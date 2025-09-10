@@ -171,7 +171,7 @@ class PlanGeneration(BaseModel, table=True):
     # if set, it would prefer a generation than edit/regeneration
     force_generation: Optional[bool] = None
 
-    regeneration_notify:  Optional[bool] = None
+    regeneration_notify: Optional[bool] = None
     #
     # Execution status and output
     #

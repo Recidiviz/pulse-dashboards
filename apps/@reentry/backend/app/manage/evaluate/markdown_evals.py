@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 from app.core.config import settings
 
-eval_llm = ChatOpenAI(openai_api_key=settings.OPENAI_API_KEY, model_name="gpt-4o")
+eval_llm = ChatOpenAI(openai_api_key=settings.OPENAI_API_KEY, model_name="o4-mini")
 
 grade_prompt = (
     "After providing your explanation, you must rate the response on a scale of 1 to 10"

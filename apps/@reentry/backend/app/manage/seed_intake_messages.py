@@ -13,7 +13,7 @@ from app.models.intake import (
     IntakeMessageRole,
     IntakeSection,
 )
-from app.utils.intake.constants import SECTIONS_LSIR, CompletionStatus, IntakeStatus
+from app.utils.intake.constants import SECTIONS_ID_FACR, CompletionStatus, IntakeStatus
 
 from .base import cli
 
@@ -109,7 +109,7 @@ async def create_client_intake_messages(
         current_section_order = current_section_result.first()
 
     # Create or update sections for this intake
-    for section_info in SECTIONS_LSIR:
+    for section_info in SECTIONS_ID_FACR:
         print(f"Finding section: {section_info['title']}")
 
         # Get the section definition

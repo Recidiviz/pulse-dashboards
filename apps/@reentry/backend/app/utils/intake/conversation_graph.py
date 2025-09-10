@@ -21,7 +21,7 @@ from app.models.intake import (
 from app.routes.shared_models import IntakeMessageResponse
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
 from app.utils.intake import db_manager
-from app.utils.intake.constants import COMPLETION_SECTION, SECTIONS_LSIR
+from app.utils.intake.constants import COMPLETION_SECTION
 from app.utils.intake.prompts import (
     CheckIfClientNeedsHelp,
     IsSectionComplete,
@@ -196,9 +196,9 @@ class IntakeConversationGraph:
         if not self.db_manager:
             raise RuntimeError("database manager !")
         client_data = self.session
-        sections_titles = [
-            section["title"] for section in SECTIONS_LSIR
-        ]  # todo read sections in db with db manager
+        sections_titles = await self.db_manager.get_section_titles(
+            client_data.client_pseudo_id
+        )
         opening_prompt = generate_opening_remarks_prompt(client_data, sections_titles)
 
         state["messages"].append(opening_prompt)

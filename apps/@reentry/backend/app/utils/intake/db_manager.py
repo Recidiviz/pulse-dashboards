@@ -393,3 +393,16 @@ class DatabaseManager:
             logger.error(f"Error checking address for client {client_pseudo_id}: {e}")
             traceback.print_exc()
             return False
+
+    async def get_section_titles(self, client_pseudo_id: str) -> list[str]:
+        try:
+            async with await self._get_session() as session:
+                intake: Intake | None = await get_intake_by_client_pseudo_id(
+                    session, client_pseudo_id
+                )
+                if intake:
+                    return [cis.section_title for cis in intake.client_intake_sections]
+                else:
+                    raise ValueError("Intake not found")
+        except Exception as e:
+            raise e

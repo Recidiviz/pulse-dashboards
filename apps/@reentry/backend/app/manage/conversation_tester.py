@@ -14,7 +14,7 @@ from langchain_core.messages import AIMessage
 
 from app.models.intake import IntakeMessage, IntakeMessageRole, IntakeSection
 from app.tests.test_intake_conversation_graph import make_client_sections
-from app.utils.intake.constants import SECTIONS_LSIR
+from app.utils.intake.constants import SECTIONS_ID_FACR
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.schemas import ClientContext, ServerEvent
 
@@ -29,7 +29,7 @@ class MockDatabaseManager:
 
     def __init__(self):
         self.current_section_index = 0
-        self.sections = [section["title"] for section in SECTIONS_LSIR]
+        self.sections = [section["title"] for section in SECTIONS_ID_FACR]
 
     async def store_message(
         self, client_pseudo_id: str, content: str, from_role: str
@@ -85,7 +85,7 @@ class MockIntake:
     """Mock intake object."""
 
     def __init__(self):
-        self.current_section = SECTIONS_LSIR[0]["title"]
+        self.current_section = SECTIONS_ID_FACR[0]["title"]
 
 
 async def mock_wait_for_user_response(
@@ -154,7 +154,7 @@ async def test_conversation():
     # Create sections
     sections = [
         IntakeSection(title=section["title"], description=section["description"])
-        for section in SECTIONS_LSIR
+        for section in SECTIONS_ID_FACR
     ]
 
     client_sections = make_client_sections(mock_intake, sections)

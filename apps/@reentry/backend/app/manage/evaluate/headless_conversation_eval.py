@@ -15,8 +15,8 @@ from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 
 from app.core.config import settings
-from app.models.intake import IntakeMessage, IntakeMessageRole, IntakeSection
-from app.utils.intake.constants import SECTIONS_LSIR, SECTIONS_ORAS_RT
+from app.models.intake import IntakeMessage, IntakeMessageRole
+from app.utils.intake.constants import SECTIONS_ID_FACR, SECTIONS_ORAS_RT
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.schemas import ClientContext, ServerEvent
 
@@ -31,12 +31,10 @@ class ConversationEvaluator:
     """Evaluates conversation quality using a more powerful AI model."""
 
     def __init__(self, sections):
-        # Use GPT-4 for evaluation (more powerful than the conversation model)
         self.evaluation_llm = ChatOpenAI(
             openai_api_key=settings.OPENAI_API_KEY,
-            model="gpt-o3-mini",
-            temperature=0.1,  # Lower temperature for more consistent evaluation
-            max_tokens=1000,
+            model="o4-mini",
+            reasoning_effort="high",
         )
         self.sections = sections
 
@@ -112,7 +110,7 @@ Please evaluate the AI caseworker's performance on the following criteria:
    - How effective was the AI at gathering the required information?
    - Would this conversation be useful for assessment purposes?
 
-Provide your evaluation in JSON format with the following structure:
+Provide your evaluation in JSON format with the following structure: Make sure your final answer is a valid json
 {{
     "tone_score": <1-10>,
     "tone_feedback": "<specific feedback>",
@@ -206,9 +204,9 @@ class HeadlessIntakeClient:
         # Initialize LLM for generating responses using app settings
         self.llm = ChatOpenAI(
             openai_api_key=settings.OPENAI_API_KEY,
-            model="gpt-4o-mini",
-            temperature=0.7,
-            max_tokens=200,
+            model="o4-mini",
+            max_tokens=500,
+            reasoning_effort="low",
         )
 
     async def generate_response(self, ai_message: str, current_section: str) -> str:
@@ -375,6 +373,21 @@ class HeadlessIntake:
         self.current_section = sections[0]["title"]
 
 
+class HeadlessClientIntakeSection:
+    def __init__(self, title, description, required_information):
+        self.title = title
+        self.description = description
+        self.required_information = required_information
+
+    def get_effective_section_data(self):
+        return {
+            "title": self.title,
+            "description": self.description,
+            "required_information": self.required_information,
+            "source": "eval",
+        }
+
+
 async def run_client_conversation(
     client: HeadlessIntakeClient, sections
 ) -> Dict[str, Any]:
@@ -410,7 +423,7 @@ async def run_client_conversation(
 
     # Create sections
     modelled_sections = [
-        IntakeSection(
+        HeadlessClientIntakeSection(
             title=section["title"],
             description=section["description"],
             required_information=section["required_information"],
@@ -473,7 +486,7 @@ SAMPLE_PERSONAS = [
         "age": 35,
         "background": "About to be released from a 2-year sentence for theft. Struggles with substance abuse issues. Has children but limited custody. Completed treatment program once before.",
         "challenges": "Staying sober, rebuilding relationship with children, finding housing, managing mental health",
-        "communication_style": "Open about struggles but sometimes defensive. Uses humor to deflect. Shows some motivation for change, but is not interested in everything. Makes short answers with low literacy",
+        "communication_style": "Open about struggles but sometimes defensive. Uses humor to deflect. Shows some motivation for change, but is not interested in everything. IMPORTANT: Makes very short answers with low literacy",
     },
 ]
 
@@ -490,7 +503,7 @@ async def headless_conversation_eval(type: str):
             '!! the supported intake types are "oras" and "lsir", defaulting to "lsir"!!'
         )
 
-    sections = SECTIONS_LSIR if type == "lsir" else SECTIONS_ORAS_RT
+    sections = SECTIONS_ID_FACR if type == "lsir" else SECTIONS_ORAS_RT
 
     # Create clients with personas
     clients = []

@@ -10,7 +10,7 @@ from app.models.assessment import AssessmentType
 from app.models.intake import ClientIntakeSection, Intake, IntakeMessage, IntakeSection
 from app.utils.content_hash import compute_content_hash
 from app.utils.intake.constants import (
-    SECTIONS_LSIR,
+    SECTIONS_ID_FACR,
     SECTIONS_ORAS_RT,
     SECTIONS_UTAH_LSIR,
     get_intake_sections_for_assessment_type,
@@ -67,7 +67,7 @@ async def seed_default_sections(session: AsyncSession):
 
     # Seed LSIR sections (marked as default for backward compatibility)
     print("Seeding LSIR sections...")
-    for i, topic in enumerate(SECTIONS_LSIR):
+    for i, topic in enumerate(SECTIONS_ID_FACR):
         existing = await session.exec(
             select(IntakeSection).where(
                 IntakeSection.title == topic["title"],

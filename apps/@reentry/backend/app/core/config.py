@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     GEN_MODEL_VERSION: str = "2025-04-16"
 
     EVAL_MODEL_PROVIDER: str = "openai"
-    EVAL_MODEL_NAME: str = "gpt-4o"
+    EVAL_MODEL_NAME: str = "o4-mini"
     EVAL_MODEL_VERSION: str = "2024-11-20"
     # https://platform.openai.com/docs/models
     # https://docs.anthropic.com/en/docs/about-claude/models
