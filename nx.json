@@ -69,7 +69,8 @@
       "options": {
         "targetName": "test"
       }
-    }
+    },
+    { "plugin": "~repo" }
   ],
   "generators": {
     "@nx/react": {

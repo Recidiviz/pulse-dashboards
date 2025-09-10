@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "projectTags": {
+      "implementation": "./src/executors/projectTags",
+      "schema": "./src/executors/schema.json",
+      "description": "projectTags executor"
+    }
+  }
+}

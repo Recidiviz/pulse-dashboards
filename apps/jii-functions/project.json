@@ -70,5 +70,5 @@
       "defaultConfiguration": "production"
     }
   },
-  "tags": ["scope:server"]
+  "tags": ["scope:server", "type:app"]
 }

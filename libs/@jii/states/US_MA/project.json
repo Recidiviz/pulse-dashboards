@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@jii/states/US_MA/src",
   "projectType": "library",
-  "tags": ["scope:client"],
+  "tags": ["scope:client", "type:state"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",

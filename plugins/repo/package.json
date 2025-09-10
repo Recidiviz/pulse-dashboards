@@ -1,12 +1,9 @@
 {
   "name": "repo",
   "version": "0.0.1",
-  "dependencies": {
-    "@nx/devkit": "18.0.5",
-    "tslib": "^2.3.0"
-  },
   "type": "commonjs",
-  "main": "./src/index.js",
+  "main": "./src/index.ts",
   "typings": "./src/index.d.ts",
-  "generators": "./generators.json"
+  "generators": "./generators.json",
+  "executors": "./executors.json"
 }

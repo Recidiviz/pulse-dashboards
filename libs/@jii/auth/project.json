@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@jii/auth/src",
   "projectType": "library",
-  "tags": ["scope:universal"],
+  "tags": ["scope:universal", "type:util"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",

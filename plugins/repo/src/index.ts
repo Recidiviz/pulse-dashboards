@@ -15,3 +15,45 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  createNodesFromFiles,
+  CreateNodesResult,
+  CreateNodesV2,
+} from "@nx/devkit";
+import { dirname } from "path";
+
+/**
+ * Defines the custom default tasks to be registered for a given project
+ */
+async function createNodesInternal(
+  projectFilePath: string,
+): Promise<CreateNodesResult> {
+  const projectRoot = dirname(projectFilePath);
+
+  return {
+    projects: {
+      [projectRoot]: {
+        targets: {
+          projectTags: {
+            executor: "repo:projectTags",
+            cache: true,
+          },
+        },
+      },
+    },
+  };
+}
+
+// exporting this lets us register default tasks for projects whose contents match the provided glob
+// (which in this case should be all of them)
+export const createNodesV2: CreateNodesV2 = [
+  "**/project.json",
+  async (configFiles, options, context) => {
+    return await createNodesFromFiles(
+      (configFile) => createNodesInternal(configFile),
+      configFiles,
+      options,
+      context,
+    );
+  },
+];

@@ -15,12 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "@testing-library/jest-dom";
-import "jest-styled-components";
+type TagKey = "util" | "ui" | "feature" | "state";
 
-import { toHaveNoViolations } from "jest-axe";
-import jestExtendedMatchers from "jest-extended";
-
-expect.extend(jestExtendedMatchers);
-
-expect.extend(toHaveNoViolations);
+export const TYPE_TAGS: Record<TagKey, string>;

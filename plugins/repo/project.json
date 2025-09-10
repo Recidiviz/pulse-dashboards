@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "plugins/repo/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
@@ -16,6 +17,5 @@
         "cwd": "{projectRoot}"
       }
     }
-  },
-  "tags": []
+  }
 }

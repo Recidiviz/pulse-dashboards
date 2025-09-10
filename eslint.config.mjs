@@ -26,6 +26,14 @@ import eslintPluginYml from "eslint-plugin-yml";
 import jsoncEslintParser from "jsonc-eslint-parser";
 import tseslint from "typescript-eslint";
 
+export const TYPE_TAGS = {
+  util: "type:util",
+  ui: "type:ui",
+  feature: "type:feature",
+  state: "type:state",
+  app: "type:app",
+};
+
 export default tseslint.config(
   {
     ignores: ["**/dist", "vite.config.mts.timestamp-*", "**/.next/**"],
@@ -93,6 +101,39 @@ export default tseslint.config(
             {
               sourceTag: "scope:universal",
               onlyDependOnLibsWithTags: ["scope:universal"],
+            },
+            {
+              sourceTag: TYPE_TAGS.util,
+              onlyDependOnLibsWithTags: [TYPE_TAGS.util],
+            },
+            {
+              sourceTag: TYPE_TAGS.ui,
+              onlyDependOnLibsWithTags: [TYPE_TAGS.util, TYPE_TAGS.ui],
+            },
+            {
+              sourceTag: TYPE_TAGS.feature,
+              onlyDependOnLibsWithTags: [
+                TYPE_TAGS.util,
+                TYPE_TAGS.ui,
+                TYPE_TAGS.feature,
+              ],
+            },
+            {
+              sourceTag: TYPE_TAGS.state,
+              onlyDependOnLibsWithTags: [
+                TYPE_TAGS.util,
+                TYPE_TAGS.ui,
+                TYPE_TAGS.feature,
+              ],
+            },
+            {
+              sourceTag: TYPE_TAGS.app,
+              onlyDependOnLibsWithTags: [
+                TYPE_TAGS.util,
+                TYPE_TAGS.ui,
+                TYPE_TAGS.feature,
+                TYPE_TAGS.state,
+              ],
             },
           ],
         },
