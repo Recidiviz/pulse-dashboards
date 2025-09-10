@@ -16,4 +16,5 @@
 // =============================================================================
 
 export * from "./UsIaActionPlansAndNotes";
+export * from "./UsIaEarlyDischargeIcOutDetails";
 export * from "./UsIaVictimContactInfo";
