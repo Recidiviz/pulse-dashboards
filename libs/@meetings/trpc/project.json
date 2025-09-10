@@ -1,0 +1,48 @@
+{
+  "name": "@meetings/trpc",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@meetings/trpc/src",
+  "projectType": "library",
+  "tags": ["meetings", "scope:server"],
+  "targets": {
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_meetings_server --env_test env_test_meetings_server",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@meetings/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@meetings/prisma"],
+          "target": "docker"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/coverage/libs/@meetings/trpc"],
+      "cache": true,
+      "options": {
+        "command": "nx prisma-deploy @meetings/prisma && cd libs/@meetings/trpc && vitest",
+        "cwd": "{workspaceRoot}",
+        "env": {
+          "NODE_OPTIONS": "--experimental-websocket"
+        }
+      }
+    }
+  }
+}

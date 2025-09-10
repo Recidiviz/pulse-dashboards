@@ -51,6 +51,12 @@
       "~@meetings/prisma/client": [
         "libs/@meetings/prisma/src/client/client.ts"
       ],
+      "~@meetings/server/*": ["apps/@meetings/server/src/*"],
+      "~@meetings/server/test/*": ["apps/@meetings/server/__tests__/*"],
+      "~@meetings/trpc": ["libs/@meetings/trpc/src/index.ts"],
+      "~@meetings/trpc-types": ["libs/@meetings/trpc-types/src/index.ts"],
+      "~@meetings/trpc/*": ["libs/@meetings/trpc/src/*"],
+      "~@meetings/trpc/test/*": ["libs/@meetings/trpc/__tests__/*"],
       "~@reentry/frontend/*": ["apps/@reentry/frontend/app/*"],
       "~@reentry/import": ["apps/@reentry/import/src/index.ts"],
       "~@reentry/import/*": ["apps/@reentry/import/src/*"],
