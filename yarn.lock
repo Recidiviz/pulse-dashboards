@@ -172,6 +172,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@axe-core/playwright@npm:^4.10.2":
+  version: 4.10.2
+  resolution: "@axe-core/playwright@npm:4.10.2"
+  dependencies:
+    axe-core: "npm:~4.10.3"
+  peerDependencies:
+    playwright-core: ">= 1.0.0"
+  checksum: 10c0/3dc02d177eb1b4865bbef05df993a5ad94268cb862e7095a273d7c7191174855f9f5a444cd8ad3ccea4991fab884083d6fdc661d471515af0d6c571958162043
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:7.10.4, @babel/code-frame@npm:~7.10.4":
   version: 7.10.4
   resolution: "@babel/code-frame@npm:7.10.4"
@@ -20110,6 +20121,13 @@ __metadata:
   version: 4.10.2
   resolution: "axe-core@npm:4.10.2"
   checksum: 10c0/0e20169077de96946a547fce0df39d9aeebe0077f9d3eeff4896518b96fde857f80b98f0d4279274a7178791744dd5a54bb4f322de45b4f561ffa2586ff9a09d
+  languageName: node
+  linkType: hard
+
+"axe-core@npm:~4.10.3":
+  version: 4.10.3
+  resolution: "axe-core@npm:4.10.3"
+  checksum: 10c0/1b1c24f435b2ffe89d76eca0001cbfff42dbf012ad9bd37398b70b11f0d614281a38a28bc3069e8972e3c90ec929a8937994bd24b0ebcbaab87b8d1e241ab0c7
   languageName: node
   linkType: hard
 
@@ -43685,6 +43703,7 @@ __metadata:
     "@anatine/zod-mock": "npm:^3.14.0"
     "@artsy/to-title-case": "npm:^1.1.0"
     "@auth0/auth0-spa-js": "npm:^1.12.1"
+    "@axe-core/playwright": "npm:^4.10.2"
     "@babel/core": "npm:^7.14.5"
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.21.11"
     "@babel/plugin-transform-runtime": "npm:^7.11.5"

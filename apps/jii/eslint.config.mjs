@@ -17,6 +17,7 @@
 
 // @ts-check
 
+import playwright from "eslint-plugin-playwright";
 import tseslint from "typescript-eslint";
 
 import baseConfig, {
@@ -24,39 +25,44 @@ import baseConfig, {
   reactConfig,
 } from "../../eslint.config.mjs";
 
-export default tseslint.config(baseConfig, reactConfig, {
-  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
-  rules: {
-    "no-restricted-imports": [
-      "error",
-      {
-        paths: [
-          // Need to include these again because eslint doesn't deep merge rules
-          {
-            name: "styled-components",
-            message: "Please import from styled-components/macro.",
-          },
-          {
-            name: "react-router-dom",
-            importNames: ["useParams"],
-            message:
-              "Please import useTypedParams from react-router-typesafe-routes/dom instead",
-          },
-          {
-            name: "@recidiviz/design-system",
-            importNames: [
-              "Dropdown",
-              "DropdownMenu",
-              "DropdownMenuLabel",
-              "DropdownMenuItem",
-              "DropdownToggle",
-            ],
-            message:
-              "Please use components from src/components/Dropdown instead",
-          },
-          designSystemRestrictedImports,
-        ],
-      },
-    ],
+export default tseslint.config(
+  baseConfig,
+  reactConfig,
+  {
+    files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            // Need to include these again because eslint doesn't deep merge rules
+            {
+              name: "styled-components",
+              message: "Please import from styled-components/macro.",
+            },
+            {
+              name: "react-router-dom",
+              importNames: ["useParams"],
+              message:
+                "Please import useTypedParams from react-router-typesafe-routes/dom instead",
+            },
+            {
+              name: "@recidiviz/design-system",
+              importNames: [
+                "Dropdown",
+                "DropdownMenu",
+                "DropdownMenuLabel",
+                "DropdownMenuItem",
+                "DropdownToggle",
+              ],
+              message:
+                "Please use components from src/components/Dropdown instead",
+            },
+            designSystemRestrictedImports,
+          ],
+        },
+      ],
+    },
   },
-});
+  { ...playwright.configs["flat/recommended"], files: ["e2e/**/*.ts"] },
+);
