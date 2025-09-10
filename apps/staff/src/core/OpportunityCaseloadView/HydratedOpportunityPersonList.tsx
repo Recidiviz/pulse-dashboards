@@ -218,6 +218,7 @@ export type OpportunityTableColumnId =
   | "SUPERVISION_EXPIRATION_DATE"
   | "US_NE_PEDD_DATE"
   | "US_MI_UNIT_ID"
+  | "US_MI_ERD"
   | "SNOOZE_ENDS_IN"
   | "SUBMITTED_FOR"
   | "CTA_BUTTON"
@@ -288,7 +289,7 @@ export function FormButtonCell({ row }: { row: Row<Opportunity> }) {
   ) {
     return (
       <RightAlignedWrapper>
-        <UsAzMarkSubmittedButton opportunity={row.original}/>
+        <UsAzMarkSubmittedButton opportunity={row.original} />
       </RightAlignedWrapper>
     );
   }
@@ -546,6 +547,35 @@ const TableView = observer(function TableView({
         if (person instanceof Resident && person.stateCode === "US_MI") {
           return person.unitId;
         }
+      },
+    },
+    {
+      header: "ERD",
+      id: "US_MI_ERD",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: ({ person }: Opportunity) => {
+        if (
+          person instanceof Resident &&
+          person.metadata.stateCode === "US_MI"
+        ) {
+          return person.metadata.earliestReleaseDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const { person } = row.original;
+        if (
+          person instanceof Resident &&
+          person.metadata.stateCode === "US_MI"
+        ) {
+          if (person.metadata.isLife) {
+            return "Serving a life sentence";
+          } else if (person.metadata.earliestReleaseDate) {
+            return formatWorkflowsDate(person.metadata.earliestReleaseDate);
+          }
+        }
+
+        return "-";
       },
     },
     {

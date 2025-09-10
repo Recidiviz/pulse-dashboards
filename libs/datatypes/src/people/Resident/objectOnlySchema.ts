@@ -27,6 +27,7 @@ import { usAzResidentMetadataSchema } from "./US_AZ/metadata/schema";
 import { usIdResidentMetadataSchema } from "./US_ID/metadata/schema";
 import { usMaResidentMetadataSchema } from "./US_MA/metadata/schema";
 import { usMeResidentMetadataSchema } from "./US_ME/metadata/schema";
+import { usMiResidentMetadataSchema } from "./US_MI/metadata/schema";
 import { usMoResidentMetadataSchema } from "./US_MO/metadata/schema";
 import { usNdResidentMetadataSchema } from "./US_ND/metadata/schema";
 import { usNeResidentMetadataSchema } from "./US_NE/metadata/schema";
@@ -66,6 +67,7 @@ export const residentRecordObjectSchema =
         usIdResidentMetadataSchema,
         usMeResidentMetadataSchema,
         usMaResidentMetadataSchema,
+        usMiResidentMetadataSchema,
         usMoResidentMetadataSchema,
         usNdResidentMetadataSchema,
         usNeResidentMetadataSchema,
