@@ -138,6 +138,26 @@
         "cwd": "{projectRoot}"
       }
     },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/apps/@reentry/frontend"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/@reentry/frontend-integration"
+      ],
+      "cache": false,
+      "options": {
+        "command": "vitest --config vitest.integration.config.mts",
+        "cwd": "{projectRoot}"
+      }
+    },
     "openapi": {
       "executor": "nx:run-commands",
       "options": {

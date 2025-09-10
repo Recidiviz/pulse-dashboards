@@ -105,6 +105,16 @@ Other flags:
 - `--no-cov`: Disables coverage reporting for faster test execution
 - `--log-cli-level=DEBUG`: Control log verbosity (DEBUG, INFO, WARNING, ERROR)
 
+To run the frontend unit or integration tests you can run the commands below from the frontend folder.
+
+```
+yarn vitest (for unit-tests)
+```
+
+```
+yarn vitest --watch=false --config vitest.integration.config.mts integration-tests/sentry.integration.test.ts (for integration-tests)
+```
+
 ## Cli tool
 
 ### Generate an action plan
