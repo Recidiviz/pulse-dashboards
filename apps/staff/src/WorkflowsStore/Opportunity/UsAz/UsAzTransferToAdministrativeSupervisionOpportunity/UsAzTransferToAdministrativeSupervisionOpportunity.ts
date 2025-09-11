@@ -20,6 +20,7 @@ import { DocumentData } from "firebase/firestore";
 import { OpportunityRecordBase } from "~datatypes";
 import { opportunitySchemaBase } from "~datatypes";
 
+import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityTab } from "../../types";
@@ -42,5 +43,16 @@ export class UsAzTransferToAdministrativeSupervisionOpportunity extends Opportun
     if (this.isSubmitted) return this.submittedTabTitle;
     if (this.almostEligible) return "Eligible per Initial Assessment";
     return "Eligible per ORAS";
+  }
+
+  eligibilityStatusLabel(): string {
+    return this.tabTitle();
+  }
+
+  get customStatusPalette() {
+    if (this.almostEligible) {
+      return OPPORTUNITY_STATUS_COLORS.eligible;
+    }
+    return super.customStatusPalette;
   }
 }
