@@ -24,7 +24,7 @@ export const crcSharedCriteria = z
     custodyLevelIsMinimum: z.object({
       custodyLevel: z.string(),
     }),
-    notServingForSexualOffense: z.object({}).nullable(),
+    notServingForSexualOffense: z.object({}).nullable().optional(),
     notServingForViolentOffense: z.object({}).nullable().optional(),
     usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: z
       .object({})
