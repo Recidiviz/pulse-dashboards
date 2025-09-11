@@ -26,12 +26,14 @@ function TogglePill({ currentValue, onChange, leftPill, rightPill }) {
     <div className="TogglePill">
       {[leftPill, rightPill].map(({ value, label }) => (
         <button
-          type="button"
+          role="radio"
+          aria-checked={currentValue === value}
           key={label}
           className={cx("TogglePill__button", {
             "TogglePill__button--selected": currentValue === value,
           })}
           onClick={() => onChange(value)}
+          tabIndex={0}
         >
           {label}
         </button>

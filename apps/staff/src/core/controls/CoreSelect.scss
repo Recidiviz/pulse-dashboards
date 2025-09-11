@@ -10,6 +10,9 @@
   color: constants.$pine-3;
 
   &__control {
+    &:focus, &:focus-within, &:active, &:hover {
+      border: 1px solid #006c67 !important;
+    }
     border: 1px solid constants.$core-border-color !important;
     box-shadow: none !important;
     border-radius: 1.25rem !important;

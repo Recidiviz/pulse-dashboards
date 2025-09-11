@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./Modal.scss";
+import "./PathwaysModal.scss";
 
 import { Icon, IconSVG } from "@recidiviz/design-system";
 import React, { useEffect, useRef } from "react";
@@ -31,7 +31,7 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const Modal: React.FC<Props> = ({
+const PathwaysModal: React.FC<Props> = ({
   isShowing,
   hide,
   title,
@@ -50,19 +50,43 @@ const Modal: React.FC<Props> = ({
     };
   }, [isShowing]);
 
+  useEffect(() => {
+    if (!isShowing) {
+      return;
+    }
+    const moreFiltersModal = document.getElementById("more-filters-modal");
+    // Select the first focusable element
+    const firstFocusableElement = moreFiltersModal?.querySelector(
+      'input, button, a[href], [tabindex]:not([tabindex="-1"])',
+    ) as HTMLElement;
+    if (firstFocusableElement) {
+      firstFocusableElement.focus();
+    }
+
+    // Define the handler as a stable function
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        hide();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    // Cleanup: remove the event listener
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isShowing, hide]);
+
   if (!isShowing) {
     return null;
   }
 
   return createPortal(
-    <div className="Modal">
+    <div className="Modal" id="more-filters-modal">
       <div className="Modal__overlay" />
       <div
         className="Modal__wrapper"
-        aria-modal
-        aria-hidden
+        aria-modal="true"
         aria-label="Modal"
-        tabIndex={-1}
         role="dialog"
       >
         <div
@@ -78,6 +102,7 @@ const Modal: React.FC<Props> = ({
               width={14}
               height={14}
               onClick={hide}
+              tabIndex={0}
             />
           </div>
           <div className="Modal__content">{children}</div>
@@ -89,4 +114,4 @@ const Modal: React.FC<Props> = ({
   );
 };
 
-export default Modal;
+export default PathwaysModal;

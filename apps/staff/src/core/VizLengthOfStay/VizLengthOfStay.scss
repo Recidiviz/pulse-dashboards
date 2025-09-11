@@ -21,4 +21,9 @@
   .data-visualization .axis.bottom text {
     transform: initial !important;
   }
+
+  &:focus, &:focus-within, &:active {
+    border: 1px solid #006c67;
+    border-radius: 8px;
+  }
 }

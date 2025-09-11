@@ -17,22 +17,22 @@
 
 import { render, screen } from "@testing-library/react";
 
-import Modal from "../Modal";
+import PathwaysModal from "../PathwaysModal";
 
-describe("Modal.js", () => {
+describe("PathwaysModal.js", () => {
   const mockHide = vi.fn();
 
   it("should render standard modal", () => {
-    render(<Modal isShowing>Some content</Modal>);
+    render(<PathwaysModal isShowing>Some content</PathwaysModal>);
 
     expect(screen.queryByText("Some content")).toBeInTheDocument();
   });
 
   it("should not be rendered if isShowing is false", () => {
     render(
-      <Modal isShowing={false} hide={mockHide}>
+      <PathwaysModal isShowing={false} hide={mockHide}>
         Some content
-      </Modal>,
+      </PathwaysModal>,
     );
 
     expect(screen.queryByText("Some content")).not.toBeInTheDocument();

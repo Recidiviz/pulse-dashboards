@@ -136,8 +136,10 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
         }}
         // eslint-disable-next-line react/no-unstable-nested-components
         tooltipContent={(d: any) => {
-          const pieceData = d.pieces[0];
-          return <ChartCountOverTimeWithAvgTooltip data={pieceData} />;
+          const pieceData = d.pieces?.[0] ?? d.data;
+          if (pieceData)
+            return <ChartCountOverTimeWithAvgTooltip data={pieceData} />;
+          return null;
         }}
         type="bar"
         data={data}

@@ -203,8 +203,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     },
     // eslint-disable-next-line react/no-unstable-nested-components
     tooltipContent: (d: any) => {
-      const { pieces } = d;
-      const pieceData = pieces[0];
+      const pieceData = d.pieces?.[0] ?? d.data;
       return (
         <PathwaysTooltip
           label={pieceData.tooltipLabel}

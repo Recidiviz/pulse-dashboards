@@ -7,6 +7,11 @@
   display: flex;
   align-items: center;
 
+  &:focus, &:focus-within, &:active {
+    border: 1px solid #006c67;
+    border-radius: 8px;
+  }
+
   &__item {
     color: constants.$slate-80;
     @include mixins.sans-14;
@@ -17,9 +22,13 @@
   }
 
   &__button {
+    &:focus, &:focus-within, &:active {
+      border: 1px solid #006c67;
+      border-radius: 8px;
+    }
     display: flex;
     align-items: center;
-    outline: 0;
+    outline: 0 !important;
     border: 0;
     background: transparent;
     color: constants.$signal-links;
@@ -52,12 +61,21 @@
     color: constants.$signal-links;
     display: block;
 
+    &:focus, &:focus-within, &:active {
+      border: 1px solid #006c67;
+      border-radius: 8px;
+    }
+
     @media screen and (max-width: constants.$core-breakpoint-sm) {
       display: block;
     }
   }
 
   &__content {
+    &:focus, &:focus-within, &:active {
+      border: 1px solid #006c67;
+      border-radius: 8px;
+    }
     display: none;
     position: absolute;
     flex-direction: column;

@@ -75,7 +75,7 @@ const NavContainer = styled.nav<{
   ${({ isFixed }) => isFixed && `position: fixed;`}
   ${({ alignBottom }) =>
     alignBottom
-      ? `bottom: 0; 
+      ? `bottom: 0;
           border-top: 1px solid ${palette.slate20};`
       : `border-bottom: 1px solid ${palette.slate20};`}
 
@@ -200,9 +200,14 @@ const ProfileButtonMobile = styled(Button).attrs({ kind: "link" })<{
 const MainLogoNavLink = styled(Link)`
   display: flex;
   align-items: end;
+  padding: 5px;
 
   ${Separator} {
     padding: 0 0.75rem;
+  }
+  &:focus, &:focus-within, &:active, &:hover {
+    border: 1px solid ${palette.signal.links} !important;
+    border-radius: 8px;
   }
 `;
 
@@ -262,6 +267,8 @@ function MethodologyLink({
         search: `?stateCode=${currentTenantId}`,
       }}
       onClick={handleMethodologyLinkClick}
+      role="menuitem"
+      tabIndex={0}
     >
       {linkContents}
     </NavLink>
@@ -275,7 +282,7 @@ function MainLogo({
   if (!enabled) return null;
 
   return (
-    <MainLogoNavLink to="/">
+    <MainLogoNavLink to="/" role="menuitem" tabIndex={0}>
       <RecidivizLogo />
       {enabledLanternLogo && (
         <>
@@ -296,7 +303,12 @@ function WorkflowsLink({
   if (!enabled) return null;
 
   return (
-    <NavLink className="WorkflowsLink" to={workflowsUrl(homepage)}>
+    <NavLink
+      className="WorkflowsLink"
+      to={workflowsUrl(homepage)}
+      role="menuitem"
+      tabIndex={0}
+    >
       {isMobile && <Icon kind={IconSVG.Workflows} width={20} />}
       Go to Workflows
     </NavLink>
@@ -313,6 +325,8 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
     <NavLink
       to={`/${DASHBOARD_VIEWS.operations}`}
       onClick={() => vitalsStore.resetCurrentEntityId()}
+      role="menuitem"
+      tabIndex={0}
     >
       {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
       Go to Operations
@@ -332,6 +346,8 @@ const PathwaysLink = observer(function PathwaysLink({
     <NavLink
       to={`/${DASHBOARD_VIEWS.system}`}
       onClick={() => filtersStore.resetFilters()}
+      role="menuitem"
+      tabIndex={0}
     >
       {isMobile && <Icon kind={IconSVG.Pathways} width={20} />}
       Go to {tenantStore.pathwaysName}
@@ -344,7 +360,7 @@ function InsightsLink({ enabled }: OptionalLinkProps) {
 
   if (!enabled) return null;
   return (
-    <NavLink to={`/${DASHBOARD_VIEWS.insights}`}>
+    <NavLink to={`/${DASHBOARD_VIEWS.insights}`} role="menuitem" tabIndex={0}>
       {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
       Go to Insights
     </NavLink>
@@ -362,7 +378,11 @@ function PSIStaffLink({
 
   if (!enabled || !staffPseudoId) return null;
   return (
-    <NavLink to={psiUrl("staffDashboard", { staffPseudoId })}>
+    <NavLink
+      to={psiUrl("staffDashboard", { staffPseudoId })}
+      role="menuitem"
+      tabIndex={0}
+    >
       {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
       Go to PSI Case Dashboard
     </NavLink>
@@ -380,7 +400,11 @@ function PSISupervisorLink({
 
   if (!enabled || !staffPseudoId) return null;
   return (
-    <NavLink to={psiUrl("supervisorDashboard", { staffPseudoId })}>
+    <NavLink
+      to={psiUrl("supervisorDashboard", { staffPseudoId })}
+      role="menuitem"
+      tabIndex={0}
+    >
       {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
       Go to PSI Supervisor Dashboard
     </NavLink>
@@ -394,7 +418,7 @@ function LogoutLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
 
   return (
-    <NavLink to="/" onClick={logout}>
+    <NavLink to="/" onClick={logout} role="menuitem" tabIndex={0}>
       {isMobile && <Icon kind={IconSVG.Leave} width={20} />}
       Log Out
     </NavLink>
@@ -535,6 +559,8 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           isFixed={isFixed}
           backgroundColor={backgroundColor}
           hasBorder={!isNaked}
+          role="navigation"
+          aria-label="Main navigation"
         >
           <MainLogo
             enabled={!isMobile || !isFixed}
@@ -567,7 +593,12 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
                 </>
               ) : (
                 <DropdownProfile>
-                  <DropdownToggle kind="link">
+                  <DropdownToggle
+                    kind="link"
+                    aria-label="Profile dropdown button"
+                    role="menuitem"
+                    tabIndex={0}
+                  >
                     <UserAvatar />
                   </DropdownToggle>
                   <DropdownProfileMenu alignment="right">

@@ -26,6 +26,10 @@
     &--active {
       color: constants.$signal-links;
     }
+    &:focus, &:focus-within, &:active {
+      color: constants.$signal-links;
+    }
+
   }
 
   &__section-name {

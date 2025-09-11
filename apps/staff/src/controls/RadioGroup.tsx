@@ -49,6 +49,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
               setState(value);
               onChange([{ value, label }], type);
             }}
+            tabIndex={0}
           />
           <span className="RadioGroup__box" />
         </label>

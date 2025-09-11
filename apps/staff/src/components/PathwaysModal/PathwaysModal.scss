@@ -66,6 +66,10 @@
     color: constants.$slate-70;
     cursor: pointer;
     margin-left: auto;
+
+    &:focus, &:focus-within {
+      color: constants.$signal-links;
+    }
   }
 
   &__content {

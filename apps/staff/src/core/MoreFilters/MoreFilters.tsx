@@ -24,7 +24,7 @@ import React, { useEffect, useState } from "react";
 
 import { Button } from "~design-system";
 
-import Modal from "../../components/Modal";
+import PathwaysModal from "../../components/PathwaysModal";
 import RadioGroup from "../../controls/RadioGroup";
 import useIsMobile from "../../hooks/useIsMobile";
 import CheckboxGroup from "../controls/CheckboxGroup";
@@ -91,8 +91,11 @@ const MoreFilters: React.FC<Props> = ({
     <button
       className="DetailsGroup__button"
       type="button"
-      aria-expanded="true"
-      onClick={() => setOpen(!open)}
+      aria-expanded={open}
+      onClick={() => {
+        setOpen(!open)
+      }}
+      aria-haspopup="true"
     >
       <Icon
         className="DetailsGroup__icon MoreFilters__icon"
@@ -105,7 +108,7 @@ const MoreFilters: React.FC<Props> = ({
   if (enabledFilters.length < 1) return null;
   return (
     <>
-      <Modal
+      <PathwaysModal
         title="More filters"
         isShowing={open}
         hide={() => setOpen(false)}
@@ -152,7 +155,7 @@ const MoreFilters: React.FC<Props> = ({
             </div>
           );
         })}
-      </Modal>
+      </PathwaysModal>
       {!isMobile ? (
         <TooltipTrigger
           className="MoreFilters__tooltip"

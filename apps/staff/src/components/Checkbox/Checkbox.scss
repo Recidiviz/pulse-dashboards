@@ -19,6 +19,11 @@
     &:has(.Checkbox__input:disabled) {
       cursor: not-allowed;
     }
+    &:focus, &:focus-within, &:active {
+      .Checkbox__box {
+        border: 1px solid constants.$signal-links !important;
+      }
+    }
   }
 
   &__label {

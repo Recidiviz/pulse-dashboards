@@ -19,7 +19,7 @@ import "./CoreMultiSelect.scss";
 
 import cn from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import ReactSelect from "react-select";
 
 import GroupHeading from "../../../controls/MultiSelect/GroupHeading";
@@ -39,6 +39,7 @@ function CoreMultiSelect({
   value,
   onChange,
   className = "",
+  id,
   ...props
 }) {
   const ref = useRef();
@@ -50,10 +51,10 @@ function CoreMultiSelect({
   }, [value]);
 
   useEffect(() => {
-    const input = document.querySelector(".CoreMultiSelect__input > input");
+    const input = document.querySelector(`#${id} input`);
     if (input) {
       input.setAttribute("readonly", "");
-      input.setAttribute("aria-labelledby", `${input.id}`);
+      input.setAttribute("aria-labelledby", `${id}`);
     }
   });
 
@@ -99,6 +100,7 @@ function CoreMultiSelect({
       className={cn("CoreMultiSelect", className, {
         "CoreMultiSelect--summing-option-selected": summingOption === value[0],
       })}
+      id={id}
       ref={ref}
       closeMenuOnSelect={false}
       components={replacedComponents}
@@ -127,6 +129,7 @@ CoreMultiSelect.propTypes = {
   className: PropTypes.string,
   summingOption: optionPropType.isRequired,
   isChanged: PropTypes.bool,
+  id: PropTypes.string,
 };
 CustomScrollBarWrapper.propTypes = {
   children: PropTypes.arrayOf(optionPropType).isRequired,

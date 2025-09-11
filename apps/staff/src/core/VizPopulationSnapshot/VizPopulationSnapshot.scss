@@ -77,4 +77,9 @@
       }
     }
   }
+
+  &:focus, &:focus-within, &:active {
+    border: 1px solid #006c67;
+    border-radius: 8px;
+  }
 }

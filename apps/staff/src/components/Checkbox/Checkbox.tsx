@@ -60,6 +60,7 @@ const Checkbox: React.FC<Props> = ({
         value={value}
         onChange={handleChange}
         disabled={disabled}
+        tabIndex={0}
       />
       <span className="Checkbox__box" />
     </label>

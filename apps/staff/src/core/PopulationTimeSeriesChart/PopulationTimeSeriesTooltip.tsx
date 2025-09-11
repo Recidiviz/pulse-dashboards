@@ -21,18 +21,26 @@ import React from "react";
 
 import { formatDate } from "../../utils/formatStrings";
 
+type DataPoint = {
+  date: Date;
+  value: number;
+  lowerBound?: number;
+  upperBound?: number;
+  parentSummary?: any;
+};
 type PropTypes = {
-  d: {
-    date: Date;
-    value: number;
-    lowerBound?: number;
-    upperBound?: number;
-    parentSummary?: any;
+  d: DataPoint & {
+    data?: DataPoint;
   };
 };
 
 const PopulationTimeSeriesTooltip: React.FC<PropTypes> = ({ d }) => {
-  const { date, value, lowerBound, upperBound } = d;
+  let { date, value } = d;
+  const { lowerBound, upperBound, data } = d;
+  if (data && !date) {
+    date = data.date;
+    value = data.value;
+  }
 
   if (d.parentSummary !== undefined || !d) {
     // don't display tooltip for summary block

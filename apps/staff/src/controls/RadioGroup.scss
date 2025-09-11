@@ -30,6 +30,11 @@
     cursor: pointer;
     height: 0;
     width: 0;
+
+    &:focus, &:focus-within {
+      border: 1px solid constants.$signal-links !important;
+      border-radius: 8px;
+    }
   }
 
   &__box {

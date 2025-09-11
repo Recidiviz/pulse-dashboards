@@ -37,13 +37,24 @@ const DetailsGroup: React.FC<Props> = ({ expand, children }) => {
   }
 
   return (
-    <div className="DetailsGroup" ref={ref}>
+    <div className="DetailsGroup" ref={ref} >
       <Icon
         kind={IconSVG.TripleDot}
         width={16}
         height={16}
         className="DetailsGroup__menu"
         onClick={() => setOpen(!open)}
+        onKeyDown={(event) => {
+          if (event.code === "Space" || event.code === "Enter") {
+            event.preventDefault();
+            setOpen(!open);
+          }
+          if (event.code === "Escape") { setOpen(false); }
+        }}
+        aria-haspopup="true"
+        aria-label="Ellipse: More options"
+        type="button"
+        tabIndex={0}
       />
       <div
         className={cn("DetailsGroup__content", {

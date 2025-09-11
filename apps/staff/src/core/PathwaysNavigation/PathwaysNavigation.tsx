@@ -36,9 +36,9 @@ const PathwaysNavigation: React.FC = () => {
     return null;
 
   return (
-    <nav className="PathwaysNavigation">
+    <div className="PathwaysNavigation">
       <PageNavigation />
-    </nav>
+    </div>
   );
 };
 

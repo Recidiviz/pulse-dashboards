@@ -113,6 +113,9 @@ div.CoreMultiSelect {
   }
 
   div.CoreMultiSelect__control {
+    &:focus, &:focus-within, &:active, &:hover {
+      border: 1px solid #006c67 !important;
+    }
     background-color: constants.$marble-3;
     border: 1px solid settings.$core-border-color;
     border-radius: 1.5rem;
