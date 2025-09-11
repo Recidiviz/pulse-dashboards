@@ -24,6 +24,7 @@ import AdminIntakeHistory from "~@reentry/frontend/(protected)/clients/intake/[i
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
 import Summary from "~@reentry/frontend/components/intake/Summary";
+import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 
 const IntakeManagementPage = () => {
@@ -55,6 +56,9 @@ const IntakeManagementPage = () => {
         "Content-Type": "application/json",
       },
     },
+    // Note: We disable this query when V2 intake chat is enabled because
+    // in V2, the intake is created during the chat flow and not upon enabling this intake.
+    { enabled: !IS_V2_INTAKE_CHAT },
   );
 
   if (clientLoading && !clientData) {

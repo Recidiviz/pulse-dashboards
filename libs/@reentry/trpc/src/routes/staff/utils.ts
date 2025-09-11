@@ -21,18 +21,26 @@ import { Intake } from "~@reentry/prisma/client";
 
 export async function fetchProcessingStatus(
   req: FastifyRequest,
-  clientIds: string[],
+  staffPseudoId: string,
+  clientPseudoId?: string,
 ): Promise<Record<string, string>> {
   const auth = req.headers.authorization ?? "";
-  const res = await fetch(`${process.env["V0_API_URL"]}/processing-status`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: auth,
+  const res = await fetch(
+    `${process.env["V0_API_URL"]}/clients/processing-status`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: auth,
+      },
+      body: JSON.stringify({ staff_pseudo_id: staffPseudoId }),
     },
-    body: JSON.stringify({ client_ids: clientIds }),
-  });
-  return res.ok ? ((await res.json()) as Record<string, string>) : {};
+  );
+  const data = (await res.json()) as Record<string, string>;
+  if (!res.ok || !data) {
+    return {};
+  }
+  return clientPseudoId ? { [clientPseudoId]: data[clientPseudoId] } : data;
 }
 
 export function resolveIntakeStatus(

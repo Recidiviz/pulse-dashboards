@@ -41,7 +41,8 @@ import { fakeClient, fakeStaff } from "~@reentry/trpc/test/setup/seed";
 
 describe("staff router", () => {
   beforeAll(() => {
-    process.env["V0_API_URL"] = process.env["V0_API_URL"] || "http://test-api";
+    process.env["V0_API_URL"] =
+      (process.env["V0_API_URL"] || "http://test-api") + "/clients";
     mswServer.listen({ onUnhandledRequest: "warn" });
   });
 
@@ -66,6 +67,7 @@ describe("staff router", () => {
 
       const status = await testTRPCClient.staff.getClientIntakeStatus.query({
         clientPseudoId: fakeClient.pseudonymizedId,
+        staffPseudoId: fakeStaff.pseudonymizedId,
       });
       expect(status).toBe("new");
     });
@@ -82,6 +84,7 @@ describe("staff router", () => {
 
       const status = await testTRPCClient.staff.getClientIntakeStatus.query({
         clientPseudoId: fakeClient.pseudonymizedId,
+        staffPseudoId: fakeStaff.pseudonymizedId,
       });
       expect(status).toBe("intake_enabled");
     });
@@ -94,6 +97,7 @@ describe("staff router", () => {
 
       const status = await testTRPCClient.staff.getClientIntakeStatus.query({
         clientPseudoId: fakeClient.pseudonymizedId,
+        staffPseudoId: fakeStaff.pseudonymizedId,
       });
       expect(status).toBe("intake_in_progress");
     });
@@ -103,7 +107,7 @@ describe("staff router", () => {
 
       const result = await testTRPCClient.staff.getAllClientsIntakeStatus.query(
         {
-          staffPseudoId: fakeStaff.staffId,
+          staffPseudoId: fakeStaff.pseudonymizedId,
         },
       );
 
@@ -115,7 +119,7 @@ describe("staff router", () => {
     test("returns an empty map for a staffId with no clients", async () => {
       const result = await testTRPCClient.staff.getAllClientsIntakeStatus.query(
         {
-          staffPseudoId: 999999,
+          staffPseudoId: "999999",
         },
       );
       expect(result).toEqual({});
@@ -146,7 +150,7 @@ describe("staff router", () => {
 
       const result = await testTRPCClient.staff.getAllClientsIntakeStatus.query(
         {
-          staffPseudoId: fakeStaff.staffId,
+          staffPseudoId: fakeStaff.pseudonymizedId,
         },
       );
 
@@ -155,15 +159,6 @@ describe("staff router", () => {
         "client-pid-2": "new",
         "client-pid-3": "new",
       });
-    });
-
-    test("rejects with BAD_REQUEST for invalid staffId input", async () => {
-      await expect(
-        testTRPCClient.staff.getAllClientsIntakeStatus.query({
-          // @ts-expect-error intentional bad input to test validation
-          staffPseudoId: "not-a-number",
-        }),
-      ).rejects.toThrow(/Expected number, received string|invalid_type/);
     });
   });
   describe("getIntakeEnabled", () => {

@@ -30,45 +30,57 @@ import * as staffUtils from "~@reentry/trpc/routes/staff/utils";
 export const staffRouter = router({
   getClientIntakeStatus: auth0Procedure
     .input(getClientIntakeStatusSchema)
-    .query(async ({ ctx: { prisma, req }, input: { clientPseudoId } }) => {
-      try {
-        const client = await prisma.client.findUniqueOrThrow({
-          where: {
-            pseudonymizedId: clientPseudoId,
-          },
-          select: {
-            intakeEnabled: true,
-            Intake: true,
-          },
-        });
-
-        const processingStatus = await staffUtils.fetchProcessingStatus(req, [
-          clientPseudoId,
-        ]);
-        return staffUtils.resolveIntakeStatus(
-          { ...client, pseudonymizedId: clientPseudoId },
-          processingStatus,
-        );
-      } catch (e) {
-        if (
-          e instanceof Prisma.PrismaClientKnownRequestError &&
-          e.code === "P2025"
-        ) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Client not found",
+    .query(
+      async ({
+        ctx: { prisma, req },
+        input: { staffPseudoId, clientPseudoId },
+      }) => {
+        try {
+          const client = await prisma.client.findUniqueOrThrow({
+            where: {
+              pseudonymizedId: clientPseudoId,
+            },
+            select: {
+              intakeEnabled: true,
+              Intake: true,
+            },
           });
+
+          const processingStatus = await staffUtils.fetchProcessingStatus(
+            req,
+            staffPseudoId,
+            clientPseudoId,
+          );
+
+          return staffUtils.resolveIntakeStatus(
+            { ...client, pseudonymizedId: clientPseudoId },
+            processingStatus,
+          );
+        } catch (e) {
+          if (
+            e instanceof Prisma.PrismaClientKnownRequestError &&
+            e.code === "P2025"
+          ) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Client not found",
+            });
+          }
+          return;
         }
-        return;
-      }
-    }),
+      },
+    ),
   getAllClientsIntakeStatus: auth0Procedure
     .input(getAllClientsIntakeStatusInputSchema)
     .query(async ({ ctx: { prisma, req }, input: { staffPseudoId } }) => {
       const clients = await prisma.client.findMany({
         where: {
           staff: {
-            some: { staffId: staffPseudoId },
+            some: {
+              staff: {
+                pseudonymizedId: staffPseudoId,
+              },
+            },
           },
         },
         include: {
@@ -77,10 +89,9 @@ export const staffRouter = router({
       });
 
       const clientToStatusMap: Record<string, string> = {};
-      const clientIds = clients.map((client) => client.pseudonymizedId);
       const processingStatusMap = await staffUtils.fetchProcessingStatus(
         req,
-        clientIds,
+        staffPseudoId,
       );
 
       clients.forEach((client) => {

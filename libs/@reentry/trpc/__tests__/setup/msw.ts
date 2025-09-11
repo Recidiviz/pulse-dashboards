@@ -18,15 +18,40 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
-export function processingStatusHandler(status = "unknown") {
-  return http.post("*/processing-status", async ({ request }) => {
-    const body = (await request.json()) as { client_ids?: string[] };
-    const clientIds = body.client_ids ?? [];
+import { testPrismaClient } from "~@reentry/trpc/test/setup";
 
+export function processingStatusHandler(status = "unknown") {
+  return http.post("*/clients/processing-status", async ({ request }) => {
+    const body = (await request.json()) as {
+      staff_pseudo_id?: string;
+    };
+
+    const staffPseudoId = body.staff_pseudo_id;
+    let clientIds: string[] | undefined;
+
+    try {
+      const clients = await testPrismaClient.client.findMany({
+        where: {
+          staff: {
+            some: {
+              staff: { pseudonymizedId: staffPseudoId },
+            },
+          },
+        },
+        select: { pseudonymizedId: true },
+      });
+      clientIds = clients.map((c) => c.pseudonymizedId);
+    } catch {
+      clientIds = [];
+    }
+
+    clientIds = clientIds ?? [];
     const clientToStatusMap: Record<string, string> = {};
-    clientIds.forEach((id) => {
+
+    for (const id of clientIds) {
       clientToStatusMap[id] = status;
-    });
+    }
+
     return HttpResponse.json(clientToStatusMap);
   });
 }

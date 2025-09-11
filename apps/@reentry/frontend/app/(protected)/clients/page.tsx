@@ -304,13 +304,12 @@ const ClientsPage = () => {
     const auth = useAuth();
     const stateCode = auth.userAppMetadata?.stateCode ?? "";
     const staffPseudoId = auth.userAppMetadata?.pseudonymizedId;
-
     const enableGetClientsIntakeStatus = Boolean(stateCode && staffPseudoId);
 
     const { data: intakeStatuses } =
       trpc.staff.getAllClientsIntakeStatus.useQuery(
         {
-          staffPseudoId: Number(staffPseudoId),
+          staffPseudoId: staffPseudoId ?? "",
         },
         { enabled: enableGetClientsIntakeStatus },
       );

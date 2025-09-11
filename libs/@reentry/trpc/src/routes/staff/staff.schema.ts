@@ -23,6 +23,7 @@ export const getIntakeInputSchema = z.object({
 
 export const getClientIntakeStatusSchema = z.object({
   clientPseudoId: z.string(),
+  staffPseudoId: z.string(),
 });
 
 export const toggleIntakeInputSchema = z.object({
@@ -31,5 +32,5 @@ export const toggleIntakeInputSchema = z.object({
 });
 
 export const getAllClientsIntakeStatusInputSchema = z.object({
-  staffPseudoId: z.number().int().nonnegative(),
+  staffPseudoId: z.string(),
 });
