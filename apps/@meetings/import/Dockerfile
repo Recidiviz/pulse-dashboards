@@ -18,10 +18,11 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=8080
 
-RUN apk add --no-cache dumb-init && \
-    chown -R node:node .
+RUN corepack enable
 
-COPY --from=builder /usr/src/app .
+RUN apk add --no-cache dumb-init
+
+COPY --chown=node:node --from=builder /usr/src/app .
 
 USER node
 EXPOSE ${PORT}

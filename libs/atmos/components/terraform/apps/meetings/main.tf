@@ -124,6 +124,7 @@ module "migrate-db-job" {
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   container_command             = ["./scripts/migrate-dbs.sh"]
+  max_retries                   = 1
 
   volumes = [{
     name = "cloudsql"

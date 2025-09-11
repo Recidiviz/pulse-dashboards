@@ -20,15 +20,16 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=8080
 
-RUN apk add --no-cache dumb-init && \
-    chown -R node:node .
+RUN corepack enable
+
+RUN apk add --no-cache dumb-init
 
 # Copy over the scripts since they should rarely be changed
-COPY dist/apps/@meetings/server/scripts ./scripts
+COPY --chown=node:node dist/apps/@meetings/server/scripts ./scripts
 RUN chmod +x scripts/*.sh
 
 # Copy node_modules from builder stage
-COPY --from=builder /usr/src/app .
+COPY --chown=node:node --from=builder /usr/src/app .
 
 USER node
 EXPOSE ${PORT}
