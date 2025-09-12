@@ -52,6 +52,7 @@ yalc.lock
 **/package.json
 # the root package.json is the only one we want to track
 !/package.json
+!apps/@meetings/app/package.json
 
 # Redis dump
 dump.rdb
