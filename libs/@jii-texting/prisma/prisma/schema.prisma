@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../../../../node_modules/@prisma/jii-texting/client"
+  provider        = "prisma-client"
+  previewFeatures = ["queryCompiler", "driverAdapters"]
+  output          = "../src/client"
 }
 
 datasource db {
@@ -80,7 +81,7 @@ enum MessageAttemptStatus {
 }
 
 model Person {
-  stableExternalId String    @id  // indicated by DOC
+  stableExternalId String    @id // indicated by DOC
   pseudonymizedId  String    @unique // hashed id used to anonymize
   personId         String    @unique // internal Recidiviz id
   stateCode        StateCode

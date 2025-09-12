@@ -23,7 +23,6 @@ RUN yarn workspaces focus --production
 
 # Copy over the rest of the files as late as we can
 COPY dist/apps/@jii-texting/server .
-RUN yarn prisma generate
 
 RUN chown -R node:node .
 USER node

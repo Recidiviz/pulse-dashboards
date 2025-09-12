@@ -16,7 +16,6 @@ RUN yarn workspaces focus --production
 
 # Copy over the rest of the files as late as we can
 COPY dist/apps/@jii-texting/seed-demo .
-RUN yarn prisma generate
 
 ENTRYPOINT ["dumb-init", "--", "node", "--import=extensionless/register", "main.js"]
 

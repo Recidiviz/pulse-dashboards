@@ -16,7 +16,6 @@ RUN yarn workspaces focus --production
 
 # Copy over the rest of the files as late as we can
 COPY dist/apps/@jii-texting/import .
-RUN yarn prisma generate
 
 # Make sure to:
 # 1. Use the extensionless package so directory imports can be resolved

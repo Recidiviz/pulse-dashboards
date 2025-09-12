@@ -16,18 +16,16 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+
 import {
   Prisma,
   PrismaClient,
   StateCode,
   Status,
-} from "@prisma/jii-texting/client";
-
+} from "~@jii-texting/prisma/client";
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma/utils";
 
-const PRISMA_TABLES = Prisma.dmmf.datamodel.models
-  .map((model) => model.name)
-  .filter((table) => table);
+const PRISMA_TABLES = Object.values(Prisma.ModelName);
 
 export async function resetDb(prismaClient: PrismaClient) {
   await prismaClient.$transaction(

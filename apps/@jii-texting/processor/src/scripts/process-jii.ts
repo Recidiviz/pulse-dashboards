@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/jii-texting/client";
-
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
+import { StateCode } from "~@jii-texting/prisma/client";
 import {
   PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP,
   PersonWithMessageSeriesAndGroup,

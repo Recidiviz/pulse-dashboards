@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "@prisma/jii-texting/client";
-
+import { PrismaClient } from "~@jii-texting/prisma/client";
 import {
   fakeFullyEligibleGroup,
   fakeMissingDA,

@@ -33,10 +33,6 @@ const projectPackageJsonContents = {
     // these are not parts of the application but we use them in the docker container
     extensionless: repoPackageContents.dependencies.extensionless,
     prisma: repoPackageContents.dependencies.prisma,
-    // This is a peer dependency of the @prisma/adapter-pg package
-    pg: repoPackageContents.dependencies.pg,
-    // Because of the way this is being imported in the generated Prisma client, esbuild doesn't pick up that it is a dependency (it resolves to @prisma/client/runtime/query_compiler_bg.postgresql.wasm instead of @prisma/client)
-    "@prisma/client": repoPackageContents.dependencies["@prisma/client"],
   },
 };
 
