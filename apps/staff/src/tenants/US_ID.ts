@@ -113,6 +113,12 @@ const US_ID_CONFIG = {
     SUPERVISION: {
       search: [
         {
+          searchType: "DISTRICT",
+          searchField: ["district"],
+          searchTitle: "District",
+          restrictedToFeatureVariant: "usIdDistrictSearch",
+        },
+        {
           searchType: "OFFICER",
           searchField: ["officerId"],
           searchTitle: "supervision officer",
