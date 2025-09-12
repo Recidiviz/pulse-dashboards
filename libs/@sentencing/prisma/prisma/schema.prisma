@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client"
-  previewFeatures = ["fullTextSearchPostgres", "queryCompiler", "driverAdapters"]
+  previewFeatures = ["fullTextSearchPostgres"]
   output          = "../src/client"
 }
 

@@ -26,12 +26,8 @@ export const MESSAGE_ATTEMPT_SELECT = {
   } satisfies Prisma.MessageAttemptSelectScalar,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const messageAttemptScalar =
-  Prisma.validator<Prisma.MessageAttemptDefaultArgs>()(MESSAGE_ATTEMPT_SELECT);
-
 export type MessageAttemptSelect = Prisma.MessageAttemptGetPayload<
-  typeof messageAttemptScalar
+  typeof MESSAGE_ATTEMPT_SELECT
 >;
 
 export const MESSAGE_SERIES_INCLUDE_ATTEMPTS_AND_GROUP = {
@@ -51,17 +47,11 @@ export const MESSAGE_SERIES_INCLUDE_ATTEMPTS_AND_GROUP = {
         groupName: true,
       },
     },
-  } satisfies Prisma.MessageSeriesInclude,
+  } satisfies Prisma.MessageSeriesInclude & Prisma.MessageSeriesDefaultArgs,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const messageSeriesWithOrderedAttemptsAndGroup =
-  Prisma.validator<Prisma.MessageSeriesDefaultArgs>()(
-    MESSAGE_SERIES_INCLUDE_ATTEMPTS_AND_GROUP,
-  );
-
 export type MessageSeriesWithAttemptsAndGroup = Prisma.MessageSeriesGetPayload<
-  typeof messageSeriesWithOrderedAttemptsAndGroup
+  typeof MESSAGE_SERIES_INCLUDE_ATTEMPTS_AND_GROUP
 >;
 
 export const PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP = {
@@ -70,7 +60,7 @@ export const PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP = {
     messageSeries: {
       ...MESSAGE_SERIES_INCLUDE_ATTEMPTS_AND_GROUP,
     },
-  } satisfies Prisma.PersonInclude,
+  } satisfies Prisma.PersonInclude & Prisma.PersonDefaultArgs,
 };
 
 export const PERSON_SELECT_DATA_FOR_MESSAGE = {
@@ -81,26 +71,22 @@ export const PERSON_SELECT_DATA_FOR_MESSAGE = {
     district: true,
     stableExternalId: true,
     pseudonymizedId: true,
-  } satisfies Prisma.PersonSelectScalar,
+  } satisfies Prisma.PersonSelectScalar & Prisma.PersonDefaultArgs,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const personSelectForMessage = Prisma.validator<Prisma.PersonDefaultArgs>()(
-  PERSON_SELECT_DATA_FOR_MESSAGE,
-);
-
-export type PersonDataForMessage = Prisma.PersonGetPayload<
-  typeof personSelectForMessage
->;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const personWithMessageSeriesAndGroup =
-  Prisma.validator<Prisma.PersonDefaultArgs>()(
-    PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP,
-  );
+export type PersonDataForMessage = Prisma.PersonGetPayload<{
+  select: {
+    givenName: true;
+    poName: true;
+    phoneNumber: true;
+    district: true;
+    stableExternalId: true;
+    pseudonymizedId: true;
+  };
+}>;
 
 export type PersonWithMessageSeriesAndGroup = Prisma.PersonGetPayload<
-  typeof personWithMessageSeriesAndGroup
+  typeof PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP
 >;
 
 // Actions we might execute for a given person and group
