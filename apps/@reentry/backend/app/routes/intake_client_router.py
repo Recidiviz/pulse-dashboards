@@ -11,8 +11,8 @@ from app.auth.intake.auth_client_user import validate_dob
 from app.core.db import get_session
 from app.crud.intake import get_intake_by_client_pseudo_id
 from app.models.intake import ClientAddress, Intake, IntakeStatus
+from app.routes.base import IntakeSectionResponse
 from app.routes.client_router import ClientRecordResponse
-from app.routes.intake_sections_router import IntakeSectionResponse
 from app.routes.shared_models import AddressSubmission, IntakeMessageResponse
 from app.services.client_data.queries import Queries
 
@@ -84,7 +84,7 @@ async def verify_date_of_birth(
             request, data.token_from_url, data.date_of_birth, session, redis_client
         )
 
-        if not result.success:
+        if not result.token_data or not result.success:
             raise HTTPException(status_code=400, detail=result.error_message)
 
         return VerifyDOBResponse(

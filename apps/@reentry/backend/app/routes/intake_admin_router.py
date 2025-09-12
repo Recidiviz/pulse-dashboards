@@ -18,7 +18,6 @@ from app.crud.intake import (
     update_internal_access_by_client_pseudo_id,
 )
 from app.models.intake import Intake, IntakeType
-from app.routes.intake_sections_router import IntakeSectionResponse
 from app.routes.shared_models import (
     ClientRecordResponse,
     IntakeMessageResponse,
@@ -27,6 +26,7 @@ from app.services.client_data.queries import Queries
 
 from .base import (
     ClientIntakeSectionResponse,
+    IntakeSectionResponse,
     ORMResponse,
 )
 

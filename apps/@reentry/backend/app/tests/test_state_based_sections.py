@@ -38,7 +38,7 @@ async def test_section_selection_functions():
     """Test that section selection functions return correct sections."""
     # Test LSIR sections
     lsir_sections = get_intake_sections_for_assessment_type("lsir")
-    assert len(lsir_sections) == 8
+    assert len(lsir_sections) == 9
     lsir_titles = [s["title"] for s in lsir_sections]
     assert "Employment" in lsir_titles
     assert "Leisure and Recreation" in lsir_titles
