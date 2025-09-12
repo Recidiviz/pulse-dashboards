@@ -173,6 +173,23 @@ module "import-job" {
   }]
 }
 
+module "audio_gcs_bucket" {
+  source = "../../vendor/submodules/cloud-storage-bucket"
+
+  project_id = var.project_id
+  location   = var.location
+  prefix     = var.project_id
+  names      = ["meetings-audio-data"]
+  logging = {
+    log_bucket = "${var.project_id}-gcs-object-logs"
+  }
+  storage_class   = "STANDARD"
+  set_admin_roles = true
+  bucket_admins = {
+    (local.etl_bucket_name) = "serviceAccount:${google_service_account.default.email}"
+  }
+}
+
 module "gcs_bucket" {
   source = "../../vendor/submodules/cloud-storage-bucket"
 

@@ -75,6 +75,36 @@ resource "google_project_iam_member" "storageobjectviewer" {
   count = var.configure_import ? 1 : 0
 }
 
+# Grant Service Account Token Creator so the service account can sign urls
+resource "google_project_iam_member" "serviceaccounttokencreator" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountTokenCreator"
+  member  = "serviceAccount:${google_service_account.default.email}"
+
+  // Only create this resource if the import job is configured
+  count = var.configure_import ? 1 : 0
+}
+
+# Grant object viewer role so the service account can read objects in the GCS bucket
+resource "google_project_iam_member" "gcsbucketobjectviewer" {
+  project = var.project_id
+  role    = "roles/storage.objectViewer"
+  member  = "serviceAccount:${google_service_account.default.email}"
+
+  // Only create this resource if the import job is configured
+  count = var.configure_import ? 1 : 0
+}
+
+# Grant object creator role so the service account can write objects in the GCS bucket
+resource "google_project_iam_member" "gcsbucketobjectcreator" {
+  project = var.project_id
+  role    = "roles/storage.objectCreator"
+  member  = "serviceAccount:${google_service_account.default.email}"
+
+  // Only create this resource if the import job is configured
+  count = var.configure_import ? 1 : 0
+}
+
 resource "google_pubsub_topic" "meetings_export_success_topic" {
   name    = "meetings_export_success"
   project = var.project_id
