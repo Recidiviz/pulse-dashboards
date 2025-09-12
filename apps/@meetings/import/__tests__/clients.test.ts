@@ -71,6 +71,7 @@ describe("import client data", () => {
         lastKnownResidence: fakeClient.lastKnownResidence,
         // staff ids are strings in the import file
         assigned_staff_ids: [newStaff.staffId.toString()],
+        supervision_type: "PAROLE",
       },
       // new client
       {
@@ -91,6 +92,7 @@ describe("import client data", () => {
         current_address: faker.location.streetAddress(),
         // staff ids are strings in the import file
         assigned_staff_ids: [fakeStaff.staffId.toString()],
+        supervision_type: "GENERAL",
       },
     ]);
 
@@ -136,6 +138,7 @@ describe("import client data", () => {
             staffId: fakeStaff.staffId,
           },
         ],
+        supervisionType: "GENERAL",
       }),
     ]);
   });

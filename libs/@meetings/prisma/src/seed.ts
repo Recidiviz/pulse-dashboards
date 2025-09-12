@@ -81,6 +81,7 @@ async function main() {
           },
         },
       },
+      supervisionType: "PAROLE",
     };
     // eslint-disable-next-line no-await-in-loop -- this is a seed script
     const client = await prisma.client.create({ data: clientData });

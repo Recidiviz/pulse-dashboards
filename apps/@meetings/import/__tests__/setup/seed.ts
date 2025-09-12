@@ -53,6 +53,7 @@ export const fakeClient = {
       staffId: fakeStaff.staffId,
     },
   },
+  supervisionType: "PAROLE",
 } satisfies ClientCreateInput;
 
 export async function seed(prismaClient: PrismaClient) {

@@ -50,6 +50,7 @@ export const clientImportSchema = z.object({
   birthdate: z.coerce.date(),
   // Need to coerce into a bigint because our metric exports use strings for these
   assigned_staff_ids: z.array(z.coerce.bigint()),
+  supervision_type: z.string(),
 });
 
 export const staffImportSchema = z.object({

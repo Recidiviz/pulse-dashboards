@@ -84,6 +84,7 @@ export async function transformAndLoadClientData(
       surname: clientData.full_name.surname,
       suffix: clientData.full_name.name_suffix,
       birthDate: clientData.birthdate,
+      supervisionType: clientData.supervision_type,
     } satisfies ClientCreateInput & BulkUpdateEntry;
 
     if (

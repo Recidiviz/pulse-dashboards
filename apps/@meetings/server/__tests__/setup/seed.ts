@@ -48,6 +48,7 @@ export const fakeClient = {
       staffId: fakeStaff.staffId,
     },
   },
+  supervisionType: "PAROLE",
 } satisfies Prisma.ClientCreateInput;
 
 export async function seed(prismaClient: PrismaClient) {

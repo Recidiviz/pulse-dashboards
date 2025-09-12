@@ -36,7 +36,6 @@ describe("import staff data", () => {
     importHandler = getImportHandler();
   });
 
-  // The case manager and supervision officer files are identical in structure, so we can test both with the same logic.
   test("should upsert existing staff and insert new ones", async () => {
     const newClient = await testPrismaClient.client.create({
       data: {
@@ -50,6 +49,7 @@ describe("import staff data", () => {
         surname: faker.person.lastName(),
         stateCode: StateCode.US_ID,
         birthDate: faker.date.birthdate(),
+        supervisionType: "PAROLE",
       },
     });
 
