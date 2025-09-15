@@ -25,7 +25,9 @@
       "~@jii-texting/import/*": ["apps/@jii-texting/import/src/*"],
       "~@jii-texting/prisma": ["libs/@jii-texting/prisma/src/index.ts"],
       "~@jii-texting/prisma/*": ["libs/@jii-texting/prisma/src/*"],
-      "~@jii-texting/prisma/client": ["libs/@jii-texting/prisma/src/client/client.ts"],
+      "~@jii-texting/prisma/client": [
+        "libs/@jii-texting/prisma/src/client/client.ts"
+      ],
       "~@jii-texting/processor/*": ["apps/@jii-texting/processor/src/*"],
       "~@jii-texting/seed-demo/*": ["apps/@jii-texting/seed-demo/src/*"],
       "~@jii-texting/server/*": ["apps/@jii-texting/server/src/*"],

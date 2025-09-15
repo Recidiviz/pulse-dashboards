@@ -32,11 +32,11 @@ export const fakeStaff = {
   middleNames: faker.person.firstName(),
   surname: faker.person.lastName(),
   email: faker.internet.email(),
-  stateCode: StateCode.US_ID,
+  stateCode: StateCode.US_NE,
 } satisfies StaffCreateInput;
 
 export const fakeClient = {
-  stateCode: StateCode.US_ID,
+  stateCode: StateCode.US_NE,
   personId: BigInt(1),
   stablePersonExternalId: "client-ext-1",
   stablePersonExternalIdType: "client-ext-type-1",

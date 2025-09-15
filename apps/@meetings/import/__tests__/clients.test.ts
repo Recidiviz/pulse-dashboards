@@ -47,14 +47,14 @@ describe("import client data", () => {
         middleNames: faker.person.firstName(),
         surname: faker.person.lastName(),
         email: faker.internet.email(),
-        stateCode: StateCode.US_ID,
+        stateCode: StateCode.US_NE,
       },
     });
 
     dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
       // Existing client with a new person id but existing external id + type
       {
-        state_code: StateCode.US_ID,
+        state_code: StateCode.US_NE,
         // person_id is a string in the import file
         person_id: "100",
         stable_person_external_id: fakeClient.stablePersonExternalId,
@@ -75,7 +75,7 @@ describe("import client data", () => {
       },
       // new client
       {
-        state_code: StateCode.US_ID,
+        state_code: StateCode.US_NE,
         // person_id is a string in the import file
         person_id: "2",
         stable_person_external_id: "client-ext-2",

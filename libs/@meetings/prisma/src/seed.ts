@@ -49,7 +49,7 @@ async function main() {
       middleNames: faker.person.firstName(),
       surname: faker.person.lastName(),
       email: faker.internet.email(),
-      stateCode: StateCode.US_ID,
+      stateCode: StateCode.US_NE,
     });
   }
   await prisma.staff.createMany({ data: staffData });
@@ -61,7 +61,7 @@ async function main() {
   const createdClients: Client[] = [];
   for (let i = 0; i < numberOfClients; i++) {
     const clientData: Prisma.ClientCreateInput = {
-      stateCode: StateCode.US_ID,
+      stateCode: StateCode.US_NE,
       personId: i + 1,
       stablePersonExternalId: `client-ext-${i + 1}`,
       stablePersonExternalIdType: "client-ext-type-1",

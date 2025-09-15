@@ -21,6 +21,6 @@ import {
 } from "~@meetings/import/constants";
 
 export const TEST_BUCKET = "test-bucket";
-export const TEST_STATE_CODE = "US_ID";
+export const TEST_STATE_CODE = "US_NE";
 export const TEST_STAFF_FILE_NAME = `${TEST_STATE_CODE}/${STAFF_FILE_NAME}`;
 export const TEST_CLIENTS_FILE_NAME = `${TEST_STATE_CODE}/${CLIENTS_FILE_NAME}`;

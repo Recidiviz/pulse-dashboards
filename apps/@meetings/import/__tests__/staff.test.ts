@@ -47,7 +47,7 @@ describe("import staff data", () => {
         givenNames: faker.person.firstName(),
         middleNames: faker.person.firstName(),
         surname: faker.person.lastName(),
-        stateCode: StateCode.US_ID,
+        stateCode: StateCode.US_NE,
         birthDate: faker.date.birthdate(),
         supervisionType: "PAROLE",
       },
@@ -56,7 +56,7 @@ describe("import staff data", () => {
     dataProviderSingleton.setData(TEST_STAFF_FILE_NAME, [
       // Existing staff with a new staff id but existing external id + type
       {
-        state_code: StateCode.US_ID,
+        state_code: StateCode.US_NE,
         // staff_id is a string in the import file
         staff_id: "100",
         stable_staff_external_id: fakeStaff.stableStaffExternalId,
@@ -74,7 +74,7 @@ describe("import staff data", () => {
       },
       // New staff
       {
-        state_code: StateCode.US_ID,
+        state_code: StateCode.US_NE,
         // staff_id is a string in the import file
         staff_id: "2",
         stable_staff_external_id: "staff-ext-2",

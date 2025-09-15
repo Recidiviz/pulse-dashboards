@@ -26,7 +26,7 @@ import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
 import { MockImportHandler } from "~data-import-plugin/testkit";
 
-export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
+export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_NE);
 
 const { testkit, sentryTransport } = sentryTestkit();
 

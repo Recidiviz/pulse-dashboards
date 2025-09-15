@@ -21,8 +21,8 @@ import { getPrismaClientForStateCode } from "~@meetings/prisma";
 
 describe("prisma", () => {
   test("should return the same instance of a prisma client for a state code if it already exists", async () => {
-    const firstClient = getPrismaClientForStateCode("US_ID");
-    const secondClient = getPrismaClientForStateCode("US_ID");
+    const firstClient = getPrismaClientForStateCode("US_NE");
+    const secondClient = getPrismaClientForStateCode("US_NE");
 
     expect(secondClient).toBe(firstClient);
   });

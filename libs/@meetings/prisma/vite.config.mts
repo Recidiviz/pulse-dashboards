@@ -43,8 +43,8 @@ export default defineConfig(() => ({
       DATABASE_URL:
         process.env["DATABASE_URL"] ??
         "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
-      DATABASE_URL_US_ID:
-        process.env["DATABASE_URL_US_ID"] ??
+      DATABASE_URL_US_NE:
+        process.env["DATABASE_URL_US_NE"] ??
         "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
     },
   },
