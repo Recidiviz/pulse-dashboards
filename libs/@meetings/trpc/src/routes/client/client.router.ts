@@ -16,24 +16,38 @@
 // =============================================================================
 
 import { auth0Procedure, router } from "~@meetings/trpc/init";
+import { createMeetingInputSchema } from "~@meetings/trpc/routes/client/client.schema";
 
-export const staffRouter = router({
-  getClients: auth0Procedure.query(async ({ ctx: { prisma, user } }) => {
-    return prisma.client.findMany({
-      where: {
-        staff: {
-          some: {
+export const clientRouter = router({
+  createMeeting: auth0Procedure
+    .input(createMeetingInputSchema)
+    .mutation(
+      async ({
+        input: { clientId, startTime, endTime, address },
+        ctx: { prisma, user },
+      }) => {
+        return await prisma.meeting.create({
+          data: {
             staff: {
-              pseudonymizedId: user.pseudonymizedId,
+              connect: {
+                pseudonymizedId: user.pseudonymizedId,
+              },
             },
+            client: {
+              connect: {
+                personId: clientId,
+              },
+            },
+            startTime,
+            endTime,
+            address,
           },
-        },
+          select: {
+            startTime: true,
+            endTime: true,
+            address: true,
+          },
+        });
       },
-      select: {
-        givenNames: true,
-        surname: true,
-        displayPersonExternalId: true,
-      },
-    });
-  }),
+    ),
 });

@@ -32,7 +32,7 @@ import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
 import { createContext } from "~@meetings/trpc/context";
 import { AppRouter, appRouter } from "~@meetings/trpc/router";
-import { seed } from "~@meetings/trpc/test/setup/seed";
+import { fakeStaff, seed } from "~@meetings/trpc/test/setup/seed";
 import { resetDb } from "~@meetings/trpc/test/setup/utils";
 
 export const testPort = process.env["PORT"]
@@ -81,7 +81,9 @@ beforeAll(async () => {
       return;
     };
 
-    req.user = "We did it Joe!";
+    req.user = {
+      pseudonymizedId: fakeStaff.pseudonymizedId,
+    };
     done();
   });
 

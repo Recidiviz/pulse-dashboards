@@ -1,6 +1,6 @@
 generator client {
-  provider        = "prisma-client"
-  output          = "../src/client"
+  provider = "prisma-client"
+  output   = "../src/client"
 }
 
 generator json {
@@ -83,8 +83,9 @@ model Staff {
   surname     String
   suffix      String?
 
-  email   String?
-  clients ClientsToStaff[]
+  email    String?
+  clients  ClientsToStaff[]
+  meetings Meeting[]
 
   @@unique([stableStaffExternalId, stableStaffExternalIdType])
 }
@@ -115,7 +116,8 @@ model Client {
 
   supervisionType String
 
-  staff ClientsToStaff[]
+  staff    ClientsToStaff[]
+  meetings Meeting[]
 
   @@unique([stablePersonExternalId, stablePersonExternalIdType])
 }
@@ -127,4 +129,18 @@ model ClientsToStaff {
   clientId BigInt
 
   @@id([staffId, clientId])
+}
+
+model Meeting {
+  id String @id @default(cuid())
+
+  startTime DateTime
+  endTime   DateTime?
+  address   String?
+
+  client   Client @relation(fields: [clientId], references: [personId])
+  clientId BigInt
+
+  staff   Staff  @relation(fields: [staffId], references: [staffId])
+  staffId BigInt
 }

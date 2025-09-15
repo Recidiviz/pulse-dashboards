@@ -16,10 +16,12 @@
 // =============================================================================
 
 import { router } from "~@meetings/trpc/init";
+import { clientRouter } from "~@meetings/trpc/routes/client/client.router";
 import { staffRouter } from "~@meetings/trpc/routes/staff/staff.router";
 
 export const appRouter = router({
   staff: staffRouter,
+  client: clientRouter,
 });
 
 // export type definition of API

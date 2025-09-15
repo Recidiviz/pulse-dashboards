@@ -15,33 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
+import { z } from "zod";
 
-import { createContext } from "~@meetings/trpc/context";
-import { procedurePlugin } from "~server-setup-plugin";
-
-export const t = initTRPC
-  .context<typeof createContext>()
-  // Required to get Date objects to serialize correctly.
-  .create({ transformer: superjson });
-
-export const router = t.router;
-
-const plugin = procedurePlugin();
-
-const baseProcedure = t.procedure.concat(plugin);
-
-export const auth0Procedure = baseProcedure.use(async (opts) => {
-  const { ctx } = opts;
-  if (!ctx.isAuth0Authorized || !ctx.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-
-  return opts.next({
-    ctx: {
-      user: ctx.user,
-      isAuth0Authorized: ctx.isAuth0Authorized,
-    },
-  });
+export const createMeetingInputSchema = z.object({
+  clientId: z.bigint(),
+  startTime: z.date(),
+  endTime: z.date(),
+  address: z.string().min(1).max(255),
 });
