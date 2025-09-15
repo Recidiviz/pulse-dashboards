@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Get all of the env variables that include `DATABASE_URL`
 DB_URLS=$(printenv | grep DATABASE_URL)

@@ -1,30 +1,36 @@
-# Install dependencies only when needed
-FROM node:20-slim
+# Build stage
+FROM node:20-alpine as builder
 WORKDIR /usr/src/app
-
-ENV NODE_ENV production
-# Cloud run requires the host to be 0.0.0.0
-ENV HOST 0.0.0.0
-ENV PORT 8080
-
-RUN apt-get update -y && apt-get install -y openssl
-RUN apt-get install dumb-init
-
-# Copy over the scripts since they should rarely be changed
-COPY dist/apps/@jii-texting/server/scripts ./scripts
-RUN chmod +x scripts/*.sh
 
 # Enable corepack so newer versions of yarn can be installed
 RUN corepack enable
 
-# Copy over the package.json, yarn.lock, and .yarnrc.yml files since they are changed less often
+# Copy over the package.json, yarn.lock, and .yarnrc.yml files
 COPY dist/apps/@jii-texting/server/package.json dist/apps/@jii-texting/server/yarn.lock dist/apps/@jii-texting/server/.yarnrc.yml ./
 RUN yarn workspaces focus --production
 
-# Copy over the rest of the files as late as we can
 COPY dist/apps/@jii-texting/server .
 
-RUN chown -R node:node .
+# Production stage
+FROM node:20-alpine
+WORKDIR /usr/src/app
+
+ENV NODE_ENV=production
+# Cloud run requires the host to be 0.0.0.0
+ENV HOST=0.0.0.0
+ENV PORT=8080
+
+RUN corepack enable
+
+RUN apk add --no-cache dumb-init
+
+# Copy over the scripts since they should rarely be changed
+COPY --chown=node:node dist/apps/@jii-texting/server/scripts ./scripts
+RUN chmod +x scripts/*.sh
+
+# Copy node_modules from builder stage
+COPY --chown=node:node --from=builder /usr/src/app .
+
 USER node
 EXPOSE ${PORT}
 

@@ -1,5 +1,18 @@
-# Install dependencies only when needed
-FROM node:20-slim
+# Build stage
+FROM node:20-alpine as builder
+WORKDIR /usr/src/app
+
+# Enable corepack so newer versions of yarn can be installed
+RUN corepack enable
+
+# Copy over the package.json, yarn.lock, and .yarnrc.yml files
+COPY dist/apps/@sentencing/server/package.json dist/apps/@sentencing/server/yarn.lock dist/apps/@sentencing/server/.yarnrc.yml ./
+RUN yarn workspaces focus --production
+
+COPY dist/apps/@sentencing/server .
+
+# Production stage
+FROM node:20-alpine
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
@@ -7,24 +20,17 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=8080
 
-RUN apt-get update -y && apt-get install -y openssl
-RUN apt-get install dumb-init
-
-# Copy over the scripts since they should rarely be changed
-COPY dist/apps/@sentencing/server/scripts ./scripts
-RUN chmod +x scripts/*.sh
-
-# Enable corepack so newer versions of yarn can be installed
 RUN corepack enable
 
-# Copy over the package.json, yarn.lock, and .yarnrc.yml files since they are changed less often
-COPY dist/apps/@sentencing/server/package.json dist/apps/@sentencing/server/yarn.lock dist/apps/@sentencing/server/.yarnrc.yml ./
-RUN yarn workspaces focus --production
+RUN apk add --no-cache dumb-init
 
-# Copy over the rest of the files as late as we can
-COPY dist/apps/@sentencing/server .
+# Copy over the scripts since they should rarely be changed
+COPY --chown=node:node dist/apps/@sentencing/server/scripts ./scripts
+RUN chmod +x scripts/*.sh
 
-RUN chown -R node:node .
+# Copy node_modules from builder stage
+COPY --chown=node:node --from=builder /usr/src/app .
+
 USER node
 EXPOSE ${PORT}
 
