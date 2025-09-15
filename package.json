@@ -355,6 +355,7 @@
     "eslint-plugin-wdio": "^9.9.1",
     "eslint-plugin-yml": "^1.16.0",
     "execa": "^9.6.0",
+    "expo-dev-client": "~5.2.4",
     "factory.ts": "^1.4.1",
     "google-spreadsheet": "^4.1.1",
     "husky": "^9.0.11",

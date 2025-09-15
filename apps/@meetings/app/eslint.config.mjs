@@ -28,6 +28,6 @@ export default [
     rules: {},
   },
   {
-    ignores: [".expo", "web-build", "cache", "dist"],
+    ignores: [".expo", "web-build", "cache", "dist", "ios", "android"],
   },
 ];
