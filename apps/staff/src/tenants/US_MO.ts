@@ -28,7 +28,7 @@ const US_MO_CONFIG = {
   enableUserRestrictions: true,
   workflowsSupportedSystems: ["INCARCERATION"],
   workflowsMethodologyUrl:
-    "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
+    "https://docs.google.com/document/d/e/2PACX-1vToMOcOU3qmUUF9J86R4MaqjcZIogwq5FwuqWqWLFiY2cPCsgq98E_HgbQ5PPJWexRT-n7pWqcqY5Xz/pub",
   workflowsSystemConfigs: {
     INCARCERATION: {
       search: [
