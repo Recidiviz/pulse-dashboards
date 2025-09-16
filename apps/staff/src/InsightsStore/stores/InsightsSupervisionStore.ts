@@ -695,7 +695,7 @@ export class InsightsSupervisionStore {
       },
       role: "supervision_officer_supervisor",
       metadata: {
-        hasSeenOnboarding: false,
+        hasSeenOnboarding: userInfo?.metadata.hasSeenOnboarding ?? false,
       },
     } as UserInfo;
 
