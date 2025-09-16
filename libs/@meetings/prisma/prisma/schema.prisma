@@ -1,6 +1,8 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/client"
+  provider        = "prisma-client"
+  output          = "../src/client"
+  previewFeatures = ["queryCompiler", "driverAdapters"]
+  engineType      = "client"
 }
 
 generator json {
