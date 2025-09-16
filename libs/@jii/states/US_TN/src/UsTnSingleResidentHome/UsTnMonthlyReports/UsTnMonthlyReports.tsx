@@ -27,17 +27,19 @@ import {
 } from "~@jii/common-ui";
 import { formatFullDate, useSingleResidentContext } from "~@jii/data";
 import { OpenTable } from "~@jii/earned-good-time";
+import { UsTnCreditActivity } from "~datatypes";
 import { withPresenterManager } from "~hydration-utils";
 
+import { usTnCopy } from "../../configs/copy";
 import { UsTnMonthlyReportSelector } from "./UsTnMonthlyReportSelector";
 import { UsTnMonthlyReportsPresenter } from "./UsTnMonthlyReportsPresenter";
 
 const StatusChip: React.FC<{ status: "GAIN" | "LOSS" }> = ({ status }) => {
-  if (status === "GAIN") {
-    return <Chip color="green">Earned</Chip>;
-  } else {
-    return <Chip color="gray">Lost</Chip>;
-  }
+  const { reportTags } = usTnCopy.monthlyCreditReport;
+
+  const color = status === "GAIN" ? "green" : "gray";
+
+  return <Chip color={color}>{reportTags[status]}</Chip>;
 };
 
 const ManagedComponent = observer(function UsTnMonthlyReports({
@@ -56,54 +58,58 @@ const ManagedComponent = observer(function UsTnMonthlyReports({
     },
   } = presenter;
 
+  const {
+    creditCategories,
+    sectionHeader,
+    reportColumns,
+    noMonthlyReport,
+    totalCredits: totalCreditsCopy,
+  } = usTnCopy.monthlyCreditReport;
+
   const filteredReports = reports.filter(
     ({ creditType }) => creditType !== null,
   );
 
+  // TODO(#9283):[JII][TN] Move "X days" into centralized copy
   return (
     <section>
-      <HomepageSectionHeading>Recent monthly reports</HomepageSectionHeading>
+      <HomepageSectionHeading>{sectionHeader}</HomepageSectionHeading>
       <Card>
         <UsTnMonthlyReportSelector presenter={presenter} />
         <TwoColumnCardWrapper>
           <Card>
-            <CardHeading>Behavior Credits</CardHeading>
+            <CardHeading>{creditCategories.behavior}</CardHeading>
             <CardValue>{behaviorCredits} days</CardValue>
           </Card>
           <Card>
-            <CardHeading>Program Credits</CardHeading>
+            <CardHeading>{creditCategories.program}</CardHeading>
             <CardValue>{programCredits} days</CardValue>
           </Card>
           <Card>
-            <CardHeading>Educational Good Time Credits</CardHeading>
+            <CardHeading>{creditCategories.education}</CardHeading>
             <CardValue>{educationCredits} days</CardValue>
           </Card>
           <Card>
-            <CardHeading>Treatment Good Time Credits</CardHeading>
+            <CardHeading>{creditCategories.treatment}</CardHeading>
             <CardValue>{treatmentCredits} days</CardValue>
           </Card>
         </TwoColumnCardWrapper>
         {filteredReports.length === 0 ? (
-          "No credit activity for this month."
+          noMonthlyReport
         ) : (
           <OpenTable
             columns={[
-              { key: "creditType", label: "Credit Type" },
-              { key: "status", label: "Status" },
-              { key: "amount", label: "Days" },
-              { key: "creditDate", label: "Date" },
+              { key: "creditType", label: reportColumns.creditType },
+              { key: "status", label: reportColumns.status },
+              { key: "amount", label: reportColumns.amount },
+              { key: "creditDate", label: reportColumns.creditDate },
             ]}
-            data={filteredReports.map(
-              ({ creditDate, creditType, creditsEarned }) => ({
-                creditDate: formatFullDate(creditDate),
-                creditType,
-                amount: `+ ${creditsEarned} days`,
-                status: <StatusChip status="GAIN" />,
-              }),
-            )}
+            data={filteredReports
+              .map((r) => generateReportRow(r))
+              .filter((x) => x !== null)}
             footer={{
-              creditType: "Total Credits",
-              amount: `+ ${totalCredits} days`,
+              creditType: totalCreditsCopy,
+              amount: `${totalCredits > 0 ? "+" : "-"} ${Math.abs(totalCredits)} days`,
             }}
           />
         )}
@@ -111,6 +117,23 @@ const ManagedComponent = observer(function UsTnMonthlyReports({
     </section>
   );
 });
+
+function generateReportRow(report: UsTnCreditActivity) {
+  const { creditsEarned } = report;
+  const { creditTypes: creditTypeCopy, unknownCreditType } =
+    usTnCopy.monthlyCreditReport;
+
+  if (creditsEarned === null) return null;
+
+  return {
+    creditDate: formatFullDate(report.creditDate),
+    creditType: report.creditType
+      ? creditTypeCopy[report.creditType]
+      : unknownCreditType,
+    amount: `${creditsEarned > 0 ? "+" : "-"} ${Math.abs(creditsEarned)} days`,
+    status: <StatusChip status={creditsEarned > 0 ? "GAIN" : "LOSS"} />,
+  };
+}
 
 function usePresenter() {
   const { resident } = useSingleResidentContext();

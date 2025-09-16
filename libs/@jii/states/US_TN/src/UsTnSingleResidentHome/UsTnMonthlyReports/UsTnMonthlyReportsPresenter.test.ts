@@ -49,6 +49,11 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
       creditType: "BONUS_BEHAVIOR" as const,
       creditsEarned: 3,
     },
+    {
+      creditDate: new Date("2024-10-31"),
+      creditType: "REMOVAL" as const,
+      creditsEarned: -15,
+    },
   ];
 
   const createMockResident = (
@@ -93,6 +98,7 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
         programCredits: 10,
         educationCredits: 0,
         treatmentCredits: 0,
+        creditRemovals: 0,
         totalCredits: 15,
         reports: mockCreditActivity.slice(0, 2),
       });
@@ -104,6 +110,7 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
         programCredits: 0,
         educationCredits: 15,
         treatmentCredits: 8,
+        creditRemovals: 0,
         totalCredits: 23,
         reports: mockCreditActivity.slice(2, 4),
       });
@@ -115,8 +122,9 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
         programCredits: 0,
         educationCredits: 0,
         treatmentCredits: 0,
-        totalCredits: 3,
-        reports: [mockCreditActivity[4]],
+        creditRemovals: -15,
+        totalCredits: -12,
+        reports: mockCreditActivity.slice(4, 6),
       });
     });
   });

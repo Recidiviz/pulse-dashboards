@@ -26,6 +26,7 @@ export type UsTnMonthlyReport = {
   educationCredits: number;
   programCredits: number;
   treatmentCredits: number;
+  creditRemovals: number;
   totalCredits: number;
   reports: UsTnCreditActivity[];
 };
@@ -113,6 +114,7 @@ export function processMonthlyReports(
         programCredits: 0,
         educationCredits: 0,
         treatmentCredits: 0,
+        creditRemovals: 0,
         reports: [],
         totalCredits: 0,
       };
@@ -120,24 +122,28 @@ export function processMonthlyReports(
 
     monthlyReports[formattedMonth].reports.push(record);
 
-    const credits = creditsEarned ?? 0;
-    monthlyReports[formattedMonth].totalCredits += credits;
+    if (creditsEarned === null) return;
+
+    monthlyReports[formattedMonth].totalCredits += creditsEarned;
 
     switch (creditType) {
       case "BEHAVIOR":
       case "BONUS_BEHAVIOR":
-        monthlyReports[formattedMonth].behaviorCredits += credits;
+        monthlyReports[formattedMonth].behaviorCredits += creditsEarned;
         break;
       case "PROGRAM":
       case "BONUS_PROGRAM":
-        monthlyReports[formattedMonth].programCredits += credits;
+        monthlyReports[formattedMonth].programCredits += creditsEarned;
         break;
       case "60_DAY_ED_CREDIT":
       case "GED":
-        monthlyReports[formattedMonth].educationCredits += credits;
+        monthlyReports[formattedMonth].educationCredits += creditsEarned;
         break;
       case "60_DAY_TREATMENT":
-        monthlyReports[formattedMonth].treatmentCredits += credits;
+        monthlyReports[formattedMonth].treatmentCredits += creditsEarned;
+        break;
+      case "REMOVAL":
+        monthlyReports[formattedMonth].creditRemovals += creditsEarned;
     }
   });
 
