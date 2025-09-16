@@ -31,6 +31,7 @@ components:
         processor_job_env_secret_id: env_demo_jii_texting_processor_job
         server_name: jii-texting-demo
         server_env_secret_id: env_demo_jii_texting_server
+        migrate_db_env_secret_id: env_demo_jii_texting_migrate_db
     seed-demo:
       deps:
         - component: apps/jii-texting

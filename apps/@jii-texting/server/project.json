@@ -134,30 +134,6 @@
       }
     },
     "upload-sourcemaps": {},
-    "deploy": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["load-env-files", "migrate-db"],
-      "options": {
-        "tty": true
-      },
-      "configurations": {
-        "demo": {
-          "commands": [
-            "yarn atmos:apply apps/jii-texting -s recidiviz-dashboard-staging--jii-texting-demo -- -auto-approve -var server_version={args.tag}"
-          ]
-        },
-        "staging": {
-          "commands": [
-            "yarn atmos:apply apps/jii-texting -s recidiviz-dashboard-staging--jii-texting -- -auto-approve -var server_version={args.tag}"
-          ]
-        },
-        "production": {
-          "commands": [
-            "yarn atmos:apply apps/jii-texting -s recidiviz-dashboard-production--jii-texting -- -auto-approve -var server_version={args.tag}"
-          ]
-        }
-      }
-    },
     "container": {
       "executor": "@nx-tools/nx-container:build",
       "dependsOn": ["upload-sourcemaps"],
@@ -210,37 +186,6 @@
       "options": {
         "command": "gcloud run services delete jii-preview-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud run jobs delete jii-migrate-preview-db-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud sql instances delete jii-db-preview-$VERSION --project recidiviz-dashboard-staging -q"
       }
-    },
-    "migrate-db": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["load-env-files"],
-      "options": {
-        "command": "gcloud run jobs deploy jii-texting-migrate-db --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID"
-      },
-      "configurations": {
-        "staging": {
-          "args": [
-            "--project recidiviz-dashboard-staging",
-            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:jii-texting",
-            "--image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server:$COMMIT_SHA"
-          ]
-        },
-        "production": {
-          "args": [
-            "--project recidiviz-dashboard-production",
-            "--set-cloudsql-instances recidiviz-dashboard-production:us-central1:jii-texting",
-            "--image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server:$COMMIT_SHA"
-          ]
-        },
-        "demo": {
-          "args": [
-            "--project recidiviz-dashboard-staging",
-            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:jii-texting-demo",
-            "--image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server:latest"
-          ]
-        }
-      },
-      "defaultConfiguration": "staging"
     }
   },
   "tags": ["jii-texting", "scope:server"]

@@ -522,8 +522,22 @@ if (
           );
         }
 
+        // Deploy the import, migration, processor, and server infrastructure changes for the applicable environment
+        let stack;
+        if (deployEnv === "staging") {
+          stack = `recidiviz-dashboard-${deployEnv}--jii-texting`;
+        } else if (deployEnv === "production") {
+          stack = `recidiviz-dashboard-${deployEnv}--jii-texting`;
+        } else if (deployEnv === "demo") {
+          stack = "recidiviz-dashboard-staging--jii-texting-demo";
+        }
+
         // TODO(#7617) Check if ETL Cloud Run Job is running before DB migration
-        await $`COMMIT_SHA=${currentRevision} nx run @jii-texting/server:deploy --configuration=${deployEnv} --tag=${currentRevision} --migrate=true`.pipe(
+        await $`yarn atmos:apply apps/jii-texting -s ${stack} -- -auto-approve \
+          -var server_container_version=${currentRevision} \
+          -var migrate_db_container_version=${currentRevision} \
+          -var processor_container_version=${currentRevision} \
+          -var import_container_version=${currentRevision}`.pipe(
           process.stdout,
         );
 

@@ -10,11 +10,13 @@ locals {
   shared_import_env    = local.env_secrets["env_jii_texting_import_job"]
   processor_job_env    = local.env_secrets[var.processor_job_env_secret_id]
   server_env           = local.env_secrets[var.server_env_secret_id]
+  migrate_db_env       = local.env_secrets[var.migrate_db_env_secret_id]
   import_env           = local.env_secrets[var.import_job_env_secret_id]
 
-  server_image        = "${var.artifact_registry_repo}/jii-texting-server:${var.server_version}"
-  processor_job_image = "${var.artifact_registry_repo}/jii-texting-jobs/processor:${var.server_version}"
-  import_job_image    = "${var.artifact_registry_repo}/jii-texting-jobs/import:${var.server_version}"
+  server_image        = "${var.artifact_registry_repo}/jii-texting-server:${var.server_container_version}"
+  migrate_db_image    = "${var.artifact_registry_repo}/jii-texting-server:${var.migrate_db_container_version}"
+  processor_job_image = "${var.artifact_registry_repo}/jii-texting-jobs/processor:${var.processor_container_version}"
+  import_job_image    = "${var.artifact_registry_repo}/jii-texting-jobs/import:${var.import_container_version}"
 
   import_job_name = "jii-texting-import"
 
@@ -38,6 +40,16 @@ locals {
 
   server_env_vars = nonsensitive([
     for key, value in merge(local.shared_server_env, local.server_env) : {
+      # The values are sensitive so we want to omit them from the plans
+      value = sensitive(value)
+      name  = key
+    }
+  ])
+
+  # This list needs to be marked as nonsensitive so it can be used in `for_each`
+  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
+  migrate_db_env_vars = nonsensitive([
+    for key, value in local.migrate_db_env : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -100,6 +112,33 @@ module "cloud-run" {
 
   # Roles to grant the Cloud Run service account
   service_account_project_roles = ["roles/cloudsql.client", "roles/storage.objectViewer"]
+}
+
+# Configure a job that will migrate the database schema
+module "migrate-db-job" {
+  source                        = "../../vendor/cloud-run-job-exec"
+  exec                          = true
+  name                          = var.migrate_db_name
+  image                         = local.migrate_db_image
+  project_id                    = var.project_id
+  location                      = var.location
+  env_vars                      = local.migrate_db_env_vars
+  cloud_run_deletion_protection = false
+  container_command             = ["./scripts/migrate-dbs.sh"]
+  max_retries                   = 1
+
+  volumes = [{
+    name = "cloudsql"
+    cloud_sql_instance = {
+      instances = [module.database.connection_name]
+    }
+    }
+  ]
+
+  volume_mounts = [{
+    name       = "cloudsql"
+    mount_path = "/cloudsql"
+  }]
 }
 
 # Configure a Google Workflow that is executed when a message is published to

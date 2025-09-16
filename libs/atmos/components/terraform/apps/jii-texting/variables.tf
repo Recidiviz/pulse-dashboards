@@ -23,7 +23,7 @@ variable "artifact_registry_repo" {
   description = "Artifact Registry repository to use for JII texting"
 }
 
-variable "server_version" {
+variable "server_container_version" {
   type        = string
   description = "The version tag of the image that we are deploying"
   default     = "latest"
@@ -89,4 +89,33 @@ variable "archive_bucket_name" {
 variable "import_job_env_secret_id" {
   type        = string
   description = "The secret id for where to find the env vars for the import job"
+}
+
+variable "migrate_db_env_secret_id" {
+  type        = string
+  description = "The secret id for where to find the env vars for the migrate db job"
+}
+
+variable "migrate_db_name" {
+  type        = string
+  description = "The name of the SQL instance"
+  default     = "jii-texting-migrate-db"
+}
+
+variable "migrate_db_container_version" {
+  type        = string
+  description = "The version tag of the image that we are deploying for migrating the db"
+  default     = "latest"
+}
+
+variable "import_container_version" {
+  type        = string
+  description = "The version tag of the image that we are deploying for the import job"
+  default     = "latest"
+}
+
+variable "processor_container_version" {
+  type        = string
+  description = "The version tag of the image that we are deploying for the processor job"
+  default     = "latest"
 }
