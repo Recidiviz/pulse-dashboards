@@ -82,10 +82,10 @@ const Resource = ({ ...props }) => {
             {props["address"]}
           </div>
         )}
-        {props["phones"] && (
+        {props["phone"] && (
           <div className="flex items-center gap-2">
             <MdOutlineLocalPhone />
-            {props["phones"]}
+            {props["phone"]}
           </div>
         )}
         {props["website"] && props["website"] !== "None" && (
