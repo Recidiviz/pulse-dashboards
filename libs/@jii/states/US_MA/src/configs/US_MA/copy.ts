@@ -18,7 +18,6 @@
 import { usMaEarnedCreditTypes } from "~datatypes";
 
 import creditsInfoPage from "./creditsInfoPage.md?raw";
-import disclaimer from "./disclaimer.md?raw";
 import emptyStateBody from "./emptyStateBody.md?raw";
 import onboardingBody from "./onboardingBody.md?raw";
 import rtsInfoPage from "./rtsInfoPage.md?raw";
@@ -40,28 +39,11 @@ const commonMonthlyReportCopy = {
 
 // where handlebars is invoked, assume a UsMaResidentMetadata object as the template context
 export const usMaEGTCopy = {
-  lastUpdated:
-    "This information was last updated on {{formatFullDate lastUpdatedDate}}. It updates once per month.",
-  tags: {
-    rts: "RTS",
-    maxRelease: "MAX",
-  },
   home: {
-    pageTitle: "Earned Time Overview",
     dates: {
       sectionTitle: "Important dates",
-      rts: {
-        label: "Release-to-supervision date",
-        value: "{{formatFullDateOptional rtsDate 'No RTS date'}}",
-        summary: `The RTS Date is a release to parole supervision without the need for a
-          parole hearing, based upon completion credits earned through programming
-          and education pursuant to M.G.L.c.127, §129D.`,
-        moreInfoLink: "Learn more about RTS",
-      },
+
       maxRelease: {
-        label: "Maximum release / wrap date",
-        value:
-          "{{formatFullDateOptional adjustedMaxReleaseDate 'No MAX date'}}",
         summary: `You’ve earned {{pluralize "days" totalStateCreditDaysCalculated true}} off your maximum release / wrap date.`,
         breakdown: {
           original: {
@@ -84,18 +66,6 @@ export const usMaEGTCopy = {
         summary:
           "Questions regarding the calculation of parole eligibility dates should be directed to the Institutional Parole Officer.",
       },
-    },
-    totalTimeEarned: {
-      sectionTitle: "Total time you’ve earned",
-      egt: {
-        label: "Earned Good Time + Boosts",
-        value: `{{pluralize "days" totalStateCredit true}}`,
-      },
-      credits: {
-        label: "Completion Credits",
-        value: `{{pluralize "days" totalCompletionCredit true}}`,
-      },
-      learnMoreLink: "Learn more about earned time",
     },
     creditHistory: {
       heading: "Time you’ve earned recently",
@@ -160,7 +130,6 @@ export const usMaEGTCopy = {
     body: onboardingBody,
     continueLink: "See your earned time",
   },
-  disclaimer: disclaimer,
   emptyState: {
     heading:
       "You haven’t done any programs or work that give you Earned Good Time.",

@@ -26,6 +26,7 @@ import styled from "styled-components/macro";
 
 import { useResidentsContext } from "~@jii/data";
 import { RouteParams, State } from "~@jii/paths";
+import { useCommonTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -62,9 +63,13 @@ const Wrapper = styled.nav`
 
 const ManagedComponent: FC<{ presenter: ResidentNavBarPresenter }> = observer(
   function ResidentNavMenu({ presenter }) {
+    const { t } = useCommonTranslations();
+
     return (
       <Wrapper>
-        {presenter.homeLink && <NavLink {...presenter.homeLink} />}
+        {presenter.homeLink && (
+          <NavLink {...presenter.homeLink}>{t(($) => $.nav.homeLink)}</NavLink>
+        )}
         <NavMenu links={presenter.menuLinks} />
       </Wrapper>
     );

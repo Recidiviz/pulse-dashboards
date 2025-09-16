@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { fullDateFormatOptions } from "~@jii/translation";
 import { dateStringSchema } from "~datatypes";
 
-const fullDateFormatter = new Intl.DateTimeFormat(undefined, {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
+const fullDateFormatter = new Intl.DateTimeFormat(
+  undefined,
+  fullDateFormatOptions,
+);
 
 export function formatFullDate(date: Date) {
   return fullDateFormatter.format(date);

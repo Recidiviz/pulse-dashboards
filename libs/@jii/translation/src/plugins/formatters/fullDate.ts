@@ -15,19 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ConfigArray } from "typescript-eslint";
+import { fullDateFormatOptions } from "../../utils/date";
+import { CachedFormatFunction } from "./types";
 
-type TagKey = "util" | "ui" | "feature" | "state";
+/**
+ * convenience method for preferred full date formatting options
+ */
+export const fullDateFormatter: CachedFormatFunction = (
+  lng,
+  options: { fallbackText?: string },
+) => {
+  const formatter = Intl.DateTimeFormat(lng, fullDateFormatOptions);
+  const fallbackText = options.fallbackText ?? "";
 
-export const TYPE_TAGS: Record<TagKey, string>;
-
-declare const baseConfig: ConfigArray;
-export default baseConfig;
-
-export const designSystemRestrictedImports: {
-  name: string;
-  importNames: string[];
-  message: string;
+  return (value) => (value ? formatter.format(value) : fallbackText);
 };
-
-export const reactConfig: ConfigArray;

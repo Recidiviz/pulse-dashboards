@@ -15,19 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ConfigArray } from "typescript-eslint";
+import { useTranslation } from "react-i18next";
 
-type TagKey = "util" | "ui" | "feature" | "state";
-
-export const TYPE_TAGS: Record<TagKey, string>;
-
-declare const baseConfig: ConfigArray;
-export default baseConfig;
-
-export const designSystemRestrictedImports: {
-  name: string;
-  importNames: string[];
-  message: string;
-};
-
-export const reactConfig: ConfigArray;
+export function useCommonTranslations() {
+  return useTranslation("common");
+}

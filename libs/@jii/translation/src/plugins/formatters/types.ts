@@ -15,19 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ConfigArray } from "typescript-eslint";
+import { Formatter } from "i18next";
 
-type TagKey = "util" | "ui" | "feature" | "state";
-
-export const TYPE_TAGS: Record<TagKey, string>;
-
-declare const baseConfig: ConfigArray;
-export default baseConfig;
-
-export const designSystemRestrictedImports: {
-  name: string;
-  importNames: string[];
-  message: string;
-};
-
-export const reactConfig: ConfigArray;
+/**
+ * function type expected when adding new cacheable formatters to i18next
+ */
+export type CachedFormatFunction = Parameters<Formatter["addCached"]>[1];

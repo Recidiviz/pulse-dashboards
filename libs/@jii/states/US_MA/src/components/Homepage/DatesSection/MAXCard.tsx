@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import { Card, SlateCopy } from "~@jii/common-ui";
 import { hydrateTemplate } from "~@jii/data";
 import { BulletTimeline } from "~@jii/earned-good-time";
+import { useUsMaTranslations } from "~@jii/translation";
 
 import {
   EGTDataContext,
@@ -47,7 +48,6 @@ const AdjustmentBreakdown = observer(function AdjustmentBreakdown() {
     },
   } = useEGTDataContext();
 
-  // const items = dates.ma.map(({label, value}) => ({label, value: hydrateTemplate(value)}))
   const items = [
     formatBreakdownItem(breakdown.original, data),
     formatBreakdownItem(breakdown.change, data),
@@ -63,17 +63,16 @@ const AdjustmentBreakdown = observer(function AdjustmentBreakdown() {
 });
 
 export const MAXCard = observer(function MAXCard() {
-  const {
-    data,
-    copy: {
-      home: { dates },
-      tags,
-    },
-  } = useEGTDataContext();
+  const { data } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
 
   return (
     <Card>
-      <DateInfo {...dates.maxRelease} tag={tags.maxRelease} />
+      <DateInfo
+        label={t(($) => $.home.dates.maxRelease.label)}
+        value={t(($) => $.home.dates.maxRelease.value, data)}
+        tag={t(($) => $.tags.maxRelease)}
+      />
       {!!data.totalStateCreditDaysCalculated && <AdjustmentBreakdown />}
     </Card>
   );

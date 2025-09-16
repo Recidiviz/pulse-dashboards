@@ -41,6 +41,7 @@ import {
   State,
   StateSelect,
 } from "~@jii/paths";
+import { initTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
 import { ErrorPage } from "../ErrorPage/ErrorPage";
@@ -68,13 +69,14 @@ const StyledApp = styled.div`
 const GlobalStyle = createGlobalStyle`
   body {
     ${typography.Sans16}
-    
+
     background: ${palette.white};
     color: ${palette.pine2};
   }
 `;
 
 initializeSentry();
+initTranslations();
 
 // doing this once (at the root off all <Routes>) allows Sentry to trace client-side URLs
 const SentryRoutes = withSentryReactRouterV6Routing(Routes);

@@ -15,19 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ConfigArray } from "typescript-eslint";
+// @ts-check
 
-type TagKey = "util" | "ui" | "feature" | "state";
+import tseslint from "typescript-eslint";
 
-export const TYPE_TAGS: Record<TagKey, string>;
+import baseConfig, {
+  designSystemRestrictedImports,
+} from "../../../eslint.config.mjs";
 
-declare const baseConfig: ConfigArray;
-export default baseConfig;
+export default tseslint.config(baseConfig, {
+  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [
+          // Need to include these again because eslint doesn't deep merge rules
+          {
+            name: "styled-components",
+            message: "Please import from styled-components/macro.",
+          },
 
-export const designSystemRestrictedImports: {
-  name: string;
-  importNames: string[];
-  message: string;
-};
-
-export const reactConfig: ConfigArray;
+          designSystemRestrictedImports,
+        ],
+      },
+    ],
+  },
+});

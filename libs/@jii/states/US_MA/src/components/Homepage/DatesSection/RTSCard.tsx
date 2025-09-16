@@ -17,28 +17,29 @@
 
 import { Card, GoButton, SlateCopy } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
+import { useUsMaTranslations } from "~@jii/translation";
 
 import { useEGTDataContext } from "../../EGTDataContext/context";
 import { DateInfo } from "./DateInfo";
 
 export const RTSCard = () => {
-  const {
-    copy: {
-      home: { dates },
-      tags,
-    },
-  } = useEGTDataContext();
+  const { data } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
 
   return (
     <Card>
-      <DateInfo {...dates.rts} tag={tags.rts} />
-      <SlateCopy>{dates.rts.summary}</SlateCopy>
+      <DateInfo
+        label={t(($) => $.home.dates.rts.label)}
+        value={t(($) => $.home.dates.rts.value, data)}
+        tag={t(($) => $.tags.rts)}
+      />
+      <SlateCopy>{t(($) => $.home.dates.rts.summary)}</SlateCopy>
       <GoButton
         to={State.Resident.EGT.$.Definition.buildRelativePath({
           pageSlug: "rts",
         })}
       >
-        {dates.rts.moreInfoLink}
+        {t(($) => $.home.dates.rts.moreInfoLink)}
       </GoButton>
     </Card>
   );

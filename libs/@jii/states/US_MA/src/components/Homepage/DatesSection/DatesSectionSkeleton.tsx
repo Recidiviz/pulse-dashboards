@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Card, HomepageSectionHeading } from "~@jii/common-ui";
+import { useUsMaTranslations } from "~@jii/translation";
 
 import { useEGTDataContext } from "../../EGTDataContext/context";
 import { DateInfoSkeleton } from "./DateInfoSkeleton";
@@ -24,9 +25,9 @@ export const DatesSectionSkeleton = () => {
   const {
     copy: {
       home: { dates },
-      tags,
     },
   } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
 
   return (
     <section>
@@ -34,14 +35,17 @@ export const DatesSectionSkeleton = () => {
 
       {/* First card skeleton (RTS) */}
       <Card>
-        <DateInfoSkeleton tag={tags.rts} label={dates.rts.label} />
+        <DateInfoSkeleton
+          tag={t(($) => $.tags.rts)}
+          label={t(($) => $.home.dates.rts.label)}
+        />
       </Card>
 
       {/* Second card skeleton (MAX) */}
       <Card>
         <DateInfoSkeleton
-          tag={tags.maxRelease}
-          label={dates.maxRelease.breakdown.adjusted.label}
+          tag={t(($) => $.tags.maxRelease)}
+          label={t(($) => $.home.dates.maxRelease.label)}
         />
       </Card>
     </section>

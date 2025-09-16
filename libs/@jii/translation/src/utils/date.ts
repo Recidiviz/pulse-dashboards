@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,19 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ConfigArray } from "typescript-eslint";
-
-type TagKey = "util" | "ui" | "feature" | "state";
-
-export const TYPE_TAGS: Record<TagKey, string>;
-
-declare const baseConfig: ConfigArray;
-export default baseConfig;
-
-export const designSystemRestrictedImports: {
-  name: string;
-  importNames: string[];
-  message: string;
+export const fullDateFormatOptions: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
 };
-
-export const reactConfig: ConfigArray;

@@ -27,8 +27,8 @@ import {
   HomepageSectionHeading,
   TwoColumnCardWrapper,
 } from "~@jii/common-ui";
-import { hydrateTemplate } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { useUsMaTranslations } from "~@jii/translation";
 
 import { useEGTDataContext } from "../../EGTDataContext/context";
 
@@ -39,29 +39,33 @@ export const Wrapper = styled.section`
 `;
 
 export const TotalTimeEarnedSection = () => {
-  const {
-    data,
-    copy: {
-      home: { totalTimeEarned },
-    },
-  } = useEGTDataContext();
+  const { data } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
 
   return (
     <Wrapper>
       <HomepageSectionHeading>
-        {totalTimeEarned.sectionTitle}
+        {t(($) => $.home.totalTimeEarned.sectionTitle)}
       </HomepageSectionHeading>
       <TwoColumnCardWrapper>
         <Card>
-          <CardHeading>{totalTimeEarned.egt.label}</CardHeading>
+          <CardHeading>
+            {t(($) => $.home.totalTimeEarned.egtBoostsLabel)}
+          </CardHeading>
           <CardValue>
-            {hydrateTemplate(totalTimeEarned.egt.value, data)}
+            {t(($) => $.home.totalTimeEarned.creditsValue, {
+              count: data.totalStateCredit,
+            })}
           </CardValue>
         </Card>
         <Card>
-          <CardHeading>{totalTimeEarned.credits.label}</CardHeading>
+          <CardHeading>
+            {t(($) => $.home.totalTimeEarned.completionLabel)}
+          </CardHeading>
           <CardValue>
-            {hydrateTemplate(totalTimeEarned.credits.value, data)}
+            {t(($) => $.home.totalTimeEarned.creditsValue, {
+              count: data.totalCompletionCredit,
+            })}
           </CardValue>
         </Card>
       </TwoColumnCardWrapper>
@@ -70,7 +74,7 @@ export const TotalTimeEarnedSection = () => {
           pageSlug: "credits",
         })}
       >
-        {totalTimeEarned.learnMoreLink}
+        {t(($) => $.home.totalTimeEarned.learnMoreLink)}
       </GoButton>
     </Wrapper>
   );

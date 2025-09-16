@@ -24,31 +24,30 @@ import {
   HomepageSectionHeading,
   TwoColumnCardWrapper,
 } from "~@jii/common-ui";
+import { useUsMaTranslations } from "~@jii/translation";
 
-import { useEGTDataContext } from "../../EGTDataContext/context";
 import { Wrapper } from "./TotalTimeEarnedSection";
 
 export const TotalTimeEarnedSectionSkeleton = () => {
-  const {
-    copy: {
-      home: { totalTimeEarned },
-    },
-  } = useEGTDataContext();
-
+  const { t } = useUsMaTranslations();
   return (
     <Wrapper>
       <HomepageSectionHeading>
-        {totalTimeEarned.sectionTitle}
+        {t(($) => $.home.totalTimeEarned.sectionTitle)}
       </HomepageSectionHeading>
       <TwoColumnCardWrapper>
         <Card>
-          <CardHeading>{totalTimeEarned.egt.label}</CardHeading>
+          <CardHeading>
+            {t(($) => $.home.totalTimeEarned.egtBoostsLabel)}
+          </CardHeading>
           <CardValue>
             <Skeleton />
           </CardValue>
         </Card>
         <Card>
-          <CardHeading>{totalTimeEarned.credits.label}</CardHeading>
+          <CardHeading>
+            {t(($) => $.home.totalTimeEarned.completionLabel)}
+          </CardHeading>
           <CardValue>
             <Skeleton />
           </CardValue>

@@ -15,8 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Loading } from "@recidiviz/design-system";
+import { Suspense } from "react";
+
 import { SingleResidentHydrator } from "../SingleResidentHydrator/SingleResidentHydrator";
 
 export function PageSingleResidentRoot() {
-  return <SingleResidentHydrator />;
+  return (
+    <Suspense fallback={<Loading />}>
+      <SingleResidentHydrator />
+    </Suspense>
+  );
 }

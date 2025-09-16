@@ -17,10 +17,7 @@
 
 import { FC } from "react";
 
-import { hydrateTemplate } from "~@jii/data";
 import { CardDateInfo } from "~@jii/earned-good-time";
-
-import { useEGTDataContext } from "../../EGTDataContext/context";
 
 export const DateInfo: FC<{
   tag: string;
@@ -28,13 +25,5 @@ export const DateInfo: FC<{
   value?: string;
   muted?: boolean;
 }> = ({ tag, label, value, muted }) => {
-  const { data } = useEGTDataContext();
-  return (
-    <CardDateInfo
-      tag={tag}
-      label={label}
-      muted={muted}
-      value={value && hydrateTemplate(value, data)}
-    />
-  );
+  return <CardDateInfo tag={tag} label={label} muted={muted} value={value} />;
 };

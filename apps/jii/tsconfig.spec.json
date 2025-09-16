@@ -13,6 +13,7 @@
     ]
   },
   "include": [
+    "../../libs/@jii/**/*.d.ts",
     "vite.config.ts",
     "vitest.config.ts",
     "src/**/*.test.ts",

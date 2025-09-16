@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Loading } from "@recidiviz/design-system";
 import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 
 import { PageContainer } from "~@jii/common-ui";
@@ -31,12 +33,14 @@ export const PageRoot = withErrorBoundary(
     usePageviewTracking();
 
     return (
-      <AuthManagerHydrator>
-        <PageContainer>
-          <Outlet />
-        </PageContainer>
-        <ScrollToTop />
-      </AuthManagerHydrator>
+      <Suspense fallback={<Loading />}>
+        <AuthManagerHydrator>
+          <PageContainer>
+            <Outlet />
+          </PageContainer>
+          <ScrollToTop />
+        </AuthManagerHydrator>
+      </Suspense>
     );
   }),
   { fallback: ErrorPage },

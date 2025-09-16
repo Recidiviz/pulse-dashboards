@@ -15,19 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ConfigArray } from "typescript-eslint";
+import i18next from "i18next";
 
-type TagKey = "util" | "ui" | "feature" | "state";
+import { initTranslations } from "../initTranslations";
 
-export const TYPE_TAGS: Record<TagKey, string>;
+export async function testTranslation(
+  s: string,
+  context?: Record<string, unknown>,
+  lng = "en",
+): Promise<string> {
+  await initTranslations();
+  const testInstance = i18next.cloneInstance({
+    forkResourceStore: true,
+    lng,
+  });
+  testInstance.addResourceBundle(lng, "test", {
+    test: s,
+  });
 
-declare const baseConfig: ConfigArray;
-export default baseConfig;
-
-export const designSystemRestrictedImports: {
-  name: string;
-  importNames: string[];
-  message: string;
-};
-
-export const reactConfig: ConfigArray;
+  // @ts-expect-error i18next selector relies on ambient types which we are overriding in this function
+  return testInstance.t(($) => $.test, { ns: "test", ...context });
+}

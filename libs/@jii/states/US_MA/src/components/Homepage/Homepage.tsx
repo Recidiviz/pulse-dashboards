@@ -26,7 +26,7 @@ import {
   PageContainer,
   usePageTitle,
 } from "~@jii/common-ui";
-import { hydrateTemplate } from "~@jii/data";
+import { useUsMaTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
@@ -55,16 +55,16 @@ const LastUpdatedBanner = styled(FullBleedContainer)`
 `;
 
 export const Homepage = observer(function Homepage() {
-  const { data, copy } = useEGTDataContext();
-  usePageTitle(copy.home.pageTitle);
+  const { data } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
+
+  usePageTitle(t(($) => $.home.pageTitle));
 
   return (
     <div>
       <HeaderPortal>
         <LastUpdatedBanner>
-          <PageContainer>
-            {hydrateTemplate(copy.lastUpdated, data)}
-          </PageContainer>
+          <PageContainer>{t(($) => $.lastUpdated, data)}</PageContainer>
         </LastUpdatedBanner>
       </HeaderPortal>
       {data.isEgtDisabled ? (

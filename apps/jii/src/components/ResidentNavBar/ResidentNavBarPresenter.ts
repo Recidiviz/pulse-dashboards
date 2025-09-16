@@ -33,11 +33,10 @@ export class ResidentNavBarPresenter {
     makeAutoObservable(this);
   }
 
-  get homeLink(): SimpleNavLinkProps | undefined {
+  get homeLink() {
     if (!("personPseudoId" in this.routeParams)) return;
 
     return {
-      children: "Home",
       to: State.Resident.buildPath(this.routeParams),
       end: true,
     };

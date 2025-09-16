@@ -20,9 +20,8 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { CopyWrapper } from "~@jii/common-ui";
+import { useUsMaTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
-
-import { useEGTDataContext } from "../EGTDataContext/context";
 
 const Wrapper = styled(CopyWrapper)`
   ${typography.Body14}
@@ -32,7 +31,7 @@ const Wrapper = styled(CopyWrapper)`
 `;
 
 export const Disclaimer = () => {
-  const { copy } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
 
-  return <Wrapper>{copy.disclaimer}</Wrapper>;
+  return <Wrapper>{t(($) => $.disclaimer)}</Wrapper>;
 };

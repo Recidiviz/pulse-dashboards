@@ -50,7 +50,6 @@ describe("with resident route", () => {
 
   test("link to home", () => {
     expect(presenter.homeLink).toEqual({
-      children: "Home",
       to: `/maine/${testResident.pseudonymizedId}`,
       end: true,
     });

@@ -15,19 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ConfigArray } from "typescript-eslint";
+// import the original type declarations
+import "i18next";
 
-type TagKey = "util" | "ui" | "feature" | "state";
+// import all namespaces (for the default language, only)
+import common from "../namespaces/common/resources/en";
+import US_MA from "../namespaces/US_MA/resources/en";
 
-export const TYPE_TAGS: Record<TagKey, string>;
-
-declare const baseConfig: ConfigArray;
-export default baseConfig;
-
-export const designSystemRestrictedImports: {
-  name: string;
-  importNames: string[];
-  message: string;
-};
-
-export const reactConfig: ConfigArray;
+declare module "i18next" {
+  // extends CustomTypeOptions
+  interface CustomTypeOptions {
+    resources: {
+      common: typeof common;
+      US_MA: typeof US_MA;
+    };
+    strictKeyChecks: true;
+    enableSelector: true;
+  }
+}
