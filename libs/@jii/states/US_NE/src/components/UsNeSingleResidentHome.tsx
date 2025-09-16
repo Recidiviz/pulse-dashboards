@@ -15,28 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import UsNeCardGroup from "./UsNeCardGroup";
+import { useUsNeContext } from "./usNeContext";
+import UsNeGoodTimeAdjustments from "./UsNeGoodTimeAdjustments";
+import UsNeHomeHeader from "./UsNeHomeHeader";
 
-import { CardValue } from "~@jii/common-ui";
-
-import { DateInfoShell } from "./DateInfoShell";
-
-export type CardDateInfoProps = {
-  tag?: string;
-  label: string;
-  value?: string;
-  muted?: boolean;
-};
-
-export const CardDateInfo: FC<CardDateInfoProps> = ({
-  tag,
-  label,
-  value,
-  muted,
-}) => {
+const UsNeSingleResidentHome = () => {
+  const { copy } = useUsNeContext();
   return (
-    <DateInfoShell tag={tag} label={label} muted={muted}>
-      {value && <CardValue>{value}</CardValue>}
-    </DateInfoShell>
+    <>
+      <UsNeHomeHeader />
+      <UsNeCardGroup copy={copy.home.dates} />
+      <UsNeCardGroup copy={copy.home.goodTimeBalances} />
+      <UsNeGoodTimeAdjustments />
+    </>
   );
 };
+
+export default UsNeSingleResidentHome;

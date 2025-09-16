@@ -25,7 +25,7 @@ import { ScreenFillingWrapper } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
-import { useEGTDataContext } from "../EGTDataContext/context";
+import { useUsNeContext } from "../usNeContext";
 import { DefinitionPagePresenter } from "./DefinitionPresenter";
 
 const ManagedComponent: FC<{
@@ -50,7 +50,7 @@ const ManagedComponent: FC<{
 
 function usePresenter() {
   const { pageSlug } = useTypedParams(State.Resident.EGT.Definition);
-  const { copy } = useEGTDataContext();
+  const { copy } = useUsNeContext();
 
   return new DefinitionPagePresenter(pageSlug, copy);
 }

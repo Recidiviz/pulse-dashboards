@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./BackLink/BackLink";
 export * from "./BaseLayout/BaseLayout";
 export * from "./ButtonLink/ButtonLink";
 export * from "./ButtonLink/GoButton";

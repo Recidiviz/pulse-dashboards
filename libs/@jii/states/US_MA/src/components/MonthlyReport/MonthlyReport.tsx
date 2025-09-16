@@ -22,13 +22,12 @@ import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
-import { CopyWrapper } from "~@jii/common-ui";
+import { BackLink, CopyWrapper } from "~@jii/common-ui";
 import { usePageTitle } from "~@jii/common-ui";
 import { hydrateTemplate } from "~@jii/data";
 import { State } from "~@jii/paths";
 
 import { getMonthlyReportPageSlug } from "../../models/UsMaEGTMonthlyReport";
-import { BackLink } from "../BackLink/BackLink";
 import { useEGTDataContext } from "../EGTDataContext/context";
 import { MonthlyReportSelector } from "../MonthlyReportSelector/MonthlyReportSelector";
 import { Achievements } from "./Achievements";

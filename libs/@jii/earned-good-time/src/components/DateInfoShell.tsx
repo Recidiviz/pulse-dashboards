@@ -23,7 +23,7 @@ import styled from "styled-components/macro";
 import { CardHeading, Chip } from "~@jii/common-ui";
 
 export type DateInfoShellProps = {
-  tag: string;
+  tag?: string;
   label: string;
   muted?: boolean;
   children: ReactNode;
@@ -45,9 +45,11 @@ export const DateInfoShell: FC<DateInfoShellProps> = ({
     <Wrapper>
       <CardHeading>
         {label}
-        <Chip color={muted ? "gray" : "green"}>
-          <abbr>{tag}</abbr>
-        </Chip>
+        {tag && (
+          <Chip color={muted ? "gray" : "green"}>
+            <abbr>{tag}</abbr>
+          </Chip>
+        )}
       </CardHeading>
       {children}
     </Wrapper>

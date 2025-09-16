@@ -18,12 +18,20 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
+import { EGT } from "~@jii/paths";
+
+import { Definition } from "./Definition/Definition";
+import { UsNeContextProvider } from "./usNeContext";
+import UsNeSingleResidentHome from "./UsNeSingleResidentHome";
 
 export const UsNeRouter = () => {
   return (
-    <Routes>
-      <Route index element={<div />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <UsNeContextProvider>
+      <Routes>
+        <Route index element={<UsNeSingleResidentHome />} />
+        <Route path={EGT.Definition.path} element={<Definition />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </UsNeContextProvider>
   );
 };

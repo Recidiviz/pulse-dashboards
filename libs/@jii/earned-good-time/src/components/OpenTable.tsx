@@ -27,7 +27,7 @@ type TableColumnDescription<ColumnKeys extends string> = {
 };
 
 type OpenTableProps<ColumnKeys extends string> = {
-  columns: TableColumnDescription<ColumnKeys>[];
+  columns: readonly TableColumnDescription<ColumnKeys>[];
   data: Record<ColumnKeys, React.ReactNode>[];
   footer?: Partial<Record<ColumnKeys, React.ReactNode>>;
 };
