@@ -420,43 +420,49 @@ class Queries:
             query_job = client.query(query, job_config=job_config)
             results = query_job.result()
 
-            # Get first result if any
-            for row in results:
-                try:
-                    # client_ids is now always a list from BigQuery REPEATED field
-                    client_external_ids_list = row.client_ids if row.client_ids else []
+            rows = list(results)
+            if not rows:
+                return None
 
-                    # Handle full_name with proper capitalization
-                    full_name_data = row.full_name
-                    capitalized_data = format_name_capitalization(full_name_data)
-                    full_name = FullNameModel(**capitalized_data)
+            # Create the CaseWorkerDataRecord with either row's data,
+            # but concatenate the client_external_ids from all rows
+            all_client_external_ids = []
+            for r in rows:
+                if r.client_ids:
+                    all_client_external_ids.extend(r.client_ids)
 
-                    caseworker = CaseWorkerDataRecord(
-                        external_staff_id=row.external_id,
-                        pseudonymized_staff_id=row.pseudonymized_id,
-                        email=row.email,
-                        full_name=full_name,
-                        external_client_ids=client_external_ids_list,
-                        state_code=row.state_code,
-                    )
-                except Exception as e:
-                    logger.error(
-                        f"Error processing caseworker data for {pseudonymized_staff_id}: {str(e)}"
-                    )
-                    continue
+            first_row = rows[0]
 
-                # Cache the result
-                try:
-                    redis_client.setex(cache_key, CACHE_TTL, pickle.dumps(caseworker))
-                    logger.info(
-                        f"Cached caseworker data for pseudonymized_staff_id {pseudonymized_staff_id}"
-                    )
-                except Exception as e:
-                    logger.error(f"Error caching caseworker data: {str(e)}")
+            try:
+                # Handle full_name with proper capitalization
+                full_name_data = first_row.full_name
+                capitalized_data = format_name_capitalization(full_name_data)
+                full_name = FullNameModel(**capitalized_data)
 
-                return caseworker
+                caseworker = CaseWorkerDataRecord(
+                    external_staff_id=first_row.external_id,
+                    pseudonymized_staff_id=first_row.pseudonymized_id,
+                    email=first_row.email,
+                    full_name=full_name,
+                    external_client_ids=all_client_external_ids,
+                    state_code=first_row.state_code,
+                )
+            except Exception as e:
+                logger.error(
+                    f"Error processing caseworker data for {pseudonymized_staff_id}: {str(e)}"
+                )
+                return None
 
-            return None
+            # Cache the result
+            try:
+                redis_client.setex(cache_key, CACHE_TTL, pickle.dumps(caseworker))
+                logger.info(
+                    f"Cached caseworker data for pseudonymized_staff_id {pseudonymized_staff_id}"
+                )
+            except Exception as e:
+                logger.error(f"Error caching caseworker data: {str(e)}")
+
+            return caseworker
         except Exception as e:
             logger.error(
                 f"Error fetching caseworker by pseudonymized staff ID: {str(e)}"
