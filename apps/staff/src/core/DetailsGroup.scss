@@ -7,11 +7,6 @@
   display: flex;
   align-items: center;
 
-  &:focus, &:focus-within, &:active {
-    border: 1px solid #006c67;
-    border-radius: 8px;
-  }
-
   &__item {
     color: constants.$slate-80;
     @include mixins.sans-14;
@@ -22,10 +17,6 @@
   }
 
   &__button {
-    &:focus, &:focus-within, &:active {
-      border: 1px solid #006c67;
-      border-radius: 8px;
-    }
     display: flex;
     align-items: center;
     outline: 0 !important;
@@ -41,6 +32,11 @@
     &:hover {
       text-decoration: none;
       color: constants.$signal-links;
+    }
+
+    &:focus, &:focus-within, &:active {
+      border: 1px solid #006c67;
+      border-radius: 8px;
     }
   }
 
@@ -63,7 +59,8 @@
 
     &:focus, &:focus-within, &:active {
       border: 1px solid #006c67;
-      border-radius: 8px;
+      border-radius: 2px;
+      padding: 2px;
     }
 
     @media screen and (max-width: constants.$core-breakpoint-sm) {
@@ -72,10 +69,6 @@
   }
 
   &__content {
-    &:focus, &:focus-within, &:active {
-      border: 1px solid #006c67;
-      border-radius: 8px;
-    }
     display: none;
     position: absolute;
     flex-direction: column;
@@ -98,7 +91,6 @@
       .DetailsGroup__button {
         display: flex;
         align-items: center;
-        border-radius: 0;
         padding: 0.75rem 1.5rem;
         width: 100%;
 

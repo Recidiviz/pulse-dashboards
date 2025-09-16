@@ -19,7 +19,7 @@ import "./DetailsGroup.scss";
 
 import { Icon, IconSVG } from "@recidiviz/design-system";
 import cn from "classnames";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "use-onclickoutside";
 
 type Props = {
@@ -32,28 +32,47 @@ const DetailsGroup: React.FC<Props> = ({ expand, children }) => {
   const ref: any = useRef();
   useOnClickOutside(ref, () => setOpen(false));
 
+  // Add global escape key listener when menu is open
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && open) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [open]);
+
   if (expand) {
     return <div className="DetailsGroup">{children}</div>;
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.code === "Space" || event.code === "Enter") {
+      event.preventDefault();
+      setOpen(!open);
+    }
+  };
+
   return (
-    <div className="DetailsGroup" ref={ref} >
+    <div className="DetailsGroup" ref={ref}>
       <Icon
         kind={IconSVG.TripleDot}
         width={16}
         height={16}
         className="DetailsGroup__menu"
         onClick={() => setOpen(!open)}
-        onKeyDown={(event) => {
-          if (event.code === "Space" || event.code === "Enter") {
-            event.preventDefault();
-            setOpen(!open);
-          }
-          if (event.code === "Escape") { setOpen(false); }
-        }}
+        onKeyDown={handleKeyDown}
         aria-haspopup="true"
-        aria-label="Ellipse: More options"
-        type="button"
+        aria-expanded={open}
+        aria-label="More options"
+        role="button"
         tabIndex={0}
       />
       <div
