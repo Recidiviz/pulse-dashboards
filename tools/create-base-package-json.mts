@@ -33,6 +33,7 @@ const projectPackageJsonContents = {
     // these are not parts of the application but we use them in the docker container
     extensionless: repoPackageContents.dependencies.extensionless,
     prisma: repoPackageContents.dependencies.prisma,
+    "@prisma/client": repoPackageContents.dependencies["@prisma/client"],
   },
 };
 

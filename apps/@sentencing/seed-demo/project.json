@@ -62,6 +62,7 @@
         "generatePackageJson": true,
         "target": "node20",
         "minify": true,
+        "external": ["@prisma/client"],
         "assets": ["{workspaceRoot}/.yarnrc.yml"]
       }
     },

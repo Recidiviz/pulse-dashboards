@@ -70,6 +70,7 @@
         "generatePackageJson": true,
         "target": "node20",
         "minify": true,
+        "external": ["@prisma/client"],
         "assets": [
           {
             "glob": "prisma/schema.prisma",
@@ -83,8 +84,7 @@
           },
           "{projectRoot}/scripts/*",
           "{workspaceRoot}/.yarnrc.yml"
-        ],
-        "external": ["@prisma/jii-texting"]
+        ]
       },
       "configurations": {
         "dev": {
