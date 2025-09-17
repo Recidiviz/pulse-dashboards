@@ -107,6 +107,10 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             'This is determined by whether "NAE" ("Not Admin Eligible") is found in the Other, Miscellaneous, or Notes fields in Captor',
         },
+        {
+          key: "notSupervisionPastFullTermCompletionDateOrUpcoming90Days",
+          text: "Not past or within 90 days of max date",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_PA-adminSupervisionReferrals",
@@ -229,6 +233,10 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Not designated as a sex offender",
           tooltip:
             "A reentrant is considered a sex offender if they have a problem area of “Sex Offender” checked in Captor or have any special conditions or treatments that relate to sex offenders or Megan’s Law ",
+        },
+        {
+          key: "notSupervisionPastFullTermCompletionDateOrUpcoming90Days",
+          text: "Not past or within 90 days of max date",
         },
       ],
       emptyTabCopy: [],

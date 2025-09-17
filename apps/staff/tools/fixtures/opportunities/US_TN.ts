@@ -761,7 +761,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "Clients must meet all financial obligations to the court and/or victim as outlined in an agreed payment plan, or be otherwise exempted, and must be in compliance with the agreed payment plan for the previous 12 months. ",
         },
-        { text: "No pending criminal charges in any jursidiction" },
+        { text: "No pending criminal charges in any jurisdiction" },
         { text: "Not under active supervision in any other jurisdiction" },
         { text: "Is not under indictment" },
       ],

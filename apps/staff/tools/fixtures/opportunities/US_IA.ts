@@ -322,6 +322,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
+        "UsIaEarlyDischargeIcOutDetails",
         "UsIaActionPlansAndNotes",
         "ClientProfileDetails",
         "CaseNotes",

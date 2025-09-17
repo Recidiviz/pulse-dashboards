@@ -469,9 +469,9 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "ELIGIBILITY STATUS",
           tabs: [
+            "Almost Eligible",
             "Fast Trackers",
             "Eligible Now",
-            "Almost Eligible",
             "Pending",
             "Marked Incorrect",
           ],
@@ -707,9 +707,9 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "ELIGIBILITY STATUS",
           tabs: [
+            "Almost Eligible",
             "Fast Trackers",
             "Eligible Now",
-            "Almost Eligible",
             "Pending",
             "Marked Incorrect",
           ],

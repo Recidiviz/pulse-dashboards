@@ -395,7 +395,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "EXCLUDED CURRENT OFFENSE",
-          text: "EXCLUDED CURRENT OFFENSE: On probation for MCL 750.81 or MCL 750.84, for an offense requiring a mandatory probation term (750.411H, 750.411I, 750.136b), or for a sex offense",
+          text: "EXCLUDED CURRENT OFFENSE: On probation for MCL 750.81 or MCL 750.84, for an offense requiring a mandatory probation term (750.411H, 750.411I, 750.136b, 400.1501), or for a sex offense",
         },
         {
           key: "EXCLUDED NEW OFFENSE",
@@ -439,7 +439,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision",
-          text: 'Not involved in a felony, assaultive misdemeanor, or offense requiring SORA registration while on {{#if (eq record.metadata.supervisionType "Parole")}}parole{{else}}probation{{/if}}',
+          text: 'Not convicted of a felony, assaultive misdemeanor, or offense requiring SORA registration while on {{#if (eq record.metadata.supervisionType "Parole")}}parole{{else}}probation{{/if}}',
           tooltip:
             '{{#if (eq record.metadata.supervisionType "Parole")}}The parolee is not known to have been involved in […] felonious behavior, assaultive misdemeanor behavior (as set forth in Attachment A) […] or an offense that requires registration under the Sex Offender Registration Act while on parole.{{else}}The offender is not known to have been involved in […] felonious behavior or assaultive misdemeanor behavior as set forth in Attachment A “OP 06.01.145B Assaultive Misdemeanor List” which occurred while on probation or any offense that requires registration under the Sex Offender Registration Act (SORA), which occurred while on probation.{{/if}}',
         },
@@ -467,7 +467,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usMiNoOwiViolationOnParoleDualSupervision",
-          text: "Not involved in an OWI offense while on parole",
+          text: "Not convicted of an OWI offense while on parole",
           tooltip:
             "The parolee is not known to have been involved in […] a violation of MCL 257.625 (OWI) […] while on parole.",
         },
@@ -510,7 +510,9 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "The client has not willfully failed to pay monetary obligations. Unless another standard is prescribed by the court, the Agent shall not regard the offender's failure to pay as willful if any of the following apply: \n1. The client provides documentation of disability and has little or no income. \n2. The client is on public assistance. \n3. The client has been unemployed for the majority of the probation term despite earnest job-seeking efforts and has little or no income from any other source. \n4. The client annual income is at or below the federal poverty guidelines (refer to the information at https://aspe.hhs.gov). \n5. The client net income is above federal poverty guidelines but has been and remains insufficient to satisfy the terms of the obligations ordered. \n6. The client has made earnest efforts to fulfill payment obligations, but the amount owed is such that complete payment within the scheduled probation term is unrealistic.",
         },
-        { text: "Must have no pending felony charges or warrants" },
+        {
+          text: 'Must have no pending felony charges or warrants ({{#if (eq record.metadata.supervisionType "Parole")}}including any involvement or suspicion of felonious behavior, assaultive misdemeanor behavior, violation of OWI, or any offense that requires registration under SORA which occurred while on parole{{else}}including any involvement or suspicion of felonious behavior, assaultive misdemeanor behavior, or any offense that requires registration under SORA which occurred while on probation{{/if}})',
+        },
       ],
       nonOmsCriteriaHeader: null,
       notifications: [],

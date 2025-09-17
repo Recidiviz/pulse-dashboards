@@ -68,11 +68,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           text: "Must have established a record of progress toward successful completion of Court-ordered obligations for local incarceration and community service",
         },
-        {
-          text: "If relevant based on client history and officer discretion, must have had a negative UA within the past 90 days",
-          tooltip:
-            "Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year ",
-        },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
       notifications: [],
@@ -110,11 +105,9 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Failure to make payments towards fines, fees, and restitution despite ability to pay",
         },
         { key: "NCIC", text: "Did not pass NCIC check" },
-        {
-          key: "PCD",
-          text: "Parole Commission permanently denied early discharge request",
-        },
-        { key: "CD", text: "Court permanently denied early discharge request" },
+        { key: "DUI", text: "DUI" },
+        { key: "NCO", text: "Active NCO" },
+        { key: "Violation_report", text: "New or pending violation report" },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
@@ -197,7 +190,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_ID",
       subcategoryHeadings: [],
