@@ -17,10 +17,13 @@
 
 import { usePageTitle } from "~@jii/common-ui";
 
-import { UsTnSingleResidentHome } from "../components/UsTnSingleResidentHome";
+import { DefinitionView } from "../components/DefinitionView";
+import { usTnCopy } from "../configs/copy";
 
-export function PageUsTnResidentHome() {
-  usePageTitle("Home");
+export function PageMoreInfoImportantDates() {
+  const { moreInfo } = usTnCopy.importantDates;
 
-  return <UsTnSingleResidentHome />;
+  usePageTitle(moreInfo.heading);
+
+  return <DefinitionView {...moreInfo} />;
 }

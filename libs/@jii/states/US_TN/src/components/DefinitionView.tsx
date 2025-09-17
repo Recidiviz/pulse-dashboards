@@ -15,12 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { UsTnSingleResidentHome } from "../components/UsTnSingleResidentHome";
+import { BackLink, InfoPage } from "~@jii/common-ui";
+import { ScreenFillingWrapper } from "~@jii/layout";
+import { State } from "~@jii/paths";
 
-export function PageUsTnResidentHome() {
-  usePageTitle("Home");
+type DefinitionViewProps = {
+  heading: string;
+  body: string;
+};
 
-  return <UsTnSingleResidentHome />;
-}
+export const DefinitionView = (props: DefinitionViewProps) => {
+  const params = useTypedParams(State.Resident.UsTnMoreInformation);
+
+  return (
+    <ScreenFillingWrapper
+      top={
+        <>
+          <BackLink to={State.Resident.buildPath(params)} children="Home" />
+          <InfoPage {...props} />
+        </>
+      }
+      bottom={null}
+    />
+  );
+};

@@ -18,7 +18,10 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
+import { UsTnMoreInformation } from "~@jii/paths";
 
+import { PageMoreInfoCreditReports } from "../pages/PageMoreInfoCreditReports";
+import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
 import { PageUsTnResidentHome } from "../pages/PageUsTnResidentHome";
 
 export function UsTnRouter() {
@@ -26,6 +29,14 @@ export function UsTnRouter() {
     <Routes>
       <Route index element={<PageUsTnResidentHome />} />
       <Route path="*" element={<NotFound />} />
+      <Route
+        path={UsTnMoreInformation.ImportantDates.path}
+        element={<PageMoreInfoImportantDates />}
+      />
+      <Route
+        path={UsTnMoreInformation.Credits.path}
+        element={<PageMoreInfoCreditReports />}
+      />
     </Routes>
   );
 }

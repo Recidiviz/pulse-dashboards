@@ -15,14 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnImportantDates } from "./UsTnImportantDates";
-import { UsTnMonthlyReports } from "./UsTnMonthlyReports/UsTnMonthlyReports";
+import { usePageTitle } from "~@jii/common-ui";
 
-export function UsTnSingleResidentHome() {
-  return (
-    <div>
-      <UsTnImportantDates />
-      <UsTnMonthlyReports />
-    </div>
-  );
+import { DefinitionView } from "../components/DefinitionView";
+import { usTnCopy } from "../configs/copy";
+
+export function PageMoreInfoCreditReports() {
+  const { moreInfo } = usTnCopy.monthlyCreditReport;
+
+  usePageTitle(moreInfo.heading);
+
+  return <DefinitionView {...moreInfo} />;
 }

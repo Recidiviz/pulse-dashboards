@@ -17,9 +17,18 @@
 
 import { UsTnCreditActivity } from "~datatypes";
 
+import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
+import sentenceCreditsInfoPage from "./sentenceCreditsInfoPage.md?raw";
+
 export const usTnCopy = {
+  importantDates: {
+    moreInfo: {
+      heading: "About Your Dates",
+      body: importantDatesInfoPage,
+    },
+  },
   monthlyCreditReport: {
-    sectionHeader: "Recent monthly Reports",
+    sectionHeader: "Recent monthly reports",
     creditCategories: {
       behavior: "Behavior Credits",
       program: "Program Credits",
@@ -48,6 +57,10 @@ export const usTnCopy = {
       status: "Status",
       amount: "Days",
       creditDate: "Date",
+    },
+    moreInfo: {
+      heading: "About Your Monthly Credit Reports",
+      body: sentenceCreditsInfoPage,
     },
   },
 };

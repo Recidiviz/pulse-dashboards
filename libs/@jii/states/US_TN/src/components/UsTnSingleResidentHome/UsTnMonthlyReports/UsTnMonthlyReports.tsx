@@ -22,15 +22,17 @@ import {
   CardHeading,
   CardValue,
   Chip,
+  GoButton,
   HomepageSectionHeading,
   TwoColumnCardWrapper,
 } from "~@jii/common-ui";
 import { formatFullDate, useSingleResidentContext } from "~@jii/data";
 import { OpenTable } from "~@jii/earned-good-time";
+import { State } from "~@jii/paths";
 import { UsTnCreditActivity } from "~datatypes";
 import { withPresenterManager } from "~hydration-utils";
 
-import { usTnCopy } from "../../configs/copy";
+import { usTnCopy } from "../../../configs/copy";
 import { UsTnMonthlyReportSelector } from "./UsTnMonthlyReportSelector";
 import { UsTnMonthlyReportsPresenter } from "./UsTnMonthlyReportsPresenter";
 
@@ -113,6 +115,13 @@ const ManagedComponent = observer(function UsTnMonthlyReports({
             }}
           />
         )}
+        <GoButton
+          to={State.Resident.$.UsTnMoreInformation.Credits.buildRelativePath(
+            {},
+          )}
+        >
+          Learn More
+        </GoButton>
       </Card>
     </section>
   );

@@ -64,6 +64,12 @@ export const EGT = route(
   },
 );
 
+export const UsTnMoreInformation = route(
+  "more-information",
+  {},
+  { ImportantDates: route("dates"), Credits: route("credits") },
+);
+
 export const State = route(":stateSlug", types(ReturnToPathFragment), {
   Resident: route(
     ":personPseudoId",
@@ -72,6 +78,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       Eligibility,
       Progress,
       EGT,
+      UsTnMoreInformation,
     },
   ),
   Search: route("search"),

@@ -15,12 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
-
-import { UsTnSingleResidentHome } from "../components/UsTnSingleResidentHome";
-
-export function PageUsTnResidentHome() {
-  usePageTitle("Home");
-
-  return <UsTnSingleResidentHome />;
-}
+export * from "./UsTnMonthlyReports";

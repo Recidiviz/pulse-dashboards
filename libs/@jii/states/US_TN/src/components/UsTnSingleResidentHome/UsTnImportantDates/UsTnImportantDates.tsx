@@ -18,9 +18,10 @@
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 
-import { Card, HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
+import { Card, GoButton, HomepageSectionHeading } from "~@jii/common-ui";
 import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
 import { BulletTimeline, CardDateInfo } from "~@jii/earned-good-time";
+import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
 import { UsTnImportantDatesPresenter } from "./UsTnImportantDatesPresenter";
@@ -43,9 +44,13 @@ const ManagedComponent: FC<{
             resident,
           )}
         />
-        <SlateCopy>
-          The earliest date when you may be eligible for release for parole
-        </SlateCopy>
+        <GoButton
+          to={State.Resident.$.UsTnMoreInformation.ImportantDates.buildRelativePath(
+            {},
+          )}
+        >
+          Learn More
+        </GoButton>
       </Card>
       <Card>
         <CardDateInfo
@@ -56,10 +61,14 @@ const ManagedComponent: FC<{
             resident,
           )}
         />
-        <SlateCopy>
-          The latest date you can be held in a TDOC facility
-        </SlateCopy>
         <ExpirationDateReduction presenter={presenter} />
+        <GoButton
+          to={State.Resident.$.UsTnMoreInformation.ImportantDates.buildRelativePath(
+            {},
+          )}
+        >
+          Learn More
+        </GoButton>
       </Card>
     </section>
   );

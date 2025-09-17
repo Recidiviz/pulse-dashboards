@@ -20,17 +20,4 @@ import { ResidentsConfig } from "../../types";
 
 export const usTnResidentsConfig: ResidentsConfig = {
   home,
-  progress: {
-    home: {
-      title: "Your Progress",
-    },
-    progressPage: {
-      heading: "Calculating Important Dates",
-      body: "Add methodology explainer here",
-      linkText: "See date calculations",
-      urlSlug: "calculating-dates",
-      teaserText: `Learn more about how important dates are calculated,
-        including how good time affects your sentence and release date.`,
-    },
-  },
 };
