@@ -19,7 +19,7 @@
 
 import { useParams } from "next/navigation";
 import type React from "react";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 
 import NavRecordingPage from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/NavRecordingPage";
 import TranscriptionAdressForm from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/TranscriptionAddressForm";
@@ -63,6 +63,30 @@ const AudioRecordingPage: React.FC = () => {
     },
   });
 
+  const { data: intakeData, refetch: refetchIntakeData } = $api.useQuery(
+    "get",
+    "/intake/admin/{client_pseudo_id}",
+    {
+      params: {
+        path: { client_pseudo_id: id },
+      },
+      headers: {
+        Authorization: `Bearer ${useAuth().getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  useEffect(() => {
+    // check if the recordingsession is completed and intake needs address
+    if (sessionData?.status === "completed" && intakeData && !intakeData.address) {
+      setNeedsAddress(true);
+    }else{
+      setNeedsAddress(false);
+    }
+  }, [intakeData, sessionData]);
+
+
   if (clientLoading || sessionLoading) {
     return (
       <div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-screen">
@@ -76,6 +100,7 @@ const AudioRecordingPage: React.FC = () => {
   const handleAddressFormClose = () => {
     setNeedsAddress(false);
     refetchSession();
+    refetchIntakeData();
   };
 
   if (clientError || sessionError || !clientData) {
@@ -95,7 +120,6 @@ const AudioRecordingPage: React.FC = () => {
       </div>
     );
   }
-  // todo: validate if this intake need to show the address form
   if (needsAddress) {
     return (
       <TranscriptionAdressForm
@@ -111,11 +135,7 @@ const AudioRecordingPage: React.FC = () => {
 
   return (
     <QueueProvider getAccessToken={getAccessToken}>
-      <NavRecordingPage
-        clientData={clientData}
-        sessionData={sessionData || null}
-        onRefreshNeeded={() => refetchSession()}
-      />
+      <NavRecordingPage />
       <div className="min-h-[calc(100vh-65px)] self-stretch p-10 bg-[#f9fafa] flex flex-col items-start gap-5">
         <UserSummary
           clientData={clientData}

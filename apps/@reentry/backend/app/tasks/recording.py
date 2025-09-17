@@ -1,9 +1,12 @@
 from uuid import UUID
 
 import structlog
+from sqlalchemy.orm import selectinload
+from sqlmodel import select
 from taskiq import TaskiqDepends
 
 from app.core.db import AsyncSession, get_session
+from app.models.intake import Intake, IntakeStatus
 from app.models.recording import RecordingStatus
 from app.tasks.recording_assemble_audio import assemble_audio
 from app.tasks.recording_transcribe_audio import transcribe_audio
@@ -63,4 +66,38 @@ async def process_recording(
     recording_session.status = RecordingStatus.COMPLETED
     session.add(recording_session)
     await session.commit()
+
+    # Start the assessment if an address were already provided
+    try:
+        # finding the intake with address
+        statement = (
+            select(Intake)
+            .where(Intake.id == recording_session.intake_id)
+            .options(
+                selectinload(Intake.address),
+            )
+        )
+        result = await session.exec(statement)
+        intake = result.first()
+        await session.refresh(intake)
+        intake_has_address = (
+            intake.address and intake.address.city and intake.address.state
+        )
+        task_logger.info(
+            "Checking if intake can be completed",
+            intake_id=intake.id,
+            intake_status=intake.status,
+            intake_has_address=intake_has_address,
+        )
+        if intake_has_address:
+            await intake.update_status(session, IntakeStatus.COMPLETED)
+            task_logger.info("Intake status updated to COMPLETED", intake_id=intake.id)
+        else:
+            task_logger.info(
+                "Intake cannot be completed yet, missing address",
+                intake_id=intake.id,
+            )
+    except Exception as e:
+        task_logger.error("Failed to update intake status", error=str(e))
+
     await execution.log_progress(session, 100, "Done", logger=task_logger)

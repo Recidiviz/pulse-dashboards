@@ -14,6 +14,7 @@ from app.crud.recording_session import get_recording_session_by_id
 from app.models.intake import ClientAddress, Intake, IntakeStatus
 from app.services.recording_service import RecordingService
 from app.utils.permission_utils import check_access
+from app.models.recording import RecordingStatus
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,10 @@ security = HTTPBearer()
 
 
 class CompleteIntakeTrascriptionSubmission(BaseModel):
+    """update: approved transcription will be set to true automatically if address is provided,
+    since the action plan will be started rigth after the transcription is completed with address.
+    """
+
     street_address: Optional[str] = None
     city: Optional[str] = None
     state: Optional[str] = None
@@ -96,15 +101,18 @@ async def complete_intake_transcription(
             )
             session.add(new_address)
 
-    if data.approved is not None:
-        intake.recording_session.transcription_approved = data.approved
-        session.add(intake)
-
+    # Updated: August-28-25 approving the intake automatically if address is provided, it should start the action plan right after the transcription is completed
+    # if data.approved is not None:
+    #     intake.recording_session.transcription_approved = data.approved
+    #     session.add(intake)
+    intake.recording_session.transcription_approved = True
+    session.add(intake)
     await session.commit()
     await session.refresh(intake)
 
+    recording_session = intake.recording_session
     intake_has_address = intake.address.city and intake.address.state
-    if intake.recording_session.transcription_approved and intake_has_address:
+    if recording_session.status == RecordingStatus.COMPLETED and intake_has_address:
         await intake.update_status(session, IntakeStatus.COMPLETED)
         await session.commit()
         await session.refresh(intake)
