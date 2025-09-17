@@ -35,8 +35,11 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
   }
 
   get dataSource(): Query | undefined {
+
+    const { activeSystem, systemConfigFor } = this.rootStore.workflowsStore;
+
     const { search } =
-      this.rootStore.workflowsStore.systemConfigFor("INCARCERATION");
+      systemConfigFor( activeSystem === "ALL" || !activeSystem ? "SUPERVISION" : activeSystem);
 
     const stateCode = this.rootStore.currentTenantId;
     if (!stateCode) return;

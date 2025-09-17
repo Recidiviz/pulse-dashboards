@@ -199,7 +199,7 @@ export type SearchType =
   | "ALL";
 
 export const locationIdsBySearchType = {
-  DISTRICT: "district",
+  DISTRICT: "districtId",
   FACILITY: "facilityId",
   FACILITY_UNIT: "facilityUnitId",
   US_ID_CRC_FACILITY: "crcFacilityId",

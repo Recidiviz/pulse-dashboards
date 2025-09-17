@@ -43,7 +43,7 @@ describe("LocationSubscription tests", () => {
           caseloadDistrict: "TEST",
           activeSystem: "SUPERVISION",
           systemConfigFor: vi.fn(() => ({
-            search: [{ searchType: "DISTRICT", searchField: ["district"] }],
+            search: [{ searchType: "DISTRICT", searchField: ["districtId"] }],
           })),
         },
         firestoreStore: {
@@ -60,7 +60,7 @@ describe("LocationSubscription tests", () => {
       // generally we don't care about that in these tests
       expect(collectionMock).toHaveBeenCalledWith({ key: "locations" });
       expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
-      expect(whereMock).toHaveBeenCalledWith("idType", "==", "district");
+      expect(whereMock).toHaveBeenCalledWith("idType", "==", "districtId");
       expect(queryMock).toHaveBeenCalled();
     });
 
@@ -98,7 +98,7 @@ describe("LocationSubscription tests", () => {
                 }
               : {
                   search: [
-                    { searchType: "DISTRICT", searchField: ["district"] },
+                    { searchType: "DISTRICT", searchField: ["districtId"] },
                   ],
                 },
           ),
@@ -118,10 +118,10 @@ describe("LocationSubscription tests", () => {
         rootStoreMock.currentTenantId = "US_ID";
       });
 
-      expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ID");
       // This is choosing the locationIdType for location search
-      // instead of searchField for US_ID since the locations have idType = facilityId
-      expect(whereMock).toHaveBeenCalledWith("idType", "==", "facilityId");
+      // instead of searchField for US_ID since the locations have idType = districtId
+      expect(whereMock).toHaveBeenCalledWith("idType", "==", "districtId");
+      expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ID");
     });
   });
 
