@@ -63,39 +63,6 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
       // Remove the international code prefix, i.e. +1, for internal use
       const fromPhoneNumber = fromNumber.substring(2);
 
-      // Find the people that have this phone number, if they exist
-      const people = await prisma.person.findMany({
-        where: {
-          phoneNumber: fromPhoneNumber,
-        },
-      });
-
-      if (!people) {
-        console.log(
-          `Received incoming message from phone number without associated Person`,
-        );
-      }
-
-      // If the person exists and the person has opted out, update their record
-      if (people && optOutType) {
-        const isValidOptOut = isOptOut(optOutType);
-
-        await prisma.person.updateMany({
-          where: {
-            phoneNumber: fromPhoneNumber,
-          },
-          data: {
-            lastOptOutDate: isValidOptOut ? new Date() : null,
-          },
-        });
-
-        const updatedPseudoIds = people.map((person) => {
-          return person.pseudonymizedId;
-        });
-
-        console.log(`Updated opt-out for people: ${updatedPseudoIds}`);
-      }
-
       try {
         const bigQueryClient = new BigQuery({
           projectId: process.env["DATA_PLATFORM_PROJECT_ID"],
@@ -119,6 +86,44 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
         console.log("Logged incoming message to BigQuery");
       } catch (e) {
         captureException(`Failed to write incoming message to BQ: ${e}`);
+      }
+
+      try {
+        // Find the people that have this phone number, if they exist
+        const people = await prisma.person.findMany({
+          where: {
+            phoneNumber: fromPhoneNumber,
+          },
+        });
+
+        if (!people) {
+          console.log(
+            `Received incoming message from phone number without associated Person`,
+          );
+        }
+        // If the person exists and the person has opted out, update their record
+        if (people && optOutType) {
+          const isValidOptOut = isOptOut(optOutType);
+
+          await prisma.person.updateMany({
+            where: {
+              phoneNumber: fromPhoneNumber,
+            },
+            data: {
+              lastOptOutDate: isValidOptOut ? new Date() : null,
+            },
+          });
+
+          const updatedPseudoIds = people.map((person) => {
+            return person.pseudonymizedId;
+          });
+
+          console.log(`Updated opt-out for people: ${updatedPseudoIds}`);
+        }
+      } catch (e) {
+        captureException(
+          `Failed while trying to find person in DB with the incoming phone number. Check Twilio logs to see if the incoming message was an opt-out message. Error: ${e}`,
+        );
       }
 
       console.log("Incoming message handled");
