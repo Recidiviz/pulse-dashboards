@@ -24,7 +24,7 @@ import {
   startOfToday,
 } from "date-fns";
 import { DocumentData, Timestamp } from "firebase/firestore";
-import { pick } from "lodash";
+import { isEmpty, pick } from "lodash";
 import { action, computed, makeObservable, when } from "mobx";
 
 import { OpportunityType } from "~datatypes";
@@ -596,7 +596,10 @@ export class OpportunityBase<
       : `Marked ${this.person.displayName} as "${toastStatus}" for ${this.config.label}`;
   }
 
-  async setDenialReasons(reasons: string[]): Promise<void> {
+  async setDenialReasons(
+    reasons: string[],
+    updatedUserInput?: Record<string, string>,
+  ): Promise<void> {
     if (reasons.length === 0) {
       // If the reasons are empty, this is equivalent to deleting the denial
       await this.deleteOpportunityDenialAndSnooze();
@@ -611,15 +614,16 @@ export class OpportunityBase<
       await this.deleteSubmitted();
     }
 
-    // clear irrelevant "other" text if necessary
-    const deletions = reasonsIncludesOtherKey(reasons)
-      ? undefined
-      : { otherReason: true };
+    // clear irrelevant reason text if necessary
+    const deletions = {
+      otherReason: !reasonsIncludesOtherKey(reasons),
+      userInput: isEmpty(updatedUserInput),
+    };
 
     await this.rootStore.firestoreStore.updateOpportunityDenial(
       this.currentUserEmail,
       this,
-      { reasons },
+      { reasons, userInput: updatedUserInput },
       deletions,
     );
 

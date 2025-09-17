@@ -25,6 +25,7 @@ import {
   setDoc,
   writeBatch,
 } from "firebase/firestore";
+import { omit } from "lodash";
 import tk from "timekeeper";
 import { expect, Mock } from "vitest";
 
@@ -376,6 +377,86 @@ describe("FirestoreStore", () => {
       ]);
     });
 
+    describe("updateOpportunityDenial", () => {
+      const testEmail = "test-email";
+      const expectedUpdateLog = { by: testEmail, date: "mock-timestamp" };
+
+      test("calls deleteField() for deletion fields set to true", async () => {
+        const updateSpy = vi.spyOn(store, "updateOpportunity");
+        const update = {
+          reasons: ["reason1", "reason2"],
+        };
+
+        await store.updateOpportunityDenial(testEmail, opp, update, {
+          otherReason: true,
+          userInput: true,
+        });
+
+        expect(updateSpy).toHaveBeenCalledWith(opp, {
+          denial: {
+            ...update,
+            otherReason: "mock-delete-fn",
+            userInput: "mock-delete-fn",
+
+            updated: expectedUpdateLog,
+          },
+        });
+      });
+
+      test("doesn't call deleteField() for false deletion fields", async () => {
+        const updateSpy = vi.spyOn(store, "updateOpportunity");
+        const update = {
+          reasons: ["reason1", "reason2"],
+        };
+
+        await store.updateOpportunityDenial(testEmail, opp, update, {
+          userInput: false,
+          otherReason: false,
+        });
+
+        expect(updateSpy).toHaveBeenCalledWith(opp, {
+          denial: {
+            ...update,
+            updated: expectedUpdateLog,
+          },
+        });
+      });
+
+      test("doesn't call deleteField() for when deletionFields is undefined", async () => {
+        const updateSpy = vi.spyOn(store, "updateOpportunity");
+        const update = {
+          reasons: ["reason1", "reason2"],
+        };
+
+        await store.updateOpportunityDenial(testEmail, opp, update);
+
+        expect(updateSpy).toHaveBeenCalledWith(opp, {
+          denial: {
+            ...update,
+            updated: expectedUpdateLog,
+          },
+        });
+      });
+
+      test("Updates opportunity with defined fields from fieldUpdates", async () => {
+        const updateSpy = vi.spyOn(store, "updateOpportunity");
+        const update = {
+          reasons: ["reason1", "reason2", "other"],
+          userInput: { reason1: "reason 1 input", reason2: "reason 2 input" },
+          otherReason: undefined,
+        };
+
+        await store.updateOpportunityDenial(testEmail, opp, update);
+
+        expect(updateSpy).toHaveBeenCalledWith(opp, {
+          denial: {
+            ...omit(update, "otherReason"),
+            updated: expectedUpdateLog,
+          },
+        });
+      });
+    });
+
     test("updateOpportunityAutoSnooze", async () => {
       const update = {
         snoozeUntil: "2024-01-01",
@@ -519,6 +600,7 @@ describe("FirestoreStore", () => {
           type: "DENIAL" as any,
           actionPlan: "test-plan",
           denialReasons: ["reason1", "reason2"],
+          userInput: { reason1: "reason 1 input", reason2: "reason 2 input" },
           requestedSnoozeLength: 30,
           by: "test-officer-email",
           date: mockServerTimestamp(),
@@ -536,6 +618,10 @@ describe("FirestoreStore", () => {
               date: "mock-timestamp",
               type: "DENIAL",
               actionPlan: "test-plan",
+              userInput: {
+                reason1: "reason 1 input",
+                reason2: "reason 2 input",
+              },
               denialReasons: ["reason1", "reason2"],
               requestedSnoozeLength: 30,
               isStale: false,
@@ -854,7 +940,11 @@ describe("FirestoreStore", () => {
         .spyOn(store, "updateOpportunity")
         .mockResolvedValue();
 
-      const denialUpdate = { reasons: ["reason1"], otherReason: "other" };
+      const denialUpdate = {
+        reasons: ["reason1"],
+        userInput: { reason1: "user input for reason 1" },
+        otherReason: "other",
+      };
       mockServerTimestamp.mockReturnValue("mock-timestamp");
 
       await store.updateOpportunityDenial(

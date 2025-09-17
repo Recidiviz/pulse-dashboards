@@ -546,7 +546,7 @@ describe("setDenialReasons", () => {
       mockUser.info.email,
       opp,
       { reasons },
-      { otherReason: true },
+      { otherReason: true, userInput: true },
     );
   });
 
@@ -570,7 +570,35 @@ describe("setDenialReasons", () => {
       mockUser.info.email,
       opp,
       { reasons },
-      undefined,
+      { otherReason: false, userInput: true },
+    );
+  });
+
+  test("doesn't delete userInput when input isn't empty", async () => {
+    const reasons = ["test1"];
+    const userInput = { test1: "test 1 user input" };
+
+    await opp.setDenialReasons(reasons, userInput);
+
+    expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
+      mockUser.info.email,
+      opp,
+      { reasons, userInput },
+      { otherReason: true, userInput: false },
+    );
+  });
+
+  test("deletes userInput when input is empty", async () => {
+    const reasons = ["test1"];
+    const userInput = {};
+
+    await opp.setDenialReasons(reasons, userInput);
+
+    expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
+      mockUser.info.email,
+      opp,
+      { reasons, userInput },
+      { otherReason: true, userInput: true },
     );
   });
 

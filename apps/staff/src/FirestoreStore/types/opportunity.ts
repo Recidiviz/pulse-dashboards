@@ -30,9 +30,14 @@ export type SharedSnoozeUpdate = {
 };
 export type Denial<DenialReason = string> = {
   reasons: DenialReason[];
+  // Maps denial reasons to the text input submitted alongside that particular
+  // denial reason.
+  userInput?: Record<string, string>;
+  // TODO(#9612): Move "Other" reason into the userInput mapping
   otherReason?: string;
   updated?: UpdateLog;
 };
+
 export type Submission = UpdateLog & {
   subcategory?: string;
 };
@@ -58,10 +63,14 @@ export type OfficerApprovalAction = {
 
 export type OfficerDenialAction = {
   type: "DENIAL";
+  // TODO(#9611): Move action plan input to the userInput mapping
   actionPlan?: string;
   denialReasons: string[];
   // Undefined for indefinite snoozes
   requestedSnoozeLength?: number;
+  // Maps denial reasons to the text input submitted alongside that particular
+  // denial reason.
+  userInput?: Record<string, string>;
 };
 
 export type OfficerAction = UpdateLog &

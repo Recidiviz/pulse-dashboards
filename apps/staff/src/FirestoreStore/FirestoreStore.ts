@@ -496,9 +496,11 @@ export default class FirestoreStore {
     fieldUpdates: {
       reasons?: string[];
       otherReason?: string;
+      userInput?: Record<string, string>;
     },
     deleteFields?: {
       otherReason: boolean;
+      userInput: boolean;
     },
   ): Promise<void> {
     // Firestore will reject any undefined values so filter them out

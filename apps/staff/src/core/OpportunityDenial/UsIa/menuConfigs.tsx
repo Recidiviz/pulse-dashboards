@@ -17,66 +17,81 @@
 
 import toast from "react-hot-toast";
 
-import { UsIaEarlyDischargeOpportunity, UsIaSupervisionLevelDowngradeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
+import {
+  UsIaEarlyDischargeOpportunity,
+  UsIaSupervisionLevelDowngradeOpportunity,
+} from "../../../WorkflowsStore/Opportunity/UsIa";
 import { OPPORTUNITY_SIDE_PANEL_VIEW } from "../../OpportunityCaseloadView/types";
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
 import { reasonsIncludesKey } from "../../utils/workflowsUtils";
-import { EarlyDischargeMenuConfig, MenuLabelWithOptions, SupervisionLevelDowngradeMenuConfig } from "./types";
+import {
+  EarlyDischargeMenuConfig,
+  MenuLabelWithOptions,
+  SupervisionLevelDowngradeMenuConfig,
+} from "./types";
 
-
-export const getSldButtonConfig = ({ opportunity, setCurrentView, deleteSubmitted }: {
+export const getSldButtonConfig = ({
+  opportunity,
+  setCurrentView,
+  deleteSubmitted,
+}: {
   opportunity: UsIaSupervisionLevelDowngradeOpportunity;
   setCurrentView: (view: OPPORTUNITY_SIDE_PANEL_VIEW) => void;
   deleteSubmitted: () => Promise<void>;
 }): MenuLabelWithOptions => {
   const { clientStatus } = opportunity;
 
-    const eligibleOptions = [
-      {
-        label: "Approve Downgrade",
-        onClick: () => setCurrentView("US_IA_REVIEW_DOWNGRADE"),
-        tooltip: "To confirm all requirements checked",
-      },
-      {
-        label: "Deny Downgrade",
-        onClick: () => setCurrentView("MARK_INELIGIBLE"),
-        tooltip: "To select a denial reason",
-      },
-    ];
-    const menuConfig: SupervisionLevelDowngradeMenuConfig = {
-      ELIGIBLE_NOW: { options: eligibleOptions },
-      PENDING_ELIGIBILITY: { options: eligibleOptions },
-      DENIED: {
-        options: [
-          {
-            label: "Change Snooze/Denial Reason",
-            onClick: () => {
-              setCurrentView("MARK_INELIGIBLE");
-            },
-            tooltip: "Update denial reason or snooze length",
+  const eligibleOptions = [
+    {
+      label: "Approve Downgrade",
+      onClick: () => setCurrentView("US_IA_REVIEW_DOWNGRADE"),
+      tooltip: "To confirm all requirements checked",
+    },
+    {
+      label: "Deny Downgrade",
+      onClick: () => setCurrentView("MARK_INELIGIBLE"),
+      tooltip: "To select a denial reason",
+    },
+  ];
+  const menuConfig: SupervisionLevelDowngradeMenuConfig = {
+    ELIGIBLE_NOW: { options: eligibleOptions },
+    PENDING_ELIGIBILITY: { options: eligibleOptions },
+    DENIED: {
+      options: [
+        {
+          label: "Change Snooze/Denial Reason",
+          onClick: () => {
+            setCurrentView("MARK_INELIGIBLE");
           },
-        ],
-      },
-      SUBMITTED: {
-        options: [
-          {
-            label: "Revert from Downgraded",
-            onClick: () => deleteSubmitted(),
-            tooltip: "To move to 'Eligible Now'",
-          },
-          {
-            label: "Mark as Ineligible",
-            onClick: () => setCurrentView("MARK_INELIGIBLE"),
-            tooltip: "To move to 'Snoozed'",
-          },
-        ],
-      },
-    };
+          tooltip: "Update denial reason or snooze length",
+        },
+      ],
+    },
+    SUBMITTED: {
+      options: [
+        {
+          label: "Revert from Downgraded",
+          onClick: () => deleteSubmitted(),
+          tooltip: "To move to 'Eligible Now'",
+        },
+        {
+          label: "Mark as Ineligible",
+          onClick: () => setCurrentView("MARK_INELIGIBLE"),
+          tooltip: "To move to 'Snoozed'",
+        },
+      ],
+    },
+  };
 
-    return menuConfig[clientStatus];
-}
+  return menuConfig[clientStatus];
+};
 
-export const getEdButtonConfig = ({ opportunity, setCurrentView, markSubmittedAndToast, deleteSubmitted }: {
+export const getEdButtonConfig = ({
+  opportunity,
+  setCurrentView,
+  markSubmittedAndToast,
+  deleteSubmitted,
+}: {
   opportunity: UsIaEarlyDischargeOpportunity;
   setCurrentView: (view: OPPORTUNITY_SIDE_PANEL_VIEW) => void;
   markSubmittedAndToast: (subcategory?: string) => Promise<void>;
@@ -89,10 +104,11 @@ export const getEdButtonConfig = ({ opportunity, setCurrentView, markSubmittedAn
 
     if (latestAction?.type === "DENIAL") {
       const reasons = latestAction.denialReasons;
+      const userInput = latestAction.userInput;
 
       // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
       await opportunity.markActionHistoryStale();
-      await opportunity.setDenialReasons(reasons);
+      await opportunity.setDenialReasons(reasons, userInput);
 
       if (latestAction.requestedSnoozeLength) {
         await opportunity.setManualSnooze(
@@ -261,4 +277,4 @@ export const getEdButtonConfig = ({ opportunity, setCurrentView, markSubmittedAn
   };
 
   return menuConfig[clientStatus];
-}
+};
