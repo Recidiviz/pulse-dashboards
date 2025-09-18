@@ -96,65 +96,24 @@
         "staging": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA",
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:latest"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes/server:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes/server:latest"
           ]
         },
         "cherry-pick": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes/server:$COMMIT_SHA"
           ]
         },
         "demo": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes/server:$COMMIT_SHA"
           ]
         }
       },
       "defaultConfiguration": "dev"
-    },
-    "deploy-app": {
-      "executor": "@nx-extend/gcp-cloud-run:deploy",
-      "dependsOn": ["load-env-files"],
-      "options": {
-        "region": "us-central1",
-        "envVars": {
-          "AUTH0_DOMAIN": "$AUTH0_DOMAIN",
-          "AUTH0_AUDIENCE": "$AUTH0_AUDIENCE",
-          "SENTRY_DSN": "$SENTRY_DSN",
-          "SENTRY_ENV": "$SENTRY_ENV",
-          "VERTEX_PROJECT_ID": "$VERTEX_PROJECT_ID",
-          "VERTEX_ENGINE_ID": "$VERTEX_ENGINE_ID",
-          "CASE_NOTES_BQ_TABLE_ADDRESS": "$CASE_NOTES_BQ_TABLE_ADDRESS",
-          "LOGS_BQ_PROJECT_ID": "$LOGS_BQ_PROJECT_ID",
-          "LOGS_BQ_DATASET_ID": "$LOGS_BQ_DATASET_ID",
-          "LOGS_BQ_TABLE_ID": "$LOGS_BQ_TABLE_ID"
-        }
-      },
-      "configurations": {
-        "staging": {
-          "project": "recidiviz-dashboard-staging",
-          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA",
-          "memory": "512Mi",
-          "serviceAccount": "case-notes-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
-        },
-        "production": {
-          "project": "recidiviz-dashboard-production",
-          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA",
-          "memory": "512Mi",
-          "serviceAccount": "case-notes-server@recidiviz-dashboard-production.iam.gserviceaccount.com"
-        },
-        "demo": {
-          "name": "case-notes-server-demo",
-          "project": "recidiviz-dashboard-staging",
-          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA",
-          "memory": "512Mi",
-          "serviceAccount": "case-notes-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
-        }
-      },
-      "defaultConfiguration": "staging"
     }
   }
 }

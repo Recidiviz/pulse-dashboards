@@ -609,7 +609,18 @@ if (
           );
         }
 
-        await $`COMMIT_SHA=${currentRevision} nx deploy-app case-notes-server --configuration ${deployEnv}`.pipe(
+        // Deploy the import, migration, and server infrastructure changes for the applicable environment
+        let stack;
+        if (deployEnv === "staging") {
+          stack = `recidiviz-dashboard-${deployEnv}--case-notes`;
+        } else if (deployEnv === "production") {
+          stack = `recidiviz-dashboard-${deployEnv}--case-notes`;
+        } else if (deployEnv === "demo") {
+          stack = "recidiviz-dashboard-staging--case-notes-demo";
+        }
+
+        await $`yarn atmos:apply apps/case-notes -s ${stack} -- -auto-approve \
+          -var server_container_version=${currentRevision}`.pipe(
           process.stdout,
         );
 
