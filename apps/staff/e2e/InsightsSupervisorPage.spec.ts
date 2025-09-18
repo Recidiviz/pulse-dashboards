@@ -42,7 +42,7 @@ test.describe("Supervisors Page", () => {
 
       await page.goto("/");
       await expect(
-        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+        page.getByRole("menuitem", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
         "How might I work with my team to improve these metrics?",
@@ -54,11 +54,11 @@ test.describe("Supervisors Page", () => {
         .first()
         .click();
       await expect(
-        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+        page.getByRole("menuitem", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await page.goBack();
       await expect(
-        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+        page.getByRole("menuitem", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(page.getByRole("main")).not.toContainText(
         "How might I work with my team to improve these metrics?",

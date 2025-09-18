@@ -28,7 +28,7 @@ test.describe("Supervisors List Page", () => {
       await expect(page.locator(".UserAvatar")).toBeVisible({ timeout: 50000 });
       await switchTenant(page, "Michigan");
       await expect(
-        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+        page.getByRole("menuitem", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
         "Select a supervisor to view their overview",
@@ -39,7 +39,7 @@ test.describe("Supervisors List Page", () => {
       ).toBeVisible();
       await switchTenant(page, "Tennessee");
       await expect(
-        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+        page.getByRole("menuitem", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
     });
   });
@@ -67,7 +67,7 @@ test.describe("Supervisors List Page", () => {
 
       await page.goto("/");
       await expect(
-        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+        page.getByRole("menuitem", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
         "Select a supervisor to view their overview",
@@ -100,7 +100,7 @@ test.describe("Supervisors List Page", () => {
 
       await page.goto("/");
       await expect(
-        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+        page.getByRole("menuitem", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(
         page.getByRole("link", { name: "Alejandro D Gonzalez" }),
@@ -130,7 +130,7 @@ test.describe("Supervisors List Page", () => {
 
       await page.goto("/");
       await expect(
-        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+        page.getByRole("menuitem", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(
         page.getByText("Alejandro D Gonzalez Overview"),

@@ -205,7 +205,10 @@ const MainLogoNavLink = styled(Link)`
   ${Separator} {
     padding: 0 0.75rem;
   }
-  &:focus, &:focus-within, &:active, &:hover {
+  &:focus,
+  &:focus-within,
+  &:active,
+  &:hover {
     border: 1px solid ${palette.signal.links} !important;
     border-radius: 8px;
   }
@@ -598,6 +601,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
                     aria-label="Profile dropdown button"
                     role="menuitem"
                     tabIndex={0}
+                    className="ProfileDropdownButton"
                   >
                     <UserAvatar />
                   </DropdownToggle>

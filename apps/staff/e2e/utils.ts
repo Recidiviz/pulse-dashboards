@@ -22,7 +22,7 @@ export const switchTenant = async (
   stateName: string,
 ): Promise<void> => {
   // TODO #5162 - find by locator .ProfileLink once the class is added to the button in all layouts
-  await page.getByRole("navigation").getByRole("button").click();
+  await page.getByRole("navigation").locator(".ProfileDropdownButton").click();
   await page.getByRole("link", { name: "Profile" }).click();
   await page.getByRole("button", { name: stateName }).click();
 };
