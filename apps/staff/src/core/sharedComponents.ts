@@ -137,6 +137,10 @@ export const MenuItem = styled.div<{ disabled?: boolean }>`
     height: 100%;
     ${({ disabled }) => disabled && `color: ${palette.slate30};`}
   }
+  &:has(+ [class*="CharacterCountTextField"]) {
+    > .Checkbox__container{
+    margin-bottom: unset;
+  }
 `;
 
 export const SidePanelContents = styled.div`

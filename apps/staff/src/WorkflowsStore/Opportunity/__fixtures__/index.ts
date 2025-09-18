@@ -81,6 +81,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   denialReasons: {},
   indefiniteDenialReasons: {},
   maxSnoozeDaysByDenialReason: {},
+  denialInputSettings: {},
   reasonsRequiringApproval: [],
   methodologyUrl: "",
   homepagePosition: 1,

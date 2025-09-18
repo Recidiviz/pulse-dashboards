@@ -21,9 +21,12 @@ import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
 
+import { CharacterCountTextField } from "../../components/CharacterCountTextField";
 import Checkbox from "../../components/Checkbox/Checkbox";
-import { DenialReasonsMap } from "../../WorkflowsStore";
+import { DenialInputSettings, DenialReasonsMap } from "../../WorkflowsStore";
+import { DEFAULT_MAX_CHAR_LENGTH, DEFAULT_MIN_CHAR_LENGTH } from "../constants";
 import { MenuItem, SidePanelHeader } from "../sharedComponents";
+import { reasonsIncludesKey } from "../utils/workflowsUtils";
 
 const SubheadingWrapper = styled.div`
   display: flex;
@@ -51,15 +54,21 @@ export const DenialReasonSection = function DenialReasonSection({
   selectedReasons,
   sectionHeading,
   handleSelectReason,
+  handleUserInput,
   disabledReasons,
   sectionSubheading,
+  denialInputSettings,
+  userInput,
 }: {
   denialReasonsMap: DenialReasonsMap;
   selectedReasons: string[];
   disabledReasons: string[];
   handleSelectReason: (code: string) => void;
+  handleUserInput: (code: string, input: string) => void;
   sectionHeading: string;
   sectionSubheading?: string;
+  denialInputSettings: Record<string, DenialInputSettings>;
+  userInput: Record<string, string>;
 }) {
   return (
     <>
@@ -77,17 +86,44 @@ export const DenialReasonSection = function DenialReasonSection({
       {Object.entries(denialReasonsMap).map(([code, description]) => {
         const disabled = disabledReasons.includes(code);
         return (
-          <MenuItem key={code} disabled={disabled}>
-            <Checkbox
-              value={code}
-              checked={selectedReasons.includes(code)}
-              name={`denial_reason-${code}`}
-              onChange={() => handleSelectReason(code)}
-              disabled={disabled}
-            >
-              {description}
-            </Checkbox>
-          </MenuItem>
+          <>
+            <MenuItem key={code} disabled={disabled}>
+              <Checkbox
+                value={code}
+                checked={selectedReasons.includes(code)}
+                name={`denial_reason-${code}`}
+                onChange={() => handleSelectReason(code)}
+                disabled={disabled}
+              >
+                {description}
+              </Checkbox>
+            </MenuItem>
+            {code in denialInputSettings &&
+              reasonsIncludesKey(code, selectedReasons) && (
+                <CharacterCountTextField
+                  key={code}
+                  data-testid={`${code}ReasonInput`}
+                  id={`${code}ReasonInput`}
+                  maxLength={
+                    denialInputSettings[code].maxCharacters ??
+                    DEFAULT_MAX_CHAR_LENGTH
+                  }
+                  minLength={
+                    denialInputSettings[code].minCharacters ??
+                    DEFAULT_MIN_CHAR_LENGTH
+                  }
+                  value={userInput[code] ?? ""}
+                  placeholder={
+                    denialInputSettings[code].placeholder ??
+                    "Please specify a reason…"
+                  }
+                  label={denialInputSettings[code].heading}
+                  onChange={(newValue) => handleUserInput(code, newValue)}
+                  inputType={denialInputSettings[code].inputType}
+                  prefix={denialInputSettings[code].prefix}
+                />
+              )}
+          </>
         );
       })}
     </>

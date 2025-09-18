@@ -19,6 +19,7 @@ import { OpportunityType, SystemId } from "~datatypes";
 
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import {
+  DenialInputSettings,
   DenialReasonsMap,
   Opportunity,
   OpportunityNotification,
@@ -50,10 +51,14 @@ export interface OpportunityConfiguration {
   hideDenialRevert?: boolean;
   isEnabled: boolean;
   methodologyUrl: string;
+
+  // TODO(#9670): Consolidate denial reason configurability into a single field.
   denialReasons: DenialReasonsMap;
   indefiniteDenialReasons: DenialReasonsMap;
   reasonsRequiringApproval: string[];
   maxSnoozeDaysByDenialReason: Record<string, number | undefined>;
+  denialInputSettings: Record<string, DenialInputSettings>;
+
   sidebarComponents: string[];
   isAlert?: boolean;
   notifications?: OpportunityNotification[];

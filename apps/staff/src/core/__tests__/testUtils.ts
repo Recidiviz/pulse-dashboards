@@ -123,6 +123,7 @@ export const mockOpportunity: Opportunity<Client> = {
     indefiniteDenialReasons: {},
     reasonsRequiringApproval: [],
     maxSnoozeDaysByDenialReason: {},
+    denialInputSettings: {},
     methodologyUrl: "https://example.com",
     sidebarComponents: [],
     isAlert: false,

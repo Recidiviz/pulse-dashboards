@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { typography } from "@recidiviz/design-system";
-import { rem } from "polished";
+import { spacing, typography } from "@recidiviz/design-system";
+import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -46,6 +46,26 @@ const Count = styled.span<{ invalid: boolean }>`
     invalid ? palette.data.crimson1 : palette.slate85};
 `;
 
+const NumberInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+`;
+
+const NumberInput = styled.input`
+  background: ${palette.marble3};
+  border-radius: ${rem(4)};
+  border: 2px solid transparent;
+  margin: ${rem(spacing.xs)};
+  margin-left: 0;
+  width: 100%;
+  min-height: 2rem;
+
+  &:focus {
+    border-color: ${rgba(palette.slate, 0.1)};
+  }
+`;
+
 type CharacterCountTextFieldProps = {
   id?: string;
   value: string;
@@ -56,6 +76,8 @@ type CharacterCountTextFieldProps = {
   isOptional?: boolean;
   header?: string;
   label?: string;
+  inputType?: "number" | "text";
+  prefix?: string;
 };
 
 export const CharacterCountTextField: React.FC<
@@ -70,13 +92,26 @@ export const CharacterCountTextField: React.FC<
   isOptional = false,
   header,
   label,
+  inputType,
+  prefix,
 }) => {
   const invalid = isOptional
     ? value.length > 0 && value.length < minLength // If it's an optional field, and the user has entered something, enforce minLength requirement
     : value.length < minLength;
 
+  const inputProps = {
+    id,
+    "data-testid": id,
+    minLength,
+    maxLength,
+    placeholder,
+    value,
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+      onChange(e.target.value),
+  };
+
   return (
-    <div>
+    <div className="CharacterCountTextField">
       {header && (
         <TextFieldHeader>
           {header}
@@ -90,15 +125,14 @@ export const CharacterCountTextField: React.FC<
             <Count invalid={invalid}>{value.length}</Count> / {maxLength}
           </span>
         </Label>
-        <TextAreaInput
-          id={id}
-          data-testid={id}
-          minLength={minLength}
-          maxLength={maxLength}
-          placeholder={placeholder}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
+        {inputType === "number" ? (
+          <NumberInputWrapper>
+            {prefix && <div>{prefix}</div>}
+            <NumberInput type="number" {...inputProps} />
+          </NumberInputWrapper>
+        ) : (
+          <TextAreaInput {...inputProps} />
+        )}
       </Section>
     </div>
   );

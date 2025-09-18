@@ -215,11 +215,24 @@ const MarkedIneligibleReasons: React.FC<{
       {opportunity.denial && (
         <div>
           {ineligibleReasonsList}
-          {opportunity.denial?.otherReason ? (
+          {opportunity.denial.otherReason ? (
             <OtherReasonText>
               &quot;{opportunity.denial.otherReason}&quot;
             </OtherReasonText>
           ) : null}
+          {opportunity.denial.userInput
+            ? Object.entries(opportunity.denial.userInput).map(
+                ([code, input]) => {
+                  return (
+                    <OtherReasonText>
+                      &quot;
+                      {`${code}: ${opportunity.config.denialInputSettings[code].prefix ?? ""}${input}`}
+                      &quot;
+                    </OtherReasonText>
+                  );
+                },
+              )
+            : null}
         </div>
       )}
     </MarkedIneligibleReasonsText>

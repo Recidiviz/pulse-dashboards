@@ -63,6 +63,19 @@ export const PRIORITY_STATUS_RANKED = ["HIGH", "NORMAL"] as const;
 
 export type DenialReasonsMap = Record<string, string>;
 
+/**
+ * The settings for a denial reason's text input field
+ */
+export type DenialInputSettings = {
+  required: boolean;
+  heading?: string;
+  placeholder?: string;
+  inputType?: "number" | "text";
+  minCharacters?: number;
+  maxCharacters?: number;
+  prefix?: string;
+};
+
 export type DefaultEligibility = "ELIGIBLE" | "MAYBE";
 
 export type OpportunityCaseNote = {

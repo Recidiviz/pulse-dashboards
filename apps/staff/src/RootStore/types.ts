@@ -92,6 +92,7 @@ export type FeatureVariant =
   | "usMoWorkRelease"
   | "indefiniteSnooze"
   | "usIdDistrictSearch"
+  | "usIaFinesAndFees"
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
@@ -174,6 +175,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMoWorkRelease: {},
   indefiniteSnooze: {},
   usIdDistrictSearch: {},
+  usIaFinesAndFees: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

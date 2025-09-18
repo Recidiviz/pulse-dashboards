@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DenialInputSettings } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsIaEarlyDischargeConfiguration extends ApiOpportunityConfiguration {
@@ -48,5 +49,24 @@ export class UsIaEarlyDischargeConfiguration extends ApiOpportunityConfiguration
 
   get reasonsRequiringApproval() {
     return ["INTERSTATE (IC-IN)", "COURT"];
+  }
+
+  // TODO(#9611): Add "PUBLIC SAFETY RISK" mapping for action plan input
+  get denialInputSettings(): Record<string, DenialInputSettings> {
+    if (this.userStore.activeFeatureVariants.usIaFinesAndFees) {
+      return {
+        "FINES & FEES": {
+          required: true,
+          heading: "Remaining fees (COFO + Restitution):",
+          placeholder: "Please enter the total amount of remaining fees",
+          inputType: "number",
+          minCharacters: 1,
+          maxCharacters: 10,
+          prefix: "$",
+        },
+      };
+    } else {
+      return {};
+    }
   }
 }

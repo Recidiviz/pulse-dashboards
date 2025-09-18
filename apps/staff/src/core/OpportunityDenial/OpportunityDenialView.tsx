@@ -17,7 +17,7 @@
 
 import { Sans14, typography } from "@recidiviz/design-system";
 import { parseISO, startOfToday } from "date-fns";
-import { isEmpty, isEqual, omit, xor } from "lodash";
+import { isEmpty, isEqual, omit, pick, some, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -98,6 +98,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const [reasons, setReasons] = useState<string[]>(initialDenialReasons ?? []);
   const [disabledReasons, setDisabledReasons] = useState<string[]>([]);
+  const [userInput, setUserInput] = useState<Record<string, string>>(
+    opportunity?.denial?.userInput ?? {},
+  );
   const [otherReason, setOtherReason] = useState<string>(
     opportunity?.denial?.otherReason ?? "",
   );
@@ -115,7 +118,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   if (!opportunity) return null;
 
-  const snoozeConfig = opportunity.config.snooze;
+  const { snooze: snoozeConfig, denialInputSettings } = opportunity.config;
 
   const snoozeEnabled = snoozeConfig !== undefined;
 
@@ -154,7 +157,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     if (isIaEDOpportunity) {
       await opportunity.markActionHistoryStale();
     }
-    await opportunity.setDenialReasons(reasons);
+    await opportunity.setDenialReasons(reasons, userInput);
     await opportunity.setOtherReasonText(otherReason);
     if (snoozeEnabled) {
       if (maxManualSnoozeDays) {
@@ -185,6 +188,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     await opportunity.setOfficerAction({
       type: "DENIAL",
       denialReasons: reasons,
+      userInput,
     });
 
     toast(
@@ -243,19 +247,39 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     reasonsIncludesOtherKey(reasons) &&
     !(otherReason === opportunity.denial?.otherReason);
 
+  const userInputChanged = !isEqual(
+    userInput,
+    opportunity.denial?.userInput ?? {},
+  );
+
   const reasonsUnchanged =
     isEqual(new Set(reasons), new Set(opportunity.denial?.reasons)) &&
-    !otherReasonChanged;
+    !otherReasonChanged &&
+    !userInputChanged;
 
   const sliderUnchanged =
     sliderDays === opportunity?.manualSnooze?.snoozeForDays ||
     !maxManualSnoozeDays; // true if autoSnooze
 
+  // The denial input settings for selected reasons
+  const inputSettingsForSelectedReasons = pick(denialInputSettings, reasons);
+
+  const userInputInvalid = !isEmpty(inputSettingsForSelectedReasons)
+    ? some(
+        inputSettingsForSelectedReasons,
+        (settings, code) =>
+          settings.required &&
+          (!(code in userInput) ||
+            userInput[code].length < (settings.minCharacters ?? 1)),
+      )
+    : false;
+
   const disableSaveButton =
     (reasonsUnchanged && (sliderUnchanged || reasons.length === 0)) ||
     unsetSlider ||
     otherReasonInvalid ||
-    saveInProgress;
+    saveInProgress ||
+    userInputInvalid;
 
   const snoozeUntilDate = autoSnoozeUntil
     ? parseISO(autoSnoozeUntil)
@@ -309,6 +333,15 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const showSnoozeSliderAndSaveButton = !isIaEDOpportunity; // The opportunities listed here will render their own slider and save button
 
+  const handleUserInput = (code: string, userInputForCode: string) => {
+    if (!userInputForCode) {
+      // Don't save empty strings
+      setUserInput({ ...omit(userInput, code) });
+    } else {
+      setUserInput({ ...userInput, [code]: userInputForCode });
+    }
+  };
+
   const handleSelectReason = (code: string) => {
     let updatedReasons = xor(reasons, [code]).sort();
 
@@ -334,6 +367,8 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         setAutoSnoozeUntil(undefined);
       }
     }
+    // We only save user input for selected reasons
+    setUserInput(pick(userInput, updatedReasons));
   };
 
   return (
@@ -348,6 +383,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         disabledReasons={disabledReasons}
         sectionHeading={opportunity.denialViewPrompt}
         handleSelectReason={handleSelectReason}
+        handleUserInput={handleUserInput}
+        denialInputSettings={denialInputSettings}
+        userInput={userInput}
       />
       {reasonsIncludesOtherKey(reasons) && (
         <CharacterCountTextField
@@ -370,6 +408,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           sectionSubheading={
             opportunity.config.indefiniteSnoozeSectionSubheading
           }
+          handleUserInput={handleUserInput}
+          denialInputSettings={denialInputSettings}
+          userInput={userInput}
         />
       )}
       {isIaEDOpportunity && (
@@ -381,6 +422,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           onSave={handleSave}
           snoozeSlider={snoozeSlider || undefined}
           disableSaveButton={disableSaveButton}
+          userInput={userInput}
         />
       )}
       {showSnoozeSliderAndSaveButton && (

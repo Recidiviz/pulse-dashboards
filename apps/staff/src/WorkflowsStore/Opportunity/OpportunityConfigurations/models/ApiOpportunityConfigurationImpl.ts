@@ -28,6 +28,7 @@ import {
 } from "../../../../RootStore/types";
 import UserStore from "../../../../RootStore/UserStore";
 import {
+  DenialInputSettings,
   OpportunityRequirement,
   OpportunityTab,
   OpportunityTabGroups,
@@ -414,5 +415,12 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
    */
   get reasonsRequiringApproval(): string[] {
     return [];
+  }
+
+  /**
+   * Used to configure which denial reasons require text input from the user.
+   */
+  get denialInputSettings(): Record<string, DenialInputSettings> {
+    return {};
   }
 }

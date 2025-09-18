@@ -40,6 +40,7 @@ export const UsIaManageActionPlan = ({
   onSubmit,
   onSave,
   snoozeSlider,
+  userInput,
 }: {
   opportunity: UsIaEarlyDischargeOpportunity;
   reasons: string[];
@@ -48,6 +49,7 @@ export const UsIaManageActionPlan = ({
   onSubmit: () => void;
   onSave: () => void;
   snoozeSlider?: JSX.Element;
+  userInput: Record<string, string>;
 }) => {
   const [actionPlanText, setActionPlanText] = useState<string>("");
 
@@ -89,6 +91,7 @@ export const UsIaManageActionPlan = ({
       actionPlan: actionPlanText,
       denialReasons: reasons,
       requestedSnoozeLength: sliderDays,
+      userInput,
     });
 
     toast(
