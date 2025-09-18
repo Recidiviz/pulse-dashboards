@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import createAuth0Client, {
+import {
   Auth0Client,
   Auth0ClientOptions,
+  createAuth0Client,
   GetTokenSilentlyOptions,
   LogoutOptions,
   User,

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import createAuth0Client from "@auth0/auth0-spa-js";
+import { createAuth0Client } from "@auth0/auth0-spa-js";
 import { z } from "zod";
 
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
@@ -52,7 +52,7 @@ beforeEach(() => {
   vi.mocked(createAuth0Client).mockResolvedValue(mockClient as any);
 
   client = new AuthClient(
-    { client_id: "test", domain: "test" },
+    { clientId: "test", domain: "test" },
     { metadataNamespace: testNamespace, metadataSchema: testSchema },
   );
 });
@@ -129,11 +129,17 @@ describe("after hydration", () => {
       await client.logInIfLoggedOut();
       expect(loginWithRedirectMock).toHaveBeenCalledExactlyOnceWith({
         appState: { targetPath: "/" },
+        authorizationParams: {
+          connection: undefined,
+        },
       });
 
       await client.logInIfLoggedOut("/another/page");
       expect(loginWithRedirectMock).toHaveBeenLastCalledWith({
         appState: { targetPath: "/another/page" },
+        authorizationParams: {
+          connection: undefined,
+        },
       });
     });
 
@@ -147,6 +153,9 @@ describe("after hydration", () => {
       await client.logIn();
       expect(loginWithRedirectMock).toHaveBeenCalledExactlyOnceWith({
         appState: { targetPath: "/" },
+        authorizationParams: {
+          connection: undefined,
+        },
       });
     });
 
@@ -157,7 +166,9 @@ describe("after hydration", () => {
       });
       expect(loginWithRedirectMock).toHaveBeenLastCalledWith({
         appState: { targetPath: "/another/page" },
-        connection: "US_XX-AD-Connection",
+        authorizationParams: {
+          connection: "US_XX-AD-Connection",
+        },
       });
     });
   });
@@ -206,12 +217,16 @@ describe("after hydration", () => {
 
       await client.logOut();
       expect(logoutMock).toHaveBeenCalledExactlyOnceWith({
-        returnTo: "https://example.com/",
+        logoutParams: {
+          returnTo: "https://example.com/",
+        },
       });
 
       await client.logOut("/logged-out");
       expect(logoutMock).toHaveBeenLastCalledWith({
-        returnTo: "https://example.com/logged-out",
+        logoutParams: {
+          returnTo: "https://example.com/logged-out",
+        },
       });
     });
 
@@ -309,7 +324,7 @@ describe("after hydration", () => {
       vi.mocked(isOfflineMode).mockReturnValue(true);
       expect(client.isAuthorized).toBeTrue();
       expect(client.isEmailVerificationRequired).toBeFalse();
-    })
+    });
   });
 
   test("authorized with email verification skipped", async () => {

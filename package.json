@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "@artsy/to-title-case": "^1.1.0",
-    "@auth0/auth0-spa-js": "^1.12.1",
+    "@auth0/auth0-spa-js": "^2.4.1",
     "@cascadia-code/scroll-to-hash-element": "^2.0.2",
     "@commander-js/extra-typings": "^13.1.0",
     "@dnd-kit/core": "^6.1.0",

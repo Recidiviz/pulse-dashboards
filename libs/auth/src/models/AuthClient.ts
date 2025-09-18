@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import createAuth0Client, {
+import {
   Auth0Client,
   Auth0ClientOptions,
+  createAuth0Client,
   GetTokenSilentlyOptions,
   User,
 } from "@auth0/auth0-spa-js";
@@ -232,7 +233,9 @@ export class AuthClient<AppMetadata extends z.ZodType<object> = z.ZodTypeAny>
 
     return auth0.loginWithRedirect({
       appState: { targetPath: targetPath ?? window.location.pathname },
-      connection,
+      authorizationParams: {
+        connection,
+      },
     });
   }
 
@@ -266,7 +269,9 @@ export class AuthClient<AppMetadata extends z.ZodType<object> = z.ZodTypeAny>
     const auth0 = await this.authClient();
 
     auth0.logout({
-      returnTo: `${window.location.origin}${returnToPath}`,
+      logoutParams: {
+        returnTo: `${window.location.origin}${returnToPath}`,
+      },
     });
   }
 

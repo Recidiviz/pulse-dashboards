@@ -41,10 +41,16 @@ export class Auth0AuthHandler implements AuthHandler {
   constructor() {
     makeAutoObservable(this, { authClient: false });
 
+    const config = getAuth0Config(import.meta.env["VITE_AUTH_ENV"]);
     this.authClient = new AuthClient(
       {
-        ...getAuth0Config(import.meta.env["VITE_AUTH_ENV"]),
-        redirect_uri: `${window.location.origin}/after-login`,
+        domain: config.domain,
+        clientId: config.client_id,
+        useFormData: false,
+        authorizationParams: {
+          redirect_uri: `${window.location.origin}/after-login`,
+          audience: config.audience,
+        },
       },
       { metadataNamespace, metadataSchema: authorizedUserProfileSchema },
     );

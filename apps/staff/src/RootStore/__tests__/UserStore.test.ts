@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import createAuth0Client, { User } from "@auth0/auth0-spa-js";
+import { createAuth0Client, User } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
 import { add } from "date-fns";
 import { runInAction } from "mobx";
@@ -79,7 +79,7 @@ const metadataField = `${METADATA_NAMESPACE}app_metadata`;
 const metadata = { [metadataField]: { stateCode: tenantId } };
 const testAuthSettings = {
   domain: "example.com",
-  client_id: "abc123",
+  clientId: "abc123",
   redirect_url: window.location.href,
 };
 

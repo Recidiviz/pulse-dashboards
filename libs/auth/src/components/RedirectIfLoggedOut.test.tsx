@@ -34,7 +34,7 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
 
   client = new AuthClient(
-    { client_id: "test", domain: "test" },
+    { clientId: "test", domain: "test" },
     { metadataNamespace: "Foo", metadataSchema: z.any() },
   );
   vi.mocked(useNavigate).mockReturnValue(mockNavigate);

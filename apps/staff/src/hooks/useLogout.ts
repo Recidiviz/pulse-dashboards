@@ -27,7 +27,8 @@ const useLogout = (): ((e: MouseEvent) => void) => {
   const onLogout = useCallback(
     (e: MouseEvent) => {
       e.preventDefault();
-      if (logout) logout({ returnTo: window.location.origin });
+      if (logout)
+        logout({ logoutParams: { returnTo: window.location.origin } });
     },
     [logout],
   );

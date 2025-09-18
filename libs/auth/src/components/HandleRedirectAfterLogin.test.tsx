@@ -33,7 +33,7 @@ const navigateMock = vi.fn();
 
 beforeEach(() => {
   client = new AuthClient(
-    { client_id: "test", domain: "test" },
+    { clientId: "test", domain: "test" },
     { metadataNamespace: "Foo", metadataSchema: z.any() },
   );
 

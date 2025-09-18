@@ -142,21 +142,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@auth0/auth0-spa-js@npm:^1.12.1":
-  version: 1.13.6
-  resolution: "@auth0/auth0-spa-js@npm:1.13.6"
-  dependencies:
-    abortcontroller-polyfill: "npm:^1.5.0"
-    browser-tabs-lock: "npm:1.2.9"
-    core-js: "npm:^3.8.0"
-    es-cookie: "npm:^1.3.2"
-    fast-text-encoding: "npm:^1.0.3"
-    promise-polyfill: "npm:^8.2.0"
-    unfetch: "npm:^4.2.0"
-  checksum: 10c0/ad9ed3ba3189bed6f4823bb9ff509360454296bb75cd98985230386e595c1ee31fbb75c57faf38de12127e83d09b3b4a6d64440356510c2acba8d5b89a39c1ad
-  languageName: node
-  linkType: hard
-
 "@auth0/auth0-spa-js@npm:^1.22.1":
   version: 1.22.6
   resolution: "@auth0/auth0-spa-js@npm:1.22.6"
@@ -169,6 +154,17 @@ __metadata:
     promise-polyfill: "npm:^8.2.3"
     unfetch: "npm:^4.2.0"
   checksum: 10c0/7f00391a30d1753ca4dee8c88501cd2d26cb064495e9b346b1639608c5135021ffd09f867fb113da561e1e4b7edb767ea031ca376eed467a0f089e76d2a7769c
+  languageName: node
+  linkType: hard
+
+"@auth0/auth0-spa-js@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "@auth0/auth0-spa-js@npm:2.4.1"
+  dependencies:
+    browser-tabs-lock: "npm:^1.2.15"
+    dpop: "npm:^2.1.1"
+    es-cookie: "npm:~1.3.2"
+  checksum: 10c0/5af2cc114403d2c74ef9bf3d41eef90b2c78fc7fd618be89a292baaf71bfcb8b59b6fe58f1565eacfc8121f64532a2318b60b5179d60e203f179bb20e040988a
   languageName: node
   linkType: hard
 
@@ -19035,13 +19031,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abortcontroller-polyfill@npm:^1.5.0":
-  version: 1.7.1
-  resolution: "abortcontroller-polyfill@npm:1.7.1"
-  checksum: 10c0/11efed31a464fe06445e6bfac28fe9ba906092e11f668a79285b0bc92c71484a25c5298b81e26661f5e055a93227d533c33187a75dbbe9160c490dbf591263b9
-  languageName: node
-  linkType: hard
-
 "abortcontroller-polyfill@npm:^1.7.3":
   version: 1.7.5
   resolution: "abortcontroller-polyfill@npm:1.7.5"
@@ -21013,13 +21002,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browser-tabs-lock@npm:1.2.9":
-  version: 1.2.9
-  resolution: "browser-tabs-lock@npm:1.2.9"
-  checksum: 10c0/c9cc2f97c26ff36b012252a8821a7c6235f005cc226371ff08470e32922ef8b48b63f02f20a2ff92a5f9034fc73ddc11dae69e2cf4f19cba2be93c1150a8cbc8
-  languageName: node
-  linkType: hard
-
 "browser-tabs-lock@npm:^1.2.15":
   version: 1.3.0
   resolution: "browser-tabs-lock@npm:1.3.0"
@@ -22988,13 +22970,6 @@ __metadata:
   version: 3.21.1
   resolution: "core-js@npm:3.21.1"
   checksum: 10c0/8791de72e2c87a9f1d33166c8974f2b8decfa3287c1418befc193459826a671660694d7f96e3301ae982e35c12d4cfe09b53d6e268512e5be25c57988e112179
-  languageName: node
-  linkType: hard
-
-"core-js@npm:^3.8.0":
-  version: 3.9.1
-  resolution: "core-js@npm:3.9.1"
-  checksum: 10c0/53d28e06c88cbcc264b9f49908ee11d6e07fc3abca1dda67469f3ea0b0e6e302757a1616a09f9173b612953142cd3078c9c3bba0d3fafe33a3c7c2811e17a558
   languageName: node
   linkType: hard
 
@@ -25604,6 +25579,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dpop@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "dpop@npm:2.1.1"
+  checksum: 10c0/e46dfd62325dd63372a17492c1867f79cdaf235645d32b87c3be8a09d4c7b03b8b44efec26688ba19e8279c77497a08deb302a9a4704b432795efd1163519611
+  languageName: node
+  linkType: hard
+
 "drange@npm:^1.0.2":
   version: 1.1.1
   resolution: "drange@npm:1.1.1"
@@ -26279,7 +26261,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-cookie@npm:^1.3.2, es-cookie@npm:~1.3.2":
+"es-cookie@npm:~1.3.2":
   version: 1.3.2
   resolution: "es-cookie@npm:1.3.2"
   checksum: 10c0/26eb6e06b25b5569d8763fcb23b5335a5098e354b0a9a7bc5122e8c8705003307187a165ddaeda5cff08fa4cc8e1675dbddd5709279fb27cfa8875514dc3eccb
@@ -42057,13 +42039,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"promise-polyfill@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "promise-polyfill@npm:8.2.0"
-  checksum: 10c0/9c57f475c74d159c6cb93413f2461f509cf6aa422ba3e498574453b85765118d5fa55c5d7a22920694afebdf0e34e22acd5992b00af09f8adcd18496da20bb21
-  languageName: node
-  linkType: hard
-
 "promise-polyfill@npm:^8.2.3":
   version: 8.3.0
   resolution: "promise-polyfill@npm:8.3.0"
@@ -44064,7 +44039,7 @@ __metadata:
   dependencies:
     "@anatine/zod-mock": "npm:^3.14.0"
     "@artsy/to-title-case": "npm:^1.1.0"
-    "@auth0/auth0-spa-js": "npm:^1.12.1"
+    "@auth0/auth0-spa-js": "npm:^2.4.1"
     "@axe-core/playwright": "npm:^4.10.2"
     "@babel/core": "npm:^7.14.5"
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.21.11"

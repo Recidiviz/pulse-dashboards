@@ -52,10 +52,13 @@ export function getAuthSettings(): Auth0ClientOptions {
     config = devAuthConfig;
   }
   return {
-    client_id: config.clientId,
+    clientId: config.clientId,
+    useFormData: false,
     domain: config.domain,
-    audience: config.audience,
-    redirect_uri: `${window.location.origin}`,
+    authorizationParams: {
+      audience: config.audience,
+      redirect_uri: `${window.location.origin}`,
+    },
   };
 }
 
