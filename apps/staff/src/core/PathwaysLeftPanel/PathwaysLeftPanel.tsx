@@ -18,7 +18,7 @@
 import "./PathwaysLeftPanel.scss";
 
 import cn from "classnames";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import SectionNavigation from "../SectionNavigation";
@@ -28,6 +28,12 @@ const PathwaysLeftPanel: React.FC<{
   description: string;
 }> = ({ title, description }) => {
   const isMobile = useIsMobile();
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    // Set focus on the h1 element when the component mounts or the title changes.
+    titleRef.current?.focus();
+  }, [title]);
 
   return (
     <div
@@ -35,8 +41,17 @@ const PathwaysLeftPanel: React.FC<{
         "pt-5 pb-5": !isMobile,
       })}
     >
-      <div className="PathwaysLeftPanel__title">{title}</div>
-      <div className="PathwaysLeftPanel__description">{description}</div>
+      <h1
+        ref={titleRef}
+        className="PathwaysLeftPanel__title"
+        tabIndex={-1}
+        aria-describedby="page-description"
+      >
+        {title}
+      </h1>
+      <div id="page-description" className="PathwaysLeftPanel__description">
+        {description}
+      </div>
       <SectionNavigation />
     </div>
   );
