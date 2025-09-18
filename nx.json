@@ -70,7 +70,9 @@
         "targetName": "test"
       }
     },
-    { "plugin": "~repo" }
+    {
+      "plugin": "~repo"
+    }
   ],
   "generators": {
     "@nx/react": {

@@ -18,6 +18,7 @@
 import assertNever from "assert-never";
 
 import { stateCodeFromCurrentUrl } from "~@jii/data";
+import { UsAzRouter } from "~@jii/US_AZ";
 import { UsIdRouter } from "~@jii/US_ID";
 import { UsMaRouter } from "~@jii/US_MA";
 import { UsMeRouter } from "~@jii/US_ME";
@@ -31,6 +32,8 @@ export function StateSpecificRouter() {
   if (!stateCode) return null;
 
   switch (stateCode) {
+    case "US_AZ":
+      return <UsAzRouter />;
     case "US_ID":
       return <UsIdRouter />;
     case "US_MA":

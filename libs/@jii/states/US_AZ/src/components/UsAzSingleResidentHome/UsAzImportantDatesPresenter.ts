@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,19 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RootStore } from "~@jii/data";
+import { makeAutoObservable } from "mobx";
 
-import { LandingStateSelectionPresenter } from "./LandingStateSelectionPresenter";
+import { ResidentRecord } from "~datatypes";
 
-test("constructs URL when a state is selected", async () => {
-  const rootStore = new RootStore();
-  const presenter = new LandingStateSelectionPresenter(
-    rootStore.loginConfigStore,
-  );
+export class UsAzImportantDatesPresenter {
+  constructor(public readonly resident: ResidentRecord) {
+    makeAutoObservable(this, undefined, { autoBind: true });
+  }
 
-  await presenter.hydrate();
+  get metadata() {
+    const { metadata } = this.resident;
+    if (metadata.stateCode !== "US_AZ") {
+      throw new Error(
+        `Invalid state code for UsAzImportantDatesPresenter: ${metadata.stateCode}`,
+      );
+    }
 
-  expect(presenter.stateLandingPageUrl).toBeUndefined();
-  presenter.setSelectedOption(presenter.selectOptions[0].value);
-  expect(presenter.stateLandingPageUrl).toMatchInlineSnapshot(`"/arizona"`);
-});
+    return metadata;
+  }
+}

@@ -24,6 +24,7 @@ import { StateCode, StateConfig } from "./types";
  * This is the source of truth for valid, enabled state codes in the application
  */
 export const stateCodes = z.enum([
+  "US_AZ",
   "US_ID",
   "US_MA",
   "US_ME",
@@ -46,6 +47,7 @@ type StateConfigArray<StateCodeList> = StateCodeList extends [
  * Exhaustive list of {@link StateConfig} objects for all supported states
  */
 export const stateConfigs: StateConfigArray<typeof stateCodes.options> = [
+  { stateCode: "US_AZ", displayName: "Arizona", urlSlug: "arizona" },
   { stateCode: "US_ID", displayName: "Idaho", urlSlug: "idaho" },
   { stateCode: "US_MA", displayName: "Massachusetts", urlSlug: "mass" },
   { stateCode: "US_ME", displayName: "Maine", urlSlug: "maine" },
