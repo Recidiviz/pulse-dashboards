@@ -101,25 +101,31 @@ export abstract class SupervisionOfficerPresenterBase
     });
   }
 
-  expectOutcomesDependenciesPopulated() {
+expectOutcomesDependenciesPopulated() {
     return [
       this.expectOfficerOutcomesDataPopulated,
       this.expectOfficerOutcomesPopulated,
     ];
   }
 
+  get isCurrentOfficerUserRestrictedFromSupervisorsList(): boolean {
+    return this.supervisionStore.isCurrentOfficerUserRestrictedFromSupervisorsList;
+  }
+
   populateMethods() {
+    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList) return [this.populateSupervisionOfficer()];
     return [
       flowResult(this.supervisionStore.populateMetricConfigs()),
       flowResult(this.supervisionStore.populateSupervisionOfficerSupervisors()),
       this.populateSupervisionOfficer(),
     ];
   }
-
+  
   expectPopulated() {
+    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList) return [this.expectOfficerPopulated];
     return [
-      this.expectMetricsPopulated,
       this.expectOfficerPopulated,
+      this.expectMetricsPopulated,
       this.expectSupervisorPopulated,
     ];
   }
@@ -138,12 +144,14 @@ export abstract class SupervisionOfficerPresenterBase
     );
   }
 
-  protected expectMetricsPopulated() {
+protected expectMetricsPopulated() {
+    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
     if (!this.supervisionStore.metricConfigsById)
       throw new Error("Failed to populate metric configs");
   }
 
   protected expectOfficerOutcomesPopulated() {
+    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
     if (isExcludedSupervisionOfficer(this.officerRecord)) return;
     if (!this.officerOutcomes)
       throw new Error("Failed to populate officer outcomes data");
@@ -251,11 +259,13 @@ export abstract class SupervisionOfficerPresenterBase
   }
 
   protected expectSupervisorPopulated() {
+    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
     if (!this.supervisorsInfo)
       throw new Error("Failed to populate supervisor info");
   }
 
   protected expectOfficerOutcomesDataPopulated() {
+    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
     // We don't expect outcomes data for excluded officers
     if (isExcludedSupervisionOfficer(this.officerRecord)) return;
     if (this.officerOutcomesDataOrError instanceof Error)
@@ -291,7 +301,7 @@ export abstract class SupervisionOfficerPresenterBase
   // action instead of flow in case it becomes overridden in the future
   // (see comment on populateSupervisionOfficer)
   protected async populateSupervisionOfficerOutcomes() {
-    if (isExcludedSupervisionOfficer(this.officerRecord)) return;
+    if (isExcludedSupervisionOfficer(this.officerRecord) || this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
 
     const outcomesForOfficer =
       await this.supervisionStore.insightsStore.apiClient.outcomesForOfficer(
