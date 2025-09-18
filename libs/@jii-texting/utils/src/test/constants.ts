@@ -96,6 +96,7 @@ export const fakePersonOne = {
   officerId: faker.string.uuid(),
   poName: "JOHN DOE",
   district: "District 1",
+  receivedWelcomeText: false,
 };
 
 export const fakePersonTwo = {
@@ -126,4 +127,13 @@ export const fakePersonThree = {
   officerId: faker.string.uuid(),
   poName: faker.person.fullName(),
   district: faker.location.county(),
+};
+
+export const fakeContact = {
+  id: faker.string.uuid(),
+  type: "HOME",
+  datetime: new Date("2025-04-14"),
+  address: "123 North Pole",
+  officerName: "John Doe",
+  reminderType: "WITHIN_ONE_DAY",
 };

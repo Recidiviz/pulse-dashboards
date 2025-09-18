@@ -15,24 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/****************************
- * State Agnostic Constants *
- ****************************/
-export const MAX_RETRY_ATTEMPTS = 3;
-export const BQ_DATASET_ID = "twilio_webhook_requests";
-export const BQ_REPLIES_VIEW_ID = "jii_texting_incoming_messages";
+import { PrismaClient } from "~@jii-texting/prisma/client";
+import {
+  fakeContact,
+  fakePersonOne,
+  fakeWorkflowExecutionOne,
+  fakeWorkflowExecutionThree,
+  fakeWorkflowExecutionTwo,
+} from "~@jii-texting/utils/test/constants";
 
-/****************************
- * Idaho LSU Constants *
- ****************************/
-export const US_ID_LSU_VISIT_LINK =
-  "\n\nSee all requirements at rviz.co/id_lsu.";
-export const US_ID_LSU_LEARN_MORE = "\n\nLearn more at rviz.co/id_lsu.";
-export const EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS = 18;
+export async function seedContactReminders(prismaClient: PrismaClient) {
+  await prismaClient.workflowExecution.createMany({
+    data: [
+      fakeWorkflowExecutionOne,
+      fakeWorkflowExecutionTwo,
+      fakeWorkflowExecutionThree,
+    ],
+  });
 
-/****************************
- * Texas Contact Reminders Constants *
- ****************************/
-export const US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS = 15;
-export const LATEST_REMINDER_MESSAGE_SEND_UTC_HOURS = 15;
-export type ReminderType = "WITHIN_ONE_DAY";
+  // Create a person with one group
+  await prismaClient.person.create({
+    data: {
+      ...fakePersonOne,
+      contacts: {
+        create: {
+          ...fakeContact,
+        },
+      },
+    },
+  });
+}

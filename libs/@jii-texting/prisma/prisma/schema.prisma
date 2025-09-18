@@ -66,6 +66,7 @@ enum StateCode {
 enum MessageType {
   INITIAL_TEXT
   ELIGIBILITY_TEXT
+  REMINDER_TEXT
 }
 
 enum Status {
@@ -81,22 +82,26 @@ enum MessageAttemptStatus {
 }
 
 model Person {
-  stableExternalId String    @id // indicated by DOC
-  pseudonymizedId  String    @unique // hashed id used to anonymize
-  personId         String    @unique // internal Recidiviz id
-  stateCode        StateCode
-  givenName        String
-  middleName       String?
-  surname          String
-  nameSuffix       String?
-  phoneNumber      String
-  officerId        String
-  poName           String
-  district         String
-  lastOptOutDate   DateTime? // will not be null if person has opted-out
+  stableExternalId    String    @id // indicated by DOC
+  pseudonymizedId     String    @unique // hashed id used to anonymize
+  personId            String    @unique // internal Recidiviz id
+  stateCode           StateCode
+  givenName           String
+  middleName          String?
+  surname             String
+  nameSuffix          String?
+  phoneNumber         String
+  officerId           String
+  poName              String
+  district            String
+  lastOptOutDate      DateTime? // will not be null if person has opted-out
+  receivedWelcomeText Boolean   @default(false)
 
-  groups        Group[] // will be an empty list if this person should not be texted that day
-  messageSeries MessageSeries[]
+  groups                       Group[] // will be an empty list if this person should not be texted that day
+  messageSeries                MessageSeries[]
+  contacts                     Contact[]
+  contactReminderMessageSeries ContactReminderMessageSeries[]
+  welcomeMessageSeries         WelcomeMessageSeries? // TODO(#9409): Move Idaho's eligibility texts to leverage this table
 }
 
 model MessageSeries {
@@ -160,7 +165,9 @@ model WorkflowExecution {
   stateCode             StateCode
   workflowExecutionTime DateTime
 
-  messageAttempts MessageAttempt[]
+  messageAttempts                MessageAttempt[]
+  contactReminderMessageAttempts ContactReminderMessageAttempt[]
+  welcomeMessageAttempt          WelcomeMessageAttempt[]
 }
 
 model Click {
@@ -174,4 +181,74 @@ model Click {
 
   messageAttempt MessageAttempt @relation(fields: [smsSid], references: [twilioMessageSid])
   smsSid         String         @unique
+}
+
+model Contact {
+  id           String   @id @default(cuid())
+  type         String
+  datetime     DateTime
+  address      String
+  officerName  String
+  reminderType String?
+
+  person                 Person                         @relation(fields: [personStableExternalId], references: [stableExternalId])
+  personStableExternalId String
+  messageSeries          ContactReminderMessageSeries[]
+}
+
+model ContactReminderMessageAttempt {
+  id                     String               @id @default(cuid())
+  twilioMessageSid       String               @unique
+  body                   String
+  phoneNumber            String
+  status                 MessageAttemptStatus
+  createdTimestamp       DateTime // when sent post request to Twilio
+  lastUpdatedTimestamp   DateTime? // when status last updated by us
+  twilioSentTimestamp    DateTime? // when Twilio actually attempted to send message
+  requestedSendTimestamp DateTime? // when we asked Twilio to schedule send message
+  error                  String?
+  errorCode              Int?
+
+  messageSeries       ContactReminderMessageSeries @relation(fields: [messageSeriesId], references: [id])
+  messageSeriesId     String
+  workflowExecution   WorkflowExecution            @relation(fields: [workflowExecutionId], references: [id])
+  workflowExecutionId String
+}
+
+model ContactReminderMessageSeries {
+  id           String @id @default(cuid())
+  reminderType String
+
+  person           Person                          @relation(fields: [personExternalId], references: [stableExternalId])
+  personExternalId String
+  contact          Contact                         @relation(fields: [contactId], references: [id])
+  contactId        String
+  messageAttempts  ContactReminderMessageAttempt[]
+}
+
+model WelcomeMessageAttempt {
+  id                     String               @id @default(cuid())
+  twilioMessageSid       String               @unique
+  body                   String
+  phoneNumber            String
+  status                 MessageAttemptStatus
+  createdTimestamp       DateTime // when sent post request to Twilio
+  lastUpdatedTimestamp   DateTime? // when status last updated by us
+  twilioSentTimestamp    DateTime? // when Twilio actually attempted to send message
+  requestedSendTimestamp DateTime? // when we asked Twilio to schedule send message
+  error                  String?
+  errorCode              Int?
+
+  messageSeries       WelcomeMessageSeries @relation(fields: [messageSeriesId], references: [id])
+  messageSeriesId     String
+  workflowExecution   WorkflowExecution    @relation(fields: [workflowExecutionId], references: [id])
+  workflowExecutionId String
+}
+
+model WelcomeMessageSeries {
+  id String @id @default(cuid())
+
+  person           Person                  @relation(fields: [personExternalId], references: [stableExternalId])
+  personExternalId String                  @unique
+  messageAttempts  WelcomeMessageAttempt[]
 }

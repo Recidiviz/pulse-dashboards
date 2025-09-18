@@ -54,6 +54,48 @@ export type MessageSeriesWithAttemptsAndGroup = Prisma.MessageSeriesGetPayload<
   typeof MESSAGE_SERIES_INCLUDE_ATTEMPTS_AND_GROUP
 >;
 
+export const REMINDER_MESSAGE_SERIES_INCLUDE_ATTEMPTS = {
+  include: {
+    messageAttempts: {
+      select: {
+        id: true,
+        twilioMessageSid: true,
+        status: true,
+        createdTimestamp: true,
+      } satisfies Prisma.MessageAttemptSelectScalar,
+      orderBy: {
+        createdTimestamp: "desc",
+      },
+    },
+  } satisfies Prisma.ContactReminderMessageSeriesInclude & Prisma.ContactReminderMessageSeriesDefaultArgs,
+};
+
+export type ReminderMessageSeriesWithAttempts =
+  Prisma.ContactReminderMessageSeriesGetPayload<
+    typeof REMINDER_MESSAGE_SERIES_INCLUDE_ATTEMPTS
+  >;
+
+export const WELCOME_MESSAGE_SERIES_INCLUDE_ATTEMPTS = {
+  include: {
+    messageAttempts: {
+      select: {
+        id: true,
+        twilioMessageSid: true,
+        status: true,
+        createdTimestamp: true,
+      } satisfies Prisma.WelcomeMessageAttemptSelectScalar,
+      orderBy: {
+        createdTimestamp: "desc",
+      },
+    },
+  } satisfies Prisma.WelcomeMessageSeriesInclude & Prisma.WelcomeMessageSeriesDefaultArgs,
+};
+
+export type WelcomeMessageSeriesWithAttempts =
+  Prisma.WelcomeMessageSeriesGetPayload<
+    typeof WELCOME_MESSAGE_SERIES_INCLUDE_ATTEMPTS
+  >;
+
 export const PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP = {
   include: {
     groups: { include: { topic: true } },
@@ -74,16 +116,24 @@ export const PERSON_SELECT_DATA_FOR_MESSAGE = {
   } satisfies Prisma.PersonSelectScalar & Prisma.PersonDefaultArgs,
 };
 
-export type PersonDataForMessage = Prisma.PersonGetPayload<{
+export type PersonDataForMessage = Prisma.PersonGetPayload<
+  typeof PERSON_SELECT_DATA_FOR_MESSAGE
+>;
+
+export const CONTACT_SELECT_DATA_FOR_MESSAGE = {
   select: {
-    givenName: true;
-    poName: true;
-    phoneNumber: true;
-    district: true;
-    stableExternalId: true;
-    pseudonymizedId: true;
-  };
-}>;
+    id: true,
+    type: true,
+    datetime: true,
+    address: true,
+    officerName: true,
+    reminderType: true,
+  } satisfies Prisma.ContactSelectScalar & Prisma.ContactDefaultArgs,
+};
+
+export type ContactDataForMessage = Prisma.ContactGetPayload<
+  typeof CONTACT_SELECT_DATA_FOR_MESSAGE
+>;
 
 export type PersonWithMessageSeriesAndGroup = Prisma.PersonGetPayload<
   typeof PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP
@@ -96,9 +146,81 @@ export enum ScriptAction {
   ERROR = "ERROR",
   SKIPPED = "SKIPPED",
   NOOP = "NOOP",
+  REMINDER_TEXT_SENT = "REMINDER_TEXT_SENT",
 }
 
 export type GroupAction = {
   id: string;
   action: ScriptAction;
 };
+
+export const CONTACT_INCLUDE_MESSAGE_SERIES = {
+  include: {
+    messageSeries: {
+      include: {
+        messageAttempts: { ...MESSAGE_ATTEMPT_SELECT },
+      },
+    },
+  } satisfies Prisma.ContactInclude & Prisma.ContactDefaultArgs,
+};
+
+export type ContactWithMessageSeriesAndAttempts = Prisma.ContactGetPayload<
+  typeof CONTACT_INCLUDE_MESSAGE_SERIES
+>;
+
+export const REMINDER_MESSAGE_ATTEMPT_SELECT = {
+  select: {
+    id: true,
+    twilioMessageSid: true,
+    status: true,
+    createdTimestamp: true,
+  } satisfies Prisma.ContactReminderMessageAttemptSelectScalar,
+};
+
+export const WELCOME_MESSAGE_ATTEMPT_SELECT = {
+  select: {
+    id: true,
+    twilioMessageSid: true,
+    status: true,
+    createdTimestamp: true,
+  } satisfies Prisma.WelcomeMessageAttemptSelectScalar,
+};
+
+export const PERSON_WITH_WELCOME_MESSAGE_SERIES = {
+  include: {
+    welcomeMessageSeries: {
+      include: {
+        messageAttempts: {
+          ...WELCOME_MESSAGE_ATTEMPT_SELECT,
+        },
+      },
+    },
+  } satisfies Prisma.PersonInclude & Prisma.PersonDefaultArgs,
+};
+
+export type PersonWithWelcomeMessageSeries = Prisma.PersonGetPayload<
+  typeof PERSON_WITH_WELCOME_MESSAGE_SERIES
+>;
+
+export const PERSON_WITH_CONTACTS_AND_MESSAGES = {
+  include: {
+    contacts: {
+      include: {
+        messageSeries: {
+          include: {
+            messageAttempts: { ...REMINDER_MESSAGE_ATTEMPT_SELECT },
+          },
+        },
+      },
+      orderBy: {
+        datetime: "asc",
+      },
+    },
+    // Include WelcomeMessageSeries
+    ...PERSON_WITH_WELCOME_MESSAGE_SERIES.include,
+  } satisfies Prisma.PersonInclude & Prisma.PersonDefaultArgs,
+};
+
+export type PersonWithContactsAndMessages = Prisma.PersonGetPayload<
+  typeof PERSON_WITH_CONTACTS_AND_MESSAGES
+>;

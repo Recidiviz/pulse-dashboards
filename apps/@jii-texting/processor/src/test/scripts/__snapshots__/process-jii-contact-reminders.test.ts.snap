@@ -1,0 +1,43 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`copy for person where contactType=HOME 1`] = `
+"Hi Jane, this is a reminder that you have an upcoming home contact tomorrow.
+
+Date: 4/14/2025
+
+Time: 7:00:00 PM CDT
+
+Location: Your home
+
+Need to reschedule or have questions? Contact John Doe
+
+Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+`;
+
+exports[`copy for person where contactType=OFFICE 1`] = `
+"Hi Jane, this is a reminder that you have an upcoming office contact tomorrow.
+
+Date: 4/14/2025
+
+Time: 7:00:00 PM CDT
+
+Location: 123 North Pole
+
+Need to reschedule or have questions? Contact John Doe
+
+Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+`;
+
+exports[`copy for person where contactType=VIRTUAL 1`] = `
+"Hi Jane, this is a reminder that you have an upcoming virtual contact tomorrow.
+
+Date: 4/14/2025
+
+Time: 7:00:00 PM CDT
+
+Location: Virtually
+
+Need to reschedule or have questions? Contact John Doe
+
+Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+`;

@@ -25,20 +25,28 @@ import {
 import {
   MessageAttemptStatus,
   MessageType,
+  Person,
   PrismaClient,
 } from "~@jii-texting/prisma/client";
 import {
+  ContactDataForMessage,
+  ContactWithMessageSeriesAndAttempts,
   MessageAttemptSelect,
   MessageSeriesWithAttemptsAndGroup,
   PersonDataForMessage,
+  PersonWithContactsAndMessages,
   PersonWithMessageSeriesAndGroup,
+  PersonWithWelcomeMessageSeries,
+  ReminderMessageSeriesWithAttempts,
   ScriptAction,
+  WelcomeMessageSeriesWithAttempts,
 } from "~@jii-texting/utils";
 import {
   EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS,
   MAX_RETRY_ATTEMPTS,
   US_ID_LSU_LEARN_MORE,
   US_ID_LSU_VISIT_LINK,
+  US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS,
 } from "~@jii-texting/utils/common/constants";
 import { TwilioAPIClient } from "~twilio-api";
 
@@ -90,7 +98,10 @@ export function mapTwilioStatusToInternalStatus(
  * @returns The MessageAttempt objects with internal ID, twilioMessageSid, status, and date created, ordered by descending createdTimestamp
  */
 export function getOrderedMessageAttempts(
-  messageSeries: MessageSeriesWithAttemptsAndGroup,
+  messageSeries:
+    | MessageSeriesWithAttemptsAndGroup
+    | ReminderMessageSeriesWithAttempts
+    | WelcomeMessageSeriesWithAttempts,
 ) {
   return messageSeries.messageAttempts.sort(
     messageAttemptSortByCreatedTimestampDesc,
@@ -113,6 +124,7 @@ export async function updateMessageAttempt(
   twilio: TwilioAPIClient,
   existingStatus: MessageAttemptStatus,
   messageAttemptTwilioSid: string,
+  messageType: MessageType,
 ) {
   // Update the given MessageAttempt with the latest data from Twilio
   const twilioMessageInstance: MessageInstance = await twilio.getMessage(
@@ -124,18 +136,50 @@ export async function updateMessageAttempt(
   );
 
   if (latestStatus !== existingStatus) {
-    await prisma.messageAttempt.update({
-      where: {
-        twilioMessageSid: messageAttemptTwilioSid,
-      },
-      data: {
-        status: latestStatus,
-        lastUpdatedTimestamp: new Date(),
-        twilioSentTimestamp: twilioMessageInstance.dateSent,
-        errorCode: twilioMessageInstance.errorCode,
-        error: twilioMessageInstance.errorMessage,
-      },
-    });
+    if (messageType === MessageType.ELIGIBILITY_TEXT) {
+      await prisma.messageAttempt.update({
+        where: {
+          twilioMessageSid: messageAttemptTwilioSid,
+        },
+        data: {
+          status: latestStatus,
+          lastUpdatedTimestamp: new Date(),
+          twilioSentTimestamp: twilioMessageInstance.dateSent,
+          errorCode: twilioMessageInstance.errorCode,
+          error: twilioMessageInstance.errorMessage,
+        },
+      });
+    } else if (messageType === MessageType.REMINDER_TEXT) {
+      await prisma.contactReminderMessageAttempt.update({
+        where: {
+          twilioMessageSid: messageAttemptTwilioSid,
+        },
+        data: {
+          status: latestStatus,
+          lastUpdatedTimestamp: new Date(),
+          twilioSentTimestamp: twilioMessageInstance.dateSent,
+          errorCode: twilioMessageInstance.errorCode,
+          error: twilioMessageInstance.errorMessage,
+        },
+      });
+    } else if (messageType === MessageType.INITIAL_TEXT) {
+      await prisma.welcomeMessageAttempt.update({
+        where: {
+          twilioMessageSid: messageAttemptTwilioSid,
+        },
+        data: {
+          status: latestStatus,
+          lastUpdatedTimestamp: new Date(),
+          twilioSentTimestamp: twilioMessageInstance.dateSent,
+          errorCode: twilioMessageInstance.errorCode,
+          error: twilioMessageInstance.errorMessage,
+        },
+      });
+    } else {
+      throw new Error(
+        `Received unexpected message type in updateMessageAttempt: ${messageType}`,
+      );
+    }
   }
 
   return latestStatus;
@@ -222,6 +266,90 @@ function getIdahoLSUMessageBody(
       throw new Error(`Received unexpected group name: ${groupName}`);
     }
   }
+
+  body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
+
+  return body;
+}
+
+/**
+ * Returns the message body for the welcome text to send to JII.
+ *
+ * @param givenName The first name of the person we're sending a text to
+ * @param poName The full name of the person's supervising officer
+ * @returns The full text to send the person
+ */
+function getWelcomeMessageBody({
+  givenName,
+  poName: assignedOfficerName,
+}: PersonDataForMessage) {
+  let body = "";
+
+  const givenNameToUse =
+    givenName.charAt(0).toUpperCase() + givenName.slice(1).toLowerCase();
+
+  const assignedPoNameToUse = assignedOfficerName
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+  body += `Hi ${givenNameToUse}, we’re reaching out on behalf of the Texas Department of Correction (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.\n\nIf you have questions, reach out to ${assignedPoNameToUse}.`;
+
+  body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
+
+  return body;
+}
+
+/**
+ * Returns the message body for a text to send to JII about an upcoming scheduled contact.
+ * This is currently specific to Texas.
+ *
+ * @param givenName The first name of the person we're sending a text to
+ * @param poName The full name of the person's supervising officer
+ * @returns The full text to send the person
+ */
+function getTexasReminderMessageBody(
+  { givenName }: PersonDataForMessage,
+  contactData: ContactDataForMessage,
+) {
+  let body = "";
+
+  const givenNameToUse =
+    givenName.charAt(0).toUpperCase() + givenName.slice(1).toLowerCase();
+
+  const { type, address, datetime, officerName } = contactData;
+
+  const officerToContact = officerName
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+  const locationStr = (function () {
+    switch (type) {
+      case "HOME":
+        return "Your home";
+      case "VIRTUAL":
+        return "Virtually";
+      case "OFFICE":
+        return address;
+      default:
+        console.log(`Received unexpected contact type: ${type}`);
+        return address;
+    }
+  })();
+
+  const dateStr = new Intl.DateTimeFormat("en-US").format(datetime);
+  const timeStr = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    timeZone: "America/Chicago",
+    timeZoneName: "short",
+  }).format(datetime);
+
+  body += `Hi ${givenNameToUse}, this is a reminder that you have an upcoming ${type.toLowerCase()} contact tomorrow.\n\nDate: ${dateStr}\n\nTime: ${timeStr}\n\nLocation: ${locationStr}\n\nNeed to reschedule or have questions? Contact ${officerToContact}`;
 
   body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
 
@@ -351,6 +479,212 @@ export async function sendText(
   } catch (e) {
     console.log(
       `Encountered error in sending ${messageType} to ${personMetadata.pseudonymizedId}`,
+    );
+    captureException(`Error in sendText for ${pseudonymizedId}: ${e}`);
+    return undefined;
+  }
+}
+
+async function createTwilioMessage(
+  twilio: TwilioAPIClient,
+  messageBody: string,
+  phoneNumber: string,
+  earliestSendAtUTCHours?: number,
+): Promise<[MessageInstance, Date?]> {
+  // If it's currently earlier than earliestSendAtUTCHours, schedule send the message for later
+  const nowUTC = new Date();
+  const nowUTCHour = nowUTC.getUTCHours();
+
+  let sendAt: Date | undefined = undefined;
+
+  if (earliestSendAtUTCHours && nowUTCHour < earliestSendAtUTCHours) {
+    nowUTC.setUTCHours(US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS);
+    sendAt = nowUTC;
+  }
+
+  const messageInstance = await twilio.createMessage(
+    messageBody,
+    phoneNumber,
+    sendAt,
+  );
+
+  return [messageInstance, sendAt];
+}
+
+/**
+ * Creates/sends a welcome message via the TwilioAPIClient and persists the message in the
+ * WelcomeMessageSeries or WelcomeMessageAttempt tables in the DB.
+ * If the messageSeriesId is provided, then create a new WelcomeMessageAttempt object that
+ * will be connected to an existing WelcomeMessageSeries, where id = messageSeriesId. If
+ * the messageSeriesId is not provided, then create a new WelcomeMessageSeries object with
+ * a nested WelcomeMessageAttempt for the given messageType
+ *
+ * @param personMetadata Metadata about the person we're sending a text to
+ * @param workflowExecutionId The ID of the current Workflow Execution that the message is being sent during
+ * @param prisma Prisma Client
+ * @param twilio Twilio API Client
+ * @param messageSeriesId The id of the MessageSeries to connect the new MessageAttempt to
+ */
+export async function sendWelcomeText(
+  personMetadata: PersonDataForMessage,
+  workflowExecutionId: string,
+  prisma: PrismaClient,
+  twilio: TwilioAPIClient,
+  messageSeriesId?: string,
+) {
+  const { phoneNumber, pseudonymizedId } = personMetadata;
+
+  try {
+    const messageBody = getWelcomeMessageBody(personMetadata);
+
+    const [messageInstance, sendAt] = await createTwilioMessage(
+      twilio,
+      messageBody,
+      phoneNumber,
+      US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS,
+    );
+
+    const messageStatus = mapTwilioStatusToInternalStatus(
+      messageInstance.status,
+    );
+
+    const messageAttemptRecord = {
+      twilioMessageSid: messageInstance.sid,
+      body: messageInstance.body,
+      phoneNumber: phoneNumber,
+      status: messageStatus,
+      createdTimestamp: messageInstance.dateCreated,
+      twilioSentTimestamp: messageInstance.dateSent,
+      lastUpdatedTimestamp: messageInstance.dateCreated,
+      workflowExecutionId: workflowExecutionId,
+      error: messageInstance.errorMessage,
+      errorCode: messageInstance.errorCode,
+      // The conditional spreading handles the optional 'sendAt' timestamp.
+      ...(sendAt === undefined ? {} : { requestedSendTimestamp: sendAt }),
+    };
+
+    // Note: the timezone we get from Twilio doesn't matter because Prisma converts
+    // to UTC under the hood on creation of dates
+    if (messageSeriesId) {
+      // If the messageSeriesId exists, connect this MessageAttempt to the MessageSeries
+      await prisma.welcomeMessageAttempt.create({
+        data: { ...messageAttemptRecord, messageSeriesId: messageSeriesId },
+      });
+    } else {
+      // If no messageSeriesId is provided, then create a new MessageSeries object
+      await prisma.welcomeMessageSeries.create({
+        data: {
+          personExternalId: personMetadata.stableExternalId,
+          messageAttempts: {
+            create: [messageAttemptRecord],
+          },
+        },
+      });
+    }
+
+    console.log(
+      `Persisted welcome message in DB for ${personMetadata.pseudonymizedId}`,
+    );
+    return messageInstance;
+  } catch (e) {
+    console.log(
+      `Encountered error in sending welcome message to ${personMetadata.pseudonymizedId}: ${e}`,
+    );
+    captureException(`Error in sendText for ${pseudonymizedId}: ${e}`);
+    return undefined;
+  }
+}
+
+/**
+ * Creates/sends a welcome message via the TwilioAPIClient and persists the message in the
+ * ContactReminderMessageSeries or ContactReminderMessageAttempt tables in the DB.
+ * If the messageSeriesId is provided, then create a new ContactReminderMessageAttempt object that
+ * will be connected to an existing ContactReminderMessageSeries, where id = messageSeriesId. If
+ * the messageSeriesId is not provided, then create a new ContactReminderMessageSeries object with
+ * a nested ContactReminderMessageAttempt for the given messageType
+ *
+ * @param reminderType The type of reminder message we're sending
+ * @param personMetadata Metadata about the person we're sending a text to
+ * @param workflowExecutionId The ID of the current Workflow Execution that the message is being sent during
+ * @param prisma Prisma Client
+ * @param twilio Twilio API Client
+ * @param contactDataForMessage Metadata about the scheduled contact that the reminder is being sent for
+ * @param messageSeriesId The id of the MessageSeries to connect the new MessageAttempt to
+ */
+export async function sendReminderText(
+  reminderType: string,
+  personMetadata: PersonDataForMessage,
+  workflowExecutionId: string,
+  prisma: PrismaClient,
+  twilio: TwilioAPIClient,
+  contactDataForMessage: ContactDataForMessage,
+  messageSeriesId?: string,
+) {
+  const { phoneNumber, stableExternalId, pseudonymizedId } = personMetadata;
+
+  try {
+    const messageBody = getTexasReminderMessageBody(
+      personMetadata,
+      contactDataForMessage,
+    );
+
+    const [messageInstance, sendAt] = await createTwilioMessage(
+      twilio,
+      messageBody,
+      phoneNumber,
+      US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS,
+    );
+
+    const messageStatus = mapTwilioStatusToInternalStatus(
+      messageInstance.status,
+    );
+
+    const messageAttemptRecord = {
+      twilioMessageSid: messageInstance.sid,
+      body: messageInstance.body,
+      phoneNumber: phoneNumber,
+      status: messageStatus,
+      createdTimestamp: messageInstance.dateCreated,
+      twilioSentTimestamp: messageInstance.dateSent,
+      lastUpdatedTimestamp: messageInstance.dateCreated,
+      workflowExecutionId: workflowExecutionId,
+      error: messageInstance.errorMessage,
+      errorCode: messageInstance.errorCode,
+      // The conditional spreading handles the optional 'sendAt' timestamp.
+      ...(sendAt === undefined ? {} : { requestedSendTimestamp: sendAt }),
+    };
+
+    // Note: the timezone we get from Twilio doesn't matter because Prisma converts
+    // to UTC under the hood on creation of dates
+    if (messageSeriesId) {
+      // If the messageSeriesId exists, connect this MessageAttempt to the MessageSeries
+      await prisma.contactReminderMessageAttempt.create({
+        data: {
+          ...messageAttemptRecord,
+          messageSeriesId: messageSeriesId,
+        },
+      });
+    } else {
+      // If no messageSeriesId is provided, then create a new MessageSeries object
+      await prisma.contactReminderMessageSeries.create({
+        data: {
+          reminderType: reminderType,
+          contactId: contactDataForMessage.id,
+          personExternalId: stableExternalId,
+          messageAttempts: {
+            create: [messageAttemptRecord],
+          },
+        },
+      });
+    }
+
+    console.log(
+      `Persisted ${reminderType} message in DB for ${personMetadata.pseudonymizedId}`,
+    );
+    return messageInstance;
+  } catch (e) {
+    console.log(
+      `Encountered error in sending ${reminderType} to ${personMetadata.pseudonymizedId}`,
     );
     captureException(`Error in sendText for ${pseudonymizedId}: ${e}`);
     return undefined;
@@ -590,7 +924,7 @@ async function handleLatestMessageTypeIsEligibilityText(
  * @param jii The person in question
  * @returns True if the lastOptOutDate is set on the person
  */
-function personHasOptedOut(jii: PersonWithMessageSeriesAndGroup) {
+function personHasOptedOut(jii: Person) {
   return jii.lastOptOutDate != null;
 }
 
@@ -616,7 +950,7 @@ function diffInDays(dateOne: Date, dateTwo: Date) {
  * @param prisma Prisma Client
  * @param twilio Twilio API Client
  */
-export async function processIndividualJii(
+export async function processIndividualJiiEligibilityTexts(
   jii: PersonWithMessageSeriesAndGroup,
   workflowExecutionId: string,
   dryRun: boolean,
@@ -726,6 +1060,7 @@ export async function processIndividualJii(
         twilio,
         latestMessageAttempt.status,
         latestMessageAttempt.twilioMessageSid,
+        MessageType.ELIGIBILITY_TEXT,
       );
     } catch (error) {
       console.log(
@@ -774,4 +1109,314 @@ export async function processIndividualJii(
   }
 
   return ScriptAction.NOOP;
+}
+
+export async function processContact(
+  jii: PersonDataForMessage,
+  contact: ContactWithMessageSeriesAndAttempts,
+  personMetadata: PersonDataForMessage,
+  workflowExecutionId: string,
+  prisma: PrismaClient,
+  twilio: TwilioAPIClient,
+  dryRun: boolean,
+): Promise<ScriptAction> {
+  const contactDataForMessage: ContactDataForMessage = {
+    id: contact.id,
+    type: contact.type,
+    address: contact.address,
+    datetime: contact.datetime,
+    officerName: contact.officerName,
+    reminderType: contact.reminderType,
+  };
+
+  if (contact.reminderType === null) {
+    captureException(
+      `Tried to send reminder message for contact on ${contact.datetime} without reminder type`,
+    );
+    return ScriptAction.ERROR;
+  }
+
+  const reminderMessageSeries = contact.messageSeries.find(
+    (series) => series.reminderType === contact.reminderType,
+  );
+
+  if (reminderMessageSeries === undefined) {
+    if (dryRun) {
+      return ScriptAction.REMINDER_TEXT_SENT;
+    } else {
+      const message = await sendReminderText(
+        contact.reminderType,
+        personMetadata,
+        workflowExecutionId,
+        prisma,
+        twilio,
+        contactDataForMessage,
+      );
+
+      console.log(
+        `Executed sendReminderText logic for sending reminder text to ${jii.pseudonymizedId}`,
+      );
+
+      if (message) {
+        return ScriptAction.REMINDER_TEXT_SENT;
+      } else {
+        return ScriptAction.ERROR;
+      }
+    }
+  }
+
+  // Condition to update an existing message
+  const orderedMessageAttempts = getOrderedMessageAttempts(
+    reminderMessageSeries,
+  );
+  const latestMessageAttempt = orderedMessageAttempts[0];
+
+  let updatedMessageAttemptStatus;
+
+  if (dryRun) {
+    updatedMessageAttemptStatus = latestMessageAttempt.status;
+  } else if (latestMessageAttempt.status === MessageAttemptStatus.IN_PROGRESS) {
+    try {
+      updatedMessageAttemptStatus = await updateMessageAttempt(
+        prisma,
+        twilio,
+        latestMessageAttempt.status,
+        latestMessageAttempt.twilioMessageSid,
+        MessageType.REMINDER_TEXT,
+      );
+    } catch (error) {
+      console.log(
+        `Encountered error updating latest message status for ${jii.pseudonymizedId}`,
+      );
+      captureException(
+        `Error in sendText for ${jii.pseudonymizedId}: ${error}`,
+      );
+      return ScriptAction.ERROR;
+    }
+  }
+
+  // Retry the message and add an attempt to the existing series by
+  // passing the latestMessageSeriesId to sendText
+  if (
+    updatedMessageAttemptStatus === MessageAttemptStatus.FAILURE &&
+    orderedMessageAttempts.length < MAX_RETRY_ATTEMPTS
+  ) {
+    if (dryRun) {
+      console.log(
+        `Skipped resending initial message for ${jii.pseudonymizedId}`,
+      );
+      return ScriptAction.REMINDER_TEXT_SENT;
+    }
+
+    const message = await sendReminderText(
+      contact.reminderType,
+      personMetadata,
+      workflowExecutionId,
+      prisma,
+      twilio,
+      contactDataForMessage,
+      reminderMessageSeries.id,
+    );
+
+    console.log(
+      `Executed sendText logic for resending eligibility text to ${jii.pseudonymizedId}`,
+    );
+
+    if (message) {
+      return ScriptAction.REMINDER_TEXT_SENT;
+    } else {
+      return ScriptAction.ERROR;
+    }
+  }
+
+  return ScriptAction.NOOP;
+}
+
+export async function processWelcomeText(
+  jii: PersonWithWelcomeMessageSeries,
+  personMetadata: PersonDataForMessage,
+  workflowExecutionId: string,
+  dryRun: boolean,
+  prisma: PrismaClient,
+  twilio: TwilioAPIClient,
+) {
+  if (jii.welcomeMessageSeries === null) {
+    if (dryRun) {
+      // Don't send requests to Twilio on a dry run, but omit the action that would've been taken
+      console.log(`Skipped sending initial message for ${jii.pseudonymizedId}`);
+      return ScriptAction.INITIAL_MESSAGE_SENT;
+    }
+
+    const message = await sendWelcomeText(
+      personMetadata,
+      workflowExecutionId,
+      prisma,
+      twilio,
+    );
+
+    console.log(
+      `Executed sendText logic for sending initial text to ${jii.pseudonymizedId}`,
+    );
+
+    if (message) {
+      return ScriptAction.INITIAL_MESSAGE_SENT;
+    } else {
+      return ScriptAction.ERROR;
+    }
+  }
+
+  const initialMessageSeries = jii.welcomeMessageSeries;
+
+  const latestInitialMessageAttempt =
+    getOrderedMessageAttempts(initialMessageSeries)[0];
+
+  if (
+    (initialMessageSeries.messageAttempts.length >= MAX_RETRY_ATTEMPTS &&
+      latestInitialMessageAttempt.status === MessageAttemptStatus.FAILURE) ||
+    latestInitialMessageAttempt.status === MessageAttemptStatus.SUCCESS
+  ) {
+    return ScriptAction.SKIPPED;
+  }
+
+  let latestInitialMessageAttemptStatus: MessageAttemptStatus;
+  if (dryRun) {
+    latestInitialMessageAttemptStatus = latestInitialMessageAttempt.status;
+  } else {
+    try {
+      // Update status for the latest message attempt by querying Twilio
+      latestInitialMessageAttemptStatus = await updateMessageAttempt(
+        prisma,
+        twilio,
+        latestInitialMessageAttempt.status,
+        latestInitialMessageAttempt.twilioMessageSid,
+        MessageType.INITIAL_TEXT,
+      );
+    } catch (error) {
+      console.log(
+        `Encountered error updating latest message status for ${jii.pseudonymizedId}`,
+      );
+      captureException(
+        `Error in processWelcomeText for ${jii.pseudonymizedId}: ${error}`,
+      );
+      return ScriptAction.ERROR;
+    }
+  }
+
+  if (
+    latestInitialMessageAttemptStatus === MessageAttemptStatus.IN_PROGRESS ||
+    latestInitialMessageAttemptStatus === MessageAttemptStatus.UNKNOWN
+  ) {
+    return ScriptAction.SKIPPED;
+  }
+
+  if (latestInitialMessageAttemptStatus === MessageAttemptStatus.FAILURE) {
+    if (initialMessageSeries.messageAttempts.length >= MAX_RETRY_ATTEMPTS) {
+      return ScriptAction.SKIPPED;
+    } else {
+      if (dryRun) {
+        console.log(
+          `Skipped resending initial message for ${jii.pseudonymizedId}`,
+        );
+        return ScriptAction.INITIAL_MESSAGE_SENT;
+      }
+
+      const message = await sendWelcomeText(
+        personMetadata,
+        workflowExecutionId,
+        prisma,
+        twilio,
+        initialMessageSeries.id,
+      );
+
+      console.log(
+        `Executed sendText logic for resending initial text to ${jii.pseudonymizedId}`,
+      );
+
+      if (message) {
+        return ScriptAction.INITIAL_MESSAGE_SENT;
+      } else {
+        return ScriptAction.ERROR;
+      }
+    }
+  }
+
+  // At this point we pulled the latest status from Twilio in this run and it is successful
+  try {
+    await prisma.person.update({
+      where: {
+        stableExternalId: jii.stableExternalId,
+      },
+      data: {
+        receivedWelcomeText: true,
+      },
+    });
+  } catch (error) {
+    console.log(
+      `Encountered error updating Person.receivedWelcomeText for ${jii.pseudonymizedId}`,
+    );
+    captureException(
+      `Error in processWelcomeText for ${jii.pseudonymizedId}: ${error}`,
+    );
+    return ScriptAction.ERROR;
+  }
+
+  return ScriptAction.NOOP;
+}
+
+export async function processIndividualJiiContactReminders(
+  jii: PersonWithContactsAndMessages,
+  workflowExecutionId: string,
+  dryRun: boolean,
+  prisma: PrismaClient,
+  twilio: TwilioAPIClient,
+): Promise<ScriptAction[]> {
+  console.log(
+    `Processing ${jii.pseudonymizedId} with ${jii.contacts.length} contacts where dryRun is ${dryRun}`,
+  );
+
+  const personMetadata: PersonDataForMessage = {
+    givenName: jii.givenName,
+    phoneNumber: jii.phoneNumber,
+    stableExternalId: jii.stableExternalId,
+    poName: jii.poName,
+    district: jii.district,
+    pseudonymizedId: jii.pseudonymizedId,
+  };
+
+  if (personHasOptedOut(jii)) return [ScriptAction.SKIPPED];
+
+  if (!jii.receivedWelcomeText) {
+    const result = await processWelcomeText(
+      jii,
+      personMetadata,
+      workflowExecutionId,
+      dryRun,
+      prisma,
+      twilio,
+    );
+
+    if (result !== ScriptAction.NOOP) {
+      return [result];
+    }
+  }
+
+  if (jii.contacts.length === 0) return [ScriptAction.SKIPPED];
+
+  const allContactActions = jii.contacts.map(async (contact) => {
+    const result = await processContact(
+      personMetadata,
+      contact,
+      personMetadata,
+      workflowExecutionId,
+      prisma,
+      twilio,
+      dryRun,
+    );
+
+    return result;
+  });
+
+  const uniqueActions = new Set(await Promise.all(allContactActions));
+
+  return [...uniqueActions];
 }

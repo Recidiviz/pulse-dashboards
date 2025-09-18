@@ -18,7 +18,8 @@
 import { Command } from "@commander-js/extra-typings";
 
 import { StateCode } from "~@jii-texting/prisma/client";
-import { processJii } from "~@jii-texting/processor/scripts/process-jii";
+import { processJiiContactReminders } from "~@jii-texting/processor/scripts/process-jii-contact-reminders";
+import { processJiiEligiblityTexts } from "~@jii-texting/processor/scripts/process-jii-eligibility-texts";
 
 // Define CLI
 const program = new Command()
@@ -33,11 +34,19 @@ function main() {
   program.parse();
   const options = program.opts();
 
-  processJii({
+  const args = {
     stateCode: options.stateCode as StateCode,
     dryRun: options.dryRun ? true : false,
     workflowExecutionId: options.workflowExecutionId as string,
-  });
+  };
+
+  if (options.stateCode === "US_ID") {
+    processJiiEligiblityTexts(args);
+  }
+
+  if (options.stateCode === "US_TX") {
+    processJiiContactReminders(args);
+  }
 }
 
 main();

@@ -18,9 +18,8 @@
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import { StateCode } from "~@jii-texting/prisma/client";
 import {
-  PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP,
-  PersonWithMessageSeriesAndGroup,
-  processIndividualJii,
+  PERSON_WITH_CONTACTS_AND_MESSAGES,
+  processIndividualJiiContactReminders,
   ScriptAction,
 } from "~@jii-texting/utils";
 import { TwilioAPIClient } from "~twilio-api";
@@ -31,13 +30,13 @@ export type processJiiArguments = {
   workflowExecutionId: string;
 };
 
-export async function processJii({
+export async function processJiiContactReminders({
   stateCode,
   dryRun,
   workflowExecutionId,
 }: processJiiArguments) {
   console.log(
-    `Starting the process-jii job for ${stateCode}, where dry-run is ${dryRun}`,
+    `Starting the process-jii-contact-reminders job for ${stateCode}, where dry-run is ${dryRun}`,
   );
 
   // Instantiate the Twilio client
@@ -55,21 +54,19 @@ export async function processJii({
   // Get Prisma client
   const prisma = getPrismaClientForStateCode(stateCode);
 
-  // Get all JII who should receive a text, that is people who have the `groups` field hydrated
-  // Currently, it's not possible to flatten the results (see https://stackoverflow.com/questions/71445312/for-prisma-client-join-queries-is-it-possible-to-move-deeply-nested-fields-to-to)
-  const jiiToText: PersonWithMessageSeriesAndGroup[] =
-    await prisma.person.findMany({
-      // Filter for people where the `groups` relation is not empty (see https://github.com/prisma/prisma/issues/3888)
-      // Also see https://www.prisma.io/docs/orm/reference/prisma-client-reference#none
-      where: {
-        NOT: {
-          groups: {
-            none: {},
+  const jiiToText = await prisma.person.findMany({
+    include: {
+      ...PERSON_WITH_CONTACTS_AND_MESSAGES.include,
+      contacts: {
+        ...PERSON_WITH_CONTACTS_AND_MESSAGES.include.contacts,
+        where: {
+          NOT: {
+            reminderType: null,
           },
         },
       },
-      ...PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP,
-    });
+    },
+  });
 
   const results: Record<ScriptAction, string[]> = {
     INITIAL_MESSAGE_SENT: [],
@@ -77,18 +74,22 @@ export async function processJii({
     SKIPPED: [],
     ERROR: [],
     NOOP: [],
+    REMINDER_TEXT_SENT: [],
   };
 
   await Promise.all(
     jiiToText.map(async (jii) => {
-      const action = await processIndividualJii(
+      const actions = await processIndividualJiiContactReminders(
         jii,
         workflowExecutionId,
         dryRun,
         prisma,
         twilioClient,
       );
-      results[action as ScriptAction].push(jii.pseudonymizedId);
+
+      actions.forEach((action) => {
+        results[action as ScriptAction].push(jii.pseudonymizedId);
+      });
     }),
   );
 

@@ -19,10 +19,16 @@ import { afterEach, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import { Prisma, PrismaClient, StateCode } from "~@jii-texting/prisma/client";
-import { seed } from "~@jii-texting/processor/test/setup/seed";
+import { seedContactReminders } from "~@jii-texting/processor/test/setup/seed-contact-reminders";
+import { seed } from "~@jii-texting/processor/test/setup/seed-eligibility";
 import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting/utils";
 
-export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
+export const testUsIdPrismaClient = getPrismaClientForStateCode(
+  StateCode.US_ID,
+);
+export const testUsTxPrismaClient = getPrismaClientForStateCode(
+  StateCode.US_TX,
+);
 
 const PRISMA_TABLES = Object.values(Prisma.ModelName);
 
@@ -35,8 +41,12 @@ async function resetDb(prismaClient: PrismaClient) {
 }
 
 beforeEach(async () => {
-  await resetDb(testPrismaClient);
-  await seed(testPrismaClient);
+  await resetDb(testUsIdPrismaClient);
+  await seed(testUsIdPrismaClient);
+
+  await resetDb(testUsTxPrismaClient);
+  await seedContactReminders(testUsTxPrismaClient);
+
   vi.useFakeTimers();
 
   // Set the system to be later than the earliest time we want to send messages

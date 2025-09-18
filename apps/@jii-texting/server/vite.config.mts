@@ -21,7 +21,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: "../../node_modules/.vite/apps/@jii-texting/server",
+  cacheDir: "../../../node_modules/.vite/apps/@jii-texting/server",
 
   plugins: [nxViteTsPaths()],
   test: {
@@ -54,6 +54,9 @@ export default defineConfig(() => ({
       DATABASE_URL_US_ID:
         process.env["DATABASE_URL_US_ID"] ??
         "postgresql://postgres:postgres@localhost:6503/jii-texting-test-us-id?schema=public",
+      DATABASE_URL_US_TX:
+        process.env["DATABASE_URL_US_TX"] ??
+        "postgresql://postgres:postgres@localhost:6503/jii-texting-test-us-tx?schema=public",
       IMPORT_BUCKET_ID: process.env["IMPORT_BUCKET_ID"] ?? "test-bucket",
       GOOGLE_WORKFLOWS_SERVICE_ACCOUNT_EMAIL:
         process.env["GOOGLE_WORKFLOWS_SERVICE_ACCOUNT_EMAIL"] ??

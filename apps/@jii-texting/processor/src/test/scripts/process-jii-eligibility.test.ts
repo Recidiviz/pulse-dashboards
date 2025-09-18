@@ -25,8 +25,8 @@ import {
   MessageType,
   StateCode,
 } from "~@jii-texting/prisma/client";
-import { processJii } from "~@jii-texting/processor/scripts/process-jii";
-import { testPrismaClient } from "~@jii-texting/processor/test/setup/index";
+import { processJiiEligiblityTexts } from "~@jii-texting/processor/scripts/process-jii-eligibility-texts";
+import { testUsIdPrismaClient } from "~@jii-texting/processor/test/setup/index";
 import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting/utils/common/constants";
 import {
   fakeMissingDA,
@@ -73,7 +73,7 @@ describe("one person in DB without prior messages, thus send initial text", () =
         status: "queued",
       } as MessageInstance);
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
@@ -112,7 +112,7 @@ describe("one person in DB without prior messages, thus send initial text", () =
         dateSend: new Date(),
       } as unknown as MessageInstance);
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
@@ -133,9 +133,10 @@ describe("one person in DB without prior messages, thus send initial text", () =
       new Date(`2025-04-01T18:00:00.000Z`),
     );
 
-    const newMessage = await testPrismaClient.messageAttempt.findFirstOrThrow({
-      where: { twilioMessageSid: "twilio-message-sid" },
-    });
+    const newMessage =
+      await testUsIdPrismaClient.messageAttempt.findFirstOrThrow({
+        where: { twilioMessageSid: "twilio-message-sid" },
+      });
 
     expect(newMessage.status).toBe(MessageAttemptStatus.IN_PROGRESS);
     expect(newMessage.requestedSendTimestamp).toStrictEqual(
@@ -154,15 +155,15 @@ describe("one person in DB without prior messages, thus send initial text", () =
       errorCode: null,
     } as unknown as MessageInstance);
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
     });
 
-    const messageSeries = await testPrismaClient.messageSeries.findMany({
+    const messageSeries = await testUsIdPrismaClient.messageSeries.findMany({
       where: {
-        personExternalId: fakePersonOne.externalId,
+        personExternalId: fakePersonOne.stableExternalId,
       },
       include: {
         messageAttempts: true,
@@ -178,15 +179,15 @@ describe("one person in DB without prior messages, thus send initial text", () =
       new Error("test"),
     );
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
     });
 
-    const messageSeries = await testPrismaClient.messageSeries.findMany({
+    const messageSeries = await testUsIdPrismaClient.messageSeries.findMany({
       where: {
-        personExternalId: fakePersonOne.externalId,
+        personExternalId: fakePersonOne.stableExternalId,
       },
       include: {
         messageAttempts: true,
@@ -199,19 +200,19 @@ describe("one person in DB without prior messages, thus send initial text", () =
 
 describe("one person in DB with initial text sent once", () => {
   beforeEach(async () => {
-    const person = await testPrismaClient.person.findFirstOrThrow({
+    const person = await testUsIdPrismaClient.person.findFirstOrThrow({
       where: { personId: fakePersonOne.personId },
       include: { groups: true },
     });
 
-    const group = await testPrismaClient.group.findFirstOrThrow({
+    const group = await testUsIdPrismaClient.group.findFirstOrThrow({
       where: {
         id: person?.groups[0].id,
       },
     });
 
     // Insert MessageSeries with single MessageAttempt
-    await testPrismaClient.messageSeries.create({
+    await testUsIdPrismaClient.messageSeries.create({
       data: {
         messageType: MessageType.INITIAL_TEXT,
         group: { connect: { id: group.id } },
@@ -234,7 +235,7 @@ describe("one person in DB with initial text sent once", () => {
 
   describe("person has opted out", () => {
     beforeEach(async () => {
-      await testPrismaClient.person.update({
+      await testUsIdPrismaClient.person.update({
         where: {
           personId: fakePersonOne.personId,
         },
@@ -245,7 +246,7 @@ describe("one person in DB with initial text sent once", () => {
     });
 
     test("Twilio getMessage not called", async () => {
-      await processJii({
+      await processJiiEligiblityTexts({
         stateCode: StateCode.US_ID,
         dryRun: false,
         workflowExecutionId: fakeWorkflowExecutionOne.id,
@@ -261,7 +262,7 @@ describe("one person in DB with initial text sent once", () => {
       status: "delivered",
     } as MessageInstance);
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
@@ -279,19 +280,19 @@ describe("one person in DB with initial text sent once", () => {
 
     // Ensure test has correct setup with one existing MessageAttempt
     const currentMessageAttempt =
-      await testPrismaClient.messageAttempt.findFirstOrThrow({
+      await testUsIdPrismaClient.messageAttempt.findFirstOrThrow({
         where: { twilioMessageSid: "message-sid-1" },
       });
     expect(currentMessageAttempt.status).toBe(MessageAttemptStatus.IN_PROGRESS);
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
     });
 
     const newMessageAttempt =
-      await testPrismaClient.messageAttempt.findFirstOrThrow({
+      await testUsIdPrismaClient.messageAttempt.findFirstOrThrow({
         where: { twilioMessageSid: "message-sid-1" },
       });
 
@@ -310,21 +311,21 @@ describe("one person in DB with initial text sent once", () => {
     test("MessageAttempt is updated", async () => {
       // Ensure test has correct setup with one existing MessageAttempt
       const currentMessageAttempt =
-        await testPrismaClient.messageAttempt.findFirstOrThrow({
+        await testUsIdPrismaClient.messageAttempt.findFirstOrThrow({
           where: { twilioMessageSid: "message-sid-1" },
         });
       expect(currentMessageAttempt.status).toBe(
         MessageAttemptStatus.IN_PROGRESS,
       );
 
-      await processJii({
+      await processJiiEligiblityTexts({
         stateCode: StateCode.US_ID,
         dryRun: false,
         workflowExecutionId: fakeWorkflowExecutionOne.id,
       });
 
       const newMessageAttempt =
-        await testPrismaClient.messageAttempt.findFirstOrThrow({
+        await testUsIdPrismaClient.messageAttempt.findFirstOrThrow({
           where: { twilioMessageSid: "message-sid-1" },
         });
 
@@ -342,14 +343,14 @@ describe("one person in DB with initial text sent once", () => {
         errorCode: null,
       } as unknown as MessageInstance);
 
-      await processJii({
+      await processJiiEligiblityTexts({
         stateCode: StateCode.US_ID,
         dryRun: false,
         workflowExecutionId: fakeWorkflowExecutionOne.id,
       });
 
       const personWithMessageSeries =
-        await testPrismaClient.person.findFirstOrThrow({
+        await testUsIdPrismaClient.person.findFirstOrThrow({
           where: {
             personId: fakePersonOne.personId,
           },
@@ -372,7 +373,7 @@ describe("one person in DB with initial text sent once", () => {
         errorCode: null,
       } as unknown as MessageInstance);
 
-      await testPrismaClient.person.update({
+      await testUsIdPrismaClient.person.update({
         where: {
           personId: fakePersonOne.personId,
         },
@@ -381,14 +382,14 @@ describe("one person in DB with initial text sent once", () => {
         },
       });
 
-      const newGroup = await testPrismaClient.group.findFirstOrThrow({
+      const newGroup = await testUsIdPrismaClient.group.findFirstOrThrow({
         where: {
           groupName: fakeMissingDA.groupName,
         },
       });
 
       // Change the existing person's group in the setup
-      await testPrismaClient.person.update({
+      await testUsIdPrismaClient.person.update({
         where: {
           personId: fakePersonOne.personId,
         },
@@ -402,14 +403,14 @@ describe("one person in DB with initial text sent once", () => {
         select: { groups: true },
       });
 
-      await processJii({
+      await processJiiEligiblityTexts({
         stateCode: StateCode.US_ID,
         dryRun: false,
         workflowExecutionId: fakeWorkflowExecutionOne.id,
       });
 
       const personWithMessageSeries =
-        await testPrismaClient.person.findFirstOrThrow({
+        await testUsIdPrismaClient.person.findFirstOrThrow({
           where: {
             personId: fakePersonOne.personId,
           },
@@ -433,21 +434,21 @@ describe("one person in DB with initial text sent once", () => {
     test("MessageAttempt is updated", async () => {
       // Ensure test has correct setup with one existing MessageAttempt
       const currentMessageAttempt =
-        await testPrismaClient.messageAttempt.findFirstOrThrow({
+        await testUsIdPrismaClient.messageAttempt.findFirstOrThrow({
           where: { twilioMessageSid: "message-sid-1" },
         });
       expect(currentMessageAttempt.status).toBe(
         MessageAttemptStatus.IN_PROGRESS,
       );
 
-      await processJii({
+      await processJiiEligiblityTexts({
         stateCode: StateCode.US_ID,
         dryRun: false,
         workflowExecutionId: fakeWorkflowExecutionOne.id,
       });
 
       const newMessageAttempt =
-        await testPrismaClient.messageAttempt.findFirstOrThrow({
+        await testUsIdPrismaClient.messageAttempt.findFirstOrThrow({
           where: { twilioMessageSid: "message-sid-1" },
         });
 
@@ -457,7 +458,7 @@ describe("one person in DB with initial text sent once", () => {
     test("initial text is attempted again", async () => {
       // Ensure test is setup correctly
       const existingMessageAttempts =
-        await testPrismaClient.messageAttempt.count({
+        await testUsIdPrismaClient.messageAttempt.count({
           where: {
             phoneNumber: fakePersonOne.phoneNumber,
           },
@@ -475,13 +476,13 @@ describe("one person in DB with initial text sent once", () => {
         errorCode: null,
       } as unknown as MessageInstance);
 
-      await processJii({
+      await processJiiEligiblityTexts({
         stateCode: StateCode.US_ID,
         dryRun: false,
         workflowExecutionId: fakeWorkflowExecutionOne.id,
       });
 
-      const messageAttempts = await testPrismaClient.messageAttempt.count({
+      const messageAttempts = await testUsIdPrismaClient.messageAttempt.count({
         where: {
           phoneNumber: fakePersonOne.phoneNumber,
         },
@@ -494,19 +495,19 @@ describe("one person in DB with initial text sent once", () => {
 
 describe("one person in DB with three initial text attempts", () => {
   beforeEach(async () => {
-    const person = await testPrismaClient.person.findFirstOrThrow({
+    const person = await testUsIdPrismaClient.person.findFirstOrThrow({
       where: { personId: fakePersonOne.personId },
       include: { groups: true },
     });
 
-    const group = await testPrismaClient.group.findFirstOrThrow({
+    const group = await testUsIdPrismaClient.group.findFirstOrThrow({
       where: {
         id: person?.groups[0].id,
       },
     });
 
     // Insert MessageSeries with multiple MessageAttempt
-    await testPrismaClient.messageSeries.create({
+    await testUsIdPrismaClient.messageSeries.create({
       data: {
         messageType: MessageType.INITIAL_TEXT,
         group: { connect: { id: group.id } },
@@ -553,7 +554,7 @@ describe("one person in DB with three initial text attempts", () => {
     });
 
     test("validate Twilio getMessage call", async () => {
-      await processJii({
+      await processJiiEligiblityTexts({
         stateCode: StateCode.US_ID,
         dryRun: false,
         workflowExecutionId: fakeWorkflowExecutionOne.id,
@@ -566,14 +567,14 @@ describe("one person in DB with three initial text attempts", () => {
     });
 
     test("validate MessageAttempt is updated", async () => {
-      await processJii({
+      await processJiiEligiblityTexts({
         stateCode: StateCode.US_ID,
         dryRun: false,
         workflowExecutionId: fakeWorkflowExecutionOne.id,
       });
 
       const newMessageAttempt =
-        await testPrismaClient.messageAttempt.findFirstOrThrow({
+        await testUsIdPrismaClient.messageAttempt.findFirstOrThrow({
           where: { twilioMessageSid: "message-sid-3" },
         });
 
@@ -590,14 +591,14 @@ describe("one person in DB with three initial text attempts", () => {
     });
 
     test("validate MessageAttempt is updated", async () => {
-      await processJii({
+      await processJiiEligiblityTexts({
         stateCode: StateCode.US_ID,
         dryRun: false,
         workflowExecutionId: fakeWorkflowExecutionOne.id,
       });
 
       const newMessageAttempt =
-        await testPrismaClient.messageAttempt.findFirstOrThrow({
+        await testUsIdPrismaClient.messageAttempt.findFirstOrThrow({
           where: { twilioMessageSid: "message-sid-3" },
         });
 
@@ -605,7 +606,7 @@ describe("one person in DB with three initial text attempts", () => {
     });
 
     test("validate createMessage is not called", async () => {
-      await processJii({
+      await processJiiEligiblityTexts({
         stateCode: StateCode.US_ID,
         dryRun: false,
         workflowExecutionId: fakeWorkflowExecutionOne.id,
@@ -618,9 +619,9 @@ describe("one person in DB with three initial text attempts", () => {
 
 describe("one person with initial and eligibility message series with MANUAL group", () => {
   beforeEach(async () => {
-    const topic = await testPrismaClient.topic.findFirstOrThrow();
+    const topic = await testUsIdPrismaClient.topic.findFirstOrThrow();
 
-    const group = await testPrismaClient.group.create({
+    const group = await testUsIdPrismaClient.group.create({
       data: {
         groupName: "MANUAL",
         id: "group-id-1",
@@ -628,13 +629,13 @@ describe("one person with initial and eligibility message series with MANUAL gro
       },
     });
 
-    const person = await testPrismaClient.person.findFirstOrThrow({
+    const person = await testUsIdPrismaClient.person.findFirstOrThrow({
       where: { personId: fakePersonOne.personId },
       include: { groups: true },
     });
 
     // Insert first MessageSeries
-    await testPrismaClient.messageSeries.create({
+    await testUsIdPrismaClient.messageSeries.create({
       data: {
         messageType: MessageType.INITIAL_TEXT,
         group: { connect: { id: group.id } },
@@ -655,7 +656,7 @@ describe("one person with initial and eligibility message series with MANUAL gro
     });
 
     // Insert second MessageSeries
-    await testPrismaClient.messageSeries.create({
+    await testUsIdPrismaClient.messageSeries.create({
       data: {
         messageType: MessageType.ELIGIBILITY_TEXT,
         group: { connect: { id: group.id } },
@@ -689,14 +690,14 @@ describe("one person with initial and eligibility message series with MANUAL gro
 
     vi.setSystemTime(fiveDaysFromLatestMessageAttempt.toDate());
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
     });
 
     const personWithMessageSeries =
-      await testPrismaClient.person.findFirstOrThrow({
+      await testUsIdPrismaClient.person.findFirstOrThrow({
         where: {
           personId: fakePersonOne.personId,
         },
@@ -728,14 +729,14 @@ describe("one person with initial and eligibility message series with MANUAL gro
 
     vi.setSystemTime(over90DaysFromLatestMessageAttempt.toDate());
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
     });
 
     const personWithMessageSeries =
-      await testPrismaClient.person.findFirstOrThrow({
+      await testUsIdPrismaClient.person.findFirstOrThrow({
         where: {
           personId: fakePersonOne.personId,
         },
@@ -752,19 +753,19 @@ describe("one person with initial and eligibility message series with MANUAL gro
 
 describe("one person with initial and eligibility message series", () => {
   beforeEach(async () => {
-    const person = await testPrismaClient.person.findFirstOrThrow({
+    const person = await testUsIdPrismaClient.person.findFirstOrThrow({
       where: { personId: fakePersonOne.personId },
       include: { groups: true },
     });
 
-    const group = await testPrismaClient.group.findFirstOrThrow({
+    const group = await testUsIdPrismaClient.group.findFirstOrThrow({
       where: {
         id: person?.groups[0].id,
       },
     });
 
     // Insert first MessageSeries
-    await testPrismaClient.messageSeries.create({
+    await testUsIdPrismaClient.messageSeries.create({
       data: {
         messageType: MessageType.INITIAL_TEXT,
         group: { connect: { id: group.id } },
@@ -785,7 +786,7 @@ describe("one person with initial and eligibility message series", () => {
     });
 
     // Insert second MessageSeries
-    await testPrismaClient.messageSeries.create({
+    await testUsIdPrismaClient.messageSeries.create({
       data: {
         messageType: MessageType.ELIGIBILITY_TEXT,
         group: { connect: { id: group.id } },
@@ -812,7 +813,7 @@ describe("one person with initial and eligibility message series", () => {
       status: "delivered",
     } as MessageInstance);
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
@@ -832,14 +833,14 @@ describe("one person with initial and eligibility message series", () => {
       status: "delivered",
     } as MessageInstance);
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
     });
 
     const newMessageAttempt =
-      await testPrismaClient.messageAttempt.findFirstOrThrow({
+      await testUsIdPrismaClient.messageAttempt.findFirstOrThrow({
         where: { twilioMessageSid: "message-sid-2" },
       });
 
@@ -863,14 +864,14 @@ describe("one person with initial and eligibility message series", () => {
 
         vi.setSystemTime(fiveDaysFromLatestMessageAttempt.toDate());
 
-        await processJii({
+        await processJiiEligiblityTexts({
           stateCode: StateCode.US_ID,
           dryRun: false,
           workflowExecutionId: fakeWorkflowExecutionOne.id,
         });
 
         const personWithMessageSeries =
-          await testPrismaClient.person.findFirstOrThrow({
+          await testUsIdPrismaClient.person.findFirstOrThrow({
             where: {
               personId: fakePersonOne.personId,
             },
@@ -906,14 +907,14 @@ describe("one person with initial and eligibility message series", () => {
 
         vi.setSystemTime(over90DaysFromLatestMessageAttempt.toDate());
 
-        await processJii({
+        await processJiiEligiblityTexts({
           stateCode: StateCode.US_ID,
           dryRun: false,
           workflowExecutionId: fakeWorkflowExecutionOne.id,
         });
 
         const personWithMessageSeries =
-          await testPrismaClient.person.findFirstOrThrow({
+          await testUsIdPrismaClient.person.findFirstOrThrow({
             where: {
               personId: fakePersonOne.personId,
             },
@@ -934,7 +935,7 @@ describe("one person with initial and eligibility message series", () => {
 
     describe("group changes", () => {
       beforeEach(async () => {
-        await testPrismaClient.person.update({
+        await testUsIdPrismaClient.person.update({
           where: {
             personId: fakePersonOne.personId,
           },
@@ -943,14 +944,14 @@ describe("one person with initial and eligibility message series", () => {
           },
         });
 
-        const newGroup = await testPrismaClient.group.findFirstOrThrow({
+        const newGroup = await testUsIdPrismaClient.group.findFirstOrThrow({
           where: {
             groupName: fakeMissingDA.groupName,
           },
         });
 
         // Change the existing person's group in the setup
-        await testPrismaClient.person.update({
+        await testUsIdPrismaClient.person.update({
           where: {
             personId: fakePersonOne.personId,
           },
@@ -976,14 +977,14 @@ describe("one person with initial and eligibility message series", () => {
           errorCode: null,
         } as unknown as MessageInstance);
 
-        await processJii({
+        await processJiiEligiblityTexts({
           stateCode: StateCode.US_ID,
           dryRun: false,
           workflowExecutionId: fakeWorkflowExecutionOne.id,
         });
 
         const personWithMessageSeries =
-          await testPrismaClient.person.findFirstOrThrow({
+          await testUsIdPrismaClient.person.findFirstOrThrow({
             where: {
               personId: fakePersonOne.personId,
             },
@@ -1013,13 +1014,13 @@ test.each([
       status: "delivered",
     } as MessageInstance);
 
-    const group = await testPrismaClient.group.findFirstOrThrow({
+    const group = await testUsIdPrismaClient.group.findFirstOrThrow({
       where: {
         groupName: groupName,
       },
     });
 
-    await testPrismaClient.person.update({
+    await testUsIdPrismaClient.person.update({
       where: { personId: fakePersonOne.personId },
       data: {
         district: district,
@@ -1030,7 +1031,7 @@ test.each([
     });
 
     // Insert MessageSeries with single MessageAttempt for the test group
-    await testPrismaClient.messageSeries.create({
+    await testUsIdPrismaClient.messageSeries.create({
       data: {
         messageType: MessageType.INITIAL_TEXT,
         group: { connect: { id: group.id } },
@@ -1062,7 +1063,7 @@ test.each([
         errorCode: null,
       } as unknown as MessageInstance);
 
-    await processJii({
+    await processJiiEligiblityTexts({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
