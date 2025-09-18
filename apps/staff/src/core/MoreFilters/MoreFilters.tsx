@@ -20,7 +20,7 @@ import "./MoreFilters.scss";
 import { Icon, IconSVG, TooltipTrigger } from "@recidiviz/design-system";
 import { get } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Button } from "~design-system";
 
@@ -47,6 +47,7 @@ const MoreFilters: React.FC<Props> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [updatedFilters, updateFilters] = useState({});
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
@@ -67,6 +68,11 @@ const MoreFilters: React.FC<Props> = ({
       filter.options,
     ).filter((option) => option.value !== filter.defaultValue).length;
   });
+
+  const handleClose = () => {
+    setOpen(false);
+    buttonRef.current?.focus();
+  };
 
   const onUpdateFilters = (newOptions: FilterOption[], filterType: string) => {
     updateFilters({
@@ -89,11 +95,12 @@ const MoreFilters: React.FC<Props> = ({
 
   const MoreFiltersButton = (
     <button
+      ref={buttonRef}
       className="DetailsGroup__button"
       type="button"
       aria-expanded={open}
       onClick={() => {
-        setOpen(!open)
+        setOpen(!open);
       }}
       aria-haspopup="true"
     >
@@ -111,7 +118,7 @@ const MoreFilters: React.FC<Props> = ({
       <PathwaysModal
         title="More filters"
         isShowing={open}
-        hide={() => setOpen(false)}
+        hide={handleClose}
         footer={
           <>
             <button

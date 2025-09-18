@@ -54,21 +54,50 @@ const PathwaysModal: React.FC<Props> = ({
     if (!isShowing) {
       return;
     }
-    const moreFiltersModal = document.getElementById("more-filters-modal");
-    // Select the first focusable element
-    const firstFocusableElement = moreFiltersModal?.querySelector(
-      'input, button, a[href], [tabindex]:not([tabindex="-1"])',
-    ) as HTMLElement;
-    if (firstFocusableElement) {
-      firstFocusableElement.focus();
-    }
+
+    const modalElement = ref.current;
+    if (!modalElement) return;
+
+    // --- Focus Trapping Logic ---
+    const focusableElementsSelector =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusableElements = Array.from(
+      modalElement.querySelectorAll(focusableElementsSelector),
+    ) as HTMLElement[];
+
+    if (focusableElements.length === 0) return;
+
+    const firstFocusableElement = focusableElements[0];
+    const lastFocusableElement =
+      focusableElements[focusableElements.length - 1];
+
+    // 1. Set initial focus on the first element
+    firstFocusableElement.focus();
 
     // Define the handler as a stable function
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         hide();
+        return;
+      }
+
+      if (event.key === "Tab") {
+        // If shift + tab is pressed
+        if (event.shiftKey) {
+          if (document.activeElement === firstFocusableElement) {
+            event.preventDefault();
+            lastFocusableElement.focus();
+          }
+        } else {
+          // If tab is pressed
+          if (document.activeElement === lastFocusableElement) {
+            event.preventDefault();
+            firstFocusableElement.focus();
+          }
+        }
       }
     };
+
     document.addEventListener("keydown", handleKeyDown);
     // Cleanup: remove the event listener
     return () => {
@@ -102,7 +131,14 @@ const PathwaysModal: React.FC<Props> = ({
               width={14}
               height={14}
               onClick={hide}
+              onKeyDown={(e: React.KeyboardEvent) => {
+                if (e.code === "Enter") {
+                  e.preventDefault();
+                  hide();
+                }
+              }}
               tabIndex={0}
+              aria-label="Close modal"
             />
           </div>
           <div className="Modal__content">{children}</div>

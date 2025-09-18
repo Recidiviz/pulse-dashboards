@@ -108,6 +108,7 @@ function CoreMultiSelect({
       onChange={handleChange}
       options={options}
       onFocus={() => ref.current.setState({ menuIsOpen: true })}
+      onEscapeKeydown={() => ref.current.setState({ menuIsOpen: false })}
       value={value}
       isSearchable
       isMulti

@@ -60,7 +60,8 @@
     }
 
     &--is-focused {
-      background-color: inherit !important;
+      background-color: constants.$core-focused-color !important;
+      color: constants.$pine-3 !important;
     }
 
     &--is-selected {
@@ -68,9 +69,8 @@
       color: white !important;
     }
 
-    &:active,
-    &:hover {
-      background: constants.$core-focused-color !important;
+    &:hover{
+      background-color: constants.$core-focused-color !important;
       color: constants.$pine-3 !important;
     }
   }

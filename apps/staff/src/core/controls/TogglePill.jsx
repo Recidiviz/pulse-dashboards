@@ -34,6 +34,7 @@ function TogglePill({ currentValue, onChange, leftPill, rightPill }) {
           })}
           onClick={() => onChange(value)}
           tabIndex={0}
+          aria-label={`Counts or Rates Toggle: ${label}`}
         >
           {label}
         </button>
