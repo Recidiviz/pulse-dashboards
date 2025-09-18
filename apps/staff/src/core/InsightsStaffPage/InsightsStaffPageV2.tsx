@@ -57,7 +57,6 @@ const ManagedComponent = observer(function StaffPage({
     numClientsOnCaseload,
     shouldShowAvgDailyCaseload,
     userCanViewUsageActivity,
-    isCurrentOfficerUserRestrictedFromSupervisorsList,
   } = presenter;
 
   type InfoItem = NonNullable<
@@ -145,7 +144,7 @@ const ManagedComponent = observer(function StaffPage({
       }
       highlightedOfficers={<ManagedStaffHighlightedOfficersBanner />}
     >
-      {!isCurrentOfficerUserRestrictedFromSupervisorsList && <InsightsStaffOutcomesSection />}
+      <InsightsStaffOutcomesSection />
       <InsightsOpportunitySummary />
       <InsightsStaffVitals officerPseudoId={officerPseudoId} />
     </InsightsPageLayout>

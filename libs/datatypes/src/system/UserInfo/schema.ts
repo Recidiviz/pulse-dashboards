@@ -30,7 +30,9 @@ export const userInfoSchema = z
     }),
     z.object({
       role: z.literal("supervision_officer"),
-      entity: supervisionOfficerSchema,
+      // TODO(#9177): Remove error catching once the backend passes the latest login
+      // date correctly.
+      entity: supervisionOfficerSchema.nullish().catch(null),
     }),
     z.object({ role: z.null(), entity: z.null() }),
   ])

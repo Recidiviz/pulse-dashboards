@@ -86,27 +86,10 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
       (supervisor) => supervisor.pseudonymizedId === userPseudoId,
     );
 
-
     if (matchingSupervisor) {
       return {
         role: "supervision_officer_supervisor",
         entity: matchingSupervisor,
-        ...(this.pseudoIdToEditableUserInfo.get(userPseudoId) ?? {
-          metadata: {
-            hasSeenOnboarding: false,
-          },
-        }),
-      };
-    }
-
-    const matchingOfficer = supervisionOfficerFixture.find(
-      (officer) => officer.pseudonymizedId === userPseudoId,
-    );
-
-    if (matchingOfficer) {
-      return {
-        role: "supervision_officer",
-        entity: matchingOfficer,
         ...(this.pseudoIdToEditableUserInfo.get(userPseudoId) ?? {
           metadata: {
             hasSeenOnboarding: false,

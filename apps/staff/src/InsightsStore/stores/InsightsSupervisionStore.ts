@@ -180,7 +180,6 @@ export class InsightsSupervisionStore {
     return userStore.getRoutePermission("supervisors-list");
   }
 
-
   get userHasSeenOnboarding(): boolean {
     return this.userInfo?.metadata.hasSeenOnboarding ?? false;
   }
@@ -204,22 +203,6 @@ export class InsightsSupervisionStore {
     if (this.userInfo?.role === "supervision_officer_supervisor") {
       return this.userInfo.entity;
     }
-  }
-
-  get currentOfficerUser(): SupervisionOfficer | undefined {
-    if (this.userInfo?.role === "supervision_officer") {
-      return this.userInfo.entity;
-    }
-  }
-
-  /**
-   * Indicates whether the current officer user does not have access to the supervisors list.
-   * 
-   * As of 9/16/2025, this should be a user who does not supervise any officers and
-   * has an officer record.
-   */
-  get isCurrentOfficerUserRestrictedFromSupervisorsList(): boolean {
-    return !!this.currentOfficerUser && !this.userCanAccessAllSupervisors;
   }
 
   get supervisorIsCurrentUser() {
@@ -513,7 +496,6 @@ export class InsightsSupervisionStore {
    * This is a MobX flow method and should be called with mobx.flowResult.
    */
   *populateMetricConfigs(): FlowMethod<InsightsAPI["metricBenchmarks"], void> {
-    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
     if (this.benchmarksByMetricAndCaseloadCategory) return;
 
     const benchmarks = yield this.insightsStore.apiClient.metricBenchmarks();
@@ -698,8 +680,6 @@ export class InsightsSupervisionStore {
         `Missing auth0 info for user with pseudo id: ${pseudonymizedId}`,
       );
 
-    // If the user does not have a backend representation, we create a mock user info object
-    // with the required fields so that the user can access the insights page.
     this.userInfo = {
       entity: {
         pseudonymizedId,
@@ -711,13 +691,9 @@ export class InsightsSupervisionStore {
           middleNames: isImpersonatedUserName ? undefined : userMiddleName,
           surname: isImpersonatedUserName ? lastName : userSurname,
         },
-        district: "Unknown",
-        supervisorExternalIds: [],
-        avgDailyPopulation: 0,
-        latestLoginDate: new Date(),
-        zeroGrantOpportunities: [],
+        hasOutliers: false,
       },
-      role: "supervision_officer",
+      role: "supervision_officer_supervisor",
       metadata: {
         hasSeenOnboarding: userInfo?.metadata.hasSeenOnboarding ?? false,
       },
@@ -737,7 +713,7 @@ export class InsightsSupervisionStore {
     // permission to see all supervisors (since we expect to have already populated this list with
     // their data from /user-info). We expect the API request to fail for these users anyway so
     // there is no reason to let the request proceed
-    if (this.supervisionOfficerSupervisors || this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
+    if (this.supervisionOfficerSupervisors) return;
 
     this.allSupervisionOfficerSupervisors =
       yield this.insightsStore.apiClient.supervisionOfficerSupervisors();

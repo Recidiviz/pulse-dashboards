@@ -21,7 +21,7 @@
  */
 export function fetchOfflineUser({
   allowedStates,
-  email = "notarealemail@recidiviz.org", //email = "officer3@recidiviz.org", example officer email for testing 
+  email = "notarealemail@recidiviz.org",
   name = "Demo Jones",
   stateCode = "recidiviz",
   allowedSupervisionLocationIds,
@@ -35,9 +35,9 @@ export function fetchOfflineUser({
     family_name: "Jones",
     email,
     [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
-      role: "supervision_officer", 
-      externalId: "agonzalez123", // externalId: "so3" for an example officer
-      pseudonymizedId: "hashed-agonzalez123", // pseudonymizedId: "hashed-so3" for an example officer
+      role: "leadership_role",
+      externalId: "agonzalez123",
+      pseudonymizedId: "hashed-agonzalez123",
       stateCode,
       allowedSupervisionLocationIds,
       allowedSupervisionLocationLevel,
@@ -57,13 +57,9 @@ export function fetchOfflineUser({
         // workflowsSupervision: true,
       },
       featureVariants: {
-        // By setting the active date to the far future, we effectively disable these feature variants.
-        // The feature variants commented out here are provided to make it easier to 
-        // toggle them on and off when testing.
+        // By setting the active date to the far future, we effectively disable these feature variants
         usMoOverdueRHPilot: { activeDate: "9999" },
         usTnExpirationSubmitToTomis: { activeDate: "9999" },
-        // supervisorHomepageVitals: {},
-        // supervisorHomepageWorkflows: {},
       },
     },
   };
