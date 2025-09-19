@@ -15,21 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import NotFound from "../../components/NotFound";
-import { useFeatureVariants } from "../../components/StoreProvider";
-import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { RoutePlannerBody } from "./RoutePlannerBody";
+import { makeAutoObservable } from "mobx";
 
-export const WorkflowsTasksRoutePlanner = () => {
-  const { tasksRoutePlanner } = useFeatureVariants();
+import { WorkflowsStore } from "../../WorkflowsStore";
+import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
 
-  if (!tasksRoutePlanner) {
-    return <NotFound />;
+/**
+ * Responsible for handling data for the Tasks Route Planner page.
+ * The child clientsPresenter keeps track of the list of selected officers
+ * and clients.
+ */
+export class RoutePlannerPresenter {
+  public readonly clientsPresenter: RoutePlannerClientsPresenter;
+
+  constructor(private readonly workflowsStore: WorkflowsStore) {
+    this.clientsPresenter = new RoutePlannerClientsPresenter(workflowsStore);
+
+    makeAutoObservable(this);
   }
-
-  return (
-    <WorkflowsNavLayout limitedWidth={false}>
-      <RoutePlannerBody />
-    </WorkflowsNavLayout>
-  );
-};
+}

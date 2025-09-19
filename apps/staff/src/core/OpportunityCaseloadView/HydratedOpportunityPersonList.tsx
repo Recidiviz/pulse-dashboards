@@ -130,7 +130,7 @@ export const MaxWidthFlexWrapper = styled.div<{ fullWidth?: boolean }>`
   ${Flex}
   ${({ fullWidth }) => !fullWidth && MaxWidth}
 `;
-export const EmptyTabGroupWrapper = styled.div`
+export const EmptyStateWrapper = styled.div`
   width: 100%;
   margin-top: ${rem(spacing.md)};
   flex-grow: 1;
@@ -145,7 +145,7 @@ export const EmptyTabGroupWrapper = styled.div`
   border: 1px dashed ${palette.slate30};
   background-color: ${palette.marble2};
 `;
-export const EmptyTabText = styled(Sans18)`
+export const EmptyStateText = styled(Sans18)`
   color: ${palette.slate80};
   width: 50%;
 `;
@@ -824,13 +824,13 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
       presenter.selectedSearchablesCount === 0 ? (
         /* Empty tab display */
         <MaxWidthFlexWrapper fullWidth={!presenter.showListView}>
-          <EmptyTabGroupWrapper>
-            <EmptyTabText>
+          <EmptyStateWrapper>
+            <EmptyStateText>
               {presenter.selectedSearchablesCount > 0
                 ? presenter.emptyTabText
                 : presenter.searchIdsNotSelectedCtaText}
-            </EmptyTabText>
-          </EmptyTabGroupWrapper>
+            </EmptyStateText>
+          </EmptyStateWrapper>
         </MaxWidthFlexWrapper>
       ) : // eslint-disable-next-line no-nested-ternary
       !presenter.showListView ? (

@@ -15,21 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import NotFound from "../../components/NotFound";
-import { useFeatureVariants } from "../../components/StoreProvider";
-import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { RoutePlannerBody } from "./RoutePlannerBody";
-
-export const WorkflowsTasksRoutePlanner = () => {
-  const { tasksRoutePlanner } = useFeatureVariants();
-
-  if (!tasksRoutePlanner) {
-    return <NotFound />;
-  }
-
+export const RoutePlannerMap = () => {
+  // TODO(#9391): Replace this placeholder with embedded map and controls
   return (
-    <WorkflowsNavLayout limitedWidth={false}>
-      <RoutePlannerBody />
-    </WorkflowsNavLayout>
+    <div
+      style={{ backgroundColor: "lavender", width: "100%", height: "100%" }}
+    />
   );
 };

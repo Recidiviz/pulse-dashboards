@@ -34,8 +34,8 @@ import { Client, SupervisionTask } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { CaseloadTable } from "../OpportunityCaseloadView/CaseloadTable";
 import {
-  EmptyTabGroupWrapper,
-  EmptyTabText,
+  EmptyStateText,
+  EmptyStateWrapper,
   MaxWidthFlexWrapper,
 } from "../OpportunityCaseloadView/HydratedOpportunityPersonList";
 import PersonId from "../PersonId";
@@ -137,16 +137,16 @@ export const EmptyTasksTabView = ({
 }) => {
   return (
     <MaxWidthFlexWrapper>
-      <EmptyTabGroupWrapper>
-        <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
-        <EmptyTabText>
+      <EmptyStateWrapper>
+        <EmptyStateText>{presenter.emptyTabText}</EmptyStateText>
+        <EmptyStateText>
           If you think this is inaccurate, please contact support at{" "}
           <Link to={"mailto:feedback@recidiviz.org"}>
             feedback@recidiviz.org
           </Link>
           .
-        </EmptyTabText>
-      </EmptyTabGroupWrapper>
+        </EmptyStateText>
+      </EmptyStateWrapper>
     </MaxWidthFlexWrapper>
   );
 };
