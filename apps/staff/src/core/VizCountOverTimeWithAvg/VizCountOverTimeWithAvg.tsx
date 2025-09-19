@@ -181,6 +181,16 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
           },
         ]}
       />
+      <div
+        id="chart-description"
+        className="sr-only"
+        aria-label="A bar chart showing the population over time with a line showing averages."
+      />
+      <div
+        id="chart-instructions"
+        className="sr-only"
+        aria-label="Press tab to access the chart. Use arrow keys to hear more information about each bar and average."
+      />
     </VizPathways>
   );
 };

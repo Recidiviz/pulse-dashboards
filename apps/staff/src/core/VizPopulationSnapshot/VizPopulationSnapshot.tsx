@@ -309,6 +309,8 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           {chartXAxisTitle}
         </div>
       )}
+      <div id="chart-description" className="sr-only" aria-label={`A bar chart showing the population by ${metric.accessor}.`} />
+      <div id="chart-instructions" className="sr-only" aria-label="Press tab to select the chart. Use arrow keys to hear more information about each bar." />
     </VizPathways>
   );
 };

@@ -36,7 +36,7 @@ const PathwaysLeftPanel: React.FC<{
   }, [title]);
 
   return (
-    <div
+    <section
       className={cn("PathwaysLeftPanel", {
         "pt-5 pb-5": !isMobile,
       })}
@@ -49,11 +49,11 @@ const PathwaysLeftPanel: React.FC<{
       >
         {title}
       </h1>
-      <div id="page-description" className="PathwaysLeftPanel__description">
+      <p id="page-description" className="PathwaysLeftPanel__description">
         {description}
-      </div>
+      </p>
       <SectionNavigation />
-    </div>
+    </section>
   );
 };
 

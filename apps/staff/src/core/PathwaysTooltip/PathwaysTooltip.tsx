@@ -26,9 +26,10 @@ type PropTypes = {
 };
 
 const PathwaysTooltip: React.FC<PropTypes> = ({ label, value, average }) => {
+  const ariaLabel = `${label} value: ${value}.` + (average ? ` ${average}` : '');
   return (
     <div className="PathwaysTooltip">
-      <div className="PathwaysTooltip__label">{label}</div>
+      <h3 className="PathwaysTooltip__label" aria-label={ariaLabel} aria-live="polite">{label}</h3>
       <div className="PathwaysTooltip__value">{value.toLocaleString()}</div>
       <div className="PathwaysTooltip__average">{average}</div>
     </div>

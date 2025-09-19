@@ -39,19 +39,42 @@ const VizPathways: React.FC<Props> = ({
   withPadding = true,
   children,
 }) => {
+  const screenReaderTitle = [
+    `Chart: ${title}. `,
+    latestUpdate && `as of ${latestUpdate}`,
+    subtitle && `Current filters: ${subtitle}`,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <div className={cn("VizPathways", className)}>
       <div className="VizPathways__header">
-        <div className="VizPathways__title">
+        <h2
+          className="VizPathways__title"
+          id="chart-title"
+          // The jsx-a11y rule is disabled here because passing the title and description into the
+          // Semiotic chart wasn't working as expected/documented. In order to have the chart title and description
+          // read by a screen reader, allowing focus on the header is the only option.
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          tabIndex={0}
+          aria-label={screenReaderTitle}
+          aria-describedby="chart-description chart-instructions"
+        >
           {title} {latestUpdate && <span> as of {latestUpdate}</span>}
-          {subtitle && <div className="VizPathways__subtitle">{subtitle}</div>}
-        </div>
+          {subtitle && (
+            <div className="VizPathways__subtitle" aria-label="Chart subtitle">
+              {subtitle}
+            </div>
+          )}
+        </h2>
         {legend}
       </div>
       <div
         className={cn({
           VizPathways__content: withPadding,
         })}
+        role="figure"
       >
         {children}
       </div>

@@ -124,6 +124,8 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
         ]}
         {...chartProps}
       />
+      <div id="chart-description" className="sr-only" aria-label="A line chart showing the population over time." />
+      <div id="chart-instructions" className="sr-only" aria-label="Press tab to access the line, and tab again to access the points. Use arrow keys to hear more information about each point." />
     </VizPathways>
   );
 };
