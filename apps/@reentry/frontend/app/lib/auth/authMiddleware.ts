@@ -15,20 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-"use client";
+import type { Middleware } from "openapi-fetch";
 
-import createFetchClient from "openapi-fetch";
-import createClient from "openapi-react-query";
+import { globalAuthStore } from "./globalAuthStore";
 
-import type { paths } from "~@reentry/frontend/recidiviz-schema";
+const PUBLIC_ENDPOINTS = ["/intake/client", "/intake/internal"];
 
-import { BACKEND_URL } from "./constants";
-import { authMiddleware } from "./lib/auth/authMiddleware";
+const isPublicEndpoint = (url: string): boolean => {
+  return PUBLIC_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+};
 
-const fetchClient = createFetchClient<paths>({
-  baseUrl: BACKEND_URL,
-});
-fetchClient.use(authMiddleware);
+export const authMiddleware: Middleware = {
+  async onRequest({ request }) {
+    const url = request.url;
 
-export const $api = createClient(fetchClient);
+    if (isPublicEndpoint(url)) {
+      return request;
+    }
 
+    try {
+      const token = await globalAuthStore.getCachedToken();
+
+      if (token) {
+        request.headers.set("Authorization", `Bearer ${token}`);
+      } else {
+        console.warn("No token available in middleware");
+      }
+    } catch (error) {
+      console.error("Error setting token in middleware:", error);
+    }
+
+    return request;
+  },
+};

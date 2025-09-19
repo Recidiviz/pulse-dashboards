@@ -68,6 +68,7 @@ export const useRecording = ({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunkCounterRef = useRef(0);
+  const [chunkCount, setChunkCount] = useState(0);
 
   // session recovery: check for paused sessions on mount and restore state
   useEffect(() => {
@@ -89,6 +90,7 @@ export const useRecording = ({
       // Restore chunk counter from backend
       const restoredChunkCount = restoreChunkCounter(sessionData);
       chunkCounterRef.current = restoredChunkCount;
+      setChunkCount(restoredChunkCount);
 
       // Restore microphone selection if available
       // Note: We'd need to add selectedMicrophone to session data in the future
@@ -160,7 +162,7 @@ export const useRecording = ({
           hasHeader,
         });
 
-        console.log(
+        console.debug(
           `Chunk ${chunkIndex} queued for upload (hasHeader: ${hasHeader})`,
         );
       } catch (error) {
@@ -198,11 +200,12 @@ export const useRecording = ({
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          console.log(
+          console.debug(
             `Chunk ${chunkCounterRef.current} ready: ${event.data.size} bytes`,
           );
           queueChunk(event.data, chunkCounterRef.current);
           chunkCounterRef.current++;
+          setChunkCount(chunkCounterRef.current);
         }
       };
 
@@ -309,11 +312,12 @@ export const useRecording = ({
 
         mediaRecorder.ondataavailable = (event) => {
           if (event.data.size > 0) {
-            console.log(
+            console.debug(
               `Chunk ${chunkCounterRef.current} ready: ${event.data.size} bytes`,
             );
             queueChunk(event.data, chunkCounterRef.current);
             chunkCounterRef.current++;
+            setChunkCount(chunkCounterRef.current);
           }
         };
 
@@ -423,6 +427,7 @@ export const useRecording = ({
         setUiStatus("completed");
       }
       chunkCounterRef.current = 0;
+      setChunkCount(0);
     }, 3000);
 
     // Notify that recording has been stopped (so polling can start)
@@ -436,7 +441,7 @@ export const useRecording = ({
     uiStatus,
     selectedMicrophone,
     microphones: [],
-    chunkCount: chunkCounterRef.current,
+    chunkCount,
     startRecording,
     pauseRecording,
     resumeRecording,

@@ -134,7 +134,7 @@ const AudioRecordingPage: React.FC = () => {
   }
 
   return (
-    <QueueProvider getAccessToken={getAccessToken}>
+    <QueueProvider>
       <NavRecordingPage />
       <div className="min-h-[calc(100vh-65px)] self-stretch p-10 bg-[#f9fafa] flex flex-col items-start gap-5">
         <UserSummary

@@ -36,9 +36,10 @@ export class PersistentChunkQueue {
   private isInitialized = false;
   private acceptingNewChunks = true;
   private globalRetryCount = 0;
-  private maxGlobalRetries = 5;
-  private maxQueueSize = 20;
-  private retryDelay = 1000; // Base delay in ms
+  private maxGlobalRetries = 60;
+  private maxQueueSize = 1440; // each chunk is 5 seconds for total of 2 hours recording. ~ 60 to 100MB.
+  private retryDelay = 5000; // Base delay in ms
+  private processingInterval: NodeJS.Timeout | null = null;
 
   constructor(
     private uploadFunction: (chunk: QueuedChunk) => Promise<UploadResponse>,
@@ -55,7 +56,7 @@ export class PersistentChunkQueue {
       this.isInitialized = true;
       console.log("PersistentChunkQueue initialized");
 
-      this.processQueue();
+      this.startProcessingTimer();
 
       this.setupTabCloseHandler();
     } catch (error) {
@@ -95,10 +96,6 @@ export class PersistentChunkQueue {
     try {
       await this.addChunkToDb(queuedChunk);
       console.log(`Chunk ${queuedChunk.chunkIndex} added to queue`);
-
-      if (!this.isProcessing) {
-        this.processQueue();
-      }
     } catch (error) {
       console.error("Failed to add chunk to queue:", error);
     }
@@ -266,13 +263,20 @@ export class PersistentChunkQueue {
     } finally {
       this.isProcessing = false;
       console.debug("Stopped queue processing");
+    }
+  }
 
-      setTimeout(() => {
-        if (!this.isProcessing) {
+  private startProcessingTimer(): void {
+    if (this.processingInterval) return;
+
+    this.processingInterval = setInterval(async () => {
+      if (!this.isProcessing && this.isInitialized) {
+        const queueSize = await this.getQueueSize();
+        if (queueSize > 0) {
           this.processQueue();
         }
-      }, 5000);
-    }
+      }
+    }, 5000);
   }
 
   /**

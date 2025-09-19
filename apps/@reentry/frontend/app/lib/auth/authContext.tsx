@@ -27,6 +27,7 @@ import {
 } from "react";
 
 import { getAuthSettings } from "./authConfig";
+import { globalAuthStore } from "./globalAuthStore";
 import type { AuthContextType, AuthState } from "./types";
 
 // Create the auth context with default values
@@ -77,6 +78,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const store = new AuthStore({ authSettings });
 
         setAuthStore(store);
+
+        // the global auth store is for sharing the store here with the middleware.
+        globalAuthStore.setAuthStore(store);
 
         // Check authentication status on init (useful for page refresh)
         if (window.location.pathname !== "/auth/callback") {

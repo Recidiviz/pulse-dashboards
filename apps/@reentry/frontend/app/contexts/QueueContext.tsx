@@ -38,46 +38,38 @@ const QueueContext = createContext<QueueContextType | null>(null);
 
 interface QueueProviderProps {
   children: ReactNode;
-  getAccessToken: () => string | null | undefined;
 }
 
-export const QueueProvider = ({
-  children,
-  getAccessToken,
-}: QueueProviderProps) => {
+export const QueueProvider = ({ children }: QueueProviderProps) => {
   // Create upload function that the queue will use
   const uploadChunkMutation = $api.useMutation(
     "post",
     "/recordings/sessions/{session_id}/upload-chunk",
   );
 
-  const uploadFunction = useCallback(
-    async (chunk: QueuedChunk) => {
-      try {
-        await uploadChunkMutation.mutateAsync({
-          params: { path: { session_id: chunk.sessionId } },
-          body: {
-            chunk_index: chunk.chunkIndex,
-            chunk_data: chunk.chunkData,
-            mime_type: chunk.mimeType,
-            has_header: chunk.hasHeader,
-          },
-          headers: {
-            Authorization: `Bearer ${getAccessToken()}`,
-            "Content-Type": "application/json",
-          },
-        });
+  const uploadFunction = useCallback(async (chunk: QueuedChunk) => {
+    try {
+      await uploadChunkMutation.mutateAsync({
+        params: { path: { session_id: chunk.sessionId } },
+        body: {
+          chunk_index: chunk.chunkIndex,
+          chunk_data: chunk.chunkData,
+          mime_type: chunk.mimeType,
+          has_header: chunk.hasHeader,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-        return { success: true };
-      } catch (error) {
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : "Upload failed",
-        };
-      }
-    },
-    [uploadChunkMutation, getAccessToken],
-  );
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Upload failed",
+      };
+    }
+  }, []);
 
   // Create queue instance as page-level singleton
   const queue = useMemo(

@@ -1,4 +1,3 @@
-import logging
 import pickle
 import time
 from datetime import datetime, timezone
@@ -165,7 +164,7 @@ class JWKSCache:
                 jwks = PyJWKSet.from_json(json_response.read())
                 self._jwks = {jwk.key_id: jwk.key for jwk in jwks.keys}
         except Exception as e:
-            logging.error(f"Error fetching JWKS: {e}")
+            logger.error(f"Error fetching JWKS: {e}")
             raise
 
     def get_key(self, key_id: str):
@@ -227,7 +226,7 @@ def validate_token(token: str, auth0_config: Auth0Config):
         return payload
 
     except jwt.ExpiredSignatureError as e:
-        logging.exception(f"Expired token: {e}.")
+        logger.exception(f"Expired token: {e}.")
 
         # Get token info for logging.
         try:
@@ -241,13 +240,13 @@ def validate_token(token: str, auth0_config: Auth0Config):
                 token_expiration_datetime_utc = datetime.fromtimestamp(
                     unverified_payload["exp"], tz=timezone.utc
                 )
-                logging.info(
+                logger.error(
                     f"Token expired. current_time_utc={current_datetime_utc}, "
                     f"expiration_time_utc={token_expiration_datetime_utc}, "
                     f"expired_duration_seconds={expired_duration_seconds}"
                 )
         except Exception:
-            logging.exception(
+            logger.exception(
                 "Could not extract expiration info from expired token for logging"
             )
 
@@ -267,9 +266,9 @@ def validate_token(token: str, auth0_config: Auth0Config):
             headers={"WWW-Authenticate": "Bearer"},
         )
     except Exception as e:
-        logging.exception(f"Unexpected error validating token: {e}. ")
+        logger.exception(f"Unexpected error validating token: {e}. ")
         token_preview = f"{token[:8]}..." if len(token) > 8 else token
-        logging.exception(
+        logger.exception(
             f"Token info. token_len: {len(token)}, token_preview: {token_preview}",
         )
         raise HTTPException(
