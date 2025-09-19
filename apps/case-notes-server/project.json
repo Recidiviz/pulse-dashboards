@@ -96,20 +96,20 @@
         "staging": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes/server:$COMMIT_SHA",
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes/server:latest"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/case-notes/case-notes-server:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/case-notes/case-notes-server:latest"
           ]
         },
         "cherry-pick": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes/server:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/case-notes/case-notes-server:$COMMIT_SHA"
           ]
         },
         "demo": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes/server:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/case-notes/case-notes-server:$COMMIT_SHA"
           ]
         }
       },
