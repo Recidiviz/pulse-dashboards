@@ -132,6 +132,45 @@ export const styles = css`
   p {
     margin: 0 0 1em;
   }
+
+  table {
+    border-collapse: collapse;
+    margin: ${rem(spacing.lg)} 0;
+    width: 100%;
+
+    text-wrap: pretty;
+
+    tr {
+      border-bottom: 1px solid ${palette.slate20};
+    }
+
+    td,
+    th {
+      vertical-align: top;
+      text-align: left;
+
+      &:not(:first-child) {
+        padding-left: ${rem(spacing.sm)};
+      }
+    }
+
+    // We tighten up the spacing on lists when used inside table cells
+    // to make them more compact and readable
+    ul {
+      margin-top: 0;
+      margin-bottom: 0;
+
+      li {
+        margin: ${rem(spacing.xxs)} 0;
+      }
+
+      // remove the top margin on the first item so it aligns
+      // with the text in the adjacent cells
+      li:first-child {
+        margin-top: 0;
+      }
+    }
+  }
 `;
 
 const MarkdownWrapper = styled(Markdown)`

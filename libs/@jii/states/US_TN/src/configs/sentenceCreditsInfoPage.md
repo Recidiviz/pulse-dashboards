@@ -8,7 +8,81 @@ Credits from last month should show up in this app between the 9th and 11th of e
 
 ## What types of credits are there, and how much can you earn?
 
-**TODO**: Add table of credit types and amounts
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Credit Type</th>
+            <th scope="col">Rate</th>
+            <th scope="col">What do I need to do to earn them?</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">Behavior Credits</th>
+            <td>4 days/month (1st year of incarceration)
+            <br/>6 days/month (after 1st year)
+            </td>
+            <td>
+                Automatically awarded each month, if during that month you:
+                <ul>
+                    <li>Had no disciplinary violations</li>
+                    <li>Were not in max custody </li>
+                    <li>Were not in punitive segregation</li>
+                    <li>Had a STRONG-R completed within past year</li>
+                    <li>Earned program credits</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Program Credits</th>
+            <td>Up to 6 days/month</td>
+            <td><ul>
+                <li>Awarded based on participation in assigned work, education, vocational training, or mental health treatment programs</li>
+                <li>No Class A disciplinary violations</li>
+                <li>Not in max custody</li>
+                <li>Not in punitive segregation</li>
+            </ul></td>
+        </tr>
+        <tr>
+            <th scope="row">Bonus Behavior</th>
+            <td>+2 days/month</td>
+            <td><ul>
+                <li>In minimum custody</li>
+                <li>No Class A disciplinary violations</li>
+                <li>Not in punitive segregation</li>
+            </ul></td>
+        </tr>
+        <tr>
+            <th scope="row">Bonus Behavior</th>
+            <td>+2 days/month</td>
+            <td><ul>
+                <li>In minimum custody</li>
+                <li>No Class A disciplinary violations</li>
+                <li>Not in punitive segregation</li>
+            </ul></td>
+        </tr>
+        <tr>
+            <th scope="row">Education Credits</th>
+            <td>60 days one-time (you can only earn this once in your life)</td>
+            <td><ul>
+                <li>Complete a GED or other degree</li>
+                <li>Not in max custody during the month when you complete the degree</li>
+                <li>Not in punitive segregation during the month when you complete the degree</li>
+                <li>Cannot earn this if you have an 85% or 100% sentence</li>
+            </ul></td>
+        </tr>
+        <tr>
+            <th scope="row">Treatment Credits</th>
+            <td>60 days one-time (you can only earn this once in your life)</td>
+            <td><ul>
+                <li>Complete 9+ month intensive treatment program (only valid if completed on or after July 1, 2018)</li>
+                <li>Not in max custody during the month when you complete the program</li>
+                <li>Not in punitive segregation during the month when you complete the program</li>
+                <li>Cannot earn this if you have an 85% or 100% sentence</li>
+            </ul></td>
+        </tr>
+    </tbody>
+</table>
 
 ## Who can earn credits?
 
