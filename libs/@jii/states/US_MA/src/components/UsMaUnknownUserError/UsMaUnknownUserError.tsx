@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { HandleAuth0Redirect } from "../HandleAuth0Redirect/HandleAuth0Redirect";
+import { InfoPage } from "~@jii/common-ui";
+import { useUsMaTranslations } from "~@jii/translation";
 
-export function PageAfterLogin() {
-  return <HandleAuth0Redirect />;
+export function UsMaUnknownUserError() {
+  const { t } = useUsMaTranslations();
+
+  return (
+    <InfoPage
+      heading={t(($) => $.unknownUser.heading)}
+      body={t(($) => $.unknownUser.body)}
+    />
+  );
 }

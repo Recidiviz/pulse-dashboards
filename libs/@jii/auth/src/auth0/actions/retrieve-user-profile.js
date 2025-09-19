@@ -59,6 +59,12 @@ exports.onExecutePostLogin = async (event, api) => {
     }
   }
 
+  // magic account for testing the unknown user login flow
+  if (email === event.secrets.MA_UNKNOWN_USER_TEST_EMAIL) {
+    stateCode = "US_MA";
+    userId = "invalid-id-that-does-not-exist";
+  }
+
   if (stateCode && userId) {
     const jwt = await new SignJWT({ stateCode, userId })
       .setProtectedHeader({ alg })
@@ -75,10 +81,14 @@ exports.onExecutePostLogin = async (event, api) => {
         api.user.setAppMetadata(k, v);
       }
     } else {
-      api.access.deny("There was a problem authorizing your account.");
+      // the (state code: US_XX) part is important, the application may look for that string
+      // to determine which state the user in question arrived from when handling this error
+      api.access.deny(
+        `Unrecognized user: not found in roster (state code: ${stateCode})`,
+      );
     }
   }
   // there are use cases for users who don't pass through this flow
   // (e.g. users manually provisioned in the Auth0 console) which is why
-  // it's not a failure if we don't do a lookup at all, only if the lookup fails
+  // we shouldn't update any app metadata by default
 };

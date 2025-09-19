@@ -16,6 +16,7 @@
 // =============================================================================
 
 import disclaimer from "./disclaimer.md?raw";
+import unknownUserBody from "./unknownUserBody.md?raw";
 
 export default {
   tags: {
@@ -51,4 +52,8 @@ export default {
     },
   },
   disclaimer,
+  unknownUser: {
+    heading: "Login Failed",
+    body: unknownUserBody,
+  },
 };

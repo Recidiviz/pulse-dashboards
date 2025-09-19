@@ -19,7 +19,11 @@ import { route, string, types } from "react-router-typesafe-routes/dom";
 
 export const EmailVerification = route("verify");
 
-export const AfterLogin = route("after-login");
+export const AfterLogin = route("after-login", {
+  // search params are optional by default so it's fine if these are missing
+  // (which they will be when login succeeds)
+  searchParams: { error: string(), error_description: string() },
+});
 
 export const ReturnToPathFragment = route("", {
   searchParams: { returnToPath: string() },

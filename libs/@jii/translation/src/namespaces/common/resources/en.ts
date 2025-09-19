@@ -19,4 +19,8 @@ export default {
   nav: {
     homeLink: "Home",
   },
+  unknownUser: {
+    heading: "Login failed",
+    body: "There was a problem authorizing your account: we don't have any data that matches your ID.",
+  },
 };

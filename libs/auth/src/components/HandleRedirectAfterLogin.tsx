@@ -18,7 +18,7 @@
 import { Loading } from "@recidiviz/design-system";
 import { captureException } from "@sentry/react";
 import { observer } from "mobx-react-lite";
-import { FC, useEffect, useState } from "react";
+import { ComponentType, FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { castToError } from "~hydration-utils";
@@ -29,9 +29,11 @@ import { NotAuthorized } from "./NotAuthorized";
 export const HandleRedirectAfterLogin: FC<{
   authClient: AuthClient;
   defaultRedirectPath?: string;
+  ErrorComponent?: ComponentType;
 }> = observer(function HandleRedirectAfterLogin({
   authClient,
   defaultRedirectPath,
+  ErrorComponent = NotAuthorized,
 }) {
   const navigate = useNavigate();
   const [error, setError] = useState<Error | undefined>();
@@ -45,7 +47,7 @@ export const HandleRedirectAfterLogin: FC<{
       });
   });
 
-  if (error) return <NotAuthorized />;
+  if (error) return <ErrorComponent />;
 
   return <Loading />;
 });
