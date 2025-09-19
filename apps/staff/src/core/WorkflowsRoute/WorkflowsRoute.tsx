@@ -26,16 +26,31 @@ import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import { WorkflowsRouteParams } from "../../WorkflowsStore";
 import { getSystemIdFromPage } from "../../WorkflowsStore/utils";
-import { WorkflowsPage, workflowsUrl } from "../views";
+import {
+  WORKFLOWS_PATHS_WITHOUT_OPP_ID,
+  WORKFLOWS_PATHS_WITHOUT_PERSON_ID,
+  WorkflowsPathSection,
+  workflowsUrl,
+} from "../views";
 
 // react-router does not seem to export this type directly
-type RouterLocation = ReturnType<typeof useLocation>;
+export type RouterLocation = ReturnType<typeof useLocation>;
 
-function parseLocation(loc: RouterLocation): WorkflowsRouteParams {
+export function parseLocation(loc: RouterLocation): WorkflowsRouteParams {
   // slicing off empty string at 0 caused by leading slash,
   // and 1 which should always be "workflows"
-  const [page, personId, opportunityPseudoId]: Array<string | undefined> =
-    loc.pathname.split("/").slice(2);
+  const pathContents: Array<string | undefined> = loc.pathname
+    .split("/")
+    .slice(2);
+
+  const page = pathContents[0];
+
+  const canHavePersonId =
+    page && !WORKFLOWS_PATHS_WITHOUT_PERSON_ID.includes(page);
+  const personId = canHavePersonId ? pathContents[1] : undefined;
+
+  const canHaveOppId = page && !WORKFLOWS_PATHS_WITHOUT_OPP_ID.includes(page);
+  const opportunityPseudoId = canHaveOppId ? pathContents[2] : undefined;
 
   return { page, personId, opportunityPseudoId };
 }
@@ -83,15 +98,18 @@ const RouteSync = observer(function RouteSync({
         } else {
           // Select active system from the page type or take the first supported system available
           const activeSystem: SystemId | undefined =
-            !!workflowsSupportedSystems && workflowsSupportedSystems?.length > 1
-              ? getSystemIdFromPage(page as WorkflowsPage)
+            workflowsSupportedSystems &&
+            workflowsSupportedSystems?.length > 1 &&
+            page
+              ? getSystemIdFromPage(page as WorkflowsPathSection)
               : workflowsSupportedSystems?.[0];
 
           if (activeSystem) workflowsStore.updateActiveSystem(activeSystem);
           workflowsStore.updateSelectedOpportunityType(undefined);
         }
 
-        /* 2. Update selectedPerson if there is a personId */
+        /* 2. Update selectedPerson if there is a personId, and selectedOpportunity if
+          there is an opportunityId */
         // updateSelectedPerson relies on the active system, so set it after the above
         if (personId || previousLocContainedPersonId) {
           workflowsStore.updateSelectedPerson(personId).catch(() => {

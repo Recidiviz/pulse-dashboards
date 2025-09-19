@@ -143,7 +143,6 @@ export type EligibilityStatus =
  * Represents URL params for a workflows route
  */
 export type WorkflowsRouteParams = {
-  urlSection?: string;
   page?: string;
   personId?: string;
   opportunityPseudoId?: string;

@@ -54,6 +54,29 @@ describe("getPathWithoutParams", () => {
     const basePath = "/system/prison";
     expect(getPathWithoutParams(`${basePath}/anythingElse`)).toEqual(basePath);
   });
+
+  it("returns the path without params when given a path with params (Workflows)", () => {
+    const basePath = "/workflows";
+    expect(
+      getPathWithoutParams(
+        `${basePath}/someOpportunity/somePseudonymizedId/someOpportunityId`,
+      ),
+    ).toEqual(basePath);
+  });
+
+  it("returns the path without params when given a Workflows sub-path with params", () => {
+    const basePath = "/workflows/clients";
+    expect(getPathWithoutParams(`${basePath}/somePseudonymizedId`)).toEqual(
+      basePath,
+    );
+  });
+
+  it("returns /workflows/tasks for home contact route planner", () => {
+    const basePath = "/workflows/tasks";
+    expect(
+      getPathWithoutParams(`${basePath}/home-contact-route-planner`),
+    ).toEqual(basePath);
+  });
 });
 
 describe("convertToSlug", () => {

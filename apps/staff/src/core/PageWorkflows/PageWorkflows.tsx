@@ -34,6 +34,7 @@ import { WorkflowsFormLayoutWrapper } from "../WorkflowsLayouts";
 import WorkflowsMilestones from "../WorkflowsMilestones/WorkflowsMilestones";
 import WorkflowsRoute from "../WorkflowsRoute/WorkflowsRoute";
 import { WorkflowsTasks } from "../WorkflowsTasks";
+import { WorkflowsTasksRoutePlanner } from "../WorkflowsTasksRoutePlanner/WorkflowsTasksRoutePlanner";
 
 const IE11Warning = styled.div`
   display: flex;
@@ -110,12 +111,17 @@ const PageWorkflows: React.FC = () => {
                 <Route key={path} path={path} element={<CaseloadView />} />
               );
             })}
-
             <Route
               path={workflowsRoute({
                 routeName: "tasks",
               })}
               element={<WorkflowsTasks />}
+            />
+            <Route
+              path={workflowsRoute({
+                routeName: "tasksRoutePlanner",
+              })}
+              element={<WorkflowsTasksRoutePlanner />}
             />
             <Route
               path={workflowsRoute({

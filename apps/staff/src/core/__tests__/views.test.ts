@@ -24,18 +24,20 @@ import {
 } from "../views";
 
 describe("getRelativePath", () => {
-  const WORKFLOWS_RELATIVE_PATHS = {
-    opportunityClients: `/:opportunityTypeUrl`,
-    opportunityAction: `/:opportunityTypeUrl/:justiceInvolvedPersonId/:opportunityPseudoId`,
-    home: `/home`,
-    tasks: `/tasks`,
-    workflows: "",
-    milestones: `/milestones`,
-    clients: `/clients`,
-    residents: `/residents`,
-    clientProfile: `/clients/:justiceInvolvedPersonId`,
-    residentProfile: `/residents/:justiceInvolvedPersonId`,
-  };
+  const WORKFLOWS_RELATIVE_PATHS: Record<WorkflowsPage | "workflows", string> =
+    {
+      opportunityClients: `/:opportunityTypeUrl`,
+      opportunityAction: `/:opportunityTypeUrl/:justiceInvolvedPersonId/:opportunityPseudoId`,
+      home: `/home`,
+      tasks: `/tasks`,
+      tasksRoutePlanner: `/tasks/home-contact-route-planner`,
+      workflows: "",
+      milestones: `/milestones`,
+      clients: `/clients`,
+      residents: `/residents`,
+      clientProfile: `/clients/:justiceInvolvedPersonId`,
+      residentProfile: `/residents/:justiceInvolvedPersonId`,
+    };
 
   test.each([...Object.keys(WORKFLOWS_PATHS)])(
     "it returns the relative path for workflows",

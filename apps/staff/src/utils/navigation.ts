@@ -23,7 +23,7 @@ import {
   DASHBOARD_VIEWS,
   INSIGHTS_PAGES,
   PATHWAYS_PAGES,
-  WORKFLOWS_PAGES,
+  WORKFLOWS_PATH_SECTIONS,
 } from "../core/views";
 import { TenantId } from "../RootStore/types";
 import { TENANT_CONFIGS } from "../tenants";
@@ -59,7 +59,7 @@ export function getPathWithoutParams(pathname: string): string {
   const viewsAndPages: string[] = [
     ...Object.values(DASHBOARD_VIEWS),
     ...Object.values(PATHWAYS_PAGES),
-    ...Object.values(WORKFLOWS_PAGES),
+    ...WORKFLOWS_PATH_SECTIONS,
     ...Object.values(INSIGHTS_PAGES),
   ];
   const basePath = pathname

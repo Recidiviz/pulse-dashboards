@@ -93,6 +93,7 @@ export type FeatureVariant =
   | "indefiniteSnooze"
   | "usIdDistrictSearch"
   | "usIaFinesAndFees"
+  | "tasksRoutePlanner"
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
@@ -176,6 +177,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   indefiniteSnooze: {},
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},
+  tasksRoutePlanner: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -216,6 +218,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],
         },
+        tasksRoutePlanner: { activeTenants: ["US_TX"] },
       };
 
 export type LanternMethodologyByTenant = {

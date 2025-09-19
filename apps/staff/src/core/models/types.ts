@@ -49,7 +49,7 @@ import { MetricCopy, PageCopy } from "../content/types";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
 import { Navigation } from "../types/navigation";
-import { WorkflowsPage } from "../views";
+import { WorkflowsPathSection } from "../views";
 import { ClientDetailComponentName } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { SupervisionTaskCategory } from "../WorkflowsTasks/fixtures";
 import { TaskTableColumnId } from "../WorkflowsTasks/TasksTable";
@@ -91,7 +91,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
     INCARCERATION?: WorkflowsSystemConfig<ResidentRecord, TENANT_ID>;
     SUPERVISION?: WorkflowsSystemConfig<ClientRecord, TENANT_ID>;
   };
-  workflowsHomepage?: WorkflowsPage;
+  workflowsHomepage?: WorkflowsPathSection;
   workflowsHomepageName?: string;
   workflowsTasksConfig?: WorkflowsTasksConfig;
   workflowsMethodologyUrl?: string;

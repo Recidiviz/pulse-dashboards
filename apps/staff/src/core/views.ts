@@ -17,6 +17,8 @@
 
 /* eslint-disable no-redeclare */
 
+import { groupBy } from "lodash";
+
 import { SystemId } from "~datatypes";
 import { psiRootPath } from "~sentencing-client";
 
@@ -208,52 +210,83 @@ export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
   return PATHWAYS_SECTION_BY_METRIC_ID[metric];
 }
 
-export const WORKFLOWS_PATHS = {
-  opportunityClients: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl`,
-  opportunityAction: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl/:justiceInvolvedPersonId/:opportunityPseudoId`,
-  workflows: `/${DASHBOARD_VIEWS.workflows}`,
-  home: `/${DASHBOARD_VIEWS.workflows}/home`,
-  tasks: `/${DASHBOARD_VIEWS.workflows}/tasks`,
-  milestones: `/${DASHBOARD_VIEWS.workflows}/milestones`,
-  clients: `/${DASHBOARD_VIEWS.workflows}/clients`,
-  residents: `/${DASHBOARD_VIEWS.workflows}/residents`,
-  clientProfile: `/${DASHBOARD_VIEWS.workflows}/clients/:justiceInvolvedPersonId`,
-  residentProfile: `/${DASHBOARD_VIEWS.workflows}/residents/:justiceInvolvedPersonId`,
-};
+// Strings that can appear in a Workflows path directly following /workflows/,
+// other than opportunity type URL sections.
+export const WORKFLOWS_PATH_SECTIONS = [
+  "home",
+  "clients",
+  "residents",
+  "tasks",
+  "milestones",
+] as const;
+export type WorkflowsPathSection = (typeof WORKFLOWS_PATH_SECTIONS)[number];
 
 // Routes not associated with an opportunity or task that should have an
 // active system selected.
-export const WORKFLOWS_SYSTEM_ID_TO_PAGE: Record<SystemId, string[]> = {
+export const WORKFLOWS_SYSTEM_ID_TO_PAGE: Record<
+  SystemId,
+  WorkflowsPathSection[]
+> = {
   INCARCERATION: ["residents"],
   SUPERVISION: ["clients", "tasks", "milestones"],
   ALL: ["home"],
 };
 
+// Internal identifiers for types of page within the /workflows route
 export const WorkflowsPageIdList = [
-  "clients",
-  "residents",
+  ...WORKFLOWS_PATH_SECTIONS,
   "clientProfile",
   "residentProfile",
-  "home",
   "opportunityClients",
   "opportunityAction",
-  "tasks",
-  "milestones",
+  "tasksRoutePlanner",
 ] as const;
-
 export type WorkflowsPage = (typeof WorkflowsPageIdList)[number];
 
-export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
-  home: "home",
-  clients: "clients",
-  clientProfile: "clientProfile",
-  residents: "residents",
-  residentProfile: "residentProfile",
-  opportunityClients: "opportunityClients",
-  opportunityAction: "opportunityAction",
-  tasks: "tasks",
-  milestones: "milestones",
+// We expect these to be in specific positions as URL params so they can be parsed
+// out of the path correctly within WorkflowsRoute. Make sure to use these strings
+// when adding a new route involving a person or opportunity ID.
+const PERSON_ID_SLUG = ":justiceInvolvedPersonId"; // should always be a pseudo ID
+const OPPORTUNITY_ID_SLUG = ":opportunityPseudoId";
+
+// Contains all possible valid paths in Workflows as values
+export const WORKFLOWS_PATHS: Record<WorkflowsPage | "workflows", string> = {
+  opportunityClients: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl`,
+  opportunityAction: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl/${PERSON_ID_SLUG}/${OPPORTUNITY_ID_SLUG}`,
+  workflows: `/${DASHBOARD_VIEWS.workflows}`,
+  home: `/${DASHBOARD_VIEWS.workflows}/home`,
+  tasks: `/${DASHBOARD_VIEWS.workflows}/tasks`,
+  tasksRoutePlanner: `/${DASHBOARD_VIEWS.workflows}/tasks/home-contact-route-planner`,
+  milestones: `/${DASHBOARD_VIEWS.workflows}/milestones`,
+  clients: `/${DASHBOARD_VIEWS.workflows}/clients`,
+  residents: `/${DASHBOARD_VIEWS.workflows}/residents`,
+  clientProfile: `/${DASHBOARD_VIEWS.workflows}/clients/${PERSON_ID_SLUG}`,
+  residentProfile: `/${DASHBOARD_VIEWS.workflows}/residents/${PERSON_ID_SLUG}`,
 };
+
+// Compute which pre-defined path sections never contain a person ID or opportunity ID
+// (We can't create a static list of path sections that *do* have a full path that can
+// contain a person or opportunity ID, because the opportunityTypeUrl can be anything.)
+const WORKFLOWS_PATHS_BY_FIRST_SECTION = groupBy(
+  Object.values(WORKFLOWS_PATHS),
+  (path) => path.split("/")[2] || "", // account for the leading slash and "workflows"
+);
+export const WORKFLOWS_PATHS_WITHOUT_PERSON_ID = Object.keys(
+  WORKFLOWS_PATHS_BY_FIRST_SECTION,
+).filter(
+  (section) =>
+    !WORKFLOWS_PATHS_BY_FIRST_SECTION[section].some((path) =>
+      path.includes(PERSON_ID_SLUG),
+    ),
+);
+export const WORKFLOWS_PATHS_WITHOUT_OPP_ID = Object.keys(
+  WORKFLOWS_PATHS_BY_FIRST_SECTION,
+).filter(
+  (section) =>
+    !WORKFLOWS_PATHS_BY_FIRST_SECTION[section].some((path) =>
+      path.includes(OPPORTUNITY_ID_SLUG),
+    ),
+);
 
 /**
  * @returns the relative route template string for a Workflows page
@@ -266,7 +299,7 @@ export function workflowsRoute({
   return getRelativePath(WORKFLOWS_PATHS[routeName]);
 }
 
-type WorkflowsRouteParams = {
+type WorkflowsPageParams = {
   opportunityPseudoId?: string;
   justiceInvolvedPersonId?: string;
   urlSection?: string;
@@ -277,7 +310,7 @@ type WorkflowsRouteParams = {
  */
 export function workflowsUrl(
   routeName: WorkflowsPage,
-  params?: WorkflowsRouteParams,
+  params?: WorkflowsPageParams,
 ): string {
   if (params) {
     const transformedParams = {

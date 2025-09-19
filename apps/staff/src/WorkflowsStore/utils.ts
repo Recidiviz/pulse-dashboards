@@ -41,7 +41,7 @@ import {
   INSIGHTS_PATHS,
   insightsUrl,
   WORKFLOWS_SYSTEM_ID_TO_PAGE,
-  WorkflowsPage,
+  WorkflowsPathSection,
   workflowsUrl,
 } from "../core/views";
 import {
@@ -188,7 +188,9 @@ export function getJusticeInvolvedPersonTitle(
   }
 }
 
-export function getSystemIdFromPage(page: WorkflowsPage): SystemId | undefined {
+export function getSystemIdFromPage(
+  page: WorkflowsPathSection,
+): SystemId | undefined {
   if (WORKFLOWS_SYSTEM_ID_TO_PAGE.INCARCERATION.includes(page)) {
     return "INCARCERATION";
   }

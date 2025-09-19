@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,23 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  PathwaysPageRootPath,
-  PathwaysSection,
-  ViewRootPath,
-  WorkflowsPathSection,
-} from "../views";
+import NotFound from "../../components/NotFound";
+import { useFeatureVariants } from "../../components/StoreProvider";
+import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 
-export type RoutePermission = [route: string, permission: boolean];
+export const WorkflowsTasksRoutePlanner = () => {
+  const { tasksRoutePlanner } = useFeatureVariants();
 
-export type NavigationSection = keyof Navigation;
+  if (!tasksRoutePlanner) {
+    return <NotFound />;
+  }
 
-type WorkflowsNavigation = Record<"workflows", WorkflowsPathSection[]>;
-
-type PathwaysNavigation = Record<PathwaysPageRootPath, PathwaysSection[]>;
-
-export type Navigation = Partial<
-  Record<Exclude<ViewRootPath, "workflows">, string[]> &
-    WorkflowsNavigation &
-    PathwaysNavigation
->;
+  return <WorkflowsNavLayout>Hello world!</WorkflowsNavLayout>;
+};

@@ -56,7 +56,7 @@ import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
 } from "../core/utils/filterOptions";
-import { WORKFLOWS_PAGES, WorkflowsPage } from "../core/views";
+import { WorkflowsPathSection } from "../core/views";
 import {
   CombinedUserRecord,
   MilestonesMessage,
@@ -867,7 +867,7 @@ export class WorkflowsStore implements Hydratable {
     } as AnyWorkflowsSystemConfig;
   }
 
-  get homepage(): WorkflowsPage {
+  get homepage(): WorkflowsPathSection {
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId) return "home";
 
@@ -883,7 +883,7 @@ export class WorkflowsStore implements Hydratable {
       allowedWorkflowsPages.includes(homepageForTenant)
     )
       return homepageForTenant;
-    return allowedWorkflowsPages[0];
+    return allowedWorkflowsPages[0] as WorkflowsPathSection;
   }
 
   get homepageNameOverride(): string | undefined {
@@ -923,6 +923,6 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get activePageIsTasks(): boolean {
-    return this.activePage.page === WORKFLOWS_PAGES.tasks;
+    return this.activePage.page === "tasks";
   }
 }
