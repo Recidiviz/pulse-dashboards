@@ -1,3 +1,5 @@
 {
-  "plugins": ["react-native-auth0"]
+  "plugins": [
+    "react-native-auth0"
+  ]
 }
