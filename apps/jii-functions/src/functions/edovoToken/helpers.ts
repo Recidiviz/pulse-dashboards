@@ -42,6 +42,9 @@ export const edovoIdTokenPayloadSchema = z
     if (user.facility_state === "US_ME") {
       return { ...user, inmate_id: user.inmate_id.replace(/^0+/, "") };
     }
+    if (user.facility_state === "US_NE") {
+      return { ...user, inmate_id: user.inmate_id.replace(/^0+/, "") };
+    }
     return user;
   });
 export type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;

@@ -94,35 +94,53 @@ export async function getFirestore() {
   return firebaseAdmin.firestore(await getFirebaseApp());
 }
 
-function getResidentPseudoId(
-  residentRecord: firebaseAdmin.firestore.DocumentData,
-) {
+function getResidentIds(residentRecord: firebaseAdmin.firestore.DocumentData) {
   // in practice this should always parse, but we can't import the full schema from ~datatypes
-  // due to Vite dependency issues. We only care about this field anyway
-  const { pseudonymizedId } = z
-    .object({ pseudonymizedId: z.string() })
+  // due to Vite dependency issues. We only care about these fields anyway
+  return z
+    .object({ personExternalId: z.string(), pseudonymizedId: z.string() })
     .parse(residentRecord);
+}
 
-  return pseudonymizedId;
+async function getResidentRecordForDisplayId(
+  stateCode: string,
+  displayId: string,
+): Promise<firebaseAdmin.firestore.DocumentData | undefined> {
+  const userResidentRecord = (
+    await (await getFirestore())
+      .collection(`residents`)
+      .where("stateCode", "==", stateCode)
+      .where("displayId", "==", displayId)
+      .limit(1)
+      .get()
+  ).docs[0]?.data();
+
+  return userResidentRecord;
 }
 
 export async function checkResidentsRoster(
   stateCode: string,
   userId: string,
 ): Promise<AuthorizedUserProfile | undefined> {
-  const userResidentRecord = (
-    await (await getFirestore())
-      .doc(`residents/${stateCode.toLowerCase()}_${userId.toLowerCase()}`)
-      .get()
-  ).data();
+  let userResidentRecord;
+  if (stateCode === "US_NE") {
+    userResidentRecord = await getResidentRecordForDisplayId(stateCode, userId);
+  } else {
+    userResidentRecord = (
+      await (await getFirestore())
+        .doc(`residents/${stateCode.toLowerCase()}_${userId.toLowerCase()}`)
+        .get()
+    ).data();
+  }
 
   if (!userResidentRecord) return;
 
-  const pseudonymizedId = getResidentPseudoId(userResidentRecord);
+  const { pseudonymizedId, personExternalId } =
+    getResidentIds(userResidentRecord);
 
   return {
     stateCode: stateCode,
-    externalId: userId,
+    externalId: personExternalId,
     pseudonymizedId,
     permissions: ["live_data"],
   };
@@ -143,7 +161,7 @@ export async function checkDemoResidentsRoster(
 
   if (!userDemoResidentRecord) return;
 
-  const pseudonymizedId = getResidentPseudoId(userDemoResidentRecord);
+  const { pseudonymizedId } = getResidentIds(userDemoResidentRecord);
 
   return {
     stateCode: stateCode,
