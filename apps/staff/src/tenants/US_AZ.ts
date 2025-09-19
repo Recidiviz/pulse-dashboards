@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
+import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
 const US_AZ_CONFIG = {
@@ -59,6 +60,7 @@ const US_AZ_CONFIG = {
   },
   navigation: {
     workflows: ["home", "clients", "residents"],
+    insights: [INSIGHTS_PAGES.supervision],
   },
   incarcerationStaffTitleOverride: "COIII",
   releaseDateCopyOverride: "SED",
