@@ -1,5 +1,3 @@
 {
-  "plugins": [
-    "expo-audio"
-  ]
+  "plugins": ["react-native-auth0"]
 }

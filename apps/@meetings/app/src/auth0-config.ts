@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-test("renders correctly", () => {
-  expect(true).toBe(true);
-});
+const config = {
+  clientId: "YU5F6jhL5TJEQVXoyI9SDIihujoT67LZ",
+  domain: "login-staging.recidiviz.org",
+};
+
+export default config;

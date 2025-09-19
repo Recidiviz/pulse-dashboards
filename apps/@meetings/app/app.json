@@ -39,9 +39,9 @@
         }
       ],
       [
-        "expo-audio",
+        "react-native-auth0",
         {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+          "domain": "login-staging.recidiviz.org"
         }
       ]
     ],

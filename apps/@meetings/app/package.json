@@ -22,6 +22,21 @@
     "react-native": "*",
     "react-native-svg": "*",
     "react-native-svg-transformer": "*",
-    "react-native-web": "*"
-  }
+    "react-native-web": "*",
+    "@nx/eslint-plugin": "*",
+    "@nx/jest": "*",
+    "@nx/detox": "*",
+    "@nx/devkit": "*",
+    "@nx/eslint": "*",
+    "@nx/js": "*",
+    "@nx/react": "*",
+    "@nx/rollup": "*",
+    "enhanced-resolve": "*",
+    "picocolors": "*",
+    "tsconfig-paths": "*",
+    "tslib": "*",
+    "react-native-auth0": "*",
+    "@auth0/auth0-spa-js": "*"
+  },
+  "devDependencies": {}
 }

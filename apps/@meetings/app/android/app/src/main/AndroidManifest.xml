@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -28,6 +28,14 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="meetings"/>
         <data android:scheme="exp+meetings"/>
+      </intent-filter>
+    </activity>
+    <activity android:name="com.auth0.android.provider.RedirectActivity" tools:node="replace" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="com.recidiviz.meetings.auth0" android:pathPrefix="/android/com.recidiviz.meetings/callback" android:host="login-staging.recidiviz.org"/>
       </intent-filter>
     </activity>
   </application>
