@@ -25,6 +25,7 @@ import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfigurat
 import { UsIaEarlyDischargeConfiguration } from "./UsIa/UsIaEarlyDischargeConfiguration";
 import { UsIaSupervisionLevelDowngradeConfiguration } from "./UsIa/UsIaSupervisionLevelDischargeConfiguration";
 import { LSUConfiguration } from "./UsId/LSUConfiguration";
+import { UsIdEarnedDischargeConfiguration } from "./UsId/UsIdEarnedDischargeConfiguration";
 import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
@@ -54,6 +55,7 @@ const customOpportunityConfigurations: Partial<
   usIdCRCResidentWorker: UsIdFacilitiesConfiguration,
   usIdCRCWorkRelease: UsIdFacilitiesConfiguration,
   usIdExpandedCRC: UsIdFacilitiesConfiguration,
+  earnedDischarge: UsIdEarnedDischargeConfiguration,
   compliantReporting: CompliantReportingConfiguration,
   LSU: LSUConfiguration,
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,

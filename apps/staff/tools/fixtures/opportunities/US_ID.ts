@@ -107,7 +107,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "NCIC", text: "Did not pass NCIC check" },
         { key: "DUI", text: "DUI" },
         { key: "NCO", text: "Active NCO" },
-        { key: "Violation_report", text: "New or pending violation report" },
+        { key: "VIOLATION_REPORT", text: "New or pending violation report" },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
