@@ -27,6 +27,20 @@ export class UsMoWorkReleaseConfiguration extends ApiOpportunityConfiguration {
     return true;
   }
 
+  get indefiniteSnoozeSectionSubheading(): string {
+    return "";
+  }
+
+  get maxSnoozeDaysByDenialReason() {
+    return {
+      ...super.maxSnoozeDaysByDenialReason,
+      // indefiniteDenialReasons will filter out entries that don't appear in denialReasons,
+      // so we can always set these even though they don't exist for Outside Clearance
+      OFFENSE: undefined,
+      ABUSE: undefined,
+    };
+  }
+
   get sidebarComponents(): OpportunityProfileModuleName[] {
     return [
       "UsMoIncarceration",
