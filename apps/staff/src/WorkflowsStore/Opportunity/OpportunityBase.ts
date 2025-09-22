@@ -524,7 +524,7 @@ export class OpportunityBase<
     return buildOpportunityCompareFunction(sortParams);
   }
 
-  private async markSubmitted(newSubcategory?: string): Promise<void> {
+  async markSubmitted(newSubcategory?: string): Promise<void> {
     await this.rootStore.firestoreStore.updateOpportunitySubmitted(
       this.currentUserEmail,
       this,
@@ -551,6 +551,7 @@ export class OpportunityBase<
    */
   async markSubmittedAndGenerateToast(
     newSubcategory?: string,
+    customToast?: string,
   ): Promise<string | undefined> {
     // Do nothing if this opportunity doesn't support the submitted status
     if (!this.config.supportsSubmitted) return;
@@ -590,6 +591,10 @@ export class OpportunityBase<
     const toastStatus = newSubcategory
       ? this.subcategoryHeadingFor(newSubcategory)
       : this.submittedTabTitle;
+
+    if (customToast) {
+      return customToast;
+    }
 
     return newSubcategory
       ? `Marked ${this.person.displayName} as ${this.submittedTabTitle}:"${toastStatus}" for ${this.config.label}`

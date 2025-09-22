@@ -48,11 +48,20 @@ export const deleteSubmitted = async (opportunity: Opportunity) => {
   );
 };
 
-export const markSubmittedAndToast = async (
-  opportunity: Opportunity,
-  subcategory?: string,
-) => {
-  const message = await opportunity.markSubmittedAndGenerateToast(subcategory);
+export const markSubmittedAndToast = async ({
+  opportunity,
+  subcategory,
+  customToast,
+}: {
+  opportunity: Opportunity;
+  subcategory?: string;
+  customToast?: string;
+}) => {
+  const message = await opportunity.markSubmittedAndGenerateToast(
+    subcategory,
+    customToast,
+  );
+
   if (message) {
     toast(<OpportunityStatusUpdateToast toastText={message} />, {
       id: "submittedToast", // prevent duplicate toasts
@@ -97,7 +106,7 @@ export const MenuButton = observer(function MenuButton({
       <UsIaMenuButton
         opportunity={opportunity}
         markSubmittedAndToast={async () => {
-          await markSubmittedAndToast(opportunity);
+          await markSubmittedAndToast({ opportunity: opportunity });
         }}
         deleteSubmitted={async () => {
           await deleteSubmitted(opportunity);
@@ -131,7 +140,10 @@ export const MenuButton = observer(function MenuButton({
                   <OpportunityStatusDropdownMenuItem
                     key={subcategory}
                     onClick={async () => {
-                      await markSubmittedAndToast(opportunity, subcategory);
+                      await markSubmittedAndToast({
+                        opportunity: opportunity,
+                        subcategory: subcategory,
+                      });
                     }}
                   >
                     {opportunity.subcategoryHeadingFor(subcategory)}
@@ -151,7 +163,7 @@ export const MenuButton = observer(function MenuButton({
             ) : (
               <OpportunityStatusDropdownMenuItem
                 onClick={async () => {
-                  await markSubmittedAndToast(opportunity);
+                  await markSubmittedAndToast({ opportunity: opportunity });
                 }}
               >
                 {submittedText}

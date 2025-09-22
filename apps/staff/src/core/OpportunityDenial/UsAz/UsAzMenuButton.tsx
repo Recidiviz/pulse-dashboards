@@ -30,8 +30,8 @@ export const UsAzMarkSubmittedButton = observer(
   }: {
     opportunity: UsAzTransferToAdministrativeSupervisionOpportunity;
   }) {
-    const submittedText = `Mark ${opportunity.submittedTabTitle}`;
-    const undoSubmitText = `Revert from ${opportunity.submittedTabTitle}`;
+    const submittedText = `Transferred in ACIS`;
+    const undoSubmitText = `Revert from Recently Transferred`;
 
     // Show a button to undo or mark submitted depending on the opportunity's current status
     if (opportunity.isSubmitted) {
@@ -48,11 +48,16 @@ export const UsAzMarkSubmittedButton = observer(
       );
     }
 
+    const customToast = "Marked as Recently Transferred in ACIS";
     return (
       <StatusAwareButton
         onClick={(e) => {
           e.stopPropagation();
-          markSubmittedAndToast(opportunity);
+          markSubmittedAndToast({
+            opportunity: opportunity,
+            subcategory: undefined,
+            customToast: customToast,
+          });
         }}
         kind={"primary"}
       >

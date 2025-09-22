@@ -900,7 +900,6 @@ describe("tracking", () => {
     });
 
     mockDenied();
-    // @ts-expect-error calling private method to bypass checks in wrapper
     await opp.markSubmitted();
 
     expect(

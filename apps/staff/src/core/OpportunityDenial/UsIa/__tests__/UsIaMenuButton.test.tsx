@@ -84,7 +84,7 @@ describe("UsIaMenuButton", () => {
           <UsIaMenuButton
             opportunity={opportunity}
             markSubmittedAndToast={async () => {
-              await markSubmittedAndToast(opportunity);
+              await markSubmittedAndToast({opportunity: opportunity});
             }}
             deleteSubmitted={async () => {
               await deleteSubmitted(opportunity);

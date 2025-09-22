@@ -174,7 +174,8 @@ export interface Opportunity<
   isSubmitted: boolean;
   readonly submittedTabTitle: string;
   markSubmittedAndGenerateToast: (
-    subcategory?: string,
+    newSubcategory?: string | undefined,
+    customToast?: string | undefined,
   ) => Promise<string | undefined>;
   deleteSubmitted: () => Promise<void>;
   submittedUpdate: Submission | undefined;
