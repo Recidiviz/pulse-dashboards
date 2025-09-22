@@ -18,7 +18,7 @@
 import { FC, ReactNode } from "react";
 
 import { Card, HomepageSectionHeading } from "~@jii/common-ui";
-import { useUsMaTranslations } from '~@jii/translation';
+import { useUsMaTranslations } from "~@jii/translation";
 
 export type ActivityChartShellProps = {
   children: ReactNode;

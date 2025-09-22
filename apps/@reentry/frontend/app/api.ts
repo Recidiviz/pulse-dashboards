@@ -31,4 +31,3 @@ const fetchClient = createFetchClient<paths>({
 fetchClient.use(authMiddleware);
 
 export const $api = createClient(fetchClient);
-

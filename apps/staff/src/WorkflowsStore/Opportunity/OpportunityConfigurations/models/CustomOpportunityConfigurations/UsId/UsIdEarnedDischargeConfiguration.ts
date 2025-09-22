@@ -20,10 +20,10 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 export class UsIdEarnedDischargeConfiguration extends ApiOpportunityConfiguration {
   get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {
     const snoozeLengthOverrides = {
-      "NCIC": 365, // Did not pass NCIC check - 1 year
-      "DUI": 365, // DUI - 1 year
-      "NCO": 365, // Active NCO - 1 year
-      "VIOLATION_REPORT": 90, // New or pending violation report - 90 days
+      NCIC: 365, // Did not pass NCIC check - 1 year
+      DUI: 365, // DUI - 1 year
+      NCO: 365, // Active NCO - 1 year
+      VIOLATION_REPORT: 90, // New or pending violation report - 90 days
     };
 
     return {

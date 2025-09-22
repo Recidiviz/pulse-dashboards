@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,32 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./PathwaysTooltip.scss";
-
-import React from "react";
-
-type PropTypes = {
-  label: string;
-  value: string;
-  average?: string;
-};
-
-const PathwaysTooltip: React.FC<PropTypes> = ({ label, value, average }) => {
-  const ariaLabel =
-    `${label} value: ${value}.` + (average ? ` ${average}` : "");
-  return (
-    <div className="PathwaysTooltip">
-      <h3
-        className="PathwaysTooltip__label"
-        aria-label={ariaLabel}
-        aria-live="polite"
-      >
-        {label}
-      </h3>
-      <div className="PathwaysTooltip__value">{value.toLocaleString()}</div>
-      <div className="PathwaysTooltip__average">{average}</div>
-    </div>
-  );
-};
-
-export default PathwaysTooltip;
+export default [
+  {
+    id: "123456",
+    name: "Mike Woods",
+    supervision: "Probation",
+    lastMeeting: "5d ago",
+  },
+  {
+    id: "234567",
+    name: "Jessica Smith",
+    supervision: "Probation",
+    lastMeeting: "2w ago",
+  },
+  {
+    id: "345678",
+    name: "Tom Davis",
+    supervision: "Probation",
+    lastMeeting: "3m ago",
+  },
+];

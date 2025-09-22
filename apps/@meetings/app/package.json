@@ -36,7 +36,12 @@
     "tsconfig-paths": "*",
     "tslib": "*",
     "react-native-auth0": "*",
-    "@auth0/auth0-spa-js": "*"
+    "@auth0/auth0-spa-js": "*",
+    "@react-navigation/native": "*",
+    "@react-navigation/stack": "*",
+    "react-native-screens": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-gesture-handler": "*"
   },
   "devDependencies": {}
 }

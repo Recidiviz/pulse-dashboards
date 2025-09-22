@@ -46,10 +46,16 @@ const PopulationTimeSeriesTooltip: React.FC<PropTypes> = ({ d }) => {
     // don't display tooltip for summary block
     return null;
   }
-  const ariaLabel = `${formatDate(date, "MMMM yyyy")} value: ${value}` + (lowerBound && upperBound ? `${lowerBound} ${upperBound}` : "");
+  const ariaLabel =
+    `${formatDate(date, "MMMM yyyy")} value: ${value}` +
+    (lowerBound && upperBound ? `${lowerBound} ${upperBound}` : "");
   return (
     <div className="PopulationTimeseriesTooltip">
-      <div className="PopulationTimeseriesTooltip__date" aria-label={ariaLabel} aria-live="polite">
+      <div
+        className="PopulationTimeseriesTooltip__date"
+        aria-label={ariaLabel}
+        aria-live="polite"
+      >
         {formatDate(date, "MMMM yyyy")}
       </div>
       <div className="PopulationTimeseriesTooltip__value">

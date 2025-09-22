@@ -15,19 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
-import { Auth0Provider } from "react-native-auth0";
+import { useAuth0 } from "react-native-auth0";
 
-import config from "~@meetings/app/auth0-config";
+import LoginScreen from "../screens/LoginScreen";
+import DrawerNavigator from "./DrawerNavigator";
 
-import AppNavigator from "./navigation/AppNavigator";
+const Stack = createStackNavigator();
 
-const App = () => {
+const AppNavigator = () => {
+  const { user, isLoading } = useAuth0();
+
+  if (isLoading) {
+    return null;
+  }
+  const loggedIn = user !== undefined && user !== null;
+
   return (
-    <Auth0Provider domain={config.domain} clientId={config.clientId}>
-      <AppNavigator />
-    </Auth0Provider>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!loggedIn ? (
+          <Stack.Screen name="Login" component={LoginScreen} />
+        ) : (
+          <Stack.Screen name="Main" component={DrawerNavigator} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
-export default App;
+export default AppNavigator;

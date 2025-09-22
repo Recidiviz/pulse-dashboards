@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,32 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./PathwaysTooltip.scss";
+import ArrowDown from "./arrow-down.png";
+import ArrowRight from "./arrow-right.png";
+import Bell from "./bell.png";
+import Schedule from "./calendar.png";
+import Clients from "./clients.png";
+import Cross from "./cross.png";
+import Home from "./home.png";
+import Menu from "./menu.png";
+import Messages from "./messages.png";
+import Resources from "./resources.png";
+import Search from "./search.png";
+import Trends from "./trends.png";
 
-import React from "react";
-
-type PropTypes = {
-  label: string;
-  value: string;
-  average?: string;
+const Icons = {
+  Search,
+  Home,
+  Trends,
+  Clients,
+  Messages,
+  Schedule,
+  Resources,
+  ArrowDown,
+  ArrowRight,
+  Bell,
+  Cross,
+  Menu,
 };
 
-const PathwaysTooltip: React.FC<PropTypes> = ({ label, value, average }) => {
-  const ariaLabel =
-    `${label} value: ${value}.` + (average ? ` ${average}` : "");
-  return (
-    <div className="PathwaysTooltip">
-      <h3
-        className="PathwaysTooltip__label"
-        aria-label={ariaLabel}
-        aria-live="polite"
-      >
-        {label}
-      </h3>
-      <div className="PathwaysTooltip__value">{value.toLocaleString()}</div>
-      <div className="PathwaysTooltip__average">{average}</div>
-    </div>
-  );
-};
-
-export default PathwaysTooltip;
+export default Icons;

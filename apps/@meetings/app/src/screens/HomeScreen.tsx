@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,32 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./PathwaysTooltip.scss";
-
 import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-type PropTypes = {
-  label: string;
-  value: string;
-  average?: string;
-};
+import Header from "../components/Header";
 
-const PathwaysTooltip: React.FC<PropTypes> = ({ label, value, average }) => {
-  const ariaLabel =
-    `${label} value: ${value}.` + (average ? ` ${average}` : "");
+const HomeScreen: React.FC = () => {
   return (
-    <div className="PathwaysTooltip">
-      <h3
-        className="PathwaysTooltip__label"
-        aria-label={ariaLabel}
-        aria-live="polite"
-      >
-        {label}
-      </h3>
-      <div className="PathwaysTooltip__value">{value.toLocaleString()}</div>
-      <div className="PathwaysTooltip__average">{average}</div>
-    </div>
+    <View style={styles.safeArea}>
+      <Header />
+      <View style={styles.container}>
+        <Text style={styles.text}>Home Screen</Text>
+      </View>
+    </View>
   );
 };
 
-export default PathwaysTooltip;
+export default HomeScreen;
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: "600",
+  },
+});
