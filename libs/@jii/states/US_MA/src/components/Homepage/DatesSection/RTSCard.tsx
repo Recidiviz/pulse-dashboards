@@ -29,8 +29,7 @@ export const RTSCard = () => {
   return (
     <Card>
       <DateInfo
-        label={t(($) => $.home.dates.rts.label)}
-        value={t(($) => $.home.dates.rts.value, data)}
+        {...t(($) => $.home.dates.rts, { returnObjects: true, ...data })}
         tag={t(($) => $.tags.rts)}
       />
       <SlateCopy>{t(($) => $.home.dates.rts.summary)}</SlateCopy>

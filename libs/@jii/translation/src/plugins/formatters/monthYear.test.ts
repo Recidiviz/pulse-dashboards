@@ -15,35 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, HomepageSectionHeading } from "~@jii/common-ui";
-import { useUsMaTranslations } from "~@jii/translation";
+import { testTranslation } from "../../utils/testTranslation";
 
-import { DateInfoSkeleton } from "./DateInfoSkeleton";
-
-export const DatesSectionSkeleton = () => {
-  const { t } = useUsMaTranslations();
-
-  return (
-    <section>
-      <HomepageSectionHeading>
-        {t(($) => $.home.dates.sectionTitle)}
-      </HomepageSectionHeading>
-
-      {/* First card skeleton (RTS) */}
-      <Card>
-        <DateInfoSkeleton
-          tag={t(($) => $.tags.rts)}
-          label={t(($) => $.home.dates.rts.label)}
-        />
-      </Card>
-
-      {/* Second card skeleton (MAX) */}
-      <Card>
-        <DateInfoSkeleton
-          tag={t(($) => $.tags.maxRelease)}
-          label={t(($) => $.home.dates.maxRelease.label)}
-        />
-      </Card>
-    </section>
-  );
-};
+test("formats date", async () => {
+  expect(
+    await testTranslation("{{testDate, formatMonthYear}}", {
+      testDate: new Date(2025, 2, 15),
+    }),
+  ).toMatchInlineSnapshot(`"March 2025"`);
+});

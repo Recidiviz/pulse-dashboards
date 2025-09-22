@@ -20,6 +20,7 @@ import resourcesToBackend from "i18next-resources-to-backend";
 import { initReactI18next } from "react-i18next";
 
 import { fullDateFormatter } from "./plugins/formatters/fullDate";
+import { monthYearFormatter } from "./plugins/formatters/monthYear";
 
 let initPromise: Promise<TFunction> | undefined = undefined;
 
@@ -48,6 +49,10 @@ export const initTranslations = () => {
   i18nextDefaultInstance.services.formatter?.addCached(
     "formatFullDate",
     fullDateFormatter,
+  );
+  i18nextDefaultInstance.services.formatter?.addCached(
+    "formatMonthYear",
+    monthYearFormatter,
   );
 
   return initPromise;

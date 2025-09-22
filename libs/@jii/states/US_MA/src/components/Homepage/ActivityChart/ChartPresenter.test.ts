@@ -31,47 +31,47 @@ test("chart data", () => {
   expect(presenter.chartData).toMatchInlineSnapshot(`
     [
       {
-        "creditMonth": "Aug",
+        "creditMonth": 2021-08-16T00:00:00.000Z,
         "creditType": "EARNEDGoodTime",
         "totalCredits": 15,
       },
       {
-        "creditMonth": "Aug",
+        "creditMonth": 2021-08-16T00:00:00.000Z,
         "creditType": "BOOST",
         "totalCredits": 0,
       },
       {
-        "creditMonth": "Aug",
+        "creditMonth": 2021-08-16T00:00:00.000Z,
         "creditType": "COMPLETION",
         "totalCredits": 0,
       },
       {
-        "creditMonth": "Sep",
+        "creditMonth": 2021-09-16T00:00:00.000Z,
         "creditType": "EARNEDGoodTime",
         "totalCredits": 15,
       },
       {
-        "creditMonth": "Sep",
+        "creditMonth": 2021-09-16T00:00:00.000Z,
         "creditType": "BOOST",
         "totalCredits": 0,
       },
       {
-        "creditMonth": "Sep",
+        "creditMonth": 2021-09-16T00:00:00.000Z,
         "creditType": "COMPLETION",
         "totalCredits": 0,
       },
       {
-        "creditMonth": "Oct",
+        "creditMonth": 2021-10-16T00:00:00.000Z,
         "creditType": "EARNEDGoodTime",
         "totalCredits": 15,
       },
       {
-        "creditMonth": "Oct",
+        "creditMonth": 2021-10-16T00:00:00.000Z,
         "creditType": "BOOST",
         "totalCredits": 10,
       },
       {
-        "creditMonth": "Oct",
+        "creditMonth": 2021-10-16T00:00:00.000Z,
         "creditType": "COMPLETION",
         "totalCredits": 30,
       },

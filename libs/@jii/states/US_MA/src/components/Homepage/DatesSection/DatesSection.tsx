@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Card, HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
+import { useUsMaTranslations } from "~@jii/translation";
 
 import { useEGTDataContext } from "../../EGTDataContext/context";
 import { DateInfo } from "./DateInfo";
@@ -23,19 +24,17 @@ import { MAXCard } from "./MAXCard";
 import { RTSCard } from "./RTSCard";
 
 export const DatesSection = () => {
-  const {
-    data,
-    copy: {
-      home: { dates },
-    },
-  } = useEGTDataContext();
+  const { data } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
 
   // if we have an RTS date or if both dates are null, put RTS first
   const showRTSFirst = !!(data.rtsDate || !data.adjustedMaxReleaseDate);
 
   return (
     <section>
-      <HomepageSectionHeading>{dates.sectionTitle}</HomepageSectionHeading>
+      <HomepageSectionHeading>
+        {t(($) => $.home.dates.sectionTitle)}
+      </HomepageSectionHeading>
       {showRTSFirst ? (
         <>
           <RTSCard />
@@ -48,8 +47,11 @@ export const DatesSection = () => {
         </>
       )}
       <Card>
-        <DateInfo {...dates.parole} muted />
-        <SlateCopy>{dates.parole.summary}</SlateCopy>
+        <DateInfo
+          {...t(($) => $.home.dates.parole, { returnObjects: true })}
+          muted
+        />
+        <SlateCopy>{t(($) => $.home.dates.parole.summary)}</SlateCopy>
       </Card>
     </section>
   );

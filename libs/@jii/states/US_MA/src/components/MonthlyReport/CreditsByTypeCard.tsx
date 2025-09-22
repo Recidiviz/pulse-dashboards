@@ -21,10 +21,9 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { hydrateTemplate } from "~@jii/data";
+import { useUsMaTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
-import { UsMaMonthlyReportCopy } from "../../configs/US_MA/copy";
 import { CreditTypeCard } from "./CreditTypeCard";
 
 export const CreditTotals = styled.div<{ marginTopBottom: string }>`
@@ -41,10 +40,11 @@ export type creditTypeToTotal = {
 };
 
 export const CreditsByTypeCard: FC<{
-  copy: UsMaMonthlyReportCopy;
   credits: creditTypeToTotal;
   marginTopBottom: string;
-}> = observer(function CreditsByTypeCard({ copy, credits, marginTopBottom }) {
+}> = observer(function CreditsByTypeCard({ credits, marginTopBottom }) {
+  const { t } = useUsMaTranslations();
+
   const {
     totalEGTCreditDays,
     totalBoostCreditDays,
@@ -52,19 +52,25 @@ export const CreditsByTypeCard: FC<{
   } = credits;
   return (
     <CreditTotals marginTopBottom={marginTopBottom}>
-      <CreditTypeCard label={copy.egt.label}>
-        {hydrateTemplate(copy.egt.value, {
-          totalEGTCreditDays,
+      <CreditTypeCard
+        label={t(($) => $.individualMonthlyReport.credits.egtLabel)}
+      >
+        {t(($) => $.individualMonthlyReport.credits.creditsValue, {
+          count: totalEGTCreditDays,
         })}
       </CreditTypeCard>
-      <CreditTypeCard label={copy.boosts.label}>
-        {hydrateTemplate(copy.boosts.value, {
-          totalBoostCreditDays,
+      <CreditTypeCard
+        label={t(($) => $.individualMonthlyReport.credits.boostsLabel)}
+      >
+        {t(($) => $.individualMonthlyReport.credits.creditsValue, {
+          count: totalBoostCreditDays,
         })}
       </CreditTypeCard>
-      <CreditTypeCard label={copy.completion.label}>
-        {hydrateTemplate(copy.completion.value, {
-          totalCompletionCreditDays,
+      <CreditTypeCard
+        label={t(($) => $.individualMonthlyReport.credits.completionLabel)}
+      >
+        {t(($) => $.individualMonthlyReport.credits.creditsValue, {
+          count: totalCompletionCreditDays,
         })}
       </CreditTypeCard>
     </CreditTotals>

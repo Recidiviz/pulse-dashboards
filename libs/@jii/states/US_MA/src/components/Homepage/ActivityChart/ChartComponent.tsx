@@ -23,11 +23,10 @@ import useMeasure from "react-use-measure";
 import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 import styled from "styled-components/macro";
 
-import { hydrateTemplate } from "~@jii/data";
+import { useUsMaTranslations } from "~@jii/translation";
 import { usMaEarnedCreditTypes } from "~datatypes";
 import { palette } from "~design-system";
 
-import { useEGTDataContext } from "../../EGTDataContext/context";
 import { ChartDatum, ChartPresenterInterface } from "./types";
 
 // these are intentionally different from what's in the design system.
@@ -77,12 +76,8 @@ const CHART_MARGINS = { left: 60, bottom: 40, top: 20 };
 
 const ChartComponent: FC<{ presenter: ChartPresenterInterface }> = observer(
   function Chart({ presenter }) {
-    const {
-      copy: {
-        home: { creditHistory: copy },
-      },
-    } = useEGTDataContext();
     const [measureRef, { width }] = useMeasure();
+    const { t } = useUsMaTranslations();
 
     // Use the max value from axisTicks to set the range extent
     const maxTickValue = presenter.axisTicks
@@ -99,7 +94,10 @@ const ChartComponent: FC<{ presenter: ChartPresenterInterface }> = observer(
             size={[width, 300]}
             type="bar"
             data={presenter.chartData}
-            oAccessor="creditMonth"
+            oAccessor={(d) =>
+              // t freaks out here if the second argument isn't an object type
+              t(($) => $.home.creditHistory.monthLabel, d as ChartDatum)
+            }
             rAccessor="totalCredits"
             rExtent={maxTickValue !== undefined ? [0, maxTickValue] : undefined}
             style={(d: ChartDatum) => ({
@@ -112,7 +110,7 @@ const ChartComponent: FC<{ presenter: ChartPresenterInterface }> = observer(
                 orient: "left",
                 // this is not really a component (it doesn't accept props)
                 // eslint-disable-next-line react/no-unstable-nested-components
-                tickFormat: (value: number) => (
+                tickFormat: (count: number) => (
                   <text
                     // 10 is the offset automatically applied by Semiotic,
                     // which we have to take into account when positioning at the left edge.
@@ -121,7 +119,7 @@ const ChartComponent: FC<{ presenter: ChartPresenterInterface }> = observer(
                     textAnchor="start"
                     dy={-8}
                   >
-                    {hydrateTemplate(copy.creditLabel, { value })}
+                    {t(($) => $.home.creditHistory.creditLabel, { count })}
                   </text>
                 ),
                 tickValues: presenter.axisTicks,
@@ -142,17 +140,21 @@ const ChartComponent: FC<{ presenter: ChartPresenterInterface }> = observer(
             ]}
             margin={CHART_MARGINS}
           />
-          {isSkeleton && <NoDataMessage>{copy.noDataMessage}</NoDataMessage>}
+          {isSkeleton && (
+            <NoDataMessage>
+              {t(($) => $.home.creditHistory.noDataMessage)}
+            </NoDataMessage>
+          )}
         </ChartWrapper>
         <Legend>
           <LegendItem swatch={CHART_COLORS.EARNEDGoodTime}>
-            {copy.legend.EARNEDGoodTime}
+            {t(($) => $.home.creditHistory.legend.EARNEDGoodTime)}
           </LegendItem>
           <LegendItem swatch={CHART_COLORS.BOOST}>
-            {copy.legend.BOOST}
+            {t(($) => $.home.creditHistory.legend.BOOST)}
           </LegendItem>
           <LegendItem swatch={CHART_COLORS.COMPLETION}>
-            {copy.legend.COMPLETION}
+            {t(($) => $.home.creditHistory.legend.COMPLETION)}
           </LegendItem>
         </Legend>
       </Wrapper>

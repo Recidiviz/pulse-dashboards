@@ -15,86 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usMaEarnedCreditTypes } from "~datatypes";
-
 import creditsInfoPage from "./creditsInfoPage.md?raw";
-import emptyStateBody from "./emptyStateBody.md?raw";
 import onboardingBody from "./onboardingBody.md?raw";
 import rtsInfoPage from "./rtsInfoPage.md?raw";
 
-const commonMonthlyReportCopy = {
-  egt: {
-    label: "Earned Good Time",
-    value: `{{pluralize "days" totalEGTCreditDays true}}`,
-  },
-  boosts: {
-    label: "Boosts",
-    value: `{{pluralize "days" totalBoostCreditDays true}}`,
-  },
-  completion: {
-    label: "Completion Credits",
-    value: `{{pluralize "days" totalCompletionCreditDays true}}`,
-  },
-};
-
 // where handlebars is invoked, assume a UsMaResidentMetadata object as the template context
 export const usMaEGTCopy = {
-  home: {
-    dates: {
-      sectionTitle: "Important dates",
-
-      maxRelease: {
-        summary: `You’ve earned {{pluralize "days" totalStateCreditDaysCalculated true}} off your maximum release / wrap date.`,
-        breakdown: {
-          original: {
-            label: "Original MAX date",
-            value: "{{formatFullDate originalMaxReleaseDate}}",
-          },
-          change: {
-            label: "Total reduction",
-            value: '-{{pluralize "days" totalStateCreditDaysCalculated true}}',
-          },
-          adjusted: {
-            label: "Adjusted MAX date",
-            value: "{{formatFullDate adjustedMaxReleaseDate}}",
-          },
-        },
-      },
-      parole: {
-        label: "Parole eligibility date",
-        tag: "PE",
-        summary:
-          "Questions regarding the calculation of parole eligibility dates should be directed to the Institutional Parole Officer.",
-      },
-    },
-    creditHistory: {
-      heading: "Time you’ve earned recently",
-      legend: {
-        [usMaEarnedCreditTypes.enum.EARNEDGoodTime]: "Earned Good Time",
-        [usMaEarnedCreditTypes.enum.BOOST]: "Boosts",
-        [usMaEarnedCreditTypes.enum.COMPLETION]: "Completion Credits",
-      },
-      creditLabel: "{{pluralize 'days' value true}}",
-      noDataMessage: "You haven't earned time yet.",
-    },
-    monthlyReport: {
-      sectionTitle: "Recent monthly reports",
-      individualReportLink: `See {{monthDisplayName}} report`,
-      ...commonMonthlyReportCopy,
-    },
-  },
-  creditRatings: {
-    S: "Satisfactory",
-    I: "Incomplete",
-    U: "Unsatisfactory",
-  },
   individualMonthlyReport: {
     pageTitle: "Monthly Report",
     browserPageTitle: "{{reportDisplayName}} Report",
     credits: {
       sectionTitle:
         "Earned time and program participation in {{monthDisplayName}}",
-      ...commonMonthlyReportCopy,
       table: {
         columnHeaders: {
           program: "Program",
@@ -130,13 +62,6 @@ export const usMaEGTCopy = {
     body: onboardingBody,
     continueLink: "See your earned time",
   },
-  emptyState: {
-    heading:
-      "You haven’t done any programs or work that give you Earned Good Time.",
-    body: emptyStateBody,
-    moreInfoLink: "Learn more about earned time",
-  },
 };
 
-export type UsMaMonthlyReportCopy = typeof commonMonthlyReportCopy;
 export type UsMaEgtCopy = typeof usMaEGTCopy;

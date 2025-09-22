@@ -15,35 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, HomepageSectionHeading } from "~@jii/common-ui";
-import { useUsMaTranslations } from "~@jii/translation";
+import { CachedFormatFunction } from "./types";
 
-import { DateInfoSkeleton } from "./DateInfoSkeleton";
+export const monthYearFormatter: CachedFormatFunction = (lng) => {
+  const formatter = Intl.DateTimeFormat(lng, {
+    month: "long",
+    year: "numeric",
+  });
 
-export const DatesSectionSkeleton = () => {
-  const { t } = useUsMaTranslations();
-
-  return (
-    <section>
-      <HomepageSectionHeading>
-        {t(($) => $.home.dates.sectionTitle)}
-      </HomepageSectionHeading>
-
-      {/* First card skeleton (RTS) */}
-      <Card>
-        <DateInfoSkeleton
-          tag={t(($) => $.tags.rts)}
-          label={t(($) => $.home.dates.rts.label)}
-        />
-      </Card>
-
-      {/* Second card skeleton (MAX) */}
-      <Card>
-        <DateInfoSkeleton
-          tag={t(($) => $.tags.maxRelease)}
-          label={t(($) => $.home.dates.maxRelease.label)}
-        />
-      </Card>
-    </section>
-  );
+  return (value) => formatter.format(value);
 };

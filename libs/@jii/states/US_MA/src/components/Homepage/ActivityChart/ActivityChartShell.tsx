@@ -18,8 +18,7 @@
 import { FC, ReactNode } from "react";
 
 import { Card, HomepageSectionHeading } from "~@jii/common-ui";
-
-import { useEGTDataContext } from "../../EGTDataContext/context";
+import { useUsMaTranslations } from '~@jii/translation';
 
 export type ActivityChartShellProps = {
   children: ReactNode;
@@ -28,17 +27,13 @@ export type ActivityChartShellProps = {
 export const ActivityChartShell: FC<ActivityChartShellProps> = ({
   children,
 }) => {
-  const {
-    copy: {
-      home: {
-        creditHistory: { heading },
-      },
-    },
-  } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
 
   return (
     <>
-      <HomepageSectionHeading>{heading}</HomepageSectionHeading>
+      <HomepageSectionHeading>
+        {t(($) => $.home.creditHistory.heading)}
+      </HomepageSectionHeading>
       <Card>{children}</Card>
     </>
   );

@@ -116,7 +116,6 @@ export const MonthlyReport = observer(function MonthlyReport() {
         })}
       </MonthlyReportSectionHeading>
       <CreditsByTypeCard
-        copy={credits}
         credits={{
           totalEGTCreditDays,
           totalBoostCreditDays,

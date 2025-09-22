@@ -57,10 +57,22 @@ const nullZeroFloatSchema = numberRepresentationSchema
   .nullish()
   .transform((i) => i ?? 0);
 
+const activityRating = z.enum(["S", "U", "I"]);
+
 export const creditActivitySchema = z.object({
   creditDate: dateStringSchema,
   activity: z.string().nullable(),
-  rating: z.string().nullable(),
+  rating: z
+    .string()
+    .nullable()
+    .transform((rating) => {
+      // cast unexpected values to null to avoid parse failures
+      try {
+        return activityRating.parse(rating);
+      } catch {
+        return null;
+      }
+    }),
   [usMaEarnedCreditTypes.enum.EARNEDGoodTime]: nullZeroFloatSchema,
   [usMaEarnedCreditTypes.enum.BOOST]: nullZeroFloatSchema,
   [usMaEarnedCreditTypes.enum.COMPLETION]: nullZeroFloatSchema,

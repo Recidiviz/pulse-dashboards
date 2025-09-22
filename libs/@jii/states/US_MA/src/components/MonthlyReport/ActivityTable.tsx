@@ -22,12 +22,11 @@ import { FC } from "react";
 import styled from "styled-components/macro";
 
 import { SlateCopy } from "~@jii/common-ui";
-import { hydrateTemplate } from "~@jii/data";
+import { useUsMaTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
 import { UsMaEgtCopy } from "../../configs/US_MA/copy";
 import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
-import { mapRatingToDisplayName } from "../Homepage/MonthlyReport/MonthlyReportPresenter";
 
 const TableRow = styled.div.attrs({ role: "row" })<{ boldFont?: boolean }>`
   display: flex;
@@ -67,6 +66,7 @@ export const ActivityTable: FC<{
   copy: UsMaEgtCopy;
   report: UsMaEGTMonthlyReport;
 }> = observer(function ActivityTable({ copy, report }) {
+  const { t } = useUsMaTranslations();
   const {
     individualMonthlyReport: { credits },
   } = copy;
@@ -81,9 +81,15 @@ export const ActivityTable: FC<{
     <Wrapper>
       <TableRow>
         <div role="columnheader">{credits.table.columnHeaders.program}</div>
-        <div role="columnheader">{credits.egt.label}</div>
-        <div role="columnheader">{credits.boosts.label}</div>
-        <div role="columnheader">{credits.completion.label}</div>
+        <div role="columnheader">
+          {t(($) => $.individualMonthlyReport.credits.egtLabel)}
+        </div>
+        <div role="columnheader">
+          {t(($) => $.individualMonthlyReport.credits.boostsLabel)}
+        </div>
+        <div role="columnheader">
+          {t(($) => $.individualMonthlyReport.credits.completionLabel)}
+        </div>
       </TableRow>
       {report.creditActivity.map((activity, index) => {
         return (
@@ -94,7 +100,7 @@ export const ActivityTable: FC<{
               <div>{activity.activity}</div>
               {/* replace with rating */}
               <ProgramSubtext>
-                {mapRatingToDisplayName(activity.rating)}
+                {t(($) => $.creditRatings[activity.rating ?? "none"])}
               </ProgramSubtext>
             </div>
             <div role="cell">
@@ -114,18 +120,18 @@ export const ActivityTable: FC<{
       <TableRow boldFont={true}>
         <div role="cell">{credits.table.aggregateColumn.label}</div>
         <div role="cell">
-          {hydrateTemplate(credits.egt.value, {
-            totalEGTCreditDays,
+          {t(($) => $.individualMonthlyReport.credits.creditsValue, {
+            count: totalEGTCreditDays,
           })}
         </div>
         <div role="cell">
-          {hydrateTemplate(credits.boosts.value, {
-            totalBoostCreditDays,
+          {t(($) => $.individualMonthlyReport.credits.creditsValue, {
+            count: totalBoostCreditDays,
           })}
         </div>
         <div role="cell">
-          {hydrateTemplate(credits.completion.value, {
-            totalCompletionCreditDays,
+          {t(($) => $.individualMonthlyReport.credits.creditsValue, {
+            count: totalCompletionCreditDays,
           })}
         </div>
       </TableRow>

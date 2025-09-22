@@ -53,13 +53,6 @@ export class UsMaEGTMonthlyReport {
     }).format(this.reportStartDate);
   }
 
-  get displayName(): string {
-    return new Intl.DateTimeFormat("en-US", {
-      month: "long",
-      year: "numeric",
-    }).format(this.reportStartDate);
-  }
-
   get pageSlug(): string {
     return getMonthlyReportPageSlug(this.reportStartDate);
   }

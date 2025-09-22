@@ -22,9 +22,9 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { Card, HomepageSectionHeading } from "~@jii/common-ui";
+import { useUsMaTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
-import { useEGTDataContext } from "../../EGTDataContext/context";
 import { CreditsByTypeCardSkeleton } from "../../MonthlyReport/CreditsByTypeCardSkeleton";
 import {
   ActivityList,
@@ -40,16 +40,16 @@ const SkeletonLine = styled.div`
 
 export const MonthlyReportHomepageCardSkeleton = observer(
   function MonthlyReportHomepageCardSkeleton() {
-    const { copy } = useEGTDataContext();
+    const { t } = useUsMaTranslations();
 
     return (
       <section>
         <HomepageSectionHeading>
-          {copy.home.monthlyReport.sectionTitle}
+          {t(($) => $.home.monthlyReport.sectionTitle)}
         </HomepageSectionHeading>
         <Card>
           <CreditsByTypeCardSkeleton
-            copy={copy.home.monthlyReport}
+            copy={t(($) => $.home.monthlyReport, { returnObjects: true })}
             marginTopBottom={rem(spacing.md)}
           />
           <ActivityList>

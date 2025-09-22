@@ -29,8 +29,8 @@ import {
   HomepageSectionHeading,
   SlateCopy,
 } from "~@jii/common-ui";
-import { hydrateTemplate } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { useUsMaTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -63,6 +63,8 @@ export const ActivityRowDivider = styled.hr`
 const ManagedComponent: FC<{
   presenter: MonthlyReportPresenter;
 }> = observer(function MonthlyReportHomepageCard({ presenter }) {
+  const { t } = useUsMaTranslations();
+
   const {
     totalEGTCreditDays,
     totalBoostCreditDays,
@@ -72,7 +74,7 @@ const ManagedComponent: FC<{
   return (
     <section>
       <HomepageSectionHeading>
-        {presenter.homepageCopy.sectionTitle}
+        {t(($) => $.home.monthlyReport.sectionTitle)}
       </HomepageSectionHeading>
       <Card>
         <MonthlyReportSelector
@@ -80,7 +82,6 @@ const ManagedComponent: FC<{
           onChange={presenter.setSelectedMonthYearStartDate}
         />
         <CreditsByTypeCard
-          copy={presenter.homepageCopy}
           credits={{
             totalEGTCreditDays,
             totalBoostCreditDays,
@@ -96,7 +97,7 @@ const ManagedComponent: FC<{
                 <ActivityRow>
                   <CopyWrapper>{activityRecord.activity}</CopyWrapper>
                   <SlateCopy>
-                    {presenter.ratingDisplayName(activityRecord.rating)}
+                    {t(($) => $.creditRatings[activityRecord.rating ?? "none"])}
                   </SlateCopy>
                 </ActivityRow>
                 <ActivityRowDivider />
@@ -109,8 +110,8 @@ const ManagedComponent: FC<{
             reportDate: `${presenter.selectedMonthlyReport.pageSlug}`,
           })}
         >
-          {hydrateTemplate(presenter.homepageCopy.individualReportLink, {
-            monthDisplayName: presenter.selectedMonthlyReport.monthDisplayName,
+          {t(($) => $.home.monthlyReport.individualReportLink, {
+            reportDate: presenter.selectedMonthlyReport.reportStartDate,
           })}
         </GoButton>
       </Card>

@@ -15,8 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { TFunctionSignature } from "i18next";
 import { useTranslation } from "react-i18next";
 
 export function useUsMaTranslations() {
   return useTranslation("US_MA");
 }
+
+/**
+ * The shape of the object that can be traversed and returned
+ * by the selector function in the US_MA namespace
+ */
+export type UsMaTranslationsObject = Parameters<
+  Parameters<TFunctionSignature<"US_MA">>["0"]
+>["0"];

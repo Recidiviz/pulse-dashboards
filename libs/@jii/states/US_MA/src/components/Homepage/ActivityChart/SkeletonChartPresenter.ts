@@ -20,7 +20,6 @@ import { makeAutoObservable } from "mobx";
 
 import { usMaEarnedCreditTypes } from "~datatypes";
 
-import { formatCreditDate } from "./ChartPresenter";
 import { ChartDatum, ChartPresenterInterface } from "./types";
 
 // Skeleton presenter that hardcodes all the structure we need
@@ -39,8 +38,7 @@ export class SkeletonChartPresenter implements ChartPresenterInterface {
     const months: Array<ChartDatum> = [];
 
     for (let i = 5; i >= 0; i--) {
-      const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const creditMonth = formatCreditDate(monthDate);
+      const creditMonth = new Date(now.getFullYear(), now.getMonth() - i, 1);
 
       usMaEarnedCreditTypes.options.forEach((creditType) => {
         months.push({

@@ -18,45 +18,40 @@
 import { observer } from "mobx-react-lite";
 
 import { Card, SlateCopy } from "~@jii/common-ui";
-import { hydrateTemplate } from "~@jii/data";
 import { BulletTimeline } from "~@jii/earned-good-time";
 import { useUsMaTranslations } from "~@jii/translation";
 
-import {
-  EGTDataContext,
-  useEGTDataContext,
-} from "../../EGTDataContext/context";
+import { useEGTDataContext } from "../../EGTDataContext/context";
 import { DateInfo } from "./DateInfo";
 
-const formatBreakdownItem = (
-  { label, value }: { label: string; value: string },
-  data: EGTDataContext["data"],
-) => ({
-  label,
-  value: hydrateTemplate(value, data),
-});
-
 const AdjustmentBreakdown = observer(function AdjustmentBreakdown() {
-  const {
-    data,
-    copy: {
-      home: {
-        dates: {
-          maxRelease: { breakdown, summary },
-        },
-      },
-    },
-  } = useEGTDataContext();
-
+  const { data } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
   const items = [
-    formatBreakdownItem(breakdown.original, data),
-    formatBreakdownItem(breakdown.change, data),
-    formatBreakdownItem(breakdown.adjusted, data),
+    t(($) => $.home.dates.maxRelease.breakdown.original, {
+      returnObjects: true,
+      ...data,
+    }),
+    // have to access these segments individually because returnObjects doesn't support plurals
+    {
+      label: t(($) => $.home.dates.maxRelease.breakdown.change.label),
+      value: t(($) => $.home.dates.maxRelease.breakdown.change.value, {
+        count: data.totalStateCreditDaysCalculated,
+      }),
+    },
+    t(($) => $.home.dates.maxRelease.breakdown.adjusted, {
+      returnObjects: true,
+      ...data,
+    }),
   ];
 
   return (
     <div>
-      <SlateCopy>{hydrateTemplate(summary, data)}</SlateCopy>
+      <SlateCopy>
+        {t(($) => $.home.dates.maxRelease.summary, {
+          count: data.totalStateCreditDaysCalculated,
+        })}
+      </SlateCopy>
       <BulletTimeline items={items} />
     </div>
   );

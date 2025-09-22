@@ -18,23 +18,24 @@
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 
-import { UsMaMonthlyReportCopy } from "../../configs/US_MA/copy";
+import { UsMaTranslationsObject } from "~@jii/translation";
+
 import { CreditTotals } from "./CreditsByTypeCard";
 import { CreditTypeCard } from "./CreditTypeCard";
 
 export const CreditsByTypeCardSkeleton: FC<{
-  copy: UsMaMonthlyReportCopy;
+  copy: UsMaTranslationsObject["home"]["monthlyReport"];
   marginTopBottom: string;
 }> = function CreditsByTypeCardSkeleton({ copy, marginTopBottom }) {
   return (
     <CreditTotals marginTopBottom={marginTopBottom}>
-      <CreditTypeCard label={copy.egt.label}>
+      <CreditTypeCard label={copy.egtLabel}>
         <Skeleton />
       </CreditTypeCard>
-      <CreditTypeCard label={copy.boosts.label}>
+      <CreditTypeCard label={copy.boostsLabel}>
         <Skeleton />
       </CreditTypeCard>
-      <CreditTypeCard label={copy.completion.label}>
+      <CreditTypeCard label={copy.completionLabel}>
         <Skeleton />
       </CreditTypeCard>
     </CreditTotals>

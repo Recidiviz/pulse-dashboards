@@ -22,8 +22,7 @@ import styled from "styled-components/macro";
 
 import { Card, CopyWrapper, GoButton } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
-
-import { useEGTDataContext } from "../EGTDataContext/context";
+import { useUsMaTranslations } from "~@jii/translation";
 
 const Heading = styled.h1`
   ${typography.Sans24}
@@ -33,20 +32,18 @@ const Heading = styled.h1`
 `;
 
 export const EmptyState: FC = () => {
-  const {
-    copy: { emptyState },
-  } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
 
   return (
     <Card>
-      <Heading>{emptyState.heading}</Heading>
-      <CopyWrapper>{emptyState.body}</CopyWrapper>
+      <Heading>{t(($) => $.home.emptyState.heading)}</Heading>
+      <CopyWrapper>{t(($) => $.home.emptyState.body)}</CopyWrapper>
       <GoButton
         to={State.Resident.EGT.$.Definition.buildRelativePath({
           pageSlug: "credits",
         })}
       >
-        {emptyState.moreInfoLink}
+        {t(($) => $.home.emptyState.moreInfoLink)}
       </GoButton>
     </Card>
   );

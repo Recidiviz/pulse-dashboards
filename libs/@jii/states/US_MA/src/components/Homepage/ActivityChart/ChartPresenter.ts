@@ -23,11 +23,6 @@ import { usMaEarnedCreditTypes } from "~datatypes";
 import { UsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";
 import { ChartDatum, ChartPresenterInterface } from "./types";
 
-const formatMonth = Intl.DateTimeFormat(undefined, { month: "short" });
-export function formatCreditDate(d: Date) {
-  return formatMonth.format(d);
-}
-
 export class ChartPresenter implements ChartPresenterInterface {
   constructor(private monthlyReports: Array<UsMaEGTMonthlyReport>) {
     makeAutoObservable(this);
@@ -37,7 +32,7 @@ export class ChartPresenter implements ChartPresenterInterface {
     return this.monthlyReports.flatMap((r) =>
       usMaEarnedCreditTypes.options.map((creditType) => ({
         creditType,
-        creditMonth: formatCreditDate(r.reportStartDate),
+        creditMonth: r.reportStartDate,
         totalCredits: r.getTotalCreditForCreditType(creditType),
       })),
     );

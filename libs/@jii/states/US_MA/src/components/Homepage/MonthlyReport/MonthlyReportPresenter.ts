@@ -17,7 +17,7 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { UsMaEgtCopy, usMaEGTCopy } from "../../../configs/US_MA/copy";
+import { UsMaEgtCopy } from "../../../configs/US_MA/copy";
 import { UsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";
 
 type SelectOption = { label: string; value: Date };
@@ -38,12 +38,6 @@ export function reportSelectOptions(
   );
 }
 
-export function mapRatingToDisplayName(rating: string | null): string {
-  const { creditRatings } = usMaEGTCopy;
-
-  return creditRatings[rating as keyof typeof creditRatings] ?? "Unknown";
-}
-
 export class MonthlyReportPresenter {
   private selectedMonthYearStartDate?: Date;
 
@@ -59,16 +53,8 @@ export class MonthlyReportPresenter {
     this.selectedMonthYearStartDate = date;
   }
 
-  get homepageCopy() {
-    return this.copy.home.monthlyReport;
-  }
-
   get individualReportCopy() {
     return this.copy.individualMonthlyReport;
-  }
-
-  get sectionTitle(): string {
-    return this.homepageCopy.sectionTitle;
   }
 
   get selectorLabel(): string {
@@ -129,9 +115,5 @@ export class MonthlyReportPresenter {
 
   get creditActivity() {
     return this.selectedMonthlyReport.creditActivity;
-  }
-
-  ratingDisplayName(rating: string | null): string {
-    return mapRatingToDisplayName(rating);
   }
 }

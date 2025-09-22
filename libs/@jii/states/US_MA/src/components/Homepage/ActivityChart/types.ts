@@ -19,7 +19,7 @@
 import { UsMaEarnedCreditType } from "~datatypes";
 
 export type ChartDatum = {
-  creditMonth: string;
+  creditMonth: Date;
   creditType: UsMaEarnedCreditType;
   totalCredits: number;
 };
