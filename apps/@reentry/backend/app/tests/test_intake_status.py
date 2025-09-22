@@ -5,6 +5,7 @@ from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.intake import (
+    COMPLETION_SECTION,
     ClientIntakeSection,
     CompletionStatus,
     Intake,
@@ -16,12 +17,11 @@ from app.tests.test_fixtures.intake_sections import (
     create_test_section,
     create_test_sections,
 )
-from app.utils.intake.constants import COMPLETION_SECTION
 
 
 @pytest.mark.asyncio
 async def test_update_status_basic(
-    async_session: AsyncSession, seed_default_sections, mock_clientdata_service
+    async_session: AsyncSession, seed_intake_sections, mock_clientdata_service
 ):
     """Test basic status update functionality."""
     # Create a test intake with CREATED status using a client ID that exists in mock data
@@ -151,7 +151,7 @@ async def count_sections(session, intake):
 
 @pytest.mark.asyncio
 async def test_in_progress_populates_sections(
-    async_session, seed_default_sections, mock_clientdata_service
+    async_session, seed_intake_sections, mock_clientdata_service
 ):
     """Test that updating to IN_PROGRESS populates sections if needed."""
     # Create a test intake with CREATED status
@@ -187,7 +187,7 @@ async def test_in_progress_populates_sections(
 
 @pytest.mark.asyncio
 async def test_dont_duplicate_sections(
-    async_session, seed_default_sections, mock_clientdata_service
+    async_session, seed_intake_sections, mock_clientdata_service
 ):
     """Test that updating to IN_PROGRESS doesn't create duplicate sections."""
 
@@ -250,7 +250,7 @@ async def test_valid_status_transitions(async_session, mock_clientdata_service):
 
 @pytest.mark.asyncio
 async def test_first_section_marked_in_progress(
-    async_session, seed_default_sections, mock_clientdata_service
+    async_session, seed_intake_sections, mock_clientdata_service
 ):
     """Test that the first section is marked as in-progress when status becomes IN_PROGRESS."""
     intake = Intake(
@@ -295,7 +295,7 @@ async def test_first_section_marked_in_progress(
 
 @pytest.mark.asyncio
 async def test_completion_section_for_terminal_statuses(
-    async_session, seed_default_sections, mock_clientdata_service
+    async_session, seed_intake_sections, mock_clientdata_service
 ):
     """Test that terminal statuses set the current_section to COMPLETION_SECTION."""
     intake = Intake(
@@ -343,7 +343,7 @@ async def test_update_status_with_no_sections(async_session, mock_clientdata_ser
         await intake.update_status(async_session, IntakeStatus.IN_PROGRESS)
 
     # Verify the correct error message
-    assert "No sections found for assessment type" in str(excinfo.value)
+    assert "No sections found for intake name" in str(excinfo.value)
 
 
 @pytest.mark.asyncio
@@ -390,7 +390,7 @@ async def test_completed_status_idempotent(async_session, mock_clientdata_servic
 
 @pytest.mark.asyncio
 async def test_db_manager_update_status(
-    async_session, seed_default_sections, mock_clientdata_service
+    async_session, seed_intake_sections, mock_clientdata_service
 ):
     """Test updating status through the DatabaseManager."""
     from app.utils.intake.db_manager import DatabaseManager
@@ -441,7 +441,7 @@ async def test_db_manager_update_status_nonexistent_client(async_session):
 
 @pytest.mark.asyncio
 async def test_all_transition_combinations(
-    async_session, seed_default_sections, mock_clientdata_service
+    async_session, seed_intake_sections, mock_clientdata_service
 ):
     """Test various status transitions between all possible statuses."""
     # Setup - create intake with CREATED status
@@ -487,7 +487,7 @@ async def test_all_transition_combinations(
                     # Add first section as IN_PROGRESS
                     section = ClientIntakeSection(
                         intake_id=intake.id,
-                        intake_section_id=seed_default_sections[0].id,
+                        intake_section_id=seed_intake_sections[0].id,
                         completion_status=CompletionStatus.IN_PROGRESS.value,
                         is_active=True,
                         order=0,
@@ -659,7 +659,7 @@ async def test_next_section_no_current_section(async_session, mock_clientdata_se
 
 @pytest.mark.asyncio
 async def test_next_section_invalid_current_section(
-    async_session, seed_default_sections, mock_clientdata_service
+    async_session, seed_intake_sections, mock_clientdata_service
 ):
     """Test that next_section raises an error when the current section doesn't exist."""
     intake = Intake(
@@ -741,3 +741,65 @@ async def test_next_section_skip_incomplete(async_session, mock_clientdata_servi
     )
     section_with_order_2 = result.first()
     assert section_with_order_2.completion_status == CompletionStatus.IN_PROGRESS.value
+
+
+@pytest.mark.asyncio
+async def test_correct_intake_sections_for_all_states(
+    async_session: AsyncSession, seed_intake_sections, mock_clientdata_service
+):
+    """Test that clients from all states get the correct intake sections."""
+    import json
+
+    from app.services.client_data.queries import Queries
+    from app.tests.test_fixtures.client_examples import create_test_client
+
+    # Load the state configuration
+    with open("./app/core/data_config/config_by_state.json") as f:
+        config_by_state = json.load(f)
+
+    for state_code, config in config_by_state.items():
+        intake_name = config.get("intake_type")
+        if not intake_name:
+            continue
+
+        # Create a mock client for the current state
+        client = create_test_client()
+        client.state_code = state_code
+        client.pseudonymized_client_id = f"client-{state_code}"
+
+        # Patch the query to return the mock client
+        with patch.object(
+            Queries,
+            "get_client_by_pseudonymized_id_unsafe",
+            return_value=client,
+        ) as mock_get_client:
+            # Create an intake for the client
+            intake = Intake(
+                client_pseudo_id=client.pseudonymized_client_id,
+                status=IntakeStatus.CREATED,
+                intake_type=IntakeType.CONVERSATION,
+            )
+            async_session.add(intake)
+            await async_session.commit()
+            await async_session.refresh(intake)
+
+            # Update status to IN_PROGRESS to trigger section initialization
+            await intake.update_status(async_session, IntakeStatus.IN_PROGRESS)
+
+            # Verify that the correct client was requested
+            mock_get_client.assert_called_once_with(client.pseudonymized_client_id)
+
+            # Get the first created section
+            result = await async_session.exec(
+                select(ClientIntakeSection)
+                .join(IntakeSection)
+                .where(ClientIntakeSection.intake_id == intake.id)
+                .order_by(IntakeSection.order)
+                .limit(1)
+            )
+            created_section = result.first()
+
+            assert created_section is not None, f"No sections created for {state_code}"
+            assert (
+                created_section.intake_section.intake_name == intake_name
+            ), f"Wrong intake_name for {state_code}"

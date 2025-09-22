@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.intake.auth_client_user import validate_dob
 from app.core.db import get_session
 from app.crud.intake import get_intake_by_client_pseudo_id
-from app.models.intake import ClientAddress, Intake, IntakeStatus
+from app.models.intake import COMPLETION_SECTION, ClientAddress, Intake, IntakeStatus
 from app.routes.base import IntakeSectionResponse
 from app.routes.client_router import ClientRecordResponse
 from app.routes.shared_models import AddressSubmission, IntakeMessageResponse
@@ -232,8 +232,6 @@ async def submit_address(
 ):
     from sqlalchemy.orm import selectinload
     from sqlmodel import select
-
-    from app.utils.intake.constants import COMPLETION_SECTION
 
     # Extract client_pseudo_id from JWT token (set by ClientAuthMiddleware)
     client_pseudo_id: str = request.state.client.get("sub")

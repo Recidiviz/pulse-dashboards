@@ -1,0 +1,22 @@
+{
+  "US_ID": {
+    "name": "Idaho",
+    "intake_name": "ID-FACR",
+    "assessment_types": ["lsir"]
+  },
+  "US_IX": {
+    "name": "Idaho",
+    "intake_name": "ID-FACR",
+    "assessment_types": ["lsir"]
+  },
+  "US_AZ": {
+    "name": "Arizona",
+    "intake_name": null,
+    "assessment_types": ["oras_rt"]
+  },
+  "US_UT": {
+    "name": "Utah",
+    "intake_name": "UT-CCCI",
+    "assessment_types": ["lsir"]
+  }
+}

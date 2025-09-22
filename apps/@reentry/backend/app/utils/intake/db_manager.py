@@ -17,13 +17,8 @@ from app.crud.intake import (
     get_latest_message,
     get_latest_not_welcome_message,
 )
-from app.models.intake import (
-    Intake,
-    IntakeMessage,
-    IntakeMessageRole,
-)
+from app.models.intake import Intake, IntakeMessage, IntakeMessageRole, IntakeStatus
 from app.services.client_data.queries import ClientDataRecord
-from app.utils.intake.constants import IntakeStatus
 
 logger = logging.getLogger(__name__)
 

@@ -222,11 +222,10 @@ async def seed_db(force: bool = False):
     elif is_empty:
         print("Database is empty, proceeding with fresh seeding")
 
-    # Fresh seeding (original behavior)
     async with get_session_async_manager() as session:
-        from app.manage.intake import seed_default_sections
+        from app.manage.intake import seed_sections_selective
 
-        await seed_default_sections(session)
+        await seed_sections_selective(session)
 
     print("Seeding database with example decision trees")
     app_directory = Path(__file__).parent.parent

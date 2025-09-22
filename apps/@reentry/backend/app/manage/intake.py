@@ -1,20 +1,17 @@
 from sqlmodel import delete, select
 
+from app.core.data_config.intakesections.constants import (
+    INTAKE_SECTIONS_MAPPING,
+    SUPPORTED_INTAKE_NAMES,
+)
 from app.core.db import AsyncSession, get_session_async_manager
 from app.crud.intake_section import (
     add_intake_section_revision,
     content_has_changed,
     get_latest_intake_section_revision,
 )
-from app.models.assessment import AssessmentType
 from app.models.intake import ClientIntakeSection, Intake, IntakeMessage, IntakeSection
 from app.utils.content_hash import compute_content_hash
-from app.utils.intake.constants import (
-    SECTIONS_ID_FACR,
-    SECTIONS_ORAS_RT,
-    SECTIONS_UTAH_LSIR,
-    get_intake_sections_for_assessment_type,
-)
 
 from .base import cli
 
@@ -49,102 +46,16 @@ async def delete_all_intake_records(session: AsyncSession):
     print("All intake records and related data deleted successfully")
 
 
-@cli.command()
-async def seed_sections():
-    async with get_session_async_manager() as session:
-        await seed_default_sections(session)
-
-
-async def seed_default_sections(session: AsyncSession):
-    """
-    Seed default intake sections if they don't exist.
-
-    Seeds both LSIR and ORAS_RT sections.
-
-    Useful for initial application setup or migrations.
-    """
-    print("Seeding intake sections...")
-
-    # Seed LSIR sections (marked as default for backward compatibility)
-    print("Seeding LSIR sections...")
-    for i, topic in enumerate(SECTIONS_ID_FACR):
-        existing = await session.exec(
-            select(IntakeSection).where(
-                IntakeSection.title == topic["title"],
-                IntakeSection.assessment_type == "lsir",
-            )
-        )
-        existing_section = existing.first()
-
-        if not existing_section:
-            print(f"Creating LSIR section: {topic['title']} (order: {i})")
-            new_section = IntakeSection(
-                title=topic["title"],
-                description=topic["description"],
-                required_information=topic["required_information"],
-                assessment_type="lsir",
-                order=i,
-            )
-            session.add(new_section)
-
-    # Seed ORAS_RT sections (not marked as default)
-    print("Seeding ORAS_RT sections...")
-    for i, topic in enumerate(SECTIONS_ORAS_RT):
-        existing = await session.exec(
-            select(IntakeSection).where(
-                IntakeSection.title == topic["title"],
-                IntakeSection.assessment_type == "oras_rt",
-            )
-        )
-        existing_section = existing.first()
-
-        if not existing_section:
-            print(f"Creating ORAS_RT section: {topic['title']} (order: {i})")
-            new_section = IntakeSection(
-                title=topic["title"],
-                description=topic["description"],
-                required_information=topic["required_information"],
-                assessment_type="oras_rt",
-                order=i,
-            )
-            session.add(new_section)
-
-    # Seed LSIR sections (marked as default for backward compatibility)
-    print("Seeding Utah LSIR sections...")
-    for i, topic in enumerate(SECTIONS_UTAH_LSIR):
-        existing = await session.exec(
-            select(IntakeSection).where(
-                IntakeSection.title == topic["title"],
-                IntakeSection.assessment_type == "utah_lsir",
-            )
-        )
-        existing_section = existing.first()
-
-        if not existing_section:
-            print(f"Creating Utah LSIR section: {topic['title']} (order: {i})")
-            new_section = IntakeSection(
-                title=topic["title"],
-                description=topic["description"],
-                required_information=topic["required_information"],
-                assessment_type="utah_lsir",
-                order=i,
-            )
-            session.add(new_section)
-
-    await session.commit()
-    print("All sections seeded successfully")
-
-    # Return all LSIR sections
-    result = await session.exec(
-        select(IntakeSection).where(IntakeSection.assessment_type == "lsir")
-    )
-    return result.all()
-
-
 def compute_section_content_hash(section_data: dict) -> str:
     """Compute content hash for an intake section."""
     content = f"{section_data['title']}|{section_data['description']}|{section_data['required_information']}"
     return compute_content_hash(content)
+
+
+@cli.command()
+async def seed_sections():
+    async with get_session_async_manager() as session:
+        await seed_sections_selective(session)
 
 
 async def seed_sections_selective(session: AsyncSession):
@@ -154,23 +65,16 @@ async def seed_sections_selective(session: AsyncSession):
     """
     print("Seeding intake sections (revision-based selective mode)...")
 
-    # Process each assessment type
-    assessment_types = [
-        AssessmentType.LSIR,
-        AssessmentType.ORAS_RT,
-        AssessmentType.UTAH_LSIR,
-    ]
-
-    for assessment_type in assessment_types:
-        print(f"Processing {assessment_type.upper()} sections...")
-        sections_data = get_intake_sections_for_assessment_type(assessment_type)
+    for intake_name in SUPPORTED_INTAKE_NAMES:
+        print(f"Processing {intake_name} sections...")
+        sections_data = INTAKE_SECTIONS_MAPPING[intake_name]
 
         for i, section_data in enumerate(sections_data):
             # Check if section already exists
             existing = await session.exec(
                 select(IntakeSection).where(
                     IntakeSection.title == section_data["title"],
-                    IntakeSection.assessment_type == assessment_type,
+                    IntakeSection.intake_name == intake_name,
                 )
             )
             existing_section = existing.first()
@@ -188,7 +92,7 @@ async def seed_sections_selective(session: AsyncSession):
                     if content_has_changed(existing_content_hash, new_content_hash):
                         # Content has changed, add new revision
                         print(
-                            f"Adding new revision for {assessment_type} section: {section_data['title']}"
+                            f"Adding new revision for {intake_name} section: {section_data['title']}"
                         )
                         print(
                             f"  Old description: {existing_section.description[:60]}..."
@@ -216,12 +120,12 @@ async def seed_sections_selective(session: AsyncSession):
                         )
                     else:
                         print(
-                            f"No changes for {assessment_type} section: {section_data['title']}"
+                            f"No changes for {intake_name} section: {section_data['title']}"
                         )
                 else:
                     # No revisions exist yet, create first revision
                     print(
-                        f"Creating first revision for {assessment_type} section: {section_data['title']}"
+                        f"Creating first revision for {intake_name} section: {section_data['title']}"
                     )
                     print(
                         f"  Section description (direct): {existing_section.description[:60]}..."
@@ -254,14 +158,12 @@ async def seed_sections_selective(session: AsyncSession):
                     session.add(existing_section)
             else:
                 # Section doesn't exist, create it with first revision
-                print(
-                    f"Creating new {assessment_type} section: {section_data['title']}"
-                )
+                print(f"Creating new {intake_name} section: {section_data['title']}")
                 new_section = IntakeSection(
                     title=section_data["title"],
                     description=section_data["description"],
                     required_information=section_data["required_information"],
-                    assessment_type=assessment_type,
+                    intake_name=intake_name,
                     order=i,
                     enabled=True,
                 )
@@ -283,27 +185,27 @@ async def seed_sections_selective(session: AsyncSession):
         # Find active sections for this assessment type that are not in current definitions
         disabled_sections = await session.exec(
             select(IntakeSection).where(
-                IntakeSection.assessment_type == assessment_type,
+                IntakeSection.intake_name == intake_name,
                 not IntakeSection.enabled,
             )
         )
 
         for section in disabled_sections:
             if section.title in current_titles:
-                print(f"Unabling {assessment_type} section: {section.title}")
+                print(f"Unabling {intake_name} section: {section.title}")
                 section.enabled = True
                 session.add(section)
         # Find active sections for this assessment type that are not in current definitions
         active_sections = await session.exec(
             select(IntakeSection).where(
-                IntakeSection.assessment_type == assessment_type,
+                IntakeSection.intake_name == intake_name,
                 IntakeSection.enabled,
             )
         )
 
         for section in active_sections:
             if section.title not in current_titles:
-                print(f"Deactivating unused {assessment_type} section: {section.title}")
+                print(f"Deactivating unused {intake_name} section: {section.title}")
                 section.enabled = False
                 session.add(section)
 

@@ -4,6 +4,7 @@ Database models for intake assessment system.
 
 import logging
 from datetime import datetime
+from enum import StrEnum
 from typing import TYPE_CHECKING, List, Optional
 from uuid import UUID
 
@@ -17,11 +18,19 @@ from sqlalchemy import Enum as SAEnum
 from sqlmodel import Field, Relationship
 
 from app.models.base import BaseModel
-from app.utils.intake.constants import (
-    CompletionStatus,
-)
 
 logger = logging.getLogger(__name__)
+
+
+class CompletionStatus(StrEnum):
+    """
+    Status of a section within an intake conversation.
+    Used both in-memory and database.
+    """
+
+    NOT_STARTED = "not_started"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
 
 
 class IntakeSectionRevision(BaseModel, table=True):
@@ -74,7 +83,11 @@ class IntakeSection(BaseModel, table=True):
         nullable=False,
         description="Assessment requirements and question guidelines",
     )
-    assessment_type: str = Field(default="lsir", nullable=False)
+    intake_name: str = Field(
+        ...,
+        nullable=True,
+        description="Assessment name",
+    )
     order: int = Field(
         default=0,
         nullable=False,
@@ -102,9 +115,7 @@ class IntakeSection(BaseModel, table=True):
     )
 
     __table_args__ = (
-        UniqueConstraint(
-            "title", "assessment_type", name="unique_title_assessment_type"
-        ),
+        UniqueConstraint("title", "intake_name", name="unique_title_intake_name"),
     )
 
     @property

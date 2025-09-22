@@ -6,11 +6,18 @@ from uuid import UUID
 from pydantic import computed_field
 
 from app.models.base import BaseModel
-from app.models.intake import IntakeMessageRole
 from app.routes.execution_router import ExecutionResponse
 from app.services.client_data.types import FullNameModel
 
 from .base import ORMResponse
+
+
+class IntakeMessageRole(StrEnum):
+    """Roles for messages in intake assessment."""
+
+    CLIENT = "client"
+    CASEWORKER = "caseworker"
+    SYSTEM = "system"
 
 
 class ProcessingStatus(StrEnum):

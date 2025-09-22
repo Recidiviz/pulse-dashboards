@@ -15,8 +15,11 @@ from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 
 from app.core.config import settings
+from app.core.data_config.intakesections.constants import (
+    INTAKE_SECTIONS_MAPPING,
+    SUPPORTED_INTAKE_NAMES,
+)
 from app.models.intake import IntakeMessage, IntakeMessageRole
-from app.utils.intake.constants import SECTIONS_ID_FACR, SECTIONS_ORAS_RT
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.schemas import ClientContext, ServerEvent
 
@@ -498,12 +501,10 @@ async def headless_conversation_eval(type: str):
     """
     logger.info("Starting headless conversation evaluation...")
 
-    if type != "lsir" and type != "oras":
-        print(
-            '!! the supported intake types are "oras" and "lsir", defaulting to "lsir"!!'
-        )
+    if type not in SUPPORTED_INTAKE_NAMES:
+        print('!! the supported intake types are "ID-FACR", "UT-CCCI"')
 
-    sections = SECTIONS_ID_FACR if type == "lsir" else SECTIONS_ORAS_RT
+    sections = INTAKE_SECTIONS_MAPPING[type]
 
     # Create clients with personas
     clients = []

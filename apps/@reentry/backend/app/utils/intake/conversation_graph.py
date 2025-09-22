@@ -13,6 +13,7 @@ from app.core.config import dt_model as model
 from app.core.config import tracer
 from app.crud.intake import WELCOME_BACK_TEST_STRING
 from app.models.intake import (
+    COMPLETION_SECTION,
     Intake,
     IntakeMessage,
     IntakeMessageRole,
@@ -21,7 +22,6 @@ from app.models.intake import (
 from app.routes.shared_models import IntakeMessageResponse
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
 from app.utils.intake import db_manager
-from app.utils.intake.constants import COMPLETION_SECTION
 from app.utils.intake.prompts import (
     CheckIfClientNeedsHelp,
     IsSectionComplete,

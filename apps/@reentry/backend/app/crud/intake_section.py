@@ -31,9 +31,9 @@ async def create_intake_sections(
 
 
 @overload
-async def get_intake_sections_by_assessment_type(
+async def get_intake_sections_by_intake_name(
     session: AsyncSession,
-    assessment_type: str,
+    intake_name: str,
     include_revisions: bool = True,
     *,
     query_only: Literal[True],
@@ -41,9 +41,9 @@ async def get_intake_sections_by_assessment_type(
 
 
 @overload
-async def get_intake_sections_by_assessment_type(
+async def get_intake_sections_by_intake_name(
     session: AsyncSession,
-    assessment_type: str,
+    intake_name: str,
     include_revisions: bool = True,
     *,
     query_only: Literal[False] = False,
@@ -51,17 +51,15 @@ async def get_intake_sections_by_assessment_type(
 
 
 @statement_or_result(result_type=list)
-async def get_intake_sections_by_assessment_type(
+async def get_intake_sections_by_intake_name(
     session: AsyncSession,
-    assessment_type: str,
+    intake_name: str,
     include_revisions: bool = True,
     *,
     query_only: bool = False,
 ) -> SelectOfScalar[IntakeSection] | list[IntakeSection]:
     """Get all intake sections for a specific assessment type."""
-    statement = select(IntakeSection).where(
-        IntakeSection.assessment_type == assessment_type
-    )
+    statement = select(IntakeSection).where(IntakeSection.intake_name == intake_name)
 
     if include_revisions:
         from sqlalchemy.orm import selectinload
@@ -134,7 +132,7 @@ async def get_intake_sections_by_titles(
 async def get_intake_section_by_title_and_assessment_type(
     session: AsyncSession,
     title: str,
-    assessment_type: str,
+    intake_name: str,
     *,
     query_only: Literal[True],
 ) -> SelectOfScalar[IntakeSection]: ...
@@ -144,7 +142,7 @@ async def get_intake_section_by_title_and_assessment_type(
 async def get_intake_section_by_title_and_assessment_type(
     session: AsyncSession,
     title: str,
-    assessment_type: str,
+    intake_name: str,
     *,
     query_only: Literal[False] = False,
 ) -> IntakeSection | None: ...
@@ -152,11 +150,11 @@ async def get_intake_section_by_title_and_assessment_type(
 
 @statement_or_result(first_only=True)
 async def get_intake_section_by_title_and_assessment_type(
-    session: AsyncSession, title: str, assessment_type: str, *, query_only: bool = False
+    session: AsyncSession, title: str, intake_name: str, *, query_only: bool = False
 ) -> SelectOfScalar[IntakeSection] | IntakeSection | None:
     """Get an intake section by title and assessment type."""
     return select(IntakeSection).where(
-        IntakeSection.title == title, IntakeSection.assessment_type == assessment_type
+        IntakeSection.title == title, IntakeSection.intake_name == intake_name
     )
 
 
@@ -209,7 +207,7 @@ async def check_section_in_use(
 @overload
 async def get_intake_sections_with_revisions(
     session: AsyncSession,
-    assessment_type: str,
+    intake_name: str,
     include_revisions: bool = True,
     filter_enabled: bool = True,
     *,
@@ -220,7 +218,7 @@ async def get_intake_sections_with_revisions(
 @overload
 async def get_intake_sections_with_revisions(
     session: AsyncSession,
-    assessment_type: str,
+    intake_name: str,
     include_revisions: bool = True,
     filter_enabled: bool = True,
     *,
@@ -231,16 +229,14 @@ async def get_intake_sections_with_revisions(
 @statement_or_result(result_type=list)
 async def get_intake_sections_with_revisions(
     session: AsyncSession,
-    assessment_type: str,
+    intake_name: str,
     include_revisions: bool = True,
     filter_enabled: bool = True,
     *,
     query_only: bool = False,
 ) -> SelectOfScalar[IntakeSection] | list[IntakeSection]:
     """Get intake sections with their revisions, similar to trees."""
-    statement = select(IntakeSection).where(
-        IntakeSection.assessment_type == assessment_type
-    )
+    statement = select(IntakeSection).where(IntakeSection.intake_name == intake_name)
 
     if filter_enabled:
         statement = statement.where(IntakeSection.enabled)

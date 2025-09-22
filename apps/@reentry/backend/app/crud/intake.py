@@ -18,6 +18,7 @@ from app.models.intake import (
 )
 from app.models.intake_sections import (
     ClientIntakeSection,
+    CompletionStatus,
 )
 from app.routes.shared_models import AddressSubmission
 
@@ -113,8 +114,6 @@ async def get_current_section_title(session: AsyncSession, intake_id: UUID) -> s
     """
     Get the title (string) of the first in_progress section of the ClientIntakeSections or the last section title
     """
-
-    from app.utils.intake.constants import CompletionStatus
 
     # First try to find an in-progress section
     in_progress_query = (

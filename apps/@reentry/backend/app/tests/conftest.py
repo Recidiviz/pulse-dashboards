@@ -13,6 +13,7 @@ from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.db import engine
+from app.manage.intake import seed_sections_selective
 from app.utils import permission_utils
 from main import app as fastapi_app
 
@@ -213,10 +214,8 @@ async def seed_decision_trees(async_session):
 
 
 @pytest_asyncio.fixture(scope="function")
-async def seed_default_sections(async_session):
-    from app.manage.intake import seed_default_sections
-
-    await seed_default_sections(async_session)
+async def seed_intake_sections(async_session):
+    await seed_sections_selective(async_session)
 
 
 @pytest.fixture(scope="session", autouse=True)

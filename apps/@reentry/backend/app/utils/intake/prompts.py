@@ -3,8 +3,15 @@ from typing import List, Optional
 from langchain_core.messages import SystemMessage
 from pydantic import BaseModel, Field
 
-from app.utils.intake.constants import ROLE, TONE
 from app.utils.intake.schemas import ClientContext
+
+ROLE = """
+Role: You are a social worker conducting a structured intake assessment with a new client who is currently in a prison facility and preparing for their release.
+"""
+
+TONE = """
+Tone: Warm, trauma-informed, and professional. Use plain language that is understandable at a 4th-grade reading level.
+"""
 
 
 def get_system_message_prompt() -> SystemMessage:

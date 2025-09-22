@@ -13,7 +13,13 @@ from sqlalchemy.orm import Mapped
 
 from app.crud.intake_section import get_intake_sections_with_revisions
 from app.models.execution import Execution
-from app.models.intake_sections import ClientIntakeSection, IntakeSection
+from app.models.intake_sections import (
+    ClientIntakeSection,
+    CompletionStatus,
+    IntakeSection,
+)
+from app.routes.shared_models import IntakeMessageRole
+from app.utils.assessment_runner import get_assessments_type
 
 if TYPE_CHECKING:
     from app.models.assessment import Assessment
@@ -27,13 +33,25 @@ from sqlmodel import Field, Relationship, select
 from app.core.config import settings
 from app.models.base import BaseModel
 from app.services.client_data.queries import Queries
-from app.utils.assessment_runner import get_assessments_type
-from app.utils.intake.constants import (
-    CompletionStatus,
-    IntakeStatus,
-)
+from app.utils.intake.utils import get_intake_name_by_state
+
+# Special section title for completed intakes
+# Not stored in DB, only used for UI organization of closing messages
+COMPLETION_SECTION = "Completion"
 
 logger = logging.getLogger(__name__)
+
+
+class IntakeStatus(StrEnum):
+    """
+    Status for intake assessment process.
+    Used for both database persistence and UI state representation.
+    """
+
+    CREATED = "created"
+    IN_PROGRESS = "in_progress"
+    ERROR = "error"
+    COMPLETED = "completed"
 
 
 class IntakeType(StrEnum):
@@ -187,7 +205,6 @@ class Intake(BaseModel, table=True):
         """
         Handle logic specific to conversation-type intakes when status is updated.
         """
-        from app.utils.intake.constants import COMPLETION_SECTION
 
         # If new status is in_progress, check if the sections are populated and otherwise populate them
         if self.status == IntakeStatus.IN_PROGRESS.value:
@@ -247,20 +264,19 @@ class Intake(BaseModel, table=True):
         client_record = Queries.get_client_by_pseudonymized_id_unsafe(
             self.client_pseudo_id
         )
-        assessment_types = get_assessments_type(client_record.state_code)
-        assessment_type = assessment_types[0].value  # Use the first assessment type
-
+        intake_name = get_intake_name_by_state(client_record.state_code)
         logger.info(
-            f"Client state: {client_record.state_code}, Assessment type: {assessment_type}"
+            f"Client state: {client_record.state_code}, Intake name: {intake_name}"
         )
+        print(f"Client state: {client_record.state_code}, Intake name: {intake_name}")
 
         # Get enabled IntakeSection records for this assessment type, ordered by the order field
         section_records = await get_intake_sections_with_revisions(
-            session, assessment_type, True, True
+            session, intake_name, True, True
         )
 
         if not section_records:
-            raise ValueError(f"No sections found for assessment type {assessment_type}")
+            raise ValueError(f"No sections found for intake name {intake_name}")
 
         # Create client intake sections for each section in the correct order
         print(
@@ -382,7 +398,6 @@ class Intake(BaseModel, table=True):
             # All sections are completed
             # Instead of setting to None, set to COMPLETION_SECTION
             # The update_status method will handle this, but we set it here too for clarity
-            from app.utils.intake.constants import COMPLETION_SECTION
 
             self.current_section = COMPLETION_SECTION
 
@@ -400,7 +415,6 @@ class Intake(BaseModel, table=True):
         """
         from app.crud.assessment import create_assessment
         from app.models.assessment import Assessment
-        from app.utils.assessment_runner import get_assessments_type
 
         # Only create assessment if intake is completed
         # Check both string value and enum value to be safe
@@ -432,18 +446,12 @@ class Intake(BaseModel, table=True):
         assessments_types = get_assessments_type(client_record.state_code)
         logger.info(f"Assessments type determined: {assessments_types}")
         logger.info(f"Using assessment type: {assessments_types[0]}")
-        if assessments_types[0] == "utah_lsir":
-            assessment = Assessment(
-                client_pseudo_id=self.client_pseudo_id,
-                intake_id=self.id,
-                assessment_type="lsir",  # Using by default the first type
-            )
-        else:
-            assessment = Assessment(
-                client_pseudo_id=self.client_pseudo_id,
-                intake_id=self.id,
-                assessment_type=assessments_types[0],  # Using by default the first type
-            )
+
+        assessment = Assessment(
+            client_pseudo_id=self.client_pseudo_id,
+            intake_id=self.id,
+            assessment_type=assessments_types[0],  # Using by default the first type
+        )
         assessment = await create_assessment(session, assessment)
         execution = await assessment.schedule_execution(session)
         await session.refresh(assessment)
@@ -504,14 +512,6 @@ class Intake(BaseModel, table=True):
             return [], has_accepted_terms
 
         return current_messages, has_accepted_terms
-
-
-class IntakeMessageRole(StrEnum):
-    """Roles for messages in intake assessment."""
-
-    CLIENT = "client"
-    CASEWORKER = "caseworker"
-    SYSTEM = "system"
 
 
 class IntakeMessage(BaseModel, table=True):

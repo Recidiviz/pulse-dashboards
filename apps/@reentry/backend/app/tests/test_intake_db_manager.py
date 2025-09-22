@@ -11,12 +11,12 @@ from sqlmodel import select
 
 from app.models.intake import (
     ClientIntakeSection,
-    CompletionStatus,
     Intake,
     IntakeMessage,
     IntakeMessageRole,
     IntakeStatus,
 )
+from app.models.intake_sections import CompletionStatus
 from app.tests.test_fixtures.intake_sections import (
     create_test_section,
     create_test_sections,

@@ -9,8 +9,8 @@ from typing import Optional
 import redis.asyncio as redis
 import socketio
 
+from app.utils.intake.redis_keys import RedisKeys
 from app.utils.intake.schemas import ForceDisconnectEvent
-from app.utils.intake.utils import RedisKeys
 
 logger = logging.getLogger(__name__)
 

@@ -24,7 +24,6 @@ logger = structlog.get_logger(__name__)
 
 class AssessmentType(StrEnum):
     LSIR = "lsir"
-    UTAH_LSIR = "utah_lsir"
     ORAS_PIT = "oras_pit"
     ORAS_RT = "oras_rt"
 

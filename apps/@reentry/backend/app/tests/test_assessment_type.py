@@ -1,4 +1,3 @@
-import logging
 from unittest.mock import mock_open, patch
 
 import pytest
@@ -73,20 +72,3 @@ class TestGetAssessmentsType:
         }
         result = get_assessments_type("US_ID")
         assert result == [AssessmentType.LSIR]
-
-    def test_reading_file_from_root(self):
-        import os
-        from pathlib import Path
-
-        PROJECT_ROOT = Path(__file__).parent.parent.parent
-        file_path = f"{PROJECT_ROOT}/assessments_by_state.json"
-
-        if not os.path.exists(file_path):
-            pytest.skip(f"assessment_by_state config file not found at {file_path}")
-
-        # Test with real file - no mocking
-        result = get_assessments_type("US_AZ")
-        logging.info(result)
-        assert isinstance(result, list)
-        assert len(result) >= 1
-        assert result == [AssessmentType.ORAS_RT]

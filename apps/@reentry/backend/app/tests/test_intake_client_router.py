@@ -5,18 +5,20 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.intake import (
+    COMPLETION_SECTION,
     ClientAddress,
     ClientIntakeSection,
     Intake,
     IntakeMessage,
     IntakeMessageRole,
+    IntakeStatus,
 )
+from app.models.intake_sections import CompletionStatus
 from app.tests.test_fixtures.client_examples import create_test_client
 from app.tests.test_fixtures.intake_sections import (
     create_test_section,
     create_test_sections,
 )
-from app.utils.intake.constants import CompletionStatus, IntakeStatus
 
 
 @pytest.mark.asyncio
@@ -821,8 +823,6 @@ async def test_submit_address_completes_intake_when_in_completion_section(
     """Test that submitting address completes intake when current section is completion section."""
     from unittest.mock import AsyncMock, patch
 
-    from app.utils.intake.constants import COMPLETION_SECTION
-
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
@@ -965,8 +965,6 @@ async def test_submit_address_does_not_complete_intake_when_already_completed(
 ):
     """Test that submitting address for already completed intake doesn't trigger additional completion."""
     from unittest.mock import AsyncMock, patch
-
-    from app.utils.intake.constants import COMPLETION_SECTION
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"

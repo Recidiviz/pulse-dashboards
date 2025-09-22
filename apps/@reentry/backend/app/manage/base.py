@@ -45,7 +45,6 @@ import app.manage.create_plan  # noqa
 import app.manage.import_assessment_tree  # noqa
 import app.manage.create_assessment  # noqa
 import app.manage.intake  # noqa
-import app.manage.seed_intake_messages  # noqa
 import app.manage.seed_assessments  # noqa
 import app.manage.seed_plans  # noqa
 import app.manage.seed_workflow  # noqa

@@ -227,7 +227,9 @@ def get_assessments_type(state_code: str) -> List:
 
     try:
         with open(
-            f"{PROJECT_ROOT}/assessments_by_state.json", "r", encoding="utf-8"
+            f"{PROJECT_ROOT}/app/core/config/config_by_state.json",
+            "r",
+            encoding="utf-8",
         ) as file:
             data = json.load(file)
 
@@ -267,7 +269,7 @@ def get_assessments_type(state_code: str) -> List:
             return default_assessment_types
 
     except FileNotFoundError:
-        logger.info("Configuration file 'assessments_by_state.json' not found")
+        logger.info("Configuration file 'config_by_state.json' not found")
         logger.info(f"Returning default assessment types: {default_assessment_types}")
         return default_assessment_types
     except json.JSONDecodeError as e:

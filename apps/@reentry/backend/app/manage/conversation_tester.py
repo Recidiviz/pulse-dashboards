@@ -12,9 +12,9 @@ from pathlib import Path
 
 from langchain_core.messages import AIMessage
 
+from app.core.data_config.intakesections.constants import INTAKE_SECTIONS_MAPPING
 from app.models.intake import IntakeMessage, IntakeMessageRole, IntakeSection
 from app.tests.test_intake_conversation_graph import make_client_sections
-from app.utils.intake.constants import SECTIONS_ID_FACR
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.schemas import ClientContext, ServerEvent
 
@@ -27,9 +27,9 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(name)s - %(mes
 class MockDatabaseManager:
     """Mock database manager that doesn't save anything to database."""
 
-    def __init__(self):
+    def __init__(self, sections):
         self.current_section_index = 0
-        self.sections = [section["title"] for section in SECTIONS_ID_FACR]
+        self.sections = [section["title"] for section in sections]
 
     async def store_message(
         self, client_pseudo_id: str, content: str, from_role: str
@@ -84,8 +84,8 @@ class MockDatabaseManager:
 class MockIntake:
     """Mock intake object."""
 
-    def __init__(self):
-        self.current_section = SECTIONS_ID_FACR[0]["title"]
+    def __init__(self, sections):
+        self.current_section = sections[0]["title"]
 
 
 async def mock_wait_for_user_response(
@@ -134,7 +134,7 @@ async def mock_send_message(client_pseudo_id: str, event: ServerEvent) -> str:
 
 
 @cli.command()
-async def test_conversation():
+async def test_conversation(type):
     """
     Test the conversation graph from command line.
     This allows experimenting with the conversation flow without database or full app.
@@ -148,14 +148,15 @@ async def test_conversation():
 
     # Create mock objects
     mock_client = ClientContext(client_pseudo_id="test-client-123", client_name="Bob")
-    mock_db_manager = MockDatabaseManager()
-    mock_intake = MockIntake()
 
     # Create sections
     sections = [
         IntakeSection(title=section["title"], description=section["description"])
-        for section in SECTIONS_ID_FACR
+        for section in INTAKE_SECTIONS_MAPPING[type]
     ]
+
+    mock_db_manager = MockDatabaseManager(sections)
+    mock_intake = MockIntake(sections)
 
     client_sections = make_client_sections(mock_intake, sections)
 

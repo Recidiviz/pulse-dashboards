@@ -14,11 +14,16 @@ import socketio
 
 from app.auth.intake.auth_client_user import verify_client_token
 from app.core.config import settings
-from app.models.intake import Intake, IntakeMessage, IntakeMessageRole, IntakeStatus
+from app.models.intake import (
+    COMPLETION_SECTION,
+    Intake,
+    IntakeMessage,
+    IntakeMessageRole,
+    IntakeStatus,
+)
 from app.routes.shared_models import IntakeMessageResponse
 from app.services.client_data.types import ClientDataRecord
 from app.utils.intake.client_connection_manager import ClientConnectionManager
-from app.utils.intake.constants import COMPLETION_SECTION
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.db_manager import DatabaseManager
 from app.utils.intake.schemas import (

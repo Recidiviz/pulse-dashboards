@@ -15,7 +15,7 @@ def create_test_section(title: str = "Test Section", order: int = 0) -> IntakeSe
         title=title,
         description=f"Description for {title}",
         required_information=f"Required information for {title}",
-        assessment_type="lsir",
+        intake_name="id-facr",
         order=order,
         enabled=True,
     )
