@@ -1,0 +1,148 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+@use "sass:math";
+
+@function rem($size) {
+  $remSize: math.div($size, 16);
+  @return #{$remSize}rem;
+}
+
+$sans-serif: "Public Sans", sans-serif;
+$serif: "Libre Baskerville", serif;
+$ui-line-height: 1.2;
+
+// UI Serif styles
+
+$font-serif-34: 400 rem(34) / $ui-line-height $serif;
+$letter-spacing-serif-34: -0.04em;
+
+$font-serif-24: 400 rem(24) / $ui-line-height $serif;
+$letter-spacing-serif-24: -0.03em;
+
+// UI Sans-serif styles
+
+$font-sans-24: 400 rem(24) / $ui-line-height $sans-serif;
+$letter-spacing-sans-24: -0.02em;
+
+$font-sans-18: 500 rem(18) / $ui-line-height $sans-serif;
+$letter-spacing-sans-18: -0.02em;
+
+$font-sans-16: 500 rem(16) / $ui-line-height $sans-serif;
+$letter-spacing-sans-16: -0.01em;
+
+$font-sans-14: 500 rem(14) / $ui-line-height $sans-serif;
+$letter-spacing-sans-14: -0.01em;
+
+$font-sans-12: 500 rem(12) / $ui-line-height $sans-serif;
+$letter-spacing-sans-12: -0.01em;
+
+// Article Header styles
+
+$font-header-88: 400 rem(88) / rem(104) $serif;
+$letter-spacing-header-88: -0.04em;
+
+$font-header-56: 400 rem(56) / rem(72) $serif;
+$letter-spacing-header-56: -0.04em;
+
+$font-header-34: 400 rem(34) / rem(48) $serif;
+$letter-spacing-header-34: -0.04em;
+
+$font-header-24: 400 rem(24) / rem(32) $serif;
+$letter-spacing-header-24: -0.04em;
+
+$paragraph-spacing-header: 0.5em;
+
+// Article Body styles
+
+$font-body-48: 400 rem(48) / 1.4 $sans-serif;
+$letter-spacing-body-48: -0.02em;
+
+$font-body-40: 400 rem(40) / 1.5 $sans-serif;
+$letter-spacing-body-40: -0.02em;
+
+$font-body-32: 400 rem(32) / 1.5 $sans-serif;
+$letter-spacing-body-32: -0.02em;
+
+$font-body-24: 400 rem(24) / 1.6 $sans-serif;
+$letter-spacing-body-24: 0;
+
+$font-body-19: 500 rem(19) / 1.7 $sans-serif;
+$letter-spacing-body-19: 0;
+
+$font-body-16: 500 rem(16) / 1.7 $sans-serif;
+$letter-spacing-body-16: 0;
+
+$font-body-14: 500 rem(14) / 1.5 $sans-serif;
+$letter-spacing-body-14: 0;
+
+$font-body-12: 500 rem(12) / 1.5 $sans-serif;
+$letter-spacing-body-12: 0;
+
+$paragraph-spacing-body: 1em;
+// palette.signal.links but all the colors are not in SCSS yet
+$link-color-body: rgb(0, 108, 103);
+$list-style-body: outside;
+$list-padding-body: 1.2em;
+$list-item-spacing-body: 0.5em;
+
+// CSS-in-JS will use these to mirror SCSS mixins in JS
+:export {
+  fontSans12: $font-sans-12;
+  letterSpacingSans12: $letter-spacing-sans-12;
+  fontSans14: $font-sans-14;
+  letterSpacingSans14: $letter-spacing-sans-14;
+  fontSans16: $font-sans-16;
+  letterSpacingSans16: $letter-spacing-sans-16;
+  fontSans18: $font-sans-18;
+  letterSpacingSans18: $letter-spacing-sans-18;
+  fontSans24: $font-sans-24;
+  letterSpacingSans24: $letter-spacing-sans-24;
+  fontSerif24: $font-serif-24;
+  letterSpacingSerif24: $letter-spacing-serif-24;
+  fontSerif34: $font-serif-34;
+  letterSpacingSerif34: $letter-spacing-serif-34;
+  fontHeader88: $font-header-88;
+  letterSpacingHeader88: $letter-spacing-header-88;
+  fontHeader56: $font-header-56;
+  letterSpacingHeader56: $letter-spacing-header-56;
+  fontHeader34: $font-header-34;
+  letterSpacingHeader34: $letter-spacing-header-34;
+  fontHeader24: $font-header-24;
+  letterSpacingHeader24: $letter-spacing-header-24;
+  paragraphSpacingHeader: $paragraph-spacing-header;
+  fontBody48: $font-body-48;
+  letterSpacingBody48: $letter-spacing-body-48;
+  fontBody40: $font-body-40;
+  letterSpacingBody40: $letter-spacing-body-40;
+  fontBody32: $font-body-32;
+  letterSpacingBody32: $letter-spacing-body-32;
+  fontBody24: $font-body-24;
+  letterSpacingBody24: $letter-spacing-body-24;
+  fontBody19: $font-body-19;
+  letterSpacingBody19: $letter-spacing-body-19;
+  fontBody16: $font-body-16;
+  letterSpacingBody16: $letter-spacing-body-16;
+  fontBody14: $font-body-14;
+  letterSpacingBody14: $letter-spacing-body-14;
+  fontBody12: $font-body-12;
+  letterSpacingBody12: $letter-spacing-body-12;
+  paragraphSpacingBody: $paragraph-spacing-body;
+  linkColorBody: $link-color-body;
+  listStyleBody: $list-style-body;
+  listPaddingBody: $list-padding-body;
+  listItemSpacingBody: $list-item-spacing-body;
+}

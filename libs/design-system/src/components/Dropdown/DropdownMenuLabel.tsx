@@ -15,6 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./palette";
-export * from "./spacing";
-export * from "./typography";
+import * as React from "react";
+
+import { MenuLabelElement } from "./Dropdown.styles";
+
+export interface DropdownMenuLabelProps {
+  className?: string;
+  children?: React.ReactChild;
+}
+
+export const DropdownMenuLabel = ({
+  className,
+  children,
+}: DropdownMenuLabelProps): JSX.Element => {
+  return <MenuLabelElement className={className}>{children}</MenuLabelElement>;
+};

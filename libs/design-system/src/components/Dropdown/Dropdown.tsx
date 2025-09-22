@@ -15,6 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./palette";
-export * from "./spacing";
-export * from "./typography";
+import * as React from "react";
+import { useRef, useState } from "react";
+
+import { DropdownElement } from "./Dropdown.styles";
+import DropdownContext from "./DropdownContext";
+import DropdownFocusManager from "./DropdownFocusManager";
+
+export interface DropdownProps {
+  children: JSX.Element | JSX.Element[];
+  className?: string;
+}
+
+export const Dropdown = ({
+  children,
+  className,
+}: DropdownProps): JSX.Element => {
+  const ref = useRef(null);
+  const [focusManager] = useState(new DropdownFocusManager(ref));
+  const [shown, setShown] = useState(false);
+
+  return (
+    <DropdownElement className={className} ref={ref}>
+      <DropdownContext.Provider value={{ focusManager, shown, setShown }}>
+        {children}
+      </DropdownContext.Provider>
+    </DropdownElement>
+  );
+};

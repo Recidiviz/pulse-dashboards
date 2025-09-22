@@ -47,9 +47,7 @@
       "~@jii/layout": ["libs/@jii/layout/src/index.ts"],
       "~@jii/paths": ["libs/@jii/paths/src/index.ts"],
       "~@jii/translation": ["libs/@jii/translation/src/index.ts"],
-      "~@meetings/app/*": [
-        "apps/@meetings/app/src/*"
-      ],
+      "~@meetings/app/*": ["apps/@meetings/app/src/*"],
       "~@meetings/import": ["apps/@meetings/import/src/index.ts"],
       "~@meetings/import/*": ["apps/@meetings/import/src/*"],
       "~@meetings/import/test/*": ["apps/@meetings/import/__tests__/*"],

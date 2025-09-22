@@ -15,6 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./palette";
-export * from "./spacing";
-export * from "./typography";
+import * as React from "react";
+
+import DropdownFocusManager from "./DropdownFocusManager";
+
+interface DropdownContextInterface {
+  shown: boolean;
+  setShown(shown: boolean): void;
+  focusManager: DropdownFocusManager;
+}
+
+const DropdownContext = React.createContext<DropdownContextInterface>({
+  shown: false,
+  setShown: (shown: boolean) => null,
+  focusManager: new DropdownFocusManager(null),
+});
+
+export default DropdownContext;
