@@ -15,15 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { mapValues } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import {
   compositeHydrationState,
   Hydratable,
+  HydrationState,
   isHydrated,
 } from "~hydration-utils";
 
-import { Client, WorkflowsStore } from "../../WorkflowsStore";
+import { PartialRecord } from "../../utils/typeUtils";
+import {
+  Client,
+  SupervisionTask,
+  SupervisionTaskType,
+  WorkflowsStore,
+} from "../../WorkflowsStore";
 import { SearchStore } from "../../WorkflowsStore/SearchStore";
 
 /**
@@ -32,6 +40,20 @@ import { SearchStore } from "../../WorkflowsStore/SearchStore";
  */
 export class RoutePlannerClientsPresenter implements Hydratable {
   private readonly searchStore: SearchStore;
+
+  private TASK_TYPE_COPY: PartialRecord<SupervisionTaskType, string> = {
+    usTxHomeContactScheduled: "Scheduled",
+    usTxHomeContactUnscheduled: "Unscheduled",
+    usTxHomeContactEdgeCase: "Ad Hoc",
+  };
+  private SHORT_SUPERVISION_LEVEL_COPY: Record<string, string> = {
+    High: "H",
+    Moderate: "M",
+    "Low-Moderate": "L–M",
+    Low: "L",
+    Annual: "A",
+    "In-custody": "I–C",
+  };
 
   constructor(private readonly workflowsStore: WorkflowsStore) {
     this.searchStore = workflowsStore.searchStore;
@@ -50,7 +72,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     });
   }
 
-  get hydrationState() {
+  get hydrationState(): HydrationState {
     const taskHydrators = this.workflowsStore.caseloadPersons.flatMap(
       (person) => (person.supervisionTasks ? [person.supervisionTasks] : []),
     );
@@ -60,5 +82,37 @@ export class RoutePlannerClientsPresenter implements Hydratable {
 
   get selectedOfficers() {
     return this.searchStore.selectedSearchables;
+  }
+
+  /**
+   * @returns Record mapping selected caseload IDs to a list of home contact tasks
+   * for each caseload.
+   */
+  get contacts() {
+    return mapValues(this.searchStore.caseloadPersonsGrouped, (persons) =>
+      persons.flatMap((person) => {
+        if (person.supervisionTasks) {
+          return person.supervisionTasks.readyOrderedTasks.filter(({ type }) =>
+            Object.keys(this.TASK_TYPE_COPY).includes(type),
+          );
+        }
+        return [];
+      }),
+    );
+  }
+
+  /**
+   * @returns copy used in ClientCard for a specific task
+   */
+  getClientCardCopy(task: SupervisionTask) {
+    const person = task.person as Client;
+
+    return {
+      supervisionLevelShort:
+        this.SHORT_SUPERVISION_LEVEL_COPY[person.supervisionLevel] ?? "Other",
+      supervisionTooltip: person.supervisionLevel,
+      type: this.TASK_TYPE_COPY[task.type] ?? "Other",
+      scheduledStatus: "To-Do",
+    };
   }
 }

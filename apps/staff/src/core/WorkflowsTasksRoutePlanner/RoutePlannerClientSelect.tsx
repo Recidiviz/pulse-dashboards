@@ -30,6 +30,11 @@ const RoutePlannerSelectContainer = styled.div`
   flex-direction: column;
 `;
 
+const ScrollableWrapper = styled.div`
+  height: 100%;
+  overflow: scroll;
+`;
+
 export const RoutePlannerClientSelect = ({
   presenter,
 }: {
@@ -42,9 +47,11 @@ export const RoutePlannerClientSelect = ({
       <TasksDescription>
         To plan your home visit trips, select people below.
       </TasksDescription>
-      <ModelHydrator hydratable={presenter.clientsPresenter}>
-        <RoutePlannerClients presenter={presenter.clientsPresenter} />
-      </ModelHydrator>
+      <ScrollableWrapper>
+        <ModelHydrator hydratable={presenter.clientsPresenter}>
+          <RoutePlannerClients presenter={presenter.clientsPresenter} />
+        </ModelHydrator>
+      </ScrollableWrapper>
     </RoutePlannerSelectContainer>
   );
 };

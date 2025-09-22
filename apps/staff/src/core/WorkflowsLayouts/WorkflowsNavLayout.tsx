@@ -64,7 +64,7 @@ const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
   ${(props) =>
     props.$fixed
       ? `
-        
+
         position: fixed;
         top: 4rem;
         z-index: ${zindex.tooltip - 2};
