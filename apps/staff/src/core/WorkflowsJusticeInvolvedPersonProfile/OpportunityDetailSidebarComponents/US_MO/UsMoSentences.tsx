@@ -35,7 +35,7 @@ const UsMoSentences: React.FC<ResidentProfileProps> = ({ resident }) => {
 
   return (
     <DetailsSection>
-      <DetailsHeading>Sentences</DetailsHeading>
+      <DetailsHeading>Current Cycle Sentences</DetailsHeading>
       <SecureDetailsContent>
         <DetailsList>
           {metadata.latestCycleSentences.map((sentence) => (
