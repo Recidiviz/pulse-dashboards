@@ -34,5 +34,5 @@ export const EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS = 18;
  * Texas Contact Reminders Constants *
  ****************************/
 export const US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS = 15;
-export const LATEST_REMINDER_MESSAGE_SEND_UTC_HOURS = 15;
+export const US_TX_LATEST_MESSAGE_SEND_CT_HOURS = 22;
 export type ReminderType = "WITHIN_ONE_DAY";

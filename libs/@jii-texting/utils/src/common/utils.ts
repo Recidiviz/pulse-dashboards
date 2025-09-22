@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { captureException } from "@sentry/node";
+import { DateTime } from "luxon";
 import moment from "moment";
 import {
   MessageInstance,
@@ -47,6 +48,7 @@ import {
   US_ID_LSU_LEARN_MORE,
   US_ID_LSU_VISIT_LINK,
   US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS,
+  US_TX_LATEST_MESSAGE_SEND_CT_HOURS,
 } from "~@jii-texting/utils/common/constants";
 import { TwilioAPIClient } from "~twilio-api";
 
@@ -1384,6 +1386,14 @@ export async function processIndividualJiiContactReminders(
   };
 
   if (personHasOptedOut(jii)) return [ScriptAction.SKIPPED];
+
+  // If the hours of the current time in the CT timezone is equal to or after US_TX_LATEST_MESSAGE_SEND_CT_HOURS, skip the processing
+  if (
+    DateTime.now().setZone("America/Chicago").hour >=
+    US_TX_LATEST_MESSAGE_SEND_CT_HOURS
+  ) {
+    return [ScriptAction.SKIPPED];
+  }
 
   if (!jii.receivedWelcomeText) {
     const result = await processWelcomeText(

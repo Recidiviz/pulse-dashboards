@@ -22,7 +22,10 @@ import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 import { MessageAttemptStatus, StateCode } from "~@jii-texting/prisma/client";
 import { processJiiContactReminders } from "~@jii-texting/processor/scripts/process-jii-contact-reminders";
 import { testUsTxPrismaClient } from "~@jii-texting/processor/test/setup";
-import { US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting/utils";
+import {
+  ScriptAction,
+  US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS,
+} from "~@jii-texting/utils";
 import {
   fakeContact,
   fakePersonOne,
@@ -104,6 +107,54 @@ describe("one person in DB without prior messages", () => {
 
     expect(welcomeMessageSeries.length).toBe(1);
     expect(welcomeMessageSeries[0].messageAttempts.length).toBe(1);
+  });
+
+  test("doesn't welcome text after desired hours", async () => {
+    // Set the system time to be later than the latest time we want to send the message
+    vi.setSystemTime(
+      new Date(
+        Date.UTC(2025, 3, 1, 4, 30, 0), // the fourth argument is the hours in UTC, which is equivalent to 22 in CDT
+      ),
+    );
+
+    const spy = vi
+      .spyOn(TwilioAPIClient.prototype, "createMessage")
+      .mockResolvedValue({
+        body: "message body",
+        status: "queued",
+        sid: "twilio-message-sid",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+    const results = await processJiiContactReminders({
+      stateCode: StateCode.US_TX,
+      dryRun: false,
+      workflowExecutionId: fakeWorkflowExecutionOne.id,
+    });
+
+    // Validates no request made to the createMessage API
+    expect(spy).not.toBeCalled();
+    expect(results).toEqual(
+      expect.objectContaining({
+        [ScriptAction.SKIPPED]: [fakePersonOne.pseudonymizedId],
+      }),
+    );
+
+    // Validates no WelcomeMessageSeries is persisted
+    const welcomeMessageSeries =
+      await testUsTxPrismaClient.welcomeMessageSeries.findMany({
+        where: {
+          personExternalId: fakePersonOne.stableExternalId,
+        },
+        include: {
+          messageAttempts: true,
+        },
+      });
+
+    expect(welcomeMessageSeries.length).toBe(0);
   });
 
   test("createMessage fails on first message, welcomeMessageSeries is not persisted", async () => {

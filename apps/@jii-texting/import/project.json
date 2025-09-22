@@ -104,7 +104,7 @@
       "outputs": ["{workspaceRoot}/coverage/apps/@jii-texting/import"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @jii-texting/prisma && cd apps/@jii-texting/import && vitest",
+        "command": "nx custom-prisma-deploy @jii-texting/prisma && cd apps/@jii-texting/import && vitest",
         "cwd": "{workspaceRoot}"
       }
     },
