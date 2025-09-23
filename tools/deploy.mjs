@@ -404,19 +404,21 @@ if (
       let projects;
       let configuration;
       if (deployEnv === "staging") {
-        projects = "@sentencing/server @sentencing/import";
+        projects = ["@sentencing/server", "@sentencing/import"];
         configuration = "staging";
       } else if (deployEnv === "production" && isCpDeploy) {
-        projects = "@sentencing/server @sentencing/import";
+        projects = ["@sentencing/server", "@sentencing/import"];
         configuration = "cherry-pick";
       } else if (deployEnv === "demo") {
-        projects = "@sentencing/server @sentencing/seed-demo";
+        projects = ["@sentencing/server", "@sentencing/seed-demo"];
         configuration = "demo";
       }
 
-      await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
-        process.stdout,
-      );
+      if (projects) {
+        await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
+          process.stdout,
+        );
+      }
 
       // Deploy any changes to the artifact registry if we're on staging
       if (deployEnv === "staging") {
@@ -482,22 +484,33 @@ if (
       let projects;
       let configuration;
       if (deployEnv === "staging") {
-        projects =
-          "@jii-texting/server @jii-texting/processor @jii-texting/import";
+        projects = [
+          "@jii-texting/server",
+          "@jii-texting/processor",
+          "@jii-texting/import",
+        ];
         configuration = "staging";
       } else if (deployEnv === "production" && isCpDeploy) {
-        projects =
-          "@jii-texting/server @jii-texting/processor @jii-texting/import";
+        projects = [
+          "@jii-texting/server",
+          "@jii-texting/processor",
+          "@jii-texting/import",
+        ];
         configuration = "cherry-pick";
       } else if (deployEnv === "demo") {
-        projects =
-          "@jii-texting/server @jii-texting/processor @jii-texting/seed-demo";
+        projects = [
+          "@jii-texting/server",
+          "@jii-texting/processor",
+          "@jii-texting/seed-demo",
+        ];
         configuration = "demo";
       }
 
-      await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
-        process.stdout,
-      );
+      if (projects) {
+        await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
+          process.stdout,
+        );
+      }
 
       // Deploy the import, migration, processor, and server infrastructure changes for the applicable environment
       let stack;
@@ -762,19 +775,21 @@ if (
       let projects;
       let configuration;
       if (deployEnv === "staging") {
-        projects = "@reentry/server @reentry/import";
+        projects = ["@reentry/server", "@reentry/import"];
         configuration = "staging";
       } else if (deployEnv === "production" && isCpDeploy) {
-        projects = "@reentry/server @reentry/import";
+        projects = ["@reentry/server", "@reentry/import"];
         configuration = "cherry-pick";
       } else if (deployEnv === "demo") {
-        projects = "@reentry/server @reentry/seed-demo";
+        projects = ["@reentry/server", "@reentry/seed-demo"];
         configuration = "demo";
       }
 
-      await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
-        process.stdout,
-      );
+      if (projects) {
+        await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
+          process.stdout,
+        );
+      }
 
       // Deploy any changes to the artifact registry if we're on staging
       if (deployEnv === "staging") {
@@ -886,19 +901,21 @@ if (
       let projects;
       let configuration;
       if (deployEnv === "staging") {
-        projects = "@meetings/server @meetings/import";
+        projects = ["@meetings/server", "@meetings/import"];
         configuration = "staging";
       } else if (deployEnv === "production" && isCpDeploy) {
-        projects = "@meetings/server @meetings/import";
+        projects = ["@meetings/server", "@meetings/import"];
         configuration = "cherry-pick";
       } else if (deployEnv === "demo") {
-        projects = "@meetings/server @meetings/seed-demo";
+        projects = ["@meetings/server", "@meetings/seed-demo"];
         configuration = "demo";
       }
 
-      await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
-        process.stdout,
-      );
+      if (projects) {
+        await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
+          process.stdout,
+        );
+      }
 
       // Deploy any changes to the artifact registry if we're on staging
       if (deployEnv === "staging") {
