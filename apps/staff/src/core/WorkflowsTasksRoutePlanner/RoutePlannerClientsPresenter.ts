@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
 import { mapValues } from "lodash";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 
 import {
   compositeHydrationState,
@@ -28,6 +29,7 @@ import {
 import { PartialRecord } from "../../utils/typeUtils";
 import {
   Client,
+  JusticeInvolvedPerson,
   SupervisionTask,
   SupervisionTaskType,
   WorkflowsStore,
@@ -40,6 +42,7 @@ import { SearchStore } from "../../WorkflowsStore/SearchStore";
  */
 export class RoutePlannerClientsPresenter implements Hydratable {
   private readonly searchStore: SearchStore;
+  private selectedPeople: JusticeInvolvedPerson[] = [];
 
   private TASK_TYPE_COPY: PartialRecord<SupervisionTaskType, string> = {
     usTxHomeContactScheduled: "Scheduled",
@@ -58,6 +61,20 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   constructor(private readonly workflowsStore: WorkflowsStore) {
     this.searchStore = workflowsStore.searchStore;
     makeAutoObservable(this);
+
+    // If the selected officers change, deselect people who were on a caseload that was removed
+    reaction(
+      () => this.searchStore.selectedSearchIds,
+      (newIds, oldIds) => {
+        // only run if search IDs could have been removed
+        if (newIds.length <= oldIds.length) {
+          this.selectedPeople = this.selectedPeople.filter(
+            (person) =>
+              person.assignedStaffId && newIds.includes(person.assignedStaffId),
+          );
+        }
+      },
+    );
   }
 
   hydrate() {
@@ -114,5 +131,34 @@ export class RoutePlannerClientsPresenter implements Hydratable {
       type: this.TASK_TYPE_COPY[task.type] ?? "Other",
       scheduledStatus: "To-Do",
     };
+  }
+
+  // Public methods for handling the list of selected people
+
+  isPersonSelected(person: JusticeInvolvedPerson) {
+    return this.indexOfPerson(person) !== -1;
+  }
+
+  indexOfPerson(person: JusticeInvolvedPerson) {
+    return this.selectedPeople.findIndex(
+      (p) => p.pseudonymizedId === person.pseudonymizedId,
+    );
+  }
+
+  addPerson(person: JusticeInvolvedPerson) {
+    this.selectedPeople.push(person);
+  }
+
+  removePerson(person: JusticeInvolvedPerson) {
+    const i = this.indexOfPerson(person);
+    if (i === -1) {
+      captureException(
+        new Error(
+          `Trying to remove person ${person.pseudonymizedId} who isn't in list of selected people`,
+        ),
+      );
+    } else {
+      this.selectedPeople.splice(i, 1);
+    }
   }
 }

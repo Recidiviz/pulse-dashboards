@@ -16,6 +16,7 @@
 // =============================================================================
 
 import {
+  animation,
   Pill,
   Sans12,
   Sans14,
@@ -32,7 +33,6 @@ import { palette } from "~design-system";
 import LocationIcon from "../../assets/static/images/locationPin.svg?react";
 import PhoneIcon from "../../assets/static/images/phone.svg?react";
 import TagsIcon from "../../assets/static/images/tags.svg?react";
-import Checkbox from "../../components/Checkbox";
 import { Client, SupervisionTask } from "../../WorkflowsStore";
 import {
   EmptyStateText,
@@ -69,13 +69,30 @@ const ClientCardGrid = styled.div`
   margin-bottom: ${rem(spacing.lg)};
 `;
 
-const BorderedClientCard = styled.div`
-  border: 1px solid ${palette.slate20};
+const BorderedClientCard = styled.div<{
+  $selected: boolean;
+}>`
   border-radius: ${rem(8)};
   padding: ${rem(14)} ${rem(16)};
 
   display: flex;
   flex-direction: row;
+
+  border: 1px solid;
+  border-color: ${({ $selected }) =>
+    $selected ? palette.slate50 : palette.slate20};
+  background-color: ${({ $selected }) =>
+    $selected ? palette.marble3 : palette.marble1};
+  transition: all ease ${animation.defaultDurationMs}ms;
+
+  :hover,
+  :focus {
+    border-color: ${({ $selected }) =>
+      $selected ? palette.slate80 : palette.slate50};
+    background-color: ${({ $selected }) =>
+      $selected ? palette.marble5 : palette.marble2};
+    cursor: pointer;
+  }
 `;
 
 const ClientInfo = styled.div`
@@ -140,6 +157,29 @@ const SchedulingBadge = styled(Pill).attrs({
   font-weight: 400;
 `;
 
+const BaseCheckbox = styled.span`
+  height: ${rem(16)};
+  width: ${rem(16)};
+  margin-right: ${rem(10)};
+  cursor: pointer;
+  border: 1px solid;
+  border-radius: ${rem(2)};
+`;
+
+const EmptyCheckbox = styled(BaseCheckbox)`
+  border-color: ${palette.slate20};
+`;
+
+const NumberedCheckbox = styled(BaseCheckbox)`
+  border-color: ${palette.pine4};
+  background-color: ${palette.pine4};
+  color: ${palette.marble1};
+`;
+
+const CheckboxContents = styled(Sans12)`
+  text-align: center;
+`;
+
 function SupervisionLevelTooltip({ copy }: { copy: string }) {
   return (
     <TooltipSection>
@@ -163,9 +203,27 @@ const ClientCard = observer(function ClientCard({
   const { supervisionLevelShort, supervisionTooltip, type, scheduledStatus } =
     presenter.getClientCardCopy(task);
 
+  const isSelected = presenter.isPersonSelected(person);
+  const ordinalRank = presenter.indexOfPerson(person) + 1;
+
   return (
-    <BorderedClientCard>
-      <Checkbox value={person.pseudonymizedId} checked={false} />
+    <BorderedClientCard
+      $selected={isSelected}
+      onClick={() => {
+        if (isSelected) {
+          presenter.removePerson(person);
+        } else {
+          presenter.addPerson(person);
+        }
+      }}
+    >
+      {isSelected ? (
+        <NumberedCheckbox>
+          <CheckboxContents>{ordinalRank}</CheckboxContents>
+        </NumberedCheckbox>
+      ) : (
+        <EmptyCheckbox />
+      )}
 
       <ClientInfo>
         <NameRow>
