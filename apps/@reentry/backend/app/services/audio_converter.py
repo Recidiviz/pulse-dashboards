@@ -36,10 +36,7 @@ def call_ffmpeg(args: List[str]) -> subprocess.CompletedProcess:
     logger.info(f"Running ffmpeg command: {' '.join(cmd)}")
 
     try:
-        result = subprocess.run(
-            cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
-        logger.debug(f"ffmpeg stdout: {result.stdout}")
+        result = subprocess.run(cmd, check=True, text=True)
         return result
 
     except subprocess.CalledProcessError as e:

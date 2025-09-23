@@ -30,7 +30,6 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
 import aiohttp
-import av
 from gcloud.aio.auth import Token
 from gcloud.aio.storage import Blob, Storage
 from moviepy import (  # TODO: investigate to not keep both moviepy or pyav
@@ -39,6 +38,12 @@ from moviepy import (  # TODO: investigate to not keep both moviepy or pyav
 )
 
 from app.core.config import settings
+from app.services.audio_converter import (
+    DEFAULT_BITRATE,
+    DEFAULT_CHANNELS,
+    DEFAULT_SAMPLE_RATE,
+    call_ffmpeg,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -310,25 +315,23 @@ class RecordingService:
 
         return chunks
 
-    def _remux_audio_data(self, input_filename: str, output_filename: str) -> None:
+    def _encode_audio_data(self, input_filename: str, output_filename: str) -> None:
+        ffmpeg_args = [
+            "-i",
+            input_filename,
+            "-ac",
+            DEFAULT_CHANNELS,
+            "-ar",
+            DEFAULT_SAMPLE_RATE,
+            "-c:a",
+            "libopus",
+            "-b:a",
+            DEFAULT_BITRATE,
+            output_filename,
+            "-y",  # overwrite if the output already exists.
+        ]
         try:
-            container_in = av.open(input_filename)
-            container_out = av.open(output_filename, "w")
-
-            stream_mapping = {}
-            for stream in container_in.streams:
-                if stream.type == "audio":
-                    out_stream = container_out.add_stream(stream.codec_context.name)
-                    stream_mapping[stream] = out_stream
-
-            for packet in container_in.demux():
-                if packet.stream in stream_mapping:
-                    packet.stream = stream_mapping[packet.stream]
-                    container_out.mux(packet)
-
-            container_in.close()
-            container_out.close()
-
+            call_ffmpeg(ffmpeg_args)
         except Exception:
             if os.path.exists(output_filename):
                 os.unlink(output_filename)
@@ -378,25 +381,25 @@ class RecordingService:
                 loop = asyncio.get_event_loop()
                 with tempfile.NamedTemporaryFile(
                     suffix=".webm", delete=False
-                ) as temp_remux:
-                    temp_remux_path = temp_remux.name
+                ) as temp_reencode:
+                    temp_reencode_path = temp_reencode.name
 
                 await loop.run_in_executor(
                     self._audio_executor,
-                    self._remux_audio_data,
+                    self._encode_audio_data,
                     temp_concat_path,
-                    temp_remux_path,
+                    temp_reencode_path,
                 )
-                logger.info(f"Remuxed group {group_index}")
+                logger.info(f"Reencoded group {group_index}")
 
-                with open(temp_remux_path, "rb") as f:
-                    remuxed_data = f.read()
+                with open(temp_reencode_path, "rb") as f:
+                    reencode_data = f.read()
 
                 group_path = f"recordings/{session_id}/groups/group_{group_index}.webm"
                 await self.storage.upload(
                     bucket=self.bucket_name,
                     object_name=group_path,
-                    file_data=remuxed_data,
+                    file_data=reencode_data,
                     content_type="audio/webm",
                 )
 
@@ -405,15 +408,15 @@ class RecordingService:
 
                 try:
                     os.unlink(temp_concat_path)
-                    if os.path.exists(temp_remux_path):
-                        os.unlink(temp_remux_path)
+                    if os.path.exists(temp_reencode_path):
+                        os.unlink(temp_reencode_path)
                 except Exception as cleanup_error:
                     logger.warning(f"Failed to cleanup temp files: {cleanup_error}")
 
             except Exception as e:
                 logger.error(f"Failed to process group {group_index}: {e}")
                 # Continue with other groups
-                continue
+                raise
 
         logger.info(
             f"Successfully processed {len(uploaded_groups)} out of {len(groups)} groups"
