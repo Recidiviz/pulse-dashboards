@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { residentsConfigByState } from "~@jii/data";
 import { UsMaResidentMetadata, usMaResidents } from "~datatypes";
 
-import { usMaEgtConfig } from "../../../configs/US_MA/egtConfig";
 import { populateUsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";
 import { ChartPresenter } from "./ChartPresenter";
+
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const usMaEgtConfig = residentsConfigByState.US_MA.egt!;
 
 test("chart data", () => {
   const testReports = populateUsMaEGTMonthlyReport(

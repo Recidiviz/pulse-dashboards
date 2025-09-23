@@ -17,8 +17,11 @@
 
 import { UsMaEarnedCreditType, usMaEarnedCreditTypes } from "~datatypes";
 
+import creditsInfoPage from "./creditsInfoPage.md?raw";
 import disclaimer from "./disclaimer.md?raw";
 import emptyStateBody from "./emptyStateBody.md?raw";
+import onboardingBody from "./onboardingBody.md?raw";
+import rtsInfoPage from "./rtsInfoPage.md?raw";
 import unknownUserBody from "./unknownUserBody.md?raw";
 
 const daysTemplate = {
@@ -121,14 +124,53 @@ export default {
       moreInfoLink: "Learn more about earned time",
     },
   },
-  individualMonthlyReport: {
+  infoPages: {
+    rts: {
+      heading: "Release-to-supervision date",
+      body: rtsInfoPage,
+    },
     credits: {
+      heading: "Earned Good Time, Boosts, and Completion Credits",
+      body: creditsInfoPage,
+    },
+  },
+  homeLink: "Back to home",
+  topLinkText: "Back to top",
+  definitionsLinksHeading: "Other definitions",
+  individualMonthlyReport: {
+    pageTitle: "Monthly Report",
+    browserPageTitle: "{{reportStartDate, formatMonthYear}} Report",
+    credits: {
+      sectionTitle:
+        "Earned time and program participation in {{reportStartDate, datetime(month: long)}}",
+      table: {
+        columnHeaders: {
+          program: "Program",
+        },
+        aggregateColumn: {
+          label: "Total time earned",
+        },
+        valueCell: "{{value, number}}",
+      },
       ...commonMonthlyReportCopy,
     },
+    achievements: {
+      heading: "Achievements",
+      maxEarnedTime: {
+        heading: "Earned Good Time",
+        body: "You earned the maximum possible earned good time this month",
+      },
+    },
+    selectOptionLabel: "{{reportStartDate, formatMonthYear}}",
   },
   disclaimer,
   unknownUser: {
     heading: "Login Failed",
     body: unknownUserBody,
+  },
+  onboarding: {
+    heading: "Track your Earned Good Time",
+    body: onboardingBody,
+    continueLink: "See your earned time",
   },
 };

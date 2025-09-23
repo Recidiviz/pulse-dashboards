@@ -17,52 +17,18 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { UsMaEgtCopy } from "../../../configs/US_MA/copy";
 import { UsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";
-
-type SelectOption = { label: string; value: Date };
-
-export function reportSelectOptions(
-  reports: UsMaEGTMonthlyReport[],
-): Array<SelectOption> {
-  return (
-    reports
-      .map((report) => {
-        return {
-          value: report.reportStartDate,
-          label: report.fullDisplayName,
-        };
-      })
-      // Sort descending
-      .sort((a, b) => b.value.getTime() - a.value.getTime())
-  );
-}
 
 export class MonthlyReportPresenter {
   private selectedMonthYearStartDate?: Date;
 
-  constructor(
-    private monthlyReports: UsMaEGTMonthlyReport[],
-    private copy: UsMaEgtCopy,
-  ) {
+  constructor(private monthlyReports: UsMaEGTMonthlyReport[]) {
     makeAutoObservable(this, undefined, { autoBind: true });
     this.setSelectedMonthYearStartDate(this.latestReport.reportStartDate);
   }
 
   setSelectedMonthYearStartDate(date: Date) {
     this.selectedMonthYearStartDate = date;
-  }
-
-  get individualReportCopy() {
-    return this.copy.individualMonthlyReport;
-  }
-
-  get selectorLabel(): string {
-    return this.latestReport.fullDisplayName;
-  }
-
-  get selectPlaceholder(): string {
-    return this.latestReport.fullDisplayName;
   }
 
   private get latestReport(): UsMaEGTMonthlyReport {
@@ -85,20 +51,6 @@ export class MonthlyReportPresenter {
     }
 
     return selectedReport;
-  }
-
-  get sortedSelectOptions(): Array<SelectOption> {
-    return (
-      this.monthlyReports
-        .map((report) => {
-          return {
-            value: report.reportStartDate,
-            label: report.fullDisplayName,
-          };
-        })
-        // Sort descending
-        .sort((a, b) => b.value.getTime() - a.value.getTime())
-    );
   }
 
   get totalEGTCreditDays(): number {

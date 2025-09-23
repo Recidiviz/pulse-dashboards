@@ -23,9 +23,9 @@ import { BackLink, InfoPage, PageLinksFooter } from "~@jii/common-ui";
 import { EgtCopyWrapper } from "~@jii/earned-good-time";
 import { ScreenFillingWrapper } from "~@jii/layout";
 import { State } from "~@jii/paths";
+import { useUsMaTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
-import { useEGTDataContext } from "../EGTDataContext/context";
 import { DefinitionPagePresenter } from "./DefinitionPresenter";
 
 const ManagedComponent: FC<{
@@ -37,8 +37,8 @@ const ManagedComponent: FC<{
         <>
           <BackLink {...presenter.backLink} />
           <InfoPage
-            heading={presenter.heading}
-            body={presenter.body}
+            heading={presenter.currentPage.heading}
+            body={presenter.currentPage.body}
             CopyWrapperOverride={EgtCopyWrapper}
           />
         </>
@@ -50,9 +50,9 @@ const ManagedComponent: FC<{
 
 function usePresenter() {
   const { pageSlug } = useTypedParams(State.Resident.EGT.Definition);
-  const { copy } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
 
-  return new DefinitionPagePresenter(pageSlug, copy);
+  return new DefinitionPagePresenter(pageSlug, t);
 }
 
 export const Definition = withPresenterManager({

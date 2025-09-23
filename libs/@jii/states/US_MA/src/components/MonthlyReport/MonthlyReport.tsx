@@ -24,8 +24,8 @@ import styled from "styled-components/macro";
 
 import { BackLink, CopyWrapper } from "~@jii/common-ui";
 import { usePageTitle } from "~@jii/common-ui";
-import { hydrateTemplate } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { useUsMaTranslations } from "~@jii/translation";
 
 import { getMonthlyReportPageSlug } from "../../models/UsMaEGTMonthlyReport";
 import { useEGTDataContext } from "../EGTDataContext/context";
@@ -45,20 +45,12 @@ const HeaderRow = styled.div`
 `;
 
 export const MonthlyReport = observer(function MonthlyReport() {
-  const { copy, monthlyReports } = useEGTDataContext();
+  const { monthlyReports } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
 
   const { reportDate, personPseudoId, stateSlug } = useTypedParams(
     State.Resident.EGT.MonthlyReport,
   );
-
-  const {
-    individualMonthlyReport: {
-      credits,
-      pageTitle,
-      browserPageTitle,
-      achievements: achievementsCopy,
-    },
-  } = copy;
 
   const navigate = useNavigate();
 
@@ -70,28 +62,32 @@ export const MonthlyReport = observer(function MonthlyReport() {
     throw new Error();
   }
 
-  usePageTitle(
-    hydrateTemplate(browserPageTitle, {
-      reportDisplayName: report.fullDisplayName,
-    }),
-  );
-
   const {
     totalEGTCreditDays,
     totalBoostCreditDays,
     totalCompletionCreditDays,
     achievements,
+    reportStartDate,
   } = report;
+
+  const { credits, pageTitle, browserPageTitle } = t(
+    ($) => $.individualMonthlyReport,
+    {
+      reportStartDate,
+      returnObjects: true,
+    },
+  );
+
+  usePageTitle(browserPageTitle);
 
   return (
     <>
       <BackLink
         {...{
-          children: copy.homeLink,
+          children: t(($) => $.homeLink),
           to: State.Resident.EGT.buildPath(useTypedParams(State.Resident)),
         }}
       />
-      {/* TODO: the spacing is wrong under this header */}
       <HeaderRow>
         <CopyWrapper>{`# ${pageTitle}`}</CopyWrapper>
         <MonthlyReportSelector
@@ -107,13 +103,9 @@ export const MonthlyReport = observer(function MonthlyReport() {
           }}
         />
       </HeaderRow>
-      {achievements.length > 0 && (
-        <Achievements copy={achievementsCopy} report={report} />
-      )}
+      {achievements.length > 0 && <Achievements report={report} />}
       <MonthlyReportSectionHeading>
-        {hydrateTemplate(credits.sectionTitle, {
-          monthDisplayName: report.monthDisplayName,
-        })}
+        {credits.sectionTitle}
       </MonthlyReportSectionHeading>
       <CreditsByTypeCard
         credits={{
@@ -123,9 +115,7 @@ export const MonthlyReport = observer(function MonthlyReport() {
         }}
         marginTopBottom={rem(spacing.lg)}
       />
-      {report.creditActivity.length > 0 && (
-        <ActivityTable copy={copy} report={report} />
-      )}
+      {report.creditActivity.length > 0 && <ActivityTable report={report} />}
     </>
   );
 });

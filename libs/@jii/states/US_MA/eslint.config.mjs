@@ -42,6 +42,12 @@ export default tseslint.config(baseConfig, reactConfig, {
             message:
               "Please import useTypedParams from react-router-typesafe-routes/dom instead",
           },
+          {
+            name: "@jii/data",
+            importNames: ["hydrateTemplate"],
+            message:
+              "Please use templates from @jii/translation instead of Handlebars",
+          },
           designSystemRestrictedImports,
         ],
       },

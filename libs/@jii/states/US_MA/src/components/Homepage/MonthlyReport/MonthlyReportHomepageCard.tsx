@@ -120,9 +120,9 @@ const ManagedComponent: FC<{
 });
 
 function usePresenter() {
-  const { copy, monthlyReports } = useEGTDataContext();
+  const { monthlyReports } = useEGTDataContext();
 
-  return new MonthlyReportPresenter(monthlyReports, copy);
+  return new MonthlyReportPresenter(monthlyReports);
 }
 
 export const MonthlyReportHomepageCard = withPresenterManager({

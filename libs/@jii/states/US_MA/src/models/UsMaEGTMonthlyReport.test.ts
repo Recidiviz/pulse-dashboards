@@ -17,6 +17,7 @@
 
 import { parseISO } from "date-fns";
 
+import { residentsConfigByState } from "~@jii/data";
 import {
   creditActivityFixture,
   creditActivitySchema,
@@ -26,12 +27,14 @@ import {
   UsMaCreditActivity,
 } from "~datatypes";
 
-import { usMaEgtConfig } from "../configs/US_MA/egtConfig";
 import { UsMaEGTMonthlyReport } from "./UsMaEGTMonthlyReport";
 
 const creditDateStr = creditDateString({ months: -2 });
 let report: UsMaEGTMonthlyReport;
 let parsedCreditActivity: Array<UsMaCreditActivity>;
+
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const usMaEgtConfig = residentsConfigByState.US_MA.egt!;
 
 beforeEach(() => {
   parsedCreditActivity = outputFixtureArray(

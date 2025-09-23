@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { STICKY_HEADER_ZINDEX } from "~@jii/common-ui";
+import { useCommonTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
 // invisible navigation link for keyboard and screen reader users; visible on tab focus
@@ -59,11 +60,12 @@ function useSkipNavContext() {
 
 function SkipNav() {
   const { id } = useSkipNavContext();
+  const { t } = useCommonTranslations();
 
   return (
     <SkipNavContainer>
       <Link to={`#${id}`} reloadDocument>
-        Skip to main content
+        {t(($) => $.skipLink)}
       </Link>
     </SkipNavContainer>
   );

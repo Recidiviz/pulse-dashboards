@@ -29,3 +29,5 @@ export function useUsMaTranslations() {
 export type UsMaTranslationsObject = Parameters<
   Parameters<TFunctionSignature<"US_MA">>["0"]
 >["0"];
+
+export type UsMaTFunction = ReturnType<typeof useUsMaTranslations>["t"];

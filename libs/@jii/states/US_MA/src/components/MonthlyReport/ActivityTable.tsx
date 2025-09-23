@@ -23,9 +23,9 @@ import styled from "styled-components/macro";
 
 import { SlateCopy } from "~@jii/common-ui";
 import { useUsMaTranslations } from "~@jii/translation";
+import { usMaEarnedCreditTypes } from "~datatypes";
 import { palette } from "~design-system";
 
-import { UsMaEgtCopy } from "../../configs/US_MA/copy";
 import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
 
 const TableRow = styled.div.attrs({ role: "row" })<{ boldFont?: boolean }>`
@@ -63,13 +63,9 @@ const Wrapper = styled.div.attrs({ role: "table" })`
 `;
 
 export const ActivityTable: FC<{
-  copy: UsMaEgtCopy;
   report: UsMaEGTMonthlyReport;
-}> = observer(function ActivityTable({ copy, report }) {
-  const { t } = useUsMaTranslations();
-  const {
-    individualMonthlyReport: { credits },
-  } = copy;
+}> = observer(function ActivityTable({ report }) {
+  const { t, i18n } = useUsMaTranslations();
 
   const {
     totalEGTCreditDays,
@@ -77,10 +73,14 @@ export const ActivityTable: FC<{
     totalCompletionCreditDays,
   } = report;
 
+  const tableCopy = t(($) => $.individualMonthlyReport.credits.table, {
+    returnObjects: true,
+  });
+
   return (
     <Wrapper>
       <TableRow>
-        <div role="columnheader">{credits.table.columnHeaders.program}</div>
+        <div role="columnheader">{tableCopy.columnHeaders.program}</div>
         <div role="columnheader">
           {t(($) => $.individualMonthlyReport.credits.egtLabel)}
         </div>
@@ -103,22 +103,16 @@ export const ActivityTable: FC<{
                 {t(($) => $.creditRatings[activity.rating ?? "none"])}
               </ProgramSubtext>
             </div>
-            <div role="cell">
-              {activity["EARNEDGoodTime"] > 0
-                ? activity["EARNEDGoodTime"]
-                : "—"}
-            </div>
-            <div role="cell">
-              {activity["BOOST"] > 0 ? activity["BOOST"] : "—"}
-            </div>
-            <div role="cell">
-              {activity["COMPLETION"] > 0 ? activity["COMPLETION"] : "—"}
-            </div>
+            {usMaEarnedCreditTypes.options.map((key) => (
+              <div role="cell" key={key}>
+                {activity[key] > 0 ? i18n.format(activity[key], "number") : "—"}
+              </div>
+            ))}
           </TableRow>
         );
       })}
       <TableRow boldFont={true}>
-        <div role="cell">{credits.table.aggregateColumn.label}</div>
+        <div role="cell">{tableCopy.aggregateColumn.label}</div>
         <div role="cell">
           {t(($) => $.individualMonthlyReport.credits.creditsValue, {
             count: totalEGTCreditDays,

@@ -21,9 +21,9 @@ import { FC } from "react";
 import styled from "styled-components/macro";
 
 import { Card } from "~@jii/common-ui";
+import { useUsMaTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
-import { UsMaEgtCopy } from "../../configs/US_MA/copy";
 import {
   AchievementKey,
   UsMaEGTMonthlyReport,
@@ -62,12 +62,14 @@ const AchievementImageUrls: Record<AchievementKey, string> = {
 };
 
 export const Achievements: FC<{
-  copy: UsMaEgtCopy["individualMonthlyReport"]["achievements"];
   report: UsMaEGTMonthlyReport;
-}> = ({ copy, report }) => {
+}> = ({ report }) => {
+  const { t } = useUsMaTranslations();
   return (
     <>
-      <MonthlyReportSectionHeading>{copy.heading}</MonthlyReportSectionHeading>
+      <MonthlyReportSectionHeading>
+        {t(($) => $.individualMonthlyReport.achievements.heading)}
+      </MonthlyReportSectionHeading>
       <TwoColumnWrapper as="dl">
         {report.achievements.map((achievementKey) => (
           <AchievementCard key={achievementKey}>
@@ -77,9 +79,18 @@ export const Achievements: FC<{
                 src={AchievementImageUrls[achievementKey]}
               />
 
-              {copy[achievementKey].heading}
+              {t(
+                ($) =>
+                  $.individualMonthlyReport.achievements[achievementKey]
+                    .heading,
+              )}
             </AchievementLabel>
-            <AchievementText>{copy[achievementKey].body}</AchievementText>
+            <AchievementText>
+              {t(
+                ($) =>
+                  $.individualMonthlyReport.achievements[achievementKey].body,
+              )}
+            </AchievementText>
           </AchievementCard>
         ))}
       </TwoColumnWrapper>

@@ -21,6 +21,7 @@ import { useId } from "react";
 import styled from "styled-components/macro";
 
 import { Selector, SelectorProps } from "~@jii/common-ui";
+import { useUsMaTranslations } from "~@jii/translation";
 
 import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
 import { useEGTDataContext } from "../EGTDataContext/context";
@@ -39,6 +40,14 @@ export const MonthlyReportSelector = observer(function MonthlyReportSelector({
 }: MonthlyReportSelectorProps) {
   const labelId = useId();
   const { monthlyReports } = useEGTDataContext();
+  const { t } = useUsMaTranslations();
+
+  const makeOption = (report: UsMaEGTMonthlyReport) => ({
+    value: report.reportStartDate,
+    label: t(($) => $.individualMonthlyReport.selectOptionLabel, {
+      reportStartDate: report.reportStartDate,
+    }),
+  });
 
   return (
     <Wrapper>
@@ -46,9 +55,9 @@ export const MonthlyReportSelector = observer(function MonthlyReportSelector({
         {...{ onChange }}
         labelId={labelId}
         placeholder=""
-        value={selectedReport.selectOption}
+        value={makeOption(selectedReport)}
         options={monthlyReports
-          .map((r) => r.selectOption)
+          .map(makeOption)
           .sort((a, b) => descending(a.value, b.value))}
       />
     </Wrapper>

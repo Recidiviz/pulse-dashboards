@@ -20,7 +20,6 @@ import { FC, ReactNode } from "react";
 
 import { useResidentsContext, useSingleResidentContext } from "~@jii/data";
 
-import { usMaEGTCopy } from "../../configs/US_MA/copy";
 import { populateUsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
 import { EGTDataContextProvider } from "./context";
 
@@ -54,7 +53,6 @@ export const EGTDataContext: FC<{ children: ReactNode }> = observer(
       <EGTDataContextProvider
         value={{
           data,
-          copy: usMaEGTCopy,
           monthlyReports: usMaEGTMonthlyReports,
         }}
       >

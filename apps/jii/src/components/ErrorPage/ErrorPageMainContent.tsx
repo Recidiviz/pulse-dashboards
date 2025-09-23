@@ -15,29 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Body16, Body19, Header34 } from "@recidiviz/design-system";
+import dedent from "dedent";
 import { ReactElement } from "react";
-import { Link } from "react-router-dom";
 
-import { PageContainer } from "~@jii/common-ui";
+import { CopyWrapper, PageContainer } from "~@jii/common-ui";
+import { useCommonTranslations } from "~@jii/translation";
 
 export const ErrorPageMainContent = ({
   error,
 }: {
   error: Error;
 }): ReactElement => {
+  const { t } = useCommonTranslations();
+
+  const contents = dedent`# ${t(($) => $.errorPage.heading)}
+
+  ${t(($) => $.errorPage.message)}
+
+  <em>[${error.name}] ${error.message}</em>
+  `;
+
   return (
     <PageContainer>
-      <Header34>Something went wrong</Header34>
-      <Body19>
-        An error occurred that prevented this page from loading. Please try
-        reloading the page, or <Link to="/">return to your homepage</Link>.
-      </Body19>
-      <Body16>
-        <em>
-          [{error.name}] {error.message}
-        </em>
-      </Body16>
+      <CopyWrapper>{contents}</CopyWrapper>
     </PageContainer>
   );
 };

@@ -20,16 +20,15 @@ import { format, isAfter } from "date-fns";
 import { DeepNonNullable } from "utility-types";
 
 import { EarnedGoodTimeConfig } from "~@jii/data";
+import { UsMaTranslationsObject } from "~@jii/translation";
 import {
   UsMaCreditActivity,
   UsMaEarnedCreditType,
   UsMaResidentMetadata,
 } from "~datatypes";
 
-import { UsMaEgtCopy } from "../configs/US_MA/copy";
-
 export type AchievementKey = Exclude<
-  keyof UsMaEgtCopy["individualMonthlyReport"]["achievements"],
+  keyof UsMaTranslationsObject["individualMonthlyReport"]["achievements"],
   "heading"
 >;
 
@@ -46,21 +45,8 @@ export class UsMaEGTMonthlyReport {
     private config: EarnedGoodTimeConfig,
   ) {}
 
-  get fullDisplayName(): string {
-    return new Intl.DateTimeFormat("en-US", {
-      month: "long",
-      year: "numeric",
-    }).format(this.reportStartDate);
-  }
-
   get pageSlug(): string {
     return getMonthlyReportPageSlug(this.reportStartDate);
-  }
-
-  get monthDisplayName(): string {
-    return new Intl.DateTimeFormat("en-US", {
-      month: "long",
-    }).format(this.reportStartDate);
   }
 
   get creditActivity(): Array<NonEmptyCreditActivity> {
@@ -100,16 +86,6 @@ export class UsMaEGTMonthlyReport {
     }
 
     return achievementsToShow;
-  }
-
-  /**
-   * used to populate and control the monthly dropdown selectors
-   */
-  get selectOption() {
-    return {
-      value: this.reportStartDate,
-      label: this.fullDisplayName,
-    };
   }
 }
 

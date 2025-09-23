@@ -23,9 +23,9 @@ import { CopyWrapper, GoButton } from "~@jii/common-ui";
 import { usePageTitle } from "~@jii/common-ui";
 import { useRootStore, UserStore } from "~@jii/data";
 import { ScreenFillingWrapper } from "~@jii/layout";
+import { useUsMaTranslations } from "~@jii/translation";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
-import { useEGTDataContext } from "../EGTDataContext/context";
 
 function trackOnboardingSeen(userStore: UserStore) {
   if (!userStore.getUserProperty("egtOnboardingSeen")) {
@@ -34,12 +34,10 @@ function trackOnboardingSeen(userStore: UserStore) {
 }
 
 export const Onboarding = observer(function Onboarding() {
-  const {
-    copy: { onboarding },
-  } = useEGTDataContext();
   const { userStore } = useRootStore();
+  const { t } = useUsMaTranslations();
 
-  usePageTitle(onboarding.heading);
+  usePageTitle(t(($) => $.onboarding.heading));
   useEffect(() => trackOnboardingSeen(userStore), [userStore]);
 
   return (
@@ -47,9 +45,9 @@ export const Onboarding = observer(function Onboarding() {
       top={
         <>
           <CopyWrapper>
-            {`# ${onboarding.heading}\n\n${onboarding.body}`}
+            {`# ${t(($) => $.onboarding.heading)}\n\n${t(($) => $.onboarding.body)}`}
           </CopyWrapper>
-          <GoButton to="../">{onboarding.continueLink}</GoButton>
+          <GoButton to="../">{t(($) => $.onboarding.continueLink)}</GoButton>
         </>
       }
       bottom={<Disclaimer />}

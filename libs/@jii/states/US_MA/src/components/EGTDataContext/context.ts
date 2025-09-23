@@ -20,14 +20,12 @@ import { createContext } from "react";
 import { useRequiredContext } from "~@jii/data";
 import { UsMaResidentMetadata } from "~datatypes";
 
-import { UsMaEgtCopy } from "../../configs/US_MA/copy";
 import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
 
 export type EGTDataContext = {
   // this is not currently state agnostic, but for now we only have one state.
   // as that changes we expect this to evolve somehow
   data: UsMaResidentMetadata;
-  copy: UsMaEgtCopy;
   monthlyReports: UsMaEGTMonthlyReport[];
 };
 

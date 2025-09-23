@@ -20,28 +20,29 @@ import { matchPath } from "react-router-dom";
 import { PageLinksFooterProps } from "~@jii/common-ui";
 import { SimpleLinkProps } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
-
-import { UsMaEgtCopy } from "../../configs/US_MA/copy";
+import { UsMaTFunction, UsMaTranslationsObject } from "~@jii/translation";
 
 export class DefinitionPagePresenter implements PageLinksFooterProps {
-  heading: string;
-  body: string;
-  pageLinksHeading: string;
-  topLinkText: string;
+  private currentPageSlug: keyof UsMaTranslationsObject["infoPages"];
 
   constructor(
     private pageSlug: string,
-    private copy: UsMaEgtCopy,
+    private t: UsMaTFunction,
   ) {
-    const currentPage = copy.infoPages[pageSlug as keyof typeof copy.infoPages];
-    if (!currentPage) {
+    if (pageSlug in this.allInfoPagesCopy) {
+      // TS can't seem to infer this but this check should ensure it
+      this.currentPageSlug = pageSlug as keyof typeof this.allInfoPagesCopy;
+    } else {
       throw new Error(`Definition page ${pageSlug} not found`);
     }
+  }
 
-    this.heading = currentPage.heading;
-    this.body = currentPage.body;
-    this.pageLinksHeading = copy.definitionsLinksHeading;
-    this.topLinkText = copy.topLinkText;
+  private get allInfoPagesCopy() {
+    return this.t(($) => $.infoPages, { returnObjects: true });
+  }
+
+  get currentPage() {
+    return this.allInfoPagesCopy[this.currentPageSlug];
   }
 
   private get baseUrlParams() {
@@ -55,7 +56,7 @@ export class DefinitionPagePresenter implements PageLinksFooterProps {
   }
 
   get pageLinks() {
-    return Object.entries(this.copy.infoPages)
+    return Object.entries(this.allInfoPagesCopy)
       .filter(([slug]) => slug !== this.pageSlug)
       .map(([pageSlug, page]) => ({
         text: page.heading,
@@ -66,9 +67,17 @@ export class DefinitionPagePresenter implements PageLinksFooterProps {
       }));
   }
 
+  get pageLinksHeading() {
+    return this.t(($) => $.definitionsLinksHeading);
+  }
+
+  get topLinkText() {
+    return this.t(($) => $.topLinkText);
+  }
+
   get backLink(): SimpleLinkProps {
     return {
-      children: this.copy.homeLink,
+      children: this.t(($) => $.homeLink),
       to: State.Resident.EGT.buildPath(this.baseUrlParams),
     };
   }
