@@ -39,9 +39,8 @@ const UsMoSentences: React.FC<ResidentProfileProps> = ({ resident }) => {
       <SecureDetailsContent>
         <DetailsList>
           {metadata.latestCycleSentences.map((sentence) => (
-            <React.Fragment
-              key={`${sentence.offense}-${sentence.sentenceLengthYears}-${sentence.sentenceLengthMonths}-${sentence.sentenceLengthDays}`}
-            >
+            <React.Fragment>
+              {/* No key because we can't guarantee uniqueness */}
               <DetailsSubheading>{sentence.offense}</DetailsSubheading>
               <DetailsContent>
                 {usMoFormatSentenceLength(sentence)}

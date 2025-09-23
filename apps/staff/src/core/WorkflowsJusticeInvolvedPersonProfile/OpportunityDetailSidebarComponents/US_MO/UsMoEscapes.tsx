@@ -48,7 +48,8 @@ const UsMoEscapes: React.FC<OpportunityProfileProps> = ({ opportunity }) => {
         <DetailsList>
           {historyEscapesAbsconsions.length === 0 && "None Noted"}
           {historyEscapesAbsconsions.map(({ eventType, eventDate }) => (
-            <React.Fragment key={`${eventType}-${eventDate}`}>
+            <React.Fragment>
+              {/* No key because we can't guarantee uniqueness */}
               <DetailsSubheading>
                 {eventType === "WARRANT_ISSUED"
                   ? "Absconsion Warrant Issued"

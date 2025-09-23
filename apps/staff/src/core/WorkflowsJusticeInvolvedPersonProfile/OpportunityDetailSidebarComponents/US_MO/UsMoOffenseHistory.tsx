@@ -45,7 +45,8 @@ const UsMoOffenseHistory: React.FC<ResidentProfileProps> = ({ resident }) => {
         {priorCycleSentences.length === 0 && "None Noted"}
         <DetailsList>
           {priorCycleSentences.map(({ offenseDate, offense }) => (
-            <React.Fragment key={`${offense}-${offenseDate}`}>
+            <React.Fragment>
+              {/* No key because we can't guarantee uniqueness */}
               <DetailsSubheading>{offense}</DetailsSubheading>
               <DetailsContent>
                 {offenseDate

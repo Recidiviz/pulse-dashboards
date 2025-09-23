@@ -47,7 +47,8 @@ const UsMoProgramParticipation: React.FC<ResidentProfileProps> = ({
         {completedPrograms.length === 0 && "None Noted"}
         <DetailsList>
           {completedPrograms.map(({ completionDate, program, status }) => (
-            <React.Fragment key={`${program}-${status}-${completionDate}`}>
+            <React.Fragment>
+              {/* No key because we can't guarantee uniqueness */}
               <DetailsSubheading>{program}</DetailsSubheading>
               <DetailsContent>
                 {status === "CMP"

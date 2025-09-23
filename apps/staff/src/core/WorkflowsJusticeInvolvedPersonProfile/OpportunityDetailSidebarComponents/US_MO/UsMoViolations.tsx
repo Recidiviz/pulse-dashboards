@@ -46,7 +46,8 @@ const UsMoViolations: React.FC<OpportunityProfileProps> = ({ opportunity }) => {
         <DetailsList>
           {historyViolationsLast24Months.map(
             ({ violationCode, violationDate }) => (
-              <React.Fragment key={`${violationCode}-${violationDate}`}>
+              <React.Fragment>
+                {/* No key because we can't guarantee uniqueness */}
                 <DetailsSubheading>{violationCode}</DetailsSubheading>
                 <DetailsContent>
                   {formatWorkflowsDate(violationDate)}
