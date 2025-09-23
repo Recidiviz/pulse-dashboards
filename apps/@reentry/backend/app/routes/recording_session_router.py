@@ -9,7 +9,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import update
-from sqlalchemy.exc import IntegrityError
+from sqlmodel import select
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.config import settings
@@ -267,24 +267,21 @@ async def upload_audio_chunk(
     )
 
     try:
-        chunk_record = RecordingChunk(
-            session_id=session_id, chunk_index=request.chunk_index
+        result = await session.exec(
+            select(RecordingChunk)
+            .where(RecordingChunk.session_id == session_id)
+            .where(RecordingChunk.timestamp == request.timestamp)
         )
-        session.add(chunk_record)
+        existing_chunk = result.first()
 
-        try:
-            await (
-                session.flush()
-            )  # This will fail if duplicate due to UNIQUE constraint
-        except IntegrityError:
-            # Chunk already exists
-            await session.rollback()
+        if existing_chunk:
             logger.info(
-                f"Chunk {request.chunk_index} already exists for session {session_id}, skipping upload"
+                f"Chunk with timestamp {request.timestamp} already exists for session {session_id}, skipping upload"
             )
             return UploadChunkResponse(
                 success=True,
                 chunk_index=request.chunk_index,
+                timestamp=request.timestamp,
                 message="Chunk already uploaded",
             )
 
@@ -292,8 +289,19 @@ async def upload_audio_chunk(
 
         async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:
             await recording_service.upload_chunk(
-                str(session_id), request.chunk_index, chunk_data, request.has_header
+                str(session_id),
+                request.chunk_index,
+                chunk_data,
+                request.has_header,
+                request.timestamp,
             )
+
+        chunk_record = RecordingChunk(
+            session_id=session_id,
+            timestamp=request.timestamp,
+            chunk_index=request.chunk_index,  # keep for compatibility
+        )
+        session.add(chunk_record)
 
         # atomic increment
         stmt = (
@@ -301,6 +309,7 @@ async def upload_audio_chunk(
             .where(RecordingSession.id == session_id)
             .values(
                 chunk_count=RecordingSession.chunk_count + 1,
+                last_chunk_timestamp=request.timestamp,
             )
         )
         await session.exec(stmt)
@@ -313,12 +322,14 @@ async def upload_audio_chunk(
         return UploadChunkResponse(
             success=True,
             chunk_index=request.chunk_index,
+            timestamp=request.timestamp,
             message="Chunk uploaded successfully",
         )
     except Exception as e:
         await session.rollback()
         logger.error(
-            f"Error uploading chunk {request.chunk_index} for session {session_id}: {e}"
+            f"Error uploading chunk {request.chunk_index} (timestamp: {request.timestamp}) "
+            f"for session {session_id}: {e}"
         )
         raise HTTPException(status_code=500, detail="Failed to upload chunk")
 

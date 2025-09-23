@@ -9,11 +9,11 @@ The combined chunks in a single group are put in the groups folder
 The combined group_x files is put into the final.
 .
 ├── chunks/
-│   ├── chunk_0000_start.webm
-│   ├── chunk_0001.webm
-│   ├── chunk_0002_start.webm
-│   ├── chunk_0003.webm
-│   └── chunk_0004.webm
+│   ├── chunk_1726847234567_0000_start.webm
+│   ├── chunk_1726847234568_0001.webm
+│   ├── chunk_1726847234569_0002_start.webm
+│   ├── chunk_1726847234570_0003.webm
+│   └── chunk_1726847234571_0004.webm
 ├── groups/
 │   ├── group_0.webm
 │   └── group_1.webm
@@ -109,13 +109,46 @@ def extract_chunk_index(file_path: str) -> int:
         filename = file_path.split("/")[
             -1
         ]  # Get just the filename in the full filepath
-        # Match patterns like chunk_0001.webm, chunk_0001_start.webm
-        match = re.search(r"chunk_(\d+)", filename)
-        if match:
-            return int(match.group(1))
+
+        # New format: chunk_TIMESTAMP_XXXX[_start].webm
+        new_format_match = re.search(r"chunk_\d{13}_(\d{4})(?:_start)?\.webm", filename)
+        if new_format_match:
+            return int(new_format_match.group(1))
+
+        # Legacy format: chunk_XXXX[_start].webm
+        legacy_match = re.search(r"chunk_(\d+)", filename)
+        if legacy_match:
+            return int(legacy_match.group(1))
         return -1  # Return -1 for no match
     except Exception:
         return -1
+
+
+def extract_timestamp_from_filename(file_path: str) -> int:
+    """
+    Extract timestamp from filename:
+    - New format: chunk_1726847234567_0001.webm or chunk_1726847234567_0001_start.webm
+    - Legacy format: chunk_0001.webm or chunk_0001_start.webm
+    """
+    try:
+        filename = file_path.split("/")[-1]  # Get just the filename
+
+        # Format: chunk_TIMESTAMP_XXXX[_start].webm
+        format_match = re.search(r"chunk_(\d{13})_(\d{4})(?:_start)?\.webm", filename)
+        if format_match:
+            timestamp = int(format_match.group(1))
+            chunk_index = int(format_match.group(2))
+            logger.debug(
+                f"Parsed new format - timestamp: {timestamp}, chunk_index: {chunk_index}"
+            )
+            return timestamp
+
+        # if not match, return 0 it will process the last one
+        logger.warning(f"Could not parse timestamp from filename: {filename}")
+        return 0
+    except Exception as e:
+        logger.error(f"Error extracting timestamp from {file_path}: {e}")
+        return 0
 
 
 def group_chunks_by_start(file_paths: List[str]) -> List[List[str]]:
@@ -123,13 +156,40 @@ def group_chunks_by_start(file_paths: List[str]) -> List[List[str]]:
         return []
 
     # Sort files by chunk index first
-    sorted_files = sorted(file_paths, key=extract_chunk_index)
+    sorted_files = sorted(file_paths, key=extract_timestamp_from_filename)
 
     groups = []
     current_group = []
 
     for file_path in sorted_files:
         filename = file_path.split("/")[-1]  # Get just the filename
+
+        if "_start" in filename:
+            if current_group:
+                groups.append(current_group)
+            current_group = [file_path]
+        else:
+            if current_group:
+                current_group.append(file_path)
+
+    if current_group:
+        groups.append(current_group)
+
+    return groups
+
+
+def group_chunks_by_start_timestamp(file_paths: List[str]) -> List[List[str]]:
+    """Group chunks by _start markers, ordered by timestamp."""
+    if not file_paths:
+        return []
+
+    sorted_files = sorted(file_paths, key=extract_timestamp_from_filename)
+
+    groups = []
+    current_group = []
+
+    for file_path in sorted_files:
+        filename = file_path.split("/")[-1]
 
         if "_start" in filename:
             if current_group:
@@ -266,10 +326,15 @@ class RecordingService:
                 logger.warning(f"Bucket check returned error but continuing: {e}")
 
     async def upload_chunk(
-        self, session_id: str, chunk_index: int, chunk_data: bytes, has_header: bool
+        self,
+        session_id: str,
+        chunk_index: int,
+        chunk_data: bytes,
+        has_header: bool,
+        timestamp: int,
     ) -> str:
-        filename_tage = "_start" if has_header else ""
-        chunk_path = f"recordings/{session_id}/chunks/chunk_{chunk_index:04d}{filename_tage}.webm"
+        filename_tag = "_start" if has_header else ""
+        chunk_path = f"recordings/{session_id}/chunks/chunk_{timestamp}_{chunk_index:04d}{filename_tag}.webm"
 
         await self.storage.upload(
             bucket=self.bucket_name,
@@ -293,7 +358,7 @@ class RecordingService:
             if name.startswith(prefix) and name.endswith(".webm") and "chunk_" in name:
                 chunk_files.append(name)
 
-        chunk_files.sort(key=extract_chunk_index)
+        chunk_files.sort(key=extract_timestamp_from_filename)
         return chunk_files
 
     async def download_single_chunk(self, file_path: str) -> bytes:
@@ -356,7 +421,7 @@ class RecordingService:
             logger.warning(f"No chunk files found for session {session_id}")
             return []
 
-        groups = group_chunks_by_start(chunk_files)
+        groups = group_chunks_by_start_timestamp(chunk_files)
         logger.info(f"Found {len(groups)} groups for session {session_id}")
 
         uploaded_groups = []

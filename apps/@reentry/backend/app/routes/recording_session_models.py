@@ -41,6 +41,7 @@ class UpdateRecordingSessionStatusRequest(BaseModel):
 
 
 class UploadChunkRequest(BaseModel):
+    timestamp: int  # Unix timestamp in milliseconds
     chunk_index: int
     chunk_data: str  # Base64 encoded audio data
     mime_type: str
@@ -50,6 +51,7 @@ class UploadChunkRequest(BaseModel):
 class UploadChunkResponse(BaseModel):
     success: bool
     chunk_index: int
+    timestamp: int
     message: str
 
 

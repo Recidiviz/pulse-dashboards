@@ -1049,6 +1049,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/clients/processing-status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Get Intake Processing Status
+     * @description Retrieve intake processing status for all clients belonging to the provided staff pseudonymized id.
+     */
+    post: operations["get_processing_status_route_clients_processing_status_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/recordings/sessions/clients/{client_pseudo_id}": {
     parameters: {
       query?: never;
@@ -1598,7 +1618,11 @@ export interface components {
       /** Address Updated */
       address_updated: boolean;
     };
-    /** CompleteIntakeTrascriptionSubmission */
+    /**
+     * CompleteIntakeTrascriptionSubmission
+     * @description update: approved transcription will be set to true automatically if address is provided,
+     *     since the action plan will be started rigth after the transcription is completed with address.
+     */
     CompleteIntakeTrascriptionSubmission: {
       /** Street Address */
       street_address?: string | null;
@@ -2538,6 +2562,11 @@ export interface components {
       | "completed"
       | "failed"
       | "needs_retry";
+    /** ProcessingStatusRequest */
+    ProcessingStatusRequest: {
+      /** Staff Pseudo Id */
+      staff_pseudo_id: string;
+    };
     /** RecordingSessionResponse */
     RecordingSessionResponse: {
       /**
@@ -2783,6 +2812,8 @@ export interface components {
     };
     /** UploadChunkRequest */
     UploadChunkRequest: {
+      /** Timestamp */
+      timestamp: number;
       /** Chunk Index */
       chunk_index: number;
       /** Chunk Data */
@@ -2801,6 +2832,8 @@ export interface components {
       success: boolean;
       /** Chunk Index */
       chunk_index: number;
+      /** Timestamp */
+      timestamp: number;
       /** Message */
       message: string;
     };
@@ -5061,6 +5094,41 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["ExecutionResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_processing_status_route_clients_processing_status_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProcessingStatusRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: components["schemas"]["ProcessingStatus"];
+          };
         };
       };
       /** @description Validation Error */

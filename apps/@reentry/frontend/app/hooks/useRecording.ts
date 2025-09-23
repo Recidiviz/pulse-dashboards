@@ -122,7 +122,7 @@ export const useRecording = ({
   );
 
   const queueChunk = useCallback(
-    async (chunk: Blob, chunkIndex: number) => {
+    async (chunk: Blob, chunkIndex: number, timestamp: number) => {
       if (!sessionId) {
         console.warn("No session ID available for chunk upload");
         return;
@@ -155,6 +155,7 @@ export const useRecording = ({
         await queue.pushChunk({
           sessionId,
           chunkIndex,
+          timestamp,
           chunkData: base64Data,
           mimeType: chunk.type,
           hasHeader,
@@ -198,10 +199,12 @@ export const useRecording = ({
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          console.debug(
-            `Chunk ${chunkCounterRef.current} ready: ${event.data.size} bytes`,
+
+          const absoluteTimestamp = Date.now();
+          console.log(
+            `Chunk ${chunkCounterRef.current} ready: ${event.data.size} bytes at timestamp ${absoluteTimestamp}`,
           );
-          queueChunk(event.data, chunkCounterRef.current);
+          queueChunk(event.data, chunkCounterRef.current, absoluteTimestamp);
           chunkCounterRef.current++;
           setChunkCount(chunkCounterRef.current);
         }
@@ -310,10 +313,12 @@ export const useRecording = ({
 
         mediaRecorder.ondataavailable = (event) => {
           if (event.data.size > 0) {
-            console.debug(
-              `Chunk ${chunkCounterRef.current} ready: ${event.data.size} bytes`,
+
+            const absoluteTimestamp = Date.now();
+            console.log(
+              `Chunk ${chunkCounterRef.current} ready: ${event.data.size} bytes at timestamp ${absoluteTimestamp}`,
             );
-            queueChunk(event.data, chunkCounterRef.current);
+            queueChunk(event.data, chunkCounterRef.current, absoluteTimestamp);
             chunkCounterRef.current++;
             setChunkCount(chunkCounterRef.current);
           }

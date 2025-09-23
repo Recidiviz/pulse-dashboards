@@ -6,7 +6,7 @@ from enum import StrEnum
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import Column, UniqueConstraint
+from sqlalchemy import BigInteger, Column, UniqueConstraint
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import Mapped
 from sqlmodel import Field, Relationship
@@ -61,6 +61,11 @@ class RecordingSession(BaseModel, table=True):
     gcs_chunks_folder: Optional[str] = Field(default=None, nullable=True)
     gcs_final_file_path: Optional[str] = Field(default=None, nullable=True)
     chunk_count: int = Field(default=0)
+    last_chunk_timestamp: int = Field(
+        ...,
+        sa_column=Column(BigInteger, nullable=True),
+        description="Unix timestamp in milliseconds of the last received chunk",
+    )
 
     transcription_approved: bool = Field(
         default=False,
@@ -93,10 +98,15 @@ class RecordingSession(BaseModel, table=True):
 class RecordingChunk(BaseModel, table=True):
     __tablename__ = "recording_chunk"
     __table_args__ = (
-        UniqueConstraint("session_id", "chunk_index", name="uq_session_chunk"),
+        UniqueConstraint("session_id", "timestamp", name="uq_session_timestamp"),
     )
 
     session_id: UUID = Field(..., foreign_key="recording_session.id", nullable=False)
     chunk_index: int = Field(
         ..., nullable=False, description="Index of the audio chunk"
+    )
+    timestamp: int = Field(
+        ...,
+        sa_column=Column(BigInteger, nullable=True),
+        description="Unix timestamp in milliseconds",
     )

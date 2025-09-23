@@ -36,7 +36,7 @@ export class PersistentChunkQueue {
   private isInitialized = false;
   private acceptingNewChunks = true;
   private globalRetryCount = 0;
-  private maxGlobalRetries = 60;
+  private maxGlobalRetries = 5000;
   private maxQueueSize = 1440; // each chunk is 5 seconds for total of 2 hours recording. ~ 60 to 100MB.
   private retryDelay = 5000; // Base delay in ms
   private processingInterval: NodeJS.Timeout | null = null;
@@ -67,7 +67,7 @@ export class PersistentChunkQueue {
   /**
    * Add a chunk to the queue for processing
    */
-  async pushChunk(chunk: Omit<QueuedChunk, "id" | "timestamp">): Promise<void> {
+  async pushChunk(chunk: Omit<QueuedChunk, "id">): Promise<void> {
     if (!this.acceptingNewChunks) {
       console.warn("Queue not accepting new chunks");
       return;
@@ -90,7 +90,6 @@ export class PersistentChunkQueue {
     const queuedChunk: QueuedChunk = {
       ...chunk,
       id: crypto.randomUUID(),
-      timestamp: Date.now(),
     };
 
     try {
@@ -165,7 +164,7 @@ export class PersistentChunkQueue {
       }
       const store = transaction.objectStore(this.storeName);
       const index = store.index("timestamp");
-      const request = index.openCursor();
+      const request = index.openCursor(null, "prev"); // gets the last in chunk.
 
       request.onsuccess = () => {
         const cursor = request.result;
@@ -218,27 +217,34 @@ export class PersistentChunkQueue {
             `Global retry limit reached (${this.maxGlobalRetries}), stopping queue processing`,
           );
           this.acceptingNewChunks = false;
+          if (this.processingInterval) {
+            clearInterval(this.processingInterval);
+            this.processingInterval = null;
+          }
           break;
         }
 
         const chunk = await this.getNextChunkAndRemove();
         if (!chunk) {
+          console.debug("No more chunks in queue");
           break;
         }
 
-        if (chunk.timestamp > Date.now()) {
-          await this.addChunkToDb(chunk);
-          continue;
-        }
-
         try {
-          console.log(`Processing chunk ${chunk.chunkIndex}`);
+          console.log(
+            `Processing chunk ${chunk.chunkIndex} (timestamp: ${chunk.timestamp})`,
+          );
           const result = await this.uploadFunction(chunk);
 
           if (result.success) {
-            console.log(`Successfully uploaded chunk ${chunk.chunkIndex}`);
+            console.log(
+              `Successfully uploaded chunk ${chunk.chunkIndex} (timestamp: ${chunk.timestamp})`,
+            );
             this.globalRetryCount = 0;
           } else {
+            console.error(
+              `Upload failed for chunk ${chunk.chunkIndex} (timestamp: ${chunk.timestamp})`,
+            );
             throw new Error(result.error || "Upload failed");
           }
         } catch (error) {
@@ -249,13 +255,18 @@ export class PersistentChunkQueue {
             `Global retry count: ${this.globalRetryCount}/${this.maxGlobalRetries}`,
           );
 
-          const delayedChunk: QueuedChunk = {
+          const reQueuedChunk: QueuedChunk = {
             ...chunk,
-            timestamp: Date.now() + this.retryDelay,
+            id: crypto.randomUUID(),
           };
 
-          await this.addChunkToDb(delayedChunk);
-          console.log(`Chunk ${chunk.chunkIndex} re-queued with delay`);
+          await this.addChunkToDb(reQueuedChunk);
+          console.log(
+            `Chunk ${chunk.chunkIndex} re-queued for retry (original timestamp: ${chunk.timestamp})`,
+          );
+
+          // Wait before processing next chunk since the previous upload failed.
+          await new Promise((resolve) => setTimeout(resolve, this.retryDelay));
         }
       }
     } catch (error) {
@@ -306,6 +317,29 @@ export class PersistentChunkQueue {
         return "Upload in progress. Close anyway?";
       }
       return;
+    });
+  }
+
+  async getQueuedChunks(): Promise<QueuedChunk[]> {
+    if (!this.db) return [];
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db?.transaction([this.storeName], "readonly");
+      if (!transaction) {
+        reject(new Error("Failed to create transaction"));
+        return;
+      }
+
+      const store = transaction.objectStore(this.storeName);
+      const index = store.index("timestamp");
+      const request = index.getAll();
+
+      request.onsuccess = () => {
+        const chunks = request.result as QueuedChunk[];
+        chunks.sort((a, b) => a.timestamp - b.timestamp);
+        resolve(chunks);
+      };
+      request.onerror = () => reject(request.error);
     });
   }
 }
