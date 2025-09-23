@@ -17,7 +17,6 @@
 
 import {
   Body16,
-  Icon,
   Modal,
   Sans14,
   Sans16,
@@ -30,7 +29,7 @@ import React, { useState } from "react";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
-import { Button, palette } from "~design-system";
+import { Button, Icon, palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { CopyCTAMetadata } from "../../RootStore/AnalyticsStore/AnalyticsStore";

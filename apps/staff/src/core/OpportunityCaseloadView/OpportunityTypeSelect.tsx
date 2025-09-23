@@ -15,6 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
+import { rem } from "polished";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components/macro";
+
 import {
   Dropdown,
   DropdownMenu,
@@ -22,12 +28,7 @@ import {
   DropdownToggle,
   Icon,
   IconSVG,
-  spacing,
-} from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components/macro";
+} from "~design-system";
 
 import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 

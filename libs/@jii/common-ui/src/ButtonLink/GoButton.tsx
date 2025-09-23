@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon } from "@recidiviz/design-system";
 import { FC } from "react";
 import { LinkProps } from "react-router-dom";
+
+import { Icon } from "~design-system";
 
 import { ButtonLink } from "./ButtonLink";
 

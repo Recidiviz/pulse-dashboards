@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Dropdown, DropdownMenu } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import toast from "react-hot-toast";
+
+import { Dropdown, DropdownMenu } from "~design-system";
 
 import { Opportunity } from "../../WorkflowsStore";
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";

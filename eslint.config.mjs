@@ -179,7 +179,17 @@ const workingReactConfig = getWorkingReactConfig();
 
 export const designSystemRestrictedImports = {
   name: "@recidiviz/design-system",
-  importNames: ["Button", "palette"],
+  importNames: [
+    "Button",
+    "palette",
+    "Dropdown",
+    "DropdownMenu",
+    "DropdownMenuItem",
+    "DropdownToggle",
+    "Menubar",
+    "Icon",
+    "IconSVG",
+  ],
   message: "Please import from ~design-system instead.",
 };
 

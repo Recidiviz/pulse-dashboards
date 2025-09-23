@@ -15,13 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Dropdown,
-  DropdownMenu,
-  DropdownMenuItem,
-  DropdownToggle as DropdownToggleButton,
-  typography,
-} from "@recidiviz/design-system";
+import { typography } from "@recidiviz/design-system";
 import { memoize } from "lodash";
 import { rem } from "polished";
 import React from "react";
@@ -30,6 +24,12 @@ import { components, ControlProps } from "react-select";
 import styled from "styled-components/macro";
 
 import { RosterChangeRequest, rosterChangeRequestSchema } from "~datatypes";
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownToggle as DropdownToggleButton,
+} from "~design-system";
 import { palette } from "~design-system";
 
 import { humanReadableTitleCase } from "../../../../utils";
@@ -76,12 +76,13 @@ const StyledDropdownMenu = styled(DropdownMenu)`
  * References
  * - {@link https://react-select.com/components#:~:text=Custom%20Control%20Example}
  */
-export const Control = memoize( // Must be wrapped in memoize to avoid unnecessary rerenders
+export const Control = memoize(
+  // Must be wrapped in memoize to avoid unnecessary rerenders
   (
     requestChangeType: RosterChangeRequest["requestChangeType"],
     setValue: (value: RosterChangeRequest["requestChangeType"]) => void,
   ) =>
-    (function Control({ children, ...props }: ControlProps<SelectOption, true>) {
+    function Control({ children, ...props }: ControlProps<SelectOption, true>) {
       const handleSetValue =
         (val: RosterChangeRequest["requestChangeType"]) => () => {
           setValue(val);
@@ -142,5 +143,5 @@ export const Control = memoize( // Must be wrapped in memoize to avoid unnecessa
           </Dropdown>
         </components.Control>
       );
-    }),
+    },
 );

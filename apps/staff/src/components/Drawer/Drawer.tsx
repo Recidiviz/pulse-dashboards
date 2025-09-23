@@ -17,11 +17,12 @@
 
 import "./Drawer.scss";
 
-import { Icon, IconSVG } from "@recidiviz/design-system";
 import cn from "classnames";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import useOnClickOutside from "use-onclickoutside";
+
+import { Icon, IconSVG } from "~design-system";
 
 type Props = {
   isShowing: boolean;

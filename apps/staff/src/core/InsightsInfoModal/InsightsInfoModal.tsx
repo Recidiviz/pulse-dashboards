@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, Modal, spacing, typography } from "@recidiviz/design-system";
+import { Modal, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
 import { Link } from "react-router-dom";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
-import { Button, palette } from "~design-system";
+import { Button, Icon, palette } from "~design-system";
 
 import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
 

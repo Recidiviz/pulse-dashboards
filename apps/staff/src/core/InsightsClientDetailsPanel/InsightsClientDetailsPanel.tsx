@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DrawerModal, Icon, spacing } from "@recidiviz/design-system";
+import { DrawerModal, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { ComponentType, useEffect, useRef, useState } from "react";
 import { matchPath, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { Button, palette } from "~design-system";
+import { Button, Icon, palette } from "~design-system";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";

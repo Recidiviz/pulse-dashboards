@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon } from "@recidiviz/design-system";
 import * as React from "react";
+
+import { Icon } from "~design-system";
 
 import { BaseButton, LinkButton } from "./Button.styles";
 import { ButtonProps } from "./Button.types";

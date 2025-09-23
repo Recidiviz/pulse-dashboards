@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon } from "@recidiviz/design-system";
 import { AnchorHTMLAttributes } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
+
+import { Icon } from "~design-system";
 
 const InlineIcon = styled(Icon).attrs({ size: 13, kind: "Arrow" })`
   display: inline-block;

@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, Modal as ModalBase, spacing } from "@recidiviz/design-system";
+import { Modal as ModalBase, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import styled from "styled-components/macro";
 
 import { PAGE_WIDTH } from "~@jii/common-ui";
+import { Icon } from "~design-system";
 import { Button } from "~design-system";
 
 import { ModalProps } from "./types";

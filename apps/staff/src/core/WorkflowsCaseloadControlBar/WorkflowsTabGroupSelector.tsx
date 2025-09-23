@@ -16,16 +16,16 @@
 // =============================================================================
 
 import { toTitleCase } from "@artsy/to-title-case";
+import { typography } from "@recidiviz/design-system";
+import styled from "styled-components/macro";
+
 import {
   Dropdown,
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle,
-  typography,
-} from "@recidiviz/design-system";
-import styled from "styled-components/macro";
-
-import { palette } from "~design-system";
+  palette,
+} from "~design-system";
 
 const SelectorDropdown = styled(Dropdown)``;
 const SelectorDropdownToggleButtonText = styled.div`

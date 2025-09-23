@@ -17,7 +17,6 @@
 
 import {
   animation,
-  Icon,
   Loading,
   Modal,
   Sans14,
@@ -34,7 +33,7 @@ import toast from "react-hot-toast";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
-import { Button, palette } from "~design-system";
+import { Button, Icon, palette } from "~design-system";
 
 import { Client, UsTnExpirationOpportunity } from "../../WorkflowsStore";
 import {

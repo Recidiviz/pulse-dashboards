@@ -15,17 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Icon,
-  Sans16,
-  Sans24,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { Sans16, Sans24, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { Button, palette } from "~design-system";
+import { Button, Icon, palette } from "~design-system";
 
 const ModalTitle = styled(Sans24)`
   color: ${palette.pine1};

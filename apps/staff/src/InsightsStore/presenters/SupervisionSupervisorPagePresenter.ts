@@ -51,9 +51,8 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     // Check if...
     return (
       // ...the user has allowed navigation to workflows and...
-      userStore.getRoutePermission("workflowsSupervision") &&
-      // ...if the active feature variant for supervisorHomepageWorkflows is enabled.
-      !!userStore.activeFeatureVariants.supervisorHomepageWorkflows
+      (// ...if the active feature variant for supervisorHomepageWorkflows is enabled.
+      userStore.getRoutePermission("workflowsSupervision") && !!userStore.activeFeatureVariants.supervisorHomepageWorkflows)
     );
   }
 

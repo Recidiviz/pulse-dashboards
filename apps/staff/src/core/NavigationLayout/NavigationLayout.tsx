@@ -15,16 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Dropdown,
-  DropdownMenu,
-  DropdownToggle,
-  Icon,
-  IconSVG,
-  spacing,
-  typography,
-  zindex,
-} from "@recidiviz/design-system";
+import { spacing, typography, zindex } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -32,7 +23,15 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { isOfflineMode } from "~client-env-utils";
-import { Button, palette } from "~design-system";
+import {
+  Button,
+  Dropdown,
+  DropdownMenu,
+  DropdownToggle,
+  Icon,
+  IconSVG,
+  palette,
+} from "~design-system";
 import { psiUrl } from "~sentencing-client";
 
 import Drawer from "../../components/Drawer/Drawer";

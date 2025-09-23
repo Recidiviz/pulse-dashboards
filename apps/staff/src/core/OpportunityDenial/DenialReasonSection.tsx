@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, IconSVG, Sans14, spacing } from "@recidiviz/design-system";
+import { Sans14, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Icon, IconSVG, palette } from "~design-system";
 
 import { CharacterCountTextField } from "../../components/CharacterCountTextField";
 import Checkbox from "../../components/Checkbox/Checkbox";

@@ -17,10 +17,11 @@
 
 import "./DetailsGroup.scss";
 
-import { Icon, IconSVG } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link } from "react-router-dom";
+
+import { Icon, IconSVG } from "~design-system";
 
 import { useRootStore } from "../components/StoreProvider";
 import { convertToSlug } from "../utils/navigation";

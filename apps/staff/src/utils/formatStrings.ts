@@ -115,13 +115,10 @@ function toTitleCase(str: string): string {
     return nameOverrides[str];
   }
 
-  return (
-    str &&
-    str.replace(
-      /\w[^\s-/]*/g,
-      (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase(),
-    )
-  );
+  return (str && str.replace(
+    /\w[^\s-/]*/g,
+    (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase(),
+  ));
 }
 
 function formatCurrentAddress(address: string, stateCode: string): string {
@@ -287,7 +284,7 @@ function formatYearsMonthsFromNow(date: Date): string {
 }
 
 /*
-  Given a number of days (assumed to originate in the past), returns duration in the 
+  Given a number of days (assumed to originate in the past), returns duration in the
   form "X years, Y months".
  */
 function formatDaysToYearsMonthsPast(days: number): string {
@@ -503,17 +500,15 @@ function formatDollarAmount(text: string) {
 
 function htmlStringToString(htmlString?: string): string {
   if (!htmlString) return "";
-  return (
-    htmlString
-      // replace breaks and divs with new line
-      .replace(/<br>|<div>|<\/div>/gi, "\n")
-      // remove any other tags
-      .replace(/<[^>]*>/gi, "")
-      // replace the non-breaking space special character with a space
-      .replace(/&nbsp;/gi, " ")
-      // remove leading and trailing quotes
-      .replace(/^"|"$/g, "")
-  );
+  return (htmlString
+    // replace breaks and divs with new line
+    .replace(/<br>|<div>|<\/div>/gi, "\n")
+    // remove any other tags
+    .replace(/<[^>]*>/gi, "")
+    // replace the non-breaking space special character with a space
+    .replace(/&nbsp;/gi, " ")
+    // remove leading and trailing quotes
+    .replace(/^"|"$/g, ""));
 }
 
 /**

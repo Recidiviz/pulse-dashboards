@@ -16,11 +16,12 @@
 // =============================================================================
 
 // TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
-import { animation, Icon, IconSVG, iconToDataURI } from "@recidiviz/design-system";
+import { animation, iconToDataURI } from "@recidiviz/design-system";
 import { darken } from "polished";
 import React from "react";
 import styled, { css } from "styled-components/macro";
 
+import { Icon, IconSVG } from "~design-system";
 import { palette } from "~design-system";
 
 import type { FormViewerContextData } from "../../FormViewer";

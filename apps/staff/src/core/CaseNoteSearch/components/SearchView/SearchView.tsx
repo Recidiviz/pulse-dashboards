@@ -16,15 +16,7 @@
 // =============================================================================
 
 import { show } from "@intercom/messenger-js-sdk";
-import {
-  Dropdown,
-  DropdownMenu,
-  DropdownMenuItem,
-  DropdownToggle,
-  Sans24,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { Sans24, spacing, typography } from "@recidiviz/design-system";
 import DomPurify from "dompurify";
 import { rem } from "polished";
 import { useEffect, useRef } from "react";
@@ -32,6 +24,12 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { CaseNoteSearchResults } from "~datatypes";
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownToggle,
+} from "~design-system";
 import { palette } from "~design-system";
 
 import { formatWorkflowsDate } from "../../../../utils";

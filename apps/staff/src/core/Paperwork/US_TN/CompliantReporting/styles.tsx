@@ -30,11 +30,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { animation, Icon, IconSVG, iconToDataURI } from "@recidiviz/design-system";
+import { animation, iconToDataURI } from "@recidiviz/design-system";
 import { darken, rem } from "polished";
 import * as React from "react";
 import styled, { css } from "styled-components/macro";
 
+import { Icon, IconSVG } from "~design-system";
 import { palette } from "~design-system";
 
 import type { FormViewerContextData } from "../../FormViewer";
@@ -90,7 +91,7 @@ const Grid = styled.div<GridProps>(
     grid-gap: 1px;
     // Extracted from TN form
     background: #a8a8a8;
-    
+
     & > ${Item},
     & ${Input} {
       background-color: var(--grid-foreground-color);

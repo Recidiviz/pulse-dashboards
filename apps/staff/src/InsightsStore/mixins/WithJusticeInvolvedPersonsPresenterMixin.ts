@@ -79,9 +79,8 @@ export function WithJusticeInvolvedPersonStore<
       // Check if...
       return (
         // ...the user has allowed navigation to workflows and...
-        userStore.getRoutePermission("workflowsSupervision") &&
-        // ...if the active feature variant for supervisorHomepageWorkflows is enabled.
-        !!userStore.activeFeatureVariants.supervisorHomepageWorkflows
+        (userStore.getRoutePermission("workflowsSupervision") && // ...if the active feature variant for supervisorHomepageWorkflows is enabled.
+        !!userStore.activeFeatureVariants.supervisorHomepageWorkflows)
       );
     }
 

@@ -23,7 +23,7 @@ import {
   useFloating,
   useInteractions,
 } from "@floating-ui/react";
-import { Icon, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC, memo, useEffect, useId, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
@@ -35,6 +35,7 @@ import {
   STICKY_HEADER_ZINDEX,
 } from "~@jii/common-ui";
 import { useRootStore, windowIsIframe } from "~@jii/data";
+import { Icon } from "~design-system";
 import { Button, palette } from "~design-system";
 
 const NAV_ACTIVE_BORDER = 2;

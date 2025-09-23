@@ -15,19 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  ButtonProps,
-  Dropdown,
-  DropdownMenu,
-  DropdownMenuItem,
-  DropdownToggle,
-  spacing,
-} from "@recidiviz/design-system";
+import { ButtonProps, spacing } from "@recidiviz/design-system";
 import { darken, rem } from "polished";
 import { useState } from "react";
 import { Link, LinkProps, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownToggle,
+} from "~design-system";
 import { palette } from "~design-system";
 
 import { useRootStore } from "../../../../components/StoreProvider";

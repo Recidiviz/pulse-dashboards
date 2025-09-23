@@ -17,10 +17,11 @@
 
 import "./ViewNavigation.scss";
 
-import { Icon, IconSVG } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
+
+import { Icon, IconSVG } from "~design-system";
 
 import MethodologyLogo from "../../assets/static/images/methodology.svg?react";
 import { useRootStore } from "../../components/StoreProvider";

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import Markdown from "markdown-to-jsx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
@@ -24,7 +24,7 @@ import styled from "styled-components/macro";
 
 import { GoButton } from "~@jii/common-ui";
 import { RequirementsSectionContent } from "~@jii/data";
-import { palette } from "~design-system";
+import { Icon, palette } from "~design-system";
 
 import { EligibilityStatusChip } from "../EligibilityStatusChip/EligibilityStatusChip";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";

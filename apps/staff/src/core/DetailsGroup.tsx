@@ -17,10 +17,11 @@
 
 import "./DetailsGroup.scss";
 
-import { Icon, IconSVG } from "@recidiviz/design-system";
 import cn from "classnames";
 import React, { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "use-onclickoutside";
+
+import { Icon, IconSVG } from "~design-system";
 
 type Props = {
   expand?: boolean;

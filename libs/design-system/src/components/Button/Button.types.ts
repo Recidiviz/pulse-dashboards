@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { IconSVG } from "@recidiviz/design-system";
 import React, { MouseEventHandler, ReactNode } from "react";
+
+import { IconSVG } from "~design-system";
 
 export type ButtonKind = "primary" | "secondary" | "link" | "borderless";
 export type ButtonShape = "pill" | "block";

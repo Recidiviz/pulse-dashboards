@@ -17,9 +17,10 @@
 
 import "./PercentDelta.scss";
 
-import { Icon, IconSVG } from "@recidiviz/design-system";
 import cn from "classnames";
 import React from "react";
+
+import { Icon, IconSVG } from "~design-system";
 
 import { formatPercent } from "../../utils/formatStrings";
 import styles from "../CoreConstants.module.scss";

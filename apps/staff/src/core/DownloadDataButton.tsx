@@ -17,8 +17,9 @@
 
 import "./DetailsGroup.scss";
 
-import { Icon, IconSVG } from "@recidiviz/design-system";
 import React from "react";
+
+import { Icon, IconSVG } from "~design-system";
 
 import styles from "./CoreConstants.module.scss";
 

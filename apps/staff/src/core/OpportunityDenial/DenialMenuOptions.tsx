@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DropdownMenuItem } from "@recidiviz/design-system";
 import { debounce, xor } from "lodash";
 import { observer } from "mobx-react-lite";
+
+import { DropdownMenuItem } from "~design-system";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { Opportunity } from "../../WorkflowsStore";

@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { Icon } from "~design-system";
 import { palette } from "~design-system";
 
 import { formatWorkflowsDate } from "../../../../utils/formatStrings";

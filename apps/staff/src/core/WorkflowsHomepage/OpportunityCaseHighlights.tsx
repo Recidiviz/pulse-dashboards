@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, IconSVG, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { ascending } from "d3-array";
 import { rem } from "polished";
 import { ReactNode } from "react";
@@ -23,7 +23,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { OpportunityType } from "~datatypes";
-import { palette } from "~design-system";
+import { Icon, IconSVG, palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { PartialRecord } from "../../utils/typeUtils";

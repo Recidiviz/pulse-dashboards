@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon } from "@recidiviz/design-system";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -23,6 +22,7 @@ import { Card, HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
 import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
 import { CardDateInfo } from "~@jii/earned-good-time";
 import { State } from "~@jii/paths";
+import { Icon } from "~design-system";
 import { palette } from "~design-system";
 
 import { UsNeCardGroupCopy } from "../configs/copy";

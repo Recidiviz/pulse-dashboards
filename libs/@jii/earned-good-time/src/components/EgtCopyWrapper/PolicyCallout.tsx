@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
 import { Card, CopyWrapper } from "~@jii/common-ui";
+import { Icon } from "~design-system";
 
 const Wrapper = styled(Card)`
   display: flex;

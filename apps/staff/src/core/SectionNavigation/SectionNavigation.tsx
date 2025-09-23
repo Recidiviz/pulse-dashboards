@@ -17,11 +17,12 @@
 
 import "./SectionNavigation.scss";
 
-import { Icon, IconSVG } from "@recidiviz/design-system";
 import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+
+import { Icon, IconSVG } from "~design-system";
 
 import Drawer from "../../components/Drawer";
 import {

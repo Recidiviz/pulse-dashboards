@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DrawerModal, Icon, spacing } from "@recidiviz/design-system";
+import { DrawerModal, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 
-import { Button, palette } from "~design-system";
+import { Button, Icon, palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
@@ -52,7 +52,7 @@ const StyledDrawerModal = styled(DrawerModal)<{
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    
+
     ${
       isMobile
         ? `
@@ -75,7 +75,7 @@ const StyledDrawerModal = styled(DrawerModal)<{
     ) !important;
     `
     }
-    
+
 }`
       : `.ReactModal__Content {
     display: flex;

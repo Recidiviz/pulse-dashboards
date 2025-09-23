@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { subMonths } from "date-fns";
 import { rem } from "polished";
 import styled, { css } from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Icon, palette } from "~design-system";
 
 import { OfficerVitalsMetricDetail } from "../../InsightsStore/presenters/types";
 import { formatDate } from "../../utils/formatStrings";

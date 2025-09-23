@@ -17,7 +17,6 @@
 
 import {
   DrawerModal,
-  Icon,
   spacing,
   TooltipTrigger,
   typography,
@@ -28,7 +27,7 @@ import { Link } from "react-router-dom";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
-import { Button, palette } from "~design-system";
+import { Button, Icon, palette } from "~design-system";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { NAV_BAR_HEIGHT } from "../NavigationLayout";

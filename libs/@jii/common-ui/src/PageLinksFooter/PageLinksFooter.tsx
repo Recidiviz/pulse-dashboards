@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { Icon } from "~design-system";
 import { palette } from "~design-system";
 
 import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";

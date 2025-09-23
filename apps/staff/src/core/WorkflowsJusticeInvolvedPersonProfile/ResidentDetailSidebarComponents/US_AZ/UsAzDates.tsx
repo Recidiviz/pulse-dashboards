@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, Sans14, spacing } from "@recidiviz/design-system";
+import { Sans14, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { ResidentMetadata } from "~datatypes";
+import { Icon } from "~design-system";
 import { palette } from "~design-system";
 
 import { optionalFieldToDate } from "../../../../WorkflowsStore/utils";

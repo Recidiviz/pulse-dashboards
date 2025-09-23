@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DropdownMenuItem } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { DropdownMenuItem, palette } from "~design-system";
 
 import Checkbox from "../../components/Checkbox";
 import { Opportunity } from "../../WorkflowsStore";
