@@ -59,8 +59,8 @@ const US_AZ_CONFIG = {
     },
   },
   navigation: {
-    workflows: ["home", "clients", "residents"],
     insights: [INSIGHTS_PAGES.supervision],
+    workflows: ["home", "clients", "residents"],
   },
   incarcerationStaffTitleOverride: "COIII",
   releaseDateCopyOverride: "SED",
