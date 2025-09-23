@@ -1,4 +1,4 @@
-# Infrastructure configuration for components for the sentencing app that will be deployed to staging
+# Infrastructure configuration for components for the case notes app that will be deployed to staging
 settings:
   context:
     project_id: recidiviz-dashboard-staging

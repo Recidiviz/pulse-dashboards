@@ -1,4 +1,4 @@
-# Infrastructure configuration for components for the sentencing app that will be deployed to production
+# Infrastructure configuration for components for the case notes app that will be deployed to production
 settings:
   context:
     project_id: recidiviz-dashboard-production
