@@ -181,27 +181,41 @@ if (deployEnv === "production") {
   publishReleaseNotes = false;
 }
 
+const staffBackendDisplayName = "Staff Backend";
+const staffFrontendDisplayName = "Staff Frontend";
+const sentencingAssistantDisplayName = "Sentencing Assistant Backend Services";
+const jiiTextingDisplayName = "JII Texting Backend Services";
+const caseNotesDisplayName = "Case Notes Server";
+const opportunitiesFrontendDisplayName = "Opportunities Frontend";
+const opportunitiesBackendDisplayName = "Opportunities Backend";
+const reentryBackendV0DisplayName = "Reentry Backend Services (v0)";
+const reentryBackendV1DisplayName = "Reentry Backend Services (v1)";
+const reentryFrontendDisplayName = "Reentry Frontend";
+const meetingAssistantDisplayName = "Meeting Assistant Backend Services";
+const demoFixturesDisplayName = "Demo fixtures";
+const opportunitiesTestDataDisplayName = "Opportunities test data";
+
 const deployServicesChoices = [
-  { name: "Staff backend", checked: true },
-  { name: "Staff frontend", checked: true },
-  { name: "Sentencing server", checked: true },
-  { name: "JII texting server", checked: true },
-  { name: "Case notes server", checked: true },
-  { name: "Opportunities frontend", checked: true },
-  { name: "Opportunities backend", checked: true },
-  { name: "Reentry backend (v0)", checked: false },
-  { name: "Reentry server (v1)", checked: false },
-  { name: "Reentry frontend", checked: false },
-  { name: "Meeting Assistant Server", checked: false },
+  { name: staffBackendDisplayName, checked: true },
+  { name: staffFrontendDisplayName, checked: true },
+  { name: sentencingAssistantDisplayName, checked: true },
+  { name: jiiTextingDisplayName, checked: true },
+  { name: caseNotesDisplayName, checked: true },
+  { name: opportunitiesFrontendDisplayName, checked: true },
+  { name: opportunitiesBackendDisplayName, checked: true },
+  { name: reentryBackendV0DisplayName, checked: false },
+  { name: reentryBackendV1DisplayName, checked: false },
+  { name: reentryFrontendDisplayName, checked: false },
+  { name: meetingAssistantDisplayName, checked: false },
 ];
 
 if (deployEnv === "demo") {
-  deployServicesChoices.push({ name: "Demo fixtures", checked: true });
+  deployServicesChoices.push({ name: demoFixturesDisplayName, checked: true });
 }
 
 if (deployEnv === "production") {
   deployServicesChoices.push({
-    name: "Opportunities test data",
+    name: opportunitiesTestDataDisplayName,
     checked: true,
   });
 }
@@ -214,37 +228,44 @@ const deployServicesPrompt = await inquirer.prompt({
   choices: deployServicesChoices,
 });
 
-const deployBackend =
-  deployServicesPrompt.deployServices.includes("Staff backend");
-const deployFrontend =
-  deployServicesPrompt.deployServices.includes("Staff frontend");
-const deploySentencing =
-  deployServicesPrompt.deployServices.includes("Sentencing server");
-const deployJII =
-  deployServicesPrompt.deployServices.includes("JII texting server");
+const deployBackend = deployServicesPrompt.deployServices.includes(
+  staffBackendDisplayName,
+);
+const deployFrontend = deployServicesPrompt.deployServices.includes(
+  staffFrontendDisplayName,
+);
+const deploySentencing = deployServicesPrompt.deployServices.includes(
+  sentencingAssistantDisplayName,
+);
+const deployJiiTexting = deployServicesPrompt.deployServices.includes(
+  jiiTextingDisplayName,
+);
 const deployCaseNotes =
-  deployServicesPrompt.deployServices.includes("Case notes server");
-const deployDemoFixtures =
-  deployServicesPrompt.deployServices.includes("Demo fixtures");
+  deployServicesPrompt.deployServices.includes(caseNotesDisplayName);
+const deployDemoFixtures = deployServicesPrompt.deployServices.includes(
+  demoFixturesDisplayName,
+);
 const deployOppsFrontend = deployServicesPrompt.deployServices.includes(
-  "Opportunities frontend",
+  opportunitiesFrontendDisplayName,
 );
 const deployOppsBackend = deployServicesPrompt.deployServices.includes(
-  "Opportunities backend",
+  opportunitiesBackendDisplayName,
 );
 const deployOppsTestData = deployServicesPrompt.deployServices.includes(
-  "Opportunities test data",
+  opportunitiesTestDataDisplayName,
 );
 const deployReentryBackend = deployServicesPrompt.deployServices.includes(
-  "Reentry backend (v0)",
+  reentryBackendV0DisplayName,
 );
 const deployReentryServer = deployServicesPrompt.deployServices.includes(
-  "Reentry server (v1)",
+  reentryBackendV1DisplayName,
 );
-const deployReentryFrontend =
-  deployServicesPrompt.deployServices.includes("Reentry frontend");
-const deployMeetingAssistantServer =
-  deployServicesPrompt.deployServices.includes("Meeting Assistant Server");
+const deployReentryFrontend = deployServicesPrompt.deployServices.includes(
+  reentryFrontendDisplayName,
+);
+const deployMeetingAssistant = deployServicesPrompt.deployServices.includes(
+  meetingAssistantDisplayName,
+);
 
 console.log("Running nx reset...");
 await $`nx reset`.pipe(process.stdout);
@@ -255,8 +276,29 @@ await $`yarn install`.pipe(process.stdout);
 console.log("Updating atmos...");
 await $`brew install atmos`.pipe(process.stdout);
 
+// Start docker and configure docker to upload to container registry
+// Only needed for staging deploys
+if (
+  (deployEnv === "staging" ||
+    (deployEnv === "production" && isCpDeploy) ||
+    deployEnv === "demo") &&
+  (deploySentencing ||
+    deployJiiTexting ||
+    deployCaseNotes ||
+    deployReentryServer ||
+    deployMeetingAssistant)
+) {
+  try {
+    await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
+      process.stdout,
+    );
+  } catch (e) {
+    console.error("Failed to configure docker for gcloud", e);
+  }
+}
+
 if (deployBackend) {
-  console.log("Building backend application ...");
+  console.log(`Building ${staffBackendDisplayName}...`);
   await $`nx build staff-shared-server`.pipe(process.stdout);
 
   const gaeVersion = nextVersion.replaceAll(".", "-");
@@ -282,12 +324,12 @@ if (deployBackend) {
           break;
       }
       retryBackend = false;
-      successfullyDeployed.push("staff-shared-server");
+      successfullyDeployed.push(staffBackendDisplayName);
     } catch (e) {
       const retryBackendPrompt = await inquirer.prompt({
         type: "confirm",
         name: "retryBackend",
-        message: `Backend deploy failed with error: ${e}. Retry?`,
+        message: `${staffBackendDisplayName} deploy failed with error: ${e}. Retry?`,
         default: false,
       });
       retryBackend = retryBackendPrompt.retryBackend;
@@ -297,7 +339,7 @@ if (deployBackend) {
 
 if (deployFrontend) {
   // Build the application
-  console.log("Building frontend application...");
+  console.log(`Building ${staffFrontendDisplayName}...`);
   switch (deployEnv) {
     case "production":
       await $`nx build staff`.pipe(process.stdout);
@@ -327,12 +369,12 @@ if (deployFrontend) {
           );
       }
       retryFrontend = false;
-      successfullyDeployed.push("Frontend");
+      successfullyDeployed.push(staffFrontendDisplayName);
     } catch (e) {
       const retryFrontendPrompt = await inquirer.prompt({
         type: "confirm",
         name: "retryFrontend",
-        message: `Frontend deploy failed with error: ${e}. Retry?`,
+        message: `${staffFrontendDisplayName} deploy failed with error: ${e}. Retry?`,
         default: false,
       });
       retryFrontend = retryFrontendPrompt.retryFrontend;
@@ -341,371 +383,289 @@ if (deployFrontend) {
 }
 
 if (
-  deployEnv === "staging" ||
-  deployEnv === "production" ||
-  deployEnv === "demo"
+  deploySentencing &&
+  (deployEnv === "staging" ||
+    deployEnv === "production" ||
+    deployEnv === "demo")
 ) {
-  if (deploySentencing) {
-    console.log("Building and deploying the application...");
+  let retryDeploy = false;
 
-    // Start docker and configure docker to upload to container registry
-    // Only needed for staging deploys
-    if (
-      deployEnv === "staging" ||
-      (deployEnv === "production" && isCpDeploy) ||
-      deployEnv === "demo"
-    ) {
-      try {
-        await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
+  do {
+    // Deploy the app
+    console.log(`Deploying ${sentencingAssistantDisplayName}...`);
+
+    try {
+      // We only need to build and push the docker containers if we are
+      // 1. deploying to staging
+      // 2. deploying a cherry-pick
+      // 3. deploying to demo
+      // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
+
+      let projects;
+      let configuration;
+      if (deployEnv === "staging") {
+        projects = "@sentencing/server @sentencing/import";
+        configuration = "staging";
+      } else if (deployEnv === "production" && isCpDeploy) {
+        projects = "@sentencing/server @sentencing/import";
+        configuration = "cherry-pick";
+      } else if (deployEnv === "demo") {
+        projects = "@sentencing/server @sentencing/seed-demo";
+        configuration = "demo";
+      }
+
+      await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
+        process.stdout,
+      );
+
+      // Deploy any changes to the artifact registry if we're on staging
+      if (deployEnv === "staging") {
+        await $`yarn atmos:apply artifact_registry -s recidiviz-dashboard-${deployEnv}--sentencing -- -auto-approve`.pipe(
           process.stdout,
         );
-      } catch (e) {
-        console.error("Failed to configure docker for gcloud", e);
       }
-    }
 
-    let retryDeploy = false;
-    do {
-      // Deploy the app
-      console.log("Deploying sentencing backend services...");
-      try {
-        // We only need to build and push the docker containers if we are
-        // 1. deploying to staging
-        // 2. deploying a cherry-pick
-        // 3. deploying to demo
-        // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
+      // Deploy the import, migration, and server infrastructure changes for the applicable environment
+      let stack;
+      if (deployEnv === "staging") {
+        stack = `recidiviz-dashboard-${deployEnv}--sentencing`;
+      } else if (deployEnv === "production") {
+        stack = `recidiviz-dashboard-${deployEnv}--sentencing`;
+      } else if (deployEnv === "demo") {
+        stack = "recidiviz-dashboard-staging--sentencing-demo";
+      }
 
-        if (deployEnv === "staging") {
-          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/server --configuration ${deployEnv}`.pipe(
-            process.stdout,
-          );
-
-          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/import --configuration ${deployEnv}`.pipe(
-            process.stdout,
-          );
-        } else if (deployEnv === "production" && isCpDeploy) {
-          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/server --configuration cherry-pick`.pipe(
-            process.stdout,
-          );
-
-          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/import --configuration cherry-pick`.pipe(
-            process.stdout,
-          );
-        } else if (deployEnv === "demo") {
-          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/server --configuration demo`.pipe(
-            process.stdout,
-          );
-
-          // There is no import job for demo, instead we have a cloud run job that
-          // seeds the demo database
-          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/seed-demo --configuration demo`.pipe(
-            process.stdout,
-          );
-        }
-
-        // Deploy any changes to the artifact registry if we're on staging
-        if (deployEnv === "staging") {
-          await $`yarn atmos:apply artifact_registry -s recidiviz-dashboard-${deployEnv}--sentencing -- -auto-approve`.pipe(
-            process.stdout,
-          );
-        }
-
-        // Deploy the import, migration, and server infrastructure changes for the applicable environment
-        let stack;
-        if (deployEnv === "staging") {
-          stack = `recidiviz-dashboard-${deployEnv}--sentencing`;
-        } else if (deployEnv === "production") {
-          stack = `recidiviz-dashboard-${deployEnv}--sentencing`;
-        } else if (deployEnv === "demo") {
-          stack = "recidiviz-dashboard-staging--sentencing-demo";
-        }
-
-        await $`yarn atmos:apply apps/sentencing -s ${stack} -- -auto-approve \
+      await $`yarn atmos:apply apps/sentencing -s ${stack} -- -auto-approve \
           -var server_container_version=${currentRevision} \
           -var migrate_db_container_version=${currentRevision} \
           -var import_container_version=${currentRevision}`.pipe(
+        process.stdout,
+      );
+
+      if (deployEnv === "demo") {
+        // If we're in demo mode, deploy the seed demo job
+        await $`yarn atmos:apply apps/sentencing-seed-demo -s ${stack} -- -auto-approve -var container_version=${currentRevision}`.pipe(
           process.stdout,
         );
-
-        if (deployEnv === "demo") {
-          // If we're in demo mode, deploy the seed demo job
-          await $`yarn atmos:apply apps/sentencing-seed-demo -s ${stack} -- -auto-approve -var container_version=${currentRevision}`.pipe(
-            process.stdout,
-          );
-        } else if (deployEnv === "production") {
-          await $`yarn atmos:apply postgres-bq-data-transfer -s recidiviz-dashboard-production--sentencing -- -auto-approve`.pipe(
-            process.stdout,
-          );
-        }
-
-        retryDeploy = false;
-        successfullyDeployed.push("Sentencing Server");
-      } catch (e) {
-        const retryDeployPrompt = await inquirer.prompt({
-          type: "confirm",
-          name: "retryDeploy",
-          message: `Sentencing server deploy failed with error: ${e}. Retry?`,
-          default: false,
-        });
-        retryDeploy = retryDeployPrompt.retryDeploy;
+      } else if (deployEnv === "production") {
+        await $`yarn atmos:apply postgres-bq-data-transfer -s recidiviz-dashboard-production--sentencing -- -auto-approve`.pipe(
+          process.stdout,
+        );
       }
-    } while (retryDeploy);
-  }
+
+      retryDeploy = false;
+      successfullyDeployed.push(sentencingAssistantDisplayName);
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `${sentencingAssistantDisplayName} deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
 }
 
 if (
-  deployEnv === "staging" ||
-  deployEnv === "production" ||
-  deployEnv === "demo"
+  deployJiiTexting &&
+  (deployEnv === "staging" ||
+    deployEnv === "production" ||
+    deployEnv === "demo")
 ) {
-  if (deployJII) {
-    console.log("Building and deploying the application...");
+  let retryDeploy = false;
+  do {
+    // Deploy the app
+    console.log(`Deploying ${jiiTextingDisplayName}...`);
 
-    // Start docker and configure docker to upload to container registry
-    // Only needed for staging deploys
-    if (
-      deployEnv === "staging" ||
-      (deployEnv === "production" && isCpDeploy) ||
-      deployEnv === "demo"
-    ) {
-      try {
-        await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
-          process.stdout,
-        );
-      } catch (e) {
-        console.error("Failed to configure docker for gcloud", e);
+    try {
+      let projects;
+      let configuration;
+      if (deployEnv === "staging") {
+        projects =
+          "@jii-texting/server @jii-texting/processor @jii-texting/import";
+        configuration = "staging";
+      } else if (deployEnv === "production" && isCpDeploy) {
+        projects =
+          "@jii-texting/server @jii-texting/processor @jii-texting/import";
+        configuration = "cherry-pick";
+      } else if (deployEnv === "demo") {
+        projects =
+          "@jii-texting/server @jii-texting/processor @jii-texting/seed-demo";
+        configuration = "demo";
       }
-    }
 
-    let retryDeploy = false;
-    do {
-      // Deploy the app
-      console.log("Deploying application to Cloud Run...");
-      try {
-        // We only need to build and push the docker container if we are
-        // 1. deploying to staging.
-        // 2. deploying a cherry-pick
-        // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
-        if (deployEnv === "staging") {
-          // Push the docker container for the Cloud Run service
+      await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
+        process.stdout,
+      );
 
-          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/server --configuration ${deployEnv}`.pipe(
-            process.stdout,
-          );
-          // Push the docker container for the Cloud Run jobs
-          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/processor --configuration ${deployEnv}`.pipe(
-            process.stdout,
-          );
-          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/import --configuration ${deployEnv}`.pipe(
-            process.stdout,
-          );
-        } else if (deployEnv === "production" && isCpDeploy) {
-          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/server --configuration cherry-pick`.pipe(
-            process.stdout,
-          );
-          // Push the docker container for the Cloud Run jobs
-          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/processor --configuration cherry-pick`.pipe(
-            process.stdout,
-          );
-          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/import --configuration cherry-pick`.pipe(
-            process.stdout,
-          );
-        } else if (deployEnv === "demo") {
-          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/processor --configuration demo`.pipe(
-            process.stdout,
-          );
-          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/seed-demo --configuration demo`.pipe(
-            process.stdout,
-          );
-          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/server --configuration demo`.pipe(
-            process.stdout,
-          );
-        }
+      // Deploy the import, migration, processor, and server infrastructure changes for the applicable environment
+      let stack;
+      if (deployEnv === "staging") {
+        stack = `recidiviz-dashboard-${deployEnv}--jii-texting`;
+      } else if (deployEnv === "production") {
+        stack = `recidiviz-dashboard-${deployEnv}--jii-texting`;
+      } else if (deployEnv === "demo") {
+        stack = "recidiviz-dashboard-staging--jii-texting-demo";
+      }
 
-        // Deploy the import, migration, processor, and server infrastructure changes for the applicable environment
-        let stack;
-        if (deployEnv === "staging") {
-          stack = `recidiviz-dashboard-${deployEnv}--jii-texting`;
-        } else if (deployEnv === "production") {
-          stack = `recidiviz-dashboard-${deployEnv}--jii-texting`;
-        } else if (deployEnv === "demo") {
-          stack = "recidiviz-dashboard-staging--jii-texting-demo";
-        }
-
-        // TODO(#7617) Check if ETL Cloud Run Job is running before DB migration
-        await $`yarn atmos:apply apps/jii-texting -s ${stack} -- -auto-approve \
+      // TODO(#7617) Check if ETL Cloud Run Job is running before DB migration
+      await $`yarn atmos:apply apps/jii-texting -s ${stack} -- -auto-approve \
           -var server_container_version=${currentRevision} \
           -var migrate_db_container_version=${currentRevision} \
           -var processor_container_version=${currentRevision} \
           -var import_container_version=${currentRevision}`.pipe(
+        process.stdout,
+      );
+
+      if (deployEnv === "demo") {
+        await $`yarn atmos:apply seed-demo -s recidiviz-dashboard-staging--jii-texting-demo -- -auto-approve`.pipe(
           process.stdout,
         );
-
-        if (deployEnv === "demo") {
-          await $`yarn atmos:apply seed-demo -s recidiviz-dashboard-staging--jii-texting-demo -- -auto-approve`.pipe(
-            process.stdout,
-          );
-        }
-
-        retryDeploy = false;
-        successfullyDeployed.push("JII Texting Server");
-      } catch (e) {
-        const retryDeployPrompt = await inquirer.prompt({
-          type: "confirm",
-          name: "retryDeploy",
-          message: `JII Texting server deploy failed with error: ${e}. Retry?`,
-          default: false,
-        });
-        retryDeploy = retryDeployPrompt.retryDeploy;
       }
-    } while (retryDeploy);
-  }
+
+      retryDeploy = false;
+      successfullyDeployed.push(jiiTextingDisplayName);
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `${jiiTextingDisplayName} deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
 }
 
 if (
-  deployEnv === "staging" ||
-  deployEnv === "production" ||
-  deployEnv === "demo"
+  deployCaseNotes &&
+  (deployEnv === "staging" ||
+    deployEnv === "production" ||
+    deployEnv === "demo")
 ) {
-  if (deployCaseNotes) {
-    console.log("Building and deploying the application...");
+  let retryDeploy = false;
+  do {
+    // Deploy the app
+    console.log(`Deploying ${caseNotesDisplayName}...`);
 
-    // Start docker and configure docker to upload to container registry
-    // Only needed for staging deploys
-    if (
-      deployEnv === "staging" ||
-      (deployEnv === "production" && isCpDeploy) ||
-      deployEnv === "demo"
-    ) {
-      try {
-        await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
-          process.stdout,
-        );
-      } catch (e) {
-        console.error("Failed to configure docker for gcloud", e);
+    try {
+      // We only need to build and push the docker container if we are
+      // 1. deploying to staging.
+      // 2. deploying a cherry-pick
+      // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
+      let configuration;
+      if (deployEnv === "staging") {
+        configuration = "staging";
+      } else if (deployEnv === "production" && isCpDeploy) {
+        configuration = "cherry-pick";
+      } else if (deployEnv === "demo") {
+        configuration = "demo";
       }
-    }
 
-    let retryDeploy = false;
-    do {
-      // Deploy the app
-      console.log("Deploying application to Cloud Run...");
-      try {
-        // We only need to build and push the docker container if we are
-        // 1. deploying to staging.
-        // 2. deploying a cherry-pick
-        // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
-        if (deployEnv === "staging") {
-          await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration ${deployEnv}`.pipe(
-            process.stdout,
-          );
-        } else if (deployEnv === "production" && isCpDeploy) {
-          await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration cherry-pick`.pipe(
-            process.stdout,
-          );
-        } else if (deployEnv === "demo") {
-          await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration demo`.pipe(
-            process.stdout,
-          );
-        }
+      await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration ${configuration}`.pipe(
+        process.stdout,
+      );
 
-        // Deploy the import, migration, and server infrastructure changes for the applicable environment
-        let stack;
-        if (deployEnv === "staging") {
-          stack = `recidiviz-dashboard-${deployEnv}--case-notes`;
-        } else if (deployEnv === "production") {
-          stack = `recidiviz-dashboard-${deployEnv}--case-notes`;
-        } else if (deployEnv === "demo") {
-          stack = "recidiviz-dashboard-staging--case-notes-demo";
-        }
+      // Deploy the import, migration, and server infrastructure changes for the applicable environment
+      let stack;
+      if (deployEnv === "staging") {
+        stack = `recidiviz-dashboard-${deployEnv}--case-notes`;
+      } else if (deployEnv === "production") {
+        stack = `recidiviz-dashboard-${deployEnv}--case-notes`;
+      } else if (deployEnv === "demo") {
+        stack = "recidiviz-dashboard-staging--case-notes-demo";
+      }
 
-        await $`yarn atmos:apply apps/case-notes -s ${stack} -- -auto-approve \
+      await $`yarn atmos:apply apps/case-notes -s ${stack} -- -auto-approve \
           -var server_container_version=${currentRevision}`.pipe(
-          process.stdout,
-        );
+        process.stdout,
+      );
 
-        retryDeploy = false;
-        successfullyDeployed.push("Case Notes Server");
-      } catch (e) {
-        const retryDeployPrompt = await inquirer.prompt({
-          type: "confirm",
-          name: "retryDeploy",
-          message: `Case notes server deploy failed with error: ${e}. Retry?`,
-          default: false,
-        });
-        retryDeploy = retryDeployPrompt.retryDeploy;
-      }
-    } while (retryDeploy);
-  }
+      retryDeploy = false;
+      successfullyDeployed.push(caseNotesDisplayName);
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `${caseNotesDisplayName} deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
 }
 
 if (
   // there is no demo backend for Opportunities, it shares the staging backend
-  deployEnv === "staging" ||
-  deployEnv === "production"
+  deployOppsBackend &&
+  (deployEnv === "staging" || deployEnv === "production")
 ) {
-  if (deployOppsBackend) {
-    let retryDeploy = false;
+  let retryDeploy = false;
 
-    do {
-      try {
-        await $`nx deploy jii-functions --configuration ${deployEnv}`.pipe(
-          process.stdout,
-        );
+  do {
+    // Deploy the app
+    console.log(`Deploying ${opportunitiesBackendDisplayName}...`);
 
-        retryDeploy = false;
-        successfullyDeployed.push("Opportunities backend");
-      } catch (e) {
-        const retryDeployPrompt = await inquirer.prompt({
-          type: "confirm",
-          name: "retryDeploy",
-          message: `Opportunities backend deploy failed with error: ${e}. Retry?`,
-          default: false,
-        });
-        retryDeploy = retryDeployPrompt.retryDeploy;
-      }
-    } while (retryDeploy);
-  }
+    try {
+      await $`nx deploy jii-functions --configuration ${deployEnv}`.pipe(
+        process.stdout,
+      );
+
+      retryDeploy = false;
+      successfullyDeployed.push(opportunitiesBackendDisplayName);
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `${opportunitiesBackendDisplayName} deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
 }
 
 if (
-  deployEnv === "staging" ||
-  deployEnv === "production" ||
-  deployEnv === "demo"
+  deployOppsFrontend &&
+  (deployEnv === "staging" ||
+    deployEnv === "production" ||
+    deployEnv === "demo")
 ) {
-  if (deployOppsFrontend) {
-    // building separately because we want to pass extra args
-    // to the deploy command but not the build command
-    await $`nx build jii --configuration ${deployEnv}`.pipe(process.stdout);
+  // building separately because we want to pass extra args
+  // to the deploy command but not the build command
+  await $`nx build jii --configuration ${deployEnv}`.pipe(process.stdout);
 
-    let retryDeploy = false;
-    do {
-      try {
-        let deployMessage = `${currentRevision}`;
-        if (deployEnv === "production") {
-          deployMessage = `Version ${nextVersion} - Commit hash ${currentRevision}`;
-          publishReleaseNotes = true;
-        }
+  let retryDeploy = false;
+  do {
+    // Deploy the app
+    console.log(`Deploying ${opportunitiesFrontendDisplayName}...`);
 
-        // we built the project manually first,
-        // skipping dependencies avoids passing arbitrary extra args to the build command
-        await $`nx deploy jii --configuration ${deployEnv} --excludeTaskDependencies -m "${deployMessage}"`.pipe(
-          process.stdout,
-        );
-
-        retryDeploy = false;
-        successfullyDeployed.push("Opportunities frontend");
-      } catch (e) {
-        const retryDeployPrompt = await inquirer.prompt({
-          type: "confirm",
-          name: "retryDeploy",
-          message: `Opportunities frontend deploy failed with error: ${e}. Retry?`,
-          default: false,
-        });
-        retryDeploy = retryDeployPrompt.retryDeploy;
+    try {
+      let deployMessage = `${currentRevision}`;
+      if (deployEnv === "production") {
+        deployMessage = `Version ${nextVersion} - Commit hash ${currentRevision}`;
+        publishReleaseNotes = true;
       }
-    } while (retryDeploy);
-  }
+
+      // we built the project manually first,
+      // skipping dependencies avoids passing arbitrary extra args to the build command
+      await $`nx deploy jii --configuration ${deployEnv} --excludeTaskDependencies -m "${deployMessage}"`.pipe(
+        process.stdout,
+      );
+
+      retryDeploy = false;
+      successfullyDeployed.push(opportunitiesFrontendDisplayName);
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `${opportunitiesFrontendDisplayName} deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
 }
 
 if (deployOppsTestData) {
@@ -727,25 +687,23 @@ if (deployOppsTestData) {
   } while (retryFixtures);
 }
 
-if (deployEnv === "demo") {
-  if (deployDemoFixtures) {
-    let retryFixtures = false;
-    do {
-      console.log("Updating demo fixtures ...");
-      successfullyDeployed.push("Demo fixtures");
-      try {
-        await $`nx load-demo-fixtures staff -c staging`.pipe(process.stdout);
-      } catch (e) {
-        const retryFixturesPrompt = await inquirer.prompt({
-          type: "confirm",
-          name: "retryFixtures",
-          message: `Demo fixtures deploy failed with error: ${e}. Retry?`,
-          default: false,
-        });
-        retryFixtures = retryFixturesPrompt.retryFixtures;
-      }
-    } while (retryFixtures);
-  }
+if (deployEnv === "demo" && deployDemoFixtures) {
+  let retryFixtures = false;
+  do {
+    console.log(`Deploying ${opportunitiesTestDataDisplayName}...`);
+    successfullyDeployed.push("Demo fixtures");
+    try {
+      await $`nx load-demo-fixtures staff -c staging`.pipe(process.stdout);
+    } catch (e) {
+      const retryFixturesPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryFixtures",
+        message: `${opportunitiesTestDataDisplayName} deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryFixtures = retryFixturesPrompt.retryFixtures;
+    }
+  } while (retryFixtures);
 }
 
 if (
@@ -754,12 +712,12 @@ if (
     deployEnv === "production" ||
     deployEnv === "demo")
 ) {
-  console.log("Building and deploying the application...");
-
   let retryDeploy = false;
+
   do {
     // Deploy the app
-    console.log("Deploying reentry backend...");
+    console.log(`Deploying ${reentryBackendV0DisplayName}...`);
+
     try {
       if (deployEnv === "staging") {
         await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/staging/cloudbuild.yaml `.pipe(
@@ -776,12 +734,12 @@ if (
       }
 
       retryDeploy = false;
-      successfullyDeployed.push("Reentry Backend (v0)");
+      successfullyDeployed.push(reentryBackendV0DisplayName);
     } catch (e) {
       const retryDeployPrompt = await inquirer.prompt({
         type: "confirm",
         name: "retryDeploy",
-        message: `Reentry backend (v0) deploy failed with error: ${e}. Retry?`,
+        message: `${reentryBackendV0DisplayName} deploy failed with error: ${e}. Retry?`,
         default: false,
       });
       retryDeploy = retryDeployPrompt.retryDeploy;
@@ -794,62 +752,29 @@ if (
   deployReentryServer &&
   (deployEnv === "staging" || deployEnv === "production")
 ) {
-  console.log("Building and deploying the application...");
-
-  // Start docker and configure docker to upload to container registry
-  // Only needed for staging deploys
-  if (
-    deployEnv === "staging" ||
-    (deployEnv === "production" && isCpDeploy) ||
-    deployEnv === "demo"
-  ) {
-    try {
-      await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
-        process.stdout,
-      );
-    } catch (e) {
-      console.error("Failed to configure docker for gcloud", e);
-    }
-  }
-
   let retryDeploy = false;
+
   do {
     // Deploy the app
-    console.log("Deploying reentry backend services...");
+    console.log(`Deploying ${reentryServerDisplayName}...`);
+
     try {
-      // We only need to build and push the docker containers if we are
-      // 1. deploying to staging
-      // 2. deploying a cherry-pick
-      // 3. deploying to demo
-      // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
-
+      let projects;
+      let configuration;
       if (deployEnv === "staging") {
-        await $`COMMIT_SHA=${currentRevision} nx container @reentry/server --configuration ${deployEnv}`.pipe(
-          process.stdout,
-        );
-
-        await $`COMMIT_SHA=${currentRevision} nx container @reentry/import --configuration ${deployEnv}`.pipe(
-          process.stdout,
-        );
+        projects = "@reentry/server @reentry/import";
+        configuration = "staging";
       } else if (deployEnv === "production" && isCpDeploy) {
-        await $`COMMIT_SHA=${currentRevision} nx container @reentry/server --configuration cherry-pick`.pipe(
-          process.stdout,
-        );
-
-        await $`COMMIT_SHA=${currentRevision} nx container @reentry/import --configuration cherry-pick`.pipe(
-          process.stdout,
-        );
+        projects = "@reentry/server @reentry/import";
+        configuration = "cherry-pick";
       } else if (deployEnv === "demo") {
-        await $`COMMIT_SHA=${currentRevision} nx container @reentry/server --configuration demo`.pipe(
-          process.stdout,
-        );
-
-        // There is no import job for demo, instead we have a cloud run job that
-        // seeds the demo database
-        await $`COMMIT_SHA=${currentRevision} nx container @reentry/seed-demo --configuration demo`.pipe(
-          process.stdout,
-        );
+        projects = "@reentry/server @reentry/seed-demo";
+        configuration = "demo";
       }
+
+      await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
+        process.stdout,
+      );
 
       // Deploy any changes to the artifact registry if we're on staging
       if (deployEnv === "staging") {
@@ -887,12 +812,12 @@ if (
       }
 
       retryDeploy = false;
-      successfullyDeployed.push("Reentry server (v1)");
+      successfullyDeployed.push(reentryServerDisplayName);
     } catch (e) {
       const retryDeployPrompt = await inquirer.prompt({
         type: "confirm",
         name: "retryDeploy",
-        message: `Reentry server (v1) deploy failed with error: ${e}. Retry?`,
+        message: `${reentryServerDisplayName} deploy failed with error: ${e}. Retry?`,
         default: false,
       });
       retryDeploy = retryDeployPrompt.retryDeploy;
@@ -906,12 +831,11 @@ if (
     deployEnv === "production" ||
     deployEnv === "demo")
 ) {
-  console.log("Building and deploying the application...");
-
   let retryDeploy = false;
+
   do {
     // Deploy the app
-    console.log("Deploying reentry frontend...");
+    console.log(`Deploying ${reentryFrontendDisplayName}...`);
     try {
       if (deployEnv === "staging") {
         await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration ${deployEnv}`.pipe(
@@ -934,12 +858,12 @@ if (
       }
 
       retryDeploy = false;
-      successfullyDeployed.push("Reentry Frontend");
+      successfullyDeployed.push(reentryFrontendDisplayName);
     } catch (e) {
       const retryDeployPrompt = await inquirer.prompt({
         type: "confirm",
         name: "retryDeploy",
-        message: `Reentry frontend deploy failed with error: ${e}. Retry?`,
+        message: `${reentryFrontendDisplayName} deploy failed with error: ${e}. Retry?`,
         default: false,
       });
       retryDeploy = retryDeployPrompt.retryDeploy;
@@ -947,66 +871,34 @@ if (
   } while (retryDeploy);
 }
 
+// TODO: Add support for demo meeting assistant deploys
 if (
-  deployMeetingAssistantServer &&
+  deployMeetingAssistant &&
   (deployEnv === "staging" || deployEnv === "production")
 ) {
-  console.log("Building and deploying the application...");
-
-  // Start docker and configure docker to upload to container registry
-  // Only needed for staging deploys
-  if (
-    deployEnv === "staging" ||
-    (deployEnv === "production" && isCpDeploy) ||
-    deployEnv === "demo"
-  ) {
-    try {
-      await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
-        process.stdout,
-      );
-    } catch (e) {
-      console.error("Failed to configure docker for gcloud", e);
-    }
-  }
-
   let retryDeploy = false;
+
   do {
     // Deploy the app
-    console.log("Deploying Meeting Assistant backend services...");
+    console.log(`Deploying ${meetingAssistantDisplayName} backend services...`);
+
     try {
-      // We only need to build and push the docker containers if we are
-      // 1. deploying to staging
-      // 2. deploying a cherry-pick
-      // 3. deploying to demo
-      // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
-
+      let projects;
+      let configuration;
       if (deployEnv === "staging") {
-        await $`COMMIT_SHA=${currentRevision} nx container @meetings/server --configuration ${deployEnv}`.pipe(
-          process.stdout,
-        );
-
-        await $`COMMIT_SHA=${currentRevision} nx container @meetings/import --configuration ${deployEnv}`.pipe(
-          process.stdout,
-        );
+        projects = "@meetings/server @meetings/import";
+        configuration = "staging";
       } else if (deployEnv === "production" && isCpDeploy) {
-        await $`COMMIT_SHA=${currentRevision} nx container @meetings/server --configuration cherry-pick`.pipe(
-          process.stdout,
-        );
-
-        await $`COMMIT_SHA=${currentRevision} nx container @meetings/import --configuration cherry-pick`.pipe(
-          process.stdout,
-        );
+        projects = "@meetings/server @meetings/import";
+        configuration = "cherry-pick";
       } else if (deployEnv === "demo") {
-        await $`COMMIT_SHA=${currentRevision} nx container @meetings/server --configuration demo`.pipe(
-          process.stdout,
-        );
-
-        // There is no import job for demo, instead we have a cloud run job that
-        // seeds the demo database
-        await $`COMMIT_SHA=${currentRevision} nx container @meetings/seed-demo --configuration demo`.pipe(
-          process.stdout,
-        );
+        projects = "@meetings/server @meetings/seed-demo";
+        configuration = "demo";
       }
+
+      await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
+        process.stdout,
+      );
 
       // Deploy any changes to the artifact registry if we're on staging
       if (deployEnv === "staging") {
@@ -1040,12 +932,12 @@ if (
       }
 
       retryDeploy = false;
-      successfullyDeployed.push("Meeting Assistant Server");
+      successfullyDeployed.push(meetingAssistantDisplayName);
     } catch (e) {
       const retryDeployPrompt = await inquirer.prompt({
         type: "confirm",
         name: "retryDeploy",
-        message: `Meeting Assistant Server deploy failed with error: ${e}. Retry?`,
+        message: `${meetingAssistantDisplayName} deploy failed with error: ${e}. Retry?`,
         default: false,
       });
       retryDeploy = retryDeployPrompt.retryDeploy;
