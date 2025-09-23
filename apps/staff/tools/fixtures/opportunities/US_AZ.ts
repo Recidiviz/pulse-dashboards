@@ -73,12 +73,16 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "No unsatisfactory program ratings within 3 months",
         },
         {
-          key: "usAzNoViolationsAndEligibleLegalStatus",
-          text: "No disqualifying violations of major rules",
+          key: "usAzNoViolations",
+          text: "No disqualifying major incarceration violations",
         },
         {
           key: "usAzNoIneligibleDtpOffenseConvictions",
           text: "No disqualifying convictions",
+        },
+        {
+          key: "usAzIsUsCitizenOrLegalPermanentResident",
+          text: "Meets citizenship / legal permanent resident requirements",
         },
       ],
       emptyTabCopy: [],
@@ -105,7 +109,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "Inmates must be currently classified by the department as minimum or medium custody as determined by an objective risk assessment.",
         },
         {
-          key: "usAzNoViolationsAndEligibleLegalStatus",
+          key: "usAzNoViolations",
           text: "Has one or more violations preventing eligibility",
           tooltip:
             "Inmates must have no major violent violations and no nonviolent violations within the last 6 months.",
@@ -113,6 +117,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzNoDtpRemovalsFromSelfImprovementPrograms",
           text: "Has been removed from a Self Improvement Program during the current incarceration",
+        },
+        {
+          key: "usAzIsUsCitizenOrLegalPermanentResident",
+          text: "Does not meet citizenship / legal permanent resident requirements",
         },
       ],
       initialHeader: null,
@@ -194,12 +202,16 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "No unsatisfactory program ratings within 3 months",
         },
         {
-          key: "usAzNoViolationsAndEligibleLegalStatus",
-          text: "No disqualifying violations of major rules",
+          key: "usAzNoViolations",
+          text: "No disqualifying major incarceration violations",
         },
         {
           key: "usAzNoIneligibleTprOffenseConvictions",
           text: "No disqualifying convictions",
+        },
+        {
+          key: "usAzIsUsCitizenOrLegalPermanentResident",
+          text: "Meets citizenship / legal permanent resident requirements",
         },
       ],
       emptyTabCopy: [],
@@ -226,7 +238,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "Inmates must be currently classified by the department as minimum or medium custody as determined by an objective risk assessment.",
         },
         {
-          key: "usAzNoViolationsAndEligibleLegalStatus",
+          key: "usAzNoViolations",
           text: "Has one or more violations preventing eligibility",
           tooltip:
             "Inmates must have no major violent violations and no nonviolent violations within the last 6 months.",
@@ -234,6 +246,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzNoTprRemovalsFromSelfImprovementPrograms",
           text: "Has been removed from a Self Improvement Program during the current incarceration",
+        },
+        {
+          key: "usAzIsUsCitizenOrLegalPermanentResident",
+          text: "Does not meet citizenship / legal permanent resident requirements",
         },
       ],
       initialHeader: null,
@@ -318,8 +334,8 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "No unsatisfactory program ratings within 3 months",
         },
         {
-          key: "usAzNoViolationsAndEligibleLegalStatus",
-          text: "No disqualifying violations of major rules",
+          key: "usAzNoViolations",
+          text: "No disqualifying major incarceration violations",
         },
         {
           key: "usAzNoIneligibleDtpOffenseConvictions",
@@ -332,6 +348,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzWithin7DaysOfRecidivizDtpDate",
           text: "Upcoming projected DTP date{{#if recidivizDtpDate}}: {{date recidivizDtpDate}}{{/if}}",
+        },
+        {
+          key: "usAzIsUsCitizenOrLegalPermanentResident",
+          text: "Meets citizenship / legal permanent resident requirements",
         },
       ],
       emptyTabCopy: [],
@@ -362,8 +382,8 @@ export const mockApiOpportunityConfigurationResponse = {
             "Inmates must be currently classified by the department as minimum or medium custody as determined by an objective risk assessment.",
         },
         {
-          key: "usAzNoViolationsAndEligibleLegalStatus",
-          text: "Has one or more violations preventing eligibility",
+          key: "usAzNoViolations",
+          text: "Has one or more major incarceration violations preventing eligibility",
           tooltip:
             "Inmates must have no major violent violations and no nonviolent violations within the last 6 months.",
         },
@@ -374,6 +394,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzWithin7DaysOfRecidivizDtpDate",
           text: "Upcoming projected DTP date{{#if recidivizDtpDate}}: {{date recidivizDtpDate}}{{/if}}",
+        },
+        {
+          key: "usAzIsUsCitizenOrLegalPermanentResident",
+          text: "Does not meet citizenship / legal permanent resident requirements",
         },
       ],
       initialHeader: null,
@@ -555,8 +579,8 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "No unsatisfactory program ratings within 3 months",
         },
         {
-          key: "usAzNoViolationsAndEligibleLegalStatus",
-          text: "No disqualifying violations of major rules",
+          key: "usAzNoViolations",
+          text: "No disqualifying major incarceration violations",
           tooltip: "",
         },
         {
@@ -570,6 +594,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzWithin7DaysOfRecidivizTprDate",
           text: "Upcoming projected TPR date{{#if recidivizTprDate}}: {{date recidivizTprDate}}{{/if}}",
+        },
+        {
+          key: "usAzIsUsCitizenOrLegalPermanentResident",
+          text: "Meets citizenship / legal permanent resident requirements",
         },
       ],
       emptyTabCopy: [],
@@ -600,8 +628,8 @@ export const mockApiOpportunityConfigurationResponse = {
             "Inmates must be currently classified by the department as minimum or medium custody as determined by an objective risk assessment.",
         },
         {
-          key: "usAzNoViolationsAndEligibleLegalStatus",
-          text: "Has one or more violations preventing eligibility",
+          key: "usAzNoViolations",
+          text: "Has one or more major incarceration violations preventing eligibility",
           tooltip:
             "Inmates must have no major violent violations and no nonviolent violations within the last 6 months.",
         },
@@ -612,6 +640,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzWithin7DaysOfRecidivizTprDate",
           text: "Upcoming projected TPR date{{#if recidivizTprDate}}: {{date recidivizTprDate}}{{/if}}",
+        },
+        {
+          key: "usAzIsUsCitizenOrLegalPermanentResident",
+          text: "Does not meet citizenship / legal permanent resident requirements",
         },
       ],
       initialHeader: null,
@@ -825,6 +857,10 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "At this time, there are no clients who are almost eligible. Please navigate to one of the other tabs.",
         },
         {
+          tab: "Recently Transferred in ACIS",
+          text: "No clients for the selected officer(s) were marked as transferred within the last day. Clients stop appearing in this tab 24 hours after the change is confirmed in ACIS.",
+        },
+        {
           tab: "Marked Ineligible",
           text: "At this time, there are no clients who are marked ineligible. Please navigate to one of the other tabs.",
         },
@@ -875,7 +911,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading: null,
-      submittedTabTitle: "Transferred",
+      submittedTabTitle: "Recently Transferred in ACIS",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: [
@@ -884,12 +920,25 @@ export const mockApiOpportunityConfigurationResponse = {
           tabs: [
             "Eligible per ORAS",
             "Eligible per Initial Assessment",
-            "Transferred",
+            "Recently Transferred in ACIS",
             "Marked Ineligible",
           ],
         },
       ],
-      tabPrefaceCopy: [],
+      tabPrefaceCopy: [
+        {
+          tab: "Eligible per ORAS",
+          text: "Clients shown in this tab have received an ORAS. Their ORAS results and other ACIS data suggest that they are eligible to transfer to Administrative Supervision. If you can confirm they have stable housing, they should be transferred to Administrative Supervision per policy.",
+        },
+        {
+          tab: "Eligible per Initial Assessment",
+          text: "Clients shown here scored Low on their Initial Risk Assessment and do not require an ORAS. ACIS data suggest that they could be eligible to transfer to Administrative Supervision per policy. Please review 'Requirements to check'. If the client meets all criteria, they should be transferred to Administrative Supervision per policy.",
+        },
+        {
+          tab: "Recently Transferred in ACIS",
+          text: "Clients appear here after you confirm that their supervision level has been set to Administrative Supervision in ACIS. Clients who were successfully transferred will drop off this list after 24 hours. If a client continues to appear here, double check their supervision level in ACIS.",
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "AdminSupervision",
       zeroGrantsTooltip: null,

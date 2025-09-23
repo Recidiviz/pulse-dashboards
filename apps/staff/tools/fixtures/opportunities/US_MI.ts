@@ -304,7 +304,14 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 1,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "usMiNoClassIOrIiMisconductInSixMonthsAndNoSecurityAssessment",
+          text: "Will be 6-months misconduct-free on {{date sixMonthMisconductFreeDate}} and has not been assessed since {{date mostRecentAssessmentDate}}",
+          tooltip:
+            "Last assessment was completed on {{date mostRecentAssessmentDate}} and resident will be 6-month misconduct-free on {{date sixMonthMisconductFreeDate}}.",
+        },
+      ],
       initialHeader: null,
       isAlert: false,
       markSubmittedOptionsByTab: [

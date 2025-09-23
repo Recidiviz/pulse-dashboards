@@ -190,7 +190,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_ID",
       subcategoryHeadings: [],

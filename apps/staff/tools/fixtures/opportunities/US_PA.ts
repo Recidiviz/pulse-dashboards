@@ -109,7 +109,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "notSupervisionPastFullTermCompletionDateOrUpcoming90Days",
-          text: "Not past or within 90 days of max date",
+          text: "Not within 90 days of max date",
         },
       ],
       emptyTabCopy: [],
@@ -236,7 +236,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "notSupervisionPastFullTermCompletionDateOrUpcoming90Days",
-          text: "Not past or within 90 days of max date",
+          text: "Not within 90 days of max date",
         },
       ],
       emptyTabCopy: [],
