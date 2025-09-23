@@ -70,6 +70,22 @@ export const useRecording = ({
   const chunkCounterRef = useRef(0);
   const [chunkCount, setChunkCount] = useState(0);
 
+  const updateRecordingStatus = useCallback(
+    async (newStatus: RecordingStatus) => {
+      setRecordingStatus(newStatus);
+      setUiStatus(newStatus);
+
+      if (sessionId) {
+        try {
+          await updateStatus(sessionId, newStatus);
+        } catch (error) {
+          console.error("Failed to update backend status:", error);
+        }
+      }
+    },
+    [sessionId, updateStatus],
+  );
+
   // session recovery: check for paused sessions on mount and restore state
   useEffect(() => {
     if (!sessionData || !sessionId) {
@@ -77,15 +93,13 @@ export const useRecording = ({
     }
 
     // Check if this session was previously paused
-    const isSessionPaused = sessionData.status === "paused";
+    const isSessionPaused = sessionData.status === "paused" || sessionData.status === "recording";
 
     if (isSessionPaused) {
       console.log("Recovering paused session:", sessionId);
       console.log("Session data structure:", sessionData);
 
-      // Restore session state
-      setRecordingStatus("paused");
-      setUiStatus("paused");
+      updateRecordingStatus("paused");
 
       // Restore chunk counter from backend
       const restoredChunkCount = restoreChunkCounter(sessionData);
@@ -105,22 +119,6 @@ export const useRecording = ({
   const { mutateAsync: finalizeRecordingMutation } = $api.useMutation(
     "post",
     "/recordings/sessions/{session_id}/finalize",
-  );
-
-  const updateRecordingStatus = useCallback(
-    async (newStatus: RecordingStatus) => {
-      setRecordingStatus(newStatus);
-      setUiStatus(newStatus);
-
-      if (sessionId) {
-        try {
-          await updateStatus(sessionId, newStatus);
-        } catch (error) {
-          console.error("Failed to update backend status:", error);
-        }
-      }
-    },
-    [sessionId, updateStatus],
   );
 
   const queueChunk = useCallback(

@@ -15,9 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Box, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Paper,
+  Typography,
+} from "@mui/material";
+import { useRouter } from "next/navigation";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import EndAssessmentModal from "~@reentry/frontend/components/recording/modals/EndAssessmentModal";
 import LiveAssessmentModal from "~@reentry/frontend/components/recording/modals/LiveAssessmentModal";
@@ -50,8 +61,12 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
   const [modalConfirmAction, setModalConfirmAction] = useState<
     (() => void) | null
   >(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+
+  const blockNavigationRef = useRef(false);
 
   const audioCapabilities = useAudioCapabilities();
+  const router = useRouter();
 
   const handleRecordingStopped = () => {
     setRecordingStopped(true);
@@ -65,6 +80,41 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     sessionData,
     onRecordingStopped: handleRecordingStopped,
   });
+
+  // Block navigation when recording is active
+  useEffect(() => {
+    const isRecordingActive = recording.uiStatus === "recording";
+    blockNavigationRef.current = isRecordingActive;
+
+    if (isRecordingActive) {
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        e.preventDefault();
+        e.returnValue =
+          "You have an active recording. Are you sure you want to leave?";
+        return "You have an active recording. Are you sure you want to leave?";
+      };
+
+      const handlePopState = (e: PopStateEvent) => {
+        if (blockNavigationRef.current) {
+          e.preventDefault();
+          window.history.pushState(null, "", window.location.pathname);
+          setConfirmDialogOpen(true);
+        }
+        return;
+      };
+
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      window.addEventListener("popstate", handlePopState);
+      window.history.pushState(null, "", window.location.pathname);
+
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+        window.removeEventListener("popstate", handlePopState);
+      };
+    }
+    // Always return undefined if not recording
+    return undefined;
+  }, [recording.uiStatus]);
 
   // Select first available microphone by default
   useEffect(() => {
@@ -158,6 +208,55 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
         onClose={() => setEndAssessmentOpen(false)}
         onConfirm={handleEndAssessmentConfirm}
       />
+
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={() => {
+          setConfirmDialogOpen(false);
+        }}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
+      >
+        <DialogTitle id="confirm-dialog-title">Active Recording</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-dialog-description">
+            You have an active recording. Are you sure you want to leave?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setConfirmDialogOpen(false);
+            }}
+            color="primary"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              setConfirmDialogOpen(false);
+
+              // Pause the recording if it's currently recording
+              if (recording.uiStatus === "recording") {
+                recording.pauseRecording();
+              }
+
+              // Navigate based on client record availability
+              if (clientRecord?.pseudonymized_client_id) {
+                router.push(
+                  `/clients/intake/${clientRecord.pseudonymized_client_id}`,
+                );
+              } else {
+                router.back();
+              }
+            }}
+            color="error"
+            variant="contained"
+          >
+            Leave
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
