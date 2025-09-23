@@ -15,7 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./Button";
-export * from "./Dropdown";
-export * from "./Icon";
-export * from "./Menubar";
+import * as React from "react";
+
+import MenubarFocusManager from "./MenubarFocusManager";
+
+interface MenubarContextInterface {
+  focusManager: MenubarFocusManager;
+}
+
+const MenubarContext = React.createContext<MenubarContextInterface>({
+  focusManager: new MenubarFocusManager(null),
+});
+
+export default MenubarContext;
