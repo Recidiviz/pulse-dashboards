@@ -10,7 +10,6 @@
     "**/*.spec.jsx",
     "**/*.test.jsx",
     "vite.config.mts",
-    "src/test/**.{ts,tsx}"
   ],
   "include": ["src/**/*.ts"],
 }

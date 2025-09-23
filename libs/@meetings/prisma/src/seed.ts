@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+/* eslint-disable no-await-in-loop */
+
 import { faker } from "@faker-js/faker";
 import { PrismaPg } from "@prisma/adapter-pg";
 
@@ -36,25 +38,20 @@ async function main() {
   await prisma.client.deleteMany({});
   await prisma.staff.deleteMany({});
 
-  // Seed Staff
-  const numberOfStaff = 10;
-  const staffData: Prisma.StaffCreateInput[] = [];
-  for (let i = 0; i < numberOfStaff; i++) {
-    staffData.push({
-      staffId: i + 1,
-      stableStaffExternalId: `staff-ext-${i + 1}`,
+  // Seed single staff
+  const seededStaff = await prisma.staff.create({
+    data: {
+      staffId: 1,
+      stableStaffExternalId: `staff-ext-1`,
       stableStaffExternalIdType: "staff-ext-type-1",
-      pseudonymizedId: `staff-pid-${i + 1}`,
+      pseudonymizedId: `staff-pid-1`,
       givenNames: faker.person.firstName(),
       middleNames: faker.person.firstName(),
       surname: faker.person.lastName(),
       email: faker.internet.email(),
       stateCode: StateCode.US_NE,
-    });
-  }
-  await prisma.staff.createMany({ data: staffData });
-  const createdStaff = await prisma.staff.findMany();
-  const randomStaff = faker.helpers.arrayElement(createdStaff);
+    },
+  });
 
   // Seed Clients
   const numberOfClients = 10;
@@ -76,16 +73,26 @@ async function main() {
         create: {
           staff: {
             connect: {
-              staffId: randomStaff.staffId,
+              staffId: seededStaff.staffId,
             },
           },
         },
       },
       supervisionType: "PAROLE",
     };
-    // eslint-disable-next-line no-await-in-loop -- this is a seed script
     const client = await prisma.client.create({ data: clientData });
     createdClients.push(client);
+  }
+
+  // Seed a meeting for every client
+  for (const createdClient of createdClients) {
+    await prisma.meeting.create({
+      data: {
+        startTime: faker.date.future(),
+        clientId: createdClient.personId,
+        staffId: seededStaff.staffId,
+      },
+    });
   }
 }
 
