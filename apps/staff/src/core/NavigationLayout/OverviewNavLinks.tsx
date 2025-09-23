@@ -66,7 +66,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   return (
     <>
       {enabledInsights && (
-        <NavLink to={`/${DASHBOARD_VIEWS.insights}`}>Overview</NavLink>
+        <NavLink to={`/${DASHBOARD_VIEWS.insights}`} role="menuitem">Overview</NavLink>
       )}
       {enableWorkflows && (
         <NavLink
@@ -78,17 +78,19 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
               )) ||
             pathname.includes("tasks")
           }
+          role="menuitem"
         >
           {workflowsHomepageName}
         </NavLink>
       )}
       {enableMilestones && (
-        <NavLink to={workflowsUrl("milestones")}>Kudos</NavLink>
+        <NavLink to={workflowsUrl("milestones")} role="menuitem">Kudos</NavLink>
       )}
       {isSupervisionTasksLinkEnabled && (
         <NavLink
           to={workflowsUrl("tasks")}
           onClick={() => workflowsStore.updateActiveSystem("SUPERVISION")}
+          role="menuitem"
         >
           Tasks
         </NavLink>
@@ -104,6 +106,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
                 key={systemId}
                 to={workflowsUrl(path)}
                 onClick={() => workflowsStore.updateActiveSystem(systemId)}
+                role="menuitem"
               >
                 {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
               </NavLink>

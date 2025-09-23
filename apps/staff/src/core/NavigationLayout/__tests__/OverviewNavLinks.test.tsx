@@ -104,14 +104,18 @@ describe("OverviewNavLinks tests", () => {
   it("Should render a link for each page option", async () => {
     renderLinks();
 
-    await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(1));
+    await waitFor(() =>
+      expect(screen.getAllByRole("menuitem")).toHaveLength(1),
+    );
   });
 
   it("Should render a link for insights if enabled", async () => {
     rootStoreMock.userStore.userAllowedNavigation.insights = ["page1"];
     renderLinks();
 
-    await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(2));
+    await waitFor(() =>
+      expect(screen.getAllByRole("menuitem")).toHaveLength(2),
+    );
   });
 
   it("Should render a link for Tasks page if enabled", async () => {
@@ -119,7 +123,9 @@ describe("OverviewNavLinks tests", () => {
     renderLinks();
 
     await waitFor(() =>
-      expect(screen.getByRole("link", { name: "Tasks" })).toBeInTheDocument(),
+      expect(
+        screen.getByRole("menuitem", { name: "Tasks" }),
+      ).toBeInTheDocument(),
     );
   });
 
@@ -135,7 +141,9 @@ describe("OverviewNavLinks tests", () => {
     renderLinks();
 
     await waitFor(() =>
-      expect(screen.getByRole("link", { name: "Clients" })).toBeInTheDocument(),
+      expect(
+        screen.getByRole("menuitem", { name: "Clients" }),
+      ).toBeInTheDocument(),
     );
   });
 
@@ -145,7 +153,7 @@ describe("OverviewNavLinks tests", () => {
 
     await waitFor(() =>
       expect(
-        screen.getByRole("link", { name: "Residents" }),
+        screen.getByRole("menuitem", { name: "Residents" }),
       ).toBeInTheDocument(),
     );
   });
@@ -159,7 +167,9 @@ describe("OverviewNavLinks tests", () => {
     rootStoreMock.workflowsStore.supportsMultipleSystems = true;
     renderLinks();
 
-    await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(1));
+    await waitFor(() =>
+      expect(screen.getAllByRole("menuitem")).toHaveLength(1),
+    );
   });
 
   it("Should render a link for Residents and Clients page if not on mobile", async () => {
@@ -172,9 +182,11 @@ describe("OverviewNavLinks tests", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("link", { name: "Residents" }),
+        screen.getByRole("menuitem", { name: "Residents" }),
       ).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "Clients" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("menuitem", { name: "Clients" }),
+      ).toBeInTheDocument();
     });
   });
 });

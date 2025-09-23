@@ -67,7 +67,7 @@ const PageNavigation: React.FC = () => {
             page?.toLowerCase() === pageOption.toLowerCase(),
         })}
         role="menuitem"
-        tabIndex={0}
+        tabIndex={-1}
       >
         {/* @ts-ignore */}
         {mergePageAndMethodologyCopy?.[pageOption]?.title}

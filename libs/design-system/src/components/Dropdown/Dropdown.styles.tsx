@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled, { css } from "styled-components/macro";
 
-import { palette, spacing, typography } from "../../styles";
+import { palette } from "../../styles";
 import { Button } from "../Button";
 
 export const MenuItemElement = styled.button.attrs({

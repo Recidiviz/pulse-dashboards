@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ import {
   DropdownToggle,
   Icon,
   IconSVG,
+  Menubar,
   palette,
 } from "~design-system";
 import { psiUrl } from "~sentencing-client";
@@ -57,7 +58,7 @@ const Banner = styled.div`
   height: ${rem(NAV_BAR_HEIGHT)};
 `;
 
-const NavContainer = styled.nav<{
+const NavContainer = styled.div<{
   isFixed?: boolean;
   alignBottom?: boolean;
   backgroundColor?: string;
@@ -99,14 +100,10 @@ const NavLinks = styled.ul`
   height: 4rem;
 
   a {
-    ${typography.Sans14}
     color: ${palette.slate85};
     text-decoration: none !important;
     margin-right: 20px;
     padding: 0 4px;
-    height: 100%;
-    display: flex;
-    align-items: center;
     border-top: 4px solid transparent;
     font-weight: 500;
     transition: color ease 500ms;
@@ -125,6 +122,14 @@ const NavLinks = styled.ul`
 
 const DropdownProfile = styled(Dropdown)`
   margin-top: 5px;
+
+  & button {
+    &:focus-visible {
+      border: 1px solid ${palette.signal.links} !important;
+      border-radius: 8px;
+      margin-bottom: -5px;
+    }
+  }
 `;
 
 const DropdownProfileMenu = styled(DropdownMenu)`
@@ -204,10 +209,8 @@ const MainLogoNavLink = styled(Link)`
   ${Separator} {
     padding: 0 0.75rem;
   }
-  &:focus,
-  &:focus-within,
-  &:active,
-  &:hover {
+
+  &:focus-visible {
     border: 1px solid ${palette.signal.links} !important;
     border-radius: 8px;
   }
@@ -284,8 +287,8 @@ function MainLogo({
   if (!enabled) return null;
 
   return (
-    <MainLogoNavLink to="/" role="menuitem" tabIndex={0}>
-      <RecidivizLogo />
+    <MainLogoNavLink to="/" role="menuitem" aria-label="Go to Recidiviz Home">
+      <RecidivizLogo aria-hidden="true" />
       {enabledLanternLogo && (
         <>
           <Separator>|</Separator>
@@ -561,56 +564,60 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           isFixed={isFixed}
           backgroundColor={backgroundColor}
           hasBorder={!isNaked}
-          role="navigation"
           aria-label="Main navigation"
         >
-          <MainLogo
-            enabled={!isMobile || !isFixed}
-            enabledLanternLogo={isInsightsLanternState && isInsightsView}
-          />
-          {!isNaked && (
-            <NavMenu
-              alignBottom={isMobile && isFixed}
-              data-intercom-target="Profile"
-            >
-              <NavLinks>{children}</NavLinks>
-              {isMobile ? (
-                <>
-                  <ProfileButtonMobile
-                    order={isMobile && -1}
-                    onClick={() => setDrawerIsOpen(true)}
-                  >
-                    <UserAvatar />
-                  </ProfileButtonMobile>
-                  <Drawer
-                    bodyStyles={DrawerBodyStyles}
-                    overlayStyles={DrawerOverlayStyles}
-                    position="bottom"
-                    closeButton={false}
-                    isShowing={drawerIsOpen}
-                    hide={() => setDrawerIsOpen(false)}
-                  >
-                    <DrawerProfileMenu>{quickLinks}</DrawerProfileMenu>
-                  </Drawer>
-                </>
-              ) : (
-                <DropdownProfile>
-                  <DropdownToggle
-                    kind="link"
-                    aria-label="Profile dropdown button"
-                    role="menuitem"
-                    tabIndex={0}
-                    className="ProfileDropdownButton"
-                  >
-                    <UserAvatar />
-                  </DropdownToggle>
-                  <DropdownProfileMenu alignment="right">
-                    {quickLinks}
-                  </DropdownProfileMenu>
-                </DropdownProfile>
-              )}
-            </NavMenu>
-          )}
+          <Menubar aria-label="Main navigation">
+            <MainLogo
+              enabled={!isMobile || !isFixed}
+              enabledLanternLogo={isInsightsLanternState && isInsightsView}
+            />
+            {!isNaked ? (
+              <NavMenu
+                alignBottom={isMobile && isFixed}
+                data-intercom-target="Profile"
+              >
+                <NavLinks>{children}</NavLinks>
+                {isMobile ? (
+                  <>
+                    <ProfileButtonMobile
+                      order={isMobile && -1}
+                      onClick={() => setDrawerIsOpen(true)}
+                    >
+                      <UserAvatar />
+                    </ProfileButtonMobile>
+                    <Drawer
+                      bodyStyles={DrawerBodyStyles}
+                      overlayStyles={DrawerOverlayStyles}
+                      position="bottom"
+                      closeButton={false}
+                      isShowing={drawerIsOpen}
+                      hide={() => setDrawerIsOpen(false)}
+                    >
+                      <DrawerProfileMenu>{quickLinks}</DrawerProfileMenu>
+                    </Drawer>
+                  </>
+                ) : (
+                  <DropdownProfile>
+                    <DropdownToggle
+                      kind="link"
+                      aria-label="Profile dropdown button"
+                      role="menuitem"
+                      className="ProfileDropdownButton"
+                      // Override the tabIndex in DropdownToggle since this is in a Menubar
+                      tabIndex={-1}
+                    >
+                      <UserAvatar />
+                    </DropdownToggle>
+                    <DropdownProfileMenu alignment="right">
+                      {quickLinks}
+                    </DropdownProfileMenu>
+                  </DropdownProfile>
+                )}
+              </NavMenu>
+            ) : (
+              <div />
+            )}
+          </Menubar>
         </NavContainer>
         {!isMobile && isFixed && <Banner />}
       </Wrapper>

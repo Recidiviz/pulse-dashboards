@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { typography } from "@recidiviz/design-system";
 import * as React from "react";
 import { useRef, useState } from "react";
 import styled from "styled-components/macro";
@@ -27,7 +28,15 @@ const MenuBarElement = styled.nav`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  align-items: center;
+  height: 100%;
+
+  a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    ${typography.Sans14}
+  }
+
   &:has(:focus-visible) {
     margin: -5px;
     border: 1px solid ${palette.signal.links};
