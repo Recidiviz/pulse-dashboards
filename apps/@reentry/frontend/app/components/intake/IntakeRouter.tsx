@@ -26,6 +26,7 @@ import IntakeCompleted from "~@reentry/frontend/components/intake/IntakeComplete
 import {
   PreIntakeNoteOne,
   PreIntakeNoteTwo,
+  PreIntakeVideo,
 } from "~@reentry/frontend/components/intake/PreIntakeNote";
 import { useSocket } from "~@reentry/frontend/websockets/IntakeSocketContext";
 
@@ -39,7 +40,7 @@ export default function IntakeRouter() {
     has_address,
   } = intakeContext;
   const { startConversation } = intakeDispatchContext;
-
+  const isFromUtah = intakeContext.client_state === "US_UT";
   const [preIntakeStep, setPreIntakeStep] = useState<"one" | "two">(() => {
     if (typeof window !== "undefined") {
       const saved = sessionStorage.getItem("preIntakeStep");
@@ -116,17 +117,21 @@ export default function IntakeRouter() {
             }}
           />
         )}
+        {isFromUtah ? <>
+          <PreIntakeVideo onStartIntake={handleStartConversation} />
+        </> : <>
+          {isPreIntake && preIntakeStep === "one" && (
+            <PreIntakeNoteOne onContinue={() => setPreIntakeStep("two")} />
+          )}
 
-        {isPreIntake && preIntakeStep === "one" && (
-          <PreIntakeNoteOne onContinue={() => setPreIntakeStep("two")} />
-        )}
+          {isPreIntake && preIntakeStep === "two" && (
+            <PreIntakeNoteTwo
+              onGoBack={() => setPreIntakeStep("one")}
+              onStartIntake={handleStartConversation}
+            />
+          )}
+        </>}
 
-        {isPreIntake && preIntakeStep === "two" && (
-          <PreIntakeNoteTwo
-            onGoBack={() => setPreIntakeStep("one")}
-            onStartIntake={handleStartConversation}
-          />
-        )}
 
         {isConversationInProgress && <ConversationLayout />}
       </div>

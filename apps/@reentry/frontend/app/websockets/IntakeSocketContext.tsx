@@ -51,6 +51,7 @@ export interface IntakeSocketContextType {
   isLoading: boolean;
   error?: IntakeErrorType;
   client_name: string | null;
+  client_state: string | null;
   conversationStarted: boolean;
   has_accepted_terms: boolean;
   has_address: boolean;
@@ -125,6 +126,7 @@ type InitializeIntakeMetaAction = {
   content: {
     status: components["schemas"]["IntakeStatus"];
     client_name?: string | null;
+    client_state?: string | null;
     current_section_messages?: components["schemas"]["IntakeMessageResponse"][];
     has_accepted_terms?: boolean;
   };
@@ -289,6 +291,7 @@ const intakeReducer = (
         ...state,
         intakeStatus: action.content.status,
         client_name: action.content.client_name || null,
+        client_state: action.content.client_state || null,
         messages: action.content.current_section_messages ?? [],
         has_accepted_terms: action.content.has_accepted_terms || false,
         isLoading: false,
@@ -339,6 +342,7 @@ export function IntakeSocketProvider({
     currentSection: null,
     intakeStatus: undefined,
     client_name: "",
+    client_state: null,
     conversationStarted: false,
     has_accepted_terms: false,
     has_address: false,
@@ -577,6 +581,7 @@ export function IntakeSocketProvider({
           status: intakeData.status,
           client_name: intakeData.client_name,
           current_section_messages: intakeData.current_section_messages,
+          client_state: intakeData.client_state,
           has_accepted_terms: intakeData.has_accepted_terms,
         },
       });

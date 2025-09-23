@@ -63,6 +63,7 @@ class IntakeWithSectionsAndMessagesResponse(IntakeWithSectionsResponse):
     current_section_messages: List[IntakeMessageResponse]
     client_name: str | None = None
     has_accepted_terms: bool = False
+    client_state: str | None = None
 
 
 @router.post(
@@ -196,12 +197,12 @@ async def get_client_intake(
                     ),
                 )
             )
-
         return IntakeWithSectionsAndMessagesResponse(
             **intake.model_dump(by_alias=True, exclude_none=True),
             has_address=intake.has_address,
             client_intake_sections=client_sections_response,
             current_section_messages=[],
+            client_state=client_response.state_code,
             client_name=client_response.full_name.formatted_full_name(),
             has_accepted_terms=has_accepted_terms,
         )
