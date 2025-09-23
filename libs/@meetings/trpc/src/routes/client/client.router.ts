@@ -43,6 +43,7 @@ export const clientRouter = router({
             address,
           },
           select: {
+            id: true,
             startTime: true,
             endTime: true,
             address: true,

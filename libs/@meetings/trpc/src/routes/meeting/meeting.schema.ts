@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { testTRPCClient } from "~@meetings/trpc/test/setup";
-import { fakeClient } from "~@meetings/trpc/test/setup/seed";
+import { z } from "zod";
 
-describe("staff router", () => {
-  describe("getClients", () => {
-    test("returns list of clients", async () => {
-      const result = await testTRPCClient.staff.getClients.query();
-      expect(result).toEqual([
-        {
-          givenNames: fakeClient.givenNames,
-          surname: fakeClient.surname,
-          displayPersonExternalId: fakeClient.displayPersonExternalId,
-        },
-      ]);
-    });
-  });
+export const getSignedUrlForRecordingInputSchema = z.object({
+  clientId: z.bigint(),
+  meetingId: z.string(),
 });

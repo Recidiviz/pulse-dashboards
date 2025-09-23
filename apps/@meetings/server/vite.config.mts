@@ -58,6 +58,8 @@ export default defineConfig(() => ({
       SENTRY_ENV: process.env["SENTRY_ENV"] ?? "test",
       AUTH0_AUDIENCE: process.env["AUTH0_AUDIENCE"] ?? "test",
       AUTH0_DOMAIN: process.env["AUTH0_DOMAIN"] ?? "test",
+      AUDIO_RECORDINGS_BUCKET_NAME:
+        process.env["AUDIO_RECORDINGS_BUCKET_NAME"] ?? "test-audio-bucket",
     },
   },
 }));

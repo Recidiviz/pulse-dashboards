@@ -24,6 +24,7 @@ import {
 import Fastify from "fastify";
 import { FastifyInstance } from "fastify/types/instance";
 import fastifyAuth0Verify from "fastify-auth0-verify";
+import { MockStorage } from "mock-gcs";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
 import { beforeAll, beforeEach } from "vitest";
@@ -34,7 +35,6 @@ import { createContext } from "~@meetings/trpc/context";
 import { AppRouter, appRouter } from "~@meetings/trpc/router";
 import { fakeStaff, seed } from "~@meetings/trpc/test/setup/seed";
 import { resetDb } from "~@meetings/trpc/test/setup/utils";
-
 export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])
   : 3003;
@@ -48,7 +48,15 @@ const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
 
+export const mockStorage = new MockStorage();
+
 beforeAll(async () => {
+  vi.mock("@google-cloud/storage", () => ({
+    Storage: vi.fn().mockImplementation(() => {
+      return mockStorage;
+    }),
+  }));
+
   init({
     dsn: process.env["SENTRY_DSN"],
     transport: sentryTransport,

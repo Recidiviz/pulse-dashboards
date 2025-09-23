@@ -32,6 +32,11 @@ export default defineConfig(() => ({
     environment: "node",
     include: ["__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
+    // We only need to fake out the Date object for our tests.
+    // There is a known issue with Vitest and faking out everything: https://github.com/vitest-dev/vitest/issues/7790
+    fakeTimers: {
+      toFake: ["Date"],
+    },
     poolOptions: {
       forks: {
         singleFork: true,
@@ -58,6 +63,8 @@ export default defineConfig(() => ({
         process.env["SENTRY_DSN"] ??
         "https://4237e42b7c1d1964233e3a993f150553@o432474.ingest.us.sentry.io/4509985399373824",
       SENTRY_ENV: process.env["SENTRY_ENV"] ?? "test",
+      AUDIO_RECORDINGS_BUCKET_NAME:
+        process.env["AUDIO_RECORDINGS_BUCKET_NAME"] ?? "test-audio-bucket",
     },
   },
 }));

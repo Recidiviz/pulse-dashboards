@@ -54,6 +54,21 @@ export const fakeClient = {
   supervisionType: "PAROLE",
 } satisfies Prisma.ClientCreateInput;
 
+export const fakeMeeting = {
+  id: "meeting-1",
+  staff: {
+    connect: {
+      staffId: fakeStaff.staffId,
+    },
+  },
+  client: {
+    connect: {
+      personId: fakeClient.personId,
+    },
+  },
+  startTime: new Date(),
+} satisfies Prisma.MeetingCreateInput;
+
 export async function seed(prismaClient: PrismaClient) {
   // Seed Data
   await prismaClient.staff.create({
@@ -62,5 +77,9 @@ export async function seed(prismaClient: PrismaClient) {
 
   await prismaClient.client.create({
     data: fakeClient,
+  });
+
+  await prismaClient.meeting.create({
+    data: fakeMeeting,
   });
 }
