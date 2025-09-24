@@ -769,7 +769,7 @@ if (
 
   do {
     // Deploy the app
-    console.log(`Deploying ${reentryServerDisplayName}...`);
+    console.log(`Deploying ${reentryBackendV1DisplayName}...`);
 
     try {
       let projects;
@@ -827,12 +827,12 @@ if (
       }
 
       retryDeploy = false;
-      successfullyDeployed.push(reentryServerDisplayName);
+      successfullyDeployed.push(reentryBackendV1DisplayName);
     } catch (e) {
       const retryDeployPrompt = await inquirer.prompt({
         type: "confirm",
         name: "retryDeploy",
-        message: `${reentryServerDisplayName} deploy failed with error: ${e}. Retry?`,
+        message: `${reentryBackendV1DisplayName} deploy failed with error: ${e}. Retry?`,
         default: false,
       });
       retryDeploy = retryDeployPrompt.retryDeploy;
