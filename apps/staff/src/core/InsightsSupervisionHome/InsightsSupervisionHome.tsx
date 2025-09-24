@@ -34,13 +34,29 @@ export const InsightsSupervisionHome = observer(
       return <Navigate to={insightsUrl("supervisionSupervisorsList")} />;
     }
 
-    if (supervisionStore.currentSupervisorUser) {
+    if (
+      supervisionStore.currentSupervisorUser
+    ) {
       return (
         <Navigate
           replace
           to={insightsUrl("supervisionSupervisor", {
             supervisorPseudoId:
               supervisionStore.currentSupervisorUser.pseudonymizedId,
+          })}
+        />
+      );
+    }
+
+    if (
+      supervisionStore.currentOfficerUser
+    ) {
+      return (
+        <Navigate
+          replace
+          to={insightsUrl("supervisionStaff", {
+            officerPseudoId:
+              supervisionStore.currentOfficerUser.pseudonymizedId,
           })}
         />
       );

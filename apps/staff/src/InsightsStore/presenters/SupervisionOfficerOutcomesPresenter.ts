@@ -81,7 +81,7 @@ export class SupervisionOfficerOutcomesPresenter extends SupervisionOfficerPrese
    * excluded from outcomes.
    */
   get highlightedOfficers(): HighlightedOfficersDetail[] {
-    if (isExcludedSupervisionOfficer(this.officerRecord)) return [];
+    if (isExcludedSupervisionOfficer(this.officerRecord) || this.isCurrentOfficerUserRestrictedFromSupervisorsList) return [];
 
     // Not expected in practice, but needed for type safety
     if (!this.officerOutcomes || !this.officerRecord) {
