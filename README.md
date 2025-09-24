@@ -185,3 +185,25 @@ The below instructions apply to creating an app that doesn't have a UI as the cl
    ensures nx doesn't set up our testing framework with jest automatically, since we use vitest.
 2. Inspect any changes to the <code>yarn.lock</code> and <code>package.json</code> to look for any unnecessary changes made by the nx generator. You
    might also want to check if the Fastify version was updated by searching for <code>fastify@</code> in <code>yarn.lock</code>.
+
+## Security
+
+### NPM Package Security
+
+This repository implements a 72-hour minimum package age gate to protect against supply chain attacks on npm packages.
+
+#### 72-Hour Package Age Gate - ACTIVE ✅
+
+Packages must be at least 72 hours old before installation. This protection is automatically enforced by Yarn 4.10.3+.
+
+```yaml
+npmMinimalAgeGate: 4320  # 72 hours in minutes - NOW WORKING
+```
+
+#### Verification
+
+To verify the 72-hour age gate is active:
+```bash
+yarn config get npmMinimalAgeGate
+# Should return: 4320
+```
