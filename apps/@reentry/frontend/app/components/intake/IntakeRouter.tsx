@@ -117,7 +117,7 @@ export default function IntakeRouter() {
             }}
           />
         )}
-        {isFromUtah ? <>
+        {isFromUtah && isPreIntake ? <>
           <PreIntakeVideo onStartIntake={handleStartConversation} />
         </> : <>
           {isPreIntake && preIntakeStep === "one" && (

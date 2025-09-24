@@ -73,7 +73,7 @@
 	--gray-350: #e9eded;
 	--gray-400: #e2e8f0;
 	--gray-500: #525454;
-	--gray-600: #4a5568; 
+	--gray-600: #4a5568;
 	--gray-700: #6b7280;
 
 	--overlay-50: rgba(0, 0, 0, 0.5);
@@ -128,4 +128,31 @@ div.rdt_TableHead svg.MuiSvgIcon-root {
 	visibility: visible !important;
 	width: 20px !important;
 	height: 20px !important; /* add height for proportional scaling */
+}
+
+.video-no-seekbar::-webkit-media-controls-timeline {
+  display: none !important;
+}
+
+.video-no-seekbar::-webkit-media-controls-current-time-display {
+  display: none !important;
+}
+
+.video-no-seekbar::-webkit-media-controls-time-remaining-display {
+  display: none !important;
+}
+
+/* Keep these visible for subtitles */
+.video-no-seekbar::-webkit-media-controls-closed-captions-container {
+  display: block !important;
+  margin-bottom: 1rem;
+}
+
+.video-no-seekbar::-webkit-media-controls-closed-captions-track-list {
+  display: block !important;
+}
+
+.video-no-seekbar::-webkit-media-text-track-display {
+  top: 75% !important;
+  position: relative !important;
 }

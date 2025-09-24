@@ -17,7 +17,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface PreIntakeNoteOneProps {
   onContinue: () => void;
@@ -59,7 +59,7 @@ const PreIntakeNoteOne: React.FC<PreIntakeNoteOneProps> = ({ onContinue }) => {
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-center gap-4 mt-10">
+          <div className="flex justify-center gap-4 mt-5">
             <button
               type="button"
               onClick={handleGoBack}
@@ -214,15 +214,18 @@ interface PreIntakeVideoProps {
 
 const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
   const handleGoBack = () => {
-    window.history.back();
+    sessionStorage.removeItem("intake_token");
+    window.location.reload();
   };
+  const videoRef = useRef(null);
 
   const [isChecked, setIsChecked] = useState(false);
+  const [hasWatchedFullVideo, setHasWatchedFullVideo] = useState(false);
 
   return (
     <div className="flex flex-1 items-center justify-center px-6 py-[2vh]">
       <div className="w-full max-w-3xl md:max-w-[714px]">
-        <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg w-[714px] px-[48px] pt-[56px] pb-[40px] flex flex-col justify-between min-h-[684px]">
+        <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg w-[714px] px-[48px] pt-[10px] pb-[10px] flex flex-col justify-between">
           <div>
             <h1 className="font-['Libre_Baskerville'] font-normal text-[32px] leading-[40px] tracking-[-0.04em] text-black text-center mb-8">
               Your Intake
@@ -242,16 +245,17 @@ const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
             {/* Video Placeholder */}
             <div className="w-full max-w-[520px] h-[293px] bg-[#E5E7EB] rounded-lg flex items-center justify-center">
               <video
-                className="w-full h-full border-1 border-gray-400 border-l-transparent flex items-center justify-center"
+                ref={videoRef}
+                className="w-full h-full border-1 border-gray-400 border-l-transparent flex items-center justify-center video-no-seekbar"
                 width="320"
                 height="240"
-                preload="none"
                 controls
-                controlsList="noplaybackrate noremoteplayback nodownload nopictureinpicture"
+                controlsList="noplaybackrate noremoteplayback nodownload nopictureinpicture noseekbar"
+                onEnded={() => setHasWatchedFullVideo(true)}
               >
                 <source src="/videos/intake-video.mp4" type="video/mp4" />
                 <track
-                  src="/videos/intake-subtitles.mp4"
+                  src="/videos/intake-subtitles.vtt"
                   kind="subtitles"
                   srcLang="en"
                   label="English"
@@ -295,22 +299,30 @@ const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
               Go Back
             </button>
 
-            <button
-              type="button"
-              onClick={onStartIntake}
-              disabled={!isChecked}
-              className={`w-[269px] h-[48px] px-8 py-3 rounded-md
+            <div className="relative group">
+              <button
+                type="button"
+                onClick={onStartIntake}
+                disabled={!isChecked || !hasWatchedFullVideo}
+                className={`w-[269px] h-[48px] px-8 py-3 rounded-md
 							font-medium font-['Public_Sans']
 							text-[14px] leading-[24px] tracking-[-0.01em]
 							border border-[#35536233] transition-all duration-200
 							${
-                isChecked
+                isChecked && hasWatchedFullVideo
                   ? "bg-[#00665F] text-white hover:opacity-80"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
-            >
-              Start Intake
-            </button>
+              >
+                Start Intake
+              </button>
+              {(!isChecked || !hasWatchedFullVideo) && (
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                  Please watch the full video and check the box to continue
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
