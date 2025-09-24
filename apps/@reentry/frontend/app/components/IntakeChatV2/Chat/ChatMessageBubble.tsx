@@ -73,7 +73,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
 
         <div className={styles["bubbleWrapper"]}>
           <div className={`${styles["bubble"]} ${bubbleClass}`}>
-            <Typography variant="body1" className={styles["bubbleText"]}>
+            <Typography variant="body1" className={`${styles["bubbleText"]} ${isUser ? "case-worker-message" : "user-message"}`}>
               {content}
             </Typography>
           </div>

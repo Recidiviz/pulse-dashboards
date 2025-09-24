@@ -132,7 +132,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-start sm:flex-row sm:items-start">
+        <div className="flex flex-col items-start sm:flex-row sm:items-start case-worker-message">
           {/* Caseworker Avatar */}
           <div className="flex-shrink-0 mr-2">
             <CaseWorkerAvatar />
