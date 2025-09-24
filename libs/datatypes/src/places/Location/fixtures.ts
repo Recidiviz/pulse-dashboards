@@ -60,6 +60,13 @@ export const locationRecordFixtures: Array<LocationRecord> = [
     id: "CRC PRC",
     name: "Phobos Reentry Center",
   },
+  {
+    stateCode: "US_ID",
+    system: "SUPERVISION",
+    idType: "districtId",
+    id: "DISTRICT1",
+    name: "District 1",
+  },
 
   //
   // Massachusetts

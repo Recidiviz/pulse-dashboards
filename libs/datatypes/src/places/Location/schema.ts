@@ -17,8 +17,6 @@
 
 import { z } from "zod";
 
-import { clientRecordObjectSchema } from "../../people/Client/objectOnlySchema";
-import { residentRecordObjectSchema } from "../../people/Resident/objectOnlySchema";
 import { systemIdEnum } from "../System/SystemId/schema";
 
 export const locationRecordSchema = z.object({
@@ -26,10 +24,7 @@ export const locationRecordSchema = z.object({
   id: z.string(),
   name: z.string(),
   system: systemIdEnum,
-  idType: clientRecordObjectSchema
-    .keyof()
-    .or(residentRecordObjectSchema.keyof())
-    .or(z.literal("crcFacilityId")),
+  idType: z.enum(["facilityId", "facilityUnitId", "crcFacilityId", "districtId"]),
 });
 
 export type LocationRecord = z.infer<typeof locationRecordSchema>;

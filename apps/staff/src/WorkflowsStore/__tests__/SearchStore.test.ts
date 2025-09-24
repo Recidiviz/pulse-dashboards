@@ -306,6 +306,7 @@ describe("availableSearchables", () => {
   test("when there are more than one search types", async () => {
     workflowsStore.activeSystemConfig = {
       search: [
+        { searchType: "DISTRICT", searchTitle: "district" },
         { searchType: "FACILITY", searchTitle: "facility" },
         { searchType: "OFFICER", searchTitle: "officer" },
       ],
@@ -324,7 +325,7 @@ describe("availableSearchables", () => {
     expect(actual).toMatchInlineSnapshot(`
       [
         {
-          "groupLabel": "All Locations",
+          "groupLabel": "All Facilities",
           "searchables": [
             {
               "searchId": "FAC1",

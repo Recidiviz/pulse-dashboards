@@ -17,6 +17,7 @@
 
 import {
   ClientRecord,
+  LocationRecord,
   MilestoneType,
   ResidentRecord,
   StaffRecord,
@@ -203,7 +204,7 @@ export const locationIdsBySearchType = {
   FACILITY: "facilityId",
   FACILITY_UNIT: "facilityUnitId",
   US_ID_CRC_FACILITY: "crcFacilityId",
-} as const satisfies Partial<Record<SearchType, string>>;
+} as const satisfies Partial<Record<SearchType, LocationRecord["idType"]>>;
 
 export type LocationSearchType = keyof typeof locationIdsBySearchType;
 

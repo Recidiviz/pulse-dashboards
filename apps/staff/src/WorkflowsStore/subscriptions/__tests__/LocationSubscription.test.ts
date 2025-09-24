@@ -121,6 +121,7 @@ describe("LocationSubscription tests", () => {
       // This is choosing the locationIdType for location search
       // instead of searchField for US_ID since the locations have idType = districtId
       expect(whereMock).toHaveBeenCalledWith("idType", "==", "districtId");
+      expect(whereMock).toHaveBeenCalledWith("idType", "==", "facilityId");
       expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ID");
     });
   });

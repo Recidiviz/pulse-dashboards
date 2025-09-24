@@ -35,29 +35,33 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
   }
 
   get dataSource(): Query | undefined {
-
-    const { activeSystem, systemConfigFor } = this.rootStore.workflowsStore;
-
-    const { search } =
-      systemConfigFor( activeSystem === "ALL" || !activeSystem ? "SUPERVISION" : activeSystem);
-
     const stateCode = this.rootStore.currentTenantId;
     if (!stateCode) return;
 
-    // The conditions that are applied with a logical OR
-    // A person should match if they match searchId1 OR searchId2
-    const orConditions = search.flatMap(({ searchType }) =>
-      searchType in locationIdsBySearchType
-        ? [
-            where(
-              "idType",
-              "==",
-              // `searchType in locationIdsBySearchType` implies searchType is a LocationSearchType
-              locationIdsBySearchType[searchType as LocationSearchType],
-            ),
-          ]
-        : [],
-    );
+    const { activeSystem, systemConfigFor } = this.rootStore.workflowsStore;
+
+    /**
+     * Get the systems to search.
+     */
+    const systemsToSearch = activeSystem === "INCARCERATION" || activeSystem === "SUPERVISION"
+  ? [activeSystem]
+  : ["INCARCERATION", "SUPERVISION"] as const; // covers "ALL" or unexpected values
+
+  /**
+   * Get and search by each location searchType in the selected systems.
+   * 
+   * The conditions that are applied with a logical OR
+   * A person should match if they match searchId1 OR searchId2
+   */
+  const orConditions = systemsToSearch
+  .map(system => systemConfigFor(system).search)
+  .flat()
+  .filter(({ searchType }) => searchType in locationIdsBySearchType) // filter out configs that don't have a locationIdType
+  .map(({ searchType }) => 
+    // `searchType in locationIdsBySearchType` implies searchType is a LocationSearchType
+    where("idType", "==", locationIdsBySearchType[searchType as LocationSearchType])
+  );
+
 
     // The conditions that are applied with a logical AND
     // A person should match if they have a specific stateCode AND they match any of the searchIds
