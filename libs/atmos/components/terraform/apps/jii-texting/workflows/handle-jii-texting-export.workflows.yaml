@@ -40,7 +40,8 @@ main:
           - condition: ${is_weekend == true and state_code == "US_ID"}
             next: archive_etl_data
           - condition: ${text.substring(latest_logic_execution.workflowExecutionTime, 0, 10) != current_date_str or latest_logic_execution == null}
-            next: run_logic
+            # next: run_logic
+            next: skip_logic
         next: skip_logic
     - skip_logic:
         return: ${"Did not trigger logic execution"}
