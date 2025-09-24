@@ -65,7 +65,7 @@ const UsNeCardGroup: React.FC<{ copy: UsNeCardGroupCopy }> = ({ copy }) => {
             label={label}
             value={hydrateTemplate(valueTemplate, { ...resident, value })}
           />
-          <SlateCopy>
+          <SlateCopy options={{ forceBlock: true }}>
             {hydrateTemplate(summary, { ...resident, value })}
           </SlateCopy>
           <GoLink

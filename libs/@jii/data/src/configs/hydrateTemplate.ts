@@ -41,6 +41,8 @@ Handlebars.registerHelper("isFutureDate", (d: Date) => isFuture(d));
 Handlebars.registerHelper("and", (a: unknown, b: unknown) => a && b);
 Handlebars.registerHelper("or", (a: unknown, b: unknown) => a || b);
 Handlebars.registerHelper("equals", (a: unknown, b: unknown) => a === b);
+Handlebars.registerHelper("gt", (a: number, b: number) => a > b);
+Handlebars.registerHelper("lt", (a: number, b: number) => a < b);
 Handlebars.registerHelper("formatDatesInText", (s: string) =>
   formatISODatesInText(s),
 );

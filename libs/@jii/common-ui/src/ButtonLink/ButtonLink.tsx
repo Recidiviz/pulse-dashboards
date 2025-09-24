@@ -36,7 +36,6 @@ export const ButtonLink = styled(Link)`
   gap: 1em;
   justify-content: space-between;
   min-height: ${rem(42)};
-  min-width: ${rem(129)};
   padding: ${rem(10)} ${rem(18)};
   text-decoration: none;
   transition-duration: ${animation.defaultDurationMs}ms;

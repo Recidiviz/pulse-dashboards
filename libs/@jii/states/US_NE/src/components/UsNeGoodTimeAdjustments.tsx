@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { sortBy } from "lodash";
+
 import { Card, HomepageSectionHeading } from "~@jii/common-ui";
-import { formatFullDate } from "~@jii/data";
+import { hydrateTemplate } from "~@jii/data";
 import { OpenTable } from "~@jii/earned-good-time";
 
 import { useUsNeContext } from "./usNeContext";
@@ -25,14 +27,22 @@ const UsNeGoodTimeAdjustments = () => {
   const { copy, metadata } = useUsNeContext();
   const sectionCopy = copy.home.goodTimeAdjustments;
 
-  const rows = metadata.creditActivity.map(
-    ({ creditDate, creditType, creditsEarned, misconductReportNumber }) => ({
-      misconductReportNumber,
-      creditDate: formatFullDate(creditDate),
-      creditType,
-      amount: `${creditsEarned > 0 ? "+" : ""}${creditsEarned} days`,
-    }),
+  const rows = sortBy(
+    metadata.creditActivity,
+    ({ creditDate }) => -creditDate,
+  ).map((a) =>
+    Object.fromEntries(
+      sectionCopy.tableColumns.map(({ value, label }) => [
+        label,
+        hydrateTemplate(value, a),
+      ]),
+    ),
   );
+
+  const colSpec = sectionCopy.tableColumns.map(({ label }) => ({
+    label,
+    key: label,
+  }));
 
   return (
     <section>
@@ -43,7 +53,7 @@ const UsNeGoodTimeAdjustments = () => {
         {rows.length === 0 ? (
           sectionCopy.emptyMessage
         ) : (
-          <OpenTable columns={sectionCopy.tableColumns} data={rows} />
+          <OpenTable columns={colSpec} data={rows} />
         )}
       </Card>
     </section>

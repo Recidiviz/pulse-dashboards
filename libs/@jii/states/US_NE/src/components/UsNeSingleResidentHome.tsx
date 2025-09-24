@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { usePageTitle } from "~@jii/common-ui";
+
 import UsNeCardGroup from "./UsNeCardGroup";
 import { useUsNeContext } from "./usNeContext";
 import UsNeGoodTimeAdjustments from "./UsNeGoodTimeAdjustments";
@@ -22,6 +24,7 @@ import UsNeHomeHeader from "./UsNeHomeHeader";
 
 const UsNeSingleResidentHome = () => {
   const { copy } = useUsNeContext();
+  usePageTitle(copy.home.pageTitle);
   return (
     <>
       <UsNeHomeHeader />

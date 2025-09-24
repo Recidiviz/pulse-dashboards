@@ -194,8 +194,9 @@ export type CopyWrapperOverrides = MarkdownToJSX.Overrides;
 export const CopyWrapper: FC<
   CopyProps & {
     overrides?: CopyWrapperOverrides;
+    options?: MarkdownToJSX.Options;
   }
-> = ({ children, className, overrides }) => {
+> = ({ children, className, overrides, options }) => {
   return (
     <MarkdownWrapper
       className={className}
@@ -207,6 +208,7 @@ export const CopyWrapper: FC<
           InternalLink: { component: Link },
           ...overrides,
         },
+        ...options,
       }}
     >
       {children}

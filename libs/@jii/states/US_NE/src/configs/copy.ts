@@ -50,7 +50,7 @@ export type UsNeCopy = {
     goodTimeAdjustments: {
       sectionTitle: string;
       emptyMessage: string;
-      tableColumns: { key: string; label: string }[];
+      tableColumns: { label: string; value: string }[];
     };
   };
   infoPages: Record<string, { heading: string; body: string }>;
@@ -61,11 +61,11 @@ export type UsNeCopy = {
 
 export const usNeCopy: UsNeCopy = {
   lastUpdated:
-    "This information is current as of {{formatFullDate goodTimeLastModifiedDate}}",
+    "This information was last updated on {{formatFullDate goodTimeLastModifiedDate}}",
   home: {
     pageTitle: "Learn More About Your Sentence",
     headerFields: [
-      { label: "Open Detainers:", value: "{{metadata.numDetainers}}" },
+      { label: "Open Detainers:", value: "{{metadata.numHoldsAndDetainers}}" },
       { label: "Open Notifiers:", value: "{{metadata.numNotifiers}}" },
       {
         label: "Dead Time:",
@@ -103,10 +103,8 @@ export const usNeCopy: UsNeCopy = {
           label: "Parole Eligibility Date (PED)",
           value: "{{formatFullDateOptional value 'No PE date'}}",
           summary: dedent`The Parole Eligibility Date (PED) only exists for individuals who may be eligible for parole.
-
-        The Nebraska Board of Parole sets Parole Hearing Dates based on the outcomes of reviews.
-
-        At the hearing, the Nebraska Board of Parole will make a decision on whether to grant parole.`,
+          The Nebraska Board of Parole sets Parole Hearing Dates based on the outcomes of reviews.
+          At the hearing, the Nebraska Board of Parole will make a decision on whether to grant parole.`,
           metadataField: "paroleEligibilityDate",
         },
         {
@@ -125,7 +123,7 @@ export const usNeCopy: UsNeCopy = {
         {
           id: "gbmd",
           label: "Good Time Balance/Mandatory Discharge Days (GB/MD)",
-          value: `{{pluralize 'Day' metadata.goodTimeBalanceDays}} Applied / {{pluralize 'Day' metadata.goodTimeAllowedDays}} Possible`,
+          value: `{{pluralize 'Day' metadata.goodTimeBalanceDays}}`,
           summary: dedent`These days are applied to your tentative release date upon intake.
           This is a type of good time that can be removed for Misconduct Reports (MRs).
 
@@ -181,10 +179,20 @@ export const usNeCopy: UsNeCopy = {
       sectionTitle: "Good Time Adjustments",
       emptyMessage: "No adjustments made",
       tableColumns: [
-        { key: "creditType", label: "Adjustment Type" },
-        { key: "misconductReportNumber", label: "MR Number (If applicable)" },
-        { key: "amount", label: "Days" },
-        { key: "creditDate", label: "Transaction Date" },
+        {
+          label: "Adjustment Type",
+          value: `{{#if (gt creditsEarned 0)}}Addition{{else}}Removal{{/if~}}
+            {{#if violationDescription}}: {{titleCase (lowerCase violationDescription)}}{{/if}}`,
+        },
+        {
+          label: "MR Number (If\u00A0applicable)",
+          value: "{{misconductReportNumber}}",
+        },
+        {
+          label: "Days",
+          value: `{{#if (gt creditsEarned 0)}}+{{/if}}{{creditsEarned}}`,
+        },
+        { label: "Transaction Date", value: "{{formatFullDate creditDate}}" },
       ],
     },
   },
@@ -216,5 +224,5 @@ export const usNeCopy: UsNeCopy = {
   },
   topLinkText: "Back to top",
   definitionsLinksHeading: "Other definitions",
-  homeLink: "Back to home",
+  homeLink: "Back",
 };
