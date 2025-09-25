@@ -41,7 +41,11 @@
     "@react-navigation/stack": "*",
     "react-native-screens": "*",
     "react-native-safe-area-context": "*",
-    "react-native-gesture-handler": "*"
+    "react-native-gesture-handler": "*",
+    "nativewind": "*"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "resolutions": {
+    "react-native-css-interop": "0.1.22"
+  }
 }

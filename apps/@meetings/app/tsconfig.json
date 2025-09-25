@@ -8,10 +8,11 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strict": true,
-    "declaration": true
+    "declaration": true,
+    "composite": true
   },
   "files": [],
-  "include": [],
+  "include": ["nativewind-env.d.ts"],
   "references": [
     {
       "path": "./tsconfig.app.json"

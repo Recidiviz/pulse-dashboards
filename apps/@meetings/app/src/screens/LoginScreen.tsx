@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React from "react";
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import { Alert, Button, Text, View } from "react-native";
 import { useAuth0 } from "react-native-auth0";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -38,15 +38,15 @@ const LoginScreen = () => {
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
+      <View className="flex-1 items-center justify-center">
         <Text>Loading</Text>
       </View>
     );
   }
 
   return (
-    <SafeAreaProvider style={styles.container}>
-      <Text style={styles.header}>Auth0 Login</Text>
+    <SafeAreaProvider className="flex-1 items-center justify-center">
+      <Text className="mb-5 text-xl">Auth0 Login</Text>
       {user && <Text>You are logged in as {user.name}</Text>}
       {!user && <Text>You are not logged in</Text>}
       <Button
@@ -58,15 +58,3 @@ const LoginScreen = () => {
 };
 
 export default LoginScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  header: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-});

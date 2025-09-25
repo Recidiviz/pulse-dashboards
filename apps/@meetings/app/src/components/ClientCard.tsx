@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React from "react";
-import { Image,StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 import Icons from "../../assets/icons";
 
@@ -36,22 +36,30 @@ const ClientCard = ({
   };
 
   return (
-    <View style={styles.card}>
-      <View style={styles.leftSection}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{getInitials(client.name)}</Text>
+    <View className="flex-row items-center border-b border-gray-300 px-2.5 py-3.5">
+      <View className="flex-1 flex-row items-center">
+        <View className="mr-3 size-11 items-center justify-center rounded-3xl border border-gray-400 bg-gray-200">
+          <Text className="font-[inter] text-sm font-semibold text-gray-600">
+            {getInitials(client.name)}
+          </Text>
         </View>
-        <View style={{ flex: 1 }}>
-          <View style={styles.nameRow}>
-            <Text style={styles.name}>{client.name}</Text>
-            <Image source={Icons.ArrowRight} style={styles.chevron} />
+        <View className="flex-1">
+          <View className="flex-row items-center">
+            <Text className="mr-1.5 font-[inter] text-base font-semibold text-gray-900">
+              {client.name}
+            </Text>
+            <Image
+              source={Icons.ArrowRight}
+              className="size-3.5"
+              style={{ resizeMode: "contain" }}
+            />
           </View>
 
-          <View style={styles.infoRow}>
-            <Text style={styles.subText}>
+          <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
+            <Text className="text-xs text-gray-600">
               ID: {client.id} • {client.supervision}
             </Text>
-            <Text style={styles.lastMeeting}>
+            <Text className="text-xs text-gray-600">
               Last meeting {client.lastMeeting}
             </Text>
           </View>
@@ -62,68 +70,3 @@ const ClientCard = ({
 };
 
 export default ClientCard;
-
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: "row",
-    paddingHorizontal: 10,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderColor: "#ddd",
-    alignItems: "center",
-  },
-  leftSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 24,
-    backgroundColor: "#E0E0E0",
-    borderWidth: 1,
-    borderColor: "#bbb",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  avatarText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#555",
-    fontFamily: "Inter",
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#111",
-    fontFamily: "Inter",
-    marginRight: 6,
-  },
-  chevron: {
-    width: 14,
-    height: 14,
-    tintColor: "#000000",
-    resizeMode: "contain",
-  },
-  infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 2,
-    gap: 5,
-  },
-  subText: {
-    fontSize: 13,
-    color: "#666",
-  },
-  lastMeeting: {
-    fontSize: 13,
-    color: "#666",
-  },
-});

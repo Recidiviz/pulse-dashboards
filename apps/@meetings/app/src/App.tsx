@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import "../global.css";
+
 import React from "react";
 import { Auth0Provider } from "react-native-auth0";
 

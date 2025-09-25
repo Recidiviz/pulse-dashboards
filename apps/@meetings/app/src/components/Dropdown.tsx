@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 
@@ -37,31 +37,32 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        {label && <Text style={styles.label}>{label}: </Text>}
+    <View className="my-[8] self-start">
+      <View className="flex-row items-center justify-between">
+        {label && <Text className="text-[#111] text-[14]">{label}: </Text>}
 
         <TouchableOpacity
-          style={styles.selector}
+          className="flex-row items-center gap-1.5 rounded-md bg-gray-100 p-2"
           onPress={() => setOpen((p) => !p)}
         >
-          <Text style={styles.selected}>{selected}</Text>
+          <Text className="text-sm text-gray-900">{selected}</Text>
           <Image
             source={open ? Icons.ArrowRight : Icons.ArrowDown}
-            style={styles.icon}
+            className="size-3.5"
+            style={{ resizeMode: "contain" }}
           />
         </TouchableOpacity>
       </View>
 
       {open && (
-        <View style={styles.optionsContainer}>
+        <View className="absolute top-10 z-50 rounded-md  border border-gray-300 bg-white shadow-sm">
           {options.map((opt) => (
             <TouchableOpacity
               key={opt}
-              style={styles.optionButton}
+              className="p-2.5"
               onPress={() => handleSelect(opt)}
             >
-              <Text style={styles.option}>{opt}</Text>
+              <Text className="text-sm text-gray-700">{opt}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -71,49 +72,3 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
 };
 
 export default Dropdown;
-
-const styles = StyleSheet.create({
-  container: { alignSelf: "flex-start", marginVertical: 8 },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  label: {
-    fontSize: 14,
-    color: "#111",
-  },
-  selector: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 8,
-    borderRadius: 6,
-    backgroundColor: "#f2f2f2",
-    gap: 6,
-  },
-  selected: {
-    fontSize: 14,
-    color: "#111",
-  },
-  icon: { width: 14, height: 14, tintColor: "#111", resizeMode: "contain" },
-  optionsContainer: {
-    position: "absolute",
-    top: 42,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 6,
-    zIndex: 1000,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  optionButton: {
-    padding: 10,
-  },
-  option: {
-    fontSize: 14,
-    color: "#333",
-  },
-});

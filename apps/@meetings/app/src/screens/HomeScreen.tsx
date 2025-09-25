@@ -16,35 +16,19 @@
 // =============================================================================
 
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 import Header from "../components/Header";
 
 const HomeScreen: React.FC = () => {
   return (
-    <View style={styles.safeArea}>
+    <View className="flex-1 bg-white">
       <Header />
-      <View style={styles.container}>
-        <Text style={styles.text}>Home Screen</Text>
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-xl font-semibold">Home Screen</Text>
       </View>
     </View>
   );
 };
 
 export default HomeScreen;
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: "600",
-  },
-});

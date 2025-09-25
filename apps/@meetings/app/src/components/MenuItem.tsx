@@ -19,7 +19,6 @@ import React from "react";
 import {
   Image,
   ImageSourcePropType,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -36,52 +35,32 @@ type MenuItemProps = {
 
 const MenuItem = ({ icon, title, badge, onPress }: MenuItemProps) => {
   return (
-    <TouchableOpacity style={styles.item} onPress={onPress}>
-      <View style={styles.left}>
-        <Image source={icon} style={styles.icon} />
-        <Text style={styles.text}>{title}</Text>
+    <TouchableOpacity
+      className="flex-row items-center justify-between border-b border-gray-200 py-3.5"
+      onPress={onPress}
+    >
+      <View className="flex-row items-center">
+        <Image
+          source={icon}
+          className="mr-3 size-6"
+          style={{ resizeMode: "contain" }}
+        />
+        <Text className="text-base font-medium">{title}</Text>
         {badge ? (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{badge}</Text>
+          <View className="ml-2 h-[18] w-6 justify-center rounded-full bg-gray-600">
+            <Text className="text-center text-xs font-medium text-white">
+              {badge}
+            </Text>
           </View>
         ) : null}
       </View>
-      <Image source={Icons.ArrowRight} style={styles.chevron} />
+      <Image
+        source={Icons.ArrowRight}
+        className="size-3.5"
+        style={{ resizeMode: "contain", tintColor: "#000000" }}
+      />
     </TouchableOpacity>
   );
 };
 
 export default MenuItem;
-
-const styles = StyleSheet.create({
-  item: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  left: { flexDirection: "row", alignItems: "center" },
-  icon: { width: 24, height: 24, marginRight: 12, resizeMode: "contain" },
-  text: { fontSize: 16, fontWeight: "500" },
-  badge: {
-    backgroundColor: "#505050",
-    borderRadius: 20,
-    width: 24,
-    height: 18,
-    marginLeft: 8,
-  },
-  badgeText: {
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "500",
-    textAlign: "center",
-  },
-  chevron: {
-    width: 14,
-    height: 14,
-    resizeMode: "contain",
-    tintColor: "#000000",
-  },
-});

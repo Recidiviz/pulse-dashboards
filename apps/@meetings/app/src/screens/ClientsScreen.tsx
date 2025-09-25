@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 
 import ClientCard from "../components/ClientCard";
 import Dropdown from "../components/Dropdown";
@@ -60,11 +60,13 @@ const ClientsScreen = () => {
   };
 
   return (
-    <View style={styles.safeArea}>
+    <View className="flex-1 bg-white">
       <Header />
-      <View style={styles.container}>
-        <Text style={styles.title}>Clients</Text>
-        <Text style={styles.description}>
+      <View className="p-4">
+        <Text className="font-[inter] text-3xl font-semibold text-black">
+          Clients
+        </Text>
+        <Text className="my-3.5 font-[inter] text-sm font-normal text-[#707070]">
           All clients on your caseload are displayed below
         </Text>
 
@@ -89,26 +91,3 @@ const ClientsScreen = () => {
 };
 
 export default ClientsScreen;
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  container: {
-    padding: 15,
-  },
-  title: {
-    fontFamily: "Inter",
-    fontWeight: "600",
-    fontSize: 28,
-    color: "#000",
-  },
-  description: {
-    fontFamily: "Inter",
-    fontWeight: "400",
-    fontSize: 14,
-    marginVertical: 14,
-    color: "#707070",
-  },
-});

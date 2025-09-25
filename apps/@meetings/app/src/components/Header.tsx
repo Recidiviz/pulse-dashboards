@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { Image, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, Modal, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
@@ -34,23 +34,28 @@ const Header: React.FC<HeaderProps> = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <SafeAreaView edges={["top"]} style={{ backgroundColor: "#F8F8F8" }}>
-      <View style={styles.header}>
+    <SafeAreaView edges={["top"]} className="bg-gray-100">
+      <View className="flex-row items-center justify-between border-b border-gray-300 bg-gray-100 px-4 py-3">
         {showDrawer && (
-          <TouchableOpacity
-            onPress={() => setDrawerOpen(true)}
-            style={styles.iconButton}
-          >
-            <Image source={Icons.Menu} style={styles.iconImage} />
+          <TouchableOpacity onPress={() => setDrawerOpen(true)} className="p-1">
+            <Image
+              source={Icons.Menu}
+              className="size-6"
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         )}
 
         {showBell && (
           <TouchableOpacity
             onPress={() => console.log("Notification screen")}
-            style={styles.iconButton}
+            className="p-1"
           >
-            <Image source={Icons.Bell} style={styles.iconImage} />
+            <Image
+              source={Icons.Bell}
+              className="size-6"
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         )}
       </View>
@@ -67,28 +72,3 @@ const Header: React.FC<HeaderProps> = ({
 };
 
 export default Header;
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    backgroundColor: "#F8F8F8",
-  },
-  iconButton: {
-    padding: 4,
-  },
-  iconImage: {
-    width: 24,
-    height: 24,
-    resizeMode: "contain",
-  },
-  iconPlaceholder: {
-    width: 24,
-    height: 24,
-  },
-});

@@ -17,19 +17,24 @@
 
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useAuth0 } from "react-native-auth0";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
 import MenuItem from "../components/MenuItem";
+
+const MenuTextItem = ({
+  title,
+  onPress,
+}: {
+  title: string;
+  onPress?: () => void;
+}) => (
+  <TouchableOpacity onPress={onPress}>
+    <Text className="my-2 text-base font-medium text-gray-500">{title}</Text>
+  </TouchableOpacity>
+);
 
 const MenuScreen = ({ onClose }: { onClose: () => void }) => {
   const { clearSession } = useAuth0();
@@ -45,17 +50,25 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      <View style={styles.header}>
+    <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
+      <View className="flex-row items-center justify-between border-b border-gray-300 px-5 pb-3">
         <TouchableOpacity onPress={onClose}>
-          <Image source={Icons.Cross} style={styles.icon} />
+          <Image
+            source={Icons.Cross}
+            className="size-6"
+            style={{ resizeMode: "contain" }}
+          />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => console.log("Bell pressed")}>
-          <Image source={Icons.Bell} style={styles.icon} />
+          <Image
+            source={Icons.Bell}
+            className="size-6"
+            style={{ resizeMode: "contain" }}
+          />
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView className="p-[16]">
         <MenuItem
           icon={Icons.Home}
           title="Home"
@@ -88,16 +101,10 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
           onPress={() => handleMenuPress("Resources")}
         />
 
-        <View style={styles.footer}>
-          <TouchableOpacity>
-            <Text style={styles.link}>Settings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.link}>Contact Support</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onLogout}>
-            <Text style={styles.link}>Log Out</Text>
-          </TouchableOpacity>
+        <View className="mt-12 border-t border-gray-300 pt-5">
+          <MenuTextItem title="Settings" />
+          <MenuTextItem title="Contact Support" />
+          <MenuTextItem title="Log Out" onPress={onLogout} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -105,39 +112,3 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
 };
 
 export default MenuScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    resizeMode: "contain",
-  },
-  scrollContent: {
-    padding: 16,
-  },
-  footer: {
-    marginTop: 50,
-    borderTopWidth: 1,
-    borderColor: "#ddd",
-    paddingTop: 20,
-  },
-  link: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginVertical: 8,
-    color: "#808283",
-  },
-});

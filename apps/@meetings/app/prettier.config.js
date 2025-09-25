@@ -15,32 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-import { Image, TextInput, View } from "react-native";
-
-import Icons from "../../assets/icons";
-
-interface SearchBarProps {
-  value: string;
-  onChange: (t: string) => void;
-}
-
-const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => (
-  <View className="flex-row items-center rounded-md border border-gray-300 bg-gray-50 px-2">
-    <Image
-      source={Icons.Search}
-      className="size-[18]"
-      style={{ resizeMode: "contain" }}
-    />
-
-    <TextInput
-      className="ml-1.5 h-10 flex-1 font-[inter] text-xs font-semibold text-black"
-      placeholder="Search clients by name"
-      placeholderTextColor="#999"
-      value={value}
-      onChangeText={onChange}
-    />
-  </View>
-);
-
-export default SearchBar;
+/**
+ * @see https://prettier.io/docs/configuration
+ * @type {import("prettier").Config}
+ */
+export const config = {
+  plugins: ["prettier-plugin-tailwindcss"],
+};
