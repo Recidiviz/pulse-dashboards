@@ -1,17 +1,21 @@
 steps:
   # Build the container image
+  # Built-in variables
+  # https://cloud.google.com/build/docs/configuring-builds/substitute-variable-values
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "build"
       - "-t"
       - "gcr.io/$PROJECT_ID/backend:staging"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/backend:$COMMIT_SHA"
       - "-f"
       - "deploy/Dockerfile.gcp"
       - "."
 
   # Push the container image
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/$PROJECT_ID/backend:staging"]
+    args: ["push", "--all-tags", "gcr.io/$PROJECT_ID/backend"]
 
   # Deploy API service
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
@@ -138,3 +142,4 @@ steps:
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840
 images:
   - "gcr.io/$PROJECT_ID/backend:staging"
+  - "gcr.io/$PROJECT_ID/backend:$COMMIT_SHA"

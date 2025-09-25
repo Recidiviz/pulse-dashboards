@@ -733,15 +733,15 @@ if (
 
     try {
       if (deployEnv === "staging") {
-        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/staging/cloudbuild.yaml `.pipe(
+        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/staging/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
           process.stdout,
         );
       } else if (deployEnv === "production") {
-        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/production/cloudbuild.yaml `.pipe(
+        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/production/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
           process.stdout,
         );
       } else if (deployEnv === "demo") {
-        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/demo/cloudbuild.yaml `.pipe(
+        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/demo/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
           process.stdout,
         );
       }
