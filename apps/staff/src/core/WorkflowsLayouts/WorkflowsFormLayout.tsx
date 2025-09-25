@@ -47,6 +47,7 @@ import { FormUsMiSCCReview } from "../Paperwork/US_MI/SCCReview/FormUsMiSCCRevie
 import { FormUsMoWorkRelease } from "../Paperwork/US_MO/WorkRelease/FormUsMoWorkRelease";
 import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
 import { WorkflowsFormUsTnSuspensionOfDirectSupervision } from "../Paperwork/US_TN/SuspensionOfDirectSupervision/WorkflowsFormUsTnSuspensionOfDirectSupervision";
+import { workflowsUrl } from "../views";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
@@ -141,7 +142,6 @@ export const WorkflowsFormLayoutWrapper = observer(
     const {
       workflowsStore: { selectedPerson, selectedOpportunityType },
     } = useRootStore();
-
     if (!selectedPerson || !selectedOpportunityType) return null;
 
     return (
@@ -183,7 +183,15 @@ const HydratedWorkflowsFormLayout = observer(
 
     const handleBack = () => {
       if (currentView === "OPPORTUNITY_PREVIEW") {
-        navigate(-1);
+        if (selectedOpportunity?.config.urlSection) {
+          const parentUrl = workflowsUrl("opportunityClients", {
+            urlSection: selectedOpportunity.config.urlSection,
+          });
+
+          navigate(parentUrl);
+        } else {
+          navigate(-1);
+        }
       } else {
         setCurrentView("OPPORTUNITY_PREVIEW");
       }

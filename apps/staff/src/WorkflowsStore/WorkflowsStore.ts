@@ -191,6 +191,16 @@ export class WorkflowsStore implements Hydratable {
       },
     );
 
+    // ensure staff subscription is hydrated when needed for navigation/filtering
+    reaction(
+      () => [this.staffSubscription?.map((s) => s.data).flat()],
+      () => {
+        // This reaction exists primarily to trigger observation of staffSubscription
+        // for scenarios where a user navigate directly to an opportunity page and then
+        // clicks the "back" button to go to the opportunity overview page with caseloads.        
+      },
+    );
+
     // clear saved caseload when changing tenants, to prevent cross-contamination
     reaction(
       () => [this.rootStore.currentTenantId],
