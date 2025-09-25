@@ -346,9 +346,10 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     let updatedReasons = xor(reasons, [code]).sort();
 
     // Handle de-selecting and disabling other reasons when indefinite reason
-    // gets selected.
-    const isIndefiniteReason = code in opportunity.indefiniteDenialReasons;
-    if (isIndefiniteReason) {
+    // gets selected. For Iowa ED, we don't enforce single select.
+    const shouldDisableReasons =
+      code in opportunity.indefiniteDenialReasons && !isIaEDOpportunity;
+    if (shouldDisableReasons) {
       if (!reasons.includes(code)) {
         updatedReasons = [code];
         setDisabledReasons(xor(Object.keys(opportunity.denialReasons), [code]));
