@@ -1007,9 +1007,13 @@ const deployer = (await $`gcloud config get-value account`).stdout.trim();
 
 const polarisChannelId = "C026UPMAX4G";
 const polarisEngChannelId = "C04LC0VH78B";
+const reentryChannelId = "C084GD6MMM0";
 
 let slackChannel = null;
 let slackMessage = null;
+
+// Collect any additional channels we want to notify (currently only Reentry).
+const additionalSlackChannels = [];
 
 if (deployEnv === "staging" && successfullyDeployed.length > 0) {
   slackChannel = polarisEngChannelId;
@@ -1048,26 +1052,46 @@ if (deployEnv === "staging" && successfullyDeployed.length > 0) {
 }
 
 if (slackChannel !== null && slackMessage !== null) {
+  // Determine if any Reentry services were deployed (v0 backend, v1 backend, or frontend)
+  const reentryServiceNames = [
+    reentryBackendV0DisplayName,
+    reentryBackendV1DisplayName,
+    reentryFrontendDisplayName,
+  ];
+  const reentryDeployed = successfullyDeployed.some((name) =>
+    reentryServiceNames.includes(name),
+  );
+
+  if (reentryDeployed) {
+    additionalSlackChannels.push(reentryChannelId);
+  }
+
   slackMessage += `\nWhat was deployed: ${successfullyDeployed.join(", ")}`;
-  try {
-    const slackMessageResponse = await slack.chat.postMessage({
-      channel: slackChannel,
-      text: slackMessage,
-      // Don't show previews for Github links
-      unfurl_links: false,
-      unfurl_media: false,
-    });
-    if (slackMessageResponse.ok) {
-      console.log("Successfully posted to Slack");
-    } else {
-      throw slackMessageResponse;
+
+  // Post to the primary channel plus any additional channels
+  const channelsToPost = [slackChannel, ...additionalSlackChannels];
+
+  for (const channel of channelsToPost) {
+    try {
+      const slackMessageResponse = await slack.chat.postMessage({
+        channel,
+        text: slackMessage,
+        // Don't show previews for Github links
+        unfurl_links: false,
+        unfurl_media: false,
+      });
+      if (slackMessageResponse.ok) {
+        console.log(`Successfully posted to Slack channel ${channel}`);
+      } else {
+        throw slackMessageResponse;
+      }
+    } catch (error) {
+      console.log(
+        "There was a problem posting to Slack, please post the message manually:",
+      );
+      console.log(slackMessage);
+      console.error(error);
     }
-  } catch (error) {
-    console.log(
-      "There was a problem posting to Slack, please post the message manually:",
-    );
-    console.log(slackMessage);
-    console.error(error);
   }
 }
 
