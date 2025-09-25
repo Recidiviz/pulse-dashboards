@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FeatureVariant } from "../../../../../../RootStore/types";
-import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
-import { usTnGateMarkSubmittedOnFormDownloaded } from "./utils";
+import UserStore from "../../../../../../RootStore/UserStore";
 
-export class CompliantReportingConfiguration extends ApiOpportunityConfiguration {
-  get supportsAlmostEligible() {
-    return true;
-  }
-
-  get markSubmittedOnFormDownload(): boolean {
-    return usTnGateMarkSubmittedOnFormDownloaded(this.userStore);
-  }
-
-  get inverseFeatureVariant() {
-    return "usTnCompliantReporting2025Policy" as FeatureVariant;
-  }
+// TODO(#9838):[US_TN][Workflows] Remove usTnDoNotMarkPendingOnDownload post-rollout
+// When doing so, please add a field to state configs to disable this behavior
+// state-wide in TN so that we don't need to remember to disable it for every new opportunity
+export function usTnGateMarkSubmittedOnFormDownloaded(
+  userStore: UserStore,
+): boolean {
+  const { usTnDoNotMarkPendingOnDownload } = userStore.activeFeatureVariants;
+  return !usTnDoNotMarkPendingOnDownload;
 }

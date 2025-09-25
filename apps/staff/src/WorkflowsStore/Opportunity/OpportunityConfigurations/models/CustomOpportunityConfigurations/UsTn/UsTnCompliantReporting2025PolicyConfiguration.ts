@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FeatureVariant } from "../../../../../../RootStore/types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 import { usTnGateMarkSubmittedOnFormDownloaded } from "./utils";
 
-export class CompliantReportingConfiguration extends ApiOpportunityConfiguration {
-  get supportsAlmostEligible() {
-    return true;
-  }
-
+export class UsTnCompliantReporting2025PolicyConfiguration extends ApiOpportunityConfiguration {
   get markSubmittedOnFormDownload(): boolean {
     return usTnGateMarkSubmittedOnFormDownloaded(this.userStore);
-  }
-
-  get inverseFeatureVariant() {
-    return "usTnCompliantReporting2025Policy" as FeatureVariant;
   }
 }

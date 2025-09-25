@@ -35,11 +35,38 @@ import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguratio
 import { UsNdTransferToMinFacility } from "./UsNd/UsNdTransferToMinFacility";
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
 import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfiguration";
+import { UsTnCompliantReporting2025PolicyConfiguration } from "./UsTn/UsTnCompliantReporting2025PolicyConfiguration";
+import { UsTnSuspensionofDirectSupervisionConfiguration } from "./UsTn/UsTnSuspensionofDirectSupervisionConfiguration";
 import { UsUtEarlyTerminationConfiguration } from "./UsUt/UsUtEarlyTerminationConfiguration";
 
 const customOpportunityConfigurations: Partial<
   Record<OpportunityType, typeof ApiOpportunityConfiguration>
 > = {
+  // Arizona
+  usAzReleaseToDTP: UsAzReleaseToDTPConfiguration,
+  usAzReleaseToTPR: UsAzReleaseToTPRConfiguration,
+
+  // Iowa
+  usIaCompleteSupervisionLevelDowngrade:
+    UsIaSupervisionLevelDowngradeConfiguration,
+  usIaEarlyDischarge: UsIaEarlyDischargeConfiguration,
+
+  // Idaho
+  earnedDischarge: UsIdEarnedDischargeConfiguration,
+  LSU: LSUConfiguration,
+  usIdCRCResidentWorker: UsIdFacilitiesConfiguration,
+  usIdCRCWorkRelease: UsIdFacilitiesConfiguration,
+  usIdExpandedCRC: UsIdFacilitiesConfiguration,
+
+  // Maine
+  usMeSCCP: UsMeSCCPConfiguration,
+  usMeEarlyTermination: UsMeEarlyTerminationConfiguration,
+
+  // Michigan
+  usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeConfiguration,
+
+  // Missouri
+  usMoOutsideClearance: UsMoWorkReleaseConfiguration,
   usMoOverdueRestrictiveHousingInitialHearing:
     UsMoOverdueRestrictiveHousingConfiguration,
   usMoOverdueRestrictiveHousingRelease:
@@ -47,25 +74,23 @@ const customOpportunityConfigurations: Partial<
   usMoOverdueRestrictiveHousingReviewHearing:
     UsMoOverdueRestrictiveHousingConfiguration,
   usMoWorkRelease: UsMoWorkReleaseConfiguration,
-  usMoOutsideClearance: UsMoWorkReleaseConfiguration,
-  usMeSCCP: UsMeSCCPConfiguration,
-  usMeEarlyTermination: UsMeEarlyTerminationConfiguration,
-  usAzReleaseToTPR: UsAzReleaseToTPRConfiguration,
-  usAzReleaseToDTP: UsAzReleaseToDTPConfiguration,
-  usIdCRCResidentWorker: UsIdFacilitiesConfiguration,
-  usIdCRCWorkRelease: UsIdFacilitiesConfiguration,
-  usIdExpandedCRC: UsIdFacilitiesConfiguration,
-  earnedDischarge: UsIdEarnedDischargeConfiguration,
-  compliantReporting: CompliantReportingConfiguration,
-  LSU: LSUConfiguration,
-  usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,
+
+  // North Dakota
   // This is a non-constructed opportunity that is being customized
   ["usNdTransferToMinFacility" as OpportunityType]: UsNdTransferToMinFacility,
-  usIaEarlyDischarge: UsIaEarlyDischargeConfiguration,
-  usIaCompleteSupervisionLevelDowngrade:
-    UsIaSupervisionLevelDowngradeConfiguration,
+
+  // Oregon
+  usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,
+
+  // Tennessee
+  compliantReporting: CompliantReportingConfiguration,
+  usTnCompliantReporting2025Policy:
+    UsTnCompliantReporting2025PolicyConfiguration,
+  usTnSuspensionOfDirectSupervision:
+    UsTnSuspensionofDirectSupervisionConfiguration,
+
+  // Utah
   usUtEarlyTermination: UsUtEarlyTerminationConfiguration,
-  usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeConfiguration,
 };
 
 export function apiOpportunityConfigurationFactory(

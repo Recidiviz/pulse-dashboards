@@ -66,34 +66,56 @@ export type UserAppMetadata = {
 export type FeatureVariant =
   | "TEST"
   // WORKFLOWS
-  | "supervisionUnrestrictedSearch"
-  | "usAzFacilitySearch"
-  | "usTnExpiration"
-  | "usTnExpirationSubmitToTomis"
-  | "usCaEnableSMS"
-  | "usMoOverdueRHPilot"
+
+  //// General
+  | "caseNoteSearch"
   | "formRevertButton"
   | "hideDenialRevert"
+  | "indefiniteSnooze"
+  | "supervisionUnrestrictedSearch"
+  | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
-  | "usPaSpecialCircumstances"
-  | "caseNoteSearch"
-  | "usOrEarnedDischargeSentence"
-  | "usIdCRCFacilitySearch"
-  | "usIdCaseManagerSearch"
-  | "usTnSuspensionOfDirectSupervision"
-  | "usMeCaseNoteSnooze"
-  | "usTnCompliantReporting2025Policy"
+
+  //// Arizona
+  | "usAzFacilitySearch"
+
+  //// California
+  | "usCaEnableSMS"
+
+  //// Iowa
   | "usIaEarlyDischargeCustomizations"
   | "usIaEarlyDischargeForms"
+  | "usIaFinesAndFees"
   | "usIaSupervisionLevelDowngrade"
-  | "usTnInitialClassification"
-  | "usTnTEPENotesForAll"
+
+  //// Idaho
+  | "usIdCaseManagerSearch"
+  | "usIdCRCFacilitySearch"
+  | "usIdDistrictSearch"
+
+  //// Maine
+  | "usMeCaseNoteSnooze"
+  | "usMoOverdueRHPilot"
+
+  //// Missouri
   | "usMoSearchByUnit"
   | "usMoWorkRelease"
-  | "indefiniteSnooze"
-  | "usIdDistrictSearch"
-  | "usIaFinesAndFees"
-  | "tasksRoutePlanner"
+
+  //// Oregon
+  | "usOrEarnedDischargeSentence"
+
+  //// Pennsylvania
+  | "usPaSpecialCircumstances"
+
+  //// Tennessee
+  | "usTnCompliantReporting2025Policy"
+  | "usTnDoNotMarkPendingOnDownload"
+  | "usTnExpiration"
+  | "usTnExpirationSubmitToTomis"
+  | "usTnInitialClassification"
+  | "usTnSuspensionOfDirectSupervision"
+  | "usTnTEPENotesForAll"
+
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
@@ -163,6 +185,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   outcomesModule: {},
   mandatoryMinimum: {},
   usTnCompliantReporting2025Policy: {},
+  usTnDoNotMarkPendingOnDownload: {},
   reportIncorrectRosters: {},
   snoozeCompanions: {},
   usIaEarlyDischargeCustomizations: {},
