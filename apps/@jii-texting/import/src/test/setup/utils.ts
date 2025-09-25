@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma, PrismaClient } from "~@jii-texting/prisma/client";
+import { Prisma, PrismaClient } from "@prisma/jii-texting/client";
 
-const PRISMA_TABLES = Object.values(Prisma.ModelName);
+const PRISMA_TABLES = Prisma.dmmf.datamodel.models
+  .map((model) => model.name)
+  .filter((table) => table);
 
 export async function resetDb(prismaClient: PrismaClient) {
   await prismaClient.$transaction(

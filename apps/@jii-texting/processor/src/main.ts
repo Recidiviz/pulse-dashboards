@@ -16,8 +16,8 @@
 // =============================================================================
 
 import { Command } from "@commander-js/extra-typings";
+import { StateCode } from "@prisma/jii-texting/client";
 
-import { StateCode } from "~@jii-texting/prisma/client";
 import { processJiiContactReminders } from "~@jii-texting/processor/scripts/process-jii-contact-reminders";
 import { processJiiEligiblityTexts } from "~@jii-texting/processor/scripts/process-jii-eligibility-texts";
 

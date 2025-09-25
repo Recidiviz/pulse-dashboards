@@ -16,8 +16,11 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-
-import { Prisma, PrismaClient, StateCode } from "~@jii-texting/prisma/client";
+import {
+  Prisma,
+  PrismaClient,
+  StateCode,
+} from "@prisma/jii-texting/client/index.js";
 
 const prisma = new PrismaClient();
 

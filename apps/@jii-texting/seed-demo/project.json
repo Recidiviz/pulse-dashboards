@@ -47,7 +47,7 @@
         ],
         "generatePackageJson": true,
         "minify": true,
-        "external": ["@prisma/client"],
+        "external": ["@prisma/jii-texting"],
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {

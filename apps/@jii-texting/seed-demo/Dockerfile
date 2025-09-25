@@ -23,6 +23,7 @@ RUN corepack enable
 RUN apk add --no-cache dumb-init
 
 COPY --chown=node:node --from=builder /usr/src/app .
+RUN yarn prisma generate
 
 USER node
 EXPOSE ${PORT}

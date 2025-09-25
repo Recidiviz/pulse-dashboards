@@ -15,6 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  MessageAttemptStatus,
+  MessageType,
+  Person,
+  PrismaClient,
+} from "@prisma/jii-texting/client";
 import { captureException } from "@sentry/node";
 import { DateTime } from "luxon";
 import moment from "moment";
@@ -23,12 +29,6 @@ import {
   MessageStatus,
 } from "twilio/lib/rest/api/v2010/account/message";
 
-import {
-  MessageAttemptStatus,
-  MessageType,
-  Person,
-  PrismaClient,
-} from "~@jii-texting/prisma/client";
 import {
   ContactDataForMessage,
   ContactWithMessageSeriesAndAttempts,

@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { MessageAttemptStatus, StateCode } from "@prisma/jii-texting/client";
 import { init } from "@sentry/node";
 import sentryTestkit from "sentry-testkit";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 
-import { MessageAttemptStatus, StateCode } from "~@jii-texting/prisma/client";
 import { processJiiContactReminders } from "~@jii-texting/processor/scripts/process-jii-contact-reminders";
 import { testUsTxPrismaClient } from "~@jii-texting/processor/test/setup";
 import {

@@ -70,7 +70,7 @@
         "generatePackageJson": true,
         "target": "node20",
         "minify": true,
-        "external": ["@prisma/client"],
+        "external": ["@prisma/jii-texting"],
         "assets": [
           {
             "glob": "prisma/schema.prisma",

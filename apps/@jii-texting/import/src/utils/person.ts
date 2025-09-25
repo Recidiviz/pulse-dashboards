@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PrismaClient } from "@prisma/jii-texting/client";
 import z from "zod";
 
 import { personImportSchema } from "~@jii-texting/import/models";
-import { PrismaClient } from "~@jii-texting/prisma/client";
 
 export async function transformAndLoadPersonData(
   prismaClient: PrismaClient,

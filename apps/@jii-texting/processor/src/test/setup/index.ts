@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Prisma, PrismaClient, StateCode } from "@prisma/jii-texting/client";
 import { afterEach, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
-import { Prisma, PrismaClient, StateCode } from "~@jii-texting/prisma/client";
 import { seedContactReminders } from "~@jii-texting/processor/test/setup/seed-contact-reminders";
 import { seed } from "~@jii-texting/processor/test/setup/seed-eligibility";
 import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting/utils";
@@ -30,7 +30,9 @@ export const testUsTxPrismaClient = getPrismaClientForStateCode(
   StateCode.US_TX,
 );
 
-const PRISMA_TABLES = Object.values(Prisma.ModelName);
+const PRISMA_TABLES = Prisma.dmmf.datamodel.models
+  .map((model) => model.name)
+  .filter((table) => table);
 
 async function resetDb(prismaClient: PrismaClient) {
   await prismaClient.$transaction(

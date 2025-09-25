@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StateCode } from "@prisma/jii-texting/client";
 import z from "zod";
 import { zu } from "zod_utilz";
-
-import { StateCode } from "~@jii-texting/prisma/client";
 
 export const nameSchema = zu.stringToJSON().pipe(
   z.object({

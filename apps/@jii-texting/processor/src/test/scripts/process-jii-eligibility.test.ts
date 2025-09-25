@@ -15,16 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  MessageAttemptStatus,
+  MessageType,
+  StateCode,
+} from "@prisma/jii-texting/client";
 import { init } from "@sentry/node";
 import moment from "moment";
 import sentryTestkit from "sentry-testkit";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 
-import {
-  MessageAttemptStatus,
-  MessageType,
-  StateCode,
-} from "~@jii-texting/prisma/client";
 import { processJiiEligiblityTexts } from "~@jii-texting/processor/scripts/process-jii-eligibility-texts";
 import { testUsIdPrismaClient } from "~@jii-texting/processor/test/setup/index";
 import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting/utils/common/constants";

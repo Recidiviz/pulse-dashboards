@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MessageStatus } from "twilio/lib/rest/api/v2010/account/message";
-
 import {
   MessageAttemptStatus,
   MessageType,
   Status,
-} from "~@jii-texting/prisma/client";
+} from "@prisma/jii-texting/client";
+import { MessageStatus } from "twilio/lib/rest/api/v2010/account/message";
+
 import {
   getOrderedMessageAttempts,
   mapTwilioStatusToInternalStatus,
