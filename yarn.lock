@@ -32450,6 +32450,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"i18next-browser-languagedetector@npm:^8.2.0":
+  version: 8.2.0
+  resolution: "i18next-browser-languagedetector@npm:8.2.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+  checksum: 10c0/4fcb6ec316e0fd4a10eee67a8d1e3d7e1407f14d5bed98978c50ed6f1853f5d559dc18ea7fd4b2de445ac0a4ed44df5b38f0b31b89b9ac883f99050d59ffec82
+  languageName: node
+  linkType: hard
+
 "i18next-resources-to-backend@npm:^1.2.1":
   version: 1.2.1
   resolution: "i18next-resources-to-backend@npm:1.2.1"
@@ -45930,6 +45939,7 @@ __metadata:
     html2pdf.js: "npm:^0.10.2"
     husky: "npm:^9.0.11"
     i18next: "npm:^25.5.2"
+    i18next-browser-languagedetector: "npm:^8.2.0"
     i18next-resources-to-backend: "npm:^1.2.1"
     inquirer: "npm:^9.1.5"
     ioredis: "npm:^5.3.2"

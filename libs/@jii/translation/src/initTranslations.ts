@@ -16,6 +16,7 @@
 // =============================================================================
 
 import i18nextDefaultInstance, { TFunction } from "i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { initReactI18next } from "react-i18next";
 
@@ -36,6 +37,7 @@ export const initTranslations = () => {
           import(`./namespaces/${namespace}/resources/${language}.ts`),
       ),
     )
+    .use(LanguageDetector)
     .init({
       fallbackLng: "en",
       partialBundledLanguages: true,
@@ -43,6 +45,9 @@ export const initTranslations = () => {
       interpolation: {
         // not needed for react as it escapes by default
         escapeValue: false,
+      },
+      detection: {
+        lookupQuerystring: "locale",
       },
     });
 
