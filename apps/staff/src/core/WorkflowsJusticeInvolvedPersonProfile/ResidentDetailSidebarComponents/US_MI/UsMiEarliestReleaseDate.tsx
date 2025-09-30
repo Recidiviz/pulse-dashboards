@@ -32,7 +32,7 @@ export function UsMiEarliestReleaseDate({
       <DetailsSubheading>Earliest Release Date</DetailsSubheading>
       <SecureDetailsContent>
         {resident.metadata.isLife
-          ? "Life sentence"
+          ? "Life"
           : formatWorkflowsDate(resident.metadata.earliestReleaseDate)}
       </SecureDetailsContent>
     </>

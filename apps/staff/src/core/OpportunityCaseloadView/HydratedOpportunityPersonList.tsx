@@ -569,7 +569,7 @@ const TableView = observer(function TableView({
           person.metadata.stateCode === "US_MI"
         ) {
           if (person.metadata.isLife) {
-            return "Serving a life sentence";
+            return "Life";
           } else if (person.metadata.earliestReleaseDate) {
             return formatWorkflowsDate(person.metadata.earliestReleaseDate);
           }
