@@ -29,6 +29,8 @@ main:
                 env:
                   - name: STATE_CODE
                     value: ${state_code}
+                  - name: FILES
+                    value: jii_to_text.json,scheduled_contacts.json
         result: import_job_execution
     - assign_process_data_args:
         assign:
