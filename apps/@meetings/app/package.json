@@ -42,6 +42,7 @@
     "react-native-screens": "*",
     "react-native-safe-area-context": "*",
     "react-native-gesture-handler": "*",
+    "@trpc/server": "*",
     "nativewind": "*",
     "eslint-plugin-tailwindcss": "*",
     "@sentry/react-native": "*"

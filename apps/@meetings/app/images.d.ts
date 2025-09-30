@@ -16,6 +16,7 @@
 // =============================================================================
 
 declare module "*.png" {
-  const value: string;
+  import { ImageSourcePropType } from "react-native";
+  const value: ImageSourcePropType;
   export default value;
 }

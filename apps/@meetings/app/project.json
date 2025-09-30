@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/@meetings/app/src",
   "projectType": "application",
-  "tags": [],
+  "tags": ["scope:meetings", "type:app"],
   "// targets": "to see all targets run: nx show project @meetings/app --web",
   "targets": {
     "test": {

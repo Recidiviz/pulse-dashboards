@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@meetings/trpc-types",
   "projectType": "library",
-  "tags": ["meetings", "scope:universal"],
+  "tags": ["meetings", "scope:universal", "type:util"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",

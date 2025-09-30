@@ -22,7 +22,7 @@ import ClientCard from "../components/ClientCard";
 import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import SearchBar from "../components/SearchBar";
-import clientsData from "../data/clients";
+import { trpc } from "../trpc/client";
 
 type Client = {
   id: string;
@@ -40,24 +40,53 @@ const sortClientsByOption = (data: Client[], option: string): Client[] => {
 };
 
 const ClientsScreen = () => {
+  const {
+    data: rawClients,
+    isLoading,
+    error,
+  } = trpc.staff.getClients.useQuery();
+
   const [search, setSearch] = useState("");
-  const [filtered, setFiltered] = useState<Client[]>(clientsData);
   const [sortBy, setSortBy] = useState("Name (A-Z)");
 
-  const handleSearch = (text: string) => {
-    setSearch(text);
-    const results = text
-      ? clientsData.filter((c) =>
-          c.name.toLowerCase().includes(text.toLowerCase()),
-        )
-      : clientsData;
-    setFiltered(sortClientsByOption(results, sortBy));
-  };
+  const clients: Client[] = React.useMemo(() => {
+    if (!rawClients) return [];
+    return rawClients.map((c) => ({
+      id: c.displayPersonExternalId,
+      name: `${c.givenNames} ${c.surname}`,
+      supervision: "Probation", // TODO: remove hardcode
+      lastMeeting: "5d ago", // TODO: remove hardcode
+    }));
+  }, [rawClients]);
 
-  const handleSort = (option: string) => {
-    setSortBy(option);
-    setFiltered(sortClientsByOption(filtered, option));
-  };
+  // filtering + sorting
+  const filtered = React.useMemo(() => {
+    let results = clients;
+    if (search) {
+      results = results.filter((e) =>
+        e.name.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
+    return sortClientsByOption(results, sortBy);
+  }, [clients, search, sortBy]);
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text className="text-base text-gray-700">Loading clients...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white p-4">
+        <Text className="text-center text-base text-red-500">
+          Error loading clients: {error.message}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-white">
@@ -72,12 +101,12 @@ const ClientsScreen = () => {
 
         <Dropdown options={["Probation", "Absconded", "Incarceration"]} />
 
-        <SearchBar value={search} onChange={handleSearch} />
+        <SearchBar value={search} onChange={setSearch} />
 
         <Dropdown
           label="Sort by"
           options={["Name (A-Z)", "ID"]}
-          onSelect={handleSort}
+          onSelect={setSortBy}
         />
 
         <FlatList

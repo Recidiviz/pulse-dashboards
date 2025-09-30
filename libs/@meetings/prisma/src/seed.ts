@@ -34,6 +34,7 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Clean up existing data
+  await prisma.meeting.deleteMany({});
   await prisma.clientsToStaff.deleteMany({});
   await prisma.client.deleteMany({});
   await prisma.staff.deleteMany({});

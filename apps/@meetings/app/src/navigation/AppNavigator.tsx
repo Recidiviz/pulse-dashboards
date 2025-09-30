@@ -17,16 +17,42 @@
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
 import React from "react";
 import { useAuth0 } from "react-native-auth0";
+import superjson from "superjson";
 
 import LoginScreen from "../screens/LoginScreen";
+import { trpc } from "../trpc/client";
 import DrawerNavigator from "./DrawerNavigator";
 
 const Stack = createStackNavigator();
+const queryClient = new QueryClient();
+
+const trpcUrl =
+  process.env["EXPO_PUBLIC_TRPC_URL"] ?? "http://localhost:3000/trpc";
 
 const AppNavigator = () => {
-  const { user, isLoading } = useAuth0();
+  const { user, isLoading, getCredentials } = useAuth0();
+  const [trpcClient] = React.useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: trpcUrl,
+          async headers() {
+            const creds = await getCredentials();
+            return {
+              Authorization: `Bearer ${creds?.idToken}`,
+              // TODO: Extract statecode from Auth0 token
+              statecode: "US_NE",
+            };
+          },
+          transformer: superjson,
+        }),
+      ],
+    }),
+  );
 
   if (isLoading) {
     return null;
@@ -34,15 +60,19 @@ const AppNavigator = () => {
   const loggedIn = user !== undefined && user !== null;
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!loggedIn ? (
-          <Stack.Screen name="Login" component={LoginScreen} />
-        ) : (
-          <Stack.Screen name="Main" component={DrawerNavigator} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {!loggedIn ? (
+              <Stack.Screen name="Login" component={LoginScreen} />
+            ) : (
+              <Stack.Screen name="Main" component={DrawerNavigator} />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </QueryClientProvider>
+    </trpc.Provider>
   );
 };
 

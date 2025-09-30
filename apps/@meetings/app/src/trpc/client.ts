@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,26 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { baseProcedure, router } from "~@meetings/trpc/init";
+import { createTRPCReact } from "@trpc/react-query";
 
-export const staffRouter = router({
-  // TODO: use auth0Procedure instead of baseProcedure
-  getClients: baseProcedure.query(async ({ ctx: { prisma, user } }) => {
-    return prisma.client.findMany({
-      where: {
-        staff: {
-          some: {
-            staff: {
-              pseudonymizedId: user?.pseudonymizedId,
-            },
-          },
-        },
-      },
-      select: {
-        givenNames: true,
-        surname: true,
-        displayPersonExternalId: true,
-      },
-    });
-  }),
-});
+import type { AppRouter } from "~@meetings/trpc-types";
+
+export const trpc = createTRPCReact<AppRouter>();
