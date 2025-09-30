@@ -522,7 +522,7 @@ class IntakeMessage(BaseModel, table=True):
 
     __tablename__ = "intakemessage"
 
-    intake_id: UUID = Field(foreign_key="intake.id")
+    intake_id: UUID = Field(foreign_key="intake.id", ondelete="CASCADE")
     from_role: str = Field(
         sa_column=Column(
             SAEnum(
@@ -546,7 +546,7 @@ class IntakeToken(BaseModel, table=True):
 
     __tablename__ = "intaketoken"
 
-    intake_id: UUID = Field(foreign_key="intake.id", index=True)
+    intake_id: UUID = Field(foreign_key="intake.id", index=True, ondelete="CASCADE")
     token: str = Field(..., nullable=False, description="Raw authentication token")
     expires_at: Optional[datetime] = Field(
         default=None,

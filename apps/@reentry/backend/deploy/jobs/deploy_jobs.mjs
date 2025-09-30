@@ -66,6 +66,12 @@ const JOBS = {
     description: "Update the status of a recording session.",
     environments: ["prod"],
   },
+  "force-assessment-from-env": {
+    name: "force-assessment-from-env",
+    description:
+      "Force regenerate assessment for client specified in env config",
+    environments: ["demo", "staging", "prod"],
+  },
 };
 
 async function main() {

@@ -171,8 +171,6 @@ class AssessmentRunner:
                 )
 
                 step_result.annotations = llm_result.annotations
-                # send back the answer to the decision tree
-                # in order to take the right path
                 step = tree_gen.send(llm_result.answer)
 
             elif isinstance(step, MermaidGraphTraversalCount):
@@ -196,17 +194,74 @@ class AssessmentRunner:
         self, question: str, possible_answers: list[str], step_logger
     ) -> AssessmentAnswer:
         """
-        Asks a decision tree question using a language model.
+        Asks a decision tree question using a language model with retry mechanism.
+        If the LLM returns an invalid answer, retries up to 3 times before defaulting to 'unclear'.
         """
         data = {
             "question": question,
             "possible_answers": possible_answers,
         }
 
-        result = await self.agent.call(
-            EXECUTION_PROMPT.format(**data), result_class=AssessmentAnswer
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                result = await self.agent.call(
+                    EXECUTION_PROMPT.format(**data), result_class=AssessmentAnswer
+                )
+
+                # Validate that the answer is one of the possible answers (case-insensitive)
+                if result.answer.casefold() in [
+                    ans.casefold() for ans in possible_answers
+                ]:
+                    step_logger.info(
+                        "Valid answer received",
+                        answer=result.answer,
+                        attempt=attempt + 1,
+                    )
+                    return result
+                else:
+                    step_logger.warning(
+                        "Invalid answer received, retrying",
+                        invalid_answer=result.answer,
+                        expected_answers=possible_answers,
+                        attempt=attempt + 1,
+                        max_retries=max_retries,
+                    )
+                    if attempt < max_retries - 1:
+                        continue
+
+            except Exception as e:
+                step_logger.error(
+                    "Error calling LLM, retrying",
+                    error=str(e),
+                    attempt=attempt + 1,
+                    max_retries=max_retries,
+                )
+                if attempt < max_retries - 1:
+                    continue
+
+        # If all retries failed, default to 'unclear' if it's a valid option, otherwise use first option
+        default_answer = (
+            "unclear"
+            if "unclear" in [ans.casefold() for ans in possible_answers]
+            else possible_answers[0]
         )
-        return result
+        step_logger.warning(
+            "All retries exhausted, using default answer",
+            default_answer=default_answer,
+            possible_answers=possible_answers,
+        )
+
+        return AssessmentAnswer(
+            answer=default_answer,
+            annotations=[
+                Annotation(
+                    source="system",
+                    source_location="assessment_runner.py",
+                    source_text_extract="Default answer used due to LLM retry exhaustion",
+                )
+            ],
+        )
 
 
 def get_assessments_type(state_code: str) -> List:

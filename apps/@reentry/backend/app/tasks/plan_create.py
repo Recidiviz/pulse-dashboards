@@ -168,13 +168,13 @@ async def fetch_assets(
         session.add(asset_summary_json)
 
         if assessment:
-            asset_assessment_summary_json = PlanAsset(
+            asset_assessment_summary_md = PlanAsset(
                 plan_id=plan.id,
                 filename="assessment_summary.md",
                 file_blob=assessment.encode("utf8"),
                 mimetype="text/markdown",
             )
-            session.add(asset_assessment_summary_json)
+            session.add(asset_assessment_summary_md)
 
     await session.commit()
 

@@ -82,11 +82,35 @@ async def assessment(
     task_logger.debug("Checking for intake availability")
     has_intake = intake is not None
 
+    # Determine assessment_type based on client's state if not already set
+    if not assessment.assessment_type:
+        task_logger.debug("Assessment type not set, determining from client state")
+        from app.services.client_data.queries import Queries
+        from app.utils.assessment_runner import get_assessments_type
+
+        client_record = Queries.get_client_by_pseudonymized_id_unsafe(
+            assessment.client_pseudo_id
+        )
+        assessments_types = get_assessments_type(client_record.state_code)
+        assessment_type = assessments_types[0] if assessments_types else "lsir"
+
+        task_logger.debug(f"Client state: {client_record.state_code}")
+        task_logger.debug(f"Determined assessment type: {assessment_type}")
+
+        # Update the assessment record with the determined type
+        assessment.assessment_type = assessment_type
+        session.add(assessment)
+        await session.commit()
+        await session.refresh(assessment)
+    else:
+        assessment_type = assessment.assessment_type
+        task_logger.debug(f"Using existing assessment type: {assessment_type}")
+
     # load assessment trees
     task_logger.debug("Load enabled assessment trees")
     assessment_trees = await get_assessment_trees(
         session,
-        assessment_type=assessment.assessment_type,
+        assessment_type=assessment_type,
         include_revisions=True,
         filter_enabled=True,
     )

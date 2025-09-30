@@ -158,7 +158,7 @@ async def get_client_background_data(
     asset_messages = await get_plan_asset(session, gen.plan_id, "messages.json")
     asset_summary = await get_plan_asset(session, gen.plan_id, "summary.md")
     asset_assessment_summary = await get_plan_asset(
-        session, gen.plan_id, "assessment_summary.json"
+        session, gen.plan_id, "assessment_summary.md"
     )
 
     client_data = ""
@@ -174,7 +174,8 @@ async def get_client_background_data(
         client_data += f"# Client intake summary\n\n{summary}\n\n"
 
     if asset_assessment_summary:
-        client_data += f"# Client risk summary\n\n{asset_assessment_summary}\n\n"
+        assessment_summary = asset_assessment_summary.data_as_text()
+        client_data += f"# Client risk summary\n\n{assessment_summary}\n\n"
 
     if not client_data:
         raise ValueError("No client data found")

@@ -131,6 +131,14 @@ You can then see the result in `experiments/structured_action_plan/Allistor_Jone
 - `_plan.md` contains the generated plan rendered in markdown
 - `_gen_data.json`: contains the data used to generate the plan (everything)
 
+### Create test intake with conversation data
+
+```bash
+uv run -m app.manage create-test-intake-command CLIENT_PSEUDO_ID
+```
+
+This creates a test intake with example conversation data for testing assessment functionality. Use `--force` to replace an existing intake for the client. The intake includes comprehensive conversation data following ID_FACR sections and a fake address.
+
 ### Simulate Intake Conversation
 
 Run the conversation in cli

@@ -160,16 +160,14 @@ async def seed_db_selective():
     # Seed decision trees (selective mode)
     print("Seeding decision trees (selective mode)")
     app_directory = Path(__file__).parent.parent
-    dt_directory = app_directory / ".." / "data" / "examples" / "decisiontrees"
+    dt_directory = app_directory / "core" / "data_config" / "decisiontrees"
     await import_decision_trees_selective(list(dt_directory.glob("*.mermaid")))
 
     # Seed assessment trees (selective mode)
     print("Seeding assessment trees (selective mode)")
 
     # LSIR TREES ASSESSMENT
-    at_directory = (
-        app_directory / ".." / "data" / "examples" / "assessmenttrees" / "LSIR"
-    )
+    at_directory = app_directory / "core" / "data_config" / "assessmenttrees" / "LSIR"
     await import_assessment_trees_selective(
         filepaths=list(at_directory.glob("*.mermaid")),
         assessment_type=AssessmentType.LSIR,
@@ -177,7 +175,7 @@ async def seed_db_selective():
 
     # ORAS TREES ASSESSMENT
     at_directory = (
-        app_directory / ".." / "data" / "examples" / "assessmenttrees" / "ORAS_PIT"
+        app_directory / "core" / "data_config" / "assessmenttrees" / "ORAS_PIT"
     )
     await import_assessment_trees_selective(
         filepaths=list(at_directory.glob("*.mermaid")),
@@ -185,7 +183,7 @@ async def seed_db_selective():
     )
 
     at_directory = (
-        app_directory / ".." / "data" / "examples" / "assessmenttrees" / "ORAS_RT"
+        app_directory / "core" / "data_config" / "assessmenttrees" / "ORAS_RT"
     )
     await import_assessment_trees_selective(
         filepaths=list(at_directory.glob("*.mermaid")),
@@ -229,13 +227,11 @@ async def seed_db(force: bool = False):
 
     print("Seeding database with example decision trees")
     app_directory = Path(__file__).parent.parent
-    dt_directory = app_directory / ".." / "data" / "examples" / "decisiontrees"
+    dt_directory = app_directory / "core" / "data_config" / "decisiontrees"
     await import_decision_trees(list(dt_directory.glob("*.mermaid")))
 
     # LSIR TREES ASSESSMENT
-    at_directory = (
-        app_directory / ".." / "data" / "examples" / "assessmenttrees" / "LSIR"
-    )
+    at_directory = app_directory / "core" / "data_config" / "assessmenttrees" / "LSIR"
     await import_assessment_trees(
         filepaths=list(at_directory.glob("*.mermaid")),
         assessment_type=AssessmentType.LSIR,
@@ -243,7 +239,7 @@ async def seed_db(force: bool = False):
 
     # ORAS TREES ASSESSMENT
     at_directory = (
-        app_directory / ".." / "data" / "examples" / "assessmenttrees" / "ORAS_PIT"
+        app_directory / "core" / "data_config" / "assessmenttrees" / "ORAS_PIT"
     )
     await import_assessment_trees(
         filepaths=list(at_directory.glob("*.mermaid")),
@@ -251,7 +247,7 @@ async def seed_db(force: bool = False):
     )
 
     at_directory = (
-        app_directory / ".." / "data" / "examples" / "assessmenttrees" / "ORAS_RT"
+        app_directory / "core" / "data_config" / "assessmenttrees" / "ORAS_RT"
     )
     await import_assessment_trees(
         filepaths=list(at_directory.glob("*.mermaid")),

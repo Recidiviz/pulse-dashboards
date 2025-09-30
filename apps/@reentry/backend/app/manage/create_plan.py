@@ -65,6 +65,7 @@ async def _create_plan(
                     return
                 await delete_plan_by_id(session, plan.id)
 
+        execution = None
         if regen:
             # Regeneration process
             plan_gen = PlanGeneration(
@@ -74,21 +75,29 @@ async def _create_plan(
                 resource_to_add_id=resource_add_id,
             )
             gen = await create_plan_generation(session, plan_gen)
-            await gen.schedule_execution(session)
+            execution = await gen.schedule_execution(session)
         else:
             # Creation process
             type = PlanType.EVALUATION if mark_eval else PlanType.LIVE
             plan = Plan(client_pseudo_id=client_pseudo_id, type=type)
             plan = await create_plan(session, plan)
-            await plan.schedule_initial_creation(session)
+            execution = await plan.schedule_initial_creation(session)
 
-        # save the plan to a file
-        plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
+        # Wait for the execution to complete
+        print(f"Waiting for plan execution {execution.id} to complete...")
+        success = await execution.wait(
+            session, timeout=360, poll=2
+        )  # 6 min timeout, poll every 2 seconds
 
-        # refresh the plan
+        if success:
+            print("✅ Plan execution completed successfully!")
+        else:
+            print("❌ Plan execution timed out or failed!")
+            return
+
+        # Get the completed plan and latest generation
         plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
         latest_generation = await plan.get_latest_generation(session)
-        print(latest_generation)
         if not latest_generation:
             logger.error("No generation found", client_pseudo_id=client_pseudo_id)
             return
@@ -119,7 +128,7 @@ async def create_plan(
 
     counter = 1
     while True:
-        prefix = f"{data.full_name}_it{counter}"
+        prefix = f"{data.full_name.given_names}_it{counter}"
         if not any(
             [
                 (experiments_dir / f"{prefix}_plan.json").exists(),
