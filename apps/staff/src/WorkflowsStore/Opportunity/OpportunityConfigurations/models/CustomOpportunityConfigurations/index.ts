@@ -37,6 +37,8 @@ import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDisch
 import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfiguration";
 import { UsTnCompliantReporting2025PolicyConfiguration } from "./UsTn/UsTnCompliantReporting2025PolicyConfiguration";
 import { UsTnSuspensionofDirectSupervisionConfiguration } from "./UsTn/UsTnSuspensionofDirectSupervisionConfiguration";
+import { UsTxAnnualReportStatusConfiguration } from "./UsTx/UsTxAnnualReportStatusConfiguration";
+import { UsTxEarlyReleaseFromSupervisionConfiguration } from "./UsTx/UsTxEarlyReleaseFromSupervision";
 import { UsUtEarlyTerminationConfiguration } from "./UsUt/UsUtEarlyTerminationConfiguration";
 
 const customOpportunityConfigurations: Partial<
@@ -88,6 +90,10 @@ const customOpportunityConfigurations: Partial<
     UsTnCompliantReporting2025PolicyConfiguration,
   usTnSuspensionOfDirectSupervision:
     UsTnSuspensionofDirectSupervisionConfiguration,
+
+  // Texas
+  usTxAnnualReportStatus: UsTxAnnualReportStatusConfiguration,
+  usTxEarlyReleaseFromSupervision: UsTxEarlyReleaseFromSupervisionConfiguration,
 
   // Utah
   usUtEarlyTermination: UsUtEarlyTerminationConfiguration,
