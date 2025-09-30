@@ -46,6 +46,7 @@ export type SelectorProps<OptionVal> = {
   onChange: (newValue: OptionVal) => void;
   defaultValue?: PropsValue<SelectorOption<OptionVal>>;
   value?: PropsValue<SelectorOption<OptionVal>>;
+  menuAlign?: "left" | "right";
 };
 
 /**
@@ -58,6 +59,7 @@ export const Selector = observer(function Selector<OptionVal>({
   onChange,
   defaultValue,
   value,
+  menuAlign = "left",
 }: SelectorProps<OptionVal>) {
   return (
     <Sans16>
@@ -87,6 +89,13 @@ export const Selector = observer(function Selector<OptionVal>({
           placeholder: (baseStyles) => ({
             ...baseStyles,
             color: palette.slate85,
+          }),
+          menu: (baseStyles) => ({
+            ...baseStyles,
+            // prevent contents from overflowing the layout
+            minWidth: "100%",
+            width: "auto",
+            ...(menuAlign === "right" ? { right: 0 } : {}),
           }),
           option: (baseStyles, state) => ({
             ...baseStyles,

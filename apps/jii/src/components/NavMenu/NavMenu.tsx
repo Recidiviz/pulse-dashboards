@@ -24,19 +24,19 @@ import {
   useInteractions,
 } from "@floating-ui/react";
 import { spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC, memo, useEffect, useId, useState } from "react";
+import { FC, useEffect, useId, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import {
-  PAGE_PADDING,
-  SimpleNavLinkProps,
-  STICKY_HEADER_ZINDEX,
-} from "~@jii/common-ui";
-import { useRootStore, windowIsIframe } from "~@jii/data";
+import { PAGE_PADDING, STICKY_HEADER_ZINDEX } from "~@jii/common-ui";
+import { useRootStore } from "~@jii/data";
 import { Icon } from "~design-system";
 import { Button, palette } from "~design-system";
+import { withPresenterManager } from "~hydration-utils";
+
+import { MenuLinks, NavMenuPresenter } from "./NavMenuPresenter";
 
 const NAV_ACTIVE_BORDER = 2;
 const NAV_ACTIVE_PADDING = 4;
@@ -121,8 +121,8 @@ function useMenuProps() {
 /**
  * Disclosure menu for navigation elements. Will also include a logout link when applicable
  */
-export const NavMenu: FC<{ links?: Array<SimpleNavLinkProps> }> = memo(
-  function NavMenu({ links = [] }) {
+const ManagedComponent: FC<{ presenter: NavMenuPresenter }> = observer(
+  function NavMenu({ presenter }) {
     const {
       floatingStyles,
       getFloatingProps,
@@ -133,16 +133,14 @@ export const NavMenu: FC<{ links?: Array<SimpleNavLinkProps> }> = memo(
     } = useMenuProps();
 
     const {
-      userStore: {
-        authManager: { authClient },
-      },
-    } = useRootStore();
-
-    const showLogout: boolean =
-      // only an auth client enables logout functionality
-      !!authClient &&
-      // no logging out inside an iframe; we assume the parent window controls user session
-      !windowIsIframe();
+      showLogout,
+      showTranslationMode,
+      links,
+      logOut,
+      toggleTranslationMode,
+      isTranslationMode,
+      toggleActiveLanguage,
+    } = presenter;
 
     // don't show a useless empty menu
     if (!showLogout && links.length === 0) return null;
@@ -170,14 +168,22 @@ export const NavMenu: FC<{ links?: Array<SimpleNavLinkProps> }> = memo(
             {links.map((link) => (
               <NavLink key={link.to} {...link} />
             ))}
+            {showTranslationMode && (
+              <>
+                <Button kind="link" onClick={() => toggleTranslationMode()}>
+                  {isTranslationMode ? "Exit" : "Enter"} Translator Mode
+                </Button>
+                <Button
+                  kind="link"
+                  disabled={isTranslationMode}
+                  onClick={() => toggleActiveLanguage()}
+                >
+                  Toggle Eng/Esp
+                </Button>
+              </>
+            )}
             {showLogout && (
-              <Button
-                kind="link"
-                onClick={() =>
-                  // this shouldn't be undefined in practice because showLogout checks it
-                  authClient?.logOut()
-                }
-              >
+              <Button kind="link" onClick={() => logOut()}>
                 Log out
               </Button>
             )}
@@ -187,3 +193,15 @@ export const NavMenu: FC<{ links?: Array<SimpleNavLinkProps> }> = memo(
     );
   },
 );
+
+function usePresenter({ links = [] }: { links?: MenuLinks }) {
+  const { userStore, uiStore } = useRootStore();
+
+  return new NavMenuPresenter(links, userStore, uiStore);
+}
+
+export const NavMenu = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: false,
+});

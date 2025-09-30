@@ -1,0 +1,14 @@
+{
+  "nav": {
+    "homeLink": "Home"
+  },
+  "unknownUser": {
+    "heading": "Login failed",
+    "body": "There was a problem authorizing your account: we don't have any data that matches your ID."
+  },
+  "errorPage": {
+    "heading": "Something went wrong",
+    "message": "An error occurred that prevented this page from loading. Please try\n        reloading the page, or [return to your homepage](/)."
+  },
+  "skipLink": "Skip to main content"
+}

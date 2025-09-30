@@ -1,0 +1,137 @@
+{
+  "tags": {
+    "rts": "[US_MA]tags.rts",
+    "maxRelease": "[US_MA]tags.maxRelease"
+  },
+  "lastUpdated": "[US_MA]lastUpdated",
+  "creditRatings": {
+    "S": "[US_MA]creditRatings.S",
+    "I": "[US_MA]creditRatings.I",
+    "U": "[US_MA]creditRatings.U",
+    "none": "[US_MA]creditRatings.none"
+  },
+  "home": {
+    "pageTitle": "[US_MA]home.pageTitle",
+    "dates": {
+      "sectionTitle": "[US_MA]home.dates.sectionTitle",
+      "rts": {
+        "label": "[US_MA]home.dates.rts.label",
+        "value": "[US_MA]home.dates.rts.value",
+        "summary": "[US_MA]home.dates.rts.summary",
+        "moreInfoLink": "[US_MA]home.dates.rts.moreInfoLink"
+      },
+      "maxRelease": {
+        "label": "[US_MA]home.dates.maxRelease.label",
+        "value": "[US_MA]home.dates.maxRelease.value",
+        "summary_one": "[US_MA]home.dates.maxRelease.summary_one",
+        "summary_other": "[US_MA]home.dates.maxRelease.summary_other",
+        "breakdown": {
+          "original": {
+            "label": "[US_MA]home.dates.maxRelease.breakdown.original.label",
+            "value": "[US_MA]home.dates.maxRelease.breakdown.original.value"
+          },
+          "change": {
+            "label": "[US_MA]home.dates.maxRelease.breakdown.change.label",
+            "value_one": "[US_MA]home.dates.maxRelease.breakdown.change.value_one",
+            "value_other": "[US_MA]home.dates.maxRelease.breakdown.change.value_other"
+          },
+          "adjusted": {
+            "label": "[US_MA]home.dates.maxRelease.breakdown.adjusted.label",
+            "value": "[US_MA]home.dates.maxRelease.breakdown.adjusted.value"
+          }
+        }
+      },
+      "parole": {
+        "label": "[US_MA]home.dates.parole.label",
+        "tag": "[US_MA]home.dates.parole.tag",
+        "summary": "[US_MA]home.dates.parole.summary"
+      }
+    },
+    "creditHistory": {
+      "heading": "[US_MA]home.creditHistory.heading",
+      "legend": {
+        "EARNEDGoodTime": "[US_MA]home.creditHistory.legend.EARNEDGoodTime",
+        "BOOST": "[US_MA]home.creditHistory.legend.BOOST",
+        "COMPLETION": "[US_MA]home.creditHistory.legend.COMPLETION"
+      },
+      "creditLabel_one": "[US_MA]home.creditHistory.creditLabel_one",
+      "creditLabel_other": "[US_MA]home.creditHistory.creditLabel_other",
+      "monthLabel": "[US_MA]home.creditHistory.monthLabel",
+      "noDataMessage": "[US_MA]home.creditHistory.noDataMessage"
+    },
+    "monthlyReport": {
+      "sectionTitle": "[US_MA]home.monthlyReport.sectionTitle",
+      "individualReportLink": "[US_MA]home.monthlyReport.individualReportLink",
+      "egtLabel": "[US_MA]home.monthlyReport.egtLabel",
+      "boostsLabel": "[US_MA]home.monthlyReport.boostsLabel",
+      "completionLabel": "[US_MA]home.monthlyReport.completionLabel",
+      "creditsValue_one": "[US_MA]home.monthlyReport.creditsValue_one",
+      "creditsValue_other": "[US_MA]home.monthlyReport.creditsValue_other"
+    },
+    "totalTimeEarned": {
+      "sectionTitle": "[US_MA]home.totalTimeEarned.sectionTitle",
+      "egtBoostsLabel": "[US_MA]home.totalTimeEarned.egtBoostsLabel",
+      "completionLabel": "[US_MA]home.totalTimeEarned.completionLabel",
+      "creditsValue_one": "[US_MA]home.totalTimeEarned.creditsValue_one",
+      "creditsValue_other": "[US_MA]home.totalTimeEarned.creditsValue_other",
+      "learnMoreLink": "[US_MA]home.totalTimeEarned.learnMoreLink"
+    },
+    "emptyState": {
+      "heading": "[US_MA]home.emptyState.heading",
+      "body": "[US_MA]home.emptyState.body",
+      "moreInfoLink": "[US_MA]home.emptyState.moreInfoLink"
+    }
+  },
+  "infoPages": {
+    "rts": {
+      "heading": "[US_MA]infoPages.rts.heading",
+      "body": "[US_MA]infoPages.rts.body"
+    },
+    "credits": {
+      "heading": "[US_MA]infoPages.credits.heading",
+      "body": "[US_MA]infoPages.credits.body"
+    }
+  },
+  "homeLink": "[US_MA]homeLink",
+  "topLinkText": "[US_MA]topLinkText",
+  "definitionsLinksHeading": "[US_MA]definitionsLinksHeading",
+  "individualMonthlyReport": {
+    "pageTitle": "[US_MA]individualMonthlyReport.pageTitle",
+    "browserPageTitle": "[US_MA]individualMonthlyReport.browserPageTitle",
+    "credits": {
+      "sectionTitle": "[US_MA]individualMonthlyReport.credits.sectionTitle",
+      "table": {
+        "columnHeaders": {
+          "program": "[US_MA]individualMonthlyReport.credits.table.columnHeaders.program"
+        },
+        "aggregateColumn": {
+          "label": "[US_MA]individualMonthlyReport.credits.table.aggregateColumn.label"
+        },
+        "valueCell": "[US_MA]individualMonthlyReport.credits.table.valueCell"
+      },
+      "egtLabel": "[US_MA]individualMonthlyReport.credits.egtLabel",
+      "boostsLabel": "[US_MA]individualMonthlyReport.credits.boostsLabel",
+      "completionLabel": "[US_MA]individualMonthlyReport.credits.completionLabel",
+      "creditsValue_one": "[US_MA]individualMonthlyReport.credits.creditsValue_one",
+      "creditsValue_other": "[US_MA]individualMonthlyReport.credits.creditsValue_other"
+    },
+    "achievements": {
+      "heading": "[US_MA]individualMonthlyReport.achievements.heading",
+      "maxEarnedTime": {
+        "heading": "[US_MA]individualMonthlyReport.achievements.maxEarnedTime.heading",
+        "body": "[US_MA]individualMonthlyReport.achievements.maxEarnedTime.body"
+      }
+    },
+    "selectOptionLabel": "[US_MA]individualMonthlyReport.selectOptionLabel"
+  },
+  "disclaimer": "[US_MA]disclaimer",
+  "unknownUser": {
+    "heading": "[US_MA]unknownUser.heading",
+    "body": "[US_MA]unknownUser.body"
+  },
+  "onboarding": {
+    "heading": "[US_MA]onboarding.heading",
+    "body": "[US_MA]onboarding.body",
+    "continueLink": "[US_MA]onboarding.continueLink"
+  }
+}

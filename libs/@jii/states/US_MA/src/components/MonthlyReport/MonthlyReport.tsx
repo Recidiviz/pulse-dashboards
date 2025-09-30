@@ -22,7 +22,11 @@ import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
-import { BackLink, CopyWrapper } from "~@jii/common-ui";
+import {
+  BackLink,
+  CopyWrapper,
+  preventFlexibleLayoutOverflow,
+} from "~@jii/common-ui";
 import { usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
@@ -41,6 +45,8 @@ const HeaderRow = styled.div`
 
   h1 {
     margin: 0;
+
+    ${preventFlexibleLayoutOverflow}
   }
 `;
 
@@ -101,6 +107,7 @@ export const MonthlyReport = observer(function MonthlyReport() {
               }),
             );
           }}
+          menuAlign="right"
         />
       </HeaderRow>
       {achievements.length > 0 && <Achievements report={report} />}

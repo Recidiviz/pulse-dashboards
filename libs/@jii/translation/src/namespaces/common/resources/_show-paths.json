@@ -1,0 +1,14 @@
+{
+  "nav": {
+    "homeLink": "[common]nav.homeLink"
+  },
+  "unknownUser": {
+    "heading": "[common]unknownUser.heading",
+    "body": "[common]unknownUser.body"
+  },
+  "errorPage": {
+    "heading": "[common]errorPage.heading",
+    "message": "[common]errorPage.message"
+  },
+  "skipLink": "[common]skipLink"
+}

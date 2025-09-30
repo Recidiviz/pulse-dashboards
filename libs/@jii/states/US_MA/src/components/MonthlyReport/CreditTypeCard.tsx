@@ -20,7 +20,7 @@ import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import styled from "styled-components/macro";
 
-import { SlateCopy } from "~@jii/common-ui";
+import { preventFlexibleLayoutOverflow, SlateCopy } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
 export type CreditTypeCardProps = {
@@ -34,6 +34,8 @@ const CreditTypeCardShell = styled.div`
   margin: 0;
   padding: ${rem(spacing.md)};
   border-radius: ${rem(spacing.sm)} 0 0 ${rem(spacing.sm)};
+
+  ${preventFlexibleLayoutOverflow}
 
   &:last-child {
     border-right: none;

@@ -1,0 +1,137 @@
+{
+  "tags": {
+    "rts": "RTS",
+    "maxRelease": "MAX"
+  },
+  "lastUpdated": "This information was last updated on {{lastUpdatedDate, formatFullDate}}. It updates once per month.",
+  "creditRatings": {
+    "S": "Satisfactory",
+    "I": "Incomplete",
+    "U": "Unsatisfactory",
+    "none": "Unknown"
+  },
+  "home": {
+    "pageTitle": "Earned Time Overview",
+    "dates": {
+      "sectionTitle": "Important dates",
+      "rts": {
+        "label": "Release-to-supervision date",
+        "value": "{{rtsDate, formatFullDate(fallbackText: 'No RTS date')}}",
+        "summary": "The RTS Date is a release to parole supervision without the need for a\n          parole hearing, based upon completion credits earned through programming\n          and education pursuant to M.G.L.c.127, §129D.",
+        "moreInfoLink": "Learn more about RTS"
+      },
+      "maxRelease": {
+        "label": "Maximum release / wrap date",
+        "value": "{{adjustedMaxReleaseDate, formatFullDate(fallbackText: 'No MAX date')}}",
+        "summary_one": "You’ve earned {{count, number}} day off your maximum release / wrap date.",
+        "summary_other": "You’ve earned {{count, number}} days off your maximum release / wrap date.",
+        "breakdown": {
+          "original": {
+            "label": "Original MAX date",
+            "value": "{{ originalMaxReleaseDate, formatFullDate}}"
+          },
+          "change": {
+            "label": "Total reduction",
+            "value_one": "-{{count, number}} day",
+            "value_other": "-{{count, number}} days"
+          },
+          "adjusted": {
+            "label": "Adjusted MAX date",
+            "value": "{{ adjustedMaxReleaseDate, formatFullDate}}"
+          }
+        }
+      },
+      "parole": {
+        "label": "Parole eligibility date",
+        "tag": "PE",
+        "summary": "Questions regarding the calculation of parole eligibility dates should be directed to the Institutional Parole Officer."
+      }
+    },
+    "creditHistory": {
+      "heading": "Time you’ve earned recently",
+      "legend": {
+        "EARNEDGoodTime": "Earned Good Time",
+        "BOOST": "Boosts",
+        "COMPLETION": "Completion Credits"
+      },
+      "creditLabel_one": "{{count, number}} day",
+      "creditLabel_other": "{{count, number}} days",
+      "monthLabel": "{{creditMonth, datetime(month: 'short')}}",
+      "noDataMessage": "You haven’t earned time yet."
+    },
+    "monthlyReport": {
+      "sectionTitle": "Recent monthly reports",
+      "individualReportLink": "See {{reportDate, datetime(month: 'long')}} report",
+      "egtLabel": "Earned Good Time",
+      "boostsLabel": "Boosts",
+      "completionLabel": "Completion Credits",
+      "creditsValue_one": "{{count, number}} day",
+      "creditsValue_other": "{{count, number}} days"
+    },
+    "totalTimeEarned": {
+      "sectionTitle": "Total time you’ve earned",
+      "egtBoostsLabel": "Earned Good Time + Boosts",
+      "completionLabel": "Completion Credits",
+      "creditsValue_one": "{{count, number}} day",
+      "creditsValue_other": "{{count, number}} days",
+      "learnMoreLink": "Learn more about earned time"
+    },
+    "emptyState": {
+      "heading": "You haven’t done any programs or work that give you Earned Good Time.",
+      "body": "When you start doing programs or working, you will be able to see more information in this app, including:\n\n- Important dates, like your release-to-supervision date and maximum release date (if you have them)\n- How much Earned Good Time you earn each month\n- Boosts and completion credits you earn for finishing programs\n- How your earned time affects your important dates\n",
+      "moreInfoLink": "Learn more about earned time"
+    }
+  },
+  "infoPages": {
+    "rts": {
+      "heading": "Release-to-supervision date",
+      "body": "The Release to Supervision date (RTS Date) is the date which has been determined by deductions from the maximum term of a prisoner’s sentence for good conduct deductions under section 129C, subsection (a) of section 129D and a further deduction for any program completion credits earned under subsection (c) of section 129D; provided however, that such date shall not be earlier than the date which has been determined by reducing a prisoner’s imposed maximum term of sentence by 35%.\n\nThe RTS Date is a release to parole supervision without the need for a parole hearing, based upon completion credits earned through programming and education pursuant to M.G.L.c.127, §129D. The RTS date is created pursuant to M.G.L.c.127, §130B upon the award of 30 days of completion credits. The RTS date is based on the Maximum Date minus EGT, Camp Time, Boost Time and Completion Credits. The RTS date cannot be reduced by more than 35% by the total number of deductions from sentence. Note that only one-half of this 35% or 17.5% may be completion credits.\n"
+    },
+    "credits": {
+      "heading": "Earned Good Time, Boosts, and Completion Credits",
+      "body": "## Earned Good Time (EGT)\n\nEarned Good Time (EGT) are credits against sentences granted pursuant to M.G.L.c.127, §129D. Incarcerated individuals may be awarded up to 7.5 days of earned good time per program and up to but not to exceed 15 days per month. Total earned time may not exceed 35% of an individual’s original sentence. House of Correction Sentences may be awarded up to 10 days per month.\n\n<PolicyCallout text=\"To read the full Earned Good Time policy, go to the law library and look up **103 CMR 411.00: Deduction from Sentence Policy.**\" />\n\n## Boosts\n\nBoost Time is Earned Good Time in the amount of ten (10) days awarded to an inmate, pursuant to M.G.L.c.127, §129D, upon successful completion of an activity six (6) months or more in duration, including demonstration of competency in the subject matter, that has been approved by the Commissioner.\n\n## Completion Credits\n\nCompletion Credits are credits that the Commissioner may grant up to 80 days of completion credits to an incarcerated individual serving a Massachusetts state sentence for successful completion of a program or activity, as designated by the commissioner, to be granted in the month during which successful completion of the designated program or activity is achieved; provided, however, that in no event shall the aggregate number of completion credits awarded to an individual exceed a maximum of 17.5% of such individual's imposed maximum term of imprisonment.\n\n## Eligibility for Deductions\n\nEach state inmate may receive a deduction from his sentence in accordance with 103 CMR 411.00 unless the law under which an inmate is committed specifically prohibits the awarding of deductions. An inmate serving a life sentence may be granted such deductions except that such deductions shall not take effect upon the sentence computation unless the sentence is commuted or otherwise revised to a term of years.\n"
+    }
+  },
+  "homeLink": "Back to home",
+  "topLinkText": "Back to top",
+  "definitionsLinksHeading": "Other definitions",
+  "individualMonthlyReport": {
+    "pageTitle": "Monthly Report",
+    "browserPageTitle": "{{reportStartDate, formatMonthYear}} Report",
+    "credits": {
+      "sectionTitle": "Earned time and program participation in {{reportStartDate, datetime(month: long)}}",
+      "table": {
+        "columnHeaders": {
+          "program": "Program"
+        },
+        "aggregateColumn": {
+          "label": "Total time earned"
+        },
+        "valueCell": "{{value, number}}"
+      },
+      "egtLabel": "Earned Good Time",
+      "boostsLabel": "Boosts",
+      "completionLabel": "Completion Credits",
+      "creditsValue_one": "{{count, number}} day",
+      "creditsValue_other": "{{count, number}} days"
+    },
+    "achievements": {
+      "heading": "Achievements",
+      "maxEarnedTime": {
+        "heading": "Earned Good Time",
+        "body": "You earned the maximum possible earned good time this month"
+      }
+    },
+    "selectOptionLabel": "{{reportStartDate, formatMonthYear}}"
+  },
+  "disclaimer": "## Disclaimer\n\nThe information provided on this application is for general and supplemental purposes only and is not intended to be substituted for the official record of this information. While the Massachusetts Department of Correction (DOC) (in partnership with Recidiviz), strives to ensure the accuracy of this content, there is no guarantee of completeness or timeliness, and DOC is not liable for errors, omissions, delays, or interruptions in such information.\n\nUsers should always rely on the official records which DOC staff provide to you directly.  Such official records include, but are not limited, to a Deduction from Sentence (DFS) Report in accordance with 103 CMR 411 Deduction from Sentence which also states the required process and time frames for disputing this information.\n",
+  "unknownUser": {
+    "heading": "Login Failed",
+    "body": "You may be seeing this page for one of these reasons:\n\n**Recent arrival** — If you came into a MADOC facility less than a month ago (whether for a new charge or a violation), **your information may not be in the portal yet**. Tablet accounts for this app are updated by the 12th of the next month.\n\n**Federal or Interstate sentence** — If you were sentenced in a jurisdiction other than Massachusetts but are currently housed in a MA Department of Correction facility in accordance with the Federal and Interstate Compact, **your case is not included in this portal**. Instead, Earned Good Time is calculated by the sending state or Federal authority who will provide you with this information in accordance with their policies and procedures.\n\nIf these reasons do not apply to you, you can submit a ticket by tapping on the (?) in the bottom left corner of the screen.\n"
+  },
+  "onboarding": {
+    "heading": "Track your Earned Good Time",
+    "body": "This app helps you to track the time you’ve earned from programs and work. It also shows how your earned time changes important dates, like your maximum release date and release-to-supervision dates (if you have them).\n\nThe information updates once per month. You will only see information after you start earning time.\n",
+    "continueLink": "See your earned time"
+  }
+}

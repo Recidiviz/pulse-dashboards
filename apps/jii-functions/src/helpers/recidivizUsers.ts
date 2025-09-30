@@ -58,6 +58,6 @@ export async function getRecidivizUserProfile(
   return {
     stateCode: "RECIDIVIZ",
     allowedStates: await getAllowedStates(email),
-    permissions: ["enhanced", "live_data"],
+    permissions: ["enhanced", "live_data", "translator"],
   };
 }

@@ -32,7 +32,9 @@ export const RTSCard = () => {
         {...t(($) => $.home.dates.rts, { returnObjects: true, ...data })}
         tag={t(($) => $.tags.rts)}
       />
-      <SlateCopy>{t(($) => $.home.dates.rts.summary)}</SlateCopy>
+      <SlateCopy options={{ forceBlock: true }}>
+        {t(($) => $.home.dates.rts.summary)}
+      </SlateCopy>
       <GoButton
         to={State.Resident.EGT.$.Definition.buildRelativePath({
           pageSlug: "rts",

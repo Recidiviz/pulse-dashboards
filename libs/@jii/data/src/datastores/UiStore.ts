@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import i18next from "i18next";
+import { action, makeAutoObservable } from "mobx";
+
+import { TRANSLATOR_MODE_LANGUAGE_CODE } from "~@jii/translation";
 
 /**
  * Contains arbitrary bits of UI state that require centralized storage
@@ -42,7 +45,47 @@ export class UiStore {
    */
   hideHeaderBar = false;
 
+  /**
+   * Will be synced in from i18next for observation
+   */
+  currentLanguage: string;
+
+  /**
+   * The most recent language used before activating translator mode,
+   * to facilitate switching back to it
+   */
+  baseLanguageForTranslatorMode: string;
+
   constructor() {
     makeAutoObservable(this);
+
+    const { language } = i18next;
+    this.currentLanguage = language;
+
+    // base defaults to English if we are starting in translator mode
+    this.baseLanguageForTranslatorMode =
+      language === TRANSLATOR_MODE_LANGUAGE_CODE ? "en" : this.currentLanguage;
+
+    i18next.on(
+      "languageChanged",
+      action("update current language", (lng) => {
+        this.currentLanguage = lng;
+        if (lng !== TRANSLATOR_MODE_LANGUAGE_CODE) {
+          this.baseLanguageForTranslatorMode = lng;
+        }
+      }),
+    );
+  }
+
+  get isTranslatorModeActive() {
+    return this.currentLanguage === TRANSLATOR_MODE_LANGUAGE_CODE;
+  }
+
+  set isTranslatorModeActive(value: boolean) {
+    if (value) {
+      i18next.changeLanguage(TRANSLATOR_MODE_LANGUAGE_CODE);
+    } else {
+      i18next.changeLanguage(this.baseLanguageForTranslatorMode);
+    }
   }
 }

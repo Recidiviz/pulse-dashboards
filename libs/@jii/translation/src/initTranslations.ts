@@ -17,6 +17,7 @@
 
 import i18nextDefaultInstance, { TFunction } from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import ChainedBackend from "i18next-chained-backend";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { initReactI18next } from "react-i18next";
 
@@ -31,12 +32,7 @@ export const initTranslations = () => {
 
   initPromise = i18nextDefaultInstance
     .use(initReactI18next)
-    .use(
-      resourcesToBackend(
-        (language: string, namespace: string) =>
-          import(`./namespaces/${namespace}/resources/${language}.ts`),
-      ),
-    )
+    .use(ChainedBackend)
     .use(LanguageDetector)
     .init({
       fallbackLng: "en",
@@ -48,6 +44,20 @@ export const initTranslations = () => {
       },
       detection: {
         lookupQuerystring: "locale",
+      },
+      backend: {
+        backends: [
+          // JSON is the standard and how we store externally managed translations
+          resourcesToBackend(
+            (language: string, namespace: string) =>
+              import(`./namespaces/${namespace}/resources/${language}.json`),
+          ),
+          // if developing copy locally we may prefer to use typescript
+          resourcesToBackend(
+            (language: string, namespace: string) =>
+              import(`./namespaces/${namespace}/resources/${language}.ts`),
+          ),
+        ],
       },
     });
 

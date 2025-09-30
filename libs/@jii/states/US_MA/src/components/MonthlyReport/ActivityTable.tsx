@@ -21,7 +21,7 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { SlateCopy } from "~@jii/common-ui";
+import { preventFlexibleLayoutOverflow, SlateCopy } from "~@jii/common-ui";
 import { useUsMaTranslations } from "~@jii/translation";
 import { usMaEarnedCreditTypes } from "~datatypes";
 import { palette } from "~design-system";
@@ -43,6 +43,8 @@ const TableRow = styled.div.attrs({ role: "row" })<{ boldFont?: boolean }>`
     align-items: center;
     ${(props) => (props.boldFont ? "font-weight: bold" : "")};
     flex: 1;
+
+    ${preventFlexibleLayoutOverflow}
   }
 
   div:first-child {

@@ -23,6 +23,20 @@
         "command": "vitest",
         "cwd": "{projectRoot}"
       }
+    },
+    "sync-resource": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite-node scripts/syncResource.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "ts-to-csv": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite-node scripts/tsToCsv.ts",
+        "cwd": "{projectRoot}"
+      }
     }
   }
 }

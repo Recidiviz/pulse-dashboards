@@ -37,4 +37,5 @@ export * from "./Redirect/Redirect";
 export * from "./RedirectToReentryApp/RedirectToReentryApp";
 export * from "./Selector/Selector";
 export * from "./SimpleLinkProps";
+export * from "./styles";
 export * from "./usePageTitle/usePageTitle";

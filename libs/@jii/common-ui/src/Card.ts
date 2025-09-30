@@ -21,6 +21,8 @@ import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
 
+import { preventFlexibleLayoutOverflow } from "./styles";
+
 export const Card = styled.section`
   border: 1px solid ${palette.slate20};
   border-radius: ${rem(spacing.sm)};
@@ -48,4 +50,8 @@ export const TwoColumnCardWrapper = styled.div`
   display: grid;
   gap: ${rem(spacing.md)};
   grid-template-columns: 1fr 1fr;
+
+  ${Card} {
+    ${preventFlexibleLayoutOverflow}
+  }
 `;

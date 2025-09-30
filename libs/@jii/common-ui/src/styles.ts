@@ -15,21 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// import the original type declarations
-import "i18next";
-
-// import all namespaces (for the default language, only)
-import common from "../namespaces/common/resources/en.json";
-import US_MA from "../namespaces/US_MA/resources/en.json";
-
-declare module "i18next" {
-  // extends CustomTypeOptions
-  interface CustomTypeOptions {
-    resources: {
-      common: typeof common;
-      US_MA: typeof US_MA;
-    };
-    strictKeyChecks: true;
-    enableSelector: true;
-  }
-}
+/**
+ * Apply to children of a flexbox or grid layout to stop their contents
+ * from overflowing the layout (e.g. with long, unbreakable strings - it will
+ * allow them to break)
+ */
+export const preventFlexibleLayoutOverflow = `
+  min-width: 0;
+  overflow-wrap: anywhere;
+`;

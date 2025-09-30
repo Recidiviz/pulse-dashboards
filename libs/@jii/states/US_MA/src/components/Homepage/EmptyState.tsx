@@ -37,7 +37,9 @@ export const EmptyState: FC = () => {
   return (
     <Card>
       <Heading>{t(($) => $.home.emptyState.heading)}</Heading>
-      <CopyWrapper>{t(($) => $.home.emptyState.body)}</CopyWrapper>
+      <CopyWrapper options={{ forceBlock: true }}>
+        {t(($) => $.home.emptyState.body)}
+      </CopyWrapper>
       <GoButton
         to={State.Resident.EGT.$.Definition.buildRelativePath({
           pageSlug: "credits",

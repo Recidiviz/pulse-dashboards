@@ -26,7 +26,10 @@ import { useUsMaTranslations } from "~@jii/translation";
 import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
 import { useEGTDataContext } from "../EGTDataContext/context";
 
-type MonthlyReportSelectorProps = Pick<SelectorProps<Date>, "onChange"> & {
+type MonthlyReportSelectorProps = Pick<
+  SelectorProps<Date>,
+  "onChange" | "menuAlign"
+> & {
   selectedReport: UsMaEGTMonthlyReport;
 };
 
@@ -37,6 +40,7 @@ const Wrapper = styled.div`
 export const MonthlyReportSelector = observer(function MonthlyReportSelector({
   onChange,
   selectedReport,
+  menuAlign,
 }: MonthlyReportSelectorProps) {
   const labelId = useId();
   const { monthlyReports } = useEGTDataContext();
@@ -52,7 +56,7 @@ export const MonthlyReportSelector = observer(function MonthlyReportSelector({
   return (
     <Wrapper>
       <Selector
-        {...{ onChange }}
+        {...{ onChange, menuAlign }}
         labelId={labelId}
         placeholder=""
         value={makeOption(selectedReport)}

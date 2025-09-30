@@ -23,6 +23,7 @@ import useMeasure from "react-use-measure";
 import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 import styled from "styled-components/macro";
 
+import { preventFlexibleLayoutOverflow } from "~@jii/common-ui";
 import { useUsMaTranslations } from "~@jii/translation";
 import { usMaEarnedCreditTypes } from "~datatypes";
 import { palette } from "~design-system";
@@ -70,6 +71,8 @@ const LegendItem = styled.div<{ swatch: string }>`
     vertical-align: baseline;
     width: 0.8em;
   }
+
+  ${preventFlexibleLayoutOverflow}
 `;
 
 const CHART_MARGINS = { left: 60, bottom: 40, top: 20 };

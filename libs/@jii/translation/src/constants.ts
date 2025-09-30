@@ -15,21 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// import the original type declarations
-import "i18next";
-
-// import all namespaces (for the default language, only)
-import common from "../namespaces/common/resources/en.json";
-import US_MA from "../namespaces/US_MA/resources/en.json";
-
-declare module "i18next" {
-  // extends CustomTypeOptions
-  interface CustomTypeOptions {
-    resources: {
-      common: typeof common;
-      US_MA: typeof US_MA;
-    };
-    strictKeyChecks: true;
-    enableSelector: true;
-  }
-}
+export const TRANSLATOR_MODE_LANGUAGE_CODE = "_show-paths";

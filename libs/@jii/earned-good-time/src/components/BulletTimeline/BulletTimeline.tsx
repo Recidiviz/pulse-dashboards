@@ -20,6 +20,7 @@ import { rem } from "polished";
 import { Fragment } from "react";
 import styled from "styled-components/macro";
 
+import { preventFlexibleLayoutOverflow } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
 import bulletEmpty from "./bullet-empty.svg";
@@ -53,6 +54,8 @@ const BulletTimelineList = styled.dl` {
 
   dt {
     position: relative;
+
+    ${preventFlexibleLayoutOverflow}
 
     &::before,
     &::after {
@@ -103,6 +106,8 @@ const BulletTimelineList = styled.dl` {
   dd {
     margin-bottom: ${rem(spacing.sm)};
     margin-left: ${rem(spacing.lg)};
+
+    ${preventFlexibleLayoutOverflow}
   }
 `;
 
