@@ -434,7 +434,8 @@
     "clsx": "~1.0.4",
     "regenerator-runtime": "^0.14.1",
     "html2canvas": "https://github.com/ohaibbq/html2canvas.git#commit=555f194698ef453c488be3804d5c1f30b83f4353",
-    "react-native-css-interop": "0.1.22"
+    "react-native-css-interop": "0.1.22",
+    "tar-fs": "^2.1.4"
   },
   "scripts": {
     "postinstall": "husky",
