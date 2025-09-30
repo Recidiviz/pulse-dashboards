@@ -16,11 +16,11 @@
 // =============================================================================
 
 const { withNxMetro } = require("@nx/expo");
-const { getDefaultConfig } = require("@expo/metro-config");
+const { getSentryExpoConfig } = require("@sentry/react-native/metro");
 const { mergeConfig } = require("metro-config");
 const { withNativeWind } = require("nativewind/metro");
 
-const defaultConfig = getDefaultConfig(__dirname);
+const defaultConfig = getSentryExpoConfig(__dirname);
 const { assetExts, sourceExts } = defaultConfig.resolver;
 
 /**

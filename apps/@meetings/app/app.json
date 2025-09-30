@@ -43,6 +43,15 @@
         {
           "domain": "login-staging.recidiviz.org"
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "note": "Use SENTRY_AUTH_TOKEN env to authenticate with Sentry.",
+          "project": "meetings-app",
+          "organization": "recidiviz-inc"
+        }
       ]
     ],
     "extra": {

@@ -17,12 +17,22 @@
 
 import "../global.css";
 
+import * as Sentry from "@sentry/react-native";
 import React from "react";
 import { Auth0Provider } from "react-native-auth0";
 
 import config from "~@meetings/app/auth0-config";
 
 import AppNavigator from "./navigation/AppNavigator";
+
+Sentry.init({
+  dsn: process.env["EXPO_PUBLIC_SENTRY_DSN"],
+  tracesSampleRate: 0,
+  profilesSampleRate: 0,
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+});
 
 const App = () => {
   return (
@@ -32,4 +42,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Sentry.wrap(App);

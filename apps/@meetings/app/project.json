@@ -11,6 +11,13 @@
       "options": {
         "command": "echo 'No tests yet'"
       }
+    },
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_meetings_app",
+        "cwd": "{projectRoot}"
+      }
     }
   }
 }

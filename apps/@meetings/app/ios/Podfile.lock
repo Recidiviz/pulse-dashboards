@@ -1738,6 +1738,29 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNSentry (6.10.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.10.14.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Sentry/HybridSDK (= 8.48.0)
+    - Yoga
   - RNSVG (15.8.0):
     - DoubleConversion
     - glog
@@ -1781,6 +1804,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - Sentry/HybridSDK (8.48.0)
   - SimpleKeychain (1.2.0)
   - SocketRocket (0.7.1)
   - Yoga (0.0.0)
@@ -1864,6 +1888,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../../../../node_modules/react-native/ReactCommon`)
   - RNGestureHandler (from `../../../../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../../../../node_modules/react-native-screens`)
+  - "RNSentry (from `../../../../node_modules/@sentry/react-native`)"
   - RNSVG (from `../../../../node_modules/react-native-svg`)
   - Yoga (from `../../../../node_modules/react-native/ReactCommon/yoga`)
 
@@ -1871,6 +1896,7 @@ SPEC REPOS:
   trunk:
     - Auth0
     - JWTDecode
+    - Sentry
     - SimpleKeychain
     - SocketRocket
 
@@ -2028,6 +2054,8 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/react-native-gesture-handler"
   RNScreens:
     :path: "../../../../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../../../../node_modules/@sentry/react-native"
   RNSVG:
     :path: "../../../../node_modules/react-native-svg"
   Yoga:
@@ -2112,7 +2140,9 @@ SPEC CHECKSUMS:
   ReactCommon: 300d8d9c5cb1a6cd79a67cf5d8f91e4d477195f9
   RNGestureHandler: fffddeb8af59709c6d8de11b6461a6af63cad532
   RNScreens: 362f4c861dd155f898908d5035d97b07a3f1a9d1
+  RNSentry: ac7beae04304d95491a512b5abf6926d4501c73c
   RNSVG: b889dc9c1948eeea0576a16cc405c91c37a12c19
+  Sentry: 1ca8405451040482877dcd344dfa3ef80b646631
   SimpleKeychain: 768cf43ae778b1c21816e94dddf01bb8ee96a075
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: feb4910aba9742cfedc059e2b2902e22ffe9954a
