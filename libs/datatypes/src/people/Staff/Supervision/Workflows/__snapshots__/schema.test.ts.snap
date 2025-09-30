@@ -163,14 +163,14 @@ exports[`supervision staff schema for 'US_PA' 'OFFICER2' 1`] = `
 
 exports[`supervision staff schema for 'US_TN' 'OFFICER1' 1`] = `
 {
-  "district": "DISTRICT 50",
+  "district": "Unit 1",
   "email": "test-officer@example.com",
-  "givenNames": "Officer Shayla",
+  "givenNames": "Shayla",
   "id": "OFFICER1",
   "pseudonymizedId": "p001",
   "recordType": "supervisionStaff",
   "stateCode": "US_TN",
-  "supervisorExternalId": "SUPERVISOR1",
+  "supervisorExternalId": "agonzalez123",
   "surname": "Rice",
 }
 `;

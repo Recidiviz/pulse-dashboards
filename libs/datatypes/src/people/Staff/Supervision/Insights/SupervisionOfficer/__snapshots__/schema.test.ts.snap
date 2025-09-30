@@ -222,3 +222,22 @@ exports[`transformations 11`] = `
   ],
 }
 `;
+
+exports[`transformations 12`] = `
+{
+  "avgDailyPopulation": null,
+  "displayName": "Shayla Rice",
+  "district": "Unit 1",
+  "email": "test-officer@example.com",
+  "externalId": "OFFICER1",
+  "fullName": {
+    "givenNames": "Shayla",
+    "surname": "Rice",
+  },
+  "latestLoginDate": 2021-09-06T00:00:00.000Z,
+  "pseudonymizedId": "p001",
+  "supervisorExternalIds": [
+    "agonzalez123",
+  ],
+}
+`;

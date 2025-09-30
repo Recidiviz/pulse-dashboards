@@ -178,6 +178,19 @@ export const rawSupervisionOfficerFixture = [
     district: "NOT_APPLICABLE",
     latestLoginDate: null,
   },
+  {
+    externalId: "OFFICER1",
+    pseudonymizedId: "p001",
+    fullName: {
+      givenNames: "Shayla",
+      surname: "Rice",
+    },
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
+    avgDailyPopulation: null,
+    email: "test-officer@example.com",
+    district: "Unit 1",
+    latestLoginDate: relativeFixtureDate({ days: -101 }),
+  },
 ] satisfies RawSupervisionOfficer[];
 
 export const supervisionOfficerFixture = rawSupervisionOfficerFixture.map(

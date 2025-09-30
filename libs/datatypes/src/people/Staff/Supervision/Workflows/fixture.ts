@@ -162,12 +162,12 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   // US_TN - TENNESSEE
   {
     email: "test-officer@example.com",
-    district: "DISTRICT 50",
+    district: "Unit 1",
     id: "OFFICER1",
     stateCode: "US_TN",
-    givenNames: "Officer Shayla",
+    givenNames: "Shayla",
     surname: "Rice",
-    supervisorExternalId: "SUPERVISOR1",
+    supervisorExternalId: "agonzalez123",
     pseudonymizedId: "p001",
   },
 
