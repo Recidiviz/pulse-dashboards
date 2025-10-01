@@ -82,6 +82,11 @@ components:
           - MessageAttempt
           - WorkflowExecution
           - _GroupToPerson
+          - ContactReminderMessageAttempt
+          - ContactReminderMessageSeries
+          - Contact 
+          - WelcomeMessageAttempt
+          - WelcomeMessageSeries
         service_account_email: "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
         postgresql:
           host: !terraform.output cloud-sql-proxy recidiviz-dashboard-production--shared-infra cloud_sql_proxy_ip
@@ -92,3 +97,4 @@ components:
           password: !terraform.output apps/jii-texting database_user_password
           databases:
             - us_id
+            - us_tx
