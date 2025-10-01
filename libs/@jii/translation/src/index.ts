@@ -19,4 +19,5 @@ export * from "./constants";
 export * from "./initTranslations";
 export * from "./namespaces/common/useCommonTranslations";
 export * from "./namespaces/US_MA/useUsMaTranslations";
+export * from "./namespaces/US_TN/useUsTnTranslations";
 export * from "./utils/date";

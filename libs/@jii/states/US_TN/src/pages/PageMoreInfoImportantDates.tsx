@@ -16,14 +16,18 @@
 // =============================================================================
 
 import { usePageTitle } from "~@jii/common-ui";
+import { useUsTnTranslations } from "~@jii/translation";
 
 import { DefinitionView } from "../components/DefinitionView";
-import { usTnCopy } from "../configs/copy";
 
 export function PageMoreInfoImportantDates() {
-  const { moreInfo } = usTnCopy.importantDates;
+  const { t } = useUsTnTranslations();
 
-  usePageTitle(moreInfo.heading);
+  usePageTitle(t(($) => $.importantDates.moreInfo.heading));
 
-  return <DefinitionView {...moreInfo} />;
+  return (
+    <DefinitionView
+      {...t(($) => $.importantDates.moreInfo, { returnObjects: true })}
+    />
+  );
 }

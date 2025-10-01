@@ -15,18 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useTranslation } from "react-i18next";
+import { Namespace, TFunctionSignature } from "i18next";
 
-import { TranslationsObject } from "../../utils/types";
-
-export function useUsMaTranslations() {
-  return useTranslation("US_MA");
-}
-
-/**
- * The shape of the object that can be traversed and returned
- * by the selector function in the US_MA namespace
- */
-export type UsMaTranslationsObject = TranslationsObject<"US_MA">;
-
-export type UsMaTFunction = ReturnType<typeof useUsMaTranslations>["t"];
+export type TranslationsObject<StateCode extends Namespace> = Parameters<
+  Parameters<TFunctionSignature<StateCode>>["0"]
+>["0"];

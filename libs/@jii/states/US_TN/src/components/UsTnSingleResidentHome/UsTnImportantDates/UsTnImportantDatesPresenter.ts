@@ -22,6 +22,18 @@ import { ResidentRecord } from "~datatypes";
 export class UsTnImportantDatesPresenter {
   constructor(public readonly resident: ResidentRecord) {}
 
+  get metadata() {
+    const { metadata } = this.resident;
+
+    if (metadata.stateCode !== "US_TN") {
+      throw new Error(
+        `Unexpected state code for UnTnImportantDatesPresenter ${metadata.stateCode}`,
+      );
+    }
+
+    return metadata;
+  }
+
   get expirationDateReduced(): boolean {
     const { metadata } = this.resident;
     if (metadata.stateCode !== "US_TN") return false;

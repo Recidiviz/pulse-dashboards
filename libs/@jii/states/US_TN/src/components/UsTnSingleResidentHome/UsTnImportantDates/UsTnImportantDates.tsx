@@ -22,54 +22,59 @@ import { Card, GoButton, HomepageSectionHeading } from "~@jii/common-ui";
 import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
 import { BulletTimeline, CardDateInfo } from "~@jii/earned-good-time";
 import { State } from "~@jii/paths";
+import { useUsTnTranslations } from "~@jii/translation";
+import { UsTnResidentMetadata } from "~datatypes";
 import { withPresenterManager } from "~hydration-utils";
 
 import { UsTnImportantDatesPresenter } from "./UsTnImportantDatesPresenter";
 
+const ImportantDateCard = ({
+  section,
+  metadata,
+  children,
+}: {
+  section: "releaseEligibilityDate" | "expirationDate";
+  metadata: UsTnResidentMetadata;
+  children?: React.ReactNode;
+}) => {
+  const { t } = useUsTnTranslations();
+
+  return (
+    <Card>
+      <CardDateInfo
+        label={t(($) => $.importantDates[section].label)}
+        //@ts-expect-error TS2322 - The templating function can accept a Date
+        value={t(($) => $.importantDates[section].contents, {
+          [section]: metadata[section] ?? undefined,
+        })}
+      />
+      {children}
+      <GoButton
+        to={State.Resident.$.UsTnMoreInformation.ImportantDates.buildRelativePath(
+          {},
+        )}
+      >
+        Learn More
+      </GoButton>
+    </Card>
+  );
+};
+
 const ManagedComponent: FC<{
   presenter: UsTnImportantDatesPresenter;
 }> = observer(function UsTnImportantDates({ presenter }) {
-  const { resident } = presenter;
+  const { metadata } = presenter;
+  const { t } = useUsTnTranslations();
 
-  // TODO(#9283):[JII][TN] Move copy into a central location
   return (
     <section>
-      <HomepageSectionHeading>Important Dates</HomepageSectionHeading>
-      <Card>
-        <CardDateInfo
-          label="Release Eligibility Date"
-          tag="RED"
-          value={hydrateTemplate(
-            "{{formatFullDateOptional metadata.releaseEligibilityDate 'No release eligibility date on record'}}",
-            resident,
-          )}
-        />
-        <GoButton
-          to={State.Resident.$.UsTnMoreInformation.ImportantDates.buildRelativePath(
-            {},
-          )}
-        >
-          Learn More
-        </GoButton>
-      </Card>
-      <Card>
-        <CardDateInfo
-          label="Expiration Date"
-          tag="EXP"
-          value={hydrateTemplate(
-            "{{formatFullDateOptional metadata.expirationDate 'No expiration date on record'}}",
-            resident,
-          )}
-        />
+      <HomepageSectionHeading>
+        {t(($) => $.importantDates.sectionHeading)}
+      </HomepageSectionHeading>
+      <ImportantDateCard section="releaseEligibilityDate" metadata={metadata} />
+      <ImportantDateCard section="expirationDate" metadata={metadata}>
         <ExpirationDateReduction presenter={presenter} />
-        <GoButton
-          to={State.Resident.$.UsTnMoreInformation.ImportantDates.buildRelativePath(
-            {},
-          )}
-        >
-          Learn More
-        </GoButton>
-      </Card>
+      </ImportantDateCard>
     </section>
   );
 });

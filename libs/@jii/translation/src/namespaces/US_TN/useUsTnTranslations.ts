@@ -19,14 +19,14 @@ import { useTranslation } from "react-i18next";
 
 import { TranslationsObject } from "../../utils/types";
 
-export function useUsMaTranslations() {
-  return useTranslation("US_MA");
+export function useUsTnTranslations() {
+  return useTranslation("US_TN");
 }
 
 /**
  * The shape of the object that can be traversed and returned
- * by the selector function in the US_MA namespace
+ * by the selector function in the US_TN namespace
  */
-export type UsMaTranslationsObject = TranslationsObject<"US_MA">;
+export type UsTnTranslationsObject = TranslationsObject<"US_TN">;
 
-export type UsMaTFunction = ReturnType<typeof useUsMaTranslations>["t"];
+export type UsTnTFunction = ReturnType<typeof useUsTnTranslations>["t"];

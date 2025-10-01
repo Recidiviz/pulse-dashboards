@@ -17,16 +17,9 @@
 
 import { UsTnCreditType } from "~datatypes";
 
-import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
 import sentenceCreditsInfoPage from "./sentenceCreditsInfoPage.md?raw";
 
 export const usTnCopy = {
-  importantDates: {
-    moreInfo: {
-      heading: "About Your Dates",
-      body: importantDatesInfoPage,
-    },
-  },
   monthlyCreditReportSummary: {
     sectionHeader: "Recent monthly reports",
     creditCategories: {

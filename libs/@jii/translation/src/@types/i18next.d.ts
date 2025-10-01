@@ -21,6 +21,7 @@ import "i18next";
 // import all namespaces (for the default language, only)
 import common from "../namespaces/common/resources/en.json";
 import US_MA from "../namespaces/US_MA/resources/en.json";
+import US_TN from "../namespaces/US_TN/resources/en";
 
 declare module "i18next" {
   // extends CustomTypeOptions
@@ -28,6 +29,7 @@ declare module "i18next" {
     resources: {
       common: typeof common;
       US_MA: typeof US_MA;
+      US_TN: typeof US_TN;
     };
     strictKeyChecks: true;
     enableSelector: true;

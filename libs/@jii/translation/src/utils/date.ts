@@ -20,3 +20,8 @@ export const fullDateFormatOptions: Intl.DateTimeFormatOptions = {
   month: "long",
   day: "numeric",
 };
+
+export const daysTemplate = {
+  singular: "{{count, number}} day",
+  plural: "{{count, number}} days",
+};
