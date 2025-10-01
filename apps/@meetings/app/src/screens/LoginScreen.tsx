@@ -25,7 +25,8 @@ const LoginScreen = () => {
     useAuth0();
 
   const onLogin = async () => {
-    await authorize();
+    const audience = process.env["EXPO_PUBLIC_AUTH0_AUDIENCE"];
+    await authorize({ audience });
     const credentials = await getCredentials();
     Alert.alert("AccessToken: " + credentials?.accessToken);
   };
