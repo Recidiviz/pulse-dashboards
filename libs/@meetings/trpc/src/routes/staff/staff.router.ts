@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { baseProcedure, router } from "~@meetings/trpc/init";
+import { auth0Procedure, router } from "~@meetings/trpc/init";
 
 export const staffRouter = router({
-  // TODO: use auth0Procedure instead of baseProcedure
-  getClients: baseProcedure.query(async ({ ctx: { prisma, user } }) => {
+  getClients: auth0Procedure.query(async ({ ctx: { prisma, user } }) => {
     return prisma.client.findMany({
       where: {
         staff: {
