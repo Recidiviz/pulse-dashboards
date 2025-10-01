@@ -21,14 +21,13 @@ import { dateStringSchema } from "../../../../utils/zod";
 
 export const usTnJiiCreditsSchema = z.object({
   creditDate: dateStringSchema,
-  creditFunction: z.enum(["ORIGINAL", "REMOVAL"]).nullable(),
-  creditSource: z.enum(["LOCAL_JAIL", "TDOC", "WORKHOUSE"]).nullable(),
   creditType: z
     .enum([
       "60_DAY_ED_CREDIT",
       "60_DAY_TREATMENT",
       "BEHAVIOR",
       "BONUS_BEHAVIOR",
+      "DRUG_ALCOHOL",
       "GED",
       "PROGRAM",
       "BONUS_PROGRAM",

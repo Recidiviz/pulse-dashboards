@@ -34,6 +34,7 @@ export const usTnCopy = {
       "60_DAY_TREATMENT": "60 Day Treatment",
       BEHAVIOR: "Behavior",
       BONUS_BEHAVIOR: "Bonus Behavior",
+      DRUG_ALCOHOL: "Treatment",
       GED: "GED",
       BONUS_PROGRAM: "Bonus Program",
       REMOVAL: "Removal",
