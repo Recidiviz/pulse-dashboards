@@ -20,8 +20,11 @@ import { makeAutoObservable } from "mobx";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
 
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const BASE_EMBED_URL = "https://www.google.com/maps/embed/v1/directions";
+
 /**
- * Responsible for handling data for the Tasks Route Planner page.
+ * Responsible for handling map-related data for the Tasks Route Planner page.
  * The child clientsPresenter keeps track of the list of selected officers
  * and clients.
  */
@@ -32,5 +35,35 @@ export class RoutePlannerPresenter {
     this.clientsPresenter = new RoutePlannerClientsPresenter(workflowsStore);
 
     makeAutoObservable(this);
+  }
+
+  get mapsApiKey(): string {
+    return API_KEY;
+  }
+
+  get mapIframeUrl(): string {
+    // TODO(#9405): Replace with the address of the logged-in user's DPO
+    const houstonDpoAddress =
+      "5400 N.SAM HOUSTON PKWY EAST HOUSTON TX 770320000";
+
+    const { selectedAddresses } = this.clientsPresenter;
+    const waypoints =
+      selectedAddresses.length === 0
+        ? {}
+        : { waypoints: selectedAddresses.join("|") };
+
+    const queryParams = {
+      key: this.mapsApiKey,
+      mode: "driving",
+      origin: houstonDpoAddress,
+      destination: houstonDpoAddress,
+      ...waypoints,
+    };
+
+    const formattedQueryParams = Object.entries(queryParams)
+      .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+      .join("&");
+
+    return `${BASE_EMBED_URL}?${formattedQueryParams}`;
   }
 }

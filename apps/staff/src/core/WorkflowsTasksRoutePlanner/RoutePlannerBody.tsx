@@ -51,7 +51,7 @@ export const ManagedComponent: FC<{
       <RoutePlannerSelectArea>
         <RoutePlannerClientSelect presenter={presenter} />
       </RoutePlannerSelectArea>
-      <RoutePlannerMap />
+      <RoutePlannerMap presenter={presenter} />
     </RoutePlannerContainer>
   );
 });

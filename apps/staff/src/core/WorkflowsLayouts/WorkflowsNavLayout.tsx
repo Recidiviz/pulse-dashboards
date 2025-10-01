@@ -33,6 +33,7 @@ import { workflowsUrl } from "../views";
 const Wrapper = styled.div`
   background-color: ${palette.marble1};
   min-height: 100vh;
+  max-height: 100vh;
   height: 100%;
   width: 100%;
 `;

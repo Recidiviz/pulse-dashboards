@@ -15,11 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const RoutePlannerMap = () => {
-  // TODO(#9391): Replace this placeholder with embedded map and controls
-  return (
-    <div
-      style={{ backgroundColor: "lavender", width: "100%", height: "100%" }}
-    />
-  );
-};
+import { observer } from "mobx-react-lite";
+import styled from "styled-components/macro";
+
+import { RoutePlannerPresenter } from "./RoutePlannerPresenter";
+
+const MapFrame = styled.iframe`
+  width: 100%;
+  height: 100%;
+`;
+
+export const RoutePlannerMap = observer(function RoutePlannerMap({
+  presenter,
+}: {
+  presenter: RoutePlannerPresenter;
+}) {
+  // TODO(#9395): Add controls
+  return <MapFrame title="Map" src={presenter.mapIframeUrl} />;
+});
