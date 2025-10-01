@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import i18next from "i18next";
+import { makeAutoObservable, when } from "mobx";
 import { z } from "zod";
 
 import { Permission } from "~@jii/auth";
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import { isHydrated } from "~hydration-utils";
 
 import { AuthManager } from "../apis/auth/AuthManager";
 import { isAuthorizedState } from "../apis/auth/types";
@@ -48,6 +50,16 @@ export class UserStore {
     this.authManager = new AuthManager();
 
     this.segmentClient = new SegmentClient(new SegmentExternals(this));
+
+    // apply feature flag to translations - force default language
+    when(
+      () => isHydrated(this.authManager),
+      () => {
+        if (!this.hasPermission("translator")) {
+          i18next.changeLanguage("en-US");
+        }
+      },
+    );
   }
 
   private get authState() {
