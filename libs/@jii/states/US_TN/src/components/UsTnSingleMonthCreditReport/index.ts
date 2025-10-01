@@ -15,26 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useId } from "react";
-
-import { Selector } from "~@jii/common-ui";
-
-import { UsTnMonthlyReportsPresenter } from "./UsTnMonthlyReportsPresenter";
-
-export const UsTnMonthlyReportSelector = ({
-  presenter,
-}: {
-  presenter: UsTnMonthlyReportsPresenter;
-}) => {
-  const labelId = useId();
-
-  return (
-    <Selector
-      onChange={(value) => presenter.setSelectedSearchOption(value)}
-      options={presenter.monthlyReportOptions}
-      value={presenter.selectedSearchOption}
-      placeholder=""
-      labelId={labelId}
-    />
-  );
-};
+export * from "./UsTnSingleMonthCreditReport";

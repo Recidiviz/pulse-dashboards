@@ -47,4 +47,6 @@ export const usTnResidentMetadataSchema = z.object({
   creditActivity: z.array(usTnJiiCreditsSchema),
 });
 
+export type UsTnResidentMetadata = z.output<typeof usTnResidentMetadataSchema>;
 export type UsTnCreditActivity = z.output<typeof usTnJiiCreditsSchema>;
+export type UsTnCreditType = NonNullable<UsTnCreditActivity["creditType"]>;

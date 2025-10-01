@@ -15,26 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
-
 import { ResidentRecord } from "~datatypes";
 
-import {
-  UsTnMonthlyReport,
-  UsTnMonthlyReports,
-} from "../../UsTnSingleResidentDataContext/context";
+import { usTnCopy } from "../../configs/copy";
+import { UsTnMonthlyReport } from "../UsTnSingleResidentDataContext/context";
 
-export class UsTnMonthlyReportsPresenter {
+export class UsTnSingleMonthCreditReportPresenter {
   constructor(
     public readonly resident: ResidentRecord,
-    private readonly monthlyReports: UsTnMonthlyReports,
-  ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
+    public readonly monthSlug: string,
+    public readonly monthlyReport?: UsTnMonthlyReport,
+  ) {}
+
+  get displayMonth(): string {
+    return this.monthlyReport?.formattedMonth ?? "";
   }
 
-  get mostRecentReports(): UsTnMonthlyReport[] {
-    return Object.values(this.monthlyReports)
-      .sort((a, b) => (b.month > a.month ? 1 : -1))
-      .slice(0, 8);
+  get totalMonthlyCredits(): number {
+    const { monthlyReport } = this;
+
+    if (!monthlyReport) return 0;
+
+    return monthlyReport.totalCredits;
+  }
+
+  get creditEntries(): [string, number][] {
+    const { monthlyReport } = this;
+
+    if (!monthlyReport) return [];
+
+    return monthlyReport.reports
+      .filter((report) => report.creditType !== null)
+      .map((report) => [
+        // @ts-expect-error We filter out reports with null creditType above
+        usTnCopy.monthlyCreditReportSummary.creditTypes[report.creditType],
+        report.creditsEarned ?? 0,
+      ]);
   }
 }

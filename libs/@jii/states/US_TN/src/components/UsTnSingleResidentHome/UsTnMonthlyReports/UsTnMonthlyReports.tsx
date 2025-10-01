@@ -15,33 +15,62 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
+import { Link } from "react-router-dom";
+import styled from "styled-components/macro";
 
 import {
   Card,
   CardHeading,
   CardValue,
-  Chip,
   GoButton,
   HomepageSectionHeading,
-  TwoColumnCardWrapper,
 } from "~@jii/common-ui";
-import { formatFullDate, useSingleResidentContext } from "~@jii/data";
-import { OpenTable } from "~@jii/earned-good-time";
+import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
-import { UsTnCreditActivity } from "~datatypes";
 import { withPresenterManager } from "~hydration-utils";
 
 import { usTnCopy } from "../../../configs/copy";
-import { UsTnMonthlyReportSelector } from "./UsTnMonthlyReportSelector";
+import { prefixNumberWithSign } from "../../../utils";
+import {
+  useUsTnSingleResidentDataContext,
+  UsTnMonthlyReport,
+} from "../../UsTnSingleResidentDataContext/context";
 import { UsTnMonthlyReportsPresenter } from "./UsTnMonthlyReportsPresenter";
 
-const StatusChip: React.FC<{ status: "GAIN" | "LOSS" }> = ({ status }) => {
-  const { reportTags } = usTnCopy.monthlyCreditReport;
+const MonthlyReportSummaryGridWrapper = styled.div`
+  display: grid;
+  gap: ${rem(spacing.sm)};
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  margin-bottom: ${rem(spacing.md)};
+`;
 
-  const color = status === "GAIN" ? "green" : "gray";
+const MonthlyReportSummaryCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  height: 9.5rem;
+`;
 
-  return <Chip color={color}>{reportTags[status]}</Chip>;
+const MonthlyReportSummary = ({ report }: { report: UsTnMonthlyReport }) => {
+  const { totalCredits, formattedMonth } = report;
+  return (
+    <Link
+      to={State.Resident.$.EGT.MonthlyReport.buildRelativePath({
+        reportDate: report.monthSlug,
+      })}
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
+      <MonthlyReportSummaryCard>
+        <CardValue>{prefixNumberWithSign(totalCredits)}</CardValue>
+        <CardHeading>{formattedMonth}</CardHeading>
+      </MonthlyReportSummaryCard>
+    </Link>
+  );
 };
 
 const ManagedComponent = observer(function UsTnMonthlyReports({
@@ -49,105 +78,33 @@ const ManagedComponent = observer(function UsTnMonthlyReports({
 }: {
   presenter: UsTnMonthlyReportsPresenter;
 }) {
-  const {
-    selectedMonthlyReport: {
-      behaviorCredits,
-      programCredits,
-      educationCredits,
-      treatmentCredits,
-      totalCredits,
-      reports,
-    },
-  } = presenter;
+  const { sectionHeader } = usTnCopy.monthlyCreditReportSummary;
 
-  const {
-    creditCategories,
-    sectionHeader,
-    reportColumns,
-    noMonthlyReport,
-    totalCredits: totalCreditsCopy,
-  } = usTnCopy.monthlyCreditReport;
-
-  const filteredReports = reports.filter(
-    ({ creditType }) => creditType !== null,
-  );
+  const { mostRecentReports } = presenter;
 
   // TODO(#9283):[JII][TN] Move "X days" into centralized copy
   return (
     <section>
       <HomepageSectionHeading>{sectionHeader}</HomepageSectionHeading>
-      <Card>
-        <UsTnMonthlyReportSelector presenter={presenter} />
-        <TwoColumnCardWrapper>
-          <Card>
-            <CardHeading>{creditCategories.behavior}</CardHeading>
-            <CardValue>{behaviorCredits} days</CardValue>
-          </Card>
-          <Card>
-            <CardHeading>{creditCategories.program}</CardHeading>
-            <CardValue>{programCredits} days</CardValue>
-          </Card>
-          <Card>
-            <CardHeading>{creditCategories.education}</CardHeading>
-            <CardValue>{educationCredits} days</CardValue>
-          </Card>
-          <Card>
-            <CardHeading>{creditCategories.treatment}</CardHeading>
-            <CardValue>{treatmentCredits} days</CardValue>
-          </Card>
-        </TwoColumnCardWrapper>
-        {filteredReports.length === 0 ? (
-          noMonthlyReport
-        ) : (
-          <OpenTable
-            columns={[
-              { key: "creditType", label: reportColumns.creditType },
-              { key: "status", label: reportColumns.status },
-              { key: "amount", label: reportColumns.amount },
-              { key: "creditDate", label: reportColumns.creditDate },
-            ]}
-            data={filteredReports
-              .map((r) => generateReportRow(r))
-              .filter((x) => x !== null)}
-            footer={{
-              creditType: totalCreditsCopy,
-              amount: `${totalCredits > 0 ? "+" : "-"} ${Math.abs(totalCredits)} days`,
-            }}
-          />
-        )}
-        <GoButton
-          to={State.Resident.$.UsTnMoreInformation.Credits.buildRelativePath(
-            {},
-          )}
-        >
-          Learn More
-        </GoButton>
-      </Card>
+      <MonthlyReportSummaryGridWrapper>
+        {mostRecentReports.map((report) => (
+          <MonthlyReportSummary report={report} key={report.monthSlug} />
+        ))}
+      </MonthlyReportSummaryGridWrapper>
+      <GoButton
+        to={State.Resident.$.UsTnMoreInformation.Credits.buildRelativePath({})}
+      >
+        Learn More
+      </GoButton>
     </section>
   );
 });
 
-function generateReportRow(report: UsTnCreditActivity) {
-  const { creditsEarned } = report;
-  const { creditTypes: creditTypeCopy, unknownCreditType } =
-    usTnCopy.monthlyCreditReport;
-
-  if (creditsEarned === null) return null;
-
-  return {
-    creditDate: formatFullDate(report.creditDate),
-    creditType: report.creditType
-      ? creditTypeCopy[report.creditType]
-      : unknownCreditType,
-    amount: `${creditsEarned > 0 ? "+" : "-"} ${Math.abs(creditsEarned)} days`,
-    status: <StatusChip status={creditsEarned > 0 ? "GAIN" : "LOSS"} />,
-  };
-}
-
 function usePresenter() {
   const { resident } = useSingleResidentContext();
+  const { monthlyReports } = useUsTnSingleResidentDataContext();
 
-  return new UsTnMonthlyReportsPresenter(resident);
+  return new UsTnMonthlyReportsPresenter(resident, monthlyReports);
 }
 
 export const UsTnMonthlyReports = withPresenterManager({

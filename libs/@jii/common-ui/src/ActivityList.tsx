@@ -15,15 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
+import { rem } from "polished";
+import styled from "styled-components/macro";
 
-import { DefinitionView } from "../components/DefinitionView";
-import { usTnCopy } from "../configs/copy";
+import { palette, spacing } from "~design-system";
 
-export function PageMoreInfoCreditReports() {
-  const { moreInfo } = usTnCopy.monthlyCreditReportSummary;
+export const ActivityRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: ${rem(spacing.lg)};
+  height: ${rem(24)};
+  margin: ${rem(spacing.sm)} 0;
+`;
 
-  usePageTitle(moreInfo.heading);
+export const ActivityList = styled.div`
+  margin: ${rem(spacing.md)} 0;
+`;
 
-  return <DefinitionView {...moreInfo} />;
-}
+export const ActivityRowDivider = styled.hr`
+  border-top: 1px solid ${palette.slate10};
+  margin: ${rem(spacing.xs)} ${rem(spacing.xxs)};
+
+  &:last-child {
+    display: none;
+  }
+`;

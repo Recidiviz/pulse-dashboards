@@ -21,16 +21,17 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { Card, HomepageSectionHeading } from "~@jii/common-ui";
-import { useUsMaTranslations } from "~@jii/translation";
-import { palette } from "~design-system";
-
-import { CreditsByTypeCardSkeleton } from "../../MonthlyReport/CreditsByTypeCardSkeleton";
 import {
   ActivityList,
   ActivityRow,
   ActivityRowDivider,
-} from "./MonthlyReportHomepageCard";
+  Card,
+  HomepageSectionHeading,
+} from "~@jii/common-ui";
+import { useUsMaTranslations } from "~@jii/translation";
+import { palette } from "~design-system";
+
+import { CreditsByTypeCardSkeleton } from "../../MonthlyReport/CreditsByTypeCardSkeleton";
 
 const SkeletonLine = styled.div`
   height: ${rem(1)};

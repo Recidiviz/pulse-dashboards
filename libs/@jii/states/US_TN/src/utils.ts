@@ -15,15 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
-
-import { DefinitionView } from "../components/DefinitionView";
-import { usTnCopy } from "../configs/copy";
-
-export function PageMoreInfoCreditReports() {
-  const { moreInfo } = usTnCopy.monthlyCreditReportSummary;
-
-  usePageTitle(moreInfo.heading);
-
-  return <DefinitionView {...moreInfo} />;
+export function prefixNumberWithSign(x: number): string {
+  return `${x >= 0 ? "+" : "-"}${Math.abs(x)}`;
 }

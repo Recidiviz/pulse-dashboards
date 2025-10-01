@@ -20,9 +20,11 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
 import React from "react";
-import styled from "styled-components/macro";
 
 import {
+  ActivityList,
+  ActivityRow,
+  ActivityRowDivider,
   Card,
   CopyWrapper,
   GoButton,
@@ -31,34 +33,12 @@ import {
 } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
-import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useEGTDataContext } from "../../EGTDataContext/context";
 import { CreditsByTypeCard } from "../../MonthlyReport/CreditsByTypeCard";
 import { MonthlyReportSelector } from "../../MonthlyReportSelector/MonthlyReportSelector";
 import { MonthlyReportPresenter } from "./MonthlyReportPresenter";
-
-export const ActivityRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: ${rem(spacing.lg)};
-  height: ${rem(24)};
-  margin: ${rem(spacing.sm)} 0;
-`;
-
-export const ActivityList = styled.div`
-  margin: ${rem(spacing.md)} 0;
-`;
-
-export const ActivityRowDivider = styled.hr`
-  border-top: 1px solid ${palette.slate10};
-  margin: ${rem(spacing.xs)} ${rem(spacing.xxs)};
-
-  &:last-child {
-    display: none;
-  }
-`;
 
 const ManagedComponent: FC<{
   presenter: MonthlyReportPresenter;

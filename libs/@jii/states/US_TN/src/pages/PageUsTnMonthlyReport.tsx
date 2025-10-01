@@ -17,13 +17,12 @@
 
 import { usePageTitle } from "~@jii/common-ui";
 
-import { DefinitionView } from "../components/DefinitionView";
+import { UsTnSingleMonthCreditReport } from "../components/UsTnSingleMonthCreditReport";
 import { usTnCopy } from "../configs/copy";
 
-export function PageMoreInfoCreditReports() {
-  const { moreInfo } = usTnCopy.monthlyCreditReportSummary;
+export function PageUsTnMonthlyReport() {
+  const { pageTitle } = usTnCopy.monthlyCreditReport;
+  usePageTitle(pageTitle);
 
-  usePageTitle(moreInfo.heading);
-
-  return <DefinitionView {...moreInfo} />;
+  return <UsTnSingleMonthCreditReport />;
 }

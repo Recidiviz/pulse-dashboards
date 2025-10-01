@@ -18,25 +18,33 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
-import { UsTnMoreInformation } from "~@jii/paths";
+import { EGT, UsTnMoreInformation } from "~@jii/paths";
 
+import { UsTnSingleResidentDataContext } from "../components/UsTnSingleResidentDataContext/DataContext";
 import { PageMoreInfoCreditReports } from "../pages/PageMoreInfoCreditReports";
 import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
+import { PageUsTnMonthlyReport } from "../pages/PageUsTnMonthlyReport";
 import { PageUsTnResidentHome } from "../pages/PageUsTnResidentHome";
 
 export function UsTnRouter() {
   return (
-    <Routes>
-      <Route index element={<PageUsTnResidentHome />} />
-      <Route path="*" element={<NotFound />} />
-      <Route
-        path={UsTnMoreInformation.ImportantDates.path}
-        element={<PageMoreInfoImportantDates />}
-      />
-      <Route
-        path={UsTnMoreInformation.Credits.path}
-        element={<PageMoreInfoCreditReports />}
-      />
-    </Routes>
+    <UsTnSingleResidentDataContext>
+      <Routes>
+        <Route index element={<PageUsTnResidentHome />} />
+        <Route path="*" element={<NotFound />} />
+        <Route
+          path={UsTnMoreInformation.ImportantDates.path}
+          element={<PageMoreInfoImportantDates />}
+        />
+        <Route
+          path={UsTnMoreInformation.Credits.path}
+          element={<PageMoreInfoCreditReports />}
+        />
+        <Route
+          path={EGT.MonthlyReport.path}
+          element={<PageUsTnMonthlyReport />}
+        />
+      </Routes>
+    </UsTnSingleResidentDataContext>
   );
 }

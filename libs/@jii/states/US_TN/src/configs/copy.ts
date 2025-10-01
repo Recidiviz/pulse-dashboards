@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnCreditActivity } from "~datatypes";
+import { UsTnCreditType } from "~datatypes";
 
 import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
 import sentenceCreditsInfoPage from "./sentenceCreditsInfoPage.md?raw";
@@ -27,7 +27,7 @@ export const usTnCopy = {
       body: importantDatesInfoPage,
     },
   },
-  monthlyCreditReport: {
+  monthlyCreditReportSummary: {
     sectionHeader: "Recent monthly reports",
     creditCategories: {
       behavior: "Behavior Credits",
@@ -44,7 +44,7 @@ export const usTnCopy = {
       GED: "GED",
       BONUS_PROGRAM: "Bonus Program",
       REMOVAL: "Removal",
-    } satisfies Record<NonNullable<UsTnCreditActivity["creditType"]>, string>,
+    } satisfies Record<UsTnCreditType, string>,
     unknownCreditType: "Unknown",
     noMonthlyReport: "No credit activity for this month.",
     totalCredits: "Total Credits",
@@ -62,5 +62,8 @@ export const usTnCopy = {
       heading: "About Your Monthly Credit Reports",
       body: sentenceCreditsInfoPage,
     },
+  },
+  monthlyCreditReport: {
+    pageTitle: "Monthly Report",
   },
 };
