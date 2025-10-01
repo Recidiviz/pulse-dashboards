@@ -16,7 +16,7 @@
 // =============================================================================
 
 import * as React from "react";
-import { KeyboardEventHandler, useContext } from "react";
+import { useContext } from "react";
 
 import { MenuElement } from "./Dropdown.styles";
 import DropdownContext from "./DropdownContext";
@@ -32,57 +32,10 @@ export const DropdownMenu = ({
   className,
   children,
 }: DropdownMenuProps): JSX.Element => {
-  const { focusManager, shown, setShown } = useContext(DropdownContext);
-  const onKeyPress: KeyboardEventHandler<HTMLDivElement> = (
-    event: React.KeyboardEvent<HTMLDivElement>,
-  ) => {
-    switch (event.key) {
-      case "Down":
-      case "ArrowDown":
-        event.preventDefault();
-        focusManager.focusNextItem();
-        break;
-      case "Up":
-      case "ArrowUp":
-        event.preventDefault();
-        focusManager.focusPreviousItem();
-        break;
-      case "Esc":
-      case "Escape":
-        event.stopPropagation();
-        event.preventDefault();
-        setShown(false);
-        focusManager.focusToggle();
-        break;
-      default:
-        break;
-    }
-  };
-
-  React.useEffect(() => {
-    const handleFocus = (event: FocusEvent) => {
-      const target = event.target as HTMLElement;
-      if (!focusManager.dropdown?.current?.contains(target)) {
-        setShown(false);
-      }
-    };
-
-    document.addEventListener("click", handleFocus);
-    document.addEventListener("focusin", handleFocus);
-
-    return () => {
-      document.removeEventListener("click", handleFocus);
-      document.removeEventListener("focusin", handleFocus);
-    };
-  });
+  const { shown } = useContext(DropdownContext);
 
   return (
-    <MenuElement
-      alignment={alignment}
-      className={className}
-      onKeyDown={onKeyPress}
-      shown={shown}
-    >
+    <MenuElement alignment={alignment} className={className} shown={shown}>
       {children}
     </MenuElement>
   );

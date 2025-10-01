@@ -37,16 +37,29 @@ import * as React from "react";
 import { MenuItemElement } from "./Dropdown.styles";
 import DropdownContext from "./DropdownContext";
 
-export interface DropdownMenuItemProps {
+// Base props shared by all variants
+interface DropdownMenuItemBaseProps {
   className?: string;
   /**
    * @deprecated pass children instead
    */
-  label?: string;
-  children?: React.ReactNode;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  label?: string
+  children: React.ReactNode;
   preventCloseOnClickEvent?: boolean;
 }
+
+// Props for when the item's action is a link inside the children
+interface LinkMenuItemProps extends DropdownMenuItemBaseProps {
+  onClick?: never;
+}
+
+// Props for when the item's action is an onClick handler
+interface ActionMenuItemProps extends DropdownMenuItemBaseProps {
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+}
+
+export type DropdownMenuItemProps = LinkMenuItemProps | ActionMenuItemProps;
+
 
 export const DropdownMenuItem = ({
   className,
@@ -66,25 +79,44 @@ export const DropdownMenuItem = ({
     ref.current?.focus();
   };
 
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>,
+  ) => {
+    // If a custom onClick is provided, execute it.
+    if (onClick) {
+      onClick(event as React.MouseEvent<HTMLButtonElement>);
+    } else {
+      // Otherwise, find an anchor tag in the children and click it.
+      const link = ref.current?.querySelector("a");
+      if (link) {
+        link.click();
+      }
+    }
+
+    // Close the dropdown and return focus to the toggle button.
+    if (!preventCloseOnClickEvent) {
+      setShown(false);
+      focusManager.focusToggle();
+    }
+  };
+
+  const isLink = !onClick;
+
   return (
     <MenuItemElement
       className={className}
       ref={ref}
+      isLink={isLink}
       onMouseDown={(e) =>
         // prevents a blur from clobbering click event in Safari
         // https://stackoverflow.com/questions/17769005/onclick-and-onblur-ordering-issue/57630197#57630197
         e.preventDefault()
       }
       onMouseEnter={onMouseEnter}
-      onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick(event);
-        if (!preventCloseOnClickEvent) {
-          setShown(false);
-          focusManager.focusToggle();
-        }
-      }}
+      onClick={handleClick}
       disabled={!shown}
       tabIndex={-1}
+      role="menuitem"
     >
       {label || children}
     </MenuItemElement>

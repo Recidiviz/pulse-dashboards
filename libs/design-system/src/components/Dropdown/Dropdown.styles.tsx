@@ -22,10 +22,7 @@ import styled, { css } from "styled-components/macro";
 import { palette } from "../../styles";
 import { Button } from "../Button";
 
-export const MenuItemElement = styled.button.attrs({
-  type: "button",
-  role: "menuitem",
-})`
+export const MenuItemElement = styled.button<{ isLink?: boolean }>`
   ${typography.Sans14}
   color: ${palette.pine3};
   list-style: none;
@@ -40,21 +37,8 @@ export const MenuItemElement = styled.button.attrs({
   width: 100%;
   text-align: left;
   white-space: nowrap;
-
-  &:focus {
-    outline: none;
-    color: ${palette.white};
-    background-color: ${palette.signal.links};
-    cursor: pointer;
-  }
-
-  &:active {
-    background-color: ${palette.pine4};
-  }
-
-  &:first-child {
-    margin-top: ${rem(spacing.sm)};
-  }
+  outline: 1px solid transparent; /* Use outline for focus, reserve space */
+  outline-offset: -1px;
 
   &:last-child {
     margin-bottom: ${rem(spacing.sm)};
@@ -65,6 +49,37 @@ export const MenuItemElement = styled.button.attrs({
     margin-bottom: 0;
     border-radius: 8px;
   }
+
+  &:first-child {
+    margin-top: ${rem(spacing.sm)};
+  }
+
+  ${({ isLink }) =>
+    isLink &&
+    css`
+      &:focus-visible {
+        /* Bring the focused item to the front to show its full border */
+        position: relative;
+        z-index: 1;
+        outline-color: ${palette.signal.links};
+        border-radius: 8px;
+      }
+    `}
+
+  ${({ isLink }) =>
+    !isLink &&
+    css`
+      &:focus {
+        outline: none;
+        color: ${palette.white};
+        background-color: ${palette.signal.links};
+        cursor: pointer;
+      }
+
+      &:active {
+        background-color: ${palette.pine4};
+      }
+    `}
 `;
 
 export const MenuLabelElement = styled.div`

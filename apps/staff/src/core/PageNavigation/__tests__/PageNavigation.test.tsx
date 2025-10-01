@@ -134,13 +134,13 @@ describe("CoreLayout tests", () => {
   describe("Insights link", () => {
     it("Hides if not enabled", () => {
       const selector = renderPageNavigation();
-      expect(selector.find("InsightsLink>NavLink")).toHaveLength(0);
+      expect(selector.find("InsightsLink>DropdownMenuItem")).toHaveLength(0);
     });
 
     it("Shows if enabled", () => {
       rootStoreMock.userStore.userAllowedNavigation.insights = [];
       const selector = renderPageNavigation();
-      expect(selector.find("InsightsLink>NavLink")).toHaveLength(1);
+      expect(selector.find("InsightsLink>DropdownMenuItem")).toHaveLength(1);
     });
   });
 });

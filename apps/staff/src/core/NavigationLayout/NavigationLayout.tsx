@@ -27,6 +27,7 @@ import {
   Button,
   Dropdown,
   DropdownMenu,
+  DropdownMenuItem,
   DropdownToggle,
   Icon,
   IconSVG,
@@ -122,14 +123,6 @@ const NavLinks = styled.ul`
 
 const DropdownProfile = styled(Dropdown)`
   margin-top: 5px;
-
-  & button {
-    &:focus-visible {
-      border: 1px solid ${palette.signal.links} !important;
-      border-radius: 8px;
-      margin-bottom: -5px;
-    }
-  }
 `;
 
 const DropdownProfileMenu = styled(DropdownMenu)`
@@ -209,11 +202,6 @@ const MainLogoNavLink = styled(Link)`
   ${Separator} {
     padding: 0 0.75rem;
   }
-
-  &:focus-visible {
-    border: 1px solid ${palette.signal.links} !important;
-    border-radius: 8px;
-  }
 `;
 
 type OptionalLinkProps = { enabled: boolean };
@@ -249,14 +237,17 @@ function MethodologyLink({
 
   if (externalMethodologyUrl) {
     return (
-      <a
-        href={externalMethodologyUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={handleMethodologyLinkClick}
-      >
-        {linkContents}
-      </a>
+      <DropdownMenuItem>
+        <a
+          href={externalMethodologyUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={handleMethodologyLinkClick}
+          role="menuitem"
+        >
+          {linkContents}
+        </a>
+      </DropdownMenuItem>
     );
   }
 
@@ -266,17 +257,18 @@ function MethodologyLink({
       : view;
 
   return (
-    <NavLink
-      to={{
-        pathname: `/${DASHBOARD_VIEWS.methodology}/${methodologyView}`,
-        search: `?stateCode=${currentTenantId}`,
-      }}
-      onClick={handleMethodologyLinkClick}
-      role="menuitem"
-      tabIndex={0}
-    >
-      {linkContents}
-    </NavLink>
+    <DropdownMenuItem>
+      <NavLink
+        to={{
+          pathname: `/${DASHBOARD_VIEWS.methodology}/${methodologyView}`,
+          search: `?stateCode=${currentTenantId}`,
+        }}
+        onClick={handleMethodologyLinkClick}
+        role="menuitem"
+      >
+        {linkContents}
+      </NavLink>
+    </DropdownMenuItem>
   );
 }
 
@@ -287,7 +279,7 @@ function MainLogo({
   if (!enabled) return null;
 
   return (
-    <MainLogoNavLink to="/" role="menuitem" aria-label="Go to Recidiviz Home">
+    <MainLogoNavLink to="/" role="menuitem" aria-label="Go to Recidiviz Home" className="MainLogoLink">
       <RecidivizLogo aria-hidden="true" />
       {enabledLanternLogo && (
         <>
@@ -302,21 +294,22 @@ function MainLogo({
 function WorkflowsLink({
   enabled,
   homepage,
-}: OptionalLinkProps & { homepage: WorkflowsPage }) {
+}: OptionalLinkProps & { homepage: WorkflowsPage   }) {
   const { isMobile } = useIsMobile(true);
 
   if (!enabled) return null;
 
   return (
-    <NavLink
-      className="WorkflowsLink"
-      to={workflowsUrl(homepage)}
-      role="menuitem"
-      tabIndex={0}
-    >
-      {isMobile && <Icon kind={IconSVG.Workflows} width={20} />}
-      Go to Workflows
-    </NavLink>
+    <DropdownMenuItem>
+      <NavLink
+        className="WorkflowsLink"
+        to={workflowsUrl(homepage)}
+        role="menuitem"
+      >
+        {isMobile && <Icon kind={IconSVG.Workflows} width={20} />}
+        Go to Workflows
+      </NavLink>
+    </DropdownMenuItem>
   );
 }
 
@@ -327,15 +320,16 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
 
   return (
-    <NavLink
-      to={`/${DASHBOARD_VIEWS.operations}`}
-      onClick={() => vitalsStore.resetCurrentEntityId()}
-      role="menuitem"
-      tabIndex={0}
-    >
-      {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
-      Go to Operations
-    </NavLink>
+    <DropdownMenuItem>
+      <NavLink
+        to={`/${DASHBOARD_VIEWS.operations}`}
+        onClick={() => vitalsStore.resetCurrentEntityId()}
+        role="menuitem"
+      >
+        {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
+        Go to Operations
+      </NavLink>
+    </DropdownMenuItem>
   );
 }
 
@@ -348,15 +342,16 @@ const PathwaysLink = observer(function PathwaysLink({
   if (!enabled) return null;
 
   return (
-    <NavLink
-      to={`/${DASHBOARD_VIEWS.system}`}
-      onClick={() => filtersStore.resetFilters()}
-      role="menuitem"
-      tabIndex={0}
-    >
-      {isMobile && <Icon kind={IconSVG.Pathways} width={20} />}
-      Go to {tenantStore.pathwaysName}
-    </NavLink>
+    <DropdownMenuItem>
+      <NavLink
+        to={`/${DASHBOARD_VIEWS.system}`}
+        onClick={() => filtersStore.resetFilters()}
+        role="menuitem"
+      >
+        {isMobile && <Icon kind={IconSVG.Pathways} width={20} />}
+        Go to {tenantStore.pathwaysName}
+      </NavLink>
+    </DropdownMenuItem>
   );
 });
 
@@ -365,10 +360,15 @@ function InsightsLink({ enabled }: OptionalLinkProps) {
 
   if (!enabled) return null;
   return (
-    <NavLink to={`/${DASHBOARD_VIEWS.insights}`} role="menuitem" tabIndex={0}>
-      {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
-      Go to Insights
-    </NavLink>
+    <DropdownMenuItem>
+      <NavLink
+        to={`/${DASHBOARD_VIEWS.insights}`}
+        role="menuitem"
+      >
+        {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
+        Go to Insights
+      </NavLink>
+    </DropdownMenuItem>
   );
 }
 
@@ -383,14 +383,15 @@ function PSIStaffLink({
 
   if (!enabled || !staffPseudoId) return null;
   return (
-    <NavLink
-      to={psiUrl("staffDashboard", { staffPseudoId })}
-      role="menuitem"
-      tabIndex={0}
-    >
-      {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
-      Go to PSI Case Dashboard
-    </NavLink>
+    <DropdownMenuItem>
+      <NavLink
+        to={psiUrl("staffDashboard", { staffPseudoId })}
+        role="menuitem"
+      >
+        {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
+        Go to PSI Case Dashboard
+      </NavLink>
+    </DropdownMenuItem>
   );
 }
 
@@ -405,14 +406,15 @@ function PSISupervisorLink({
 
   if (!enabled || !staffPseudoId) return null;
   return (
-    <NavLink
-      to={psiUrl("supervisorDashboard", { staffPseudoId })}
-      role="menuitem"
-      tabIndex={0}
-    >
-      {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
-      Go to PSI Supervisor Dashboard
-    </NavLink>
+    <DropdownMenuItem>
+      <NavLink
+        to={psiUrl("supervisorDashboard", { staffPseudoId })}
+        role="menuitem"
+      >
+        {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
+        Go to PSI Supervisor Dashboard
+      </NavLink>
+    </DropdownMenuItem>
   );
 }
 
@@ -423,10 +425,12 @@ function LogoutLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
 
   return (
-    <NavLink to="/" onClick={logout} role="menuitem" tabIndex={0}>
-      {isMobile && <Icon kind={IconSVG.Leave} width={20} />}
-      Log Out
-    </NavLink>
+    <DropdownMenuItem>
+      <NavLink to="/" onClick={logout} role="menuitem">
+        {isMobile && <Icon kind={IconSVG.Leave} width={20} />}
+        Log Out
+      </NavLink>
+    </DropdownMenuItem>
   );
 }
 
@@ -436,10 +440,16 @@ function AccountLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
 
   return (
-    <NavLink className="AccountLink" to={`/${DASHBOARD_VIEWS.profile}`}>
-      {isMobile && <UserAvatar />}
-      Profile
-    </NavLink>
+    <DropdownMenuItem>
+      <NavLink
+        className="AccountLink"
+        to={`/${DASHBOARD_VIEWS.profile}`}
+        role="menuitem"
+      >
+        {isMobile && <UserAvatar />}
+        Profile
+      </NavLink>
+    </DropdownMenuItem>
   );
 }
 
@@ -452,14 +462,16 @@ function WorkflowsSystemLinks() {
 
   return workflowsStore.workflowsSupportedSystems?.map((systemId) => {
     return (
-      <NavLink
-        key={systemId}
-        to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
-        onClick={() => workflowsStore.updateActiveSystem(systemId)}
-      >
-        {isMobile && <Icon kind={IconSVG.Users} width={20} />}
-        {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
-      </NavLink>
+      <DropdownMenuItem>
+        <NavLink
+          key={systemId}
+          to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
+          onClick={() => workflowsStore.updateActiveSystem(systemId)}
+        >
+          {isMobile && <Icon kind={IconSVG.Users} width={20} />}
+          {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
+        </NavLink>
+      </DropdownMenuItem>
     );
   });
 }
@@ -603,8 +615,6 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
                       aria-label="Profile dropdown button"
                       role="menuitem"
                       className="ProfileDropdownButton"
-                      // Override the tabIndex in DropdownToggle since this is in a Menubar
-                      tabIndex={-1}
                     >
                       <UserAvatar />
                     </DropdownToggle>

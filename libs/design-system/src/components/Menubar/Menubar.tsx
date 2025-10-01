@@ -38,8 +38,14 @@ const MenuBarElement = styled.nav`
   }
 
   &:has(:focus-visible) {
-    margin: -5px;
-    border: 1px solid ${palette.signal.links};
+    box-shadow:
+      -1px 1px 1px 1px ${palette.signal.links},
+      1px -1px 1px 1px ${palette.signal.links};
+    border-radius: 4px;
+  }
+
+  [role="menuitem"]:focus-visible {
+    box-shadow: 0 0 0 1px ${palette.signal.links};
     border-radius: 4px;
   }
 `;
@@ -52,6 +58,25 @@ export interface MenubarProps {
 export const Menubar = ({ children, className }: MenubarProps): JSX.Element => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [focusManager] = useState(new MenubarFocusManager(ref));
+
+  React.useEffect(() => {
+    // Override tabIndex for all menuitem children so that they are removed from tab order
+    if (ref.current) {
+      const menuItems = ref.current.querySelectorAll('[role="menuitem"]');
+      menuItems.forEach((item) => {
+        (item as HTMLElement).tabIndex = -1;
+      });
+    }
+  }, [children]);
+
+  const onFocus: React.FocusEventHandler<HTMLDivElement> = (event) => {
+    // If focus moves into the menubar from an outside element, focus the first item.
+    // This check prevents focus from being hijacked if a user clicks directly on a menu item.
+    if (!ref.current?.contains(event.relatedTarget as Node)) {
+      focusManager.focusFirstItem();
+    }
+  };
+
   const onKeyPress: React.KeyboardEventHandler<HTMLDivElement> = (
     event: React.KeyboardEvent<HTMLDivElement>,
   ) => {
@@ -71,21 +96,14 @@ export const Menubar = ({ children, className }: MenubarProps): JSX.Element => {
     }
   };
 
-  const onFocus: React.FocusEventHandler<HTMLDivElement> = (event) => {
-    // If focus moves into the menubar from an outside element, focus the first item.
-    // This check prevents focus from being hijacked if a user clicks directly on a menu item.
-    if (!ref.current?.contains(event.relatedTarget as Node)) {
-      focusManager.focusFirstItem();
-    }
-  };
   return (
     <MenuBarElement
       className={className}
       ref={ref}
       onKeyDown={onKeyPress}
       role="menubar"
-      onFocus={onFocus}
       tabIndex={0}
+      onFocus={onFocus}
     >
       <MenubarContext.Provider value={{ focusManager }}>
         {children}

@@ -26,7 +26,7 @@ const LogoImg = styled.img`
 `;
 
 const LanternLogo: React.FC = () => {
-  return <LogoImg src={lanternLogo} alt="Lantern" />;
+  return <LogoImg src={lanternLogo} alt="Lantern" className="LanternLogo" />;
 };
 
 export default LanternLogo;

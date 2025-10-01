@@ -31,12 +31,78 @@ export const Dropdown = ({
   children,
   className,
 }: DropdownProps): JSX.Element => {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const [focusManager] = useState(new DropdownFocusManager(ref));
   const [shown, setShown] = useState(false);
 
+  React.useEffect(() => {
+    // Override tabIndex for all menuitem children
+    if (ref.current) {
+      const menuItems = ref.current.querySelectorAll('[role="menuitem"]');
+      menuItems.forEach((item) => {
+        (item as HTMLElement).tabIndex = -1;
+      });
+    }
+  }, [children]);
+
+  const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+  ) => {
+    switch (event.key) {
+      case "Down":
+      case "ArrowDown":
+        if (shown) {
+          event.preventDefault();
+          focusManager.focusNextItem();
+          break;
+        } else {
+          event.preventDefault();
+          setShown(true);
+          focusManager.focusFirstItem();
+          break;
+        }
+      case "Up":
+      case "ArrowUp":
+        event.preventDefault();
+        focusManager.focusPreviousItem();
+        break;
+      case "Left":
+      case "ArrowLeft":
+      case "Right":
+      case "ArrowRight":
+        setShown(false);
+        break;
+      case "Esc":
+      case "Escape":
+        event.stopPropagation();
+        event.preventDefault();
+        setShown(false);
+        focusManager.focusToggle();
+        break;
+      default:
+        break;
+    }
+  };
+
+  React.useEffect(() => {
+    const handleFocus = (event: FocusEvent) => {
+      const target = event.target as HTMLElement;
+      if (!focusManager.dropdown?.current?.contains(target)) {
+        setShown(false);
+      }
+    };
+
+    document.addEventListener("click", handleFocus);
+    document.addEventListener("focusin", handleFocus);
+
+    return () => {
+      document.removeEventListener("click", handleFocus);
+      document.removeEventListener("focusin", handleFocus);
+    };
+  });
+
   return (
-    <DropdownElement className={className} ref={ref}>
+    <DropdownElement className={className} ref={ref} onKeyDown={onKeyDown}>
       <DropdownContext.Provider value={{ focusManager, shown, setShown }}>
         {children}
       </DropdownContext.Provider>
