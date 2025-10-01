@@ -40,3 +40,18 @@ export const personImportSchema = z.object({
   district: z.string(),
   group_ids: z.array(z.string()),
 });
+
+export const contactImportSchema = z.object({
+  state_code: z.nativeEnum(StateCode),
+  person_id: z.string(),
+  stable_person_external_id: z.string(),
+  contact_external_id: z.string(),
+  contacting_officer_id: z.string(),
+  contacting_po_name: z.string(),
+  contact_location_type: z.string(),
+  contact_method: z.string(),
+  reminder_type: z.string().nullable(),
+  contact_address: z.string(),
+  contact_datetime: z.string(),
+  update_datetime: z.string(),
+});

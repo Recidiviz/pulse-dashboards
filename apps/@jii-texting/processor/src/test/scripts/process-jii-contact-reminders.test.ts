@@ -27,7 +27,7 @@ import {
   US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS,
 } from "~@jii-texting/utils";
 import {
-  fakeContact,
+  fakeContactOne,
   fakePersonOne,
   fakeWorkflowExecutionOne,
   fakeWorkflowExecutionThree,
@@ -523,7 +523,7 @@ describe("one person received welcome text and reminder message attempted", () =
     // Insert MessageSeries for reminder text attempt
     await testUsTxPrismaClient.contactReminderMessageSeries.create({
       data: {
-        contact: { connect: { id: fakeContact.id } },
+        contact: { connect: { externalId: fakeContactOne.externalId } },
         person: { connect: { personId: person?.personId } },
         reminderType: "WITHIN_ONE_DAY",
         messageAttempts: {
@@ -683,9 +683,9 @@ test("ensure only connected contacts are processed", async () => {
   // Add another contact for person one that has no reminder type
   await testUsTxPrismaClient.contact.create({
     data: {
-      ...fakeContact,
-      id: "null-reminder-type-contact-id",
-      reminderType: undefined,
+      ...fakeContactOne,
+      externalId: "null-reminder-type-contact-id",
+      reminderType: null,
       person: { connect: { stableExternalId: fakePersonOne.stableExternalId } },
     },
   });
@@ -699,12 +699,12 @@ test("ensure only connected contacts are processed", async () => {
   expect(existingPerson.contacts).toEqual(
     expect.arrayContaining([
       expect.objectContaining({
-        id: "null-reminder-type-contact-id",
+        externalId: "null-reminder-type-contact-id",
         reminderType: null,
       }),
       expect.objectContaining({
-        id: fakeContact.id,
-        reminderType: fakeContact.reminderType,
+        externalId: fakeContactOne.externalId,
+        reminderType: fakeContactOne.reminderType,
       }),
     ]),
   );
@@ -734,24 +734,34 @@ test("ensure only connected contacts are processed", async () => {
   expect(messageSeriesList.length).toBe(1);
   expect(messageSeriesList).toEqual([
     expect.objectContaining({
-      contactId: fakeContact.id,
-      reminderType: fakeContact.reminderType,
+      contactId: fakeContactOne.externalId,
+      reminderType: fakeContactOne.reminderType,
     }),
   ]);
 });
 
-test.each([["HOME"], ["VIRTUAL"], ["OFFICE"]])(
-  "copy for person where contactType=%s",
-  async (contactType) => {
+test.each([
+  { locationType: "HOME", method: "IN_PERSON" },
+  { locationType: "HOME", method: "VIRTUAL" },
+  { locationType: "OFFICE", method: "IN_PERSON" },
+  { locationType: "OFFICE", method: "VIRTUAL" },
+  { locationType: "FIELD", method: "IN_PERSON" },
+  { locationType: "FIELD", method: "VIRTUAL" },
+  { locationType: "EMPLOYMENT", method: "IN_PERSON" },
+  { locationType: "EMPLOYMENT", method: "VIRTUAL" },
+])(
+  "copy for person where locationType=$locationType and method=$method",
+  async ({ locationType, method }) => {
     vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
       sid: "message-sid-1",
       status: "delivered",
     } as MessageInstance);
 
     await testUsTxPrismaClient.contact.update({
-      where: { id: fakeContact.id },
+      where: { externalId: fakeContactOne.externalId },
       data: {
-        type: contactType,
+        locationType: locationType,
+        method: method,
       },
     });
 

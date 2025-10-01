@@ -159,6 +159,21 @@ model Group {
 
   @@unique([groupName, topicId])
 }
+//TODO(#9875) Confirm contacts are unique on external_id
+model Contact {
+  externalId          String    @unique // external id
+  locationType        String
+  method              String
+  reminderType        String?
+  contactingOfficerId String
+  contactingPoName    String
+  address             String
+  datetime            DateTime
+  updateDatetime      DateTime
+  personStableExternalId    String
+  person              Person    @relation(fields: [personStableExternalId], references: [stableExternalId])
+  messageSeries          ContactReminderMessageSeries[]
+}
 
 model WorkflowExecution {
   id                    String    @id @default(cuid())
@@ -181,19 +196,6 @@ model Click {
 
   messageAttempt MessageAttempt @relation(fields: [smsSid], references: [twilioMessageSid])
   smsSid         String         @unique
-}
-
-model Contact {
-  id           String   @id @default(cuid())
-  type         String
-  datetime     DateTime
-  address      String
-  officerName  String
-  reminderType String?
-
-  person                 Person                         @relation(fields: [personStableExternalId], references: [stableExternalId])
-  personStableExternalId String
-  messageSeries          ContactReminderMessageSeries[]
 }
 
 model ContactReminderMessageAttempt {
@@ -221,7 +223,7 @@ model ContactReminderMessageSeries {
 
   person           Person                          @relation(fields: [personExternalId], references: [stableExternalId])
   personExternalId String
-  contact          Contact                         @relation(fields: [contactId], references: [id])
+  contact          Contact                         @relation(fields: [contactId], references: [externalId])
   contactId        String
   messageAttempts  ContactReminderMessageAttempt[]
 }

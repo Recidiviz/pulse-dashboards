@@ -15,8 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PERSON_FILE_NAME } from "~@jii-texting/import/constants";
+import {
+  CONTACT_FILE_NAME,
+  PERSON_FILE_NAME,
+} from "~@jii-texting/import/constants";
 
 export const TEST_BUCKET = "test-bucket";
 export const TEST_STATE_CODE = "US_ID";
 export const TEST_PERSON_FILE_NAME = `${TEST_STATE_CODE}/${PERSON_FILE_NAME}`;
+export const TEST_CONTACT_FILE_NAME = `US_TX/${CONTACT_FILE_NAME}`;

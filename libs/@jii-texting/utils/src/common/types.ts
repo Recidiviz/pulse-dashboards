@@ -67,7 +67,8 @@ export const REMINDER_MESSAGE_SERIES_INCLUDE_ATTEMPTS = {
         createdTimestamp: "desc",
       },
     },
-  } satisfies Prisma.ContactReminderMessageSeriesInclude & Prisma.ContactReminderMessageSeriesDefaultArgs,
+  } satisfies Prisma.ContactReminderMessageSeriesInclude &
+    Prisma.ContactReminderMessageSeriesDefaultArgs,
 };
 
 export type ReminderMessageSeriesWithAttempts =
@@ -88,7 +89,8 @@ export const WELCOME_MESSAGE_SERIES_INCLUDE_ATTEMPTS = {
         createdTimestamp: "desc",
       },
     },
-  } satisfies Prisma.WelcomeMessageSeriesInclude & Prisma.WelcomeMessageSeriesDefaultArgs,
+  } satisfies Prisma.WelcomeMessageSeriesInclude &
+    Prisma.WelcomeMessageSeriesDefaultArgs,
 };
 
 export type WelcomeMessageSeriesWithAttempts =
@@ -122,11 +124,12 @@ export type PersonDataForMessage = Prisma.PersonGetPayload<
 
 export const CONTACT_SELECT_DATA_FOR_MESSAGE = {
   select: {
-    id: true,
-    type: true,
+    externalId: true,
+    locationType: true,
+    method: true,
     datetime: true,
     address: true,
-    officerName: true,
+    contactingPoName: true,
     reminderType: true,
   } satisfies Prisma.ContactSelectScalar & Prisma.ContactDefaultArgs,
 };

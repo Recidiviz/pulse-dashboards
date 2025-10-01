@@ -19,25 +19,17 @@ import { PrismaClient } from "@prisma/jii-texting/client";
 
 import {
   fakeContactOne,
-  fakePersonOne,
-  fakeWorkflowExecutionOne,
-  fakeWorkflowExecutionThree,
-  fakeWorkflowExecutionTwo,
+  fakeUsTxPersonFour,
+  fakeUsTxPersonOne,
+  fakeUsTxPersonThree,
+  fakeUsTxPersonTwo,
 } from "~@jii-texting/utils/test/constants";
 
-export async function seedContactReminders(prismaClient: PrismaClient) {
-  await prismaClient.workflowExecution.createMany({
-    data: [
-      fakeWorkflowExecutionOne,
-      fakeWorkflowExecutionTwo,
-      fakeWorkflowExecutionThree,
-    ],
-  });
-
-  // Create a person with one group
+export async function seedContacts(prismaClient: PrismaClient) {
+  // Create Person One with Contact One
   await prismaClient.person.create({
     data: {
-      ...fakePersonOne,
+      ...fakeUsTxPersonOne,
       contacts: {
         create: {
           ...fakeContactOne,
@@ -45,4 +37,30 @@ export async function seedContactReminders(prismaClient: PrismaClient) {
       },
     },
   });
+
+  // Create Person Two
+  await prismaClient.person.create({
+    data: {
+      ...fakeUsTxPersonTwo,
+      receivedWelcomeText: false,
+    },
+  });
+
+  // Create Person Three
+  await prismaClient.person.create({
+    data: {
+      ...fakeUsTxPersonThree,
+      receivedWelcomeText: false,
+    },
+  });
+
+  // Create Person Four (if it exists)
+  if (fakeUsTxPersonFour) {
+    await prismaClient.person.create({
+      data: {
+        ...fakeUsTxPersonFour,
+        receivedWelcomeText: false,
+      },
+    });
+  }
 }

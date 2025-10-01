@@ -20,7 +20,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 
 import { PERSON_FILE_NAME } from "~@jii-texting/import/constants";
 import { getImportHandler } from "~@jii-texting/import/handler";
-import { testPrismaClient } from "~@jii-texting/import/test/setup";
+import { testUsIdPrismaClient } from "~@jii-texting/import/test/setup";
 import {
   TEST_PERSON_FILE_NAME,
   TEST_STATE_CODE,
@@ -42,7 +42,7 @@ describe("handle_import", () => {
   describe("import people data", () => {
     test("should upsert existing people and add new people", async () => {
       // Set up test so that existing person has opt out date and no group
-      await testPrismaClient.person.update({
+      await testUsIdPrismaClient.person.update({
         where: { personId: fakePersonOne.personId },
         data: {
           lastOptOutDate: new Date("2025-01-01"),
@@ -97,7 +97,7 @@ describe("handle_import", () => {
 
       await importHandler.import(TEST_STATE_CODE, [PERSON_FILE_NAME]);
 
-      const dbPeople = await testPrismaClient.person.findMany({
+      const dbPeople = await testUsIdPrismaClient.person.findMany({
         include: { groups: true },
       });
 
@@ -121,7 +121,7 @@ describe("handle_import", () => {
     });
 
     test("should update existing persons group", async () => {
-      const existingDbPeople = await testPrismaClient.person.findMany({
+      const existingDbPeople = await testUsIdPrismaClient.person.findMany({
         select: {
           stableExternalId: true,
           groups: {
@@ -171,7 +171,7 @@ describe("handle_import", () => {
 
       await importHandler.import(TEST_STATE_CODE, [PERSON_FILE_NAME]);
 
-      const dbPeople = await testPrismaClient.person.findMany({
+      const dbPeople = await testUsIdPrismaClient.person.findMany({
         include: { groups: true },
       });
 
@@ -189,7 +189,7 @@ describe("handle_import", () => {
     });
 
     test("no longer eligible person should have empty array of groups", async () => {
-      const dbPerson = await testPrismaClient.person.findMany({
+      const dbPerson = await testUsIdPrismaClient.person.findMany({
         select: {
           stableExternalId: true,
           groups: {
@@ -244,7 +244,7 @@ describe("handle_import", () => {
 
       await importHandler.import(TEST_STATE_CODE, [PERSON_FILE_NAME]);
 
-      const dbPeople = await testPrismaClient.person.findMany({
+      const dbPeople = await testUsIdPrismaClient.person.findMany({
         select: {
           stableExternalId: true,
           groups: {

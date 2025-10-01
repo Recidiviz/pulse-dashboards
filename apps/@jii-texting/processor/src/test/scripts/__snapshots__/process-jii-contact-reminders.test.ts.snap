@@ -1,6 +1,62 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`copy for person where contactType=HOME 1`] = `
+exports[`copy for person where locationType='EMPLOYMENT' and method='IN_PERSON' 1`] = `
+"Hi Jane, this is a reminder that you have an upcoming employment contact tomorrow.
+
+Date: 4/14/2025
+
+Time: 7:00:00 PM CDT
+
+Location: 123 North Pole
+
+Need to reschedule or have questions? Contact John Doe
+
+Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+`;
+
+exports[`copy for person where locationType='EMPLOYMENT' and method='VIRTUAL' 1`] = `
+"Hi Jane, this is a reminder that you have an upcoming employment contact tomorrow.
+
+Date: 4/14/2025
+
+Time: 7:00:00 PM CDT
+
+Location: Virtual video call
+
+Need to reschedule or have questions? Contact John Doe
+
+Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+`;
+
+exports[`copy for person where locationType='FIELD' and method='IN_PERSON' 1`] = `
+"Hi Jane, this is a reminder that you have an upcoming field contact tomorrow.
+
+Date: 4/14/2025
+
+Time: 7:00:00 PM CDT
+
+Location: 123 North Pole
+
+Need to reschedule or have questions? Contact John Doe
+
+Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+`;
+
+exports[`copy for person where locationType='FIELD' and method='VIRTUAL' 1`] = `
+"Hi Jane, this is a reminder that you have an upcoming field contact tomorrow.
+
+Date: 4/14/2025
+
+Time: 7:00:00 PM CDT
+
+Location: Virtual video call
+
+Need to reschedule or have questions? Contact John Doe
+
+Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+`;
+
+exports[`copy for person where locationType='HOME' and method='IN_PERSON' 1`] = `
 "Hi Jane, this is a reminder that you have an upcoming home contact tomorrow.
 
 Date: 4/14/2025
@@ -14,7 +70,21 @@ Need to reschedule or have questions? Contact John Doe
 Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
 `;
 
-exports[`copy for person where contactType=OFFICE 1`] = `
+exports[`copy for person where locationType='HOME' and method='VIRTUAL' 1`] = `
+"Hi Jane, this is a reminder that you have an upcoming home contact tomorrow.
+
+Date: 4/14/2025
+
+Time: 7:00:00 PM CDT
+
+Location: Your home via virtual video call
+
+Need to reschedule or have questions? Contact John Doe
+
+Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+`;
+
+exports[`copy for person where locationType='OFFICE' and method='IN_PERSON' 1`] = `
 "Hi Jane, this is a reminder that you have an upcoming office contact tomorrow.
 
 Date: 4/14/2025
@@ -28,14 +98,14 @@ Need to reschedule or have questions? Contact John Doe
 Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
 `;
 
-exports[`copy for person where contactType=VIRTUAL 1`] = `
-"Hi Jane, this is a reminder that you have an upcoming virtual contact tomorrow.
+exports[`copy for person where locationType='OFFICE' and method='VIRTUAL' 1`] = `
+"Hi Jane, this is a reminder that you have an upcoming office contact tomorrow.
 
 Date: 4/14/2025
 
 Time: 7:00:00 PM CDT
 
-Location: Virtually
+Location: Virtual video call
 
 Need to reschedule or have questions? Contact John Doe
 

@@ -320,25 +320,28 @@ function getTexasReminderMessageBody(
   const givenNameToUse =
     givenName.charAt(0).toUpperCase() + givenName.slice(1).toLowerCase();
 
-  const { type, address, datetime, officerName } = contactData;
+  const { method, locationType, address, datetime, contactingPoName } =
+    contactData;
 
-  const officerToContact = officerName
+  const officerToContact = contactingPoName
     .toLowerCase()
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
   const locationStr = (function () {
-    switch (type) {
-      case "HOME":
-        return "Your home";
-      case "VIRTUAL":
-        return "Virtually";
-      case "OFFICE":
-        return address;
-      default:
-        console.log(`Received unexpected contact type: ${type}`);
-        return address;
+    if (locationType === "HOME" && method === "IN_PERSON") {
+      return "Your home";
+    } else if (locationType === "HOME" && method === "VIRTUAL") {
+      return "Your home via virtual video call";
+    } else if (method === "VIRTUAL") {
+      return "Virtual video call";
+      //for clauses below method === "IN_PERSON"
+    } else if (["OFFICE", "EMPLOYMENT", "FIELD"].includes(locationType)) {
+      return address || "In person";
+    } else {
+      console.log(`Received unexpected contact type: ${locationType}`);
+      return address;
     }
   })();
 
@@ -351,7 +354,7 @@ function getTexasReminderMessageBody(
     timeZoneName: "short",
   }).format(datetime);
 
-  body += `Hi ${givenNameToUse}, this is a reminder that you have an upcoming ${type.toLowerCase()} contact tomorrow.\n\nDate: ${dateStr}\n\nTime: ${timeStr}\n\nLocation: ${locationStr}\n\nNeed to reschedule or have questions? Contact ${officerToContact}`;
+  body += `Hi ${givenNameToUse}, this is a reminder that you have an upcoming ${locationType.toLowerCase()} contact tomorrow.\n\nDate: ${dateStr}\n\nTime: ${timeStr}\n\nLocation: ${locationStr}\n\nNeed to reschedule or have questions? Contact ${officerToContact}`;
 
   body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
 
@@ -671,7 +674,7 @@ export async function sendReminderText(
       await prisma.contactReminderMessageSeries.create({
         data: {
           reminderType: reminderType,
-          contactId: contactDataForMessage.id,
+          contactId: contactDataForMessage.externalId,
           personExternalId: stableExternalId,
           messageAttempts: {
             create: [messageAttemptRecord],
@@ -1123,12 +1126,13 @@ export async function processContact(
   dryRun: boolean,
 ): Promise<ScriptAction> {
   const contactDataForMessage: ContactDataForMessage = {
-    id: contact.id,
-    type: contact.type,
+    externalId: contact.externalId,
+    locationType: contact.locationType,
     address: contact.address,
     datetime: contact.datetime,
-    officerName: contact.officerName,
+    contactingPoName: contact.contactingPoName,
     reminderType: contact.reminderType,
+    method: contact.method,
   };
 
   if (contact.reminderType === null) {

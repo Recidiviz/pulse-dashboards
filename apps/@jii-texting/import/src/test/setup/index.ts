@@ -21,11 +21,17 @@ import sentryTestkit from "sentry-testkit";
 import { beforeAll, beforeEach, vi } from "vitest";
 
 import { seed } from "~@jii-texting/import/test/setup/seed";
+import { seedContacts } from "~@jii-texting/import/test/setup/seed-contacts";
 import { resetDb } from "~@jii-texting/import/test/setup/utils";
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import { MockImportHandler } from "~data-import-plugin/testkit";
 
-export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
+export const testUsIdPrismaClient = getPrismaClientForStateCode(
+  StateCode.US_ID,
+);
+export const testUsTxPrismaClient = getPrismaClientForStateCode(
+  StateCode.US_TX,
+);
 
 const { testkit, sentryTransport } = sentryTestkit();
 
@@ -44,8 +50,11 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  await resetDb(testPrismaClient);
-  await seed(testPrismaClient);
+  await resetDb(testUsIdPrismaClient);
+  await seed(testUsIdPrismaClient);
+
+  await resetDb(testUsTxPrismaClient);
+  await seedContacts(testUsTxPrismaClient);
 
   testkit.reset();
 });

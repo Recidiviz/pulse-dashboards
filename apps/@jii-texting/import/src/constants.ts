@@ -15,14 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { personImportSchema } from "~@jii-texting/import/models";
+import {
+  contactImportSchema,
+  personImportSchema,
+} from "~@jii-texting/import/models";
+import { transformAndLoadContactData } from "~@jii-texting/import/utils/contacts";
 import { transformAndLoadPersonData } from "~@jii-texting/import/utils/person";
 
 export const PERSON_FILE_NAME = "jii_to_text.json";
+export const CONTACT_FILE_NAME = "contacts.json";
 
 export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
   [PERSON_FILE_NAME]: {
     schema: personImportSchema,
     loaderFn: transformAndLoadPersonData,
+  },
+  [CONTACT_FILE_NAME]: {
+    schema: contactImportSchema,
+    loaderFn: transformAndLoadContactData,
   },
 };

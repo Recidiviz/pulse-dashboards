@@ -127,12 +127,99 @@ export const fakePersonThree = {
   poName: faker.person.fullName(),
   district: faker.location.county(),
 };
+//fake person that corresponds to fakeContactOne
+export const fakeUsTxPersonOne = {
+  stateCode: StateCode.US_TX,
+  pseudonymizedId: "pseudo-id-1",
+  personId: "person-id-1",
+  stableExternalId: "person-ext-id-1",
+  givenName: faker.person.firstName(),
+  middleName: faker.person.middleName(),
+  surname: faker.person.lastName(),
+  nameSuffix: faker.person.suffix(),
+  phoneNumber: faker.string.numeric({ length: 11 }),
+  officerId: faker.string.uuid(),
+  poName: faker.person.fullName(),
+  district: "District 1",
+  receivedWelcomeText: false,
+};
+export const fakeUsTxPersonTwo = {
+  stateCode: StateCode.US_TX,
+  pseudonymizedId: "pseudo-id-2",
+  personId: "person-id-2",
+  stableExternalId: "person-ext-id-2",
+  givenName: faker.person.firstName(),
+  middleName: faker.person.middleName(),
+  surname: faker.person.lastName(),
+  nameSuffix: faker.person.suffix(),
+  phoneNumber: faker.string.numeric({ length: 11 }),
+  officerId: faker.string.uuid(),
+  poName: faker.person.fullName(),
+  district: faker.location.county(),
+};
 
-export const fakeContact = {
-  id: faker.string.uuid(),
-  type: "HOME",
-  datetime: new Date("2025-04-14"),
+export const fakeUsTxPersonThree = {
+  stateCode: StateCode.US_TX,
+  pseudonymizedId: "pseudo-id-3",
+  personId: "person-id-3",
+  stableExternalId: "person-ext-id-3",
+  givenName: faker.person.firstName(),
+  middleName: faker.person.middleName(),
+  surname: faker.person.lastName(),
+  nameSuffix: faker.person.suffix(),
+  phoneNumber: faker.string.numeric({ length: 11 }),
+  officerId: faker.string.uuid(),
+  poName: faker.person.fullName(),
+  district: faker.location.county(),
+};
+export const fakeUsTxPersonFour = {
+  stateCode: StateCode.US_TX,
+  pseudonymizedId: "pseudo-id-4",
+  personId: "person-id-4",
+  stableExternalId: "person-ext-id-4",
+  givenName: faker.person.firstName(),
+  middleName: faker.person.middleName(),
+  surname: faker.person.lastName(),
+  nameSuffix: faker.person.suffix(),
+  phoneNumber: faker.string.numeric({ length: 11 }),
+  officerId: faker.string.uuid(),
+  poName: faker.person.fullName(),
+  district: faker.location.county(),
+};
+
+// CONTACTS
+export const fakeContactOne = {
+  externalId: "contact-id-1",
+  contactingOfficerId: faker.string.uuid(),
+  contactingPoName: "JOHN DOE",
+  locationType: "HOME",
+  method: "IN_PERSON",
   address: "123 North Pole",
-  officerName: "John Doe",
+  datetime: new Date("2025-04-14"),
+  updateDatetime: new Date("2025-04-14T08:00:00Z"),
+  reminderType: "WITHIN_ONE_DAY",
+};
+
+export const fakeContactTwo = {
+  externalId: "contact-id-2",
+  contactingOfficerId: faker.string.uuid(),
+  contactingPoName: faker.person.fullName().toUpperCase(),
+  locationType: "OFFICE",
+  method: "VIRTUAL",
+  address: faker.location.streetAddress(),
+  datetime: new Date("2025-01-16T14:00:00Z"),
+  updateDatetime: new Date("2025-01-16T14:00:00Z"),
+  reminderType: null,
+};
+
+export const fakeContactThree = {
+  externalId: faker.string.uuid(),
+  contactingOfficerId: faker.string.uuid(),
+  contactingPoName: faker.person.fullName().toUpperCase(),
+  locationType: "OFFICE",
+  method: "IN_PERSON",
+  address: faker.location.streetAddress(),
+  datetime: new Date("2025-04-14"),
+  updateDatetime: new Date("2025-04-14T08:00:00Z"),
   reminderType: "WITHIN_ONE_DAY",
 };
