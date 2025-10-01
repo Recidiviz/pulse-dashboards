@@ -576,9 +576,8 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           isFixed={isFixed}
           backgroundColor={backgroundColor}
           hasBorder={!isNaked}
-          aria-label="Main navigation"
         >
-          <Menubar aria-label="Main navigation">
+          <Menubar ariaLabel="Main Navigation">
             <MainLogo
               enabled={!isMobile || !isFixed}
               enabledLanternLogo={isInsightsLanternState && isInsightsView}
@@ -588,7 +587,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
                 alignBottom={isMobile && isFixed}
                 data-intercom-target="Profile"
               >
-                <NavLinks>{children}</NavLinks>
+                <NavLinks role="none">{children}</NavLinks>
                 {isMobile ? (
                   <>
                     <ProfileButtonMobile
@@ -618,7 +617,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
                     >
                       <UserAvatar />
                     </DropdownToggle>
-                    <DropdownProfileMenu alignment="right">
+                    <DropdownProfileMenu alignment="right" ariaLabel="Profile menu">
                       {quickLinks}
                     </DropdownProfileMenu>
                   </DropdownProfile>

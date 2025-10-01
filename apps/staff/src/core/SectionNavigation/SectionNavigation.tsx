@@ -22,7 +22,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import { Icon, IconSVG } from "~design-system";
+import { Icon, IconSVG, Menubar } from "~design-system";
 
 import Drawer from "../../components/Drawer";
 import {
@@ -55,31 +55,46 @@ const SectionNavigation: React.FC = () => {
   }, [currentSection]);
 
   const sectionLinks = (
-    <nav className="SectionNavigation">
-      <div className="SectionNavigation__title" />
-      {enabledSections.map((sectionId: string) => (
-        <div key={sectionId}>
-          <Link
-            className={cn("SectionNavigation__navlink", {
-              "SectionNavigation__navlink--active":
-                currentSection === sectionId,
-              "SectionNavigation__navlink--multiple": isMultipleSections,
-            })}
-            to={`/${currentView}/${currentPage}/${sectionId}`}
-            onClick={() => setSection(sectionId)}
-          >
-            <div className="SectionNavigation__section-name">
-              {sections && sections[sectionId]}
-            </div>
-            <div className="SectionNavigation__arrow">
-              {currentSection === sectionId && (
-                <Icon kind={IconSVG.Arrow} width={16} height={16} />
-              )}
-            </div>
-          </Link>
-        </div>
-      ))}
-    </nav>
+    <>
+      <div className="SectionNavigation__divider" />
+      <Menubar
+        className="SectionNavigation"
+        vertical
+        ariaLabel="Chart navigation"
+      >
+        {enabledSections.map((sectionId: string) => (
+          <div key={sectionId}>
+            <Link
+              className={cn("SectionNavigation__navlink", {
+                "SectionNavigation__navlink--active":
+                  currentSection === sectionId,
+                "SectionNavigation__navlink--multiple": isMultipleSections,
+              })}
+              to={`/${currentView}/${currentPage}/${sectionId}`}
+              onClick={() => setSection(sectionId)}
+              role="menuitem"
+              aria-current={
+                currentSection === sectionId ? "location" : undefined
+              }
+            >
+              <div className="SectionNavigation__section-name">
+                {sections && sections[sectionId]}
+              </div>
+              <div className="SectionNavigation__arrow">
+                {currentSection === sectionId && (
+                  <Icon
+                    kind={IconSVG.Arrow}
+                    width={16}
+                    height={16}
+                    aria-hidden="true"
+                  />
+                )}
+              </div>
+            </Link>
+          </div>
+        ))}
+      </Menubar>
+    </>
   );
 
   if (isMobile && isMultipleSections)

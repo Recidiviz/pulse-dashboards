@@ -6,7 +6,7 @@
 .SectionNavigation {
   padding-bottom: 2rem;
 
-  &__title {
+  &__divider {
     @include mixins.sans-24;
     color: constants.$slate-85;
     border-bottom: 1px solid constants.$slate-20;
@@ -20,6 +20,8 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    text-decoration: none;
+
     &:hover {
       color: constants.$signal-links;
     }
@@ -42,7 +44,7 @@
   @media screen and (max-width: constants.$core-breakpoint-sm) {
     padding: 2rem 0;
 
-    &__title {
+    &__divider {
       display: none;
     }
     &__navlink {

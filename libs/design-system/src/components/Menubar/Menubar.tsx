@@ -15,26 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { typography } from "@recidiviz/design-system";
 import * as React from "react";
 import { useRef, useState } from "react";
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components/macro";
 
 import { palette } from "../../styles";
 import MenubarContext from "./MenubarContext";
 import MenubarFocusManager from "./MenubarFocusManager";
 
-const MenuBarElement = styled.nav`
+const MenuBarElement = styled.nav<{ vertical?: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
   height: 100%;
+  ${({ vertical }) =>
+    vertical &&
+    css`
+      flex-direction: column;
+      align-items: flex-start;
+    `}
 
   a {
     display: flex;
     justify-content: center;
     align-items: center;
-    ${typography.Sans14}
   }
 
   &:has(:focus-visible) {
@@ -53,9 +57,11 @@ const MenuBarElement = styled.nav`
 export interface MenubarProps {
   children: JSX.Element | JSX.Element[];
   className?: string;
+  vertical?: boolean;
+  ariaLabel?: string;
 }
 
-export const Menubar = ({ children, className }: MenubarProps): JSX.Element => {
+export const Menubar = ({ children, className, vertical, ariaLabel }: MenubarProps): JSX.Element => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [focusManager] = useState(new MenubarFocusManager(ref));
 
@@ -83,13 +89,31 @@ export const Menubar = ({ children, className }: MenubarProps): JSX.Element => {
     switch (event.key) {
       case "Right":
       case "ArrowRight":
-        event.preventDefault();
-        focusManager.focusNextItem();
+        if (!vertical) {
+          event.preventDefault();
+          focusManager.focusNextItem();
+        }
         break;
       case "Left":
       case "ArrowLeft":
-        event.preventDefault();
-        focusManager.focusPreviousItem();
+        if (!vertical) {
+          event.preventDefault();
+          focusManager.focusPreviousItem();
+        }
+        break;
+      case "Down":
+      case "ArrowDown":
+        if (vertical) {
+          event.preventDefault();
+          focusManager.focusNextItem();
+        }
+        break;
+      case "Up":
+      case "ArrowUp":
+        if (vertical) {
+          event.preventDefault();
+          focusManager.focusPreviousItem();
+        }
         break;
       default:
         break;
@@ -101,9 +125,11 @@ export const Menubar = ({ children, className }: MenubarProps): JSX.Element => {
       className={className}
       ref={ref}
       onKeyDown={onKeyPress}
+      onFocus={onFocus}
       role="menubar"
       tabIndex={0}
-      onFocus={onFocus}
+      vertical={vertical}
+      aria-label={ariaLabel || "Menu Bar"}
     >
       <MenubarContext.Provider value={{ focusManager }}>
         {children}

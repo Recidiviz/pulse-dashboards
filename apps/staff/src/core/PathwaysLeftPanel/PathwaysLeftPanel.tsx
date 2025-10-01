@@ -40,12 +40,14 @@ const PathwaysLeftPanel: React.FC<{
       className={cn("PathwaysLeftPanel", {
         "pt-5 pb-5": !isMobile,
       })}
+      aria-labelledby="page-title"
     >
       <h1
         ref={titleRef}
         className="PathwaysLeftPanel__title"
         tabIndex={-1}
         aria-describedby="page-description"
+        id="page-title"
       >
         {title}
       </h1>

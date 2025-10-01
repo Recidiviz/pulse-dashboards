@@ -25,17 +25,19 @@ export interface DropdownMenuProps {
   alignment?: "left" | "right";
   className?: string;
   children?: React.ReactNode;
+  ariaLabel?: string;
 }
 
 export const DropdownMenu = ({
   alignment,
   className,
   children,
+  ariaLabel,
 }: DropdownMenuProps): JSX.Element => {
   const { shown } = useContext(DropdownContext);
 
   return (
-    <MenuElement alignment={alignment} className={className} shown={shown}>
+    <MenuElement alignment={alignment} className={className} shown={shown} aria-label={ariaLabel || "Dropdown Menu"}>
       {children}
     </MenuElement>
   );

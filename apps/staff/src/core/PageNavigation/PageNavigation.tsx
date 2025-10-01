@@ -59,7 +59,7 @@ const PageNavigation: React.FC = () => {
   }
 
   const options = pageOptions.map((pageOption: NavigationSection) => (
-    <li key={pageOption}>
+    <li key={pageOption} role="none">
       <NavLink
         to={{ pathname: `/${currentView}/${pageOption}`, hash: "" }}
         className={cx("PageNavigation__option", {
@@ -68,6 +68,9 @@ const PageNavigation: React.FC = () => {
         })}
         role="menuitem"
         tabIndex={-1}
+        aria-current={
+          page?.toLowerCase() === pageOption.toLowerCase() ? "page" : undefined
+        }
       >
         {/* @ts-ignore */}
         {mergePageAndMethodologyCopy?.[pageOption]?.title}
