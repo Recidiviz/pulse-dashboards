@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { Timestamp } from "firebase/firestore";
 import { BrowserRouter } from "react-router-dom";
 
@@ -264,6 +264,7 @@ describe("MarkedIneligibleReasons", () => {
         reasons: ["REASON"],
         otherReason: "Other Reason",
       },
+      denialReasons: { REASON: "Test reason", Other: "other reason" },
     };
     const testText = buildActedOnTextAndResurfaceText(
       opp,
@@ -290,9 +291,10 @@ describe("MarkedIneligibleReasons", () => {
   });
 
   test("ineligible reasons list", () => {
-    expect(
-      screen.getByText("Override reasons: REASON, Other"),
-    ).toBeInTheDocument();
+    const { getByText } = within(screen.getByTestId("IneligibleReasonsList"));
+    expect(getByText("Override reasons:")).toBeInTheDocument();
+    expect(getByText("REASON - Test reason")).toBeInTheDocument();
+    expect(getByText("Other - other reason")).toBeInTheDocument();
   });
 
   test("otherReason text", () => {

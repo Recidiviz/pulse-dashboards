@@ -175,6 +175,32 @@ export function buildActedOnTextAndResurfaceText(
   return [actedOnText, resurfaceText];
 }
 
+const IneligibleReasonList: React.FC<{
+  opportunity: Opportunity;
+  denialReasons: string[];
+}> = ({ opportunity, denialReasons }) => {
+  const denialReasonsMap = opportunity.denialReasons;
+
+  return (
+    <div data-testid="IneligibleReasonsList">
+      <div>
+        {opportunity.config.isAlert
+          ? "Override reasons:"
+          : "Not eligible reasons:"}
+      </div>
+      <ul>
+        {denialReasons.map((code) => (
+          <li key={code}>
+            {code in denialReasonsMap
+              ? `${code} - ${denialReasonsMap[code]}`
+              : code}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
 const MarkedIneligibleReasons: React.FC<{
   opportunity: Opportunity;
   actedOnTextAndResurfaceTextPair: ReturnType<
@@ -191,11 +217,6 @@ const MarkedIneligibleReasons: React.FC<{
   }
 
   if (!denialReasons) return null;
-
-  const ineligibleReasonsList = buildDenialReasonsListText(
-    opportunity,
-    denialReasons,
-  );
 
   const actedOnTextAndResurfaceText = actedOnTextAndResurfaceTextPair.every(
     (text) => text,
@@ -214,7 +235,10 @@ const MarkedIneligibleReasons: React.FC<{
       )}
       {opportunity.denial && (
         <div>
-          {ineligibleReasonsList}
+          <IneligibleReasonList
+            opportunity={opportunity}
+            denialReasons={denialReasons}
+          />
           {opportunity.denial.otherReason ? (
             <OtherReasonText>
               &quot;{opportunity.denial.otherReason}&quot;
