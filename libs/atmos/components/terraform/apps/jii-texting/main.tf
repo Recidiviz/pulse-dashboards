@@ -142,7 +142,7 @@ module "migrate-db-job" {
 }
 
 # Configure a Google Workflow that is executed when a message is published to
-# the jii_texting_export_success_topic 
+# the jii_texting_export_success_topic
 module "handle-jii-texting-export-wf" {
   count                 = var.demo_mode ? 0 : 1
   project_id            = var.project_id
@@ -186,7 +186,7 @@ module "process-jii-cloud-run-job" {
 
 # Configure a Cloud Run job that will import the data into our CloudSQL DB
 module "import-job" {
-  count                         = var.demo_mode ? 0 : 1
+  task_count                    = var.demo_mode ? 0 : 1
   source                        = "../../vendor/cloud-run-job-exec"
   name                          = local.import_job_name
   image                         = local.import_job_image
