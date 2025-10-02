@@ -21,3 +21,8 @@ export const getSignedUrlForRecordingInputSchema = z.object({
   clientId: z.bigint(),
   meetingId: z.string(),
 });
+
+export const endMeetingInputSchema = z.object({
+  clientId: z.bigint(),
+  meetingId: z.string(),
+});

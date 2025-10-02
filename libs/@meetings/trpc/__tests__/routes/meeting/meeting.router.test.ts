@@ -15,42 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Storage } from "@google-cloud/storage";
 import { describe, expect, test, vi } from "vitest";
 
-import { mockStorage, testTRPCClient } from "~@meetings/trpc/test/setup";
+import {
+  GCS_API_ENDPOINT,
+  testPrismaClient,
+  testTRPCClient,
+} from "~@meetings/trpc/test/setup";
 import { fakeClient, fakeMeeting } from "~@meetings/trpc/test/setup/seed";
 
 const FAKE_DATE = new Date("2025-09-18");
 
+const AUDIO_RECORDINGS_BUCKET_NAME =
+  process.env["AUDIO_RECORDINGS_BUCKET_NAME"];
+
+if (!AUDIO_RECORDINGS_BUCKET_NAME) {
+  throw new Error("AUDIO_RECORDINGS_BUCKET_NAME is not defined");
+}
+
 describe("meeting router", () => {
+  beforeAll(() => {
+    // // tell vitest we use mocked time
+    vi.useFakeTimers();
+    vi.setSystemTime(FAKE_DATE);
+  });
+
+  afterAll(() => {
+    // restoring date after the tests are complete
+    vi.useRealTimers();
+  });
+
   describe("getSignedUrlForRecording", () => {
-    beforeAll(() => {
-      vi.mock("@google-cloud/storage", () => ({
-        Storage: vi.fn().mockImplementation(() => {
-          return mockStorage;
-        }),
-      }));
-
-      // // tell vitest we use mocked time
-      vi.useFakeTimers();
-      vi.setSystemTime(FAKE_DATE);
-
-      const bucket = mockStorage.bucket(
-        process.env["AUDIO_RECORDING_BUCKET_NAME"] || "test-audio-bucket",
-      );
-
-      // We need to create the bucket and file because the mock-gcs library needs the file to exist in order to create a signed URL (not true of real GCS)
-      const fakeSecondsSinceEpoch = Math.round(FAKE_DATE.getTime() / 1000);
-      const fileName = `${fakeMeeting.id}/${fakeSecondsSinceEpoch}.m4a`;
-      const file = bucket.file(fileName);
-      file.save("Hello, world!");
-    });
-
-    afterAll(() => {
-      // restoring date after each test run
-      vi.useRealTimers();
-    });
-
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.meeting.getSignedUrlForRecording.query({
@@ -58,10 +54,10 @@ describe("meeting router", () => {
           meetingId: "non-existent-meeting-id",
         }),
       ).rejects.toMatchObject({
-        message: "Meeting not found",
+        message: "Meeting with that id was not found",
         data: { code: "NOT_FOUND" },
       });
-    }, 10000);
+    });
 
     test("Returns a signed URL for the meeting recording", async () => {
       const result =
@@ -70,7 +66,86 @@ describe("meeting router", () => {
           meetingId: fakeMeeting.id,
         });
 
-      expect(result).toEqual(expect.any(String));
-    }, 10000);
+      expect(result).toEqual(
+        `${GCS_API_ENDPOINT}/${fakeMeeting.id}/${FAKE_DATE.getTime() / 1000}.webm`,
+      );
+    });
+  });
+
+  describe("endMeeting", () => {
+    beforeAll(async () => {
+      const storage = new Storage({
+        apiEndpoint: GCS_API_ENDPOINT,
+        projectId: "test",
+      });
+
+      await storage.createBucket(AUDIO_RECORDINGS_BUCKET_NAME);
+
+      await storage
+        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .upload(
+          "__tests__/data/recordings_10f2d1f0-ed09-4d12-963c-07c396b822a5_chunks_chunk_1758921620931_0000_start.webm",
+          {
+            destination: `${fakeMeeting.id}/1.webm`,
+            resumable: false,
+          },
+        );
+      await storage
+        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .upload(
+          "__tests__/data/recordings_10f2d1f0-ed09-4d12-963c-07c396b822a5_chunks_chunk_1758921625971_0001.webm",
+          {
+            destination: `${fakeMeeting.id}/2.webm`,
+            resumable: false,
+          },
+        );
+      await storage
+        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .upload(
+          "__tests__/data/recordings_10f2d1f0-ed09-4d12-963c-07c396b822a5_chunks_chunk_1758921627461_0002.webm",
+          {
+            destination: `${fakeMeeting.id}/3.webm`,
+            resumable: false,
+          },
+        );
+    });
+
+    test("Should throw error if meeting does not exist", async () => {
+      await expect(
+        testTRPCClient.meeting.endMeeting.mutate({
+          clientId: fakeClient.personId,
+          meetingId: "non-existent-meeting-id",
+        }),
+      ).rejects.toMatchObject({
+        message: "Meeting with that id was not found",
+        data: { code: "NOT_FOUND" },
+      });
+    });
+
+    test("Should end meeting and stitch together audio", async () => {
+      await testTRPCClient.meeting.endMeeting.mutate({
+        clientId: fakeClient.personId,
+        meetingId: fakeMeeting.id,
+      });
+
+      const updatedMeeting = await testPrismaClient.meeting.findUnique({
+        where: { id: fakeMeeting.id },
+      });
+
+      // Check that end date has been set
+      expect(updatedMeeting?.endTime).toEqual(FAKE_DATE);
+
+      // Check that the "final" audio file has been created
+      const storage = new Storage({
+        apiEndpoint: GCS_API_ENDPOINT,
+        projectId: "test",
+      });
+      const [files] = await storage
+        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .getFiles({ prefix: `${fakeMeeting.id}/` });
+      expect(files.map((f) => f.name)).toEqual(
+        expect.arrayContaining([`${fakeMeeting.id}/final.webm`]),
+      );
+    });
   });
 });

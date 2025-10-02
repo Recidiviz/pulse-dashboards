@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { request } from "node:http";
+
+import { File } from "@google-cloud/storage";
 import { init } from "@sentry/node";
 import { createTRPCClient, httpBatchLink, TRPCClient } from "@trpc/client";
 import {
@@ -24,9 +27,9 @@ import {
 import Fastify from "fastify";
 import { FastifyInstance } from "fastify/types/instance";
 import fastifyAuth0Verify from "fastify-auth0-verify";
-import { MockStorage } from "mock-gcs";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
+import { GenericContainer } from "testcontainers";
 import { beforeAll, beforeEach } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
@@ -48,15 +51,59 @@ const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
 
-export const mockStorage = new MockStorage();
+const FAKE_GCS_PORT = 4443;
+
+const gcsContainer = await new GenericContainer("fsouza/fake-gcs-server:1.52.3")
+  .withEntrypoint([
+    "/bin/fake-gcs-server",
+    "-scheme",
+    "http",
+    "-public-host",
+    "localhost:4443",
+  ])
+  .withExposedPorts(FAKE_GCS_PORT)
+  .start();
+
+export const GCS_API_ENDPOINT = `http://${gcsContainer.getHost()}:${gcsContainer.getMappedPort(FAKE_GCS_PORT)}`;
+
+const data = JSON.stringify({ externalUrl: GCS_API_ENDPOINT });
+
+// This updates the external url of the fake-gcs-server so that uploads work
+const options = {
+  hostname: new URL(GCS_API_ENDPOINT).hostname,
+  port: new URL(GCS_API_ENDPOINT).port,
+  path: `${new URL(GCS_API_ENDPOINT).pathname}/_internal/config`,
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json",
+    "Content-Length": Buffer.byteLength(data),
+  },
+};
+
+const req = request(options);
+req.write(data);
+req.end();
+
+// Mock out the Storage constructor to use our fake-gcs-server endpoint
+vi.mock("@google-cloud/storage", async (importOriginal) => {
+  const mod: typeof import("@google-cloud/storage") = await importOriginal();
+  return {
+    ...mod,
+    Storage: vi.fn(
+      () =>
+        new mod.Storage({ apiEndpoint: GCS_API_ENDPOINT, projectId: "test" }),
+    ),
+  };
+});
+
+// Mock the getSignedUrl method to return a predictable URL
+vi.spyOn(File.prototype, "getSignedUrl").mockImplementation(async function (
+  this: File,
+) {
+  return [`${GCS_API_ENDPOINT}/${this.name}`];
+});
 
 beforeAll(async () => {
-  vi.mock("@google-cloud/storage", () => ({
-    Storage: vi.fn().mockImplementation(() => {
-      return mockStorage;
-    }),
-  }));
-
   init({
     dsn: process.env["SENTRY_DSN"],
     transport: sentryTransport,
