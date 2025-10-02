@@ -23,3 +23,7 @@ export const createMeetingInputSchema = z.object({
   endTime: z.date(),
   address: z.string().min(1).max(255),
 });
+
+export const getMeetingsInputSchema = z.object({
+  clientId: z.bigint(),
+});

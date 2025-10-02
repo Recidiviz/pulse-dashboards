@@ -72,4 +72,22 @@ describe("client router", () => {
       );
     });
   });
+
+  describe("getMeetings", () => {
+    test("Returns list of meetings", async () => {
+      const result = await testTRPCClient.client.getMeetings.query({
+        clientId: fakeClient.personId,
+      });
+
+      // Check expected fields are returned
+      expect(result).toEqual([
+        expect.objectContaining({
+          id: fakeMeeting.id,
+          startTime: fakeMeeting.startTime,
+          endTime: null,
+          address: null,
+        }),
+      ]);
+    });
+  });
 });

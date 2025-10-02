@@ -15,8 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { TRPCError } from "@trpc/server";
+
 import { auth0Procedure, router } from "~@meetings/trpc/init";
-import { createMeetingInputSchema } from "~@meetings/trpc/routes/client/client.schema";
+import {
+  createMeetingInputSchema,
+  getMeetingsInputSchema,
+} from "~@meetings/trpc/routes/client/client.schema";
 
 export const clientRouter = router({
   createMeeting: auth0Procedure
@@ -51,4 +56,39 @@ export const clientRouter = router({
         });
       },
     ),
+  getMeetings: auth0Procedure
+    .input(getMeetingsInputSchema)
+    .query(async ({ input: { clientId }, ctx: { prisma, user } }) => {
+      const clientBelongsToStaff = await prisma.client.findFirst({
+        where: {
+          personId: clientId,
+          staff: {
+            some: {
+              staff: {
+                pseudonymizedId: user.pseudonymizedId,
+              },
+            },
+          },
+        },
+      });
+
+      if (!clientBelongsToStaff) {
+        throw new TRPCError({
+          message: "Client not found",
+          code: "NOT_FOUND",
+        });
+      }
+
+      return await prisma.meeting.findMany({
+        where: {
+          clientId,
+        },
+        select: {
+          id: true,
+          startTime: true,
+          endTime: true,
+          address: true,
+        },
+      });
+    }),
 });
