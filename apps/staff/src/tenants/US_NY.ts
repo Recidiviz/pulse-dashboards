@@ -33,8 +33,6 @@ const US_NY_CONFIG: TenantConfig<"US_NY"> = {
     prison: [
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countByRace,
-      PATHWAYS_SECTIONS.personLevelDetail,
     ],
     methodology: ["system"],
   },

@@ -606,13 +606,6 @@ export default class UserStore {
    * or, if subpageName is not provided, to the route /pageName
    */
   getRoutePermission(route: string, subpage?: string): boolean {
-    if (
-      this.isRecidivizUser &&
-      !isDemoMode &&
-      !isOfflineMode &&
-      this.rootStore?.currentTenantId === "US_NY"
-    )
-      return false;
     if (this.isRecidivizUser) return true;
 
     const isTasksAccessibleSubpage = Boolean(

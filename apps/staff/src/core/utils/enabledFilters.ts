@@ -558,6 +558,18 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
 
 export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
+    // PRISON
+  prisonPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.FACILITY,
+    ]
+  },
+  prisonFacilityPopulation: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+    ],
+  },
 };
 
 const AllEnabledFilterOptions: Record<
