@@ -528,4 +528,32 @@ describe("import case data", () => {
       }),
     ]);
   });
+
+  test("should not overwrite report type if the user has set it", async () => {
+    dataProviderSingleton.setData(TEST_CASES_FILE_NAME, [
+      // Existing case
+      {
+        external_id: fakeCase.externalId,
+        state_code: StateCode.US_ID,
+        staff_id: fakeStaff.externalId,
+        client_id: fakeClient.externalId,
+        due_date: faker.date.future(),
+        county: faker.location.county(),
+        lsir_score: (1000).toString(),
+        lsir_level: faker.number.int().toString(),
+      },
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [CASES_FILE_NAME]);
+
+    // Check that the new case was created
+    const dbCases = await testPrismaClient.case.findMany({});
+
+    expect(dbCases).toEqual([
+      expect.objectContaining({
+        externalId: fakeCase.externalId,
+        reportType: ReportType.FullPSI,
+      }),
+    ]);
+  });
 });

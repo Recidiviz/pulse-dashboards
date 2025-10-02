@@ -65,7 +65,7 @@ export async function transformAndLoadCaseData(
       lsirLevel: caseData.lsir_level,
       reportType: caseData.report_type
         ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[caseData.report_type]
-        : null,
+        : undefined,
       isLsirScoreLocked: caseData.lsir_score !== undefined,
       isReportTypeLocked: caseData.report_type !== undefined,
       isCountyLocked: Boolean(caseData.county),
