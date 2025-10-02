@@ -50,7 +50,6 @@ const TranscriptionSection: React.FC<{
   onRefreshNeeded?: () => void;
 }> = ({ sessionData, onRefreshNeeded }) => {
   const { statusData } = useRecordingSessionStatus(sessionData?.id || "", true);
-
   useEffect(() => {
     if (statusData?.status === "completed") {
       onRefreshNeeded?.();

@@ -85,7 +85,15 @@ async def update_status(
     if not recording_session:
         logger.warning(f"Recording session {session_id} not found for status update")
         return None
-
+    if status == "paused" and recording_session.status in [
+        "processing",
+        "completed",
+        "error",
+    ]:
+        logger.warning(
+            f"Cannot pause recording session {session_id} as it is not in 'recording' status"
+        )
+        return recording_session
     recording_session.status = status
     if audio_chunks_url is not None:
         recording_session.audio_chunks_url = audio_chunks_url

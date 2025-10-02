@@ -260,6 +260,7 @@
     "use-onclickoutside": "^0.4.0",
     "use-query-params": "^2.2.1",
     "uuid": "^8.3.2",
+    "wavesurfer.js": "^7.10.1",
     "word-wrap": "^1.2.4",
     "zod": "^3.23.6",
     "zod_utilz": "^0.8.3"

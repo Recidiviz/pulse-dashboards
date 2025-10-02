@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useMemo } from "react";
+
 import { $api } from "~@reentry/frontend/api";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { RecordingSessionStatusResponse } from "~@reentry/frontend/types/recording";
@@ -24,6 +26,7 @@ export const useRecordingSessionStatus = (
   enabled = false,
 ) => {
   const { getAccessToken } = useAuth();
+  const accessToken = useMemo(() => getAccessToken(), [getAccessToken]);
 
   const { data, error, isLoading } = $api.useQuery(
     "get",
@@ -31,7 +34,7 @@ export const useRecordingSessionStatus = (
     {
       params: { path: { session_id: sessionId } },
       headers: {
-        Authorization: `Bearer ${getAccessToken()}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
     },

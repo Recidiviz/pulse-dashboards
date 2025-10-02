@@ -23,7 +23,6 @@ import { useQueue } from "~@reentry/frontend/contexts/QueueContext";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type {
   RecordingActions,
-  RecordingSessionResponse,
   RecordingState,
   RecordingStatus,
   UIRecordingStatus,
@@ -31,8 +30,6 @@ import type {
 import {
   blobToBase64,
   cleanupMediaResources,
-  isWithinSessionResume,
-  restoreChunkCounter,
   validateRecordingCapabilities,
 } from "~@reentry/frontend/utils/recording";
 import {
@@ -46,7 +43,8 @@ interface UseRecordingProps {
   supportedFormat: string | null;
   isRecordingSupported: boolean;
   sessionId?: string | null;
-  sessionData?: RecordingSessionResponse | null;
+  sessionStatus?: string | null;
+  sessionChunkCount?: number;
   onRecordingStopped?: () => void;
 }
 
@@ -54,7 +52,8 @@ export const useRecording = ({
   supportedFormat,
   isRecordingSupported,
   sessionId,
-  sessionData,
+  sessionStatus,
+  sessionChunkCount = 0,
   onRecordingStopped,
 }: UseRecordingProps): RecordingState & RecordingActions => {
   const [recordingStatus, setRecordingStatus] =
@@ -68,7 +67,10 @@ export const useRecording = ({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunkCounterRef = useRef(0);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const [chunkCount, setChunkCount] = useState(0);
+  const recordingStartTimeRef = useRef<number | null>(null);
+  const lastDataSendedTimeRef = useRef<number | null>(null);
 
   const updateRecordingStatus = useCallback(
     async (newStatus: RecordingStatus) => {
@@ -88,24 +90,24 @@ export const useRecording = ({
 
   // session recovery: check for paused sessions on mount and restore state
   useEffect(() => {
-    if (!sessionData || !sessionId) {
+    if (!sessionStatus || !sessionId) {
       return;
     }
 
     // Check if this session was previously paused
-    const isSessionPaused = sessionData.status === "paused" || sessionData.status === "recording";
+    const isSessionPaused =
+      sessionStatus === "paused" || sessionStatus === "recording";
 
     if (isSessionPaused) {
       console.log("Recovering paused session:", sessionId);
-      console.log("Session data structure:", sessionData);
-
-      updateRecordingStatus("paused");
+      if (!hasInitialized) {
+        setHasInitialized(true);
+      }
 
       // Restore chunk counter from backend
-      const restoredChunkCount = restoreChunkCounter(sessionData);
+      const restoredChunkCount = sessionChunkCount || 0;
       chunkCounterRef.current = restoredChunkCount;
       setChunkCount(restoredChunkCount);
-
       // Restore microphone selection if available
       // Note: We'd need to add selectedMicrophone to session data in the future
       // For now, microphone will be set by RecordingInterface's useEffect
@@ -114,7 +116,58 @@ export const useRecording = ({
         `Session recovered: status=paused, chunkCount=${restoredChunkCount}`,
       );
     }
-  }, [sessionData, sessionId]);
+  }, [sessionStatus, sessionId, sessionChunkCount, hasInitialized]);
+  // Cleanup microphone resources on page refresh/unload
+
+  const cleanupMicrophoneOnUnload = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => {
+        track.stop();
+      });
+      streamRef.current = null;
+    }
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== "inactive"
+    ) {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (error) {
+        console.log("MediaRecorder already stopped or error stopping:", error);
+      }
+    }
+  }, []);
+
+  // Cleanup microphone on page refresh/unload
+  useEffect(() => {
+    const handlePageUnload = () => {
+      // Synchronous cleanup for better reliability
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => {
+          track.stop();
+        });
+        streamRef.current = null;
+      }
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== "inactive"
+      ) {
+        try {
+          mediaRecorderRef.current.stop();
+        } catch (error) {
+          console.log(
+            "MediaRecorder already stopped or error stopping:",
+            error,
+          );
+        }
+      }
+    };
+    // Use pagehide for more reliable cleanup, especially on mobile
+    window.addEventListener("beforeunload", handlePageUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handlePageUnload);
+    };
+  }, [cleanupMicrophoneOnUnload]);
 
   const { mutateAsync: finalizeRecordingMutation } = $api.useMutation(
     "post",
@@ -122,7 +175,12 @@ export const useRecording = ({
   );
 
   const queueChunk = useCallback(
-    async (chunk: Blob, chunkIndex: number, timestamp: number) => {
+    async (
+      chunk: Blob,
+      chunkIndex: number,
+      timestamp: number,
+      chunkDuration: number,
+    ) => {
       if (!sessionId) {
         console.warn("No session ID available for chunk upload");
         return;
@@ -143,10 +201,10 @@ export const useRecording = ({
       }
 
       // Determine if this chunk has WebM headers
-      const restoredChunkCount = sessionData?.chunk_count || 0;
+      const restoredChunkCount = sessionChunkCount || 0;
       const isFirstChunk = chunkIndex === 0;
       const isFirstResumeChunk =
-        sessionData?.status === "paused" && chunkIndex === restoredChunkCount;
+        sessionStatus === "paused" && chunkIndex === restoredChunkCount;
       const hasHeader = isFirstChunk || isFirstResumeChunk;
 
       try {
@@ -159,17 +217,77 @@ export const useRecording = ({
           chunkData: base64Data,
           mimeType: chunk.type,
           hasHeader,
+          chunkDuration,
         });
 
         console.debug(
-          `Chunk ${chunkIndex} queued for upload (hasHeader: ${hasHeader})`,
+          `Chunk ${chunkIndex} queued for upload (hasHeader: ${hasHeader}, duration: ${chunkDuration.toFixed(2)}s)`,
         );
       } catch (error) {
         console.error(`Error queueing chunk ${chunkIndex}:`, error);
         showErrorToast(`Failed to queue chunk ${chunkIndex}`);
       }
     },
-    [sessionId, sessionData, queue],
+    [sessionId, sessionChunkCount, sessionStatus, queue],
+  );
+
+  const handleRecordingStart = useCallback(() => {
+    const currentTime = Date.now();
+    recordingStartTimeRef.current = currentTime;
+    lastDataSendedTimeRef.current = currentTime;
+  }, []);
+
+  const handleDataAvailable = useCallback(
+    (event: BlobEvent) => {
+      if (event.data.size > 0) {
+        const currentTime = Date.now();
+        const chunkDuration = lastDataSendedTimeRef.current
+          ? currentTime - lastDataSendedTimeRef.current
+          : 0;
+        lastDataSendedTimeRef.current = currentTime;
+
+        console.log(`Chunk duration: ${chunkDuration.toFixed(2)} seconds`);
+
+        const absoluteTimestamp = Date.now();
+        console.log(
+          `Chunk ${chunkCounterRef.current} ready: ${event.data.size} bytes at timestamp ${absoluteTimestamp}`,
+        );
+        queueChunk(
+          event.data,
+          chunkCounterRef.current,
+          absoluteTimestamp,
+          chunkDuration,
+        );
+        chunkCounterRef.current++;
+        setChunkCount(chunkCounterRef.current);
+      }
+    },
+    [queueChunk],
+  );
+
+  const handleRecordingError = useCallback(
+    (mediaRecorder: MediaRecorder) => (event: Event) => {
+      console.error("MediaRecorder error:", event);
+      showErrorToast(
+        `An error occurred during the recording: ${(event as ErrorEvent).error?.message} . Please refresh the page.`,
+      );
+
+      const error = new Error(
+        `MediaRecorder error: ${(event as ErrorEvent).error?.message || "Unknown error"}`,
+      );
+      withScope((scope) => {
+        scope.setContext("mediaRecorder", {
+          sessionId: sessionId,
+          state: mediaRecorder.state,
+          mimeType: mediaRecorder.mimeType,
+          errorName: (event as ErrorEvent).error?.name,
+          errorMessage: (event as ErrorEvent).error?.message,
+          eventType: event.type,
+        });
+        captureException(error);
+      });
+    },
+    [sessionId],
   );
 
   const startRecording = useCallback(async () => {
@@ -197,45 +315,15 @@ export const useRecording = ({
         mimeType: supportedFormat || undefined,
       });
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-
-          const absoluteTimestamp = Date.now();
-          console.log(
-            `Chunk ${chunkCounterRef.current} ready: ${event.data.size} bytes at timestamp ${absoluteTimestamp}`,
-          );
-          queueChunk(event.data, chunkCounterRef.current, absoluteTimestamp);
-          chunkCounterRef.current++;
-          setChunkCount(chunkCounterRef.current);
-        }
-      };
-
-      mediaRecorder.onerror = (event) => {
-        console.error("MediaRecorder error:", event);
-        showErrorToast(
-          `An error occurred during the recording: ${event.error?.message} . Please refresh the page.`,
-        );
-
-        const error = new Error(
-          `MediaRecorder error: ${event.error?.message || "Unknown error"}`,
-        );
-        withScope((scope) => {
-          scope.setContext("mediaRecorder", {
-            sessionId: sessionId,
-            state: mediaRecorder.state,
-            mimeType: mediaRecorder.mimeType,
-            errorName: event.error?.name,
-            errorMessage: event.error?.message,
-            eventType: event.type,
-          });
-          captureException(error);
-        });
-      };
+      mediaRecorder.onstart = handleRecordingStart;
+      mediaRecorder.ondataavailable = handleDataAvailable;
+      mediaRecorder.onerror = handleRecordingError(mediaRecorder);
 
       mediaRecorder.start(5000);
 
       mediaRecorderRef.current = mediaRecorder;
       streamRef.current = stream;
+
       await updateRecordingStatus("recording");
 
       showSuccessToast("Recording started");
@@ -262,7 +350,9 @@ export const useRecording = ({
     isRecordingSupported,
     supportedFormat,
     updateRecordingStatus,
-    queueChunk,
+    handleRecordingStart,
+    handleDataAvailable,
+    handleRecordingError,
   ]);
 
   const pauseRecording = useCallback(() => {
@@ -271,94 +361,73 @@ export const useRecording = ({
       mediaRecorderRef.current.state === "recording"
     ) {
       // Request any buffered data before pausing to prevent data loss on page refresh.
+      console.log(mediaRecorderRef);
       mediaRecorderRef.current.requestData();
       mediaRecorderRef.current.pause();
+
+      recordingStartTimeRef.current = null;
+
+      // Stop all microphone tracks to release microphone access
+      // This will show that the microphone is no longer in use
+      if (streamRef.current) {
+        console.log("Stopping microphone tracks on pause", streamRef.current);
+        console.log("Tracks", streamRef.current.getTracks());
+        streamRef.current.getTracks().forEach((track) => {
+          console.log(track);
+          track.stop();
+        });
+        streamRef.current = null;
+      }
     }
 
     updateRecordingStatus("paused");
   }, [updateRecordingStatus]);
 
+  useEffect(() => {
+    if (hasInitialized || !sessionStatus || !sessionId) {
+      return;
+    }
+    setHasInitialized(true);
+    if (sessionStatus === "recording") {
+      pauseRecording();
+    }
+  }, [sessionStatus, sessionId, pauseRecording, hasInitialized]);
+
   const resumeRecording = useCallback(async () => {
     try {
-      // Determine if this is within-session or cross-session resume
-      const isWithinSession = isWithinSessionResume(mediaRecorderRef.current);
+      // Since we stop the stream during pause, we always need to create a new MediaRecorder
+      // when resuming, whether it's within-session or cross-session
+      console.log("Resume: creating new MediaRecorder and stream");
 
-      if (isWithinSession) {
-        // MediaRecorder exists and is paused - just resume it
-        console.log("Within-session resume: using existing MediaRecorder");
-
-        if (mediaRecorderRef.current) {
-          mediaRecorderRef.current.resume();
-        }
-      } else {
-        // cross sessions: create new mediaRecorder
-        console.log("Cross-session resume: creating new MediaRecorder");
-
-        // Validate capabilities first
-        validateRecordingCapabilities(
-          selectedMicrophone,
-          isRecordingSupported,
-          supportedFormat || "",
-        );
-
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: selectedMicrophone
-            ? { deviceId: { exact: selectedMicrophone } }
-            : true,
-        });
-
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: supportedFormat || undefined,
-        });
-
-        mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-
-            const absoluteTimestamp = Date.now();
-            console.log(
-              `Chunk ${chunkCounterRef.current} ready: ${event.data.size} bytes at timestamp ${absoluteTimestamp}`,
-            );
-            queueChunk(event.data, chunkCounterRef.current, absoluteTimestamp);
-            chunkCounterRef.current++;
-            setChunkCount(chunkCounterRef.current);
-          }
-        };
-
-        mediaRecorder.onerror = (event) => {
-          console.error("MediaRecorder error:", event);
-          showErrorToast(
-            `Recording error occurred: ${event.error?.message}. Please refresh the page.`,
-          );
-
-          const error = new Error(
-            `MediaRecorder error: ${event.error?.message || "Unknown error"}`,
-          );
-          withScope((scope) => {
-            scope.setContext("mediaRecorder", {
-              sessionId: sessionId,
-              state: mediaRecorder.state,
-              mimeType: mediaRecorder.mimeType,
-              errorName: event.error?.name,
-              errorMessage: event.error?.message,
-              eventType: event.type,
-            });
-            captureException(error);
-          });
-        };
-
-        mediaRecorder.start(5000);
-
-        mediaRecorderRef.current = mediaRecorder;
-        streamRef.current = stream;
-      }
-
-      // Update status for both scenarios
-      await updateRecordingStatus("recording");
-      showSuccessToast(
-        isWithinSession
-          ? "Recording resumed"
-          : "Recording resumed from previous session",
+      // Validate capabilities first
+      validateRecordingCapabilities(
+        selectedMicrophone,
+        isRecordingSupported,
+        supportedFormat || "",
       );
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: selectedMicrophone
+          ? { deviceId: { exact: selectedMicrophone } }
+          : true,
+      });
+
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: supportedFormat || undefined,
+      });
+
+      mediaRecorder.onstart = handleRecordingStart;
+      mediaRecorder.ondataavailable = handleDataAvailable;
+      mediaRecorder.onerror = handleRecordingError(mediaRecorder);
+
+      mediaRecorder.start(5000);
+
+      mediaRecorderRef.current = mediaRecorder;
+      streamRef.current = stream;
+
+      // Update status
+      await updateRecordingStatus("recording");
+      showSuccessToast("Recording resumed");
     } catch (error) {
       console.error("Error resuming recording:", error);
       showErrorToast(
@@ -382,7 +451,9 @@ export const useRecording = ({
     isRecordingSupported,
     supportedFormat,
     updateRecordingStatus,
-    queueChunk,
+    handleRecordingStart,
+    handleDataAvailable,
+    handleRecordingError,
   ]);
 
   const finalizeRecording = useCallback(async () => {
@@ -431,6 +502,7 @@ export const useRecording = ({
       }
       chunkCounterRef.current = 0;
       setChunkCount(0);
+      recordingStartTimeRef.current = null;
     }, 3000);
 
     // Notify that recording has been stopped (so polling can start)
@@ -445,6 +517,7 @@ export const useRecording = ({
     selectedMicrophone,
     microphones: [],
     chunkCount,
+    mediaRecorderRef,
     startRecording,
     pauseRecording,
     resumeRecording,

@@ -66,6 +66,11 @@ class RecordingSession(BaseModel, table=True):
         sa_column=Column(BigInteger, nullable=True),
         description="Unix timestamp in milliseconds of the last received chunk",
     )
+    duration: int = Field(
+        nullable=True,
+        default=0,
+        description="Total duration of the recording in milliseconds",
+    )
 
     transcription_approved: bool = Field(
         default=False,

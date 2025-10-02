@@ -46728,6 +46728,7 @@ __metadata:
     vitest-canvas-mock: "npm:^0.3.3"
     vitest-fetch-mock: "npm:^0.3.0"
     vitest-mock-extended: "npm:^1.3.2"
+    wavesurfer.js: "npm:^7.10.1"
     word-wrap: "npm:^1.2.4"
     zod: "npm:^3.23.6"
     zod_utilz: "npm:^0.8.3"
@@ -53715,6 +53716,13 @@ __metadata:
     glob-to-regexp: "npm:^0.4.1"
     graceful-fs: "npm:^4.1.2"
   checksum: 10c0/ec60a5f0e9efaeca0102fd9126346b3b2d523e01c34030d3fddf5813a7125765121ebdc2552981136dcd2c852deb1af0b39340f2fcc235f292db5399d0283577
+  languageName: node
+  linkType: hard
+
+"wavesurfer.js@npm:^7.10.1":
+  version: 7.10.1
+  resolution: "wavesurfer.js@npm:7.10.1"
+  checksum: 10c0/1508373830bbfaaf89638cd38d8d8cb96bfdf2360ddaa74f397079b792624ccc6bc5f7c4914ba26d889b60a544eb1f8a5bef114500ff8fdeb0f1b16691e67cee
   languageName: node
   linkType: hard
 

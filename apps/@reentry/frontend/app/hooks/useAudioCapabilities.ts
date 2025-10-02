@@ -44,7 +44,12 @@ export const useAudioCapabilities = () => {
   useEffect(() => {
     const loadMicrophones = async () => {
       try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); // needed for getting microphone permission.
+        try {
+          stream.getTracks().forEach(track => track.stop());
+        } catch (error) {
+          console.error("Error stopping permission stream tracks:", error);
+        }
         const devices = await navigator.mediaDevices.enumerateDevices();
         const audioInputs = devices
           .filter((device) => device.kind === "audioinput")

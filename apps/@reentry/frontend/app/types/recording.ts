@@ -48,6 +48,7 @@ export interface RecordingState {
 }
 
 export interface RecordingActions {
+  mediaRecorderRef?: React.MutableRefObject<MediaRecorder | null>;
   startRecording: () => Promise<void>;
   pauseRecording: () => void;
   resumeRecording: () => void;
@@ -69,4 +70,5 @@ export interface QueuedChunk {
   mimeType: string;
   hasHeader: boolean;
   timestamp: number;
+  chunkDuration: number; // duration in seconds
 }

@@ -25,6 +25,7 @@ class RecordingSessionResponse(ORMResponse):
     gcs_chunks_folder: Optional[str] = None
     gcs_final_file_path: Optional[str] = None
     chunk_count: int
+    duration: Optional[int] = 0
     transcription_approved: bool = False
     execution_id: uuid.UUID | None = None
     execution: ExecutionResponse | None = None
@@ -46,6 +47,7 @@ class UploadChunkRequest(BaseModel):
     chunk_data: str  # Base64 encoded audio data
     mime_type: str
     has_header: bool = False
+    chunk_duration: int
 
 
 class UploadChunkResponse(BaseModel):
@@ -72,6 +74,7 @@ class RecordingSessionStatusResponse(BaseModel):
     id: str
     status: RecordingStatus
     chunk_count: int
+    duration: Optional[int] = 0
     processing_progress: Optional[float] = None
     error_message: Optional[str] = None
     updated_at: datetime

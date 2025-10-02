@@ -185,6 +185,7 @@ async def get_recording_session_status(
         id=str(recording_session.id),
         status=recording_session.status,
         chunk_count=recording_session.chunk_count,
+        duration=recording_session.duration,
         updated_at=recording_session.updated_at,
         gcs_final_file_path=recording_session.gcs_final_file_path,
         transcription_approved=recording_session.transcription_approved,
@@ -310,6 +311,7 @@ async def upload_audio_chunk(
             .values(
                 chunk_count=RecordingSession.chunk_count + 1,
                 last_chunk_timestamp=request.timestamp,
+                duration=RecordingSession.duration + request.chunk_duration,
             )
         )
         await session.exec(stmt)

@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -36,6 +38,8 @@ interface RecordingControlsProps {
   microphones: MediaDevice[];
   isRecordingSupported: boolean;
   chunkCount?: number;
+  uploadDuration?: number;
+  recordDuration?: number;
   actions: RecordingActions;
   openLiveAssessmentModal: (action: () => void) => void;
   setEndAssessmentOpen: (open: boolean) => void;
@@ -47,10 +51,21 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   microphones,
   isRecordingSupported,
   chunkCount = 0,
+  uploadDuration = 0,
+  recordDuration = 0,
   actions,
   openLiveAssessmentModal,
   setEndAssessmentOpen,
 }) => {
+  const uploadPercentage =
+    recordDuration > 0
+      ? Math.min(Math.round((uploadDuration / recordDuration) * 100), 100)
+      : 0;
+  const formatDuration = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
   const renderRecordingControls = () => {
     if (!isRecordingSupported) {
       return (
@@ -179,7 +194,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
               ))}
             </div>
             <div className="text-[#2a5469]/90 text-base font-medium font-['Public_Sans']">
-              0:00
+              {formatDuration(uploadDuration)}
             </div>
           </div>
         );
@@ -193,11 +208,25 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
                   Recording in progress...
                 </Typography>
               </div>
-              {chunkCount > 0 && (
-                <div className="flex items-center justify-center">
+              {recordDuration > 0 && (
+                <div className="flex items-center justify-center space-x-2">
                   <Typography className="text-xs text-gray-500">
-                    {chunkCount} chunks recorded
+                    Duration: {formatDuration(recordDuration)} ({chunkCount}{" "}
+                    chunks)
                   </Typography>
+                  {uploadPercentage > 0 && uploadPercentage < 100 && (
+                    <div className="flex items-center space-x-1">
+                      <CircularProgress size={10} className="text-blue-500" />
+                    </div>
+                  )}
+                  {uploadPercentage === 100 && (
+                    <div className="flex items-center space-x-1">
+                      <CheckCircleIcon
+                        className="text-green-600"
+                        style={{ fontSize: 12 }}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -213,11 +242,25 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
                   Recording paused - click Resume to continue
                 </Typography>
               </div>
-              {chunkCount > 0 && (
-                <div className="flex items-center justify-center">
+              {recordDuration > 0 && (
+                <div className="flex items-center justify-center space-x-2">
                   <Typography className="text-xs text-gray-500">
-                    Progress: {chunkCount} audio chunks recorded
+                    Duration: {formatDuration(recordDuration)} ({chunkCount}{" "}
+                    chunks)
                   </Typography>
+                  {uploadPercentage > 0 && uploadPercentage < 100 && (
+                    <div className="flex items-center space-x-1">
+                      <CircularProgress size={10} className="text-blue-500" />
+                    </div>
+                  )}
+                  {uploadPercentage === 100 && (
+                    <div className="flex items-center space-x-1">
+                      <CheckCircleIcon
+                        className="text-green-600"
+                        style={{ fontSize: 12 }}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -233,10 +276,11 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
                   Processing recording...
                 </Typography>
               </div>
-              {chunkCount > 0 && (
+              {uploadDuration > 0 && (
                 <div className="flex items-center justify-center">
                   <Typography className="text-xs text-gray-500">
-                    Finalizing {chunkCount} audio chunks
+                    Finalizing {formatDuration(uploadDuration)} of audio (
+                    {chunkCount} chunks)
                   </Typography>
                 </div>
               )}
@@ -246,9 +290,19 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
       case "completed":
         return (
           <div className="space-y-3">
-            <div className="flex items-center justify-center space-x-2 text-green-600">
-              <div className="w-3 h-3 bg-green-600 rounded-full" />
-              <Typography className="text-sm">Recording complete</Typography>
+            <div className="space-y-2">
+              <div className="flex items-center justify-center space-x-2 text-green-600">
+                <div className="w-3 h-3 bg-green-600 rounded-full" />
+                <Typography className="text-sm">Recording complete</Typography>
+              </div>
+              {uploadDuration > 0 && (
+                <div className="flex items-center justify-center">
+                  <Typography className="text-xs text-gray-500">
+                    Total duration: {formatDuration(uploadDuration)} (
+                    {chunkCount} chunks)
+                  </Typography>
+                </div>
+              )}
             </div>
           </div>
         );

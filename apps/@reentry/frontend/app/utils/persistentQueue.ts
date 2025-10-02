@@ -31,6 +31,7 @@ interface UploadResponse {
 export class PersistentChunkQueue {
   private dbName = "AudioChunkQueue";
   private storeName = "chunks";
+  private durationStoreName = "audioDuration";
   private db: IDBDatabase | null = null;
   private isProcessing = false;
   private isInitialized = false;
@@ -94,6 +95,10 @@ export class PersistentChunkQueue {
 
     try {
       await this.addChunkToDb(queuedChunk);
+      await this.updateTotalAudioDuration(
+        queuedChunk.sessionId,
+        queuedChunk.chunkDuration,
+      );
       console.log(`Chunk ${queuedChunk.chunkIndex} added to queue`);
     } catch (error) {
       console.error("Failed to add chunk to queue:", error);
@@ -132,7 +137,7 @@ export class PersistentChunkQueue {
    */
   private async openDatabase(): Promise<void> {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, 1);
+      const request = indexedDB.open(this.dbName, 3);
 
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
@@ -142,9 +147,30 @@ export class PersistentChunkQueue {
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
+        const transaction = (event.target as IDBOpenDBRequest).transaction;
+
+        // Create or update chunks store
+        let chunksStore: IDBObjectStore | undefined;
         if (!db.objectStoreNames.contains(this.storeName)) {
-          const store = db.createObjectStore(this.storeName, { keyPath: "id" });
-          store.createIndex("timestamp", "timestamp", { unique: false });
+          chunksStore = db.createObjectStore(this.storeName, { keyPath: "id" });
+          chunksStore.createIndex("timestamp", "timestamp", { unique: false });
+        } else {
+          chunksStore = transaction?.objectStore(this.storeName);
+        }
+
+        // Add chunkDuration index if it doesn't exist (for v1 to v2 upgrade)
+        if (chunksStore) {
+          if (!chunksStore.indexNames.contains("chunkDuration")) {
+              chunksStore.createIndex("chunkDuration", "chunkDuration", {
+              unique: false,
+            });
+          }
+        }
+
+
+        // Create audioDuration store if it doesn't exist
+        if (!db.objectStoreNames.contains(this.durationStoreName)) {
+          db.createObjectStore(this.durationStoreName, { keyPath: "id" });
         }
       };
     });
@@ -339,6 +365,93 @@ export class PersistentChunkQueue {
         chunks.sort((a, b) => a.timestamp - b.timestamp);
         resolve(chunks);
       };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  private async updateTotalAudioDuration(
+    sessionId: string,
+    chunkDuration: number,
+  ): Promise<void> {
+    if (!this.db) throw new Error("Database not initialized");
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db?.transaction(
+        [this.durationStoreName],
+        "readwrite",
+      );
+      if (!transaction) {
+        reject(new Error("Failed to create transaction"));
+        return;
+      }
+
+      const store = transaction.objectStore(this.durationStoreName);
+      const getRequest = store.get(sessionId);
+
+      getRequest.onsuccess = () => {
+        const existingRecord = getRequest.result;
+        const currentTotal = existingRecord ? existingRecord.duration : 0;
+        const newTotal = currentTotal + chunkDuration;
+
+        const putRequest = store.put({
+          id: sessionId,
+          duration: newTotal,
+          lastUpdated: Date.now(),
+        });
+
+        putRequest.onsuccess = () => resolve();
+        putRequest.onerror = () => reject(putRequest.error);
+      };
+
+      getRequest.onerror = () => reject(getRequest.error);
+    });
+  }
+
+  async getTotalAudioDuration(sessionId: string): Promise<number> {
+    if (!this.db) return 0;
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db?.transaction(
+        [this.durationStoreName],
+        "readonly",
+      );
+      if (!transaction) {
+        reject(new Error("Failed to create transaction"));
+        return;
+      }
+
+      const store = transaction.objectStore(this.durationStoreName);
+      const request = store.get(sessionId);
+
+      request.onsuccess = () => {
+        const record = request.result;
+        resolve(record ? record.duration : 0);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async resetTotalAudioDuration(): Promise<void> {
+    if (!this.db) throw new Error("Database not initialized");
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db?.transaction(
+        [this.durationStoreName],
+        "readwrite",
+      );
+      if (!transaction) {
+        reject(new Error("Failed to create transaction"));
+        return;
+      }
+
+      const store = transaction.objectStore(this.durationStoreName);
+      const request = store.put({
+        id: "totalDuration",
+        duration: 0,
+        lastUpdated: Date.now(),
+      });
+
+      request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
     });
   }

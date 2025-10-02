@@ -32,13 +32,16 @@ import { useEffect, useRef, useState } from "react";
 
 import EndAssessmentModal from "~@reentry/frontend/components/recording/modals/EndAssessmentModal";
 import LiveAssessmentModal from "~@reentry/frontend/components/recording/modals/LiveAssessmentModal";
+import { useQueue } from "~@reentry/frontend/contexts/QueueContext";
 import { useAudioCapabilities } from "~@reentry/frontend/hooks/useAudioCapabilities";
 import { useRecording } from "~@reentry/frontend/hooks/useRecording";
+import { useRecordingSessionStatus } from "~@reentry/frontend/hooks/useRecordingSessionStatus";
 import type {
   ClientRecordResponse,
   RecordingSessionResponse,
 } from "~@reentry/frontend/types/recording";
 
+import AudioWaveform from "./AudioWaveform";
 import RecordingControls from "./RecordingControls";
 import { SimpleAudioPlayer } from "./SimpleAudioPlayer";
 
@@ -55,6 +58,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
   onRecordingStopped,
   setNeedsAddress,
 }) => {
+  const { statusData } = useRecordingSessionStatus(sessionData?.id || "", true);
   const [recordingStopped, setRecordingStopped] = useState(false);
   const [liveAssessmentOpen, setLiveAssessmentOpen] = useState(false);
   const [endAssessmentOpen, setEndAssessmentOpen] = useState(false);
@@ -62,11 +66,13 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     (() => void) | null
   >(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [recordDuration, setRecordDuration] = useState(0);
 
   const blockNavigationRef = useRef(false);
 
   const audioCapabilities = useAudioCapabilities();
   const router = useRouter();
+  const queue = useQueue();
 
   const handleRecordingStopped = () => {
     setRecordingStopped(true);
@@ -77,9 +83,37 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     supportedFormat: audioCapabilities.supportedFormat,
     isRecordingSupported: audioCapabilities.isRecordingSupported,
     sessionId: sessionData?.id,
-    sessionData,
+    sessionStatus: sessionData?.status,
+    sessionChunkCount: sessionData?.chunk_count,
     onRecordingStopped: handleRecordingStopped,
   });
+
+  // Update record duration periodically when recording
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    const updateRecordDuration = async () => {
+      try {
+        const totalDuration = await queue.getTotalAudioDuration(
+          sessionData?.id || "",
+        );
+        setRecordDuration(totalDuration);
+      } catch (error) {
+        console.error("Failed to get queue duration:", error);
+      }
+    };
+
+    if (recording.uiStatus === "recording" || recording.uiStatus === "paused") {
+      updateRecordDuration(); // Initial update
+      interval = setInterval(updateRecordDuration, 1000); // Update every second
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [recording.uiStatus, queue, sessionData?.id]);
 
   // Block navigation when recording is active
   useEffect(() => {
@@ -116,7 +150,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     return undefined;
   }, [recording.uiStatus]);
 
-  // Select first available microphone by default
+  //Select first available microphone by default
   useEffect(() => {
     if (
       audioCapabilities.microphones.length > 0 &&
@@ -169,22 +203,34 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
   return (
     <div className="w-full">
       {shouldShowControls && (
-        <RecordingControls
-          recordingStatus={recording.uiStatus}
-          selectedMicrophone={recording.selectedMicrophone}
-          microphones={audioCapabilities.microphones}
-          isRecordingSupported={audioCapabilities.isRecordingSupported}
-          chunkCount={recording.chunkCount}
-          openLiveAssessmentModal={openLiveAssessmentModal}
-          setEndAssessmentOpen={setEndAssessmentOpen}
-          actions={{
-            startRecording: recording.startRecording,
-            pauseRecording: recording.pauseRecording,
-            resumeRecording: recording.resumeRecording,
-            stopRecording: recording.stopRecording,
-            setSelectedMicrophone: recording.setSelectedMicrophone,
-          }}
-        />
+        <>
+          <RecordingControls
+            recordingStatus={recording.uiStatus}
+            selectedMicrophone={recording.selectedMicrophone}
+            microphones={audioCapabilities.microphones}
+            isRecordingSupported={audioCapabilities.isRecordingSupported}
+            chunkCount={recording.chunkCount}
+            uploadDuration={
+              statusData?.duration ? Math.floor(statusData.duration / 1000) : 0
+            }
+            recordDuration={Math.floor(recordDuration / 1000)}
+            openLiveAssessmentModal={openLiveAssessmentModal}
+            setEndAssessmentOpen={setEndAssessmentOpen}
+            actions={{
+              startRecording: recording.startRecording,
+              pauseRecording: recording.pauseRecording,
+              resumeRecording: recording.resumeRecording,
+              stopRecording: recording.stopRecording,
+              setSelectedMicrophone: recording.setSelectedMicrophone,
+            }}
+          />
+          <AudioWaveform
+            selectedMicrophone={recording.selectedMicrophone}
+            recordingStatus={recording.uiStatus}
+            isRecordingSupported={audioCapabilities.isRecordingSupported}
+            recordDuration={recordDuration}
+          />
+        </>
       )}
 
       {shouldShowPlayer && sessionData.id && (

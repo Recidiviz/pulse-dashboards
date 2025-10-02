@@ -47,22 +47,22 @@ export const QueueProvider = ({ children }: QueueProviderProps) => {
     "/recordings/sessions/{session_id}/upload-chunk",
   );
 
-  const uploadFunction = useCallback(
-    async (chunk: QueuedChunk) => {
-      try {
-        await uploadChunkMutation.mutateAsync({
-          params: { path: { session_id: chunk.sessionId } },
-          body: {
-            timestamp: chunk.timestamp,
-            chunk_index: chunk.chunkIndex,
-            chunk_data: chunk.chunkData,
-            mime_type: chunk.mimeType,
-            has_header: chunk.hasHeader,
-          },
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+  const uploadFunction = useCallback(async (chunk: QueuedChunk) => {
+    try {
+      await uploadChunkMutation.mutateAsync({
+        params: { path: { session_id: chunk.sessionId } },
+        body: {
+          timestamp: chunk.timestamp,
+          chunk_index: chunk.chunkIndex,
+          chunk_data: chunk.chunkData,
+          mime_type: chunk.mimeType,
+          has_header: chunk.hasHeader,
+          chunk_duration: chunk.chunkDuration,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       return { success: true };
     } catch (error) {

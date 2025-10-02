@@ -19,7 +19,7 @@
 
 import { useParams } from "next/navigation";
 import type React from "react";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 import NavRecordingPage from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/NavRecordingPage";
 import TranscriptionAdressForm from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/TranscriptionAddressForm";
@@ -33,10 +33,11 @@ import { useAuth } from "~@reentry/frontend/lib/auth";
 const AudioRecordingPage: React.FC = () => {
   const { id, sessionId } = useParams() as { id: string; sessionId: string };
   const { getAccessToken } = useAuth();
-  const [isPollingEnabled, setIsPollingEnabled] = useState(false);
   const [needsAddress, setNeedsAddress] = useState(false);
 
-  console.log(`polling enabled: ${isPollingEnabled}`);
+  // Get access token once per render
+  const accessToken = getAccessToken();
+
   // Fetch client data (same pattern as intake page)
   const {
     data: clientData,
@@ -45,7 +46,7 @@ const AudioRecordingPage: React.FC = () => {
   } = $api.useQuery("get", "/clients/{client_pseudo_id}", {
     params: { path: { client_pseudo_id: id } },
     headers: {
-      Authorization: `Bearer ${getAccessToken()}`,
+      Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
   });
@@ -58,7 +59,7 @@ const AudioRecordingPage: React.FC = () => {
   } = $api.useQuery("get", "/recordings/sessions/{session_id}", {
     params: { path: { session_id: sessionId } },
     headers: {
-      Authorization: `Bearer ${getAccessToken()}`,
+      Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
   });
@@ -71,7 +72,7 @@ const AudioRecordingPage: React.FC = () => {
         path: { client_pseudo_id: id },
       },
       headers: {
-        Authorization: `Bearer ${useAuth().getAccessToken()}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
     },
@@ -81,10 +82,10 @@ const AudioRecordingPage: React.FC = () => {
     // check if the recordingsession is completed and intake needs address
     if (sessionData?.status === "completed" && intakeData && !intakeData.address) {
       setNeedsAddress(true);
-    }else{
+    } else {
       setNeedsAddress(false);
     }
-  }, [intakeData, sessionData]);
+  }, [sessionData?.status, intakeData]);
 
 
   if (clientLoading || sessionLoading) {
@@ -148,7 +149,6 @@ const AudioRecordingPage: React.FC = () => {
         <RecordingInterface
           clientRecord={clientData}
           sessionData={sessionData || null}
-          onRecordingStopped={() => setIsPollingEnabled(true)}
           setNeedsAddress={setNeedsAddress}
         />
       </div>

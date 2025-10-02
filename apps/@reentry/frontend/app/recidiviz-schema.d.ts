@@ -921,54 +921,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/intake-sections": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Add new intake sections
-     * @description Create one or multiple intake sections for the assessment process
-     */
-    post: operations["create_intake_sections_intake_sections_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake-sections/{section_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Retrieve a specific intake section
-     * @description Fetch a single intake section by its ID
-     */
-    get: operations["get_intake_section_intake_sections__section_id__get"];
-    put?: never;
-    post?: never;
-    /**
-     * Delete an intake section
-     * @description Remove a specific intake section by its ID
-     */
-    delete: operations["delete_intake_section_intake_sections__section_id__delete"];
-    options?: never;
-    head?: never;
-    /**
-     * Update an intake section
-     * @description Update a specific intake section by its ID
-     */
-    patch: operations["update_intake_section_intake_sections__section_id__patch"];
-    trace?: never;
-  };
   "/clients/": {
     parameters: {
       query?: never;
@@ -1181,6 +1133,23 @@ export interface paths {
     put?: never;
     /** Finalize recording and merge chunks */
     post: operations["finalize_recording_recordings_sessions__session_id__finalize_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/recordings/sessions/{session_id}/assemble": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Assemble audio chunks into final file */
+    post: operations["assemble_recording_audio_recordings_sessions__session_id__assemble_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -2036,18 +2005,6 @@ export interface components {
       /** Internal Access */
       internal_access?: boolean | null;
     };
-    /**
-     * IntakeSectionCreate
-     * @description Model for creating intake sections
-     */
-    IntakeSectionCreate: {
-      /** Title */
-      title: string;
-      /** Description */
-      description: string;
-      /** Required Information */
-      required_information: string;
-    };
     /** IntakeSectionResponse */
     IntakeSectionResponse: {
       /**
@@ -2112,13 +2069,13 @@ export interface components {
       current_section_messages: components["schemas"]["IntakeMessageResponse"][];
       /** Client Name */
       client_name?: string | null;
-      /** Client State */
-      client_state?: string | null;
       /**
        * Has Accepted Terms
        * @default false
        */
       has_accepted_terms: boolean;
+      /** Client State */
+      client_state?: string | null;
     };
     /** IntakeWithSectionsResponse */
     IntakeWithSectionsResponse: {
@@ -2605,6 +2562,11 @@ export interface components {
       /** Chunk Count */
       chunk_count: number;
       /**
+       * Duration
+       * @default 0
+       */
+      duration: number;
+      /**
        * Transcription Approved
        * @default false
        */
@@ -2620,6 +2582,11 @@ export interface components {
       status: components["schemas"]["RecordingStatus"];
       /** Chunk Count */
       chunk_count: number;
+      /**
+       * Duration
+       * @default 0
+       */
+      duration: number;
       /** Processing Progress */
       processing_progress?: number | null;
       /** Error Message */
@@ -2825,6 +2792,8 @@ export interface components {
        * @default false
        */
       has_header: boolean;
+      /** Chunk Duration */
+      chunk_duration: number;
     };
     /** UploadChunkResponse */
     UploadChunkResponse: {
@@ -4857,136 +4826,6 @@ export interface operations {
       };
     };
   };
-  create_intake_sections_intake_sections_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        "application/json":
-          | components["schemas"]["IntakeSectionCreate"][]
-          | null;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["IntakeSectionResponse"][];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_intake_section_intake_sections__section_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        section_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["IntakeSectionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  delete_intake_section_intake_sections__section_id__delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        section_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  update_intake_section_intake_sections__section_id__patch: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        section_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["IntakeSectionCreate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["IntakeSectionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   router_list_clients_clients__get: {
     parameters: {
       query?: {
@@ -5352,6 +5191,37 @@ export interface operations {
         "application/json": components["schemas"]["FinalizeRecordingRequest"];
       };
     };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FinalizeRecordingResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  assemble_recording_audio_recordings_sessions__session_id__assemble_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        session_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description Successful Response */
       200: {
