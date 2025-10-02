@@ -15,15 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { faker } from "@faker-js/faker";
-import {
-  Prisma,
-  PrismaClient,
-  StateCode,
-  Status,
-} from "@prisma/jii-texting/client";
+import { Prisma, PrismaClient, StateCode } from "@prisma/jii-texting/client";
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma/utils";
+import { seedUsId } from "~@jii-texting/seed-demo/seedUsId";
+import { seedUsTx } from "~@jii-texting/seed-demo/seedUsTx";
+
+const usIdPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
+const usTxPrismaClient = getPrismaClientForStateCode(StateCode.US_TX);
 
 const PRISMA_TABLES = Prisma.dmmf.datamodel.models
   .map((model) => model.name)
@@ -38,117 +37,25 @@ export async function resetDb(prismaClient: PrismaClient) {
 }
 
 async function main() {
-  const prismaClient = getPrismaClientForStateCode(StateCode.US_ID);
+  // Hydrate Idaho DB
+  console.log("Hydrating Idaho DB...");
+  await resetDb(usIdPrismaClient);
+  await seedUsId(usIdPrismaClient);
+  console.log("Done writing to Idaho DB");
 
-  await resetDb(prismaClient);
-
-  const topic = await prismaClient.topic.create({
-    data: {
-      topicName: "LSU",
-      stateCode: StateCode.US_ID,
-      status: Status.ACTIVE,
-      groups: {
-        create: [
-          {
-            groupName: "FULLY_ELIGIBLE",
-            messageCopyTemplate: "Hello world",
-            status: Status.ACTIVE,
-          },
-          {
-            groupName: "ELIGIBLE_MISSING_FINES_AND_FEES",
-            messageCopyTemplate: "Hello world",
-            status: Status.ACTIVE,
-          },
-          {
-            groupName: "MISSING_DA",
-            messageCopyTemplate: "Hello world",
-            status: Status.ACTIVE,
-          },
-          {
-            groupName: "MISSING_INCOME_VERIFICATION",
-            messageCopyTemplate: "Hello world",
-            status: Status.ACTIVE,
-          },
-          {
-            groupName: "TWO_MISSING_CRITERIA",
-            messageCopyTemplate: "Hello world",
-            status: Status.ACTIVE,
-          },
-        ],
-      },
-    } satisfies Prisma.TopicCreateInput,
-    select: {
-      groups: true,
-    },
-  });
-
-  await prismaClient.workflowExecution.create({
-    data: {
-      stateCode: StateCode.US_ID,
-      workflowExecutionTime: new Date("2025-03-01"),
-      id: "workflow-id1",
-    } satisfies Prisma.WorkflowExecutionCreateInput,
-  });
-
-  const peopleToCreate: Prisma.PersonCreateInput[] = [];
-
-  const recidivizPhoneNumbers = process.env["PHONE_NUMBERS"]?.split(",") ?? [
-    "5514979687",
-  ];
-
-  for (const phoneNumber of recidivizPhoneNumbers) {
-    const validDistricts = [
-      "District 1",
-      "district 2",
-      "district 3",
-      "District 4",
-      "district 5",
-      "district 7",
-    ];
-
-    const randomIndex = Math.floor(Math.random() * validDistricts.length);
-
-    peopleToCreate.push({
-      stateCode: StateCode.US_ID,
-      pseudonymizedId: faker.string.uuid(),
-      personId: faker.string.uuid(),
-      stableExternalId: faker.string.uuid(),
-      givenName: faker.person.firstName(),
-      middleName: faker.person.middleName(),
-      surname: faker.person.lastName(),
-      nameSuffix: faker.person.suffix(),
-      phoneNumber: phoneNumber,
-      officerId: faker.string.uuid(),
-      poName: faker.person.fullName(),
-      district: `${validDistricts[randomIndex]}`,
-    });
-  }
-
-  const people = await prismaClient.person.createManyAndReturn({
-    data: peopleToCreate,
-  });
-
-  // Connect each person to group
-  await Promise.all(
-    people.map(async (person) => {
-      const groupIds = topic.groups.map((group) => group.id);
-      const randomIndex = Math.floor(Math.random() * groupIds.length);
-
-      await prismaClient.person.update({
-        where: {
-          personId: person.personId,
-        },
-        data: {
-          groups: {
-            connect: { id: groupIds[randomIndex] },
-          },
-        },
-      });
-    }),
-  );
+  // Hydrate Texas DB
+  console.log("Hydrating Texas DB...");
+  await resetDb(usTxPrismaClient);
+  await seedUsTx(usTxPrismaClient);
+  console.log("Done writing to Texas DB");
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+main()
+  .then(async () => {
+    await usIdPrismaClient.$disconnect();
+    await usTxPrismaClient.$disconnect();
+  })
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

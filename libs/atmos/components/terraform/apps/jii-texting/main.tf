@@ -11,7 +11,7 @@ locals {
   processor_job_env    = local.env_secrets[var.processor_job_env_secret_id]
   server_env           = local.env_secrets[var.server_env_secret_id]
   migrate_db_env       = local.env_secrets[var.migrate_db_env_secret_id]
-  import_env           = local.env_secrets[var.import_job_env_secret_id]
+  import_env           = var.demo_mode ? null : local.env_secrets[var.import_job_env_secret_id]
 
   server_image        = "${var.artifact_registry_repo}/jii-texting-server:${var.server_container_version}"
   migrate_db_image    = "${var.artifact_registry_repo}/jii-texting-server:${var.migrate_db_container_version}"

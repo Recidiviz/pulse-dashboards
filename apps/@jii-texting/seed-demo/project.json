@@ -82,7 +82,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsx src/main.ts --state-code=US_ID"
+        "command": "nx custom-prisma-deploy @jii-texting/prisma && tsx src/main.ts --state-code=US_ID"
       }
     }
   },
