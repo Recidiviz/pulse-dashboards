@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 
 # Set environment variable BEFORE any imports that might use settings
 os.environ["RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE"] = "false"
+os.environ["RECIDIVIZ_LANGCHAIN_TRACING_V2"] = "false"
 
 import pytest
 import pytest_asyncio

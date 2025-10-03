@@ -64,10 +64,8 @@ const ActionButton: React.FC<DropdownProps> = ({
   const { getFloatingProps } = useInteractions([dismiss]);
 
   // Mutation for retry processing
-  const { mutateAsync: retryProcessingMutation } = $api.useMutation(
-    "post",
-    "/clients/{client_pseudo_id}/retry-processing",
-  );
+  const { mutateAsync: retryProcessingMutation, isPending: isRetrying } =
+    $api.useMutation("post", "/clients/{client_pseudo_id}/retry-processing");
 
   const handleRetryProcessing = async () => {
     try {
@@ -156,11 +154,12 @@ const ActionButton: React.FC<DropdownProps> = ({
                 client.processing_status === "failed") && (
                 <button
                   type="button"
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
                   role="menuitem"
                   onClick={handleMenuItemClick(handleRetryProcessing)}
+                  disabled={isRetrying}
                 >
-                  Retry Processing
+                  {isRetrying ? "Retrying..." : "Retry Processing"}
                 </button>
               )}
 

@@ -26,7 +26,7 @@ class Settings(BaseSettings):
         "postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test"
     )
     LANGCHAIN_API_KEY: str | None = None
-    LANGCHAIN_TRACING_V2: bool = True
+    LANGCHAIN_TRACING_V2: bool = False
     LANGCHAIN_ENDPOINT: str | None = "https://api.smith.langchain.com"
     LANGCHAIN_PROJECT: str | None = "dev-recidiviz"
     ANTHROPIC_API_KEY: str | None = None

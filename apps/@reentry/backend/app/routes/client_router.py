@@ -1,6 +1,10 @@
+import logging
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi_pagination import Page
 from pydantic import BaseModel
+from sqlmodel import select
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
@@ -10,9 +14,11 @@ from app.crud.client import (
     get_paginated_client_list,
     get_processing_status,
 )
-from app.crud.intake import get_intake_by_client_pseudo_id
 from app.crud.plan import create_plan, get_plan_by_client_pseudo_id, retry_plan_creation
+from app.models.execution import Execution, ExecutionStatus
+from app.models.intake import Intake
 from app.models.models import Plan
+from app.models.recording import RecordingSession
 from app.routes.execution_router import ExecutionResponse
 from app.routes.shared_models import (
     ClientRecordResponse,
@@ -22,6 +28,7 @@ from app.routes.shared_models import (
 from app.services.client_data.queries import Queries
 from app.utils.permission_utils import check_access
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -112,7 +119,7 @@ async def get_client_record(
     "/{client_pseudo_id}/retry-processing",
     response_model=ExecutionResponse,
     summary="Retry Processing",
-    description="Intelligently retry processing for a client based on current state. Determines whether to retry assessments, plan generation, or both.",
+    description="Intelligently retry processing for a client based on current state. Determines whether to retry assessments, plan generation, or both. Handles failed and stuck executions.",
     tags=["Client Processing"],
 )
 async def retry_processing(
@@ -120,61 +127,303 @@ async def retry_processing(
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
+    from sqlalchemy.exc import DBAPIError
+
+    from app.crud.client import is_execution_stuck
+    from app.crud.execution import delete_execution_by_id
+
     check_access(client_pseudo_id, pseudonymized_id)
 
-    # Get intake for the client
-    intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
+    # Acquire row-level lock on intake to prevent race conditions
+    # This ensures only one concurrent retry operation proceeds at a time per client
+    try:
+        stmt = (
+            select(Intake)
+            .where(Intake.client_pseudo_id == client_pseudo_id)
+            .with_for_update(nowait=True)
+        )
+        result = await session.execute(stmt)
+        intake = result.scalar_one_or_none()
+    except DBAPIError as e:
+        # Handle LockNotAvailableError - another retry operation is in progress
+        if "LockNotAvailableError" in str(e) or "could not obtain lock" in str(e):
+            raise HTTPException(
+                status_code=409,
+                detail="A retry operation is already in progress for this client",
+            )
+        raise
+
     if not intake or intake.status != "completed":
         raise HTTPException(status_code=400, detail="No retryable operations found")
+
+    # Check for failed or stuck recording/transcription
+    # Also lock the recording session if it exists to prevent race conditions
+    recording = None
+    if intake.recording_session:
+        try:
+            stmt = (
+                select(RecordingSession)
+                .where(RecordingSession.intake_id == intake.id)
+                .with_for_update(nowait=True)
+            )
+            result = await session.execute(stmt)
+            recording = result.scalar_one_or_none()
+        except DBAPIError as e:
+            if "LockNotAvailableError" in str(e) or "could not obtain lock" in str(e):
+                raise HTTPException(
+                    status_code=409,
+                    detail="A retry operation is already in progress for this client",
+                )
+            raise
+
+    if recording:
+        should_retry_recording = False
+        retry_reason = None
+
+        # Check if recording execution is stuck or failed
+        if recording.execution:
+            if recording.execution.status == "failed":
+                should_retry_recording = True
+                retry_reason = f"failed (status={recording.execution.status})"
+            elif is_execution_stuck(recording.execution):
+                should_retry_recording = True
+                retry_reason = f"stuck (status={recording.execution.status}, updated_at={recording.execution.updated_at})"
+
+        # Check if recording status is error
+        if recording.status == "error":
+            should_retry_recording = True
+            if not retry_reason:
+                retry_reason = "recording status=error"
+
+        if should_retry_recording:
+            # Delete the failed/stuck recording execution first
+            execution_id = recording.execution_id
+            if execution_id:
+                logger.info(
+                    f"Retrying execution for client {client_pseudo_id}, "
+                    f"deleted execution {execution_id} (type=recording_session, reason={retry_reason})"
+                )
+                recording.execution = None
+                recording.execution_id = None
+                session.add(recording)
+                await delete_execution_by_id(session, execution_id)
+            else:
+                logger.info(
+                    f"Retrying execution for client {client_pseudo_id}, "
+                    f"no execution to delete (type=recording_session, reason={retry_reason})"
+                )
+
+            # Schedule new recording processing
+            from app.tasks.recording import process_recording_task
+
+            new_execution = Execution(
+                status="pending",
+                table_name="recording_session",
+                table_entity_id=recording.id,
+            )
+            session.add(new_execution)
+            await session.flush()  # Get the ID without committing
+
+            # Dispatch task
+            task = await process_recording_task.kiq(
+                execution_id=new_execution.id,
+                recording_session_id=recording.id,
+            )
+            new_execution.task_id = str(task.task_id)
+            recording.execution_id = new_execution.id
+            recording.status = "processing"
+            session.add(new_execution)
+            session.add(recording)
+
+            # Single commit at the end
+            await session.commit()
+            await session.refresh(new_execution)
+
+            return new_execution
+
+        if recording.execution and recording.execution.status in [
+            ExecutionStatus.PENDING,
+            ExecutionStatus.IN_PROGRESS,
+        ]:
+            raise HTTPException(status_code=400, detail="No retryable operations found")
 
     # Get current assessments and plan
     assessments = await get_assessments_by_client_pseudo_id(session, client_pseudo_id)
 
-    # Check if we should retry assessments
-    need_assessment_retry = not assessments or all(
-        a.status == "failed" for a in assessments
-    )
+    # Check for failed or stuck assessments that need to be retried
+    if assessments:
+        for assessment in assessments:
+            # Check if assessment failed or is stuck
+            if assessment.status == "failed":
+                retry_reason = f"failed (status={assessment.status})"
+                execution_id = assessment.execution_id
+                logger.info(
+                    f"Retrying execution for client {client_pseudo_id}, "
+                    f"deleted execution {execution_id} (type=assessment, reason={retry_reason})"
+                )
 
-    if need_assessment_retry:
-        # Use intake.schedule_assessment to restart assessment
+                # Delete the failed/stuck assessment first (due to foreign key constraint)
+                await session.delete(assessment)
+
+                # Then delete the execution
+                if execution_id:
+                    await delete_execution_by_id(session, execution_id)
+
+                # Schedule new assessment
+                execution = await intake.schedule_assessment(session)
+
+                # Single commit at the end
+                await session.commit()
+                await session.refresh(intake)
+                return execution
+            elif assessment.execution and is_execution_stuck(assessment.execution):
+                execution_id = assessment.execution_id
+                retry_reason = f"stuck (status={assessment.execution.status}, updated_at={assessment.execution.updated_at})"
+                logger.info(
+                    f"Retrying execution for client {client_pseudo_id}, "
+                    f"deleted execution {execution_id} (type=assessment, reason={retry_reason})"
+                )
+
+                # Delete the failed/stuck assessment first (due to foreign key constraint)
+                await session.delete(assessment)
+
+                # Then delete the execution
+                if execution_id:
+                    await delete_execution_by_id(session, execution_id)
+
+                # Schedule new assessment
+                execution = await intake.schedule_assessment(session)
+
+                # Single commit at the end
+                await session.commit()
+                await session.refresh(intake)
+                return execution
+
+    # Check if we should retry assessments (no assessments exist)
+    if not assessments:
+        logger.info(
+            f"Retrying execution for client {client_pseudo_id}, "
+            f"no execution to delete (type=assessment, reason=missing assessment)"
+        )
+        # Use intake.schedule_assessment to start assessment
         execution = await intake.schedule_assessment(session)
+
+        # Single commit at the end
         await session.commit()
         await session.refresh(intake)
         return execution
 
+    if any(a.status in ["pending", "in_progress"] for a in assessments):
+        raise HTTPException(status_code=400, detail="No retryable operations found")
+
     plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
 
-    no_in_progress_assessments = not assessments or not any(
-        a.status in ["pending", "in_progress"] for a in assessments
-    )
-    plan_failed_create = plan and plan.create_status == "failed"
-    no_plan = not plan
-    need_initial_plan_retry = no_in_progress_assessments and (
-        no_plan or plan_failed_create
-    )
-
-    # Only handle plan generation if we're not creating new assessments
-    # (because plan generation will be automatically triggered when assessments complete)
-    if need_initial_plan_retry:
+    # Check for stuck or failed plan
+    if (
+        not plan
+        or not plan.create_execution
+        or plan.create_status == "failed"
+        or plan.create_execution.status == "failed"
+        or is_execution_stuck(plan.create_execution)
+    ):
         if not plan:
+            logger.info(
+                f"Retrying execution for client {client_pseudo_id}, "
+                f"no execution to delete (type=plan, reason=missing plan)"
+            )
             # Create new plan (only if we have completed assessments and no plan)
             plan_obj = Plan(client_pseudo_id=client_pseudo_id)
             plan = await create_plan(session, plan_obj)
             execution = await plan.schedule_initial_creation(session)
+
+            # Single commit at the end
             await session.commit()
             await session.refresh(plan)
             return execution
         elif not plan.create_execution:
+            logger.info(
+                f"Retrying execution for client {client_pseudo_id}, "
+                f"no execution to delete (type=plan, reason=missing execution)"
+            )
             execution = await plan.schedule_initial_creation(session)
+
+            # Single commit at the end
             await session.commit()
             await session.refresh(plan)
             return execution
         else:
-            # Retry failed plan creation
+            # Retry failed/stuck plan creation
+            execution_id = plan.create_execution_id
+            if (
+                plan.create_status == "failed"
+                or plan.create_execution.status == "failed"
+            ):
+                retry_reason = f"failed (status={plan.create_execution.status})"
+            else:
+                retry_reason = f"stuck (status={plan.create_execution.status}, updated_at={plan.create_execution.updated_at})"
+
+            logger.info(
+                f"Retrying execution for client {client_pseudo_id}, "
+                f"deleted execution {execution_id} (type=plan, reason={retry_reason})"
+            )
             execution = await retry_plan_creation(session, plan)
+
+            # Single commit at the end
             await session.commit()
             await session.refresh(plan)
             return execution
+
+    # Check for stuck or failed plan generations
+    if plan and plan.create_status == "completed":
+        from app.crud.plan_generation import get_gen_by_plan_id_with_executions
+        from app.models.models import PlanGeneration
+
+        generations = await get_gen_by_plan_id_with_executions(session, plan.id)
+        if generations:
+            # Get the latest generation by created_at
+            sorted_gens = sorted(
+                generations,
+                key=lambda x: x.created_at or datetime.min.replace(tzinfo=timezone.utc),
+                reverse=True,
+            )
+            latest_gen = sorted_gens[0] if sorted_gens else None
+
+            if latest_gen and latest_gen.execution:
+                if latest_gen.execution.status == "failed" or is_execution_stuck(
+                    latest_gen.execution
+                ):
+                    execution_id = latest_gen.execution_id
+                    if latest_gen.execution.status == "failed":
+                        retry_reason = f"failed (status={latest_gen.execution.status})"
+                    else:
+                        retry_reason = f"stuck (status={latest_gen.execution.status}, updated_at={latest_gen.execution.updated_at})"
+
+                    logger.info(
+                        f"Retrying execution for client {client_pseudo_id}, "
+                        f"deleted execution {execution_id} (type=plan_generation, reason={retry_reason})"
+                    )
+
+                    # Copy parameters from stuck/failed generation for retry
+                    prompt = latest_gen.prompt
+                    resource_to_add_content = latest_gen.resource_to_add_content
+                    resource_to_remove_id = latest_gen.resource_to_remove_id
+
+                    # Create new generation with same parameters (keep old one for audit trail)
+                    new_gen = PlanGeneration(
+                        plan_id=plan.id,
+                        prompt=prompt,
+                        resource_to_add_content=resource_to_add_content,
+                        resource_to_remove_id=resource_to_remove_id,
+                    )
+                    session.add(new_gen)
+                    await session.flush()  # Get the ID without committing
+
+                    # Schedule the new generation
+                    execution = await new_gen.schedule_execution(session)
+
+                    # Single commit at the end
+                    await session.commit()
+                    return execution
 
     # Fallback: no current executions found
     raise HTTPException(status_code=400, detail="No retryable operations found")

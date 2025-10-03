@@ -72,6 +72,29 @@ async def get_gen_by_plan_id(
     return select(PlanGeneration).where(PlanGeneration.plan_id == plan_id)
 
 
+async def get_gen_by_plan_id_with_executions(
+    session: AsyncSession, plan_id: UUID
+) -> list[PlanGeneration]:
+    """Get all generations for a plan with their executions eagerly loaded."""
+    from app.models.models import Execution
+
+    stmt = (
+        select(PlanGeneration, Execution)
+        .where(PlanGeneration.plan_id == plan_id)
+        .outerjoin(Execution, PlanGeneration.execution_id == Execution.id)
+    )
+    result = await session.exec(stmt)
+    rows = result.all()
+
+    # Attach executions to generations
+    generations = []
+    for gen, execution in rows:
+        gen.execution = execution
+        generations.append(gen)
+
+    return generations
+
+
 async def update_plan_generation(session: AsyncSession, gen: PlanGeneration):
     session.add(gen)
     await session.commit()
