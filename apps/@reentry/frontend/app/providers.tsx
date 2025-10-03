@@ -20,13 +20,26 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRef } from "react";
 
+const QUERY_RETRY_LIMIT = 1;
+const MUTATION_RETRY_LIMIT = 0; // because of mutations side effects.
+
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = useRef(
     new QueryClient({
       defaultOptions: {
         queries: {
-          retry: false,
+          retry: (failureCount, error) => {
+            if (failureCount < QUERY_RETRY_LIMIT) {
+              console.debug(
+                `Query failed, retrying: attempt ${failureCount + 1}`,
+                error,
+              );
+              return true;
+            }
+            return false;
+          },
         },
+        mutations: { retry: MUTATION_RETRY_LIMIT },
       },
     }),
   );

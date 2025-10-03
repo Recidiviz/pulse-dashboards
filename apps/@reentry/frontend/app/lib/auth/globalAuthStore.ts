@@ -136,6 +136,20 @@ class GlobalAuthStore {
       return null;
     }
   }
+
+  async getTokenFromAuth0Cache(): Promise<string | null>  {
+    if (!this.authStore) {
+      console.debug("No authStore available for token fetch");
+      return null;
+    }
+
+    try {
+      return await this.authStore.getTokenSilently();
+    }  catch (error) {
+      console.error("Error fetching token from auth0 cache:", error);
+      return null;
+    }
+  }
 }
 
 export const globalAuthStore = new GlobalAuthStore();

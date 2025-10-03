@@ -47,4 +47,26 @@ export const authMiddleware: Middleware = {
 
     return request;
   },
+
+  async onResponse({ request, response }) {
+    if (response.status === 401) {
+      if (!request.headers.get('X-Token-Refreshed')) {
+        console.debug('Received 401 for:', request.url);
+
+        const newRequest = request.clone();
+        newRequest.headers.set('X-Token-Refreshed', 'true');
+        const token = await globalAuthStore.getTokenFromAuth0Cache();
+
+        if (token) {
+          newRequest.headers.set('Authorization', `Bearer ${token}`);
+          console.debug('Retrying request with refreshed token');
+        } else {
+          console.warn('Token refresh failed for retry.');
+        }
+
+        return fetch(newRequest);
+      }
+    }
+    return response;
+  },
 };
