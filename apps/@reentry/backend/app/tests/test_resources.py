@@ -1,11 +1,14 @@
 import pytest
 
+from app.core.config import settings
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
     ResourceCategory,
     ResourceFailureReason,
     ResourceSubcategory,
+    list_resources,
 )
+from app.utils.disallowed_resources import DISALLOWED_RESOURCE_NAMES
 
 
 @pytest.mark.parametrize(
@@ -222,3 +225,82 @@ async def test_get_resources_with_exclusion_api(client):
 async def test_get_resources_invalid_resource_type_api(client):
     response = await client.post("/resources", json={"category": "INVALID_CATEGORY"})
     assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+@pytest.mark.integration
+async def test_call_list_resources():
+    from app.services.resources import GetResourcesRequest
+
+    WORK_ADDRESS = "748 N 1340 W Orem, UT 84057"
+    HOME_ADDRESS = WORK_ADDRESS
+
+    request = GetResourcesRequest(
+        category=ResourceCategory.EMPLOYMENT_AND_CAREER,
+        home=WORK_ADDRESS,
+        work=HOME_ADDRESS,
+        can_drive=True,
+        transit_pass=True,
+        limit=50,
+    )
+
+    previous_env_name = settings.ENV_NAME
+    settings.ENV_NAME = ""  # to call external api need to unset this variable.
+    settings.USE_EXTERNAL_RESOURCES_API = True
+    assert settings.EXTERNAL_RESOURCES_API_URL
+
+    response = await list_resources(request)
+    settings.ENV_NAME = previous_env_name
+    settings.USE_EXTERNAL_RESOURCES_API = False
+
+    print(f"Request: {request}")
+    print(f"Response: {response}")
+    assert response.resources, "Expected resources but got None or empty list"
+
+
+@pytest.mark.asyncio
+@pytest.mark.integration
+async def test_disallowed_resources():
+    from app.core.config import settings
+    from app.services.resources import GetResourcesRequest
+
+    assert settings.EXTERNAL_RESOURCES_API_URL
+    previous_env_name = settings.ENV_NAME
+    settings.ENV_NAME = ""  # to call external api need to unset this variable.
+    settings.USE_EXTERNAL_RESOURCES_API = True
+
+    correctional_centers_address = {
+        "80 South Orange Street, Salt Lake City, UT",
+        "748 North 1340 W, Orem, UT",
+        "1141 South 2475 West, Salt Lake City, UT",
+        "1747 South 900 West, Salt Lake City, UT",
+        "2445 South Water Tower Way, Ogden, UT",
+        "2588 West 2365 South, West Valley City, UT",
+    }
+    all_found_resource_names: set[str] = set()
+
+    for address in correctional_centers_address:
+        for resource_category in ResourceCategory:
+            WORK_ADDRESS = address
+            HOME_ADDRESS = WORK_ADDRESS
+
+            request = GetResourcesRequest(
+                category=resource_category,
+                home=WORK_ADDRESS,
+                work=HOME_ADDRESS,
+                can_drive=True,
+                transit_pass=True,
+                limit=50,
+            )
+
+            response = await list_resources(request)
+
+            for resource in response.resources:
+                all_found_resource_names.add(resource.name)
+
+    settings.ENV_NAME = previous_env_name
+    settings.USE_EXTERNAL_RESOURCES_API = False
+
+    print(f"All found resource names: {all_found_resource_names}")
+    for name in DISALLOWED_RESOURCE_NAMES:
+        assert name not in all_found_resource_names

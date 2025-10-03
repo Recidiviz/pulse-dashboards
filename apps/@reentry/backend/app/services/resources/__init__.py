@@ -1,9 +1,16 @@
+import logging
 from enum import Enum
-from typing import List, Optional, TypeAlias
+from typing import List, Optional, Set, TypeAlias
 
 from pydantic import BaseModel, Field, TypeAdapter, validator
 
 from app.core.config import settings
+from app.utils.disallowed_resources import (
+    DISALLOWED_RESOURCE_ADDRESSES,
+    DISALLOWED_RESOURCE_NAMES,
+)
+
+logger = logging.getLogger(__name__)
 
 
 class ResourceOrigin(str, Enum):
@@ -339,8 +346,11 @@ async def list_resources(request: GetResourcesRequest) -> GetResourcesResponse:
     # Always use built-in resources in test environment
     if settings.ENV_NAME == "pytest":
         internal_result = _list_resources_internal(request)
+        filtered_resources = [
+            r for r in internal_result.resources if resource_is_allowed(r)
+        ]
         return GetResourcesResponse(
-            resources=internal_result.resources,
+            resources=filtered_resources,
             failure_reason=ResourceFailureReason.SUCCESS
             if internal_result.resources
             else ResourceFailureReason.NO_RESULTS_FOUND,
@@ -354,13 +364,33 @@ async def list_resources(request: GetResourcesRequest) -> GetResourcesResponse:
         # Use the external API
         from app.services.resources.api import list_external_resources
 
-        return await list_external_resources(request)
+        response = await list_external_resources(request)
+        filtered_resources = [r for r in response.resources if resource_is_allowed(r)]
+        return GetResourcesResponse(
+            resources=filtered_resources,
+            failure_reason=response.failure_reason,
+            error_message=response.error_message,
+        )
     else:
         # Use the built-in resources
         internal_result = _list_resources_internal(request)
+        filtered_resources = [
+            r for r in internal_result.resources if resource_is_allowed(r)
+        ]
         return GetResourcesResponse(
-            resources=internal_result.resources,
+            resources=filtered_resources,
             failure_reason=ResourceFailureReason.SUCCESS
             if internal_result.resources
             else ResourceFailureReason.NO_RESULTS_FOUND,
         )
+
+
+def resource_is_allowed(
+    resource: Resource,
+    disallowed_names: Set[str] = DISALLOWED_RESOURCE_NAMES,
+    disallowed_addresses: Set[str] = DISALLOWED_RESOURCE_ADDRESSES,
+) -> bool:
+    return (
+        getattr(resource, "name", "").lower() not in disallowed_names
+        and getattr(resource, "address", "").lower() not in disallowed_addresses
+    )
