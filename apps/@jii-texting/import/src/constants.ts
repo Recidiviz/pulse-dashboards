@@ -23,7 +23,7 @@ import { transformAndLoadContactData } from "~@jii-texting/import/utils/contacts
 import { transformAndLoadPersonData } from "~@jii-texting/import/utils/person";
 
 export const PERSON_FILE_NAME = "jii_to_text.json";
-export const CONTACT_FILE_NAME = "contacts.json";
+export const CONTACT_FILE_NAME = "scheduled_contacts.json";
 
 export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
   [PERSON_FILE_NAME]: {
