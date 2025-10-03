@@ -98,5 +98,7 @@ export async function processJiiContactReminders({
     console.log(`${key}: ${results[key as ScriptAction]}`);
   }
 
+  await prisma.$disconnect();
+
   return results;
 }
