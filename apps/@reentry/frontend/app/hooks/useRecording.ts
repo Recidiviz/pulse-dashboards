@@ -72,6 +72,11 @@ export const useRecording = ({
   const recordingStartTimeRef = useRef<number | null>(null);
   const lastDataSendedTimeRef = useRef<number | null>(null);
 
+  const { mutateAsync: finalizeRecordingMutation } = $api.useMutation(
+    "post",
+    "/recordings/sessions/{session_id}/finalize",
+  );
+
   const updateRecordingStatus = useCallback(
     async (newStatus: RecordingStatus) => {
       setRecordingStatus(newStatus);
@@ -86,92 +91,6 @@ export const useRecording = ({
       }
     },
     [sessionId, updateStatus],
-  );
-
-  // session recovery: check for paused sessions on mount and restore state
-  useEffect(() => {
-    if (!sessionStatus || !sessionId) {
-      return;
-    }
-
-    // Check if this session was previously paused
-    const isSessionPaused =
-      sessionStatus === "paused" || sessionStatus === "recording";
-
-    if (isSessionPaused) {
-      console.log("Recovering paused session:", sessionId);
-      if (!hasInitialized) {
-        setHasInitialized(true);
-      }
-
-      // Restore chunk counter from backend
-      const restoredChunkCount = sessionChunkCount || 0;
-      chunkCounterRef.current = restoredChunkCount;
-      setChunkCount(restoredChunkCount);
-      // Restore microphone selection if available
-      // Note: We'd need to add selectedMicrophone to session data in the future
-      // For now, microphone will be set by RecordingInterface's useEffect
-
-      console.log(
-        `Session recovered: status=paused, chunkCount=${restoredChunkCount}`,
-      );
-    }
-  }, [sessionStatus, sessionId, sessionChunkCount, hasInitialized]);
-  // Cleanup microphone resources on page refresh/unload
-
-  const cleanupMicrophoneOnUnload = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => {
-        track.stop();
-      });
-      streamRef.current = null;
-    }
-    if (
-      mediaRecorderRef.current &&
-      mediaRecorderRef.current.state !== "inactive"
-    ) {
-      try {
-        mediaRecorderRef.current.stop();
-      } catch (error) {
-        console.log("MediaRecorder already stopped or error stopping:", error);
-      }
-    }
-  }, []);
-
-  // Cleanup microphone on page refresh/unload
-  useEffect(() => {
-    const handlePageUnload = () => {
-      // Synchronous cleanup for better reliability
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => {
-          track.stop();
-        });
-        streamRef.current = null;
-      }
-      if (
-        mediaRecorderRef.current &&
-        mediaRecorderRef.current.state !== "inactive"
-      ) {
-        try {
-          mediaRecorderRef.current.stop();
-        } catch (error) {
-          console.log(
-            "MediaRecorder already stopped or error stopping:",
-            error,
-          );
-        }
-      }
-    };
-    // Use pagehide for more reliable cleanup, especially on mobile
-    window.addEventListener("beforeunload", handlePageUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handlePageUnload);
-    };
-  }, [cleanupMicrophoneOnUnload]);
-
-  const { mutateAsync: finalizeRecordingMutation } = $api.useMutation(
-    "post",
-    "/recordings/sessions/{session_id}/finalize",
   );
 
   const queueChunk = useCallback(
@@ -230,6 +149,93 @@ export const useRecording = ({
     },
     [sessionId, sessionChunkCount, sessionStatus, queue],
   );
+
+  const finalizeRecording = useCallback(async () => {
+    if (!sessionId || chunkCounterRef.current === 0) {
+      return;
+    }
+
+    try {
+      await finalizeRecordingMutation({
+        params: { path: { session_id: sessionId } },
+        body: {
+          total_chunks: chunkCounterRef.current,
+        },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      showSuccessToast("Recording finalized successfully!");
+    } catch (error) {
+      console.error("Error finalizing recording:", error);
+      showErrorToast("Failed to finalize recording");
+    }
+  }, [sessionId, finalizeRecordingMutation, getAccessToken]);
+
+  const pauseRecording = useCallback(() => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === "recording"
+    ) {
+      // Request any buffered data before pausing to prevent data loss on page refresh.
+      console.log(mediaRecorderRef);
+      mediaRecorderRef.current.requestData();
+      mediaRecorderRef.current.pause();
+
+      recordingStartTimeRef.current = null;
+
+      // Stop all microphone tracks to release microphone access
+      // This will show that the microphone is no longer in use
+      if (streamRef.current) {
+        console.log("Stopping microphone tracks on pause", streamRef.current);
+        console.log("Tracks", streamRef.current.getTracks());
+        streamRef.current.getTracks().forEach((track) => {
+          console.log(track);
+          track.stop();
+        });
+        streamRef.current = null;
+      }
+    }
+
+    updateRecordingStatus("paused");
+  }, [updateRecordingStatus]);
+
+  const handleTrackEnded = useCallback(async () => {
+    console.warn("Microphone track ended - device disconnected");
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === "recording"
+    ) {
+      console.warn("Pausing recording due to microphone disconnection");
+      await pauseRecording();
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("Pause operations completed");
+    }
+    alert("Microphone disconnected. Recording paused.");
+  }, [pauseRecording]);
+
+  // Cleanup microphone resources on page refresh/unload
+  const cleanupMicrophoneOnUnload = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => {
+        track.removeEventListener("ended", handleTrackEnded);
+        track.stop();
+      });
+      streamRef.current = null;
+    }
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== "inactive"
+    ) {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (error) {
+        console.log("MediaRecorder already stopped or error stopping:", error);
+      }
+    }
+  }, []);
 
   const handleRecordingStart = useCallback(() => {
     const currentTime = Date.now();
@@ -324,6 +330,10 @@ export const useRecording = ({
       mediaRecorderRef.current = mediaRecorder;
       streamRef.current = stream;
 
+      stream.getTracks().forEach((track) => {
+        track.addEventListener("ended", handleTrackEnded);
+      });
+
       await updateRecordingStatus("recording");
 
       showSuccessToast("Recording started");
@@ -354,44 +364,6 @@ export const useRecording = ({
     handleDataAvailable,
     handleRecordingError,
   ]);
-
-  const pauseRecording = useCallback(() => {
-    if (
-      mediaRecorderRef.current &&
-      mediaRecorderRef.current.state === "recording"
-    ) {
-      // Request any buffered data before pausing to prevent data loss on page refresh.
-      console.log(mediaRecorderRef);
-      mediaRecorderRef.current.requestData();
-      mediaRecorderRef.current.pause();
-
-      recordingStartTimeRef.current = null;
-
-      // Stop all microphone tracks to release microphone access
-      // This will show that the microphone is no longer in use
-      if (streamRef.current) {
-        console.log("Stopping microphone tracks on pause", streamRef.current);
-        console.log("Tracks", streamRef.current.getTracks());
-        streamRef.current.getTracks().forEach((track) => {
-          console.log(track);
-          track.stop();
-        });
-        streamRef.current = null;
-      }
-    }
-
-    updateRecordingStatus("paused");
-  }, [updateRecordingStatus]);
-
-  useEffect(() => {
-    if (hasInitialized || !sessionStatus || !sessionId) {
-      return;
-    }
-    setHasInitialized(true);
-    if (sessionStatus === "recording") {
-      pauseRecording();
-    }
-  }, [sessionStatus, sessionId, pauseRecording, hasInitialized]);
 
   const resumeRecording = useCallback(async () => {
     try {
@@ -425,6 +397,10 @@ export const useRecording = ({
       mediaRecorderRef.current = mediaRecorder;
       streamRef.current = stream;
 
+      stream.getTracks().forEach((track) => {
+        track.addEventListener("ended", handleTrackEnded);
+      });
+
       // Update status
       await updateRecordingStatus("recording");
       showSuccessToast("Recording resumed");
@@ -456,30 +432,6 @@ export const useRecording = ({
     handleRecordingError,
   ]);
 
-  const finalizeRecording = useCallback(async () => {
-    if (!sessionId || chunkCounterRef.current === 0) {
-      return;
-    }
-
-    try {
-      await finalizeRecordingMutation({
-        params: { path: { session_id: sessionId } },
-        body: {
-          total_chunks: chunkCounterRef.current,
-        },
-        headers: {
-          Authorization: `Bearer ${getAccessToken()}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      showSuccessToast("Recording finalized successfully!");
-    } catch (error) {
-      console.error("Error finalizing recording:", error);
-      showErrorToast("Failed to finalize recording");
-    }
-  }, [sessionId, finalizeRecordingMutation, getAccessToken]);
-
   const stopRecording = useCallback(async () => {
     if (
       mediaRecorderRef.current &&
@@ -510,6 +462,77 @@ export const useRecording = ({
 
     showSuccessToast("Recording stopped");
   }, [sessionId, onRecordingStopped, finalizeRecording]);
+
+  // session recovery: check for paused sessions on mount and restore state
+  useEffect(() => {
+    if (!sessionStatus || !sessionId) {
+      return;
+    }
+
+    // Check if this session was previously paused
+    const isSessionPaused =
+      sessionStatus === "paused" || sessionStatus === "recording";
+
+    if (isSessionPaused) {
+      console.log("Recovering paused session:", sessionId);
+      if (!hasInitialized) {
+        setHasInitialized(true);
+      }
+
+      // Restore chunk counter from backend
+      const restoredChunkCount = sessionChunkCount || 0;
+      chunkCounterRef.current = restoredChunkCount;
+      setChunkCount(restoredChunkCount);
+      // Restore microphone selection if available
+      // Note: We'd need to add selectedMicrophone to session data in the future
+      // For now, microphone will be set by RecordingInterface's useEffect
+
+      console.log(
+        `Session recovered: status=paused, chunkCount=${restoredChunkCount}`,
+      );
+    }
+  }, [sessionStatus, sessionId, sessionChunkCount, hasInitialized]);
+
+  // Cleanup microphone on page refresh/unload
+  useEffect(() => {
+    const handlePageUnload = () => {
+      // Synchronous cleanup for better reliability
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => {
+          track.stop();
+        });
+        streamRef.current = null;
+      }
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== "inactive"
+      ) {
+        try {
+          mediaRecorderRef.current.stop();
+        } catch (error) {
+          console.log(
+            "MediaRecorder already stopped or error stopping:",
+            error,
+          );
+        }
+      }
+    };
+    // Use pagehide for more reliable cleanup, especially on mobile
+    window.addEventListener("beforeunload", handlePageUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handlePageUnload);
+    };
+  }, [cleanupMicrophoneOnUnload]);
+
+  useEffect(() => {
+    if (hasInitialized || !sessionStatus || !sessionId) {
+      return;
+    }
+    setHasInitialized(true);
+    if (sessionStatus === "recording") {
+      pauseRecording();
+    }
+  }, [sessionStatus, sessionId, pauseRecording, hasInitialized]);
 
   return {
     status: recordingStatus,
