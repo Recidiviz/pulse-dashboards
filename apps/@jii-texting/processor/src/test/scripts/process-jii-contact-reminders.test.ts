@@ -85,7 +85,7 @@ describe("one person in DB without prior messages", () => {
     // Validates the request to the createMessage API
     expect(spy).toBeCalledTimes(1);
     expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`
-      "Hi Jane, we’re reaching out on behalf of the Texas Department of Correction (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.
+      "Hi Jane, we’re reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.
 
       If you have questions, reach out to John Doe.
 
@@ -209,7 +209,7 @@ describe("one person in DB without prior messages", () => {
     // Validates arguments to Twilio's createMessage
     expect(spy).toBeCalledTimes(1);
     expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`
-      "Hi Jane, we’re reaching out on behalf of the Texas Department of Correction (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.
+      "Hi Jane, we’re reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.
 
       If you have questions, reach out to John Doe.
 
@@ -380,7 +380,7 @@ describe("one person in DB with welcome text in progress", () => {
 
       Date: 4/14/2025
 
-      Time: 7:00:00 PM CDT
+      Time: 7:00 PM CDT
 
       Location: Your home
 

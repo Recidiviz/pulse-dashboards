@@ -296,7 +296,7 @@ function getWelcomeMessageBody({
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-  body += `Hi ${givenNameToUse}, we’re reaching out on behalf of the Texas Department of Correction (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.\n\nIf you have questions, reach out to ${assignedPoNameToUse}.`;
+  body += `Hi ${givenNameToUse}, we’re reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.\n\nIf you have questions, reach out to ${assignedPoNameToUse}.`;
 
   body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
 
@@ -349,7 +349,6 @@ function getTexasReminderMessageBody(
   const timeStr = new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     minute: "numeric",
-    second: "numeric",
     timeZone: "America/Chicago",
     timeZoneName: "short",
   }).format(datetime);
