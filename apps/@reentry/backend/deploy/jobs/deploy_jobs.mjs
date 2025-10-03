@@ -41,6 +41,12 @@ const JOBS = {
     description: "Regenerate all plans from a set date",
     environments: ["staging", "demo", "prod"], // environments where this job is applicable
   },
+  "investigate-failures": {
+    name: "investigate-failures",
+    description:
+      "Investigate stuck and failed executions with detailed client context",
+    environments: ["staging", "demo", "prod"], // environments where this job is applicable
+  },
   "demo-migrate-ids": {
     name: "demo-migrate-ids",
     description: "populates pseudo_id fields",
