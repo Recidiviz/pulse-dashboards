@@ -15,34 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import fs from "node:fs";
-import os from "node:os";
-
 import { Storage } from "@google-cloud/storage";
+import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
-import ffmpegPath from "ffmpeg-static";
-import ffmpeg from "fluent-ffmpeg";
-import path from "path";
 
-import { Prisma } from "~@meetings/prisma/client";
+import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   endMeetingInputSchema,
   getSignedUrlForRecordingInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
-
-const AUDIO_RECORDING_BUCKET_NAME = process.env["AUDIO_RECORDINGS_BUCKET_NAME"];
-if (!AUDIO_RECORDING_BUCKET_NAME) {
-  throw new Error("AUDIO_RECORDINGS_BUCKET_NAME environment variable not set");
-}
+import { stitchAudioForMeeting } from "~@meetings/trpc/routes/meeting/utils";
 
 const CONTENT_TYPE = "audio/webm";
-
-if (!ffmpegPath) {
-  throw new Error("ffmpeg-static failed to load ffmpeg binary");
-}
-
-ffmpeg.setFfmpegPath(ffmpegPath);
 
 export const meetingRouter = router({
   getSignedUrlForRecording: auth0Procedure
@@ -66,16 +51,14 @@ export const meetingRouter = router({
           });
         }
 
-        // Make the file name the time since epoch so that we know the order of the recordings for a meeting
-        const secondsSinceEpoch = Math.round(Date.now() / 1000);
-        const fileName = `${meetingId}/${secondsSinceEpoch}.webm`;
-
         // Creates a client
         const storage = new Storage();
+        const bucket = storage.bucket(meeting.recordingsGCSBucket);
 
-        const bucket = storage.bucket(AUDIO_RECORDING_BUCKET_NAME);
+        // Make the file name the time since epoch so that we know the order of the recordings for a meeting
+        const secondsSinceEpoch = Math.round(Date.now() / 1000);
+        const fileName = `${meeting.recordingsFolderPath}/${secondsSinceEpoch}.webm`;
         const file = bucket.file(fileName);
-        // await file.save("Hello, world!");
 
         const [url] = await file.getSignedUrl({
           version: "v4",
@@ -91,8 +74,9 @@ export const meetingRouter = router({
     .input(endMeetingInputSchema)
     .mutation(
       async ({ input: { clientId, meetingId }, ctx: { prisma, user } }) => {
+        let meeting;
         try {
-          await prisma.meeting.update({
+          meeting = await prisma.meeting.update({
             where: {
               id: meetingId,
               clientId: clientId,
@@ -102,6 +86,8 @@ export const meetingRouter = router({
             },
             data: {
               endTime: new Date(),
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.STITCHING,
             },
           });
         } catch (e) {
@@ -119,62 +105,40 @@ export const meetingRouter = router({
           throw e;
         }
 
-        // Creates a client
-        const storage = new Storage();
-        const bucket = storage.bucket(AUDIO_RECORDING_BUCKET_NAME);
+        try {
+          await stitchAudioForMeeting(
+            meeting.recordingsGCSBucket,
+            meeting.recordingsFolderPath,
+          );
+        } catch (e) {
+          await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.STITCHING_ERROR,
+            },
+          });
 
-        const [files] = await bucket.getFiles({ prefix: `${meetingId}/` });
-        if (files.length === 0) {
+          captureException(e);
+
+          // Don't throw an error because the meeting was ended successfully.
+          // TODO: implement a way to retry the stitching step via a job
           return;
         }
 
-        // Sort files by timestamp to ensure correct order
-        files.sort((a, b) => {
-          const timeA = parseInt(a.name);
-          const timeB = parseInt(b.name);
-          return timeA - timeB;
+        await prisma.meeting.update({
+          where: {
+            id: meetingId,
+          },
+          data: {
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.TRANSCRIBING,
+          },
         });
 
-        const tempFilePaths = [];
-        const fileListPath = path.join(os.tmpdir(), "filelist.txt");
-        let fileListContent = "";
-
-        const downloads = [];
-        for (const segmentFile of files) {
-          const tempFilePath = path.join(
-            os.tmpdir(),
-            path.basename(segmentFile.name),
-          );
-
-          downloads.push(segmentFile.download({ destination: tempFilePath }));
-          tempFilePaths.push(tempFilePath);
-          fileListContent += `file '${tempFilePath}'\n`;
-        }
-
-        // TODO: handle errors
-        await Promise.all(downloads);
-        fs.writeFileSync(fileListPath, fileListContent);
-
-        const tempOutputPath = path.join(os.tmpdir(), "final.webm");
-
-        // Use FFmpeg to concatenate the files
-        await new Promise((resolve, reject) => {
-          ffmpeg()
-            .input(fileListPath)
-            .inputOptions(["-f concat", "-safe 0"])
-            .outputOptions("-c copy") // Directly copy the stream without re-encoding
-            .save(tempOutputPath)
-            .on("end", resolve)
-            .on("error", reject);
-        });
-
-        // Upload the final stitched file back to the bucket
-        const outputFileName = `${meetingId}/final.webm`;
-        await bucket.upload(tempOutputPath, {
-          destination: outputFileName,
-          metadata: { contentType: "audio/webm" },
-          resumable: false,
-        });
+        // TODO: implement transcription step
       },
     ),
 });

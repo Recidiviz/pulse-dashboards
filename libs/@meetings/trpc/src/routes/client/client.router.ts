@@ -17,6 +17,7 @@
 
 import { TRPCError } from "@trpc/server";
 
+import env from "~@meetings/trpc/env";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   createMeetingInputSchema,
@@ -31,7 +32,7 @@ export const clientRouter = router({
         input: { clientId, startTime, endTime, address },
         ctx: { prisma, user },
       }) => {
-        return await prisma.meeting.create({
+        const meeting = await prisma.meeting.create({
           data: {
             staff: {
               connect: {
@@ -46,6 +47,18 @@ export const clientRouter = router({
             startTime,
             endTime,
             address,
+            recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
+            recordingsFolderPath: "placeholder",
+          },
+        });
+
+        // Use the meeting ID as the recordings folder path since we don't know it during creation
+        return await prisma.meeting.update({
+          where: {
+            id: meeting.id,
+          },
+          data: {
+            recordingsFolderPath: meeting.id,
           },
           select: {
             id: true,

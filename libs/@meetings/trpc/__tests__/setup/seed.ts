@@ -18,6 +18,7 @@
 import { faker } from "@faker-js/faker";
 
 import { Prisma, PrismaClient, StateCode } from "~@meetings/prisma/client";
+import env from "~@meetings/trpc/env";
 
 export const intakeId = "intake-1";
 export const clientPseudoId = "client-pid-1";
@@ -67,6 +68,8 @@ export const fakeMeeting = {
     },
   },
   startTime: new Date(),
+  recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
+  recordingsFolderPath: "meeting-1",
 } satisfies Prisma.MeetingCreateInput;
 
 export async function seed(prismaClient: PrismaClient) {

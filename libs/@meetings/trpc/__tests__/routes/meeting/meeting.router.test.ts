@@ -18,6 +18,8 @@
 import { Storage } from "@google-cloud/storage";
 import { describe, expect, test, vi } from "vitest";
 
+import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
+import env from "~@meetings/trpc/env";
 import {
   GCS_API_ENDPOINT,
   testPrismaClient,
@@ -26,13 +28,6 @@ import {
 import { fakeClient, fakeMeeting } from "~@meetings/trpc/test/setup/seed";
 
 const FAKE_DATE = new Date("2025-09-18");
-
-const AUDIO_RECORDINGS_BUCKET_NAME =
-  process.env["AUDIO_RECORDINGS_BUCKET_NAME"];
-
-if (!AUDIO_RECORDINGS_BUCKET_NAME) {
-  throw new Error("AUDIO_RECORDINGS_BUCKET_NAME is not defined");
-}
 
 describe("meeting router", () => {
   beforeAll(() => {
@@ -79,10 +74,10 @@ describe("meeting router", () => {
         projectId: "test",
       });
 
-      await storage.createBucket(AUDIO_RECORDINGS_BUCKET_NAME);
+      await storage.createBucket(env.AUDIO_RECORDINGS_BUCKET_NAME);
 
       await storage
-        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
         .upload(
           "__tests__/data/recordings_10f2d1f0-ed09-4d12-963c-07c396b822a5_chunks_chunk_1758921620931_0000_start.webm",
           {
@@ -91,7 +86,7 @@ describe("meeting router", () => {
           },
         );
       await storage
-        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
         .upload(
           "__tests__/data/recordings_10f2d1f0-ed09-4d12-963c-07c396b822a5_chunks_chunk_1758921625971_0001.webm",
           {
@@ -100,7 +95,7 @@ describe("meeting router", () => {
           },
         );
       await storage
-        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
         .upload(
           "__tests__/data/recordings_10f2d1f0-ed09-4d12-963c-07c396b822a5_chunks_chunk_1758921627461_0002.webm",
           {
@@ -133,7 +128,12 @@ describe("meeting router", () => {
       });
 
       // Check that end date has been set
-      expect(updatedMeeting?.endTime).toEqual(FAKE_DATE);
+      expect(updatedMeeting).toEqual(
+        expect.objectContaining({
+          endTime: FAKE_DATE,
+          postMeetingProcessingStatus: PostMeetingProcessingStatus.TRANSCRIBING,
+        }),
+      );
 
       // Check that the "final" audio file has been created
       const storage = new Storage({
@@ -141,7 +141,7 @@ describe("meeting router", () => {
         projectId: "test",
       });
       const [files] = await storage
-        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
         .getFiles({ prefix: `${fakeMeeting.id}/` });
       expect(files.map((f) => f.name)).toEqual(
         expect.arrayContaining([`${fakeMeeting.id}/final.webm`]),

@@ -17,6 +17,7 @@
 
 import { faker } from "@faker-js/faker";
 
+import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
 import { testPrismaClient, testTRPCClient } from "~@meetings/trpc/test/setup";
 import {
   fakeClient,
@@ -60,6 +61,10 @@ describe("client router", () => {
             startTime,
             endTime,
             address,
+            recordingsGCSBucket: "test-audio-bucket",
+            recordingsFolderPath: result.id,
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.NOT_STARTED,
           }),
           expect.objectContaining({
             clientId: fakeClient.personId,
@@ -67,6 +72,8 @@ describe("client router", () => {
             startTime: fakeMeeting.startTime,
             endTime: null,
             address: null,
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.NOT_STARTED,
           }),
         ]),
       );

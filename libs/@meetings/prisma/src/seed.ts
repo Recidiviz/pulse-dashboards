@@ -89,9 +89,12 @@ async function main() {
   for (const createdClient of createdClients) {
     await prisma.meeting.create({
       data: {
+        id: `meeting-${createdClient.personId}`,
         startTime: faker.date.future(),
         clientId: createdClient.personId,
         staffId: seededStaff.staffId,
+        recordingsGCSBucket: "test-audio-bucket",
+        recordingsFolderPath: `meeting-${createdClient.personId}`,
       },
     });
   }
