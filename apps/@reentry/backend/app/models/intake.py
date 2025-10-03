@@ -59,6 +59,19 @@ class IntakeType(StrEnum):
     CONVERSATION = "conversation"
 
 
+class QuestionsConfusing(StrEnum):
+    NO = "no"
+    SOME = "some"  # Yes, some of them were confusing
+    MOST_ALL = "most_all"  # Yes, most or all of them were confusing
+
+
+class PreferredMethod(StrEnum):
+    CHATBOT = "chatbot"  # Typing on the computer to a chatbot (like you just did)
+    VOICE = "voice"  # Talking into a microphone on the computer instead of typing
+    PERSON = "person"  # Talking face-to-face with a person, like a case manager
+    OTHER = "other"
+
+
 class Intake(BaseModel, table=True):
     """
     Model for intake assessment.
@@ -137,6 +150,14 @@ class Intake(BaseModel, table=True):
         },
     )
 
+    survey: Mapped[Optional["IntakeSurvey"]] = Relationship(
+        back_populates="intake",
+        sa_relationship_kwargs={
+            "cascade": "all, delete-orphan",
+            "lazy": "selectin",
+        },
+    )
+
     # One-to-one relationship with RecordingSession
     recording_session: Mapped[Optional["RecordingSession"]] = Relationship(
         back_populates="intake",
@@ -146,6 +167,11 @@ class Intake(BaseModel, table=True):
             "lazy": "selectin",
         },
     )
+
+    @property
+    def has_survey(self) -> bool:
+        """Check if client has filled out the intake survey."""
+        return self.survey is not None
 
     @property
     def has_address(self) -> bool:
@@ -663,3 +689,44 @@ class ClientAddress(BaseModel, table=True):
 
     # Relationship
     intake: Mapped["Intake"] = Relationship(back_populates="address")
+
+
+class IntakeSurvey(BaseModel, table=True):
+    """
+    Model for survey filled out after intake completion.
+    """
+
+    __tablename__ = "intake_survey"
+
+    intake_id: UUID = Field(foreign_key="intake.id", nullable=False, ondelete="CASCADE")
+    # How hard or easy was it to do this intake?
+    difficulty_rating: Optional[int] = Field(
+        ge=1, le=5, description="1=Very hard, 5=Very easy", nullable=True
+    )
+    # Were any of the questions confusing or hard to understand?
+    questions_confusing: Optional[QuestionsConfusing] = Field(
+        description="Whether questions were confusing", nullable=True
+    )
+    # If you had to do this intake again, how would you prefer to do it?
+    preferred_method: Optional[PreferredMethod] = Field(
+        default=None,
+        max_length=500,
+        description="Preferred method for future intakes",
+        nullable=True,
+    )
+    method_other: Optional[str] = Field(
+        default=None,
+        max_length=500,
+        description="Free text explanation if 'other' is selected",
+        nullable=True,
+    )
+    # Is there anything else you want to tell us that could help make this intake better or easier for others?
+    additional_feedback: Optional[str] = Field(
+        default=None,
+        max_length=2000,
+        description="Additional feedback to improve the intake",
+        nullable=True,
+    )
+
+    # Relationship
+    intake: Mapped["Intake"] = Relationship(back_populates="survey")

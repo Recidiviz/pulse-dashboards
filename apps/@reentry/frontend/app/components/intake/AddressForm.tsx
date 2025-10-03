@@ -21,7 +21,6 @@ import type React from "react";
 import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
-import { useSocket } from "~@reentry/frontend/websockets/IntakeSocketContext";
 
 interface AddressFormData {
   streetAddress?: string;
@@ -31,12 +30,10 @@ interface AddressFormData {
 
 interface AddressFormProps {
   onError: (error: string) => void;
+  setDisplaySurvey: (display: boolean) => void;
 }
 
-const AddressForm = ({ onError }: AddressFormProps) => {
-  const { intakeDispatchContext } = useSocket();
-
-  const { setIntakeComplete } = intakeDispatchContext;
+const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
   const [formData, setFormData] = useState<AddressFormData>({
     streetAddress: "",
     city: "",
@@ -77,7 +74,7 @@ const AddressForm = ({ onError }: AddressFormProps) => {
         },
       });
       if (response.intake_completed) {
-        setIntakeComplete();
+        setDisplaySurvey(true)
       }
     } catch {
       onError("Failed to submit address. Please try again.");

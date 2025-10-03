@@ -91,3 +91,11 @@ class AddressSubmission(BaseModel):
         if self.street_address:
             result = f"{self.street_address}, {result}"
         return result
+
+
+class SurveySubmission(BaseModel):
+    difficulty_rating: Optional[int] = None
+    questions_confusing: Optional[str] = None
+    preferred_method: Optional[str] = None
+    method_other: Optional[str] = None
+    additional_feedback: Optional[str] = None

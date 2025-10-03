@@ -10,10 +10,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.intake.auth_client_user import validate_dob
 from app.core.db import get_session
 from app.crud.intake import get_intake_by_client_pseudo_id
-from app.models.intake import COMPLETION_SECTION, ClientAddress, Intake, IntakeStatus
+from app.models.intake import (
+    COMPLETION_SECTION,
+    ClientAddress,
+    Intake,
+    IntakeStatus,
+    IntakeSurvey,
+)
 from app.routes.base import IntakeSectionResponse
 from app.routes.client_router import ClientRecordResponse
-from app.routes.shared_models import AddressSubmission, IntakeMessageResponse
+from app.routes.shared_models import (
+    AddressSubmission,
+    IntakeMessageResponse,
+    SurveySubmission,
+)
 from app.services.client_data.queries import Queries
 
 from .base import ClientIntakeSectionResponse, ORMResponse
@@ -53,6 +63,7 @@ class IntakeResponse(ORMResponse):
     current_section: str | None = None
     internal_access: Optional[bool] = None
     has_address: bool = False
+    has_survey: bool = False
 
 
 class IntakeWithSectionsResponse(IntakeResponse):
@@ -199,6 +210,7 @@ async def get_client_intake(
             )
         return IntakeWithSectionsAndMessagesResponse(
             **intake.model_dump(by_alias=True, exclude_none=True),
+            has_survey=intake.has_survey,
             has_address=intake.has_address,
             client_intake_sections=client_sections_response,
             current_section_messages=[],
@@ -278,4 +290,61 @@ async def submit_address(
 
     return {
         "intake_completed": intake.status == IntakeStatus.COMPLETED,
+    }
+
+
+@router.post(
+    "/survey",
+    summary="Submit client survey for intake",
+    description="Submit survey information for the authenticated client's intake",
+    tags=["Intake assessment"],
+)
+async def submit_survey(
+    request: Request,
+    survey_data: SurveySubmission,
+    session: AsyncSession = Depends(get_session),
+):
+    from sqlalchemy.orm import selectinload
+    from sqlmodel import select
+
+    # Extract client_pseudo_id from JWT token (set by ClientAuthMiddleware)
+    client_pseudo_id: str = request.state.client.get("sub")
+
+    # Get intake with survey relationship loaded
+    statement = (
+        select(Intake)
+        .where(Intake.client_pseudo_id == client_pseudo_id)
+        .options(selectinload(Intake.survey))
+    )
+    result = await session.exec(statement)
+    intake = result.first()
+
+    if not intake:
+        raise HTTPException(status_code=404, detail="Intake not found")
+
+    if intake.survey:
+        # Update existing survey
+        intake.survey.difficulty_rating = survey_data.difficulty_rating
+        intake.survey.questions_confusing = survey_data.questions_confusing
+        intake.survey.preferred_method = survey_data.preferred_method
+        intake.survey.method_other = survey_data.preferred_method
+        intake.survey.additional_feedback = survey_data.additional_feedback
+        session.add(intake.survey)
+    else:
+        # Create new survey
+        new_survey = IntakeSurvey(
+            intake_id=intake.id,
+            difficulty_rating=survey_data.difficulty_rating,
+            questions_confusing=survey_data.questions_confusing,
+            preferred_method=survey_data.preferred_method,
+            method_other=survey_data.method_other,
+            additional_feedback=survey_data.additional_feedback,
+        )
+        session.add(new_survey)
+
+    await session.commit()
+    await session.refresh(intake)
+
+    return {
+        "survey_submitted": True,
     }

@@ -797,6 +797,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/intake/client/survey": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Submit client survey for intake
+     * @description Submit survey information for the authenticated client's intake
+     */
+    post: operations["submit_survey_intake_client_survey_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/intake/internal/{pseudonymized_id}": {
     parameters: {
       query?: never;
@@ -2063,6 +2083,11 @@ export interface components {
        * @default false
        */
       has_address: boolean;
+      /**
+       * Has Survey
+       * @default false
+       */
+      has_survey: boolean;
       /** Client Intake Sections */
       client_intake_sections: components["schemas"]["ClientIntakeSectionResponse"][];
       /** Current Section Messages */
@@ -2755,6 +2780,34 @@ export interface components {
       turns: number;
       /** Duration */
       duration: string;
+    };
+    /** SurveySubmission */
+    SurveySubmission: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id?: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at?: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at?: string;
+      /** Difficulty Rating */
+      difficulty_rating?: number | null;
+      /** Questions Confusing */
+      questions_confusing?: string | null;
+      /** Preferred Method */
+      preferred_method?: string | null;
+      /** Method Other */
+      method_other?: string | null;
+      /** Additional Feedback */
+      additional_feedback?: string | null;
     };
     /** TokenAccessResponse */
     TokenAccessResponse: {
@@ -4585,6 +4638,39 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["AdressSubmissionResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  submit_survey_intake_client_survey_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SurveySubmission"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
         };
       };
       /** @description Validation Error */

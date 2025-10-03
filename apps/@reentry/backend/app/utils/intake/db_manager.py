@@ -389,6 +389,22 @@ class DatabaseManager:
             traceback.print_exc()
             return False
 
+    async def has_survey(self, client_pseudo_id: str) -> bool:
+        """Check if intake has collected survey"""
+        try:
+            async with await self._get_session() as session:
+                # First get the intake
+                intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
+                if not intake:
+                    return False
+
+                return intake.has_survey is not None
+
+        except Exception as e:
+            logger.error(f"Error checking survey for client {client_pseudo_id}: {e}")
+            traceback.print_exc()
+            return False
+
     async def get_section_titles(self, client_pseudo_id: str) -> list[str]:
         try:
             async with await self._get_session() as session:

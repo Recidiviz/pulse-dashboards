@@ -55,6 +55,7 @@ export interface IntakeSocketContextType {
   conversationStarted: boolean;
   has_accepted_terms: boolean;
   has_address: boolean;
+  has_survey: boolean;
   disconnectReason?: string | null;
 }
 
@@ -129,6 +130,8 @@ type InitializeIntakeMetaAction = {
     client_state?: string | null;
     current_section_messages?: components["schemas"]["IntakeMessageResponse"][];
     has_accepted_terms?: boolean;
+    has_address?: boolean;
+    has_survey?: boolean;
   };
 };
 
@@ -206,6 +209,7 @@ const intakeReducer = (
         clientPseudoId: action.content.client_pseudo_id || null,
         has_accepted_terms: action.content.has_accepted_terms || false,
         has_address: action.content.has_address || false,
+        has_survey: action.content.has_survey || false,
       };
     }
     case "receiveAIMessage": {
@@ -294,6 +298,8 @@ const intakeReducer = (
         client_state: action.content.client_state || null,
         messages: action.content.current_section_messages ?? [],
         has_accepted_terms: action.content.has_accepted_terms || false,
+        has_address: action.content.has_address || false,
+        has_survey: action.content.has_survey || false,
         isLoading: false,
       };
     }
@@ -346,6 +352,7 @@ export function IntakeSocketProvider({
     conversationStarted: false,
     has_accepted_terms: false,
     has_address: false,
+    has_survey: false,
     disconnectReason: null,
   };
 
@@ -583,6 +590,8 @@ export function IntakeSocketProvider({
           current_section_messages: intakeData.current_section_messages,
           client_state: intakeData.client_state,
           has_accepted_terms: intakeData.has_accepted_terms,
+          has_address: intakeData.has_address,
+          has_survey: intakeData.has_survey,
         },
       });
     } else {

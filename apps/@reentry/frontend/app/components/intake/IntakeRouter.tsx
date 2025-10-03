@@ -23,6 +23,7 @@ import AddressForm from "~@reentry/frontend/components/intake/AddressForm";
 import ChatHeader from "~@reentry/frontend/components/intake/ChatInterface/ChatHeader";
 import ConversationLayout from "~@reentry/frontend/components/intake/ChatInterface/ConversationLayout";
 import IntakeCompleted from "~@reentry/frontend/components/intake/IntakeCompleted";
+import IntakeSurvey from "~@reentry/frontend/components/intake/IntakeSurvey";
 import {
   PreIntakeNoteOne,
   PreIntakeNoteTwo,
@@ -38,6 +39,7 @@ export default function IntakeRouter() {
     conversationStarted,
     has_accepted_terms,
     has_address,
+    has_survey,
   } = intakeContext;
   const { startConversation } = intakeDispatchContext;
   const isFromUtah = intakeContext.client_state === "US_UT";
@@ -48,6 +50,8 @@ export default function IntakeRouter() {
     }
     return "one";
   });
+  const [displaySurvey, setDisplaySurvey] = useState(false);
+  const [surveySubmitted, setSurveySubmitted] = useState(has_survey);
 
   // Updated completion logic to check for address collection
   const isCompleted = intakeStatus === "completed";
@@ -96,6 +100,12 @@ export default function IntakeRouter() {
     isCompleted,
   ]);
 
+  useEffect(() => {
+    const checkDisplaySurvey =
+      has_address && intakeStatus === "completed" && !has_survey;
+    setDisplaySurvey(checkDisplaySurvey);
+  }, [has_address, intakeStatus, has_survey]);
+
   const shouldRenderHeader = !isConversationInProgress;
 
   return (
@@ -107,31 +117,43 @@ export default function IntakeRouter() {
       )}
 
       <div className="flex-1">
-        {isCompleted && <IntakeCompleted />}
+        {((isCompleted && surveySubmitted) || (isCompleted && has_survey)) && (
+          <IntakeCompleted />
+        )}
 
-        {needsAddress && (
+        {needsAddress && !displaySurvey && (
           <AddressForm
+            setDisplaySurvey={setDisplaySurvey}
             onError={(error) => {
               console.error("Address submission error:", error);
               // Could add toast notification here
             }}
           />
         )}
-        {isFromUtah && isPreIntake ? <>
-          <PreIntakeVideo onStartIntake={handleStartConversation} />
-        </> : <>
-          {isPreIntake && preIntakeStep === "one" && (
-            <PreIntakeNoteOne onContinue={() => setPreIntakeStep("two")} />
-          )}
+        {displaySurvey && !surveySubmitted && (
+          <>
+            <ChatHeader />
+            <IntakeSurvey setSurveySubmitted={setSurveySubmitted} />
+          </>
+        )}
+        {isFromUtah && isPreIntake ? (
+          <>
+            <PreIntakeVideo onStartIntake={handleStartConversation} />
+          </>
+        ) : (
+          <>
+            {isPreIntake && preIntakeStep === "one" && (
+              <PreIntakeNoteOne onContinue={() => setPreIntakeStep("two")} />
+            )}
 
-          {isPreIntake && preIntakeStep === "two" && (
-            <PreIntakeNoteTwo
-              onGoBack={() => setPreIntakeStep("one")}
-              onStartIntake={handleStartConversation}
-            />
-          )}
-        </>}
-
+            {isPreIntake && preIntakeStep === "two" && (
+              <PreIntakeNoteTwo
+                onGoBack={() => setPreIntakeStep("one")}
+                onStartIntake={handleStartConversation}
+              />
+            )}
+          </>
+        )}
 
         {isConversationInProgress && <ConversationLayout />}
       </div>
