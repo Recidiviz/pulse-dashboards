@@ -22,6 +22,7 @@ export const INSIGHT_INCLUDES_AND_OMITS = {
     offense: {
       select: {
         name: true,
+        category: true,
       },
     },
     rollupOffense: {

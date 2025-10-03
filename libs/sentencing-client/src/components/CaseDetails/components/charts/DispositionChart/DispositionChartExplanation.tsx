@@ -39,17 +39,28 @@ export function DispositionChartExplanation({
     assessmentScoreBucketStart,
     assessmentScoreBucketEnd,
     offense,
+    offenseCategory,
     dispositionNumRecords,
   } = insight;
   const genderString = getDescriptionGender(gender);
+
+  const hasOffenseCategory = Boolean(offenseCategory);
+  const offenseDescriptor = hasOffenseCategory
+    ? offenseCategory
+    : formatOffenseLabel(offense);
+  const optionalCategoryLeadText = hasOffenseCategory
+    ? "a conviction in the category of "
+    : "";
+
   const genderCohortString = (
     <>
-      <span>{genderString}</span>
+      <span>{genderString}</span>{" "}
       <LsirScoreText
         rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
         rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
       />{" "}
-      with <span>{formatOffenseLabel(offense)}</span>
+      with {optionalCategoryLeadText}
+      <span>{offenseDescriptor}</span>
     </>
   );
 

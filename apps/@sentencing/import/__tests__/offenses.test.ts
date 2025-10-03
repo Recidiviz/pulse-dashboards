@@ -234,4 +234,52 @@ describe("import offense data", () => {
       }),
     ]);
   });
+
+  test("should import offense category for existing and new offenses", async () => {
+    dataProviderSingleton.setData(TEST_OFFENSES_FILE_NAME, [
+      // Existing (seed) offense with category update
+      {
+        state_code: StateCode.US_ID,
+        charge: fakeOffense.name,
+        is_sex_offense: false,
+        frequency: 100,
+      },
+      // New offense with category
+      {
+        state_code: StateCode.US_ID,
+        charge: "new-offense-with-category",
+        recidiviz_offense_category: "PERSON",
+        is_sex_offense: false,
+        frequency: 50,
+      },
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [OFFENSES_FILE_NAME]);
+
+    const dbOffenses = await testPrismaClient.offense.findMany({
+      where: {
+        name: { in: [fakeOffense.name, "new-offense-with-category"] },
+      },
+    });
+
+    expect(dbOffenses).toHaveLength(2);
+    expect(dbOffenses).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: fakeOffense.name,
+          category: null,
+          isSexOffense: false,
+          isViolentOffense: null,
+          frequency: 100,
+        }),
+        expect.objectContaining({
+          name: "new-offense-with-category",
+          category: "PERSON",
+          isSexOffense: false,
+          isViolentOffense: null,
+          frequency: 50,
+        }),
+      ]),
+    );
+  });
 });

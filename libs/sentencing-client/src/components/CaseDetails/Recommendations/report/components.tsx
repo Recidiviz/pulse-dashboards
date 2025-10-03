@@ -328,7 +328,11 @@ export function HistoricalSentencingAttributeChips({
           <Styled.AttributeChip>{genderString}</Styled.AttributeChip>
         )}
         {lsirScore && <Styled.AttributeChip>{lsirScore}</Styled.AttributeChip>}
-        <Styled.AttributeChip>{insight?.offense}</Styled.AttributeChip>
+        <Styled.AttributeChip>
+          {insight?.offenseCategory
+            ? `Category: ${insight.offenseCategory}`
+            : insight.offense}
+        </Styled.AttributeChip>
       </Styled.AttributeChipsWrapper>
     </Styled.AttributesContainer>
   );

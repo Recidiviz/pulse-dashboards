@@ -291,6 +291,7 @@ model Offense {
   id                String             @id @default(cuid())
   stateCode         StateCode
   name              String             @unique
+  category          String?
   isViolentOffense  Boolean?
   isSexOffense      Boolean?
   frequency         Int                @default(0)

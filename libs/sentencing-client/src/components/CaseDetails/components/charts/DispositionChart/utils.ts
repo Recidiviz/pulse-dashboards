@@ -25,13 +25,16 @@ export function getDispositionChartSubtitle(insight: CaseInsight) {
     assessmentScoreBucketStart,
     assessmentScoreBucketEnd,
     offense,
+    offenseCategory,
   } = insight ?? {};
   const genderString = getSubtitleGender(gender);
   const lsirScoreString = getSubtitleLsirScore(
     assessmentScoreBucketStart,
     assessmentScoreBucketEnd,
   );
-  const offenseString = `${formatOffenseLabel(offense)}`;
+  const offenseString = offenseCategory
+    ? `${offenseCategory} Category`
+    : `${formatOffenseLabel(offense)}`;
 
   const dispositionSubtitleStrings = [
     genderString,

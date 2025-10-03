@@ -354,6 +354,7 @@ export async function getInsight(
       "rollupRecidivismNumRecords",
     ]),
     offense: insightToReturn.offense.name,
+    offenseCategory: insightToReturn.offense.category,
     rollupOffense: insightToReturn.rollupOffense?.name,
     rollupOffenseDescription: formatRollupOffenseDescription(insightToReturn),
   };

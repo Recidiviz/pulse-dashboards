@@ -81,6 +81,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     insight: {
       gender: "MALE",
       offense: "Burglary",
+      offenseCategory: null,
       assessmentScoreBucketStart: 0,
       assessmentScoreBucketEnd: 20,
       rollupGender: null,

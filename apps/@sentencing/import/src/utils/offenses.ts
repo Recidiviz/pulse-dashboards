@@ -31,6 +31,7 @@ export async function transformAndLoadOffenseData(
     const newOffense = {
       stateCode: offenseData.state_code,
       name: offenseData.charge,
+      category: offenseData.recidiviz_offense_category,
       // If the data doesn't specify the value, make sure to set it to be explicitly
       // null (passing an undefined value to Prisma will just leave the field as is)
       isSexOffense:

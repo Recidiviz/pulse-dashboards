@@ -240,6 +240,7 @@ const mandatoryMinimumsSchema = z.array(
 export const offenseImportSchema = z.object({
   state_code: stateCode,
   charge: z.string(),
+  recidiviz_offense_category: z.string().optional(),
   is_sex_offense: z.boolean().optional(),
   is_violent: z.boolean().optional(),
   // Integers are being converted to strings for some reason
