@@ -22,6 +22,7 @@ import {
   PERSON_WITH_CONTACTS_AND_MESSAGES,
   processIndividualJiiContactReminders,
   ScriptAction,
+  updateMessageStatuses,
 } from "~@jii-texting/utils";
 import { TwilioAPIClient } from "~twilio-api";
 
@@ -54,6 +55,11 @@ export async function processJiiContactReminders({
 
   // Get Prisma client
   const prisma = getPrismaClientForStateCode(stateCode);
+
+  // Get the latest statuses for in progress messages
+  if (!dryRun) {
+    await updateMessageStatuses(prisma, twilioClient);
+  }
 
   const jiiToText = await prisma.person.findMany({
     include: {

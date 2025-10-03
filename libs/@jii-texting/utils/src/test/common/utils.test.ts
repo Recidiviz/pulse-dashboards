@@ -18,15 +18,59 @@
 import {
   MessageAttemptStatus,
   MessageType,
+  Prisma,
+  PrismaClient,
+  StateCode,
   Status,
 } from "@prisma/jii-texting/client";
-import { MessageStatus } from "twilio/lib/rest/api/v2010/account/message";
+import {
+  MessageInstance,
+  MessageStatus,
+} from "twilio/lib/rest/api/v2010/account/message";
 
+import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import {
   getOrderedMessageAttempts,
   mapTwilioStatusToInternalStatus,
   MessageSeriesWithAttemptsAndGroup,
+  updateMessageStatuses,
 } from "~@jii-texting/utils";
+import {
+  fakeContactOne,
+  fakeUsTxPersonOne,
+  fakeWorkflowExecutionOne,
+} from "~@jii-texting/utils/test/constants";
+import { TwilioAPIClient } from "~twilio-api";
+
+vi.mock("~twilio-api");
+const testUsTxPrismaClient = getPrismaClientForStateCode(StateCode.US_TX);
+const testTwilioClient = new TwilioAPIClient(
+  "account-sid",
+  "token",
+  "subaccount",
+);
+
+const PRISMA_TABLES = Prisma.dmmf.datamodel.models
+  .map((model) => model.name)
+  .filter((table) => table);
+
+async function resetDb(prismaClient: PrismaClient) {
+  await prismaClient.$transaction(
+    PRISMA_TABLES.map((table) =>
+      prismaClient.$executeRawUnsafe(`TRUNCATE "${table}" CASCADE;`),
+    ),
+  );
+}
+
+beforeEach(async () => {
+  await resetDb(testUsTxPrismaClient);
+});
+
+afterEach(() => {
+  vi.clearAllMocks();
+  vi.restoreAllMocks();
+});
+
 
 test.each([
   ["accepted", MessageAttemptStatus.IN_PROGRESS],
@@ -107,5 +151,153 @@ describe("getOrderedMessageAttemptFromMessageSeries", () => {
         }) => attempt.id,
       ),
     ).toEqual(["attempt-id-2", "attempt-id-1"]);
+  });
+});
+
+describe("updateMessageStatuses", () => {
+  beforeEach(async () => {
+    console.log(`Initializing Texas database...`);
+
+    await testUsTxPrismaClient.workflowExecution.createMany({
+      data: [fakeWorkflowExecutionOne],
+    });
+
+    // Create a person with one contact
+    await testUsTxPrismaClient.person.create({
+      data: {
+        ...fakeUsTxPersonOne,
+        contacts: {
+          create: {
+            ...fakeContactOne,
+          },
+        },
+      },
+    });
+  });
+
+  test("no in-progress messages", async () => {
+    await updateMessageStatuses(testUsTxPrismaClient, testTwilioClient);
+    expect(TwilioAPIClient.prototype.getMessage).not.toBeCalled();
+  });
+
+  describe("person has messages", () => {
+    beforeEach(async () => {
+      // Add welcome message
+      await testUsTxPrismaClient.welcomeMessageSeries.create({
+        data: {
+          person: { connect: { personId: fakeUsTxPersonOne?.personId } },
+          messageAttempts: {
+            create: [
+              {
+                twilioMessageSid: "welcome-message-sid",
+                body: "Hello world",
+                phoneNumber: fakeUsTxPersonOne.phoneNumber,
+                status: MessageAttemptStatus.IN_PROGRESS,
+                createdTimestamp:
+                  fakeWorkflowExecutionOne.workflowExecutionTime,
+                workflowExecutionId: fakeWorkflowExecutionOne.id,
+              },
+            ],
+          },
+        },
+      });
+    });
+
+    test("message succeeded, status updated", async () => {
+      vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+        sid: "welcome-message-sid",
+        status: "delivered",
+      } as MessageInstance);
+
+      await updateMessageStatuses(testUsTxPrismaClient, testTwilioClient);
+      expect(TwilioAPIClient.prototype.getMessage).toHaveBeenCalledWith(
+        "welcome-message-sid",
+      );
+
+      const messageAttempt =
+        await testUsTxPrismaClient.welcomeMessageAttempt.findUniqueOrThrow({
+          where: { twilioMessageSid: "welcome-message-sid" },
+        });
+      expect(messageAttempt.status).toBe(MessageAttemptStatus.SUCCESS);
+    });
+
+    test("message is not in-progress", async () => {
+      // Setup
+      await testUsTxPrismaClient.welcomeMessageAttempt.update({
+        where: {
+          twilioMessageSid: "welcome-message-sid",
+        },
+        data: {
+          status: MessageAttemptStatus.SUCCESS,
+        },
+      });
+
+      await updateMessageStatuses(testUsTxPrismaClient, testTwilioClient);
+      expect(TwilioAPIClient.prototype.getMessage).not.toBeCalled();
+    });
+
+    describe("person has multiple in progress messages", () => {
+      beforeEach(async () => {
+        // Add contact reminder message
+        await testUsTxPrismaClient.contactReminderMessageSeries.create({
+          data: {
+            contact: { connect: { externalId: fakeContactOne.externalId } },
+            person: { connect: { personId: fakeUsTxPersonOne?.personId } },
+            reminderType: "WITHIN_ONE_DAY",
+            messageAttempts: {
+              create: [
+                {
+                  twilioMessageSid: "reminder-message-sid",
+                  body: "Hello world",
+                  phoneNumber: fakeUsTxPersonOne.phoneNumber,
+                  status: MessageAttemptStatus.IN_PROGRESS,
+                  createdTimestamp:
+                    fakeWorkflowExecutionOne.workflowExecutionTime,
+                  workflowExecutionId: fakeWorkflowExecutionOne.id,
+                },
+              ],
+            },
+          },
+        });
+      });
+
+      test("Twilio API called twice successfully", async () => {
+        vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+          sid: "message-sid",
+          status: "delivered",
+        } as MessageInstance);
+
+        await updateMessageStatuses(testUsTxPrismaClient, testTwilioClient);
+        expect(TwilioAPIClient.prototype.getMessage).toBeCalledTimes(2);
+
+        const welcomeMessageAttempt =
+          await testUsTxPrismaClient.welcomeMessageAttempt.findUniqueOrThrow({
+            where: { twilioMessageSid: "welcome-message-sid" },
+          });
+        expect(welcomeMessageAttempt.status).toBe(MessageAttemptStatus.SUCCESS);
+
+        const reminderMessageAttempt =
+          await testUsTxPrismaClient.contactReminderMessageAttempt.findUniqueOrThrow(
+            {
+              where: { twilioMessageSid: "reminder-message-sid" },
+            },
+          );
+        expect(reminderMessageAttempt.status).toBe(
+          MessageAttemptStatus.SUCCESS,
+        );
+      });
+
+      test("Twilio API errors for less than 75% success", async () => {
+        vi.mocked(TwilioAPIClient.prototype.getMessage).mockRejectedValue(
+          new Error("test"),
+        );
+
+        await expect(
+          updateMessageStatuses(testUsTxPrismaClient, testTwilioClient),
+        ).rejects.toThrow(
+          `Less than 75% of in-progress messages were successfully updated`,
+        );
+      });
+    });
   });
 });

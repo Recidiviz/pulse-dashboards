@@ -1171,35 +1171,11 @@ export async function processContact(
     }
   }
 
-  // Condition to update an existing message
   const orderedMessageAttempts = getOrderedMessageAttempts(
     reminderMessageSeries,
   );
   const latestMessageAttempt = orderedMessageAttempts[0];
-
-  let updatedMessageAttemptStatus;
-
-  if (dryRun) {
-    updatedMessageAttemptStatus = latestMessageAttempt.status;
-  } else if (latestMessageAttempt.status === MessageAttemptStatus.IN_PROGRESS) {
-    try {
-      updatedMessageAttemptStatus = await updateMessageAttempt(
-        prisma,
-        twilio,
-        latestMessageAttempt.status,
-        latestMessageAttempt.twilioMessageSid,
-        MessageType.REMINDER_TEXT,
-      );
-    } catch (error) {
-      console.log(
-        `Encountered error updating latest message status for ${jii.pseudonymizedId}`,
-      );
-      captureException(
-        `Error in sendText for ${jii.pseudonymizedId}: ${error}`,
-      );
-      return ScriptAction.ERROR;
-    }
-  }
+  const updatedMessageAttemptStatus = latestMessageAttempt.status;
 
   // Retry the message and add an attempt to the existing series by
   // passing the latestMessageSeriesId to sendText
@@ -1277,6 +1253,22 @@ export async function processWelcomeText(
     getOrderedMessageAttempts(initialMessageSeries)[0];
 
   if (
+    latestInitialMessageAttempt.status === MessageAttemptStatus.SUCCESS &&
+    !jii.receivedWelcomeText
+  ) {
+    await prisma.person.update({
+      where: {
+        stableExternalId: jii.stableExternalId,
+      },
+      data: {
+        receivedWelcomeText: true,
+      },
+    });
+
+    return ScriptAction.NOOP;
+  }
+
+  if (
     (initialMessageSeries.messageAttempts.length >= MAX_RETRY_ATTEMPTS &&
       latestInitialMessageAttempt.status === MessageAttemptStatus.FAILURE) ||
     latestInitialMessageAttempt.status === MessageAttemptStatus.SUCCESS
@@ -1284,29 +1276,7 @@ export async function processWelcomeText(
     return ScriptAction.SKIPPED;
   }
 
-  let latestInitialMessageAttemptStatus: MessageAttemptStatus;
-  if (dryRun) {
-    latestInitialMessageAttemptStatus = latestInitialMessageAttempt.status;
-  } else {
-    try {
-      // Update status for the latest message attempt by querying Twilio
-      latestInitialMessageAttemptStatus = await updateMessageAttempt(
-        prisma,
-        twilio,
-        latestInitialMessageAttempt.status,
-        latestInitialMessageAttempt.twilioMessageSid,
-        MessageType.INITIAL_TEXT,
-      );
-    } catch (error) {
-      console.log(
-        `Encountered error updating latest message status for ${jii.pseudonymizedId}`,
-      );
-      captureException(
-        `Error in processWelcomeText for ${jii.pseudonymizedId}: ${error}`,
-      );
-      return ScriptAction.ERROR;
-    }
-  }
+  const latestInitialMessageAttemptStatus = latestInitialMessageAttempt.status;
 
   if (
     latestInitialMessageAttemptStatus === MessageAttemptStatus.IN_PROGRESS ||
@@ -1344,26 +1314,6 @@ export async function processWelcomeText(
         return ScriptAction.ERROR;
       }
     }
-  }
-
-  // At this point we pulled the latest status from Twilio in this run and it is successful
-  try {
-    await prisma.person.update({
-      where: {
-        stableExternalId: jii.stableExternalId,
-      },
-      data: {
-        receivedWelcomeText: true,
-      },
-    });
-  } catch (error) {
-    console.log(
-      `Encountered error updating Person.receivedWelcomeText for ${jii.pseudonymizedId}`,
-    );
-    captureException(
-      `Error in processWelcomeText for ${jii.pseudonymizedId}: ${error}`,
-    );
-    return ScriptAction.ERROR;
   }
 
   return ScriptAction.NOOP;
@@ -1433,4 +1383,81 @@ export async function processIndividualJiiContactReminders(
   const uniqueActions = new Set(await Promise.all(allContactActions));
 
   return [...uniqueActions];
+}
+
+export async function updateMessageStatuses(
+  prisma: PrismaClient,
+  twilio: TwilioAPIClient,
+) {
+  const welcomeMessages = await prisma.welcomeMessageAttempt.findMany({
+    where: {
+      status: MessageAttemptStatus.IN_PROGRESS,
+    },
+    select: {
+      twilioMessageSid: true,
+      status: true,
+    },
+  });
+
+  const reminderMessages = await prisma.contactReminderMessageAttempt.findMany({
+    where: {
+      status: MessageAttemptStatus.IN_PROGRESS,
+    },
+    select: {
+      twilioMessageSid: true,
+      status: true,
+    },
+  });
+
+  const allMessagesToUpdate = [
+    {
+      type: MessageType.INITIAL_TEXT,
+      messages: welcomeMessages,
+    },
+    {
+      type: MessageType.REMINDER_TEXT,
+      messages: reminderMessages,
+    },
+  ];
+
+  const numMessagesToUpdate = welcomeMessages.length + reminderMessages.length;
+  console.log(
+    `Found ${numMessagesToUpdate} messages where status is IN_PROGRESS`,
+  );
+
+  let numUpdatedMessages = 0;
+
+  await Promise.all(
+    allMessagesToUpdate.flatMap(({ type, messages }) =>
+      messages.map(async (attempt) => {
+        try {
+          await updateMessageAttempt(
+            prisma,
+            twilio,
+            attempt.status,
+            attempt.twilioMessageSid,
+            type,
+          );
+          numUpdatedMessages++;
+        } catch (e) {
+          // Don't completely fail on individual errors
+          console.log(
+            `Error when updating message with twilio id: ${attempt.twilioMessageSid}. ${e}`,
+          );
+          captureException(`Failed to update the status of message: ${e}`);
+        }
+      }),
+    ),
+  );
+
+  console.log(
+    `Updated ${numUpdatedMessages} messages out of ${numMessagesToUpdate} in-progress messages`,
+  );
+
+  if (numUpdatedMessages / numMessagesToUpdate < 0.75) {
+    captureException(`Less than 75% of messages were successfully updated`);
+    throw new Error(
+      `Less than 75% of in-progress messages were successfully updated`,
+    );
+  }
 }

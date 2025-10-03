@@ -259,25 +259,6 @@ describe("one person in DB with welcome text in progress", () => {
     });
   });
 
-  test("person has opted out -> Twilio getMessage not called", async () => {
-    await testUsTxPrismaClient.person.update({
-      where: {
-        personId: fakePersonOne.personId,
-      },
-      data: {
-        lastOptOutDate: new Date(),
-      },
-    });
-
-    await processJiiContactReminders({
-      stateCode: StateCode.US_TX,
-      dryRun: false,
-      workflowExecutionId: fakeWorkflowExecutionOne.id,
-    });
-
-    expect(TwilioAPIClient.prototype.getMessage).not.toBeCalled();
-  });
-
   test("validate Twilio getMessage call", async () => {
     vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
       sid: "message-sid-1",
@@ -296,7 +277,7 @@ describe("one person in DB with welcome text in progress", () => {
   });
 
   test("getMessage called with error", async () => {
-    vi.mocked(TwilioAPIClient.prototype.getMessage).mockRejectedValueOnce(
+    vi.mocked(TwilioAPIClient.prototype.getMessage).mockRejectedValue(
       new Error("test"),
     );
 
@@ -307,11 +288,16 @@ describe("one person in DB with welcome text in progress", () => {
       });
     expect(currentMessageAttempt.status).toBe(MessageAttemptStatus.IN_PROGRESS);
 
-    await processJiiContactReminders({
-      stateCode: StateCode.US_TX,
-      dryRun: false,
-      workflowExecutionId: fakeWorkflowExecutionOne.id,
-    });
+    // Ensure error is thrown from the script when message statuses updates fail
+    await expect(
+      processJiiContactReminders({
+        stateCode: StateCode.US_TX,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      }),
+    ).rejects.toThrow(
+      "Less than 75% of in-progress messages were successfully updated",
+    );
 
     const newMessageAttempt =
       await testUsTxPrismaClient.welcomeMessageAttempt.findFirstOrThrow({
