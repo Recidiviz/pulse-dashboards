@@ -15,23 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { NotFound } from "~@jii/common-ui";
-import { UsAzMoreInformation } from "~@jii/paths";
+import { usePageTitle } from "~@jii/common-ui";
+import { State } from "~@jii/paths";
 
-import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
-import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
+import { DefinitionView } from "../components/DefinitionView";
+import { usAzCopy } from "../configs/copy";
 
-export function UsAzRouter() {
-  return (
-    <Routes>
-      <Route index element={<PageUsAzResidentHome />} />
-      <Route path="*" element={<NotFound />} />
-      <Route
-        path={UsAzMoreInformation.DateInfo.path}
-        element={<PageMoreInfoImportantDates />}
-      />
-    </Routes>
+export function PageMoreInfoImportantDates() {
+  const { dateType } = useTypedParams(
+    State.Resident.UsAzMoreInformation.DateInfo,
   );
+
+  const moreInfo =
+    usAzCopy.importantDates.dates[
+      dateType as keyof typeof usAzCopy.importantDates.dates
+    ].moreInfo;
+
+  usePageTitle(moreInfo.heading);
+
+  return <DefinitionView {...moreInfo} />;
 }

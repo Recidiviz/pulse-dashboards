@@ -15,23 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
-
-import { NotFound } from "~@jii/common-ui";
-import { UsAzMoreInformation } from "~@jii/paths";
-
-import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
-import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
-
-export function UsAzRouter() {
-  return (
-    <Routes>
-      <Route index element={<PageUsAzResidentHome />} />
-      <Route path="*" element={<NotFound />} />
-      <Route
-        path={UsAzMoreInformation.DateInfo.path}
-        element={<PageMoreInfoImportantDates />}
-      />
-    </Routes>
-  );
-}
+export * from "./DefinitionView";
+export * from "./UsAzSingleResidentHome";

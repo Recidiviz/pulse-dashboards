@@ -15,68 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatDistanceToNowStrict } from "date-fns";
 import { observer } from "mobx-react-lite";
 
-import {
-  Card,
-  CardHeading,
-  CardValue,
-  HomepageSectionHeading,
-  SlateCopy,
-  TwoColumnCardWrapper,
-} from "~@jii/common-ui";
-import { formatFullDate, useSingleResidentContext } from "~@jii/data";
+import { HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import { withPresenterManager } from "~hydration-utils";
 
+import { usAzCopy } from "../../configs/copy";
+import { DateInfoCard } from "./DateInfoCard";
 import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
 
-const DateInfoCard = ({
-  title,
-  date,
-}: {
-  title: string;
-  date: string | undefined;
-}) => {
-  if (!date) {
-    return (
-      <Card>
-        <CardHeading>{title}</CardHeading>
-        <CardValue>None on record</CardValue>
-      </Card>
-    );
-  }
-
-  const dateObj = new Date(date);
-
-  return (
-    <Card>
-      <CardHeading>{title}</CardHeading>
-      <CardValue>{formatFullDate(dateObj)}</CardValue>
-      <SlateCopy>{`(${formatDistanceToNowStrict(dateObj)} from today)`}</SlateCopy>
-    </Card>
-  );
-};
+const { sectionHeader, sectionSubHeader } = usAzCopy.importantDates;
 
 const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
   observer(function UsAzImportantDates({ presenter }) {
-    const { csbdDate, ercdDate, sedDate, csedDate } = presenter.metadata;
-
     return (
       <div>
         <section>
-          <HomepageSectionHeading>
-            My Important Dates to Keep Track of
-          </HomepageSectionHeading>
-          <TwoColumnCardWrapper>
-            <DateInfoCard title="TR Date (CSBD)" date={csbdDate} />
-            <DateInfoCard title="85% Date (ERCD)" date={ercdDate} />
-            <DateInfoCard
-              title="100% Date (Flat Sentence, SED)"
-              date={sedDate}
-            />
-            <DateInfoCard title="115% Date (CSED)" date={csedDate} />
-          </TwoColumnCardWrapper>
+          <HomepageSectionHeading>{sectionHeader}</HomepageSectionHeading>
+          <SlateCopy as="p">{sectionSubHeader}</SlateCopy>
+          {presenter.dateEntries.map(({ key, date, config, isHighlighted }) => {
+            return (
+              <DateInfoCard
+                key={key}
+                title={config.title}
+                date={date}
+                info={config.info}
+                dateKey={key}
+                shortName={config.shortName}
+                isHighlighted={isHighlighted}
+              />
+            );
+          })}
         </section>
       </div>
     );

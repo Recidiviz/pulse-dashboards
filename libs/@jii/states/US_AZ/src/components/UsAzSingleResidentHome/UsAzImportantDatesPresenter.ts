@@ -19,6 +19,21 @@ import { makeAutoObservable } from "mobx";
 
 import { ResidentRecord } from "~datatypes";
 
+import { usAzCopy } from "../../configs/copy";
+
+const { dates } = usAzCopy.importantDates;
+
+export interface DateEntry {
+  key: string;
+  date: string | undefined;
+  config: {
+    title: string;
+    info: string;
+    shortName: string;
+  };
+  isHighlighted: boolean;
+}
+
 export class UsAzImportantDatesPresenter {
   constructor(public readonly resident: ResidentRecord) {
     makeAutoObservable(this, undefined, { autoBind: true });
@@ -33,5 +48,53 @@ export class UsAzImportantDatesPresenter {
     }
 
     return metadata;
+  }
+
+  get dateEntries(): DateEntry[] {
+    const { acisTprDate, csbdDate, ercdDate, sedDate, csedDate } =
+      this.metadata;
+
+    // Create date entries
+    const entries: Omit<DateEntry, "isHighlighted">[] = [
+      {
+        key: "acisTprDate",
+        date: acisTprDate,
+        config: dates.acisTprDate,
+      },
+      {
+        key: "csbd",
+        date: csbdDate,
+        config: dates.csbd,
+      },
+      {
+        key: "ercd",
+        date: ercdDate,
+        config: dates.ercd,
+      },
+      {
+        key: "sed",
+        date: sedDate,
+        config: dates.sed,
+      },
+      {
+        key: "csed",
+        date: csedDate,
+        config: dates.csed,
+      },
+    ];
+
+    // Sort by earliest date first, with valid dates before null dates
+    const sortedEntries = entries.sort((a, b) => {
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    });
+
+    // Add highlighting to the first valid date
+    return sortedEntries.map((entry, index) => ({
+      ...entry,
+      isHighlighted: index === 0 && entry.date !== undefined,
+    }));
   }
 }

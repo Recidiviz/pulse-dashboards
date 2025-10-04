@@ -15,23 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { FC, ReactNode } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components/macro";
 
-import { NotFound } from "~@jii/common-ui";
-import { UsAzMoreInformation } from "~@jii/paths";
+import { Icon, palette } from "~design-system";
 
-import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
-import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
+/**
+ * A text-styled link with an arrow icon, for inline "go to" links
+ * as opposed to GoButton which is button-styled
+ */
+const StyledGoLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+  color: ${palette.signal.links};
+  text-decoration: none;
 
-export function UsAzRouter() {
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+`;
+
+export const GoLink: FC<{ children: ReactNode; to: string }> = ({
+  children,
+  to,
+}) => {
   return (
-    <Routes>
-      <Route index element={<PageUsAzResidentHome />} />
-      <Route path="*" element={<NotFound />} />
-      <Route
-        path={UsAzMoreInformation.DateInfo.path}
-        element={<PageMoreInfoImportantDates />}
-      />
-    </Routes>
+    <StyledGoLink to={to}>
+      <span>{children}</span>
+      <Icon kind="Arrow" size={16} />
+    </StyledGoLink>
   );
-}
+};
