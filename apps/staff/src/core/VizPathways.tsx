@@ -42,7 +42,6 @@ const VizPathways: React.FC<Props> = ({
   const screenReaderTitle = [
     `Chart: ${title}. `,
     latestUpdate && `as of ${latestUpdate}`,
-    subtitle && `Current filters: ${subtitle}`,
   ]
     .filter(Boolean)
     .join(" ");
