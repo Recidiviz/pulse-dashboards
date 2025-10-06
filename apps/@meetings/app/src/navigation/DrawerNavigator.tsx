@@ -22,8 +22,19 @@ import { Modal } from "react-native";
 import ClientsScreen from "../screens/ClientsScreen";
 import HomeScreen from "../screens/HomeScreen";
 import MenuScreen from "../screens/MenuScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
-const Stack = createStackNavigator();
+export type RootStackParamList = {
+  Home: undefined;
+  Trends: undefined;
+  Clients: undefined;
+  Messages: undefined;
+  Schedule: undefined;
+  Resources: undefined;
+  Profile: { id: string };
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function DrawerNavigator() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -37,6 +48,7 @@ export default function DrawerNavigator() {
         <Stack.Screen name="Messages" component={HomeScreen} />
         <Stack.Screen name="Schedule" component={HomeScreen} />
         <Stack.Screen name="Resources" component={HomeScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
 
       <Modal

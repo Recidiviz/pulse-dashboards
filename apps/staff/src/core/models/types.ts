@@ -107,8 +107,6 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   insightsLaunchedDistricts?: string[];
   insightsLanternState?: boolean;
   insightsUnitState?: boolean;
-  // For Last Login Module. Number of days without a login where we flag someone for not having logged in in that amount of time
-  insightsNumDaysWithoutLogin?: number;
 };
 
 /**

@@ -22,10 +22,15 @@ import Icons from "../../assets/icons";
 
 interface SearchBarProps {
   value: string;
+  placeholder: string;
   onChange: (t: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => (
+const SearchBar: React.FC<SearchBarProps> = ({
+  value,
+  placeholder,
+  onChange,
+}) => (
   <View className="flex-row items-center rounded-md border border-gray-300 bg-gray-50 px-2">
     <Image
       source={Icons.Search}
@@ -35,7 +40,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => (
 
     <TextInput
       className="ml-1.5 h-10 flex-1 font-[inter] text-xs font-semibold text-black"
-      placeholder="Search clients by name"
+      placeholder={placeholder}
       placeholderTextColor="#999"
       value={value}
       onChangeText={onChange}

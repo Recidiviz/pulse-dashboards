@@ -15,13 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, GoLink, HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
+import { Link } from "react-router-dom";
+import styled from "styled-components/macro";
+
+import { Card, HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
 import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
 import { CardDateInfo } from "~@jii/earned-good-time";
 import { State } from "~@jii/paths";
+import { Icon } from "~design-system";
+import { palette } from "~design-system";
 
 import { UsNeCardGroupCopy } from "../configs/copy";
 import { useUsNeContext } from "./usNeContext";
+
+const GoLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+  color: ${palette.signal.links};
+
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+`;
 
 const UsNeCardGroup: React.FC<{ copy: UsNeCardGroupCopy }> = ({ copy }) => {
   const { resident } = useSingleResidentContext();
@@ -54,7 +73,8 @@ const UsNeCardGroup: React.FC<{ copy: UsNeCardGroupCopy }> = ({ copy }) => {
               pageSlug: definitionSlug ?? id,
             })}
           >
-            {copy.moreInfoLink}
+            <span>{copy.moreInfoLink}</span>
+            <Icon kind="Arrow" size={16} />
           </GoLink>
         </Card>
       );

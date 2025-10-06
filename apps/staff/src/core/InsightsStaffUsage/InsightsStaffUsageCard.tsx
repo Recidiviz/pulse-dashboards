@@ -40,15 +40,10 @@ import {
 } from "../InsightsSupervisorPage/styles";
 import ModelHydrator from "../ModelHydrator";
 
-export const hasNoLoginActivityInNumDays = (
-  { latestLoginDate }: SupervisionOfficer,
-  insightsNumDaysWithoutLogin: number,
-) =>
-  !latestLoginDate ||
-  differenceInDays(new Date(), latestLoginDate) > insightsNumDaysWithoutLogin;
-
-export const noLoginLabel = (insightsNumDaysWithoutLogin: number) => `No Login for ${insightsNumDaysWithoutLogin} Days`;
-export const noLoginTooltip = (insightsNumDaysWithoutLogin: number) => `It has been more than ${insightsNumDaysWithoutLogin} days since the last login.`;
+export const hasNoLoginActivityInLast30Days = ({
+  latestLoginDate,
+}: SupervisionOfficer) =>
+  !latestLoginDate || differenceInDays(new Date(), latestLoginDate) > 30;
 
 export const getLatestLoginDate = ({ latestLoginDate }: SupervisionOfficer) =>
   latestLoginDate ? formatWorkflowsDate(latestLoginDate) : "Never";
@@ -56,18 +51,13 @@ export const getLatestLoginDate = ({ latestLoginDate }: SupervisionOfficer) =>
 const InsightsUsageCard: React.FC<{
   presenter: SupervisionSupervisorPagePresenter;
 }> = observer(function InsightsUsageCard({
-  presenter: {
-    allOfficers,
-    labels,
-    trackLastLoginUsageModuleViewed,
-    insightsNumDaysWithoutLogin,
-  },
+  presenter: { allOfficers, labels, trackLastLoginUsageModuleViewed },
 }) {
   if (allOfficers.length === 0) return null;
   trackLastLoginUsageModuleViewed();
 
-  const numOfficersWithNoLoginActivityInLastXDays = allOfficers.filter(
-    hasNoLoginActivityInNumDays,
+  const numOfficersWithNoLoginActivityInLast30Days = allOfficers.filter(
+    hasNoLoginActivityInLast30Days,
   ).length;
   return (
     <CardWrapper style={{ maxWidth: "501px" }}>
@@ -75,7 +65,7 @@ const InsightsUsageCard: React.FC<{
         <CardHeaderText>
           <CardTitle>Date of Last Login</CardTitle>
           <CardSubtitle>
-            {`${numOfficersWithNoLoginActivityInLastXDays} inactive ${pluralize(labels.supervisionOfficerLabel, numOfficersWithNoLoginActivityInLastXDays)}`}
+            {`${numOfficersWithNoLoginActivityInLast30Days} inactive ${pluralize(labels.supervisionOfficerLabel, numOfficersWithNoLoginActivityInLast30Days)}`}
           </CardSubtitle>
         </CardHeaderText>
       </CardHeader>
@@ -94,18 +84,14 @@ const InsightsUsageCard: React.FC<{
               officerName={officer.displayName}
               officerPseudoId={officer.pseudonymizedId}
               officerValue={getLatestLoginDate(officer)}
-              showPill={hasNoLoginActivityInNumDays(
-                officer,
-                insightsNumDaysWithoutLogin,
-              )}
+              showPill={hasNoLoginActivityInLast30Days(officer)}
             >
-              {hasNoLoginActivityInNumDays(
-                officer,
-                insightsNumDaysWithoutLogin,
-              ) && (
+              {hasNoLoginActivityInLast30Days(officer) && (
                 <InsightsPill
-                  label={noLoginLabel(insightsNumDaysWithoutLogin)}
-                  tooltipCopy={noLoginTooltip(insightsNumDaysWithoutLogin)}
+                  label="No Login for 30 Days"
+                  tooltipCopy={
+                    "It has been more than 30 days since the last login."
+                  }
                 />
               )}
             </InsightsSupervisorDetailCardListItem>
@@ -121,7 +107,7 @@ const ManagedComponent: React.FC<{
   return (
     <InsightsPageSection
       sectionTitle="Login Activity"
-      sectionDescription={`View the last log-in date for each ${presenter.labels.supervisionOfficerLabel}. Any ${presenter.labels.supervisionOfficerLabel} inactive for over ${presenter.insightsNumDaysWithoutLogin} days will be flagged, so you can take action to ensure continued usage and support.`}
+      sectionDescription={`View the last log-in date for each ${presenter.labels.supervisionOfficerLabel}. Any ${presenter.labels.supervisionOfficerLabel} inactive for over 30 days will be flagged, so you can take action to ensure continued usage and support.`}
     >
       <ModelHydrator hydratable={presenter}>
         <InsightsUsageCard presenter={presenter} />

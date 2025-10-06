@@ -20,7 +20,6 @@ export * from "./BackLink/BackLink";
 export * from "./BaseLayout/BaseLayout";
 export * from "./ButtonLink/ButtonLink";
 export * from "./ButtonLink/GoButton";
-export * from "./ButtonLink/GoLink";
 export * from "./Card";
 export * from "./Chip";
 export * from "./constants";

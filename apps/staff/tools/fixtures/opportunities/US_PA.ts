@@ -84,8 +84,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usPaNoHighSanctionsInPastYear",
           text: "Has not incurred high sanctions within the last year",
-          tooltip:
-            "Per policy, the tool checks the severity of the sanction, not the severity of the violation itself.",
         },
         {
           key: "usPaNotServingIneligibleOffenseForAdminSupervision",
@@ -102,7 +100,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "supervisionLevelIsNotHighOrMaxForOneYear",
           text: "Not supervised under enhanced or maximum supervision within the past 12 months",
-          tooltip: "",
         },
         {
           key: "usPaNotMarkedIneligibleForAdminSupervisionInOms",

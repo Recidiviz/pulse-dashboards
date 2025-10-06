@@ -249,20 +249,16 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: "",
         },
         {
-          key: "onIntakeFor60Days",
+          key: "onUnassignedFor60Days",
           text: "On intake for 60+ days",
           tooltip: "Clients must be on intake for 60 days",
-        },
-        {
-          key: "usTnAssessedRiskLowCompliantOnStrongR2AfterIntakeSupervisionLevel",
-          text: "Assessed Low-Compliant after starting on intake (latest assessment on {{date assessmentDate}})",
         },
         {
           key: "noSupervisionViolationReportWithin6Months",
           text: "No violations in the past 6 months",
         },
         {
-          key: "noSupervisionViolationReportSinceIntakeSupervisionLevel",
+          key: "noSupervisionViolationReportSinceUnassignedSupervisionLevel",
           text: "No violations since being placed on Community Supervision",
         },
         {
@@ -270,18 +266,18 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "No sanctions in the past 3 months",
         },
         {
-          key: "usTnNoSupervisionSanctionSinceIntakeSupervisionLevel",
+          key: "usTnNoSupervisionSanctionSinceUnassignedSupervisionLevel",
           text: "No sanctions since being placed on Community Supervision",
         },
         {
           key: "latestDrugTestIsNegativeOrMissing",
-          text: ' {{#if  (eq latestDrugScreenDate "")}}\nNo recent drug screens\n{{else}}\nPassed most recent drug screen on {{date latestDrugScreenDate}}\n{{/if}}',
+          text: ' {{#if  (eq latestDrugScreenDate "")}}\nNo recent drug screens\n{{else}}\nPassed most recent drug screen on {{date latestDrugScreenDate}}\n{{/if}}\n\n',
           tooltip:
             "Tested negative on their most recent drug screen or have no drug tests",
         },
         {
-          key: "noPositiveDrugScreensSinceIntakeSupervisionLevel",
-          text: "No positive drug screens since being placed on Community\nSupervision",
+          key: "noPositiveDrugScreensSinceUnassignedSupervisionLevel",
+          text: "No positive drug screens since being placed on Community\nSupervision.",
         },
         {
           key: "usTnNoArrestsInPast6Months",
@@ -295,13 +291,17 @@ export const mockApiOpportunityConfigurationResponse = {
             "Have addressed or are addressing any highly assessed criminogenic needs.",
         },
         {
-          key: "usTnThreeFaceToFaceContactsWithin60DaysOfIntakeSupervisionStart",
-          text: "At least three face-to-face contacts since intake start on \n\n{{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
-          tooltip:
-            "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discretion.",
+          key: "assessedRiskLowAfterUnassignedSupervisionLevel",
+          text: "Assessed Low after starting on Intake, latest assessment on {{date assessmentDate}}",
         },
         {
-          key: "usTnHomeVisitSinceIntakeSupervisionLevel",
+          key: "usTnThreeFaceToFaceContactsWithin60DaysOfUnassignedSupervisionStart",
+          text: "At least three face-to-face contacts since intake start on \n\n{{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
+          tooltip:
+            "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discrection.",
+        },
+        {
+          key: "usTnHomeVisitSinceUnassignedSupervisionLevel",
           text: "First home visit since intake on {{date eligibleDate}}",
         },
         {
@@ -339,11 +339,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Needs {{daysUntil minimumTimeServedDate}} more days on Low",
         },
         {
-          key: "onIntakeFor60Days",
-          text: "Needs {{daysUntil minimumTimeServedDate}} more days on Intake",
-          tooltip: "Clients must be on intake for 60 days",
-        },
-        {
           key: "usTnFeeScheduleOrPermanentExemption",
           text: "Confirm the client has a fee payment schedule in place if applicable",
           tooltip:
@@ -356,7 +351,12 @@ export const mockApiOpportunityConfigurationResponse = {
             "Have addressed or are addressing any highly assessed criminogenic needs.",
         },
         {
-          key: "usTnThreeFaceToFaceContactsWithin60DaysOfIntakeSupervisionStart",
+          key: "onUnassignedFor60Days",
+          text: "Needs {{daysUntil minimumTimeServedDate}} more days on Intake",
+          tooltip: "Clients must be on intake for 60 days",
+        },
+        {
+          key: "usTnThreeFaceToFaceContactsWithin60DaysOfUnassignedSupervisionStart",
           text: "Did not have 3 face to face contacts within 60 days of starting Intake. Has had contacts on {{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
           tooltip:
             "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discrection.",
@@ -668,9 +668,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Under active supervision in another jurisdiction",
         },
         { key: "INDICTMENT", text: "Under indictment" },
-        { key: "DENIAL BY DD", text: "Denied by District Director" },
-        { key: "DENIAL BY CA", text: "Denied by Correctional Administrator" },
-        { key: "DENIAL BY PA", text: "Denied by P&P Administrator" },
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,

@@ -39,7 +39,7 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
   return (
     <View className="my-[8] self-start">
       <View className="flex-row items-center justify-between">
-        {label && <Text className="text-[#111] text-[14]">{label}: </Text>}
+        {label && <Text className="text-[14] text-gray-900">{label}:</Text>}
 
         <TouchableOpacity
           className="flex-row items-center gap-1.5 rounded-md bg-gray-100 p-2"

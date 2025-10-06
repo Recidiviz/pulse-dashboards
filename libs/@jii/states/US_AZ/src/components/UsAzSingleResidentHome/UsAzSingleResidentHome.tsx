@@ -15,41 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
-import { rem } from "polished";
-import styled from "styled-components/macro";
-
-import {
-  FullBleedContainer,
-  HeaderPortal,
-  PageContainer,
-} from "~@jii/common-ui";
-import { palette } from "~design-system";
-
-import { usAzCopy } from "../../configs/copy";
 import { UsAzImportantDates } from "./UsAzImportantDates";
-
-const LastUpdatedBanner = styled(FullBleedContainer)`
-  ${typography.Sans14}
-
-  background: ${palette.marble2};
-  color: ${palette.slate85};
-  text-align: center;
-
-  ${PageContainer} {
-    padding-bottom: ${rem(spacing.md)};
-    padding-top: ${rem(spacing.md)};
-  }
-`;
 
 export function UsAzSingleResidentHome() {
   return (
     <div>
-      <HeaderPortal>
-        <LastUpdatedBanner>
-          <PageContainer>{usAzCopy.lastUpdated}</PageContainer>
-        </LastUpdatedBanner>
-      </HeaderPortal>
       <UsAzImportantDates />
     </div>
   );

@@ -343,8 +343,4 @@ export default class TenantStore {
     if (!this.currentTenantId) return;
     return this.tenantConfigs[this.currentTenantId];
   }
-
-  get insightsNumDaysWithoutLogin(): number {
-    return this.currentTenantConfig?.insightsNumDaysWithoutLogin ?? 30;
-  }
 }

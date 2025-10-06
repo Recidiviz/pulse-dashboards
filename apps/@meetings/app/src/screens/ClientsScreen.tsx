@@ -101,7 +101,11 @@ const ClientsScreen = () => {
 
         <Dropdown options={["Probation", "Absconded", "Incarceration"]} />
 
-        <SearchBar value={search} onChange={setSearch} />
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder={"Search clients by name"}
+        />
 
         <Dropdown
           label="Sort by"

@@ -36,7 +36,7 @@ type MenuItemProps = {
 const MenuItem = ({ icon, title, badge, onPress }: MenuItemProps) => {
   return (
     <TouchableOpacity
-      className="flex-row items-center justify-between border-b border-gray-200 py-3.5"
+      className="flex-row items-center justify-between py-4"
       onPress={onPress}
     >
       <View className="flex-row items-center">
@@ -47,7 +47,7 @@ const MenuItem = ({ icon, title, badge, onPress }: MenuItemProps) => {
         />
         <Text className="text-base font-medium">{title}</Text>
         {badge ? (
-          <View className="ml-2 h-[18] w-6 justify-center rounded-full bg-gray-600">
+          <View className="ml-2 h-[14] w-4 justify-center rounded-full bg-gray-600">
             <Text className="text-center text-xs font-medium text-white">
               {badge}
             </Text>

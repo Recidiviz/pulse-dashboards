@@ -31,7 +31,7 @@ const Stack = createStackNavigator();
 const queryClient = new QueryClient();
 
 const trpcUrl =
-  process.env["EXPO_PUBLIC_SERVER_URL"] ?? "http://localhost:3002/";
+  process.env["EXPO_PUBLIC_TRPC_URL"] ?? "http://localhost:3000/trpc";
 
 const AppNavigator = () => {
   const { user, isLoading, getCredentials } = useAuth0();
@@ -43,7 +43,7 @@ const AppNavigator = () => {
           async headers() {
             const creds = await getCredentials();
             return {
-              Authorization: `Bearer ${creds?.accessToken}`,
+              Authorization: `Bearer ${creds?.idToken}`,
               // TODO: Extract statecode from Auth0 token
               statecode: "US_NE",
             };

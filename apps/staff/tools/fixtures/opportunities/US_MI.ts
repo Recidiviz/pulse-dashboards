@@ -256,7 +256,7 @@ export const mockApiOpportunityConfigurationResponse = {
       denialReasons: [
         {
           key: "PROGRAMMING",
-          text: "The resident is currently participating in programming, e.g. START, that is not available at other facilities or housing units with a lower security level.",
+          text: "The resident is currently participating in programming, e.g. START, that is not available at a facility that houses residents with a lower security level.",
         },
         {
           key: "INVESTIGATION",
@@ -264,23 +264,19 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "ACCOMMODATION",
-          text: "There is a lack of accommodations that the resident requires for religious, medical or other reasons at other facilities or housing units with a lower security level.",
+          text: "There is a lack of accommodations that the resident requires for religious, medical or other reasons at other facilities with a lower security level.",
         },
         {
           key: "BED SPACE",
-          text: "There is a lack of bed space at the appropriate security level.",
-        },
-        {
-          key: "RESIDENT PREFERENCE",
-          text: "Resident prefers not to transfer to a different facility or housing unit.",
+          text: "There is a lack of bed space at other facilities with a lower security level.",
         },
         { key: "OTHER", text: "Other: Please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Custody Level Reduction",
+      displayName: "Custody Level Downgrade",
       dynamicEligibilityText:
-        "client[|s] may be eligible for custody level reduction",
+        "client[|s] may be eligible for custody level downgrade",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -318,12 +314,17 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
-      markSubmittedOptionsByTab: [{ tab: "Reduction Pending", texts: [] }],
+      markSubmittedOptionsByTab: [
+        {
+          tab: "Pending Review for Transfer",
+          texts: ["Education status", "Medical status", "Mental Health status"],
+        },
+      ],
       methodologyUrl: "tbd",
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: "Validated by data from COMS & OMNI",
+      omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "ResidentHousing"],
@@ -333,9 +334,9 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify residents who may be newly eligible for a custody level reduction because they have not had a Class I or II misconduct in over 6 months. ",
-      submittedTabTitle: "Reduction Pending",
-      supportsSubmitted: true,
+        "This alert helps staff identify residents who may be newly eligible for a custody level downgrade because they have not had a Class I or II misconduct in over 6 months. ",
+      submittedTabTitle: null,
+      supportsSubmitted: false,
       systemType: "INCARCERATION",
       tabGroups: null,
       tabPrefaceCopy: [],

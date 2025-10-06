@@ -17,6 +17,7 @@
 
 import nx from "@nx/eslint-plugin";
 import tailwind from "eslint-plugin-tailwindcss";
+import path from "path";
 
 import baseConfig from "../../../eslint.config.mjs";
 
@@ -25,9 +26,21 @@ export default [
   ...nx.configs["flat/react"],
   ...tailwind.configs["flat/recommended"],
   {
+    settings: {
+      tailwindcss: {
+        config: path.resolve(
+          process.cwd(),
+          "apps/@meetings/app/tailwind.config.js",
+        ),
+      },
+    },
+  },
+  {
     files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
     // Override or add rules here
-    rules: {},
+    rules: {
+      "tailwindcss/no-custom-classname": "off",
+    },
   },
   {
     ignores: [".expo", "web-build", "cache", "dist", "ios", "android"],

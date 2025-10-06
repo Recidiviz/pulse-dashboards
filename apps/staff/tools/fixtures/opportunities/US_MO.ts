@@ -48,10 +48,6 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "SOP",
           text: "Does not meet other, institution-specific criteria in standard operating procedures",
         },
-        {
-          key: "NOT INTERESTED",
-          text: "Resident is not interested in participating",
-        },
         { key: "OTHER", text: "Other: please specify a reason" },
       ],
       denialText: null,
@@ -419,10 +415,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "SOP",
           text: "Does not meet other, institution-specific criteria in standard operating procedures",
-        },
-        {
-          key: "NOT INTERESTED",
-          text: "Resident is not interested in participating",
         },
         { key: "OTHER", text: "Other: please specify a reason" },
       ],

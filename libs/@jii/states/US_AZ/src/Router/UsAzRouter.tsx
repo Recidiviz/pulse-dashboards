@@ -18,9 +18,7 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
-import { UsAzMoreInformation } from "~@jii/paths";
 
-import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
 import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
 
 export function UsAzRouter() {
@@ -28,10 +26,6 @@ export function UsAzRouter() {
     <Routes>
       <Route index element={<PageUsAzResidentHome />} />
       <Route path="*" element={<NotFound />} />
-      <Route
-        path={UsAzMoreInformation.DateInfo.path}
-        element={<PageMoreInfoImportantDates />}
-      />
     </Routes>
   );
 }

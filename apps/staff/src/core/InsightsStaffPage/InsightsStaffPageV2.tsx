@@ -30,9 +30,7 @@ import { Title } from "../InsightsPageLayout/InsightsPageLayout";
 import InsightsPill from "../InsightsPill";
 import {
   getLatestLoginDate,
-  hasNoLoginActivityInNumDays,
-  noLoginLabel,
-  noLoginTooltip
+  hasNoLoginActivityInLast30Days,
 } from "../InsightsStaffUsage/InsightsStaffUsageCard";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
 import ModelHydrator from "../ModelHydrator";
@@ -106,16 +104,14 @@ const ManagedComponent = observer(function StaffPage({
             <div style={{ marginRight: rem(spacing.sm) }}>
               {officerRecord?.displayName}
             </div>{" "}
-            {officerRecord &&
-              hasNoLoginActivityInNumDays(
-                officerRecord,
-                presenter.insightsNumDaysWithoutLogin,
-              ) && (
-                <InsightsPill
-                  label={noLoginLabel(presenter.insightsNumDaysWithoutLogin)}
-                  tooltipCopy={noLoginTooltip(presenter.insightsNumDaysWithoutLogin)}
-                />
-              )}
+            {officerRecord && hasNoLoginActivityInLast30Days(officerRecord) && (
+              <InsightsPill
+                label="No Login for 30 Days"
+                tooltipCopy={
+                  "It has been more than 30 days since the last login."
+                }
+              />
+            )}
           </Title>
         ) : (
           officerRecord?.displayName
@@ -149,9 +145,7 @@ const ManagedComponent = observer(function StaffPage({
       }
       highlightedOfficers={<ManagedStaffHighlightedOfficersBanner />}
     >
-      {!isCurrentOfficerUserRestrictedFromSupervisorsList && (
-        <InsightsStaffOutcomesSection />
-      )}
+      {!isCurrentOfficerUserRestrictedFromSupervisorsList && <InsightsStaffOutcomesSection />}
       <InsightsOpportunitySummary />
       <InsightsStaffVitals officerPseudoId={officerPseudoId} />
     </InsightsPageLayout>

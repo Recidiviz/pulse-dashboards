@@ -16,14 +16,18 @@
 // =============================================================================
 
 import ArrowDown from "./arrow-down.png";
+import ArrowLeft from "./arrow-left.png";
 import ArrowRight from "./arrow-right.png";
+import ArrowUp from "./arrow-up.png";
 import Bell from "./bell.png";
+import BgAvatar from "./bg-avatar.png";
 import Schedule from "./calendar.png";
+import Chat from "./chat.png";
 import Clients from "./clients.png";
 import Cross from "./cross.png";
 import Home from "./home.png";
 import Menu from "./menu.png";
-import Messages from "./messages.png";
+import Plus from "./plus.png";
 import Resources from "./resources.png";
 import Search from "./search.png";
 import Trends from "./trends.png";
@@ -33,7 +37,7 @@ const Icons = {
   Home,
   Trends,
   Clients,
-  Messages,
+  Chat,
   Schedule,
   Resources,
   ArrowDown,
@@ -41,6 +45,10 @@ const Icons = {
   Bell,
   Cross,
   Menu,
+  ArrowUp,
+  ArrowLeft,
+  Plus,
+  BgAvatar,
 };
 
 export default Icons;
