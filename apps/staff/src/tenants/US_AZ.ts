@@ -64,6 +64,7 @@ const US_AZ_CONFIG = {
   },
   incarcerationStaffTitleOverride: "COIII",
   releaseDateCopyOverride: "SED",
+  insightsNumDaysWithoutLogin: 14,
 } satisfies TenantConfig<"US_AZ">;
 
 export default US_AZ_CONFIG;

@@ -102,4 +102,9 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
     if (isExcludedSupervisionOfficer(this.fetchedOfficerRecord) || this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
     super.expectMetricsPopulated();
   }
+
+
+  get insightsNumDaysWithoutLogin(): number {
+    return this.supervisionStore.insightsStore.rootStore.tenantStore.insightsNumDaysWithoutLogin;
+  }
 }

@@ -51,8 +51,9 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     // Check if...
     return (
       // ...the user has allowed navigation to workflows and...
-      (// ...if the active feature variant for supervisorHomepageWorkflows is enabled.
-      userStore.getRoutePermission("workflowsSupervision") && !!userStore.activeFeatureVariants.supervisorHomepageWorkflows)
+      // ...if the active feature variant for supervisorHomepageWorkflows is enabled.
+      userStore.getRoutePermission("workflowsSupervision") &&
+      !!userStore.activeFeatureVariants.supervisorHomepageWorkflows
     );
   }
 
@@ -251,5 +252,10 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
 
   get hydrationState(): HydrationState {
     return this.hydrator.hydrationState;
+  }
+
+  get insightsNumDaysWithoutLogin(): number {
+    return this.supervisionStore.insightsStore.rootStore.tenantStore
+      .insightsNumDaysWithoutLogin;
   }
 }
