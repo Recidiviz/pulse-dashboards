@@ -72,6 +72,7 @@ resource "google_bigquery_data_transfer_config" "postgres_transfer_config" {
 resource "google_bigquery_data_transfer_config" "transfer_config" {
   for_each = var.postgresql.databases
 
+  service_account_name   = var.service_account_email
   display_name = "${var.dataset_name}_${each.key}_bigquery"
   location     = "US"
   schedule = "every day 9:30"
