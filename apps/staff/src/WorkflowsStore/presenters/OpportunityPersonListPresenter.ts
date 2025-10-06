@@ -148,15 +148,8 @@ export class OpportunityPersonListPresenter
       // TODO(#7921): More gracefully handle these special cases
       STATUS:
         this.opportunityType !== "usAzTransferToAdministrativeSupervision",
+      ELIGIBILITY_DATE: some(opportunities, (opp) => !!opp.eligibilityDate),
       // TODO(#7921): More gracefully handle these special cases
-      ELIGIBILITY_DATE:
-        ![
-          // The eligibility date is confusing for TX opportunities where policy changes
-          // mean that past eligibility dates are not always accurate
-          "usTxAnnualReportStatus",
-          "usTxEarlyReleaseFromSupervision",
-        ].includes(this.opportunityType) &&
-        some(opportunities, (opp) => !!opp.eligibilityDate),
       RELEASE_DATE:
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         ![
