@@ -39,12 +39,10 @@ const StepOne: React.FC<StepOneProps> = ({ onContinue, onGoBack }) => (
               support you as you transition back into the community.
             </p>
             <p>
-              To make this process as effective as possible, please provide
-              honest and complete answers. This information will help create a
-              personalized case plan to help you achieve stability quickly. If
-              you&rsquo;d prefer to skip this intake and answer questions with
-              your supervision officer in person, stop here and let your case
-              manager know.
+              Please provide honest and complete answers to make this process as effective as possible.
+              This program will then draft a personalized reentry action plan for you.
+              If you&rsquo;d prefer to skip this digital intake and answer questions with your case manager directly,
+              stop here and let your case manager know.
             </p>
           </div>
         </div>

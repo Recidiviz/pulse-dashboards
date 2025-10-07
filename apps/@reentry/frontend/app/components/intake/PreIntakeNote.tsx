@@ -23,6 +23,21 @@ interface PreIntakeNoteOneProps {
   onContinue: () => void;
 }
 
+const copyFirstParagraph = `
+This intake is designed to help your case manager and parole officer
+learn more about your reentry goals, plans, and needs. This helps
+them understand the best ways to support you as you transition back
+into the community.
+`;
+
+const copySecondParagraph = `
+Please provide honest and complete answers to make this process as
+effective as possible. This program will then draft a personalized
+reentry action plan for you. If you’d prefer to skip this digital
+intake and answer questions with your case manager directly,
+stop here and let your case manager know.
+`;
+
 const PreIntakeNoteOne: React.FC<PreIntakeNoteOneProps> = ({ onContinue }) => {
   const handleGoBack = () => {
     window.history.back();
@@ -41,19 +56,11 @@ const PreIntakeNoteOne: React.FC<PreIntakeNoteOneProps> = ({ onContinue }) => {
           <div className="flex-1 flex items-center justify-center">
             <div className="space-y-6 text-black text-center font-['Public_Sans'] text-[18px] leading-[1.2] tracking-[-0.02em] max-w-[520px] mx-auto">
               <p>
-                This intake chat will help the CCC staff and your parole officer
-                better understand what you need and what your goals are. Please
-                watch this short video to see how this process works and what
-                happens with the information you share.
+                {copyFirstParagraph}
               </p>
 
               <p>
-                To make this process as effective as possible, please provide
-                honest and complete answers. This information will help create a
-                personalized case plan to help you achieve stability quickly. If
-                you&apos;d prefer to skip this intake and answer questions with
-                your supervision officer in person, stop here and let your case
-                manager know.
+                {copySecondParagraph}
               </p>
             </div>
           </div>
@@ -235,10 +242,7 @@ const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
           <div className="flex-1 flex flex-col items-center justify-center space-y-8">
             <div className="text-black text-center font-['Public_Sans'] text-[18px] leading-[1.2] tracking-[-0.02em] max-w-[520px] mx-auto">
               <p>
-                This intake chat will help the CCC staff and your parole officer
-                better understand what you need and what your goals are. Please
-                watch this short video to see how this process works and what
-                happens with the information you share.
+                {copyFirstParagraph}
               </p>
             </div>
 
