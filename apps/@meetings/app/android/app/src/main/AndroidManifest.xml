@@ -36,7 +36,6 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="com.recidiviz.meetings.auth0" android:host="login-staging.recidiviz.org"/>
-        <data android:scheme="com.recidiviz.meetings.auth0" android:host="login-staging.recidiviz.org"/>
       </intent-filter>
     </activity>
   </application>
