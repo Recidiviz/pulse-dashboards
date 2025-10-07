@@ -74,7 +74,7 @@ describe("MethodologyPathways", () => {
         (pageId) => {
           const { getByRole } = render(<MethodologyPathways />);
           expect(
-            getByRole("link", { name: pageCopy[pageId].title }),
+            getByRole("menuitem", { name: pageCopy[pageId].title }),
           ).toBeInTheDocument();
         },
       );

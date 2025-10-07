@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateSpecificMetricCopy } from "../types";
+import { StateSpecificPageCopy } from "../types";
 
-const content: StateSpecificMetricCopy = {};
+const content: StateSpecificPageCopy = {};
 
 export default content;

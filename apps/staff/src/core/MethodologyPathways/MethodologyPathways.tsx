@@ -20,6 +20,8 @@ import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Container } from "reactstrap";
 
+import { Menubar } from "~design-system";
+
 import {
   PartiallyTypedRootStore,
   useRootStore,
@@ -73,37 +75,57 @@ const MethodologyPathways: React.FC = () => {
       : ["vitalsPercentMethodology", "vitalsOverTimeMethodology"];
 
   return (
-    <PageTemplate mobileNavigation={<MobileNavigation />}>
+    <PageTemplate
+      mobileNavigation={<MobileNavigation />}
+    >
       <div className="Methodology">
         <Container className="col-md-9 col-12">
-          <h1 className="Methodology__main-title">{Methodology.title}</h1>
-          <h2 className="Methodology__main-description">
-            {Methodology.description}
-          </h2>
-          <br />
-          {Methodology.descriptionSecondary && (
-            <h2 className="Methodology__main-description">
-              {Methodology.descriptionSecondary}
+          <section>
+            <h1
+              className="Methodology__main-title"
+            >
+              {Methodology.title}
+            </h1>
+            <h2
+              className="Methodology__main-description"
+              id="primary-description"
+            >
+              {Methodology.description}
             </h2>
-          )}
+            <br aria-hidden="true" />
+            {Methodology.descriptionSecondary && (
+              <h2
+                className="Methodology__main-description"
+                id="secondary-description"
+              >
+                {Methodology.descriptionSecondary}
+              </h2>
+            )}
+          </section>
+
           <div className=" Methodology__toc">
-            <h5 className="Methodology__toc--title">CONTENTS</h5>
-            <div className="d-flex flex-column">
-              {Object.keys(pageCopy).map((pageId) => {
-                const page = pageCopy[pageId];
-                if (!page?.title || !enabledPages.includes(pageId))
-                  return <div key={`link${page.title}`} />;
-                return (
-                  <a
-                    className="Methodology__toc--link"
-                    key={`link${page.title}`}
-                    href={`#${convertToSlug(page.title)}`}
-                  >
-                    {page.title}
-                  </a>
-                );
-              })}
-            </div>
+            <h5 className="Methodology__toc--title" aria-hidden="true">
+              CONTENTS
+            </h5>
+            <Menubar vertical ariaLabel="Methodology table of contents">
+              <div className="d-flex flex-column">
+                {Object.keys(pageCopy).map((pageId) => {
+                  const page = pageCopy[pageId];
+                  if (!page?.title || !enabledPages.includes(pageId))
+                    return <div key={`link${page.title}`} />;
+                  return (
+                    <a
+                      className="Methodology__toc--link"
+                      key={`link${page.title}`}
+                      href={`#${convertToSlug(page.title)}`}
+                      role="menuitem"
+                    >
+                      {page.title}
+                    </a>
+                  );
+                })}
+              </div>
+            </Menubar>
           </div>
           <div>
             {Object.keys(pageCopy).map((pageId) => {

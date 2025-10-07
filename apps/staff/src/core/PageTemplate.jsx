@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@ import "../assets/styles/index.scss";
 import "./PageTemplate.scss";
 
 import PropTypes from "prop-types";
-import React from "react";
 
 // Newer versions of Typescript infer the argument types too narrowly for this function;
 // previously they all were just typed as any
@@ -39,10 +38,7 @@ function PageTemplate({
     <div className="PageTemplate">
       {mobileNavigation}
       {leftPanel && <div className="PageTemplate__left-panel">{leftPanel}</div>}
-      <main
-        className="PageTemplate__body"
-        aria-label="Main chart and filter content"
-      >
+      <main className="PageTemplate__body">
         {filters}
         <div className="row gap-20 pos-r">
           <div className="PageTemplate__content">{children}</div>

@@ -15,8 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateSpecificMetricCopy } from "../types";
+import { ViewMethodology } from "../../models/types";
+import { getMetricCopy, getPageCopy } from "..";
 
-const content: StateSpecificMetricCopy = {};
-
-export default content;
+/**
+ * All methodology attribute blocks are in Markdown
+ */
+export const usNyMethodology: ViewMethodology = {
+  system: {
+    title: "Pathways",
+    description: `Pathways provides a real-time map of the corrections system and helps identify patterns of success and failure among specific cohorts of people.`,
+    get pageCopy() {
+      return getPageCopy("US_NY");
+    },
+    get metricCopy() {
+      return getMetricCopy("US_NY");
+    },
+  },
+};

@@ -23,16 +23,19 @@ import { ViewMethodology } from "../models/types";
 import { usIdMethodology } from "./methodology/usIdMethodology";
 import { usMoMethodology } from "./methodology/usMoMethodology";
 import { usNdMethodology } from "./methodology/usNdMethodology";
+import { usNyMethodology } from "./methodology/usNyMethodology";
 import { usTnMethodology } from "./methodology/usTnMethodology";
 import defaultMetricContent from "./metric/default";
 import IdMetricContent from "./metric/us_id";
 import MoMetricContent from "./metric/us_mo";
 import NdMetricContent from "./metric/us_nd";
+import NyMetricContent from "./metric/us_ny";
 import TnMetricContent from "./metric/us_tn";
 import defaultPageContent from "./page/default";
 import IdPageContent from "./page/us_id";
 import MoPageContent from "./page/us_mo";
 import NdPageContent from "./page/us_nd";
+import NyPageContent from "./page/us_ny";
 import TnPageContent from "./page/us_tn";
 import {
   MetricCopy,
@@ -48,6 +51,7 @@ export const pageContentOverrides: {
   US_TN: TnPageContent,
   US_ND: NdPageContent,
   US_MO: MoPageContent,
+  US_NY: NyPageContent,
 };
 
 export const metricContentOverrides: {
@@ -57,6 +61,7 @@ export const metricContentOverrides: {
   US_TN: TnMetricContent,
   US_ND: NdMetricContent,
   US_MO: MoMetricContent,
+  US_NY: NyMetricContent,
 };
 
 export const getPageCopy = (currentTenantId: TenantId): PageCopy => {
@@ -86,6 +91,8 @@ export const getMethodologyCopy = (
       return usMoMethodology;
     case pathwaysTenants.US_TN:
       return usTnMethodology;
+    case pathwaysTenants.US_NY:
+      return usNyMethodology;
     default:
       throw new Error(
         `methodology does not exist for state code ${currentTenantId}`,
