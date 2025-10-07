@@ -16,6 +16,18 @@ yarn nx build @reentry/frontend
 
 
 ### Backend
+0. Make sure you have the following libraries installed in your machine:
+
+For macOs:
+`
+brew install cairo pango glib gobject-introspection gdk-pixbuf
+`
+Ubuntu/Debian
+
+`
+sudo apt-get install -y libcairo2-dev libpango1.0-dev libglib2.0-dev gobject-introspection libgirepository1.0-dev libgdk-pixbuf2.0-dev
+`
+
 1. Go inside the `apps/@reentry/backend` folder, make a `.env` file. Get the content of the file from one of your teammates.
 
 ```bash

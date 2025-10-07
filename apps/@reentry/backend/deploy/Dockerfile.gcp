@@ -13,7 +13,18 @@ RUN apk add --no-cache \
     postgresql-dev \
     netcat-openbsd \
     curl \
-    redis
+    redis \
+    cairo \
+    cairo-dev \
+    pango \
+    pango-dev \
+    glib \
+    glib-dev \
+    gobject-introspection \
+    gobject-introspection-dev \
+    gdk-pixbuf \
+    gdk-pixbuf-dev
+
 
 RUN pip install redis
 
