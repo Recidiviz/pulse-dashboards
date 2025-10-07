@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Image from "next/image";
 import type { PathsWithMethod } from "openapi-typescript-helpers";
 import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import { InfoTooltip } from "~@reentry/frontend/components/base/InfoTooltip";
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components, paths } from "~@reentry/frontend/recidiviz-schema";
@@ -84,12 +84,9 @@ const RegeneratePlan = ({
         <div className="text-[#002321] text-sm font-medium leading-[16.80px]">
           Prompt to Regenerate Plan
         </div>
-        <Image
-          src="/images/info_icon.svg"
-          alt="info icon"
-          width={15}
-          height={15}
-          priority
+        <InfoTooltip
+          text="Update this plan by prompting AI to make edits."
+          position="top"
         />
       </div>
       <div

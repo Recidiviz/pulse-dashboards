@@ -19,24 +19,24 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const BackButton = () => {
-	const router = useRouter();
+  const router = useRouter();
 
-	return (
-		<button
-			type="button"
-			onClick={() => router.back()}
-			className="flex flex-row"
-		>
-			<Image
-				src="/images/ic_previous.svg"
-				alt="previous row"
-				width={15}
-				height={15}
-				priority
-			/>
-			Back
-		</button>
-	);
+  return (
+    <button
+      type="button"
+      onClick={() => router.push("/clients")}
+      className="flex flex-row"
+    >
+      <Image
+        src="/images/ic_previous.svg"
+        alt="previous row"
+        width={15}
+        height={15}
+        priority
+      />
+      Back
+    </button>
+  );
 };
 
 export default BackButton;

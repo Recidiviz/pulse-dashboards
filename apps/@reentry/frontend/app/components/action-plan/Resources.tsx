@@ -17,6 +17,7 @@
 
 import Image from "next/image";
 
+import { InfoTooltip } from "~@reentry/frontend/components/base/InfoTooltip";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 import ResourcesList from "./ResourcesList";
@@ -52,12 +53,9 @@ const Resources = ({
         <div className="text-[#002321] text-sm font-medium leading-[16.80px]">
           Resources
         </div>
-        <Image
-          src="/images/info_icon.svg"
-          alt="info icon"
-          width={15}
-          height={15}
-          priority
+        <InfoTooltip
+          text="Select a underlined resource in the action plan to review and swap in alternative options."
+          position="top"
         />
         <div className={"flex w-full items-end justify-end"}>
           <Image

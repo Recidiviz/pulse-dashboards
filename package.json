@@ -237,7 +237,7 @@
     "react-to-pdf": "^1.0.1",
     "react-to-print": "^3.0.2",
     "react-toastify": "^10.0.6",
-    "react-tooltip": "^5.28.0",
+    "react-tooltip": "^5.29.1",
     "react-use-clipboard": "^1.0.8",
     "react-use-measure": "^2.1.1",
     "react-virtualized": "^9.22.5",

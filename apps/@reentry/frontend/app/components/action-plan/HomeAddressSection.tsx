@@ -21,6 +21,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import {InfoTooltip} from "~@reentry/frontend/components/base/InfoTooltip";
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import {
@@ -190,13 +191,7 @@ const HomeAddressSection = ({
         <div className="text-[#002321] text-sm font-medium leading-[16.80px] whitespace-nowrap">
           Home Address
         </div>
-        <Image
-          src="/images/info_icon.svg"
-          alt="info icon"
-          width={15}
-          height={15}
-          priority
-        />
+        <InfoTooltip text="Current address used to find local resources." position="top" />
         <div className={"flex w-full items-end justify-end"}>
           <Image
             src={"/images/arrow_down.svg"}

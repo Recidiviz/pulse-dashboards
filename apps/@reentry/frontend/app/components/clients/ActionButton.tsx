@@ -36,6 +36,7 @@ interface DropdownProps {
   isOpen: boolean;
   onToggle: () => void;
   onRefetch: () => void;
+  dropdownRef: React.RefObject<HTMLDivElement> | null;
 }
 
 const ActionButton: React.FC<DropdownProps> = ({
@@ -43,6 +44,7 @@ const ActionButton: React.FC<DropdownProps> = ({
   isOpen,
   onToggle,
   onRefetch,
+  dropdownRef,
 }) => {
   const { getAccessToken } = useAuth();
 
@@ -105,7 +107,7 @@ const ActionButton: React.FC<DropdownProps> = ({
     };
   };
 
-  const buttonClasses = `flex justify-end items-end w-full focus:outline-none ${
+  const buttonClasses = `flex justify-end items-end w-full focus:outline-none hover:bg-gray-300 ${
     isOpen ? "bg-blue-100 rounded-md" : ""
   }`;
 
@@ -117,6 +119,7 @@ const ActionButton: React.FC<DropdownProps> = ({
         type="button"
         className={buttonClasses}
         onClick={onToggle}
+        data-dropdown-toggle="true"
       >
         <Image
           src="/images/action_button.svg"
@@ -144,6 +147,7 @@ const ActionButton: React.FC<DropdownProps> = ({
             {...getFloatingProps()}
           >
             <div
+              ref={dropdownRef}
               className="py-1"
               role="menu"
               aria-orientation="vertical"

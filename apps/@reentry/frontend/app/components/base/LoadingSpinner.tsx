@@ -18,57 +18,54 @@
 import { useEffect, useState } from "react";
 
 const LoadingSpinner = ({
-	message,
-	startTime,
-	regenerationInProgress,
-	regenerationMessage,
+  message,
+  startTime,
+  regenerationInProgress,
+  regenerationMessage,
 }: {
-	progress: number;
-	message: string;
-	startTime: number;
-	regenerationInProgress?: boolean;
-	regenerationMessage?: string;
+  progress: number;
+  message: string;
+  startTime: number;
+  regenerationInProgress?: boolean;
+  regenerationMessage?: string;
 }) => {
-	const [elapsedTime, setElapsedTime] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [elapsedTime, setElapsedTime] = useState(0);
 
-	useEffect(() => {
-		const startDate = new Date(startTime);
-		const interval = setInterval(() => {
-			const now = new Date();
-			const secondsElapsed = Math.floor(
-				(now.getTime() - startDate.getTime()) / 1000,
-			);
-			setElapsedTime(secondsElapsed);
-		}, 1000);
+  useEffect(() => {
+    const startDate = new Date(startTime);
+    const interval = setInterval(() => {
+      const now = new Date();
+      const secondsElapsed = Math.floor(
+        (now.getTime() - startDate.getTime()) / 1000,
+      );
+      setElapsedTime(secondsElapsed);
+    }, 1000);
 
-		return () => {
-			clearInterval(interval);
-		};
-	}, [startTime]);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [startTime]);
 
-	return (
-		<div className="flex flex-col items-center text-center space-y-4 w-full h-full justify-center">
-			<p
-				className={
-					"flex justify-center items-center mb-4 text-[#2b5469]/70 text-base"
-				}
-			>
-				{regenerationInProgress && regenerationMessage}
-			</p>
-			<div className="w-12 h-12 border-4 border-gray-400 border-t-transparent rounded-full animate-spin mb-4" />
-			<p
-				className={
-					"flex justify-center items-center mb-4 text-[#2b5469]/70 text-base"
-				}
-			>
-				<>
-					Started since {elapsedTime} seconds ago.
-					<br />
-					{message}
-				</>
-			</p>
-		</div>
-	);
+  return (
+    <div className="flex flex-col items-center text-center space-y-4 w-full h-full justify-center">
+      <p
+        className={
+          "flex justify-center items-center mb-4 text-[#2b5469]/70 text-base"
+        }
+      >
+        {regenerationInProgress && regenerationMessage}
+      </p>
+      <div className="w-12 h-12 border-4 border-gray-400 border-t-transparent rounded-full animate-spin mb-4" />
+      <p
+        className={
+          "flex justify-center items-center mb-4 text-[#2b5469]/70 text-base"
+        }
+      >
+        <>{message}</>
+      </p>
+    </div>
+  );
 };
 
 export default LoadingSpinner;

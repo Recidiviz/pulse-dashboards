@@ -24,7 +24,7 @@ import {
 } from "@mui/icons-material";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef,useState } from "react";
 import DataTable, {
   SortOrder,
   TableColumn,
@@ -126,6 +126,31 @@ const ClientsPage = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [activeRowId, setActiveRowId] = useState<string | null>(null);
+
+  // Ref to detect clicks outside dropdowm
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // useEffect to close the dropdown
+  useEffect(() => {
+    if (!openDropdownId) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const clickedToggleButton = (event.target as HTMLElement).closest('[data-dropdown-toggle]');
+
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&  !clickedToggleButton) {
+        setOpenDropdownId(null);
+        setActiveRowId(null);
+      }
+    };
+    if (openDropdownId) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    // Cleanup
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdownId]);
+
 
   const uniqueIntakeStatusOptions = [
     ["New", "new"],
@@ -370,7 +395,7 @@ const ClientsPage = () => {
     {
       name: "NAME",
       cell: (row: ClientResponse) => (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pointer-events-none">
           <div className="w-10 h-10 bg-white rounded-full text-center font-bold text-[14px] flex justify-center items-center text-white bg-[url('/images/profile.png')]">
             {formatInitials(row)}
           </div>
@@ -386,7 +411,7 @@ const ClientsPage = () => {
       name: "DOC ID",
       selector: (row: ClientResponse) => row.client?.external_client_id || "",
       cell: (row: ClientResponse) => (
-        <span className="text-[#002321] text-sm">
+        <span className="text-[#002321] text-sm pointer-events-none">
           {row.client?.external_client_id || "-"}
         </span>
       ),
@@ -396,7 +421,7 @@ const ClientsPage = () => {
       name: "INTAKE DATE",
       selector: (row: ClientResponse) => row.intake?.created_at || "",
       cell: (row: ClientResponse) => (
-        <span className="text-[#002321] text-sm">
+        <span className="text-[#002321] text-sm pointer-events-none">
           {row.intake?.updated_at ? formatDate(row.intake.updated_at) : "-"}
         </span>
       ),
@@ -405,7 +430,7 @@ const ClientsPage = () => {
     {
       name: "STATUS",
       cell: (row: ClientResponse) => (
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center pointer-events-none">
           <span className="text-[#002321] text-sm font-medium">
             {formatFrontendStatus(row.frontend_status)}
           </span>
@@ -417,6 +442,7 @@ const ClientsPage = () => {
       name: "",
       cell: (row: ClientResponse) => (
         <ActionButton
+          dropdownRef={dropdownRef}
           client={row}
           isOpen={openDropdownId === `dropdown-${row.client_pseudo_id}`}
           onToggle={() =>
@@ -485,9 +511,7 @@ const ClientsPage = () => {
           />
         )}
         onRowClicked={(row) => {
-          if (row.processing_status === "not_started") {
-            window.location.href = `/clients/intake/${row.client_pseudo_id}`;
-          }
+          router.push(`/clients/intake/${row.client_pseudo_id}`);
         }}
         pointerOnHover
       />
