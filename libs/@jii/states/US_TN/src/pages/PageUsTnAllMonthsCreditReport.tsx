@@ -15,26 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { usePageTitle } from "~@jii/common-ui";
 
-import { ResidentRecord } from "~datatypes";
+import { UsTnAllMonthsCreditReport } from "../components/UsTnAllMonthsCreditReport";
 
-import {
-  UsTnMonthlyReport,
-  UsTnMonthlyReports,
-} from "../../UsTnSingleResidentDataContext/context";
+export function PageUsTnAllMonthsCreditReport() {
+  usePageTitle("All months");
 
-export class UsTnMonthlyReportsPresenter {
-  constructor(
-    public readonly resident: ResidentRecord,
-    private readonly monthlyReports: UsTnMonthlyReports,
-  ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
-  }
-
-  get mostRecentReports(): UsTnMonthlyReport[] {
-    return Object.values(this.monthlyReports)
-      .sort((a, b) => (b.date > a.date ? 1 : -1))
-      .slice(0, 8);
-  }
+  return <UsTnAllMonthsCreditReport />;
 }

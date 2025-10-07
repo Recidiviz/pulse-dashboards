@@ -77,7 +77,7 @@ export function processMonthlyReports(
       monthlyReports[monthSlug] = {
         formattedMonth,
         monthSlug,
-        month: creditDate,
+        date: creditDate,
         behaviorCredits: 0,
         programCredits: 0,
         educationCredits: 0,
@@ -108,6 +108,7 @@ export function processMonthlyReports(
         monthlyReports[monthSlug].educationCredits += creditsEarned;
         break;
       case "60_DAY_TREATMENT":
+      case "DRUG_ALCOHOL":
         monthlyReports[monthSlug].treatmentCredits += creditsEarned;
         break;
       case "REMOVAL":

@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import React from "react";
+import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
@@ -29,79 +28,92 @@ import {
   HomepageSectionHeading,
 } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
-import { EGT, State } from "~@jii/paths";
+import { State } from "~@jii/paths";
+import { spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { prefixNumberWithSign } from "../../utils";
 import { useUsTnSingleResidentDataContext } from "../UsTnSingleResidentDataContext/context";
-import { UsTnSingleMonthCreditReportPresenter } from "./UsTnSingleMonthCreditReportPresenter";
+import { UsTnAllMonthCreditReportPresenter } from "./UsTnAllMonthCreditReportPresenter";
 
 const Heading = styled(HomepageSectionHeading)`
   padding-top: ${rem(spacing.lg)};
+`;
 
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+const StyledList = styled(ActivityList)`
+  margin-top: ${rem(spacing.xl)};
+`;
+
+const StyledRow = styled(ActivityRow)`
+  margin-bottom: ${rem(spacing.md)};
+  margin-top: ${rem(spacing.md)};
+  }
+`;
+
+const Year = styled.div`
+  font-weight: 600;
+  font-size: 1.25rem;
 `;
 
 function ManagedComponent({
   presenter,
 }: {
-  presenter: UsTnSingleMonthCreditReportPresenter;
+  presenter: UsTnAllMonthCreditReportPresenter;
 }) {
-  const { monthlyReport, totalMonthlyCredits, creditEntries, displayMonth } =
-    presenter;
+  const { groupedReportsByYear, orderedYears } = presenter;
 
   const { stateSlug, personPseudoId } = useTypedParams(
-    State.Resident.EGT.MonthlyReport,
+    State.Resident.EGT.AllMonths,
   );
 
-  if (!monthlyReport) {
-    return <div>Missing credit report for {presenter.monthSlug}</div>;
-  }
-
   return (
-    <div>
+    <section>
       <Link
         to={State.Resident.buildPath({ stateSlug, personPseudoId })}
-        style={{ textDecoration: "none" }}
+        style={{ textDecoration: "none", color: "inherit" }}
       >
         Home
       </Link>
-      <Heading>
-        <div>{displayMonth}</div>
-        <div>{prefixNumberWithSign(totalMonthlyCredits)} days</div>
-      </Heading>
-      <ActivityList>
-        {creditEntries.map(([creditType, creditDays]) => {
-          return (
-            <React.Fragment key={`${creditType}-${creditDays}`}>
+      <Heading>Monthly Sentence Credits</Heading>
+      {orderedYears.map((year) => (
+        <StyledList key={year}>
+          <StyledRow>
+            <Year>{year}</Year>
+            <div />
+          </StyledRow>
+          {groupedReportsByYear[year].map((report) => (
+            <Fragment key={report.monthSlug}>
               <ActivityRowDivider />
-              <ActivityRow>
-                <div>{creditType}</div>
-                <div>{prefixNumberWithSign(creditDays)} days</div>
-              </ActivityRow>
-            </React.Fragment>
-          );
-        })}
-      </ActivityList>
-    </div>
+
+              <Link
+                to={State.Resident.EGT.MonthlyReport.buildPath({
+                  stateSlug,
+                  personPseudoId,
+                  reportDate: report.monthSlug,
+                })}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <StyledRow>
+                  <div>{report.formattedMonth}</div>
+                  <div>{prefixNumberWithSign(report.totalCredits)} days</div>
+                </StyledRow>
+              </Link>
+            </Fragment>
+          ))}
+        </StyledList>
+      ))}
+    </section>
   );
 }
 
 function usePresenter() {
   const { resident } = useSingleResidentContext();
-  const { reportDate } = useTypedParams(EGT.MonthlyReport);
   const { monthlyReports } = useUsTnSingleResidentDataContext();
 
-  return new UsTnSingleMonthCreditReportPresenter(
-    resident,
-    reportDate,
-    monthlyReports[reportDate],
-  );
+  return new UsTnAllMonthCreditReportPresenter(resident, monthlyReports);
 }
 
-export const UsTnSingleMonthCreditReport = withPresenterManager({
+export const UsTnAllMonthsCreditReport = withPresenterManager({
   ManagedComponent,
   usePresenter,
   managerIsObserver: false,

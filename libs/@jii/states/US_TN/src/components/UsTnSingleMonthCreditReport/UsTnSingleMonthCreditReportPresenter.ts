@@ -44,6 +44,7 @@ export class UsTnSingleMonthCreditReportPresenter {
 
     if (!monthlyReport) return [];
 
+    // TODO: Change this to summarize by credit type, not by individual entry
     return monthlyReport.reports
       .filter((report) => report.creditType !== null)
       .map((report) => [

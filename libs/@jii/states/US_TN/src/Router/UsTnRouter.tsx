@@ -23,6 +23,7 @@ import { EGT, UsTnMoreInformation } from "~@jii/paths";
 import { UsTnSingleResidentDataContext } from "../components/UsTnSingleResidentDataContext/DataContext";
 import { PageMoreInfoCreditReports } from "../pages/PageMoreInfoCreditReports";
 import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
+import { PageUsTnAllMonthsCreditReport } from "../pages/PageUsTnAllMonthsCreditReport";
 import { PageUsTnMonthlyReport } from "../pages/PageUsTnMonthlyReport";
 import { PageUsTnResidentHome } from "../pages/PageUsTnResidentHome";
 
@@ -39,6 +40,10 @@ export function UsTnRouter() {
         <Route
           path={UsTnMoreInformation.Credits.path}
           element={<PageMoreInfoCreditReports />}
+        />
+        <Route
+          path={EGT.AllMonths.path}
+          element={<PageUsTnAllMonthsCreditReport />}
         />
         <Route
           path={EGT.MonthlyReport.path}

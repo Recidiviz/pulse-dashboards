@@ -23,7 +23,7 @@ import { UsTnCreditActivity, UsTnResidentMetadata } from "~datatypes";
 export type UsTnMonthlyReport = {
   formattedMonth: string;
   monthSlug: string;
-  month: Date;
+  date: Date;
   behaviorCredits: number;
   educationCredits: number;
   programCredits: number;

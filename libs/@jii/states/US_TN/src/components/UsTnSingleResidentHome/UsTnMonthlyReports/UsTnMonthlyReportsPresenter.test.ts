@@ -24,24 +24,24 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
   const resident = { stateCode: "US_TN" } as never as ResidentRecord;
 
   const partialMonthlyReports = {
-    "november-2023": { month: new Date("2023-11-01") },
-    "december-2023": { month: new Date("2023-12-01") },
-    "january-2024": { month: new Date("2023-12-01") },
-    "february-2024": { month: new Date("2024-02-01") },
+    "november-2023": { date: new Date("2023-11-01") },
+    "december-2023": { date: new Date("2023-12-01") },
+    "january-2024": { date: new Date("2023-12-01") },
+    "february-2024": { date: new Date("2024-02-01") },
   } as never as UsTnMonthlyReports;
 
   const monthlyReports = {
     ...partialMonthlyReports,
-    "march-2024": { month: new Date("2024-03-01") },
-    "april-2024": { month: new Date("2024-04-01") },
-    "may-2024": { month: new Date("2024-05-01") },
-    "june-2024": { month: new Date("2024-06-01") },
-    "july-2024": { month: new Date("2024-07-01") },
-    "august-2024": { month: new Date("2024-08-01") },
-    "september-2024": { month: new Date("2024-09-01") },
-    "october-2024": { month: new Date("2024-10-01") },
-    "november-2024": { month: new Date("2024-11-01") },
-    "december-2024": { month: new Date("2024-12-01") },
+    "march-2024": { date: new Date("2024-03-01") },
+    "april-2024": { date: new Date("2024-04-01") },
+    "may-2024": { date: new Date("2024-05-01") },
+    "june-2024": { date: new Date("2024-06-01") },
+    "july-2024": { date: new Date("2024-07-01") },
+    "august-2024": { date: new Date("2024-08-01") },
+    "september-2024": { date: new Date("2024-09-01") },
+    "october-2024": { date: new Date("2024-10-01") },
+    "november-2024": { date: new Date("2024-11-01") },
+    "december-2024": { date: new Date("2024-12-01") },
   } as never as UsTnMonthlyReports;
 
   describe("mostRecentReports", () => {
@@ -52,8 +52,8 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
       );
       const mostRecent = presenter.mostRecentReports;
       expect(mostRecent.length).toBe(8);
-      expect(mostRecent[0].month).toEqual(new Date("2024-12-01"));
-      expect(mostRecent[7].month).toEqual(new Date("2024-05-01"));
+      expect(mostRecent[0].date).toEqual(new Date("2024-12-01"));
+      expect(mostRecent[7].date).toEqual(new Date("2024-05-01"));
     });
 
     it("returns all months when there are 8 or fewer months", () => {
@@ -63,8 +63,8 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
       );
       const mostRecent = presenter.mostRecentReports;
       expect(mostRecent.length).toBe(4);
-      expect(mostRecent[0].month).toEqual(new Date("2024-02-01"));
-      expect(mostRecent[3].month).toEqual(new Date("2023-11-01"));
+      expect(mostRecent[0].date).toEqual(new Date("2024-02-01"));
+      expect(mostRecent[3].date).toEqual(new Date("2023-11-01"));
     });
   });
 });

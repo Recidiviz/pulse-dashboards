@@ -64,6 +64,7 @@ export const EGT = route(
   {
     Definition: route("definition/:pageSlug"),
     Intro: route("intro"),
+    AllMonths: route("report/all"),
     MonthlyReport: route("report/:reportDate"),
   },
 );

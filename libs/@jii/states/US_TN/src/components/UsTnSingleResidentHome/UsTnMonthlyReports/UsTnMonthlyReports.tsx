@@ -30,6 +30,7 @@ import {
 } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { Icon, palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { usTnCopy } from "../../../configs/copy";
@@ -54,6 +55,13 @@ const MonthlyReportSummaryCard = styled(Card)`
   align-items: center;
   margin: 0;
   height: 9.5rem;
+`;
+
+const LinkContainer = styled.div`
+  margin-top: ${rem(spacing.lg)};
+  margin-bottom: ${rem(spacing.lg)};
+  width: 100%;
+  text-align: center;
 `;
 
 const MonthlyReportSummary = ({ report }: { report: UsTnMonthlyReport }) => {
@@ -91,6 +99,14 @@ const ManagedComponent = observer(function UsTnMonthlyReports({
           <MonthlyReportSummary report={report} key={report.monthSlug} />
         ))}
       </MonthlyReportSummaryGridWrapper>
+      <LinkContainer>
+        <Link
+          to={State.Resident.$.EGT.AllMonths.buildRelativePath({})}
+          style={{ color: palette.pine4, textDecoration: "none" }}
+        >
+          See full list of reports <Icon kind="Arrow" size={12} />
+        </Link>
+      </LinkContainer>
       <GoButton
         to={State.Resident.$.UsTnMoreInformation.Credits.buildRelativePath({})}
       >

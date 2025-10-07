@@ -15,26 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { groupBy, mapValues } from "lodash";
 
 import { ResidentRecord } from "~datatypes";
 
 import {
   UsTnMonthlyReport,
   UsTnMonthlyReports,
-} from "../../UsTnSingleResidentDataContext/context";
+} from "../UsTnSingleResidentDataContext/context";
 
-export class UsTnMonthlyReportsPresenter {
+export class UsTnAllMonthCreditReportPresenter {
   constructor(
     public readonly resident: ResidentRecord,
-    private readonly monthlyReports: UsTnMonthlyReports,
-  ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
+    public readonly monthlyReports: UsTnMonthlyReports,
+  ) {}
+
+  get groupedReportsByYear(): Record<string, UsTnMonthlyReport[]> {
+    const reportsByYear = groupBy(this.monthlyReports, (report) =>
+      report.date.getFullYear(),
+    );
+
+    return mapValues(reportsByYear, (reports) =>
+      reports.sort((a, b) => b.date.getTime() - a.date.getTime()),
+    );
   }
 
-  get mostRecentReports(): UsTnMonthlyReport[] {
-    return Object.values(this.monthlyReports)
-      .sort((a, b) => (b.date > a.date ? 1 : -1))
-      .slice(0, 8);
+  get orderedYears(): string[] {
+    return Object.keys(this.groupedReportsByYear).sort().reverse();
   }
 }

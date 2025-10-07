@@ -74,7 +74,7 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
       expect(processedReports["december-2024"]).toEqual({
         formattedMonth: "December 2024",
         monthSlug: "december-2024",
-        month: new Date("2024-12-31"),
+        date: new Date("2024-12-31"),
         behaviorCredits: 5,
         programCredits: 10,
         educationCredits: 0,
@@ -87,7 +87,7 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
       expect(processedReports["november-2024"]).toEqual({
         formattedMonth: "November 2024",
         monthSlug: "november-2024",
-        month: new Date("2024-11-30"),
+        date: new Date("2024-11-30"),
         behaviorCredits: 0,
         programCredits: 0,
         educationCredits: 15,
@@ -100,7 +100,7 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
       expect(processedReports["october-2024"]).toEqual({
         formattedMonth: "October 2024",
         monthSlug: "october-2024",
-        month: new Date("2024-10-31"),
+        date: new Date("2024-10-31"),
         behaviorCredits: 3,
         programCredits: 0,
         educationCredits: 0,

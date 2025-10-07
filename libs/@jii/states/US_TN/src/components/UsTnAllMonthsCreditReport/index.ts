@@ -15,26 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
-
-import { ResidentRecord } from "~datatypes";
-
-import {
-  UsTnMonthlyReport,
-  UsTnMonthlyReports,
-} from "../../UsTnSingleResidentDataContext/context";
-
-export class UsTnMonthlyReportsPresenter {
-  constructor(
-    public readonly resident: ResidentRecord,
-    private readonly monthlyReports: UsTnMonthlyReports,
-  ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
-  }
-
-  get mostRecentReports(): UsTnMonthlyReport[] {
-    return Object.values(this.monthlyReports)
-      .sort((a, b) => (b.date > a.date ? 1 : -1))
-      .slice(0, 8);
-  }
-}
+export * from "./UsTnAllMonthCreditReport";
