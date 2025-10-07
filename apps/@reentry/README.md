@@ -101,18 +101,42 @@ yarn nx dev @reentry/frontend
 
 ## Testing
 
-Run the tests for the `backend`:
+Run tests against a dockerized Postgres test database.
 
-```
-uv run pytest
+1) Start the test database (runs on localhost:5433):
+
+```bash
+cd apps/@reentry
+docker compose up -d postgres-tests
 ```
 
-To run integration tests only use -m "integration" (skipped by default):
+2) Run backend tests, pointing pytest at the dockerized DB in one line:
 
+```bash
+cd apps/@reentry/backend
+RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run pytest
 ```
-uv run pytest -m "integration"
+
+To run integration tests only (skipped by default):
+
+```bash
+RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run pytest -m "integration"
 ```
-Other flags:
+
+Optional: apply Alembic migrations to the test database instead of relying on `create_all` in tests:
+
+```bash
+cd apps/@reentry/backend
+RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run alembic upgrade head
+```
+
+Sanity check the URL pytest will use:
+
+```bash
+uv run python -c "from app.core.config import settings; print(settings.DATABASE_URL_TESTS)"
+```
+
+Other useful flags:
 
 - `--no-cov`: Disables coverage reporting for faster test execution
 - `--log-cli-level=DEBUG`: Control log verbosity (DEBUG, INFO, WARNING, ERROR)

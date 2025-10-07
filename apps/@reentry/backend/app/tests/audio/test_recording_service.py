@@ -149,23 +149,23 @@ def test_group_chunks_by_start():
 
     expected_group1 = [
         "recordings/session/chunks/chunk_0000_start.webm",
-        "recordings/session/chunks/chunk_0001.webm",
-        "recordings/session/chunks/chunk_0002.webm",
-        "recordings/session/chunks/chunk_0003.webm",
     ]
     assert groups[0] == expected_group1
 
     expected_group2 = [
         "recordings/session/chunks/chunk_0004_start.webm",
-        "recordings/session/chunks/chunk_0005.webm",
-        "recordings/session/chunks/chunk_0006.webm",
-        "recordings/session/chunks/chunk_0007.webm",
-        "recordings/session/chunks/chunk_0008.webm",
+        "recordings/session/chunks/chunk_0001.webm",
+        "recordings/session/chunks/chunk_0003.webm",
+        "recordings/session/chunks/chunk_0002.webm",
     ]
     assert groups[1] == expected_group2
 
     expected_group3 = [
         "recordings/session/chunks/chunk_0009_start.webm",
+        "recordings/session/chunks/chunk_0005.webm",
+        "recordings/session/chunks/chunk_0006.webm",
+        "recordings/session/chunks/chunk_0007.webm",
+        "recordings/session/chunks/chunk_0008.webm",
         "recordings/session/chunks/chunk_0010.webm",
         "recordings/session/chunks/chunk_0011.webm",
     ]

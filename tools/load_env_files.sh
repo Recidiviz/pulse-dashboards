@@ -21,9 +21,9 @@ handle_options() {
           echo "File not specified." >&2
           exit 1
         fi
-        
+
         env_file=$(extract_argument $@)
-        
+
         shift
         ;;
       --env_staging)
@@ -31,9 +31,9 @@ handle_options() {
           echo "File not specified." >&2
           exit 1
         fi
-        
+
         env_staging_file=$(extract_argument $@)
-        
+
         shift
         ;;
       --env_prod)
@@ -41,9 +41,9 @@ handle_options() {
           echo "File not specified." >&2
           exit 1
         fi
-        
+
         env_prod_file=$(extract_argument $@)
-        
+
         shift
         ;;
       --env_test)
@@ -51,9 +51,9 @@ handle_options() {
           echo "File not specified." >&2
           exit 1
         fi
-        
+
         env_test_file=$(extract_argument $@)
-        
+
         shift
         ;;
       --env_demo)
@@ -61,9 +61,9 @@ handle_options() {
           echo "File not specified." >&2
           exit 1
         fi
-        
+
         env_demo_file=$(extract_argument $@)
-        
+
         shift
         ;;
       --env_preview)
@@ -71,9 +71,9 @@ handle_options() {
           echo "File not specified." >&2
           exit 1
         fi
-        
+
         env_preview_file=$(extract_argument $@)
-        
+
         shift
         ;;
       *)
@@ -83,6 +83,11 @@ handle_options() {
     esac
     shift
   done
+}
+
+# Returns 0 when running in GitHub Actions on a pull_request workflow
+is_github_actions_pr() {
+  [ "${GITHUB_ACTIONS:-false}" = "true" ] && [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ]
 }
 
 env_file=null
@@ -97,8 +102,25 @@ handle_options "$@"
 # Download env files
 echo "Downloading env files..."
 
-# Create the files if they don't exist already
-touch .env .env.staging .env.production .env.test .env.preview .env.demo
+# If running on GitHub Actions for a pull_request, do not download secrets
+if is_github_actions_pr; then
+  echo "GitHub Actions pull_request detected; skipping secret download and creating placeholder env files."
+  touch .env .env.staging .env.production .env.test .env.preview .env.demo
+  exit 0
+fi
+
+# Require gcloud locally or in non-PR CI runs
+if ! command -v gcloud >/dev/null 2>&1; then
+  echo "ERROR: gcloud not found. Install and authenticate gcloud, or run in GitHub Actions PR to auto-skip." >&2
+  exit 1
+fi
+
+# Ensure an active gcloud account is configured
+active_account=$(gcloud auth list --format="value(account)" --filter="status:ACTIVE" 2>/dev/null || true)
+if [ -z "$active_account" ]; then
+  echo "ERROR: No active gcloud account. Run 'gcloud auth login' or configure CI auth." >&2
+  exit 1
+fi
 
 if [ "$env_file" != null ]; then
   env=$(gcloud secrets versions access latest --secret=$env_file --project recidiviz-dashboard-staging)

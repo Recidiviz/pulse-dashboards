@@ -1,3 +1,4 @@
+import logging
 import pickle
 import time
 from datetime import datetime, timezone
@@ -227,6 +228,8 @@ def validate_token(token: str, auth0_config: Auth0Config):
 
     except jwt.ExpiredSignatureError as e:
         logger.exception(f"Expired token: {e}.")
+        # Mirror to stdlib logging for tests that patch logging directly
+        logging.exception(f"Expired token: {e}.")
 
         # Get token info for logging.
         try:
@@ -249,6 +252,9 @@ def validate_token(token: str, auth0_config: Auth0Config):
             logger.exception(
                 "Could not extract expiration info from expired token for logging"
             )
+            logging.exception(
+                "Could not extract expiration info from expired token for logging"
+            )
 
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -267,8 +273,12 @@ def validate_token(token: str, auth0_config: Auth0Config):
         )
     except Exception as e:
         logger.exception(f"Unexpected error validating token: {e}. ")
+        logging.exception(f"Unexpected error validating token: {e}. ")
         token_preview = f"{token[:8]}..." if len(token) > 8 else token
         logger.exception(
+            f"Token info. token_len: {len(token)}, token_preview: {token_preview}",
+        )
+        logging.exception(
             f"Token info. token_len: {len(token)}, token_preview: {token_preview}",
         )
         raise HTTPException(
