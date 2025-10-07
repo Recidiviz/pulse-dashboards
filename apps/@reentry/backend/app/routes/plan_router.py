@@ -2,7 +2,7 @@ import copy
 import uuid
 from datetime import datetime
 from io import BytesIO
-from typing import Optional
+from typing import List, Optional
 
 import orjson
 from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
@@ -10,6 +10,7 @@ from fastapi.responses import StreamingResponse
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
 from pydantic import BaseModel, computed_field
+from weasyprint import CSS, HTML
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
@@ -749,3 +750,49 @@ async def router_set_generation_notify(
     await session.commit()
 
     return Response(status_code=200)
+
+
+class PDFRequest(BaseModel):
+    html: str
+    css: Optional[List[str]] = []
+    options: Optional[dict] = {}
+
+
+@router.post("/generate-pdf")
+async def generate_pdf(request: PDFRequest):
+    """Generate PDF from HTML using WeasyPrint"""
+    try:
+        # Create HTML document
+        html_doc = HTML(string=request.html)
+
+        # Process CSS content from frontend (now includes PDF-specific CSS)
+        css_objects = []
+
+        for css_content in request.css:
+            try:
+                if isinstance(css_content, str) and css_content.strip():
+                    # All CSS from frontend should now be content strings
+                    css_objects.append(CSS(string=css_content))
+            except Exception as e:
+                # Skip any CSS that fails to load
+                print(f"Warning: Failed to load CSS content: {str(e)}")
+                continue
+
+        # Default PDF options
+        pdf_options = {
+            "presentational_hints": True,
+            "optimize_images": True,
+            "pdf_version": "1.7",
+        }
+        pdf_options.update(request.options)
+
+        # Generate PDF
+        pdf_bytes = html_doc.write_pdf(stylesheets=css_objects, **pdf_options)
+
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={"Content-Disposition": "attachment; filename=document.pdf"},
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")

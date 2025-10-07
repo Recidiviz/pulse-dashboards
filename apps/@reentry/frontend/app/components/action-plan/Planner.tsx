@@ -26,6 +26,10 @@ import ActionPlanViewer from "~@reentry/frontend/components/ActionPlanViewer";
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import {
+  extractCompleteCSS,
+  generatePDF,
+} from "~@reentry/frontend/utils/pdfGenerator";
+import {
   showErrorToast,
   showSuccessToast,
 } from "~@reentry/frontend/utils/toast";
@@ -58,6 +62,8 @@ const Planner = ({
   const [showLastPrompt, setShowLastPrompt] = useState(
     showRegenerationNotify && !!planPrompt,
   );
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [viewerKey, setViewerKey] = useState(0);
 
   const contentRef = useRef<HTMLDivElement | null>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
@@ -75,7 +81,7 @@ const Planner = ({
     "/plans/{id}/set-notify",
   );
 
-  const postprocessMarkdown = (markdown) => {
+  const postprocessMarkdown = (markdown: string) => {
     // Replace <readonlylink href="https://somewhere.com">some text</readonlylink> with a markdown link [https://somewhere.com](https://somewhere.com)
     return markdown.replaceAll(
       /<readonlylink\s+[^>]*href=(["'])([^"']+)\1[^>]*>([\s\S]*?)<\/readonlylink>/gi,
@@ -115,47 +121,80 @@ const Planner = ({
     setUpdate(false);
   };
 
-  const handleDownload = async () => {
+  function convertButtonsToSpansPreserveText(
+    containerElement: HTMLElement | Document = document,
+  ): string[] {
+    const customLinkButtons =
+      containerElement.querySelectorAll("button.custom-link");
+    const customLinkButtonsHtmlContent: string[] = [];
+    customLinkButtons.forEach((button) => {
+      customLinkButtonsHtmlContent.push(button.innerHTML);
+      const originalText = button.textContent;
+
+      const span = document.createElement("span");
+
+      for (const attr of button.attributes) {
+        span.setAttribute(attr.name, attr.value);
+      }
+
+      span.textContent = originalText;
+
+      if (button.parentNode) {
+        button.parentNode.replaceChild(span, button);
+      }
+    });
+
+    return customLinkButtonsHtmlContent;
+  }
+
+  const handleDownload = async (): Promise<void> => {
+    setIsDownloading(true);
+    const accessToken = getAccessToken();
     const element = document.getElementById("contentToDownload");
-    if (!element) return;
-
-    // get the element to change the style provisionally while generating the PDF
-    const elementsToHide = [
-      ...document.querySelectorAll(".notes"),
-      ...document.querySelectorAll(".annotations"),
-      ...document.querySelectorAll("img"),
-    ];
-    const annotationsLinks = document.querySelectorAll(".custom-link");
-
-    // tried to use forEach but biome checker was very annoying about it, and deactivating the rule didn't work
-    for (const element of elementsToHide) {
-      element.setAttribute("style", "display: none !important");
+    if (!element) {
+      setIsDownloading(false);
+      return;
     }
-    for (const annotationLink of annotationsLinks) {
-      annotationLink.setAttribute("style", "border-bottom: none !important");
+    if (!accessToken) {
+      setIsDownloading(false);
+      return;
     }
+    convertButtonsToSpansPreserveText(element);
+    const extractedCSSResult = extractCompleteCSS(element, {
+      includeChildren: true,
+      includeMediaQueries: true,
+      includeAnimations: true,
+    });
+    const pdfCSS = `
+      ${extractedCSSResult.combined}
+      @media print {
+      .markdown_annotations__PyRaq, .markdown_notes__84h8O { display: none; }
+      .markdown_markdown__MnjCI > * { break-inside: avoid !important; }
+      .markdown_markdown__MnjCI button { border-bottom: none !important; }
+      .markdown_markdown__MnjCI img { display: none; }
+      }
+    `;
 
-    const { default: html2pdf } = await import("html2pdf.js");
-
-    const options = {
-      margin: [10, 10, 10, 10],
-      filename: `${clientFullName}-action-plan.pdf`,
+    const actionPlan = {
+      html: element.innerHTML,
+      css: [pdfCSS],
+      options: {} as Record<string, never>,
     };
+    const fileName = `${clientFullName}_action_plan.pdf`;
+    await generatePDF(
+      actionPlan,
+      fileName,
+      accessToken,
+      () => {
+        showSuccessToast("PDF downloaded successfully");
+        setViewerKey((prev) => prev + 1);
+      },
+      (error) => {
+        showErrorToast(error);
+      },
+    );
 
-    html2pdf()
-      .from(element)
-      .set(options)
-      .save()
-      .then(() => {
-        // remove the provisional styles
-        for (const element of elementsToHide) {
-          element.removeAttribute("style");
-        }
-        for (const annotationLink of annotationsLinks) {
-          annotationLink.removeAttribute("style");
-        }
-      })
-      .catch((err) => console.error(err));
+    setIsDownloading(false);
   };
 
   useEffect(() => {
@@ -211,7 +250,11 @@ const Planner = ({
                   onClick={() => setUpdate(!update)}
                 />
                 <PrimaryButton buttonText="Print" onClick={reactToPrintFn} />
-                <PrimaryButton buttonText="Download" onClick={handleDownload} />
+                <PrimaryButton
+                  buttonText={isDownloading ? "Downloading..." : "Download"}
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                />
               </>
             )}
           </div>
@@ -235,6 +278,7 @@ const Planner = ({
               </div>
             </div>
             <ActionPlanViewer
+              key={viewerKey}
               markDownPlan={markDownPlan}
               update={update}
               internalMarkdown={internalMarkdown}

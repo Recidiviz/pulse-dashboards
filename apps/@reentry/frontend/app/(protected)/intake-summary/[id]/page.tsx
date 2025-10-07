@@ -19,22 +19,45 @@
 
 import Markdown from "markdown-to-jsx";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
 
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth";
+import { extractCompleteCSS, generatePDF } from "~@reentry/frontend/utils/pdfGenerator";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "~@reentry/frontend/utils/toast";
 
 import styles from "./markdown.module.css";
 
 const IntakeSummaryPage = () => {
   const { id } = useParams();
+  const { getAccessToken } = useAuth();
   const { isPolling, progress, startPolling } = useExecutionPolling({
     interval: 4000,
   });
   const router = useRouter();
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const reactToPrintFn = useReactToPrint({
+    contentRef,
+    pageStyle: `
+      @page {
+        margin: 20mm;
+      }
+      @media print {
+        body {
+          padding: 20px;
+        }
+      }
+    `
+  });
 
   const {
     data: dataPlan,
@@ -95,6 +118,74 @@ const IntakeSummaryPage = () => {
     }
   }, [isPolling, progress, refetchPlan]);
 
+  function convertButtonsToSpansPreserveText(containerElement: HTMLElement | Document = document): string[] {
+    const customLinkButtons = containerElement.querySelectorAll('button.custom-link');
+    const customLinkButtonsHtmlContent: string[] = [];
+    customLinkButtons.forEach((button) => {
+      customLinkButtonsHtmlContent.push(button.innerHTML);
+      const originalText = button.textContent;
+      const span = document.createElement('span');
+      for (const attr of button.attributes) {
+        span.setAttribute(attr.name, attr.value);
+      }
+      span.textContent = originalText;
+      if (button.parentNode) {
+        button.parentNode.replaceChild(span, button);
+      }
+    });
+
+    return customLinkButtonsHtmlContent;
+  }
+
+  const handleDownload = async (): Promise<void> => {
+    setIsDownloading(true);
+    const accessToken = getAccessToken();
+    const element = document.getElementById("contentToDownload");
+    if (!element) {
+      setIsDownloading(false);
+      return;
+    }
+    if(!accessToken) {
+      setIsDownloading(false);
+      return;
+    }
+    convertButtonsToSpansPreserveText(element);
+    const extractedCSSResult = extractCompleteCSS(element, {
+      includeChildren: true,
+      includeMediaQueries: true,
+      includeAnimations: true
+    });
+    const pdfCSS = `
+      ${extractedCSSResult.combined}
+      @media print {
+      .markdown_annotations__PyRaq, .markdown_notes__84h8O { display: none; }
+      .markdown_markdown__MnjCI > * { break-inside: avoid !important; }
+      .markdown_markdown__MnjCI button { border-bottom: none !important; }
+      .markdown_markdown__MnjCI img { display: none; }
+      }
+    `;
+
+    const intakeSummaryData = {
+      html: element.innerHTML,
+      css: [pdfCSS],
+      options: {} as Record<string, never>,
+    }
+    const fileName = `${clientFullName}_intake_summary.pdf`;
+    await generatePDF(
+      intakeSummaryData,
+      fileName,
+      accessToken,
+      () => {
+        showSuccessToast("PDF downloaded successfully");
+      },
+      (error) => {
+        showErrorToast(error);
+      }
+    );
+
+    setIsDownloading(false);
+  };
+
   return (
     <div className={"bg-white w-full screen:h-[calc(100vh-65px)]"}>
       <div className="w-[25%] h-auto self-stretch bg-white  flex-col justify-start items-center gap-2 inline-flex print:hidden">
@@ -109,6 +200,12 @@ const IntakeSummaryPage = () => {
               <PrimaryButton
                 buttonText="View Action Plan"
                 onClick={() => router.push(`/action-plan/${id}`)}
+              />
+              <PrimaryButton buttonText="Print" onClick={reactToPrintFn} />
+              <PrimaryButton
+                buttonText={isDownloading ? "Downloading..." : "Download"}
+                onClick={handleDownload}
+                disabled={isDownloading}
               />
             </div>
             <div className="w-full h-full justify-start items-start inline-flex">
@@ -127,7 +224,11 @@ const IntakeSummaryPage = () => {
                 </div>
               )}
               {intakeSummary && (
-                <div>
+                <div
+                  ref={contentRef}
+                  id={"contentToDownload"}
+                  className="max-w-[800px]"
+                >
                   <div className="w-full flex-col justify-start items-center gap-3 flex">
                     <div className="w-full text-[#2a5469]/90 text-sm font-medium leading-[16.80px]">
                       Intake Summary

@@ -53,6 +53,7 @@ dependencies = [
     "moviepy>=1.0.3",
     "imageio-ffmpeg>=0.4.8",
     "google-cloud-speech>=2.33.0",
+    "weasyprint>=66.0",
 ]
 
 [tool.ruff]
