@@ -23,7 +23,12 @@ RUN apk add --no-cache \
     gobject-introspection \
     gobject-introspection-dev \
     gdk-pixbuf \
-    gdk-pixbuf-dev
+    gdk-pixbuf-dev \
+    fontconfig \
+    ttf-liberation \
+    ttf-dejavu \
+    font-noto \
+    && fc-cache -f
 
 
 RUN pip install redis
