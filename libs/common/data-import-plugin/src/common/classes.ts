@@ -141,6 +141,9 @@ export abstract class ImportHandlerBase<T, M> {
       );
     }
 
+    // @ts-expect-error the type in the import helper class is a generic, since the PrismaClient is dependent on the product
+    await prismaClient.$disconnect();
+
     // If there were any errors, throw an error with all of the error messages.
     if (errors.length > 0) {
       throw new Error(errors.join("\n"));
