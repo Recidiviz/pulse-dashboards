@@ -25,6 +25,7 @@ import {
   ActivityList,
   ActivityRow,
   ActivityRowDivider,
+  HistoryBackButton,
   HomepageSectionHeading,
 } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
@@ -68,12 +69,7 @@ function ManagedComponent({
 
   return (
     <section>
-      <Link
-        to={State.Resident.buildPath({ stateSlug, personPseudoId })}
-        style={{ textDecoration: "none", color: "inherit" }}
-      >
-        Home
-      </Link>
+      <HistoryBackButton />
       <Heading>Monthly Sentence Credits</Heading>
       {orderedYears.map((year) => (
         <StyledList key={year}>

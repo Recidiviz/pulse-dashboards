@@ -18,7 +18,6 @@
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
-import { Link } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
@@ -26,10 +25,11 @@ import {
   ActivityList,
   ActivityRow,
   ActivityRowDivider,
+  HistoryBackButton,
   HomepageSectionHeading,
 } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
-import { EGT, State } from "~@jii/paths";
+import { EGT } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
 import { prefixNumberWithSign } from "../../utils";
@@ -44,6 +44,27 @@ const Heading = styled(HomepageSectionHeading)`
   justify-content: space-between;
 `;
 
+function CreditList({ creditEntries }: { creditEntries: [string, number][] }) {
+  if (creditEntries.length === 0) {
+    return <div>No credits currently on record for this month.</div>;
+  }
+
+  return (
+    <ActivityList>
+      {creditEntries.map(([creditType, creditDays]) => {
+        return (
+          <React.Fragment key={`${creditType}-${creditDays}`}>
+            <ActivityRowDivider />
+            <ActivityRow>
+              <div>{creditType}</div>
+              <div>{prefixNumberWithSign(creditDays)} days</div>
+            </ActivityRow>
+          </React.Fragment>
+        );
+      })}
+    </ActivityList>
+  );
+}
 function ManagedComponent({
   presenter,
 }: {
@@ -52,39 +73,18 @@ function ManagedComponent({
   const { monthlyReport, totalMonthlyCredits, creditEntries, displayMonth } =
     presenter;
 
-  const { stateSlug, personPseudoId } = useTypedParams(
-    State.Resident.EGT.MonthlyReport,
-  );
-
   if (!monthlyReport) {
     return <div>Missing credit report for {presenter.monthSlug}</div>;
   }
 
   return (
     <div>
-      <Link
-        to={State.Resident.buildPath({ stateSlug, personPseudoId })}
-        style={{ textDecoration: "none" }}
-      >
-        Home
-      </Link>
+      <HistoryBackButton />
       <Heading>
         <div>{displayMonth}</div>
         <div>{prefixNumberWithSign(totalMonthlyCredits)} days</div>
       </Heading>
-      <ActivityList>
-        {creditEntries.map(([creditType, creditDays]) => {
-          return (
-            <React.Fragment key={`${creditType}-${creditDays}`}>
-              <ActivityRowDivider />
-              <ActivityRow>
-                <div>{creditType}</div>
-                <div>{prefixNumberWithSign(creditDays)} days</div>
-              </ActivityRow>
-            </React.Fragment>
-          );
-        })}
-      </ActivityList>
+      <CreditList creditEntries={creditEntries} />
     </div>
   );
 }

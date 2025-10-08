@@ -1,0 +1,36 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { FullWidthBanner } from "~@jii/common-ui";
+import { formatFullDate, useSingleResidentContext } from "~@jii/data";
+
+export function LastUpdatedBanner() {
+  const {
+    resident: { metadata },
+  } = useSingleResidentContext();
+
+  if (metadata.stateCode !== "US_TN") return null;
+
+  const updatedAt = formatFullDate(metadata.fileUpdateDate);
+
+  return (
+    <FullWidthBanner>
+      This information was last updated on {updatedAt}. Most monthly updates
+      will appear here by the 13th.
+    </FullWidthBanner>
+  );
+}

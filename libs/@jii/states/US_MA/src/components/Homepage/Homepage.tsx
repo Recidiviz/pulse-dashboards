@@ -15,44 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import styled from "styled-components/macro";
 
-import {
-  FullBleedContainer,
-  HeaderPortal,
-  PageContainer,
-  usePageTitle,
-} from "~@jii/common-ui";
+import { FullWidthBanner, usePageTitle } from "~@jii/common-ui";
 import { useUsMaTranslations } from "~@jii/translation";
-import { palette } from "~design-system";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
 import { useEGTDataContext } from "../EGTDataContext/context";
 import { SkeletonThemeProvider } from "../SkeletonThemeProvider";
 import { ActivityChart, ActivityChartSkeleton } from "./ActivityChart";
 import { DatesSection } from "./DatesSection";
-import { DatesSectionSkeleton } from "./DatesSection/DatesSectionSkeleton";
+import { DatesSectionSkeleton } from "./DatesSection";
 import { EmptyState } from "./EmptyState";
 import { MonthlyReportHomepageCard } from "./MonthlyReport/MonthlyReportHomepageCard";
 import { MonthlyReportHomepageCardSkeleton } from "./MonthlyReport/MonthlyReportHomepageCardSkeleton";
 import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
 import { TotalTimeEarnedSectionSkeleton } from "./TotalTimeEarnedSection/TotalTimeEarnedSectionSkeleton";
-
-const LastUpdatedBanner = styled(FullBleedContainer)`
-  ${typography.Sans14}
-
-  background: ${palette.marble2};
-  color: ${palette.slate85};
-  text-align: center;
-
-  ${PageContainer} {
-    padding-bottom: ${rem(spacing.md)};
-    padding-top: ${rem(spacing.md)};
-  }
-`;
 
 export const Homepage = observer(function Homepage() {
   const { data } = useEGTDataContext();
@@ -62,11 +40,7 @@ export const Homepage = observer(function Homepage() {
 
   return (
     <div>
-      <HeaderPortal>
-        <LastUpdatedBanner>
-          <PageContainer>{t(($) => $.lastUpdated, data)}</PageContainer>
-        </LastUpdatedBanner>
-      </HeaderPortal>
+      <FullWidthBanner>{t(($) => $.lastUpdated, data)}</FullWidthBanner>
       {data.isEgtDisabled ? (
         <>
           <EmptyState />

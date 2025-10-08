@@ -20,6 +20,7 @@ import { Route, Routes } from "react-router-dom";
 import { NotFound } from "~@jii/common-ui";
 import { EGT, UsTnMoreInformation } from "~@jii/paths";
 
+import { LastUpdatedBanner } from "../components/LastUpdatedBanner";
 import { UsTnSingleResidentDataContext } from "../components/UsTnSingleResidentDataContext/DataContext";
 import { PageMoreInfoCreditReports } from "../pages/PageMoreInfoCreditReports";
 import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
@@ -30,6 +31,7 @@ import { PageUsTnResidentHome } from "../pages/PageUsTnResidentHome";
 export function UsTnRouter() {
   return (
     <UsTnSingleResidentDataContext>
+      <LastUpdatedBanner />
       <Routes>
         <Route index element={<PageUsTnResidentHome />} />
         <Route path="*" element={<NotFound />} />

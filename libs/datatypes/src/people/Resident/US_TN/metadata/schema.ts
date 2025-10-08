@@ -44,6 +44,7 @@ export const usTnResidentMetadataSchema = z.object({
   releaseEligibilityDate: dateStringSchema.nullable(),
   sentenceEffectiveDate: dateStringSchema.nullable(),
   creditActivity: z.array(usTnJiiCreditsSchema),
+  fileUpdateDate: dateStringSchema,
 });
 
 export type UsTnResidentMetadata = z.output<typeof usTnResidentMetadataSchema>;

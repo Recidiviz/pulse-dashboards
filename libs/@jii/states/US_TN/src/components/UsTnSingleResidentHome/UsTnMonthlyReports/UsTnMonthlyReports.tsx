@@ -55,6 +55,7 @@ const MonthlyReportSummaryCard = styled(Card)`
   align-items: center;
   margin: 0;
   height: 9.5rem;
+  text-align: center;
 `;
 
 const LinkContainer = styled.div`

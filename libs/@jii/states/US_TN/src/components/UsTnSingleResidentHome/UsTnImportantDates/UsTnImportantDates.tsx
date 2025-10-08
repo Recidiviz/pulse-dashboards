@@ -103,9 +103,9 @@ const ExpirationDateReduction = ({
         <BulletTimeline
           items={[
             {
-              label: "Original EXP date",
+              label: "Full Expiration Date",
               value: hydrateTemplate(
-                "{{formatFullDateOptional expirationDateOriginal 'No original EXP date on record'}}",
+                "{{formatFullDateOptional expirationDateOriginal 'No original FXP date on record'}}",
                 metadata,
               ),
             },
@@ -114,9 +114,9 @@ const ExpirationDateReduction = ({
               value: `-${expirationDateReduction}`,
             },
             {
-              label: "Adjusted EXP date",
+              label: "Adjusted FXP date",
               value: hydrateTemplate(
-                "{{formatFullDateOptional expirationDate 'No updated EXP date on record'}}",
+                "{{formatFullDateOptional expirationDate 'No updated FXP date on record'}}",
                 metadata,
               ),
             },
