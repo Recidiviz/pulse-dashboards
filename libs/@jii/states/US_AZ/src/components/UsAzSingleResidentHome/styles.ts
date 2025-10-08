@@ -15,23 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { rem } from "polished";
+import styled from "styled-components/macro";
 
-import { NotFound } from "~@jii/common-ui";
-import { UsAzMoreInformation } from "~@jii/paths";
+import { Card } from "~@jii/common-ui";
+import { palette, spacing } from "~design-system";
 
-import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
-import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
+export const StyledCard = styled(Card)``;
 
-export function UsAzRouter() {
-  return (
-    <Routes>
-      <Route index element={<PageUsAzResidentHome />} />
-      <Route path="*" element={<NotFound />} />
-      <Route
-        path={UsAzMoreInformation.DateInfo.path}
-        element={<PageMoreInfoImportantDates />}
-      />
-    </Routes>
-  );
-}
+export const HighlightedCard = styled(StyledCard)`
+  border-top: 8px solid ${palette.pine3};
+`;
+
+export const DateInfoContent = styled.div`
+  margin-top: ${rem(spacing.xxl)};
+`;
+
+export const LearnMoreLinkWrapper = styled.div`
+  margin-top: ${rem(spacing.md)};
+`;

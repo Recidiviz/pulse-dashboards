@@ -75,6 +75,14 @@ export const UsTnMoreInformation = route(
   { ImportantDates: route("dates"), Credits: route("credits") },
 );
 
+export const UsAzMoreInformation = route(
+  "more-information",
+  {},
+  {
+    DateInfo: route("date/:dateType"),
+  },
+);
+
 export const State = route(":stateSlug", types(ReturnToPathFragment), {
   Resident: route(
     ":personPseudoId",
@@ -84,6 +92,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       Progress,
       EGT,
       UsTnMoreInformation,
+      UsAzMoreInformation,
     },
   ),
   Search: route("search"),

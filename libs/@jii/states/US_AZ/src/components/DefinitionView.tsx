@@ -15,23 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { NotFound } from "~@jii/common-ui";
-import { UsAzMoreInformation } from "~@jii/paths";
+import { BackLink, CopyWrapper } from "~@jii/common-ui";
+import { State } from "~@jii/paths";
 
-import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
-import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
+type DefinitionViewProps = {
+  heading: string;
+  body: string;
+};
 
-export function UsAzRouter() {
+export const DefinitionView = (props: DefinitionViewProps) => {
+  const params = useTypedParams(State.Resident.UsAzMoreInformation);
+
   return (
-    <Routes>
-      <Route index element={<PageUsAzResidentHome />} />
-      <Route path="*" element={<NotFound />} />
-      <Route
-        path={UsAzMoreInformation.DateInfo.path}
-        element={<PageMoreInfoImportantDates />}
-      />
-    </Routes>
+    <>
+      <BackLink to={State.Resident.buildPath(params)} children="Home" />
+      <CopyWrapper>{`# ${props.heading}\n\n${props.body}`}</CopyWrapper>
+    </>
   );
-}
+};

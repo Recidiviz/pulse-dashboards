@@ -23,10 +23,23 @@ const mockAzResident = {
   stateCode: "US_AZ",
   metadata: {
     stateCode: "US_AZ",
-    sedDate: "2023-12-01",
-    ercdDate: "2024-01-15",
+    acisTprDate: "2024-03-15",
+    csbdDate: "2024-01-10", // earliest date
+    ercdDate: "2024-06-01",
+    sedDate: "2024-12-01", // latest date
+    csedDate: undefined, // null date
+  },
+} as never as ResidentRecord;
+
+const mockAzResidentAllNullDates = {
+  stateCode: "US_AZ",
+  metadata: {
+    stateCode: "US_AZ",
+    acisTprDate: undefined,
     csbdDate: undefined,
-    csed: "2024-06-01",
+    ercdDate: undefined,
+    sedDate: undefined,
+    csedDate: undefined,
   },
 } as never as ResidentRecord;
 
@@ -38,15 +51,61 @@ const mockCaResident = {
 } as never as ResidentRecord;
 
 describe("UsAzImportantDatesPresenter", () => {
-  it("returns the metadata blob when the state code is US_AZ", () => {
-    const presenter = new UsAzImportantDatesPresenter(mockAzResident);
-    expect(presenter.metadata).toEqual(mockAzResident.metadata);
+  describe("metadata", () => {
+    it("returns the metadata blob when the state code is US_AZ", () => {
+      const presenter = new UsAzImportantDatesPresenter(mockAzResident);
+      expect(presenter.metadata).toEqual(mockAzResident.metadata);
+    });
+
+    it("throws an error when the state code is not US_AZ", () => {
+      const presenter = new UsAzImportantDatesPresenter(mockCaResident);
+      expect(() => presenter.metadata).toThrow(
+        "Invalid state code for UsAzImportantDatesPresenter: US_CA",
+      );
+    });
   });
 
-  it("throws an error when the state code is not US_AZ", () => {
-    const presenter = new UsAzImportantDatesPresenter(mockCaResident);
-    expect(() => presenter.metadata).toThrow(
-      "Invalid state code for UsAzImportantDatesPresenter: US_CA",
-    );
+  describe("dateEntries", () => {
+    it("sorts dates by earliest first and highlights the first valid date", () => {
+      const presenter = new UsAzImportantDatesPresenter(mockAzResident);
+      const entries = presenter.dateEntries;
+
+      // Check sorting order
+      expect(entries[0].key).toBe("csbd");
+      expect(entries[0].date).toBe("2024-01-10");
+      expect(entries[0].isHighlighted).toBe(true); // First valid date should be highlighted
+
+      expect(entries[1].key).toBe("acisTprDate");
+      expect(entries[1].date).toBe("2024-03-15");
+      expect(entries[1].isHighlighted).toBe(false);
+
+      expect(entries[2].key).toBe("ercd");
+      expect(entries[2].date).toBe("2024-06-01");
+      expect(entries[2].isHighlighted).toBe(false);
+
+      expect(entries[3].key).toBe("sed");
+      expect(entries[3].date).toBe("2024-12-01");
+      expect(entries[3].isHighlighted).toBe(false);
+
+      // Null dates should come last
+      expect(entries[4].key).toBe("csed");
+      expect(entries[4].date).toBeUndefined();
+      expect(entries[4].isHighlighted).toBe(false);
+    });
+
+    it("handles all null dates correctly", () => {
+      const presenter = new UsAzImportantDatesPresenter(
+        mockAzResidentAllNullDates,
+      );
+      const entries = presenter.dateEntries;
+
+      expect(entries).toHaveLength(5);
+
+      // All dates should be undefined
+      entries.forEach((entry) => {
+        expect(entry.date).toBeUndefined();
+        expect(entry.isHighlighted).toBe(false); // No highlighting when no valid dates
+      });
+    });
   });
 });

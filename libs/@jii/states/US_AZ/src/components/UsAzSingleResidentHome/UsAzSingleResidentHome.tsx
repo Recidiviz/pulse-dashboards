@@ -15,11 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FullWidthBanner, HeaderPortal, PageContainer } from "~@jii/common-ui";
+
+import { usAzCopy } from "../../configs/copy";
 import { UsAzImportantDates } from "./UsAzImportantDates";
 
 export function UsAzSingleResidentHome() {
   return (
     <div>
+      <HeaderPortal>
+        <FullWidthBanner>
+          <PageContainer>{usAzCopy.lastUpdated}</PageContainer>
+        </FullWidthBanner>
+      </HeaderPortal>
       <UsAzImportantDates />
     </div>
   );
