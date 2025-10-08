@@ -296,7 +296,7 @@ function getWelcomeMessageBody({
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-  body += `Hi ${givenNameToUse}, we’re reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.\n\nIf you have questions, reach out to ${assignedPoNameToUse}.`;
+  body += `Hi ${givenNameToUse}, we’re reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.\n\nIf you have questions, reach out to Officer ${assignedPoNameToUse}. Please note each appointment reminder will specify if you are meeting with your primary officer or another officer.`;
 
   body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
 
@@ -337,13 +337,17 @@ function getTexasReminderMessageBody(
     } else if (method === "VIRTUAL") {
       return "Virtual video call";
       //for clauses below method === "IN_PERSON"
-    } else if (["OFFICE", "EMPLOYMENT", "FIELD"].includes(locationType)) {
+    } else if (locationType === "OFFICE") {
       return address || "In person";
+    } else if (locationType === "EMPLOYMENT") {
+      return "At your place of employment";
     } else {
       console.log(`Received unexpected contact type: ${locationType}`);
       return address;
     }
   })();
+
+  const contactDescription = method === "IN_PERSON" ? "arrive" : "call";
 
   const dateStr = new Intl.DateTimeFormat("en-US").format(datetime);
   const timeStr = new Intl.DateTimeFormat("en-US", {
@@ -353,7 +357,7 @@ function getTexasReminderMessageBody(
     timeZoneName: "short",
   }).format(datetime);
 
-  body += `Hi ${givenNameToUse}, this is a reminder that you have an upcoming ${locationType.toLowerCase()} contact tomorrow.\n\nDate: ${dateStr}\n\nTime: ${timeStr}\n\nLocation: ${locationStr}\n\nNeed to reschedule or have questions? Contact ${officerToContact}`;
+  body += `Hi ${givenNameToUse}, this is a reminder that you have an upcoming ${locationType.toLowerCase()} contact tomorrow.\n\nDate: ${dateStr}\n\nTime: Approximately ${timeStr}\n\nLocation: ${locationStr}\n\nBe aware that the officer may ${contactDescription} within 2 hours before or after the time listed above.\n\nNeed to reschedule or have questions? Contact Officer ${officerToContact}`;
 
   body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
 
