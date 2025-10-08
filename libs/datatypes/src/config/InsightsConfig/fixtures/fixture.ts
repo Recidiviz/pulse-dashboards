@@ -35,6 +35,7 @@ import { US_MI } from "./US_MI";
 import { US_ND } from "./US_ND";
 import { US_PA } from "./US_PA";
 import { US_TN } from "./US_TN";
+import { US_TX } from "./US_TX";
 
 export const rawInsightsConfigFixture: RawInsightsConfig = {
   supervisionOfficerLabel: "officer",
@@ -56,7 +57,7 @@ export const rawInsightsConfigFixture: RawInsightsConfig = {
   worseThanRateLabel: "Far worse than statewide rate",
   noneAreOutliersLabel: "are outliers",
   learnMoreUrl: "https://recidiviz.org",
-  exclusionReasonDescription: dedent`We've excluded officers from this list with particularly large or small average caseloads (larger than 175 or smaller than 10). 
+  exclusionReasonDescription: dedent`We've excluded officers from this list with particularly large or small average caseloads (larger than 175 or smaller than 10).
   We also excluded officers who didn’t have a caseload of at least 10 clients for at least 75% of the observation period.`,
   metrics: [
     {
@@ -68,7 +69,7 @@ export const rawInsightsConfigFixture: RawInsightsConfig = {
       eventNamePastTense: "were absconded",
       outcomeType: "ADVERSE",
       descriptionMarkdown: dedent`**All reported absconsions and warrants for the time period**, as captured in the data we receive by supervision levels "9AB", "ZAB", "ZAC", "ZAP" or supervision type “ABS” for absconsions, and “9WR", "NIA", "WRT", "ZWS" for warrants, in a given time period.
-     
+
       <br />
       **Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.`,
       topXPct: null,
@@ -107,7 +108,7 @@ export const rawInsightsConfigFixture: RawInsightsConfig = {
       descriptionMarkdown: dedent`“Technical Incarcerations” include:
       * All transitions to incarceration from supervision (regardless of whether the final decision was a revocation or sanction admission) where the movement reason in OMNI was “Technical” <br>
       * All transitions to incarceration from supervision (regardless of whether the final decision was a revocation or sanction admission) where the most serious violation type among all violations occurring within the past 24 months was a technical violation <br><br>
-      
+
       <br />
       Note: There are situations where we are unable to associate an incarceration with a violation type, especially if the revocation leads to time in county jail. We may also associate an incorrect violation type, if for example, there are no violations due to poor data entry.`,
       topXPct: null,
@@ -122,7 +123,7 @@ export const rawInsightsConfigFixture: RawInsightsConfig = {
       eventNamePastTense: "program started",
       outcomeType: "FAVORABLE",
       descriptionMarkdown: dedent`**All reported program starts that exist in PVDTS**, as captured in the data we receive for all supervision levels except for CATEGORY D, DEPORTED and PENDING DEPORT, in a given time period.
-      
+
       <br />
       **Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.`,
       topXPct: 10,
@@ -175,4 +176,5 @@ export const getMockConfigsByTenantId = (): Record<string, InsightsConfig> => ({
   US_PA,
   US_ND,
   US_TN,
+  US_TX,
 });

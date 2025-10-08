@@ -207,7 +207,61 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER2' 1`] = `
     "stateCode": "US_TX",
   },
   "supervisorExternalId": "SUPERVISOR2",
-  "surname": "Dent",
+  "surname": "Jones",
+}
+`;
+
+exports[`supervision staff schema for 'US_TX' 'OFFICER3' 1`] = `
+{
+  "district": "DISTRICT 23",
+  "email": "tx-test-officer-3@example.com",
+  "givenNames": "Amanda",
+  "id": "OFFICER3",
+  "pseudonymizedId": "p003",
+  "recordType": "supervisionStaff",
+  "stateCode": "US_TX",
+  "stateSpecificData": {
+    "isInUnderstaffedOffice": false,
+    "stateCode": "US_TX",
+  },
+  "supervisorExternalId": "SUPERVISOR3",
+  "surname": "Garcia",
+}
+`;
+
+exports[`supervision staff schema for 'US_TX' 'OFFICER4' 1`] = `
+{
+  "district": "DISTRICT 81",
+  "email": "tx-test-officer-4@example.com",
+  "givenNames": "Stephanie",
+  "id": "OFFICER4",
+  "pseudonymizedId": "p004",
+  "recordType": "supervisionStaff",
+  "stateCode": "US_TX",
+  "stateSpecificData": {
+    "isInUnderstaffedOffice": true,
+    "stateCode": "US_TX",
+  },
+  "supervisorExternalId": "SUPERVISOR4",
+  "surname": "Smith",
+}
+`;
+
+exports[`supervision staff schema for 'US_TX' 'OFFICER5' 1`] = `
+{
+  "district": "DISTRICT 42",
+  "email": "tx-test-officer-5@example.com",
+  "givenNames": "Christopher",
+  "id": "OFFICER5",
+  "pseudonymizedId": "p005",
+  "recordType": "supervisionStaff",
+  "stateCode": "US_TX",
+  "stateSpecificData": {
+    "isInUnderstaffedOffice": false,
+    "stateCode": "US_TX",
+  },
+  "supervisorExternalId": "SUPERVISOR5",
+  "surname": "Johnson",
 }
 `;
 

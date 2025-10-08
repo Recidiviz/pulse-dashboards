@@ -32,8 +32,20 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           contactCount: 2,
           lastContactDate: "2021-08-03",
           overdueFlag: true,
-          typeOfContact: "UNSCHEDULED HOME",
+          typeOfContact: "SCHEDULED HOME",
           contactCadence: "4 MONTHS",
+          officerInCriticallyUnderstaffedLocation: false,
+        },
+      },
+      {
+        type: "usTxCollateralContactScheduled",
+        dueDate: "2023-02-10",
+        details: {
+          contactCount: 2,
+          lastContactDate: "2022-08-10",
+          overdueFlag: false,
+          typeOfContact: "SCHEDULED COLLATERAL",
+          contactCadence: "1 MONTH",
         },
       },
     ],
@@ -53,6 +65,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           overdueFlag: true,
           typeOfContact: "SCHEDULED HOME",
           contactCadence: "12 MONTHS",
+          officerInCriticallyUnderstaffedLocation: false,
         },
       },
       {
@@ -122,6 +135,39 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           contactCadence: "3 MONTHS",
         },
       },
+      {
+        type: "usTxHomeContactUnscheduled",
+        dueDate: "2024-06-12",
+        details: {
+          overrideContactType: "UNSCHEDULED HOME (VIRTUAL)",
+          officerInCriticallyUnderstaffedLocation: true,
+          lastContactDate: null,
+          contactCount: 2,
+          overdueFlag: false,
+          typeOfContact: "UNSCHEDULED HOME",
+          contactCadence: "6 MONTHS",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "005",
+    officerId: "OFFICER2",
+    tasks: [
+      {
+        type: "usTxHomeContactUnscheduled",
+        dueDate: "2020-03-19",
+        details: {
+          overrideContactType: "UNSCHEDULED HOME (VIRTUAL)",
+          officerInCriticallyUnderstaffedLocation: true,
+          lastContactDate: null,
+          contactCount: 2,
+          overdueFlag: false,
+          typeOfContact: "UNSCHEDULED HOME",
+          contactCadence: "6 MONTHS",
+        },
+      },
     ],
   },
   {
@@ -138,6 +184,231 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           overdueFlag: false,
           typeOfContact: "UNSCHEDULED HOME",
           contactCadence: "12 MONTHS",
+        },
+      },
+      {
+        type: "usTxOfficeContactScheduled",
+        dueDate: "2024-06-01",
+        details: {
+          contactCount: 2,
+          lastContactDate: null,
+          overdueFlag: false,
+          typeOfContact: "OFFICE CONTACT",
+          contactCadence: "12 MONTHS",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "007",
+    officerId: "OFFICER3",
+    tasks: [
+      {
+        type: "usTxFieldContactScheduled",
+        dueDate: "2022-12-12",
+        details: {
+          contactCount: 2,
+          lastContactDate: null,
+          overdueFlag: false,
+          typeOfContact: "FIELD CONTACT, SCHEDULED",
+          contactCadence: "12 MONTHS",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "008",
+    officerId: "OFFICER3",
+    tasks: [
+      {
+        type: "usTxFieldContactUnscheduled",
+        dueDate: "2022-06-11",
+        details: {
+          contactCount: 2,
+          lastContactDate: null,
+          overdueFlag: false,
+          typeOfContact: "FIELD CONTACT, UNSCHEDULED",
+          contactCadence: "12 MONTHS",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "009",
+    officerId: "OFFICER4",
+    tasks: [
+      {
+        type: "usTxVirtualOfficeContactScheduled",
+        dueDate: "2022-02-10",
+        details: {
+          contactCount: 2,
+          lastContactDate: "2022-01-10",
+          overdueFlag: false,
+          typeOfContact: "VIRTUAL OFFICE CONTACT, SCHEDULED",
+          contactCadence: "1 MONTH",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "010",
+    officerId: "OFFICER4",
+    tasks: [
+      {
+        type: "usTxVirtualOfficeContactScheduled",
+        dueDate: "2022-11-23",
+        details: {
+          contactCount: 2,
+          lastContactDate: "2022-10-23",
+          overdueFlag: false,
+          typeOfContact: "VIRTUAL OFFICE CONTACT, UNSCHEDULED",
+          contactCadence: "1 MONTH",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "011",
+    officerId: "OFFICER4",
+    tasks: [
+      {
+        type: "usTxAssessment",
+        dueDate: "2022-12-30",
+        details: {
+          eventType: "supervision_start_no_prior_assessment",
+          eventDate: "2022-12-30",
+          dueAssessmentDate: "2022-12-30",
+          frequency: "6 MONTHS",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "012",
+    officerId: "OFFICER5",
+    tasks: [
+      {
+        type: "usTxCollateralContactScheduled",
+        dueDate: "2022-08-13",
+        details: {
+          contactCount: 2,
+          lastContactDate: "2022-07-13",
+          overdueFlag: false,
+          typeOfContact: "SCHEDULED COLLATERAL",
+          contactCadence: "1 MONTH",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "013",
+    officerId: "OFFICER5",
+    tasks: [
+      {
+        type: "usTxHomeContactScheduled",
+        dueDate: "2020-09-14",
+        details: {
+          contactCount: 2,
+          lastContactDate: "2022-03-14",
+          overdueFlag: false,
+          typeOfContact: "SCHEDULED HOME",
+          contactCadence: "6 MONTHS",
+          officerInCriticallyUnderstaffedLocation: false,
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "014",
+    officerId: "OFFICER5",
+    tasks: [
+      {
+        type: "usTxHomeContactUnscheduled",
+        dueDate: "2020-12-01",
+        details: {
+          overrideContactType: "UNSCHEDULED HOME (VIRTUAL)",
+          officerInCriticallyUnderstaffedLocation: false,
+          lastContactDate: "2020-06-01",
+          contactCount: 2,
+          overdueFlag: false,
+          typeOfContact: "UNSCHEDULED HOME",
+          contactCadence: "6 MONTHS",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "015",
+    officerId: "OFFICER1",
+    tasks: [
+      {
+        type: "usTxHomeContactEdgeCase",
+        dueDate: "2023-11-30",
+        details: {
+          reasonForContact: "Initial Home Contact",
+          contactCadence: "3 MONTHS",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "016",
+    officerId: "OFFICER2",
+    tasks: [
+      {
+        type: "usTxOfficeContactScheduled",
+        dueDate: "2022-06-01",
+        details: {
+          contactCount: 2,
+          lastContactDate: null,
+          overdueFlag: false,
+          typeOfContact: "OFFICE CONTACT",
+          contactCadence: "12 MONTHS",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "017",
+    officerId: "OFFICER3",
+    tasks: [
+      {
+        type: "usTxVirtualOrOfficeContact",
+        dueDate: "2022-01-01",
+        details: {
+          contactCount: 2,
+          lastContactDate: null,
+          overdueFlag: false,
+          typeOfContact: "VIRTUAL CONTACT",
+          contactCadence: "2 MONTHS",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "018",
+    officerId: "OFFICER4",
+    tasks: [
+      {
+        type: "usTxAssessment",
+        dueDate: "2021-12-21",
+        details: {
+          eventType: "supervision_start_no_prior_assessment",
+          eventDate: "2021-12-21",
+          dueAssessmentDate: "2021-12-21",
+          frequency: "4 MONTHS",
         },
       },
     ],
