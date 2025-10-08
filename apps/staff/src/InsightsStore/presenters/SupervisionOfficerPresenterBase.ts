@@ -99,9 +99,11 @@ export abstract class SupervisionOfficerPresenterBase
         await Promise.all(this.populateMethods());
       },
     });
+
+    this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
   }
 
-expectOutcomesDependenciesPopulated() {
+  expectOutcomesDependenciesPopulated() {
     return [
       this.expectOfficerOutcomesDataPopulated,
       this.expectOfficerOutcomesPopulated,
@@ -109,20 +111,23 @@ expectOutcomesDependenciesPopulated() {
   }
 
   get isCurrentOfficerUserRestrictedFromSupervisorsList(): boolean {
-    return this.supervisionStore.isCurrentOfficerUserRestrictedFromSupervisorsList;
+    return this.supervisionStore
+      .isCurrentOfficerUserRestrictedFromSupervisorsList;
   }
 
   populateMethods() {
-    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList) return [this.populateSupervisionOfficer()];
+    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList)
+      return [this.populateSupervisionOfficer()];
     return [
       flowResult(this.supervisionStore.populateMetricConfigs()),
       flowResult(this.supervisionStore.populateSupervisionOfficerSupervisors()),
       this.populateSupervisionOfficer(),
     ];
   }
-  
+
   expectPopulated() {
-    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList) return [this.expectOfficerPopulated];
+    if (this.isCurrentOfficerUserRestrictedFromSupervisorsList)
+      return [this.expectOfficerPopulated];
     return [
       this.expectOfficerPopulated,
       this.expectMetricsPopulated,
@@ -144,7 +149,7 @@ expectOutcomesDependenciesPopulated() {
     );
   }
 
-protected expectMetricsPopulated() {
+  protected expectMetricsPopulated() {
     if (this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
     if (!this.supervisionStore.metricConfigsById)
       throw new Error("Failed to populate metric configs");
@@ -301,7 +306,11 @@ protected expectMetricsPopulated() {
   // action instead of flow in case it becomes overridden in the future
   // (see comment on populateSupervisionOfficer)
   protected async populateSupervisionOfficerOutcomes() {
-    if (isExcludedSupervisionOfficer(this.officerRecord) || this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
+    if (
+      isExcludedSupervisionOfficer(this.officerRecord) ||
+      this.isCurrentOfficerUserRestrictedFromSupervisorsList
+    )
+      return;
 
     const outcomesForOfficer =
       await this.supervisionStore.insightsStore.apiClient.outcomesForOfficer(

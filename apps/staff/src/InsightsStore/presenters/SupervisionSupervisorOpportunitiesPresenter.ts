@@ -102,7 +102,6 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         ),
       ],
     });
-    this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
   }
 
   // ==============================

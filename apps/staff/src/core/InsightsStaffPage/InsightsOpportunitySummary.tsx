@@ -38,13 +38,15 @@ const ManagedComponent = observer(function OpportunitySummary({
     officerPseudoId,
     officerOutcomesData,
     opportunityTypes,
+    isUserEnriched,
+    isWorkflowsEnabled,
   } = presenter;
 
-  return opportunitiesByType ? (
+  return isWorkflowsEnabled ? (
     <InsightsPageSection
       sectionTitle={`Opportunities (${numEligibleOpportunities ?? 0})`}
     >
-      {numEligibleOpportunities ? (
+      {!isUserEnriched && opportunitiesByType &&  numEligibleOpportunities ? (
         <OpportunitySummaries
           opportunitiesByType={opportunitiesByType}
           opportunityTypes={opportunityTypes}

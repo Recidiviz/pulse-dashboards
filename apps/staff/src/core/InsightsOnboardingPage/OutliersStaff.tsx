@@ -77,10 +77,10 @@ const StaffPills = observer(function StaffPills({
 }) {
   const { isMobile } = useIsMobile(true);
 
-  const { allOfficersWithOutcomes: allOfficers } = presenter;
+  const { allOfficersWithOutcomes: allOfficers, isUserEnriched } = presenter;
   const officerNames = allOfficers?.map((o) => o.displayName);
 
-  if (!officerNames)
+  if (!officerNames || isUserEnriched)
     return (
       <WarningMessage>
         We don't currently see any staff members assigned to you in our roster.

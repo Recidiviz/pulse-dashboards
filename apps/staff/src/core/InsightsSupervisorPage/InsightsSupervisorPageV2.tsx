@@ -88,13 +88,12 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     pageTitle,
     highlightedOfficersByMetric,
     userCanSubmitRosterChangeRequest,
-    isUserEnriched,
     isUsageLoginActivityModuleDisplayed,
   } = presenter;
 
   let teamTooltip;
 
-  if (userCanSubmitRosterChangeRequest || isUserEnriched)
+  if (userCanSubmitRosterChangeRequest)
     teamTooltip = undefined;
   else if (outcomesModule)
     teamTooltip = (
@@ -127,9 +126,8 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       title: supervisionLocationInfo.locationLabel,
       info: supervisionLocationInfo.supervisionLocationForSupervisorPage,
     },
-    ...(isUserEnriched
-      ? []
-      : [
+    ...(
+       [
           {
             title: "team",
             tooltip: teamTooltip,

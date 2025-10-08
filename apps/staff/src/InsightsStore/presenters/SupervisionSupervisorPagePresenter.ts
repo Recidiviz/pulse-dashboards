@@ -42,7 +42,6 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
       },
       expectPopulated: this.expectPopulated(),
     });
-    this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
   }
 
   get isWorkflowsEnabled() {
@@ -109,11 +108,7 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
   get userCanSubmitRosterChangeRequest() {
     return this.supervisionStore.userCanSubmitRosterChangeRequest;
   }
-
-  get isUserEnriched() {
-    return this.supervisionStore.isUserEnriched;
-  }
-
+  
   /**
    * Provides a list of all officers excluded from outcomes in this supervisor's unit.
    * @returns An array of `SupervisionOfficer` or `undefined` if data is not available.

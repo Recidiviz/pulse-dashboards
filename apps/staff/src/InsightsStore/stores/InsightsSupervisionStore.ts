@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AxiosError, HttpStatusCode } from "axios";
 import { index } from "d3-array";
 import { parseISO } from "date-fns";
 import { uniq } from "lodash";
@@ -188,7 +187,7 @@ export class InsightsSupervisionStore {
   get userCanSubmitRosterChangeRequest(): boolean {
     return (
       "reportIncorrectRosters" in
-        this.insightsStore.rootStore.userStore.activeFeatureVariants &&
+      this.insightsStore.rootStore.userStore.activeFeatureVariants &&
       (this.userCanAccessAllSupervisors || !!this.currentSupervisorUser)
     );
   }
@@ -305,6 +304,7 @@ export class InsightsSupervisionStore {
   }
 
   get officerRecord(): SupervisionOfficer | undefined {
+    if (this.isUserEnriched) return this.currentOfficerUser;
     const officer = [...this.officersBySupervisorPseudoId.values()]
       .flat()
       .find((o) => o.pseudonymizedId === this.officerPseudoId);
@@ -654,24 +654,15 @@ export class InsightsSupervisionStore {
       throw new Error("Missing pseudonymizedId for user");
     }
 
-    let userInfo: UserInfo | undefined;
+    const userInfo = yield this.insightsStore.apiClient.userInfo(pseudonymizedId);
 
-    try {
-      userInfo = yield this.insightsStore.apiClient.userInfo(pseudonymizedId);
-    } catch (error) {
-      if (
-        !(
-          error instanceof AxiosError &&
-          error?.status === HttpStatusCode.NotFound
-        )
-      )
-        throw error;
-    }
     if (userInfo?.entity && userInfo?.role) {
       this.userInfo = userInfo;
       return;
     }
 
+    // If the user does not have a backend representation, we create an "enriched" user info object
+    // with the required fields so that the user can access the insights page.
     const {
       externalId,
       userEmail: email,

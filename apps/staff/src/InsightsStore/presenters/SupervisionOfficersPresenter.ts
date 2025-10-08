@@ -80,12 +80,18 @@ export class SupervisionOfficersPresenter implements Hydratable {
         this.expectOfficerOutcomesPopulated,
       ],
     });
+
+    this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
   }
 
   private hydrator: HydratesFromSource;
 
   get hydrationState(): HydrationState {
     return this.hydrator.hydrationState;
+  }
+
+  get isUserEnriched(): boolean {
+    return this.supervisionStore.isUserEnriched;
   }
 
   private expectMetricsPopulated() {

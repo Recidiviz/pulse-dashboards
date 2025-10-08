@@ -446,6 +446,77 @@ test.each([
   },
 );
 
+
+test("current user record for an enriched user", async () => {
+  vi.useFakeTimers().setSystemTime(
+    parseISO("2025-10-04T12:45:04.570Z").getTime(),
+  );
+  // An "enriched" user is created when the entity and role fields are null in the user info response.
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "userInfo").mockResolvedValueOnce({
+    metadata: {
+      hasSeenOnboarding: false,
+    },
+    entity: null,
+    role: null,
+  });
+  const officer = supervisionOfficerFixture[0];
+
+  // The required auth0 information to populate the user record
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    externalId: officer.externalId,
+    stateCode: "us_mi",
+    pseudonymizedId: officer.pseudonymizedId,
+    district: officer.district,
+  });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userEmail",
+    "get",
+  ).mockReturnValue(officer.email as string);
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userMiddleName",
+    "get",
+  ).mockReturnValue(officer.fullName.middleNames);
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userGivenName",
+    "get",
+  ).mockReturnValue(officer.fullName.givenNames);
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userSurname",
+    "get",
+  ).mockReturnValue(officer.fullName.surname);
+
+  await flowResult(store.populateUserInfo());
+  expect(store.isUserEnriched).toBeTrue();
+  expect(store.currentOfficerUser).toMatchInlineSnapshot(`
+    {
+      "avgDailyPopulation": 0,
+      "displayName": "Walter Harris",
+      "district": "Unknown",
+      "email": "officer1@recidiviz.org",
+      "externalId": "OFFICER4",
+      "fullName": {
+        "givenNames": "Walter",
+        "middleNames": undefined,
+        "surname": "Harris",
+      },
+      "latestLoginDate": 2025-10-04T12:45:04.570Z,
+      "pseudonymizedId": "hashed-so1",
+      "supervisorExternalIds": [],
+      "zeroGrantOpportunities": [],
+    }
+  `);
+  vi.useRealTimers();
+});
+
+
 test("current user record for supervisor", async () => {
   vi.spyOn(
     store.insightsStore.rootStore.userStore,
