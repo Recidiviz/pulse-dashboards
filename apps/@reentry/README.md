@@ -20,7 +20,7 @@ yarn nx build @reentry/frontend
 
 For macOs:
 `
-brew install cairo pango glib gobject-introspection gdk-pixbuf
+brew install cairo pango glib gobject-introspection gdk-pixbuf uv
 `
 Ubuntu/Debian
 
@@ -46,7 +46,7 @@ Get the content of the file from a teammate.
 
 ```bash
 cd "apps/@reentry" (relative path to the project root, adjust accordingly)
-docker-compose up
+docker compose up
 ```
 
 3. Inside the backend folder, run the database migrations
