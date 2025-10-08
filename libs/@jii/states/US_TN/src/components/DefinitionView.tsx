@@ -17,13 +17,14 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { BackLink, InfoPage } from "~@jii/common-ui";
+import { BackLink, InfoPage, PageLinksFooter } from "~@jii/common-ui";
 import { ScreenFillingWrapper } from "~@jii/layout";
 import { State } from "~@jii/paths";
 
 type DefinitionViewProps = {
   heading: string;
   body: string;
+  moreInfoPageLinks: { text: string; url: string }[];
 };
 
 export const DefinitionView = (props: DefinitionViewProps) => {
@@ -37,7 +38,15 @@ export const DefinitionView = (props: DefinitionViewProps) => {
           <InfoPage {...props} />
         </>
       }
-      bottom={null}
+      bottom={
+        <PageLinksFooter
+          contents={{
+            pageLinksHeading: "More Information",
+            pageLinks: props.moreInfoPageLinks,
+            topLinkText: "Back to top",
+          }}
+        />
+      }
     />
   );
 };

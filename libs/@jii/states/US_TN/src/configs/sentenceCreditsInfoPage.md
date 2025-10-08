@@ -1,10 +1,10 @@
 ## What are Sentence Reduction Credits?
 
-You can earn Sentence Credits for good behavior and for participating in programs. Depending on your sentence, Sentence Credits may reduce your Release Eligibility Date or Expiration Date. In most cases, 1 credit = 1 day off the date it applies to.
+Sentence Reduction Credits are a reward for good behavior and for successfully completing programming. Depending on your sentence, Sentence Credits may reduce your Release Eligibility Date or Expiration Date. In most cases, 1 credit = 1 day off the date.
 
 ## When are credits posted?
 
-Credits from last month should show up in this app between the 9th and 11th of each month.
+Most credits from last month should appear in this app by the 13th. Credits update here with a 1-3 day delay after TDOC staff entry.
 
 ## What types of credits are there, and how much can you earn?
 

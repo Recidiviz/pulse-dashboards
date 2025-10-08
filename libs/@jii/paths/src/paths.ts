@@ -72,7 +72,10 @@ export const EGT = route(
 export const UsTnMoreInformation = route(
   "more-information",
   {},
-  { ImportantDates: route("dates"), Credits: route("credits") },
+  {
+    ImportantDates: route("dates", { hash: ["expiration-date"] }),
+    Credits: route("credits"),
+  },
 );
 
 export const UsAzMoreInformation = route(

@@ -18,9 +18,17 @@
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 
-import { Card, GoButton, HomepageSectionHeading } from "~@jii/common-ui";
+import {
+  ActivityList,
+  ActivityRow,
+  ActivityRowDivider,
+  Card,
+  Chip,
+  GoButton,
+  HomepageSectionHeading,
+} from "~@jii/common-ui";
 import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
-import { BulletTimeline, CardDateInfo } from "~@jii/earned-good-time";
+import { CardDateInfo } from "~@jii/earned-good-time";
 import { State } from "~@jii/paths";
 import { useUsTnTranslations } from "~@jii/translation";
 import { UsTnResidentMetadata } from "~datatypes";
@@ -32,10 +40,12 @@ const ImportantDateCard = ({
   section,
   metadata,
   children,
+  infoPageAnchorTag,
 }: {
   section: "releaseEligibilityDate" | "expirationDate";
   metadata: UsTnResidentMetadata;
   children?: React.ReactNode;
+  infoPageAnchorTag?: "expiration-date";
 }) => {
   const { t } = useUsTnTranslations();
 
@@ -52,6 +62,8 @@ const ImportantDateCard = ({
       <GoButton
         to={State.Resident.$.UsTnMoreInformation.ImportantDates.buildRelativePath(
           {},
+          {},
+          infoPageAnchorTag,
         )}
       >
         Learn More
@@ -72,7 +84,11 @@ const ManagedComponent: FC<{
         {t(($) => $.importantDates.sectionHeading)}
       </HomepageSectionHeading>
       <ImportantDateCard section="releaseEligibilityDate" metadata={metadata} />
-      <ImportantDateCard section="expirationDate" metadata={metadata}>
+      <ImportantDateCard
+        section="expirationDate"
+        metadata={metadata}
+        infoPageAnchorTag="expiration-date"
+      >
         <ExpirationDateReduction presenter={presenter} />
       </ImportantDateCard>
     </section>
@@ -97,31 +113,35 @@ const ExpirationDateReduction = ({
     <>
       <hr />
       <div>
-        You've earned {expirationDateReduction} off your Expiration Date
-      </div>
-      <div>
-        <BulletTimeline
-          items={[
-            {
-              label: "Full Expiration Date",
-              value: hydrateTemplate(
+        <ActivityList>
+          <ActivityRow>
+            <div>Full Expiration Date</div>
+            <div>
+              {hydrateTemplate(
                 "{{formatFullDateOptional expirationDateOriginal 'No original FXP date on record'}}",
                 metadata,
-              ),
-            },
-            {
-              label: "Total reduction",
-              value: `-${expirationDateReduction}`,
-            },
-            {
-              label: "Adjusted FXP date",
-              value: hydrateTemplate(
+              )}
+            </div>
+          </ActivityRow>
+          <ActivityRowDivider />
+          <ActivityRow>
+            <div>Total reduction</div>
+            <div>
+              <Chip color="green">{`-${expirationDateReduction}`}</Chip>
+            </div>
+          </ActivityRow>
+          <ActivityRowDivider />
+          <ActivityRow>
+            <div>Adjusted FXP date</div>
+            <div>
+              {hydrateTemplate(
                 "{{formatFullDateOptional expirationDate 'No updated FXP date on record'}}",
                 metadata,
-              ),
-            },
-          ]}
-        />
+              )}
+            </div>
+          </ActivityRow>
+          <ActivityRowDivider />
+        </ActivityList>
       </div>
     </>
   );

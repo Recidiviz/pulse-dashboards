@@ -15,19 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useTypedParams } from "react-router-typesafe-routes/dom";
+
 import { usePageTitle } from "~@jii/common-ui";
+import { State } from "~@jii/paths";
 import { useUsTnTranslations } from "~@jii/translation";
 
 import { DefinitionView } from "../components/DefinitionView";
 
+// TODO(#10015): [US_TN][P2] Parameterize "more info" pages and generate footers
 export function PageMoreInfoImportantDates() {
   const { t } = useUsTnTranslations();
 
   usePageTitle(t(($) => $.importantDates.moreInfo.heading));
 
+  const pathParams = useTypedParams(State.Resident.UsTnMoreInformation);
+
   return (
     <DefinitionView
       {...t(($) => $.importantDates.moreInfo, { returnObjects: true })}
+      moreInfoPageLinks={[
+        {
+          text: "Credits",
+          url: State.Resident.UsTnMoreInformation.Credits.buildPath(pathParams),
+        },
+      ]}
     />
   );
 }
