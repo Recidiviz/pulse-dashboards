@@ -42,6 +42,24 @@ export class ResidentNavBarPresenter {
     };
   }
 
+  // TODO(#10032): [JII][P2] Parameterize additional top-level links in ResidentNavBar
+  get additionalTopBarLinks(): { label: string; to: string }[] {
+    if (
+      !("personPseudoId" in this.routeParams) ||
+      this.routeParams.stateSlug !== "tennessee"
+    )
+      return [];
+
+    return [
+      {
+        label: "About",
+        to: State.Resident.UsTnMoreInformation.About.buildPath(
+          this.routeParams,
+        ),
+      },
+    ];
+  }
+
   get menuLinks(): Array<SimpleNavLinkProps> {
     const links: Array<SimpleNavLinkProps> = [];
 

@@ -87,19 +87,25 @@ Most credits from last month should appear in this app by the 13th. Credits upda
 ## Who can earn credits?
 
 Most people can earn credits if they meet the following requirements:
-* You must have a **STRONG-R assessment** completed within the past year to earn behavior credits. Your Counselor should complete a STRONG-R assessment with you each year. You can earn **program** credits without STRONG‑R.
-* If you spent any time in **maximum custody** or in **punitive segregation** during a month, you cannot earn credits that month.
 
+- You must have a **STRONG-R assessment** completed within the past year to earn behavior credits. Your Counselor should complete a STRONG-R assessment with you each year. You can earn **program** credits without STRONG‑R.
+- If you spent any time in **maximum custody** or in **punitive segregation** during a month, you cannot earn credits that month.
 
 ## Which date moves when you earn credits?
 
-* **RED**: moves earlier for most people when you earn credits. If your sentence has a mandatory minimum, you may be able to move your RED less, or not at all.
-* **EXP (Max)**: see the rules under Expiration Date.
-* **FXP**: does not move.
+- **RED**: moves earlier for most people when you earn credits. If your sentence has a mandatory minimum, you may be able to move your RED less, or not at all.
+- **EXP (Max)**: see the rules under Expiration Date.
+- **FXP**: does not move.
 
 ## How credits can be lost
 
-* A **Class A** disciplinary conviction can take away credits you already earned. The amount of time you can lose ranges from 9 to 15 months, depending on how many disciplinary infractions you have gotten in the past, and if past ones were Class A, B, or C.
-  * People serving sentences which started before March 1, 1986 may also lose credits for Class B and Class C disciplinaries.
-* You also do **not** earn behavior/program credits for any month with a disciplinary conviction (more than a verbal warning) or if you are in max custody or punitive segregation.
-* Lost credits are **not** restored unless the disciplinary action is overturned on appeal.
+- A **Class A** disciplinary conviction can take away credits you already earned. The amount of time you can lose ranges from 9 to 15 months, depending on how many disciplinary infractions you have gotten in the past, and if past ones were Class A, B, or C.
+  - People serving sentences which started before March 1, 1986 may also lose credits for Class B and Class C disciplinaries.
+- You also do **not** earn behavior/program credits for any month with a disciplinary conviction (more than a verbal warning) or if you are in max custody or punitive segregation.
+- Lost credits are **not** restored unless the disciplinary action is overturned on appeal.
+
+## I see a credit removal this month, but I didn’t have a disciplinary. Why?
+
+- The app shows credit removals **in the month when they are entered into the computer**, not when the disciplinary actually happened.
+- If you get a Class A ticket that takes away sentence credits, it first has to go through a review process. TDOC then enters the loss of credits into the computer. This usually takes 3 or more months from the time of your disciplinary hearing.
+- So, if you see a credit removal, it may be from a disciplinary that happened a few months ago.

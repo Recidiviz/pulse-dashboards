@@ -19,31 +19,31 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
+import { useUsTnTranslations } from "~@jii/translation";
 
 import { DefinitionView } from "../components/DefinitionView";
-import { usTnCopy } from "../configs/copy";
 
 // TODO(#10015): [US_TN][P2] Parameterize "more info" pages and generate footers
-export function PageMoreInfoCreditReports() {
-  const { moreInfo } = usTnCopy.monthlyCreditReportSummary;
+export function PageMoreInfoAbout() {
+  const { t } = useUsTnTranslations();
 
-  usePageTitle(moreInfo.heading);
+  usePageTitle(t(($) => $.importantDates.moreInfo.heading));
 
   const pathParams = useTypedParams(State.Resident.UsTnMoreInformation);
 
   return (
     <DefinitionView
-      {...moreInfo}
+      {...t(($) => $.moreInfo, { returnObjects: true })}
       moreInfoPageLinks={[
-        {
-          text: "About the App",
-          url: State.Resident.UsTnMoreInformation.About.buildPath(pathParams),
-        },
         {
           text: "Important Dates",
           url: State.Resident.UsTnMoreInformation.ImportantDates.buildPath(
             pathParams,
           ),
+        },
+        {
+          text: "Credits",
+          url: State.Resident.UsTnMoreInformation.Credits.buildPath(pathParams),
         },
       ]}
     />

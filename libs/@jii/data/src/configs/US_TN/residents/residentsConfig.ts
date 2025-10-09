@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ResidentsConfig } from "~@jii/data";
+
 import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
 
 export const usTnResidentsConfig: ResidentsConfig = {
   home,

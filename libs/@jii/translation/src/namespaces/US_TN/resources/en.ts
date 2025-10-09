@@ -17,6 +17,7 @@
 
 import { daysTemplate } from "~@jii/translation";
 
+import aboutInfoPage from "./aboutInfoPage.md?raw";
 import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
 
 export default {
@@ -38,5 +39,9 @@ export default {
       heading: "About Your Dates",
       body: importantDatesInfoPage,
     },
+  },
+  moreInfo: {
+    heading: "About the App",
+    body: aboutInfoPage,
   },
 };

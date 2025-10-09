@@ -73,6 +73,7 @@ export const UsTnMoreInformation = route(
   "more-information",
   {},
   {
+    About: route("about"),
     ImportantDates: route("dates", { hash: ["expiration-date"] }),
     Credits: route("credits"),
   },

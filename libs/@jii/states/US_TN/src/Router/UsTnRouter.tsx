@@ -22,6 +22,7 @@ import { EGT, UsTnMoreInformation } from "~@jii/paths";
 
 import { LastUpdatedBanner } from "../components/LastUpdatedBanner";
 import { UsTnSingleResidentDataContext } from "../components/UsTnSingleResidentDataContext/DataContext";
+import { PageMoreInfoAbout } from "../pages/PageMoreInfoAbout";
 import { PageMoreInfoCreditReports } from "../pages/PageMoreInfoCreditReports";
 import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
 import { PageUsTnAllMonthsCreditReport } from "../pages/PageUsTnAllMonthsCreditReport";
@@ -35,6 +36,10 @@ export function UsTnRouter() {
       <Routes>
         <Route index element={<PageUsTnResidentHome />} />
         <Route path="*" element={<NotFound />} />
+        <Route
+          path={UsTnMoreInformation.About.path}
+          element={<PageMoreInfoAbout />}
+        />
         <Route
           path={UsTnMoreInformation.ImportantDates.path}
           element={<PageMoreInfoImportantDates />}

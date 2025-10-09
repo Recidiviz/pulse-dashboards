@@ -70,6 +70,11 @@ const ManagedComponent: FC<{ presenter: ResidentNavBarPresenter }> = observer(
         {presenter.homeLink && (
           <NavLink {...presenter.homeLink}>{t(($) => $.nav.homeLink)}</NavLink>
         )}
+        {presenter.additionalTopBarLinks.map((link) => (
+          <NavLink key={link.to} to={link.to} end>
+            {link.label}
+          </NavLink>
+        ))}
         <NavMenu links={presenter.menuLinks} />
       </Wrapper>
     );
