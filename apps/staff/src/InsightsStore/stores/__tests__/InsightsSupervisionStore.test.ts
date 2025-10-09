@@ -446,13 +446,15 @@ test.each([
   },
 );
 
-
 test("current user record for an enriched user", async () => {
   vi.useFakeTimers().setSystemTime(
     parseISO("2025-10-04T12:45:04.570Z").getTime(),
   );
   // An "enriched" user is created when the entity and role fields are null in the user info response.
-  vi.spyOn(InsightsOfflineAPIClient.prototype, "userInfo").mockResolvedValueOnce({
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "userInfo",
+  ).mockResolvedValueOnce({
     metadata: {
       hasSeenOnboarding: false,
     },
@@ -515,7 +517,6 @@ test("current user record for an enriched user", async () => {
   `);
   vi.useRealTimers();
 });
-
 
 test("current user record for supervisor", async () => {
   vi.spyOn(

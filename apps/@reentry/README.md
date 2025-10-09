@@ -1,6 +1,7 @@
 ## Setup
 
 In the project root directory run
+
 ```bash
 yarn install
 ```
@@ -13,20 +14,15 @@ yarn nx build @reentry/frontend
 
 ## Running the Frontend/Backend
 
-
-
 ### Backend
+
 0. Make sure you have the following libraries installed in your machine:
 
 For macOs:
-`
-brew install cairo pango glib gobject-introspection gdk-pixbuf uv
-`
+`brew install cairo pango glib gobject-introspection gdk-pixbuf uv`
 Ubuntu/Debian
 
-`
-sudo apt-get install -y libcairo2-dev libpango1.0-dev libglib2.0-dev gobject-introspection libgirepository1.0-dev libgdk-pixbuf2.0-dev
-`
+`sudo apt-get install -y libcairo2-dev libpango1.0-dev libglib2.0-dev gobject-introspection libgirepository1.0-dev libgdk-pixbuf2.0-dev`
 
 1. Go inside the `apps/@reentry/backend` folder, make a `.env` file. Get the content of the file from one of your teammates.
 
@@ -40,7 +36,6 @@ cp .env_example .env
 
 In the folder `apps/@reentry/backend/.secrets/gcp-service-account.json-sample`, create a `apps/@reentry/backend/.secrets/gcp-service-account.json`.
 Get the content of the file from a teammate.
-
 
 2. Start the services with docker-compose (postgres, pgadmin, ...)
 
@@ -91,10 +86,10 @@ uv run fastapi dev
 You can now access the API at [http://localhost:8000](http://localhost:8000).
 The API documentation is accessible at [http://localhost:8000/docs](http://localhost:8000/docs).
 
-
 ### Frontend
 
 Anywhere in the repo run
+
 ```
 yarn nx dev @reentry/frontend
 ```
@@ -103,14 +98,14 @@ yarn nx dev @reentry/frontend
 
 Run tests against a dockerized Postgres test database.
 
-1) Start the test database (runs on localhost:5433):
+1. Start the test database (runs on localhost:5433):
 
 ```bash
 cd apps/@reentry
 docker compose up -d postgres-tests
 ```
 
-2) Run backend tests, pointing pytest at the dockerized DB in one line:
+2. Run backend tests, pointing pytest at the dockerized DB in one line:
 
 ```bash
 cd apps/@reentry/backend
@@ -184,6 +179,7 @@ uv run -m app.manage test-conversation
 ```
 
 Run a few conversations in parallel with basic ai bots and evaluate results
+
 ```bash
 uv run -m app.manage headless-conversation-eval
 ```
@@ -201,12 +197,14 @@ nx run @reentry/frontend:openapi
 Both the backend and frontend support Sentry error tracking. To enable it:
 
 **Backend:**
+
 - Set `RECIDIVIZ_SENTRY_DSN` in your `.env` file or as an environment variable
 - The backend will automatically initialize Sentry if a DSN is provided
 
 **Frontend:**
+
 - Set `NEXT_PUBLIC_SENTRY_DSN` in your `.env.local` file
 
-
 ## Creating One-off jobs
+
 To create gcp cloud run jobs to run one-time procedures, you can follow the examples in [PR-9559](https://github.com/Recidiviz/pulse-dashboards/pull/9559) and [PR-9413](https://github.com/Recidiviz/pulse-dashboards/pull/9413).

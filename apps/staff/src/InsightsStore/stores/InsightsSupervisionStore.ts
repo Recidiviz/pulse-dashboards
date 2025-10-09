@@ -179,7 +179,6 @@ export class InsightsSupervisionStore {
     return userStore.getRoutePermission("supervisors-list");
   }
 
-
   get userHasSeenOnboarding(): boolean {
     return this.userInfo?.metadata.hasSeenOnboarding ?? false;
   }
@@ -187,7 +186,7 @@ export class InsightsSupervisionStore {
   get userCanSubmitRosterChangeRequest(): boolean {
     return (
       "reportIncorrectRosters" in
-      this.insightsStore.rootStore.userStore.activeFeatureVariants &&
+        this.insightsStore.rootStore.userStore.activeFeatureVariants &&
       (this.userCanAccessAllSupervisors || !!this.currentSupervisorUser)
     );
   }
@@ -213,7 +212,7 @@ export class InsightsSupervisionStore {
 
   /**
    * Indicates whether the current officer user does not have access to the supervisors list.
-   * 
+   *
    * As of 9/16/2025, this should be a user who does not supervise any officers and
    * has an officer record.
    */
@@ -654,7 +653,8 @@ export class InsightsSupervisionStore {
       throw new Error("Missing pseudonymizedId for user");
     }
 
-    const userInfo = yield this.insightsStore.apiClient.userInfo(pseudonymizedId);
+    const userInfo =
+      yield this.insightsStore.apiClient.userInfo(pseudonymizedId);
 
     if (userInfo?.entity && userInfo?.role) {
       this.userInfo = userInfo;
@@ -728,7 +728,11 @@ export class InsightsSupervisionStore {
     // permission to see all supervisors (since we expect to have already populated this list with
     // their data from /user-info). We expect the API request to fail for these users anyway so
     // there is no reason to let the request proceed
-    if (this.supervisionOfficerSupervisors || this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
+    if (
+      this.supervisionOfficerSupervisors ||
+      this.isCurrentOfficerUserRestrictedFromSupervisorsList
+    )
+      return;
 
     this.allSupervisionOfficerSupervisors =
       yield this.insightsStore.apiClient.supervisionOfficerSupervisors();

@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, GoLink, HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
+import {
+  Card,
+  GoLink,
+  HomepageSectionHeading,
+  SlateCopy,
+} from "~@jii/common-ui";
 import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
 import { CardDateInfo } from "~@jii/earned-good-time";
 import { State } from "~@jii/paths";

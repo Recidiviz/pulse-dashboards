@@ -46,7 +46,7 @@ const ManagedComponent = observer(function OpportunitySummary({
     <InsightsPageSection
       sectionTitle={`Opportunities (${numEligibleOpportunities ?? 0})`}
     >
-      {!isUserEnriched && opportunitiesByType &&  numEligibleOpportunities ? (
+      {!isUserEnriched && opportunitiesByType && numEligibleOpportunities ? (
         <OpportunitySummaries
           opportunitiesByType={opportunitiesByType}
           opportunityTypes={opportunityTypes}

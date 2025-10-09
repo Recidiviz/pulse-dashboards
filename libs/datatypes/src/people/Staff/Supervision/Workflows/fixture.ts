@@ -214,7 +214,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
       isInUnderstaffedOffice: false,
     },
   },
-    {
+  {
     email: "tx-test-officer-4@example.com",
     district: "DISTRICT 81",
     id: "OFFICER4",
@@ -228,7 +228,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
       isInUnderstaffedOffice: true,
     },
   },
-    {
+  {
     email: "tx-test-officer-5@example.com",
     district: "DISTRICT 42",
     id: "OFFICER5",

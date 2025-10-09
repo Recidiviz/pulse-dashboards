@@ -93,8 +93,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
 
   let teamTooltip;
 
-  if (userCanSubmitRosterChangeRequest)
-    teamTooltip = undefined;
+  if (userCanSubmitRosterChangeRequest) teamTooltip = undefined;
   else if (outcomesModule)
     teamTooltip = (
       <>
@@ -126,27 +125,26 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       title: supervisionLocationInfo.locationLabel,
       info: supervisionLocationInfo.supervisionLocationForSupervisorPage,
     },
-    ...(
-       [
-          {
-            title: "team",
-            tooltip: teamTooltip,
-            info: (
+    ...[
+      {
+        title: "team",
+        tooltip: teamTooltip,
+        info: (
+          <>
+            {pluralize(
+              allOfficers.length,
+              toTitleCase(labels.supervisionOfficerLabel),
+            )}
+            {userCanSubmitRosterChangeRequest && (
               <>
-                {pluralize(
-                  allOfficers.length,
-                  toTitleCase(labels.supervisionOfficerLabel),
-                )}
-                {userCanSubmitRosterChangeRequest && (
-                  <>
-                    <Spacer size={spacing.sm} />
-                    <InsightsManagedSupervisorRosterModal />
-                  </>
-                )}
+                <Spacer size={spacing.sm} />
+                <InsightsManagedSupervisorRosterModal />
               </>
-            ),
-          },
-        ]),
+            )}
+          </>
+        ),
+      },
+    ],
   ];
 
   if (initialPageLoad) {

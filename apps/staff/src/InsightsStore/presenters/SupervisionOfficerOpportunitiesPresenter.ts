@@ -56,25 +56,23 @@ export class SupervisionOfficerOpportunitiesPresenter extends WithJusticeInvolve
 
     this.personFieldsToHydrate = ["opportunityManager"];
 
-    this.hydrator = new HydratesFromSource(
-      {
-        expectPopulated: [
-          this.expectSupervisorPopulated,
-          this.expectOfficerPopulated,
-          () => this.expectCaseloadPopulated(this.officerExternalId),
-        ],
-        populate: async () => {
-          await Promise.all([
-            this.supervisionStore.populateSupervisionOfficerSupervisors(),
-            this.populateSupervisionOfficer(),
-          ]);
+    this.hydrator = new HydratesFromSource({
+      expectPopulated: [
+        this.expectSupervisorPopulated,
+        this.expectOfficerPopulated,
+        () => this.expectCaseloadPopulated(this.officerExternalId),
+      ],
+      populate: async () => {
+        await Promise.all([
+          this.supervisionStore.populateSupervisionOfficerSupervisors(),
+          this.populateSupervisionOfficer(),
+        ]);
 
-          // This needs to happen after the above are hydrated
-          // so it can use the externalId to find the opportunities.
-          await this.populateCaseload();
-        },
+        // This needs to happen after the above are hydrated
+        // so it can use the externalId to find the opportunities.
+        await this.populateCaseload();
       },
-    );
+    });
     this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
   }
 
