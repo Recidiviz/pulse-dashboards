@@ -161,39 +161,54 @@ const SummaryBody: React.FC<SummaryBodyProps> = ({
                           })}
                         </span>
                       </div>
-                      <Typography
-                        component="div"
-                        className="text-[#2B5469D9] font-['Public_Sans'] text-sm leading-[120%] tracking-[-0.01em]"
-                      >
-                        <h2 className="mb-3 font-bold mt-7">
-                          Intake assessment is enabled.
-                        </h2>
+                      {status === "completed" ? (
+                        <Typography
+                          component="div"
+                          className="text-[#2B5469D9] font-['Public_Sans'] text-sm leading-[120%] tracking-[-0.01em]"
+                        >
+                          <h2 className="mb-3 font-bold mt-7">
+                            Intake assessment has been completed.
+                          </h2>
 
-                        <p className="mb-4">
-                          <span className="underline">
-                            If resident uses a computer lab
-                          </span>
-                          : resident can access the intake assessment on the
-                          computer by going to{" "}
-                          <strong>{`${cleanedBaseUrl}/assessment`}</strong>
-                        </p>
+                          <p className="mb-4">
+                            The intake results are ready for your review.
+                          </p>
+                        </Typography>
+                      ) : (
+                        <Typography
+                          component="div"
+                          className="text-[#2B5469D9] font-['Public_Sans'] text-sm leading-[120%] tracking-[-0.01em]"
+                        >
+                          <h2 className="mb-3 font-bold mt-7">
+                            Intake assessment is enabled.
+                          </h2>
 
-                        <p className="mb-3">
-                          <span className="underline">
-                            If resident has a tablet
-                          </span>
-                          : resident can access intake assessment via the{" "}
-                          <strong>Opportunities</strong> button within the Edovo
-                          app on the tablet.
-                        </p>
+                          <p className="mb-4">
+                            <span className="underline">
+                              If resident uses a computer lab
+                            </span>
+                            : resident can access the intake assessment on the
+                            computer by going to{" "}
+                            <strong>{`${cleanedBaseUrl}/assessment`}</strong>
+                          </p>
 
-                        <p className="italic text-[13px]">
-                          Note: for tablet users, the{" "}
-                          <strong>Opportunities</strong> button may take up to 5
-                          business days to appear in the resident&#39;s Edovo
-                          app after you enable the intake here.
-                        </p>
-                      </Typography>
+                          <p className="mb-3">
+                            <span className="underline">
+                              If resident has a tablet
+                            </span>
+                            : resident can access intake assessment via the{" "}
+                            <strong>Opportunities</strong> button within the
+                            Edovo app on the tablet.
+                          </p>
+
+                          <p className="italic text-[13px]">
+                            Note: for tablet users, the{" "}
+                            <strong>Opportunities</strong> button may take up to
+                            5 business days to appear in the resident&#39;s
+                            Edovo app after you enable the intake here.
+                          </p>
+                        </Typography>
+                      )}
                     </>
                   ) : (
                     <div className="text-center py-8">
