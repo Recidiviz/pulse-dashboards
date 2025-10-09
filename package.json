@@ -10,6 +10,7 @@
   "author": "Recidiviz <team@recidiviz.org>",
   "license": "GNU General Public License v3",
   "workspaces": [
+    "apps/@meetings/app",
     "apps/staff",
     "plugins/repo"
   ],
@@ -218,8 +219,8 @@
     "react-native": "0.76.9",
     "react-native-auth0": "^4.6.0",
     "react-native-gesture-handler": "~2.20.2",
-    "react-native-reanimated": "~3.17.4",
-    "react-native-safe-area-context": "5.4.0",
+    "react-native-reanimated": "~3.16.1",
+    "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
     "react-native-svg": "15.8.0",
     "react-native-svg-transformer": "~1.5.1",

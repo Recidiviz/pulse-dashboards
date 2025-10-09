@@ -5,12 +5,16 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "YARN_ENABLE_IMMUTABLE_INSTALLS": "false"
+        "YARN_ENABLE_IMMUTABLE_INSTALLS": "false",
+        "APP_ENV": "production"
       }
     },
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "development"
+      }
     },
     "preview": {
       "distribution": "internal",
@@ -19,6 +23,9 @@
       },
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "APP_ENV": "preview"
       }
     }
   },
