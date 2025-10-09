@@ -44,6 +44,11 @@ const OpportunityWrapper = styled.div<{ background: string; border: string }>`
   background-color: ${({ background: backgroundColor }) => backgroundColor};
   border-width: 1px 0;
   border-color: ${({ border: borderColor }) => borderColor};
+  border-top-style: solid;
+
+  &:last-child {
+    border-bottom-style: solid;
+  }
 `;
 
 const AccordionButton = styled(AccordionItemButton)`
