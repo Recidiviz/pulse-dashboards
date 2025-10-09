@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./Button";
-export * from "./Dropdown";
-export * from "./Icon";
-export * from "./Menubar";
 export * from "./Toolbar";
+export * from "./ToolbarContext";
+export * from "./ToolbarFocusManager";
+export * from "./ToolbarItem";
