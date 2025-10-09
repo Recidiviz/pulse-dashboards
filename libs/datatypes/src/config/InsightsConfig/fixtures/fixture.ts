@@ -29,6 +29,7 @@ import {
   insightsConfigSchema,
   RawInsightsConfig,
 } from "../schema";
+import { US_AZ } from "./US_AZ";
 import { US_CA } from "./US_CA";
 import { US_ID } from "./US_ID";
 import { US_MI } from "./US_MI";
@@ -170,6 +171,7 @@ export const InsightsConfigFixture: InsightsConfig = insightsConfigSchema.parse(
 );
 
 export const getMockConfigsByTenantId = (): Record<string, InsightsConfig> => ({
+  US_AZ,
   US_CA,
   US_ID,
   US_MI,

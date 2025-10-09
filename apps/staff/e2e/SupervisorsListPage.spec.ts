@@ -30,7 +30,7 @@ test.describe("Supervisors List Page", () => {
       });
       await switchTenant(page, "Michigan");
       await expect(
-        page.getByRole("menuitem", { name: "Recidiviz | Lantern" }),
+        page.locator(".LanternLogo"),
       ).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
         "Select a supervisor to view their overview",
@@ -41,7 +41,7 @@ test.describe("Supervisors List Page", () => {
       ).toBeVisible();
       await switchTenant(page, "Tennessee");
       await expect(
-        page.getByRole("menuitem", { name: "Recidiviz | Lantern" }),
+        page.locator(".LanternLogo"),
       ).toBeVisible();
     });
   });
