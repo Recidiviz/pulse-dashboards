@@ -24,6 +24,7 @@ describe("staff router", () => {
       const result = await testTRPCClient.staff.getClients.query();
       expect(result).toEqual([
         {
+          personId: fakeClient.personId,
           givenNames: fakeClient.givenNames,
           surname: fakeClient.surname,
           displayPersonExternalId: fakeClient.displayPersonExternalId,

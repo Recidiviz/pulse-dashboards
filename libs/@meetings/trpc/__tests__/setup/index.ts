@@ -137,7 +137,9 @@ beforeAll(async () => {
     };
 
     req.user = {
-      pseudonymizedId: fakeStaff.pseudonymizedId,
+      "https://dashboard.recidiviz.org/app_metadata": {
+        pseudonymizedId: fakeStaff.pseudonymizedId,
+      },
     };
     done();
   });

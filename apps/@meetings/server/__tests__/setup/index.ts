@@ -25,7 +25,7 @@ import { beforeAll, beforeEach } from "vitest";
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
 import { buildServer } from "~@meetings/server/server";
-import { seed } from "~@meetings/server/test/setup/seed";
+import { fakeStaff, seed } from "~@meetings/server/test/setup/seed";
 import { resetDb } from "~@meetings/server/test/setup/utils";
 import { AppRouter } from "~@meetings/trpc";
 
@@ -58,7 +58,11 @@ beforeAll(async () => {
       return;
     };
 
-    req.user = "We did it Joe!";
+    req.user = {
+      "https://dashboard.recidiviz.org/app_metadata": {
+        pseudonymizedId: fakeStaff.pseudonymizedId,
+      },
+    };
     done();
   });
 

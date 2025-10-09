@@ -20,21 +20,18 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { Image, ImageBackground, Text, View } from "react-native";
 
+import { Client } from "~@meetings/app/common/types";
+
 import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 
 type ProfileNavProp = StackNavigationProp<RootStackParamList, "Clients">;
 
-const ClientCard = ({
-  client,
-}: {
-  client: {
-    id: string;
-    name: string;
-    supervision: string;
-    lastMeeting: string;
-  };
-}) => {
+interface ClientProps {
+  client: Client;
+}
+
+const ClientCard = ({ client }: ClientProps) => {
   const navigation = useNavigation<ProfileNavProp>();
 
   const getInitials = (name: string) => {
@@ -51,16 +48,23 @@ const ClientCard = ({
           style={{ borderRadius: 22, overflow: "hidden" }}
         >
           <Text
-            onPress={() => navigation.navigate("Profile", { id: client.id })}
+            onPress={() =>
+              navigation.navigate("Profile", {
+                client: {
+                  personId: client.personId,
+                  fullName: client.fullName,
+                },
+              })
+            }
             className="font-[inter] text-sm font-semibold text-white"
           >
-            {getInitials(client.name)}
+            {getInitials(client.fullName)}
           </Text>
         </ImageBackground>
         <View className="flex-1">
           <View className="flex-row items-center">
             <Text className="mr-1.5 font-[inter] text-base font-semibold text-gray-900">
-              {client.name}
+              {client.fullName}
             </Text>
             <Image
               source={Icons.ArrowRight}
@@ -71,7 +75,7 @@ const ClientCard = ({
 
           <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
             <Text className="text-xs text-gray-600">
-              ID: {client.id} • {client.supervision}
+              ID: {client.displayPersonExternalId} • {client.supervision}
             </Text>
             <Text className="text-xs text-gray-600">
               Last meeting {client.lastMeeting}

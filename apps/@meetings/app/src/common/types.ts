@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,23 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { describe } from "vitest";
+import type { AppRouter } from "~@meetings/trpc-types";
 
-import { testTRPCClient } from "~@meetings/server/test/setup";
-import { fakeClient } from "~@meetings/server/test/setup/seed";
-
-describe("server", () => {
-  test("should include trpc routes", async () => {
-    // If the trpc routes are not properly set up, this query will fail.
-    const returnedClients = await testTRPCClient.staff.getClients.query();
-
-    expect(returnedClients).toEqual([
-      {
-        personId: fakeClient.personId,
-        givenNames: fakeClient.givenNames,
-        surname: fakeClient.surname,
-        displayPersonExternalId: fakeClient.displayPersonExternalId,
-      },
-    ]);
-  });
-});
+export type Client = Awaited<
+  ReturnType<AppRouter["staff"]["getClients"]>
+>[0] & {
+  supervision: string;
+  lastMeeting: string;
+  fullName: string;
+};

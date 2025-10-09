@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useRef, useState } from "react";
 import {
   Image,
@@ -36,9 +37,15 @@ import Dropdown from "../components/Dropdown";
 import MeetingCard from "../components/MeetingCard";
 import SearchBar from "../components/SearchBar";
 import meetings from "../data/meetings";
+import { RootStackParamList } from "../navigation/DrawerNavigator";
+
+type NewMeetingNavProp = StackNavigationProp<RootStackParamList, "NewMeeting">;
+type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
 
 const ProfileScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NewMeetingNavProp>();
+  const route = useRoute<NewMeetingRouteProp>();
+  const { client } = route.params;
   const insets = useSafeAreaInsets();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -113,7 +120,14 @@ const ProfileScreen = () => {
             {isCollapsed && (
               <TouchableOpacity
                 className="px-2"
-                onPress={() => console.log("Add meeting")}
+                onPress={() =>
+                  navigation.navigate("NewMeeting", {
+                    client: {
+                      personId: client.personId,
+                      fullName: client.fullName,
+                    },
+                  })
+                }
               >
                 <Image
                   source={Icons.Plus}
@@ -153,7 +167,14 @@ const ProfileScreen = () => {
 
           <TouchableOpacity
             className="rounded-full bg-[#006C67] px-4 py-2"
-            onPress={() => console.log("Add meeting")}
+            onPress={() =>
+              navigation.navigate("NewMeeting", {
+                client: {
+                  personId: client.personId,
+                  fullName: client.fullName,
+                },
+              })
+            }
           >
             <Text className="font-medium text-white">+ Meeting</Text>
           </TouchableOpacity>

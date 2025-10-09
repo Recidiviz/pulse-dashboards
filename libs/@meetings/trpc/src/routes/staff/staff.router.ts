@@ -19,12 +19,14 @@ import { auth0Procedure, router } from "~@meetings/trpc/init";
 
 export const staffRouter = router({
   getClients: auth0Procedure.query(async ({ ctx: { prisma, user } }) => {
+    console.log(user.pseudonymizedId);
+
     return prisma.client.findMany({
       where: {
         staff: {
           some: {
             staff: {
-              pseudonymizedId: user?.pseudonymizedId,
+              pseudonymizedId: user.pseudonymizedId,
             },
           },
         },
@@ -33,6 +35,7 @@ export const staffRouter = router({
         givenNames: true,
         surname: true,
         displayPersonExternalId: true,
+        personId: true,
       },
     });
   }),

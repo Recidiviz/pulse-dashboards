@@ -30,7 +30,7 @@ export const router = t.router;
 
 const plugin = procedurePlugin();
 
-export const baseProcedure = t.procedure.concat(plugin);
+const baseProcedure = t.procedure.concat(plugin);
 
 export const auth0Procedure = baseProcedure.use(async (opts) => {
   const { ctx } = opts;

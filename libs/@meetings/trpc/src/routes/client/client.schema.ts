@@ -20,7 +20,6 @@ import { z } from "zod";
 export const createMeetingInputSchema = z.object({
   clientId: z.bigint(),
   startTime: z.date(),
-  endTime: z.date(),
   address: z.string().min(1).max(255),
 });
 

@@ -20,7 +20,7 @@ import { faker } from "@faker-js/faker";
 import { Prisma, PrismaClient, StateCode } from "~@meetings/prisma/client";
 
 export const fakeStaff = {
-  staffId: 1,
+  staffId: BigInt(1),
   stableStaffExternalId: "staff-ext-1",
   stableStaffExternalIdType: "staff-ext-type-1",
   pseudonymizedId: "staff-pid-1",
@@ -33,7 +33,7 @@ export const fakeStaff = {
 
 export const fakeClient = {
   stateCode: StateCode.US_NE,
-  personId: 1,
+  personId: BigInt(1),
   stablePersonExternalId: "client-ext-1",
   stablePersonExternalIdType: "client-ext-type-1",
   displayPersonExternalId: "client-display-ext-1",

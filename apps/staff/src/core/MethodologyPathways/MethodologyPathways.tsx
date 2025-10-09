@@ -75,17 +75,11 @@ const MethodologyPathways: React.FC = () => {
       : ["vitalsPercentMethodology", "vitalsOverTimeMethodology"];
 
   return (
-    <PageTemplate
-      mobileNavigation={<MobileNavigation />}
-    >
+    <PageTemplate mobileNavigation={<MobileNavigation />}>
       <div className="Methodology">
         <Container className="col-md-9 col-12">
           <section>
-            <h1
-              className="Methodology__main-title"
-            >
-              {Methodology.title}
-            </h1>
+            <h1 className="Methodology__main-title">{Methodology.title}</h1>
             <h2
               className="Methodology__main-description"
               id="primary-description"

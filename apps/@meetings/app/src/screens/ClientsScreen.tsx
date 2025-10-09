@@ -18,25 +18,23 @@
 import React, { useState } from "react";
 import { FlatList, Text, View } from "react-native";
 
+import { Client } from "~@meetings/app/common/types";
+
 import ClientCard from "../components/ClientCard";
 import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import SearchBar from "../components/SearchBar";
 import { trpc } from "../trpc/client";
 
-type Client = {
-  id: string;
-  name: string;
-  supervision: string;
-  lastMeeting: string;
-};
-
 const sortClientsByOption = (data: Client[], option: string): Client[] => {
   const sorted = [...data];
   if (option.includes("Name")) {
-    return sorted.sort((a, b) => a.name.localeCompare(b.name));
+    return sorted.sort((a, b) => a.fullName.localeCompare(b.fullName));
   }
-  return sorted.sort((a, b) => Number(a.id) - Number(b.id));
+  return sorted.sort(
+    (a, b) =>
+      Number(a.displayPersonExternalId) - Number(b.displayPersonExternalId),
+  );
 };
 
 const ClientsScreen = () => {
@@ -52,8 +50,8 @@ const ClientsScreen = () => {
   const clients: Client[] = React.useMemo(() => {
     if (!rawClients) return [];
     return rawClients.map((c) => ({
-      id: c.displayPersonExternalId,
-      name: `${c.givenNames} ${c.surname}`,
+      ...c,
+      fullName: `${c.givenNames} ${c.surname}`,
       supervision: "Probation", // TODO: remove hardcode
       lastMeeting: "5d ago", // TODO: remove hardcode
     }));
@@ -64,7 +62,7 @@ const ClientsScreen = () => {
     let results = clients;
     if (search) {
       results = results.filter((e) =>
-        e.name.toLowerCase().includes(search.toLowerCase()),
+        e.fullName.toLowerCase().includes(search.toLowerCase()),
       );
     }
     return sortClientsByOption(results, sortBy);
@@ -115,7 +113,7 @@ const ClientsScreen = () => {
 
         <FlatList
           data={filtered}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.displayPersonExternalId}
           renderItem={({ item }) => <ClientCard client={item} />}
         />
       </View>

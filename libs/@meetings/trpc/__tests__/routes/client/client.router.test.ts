@@ -29,13 +29,11 @@ describe("client router", () => {
   describe("createMeeting", () => {
     test("Creates a meeting", async () => {
       const startTime = faker.date.future();
-      const endTime = faker.date.future({ refDate: startTime });
       const address = faker.location.streetAddress();
 
       const result = await testTRPCClient.client.createMeeting.mutate({
         clientId: fakeClient.personId,
         startTime,
-        endTime,
         address,
       });
 
@@ -43,7 +41,6 @@ describe("client router", () => {
       expect(result).toEqual({
         id: expect.any(String),
         startTime,
-        endTime,
         address,
       });
 
@@ -59,7 +56,7 @@ describe("client router", () => {
             clientId: fakeClient.personId,
             staffId: fakeStaff.staffId,
             startTime,
-            endTime,
+            endTime: null,
             address,
             recordingsGCSBucket: "test-audio-bucket",
             recordingsFolderPath: result.id,

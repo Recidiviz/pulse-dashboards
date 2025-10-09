@@ -22,33 +22,38 @@ import { useId } from "react";
 import { Tooltip } from "react-tooltip";
 
 interface InfoTooltipProps {
-    text: string;
-    size?: number;
-    position?: "top" | "bottom" | "left" | "right";
-    className?: string;
+  text: string;
+  size?: number;
+  position?: "top" | "bottom" | "left" | "right";
+  className?: string;
 }
 
-export function InfoTooltip({text, size = 15, position = "top", className = "",}: InfoTooltipProps) {
-    // Unique ID for each tooltip instance
-    const id = useId();
+export function InfoTooltip({
+  text,
+  size = 15,
+  position = "top",
+  className = "",
+}: InfoTooltipProps) {
+  // Unique ID for each tooltip instance
+  const id = useId();
 
-    return (
-        <>
-            <Image
-                data-tooltip-id={id}
-                data-tooltip-content={text}
-                src="/images/info_icon.svg"
-                alt="info icon"
-                width={size}
-                height={size}
-                className={`cursor-pointer ${className}`}
-            />
+  return (
+    <>
+      <Image
+        data-tooltip-id={id}
+        data-tooltip-content={text}
+        src="/images/info_icon.svg"
+        alt="info icon"
+        width={size}
+        height={size}
+        className={`cursor-pointer ${className}`}
+      />
 
-            <Tooltip
-                id={id}
-                place={position}
-                className="bg-gray-800 text-white text-[10px] italic rounded-md px-2 py-1 z-[9999]"
-            />
-        </>
-    );
+      <Tooltip
+        id={id}
+        place={position}
+        className="bg-gray-800 text-white text-[10px] italic rounded-md px-2 py-1 z-[9999]"
+      />
+    </>
+  );
 }

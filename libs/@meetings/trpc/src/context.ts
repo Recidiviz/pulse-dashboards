@@ -23,11 +23,28 @@ import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
-import { Context } from "~@meetings/trpc/types";
+import { AuthUser, Context } from "~@meetings/trpc/types";
 import { verifyAuth0Token } from "~server-setup-plugin";
+
+type Auth0User = {
+  "https://dashboard.recidiviz.org/app_metadata": {
+    pseudonymizedId: string;
+  };
+};
 
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
+
+function formatUser(user: Auth0User | undefined): AuthUser | undefined {
+  if (!user) {
+    return undefined;
+  }
+
+  return {
+    pseudonymizedId:
+      user["https://dashboard.recidiviz.org/app_metadata"].pseudonymizedId,
+  };
+}
 
 export async function createContext(
   opts: CreateFastifyContextOptions,
@@ -53,7 +70,8 @@ export async function createContext(
   }
 
   // Cast since the returned object from verifyAuth0Token has no type information
-  const auth0User = (await verifyAuth0Token(opts)) as Context["user"];
+  const auth0User = (await verifyAuth0Token(opts)) as Auth0User;
+  const formattedUser = formatUser(auth0User);
 
   let prismaClient;
   try {
@@ -69,8 +87,8 @@ export async function createContext(
   return {
     req,
     res,
-    isAuth0Authorized: !!auth0User,
-    user: auth0User,
+    isAuth0Authorized: !!formattedUser,
+    user: formattedUser,
     prisma: prismaClient,
     stateCode: stateCode as StateCode,
   };

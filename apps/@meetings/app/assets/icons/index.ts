@@ -27,9 +27,15 @@ import Clients from "./clients.png";
 import Cross from "./cross.png";
 import Home from "./home.png";
 import Menu from "./menu.png";
+import Microphone from "./microphone.png";
+import Notes from "./notes.png";
+import Pause from "./pause.png";
+import Play from "./play.png";
 import Plus from "./plus.png";
+import Record from "./record.png";
 import Resources from "./resources.png";
 import Search from "./search.png";
+import Stop from "./stop.png";
 import Trends from "./trends.png";
 
 const Icons = {
@@ -49,6 +55,12 @@ const Icons = {
   ArrowLeft,
   Plus,
   BgAvatar,
+  Microphone,
+  Notes,
+  Pause,
+  Play,
+  Record,
+  Stop,
 };
 
 export default Icons;
