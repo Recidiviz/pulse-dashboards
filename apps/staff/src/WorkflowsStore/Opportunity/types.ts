@@ -33,6 +33,7 @@ import {
   OfficerDenialAction,
   SharedSnoozeUpdate,
   Submission,
+  SupervisorAction,
   UpdateLog,
 } from "../../FirestoreStore";
 import { PartialRecord } from "../../utils/typeUtils";
@@ -173,6 +174,12 @@ export interface Opportunity<
   readonly denialConfirmationModalName?: DenialConfirmationModalName;
   isSubmitted: boolean;
   readonly submittedTabTitle: string;
+  isInSupervisorReview: boolean;
+  isInSnoozeReview: boolean;
+  isInGrantReview: boolean;
+  readonly supervisorReviewTabTitle: string;
+  readonly snoozeReviewStatusMessage: string;
+  readonly grantReviewStatusMessage: string;
   markSubmittedAndGenerateToast: (
     newSubcategory?: string | undefined,
     customToast?: string | undefined,
@@ -209,6 +216,10 @@ export interface Opportunity<
     officerActionParams: OfficerApprovalAction | OfficerDenialAction,
   ) => Promise<void>;
   markActionHistoryStale: () => Promise<void>;
+  deleteActionHistory: () => Promise<void>;
+  setSupervisorResponse: (
+    supervisorResponseParams: Omit<SupervisorAction, "date" | "by">,
+  ) => Promise<void>;
   indefiniteDenialReasons: DenialReasonsMap;
   denialViewPrompt: string;
 }
@@ -240,6 +251,7 @@ export type OpportunityTab =
   | "Assessment Complete"
   | "In Progress"
   | "Submitted"
+  | "Supervisor Review"
 
   // For US_AZ TPR/DTP opportunities
   | "Fast Trackers"

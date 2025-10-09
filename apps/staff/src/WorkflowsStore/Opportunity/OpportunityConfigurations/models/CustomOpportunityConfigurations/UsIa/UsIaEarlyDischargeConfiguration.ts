@@ -69,4 +69,8 @@ export class UsIaEarlyDischargeConfiguration extends ApiOpportunityConfiguration
       return {};
     }
   }
+
+  get grantReviewStatusMessage() {
+    return "Discharge Form Review";
+  }
 }

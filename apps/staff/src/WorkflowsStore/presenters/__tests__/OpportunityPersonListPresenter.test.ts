@@ -24,7 +24,11 @@ import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../../RootStore/types";
 import { OpportunityConfiguration } from "../../Opportunity/OpportunityConfigurations";
-import { OpportunityTab, OpportunityTabGroups } from "../../Opportunity/types";
+import {
+  Opportunity,
+  OpportunityTab,
+  OpportunityTabGroups,
+} from "../../Opportunity/types";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { OpportunityPersonListPresenter } from "../OpportunityPersonListPresenter";
 
@@ -42,7 +46,13 @@ const firestoreStore = {
 const tenantStore = {} as any as TenantStore;
 
 const mockOpportunities = {
-  [mockOpportunity.type]: [mockOpportunity],
+  [mockOpportunity.type]: [
+    {
+      ...mockOpportunity,
+      tabTitle: (tabGroup) =>
+        tabGroup === "ELIGIBILITY STATUS" ? "Eligible Now" : "Other",
+    } as Opportunity,
+  ],
 };
 const mockWorkflowsStore = {
   allOpportunitiesByType: mockOpportunities,

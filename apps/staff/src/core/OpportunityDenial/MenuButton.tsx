@@ -49,6 +49,40 @@ export const deleteSubmitted = async (opportunity: Opportunity) => {
   );
 };
 
+const setSupervisorResponse = async (
+  opportunity: Opportunity,
+  type: "APPROVAL" | "DENIAL",
+) => {
+  await opportunity.setSupervisorResponse({ type });
+
+  // Submit snooze if it has been approved
+  if (type === "APPROVAL" && opportunity.latestAction?.type === "DENIAL") {
+    const {
+      denialReasons: reasons,
+      userInput,
+      requestedSnoozeLength,
+    } = opportunity.latestAction;
+
+    // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
+    await opportunity.markActionHistoryStale();
+    await opportunity.setDenialReasons(reasons, userInput);
+
+    if (requestedSnoozeLength) {
+      await opportunity.setManualSnooze(requestedSnoozeLength, reasons);
+    }
+  }
+
+  toast(
+    <OpportunityStatusUpdateToast
+      toastText={`Marked ${opportunity.person.displayName} as ${opportunity.tabTitle()} for ${opportunity.config.label}`}
+    />,
+    {
+      id: "reviewToast", // prevent duplicate toasts
+      position: "bottom-left",
+    },
+  );
+};
+
 export const markSubmittedAndToast = async ({
   opportunity,
   subcategory,
@@ -72,6 +106,8 @@ export const markSubmittedAndToast = async ({
   }
 };
 
+// TODO(#9771): Consider adding a presenter to this component to determine which menu
+// items are relevant.
 export const MenuButton = observer(function MenuButton({
   opportunity,
   onDenialButtonClick = () => null,
@@ -127,58 +163,93 @@ export const MenuButton = observer(function MenuButton({
     );
   }
 
+  const submittedSubcategoryMenuItems = (submittedSubcategories: string[]) => (
+    <>
+      {submittedSubcategories.map((subcategory) => (
+        <OpportunityStatusDropdownMenuItem
+          key={subcategory}
+          onClick={async () => {
+            await markSubmittedAndToast({
+              opportunity: opportunity,
+              subcategory: subcategory,
+            });
+          }}
+        >
+          {opportunity.subcategoryHeadingFor(subcategory)}
+        </OpportunityStatusDropdownMenuItem>
+      ))}
+    </>
+  );
+  const nonSubcategoryMenuItems = // If there are no subcategories, show a button to undo or mark submitted
+    // depending on the opportunity's current status
+    opportunity.isSubmitted ? (
+      <OpportunityStatusDropdownMenuItem
+        onClick={async () => {
+          await deleteSubmitted(opportunity);
+        }}
+      >
+        {undoSubmitText}
+      </OpportunityStatusDropdownMenuItem>
+    ) : (
+      <OpportunityStatusDropdownMenuItem
+        onClick={async () => {
+          await markSubmittedAndToast({ opportunity: opportunity });
+        }}
+      >
+        {submittedText}
+      </OpportunityStatusDropdownMenuItem>
+    );
+
+  // MARK PENDING/SUBMITTED
+  const submittedMenuItems =
+    // If there are subcategories for submitted, show a menu option for each submitted category
+    submittedSubcategories && submittedSubcategories.length > 0 ? (
+      <>{submittedSubcategoryMenuItems(submittedSubcategories)}</>
+    ) : (
+      nonSubcategoryMenuItems
+    );
+
+  const denialMenuItem = (
+    <OpportunityStatusDropdownMenuItem onClick={onDenialButtonClick}>
+      {denialText}
+    </OpportunityStatusDropdownMenuItem>
+  );
+
+  // TODO(#9558): Add menu items for opportunity grant review
+  const supervisorReviewItems = (
+    <>
+      <OpportunityStatusDropdownMenuItem
+        onClick={async () => {
+          await setSupervisorResponse(opportunity, "APPROVAL");
+        }}
+      >
+        {"Approve Snooze"}
+      </OpportunityStatusDropdownMenuItem>
+      <OpportunityStatusDropdownMenuItem
+        onClick={async () => {
+          await setSupervisorResponse(opportunity, "DENIAL");
+        }}
+      >
+        {"Deny Snooze"}
+      </OpportunityStatusDropdownMenuItem>
+    </>
+  );
+
+  const getItems = () => {
+    if (opportunity.isInSupervisorReview) return supervisorReviewItems;
+    return (
+      <>
+        {submittedMenuItems}
+        {config.supportsDenial && denialMenuItem}
+      </>
+    );
+  };
+
   if (config.supportsSubmitted) {
     return (
       <Dropdown>
         <StatusAwareToggle>{toggleText}</StatusAwareToggle>
-        <DropdownMenu>
-          {
-            // If there are subcategories for submitted, show a menu option for each submitted category
-            // eslint-disable-next-line no-nested-ternary
-            submittedSubcategories && submittedSubcategories.length > 0 ? (
-              <>
-                {submittedSubcategories.map((subcategory) => (
-                  <OpportunityStatusDropdownMenuItem
-                    key={subcategory}
-                    onClick={async () => {
-                      await markSubmittedAndToast({
-                        opportunity: opportunity,
-                        subcategory: subcategory,
-                      });
-                    }}
-                  >
-                    {opportunity.subcategoryHeadingFor(subcategory)}
-                  </OpportunityStatusDropdownMenuItem>
-                ))}
-              </>
-            ) : // If there are no subcategories, show a button to undo or mark submitted
-            // depending on the opportunity's current status
-            opportunity.isSubmitted ? (
-              <OpportunityStatusDropdownMenuItem
-                onClick={async () => {
-                  await deleteSubmitted(opportunity);
-                }}
-              >
-                {undoSubmitText}
-              </OpportunityStatusDropdownMenuItem>
-            ) : (
-              <OpportunityStatusDropdownMenuItem
-                onClick={async () => {
-                  await markSubmittedAndToast({ opportunity: opportunity });
-                }}
-              >
-                {submittedText}
-              </OpportunityStatusDropdownMenuItem>
-            )
-          }
-          <>
-            {config.supportsDenial && (
-              <OpportunityStatusDropdownMenuItem onClick={onDenialButtonClick}>
-                {denialText}
-              </OpportunityStatusDropdownMenuItem>
-            )}
-          </>
-        </DropdownMenu>
+        <DropdownMenu>{getItems()}</DropdownMenu>
       </Dropdown>
     );
   } else {

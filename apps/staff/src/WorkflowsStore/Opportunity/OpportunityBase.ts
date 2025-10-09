@@ -50,6 +50,7 @@ import {
   OpportunityUpdateWithForm,
   SharedSnoozeUpdate,
   Submission,
+  SupervisorAction,
   UpdateLog,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -170,6 +171,11 @@ export class OpportunityBase<
       isSubmitted: computed,
       submittedUpdate: computed,
       bannerInfo: computed,
+      isInSupervisorReview: computed,
+      isInGrantReview: computed,
+      isInSnoozeReview: computed,
+      latestAction: computed,
+      actionHistory: computed,
     });
 
     this.updateOpportunityEligibility = updateOpportunityEligibility(
@@ -737,9 +743,34 @@ export class OpportunityBase<
     return this.config.deniedTabTitle;
   }
 
+  get supervisorReviewTabTitle(): OpportunityTab {
+    return this.config.supervisorReviewTabTitle;
+  }
+
+  /**
+   * Returns true when an officer has taken an action requiring supervisor approval and there is
+   * not yet a supervisor response for that action.
+   */
+  get isInSupervisorReview(): boolean {
+    return (
+      !!this.latestAction &&
+      !this.latestAction.isStale &&
+      !this.latestAction.supervisorResponse
+    );
+  }
+
+  get isInSnoozeReview(): boolean {
+    return this.isInSupervisorReview && this.latestAction?.type === "DENIAL";
+  }
+
+  get isInGrantReview(): boolean {
+    return this.isInSupervisorReview && this.latestAction?.type === "APPROVAL";
+  }
+
   tabTitle(category?: OpportunityTabGroup): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
     if (this.isSubmitted) return this.submittedTabTitle;
+    if (this.isInSupervisorReview) return this.supervisorReviewTabTitle;
     if (this.almostEligible) return "Almost Eligible";
     return "Eligible Now";
   }
@@ -901,6 +932,8 @@ export class OpportunityBase<
       this,
       updatedActionHistory,
     );
+
+    // TODO(#9770): Add state-agnostic tracking event
   }
 
   /**
@@ -927,12 +960,70 @@ export class OpportunityBase<
         updatedActionHistory,
       );
     }
+
+    // TODO(#9770): Add state-agnostic tracking event
+  }
+
+  /**
+   * Clears all actions requiring supervisor approval.
+   */
+  async deleteActionHistory(): Promise<void> {
+    await this.rootStore.firestoreStore.deleteOpportunityActionHistory(this);
+    // TODO(#9770): Add state-agnostic tracking event
+  }
+
+  /**
+   * Set the supervisor's `DENIAL` or `APPROVAL` of the latest officer action.
+   */
+  async setSupervisorResponse(
+    supervisorResponseParams: Omit<SupervisorAction, "date" | "by">,
+  ): Promise<void> {
+    const supervisorResponse = {
+      date: Timestamp.fromDate(new Date()),
+      by: this.userName,
+      ...supervisorResponseParams,
+    };
+
+    if (!this.actionHistory || !this.latestAction) {
+      throw new Error(
+        `Supervisor with id [${this.rootStore.userStore.userPseudoId}] cannot respond when there is no existing Action History for client with id [${this.person.pseudonymizedId}]`,
+      );
+    }
+
+    const updatedOfficerAction = {
+      ...this.latestAction,
+      supervisorResponse,
+    };
+
+    const updatedActionHistory = this.actionHistory
+      .slice(0, -1)
+      .concat(updatedOfficerAction);
+
+    await this.rootStore.firestoreStore.updateOpportunityActionHistory(
+      this,
+      updatedActionHistory,
+    );
+
+    // TODO(#9770): Add state-agnostic tracking event
+  }
+
+  get userName(): string {
+    // We'll fall back to the user's email
+    return this.rootStore.userStore.userFullName ?? this.currentUserEmail;
   }
 
   get denialViewPrompt(): string {
     return this.config.isAlert
       ? `Please select the reason(s) ${this.person?.displayPreferredName} should be overridden:`
       : `Which of the following requirements has ${this.person?.displayPreferredName} not met${this.instanceDetails ? ` [${this.instanceDetails}]` : ""}?`;
+  }
+
+  get snoozeReviewStatusMessage(): string {
+    return this.config.snoozeReviewStatusMessage;
+  }
+
+  get grantReviewStatusMessage(): string {
+    return this.config.grantReviewStatusMessage;
   }
 
   // ===============================
@@ -998,6 +1089,7 @@ export class OpportunityBase<
     descriptionText: "This action cannot be undone.",
   };
 
+  // TODO(#9952): Clean up custom behavior related to supervisor approvals. Remove this handler.
   // Used to execute additional opportunity-specific actions when the "Revert Changes" confirmation is triggered
   async handleAdditionalUndoActions(): Promise<void> {
     return undefined;
@@ -1026,6 +1118,10 @@ export class OpportunityBase<
       denial,
       isSubmitted,
       config: { isAlert, submittedTabTitle },
+      isInSnoozeReview,
+      isInGrantReview,
+      grantReviewStatusMessage,
+      snoozeReviewStatusMessage,
     } = this;
 
     if (!isHydrated(this)) return null;
@@ -1047,6 +1143,14 @@ export class OpportunityBase<
       return includeReasons && almostEligibleStatusMessage
         ? almostEligibleStatusMessage
         : "Almost eligible";
+    }
+
+    if (isInSnoozeReview) {
+      return snoozeReviewStatusMessage;
+    }
+
+    if (isInGrantReview) {
+      return grantReviewStatusMessage;
     }
 
     if (defaultEligibility === "MAYBE") return "May be eligible";

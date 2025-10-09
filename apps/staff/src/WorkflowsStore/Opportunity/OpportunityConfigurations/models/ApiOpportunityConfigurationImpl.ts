@@ -168,6 +168,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return [
       "Eligible Now",
       ...(this.supportsAlmostEligible ? [almostEligibleTabTitle] : []),
+      ...(this.supportsSupervisorReview ? [this.supervisorReviewTabTitle] : []),
       ...(this.supportsSubmitted ? [this.submittedTabTitle] : []),
       ...(this.supportsDenial ? [this.deniedTabTitle] : []),
     ];
@@ -422,5 +423,33 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
    */
   get denialInputSettings(): Record<string, DenialInputSettings> {
     return {};
+  }
+
+  get supportsSupervisorReview() {
+    return (
+      this.supportsSupervisorReviewOnGrants ||
+      this.supportsSupervisorReviewOnSnooze
+    );
+  }
+
+  get supportsSupervisorReviewOnGrants() {
+    return false;
+  }
+
+  get supportsSupervisorReviewOnSnooze() {
+    return this.reasonsRequiringApproval.length > 0;
+  }
+
+  get supervisorReviewTabTitle() {
+    return (this.configurationObject.supervisorReviewTabTitle ??
+      "Supervisor Review") as OpportunityTab;
+  }
+
+  get snoozeReviewStatusMessage() {
+    return this.configurationObject.snoozeReviewStatusMessage ?? "Under Review";
+  }
+
+  get grantReviewStatusMessage() {
+    return this.configurationObject.grantReviewStatusMessage ?? "Under Review";
   }
 }

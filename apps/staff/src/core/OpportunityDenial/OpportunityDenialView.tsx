@@ -154,7 +154,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     }
 
     // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
-    if (isIaEDOpportunity) {
+    if (opportunity.latestAction) {
       await opportunity.markActionHistoryStale();
     }
     await opportunity.setDenialReasons(reasons, userInput);
@@ -176,15 +176,20 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     onSubmit();
   };
 
-  const handleIndefiniteSnoozeRequest = async () => {
-    // If a client is moving into snooze review, we should
-    // delete denials and submissions, if applicable.
+  const clearDenialsAndSubmissions = async () => {
     if (opportunity.denied) {
       await opportunity.deleteOpportunityDenialAndSnooze();
     }
     if (opportunity.isSubmitted) {
       await opportunity.deleteSubmitted();
     }
+  };
+
+  const handleIndefiniteSnoozeRequest = async () => {
+    // If a client is moving into snooze review, we should
+    // delete denials and submissions, if applicable.
+    await clearDenialsAndSubmissions();
+
     await opportunity.setOfficerAction({
       type: "DENIAL",
       denialReasons: reasons,
@@ -193,10 +198,34 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
     toast(
       <OpportunityStatusUpdateToast
-        toastText={`You have submitted ${opportunity.person.displayName} for indefinite snooze under 'Supervisor Review'.`}
+        toastText={`You have submitted ${opportunity.person.displayName} for indefinite snooze under ${opportunity.tabTitle()}.`}
       />,
       {
         id: "indefiniteSnoozeSubmittedToast", // prevent duplicate toasts
+        position: "bottom-left",
+      },
+    );
+
+    onSubmit();
+  };
+
+  const handleSupervisorReviewRequest = async () => {
+    // If a client is moving into snooze review, we should
+    // delete denials and submissions, if applicable.
+    await clearDenialsAndSubmissions();
+    await opportunity.setOfficerAction({
+      type: "DENIAL",
+      denialReasons: reasons,
+      userInput,
+      requestedSnoozeLength: sliderDays,
+    });
+
+    toast(
+      <OpportunityStatusUpdateToast
+        toastText={`You have submitted ${opportunity.person.displayName} for snooze review under ${opportunity.tabTitle()}.`}
+      />,
+      {
+        id: "snoozeReviewSubmittedToast", // prevent duplicate toasts
         position: "bottom-left",
       },
     );
@@ -216,7 +245,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   );
 
   const shouldSubmitIndefiniteSnoozeRequest =
-    hasSelectedIndefiniteReason && requiresApproval;
+    indefiniteSnooze && hasSelectedIndefiniteReason && requiresApproval;
 
   const handleSave = async () => {
     if (denialConfirmationModalName) {
@@ -225,8 +254,10 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       setSaveInProgress(true);
       // For indefinite snooze reasons, create an officer denial request instead of
       // kicking off the snooze immediately.
-      if (indefiniteSnooze && shouldSubmitIndefiniteSnoozeRequest) {
+      if (shouldSubmitIndefiniteSnoozeRequest) {
         await handleIndefiniteSnoozeRequest();
+      } else if (requiresApproval) {
+        await handleSupervisorReviewRequest();
       } else {
         await submitDenial();
       }

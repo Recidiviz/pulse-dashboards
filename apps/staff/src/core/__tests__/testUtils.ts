@@ -80,8 +80,9 @@ export const mockOpportunity: Opportunity<Client> = {
   trackPreviewed: () => undefined,
   supportsExternalRequest: false,
   deniedTabTitle: "Marked Ineligible",
-  tabTitle: (tabGroup) =>
-    tabGroup === "ELIGIBILITY STATUS" ? "Eligible Now" : "Other",
+  tabTitle(tabGroup) {
+    return OpportunityBase.prototype.tabTitle.call(this, tabGroup);
+  },
   subcategory: undefined,
   submittedSubcategories: undefined,
   subcategoryHeadingFor: () => undefined,
@@ -154,6 +155,12 @@ export const mockOpportunity: Opportunity<Client> = {
     skipFormPreview: false,
     indefiniteSnoozeSectionHeader: "Indefinite Snooze",
     indefiniteSnoozeSectionSubheading: "Indefinite snooze subheading",
+    supervisorReviewTabTitle: "Supervisor Review",
+    supportsSupervisorReview: true,
+    supportsSupervisorReviewOnGrants: true,
+    supportsSupervisorReviewOnSnooze: true,
+    snoozeReviewStatusMessage: "Snooze Review",
+    grantReviewStatusMessage: "Under Review",
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,
@@ -187,4 +194,12 @@ export const mockOpportunity: Opportunity<Client> = {
   markActionHistoryStale: async () => undefined,
   indefiniteDenialReasons: {},
   denialViewPrompt: "",
+  isInSupervisorReview: false,
+  isInGrantReview: false,
+  isInSnoozeReview: false,
+  supervisorReviewTabTitle: "Supervisor Review",
+  snoozeReviewStatusMessage: "Snooze review",
+  grantReviewStatusMessage: "Grant review",
+  deleteActionHistory: async () => undefined,
+  setSupervisorResponse: async () => undefined,
 };

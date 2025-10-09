@@ -27,6 +27,7 @@ import { HydrationState } from "~hydration-utils";
 import { mockOpportunity } from "../../../core/__tests__/testUtils";
 import {
   CombinedUserRecord,
+  OfficerAction,
   OfficerDenialAction,
   OpportunityUpdate,
 } from "../../../FirestoreStore";
@@ -100,6 +101,10 @@ function createTestUnit() {
   mockUserStateCode = vi.spyOn(root.userStore, "stateCode", "get");
   vi.spyOn(root.userStore, "userEmail", "get").mockReturnValue(
     mockUser.info.email,
+  );
+
+  vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
+    mockUser.info.pseudonymizedId,
   );
 
   oppRecord = {
@@ -1164,6 +1169,54 @@ describe("snoozeCompanionOpportunities", () => {
   });
 });
 
+describe("tabTitle", () => {
+  test("Under review for snooze", () => {
+    const opportunity: Opportunity = {
+      ...mockOpportunity,
+      isInSupervisorReview: true,
+    };
+    expect(opportunity.tabTitle()).toBe("Supervisor Review");
+  });
+
+  test("inferred eligible", () => {
+    expect(mockOpportunity.tabTitle()).toBe("Eligible Now");
+  });
+
+  test("custom tabTitle function", () => {
+    const opportunity: Opportunity = {
+      ...mockOpportunity,
+      tabTitle: () => "Other",
+    };
+    expect(opportunity.tabTitle()).toBe("Other");
+  });
+
+  test("ineligible", () => {
+    const denied = {
+      ...mockOpportunity,
+      denied: true,
+    };
+    expect(denied.tabTitle()).toBe("Marked Ineligible");
+  });
+
+  test("almost eligible", () => {
+    const almost = {
+      ...mockOpportunity,
+      almostEligible: true,
+    };
+
+    expect(almost.tabTitle()).toBe("Almost Eligible");
+  });
+
+  test("submitted", () => {
+    const submitted = {
+      ...mockOpportunity,
+      isSubmitted: true,
+    };
+
+    expect(submitted.tabTitle()).toBe("Submitted");
+  });
+});
+
 describe("eligibilityStatusLabel", () => {
   test("eligibilityStatusLabel returns null until hydrated", () => {
     const opportunity = {
@@ -1178,6 +1231,22 @@ describe("eligibilityStatusLabel", () => {
     });
 
     expect(opportunity.eligibilityStatusLabel()).not.toBeNull();
+  });
+
+  test("Under review for snooze", () => {
+    const opportunity: Opportunity = {
+      ...mockOpportunity,
+      isInSnoozeReview: true,
+    };
+    expect(opportunity.eligibilityStatusLabel()).toBe("Snooze review");
+  });
+
+  test("Under review for grant", () => {
+    const opportunity: Opportunity = {
+      ...mockOpportunity,
+      isInGrantReview: true,
+    };
+    expect(opportunity.eligibilityStatusLabel()).toBe("Grant review");
   });
 
   test("inferred eligible", () => {
@@ -1409,6 +1478,143 @@ describe("setOfficerAction", () => {
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
     ).toHaveBeenCalledWith(opp, [existingAction, expectedAction]);
+  });
+});
+
+describe("setSupervisorResponse", () => {
+  beforeEach(() => {
+    vi.spyOn(root.firestoreStore, "updateOpportunityActionHistory");
+    timekeeper.freeze(new Date(2025, 1, 15));
+    vi.spyOn(root.userStore, "userFullName", "get").mockReturnValue(
+      "Test Supervisor",
+    );
+  });
+
+  test("throws error if actionHistory is empty", async () => {
+    vi.spyOn(opp, "actionHistory", "get").mockReturnValue(
+      [] as OfficerAction[],
+    );
+    await expect(
+      opp.setSupervisorResponse({ type: "APPROVAL" }),
+    ).rejects.toThrow(
+      "Supervisor with id [p123] cannot respond when there is no existing Action History for client with id [p001]",
+    );
+  });
+
+  test("approval of snooze request", async () => {
+    const testAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "officer@email.gov",
+      isStale: false,
+      type: "DENIAL",
+      denialReasons: ["INDEFINITE REASON"],
+      requestedSnoozeLength: undefined,
+    };
+    vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
+      testAction,
+      testAction,
+    ] as OfficerAction[]);
+
+    await opp.setSupervisorResponse({ type: "APPROVAL" });
+
+    const expectedUpdatedAction = {
+      ...testAction,
+      supervisorResponse: {
+        date: Timestamp.fromDate(new Date()),
+        by: "Test Supervisor",
+        type: "APPROVAL",
+      },
+    };
+
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction]);
+  });
+
+  test("denial of snooze request", async () => {
+    const testAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "officer@email.gov",
+      isStale: false,
+      type: "DENIAL",
+      denialReasons: ["INDEFINITE REASON"],
+      requestedSnoozeLength: undefined,
+    };
+    vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
+      testAction,
+      testAction,
+    ] as OfficerAction[]);
+
+    await opp.setSupervisorResponse({ type: "DENIAL" });
+
+    const expectedUpdatedAction = {
+      ...testAction,
+      supervisorResponse: {
+        date: Timestamp.fromDate(new Date()),
+        by: "Test Supervisor",
+        type: "DENIAL",
+      },
+    };
+
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction]);
+  });
+
+  test("approval of grant request", async () => {
+    const testAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "officer@email.gov",
+      isStale: false,
+      type: "APPROVAL",
+    };
+    vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
+      testAction,
+      testAction,
+    ] as OfficerAction[]);
+
+    await opp.setSupervisorResponse({ type: "APPROVAL" });
+
+    const expectedUpdatedAction = {
+      ...testAction,
+      supervisorResponse: {
+        date: Timestamp.fromDate(new Date()),
+        by: "Test Supervisor",
+        type: "APPROVAL",
+      },
+    };
+
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction]);
+  });
+
+  test("denial of grant request", async () => {
+    const testAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "officer@email.gov",
+      isStale: false,
+      type: "APPROVAL",
+    };
+    vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
+      testAction,
+      testAction,
+    ] as OfficerAction[]);
+
+    await opp.setSupervisorResponse({ type: "DENIAL" });
+
+    const expectedUpdatedAction = {
+      ...testAction,
+      supervisorResponse: {
+        date: Timestamp.fromDate(new Date()),
+        by: "Test Supervisor",
+        type: "DENIAL",
+      },
+    };
+
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(opp, [testAction, expectedUpdatedAction]);
   });
 });
 

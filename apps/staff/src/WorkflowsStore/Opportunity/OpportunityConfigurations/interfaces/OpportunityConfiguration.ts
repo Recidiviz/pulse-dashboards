@@ -128,4 +128,12 @@ export interface OpportunityConfiguration {
    */
   indefiniteSnoozeSectionHeader: string;
   indefiniteSnoozeSectionSubheading: string;
+
+  supportsSupervisorReview: boolean;
+  supportsSupervisorReviewOnGrants: boolean;
+  supportsSupervisorReviewOnSnooze: boolean;
+
+  supervisorReviewTabTitle: OpportunityTab;
+  snoozeReviewStatusMessage: string;
+  grantReviewStatusMessage: string;
 }

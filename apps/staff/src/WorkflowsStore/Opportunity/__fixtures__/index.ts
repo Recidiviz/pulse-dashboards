@@ -103,6 +103,12 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   skipFormPreview: true,
   indefiniteSnoozeSectionHeader: "Mock Indefinite Snooze Header",
   indefiniteSnoozeSectionSubheading: "Mock indefinite snooze subheading",
+  supportsSupervisorReview: false,
+  supportsSupervisorReviewOnGrants: false,
+  supportsSupervisorReviewOnSnooze: false,
+  supervisorReviewTabTitle: "Supervisor Review",
+  snoozeReviewStatusMessage: "Snooze Review",
+  grantReviewStatusMessage: "Discharge Review",
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

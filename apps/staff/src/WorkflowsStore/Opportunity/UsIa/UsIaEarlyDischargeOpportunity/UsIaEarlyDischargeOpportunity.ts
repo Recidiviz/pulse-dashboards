@@ -79,11 +79,6 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       "Reverting all changes will delete any action plans and notes connected to this client. Client will be placed in the Eligible Now tab.",
   };
 
-  get userName(): string {
-    // We'll fall back to the user's email
-    return this.rootStore.userStore.userFullName ?? this.currentUserEmail;
-  }
-
   get mostRecentActions() {
     return this.actionHistory?.slice(-2);
   }
@@ -150,20 +145,24 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     if (this.clientStatus === "READY_FOR_DISCHARGE") {
       return "Ready for Discharge";
     }
-    if (
-      this.clientStatus === "ACTION_PLAN_REVIEW" ||
-      this.clientStatus === "ACTION_PLAN_REVIEW_REVISION"
-    ) {
+    if (this.clientStatus === "ACTION_PLAN_REVIEW_REVISION") {
       return "Action Plan Review";
     }
     if (this.clientStatus === "DISCHARGE_FORM_REVIEW") {
       return "Discharge Form Review";
     }
+
+    return "Eligible Now";
+  }
+
+  get snoozeReviewStatusMessage() {
+    if (this.clientStatus === "ACTION_PLAN_REVIEW") {
+      return "Action Plan Review";
+    }
     if (this.clientStatus === "SNOOZE_REVIEW") {
       return "Indefinite Snooze Review";
     }
-
-    return "Eligible Now";
+    return super.snoozeReviewStatusMessage;
   }
 
   get customStatusPalette() {
@@ -189,7 +188,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       case "ACTION_PLAN_REVIEW":
       case "SNOOZE_REVIEW":
       case "DISCHARGE_FORM_REVIEW":
-        return "Supervisor Review";
+        return this.supervisorReviewTabTitle;
       case "READY_FOR_DISCHARGE":
         return "Ready for Discharge";
       default:

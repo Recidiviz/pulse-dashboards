@@ -152,6 +152,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     const showRevertLink =
       denialRevertEnabled ||
       opportunity.isSubmitted ||
+      opportunity.isInSupervisorReview ||
       opportunity.showRevertLinkFallback;
 
     const showActionButtons =
@@ -164,6 +165,10 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         await opportunity.deleteOpportunityDenialAndSnooze();
       } else if (opportunity.isSubmitted) {
         await opportunity.deleteSubmitted();
+      }
+
+      if (opportunity.actionHistory?.length) {
+        await opportunity.deleteActionHistory();
       }
 
       if (opportunity.subcategory) {
