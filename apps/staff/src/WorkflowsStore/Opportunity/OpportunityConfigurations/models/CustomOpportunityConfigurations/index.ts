@@ -30,6 +30,8 @@ import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration"
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
 import { UsMiCustodyLevelDowngradeConfiguration } from "./UsMi/UsMiCustodyLevelDowngradeConfiguration";
+import { UsMiEarlyDischargeConfiguration } from "./UsMi/UsMiEarlyDischargeConfiguration";
+import { UsMiMinimumTelephoneReportingConfiguration } from "./UsMi/UsMiMinimumTelephoneReporting";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguration";
 import { UsNdTransferToMinFacility } from "./UsNd/UsNdTransferToMinFacility";
@@ -66,6 +68,8 @@ const customOpportunityConfigurations: Partial<
 
   // Michigan
   usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeConfiguration,
+  usMiEarlyDischarge: UsMiEarlyDischargeConfiguration,
+  usMiMinimumTelephoneReporting: UsMiMinimumTelephoneReportingConfiguration,
 
   // Missouri
   usMoOutsideClearance: UsMoWorkReleaseConfiguration,
