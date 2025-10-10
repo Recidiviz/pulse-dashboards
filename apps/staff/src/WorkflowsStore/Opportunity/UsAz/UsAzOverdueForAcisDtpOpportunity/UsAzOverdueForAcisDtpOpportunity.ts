@@ -21,20 +21,22 @@ import {
   OPPORTUNITY_STATUS_COLORS,
   StatusPalette,
 } from "../../../../core/utils/workflowsUtils";
+import { OpportunityUpdate } from "../../../../FirestoreStore";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { UsAzReleaseToTransitionProgramForm } from "../../Forms/UsAzReleaseToTransitionProgramForm";
-import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement, OpportunityTab } from "../../types";
 import { hydrateReq, hydrateUntypedCriteria } from "../../utils/criteriaUtils";
+import {UsAzTprDtpOpportunityBase} from "../UsAzTprDtpBase/UsAzTprDtpBase";
 import {
   UsAzOverdueForAcisDtpReferralRecord,
   usAzOverdueForAcisDtpSchema,
 } from "./UsAzOverdueForAcisDtpReferralRecord";
 
-export class UsAzOverdueForAcisDtpOpportunity extends OpportunityBase<
+export class UsAzOverdueForAcisDtpOpportunity extends UsAzTprDtpOpportunityBase<
   Resident,
-  UsAzOverdueForAcisDtpReferralRecord
+  UsAzOverdueForAcisDtpReferralRecord,
+  OpportunityUpdate
 > {
   constructor(resident: Resident, record: DocumentData) {
     super(

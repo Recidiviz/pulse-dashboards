@@ -30,16 +30,15 @@ import {
 } from "../..";
 import { UsAzReleaseToTransitionProgramForm } from "../../Forms/UsAzReleaseToTransitionProgramForm";
 import { convertStringToUTCDate } from "../../utils/dateUtils";
-import {
-  UsAzReleaseToTPRUpdateRecord,
-  UsAzReleaseToTransitionProgramOpportunityBase,
-} from "../UsAzReleaseToTransitionProgramOpportunityBase";
+import { UsAzReleaseToTPRUpdateRecord } from "../UsAzReleaseToTransitionProgramOpportunityBase";
+import { UsAzTprDtpOpportunityBase } from "../UsAzTprDtpBase/UsAzTprDtpBase";
 import {
   UsAzReleaseToDTPReferralRecord,
   usAzReleaseToDTPSchema,
 } from "./UsAzReleaseToDTPReferralRecord";
 
-export class UsAzReleaseToDTPOpportunity extends UsAzReleaseToTransitionProgramOpportunityBase<
+export class UsAzReleaseToDTPOpportunity extends UsAzTprDtpOpportunityBase<
+  Resident,
   UsAzReleaseToDTPReferralRecord,
   UsAzReleaseToTPRUpdateRecord
 > {

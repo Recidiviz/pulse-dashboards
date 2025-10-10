@@ -79,6 +79,7 @@ import {
   OpportunityTabGroup,
 } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
+import { UsAzTprDtpOpportunityBase } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTprDtpBase/UsAzTprDtpBase";
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
@@ -223,7 +224,10 @@ export type OpportunityTableColumnId =
   | "SUBMITTED_FOR"
   | "CTA_BUTTON"
   | "LAST_VIEWED"
-  | "ALMOST_ELIGIBLE_STATUS";
+  | "ALMOST_ELIGIBLE_STATUS"
+  | "AGREEMENT_STATUS"
+  | "HOME_PLAN_STATUS"
+  | "MAN_LIT_STATUS";
 
 type OpportunityTableColumnDef = {
   header: string;
@@ -617,6 +621,30 @@ const TableView = observer(function TableView({
       accessorFn: (opp: Opportunity) => opp.eligibilityStatusLabel(),
       sortingFn: "text",
       cell: EligibilityStatusCell,
+    },
+    {
+      header: "Agreement Status",
+      id: "AGREEMENT_STATUS",
+      enableSorting: true,
+      accessorFn: (opp: Opportunity) =>
+        opp instanceof UsAzTprDtpOpportunityBase && opp.agreementStatus,
+      sortingFn: "text",
+    },
+    {
+      header: "Home Plan Status",
+      id: "HOME_PLAN_STATUS",
+      enableSorting: true,
+      accessorFn: (opp: Opportunity) =>
+        opp instanceof UsAzTprDtpOpportunityBase && opp.homePlanStatus,
+      sortingFn: "text",
+    },
+    {
+      header: "Mandatory Literacy Status",
+      id: "MAN_LIT_STATUS",
+      enableSorting: true,
+      accessorFn: (opp: Opportunity) =>
+        opp instanceof UsAzTprDtpOpportunityBase && opp.mandatoryLiteracyStatus,
+      sortingFn: "text",
     },
     {
       header: "Missing Criteria",
