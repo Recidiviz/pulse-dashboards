@@ -26,6 +26,8 @@ import Chat from "./chat.png";
 import Clients from "./clients.png";
 import Cross from "./cross.png";
 import Home from "./home.png";
+import Logo from "./logo.png";
+import Mail from "./mail.png";
 import Menu from "./menu.png";
 import Microphone from "./microphone.png";
 import Notes from "./notes.png";
@@ -61,6 +63,8 @@ const Icons = {
   Play,
   Record,
   Stop,
+  Mail,
+  Logo,
 };
 
 export default Icons;

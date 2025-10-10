@@ -15,46 +15,68 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-import { Alert, Button, Text, View } from "react-native";
+import BottomSheet from "@gorhom/bottom-sheet";
+import React, { useRef } from "react";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useAuth0 } from "react-native-auth0";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import Icons from "../../assets/icons";
+import LearnMoreSheet from "../components/LearnMoreSheet";
+import PrimaryButton from "../components/PrimaryButton";
 
 const LoginScreen = () => {
-  const { authorize, clearSession, user, getCredentials, isLoading } =
-    useAuth0();
+  const { authorize } = useAuth0();
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const onLogin = async () => {
+  const handleContinue = async () => {
     const audience = process.env["EXPO_PUBLIC_AUTH0_AUDIENCE"];
     await authorize({ audience });
-    const credentials = await getCredentials();
-    Alert.alert("AccessToken: " + credentials?.accessToken);
   };
 
-  const onLogout = async () => {
-    await clearSession();
-  };
-
-  const loggedIn = user !== undefined && user !== null;
-
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <Text>Loading</Text>
-      </View>
-    );
-  }
+  const openSheet = () => bottomSheetRef.current?.expand();
 
   return (
-    <SafeAreaProvider className="flex-1 items-center justify-center">
-      <Text className="mb-5 text-xl">Auth0 Login</Text>
-      {user && <Text>You are logged in as {user.name}</Text>}
-      {!user && <Text>You are not logged in</Text>}
-      <Button
-        onPress={loggedIn ? onLogout : onLogin}
-        title={loggedIn ? "Log Out" : "Log In"}
-      />
-    </SafeAreaProvider>
+    <SafeAreaView className="flex-1">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        className="flex-1 items-center justify-center px-2"
+      >
+        <View className="w-full items-center rounded-3xl bg-white py-12">
+          <Image
+            source={Icons.Logo}
+            className="mb-8 size-16"
+            resizeMode="contain"
+          />
+          <Text className="text-primary mb-8 text-center text-[32px] font-bold">
+            Sign In to Recidiviz
+          </Text>
+
+          <PrimaryButton label="Continue" onPress={handleContinue} />
+        </View>
+      </KeyboardAvoidingView>
+
+      {/* Footer: restricted notice */}
+      <View className="mb-6 flex-row items-center justify-center">
+        <Text className="text-sm text-gray-400">
+          Restricted to authorized users
+        </Text>
+        <TouchableOpacity onPress={openSheet}>
+          <Text className="ml-1 text-sm font-medium text-[#4D5255]">
+            Learn more
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <LearnMoreSheet ref={bottomSheetRef} />
+    </SafeAreaView>
   );
 };
 

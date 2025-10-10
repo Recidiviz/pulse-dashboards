@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^2.4.1",
+    "@gorhom/bottom-sheet": "^5.2.6",
     "@nx/detox": "*",
     "@nx/devkit": "21.4.0",
     "@nx/rollup": "*",
