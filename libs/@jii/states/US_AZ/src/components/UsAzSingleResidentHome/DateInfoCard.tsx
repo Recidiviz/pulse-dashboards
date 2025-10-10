@@ -15,28 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatDistanceToNowStrict } from "date-fns";
-
 import { CardHeading, CardValue, GoLink, SlateCopy } from "~@jii/common-ui";
-import { formatFullDate } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { useUsAzTranslations } from "~@jii/translation";
 
-import { usAzCopy } from "../../configs/copy";
 import {
   DateInfoContent,
   HighlightedCard,
   LearnMoreLinkWrapper,
   StyledCard,
 } from "./styles";
-
-const { goLink, noDate, fromToday } = usAzCopy;
+import { UsAzDateField } from "./UsAzImportantDatesPresenter";
 
 export interface DateInfoCardProps {
   title: string;
   date: string | undefined;
   info: string;
   shortName: string;
-  dateKey: string;
+  dateKey: UsAzDateField;
   isHighlighted?: boolean;
 }
 
@@ -48,13 +44,14 @@ export const DateInfoCard = ({
   dateKey,
   isHighlighted = false,
 }: DateInfoCardProps) => {
+  const { t } = useUsAzTranslations();
   const CardComponent = isHighlighted ? HighlightedCard : StyledCard;
 
   if (!date) {
     return (
       <CardComponent>
         <CardHeading>{title}</CardHeading>
-        <CardValue>{noDate}</CardValue>
+        <CardValue>{t(($) => $.noDate)}</CardValue>
         <LearnMoreLinkWrapper>
           <GoLink
             to={State.Resident.$.UsAzMoreInformation.DateInfo.buildRelativePath(
@@ -63,7 +60,7 @@ export const DateInfoCard = ({
               },
             )}
           >
-            {goLink}
+            {t(($) => $.goLink)}
             {shortName}
           </GoLink>
         </LearnMoreLinkWrapper>
@@ -76,8 +73,12 @@ export const DateInfoCard = ({
   return (
     <CardComponent>
       <CardHeading>{title}</CardHeading>
-      <CardValue>{formatFullDate(dateObj)}</CardValue>
-      <SlateCopy>{`(${formatDistanceToNowStrict(dateObj)} ${fromToday})`}</SlateCopy>
+      <CardValue>
+        {t(($) => $.importantDates.dates[dateKey].value, {
+          replace: { [dateKey]: dateObj },
+        })}
+      </CardValue>
+      <SlateCopy>{t(($) => $.distanceFromToday, { date: dateObj })}</SlateCopy>
       <DateInfoContent>{info}</DateInfoContent>
       <LearnMoreLinkWrapper>
         <GoLink
@@ -85,7 +86,7 @@ export const DateInfoCard = ({
             dateType: dateKey,
           })}
         >
-          {goLink}
+          {t(($) => $.goLink)}
           {shortName}
         </GoLink>
       </LearnMoreLinkWrapper>

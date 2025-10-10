@@ -1,0 +1,57 @@
+{
+  "lastUpdated": "[US_AZ]lastUpdated",
+  "goLink": "[US_AZ]goLink",
+  "noDate": "[US_AZ]noDate",
+  "fromToday": "[US_AZ]fromToday",
+  "importantDates": {
+    "sectionHeader": "[US_AZ]importantDates.sectionHeader",
+    "sectionSubHeader": "[US_AZ]importantDates.sectionSubHeader",
+    "dates": {
+      "acisTprDate": {
+        "title": "[US_AZ]importantDates.dates.acisTprDate.title",
+        "info": "[US_AZ]importantDates.dates.acisTprDate.info",
+        "shortName": "[US_AZ]importantDates.dates.acisTprDate.shortName",
+        "moreInfo": {
+          "heading": "[US_AZ]importantDates.dates.acisTprDate.moreInfo.heading",
+          "body": "[US_AZ]importantDates.dates.acisTprDate.moreInfo.body"
+        }
+      },
+      "csbdDate": {
+        "title": "[US_AZ]importantDates.dates.csbdDate.title",
+        "info": "[US_AZ]importantDates.dates.csbdDate.info",
+        "shortName": "[US_AZ]importantDates.dates.csbdDate.shortName",
+        "moreInfo": {
+          "heading": "[US_AZ]importantDates.dates.csbdDate.moreInfo.heading",
+          "body": "[US_AZ]importantDates.dates.csbdDate.moreInfo.body"
+        }
+      },
+      "ercdDate": {
+        "title": "[US_AZ]importantDates.dates.ercdDate.title",
+        "info": "[US_AZ]importantDates.dates.ercdDate.info",
+        "shortName": "[US_AZ]importantDates.dates.ercdDate.shortName",
+        "moreInfo": {
+          "heading": "[US_AZ]importantDates.dates.ercdDate.moreInfo.heading",
+          "body": "[US_AZ]importantDates.dates.ercdDate.moreInfo.body"
+        }
+      },
+      "sedDate": {
+        "title": "[US_AZ]importantDates.dates.sedDate.title",
+        "info": "[US_AZ]importantDates.dates.sedDate.info",
+        "shortName": "[US_AZ]importantDates.dates.sedDate.shortName",
+        "moreInfo": {
+          "heading": "[US_AZ]importantDates.dates.sedDate.moreInfo.heading",
+          "body": "[US_AZ]importantDates.dates.sedDate.moreInfo.body"
+        }
+      },
+      "csedDate": {
+        "title": "[US_AZ]importantDates.dates.csedDate.title",
+        "info": "[US_AZ]importantDates.dates.csedDate.info",
+        "shortName": "[US_AZ]importantDates.dates.csedDate.shortName",
+        "moreInfo": {
+          "heading": "[US_AZ]importantDates.dates.csedDate.moreInfo.heading",
+          "body": "[US_AZ]importantDates.dates.csedDate.moreInfo.body"
+        }
+      }
+    }
+  }
+}

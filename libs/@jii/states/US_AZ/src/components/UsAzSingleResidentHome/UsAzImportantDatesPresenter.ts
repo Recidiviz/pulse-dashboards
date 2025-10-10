@@ -19,18 +19,19 @@ import { makeAutoObservable } from "mobx";
 
 import { ResidentRecord } from "~datatypes";
 
-import { usAzCopy } from "../../configs/copy";
-
-const { dates } = usAzCopy.importantDates;
+// Shared constant for all US_AZ date field names
+export const US_AZ_DATE_FIELDS = [
+  "acisTprDate",
+  "csbdDate",
+  "ercdDate",
+  "sedDate",
+  "csedDate",
+] as const;
+export type UsAzDateField = (typeof US_AZ_DATE_FIELDS)[number];
 
 export interface DateEntry {
   key: string;
   date: string | undefined;
-  config: {
-    title: string;
-    info: string;
-    shortName: string;
-  };
   isHighlighted: boolean;
 }
 
@@ -51,37 +52,12 @@ export class UsAzImportantDatesPresenter {
   }
 
   get dateEntries(): DateEntry[] {
-    const { acisTprDate, csbdDate, ercdDate, sedDate, csedDate } =
-      this.metadata;
-
-    // Create date entries
-    const entries: Omit<DateEntry, "isHighlighted">[] = [
-      {
-        key: "acisTprDate",
-        date: acisTprDate,
-        config: dates.acisTprDate,
-      },
-      {
-        key: "csbd",
-        date: csbdDate,
-        config: dates.csbd,
-      },
-      {
-        key: "ercd",
-        date: ercdDate,
-        config: dates.ercd,
-      },
-      {
-        key: "sed",
-        date: sedDate,
-        config: dates.sed,
-      },
-      {
-        key: "csed",
-        date: csedDate,
-        config: dates.csed,
-      },
-    ];
+    const entries: Omit<DateEntry, "isHighlighted">[] = US_AZ_DATE_FIELDS.map(
+      (field) => ({
+        key: field,
+        date: this.metadata[field],
+      }),
+    );
 
     // Sort by earliest date first, with valid dates before null dates
     const sortedEntries = entries.sort((a, b) => {

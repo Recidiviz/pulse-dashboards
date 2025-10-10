@@ -21,6 +21,7 @@ import ChainedBackend from "i18next-chained-backend";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { initReactI18next } from "react-i18next";
 
+import { formatDistanceFromTodayFormatter } from "./plugins/formatters/distanceFromToday";
 import { fullDateFormatter } from "./plugins/formatters/fullDate";
 import { monthYearFormatter } from "./plugins/formatters/monthYear";
 
@@ -68,6 +69,10 @@ export const initTranslations = () => {
   i18nextDefaultInstance.services.formatter?.addCached(
     "formatMonthYear",
     monthYearFormatter,
+  );
+  i18nextDefaultInstance.services.formatter?.addCached(
+    "formatDistanceFromToday",
+    formatDistanceFromTodayFormatter,
   );
 
   return initPromise;

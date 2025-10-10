@@ -21,57 +21,62 @@ import csedDateInfoPage from "./csedDateInfoPage.md?raw";
 import ercdDateInfoPage from "./ercdDateInfoPage.md?raw";
 import sedDateInfoPage from "./sedDateInfoPage.md?raw";
 
-export const usAzCopy = {
+export default {
   lastUpdated:
     "This information was last updated XXXX. It updates once per month.",
   goLink: "Learn more about ",
   noDate: "None on record",
-  fromToday: "from today",
+  distanceFromToday: "{{date, formatDistanceFromToday()}} from today",
   importantDates: {
     sectionHeader: "Your important dates",
     sectionSubHeader:
-      "These are all the dates that Time Computation has calculated for your sentence. Dates may change if you get a disciplinary infraction, or get lost time restored. Tap “Learn More” to see what you need to do in order to be released on any date.",
+      "These are all the dates that Time Computation has calculated for your sentence. Dates may change if you get a disciplinary infraction, or get lost time restored. Tap 'Learn More' to see what you need to do in order to be released on any date.",
     dates: {
       acisTprDate: {
         title: "Standard Transition Program (TPR)",
         info: "Release up to 90 days earlier, if you agree to attend a program in the community; must meet criteria.",
         shortName: "TPR",
+        value: "{{acisTprDate, formatFullDate}}",
         moreInfo: {
           heading: "Standard Transition Program",
           body: acisTprDateInfoPage,
         },
       },
-      csbd: {
+      csbdDate: {
         title: "Community Supervision Begin Date (CSBD)",
-        info: `Also called a Transition Release (TR) date, allows for release up to 90 days before your ERCD; must meet criteria.`,
+        info: "Also called a Transition Release (TR) date, allows for release up to 90 days before your ERCD; must meet criteria.",
         shortName: "CSBD",
+        value: "{{csbdDate, formatFullDate}}",
         moreInfo: {
           heading: "Community Supervision Begin Date (CSBD)",
           body: csbdDateInfoPage,
         },
       },
-      ercd: {
+      ercdDate: {
         title: "Earned Release Credit Date (ERCD)",
-        info: `The earliest date you can be released based on Earned Release Credits – usually, a minimum of 85.7% of your sentence.`,
+        info: "The earliest date you can be released based on Earned Release Credits – usually, a minimum of 85.7% of your sentence.",
         shortName: "ERCD",
+        value: "{{ercdDate, formatFullDate}}",
         moreInfo: {
           heading: "Earned Release Credit Date (ERCD)",
           body: ercdDateInfoPage,
         },
       },
-      sed: {
+      sedDate: {
         title: "100% Date (Flat Sentence, SED)",
-        info: `The full term of your sentence; when you will be released, unless you decline conditions of supervision.`,
+        info: "The full term of your sentence; when you will be released, unless you decline conditions of supervision.",
         shortName: "SED",
+        value: "{{sedDate, formatFullDate}}",
         moreInfo: {
           heading: "100% Date (Flat Sentence, SED)",
           body: sedDateInfoPage,
         },
       },
-      csed: {
+      csedDate: {
         title: "115% Date (CSED)",
-        info: `The last day that you can be under ADCRR supervision for your current sentence.`,
+        info: "The last day that you can be under ADCRR supervision for your current sentence.",
         shortName: "CSED",
+        value: "{{csedDate, formatFullDate}}",
         moreInfo: {
           heading: "115% Date (CSED)",
           body: csedDateInfoPage,

@@ -19,30 +19,39 @@ import { observer } from "mobx-react-lite";
 
 import { HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
+import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
-import { usAzCopy } from "../../configs/copy";
 import { DateInfoCard } from "./DateInfoCard";
-import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
-
-const { sectionHeader, sectionSubHeader } = usAzCopy.importantDates;
+import {
+  UsAzDateField,
+  UsAzImportantDatesPresenter,
+} from "./UsAzImportantDatesPresenter";
 
 const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
   observer(function UsAzImportantDates({ presenter }) {
+    const { t } = useUsAzTranslations();
+
     return (
       <div>
         <section>
-          <HomepageSectionHeading>{sectionHeader}</HomepageSectionHeading>
-          <SlateCopy as="p">{sectionSubHeader}</SlateCopy>
-          {presenter.dateEntries.map(({ key, date, config, isHighlighted }) => {
+          <HomepageSectionHeading>
+            {t(($) => $.importantDates.sectionHeader)}
+          </HomepageSectionHeading>
+          <SlateCopy as="p">
+            {t(($) => $.importantDates.sectionSubHeader)}
+          </SlateCopy>
+          {presenter.dateEntries.map(({ key, date, isHighlighted }) => {
+            const dateKey = key as UsAzDateField;
+
             return (
               <DateInfoCard
                 key={key}
-                title={config.title}
+                title={t(($) => $.importantDates.dates[dateKey].title)}
                 date={date}
-                info={config.info}
-                dateKey={key}
-                shortName={config.shortName}
+                info={t(($) => $.importantDates.dates[dateKey].info)}
+                dateKey={dateKey}
+                shortName={t(($) => $.importantDates.dates[dateKey].shortName)}
                 isHighlighted={isHighlighted}
               />
             );

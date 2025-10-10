@@ -71,7 +71,7 @@ describe("UsAzImportantDatesPresenter", () => {
       const entries = presenter.dateEntries;
 
       // Check sorting order
-      expect(entries[0].key).toBe("csbd");
+      expect(entries[0].key).toBe("csbdDate");
       expect(entries[0].date).toBe("2024-01-10");
       expect(entries[0].isHighlighted).toBe(true); // First valid date should be highlighted
 
@@ -79,16 +79,16 @@ describe("UsAzImportantDatesPresenter", () => {
       expect(entries[1].date).toBe("2024-03-15");
       expect(entries[1].isHighlighted).toBe(false);
 
-      expect(entries[2].key).toBe("ercd");
+      expect(entries[2].key).toBe("ercdDate");
       expect(entries[2].date).toBe("2024-06-01");
       expect(entries[2].isHighlighted).toBe(false);
 
-      expect(entries[3].key).toBe("sed");
+      expect(entries[3].key).toBe("sedDate");
       expect(entries[3].date).toBe("2024-12-01");
       expect(entries[3].isHighlighted).toBe(false);
 
       // Null dates should come last
-      expect(entries[4].key).toBe("csed");
+      expect(entries[4].key).toBe("csedDate");
       expect(entries[4].date).toBeUndefined();
       expect(entries[4].isHighlighted).toBe(false);
     });

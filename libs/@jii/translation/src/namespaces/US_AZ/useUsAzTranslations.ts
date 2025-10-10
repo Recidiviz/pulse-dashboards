@@ -15,32 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { useTranslation } from "react-i18next";
 
-import { usePageTitle } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
-import { useUsAzTranslations } from "~@jii/translation";
+import { TranslationsObject } from "../../utils/types";
 
-import { DefinitionView } from "../components/DefinitionView";
-
-export function PageMoreInfoImportantDates() {
-  const { t } = useUsAzTranslations();
-  const { dateType } = useTypedParams(
-    State.Resident.UsAzMoreInformation.DateInfo,
-  );
-
-  const heading = t(
-    ($) =>
-      $.importantDates.dates[dateType as keyof typeof $.importantDates.dates]
-        .moreInfo.heading,
-  );
-  const body = t(
-    ($) =>
-      $.importantDates.dates[dateType as keyof typeof $.importantDates.dates]
-        .moreInfo.body,
-  );
-
-  usePageTitle(heading);
-
-  return <DefinitionView heading={heading} body={body} />;
+export function useUsAzTranslations() {
+  return useTranslation("US_AZ");
 }
+
+/**
+ * The shape of the object that can be traversed and returned
+ * by the selector function in the US_AZ namespace
+ */
+export type UsAzTranslationsObject = TranslationsObject<"US_AZ">;
+
+export type UsAzTFunction = ReturnType<typeof useUsAzTranslations>["t"];

@@ -16,16 +16,18 @@
 // =============================================================================
 
 import { FullWidthBanner, HeaderPortal, PageContainer } from "~@jii/common-ui";
+import { useUsAzTranslations } from "~@jii/translation";
 
-import { usAzCopy } from "../../configs/copy";
 import { UsAzImportantDates } from "./UsAzImportantDates";
 
 export function UsAzSingleResidentHome() {
+  const { t } = useUsAzTranslations();
+
   return (
     <div>
       <HeaderPortal>
         <FullWidthBanner>
-          <PageContainer>{usAzCopy.lastUpdated}</PageContainer>
+          <PageContainer>{t(($) => $.lastUpdated)}</PageContainer>
         </FullWidthBanner>
       </HeaderPortal>
       <UsAzImportantDates />
