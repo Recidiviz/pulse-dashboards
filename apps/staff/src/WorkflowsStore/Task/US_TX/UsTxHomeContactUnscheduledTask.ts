@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { toTitleCase } from "../../../utils/formatStrings";
-import { Client } from "../../Client";
 import UsTxContactTask from "./UsTxContactTask";
 
 class UsTxHomeContactUnscheduledTask extends UsTxContactTask<"usTxHomeContactUnscheduled"> {
@@ -25,28 +24,15 @@ class UsTxHomeContactUnscheduledTask extends UsTxContactTask<"usTxHomeContactUns
       // Fallthrough to the final return is intentional
       switch (this.details.overrideContactType) {
         case "UNSCHEDULED HOME (VIRTUAL)":
-          return "Virtual contact in lieu of home visit (unscheduled)";
+          return "Home Contact (Unscheduled, Virtual)";
       }
     }
 
-    return "Home contact (unscheduled)";
+    return "Home Contact (Unscheduled)";
   }
 
   get frequency(): string {
-    if (this.details.contactCadence) {
-      return toTitleCase(this.details.contactCadence);
-    }
-
-    // TODO(#9309) remove, contact cadence should correctly handle this case
-    const client = this.person as Client;
-    const high = client.supervisionLevel === "High";
-    const moderate = client.supervisionLevel === "Moderate";
-    const so = client.caseTypeRawText === "SEX OFFENDER";
-    const sisp = client.caseTypeRawText === "SUPER-INTENSIVE SUPERVISION";
-    if ((high && so) || (high && sisp) || (moderate && sisp)) {
-      return "Twice per month";
-    }
-    return super.frequency;
+    return toTitleCase(this.details.contactCadence);
   }
 }
 

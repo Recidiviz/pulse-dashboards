@@ -17,7 +17,7 @@
 
 import { fieldToDate } from "~datatypes";
 
-import { formatWorkflowsDate } from "../../../utils/formatStrings";
+import { formatWorkflowsDate, toTitleCase } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 
 class UsTxAssessmentTask extends Task<"usTxAssessment"> {
@@ -35,7 +35,7 @@ class UsTxAssessmentTask extends Task<"usTxAssessment"> {
   }
 
   get frequency(): string {
-    return `Every ${this.details.frequency.toLowerCase()}`;
+    return `1 Every ${toTitleCase(this.details.frequency)}`;
   }
 }
 

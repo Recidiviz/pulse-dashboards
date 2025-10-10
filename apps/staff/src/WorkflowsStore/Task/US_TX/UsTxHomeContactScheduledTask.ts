@@ -23,11 +23,11 @@ class UsTxHomeContactScheduledTask extends UsTxContactTask<"usTxHomeContactSched
       // Fallthrough to the final return is intentional
       switch (this.details.overrideContactType) {
         case "SCHEDULED HOME (VIRTUAL)":
-          return "Virtual contact in lieu of home visit (scheduled)";
+          return "Home Contact (Scheduled, Virtual)";
       }
     }
 
-    return "Home contact (scheduled)";
+    return "Home Contact (Scheduled)";
   }
 }
 

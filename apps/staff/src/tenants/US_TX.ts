@@ -136,18 +136,18 @@ const US_TX_CONFIG = {
           },
           {
             value: "usTxHomeContactScheduled",
-            shortLabel: "Home Contact, Sch.",
+            shortLabel: "Home Contact, Sched.",
             label: "Home Contact, Scheduled",
           },
           {
             value: "usTxHomeContactUnscheduled",
-            shortLabel: "Home Contact, Unsch.",
+            shortLabel: "Home Contact, Unsched.",
             label: "Home Contact, Unscheduled",
           },
           {
             value: "usTxHomeContactEdgeCase",
-            shortLabel: "Home Contact, Misc.",
-            label: "Home Contact, Miscellaneous",
+            shortLabel: "Residence Validation",
+            label: "Residence Validation",
           },
           {
             value: "usTxInCustodyContact",
@@ -159,26 +159,25 @@ const US_TX_CONFIG = {
           },
           {
             value: "usTxFieldContactScheduled",
-            shortLabel: "Field Contact, Sch.",
+            shortLabel: "Field Contact, Sched.",
             label: "Field Contact, Scheduled",
           },
           {
             value: "usTxFieldContactUnscheduled",
-            shortLabel: "Field Contact, Unsch.",
+            shortLabel: "Field Contact, Unsched.",
             label: "Field Contact, Unscheduled",
           },
           {
             value: "usTxVirtualOfficeContactScheduled",
-            shortLabel: "Virtual Office Contact, Sch.",
-            label: "Virtual Office Contact, Scheduled",
+            label: "Virtual Contact",
           },
           {
             value: "usTxVirtualOrOfficeContact",
-            label: "Virtual Office or In-Person Office Contact",
+            label: "Virtual or Additional Office Contact",
           },
           {
             value: "usTxTypeAgnosticContact",
-            label: "Generic Contact",
+            label: "Other Contact",
           },
           {
             value: "usTxAssessment",
@@ -208,6 +207,9 @@ const US_TX_CONFIG = {
           },
           {
             value: "In-custody",
+          },
+          {
+            value: "Unassigned",
           },
         ],
       },

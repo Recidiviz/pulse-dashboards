@@ -235,7 +235,9 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   get caseType(): string {
     if (this.stateCode === "US_TX") {
       // This is the raw text we get from the state
-      return capitalize(this.caseTypeRawText ?? "Unknown");
+      if (!this.caseTypeRawText) return "Unknown";
+      // Fix capitalization for PRSAP, which is an acronym
+      return capitalize(this.caseTypeRawText).replace("prsap", "PRSAP");
     }
     if (this.stateCode === "US_NE") {
       if (!this._caseType) return "Unknown";

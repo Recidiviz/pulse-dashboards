@@ -18,7 +18,7 @@
 import UsTxContactTask from "./UsTxContactTask";
 
 class UsTxFieldContactUnscheduledTask extends UsTxContactTask<"usTxFieldContactUnscheduled"> {
-  displayName = "Field contact (unscheduled)";
+  displayName = "Field Contact (Unscheduled)";
 }
 
 export default UsTxFieldContactUnscheduledTask;

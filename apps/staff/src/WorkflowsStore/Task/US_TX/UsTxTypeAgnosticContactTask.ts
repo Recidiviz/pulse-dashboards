@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { capitalize } from "lodash";
-
 import { fieldToDate } from "~datatypes";
 
 import { formatWorkflowsDate, generateSerialListString } from "../../../utils";
@@ -37,9 +35,9 @@ class UsTxTypeAgnosticContactTask<
       : this.details.contactTypesAccepted;
     const allowedTypes = (rawTypes ?? "Contact")
       .split(",")
-      .map((type) => type.toLowerCase());
+      .map((type) => toTitleCase(type));
 
-    allowedTypes[0] = capitalize(allowedTypes[0]);
+    allowedTypes[0] = toTitleCase(allowedTypes[0]);
 
     return generateSerialListString(allowedTypes, "or");
   }
@@ -56,11 +54,7 @@ class UsTxTypeAgnosticContactTask<
   }
 
   get frequency(): string {
-    if (this.details.contactCadence) {
-      return toTitleCase(this.details.contactCadence);
-    }
-    // TODO(#9309) remove
-    return `Every ${this.details.frequency?.toLowerCase()}`;
+    return toTitleCase(this.details.contactCadence);
   }
 }
 

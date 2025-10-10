@@ -18,7 +18,7 @@
 import UsTxContactTask from "./UsTxContactTask";
 
 class UsTxOfficeContactScheduledTask extends UsTxContactTask<"usTxOfficeContactScheduled"> {
-  displayName = "Office contact";
+  displayName = "Office Contact";
 }
 
 export default UsTxOfficeContactScheduledTask;

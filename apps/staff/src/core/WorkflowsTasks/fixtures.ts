@@ -61,13 +61,13 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   usTxTypeAgnosticContact: "Contacts",
   usTxHomeContactScheduled: "Home Contacts (Scheduled)",
   usTxHomeContactUnscheduled: "Home Contacts (Unscheduled)",
-  usTxHomeContactEdgeCase: "Home Contacts (Misc.)",
+  usTxHomeContactEdgeCase: "Residence Validations",
   usTxInCustodyContact: "Investigative Contacts",
   usTxOfficeContactScheduled: "Office Contacts",
   usTxFieldContactScheduled: "Field Contacts (Scheduled)",
   usTxFieldContactUnscheduled: "Field Contacts (Unscheduled)",
-  usTxVirtualOfficeContactScheduled: "Virtual Office Contacts (Scheduled)",
-  usTxVirtualOrOfficeContact: "Virtual Office or In-Person Office Contacts",
+  usTxVirtualOfficeContactScheduled: "Virtual Contacts (Scheduled)",
+  usTxVirtualOrOfficeContact: "Virtual Contacts",
   usTxAssessment: "TRAS Assessments",
 };
 

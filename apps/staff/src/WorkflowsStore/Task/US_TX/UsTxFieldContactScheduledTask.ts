@@ -18,7 +18,7 @@
 import UsTxContactTask from "./UsTxContactTask";
 
 class UsTxFieldContactScheduledTask extends UsTxContactTask<"usTxFieldContactScheduled"> {
-  displayName = "Field contact (scheduled)";
+  displayName = "Field Contact (Scheduled)";
 }
 
 export default UsTxFieldContactScheduledTask;

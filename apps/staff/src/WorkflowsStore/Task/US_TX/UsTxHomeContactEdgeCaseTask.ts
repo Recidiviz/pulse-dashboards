@@ -19,17 +19,14 @@ import { toTitleCase } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 
 class UsTxHomeContactEdgeCaseTask extends Task<"usTxHomeContactEdgeCase"> {
-  displayName = "Home contact";
+  displayName = "Residence Validation";
 
   get additionalDetails(): string {
     return this.details.reasonForContact;
   }
 
   get frequency(): string {
-    if (this.details.contactCadence) {
-      return toTitleCase(this.details.contactCadence);
-    }
-    return `Every ${this.details.frequency?.toLowerCase()}`;
+    return toTitleCase(this.details.contactCadence);
   }
 }
 
