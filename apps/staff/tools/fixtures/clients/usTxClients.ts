@@ -328,7 +328,7 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     address: "890 Meadow Lane",
     phoneNumber: "5212121212",
     supervisionStartDate: "2019-01-01",
-    expirationDate: "2020-09-31",
+    expirationDate: "2020-09-30",
     allEligibleOpportunities: [],
     currentEmployers: [
       {
@@ -386,7 +386,7 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     address: "12 Baker Drive",
     phoneNumber: "5434343434",
     supervisionStartDate: "2022-01-01",
-    expirationDate: "2022-02-31",
+    expirationDate: "2022-02-28",
     allEligibleOpportunities: [],
     currentEmployers: [
       {
@@ -415,7 +415,7 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     address: "23 Water Road",
     phoneNumber: "5545454545",
     supervisionStartDate: "2021-01-01",
-    expirationDate: "2022-04-31",
+    expirationDate: "2022-04-30",
     allEligibleOpportunities: [],
     currentEmployers: [
       {
@@ -531,7 +531,7 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     address: "76 Vernon Lane",
     phoneNumber: "5989898989",
     supervisionStartDate: "2021-06-01",
-    expirationDate: "2022-09-31",
+    expirationDate: "2022-09-30",
     allEligibleOpportunities: [],
     currentEmployers: [
       {

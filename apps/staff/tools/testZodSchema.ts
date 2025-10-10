@@ -207,6 +207,10 @@ const OTHER_SCHEMAS = {
     schema: clientRecordSchema,
     firestoreCollection: "clients",
   },
+  demoClients: {
+    schema: clientRecordSchema,
+    firestoreCollection: "DEMO_clients",
+  },
 };
 
 type SchemaKey = keyof typeof OPPORTUNITY_SCHEMAS | keyof typeof OTHER_SCHEMAS;
@@ -252,8 +256,10 @@ function validateDocument(
 ) {
   const raw = doc.data();
   // The client schema expects the record id to be injected
-  if (firestoreCollection === "clients" || firestoreCollection === "residents")
+  if (["clients", "residents", "DEMO_clients"].includes(firestoreCollection)) {
     raw.recordId = "stub";
+  }
+
   if (isOpportunity) {
     // To ensure that opportunity schemas pass through criteria they don't recognize,
     // we inject these additional criteria and check that they're still there after the
