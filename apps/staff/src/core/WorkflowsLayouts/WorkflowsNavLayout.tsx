@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, zindex } from "@recidiviz/design-system";
+import { spacing, typography, zindex } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -31,6 +31,7 @@ import { MaxWidth } from "../sharedComponents";
 import { workflowsUrl } from "../views";
 
 const Wrapper = styled.div`
+  ${typography.Sans14};
   background-color: ${palette.marble1};
   min-height: 100vh;
   max-height: 100vh;

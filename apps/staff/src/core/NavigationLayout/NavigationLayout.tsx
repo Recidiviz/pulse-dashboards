@@ -132,17 +132,16 @@ const DropdownProfileMenu = styled(DropdownMenu)`
     0px 4px 8px ${palette.slate05},
     0px 8px 56px ${palette.slate15};
   border-radius: 8px;
-  padding: 12px 0;
   width: max-content;
 
   & a {
     ${typography.Sans14}
 
     color: ${palette.slate80};
-    margin: 4px 16px;
     display: flex;
     justify-content: space-between;
     transition: color ease 500ms;
+    height: 1rem;
 
     &:hover,
     &:focus {
@@ -279,7 +278,12 @@ function MainLogo({
   if (!enabled) return null;
 
   return (
-    <MainLogoNavLink to="/" role="menuitem" aria-label="Go to Recidiviz Home" className="MainLogoLink">
+    <MainLogoNavLink
+      to="/"
+      role="menuitem"
+      aria-label="Go to Recidiviz Home"
+      className="MainLogoLink"
+    >
       <RecidivizLogo aria-hidden="true" />
       {enabledLanternLogo && (
         <>
@@ -294,7 +298,7 @@ function MainLogo({
 function WorkflowsLink({
   enabled,
   homepage,
-}: OptionalLinkProps & { homepage: WorkflowsPage   }) {
+}: OptionalLinkProps & { homepage: WorkflowsPage }) {
   const { isMobile } = useIsMobile(true);
 
   if (!enabled) return null;
@@ -361,10 +365,7 @@ function InsightsLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
   return (
     <DropdownMenuItem>
-      <NavLink
-        to={`/${DASHBOARD_VIEWS.insights}`}
-        role="menuitem"
-      >
+      <NavLink to={`/${DASHBOARD_VIEWS.insights}`} role="menuitem">
         {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
         Go to Insights
       </NavLink>
@@ -384,10 +385,7 @@ function PSIStaffLink({
   if (!enabled || !staffPseudoId) return null;
   return (
     <DropdownMenuItem>
-      <NavLink
-        to={psiUrl("staffDashboard", { staffPseudoId })}
-        role="menuitem"
-      >
+      <NavLink to={psiUrl("staffDashboard", { staffPseudoId })} role="menuitem">
         {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
         Go to PSI Case Dashboard
       </NavLink>
@@ -617,7 +615,10 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
                     >
                       <UserAvatar />
                     </DropdownToggle>
-                    <DropdownProfileMenu alignment="right" ariaLabel="Profile menu">
+                    <DropdownProfileMenu
+                      alignment="right"
+                      ariaLabel="Profile menu"
+                    >
                       {quickLinks}
                     </DropdownProfileMenu>
                   </DropdownProfile>
