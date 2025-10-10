@@ -22,20 +22,6 @@ import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 import { formInformationSchema as formInformation } from "../UsTnSharedCriteria";
 
 export const usTnInitialClassificationSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z
-    .object({
-      // TODO(#8145): remove once #41006 is in prod
-      custodyLevelComparedToRecommended: z
-        .object({
-          custodyLevel: z
-            .string()
-            .nullable()
-            .transform((custodyLevel) => custodyLevel ?? "NOT YET CLASSIFIED"),
-          recommendedCustodyLevel: z.string().nullable(),
-        })
-        .optional(),
-    })
-    .passthrough(),
   formInformation: formInformation
     .extend({
       q3Score: z.null(),
