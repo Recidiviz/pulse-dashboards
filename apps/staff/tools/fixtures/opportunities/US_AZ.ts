@@ -45,10 +45,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Past DTP date in ACIS{{#if acisDtpDate}}: {{date acisDtpDate}}{{/if}}",
         },
         {
-          key: "usAzNoActiveFelonyDetainers",
-          text: "No active felony detainers",
-        },
-        {
           key: "usAzEnrolledInOrMeetsMandatoryLiteracy",
           text: "Enrolled in or meets functional literacy requirement",
           tooltip:
@@ -93,10 +89,6 @@ export const mockApiOpportunityConfigurationResponse = {
       homepagePosition: 4,
       ineligibleCriteriaCopy: [
         {
-          key: "usAzNoActiveFelonyDetainers",
-          text: "Has one or more felony detainers",
-        },
-        {
           key: "usAzEnrolledInOrMeetsMandatoryLiteracy",
           text: "Has not enrolled in or met functional literacy requirement",
           tooltip:
@@ -128,7 +120,11 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        {
+          text: "Validate that client does not have felony holds, felony warrants, or felony detainers.",
+        },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Requirements validated by ACIS",
@@ -176,7 +172,6 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzIncarcerationPastAcisTprDate",
           text: "Past TPR date in ACIS{{#if acisTprDate}}: {{date acisTprDate}}{{/if}}",
         },
-        { key: "usAzNoActiveFelonyDetainers", text: "No felony detainers" },
         {
           key: "usAzMeetsFunctionalLiteracyTpr",
           text: "Functional literacy complete",
@@ -228,10 +223,6 @@ export const mockApiOpportunityConfigurationResponse = {
             "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
         },
         {
-          key: "usAzNoActiveFelonyDetainers",
-          text: "Has one or more felony detainers",
-        },
-        {
           key: "custodyLevelIsMinimumOrMedium",
           text: "Not currently classified as Minimum or Medium Custody",
           tooltip:
@@ -257,7 +248,11 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        {
+          text: "Validate that client does not have felony holds, felony warrants, or felony detainers.",
+        },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: null,
@@ -305,10 +300,6 @@ export const mockApiOpportunityConfigurationResponse = {
         "inmate[|s] may be eligible for Drug Transition Program Release",
       eligibilityDateText: "DTP or Projected DTP",
       eligibleCriteriaCopy: [
-        {
-          key: "usAzNoActiveFelonyDetainers",
-          text: "No active felony detainers",
-        },
         {
           key: "usAzEnrolledInOrMeetsMandatoryLiteracy",
           text: "Enrolled in or meets functional literacy requirement",
@@ -364,10 +355,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzIncarcerationPastAcisDtpDate",
           text: "Upcoming DTP date in ACIS{{#if acisDtpDate}}: {{date acisDtpDate}}{{/if}}",
-        },
-        {
-          key: "usAzNoActiveFelonyDetainers",
-          text: "Has one or more felony detainers",
         },
         {
           key: "usAzEnrolledInOrMeetsMandatoryLiteracy",
@@ -442,7 +429,11 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        {
+          text: "Validate that client does not have felony holds, felony warrants, or felony detainers.",
+        },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Requirements validated by ACIS",
@@ -553,7 +544,6 @@ export const mockApiOpportunityConfigurationResponse = {
         "inmate[|s] may be eligible for Standard Transition Program Release",
       eligibilityDateText: "TPR or Projected TPR",
       eligibleCriteriaCopy: [
-        { key: "usAzNoActiveFelonyDetainers", text: "No felony detainers" },
         {
           key: "usAzMeetsFunctionalLiteracyTpr",
           text: "Functional literacy complete",
@@ -616,10 +606,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Functional literacy outstanding",
           tooltip:
             "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
-        },
-        {
-          key: "usAzNoActiveFelonyDetainers",
-          text: "Has one or more felony detainers",
         },
         {
           key: "custodyLevelIsMinimumOrMedium",
@@ -688,7 +674,11 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        {
+          text: "Validate that client does not have felony holds, felony warrants, or felony detainers.",
+        },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Requirements validated by ACIS data",

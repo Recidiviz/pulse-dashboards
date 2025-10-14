@@ -266,7 +266,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usNdNotEnrolledInRelevantProgram",
-          text: "The resident is currently enrolled in a core program",
+          text: "Currently enrolled in a core program",
         },
       ],
       initialHeader: null,
@@ -395,7 +395,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usNdNotEnrolledInRelevantProgram",
-          text: "Currently enrolled in a program",
+          text: "Currently enrolled in a core program",
         },
         {
           key: "usNdNotInAnOrientationUnit",
