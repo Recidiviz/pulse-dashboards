@@ -63,7 +63,7 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
         // These need to happen after the above calls so that the officer record is hydrated
         await Promise.all([
           this.populateCaseload(),
-          this.populateSupervisionOfficerOutcomes()
+          this.populateSupervisionOfficerOutcomes(),
         ]);
       },
     });
@@ -101,5 +101,10 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
   protected expectMetricsPopulated() {
     if (isExcludedSupervisionOfficer(this.fetchedOfficerRecord) || this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
     super.expectMetricsPopulated();
+  }
+
+  get insightsNumDaysWithoutLogin(): number {
+    return this.supervisionStore.insightsStore.rootStore.tenantStore
+      .insightsNumDaysWithoutLogin;
   }
 }

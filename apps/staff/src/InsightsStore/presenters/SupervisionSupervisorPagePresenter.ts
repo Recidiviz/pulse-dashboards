@@ -248,4 +248,9 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
   get hydrationState(): HydrationState {
     return this.hydrator.hydrationState;
   }
+
+  get insightsNumDaysWithoutLogin(): number {
+    return this.supervisionStore.insightsStore.rootStore.tenantStore
+      .insightsNumDaysWithoutLogin;
+  }
 }
