@@ -1,4 +1,5 @@
 import copy
+import logging
 import uuid
 from datetime import datetime
 from io import BytesIO
@@ -67,6 +68,7 @@ from ..utils.PrometheusBackgroundThreadManager import (
 from .execution_router import ExecutionResponse
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 class ClientAddressUpdate(BaseModel):
@@ -553,6 +555,7 @@ async def get_plan_resources(
 
         return resources
     except Exception as e:
+        logger.exception(f"Error parsing plan data for plan {id}: {str(e)}")
         raise HTTPException(
             status_code=500, detail=f"Error parsing plan data: {str(e)}"
         )
@@ -595,6 +598,7 @@ async def search_resources(
         # Get resources using list_resources function
         return await list_resources(resource_request)
     except Exception as e:
+        logger.exception(f"Error processing plan data for plan {id}: {str(e)}")
         raise HTTPException(
             status_code=500, detail=f"Error processing plan data: {str(e)}"
         )
@@ -743,7 +747,8 @@ async def router_set_generation_notify(
 
     try:
         latest_generation.set_regeneration_notify(request.notify)
-    except Exception:
+    except Exception as e:
+        logger.exception(f"Error setting regeneration notify: {str(e)}")
         raise HTTPException(status_code=400)
 
     session.add(latest_generation)
@@ -795,4 +800,5 @@ async def generate_pdf(request: PDFRequest):
             headers={"Content-Disposition": "attachment; filename=document.pdf"},
         )
     except Exception as e:
+        logger.exception(f"PDF generation failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")

@@ -390,7 +390,15 @@ def resource_is_allowed(
     disallowed_names: Set[str] = DISALLOWED_RESOURCE_NAMES,
     disallowed_addresses: Set[str] = DISALLOWED_RESOURCE_ADDRESSES,
 ) -> bool:
+    if not resource:
+        return False
+
+    # either the attribute doesn't exist, or it can exist and be null.
+    # either case default to ""
+    name = getattr(resource, "name", "") or ""
+    address = getattr(resource, "address", "") or ""
+
     return (
-        getattr(resource, "name", "").lower() not in disallowed_names
-        and getattr(resource, "address", "").lower() not in disallowed_addresses
+        name.lower() not in disallowed_names
+        and address.lower() not in disallowed_addresses
     )

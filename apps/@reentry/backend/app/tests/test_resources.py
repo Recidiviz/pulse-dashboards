@@ -258,6 +258,48 @@ async def test_call_list_resources():
     assert response.resources, "Expected resources but got None or empty list"
 
 
+def test_resource_is_allowed():
+    from app.services.resources import Resource, resource_is_allowed
+
+    allowed = Resource(
+        id="1",
+        category=ResourceCategory.BASIC_NEEDS,
+        name="test name",
+        address="test address",
+    )
+    assert resource_is_allowed(allowed) is True
+
+    # disallowed by name
+    disallowed_name = Resource(
+        id="2",
+        category=ResourceCategory.BASIC_NEEDS,
+        name="Bonneville Community Correctional Center",
+        address="test address",
+    )
+    assert resource_is_allowed(disallowed_name) is False
+
+    # disallowed by address
+    disallowed_address = Resource(
+        id="3",
+        category=ResourceCategory.BASIC_NEEDS,
+        name="test name",
+        address="80 South Orange Street, Salt Lake City, UT",
+    )
+    assert resource_is_allowed(disallowed_address) is False
+
+    # check null values are handled
+    assert resource_is_allowed(None) is False
+
+    # default to allow if resource only has partial data.
+    incomplete_resource = Resource(
+        id="4",
+        category=ResourceCategory.BASIC_NEEDS,
+        name="test name",
+        address=None,
+    )
+    assert resource_is_allowed(incomplete_resource) is True
+
+
 @pytest.mark.asyncio
 @pytest.mark.integration
 async def test_disallowed_resources():
