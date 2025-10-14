@@ -219,6 +219,7 @@
     "react-modal": "^3.12.1",
     "react-native": "0.76.9",
     "react-native-auth0": "^4.6.0",
+    "react-native-error-boundary": "^2.0.0",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-reanimated": "~3.16.1",
     "react-native-safe-area-context": "4.12.0",

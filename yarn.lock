@@ -9399,6 +9399,7 @@ __metadata:
     react: "npm:18.3.1"
     react-native: "npm:0.76.9"
     react-native-auth0: "npm:^4.6.0"
+    react-native-error-boundary: "npm:^2.0.0"
     react-native-gesture-handler: "npm:~2.20.2"
     react-native-reanimated: "npm:~3.16.1"
     react-native-safe-area-context: "npm:4.12.0"
@@ -45908,6 +45909,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-error-boundary@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "react-native-error-boundary@npm:2.0.0"
+  peerDependencies:
+    "@types/react-native": ">=0.57.7"
+    react: ">=16.6.0"
+    react-native: ">=0.57.7"
+  peerDependenciesMeta:
+    "@types/react-native":
+      optional: true
+  checksum: 10c0/337e5cf3dff377f2fdc8fae2506a6c80b2fab5360b6603c31eded77485f55ce1d5834bdf012da965d5b4a5e63fc051213584f69a176574a82d0dab5a4ccb550c
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:~2.20.2":
   version: 2.20.2
   resolution: "react-native-gesture-handler@npm:2.20.2"
@@ -47177,6 +47192,7 @@ __metadata:
     react-modal: "npm:^3.12.1"
     react-native: "npm:0.76.9"
     react-native-auth0: "npm:^4.6.0"
+    react-native-error-boundary: "npm:^2.0.0"
     react-native-gesture-handler: "npm:~2.20.2"
     react-native-reanimated: "npm:~3.16.1"
     react-native-safe-area-context: "npm:4.12.0"

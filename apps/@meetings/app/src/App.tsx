@@ -23,6 +23,7 @@ import { Auth0Provider } from "react-native-auth0";
 
 import config from "~@meetings/app/auth0-config";
 
+import AppErrorBoundary from "./components/AppErrorBoundary";
 import AppNavigator from "./navigation/AppNavigator";
 
 Sentry.init({
@@ -37,7 +38,9 @@ Sentry.init({
 const App = () => {
   return (
     <Auth0Provider domain={config.domain} clientId={config.clientId}>
-      <AppNavigator />
+      <AppErrorBoundary>
+        <AppNavigator />
+      </AppErrorBoundary>
     </Auth0Provider>
   );
 };
