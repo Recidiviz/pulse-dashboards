@@ -18,7 +18,15 @@ If you haven't already, follow the setup instructions in the root README to inst
    This way, `nx` will automatically pick up the correct environment variables based on the targets you are running.
 
 2. Make sure you have your Docker daemon running.
-3. Start the server with `nx dev @meetings/server`.
+3. To point to your own GCS bucket for local development, create an `.env.dev` file in this directory with the following contents:
+
+   ```
+   AUDIO_RECORDINGS_BUCKET_NAME=your-bucket-name
+
+   ```
+
+   Replace `your-bucket-name` with the name of your GCS bucket.
+4. Start the server with `nx dev @meetings/server`.
 
 ### Updating the prisma schema
 
