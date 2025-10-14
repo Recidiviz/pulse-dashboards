@@ -60,6 +60,10 @@ export const useRecording = ({
     useState<RecordingStatus>("created");
   const [uiStatus, setUiStatus] = useState<UIRecordingStatus>("created");
   const [selectedMicrophone, setSelectedMicrophone] = useState<string>("");
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== "undefined" ? navigator.onLine : true,
+  );
+  const [cannotConnectToServer, setCannotConnectToServer] = useState(false);
   const { getAccessToken } = useAuth();
   const { updateStatus } = useUpdateRecordingStatus();
   const queue = useQueue();
@@ -76,6 +80,44 @@ export const useRecording = ({
     "post",
     "/recordings/sessions/{session_id}/finalize",
   );
+
+  // Track online/offline status
+  const isBackOnline = useCallback(() => {
+    if (!isOnline) {
+      showSuccessToast("You are back online.");
+    }
+    setIsOnline(true);
+  }, [isOnline]);
+
+  const isBackOffline = useCallback(() => {
+    if (isOnline) {
+      showErrorToast("You are offline. Recording will continue locally.");
+    }
+    setIsOnline(false);
+  }, [isOnline]);
+
+  useEffect(() => {
+    const handleOnline = () => isBackOnline();
+    const handleOffline = () => isBackOffline();
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  // Poll queue for server connection status
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const cannotConnect = queue.cannotConnectToServer();
+      setCannotConnectToServer(cannotConnect);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [queue]);
 
   const updateRecordingStatus = useCallback(
     async (newStatus: RecordingStatus) => {
@@ -433,35 +475,36 @@ export const useRecording = ({
   ]);
 
   const stopRecording = useCallback(async () => {
-    if (
-      mediaRecorderRef.current &&
-      mediaRecorderRef.current.state !== "inactive"
-    ) {
-      mediaRecorderRef.current.stop();
-    }
-
-    cleanupMediaResources(streamRef.current, null);
-    streamRef.current = null;
-
-    setUiStatus("processing");
-
-    setTimeout(async () => {
-      if (sessionId && chunkCounterRef.current > 0) {
-        await finalizeRecording();
-        // Backend already sets status to "completed", so just update frontend state
-        setRecordingStatus("completed");
-        setUiStatus("completed");
+    if (uiStatus !== "processing") {
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== "inactive"
+      ) {
+        mediaRecorderRef.current.stop();
       }
-      chunkCounterRef.current = 0;
-      setChunkCount(0);
-      recordingStartTimeRef.current = null;
-    }, 3000);
+      cleanupMediaResources(streamRef.current, null);
+      streamRef.current = null;
 
-    // Notify that recording has been stopped (so polling can start)
-    onRecordingStopped?.();
+      setUiStatus("processing");
 
-    showSuccessToast("Recording stopped");
-  }, [sessionId, onRecordingStopped, finalizeRecording]);
+      setTimeout(async () => {
+        if (sessionId && chunkCounterRef.current > 0) {
+          await finalizeRecording();
+          // Backend already sets status to "completed", so just update frontend state
+          setRecordingStatus("completed");
+          setUiStatus("completed");
+        }
+        chunkCounterRef.current = 0;
+        setChunkCount(0);
+        recordingStartTimeRef.current = null;
+      }, 3000);
+
+      // Notify that recording has been stopped (so polling can start)
+      onRecordingStopped?.();
+
+      showSuccessToast("Recording stopped");
+    }
+  }, [sessionId, uiStatus, onRecordingStopped, finalizeRecording]);
 
   // session recovery: check for paused sessions on mount and restore state
   useEffect(() => {
@@ -540,7 +583,9 @@ export const useRecording = ({
     selectedMicrophone,
     microphones: [],
     chunkCount,
+    isOnline,
     mediaRecorderRef,
+    cannotConnectToServer,
     startRecording,
     pauseRecording,
     resumeRecording,

@@ -45,6 +45,8 @@ export interface RecordingState {
   selectedMicrophone: string;
   microphones: MediaDevice[];
   chunkCount: number;
+  isOnline: boolean;
+  cannotConnectToServer: boolean;
 }
 
 export interface RecordingActions {

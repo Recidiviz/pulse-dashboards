@@ -15,17 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { CloudOff } from "@mui/icons-material";
 import {
-  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  Tooltip,
   Typography,
 } from "@mui/material";
 
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
+import StatusIndicators from "~@reentry/frontend/components/recording/StatusIndicators";
 import type {
   MediaDevice,
   RecordingActions,
@@ -43,38 +44,52 @@ interface RecordingControlsProps {
   actions: RecordingActions;
   openLiveAssessmentModal: (action: () => void) => void;
   setEndAssessmentOpen: (open: boolean) => void;
+  isOnline: boolean;
+  cannotConnectToServer: boolean;
 }
 
-const RecordingControls: React.FC<RecordingControlsProps> = ({
+interface RecordingControlsButtonsProps {
+  recordingStatus: UIRecordingStatus;
+  selectedMicrophone: string;
+  microphones: MediaDevice[];
+  isRecordingSupported: boolean;
+  actions: RecordingActions;
+  openLiveAssessmentModal: (action: () => void) => void;
+  setEndAssessmentOpen: (open: boolean) => void;
+  isOnline: boolean;
+  uploadDuration?: number;
+}
+
+interface RecordingStatusTextProps {
+  recordingStatus: UIRecordingStatus;
+  isRecordingSupported: boolean;
+  chunkCount: number;
+  uploadDuration: number;
+  recordDuration: number;
+  isOnline: boolean;
+  cannotConnectToServer: boolean;
+  formatDuration: (seconds: number) => string;
+}
+
+const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
   recordingStatus,
   selectedMicrophone,
   microphones,
   isRecordingSupported,
-  chunkCount = 0,
-  uploadDuration = 0,
-  recordDuration = 0,
   actions,
   openLiveAssessmentModal,
   setEndAssessmentOpen,
+  uploadDuration = 0,
 }) => {
-  const uploadPercentage =
-    recordDuration > 0
-      ? Math.min(Math.round((uploadDuration / recordDuration) * 100), 100)
-      : 0;
-  const formatDuration = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-  };
-  const renderRecordingControls = () => {
-    if (!isRecordingSupported) {
-      return (
-        <div className="text-red-600 text-sm font-medium">
-          Recording not supported on this device.
-        </div>
-      );
-    }
+  if (!isRecordingSupported) {
+    return (
+      <div className="text-red-600 text-sm font-medium">
+        Recording not supported on this device.
+      </div>
+    );
+  }
 
+  const renderButtons = () => {
     switch (recordingStatus) {
       case "created":
         return (
@@ -103,7 +118,9 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
               </FormControl>
             </div>
             <PrimaryButton
-              buttonText="Start Recording"
+              buttonText={
+                uploadDuration > 0 ? "Resume Recording" : "Start Recording"
+              }
               className="h-8 px-4 py-2 bg-[#006c67] rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
               onClick={() => {
                 openLiveAssessmentModal(actions.startRecording);
@@ -172,30 +189,46 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
     }
   };
 
-  const renderRecordingStatusText = () => {
-    if (!isRecordingSupported) {
-      return (
-        <div className="text-red-600 text-sm font-medium">
-          Recording not supported on this device.
-        </div>
-      );
-    }
+  return <div className="flex items-center gap-3">{renderButtons()}</div>;
+};
 
+const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
+  recordingStatus,
+  isRecordingSupported,
+  chunkCount,
+  uploadDuration,
+  recordDuration,
+  isOnline,
+  cannotConnectToServer,
+  formatDuration,
+}) => {
+  if (!isRecordingSupported) {
+    return (
+      <div className="text-red-600 text-sm font-medium">
+        Recording not supported on this device.
+      </div>
+    );
+  }
+
+  const renderStatus = () => {
     switch (recordingStatus) {
       case "created":
         return (
           <div className={"flex gap-4"}>
-            <div className="flex items-end gap-[2px] h-4">
-              {Array.from({ length: 15 }).map((_, idx) => (
-                <div
-                  key={idx}
-                  className="w-0.5 h-2.5 opacity-70 bg-[#2a5469]/90 rounded"
+            {uploadDuration > 0 && (
+              <div className="flex items-center justify-center space-x-2">
+                <Typography className="text-xs text-gray-500">
+                  Duration: {formatDuration(uploadDuration)} ({chunkCount}{" "}
+                  chunks)
+                </Typography>
+                <StatusIndicators
+                  isOnline={isOnline}
+                  cannotConnectToServer={cannotConnectToServer}
+                  uploadDuration={uploadDuration}
+                  recordDuration={recordDuration}
                 />
-              ))}
-            </div>
-            <div className="text-[#2a5469]/90 text-base font-medium font-['Public_Sans']">
-              {formatDuration(uploadDuration)}
-            </div>
+              </div>
+            )}
           </div>
         );
       case "recording":
@@ -214,19 +247,12 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
                     Duration: {formatDuration(recordDuration)} ({chunkCount}{" "}
                     chunks)
                   </Typography>
-                  {uploadPercentage > 0 && uploadPercentage < 100 && (
-                    <div className="flex items-center space-x-1">
-                      <CircularProgress size={10} className="text-blue-500" />
-                    </div>
-                  )}
-                  {uploadPercentage === 100 && (
-                    <div className="flex items-center space-x-1">
-                      <CheckCircleIcon
-                        className="text-green-600"
-                        style={{ fontSize: 12 }}
-                      />
-                    </div>
-                  )}
+                  <StatusIndicators
+                    isOnline={isOnline}
+                    cannotConnectToServer={cannotConnectToServer}
+                    uploadDuration={uploadDuration}
+                    recordDuration={recordDuration}
+                  />
                 </div>
               )}
             </div>
@@ -248,19 +274,12 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
                     Duration: {formatDuration(recordDuration)} ({chunkCount}{" "}
                     chunks)
                   </Typography>
-                  {uploadPercentage > 0 && uploadPercentage < 100 && (
-                    <div className="flex items-center space-x-1">
-                      <CircularProgress size={10} className="text-blue-500" />
-                    </div>
-                  )}
-                  {uploadPercentage === 100 && (
-                    <div className="flex items-center space-x-1">
-                      <CheckCircleIcon
-                        className="text-green-600"
-                        style={{ fontSize: 12 }}
-                      />
-                    </div>
-                  )}
+                  <StatusIndicators
+                    isOnline={isOnline}
+                    cannotConnectToServer={cannotConnectToServer}
+                    uploadDuration={uploadDuration}
+                    recordDuration={recordDuration}
+                  />
                 </div>
               )}
             </div>
@@ -312,16 +331,72 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   };
 
   return (
+    <div className="flex items-center gap-3">
+      {!isOnline && (
+        <Tooltip title="You are offline">
+          <div className="flex items-center gap-2 text-red-600">
+            <CloudOff fontSize="small" />
+            <span className="text-sm font-medium">Offline</span>
+          </div>
+        </Tooltip>
+      )}
+      {renderStatus()}
+    </div>
+  );
+};
+
+const RecordingControls: React.FC<RecordingControlsProps> = ({
+  recordingStatus,
+  selectedMicrophone,
+  microphones,
+  isRecordingSupported,
+  chunkCount = 0,
+  uploadDuration = 0,
+  recordDuration = 0,
+  actions,
+  openLiveAssessmentModal,
+  setEndAssessmentOpen,
+  isOnline,
+  cannotConnectToServer,
+}) => {
+  const formatDuration = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
+
+  return (
     <div className="w-full px-6 py-3 bg-white rounded-[99px] outline outline-1 outline-offset-[-1px] outline-[#2b5469]/10 flex items-center justify-between">
       <div className="opacity-0">
         <div className="h-8 px-4 py-2 bg-[#006c67] rounded-[32px] flex items-center justify-center text-white text-[13px] font-medium">
-          Start Recording
+          {uploadDuration ? "Start Recording" : "Resume Recording"}
         </div>
       </div>
       <div className="flex items-center gap-4">
-        {renderRecordingStatusText()}
+        <RecordingStatusText
+          recordingStatus={recordingStatus}
+          isRecordingSupported={isRecordingSupported}
+          chunkCount={chunkCount}
+          uploadDuration={uploadDuration}
+          recordDuration={recordDuration}
+          isOnline={isOnline}
+          cannotConnectToServer={cannotConnectToServer}
+          formatDuration={formatDuration}
+        />
       </div>
-      <div className="flex items-center gap-3">{renderRecordingControls()}</div>
+      <div className="flex items-center gap-3">
+        <RecordingControlsButtons
+          recordingStatus={recordingStatus}
+          selectedMicrophone={selectedMicrophone}
+          microphones={microphones}
+          isRecordingSupported={isRecordingSupported}
+          actions={actions}
+          openLiveAssessmentModal={openLiveAssessmentModal}
+          setEndAssessmentOpen={setEndAssessmentOpen}
+          isOnline={isOnline}
+          uploadDuration={uploadDuration}
+        />
+      </div>
     </div>
   );
 };

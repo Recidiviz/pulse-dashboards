@@ -64,11 +64,12 @@ export const QueueProvider = ({ children }: QueueProviderProps) => {
         },
       });
 
-      return { success: true };
+      return { success: true, error: "" };
     } catch (error) {
+      // Return the full error object with all its properties
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Upload failed",
+        error: error instanceof Error ? error.toString() : "Unknown error",
       };
     }
   }, []);

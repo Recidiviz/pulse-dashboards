@@ -25,7 +25,7 @@ import type { QueuedChunk } from "~@reentry/frontend/types/recording";
 
 interface UploadResponse {
   success: boolean;
-  error?: string;
+  error: string;
 }
 
 export class PersistentChunkQueue {
@@ -41,6 +41,7 @@ export class PersistentChunkQueue {
   private maxQueueSize = 1440; // each chunk is 5 seconds for total of 2 hours recording. ~ 60 to 100MB.
   private retryDelay = 5000; // Base delay in ms
   private processingInterval: NodeJS.Timeout | null = null;
+  private canNotConnectToTheServer = false;
 
   constructor(
     private uploadFunction: (chunk: QueuedChunk) => Promise<UploadResponse>,
@@ -130,6 +131,13 @@ export class PersistentChunkQueue {
    */
   isAcceptingChunks(): boolean {
     return this.acceptingNewChunks;
+  }
+
+  /**
+   * Check if cannot connect to the server
+   */
+  cannotConnectToServer(): boolean {
+    return this.canNotConnectToTheServer;
   }
 
   /**
@@ -238,6 +246,10 @@ export class PersistentChunkQueue {
 
     try {
       while (true) {
+        if (this.globalRetryCount > 10) {
+          this.canNotConnectToTheServer = true;
+        }
+
         if (this.globalRetryCount >= this.maxGlobalRetries) {
           console.error(
             `Global retry limit reached (${this.maxGlobalRetries}), stopping queue processing`,
@@ -267,10 +279,25 @@ export class PersistentChunkQueue {
               `Successfully uploaded chunk ${chunk.chunkIndex} (timestamp: ${chunk.timestamp})`,
             );
             this.globalRetryCount = 0;
+            this.canNotConnectToTheServer = false;
           } else {
             console.error(
               `Upload failed for chunk ${chunk.chunkIndex} (timestamp: ${chunk.timestamp})`,
             );
+            console.log("Error:", result.error);
+
+            // Check if the error is a 404
+            const is404 = result.error == "Recording session not found";
+
+
+            if (is404) {
+              console.log(
+                `Chunk ${chunk.chunkIndex} received 404 error - not re-queuing`,
+              );
+              // Don't throw error to avoid re-queuing
+              continue;
+            }
+
             throw new Error(result.error || "Upload failed");
           }
         } catch (error) {

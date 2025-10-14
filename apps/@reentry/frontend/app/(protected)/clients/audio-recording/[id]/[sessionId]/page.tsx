@@ -19,7 +19,7 @@
 
 import { useParams } from "next/navigation";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import NavRecordingPage from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/NavRecordingPage";
 import TranscriptionAdressForm from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/TranscriptionAddressForm";
@@ -87,6 +87,29 @@ const AudioRecordingPage: React.FC = () => {
     }
   }, [sessionData?.status, intakeData]);
 
+  const handleClientError = useCallback(async () => {
+    console.log("clientError", clientError);
+    if (clientError || sessionError) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); // needed for getting microphone permission.
+      console.log(stream);
+      try {
+        stream.getTracks().forEach(track => track.stop());
+      } catch (error) {
+        console.error("Error stopping permission stream tracks:", error);
+      }
+    }
+  }, [clientError, sessionError]);
+
+  useEffect(() => {
+    // Refetch session data when component mounts to get the latest status
+    handleClientError();
+  }, [clientError, sessionError]);
+
+  const handleAddressFormClose = () => {
+    setNeedsAddress(false);
+    refetchSession();
+    refetchIntakeData();
+  };
 
   if (clientLoading || sessionLoading) {
     return (
@@ -97,12 +120,6 @@ const AudioRecordingPage: React.FC = () => {
       </div>
     );
   }
-
-  const handleAddressFormClose = () => {
-    setNeedsAddress(false);
-    refetchSession();
-    refetchIntakeData();
-  };
 
   if (clientError || sessionError || !clientData) {
     return (

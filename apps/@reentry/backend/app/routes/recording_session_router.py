@@ -351,27 +351,27 @@ async def finalize_recording(
     recording_session = await get_recording_session_by_id(session, session_id)
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
+    if recording_session.status != RecordingStatus.PROCESSING:
+        check_access(
+            client_pseudo_id=recording_session.client_pseudo_id,
+            pseudonymized_staff_id=pseudonymized_id,
+        )
 
-    check_access(
-        client_pseudo_id=recording_session.client_pseudo_id,
-        pseudonymized_staff_id=pseudonymized_id,
-    )
+        execution = await schedule_task(
+            session,
+            table_name="recording_session",
+            table_entity_id=session_id,
+            task_func=process_recording_task,
+            task_kwargs={
+                "recording_session_id": session_id,
+            },
+        )
 
-    execution = await schedule_task(
-        session,
-        table_name="recording_session",
-        table_entity_id=session_id,
-        task_func=process_recording_task,
-        task_kwargs={
-            "recording_session_id": session_id,
-        },
-    )
-
-    recording_session.execution_id = execution.id
-    recording_session.status = RecordingStatus.PROCESSING
-    session.add(recording_session)
-    await session.commit()
-    await session.refresh(recording_session)
+        recording_session.execution_id = execution.id
+        recording_session.status = RecordingStatus.PROCESSING
+        session.add(recording_session)
+        await session.commit()
+        await session.refresh(recording_session)
 
     return FinalizeRecordingResponse(execution_id=str(execution.id))
 

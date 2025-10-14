@@ -103,7 +103,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
       }
     };
 
-    if (recording.uiStatus === "recording" || recording.uiStatus === "paused") {
+    if (["recording", "paused", "created"].includes(recording.uiStatus)) {
       updateRecordDuration(); // Initial update
       interval = setInterval(updateRecordDuration, 1000); // Update every second
     }
@@ -216,6 +216,8 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
             recordDuration={Math.floor(recordDuration / 1000)}
             openLiveAssessmentModal={openLiveAssessmentModal}
             setEndAssessmentOpen={setEndAssessmentOpen}
+            isOnline={recording.isOnline}
+            cannotConnectToServer={recording.cannotConnectToServer}
             actions={{
               startRecording: recording.startRecording,
               pauseRecording: recording.pauseRecording,
@@ -247,12 +249,22 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
         isOpen={liveAssessmentOpen}
         onClose={() => setLiveAssessmentOpen(false)}
         onConfirm={handleLiveAssessmentConfirm}
+        isOnline={recording.isOnline}
+        isPaused={recording.uiStatus === "paused"}
       />
 
       <EndAssessmentModal
         isOpen={endAssessmentOpen}
         onClose={() => setEndAssessmentOpen(false)}
         onConfirm={handleEndAssessmentConfirm}
+        isOnline={recording.isOnline}
+        cannotConnectToServer={recording.cannotConnectToServer}
+        isRecording={recording.uiStatus === "recording"}
+        uploadDuration={
+          statusData?.duration ? Math.floor(statusData.duration / 1000) : 0
+        }
+        recordDuration={Math.floor(recordDuration / 1000)}
+        onPause={recording.pauseRecording}
       />
 
       <Dialog
