@@ -68,7 +68,7 @@ let deployingLatestMain = true;
 // Determine which environment to deploy
 const { deployEnv } = await inquirer.prompt({
   type: "list",
-  choices: ["staging", "preview", "demo", "production"],
+  choices: ["staging", "preview", "demo", "reentry-dev", "production"],
   name: "deployEnv",
   message: "Which environment are you deploying?",
   default: "staging",
@@ -281,7 +281,8 @@ await $`brew install atmos`.pipe(process.stdout);
 if (
   (deployEnv === "staging" ||
     (deployEnv === "production" && isCpDeploy) ||
-    deployEnv === "demo") &&
+    deployEnv === "demo" ||
+    deployEnv === "reentry-dev") &&
   (deploySentencing ||
     deployJiiTexting ||
     deployCaseNotes ||
@@ -723,7 +724,8 @@ if (
   deployReentryBackend &&
   (deployEnv === "staging" ||
     deployEnv === "production" ||
-    deployEnv === "demo")
+    deployEnv === "demo" ||
+    deployEnv === "reentry-dev")
 ) {
   let retryDeploy = false;
 
@@ -742,6 +744,10 @@ if (
         );
       } else if (deployEnv === "demo") {
         await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/demo/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "reentry-dev") {
+        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/dev/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
           process.stdout,
         );
       }
@@ -844,7 +850,8 @@ if (
   deployReentryFrontend &&
   (deployEnv === "staging" ||
     deployEnv === "production" ||
-    deployEnv === "demo")
+    deployEnv === "demo" ||
+    deployEnv === "reentry-dev")
 ) {
   let retryDeploy = false;
 
@@ -868,6 +875,12 @@ if (
         }
       } else if (deployEnv === "demo") {
         await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration ${deployEnv}`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "reentry-dev") {
+        // have to use dev_gcp instead of (dev) reentry-dev because in project.json dev is already taken for local dev
+        // apps/@reentry/frontend/project.json
+        await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration dev_gcp`.pipe(
           process.stdout,
         );
       }

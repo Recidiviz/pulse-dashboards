@@ -8,7 +8,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../../tools/load_env_files.sh --env env_reentry_frontend  --env_demo env_demo_reentry_frontend --env_staging env_staging_reentry_frontend --env_prod env_prod_reentry_frontend",
+        "command": "../../../tools/load_env_files.sh --env env_reentry_frontend --env_dev_gcp env_dev_gcp_reentry_frontend --env_demo env_demo_reentry_frontend --env_staging env_staging_reentry_frontend --env_prod env_prod_reentry_frontend",
         "cwd": "{projectRoot}"
       }
     },
@@ -42,6 +42,7 @@
       },
       "configurations": {
         "dev": {},
+        "dev_gcp": {},
         "staging": {},
         "demo": {},
         "production": {}
@@ -57,6 +58,9 @@
       "configurations": {
         "dev": {
           "command": "cp apps/@reentry/frontend/.env dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env"
+        },
+        "dev_gcp": {
+          "command": "cp apps/@reentry/frontend/.env.dev_gcp dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
         },
         "staging": {
           "command": "cp apps/@reentry/frontend/.env.staging dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
@@ -127,6 +131,16 @@
         },
         "demo": {
           "command": "gcloud run deploy frontend-demo --image gcr.io/recidiviz-rnd-planner/frontend-demo:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner"
+        },
+        "dev_gcp": {
+          "parallel": false,
+          "dependsOn": ["copy-correct-env"],
+          "cwd": "{workspaceRoot}",
+          "commands": [
+            "docker build --platform linux/amd64 --provenance=false -t gcr.io/recidiviz-rnd-planner/frontend-dev:$COMMIT_SHA -f apps/@reentry/frontend/Dockerfile.gcp .",
+            "docker push gcr.io/recidiviz-rnd-planner/frontend-dev:$COMMIT_SHA",
+            "gcloud run deploy frontend-dev --image gcr.io/recidiviz-rnd-planner/frontend-dev:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner"
+          ]
         }
       },
       "defaultConfiguration": "demo"
