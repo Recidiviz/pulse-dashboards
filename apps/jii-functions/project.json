@@ -70,5 +70,14 @@
       "defaultConfiguration": "production"
     }
   },
+  "test": {
+    "executor": "nx:run-commands",
+    "outputs": ["{workspaceRoot}/coverage/apps/jii-functions"],
+    "cache": true,
+    "options": {
+      "command": "vitest",
+      "cwd": "{projectRoot}"
+    }
+  },
   "tags": ["scope:server", "type:app"]
 }

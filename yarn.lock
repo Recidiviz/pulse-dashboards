@@ -17078,6 +17078,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/cookiejar@npm:^2.1.5":
+  version: 2.1.5
+  resolution: "@types/cookiejar@npm:2.1.5"
+  checksum: 10c0/af38c3d84aebb3ccc6e46fb6afeeaac80fb26e63a487dd4db5a8b87e6ad3d4b845ba1116b2ae90d6f886290a36200fa433d8b1f6fe19c47da6b81872ce9a2764
+  languageName: node
+  linkType: hard
+
 "@types/cors@npm:^2.8.5":
   version: 2.8.17
   resolution: "@types/cors@npm:2.8.17"
@@ -18040,6 +18047,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/methods@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "@types/methods@npm:1.1.4"
+  checksum: 10c0/a78534d79c300718298bfff92facd07bf38429c66191f640c1db4c9cff1e36f819304298a96f7536b6512bfc398e5c3e6b831405e138cd774b88ad7be78d682a
+  languageName: node
+  linkType: hard
+
 "@types/mime@npm:*":
   version: 3.0.4
   resolution: "@types/mime@npm:3.0.4"
@@ -18655,6 +18669,28 @@ __metadata:
     "@types/react": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/61c53b035d82bbf6071d3f15348f2e9a43af8c28c630ab472d153277082a578aa60116ddc67bcfea1340d93577d5758c359f0a4d4d1291a419cebb3f8677b63e
+  languageName: node
+  linkType: hard
+
+"@types/superagent@npm:^8.1.0":
+  version: 8.1.9
+  resolution: "@types/superagent@npm:8.1.9"
+  dependencies:
+    "@types/cookiejar": "npm:^2.1.5"
+    "@types/methods": "npm:^1.1.4"
+    "@types/node": "npm:*"
+    form-data: "npm:^4.0.0"
+  checksum: 10c0/12631f1d8b3a62e1f435bc885f6d64d1a2d1ae82b80f0c6d63d4d6372c40b6f1fee6b3da59ac18bb86250b1eb73583bf2d4b1f7882048c32468791c560c69b7c
+  languageName: node
+  linkType: hard
+
+"@types/supertest@npm:^6.0.1":
+  version: 6.0.3
+  resolution: "@types/supertest@npm:6.0.3"
+  dependencies:
+    "@types/methods": "npm:^1.1.4"
+    "@types/superagent": "npm:^8.1.0"
+  checksum: 10c0/a2080f870154b09db123864a484fb633bc9e2a0f7294a194388df4c7effe5af9de36d5a5ebf819f72b404fa47b5e813c47d5a3a51354251fd2fa8589bfb64f2c
   languageName: node
   linkType: hard
 
@@ -21356,7 +21392,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"asn1@npm:^0.2.6":
+"asn1@npm:^0.2.4, asn1@npm:^0.2.6":
   version: 0.2.6
   resolution: "asn1@npm:0.2.6"
   dependencies:
@@ -22191,6 +22227,13 @@ __metadata:
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 10c0/f23823513b63173a001030fae4f2dabe283b99a9d324ade3ad3d148e218134676f1ee8568c877cd79ec1c53158dcf2d2ba527a97c606618928ba99dd930102bf
+  languageName: node
+  linkType: hard
+
+"base64-url@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "base64-url@npm:2.3.3"
+  checksum: 10c0/d68b2a9586e5a00eba1271c2d6d182932439e5f61e7c8901b6404044fedcc1d8be4c6034a78599462782372939a0c12ce3563af031fda87c54b03b19ebe75d3f
   languageName: node
   linkType: hard
 
@@ -37026,7 +37069,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonwebtoken@npm:^9.0.2":
+"jsonwebtoken@npm:^9.0.0, jsonwebtoken@npm:^9.0.2":
   version: 9.0.2
   resolution: "jsonwebtoken@npm:9.0.2"
   dependencies:
@@ -40636,6 +40679,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mock-jwks@npm:^3.3.5":
+  version: 3.3.5
+  resolution: "mock-jwks@npm:3.3.5"
+  dependencies:
+    base64-url: "npm:^2.3.3"
+    jsonwebtoken: "npm:^9.0.0"
+    msw: "npm:^2.3.1"
+    node-forge: "npm:^1.3.1"
+    node-rsa: "npm:^1.1.1"
+  checksum: 10c0/20f72c7e9f8290abaafaa77b85666dda65b518aac5d6ea6316e01ae2c8dfc448779d62c4596b1774a3f78a0a3d48f1c5807e82e0978d9965e2365a711805092f
+  languageName: node
+  linkType: hard
+
 "mockery@npm:^2.1.0":
   version: 2.1.0
   resolution: "mockery@npm:2.1.0"
@@ -40737,7 +40793,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.7.3":
+"msw@npm:^2.3.1, msw@npm:^2.7.3":
   version: 2.7.3
   resolution: "msw@npm:2.7.3"
   dependencies:
@@ -41296,6 +41352,15 @@ __metadata:
   version: 2.0.23
   resolution: "node-releases@npm:2.0.23"
   checksum: 10c0/3fdcddb574a9d56c050469b027f3fd2b8830fd321edd12f34b862969b67d0a3d6713eb2af8916f91618d555354f6c7bd33ae39e3b37117b1e7ddf2e42bc3f4be
+  languageName: node
+  linkType: hard
+
+"node-rsa@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "node-rsa@npm:1.1.1"
+  dependencies:
+    asn1: "npm:^0.2.4"
+  checksum: 10c0/af3b6534844dfeaa8290a7bc20d5e4d1a134f05d456725e56d75b7661d4d63cd63914ce335ee8889adc2458112b996d4ba8a83ba105bde744a26e61d9160f639
   languageName: node
   linkType: hard
 
@@ -47048,6 +47113,7 @@ __metadata:
     "@types/react-virtualized-auto-sizer": "npm:^1.0.1"
     "@types/react-window": "npm:^1.8.5"
     "@types/styled-components": "npm:5.1.26"
+    "@types/supertest": "npm:^6.0.1"
     "@uiw/react-markdown-editor": "npm:^6.1.2"
     "@visx/text": "npm:^3.3.0"
     "@vitejs/plugin-react": "npm:^4.2.0"
@@ -47184,6 +47250,7 @@ __metadata:
     mobx-react-lite: "npm:^3.1.6"
     mobx-utils: "npm:^6.0.4"
     mock-gcs: "npm:^2.1.0"
+    mock-jwks: "npm:^3.3.5"
     modern-normalize: "npm:^2.0.0"
     moment: "npm:^2.29.4"
     morgan: "npm:^1.9.1"

@@ -90,7 +90,7 @@ export async function getFirebaseToken(
   });
 }
 
-export async function getFirestore() {
+async function getFirestore() {
   return firebaseAdmin.firestore(await getFirebaseApp());
 }
 
@@ -169,4 +169,12 @@ export async function checkDemoResidentsRoster(
     pseudonymizedId,
     permissions: [],
   };
+}
+
+export async function checkEdovoTestAccountRoster(userId: string) {
+  return (
+    await (await getFirestore())
+      .doc(`JII-edovoToRecidivizMappings/${userId}`)
+      .get()
+  ).data();
 }

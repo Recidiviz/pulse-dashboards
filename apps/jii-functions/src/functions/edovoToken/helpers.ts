@@ -22,8 +22,8 @@ import { z } from "zod";
 import { AuthorizedUserProfile } from "~@jii/auth";
 
 import {
+  checkEdovoTestAccountRoster,
   checkResidentsRoster,
-  getFirestore,
 } from "../../helpers/firebaseAdmin";
 import { getRecidivizUserProfile } from "../../helpers/recidivizUsers";
 import { secrets } from "../../helpers/secrets";
@@ -58,11 +58,7 @@ export async function lookupResident(
 export async function checkRecidivizEmployeeRoster(
   userData: EdovoIdTokenPayload,
 ): Promise<AuthorizedUserProfile | undefined> {
-  const employeeRecord = (
-    await (await getFirestore())
-      .doc(`JII-edovoToRecidivizMappings/${userData.inmate_id}`)
-      .get()
-  ).data();
+  const employeeRecord = await checkEdovoTestAccountRoster(userData.inmate_id);
 
   if (!employeeRecord) return;
 
