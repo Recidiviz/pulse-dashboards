@@ -63,11 +63,9 @@ const NewMeetingScreen = () => {
   useEffect(() => {
     try {
       const startTime = new Date();
-      const address = "123 Main Street"; // TODO: Remove hardcode
       createMeetingMutation.mutate({
         clientId: client.personId,
         startTime,
-        address,
       });
     } catch (err) {
       console.error("[create] Failed to create meeting", err);

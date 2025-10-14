@@ -29,7 +29,7 @@ export const clientRouter = router({
     .input(createMeetingInputSchema)
     .mutation(
       async ({
-        input: { clientId, startTime, address },
+        input: { clientId, startTime },
         ctx: { prisma, user },
       }) => {
         const meeting = await prisma.meeting.create({
@@ -45,7 +45,6 @@ export const clientRouter = router({
               },
             },
             startTime,
-            address,
             recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
             recordingsFolderPath: "placeholder",
           },
@@ -62,7 +61,6 @@ export const clientRouter = router({
           select: {
             id: true,
             startTime: true,
-            address: true,
           },
         });
       },
@@ -98,7 +96,6 @@ export const clientRouter = router({
           id: true,
           startTime: true,
           endTime: true,
-          address: true,
         },
       });
     }),

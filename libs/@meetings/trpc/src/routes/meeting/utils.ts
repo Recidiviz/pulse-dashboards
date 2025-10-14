@@ -23,6 +23,11 @@ import ffmpegPath from "ffmpeg-static";
 import ffmpeg from "fluent-ffmpeg";
 import path from "path";
 
+import {
+  AUDIO_FILE_EXTENSION,
+  GCS_CONTENT_TYPE,
+} from "~@meetings/trpc/common/constants";
+
 if (!ffmpegPath) {
   throw new Error("ffmpeg-static failed to load ffmpeg binary");
 }
@@ -30,14 +35,14 @@ if (!ffmpegPath) {
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 export async function stitchAudioForMeeting(
-  gcsBucket: string,
-  gcsFolder: string,
+  gcsBucketName: string,
+  meetingFolderName: string,
 ) {
   // Get the list of audio files for this meeting
   const storage = new Storage();
-  const bucket = storage.bucket(gcsBucket);
+  const bucket = storage.bucket(gcsBucketName);
 
-  const [files] = await bucket.getFiles({ prefix: `${gcsFolder}/` });
+  const [files] = await bucket.getFiles({ prefix: `${meetingFolderName}/` });
   if (files.length === 0) {
     return;
   }
@@ -72,7 +77,10 @@ export async function stitchAudioForMeeting(
   await Promise.all(downloads);
   fs.writeFileSync(fileListPath, fileListContent);
 
-  const tempOutputPath = path.join(os.tmpdir(), "final.webm");
+  const tempOutputPath = path.join(
+    os.tmpdir(),
+    `final.${AUDIO_FILE_EXTENSION}`,
+  );
 
   // Use FFmpeg to concatenate the audio files into a single one
   await new Promise((resolve, reject) => {
@@ -86,10 +94,12 @@ export async function stitchAudioForMeeting(
   });
 
   // Upload the final stitched file back to the bucket
-  const outputFileName = `${gcsFolder}/final.webm`;
+  const outputFileName = `${meetingFolderName}/final.${AUDIO_FILE_EXTENSION}`;
   await bucket.upload(tempOutputPath, {
     destination: outputFileName,
-    metadata: { contentType: "audio/webm" },
+    metadata: { contentType: GCS_CONTENT_TYPE },
     resumable: false,
   });
+
+  return `${gcsBucketName}/${outputFileName}`;
 }

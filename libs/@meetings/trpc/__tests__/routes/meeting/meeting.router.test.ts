@@ -62,7 +62,7 @@ describe("meeting router", () => {
         });
 
       expect(result).toEqual(
-        `${GCS_API_ENDPOINT}/${fakeMeeting.id}/${FAKE_DATE.getTime() / 1000}.webm`,
+        `${GCS_API_ENDPOINT}/${fakeMeeting.id}/${FAKE_DATE.getTime() / 1000}.m4a`,
       );
     });
   });
@@ -78,31 +78,22 @@ describe("meeting router", () => {
 
       await storage
         .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
-        .upload(
-          "__tests__/data/recordings_10f2d1f0-ed09-4d12-963c-07c396b822a5_chunks_chunk_1758921620931_0000_start.webm",
-          {
-            destination: `${fakeMeeting.id}/1.webm`,
-            resumable: false,
-          },
-        );
+        .upload("__tests__/data/1.m4a", {
+          destination: `${fakeMeeting.id}/1.m4a`,
+          resumable: false,
+        });
       await storage
         .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
-        .upload(
-          "__tests__/data/recordings_10f2d1f0-ed09-4d12-963c-07c396b822a5_chunks_chunk_1758921625971_0001.webm",
-          {
-            destination: `${fakeMeeting.id}/2.webm`,
-            resumable: false,
-          },
-        );
+        .upload("__tests__/data/2.m4a", {
+          destination: `${fakeMeeting.id}/2.m4a`,
+          resumable: false,
+        });
       await storage
         .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
-        .upload(
-          "__tests__/data/recordings_10f2d1f0-ed09-4d12-963c-07c396b822a5_chunks_chunk_1758921627461_0002.webm",
-          {
-            destination: `${fakeMeeting.id}/3.webm`,
-            resumable: false,
-          },
-        );
+        .upload("__tests__/data/3.m4a", {
+          destination: `${fakeMeeting.id}/3.m4a`,
+          resumable: false,
+        });
     });
 
     test("Should throw error if meeting does not exist", async () => {
@@ -132,6 +123,7 @@ describe("meeting router", () => {
         expect.objectContaining({
           endTime: FAKE_DATE,
           postMeetingProcessingStatus: PostMeetingProcessingStatus.TRANSCRIBING,
+          finalRecordingGCSPath: `${env.AUDIO_RECORDINGS_BUCKET_NAME}/${fakeMeeting.id}/final.m4a`,
         }),
       );
 
@@ -144,7 +136,7 @@ describe("meeting router", () => {
         .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
         .getFiles({ prefix: `${fakeMeeting.id}/` });
       expect(files.map((f) => f.name)).toEqual(
-        expect.arrayContaining([`${fakeMeeting.id}/final.webm`]),
+        expect.arrayContaining([`${fakeMeeting.id}/final.m4a`]),
       );
     });
   });

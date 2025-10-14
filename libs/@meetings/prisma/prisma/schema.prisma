@@ -101,7 +101,7 @@ model Client {
   stablePersonExternalId     String
   stablePersonExternalIdType String
   pseudonymizedId            String @unique
-  displayPersonExternalId    String 
+  displayPersonExternalId    String
 
   givenNames  String
   middleNames String?
@@ -142,11 +142,10 @@ model Meeting {
 
   startTime DateTime
   endTime   DateTime?
-  address   String?
 
-  recordingsGCSBucket  String
-  recordingsFolderPath String
-  finalRecordingUrl    String?
+  recordingsGCSBucket   String
+  recordingsFolderPath  String
+  finalRecordingGCSPath String?
 
   postMeetingProcessingStatus PostMeetingProcessingStatus @default(NOT_STARTED)
 

@@ -20,14 +20,16 @@ import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
+import {
+  AUDIO_FILE_EXTENSION,
+  GCS_CONTENT_TYPE,
+} from "~@meetings/trpc/common/constants";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   endMeetingInputSchema,
   getSignedUrlForRecordingInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
 import { stitchAudioForMeeting } from "~@meetings/trpc/routes/meeting/utils";
-
-const CONTENT_TYPE = "audio/webm";
 
 export const meetingRouter = router({
   getSignedUrlForRecording: auth0Procedure
@@ -57,14 +59,14 @@ export const meetingRouter = router({
 
         // Make the file name the time since epoch so that we know the order of the recordings for a meeting
         const secondsSinceEpoch = Math.round(Date.now() / 1000);
-        const fileName = `${meeting.recordingsFolderPath}/${secondsSinceEpoch}.webm`;
+        const fileName = `${meeting.recordingsFolderPath}/${secondsSinceEpoch}.${AUDIO_FILE_EXTENSION}`;
         const file = bucket.file(fileName);
 
         const [url] = await file.getSignedUrl({
           version: "v4",
           action: "write",
           expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-          contentType: CONTENT_TYPE,
+          contentType: GCS_CONTENT_TYPE,
         });
 
         return url;
@@ -105,8 +107,9 @@ export const meetingRouter = router({
           throw e;
         }
 
+        let finalRecordingGCSPath;
         try {
-          await stitchAudioForMeeting(
+          finalRecordingGCSPath = await stitchAudioForMeeting(
             meeting.recordingsGCSBucket,
             meeting.recordingsFolderPath,
           );
@@ -135,6 +138,7 @@ export const meetingRouter = router({
           data: {
             postMeetingProcessingStatus:
               PostMeetingProcessingStatus.TRANSCRIBING,
+            finalRecordingGCSPath,
           },
         });
 

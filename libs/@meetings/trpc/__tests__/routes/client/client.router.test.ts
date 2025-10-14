@@ -29,19 +29,16 @@ describe("client router", () => {
   describe("createMeeting", () => {
     test("Creates a meeting", async () => {
       const startTime = faker.date.future();
-      const address = faker.location.streetAddress();
 
       const result = await testTRPCClient.client.createMeeting.mutate({
         clientId: fakeClient.personId,
         startTime,
-        address,
       });
 
       // Check expected fields are returned
       expect(result).toEqual({
         id: expect.any(String),
         startTime,
-        address,
       });
 
       // Check meeting was created in DB
@@ -57,7 +54,6 @@ describe("client router", () => {
             staffId: fakeStaff.staffId,
             startTime,
             endTime: null,
-            address,
             recordingsGCSBucket: "test-audio-bucket",
             recordingsFolderPath: result.id,
             postMeetingProcessingStatus:
@@ -68,7 +64,6 @@ describe("client router", () => {
             staffId: fakeStaff.staffId,
             startTime: fakeMeeting.startTime,
             endTime: null,
-            address: null,
             postMeetingProcessingStatus:
               PostMeetingProcessingStatus.NOT_STARTED,
           }),
@@ -89,7 +84,6 @@ describe("client router", () => {
           id: fakeMeeting.id,
           startTime: fakeMeeting.startTime,
           endTime: null,
-          address: null,
         }),
       ]);
     });
