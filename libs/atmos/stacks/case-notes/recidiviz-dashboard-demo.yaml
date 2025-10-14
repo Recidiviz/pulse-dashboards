@@ -34,8 +34,3 @@ components:
         server_env_key: env_demo_case_notes_server
         service_account_id: case-notes-demo
         server_name: case-notes-server-demo
-      hooks:
-        store-outputs:
-          outputs:
-            database_credentials: .database_credentials
-            service_account_email: .service_account_email

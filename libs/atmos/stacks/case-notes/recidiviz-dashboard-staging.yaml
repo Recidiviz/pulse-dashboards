@@ -32,8 +32,3 @@ components:
         artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'
         artifact_registry_project_id: "{{ .settings.context.project_id }}"
         server_env_key: env_staging_case_notes_server
-      hooks:
-        store-outputs:
-          outputs:
-            service_account_email: .service_account_email
-            database_credentials: .database_credentials
