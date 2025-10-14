@@ -1,4 +1,5 @@
 from typing import TypeVar
+
 from app.services.client_data.types import ClientDataRecord
 
 
@@ -53,7 +54,10 @@ def statement_or_result(result_type=None, first_only=False):
 
     return decorator
 
-T = TypeVar('T')
+
+T = TypeVar("T")
+
+
 def paginate(items: list[T], page: int, size: int) -> list[T]:
     total = len(items)
     pages = (total + size - 1) // size if total else 0

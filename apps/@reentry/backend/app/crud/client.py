@@ -69,6 +69,19 @@ def compute_frontend_status(
     return "unknown"
 
 
+def get_status_priority(status: str) -> int:
+    priority_map = {
+        "new": 0,
+        "intake_enabled": 1,
+        "intake_in_progress": 2,
+        "processing": 3,
+        "intake_complete": 4,
+        "error": 5,
+        "unknown": -1,
+    }
+    return priority_map.get(status, -1)
+
+
 def compute_processing_status(
     assessments, plans, intake, plan_generations=None
 ) -> ProcessingStatus:
@@ -277,7 +290,7 @@ async def get_paginated_client_list(
             sorted_clients, session, page, page_size
         )
 
-    if status_filter:
+    if status_filter or sort_by == "status":
         # TODO change this so we use the database status index.
         sorted_clients = await compute_priority_order(bq_clients, session)
         full_response = await build_response_for_clients(
@@ -286,26 +299,43 @@ async def get_paginated_client_list(
 
         # filtering still require information about intake and plan
         # that for now, we don't do database filtering.
-        filtered_items = []
-        for item in full_response["items"]:
-            intake_status = item["intake"]["status"] if item["intake"] else None
-            frontend_status = compute_frontend_status(
-                intake_status, item["processing_status"]
-            )
-            if frontend_status == status_filter:
-                filtered_items.append(item)
+        filtered_or_sorted_items = []
+        if status_filter:
+            for item in full_response["items"]:
+                intake_status = item["intake"]["status"] if item["intake"] else None
+                frontend_status = compute_frontend_status(
+                    intake_status, item["processing_status"]
+                )
+                if frontend_status == status_filter:
+                    filtered_or_sorted_items.append(item)
+        elif sort_by == "status":
+            filtered_or_sorted_items = [
+                c
+                for c in sorted(
+                    full_response["items"],
+                    key=lambda c: get_status_priority(
+                        compute_frontend_status(
+                            c.get("intake", {}).get("status")
+                            if c.get("intake")
+                            else None,
+                            c.get("processing_status"),
+                        ).lower()
+                    ),
+                    reverse=(sort_order == "desc"),
+                )
+            ]
 
         start = (page - 1) * page_size
         end = start + page_size
 
         return {
-            "items": filtered_items[start:end],
-            "total": len(filtered_items),
+            "items": filtered_or_sorted_items[start:end],
+            "total": len(filtered_or_sorted_items),
             "page": page,
             "size": page_size,
             "pages": (
-                (len(filtered_items) + page_size - 1) // page_size
-                if filtered_items
+                (len(filtered_or_sorted_items) + page_size - 1) // page_size
+                if filtered_or_sorted_items
                 else 0
             ),
         }
