@@ -7,14 +7,16 @@
       "env": {
         "YARN_ENABLE_IMMUTABLE_INSTALLS": "false",
         "APP_ENV": "production"
-      }
+      },
+      "channel": "production"
     },
     "development": {
       "developmentClient": true,
       "distribution": "internal",
       "env": {
         "APP_ENV": "development"
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
@@ -26,7 +28,8 @@
       },
       "env": {
         "APP_ENV": "preview"
-      }
+      },
+      "channel": "preview"
     }
   },
   "submit": {

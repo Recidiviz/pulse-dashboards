@@ -117,5 +117,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       },
     },
     owner: "recidiviz",
+    updates: {
+      url: "https://u.expo.dev/6db95bf2-07f3-4753-890d-1950ac2a58fb",
+    },
+    runtimeVersion: {
+      policy: "appVersion",
+    },
   };
 };
