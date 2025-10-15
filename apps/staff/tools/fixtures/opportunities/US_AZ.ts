@@ -80,6 +80,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzIsUsCitizenOrLegalPermanentResident",
           text: "Meets citizenship / legal permanent resident requirements",
         },
+        {
+          key: "usAzNoActiveFelonyDetainers",
+          text: "No active felony detainers or warrants",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-OverdueForDTPReferrals",
@@ -120,11 +124,7 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [
-        {
-          text: "Validate that client does not have felony holds, felony warrants, or felony detainers.",
-        },
-      ],
+      nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Requirements validated by ACIS",
@@ -134,10 +134,12 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 4, maxSnoozeDays: 10 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
+      strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading: null,
       submittedTabTitle: null,
+      supportsIneligible: false,
       supportsSubmitted: false,
       systemType: "INCARCERATION",
       tabGroups: [{ key: "ELIGIBILITY STATUS", tabs: ["Overdue"] }],
@@ -208,6 +210,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzIsUsCitizenOrLegalPermanentResident",
           text: "Meets citizenship / legal permanent resident requirements",
         },
+        {
+          key: "usAzNoActiveFelonyDetainers",
+          text: "No active felony detainers or warrants",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-OverdueForTPRReferrals",
@@ -248,11 +254,7 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [
-        {
-          text: "Validate that client does not have felony holds, felony warrants, or felony detainers.",
-        },
-      ],
+      nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: null,
@@ -262,10 +264,12 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 4, maxSnoozeDays: 10 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
+      strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading: null,
       submittedTabTitle: null,
+      supportsIneligible: false,
       supportsSubmitted: false,
       systemType: "INCARCERATION",
       tabGroups: [{ key: "ELIGIBILITY STATUS", tabs: ["Overdue"] }],
@@ -343,6 +347,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzIsUsCitizenOrLegalPermanentResident",
           text: "Meets citizenship / legal permanent resident requirements",
+        },
+        {
+          key: "usAzNoActiveFelonyDetainers",
+          text: "No active felony detainers or warrants",
         },
       ],
       emptyTabCopy: [],
@@ -429,11 +437,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [
-        {
-          text: "Validate that client does not have felony holds, felony warrants, or felony detainers.",
-        },
-      ],
+      nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Requirements validated by ACIS",
@@ -443,6 +447,7 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 15, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
+      strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [
         { subcategory: "HOME_PLAN_IN_PROGRESS", text: "Home Plan in Progress" },
         {
@@ -478,6 +483,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       subheading: null,
       submittedTabTitle: "Pending",
+      supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
@@ -589,6 +595,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzIsUsCitizenOrLegalPermanentResident",
           text: "Meets citizenship / legal permanent resident requirements",
         },
+        {
+          key: "usAzNoActiveFelonyDetainers",
+          text: "No active felony detainers or warrants",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-TPRReferrals",
@@ -674,11 +684,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [
-        {
-          text: "Validate that client does not have felony holds, felony warrants, or felony detainers.",
-        },
-      ],
+      nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Requirements validated by ACIS data",
@@ -688,6 +694,7 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 15, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
+      strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [
         { subcategory: "HOME_PLAN_IN_PROGRESS", text: "Home Plan in Progress" },
         {
@@ -723,6 +730,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       subheading: null,
       submittedTabTitle: "Pending",
+      supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
@@ -898,10 +906,12 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
+      strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading: null,
       submittedTabTitle: "Recently Transferred in ACIS",
+      supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: [

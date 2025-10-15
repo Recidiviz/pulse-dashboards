@@ -106,6 +106,7 @@ export const apiOpportunityConfigurationSchema = z.object({
   hideDenialRevert: z.boolean().optional(),
   eligibleCriteriaCopy: criteriaCopySchema,
   ineligibleCriteriaCopy: criteriaCopySchema,
+  strictlyIneligibleCriteriaCopy: criteriaCopySchema,
   sidebarComponents: z.array(z.string()),
   isAlert: z.boolean(),
   compareBy: nullishAsUndefined(
@@ -127,6 +128,7 @@ export const apiOpportunityConfigurationSchema = z.object({
   denialAdjective: nullishAsUndefined(z.string()),
   denialNoun: nullishAsUndefined(z.string()),
 
+  supportsIneligible: z.boolean().default(false),
   supportsSubmitted: z.boolean().default(false),
   submittedTabTitle: nullishAsUndefined(z.string()),
 

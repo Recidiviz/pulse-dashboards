@@ -66,6 +66,7 @@ export interface OpportunityConfiguration {
   omsCriteriaHeader: string;
   eligibleCriteriaCopy: CriteriaCopy;
   ineligibleCriteriaCopy: CriteriaCopy;
+  strictlyIneligibleCriteriaCopy: CriteriaCopy;
   compareBy: SortParam[] | undefined;
   nonOmsCriteriaHeader: string;
   nonOmsCriteria: OpportunityRequirement[];
@@ -80,6 +81,7 @@ export interface OpportunityConfiguration {
   supportsDenial: boolean;
   supportsAlmostEligible: boolean;
   supportsSubmitted: boolean;
+  supportsIneligible: boolean;
   highlightCasesOnHomepage: boolean;
   highlightedCaseCtaCopy: string;
   subcategoryHeadings?: Record<string, string>;

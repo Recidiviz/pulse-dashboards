@@ -159,6 +159,7 @@ export const mockApiOpportunityConfigurationResponse = {
       sidebarComponents: ["SentenceDates", "Contact"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       stateCode: "US_OR",
+      strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:

@@ -221,6 +221,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.ineligibleCriteriaCopy;
   }
 
+  get strictlyIneligibleCriteriaCopy() {
+    return this.configurationObject.strictlyIneligibleCriteriaCopy;
+  }
+
   get nonOmsCriteria(): OpportunityRequirement[] {
     return this.configurationObject.nonOmsCriteria;
   }
@@ -308,6 +312,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
 
   get supportsSubmitted() {
     return this.configurationObject.supportsSubmitted;
+  }
+
+  get supportsIneligible() {
+    return this.configurationObject.supportsIneligible;
   }
 
   get highlightCasesOnHomepage() {
