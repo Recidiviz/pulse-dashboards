@@ -28,16 +28,6 @@
     &:not(:last-child) {
       padding-right: 1.5rem;
     }
-
-    &:hover {
-      text-decoration: none;
-      color: constants.$signal-links;
-    }
-
-    &:focus, &:focus-within, &:active {
-      border: 1px solid #006c67;
-      border-radius: 8px;
-    }
   }
 
   &__icon {
@@ -52,24 +42,17 @@
     }
   }
 
-  &__menu {
+  &__control {
     cursor: pointer;
     color: constants.$signal-links;
-    display: block;
-
-    &:focus, &:focus-within, &:active {
-      border: 1px solid #006c67;
-      border-radius: 2px;
-      padding: 2px;
-    }
+    padding: 8px !important;
 
     @media screen and (max-width: constants.$core-breakpoint-sm) {
       display: block;
     }
   }
 
-  &__content {
-    display: none;
+  &__menu {
     position: absolute;
     flex-direction: column;
     width: auto;
@@ -80,23 +63,24 @@
     box-shadow: 0px 4px 35px rgba(0, 0, 0, 0.25);
     border-radius: 8px;
     z-index: 3;
+    display: flex;
 
     @media screen and (max-width: constants.$core-breakpoint-sm) {
       top: 6.5rem;
     }
 
-    &--visible {
+
+    > button {
       display: flex;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      width: 100%;
 
-      .DetailsGroup__button {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem 1.5rem;
-        width: 100%;
-
-        &:hover {
+      &:focus {
+        background: constants.$signal-links;
+        border-radius: 0;
+        * {
           color: constants.$white;
-          background: constants.$signal-links;
         }
       }
     }

@@ -36,10 +36,22 @@ class DropdownFocusManager {
     return null;
   }
 
+  /**
+   * Gets all focusable menu items within the dropdown.
+   */
+  private getMenuItems(): HTMLElement[] {
+    if (!this.dropdown?.current) {
+      return [];
+    }
+    return Array.from(
+      this.dropdown?.current?.querySelectorAll(`${MenuItemElement}`) ?? [],
+    ) as HTMLElement[];
+  }
+
   focusFirstItem(): void {
-    this.querySelector<HTMLButtonElement>(
-      `${MenuItemElement}:first-of-type`,
-    )?.focus();
+    const items = this.getMenuItems();
+    if (items.length === 0) return;
+    items[0]?.focus();
   }
 
   focusToggle(): void {
@@ -50,50 +62,47 @@ class DropdownFocusManager {
    * Selects the next menu item after the one currently focused, otherwise wrap to the first
    */
   focusNextItem(): void {
-    const focused = this.querySelector<HTMLButtonElement>(
-      `${MenuItemElement}:focus`,
+    const items = this.getMenuItems();
+    if (items.length === 0) return;
+
+    const focused = document.activeElement as HTMLElement;
+
+    // Find which menu item contains the currently focused element
+    const currentIndex = items.findIndex(
+      (item) => item === focused || item.contains(focused)
     );
 
-    let next = focused?.nextElementSibling;
-
-    // skip over any intermediate elements that are not MenuItemElements
-    while (next) {
-      if (next.matches(`${MenuItemElement}`)) {
-        break;
-      }
-      next = next.nextElementSibling;
+    if (currentIndex === -1) {
+      // If no menu item is focused, focus the first one.
+      items[0]?.focus();
+    } else {
+      // Wrap to the first item if we're at the end
+      const nextIndex = (currentIndex + 1) % items.length;
+      items[nextIndex]?.focus();
     }
-
-    if (!next) {
-      next = this.querySelector(`${MenuItemElement}:first-of-type`);
-    }
-
-    (next as HTMLButtonElement).focus();
   }
 
   /**
    * Selects the last menu item before the one currently focused, otherwise wrap to the last
    */
   focusPreviousItem(): void {
-    const focused = this.querySelector<HTMLButtonElement>(
-      `${MenuItemElement}:focus`,
+    const items = this.getMenuItems();
+    if (items.length === 0) return;
+
+    const focused = document.activeElement as HTMLElement;
+
+    // Find which menu item contains the currently focused element
+    const currentIndex = items.findIndex(
+      (item) => item === focused || item.contains(focused)
     );
 
-    let previous = focused?.previousElementSibling;
-
-    // skip over any intermediate elements that are not MenuItemElements
-    while (previous) {
-      if (previous.matches(`${MenuItemElement}`)) {
-        break;
-      }
-      previous = previous.previousElementSibling;
+    if (currentIndex <= 0) {
+      // If no menu item is focused, focus the last one.
+      items[items.length - 1]?.focus();
+    } else {
+      const prevIndex = (currentIndex - 1 + items.length) % items.length;
+      items[prevIndex]?.focus();
     }
-
-    if (!previous) {
-      previous = this.querySelector(`${MenuItemElement}:last-of-type`);
-    }
-
-    (previous as HTMLButtonElement).focus();
   }
 }
 

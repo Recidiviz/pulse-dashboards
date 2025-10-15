@@ -20,8 +20,11 @@ import "./FilterBar.scss";
 import React from "react";
 import Sticky from "react-sticky-fill";
 
+import { Toolbar } from "~design-system";
+
 const FILTER_BAR_STYLE = {
   top: 64,
+  width: "100%",
 };
 
 const FilterBar: React.FC<{
@@ -31,15 +34,15 @@ const FilterBar: React.FC<{
   filtersRef?: any;
 }> = ({ details = null, children, containerRef, filtersRef }) => {
   return (
-    <Sticky style={FILTER_BAR_STYLE} className="Sticky">
-      <div className="FilterBar">
+    <Sticky style={FILTER_BAR_STYLE} className="Sticky" >
+      <Toolbar className="FilterBar" ariaLabel="Filter controls">
         <div className="FilterBar__container" ref={containerRef}>
           <div className="FilterBar__filters" ref={filtersRef}>
             {children}
           </div>
           {details && details}
         </div>
-      </div>
+      </Toolbar>
     </Sticky>
   );
 };

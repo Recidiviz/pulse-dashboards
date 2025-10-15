@@ -25,11 +25,13 @@ import DropdownFocusManager from "./DropdownFocusManager";
 export interface DropdownProps {
   children: JSX.Element | JSX.Element[];
   className?: string;
+  id?: string;
 }
 
 export const Dropdown = ({
   children,
   className,
+  id,
 }: DropdownProps): JSX.Element => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [focusManager] = useState(new DropdownFocusManager(ref));
@@ -102,7 +104,12 @@ export const Dropdown = ({
   });
 
   return (
-    <DropdownElement className={className} ref={ref} onKeyDown={onKeyDown}>
+    <DropdownElement
+      className={className}
+      ref={ref}
+      onKeyDown={onKeyDown}
+      id={id}
+    >
       <DropdownContext.Provider value={{ focusManager, shown, setShown }}>
         {children}
       </DropdownContext.Provider>

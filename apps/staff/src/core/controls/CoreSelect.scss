@@ -3,6 +3,7 @@
 @use "../../assets/styles/spec/settings/index";
 @use "../CoreConstants.module.scss" as constants;
 
+
 .CoreSelect {
   flex-grow: 1;
   font-size: 0.8em;
@@ -10,9 +11,11 @@
   color: constants.$pine-3;
 
   &__control {
-    &:focus, &:focus-within, &:active, &:hover {
-      border: 1px solid #006c67 !important;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    text-decoration-line: none !important;
     border: 1px solid constants.$core-border-color !important;
     box-shadow: none !important;
     border-radius: 1.25rem !important;
@@ -20,7 +23,15 @@
     transition: border-radius 0s !important;
     cursor: pointer !important;
 
-    &--menu-is-open {
+    &--changed {
+      border-color: #006c67 !important;
+    }
+    &:focus, &:focus-within, &:active, &:hover {
+      border-color: #006c67 !important;
+    }
+
+
+    &[aria-expanded="true"] {
       border-bottom-right-radius: 0 !important;
       border-bottom-left-radius: 0 !important;
     }
@@ -44,6 +55,13 @@
     box-shadow: none !important;
     margin: 0 !important;
     overflow: hidden;
+    width: 100%;
+    min-width: 0 !important;
+
+    // Remove dropdown animations
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
   }
 
   &__menu-list {
@@ -54,6 +72,7 @@
   &__option {
     cursor: pointer !important;
     padding-left: 1rem !important;
+    background-color: constants.$marble-3 !important;
 
     &--is-multi {
       background-color: transparent !important;
@@ -64,15 +83,23 @@
       color: constants.$pine-3 !important;
     }
 
-    &--is-selected {
+    &--selected {
       background-color: #006c67 !important;
       color: white !important;
     }
 
-    &:hover{
+    &:active {
       background-color: constants.$core-focused-color !important;
       color: constants.$pine-3 !important;
     }
+
+    &:focus {
+      outline: none;
+      color: constants.$pine-3 !important;
+      background-color: constants.$core-focused-color !important;
+      cursor: pointer;
+    }
+
   }
 
   &__group {
@@ -85,6 +112,11 @@
     padding-left: 1rem !important;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-decoration-line: none !important;
+
+    &:focus, &:focus-within, &:active, &:hover {
+      text-decoration-line: none !important;
+    }
   }
 
   &__custom-indicator {
@@ -101,9 +133,12 @@
     border-style: solid;
     border-width: 4px 4px 0 4px;
     border-color: constants.$pine-3 transparent transparent transparent;
+  }
 
-    .CoreSelect--changed & {
-      border-color: constants.$signal-links transparent transparent transparent;
-    }
+  // Override design system dropdown animations
+  [role="menu"] {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
   }
 }

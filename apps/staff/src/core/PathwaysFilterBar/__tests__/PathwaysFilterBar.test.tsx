@@ -16,11 +16,10 @@
 // =============================================================================
 
 import { BrowserRouter as Router } from "react-router-dom";
-import selectEvent from "react-select-event";
 import { Mock } from "vitest";
 
 import { useRootStore } from "../../../components/StoreProvider";
-import { render, screen } from "../../../testUtils";
+import { fireEvent, render, screen } from "../../../testUtils";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import { useCoreStore } from "../../CoreStoreProvider";
@@ -55,9 +54,10 @@ test("selecting from menu sets the filters", async () => {
       />
     </Router>,
   );
-
-  await selectEvent.select(screen.getByText("6 months"), ["1 year"]);
-  await selectEvent.select(screen.getByText("All"), ["Female"]);
+  fireEvent.click(screen.getByLabelText("Select timePeriod"));
+  fireEvent.click(await screen.findByText("1 year"));
+  fireEvent.click(screen.getByLabelText("Select gender"));
+  fireEvent.click(await screen.findByText("Female"));
 
   expect(mockSetFilters).toHaveBeenCalledTimes(2);
   // first call is the time period select event

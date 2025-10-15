@@ -23,6 +23,8 @@ import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { DropdownMenuItem, ToolbarItem } from "~design-system";
+
 import useIsMobile from "../../hooks/useIsMobile";
 import useResizeFilterBar from "../../hooks/useResizeFilterBar";
 import { sortByLabel } from "../../utils/datasets";
@@ -98,35 +100,46 @@ const PathwaysFilterBar: React.FC<{
             </DetailsGroup>
           ) : (
             <div className="FilterBar__details">
-              <MoreFilters
-                enabledFilters={enabledFilters.slice(
-                  enabledFiltersDisplayCount,
-                )}
-                filterOptions={pick(
-                  enabledFilters.slice(enabledFiltersDisplayCount),
-                  filterOptions,
-                )}
-              />
-              <DetailsGroup>
-                <DownloadDataButton handleOnClick={handleDownload} />
-                <MethodologyLink
-                  path={DASHBOARD_PATHS.methodologySystem}
-                  chartTitle={chartTitle}
+              <ToolbarItem>
+                <MoreFilters
+                  enabledFilters={enabledFilters.slice(
+                    enabledFiltersDisplayCount,
+                  )}
+                  filterOptions={pick(
+                    enabledFilters.slice(enabledFiltersDisplayCount),
+                    filterOptions,
+                  )}
                 />
-              </DetailsGroup>
+              </ToolbarItem>
+              <ToolbarItem>
+                <DetailsGroup>
+                  <DropdownMenuItem>
+                    <DownloadDataButton handleOnClick={handleDownload} />
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <MethodologyLink
+                      path={DASHBOARD_PATHS.methodologySystem}
+                      chartTitle={chartTitle}
+                    />
+                  </DropdownMenuItem>
+                </DetailsGroup>
+              </ToolbarItem>
             </div>
           )
         }
       >
         {enableMetricModeToggle && (
-          <TogglePill
-            leftPill={metricModeOptions[0]}
-            rightPill={metricModeOptions[1]}
-            onChange={(metricMode: string) =>
-              filtersStore.setMetricMode(metricMode)
-            }
-            currentValue={filtersStore.currentMetricMode}
-          />
+          <ToolbarItem>
+            <TogglePill
+              leftPill={metricModeOptions[0]}
+              rightPill={metricModeOptions[1]}
+              onChange={(metricMode: string) =>
+                filtersStore.setMetricMode(metricMode)
+              }
+              currentValue={filtersStore.currentMetricMode}
+            />
+          </ToolbarItem>
+
         )}
         {enabledFilters
           .slice(0, enabledFiltersDisplayCount)
@@ -135,50 +148,54 @@ const PathwaysFilterBar: React.FC<{
             return (
               <Filter key={`${filterType}`} title={filter.title}>
                 {filter.isSingleSelect ? (
-                  <CoreSelect
-                    id={filter.type}
-                    value={getFilterOptions(
-                      get(filters, filter.type),
-                      filter.options,
-                    )}
-                    options={
-                      filter.type === FILTER_TYPES.TIME_PERIOD
-                        ? filter.options
-                        : sortByLabel(filter.options, "label")
-                    }
-                    onChange={filter.setFilters(filtersStore)}
-                    defaultValue={filter.defaultValue}
-                    isChanged={
-                      filter.defaultValue !==
-                      getFilterOptions(
+                  <ToolbarItem>
+                    <CoreSelect
+                      id={filter.type}
+                      value={getFilterOptions(
                         get(filters, filter.type),
                         filter.options,
-                      )[0]?.value
-                    }
-                  />
+                      )}
+                      options={
+                        filter.type === FILTER_TYPES.TIME_PERIOD
+                          ? filter.options
+                          : sortByLabel(filter.options, "label")
+                      }
+                      onChange={filter.setFilters(filtersStore)}
+                      defaultValue={filter.defaultValue}
+                      isChanged={
+                        filter.defaultValue !==
+                        getFilterOptions(
+                          get(filters, filter.type),
+                          filter.options,
+                        )[0]?.value
+                      }
+                    />
+                  </ToolbarItem>
                 ) : (
-                  <CoreMultiSelect
-                    id={filter.type}
-                    summingOption={{ value: "ALL", label: "All" }}
-                    value={getFilterOptions(
-                      get(filters, filter.type),
-                      filter.options,
-                    )}
-                    options={
-                      filter.type === FILTER_TYPES.TIME_PERIOD
-                        ? filter.options
-                        : sortByLabel(filter.options, "label")
-                    }
-                    onChange={filter.setFilters(filtersStore)}
-                    defaultValue={[filter.defaultOption]}
-                    isChanged={
-                      filter.defaultValue !==
-                      getFilterOptions(
+                  <ToolbarItem>
+                    <CoreMultiSelect
+                      id={filter.type}
+                      summingOption={{ value: "ALL", label: "All" }}
+                      value={getFilterOptions(
                         get(filters, filter.type),
                         filter.options,
-                      )[0]?.value
-                    }
-                  />
+                      )}
+                      options={
+                        filter.type === FILTER_TYPES.TIME_PERIOD
+                          ? filter.options
+                          : sortByLabel(filter.options, "label")
+                      }
+                      onChange={filter.setFilters(filtersStore)}
+                      defaultValue={[filter.defaultOption]}
+                      isChanged={
+                        filter.defaultValue !==
+                        getFilterOptions(
+                          get(filters, filter.type),
+                          filter.options,
+                        )[0]?.value
+                      }
+                    />
+                  </ToolbarItem>
                 )}
               </Filter>
             );

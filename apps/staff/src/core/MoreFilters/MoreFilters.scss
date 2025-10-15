@@ -28,10 +28,9 @@
     transform: rotate(45deg);
     width: 0.5rem;
   }
+
   &__tooltip {
     display: flex;
-    &:not(:last-child) {
-      padding-right: 1.5rem;
-    }
+    padding: 1.5rem;
   }
 }

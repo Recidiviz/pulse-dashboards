@@ -20,18 +20,36 @@ import "./CoreMultiSelect.scss";
 import cn from "classnames";
 import PropTypes from "prop-types";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import ReactSelect from "react-select";
 
-import GroupHeading from "../../../controls/MultiSelect/GroupHeading";
-import Option from "../../../controls/MultiSelect/Option";
-import ValueContainer from "../../../controls/MultiSelect/ValueContainer";
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownToggle,
+} from "~design-system";
+
 import { optionPropType } from "../../../controls/propTypes";
-import { getNewOptions } from "../../../controls/utils";
-import { coreSelectCustomStyles } from "../utils";
+import {
+  formatSelectOptionValue,
+  getNewOptions,
+  VALUE_CHARACTER_LIMIT,
+} from "../../../controls/utils";
 
 function CustomScrollBarWrapper({ children }) {
-  return <div style={{ overflowY: "auto", maxHeight: 250 }}>{children}</div>;
+  return (
+    <div style={{ overflowY: "auto", maxHeight: 250 }} tabIndex={-1}>
+      {children}
+    </div>
+  );
 }
+
+const CustomDropdownIndicator = () => {
+  return (
+    <div className="CoreSelect__custom-indicator">
+      <span className={cn("CoreSelect__custom-arrow", {})} />
+    </div>
+  );
+};
 
 function CoreMultiSelect({
   summingOption,
@@ -43,7 +61,6 @@ function CoreMultiSelect({
   ...props
 }) {
   const ref = useRef();
-
   useEffect(() => {
     if (ref.current && ref.current.state.menuIsOpen) {
       ref.current.select?.focus();
@@ -59,62 +76,116 @@ function CoreMultiSelect({
   });
 
   const handleChange = useCallback(
-    (selectedOptions) => {
-      const newOptions = getNewOptions(options, summingOption, selectedOptions);
+    (option) => {
+      // Check if option is already selected
+      const isSelected = value.some(
+        (selectedOption) => selectedOption.value === option.value,
+      );
+
+      let newSelectedOptions;
+      if (isSelected) {
+        // Remove option from selected options
+        newSelectedOptions = value.filter(
+          (selectedOption) => selectedOption.value !== option.value,
+        );
+      } else {
+        // Add option to selected options
+        newSelectedOptions = [...value, option];
+      }
+
+      const newOptions = getNewOptions(
+        options,
+        summingOption,
+        newSelectedOptions,
+      );
       onChange(newOptions);
     },
-    [onChange, options, summingOption],
+    [onChange, options, summingOption, value],
   );
 
-  const replacedComponents = useMemo(
-    () => ({
-      IndicatorSeparator: () => null,
-      // TODO: should refactor to resolve these warnings if/when converted to TS
-      // eslint-disable-next-line react/no-unstable-nested-components
-      GroupHeading: (groupHeadingProps) => (
-        <GroupHeading onChange={handleChange} {...groupHeadingProps} />
-      ),
-      Option,
-      MenuList: CustomScrollBarWrapper,
-      // eslint-disable-next-line react/no-unstable-nested-components
-      DropdownIndicator: () => (
-        <div className="CoreMultiSelect__custom-indicator">
-          <span className="CoreMultiSelect__custom-arrow" />
-        </div>
-      ),
-      // eslint-disable-next-line react/no-unstable-nested-components
-      ValueContainer: (valueContainerProps) => (
-        <ValueContainer
-          allOptions={options}
-          summingOption={summingOption}
-          {...valueContainerProps}
-        />
-      ),
-    }),
-    [handleChange, options, summingOption],
-  );
+  // Format display text for the toggle button
+  const displayText = useMemo(() => {
+    const selectedOptions = value || [];
+
+    if (selectedOptions.length === 0) {
+      return "Select options...";
+    }
+
+    const isSummingOptionSelected =
+      summingOption &&
+      selectedOptions.length === 1 &&
+      selectedOptions[0].value === summingOption.value;
+
+    if (isSummingOptionSelected) {
+      return summingOption.label;
+    }
+
+    const text = formatSelectOptionValue({
+      allOptions: options,
+      summingOption,
+      selectedOptions,
+    });
+
+    return text.length > VALUE_CHARACTER_LIMIT
+      ? `${text.slice(0, VALUE_CHARACTER_LIMIT)}...`
+      : text;
+  }, [value, options, summingOption]);
 
   return (
-    <ReactSelect
-      classNamePrefix="CoreMultiSelect"
-      className={cn("CoreMultiSelect", className, {
-        "CoreMultiSelect--summing-option-selected": summingOption === value[0],
-      })}
-      id={id}
-      ref={ref}
-      closeMenuOnSelect={false}
-      components={replacedComponents}
-      hideSelectedOptions={false}
-      onChange={handleChange}
-      options={options}
-      onFocus={() => ref.current.setState({ menuIsOpen: true })}
-      onEscapeKeydown={() => ref.current.setState({ menuIsOpen: false })}
-      value={value}
-      isSearchable
-      isMulti
-      styles={coreSelectCustomStyles(props.isChanged)}
-      {...props}
-    />
+    <Dropdown className={"CoreMultiSelect"} id={id}>
+      <DropdownToggle
+        kind="link"
+        aria-label={`Select ${id}`}
+        className={cn("CoreMultiSelect__control", {
+          "CoreMultiSelect__control--changed": props.isChanged,
+        })}
+        // Override the tabIndex in DropdownToggle since this is in a Toolbar
+        tabIndex={-1}
+      >
+        <div
+          className="CoreMultiSelect__value-container"
+          aria-label="Current value"
+        >
+          {displayText}
+        </div>
+        <CustomDropdownIndicator />
+      </DropdownToggle>
+      <DropdownMenu
+        alignment="right"
+        className="CoreMultiSelect__menu"
+        ariaLabel={`${id} dropdown menu`}
+      >
+        <CustomScrollBarWrapper>
+          {options.map((option) => {
+            return (
+              <DropdownMenuItem
+                key={option.value}
+                preventCloseOnClickEvent
+                className={`CoreMultiSelect__option ${option.value === value[0].value ? "CoreMultiSelect__option--selected" : ""}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleChange(option);
+                }}
+              >
+                <label className="MultiSelect__checkbox-container">
+                  {option.label}
+                  <input
+                    type="checkbox"
+                    checked={value.some(
+                      (selectedOption) => selectedOption.value === option.value,
+                    )}
+                    className="MultiSelect__checkbox-input"
+                    onClick={() => handleChange(option)}
+                    tabIndex={-1}
+                  />
+                  <span className="MultiSelect__checkbox" />
+                </label>
+              </DropdownMenuItem>
+            );
+          })}
+        </CustomScrollBarWrapper>
+      </DropdownMenu>
+    </Dropdown>
   );
 }
 

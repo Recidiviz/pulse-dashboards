@@ -17,11 +17,9 @@
 
 import "./DetailsGroup.scss";
 
-import cn from "classnames";
-import React, { useEffect, useRef, useState } from "react";
-import useOnClickOutside from "use-onclickoutside";
+import React from "react";
 
-import { Icon, IconSVG } from "~design-system";
+import { Dropdown, DropdownMenu, DropdownToggle, Icon, IconSVG } from "~design-system";
 
 type Props = {
   expand?: boolean;
@@ -29,61 +27,30 @@ type Props = {
 };
 
 const DetailsGroup: React.FC<Props> = ({ expand, children }) => {
-  const [open, setOpen] = useState(false);
-  const ref: any = useRef();
-  useOnClickOutside(ref, () => setOpen(false));
-
-  // Add global escape key listener when menu is open
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && open) {
-        setOpen(false);
-      }
-    };
-
-    if (open) {
-      document.addEventListener("keydown", handleEscape);
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [open]);
-
   if (expand) {
     return <div className="DetailsGroup">{children}</div>;
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.code === "Space" || event.code === "Enter") {
-      event.preventDefault();
-      setOpen(!open);
-    }
-  };
-
   return (
-    <div className="DetailsGroup" ref={ref}>
-      <Icon
-        kind={IconSVG.TripleDot}
-        width={16}
-        height={16}
-        className="DetailsGroup__menu"
-        onClick={() => setOpen(!open)}
-        onKeyDown={handleKeyDown}
-        aria-haspopup="true"
-        aria-expanded={open}
+    <Dropdown className="DetailsGroup">
+      <DropdownToggle
+        kind="link"
+        className="DetailsGroup__control"
         aria-label="More options"
-        role="button"
-        tabIndex={0}
-      />
-      <div
-        className={cn("DetailsGroup__content", {
-          "DetailsGroup__content--visible": open,
-        })}
+        tabIndex={-1}
       >
+        <Icon
+          kind={IconSVG.TripleDot}
+          width={16}
+          height={16}
+          aria-hidden={true}
+
+        />
+      </DropdownToggle>
+      <DropdownMenu className="DetailsGroup__menu" ariaLabel="More options menu" alignment="right">
         {children}
-      </div>
-    </div>
+      </DropdownMenu>
+    </Dropdown>
   );
 };
 

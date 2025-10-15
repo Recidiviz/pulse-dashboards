@@ -26,7 +26,11 @@ type FilterProps = {
 const Filter: React.FC<FilterProps> = ({ children, title, width }) => {
   return (
     <div className="Filter">
-      {title && <span className="Filter__title">{title}</span>}
+      {title && (
+        <span className="Filter__title" aria-hidden="true">
+          {title}
+        </span>
+      )}
       {width ? <div style={{ width }}>{children}</div> : children}
     </div>
   );

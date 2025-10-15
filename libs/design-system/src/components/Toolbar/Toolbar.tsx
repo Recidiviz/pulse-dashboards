@@ -42,6 +42,15 @@ const ToolbarElement = styled.nav`
       -1px 1px 1px 1px ${palette.signal.links},
       1px -1px 1px 1px ${palette.signal.links};
     border-radius: 4px;
+
+    .ToolbarItem {
+      &:has(:focus-visible) {
+        box-shadow:
+          -1px 1px 1px 1px ${palette.signal.links},
+          1px -1px 1px 1px ${palette.signal.links};
+        border-radius: 4px;
+      }
+    }
   }
 `;
 

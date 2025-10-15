@@ -107,6 +107,7 @@ const MoreFilters: React.FC<Props> = ({
       <Icon
         className="DetailsGroup__icon MoreFilters__icon"
         kind={IconSVG.Close}
+        aria-hidden="true"
       />
       More filters {activeFiltersCount !== 0 && `(${activeFiltersCount})`}
     </button>

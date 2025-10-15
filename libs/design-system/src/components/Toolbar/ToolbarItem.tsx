@@ -18,23 +18,10 @@
 import * as React from "react";
 import styled from "styled-components/macro";
 
-import { palette } from "../../styles";
-
-export const ToolbarItemElement = styled.div`
-  &:has(:focus-visible:not([role="menu"] *)):not(:active) {
-    box-shadow:
-      -1px 1px 1px 1px ${palette.signal.links},
-      1px -1px 1px 1px ${palette.signal.links};
-    border-radius: 4px;
-  }
-`;
+export const ToolbarItemElement = styled.div``;
 
 export interface ToolbarItemProps {
   className?: string;
-  /**
-   * @deprecated pass children instead
-   */
-  label?: string;
   children?: React.ReactNode;
 }
 
@@ -44,7 +31,7 @@ export const ToolbarItem = ({
 }: ToolbarItemProps): JSX.Element => {
   return (
     <ToolbarItemElement
-      className={className}
+      className={`ToolbarItem ${className}`}
       onMouseDown={(e) =>
         // prevents a blur from clobbering click event in Safari
         // https://stackoverflow.com/questions/17769005/onclick-and-onblur-ordering-issue/57630197#57630197

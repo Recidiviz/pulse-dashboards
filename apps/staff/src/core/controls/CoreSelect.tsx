@@ -18,23 +18,18 @@
 import "./CoreSelect.scss";
 
 import cn from "classnames";
-import React, { forwardRef } from "react";
-import ReactSelect from "react-select";
+import React, { ReactNode } from "react";
 
-import { coreSelectCustomStyles } from "./utils";
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownToggle,
+} from "~design-system";
 
 type FilterOption = {
   label: string;
   value: any;
-};
-
-type CoreSelectProps = {
-  isChanged: boolean;
-  value: FilterOption | FilterOption[];
-  defaultValue: FilterOption | FilterOption[];
-  options: FilterOption[];
-  onChange: (option: FilterOption) => void;
-  [key: string]: any;
 };
 
 const CustomDropdownIndicator = () => {
@@ -45,24 +40,49 @@ const CustomDropdownIndicator = () => {
   );
 };
 
-export const CoreSelect = forwardRef<HTMLInputElement, CoreSelectProps>(
-  (props, ref) => {
-    return (
-      <ReactSelect
-        // @ts-ignore
-        ref={ref}
-        aria-label={props.id}
-        className={`CoreSelect ${props.isChanged ? "CoreSelect--changed" : ""}`}
-        classNamePrefix="CoreSelect"
-        components={{
-          IndicatorSeparator: () => null,
-          DropdownIndicator: CustomDropdownIndicator,
-        }}
-        styles={coreSelectCustomStyles(props.isChanged)}
-        {...props}
-      />
-    );
-  },
-);
+export const CoreSelect: React.FC<{
+  value: FilterOption[];
+  defaultValue: string;
+  options: FilterOption[];
+  onChange: (option: FilterOption) => void;
+  id: string;
+  isChanged: boolean;
+}> = ({ value, defaultValue, options, onChange, id, isChanged }): ReactNode => {
+  return (
+    <Dropdown className={"CoreSelect"} id={id}>
+      <DropdownToggle
+        kind="link"
+        aria-label={`Select ${id}`}
+        className={cn("CoreSelect__control", {
+          "CoreSelect__control--changed": isChanged,
+        })}
+        // Override the tabIndex in DropdownToggle since this is in a Toolbar
+        tabIndex={-1}
+      >
+        <div className="CoreSelect__value-container" aria-label="Current value">
+          {value[0].label || defaultValue}
+        </div>
+        <CustomDropdownIndicator />
+      </DropdownToggle>
+      <DropdownMenu
+        alignment="right"
+        className="CoreSelect__menu"
+        ariaLabel={`${id} dropdown menu`}
+      >
+        {options.map((option: FilterOption) => {
+          return (
+            <DropdownMenuItem
+              key={option.value}
+              onClick={() => onChange(option)}
+              className={`CoreSelect__option ${option.value === value[0].value ? "CoreSelect__option--selected" : ""}`}
+            >
+              {option.label}
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenu>
+    </Dropdown>
+  );
+};
 
 CoreSelect.displayName = "Select";
