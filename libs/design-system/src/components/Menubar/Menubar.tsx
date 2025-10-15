@@ -49,7 +49,9 @@ const MenuBarElement = styled.nav<{ vertical?: boolean }>`
   }
 
   [role="menuitem"]:focus-visible {
-    box-shadow: 0 0 0 1px ${palette.signal.links};
+    box-shadow:
+      -1px 1px 1px 1px ${palette.signal.links},
+      1px -1px 1px 1px ${palette.signal.links};
     border-radius: 4px;
   }
 `;
@@ -61,7 +63,12 @@ export interface MenubarProps {
   ariaLabel?: string;
 }
 
-export const Menubar = ({ children, className, vertical, ariaLabel }: MenubarProps): JSX.Element => {
+export const Menubar = ({
+  children,
+  className,
+  vertical,
+  ariaLabel,
+}: MenubarProps): JSX.Element => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [focusManager] = useState(new MenubarFocusManager(ref));
 

@@ -23,11 +23,13 @@ export const ToolbarItemElement = styled.div``;
 export interface ToolbarItemProps {
   className?: string;
   children?: React.ReactNode;
+  ariaLabel?: string;
 }
 
 export const ToolbarItem = ({
   className,
   children,
+  ariaLabel,
 }: ToolbarItemProps): JSX.Element => {
   return (
     <ToolbarItemElement
@@ -38,6 +40,7 @@ export const ToolbarItem = ({
         e.preventDefault()
       }
       tabIndex={-1}
+      aria-label={ariaLabel}
     >
       {children}
     </ToolbarItemElement>

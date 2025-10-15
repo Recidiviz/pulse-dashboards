@@ -71,6 +71,8 @@ const PathwaysFilterBar: React.FC<{
     enableMetricModeToggle,
   );
 
+  const moreFilters = enabledFilters.slice(enabledFiltersDisplayCount);
+
   return (
     <div
       className={cn("PathwaysFilterBar", {
@@ -84,13 +86,8 @@ const PathwaysFilterBar: React.FC<{
           isMobile ? (
             <DetailsGroup>
               <MoreFilters
-                enabledFilters={enabledFilters.slice(
-                  enabledFiltersDisplayCount,
-                )}
-                filterOptions={pick(
-                  enabledFilters.slice(enabledFiltersDisplayCount),
-                  filterOptions,
-                )}
+                enabledFilters={moreFilters}
+                filterOptions={pick(moreFilters, filterOptions)}
               />
               <DownloadDataButton handleOnClick={handleDownload} />
               <MethodologyLink
@@ -100,17 +97,14 @@ const PathwaysFilterBar: React.FC<{
             </DetailsGroup>
           ) : (
             <div className="FilterBar__details">
-              <ToolbarItem>
-                <MoreFilters
-                  enabledFilters={enabledFilters.slice(
-                    enabledFiltersDisplayCount,
-                  )}
-                  filterOptions={pick(
-                    enabledFilters.slice(enabledFiltersDisplayCount),
-                    filterOptions,
-                  )}
-                />
-              </ToolbarItem>
+              {moreFilters.length > 0 && (
+                <ToolbarItem>
+                  <MoreFilters
+                    enabledFilters={moreFilters}
+                    filterOptions={pick(moreFilters, filterOptions)}
+                  />
+                </ToolbarItem>
+              )}
               <ToolbarItem>
                 <DetailsGroup>
                   <DropdownMenuItem>
@@ -129,7 +123,7 @@ const PathwaysFilterBar: React.FC<{
         }
       >
         {enableMetricModeToggle && (
-          <ToolbarItem>
+          <ToolbarItem ariaLabel="Counts or Rates Toggle">
             <TogglePill
               leftPill={metricModeOptions[0]}
               rightPill={metricModeOptions[1]}
@@ -139,7 +133,6 @@ const PathwaysFilterBar: React.FC<{
               currentValue={filtersStore.currentMetricMode}
             />
           </ToolbarItem>
-
         )}
         {enabledFilters
           .slice(0, enabledFiltersDisplayCount)

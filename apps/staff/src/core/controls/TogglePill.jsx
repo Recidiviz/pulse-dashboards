@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,22 +19,42 @@ import "./TogglePill.scss";
 
 import cx from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
+import { useRef } from "react";
 
 function TogglePill({ currentValue, onChange, leftPill, rightPill }) {
+  const leftRef = useRef(null);
+  const rightRef = useRef(null);
+
+  const handleToggle = (clickedValue) => {
+    const otherValue =
+      clickedValue === leftPill.value ? rightPill.value : leftPill.value;
+
+    onChange(otherValue);
+
+    const otherRef = clickedValue === leftPill.value ? rightRef : leftRef;
+    otherRef.current?.focus();
+  };
+
   return (
-    <div className="TogglePill">
+    <div className="TogglePill" role="radiogroup">
       {[leftPill, rightPill].map(({ value, label }) => (
         <button
           role="radio"
           aria-checked={currentValue === value}
           key={label}
+          ref={value === leftPill.value ? leftRef : rightRef}
           className={cx("TogglePill__button", {
             "TogglePill__button--selected": currentValue === value,
           })}
           onClick={() => onChange(value)}
-          tabIndex={0}
-          aria-label={`Counts or Rates Toggle: ${label}`}
+          tabIndex={currentValue === value ? 0 : -1}
+          aria-label={label}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              handleToggle(value);
+            }
+          }}
         >
           {label}
         </button>
