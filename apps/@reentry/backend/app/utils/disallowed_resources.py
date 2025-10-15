@@ -30,6 +30,7 @@ DISALLOWED_RESOURCE_ADDRESSES = {
         "1141 South 2475 West, Salt Lake City, UT",
         "1480 N 8000 W, Salt Lake City, UT",
         "1480 North 8000 West, Salt Lake City, UT",
+        "1480 North 8000 West, Salt Lake City, Utah",
         "1747 S. 900 West, Salt Lake City, UT",
         "1747 South 900 West, Salt Lake City, UT",
         "2445 S. Water Tower Way, Ogden, UT",
