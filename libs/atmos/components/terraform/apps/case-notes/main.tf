@@ -41,4 +41,6 @@ module "server" {
       }]
     }
   ]
+
+  members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
 }

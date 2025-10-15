@@ -112,6 +112,8 @@ module "cloud-run" {
 
   # Roles to grant the Cloud Run service account
   service_account_project_roles = ["roles/cloudsql.client", "roles/storage.objectViewer"]
+
+  members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
 }
 
 # Configure a job that will migrate the database schema
