@@ -17,24 +17,11 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
+import { opportunitySchemaBase } from "~datatypes";
 
 export const usIaSupervisionLevelDowngradeSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: z
-      .object({
-        usIaSupervisionFeesPaid: z
-          .object({
-            supervisionFeesPaidDate: dateStringSchema,
-          })
-          .optional(),
-        usIaEDDeniedFinesAndFees: z
-          .object({
-            edDeniedFinesAndFeesDate: dateStringSchema,
-          })
-          .optional(),
-      })
-      .passthrough(),
+    eligibleCriteria: z.object({}).passthrough(),
     ineligibleCriteria: z.object({}).passthrough(),
   })
   .passthrough();

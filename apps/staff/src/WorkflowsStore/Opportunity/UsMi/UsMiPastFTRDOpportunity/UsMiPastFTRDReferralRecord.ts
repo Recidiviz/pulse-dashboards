@@ -23,7 +23,7 @@ import { eligibleDateSchema } from "../../schemaHelpers";
 
 const eligibleAndIneligibleCriteria = z
   .object({
-    supervisionTwoDaysPastFullTermCompletionDate: eligibleDateSchema.optional(),
+    supervisionPastFullTermCompletionDate: eligibleDateSchema.optional(),
   })
   .passthrough();
 

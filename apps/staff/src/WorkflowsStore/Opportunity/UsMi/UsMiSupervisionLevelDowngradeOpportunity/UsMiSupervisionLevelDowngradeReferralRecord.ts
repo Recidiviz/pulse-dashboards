@@ -43,9 +43,6 @@ export const usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLeve
         usMiNotPastInitialClassificationReviewDate: z.object({
           eligibleDate: dateStringSchema,
         }),
-        usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel: z
-          .object({})
-          .nullable(),
       }),
       metadata: z.object({
         eligibleDate: dateStringSchema,
