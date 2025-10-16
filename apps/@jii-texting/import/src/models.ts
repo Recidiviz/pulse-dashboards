@@ -51,7 +51,7 @@ export const contactImportSchema = z.object({
   contact_location_type: z.string(),
   contact_method: z.string(),
   reminder_type: z.string().nullable(),
-  contact_address: z.string(),
+  contact_address: z.string().optional(),
   contact_datetime: z.string(),
   update_datetime: z.string(),
 });
