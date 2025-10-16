@@ -17,21 +17,27 @@
 
 import { Route, Routes } from "react-router-dom";
 
-import { NotFound } from "~@jii/common-ui";
+import { FullWidthBanner, NotFound } from "~@jii/common-ui";
 import { UsAzMoreInformation } from "~@jii/paths";
+import { useUsAzTranslations } from "~@jii/translation";
 
 import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
 import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
 
 export function UsAzRouter() {
+  const { t } = useUsAzTranslations();
+
   return (
-    <Routes>
-      <Route index element={<PageUsAzResidentHome />} />
-      <Route path="*" element={<NotFound />} />
-      <Route
-        path={UsAzMoreInformation.DateInfo.path}
-        element={<PageMoreInfoImportantDates />}
-      />
-    </Routes>
+    <div>
+      <FullWidthBanner>{t(($) => $.lastUpdated)}</FullWidthBanner>
+      <Routes>
+        <Route index element={<PageUsAzResidentHome />} />
+        <Route path="*" element={<NotFound />} />
+        <Route
+          path={UsAzMoreInformation.DateInfo.path}
+          element={<PageMoreInfoImportantDates />}
+        />
+      </Routes>
+    </div>
   );
 }

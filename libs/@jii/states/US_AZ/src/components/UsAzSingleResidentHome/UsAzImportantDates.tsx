@@ -17,12 +17,13 @@
 
 import { observer } from "mobx-react-lite";
 
-import { HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
+import { HomepageSectionHeading } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
 import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
 import { DateInfoCard } from "./DateInfoCard";
+import { SectionSubHeader } from "./styles";
 import {
   UsAzDateField,
   UsAzImportantDatesPresenter,
@@ -38,24 +39,29 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
           <HomepageSectionHeading>
             {t(($) => $.importantDates.sectionHeader)}
           </HomepageSectionHeading>
-          <SlateCopy as="p">
+          <SectionSubHeader as="p">
             {t(($) => $.importantDates.sectionSubHeader)}
-          </SlateCopy>
-          {presenter.dateEntries.map(({ key, date, isHighlighted }) => {
-            const dateKey = key as UsAzDateField;
+          </SectionSubHeader>
+          {presenter.dateEntries.map(
+            ({ key, date, isUpcoming, highlightType }) => {
+              const dateKey = key as UsAzDateField;
 
-            return (
-              <DateInfoCard
-                key={key}
-                title={t(($) => $.importantDates.dates[dateKey].title)}
-                date={date}
-                info={t(($) => $.importantDates.dates[dateKey].info)}
-                dateKey={dateKey}
-                shortName={t(($) => $.importantDates.dates[dateKey].shortName)}
-                isHighlighted={isHighlighted}
-              />
-            );
-          })}
+              return (
+                <DateInfoCard
+                  key={key}
+                  title={t(($) => $.importantDates.dates[dateKey].title)}
+                  date={date}
+                  info={t(($) => $.importantDates.dates[dateKey].info)}
+                  dateKey={dateKey}
+                  shortName={t(
+                    ($) => $.importantDates.dates[dateKey].shortName,
+                  )}
+                  isUpcoming={isUpcoming}
+                  highlightType={highlightType}
+                />
+              );
+            },
+          )}
         </section>
       </div>
     );

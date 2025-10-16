@@ -24,10 +24,11 @@ const mockAzResident = {
   metadata: {
     stateCode: "US_AZ",
     acisTprDate: "2024-03-15",
+    acisDtpDate: undefined,
     csbdDate: "2024-01-10", // earliest date
     ercdDate: "2024-06-01",
     sedDate: "2024-12-01", // latest date
-    csedDate: undefined, // null date
+    csedDate: undefined,
   },
 } as never as ResidentRecord;
 
@@ -66,31 +67,29 @@ describe("UsAzImportantDatesPresenter", () => {
   });
 
   describe("dateEntries", () => {
-    it("sorts dates by earliest first and highlights the first valid date", () => {
+    it("sorts dates by earliest first and highlights acisTprDate", () => {
       const presenter = new UsAzImportantDatesPresenter(mockAzResident);
       const entries = presenter.dateEntries;
 
       // Check sorting order
       expect(entries[0].key).toBe("csbdDate");
       expect(entries[0].date).toBe("2024-01-10");
-      expect(entries[0].isHighlighted).toBe(true); // First valid date should be highlighted
+      expect(entries[0].highlightType).toBeUndefined();
 
       expect(entries[1].key).toBe("acisTprDate");
       expect(entries[1].date).toBe("2024-03-15");
-      expect(entries[1].isHighlighted).toBe(false);
+      expect(entries[1].highlightType).toBe("acisTprDate");
 
       expect(entries[2].key).toBe("ercdDate");
       expect(entries[2].date).toBe("2024-06-01");
-      expect(entries[2].isHighlighted).toBe(false);
+      expect(entries[2].highlightType).toBeUndefined();
 
       expect(entries[3].key).toBe("sedDate");
       expect(entries[3].date).toBe("2024-12-01");
-      expect(entries[3].isHighlighted).toBe(false);
+      expect(entries[3].highlightType).toBeUndefined();
 
-      // Null dates should come last
-      expect(entries[4].key).toBe("csedDate");
-      expect(entries[4].date).toBeUndefined();
-      expect(entries[4].isHighlighted).toBe(false);
+      // Should only include dates that have values
+      expect(entries).toHaveLength(4);
     });
 
     it("handles all null dates correctly", () => {
@@ -99,13 +98,7 @@ describe("UsAzImportantDatesPresenter", () => {
       );
       const entries = presenter.dateEntries;
 
-      expect(entries).toHaveLength(5);
-
-      // All dates should be undefined
-      entries.forEach((entry) => {
-        expect(entry.date).toBeUndefined();
-        expect(entry.isHighlighted).toBe(false); // No highlighting when no valid dates
-      });
+      expect(entries).toHaveLength(0);
     });
   });
 });

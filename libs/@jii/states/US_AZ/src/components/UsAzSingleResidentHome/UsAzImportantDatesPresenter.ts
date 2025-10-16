@@ -22,6 +22,7 @@ import { ResidentRecord } from "~datatypes";
 // Shared constant for all US_AZ date field names
 export const US_AZ_DATE_FIELDS = [
   "acisTprDate",
+  "acisDtpDate",
   "csbdDate",
   "ercdDate",
   "sedDate",
@@ -31,8 +32,9 @@ export type UsAzDateField = (typeof US_AZ_DATE_FIELDS)[number];
 
 export interface DateEntry {
   key: string;
-  date: string | undefined;
-  isHighlighted: boolean;
+  date: string;
+  isUpcoming: boolean; // Within 31 days
+  highlightType?: UsAzDateField;
 }
 
 export class UsAzImportantDatesPresenter {
@@ -52,25 +54,39 @@ export class UsAzImportantDatesPresenter {
   }
 
   get dateEntries(): DateEntry[] {
-    const entries: Omit<DateEntry, "isHighlighted">[] = US_AZ_DATE_FIELDS.map(
-      (field) => ({
-        key: field,
-        date: this.metadata[field],
-      }),
-    );
+    // Check if acisDtpDate exists to determine whether to exclude acisTprDate
+    const hasAcisDtpDate = !!this.metadata.acisDtpDate;
 
-    // Sort by earliest date first, with valid dates before null dates
+    // Filter out undefined dates and prioritize acisDtpDates over acisTprDates
+    const entries = US_AZ_DATE_FIELDS.flatMap((field) => {
+      const date = this.metadata[field];
+      if (!date) return [];
+      if (field === "acisTprDate" && hasAcisDtpDate) return [];
+      return [{ key: field, date }];
+    });
+
+    // Sort by earliest date first
     const sortedEntries = entries.sort((a, b) => {
-      if (!a.date && !b.date) return 0;
-      if (!a.date) return 1;
-      if (!b.date) return -1;
       return new Date(a.date).getTime() - new Date(b.date).getTime();
     });
 
-    // Add highlighting to the first valid date
-    return sortedEntries.map((entry, index) => ({
-      ...entry,
-      isHighlighted: index === 0 && entry.date !== undefined,
-    }));
+    // Add highlighting and upcoming logic
+    const today = new Date();
+    const thirtyOneDaysFromNow = new Date(today);
+    thirtyOneDaysFromNow.setDate(today.getDate() + 31);
+
+    return sortedEntries.map((entry) => {
+      const entryDate = new Date(entry.date);
+      const result: DateEntry = {
+        ...entry,
+        isUpcoming: entryDate >= today && entryDate <= thirtyOneDaysFromNow,
+      };
+
+      if (["acisTprDate", "acisDtpDate"].includes(entry.key)) {
+        result.highlightType = entry.key;
+      }
+
+      return result;
+    });
   }
 }

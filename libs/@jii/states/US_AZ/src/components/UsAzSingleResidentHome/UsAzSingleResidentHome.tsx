@@ -15,21 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FullWidthBanner, HeaderPortal, PageContainer } from "~@jii/common-ui";
-import { useUsAzTranslations } from "~@jii/translation";
-
 import { UsAzImportantDates } from "./UsAzImportantDates";
 
 export function UsAzSingleResidentHome() {
-  const { t } = useUsAzTranslations();
-
   return (
     <div>
-      <HeaderPortal>
-        <FullWidthBanner>
-          <PageContainer>{t(($) => $.lastUpdated)}</PageContainer>
-        </FullWidthBanner>
-      </HeaderPortal>
       <UsAzImportantDates />
     </div>
   );

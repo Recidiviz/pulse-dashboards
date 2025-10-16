@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import acisDtpDateInfoPage from "./acisDtpDateInfoPage.md?raw";
 import acisTprDateInfoPage from "./acisTprDateInfoPage.md?raw";
 import csbdDateInfoPage from "./csbdDateInfoPage.md?raw";
 import csedDateInfoPage from "./csedDateInfoPage.md?raw";
@@ -25,10 +26,12 @@ export default {
   lastUpdated:
     "This information was last updated XXXX. It updates once per month.",
   goLink: "Learn more about ",
-  noDate: "None on record",
-  distanceFromToday: "{{date, formatDistanceFromToday()}} from today",
+  distanceFromTodayPast: "({{date, formatDistanceFromToday()}} ago)",
+  distanceFromTodayFuture: "({{date, formatDistanceFromToday()}} from today)",
+  upcomingDateCopy:
+    "Your date is coming up soon - stay on track to ensure that your date doesn't change. ",
   importantDates: {
-    sectionHeader: "Your important dates",
+    sectionHeader: "Your Important Dates",
     sectionSubHeader:
       "These are all the dates that Time Computation has calculated for your sentence. Dates may change if you get a disciplinary infraction, or get lost time restored. Tap 'Learn More' to see what you need to do in order to be released on any date.",
     dates: {
@@ -40,6 +43,16 @@ export default {
         moreInfo: {
           heading: "Standard Transition Program",
           body: acisTprDateInfoPage,
+        },
+      },
+      acisDtpDate: {
+        title: "Drug Transition Program (DTP)",
+        info: "TKTK",
+        shortName: "DTP",
+        value: "{{acisDtpDate, formatFullDate}}",
+        moreInfo: {
+          heading: "Drug Transition Program",
+          body: acisDtpDateInfoPage,
         },
       },
       csbdDate: {

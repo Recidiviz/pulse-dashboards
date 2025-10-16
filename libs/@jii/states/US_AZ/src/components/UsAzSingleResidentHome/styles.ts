@@ -18,13 +18,49 @@
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { Card } from "~@jii/common-ui";
+import { Card, CardValue, SlateCopy } from "~@jii/common-ui";
 import { palette, spacing } from "~design-system";
 
-export const StyledCard = styled(Card)``;
+import { UsAzDateField } from "./UsAzImportantDatesPresenter";
 
-export const HighlightedCard = styled(StyledCard)`
-  border-top: 8px solid ${palette.pine3};
+interface StyledCardProps {
+  $isUpcoming: boolean;
+  $highlightType?: UsAzDateField;
+}
+
+export const StyledCard = styled(Card)<StyledCardProps>`
+  margin: ${rem(spacing.md)} 0;
+  padding-right: ${rem(spacing.xl)};
+
+  /* Upcoming styling */
+  ${({ $isUpcoming }) =>
+    $isUpcoming &&
+    `
+    background-color: ${palette.slate05};
+    border: 1px solid ${palette.signal.notification};
+
+    /* Blue text for CardValue when upcoming */
+    ${CardValue} {
+      color: ${palette.signal.notification};
+    }
+  `}
+
+  /* Highlight border styling */
+  ${({ $highlightType }) => {
+    if ($highlightType === "acisTprDate") {
+      return `border-top: 8px solid ${palette.pine3};`;
+    }
+    if ($highlightType === "acisDtpDate") {
+      return `border-top: 8px solid #624488;`;
+    }
+    return "";
+  }}
+`;
+
+export const SectionSubHeader = styled(SlateCopy)`
+  && {
+    margin-bottom: ${rem(spacing.lg)};
+  }
 `;
 
 export const DateInfoContent = styled.div`
@@ -33,4 +69,8 @@ export const DateInfoContent = styled.div`
 
 export const LearnMoreLinkWrapper = styled.div`
   margin-top: ${rem(spacing.md)};
+`;
+
+export const StyledSlateCopy = styled(SlateCopy)<{ $isPastDate?: boolean }>`
+  ${({ $isPastDate }) => $isPastDate && `color: ${palette.signal.error};`}
 `;

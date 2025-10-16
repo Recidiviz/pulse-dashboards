@@ -15,25 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CardHeading, CardValue, GoLink, SlateCopy } from "~@jii/common-ui";
+import { CardHeading, CardValue, GoLink } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
 import {
   DateInfoContent,
-  HighlightedCard,
   LearnMoreLinkWrapper,
   StyledCard,
+  StyledSlateCopy,
 } from "./styles";
 import { UsAzDateField } from "./UsAzImportantDatesPresenter";
 
 export interface DateInfoCardProps {
   title: string;
-  date: string | undefined;
+  date: string;
   info: string;
   shortName: string;
   dateKey: UsAzDateField;
-  isHighlighted?: boolean;
+  isUpcoming: boolean;
+  highlightType?: UsAzDateField;
 }
 
 export const DateInfoCard = ({
@@ -42,44 +43,55 @@ export const DateInfoCard = ({
   info,
   shortName,
   dateKey,
-  isHighlighted = false,
+  isUpcoming,
+  highlightType,
 }: DateInfoCardProps) => {
   const { t } = useUsAzTranslations();
-  const CardComponent = isHighlighted ? HighlightedCard : StyledCard;
-
-  if (!date) {
-    return (
-      <CardComponent>
-        <CardHeading>{title}</CardHeading>
-        <CardValue>{t(($) => $.noDate)}</CardValue>
-        <LearnMoreLinkWrapper>
-          <GoLink
-            to={State.Resident.$.UsAzMoreInformation.DateInfo.buildRelativePath(
-              {
-                dateType: dateKey,
-              },
-            )}
-          >
-            {t(($) => $.goLink)}
-            {shortName}
-          </GoLink>
-        </LearnMoreLinkWrapper>
-      </CardComponent>
-    );
-  }
 
   const dateObj = new Date(date);
+  const today = new Date();
+  const isPastDate = dateObj < today;
+
+  // Determine which distance translation to use based on whether date is past/future
+  const getDistanceTranslation = (dateValue: Date) => {
+    if (isPastDate) {
+      return t(($) => $.distanceFromTodayPast, { date: dateValue });
+    } else {
+      return t(($) => $.distanceFromTodayFuture, { date: dateValue });
+    }
+  };
+
+  /*
+  For upcoming dates in the next 31 days:
+  - CardValue should show distanceFromToday without parentheses
+  - SlateCopy should be the date
+
+  For all other dates:
+  - CardValue should be the date, SlateCopy should be distanceFromToday
+  */
+  const cardValue = isUpcoming
+    ? getDistanceTranslation(dateObj).replace(/^\(|\)$/g, "") //remove parentheses
+    : t(($) => $.importantDates.dates[dateKey].value, {
+        replace: { [dateKey]: dateObj },
+      });
+
+  const slateCopyContent = isUpcoming
+    ? t(($) => $.importantDates.dates[dateKey].value, {
+        replace: { [dateKey]: dateObj },
+      })
+    : getDistanceTranslation(dateObj);
 
   return (
-    <CardComponent>
+    <StyledCard $isUpcoming={isUpcoming} $highlightType={highlightType}>
       <CardHeading>{title}</CardHeading>
-      <CardValue>
-        {t(($) => $.importantDates.dates[dateKey].value, {
-          replace: { [dateKey]: dateObj },
-        })}
-      </CardValue>
-      <SlateCopy>{t(($) => $.distanceFromToday, { date: dateObj })}</SlateCopy>
-      <DateInfoContent>{info}</DateInfoContent>
+      <CardValue>{cardValue}</CardValue>
+      <StyledSlateCopy $isPastDate={isPastDate}>
+        {slateCopyContent}
+      </StyledSlateCopy>
+      <DateInfoContent>
+        {isUpcoming && t(($) => $.upcomingDateCopy)}
+        {info}
+      </DateInfoContent>
       <LearnMoreLinkWrapper>
         <GoLink
           to={State.Resident.$.UsAzMoreInformation.DateInfo.buildRelativePath({
@@ -90,6 +102,6 @@ export const DateInfoCard = ({
           {shortName}
         </GoLink>
       </LearnMoreLinkWrapper>
-    </CardComponent>
+    </StyledCard>
   );
 };
