@@ -23,6 +23,8 @@ import {
   StateCode,
   Status,
 } from "@prisma/jii-texting/client";
+import { flush, init } from "@sentry/node";
+import sentryTestkit from "sentry-testkit";
 import {
   MessageInstance,
   MessageStatus,
@@ -30,6 +32,7 @@ import {
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import {
+  auditNumMessagesAttemptedChangeRatio,
   getOrderedMessageAttempts,
   mapTwilioStatusToInternalStatus,
   MessageSeriesWithAttemptsAndGroup,
@@ -39,6 +42,7 @@ import {
   fakeContactOne,
   fakeUsTxPersonOne,
   fakeWorkflowExecutionOne,
+  fakeWorkflowExecutionTwo,
 } from "~@jii-texting/utils/test/constants";
 import { TwilioAPIClient } from "~twilio-api";
 
@@ -62,15 +66,34 @@ async function resetDb(prismaClient: PrismaClient) {
   );
 }
 
+// Sentry test setup
+const { testkit, sentryTransport } = sentryTestkit();
+
+export async function testAndGetSentryReports(expectedLength = 1) {
+  // Use waitFor because sentry-testkit can be async
+  const sentryReports = await vi.waitFor(async () => {
+    const reports = testkit.reports();
+    expect(reports).toHaveLength(expectedLength);
+
+    return reports;
+  });
+
+  return sentryReports;
+}
+
 beforeEach(async () => {
   await resetDb(testUsTxPrismaClient);
+  init({
+    dsn: process.env["SENTRY_DSN"],
+    transport: sentryTransport,
+  });
 });
 
 afterEach(() => {
   vi.clearAllMocks();
   vi.restoreAllMocks();
+  testkit.reset();
 });
-
 
 test.each([
   ["accepted", MessageAttemptStatus.IN_PROGRESS],
@@ -298,6 +321,104 @@ describe("updateMessageStatuses", () => {
           `Less than 75% of in-progress messages were successfully updated`,
         );
       });
+    });
+  });
+});
+
+describe("getNumMessagesSentChangeRatio", () => {
+  describe("previous executions exist", () => {
+    beforeEach(async () => {
+      console.log(`Initializing Texas database...`);
+
+      await testUsTxPrismaClient.workflowExecution.createMany({
+        data: [fakeWorkflowExecutionOne, fakeWorkflowExecutionTwo],
+      });
+
+      // Create a person with one welcome message in earlier execution
+      const series = await testUsTxPrismaClient.welcomeMessageSeries.create({
+        data: {
+          person: { create: { ...fakeUsTxPersonOne } },
+          messageAttempts: {
+            create: [
+              {
+                twilioMessageSid: "welcome-message-sid-1",
+                body: "Hello world",
+                phoneNumber: fakeUsTxPersonOne.phoneNumber,
+                status: MessageAttemptStatus.IN_PROGRESS,
+                createdTimestamp:
+                  fakeWorkflowExecutionOne.workflowExecutionTime,
+                workflowExecutionId: fakeWorkflowExecutionOne.id,
+              },
+            ],
+          },
+        },
+      });
+
+      // Add a message in the latest execution
+      await testUsTxPrismaClient.welcomeMessageAttempt.create({
+        data: {
+          messageSeriesId: series.id,
+          twilioMessageSid: "welcome-message-sid-2",
+          body: "Hello world",
+          phoneNumber: fakeUsTxPersonOne.phoneNumber,
+          status: MessageAttemptStatus.IN_PROGRESS,
+          createdTimestamp: fakeWorkflowExecutionTwo.workflowExecutionTime,
+          workflowExecutionId: fakeWorkflowExecutionTwo.id,
+        },
+      });
+    });
+
+    test("change ratio <= 0.5", async () => {
+      const changeRatio = await auditNumMessagesAttemptedChangeRatio(
+        testUsTxPrismaClient,
+        fakeWorkflowExecutionTwo.id,
+      );
+
+      expect(changeRatio).toBe(0);
+    });
+
+    test("change ratio > 0.5", async () => {
+      // Add two additional messages to the latest execution
+      const series =
+        await testUsTxPrismaClient.welcomeMessageSeries.findUniqueOrThrow({
+          where: { personExternalId: fakeUsTxPersonOne.stableExternalId },
+        });
+
+      await testUsTxPrismaClient.welcomeMessageAttempt.createMany({
+        data: [
+          {
+            twilioMessageSid: "welcome-message-sid-3",
+            body: "Hello world",
+            phoneNumber: fakeUsTxPersonOne.phoneNumber,
+            status: MessageAttemptStatus.IN_PROGRESS,
+            createdTimestamp: fakeWorkflowExecutionOne.workflowExecutionTime,
+            workflowExecutionId: fakeWorkflowExecutionTwo.id,
+            messageSeriesId: series.id,
+          },
+          {
+            twilioMessageSid: "welcome-message-sid-4",
+            body: "Hello world",
+            phoneNumber: fakeUsTxPersonOne.phoneNumber,
+            status: MessageAttemptStatus.IN_PROGRESS,
+            createdTimestamp: fakeWorkflowExecutionOne.workflowExecutionTime,
+            workflowExecutionId: fakeWorkflowExecutionTwo.id,
+            messageSeriesId: series.id,
+          },
+        ],
+      });
+
+      const changeRatio = await auditNumMessagesAttemptedChangeRatio(
+        testUsTxPrismaClient,
+        fakeWorkflowExecutionTwo.id,
+      );
+
+      expect(changeRatio).toBe(2);
+
+      await flush();
+
+      // Ensure captureException called
+      const sentryReports = await testAndGetSentryReports(1);
+      expect(sentryReports.length).toBe(1);
     });
   });
 });

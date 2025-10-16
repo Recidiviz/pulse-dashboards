@@ -1464,3 +1464,88 @@ export async function updateMessageStatuses(
     );
   }
 }
+
+export async function auditNumMessagesAttemptedChangeRatio(
+  prismaClient: PrismaClient,
+  currentWorkflowExecutionId: string,
+): Promise<number | null> {
+  const currentExecution =
+    await prismaClient.workflowExecution.findUniqueOrThrow({
+      where: { id: currentWorkflowExecutionId },
+      select: {
+        workflowExecutionTime: true,
+        _count: {
+          select: {
+            messageAttempts: true,
+            welcomeMessageAttempt: true,
+            contactReminderMessageAttempts: true,
+          },
+        },
+      },
+    });
+
+  const {
+    workflowExecutionTime: currentWorkflowExecutionTime,
+    _count: currentCounts,
+  } = currentExecution;
+
+  const currentNumMessagesAttempted =
+    currentCounts.messageAttempts +
+    currentCounts.welcomeMessageAttempt +
+    currentCounts.contactReminderMessageAttempts;
+
+  console.log(
+    `Attempted to send ${currentNumMessagesAttempted} messages in current execution ${currentWorkflowExecutionId}`,
+  );
+
+  const precedingExecution = await prismaClient.workflowExecution.findFirst({
+    where: {
+      workflowExecutionTime: { lt: currentWorkflowExecutionTime },
+    },
+    orderBy: { workflowExecutionTime: "desc" },
+    select: {
+      id: true,
+      workflowExecutionTime: true,
+      _count: {
+        select: {
+          messageAttempts: true,
+          welcomeMessageAttempt: true,
+          contactReminderMessageAttempts: true,
+        },
+      },
+    },
+    take: 1,
+  });
+
+  if (!precedingExecution) {
+    return null;
+  }
+
+  const { _count: prevCounts } = precedingExecution;
+
+  const precedingExecutionNumMessagesAttempted =
+    prevCounts.messageAttempts +
+    prevCounts.welcomeMessageAttempt +
+    prevCounts.contactReminderMessageAttempts;
+
+  console.log(
+    `Attempted to send ${precedingExecutionNumMessagesAttempted} messages in previous execution ${precedingExecution.id} on ${precedingExecution.workflowExecutionTime}`,
+  );
+
+  if (precedingExecutionNumMessagesAttempted === 0) {
+    return null;
+  }
+
+  const changeRatio =
+    Math.abs(
+      currentNumMessagesAttempted - precedingExecutionNumMessagesAttempted,
+    ) / precedingExecutionNumMessagesAttempted;
+
+  if (changeRatio && changeRatio > 0.5) {
+    captureException(
+      `Percent change of ${changeRatio * 100}% found between current execution ${currentWorkflowExecutionId} and preceding execution ${precedingExecution}`,
+    );
+  }
+
+  return changeRatio;
+}

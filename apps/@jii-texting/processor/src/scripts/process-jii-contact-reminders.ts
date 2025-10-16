@@ -19,6 +19,7 @@ import { StateCode } from "@prisma/jii-texting/client";
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import {
+  auditNumMessagesAttemptedChangeRatio,
   PERSON_WITH_CONTACTS_AND_MESSAGES,
   processIndividualJiiContactReminders,
   ScriptAction,
@@ -103,6 +104,8 @@ export async function processJiiContactReminders({
   for (const key in results) {
     console.log(`${key}: ${results[key as ScriptAction]}`);
   }
+
+  await auditNumMessagesAttemptedChangeRatio(prisma, workflowExecutionId);
 
   await prisma.$disconnect();
 
