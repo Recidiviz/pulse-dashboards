@@ -42,7 +42,7 @@ const ClientsScreen = () => {
     data: rawClients,
     isLoading,
     error,
-  } = trpc.staff.getClients.useQuery();
+  } = trpc.v1.staff.getClients.useQuery();
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("Name (A-Z)");

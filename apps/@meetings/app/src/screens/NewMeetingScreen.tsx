@@ -56,7 +56,7 @@ const NewMeetingScreen = () => {
     setIsRecording(false);
   };
 
-  const createMeetingMutation = trpc.client.createMeeting.useMutation({
+  const createMeetingMutation = trpc.v1.client.createMeeting.useMutation({
     onSuccess: (data) => setMeetingId(data.id),
   });
 

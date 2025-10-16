@@ -44,7 +44,7 @@ describe("meeting router", () => {
   describe("getSignedUrlForRecording", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
-        testTRPCClient.meeting.getSignedUrlForRecording.query({
+        testTRPCClient.v1.meeting.getSignedUrlForRecording.query({
           clientId: fakeClient.personId,
           meetingId: "non-existent-meeting-id",
         }),
@@ -56,7 +56,7 @@ describe("meeting router", () => {
 
     test("Returns a signed URL for the meeting recording", async () => {
       const result =
-        await testTRPCClient.meeting.getSignedUrlForRecording.query({
+        await testTRPCClient.v1.meeting.getSignedUrlForRecording.query({
           clientId: fakeClient.personId,
           meetingId: fakeMeeting.id,
         });
@@ -98,7 +98,7 @@ describe("meeting router", () => {
 
     test("Should throw error if meeting does not exist", async () => {
       await expect(
-        testTRPCClient.meeting.endMeeting.mutate({
+        testTRPCClient.v1.meeting.endMeeting.mutate({
           clientId: fakeClient.personId,
           meetingId: "non-existent-meeting-id",
         }),
@@ -109,7 +109,7 @@ describe("meeting router", () => {
     });
 
     test("Should end meeting and stitch together audio", async () => {
-      await testTRPCClient.meeting.endMeeting.mutate({
+      await testTRPCClient.v1.meeting.endMeeting.mutate({
         clientId: fakeClient.personId,
         meetingId: fakeMeeting.id,
       });

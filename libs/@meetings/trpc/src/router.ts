@@ -20,10 +20,14 @@ import { clientRouter } from "~@meetings/trpc/routes/client/client.router";
 import { meetingRouter } from "~@meetings/trpc/routes/meeting/meeting.router";
 import { staffRouter } from "~@meetings/trpc/routes/staff/staff.router";
 
-export const appRouter = router({
+const v1Router = router({
   staff: staffRouter,
   client: clientRouter,
   meeting: meetingRouter,
+});
+
+export const appRouter = router({
+  v1: v1Router,
 });
 
 // export type definition of API

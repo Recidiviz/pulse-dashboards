@@ -21,7 +21,7 @@ import { fakeClient } from "~@meetings/trpc/test/setup/seed";
 describe("staff router", () => {
   describe("getClients", () => {
     test("returns list of clients", async () => {
-      const result = await testTRPCClient.staff.getClients.query();
+      const result = await testTRPCClient.v1.staff.getClients.query();
       expect(result).toEqual([
         {
           personId: fakeClient.personId,

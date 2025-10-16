@@ -18,7 +18,7 @@
 import type { AppRouter } from "~@meetings/trpc-types";
 
 export type Client = Awaited<
-  ReturnType<AppRouter["staff"]["getClients"]>
+  ReturnType<AppRouter["v1"]["staff"]["getClients"]>
 >[0] & {
   supervision: string;
   lastMeeting: string;

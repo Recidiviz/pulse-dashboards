@@ -30,7 +30,7 @@ describe("client router", () => {
     test("Creates a meeting", async () => {
       const startTime = faker.date.future();
 
-      const result = await testTRPCClient.client.createMeeting.mutate({
+      const result = await testTRPCClient.v1.client.createMeeting.mutate({
         clientId: fakeClient.personId,
         startTime,
       });
@@ -74,7 +74,7 @@ describe("client router", () => {
 
   describe("getMeetings", () => {
     test("Returns list of meetings", async () => {
-      const result = await testTRPCClient.client.getMeetings.query({
+      const result = await testTRPCClient.v1.client.getMeetings.query({
         clientId: fakeClient.personId,
       });
 
