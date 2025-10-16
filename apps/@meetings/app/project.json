@@ -12,12 +12,55 @@
         "command": "echo 'No tests yet'"
       }
     },
-    "load-env-files": {
+    "load-env-file-gcp": {
       "executor": "nx:run-commands",
       "options": {
         "command": "../../../tools/load_env_files.sh --env env_meetings_app",
         "cwd": "{projectRoot}"
       }
+    },
+    "load-env-file-eas": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eas env:pull --non-interactive --path .env",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {
+          "args": "--environment development"
+        },
+        "preview": {
+          "args": "--environment preview"
+        },
+        "production": {
+          "args": "--environment production"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "offline:android": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx load-env-file-gcp @meetings/app",
+          "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
+          "nx run-android @meetings/app"
+        ],
+        "parallel": false
+      },
+      "cwd": "{workspaceRoot}"
+    },
+    "dev:android": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx load-env-file-eas @meetings/app -c dev",
+          "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
+          "nx run-android @meetings/app"
+        ],
+        "parallel": false
+      },
+      "cwd": "{workspaceRoot}"
     }
   }
 }
