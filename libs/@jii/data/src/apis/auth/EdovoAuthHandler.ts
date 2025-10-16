@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import i18next from "i18next";
 import { makeAutoObservable, runInAction } from "mobx";
 import { matchPath } from "react-router-dom";
 
@@ -77,7 +78,7 @@ export class EdovoAuthHandler implements AuthHandler {
     });
 
     if (response.ok) {
-      const { firebaseToken, user } = tokenAuthResponseSchema.parse(
+      const { firebaseToken, user, language } = tokenAuthResponseSchema.parse(
         await response.json(),
       );
 
@@ -86,6 +87,10 @@ export class EdovoAuthHandler implements AuthHandler {
         this.userProfile = user;
         this.hydrationStateOverride = undefined;
       });
+
+      if (language && user.permissions?.includes("translator")) {
+        i18next.changeLanguage(language);
+      }
     } else {
       const authError =
         (await response.json())["error"] ??

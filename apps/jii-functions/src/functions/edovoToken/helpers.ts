@@ -36,6 +36,7 @@ export const edovoIdTokenPayloadSchema = z
       .toUpperCase()
       .transform((s) => `US_${s}`),
     facility_name: z.string().optional(),
+    language: z.string().optional(),
   })
   .transform((user) => {
     // known cases where our ID formats do not match

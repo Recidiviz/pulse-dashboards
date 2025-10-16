@@ -47,9 +47,17 @@ type StateConfigArray<StateCodeList> = StateCodeList extends [
  * Exhaustive list of {@link StateConfig} objects for all supported states
  */
 export const stateConfigs: StateConfigArray<typeof stateCodes.options> = [
-  { stateCode: "US_AZ", displayName: "Arizona", urlSlug: "arizona" },
+  {
+    stateCode: "US_AZ",
+    displayName: "Arizona",
+    urlSlug: "arizona",
+  },
   { stateCode: "US_ID", displayName: "Idaho", urlSlug: "idaho" },
-  { stateCode: "US_MA", displayName: "Massachusetts", urlSlug: "mass" },
+  {
+    stateCode: "US_MA",
+    displayName: "Massachusetts",
+    urlSlug: "mass",
+  },
   { stateCode: "US_ME", displayName: "Maine", urlSlug: "maine" },
   { stateCode: "US_NE", displayName: "Nebraska", urlSlug: "nebraska" },
   { stateCode: "US_TN", displayName: "Tennessee", urlSlug: "tennessee" },

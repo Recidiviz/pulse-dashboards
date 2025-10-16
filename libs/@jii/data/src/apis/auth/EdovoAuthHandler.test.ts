@@ -31,9 +31,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import i18next from "i18next";
+
 import { TokenAuthResponse } from "~@jii/auth";
 
 import { EdovoAuthHandler } from "./EdovoAuthHandler";
+
+vi.mock("i18next", () => ({
+  default: {
+    changeLanguage: vi.fn(),
+  },
+}));
 
 vi.hoisted(() => {
   vi.stubEnv("VITE_API_URL_BASE", "http://localhost:9999");
@@ -104,5 +112,69 @@ describe("with url token", () => {
     expect(handler.userProfile).toBeUndefined();
     await handler.hydrate();
     expect(handler.userProfile).toEqual(mockResponse.user);
+  });
+
+  describe("language handling", () => {
+    test("calls i18next.changeLanguage when language is provided and user has translator permission", async () => {
+      const mockResponseWithLanguageAndTranslatorPermission = {
+        ...mockResponse,
+        user: {
+          ...mockResponse.user,
+          permissions: ["translator"],
+        },
+        language: "es",
+      };
+
+      fetchMock.mockResponse(
+        JSON.stringify(mockResponseWithLanguageAndTranslatorPermission),
+      );
+
+      await handler.hydrate();
+
+      expect(i18next.changeLanguage).toHaveBeenCalledWith("es");
+    });
+
+    test("does not call i18next.changeLanguage when no language or translator permission provided", async () => {
+      // mockResponse has no language field
+      await handler.hydrate();
+
+      expect(i18next.changeLanguage).not.toHaveBeenCalled();
+    });
+
+    test("does not call i18next.changeLanguage when language provided but user lacks translator permission", async () => {
+      const mockResponseWithLanguageButNoTranslatorPermission = {
+        ...mockResponse,
+        user: {
+          ...mockResponse.user,
+          permissions: ["live_data"], // has permission but not translator
+        },
+        language: "es",
+      };
+
+      fetchMock.mockResponse(
+        JSON.stringify(mockResponseWithLanguageButNoTranslatorPermission),
+      );
+      await handler.hydrate();
+
+      expect(i18next.changeLanguage).not.toHaveBeenCalled();
+    });
+
+    test("does not call i18next.changeLanguage when user has no permissions", async () => {
+      const mockResponseWithLanguageButNoPermissions = {
+        ...mockResponse,
+        user: {
+          ...mockResponse.user,
+          permissions: undefined,
+        },
+        language: "es",
+      };
+
+      fetchMock.mockResponse(
+        JSON.stringify(mockResponseWithLanguageButNoPermissions),
+      );
+      await handler.hydrate();
+
+      expect(i18next.changeLanguage).not.toHaveBeenCalled();
+    });
   });
 });

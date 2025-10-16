@@ -275,3 +275,66 @@ test("invalid payload", async () => {
     }
   `);
 });
+
+describe("language field handling", () => {
+  test("succeeds with language field", async () => {
+    await createMockToken({
+      inmate_id: "123456",
+      facility_state: "OZ",
+      language: "es",
+    });
+
+    const resp = await request(
+      // @ts-expect-error this type overlaps enough for our purposes
+      edovoToken,
+    )
+      .get("/")
+      .auth(`${mockEncryptedToken}`, { type: "bearer" });
+
+    expect(resp.status).toBe(200);
+    expect(resp.body).toEqual({
+      firebaseToken: mockFirebaseTokenValue,
+      user: mockRealUserProfile,
+      language: "es",
+    });
+  });
+
+  test("succeeds without language field", async () => {
+    // Default mock token has no language field
+    const resp = await request(
+      // @ts-expect-error this type overlaps enough for our purposes
+      edovoToken,
+    )
+      .get("/")
+      .auth(`${mockEncryptedToken}`, { type: "bearer" });
+
+    expect(resp.status).toBe(200);
+    expect(resp.body).toEqual({
+      firebaseToken: mockFirebaseTokenValue,
+      user: mockRealUserProfile,
+      // No language field should be present
+    });
+  });
+
+  test("passes through invalid language values", async () => {
+    await createMockToken({
+      inmate_id: "123456",
+      facility_state: "OZ",
+      language: "invalid-locale-code",
+    });
+
+    const resp = await request(
+      // @ts-expect-error this type overlaps enough for our purposes
+      edovoToken,
+    )
+      .get("/")
+      .auth(`${mockEncryptedToken}`, { type: "bearer" });
+
+    expect(resp.status).toBe(200);
+    expect(resp.body).toEqual({
+      firebaseToken: mockFirebaseTokenValue,
+      user: mockRealUserProfile,
+      language: "invalid-locale-code",
+    });
+  });
+});

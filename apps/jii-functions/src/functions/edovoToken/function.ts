@@ -88,7 +88,11 @@ app.get("/*", async (request, response, next): Promise<void> => {
       );
 
       response.json(
-        tokenAuthResponseSchema.parse({ firebaseToken, user: userProfile }),
+        tokenAuthResponseSchema.parse({
+          firebaseToken,
+          user: userProfile,
+          language: userData.language,
+        }),
       );
       segment.track("backend_edovo_login_succeeded", {
         isRecidiviz,

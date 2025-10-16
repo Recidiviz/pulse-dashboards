@@ -126,5 +126,6 @@ export type AuthorizedUserProfile = z.infer<typeof authorizedUserProfileSchema>;
 export const tokenAuthResponseSchema = z.object({
   firebaseToken: z.string(),
   user: authorizedUserProfileSchema,
+  language: z.string().optional(),
 });
 export type TokenAuthResponse = z.infer<typeof tokenAuthResponseSchema>;
