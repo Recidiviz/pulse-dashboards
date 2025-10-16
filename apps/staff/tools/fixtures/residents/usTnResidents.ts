@@ -19,6 +19,107 @@ import { relativeFixtureDate } from "~datatypes";
 
 import { ResidentFixture } from "../residents";
 
+const metadata = {
+  stateCode: "US_TN" as const,
+  expirationDate: relativeFixtureDate({ years: 1, days: 249 }),
+  expirationDateOriginal: relativeFixtureDate({ years: 3, days: 300 }),
+  fileUpdateDate: relativeFixtureDate({ days: -1 }),
+  releaseEligibilityDate: relativeFixtureDate({ days: 222 }),
+  sentenceEffectiveDate: relativeFixtureDate({ years: -2, days: -222 }),
+  creditActivity: [
+    {
+      creditDate: relativeFixtureDate({ months: -11 }),
+      creditType: "PROGRAM" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -11 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -10 }),
+      creditType: "PROGRAM" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -10 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -9 }),
+      creditType: "PROGRAM" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -9 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -8 }),
+      creditType: "PROGRAM" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -8 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -7 }),
+      creditType: "PROGRAM" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -7 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -6 }),
+      creditType: "PROGRAM" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -6 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -5 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -4 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -3 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -3 }),
+      creditType: "REMOVAL" as const,
+      creditsEarned: -10,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -2 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+    {
+      creditDate: relativeFixtureDate({ months: -1 }),
+      creditType: "BEHAVIOR" as const,
+      creditsEarned: 6,
+    },
+  ],
+};
+
 export const usTnResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
@@ -37,7 +138,7 @@ export const usTnResidents: ResidentFixture[] = [
     custodyLevel: "CLOSE",
     admissionDate: relativeFixtureDate({ years: -2, days: -200 }),
     releaseDate: relativeFixtureDate({ years: 3, days: 300 }),
-    metadata: {},
+    metadata,
   },
   {
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
@@ -56,7 +157,7 @@ export const usTnResidents: ResidentFixture[] = [
     custodyLevel: "MEDIUM",
     admissionDate: relativeFixtureDate({ years: -4, days: -400 }),
     releaseDate: relativeFixtureDate({ years: 1, days: 100 }),
-    metadata: {},
+    metadata,
   },
   {
     allEligibleOpportunities: [
@@ -78,7 +179,7 @@ export const usTnResidents: ResidentFixture[] = [
     custodyLevel: "MEDIUM",
     admissionDate: relativeFixtureDate({ years: -3, days: -100 }),
     releaseDate: relativeFixtureDate({ years: 1, days: 100 }),
-    metadata: {},
+    metadata,
   },
   {
     allEligibleOpportunities: [
@@ -100,6 +201,6 @@ export const usTnResidents: ResidentFixture[] = [
     custodyLevel: "CLOSE",
     admissionDate: relativeFixtureDate({ years: -2, days: -200 }),
     releaseDate: relativeFixtureDate({ years: 1, days: 200 }),
-    metadata: {},
+    metadata,
   },
 ];
