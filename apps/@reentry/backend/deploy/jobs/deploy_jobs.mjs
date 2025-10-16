@@ -24,7 +24,7 @@ const JOBS = {
   "force-db": {
     name: "force-db", // same as the entrypoint file eg "entrypoints/entrypoint.force-db.sh"
     description: "Empty and recreate the database",
-    environments: ["demo"], // environments where this job is applicable
+    environments: ["demo", "dev"], // environments where this job is applicable
   },
   seed: {
     name: "seed",
