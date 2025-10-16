@@ -1027,6 +1027,15 @@ let slackMessage = null;
 
 // Collect any additional channels we want to notify (currently only Reentry).
 const additionalSlackChannels = [];
+const reentryServiceNames = [
+  reentryBackendV0DisplayName,
+  reentryBackendV1DisplayName,
+  reentryFrontendDisplayName,
+];
+// Determine if any Reentry services were deployed (v0 backend, v1 backend, or frontend)
+const reentryDeployed = successfullyDeployed.some((name) =>
+  reentryServiceNames.includes(name),
+);
 
 if (deployEnv === "staging" && successfullyDeployed.length > 0) {
   slackChannel = polarisEngChannelId;
@@ -1062,20 +1071,20 @@ if (deployEnv === "staging" && successfullyDeployed.length > 0) {
 
   slackChannel = polarisChannelId;
   slackMessage = message;
+} else if (
+  successfullyDeployed.length > 0 &&
+  ((deployEnv === "demo" && reentryDeployed) || deployEnv === "reentry-dev")
+) {
+  slackChannel = reentryChannelId;
+
+  let revisionText = "`" + currentRevision + "`";
+  if (!deployingLatestMain) revisionText += " (not the tip of main)";
+
+  slackMessage = `${deployer} deployed ${revisionText} to ${deployEnv}!`;
 }
 
 if (slackChannel !== null && slackMessage !== null) {
-  // Determine if any Reentry services were deployed (v0 backend, v1 backend, or frontend)
-  const reentryServiceNames = [
-    reentryBackendV0DisplayName,
-    reentryBackendV1DisplayName,
-    reentryFrontendDisplayName,
-  ];
-  const reentryDeployed = successfullyDeployed.some((name) =>
-    reentryServiceNames.includes(name),
-  );
-
-  if (reentryDeployed) {
+  if (reentryDeployed && slackChannel !== reentryChannelId) {
     additionalSlackChannels.push(reentryChannelId);
   }
 
