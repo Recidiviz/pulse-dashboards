@@ -260,3 +260,36 @@ module "handle-meetings-gcs-upload" {
     ETL_BUCKET_ID     = module.gcs_bucket[0].names[local.etl_bucket_name]
   }
 }
+
+resource "google_cloud_tasks_queue" "audio-stitching-task-queue" {
+  name     = "audio-stitching-task-queue"
+  project  = var.project_id
+  location = var.location
+
+  retry_config {
+    max_attempts = 1
+  }
+
+  stackdriver_logging_config {
+    sampling_ratio = 1.0
+  }
+}
+
+resource "google_cloud_tasks_queue" "transcription-task-queue" {
+  name     = "transcription-task-queue"
+  project  = var.project_id
+  location = var.location
+
+  rate_limits {
+    // This is the max number of concurrent requests that Deepgram allows
+    max_concurrent_dispatches = 100
+  }
+
+  retry_config {
+    max_attempts = 1
+  }
+
+  stackdriver_logging_config {
+    sampling_ratio = 1.0
+  }
+}
