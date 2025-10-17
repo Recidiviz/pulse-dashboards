@@ -227,9 +227,9 @@ const Planner = ({
   };
 
   return (
-    <div className="w-[75%] grow shrink basis-0 self-stretch px-14 py-8 bg-white flex-col justify-start items-center gap-2 inline-flex overflow-y-auto actionPlanSide">
-      <div className="mx-auto max-w-[800px] h-full flex-col justify-start items-center gap-8 flex">
-        <div className="w-full grow shrink basis-0 flex-col justify-start items-center gap-8 flex">
+    <div className="w-full md:w-[75%] grow shrink basis-0 self-stretch px-6 md:px-14 py-8 bg-white flex-col justify-start items-center gap-2 inline-flex overflow-y-auto actionPlanSide">
+      <div className="mx-auto w-full md:max-w-[800px] h-full flex-col justify-start items-center gap-8 flex">
+        <div className="w-full grow shrink basis-0 flex-col justify-start md:items-center gap-8 flex">
           <div className="w-full justify-end items-center gap-2 inline-flex print:hidden">
             {update ? (
               <>
@@ -239,7 +239,7 @@ const Planner = ({
             ) : (
               <>
                 <PrimaryButton
-                  className={"!w-[180px] "}
+                  className={"!w-[180px] !text-[10px] md:!text-[13px] "}
                   buttonText="View Intake Summary"
                   onClick={() =>
                     router.push(`/intake-summary/${clientPseudoId}`)

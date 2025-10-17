@@ -46,7 +46,7 @@ const PreIntakeNoteOne: React.FC<PreIntakeNoteOneProps> = ({ onContinue }) => {
   return (
     <div className="flex flex-1 items-center justify-center px-6 py-[2vh]">
       <div className="w-full max-w-3xl md:max-w-[714px]">
-        <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg w-[714px] h-[684px] px-[48px] pt-[56px] pb-[40px] flex flex-col justify-between">
+        <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg w-full md:max-w-[714px] h-[684px] px-6 md:px-[48px] pt-[56px] pb-[40px] flex flex-col justify-between">
           <div>
             <h1 className="font-['Libre_Baskerville'] font-normal text-[32px] leading-[40px] tracking-[-0.04em] text-black text-center">
               Your Community Intake
@@ -55,13 +55,9 @@ const PreIntakeNoteOne: React.FC<PreIntakeNoteOneProps> = ({ onContinue }) => {
 
           <div className="flex-1 flex items-center justify-center">
             <div className="space-y-6 text-black text-center font-['Public_Sans'] text-[18px] leading-[1.2] tracking-[-0.02em] max-w-[520px] mx-auto">
-              <p>
-                {copyFirstParagraph}
-              </p>
+              <p>{copyFirstParagraph}</p>
 
-              <p>
-                {copySecondParagraph}
-              </p>
+              <p>{copySecondParagraph}</p>
             </div>
           </div>
 
@@ -107,7 +103,7 @@ const PreIntakeNoteTwo: React.FC<PreIntakeNoteTwoProps> = ({
 }) => {
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-[3vh]">
-      <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-sm w-[714px] px-[48px] pt-[36px] pb-[28px] flex flex-col justify-between">
+      <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-sm w-full md:max-w-[714px] px-6 md:px-[48px] pt-[36px] pb-[28px] flex flex-col justify-between">
         <h1 className="text-center font-serif text-4xl font-normal text-black mb-10 tracking-tight">
           Before You Start
         </h1>
@@ -185,11 +181,11 @@ const PreIntakeNoteTwo: React.FC<PreIntakeNoteTwoProps> = ({
           </div>
 
           {/* Button Container */}
-          <div className="flex justify-center gap-4 mt-10">
+          <div className="flex justify-center gap-4 mt-10 flex-col md:flex-row">
             <button
               type="button"
               onClick={onGoBack}
-              className="w-[269px] h-[48px] px-8 py-3 border border-[#35536233] rounded-md
+              className="w-full md:max-w-[269px] h-[48px] px-8 py-3 border border-[#35536233] rounded-md
 							text-[14px] leading-[24px] tracking-[-0.01em] text-[#355362D9]
 							font-medium font-['Public_Sans']
 							hover:bg-gray-50 transition-colors duration-200"
@@ -200,7 +196,7 @@ const PreIntakeNoteTwo: React.FC<PreIntakeNoteTwoProps> = ({
             <button
               type="button"
               onClick={onStartIntake}
-              className="w-[269px] h-[48px] px-8 py-3 rounded-md
+              className="w-full md:max-w-[269px] h-[48px] px-8 py-3 rounded-md
 							bg-[#00665F] text-white
 							font-medium font-['Public_Sans']
 							text-[14px] leading-[24px] tracking-[-0.01em]
@@ -232,7 +228,7 @@ const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
   return (
     <div className="flex flex-1 items-center justify-center px-6 py-[2vh]">
       <div className="w-full max-w-3xl md:max-w-[714px]">
-        <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg w-[714px] px-[48px] pt-[10px] pb-[10px] flex flex-col justify-between">
+        <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg w-full md:max-w-[714px] px-6 md:px-[48px] pt-[10px] pb-[10px] flex flex-col justify-between">
           <div>
             <h1 className="font-['Libre_Baskerville'] font-normal text-[32px] leading-[40px] tracking-[-0.04em] text-black text-center mb-8">
               Your Intake
@@ -241,9 +237,7 @@ const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
 
           <div className="flex-1 flex flex-col items-center justify-center space-y-8">
             <div className="text-black text-center font-['Public_Sans'] text-[18px] leading-[1.2] tracking-[-0.02em] max-w-[520px] mx-auto">
-              <p>
-                {copyFirstParagraph}
-              </p>
+              <p>{copyFirstParagraph}</p>
             </div>
 
             {/* Video Placeholder */}
@@ -291,11 +285,11 @@ const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-center gap-4 mt-10">
+          <div className="flex justify-center gap-4 mt-10 flex-col md:flex-row">
             <button
               type="button"
               onClick={handleGoBack}
-              className="w-[269px] h-[48px] px-8 py-3 border border-[#35536233] rounded-md
+              className="w-full md:max-w-[269px] h-[48px] px-8 py-3 border border-[#35536233] rounded-md
 							text-[14px] leading-[24px] tracking-[-0.01em] text-[#355362D9]
 							font-medium font-['Public_Sans']
 							hover:bg-gray-50 transition-colors duration-200"
@@ -308,7 +302,7 @@ const PreIntakeVideo: React.FC<PreIntakeVideoProps> = ({ onStartIntake }) => {
                 type="button"
                 onClick={onStartIntake}
                 disabled={!isChecked || !hasWatchedFullVideo}
-                className={`w-[269px] h-[48px] px-8 py-3 rounded-md
+                className={`w-full md:max-w-[269px] h-[48px] px-8 py-3 rounded-md
 							font-medium font-['Public_Sans']
 							text-[14px] leading-[24px] tracking-[-0.01em]
 							border border-[#35536233] transition-all duration-200

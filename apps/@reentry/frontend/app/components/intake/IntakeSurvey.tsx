@@ -82,7 +82,7 @@ const IntakeSurvey = ({
   return (
     <div className="flex flex-1 items-center justify-center px-6 py-[2vh] font-public bg-slate-50">
       <div className="w-full max-w-3xl ">
-        <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg px-12 pt-14 pb-10 flex flex-col justify-between">
+        <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg px-2 md:px-12 pt-14 pb-10 flex flex-col justify-between">
           <form onSubmit={handleSubmit} className="px-8 md:px-12">
             <h1
               className="text-center text-black text-3xl font-normal mb-6"
@@ -253,7 +253,7 @@ const IntakeSurvey = ({
             </div>
 
             {/* Submit Button */}
-            <div className="flex justify-center px-48">
+            <div className="flex justify-center  md:px-48">
               <button
                 type="submit"
                 disabled={isSubmitting}

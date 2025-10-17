@@ -129,10 +129,10 @@ const SummaryBody: React.FC<SummaryBodyProps> = ({
             </Grid>
             {clientRecord.state_code !== "US_AZ" && (
               <Grid item xs={12} md={7} className="border-r border-gray-200">
-                <div className="bg-white rounded-lg shadow-sm p-10">
+                <div className="bg-white rounded-lg shadow-sm p-6 md:p-10">
                   {isIntakeEnabled ? (
                     <>
-                      <div className="flex justify-between pl-5">
+                      <div className="flex justify-between md:pl-5 gap-2 md:gap-0">
                         <div className="flex items-center">
                           <span className="text-xs text-gray-700">Status:</span>
                           <span

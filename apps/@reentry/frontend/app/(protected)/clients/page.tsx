@@ -398,7 +398,7 @@ const ClientsPage = () => {
       name: "NAME",
       cell: (row: ClientResponse) => (
         <div className="flex items-center gap-3 pointer-events-none">
-          <div className="w-10 h-10 bg-white rounded-full text-center font-bold text-[14px] flex justify-center items-center text-white bg-[url('/images/profile.png')]">
+          <div className="w-10 h-10 bg-white rounded-full text-center font-bold text-[14px] flex justify-center items-center text-white bg-[url('/images/profile.png')] hidden md:flex">
             {formatInitials(row)}
           </div>
           <span className="text-[#002321] text-base font-medium">
@@ -481,6 +481,7 @@ const ClientsPage = () => {
       );
     }
     return (
+        <div className="w-full overflow-x-auto">
       <DataTable
         columns={columns}
         data={data?.items || []}
@@ -520,13 +521,14 @@ const ClientsPage = () => {
         }}
         pointerOnHover
       />
+        </div>
     );
   };
 
   return (
     <>
       <PageView />
-      <div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] flex-grow">
+      <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] flex-grow">
         <div className="w-full flex-col justify-start items-start gap-8 flex sm:w-[100%] xl:w-[80%] 2xl:w-[60%]">
           <div className="self-stretch flex-col justify-start items-start gap-2 flex">
             <div className="self-stretch text-[#003331] text-[34px] font-normal font-['Libre Baskerville'] leading-[40.80px]  ">

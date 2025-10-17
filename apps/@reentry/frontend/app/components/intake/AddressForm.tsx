@@ -74,7 +74,7 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
         },
       });
       if (response.intake_completed) {
-        setDisplaySurvey(true)
+        setDisplaySurvey(true);
       }
     } catch {
       onError("Failed to submit address. Please try again.");
@@ -86,7 +86,7 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
   return (
     <div className="flex flex-1 items-center justify-center px-6 py-[2vh] font-public">
       <div className="w-full max-w-3xl ">
-        <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg px-12 pt-14 pb-10 flex flex-col justify-between">
+        <div className="bg-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] rounded-lg px-6 md:px-12 pt-14 pb-10 flex flex-col justify-between">
           <div className="space-y-6 text-center leading-normal tracking-[-0.02em]">
             <h1 className="font-['Libre_Baskerville'] font-normal leading-snug text-4xl tracking-[-0.04em] text-black text-center">
               Your Home Address After Release

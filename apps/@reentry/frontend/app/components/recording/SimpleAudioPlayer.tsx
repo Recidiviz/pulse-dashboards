@@ -83,7 +83,7 @@ export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
   const isRecordingComplete = statusData?.status === "completed";
 
   return (
-    <div className="simple-audio-player border rounded-lg p-4">
+    <div className="simple-audio-player border rounded-lg md:p-4">
       {signedUrl ? (
         <div className="space-y-4">
           <audio

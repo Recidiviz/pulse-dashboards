@@ -93,8 +93,8 @@ const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
     switch (recordingStatus) {
       case "created":
         return (
-          <div className={"flex items-center gap-3"}>
-            <div className="">
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col">
               <FormControl
                 fullWidth
                 variant="outlined"
@@ -132,7 +132,7 @@ const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
 
       case "recording":
         return (
-          <div className="flex items-center gap-3">
+          <>
             <PrimaryButton
               buttonText="Pause Recording"
               onClick={actions.pauseRecording}
@@ -144,13 +144,14 @@ const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
                 setEndAssessmentOpen(true);
               }}
             />
-          </div>
+          </>
         );
 
       case "paused":
         return (
-          <div className="flex items-center gap-3">
+          <>
             <PrimaryButton
+              className={"w-full"}
               buttonText="Resume Recording"
               onClick={() => {
                 openLiveAssessmentModal(actions.resumeRecording);
@@ -158,12 +159,12 @@ const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
             />
             <PrimaryButton
               buttonText="End Assessment"
-              className="h-8 px-4 py-2 bg-red-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
+              className="w-full h-8 px-4 py-2 bg-red-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
               onClick={() => {
                 setEndAssessmentOpen(true);
               }}
             />
-          </div>
+          </>
         );
 
       case "processing":
@@ -189,7 +190,7 @@ const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
     }
   };
 
-  return <div className="flex items-center gap-3">{renderButtons()}</div>;
+  return <div className="flex items-center gap-3 ">{renderButtons()}</div>;
 };
 
 const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
@@ -366,13 +367,13 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   };
 
   return (
-    <div className="w-full px-6 py-3 bg-white rounded-[99px] outline outline-1 outline-offset-[-1px] outline-[#2b5469]/10 flex items-center justify-between">
+    <div className="w-full flex-col md:flex-row px-6 py-3 bg-white rounded-[20px] md:rounded-[99px] outline outline-1 outline-offset-[-1px] outline-[#2b5469]/10 flex items-center justify-between">
       <div className="opacity-0">
         <div className="h-8 px-4 py-2 bg-[#006c67] rounded-[32px] flex items-center justify-center text-white text-[13px] font-medium">
           {uploadDuration ? "Start Recording" : "Resume Recording"}
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center md:mb-0 mb-6">
         <RecordingStatusText
           recordingStatus={recordingStatus}
           isRecordingSupported={isRecordingSupported}
@@ -384,7 +385,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
           formatDuration={formatDuration}
         />
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center  ">
         <RecordingControlsButtons
           recordingStatus={recordingStatus}
           selectedMicrophone={selectedMicrophone}

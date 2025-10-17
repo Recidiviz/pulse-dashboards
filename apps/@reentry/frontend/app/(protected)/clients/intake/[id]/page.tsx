@@ -80,9 +80,9 @@ const IntakeManagementPage = () => {
   }
 
   return (
-    <div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-auto">
+    <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-auto">
       {/* Profile Detail */}
-      <ProfileDetail clientRecord={clientData} />
+      <ProfileDetail clientRecord={clientData} isExpanded={undefined} setIsExpanded={()=> console.log("expanded")}/>
 
       {/* Summary Section */}
       <div className="flex-grow w-full flex justify-center items-center">

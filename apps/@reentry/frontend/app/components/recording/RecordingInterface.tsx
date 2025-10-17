@@ -201,7 +201,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     sessionData.status === "processing";
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col">
       {shouldShowControls && (
         <>
           <RecordingControls

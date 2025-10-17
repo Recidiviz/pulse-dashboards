@@ -40,7 +40,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
 			overlayClassName="fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
 			ariaHideApp={false}
 		>
-			<div className="w-[410px] bg-white rounded-xl shadow-[0px_8px_56px_0px_rgba(43,84,105,0.12)] shadow-[0px_4px_8px_0px_rgba(43,84,105,0.06)] shadow-[0px_0px_1px_0px_rgba(43,84,105,0.10)] inline-flex flex-col justify-start items-end overflow-hidden">
+			<div className="w-full max-w-[410px] bg-white rounded-xl shadow-[0px_8px_56px_0px_rgba(43,84,105,0.12)] shadow-[0px_4px_8px_0px_rgba(43,84,105,0.06)] shadow-[0px_0px_1px_0px_rgba(43,84,105,0.10)] inline-flex flex-col justify-start items-end overflow-hidden">
 				{/* Header */}
 				<div className="self-stretch px-4 py-3 border-b border-[#2b5469]/20 flex justify-between items-center">
 					<div className="text-[#002321] text-base font-medium font-['Public_Sans'] leading-tight">

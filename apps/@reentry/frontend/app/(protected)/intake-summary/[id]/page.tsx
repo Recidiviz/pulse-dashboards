@@ -187,13 +187,13 @@ const IntakeSummaryPage = () => {
   };
 
   return (
-    <div className={"bg-white w-full screen:h-[calc(100vh-65px)]"}>
-      <div className="w-[25%] h-auto self-stretch bg-white  flex-col justify-start items-center gap-2 inline-flex print:hidden">
+    <div className={"bg-white w-full screen:h-[calc(100vh-65px)] flex flex-col md:flex-row"}>
+      <div className="w-full md:w-[25%] h-auto self-stretch bg-white  flex-col justify-start items-center gap-2 inline-flex print:hidden">
         <div className="self-stretch h-full flex-col justify-start items-start flex">
-          <ProfileDetail clientRecord={dataPlan?.client_record} />
+          <ProfileDetail clientRecord={dataPlan?.client_record} isExpanded={undefined} setIsExpanded={()=> console.log("expanded")} />
         </div>
       </div>
-      <div className="w-[75%] h-full grow shrink basis-0 self-stretch px-14 py-8 bg-white flex-col justify-start items-center gap-2 inline-flex overflow-y-auto  border-l border-[#2b5469]/20">
+      <div className="w-full md:w-[75%] h-full grow shrink basis-0 self-stretch px-6 md:px-14 py-8 bg-white flex-col justify-start items-center gap-2 inline-flex overflow-y-auto  border-l border-[#2b5469]/20">
         <div className="mx-auto w-full max-w-[800px] h-full flex-col justify-start items-center gap-8 flex">
           <div className="w-full grow shrink basis-0 flex-col justify-start items-center gap-8 flex">
             <div className="w-full justify-end items-center gap-2 inline-flex print:hidden">

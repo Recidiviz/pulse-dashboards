@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useEffect, useState } from "react";
+
 import HomeAddressSection from "~@reentry/frontend/components/action-plan/HomeAddressSection";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
 import RegeneratePlan from "~@reentry/frontend/components/action-plan/RegeneratePlan";
@@ -56,33 +58,58 @@ const SidePanel = ({
   dataDetailPlan,
   isPolling = false,
 }: SidePanelProps) => {
+  const [isExpanded, setIsExpanded] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth >= 768;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsExpanded(window.innerWidth >= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <div className="w-[25%] overflow-auto h-full self-stretch bg-white border-r border-[#2b5469]/20 flex-col justify-start items-center gap-2 inline-flex print:hidden">
+    <div className="w-full md:w-[25%] overflow-auto md:h-full self-stretch bg-white border-r border-[#2b5469]/20 flex-col justify-start items-center gap-2 inline-flex print:hidden">
       <div className="self-stretch h-full flex-col justify-start items-start flex">
-        <ProfileDetail clientRecord={clientRecord} />
-        {/*<PlanStatus />*/}
-        <Resources
-          selectedResource={selectedResource}
-          candidateResource={candidateResource}
-          relatedResourcesLoading={relatedResourcesLoading}
-          planResources={planResources}
-          handleSelectResource={handleSelectResource}
-          relatedResources={relatedResources}
-          handleOpenResourceSection={handleOpenResourceSection}
-          openResourceSection={openResourceSection}
+        <ProfileDetail
+          clientRecord={clientRecord}
+          isExpanded={isExpanded}
+          setIsExpanded={setIsExpanded}
         />
-        <RegeneratePlan
-          planId={planId}
-          startPolling={startPolling}
-          setRegenerationMessage={setRegenerationMessage}
-          dataDetailPlan={dataDetailPlan}
-          isPolling={isPolling}
-        />
-        <HomeAddressSection
-          planId={planId}
-          startPolling={startPolling}
-          isPolling={isPolling}
-        />
+
+        {isExpanded && (
+          <>
+            {/*<PlanStatus />*/}
+            <Resources
+              selectedResource={selectedResource}
+              candidateResource={candidateResource}
+              relatedResourcesLoading={relatedResourcesLoading}
+              planResources={planResources}
+              handleSelectResource={handleSelectResource}
+              relatedResources={relatedResources}
+              handleOpenResourceSection={handleOpenResourceSection}
+              openResourceSection={openResourceSection}
+            />
+            <RegeneratePlan
+              planId={planId}
+              startPolling={startPolling}
+              setRegenerationMessage={setRegenerationMessage}
+              dataDetailPlan={dataDetailPlan}
+              isPolling={isPolling}
+            />
+            <HomeAddressSection
+              planId={planId}
+              startPolling={startPolling}
+              isPolling={isPolling}
+            />
+          </>
+        )}
       </div>
     </div>
   );

@@ -273,8 +273,8 @@ const ActionPlanPage = () => {
       </div>
     );
   return (
-    <div className={"bg-white w-full screen:h-[calc(100vh-65px)]"}>
-      <div className="w-full h-full justify-start items-start inline-flex">
+    <div className={"bg-white w-full screen:h-[calc(100vh-65px)] flex flex-col md:flex-row"}>
+      <div className="w-full h-full justify-start items-start inline-flex flex flex-col md:flex-row">
         <SidePanel
           clientRecord={dataDetailPlan.client_record}
           planId={dataDetailPlan.id}
