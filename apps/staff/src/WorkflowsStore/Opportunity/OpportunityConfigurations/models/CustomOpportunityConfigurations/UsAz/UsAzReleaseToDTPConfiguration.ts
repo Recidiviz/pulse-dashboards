@@ -15,16 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityType } from "~datatypes";
-
 import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
-  get linkedOverdueOpportunityType(): OpportunityType {
-    return "usAzOverdueForACISDTP";
-  }
-
   eligibilityDateTextForTab(tab?: OpportunityTab): string | undefined {
     if (tab === "Fast Trackers" || tab === "Eligible Now") {
       return "DTP Date";

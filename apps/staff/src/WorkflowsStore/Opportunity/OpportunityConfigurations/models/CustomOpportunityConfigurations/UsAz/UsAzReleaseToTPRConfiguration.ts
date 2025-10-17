@@ -15,16 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityType } from "~datatypes";
-
 import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsAzReleaseToTPRConfiguration extends ApiOpportunityConfiguration {
-  get linkedOverdueOpportunityType(): OpportunityType {
-    return "usAzOverdueForACISTPR";
-  }
-
   eligibilityDateTextForTab(tab?: OpportunityTab): string | undefined {
     if (tab === "Fast Trackers" || tab === "Eligible Now") {
       return "TPR Date";
