@@ -40,11 +40,11 @@
     },
     "offline:android": {
       "executor": "nx:run-commands",
+      "dependsOn": ["load-env-file-gcp"],
       "options": {
         "commands": [
-          "nx load-env-file-gcp @meetings/app",
           "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
-          "nx run-android @meetings/app"
+          "nx run-android @meetings/app --no-build-cache"
         ],
         "parallel": false
       },
@@ -52,11 +52,35 @@
     },
     "dev:android": {
       "executor": "nx:run-commands",
+      "dependsOn": ["load-env-file-eas"],
       "options": {
         "commands": [
-          "nx load-env-file-eas @meetings/app -c dev",
           "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
-          "nx run-android @meetings/app"
+          "nx run-android @meetings/app --no-build-cache"
+        ],
+        "parallel": false
+      },
+      "cwd": "{workspaceRoot}"
+    },
+    "offline:ios": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["load-env-file-gcp"],
+      "options": {
+        "commands": [
+          "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
+          "nx run-ios @meetings/app --no-build-cache"
+        ],
+        "parallel": false
+      },
+      "cwd": "{workspaceRoot}"
+    },
+    "dev:ios": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["load-env-file-eas"],
+      "options": {
+        "commands": [
+          "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
+          "nx run-ios @meetings/app --no-build-cache"
         ],
         "parallel": false
       },
