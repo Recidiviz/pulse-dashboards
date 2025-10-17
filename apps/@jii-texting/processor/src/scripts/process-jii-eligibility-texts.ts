@@ -98,7 +98,7 @@ export async function processJiiEligiblityTexts({
     console.log(`${key}: ${results[key as ScriptAction]}`);
   }
 
-  await prisma.$disconnect;
+  await prisma.$disconnect();
 
   return results;
 }
