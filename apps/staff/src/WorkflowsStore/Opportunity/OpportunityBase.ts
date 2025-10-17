@@ -258,11 +258,17 @@ export class OpportunityBase<
   get snoozedBy(): SharedSnoozeUpdate["snoozedBy"] | undefined {
     if (this.manualSnooze) return this.manualSnooze.snoozedBy;
     if (this.autoSnooze) return this.autoSnooze.snoozedBy;
+    if (this.isIndefinitelySnoozed) {
+      return this.denial?.updated?.by;
+    }
   }
 
   get snoozedOnDate(): Date | undefined {
     if (this.manualSnooze) return parseISO(this.manualSnooze.snoozedOn);
     if (this.autoSnooze) return parseISO(this.autoSnooze.snoozedOn);
+    if (this.isIndefinitelySnoozed) {
+      return this.denial?.updated?.date.toDate();
+    }
   }
 
   get manualSnoozeUntilDate(): Date | undefined {
@@ -1126,12 +1132,15 @@ export class OpportunityBase<
       isInGrantReview,
       grantReviewStatusMessage,
       snoozeReviewStatusMessage,
+      isIndefinitelySnoozed,
     } = this;
 
     if (!isHydrated(this)) return null;
 
     if (denial?.reasons.length) {
-      const statusText = isAlert ? "Override" : "Currently ineligible";
+      const statusText = isAlert
+        ? "Override"
+        : `${isIndefinitelySnoozed ? "Indefinitely" : "Currently"} ineligible`;
       const withReasons = includeReasons
         ? ` (${denial.reasons.join(", ")})`
         : "";

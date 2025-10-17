@@ -53,6 +53,7 @@ export function buildActedOnText({
   submittedUpdate,
   subcategoryCopy,
   actedOnTextAddition,
+  isIndefinitelySnoozed,
 }: {
   denial?: Denial;
   isSubmitted: boolean;
@@ -63,6 +64,7 @@ export function buildActedOnText({
   submittedUpdate?: Submission;
   subcategoryCopy?: string;
   actedOnTextAddition?: ActedOnTextAddition;
+  isIndefinitelySnoozed: boolean;
 }): string | undefined {
   if (!isSubmitted && !denial) return;
 
@@ -83,7 +85,14 @@ export function buildActedOnText({
     }
   }
 
-  return `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}${subcategorySubstr} by ${actionBy} on ${format(
+  let actionText: string;
+  if (isIndefinitelySnoozed) {
+    actionText = "Marked indefinitely ineligible";
+  } else {
+    actionText = `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}${subcategorySubstr}`;
+  }
+
+  return `${actionText} by ${actionBy} on ${format(
     actionDate,
     "LLLL d, yyyy",
   )}${textAddition ?? "."}`;
@@ -169,7 +178,7 @@ export function buildActedOnTextAndResurfaceText(
   const resurfaceText = buildResurfaceText(
     opportunity,
     snoozeUntil,
-    false,
+    opportunity.isIndefinitelySnoozed,
     labels,
   );
   return [actedOnText, resurfaceText];
