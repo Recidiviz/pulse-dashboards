@@ -195,18 +195,19 @@ const meetingAssistantDisplayName = "Meeting Assistant Backend Services";
 const demoFixturesDisplayName = "Demo fixtures";
 const opportunitiesTestDataDisplayName = "Opportunities test data";
 
+const inStagingOrProd = ["staging", "production"].includes(deployEnv);
 const deployServicesChoices = [
   { name: staffBackendDisplayName, checked: true },
   { name: staffFrontendDisplayName, checked: true },
-  { name: sentencingAssistantDisplayName, checked: true },
-  { name: jiiTextingDisplayName, checked: true },
+  { name: sentencingAssistantDisplayName, checked: inStagingOrProd },
+  { name: jiiTextingDisplayName, checked: inStagingOrProd },
   { name: caseNotesDisplayName, checked: true },
   { name: opportunitiesFrontendDisplayName, checked: true },
-  { name: opportunitiesBackendDisplayName, checked: true },
+  { name: opportunitiesBackendDisplayName, checked: inStagingOrProd },
   { name: reentryBackendV0DisplayName, checked: false },
   { name: reentryBackendV1DisplayName, checked: false },
   { name: reentryFrontendDisplayName, checked: false },
-  { name: meetingAssistantDisplayName, checked: false },
+  { name: meetingAssistantDisplayName, checked: inStagingOrProd },
 ];
 
 if (deployEnv === "demo") {
@@ -224,7 +225,7 @@ const deployServicesPrompt = await inquirer.prompt({
   type: "checkbox",
   name: "deployServices",
   message:
-    "Deploying all services by default. Press 'Enter' to proceed or deselect the services you wish to exclude.",
+    "Deploying selected services. Press 'Enter' to proceed or modify your selections.",
   choices: deployServicesChoices,
 });
 
