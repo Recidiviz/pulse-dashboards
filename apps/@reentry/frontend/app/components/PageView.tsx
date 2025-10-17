@@ -15,30 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { User } from "@auth0/auth0-spa-js";
-import type { AuthStore } from "@recidiviz/auth";
+"use client";
 
-export interface AuthState {
-  isAuthorized: boolean;
-  isLoading: boolean;
-  user?: User;
-  emailVerified?: boolean;
-  error?: Error | null;
-  accessToken?: string | null;
-}
+import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 
-export interface AuthContextType {
-  authStore: AuthStore | null;
-  state: AuthState;
-  login: (options?: unknown) => Promise<void>;
-  logout: () => Promise<void>;
-  getAccessToken: () => string | null | undefined;
-  refreshToken: () => Promise<void>;
-  userAppMetadata?: UserAppMetadata;
-}
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 
-export type UserAppMetadata = {
-  stateCode: string;
-  pseudonymizedId?: string;
-  userHash: string;
+export const PageView = () => {
+  const location = usePathname();
+  const { pageView } = useAnalytics();
+  const called = useRef(false);
+
+  useEffect(() => {
+    if (called.current) {
+      return;
+    }
+    pageView(location);
+    called.current = true;
+  }, [pageView, location]);
+
+  return null;
 };

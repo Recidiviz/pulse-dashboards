@@ -15,30 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { User } from "@auth0/auth0-spa-js";
-import type { AuthStore } from "@recidiviz/auth";
+import { AnalyticsBrowser } from "@segment/analytics-next";
 
-export interface AuthState {
-  isAuthorized: boolean;
-  isLoading: boolean;
-  user?: User;
-  emailVerified?: boolean;
-  error?: Error | null;
-  accessToken?: string | null;
+const segmentWriteKey = process.env['NEXT_PUBLIC_SEGMENT_WRITE_KEY'];
+
+if (!segmentWriteKey) {
+  // There should be a segment write key for each environment, where demo and development share the same write key
+  throw new Error('NEXT_PUBLIC_SEGMENT_WRITE_KEY is not defined in the environment.');
 }
 
-export interface AuthContextType {
-  authStore: AuthStore | null;
-  state: AuthState;
-  login: (options?: unknown) => Promise<void>;
-  logout: () => Promise<void>;
-  getAccessToken: () => string | null | undefined;
-  refreshToken: () => Promise<void>;
-  userAppMetadata?: UserAppMetadata;
-}
-
-export type UserAppMetadata = {
-  stateCode: string;
-  pseudonymizedId?: string;
-  userHash: string;
-};
+export const analytics = AnalyticsBrowser.load({
+  writeKey: segmentWriteKey,
+});

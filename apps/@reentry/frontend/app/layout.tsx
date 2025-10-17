@@ -26,6 +26,7 @@ import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "~@reentry/frontend/lib/auth";
 import { TrpcReactQueryProvider } from "~@reentry/frontend/trpc/TrpcReactQueryProvider";
 
+import { AnalyticsProvider } from "./contexts/AnalyticsProvider";
 import { Providers } from "./providers";
 
 const geistSans = localFont({
@@ -68,12 +69,16 @@ export default function RootLayout({
         <Providers>
           <AppRouterCacheProvider>
             <AuthProvider>
-              <TrpcReactQueryProvider>
-                {children}
-                {process.env["NEXT_PUBLIC_GA_ID"] && (
-                  <GoogleAnalytics gaId={process.env["NEXT_PUBLIC_GA_ID"]} />
-                )}
-              </TrpcReactQueryProvider>
+              <AnalyticsProvider
+                writeKey={process.env["NEXT_PUBLIC_SEGMENT_WRITE_KEY"]}
+              >
+                <TrpcReactQueryProvider>
+                  {children}
+                  {process.env["NEXT_PUBLIC_GA_ID"] && (
+                    <GoogleAnalytics gaId={process.env["NEXT_PUBLIC_GA_ID"]} />
+                  )}
+                </TrpcReactQueryProvider>
+              </AnalyticsProvider>
             </AuthProvider>
             <ToastContainer />
           </AppRouterCacheProvider>

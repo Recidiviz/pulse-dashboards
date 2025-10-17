@@ -24,7 +24,7 @@ import {
 } from "@mui/icons-material";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef,useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DataTable, {
   SortOrder,
   TableColumn,
@@ -35,6 +35,8 @@ import { $api } from "~@reentry/frontend/api";
 import CustomPagination from "~@reentry/frontend/components/base/CustomPagination";
 import { IconInput } from "~@reentry/frontend/components/base/SortingInput";
 import ActionButton from "~@reentry/frontend/components/clients/ActionButton";
+import { PageView } from "~@reentry/frontend/components/PageView";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useClientStatusPolling } from "~@reentry/frontend/hooks/useClientStatusPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth";
@@ -117,6 +119,7 @@ const formatFrontendStatus = (status: string) => {
 const ClientsPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { track } = useAnalytics();
   const rowsPerPage = 10;
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -150,7 +153,6 @@ const ClientsPage = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [openDropdownId]);
-
 
   const uniqueIntakeStatusOptions = [
     ["New", "new"],
@@ -512,6 +514,9 @@ const ClientsPage = () => {
         )}
         onRowClicked={(row) => {
           router.push(`/clients/intake/${row.client_pseudo_id}`);
+          track("clients_page_navigate_to_client_profile_link_clicked", {
+            justiceInvolvedPersonId: row.client_pseudo_id,
+          });
         }}
         pointerOnHover
       />
@@ -519,95 +524,101 @@ const ClientsPage = () => {
   };
 
   return (
-    <div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] flex-grow">
-      <div className="w-full flex-col justify-start items-start gap-8 flex sm:w-[100%] xl:w-[80%] 2xl:w-[60%]">
-        <div className="self-stretch flex-col justify-start items-start gap-2 flex">
-          <div className="self-stretch text-[#003331] text-[34px] font-normal font-['Libre Baskerville'] leading-[40.80px]  ">
-            Clients
-          </div>
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6">
-            <div className="text-[#2b5469]/70 text-lg font-medium leading-snug">
-              All clients on your caseload are displayed below.
+    <>
+      <PageView />
+      <div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] flex-grow">
+        <div className="w-full flex-col justify-start items-start gap-8 flex sm:w-[100%] xl:w-[80%] 2xl:w-[60%]">
+          <div className="self-stretch flex-col justify-start items-start gap-2 flex">
+            <div className="self-stretch text-[#003331] text-[34px] font-normal font-['Libre Baskerville'] leading-[40.80px]  ">
+              Clients
             </div>
-            <div className="flex flex-col md:flex-row gap-4 w-full max-w-md">
-              <IconInput
-                placeholder="Search by name..."
-                startIcon={
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (searchTerm.trim()) {
-                        executeSearch();
-                      }
-                    }}
-                    className="focus:outline-none"
-                  >
-                    <Search fontSize="small" />
-                  </button>
-                }
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={handleSearchKeyDown}
-                className="h-10 text-sm border border-gray-300 rounded-md flex-1 min-w-[100px]"
-              />
-
-              <div className="relative flex-1 min-w-[100px]">
-                <FilterList
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  fontSize="small"
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6">
+              <div className="text-[#2b5469]/70 text-lg font-medium leading-snug">
+                All clients on your caseload are displayed below.
+              </div>
+              <div className="flex flex-col md:flex-row gap-4 w-full max-w-md">
+                <IconInput
+                  placeholder="Search by name..."
+                  startIcon={
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (searchTerm.trim()) {
+                          executeSearch();
+                        }
+                      }}
+                      className="focus:outline-none"
+                    >
+                      <Search fontSize="small" />
+                    </button>
+                  }
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
+                  className="h-10 text-sm border border-gray-300 rounded-md flex-1 min-w-[100px]"
                 />
 
-                <select
-                  value={statusFilter}
-                  onChange={(e) => {
-                    setStatusFilter(e.target.value);
-                    // Reset to page 1 when filter changes
+                <div className="relative flex-1 min-w-[100px]">
+                  <FilterList
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    fontSize="small"
+                  />
+
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => {
+                      setStatusFilter(e.target.value);
+                      // Reset to page 1 when filter changes
+                      const params = new URLSearchParams(searchParams);
+                      params.set("page", "1");
+                      router.push(`?${params.toString()}`);
+                      track("clients_page_client_status_filtered", {
+                        updated_status_filter: e.target.value,
+                      });
+                    }}
+                    className="h-10 text-sm pl-10 pr-8 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white appearance-none w-full"
+                  >
+                    <option value="">All</option>
+                    {uniqueIntakeStatusOptions.map(([label, value]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+
+                  <ArrowDropDown
+                    className="pointer-events-none absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    fontSize="small"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full rounded-lg flex-col justify-start items-start mb-20">
+            {activeSearchTerm && (
+              <div className="text-sm text-gray-600 px-4 pt-4">
+                Showing results for {<strong>{activeSearchTerm}</strong>}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveSearchTerm("");
+                    setSearchTerm("");
+                    // Reset to page 1 when clearing search
                     const params = new URLSearchParams(searchParams);
                     params.set("page", "1");
                     router.push(`?${params.toString()}`);
                   }}
-                  className="h-10 text-sm pl-10 pr-8 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white appearance-none w-full"
+                  className="ml-2 text-blue-500 underline text-xs"
                 >
-                  <option value="">All</option>
-                  {uniqueIntakeStatusOptions.map(([label, value]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-
-                <ArrowDropDown
-                  className="pointer-events-none absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  fontSize="small"
-                />
+                  Clear search
+                </button>
               </div>
-            </div>
+            )}
+            {renderClientsTable()}
           </div>
         </div>
-        <div className="w-full rounded-lg flex-col justify-start items-start mb-20">
-          {activeSearchTerm && (
-            <div className="text-sm text-gray-600 px-4 pt-4">
-              Showing results for {<strong>{activeSearchTerm}</strong>}
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveSearchTerm("");
-                  setSearchTerm("");
-                  // Reset to page 1 when clearing search
-                  const params = new URLSearchParams(searchParams);
-                  params.set("page", "1");
-                  router.push(`?${params.toString()}`);
-                }}
-                className="ml-2 text-blue-500 underline text-xs"
-              >
-                Clear search
-              </button>
-            </div>
-          )}
-          {renderClientsTable()}
-        </div>
       </div>
-    </div>
+    </>
   );
 };
 
