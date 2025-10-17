@@ -64,7 +64,7 @@ const AudioRecordingPage: React.FC = () => {
     },
   });
 
-  const { data: intakeData, refetch: refetchIntakeData } = $api.useQuery(
+  const { data: intakeData, refetch: refetchIntakeData, isLoading: intakeLoading } = $api.useQuery(
     "get",
     "/intake/admin/{client_pseudo_id}",
     {
@@ -80,18 +80,17 @@ const AudioRecordingPage: React.FC = () => {
 
   useEffect(() => {
     // check if the recordingsession is completed and intake needs address
-    if (sessionData?.status === "completed" && intakeData && !intakeData.address) {
+    if (!sessionLoading && !intakeLoading && ["processing", "completed"].includes(`${sessionData?.status}`) && !intakeData?.address) {
       setNeedsAddress(true);
-    } else {
+    }else {
       setNeedsAddress(false);
     }
-  }, [sessionData?.status, intakeData]);
+  }, [sessionData?.status, intakeData?.address, sessionLoading, intakeLoading]);
 
   const handleClientError = useCallback(async () => {
     console.log("clientError", clientError);
     if (clientError || sessionError) {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); // needed for getting microphone permission.
-      console.log(stream);
       try {
         stream.getTracks().forEach(track => track.stop());
       } catch (error) {

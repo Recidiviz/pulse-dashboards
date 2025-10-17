@@ -33,7 +33,7 @@ interface AddressFormData {
 interface AddressFormProps {
   onError: (error: string) => void;
   clientData: components["schemas"]["ClientRecordResponse"] | null;
-  setNeedsAddress: (needsAddress: boolean) => void;
+  setNeedsAddress: () => void;
 }
 
 const TranscriptionAddressForm = ({
@@ -80,7 +80,7 @@ const TranscriptionAddressForm = ({
       })) as components["schemas"]["CompleteIntakeTranscriptionResponse"];
       if (response?.address_updated) {
         console.log("Intake transcription completed successfully");
-        setNeedsAddress(false);
+        setNeedsAddress();
       }
     } catch {
       onError("Failed to submit address. Please try again.");
