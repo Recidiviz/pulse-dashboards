@@ -37,4 +37,9 @@ export class UsPaSpecialCircumstancesSupervisionOpportunity extends OpportunityB
       usPaSpecialCircumstancesSupervisionSchema.parse(record),
     );
   }
+
+  // TODO(#8429): Add caseNoteHeaders field to the admin panel config
+  get caseNoteHeaders() {
+    return ["Potential Barriers to Eligibility"];
+  }
 }

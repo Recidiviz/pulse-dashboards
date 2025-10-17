@@ -49,4 +49,9 @@ export class UsPaAdminSupervisionOpportunity extends OpportunityBase<
         ". Note: this action does not automatically notify your supervisor.",
     };
   }
+
+  // TODO(#8429): Add caseNoteHeaders field to the admin panel config
+  get caseNoteHeaders() {
+    return ["Potential Barriers to Eligibility"];
+  }
 }
