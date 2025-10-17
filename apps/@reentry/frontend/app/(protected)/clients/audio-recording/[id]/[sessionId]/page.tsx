@@ -128,9 +128,9 @@ const AudioRecordingPage: React.FC = () => {
           <p className="text-gray-600">
             {/* eslint-disable-next-line no-nested-ternary */}
             {clientError
-              ? "Failed to load client data"
+              ? `Failed to load client data ${clientError.detail}`
               : sessionError
-                ? "Failed to load recording session"
+                ? `Failed to load recording session data ${sessionError.detail}`
                 : "Client not found"}
           </p>
         </div>

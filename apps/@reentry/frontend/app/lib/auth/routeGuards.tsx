@@ -17,7 +17,6 @@
 
 "use client";
 
-import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
 
 import EmailVerificationState from "~@reentry/frontend/components/auth/EmailVerificationState";
@@ -51,7 +50,6 @@ export const ProtectedRoute = ({
   requireVerifiedEmail = false,
 }: ProtectedRouteProps) => {
   const { state } = useAuth();
-  const pathname = usePathname();
 
   if (state.isLoading) {
     return <LoadingState />;
@@ -59,10 +57,6 @@ export const ProtectedRoute = ({
 
   // Not authorized, redirect to login
   if (!state.isAuthorized) {
-    // Store the current path to redirect back after login
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("auth_redirect", pathname);
-    }
     return <UnauthorizedState />;
   }
 

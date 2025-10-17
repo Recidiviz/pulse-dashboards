@@ -40,13 +40,47 @@ class GlobalAuthStore {
     return this.authStore;
   }
 
-  async getCachedToken(): Promise<string | null> {
-    const now = Date.now();
-
+  private ensureAuthStore(): boolean {
     if (!this.authStore) {
       console.warn("No authStore available for token fetch");
+      this.redirectToLogin();
+      return false;
+    }
+    return true;
+  }
+
+  private shouldRedirectToLogin(error): boolean {
+    console.warn(
+      `Checking if should redirect to login for error: ${error.error}`,
+    );
+    const loginRequiredErrors = [
+      "login_required",
+      "consent_required",
+      "interaction_required",
+      "invalid_grant",
+      "unauthorized",
+    ];
+    return loginRequiredErrors.includes(error?.error);
+  }
+
+  private redirectToLogin() {
+    console.warn("Authentication required - redirecting to login");
+    this.tokenCache = null;
+    this.tokenPromise = null;
+    const currentPath = window.location.pathname + window.location.search;
+    console.error(`Redirect to ${currentPath}`);
+    if (currentPath !== "/") {
+      sessionStorage.setItem("auth_redirect", currentPath);
+    }
+    window.location.href = "/";
+  }
+
+  async getCachedToken(): Promise<string | null> {
+    if (!this.ensureAuthStore()) {
       return null;
     }
+
+    const now = Date.now();
 
     if (this.tokenCache && now < this.tokenCache.cacheExpiresAt) {
       console.debug("Using cached token:", {
@@ -74,8 +108,7 @@ class GlobalAuthStore {
   }
 
   private async fetchNewToken(): Promise<string | null> {
-    if (!this.authStore) {
-      console.warn("No authStore available for token fetch");
+    if (!this.ensureAuthStore()) {
       return null;
     }
 
@@ -89,14 +122,18 @@ class GlobalAuthStore {
       // the expires_in value is only valid when getting a new token (ignoreCache: true forces that).
       // if getting a current valid token from the local Auth0 cache, the expires_in is not valid since we don't have the time the token was created.
       const options = { ignoreCache: true, detailedResponse: true };
-      const result = await this.authStore.getTokenSilently(options);
+      const result = await this.authStore?.getTokenSilently(options);
       const detailedResponse = result as unknown as {
         access_token: string;
         expires_in: number;
       };
 
       if (!detailedResponse?.access_token || !detailedResponse?.expires_in) {
-        throw new Error("Invalid token response");
+        console.error(
+          "Invalid token response - missing access_token or expires_in",
+        );
+        this.redirectToLogin();
+        return null;
       }
 
       const token = detailedResponse.access_token;
@@ -104,6 +141,7 @@ class GlobalAuthStore {
 
       if (!token) {
         console.warn("No token received from authStore");
+        this.redirectToLogin();
         return null;
       }
 
@@ -133,20 +171,27 @@ class GlobalAuthStore {
       return token;
     } catch (error) {
       console.error("Error fetching token:", error);
+
+      if (this.shouldRedirectToLogin(error)) {
+        this.redirectToLogin();
+      }
+
       return null;
     }
   }
 
-  async getTokenFromAuth0Cache(): Promise<string | null>  {
-    if (!this.authStore) {
-      console.debug("No authStore available for token fetch");
+  async getTokenFromAuth0Cache(): Promise<string | null> {
+    if (!this.ensureAuthStore()) {
       return null;
     }
 
     try {
-      return await this.authStore.getTokenSilently();
-    }  catch (error) {
+      return (await this.authStore?.getTokenSilently()) || null;
+    } catch (error) {
       console.error("Error fetching token from auth0 cache:", error);
+      if (this.shouldRedirectToLogin(error)) {
+        this.redirectToLogin();
+      }
       return null;
     }
   }
