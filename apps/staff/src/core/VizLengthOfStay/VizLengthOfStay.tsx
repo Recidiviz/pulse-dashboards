@@ -138,16 +138,13 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
           {chartXAxisTitle}
         </div>
       )}
-      <div
-        id="chart-description"
-        className="sr-only"
-        aria-label={`A bar chart showing the population by length of stay.`}
-      />
-      <div
-        id="chart-instructions"
-        className="sr-only"
-        aria-label="Press tab to select the chart. Use arrow keys to hear more information about each point."
-      />
+      <div id="chart-description" className="sr-only">
+        A bar chart showing the population by length of stay.
+      </div>
+      <div id="chart-instructions" className="sr-only">
+        Press tab to select the chart. Use arrow keys to hear more information
+        about each point.
+      </div>
     </VizPathways>
   );
 };

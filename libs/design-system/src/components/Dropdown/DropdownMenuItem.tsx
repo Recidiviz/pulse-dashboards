@@ -43,7 +43,7 @@ interface DropdownMenuItemBaseProps {
   /**
    * @deprecated pass children instead
    */
-  label?: string
+  label?: string;
   children: React.ReactNode;
   preventCloseOnClickEvent?: boolean;
 }
@@ -59,7 +59,6 @@ interface ActionMenuItemProps extends DropdownMenuItemBaseProps {
 }
 
 export type DropdownMenuItemProps = LinkMenuItemProps | ActionMenuItemProps;
-
 
 export const DropdownMenuItem = ({
   className,
@@ -80,7 +79,9 @@ export const DropdownMenuItem = ({
   };
 
   const handleClick = (
-    event: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>,
+    event:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLButtonElement>,
   ) => {
     // If a custom onClick is provided, execute it.
     if (onClick) {
@@ -115,7 +116,6 @@ export const DropdownMenuItem = ({
       onMouseEnter={onMouseEnter}
       onClick={handleClick}
       disabled={!shown}
-      tabIndex={-1}
       role="menuitem"
     >
       {label || children}

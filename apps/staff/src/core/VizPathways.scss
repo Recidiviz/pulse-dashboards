@@ -23,7 +23,7 @@
   &__subtitle {
     padding-top: 0.5rem;
     @include mixins.sans-14;
-    color: constants.$slate-60;
+    color: constants.$slate-80;
   }
 
   &__content {
@@ -86,7 +86,7 @@
   }
 
   &:focus, &:focus-within, &:active {
-    border: 1px solid #006c67;
+    border: 2px solid #006c67;
     border-radius: 8px;
   }
 }

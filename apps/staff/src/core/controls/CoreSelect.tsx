@@ -59,7 +59,10 @@ export const CoreSelect: React.FC<{
         // Override the tabIndex in DropdownToggle since this is in a Toolbar
         tabIndex={-1}
       >
-        <div className="CoreSelect__value-container" aria-label="Current value">
+        <div
+          className="CoreSelect__value-container"
+          aria-label={value[0].label || defaultValue}
+        >
           {value[0].label || defaultValue}
         </div>
         <CustomDropdownIndicator />

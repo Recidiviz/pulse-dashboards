@@ -34,7 +34,6 @@ const DownloadDataButton: React.FC<PropTypes> = ({ handleOnClick }) => {
       id="downloadChartData"
       type="button"
       aria-expanded="true"
-      aria-controls="importantNotes"
       onClick={handleOnClick}
     >
       <Icon

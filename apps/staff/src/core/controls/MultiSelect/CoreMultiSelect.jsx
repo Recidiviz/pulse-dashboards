@@ -144,7 +144,7 @@ function CoreMultiSelect({
       >
         <div
           className="CoreMultiSelect__value-container"
-          aria-label="Current value"
+          aria-label={displayText}
         >
           {displayText}
         </div>
@@ -176,7 +176,6 @@ function CoreMultiSelect({
                     )}
                     className="MultiSelect__checkbox-input"
                     onClick={() => handleChange(option)}
-                    tabIndex={-1}
                   />
                   <span className="MultiSelect__checkbox" />
                 </label>

@@ -24,7 +24,7 @@ import { palette } from "../../styles";
 import ToolbarContext from "./ToolbarContext";
 import ToolbarFocusManager from "./ToolbarFocusManager";
 
-const ToolbarElement = styled.nav`
+const ToolbarElement = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
