@@ -73,4 +73,8 @@ export class UsIaEarlyDischargeConfiguration extends ApiOpportunityConfiguration
   get grantReviewStatusMessage() {
     return "Discharge Form Review";
   }
+
+  get excludeIndefiniteSnoozesFromTableView() {
+    return false;
+  }
 }

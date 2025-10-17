@@ -767,6 +767,10 @@ export class OpportunityBase<
     return this.isInSupervisorReview && this.latestAction?.type === "APPROVAL";
   }
 
+  get isIndefinitelySnoozed(): boolean {
+    return this.denied && !this.manualSnooze && !this.autoSnooze;
+  }
+
   tabTitle(category?: OpportunityTabGroup): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
     if (this.isSubmitted) return this.submittedTabTitle;

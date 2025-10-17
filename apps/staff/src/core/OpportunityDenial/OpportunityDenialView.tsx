@@ -132,15 +132,14 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const { denialConfirmationModalName } = opportunity;
 
   const postDenialToast = () => {
-    toast(
-      <OpportunityStatusUpdateToast
-        toastText={`${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}${opportunity.actedOnTextAddition?.DENIED ?? ""}`}
-      />,
-      {
-        id: "denialToast", // prevent duplicate toasts
-        position: "bottom-left",
-      },
-    );
+    let toastText = `${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}${opportunity.actedOnTextAddition?.DENIED ?? ""}`;
+    if (opportunity.isIndefinitelySnoozed) {
+      toastText = `You have indefinitely snoozed ${opportunity.person.displayName} for ${opportunity.config.label}${opportunity.actedOnTextAddition?.DENIED ?? ""}`;
+    }
+    toast(<OpportunityStatusUpdateToast toastText={toastText} />, {
+      id: "denialToast", // prevent duplicate toasts
+      position: "bottom-left",
+    });
   };
 
   const submitDenial = async () => {

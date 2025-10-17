@@ -405,6 +405,16 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   /**
+   * Determines whether we filter out indefinite snoozes from the "Marked Ineligible"
+   * tab in the table view. By default, we will filter out, but this field can be
+   * overridden for opportunities where the indefinitely snoozed clients should
+   * still surface in table view.
+   */
+  get excludeIndefiniteSnoozesFromTableView() {
+    return true;
+  }
+
+  /**
    * Returns a record of each denial reason to the relevant max snooze length.
    * Override to set individual denial reason max snoozes or map a reason to undefined
    * to mark the given reason as indefinite snooze.

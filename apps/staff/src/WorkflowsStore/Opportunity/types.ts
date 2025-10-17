@@ -177,6 +177,7 @@ export interface Opportunity<
   isInSupervisorReview: boolean;
   isInSnoozeReview: boolean;
   isInGrantReview: boolean;
+  isIndefinitelySnoozed: boolean;
   readonly supervisorReviewTabTitle: string;
   readonly snoozeReviewStatusMessage: string;
   readonly grantReviewStatusMessage: string;

@@ -111,6 +111,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   supervisorReviewTabTitle: "Supervisor Review",
   snoozeReviewStatusMessage: "Snooze Review",
   grantReviewStatusMessage: "Discharge Review",
+  excludeIndefiniteSnoozesFromTableView: true,
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

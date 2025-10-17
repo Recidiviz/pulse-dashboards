@@ -55,6 +55,8 @@ const setSupervisorResponse = async (
 ) => {
   await opportunity.setSupervisorResponse({ type });
 
+  let toastText = `Marked ${opportunity.person.displayName} as ${opportunity.tabTitle()} for ${opportunity.config.label}`;
+
   // Submit snooze if it has been approved
   if (type === "APPROVAL" && opportunity.latestAction?.type === "DENIAL") {
     const {
@@ -69,18 +71,16 @@ const setSupervisorResponse = async (
 
     if (requestedSnoozeLength) {
       await opportunity.setManualSnooze(requestedSnoozeLength, reasons);
+    } else {
+      // Indefinite snoozes use different toast copy.
+      toastText = `You have approved ${opportunity.person.displayName} for an indefinite snooze.`;
     }
   }
 
-  toast(
-    <OpportunityStatusUpdateToast
-      toastText={`Marked ${opportunity.person.displayName} as ${opportunity.tabTitle()} for ${opportunity.config.label}`}
-    />,
-    {
-      id: "reviewToast", // prevent duplicate toasts
-      position: "bottom-left",
-    },
-  );
+  toast(<OpportunityStatusUpdateToast toastText={toastText} />, {
+    id: "reviewToast", // prevent duplicate toasts
+    position: "bottom-left",
+  });
 };
 
 export const markSubmittedAndToast = async ({

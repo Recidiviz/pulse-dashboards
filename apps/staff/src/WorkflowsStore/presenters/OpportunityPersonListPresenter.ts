@@ -386,10 +386,33 @@ export class OpportunityPersonListPresenter
   get oppsFromOpportunitiesByTab():
     | Record<OpportunityTab, Opportunity[]>
     | undefined {
-    const opps =
+    const oppsByType =
       this.supervisionPresenter?.opportunitiesByType ??
       this.workflowsStore.allOpportunitiesByType;
-    return opportunitiesByTab(opps, this.activeTabGroup)[this.opportunityType];
+
+    const allOppsForTypeByTab = opportunitiesByTab(
+      oppsByType,
+      this.activeTabGroup,
+    )[this.opportunityType];
+
+    const { deniedTabTitle, excludeIndefiniteSnoozesFromTableView } =
+      this.config;
+
+    // Filter out indefinite snoozes from the denied tab if relevant
+    if (
+      allOppsForTypeByTab &&
+      excludeIndefiniteSnoozesFromTableView &&
+      deniedTabTitle in allOppsForTypeByTab
+    ) {
+      return {
+        ...allOppsForTypeByTab,
+        [deniedTabTitle]: allOppsForTypeByTab[deniedTabTitle].filter(
+          (opp) => !opp.isIndefinitelySnoozed,
+        ),
+      };
+    }
+
+    return allOppsForTypeByTab;
   }
 
   get label() {

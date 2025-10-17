@@ -51,8 +51,17 @@ const mockOpportunities = {
       ...mockOpportunity,
       tabTitle: (tabGroup) =>
         tabGroup === "ELIGIBILITY STATUS" ? "Eligible Now" : "Other",
-    } as Opportunity,
-  ],
+    },
+    {
+      ...mockOpportunity,
+      tabTitle: (_) => "Marked Ineligible",
+    },
+    {
+      ...mockOpportunity,
+      tabTitle: (_) => "Marked Ineligible",
+      isIndefinitelySnoozed: true,
+    },
+  ] as Opportunity[],
 };
 const mockWorkflowsStore = {
   allOpportunitiesByType: mockOpportunities,
@@ -151,6 +160,25 @@ describe("one tab group, no supervision presenter", () => {
     expect(presenter.overdueOpportunityCount).toEqual(0);
     expect(presenter.overdueOpportunityUrl).toBeUndefined();
   });
+
+  test("oppsFromOpportunitiesByTab filters out indefinite snoozes", () => {
+    expect(
+      presenter.oppsFromOpportunitiesByTab?.["Marked Ineligible"],
+    ).toHaveLength(1);
+  });
+
+  test("oppsFromOpportunitiesByTab doesn't filter out indefinite snoozes when config is overridden", () => {
+    presenter = getPresenter({
+      config: {
+        ...mockOpportunity.config,
+        excludeIndefiniteSnoozesFromTableView: false,
+      },
+    });
+
+    expect(
+      presenter.oppsFromOpportunitiesByTab?.["Marked Ineligible"],
+    ).toHaveLength(2);
+  });
 });
 
 describe("multiple tab groups, no supervision presenter", () => {
@@ -182,7 +210,7 @@ describe("multiple tab groups, no supervision presenter", () => {
     expect(presenter.tabBadges).toEqual({
       "Almost Eligible": 0,
       "Eligible Now": 1,
-      "Marked Ineligible": 0,
+      "Marked Ineligible": 1,
     });
 
     presenter.activeTabGroup = "GENDER";
