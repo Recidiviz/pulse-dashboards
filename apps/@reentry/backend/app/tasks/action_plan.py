@@ -24,7 +24,7 @@ from app.crud.plan_generation import (
 )
 from app.models.models import PlanGeneration
 from app.services.client_data.queries import Queries
-from app.services.resources import ClientExtractedInfo, Resource
+from app.services.resources import Resource, ClientExtractedInfo
 from app.utils.action_plan_types import (
     ActionPlanMilestones,
     ActionPlanSection,
@@ -151,8 +151,8 @@ async def generate_action_plan_task(
 
 
 async def get_client_background_data(
-    client_data: str, gen: PlanGeneration, session: AsyncSession
-):
+    gen: PlanGeneration, session: AsyncSession
+) -> tuple[str, str]:
     from app.crud.intake import get_collected_address_for_client
 
     asset_messages = await get_plan_asset(session, gen.plan_id, "messages.json")
@@ -162,7 +162,6 @@ async def get_client_background_data(
     )
 
     client_data = ""
-
     if asset_messages:
         # XXX it's a json, but could be formatted as text honestly'
         messages = asset_messages.data_as_text()
@@ -341,9 +340,7 @@ async def _generate_new_action_plan(
     await execution.log_progress(
         session, 30, "Fetching client data", logger=task_logger
     )
-    client_data, _ = await get_client_background_data(
-        gen.plan.client_extracted_info, gen, session
-    )
+    client_data, _ = await get_client_background_data(gen, session)
 
     await execution.log_progress(
         session, 40, "Preparing decision tree data", logger=task_logger
@@ -386,9 +383,7 @@ async def _extract_client_info(
         except Exception:
             logger.warning("Failed to convert to ClientExtractedInfo, redo extraction")
 
-    client_data, home_address = await get_client_background_data(
-        gen.plan.client_extracted_info, gen, session
-    )
+    client_data, home_address = await get_client_background_data(gen, session)
     prompt = """Here is information about a client, please extract the relevant information:"""
 
     agent = LLMAgentQA(client_data, gen.plan_id)

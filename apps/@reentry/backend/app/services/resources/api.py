@@ -116,38 +116,6 @@ async def search_resource_api(
         return result.data
 
 
-def _determine_travel_mode(request: GetResourcesRequest) -> Optional[DistanceMode]:
-    """
-    Determine the appropriate travel mode based on client capabilities.
-
-    Args:
-        request: The resources request containing client transportation info
-
-    Returns:
-        Appropriate DistanceMode or None
-    """
-    if request.can_drive is not False:
-        return DistanceMode.DRIVING
-    elif request.transit_pass is not False:
-        return DistanceMode.TRANSIT
-    elif request.can_bike is not False:
-        return DistanceMode.BICYCLING
-    elif request.can_walk is not False:
-        return DistanceMode.WALKING
-    return None
-
-
-def _determine_distance(travel_mode: Optional[DistanceMode]) -> int:
-    mode_distance_matching = {
-        DistanceMode.WALKING: 5,
-        DistanceMode.BICYCLING: 10,
-        DistanceMode.TRANSIT: 50,
-        DistanceMode.DRIVING: 100,
-        None: 100,
-    }
-    return mode_distance_matching[travel_mode]
-
-
 def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
     """
     Convert an external API search result to an internal Resource model.
@@ -212,43 +180,12 @@ async def list_external_resources(request: GetResourcesRequest) -> GetResourcesR
         logger.error("External resources API URL not configured")
         raise ValueError("EXTERNAL_RESOURCES_API_URL is not configured in settings")
 
-    # Find a valid address from the available options, in priority order
-    address = None
-
-    # Try home address first
-    if request.home:
-        address = request.home
-    # Then try work address
-    elif request.work:
-        address = request.work
-    # Then try school address
-    elif request.school:
-        address = request.school
-    # Finally try probation office
-    elif request.probation_office:
-        address = request.probation_office
-
-    # Raise error if no address is available
-    if not address:
-        logger.error(
-            "No address provided for external resources search",
-            category=request.category,
-            subcategory=request.subcategory,
-        )
-        raise ValueError(
-            "At least one address (home, work, school, or probation_office) is required for external resources API"
-        )
-
-    # Determine travel mode based on client capabilities
-    travel_mode = _determine_travel_mode(request)
-    distance = _determine_distance(travel_mode)
-
     logger.debug(
         "Starting external resources search",
         category=request.category,
         subcategory=request.subcategory,
-        travel_mode=travel_mode,
-        distance=distance,
+        travel_mode=request.travel_mode,
+        distance=request.distance,
     )
 
     # Prepare result list
@@ -261,10 +198,11 @@ async def list_external_resources(request: GetResourcesRequest) -> GetResourcesR
         params = ParameterSearchBodyParams(
             category=category,
             subcategory=subcategory,
-            textSearch="",  # Todo handle this
-            address=address,  # Use the full address string
-            distance=distance,  # Default 100 miles
-            mode=travel_mode,
+            # TODO(#10014): Deprecate this field in the new API
+            textSearch="",
+            address=request.address,
+            distance=request.distance_miles,
+            mode=request.travel_mode,
             time=None,
         )
 

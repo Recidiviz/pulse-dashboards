@@ -7,10 +7,10 @@ import pytest
 
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
-    ClientExtractedInfo,
     Resource,
     ResourceCategory,
     ResourceSubcategory,
+     ClientExtractedInfo
 )
 from app.utils.action_plan_types import ActionPlan, ActionPlanMarkdown
 

@@ -579,22 +579,19 @@ async def search_resources(
 
     try:
         client_info = plan.client_extracted_info
+        if not client_info:
+            raise HTTPException(
+                status_code=400, detail="Client info not available for this plan"
+            )
         # Create the resources request with client info
-        resource_request = GetResourcesRequest(
+        resource_request = GetResourcesRequest.from_client_extracted_json(
             category=request.category,
             subcategory=request.subcategory,
-            limit=10,
+            client_info_json=client_info,
             exclude_names=request.exclude,
-            home=client_info.get("home"),
-            work=client_info.get("work"),
-            school=client_info.get("school"),
-            probation_office=client_info.get("probation_office"),
-            can_drive=client_info.get("has_car", False),
-            can_walk=client_info.get("can_walk", True),
-            can_bike=client_info.get("can_bike", False),
-            transit_pass=client_info.get("transit_pass", False),
+            exclude_ids=None,
+            limit=10,
         )
-
         # Get resources using list_resources function
         return await list_resources(resource_request)
     except Exception as e:

@@ -2,7 +2,7 @@ import logging
 from enum import Enum
 from typing import List, Optional, Set, TypeAlias
 
-from pydantic import BaseModel, Field, TypeAdapter, validator
+from pydantic import BaseModel, Field, TypeAdapter, field_validator
 
 from app.core.config import settings
 from app.utils.disallowed_resources import (
@@ -190,7 +190,7 @@ class ParameterSearchBodyParams(BaseModel):
     )
 
     # Validation
-    @validator("mode")
+    @field_validator("mode")
     def validate_mode(cls, v, values):
         if values.get("time") is not None and v is None:
             raise ValueError("If time is provided, mode is required")
@@ -213,23 +213,26 @@ class GetPlanResourcesRequest(BaseModel):
     )
 
 
+# Not doing a docstring as the LLM may pull information from that.
+# This is data from the 'client_extracted_info' field of the Plan 
+# DB model, which is JSON when in the DB and a dict in pydantic.
 class ClientExtractedInfo(BaseModel):
-    home: Optional[str] = Field(
+    home: str | None = Field(
         default=None,
         description="Client's home address, which can be a full address (preferred), a zip code, or a landmark.",
     )
 
-    work: Optional[str] = Field(
+    work: str | None = Field(
         default=None,
         description="Client's work address, which can be a full address (preferred), a zip code, or a landmark.",
     )
 
-    school: Optional[str] = Field(
+    school: str | None = Field(
         default=None,
         description="Client's school address, which can be a full address (preferred), a zip code, or a landmark.",
     )
 
-    probation_office: Optional[str] = Field(
+    probation_office: str | None = Field(
         default=None,
         description=(
             "Client's probation office address, which can be a full address (preferred), "
@@ -237,28 +240,40 @@ class ClientExtractedInfo(BaseModel):
         ),
     )
 
-    can_drive: Optional[bool] = Field(
-        default=None, description="Whether the client has a car"
+    can_drive: bool | None = Field(
+        default=False, description="Whether the client has a car"
     )
 
-    can_walk: Optional[bool] = Field(
-        default=None, description="Whether the client can comfortably walk"
+    can_walk: bool | None = Field(
+        default=True, description="Whether the client can comfortably walk"
     )
 
-    can_bike: Optional[bool] = Field(
-        default=None, description="Whether the client has a bike"
+    can_bike: bool | None = Field(
+        default=False, description="Whether the client has a bike"
     )
 
-    transit_pass: Optional[bool] = Field(
-        default=None, description="Whether the client has a transit pass"
+    transit_pass: bool | None = Field(
+        default=False, description="Whether the client has a transit pass"
     )
 
 
-class GetResourcesRequest(ClientExtractedInfo):
+class GetResourcesRequest(BaseModel):
+
     category: ResourceCategory = Field(description="Resource category")
+    # TODO(#10014): Have subcategory be required in the new API
     subcategory: Optional[ResourceSubcategory] = Field(
         default=None, description="Resource subcategory"
     )
+    address: str = Field(
+        description="Full address to find resources near. (e.g. '123 Main St, Cityville, CA 12345')"
+    )
+    distance_miles: int = Field(
+        default=100, description="The distance in miles from this request's address to search within."
+    )
+    travel_mode: DistanceMode | None = Field(
+        default=None, description="Preferred travel mode (driving, walking, bicycling, transit)"
+    )
+
     exclude_names: Optional[list[str]] = Field(
         default_factory=list, description="Keywords to exclude in resource names"
     )
@@ -267,6 +282,84 @@ class GetResourcesRequest(ClientExtractedInfo):
     )
     limit: Optional[int] = Field(default=10, description="How many")
 
+    @classmethod
+    def from_client_extracted_info(
+        cls,
+        *,
+        category: ResourceCategory,
+        subcategory: Optional[ResourceSubcategory],
+        exclude_names: Optional[List[str]],
+        exclude_ids: Optional[List[str]],
+        client_info: ClientExtractedInfo,
+        limit: Optional[int] = 10,
+    ) -> "GetResourcesRequest":
+        address = cls._address_from_client_extracted_info(client_info)
+        travel_mode, distance_miles = cls._mode_and_distance_from_client_extracted_info(
+            client_info
+        )
+        return GetResourcesRequest(
+            category=category,
+            subcategory=subcategory,
+            address=address,
+            travel_mode=travel_mode,
+            distance_miles=distance_miles,
+            exclude_names=exclude_names or [],
+            exclude_ids=exclude_ids or [],
+            limit=limit,
+        )
+
+    @classmethod
+    def from_client_extracted_json(
+        cls, 
+        *,
+        category: ResourceCategory,
+        subcategory: Optional[ResourceSubcategory],
+        exclude_names: Optional[List[str]],
+        exclude_ids: Optional[List[str]],
+        client_info_json: dict,
+        limit: Optional[int] = 10,
+    ):
+        client_info = ClientExtractedInfo.model_validate(client_info_json, strict=True)
+        return cls.from_client_extracted_info(
+            category=category,
+            subcategory=subcategory,
+            exclude_names=exclude_names,
+            exclude_ids=exclude_ids,
+            client_info=client_info,
+            limit=limit,
+        )
+
+
+    @staticmethod
+    def _address_from_client_extracted_info(
+        client_info: ClientExtractedInfo
+    ):
+        if client_info.home:
+            return client_info.home
+        if client_info.work:
+            return client_info.work
+        if client_info.school:
+            return client_info.school
+        if client_info.probation_office:
+            return client_info.probation_office
+        raise ValueError(
+            "At least one address (home, work, school, or probation_office) is "
+            "required to request resources."
+        )
+
+    @staticmethod
+    def _mode_and_distance_from_client_extracted_info(
+        client_info: ClientExtractedInfo
+    ):
+        if client_info.can_drive is not False:
+            return DistanceMode.DRIVING, 100
+        elif client_info.transit_pass is not False:
+            return DistanceMode.TRANSIT, 50
+        elif client_info.can_bike is not False:
+            return DistanceMode.BICYCLING, 10
+        elif client_info.can_walk is not False:
+            return DistanceMode.WALKING, 5
+        return None, 100
 
 class Resource(BaseModel):
     id: str = Field(description="Unique identifier for the resource.")

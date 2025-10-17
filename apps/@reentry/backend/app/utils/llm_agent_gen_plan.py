@@ -15,10 +15,10 @@ from app.core.config import gen_model as model
 from app.core.config import tracer
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
-    ClientExtractedInfo,
     GetResourcesRequest,
     Resource,
     ResourceFailureReason,
+    ClientExtractedInfo,
     list_resources,
 )
 from app.utils.action_plan_types import (
@@ -218,11 +218,13 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
                     )
                     continue
 
-                request = GetResourcesRequest(
-                    **state["client_extracted_info"].model_dump(),
+                request = GetResourcesRequest.from_client_extracted_info(
                     category=parent_category,
                     subcategory=subcategory,
                     limit=2,
+                    client_info=state.client_extracted_info,
+                    exclude_names=None,
+                    exclude_ids=None,
                 )
                 try:
                     fetched_resources = await fetch_resources_with_retry(
@@ -251,10 +253,12 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
 
                 # If no subcategories were handled for this category, get all resources for the category
                 if not subcategories_handled:
-                    request = GetResourcesRequest(
-                        **state["client_extracted_info"].model_dump(),
+                    request = GetResourcesRequest.from_client_extracted_info(
                         category=category,
                         subcategory=None,
+                        client_info=state.client_extracted_info,
+                        exclude_names=None,
+                        exclude_ids=None,
                         limit=2,
                     )
                     try:

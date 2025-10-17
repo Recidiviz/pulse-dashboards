@@ -168,3 +168,5 @@ class CommonMessagesState(MessagesState):
 class TranscriptionMessage(BaseModel):
     role: Literal["client", "caseworker"]
     content: str
+
+
