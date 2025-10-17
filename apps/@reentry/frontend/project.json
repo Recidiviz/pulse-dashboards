@@ -21,6 +21,7 @@
     },
     "dev": {
       "executor": "nx:run-commands",
+      "dependsOn": ["load-env-files"],
       "options": {
         "command": "next dev",
         "cwd": "{projectRoot}"
