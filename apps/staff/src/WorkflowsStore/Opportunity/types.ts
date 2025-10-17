@@ -53,6 +53,10 @@ export type OpportunityRequirement = {
 // ranked roughly by actionability
 export const OPPORTUNITY_STATUS_RANKED = [
   "PENDING",
+  "GRANT_REVIEW", // An officer has requested an opp grant; supervisor has yet to respond
+  "SNOOZE_REVIEW", // An officer has requested a snooze of any kind; supervisor has yet to respond
+  "GRANT_APPROVED", // A supervisor has approved the opp grant request, but the opp is not yet marked submitted
+  "REVISIONS_REQUESTED", // A supervisor requests revisions on a snooze request
   "IN_PROGRESS", // form viewed
   "SUBMITTED", // user marked as "submitted" or "in progress"
   "DENIED",

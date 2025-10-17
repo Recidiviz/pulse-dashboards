@@ -220,18 +220,31 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
         : { type: officerAction.type, additionalNotes: officerAction.notes };
 
     const originalStatus = this.clientStatus;
+    const originalReviewStatus = this.reviewStatus;
 
     await this.rootStore.firestoreStore.updateOpportunityActionHistory(
       this,
       updatedActionHistory,
     );
 
+    // TODO(#9770): remove IA specific tracking events once the state agnostic
+    // event has replaced it in the views
     this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
       staffId: userPseudoId ?? this.currentUserEmail,
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       action: actionMetadata,
       currentStatus: originalStatus,
       subsequentStatus: this.clientStatus,
+    });
+
+    this.rootStore.analyticsStore.trackOpportunityApprovalActions({
+      opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
+      staffId: userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      action: actionMetadata,
+      currentStatus: originalReviewStatus,
+      subsequentStatus: this.reviewStatus,
     });
   }
 
@@ -267,18 +280,31 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     };
 
     const originalStatus = this.clientStatus;
+    const originalReviewStatus = this.reviewStatus;
 
     await this.rootStore.firestoreStore.updateOpportunityActionHistory(
       this,
       updatedActionHistory,
     );
 
+    // TODO(#9770): remove IA specific tracking events once the state agnostic
+    // event has replaced it in the views
     this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
       staffId: userPseudoId ?? this.currentUserEmail,
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       action: actionMetadata,
       currentStatus: originalStatus,
       subsequentStatus: this.clientStatus,
+    });
+
+    this.rootStore.analyticsStore.trackOpportunityApprovalActions({
+      opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
+      staffId: userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      action: actionMetadata,
+      currentStatus: originalReviewStatus,
+      subsequentStatus: this.reviewStatus,
     });
   }
 
@@ -293,9 +319,12 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       : undefined;
 
     const originalStatus = this.clientStatus;
+    const originalReviewStatus = this.reviewStatus;
 
     await this.rootStore.firestoreStore.deleteOpportunityActionHistory(this);
 
+    // TODO(#9770): remove IA specific tracking events once the state agnostic
+    // event has replaced it in the views
     this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
       staffId: userPseudoId ?? this.currentUserEmail,
       justiceInvolvedPersonId: this.person.pseudonymizedId,
@@ -303,6 +332,16 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       currentStatus: originalStatus,
       subsequentStatus: this.clientStatus,
       revert: true,
+    });
+
+    this.rootStore.analyticsStore.trackOpportunityApprovalActions({
+      opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
+      staffId: userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      action: actionMetadata,
+      currentStatus: originalReviewStatus,
+      subsequentStatus: this.reviewStatus,
     });
   }
 

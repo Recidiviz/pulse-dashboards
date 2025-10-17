@@ -54,6 +54,7 @@ import {
   UpdateLog,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
+import { OpportunityApprovalActionsMetadata } from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { formatDateToISO, toTitleCase } from "../../utils";
 import {
   DocumentSubscription,
@@ -340,6 +341,22 @@ export class OpportunityBase<
 
     if (isSubmitted) {
       return "SUBMITTED";
+    }
+
+    if (this.isInRevisionsRequests) {
+      return "REVISIONS_REQUESTED";
+    }
+
+    if (this.isGrantApproved) {
+      return "GRANT_APPROVED";
+    }
+
+    if (this.isInGrantReview) {
+      return "GRANT_REVIEW";
+    }
+
+    if (this.isInSnoozeReview) {
+      return "SNOOZE_REVIEW";
     }
 
     if (this.lastViewed || updates?.referralForm) {
@@ -657,6 +674,11 @@ export class OpportunityBase<
       deniedReasons: reasons,
       opportunityId: this.sentryTrackingId,
     });
+
+    // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
+    if (this.latestAction) {
+      await this.markActionHistoryStale();
+    }
   }
 
   async setOtherReasonText(otherReason?: string): Promise<void> {
@@ -775,6 +797,31 @@ export class OpportunityBase<
 
   get isIndefinitelySnoozed(): boolean {
     return this.denied && !this.manualSnooze && !this.autoSnooze;
+  }
+
+  /**
+   * Returns true when an officer has requested a snooze, and the supervisor
+   * has denied that snooze with suggested revisisons to the snooze request.
+   *
+   * Only relevant for Iowa at this time.
+   */
+  get isInRevisionsRequests(): boolean {
+    return (
+      !!this.latestAction &&
+      !this.latestAction.isStale &&
+      this.latestAction?.type === "DENIAL" &&
+      this.latestAction.supervisorResponse?.type === "DENIAL" &&
+      !!this.latestAction.supervisorResponse.revisionRequest
+    );
+  }
+
+  get isGrantApproved(): boolean {
+    return (
+      !!this.latestAction &&
+      !this.latestAction.isStale &&
+      this.latestAction?.type === "APPROVAL" &&
+      this.latestAction.supervisorResponse?.type === "APPROVAL"
+    );
   }
 
   tabTitle(category?: OpportunityTabGroup): OpportunityTab {
@@ -938,12 +985,31 @@ export class OpportunityBase<
       officerAction,
     );
 
+    const actionMetadata: OpportunityApprovalActionsMetadata["action"] =
+      officerAction.type === "DENIAL"
+        ? {
+            type: officerAction.type,
+            actionPlan: officerAction.actionPlan,
+            requestedDenialReasons: officerAction.denialReasons,
+          }
+        : { type: officerAction.type, additionalNotes: officerAction.notes };
+
+    const originalStatus = this.reviewStatus;
+
     await this.rootStore.firestoreStore.updateOpportunityActionHistory(
       this,
       updatedActionHistory,
     );
 
-    // TODO(#9770): Add state-agnostic tracking event
+    this.rootStore.analyticsStore.trackOpportunityApprovalActions({
+      opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
+      staffId: this.rootStore.userStore.userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      action: actionMetadata,
+      currentStatus: originalStatus,
+      subsequentStatus: this.reviewStatus,
+    });
   }
 
   /**
@@ -955,7 +1021,9 @@ export class OpportunityBase<
    *   - when an indefinite snooze is denied
    */
   async markActionHistoryStale(): Promise<void> {
-    if (this.actionHistory && this.latestAction) {
+    if (this.actionHistory && this.latestAction && !this.latestAction.isStale) {
+      const originalStatus = this.reviewStatus;
+
       const updatedOfficerAction = {
         ...this.latestAction,
         isStale: true,
@@ -969,17 +1037,33 @@ export class OpportunityBase<
         this,
         updatedActionHistory,
       );
-    }
 
-    // TODO(#9770): Add state-agnostic tracking event
+      this.rootStore.analyticsStore.trackOpportunityApprovalActions({
+        opportunityType: this.type,
+        opportunityId: this.sentryTrackingId,
+        staffId: this.rootStore.userStore.userPseudoId ?? this.currentUserEmail,
+        justiceInvolvedPersonId: this.person.pseudonymizedId,
+        currentStatus: originalStatus,
+        subsequentStatus: this.reviewStatus,
+      });
+    }
   }
 
   /**
    * Clears all actions requiring supervisor approval.
    */
   async deleteActionHistory(): Promise<void> {
+    const originalStatus = this.reviewStatus;
+
     await this.rootStore.firestoreStore.deleteOpportunityActionHistory(this);
-    // TODO(#9770): Add state-agnostic tracking event
+    this.rootStore.analyticsStore.trackOpportunityApprovalActions({
+      opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
+      staffId: this.rootStore.userStore.userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      currentStatus: originalStatus,
+      subsequentStatus: this.reviewStatus,
+    });
   }
 
   /**
@@ -1000,6 +1084,14 @@ export class OpportunityBase<
       );
     }
 
+    const actionMetadata: OpportunityApprovalActionsMetadata["action"] = {
+      type: this.latestAction.type,
+      supervisorResponseType: supervisorResponse.type,
+      revisionRequest: supervisorResponse.revisionRequest,
+    };
+
+    const originalStatus = this.reviewStatus;
+
     const updatedOfficerAction = {
       ...this.latestAction,
       supervisorResponse,
@@ -1014,7 +1106,15 @@ export class OpportunityBase<
       updatedActionHistory,
     );
 
-    // TODO(#9770): Add state-agnostic tracking event
+    this.rootStore.analyticsStore.trackOpportunityApprovalActions({
+      opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
+      staffId: this.rootStore.userStore.userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      action: actionMetadata,
+      currentStatus: originalStatus,
+      subsequentStatus: this.reviewStatus,
+    });
   }
 
   get userName(): string {

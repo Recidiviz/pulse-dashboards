@@ -106,8 +106,6 @@ export const getEdButtonConfig = ({
       const reasons = latestAction.denialReasons;
       const userInput = latestAction.userInput;
 
-      // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
-      await opportunity.markActionHistoryStale();
       await opportunity.setDenialReasons(reasons, userInput);
 
       if (latestAction.requestedSnoozeLength) {

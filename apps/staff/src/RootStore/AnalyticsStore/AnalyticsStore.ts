@@ -196,6 +196,21 @@ export type UsIaEarlyDischargeActionsMetadata = {
   revert?: boolean;
 };
 
+export type OpportunityApprovalActionsMetadata = OpportunityTrackingMetadata & {
+  staffId: string;
+  action?: {
+    type: string;
+    actionPlan?: string;
+    revisionRequest?: string;
+    additionalNotes?: string;
+    requestedDenialReasons?: string[];
+    supervisorResponseType?: string;
+    userInput?: Record<string, string>;
+  };
+  currentStatus: string;
+  subsequentStatus: string;
+};
+
 export type UsIaEarlyDischargeReferralFormSignatureMetadata = {
   justiceInvolvedPersonId: string;
   formType: "cbc" | "parole";
@@ -211,12 +226,12 @@ export type NavigateToCompanionOpportunityLinkClickedMetadata = {
   justiceInvolvedPersonId: string;
   opportunityType: OpportunityType;
   companionOpportunityType: OpportunityType;
-}
+};
 
 export type NavigateToPersonProfileLinkClickedMetadata = {
   justiceInvolvedPersonId: string;
   opportunityType: OpportunityType;
-}
+};
 
 export default class AnalyticsStore {
   rootStore;
@@ -591,6 +606,12 @@ export default class AnalyticsStore {
     this.track("frontend.almost_eligible_copy_cta_clicked", metadata);
   }
 
+  trackOpportunityApprovalActions(
+    metadata: OpportunityApprovalActionsMetadata,
+  ) {
+    this.track("frontend.opportunity_approval_actions", metadata);
+  }
+
   trackUsIaEarlyDischargeOpportunityActions(
     metadata: UsIaEarlyDischargeActionsMetadata,
   ) {
@@ -627,10 +648,7 @@ export default class AnalyticsStore {
   trackNavigateToPersonProfileLinkClicked(
     metadata: NavigateToPersonProfileLinkClickedMetadata,
   ) {
-    this.track(
-      "frontend.navigate_to_person_profile_link_clicked",
-      metadata,
-    );
+    this.track("frontend.navigate_to_person_profile_link_clicked", metadata);
   }
 
   trackLastLoginUsageModuleViewed(metadata: LastLoginUsageModuleMetadata) {

@@ -49,7 +49,12 @@ import { OpportunityConfiguration } from "../OpportunityConfigurations";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
+  GRANT_APPROVAL_UPDATE,
+  GRANT_REQUEST_UPDATE,
   INCOMPLETE_FORM_UPDATE,
+  REVISIONS_REQUEST_UPDATE,
+  SNOOZE_REQUEST_UPDATE,
+  SUBMITTED_UPDATE,
   VIEWED_UPDATE,
 } from "../testUtils";
 import { Opportunity } from "../types";
@@ -321,6 +326,25 @@ test("review status", () => {
 
   updatesSub.data = COMPLETED_UPDATE;
   expect(opp.reviewStatus).toBe("COMPLETED");
+
+  vi.spyOn(opp, "config", "get").mockReturnValue({
+    supportsSubmitted: true,
+  } as OpportunityConfiguration);
+
+  updatesSub.data = SUBMITTED_UPDATE;
+  expect(opp.reviewStatus).toBe("SUBMITTED");
+
+  updatesSub.data = SNOOZE_REQUEST_UPDATE;
+  expect(opp.reviewStatus).toBe("SNOOZE_REVIEW");
+
+  updatesSub.data = GRANT_REQUEST_UPDATE;
+  expect(opp.reviewStatus).toBe("GRANT_REVIEW");
+
+  updatesSub.data = REVISIONS_REQUEST_UPDATE;
+  expect(opp.reviewStatus).toBe("REVISIONS_REQUESTED");
+
+  updatesSub.data = GRANT_APPROVAL_UPDATE;
+  expect(opp.reviewStatus).toBe("GRANT_APPROVED");
 });
 
 describe("isSnoozed", () => {

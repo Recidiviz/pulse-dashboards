@@ -65,8 +65,6 @@ const setSupervisorResponse = async (
       requestedSnoozeLength,
     } = opportunity.latestAction;
 
-    // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
-    await opportunity.markActionHistoryStale();
     await opportunity.setDenialReasons(reasons, userInput);
 
     if (requestedSnoozeLength) {

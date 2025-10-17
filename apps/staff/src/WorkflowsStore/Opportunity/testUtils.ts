@@ -41,3 +41,46 @@ export const SUBMITTED_UPDATE = {
 export const COMPLETED_UPDATE = {
   completed: { update: UPDATE_RECORD },
 };
+
+export const SNOOZE_REQUEST_UPDATE = {
+  actionHistory: [
+    {
+      type: "DENIAL",
+      isStale: false,
+    },
+  ],
+};
+
+export const GRANT_REQUEST_UPDATE = {
+  actionHistory: [
+    {
+      type: "APPROVAL",
+      isStale: false,
+    },
+  ],
+};
+
+export const REVISIONS_REQUEST_UPDATE = {
+  actionHistory: [
+    {
+      type: "DENIAL",
+      isStale: false,
+      supervisorResponse: {
+        type: "DENIAL",
+        revisionRequest: "Test revisions",
+      },
+    },
+  ],
+};
+
+export const GRANT_APPROVAL_UPDATE = {
+  actionHistory: [
+    {
+      type: "APPROVAL",
+      isStale: false,
+      supervisorResponse: {
+        type: "APPROVAL",
+      },
+    },
+  ],
+};

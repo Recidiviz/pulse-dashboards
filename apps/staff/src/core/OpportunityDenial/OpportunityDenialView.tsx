@@ -152,10 +152,6 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       return;
     }
 
-    // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
-    if (opportunity.latestAction) {
-      await opportunity.markActionHistoryStale();
-    }
     await opportunity.setDenialReasons(reasons, userInput);
     await opportunity.setOtherReasonText(otherReason);
     if (snoozeEnabled) {
