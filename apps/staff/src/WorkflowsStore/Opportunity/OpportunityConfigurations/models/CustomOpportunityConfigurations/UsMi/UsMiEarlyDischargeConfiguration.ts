@@ -38,4 +38,8 @@ export class UsMiEarlyDischargeConfiguration extends ApiOpportunityConfiguration
   get snoozeReviewStatusMessage() {
     return "Indefinite Snooze Review";
   }
+
+  get sidebarComponents() {
+    return [...super.sidebarComponents, "ActionHistory"];
+  }
 }

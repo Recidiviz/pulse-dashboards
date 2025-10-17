@@ -35,6 +35,7 @@ import {
 } from "./ClientDetailSidebarComponents";
 import { UsUtDates } from "./ClientDetailSidebarComponents/UsUtDates";
 import {
+  ActionHistory,
   CaseNotes,
   EligibilityDate,
   SentenceDates,
@@ -89,6 +90,7 @@ export type ClientDetailComponentName =
   keyof typeof ClientDetailSidebarComponents;
 
 export const OpportunityDetailSidebarComponents = {
+  ActionHistory,
   CaseNotes,
   EligibilityDate,
   SentenceDates,

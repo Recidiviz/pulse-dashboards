@@ -920,7 +920,7 @@ export class OpportunityBase<
   ): Promise<void> {
     const officerAction = {
       date: Timestamp.fromDate(new Date()),
-      by: this.currentUserEmail,
+      by: this.userName,
       isStale: false,
       ...officerActionParams,
     };

@@ -1397,13 +1397,16 @@ describe("setOfficerAction", () => {
     vi.spyOn(root.firestoreStore, "updateOpportunityActionHistory");
     vi.spyOn(opp, "actionHistory", "get").mockReturnValue([] as any);
     timekeeper.freeze(new Date("2025-01-15"));
+    vi.spyOn(root.userStore, "userFullName", "get").mockReturnValue(
+      "Test Officer",
+    );
   });
   test("sets approval action", async () => {
     await opp.setOfficerAction({ type: "APPROVAL" });
 
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
-      by: "test@email.gov",
+      by: "Test Officer",
       isStale: false,
       type: "APPROVAL",
     };
@@ -1421,7 +1424,7 @@ describe("setOfficerAction", () => {
 
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
-      by: "test@email.gov",
+      by: "Test Officer",
       isStale: false,
       ...testAction,
     };
@@ -1441,7 +1444,7 @@ describe("setOfficerAction", () => {
 
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
-      by: "test@email.gov",
+      by: "Test Officer",
       isStale: false,
       ...testAction,
     };
@@ -1471,7 +1474,7 @@ describe("setOfficerAction", () => {
 
     const expectedAction = {
       date: Timestamp.fromDate(new Date()),
-      by: "test@email.gov",
+      by: "Test Officer",
       isStale: false,
       ...testAction,
     };

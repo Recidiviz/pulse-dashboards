@@ -38,4 +38,8 @@ export class UsMiMinimumTelephoneReportingConfiguration extends ApiOpportunityCo
   get snoozeReviewStatusMessage() {
     return "Indefinite Snooze Review";
   }
+
+  get sidebarComponents() {
+    return [...super.sidebarComponents, "ActionHistory"];
+  }
 }
