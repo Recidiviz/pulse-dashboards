@@ -4,6 +4,12 @@ resource "google_project_iam_member" "permissions" {
   member  = "serviceAccount:${var.service_account_email}"
 }
 
+resource "google_project_iam_member" "job_user" {
+  project = var.project_id
+  role    = "roles/bigquery.jobUser"
+  member  = "serviceAccount:${var.service_account_email}"
+}
+
 resource "google_bigquery_dataset_iam_member" "regional_transfer_dataset_access" {
   for_each = var.postgresql.databases
 
