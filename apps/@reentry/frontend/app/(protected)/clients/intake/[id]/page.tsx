@@ -24,6 +24,7 @@ import AdminIntakeHistory from "~@reentry/frontend/(protected)/clients/intake/[i
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
 import Summary from "~@reentry/frontend/components/intake/Summary";
+import { PageView } from "~@reentry/frontend/components/PageView";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 
@@ -80,49 +81,52 @@ const IntakeManagementPage = () => {
   }
 
   return (
-    <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-auto">
-      {/* Profile Detail */}
-      <ProfileDetail clientRecord={clientData} isExpanded={undefined} setIsExpanded={()=> console.log("expanded")}/>
+    <>
+      <PageView />
+      <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-auto">
+        {/* Profile Detail */}
+        <ProfileDetail clientRecord={clientData} isExpanded={undefined} setIsExpanded={()=> console.log("expanded")}/>
 
-      {/* Summary Section */}
-      <div className="flex-grow w-full flex justify-center items-center">
-        <Summary
-          clientRecord={clientData}
-          intake={intakeData}
-          onIntakeUpdate={refetchIntake}
-        />
-      </div>
-
-      {clientData.state_code !== "US_AZ" && (
-        <div className="mb-6 mt-8 w-full max-w-7xl">
-          <h2 className="text-lg font-medium text-[#003331] mb-4 flex items-center">
-            <FiMessageSquare className="mr-2" /> Intake Conversation History
-          </h2>
-          <div className="h-[600px]">
-            {clientData?.external_client_id &&
-            intakeData &&
-            intakeData.id &&
-            intakeData.client_intake_sections &&
-            intakeData.client_intake_sections.length > 0 &&
-            intakeData.status !== "created" ? (
-              <AdminIntakeHistory
-                clientRecord={clientData}
-                intake={intakeData}
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-500">
-                {/* eslint-disable-next-line no-nested-ternary */}
-                {intakeData?.status === "created"
-                  ? "Intake has been created but not started yet"
-                  : !intakeData
-                    ? "No intake has been created for this client"
-                    : "No conversation history available"}
-              </div>
-            )}
-          </div>
+        {/* Summary Section */}
+        <div className="flex-grow w-full flex justify-center items-center">
+          <Summary
+            clientRecord={clientData}
+            intake={intakeData}
+            onIntakeUpdate={refetchIntake}
+          />
         </div>
-      )}
-    </div>
+
+        {clientData.state_code !== "US_AZ" && (
+          <div className="mb-6 mt-8 w-full max-w-7xl">
+            <h2 className="text-lg font-medium text-[#003331] mb-4 flex items-center">
+              <FiMessageSquare className="mr-2" /> Intake Conversation History
+            </h2>
+            <div className="h-[600px]">
+              {clientData?.external_client_id &&
+              intakeData &&
+              intakeData.id &&
+              intakeData.client_intake_sections &&
+              intakeData.client_intake_sections.length > 0 &&
+              intakeData.status !== "created" ? (
+                <AdminIntakeHistory
+                  clientRecord={clientData}
+                  intake={intakeData}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  {/* eslint-disable-next-line no-nested-ternary */}
+                  {intakeData?.status === "created"
+                    ? "Intake has been created but not started yet"
+                    : !intakeData
+                      ? "No intake has been created for this client"
+                      : "No conversation history available"}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

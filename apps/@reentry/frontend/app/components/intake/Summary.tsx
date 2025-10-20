@@ -23,6 +23,7 @@ import { $api } from "~@reentry/frontend/api";
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import AudioRecordings from "~@reentry/frontend/components/intake/VoiceIntake/AudioRecordings";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
@@ -255,6 +256,7 @@ const ClientSummaryCardLegacy: React.FC<ClientSummaryCardProps> = ({
 }) => {
   const [linkLoading, setLinkLoading] = useState(false);
   const auth = useAuth();
+  const { trackClientIntakeManuallyEnabled } = useAnalytics();
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
 
   const { mutateAsync: startIntakeAsync } = $api.useMutation(
@@ -265,6 +267,7 @@ const ClientSummaryCardLegacy: React.FC<ClientSummaryCardProps> = ({
   const startIntake = async () => {
     setLinkLoading(true);
     try {
+      trackClientIntakeManuallyEnabled({justiceInvolvedPersonId: clientRecord.pseudonymized_client_id})
       await startIntakeAsync({
         params: {
           path: { client_pseudo_id: clientRecord.pseudonymized_client_id },
@@ -303,6 +306,7 @@ const ClientSummaryCardV2: React.FC<ClientSummaryCardProps> = ({
   intake,
 }) => {
   const auth = useAuth();
+  const {trackClientIntakeManuallyEnabled} = useAnalytics();
   const [linkLoading, setLinkLoading] = useState(false);
   const clientPseudoId = clientRecord.pseudonymized_client_id;
   const staffPseudoId = auth.userAppMetadata?.pseudonymizedId || "";
@@ -326,6 +330,7 @@ const ClientSummaryCardV2: React.FC<ClientSummaryCardProps> = ({
   });
 
   const startIntake = async () => {
+    trackClientIntakeManuallyEnabled({justiceInvolvedPersonId: clientPseudoId}) 
     setLinkLoading(true);
     try {
       await toggleIntake.mutateAsync({

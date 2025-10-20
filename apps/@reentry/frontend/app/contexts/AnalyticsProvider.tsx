@@ -28,6 +28,13 @@ interface AnalyticsContextProps {
   identify: (userId: string) => void;
   pageView: (pagePath: string) => void;
   track: (eventName: string, metadata: Record<string, unknown>) => void;
+  trackClientIntakeChatHistoryViewed: (metadata: {
+    justiceInvolvedPersonId: string;
+    section: string;
+  }) => void;
+  trackClientIntakeManuallyEnabled: (metadata: {
+    justiceInvolvedPersonId: string;
+  }) => void;
 }
 
 interface AnalyticsProviderProps {
@@ -109,6 +116,19 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     analytics.track(eventName, fullMetadata);
   };
 
+  const trackClientIntakeChatHistoryViewed = (metadata: {
+    justiceInvolvedPersonId: string;
+    section: string;
+  }) => {
+    track("client_intake_chat_history_viewed", metadata);
+  };
+
+  const trackClientIntakeManuallyEnabled = (metadata: {
+    justiceInvolvedPersonId: string;
+  }) => {
+    track("client_intake_manually_enabled", metadata);
+  };
+
   useEffect(() => {
     const userHash = auth.userAppMetadata?.["userHash"];
     if (auth.state.isAuthorized && userHash) {
@@ -118,7 +138,7 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
 
   return (
     <AnalyticsContext.Provider
-      value={{ identify, pageView, track }}
+      value={{ identify, pageView, track, trackClientIntakeChatHistoryViewed, trackClientIntakeManuallyEnabled }}
     >
       {children}
     </AnalyticsContext.Provider>

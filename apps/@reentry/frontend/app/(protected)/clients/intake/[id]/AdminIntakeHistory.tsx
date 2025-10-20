@@ -22,6 +22,7 @@ import { useEffect, useRef, useState } from "react";
 
 import Chatbubble from "~@reentry/frontend/(protected)/clients/intake/[id]/Chatbubble";
 import Sidebar from "~@reentry/frontend/(protected)/clients/intake/[id]/Sidebar";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 type ClientRecord = components["schemas"]["ClientRecordResponse"];
@@ -57,6 +58,7 @@ const AdminIntakeHistory = ({
   clientRecord: ClientRecord;
   intake: Intake;
 }) => {
+  const { trackClientIntakeChatHistoryViewed } = useAnalytics();
   const [currentSectionId, setCurrentSectionId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [containerHeight, setContainerHeight] = useState<number | null>(null);
@@ -64,7 +66,12 @@ const AdminIntakeHistory = ({
 
   useEffect(() => {
     if (intake?.client_intake_sections?.length && !currentSectionId) {
-      setCurrentSectionId(intake.client_intake_sections[0].id);
+      const defaultSectionId = intake.client_intake_sections[0].id;
+      trackClientIntakeChatHistoryViewed({
+        justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,
+        section: defaultSectionId,
+      });
+      setCurrentSectionId(defaultSectionId);
     }
   }, [intake, currentSectionId]);
 
@@ -112,6 +119,10 @@ const AdminIntakeHistory = ({
             onClose={() => setSidebarOpen(!sidebarOpen)}
             activeSectionId={currentSectionId}
             onSectionSelect={(sectionId) => {
+              trackClientIntakeChatHistoryViewed({
+                justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,
+                section: sectionId,
+              });
               setCurrentSectionId(sectionId);
             }}
             intakeData={sections}
