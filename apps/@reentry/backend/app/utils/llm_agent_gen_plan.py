@@ -13,10 +13,10 @@ from app.core.config import gen_model as model
 from app.core.config import tracer
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
+    ClientExtractedInfo,
     GetResourcesRequest,
     Resource,
     ResourceFailureReason,
-    ClientExtractedInfo,
     list_resources,
 )
 from app.utils.action_plan_types import (
@@ -221,7 +221,7 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
                     category=parent_category,
                     subcategory=subcategory,
                     limit=2,
-                    client_info=state.client_extracted_info,
+                    client_info=state["client_extracted_info"],
                     exclude_names=None,
                     exclude_ids=None,
                 )
@@ -255,7 +255,7 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
                     request = GetResourcesRequest.from_client_extracted_info(
                         category=category,
                         subcategory=None,
-                        client_info=state.client_extracted_info,
+                        client_info=state["client_extracted_info"],
                         exclude_names=None,
                         exclude_ids=None,
                         limit=2,
