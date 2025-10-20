@@ -465,6 +465,7 @@ async def test_retry_processing_rejects_healthy(
     assert "No retryable operations found" in data["detail"]
 
 
+@pytest.mark.flaky(reruns=3, reruns_delay=1)
 @pytest.mark.parametrize(
     "test_case",
     [

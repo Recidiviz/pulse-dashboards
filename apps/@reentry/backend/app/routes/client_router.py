@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi_pagination import Page
 from pydantic import BaseModel
+from sqlalchemy.exc import DBAPIError
 from sqlmodel import select
 
 from app.auth.auth_core import get_pseudonymized_id
@@ -115,6 +116,26 @@ async def get_client_record(
     return record
 
 
+async def acquire_intake_lock(session: AsyncSession, client_pseudo_id: str):
+    try:
+        stmt = (
+            select(Intake)
+            .where(Intake.client_pseudo_id == client_pseudo_id)
+            .with_for_update(nowait=True)
+        )
+        result = await session.execute(stmt)
+        intake = result.scalar_one_or_none()
+        return intake
+    except DBAPIError as e:
+        # Handle LockNotAvailableError - another retry operation is in progress
+        if "LockNotAvailableError" in str(e) or "could not obtain lock" in str(e):
+            raise HTTPException(
+                status_code=409,
+                detail="A retry operation is already in progress for this client",
+            )
+        raise
+
+
 @router.post(
     "/{client_pseudo_id}/retry-processing",
     response_model=ExecutionResponse,
@@ -127,8 +148,6 @@ async def retry_processing(
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
-    from sqlalchemy.exc import DBAPIError
-
     from app.crud.client import is_execution_stuck
     from app.crud.execution import delete_execution_by_id
 
@@ -136,22 +155,7 @@ async def retry_processing(
 
     # Acquire row-level lock on intake to prevent race conditions
     # This ensures only one concurrent retry operation proceeds at a time per client
-    try:
-        stmt = (
-            select(Intake)
-            .where(Intake.client_pseudo_id == client_pseudo_id)
-            .with_for_update(nowait=True)
-        )
-        result = await session.execute(stmt)
-        intake = result.scalar_one_or_none()
-    except DBAPIError as e:
-        # Handle LockNotAvailableError - another retry operation is in progress
-        if "LockNotAvailableError" in str(e) or "could not obtain lock" in str(e):
-            raise HTTPException(
-                status_code=409,
-                detail="A retry operation is already in progress for this client",
-            )
-        raise
+    intake = await acquire_intake_lock(session, client_pseudo_id)
 
     if not intake or intake.status != "completed":
         raise HTTPException(status_code=400, detail="No retryable operations found")
@@ -160,6 +164,7 @@ async def retry_processing(
     # Also lock the recording session if it exists to prevent race conditions
     recording = None
     if intake.recording_session:
+        intake = await acquire_intake_lock(session, client_pseudo_id)
         try:
             stmt = (
                 select(RecordingSession)
@@ -246,6 +251,23 @@ async def retry_processing(
             ExecutionStatus.IN_PROGRESS,
         ]:
             raise HTTPException(status_code=400, detail="No retryable operations found")
+
+    try:
+        from app.models.assessment import Assessment
+
+        stmt = (
+            select(Assessment)
+            .where(Assessment.client_pseudo_id == client_pseudo_id)
+            .with_for_update(nowait=True)
+        )
+        await session.execute(stmt)
+    except DBAPIError as e:
+        if "could not obtain lock" in str(e) or "LockNotAvailableError" in str(e):
+            raise HTTPException(
+                status_code=409,
+                detail=f"A retry operation is already in progress for client {client_pseudo_id}",
+            )
+        raise
 
     # Get current assessments and plan
     assessments = await get_assessments_by_client_pseudo_id(session, client_pseudo_id)
