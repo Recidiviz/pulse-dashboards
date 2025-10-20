@@ -27,6 +27,14 @@
         "cwd": "{projectRoot}"
       }
     },
+    "dev:with-staging-proxy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["node proxy-staging.js", "next dev"],
+        "parallel": true,
+        "cwd": "{projectRoot}"
+      }
+    },
     "test": {
       "executor": "nx:run-commands",
       "options": {

@@ -73,3 +73,36 @@ state = {
 **Things to improve**
 
 - I've attempted several approaches to encapsulate the API client within a hook (useApiClient) to manage the authorization token dynamically, but none have worked as expected. The main issue is that the Authorization header is not being sent correctly when retrieving the token. Centralizing the API client in a hook would improve reusability and avoid manually passing the token in each request, but this needs further investigation to ensure proper token handling.
+
+
+## Staging API Proxy (Local Development)
+
+To run the frontend against the staging backend (which has CORS restrictions) you can use the local proxy server defined in `proxy-staging.js`.
+
+1. In `apps/@reentry/frontend` create or update `.env` with the `.env.staging` env vars:
+
+```bash
+# Points the frontend API calls at the local proxy instead of directly at staging
+NEXT_PUBLIC_API_URL=http://localhost:3001
+# The actual staging backend base URL you want to reach (no trailing slash)
+PROXY_TARGET=https://staging-api.example.com
+```
+
+Replace the example URL with the real staging API base URL.
+
+1. Start the proxy + Next.js app together:
+
+```bash
+nx dev:with-staging-proxy @reentry/frontend
+```
+
+This runs the proxy on port 3001 and the frontend on port 3000.
+
+Visit `http://localhost:3000` as usual. All requests to `NEXT_PUBLIC_API_URL` will be transparently forwarded to `PROXY_TARGET` with CORS handled.
+
+
+### Troubleshooting
+
+- 401 / auth errors: Confirm your Auth0 settings and that the access token is being attached (see Auth0 section above).
+- CORS errors still appear: Make sure the browser is hitting `http://localhost:3001` (check the Network tab for request URLs) and that `PROXY_TARGET` is correct.
+- Mixed content / HTTPS warnings: Ensure `PROXY_TARGET` uses `https://`.
