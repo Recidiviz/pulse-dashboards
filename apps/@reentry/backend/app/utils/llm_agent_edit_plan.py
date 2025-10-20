@@ -2,11 +2,9 @@ from textwrap import dedent
 from typing import Literal
 
 import structlog
-from anthropic import RateLimitError as AnthropicRateLimitError
 from langchain_core.messages import AIMessage, HumanMessage
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
-from openai import RateLimitError as OpenAIRateLimitError
 from pydantic import BaseModel, Field
 
 from app.core.config import gen_model as model
@@ -26,6 +24,7 @@ from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
 from app.utils.regex import extract_uuids_from_links
 
 from .llm_agent_gen_plan import call_generate_section
+from .llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
 from .llm_tools import convert_to_markdown
 
 logger = structlog.get_logger(__name__)
@@ -118,11 +117,8 @@ class LLMAgentEdit:
             response = (
                 await model.with_structured_output(RegenerationAction)
                 .with_retry(
-                    stop_after_attempt=5,
-                    retry_if_exception_type=(
-                        OpenAIRateLimitError,
-                        AnthropicRateLimitError,
-                    ),
+                    stop_after_attempt=DEFAULT_MAX_RETRIES,
+                    retry_if_exception_type=ERRORS_TO_RETRY_ON,
                 )
                 .ainvoke(state["messages"] + [message], self.config)
             )
@@ -186,8 +182,8 @@ class LLMAgentEdit:
             )
 
             response = await model.with_retry(
-                stop_after_attempt=5,
-                retry_if_exception_type=(OpenAIRateLimitError, AnthropicRateLimitError),
+                stop_after_attempt=DEFAULT_MAX_RETRIES,
+                retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(messages + [prompt], self.config)
             result_messages.append(response)
 
@@ -230,19 +226,16 @@ class LLMAgentEdit:
                 )
             )
             response = await model.with_retry(
-                stop_after_attempt=5,
-                retry_if_exception_type=(OpenAIRateLimitError, AnthropicRateLimitError),
+                stop_after_attempt=DEFAULT_MAX_RETRIES,
+                retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(messages, self.config)
             messages.append(response)
 
             timeline = (
                 await model.with_structured_output(ActionPlanTimelines)
                 .with_retry(
-                    stop_after_attempt=5,
-                    retry_if_exception_type=(
-                        OpenAIRateLimitError,
-                        AnthropicRateLimitError,
-                    ),
+                    stop_after_attempt=DEFAULT_MAX_RETRIES,
+                    retry_if_exception_type=ERRORS_TO_RETRY_ON,
                 )
                 .ainvoke(state["messages"], self.config)
             )
@@ -262,19 +255,16 @@ class LLMAgentEdit:
                 )
             )
             response = await model.with_retry(
-                stop_after_attempt=5,
-                retry_if_exception_type=(OpenAIRateLimitError, AnthropicRateLimitError),
+                stop_after_attempt=DEFAULT_MAX_RETRIES,
+                retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(messages, self.config)
             messages.append(response)
 
             milestones = (
                 await model.with_structured_output(ActionPlanMilestones)
                 .with_retry(
-                    stop_after_attempt=5,
-                    retry_if_exception_type=(
-                        OpenAIRateLimitError,
-                        AnthropicRateLimitError,
-                    ),
+                    stop_after_attempt=DEFAULT_MAX_RETRIES,
+                    retry_if_exception_type=ERRORS_TO_RETRY_ON,
                 )
                 .ainvoke(state["messages"], self.config)
             )
@@ -296,11 +286,8 @@ class LLMAgentEdit:
             response = (
                 await model.with_structured_output(ActionPlanPartial)
                 .with_retry(
-                    stop_after_attempt=5,
-                    retry_if_exception_type=(
-                        OpenAIRateLimitError,
-                        AnthropicRateLimitError,
-                    ),
+                    stop_after_attempt=DEFAULT_MAX_RETRIES,
+                    retry_if_exception_type=ERRORS_TO_RETRY_ON,
                 )
                 .ainvoke(state["messages"], self.config)
             )

@@ -1,12 +1,11 @@
-from anthropic import RateLimitError as AnthropicRateLimitError
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.runnables.config import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
-from openai import RateLimitError as OpenAIRateLimitError
 
 from app.core.config import dt_model as model
 from app.core.config import tracer
+from app.utils.llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
 
 
 ### Graph state
@@ -69,8 +68,8 @@ class LLMAgentQA:
             messages.insert(0, SystemMessage(self.sytem_prompt))
 
         final_state = await self.graph.with_retry(
-            stop_after_attempt=5,
-            retry_if_exception_type=(OpenAIRateLimitError, AnthropicRateLimitError),
+            stop_after_attempt=DEFAULT_MAX_RETRIES,
+            retry_if_exception_type=ERRORS_TO_RETRY_ON,
         ).ainvoke(
             {"messages": messages, "result": None, "question": message},
             config=self.config,

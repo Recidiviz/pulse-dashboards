@@ -3,12 +3,10 @@ from textwrap import dedent
 from typing import Literal
 
 import structlog
-from anthropic import RateLimitError as AnthropicRateLimitError
 from langchain_core.messages import AIMessage, HumanMessage
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.pregel import RetryPolicy
 from langgraph.types import Send
-from openai import RateLimitError as OpenAIRateLimitError
 from pydantic import ValidationError
 
 from app.core.config import gen_model as model
@@ -36,6 +34,7 @@ from app.utils.action_plan_types import (
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
 from app.utils.regex import extract_uuids_from_links
 
+from .llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
 from .llm_tools import convert_to_markdown
 
 logger = structlog.get_logger(__name__)
@@ -382,8 +381,8 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
 
     try:
         temp_response = await model.with_retry(
-            stop_after_attempt=5,
-            retry_if_exception_type=(OpenAIRateLimitError, AnthropicRateLimitError),
+            stop_after_attempt=DEFAULT_MAX_RETRIES,
+            retry_if_exception_type=ERRORS_TO_RETRY_ON,
         ).ainvoke(messages, config)
     except Exception as error:
         logger.error(
@@ -407,8 +406,8 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
     annotations = (
         await model.with_structured_output(ActionPlanSectionPartial)
         .with_retry(
-            stop_after_attempt=5,
-            retry_if_exception_type=(OpenAIRateLimitError, AnthropicRateLimitError),
+            stop_after_attempt=DEFAULT_MAX_RETRIES,
+            retry_if_exception_type=ERRORS_TO_RETRY_ON,
         )
         .ainvoke(messages + [prompt], config)
     )
@@ -423,8 +422,8 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
         "5. Use ## for the short/long term plan."
     )
     final_response = await model.with_retry(
-        stop_after_attempt=5,
-        retry_if_exception_type=(OpenAIRateLimitError, AnthropicRateLimitError),
+        stop_after_attempt=DEFAULT_MAX_RETRIES,
+        retry_if_exception_type=ERRORS_TO_RETRY_ON,
     ).ainvoke(messages + [temp_response] + [prompt], config)
     result_messages.append(final_response)
 
@@ -504,8 +503,8 @@ class LLMAgentGenerate:
                 )
             state["messages"].append(message)
             response = await model.with_retry(
-                stop_after_attempt=5,
-                retry_if_exception_type=(OpenAIRateLimitError, AnthropicRateLimitError),
+                stop_after_attempt=DEFAULT_MAX_RETRIES,
+                retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(state["messages"], self.config)
 
             state["messages"].append(response)
@@ -533,11 +532,8 @@ class LLMAgentGenerate:
                 response = (
                     await model.with_structured_output(AreaOfRiskNeeds)
                     .with_retry(
-                        stop_after_attempt=5,
-                        retry_if_exception_type=(
-                            OpenAIRateLimitError,
-                            AnthropicRateLimitError,
-                        ),
+                        stop_after_attempt=DEFAULT_MAX_RETRIES,
+                        retry_if_exception_type=ERRORS_TO_RETRY_ON,
                     )
                     .ainvoke(state["messages"], self.config)
                 )
@@ -562,11 +558,8 @@ class LLMAgentGenerate:
             associations = (
                 await model.with_structured_output(ActionPlanResourcesAssociations)
                 .with_retry(
-                    stop_after_attempt=5,
-                    retry_if_exception_type=(
-                        OpenAIRateLimitError,
-                        AnthropicRateLimitError,
-                    ),
+                    stop_after_attempt=DEFAULT_MAX_RETRIES,
+                    retry_if_exception_type=ERRORS_TO_RETRY_ON,
                 )
                 .ainvoke(state["messages"], self.config)
             )
@@ -607,8 +600,8 @@ class LLMAgentGenerate:
                 """)
             )
             response = await model.with_retry(
-                stop_after_attempt=5,
-                retry_if_exception_type=(OpenAIRateLimitError, AnthropicRateLimitError),
+                stop_after_attempt=DEFAULT_MAX_RETRIES,
+                retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(messages + [message], self.config)
             messages.append(response)
 
@@ -617,11 +610,8 @@ class LLMAgentGenerate:
             timeline = (
                 await model.with_structured_output(ActionPlanTimelines)
                 .with_retry(
-                    stop_after_attempt=5,
-                    retry_if_exception_type=(
-                        OpenAIRateLimitError,
-                        AnthropicRateLimitError,
-                    ),
+                    stop_after_attempt=DEFAULT_MAX_RETRIES,
+                    retry_if_exception_type=ERRORS_TO_RETRY_ON,
                 )
                 .ainvoke(messages + [format_message], self.config)
             )
@@ -648,8 +638,8 @@ class LLMAgentGenerate:
             )
             messages.append(message)
             intermediate_response = await model.with_retry(
-                stop_after_attempt=5,
-                retry_if_exception_type=(OpenAIRateLimitError, AnthropicRateLimitError),
+                stop_after_attempt=DEFAULT_MAX_RETRIES,
+                retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(messages, self.config)
 
             # ignore the first generation as most of the time it's not ordered correctly nor grouped correctly
@@ -664,12 +654,9 @@ class LLMAgentGenerate:
                 )
             )
             response = await model.with_retry(
-                stop_after_attempt=5,
-                retry_if_exception_type=(
-                    OpenAIRateLimitError,
-                    AnthropicRateLimitError,
-                    ValidationError,
-                ),
+                stop_after_attempt=DEFAULT_MAX_RETRIES,
+                retry_if_exception_type=ERRORS_TO_RETRY_ON
+                + (ValidationError,),  # need the comma to make it a tuple
             ).ainvoke(
                 messages + [intermediate_response, intermediate_message], self.config
             )
@@ -682,11 +669,8 @@ class LLMAgentGenerate:
             milestones = (
                 await model.with_structured_output(ActionPlanMilestones)
                 .with_retry(
-                    stop_after_attempt=5,
-                    retry_if_exception_type=(
-                        OpenAIRateLimitError,
-                        AnthropicRateLimitError,
-                    ),
+                    stop_after_attempt=DEFAULT_MAX_RETRIES,
+                    retry_if_exception_type=ERRORS_TO_RETRY_ON,
                 )
                 .ainvoke(messages + [format_message], self.config)
             )
@@ -706,11 +690,8 @@ class LLMAgentGenerate:
             response = (
                 await model.with_structured_output(ActionPlanPartial)
                 .with_retry(
-                    stop_after_attempt=5,
-                    retry_if_exception_type=(
-                        OpenAIRateLimitError,
-                        AnthropicRateLimitError,
-                    ),
+                    stop_after_attempt=DEFAULT_MAX_RETRIES,
+                    retry_if_exception_type=ERRORS_TO_RETRY_ON,
                 )
                 .ainvoke(state["messages"], self.config)
             )

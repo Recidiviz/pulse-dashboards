@@ -1,11 +1,10 @@
-from anthropic import RateLimitError as AnthropicRateLimitError
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langsmith.schemas import Example, Run
-from openai import RateLimitError as OpenAIRateLimitError
 from pydantic import BaseModel, Field
 
 from app.core.config import settings
+from app.utils.llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
 
 eval_llm = ChatOpenAI(openai_api_key=settings.OPENAI_API_KEY, model_name="o4-mini")
 
@@ -63,11 +62,8 @@ async def addressed_to_client(run: Run, example: Example):
 
     grader = prompt | structured_llm_grader
     score = await grader.with_retry(
-        stop_after_attempt=5,
-        retry_if_exception_type=(
-            OpenAIRateLimitError,
-            AnthropicRateLimitError,
-        ),
+        stop_after_attempt=DEFAULT_MAX_RETRIES,
+        retry_if_exception_type=ERRORS_TO_RETRY_ON,
     ).ainvoke(
         {
             "prediction": prediction,
@@ -107,11 +103,8 @@ async def clarity(run: Run, example: Example):
 
     grader = prompt | structured_llm_grader
     score = await grader.with_retry(
-        stop_after_attempt=5,
-        retry_if_exception_type=(
-            OpenAIRateLimitError,
-            AnthropicRateLimitError,
-        ),
+        stop_after_attempt=DEFAULT_MAX_RETRIES,
+        retry_if_exception_type=ERRORS_TO_RETRY_ON,
     ).ainvoke(
         {
             "prediction": prediction,
@@ -157,11 +150,8 @@ async def actionable(run: Run, example: Example):
 
     grader = prompt | structured_llm_grader
     score = await grader.with_retry(
-        stop_after_attempt=5,
-        retry_if_exception_type=(
-            OpenAIRateLimitError,
-            AnthropicRateLimitError,
-        ),
+        stop_after_attempt=DEFAULT_MAX_RETRIES,
+        retry_if_exception_type=ERRORS_TO_RETRY_ON,
     ).ainvoke(
         {
             "prediction": prediction,
@@ -207,11 +197,8 @@ async def structure(run: Run, example: Example):
 
     grader = prompt | structured_llm_grader
     score = await grader.with_retry(
-        stop_after_attempt=5,
-        retry_if_exception_type=(
-            OpenAIRateLimitError,
-            AnthropicRateLimitError,
-        ),
+        stop_after_attempt=DEFAULT_MAX_RETRIES,
+        retry_if_exception_type=ERRORS_TO_RETRY_ON,
     ).ainvoke(
         {
             "prediction": prediction,
@@ -251,11 +238,8 @@ async def tone(run: Run, example: Example):
 
     grader = prompt | structured_llm_grader
     score = await grader.with_retry(
-        stop_after_attempt=5,
-        retry_if_exception_type=(
-            OpenAIRateLimitError,
-            AnthropicRateLimitError,
-        ),
+        stop_after_attempt=DEFAULT_MAX_RETRIES,
+        retry_if_exception_type=ERRORS_TO_RETRY_ON,
     ).ainvoke(
         {
             "prediction": prediction,
@@ -295,11 +279,8 @@ async def timeline(run: Run, example: Example):
 
     grader = prompt | structured_llm_grader
     score = await grader.with_retry(
-        stop_after_attempt=5,
-        retry_if_exception_type=(
-            OpenAIRateLimitError,
-            AnthropicRateLimitError,
-        ),
+        stop_after_attempt=DEFAULT_MAX_RETRIES,
+        retry_if_exception_type=ERRORS_TO_RETRY_ON,
     ).ainvoke(
         {
             "prediction": prediction,
@@ -339,11 +320,8 @@ async def no_judgments(run: Run, example: Example):
 
     grader = prompt | structured_llm_grader
     score = await grader.with_retry(
-        stop_after_attempt=5,
-        retry_if_exception_type=(
-            OpenAIRateLimitError,
-            AnthropicRateLimitError,
-        ),
+        stop_after_attempt=DEFAULT_MAX_RETRIES,
+        retry_if_exception_type=ERRORS_TO_RETRY_ON,
     ).ainvoke(
         {
             "prediction": prediction,
