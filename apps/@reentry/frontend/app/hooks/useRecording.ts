@@ -19,6 +19,7 @@ import { captureException, withScope } from "@sentry/nextjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useQueue } from "~@reentry/frontend/contexts/QueueContext";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type {
@@ -46,6 +47,7 @@ interface UseRecordingProps {
   sessionStatus?: string | null;
   sessionChunkCount?: number;
   onRecordingStopped?: () => void;
+  clientPseudoId?: string | null;
 }
 
 export const useRecording = ({
@@ -55,6 +57,7 @@ export const useRecording = ({
   sessionStatus,
   sessionChunkCount = 0,
   onRecordingStopped,
+  clientPseudoId
 }: UseRecordingProps): RecordingState & RecordingActions => {
   const [recordingStatus, setRecordingStatus] =
     useState<RecordingStatus>("created");
@@ -65,6 +68,7 @@ export const useRecording = ({
   );
   const [cannotConnectToServer, setCannotConnectToServer] = useState(false);
   const { getAccessToken } = useAuth();
+  const { trackAssessmentRecordingStatusUpdated } = useAnalytics();
   const { updateStatus } = useUpdateRecordingStatus();
   const queue = useQueue();
 
@@ -217,6 +221,11 @@ export const useRecording = ({
   }, [sessionId, finalizeRecordingMutation, getAccessToken]);
 
   const pauseRecording = useCallback(() => {
+    if (!sessionId || !clientPseudoId) {
+      return;
+    }
+    trackAssessmentRecordingStatusUpdated({sessionId, justiceInvolvedPersonId: clientPseudoId, status: "PAUSED"})
+
     if (
       mediaRecorderRef.current &&
       mediaRecorderRef.current.state === "recording"
@@ -339,6 +348,11 @@ export const useRecording = ({
   );
 
   const startRecording = useCallback(async () => {
+    if (!sessionId || !clientPseudoId) {
+      return;
+    }
+    trackAssessmentRecordingStatusUpdated({sessionId, justiceInvolvedPersonId: clientPseudoId, status: "STARTED"})
+  
     try {
       validateRecordingCapabilities(
         selectedMicrophone,
@@ -408,6 +422,11 @@ export const useRecording = ({
   ]);
 
   const resumeRecording = useCallback(async () => {
+    if (!sessionId || !clientPseudoId) {
+      return;
+    }
+    trackAssessmentRecordingStatusUpdated({sessionId, justiceInvolvedPersonId: clientPseudoId, status: "RESUMED"})
+    
     try {
       // Since we stop the stream during pause, we always need to create a new MediaRecorder
       // when resuming, whether it's within-session or cross-session
@@ -475,6 +494,11 @@ export const useRecording = ({
   ]);
 
   const stopRecording = useCallback(async () => {
+    if (!sessionId || !clientPseudoId) {
+      return;
+    }
+    trackAssessmentRecordingStatusUpdated({sessionId, justiceInvolvedPersonId: clientPseudoId, status: "STOPPED"})
+    
     if (uiStatus !== "processing") {
       if (
         mediaRecorderRef.current &&

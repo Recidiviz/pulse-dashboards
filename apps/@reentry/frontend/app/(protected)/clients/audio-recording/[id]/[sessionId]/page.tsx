@@ -26,6 +26,7 @@ import TranscriptionAdressForm from "~@reentry/frontend/(protected)/clients/audi
 import TranscriptionSection from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/TranscriptionSection";
 import UserSummary from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/UserSummary";
 import { $api } from "~@reentry/frontend/api";
+import { PageView } from "~@reentry/frontend/components/PageView";
 import RecordingInterface from "~@reentry/frontend/components/recording/RecordingInterface";
 import { QueueProvider } from "~@reentry/frontend/contexts/QueueContext";
 import { useAuth } from "~@reentry/frontend/lib/auth";
@@ -151,24 +152,27 @@ const AudioRecordingPage: React.FC = () => {
   }
 
   return (
-    <QueueProvider>
-      <NavRecordingPage />
-      <div className="min-h-[calc(100vh-65px)] self-stretch px-4 md:p-10 bg-[#f9fafa] flex flex-col items-start gap-5">
-        <UserSummary
-          clientData={clientData}
-          sessionData={sessionData || null}
-        />
-        <TranscriptionSection
-          sessionData={sessionData || null}
-          onRefreshNeeded={() => refetchSession()}
-        />
-        <RecordingInterface
-          clientRecord={clientData}
-          sessionData={sessionData || null}
-          setNeedsAddress={setNeedsAddress}
-        />
-      </div>
-    </QueueProvider>
+    <>
+      <PageView />
+      <QueueProvider>
+        <NavRecordingPage />
+        <div className="min-h-[calc(100vh-65px)] self-stretch px-4 md:p-10 bg-[#f9fafa] flex flex-col items-start gap-5">
+          <UserSummary
+            clientData={clientData}
+            sessionData={sessionData || null}
+          />
+          <TranscriptionSection
+            sessionData={sessionData || null}
+            onRefreshNeeded={() => refetchSession()}
+          />
+          <RecordingInterface
+            clientRecord={clientData}
+            sessionData={sessionData || null}
+            setNeedsAddress={setNeedsAddress}
+          />
+        </div>
+      </QueueProvider>
+    </>
   );
 };
 

@@ -17,9 +17,10 @@
 
 "use client";
 
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useRecordingSessionStatus } from "~@reentry/frontend/hooks/useRecordingSessionStatus";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import { showErrorToast } from "~@reentry/frontend/utils/toast";
@@ -38,6 +39,7 @@ export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
   const [signedUrl, setSignedUrl] = useState<string | null>(null);
   const [shouldLoad, setShouldLoad] = useState(false);
   const { getAccessToken } = useAuth();
+  const { track } = useAnalytics();
 
   const { statusData } = useRecordingSessionStatus(sessionId, shouldPollStatus);
 
@@ -100,6 +102,7 @@ export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
             onError={(e) =>
               console.error(`Audio playback error for ${signedUrl}:`, e)
             }
+            onPlay={() => track("assessment_playback_started", {sessionId: sessionId})}
           >
             <track kind="captions" src="" label="No captions available" />
             Your browser does not support audio playback.

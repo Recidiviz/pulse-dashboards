@@ -35,6 +35,12 @@ interface AnalyticsContextProps {
   trackClientIntakeManuallyEnabled: (metadata: {
     justiceInvolvedPersonId: string;
   }) => void;
+  trackClientHomeAddressSubmitted: (metadata: {
+    justiceInvolvedPersonId: string;
+  }) => void;
+  trackAssessmentRecordingStatusUpdated: (metadata: {
+    justiceInvolvedPersonId: string, sessionId: string, status: string
+  }) => void;
 }
 
 interface AnalyticsProviderProps {
@@ -129,6 +135,18 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     track("client_intake_manually_enabled", metadata);
   };
 
+  const trackClientHomeAddressSubmitted = (metadata: {
+    justiceInvolvedPersonId: string;
+  }) => {
+    track("client_home_address_submitted", metadata);
+  };
+
+  const trackAssessmentRecordingStatusUpdated = (metadata: {
+    justiceInvolvedPersonId: string, sessionId: string, status: string
+  }) => {
+    track(`assessment_recording_status_updated`, metadata)
+  }
+
   useEffect(() => {
     const userHash = auth.userAppMetadata?.["userHash"];
     if (auth.state.isAuthorized && userHash) {
@@ -138,7 +156,7 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
 
   return (
     <AnalyticsContext.Provider
-      value={{ identify, pageView, track, trackClientIntakeChatHistoryViewed, trackClientIntakeManuallyEnabled }}
+      value={{ identify, pageView, track, trackClientIntakeChatHistoryViewed, trackClientIntakeManuallyEnabled, trackClientHomeAddressSubmitted, trackAssessmentRecordingStatusUpdated }}
     >
       {children}
     </AnalyticsContext.Provider>

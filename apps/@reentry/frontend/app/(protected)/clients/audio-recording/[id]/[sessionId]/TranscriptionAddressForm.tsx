@@ -21,6 +21,7 @@ import type React from "react";
 import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
 
@@ -42,6 +43,7 @@ const TranscriptionAddressForm = ({
   setNeedsAddress,
 }: AddressFormProps) => {
   const { getAccessToken } = useAuth();
+  const { trackClientHomeAddressSubmitted } = useAnalytics();
   const [formData, setFormData] = useState<AddressFormData>({
     streetAddress: "",
     city: "",
@@ -59,6 +61,10 @@ const TranscriptionAddressForm = ({
     if (!formData.city.trim() || !formData.state.trim()) {
       onError("City and state are required");
       return;
+    }
+
+    if (clientData) {
+      trackClientHomeAddressSubmitted({justiceInvolvedPersonId: clientData.pseudonymized_client_id})
     }
 
     setIsSubmitting(true);
