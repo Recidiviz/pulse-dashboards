@@ -107,10 +107,10 @@ const PathwaysFilterBar: React.FC<{
               )}
               <ToolbarItem>
                 <DetailsGroup>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={(e) => handleDownload()} preventCloseOnClickEvent>
                     <DownloadDataButton handleOnClick={handleDownload} />
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem preventCloseOnClickEvent>
                     <MethodologyLink
                       path={DASHBOARD_PATHS.methodologySystem}
                       chartTitle={chartTitle}

@@ -88,9 +88,12 @@ export const Toolbar = ({
 
   const onFocus: React.FocusEventHandler<HTMLDivElement> = (event) => {
     // If focus moves into the toolbar from an outside element, focus the first item.
-    if (!ref.current?.contains(event.relatedTarget as Node)) {
+    if (
+      event.relatedTarget &&
+      !ref.current?.contains(event.relatedTarget as Node)
+    ) {
       focusManager.focusFirstItem();
-      ref.current?.classList.add('FocusVisible');
+      ref.current?.classList.add("FocusVisible");
     }
   };
 
@@ -119,7 +122,7 @@ export const Toolbar = ({
       if (ref.current && relatedTarget) {
         // Check if the newly focused element is inside of the Toolbar, if not remove FocusVisible
         if (!ref.current.contains(relatedTarget as Node)) {
-          ref.current.classList.remove('FocusVisible');
+          ref.current.classList.remove("FocusVisible");
         }
       }
     };
