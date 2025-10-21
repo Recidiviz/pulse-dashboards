@@ -50,6 +50,7 @@ export const usMiSecurityClassificationCommitteeReviewSchema =
       minReleaseDate: dateStringSchema.nullish(),
       facility: z.string(),
       lock: z.string(),
+      OPT: z.boolean().optional(),
       STG: z.string().optional(),
       bondableOffensesWithin6Months: z.string().nullish(),
       nonbondableOffensesWithin1Year: z.string().optional(),

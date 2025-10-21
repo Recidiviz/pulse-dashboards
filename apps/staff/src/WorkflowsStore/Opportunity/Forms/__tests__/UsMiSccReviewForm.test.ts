@@ -88,6 +88,7 @@ function createTestUnit() {
       lock: "lock1",
       facility: "FACILITY1",
       STG: "1",
+      OPT: true,
       bondableOffensesWithin6Months:
         "(040, 011, 2024-01-01), (011, 2023-12-12)",
       nonbondableOffensesWithin1Year: "(008, 2023-12-01)",
@@ -138,6 +139,7 @@ describe("prefilledDataTransformer", () => {
       {
         "AMX": "Apr 1, 2027",
         "ERD": "Apr 1, 2025",
+        "OPT": true,
         "STG1": true,
         "STG2": false,
         "adSegDate1": "2023-12-01",
