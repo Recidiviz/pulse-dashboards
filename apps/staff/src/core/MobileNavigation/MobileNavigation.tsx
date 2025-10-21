@@ -20,12 +20,14 @@ import "./MobileNavigation.scss";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
+import { Menubar } from "~design-system";
+
 import MenuIcon from "../../assets/static/images/menu.svg?react";
 import Drawer from "../../components/Drawer";
 import useIsMobile from "../../hooks/useIsMobile";
+import MobileViewNavigation from "../MobileViewNavigation";
 import PageNavigation from "../PageNavigation";
 import SectionNavigation from "../SectionNavigation";
-import ViewNavigation from "../ViewNavigation";
 import { DASHBOARD_VIEWS } from "../views";
 import VitalsSummaryBreadcrumbs from "../VitalsSummaryBreadcrumbs";
 
@@ -38,32 +40,63 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
   const { pathname } = useLocation();
   const currentView = pathname.split("/")[1].toLowerCase();
   const [open, setOpen] = useState(false);
+
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
   return isMobile ? (
     <>
-      <Drawer isShowing={open} hide={() => setOpen(false)}>
-        <ViewNavigation>
+      <Drawer
+        isShowing={open}
+        hide={() => setOpen(false)}
+        id="mobile-page-navigation-drawer"
+      >
+        <MobileViewNavigation>
           {currentView === DASHBOARD_VIEWS.system && <PageNavigation />}
-        </ViewNavigation>
+        </MobileViewNavigation>
       </Drawer>
-      <div className="MobileNavigation">
-        <MenuIcon
-          className="MobileNavigation__icon"
-          onClick={() => setOpen(!open)}
-        />
-        <div className="MobileNavigation__title">{title}</div>
-        {currentView === DASHBOARD_VIEWS.system && (
-          <div className="MobileNavigation__system">
-            <SectionNavigation />
+      <div className="MenubarContainer">
+        <Menubar className="MobileNavigation" aria-label="Main navigation">
+          <MenuIcon
+            className="MobileNavigation__icon"
+            onClick={() => setOpen(!open)}
+            onKeyDown={(event) => {
+              if (event?.key === "Enter" || event?.key === " ") {
+                setOpen(!open);
+              }
+            }}
+            role="menuitem"
+            aria-expanded={open}
+            aria-haspopup="true"
+            aria-label={
+              open ? "Close page navigation menu" : "Open page navigation menu"
+            }
+          />
+          <div className="MobileNavigation__title" aria-live="polite">
+            {title}
           </div>
-        )}
-        {currentView === DASHBOARD_VIEWS.operations && (
-          <div className="MobileNavigation__operations">
-            <VitalsSummaryBreadcrumbs />
-          </div>
-        )}
+          {currentView === DASHBOARD_VIEWS.system ? (
+            <div
+              className="MobileNavigation__system"
+              aria-label="Section navigation"
+            >
+              <SectionNavigation />
+            </div>
+          ) : (
+            <div />
+          )}
+          {currentView === DASHBOARD_VIEWS.operations ? (
+            <div
+              className="MobileNavigation__operations"
+              aria-label="Operations navigation"
+            >
+              <VitalsSummaryBreadcrumbs />
+            </div>
+          ) : (
+            <div />
+          )}
+        </Menubar>
       </div>
     </>
   ) : null;

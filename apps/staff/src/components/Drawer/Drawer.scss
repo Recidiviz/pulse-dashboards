@@ -30,8 +30,6 @@
     max-width: 100vw;
     max-height: 100vh;
     z-index: 999;
-    overflow-x: hidden;
-    overflow-y: auto;
     outline: 0;
     transition: transform 300ms ease;
     box-shadow:
@@ -52,6 +50,8 @@
     min-height: 15rem;
     height: 100%;
     padding: 1.25rem 2.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   &__close-icon {
@@ -60,6 +60,12 @@
     transform: rotate(0.5turn);
     display: flex;
     margin-left: auto;
+    padding: 2px;
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px constants.$white;
+      border-radius: 2px;
+    }
   }
 
   &__left {

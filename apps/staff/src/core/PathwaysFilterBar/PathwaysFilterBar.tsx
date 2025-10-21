@@ -84,17 +84,27 @@ const PathwaysFilterBar: React.FC<{
         containerRef={containerRef}
         details={
           isMobile ? (
-            <DetailsGroup>
-              <MoreFilters
-                enabledFilters={moreFilters}
-                filterOptions={pick(moreFilters, filterOptions)}
-              />
-              <DownloadDataButton handleOnClick={handleDownload} />
-              <MethodologyLink
-                path={DASHBOARD_PATHS.methodologySystem}
-                chartTitle={chartTitle}
-              />
-            </DetailsGroup>
+            <ToolbarItem>
+              <DetailsGroup>
+                {moreFilters.length > 0 && (
+                  <DropdownMenuItem>
+                    <MoreFilters
+                      enabledFilters={moreFilters}
+                      filterOptions={pick(moreFilters, filterOptions)}
+                    />
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem>
+                  <DownloadDataButton handleOnClick={handleDownload} />
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <MethodologyLink
+                    path={DASHBOARD_PATHS.methodologySystem}
+                    chartTitle={chartTitle}
+                  />
+                </DropdownMenuItem>
+              </DetailsGroup>
+            </ToolbarItem>
           ) : (
             <div className="FilterBar__details">
               {moreFilters.length > 0 && (

@@ -31,6 +31,7 @@ type Props = {
   bodyStyles?: any;
   closeButton?: boolean;
   position?: "left" | "right" | "top" | "bottom";
+  id?: string;
   children?: React.ReactNode;
 };
 
@@ -41,6 +42,7 @@ const Drawer: React.FC<Props> = ({
   hide,
   position = "left",
   closeButton = true,
+  id,
   children,
 }) => {
   const ref: any = useRef();
@@ -61,6 +63,72 @@ const Drawer: React.FC<Props> = ({
     };
   }, [isShowing]);
 
+  useEffect(() => {
+    if (!isShowing) {
+      return;
+    }
+    const drawer = ref.current;
+
+    // Get all focusable elements within the drawer
+    const focusableElementsSelector =
+      'menubar, button:not([tabindex="-1"]), [href]:not([tabindex="-1"]), input, select, [tabindex]:not([tabindex="-1"])';
+    const focusableElements = drawer.querySelectorAll(
+      focusableElementsSelector,
+    );
+    const firstFocusableElement = focusableElements?.[0];
+    if (firstFocusableElement) {
+      firstFocusableElement.focus();
+    }
+
+    // Handle keyboard navigation for focus trapping
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        hide();
+        return;
+      }
+
+      // Handle Tab key for focus trapping
+      if (event.key === "Tab") {
+        if (!focusableElements || focusableElements.length === 0) {
+          return;
+        }
+
+        const lastFocusableElement =
+          focusableElements[focusableElements.length - 1];
+        if (event.shiftKey) {
+          // Shift + Tab: moving backwards
+          if (
+            document.activeElement === firstFocusableElement ||
+            !drawer?.contains(document.activeElement)
+          ) {
+            event.stopPropagation();
+            event.preventDefault();
+            lastFocusableElement.focus();
+          }
+        } else {
+          if (
+            document.activeElement === lastFocusableElement ||
+            (lastFocusableElement as HTMLElement)?.contains(
+              document.activeElement as Node,
+            ) ||
+            !drawer?.contains(document.activeElement)
+          ) {
+            event.stopPropagation();
+            event.preventDefault();
+            firstFocusableElement.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup: remove the event listener
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isShowing, hide, id]);
+
   if (!isTransitioning && !isShowing) {
     return null;
   }
@@ -73,6 +141,7 @@ const Drawer: React.FC<Props> = ({
         Drawer__bottom: position === "bottom",
         Drawer__top: position === "top",
       })}
+      id={id || "drawer"}
     >
       <div
         className={cn("Drawer__overlay", {
@@ -97,6 +166,13 @@ const Drawer: React.FC<Props> = ({
               width={position === "left" ? 24 : 17}
               height={position === "left" ? 24 : 17}
               onClick={hide}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  hide();
+                }
+              }}
+              tabIndex={0}
+              aria-label="Close drawer"
             />
           )}
           {children}

@@ -22,7 +22,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import { Icon, IconSVG, Menubar } from "~design-system";
+import { Icon, IconSVG, Menubar, palette } from "~design-system";
 
 import Drawer from "../../components/Drawer";
 import {
@@ -61,6 +61,7 @@ const SectionNavigation: React.FC = () => {
         className="SectionNavigation"
         vertical
         ariaLabel="Chart navigation"
+        focusBorderColor={isMobile ? palette.white : undefined}
       >
         {enabledSections.map((sectionId: string) => (
           <div key={sectionId}>
@@ -100,16 +101,25 @@ const SectionNavigation: React.FC = () => {
   if (isMobile && isMultipleSections)
     return (
       <>
-        <Drawer position="right" isShowing={open} hide={() => setOpen(false)}>
+        <Drawer position="right" isShowing={open} hide={() => setOpen(false)} id="section-navigation-drawer">
           {sectionLinks}
         </Drawer>
         <button
-          type="button"
+          role="menuitem"
           className="SectionNavigation__drawer-button"
           onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          aria-haspopup="true"
+          aria-label={open ? "Close section menu" : "Open section menu"}
+          aria-controls="section-navigation-drawer"
         >
           <span>{sections && sections[currentSection]}</span>
-          <Icon kind={IconSVG.DownChevron} width={10} height={6} />
+          <Icon
+            kind={IconSVG.DownChevron}
+            width={10}
+            height={6}
+            aria-hidden="true"
+          />
         </button>
       </>
     );

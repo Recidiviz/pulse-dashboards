@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./ViewNavigation.scss";
+import "./MobileViewNavigation.scss";
 
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import { Icon, IconSVG } from "~design-system";
+import { Icon, IconSVG, Menubar, palette } from "~design-system";
 
 import MethodologyLogo from "../../assets/static/images/methodology.svg?react";
 import { useRootStore } from "../../components/StoreProvider";
@@ -43,8 +43,9 @@ function PathwaysLink({ enabled }: OptionalLinkProps) {
       className={appendActiveClassName(`ViewNavigation__navlink`)}
       to={`/${DASHBOARD_VIEWS.system}`}
       onClick={() => filtersStore.resetFilters()}
+      role="menuitem"
     >
-      <Icon kind={IconSVG.Pathways} width={24} />
+      <Icon kind={IconSVG.Pathways} width={24} aria-hidden="true" />
       <div className="ViewNavigation__navlink-heading">System-Level Trends</div>
     </NavLink>
   );
@@ -55,6 +56,7 @@ function ProfileNavLink() {
     <NavLink
       className={appendActiveClassName(`ViewNavigation__navlink`)}
       to={`/${DASHBOARD_VIEWS.profile}`}
+      role="menuitem"
     >
       <UserAvatar />
       <div className="ViewNavigation__navlink-heading">Profile</div>
@@ -71,7 +73,7 @@ function MethodologyLink({
 }) {
   const linkContents = (
     <>
-      <MethodologyLogo className="ViewNavigation__icon" />
+      <MethodologyLogo className="ViewNavigation__icon" aria-hidden="true" />
       <div className="ViewNavigation__navlink-heading">How it works</div>
     </>
   );
@@ -98,6 +100,8 @@ function MethodologyLink({
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleMethodologyLinkClick}
+        role="menuitem"
+        aria-label="How it works (opens in new tab)"
       >
         {linkContents}
       </a>
@@ -117,6 +121,8 @@ function MethodologyLink({
         search: `?stateCode=${currentTenantId}`,
       }}
       onClick={handleMethodologyLinkClick}
+      role="menuitem"
+      aria-label="How it works (opens in new tab)"
     >
       {linkContents}
     </NavLink>
@@ -134,8 +140,9 @@ function InsightsLink({ enabled }: OptionalLinkProps) {
         }`
       }
       to={`/${DASHBOARD_VIEWS.insights}`}
+      role="menuitem"
     >
-      <Icon kind={IconSVG.Insights} width={24} />
+      <Icon kind={IconSVG.Insights} width={24} aria-hidden="true" />
       <div className="ViewNavigation__navlink-heading">Overview</div>
     </NavLink>
   );
@@ -152,8 +159,9 @@ function WorkflowsLink({ enabled }: OptionalLinkProps) {
         }`
       }
       to={`/${DASHBOARD_VIEWS.workflows}`}
+      role="menuitem"
     >
-      <Icon kind={IconSVG.Workflows} width={24} />
+      <Icon kind={IconSVG.Workflows} width={24} aria-hidden="true" />
       <div className="ViewNavigation__navlink-heading">Workflows</div>
     </NavLink>
   );
@@ -163,6 +171,7 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
   const { vitalsStore } = useCoreStore();
 
   if (!enabled) return null;
+
   return (
     <NavLink
       className={({ isActive }) =>
@@ -172,14 +181,15 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
       }
       to={`/${DASHBOARD_VIEWS.operations}`}
       onClick={() => vitalsStore.resetCurrentEntityId()}
+      role="menuitem"
     >
-      <Icon kind={IconSVG.Operations} width={24} />
+      <Icon kind={IconSVG.Operations} width={24} aria-hidden="true" />
       <div className="ViewNavigation__navlink-heading">Operational Metrics</div>
     </NavLink>
   );
 }
 
-const ViewNavigation: React.FC<{ children?: React.ReactNode }> = ({
+const MobileViewNavigation: React.FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
   const { pathname } = useLocation();
@@ -195,16 +205,20 @@ const ViewNavigation: React.FC<{ children?: React.ReactNode }> = ({
   const enableWorkflows = !!navigationLayout.workflows;
 
   return (
-    <div className="ViewNavigation__mobile">
+    <Menubar
+      vertical
+      className="MobileViewNavigation__mobile"
+      focusBorderColor={palette.white}
+    >
       <InsightsLink enabled={enableInsights} />
       <PathwaysLink enabled={enabledPathwaysPages} />
-      {children}
+      {children ? <>{children}</> : <div />}
       <OperationsLink enabled={enableOperations} />
       <WorkflowsLink enabled={enableWorkflows} />
       <MethodologyLink currentTenantId={currentTenantId} view={view} />
       <ProfileNavLink />
-    </div>
+    </Menubar>
   );
 };
 
-export default observer(ViewNavigation);
+export default observer(MobileViewNavigation);

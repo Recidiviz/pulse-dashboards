@@ -3,7 +3,7 @@
 @use "../CoreConstants.module.scss" as constants;
 @use "../../assets/styles/spec/tools/mixins/ie11.scss";
 
-.ViewNavigation {
+.MobileViewNavigation {
   height: 100vh;
   width: 4rem;
   max-width: 4rem;
@@ -47,6 +47,9 @@
         & svg g {
           opacity: 1;
         }
+        &:focus, &:focus-within, &:active {
+          opacity: 1;
+        }
       }
       &:hover {
         opacity: 1;
@@ -71,6 +74,9 @@
       & svg {
         opacity: 1;
       }
+    }
+    &:focus, &:focus-within, &:active {
+      opacity: 1;
     }
     &:hover {
       & svg {

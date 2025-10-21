@@ -2,14 +2,18 @@
 @use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
 @use "../CoreConstants.module.scss" as constants;
 
+.MenubarContainer {
+  position: fixed;
+  height: calc(4rem - 4px); /* Reduce height by 4px (2px top + 2px bottom) to account for focus outline */
+  width: calc(100% - 4px); /* Reduce width by 4px (2px left + 2px right) to account for focus outline */
+  top: 2px; /* Offset by 2px to center with focus outline */
+  left: 2px; /* Offset by 2px to center with focus outline */
+  z-index: 2;
+}
+
 .MobileNavigation {
   background: constants.$marble-3;
-  height: 4rem;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 2;
+  height: 100%;
   flex-direction: row;
   align-items: center;
   border-bottom: constants.$core-border-color 1px solid;

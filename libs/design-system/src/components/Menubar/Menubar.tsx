@@ -23,11 +23,13 @@ import { palette } from "../../styles";
 import MenubarContext from "./MenubarContext";
 import MenubarFocusManager from "./MenubarFocusManager";
 
-const MenuBarElement = styled.nav<{ vertical?: boolean }>`
+const MenuBarElement = styled.nav<{
+  vertical?: boolean;
+  focusBorderColor?: string;
+}>`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  height: 100%;
   ${({ vertical }) =>
     vertical &&
     css`
@@ -41,19 +43,20 @@ const MenuBarElement = styled.nav<{ vertical?: boolean }>`
     align-items: center;
   }
 
-  &:has(:focus-visible) {
-    box-shadow:
-      -1px 1px 1px 1px ${palette.signal.links},
-      1px -1px 1px 1px ${palette.signal.links};
-    border-radius: 4px;
-  }
+  ${({ focusBorderColor }) => css`
+    &:has(:focus-visible) {
+      box-shadow:
+        -1px 1px 1px 1px ${focusBorderColor || palette.signal.links},
+        1px -1px 1px 1px ${focusBorderColor || palette.signal.links};
+      border-radius: 4px;
+    }
 
-  [role="menuitem"]:focus-visible {
-    box-shadow:
-      -1px 1px 1px 1px ${palette.signal.links},
-      1px -1px 1px 1px ${palette.signal.links};
-    border-radius: 4px;
-  }
+    [role="menuitem"]:focus-visible {
+      box-shadow:
+        -1px 1px 1px 1px ${focusBorderColor || palette.signal.links},
+        1px -1px 1px 1px ${focusBorderColor || palette.signal.links};
+      border-radius: 4px;
+    }`}
 `;
 
 export interface MenubarProps {
@@ -61,6 +64,7 @@ export interface MenubarProps {
   className?: string;
   vertical?: boolean;
   ariaLabel?: string;
+  focusBorderColor?: string;
 }
 
 export const Menubar = ({
@@ -68,6 +72,7 @@ export const Menubar = ({
   className,
   vertical,
   ariaLabel,
+  focusBorderColor,
 }: MenubarProps): JSX.Element => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [focusManager] = useState(new MenubarFocusManager(ref));
@@ -85,7 +90,10 @@ export const Menubar = ({
   const onFocus: React.FocusEventHandler<HTMLDivElement> = (event) => {
     // If focus moves into the menubar from an outside element, focus the first item.
     // This check prevents focus from being hijacked if a user clicks directly on a menu item.
-    if (!ref.current?.contains(event.relatedTarget as Node)) {
+    if (
+      !ref.current?.contains(event.relatedTarget as Node) &&
+      ref.current === event.target
+    ) {
       focusManager.focusFirstItem();
     }
   };
@@ -137,6 +145,7 @@ export const Menubar = ({
       tabIndex={0}
       vertical={vertical}
       aria-label={ariaLabel || "Menu Bar"}
+      focusBorderColor={focusBorderColor}
     >
       <MenubarContext.Provider value={{ focusManager }}>
         {children}
