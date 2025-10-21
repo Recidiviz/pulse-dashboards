@@ -20,7 +20,7 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 
 export class UsAzReleaseToTPRConfiguration extends ApiOpportunityConfiguration {
   eligibilityDateTextForTab(tab?: OpportunityTab): string | undefined {
-    if (tab === "Fast Trackers" || tab === "Eligible Now") {
+    if (tab && ["Fast Trackers", "Eligible Now", "Overdue"].includes(tab)) {
       return "TPR Date";
     } else {
       return "TPR or Projected TPR";

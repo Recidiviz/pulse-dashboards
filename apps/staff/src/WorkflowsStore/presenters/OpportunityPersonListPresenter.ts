@@ -150,8 +150,6 @@ export class OpportunityPersonListPresenter
         "usAzTransferToAdministrativeSupervision",
         "usAzReleaseToTPR",
         "usAzReleaseToDTP",
-        "usAzOverdueForACISDTP",
-        "usAzOverdueForACISTPR",
       ].includes(this.opportunityType),
       // TODO(#7921): More gracefully handle these special cases
       ELIGIBILITY_DATE: some(opportunities, (opp) => !!opp.eligibilityDate),
@@ -200,24 +198,15 @@ export class OpportunityPersonListPresenter
         ),
       SUBMITTED_FOR: this.isViewingSubmittedTab,
       CTA_BUTTON: true,
-      AGREEMENT_STATUS: [
-        "usAzReleaseToTPR",
-        "usAzReleaseToDTP",
-        "usAzOverdueForACISDTP",
-        "usAzOverdueForACISTPR",
-      ].includes(this.opportunityType),
-      HOME_PLAN_STATUS: [
-        "usAzReleaseToTPR",
-        "usAzReleaseToDTP",
-        "usAzOverdueForACISDTP",
-        "usAzOverdueForACISTPR",
-      ].includes(this.opportunityType),
-      MAN_LIT_STATUS: [
-        "usAzReleaseToTPR",
-        "usAzReleaseToDTP",
-        "usAzOverdueForACISDTP",
-        "usAzOverdueForACISTPR",
-      ].includes(this.opportunityType),
+      AGREEMENT_STATUS: ["usAzReleaseToTPR", "usAzReleaseToDTP"].includes(
+        this.opportunityType,
+      ),
+      HOME_PLAN_STATUS: ["usAzReleaseToTPR", "usAzReleaseToDTP"].includes(
+        this.opportunityType,
+      ),
+      MAN_LIT_STATUS: ["usAzReleaseToTPR", "usAzReleaseToDTP"].includes(
+        this.opportunityType,
+      ),
     };
   }
 

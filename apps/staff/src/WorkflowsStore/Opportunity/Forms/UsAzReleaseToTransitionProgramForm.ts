@@ -17,8 +17,6 @@
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatDate, formatNameLastFirst } from "../../../utils/formatStrings";
-import { UsAzOverdueForAcisDtpOpportunity } from "../UsAz/UsAzOverdueForAcisDtpOpportunity/UsAzOverdueForAcisDtpOpportunity";
-import { UsAzOverdueForAcisTprOpportunity } from "../UsAz/UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprOpportunity";
 import { UsAzReleaseToDTPOpportunity } from "../UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPOpportunity";
 import { UsAzReleaseToTPROpportunity } from "../UsAz/UsAzReleaseToTPROpportunity/UsAzReleaseToTPROpportunity";
 import { UsAzReleaseToTransitionProgramDraftData } from "../UsAz/UsAzReleaseToTransitionProgramBaseSchema";
@@ -28,8 +26,6 @@ export class UsAzReleaseToTransitionProgramForm extends FormBase<
   UsAzReleaseToTransitionProgramDraftData,
   | UsAzReleaseToTPROpportunity
   | UsAzReleaseToDTPOpportunity
-  | UsAzOverdueForAcisTprOpportunity
-  | UsAzOverdueForAcisDtpOpportunity
 > {
   navigateToFormText = "Download Agreement Form";
   allowRevert = false;
@@ -49,8 +45,7 @@ export class UsAzReleaseToTransitionProgramForm extends FormBase<
 
       return {
         isDTPRelease:
-          this.opportunity instanceof UsAzReleaseToDTPOpportunity ||
-          this.opportunity instanceof UsAzOverdueForAcisDtpOpportunity,
+          this.opportunity instanceof UsAzReleaseToDTPOpportunity,
         residentNameLastFirst: formatNameLastFirst(person.fullName),
         adcNumber: person.displayId,
         residentNameAndAdcNumber: `${person.displayName} (${person.displayId})`,

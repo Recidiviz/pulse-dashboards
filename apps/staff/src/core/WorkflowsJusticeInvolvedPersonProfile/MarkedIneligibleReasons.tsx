@@ -102,14 +102,7 @@ export function getusAzTprDtpAdditionalInformation(
   opportunity: Opportunity,
 ): JSX.Element | undefined {
   const usAzTprDtpAdditionalInformation = `Thank you for flagging an error in this person's TPR date in ACIS. Recidiviz will automatically report this information to Central Time Comp. If you have questions for their team, you're encouraged to reach out to them directly via email.`;
-  if (
-    [
-      "usAzOverdueForACISTPR",
-      "usAzOverdueForACISDTP",
-      "usAzReleaseToDTP",
-      "usAzReleaseToTPR",
-    ].includes(opportunity.type)
-  ) {
+  if (["usAzReleaseToDTP", "usAzReleaseToTPR"].includes(opportunity.type)) {
     return (
       <>
         <div>{usAzTprDtpAdditionalInformation}</div>

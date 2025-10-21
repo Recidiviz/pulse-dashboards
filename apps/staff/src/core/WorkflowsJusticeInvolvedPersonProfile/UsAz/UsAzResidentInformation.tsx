@@ -32,12 +32,7 @@ export function UsAzResidentInformation({
   // In Arizona, case notes are used to display the resident's home plan for transition
   // program release opportunities; each resident should only have one such opportunity
   const opportunityWithCaseNotes = resident.flattenedOpportunities.find((opp) =>
-    [
-      "usAzOverdueForACISDTP",
-      "usAzOverdueForACISTPR",
-      "usAzReleaseToDTP",
-      "usAzReleaseToTPR",
-    ].includes(opp.type),
+    ["usAzReleaseToDTP", "usAzReleaseToTPR"].includes(opp.type),
   );
 
   return (

@@ -31,14 +31,13 @@ import {
 import { UsAzReleaseToTransitionProgramForm } from "../../Forms/UsAzReleaseToTransitionProgramForm";
 import { convertStringToUTCDate } from "../../utils/dateUtils";
 import { UsAzReleaseToTPRUpdateRecord } from "../UsAzReleaseToTransitionProgramOpportunityBase";
-import { UsAzTprDtpOpportunityBase } from "../UsAzTprDtpBase/UsAzTprDtpBase";
+import { UsAzReleaseToTransitionProgramOpportunityBase } from "../UsAzReleaseToTransitionProgramOpportunityBase";
 import {
   UsAzReleaseToDTPReferralRecord,
   usAzReleaseToDTPSchema,
 } from "./UsAzReleaseToDTPReferralRecord";
 
-export class UsAzReleaseToDTPOpportunity extends UsAzTprDtpOpportunityBase<
-  Resident,
+export class UsAzReleaseToDTPOpportunity extends UsAzReleaseToTransitionProgramOpportunityBase<
   UsAzReleaseToDTPReferralRecord,
   UsAzReleaseToTPRUpdateRecord
 > {

@@ -24,14 +24,13 @@ import { hydrateReq, hydrateUntypedCriteria } from "../../utils";
 import { Reason } from "../../utils/criteriaUtils";
 import { convertStringToUTCDate } from "../../utils/dateUtils";
 import { UsAzReleaseToTPRUpdateRecord } from "../UsAzReleaseToTransitionProgramOpportunityBase";
-import { UsAzTprDtpOpportunityBase } from "../UsAzTprDtpBase/UsAzTprDtpBase";
+import { UsAzReleaseToTransitionProgramOpportunityBase } from "../UsAzReleaseToTransitionProgramOpportunityBase";
 import {
   UsAzReleaseToTPRReferralRecord,
   usAzReleaseToTPRSchema,
 } from "./UsAzReleaseToTPRReferralRecord";
 
-export class UsAzReleaseToTPROpportunity extends UsAzTprDtpOpportunityBase<
-  Resident,
+export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramOpportunityBase<
   UsAzReleaseToTPRReferralRecord,
   UsAzReleaseToTPRUpdateRecord
 > {

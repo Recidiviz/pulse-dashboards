@@ -20,7 +20,7 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 
 export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
   eligibilityDateTextForTab(tab?: OpportunityTab): string | undefined {
-    if (tab === "Fast Trackers" || tab === "Eligible Now") {
+    if (tab && ["Fast Trackers", "Eligible Now", "Overdue"].includes(tab)) {
       return "DTP Date";
     } else {
       return "DTP or Projected DTP";

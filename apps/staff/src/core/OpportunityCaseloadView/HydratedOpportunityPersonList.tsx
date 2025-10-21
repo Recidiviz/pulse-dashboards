@@ -79,7 +79,7 @@ import {
   OpportunityTabGroup,
 } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
-import { UsAzTprDtpOpportunityBase } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTprDtpBase/UsAzTprDtpBase";
+import { UsAzReleaseToTransitionProgramOpportunityBase } from "../../WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTransitionProgramOpportunityBase";
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
@@ -627,7 +627,8 @@ const TableView = observer(function TableView({
       id: "AGREEMENT_STATUS",
       enableSorting: true,
       accessorFn: (opp: Opportunity) =>
-        opp instanceof UsAzTprDtpOpportunityBase && opp.agreementStatus,
+        opp instanceof UsAzReleaseToTransitionProgramOpportunityBase &&
+        opp.agreementStatus,
       sortingFn: "text",
     },
     {
@@ -635,7 +636,8 @@ const TableView = observer(function TableView({
       id: "HOME_PLAN_STATUS",
       enableSorting: true,
       accessorFn: (opp: Opportunity) =>
-        opp instanceof UsAzTprDtpOpportunityBase && opp.homePlanStatus,
+        opp instanceof UsAzReleaseToTransitionProgramOpportunityBase &&
+        opp.homePlanStatus,
       sortingFn: "text",
     },
     {
@@ -643,7 +645,8 @@ const TableView = observer(function TableView({
       id: "MAN_LIT_STATUS",
       enableSorting: true,
       accessorFn: (opp: Opportunity) =>
-        opp instanceof UsAzTprDtpOpportunityBase && opp.mandatoryLiteracyStatus,
+        opp instanceof UsAzReleaseToTransitionProgramOpportunityBase &&
+        opp.mandatoryLiteracyStatus,
       sortingFn: "text",
     },
     {

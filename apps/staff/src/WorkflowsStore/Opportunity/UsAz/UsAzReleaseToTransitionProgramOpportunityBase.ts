@@ -19,7 +19,10 @@ import { DocumentData } from "firebase/firestore";
 
 import { palette } from "~design-system";
 
-import { OPPORTUNITY_STATUS_COLORS, StatusPalette } from "../../../core/utils/workflowsUtils";
+import {
+  OPPORTUNITY_STATUS_COLORS,
+  StatusPalette,
+} from "../../../core/utils/workflowsUtils";
 import { OpportunityUpdate } from "../../../FirestoreStore";
 import { Resident } from "../../Resident";
 import { OpportunityBase } from "../OpportunityBase";
@@ -52,11 +55,14 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
     if (this.isSubmitted) return this.submittedTabTitle;
     if (this.denied) return this.deniedTabTitle;
     if (this.almostEligible) return "Almost Eligible";
+
     switch (this.record.metadata.tabDescription) {
       case "FAST_TRACK":
         return "Fast Trackers";
       case "APPROVED_BY_TIME_COMP":
         return "Eligible Now";
+      case "OVERDUE":
+        return "Overdue";
       default:
         return "Other";
     }
@@ -135,8 +141,29 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
         icon: palette.signal.highlight,
         buttonFill: palette.signal.links,
       } as StatusPalette;
-    } 
+    }
 
     return undefined;
+  }
+
+  get agreementStatus(): string {
+    return (
+      this.record.caseNotes["Agreement Form Signature Status"]?.[0].noteTitle ??
+      "\u{2014}"
+    );
+  }
+
+  get homePlanStatus(): string {
+    return (
+      this.record.caseNotes["Home Plan Information"]?.[0].noteTitle ??
+      "\u{2014}"
+    );
+  }
+
+  get mandatoryLiteracyStatus(): string {
+    return (
+      this.record.caseNotes["Mandatory Literacy Enrollment Information"]?.[0]
+        .noteTitle ?? "\u{2014}"
+    );
   }
 }

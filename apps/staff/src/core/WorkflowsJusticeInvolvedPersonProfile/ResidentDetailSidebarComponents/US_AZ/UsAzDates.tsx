@@ -107,8 +107,7 @@ export function UsAzDates({
   // Only show a DTP date for people with a DTP opportunity; by default show TPR
   const useDtp = Boolean(
     resident.flattenedOpportunities.find(
-      (opp) =>
-        opp.type === "usAzReleaseToDTP" || opp.type === "usAzOverdueForACISDTP",
+      (opp) => opp.type === "usAzReleaseToDTP",
     ),
   );
 
