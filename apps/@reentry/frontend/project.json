@@ -125,30 +125,43 @@
     "deploy": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "{projectRoot}"
+        "cwd": "{projectRoot}",
+        "parallel": false
       },
       "dependsOn": ["container"],
       "configurations": {
         "staging": {
-          "command": "gcloud run deploy frontend-staging --image gcr.io/recidiviz-rnd-planner/frontend-staging:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner"
+          "commands": [
+            "gcloud run deploy frontend-staging --image gcr.io/recidiviz-rnd-planner/frontend-staging:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner",
+            "gcloud -q run services update-traffic frontend-staging --project recidiviz-rnd-planner --region us-central1 --to-latest"
+          ]
         },
         "cherry-pick": {
-          "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend-production:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner"
+          "commands": [
+            "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend-production:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner",
+            "gcloud -q run services update-traffic frontend-prod --project recidiviz-rnd-planner --region us-central1 --to-latest"
+          ]
         },
         "production": {
-          "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend-production:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner"
+          "commands": [
+            "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend-production:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner",
+            "gcloud -q run services update-traffic frontend-prod --project recidiviz-rnd-planner --region us-central1 --to-latest"
+          ]
         },
         "demo": {
-          "command": "gcloud run deploy frontend-demo --image gcr.io/recidiviz-rnd-planner/frontend-demo:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner"
+          "commands": [
+            "gcloud run deploy frontend-demo --image gcr.io/recidiviz-rnd-planner/frontend-demo:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner",
+            "gcloud -q run services update-traffic frontend-demo --project recidiviz-rnd-planner --region us-central1 --to-latest"
+          ]
         },
         "dev_gcp": {
-          "parallel": false,
           "dependsOn": ["copy-correct-env"],
           "cwd": "{workspaceRoot}",
           "commands": [
             "docker build --platform linux/amd64 --provenance=false -t gcr.io/recidiviz-rnd-planner/frontend-dev:$COMMIT_SHA -f apps/@reentry/frontend/Dockerfile.gcp .",
             "docker push gcr.io/recidiviz-rnd-planner/frontend-dev:$COMMIT_SHA",
-            "gcloud run deploy frontend-dev --image gcr.io/recidiviz-rnd-planner/frontend-dev:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner"
+            "gcloud run deploy frontend-dev --image gcr.io/recidiviz-rnd-planner/frontend-dev:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner",
+            "gcloud -q run services update-traffic frontend-dev --project recidiviz-rnd-planner --region us-central1 --to-latest"
           ]
         }
       },

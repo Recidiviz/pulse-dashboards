@@ -140,6 +140,36 @@ steps:
         RECIDIVIZ_GCS_SERVICE_ACCOUNT_EMAIL=reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com,
         RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840
+
+  # Route traffic to latest revision
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "-q"
+      - "run"
+      - "services"
+      - "update-traffic"
+      - "backend-api-staging"
+      - "--project"
+      - "$PROJECT_ID"
+      - "--region"
+      - "us-central1"
+      - "--to-latest"
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "-q"
+      - "run"
+      - "services"
+      - "update-traffic"
+      - "backend-worker-staging"
+      - "--project"
+      - "$PROJECT_ID"
+      - "--region"
+      - "us-central1"
+      - "--to-latest"
+
 images:
   - "gcr.io/$PROJECT_ID/backend:staging"
   - "gcr.io/$PROJECT_ID/backend:$COMMIT_SHA"
