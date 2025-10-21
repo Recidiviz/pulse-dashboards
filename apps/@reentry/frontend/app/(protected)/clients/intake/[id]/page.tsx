@@ -21,6 +21,7 @@ import { useParams } from "next/navigation";
 import { FiMessageSquare } from "react-icons/fi";
 
 import AdminIntakeHistory from "~@reentry/frontend/(protected)/clients/intake/[id]/AdminIntakeHistory";
+import AdminIntakeHistoryV2 from "~@reentry/frontend/(protected)/clients/intake/[id]/AdminIntakeHistoryV2";
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
 import Summary from "~@reentry/frontend/components/intake/Summary";
@@ -57,8 +58,6 @@ const IntakeManagementPage = () => {
         "Content-Type": "application/json",
       },
     },
-    // Note: We disable this query when V2 intake chat is enabled because
-    // in V2, the intake is created during the chat flow and not upon enabling this intake.
     { enabled: !IS_V2_INTAKE_CHAT },
   );
 
@@ -80,12 +79,29 @@ const IntakeManagementPage = () => {
     );
   }
 
+  const getIntakeConvoHistoryCopy = () => {
+    if (IS_V2_INTAKE_CHAT) return;
+    if (!intakeData) {
+      return "No intake has been created for this client";
+    }
+    if (intakeData.status === "created") {
+      return "Intake has been created but not started yet";
+    }
+    return "No conversation history available";
+  };
+
+  const intakeConvoHistoryCopy = getIntakeConvoHistoryCopy();
+
   return (
     <>
       <PageView />
       <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-auto">
         {/* Profile Detail */}
-        <ProfileDetail clientRecord={clientData} isExpanded={undefined} setIsExpanded={()=> console.log("expanded")}/>
+        <ProfileDetail
+          clientRecord={clientData}
+          isExpanded={undefined}
+          setIsExpanded={() => console.log("expanded")}
+        />
 
         {/* Summary Section */}
         <div className="flex-grow w-full flex justify-center items-center">
@@ -102,7 +118,15 @@ const IntakeManagementPage = () => {
               <FiMessageSquare className="mr-2" /> Intake Conversation History
             </h2>
             <div className="h-[600px]">
-              {clientData?.external_client_id &&
+              {IS_V2_INTAKE_CHAT && (
+                <AdminIntakeHistoryV2
+                  clientRecord={clientData}
+                  clientPseudoId={id}
+                />
+              )}
+
+              {!IS_V2_INTAKE_CHAT &&
+              clientData?.external_client_id &&
               intakeData &&
               intakeData.id &&
               intakeData.client_intake_sections &&
@@ -113,14 +137,11 @@ const IntakeManagementPage = () => {
                   intake={intakeData}
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-500">
-                  {/* eslint-disable-next-line no-nested-ternary */}
-                  {intakeData?.status === "created"
-                    ? "Intake has been created but not started yet"
-                    : !intakeData
-                      ? "No intake has been created for this client"
-                      : "No conversation history available"}
-                </div>
+                intakeConvoHistoryCopy && (
+                  <div className="flex items-center justify-center h-full text-gray-500">
+                    {intakeConvoHistoryCopy}
+                  </div>
+                )
               )}
             </div>
           </div>

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,26 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+export const StatusPill = ({ status }: { status: string }) => {
+  const statusStyles = {
+    completed: "bg-green-100 text-green-800",
+    in_progress: "bg-yellow-100 text-yellow-800",
+    not_started: "bg-gray-100 text-gray-800",
+  };
 
-export const getIntakeInputSchema = z.object({
-  clientPseudoId: z.string(),
-});
+  const labelMap = {
+    completed: "Completed",
+    in_progress: "In Progress",
+    not_started: "Not Started",
+  };
 
-export const getClientIntakeStatusSchema = z.object({
-  clientPseudoId: z.string(),
-  staffPseudoId: z.string(),
-});
-
-export const toggleIntakeInputSchema = z.object({
-  clientPseudoId: z.string(),
-  enable: z.boolean(),
-});
-
-export const getAllClientsIntakeStatusInputSchema = z.object({
-  staffPseudoId: z.string(),
-});
-
-export const getIntakeHistoryInputSchema = z.object({
-  clientPseudoId: z.string(),
-});
+  return (
+    <span
+      className={`ml-2 px-2 py-0.5 text-xs rounded-full ${statusStyles[status]}`}
+    >
+      {labelMap[status]}
+    </span>
+  );
+};

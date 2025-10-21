@@ -332,7 +332,7 @@ export function buildServer() {
         return;
       }
 
-      const messages = await getChatHistoryForClient(intake.id, stateCode);
+      const { messages } = await getChatHistoryForClient(intake.id, stateCode);
 
       res.send({ ...intake, messages });
     },

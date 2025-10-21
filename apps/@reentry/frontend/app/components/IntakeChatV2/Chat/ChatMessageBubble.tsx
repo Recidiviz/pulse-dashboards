@@ -29,6 +29,7 @@ interface MessageBubbleProps {
   message?: Message;
   name?: string;
   isTyping?: boolean;
+  clientInitials?: string;
 }
 
 const TypingDots: React.FC = () => (
@@ -42,6 +43,7 @@ const TypingDots: React.FC = () => (
 export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
   message,
   isTyping = false,
+  clientInitials,
 }) => {
   if (!message && !isTyping) return null;
   if (message && !message.content?.trim()) return null;
@@ -62,7 +64,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
 
   const trailingAvatar = isUser && (
     <div className={styles["avatarDesktop"]}>
-      <ClientAvatar />
+      <ClientAvatar clientInitials={clientInitials} />
     </div>
   );
 
@@ -73,7 +75,10 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
 
         <div className={styles["bubbleWrapper"]}>
           <div className={`${styles["bubble"]} ${bubbleClass}`}>
-            <Typography variant="body1" className={`${styles["bubbleText"]} ${isUser ? "case-worker-message" : "user-message"}`}>
+            <Typography
+              variant="body1"
+              className={`${styles["bubbleText"]} ${isUser ? "case-worker-message" : "user-message"}`}
+            >
               {content}
             </Typography>
           </div>

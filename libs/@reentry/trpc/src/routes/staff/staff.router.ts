@@ -17,11 +17,13 @@
 
 import { TRPCError } from "@trpc/server";
 
+import { getChatHistoryForClient } from "~@reentry/intake-agent/utils";
 import { Prisma } from "~@reentry/prisma/client";
 import { auth0Procedure, router } from "~@reentry/trpc/init";
 import {
   getAllClientsIntakeStatusInputSchema,
   getClientIntakeStatusSchema,
+  getIntakeHistoryInputSchema,
   getIntakeInputSchema,
   toggleIntakeInputSchema,
 } from "~@reentry/trpc/routes/staff/staff.schema";
@@ -160,6 +162,71 @@ export const staffRouter = router({
             message: "Failed to update intake status",
           });
         }
+      },
+    ),
+  getIntakeHistory: auth0Procedure
+    .input(getIntakeHistoryInputSchema)
+    .query(
+      async ({ ctx: { prisma, stateCode }, input: { clientPseudoId } }) => {
+        // Fetch latest intake for this client (assuming last is current)
+        const intake = await prisma.intake.findFirst({
+          where: { client: { pseudonymizedId: clientPseudoId } },
+          orderBy: { startDate: "desc" },
+          select: {
+            id: true,
+            startDate: true,
+            endDate: true,
+            config: true,
+          },
+        });
+
+        if (!intake) {
+          return null;
+        }
+
+        const { messages: chatHistory, currentSectionIndex } =
+          await getChatHistoryForClient(intake.id, stateCode);
+        if (currentSectionIndex === undefined) {
+          // Debug guard: unexpected undefined active section index; defaulting to 0.
+          // If this occurs frequently we should investigate intake agent checkpointing.
+          console.warn(
+            `[staff.getIntakeHistory] currentSectionIndex undefined for intake ${intake.id}; defaulting to 0`,
+          );
+        }
+        const sections = intake.config?.sections || [];
+
+        const idx = currentSectionIndex ?? 0;
+        const completeAll = idx >= sections.length;
+        const sectionsWithCompletionStatus = sections.map((section, i) => {
+          let completion_status: string;
+          if (completeAll || i < idx) {
+            completion_status = "completed";
+          } else if (i === idx) {
+            completion_status = "in_progress";
+          } else {
+            completion_status = "not_started";
+          }
+          return {
+            id: section.title,
+            title: section.title,
+            description: section.description,
+            requiredInformation: section.requiredInformation,
+            completion_status,
+          };
+        });
+
+        return {
+          intakeId: intake.id,
+          startDate: intake.startDate,
+          endDate: intake.endDate,
+          sections: sectionsWithCompletionStatus,
+          messages: (chatHistory || []).map((message) => ({
+            id: message.id,
+            content: message.content,
+            section: message.response_metadata?.["section"],
+            from_role: message.getType() === "ai" ? "case_worker" : "client",
+          })),
+        };
       },
     ),
 });

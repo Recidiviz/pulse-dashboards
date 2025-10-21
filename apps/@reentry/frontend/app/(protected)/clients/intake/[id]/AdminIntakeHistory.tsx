@@ -22,34 +22,13 @@ import { useEffect, useRef, useState } from "react";
 
 import Chatbubble from "~@reentry/frontend/(protected)/clients/intake/[id]/Chatbubble";
 import Sidebar from "~@reentry/frontend/(protected)/clients/intake/[id]/Sidebar";
+import { StatusPill } from "~@reentry/frontend/components/base/StatusPill";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 type ClientRecord = components["schemas"]["ClientRecordResponse"];
 type Intake = components["schemas"]["IntakeWithSectionsResponse"];
 type ClientIntakeSection = components["schemas"]["ClientIntakeSectionResponse"];
-
-const StatusPill = ({ status }: { status: string }) => {
-  const statusStyles = {
-    completed: "bg-green-100 text-green-800",
-    in_progress: "bg-yellow-100 text-yellow-800",
-    not_started: "bg-gray-100 text-gray-800",
-  };
-
-  const labelMap = {
-    completed: "Completed",
-    in_progress: "In Progress",
-    not_started: "Not Started",
-  };
-
-  return (
-    <span
-      className={`ml-2 px-2 py-0.5 text-xs rounded-full ${statusStyles[status]}`}
-    >
-      {labelMap[status]}
-    </span>
-  );
-};
 
 const AdminIntakeHistory = ({
   clientRecord,

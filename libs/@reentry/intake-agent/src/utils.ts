@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AIMessage, HumanMessage } from "@langchain/core/messages";
+import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
 
+import { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent";
 import { IntakeConfig } from "~@reentry/prisma/types";
 
 export function getSectionTitles(config: IntakeConfig) {
@@ -74,4 +75,29 @@ export function createHumanMessageWithMetadata(opts: {
     currentSectionIndex: opts.currentSectionIndex,
     messageType: "human",
   });
+}
+
+// Remove/resolve during rebase
+export async function getChatHistoryForClient(
+  intakeId: string,
+  stateCode: string,
+): Promise<{
+  messages: BaseMessage[] | undefined;
+  currentSectionIndex: number | undefined;
+}> {
+  const checkpointer = getIntakeCheckpointerForStateCode(stateCode);
+
+  const result = await checkpointer.get({
+    configurable: {
+      thread_id: intakeId,
+    },
+  });
+  const messages = result?.channel_values["messages"] as
+    | BaseMessage[]
+    | undefined;
+  const currentSectionIndex = result?.channel_values["currentSectionIndex"] as
+    | number
+    | undefined;
+
+  return { messages, currentSectionIndex };
 }

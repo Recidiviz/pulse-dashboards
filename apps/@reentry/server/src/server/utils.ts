@@ -92,7 +92,10 @@ export function getAuthenticateInternalRequestPreHandlerFn<
 export async function getChatHistoryForClient(
   intakeId: string,
   stateCode: string,
-): Promise<BaseMessage[] | undefined> {
+): Promise<{
+  messages: BaseMessage[] | undefined;
+  currentSectionIndex: number | undefined;
+}> {
   const checkpointer = getIntakeCheckpointerForStateCode(stateCode);
 
   const result = await checkpointer.get({
@@ -100,6 +103,12 @@ export async function getChatHistoryForClient(
       thread_id: intakeId,
     },
   });
+  const messages = result?.channel_values["messages"] as
+    | BaseMessage[]
+    | undefined;
+  const currentSectionIndex = result?.channel_values["currentSectionIndex"] as
+    | number
+    | undefined;
 
-  return result?.channel_values["messages"] as BaseMessage[] | undefined;
+  return { messages, currentSectionIndex };
 }

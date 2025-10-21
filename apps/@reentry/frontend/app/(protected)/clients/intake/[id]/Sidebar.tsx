@@ -141,7 +141,7 @@ const Sidebar: FC<SidebarProps> = ({
           )}
         </div>
 
-        <div className="flex flex-col gap-0.3 pt-0.3 pb-1.5 flex-1 w-full">
+        <div className="flex flex-col gap-0.3 mt-[3px] pt-0.3 pb-1.5 flex-1 w-full">
           <h3
             className={`text-sm font-bold leading-snug tracking-tight ${isActive ? "text-white" : "text-[#012322]"}`}
           >

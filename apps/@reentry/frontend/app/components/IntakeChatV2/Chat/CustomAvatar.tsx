@@ -26,12 +26,16 @@ import styles from "./CustomAvatar.module.css";
 
 interface AvatarProps {
   size?: number;
+  clientInitials?: string;
 }
 
-export const ClientAvatar: React.FC<AvatarProps> = ({ size = 32 }) => {
+export const ClientAvatar: React.FC<AvatarProps> = ({
+  size = 32,
+  clientInitials,
+}) => {
   const { firstName, lastName } = useIntakeAuthContext();
   const clientName = `${firstName || ""} ${lastName || ""}`;
-  const userInitials = getInitials(clientName);
+  const userInitials = clientInitials ?? getInitials(clientName);
 
   return (
     <Avatar
