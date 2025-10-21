@@ -21,6 +21,7 @@ import { OpportunityType } from "~datatypes";
 import {
   awaitHydration,
   castToError,
+  compositeHydrationState,
   Hydratable,
   HydrationState,
   isHydrated,
@@ -141,6 +142,8 @@ export class WorkflowsFormLayoutPresenter implements Hydratable {
         );
       }
     }
+
+    this.selectedOpportunity?.form?.hydrate();
   }
 
   /**
@@ -172,6 +175,11 @@ export class WorkflowsFormLayoutPresenter implements Hydratable {
       };
     }
 
-    return this.selectedOpportunity.hydrationState;
+    const hydratables: Hydratable[] = [this.selectedOpportunity];
+    if (this.selectedOpportunity.form) {
+      hydratables.push(this.selectedOpportunity.form);
+    }
+
+    return compositeHydrationState(hydratables);
   }
 }

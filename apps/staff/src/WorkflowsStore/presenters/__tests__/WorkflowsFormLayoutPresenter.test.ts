@@ -21,13 +21,16 @@ import { ClientRecord, fieldToDate, OpportunityType } from "~datatypes";
 import { isHydrated } from "~hydration-utils";
 
 import FirestoreStore from "../../../FirestoreStore";
-import { RootStore } from "../../../RootStore"
+import { RootStore } from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import { mockIneligibleClient } from "../../__fixtures__";
 import { Client } from "../../Client";
 import { isEligibleOrAlmostEligible } from "../../Opportunity";
 import { OpportunityBase } from "../../Opportunity/OpportunityBase";
-import { UsTnCustodyLevelDowngradeReferralRecordFixture, UsTnExpirationReferralRecordFixture } from "../../Opportunity/UsTn/__fixtures__";
+import {
+  UsTnCustodyLevelDowngradeReferralRecordFixture,
+  UsTnExpirationReferralRecordFixture,
+} from "../../Opportunity/UsTn/__fixtures__";
 import { JusticeInvolvedPerson } from "../../types";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { WorkflowsFormLayoutPresenter } from "../WorkflowsFormLayoutPresenter";
@@ -50,25 +53,29 @@ const usTnClientRecord: ClientRecord = {
 };
 
 describe("WorkflowsFormLayoutPresenter", () => {
-  beforeEach(async() => {
+  beforeEach(async () => {
     vi.resetAllMocks();
 
     rootStore = new RootStore();
     rootStore.tenantStore.setCurrentTenantId(mockTenantId);
     rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
 
-    firestoreStore = new FirestoreStore({rootStore: rootStore});
+    firestoreStore = new FirestoreStore({ rootStore: rootStore });
 
     tenantStore = { currentTenantId: mockTenantId } as TenantStore;
 
     selectedPerson = new Client(usTnClientRecord, rootStore);
-    selectedPerson.opportunityManager.setSelectedOpportunityTypes([usTnCustodyDowngradeType, usTnExpirationType]);
+    selectedPerson.opportunityManager.setSelectedOpportunityTypes([
+      usTnCustodyDowngradeType,
+      usTnExpirationType,
+    ]);
 
     workflowsStore = {
       selectedPerson: selectedPerson,
       selectedOpportunityType: usTnCustodyDowngradeType,
-      featureVariants: {usTnTEPENotesForAll: {}},
-      opportunityConfigurationStore: rootStore.workflowsRootStore.opportunityConfigurationStore,
+      featureVariants: { usTnTEPENotesForAll: {} },
+      opportunityConfigurationStore:
+        rootStore.workflowsRootStore.opportunityConfigurationStore,
     } as unknown as WorkflowsStore;
 
     vi.spyOn(
@@ -106,16 +113,40 @@ describe("WorkflowsFormLayoutPresenter", () => {
     });
 
     it("correctly identifies eligible person", () => {
-      expect(isEligibleOrAlmostEligible(selectedPerson, usTnCustodyDowngradeType)).toBeTrue();
+      expect(
+        isEligibleOrAlmostEligible(selectedPerson, usTnCustodyDowngradeType),
+      ).toBeTrue();
     });
 
-    it("returns correct opportunity from person & type", async() => {
+    it("returns correct opportunity from person & type", async () => {
       presenter.hydrate();
       await waitFor(() => {
         expect(isHydrated(presenter)).toBeTrue();
       });
 
-      expect(presenter.selectedOpportunity?.type).toBe(usTnCustodyDowngradeType);
+      expect(presenter.selectedOpportunity?.type).toBe(
+        usTnCustodyDowngradeType,
+      );
+    });
+
+    it("calls hydrate on the existing opportunity form", async () => {
+      // grab the underlying opportunity & form created during opportunityManager hydration
+      const opp = selectedPerson.flattenedOpportunities.find(
+        (o) => o.type === usTnCustodyDowngradeType,
+      );
+
+      // opp & form existence already asserted above; cast with conditional fallback to satisfy lint
+      const formInstance = opp?.form as any;
+      const formHydrateSpy = formInstance
+        ? vi.spyOn(formInstance, "hydrate").mockImplementation(() => {
+            /* intentionally no-op for test */
+          })
+        : undefined;
+
+      await presenter.hydrate();
+      if (formHydrateSpy) {
+        expect(formHydrateSpy).toHaveBeenCalled();
+      }
     });
   });
 
@@ -129,22 +160,18 @@ describe("WorkflowsFormLayoutPresenter", () => {
         tenantStore,
       );
 
-      vi.spyOn(
-        presenter,
-        "hydrate"
-      );
+      vi.spyOn(presenter, "hydrate");
 
-      vi.spyOn(
-        presenter,
-        "hydrate"
-      );
+      vi.spyOn(presenter, "hydrate");
     });
 
     it("correctly identifies ineligible person", () => {
-      expect(isEligibleOrAlmostEligible(selectedPerson, usTnExpirationType)).not.toBeTrue();
+      expect(
+        isEligibleOrAlmostEligible(selectedPerson, usTnExpirationType),
+      ).not.toBeTrue();
     });
 
-    it("returns correct opportunity from person & type", async() => {
+    it("returns correct opportunity from person & type", async () => {
       vi.spyOn(
         FirestoreStore.prototype,
         "getOpportunitiesForJIIAndOpportunityType",

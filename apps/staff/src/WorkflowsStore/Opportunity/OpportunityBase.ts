@@ -28,12 +28,7 @@ import { isEmpty, pick } from "lodash";
 import { action, computed, makeObservable, when } from "mobx";
 
 import { OpportunityType } from "~datatypes";
-import {
-  compositeHydrationState,
-  Hydratable,
-  HydrationState,
-  isHydrated,
-} from "~hydration-utils";
+import { HydrationState, isHydrated } from "~hydration-utils";
 
 import {
   reasonsIncludesOtherKey,
@@ -426,25 +421,16 @@ export class OpportunityBase<
   }
 
   /**
-   * An Opportunity is only as hydrated as its least-hydrated Subscription.
+   * Opportunity hydration covers only the updates subscription:
+   * The opportunity record is provided to the constructor, and the form
+   * is hydrated separately.
    */
   get hydrationState(): HydrationState {
-    const opportunitySubscriptions: Hydratable[] = [this.updatesSubscription];
-    // Also evaluate form subscription hydration state if applicable.
-    if (this.form) {
-      opportunitySubscriptions.push(this.form);
-    }
-    return compositeHydrationState([...opportunitySubscriptions]);
+    return this.updatesSubscription.hydrationState;
   }
 
-  /**
-   * Initiates hydration for all subscriptions.
-   */
   hydrate(): void {
     this.updatesSubscription.hydrate();
-    if (this.form) {
-      this.form.hydrate();
-    }
   }
 
   async deleteSubmitted(): Promise<void> {
