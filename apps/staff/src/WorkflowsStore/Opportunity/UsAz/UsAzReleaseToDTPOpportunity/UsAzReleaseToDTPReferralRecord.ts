@@ -26,7 +26,7 @@ export const usAzReleaseToDTPSchema = usAzReleaseToTransitionProgramSchemaBase
     eligibleCriteria: z
       .object({
         usAzIncarcerationWithin6MonthsOfAcisDtpDate: z.object({
-          acisDtpDate: dateStringSchema,
+          acisDtpDate: dateStringSchema.nullable(),
         }),
       })
       .passthrough()
@@ -34,7 +34,7 @@ export const usAzReleaseToDTPSchema = usAzReleaseToTransitionProgramSchemaBase
         z
           .object({
             usAzWithin7DaysOfRecidivizDtpDate: z.object({
-              recidivizDtpDate: dateStringSchema,
+              recidivizDtpDate: dateStringSchema.nullable(),
             }),
           })
           .passthrough(),
@@ -45,7 +45,7 @@ export const usAzReleaseToDTPSchema = usAzReleaseToTransitionProgramSchemaBase
       ineligibleCriteria: z
         .object({
           usAzWithin7DaysOfRecidivizDtpDate: z.object({
-            recidivizDtpDate: dateStringSchema,
+            recidivizDtpDate: dateStringSchema.nullable(),
           }),
         })
         .passthrough(),
