@@ -3,23 +3,24 @@ import pytest
 from app.core.config import settings
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
+    ClientExtractedInfo,
     DistanceMode,
+    GetResourcesRequest,
     ResourceCategory,
     ResourceFailureReason,
     ResourceSubcategory,
-    ClientExtractedInfo,
     list_resources,
 )
 from app.utils.disallowed_resources import DISALLOWED_RESOURCE_NAMES
-from app.services.resources import GetResourcesRequest, list_resources
+
 
 def test_build_GetResourcesRequest__no_address():
     """Tests we don't build a GetResourcesRequest when there is no address in ClientExtractedInfo."""
 
     all_default = ClientExtractedInfo()
     with pytest.raises(
-        ValueError, 
-        match=r'At least one address \(home, work, school, or probation_office\) is required to request resources.',
+        ValueError,
+        match=r"At least one address \(home, work, school, or probation_office\) is required to request resources.",
     ):
         GetResourcesRequest.from_client_extracted_info(
             category=ResourceCategory.BASIC_NEEDS,
@@ -31,8 +32,8 @@ def test_build_GetResourcesRequest__no_address():
         )
 
     with pytest.raises(
-        ValueError, 
-        match=r'At least one address \(home, work, school, or probation_office\) is required to request resources.',
+        ValueError,
+        match=r"At least one address \(home, work, school, or probation_office\) is required to request resources.",
     ):
         GetResourcesRequest.from_client_extracted_json(
             category=ResourceCategory.BASIC_NEEDS,
@@ -42,6 +43,7 @@ def test_build_GetResourcesRequest__no_address():
             exclude_names=None,
             exclude_ids=None,
         )
+
 
 def test_build_GetResourcesRequest__invalid_json():
     """Ensures we fail clearly when trying to build a request from invalid client info JSON."""
@@ -56,7 +58,7 @@ def test_build_GetResourcesRequest__invalid_json():
     )
 
     with pytest.raises(
-        ValueError, 
+        ValueError,
         match="Input should be a valid string",
     ):
         GetResourcesRequest.from_client_extracted_json(
@@ -73,11 +75,12 @@ def test_build_GetResourcesRequest__invalid_json():
     GetResourcesRequest.from_client_extracted_json(
         category=ResourceCategory.BASIC_NEEDS,
         subcategory=ResourceSubcategory.HOUSING,
-        client_info_json={"extra_field": "value", "work": '2'},
+        client_info_json={"extra_field": "value", "work": "2"},
         limit=10,
         exclude_names=None,
         exclude_ids=None,
     )
+
 
 # TODO(#10014): Have subcategory be required in the new API
 @pytest.mark.parametrize("field_name", ["category", "address"])
@@ -91,6 +94,7 @@ def test_build_GetResourcesRequest__missing_required_fields(field_name):
     data.pop(field_name)
     with pytest.raises(ValueError, match="type=missing"):
         GetResourcesRequest(**data)
+
 
 def test_build_GetResourcesRequest__request_address():
     """Tests that our expectations of the requested address line up from extracted info."""
@@ -124,7 +128,7 @@ def test_build_GetResourcesRequest__travel_info():
         limit=10,
         exclude_names=None,
         exclude_ids=None,
-        )
+    )
     assert walking.travel_mode == DistanceMode.WALKING
     assert walking.distance_miles == 5
 
@@ -139,7 +143,7 @@ def test_build_GetResourcesRequest__travel_info():
         limit=10,
         exclude_names=None,
         exclude_ids=None,
-        )
+    )
     assert request.travel_mode == DistanceMode.DRIVING
     assert request.distance_miles == 100
 
@@ -163,17 +167,16 @@ def test_build_GetResourcesRequest__travel_info():
 )
 @pytest.mark.asyncio
 async def test_resource_type_get_result(resource_type: ResourceCategory):
-
     # Get the first subcategory from the list (if available)
     subcategories = CATEGORY_SUBCATEGORY_MAP[resource_type]
     subcategory = subcategories[0] if subcategories else None
 
     # Create a request with the category and first subcategory
     request = GetResourcesRequest(
-        category=resource_type, 
-        subcategory=subcategory, 
+        category=resource_type,
+        subcategory=subcategory,
         address="123 Anywhere St, UT 84057",
-        limit=10
+        limit=10,
     )
     response = await list_resources(request)
 
@@ -196,9 +199,7 @@ async def test_get_resources_invalid_resource_type():
     with pytest.raises(Exception):
         # Use an invalid category
         request = GetResourcesRequest(
-            category="INVALID_CATEGORY", 
-            address="123 Anywhere St, UT 84057",
-            limit=10
+            category="INVALID_CATEGORY", address="123 Anywhere St, UT 84057", limit=10
         )
         _list_resources_internal(request)
 
@@ -213,10 +214,10 @@ async def test_get_resources_with_exclusion():
     category = ResourceCategory.BASIC_NEEDS
     subcategory = ResourceSubcategory.HOUSING
     request = GetResourcesRequest(
-        category=category, 
-        subcategory=subcategory, 
+        category=category,
+        subcategory=subcategory,
         address="123 Anywhere St, UT 84057",
-        limit=10
+        limit=10,
     )
     response = _list_resources_internal(request)
     assert response is not None
@@ -312,11 +313,12 @@ async def test_resource_type_get_result_api(client, category: ResourceCategory):
     subcategory_str = subcategory.value if subcategory else None
     print({"category": category_str, "subcategory": subcategory_str})
     response = await client.post(
-        "/resources", json={
-            "category": category_str, 
+        "/resources",
+        json={
+            "category": category_str,
             "subcategory": subcategory_str,
             "address": "123 Anywhere St, UT 84057",
-        }
+        },
     )
     assert response.status_code == 200
     response_json = response.json()
@@ -353,11 +355,12 @@ async def test_get_resources_with_exclusion_api(client):
 
     # First check if there are resources available
     response = await client.post(
-        "/resources", json={
-            "category": category, 
+        "/resources",
+        json={
+            "category": category,
             "subcategory": subcategory,
             "address": "123 Anywhere St, UT 84057",
-        }
+        },
     )
     assert response.status_code == 200
     response_json = response.json()
@@ -392,10 +395,13 @@ async def test_get_resources_with_exclusion_api(client):
 
 
 async def test_get_resources_invalid_resource_type_api(client):
-    response = await client.post("/resources", json={
-        "category": "INVALID_CATEGORY",
-        "address": "123 Anywhere St, UT 84057",
-    })
+    response = await client.post(
+        "/resources",
+        json={
+            "category": "INVALID_CATEGORY",
+            "address": "123 Anywhere St, UT 84057",
+        },
+    )
     assert response.status_code == 422
 
 
@@ -404,13 +410,9 @@ async def test_get_resources_invalid_resource_type_api(client):
 async def test_call_list_resources():
     from app.services.resources import GetResourcesRequest
 
-    WORK_ADDRESS = "748 N 1340 W Orem, UT 84057"
-    HOME_ADDRESS = WORK_ADDRESS
-
     request = GetResourcesRequest(
         category=ResourceCategory.EMPLOYMENT_AND_CAREER,
-        home=WORK_ADDRESS,
-        work=HOME_ADDRESS,
+        address="748 N 1340 W Orem, UT 84057",
         can_drive=True,
         transit_pass=True,
         limit=50,
@@ -493,15 +495,11 @@ async def test_disallowed_resources():
     }
     all_found_resource_names: set[str] = set()
 
-    for address in correctional_centers_address:
+    for current_address in correctional_centers_address:
         for resource_category in ResourceCategory:
-            WORK_ADDRESS = address
-            HOME_ADDRESS = WORK_ADDRESS
-
             request = GetResourcesRequest(
                 category=resource_category,
-                home=WORK_ADDRESS,
-                work=HOME_ADDRESS,
+                address=current_address,
                 can_drive=True,
                 transit_pass=True,
                 limit=50,

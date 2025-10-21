@@ -189,7 +189,7 @@ async def fetch_resources_with_retry(
                 # current_request = modified_request_with_broader_search
                 logger.debug(f"No results found on attempt {attempt + 1}")
         except Exception as e:
-            logger.error(f"Unexpected error on attempt {attempt + 1}: {str(e)}")
+            logger.exception(f"Unexpected error on attempt {attempt + 1}: {str(e)}")
 
     logger.error("Max attempt reached, no resources found")
     return []

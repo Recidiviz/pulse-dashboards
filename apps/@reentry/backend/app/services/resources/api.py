@@ -185,7 +185,7 @@ async def list_external_resources(request: GetResourcesRequest) -> GetResourcesR
         category=request.category,
         subcategory=request.subcategory,
         travel_mode=request.travel_mode,
-        distance=request.distance,
+        distance=request.distance_miles,
     )
 
     # Prepare result list
@@ -264,11 +264,11 @@ async def list_external_resources(request: GetResourcesRequest) -> GetResourcesR
             )
 
     except Exception as error:
-        logger.error(
+        logger.exception(
             "Failed to fetch external resources",
             category=category,
             subcategory=subcategory,
-            address=address,
+            address=request.address,
             error=str(error),
             exc_info=error,
         )

@@ -191,8 +191,8 @@ class ParameterSearchBodyParams(BaseModel):
 
     # Validation
     @field_validator("mode")
-    def validate_mode(cls, v, values):
-        if values.get("time") is not None and v is None:
+    def validate_mode(cls, v, info):
+        if info.data.get("time") is not None and v is None:
             raise ValueError("If time is provided, mode is required")
         return v
 
@@ -214,7 +214,7 @@ class GetPlanResourcesRequest(BaseModel):
 
 
 # Not doing a docstring as the LLM may pull information from that.
-# This is data from the 'client_extracted_info' field of the Plan 
+# This is data from the 'client_extracted_info' field of the Plan
 # DB model, which is JSON when in the DB and a dict in pydantic.
 class ClientExtractedInfo(BaseModel):
     home: str | None = Field(
@@ -258,7 +258,6 @@ class ClientExtractedInfo(BaseModel):
 
 
 class GetResourcesRequest(BaseModel):
-
     category: ResourceCategory = Field(description="Resource category")
     # TODO(#10014): Have subcategory be required in the new API
     subcategory: Optional[ResourceSubcategory] = Field(
@@ -268,10 +267,12 @@ class GetResourcesRequest(BaseModel):
         description="Full address to find resources near. (e.g. '123 Main St, Cityville, CA 12345')"
     )
     distance_miles: int = Field(
-        default=100, description="The distance in miles from this request's address to search within."
+        default=100,
+        description="The distance in miles from this request's address to search within.",
     )
     travel_mode: DistanceMode | None = Field(
-        default=None, description="Preferred travel mode (driving, walking, bicycling, transit)"
+        default=None,
+        description="Preferred travel mode (driving, walking, bicycling, transit)",
     )
 
     exclude_names: Optional[list[str]] = Field(
@@ -310,7 +311,7 @@ class GetResourcesRequest(BaseModel):
 
     @classmethod
     def from_client_extracted_json(
-        cls, 
+        cls,
         *,
         category: ResourceCategory,
         subcategory: Optional[ResourceSubcategory],
@@ -329,11 +330,8 @@ class GetResourcesRequest(BaseModel):
             limit=limit,
         )
 
-
     @staticmethod
-    def _address_from_client_extracted_info(
-        client_info: ClientExtractedInfo
-    ):
+    def _address_from_client_extracted_info(client_info: ClientExtractedInfo):
         if client_info.home:
             return client_info.home
         if client_info.work:
@@ -348,9 +346,7 @@ class GetResourcesRequest(BaseModel):
         )
 
     @staticmethod
-    def _mode_and_distance_from_client_extracted_info(
-        client_info: ClientExtractedInfo
-    ):
+    def _mode_and_distance_from_client_extracted_info(client_info: ClientExtractedInfo):
         if client_info.can_drive is not False:
             return DistanceMode.DRIVING, 100
         elif client_info.transit_pass is not False:
@@ -360,6 +356,7 @@ class GetResourcesRequest(BaseModel):
         elif client_info.can_walk is not False:
             return DistanceMode.WALKING, 5
         return None, 100
+
 
 class Resource(BaseModel):
     id: str = Field(description="Unique identifier for the resource.")
