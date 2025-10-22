@@ -21,38 +21,9 @@ import { FILTER_TYPES } from "../utils/constants";
 
 export type EnabledFilter = keyof PopulationFilters;
 export type EnabledFilters = EnabledFilter[];
-
-export type PopulationFilterValues = {
-  timePeriod: string[];
-  gender: Gender[];
-  supervisionType: string[];
-  legalStatus: string[];
-  admissionReason: string[];
-  facility: string[];
-  ageGroup: AgeGroup[];
-  district: string[];
-  judicialDistrict: string[];
-  mostSevereViolation: string[];
-  numberOfViolations: string[];
-  supervisionLevel: string[];
-  race: string[];
-};
-
-export type PopulationFilterLabels = {
-  timePeriod: string;
-  gender: string;
-  supervisionType: string;
-  legalStatus: string;
-  admissionReason: string;
-  facility: string;
-  ageGroup: string;
-  district: string;
-  judicialDistrict: string;
-  mostSevereViolation: string;
-  numberOfViolations: string;
-  supervisionLevel: string;
-  race: string;
-};
+export type FilterType = typeof FILTER_TYPES[keyof typeof FILTER_TYPES];
+export type PopulationFilterValues = Record<Exclude<FilterType, "gender" | "ageGroup">, string[]> & { ageGroup: AgeGroup[], gender: Gender[] };
+export type PopulationFilterLabels = Record<FilterType, string>;
 
 export type SetPopulationFilters = (
   filtersStore: FiltersStore,
@@ -64,24 +35,10 @@ export type FilterOption = {
   longLabel?: string;
 };
 
-export interface PopulationFilters {
-  [FILTER_TYPES.TIME_PERIOD]: PopulationFilter;
-  [FILTER_TYPES.GENDER]: PopulationFilter;
-  [FILTER_TYPES.LEGAL_STATUS]: PopulationFilter;
-  [FILTER_TYPES.ADMISSION_REASON]: PopulationFilter;
-  [FILTER_TYPES.SUPERVISION_TYPE]: PopulationFilter;
-  [FILTER_TYPES.AGE_GROUP]: PopulationFilter;
-  [FILTER_TYPES.FACILITY]: PopulationFilter;
-  [FILTER_TYPES.DISTRICT]: PopulationFilter;
-  [FILTER_TYPES.JUDICIAL_DISTRICT]: PopulationFilter;
-  [FILTER_TYPES.MOST_SEVERE_VIOLATION]: PopulationFilter;
-  [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: PopulationFilter;
-  [FILTER_TYPES.SUPERVISION_LEVEL]: PopulationFilter;
-  [FILTER_TYPES.RACE]: PopulationFilter;
-}
+export type PopulationFilters = Record<FilterType, PopulationFilter>
 
 export type PopulationFilter = {
-  type: keyof PopulationFilters;
+  type: FilterType;
   title: string;
   isSingleSelect?: boolean;
   setFilters: SetPopulationFilters;

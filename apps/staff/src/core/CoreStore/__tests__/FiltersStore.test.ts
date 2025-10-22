@@ -19,7 +19,7 @@ import MetricsStore from "../../../core/CoreStore/MetricsStore";
 import { RootStore } from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
-import { defaultPopulationFilterValues } from "../../utils/filterOptions";
+import { defaultPopulationFilterValues, IdPopulationFilterOptions } from "../../utils/filterOptions";
 import CoreStore from "..";
 
 let coreStore: CoreStore;
@@ -37,12 +37,16 @@ beforeEach(() => {
   vi.mocked(TenantStore).mockImplementation(() => ({
     currentTenantId: "US_ID",
   }));
-  // @ts-expect-error
   vi.mocked(MetricsStore).mockImplementation(() => ({
+    // @ts-expect-error
     current: {
       filters: {
         enabledFilters: [],
       },
+      hydrationState: {
+        status: "hydrated"
+      },
+      dynamicFilterOptions: {}
     },
   }));
 });
@@ -130,6 +134,18 @@ describe("FiltersStore", () => {
       expect(coreStore.filtersStore.filtersDescription).toEqual(
         "Time Period: 1 year;\nGender: All;\nFacility: CAPP, ISCC\n",
       );
+    });
+  });
+
+  describe("dynamicFilterOptions", () => {
+    it("sets filterOptions with the dynamicFilterOptions from the current metric", () => {
+      coreStore.metricsStore.current.dynamicFilterOptions["facility"] = [
+        { label: "Option 1", value: "OPTION_1" },
+        { label: "Option 2", value: "OPTION_2" },
+      ];
+      const expected = IdPopulationFilterOptions;
+      expected.facility.options = [{ label: "All", value: "ALL" }, ...coreStore.metricsStore.current.dynamicFilterOptions["facility"]];
+      expect(coreStore.filtersStore.filterOptions).toEqual(expected);
     });
   });
 });

@@ -36,7 +36,7 @@ import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { Dimension } from "../types/dimensions";
-import { EnabledFilters, Filters } from "../types/filters";
+import { EnabledFilters, Filters, PopulationFilters } from "../types/filters";
 import { PathwaysPage } from "../views";
 import { Diff, Differ } from "./backendDiff/Differ";
 import { DiffError } from "./backendDiff/DiffError";
@@ -121,6 +121,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   newBackendMetric?: PathwaysNewBackendMetric<any>;
 
+  dynamicFilterOptions: Partial<PopulationFilters>;
+
   constructor({
     rootStore,
     id,
@@ -159,6 +161,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.rotateLabels = rotateLabels;
     this.accessorIsNotFilterType = accessorIsNotFilterType;
     this.newBackendMetric = newBackendMetric;
+    // Legacy PathwaysMetric will never have dynamic filter options
+    this.dynamicFilterOptions = {};
 
     reaction(
       () => {

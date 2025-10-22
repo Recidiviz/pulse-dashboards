@@ -18,13 +18,10 @@
 import React from "react";
 
 import OverTimeMetric from "../models/OverTimeMetric";
-import PathwaysMetric from "../models/PathwaysMetric";
-import PathwaysNewBackendMetric from "../models/PathwaysNewBackendMetric";
 import PersonLevelMetric from "../models/PersonLevelMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
-import { MetricRecord } from "../models/types";
 import VizCountOverTimeWithAvg from "../VizCountOverTimeWithAvg";
 import VizLengthOfStay from "../VizLengthOfStay";
 import VizPopulationOverTime from "../VizPopulationOverTime";
@@ -33,7 +30,12 @@ import VizPopulationProjectionOverTime from "../VizPopulationProjectionOverTime"
 import VizPopulationSnapshot from "../VizPopulationSnapshot";
 
 type MetricVizMapperProps = {
-  metric: PathwaysMetric<MetricRecord> | PathwaysNewBackendMetric<MetricRecord>;
+  metric:
+    | OverTimeMetric
+    | SnapshotMetric
+    | PersonLevelMetric
+    | PopulationProjectionOverTimeMetric
+    | SupervisionPopulationSnapshotMetric;
 };
 
 const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {

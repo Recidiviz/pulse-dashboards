@@ -25,7 +25,7 @@ import { convertToSlug } from "../../utils/navigation";
 import { DASHBOARD_PATHS, DASHBOARD_VIEWS } from "../views";
 
 type Props = {
-  note: string;
+  note?: string;
   chartTitle: string;
   isLoading?: boolean;
 };

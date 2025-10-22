@@ -19,7 +19,6 @@ import { makeAutoObservable } from "mobx";
 
 import OverTimeMetric from "../models/OverTimeMetric";
 import PathwaysMetric from "../models/PathwaysMetric";
-import PathwaysNewBackendMetric from "../models/PathwaysNewBackendMetric";
 import PersonLevelMetric from "../models/PersonLevelMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import SnapshotMetric from "../models/SnapshotMetric";
@@ -37,7 +36,14 @@ export default class MetricsStore {
 
   protected map?: Record<
     string,
-    Record<string, PathwaysMetric<any> | PathwaysNewBackendMetric<any>>
+    Record<
+      string,
+      | OverTimeMetric
+      | SnapshotMetric
+      | PersonLevelMetric
+      | PopulationProjectionOverTimeMetric
+      | SupervisionPopulationSnapshotMetric
+    >
   >;
 
   constructor({ rootStore }: { rootStore: CoreStore }) {
@@ -52,10 +58,13 @@ export default class MetricsStore {
     });
   }
 
-  get current(): any {
+  get current():
+    | OverTimeMetric
+    | SnapshotMetric
+    | PersonLevelMetric
+    | PopulationProjectionOverTimeMetric
+    | SupervisionPopulationSnapshotMetric {
     const { page, section } = this.rootStore;
-
-    if (!Object.keys(PATHWAYS_PAGES).includes(page)) return undefined;
 
     if (!this.map) {
       this.map = {

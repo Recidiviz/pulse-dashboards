@@ -35,7 +35,12 @@ import { TenantId } from "../../RootStore/types";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
-import { Filters, PopulationFilterValues } from "../types/filters";
+import {
+  FilterOption,
+  Filters,
+  FilterType,
+  PopulationFilterValues,
+} from "../types/filters";
 import { isAbortException } from "../utils/exceptions";
 import {
   getMetricIdsForPage,
@@ -52,7 +57,11 @@ import {
   PathwaysMetricRecords,
   SimulationCompartment,
 } from "./types";
-import { formatDateString, getTimePeriodRawValue } from "./utils";
+import {
+  formatDateString,
+  getTimePeriodRawValue,
+  validateDynamicFilterOptions,
+} from "./utils";
 
 export type BaseNewMetricConstructorOptions = {
   id: MetricId;
@@ -101,6 +110,8 @@ export default abstract class PathwaysNewBackendMetric<
 
   lastUpdated?: Date;
 
+  dynamicFilterOptions: Record<FilterType, FilterOption[]>;
+
   protected abortController?: AbortController;
 
   constructor({
@@ -123,6 +134,7 @@ export default abstract class PathwaysNewBackendMetric<
     this.isGeographic = isGeographic;
     this.rotateLabels = rotateLabels;
     this.accessorIsNotFilterType = accessorIsNotFilterType;
+    this.dynamicFilterOptions = {} as Record<FilterType, FilterOption[]>;
 
     makeObservable<PathwaysNewBackendMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -285,6 +297,16 @@ export default abstract class PathwaysNewBackendMetric<
           this.lastUpdated = formatDateString(
             fetchedData.metadata?.lastUpdated,
           );
+          if (fetchedData.metadata?.facilityIdNameMap) {
+            const facility = JSON.parse(
+              fetchedData.metadata.facilityIdNameMap,
+            );
+            if (!validateDynamicFilterOptions(facility))
+              throw new Error(
+                `Invalid dynamic filter option for ${this.id}: facility`,
+              );
+            this.dynamicFilterOptions.facility = facility;
+          }
           this.hydrationState = { status: "hydrated" };
         });
       })

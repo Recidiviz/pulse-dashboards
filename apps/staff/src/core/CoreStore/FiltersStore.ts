@@ -39,6 +39,7 @@ import {
   EnabledFiltersByMetric,
   FilterOption,
   Filters,
+  FilterType,
   PopulationFilterLabels,
   PopulationFilters,
   PopulationFilterValues,
@@ -66,6 +67,7 @@ export default class FiltersStore {
       filters: observable,
       timePeriodLabel: computed,
       setFilters: action,
+      filterOptions: computed,
     });
 
     this.rootStore = rootStore;
@@ -126,7 +128,7 @@ export default class FiltersStore {
     const query = {} as QueryParamConfigMap;
     [
       ...metric.filters.enabledFilters,
-      ...metric.filters.enabledMoreFilters,
+      ...(metric.filters.enabledMoreFilters ?? []),
     ].forEach((filterType) => {
       query[filterType] = this.filterOptions[
         filterType as keyof PopulationFilters
@@ -147,24 +149,18 @@ export default class FiltersStore {
   get filtersDescription(): string {
     const metric = this.rootStore.metricsStore.current;
     const filters = toJS(this.filters);
-    const filtersStrings = Object.entries(filters).reduce(
-      (acc, [key, value]) => {
-        if (
-          metric.filters.enabledFilters.includes(key) ||
-          metric.filters.enabledMoreFilters?.includes(key)
-        ) {
-          const { title } = this.filterOptions[key as keyof PopulationFilters];
-          acc.push(
-            `${title}: ${
-              this.filtersLabels[key as keyof PopulationFilterLabels]
-            }`,
-          );
-        }
+    const filterKeys = Object.keys(filters) as FilterType[];
+    const filtersStrings = filterKeys.reduce((acc: string[], key) => {
+      if (
+        metric?.filters.enabledFilters.includes(key) ||
+        metric?.filters.enabledMoreFilters?.includes(key)
+      ) {
+        const { title } = this.filterOptions[key];
+        acc.push(`${title}: ${this.filtersLabels[key]}`);
+      }
 
-        return acc;
-      },
-      [] as string[],
-    );
+      return acc;
+    }, []);
     return filtersStrings.join(";\n").concat("\n");
   }
 
@@ -182,7 +178,7 @@ export default class FiltersStore {
       )
         .map((o) => o.label)
         .join(", ");
-      acc[filterType as keyof PopulationFilterLabels] = labels;
+      acc[filterType as FilterType] = labels;
       return acc;
     }, {} as PopulationFilterLabels);
   }
@@ -204,11 +200,27 @@ export default class FiltersStore {
   }
 
   get filterOptions(): PopulationFilters {
-    return this.pathwaysTenantId
-      ? filterOptions[
-          isDemoMode() || isOfflineMode() ? US_DEMO : this.pathwaysTenantId
-        ]
+    const metric = this.rootStore.metricsStore.current;
+    const staticFilterOptions = this.pathwaysTenantId
+      ? {
+          ...filterOptions[
+            isDemoMode() || isOfflineMode() ? US_DEMO : this.pathwaysTenantId
+          ],
+        }
       : DefaultPopulationFilterOptions;
+
+    return metric.hydrationState.status === "hydrated"
+      ? Object.entries(metric.dynamicFilterOptions).reduce(
+          (acc, [filterType, dynamicOptions]) => {
+            acc[filterType as FilterType].options = [
+              { label: "All", value: "ALL" },
+              ...dynamicOptions,
+            ];
+            return acc;
+          },
+          staticFilterOptions,
+        )
+      : staticFilterOptions;
   }
 
   getFilterLabel(

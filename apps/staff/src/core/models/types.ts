@@ -278,6 +278,7 @@ export type NewBackendRecord<RecordType extends MetricRecord> = {
   data: RecordType[];
   metadata: {
     lastUpdated: string;
+    facilityIdNameMap?: string;
   };
 };
 

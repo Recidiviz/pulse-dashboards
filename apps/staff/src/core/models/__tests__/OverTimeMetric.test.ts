@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,6 +36,10 @@ vi.mock("../../../api/metrics/metricsClient");
 
 describe("OverTimeMetric", () => {
   let metric: OverTimeMetric;
+  const facilityOptions = [
+    { label: "Option 1", value: "OPTION_1" },
+    { label: "Option 2", value: "OPTION_2" },
+  ];
 
   beforeEach(() => {
     vi.mocked(callNewMetricsApi).mockResolvedValue({
@@ -70,6 +74,7 @@ describe("OverTimeMetric", () => {
       ],
       metadata: {
         lastUpdated: "2022-05-01",
+        facilityIdNameMap: JSON.stringify(facilityOptions),
       },
     });
 
@@ -356,5 +361,48 @@ describe("OverTimeMetric", () => {
       dataExportLabel: "Month",
     };
     expect(metric.downloadableData).toEqual(expected);
+  });
+
+  it("parses facilityIdNameMap from metadata", () => {
+    expect(metric.dynamicFilterOptions).toEqual({ facility: facilityOptions });
+  });
+
+  it("does not set dynamic filter option if invalid", async () => {
+    vi.mocked(callNewMetricsApi).mockResolvedValue({
+      data: [],
+      metadata: {
+        lastUpdated: "2022-05-01",
+        facilityIdNameMap: JSON.stringify([
+          { label: "Option 1" },
+          { anything_else: 1 },
+        ]),
+      },
+    });
+
+    metric = new OverTimeMetric({
+      id: "prisonPopulationOverTime",
+      rootStore: new CoreStore(mockRootStore),
+      endpoint: "PrisonPopulationOverTime",
+    });
+    await metric.hydrate();
+    expect(metric.dynamicFilterOptions).toEqual({});
+  });
+
+  it("does not set dynamic filter option if empty", async () => {
+    vi.mocked(callNewMetricsApi).mockResolvedValue({
+      data: [],
+      metadata: {
+        lastUpdated: "2022-05-01",
+        facilityIdNameMap: JSON.stringify([]),
+      },
+    });
+
+    metric = new OverTimeMetric({
+      id: "prisonPopulationOverTime",
+      rootStore: new CoreStore(mockRootStore),
+      endpoint: "PrisonPopulationOverTime",
+    });
+    await metric.hydrate();
+    expect(metric.dynamicFilterOptions).toEqual({});
   });
 });
