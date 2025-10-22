@@ -18,12 +18,13 @@
 import { makeAutoObservable } from "mobx";
 
 import { AuthorizedUserProfile } from "~@jii/auth";
-import { isDemoMode as isDemoEnv } from "~client-env-utils";
+import { isDemoMode as isDemoEnv, isOfflineMode } from "~client-env-utils";
 import { Hydratable, HydrationState, isHydrated } from "~hydration-utils";
 
 import { isEdovoEnv } from "../../utils/edovo";
 import { Auth0AuthHandler } from "./Auth0AuthHandler";
 import { EdovoAuthHandler } from "./EdovoAuthHandler";
+import { OfflineAuthHandler } from "./OfflineAuthHandler";
 import { AuthHandler, AuthState, isAuthorizedState } from "./types";
 
 export class AuthManager implements Hydratable {
@@ -35,9 +36,13 @@ export class AuthManager implements Hydratable {
       authClient: false,
     });
 
-    this.handler = isEdovoEnv()
-      ? new EdovoAuthHandler()
-      : new Auth0AuthHandler();
+    if (isOfflineMode()) {
+      this.handler = new OfflineAuthHandler();
+    } else if (isEdovoEnv()) {
+      this.handler = new EdovoAuthHandler();
+    } else {
+      this.handler = new Auth0AuthHandler();
+    }
   }
 
   /**

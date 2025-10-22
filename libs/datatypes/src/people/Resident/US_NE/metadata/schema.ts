@@ -80,5 +80,8 @@ export const usNeResidentMetadataSchema = z.object({
   lb191Credits: z.number().nullable().default(0),
 });
 
+export type RawUsNeResidentMetadata = z.input<
+  typeof usNeResidentMetadataSchema
+>;
 export type UsNeResidentMetadata = z.output<typeof usNeResidentMetadataSchema>;
 export type UsNeCreditActivity = z.output<typeof usNeCreditActivitySchema>;

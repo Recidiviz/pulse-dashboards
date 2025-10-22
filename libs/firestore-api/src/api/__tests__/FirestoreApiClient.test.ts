@@ -177,17 +177,17 @@ describe("residents", () => {
     );
     expect(result.map((r) => pick(r, ["admissionDate", "releaseDate"])))
       .toMatchInlineSnapshot(`
-      [
-        {
-          "admissionDate": 2017-06-08T00:00:00.000Z,
-          "releaseDate": 2028-06-08T00:00:00.000Z,
-        },
-        {
-          "admissionDate": 2021-09-09T00:00:00.000Z,
-          "releaseDate": 2027-09-08T00:00:00.000Z,
-        },
-      ]
-    `);
+        [
+          {
+            "admissionDate": 2024-04-07T00:00:00.000Z,
+            "releaseDate": 2026-04-08T00:00:00.000Z,
+          },
+          {
+            "admissionDate": 2021-02-26T00:00:00.000Z,
+            "releaseDate": 2026-12-08T00:00:00.000Z,
+          },
+        ]
+      `);
 
     tk.reset();
   });
@@ -263,11 +263,11 @@ describe("resident by pseudo ID", () => {
     ).not.toEqual(pick(expectedFixture, ["admissionDate", "releaseDate"]));
     expect(pick(result, ["admissionDate", "releaseDate"]))
       .toMatchInlineSnapshot(`
-      {
-        "admissionDate": 2017-06-08T00:00:00.000Z,
-        "releaseDate": 2028-06-08T00:00:00.000Z,
-      }
-    `);
+        {
+          "admissionDate": 2024-04-07T00:00:00.000Z,
+          "releaseDate": 2026-04-08T00:00:00.000Z,
+        }
+      `);
 
     tk.reset();
   });

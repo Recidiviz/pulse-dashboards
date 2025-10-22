@@ -76,8 +76,8 @@ export default function IntakeLogin() {
 
       if (!clientPseudoId)
         throw new Error("There was an issue verifying the client.");
-      
-      trackIntakeChatClientLogin({justiceInvolvedPersonId: clientPseudoId});
+
+      trackIntakeChatClientLogin({ justiceInvolvedPersonId: clientPseudoId });
 
       showSuccessToast(`Success! Welcome, ${formattedFirstName}.`);
       setToken(token);

@@ -102,7 +102,9 @@ export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
             onError={(e) =>
               console.error(`Audio playback error for ${signedUrl}:`, e)
             }
-            onPlay={() => track("assessment_playback_started", {sessionId: sessionId})}
+            onPlay={() =>
+              track("assessment_playback_started", { sessionId: sessionId })
+            }
           >
             <track kind="captions" src="" label="No captions available" />
             Your browser does not support audio playback.

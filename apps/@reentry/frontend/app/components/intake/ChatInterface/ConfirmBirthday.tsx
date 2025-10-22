@@ -37,7 +37,7 @@ export default function ConfirmBirthdatePage({
   mode,
   pseudonymized_id,
 }: ConfirmBirthdatePageProps) {
-  const {trackIntakeChatClientLogin} = useAnalytics();
+  const { trackIntakeChatClientLogin } = useAnalytics();
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
@@ -167,7 +167,9 @@ export default function ConfirmBirthdatePage({
         return;
       }
 
-      trackIntakeChatClientLogin({justiceInvolvedPersonId: response.client_pseudo_id})
+      trackIntakeChatClientLogin({
+        justiceInvolvedPersonId: response.client_pseudo_id,
+      });
 
       showSuccessToast("Successful!");
 

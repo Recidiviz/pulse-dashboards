@@ -35,11 +35,11 @@ interface HomeAddressSectionProps {
   planId: string;
   onAddressUpdate?: () => void;
   startPolling?: (executionId: string) => void;
-  isPolling?: boolean;  
+  isPolling?: boolean;
   clientRecord:
-      | components["schemas"]["ClientRecordResponse"]
-      | null
-      | undefined;
+    | components["schemas"]["ClientRecordResponse"]
+    | null
+    | undefined;
 }
 
 interface AddressFields {
@@ -53,10 +53,10 @@ const HomeAddressSection = ({
   onAddressUpdate,
   startPolling,
   isPolling = false,
-  clientRecord
+  clientRecord,
 }: HomeAddressSectionProps) => {
   const { getAccessToken } = useAuth();
-  const {track } = useAnalytics();
+  const { track } = useAnalytics();
   const [isEditing, setIsEditing] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
   const [addressFields, setAddressFields] = useState<AddressFields>({
@@ -142,7 +142,10 @@ const HomeAddressSection = ({
       return;
     }
 
-    track("action_plan_client_home_address_updated", {justiceInvolvedPersonId: clientRecord?.pseudonymized_client_id, planId: planId})
+    track("action_plan_client_home_address_updated", {
+      justiceInvolvedPersonId: clientRecord?.pseudonymized_client_id,
+      planId: planId,
+    });
 
     setIsLoading(true);
     try {
@@ -328,8 +331,12 @@ const HomeAddressSection = ({
               className={"!max-w-[300px] !self-center !w-full"}
               buttonText="Update Address"
               onClick={() => {
-                track("action_plan_editing_home_address", {justiceInvolvedPersonId: clientRecord?.pseudonymized_client_id, planId: planId})
-                setIsEditing(true)
+                track("action_plan_editing_home_address", {
+                  justiceInvolvedPersonId:
+                    clientRecord?.pseudonymized_client_id,
+                  planId: planId,
+                });
+                setIsEditing(true);
               }}
               disabled={isPolling}
             />

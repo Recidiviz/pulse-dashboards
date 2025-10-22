@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Duration, formatISO, parseISO } from "date-fns";
-
 import {
   CURRENT_DATE_STRING_FIXTURE,
   relativeFixtureDate,
+  relativeFixtureMonth,
 } from "../../../../utils/zod";
 import {
   RawUsMaResidentMetadata,
@@ -27,15 +26,9 @@ import {
   usMaResidentMetadataSchema,
 } from "./schema";
 
-export function creditDateString(...differences: Array<Duration>) {
-  return formatISO(parseISO(relativeFixtureDate(...differences)), {
-    representation: "date",
-  });
-}
-
 export const creditActivityFixture = [
   {
-    creditDate: creditDateString({ months: -4 }),
+    creditDate: relativeFixtureMonth({ months: -4 }, "end"),
     activity: "SOR Adult Secondary Education-Educ",
     rating: "S",
     EARNEDGoodTime: "7.5",
@@ -43,7 +36,7 @@ export const creditActivityFixture = [
     COMPLETION: null,
   },
   {
-    creditDate: creditDateString({ months: -4 }),
+    creditDate: relativeFixtureMonth({ months: -4 }, "end"),
     activity: "SOR Adult Secondary Education-Prog",
     rating: "S",
     EARNEDGoodTime: 0,
@@ -51,7 +44,7 @@ export const creditActivityFixture = [
     COMPLETION: null,
   },
   {
-    creditDate: creditDateString({ months: -4 }),
+    creditDate: relativeFixtureMonth({ months: -4 }, "end"),
     activity: "Violence Reduction Program (Prog)",
     rating: "S",
     EARNEDGoodTime: "7.5",
@@ -59,7 +52,7 @@ export const creditActivityFixture = [
     COMPLETION: null,
   },
   {
-    creditDate: creditDateString({ months: -3 }),
+    creditDate: relativeFixtureMonth({ months: -3 }, "end"),
     activity: "SOR Adult Secondary Education-Educ",
     rating: "S",
     EARNEDGoodTime: "7.5",
@@ -67,7 +60,7 @@ export const creditActivityFixture = [
     COMPLETION: null,
   },
   {
-    creditDate: creditDateString({ months: -3 }),
+    creditDate: relativeFixtureMonth({ months: -3 }, "end"),
     activity: "SOR Adult Secondary Education-Prog",
     rating: "S",
     EARNEDGoodTime: "7.5",
@@ -75,7 +68,7 @@ export const creditActivityFixture = [
     COMPLETION: null,
   },
   {
-    creditDate: creditDateString({ months: -3 }),
+    creditDate: relativeFixtureMonth({ months: -3 }, "end"),
     activity: "Violence Reduction Program (Prog)",
     rating: "I",
     EARNEDGoodTime: 0,
@@ -83,7 +76,7 @@ export const creditActivityFixture = [
     COMPLETION: null,
   },
   {
-    creditDate: creditDateString({ months: -2 }),
+    creditDate: relativeFixtureMonth({ months: -2 }, "end"),
     activity: "SOR Adult Secondary Education-Educ",
     rating: "S",
     EARNEDGoodTime: "7.5",
@@ -91,7 +84,7 @@ export const creditActivityFixture = [
     COMPLETION: null,
   },
   {
-    creditDate: creditDateString({ months: -2 }),
+    creditDate: relativeFixtureMonth({ months: -2 }, "end"),
     activity: "SOR Adult Secondary Education-Prog",
     rating: "S",
     EARNEDGoodTime: "7.5",
@@ -99,12 +92,28 @@ export const creditActivityFixture = [
     COMPLETION: null,
   },
   {
-    creditDate: creditDateString({ months: -2 }),
+    creditDate: relativeFixtureMonth({ months: -2 }, "end"),
     activity: "Violence Reduction Program (Prog)",
     rating: "S",
     EARNEDGoodTime: 0,
     BOOST: 10,
     COMPLETION: 30,
+  },
+  {
+    creditDate: relativeFixtureMonth({ months: -1 }, "end"),
+    activity: "SOR Adult Secondary Education-Educ",
+    rating: "S",
+    EARNEDGoodTime: "7.5",
+    BOOST: null,
+    COMPLETION: null,
+  },
+  {
+    creditDate: relativeFixtureMonth({ months: -1 }, "end"),
+    activity: "SOR Adult Secondary Education-Prog",
+    rating: "S",
+    EARNEDGoodTime: "7.5",
+    BOOST: null,
+    COMPLETION: null,
   },
 ];
 
@@ -145,7 +154,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
     totalStateCreditDaysCalculated: null,
     creditActivity: [
       {
-        creditDate: creditDateString({ months: -13 }),
+        creditDate: relativeFixtureMonth({ months: -12 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -153,7 +162,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -13 }),
+        creditDate: relativeFixtureMonth({ months: -12 }, "end"),
         activity: "Violence Reduction Program (Prog)",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -161,7 +170,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -12 }),
+        creditDate: relativeFixtureMonth({ months: -11 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -169,23 +178,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -12 }),
-        activity: "Violence Reduction Program (Prog)",
-        rating: "S",
-        EARNEDGoodTime: "7.5",
-        BOOST: null,
-        COMPLETION: null,
-      },
-      {
-        creditDate: creditDateString({ months: -11 }),
-        activity: "Institutional Employment",
-        rating: "S",
-        EARNEDGoodTime: "7.5",
-        BOOST: null,
-        COMPLETION: null,
-      },
-      {
-        creditDate: creditDateString({ months: -11 }),
+        creditDate: relativeFixtureMonth({ months: -11 }, "end"),
         activity: "Violence Reduction Program (Prog)",
         rating: "S",
         EARNEDGoodTime: 0,
@@ -193,7 +186,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: 30,
       },
       {
-        creditDate: creditDateString({ months: -10 }),
+        creditDate: relativeFixtureMonth({ months: -10 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -201,7 +194,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -9 }),
+        creditDate: relativeFixtureMonth({ months: -9 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -209,7 +202,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -8 }),
+        creditDate: relativeFixtureMonth({ months: -8 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -217,7 +210,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -7 }),
+        creditDate: relativeFixtureMonth({ months: -7 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -225,7 +218,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -6 }),
+        creditDate: relativeFixtureMonth({ months: -6 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -233,7 +226,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -5 }),
+        creditDate: relativeFixtureMonth({ months: -5 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -241,7 +234,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -4 }),
+        creditDate: relativeFixtureMonth({ months: -4 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -249,7 +242,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -3 }),
+        creditDate: relativeFixtureMonth({ months: -3 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -257,7 +250,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -2 }),
+        creditDate: relativeFixtureMonth({ months: -2 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -265,7 +258,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -1 }),
+        creditDate: relativeFixtureMonth({ months: -1 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -297,7 +290,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
     totalStateCreditDaysCalculated: 1,
     creditActivity: [
       {
-        creditDate: creditDateString({ months: -4 }),
+        creditDate: relativeFixtureMonth({ months: -4 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -305,7 +298,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -3 }),
+        creditDate: relativeFixtureMonth({ months: -3 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -313,7 +306,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -3 }),
+        creditDate: relativeFixtureMonth({ months: -3 }, "end"),
         activity: "Reentry Readiness Workshop",
         rating: "S",
         EARNEDGoodTime: 5,
@@ -321,7 +314,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -2 }),
+        creditDate: relativeFixtureMonth({ months: -2 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -329,7 +322,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -2 }),
+        creditDate: relativeFixtureMonth({ months: -2 }, "end"),
         activity: "Reentry Readiness Workshop",
         rating: "S",
         EARNEDGoodTime: 5,
@@ -337,7 +330,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -1 }),
+        creditDate: relativeFixtureMonth({ months: -1 }, "end"),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -345,7 +338,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
         COMPLETION: null,
       },
       {
-        creditDate: creditDateString({ months: -1 }),
+        creditDate: relativeFixtureMonth({ months: -1 }, "end"),
         activity: "Reentry Readiness Workshop",
         rating: "S",
         EARNEDGoodTime: 5,

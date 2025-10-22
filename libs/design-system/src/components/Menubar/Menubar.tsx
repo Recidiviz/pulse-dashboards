@@ -56,7 +56,8 @@ const MenuBarElement = styled.nav<{
         -1px 1px 1px 1px ${focusBorderColor || palette.signal.links},
         1px -1px 1px 1px ${focusBorderColor || palette.signal.links};
       border-radius: 4px;
-    }`}
+    }
+  `}
 `;
 
 export interface MenubarProps {

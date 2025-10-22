@@ -24,7 +24,6 @@ import {
   FixtureMapping,
   incarcerationStaffFixtures,
   ParsedRecord,
-  rawUsMaResidents,
   supervisionStaffFixtures,
   usMeAnnualReclassificationFixtures,
   usMeMediumTrusteeFixtures,
@@ -142,7 +141,7 @@ const GENERAL_FIXTURES_TO_LOAD: Partial<
   clients: clientsData,
   residents: {
     idFunc: residentsData.idFunc,
-    data: [...residentsData.data, ...rawUsMaResidents],
+    data: [...residentsData.data],
   },
   locations: locationsData,
   usIdSupervisionTasks: usIdSupervisionTasksData,

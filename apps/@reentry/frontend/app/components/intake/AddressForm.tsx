@@ -64,7 +64,6 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
     return "";
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.city.trim() || !formData.state.trim()) {
@@ -90,7 +89,9 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
     } catch {
       onError("Failed to submit address. Please try again.");
     } finally {
-      trackIntakeChatClientAddressSubmitted({ justiceInvolvedPersonId: getClientPseudoId()})
+      trackIntakeChatClientAddressSubmitted({
+        justiceInvolvedPersonId: getClientPseudoId(),
+      });
       setIsSubmitting(false);
     }
   };

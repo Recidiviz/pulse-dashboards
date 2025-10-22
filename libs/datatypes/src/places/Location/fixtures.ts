@@ -35,6 +35,30 @@ export const locationRecordFixtures: Array<LocationRecord> = [
     id: "FACILITY2",
     name: "Upstate Facility",
   },
+  //
+  // Arizona
+  //
+  {
+    stateCode: "US_AZ",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "FACILITY1",
+    name: "Facility 1",
+  },
+  {
+    stateCode: "US_AZ",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "FACILITY2",
+    name: "Facility 2",
+  },
+  {
+    stateCode: "US_AZ",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "FACILITY3",
+    name: "Facility 3",
+  },
 
   //
   // Idaho
@@ -126,6 +150,18 @@ export const locationRecordFixtures: Array<LocationRecord> = [
     idType: "facilityId",
     id: "FACILITY2",
     name: "Facility #2",
+  },
+
+  //
+  // Nebraska
+  //
+
+  {
+    stateCode: "US_NE",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "DEMOFACILITY",
+    name: "Demo Facility",
   },
 
   //

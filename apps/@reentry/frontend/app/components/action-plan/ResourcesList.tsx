@@ -30,9 +30,9 @@ type ResourcesListProps = {
   relatedResourcesLoading: boolean;
   handleSelectResource: (r: components["schemas"]["Resource"]) => void;
   clientRecord:
-      | components["schemas"]["ClientRecordResponse"]
-      | null
-      | undefined;
+    | components["schemas"]["ClientRecordResponse"]
+    | null
+    | undefined;
 };
 
 const ResourcesList = ({
@@ -42,7 +42,7 @@ const ResourcesList = ({
   planResources,
   relatedResourcesLoading,
   handleSelectResource,
-  clientRecord
+  clientRecord,
 }: ResourcesListProps) => {
   const { track } = useAnalytics();
   const [searchTerm, setSearchTerm] = useState("");
@@ -93,8 +93,11 @@ const ResourcesList = ({
               key={index}
               className={`p-2 border rounded-lg cursor-pointer ${(candidateResource && candidateResource?.name === resource.name && "bg-blue-100 border-blue-300") || (candidateResource === null && selectedResource?.name === resource.name) ? "bg-blue-100 border-blue-300" : "bg-white"}`}
               onClick={() => {
-                track("action_plan_resource_selected", {justiceInvolvedPersonId: clientRecord?.pseudonymized_client_id})
-                handleSelectResource(resource)
+                track("action_plan_resource_selected", {
+                  justiceInvolvedPersonId:
+                    clientRecord?.pseudonymized_client_id,
+                });
+                handleSelectResource(resource);
               }}
             >
               <div className="font-semibold text-sm text-[#002321]">

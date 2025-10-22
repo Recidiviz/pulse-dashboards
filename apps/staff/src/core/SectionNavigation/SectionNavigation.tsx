@@ -101,7 +101,12 @@ const SectionNavigation: React.FC = () => {
   if (isMobile && isMultipleSections)
     return (
       <>
-        <Drawer position="right" isShowing={open} hide={() => setOpen(false)} id="section-navigation-drawer">
+        <Drawer
+          position="right"
+          isShowing={open}
+          hide={() => setOpen(false)}
+          id="section-navigation-drawer"
+        >
           {sectionLinks}
         </Drawer>
         <button

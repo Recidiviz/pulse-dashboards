@@ -24,8 +24,7 @@ import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 export class UsAzReleaseToTransitionProgramForm extends FormBase<
   UsAzReleaseToTransitionProgramDraftData,
-  | UsAzReleaseToTPROpportunity
-  | UsAzReleaseToDTPOpportunity
+  UsAzReleaseToTPROpportunity | UsAzReleaseToDTPOpportunity
 > {
   navigateToFormText = "Download Agreement Form";
   allowRevert = false;
@@ -44,8 +43,7 @@ export class UsAzReleaseToTransitionProgramForm extends FormBase<
       const { person } = this.opportunity;
 
       return {
-        isDTPRelease:
-          this.opportunity instanceof UsAzReleaseToDTPOpportunity,
+        isDTPRelease: this.opportunity instanceof UsAzReleaseToDTPOpportunity,
         residentNameLastFirst: formatNameLastFirst(person.fullName),
         adcNumber: person.displayId,
         residentNameAndAdcNumber: `${person.displayName} (${person.displayId})`,

@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { relativeFixtureDate } from "~datatypes";
-
-import { ResidentFixture } from "../residents";
+import { relativeFixtureDate } from "../../../utils/zod";
+import { RawResidentRecord, residentRecordSchema } from "../schema";
 
 const metadata = {
   stateCode: "US_TN" as const,
@@ -120,11 +119,12 @@ const metadata = {
   ],
 };
 
-export const usTnResidents: ResidentFixture[] = [
+export const rawUsTnResidents: Array<RawResidentRecord> = [
   {
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
     stateCode: "US_TN",
     personExternalId: "RES001",
+    recordId: "us_tn_res001",
     displayId: "dRES001",
     personName: {
       givenNames: "Carmen",
@@ -144,6 +144,7 @@ export const usTnResidents: ResidentFixture[] = [
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
     stateCode: "US_TN",
     personExternalId: "RES002",
+    recordId: "us_tn_res002",
     displayId: "dRES002",
     personName: {
       givenNames: "Jessica",
@@ -166,6 +167,7 @@ export const usTnResidents: ResidentFixture[] = [
     ],
     stateCode: "US_TN",
     personExternalId: "RES003",
+    recordId: "us_tn_res003",
     displayId: "dRES003",
     personName: {
       givenNames: "Fei",
@@ -188,6 +190,7 @@ export const usTnResidents: ResidentFixture[] = [
     ],
     stateCode: "US_TN",
     personExternalId: "RES004",
+    recordId: "us_tn_res004",
     displayId: "dRES004",
     personName: {
       givenNames: "Geoff",
@@ -204,3 +207,7 @@ export const usTnResidents: ResidentFixture[] = [
     metadata,
   },
 ];
+
+export const usTnResidents = rawUsTnResidents.map((r) =>
+  residentRecordSchema.parse(r),
+);

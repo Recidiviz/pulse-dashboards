@@ -15,19 +15,44 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { addDays } from "date-fns";
 import tk from "timekeeper";
 
-import { relativeFixtureDate, shiftFixtureDate } from "../fixtureDates";
+import {
+  CURRENT_DATE_FIXTURE,
+  relativeFixtureDate,
+  relativeFixtureMonth,
+  shiftFixtureDate,
+} from "../fixtureDates";
 
-test("shift fixture date", () => {
-  tk.withFreeze(new Date(2024, 2, 25), () => {
-    // this is "today" in fixture-land
-    expect(shiftFixtureDate(new Date(2021, 11, 16))).toEqual(
-      new Date(2024, 2, 25),
+describe("shift fixture date", () => {
+  beforeEach(() => {
+    tk.freeze(new Date(2024, 2, 25));
+    onTestFinished(tk.reset);
+  });
+
+  test("by day offset", () => {
+    expect(shiftFixtureDate(CURRENT_DATE_FIXTURE)).toMatchInlineSnapshot(
+      `2024-03-25T00:00:00.000Z`,
     );
+    expect(
+      shiftFixtureDate(addDays(CURRENT_DATE_FIXTURE, -10)),
+    ).toMatchInlineSnapshot(`2024-03-15T00:00:00.000Z`);
 
-    expect(shiftFixtureDate(new Date(2021, 8, 1))).toEqual(
-      new Date(2023, 11, 10),
+    expect(
+      shiftFixtureDate(addDays(CURRENT_DATE_FIXTURE, 365)),
+    ).toMatchInlineSnapshot(`2025-03-25T00:00:00.000Z`);
+  });
+
+  test("by start of month", () => {
+    expect(shiftFixtureDate(new Date(2021, 8, 1))).toMatchInlineSnapshot(
+      `2023-12-01T00:00:00.000Z`,
+    );
+  });
+
+  test("by end of month", () => {
+    expect(shiftFixtureDate(new Date(2021, 8, 30))).toMatchInlineSnapshot(
+      `2023-12-31T00:00:00.000Z`,
     );
   });
 });
@@ -58,5 +83,19 @@ describe("relative fixture date", () => {
         { days: 1 },
       ),
     ).toMatchInlineSnapshot(`"2024-09-22"`);
+  });
+});
+
+describe("relative fixture month", () => {
+  test("start of month", () => {
+    expect(relativeFixtureMonth({ months: -7 }, "start")).toMatchInlineSnapshot(
+      `"2021-05-01"`,
+    );
+  });
+
+  test("end of month", () => {
+    expect(relativeFixtureMonth({ months: -2 }, "end")).toMatchInlineSnapshot(
+      `"2021-10-31"`,
+    );
   });
 });

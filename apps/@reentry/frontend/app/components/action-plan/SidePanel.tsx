@@ -103,7 +103,7 @@ const SidePanel = ({
               setRegenerationMessage={setRegenerationMessage}
               dataDetailPlan={dataDetailPlan}
               isPolling={isPolling}
-            clientRecord={clientRecord}
+              clientRecord={clientRecord}
             />
             <HomeAddressSection
               clientRecord={clientRecord}

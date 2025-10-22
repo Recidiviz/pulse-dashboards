@@ -32,9 +32,9 @@ export type ResourcesProps = {
   relatedResourcesLoading: boolean;
   handleSelectResource: (r: components["schemas"]["Resource"]) => void;
   clientRecord:
-      | components["schemas"]["ClientRecordResponse"]
-      | null
-      | undefined;
+    | components["schemas"]["ClientRecordResponse"]
+    | null
+    | undefined;
 };
 
 export enum ShowResourcesEnum {
@@ -50,7 +50,7 @@ const Resources = ({
   planResources,
   handleSelectResource,
   relatedResources,
-  clientRecord
+  clientRecord,
 }: ResourcesProps) => {
   return (
     <div className="self-stretch h-auto max-h-[320px] px-2 md:px-8 py-6 border-b border-[#2b5469]/20 flex-col justify-start items-start gap-3 flex ">

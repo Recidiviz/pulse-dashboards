@@ -117,7 +117,10 @@ const PathwaysFilterBar: React.FC<{
               )}
               <ToolbarItem>
                 <DetailsGroup>
-                  <DropdownMenuItem onClick={(e) => handleDownload()} preventCloseOnClickEvent>
+                  <DropdownMenuItem
+                    onClick={(e) => handleDownload()}
+                    preventCloseOnClickEvent
+                  >
                     <DownloadDataButton handleOnClick={handleDownload} />
                   </DropdownMenuItem>
                   <DropdownMenuItem preventCloseOnClickEvent>

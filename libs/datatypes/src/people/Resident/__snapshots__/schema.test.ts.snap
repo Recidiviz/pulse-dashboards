@@ -1,5 +1,967 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`schema for 'US_AZ' 'RES001' 1`] = `
+{
+  "admissionDate": 2020-09-15T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES001",
+  "facilityId": "FACILITY1",
+  "gender": "FEMALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": "2021-12-21",
+    "csbdDate": "2022-03-21",
+    "csedDate": "2022-11-16",
+    "ercdDate": "2022-06-06",
+    "projectedCsbdDate": "2022-03-21",
+    "projectedDtpDate": undefined,
+    "projectedTprDate": "2021-12-21",
+    "sedDate": "2022-09-16",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER1",
+  "personExternalId": "RES001",
+  "personName": {
+    "givenNames": "Elinor",
+    "middleNames": "Maja",
+    "surname": "Sloan",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres001",
+  "recordId": "us_az_res001",
+  "releaseDate": 2022-09-16T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES002' 1`] = `
+{
+  "admissionDate": 2017-08-06T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES002",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": "2022-02-04",
+    "csbdDate": "2022-05-05",
+    "csedDate": "2024-02-01",
+    "ercdDate": "2022-07-21",
+    "projectedCsbdDate": "2022-05-05",
+    "projectedDtpDate": undefined,
+    "projectedTprDate": "2022-02-04",
+    "sedDate": "2023-05-18",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER2",
+  "personExternalId": "RES002",
+  "personName": {
+    "givenNames": "Michael",
+    "middleNames": "James",
+    "surname": "Mooney",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres002",
+  "recordId": "us_az_res002",
+  "releaseDate": 2023-05-18T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES003' 1`] = `
+{
+  "admissionDate": 2018-05-29T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES003",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": undefined,
+    "csbdDate": "2022-04-12",
+    "csedDate": "2023-08-08",
+    "ercdDate": "2022-06-28",
+    "projectedCsbdDate": "2022-04-12",
+    "projectedDtpDate": undefined,
+    "projectedTprDate": "2022-01-12",
+    "sedDate": "2023-03-03",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "RES003",
+  "personName": {
+    "givenNames": "Sebastien",
+    "middleNames": "Harry",
+    "surname": "Bose",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres003",
+  "recordId": "us_az_res003",
+  "releaseDate": 2023-03-03T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES004' 1`] = `
+{
+  "admissionDate": 2021-01-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES004",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": undefined,
+    "csbdDate": "2023-01-10",
+    "csedDate": "2023-11-25",
+    "ercdDate": "2023-03-28",
+    "projectedCsbdDate": "2023-01-10",
+    "projectedDtpDate": undefined,
+    "projectedTprDate": "2022-10-12",
+    "sedDate": "2023-08-16",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "RES004",
+  "personName": {
+    "givenNames": "Sasha",
+    "middleNames": "Gideon",
+    "surname": "Burch",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres004",
+  "recordId": "us_az_res004",
+  "releaseDate": 2023-08-16T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES005' 1`] = `
+{
+  "admissionDate": 2020-07-03T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzOverdueForACISTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES005",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": "2021-12-01",
+    "csbdDate": "2022-03-01",
+    "csedDate": undefined,
+    "ercdDate": "2022-05-17",
+    "projectedCsbdDate": "2022-03-01",
+    "projectedDtpDate": undefined,
+    "projectedTprDate": "2021-12-01",
+    "sedDate": "2022-09-07",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "RES005",
+  "personName": {
+    "givenNames": "Travis",
+    "middleNames": "Morgan",
+    "surname": "Shah",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres005",
+  "recordId": "us_az_res005",
+  "releaseDate": 2022-09-07T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES006' 1`] = `
+{
+  "admissionDate": 2020-02-07T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzOverdueForACISTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES006",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": "2021-11-23",
+    "csbdDate": "2022-02-21",
+    "csedDate": undefined,
+    "ercdDate": "2022-05-22",
+    "projectedCsbdDate": "2022-02-21",
+    "projectedDtpDate": undefined,
+    "projectedTprDate": "2021-11-23",
+    "sedDate": "2022-10-08",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "RES006",
+  "personName": {
+    "givenNames": "Ilyas",
+    "middleNames": "Steven",
+    "surname": "Baker",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres006",
+  "recordId": "us_az_res006",
+  "releaseDate": 2022-10-08T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES007' 1`] = `
+{
+  "admissionDate": 2017-03-27T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzOverdueForACISDTP",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES007",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": "2021-10-27",
+    "acisTprDate": "2021-10-27",
+    "csbdDate": "2022-01-25",
+    "csedDate": undefined,
+    "ercdDate": "2022-04-12",
+    "projectedCsbdDate": "2022-01-25",
+    "projectedDtpDate": "2021-10-27",
+    "projectedTprDate": "2021-10-27",
+    "sedDate": "2024-06-07",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER1",
+  "personExternalId": "RES007",
+  "personName": {
+    "givenNames": "Benjamin",
+    "middleNames": "Walter",
+    "surname": "Knox",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres007",
+  "recordId": "us_az_res007",
+  "releaseDate": 2024-06-07T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES008' 1`] = `
+{
+  "admissionDate": 2018-12-05T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzOverdueForACISDTP",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES008",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": "2021-12-07",
+    "acisTprDate": "2021-12-07",
+    "csbdDate": "2022-03-07",
+    "csedDate": undefined,
+    "ercdDate": "2022-05-23",
+    "projectedCsbdDate": "2022-03-07",
+    "projectedDtpDate": "2021-12-07",
+    "projectedTprDate": "2021-12-07",
+    "sedDate": "2023-11-14",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER1",
+  "personExternalId": "RES008",
+  "personName": {
+    "givenNames": "Elif",
+    "middleNames": "James",
+    "surname": "Carter",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres008",
+  "recordId": "us_az_res008",
+  "releaseDate": 2023-11-14T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES009' 1`] = `
+{
+  "admissionDate": 2021-08-27T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzOverdueForACISTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES009",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": "2021-12-11",
+    "csbdDate": "2022-03-11",
+    "csedDate": undefined,
+    "ercdDate": "2022-05-27",
+    "projectedCsbdDate": "2022-03-11",
+    "projectedDtpDate": undefined,
+    "projectedTprDate": "2021-12-11",
+    "sedDate": "2022-07-11",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER2",
+  "personExternalId": "RES009",
+  "personName": {
+    "givenNames": "Giovanni",
+    "middleNames": "Elliot",
+    "surname": "Cervantes",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres009",
+  "recordId": "us_az_res009",
+  "releaseDate": 2022-07-11T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES010' 1`] = `
+{
+  "admissionDate": 2021-06-30T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzOverdueForACISTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES010",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": "2021-11-05",
+    "csbdDate": "2022-02-04",
+    "csedDate": undefined,
+    "ercdDate": "2022-04-22",
+    "projectedCsbdDate": "2022-02-04",
+    "projectedDtpDate": undefined,
+    "projectedTprDate": "2021-11-05",
+    "sedDate": "2022-06-09",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER1",
+  "personExternalId": "RES010",
+  "personName": {
+    "givenNames": "Tommy",
+    "middleNames": "Taylor",
+    "surname": "Vaughan",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres010",
+  "recordId": "us_az_res010",
+  "releaseDate": 2022-07-11T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES011' 1`] = `
+{
+  "admissionDate": 2020-09-15T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzOverdueForACISTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES011",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": "2021-12-14",
+    "csbdDate": "2022-03-14",
+    "csedDate": undefined,
+    "ercdDate": "2022-06-19",
+    "projectedCsbdDate": "2022-03-14",
+    "projectedDtpDate": undefined,
+    "projectedTprDate": "2021-12-14",
+    "sedDate": "2022-09-05",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER1",
+  "personExternalId": "RES011",
+  "personName": {
+    "givenNames": "Hassan",
+    "middleNames": "James",
+    "surname": "Pittmann",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres011",
+  "recordId": "us_az_res011",
+  "releaseDate": 2022-09-05T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES012' 1`] = `
+{
+  "admissionDate": 2021-07-05T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzOverdueForACISDTP",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES012",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": "2021-12-06",
+    "acisTprDate": "2021-12-06",
+    "csbdDate": "2022-03-06",
+    "csedDate": undefined,
+    "ercdDate": "2022-05-22",
+    "projectedCsbdDate": "2022-03-06",
+    "projectedDtpDate": "2021-12-06",
+    "projectedTprDate": "2021-12-06",
+    "sedDate": "2022-10-05",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER2",
+  "personExternalId": "RES012",
+  "personName": {
+    "givenNames": "Aron",
+    "middleNames": "Oliver",
+    "surname": "Mercado",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres012",
+  "recordId": "us_az_res012",
+  "releaseDate": 2022-10-05T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES013' 1`] = `
+{
+  "admissionDate": 2020-04-27T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzOverdueForACISDTP",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES013",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": "2021-11-25",
+    "acisTprDate": "2021-11-25",
+    "csbdDate": "2022-02-24",
+    "csedDate": undefined,
+    "ercdDate": "2022-05-15",
+    "projectedCsbdDate": "2022-02-24",
+    "projectedDtpDate": "2021-11-25",
+    "projectedTprDate": "2021-11-25",
+    "sedDate": "2023-03-28",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "RES013",
+  "personName": {
+    "givenNames": "Marley",
+    "middleNames": "Patrick",
+    "surname": "Mahoney",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres013",
+  "recordId": "us_az_res013",
+  "releaseDate": 2023-03-28T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES014' 1`] = `
+{
+  "admissionDate": 2020-09-15T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToDTP",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES014",
+  "facilityId": "FACILITY1",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": "2021-12-21",
+    "acisTprDate": "2021-12-21",
+    "csbdDate": "2022-03-21",
+    "csedDate": undefined,
+    "ercdDate": "2022-06-06",
+    "projectedCsbdDate": "2022-03-21",
+    "projectedDtpDate": "2021-12-21",
+    "projectedTprDate": "2021-12-21",
+    "sedDate": "2022-09-16",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER1",
+  "personExternalId": "RES014",
+  "personName": {
+    "givenNames": "Carl",
+    "middleNames": "Benedict",
+    "surname": "Garrett",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres014",
+  "recordId": "us_az_res014",
+  "releaseDate": 2022-09-16T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES015' 1`] = `
+{
+  "admissionDate": 2017-08-06T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToDTP",
+  ],
+  "custodyLevel": "MEDIUM",
+  "displayId": "RES015",
+  "facilityId": "FACILITY2",
+  "gender": "FEMALE",
+  "metadata": {
+    "acisDtpDate": "2022-02-04",
+    "acisTprDate": "2022-02-04",
+    "csbdDate": "2022-05-05",
+    "csedDate": undefined,
+    "ercdDate": "2022-07-21",
+    "projectedCsbdDate": "2022-05-05",
+    "projectedDtpDate": "2022-02-04",
+    "projectedTprDate": "2022-02-04",
+    "sedDate": "2023-05-18",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER1",
+  "personExternalId": "RES015",
+  "personName": {
+    "givenNames": "Rosalie",
+    "middleNames": "Lana",
+    "surname": "Bloggs",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres015",
+  "recordId": "us_az_res015",
+  "releaseDate": 2023-05-18T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT C",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES016' 1`] = `
+{
+  "admissionDate": 2018-05-29T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToDTP",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES016",
+  "facilityId": "FACILITY3",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": undefined,
+    "csbdDate": "2022-04-12",
+    "csedDate": undefined,
+    "ercdDate": "2022-06-28",
+    "projectedCsbdDate": "2022-04-12",
+    "projectedDtpDate": "2022-01-12",
+    "projectedTprDate": "2022-01-12",
+    "sedDate": "2023-03-03",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER2",
+  "personExternalId": "RES016",
+  "personName": {
+    "givenNames": "Kyron",
+    "middleNames": "Daneel",
+    "surname": "Christensen",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres016",
+  "recordId": "us_az_res016",
+  "releaseDate": 2023-03-03T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES017' 1`] = `
+{
+  "admissionDate": 2020-10-13T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToDTP",
+  ],
+  "custodyLevel": "MEDIUM",
+  "displayId": "RES017",
+  "facilityId": "FACILITY1",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": undefined,
+    "csbdDate": "2022-03-26",
+    "csedDate": undefined,
+    "ercdDate": "2022-06-11",
+    "projectedCsbdDate": "2022-03-26",
+    "projectedDtpDate": "2021-12-26",
+    "projectedTprDate": "2021-12-26",
+    "sedDate": "2022-09-19",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER2",
+  "personExternalId": "RES017",
+  "personName": {
+    "givenNames": "Teddy",
+    "middleNames": "Roger",
+    "surname": "Villegas",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres017",
+  "recordId": "us_az_res017",
+  "releaseDate": 2023-03-03T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES018' 1`] = `
+{
+  "admissionDate": 2021-01-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToDTP",
+  ],
+  "custodyLevel": "MEDIUM",
+  "displayId": "RES018",
+  "facilityId": "FACILITY1",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": undefined,
+    "acisTprDate": undefined,
+    "csbdDate": "2023-01-10",
+    "csedDate": undefined,
+    "ercdDate": "2023-03-28",
+    "projectedCsbdDate": "2023-01-10",
+    "projectedDtpDate": "2022-10-12",
+    "projectedTprDate": "2022-10-12",
+    "sedDate": "2023-08-16",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "RES018",
+  "personName": {
+    "givenNames": "Derrell",
+    "middleNames": "Jason",
+    "surname": "Stewart",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres018",
+  "recordId": "us_az_res018",
+  "releaseDate": 2023-08-16T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES019' 1`] = `
+{
+  "admissionDate": 2020-12-11T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MEDIUM",
+  "displayId": "RES019",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {},
+  "officerId": "OFFICER3",
+  "personExternalId": "RES019",
+  "personName": {
+    "givenNames": "Allyn",
+    "middleNames": "Bobby",
+    "surname": "Fisher",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres019",
+  "recordId": "us_az_res019",
+  "releaseDate": 2022-12-11T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES020' 1`] = `
+{
+  "admissionDate": 2019-07-26T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MEDIUM",
+  "displayId": "RES020",
+  "facilityId": "FACILITY2",
+  "gender": "FEMALE",
+  "metadata": {},
+  "officerId": "OFFICER3",
+  "personExternalId": "RES020",
+  "personName": {
+    "givenNames": "Hailee",
+    "middleNames": "Gabriella",
+    "surname": "Esposito",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres020",
+  "recordId": "us_az_res020",
+  "releaseDate": 2022-07-25T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES021' 1`] = `
+{
+  "admissionDate": 2020-10-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES021",
+  "facilityId": "FACILITY1",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": "2022-01-30",
+    "acisTprDate": "2022-01-30",
+    "csbdDate": "2022-04-30",
+    "csedDate": undefined,
+    "ercdDate": "2022-07-16",
+    "projectedCsbdDate": "2022-04-30",
+    "projectedDtpDate": "2022-01-30",
+    "projectedTprDate": "2022-01-30",
+    "sedDate": "2022-08-16",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER1",
+  "personExternalId": "RES021",
+  "personName": {
+    "givenNames": "Marcus",
+    "middleNames": "Theodore",
+    "surname": "Rivera",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres021",
+  "recordId": "us_az_res021",
+  "releaseDate": 2022-08-16T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT C",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES022' 1`] = `
+{
+  "admissionDate": 2018-11-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToTPR",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES022",
+  "facilityId": "FACILITY2",
+  "gender": "FEMALE",
+  "metadata": {
+    "acisDtpDate": "2022-02-14",
+    "acisTprDate": "2022-02-14",
+    "csbdDate": "2022-05-15",
+    "csedDate": undefined,
+    "ercdDate": "2022-07-31",
+    "projectedCsbdDate": "2022-05-15",
+    "projectedDtpDate": "2022-02-14",
+    "projectedTprDate": "2022-02-14",
+    "sedDate": "2022-11-16",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER2",
+  "personExternalId": "RES022",
+  "personName": {
+    "givenNames": "Sophia",
+    "middleNames": "Isabella",
+    "surname": "Chen",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres022",
+  "recordId": "us_az_res022",
+  "releaseDate": 2022-11-16T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES023' 1`] = `
+{
+  "admissionDate": 2019-09-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToTPR",
+  ],
+  "custodyLevel": "MEDIUM",
+  "displayId": "RES023",
+  "facilityId": "FACILITY3",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": "2022-03-01",
+    "acisTprDate": "2022-03-01",
+    "csbdDate": "2022-05-30",
+    "csedDate": undefined,
+    "ercdDate": "2022-08-15",
+    "projectedCsbdDate": "2022-05-30",
+    "projectedDtpDate": "2022-03-01",
+    "projectedTprDate": "2022-03-01",
+    "sedDate": "2022-09-16",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "RES023",
+  "personName": {
+    "givenNames": "Darius",
+    "middleNames": "Alexander",
+    "surname": "Washington",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres023",
+  "recordId": "us_az_res023",
+  "releaseDate": 2022-09-16T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES024' 1`] = `
+{
+  "admissionDate": 2020-06-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToDTP",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES024",
+  "facilityId": "FACILITY1",
+  "gender": "FEMALE",
+  "metadata": {
+    "acisDtpDate": "2022-03-16",
+    "acisTprDate": "2022-03-16",
+    "csbdDate": "2022-06-14",
+    "csedDate": undefined,
+    "ercdDate": "2022-08-30",
+    "projectedCsbdDate": "2022-06-14",
+    "projectedDtpDate": "2022-03-16",
+    "projectedTprDate": "2022-03-16",
+    "sedDate": "2022-06-16",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER1",
+  "personExternalId": "RES024",
+  "personName": {
+    "givenNames": "Luna",
+    "middleNames": "Marie",
+    "surname": "Garcia",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres024",
+  "recordId": "us_az_res024",
+  "releaseDate": 2022-06-16T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES025' 1`] = `
+{
+  "admissionDate": 2019-07-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToDTP",
+  ],
+  "custodyLevel": "MEDIUM",
+  "displayId": "RES025",
+  "facilityId": "FACILITY2",
+  "gender": "MALE",
+  "metadata": {
+    "acisDtpDate": "2022-03-31",
+    "acisTprDate": "2022-03-31",
+    "csbdDate": "2022-06-29",
+    "csedDate": undefined,
+    "ercdDate": "2022-09-14",
+    "projectedCsbdDate": "2022-06-29",
+    "projectedDtpDate": "2022-03-31",
+    "projectedTprDate": "2022-03-31",
+    "sedDate": "2022-07-16",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER2",
+  "personExternalId": "RES025",
+  "personName": {
+    "givenNames": "Kai",
+    "middleNames": "James",
+    "surname": "Nguyen",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres025",
+  "recordId": "us_az_res025",
+  "releaseDate": 2022-07-16T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT C",
+}
+`;
+
+exports[`schema for 'US_AZ' 'RES026' 1`] = `
+{
+  "admissionDate": 2020-08-16T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usAzReleaseToDTP",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES026",
+  "facilityId": "FACILITY3",
+  "gender": "FEMALE",
+  "metadata": {
+    "acisDtpDate": "2022-04-15",
+    "acisTprDate": "2022-04-15",
+    "csbdDate": "2022-07-14",
+    "csedDate": undefined,
+    "ercdDate": "2022-09-29",
+    "projectedCsbdDate": "2022-07-14",
+    "projectedDtpDate": "2022-04-15",
+    "projectedTprDate": "2022-04-15",
+    "sedDate": "2022-08-16",
+    "stateCode": "US_AZ",
+  },
+  "officerId": "OFFICER3",
+  "personExternalId": "RES026",
+  "personName": {
+    "givenNames": "Aria",
+    "middleNames": "Sophia",
+    "surname": "Patel",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres026",
+  "recordId": "us_az_res026",
+  "releaseDate": 2022-08-16T00:00:00.000Z,
+  "stateCode": "US_AZ",
+  "unitId": "UNIT B",
+}
+`;
+
 exports[`schema for 'US_MA' 'RES001' 1`] = `
 {
   "allEligibleOpportunities": [],
@@ -14,7 +976,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "SOR Adult Secondary Education-Educ",
-        "creditDate": 2021-08-16T00:00:00.000Z,
+        "creditDate": 2021-08-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -22,7 +984,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 0,
         "activity": "SOR Adult Secondary Education-Prog",
-        "creditDate": 2021-08-16T00:00:00.000Z,
+        "creditDate": 2021-08-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -30,7 +992,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Violence Reduction Program (Prog)",
-        "creditDate": 2021-08-16T00:00:00.000Z,
+        "creditDate": 2021-08-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -38,7 +1000,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "SOR Adult Secondary Education-Educ",
-        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -46,7 +1008,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "SOR Adult Secondary Education-Prog",
-        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -54,7 +1016,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 0,
         "activity": "Violence Reduction Program (Prog)",
-        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "I",
       },
       {
@@ -62,7 +1024,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "SOR Adult Secondary Education-Educ",
-        "creditDate": 2021-10-16T00:00:00.000Z,
+        "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -70,7 +1032,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "SOR Adult Secondary Education-Prog",
-        "creditDate": 2021-10-16T00:00:00.000Z,
+        "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -78,7 +1040,23 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
         "COMPLETION": 30,
         "EARNEDGoodTime": 0,
         "activity": "Violence Reduction Program (Prog)",
-        "creditDate": 2021-10-16T00:00:00.000Z,
+        "creditDate": 2021-10-31T00:00:00.000Z,
+        "rating": "S",
+      },
+      {
+        "BOOST": 0,
+        "COMPLETION": 0,
+        "EARNEDGoodTime": 7.5,
+        "activity": "SOR Adult Secondary Education-Educ",
+        "creditDate": 2021-11-30T00:00:00.000Z,
+        "rating": "S",
+      },
+      {
+        "BOOST": 0,
+        "COMPLETION": 0,
+        "EARNEDGoodTime": 7.5,
+        "activity": "SOR Adult Secondary Education-Prog",
+        "creditDate": 2021-11-30T00:00:00.000Z,
         "rating": "S",
       },
     ],
@@ -119,7 +1097,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2020-11-16T00:00:00.000Z,
+        "creditDate": 2020-12-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -127,7 +1105,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Violence Reduction Program (Prog)",
-        "creditDate": 2020-11-16T00:00:00.000Z,
+        "creditDate": 2020-12-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -135,23 +1113,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2020-12-16T00:00:00.000Z,
-        "rating": "S",
-      },
-      {
-        "BOOST": 0,
-        "COMPLETION": 0,
-        "EARNEDGoodTime": 7.5,
-        "activity": "Violence Reduction Program (Prog)",
-        "creditDate": 2020-12-16T00:00:00.000Z,
-        "rating": "S",
-      },
-      {
-        "BOOST": 0,
-        "COMPLETION": 0,
-        "EARNEDGoodTime": 7.5,
-        "activity": "Institutional Employment",
-        "creditDate": 2021-01-16T00:00:00.000Z,
+        "creditDate": 2021-01-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -159,7 +1121,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 30,
         "EARNEDGoodTime": 0,
         "activity": "Violence Reduction Program (Prog)",
-        "creditDate": 2021-01-16T00:00:00.000Z,
+        "creditDate": 2021-01-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -167,7 +1129,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-02-16T00:00:00.000Z,
+        "creditDate": 2021-02-28T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -175,7 +1137,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-03-16T00:00:00.000Z,
+        "creditDate": 2021-03-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -183,7 +1145,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-04-16T00:00:00.000Z,
+        "creditDate": 2021-04-30T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -191,7 +1153,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-05-16T00:00:00.000Z,
+        "creditDate": 2021-05-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -199,7 +1161,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-06-16T00:00:00.000Z,
+        "creditDate": 2021-06-30T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -207,7 +1169,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-07-16T00:00:00.000Z,
+        "creditDate": 2021-07-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -215,7 +1177,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-08-16T00:00:00.000Z,
+        "creditDate": 2021-08-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -223,7 +1185,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -231,7 +1193,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-10-16T00:00:00.000Z,
+        "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -239,7 +1201,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-11-16T00:00:00.000Z,
+        "creditDate": 2021-11-30T00:00:00.000Z,
         "rating": "S",
       },
     ],
@@ -280,7 +1242,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-08-16T00:00:00.000Z,
+        "creditDate": 2021-08-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -288,7 +1250,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -296,7 +1258,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 5,
         "activity": "Reentry Readiness Workshop",
-        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -304,7 +1266,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-10-16T00:00:00.000Z,
+        "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -312,7 +1274,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 5,
         "activity": "Reentry Readiness Workshop",
-        "creditDate": 2021-10-16T00:00:00.000Z,
+        "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -320,7 +1282,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
-        "creditDate": 2021-11-16T00:00:00.000Z,
+        "creditDate": 2021-11-30T00:00:00.000Z,
         "rating": "S",
       },
       {
@@ -328,7 +1290,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
         "COMPLETION": 0,
         "EARNEDGoodTime": 5,
         "activity": "Reentry Readiness Workshop",
-        "creditDate": 2021-11-16T00:00:00.000Z,
+        "creditDate": 2021-11-30T00:00:00.000Z,
         "rating": "S",
       },
     ],
@@ -667,5 +1629,633 @@ exports[`schema for 'US_ME' 'RES999' 1`] = `
   "stateCode": "US_ME",
   "unitId": "UNIT B",
   "usMePortionNeededEligibleDate": 2022-11-16T00:00:00.000Z,
+}
+`;
+
+exports[`schema for 'US_NE' 'RES001' 1`] = `
+{
+  "admissionDate": 2020-06-16T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES001",
+  "facilityId": "DEMOFACILITY",
+  "facilityUnitId": null,
+  "gender": "MALE",
+  "metadata": {
+    "creditActivity": [
+      {
+        "actionDate": 2021-07-01T00:00:00.000Z,
+        "creditDate": 2021-07-01T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 3,
+        "isRestorable": null,
+        "lastModifiedDate": 2021-07-01T00:00:00.000Z,
+        "misconductReportNumber": null,
+        "violationCode": null,
+        "violationCount": null,
+        "violationDescription": null,
+      },
+      {
+        "actionDate": 2021-08-01T00:00:00.000Z,
+        "creditDate": 2021-08-01T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 3,
+        "isRestorable": null,
+        "lastModifiedDate": 2021-08-01T00:00:00.000Z,
+        "misconductReportNumber": null,
+        "violationCode": null,
+        "violationCount": null,
+        "violationDescription": null,
+      },
+      {
+        "actionDate": 2021-09-01T00:00:00.000Z,
+        "creditDate": 2021-09-01T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 3,
+        "isRestorable": null,
+        "lastModifiedDate": 2021-09-01T00:00:00.000Z,
+        "misconductReportNumber": null,
+        "violationCode": null,
+        "violationCount": null,
+        "violationDescription": null,
+      },
+      {
+        "actionDate": 2021-10-01T00:00:00.000Z,
+        "creditDate": 2021-10-01T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 3,
+        "isRestorable": null,
+        "lastModifiedDate": 2021-10-01T00:00:00.000Z,
+        "misconductReportNumber": null,
+        "violationCode": null,
+        "violationCount": null,
+        "violationDescription": null,
+      },
+      {
+        "actionDate": 2021-11-01T00:00:00.000Z,
+        "creditDate": 2021-11-01T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 3,
+        "isRestorable": null,
+        "lastModifiedDate": 2021-11-01T00:00:00.000Z,
+        "misconductReportNumber": null,
+        "violationCode": null,
+        "violationCount": null,
+        "violationDescription": null,
+      },
+      {
+        "actionDate": 2021-12-01T00:00:00.000Z,
+        "creditDate": 2021-12-01T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 3,
+        "isRestorable": null,
+        "lastModifiedDate": 2021-12-01T00:00:00.000Z,
+        "misconductReportNumber": null,
+        "violationCode": null,
+        "violationCount": null,
+        "violationDescription": null,
+      },
+    ],
+    "deadTimeDays": 0,
+    "goodTimeAllowedDays": 2922,
+    "goodTimeBalanceDays": 2922,
+    "goodTimeLastModifiedDate": 2021-12-01T00:00:00.000Z,
+    "goodTimeLawNumber": "191",
+    "goodTimeLostDaysNonRestorable": 0,
+    "goodTimeLostDaysRestorable": 0,
+    "jailTimeDays": 174,
+    "lb191Credits": 18,
+    "mandatoryMinimumDate": null,
+    "mandatoryMinimumSentenceDays": 0,
+    "mandatoryMinimumSentenceMonths": 0,
+    "mandatoryMinimumSentenceYears": 0,
+    "maximumSentenceDays": 0,
+    "maximumSentenceMonths": 0,
+    "maximumSentenceYears": 16,
+    "minimumSentenceDays": 0,
+    "minimumSentenceMonths": 0,
+    "minimumSentenceYears": 8,
+    "numHoldsAndDetainers": 0,
+    "numNotifiers": 0,
+    "paroleEligibilityDate": 2023-12-16T00:00:00.000Z,
+    "sentenceInfoIsCurrent": true,
+    "sentenceLastModifiedDate": 2021-12-01T00:00:00.000Z,
+    "sentenceStartDate": 2020-06-16T00:00:00.000Z,
+    "stateCode": "US_NE",
+    "tentativeReleaseDate": 2027-12-06T00:00:00.000Z,
+  },
+  "personExternalId": "RES001",
+  "personName": {
+    "givenNames": "Joseph",
+    "middleNames": "",
+    "surname": "Gutmann",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres001",
+  "recordId": "us_ne_RES001",
+  "stateCode": "US_NE",
+  "unitId": null,
+}
+`;
+
+exports[`schema for 'US_TN' 'RES001' 1`] = `
+{
+  "admissionDate": 2019-05-30T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usTnCustodyLevelDowngrade",
+  ],
+  "custodyLevel": "CLOSE",
+  "displayId": "dRES001",
+  "facilityId": "BLEDSOE_CC",
+  "facilityUnitId": "BLEDSOE_CC‡UNIT A",
+  "gender": "MALE",
+  "metadata": {
+    "creditActivity": [
+      {
+        "creditDate": 2021-01-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-01-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-02-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-02-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-03-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-03-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-04-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-04-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-05-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-05-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-06-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-06-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-07-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-08-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditType": "REMOVAL",
+        "creditsEarned": -10,
+      },
+      {
+        "creditDate": 2021-10-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-11-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+    ],
+    "expirationDate": 2023-08-22T00:00:00.000Z,
+    "expirationDateOriginal": 2025-10-12T00:00:00.000Z,
+    "fileUpdateDate": 2021-12-15T00:00:00.000Z,
+    "releaseEligibilityDate": 2022-07-26T00:00:00.000Z,
+    "sentenceEffectiveDate": 2019-05-08T00:00:00.000Z,
+    "stateCode": "US_TN",
+  },
+  "personExternalId": "RES001",
+  "personName": {
+    "givenNames": "Carmen",
+    "surname": "Reyes",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres001",
+  "recordId": "us_tn_res001",
+  "releaseDate": 2025-10-12T00:00:00.000Z,
+  "stateCode": "US_TN",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_TN' 'RES002' 1`] = `
+{
+  "admissionDate": 2016-11-11T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usTnCustodyLevelDowngrade",
+  ],
+  "custodyLevel": "MEDIUM",
+  "displayId": "dRES002",
+  "facilityId": "BLEDSOE_CC",
+  "facilityUnitId": "BLEDSOE_CC‡UNIT A",
+  "gender": "FEMALE",
+  "metadata": {
+    "creditActivity": [
+      {
+        "creditDate": 2021-01-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-01-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-02-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-02-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-03-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-03-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-04-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-04-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-05-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-05-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-06-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-06-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-07-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-08-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditType": "REMOVAL",
+        "creditsEarned": -10,
+      },
+      {
+        "creditDate": 2021-10-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-11-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+    ],
+    "expirationDate": 2023-08-22T00:00:00.000Z,
+    "expirationDateOriginal": 2025-10-12T00:00:00.000Z,
+    "fileUpdateDate": 2021-12-15T00:00:00.000Z,
+    "releaseEligibilityDate": 2022-07-26T00:00:00.000Z,
+    "sentenceEffectiveDate": 2019-05-08T00:00:00.000Z,
+    "stateCode": "US_TN",
+  },
+  "personExternalId": "RES002",
+  "personName": {
+    "givenNames": "Jessica",
+    "surname": "Ren",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres002",
+  "recordId": "us_tn_res002",
+  "releaseDate": 2023-03-26T00:00:00.000Z,
+  "stateCode": "US_TN",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_TN' 'RES003' 1`] = `
+{
+  "admissionDate": 2018-09-07T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usTnAnnualReclassification",
+    "usTnInitialClassification",
+  ],
+  "custodyLevel": "MEDIUM",
+  "displayId": "dRES003",
+  "facilityId": "BLEDSOE_CC",
+  "facilityUnitId": "BLEDSOE_CC‡UNIT A",
+  "gender": "MALE",
+  "metadata": {
+    "creditActivity": [
+      {
+        "creditDate": 2021-01-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-01-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-02-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-02-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-03-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-03-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-04-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-04-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-05-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-05-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-06-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-06-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-07-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-08-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditType": "REMOVAL",
+        "creditsEarned": -10,
+      },
+      {
+        "creditDate": 2021-10-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-11-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+    ],
+    "expirationDate": 2023-08-22T00:00:00.000Z,
+    "expirationDateOriginal": 2025-10-12T00:00:00.000Z,
+    "fileUpdateDate": 2021-12-15T00:00:00.000Z,
+    "releaseEligibilityDate": 2022-07-26T00:00:00.000Z,
+    "sentenceEffectiveDate": 2019-05-08T00:00:00.000Z,
+    "stateCode": "US_TN",
+  },
+  "personExternalId": "RES003",
+  "personName": {
+    "givenNames": "Fei",
+    "surname": "Jackson",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres003",
+  "recordId": "us_tn_res003",
+  "releaseDate": 2023-03-26T00:00:00.000Z,
+  "stateCode": "US_TN",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_TN' 'RES004' 1`] = `
+{
+  "admissionDate": 2019-05-30T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usTnAnnualReclassification",
+    "usTnInitialClassification",
+  ],
+  "custodyLevel": "CLOSE",
+  "displayId": "dRES004",
+  "facilityId": "BLEDSOE_CC",
+  "facilityUnitId": "BLEDSOE_CC‡UNIT A",
+  "gender": "INTERNAL_UNKNOWN",
+  "metadata": {
+    "creditActivity": [
+      {
+        "creditDate": 2021-01-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-01-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-02-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-02-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-03-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-03-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-04-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-04-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-05-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-05-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-06-16T00:00:00.000Z,
+        "creditType": "PROGRAM",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-06-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-07-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-08-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-09-16T00:00:00.000Z,
+        "creditType": "REMOVAL",
+        "creditsEarned": -10,
+      },
+      {
+        "creditDate": 2021-10-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+      {
+        "creditDate": 2021-11-16T00:00:00.000Z,
+        "creditType": "BEHAVIOR",
+        "creditsEarned": 6,
+      },
+    ],
+    "expirationDate": 2023-08-22T00:00:00.000Z,
+    "expirationDateOriginal": 2025-10-12T00:00:00.000Z,
+    "fileUpdateDate": 2021-12-15T00:00:00.000Z,
+    "releaseEligibilityDate": 2022-07-26T00:00:00.000Z,
+    "sentenceEffectiveDate": 2019-05-08T00:00:00.000Z,
+    "stateCode": "US_TN",
+  },
+  "personExternalId": "RES004",
+  "personName": {
+    "givenNames": "Geoff",
+    "surname": "Zhang",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres004",
+  "recordId": "us_tn_res004",
+  "releaseDate": 2023-07-04T00:00:00.000Z,
+  "stateCode": "US_TN",
+  "unitId": "UNIT A",
 }
 `;

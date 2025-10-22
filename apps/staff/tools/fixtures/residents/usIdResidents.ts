@@ -21,7 +21,7 @@ export const usIdResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usIdExpandedCRC", "usIdCustodyLevelDowngrade"],
     stateCode: "US_ID",
-    personExternalId: "ID_RES001",
+    personExternalId: "RES001",
     displayId: "RES001",
     personName: {
       givenNames: "Andre",
@@ -49,7 +49,7 @@ export const usIdResidents: ResidentFixture[] = [
       "usIdCustodyLevelDowngrade",
     ],
     stateCode: "US_ID",
-    personExternalId: "ID_RES002",
+    personExternalId: "RES002",
     displayId: "RES002",
     personName: {
       givenNames: "Antonio",
@@ -73,7 +73,7 @@ export const usIdResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usIdCRCWorkRelease", "usIdCRCResidentWorker"],
     stateCode: "US_ID",
-    personExternalId: "ID_RES003",
+    personExternalId: "RES003",
     displayId: "RES003",
     personName: {
       givenNames: "Walter",
@@ -97,7 +97,7 @@ export const usIdResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usIdCRCResidentWorker"],
     stateCode: "US_ID",
-    personExternalId: "ID_RES004",
+    personExternalId: "RES004",
     displayId: "RES004",
     personName: {
       givenNames: "Nathan",

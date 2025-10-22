@@ -298,9 +298,7 @@ export default abstract class PathwaysNewBackendMetric<
             fetchedData.metadata?.lastUpdated,
           );
           if (fetchedData.metadata?.facilityIdNameMap) {
-            const facility = JSON.parse(
-              fetchedData.metadata.facilityIdNameMap,
-            );
+            const facility = JSON.parse(fetchedData.metadata.facilityIdNameMap);
             if (!validateDynamicFilterOptions(facility))
               throw new Error(
                 `Invalid dynamic filter option for ${this.id}: facility`,

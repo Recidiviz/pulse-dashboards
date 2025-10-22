@@ -53,7 +53,10 @@ export interface RecordingState {
 export interface RecordingActions {
   mediaRecorderRef?: React.MutableRefObject<MediaRecorder | null>;
   startRecording: () => Promise<void>;
-  pauseRecording: (event?: Event | null, fromVisibilityChange?: boolean) => void;
+  pauseRecording: (
+    event?: Event | null,
+    fromVisibilityChange?: boolean,
+  ) => void;
   resumeRecording: () => void;
   stopRecording: () => void;
   setSelectedMicrophone: (deviceId: string) => void;

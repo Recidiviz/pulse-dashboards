@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,27 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rawUsAzResidents, usAzResidents } from "./US_AZ/fixtures";
-import { rawUsMaResidents, usMaResidents } from "./US_MA/fixtures";
-import { rawUsMeResidents, usMeResidents } from "./US_ME/fixtures";
-import { rawUsNeResidents, usNeResidents } from "./US_NE/fixtures";
-import { rawUsTnResidents, usTnResidents } from "./US_TN/fixtures";
+import { permissionSchema } from "~@jii/auth";
+import { HydrationState } from "~hydration-utils";
 
-// re-exporting state fixtures for convenience
-export { rawUsMaResidents, rawUsMeResidents, usMaResidents, usMeResidents };
+import { stateCodes } from "../../configs/stateConstants";
+import { AuthHandler } from "./types";
 
-export const allResidents = [
-  ...usAzResidents,
-  ...usMaResidents,
-  ...usMeResidents,
-  ...usNeResidents,
-  ...usTnResidents,
-];
+export class OfflineAuthHandler implements AuthHandler {
+  get userProfile(): AuthHandler["userProfile"] {
+    return {
+      stateCode: "RECIDIVIZ",
+      allowedStates: [...stateCodes.options],
+      permissions: [...permissionSchema.options],
+    };
+  }
 
-export const rawAllResidents = [
-  ...rawUsAzResidents,
-  ...rawUsMaResidents,
-  ...rawUsMeResidents,
-  ...rawUsNeResidents,
-  ...rawUsTnResidents,
-];
+  // everything below this line is a stub because the functionality doesn't really apply to offline mode
+
+  async getFirebaseToken() {
+    return "offline";
+  }
+
+  hydrate() {
+    return;
+  }
+
+  hydrationState: HydrationState = { status: "hydrated" };
+}

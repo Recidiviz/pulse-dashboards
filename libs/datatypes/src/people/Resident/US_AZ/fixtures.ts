@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { relativeFixtureDate } from "~datatypes";
+import { relativeFixtureDate } from "../../../utils/zod";
+import { RawResidentRecord, residentRecordSchema } from "../schema";
 
-import { ResidentFixture } from "../residents";
-
-export const usAzResidents: ResidentFixture[] = [
+export const rawUsAzResidents: Array<RawResidentRecord> = [
   {
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES001",
+    personExternalId: "RES001",
+    recordId: "us_az_res001",
     displayId: "RES001",
     personName: {
       givenNames: "Elinor",
@@ -54,7 +54,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES002",
+    personExternalId: "RES002",
+    recordId: "us_az_res002",
     displayId: "RES002",
     personName: {
       givenNames: "Michael",
@@ -85,7 +86,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES003",
+    personExternalId: "RES003",
+    recordId: "us_az_res003",
     displayId: "RES003",
     personName: {
       givenNames: "Sebastien",
@@ -116,7 +118,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES004",
+    personExternalId: "RES004",
+    recordId: "us_az_res004",
     displayId: "RES004",
     personName: {
       givenNames: "Sasha",
@@ -147,7 +150,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToDTP"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES014",
+    personExternalId: "RES014",
+    recordId: "us_az_res014",
     displayId: "RES014",
     personName: {
       givenNames: "Carl",
@@ -178,7 +182,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToDTP"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES015",
+    personExternalId: "RES015",
+    recordId: "us_az_res015",
     displayId: "RES015",
     personName: {
       givenNames: "Rosalie",
@@ -209,7 +214,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToDTP"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES016",
+    personExternalId: "RES016",
+    recordId: "us_az_res016",
     displayId: "RES016",
     personName: {
       givenNames: "Kyron",
@@ -240,7 +246,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToDTP"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES017",
+    personExternalId: "RES017",
+    recordId: "us_az_res017",
     displayId: "RES017",
     personName: {
       givenNames: "Teddy",
@@ -271,7 +278,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToDTP"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES018",
+    personExternalId: "RES018",
+    recordId: "us_az_res018",
     displayId: "RES018",
     personName: {
       givenNames: "Derrell",
@@ -302,7 +310,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: [],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES019",
+    personExternalId: "RES019",
+    recordId: "us_az_res019",
     displayId: "RES019",
     personName: {
       givenNames: "Allyn",
@@ -322,7 +331,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: [],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES020",
+    personExternalId: "RES020",
+    recordId: "us_az_res020",
     displayId: "RES020",
     personName: {
       givenNames: "Hailee",
@@ -342,7 +352,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES021",
+    personExternalId: "RES021",
+    recordId: "us_az_res021",
     displayId: "RES021",
     personName: {
       givenNames: "Marcus",
@@ -373,7 +384,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES022",
+    personExternalId: "RES022",
+    recordId: "us_az_res022",
     displayId: "RES022",
     personName: {
       givenNames: "Sophia",
@@ -404,7 +416,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES023",
+    personExternalId: "RES023",
+    recordId: "us_az_res023",
     displayId: "RES023",
     personName: {
       givenNames: "Darius",
@@ -435,7 +448,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToDTP"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES024",
+    personExternalId: "RES024",
+    recordId: "us_az_res024",
     displayId: "RES024",
     personName: {
       givenNames: "Luna",
@@ -466,7 +480,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToDTP"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES025",
+    personExternalId: "RES025",
+    recordId: "us_az_res025",
     displayId: "RES025",
     personName: {
       givenNames: "Kai",
@@ -497,7 +512,8 @@ export const usAzResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usAzReleaseToDTP"],
     stateCode: "US_AZ",
-    personExternalId: "AZ_RES026",
+    personExternalId: "RES026",
+    recordId: "us_az_res026",
     displayId: "RES026",
     personName: {
       givenNames: "Aria",
@@ -526,3 +542,7 @@ export const usAzResidents: ResidentFixture[] = [
     },
   },
 ];
+
+export const usAzResidents = rawUsAzResidents.map((r) =>
+  residentRecordSchema.parse(r),
+);

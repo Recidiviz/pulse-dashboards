@@ -18,18 +18,12 @@
 import { configure } from "mobx";
 
 import { AuthorizedUserProfile } from "~@jii/auth";
-import { isOfflineMode } from "~client-env-utils";
 
 import { Auth0AuthHandler } from "./Auth0AuthHandler";
 
 vi.hoisted(() => {
   vi.stubEnv("VITE_API_URL_BASE", "http://localhost:9999");
 });
-
-vi.mock("~client-env-utils", async (importOriginal) => ({
-  ...(await importOriginal()),
-  isOfflineMode: vi.fn(),
-}));
 
 let handler: Auth0AuthHandler;
 
@@ -121,18 +115,6 @@ test("user profile", () => {
   );
 
   expect(handler.userProfile).toEqual(mockProfile);
-});
-
-test("mock user profile in offline mode", () => {
-  const appMetadataSpy = vi.spyOn(handler.authClient, "appMetadata", "get");
-  vi.mocked(isOfflineMode).mockReturnValue(true);
-
-  expect(handler.userProfile).toMatchInlineSnapshot(`
-    {
-      "stateCode": "RECIDIVIZ",
-    }
-  `);
-  expect(appMetadataSpy).not.toHaveBeenCalled();
 });
 
 test("get firebase token", async () => {

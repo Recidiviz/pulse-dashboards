@@ -19,7 +19,10 @@ import MetricsStore from "../../../core/CoreStore/MetricsStore";
 import { RootStore } from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
-import { defaultPopulationFilterValues, IdPopulationFilterOptions } from "../../utils/filterOptions";
+import {
+  defaultPopulationFilterValues,
+  IdPopulationFilterOptions,
+} from "../../utils/filterOptions";
 import CoreStore from "..";
 
 let coreStore: CoreStore;
@@ -44,9 +47,9 @@ beforeEach(() => {
         enabledFilters: [],
       },
       hydrationState: {
-        status: "hydrated"
+        status: "hydrated",
       },
-      dynamicFilterOptions: {}
+      dynamicFilterOptions: {},
     },
   }));
 });
@@ -144,7 +147,10 @@ describe("FiltersStore", () => {
         { label: "Option 2", value: "OPTION_2" },
       ];
       const expected = IdPopulationFilterOptions;
-      expected.facility.options = [{ label: "All", value: "ALL" }, ...coreStore.metricsStore.current.dynamicFilterOptions["facility"]];
+      expected.facility.options = [
+        { label: "All", value: "ALL" },
+        ...coreStore.metricsStore.current.dynamicFilterOptions["facility"],
+      ];
       expect(coreStore.filtersStore.filterOptions).toEqual(expected);
     });
   });

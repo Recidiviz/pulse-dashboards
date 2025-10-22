@@ -86,7 +86,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     sessionStatus: sessionData?.status,
     sessionChunkCount: sessionData?.chunk_count,
     onRecordingStopped: handleRecordingStopped,
-    clientPseudoId: clientRecord?.pseudonymized_client_id
+    clientPseudoId: clientRecord?.pseudonymized_client_id,
   });
 
   // Update record duration periodically when recording

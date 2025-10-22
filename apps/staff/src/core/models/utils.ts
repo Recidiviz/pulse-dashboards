@@ -302,7 +302,9 @@ export const validateDynamicFilterOptions = (filterOption: any): boolean => {
   // Check each has a value and a label
   const correctFormat = filterOption.filter((o: any) => {
     return o.value && o.label;
-  })
+  });
   // Check length > 0
-  return correctFormat.length === filterOption.length && filterOption.length > 0;
-}
+  return (
+    correctFormat.length === filterOption.length && filterOption.length > 0
+  );
+};

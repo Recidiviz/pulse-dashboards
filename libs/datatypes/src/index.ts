@@ -79,6 +79,7 @@ export * from "./people/Client/utils";
 export * from "./people/Resident/fixtures";
 export * from "./people/Resident/schema";
 export type * from "./people/Resident/US_AR/metadata/schema";
+export * from "./people/Resident/US_AZ/fixtures";
 export type * from "./people/Resident/US_AZ/metadata/schema";
 export type * from "./people/Resident/US_ID/metadata/schema";
 export * from "./people/Resident/US_MA/metadata/fixtures";
@@ -87,7 +88,9 @@ export type * from "./people/Resident/US_ME/metadata/schema";
 export type * from "./people/Resident/US_MI/metadata/schema";
 export * from "./people/Resident/US_MO/metadata/schema";
 export type * from "./people/Resident/US_ND/metadata/schema";
+export * from "./people/Resident/US_NE/fixtures";
 export type * from "./people/Resident/US_NE/metadata/schema";
+export * from "./people/Resident/US_TN/fixtures";
 export type * from "./people/Resident/US_TN/metadata/schema";
 
 // Staff Exports: Includes fixtures and schema related to Staff

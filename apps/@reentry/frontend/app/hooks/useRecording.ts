@@ -57,7 +57,7 @@ export const useRecording = ({
   sessionStatus,
   sessionChunkCount = 0,
   onRecordingStopped,
-  clientPseudoId
+  clientPseudoId,
 }: UseRecordingProps): RecordingState & RecordingActions => {
   const [recordingStatus, setRecordingStatus] =
     useState<RecordingStatus>("created");
@@ -224,10 +224,14 @@ export const useRecording = ({
 
   const pauseRecording = useCallback(
     (event: Event | null = null, fromVisibilityChange = false) => {
-          if (!sessionId || !clientPseudoId) {
-      return;
-    }
-    trackAssessmentRecordingStatusUpdated({sessionId, justiceInvolvedPersonId: clientPseudoId, status: "PAUSED"})
+      if (!sessionId || !clientPseudoId) {
+        return;
+      }
+      trackAssessmentRecordingStatusUpdated({
+        sessionId,
+        justiceInvolvedPersonId: clientPseudoId,
+        status: "PAUSED",
+      });
 
       console.log("Pausing recording", event?.timeStamp);
       if (
@@ -409,8 +413,12 @@ export const useRecording = ({
     if (!sessionId || !clientPseudoId) {
       return;
     }
-    trackAssessmentRecordingStatusUpdated({sessionId, justiceInvolvedPersonId: clientPseudoId, status: "STARTED"})
-  
+    trackAssessmentRecordingStatusUpdated({
+      sessionId,
+      justiceInvolvedPersonId: clientPseudoId,
+      status: "STARTED",
+    });
+
     try {
       validateRecordingCapabilities(
         selectedMicrophone,
@@ -483,8 +491,12 @@ export const useRecording = ({
     if (!sessionId || !clientPseudoId) {
       return;
     }
-    trackAssessmentRecordingStatusUpdated({sessionId, justiceInvolvedPersonId: clientPseudoId, status: "RESUMED"})
-    
+    trackAssessmentRecordingStatusUpdated({
+      sessionId,
+      justiceInvolvedPersonId: clientPseudoId,
+      status: "RESUMED",
+    });
+
     try {
       // Since we stop the stream during pause, we always need to create a new MediaRecorder
       // when resuming, whether it's within-session or cross-session
@@ -558,8 +570,12 @@ export const useRecording = ({
     if (!sessionId || !clientPseudoId) {
       return;
     }
-    trackAssessmentRecordingStatusUpdated({sessionId, justiceInvolvedPersonId: clientPseudoId, status: "STOPPED"})
-    
+    trackAssessmentRecordingStatusUpdated({
+      sessionId,
+      justiceInvolvedPersonId: clientPseudoId,
+      status: "STOPPED",
+    });
+
     if (uiStatus !== "processing") {
       if (
         mediaRecorderRef.current &&

@@ -31,6 +31,8 @@ export default defineConfig({
     baseURL,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+    // set browser to UTC to avoid timezone issues when manipulating time for tests
+    timezoneId: "UTC",
   },
   retries: 3,
   projects: [

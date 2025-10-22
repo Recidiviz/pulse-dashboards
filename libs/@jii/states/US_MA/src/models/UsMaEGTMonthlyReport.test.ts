@@ -21,15 +21,15 @@ import { residentsConfigByState } from "~@jii/data";
 import {
   creditActivityFixture,
   creditActivitySchema,
-  creditDateString,
   makeRecordFixture,
   outputFixtureArray,
+  relativeFixtureMonth,
   UsMaCreditActivity,
 } from "~datatypes";
 
 import { UsMaEGTMonthlyReport } from "./UsMaEGTMonthlyReport";
 
-const creditDateStr = creditDateString({ months: -2 });
+const creditDateStr = relativeFixtureMonth({ months: -2 }, "end");
 let report: UsMaEGTMonthlyReport;
 let parsedCreditActivity: Array<UsMaCreditActivity>;
 

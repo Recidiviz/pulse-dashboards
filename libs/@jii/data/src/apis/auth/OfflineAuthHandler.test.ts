@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,27 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rawUsAzResidents, usAzResidents } from "./US_AZ/fixtures";
-import { rawUsMaResidents, usMaResidents } from "./US_MA/fixtures";
-import { rawUsMeResidents, usMeResidents } from "./US_ME/fixtures";
-import { rawUsNeResidents, usNeResidents } from "./US_NE/fixtures";
-import { rawUsTnResidents, usTnResidents } from "./US_TN/fixtures";
+import { OfflineAuthHandler } from "./OfflineAuthHandler";
 
-// re-exporting state fixtures for convenience
-export { rawUsMaResidents, rawUsMeResidents, usMaResidents, usMeResidents };
+let handler: OfflineAuthHandler;
 
-export const allResidents = [
-  ...usAzResidents,
-  ...usMaResidents,
-  ...usMeResidents,
-  ...usNeResidents,
-  ...usTnResidents,
-];
+beforeEach(() => {
+  handler = new OfflineAuthHandler();
+});
 
-export const rawAllResidents = [
-  ...rawUsAzResidents,
-  ...rawUsMaResidents,
-  ...rawUsMeResidents,
-  ...rawUsNeResidents,
-  ...rawUsTnResidents,
-];
+test("mock user profile in offline mode", () => {
+  expect(handler.userProfile).toMatchInlineSnapshot(`
+    {
+      "allowedStates": [
+        "US_AZ",
+        "US_ID",
+        "US_MA",
+        "US_ME",
+        "US_NE",
+        "US_TN",
+        "US_UT",
+      ],
+      "permissions": [
+        "enhanced",
+        "live_data",
+        "translator",
+      ],
+      "stateCode": "RECIDIVIZ",
+    }
+  `);
+});

@@ -16,4 +16,4 @@
 // =============================================================================
 
 export * from "./configs/configs";
-export type * from "./configs/permissions";
+export * from "./configs/permissions";

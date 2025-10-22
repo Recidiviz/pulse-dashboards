@@ -21,11 +21,13 @@ import { ReactElement } from "react";
 import { CopyWrapper, PageContainer } from "~@jii/common-ui";
 import { useCommonTranslations } from "~@jii/translation";
 
-export const ErrorPageMainContent = ({
-  error,
-}: {
+type ErrorPageProps = {
   error: Error;
-}): ReactElement => {
+};
+
+const ErrorPageMainContentWrapped = ({
+  error,
+}: ErrorPageProps): ReactElement => {
   const { t } = useCommonTranslations();
 
   const contents = dedent`# ${t(($) => $.errorPage.heading)}
@@ -41,3 +43,10 @@ export const ErrorPageMainContent = ({
     </PageContainer>
   );
 };
+
+// When used as a Sentry fallback function this will be called within the body of a class component,
+// which means it can't contain any React hook calls. This extra wrapper prevents the component
+//  from breaking in that context and should have no effect otherwise
+export const ErrorPageMainContent = (props: ErrorPageProps) => (
+  <ErrorPageMainContentWrapped {...props} />
+);

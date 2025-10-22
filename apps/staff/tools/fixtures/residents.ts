@@ -15,32 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RawResidentRecord } from "~datatypes";
+import {
+  RawResidentRecord,
+  rawUsAzResidents,
+  rawUsMaResidents,
+  rawUsNeResidents,
+  rawUsTnResidents,
+} from "~datatypes";
 
 import { usArResidents } from "./residents/usArResidents";
-import { usAzResidents } from "./residents/usAzResidents";
 import { usIdResidents } from "./residents/usIdResidents";
 import { usMeResidents } from "./residents/usMeResidents";
 import { usMiResidents } from "./residents/usMiResidents";
 import { usMoResidents } from "./residents/usMoResidents";
 import { usNdResidents } from "./residents/usNdResidents";
-import { usTnResidents } from "./residents/usTnResidents";
 import { FirestoreFixture, PersonFixture } from "./utils";
 
 export type ResidentFixture = PersonFixture<RawResidentRecord>;
 
-const data: ResidentFixture[] = [
-  ...usAzResidents,
+// RawResidentRecords is a superset of ResidentFixture
+const data: Array<ResidentFixture | RawResidentRecord> = [
+  ...rawUsAzResidents,
   ...usArResidents,
   ...usIdResidents,
+  ...rawUsMaResidents,
   ...usMeResidents,
   ...usMiResidents,
   ...usMoResidents,
   ...usNdResidents,
-  ...usTnResidents,
+  ...rawUsNeResidents,
+  ...rawUsTnResidents,
 ];
 
-export const residentsData: FirestoreFixture<ResidentFixture> = {
+export const residentsData: FirestoreFixture<
+  ResidentFixture | RawResidentRecord
+> = {
   data,
   idFunc: (r) => r.personExternalId,
 };

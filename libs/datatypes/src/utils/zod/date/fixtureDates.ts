@@ -18,10 +18,17 @@
 import {
   add,
   addDays,
+  differenceInCalendarMonths,
   differenceInDays,
   Duration,
+  endOfMonth,
   formatISO,
+  isFirstDayOfMonth,
+  isLastDayOfMonth,
   parseISO,
+  startOfDay,
+  startOfMonth,
+  subMonths,
 } from "date-fns";
 
 /**
@@ -47,6 +54,32 @@ export function relativeFixtureDate(...differences: Array<Duration>) {
 }
 
 /**
+ * Returns an ISO date string representing the "fixture current" date
+ * plus the specified duration and then adjusted to either the start or end
+ * of the month as specified . Use negative values for past dates, and
+ * positive values for future dates.
+ */
+export function relativeFixtureMonth(
+  difference: Duration,
+  endpoint: "start" | "end",
+) {
+  const baseDate = add(CURRENT_DATE_FIXTURE, difference);
+
+  let finalDate: Date;
+
+  switch (endpoint) {
+    case "start":
+      finalDate = startOfMonth(baseDate);
+      break;
+    case "end":
+      finalDate = endOfMonth(baseDate);
+      break;
+  }
+
+  return formatISO(finalDate, { representation: "date" });
+}
+
+/**
  * This class is functionally identical to Date, it just serves
  * to "brand" dates as already shifted for inspection at runtime
  */
@@ -60,6 +93,26 @@ class ShiftedDate extends Date {}
 export function shiftFixtureDate(storedDate: Date | ShiftedDate): ShiftedDate {
   if (storedDate instanceof ShiftedDate) return storedDate;
 
-  const offsetDays = differenceInDays(new Date(), CURRENT_DATE_FIXTURE);
-  return new ShiftedDate(addDays(storedDate, offsetDays));
+  let adjustedDate: Date;
+
+  // special case for month starts and ends: align them to the month of the adjusted date
+  if (isFirstDayOfMonth(storedDate) || isLastDayOfMonth(storedDate)) {
+    // count by months instead of days to avoid off-by-one errors
+    adjustedDate = subMonths(
+      new Date(),
+      // earlier stores dates are positive, later dates negative, which is why we subtract
+      differenceInCalendarMonths(CURRENT_DATE_FIXTURE, storedDate),
+    );
+
+    adjustedDate = isFirstDayOfMonth(storedDate)
+      ? startOfMonth(adjustedDate)
+      : startOfDay(endOfMonth(adjustedDate));
+  } else {
+    // normal case: just calculate a day offset
+    const offsetDays = differenceInDays(new Date(), CURRENT_DATE_FIXTURE);
+
+    adjustedDate = addDays(storedDate, offsetDays);
+  }
+
+  return new ShiftedDate(adjustedDate);
 }

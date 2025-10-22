@@ -20,7 +20,7 @@ import { makeAutoObservable, when } from "mobx";
 import { z } from "zod";
 
 import { Permission } from "~@jii/auth";
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import { isDemoMode } from "~client-env-utils";
 import { isHydrated } from "~hydration-utils";
 
 import { AuthManager } from "../apis/auth/AuthManager";
@@ -67,9 +67,6 @@ export class UserStore {
   }
 
   isAuthorizedForStateUrl(urlSlug: string): boolean {
-    // for convenience we don't bother with this in offline mode
-    if (isOfflineMode()) return true;
-
     const activeStateCode = stateConfigsByUrlSlug[urlSlug]?.stateCode;
 
     if (activeStateCode && isAuthorizedState(this.authState)) {
@@ -84,7 +81,7 @@ export class UserStore {
       const isAllowedState = allowedStates?.includes(activeStateCode);
       if (isAllowedState) return true;
 
-      // for recidiviz users, assume blanket access in demo mode
+      // for recidiviz users, assume blanket access to demo data
       if (stateCode === "RECIDIVIZ" && isDemoMode()) return true;
     }
 
@@ -106,8 +103,6 @@ export class UserStore {
   }
 
   hasPermission(permission: Permission): boolean {
-    if (isOfflineMode()) return true;
-
     return !!this.authManager.permissions?.includes(permission);
   }
 
@@ -116,8 +111,6 @@ export class UserStore {
   }
 
   identifyToTrackers() {
-    if (isOfflineMode()) return;
-
     // non-JII users (e.g. Recidiviz employees) will not have this property
     if (this.pseudonymizedId) {
       this.segmentClient.identify(this.pseudonymizedId);

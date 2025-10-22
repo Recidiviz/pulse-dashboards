@@ -25,13 +25,13 @@ test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime("2025-09-01");
 
   await page.goto(HOMEPAGE_URL);
-  await page.getByRole("link", { name: "See July report" }).click();
+  await page.getByRole("link", { name: "See August report" }).click();
   await expect(
     page.getByRole("heading", { name: "Monthly Report" }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", {
-      name: "Earned time and program participation in July",
+      name: "Earned time and program participation in August",
     }),
   ).toBeVisible();
 });
@@ -41,5 +41,5 @@ test("accessibility", async ({ page }) => {
 });
 
 test("page title", async ({ page }) => {
-  expect(await page.title()).toBe("July 2025 Report – Opportunities");
+  expect(await page.title()).toBe("August 2025 Report – Opportunities");
 });

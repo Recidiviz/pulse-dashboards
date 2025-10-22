@@ -21,8 +21,11 @@ import { FILTER_TYPES } from "../utils/constants";
 
 export type EnabledFilter = keyof PopulationFilters;
 export type EnabledFilters = EnabledFilter[];
-export type FilterType = typeof FILTER_TYPES[keyof typeof FILTER_TYPES];
-export type PopulationFilterValues = Record<Exclude<FilterType, "gender" | "ageGroup">, string[]> & { ageGroup: AgeGroup[], gender: Gender[] };
+export type FilterType = (typeof FILTER_TYPES)[keyof typeof FILTER_TYPES];
+export type PopulationFilterValues = Record<
+  Exclude<FilterType, "gender" | "ageGroup">,
+  string[]
+> & { ageGroup: AgeGroup[]; gender: Gender[] };
 export type PopulationFilterLabels = Record<FilterType, string>;
 
 export type SetPopulationFilters = (
@@ -35,7 +38,7 @@ export type FilterOption = {
   longLabel?: string;
 };
 
-export type PopulationFilters = Record<FilterType, PopulationFilter>
+export type PopulationFilters = Record<FilterType, PopulationFilter>;
 
 export type PopulationFilter = {
   type: FilterType;

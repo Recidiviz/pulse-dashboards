@@ -31,7 +31,7 @@ const RegeneratePlan = ({
   setRegenerationMessage,
   dataDetailPlan,
   isPolling = false,
-  clientRecord
+  clientRecord,
 }) => {
   const { getAccessToken } = useAuth();
   const { track } = useAnalytics();
@@ -42,7 +42,10 @@ const RegeneratePlan = ({
   );
   const planEditedManually = dataDetailPlan?.edited_manually;
   const handleRegenerate = async () => {
-    track("action_plan_regeneration_triggered", {justiceInvolvedPersonId: clientRecord.pseudonymized_client_id, planId: planId})
+    track("action_plan_regeneration_triggered", {
+      justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,
+      planId: planId,
+    });
     setRegenerationMessage(`Regenerating plan with new prompt: ${prompt}`);
     const response: components["schemas"]["PlanGenerationResponseCreate"] =
       await generatePlanMutation({
