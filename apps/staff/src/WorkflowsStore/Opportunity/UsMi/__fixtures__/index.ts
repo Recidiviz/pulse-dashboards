@@ -143,6 +143,7 @@ export const usMiPastFTRDRecordFixture: UsMiPastFTRDReferralRecordRaw = {
   },
   ineligibleCriteria: {},
   caseNotes: {},
+  metadata: {},
   isEligible: true,
   isAlmostEligible: false,
 };

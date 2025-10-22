@@ -17,22 +17,21 @@
 
 import { z } from "zod";
 
-import { opportunitySchemaBase } from "~datatypes";
+import { dateStringSchema } from "~datatypes";
 
-import { eligibleDateSchema } from "../../schemaHelpers";
-import { usMiOfficersAndDocketsMetadataSchema } from "../common";
+import { nullishAsUndefined } from "../schemaHelpers";
 
-const eligibleAndIneligibleCriteria = z
-  .object({
-    supervisionPastFullTermCompletionDate: eligibleDateSchema.optional(),
-  })
-  .passthrough();
-
-export const usMiPastFTRDSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: eligibleAndIneligibleCriteria,
-  ineligibleCriteria: eligibleAndIneligibleCriteria,
-  metadata: usMiOfficersAndDocketsMetadataSchema,
+export const usMiOfficersAndDocketsMetadataSchema = z.object({
+  officers: z.array(z.string()).default([]),
+  dockets: z
+    .array(
+      z.object({
+        docketNumber: z.string(),
+        issueLocation: z.string().nullable(),
+        legalOrderEffectiveDate: nullishAsUndefined(dateStringSchema),
+        legalOrderExpirationDate: nullishAsUndefined(dateStringSchema),
+        legalOrderType: z.string().nullable(),
+      }),
+    )
+    .default([]),
 });
-
-export type UsMiPastFTRDReferralRecord = z.infer<typeof usMiPastFTRDSchema>;
-export type UsMiPastFTRDReferralRecordRaw = z.input<typeof usMiPastFTRDSchema>;

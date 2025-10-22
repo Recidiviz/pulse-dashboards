@@ -44,6 +44,7 @@ import {
   UsIaVictimContactInfo,
   UsMiEarlyDischargeIcDetails,
   UsMiRecommendedSupervisionLevel,
+  UsMiSecondaryOfficersAndDockets,
   UsMoIncarceration,
 } from "./OpportunityDetailSidebarComponents";
 import UsMiLastAssessment from "./OpportunityDetailSidebarComponents/US_MI/UsMiLastAssessment";
@@ -95,6 +96,7 @@ export const OpportunityDetailSidebarComponents = {
   EligibilityDate,
   SentenceDates,
   UsMiEarlyDischargeIcDetails,
+  UsMiSecondaryOfficersAndDockets,
   UsMiRecommendedSupervisionLevel,
   UsMoRestrictiveHousing,
   UsMoViolations,

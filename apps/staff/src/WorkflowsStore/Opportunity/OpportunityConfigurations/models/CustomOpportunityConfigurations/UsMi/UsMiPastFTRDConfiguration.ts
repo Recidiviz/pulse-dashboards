@@ -15,36 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityProfileModuleName } from "../../../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
-export class UsMiEarlyDischargeConfiguration extends ApiOpportunityConfiguration {
-  get reasonsRequiringApproval() {
-    if (this.userStore.activeFeatureVariants.indefiniteSnooze) {
-      return ["JUDGE"];
-    }
-    return [];
-  }
-
-  get maxSnoozeDaysByDenialReason() {
-    if (this.userStore.activeFeatureVariants.indefiniteSnooze) {
-      return {
-        ...super.maxSnoozeDaysByDenialReason,
-        JUDGE: undefined,
-      };
-    }
-    return super.maxSnoozeDaysByDenialReason;
-  }
-
-  get snoozeReviewStatusMessage() {
-    return "Indefinite Snooze Review";
-  }
-
-  get sidebarComponents() {
-    return [
-      ...super.sidebarComponents,
-      // TODO(#10190): Add UsMiSecondaryOfficersAndDockets to admin panel
-      "UsMiSecondaryOfficersAndDockets",
-      "ActionHistory",
-    ];
+export class UsMiPastFTRDConfiguration extends ApiOpportunityConfiguration {
+  get sidebarComponents(): OpportunityProfileModuleName[] {
+    return ["ClientProfileDetails", "UsMiSecondaryOfficersAndDockets"];
   }
 }

@@ -19,10 +19,12 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
+import { usMiOfficersAndDocketsMetadataSchema } from "../common";
+
 const interstateFlag = z.enum(["IC-OUT", "IC-IN"]).optional();
 
 export const usMiEarlyDischargeSchema = opportunitySchemaBase.extend({
-  metadata: z.object({
+  metadata: usMiOfficersAndDocketsMetadataSchema.extend({
     interstateFlag,
     eligibleDate: dateStringSchema,
     supervisionType: z.literal("Parole").or(z.literal("Probation")),

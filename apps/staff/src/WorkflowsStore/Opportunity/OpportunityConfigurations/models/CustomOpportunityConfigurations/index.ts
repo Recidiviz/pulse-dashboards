@@ -32,6 +32,7 @@ import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
 import { UsMiCustodyLevelDowngradeConfiguration } from "./UsMi/UsMiCustodyLevelDowngradeConfiguration";
 import { UsMiEarlyDischargeConfiguration } from "./UsMi/UsMiEarlyDischargeConfiguration";
 import { UsMiMinimumTelephoneReportingConfiguration } from "./UsMi/UsMiMinimumTelephoneReporting";
+import { UsMiPastFTRDConfiguration } from "./UsMi/UsMiPastFTRDConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguration";
 import { UsNdTransferToMinFacility } from "./UsNd/UsNdTransferToMinFacility";
@@ -70,6 +71,7 @@ const customOpportunityConfigurations: Partial<
   usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeConfiguration,
   usMiEarlyDischarge: UsMiEarlyDischargeConfiguration,
   usMiMinimumTelephoneReporting: UsMiMinimumTelephoneReportingConfiguration,
+  usMiPastFTRD: UsMiPastFTRDConfiguration,
 
   // Missouri
   usMoOutsideClearance: UsMoWorkReleaseConfiguration,

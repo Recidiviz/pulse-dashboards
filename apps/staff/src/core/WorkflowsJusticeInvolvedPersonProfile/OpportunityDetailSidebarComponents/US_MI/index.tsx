@@ -18,3 +18,4 @@
 export * from "./UsMiEarlyDischargeIcDetails";
 export * from "./UsMiLastAssessment";
 export * from "./UsMiRecommendedSupervisionLevel";
+export * from "./UsMiSecondaryOfficersAndDockets";
