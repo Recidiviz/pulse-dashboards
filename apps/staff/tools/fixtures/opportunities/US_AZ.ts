@@ -46,7 +46,7 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: "DTP or Projected DTP",
       eligibleCriteriaCopy: [
         {
-          key: "usAzEnrolledInOrMeetsMandatoryLiteracy",
+          key: "usAzEnrolledInOrMeetsMandatoryLiteracyDtp",
           text: "Enrolled in or meets functional literacy requirement",
           tooltip:
             "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
@@ -106,7 +106,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Upcoming DTP date in ACIS{{#if acisDtpDate}}: {{date acisDtpDate}}{{/if}}",
         },
         {
-          key: "usAzEnrolledInOrMeetsMandatoryLiteracy",
+          key: "usAzEnrolledInOrMeetsMandatoryLiteracyDtp",
           text: "Has not enrolled in or met functional literacy requirement",
           tooltip:
             "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
@@ -182,7 +182,7 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Requirements validated by ACIS",
-      overdueOpportunityCalloutCopy: "overdue for their DTP date",
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
       snooze: { defaultSnoozeDays: 15, maxSnoozeDays: 90 },
@@ -234,6 +234,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "Almost Eligible",
             "Fast Trackers",
             "Eligible Now",
+            "Overdue",
             "Pending",
             "Marked Incorrect",
           ],
@@ -292,10 +293,10 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: "TPR or Projected TPR",
       eligibleCriteriaCopy: [
         {
-          key: "usAzMeetsFunctionalLiteracyTpr",
+          key: "usAzEnrolledInOrMeetsMandatoryLiteracyTpr",
           text: "Functional literacy complete",
           tooltip:
-            "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
+            "Inmates must meet literacy standards, as required by A.R.S. §31-229.02. ",
         },
         {
           key: "custodyLevelIsMinimumOrMedium",
@@ -353,10 +354,10 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Upcoming TPR date in ACIS{{#if acisTprDate}}: {{date acisTprDate}}{{/if}}",
         },
         {
-          key: "usAzMeetsFunctionalLiteracyTpr",
+          key: "usAzEnrolledInOrMeetsMandatoryLiteracyTpr",
           text: "Functional literacy outstanding",
           tooltip:
-            "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
+            "Inmates must meet literacy standards, as required by A.R.S. §31-229.02. ",
         },
         {
           key: "custodyLevelIsMinimumOrMedium",
@@ -429,7 +430,7 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Requirements validated by ACIS data",
-      overdueOpportunityCalloutCopy: "overdue for their STP date",
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
       snooze: { defaultSnoozeDays: 15, maxSnoozeDays: 90 },
@@ -481,6 +482,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "Almost Eligible",
             "Fast Trackers",
             "Eligible Now",
+            "Overdue",
             "Pending",
             "Marked Incorrect",
           ],
@@ -514,7 +516,7 @@ export const mockApiOpportunityConfigurationResponse = {
     },
     usAzTransferToAdministrativeSupervision: {
       callToAction:
-        "Review clients who may be eligible for Administrative Supervision and complete the checklist for them.",
+        "Identify clients who are eligible for Administrative Supervision and adjust their supervision level in ACIS.",
       caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
@@ -538,7 +540,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         { key: "Other", text: "Other" },
       ],
-      denialText: "Mark ineligible",
+      denialText: "Mark Ineligible",
       deniedTabTitle: "Marked Ineligible",
       displayName: "Administrative Supervision",
       dynamicEligibilityText:
@@ -596,7 +598,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "At this time, there are no clients who are almost eligible. Please navigate to one of the other tabs.",
         },
         {
-          tab: "Recently Transferred in ACIS",
+          tab: "Transferred in ACIS",
           text: "No clients for the selected officer(s) were marked as transferred within the last day. Clients stop appearing in this tab 24 hours after the change is confirmed in ACIS.",
         },
         {
@@ -651,7 +653,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading: null,
-      submittedTabTitle: "Recently Transferred in ACIS",
+      submittedTabTitle: "Transferred in ACIS",
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
@@ -661,7 +663,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tabs: [
             "Eligible per ORAS",
             "Eligible per Initial Assessment",
-            "Recently Transferred in ACIS",
+            "Transferred in ACIS",
             "Marked Ineligible",
           ],
         },
