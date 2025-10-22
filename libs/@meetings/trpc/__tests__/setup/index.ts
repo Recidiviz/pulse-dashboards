@@ -15,9 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { request } from "node:http";
-
-import { File } from "@google-cloud/storage";
+import { CloudTasksClient } from "@google-cloud/tasks";
 import { init } from "@sentry/node";
 import { createTRPCClient, httpBatchLink, TRPCClient } from "@trpc/client";
 import {
@@ -29,8 +27,8 @@ import { FastifyInstance } from "fastify/types/instance";
 import fastifyAuth0Verify from "fastify-auth0-verify";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
-import { GenericContainer } from "testcontainers";
 import { beforeAll, beforeEach } from "vitest";
+import { mock } from "vitest-mock-extended";
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
@@ -51,57 +49,31 @@ const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
 
-const FAKE_GCS_PORT = 4443;
+vi.mock("~@meetings/tasks", () => {
+  const originalModule = vi.importActual("~@meetings/tasks");
 
-const gcsContainer = await new GenericContainer("fsouza/fake-gcs-server:1.52.3")
-  .withEntrypoint([
-    "/bin/fake-gcs-server",
-    "-scheme",
-    "http",
-    "-public-host",
-    "localhost:4443",
-  ])
-  .withExposedPorts(FAKE_GCS_PORT)
-  .start();
-
-export const GCS_API_ENDPOINT = `http://${gcsContainer.getHost()}:${gcsContainer.getMappedPort(FAKE_GCS_PORT)}`;
-
-const data = JSON.stringify({ externalUrl: GCS_API_ENDPOINT });
-
-// This updates the external url of the fake-gcs-server so that uploads work
-const options = {
-  hostname: new URL(GCS_API_ENDPOINT).hostname,
-  port: new URL(GCS_API_ENDPOINT).port,
-  path: `${new URL(GCS_API_ENDPOINT).pathname}/_internal/config`,
-  method: "PUT",
-  headers: {
-    "Content-Type": "application/json",
-    "Content-Length": Buffer.byteLength(data),
-  },
-};
-
-const req = request(options);
-req.write(data);
-req.end();
-
-// Mock out the Storage constructor to use our fake-gcs-server endpoint
-vi.mock("@google-cloud/storage", async (importOriginal) => {
-  const mod: typeof import("@google-cloud/storage") = await importOriginal();
   return {
-    ...mod,
-    Storage: vi.fn(
-      () =>
-        new mod.Storage({ apiEndpoint: GCS_API_ENDPOINT, projectId: "test" }),
+    ...originalModule,
+    getSignedUrlForNewRecording: vi.fn(
+      (bucketName: string, folderName: string) => {
+        return `storage.googleapis.com/${bucketName}/${folderName}/1.m4a`;
+      },
     ),
   };
 });
 
-// Mock the getSignedUrl method to return a predictable URL
-vi.spyOn(File.prototype, "getSignedUrl").mockImplementation(async function (
-  this: File,
-) {
-  return [`${GCS_API_ENDPOINT}/${this.name}`];
+export const mockCloudTasksClient = mock<CloudTasksClient>({
+  queuePath: vi.fn((project: string, location: string, queue: string) => {
+    return `projects/${project}/locations/${location}/queues/${queue}`;
+  }),
+  createTask: vi.fn().mockResolvedValue([{ name: "task-name" }]),
 });
+
+vi.mock("@google-cloud/tasks", () => ({
+  CloudTasksClient: vi.fn().mockImplementation(() => {
+    return mockCloudTasksClient;
+  }),
+}));
 
 beforeAll(async () => {
   init({

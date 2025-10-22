@@ -65,6 +65,18 @@ export default defineConfig(() => ({
       SENTRY_ENV: process.env["SENTRY_ENV"] ?? "test",
       AUDIO_RECORDINGS_BUCKET_NAME:
         process.env["AUDIO_RECORDINGS_BUCKET_NAME"] ?? "test-audio-bucket",
+      CLOUD_TASKS_PROJECT: process.env["CLOUD_TASKS_PROJECT"] ?? "test-project",
+      CLOUD_TASKS_LOCATION:
+        process.env["CLOUD_TASKS_LOCATION"] ?? "us-central1",
+      CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL:
+        process.env["CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL"] ??
+        "test-service-account-email@test-project.iam.gserviceaccount.com",
+      STITCHING_TASK_QUEUE_NAME:
+        process.env["STITCHING_TASK_QUEUE_NAME"] ?? "test-stitching-task-queue",
+      STITCHING_TASK_REQUEST_URL:
+        process.env["STITCHING_TASK_REQUEST_URL"] ??
+        "https://test-server.app/stitch-audio",
+      NODE_ENV: process.env["NODE_ENV"] ?? "production",
     },
   },
 }));

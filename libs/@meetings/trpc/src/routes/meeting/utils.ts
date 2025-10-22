@@ -15,91 +15,52 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import fs from "node:fs";
-import os from "node:os";
+import { CloudTasksClient, protos } from "@google-cloud/tasks";
 
-import { Storage } from "@google-cloud/storage";
-import ffmpegPath from "ffmpeg-static";
-import ffmpeg from "fluent-ffmpeg";
-import path from "path";
+import env from "~@meetings/trpc/env";
 
-import {
-  AUDIO_FILE_EXTENSION,
-  GCS_CONTENT_TYPE,
-} from "~@meetings/trpc/common/constants";
-
-if (!ffmpegPath) {
-  throw new Error("ffmpeg-static failed to load ffmpeg binary");
+export async function queueStitchingTaskLocal(
+  stateCode: string,
+  meetingId: string,
+) {
+  // Don't await the fetch to avoid blocking
+  fetch(env.STITCHING_TASK_REQUEST_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ stateCode, meetingId }),
+  });
 }
 
-ffmpeg.setFfmpegPath(ffmpegPath);
-
-export async function stitchAudioForMeeting(
-  gcsBucketName: string,
-  meetingFolderName: string,
+export async function queueStitchingTaskCloud(
+  stateCode: string,
+  meetingId: string,
 ) {
-  // Get the list of audio files for this meeting
-  const storage = new Storage();
-  const bucket = storage.bucket(gcsBucketName);
+  const cloudTaskClient = new CloudTasksClient();
 
-  const [files] = await bucket.getFiles({ prefix: `${meetingFolderName}/` });
-  if (files.length === 0) {
-    return;
-  }
-
-  // Sort files by timestamp to ensure correct order
-  files.sort((a, b) => {
-    const timeA = parseInt(a.name);
-    const timeB = parseInt(b.name);
-    return timeA - timeB;
-  });
-
-  // Download each file to a temp location and keep a list of the paths
-  const tempFilePaths = [];
-  const fileListPath = path.join(os.tmpdir(), "filelist.txt");
-  let fileListContent = "";
-
-  const downloads = [];
-  for (const segmentFile of files) {
-    const tempFilePath = path.join(
-      os.tmpdir(),
-      path.basename(segmentFile.name),
-    );
-
-    downloads.push(segmentFile.download({ destination: tempFilePath }));
-    tempFilePaths.push(tempFilePath);
-    fileListContent += `file '${tempFilePath}'\n`;
-  }
-
-  // GCS will auto-retry up to three times with expenential backoff, so we can
-  // await all downloads to complete here. If they still fail, we should just
-  // throw the error
-  await Promise.all(downloads);
-  fs.writeFileSync(fileListPath, fileListContent);
-
-  const tempOutputPath = path.join(
-    os.tmpdir(),
-    `final.${AUDIO_FILE_EXTENSION}`,
+  const parent = cloudTaskClient.queuePath(
+    env.CLOUD_TASKS_PROJECT,
+    env.CLOUD_TASKS_LOCATION,
+    env.STITCHING_TASK_QUEUE_NAME,
   );
 
-  // Use FFmpeg to concatenate the audio files into a single one
-  await new Promise((resolve, reject) => {
-    ffmpeg()
-      .input(fileListPath)
-      .inputOptions(["-f concat", "-safe 0"])
-      .outputOptions("-c copy") // Directly copy the stream without re-encoding
-      .save(tempOutputPath)
-      .on("end", resolve)
-      .on("error", reject);
-  });
+  const request: protos.google.cloud.tasks.v2.ICreateTaskRequest = {
+    parent,
+    task: {
+      httpRequest: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: Buffer.from(JSON.stringify({ stateCode, meetingId })),
+        httpMethod: "POST",
+        url: env.STITCHING_TASK_REQUEST_URL,
+        oidcToken: {
+          serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
+        },
+      },
+    },
+  };
 
-  // Upload the final stitched file back to the bucket
-  const outputFileName = `${meetingFolderName}/final.${AUDIO_FILE_EXTENSION}`;
-  await bucket.upload(tempOutputPath, {
-    destination: outputFileName,
-    metadata: { contentType: GCS_CONTENT_TYPE },
-    resumable: false,
-  });
-
-  return `${gcsBucketName}/${outputFileName}`;
+  await cloudTaskClient.createTask(request);
 }

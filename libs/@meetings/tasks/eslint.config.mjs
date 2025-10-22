@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,25 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { registerTaskRoutes } from "~@meetings/server/server/utils";
-import { appRouter, createContext } from "~@meetings/trpc";
-import { buildCommonServer } from "~server-setup-plugin";
+// @ts-check
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
+import tseslint from "typescript-eslint";
 
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
-  });
+import baseConfig from "../../../eslint.config.mjs";
 
-  registerTaskRoutes(server);
-
-  return server;
-}
+export default tseslint.config(baseConfig, {
+  files: ["**/*.ts", "**/*.tsx"],
+  rules: {
+    // This enforces that we use absolute imports for all of the code in this project
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [".*"],
+      },
+    ],
+  },
+});

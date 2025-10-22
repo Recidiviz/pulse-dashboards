@@ -38,10 +38,7 @@
       "cache": true,
       "options": {
         "command": "nx prisma-deploy @meetings/prisma && cd libs/@meetings/trpc && vitest",
-        "cwd": "{workspaceRoot}",
-        "env": {
-          "NODE_OPTIONS": "--experimental-websocket"
-        }
+        "cwd": "{workspaceRoot}"
       }
     }
   }

@@ -19,6 +19,9 @@ import { faker } from "@faker-js/faker";
 
 import { Prisma, PrismaClient, StateCode } from "~@meetings/prisma/client";
 
+export const intakeId = "intake-1";
+export const clientPseudoId = "client-pid-1";
+
 export const fakeStaff = {
   staffId: BigInt(1),
   stableStaffExternalId: "staff-ext-1",
@@ -37,7 +40,7 @@ export const fakeClient = {
   stablePersonExternalId: "client-ext-1",
   stablePersonExternalIdType: "client-ext-type-1",
   displayPersonExternalId: "client-display-ext-1",
-  pseudonymizedId: "client-pid-1",
+  pseudonymizedId: clientPseudoId,
   givenNames: faker.person.firstName(),
   middleNames: faker.person.firstName(),
   surname: faker.person.lastName(),
@@ -51,6 +54,23 @@ export const fakeClient = {
   supervisionType: "PAROLE",
 } satisfies Prisma.ClientCreateInput;
 
+export const fakeMeeting = {
+  id: "meeting-1",
+  staff: {
+    connect: {
+      staffId: fakeStaff.staffId,
+    },
+  },
+  client: {
+    connect: {
+      personId: fakeClient.personId,
+    },
+  },
+  startTime: new Date(),
+  recordingsGCSBucket: "test-bucket",
+  recordingsFolderPath: "meeting-1",
+} satisfies Prisma.MeetingCreateInput;
+
 export async function seed(prismaClient: PrismaClient) {
   // Seed Data
   await prismaClient.staff.create({
@@ -59,5 +79,9 @@ export async function seed(prismaClient: PrismaClient) {
 
   await prismaClient.client.create({
     data: fakeClient,
+  });
+
+  await prismaClient.meeting.create({
+    data: fakeMeeting,
   });
 }

@@ -15,21 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Storage } from "@google-cloud/storage";
 import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
-import {
-  AUDIO_FILE_EXTENSION,
-  GCS_CONTENT_TYPE,
-} from "~@meetings/trpc/common/constants";
+import { getSignedUrlForNewRecording } from "~@meetings/tasks";
+import env from "~@meetings/trpc/env";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   endMeetingInputSchema,
   getSignedUrlForRecordingInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
-import { stitchAudioForMeeting } from "~@meetings/trpc/routes/meeting/utils";
+import {
+  queueStitchingTaskCloud,
+  queueStitchingTaskLocal,
+} from "~@meetings/trpc/routes/meeting/utils";
 
 export const meetingRouter = router({
   getSignedUrlForRecording: auth0Procedure
@@ -53,32 +53,21 @@ export const meetingRouter = router({
           });
         }
 
-        // Creates a client
-        const storage = new Storage();
-        const bucket = storage.bucket(meeting.recordingsGCSBucket);
-
-        // Make the file name the time since epoch so that we know the order of the recordings for a meeting
-        const secondsSinceEpoch = Math.round(Date.now() / 1000);
-        const fileName = `${meeting.recordingsFolderPath}/${secondsSinceEpoch}.${AUDIO_FILE_EXTENSION}`;
-        const file = bucket.file(fileName);
-
-        const [url] = await file.getSignedUrl({
-          version: "v4",
-          action: "write",
-          expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-          contentType: GCS_CONTENT_TYPE,
-        });
-
-        return url;
+        return await getSignedUrlForNewRecording(
+          meeting.recordingsGCSBucket,
+          meeting.recordingsFolderPath,
+        );
       },
     ),
   endMeeting: auth0Procedure
     .input(endMeetingInputSchema)
     .mutation(
-      async ({ input: { clientId, meetingId }, ctx: { prisma, user } }) => {
-        let meeting;
+      async ({
+        input: { clientId, meetingId },
+        ctx: { prisma, user, stateCode },
+      }) => {
         try {
-          meeting = await prisma.meeting.update({
+          await prisma.meeting.update({
             where: {
               id: meetingId,
               clientId: clientId,
@@ -88,8 +77,6 @@ export const meetingRouter = router({
             },
             data: {
               endTime: new Date(),
-              postMeetingProcessingStatus:
-                PostMeetingProcessingStatus.STITCHING,
             },
           });
         } catch (e) {
@@ -107,42 +94,46 @@ export const meetingRouter = router({
           throw e;
         }
 
-        let finalRecordingGCSPath;
+        // Go ahead and set the status to stitching queued so we don't accidentally overwrite it from the other process
+        await prisma.meeting.update({
+          where: {
+            id: meetingId,
+            clientId: clientId,
+            staff: {
+              pseudonymizedId: user.pseudonymizedId,
+            },
+          },
+          data: {
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.STITCHING_QUEUED,
+          },
+        });
+
         try {
-          finalRecordingGCSPath = await stitchAudioForMeeting(
-            meeting.recordingsGCSBucket,
-            meeting.recordingsFolderPath,
-          );
+          // If we're on a local environment, there is no way to emulate Cloud Tasks, so we just call endpoint directly
+          if (env.NODE_ENV === "development") {
+            await queueStitchingTaskLocal(stateCode, meetingId);
+          } else {
+            await queueStitchingTaskCloud(stateCode, meetingId);
+          }
         } catch (e) {
+          // Don't throw the error because the meeting should still be ended
+          captureException(e);
+
           await prisma.meeting.update({
             where: {
               id: meetingId,
+              clientId: clientId,
+              staff: {
+                pseudonymizedId: user.pseudonymizedId,
+              },
             },
             data: {
               postMeetingProcessingStatus:
                 PostMeetingProcessingStatus.STITCHING_ERROR,
             },
           });
-
-          captureException(e);
-
-          // Don't throw an error because the meeting was ended successfully.
-          // TODO: implement a way to retry the stitching step via a job
-          return;
         }
-
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.TRANSCRIBING,
-            finalRecordingGCSPath,
-          },
-        });
-
-        // TODO: implement transcription step
       },
     ),
 });

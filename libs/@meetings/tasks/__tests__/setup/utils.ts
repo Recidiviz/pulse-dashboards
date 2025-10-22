@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,25 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { registerTaskRoutes } from "~@meetings/server/server/utils";
-import { appRouter, createContext } from "~@meetings/trpc";
-import { buildCommonServer } from "~server-setup-plugin";
+import { Prisma, PrismaClient } from "~@meetings/prisma/client";
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
+const PRISMA_TABLES = Object.values(Prisma.ModelName);
 
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
-  });
-
-  registerTaskRoutes(server);
-
-  return server;
+export async function resetDb(prismaClient: PrismaClient) {
+  await prismaClient.$transaction(
+    PRISMA_TABLES.map((table) =>
+      prismaClient.$executeRawUnsafe(`TRUNCATE "${table}" CASCADE;`),
+    ),
+  );
 }

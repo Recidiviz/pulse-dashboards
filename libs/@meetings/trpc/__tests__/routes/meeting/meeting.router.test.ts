@@ -15,32 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Storage } from "@google-cloud/storage";
 import { describe, expect, test, vi } from "vitest";
 
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
-import env from "~@meetings/trpc/env";
 import {
-  GCS_API_ENDPOINT,
+  mockCloudTasksClient,
+  testkit,
   testPrismaClient,
   testTRPCClient,
 } from "~@meetings/trpc/test/setup";
 import { fakeClient, fakeMeeting } from "~@meetings/trpc/test/setup/seed";
 
-const FAKE_DATE = new Date("2025-09-18");
+const FAKE_DATE = new Date("2025-10-19");
 
 describe("meeting router", () => {
-  beforeAll(() => {
-    // // tell vitest we use mocked time
-    vi.useFakeTimers();
-    vi.setSystemTime(FAKE_DATE);
-  });
-
-  afterAll(() => {
-    // restoring date after the tests are complete
-    vi.useRealTimers();
-  });
-
   describe("getSignedUrlForRecording", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
@@ -62,38 +50,21 @@ describe("meeting router", () => {
         });
 
       expect(result).toEqual(
-        `${GCS_API_ENDPOINT}/${fakeMeeting.id}/${FAKE_DATE.getTime() / 1000}.m4a`,
+        "storage.googleapis.com/test-audio-bucket/meeting-1/1.m4a",
       );
     });
   });
 
   describe("endMeeting", () => {
-    beforeAll(async () => {
-      const storage = new Storage({
-        apiEndpoint: GCS_API_ENDPOINT,
-        projectId: "test",
-      });
+    beforeAll(() => {
+      // // tell vitest we use mocked time
+      vi.useFakeTimers();
+      vi.setSystemTime(FAKE_DATE);
+    });
 
-      await storage.createBucket(env.AUDIO_RECORDINGS_BUCKET_NAME);
-
-      await storage
-        .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
-        .upload("__tests__/data/1.m4a", {
-          destination: `${fakeMeeting.id}/1.m4a`,
-          resumable: false,
-        });
-      await storage
-        .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
-        .upload("__tests__/data/2.m4a", {
-          destination: `${fakeMeeting.id}/2.m4a`,
-          resumable: false,
-        });
-      await storage
-        .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
-        .upload("__tests__/data/3.m4a", {
-          destination: `${fakeMeeting.id}/3.m4a`,
-          resumable: false,
-        });
+    afterAll(() => {
+      // restoring date after the tests are complete
+      vi.useRealTimers();
     });
 
     test("Should throw error if meeting does not exist", async () => {
@@ -108,7 +79,9 @@ describe("meeting router", () => {
       });
     });
 
-    test("Should end meeting and stitch together audio", async () => {
+    test("Should set meeting end time but queue stitching error if there is a cloud task error", async () => {
+      mockCloudTasksClient.createTask.mockRejectedValueOnce(new Error());
+
       await testTRPCClient.v1.meeting.endMeeting.mutate({
         clientId: fakeClient.personId,
         meetingId: fakeMeeting.id,
@@ -118,25 +91,62 @@ describe("meeting router", () => {
         where: { id: fakeMeeting.id },
       });
 
-      // Check that end date has been set
+      // Check that end date and post processing status were updated
       expect(updatedMeeting).toEqual(
         expect.objectContaining({
           endTime: FAKE_DATE,
-          postMeetingProcessingStatus: PostMeetingProcessingStatus.TRANSCRIBING,
-          finalRecordingGCSPath: `${env.AUDIO_RECORDINGS_BUCKET_NAME}/${fakeMeeting.id}/final.m4a`,
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.STITCHING_ERROR,
         }),
       );
 
-      // Check that the "final" audio file has been created
-      const storage = new Storage({
-        apiEndpoint: GCS_API_ENDPOINT,
-        projectId: "test",
+      // The error should still be reported to Sentry
+      expect(testkit.reports()).toHaveLength(1);
+    });
+
+    test("Should set meeting end time and queue stitching", async () => {
+      await testTRPCClient.v1.meeting.endMeeting.mutate({
+        clientId: fakeClient.personId,
+        meetingId: fakeMeeting.id,
       });
-      const [files] = await storage
-        .bucket(env.AUDIO_RECORDINGS_BUCKET_NAME)
-        .getFiles({ prefix: `${fakeMeeting.id}/` });
-      expect(files.map((f) => f.name)).toEqual(
-        expect.arrayContaining([`${fakeMeeting.id}/final.m4a`]),
+
+      const updatedMeeting = await testPrismaClient.meeting.findUnique({
+        where: { id: fakeMeeting.id },
+      });
+
+      // Check that end date and post processing status were updated
+      expect(updatedMeeting).toEqual(
+        expect.objectContaining({
+          endTime: FAKE_DATE,
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.STITCHING_QUEUED,
+        }),
+      );
+
+      expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith(
+        expect.objectContaining({
+          parent:
+            "projects/test-project/locations/us-central1/queues/test-stitching-task-queue",
+          task: {
+            httpRequest: {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: Buffer.from(
+                JSON.stringify({
+                  stateCode: "US_NE",
+                  meetingId: fakeMeeting.id,
+                }),
+              ),
+              httpMethod: "POST",
+              url: "https://test-server.app/stitch-audio",
+              oidcToken: {
+                serviceAccountEmail:
+                  "test-service-account-email@test-project.iam.gserviceaccount.com",
+              },
+            },
+          },
+        }),
       );
     });
   });

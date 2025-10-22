@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,25 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { registerTaskRoutes } from "~@meetings/server/server/utils";
-import { appRouter, createContext } from "~@meetings/trpc";
-import { buildCommonServer } from "~server-setup-plugin";
+import { z } from "zod";
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
+const envSchema = z.object({
+  CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL: z
+    .string()
+    .min(1, "CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL is required"),
+});
 
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
-  });
+const parsedEnv = envSchema.safeParse(process.env);
 
-  registerTaskRoutes(server);
-
-  return server;
+if (!parsedEnv.success) {
+  console.error(
+    "Environment variable validation failed:",
+    parsedEnv.error.format(),
+  );
+  process.exit(1); // Terminate the application
 }
+
+export default parsedEnv.data;
