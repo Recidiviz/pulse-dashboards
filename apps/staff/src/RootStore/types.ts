@@ -227,6 +227,10 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnTEPENotesForAll: {},
         usMoSearchByUnit: {},
         usMoWorkRelease: {},
+        indefiniteSnooze: { activeTenants: ["US_IA"] },
+        usIaEarlyDischargeForms: {},
+        usIaFinesAndFees: {},
+        usIaSupervisionLevelDowngrade: {},
       }
     : {
         ...allFeatureVariants,
