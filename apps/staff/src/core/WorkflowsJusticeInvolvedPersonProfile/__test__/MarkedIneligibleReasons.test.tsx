@@ -117,7 +117,7 @@ describe("actedOnText", () => {
       actedOnTextAddition: { SUBMITTED: ". Submitted text addition." },
     };
     expect(buildActedOnText(testOpp)).toEqual(
-      "Marked ineligible by test-email on October 15, 2023.",
+      "Marked Ineligible by test-email on October 15, 2023.",
     );
   });
 
@@ -131,7 +131,7 @@ describe("actedOnText", () => {
       actedOnTextAddition: { DENIED: ". Denied text addition." },
     };
     expect(buildActedOnText(testOpp)).toEqual(
-      "Marked ineligible by test-email on October 15, 2023. Denied text addition.",
+      "Marked Ineligible by test-email on October 15, 2023. Denied text addition.",
     );
   });
 

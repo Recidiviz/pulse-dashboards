@@ -89,7 +89,7 @@ export function buildActedOnText({
   if (isIndefinitelySnoozed) {
     actionText = "Marked indefinitely ineligible";
   } else {
-    actionText = `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}${subcategorySubstr}`;
+    actionText = `${status}${subcategorySubstr}`;
   }
 
   return `${actionText} by ${actionBy} on ${format(
