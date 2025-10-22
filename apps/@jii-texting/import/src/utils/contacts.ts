@@ -41,7 +41,7 @@ export async function transformAndLoadContactData(
         method: contactData.contact_method,
         address: contactData.contact_address,
         datetime: new Date(contactData.contact_datetime),
-        updateDatetime: contactData.update_datetime,
+        updateDatetime: new Date(contactData.update_datetime),
         reminderType: contactData.reminder_type,
       };
 
