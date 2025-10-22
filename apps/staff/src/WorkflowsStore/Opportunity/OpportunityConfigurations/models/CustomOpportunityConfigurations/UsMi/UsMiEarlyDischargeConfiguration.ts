@@ -41,10 +41,10 @@ export class UsMiEarlyDischargeConfiguration extends ApiOpportunityConfiguration
 
   get sidebarComponents() {
     return [
+      "ActionHistory",
       ...super.sidebarComponents,
       // TODO(#10190): Add UsMiSecondaryOfficersAndDockets to admin panel
       "UsMiSecondaryOfficersAndDockets",
-      "ActionHistory",
     ];
   }
 }

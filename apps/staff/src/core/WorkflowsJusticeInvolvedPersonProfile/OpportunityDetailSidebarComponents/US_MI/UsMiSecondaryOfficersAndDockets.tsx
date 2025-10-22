@@ -30,6 +30,7 @@ import {
   DetailsList,
   DetailsSection,
   DetailsSubheading,
+  Divider,
   SecureDetailsContent,
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
@@ -72,6 +73,7 @@ export function UsMiSecondaryOfficersAndDockets({
           <SecureDetailsContent>{officers.join(", ")}</SecureDetailsContent>
         </>
       )}
+      <Divider />
       {dockets.length > 0 && (
         <>
           <DetailsHeading>Dockets</DetailsHeading>
