@@ -47,12 +47,13 @@ export interface RecordingState {
   chunkCount: number;
   isOnline: boolean;
   cannotConnectToServer: boolean;
+  pausedByVisibilityChange: boolean;
 }
 
 export interface RecordingActions {
   mediaRecorderRef?: React.MutableRefObject<MediaRecorder | null>;
   startRecording: () => Promise<void>;
-  pauseRecording: () => void;
+  pauseRecording: (event?: Event | null, fromVisibilityChange?: boolean) => void;
   resumeRecording: () => void;
   stopRecording: () => void;
   setSelectedMicrophone: (deviceId: string) => void;

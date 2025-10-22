@@ -219,6 +219,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
             setEndAssessmentOpen={setEndAssessmentOpen}
             isOnline={recording.isOnline}
             cannotConnectToServer={recording.cannotConnectToServer}
+            pausedByVisibilityChange={recording.pausedByVisibilityChange}
             actions={{
               startRecording: recording.startRecording,
               pauseRecording: recording.pauseRecording,

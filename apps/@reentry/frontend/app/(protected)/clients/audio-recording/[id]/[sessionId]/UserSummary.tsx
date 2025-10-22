@@ -25,9 +25,9 @@ const UserSummary: React.FC<{
   sessionData: components["schemas"]["RecordingSessionResponse"] | null;
 }> = ({ clientData, sessionData }) => {
   return (
-    <div className="flex flex-col justify-start items-start gap-4">
-      <div className="inline-flex justify-start items-center gap-4">
-        <div className="w-10 h-10 relative bg-white rounded-[40px] overflow-hidden">
+    <div className="flex flex-col justify-start items-start gap-3 md:gap-4 w-full">
+      <div className="inline-flex justify-start items-center gap-3 md:gap-4">
+        <div className="w-10 h-10 relative bg-white rounded-[40px] overflow-hidden flex-shrink-0">
           <div className="w-10 h-10 left-0 top-0 absolute bg-[#4c6290]" />
           <div className="w-[29.90px] h-[46.15px] left-[0.45px] top-[10.88px] absolute origin-top-left rotate-[-46deg] bg-[#90aeb5] blur-[4.55px]" />
           <div className="w-[50.70px] h-[40.30px] left-[6.22px] top-[39.60px] absolute origin-top-left rotate-[-69deg] mix-blend-overlay bg-[#25636f] blur-[4.55px]" />
@@ -37,16 +37,16 @@ const UserSummary: React.FC<{
               : "--"}
           </div>
         </div>
-        <div className="justify-start text-[#003331] text-2xl font-medium font-['Public_Sans'] leading-[28.80px]">
+        <div className="justify-start text-[#003331] text-lg sm:text-xl md:text-2xl font-medium font-['Public_Sans'] leading-tight break-words">
           {clientData?.full_name?.given_names && clientData.full_name?.surname
             ? `${clientData.full_name.given_names} ${clientData.full_name.surname}`
             : "--"}
         </div>
       </div>
-      <div className="inline-flex justify-center items-center gap-6">
-        <div className="flex justify-start items-center gap-3">
-          <Calendar size={20} className="text-[#2B5469]/85" />
-          <div className="justify-start text-[#2a5469]/90 text-base font-medium font-['Public_Sans'] leading-tight">
+      <div className="inline-flex justify-center items-center gap-4 md:gap-6">
+        <div className="flex justify-start items-center gap-2 md:gap-3">
+          <Calendar size={18} className="text-[#2B5469]/85 flex-shrink-0 sm:w-5 sm:h-5" />
+          <div className="justify-start text-[#2a5469]/90 text-sm sm:text-base font-medium font-['Public_Sans'] leading-tight">
             {sessionData && new Date(sessionData?.created_at).toLocaleString()}
           </div>
         </div>

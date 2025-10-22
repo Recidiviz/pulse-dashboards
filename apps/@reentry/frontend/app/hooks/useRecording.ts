@@ -67,6 +67,8 @@ export const useRecording = ({
     typeof navigator !== "undefined" ? navigator.onLine : true,
   );
   const [cannotConnectToServer, setCannotConnectToServer] = useState(false);
+  const [pausedByVisibilityChange, setPausedByVisibilityChange] =
+    useState(false);
   const { getAccessToken } = useAuth();
   const { trackAssessmentRecordingStatusUpdated } = useAnalytics();
   const { updateStatus } = useUpdateRecordingStatus();
@@ -220,38 +222,94 @@ export const useRecording = ({
     }
   }, [sessionId, finalizeRecordingMutation, getAccessToken]);
 
-  const pauseRecording = useCallback(() => {
-    if (!sessionId || !clientPseudoId) {
+  const pauseRecording = useCallback(
+    (event: Event | null = null, fromVisibilityChange = false) => {
+          if (!sessionId || !clientPseudoId) {
       return;
     }
     trackAssessmentRecordingStatusUpdated({sessionId, justiceInvolvedPersonId: clientPseudoId, status: "PAUSED"})
 
-    if (
-      mediaRecorderRef.current &&
-      mediaRecorderRef.current.state === "recording"
-    ) {
-      // Request any buffered data before pausing to prevent data loss on page refresh.
-      console.log(mediaRecorderRef);
-      mediaRecorderRef.current.requestData();
-      mediaRecorderRef.current.pause();
+      console.log("Pausing recording", event?.timeStamp);
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state === "recording"
+      ) {
+        // Request any buffered data before pausing to prevent data loss on page refresh.
+        console.log(mediaRecorderRef);
+        mediaRecorderRef.current.requestData();
+        mediaRecorderRef.current.pause();
 
-      recordingStartTimeRef.current = null;
+        recordingStartTimeRef.current = null;
 
-      // Stop all microphone tracks to release microphone access
-      // This will show that the microphone is no longer in use
-      if (streamRef.current) {
-        console.log("Stopping microphone tracks on pause", streamRef.current);
-        console.log("Tracks", streamRef.current.getTracks());
-        streamRef.current.getTracks().forEach((track) => {
-          console.log(track);
-          track.stop();
-        });
-        streamRef.current = null;
+        // Stop all microphone tracks to release microphone access
+        // This will show that the microphone is no longer in use
+        if (streamRef.current) {
+          console.log("Stopping microphone tracks on pause", streamRef.current);
+          console.log("Tracks", streamRef.current.getTracks());
+          streamRef.current.getTracks().forEach((track) => {
+            console.log(track);
+            track.stop();
+          });
+          streamRef.current = null;
+        }
       }
+      console.log("Paused by visibility change:", fromVisibilityChange);
+      setPausedByVisibilityChange(fromVisibilityChange);
+      updateRecordingStatus("paused");
+    },
+    [updateRecordingStatus],
+  );
+
+  // Handle tab visibility changes (tab switching, minimization)
+  // Only apply on mobile and tablet devices
+  useEffect(() => {
+    // Detect if device is mobile or tablet
+    const isMobileOrTablet = (): boolean => {
+      // Check for touch support and screen size
+      const hasTouch =
+        "ontouchstart" in window ||
+        navigator.maxTouchPoints > 0 ||
+        ((navigator as { msMaxTouchPoints?: number }).msMaxTouchPoints ?? 0) >
+          0;
+
+      // Check screen width (typical mobile/tablet breakpoint)
+      const isSmallScreen = window.matchMedia("(max-width: 1024px)").matches;
+
+      return hasTouch && isSmallScreen;
+    };
+
+    // Only set up visibility handler on mobile/tablet
+    if (!isMobileOrTablet()) {
+      return;
     }
 
-    updateRecordingStatus("paused");
-  }, [updateRecordingStatus]);
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Tab is hidden (user switched tabs or minimized browser)
+        if (
+          mediaRecorderRef.current &&
+          mediaRecorderRef.current.state === "recording"
+        ) {
+          console.log(
+            "Tab hidden while recording on mobile/tablet - pausing to save resources and prevent data loss",
+          );
+          pauseRecording(null, true);
+          showErrorToast(
+            "Recording paused because you switched tabs or minimized the browser. Resume when you return.",
+          );
+        }
+      } else {
+        // Tab is visible again
+        console.log("Tab visible again");
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [pauseRecording]);
 
   const handleTrackEnded = useCallback(async () => {
     console.warn("Microphone track ended - device disconnected");
@@ -462,6 +520,9 @@ export const useRecording = ({
         track.addEventListener("ended", handleTrackEnded);
       });
 
+      // Reset the visibility change flag when resuming
+      setPausedByVisibilityChange(false);
+
       // Update status
       await updateRecordingStatus("recording");
       showSuccessToast("Recording resumed");
@@ -584,10 +645,13 @@ export const useRecording = ({
         }
       }
     };
-    // Use pagehide for more reliable cleanup, especially on mobile
+    // Use both beforeunload and pagehide for reliable cleanup
+    // pagehide is more reliable on mobile browsers
     window.addEventListener("beforeunload", handlePageUnload);
+    window.addEventListener("pagehide", handlePageUnload);
     return () => {
       window.removeEventListener("beforeunload", handlePageUnload);
+      window.removeEventListener("pagehide", handlePageUnload);
     };
   }, [cleanupMicrophoneOnUnload]);
 
@@ -610,6 +674,7 @@ export const useRecording = ({
     isOnline,
     mediaRecorderRef,
     cannotConnectToServer,
+    pausedByVisibilityChange,
     startRecording,
     pauseRecording,
     resumeRecording,

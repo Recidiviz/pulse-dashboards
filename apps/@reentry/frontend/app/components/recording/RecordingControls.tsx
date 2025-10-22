@@ -46,6 +46,7 @@ interface RecordingControlsProps {
   setEndAssessmentOpen: (open: boolean) => void;
   isOnline: boolean;
   cannotConnectToServer: boolean;
+  pausedByVisibilityChange: boolean;
 }
 
 interface RecordingControlsButtonsProps {
@@ -68,6 +69,7 @@ interface RecordingStatusTextProps {
   recordDuration: number;
   isOnline: boolean;
   cannotConnectToServer: boolean;
+  pausedByVisibilityChange: boolean;
   formatDuration: (seconds: number) => string;
 }
 
@@ -93,13 +95,17 @@ const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
     switch (recordingStatus) {
       case "created":
         return (
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col">
+          <div
+            className={
+              "flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto"
+            }
+          >
+            <div className="w-full sm:w-auto">
               <FormControl
                 fullWidth
                 variant="outlined"
                 size="small"
-                className="!w-64"
+                className="sm:!w-64"
               >
                 <InputLabel>Select Microphone</InputLabel>
                 <Select
@@ -121,7 +127,7 @@ const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
               buttonText={
                 uploadDuration > 0 ? "Resume Recording" : "Start Recording"
               }
-              className="h-8 px-4 py-2 bg-[#006c67] rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
+              className="h-10 sm:h-8 px-4 py-2 bg-[#006c67] rounded-[32px] text-white text-xs sm:text-[13px] font-medium font-['Public_Sans'] whitespace-nowrap"
               onClick={() => {
                 openLiveAssessmentModal(actions.startRecording);
               }}
@@ -132,39 +138,40 @@ const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
 
       case "recording":
         return (
-          <>
+          <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto">
             <PrimaryButton
               buttonText="Pause Recording"
               onClick={actions.pauseRecording}
+              className="h-10 sm:h-8 whitespace-nowrap text-xs sm:text-[13px]"
             />
             <PrimaryButton
               buttonText="End assessment"
-              className="h-8 px-4 py-2 bg-red-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
+              className="h-10 sm:h-8 px-3 sm:px-4 py-2 bg-red-600 rounded-[32px] text-white text-xs sm:text-[13px] font-medium font-['Public_Sans'] whitespace-nowrap"
               onClick={() => {
                 setEndAssessmentOpen(true);
               }}
             />
-          </>
+          </div>
         );
 
       case "paused":
         return (
-          <>
+          <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto">
             <PrimaryButton
-              className={"w-full"}
               buttonText="Resume Recording"
               onClick={() => {
                 openLiveAssessmentModal(actions.resumeRecording);
               }}
+              className="h-10 sm:h-8 whitespace-nowrap text-xs sm:text-[13px]"
             />
             <PrimaryButton
               buttonText="End Assessment"
-              className="w-full h-8 px-4 py-2 bg-red-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
+              className="h-10 sm:h-8 px-3 sm:px-4 py-2 bg-red-600 rounded-[32px] text-white text-xs sm:text-[13px] font-medium font-['Public_Sans'] whitespace-nowrap"
               onClick={() => {
                 setEndAssessmentOpen(true);
               }}
             />
-          </>
+          </div>
         );
 
       case "processing":
@@ -201,6 +208,7 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
   recordDuration,
   isOnline,
   cannotConnectToServer,
+  pausedByVisibilityChange,
   formatDuration,
 }) => {
   if (!isRecordingSupported) {
@@ -210,7 +218,6 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
       </div>
     );
   }
-
   const renderStatus = () => {
     switch (recordingStatus) {
       case "created":
@@ -218,7 +225,7 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
           <div className={"flex gap-4"}>
             {uploadDuration > 0 && (
               <div className="flex items-center justify-center space-x-2">
-                <Typography className="text-xs text-gray-500">
+                <Typography className="text-[10px] sm:text-xs text-gray-500">
                   Duration: {formatDuration(uploadDuration)} ({chunkCount}{" "}
                   chunks)
                 </Typography>
@@ -235,16 +242,16 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
       case "recording":
         return (
           <div className="flex items-center gap-3">
-            <div className="space-y-2">
+            <div className="space-y-1 sm:space-y-2">
               <div className="flex items-center justify-center space-x-2 text-red-600">
-                <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse" />
-                <Typography className="text-sm">
+                <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse flex-shrink-0" />
+                <Typography className="text-xs sm:text-sm">
                   Recording in progress...
                 </Typography>
               </div>
               {recordDuration > 0 && (
                 <div className="flex items-center justify-center space-x-2">
-                  <Typography className="text-xs text-gray-500">
+                  <Typography className="text-[10px] sm:text-xs text-gray-500">
                     Duration: {formatDuration(recordDuration)} ({chunkCount}{" "}
                     chunks)
                   </Typography>
@@ -262,16 +269,18 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
       case "paused":
         return (
           <div className="flex items-center gap-3">
-            <div className="space-y-2">
+            <div className="space-y-1 sm:space-y-2">
               <div className="flex items-center justify-center space-x-2 text-gray-600">
-                <div className="w-3 h-3 bg-gray-600 rounded-full" />
-                <Typography className="text-sm">
-                  Recording paused - click Resume to continue
+                <div className="w-3 h-3 bg-gray-600 rounded-full flex-shrink-0" />
+                <Typography className="text-xs sm:text-sm">
+                  {pausedByVisibilityChange
+                    ? "Recording paused due to tab switch - click Resume to continue"
+                    : "Recording paused - click Resume to continue"}
                 </Typography>
               </div>
               {recordDuration > 0 && (
                 <div className="flex items-center justify-center space-x-2">
-                  <Typography className="text-xs text-gray-500">
+                  <Typography className="text-[10px] sm:text-xs text-gray-500">
                     Duration: {formatDuration(recordDuration)} ({chunkCount}{" "}
                     chunks)
                   </Typography>
@@ -288,17 +297,17 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
         );
       case "processing":
         return (
-          <div className="space-y-3">
-            <div className="space-y-2">
+          <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-1 sm:space-y-2">
               <div className="flex items-center justify-center space-x-2 text-blue-600">
-                <div className="w-3 h-3 bg-blue-600 rounded-full animate-pulse" />
-                <Typography className="text-sm">
+                <div className="w-3 h-3 bg-blue-600 rounded-full animate-pulse flex-shrink-0" />
+                <Typography className="text-xs sm:text-sm">
                   Processing recording...
                 </Typography>
               </div>
               {uploadDuration > 0 && (
                 <div className="flex items-center justify-center">
-                  <Typography className="text-xs text-gray-500">
+                  <Typography className="text-[10px] sm:text-xs text-gray-500">
                     Finalizing {formatDuration(uploadDuration)} of audio (
                     {chunkCount} chunks)
                   </Typography>
@@ -309,15 +318,17 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
         );
       case "completed":
         return (
-          <div className="space-y-3">
-            <div className="space-y-2">
+          <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-1 sm:space-y-2">
               <div className="flex items-center justify-center space-x-2 text-green-600">
-                <div className="w-3 h-3 bg-green-600 rounded-full" />
-                <Typography className="text-sm">Recording complete</Typography>
+                <div className="w-3 h-3 bg-green-600 rounded-full flex-shrink-0" />
+                <Typography className="text-xs sm:text-sm">
+                  Recording complete
+                </Typography>
               </div>
               {uploadDuration > 0 && (
                 <div className="flex items-center justify-center">
-                  <Typography className="text-xs text-gray-500">
+                  <Typography className="text-[10px] sm:text-xs text-gray-500">
                     Total duration: {formatDuration(uploadDuration)} (
                     {chunkCount} chunks)
                   </Typography>
@@ -359,6 +370,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   setEndAssessmentOpen,
   isOnline,
   cannotConnectToServer,
+  pausedByVisibilityChange,
 }) => {
   const formatDuration = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -367,13 +379,13 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   };
 
   return (
-    <div className="w-full flex-col md:flex-row px-6 py-3 bg-white rounded-[20px] md:rounded-[99px] outline outline-1 outline-offset-[-1px] outline-[#2b5469]/10 flex items-center justify-between">
-      <div className="opacity-0">
+    <div className="w-full px-4 sm:px-6 py-4 sm:py-3 bg-white rounded-[32px] sm:rounded-[99px] outline outline-1 outline-offset-[-1px] outline-[#2b5469]/10 flex flex-col sm:flex-row items-center justify-center lg:justify-between gap-3 sm:gap-4 lg:gap-0">
+      <div className="hidden lg:block flex-shrink-0">
         <div className="h-8 px-4 py-2 bg-[#006c67] rounded-[32px] flex items-center justify-center text-white text-[13px] font-medium">
           {uploadDuration ? "Start Recording" : "Resume Recording"}
         </div>
       </div>
-      <div className="flex items-center md:mb-0 mb-6">
+      <div className="flex items-center justify-center gap-4 order-1 sm:order-none">
         <RecordingStatusText
           recordingStatus={recordingStatus}
           isRecordingSupported={isRecordingSupported}
@@ -382,10 +394,11 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
           recordDuration={recordDuration}
           isOnline={isOnline}
           cannotConnectToServer={cannotConnectToServer}
+          pausedByVisibilityChange={pausedByVisibilityChange}
           formatDuration={formatDuration}
         />
       </div>
-      <div className="flex items-center  ">
+      <div className="flex items-center justify-center gap-3 order-2 sm:order-none w-full sm:w-auto">
         <RecordingControlsButtons
           recordingStatus={recordingStatus}
           selectedMicrophone={selectedMicrophone}
