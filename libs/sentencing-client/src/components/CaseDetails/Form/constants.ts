@@ -30,6 +30,15 @@ export const ANY_OPTION = "Any";
 export const MILD_OPTION = "Mild";
 export const MODERATE_OPTION = "Moderate";
 export const SEVERE_OPTION = "Severe";
+export const STRIP_FREE_TEXT = /\s*-\s*\(?\s*FREE\s+TEXT\s*\)?\s*$/i;
+
+export const stripFreeTextHelper = (option: string | undefined) => {
+  // strips: " - (FREE TEXT)", " - FREE TEXT", "-FREE TEXT", "- ( free text )"
+  if (!option) {
+    return option;
+  }
+  return option?.replace(STRIP_FREE_TEXT, "").trim();
+};
 
 export const yesNoUnsureOptions = [YES_OPTION, NO_OPTION, NOT_SURE_YET_OPTION];
 

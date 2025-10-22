@@ -34,7 +34,7 @@ import { sortFullNameByLastNameDescending } from "../../utils/sorting";
 import { displayReportType } from "../../utils/utils";
 import SortIcon from "../assets/sort-icon.svg?react";
 import { REPORT_TYPE_KEY } from "../CaseDetails/constants";
-import { UNKNOWN_OPTION } from "../CaseDetails/Form/constants";
+import { stripFreeTextHelper, UNKNOWN_OPTION } from "../CaseDetails/Form/constants";
 import { ReportType } from "../constants";
 import {
   ACTIVE_STATUS,
@@ -128,7 +128,7 @@ const columns = [
     cell: (
       offense: CellContext<CaseListTableCase, CaseListTableCase["offense"]>,
     ) => {
-      const displayValue = offense.getValue() ?? "None Yet";
+      const displayValue = stripFreeTextHelper(offense.getValue()) ?? "None Yet";
       return (
         <Styled.Offense isNotSpecified={displayValue === "None Yet"}>
           {displayValue}

@@ -31,6 +31,7 @@ import {
   VIOLENT_OFFENSE_KEY,
 } from "../../constants";
 import { getMandatoryMinimumsData } from "../../Recommendations/utils";
+import { stripFreeTextHelper } from "../constants";
 import { Dropdown } from "../Elements/Dropdown";
 import { form } from "../FormStore";
 import { FormFieldProps, SelectOption } from "../types";
@@ -105,7 +106,7 @@ function OffenseField({ isRequired }: FormFieldProps) {
 
   const options = Object.keys(caseStore.offensesByName).map(
     (selection: string) => ({
-      label: selection,
+      label: stripFreeTextHelper(selection),
       value: selection,
     }),
   );

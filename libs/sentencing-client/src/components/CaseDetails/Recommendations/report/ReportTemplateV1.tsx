@@ -23,6 +23,7 @@ import {
 } from "../../components/charts/constants";
 import { DispositionChartExplanation } from "../../components/charts/DispositionChart/DispositionChartExplanation";
 import { RecidivismChartExplanation } from "../../components/charts/RecidivismChart/RecidivismChartExplanation";
+import { stripFreeTextHelper } from "../../Form/constants";
 import {
   CumulativeRecidivismRatesAttributeChips,
   HistoricalSentencingAttributeChips,
@@ -65,7 +66,7 @@ const ReportTemplateV1: React.FC<CustomReportProps> = ({
                   <Styled.AttributeChip>Gender: {gender}</Styled.AttributeChip>
                   <Styled.AttributeChip>Age: {age}</Styled.AttributeChip>
                   <Styled.AttributeChip>
-                    Offense: {insight.offense}
+                    Offense: {stripFreeTextHelper(insight.offense)}
                   </Styled.AttributeChip>
                 </>
               )}

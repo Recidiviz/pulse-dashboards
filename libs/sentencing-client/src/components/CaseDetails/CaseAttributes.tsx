@@ -32,6 +32,7 @@ import {
   OFFENSE_KEY,
   REPORT_TYPE_KEY,
 } from "./constants";
+import { stripFreeTextHelper } from "./Form/constants";
 import { AttributeLabelValue } from "./types";
 
 type CaseAttributesProps = {
@@ -88,6 +89,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
         ? [countyOfSentencingField]
         : [countyOfSentencingField, countyOfResidenceField];
 
+    const formattedOffense = stripFreeTextHelper(offense)
     const attributesRow: AttributeLabelValue[] = [
       {
         key: REPORT_TYPE_KEY,
@@ -101,7 +103,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
         value: gender ? GenderToDisplayName[gender] : undefined,
       },
       { key: AGE_KEY, label: "Age", value: age },
-      { key: OFFENSE_KEY, label: "Offense", value: offense },
+      { key: OFFENSE_KEY, label: "Offense", value: formattedOffense },
       {
         key: LSIR_SCORE_KEY,
         label: "LSI-R Score",
