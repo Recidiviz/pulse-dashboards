@@ -39,6 +39,8 @@ main:
               - ${"--workflow-execution-id=" + workflow_execution.body.workflowExecutionId}
     - process_data_switch:
         switch:
+          - condition: ${state_code == "US_TX"}
+            next: skip_logic
           - condition: ${dry_run}
             next: append_dry_run_argument
         next: process_data
@@ -54,5 +56,7 @@ main:
               containerOverrides:
                 args: ${process_data_args}
         result: process_job_execution
+    - skip_logic:
+        return: ${"Did not trigger processor execution"}
     - return:
         return: ${process_job_execution}
