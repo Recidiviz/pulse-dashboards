@@ -28,9 +28,10 @@ import styles from "./Address.module.css";
 
 interface AddressProps {
   clientPseudoId: string;
+  intakeId: string;
 }
 
-const Address: React.FC<AddressProps> = ({ clientPseudoId }) => {
+const Address: React.FC<AddressProps> = ({ clientPseudoId, intakeId }) => {
   const [streetAddress, setStreetAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -41,7 +42,7 @@ const Address: React.FC<AddressProps> = ({ clientPseudoId }) => {
     [city, state],
   );
   const utils = trpc.useUtils();
-  const mutation = trpc.clientRecords.updateAddress.useMutation({
+  const mutation = trpc.clientRecords.updateAddressStartAssessment.useMutation({
     onMutate: async ({ address }) => {
       const pseudoIdKey = { clientPseudoId };
       await utils.clientRecords.getAddress.cancel(pseudoIdKey);
@@ -76,7 +77,7 @@ const Address: React.FC<AddressProps> = ({ clientPseudoId }) => {
       ? `${trimmedStreet}, ${trimmedCity}, ${trimmedState}`
       : `${trimmedCity}, ${trimmedState}`;
 
-    const payload = { clientPseudoId, address };
+    const payload = { clientPseudoId, address, intakeId };
 
     try {
       setIsSubmitting(true);

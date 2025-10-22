@@ -15,14 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { BaseMessage } from "@langchain/core/messages";
+
+import { parseAddress } from "~@reentry/trpc/routes/intake-chat/utils";
 import {
   initTRPCClient,
   initWSClient,
+  sharedMemorySaver,
   testPrismaClient,
   testServer,
   testTRPCClient,
 } from "~@reentry/trpc/test/setup";
-import { fakeClient } from "~@reentry/trpc/test/setup/seed";
+import { fakeClient, intakeId } from "~@reentry/trpc/test/setup/seed";
 
 describe("client router", () => {
   describe("getAddress", () => {
@@ -37,9 +41,10 @@ describe("client router", () => {
     test("should return client's address when set", async () => {
       const address = "789 Pine Ave, Meridian, ID";
 
-      await testTRPCClient.clientRecords.updateAddress.mutate({
+      await testTRPCClient.clientRecords.updateAddressStartAssessment.mutate({
         clientPseudoId: fakeClient.pseudonymizedId,
         address,
+        intakeId: "test-intake-id",
       });
 
       const result = await testTRPCClient.clientRecords.getAddress.query({
@@ -53,6 +58,9 @@ describe("client router", () => {
       const badClientToken = testServer.jwt.regular.sign(
         {
           clientPseudoId: "non-existent-client-pseudo-id",
+          sub: "non-existent-client-pseudo-id",
+          token_type: "client",
+          login_timestamp: Date.now() / 1000,
         },
         { algorithm: "HS256", expiresIn: "5h" },
       );
@@ -69,13 +77,14 @@ describe("client router", () => {
       );
     });
   });
-  describe("updateAddress", () => {
+  describe("updateAddressStartAssessment", () => {
     test("should update client address", async () => {
       const address = "123 Main St, Boise, ID";
 
-      await testTRPCClient.clientRecords.updateAddress.mutate({
+      await testTRPCClient.clientRecords.updateAddressStartAssessment.mutate({
         clientPseudoId: fakeClient.pseudonymizedId,
         address,
+        intakeId: "test-intake-id",
       });
 
       const client = await testPrismaClient.client.findUnique({
@@ -88,13 +97,49 @@ describe("client router", () => {
 
     test("should throw error if client doesn't exist and update address attempt is made", async () => {
       await expect(
-        testTRPCClient.clientRecords.updateAddress.mutate({
+        testTRPCClient.clientRecords.updateAddressStartAssessment.mutate({
           clientPseudoId: "non-existent-client-pseudo-id",
           address: "456 Elm St, Somecity, ST",
+          intakeId: "test-intake-id",
         }),
       ).rejects.toThrow(
         'No client found with ID "non-existent-client-pseudo-id"',
       );
+    });
+
+    test("should trigger assessment generation when chat history exists", async () => {
+      const chatHistoryMock = [
+        { role: "caseworker", content: "Welcome message" },
+        { role: "client", content: "Some reply" },
+      ] as unknown as BaseMessage[];
+
+      await sharedMemorySaver.put(
+        { configurable: { thread_id: intakeId } },
+        // @ts-expect-error only partial checkpoint needed for testing
+        {
+          channel_values: {
+            messages: chatHistoryMock,
+          },
+          ts: new Date().toISOString(),
+        },
+        {},
+      );
+
+      const result =
+        await testTRPCClient.clientRecords.updateAddressStartAssessment.mutate({
+          clientPseudoId: fakeClient.pseudonymizedId,
+          address: "123 Main St, Boise, ID",
+          intakeId,
+        });
+
+      expect(result).toEqual({
+        intakeId,
+        assessmentResponse: {
+          assessmentId: "assessment-123",
+          actionPlanId: "action-plan-456",
+        },
+        address: parseAddress("123 Main St, Boise, ID"),
+      });
     });
   });
 });

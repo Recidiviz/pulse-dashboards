@@ -3,11 +3,7 @@ from typing import Optional
 from uuid import UUID
 
 import structlog
-from pydantic import (
-    ConfigDict,
-    computed_field,
-    field_serializer,
-)
+from pydantic import ConfigDict, computed_field, field_serializer
 from sqlalchemy.orm import Mapped
 from sqlmodel import JSON, Field, Relationship
 
@@ -125,12 +121,13 @@ class Assessment(BaseModel, table=True):
         if self.execution:
             return self.execution
 
+        task_kwargs = {"assessment_id": self.id}
         execution = await schedule_task(
             session,
             table_name="assessmenttrees",
             table_entity_id=self.id,
             task_func=assessment_task,
-            task_kwargs={"assessment_id": self.id},
+            task_kwargs=task_kwargs,
         )
 
         self.execution = execution

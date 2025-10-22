@@ -41,6 +41,7 @@ interface ChatState {
   waitingForAIInput: boolean;
   error?: string;
   intakeEndDate: Date | null;
+  intakeId: string;
   sendMessage: (text: string) => Promise<void>;
   setIntakeEndDate: (endDate: Date) => Promise<void>;
   restartChat: () => Promise<void>;
@@ -74,10 +75,7 @@ export const ChatProvider: React.FC<{
   }, [intake]);
 
   useEffect(() => {
-    if (
-      connectionStatus?.connectionError ||
-      connectionStatus?.connectionState === "closed"
-    ) {
+    if (connectionStatus?.connectionError) {
       setError("Chat is disconnected.");
       return;
     }
@@ -96,7 +94,7 @@ export const ChatProvider: React.FC<{
 
   const utils = trpc.useUtils();
   const reply = trpc.intake.reply.useMutation();
-  const updateEndDate = trpc.intake.updateEndDate.useMutation();
+  const completeIntake = trpc.intake.setEndDate.useMutation();
   trpc.intake.chat.useSubscription(
     intake.id ? { intakeId: intake.id } : skipToken,
     {
@@ -147,7 +145,7 @@ export const ChatProvider: React.FC<{
 
   const setIntakeEndDate = async (endDate: Date) => {
     try {
-      await updateEndDate.mutateAsync({ intakeId: intake.id, endDate });
+      await completeIntake.mutateAsync({ intakeId: intake.id, endDate });
       if (clientId) {
         // Refetch the intake to move on to the next steps
         await utils.intake.getIntake.invalidate({ clientPseudoId: clientId });
@@ -174,6 +172,7 @@ export const ChatProvider: React.FC<{
         waitingForAIInput,
         error,
         intakeEndDate: intake.endDate,
+        intakeId: intake.id,
         sendMessage,
         setIntakeEndDate,
         restartChat,

@@ -59,4 +59,13 @@ export function processingStatusHandler(status = "unknown") {
 export const mswServer = setupServer(
   // Default processing-status handler returning 'unknown' for all ids.
   processingStatusHandler("unknown"),
+  http.post("*/intake/client/start-assessment-action-plan", async () => {
+    return HttpResponse.json(
+      {
+        assessmentId: "assessment-123",
+        actionPlanId: "action-plan-456",
+      },
+      { status: 200 },
+    );
+  }),
 );

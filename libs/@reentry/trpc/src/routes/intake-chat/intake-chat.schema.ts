@@ -31,7 +31,7 @@ export const createOrGetInputSchema = z.object({
   clientPseudoId: z.string(),
 });
 
-export const updateEndDateInputSchema = z.object({
+export const setEndDateInputSchema = z.object({
   intakeId: z.string(),
   endDate: z.date(),
 });

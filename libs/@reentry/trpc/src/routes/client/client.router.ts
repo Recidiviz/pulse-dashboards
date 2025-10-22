@@ -17,12 +17,17 @@
 
 import { TRPCError } from "@trpc/server";
 
+import { getChatHistoryForClient } from "~@reentry/intake-agent/utils";
 import { regularJwtProcedure, router } from "~@reentry/trpc/init";
 import {
   getAddressInputSchema,
   updateAddressInputSchema,
 } from "~@reentry/trpc/routes/client/client.schema";
 import { CLIENT_GET_ARGS } from "~@reentry/trpc/routes/client/constants";
+import {
+  parseAddress,
+  startAssessmentAndActionPlanGeneration,
+} from "~@reentry/trpc/routes/intake-chat/utils";
 
 export const clientRouter = router({
   getAddress: regularJwtProcedure
@@ -48,10 +53,13 @@ export const clientRouter = router({
 
       return client.address;
     }),
-  updateAddress: regularJwtProcedure
+  updateAddressStartAssessment: regularJwtProcedure
     .input(updateAddressInputSchema)
     .mutation(
-      async ({ ctx: { prisma }, input: { clientPseudoId, address } }) => {
+      async ({
+        ctx: { prisma, stateCode, req },
+        input: { clientPseudoId, address, intakeId },
+      }) => {
         const client = await prisma.client.findUnique({
           where: {
             pseudonymizedId: clientPseudoId,
@@ -65,6 +73,13 @@ export const clientRouter = router({
           });
         }
 
+        if (!intakeId) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Intake ID is required to start assessment",
+          });
+        }
+
         await prisma.client.update({
           where: {
             pseudonymizedId: client.pseudonymizedId,
@@ -73,6 +88,27 @@ export const clientRouter = router({
             address,
           },
         });
+
+        const parsedAddress = parseAddress(address);
+
+        // Kick off assessment and action plan generation based on chat history
+        const { messages } = await getChatHistoryForClient(intakeId, stateCode);
+
+        let assessmentResponse;
+        if (messages && messages.length > 0) {
+          assessmentResponse = await startAssessmentAndActionPlanGeneration(
+            req,
+            messages,
+            parsedAddress,
+          );
+        }
+
+        return {
+          intakeId: intakeId,
+          address: parsedAddress,
+          assessmentResponse:
+            assessmentResponse ?? "No chat history found for this intake.",
+        };
       },
     ),
 });

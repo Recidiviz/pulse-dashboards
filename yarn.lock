@@ -8408,59 +8408,59 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/core@npm:^0.3.67":
-  version: 0.3.67
-  resolution: "@langchain/core@npm:0.3.67"
+"@langchain/core@npm:^0.3.77":
+  version: 0.3.77
+  resolution: "@langchain/core@npm:0.3.77"
   dependencies:
     "@cfworker/json-schema": "npm:^4.0.2"
     ansi-styles: "npm:^5.0.0"
     camelcase: "npm:6"
     decamelize: "npm:1.2.0"
     js-tiktoken: "npm:^1.0.12"
-    langsmith: "npm:^0.3.46"
+    langsmith: "npm:^0.3.67"
     mustache: "npm:^4.2.0"
     p-queue: "npm:^6.6.2"
     p-retry: "npm:4"
     uuid: "npm:^10.0.0"
     zod: "npm:^3.25.32"
     zod-to-json-schema: "npm:^3.22.3"
-  checksum: 10c0/69fd913115f3e5cea3d9869b0f8f4d5370250c572e85bdf52948c5db5f83cf082c7017ec9596f0f800f0a49dea8187d7d3e538acd5f3621099fb9e682cff08d0
+  checksum: 10c0/37ae6b6828f5ec6e2542236513c139425f416b2086ab5065b84766fc8d8cd8b37900982bbd0c017a6b778d8aaf6076e26e984a5fd30cf9bf8f72dea9bb265167
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-checkpoint-postgres@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@langchain/langgraph-checkpoint-postgres@npm:0.1.1"
+"@langchain/langgraph-checkpoint-postgres@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@langchain/langgraph-checkpoint-postgres@npm:0.1.2"
   dependencies:
     pg: "npm:^8.12.0"
   peerDependencies:
-    "@langchain/core": ">=0.2.31 <0.4.0"
+    "@langchain/core": ">=0.2.31 <0.4.0 || ^1.0.0-alpha"
     "@langchain/langgraph-checkpoint": ^0.1.0
-  checksum: 10c0/6bb0edbeaaba2fbea413464ea0a44c4368803bc75f792e476b3eac22de458e56da95dbddd085f473b4014abd6ca9cf46ce9932e3195b4e1c86c894847cd31698
+  checksum: 10c0/4dc07cb71f29bfa7f65117ed4c2a9f16e1280c87d0f01eee4bf088357c0d923476cb2308956204c039b7438da7e2edecf59335a28be51288e097a15eba453252
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-checkpoint@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@langchain/langgraph-checkpoint@npm:0.1.0"
+"@langchain/langgraph-checkpoint@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@langchain/langgraph-checkpoint@npm:0.1.1"
   dependencies:
     uuid: "npm:^10.0.0"
   peerDependencies:
-    "@langchain/core": ">=0.2.31 <0.4.0"
-  checksum: 10c0/4755d982d76f4931bac23da3613bd860c515a6ac333c38c229d3a39e4acb13e27eb498ed2b78f3369be177d689b33834a45653095269bb08c40508f57e0113b0
+    "@langchain/core": ">=0.2.31 <0.4.0 || ^1.0.0-alpha"
+  checksum: 10c0/31ce2c2998321e82f96f7e6743c82a2588573b4dbde5b70f692f78c506874ef0a6444c8399d8ce83da9589712045b19324d54bada518c900013844123f6f8d43
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-sdk@npm:~0.0.105":
-  version: 0.0.105
-  resolution: "@langchain/langgraph-sdk@npm:0.0.105"
+"@langchain/langgraph-sdk@npm:~0.1.0":
+  version: 0.1.6
+  resolution: "@langchain/langgraph-sdk@npm:0.1.6"
   dependencies:
     "@types/json-schema": "npm:^7.0.15"
     p-queue: "npm:^6.6.2"
     p-retry: "npm:4"
     uuid: "npm:^9.0.0"
   peerDependencies:
-    "@langchain/core": ">=0.2.31 <0.4.0"
+    "@langchain/core": ">=0.2.31 <0.4.0 || ^1.0.0-alpha"
     react: ^18 || ^19
     react-dom: ^18 || ^19
   peerDependenciesMeta:
@@ -8470,16 +8470,16 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/5ab1b2ad3a2e4150ab26db0b8b9286d835d6c8b04fb06b548d5e70ed71feae08e42b733c51371ae5477cdaf2c2b0062b5c0d77f7f7d410da2df979e31d3c2378
+  checksum: 10c0/1ecfd1aec0de254998f08f496023a7264f27f69a7cfa293bb51bd4438e3de68fa8acad7fc196fdcb799b05d84483f17035a01e4a715abc34a7bd1a423b32954d
   languageName: node
   linkType: hard
 
-"@langchain/langgraph@npm:^0.4.3":
-  version: 0.4.3
-  resolution: "@langchain/langgraph@npm:0.4.3"
+"@langchain/langgraph@npm:^0.4.9":
+  version: 0.4.9
+  resolution: "@langchain/langgraph@npm:0.4.9"
   dependencies:
-    "@langchain/langgraph-checkpoint": "npm:^0.1.0"
-    "@langchain/langgraph-sdk": "npm:~0.0.105"
+    "@langchain/langgraph-checkpoint": "npm:^0.1.1"
+    "@langchain/langgraph-sdk": "npm:~0.1.0"
     uuid: "npm:^10.0.0"
     zod: "npm:^3.25.32"
   peerDependencies:
@@ -8488,7 +8488,7 @@ __metadata:
   peerDependenciesMeta:
     zod-to-json-schema:
       optional: true
-  checksum: 10c0/641e37fb2b62fa980dddef03124654ca8f4277321528775dc96b10347c25b5bb068a46395a9a14df055964a80e1c504aab87d4a285bea9da0b136b8d9e813370
+  checksum: 10c0/abb6d34d11192b7268ee301f5865de5d19105470f84d58f6b4fbf43934add0263dd054e6ca87e2e57b3d624694afe0f84d0d976ddd4d6c129bef839adf60d3a6
   languageName: node
   linkType: hard
 
@@ -8519,16 +8519,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/openai@npm:^0.6.4":
-  version: 0.6.4
-  resolution: "@langchain/openai@npm:0.6.4"
+"@langchain/openai@npm:^0.6.13":
+  version: 0.6.13
+  resolution: "@langchain/openai@npm:0.6.13"
   dependencies:
     js-tiktoken: "npm:^1.0.12"
-    openai: "npm:^5.3.0"
+    openai: "npm:5.12.2"
     zod: "npm:^3.25.32"
   peerDependencies:
-    "@langchain/core": ">=0.3.58 <0.4.0"
-  checksum: 10c0/0d9024d7600f202422596cfc3d5c6aca1c47592e96bfb4ee70d4f0487910305b392e46130019eccb9305405df44b3119d141a00715b3cf845cc4c2659d4222f6
+    "@langchain/core": ">=0.3.68 <0.4.0"
+  checksum: 10c0/0dd0d48505330a01e1f7f28400e86cdff1cd52a5ad47f5424cff46f0e9123641f6809662ce96a75f5ac7e77a1d7b5e1129a0c51fee394f065e3580ef4cf6498c
   languageName: node
   linkType: hard
 
@@ -37519,9 +37519,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"langsmith@npm:^0.3.26, langsmith@npm:^0.3.33, langsmith@npm:^0.3.46, langsmith@npm:^0.3.54":
-  version: 0.3.54
-  resolution: "langsmith@npm:0.3.54"
+"langsmith@npm:0.3.60":
+  version: 0.3.60
+  resolution: "langsmith@npm:0.3.60"
   dependencies:
     "@types/uuid": "npm:^10.0.0"
     chalk: "npm:^4.1.2"
@@ -37544,7 +37544,7 @@ __metadata:
       optional: true
     openai:
       optional: true
-  checksum: 10c0/0668b5ff4a883826d851794f3f2231b7694d92b37e85230a318b2d752fcbc471b159d33be0bbb90bdf9cd139592699fc654d7e741a4ed9af79c40f5cca1f8469
+  checksum: 10c0/ace93954d5ab351b1ab78379e1c5356462e9b6c6bf381c127ece4ff14a4e6ba2088f4e76c9ae09312e593bbb26b2f81be1674a403817c987e8d1dcba2fb4d4a8
   languageName: node
   linkType: hard
 
@@ -42146,6 +42146,23 @@ __metadata:
     is-docker: "npm:^2.1.1"
     is-wsl: "npm:^2.2.0"
   checksum: 10c0/bb6b3a58401dacdb0aad14360626faf3fb7fba4b77816b373495988b724fb48941cad80c1b65d62bb31a17609b2cd91c41a181602caea597ca80dfbcc27e84c9
+  languageName: node
+  linkType: hard
+
+"openai@npm:5.12.2":
+  version: 5.12.2
+  resolution: "openai@npm:5.12.2"
+  peerDependencies:
+    ws: ^8.18.0
+    zod: ^3.23.8
+  peerDependenciesMeta:
+    ws:
+      optional: true
+    zod:
+      optional: true
+  bin:
+    openai: bin/cli
+  checksum: 10c0/7737b9b24edc81fcf9e6dcfb18a196cc0f8e29b6e839adf06a2538558c03908e3aa4cd94901b1a7f4a9dd62676fe9e34d6202281b2395090d998618ea1614c0c
   languageName: node
   linkType: hard
 
@@ -47003,10 +47020,10 @@ __metadata:
     "@gorhom/bottom-sheet": "npm:^5.2.6"
     "@intercom/messenger-js-sdk": "npm:^0.0.11"
     "@juggle/resize-observer": "npm:^3.4.0"
-    "@langchain/core": "npm:^0.3.67"
-    "@langchain/langgraph": "npm:^0.4.3"
-    "@langchain/langgraph-checkpoint-postgres": "npm:^0.1.1"
-    "@langchain/openai": "npm:^0.6.4"
+    "@langchain/core": "npm:^0.3.77"
+    "@langchain/langgraph": "npm:^0.4.9"
+    "@langchain/langgraph-checkpoint-postgres": "npm:^0.1.2"
+    "@langchain/openai": "npm:^0.6.13"
     "@material/select": "npm:^14.0.0"
     "@material/textfield": "npm:^14.0.0"
     "@mdxeditor/editor": "npm:^3.30.1"
@@ -47233,7 +47250,7 @@ __metadata:
     jspdf: "npm:^2.5.1"
     jszip: "npm:^3.8.0"
     jwks-rsa: "npm:^3.1.0"
-    langsmith: "npm:^0.3.54"
+    langsmith: "npm:^0.3.69"
     lint-staged: "npm:^15.2.2"
     lodash: "npm:^4.17.21"
     lucide-react: "npm:^0.479.0"

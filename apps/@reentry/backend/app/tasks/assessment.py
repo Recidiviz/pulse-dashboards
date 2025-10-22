@@ -40,6 +40,7 @@ async def assessment_task(
         task_logger = logger.bind(
             execution_id=execution_id.hex, assessment_id=assessment_id.hex
         )
+
         await assessment(
             execution=execution,
             assessment_id=assessment_id,
@@ -142,6 +143,8 @@ async def assessment(
             messages = await get_transcription_messages_from_gcp(
                 intake.recording_session.id, session
             )
+        elif intake.intake_type == IntakeType.EXTERNAL.value:
+            messages = intake.external_chat_messages
     else:
         task_logger.debug("No intake available, skipping intake-based assessments")
         # Skip assessment trees that require intake conversations
@@ -180,6 +183,11 @@ async def assessment(
                 error=error,
                 messages=messages,
             )
+    elif intake and intake.intake_type == IntakeType.EXTERNAL.value:
+        for msg in messages:
+            role = msg.get("from_role") or "unknown"
+            content = msg.get("content")
+            formatted_client_messages_list.append(f"{role}: {content}")
 
     formatted_client_messages = "\n".join(formatted_client_messages_list)
 

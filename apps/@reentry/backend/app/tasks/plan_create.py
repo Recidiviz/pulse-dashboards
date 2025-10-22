@@ -61,6 +61,8 @@ async def fetch_assets(
         intake_messages = await get_transcription_messages_from_gcp(
             intake.recording_session.id, session
         )
+    elif intake.intake_type == IntakeType.EXTERNAL.value:
+        intake_messages = intake.external_chat_messages
 
     if not intake_messages:
         task_logger.error(f"No messages found for intake {intake.id}")
@@ -96,6 +98,25 @@ async def fetch_assets(
         except TypeError as error:
             logger.error(
                 "Error formatting messages for transcription-based intake in plan creation",
+                error=error,
+                messages=intake_messages,
+            )
+    elif intake.intake_type == IntakeType.EXTERNAL.value:
+        try:
+            formatted_messages_list = []
+            for msg in intake_messages:
+                role = msg.get("role") or msg.get("from_role") or "assistant"
+                role_norm = "client" if role == "client" else "assistant"
+                formatted_messages_list.append(
+                    f'{role_norm}: "{msg.get("content", "").strip()}"'
+                )
+            formatted_messages = "\n".join(formatted_messages_list)
+            task_logger.info(
+                "Formatted messages for EXTERNAL intake", messages=intake_messages
+            )
+        except TypeError as error:
+            logger.error(
+                "Error formatting messages for external-based intake in plan creation",
                 error=error,
                 messages=intake_messages,
             )

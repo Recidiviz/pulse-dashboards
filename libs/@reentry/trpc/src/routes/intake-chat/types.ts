@@ -45,3 +45,9 @@ export type MessagesLastId = {
   messages: Message[];
   lastId: string;
 };
+
+export type AddressSubmission = {
+  street_address?: string | null;
+  city: string;
+  state: string;
+};

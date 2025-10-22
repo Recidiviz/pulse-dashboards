@@ -58,6 +58,9 @@ describe("server", () => {
         exp: expect.any(Number),
         pseudonymizedId: fakeClient.pseudonymizedId,
         iat: expect.any(Number),
+        login_timestamp: expect.any(Number),
+        sub: "client-pid-1",
+        token_type: "client",
       });
     });
 

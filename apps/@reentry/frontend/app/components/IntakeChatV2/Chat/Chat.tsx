@@ -56,7 +56,8 @@ const Chat = ({ clientId }: ChatProps) => {
   if (!intake) return <PreIntake clientPseudoId={clientId} />;
 
   if (intake.endDate) {
-    if (!address) return <Address clientPseudoId={clientId} />;
+    if (!address)
+      return <Address clientPseudoId={clientId} intakeId={intake.id} />;
     return <IntakeComplete />;
   }
   return (

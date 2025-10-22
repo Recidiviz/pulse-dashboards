@@ -28,7 +28,7 @@ import {
   createOrGetInputSchema,
   intakeChatInputSchema,
   intakeChatResponseInputSchema,
-  updateEndDateInputSchema,
+  setEndDateInputSchema,
 } from "~@reentry/trpc/routes/intake-chat/intake-chat.schema";
 import {
   EmitData,
@@ -52,7 +52,8 @@ function getCleanedMessagesAndLastId(aiMessages: AIMessage[]): MessagesLastId {
     content: message.content as string,
     section: message.response_metadata["section"],
     id: message.id,
-    from_role: "case_worker",
+    from_role: "caseworker",
+    role: "caseworker",
   }));
 
   if (aiMessages.length === 0) {
@@ -129,16 +130,14 @@ export const intakeChatRouter = router({
         }
       },
     ),
-  updateEndDate: regularJwtProcedure
-    .input(updateEndDateInputSchema)
+  setEndDate: regularJwtProcedure
+    .input(setEndDateInputSchema)
     .mutation(
       async ({ ctx: { prisma, user }, input: { intakeId, endDate } }) => {
         const intake = await prisma.intake.findUnique({
           where: {
             id: intakeId,
-            client: {
-              pseudonymizedId: user?.clientPseudoId,
-            },
+            client: { pseudonymizedId: user?.clientPseudoId },
           },
           select: { id: true },
         });
@@ -150,7 +149,7 @@ export const intakeChatRouter = router({
           });
         }
 
-        await prisma.intake.update({
+        return await prisma.intake.update({
           where: { id: intakeId },
           data: { endDate },
         });

@@ -20,7 +20,7 @@ import { captureException } from "@sentry/node";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { OAuth2Client } from "google-auth-library";
 
-import { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
+import { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent";
 import { StateCode } from "~@reentry/prisma/client";
 import { RequestWithStateCodeParams } from "~@reentry/server/server/types";
 

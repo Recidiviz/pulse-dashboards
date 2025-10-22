@@ -28,7 +28,7 @@ import jwt
 from sqlalchemy import Column, and_
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import Field, Relationship, select
+from sqlmodel import JSON, Field, Relationship, select
 
 from app.core.config import settings
 from app.models.base import BaseModel
@@ -57,6 +57,7 @@ class IntakeStatus(StrEnum):
 class IntakeType(StrEnum):
     TRANSCRIPTION = "transcription"
     CONVERSATION = "conversation"
+    EXTERNAL = "external"
 
 
 class QuestionsConfusing(StrEnum):
@@ -116,6 +117,11 @@ class Intake(BaseModel, table=True):
     )
     current_section: Optional[str] = Field(
         default=None, nullable=True, description="Current section being processed"
+    )
+
+    # Store external chat messages for external intakes
+    external_chat_messages: list[dict] | None = Field(
+        sa_type=JSON, nullable=True, default=None
     )
 
     # Relationships

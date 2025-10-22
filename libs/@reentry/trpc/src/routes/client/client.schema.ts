@@ -24,4 +24,5 @@ export const getAddressInputSchema = z.object({
 export const updateAddressInputSchema = z.object({
   clientPseudoId: z.string(),
   address: z.string(),
+  intakeId: z.string().optional(),
 });

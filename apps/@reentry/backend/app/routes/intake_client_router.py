@@ -9,13 +9,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.intake.auth_client_user import validate_dob
 from app.core.db import get_session
-from app.crud.intake import get_intake_by_client_pseudo_id
+from app.crud.intake import create_intake, get_intake_by_client_pseudo_id
 from app.models.intake import (
     COMPLETION_SECTION,
     ClientAddress,
     Intake,
     IntakeStatus,
     IntakeSurvey,
+    IntakeType,
 )
 from app.routes.base import IntakeSectionResponse
 from app.routes.client_router import ClientRecordResponse
@@ -350,3 +351,87 @@ async def submit_survey(
     return {
         "survey_submitted": True,
     }
+
+
+# This endpoint allows scheduling an assessment and subsequent plan generation
+# based on chat messages provided directly, To be used by external systems that handle intake conversations separately
+# (e.g. the 2nd version of the intake chat).
+
+
+class ChatMessageInput(BaseModel):
+    role: str
+    content: str
+    section: Optional[str] = None
+
+
+class CompleteExternalChatRequest(BaseModel):
+    messages: List[ChatMessageInput]
+    address: AddressSubmission
+
+
+class CompleteExternalChatResponse(BaseModel):
+    intake_id: str
+    status: str
+    message: str
+
+
+@router.post(
+    "/start-assessment-action-plan",
+    summary="Trigger assessment + plan generation from external chat",
+    description=("Schedules an assessment using provided chat messages. "),
+    tags=["Intake assessment"],
+    response_model=CompleteExternalChatResponse,
+)
+async def complete_external_chat(
+    request: Request,
+    data: CompleteExternalChatRequest,
+    session: AsyncSession = Depends(get_session),
+):
+    if not getattr(request.state, "client", None):
+        from app.auth.intake.utils import decode_jwt_token
+
+        auth_header = request.headers.get("Authorization", "")
+        if not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Missing Authorization header")
+        raw = auth_header.split(" ", 1)[1].strip()
+        claims = decode_jwt_token(raw)
+        request.state.client = {"sub": claims.get("sub")}
+
+    client_pseudo_id: str = request.state.client.get("sub")
+    if not client_pseudo_id:
+        raise HTTPException(status_code=401, detail="Unauthorized: missing client id")
+
+    # getting intake
+    intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
+
+    if not intake:
+        intake = await create_intake(session, client_pseudo_id, IntakeType.EXTERNAL)
+
+    if intake.intake_type != IntakeType.EXTERNAL.value:
+        raise HTTPException(
+            status_code=400,
+            detail="Intake type must be EXTERNAL for this endpoint",
+        )
+
+    # save the intake messages to the database into the intake table
+    external_chat_messages = [msg.model_dump() for msg in data.messages]
+    intake.external_chat_messages = external_chat_messages
+
+    new_address = ClientAddress(
+        intake_id=intake.id,
+        street_address=data.address.street_address,
+        city=data.address.city,
+        state=data.address.state,
+    )
+    session.add(new_address)
+    session.add(intake)
+
+    await intake.update_status(session, IntakeStatus.COMPLETED)
+    await session.commit()
+    await session.refresh(intake)
+
+    return CompleteExternalChatResponse(
+        intake_id=str(intake.id),
+        status=str(intake.status),
+        message="Action plan scheduled",
+    )

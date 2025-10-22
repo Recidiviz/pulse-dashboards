@@ -15,8 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { BaseMessage } from "@langchain/core/messages";
+import { FastifyRequest } from "fastify";
+
 import type { AgentStatus } from "~@reentry/intake-agent/types";
-import { Status } from "~@reentry/trpc/routes/intake-chat/types";
+import {
+  AddressSubmission,
+  Status,
+} from "~@reentry/trpc/routes/intake-chat/types";
+
+function getApiURL(): string | undefined {
+  return process.env["V0_API_URL"];
+}
 
 export function agentStatusToSubscriptionStatus(
   agentStatus: AgentStatus,
@@ -28,4 +38,84 @@ export function agentStatusToSubscriptionStatus(
   }
 
   return "active";
+}
+
+export async function startAssessmentAndActionPlanGeneration(
+  req: FastifyRequest,
+  messages: BaseMessage[],
+  clientAddress?: AddressSubmission,
+): Promise<unknown | { error: string }> {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return { error: "Missing Authorization header" };
+  }
+
+  const apiURL = getApiURL();
+  if (!apiURL) {
+    return { error: "Missing V0 api URL environment variable" };
+  }
+
+  if (!clientAddress) {
+    return { error: "Client address is required to start assessment" };
+  }
+
+  const body = {
+    messages: messages.map((m: BaseMessage) => ({
+      role: m.getType?.() === "ai" ? "caseworker" : "client",
+      content: m.content,
+    })),
+    address: clientAddress,
+  };
+
+  try {
+    const res = await fetch(
+      `${apiURL}/intake/client/start-assessment-action-plan`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: authHeader,
+        },
+        body: JSON.stringify(body),
+      },
+    );
+    const data = await res.json();
+
+    if (!res.ok) {
+      const details =
+        typeof data === "object" && data && "detail" in data
+          ? data.detail
+          : undefined;
+      return {
+        error: `There was an issue starting the assessment: (${res.status}) ${details}`,
+      };
+    }
+
+    return data;
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Unknown error" };
+  }
+}
+
+export function parseAddress(
+  address: string | null | undefined,
+): AddressSubmission | undefined {
+  if (!address) {
+    return;
+  }
+
+  const parts = address.split(",").map((part) => part.trim());
+
+  if (parts.length === 2) {
+    // No street address
+    const [city, state] = parts;
+    return { city, state };
+  } else if (parts.length === 3) {
+    const [street_address, city, state] = parts;
+    return { street_address, city, state };
+  } else {
+    throw new Error(
+      `Invalid address format. Expected 2 or 3 parts, got ${parts.length}.`,
+    );
+  }
 }

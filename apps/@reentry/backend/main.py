@@ -22,10 +22,7 @@ import app.models.intake  # noqa
 import app.models.models  # noqa
 import app.models.plan_decision_tree  # noqa
 import app.models.recording  # noqa
-from app.auth.auth_core import (
-    get_auth0_config,
-    setup_auth,
-)
+from app.auth.auth_core import get_auth0_config, setup_auth
 from app.auth.intake.auth_client_user import setup_client_auth
 from app.core.config import settings
 from app.routes import (
@@ -44,10 +41,7 @@ from app.routes import (
     transcription_router,
 )
 from app.tasks.base import broker
-from app.utils.intake.socket_manager import (
-    intake_setup_background_tasks,
-    socket_app,
-)
+from app.utils.intake.socket_manager import intake_setup_background_tasks, socket_app
 from app.utils.PrometheusBackgroundThreadManager import (
     PrometheusBackgroundThreadManager,
 )
@@ -160,6 +154,7 @@ exclude_paths = [
     "/metrics",
     "/intake/client",
     "/intake/internal",
+    "/intake/client/start-assessment-action-plan",
 ]
 
 auth0_config = get_auth0_config()

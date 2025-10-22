@@ -44,6 +44,7 @@ import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { StateCode } from "~@reentry/prisma/client";
 import { createContext } from "~@reentry/trpc/context";
 import { AppRouter, appRouter } from "~@reentry/trpc/router";
+import { mswServer } from "~@reentry/trpc/test/setup/msw";
 import { clientPseudoId, seed } from "~@reentry/trpc/test/setup/seed";
 import { resetDb } from "~@reentry/trpc/test/setup/utils";
 
@@ -194,6 +195,9 @@ export const initTestServer = async () => {
   testToken = testServer.jwt.regular.sign(
     {
       clientPseudoId,
+      sub: clientPseudoId,
+      token_type: "client",
+      login_timestamp: Date.now() / 1000,
     },
     { algorithm: "HS256", expiresIn: "5h" },
   );
@@ -204,6 +208,12 @@ beforeAll(async () => {
     dsn: process.env["SENTRY_DSN"],
     transport: sentryTransport,
   });
+
+  if (!process.env["V0_API_URL"]) {
+    process.env["V0_API_URL"] = "http://test-api";
+  }
+
+  mswServer.listen({ onUnhandledRequest: "warn" });
 
   await initTestServer();
   wsClient = initWSClient();
@@ -216,4 +226,9 @@ beforeEach(async () => {
   sharedMemorySaver = new MemorySaver();
 
   testkit.reset();
+  mswServer.resetHandlers();
+});
+
+afterAll(() => {
+  mswServer.close();
 });

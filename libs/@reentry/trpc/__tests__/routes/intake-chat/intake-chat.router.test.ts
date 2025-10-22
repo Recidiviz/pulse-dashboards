@@ -123,7 +123,7 @@ describe("intake chat router", () => {
     });
   });
 
-  describe("updateEndDate", () => {
+  describe("setEndDate", () => {
     test("should update intake endDate", async () => {
       const endDate = new Date("2025-01-02T03:04:05.000Z");
       const original = await testPrismaClient.intake.findUnique({
@@ -133,7 +133,7 @@ describe("intake chat router", () => {
 
       expect(original?.endDate).toBeNull();
 
-      await testTRPCClient.intake.updateEndDate.mutate({
+      await testTRPCClient.intake.setEndDate.mutate({
         intakeId,
         endDate,
       });
@@ -150,6 +150,9 @@ describe("intake chat router", () => {
       const badClientToken = testServer.jwt.regular.sign(
         {
           clientPseudoId: "non-existent-client-pseudo-id",
+          sub: "non-existent-client-pseudo-id",
+          token_type: "client",
+          login_timestamp: Date.now() / 1000,
         },
         { algorithm: "HS256", expiresIn: "5h" },
       );
@@ -158,7 +161,7 @@ describe("intake chat router", () => {
       const badTRPCClient = initTRPCClient(badClientToken, wsClient);
 
       await expect(
-        badTRPCClient.intake.updateEndDate.mutate({
+        badTRPCClient.intake.setEndDate.mutate({
           intakeId,
           endDate: new Date(),
         }),
@@ -502,6 +505,9 @@ describe("intake chat router", () => {
       const badClientToken = testServer.jwt.regular.sign(
         {
           clientPseudoId: "non-existent-client-pseudo-id",
+          sub: "non-existent-client-pseudo-id",
+          token_type: "client",
+          login_timestamp: Date.now() / 1000,
         },
         { algorithm: "HS256", expiresIn: "5h" },
       );

@@ -17,16 +17,14 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 
+import { getChatHistoryForClient } from "~@reentry/intake-agent/utils";
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { Prisma, StateCode } from "~@reentry/prisma/client";
 import {
   RequestWithStateCodeParams,
   RequestWithStateCodeStaffIdParams,
 } from "~@reentry/server/server/types";
-import {
-  getAuthenticateInternalRequestPreHandlerFn,
-  getChatHistoryForClient,
-} from "~@reentry/server/server/utils";
+import { getAuthenticateInternalRequestPreHandlerFn } from "~@reentry/server/server/utils";
 import { appRouter, createContext } from "~@reentry/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
 
@@ -143,6 +141,9 @@ export function buildServer() {
 
     const token = server.jwt.regular.sign({
       pseudonymizedId: client.pseudonymizedId,
+      sub: client.pseudonymizedId,
+      token_type: "client",
+      login_timestamp: Date.now() / 1000,
     });
 
     return token;
@@ -192,6 +193,9 @@ export function buildServer() {
       const token = server.jwt.regular.sign({
         clientPseudoId: client.pseudonymizedId,
         stateCode: state_code,
+        sub: client.pseudonymizedId,
+        token_type: "client",
+        login_timestamp: Date.now() / 1000,
       });
 
       if (!token) {

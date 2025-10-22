@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from httpx import AsyncClient
@@ -12,6 +12,7 @@ from app.models.intake import (
     IntakeMessage,
     IntakeMessageRole,
     IntakeStatus,
+    IntakeType,
 )
 from app.models.intake_sections import CompletionStatus
 from app.tests.test_fixtures.client_examples import create_test_client
@@ -821,7 +822,7 @@ async def test_submit_address_completes_intake_when_in_completion_section(
     mock_clientdata_service,
 ):
     """Test that submitting address completes intake when current section is completion section."""
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import patch
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
@@ -964,7 +965,7 @@ async def test_submit_address_does_not_complete_intake_when_already_completed(
     mock_clientdata_service,
 ):
     """Test that submitting address for already completed intake doesn't trigger additional completion."""
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import patch
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
@@ -1014,7 +1015,6 @@ async def test_submit_address_does_not_complete_intake_when_already_completed(
                 "token_type": "client",
             }
 
-            # Submit updated address data
             address_data = {
                 "street_address": "789 New Ave",
                 "city": "Newtown",
@@ -1037,3 +1037,179 @@ async def test_submit_address_does_not_complete_intake_when_already_completed(
 
         # Verify schedule_assessment was not called again (update_status won't call it if already completed)
         mock_schedule.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_start_assessment_action_plan_creates_intake_and_schedules(
+    client: AsyncClient,
+    async_session: AsyncSession,
+    assert_response,
+    mock_clientdata_service,
+):
+    """Endpoint should create intake with external chat messages and schedule assessment."""
+
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
+    with (
+        patch(
+            "app.auth.intake.auth_client_user.decode_jwt_token"
+        ) as mock_decode_jwt_token,
+    ):
+        mock_decode_jwt_token.return_value = {
+            "clientPseudoId": client_pseudo_id,
+            "sub": client_pseudo_id,
+            "stateCode": "US_ID",
+            "token_type": "client",
+        }
+
+        # Payload with messages and address
+        payload = {
+            "messages": [
+                {"role": "caseworker", "content": "Welcome to the assessment"},
+                {"role": "client", "content": "Hello, I'm ready"},
+                {"role": "caseworker", "content": "Let's begin", "section": ""},
+            ],
+            "address": {
+                "street_address": "123 Main St",
+                "city": "New York",
+                "state": "NY",
+            },
+        }
+
+        response = await client.post(
+            "/intake/client/start-assessment-action-plan",
+            json=payload,
+            headers={"Authorization": "Bearer test-token"},
+        )
+
+        assert_response(response, 200)
+        data = response.json()
+
+        # Verify response structure
+        assert "intake_id" in data
+        assert "status" in data
+        assert "message" in data
+
+
+@pytest.mark.asyncio
+async def test_start_assessment_action_plan_rejects_wrong_intake_type(
+    client: AsyncClient,
+    assert_response,
+    async_session: AsyncSession,
+    mock_clientdata_service,
+):
+    """Endpoint should reject if intake exists but is not EXTERNAL type."""
+
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
+    with (
+        patch(
+            "app.routes.intake_client_router.get_intake_by_client_pseudo_id",
+            new=AsyncMock(),
+        ) as mock_get_intake,
+        patch(
+            "app.auth.intake.auth_client_user.decode_jwt_token"
+        ) as mock_decode_jwt_token,
+    ):
+        # Mock intake with wrong type (TRANSCRIPTION instead of EXTERNAL)
+        wrong_type_intake = Intake(
+            client_pseudo_id=client_pseudo_id,
+            intake_type=IntakeType.TRANSCRIPTION,  # Wrong type
+            status=IntakeStatus.COMPLETED,
+        )
+        mock_get_intake.return_value = wrong_type_intake
+
+        mock_decode_jwt_token.return_value = {
+            "clientPseudoId": client_pseudo_id,
+            "sub": client_pseudo_id,
+            "stateCode": "US_ID",
+            "token_type": "client",
+        }
+
+        # Payload with messages and address
+        payload = {
+            "messages": [
+                {"role": "caseworker", "content": "Welcome to the assessment"},
+                {"role": "client", "content": "Hello, I'm ready"},
+                {"role": "caseworker", "content": "Let's begin", "section": ""},
+            ],
+            "address": {
+                "street_address": "123 Main St",
+                "city": "New York",
+                "state": "Ny",
+            },
+        }
+
+        response = await client.post(
+            "/intake/client/start-assessment-action-plan",
+            json=payload,
+            headers={"Authorization": "Bearer test-token"},
+        )
+
+        # Should return 400 error
+        assert response.status_code == 400
+        assert "EXTERNAL" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_start_assessment_action_plan_validates_messages(
+    client: AsyncClient,
+    async_session: AsyncSession,
+    assert_response,
+    mock_clientdata_service,
+):
+    """Endpoint should validate message structure."""
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
+    # Missing required fields
+    invalid_payloads = [
+        # Missing messages
+        {"address": {"street_address": "123 Main St", "city": "Boise", "state": "ID"}},
+        # Missing address
+        {
+            "messages": [
+                {"role": "caseworker", "content": "Test"},
+            ]
+        },
+        # Invalid message structure (missing content)
+        {
+            "messages": [{"role": "caseworker"}],
+            "address": {
+                "street_address": "123 Main St",
+                "city": "Boise",
+                "state": "ID",
+            },
+        },
+        # Invalid address (missing required field)
+        {
+            "messages": [
+                {"role": "caseworker", "content": "Test"},
+            ],
+            "address": {
+                "street_address": "123 Main St",
+                "city": "Boise",
+                # Missing state
+            },
+        },
+    ]
+
+    with (
+        patch(
+            "app.auth.intake.auth_client_user.decode_jwt_token"
+        ) as mock_decode_jwt_token,
+    ):
+        mock_decode_jwt_token.return_value = {
+            "clientPseudoId": client_pseudo_id,
+            "sub": client_pseudo_id,
+            "stateCode": "US_ID",
+            "token_type": "client",
+        }
+
+        for invalid_payload in invalid_payloads:
+            response = await client.post(
+                "/intake/client/start-assessment-action-plan",
+                json=invalid_payload,
+                headers={"Authorization": "Bearer test-token"},
+            )
+
+            assert response.status_code == 422
