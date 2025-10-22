@@ -26,12 +26,14 @@ import styles from "~@reentry/frontend/components/IntakeChatV2/IntakeLogin/Intak
 import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
 import { IntakeFields } from "~@reentry/frontend/components/IntakeChatV2/types";
 import { validateIntakeFields } from "~@reentry/frontend/components/IntakeChatV2/utils";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { showSuccessToast } from "~@reentry/frontend/utils/toast";
 
 export default function IntakeLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const { setToken, setClientId, setStateCode, setFirstName, setLastName } =
     useIntakeAuthContext();
+  const { trackIntakeChatClientLogin } = useAnalytics();
 
   const [fields, setFields] = useState<IntakeFields>({
     firstName: "",
@@ -74,6 +76,8 @@ export default function IntakeLogin() {
 
       if (!clientPseudoId)
         throw new Error("There was an issue verifying the client.");
+      
+      trackIntakeChatClientLogin({justiceInvolvedPersonId: clientPseudoId});
 
       showSuccessToast(`Success! Welcome, ${formattedFirstName}.`);
       setToken(token);

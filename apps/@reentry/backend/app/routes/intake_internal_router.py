@@ -19,6 +19,7 @@ class VerifyDOBResponse(BaseModel):
     access_token: Optional[str] = None
     token_type: str = "bearer"
     message: Optional[str] = None
+    client_pseudo_id: str
 
 
 class VerifyPseudoDOBRequest(BaseModel):
@@ -66,6 +67,7 @@ async def verify_pseudo_date_of_birth(
             access_token=result.token_data["token"],
             token_type="bearer",
             message="Verification successful",
+            client_pseudo_id=result.client_pseudo_id
         )
     except HTTPException:
         raise
@@ -122,6 +124,7 @@ async def verify_non_pseudonymized_id(
             access_token=result.token_data["token"],
             token_type="bearer",
             message="Verification successful",
+            client_pseudo_id=result.client_pseudo_id
         )
     except HTTPException:
         raise

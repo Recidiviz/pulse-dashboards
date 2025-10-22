@@ -21,6 +21,7 @@ import type React from "react";
 import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 
 interface AddressFormData {
   streetAddress?: string;
@@ -40,6 +41,7 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
     state: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { trackIntakeChatClientAddressSubmitted } = useAnalytics();
 
   const { mutateAsync: submitAddressMutation } = $api.useMutation(
     "post",
@@ -53,6 +55,15 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
     }
     return "";
   };
+
+  const getClientPseudoId = () => {
+    // Get client pseudo id from sessionStorage where it's stored for intake authentication
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("client_pseudo_id") || "";
+    }
+    return "";
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,6 +90,7 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
     } catch {
       onError("Failed to submit address. Please try again.");
     } finally {
+      trackIntakeChatClientAddressSubmitted({ justiceInvolvedPersonId: getClientPseudoId()})
       setIsSubmitting(false);
     }
   };

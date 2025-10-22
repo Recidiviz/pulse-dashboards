@@ -21,13 +21,14 @@ async def test_verify_pseudo_date_of_birth_direct(
 
     async def mock_validate_pseudo_dob(*args, **kwargs):
         """Mocked version that always returns success"""
+        client_pseudo_id = "client-001"
         token_data = {
             "token": "test-token-12345",
-            "client_pseudo_id": "client-001",
+            "client_pseudo_id": client_pseudo_id,
             "client_name": "John Doe",
             "full_name": {"given_name": "John", "surname": "Doe"},
         }
-        return ValidationResult.success_result(token_data)
+        return ValidationResult.success_result(token_data, client_pseudo_id)
 
     original_validate = intake_internal_router.validate_pseudo_dob
     intake_internal_router.validate_pseudo_dob = mock_validate_pseudo_dob
@@ -75,6 +76,8 @@ async def test_verify_pseudo_date_of_birth_wrong_name(
 ):
     """Test validation failure due to incorrect last name."""
 
+    client_pseudo_id = "pc-001"
+
     from app.auth.intake.utils import ValidationResult
     from app.routes import intake_internal_router
 
@@ -85,14 +88,13 @@ async def test_verify_pseudo_date_of_birth_wrong_name(
             )
 
         token_data = {"token": "fake-token"}
-        return ValidationResult.success_result(token_data)
+        return ValidationResult.success_result(token_data, client_pseudo_id)
 
     original_validate = intake_internal_router.validate_pseudo_dob
     intake_internal_router.validate_pseudo_dob = mock_validate_pseudo_dob
 
     try:
         # Test data
-        pseudonymized_id = "pc-001"
         last_name = "WrongName"  # Incorrect last name
         date_of_birth = "1985/1/1"  # Correct DOB
 
@@ -113,7 +115,7 @@ async def test_verify_pseudo_date_of_birth_wrong_name(
             await intake_internal_router.verify_pseudo_date_of_birth(
                 request=request,
                 data=data,
-                pseudonymized_id=pseudonymized_id,
+                pseudonymized_id=client_pseudo_id,
                 session=async_session,
             )
 
@@ -131,6 +133,8 @@ async def test_verify_pseudo_date_of_birth_wrong_dob(
 ):
     """Test validation failure due to incorrect date of birth."""
 
+    pseudonymized_id = "pc-001"
+
     from app.auth.intake.utils import ValidationResult
     from app.routes import intake_internal_router
 
@@ -141,13 +145,12 @@ async def test_verify_pseudo_date_of_birth_wrong_dob(
             )
 
         token_data = {"token": "fake-token"}
-        return ValidationResult.success_result(token_data)
+        return ValidationResult.success_result(token_data, pseudonymized_id)
 
     original_validate = intake_internal_router.validate_pseudo_dob
     intake_internal_router.validate_pseudo_dob = mock_validate_pseudo_dob
 
     try:
-        pseudonymized_id = "pc-001"
         last_name = "Doe"
         date_of_birth = "1990/1/1"
 
@@ -212,6 +215,7 @@ async def test_validate_non_pseudo_id_verify_success(
     mock_result = MagicMock()
     mock_result.success = True
     mock_result.token_data = {"token": "jwt_token"}
+    mock_result.client_pseudo_id = "client-pseudo-id-01"
     mock_validate.return_value = mock_result
 
     result = await verify_non_pseudonymized_id(
@@ -220,6 +224,7 @@ async def test_validate_non_pseudo_id_verify_success(
 
     assert result.status is True
     assert result.access_token == "jwt_token"
+    assert result.client_pseudo_id == "client-pseudo-id-01"
     assert result.message == "Verification successful"
 
 

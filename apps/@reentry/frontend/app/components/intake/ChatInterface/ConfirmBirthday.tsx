@@ -22,6 +22,7 @@ import type React from "react";
 import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 //import RecaptchaWidget from "~@reentry/frontend/components/RecaptchaWidget";
 import { showSuccessToast } from "~@reentry/frontend/utils/toast";
 
@@ -36,6 +37,7 @@ export default function ConfirmBirthdatePage({
   mode,
   pseudonymized_id,
 }: ConfirmBirthdatePageProps) {
+  const {trackIntakeChatClientLogin} = useAnalytics();
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
@@ -165,10 +167,13 @@ export default function ConfirmBirthdatePage({
         return;
       }
 
+      trackIntakeChatClientLogin({justiceInvolvedPersonId: response.client_pseudo_id})
+
       showSuccessToast("Successful!");
 
-      if (response?.access_token) {
+      if (response?.access_token && response?.client_pseudo_id) {
         sessionStorage.setItem("intake_token", response.access_token);
+        sessionStorage.setItem("client_pseudo_id", response.client_pseudo_id);
         window.location.reload();
       } else {
         setError("Invalid response from server. Please try again.");

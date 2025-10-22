@@ -41,6 +41,12 @@ interface AnalyticsContextProps {
   trackAssessmentRecordingStatusUpdated: (metadata: {
     justiceInvolvedPersonId: string, sessionId: string, status: string
   }) => void;
+  trackIntakeChatClientLogin: (metadata: {
+    justiceInvolvedPersonId: string;
+  }) => void;
+  trackIntakeChatClientAddressSubmitted: (metadata: {
+    justiceInvolvedPersonId: string;
+  }) => void;
 }
 
 interface AnalyticsProviderProps {
@@ -112,6 +118,8 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
   };
 
   const track = (eventName: string, metadata?: Record<string, unknown>) => {
+    // If the event is from a public route, e.g. `/assessments`, consider using 
+    // the below trackIntakeChatEvent() instead. 
     const fullMetadata = { ...metadata, ...defaultEventProperties };
     if (shouldLogEvent()) {
       console.log(
@@ -119,7 +127,7 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
       );
     }
     if (shouldSkipWriteToSegment()) return;
-    analytics.track(eventName, fullMetadata);
+    analytics.track(`frontend_cpa_${eventName}`, fullMetadata);
   };
 
   const trackClientIntakeChatHistoryViewed = (metadata: {
@@ -133,6 +141,29 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     justiceInvolvedPersonId: string;
   }) => {
     track("client_intake_manually_enabled", metadata);
+  };
+
+  const trackIntakeChatEvent = (eventName: string, metadata: {
+    justiceInvolvedPersonId: string;
+  }) => {
+    // The track() method defined above is not used here because, unlike other flows, 
+    // the intake assessment is a public route and has no Auth0 authentication.
+    // And since internal users do not log into the assessment into production, 
+    // there is no need to check if the user is an internal user before emitting the 
+    // event if we're only emitting events from production.
+    if (!isAnalyticsDisabled) analytics.track(`frontend_cpa_intake_chat_${eventName}`, metadata);
+  };
+
+  const trackIntakeChatClientLogin = (metadata: {
+    justiceInvolvedPersonId: string;
+  }) => {
+    trackIntakeChatEvent("client_login", metadata);
+  };
+
+  const trackIntakeChatClientAddressSubmitted = (metadata: {
+    justiceInvolvedPersonId: string;
+  }) => {
+    trackIntakeChatEvent("client_address_submitted", metadata);
   };
 
   const trackClientHomeAddressSubmitted = (metadata: {
@@ -156,7 +187,7 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
 
   return (
     <AnalyticsContext.Provider
-      value={{ identify, pageView, track, trackClientIntakeChatHistoryViewed, trackClientIntakeManuallyEnabled, trackClientHomeAddressSubmitted, trackAssessmentRecordingStatusUpdated }}
+      value={{ identify, pageView, track, trackClientIntakeChatHistoryViewed, trackClientIntakeManuallyEnabled, trackAssessmentRecordingStatusUpdated, trackIntakeChatClientLogin, trackClientHomeAddressSubmitted, trackIntakeChatClientAddressSubmitted }}
     >
       {children}
     </AnalyticsContext.Provider>

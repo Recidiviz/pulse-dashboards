@@ -44,6 +44,7 @@ class VerifyDOBResponse(BaseModel):
     access_token: Optional[str] = None
     token_type: str = "bearer"
     message: Optional[str] = None
+    client_pseudo_id: str
 
 
 class Message(ORMResponse):
@@ -104,6 +105,7 @@ async def verify_date_of_birth(
             access_token=result.token_data["token"],
             token_type="bearer",
             message="Date of birth verified successfully",
+            client_pseudo_id=result.client_pseudo_id
         )
     except HTTPException:
         raise

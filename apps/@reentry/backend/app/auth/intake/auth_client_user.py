@@ -113,7 +113,7 @@ async def validate_dob(
         return await record_validation_failure(request, redis_client, token_from_url)
 
     token_data = create_client_response(intake.client_pseudo_id, record.full_name)
-    return ValidationResult.success_result(token_data)
+    return ValidationResult.success_result(token_data, intake.client_pseudo_id)
 
 
 async def validate_pseudo_dob(
@@ -161,7 +161,7 @@ async def validate_pseudo_dob(
         )
 
     token_data = create_client_response(client_pseudo_id, record.full_name)
-    return ValidationResult.success_result(token_data)
+    return ValidationResult.success_result(token_data, client_pseudo_id)
 
 
 async def validate_non_pseudo_id(
@@ -202,7 +202,7 @@ async def validate_non_pseudo_id(
         )
 
     token_data = create_client_response(client_pseudo_id, record.full_name)
-    return ValidationResult.success_result(token_data)
+    return ValidationResult.success_result(token_data, client_pseudo_id)
 
 
 class ClientAuthMiddleware(BaseHTTPMiddleware):
