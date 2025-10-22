@@ -17,6 +17,7 @@
 
 import { useEffect, useState } from "react";
 
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 import LoadingSpinner from "../base/LoadingSpinner";
@@ -28,6 +29,10 @@ type ResourcesListProps = {
   planResources?: components["schemas"]["Resource"][] | null | undefined;
   relatedResourcesLoading: boolean;
   handleSelectResource: (r: components["schemas"]["Resource"]) => void;
+  clientRecord:
+      | components["schemas"]["ClientRecordResponse"]
+      | null
+      | undefined;
 };
 
 const ResourcesList = ({
@@ -37,7 +42,9 @@ const ResourcesList = ({
   planResources,
   relatedResourcesLoading,
   handleSelectResource,
+  clientRecord
 }: ResourcesListProps) => {
+  const { track } = useAnalytics();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredResources, setFilteredReources] = useState<
     components["schemas"]["Resource"][]
@@ -85,7 +92,10 @@ const ResourcesList = ({
             <div
               key={index}
               className={`p-2 border rounded-lg cursor-pointer ${(candidateResource && candidateResource?.name === resource.name && "bg-blue-100 border-blue-300") || (candidateResource === null && selectedResource?.name === resource.name) ? "bg-blue-100 border-blue-300" : "bg-white"}`}
-              onClick={() => handleSelectResource(resource)}
+              onClick={() => {
+                track("action_plan_resource_selected", {justiceInvolvedPersonId: clientRecord?.pseudonymized_client_id})
+                handleSelectResource(resource)
+              }}
             >
               <div className="font-semibold text-sm text-[#002321]">
                 {resource.name}

@@ -95,6 +95,7 @@ const SidePanel = ({
               relatedResources={relatedResources}
               handleOpenResourceSection={handleOpenResourceSection}
               openResourceSection={openResourceSection}
+              clientRecord={clientRecord}
             />
             <RegeneratePlan
               planId={planId}
@@ -102,8 +103,10 @@ const SidePanel = ({
               setRegenerationMessage={setRegenerationMessage}
               dataDetailPlan={dataDetailPlan}
               isPolling={isPolling}
+            clientRecord={clientRecord}
             />
             <HomeAddressSection
+              clientRecord={clientRecord}
               planId={planId}
               startPolling={startPolling}
               isPolling={isPolling}

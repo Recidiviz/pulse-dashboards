@@ -25,6 +25,7 @@ import SidePanel from "~@reentry/frontend/components/action-plan/SidePanel";
 import UpdateResource from "~@reentry/frontend/components/action-plan/UpdateResource";
 import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
 import LoadingSpinner from "~@reentry/frontend/components/base/LoadingSpinner";
+import { PageView } from "~@reentry/frontend/components/PageView";
 import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
@@ -273,81 +274,84 @@ const ActionPlanPage = () => {
       </div>
     );
   return (
-    <div className={"bg-white w-full screen:h-[calc(100vh-65px)] flex flex-col md:flex-row"}>
-      <div className="w-full h-full justify-start items-start inline-flex flex flex-col md:flex-row">
-        <SidePanel
-          clientRecord={dataDetailPlan.client_record}
-          planId={dataDetailPlan.id}
-          startPolling={startPolling}
-          setRegenerationMessage={setRegenerationMessage}
-          selectedResource={selectedResource}
-          candidateResource={candidateResource}
-          relatedResourcesLoading={relatedResourcesLoading}
-          planResources={planResources}
-          handleSelectResource={handleSelectResource}
-          relatedResources={relatedResources}
-          handleOpenResourceSection={handleOpenResourceSection}
-          openResourceSection={openResourceSection}
-          setOpenResourceSection={setOpenResourceSection}
-          dataDetailPlan={dataDetailPlan}
-          isPolling={isPolling}
-        />
-        {!isPolling &&
-          dataDetailPlan.create_status === "completed" &&
-          dataDetailPlan.latest_generation && (
-            <Planner
-              refetchDetailPlan={refetchDetailPlan}
-              handleSelectResource={handleSelectResource}
-              planId={dataDetailPlan?.id}
-              clientPseudoId={id as string}
-              planPrompt={dataDetailPlan?.latest_generation?.prompt || ""}
-              clientFullName={
-                dataDetailPlan?.client_record?.full_name
-                  ? `${dataDetailPlan.client_record.full_name.given_names} ${dataDetailPlan.client_record.full_name.surname}`
-                  : ""
-              }
-              markDownText={
-                dataDetailPlan?.latest_generation?.markdown_result || ""
-              }
+    <>
+      <PageView/>
+      <div className={"bg-white w-full screen:h-[calc(100vh-65px)] flex flex-col md:flex-row"}>
+        <div className="w-full h-full justify-start items-start inline-flex flex flex-col md:flex-row">
+          <SidePanel
+            clientRecord={dataDetailPlan.client_record}
+            planId={dataDetailPlan.id}
+            startPolling={startPolling}
+            setRegenerationMessage={setRegenerationMessage}
+            selectedResource={selectedResource}
+            candidateResource={candidateResource}
+            relatedResourcesLoading={relatedResourcesLoading}
+            planResources={planResources}
+            handleSelectResource={handleSelectResource}
+            relatedResources={relatedResources}
+            handleOpenResourceSection={handleOpenResourceSection}
+            openResourceSection={openResourceSection}
+            setOpenResourceSection={setOpenResourceSection}
+            dataDetailPlan={dataDetailPlan}
+            isPolling={isPolling}
+          />
+          {!isPolling &&
+            dataDetailPlan.create_status === "completed" &&
+            dataDetailPlan.latest_generation && (
+              <Planner
+                refetchDetailPlan={refetchDetailPlan}
+                handleSelectResource={handleSelectResource}
+                planId={dataDetailPlan?.id}
+                clientPseudoId={id as string}
+                planPrompt={dataDetailPlan?.latest_generation?.prompt || ""}
+                clientFullName={
+                  dataDetailPlan?.client_record?.full_name
+                    ? `${dataDetailPlan.client_record.full_name.given_names} ${dataDetailPlan.client_record.full_name.surname}`
+                    : ""
+                }
+                markDownText={
+                  dataDetailPlan?.latest_generation?.markdown_result || ""
+                }
+              />
+            )}
+          {isPolling && (
+            <LoadingSpinner
+              progress={progress || 0}
+              message={message || ""}
+              startTime={startTime || 0}
+              regenerationInProgress={isPolling}
+              regenerationMessage={regenerationMessage}
             />
           )}
-        {isPolling && (
-          <LoadingSpinner
-            progress={progress || 0}
-            message={message || ""}
-            startTime={startTime || 0}
-            regenerationInProgress={isPolling}
-            regenerationMessage={regenerationMessage}
-          />
-        )}
-        {!isLoadingDetailPlan && errorDetailPlan && (
-          <div className="flex flex-col items-center space-y-4 w-full h-full justify-center ">
-            <div className="text-[#003331] text-lg font-medium">
-              An error occured, plan may not have been started for this client.
-            </div>
-          </div>
-        )}
-        {!isLoadingDetailPlan &&
-          (dataDetailPlan?.create_status === "failed" || errorPolling) && (
+          {!isLoadingDetailPlan && errorDetailPlan && (
             <div className="flex flex-col items-center space-y-4 w-full h-full justify-center ">
-              <span className="text-[#003331] text-lg font-medium">
-                Failed to generate the plan, please try again or contact
-                support.
-              </span>
+              <div className="text-[#003331] text-lg font-medium">
+                An error occured, plan may not have been started for this client.
+              </div>
             </div>
           )}
+          {!isLoadingDetailPlan &&
+            (dataDetailPlan?.create_status === "failed" || errorPolling) && (
+              <div className="flex flex-col items-center space-y-4 w-full h-full justify-center ">
+                <span className="text-[#003331] text-lg font-medium">
+                  Failed to generate the plan, please try again or contact
+                  support.
+                </span>
+              </div>
+            )}
+        </div>
+        {candidateResource &&
+          selectedResource &&
+          candidateResource.id !== selectedResource?.id && (
+            <UpdateResource
+              candidateResource={candidateResource}
+              selectedResource={selectedResource}
+              onUpdate={handleUpdateResource}
+              onCancel={() => setCandidateResource(null)}
+            />
+          )}
       </div>
-      {candidateResource &&
-        selectedResource &&
-        candidateResource.id !== selectedResource?.id && (
-          <UpdateResource
-            candidateResource={candidateResource}
-            selectedResource={selectedResource}
-            onUpdate={handleUpdateResource}
-            onCancel={() => setCandidateResource(null)}
-          />
-        )}
-    </div>
+    </>
   );
 };
 

@@ -21,6 +21,7 @@ import { useState } from "react";
 import { $api } from "~@reentry/frontend/api";
 import { InfoTooltip } from "~@reentry/frontend/components/base/InfoTooltip";
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components, paths } from "~@reentry/frontend/recidiviz-schema";
 
@@ -30,8 +31,10 @@ const RegeneratePlan = ({
   setRegenerationMessage,
   dataDetailPlan,
   isPolling = false,
+  clientRecord
 }) => {
   const { getAccessToken } = useAuth();
+  const { track } = useAnalytics();
   const [prompt, setPrompt] = useState<string>("");
   const { mutateAsync: generatePlanMutation } = $api.useMutation(
     "post",
@@ -39,6 +42,7 @@ const RegeneratePlan = ({
   );
   const planEditedManually = dataDetailPlan?.edited_manually;
   const handleRegenerate = async () => {
+    track("action_plan_regeneration_triggered", {justiceInvolvedPersonId: clientRecord.pseudonymized_client_id, planId: planId})
     setRegenerationMessage(`Regenerating plan with new prompt: ${prompt}`);
     const response: components["schemas"]["PlanGenerationResponseCreate"] =
       await generatePlanMutation({

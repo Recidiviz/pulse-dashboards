@@ -115,7 +115,7 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const fullMetadata = { ...metadata, ...defaultEventProperties };
     if (shouldLogEvent()) {
       console.log(
-        `[Analytics] Tracking event name: ${eventName}, with metadata: ${JSON.stringify(metadata)}`,
+        `[Analytics] Tracking event name: ${eventName}, with metadata: ${JSON.stringify(fullMetadata)}`,
       );
     }
     if (shouldSkipWriteToSegment()) return;

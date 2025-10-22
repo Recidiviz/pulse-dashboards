@@ -24,6 +24,7 @@ import { $api } from "~@reentry/frontend/api";
 import LastPrompt from "~@reentry/frontend/components/action-plan/LastPrompt";
 import ActionPlanViewer from "~@reentry/frontend/components/ActionPlanViewer";
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import {
   extractCompleteCSS,
@@ -55,6 +56,7 @@ const Planner = ({
   handleSelectResource,
   showRegenerationNotify,
 }: PlannerProps) => {
+  const { track }  = useAnalytics();
   const { getAccessToken } = useAuth();
   const [markDownPlan, setMarkdownPlan] = useState<string>(markDownText);
   const [update, setUpdate] = useState(false);
@@ -66,7 +68,11 @@ const Planner = ({
   const [viewerKey, setViewerKey] = useState(0);
 
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const reactToPrintFn = useReactToPrint({ contentRef });
+  const reactToPrintFn = useReactToPrint({ contentRef,
+    onBeforePrint: () => {
+      track("action_plan_printed", { justiceInvolvedPersonId: clientPseudoId, planId: planId });
+      return Promise.resolve();
+    } });
   const router = useRouter();
 
   useEffect(() => {
@@ -91,6 +97,7 @@ const Planner = ({
 
   const saveEdit = async () => {
     try {
+      track("action_plan_edited", {justiceInvolvedPersonId: clientPseudoId, planId: planId})
       const processedMarkdown = postprocessMarkdown(internalMarkdown);
       await generatePlanMutation({
         params: {
@@ -148,6 +155,7 @@ const Planner = ({
   }
 
   const handleDownload = async (): Promise<void> => {
+    track("action_plan_downloaded", {justiceInvolvedPersonId: clientPseudoId, planId: planId})
     setIsDownloading(true);
     const accessToken = getAccessToken();
     const element = document.getElementById("contentToDownload");
