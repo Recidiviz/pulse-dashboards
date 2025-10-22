@@ -86,7 +86,11 @@ export async function verifyToken(
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: await secrets.getLatestValue("EDOVO_JWKS_URL"),
+        jwksUri:
+          // the real URI can be overridden with an env var. as the name suggests,
+          // this should ONLY be done in a dev environment when using the simulated JWKS server
+          process.env["DEV_ONLY_SIMULATED_JWKS_URI"] ||
+          (await secrets.getLatestValue("EDOVO_JWKS_URL")),
         requestHeaders: {
           "X-Api-Key": await secrets.getLatestValue("EDOVO_API_KEY"),
         },

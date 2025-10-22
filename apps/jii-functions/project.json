@@ -57,6 +57,15 @@
         }
       }
     },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/apps/jii-functions"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    },
     "decode-token": {
       "executor": "nx:run-commands",
       "options": {
@@ -68,15 +77,20 @@
         "production": {}
       },
       "defaultConfiguration": "production"
-    }
-  },
-  "test": {
-    "executor": "nx:run-commands",
-    "outputs": ["{workspaceRoot}/coverage/apps/jii-functions"],
-    "cache": true,
-    "options": {
-      "command": "vitest",
-      "cwd": "{projectRoot}"
+    },
+    "jwks-sim": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx watch src/jwks-simulator/main.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "edovo-test-token": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/tools/edovoTestToken.ts",
+        "cwd": "{projectRoot}"
+      }
     }
   },
   "tags": ["scope:server", "type:app"]

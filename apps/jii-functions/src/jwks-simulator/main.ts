@@ -15,9 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// @ts-check
-import tseslint from "typescript-eslint";
+import Fastify from "fastify";
 
-import baseConfig from "../../eslint.config.mjs";
+import { EDOVO_SIGNING_KEY } from "./keys/public";
 
-export default tseslint.config(baseConfig, { ignores: ["**/.enc.env*"] });
+const fastify = Fastify({
+  logger: true,
+});
+
+/**
+ * This endpoint simulates the Edovo API endpoint where we retrieve the verification key
+ * for their signed JWT. It returns a different key that is for local use only, and unlike
+ * the real endpoint it does not verify the API key (there would be no point to this really,
+ * we would just be comparing our own secret value to itself).
+ */
+fastify.get("/edovo-jwks", async () => {
+  return { keys: [EDOVO_SIGNING_KEY] };
+});
+
+const start = async () => {
+  try {
+    await fastify.listen({ port: 3003 });
+  } catch (err) {
+    fastify.log.error(err);
+    process.exit(1);
+  }
+};
+start();

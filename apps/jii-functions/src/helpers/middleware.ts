@@ -44,6 +44,10 @@ export function errorHandler(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: NextFunction,
 ) {
+  if (process.env["SENTRY_ENV"] === "development") {
+    console.log(error);
+  }
+
   if (
     // this is what the JWT middleware throws
     error.name === "UnauthorizedError"
