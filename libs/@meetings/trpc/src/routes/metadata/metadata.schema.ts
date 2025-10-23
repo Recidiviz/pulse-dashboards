@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,22 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "~@meetings/trpc/init";
-import { clientRouter } from "~@meetings/trpc/routes/client/client.router";
-import { meetingRouter } from "~@meetings/trpc/routes/meeting/meeting.router";
-import { metadataRouter } from "~@meetings/trpc/routes/metadata/metadata.router";
-import { staffRouter } from "~@meetings/trpc/routes/staff/staff.router";
+import { z } from "zod";
 
-const v1Router = router({
-  staff: staffRouter,
-  client: clientRouter,
-  meeting: meetingRouter,
-  metadata: metadataRouter,
+export const checkAppVersionInputSchema = z.object({
+  appVersion: z.string(),
 });
-
-export const appRouter = router({
-  v1: v1Router,
-});
-
-// export type definition of API
-export type AppRouter = typeof appRouter;

@@ -15,22 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "~@meetings/trpc/init";
-import { clientRouter } from "~@meetings/trpc/routes/client/client.router";
-import { meetingRouter } from "~@meetings/trpc/routes/meeting/meeting.router";
-import { metadataRouter } from "~@meetings/trpc/routes/metadata/metadata.router";
-import { staffRouter } from "~@meetings/trpc/routes/staff/staff.router";
+import { auth0Procedure, router } from "~@meetings/trpc/init";
+import { checkAppVersionInputSchema } from "~@meetings/trpc/routes/metadata/metadata.schema";
 
-const v1Router = router({
-  staff: staffRouter,
-  client: clientRouter,
-  meeting: meetingRouter,
-  metadata: metadataRouter,
+export const metadataRouter = router({
+  checkAppVersion: auth0Procedure
+    .input(checkAppVersionInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- we'll check versions eventually
+    .query(async ({ input }) => {
+      return { requiresUpgrade: false };
+    }),
 });
-
-export const appRouter = router({
-  v1: v1Router,
-});
-
-// export type definition of API
-export type AppRouter = typeof appRouter;
