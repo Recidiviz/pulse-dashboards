@@ -49,7 +49,6 @@ const NavigationKeyboardShortcutTooltip = styled(Sans16)`
   display: flex;
   align-items: center;
   gap: 8px;
-  text-transform: capitalize;
 `;
 
 const NavigationKeyboardShortcutIcon = styled.span`
@@ -68,6 +67,7 @@ export const OpportunityProfileFooter = ({
   handleTrackPreviewed: () => void;
 }) => {
   const { workflowsStore } = useRootStore();
+  const itemLabel = workflowsStore.justiceInvolvedPersonTitle;
 
   return (
     <PreviewModalFooter
@@ -77,7 +77,7 @@ export const OpportunityProfileFooter = ({
         workflowsStore.updateSelectedPersonAndOpportunity(opp);
         handleTrackPreviewed();
       }}
-      itemLabel={"Opportunity"}
+      itemLabel={itemLabel}
     />
   );
 };
