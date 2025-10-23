@@ -55,6 +55,33 @@ describe("meeting router", () => {
     });
   });
 
+  describe("discardMeeting", () => {
+    test("Should throw error if meeting does not exist", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.discardMeeting.mutate({
+          clientId: fakeClient.personId,
+          meetingId: "non-existent-meeting-id",
+        }),
+      ).rejects.toMatchObject({
+        message: "Meeting with that id was not found",
+        data: { code: "NOT_FOUND" },
+      });
+    });
+
+    test("Should delete meeting if it exists", async () => {
+      await testTRPCClient.v1.meeting.discardMeeting.mutate({
+        clientId: fakeClient.personId,
+        meetingId: fakeMeeting.id,
+      });
+
+      const meetingsInDb = await testPrismaClient.meeting.findMany({
+        where: { id: fakeMeeting.id },
+      });
+
+      expect(meetingsInDb).toEqual([]);
+    });
+  });
+
   describe("endMeeting", () => {
     beforeAll(() => {
       // // tell vitest we use mocked time

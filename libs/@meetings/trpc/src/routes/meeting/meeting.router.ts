@@ -23,6 +23,7 @@ import { getSignedUrlForNewRecording } from "~@meetings/tasks";
 import env from "~@meetings/trpc/env";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
+  discardMeetingInputSchema,
   endMeetingInputSchema,
   getSignedUrlForRecordingInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
@@ -57,6 +58,36 @@ export const meetingRouter = router({
           meeting.recordingsGCSBucket,
           meeting.recordingsFolderPath,
         );
+      },
+    ),
+  discardMeeting: auth0Procedure
+    .input(discardMeetingInputSchema)
+    .mutation(
+      async ({ input: { clientId, meetingId }, ctx: { prisma, user } }) => {
+        try {
+          await prisma.meeting.delete({
+            where: {
+              id: meetingId,
+              clientId: clientId,
+              staff: {
+                pseudonymizedId: user.pseudonymizedId,
+              },
+            },
+          });
+        } catch (e) {
+          if (
+            e instanceof Prisma.PrismaClientKnownRequestError &&
+            e.code === "P2025"
+          ) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Meeting with that id was not found",
+              cause: e,
+            });
+          }
+
+          throw e;
+        }
       },
     ),
   endMeeting: auth0Procedure
