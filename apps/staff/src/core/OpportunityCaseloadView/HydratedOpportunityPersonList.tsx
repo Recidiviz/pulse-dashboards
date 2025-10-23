@@ -220,6 +220,7 @@ export type OpportunityTableColumnId =
   | "US_NE_PEDD_DATE"
   | "US_MI_UNIT_ID"
   | "US_MI_ERD"
+  | "US_MI_CUSTODY_LEVEL"
   | "SNOOZE_ENDS_IN"
   | "SUBMITTED_FOR"
   | "CTA_BUTTON"
@@ -580,6 +581,17 @@ const TableView = observer(function TableView({
         }
 
         return "-";
+      },
+    },
+    {
+      header: "Current Custody Level",
+      id: "US_MI_CUSTODY_LEVEL",
+      enableSorting: true,
+      sortingFn: "alphanumeric",
+      accessorFn: ({ person }: Opportunity) => {
+        if (person instanceof Resident && person.stateCode === "US_MI") {
+          return person.displayCustodyLevel;
+        }
       },
     },
     {

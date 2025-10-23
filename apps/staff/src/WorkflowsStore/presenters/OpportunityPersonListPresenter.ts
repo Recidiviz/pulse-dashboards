@@ -182,6 +182,10 @@ export class OpportunityPersonListPresenter
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         this.tenantStore.currentTenantId === "US_MI" &&
         this.opportunityType === "usMiCustodyLevelDowngrade",
+      US_MI_CUSTODY_LEVEL:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI" &&
+        this.opportunityType === "usMiCustodyLevelDowngrade",
       LAST_VIEWED: true,
       ALMOST_ELIGIBLE_STATUS: some(
         opportunities,
