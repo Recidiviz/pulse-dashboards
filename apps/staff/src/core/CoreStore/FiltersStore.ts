@@ -86,10 +86,16 @@ export default class FiltersStore {
 
   setFilters(updatedFilters: Partial<PopulationFilterValues>): void {
     Object.keys(updatedFilters).forEach((filterKey) => {
+      const updatedFilterValue =
+        updatedFilters[filterKey as keyof PopulationFilters];
       set(
         this.filters,
         filterKey,
-        updatedFilters[filterKey as keyof PopulationFilters],
+        // TODO(#10250) Remove this default value once Pathways hydration has been refactored
+        // Set ["ALL"] as the default value if defaultFilterOptions are still loading
+        updatedFilterValue && updatedFilterValue.length > 0
+          ? updatedFilterValue
+          : ["ALL"],
       );
     });
   }

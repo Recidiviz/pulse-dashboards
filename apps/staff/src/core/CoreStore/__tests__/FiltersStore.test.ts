@@ -76,6 +76,15 @@ describe("FiltersStore", () => {
       coreStore.filtersStore.setFilters({ gender: ["FEMALE"] });
       expect(coreStore.filtersStore.filters).toEqual(expected);
     });
+
+    it("defaults to ALL if the filter value is not loaded yet", () => {
+      const expected = {
+        ...defaultPopulationFilterValues,
+        facility: ["ALL"],
+      };
+      coreStore.filtersStore.setFilters({ facility: [] });
+      expect(coreStore.filtersStore.filters).toEqual(expected);
+    })
   });
 
   describe("timePeriodLabel", () => {
