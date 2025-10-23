@@ -51,8 +51,10 @@ const ClientCard = ({ client }: ClientProps) => {
             onPress={() =>
               navigation.navigate("Profile", {
                 client: {
-                  personId: client.personId,
+                  personId: client.personId.toString(),
                   fullName: client.fullName,
+                  displayPersonExternalId: client.displayPersonExternalId,
+                  supervision: client.supervision,
                 },
               })
             }

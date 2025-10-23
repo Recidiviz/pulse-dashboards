@@ -15,14 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface ButtonConfig {
   label: string;
   onPress: () => void;
   variant?: "primary" | "danger" | "neutral";
-  countdown?: number;
 }
 
 interface MeetingSheetProps {
@@ -33,13 +32,14 @@ interface MeetingSheetProps {
   tertiaryButton?: ButtonConfig;
 }
 
-const getButtonClasses = (variant: string, disabled: boolean) => {
-  if (disabled) return "bg-gray-300 text-white";
+const getButtonClasses = (variant: string) => {
   switch (variant) {
     case "danger":
       return "bg-[#B42D2D] text-white";
     case "primary":
       return "bg-[#006C67] text-white";
+    case "neutral":
+      return "bg-transparent text-primary";
     default:
       return "bg-transparent text-primary";
   }
@@ -52,35 +52,35 @@ const MeetingSheet: React.FC<MeetingSheetProps> = ({
   secondaryButton,
   tertiaryButton,
 }) => {
-  const [countdown, setCountdown] = useState(primaryButton.countdown ?? 0);
+  // Primary button classes
+  let primaryBgClass = "bg-transparent";
+  let primaryTextClass = "text-white";
 
-  useEffect(() => {
-    if (countdown > 0) {
-      const timer = setInterval(() => setCountdown((c) => c - 1), 1000);
-      return () => clearInterval(timer);
-    }
-    return undefined;
-  }, [countdown]);
+  if (primaryButton.variant === "danger") {
+    primaryBgClass = "bg-[#B42D2D]";
+  } else if (primaryButton.variant === "primary") {
+    primaryBgClass = "bg-[#006C67]";
+  }
 
-  const isPrimaryDisabled = countdown > 0;
+  if (primaryButton.variant === "neutral") {
+    primaryTextClass = "text-primary";
+  }
 
-  const primaryBgClass = isPrimaryDisabled ? "bg-gray-300" : "bg-[#B42D2D]";
-  const primaryTextClass = isPrimaryDisabled ? "text-gray-500" : "text-white";
+  // Secondary button classes
+  let secondaryBgClass = "bg-transparent";
+  let secondaryTextClass = "text-primary";
+
+  if (secondaryButton?.variant === "primary") {
+    secondaryBgClass = "bg-[#4D5255]";
+    secondaryTextClass = "text-white";
+  }
 
   const SecondaryButton = secondaryButton ? (
     <TouchableOpacity
-      className={`mb-3 w-72 items-center self-center rounded-full py-4 ${
-        secondaryButton.variant === "primary"
-          ? "bg-[#4D5255]"
-          : "bg-transparent"
-      }`}
+      className={`mb-3 w-72 items-center self-center rounded-full py-4 ${secondaryBgClass}`}
       onPress={secondaryButton.onPress}
     >
-      <Text
-        className={`font-semibold ${
-          secondaryButton.variant === "primary" ? "text-white" : "text-primary"
-        }`}
-      >
+      <Text className={`font-semibold ${secondaryTextClass}`}>
         {secondaryButton.label}
       </Text>
     </TouchableOpacity>
@@ -90,7 +90,6 @@ const MeetingSheet: React.FC<MeetingSheetProps> = ({
     <TouchableOpacity
       className={`items-center justify-center rounded-full py-4 ${getButtonClasses(
         tertiaryButton.variant || "primary",
-        false,
       )}`}
       onPress={tertiaryButton.onPress}
     >
@@ -109,14 +108,11 @@ const MeetingSheet: React.FC<MeetingSheetProps> = ({
         {description}
       </Text>
       <TouchableOpacity
-        className={`mb-3 items-center self-center rounded-full py-4 ${primaryBgClass} w-72`}
-        disabled={isPrimaryDisabled}
+        className={`mb-3 w-72 items-center self-center rounded-full py-4 ${primaryBgClass}`}
         onPress={primaryButton.onPress}
       >
         <Text className={`font-semibold ${primaryTextClass} text-center`}>
-          {isPrimaryDisabled
-            ? `${primaryButton.label} (0:0${countdown})`
-            : primaryButton.label}
+          {primaryButton.label}
         </Text>
       </TouchableOpacity>
 

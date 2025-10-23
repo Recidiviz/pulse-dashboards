@@ -110,6 +110,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           organization: "recidiviz-inc",
         },
       ],
+      [
+        "expo-audio",
+        {
+          microphonePermission:
+            "Allow $(PRODUCT_NAME) to access your microphone.",
+        },
+      ],
     ],
     extra: {
       eas: {

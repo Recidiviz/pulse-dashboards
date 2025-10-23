@@ -124,6 +124,8 @@
     "escape-html": "^1.0.3",
     "eslint-config-google": "^0.14.0",
     "expo": "~52.0.47",
+    "expo-audio": "~0.3.5",
+    "expo-permissions": "^14.4.0",
     "expo-splash-screen": "~0.29.24",
     "expo-status-bar": "~2.0.1",
     "expo-system-ui": "~4.0.9",

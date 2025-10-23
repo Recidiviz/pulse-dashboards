@@ -9389,6 +9389,8 @@ __metadata:
     enhanced-resolve: "npm:*"
     eslint-plugin-tailwindcss: "npm:^3.18.2"
     expo: "npm:~52.0.47"
+    expo-audio: "npm:~0.3.5"
+    expo-permissions: "npm:^14.4.0"
     expo-splash-screen: "npm:~0.29.24"
     expo-status-bar: "npm:~2.0.1"
     expo-system-ui: "npm:~4.0.9"
@@ -29715,6 +29717,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-audio@npm:~0.3.5":
+  version: 0.3.5
+  resolution: "expo-audio@npm:0.3.5"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/dc8b92c2f41d08ddeee655224dccd2972742954bbf5141c577673bcf06baacf0802be6267600d252eec3cfbb2f0aa471648e5857b5c527914429a7418fe6dcaa
+  languageName: node
+  linkType: hard
+
 "expo-constants@npm:~17.0.8":
   version: 17.0.8
   resolution: "expo-constants@npm:17.0.8"
@@ -29870,6 +29883,15 @@ __metadata:
   dependencies:
     invariant: "npm:^2.2.4"
   checksum: 10c0/1f0ca6902baf0bfabad2442b08ee44099bd3675a4f57eda76316416c2518667bd1e72cddc1c3b8c3ff1464b318a2814ff0a63036a5d7405d508f65fcacce19da
+  languageName: node
+  linkType: hard
+
+"expo-permissions@npm:^14.4.0":
+  version: 14.4.0
+  resolution: "expo-permissions@npm:14.4.0"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/05f12cc80bedfd74c3fc9979f10fa99309e781512f081565922043d232e25c13f0361c918f5896780b29fa80a9ab93a1521881e44c56a895c7129ad56ddc3264
   languageName: node
   linkType: hard
 
@@ -47251,8 +47273,10 @@ __metadata:
     eslint-plugin-yml: "npm:^1.16.0"
     execa: "npm:^9.6.0"
     expo: "npm:~52.0.47"
+    expo-audio: "npm:~0.3.5"
     expo-dev-client: "npm:~5.0.20"
     expo-doctor: "npm:^1.17.7"
+    expo-permissions: "npm:^14.4.0"
     expo-splash-screen: "npm:~0.29.24"
     expo-status-bar: "npm:~2.0.1"
     expo-system-ui: "npm:~4.0.9"

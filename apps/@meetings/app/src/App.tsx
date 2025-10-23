@@ -35,6 +35,13 @@ Sentry.init({
   sendDefaultPii: true,
 });
 
+// @ts-expect-error BigInt may not have toJSON in all environments
+// eslint-disable-next-line no-extend-native
+BigInt.prototype.toJSON = function () {
+  const int = Number.parseInt(this.toString());
+  return Number.isNaN(int) ? this.toString() : int;
+};
+
 const App = () => {
   return (
     <Auth0Provider domain={config.domain} clientId={config.clientId}>

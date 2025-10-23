@@ -17,8 +17,23 @@
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import {
+  AudioModule,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioRecorder,
+  useAudioRecorderState,
+} from "expo-audio";
 import React, { useEffect, useState } from "react";
-import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import Icons from "../../assets/icons";
 import MeetingSheet from "../components/MeetingSheet";
@@ -32,52 +47,137 @@ type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
 const NewMeetingScreen = () => {
   const navigation = useNavigation<ProfileNavProp>();
   const route = useRoute<NewMeetingRouteProp>();
-  const { client } = route.params;
-
-  const [meetingId, setMeetingId] = useState<string | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [sheetStep, setSheetStep] = useState<"none" | "discard" | "end">(
-    "none",
-  );
-
-  const startRecording = () => setIsRecording(true);
-  const stopRecording = () => setSheetStep("discard");
-  const handleContinue = () => setSheetStep("none");
-  const handleDiscard = () => setSheetStep("end");
-  const handleFinishAndSave = () => {
-    setSheetStep("none");
-    setIsRecording(false);
-    navigation.navigate("Profile", {
-      client: { personId: client.personId, fullName: client.fullName },
-    });
+  const client = {
+    ...route.params.client,
+    // Convert this back into a BigInt for TRPC calls
+    personId: BigInt(route.params.client.personId),
   };
-  const handleFinalDiscard = () => {
-    setSheetStep("none");
-    setIsRecording(false);
-  };
+  const { meetingId } = route.params;
 
-  const createMeetingMutation = trpc.v1.client.createMeeting.useMutation({
-    onSuccess: (data) => setMeetingId(data.id),
-  });
+  const [status, setStatus] = useState<
+    | "idle"
+    | "recording"
+    | "paused"
+    | "uploading"
+    | "stopping"
+    | "discarding"
+    | "ending"
+  >("idle");
+
+  const audioRecorder = useAudioRecorder(RecordingPresets["HIGH_QUALITY"]);
+  const recorderState = useAudioRecorderState(audioRecorder);
 
   useEffect(() => {
-    try {
-      const startTime = new Date();
-      createMeetingMutation.mutate({
-        clientId: client.personId,
-        startTime,
+    (async () => {
+      const status = await AudioModule.requestRecordingPermissionsAsync();
+      if (!status.granted) {
+        Alert.alert("Permission to access microphone was denied");
+      }
+
+      await setAudioModeAsync({
+        playsInSilentMode: true,
+        allowsRecording: true,
       });
-    } catch (err) {
-      console.error("[create] Failed to create meeting", err);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    })();
   }, []);
 
-  if (meetingId === null) {
+  const endMeetingMutation = trpc.v1.meeting.endMeeting.useMutation({
+    onSuccess: () => {
+      console.log("Meeting successfully ended and processing started");
+      navigation.navigate("Profile", {
+        client: {
+          personId: client.personId.toString(),
+          fullName: client.fullName,
+          displayPersonExternalId: client.displayPersonExternalId,
+          supervision: client.supervision,
+        },
+      });
+    },
+    onError: (err) => {
+      console.error("[endMeeting] Failed:", err);
+    },
+  });
+
+  const { refetch } = trpc.v1.meeting.getSignedUrlForRecording.useQuery(
+    { clientId: client.personId, meetingId: meetingId ?? "" },
+    { enabled: false },
+  );
+
+  const uploadSegmentToGCS = async (uri: string) => {
+    const { data } = await refetch(); // data is the signed URL
+    if (!data) return;
+
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    await fetch(data, {
+      method: "PUT",
+      body: blob,
+      headers: { "Content-Type": "audio/m4a" },
+    });
+  };
+
+  const startRecording = async () => {
+    await audioRecorder.prepareToRecordAsync();
+    audioRecorder.record();
+    setStatus("recording");
+  };
+  const stopRecording = () => setStatus("stopping");
+
+  const togglePauseResume = async () => {
+    if (status === "uploading") return;
+
+    if (status === "paused") {
+      await audioRecorder.prepareToRecordAsync();
+      audioRecorder.record();
+      setStatus("recording");
+    } else if (status === "recording") {
+      setStatus("uploading");
+      try {
+        await audioRecorder.stop();
+        const uri = audioRecorder.uri;
+        if (uri) await uploadSegmentToGCS(uri);
+      } catch (err) {
+        console.error("Upload during pause failed:", err);
+        Alert.alert("Upload Failed", "Please try again.");
+      } finally {
+        setStatus("paused");
+      }
+    }
+  };
+
+  const handleFinishAndSave = async () => {
+    setStatus("ending");
+    try {
+      if (recorderState.isRecording) {
+        await audioRecorder.stop();
+        const uri = audioRecorder.uri;
+        if (uri) await uploadSegmentToGCS(uri);
+      }
+      await endMeetingMutation.mutateAsync({
+        clientId: client.personId,
+        meetingId,
+      });
+    } catch (err) {
+      console.error("[handleFinishAndSave] error:", err);
+      Alert.alert("Error", "Failed to end meeting. Please try again.");
+      setStatus("paused");
+    }
+  };
+
+  const handleContinue = () => setStatus("recording");
+  const handleDiscard = () => setStatus("discarding");
+  const handleFinalDiscard = async () => {
+    await audioRecorder.stop();
+    // TODO: implement meeting discard API
+    setStatus("idle");
+  };
+
+  if (status === "ending") {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <Text className="text-primary text-lg font-medium">
-          Creating meeting...
+      <View className="flex-1 flex-row items-center justify-center bg-white">
+        <ActivityIndicator size="small" color="text-primary" />
+        <Text className="text-primary p-4 text-lg font-medium">
+          Meeting ending...
         </Text>
       </View>
     );
@@ -126,74 +226,103 @@ const NewMeetingScreen = () => {
       </Text>
     </View>
   );
+  const isUploading = status === "uploading";
+  const buttonBgClass = isUploading ? "bg-gray-300" : "bg-[#B42D2D]";
+  const buttonTextClass = isUploading ? "text-gray-700" : "text-white";
+  let pauseResumeBgColor = "#4D5255";
+  if (isUploading) {
+    pauseResumeBgColor = "#D1D5DB";
+  } else if (status === "paused") {
+    pauseResumeBgColor = "#006C67";
+  }
 
-  const RecordingControls = !isRecording ? (
-    <TouchableOpacity
-      className="flex-row items-center justify-center rounded-full bg-[#006C67] py-5"
-      onPress={startRecording}
-    >
-      <Image source={Icons.Play} className="mr-2 size-4" />
-      <Text className="font-semibold text-white">Start Recording</Text>
-    </TouchableOpacity>
-  ) : (
-    <>
-      <View className="flex-row items-center justify-center pb-2">
-        <Image source={Icons.Record} className="size-4" />
-        <Text className="px-2 text-black">Recording in progress</Text>
-        <Text className="text-sm text-gray-500">4:22</Text>
-      </View>
+  const RecordingControls =
+    status === "idle" ? (
+      <TouchableOpacity
+        className="flex-row items-center justify-center rounded-full bg-[#006C67] py-5"
+        onPress={startRecording}
+      >
+        <Image source={Icons.Play} className="mr-2 size-4" />
+        <Text className="font-semibold text-white">Start Recording</Text>
+      </TouchableOpacity>
+    ) : (
+      <>
+        <View className="flex-row items-center justify-center pb-2">
+          <Image source={Icons.Record} className="size-4" />
+          <Text className="px-2 text-black">Recording in progress</Text>
+        </View>
 
-      <View className="flex-row items-center justify-center">
-        <TouchableOpacity
-          className="flex-row items-center justify-center rounded-full bg-[#B42D2D] px-8 py-3"
-          onPress={stopRecording}
-        >
-          <Image source={Icons.Stop} className="mr-2 size-6" />
-          <Text className="font-semibold text-white">Stop</Text>
-        </TouchableOpacity>
+        <View className="flex-row items-center justify-center">
+          <TouchableOpacity
+            className={`w-[120px] flex-row items-center justify-center rounded-full px-8 py-3 ${buttonBgClass}`}
+            onPress={stopRecording}
+            disabled={isUploading}
+          >
+            <Image source={Icons.Stop} className="mr-2 size-6" />
+            <Text className={`font-semibold ${buttonTextClass}`}>Stop</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity className="ml-3 flex-row items-center justify-center rounded-full bg-[#4D5255] px-8 py-3">
-          <Image source={Icons.Pause} className="mr-2 size-6" />
-          <Text className="font-semibold text-white">Pause</Text>
-        </TouchableOpacity>
-      </View>
-    </>
-  );
+          <TouchableOpacity
+            className="ml-3 w-[120px] flex-row items-center justify-center rounded-full px-8 py-3"
+            onPress={togglePauseResume}
+            disabled={isUploading}
+            style={{ backgroundColor: pauseResumeBgColor }}
+          >
+            {isUploading ? (
+              <ActivityIndicator size="small" color="white" className="mr-2" />
+            ) : (
+              <Image
+                source={status === "paused" ? Icons.Play : Icons.Pause}
+                className="mr-2 size-6"
+              />
+            )}
+            <Text className={`font-semibold ${buttonTextClass}`}>
+              {status === "paused" ? "Resume" : "Pause"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </>
+    );
 
+  const isMeetingActive = status !== "idle" || recorderState.isRecording;
   return (
     <View className="flex-1 bg-white">
       <SubHeader
-        headingTxt={isRecording ? "Meeting in Progress" : "New Meeting"}
-        showRightBtn={isRecording}
+        headingTxt={isMeetingActive ? "Meeting in Progress" : "New Meeting"}
+        showRightBtn={isMeetingActive}
+        onPressBtn={() => handleDiscard()}
       />
 
       <View className="flex-1 px-6">
-        {!isRecording ? RecordingIntro : RecordingNotes}
+        {isMeetingActive ? RecordingNotes : RecordingIntro}
       </View>
 
       <View className="rounded-t-2xl bg-gray-100 px-6 py-12">
         <Text className="text-primary text-center text-base font-semibold">
-          Mike Woods
+          {client.fullName}
         </Text>
         <Text className="mb-4 text-center text-sm text-gray-600">
-          ID: 123456 · Probation
+          ID: {client.displayPersonExternalId} • {client.supervision}
         </Text>
 
         {RecordingControls}
       </View>
 
       {/* Modal Bottom Sheet */}
-      <Modal visible={sheetStep !== "none"} animationType="slide" transparent>
+      <Modal
+        visible={["stopping", "discarding"].includes(status)}
+        animationType="slide"
+        transparent
+      >
         <View className="flex-1 justify-end bg-[rgba(0,0,0,0.3)]">
-          {sheetStep === "discard" && (
+          {status === "discarding" && (
             <MeetingSheet
               title="Discard meeting?"
-              description="You're about to discard the meeting with Mike Woods. Notes and transcript will not be saved."
+              description={`You're about to discard the meeting with ${client.fullName}. Notes and transcript will not be saved.`}
               primaryButton={{
                 label: "Discard",
-                onPress: handleDiscard,
+                onPress: handleFinalDiscard,
                 variant: "danger",
-                countdown: 3,
               }}
               secondaryButton={{
                 label: "Continue Meeting",
@@ -203,15 +332,14 @@ const NewMeetingScreen = () => {
             />
           )}
 
-          {sheetStep === "end" && (
+          {status === "stopping" && (
             <MeetingSheet
               title="End this meeting?"
-              description="You're about to finish the meeting with Mike Woods and save the notes for processing."
+              description={`You're about to finish the meeting with ${client.fullName} and save the notes for processing.`}
               primaryButton={{
                 label: "Finish & Save",
                 onPress: handleFinishAndSave,
                 variant: "danger",
-                countdown: 5,
               }}
               secondaryButton={{
                 label: "Continue Meeting",
@@ -220,7 +348,7 @@ const NewMeetingScreen = () => {
               }}
               tertiaryButton={{
                 label: "Discard meeting",
-                onPress: handleFinalDiscard,
+                onPress: handleDiscard,
                 variant: "neutral",
               }}
             />

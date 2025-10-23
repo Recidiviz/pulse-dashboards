@@ -17,8 +17,10 @@
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -38,6 +40,7 @@ import MeetingCard from "../components/MeetingCard";
 import SearchBar from "../components/SearchBar";
 import meetings from "../data/meetings";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { trpc } from "../trpc/client";
 
 type NewMeetingNavProp = StackNavigationProp<RootStackParamList, "NewMeeting">;
 type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
@@ -45,9 +48,14 @@ type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
 const ProfileScreen = () => {
   const navigation = useNavigation<NewMeetingNavProp>();
   const route = useRoute<NewMeetingRouteProp>();
-  const { client } = route.params;
+  const client = {
+    ...route.params.client,
+    // Convert this back into a BigInt for TRPC calls
+    personId: BigInt(route.params.client.personId),
+  };
   const insets = useSafeAreaInsets();
 
+  const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -98,6 +106,33 @@ const ProfileScreen = () => {
     return matchesSearch && matchesFilters;
   });
 
+  const createMeetingMutation = trpc.v1.client.createMeeting.useMutation();
+  const handleCreateMeeting = async () => {
+    try {
+      setIsCreating(true);
+      const startTime = new Date();
+      const { id: meetingId } = await createMeetingMutation.mutateAsync({
+        clientId: client.personId,
+        startTime,
+      });
+
+      navigation.navigate("NewMeeting", {
+        client: {
+          personId: client.personId.toString(),
+          fullName: client.fullName,
+          displayPersonExternalId: client.displayPersonExternalId,
+          supervision: client.supervision,
+        },
+        meetingId,
+      });
+    } catch (err) {
+      console.error("[createMeeting] Failed:", err);
+      Alert.alert("Error", "Failed to create meeting. Please try again.");
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-gray-100">
       <View
@@ -120,14 +155,8 @@ const ProfileScreen = () => {
             {isCollapsed && (
               <TouchableOpacity
                 className="px-2"
-                onPress={() =>
-                  navigation.navigate("NewMeeting", {
-                    client: {
-                      personId: client.personId,
-                      fullName: client.fullName,
-                    },
-                  })
-                }
+                onPress={handleCreateMeeting}
+                disabled={isCreating}
               >
                 <Image
                   source={Icons.Plus}
@@ -164,19 +193,16 @@ const ProfileScreen = () => {
             Meetings{" "}
             <Text className="text-gray-400">({filteredMeetings.length})</Text>
           </Text>
-
           <TouchableOpacity
-            className="rounded-full bg-[#006C67] px-4 py-2"
-            onPress={() =>
-              navigation.navigate("NewMeeting", {
-                client: {
-                  personId: client.personId,
-                  fullName: client.fullName,
-                },
-              })
-            }
+            className="w-[100px] flex-row items-center justify-center rounded-full bg-[#006C67] px-4 py-2"
+            onPress={handleCreateMeeting}
+            disabled={isCreating}
           >
-            <Text className="font-medium text-white">+ Meeting</Text>
+            {isCreating ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text className="font-medium text-white">+ Meeting</Text>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -200,9 +226,9 @@ const ProfileScreen = () => {
                 onPress={() => toggleFilter(filter)}
               >
                 <Text
-                  className={`text-sm ${
+                  className={`${
                     isActive ? "text-primary font-medium" : "text-gray-700"
-                  }`}
+                  } text-sm`}
                 >
                   {filter}
                 </Text>

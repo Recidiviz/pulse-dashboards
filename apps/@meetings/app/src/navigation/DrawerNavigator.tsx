@@ -32,8 +32,23 @@ export type RootStackParamList = {
   Messages: undefined;
   Schedule: undefined;
   Resources: undefined;
-  Profile: { client: { personId: bigint; fullName: string } };
-  NewMeeting: { client: { personId: bigint; fullName: string } };
+  Profile: {
+    client: {
+      personId: string;
+      fullName: string;
+      displayPersonExternalId: string;
+      supervision: string;
+    };
+  };
+  NewMeeting: {
+    client: {
+      personId: string;
+      fullName: string;
+      displayPersonExternalId: string;
+      supervision: string;
+    };
+    meetingId: string;
+  };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();

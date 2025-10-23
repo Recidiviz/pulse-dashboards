@@ -1,5 +1,6 @@
 {
   "plugins": [
-    "react-native-auth0"
+    "react-native-auth0",
+    "expo-audio"
   ]
 }
