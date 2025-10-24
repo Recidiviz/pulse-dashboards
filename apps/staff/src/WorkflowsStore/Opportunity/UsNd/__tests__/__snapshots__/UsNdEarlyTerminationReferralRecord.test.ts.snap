@@ -1,29 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`criteria are required 1`] = `
-{
-  "_errors": [],
-  "eligibleCriteria": {
-    "_errors": [],
-    "usNdImpliedValidEarlyTerminationSentenceType": {
-      "_errors": [
-        "Required",
-      ],
-    },
-    "usNdImpliedValidEarlyTerminationSupervisionLevel": {
-      "_errors": [
-        "Required",
-      ],
-    },
-    "usNdNotInActiveRevocationStatus": {
-      "_errors": [
-        "Required",
-      ],
-    },
-  },
-}
-`;
-
 exports[`eligibleCriteria must not be empty 1`] = `
 {
   "_errors": [],

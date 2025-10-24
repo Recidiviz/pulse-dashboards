@@ -19,7 +19,7 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { stringToIntSchema } from "../../schemaHelpers";
+import { nullishAsUndefined, stringToIntSchema } from "../../schemaHelpers";
 
 export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
   formInformation: z
@@ -48,24 +48,30 @@ export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
           eligibleDate: dateStringSchema.optional(),
         })
         .optional(),
-      usNdImpliedValidEarlyTerminationSupervisionLevel: z.object({
-        supervisionLevel: z.string(),
-      }),
-      usNdImpliedValidEarlyTerminationSentenceType: z.object({
-        supervisionType: z.string(),
-      }),
-      usNdNotInActiveRevocationStatus: z.object({
-        revocationDate: z.null(),
-      }),
+      usNdImpliedValidEarlyTerminationSupervisionLevel: z
+        .object({
+          supervisionLevel: z.string(),
+        })
+        .optional(),
+      usNdImpliedValidEarlyTerminationSentenceType: z
+        .object({
+          supervisionType: z.string(),
+        })
+        .optional(),
+      usNdNotInActiveRevocationStatus: z
+        .object({
+          revocationDate: z.null(),
+        })
+        .optional(),
     })
     .passthrough(),
   ineligibleCriteria: z
     .object({
-      supervisionPastEarlyDischargeDate: z
-        .object({
-          eligibleDate: dateStringSchema.optional(),
-        })
-        .optional(),
+      supervisionPastEarlyDischargeDate: nullishAsUndefined(
+        z.object({
+          eligibleDate: dateStringSchema.nullish(),
+        }),
+      ),
     })
     .passthrough(),
   metadata: z.object({

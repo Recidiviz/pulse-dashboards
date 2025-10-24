@@ -73,17 +73,6 @@ test("eligibleCriteria must not be empty", () => {
   ).toMatchSnapshot();
 });
 
-test("criteria are required", () => {
-  const testRecord = {
-    ...rawRecord,
-    eligibleCriteria: {},
-  };
-
-  expect(
-    getParseErrorFormatted(usNdEarlyTerminationSchema.safeParse(testRecord)),
-  ).toMatchSnapshot();
-});
-
 test("must not have revocation date", () => {
   const testRecord = {
     ...rawRecord,
