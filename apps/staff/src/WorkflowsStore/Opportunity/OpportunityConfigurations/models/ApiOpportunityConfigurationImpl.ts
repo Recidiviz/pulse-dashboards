@@ -470,4 +470,8 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get grantReviewStatusMessage() {
     return this.configurationObject.grantReviewStatusMessage ?? "Under Review";
   }
+
+  get customSubmittedText(): string | undefined {
+    return undefined;
+  }
 }

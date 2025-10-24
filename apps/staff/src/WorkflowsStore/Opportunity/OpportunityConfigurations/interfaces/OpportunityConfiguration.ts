@@ -140,4 +140,5 @@ export interface OpportunityConfiguration {
   grantReviewStatusMessage: string;
 
   excludeIndefiniteSnoozesFromTableView: boolean;
+  customSubmittedText?: string;
 }

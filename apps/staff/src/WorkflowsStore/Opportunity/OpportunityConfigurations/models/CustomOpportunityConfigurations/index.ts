@@ -49,7 +49,8 @@ const customOpportunityConfigurations: Partial<
   Record<OpportunityType, typeof ApiOpportunityConfiguration>
 > = {
   // Arizona
-  usAzTransferToAdministrativeSupervision: UsAzTransferToAdministrativeSupervisionConfiguration,
+  usAzTransferToAdministrativeSupervision:
+    UsAzTransferToAdministrativeSupervisionConfiguration,
   usAzReleaseToDTP: UsAzReleaseToDTPConfiguration,
   usAzReleaseToTPR: UsAzReleaseToTPRConfiguration,
 

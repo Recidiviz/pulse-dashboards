@@ -31,4 +31,8 @@ export class UsAzTransferToAdministrativeSupervisionConfiguration extends ApiOpp
       (counts["Eligible per Initial Assessment"] ?? 0)
     );
   };
+
+  get customSubmittedText(): string {
+    return "Don't forget to remove them from the [drug testing schedule](https://aversys.averhealth.com).";
+  }
 }

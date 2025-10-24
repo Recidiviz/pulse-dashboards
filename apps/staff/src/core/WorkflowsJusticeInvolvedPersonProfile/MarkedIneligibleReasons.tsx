@@ -18,6 +18,7 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { format, isEqual } from "date-fns";
 import { rem } from "polished";
+import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
@@ -41,6 +42,19 @@ const OtherReasonText = styled.pre`
   color: ${palette.slate85};
   text-wrap: inherit;
   margin: ${rem(spacing.md)} 0 0 0;
+`;
+
+const StyledMarkdownView = styled(MarkdownView)`
+  p {
+    margin: 1rem 0 0;
+  }
+  a {
+    color: ${palette.signal.links} !important;
+    padding-top: ${rem(spacing.sm)};
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 export function buildActedOnText({
@@ -213,7 +227,13 @@ const MarkedIneligibleReasons: React.FC<{
   if (opportunity.isSubmitted) {
     return (
       <MarkedIneligibleReasonsText className="MarkedIneligibleReasonsText">
-        <div>{`Marked as ${actedOnTextAndResurfaceTextPair[0]}`} </div>
+        <div>{`Marked as ${actedOnTextAndResurfaceTextPair[0]}`}</div>
+        {opportunity.config.customSubmittedText && (
+          <StyledMarkdownView
+            markdown={opportunity.config.customSubmittedText}
+            options={{ openLinksInNewWindow: true }}
+          ></StyledMarkdownView>
+        )}
       </MarkedIneligibleReasonsText>
     );
   }
