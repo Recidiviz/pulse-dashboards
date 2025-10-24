@@ -19,6 +19,26 @@ import { OpportunityTabGroups } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsIdFacilitiesConfiguration extends ApiOpportunityConfiguration {
+  get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {
+    const snoozeLengthOverrides = {
+      ESCAPE_ABSCONSION: undefined,
+      SEX_OFFENSE: undefined,
+    };
+
+    return {
+      ...super.maxSnoozeDaysByDenialReason,
+      ...snoozeLengthOverrides,
+    };
+  }
+
+  get indefiniteSnoozeSectionSubheading(): string {
+    return "";
+  }
+
+  get excludeIndefiniteSnoozesFromTableView() {
+    return false;
+  }
+
   get tabGroups(): OpportunityTabGroups {
     return {
       ...this.configurationObject.tabGroups,
