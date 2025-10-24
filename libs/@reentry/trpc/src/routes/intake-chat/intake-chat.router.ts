@@ -19,8 +19,9 @@ import { AIMessage } from "@langchain/core/messages";
 import { tracked, TRPCError } from "@trpc/server";
 import EventEmitter, { on } from "events";
 
-import { getIntakeConfigForState, IntakeAgent } from "~@reentry/intake-agent";
+import { IntakeAgent } from "~@reentry/intake-agent";
 import { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
+import { getIntakeConfigForState } from "~@reentry/intake-agent/intake_configs/utils";
 import { Prisma } from "~@reentry/prisma/client";
 import { regularJwtProcedure, router } from "~@reentry/trpc/init";
 import { INTAKE_GET_ARGS } from "~@reentry/trpc/routes/intake-chat/constants";

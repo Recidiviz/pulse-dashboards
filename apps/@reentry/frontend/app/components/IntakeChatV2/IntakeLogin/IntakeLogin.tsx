@@ -240,7 +240,6 @@ export default function IntakeLogin() {
               disabled={isLoading}
             >
               <option value="">Select a state</option>
-              <option value="US_AZ">Arizona</option>
               <option value="US_ID">Idaho</option>
               <option value="US_UT">Utah</option>
             </select>

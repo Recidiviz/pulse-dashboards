@@ -28,6 +28,7 @@ import {
 import { CLIENT_PERSONAS } from "~@reentry/intake-agent/evaluate/profiles";
 import { IntakeAgent } from "~@reentry/intake-agent/index";
 import { getIntakeConfigForState } from "~@reentry/intake-agent/intake_configs/utils";
+import { StateCode } from "~@reentry/prisma/client";
 
 const OPENAI_API_KEY = process.env["OPENAI_API_KEY"];
 
@@ -36,7 +37,7 @@ const model = new ChatOpenAI({
   model: "gpt-5-mini-2025-08-07",
 });
 
-const config = getIntakeConfigForState("US_ID");
+const config = getIntakeConfigForState(StateCode.US_ID);
 
 async function main() {
   const persona = CLIENT_PERSONAS["Ethan 'Eddie' Sullivan"];
@@ -78,10 +79,10 @@ async function main() {
       )
       .join("\n\n")}
 
-    Please respond to the last question that was asked of you. 
-    
+    Please respond to the last question that was asked of you.
+
     - Your answer should be based on the summary and detailed breakdown provided above, do not make anything up. However you can assume you are a US born citizen if that is relevant to answering the question.
-    - Your answer should be concise (at most two short sentences) and relevant to your current situation. 
+    - Your answer should be concise (at most two short sentences) and relevant to your current situation.
     - If you do not know the answer, say "I don't know." If you are unsure, say "I'm not sure."
     `,
     client: model,
@@ -181,10 +182,10 @@ async function main() {
 
       {outputs}
 
-      Evaluate on a scale of 1 to 10 on whether, for each individual response it gave, the social worked only grouped related questions together. 
-      
+      Evaluate on a scale of 1 to 10 on whether, for each individual response it gave, the social worked only grouped related questions together.
+
       An example of two related questions is "Do you have any government-issued photo ID (like a state ID or driver's license)?" and "If you don't, would you like help getting one?"
-      
+
       An example of two unrelated questions is "Would you like help getting a government-issued photo ID?" and "Are you a veteran, and if so, what type of discharge did you receive (Honorable, General under honorable conditions, or Other Than Honorable)?"
 
       A score of 1 means that for every response where they grouped questions together, the social worked grouped unrelated questions together, and a score of 10 means that for every single response where they grouped questions together, they only grouped related questions.

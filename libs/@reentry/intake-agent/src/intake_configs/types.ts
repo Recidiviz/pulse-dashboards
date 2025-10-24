@@ -15,22 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { IntakeStateConfigMap } from "~@reentry/intake-agent/intake_configs/types";
-import { US_ID_CONFIG } from "~@reentry/intake-agent/intake_configs/US_ID";
-import { US_UT_CONFIG } from "~@reentry/intake-agent/intake_configs/US_UT";
-import { StateCode } from "~@reentry/prisma/client";
-
-export const configs: IntakeStateConfigMap = {
-  US_UT: US_UT_CONFIG,
-  US_ID: US_ID_CONFIG,
+export type IntakeStateConfig = {
+  version: string;
+  sections: {
+    title: string;
+    description: string;
+    requiredInformation: string;
+  }[];
+  sectionTitles: string[];
+  role: string;
 };
 
-export function getIntakeConfigForState(stateCode: StateCode) {
-  const config = configs[stateCode];
-  if (!config) {
-    throw new Error(
-      `No intake configuration found for state code: ${stateCode}`,
-    );
-  }
-  return config;
-}
+export type IntakeStateConfigMap = {
+  [stateCode: string]: IntakeStateConfig;
+};

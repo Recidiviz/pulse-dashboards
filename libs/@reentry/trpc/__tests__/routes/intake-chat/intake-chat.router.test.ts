@@ -19,7 +19,7 @@ import { faker } from "@faker-js/faker";
 import { BaseMessage } from "@langchain/core/messages";
 import { describe, test } from "vitest";
 
-import { getIntakeConfigForState } from "~@reentry/intake-agent";
+import { getIntakeConfigForState } from "~@reentry/intake-agent/intake_configs/utils";
 import { StateCode } from "~@reentry/prisma/client";
 import {
   initTRPCClient,

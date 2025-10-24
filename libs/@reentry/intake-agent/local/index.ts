@@ -23,6 +23,7 @@ import inquirer from "inquirer";
 
 import { IntakeAgent } from "~@reentry/intake-agent/index";
 import { getIntakeConfigForState } from "~@reentry/intake-agent/intake_configs/utils";
+import { StateCode } from "~@reentry/prisma/client";
 
 async function main() {
   const { checkpointerOption } = await inquirer.prompt({
@@ -54,7 +55,7 @@ async function main() {
     checkpointer,
     clientName: name,
     intakeId: name,
-    config: getIntakeConfigForState("US_ID"),
+    config: getIntakeConfigForState(StateCode.US_ID),
   });
 
   const initialMessages = await agent.init();

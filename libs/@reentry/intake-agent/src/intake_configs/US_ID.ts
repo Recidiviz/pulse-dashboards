@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { IntakeStateConfig } from "~@reentry/intake-agent/intake_configs/types";
 import { Sections } from "~@reentry/prisma/types";
 
 export const ROLE = `
 Role: You are a social worker conducting a structured intake assessment with a new client who is currently in a prison facility and preparing for their release.
 `;
 
+// NOTE: when making changes to these sections, please also update the version number in US_ID_CONFIG below.
 export const US_ID_SECTIONS: Sections = [
   {
     title: "Basic Information",
@@ -28,7 +30,7 @@ export const US_ID_SECTIONS: Sections = [
     requiredInformation: `
       1. Does the client have a birth certificate? If not, do they need assistance obtaining one?
       2. Does the client have a social security card? If not, do they need assistance obtaining one? If they do, do they know their social security number (tell them they should not give the number)?
-      3. Does the client have a government-issued ID? 
+      3. Does the client have a government-issued ID?
          a. If they do, is it a driver's license issued by the DMV within the past 10 years? If so, is it currently valid, and, if so, when does it expire? If it's not valid, has the license been suspended or revoked? If so, when, what county ordered it, and why was the suspension or revocation ordered?
          b. If they do not, do they need assistance obtaining one?
       4. Is the client a veteran? If so, was the client's character of discharge Honorable Discharge, General Discharge under Honorable Conditions, or Other Than Honorable Discharge?
@@ -63,8 +65,8 @@ export const US_ID_SECTIONS: Sections = [
     title: "Employment",
     description: "Your employment history and goals",
     requiredInformation: `
-      1. Does the client plan to work after release? 
-         a . If yes, how many hours per week does the client seek to work, what jobs would the client ideally like to have after release, does the client have a resume, and does the client have a professional email address for job applications? 
+      1. Does the client plan to work after release?
+         a . If yes, how many hours per week does the client seek to work, what jobs would the client ideally like to have after release, does the client have a resume, and does the client have a professional email address for job applications?
          b. If no, is the client planning to apply for disability benefits (SSI/SSDI)? Is the client planning to be a full-time student or homemaker?
       2. What is the client's past work experience?
       3. Does the client still have a good relationship with any prior employers? If yes, What are the name(s) of those prior employers?
@@ -140,7 +142,8 @@ export const US_ID_SECTIONS: Sections = [
 
 export const SECTION_TITLES = US_ID_SECTIONS.map((section) => section.title);
 
-export const config = {
+export const US_ID_CONFIG: IntakeStateConfig = {
+  version: "v1",
   sections: US_ID_SECTIONS,
   sectionTitles: SECTION_TITLES,
   role: ROLE,
