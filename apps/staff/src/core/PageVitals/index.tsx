@@ -43,8 +43,8 @@ const PageVitals: React.FC = () => {
   const isMobile = useIsMobile();
   const displayHeader = !isMobile;
 
-  const { metricsStore, vitalsStore } = useCoreStore();
-  const { isLoading, isError } = metricsStore.vitals;
+  const { vitalsStore } = useCoreStore();
+  const { isLoading, isError } = vitalsStore.vitals;
   const { currentEntitySummary, downloadData, childEntitySummaryRows } =
     vitalsStore;
 

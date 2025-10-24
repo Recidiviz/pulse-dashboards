@@ -26,6 +26,7 @@ import {
   VitalsSummaryRecord,
   VitalsTimeSeriesRecord,
 } from "../models/types";
+import VitalsMetrics from "../models/VitalsMetrics";
 import {
   DEFAULT_ENTITY_ID,
   DownloadableData,
@@ -66,6 +67,13 @@ export default class VitalsStore {
     );
   }
 
+  get vitals(): VitalsMetrics {
+    return new VitalsMetrics({
+      tenantId: this.rootStore.currentTenantId,
+      sourceEndpoint: "vitals",
+    });
+  }
+
   setCurrentEntityId(entityId: string): void {
     this.currentEntityId = entityId;
   }
@@ -75,11 +83,11 @@ export default class VitalsStore {
   }
 
   get summaries(): VitalsSummaryRecord[] {
-    return this.rootStore.metricsStore.vitals.summaries;
+    return this.vitals.summaries;
   }
 
   get timeSeries(): VitalsTimeSeriesRecord[] {
-    return this.rootStore.metricsStore.vitals.timeSeries;
+    return this.vitals.timeSeries;
   }
 
   setSelectedMetricId(metricId: MetricType): void {

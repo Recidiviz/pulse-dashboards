@@ -27,7 +27,6 @@ import {
   createProjectionTimeSeries,
   createSupervisionPopulationSnapshot,
 } from "../models/utils";
-import VitalsMetrics from "../models/VitalsMetrics";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../views";
 import type CoreStore from ".";
 
@@ -49,13 +48,6 @@ export default class MetricsStore {
   constructor({ rootStore }: { rootStore: CoreStore }) {
     makeAutoObservable(this);
     this.rootStore = rootStore;
-  }
-
-  get vitals(): VitalsMetrics {
-    return new VitalsMetrics({
-      tenantId: this.rootStore.currentTenantId,
-      sourceEndpoint: "vitals",
-    });
   }
 
   get current():
@@ -147,6 +139,11 @@ export default class MetricsStore {
       };
     }
 
+    // TODO(#10259) Remove this default return when the MetricsStore and VitalsStore
+    // are broken out of the CoreStore
+    if (!Object.keys(PATHWAYS_PAGES).includes(page)) {
+      return this.map[PATHWAYS_PAGES.prison][PATHWAYS_SECTIONS.countOverTime];
+    }
     return this.map[page][section];
   }
 

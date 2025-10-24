@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { runInAction } from "mobx";
+
 import { RootStore } from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import VitalsMetrics from "../../models/VitalsMetrics";
@@ -67,8 +69,7 @@ let vitalsStore: VitalsStore;
 
 describe("VitalsStore", () => {
   beforeEach(() => {
-    // @ts-expect-error
-    vi.mocked(VitalsMetrics).mockImplementation(() => ({
+    const mockVitalsMetricsInstance = {
       timeSeries: [
         {
           date: "2021-03-11",
@@ -169,7 +170,11 @@ describe("VitalsStore", () => {
           timelyDowngrade: 67,
         },
       ],
-    }));
+    };
+    Object.setPrototypeOf(mockVitalsMetricsInstance, VitalsMetrics.prototype);
+    vi.mocked(VitalsMetrics).mockImplementation(
+      () => mockVitalsMetricsInstance as VitalsMetrics,
+    );
   });
 
   describe("when the tenant is US_ND", () => {
@@ -313,7 +318,7 @@ describe("VitalsStore", () => {
           },
           {
             accessor: "timelyRiskAssessment",
-            description: `of clients have had an initial assessment within 30 days and 
+            description: `of clients have had an initial assessment within 30 days and${" "}
         reassessment within 212 days`,
             id: "RISK_ASSESSMENT",
             name: "Timely risk assessments",
@@ -321,6 +326,25 @@ describe("VitalsStore", () => {
         ];
         const result = vitalsStore.metrics;
         expect(result).toEqual(expected);
+      });
+    });
+
+    describe("vitals", () => {
+      it("has a reference to the vitals metrics", () => {
+        expect(vitalsStore.vitals).toBeInstanceOf(VitalsMetrics);
+      });
+    });
+
+    describe("when the tenantId changes", () => {
+      it("fetches new vitals metrics for the new tenantId", () => {
+        runInAction(() => {
+          coreStore.tenantStore.currentTenantId = "US_ID";
+          expect(vitalsStore.vitals).toBeInstanceOf(VitalsMetrics);
+          expect(VitalsMetrics).toHaveBeenCalledWith({
+            tenantId: "US_ID",
+            sourceEndpoint: "vitals",
+          });
+        });
       });
     });
   });
@@ -464,6 +488,12 @@ describe("VitalsStore", () => {
         ];
         const result = vitalsStore.metrics;
         expect(result).toEqual(expected);
+      });
+    });
+
+    describe("vitals", () => {
+      it("has a reference to the vitals metrics", () => {
+        expect(vitalsStore.vitals).toBeInstanceOf(VitalsMetrics);
       });
     });
   });

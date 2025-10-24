@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { runInAction } from "mobx";
-
 import flags from "../../../flags";
 import { RootStore } from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore";
@@ -25,7 +23,6 @@ import OverTimeMetric from "../../models/OverTimeMetric";
 import PathwaysMetric from "../../models/PathwaysMetric";
 import PopulationProjectionOverTimeMetric from "../../models/PopulationProjectionOverTimeMetric";
 import SupervisionPopulationSnapshotMetric from "../../models/SupervisionPopulationSnapshotMetric";
-import VitalsMetrics from "../../models/VitalsMetrics";
 import CoreStore from "..";
 
 let coreStore: CoreStore;
@@ -53,10 +50,6 @@ describe("MetricsStore", () => {
       flags.defaultMetricBackend = "OLD";
       // @ts-ignore
       flags.metricBackendOverrides = {};
-    });
-
-    it("has a reference to the vitals metrics", () => {
-      expect(coreStore.metricsStore.vitals).toBeInstanceOf(VitalsMetrics);
     });
 
     it("has a reference to the projectedPrisonPopulationOverTime metric", () => {
@@ -139,19 +132,6 @@ describe("MetricsStore", () => {
           !!metric.accessorIsNotFilterType,
         );
       }
-    });
-  });
-
-  describe("when the tenantId changes", () => {
-    it("fetches new vitals metrics for the new tenantId", () => {
-      runInAction(() => {
-        coreStore.tenantStore.currentTenantId = "US_ID";
-        expect(coreStore.metricsStore.vitals).toBeInstanceOf(VitalsMetrics);
-        expect(VitalsMetrics).toHaveBeenCalledWith({
-          tenantId: "US_ID",
-          sourceEndpoint: "vitals",
-        });
-      });
     });
   });
 });
