@@ -6,13 +6,21 @@
   height: 100%;
 }
 
-.spinner {
-  width: 48px;
-  height: 48px;
+.spinner, .spinner-regular, .spinner-mini {
   border: 4px solid var(--shadow-10);
   border-top-color: var(--color-green-1);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+.spinner-regular {
+  width: 48px;
+  height: 48px;
+}
+
+.spinner-mini {
+  width: 20px;
+  height: 20px;
 }
 
 .message {

@@ -123,8 +123,8 @@ describe("staff router", () => {
           staffPseudoId: fakeStaff.pseudonymizedId,
         },
       );
-
-      expect(result[fakeClient.pseudonymizedId]).toBe("in_progress");
+      // `in_progress` from v0 maps to `processing`
+      expect(result[fakeClient.pseudonymizedId]).toBe("processing");
     });
   });
 

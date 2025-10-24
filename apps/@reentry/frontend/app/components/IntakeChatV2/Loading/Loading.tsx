@@ -21,11 +21,14 @@ import styles from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading.m
 
 interface LoadingProps {
   message?: string;
+  type?: "regular" | "mini";
 }
 
-const Loading: React.FC<LoadingProps> = ({ message = "Loading..." }) => (
+const Loading: React.FC<LoadingProps> = ({ message = "Loading...", type }) => (
   <div className={styles["container"]}>
-    <div className={styles["spinner"]} />
+    <div
+      className={styles[type === "mini" ? "spinner-mini" : "spinner-regular"]}
+    />
     <div className={styles["message"]}>{message}</div>
   </div>
 );

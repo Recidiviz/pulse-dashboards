@@ -50,6 +50,20 @@ export function resolveIntakeStatus(
   const id = client.pseudonymizedId;
   const processingStatus = processingStatusMap[id];
 
+  // Format select v0 processing statuses
+  if (processingStatus === "in_progress") {
+    // v0 Backend sends `in_progress` status for clients with intake summary and action plan being generated
+    return "processing";
+  }
+
+  if (processingStatus === "completed") {
+    return "intake_complete";
+  }
+
+  /**
+   * If the below statuses are provided by the v0 backend, we can assume this is an intake that lives in
+   * the v1 backend, and we can infer the status based on the v1 intake and client's enabled status.
+   */
   if (processingStatus === "unknown" || processingStatus === "not_started") {
     const latestIntake = client.Intake[client.Intake.length - 1];
 

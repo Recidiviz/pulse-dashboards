@@ -35,6 +35,7 @@ import { $api } from "~@reentry/frontend/api";
 import CustomPagination from "~@reentry/frontend/components/base/CustomPagination";
 import { IconInput } from "~@reentry/frontend/components/base/SortingInput";
 import ActionButton from "~@reentry/frontend/components/clients/ActionButton";
+import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
@@ -138,9 +139,15 @@ const ClientsPage = () => {
     if (!openDropdownId) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      const clickedToggleButton = (event.target as HTMLElement).closest('[data-dropdown-toggle]');
+      const clickedToggleButton = (event.target as HTMLElement).closest(
+        "[data-dropdown-toggle]",
+      );
 
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&  !clickedToggleButton) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        !clickedToggleButton
+      ) {
         setOpenDropdownId(null);
         setActiveRowId(null);
       }
@@ -309,23 +316,23 @@ const ClientsPage = () => {
     total: number;
     page: number;
     rowsPerPage: number;
-    columns: TableColumn<ClientResponse>[];
     customStyles: TableStyles;
     onSort: (
       column: TableColumn<ClientResponse>,
       sortDirection: SortOrder,
     ) => void;
     SortIconComp: React.ReactNode;
+    buildColumns: (statusLoading?: boolean) => TableColumn<ClientResponse>[];
     activeRowId: string | null;
   }> = ({
     items,
     total,
     page,
     rowsPerPage,
-    columns,
     customStyles,
     onSort,
     SortIconComp,
+    buildColumns,
     activeRowId,
   }) => {
     const auth = useAuth();
@@ -333,7 +340,7 @@ const ClientsPage = () => {
     const staffPseudoId = auth.userAppMetadata?.pseudonymizedId;
     const enableGetClientsIntakeStatus = Boolean(stateCode && staffPseudoId);
 
-    const { data: intakeStatuses } =
+    const { data: intakeStatuses, isLoading } =
       trpc.staff.getAllClientsIntakeStatus.useQuery(
         {
           staffPseudoId: staffPseudoId ?? "",
@@ -352,6 +359,8 @@ const ClientsPage = () => {
         frontend_status: statusOverride || item.frontend_status,
       };
     });
+
+    const columns = buildColumns(isLoading);
 
     return (
       <DataTable
@@ -393,7 +402,9 @@ const ClientsPage = () => {
     );
   };
 
-  const columns = [
+  const buildColumns = (
+    statusLoading?: boolean,
+  ): TableColumn<ClientResponse>[] => [
     {
       name: "NAME",
       cell: (row: ClientResponse) => (
@@ -434,7 +445,11 @@ const ClientsPage = () => {
       cell: (row: ClientResponse) => (
         <div className="flex gap-2 items-center pointer-events-none">
           <span className="text-[#002321] text-sm font-medium">
-            {formatFrontendStatus(row.frontend_status)}
+            {statusLoading ? (
+              <Loading type="mini" message="" />
+            ) : (
+              formatFrontendStatus(row.frontend_status)
+            )}
           </span>
         </div>
       ),
@@ -472,56 +487,56 @@ const ClientsPage = () => {
           total={data?.total || 0}
           page={page}
           rowsPerPage={rowsPerPage}
-          columns={columns}
           customStyles={customStyles}
           onSort={handleSort}
           SortIconComp={<SortIcon />}
+          buildColumns={buildColumns}
           activeRowId={activeRowId}
         />
       );
     }
     return (
-        <div className="w-full overflow-x-auto">
-      <DataTable
-        columns={columns}
-        data={data?.items || []}
-        customStyles={customStyles}
-        sortIcon={<SortIcon />}
-        onSort={handleSort}
-        noHeader
-        responsive
-        highlightOnHover
-        noDataComponent={
-          <div className="text-gray-600 py-4 ">No clients found.</div>
-        }
-        conditionalRowStyles={[
-          {
-            when: (row) => row.client_pseudo_id === activeRowId,
-            style: {
-              backgroundColor: "bg-gray-200",
-              "&:hover": {
+      <div className="w-full overflow-x-auto">
+        <DataTable
+          columns={buildColumns()}
+          data={data?.items || []}
+          customStyles={customStyles}
+          sortIcon={<SortIcon />}
+          onSort={handleSort}
+          noHeader
+          responsive
+          highlightOnHover
+          noDataComponent={
+            <div className="text-gray-600 py-4 ">No clients found.</div>
+          }
+          conditionalRowStyles={[
+            {
+              when: (row) => row.client_pseudo_id === activeRowId,
+              style: {
                 backgroundColor: "bg-gray-200",
+                "&:hover": {
+                  backgroundColor: "bg-gray-200",
+                },
               },
             },
-          },
-        ]}
-        pagination
-        paginationComponent={() => (
-          <CustomPagination
-            currentPage={page}
-            totalRows={data?.total || 0}
-            rowsPerPage={rowsPerPage}
-          />
-        )}
-        onRowClicked={(row) => {
-          router.push(`/clients/intake/${row.client_pseudo_id}`);
-          track("clients_page_navigate_to_client_profile_link_clicked", {
-            justiceInvolvedPersonId: row.client_pseudo_id,
-          });
-        }}
-        pointerOnHover
-      />
-        </div>
+          ]}
+          pagination
+          paginationComponent={() => (
+            <CustomPagination
+              currentPage={page}
+              totalRows={data?.total || 0}
+              rowsPerPage={rowsPerPage}
+            />
+          )}
+          onRowClicked={(row) => {
+            router.push(`/clients/intake/${row.client_pseudo_id}`);
+            track("clients_page_navigate_to_client_profile_link_clicked", {
+              justiceInvolvedPersonId: row.client_pseudo_id,
+            });
+          }}
+          pointerOnHover
+        />
+      </div>
     );
   };
 
