@@ -26,7 +26,6 @@ const API_BASE_URL = process.env["NEXT_PUBLIC_V2_API_URL"] || "";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
