@@ -112,6 +112,7 @@ export class IntakeAgent {
     }
 
     // If a message id was provided, just return all of the AI messages from that point onwards. Otherwise, fetch the next messages.
+
     if (lastMessageId) {
       const state = await this.graph.getState({
         configurable: {
@@ -125,6 +126,11 @@ export class IntakeAgent {
       const newAiMessages = newMessages.filter((message) =>
         isAIMessage(message),
       );
+
+      // Make sure the update the state of the agent
+      // If there are no next nodes, the agent is complete. Otherwise, it's should be waiting for a response.
+      this.status =
+        state.next.length === 0 ? "complete" : "waiting_for_response";
 
       return newAiMessages;
     }

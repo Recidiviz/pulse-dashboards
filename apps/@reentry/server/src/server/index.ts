@@ -139,12 +139,14 @@ export function buildServer() {
       return;
     }
 
-    const token = server.jwt.regular.sign({
-      pseudonymizedId: client.pseudonymizedId,
-      sub: client.pseudonymizedId,
-      token_type: "client",
-      login_timestamp: Date.now() / 1000,
-    });
+    const token = server.jwt.regular.sign(
+      {
+        pseudonymizedId: client.pseudonymizedId,
+        sub: client.pseudonymizedId,
+        token_type: "client",
+        login_timestamp: Date.now() / 1000,
+      },
+    );
 
     return token;
   });
