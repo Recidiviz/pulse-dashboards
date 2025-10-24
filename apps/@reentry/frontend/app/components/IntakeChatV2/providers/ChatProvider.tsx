@@ -106,11 +106,13 @@ export const ChatProvider: React.FC<{
           if ("messages" in payload.data) {
             const newMessages = payload.data.messages as Message[];
             setMessages((prev) => [...prev, ...newMessages]);
+            if (newMessages.length) {
+              setWaitingForAIInput(false);
+            }
           }
           if ("status" in payload.data) {
             setIntakeStatus(payload.data.status as AgentStatus);
           }
-          setWaitingForAIInput(false);
         }
       },
       onError(err) {
