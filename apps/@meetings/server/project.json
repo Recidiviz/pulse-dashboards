@@ -35,14 +35,10 @@
         {
           "projects": ["@meetings/prisma"],
           "target": "docker"
-        },
-        {
-          "projects": ["@meetings/prisma"],
-          "target": "prisma-seed"
         }
       ],
       "options": {
-        "command": "vite-node --watch src/main.ts",
+        "command": "GOOGLE_APPLICATION_CREDENTIALS=recidiviz-dashboard-staging-22598baea1a7.json vite-node --watch src/main.ts",
         "cwd": "{projectRoot}"
       }
     },

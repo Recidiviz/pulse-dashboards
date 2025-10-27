@@ -26,7 +26,9 @@ If you haven't already, follow the setup instructions in the root README to inst
    ```
 
    Replace `your-bucket-name` with the name of your GCS bucket.
-4. Start the server with `nx dev @meetings/server`.
+4. Get the service account key JSON file for the `recidiviz-dashboard-staging` GCP project from your team lead and put it in this directory. Name the file `recidiviz-dashboard-staging-22598baea1a7.json`.
+5. [Only if this is the first time you're setting up the project/you want to re-seed the database] Run `nx run @meetings/prisma:docker && nx run @meetings/prisma:prisma-seed` to seed the database with initial data.
+6. Start the server with `nx dev @meetings/server`.
 
 ### Updating the prisma schema
 
