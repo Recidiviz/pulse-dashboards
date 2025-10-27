@@ -47,6 +47,8 @@ main:
     - append_dry_run_argument:
         assign:
           - process_data_args: ${list.concat(process_data_args, "--dry-run")}
+    - skip_logic:
+        return: ${"Did not trigger processor execution"}
     - process_data:
         call: googleapis.run.v2.projects.locations.jobs.run
         args:
@@ -56,7 +58,5 @@ main:
               containerOverrides:
                 args: ${process_data_args}
         result: process_job_execution
-    - skip_logic:
-        return: ${"Did not trigger processor execution"}
     - return:
         return: ${process_job_execution}
