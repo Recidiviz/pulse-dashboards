@@ -32,18 +32,58 @@ Production
 
 ## Development
 
-If you haven't already, follow the setup instructions in the root README to install dependencies.
+**Prerequisites**
+Ensure that 1) the correct version of Node.js by running `nvm use` and 2) the Docker daemon are running.
 
-1. Get env variables by running `nx load-env-files sentencing`
+Complete the initial dependency setup by following the instructions in the root README.md.
 
-   This way, `nx` will automatically pick up the correct environment variables based on the targets you are running.
+**Step 1: Obtain Feature Access & Permissions**
+The PSI/Sentencing features are currently configured for certain states. You need a Auth0 user account associated with these states to proceed.
 
-2. Make sure you have your Docker daemon running.
-3. Start the server with `nx dev sentencing`.
+Submit an access request through the Security team to be granted access to North Dakota (ND) and Idaho (ID) via our Auth0 staging tenant.
+
+**Step 2: Load Environment Variables**
+Before running the server, you must securely fetch the necessary secrets (like `AUTH0_CLIENT_SECRET` and database URLs) from Google Cloud Secret Manager.
+
+First, run `gcloud auth login` to authenticate.
+
+Next, run the following command to load the environment variables into your local .env files:
+
+`nx run @sentencing/server:load-env-files`
+
+**Step 3: Seed the Database (First Run or Reset)**
+The seed command performs a full database reset, creates all test fixture data, and crucially, links that data to your Auth0 pseudonymizedId.
+
+Database Scope: Locally, we only seed the database for Idaho (ID). You must always develop and test locally using your ID credentials.
+
+Run the Command: Execute the seed command below. It will prompt you for your Recidiviz email address.
+
+`nx run @sentencing/prisma:prisma-seed`
+
+**Step 4: Start the Backend and Frontend**
+Run the required services in separate terminal tabs.
+
+Start the Backend:
+`nx dev @sentencing/server`
+
+Start the Frontend:
+`nx dev staff`
+
+You can now navigate to the PSI endpoints (http://localhost:3000/psi?tenantId=US_ID) in your browser.
 
 ### Updating the prisma schema
 
-Instructions for updating the prisma schema are in the [prisma README](../../libs/@sentencing/prisma/README.md).
+To update the Prisma schema, modify the file at:
+
+`libs/@sentencing/prisma/prisma/schema.prisma`
+
+Then, to run a migration so the changes appear in your local database, run:
+
+`nx run @sentencing/prisma:prisma-migrate`
+
+If you want to what's in your local database, run:
+
+`nx run @sentencing/prisma:prisma-studio`
 
 ### Add support for a new state
 

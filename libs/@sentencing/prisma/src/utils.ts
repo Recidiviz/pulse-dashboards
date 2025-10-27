@@ -21,8 +21,11 @@ import { PrismaClient } from "~@sentencing/prisma/client";
 
 const prismaClients: Record<string, PrismaClient> = {};
 
-export function getPrismaClientForStateCode(stateCode: string) {
-  const dbUrl = process.env[`DATABASE_URL_${stateCode}`];
+export function getPrismaClientForStateCode(stateCode?: string | undefined) {
+  const dbUrl: string | undefined =
+    process.env["NODE_ENV"] === "development" || !stateCode
+      ? process.env["DATABASE_URL"]
+      : process.env[`DATABASE_URL_${stateCode}`];
 
   if (!dbUrl) {
     throw Error(
@@ -32,7 +35,7 @@ export function getPrismaClientForStateCode(stateCode: string) {
 
   if (!prismaClients[dbUrl]) {
     const adapter = new PrismaPg({
-      connectionString: process.env[`DATABASE_URL_${stateCode}`],
+      connectionString: dbUrl,
     });
     prismaClients[dbUrl] = new PrismaClient({ adapter });
   }

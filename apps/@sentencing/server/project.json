@@ -34,10 +34,6 @@
         {
           "projects": ["@sentencing/prisma"],
           "target": "docker"
-        },
-        {
-          "projects": ["@sentencing/prisma"],
-          "target": "prisma-seed"
         }
       ],
       "options": {
