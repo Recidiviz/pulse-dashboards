@@ -71,9 +71,9 @@ export function UsMiSecondaryOfficersAndDockets({
         <>
           <DetailsHeading>Secondary Officers</DetailsHeading>
           <SecureDetailsContent>{officers.join(", ")}</SecureDetailsContent>
+          <Divider />
         </>
       )}
-      <Divider />
       {dockets.length > 0 && (
         <>
           <DetailsHeading>Dockets</DetailsHeading>
