@@ -40,6 +40,10 @@ import MeetingSheet from "../components/MeetingSheet";
 import SubHeader from "../components/SubHeader";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
+import {
+  requestNotificationPermissions,
+  sendNotification,
+} from "../utils/notifications";
 
 type ProfileNavProp = StackNavigationProp<RootStackParamList, "Profile">;
 type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
@@ -53,6 +57,7 @@ const NewMeetingScreen = () => {
     personId: BigInt(route.params.client.personId),
   };
   const { meetingId } = route.params;
+  const MAX_RECORDING_SECONDS = 90 * 60;
 
   const [status, setStatus] = useState<
     | "idle"
@@ -77,9 +82,16 @@ const NewMeetingScreen = () => {
       await setAudioModeAsync({
         playsInSilentMode: true,
         allowsRecording: true,
+        shouldPlayInBackground: true,
       });
     })();
+    requestNotificationPermissions();
   }, []);
+
+  useEffect(() => {
+    handleAutoStopRecording();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recorderState.isRecording]);
 
   const endMeetingMutation = trpc.v1.meeting.endMeeting.useMutation({
     onSuccess: () => {
@@ -118,30 +130,32 @@ const NewMeetingScreen = () => {
 
   const startRecording = async () => {
     await audioRecorder.prepareToRecordAsync();
-    audioRecorder.record();
+    audioRecorder.recordForDuration(MAX_RECORDING_SECONDS);
     setStatus("recording");
   };
   const stopRecording = () => setStatus("stopping");
+
+  const stopAndUploadRecording = async () => {
+    try {
+      await audioRecorder.stop();
+      const uri = audioRecorder.uri;
+      if (uri) await uploadSegmentToGCS(uri);
+    } catch (err) {
+      console.error("[UploadRecordingFailed] error:", err);
+      Alert.alert("Upload Recording Failed");
+    } finally {
+      setStatus("paused");
+    }
+  };
 
   const togglePauseResume = async () => {
     if (status === "uploading") return;
 
     if (status === "paused") {
-      await audioRecorder.prepareToRecordAsync();
-      audioRecorder.record();
-      setStatus("recording");
+      startRecording();
     } else if (status === "recording") {
       setStatus("uploading");
-      try {
-        await audioRecorder.stop();
-        const uri = audioRecorder.uri;
-        if (uri) await uploadSegmentToGCS(uri);
-      } catch (err) {
-        console.error("Upload during pause failed:", err);
-        Alert.alert("Upload Failed", "Please try again.");
-      } finally {
-        setStatus("paused");
-      }
+      stopAndUploadRecording();
     }
   };
 
@@ -149,9 +163,7 @@ const NewMeetingScreen = () => {
     setStatus("ending");
     try {
       if (recorderState.isRecording) {
-        await audioRecorder.stop();
-        const uri = audioRecorder.uri;
-        if (uri) await uploadSegmentToGCS(uri);
+        stopAndUploadRecording();
       }
       await endMeetingMutation.mutateAsync({
         clientId: client.personId,
@@ -172,6 +184,17 @@ const NewMeetingScreen = () => {
     await audioRecorder.stop();
     // TODO: implement meeting discard API
     setStatus("idle");
+  };
+
+  const handleAutoStopRecording = async () => {
+    if (status === "recording" && !recorderState.isRecording) {
+      setStatus("uploading");
+      stopAndUploadRecording();
+      sendNotification(
+        "Recording Paused",
+        "90 minute-at-a-time recording limit reached. Pausing Recording",
+      );
+    }
   };
 
   if (status === "ending") {
@@ -249,11 +272,12 @@ const NewMeetingScreen = () => {
       </TouchableOpacity>
     ) : (
       <>
-        <View className="flex-row items-center justify-center pb-2">
-          <Image source={Icons.Record} className="size-4" />
-          <Text className="px-2 text-black">Recording in progress</Text>
-        </View>
-
+        {status === "recording" && (
+          <View className="flex-row items-center justify-center pb-2">
+            <Image source={Icons.Record} className="size-4" />
+            <Text className="px-2 text-black">Recording in progress</Text>
+          </View>
+        )}
         <View className="flex-row items-center justify-center">
           <TouchableOpacity
             className={`w-[120px] flex-row items-center justify-center rounded-full px-8 py-3 ${buttonBgClass}`}

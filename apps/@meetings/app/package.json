@@ -21,6 +21,7 @@
     "enhanced-resolve": "*",
     "expo": "~52.0.47",
     "expo-audio": "~0.3.5",
+    "expo-notifications": "~0.29.14",
     "expo-permissions": "^14.4.0",
     "expo-splash-screen": "~0.29.24",
     "expo-status-bar": "~2.0.1",

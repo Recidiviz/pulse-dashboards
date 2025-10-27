@@ -28,10 +28,7 @@ export const clientRouter = router({
   createMeeting: auth0Procedure
     .input(createMeetingInputSchema)
     .mutation(
-      async ({
-        input: { clientId, startTime },
-        ctx: { prisma, user },
-      }) => {
+      async ({ input: { clientId, startTime }, ctx: { prisma, user } }) => {
         const meeting = await prisma.meeting.create({
           data: {
             staff: {

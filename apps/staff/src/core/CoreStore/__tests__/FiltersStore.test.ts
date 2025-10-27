@@ -84,7 +84,7 @@ describe("FiltersStore", () => {
       };
       coreStore.filtersStore.setFilters({ facility: [] });
       expect(coreStore.filtersStore.filters).toEqual(expected);
-    })
+    });
   });
 
   describe("timePeriodLabel", () => {
