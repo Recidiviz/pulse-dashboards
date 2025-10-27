@@ -44,6 +44,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "ESCAPE",
           text: "Has perimeter escape or absconsion history on current offense or within the last 10 years",
         },
+        { key: "SANCTIONS", text: "Has disqualifying C-3 sanction(s)" },
         {
           key: "SOP",
           text: "Does not meet other, institution-specific criteria in standard operating procedures",
@@ -105,6 +106,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
         },
+        { text: "Does not have any disqualifying C-3 sanctions" },
         {
           text: "Meets any other institution-specific requirements established in standard operating procedures (SOP)",
         },
@@ -424,6 +426,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Has not yet completed required 12 months of Outside Clearance required based on offense",
         },
         { key: "EMPLOYER", text: "Receiving employer denied the placement" },
+        { key: "SANCTIONS", text: "Has disqualifying C-3 sanction(s)" },
         {
           key: "SOP",
           text: "Does not meet other, institution-specific criteria in standard operating procedures",
@@ -510,6 +513,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "Consideration shall be given to whether the offender’s presence in the community may cause adverse community reaction due to factors such as organized crime affiliation or gang involvement.",
         },
+        { text: "Does not have any disqualifying C-3 sanctions" },
         {
           text: "Meets any other institution-specific requirements established in standard operating procedures (SOP)",
         },

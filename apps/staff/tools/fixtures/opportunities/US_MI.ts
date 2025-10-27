@@ -378,7 +378,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "PROGRAMMING",
-          text: "Has not completed all required programming",
+          text: "Has not completed all required programming including specialty court conditions",
         },
         { key: "PRO-SOCIAL", text: "Has not demonstrated pro-social behavior" },
         {
@@ -526,7 +526,6 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: [
         "UsMiEarlyDischargeIcDetails",
-        "UsMiSecondaryOfficersAndDockets",
         "ClientProfileDetails",
         "EligibilityDate",
       ],
@@ -718,10 +717,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: [
-        "UsMiSecondaryOfficersAndDockets",
-        "ClientProfileDetails",
-      ],
+      sidebarComponents: ["ClientProfileDetails"],
       snooze: {
         autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
       },

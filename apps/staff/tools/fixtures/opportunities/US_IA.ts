@@ -53,7 +53,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "supervisionLevelIsMediumOrMinimum",
           text: 'Is on supervision {{#if (eq supervisionLevel "MEDIUM")}}level 3{{else}}level 2{{/if}}',
-          tooltip: "Client must be on supervision level 2 or 3",
+          tooltip: "",
         },
         {
           key: "usIaServingSupervisionCaseAtLeast90Days",
