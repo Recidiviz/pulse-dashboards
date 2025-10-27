@@ -78,12 +78,14 @@ const PageNavigation: React.FC = () => {
     </li>
   ));
 
-  if (!isMobile)
+  if (!isMobile) {
     return (
       <NavigationLayout backgroundColor={palette.marble3}>
-        {options}
+        {/* Do not show page navigation if there is only one page */}
+        {options.length < 2 ? null : options}
       </NavigationLayout>
     );
+  }
 
   return (
     <ul
