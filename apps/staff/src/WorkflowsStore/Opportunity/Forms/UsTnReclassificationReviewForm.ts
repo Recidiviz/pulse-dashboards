@@ -135,26 +135,6 @@ export class UsTnReclassificationReviewForm extends FormBase<
           )}`,
         );
       }
-      if (formInformation.latestPreaScreeningResults) {
-        const {
-          latestPreaScreeningDate,
-          aggressorFindingLevelChanged,
-          victimFindingLevelChanged,
-        } = formInformation.latestPreaScreeningResults;
-        const preaClauses = [
-          `Latest PREA screening date: ${formatDate(latestPreaScreeningDate)}`,
-          aggressorFindingLevelChanged
-            ? "Aggressor Finding has changed"
-            : "Aggressor finding same as previous screening",
-
-          victimFindingLevelChanged
-            ? "Victim Finding has changed"
-            : "Victim finding same as previous screening",
-        ];
-        justifications.push(preaClauses.join(", "));
-      } else {
-        justifications.push("Latest PREA screening: Unavailable");
-      }
       if (
         formInformation.activeRecommendations &&
         formInformation.activeRecommendations.length

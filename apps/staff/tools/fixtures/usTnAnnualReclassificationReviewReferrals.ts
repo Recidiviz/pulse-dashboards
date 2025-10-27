@@ -59,11 +59,6 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
       lastCafDate: relativeFixtureDate({ days: -363 }),
       lastCafTotal: "15",
       latestClassificationDate: relativeFixtureDate({ days: -355 }),
-      latestPreaScreeningResults: {
-        aggressorFindingLevelChanged: false,
-        latestPreaScreeningDate: relativeFixtureDate({ days: -150 }),
-        victimFindingLevelChanged: false,
-      },
       latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
       latestVantageRiskLevel: "LOW",
       levelOfCare: "LVL2",
@@ -127,11 +122,6 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
       lastCafDate: relativeFixtureDate({ days: -359 }),
       lastCafTotal: "15",
       latestClassificationDate: relativeFixtureDate({ days: -350 }),
-      latestPreaScreeningResults: {
-        aggressorFindingLevelChanged: false,
-        latestPreaScreeningDate: relativeFixtureDate({ days: -150 }),
-        victimFindingLevelChanged: false,
-      },
       latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
       latestVantageRiskLevel: "LOW",
       levelOfCare: "LVL2",

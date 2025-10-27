@@ -31,11 +31,6 @@ exports[`record is properly parsed for opportunity 1`] = `
     "incompatibleArray": [],
     "lastCafDate": 2022-08-22T00:00:00.000Z,
     "lastCafTotal": "8",
-    "latestPreaScreeningResults": {
-      "aggressorFindingLevelChanged": false,
-      "latestPreaScreeningDate": 2022-02-23T00:00:00.000Z,
-      "victimFindingLevelChanged": true,
-    },
     "q1Score": 1,
     "q2Score": 1,
     "q3Score": 1,

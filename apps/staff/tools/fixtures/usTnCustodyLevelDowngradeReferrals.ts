@@ -46,11 +46,6 @@ export const usTnCustodyLevelDowngradeFixture =
         incompatibleArray: [],
         lastCafDate: relativeFixtureDate({ months: -11, days: -11 }),
         lastCafTotal: "18",
-        latestPreaScreeningResults: {
-          latestPreaScreeningDate: relativeFixtureDate({ years: -2, days: 22 }),
-          aggressorFindingLevelChanged: false,
-          victimFindingLevelChanged: true,
-        },
         latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
         latestVantageRiskLevel: "LOW",
         levelOfCare: "LVL1",
@@ -116,11 +111,6 @@ export const usTnCustodyLevelDowngradeFixture =
         incompatibleArray: [],
         lastCafDate: relativeFixtureDate({ years: -1, months: -5 }),
         lastCafTotal: "8",
-        latestPreaScreeningResults: {
-          latestPreaScreeningDate: relativeFixtureDate({ years: -3 }),
-          aggressorFindingLevelChanged: true,
-          victimFindingLevelChanged: false,
-        },
         latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
         latestVantageRiskLevel: "LOW",
         levelOfCare: "LVL1",

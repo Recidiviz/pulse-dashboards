@@ -157,7 +157,7 @@ const baseResult: PartialFormData = {
   incompatiblesList: "1, 2, 3",
   statusAtHearing: "GEN",
   recommendationJustification:
-    "Justification for classification: \nLevel of Care: LOC\nLatest PREA screening: Unavailable",
+    "Justification for classification: \nLevel of Care: LOC",
 };
 
 describe("Annual Reclassification", () => {
@@ -362,7 +362,7 @@ describe("Annual Reclassification", () => {
       expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
         ...baseResult,
         recommendationJustification:
-          "Justification for classification: \nLevel of Care: LOC\nLatest PREA screening: Unavailable\nActive Recommendations: RECA, RECB",
+          "Justification for classification: \nLevel of Care: LOC\nActive Recommendations: RECA, RECB",
       });
     });
   });

@@ -448,11 +448,6 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
       statusAtHearingSeg: "GEN",
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
       lastCafDate: "2022-08-22",
-      latestPreaScreeningResults: {
-        latestPreaScreeningDate: "2022-02-23",
-        aggressorFindingLevelChanged: true,
-        victimFindingLevelChanged: false,
-      },
       lastCafTotal: "8",
       q1Score: -3,
       q2Score: -2,
@@ -521,11 +516,6 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
     formInformation: {
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
       lastCafDate: "2022-08-22",
-      latestPreaScreeningResults: {
-        latestPreaScreeningDate: "2022-02-23",
-        aggressorFindingLevelChanged: false,
-        victimFindingLevelChanged: true,
-      },
       lastCafTotal: "8",
       q1Score: -3,
       q2Score: -2,
