@@ -66,6 +66,7 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity 
   tabTitle(category?: OpportunityTabGroup): OpportunityTab {
     if (!this.record) return "Other";
     if (this.denied) return this.deniedTabTitle;
+    if (this.isSubmitted) return this.submittedTabTitle;
     if (this.record.isOverdue) return "Overdue";
     if (this.almostEligible) return "Upcoming";
     return "Due now";
