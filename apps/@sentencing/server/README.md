@@ -85,6 +85,16 @@ If you want to what's in your local database, run:
 
 `nx run @sentencing/prisma:prisma-studio`
 
+`libs/@sentencing/prisma/prisma/schema.prisma`
+
+Then, to run a migration so the changes appear in your local database, run:
+
+`nx run @sentencing/prisma:prisma-migrate`
+
+If you want to what's in your local database, run:
+
+`nx run @sentencing/prisma:prisma-studio`
+
 ### Add support for a new state
 
 Note: This is just for the application to support a new state. You will still need to add metric exports + Cloud Storage notifications for the new state in order for data to be be imported for the new state.
