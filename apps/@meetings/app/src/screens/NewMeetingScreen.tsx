@@ -156,6 +156,8 @@ const NewMeetingScreen = () => {
       await endMeetingMutation.mutateAsync({
         clientId: client.personId,
         meetingId,
+        // TODO: Umar to fill in the actual notes from transcription
+        notes: "Sample notes",
       });
     } catch (err) {
       console.error("[handleFinishAndSave] error:", err);

@@ -25,7 +25,9 @@ import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   discardMeetingInputSchema,
   endMeetingInputSchema,
+  getDetailInputSchema,
   getSignedUrlForRecordingInputSchema,
+  updateNotesInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
 import {
   queueStitchingTaskCloud,
@@ -33,6 +35,43 @@ import {
 } from "~@meetings/trpc/routes/meeting/utils";
 
 export const meetingRouter = router({
+  getDetails: auth0Procedure
+    .input(getDetailInputSchema)
+    .query(
+      async ({ input: { clientId, meetingId }, ctx: { prisma, user } }) => {
+        try {
+          return await prisma.meeting.findUniqueOrThrow({
+            where: {
+              id: meetingId,
+              clientId: clientId,
+              staff: {
+                pseudonymizedId: user.pseudonymizedId,
+              },
+            },
+            select: {
+              id: true,
+              startTime: true,
+              endTime: true,
+              notes: true,
+              postMeetingProcessingStatus: true,
+            },
+          });
+        } catch (e) {
+          if (
+            e instanceof Prisma.PrismaClientKnownRequestError &&
+            e.code === "P2025"
+          ) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Meeting with that id was not found",
+              cause: e,
+            });
+          }
+
+          throw e;
+        }
+      },
+    ),
   getSignedUrlForRecording: auth0Procedure
     .input(getSignedUrlForRecordingInputSchema)
     .query(
@@ -94,7 +133,7 @@ export const meetingRouter = router({
     .input(endMeetingInputSchema)
     .mutation(
       async ({
-        input: { clientId, meetingId },
+        input: { clientId, meetingId, notes },
         ctx: { prisma, user, stateCode },
       }) => {
         try {
@@ -108,6 +147,7 @@ export const meetingRouter = router({
             },
             data: {
               endTime: new Date(),
+              notes,
             },
           });
         } catch (e) {
@@ -164,6 +204,42 @@ export const meetingRouter = router({
                 PostMeetingProcessingStatus.STITCHING_ERROR,
             },
           });
+        }
+      },
+    ),
+  updateNotes: auth0Procedure
+    .input(updateNotesInputSchema)
+    .mutation(
+      async ({
+        input: { clientId, meetingId, notes },
+        ctx: { prisma, user },
+      }) => {
+        try {
+          await prisma.meeting.update({
+            where: {
+              id: meetingId,
+              clientId: clientId,
+              staff: {
+                pseudonymizedId: user.pseudonymizedId,
+              },
+            },
+            data: {
+              notes: notes,
+            },
+          });
+        } catch (e) {
+          if (
+            e instanceof Prisma.PrismaClientKnownRequestError &&
+            e.code === "P2025"
+          ) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Meeting with that id was not found",
+              cause: e,
+            });
+          }
+
+          throw e;
         }
       },
     ),

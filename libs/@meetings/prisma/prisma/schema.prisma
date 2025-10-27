@@ -151,6 +151,8 @@ model Meeting {
 
   postMeetingProcessingStatus PostMeetingProcessingStatus @default(NOT_STARTED)
 
+  notes String?
+
   client   Client @relation(fields: [clientId], references: [personId])
   clientId BigInt
 

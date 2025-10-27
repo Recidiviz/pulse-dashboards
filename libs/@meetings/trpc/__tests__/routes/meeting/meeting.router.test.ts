@@ -29,6 +29,37 @@ import { fakeClient, fakeMeeting } from "~@meetings/trpc/test/setup/seed";
 const FAKE_DATE = new Date("2025-10-19");
 
 describe("meeting router", () => {
+  describe("getDetails", () => {
+    test("Should throw error if meeting does not exist", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.getDetails.query({
+          clientId: fakeClient.personId,
+          meetingId: "non-existent-meeting-id",
+        }),
+      ).rejects.toMatchObject({
+        message: "Meeting with that id was not found",
+        data: { code: "NOT_FOUND" },
+      });
+    });
+
+    test("Should return meeting details if it exists", async () => {
+      const result = await testTRPCClient.v1.meeting.getDetails.query({
+        clientId: fakeClient.personId,
+        meetingId: fakeMeeting.id,
+      });
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          id: fakeMeeting.id,
+          startTime: fakeMeeting.startTime,
+          endTime: null,
+          postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
+          notes: null,
+        }),
+      );
+    });
+  });
+
   describe("getSignedUrlForRecording", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
@@ -82,6 +113,39 @@ describe("meeting router", () => {
     });
   });
 
+  describe("updateNotes", () => {
+    test("Should throw error if meeting does not exist", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.updateNotes.mutate({
+          clientId: fakeClient.personId,
+          meetingId: "non-existent-meeting-id",
+          notes: "These are some notes",
+        }),
+      ).rejects.toMatchObject({
+        message: "Meeting with that id was not found",
+        data: { code: "NOT_FOUND" },
+      });
+    });
+
+    test("Should update notes if meeting exists", async () => {
+      await testTRPCClient.v1.meeting.updateNotes.mutate({
+        clientId: fakeClient.personId,
+        meetingId: fakeMeeting.id,
+        notes: "These are some notes",
+      });
+
+      const updatedMeeting = await testPrismaClient.meeting.findUnique({
+        where: { id: fakeMeeting.id },
+      });
+
+      expect(updatedMeeting).toEqual(
+        expect.objectContaining({
+          notes: "These are some notes",
+        }),
+      );
+    });
+  });
+
   describe("endMeeting", () => {
     beforeAll(() => {
       // // tell vitest we use mocked time
@@ -99,6 +163,7 @@ describe("meeting router", () => {
         testTRPCClient.v1.meeting.endMeeting.mutate({
           clientId: fakeClient.personId,
           meetingId: "non-existent-meeting-id",
+          notes: "These are some notes",
         }),
       ).rejects.toMatchObject({
         message: "Meeting with that id was not found",
@@ -112,6 +177,7 @@ describe("meeting router", () => {
       await testTRPCClient.v1.meeting.endMeeting.mutate({
         clientId: fakeClient.personId,
         meetingId: fakeMeeting.id,
+        notes: "These are some notes",
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
@@ -122,6 +188,7 @@ describe("meeting router", () => {
       expect(updatedMeeting).toEqual(
         expect.objectContaining({
           endTime: FAKE_DATE,
+          notes: "These are some notes",
           postMeetingProcessingStatus:
             PostMeetingProcessingStatus.STITCHING_ERROR,
         }),
@@ -135,6 +202,7 @@ describe("meeting router", () => {
       await testTRPCClient.v1.meeting.endMeeting.mutate({
         clientId: fakeClient.personId,
         meetingId: fakeMeeting.id,
+        notes: "These are some notes",
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
@@ -145,6 +213,7 @@ describe("meeting router", () => {
       expect(updatedMeeting).toEqual(
         expect.objectContaining({
           endTime: FAKE_DATE,
+          notes: "These are some notes",
           postMeetingProcessingStatus:
             PostMeetingProcessingStatus.STITCHING_QUEUED,
         }),

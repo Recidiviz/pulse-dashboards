@@ -84,6 +84,7 @@ describe("client router", () => {
           id: fakeMeeting.id,
           startTime: fakeMeeting.startTime,
           endTime: null,
+          postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
         }),
       ]);
     });

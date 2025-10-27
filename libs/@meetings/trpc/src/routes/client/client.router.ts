@@ -96,6 +96,7 @@ export const clientRouter = router({
           id: true,
           startTime: true,
           endTime: true,
+          postMeetingProcessingStatus: true,
         },
       });
     }),

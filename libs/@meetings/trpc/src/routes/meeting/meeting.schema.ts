@@ -17,6 +17,11 @@
 
 import { z } from "zod";
 
+export const getDetailInputSchema = z.object({
+  clientId: z.bigint(),
+  meetingId: z.string(),
+});
+
 export const getSignedUrlForRecordingInputSchema = z.object({
   clientId: z.bigint(),
   meetingId: z.string(),
@@ -30,4 +35,11 @@ export const discardMeetingInputSchema = z.object({
 export const endMeetingInputSchema = z.object({
   clientId: z.bigint(),
   meetingId: z.string(),
+  notes: z.string().max(100000),
+});
+
+export const updateNotesInputSchema = z.object({
+  clientId: z.bigint(),
+  meetingId: z.string(),
+  notes: z.string().max(100000),
 });
