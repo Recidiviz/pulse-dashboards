@@ -115,10 +115,13 @@ function toTitleCase(str: string): string {
     return nameOverrides[str];
   }
 
-  return (str && str.replace(
-    /\w[^\s-/]*/g,
-    (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase(),
-  ));
+  return (
+    str &&
+    str.replace(
+      /\w[^\s-/]*/g,
+      (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase(),
+    )
+  );
 }
 
 function formatCurrentAddress(address: string, stateCode: string): string {
@@ -367,10 +370,12 @@ const getTicks = (
     tickValues,
 
     // This value used to determine chart left margin based on tick value length
-    ticksMargin:
+    ticksMargin: Math.max(
       (max.toString().length +
         getMarginFactor(max.toString().length, ticks[1] % 1 !== 0)) *
-      10,
+        10,
+      50,
+    ),
   };
 };
 
@@ -500,15 +505,17 @@ function formatDollarAmount(text: string) {
 
 function htmlStringToString(htmlString?: string): string {
   if (!htmlString) return "";
-  return (htmlString
-    // replace breaks and divs with new line
-    .replace(/<br>|<div>|<\/div>/gi, "\n")
-    // remove any other tags
-    .replace(/<[^>]*>/gi, "")
-    // replace the non-breaking space special character with a space
-    .replace(/&nbsp;/gi, " ")
-    // remove leading and trailing quotes
-    .replace(/^"|"$/g, ""));
+  return (
+    htmlString
+      // replace breaks and divs with new line
+      .replace(/<br>|<div>|<\/div>/gi, "\n")
+      // remove any other tags
+      .replace(/<[^>]*>/gi, "")
+      // replace the non-breaking space special character with a space
+      .replace(/&nbsp;/gi, " ")
+      // remove leading and trailing quotes
+      .replace(/^"|"$/g, "")
+  );
 }
 
 /**
