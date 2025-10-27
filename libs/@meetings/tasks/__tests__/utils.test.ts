@@ -22,6 +22,7 @@ import { GCS_API_ENDPOINT } from "~@meetings/tasks/test/setup";
 import {
   getSignedUrlForNewRecording,
   stitchAudio,
+  transcribeAudioWithAssemblyAI,
 } from "~@meetings/tasks/utils";
 
 const AUDIO_RECORDINGS_BUCKET_NAME = "test-audio-recordings";
@@ -108,6 +109,107 @@ describe("utils", () => {
       expect(files.map((f) => f.name)).toEqual(
         expect.arrayContaining([`stitch-audio-test-folder/final.m4a`]),
       );
+    });
+  });
+
+  describe("getAssemblyAITranscript", () => {
+    test("Should return transcript", async () => {
+      const transcript = await transcribeAudioWithAssemblyAI(
+        AUDIO_RECORDINGS_BUCKET_NAME,
+        "transcription-test-folder/final.m4a",
+        "test-api-key",
+      );
+
+      expect(transcript).toEqual({
+        audio_duration: 1.8,
+        id: "mock-transcript-id",
+        language_code: "en",
+        status: "completed",
+        text: "This is a mock transcription.",
+        utterances: [
+          {
+            confidence: 0.96,
+            end: 1800,
+            speaker: "A",
+            start: 0,
+            text: "This is a mock transcription.",
+            words: [
+              {
+                confidence: 0.95,
+                end: 400,
+                speaker: "A",
+                start: 0,
+                text: "This",
+              },
+              {
+                confidence: 0.98,
+                end: 600,
+                speaker: "A",
+                start: 400,
+                text: "is",
+              },
+              {
+                confidence: 0.97,
+                end: 700,
+                speaker: "A",
+                start: 600,
+                text: "a",
+              },
+              {
+                confidence: 0.93,
+                end: 1100,
+                speaker: "A",
+                start: 700,
+                text: "mock",
+              },
+              {
+                confidence: 0.96,
+                end: 1800,
+                speaker: "A",
+                start: 1100,
+                text: "transcription",
+              },
+            ],
+          },
+        ],
+        words: [
+          {
+            confidence: 0.95,
+            end: 400,
+            speaker: "A",
+            start: 0,
+            text: "This",
+          },
+          {
+            confidence: 0.98,
+            end: 600,
+            speaker: "A",
+            start: 400,
+            text: "is",
+          },
+          {
+            confidence: 0.97,
+            end: 700,
+            speaker: "A",
+            start: 600,
+            text: "a",
+          },
+          {
+            confidence: 0.93,
+            end: 1100,
+            speaker: "A",
+            start: 700,
+            text: "mock",
+          },
+          {
+            confidence: 0.96,
+            end: 1800,
+            speaker: "A",
+            start: 1100,
+            text: "transcription",
+          },
+        ],
+      });
     });
   });
 });

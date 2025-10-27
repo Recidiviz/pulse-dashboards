@@ -19,6 +19,7 @@ import fs from "node:fs";
 import os from "node:os";
 
 import { Storage } from "@google-cloud/storage";
+import { AssemblyAI } from "assemblyai";
 import ffmpegPath from "ffmpeg-static";
 import ffmpeg from "fluent-ffmpeg";
 import path from "path";
@@ -121,4 +122,35 @@ export async function stitchAudio(bucketName: string, folderName: string) {
   });
 
   return `${bucketName}/${outputFileName}`;
+}
+
+export async function transcribeAudioWithAssemblyAI(
+  bucketName: string,
+  finalRecordingFilePath: string,
+  apiKey: string,
+) {
+  const storage = new Storage();
+  const bucket = storage.bucket(bucketName);
+
+  const file = bucket.file(finalRecordingFilePath);
+
+  const [url] = await file.getSignedUrl({
+    version: "v4",
+    action: "read",
+    expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+  });
+
+  const assemblyAiClient = new AssemblyAI({
+    apiKey,
+  });
+
+  // TODO: Add custom speaker labels once the API supports it
+  return await assemblyAiClient.transcripts.transcribe({
+    audio: url,
+    speaker_labels: true,
+    format_text: true,
+    punctuate: true,
+    speech_model: "universal",
+    language_detection: true,
+  });
 }

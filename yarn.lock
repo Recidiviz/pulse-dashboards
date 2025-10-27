@@ -21412,6 +21412,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"assemblyai@npm:^4.18.0":
+  version: 4.18.0
+  resolution: "assemblyai@npm:4.18.0"
+  dependencies:
+    ws: "npm:^8.18.0"
+  checksum: 10c0/12249aa128f827df923a3b2506acd43b34546329c1d0677fdbea78434d49ff9c338e01d14123834532653df28b48b9faf95a9f51f92127071d0a50b12095d569
+  languageName: node
+  linkType: hard
+
 "assert-never@npm:^1.2.1":
   version: 1.2.1
   resolution: "assert-never@npm:1.2.1"
@@ -47219,6 +47228,7 @@ __metadata:
     "@wojtekmaj/enzyme-adapter-react-17": "npm:^0.4.1"
     acorn: "npm:^6.0.7"
     argparse: "npm:^2.0.1"
+    assemblyai: "npm:^4.18.0"
     assert-never: "npm:^1.2.1"
     axios: "npm:^1.7.9"
     axios-mock-adapter: "npm:^2.1.0"

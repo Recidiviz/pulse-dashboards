@@ -15,22 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type IntakeConfig = {
-  role: string;
-  sections: {
-    title: string;
-    description: string;
-    requiredInformation: string;
-  }[];
-};
-
-export type Sections = IntakeConfig["sections"];
+import type { Transcript } from "assemblyai";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace PrismaJson {
     // Define a type for a user's profile information.
-    type IntakeConfigType = IntakeConfig;
+    type TranscriptType = Transcript;
   }
 }
 

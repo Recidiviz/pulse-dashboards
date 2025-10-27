@@ -18,9 +18,19 @@
 import { z } from "zod";
 
 const envSchema = z.object({
+  CLOUD_TASKS_PROJECT: z.string().min(1, "CLOUD_TASKS_PROJECT is required"),
+  CLOUD_TASKS_LOCATION: z.string().min(1, "CLOUD_TASKS_LOCATION is required"),
   CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL: z
     .string()
     .min(1, "CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL is required"),
+  TRANSCRIPTION_TASK_QUEUE_NAME: z
+    .string()
+    .min(1, "TRANSCRIPTION_TASK_QUEUE_NAME is required"),
+  TRANSCRIPTION_TASK_REQUEST_URL: z
+    .string()
+    .min(1, "TRANSCRIPTION_TASK_REQUEST_URL is required"),
+  ASSEMBLYAI_API_KEY: z.string().min(1, "ASSEMBLYAI_API_KEY is required"),
+  NODE_ENV: z.string().min(1, "NODE_ENV is required"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

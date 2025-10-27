@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { CloudTasksClient } from "@google-cloud/tasks";
 import { init } from "@sentry/node";
 import { createTRPCClient, httpBatchLink, TRPCClient } from "@trpc/client";
 import type { FastifyInstance } from "fastify";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
 import { beforeAll, beforeEach } from "vitest";
+import { mock } from "vitest-mock-extended";
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
@@ -67,6 +69,19 @@ beforeEach(() => {
     }),
   );
 });
+
+export const mockCloudTasksClient = mock<CloudTasksClient>({
+  queuePath: vi.fn((project: string, location: string, queue: string) => {
+    return `projects/${project}/locations/${location}/queues/${queue}`;
+  }),
+  createTask: vi.fn().mockResolvedValue([{ name: "task-name" }]),
+});
+
+vi.mock("@google-cloud/tasks", () => ({
+  CloudTasksClient: vi.fn().mockImplementation(() => {
+    return mockCloudTasksClient;
+  }),
+}));
 
 beforeAll(async () => {
   init({

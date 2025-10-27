@@ -18,7 +18,9 @@
 import { request } from "node:http";
 
 import { File } from "@google-cloud/storage";
+import { AssemblyAI } from "assemblyai";
 import { GenericContainer } from "testcontainers";
+import { mock } from "vitest-mock-extended";
 
 export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])
@@ -76,3 +78,99 @@ vi.spyOn(File.prototype, "getSignedUrl").mockImplementation(async function (
 ) {
   return [`${GCS_API_ENDPOINT}/${this.bucket.name}/${this.name}`];
 });
+
+export const mockAssemblyAI = mock<AssemblyAI>({
+  transcripts: {
+    transcribe: vi.fn().mockResolvedValue({
+      id: "mock-transcript-id",
+      status: "completed",
+      text: "This is a mock transcription.",
+      words: [
+        {
+          text: "This",
+          start: 0,
+          end: 400,
+          confidence: 0.95,
+          speaker: "A",
+        },
+        {
+          text: "is",
+          start: 400,
+          end: 600,
+          confidence: 0.98,
+          speaker: "A",
+        },
+        { text: "a", start: 600, end: 700, confidence: 0.97, speaker: "A" },
+        {
+          text: "mock",
+          start: 700,
+          end: 1100,
+          confidence: 0.93,
+          speaker: "A",
+        },
+        {
+          text: "transcription",
+          start: 1100,
+          end: 1800,
+          confidence: 0.96,
+          speaker: "A",
+        },
+      ],
+      utterances: [
+        {
+          confidence: 0.96,
+          end: 1800,
+          speaker: "A",
+          start: 0,
+          text: "This is a mock transcription.",
+          words: [
+            {
+              text: "This",
+              start: 0,
+              end: 400,
+              confidence: 0.95,
+              speaker: "A",
+            },
+            {
+              text: "is",
+              start: 400,
+              end: 600,
+              confidence: 0.98,
+              speaker: "A",
+            },
+            {
+              text: "a",
+              start: 600,
+              end: 700,
+              confidence: 0.97,
+              speaker: "A",
+            },
+            {
+              text: "mock",
+              start: 700,
+              end: 1100,
+              confidence: 0.93,
+              speaker: "A",
+            },
+            {
+              text: "transcription",
+              start: 1100,
+              end: 1800,
+              confidence: 0.96,
+              speaker: "A",
+            },
+          ],
+        },
+      ],
+      language_code: "en",
+      audio_duration: 1.8,
+    }),
+  },
+});
+
+// Mock AssemblyAI client
+vi.mock("assemblyai", () => ({
+  AssemblyAI: vi.fn().mockImplementation(() => {
+    return mockAssemblyAI;
+  }),
+}));

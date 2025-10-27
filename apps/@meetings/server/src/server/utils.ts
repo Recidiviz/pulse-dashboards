@@ -15,162 +15,65 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import {
-  serializerCompiler,
-  validatorCompiler,
-} from "fastify-type-provider-zod";
-import { OAuth2Client } from "google-auth-library";
-import { z } from "zod";
+import { CloudTasksClient, protos } from "@google-cloud/tasks";
 
-import { getPrismaClientForStateCode } from "~@meetings/prisma";
-import {
-  PostMeetingProcessingStatus,
-  StateCode,
-} from "~@meetings/prisma/client";
-import env from "~@meetings/server/server/env";
-import { stitchAudio } from "~@meetings/tasks";
+import env from "~@meetings/server/env";
 
-class AuthError extends Error {
-  errorCode: number;
-
-  constructor(message: string, errorCode: number) {
-    super(message);
-    this.name = "AuthError";
-    this.errorCode = errorCode;
-  }
-}
-
-async function verifyGoogleIdToken(authorizationHeaders: string | undefined) {
-  const idToken = authorizationHeaders?.split(" ")[1];
-
-  if (!idToken) {
-    throw new AuthError("No bearer token was provided", 401);
-  }
-
-  const oAuth2Client = new OAuth2Client();
-
-  const result = await oAuth2Client.verifyIdToken({
-    idToken,
-  });
-
-  const payload = result.getPayload();
-
-  // Optionally, if "includeEmail" was set in the token options, check if the
-  // email was verified
-  if (!payload || !payload.email_verified || !payload.email) {
-    throw new AuthError("Email not verified", 401);
-  }
-
-  if (payload.email !== env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL) {
-    throw new AuthError("Invalid email address", 403);
-  }
-
-  console.log(`Email verified: ${payload.email}`);
-}
-
-async function authenticateInternalRequestPreHandlerFn<
-  T extends FastifyRequest,
->(request: T, reply: FastifyReply) {
-  if (process.env["NODE_ENV"] === "development") {
-    // Skip authentication in development mode
-    return;
-  }
-
-  // Validate that the token in the request is from the expected service account
-  try {
-    await verifyGoogleIdToken(request.headers.authorization);
-  } catch (err) {
-    if (err instanceof AuthError) {
-      return reply.status(err.errorCode).send(err);
-    }
-
-    reply.status(403).send(err);
-  }
-}
-
-export function registerTaskRoutes(app: FastifyInstance) {
-  app.setValidatorCompiler(validatorCompiler);
-  app.setSerializerCompiler(serializerCompiler);
-
-  // TODO(#10219): Remove route-level authentication once this is moved to an internal-only service
-  app.withTypeProvider<ZodTypeProvider>().route({
+export async function queueTranscriptionTaskLocal(
+  stateCode: string,
+  meetingId: string,
+) {
+  // Don't await the fetch to avoid blocking
+  fetch(env.TRANSCRIPTION_TASK_REQUEST_URL, {
     method: "POST",
-    url: "/stitch-audio",
-    // Define your schema
-    schema: {
-      body: z.object({
-        stateCode: z.nativeEnum(StateCode),
-        meetingId: z.string(),
-      }),
+    headers: {
+      "Content-Type": "application/json",
     },
-    preHandler: [authenticateInternalRequestPreHandlerFn],
-    handler: async (req, reply) => {
-      const { stateCode, meetingId } = req.body;
-
-      const prisma = getPrismaClientForStateCode(stateCode);
-
-      // Try and find the meeting and fail fast if it doesn't exist
-      await prisma.meeting.findUniqueOrThrow({
-        where: {
-          id: meetingId,
-        },
-      });
-
-      let finalRecordingGCSPath;
-      try {
-        const meeting = await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.STITCHING_IN_PROGRESS,
-          },
-        });
-
-        finalRecordingGCSPath = await stitchAudio(
-          meeting.recordingsGCSBucket,
-          meeting.recordingsFolderPath,
-        );
-
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            finalRecordingGCSPath,
-          },
-        });
-      } catch (e) {
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.STITCHING_ERROR,
-          },
-        });
-
-        // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
-        throw e;
-      }
-
-      // TODO: Queue transcription task
-      await prisma.meeting.update({
-        where: {
-          id: meetingId,
-        },
-        data: {
-          finalRecordingGCSPath,
-          postMeetingProcessingStatus:
-            PostMeetingProcessingStatus.TRANSCRIBING_QUEUED,
-        },
-      });
-
-      reply.code(200).send("Audio stitching completed successfully");
-    },
+    body: JSON.stringify({ stateCode, meetingId }),
   });
+}
+
+export async function queueTranscriptionTaskCloud(
+  stateCode: string,
+  meetingId: string,
+) {
+  const cloudTaskClient = new CloudTasksClient();
+
+  const parent = cloudTaskClient.queuePath(
+    env.CLOUD_TASKS_PROJECT,
+    env.CLOUD_TASKS_LOCATION,
+    env.TRANSCRIPTION_TASK_QUEUE_NAME,
+  );
+
+  const request: protos.google.cloud.tasks.v2.ICreateTaskRequest = {
+    parent,
+    task: {
+      httpRequest: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: Buffer.from(JSON.stringify({ stateCode, meetingId })),
+        httpMethod: "POST",
+        url: env.TRANSCRIPTION_TASK_REQUEST_URL,
+        oidcToken: {
+          serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
+        },
+      },
+    },
+  };
+
+  await cloudTaskClient.createTask(request);
+}
+
+export async function queueTranscriptionTask(
+  stateCode: string,
+  meetingId: string,
+) {
+  // If we're on a local environment, there is no way to emulate Cloud Tasks, so we just call endpoint directly
+  if (env.NODE_ENV === "development") {
+    // Don't await to avoid blocking
+    queueTranscriptionTaskLocal(stateCode, meetingId);
+  } else {
+    await queueTranscriptionTaskCloud(stateCode, meetingId);
+  }
 }

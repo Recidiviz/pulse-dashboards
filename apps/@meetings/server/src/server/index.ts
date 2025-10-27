@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { registerTaskRoutes } from "~@meetings/server/server/utils";
+import { registerTaskRoutes } from "~@meetings/server/server/routes";
 import { appRouter, createContext } from "~@meetings/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
 

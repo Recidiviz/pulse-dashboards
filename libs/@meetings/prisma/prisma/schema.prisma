@@ -4,6 +4,10 @@ generator client {
   engineType = "client"
 }
 
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -133,9 +137,9 @@ enum PostMeetingProcessingStatus {
   STITCHING_QUEUED
   STITCHING_IN_PROGRESS
   STITCHING_ERROR
-  TRANSCRIBING_QUEUED
-  TRANSCRIBING_IN_PROGRESS
-  TRANSCRIBING_ERROR
+  TRANSCRIPTION_QUEUED
+  TRANSCRIPTION_IN_PROGRESS
+  TRANSCRIPTION_ERROR
   COMPLETED
 }
 
@@ -153,9 +157,28 @@ model Meeting {
 
   notes String?
 
+  transcriptions Transcription[]
+
   client   Client @relation(fields: [clientId], references: [personId])
   clientId BigInt
 
   staff   Staff  @relation(fields: [staffId], references: [staffId])
   staffId BigInt
+}
+
+enum TranscriptionProvider {
+  ASSEMBLYAI
+  DEEPGRAM
+}
+
+model Transcription {
+  id String @id @default(cuid())
+
+  provider         TranscriptionProvider
+  // The transcript response, stored as a JSON object. We store the whole object because its possible we may want to use other fields in the future.
+  /// [TranscriptType]
+  transcriptObject Json
+
+  meeting   Meeting? @relation(fields: [meetingId], references: [id])
+  meetingId String?
 }

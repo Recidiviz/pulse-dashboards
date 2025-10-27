@@ -72,6 +72,13 @@ export default defineConfig(() => ({
         process.env["STITCHING_TASK_REQUEST_URL"] ??
         "https://test-server.app/stitch-audio",
       NODE_ENV: process.env["NODE_ENV"] ?? "production",
+      ASSEMBLYAI_API_KEY: process.env["ASSEMBLYAI_API_KEY"] ?? "noop",
+      TRANSCRIPTION_TASK_QUEUE_NAME:
+        process.env["TRANSCRIPTION_TASK_QUEUE_NAME"] ??
+        "transcription-task-queue",
+      TRANSCRIPTION_TASK_REQUEST_URL:
+        process.env["TRANSCRIPTION_TASK_REQUEST_URL"] ??
+        "https://test-server.app/transcribe-audio",
     },
   },
 }));
