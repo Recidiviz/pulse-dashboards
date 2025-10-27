@@ -25,6 +25,7 @@ import { pluralizeWord } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { UsMeSCCPForm } from "../../Forms/UsMeSCCPForm";
 import { OpportunityRequirement } from "../../types";
+import { monthsOrDaysRemainingFromToday } from "../../utils";
 import { UsMeExternalSnoozeOpportunityBase } from "../UsMeExternalSnoozeOpportunityBase/UsMeExternalSnoozeOpportunityBase";
 
 const ELIGIBLE_CRITERIA_COPY: Record<
@@ -44,16 +45,6 @@ const ELIGIBLE_CRITERIA_COPY: Record<
       "subsection 1; section 2305; section 2307; section 2308; section 2309; section 2310; or " +
       "section 2311 if the term of imprisonment or, in the case of a split sentence, the " +
       "unsuspended portion is $LENGTH_CONDITION.",
-  },
-  usMeXMonthsRemainingOnSentence: {
-    text: "Has 30 or fewer months remaining on term: $MONTHS_REMAINING months remaining on sentence",
-    tooltip:
-      "No more than thirty (30) months remaining on the term of imprisonment or, " +
-      "in the case of a split sentence, on the unsuspended portion, after consideration " +
-      "of any deductions that the resident has received and retained under Title 17-A, " +
-      "Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines " +
-      "that the average statewide case load is no more than ninety (90) adult community " +
-      "corrections clients to one probation officer.",
   },
   usMeNoClassAOrBViolationFor90Days: {
     text: "No Class A or B disciplines pending or occurring in the past 90 days",
@@ -85,28 +76,6 @@ const INELIGIBLE_CRITERIA_COPY = {
     tooltip: ELIGIBLE_CRITERIA_COPY.usMeServedXPortionOfSentence.tooltip,
   },
 };
-
-export function hydrateXMonthsRemainingRequirement(
-  criterion: NonNullable<UsMeSCCPCriteria["usMeXMonthsRemainingOnSentence"]>,
-  copy: OpportunityRequirement,
-) {
-  // this can only happen for fully ineligible residents.
-  // the schema supports them but Workflows doesn't
-  if (!criterion.eligibleDate) return;
-
-  const monthsRemaining =
-    differenceInMonths(criterion.eligibleDate, new Date()) + 36;
-
-  const pluralizedMonth = monthsRemaining === 1 ? "month" : "months";
-
-  return {
-    text: copy.text.replace(
-      "$MONTHS_REMAINING months",
-      `${monthsRemaining} ${pluralizedMonth}`,
-    ),
-    tooltip: copy.tooltip,
-  };
-}
 
 function hydrateServedXPortionOfSentence(
   criterion: NonNullable<UsMeSCCPCriteria["usMeServedXPortionOfSentence"]>,
@@ -174,7 +143,6 @@ const requirementsForEligibleCriteria = (
   const {
     usMeCustodyLevelIsMinimumOrCommunity,
     usMeServedXPortionOfSentence,
-    usMeXMonthsRemainingOnSentence,
     usMeNoDetainersWarrantsOrOther,
     usMeNoClassAOrBViolationFor90Days,
   } = cloneDeep(ELIGIBLE_CRITERIA_COPY);
@@ -186,18 +154,6 @@ const requirementsForEligibleCriteria = (
         criteria.usMeCustodyLevelIsMinimumOrCommunity.custodyLevel.toLowerCase(),
       );
     requirements.push(usMeCustodyLevelIsMinimumOrCommunity);
-  }
-
-  if (criteria.usMeXMonthsRemainingOnSentence) {
-    requirements.push(
-      // this can be missing if the criterion was missing some data,
-      // which does not apply to eligible residents per the schema
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      hydrateXMonthsRemainingRequirement(
-        criteria.usMeXMonthsRemainingOnSentence,
-        usMeXMonthsRemainingOnSentence,
-      )!,
-    );
   }
 
   if (criteria.usMeServedXPortionOfSentence) {
@@ -228,24 +184,8 @@ const requirementsForIneligibleCriteria = (
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
 
-  const {
-    usMeXMonthsRemainingOnSentence,
-    usMeNoClassAOrBViolationFor90Days,
-    usMeServedXPortionOfSentence,
-  } = cloneDeep(INELIGIBLE_CRITERIA_COPY);
-
-  if (criteria.usMeXMonthsRemainingOnSentence) {
-    const requirement = hydrateXMonthsRemainingRequirement(
-      criteria.usMeXMonthsRemainingOnSentence,
-      usMeXMonthsRemainingOnSentence,
-    );
-    // this can be missing if the criterion was missing some data.
-    // should only happen with fully ineligible residents, who will not be displayed anyway,
-    // so it should be safe to ignore these cases in practice
-    if (requirement) {
-      requirements.push(requirement);
-    }
-  }
+  const { usMeNoClassAOrBViolationFor90Days, usMeServedXPortionOfSentence } =
+    cloneDeep(INELIGIBLE_CRITERIA_COPY);
 
   if (criteria.usMeServedXPortionOfSentence) {
     const requirement = hydrateServedXPortionOfSentence(
@@ -296,13 +236,19 @@ export class UsMeSCCPOpportunity extends UsMeExternalSnoozeOpportunityBase<
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
     const { eligibleCriteria } = this.record;
-    return requirementsForEligibleCriteria(eligibleCriteria);
+    return [
+      ...super.requirementsMet, // Criteria copy from the config defined in admin panel
+      ...requirementsForEligibleCriteria(eligibleCriteria), // Copy defined in this file
+    ];
   }
 
   get requirementsAlmostMet(): OpportunityRequirement[] {
     if (!this.record) return [];
     const { ineligibleCriteria } = this.record;
-    return requirementsForIneligibleCriteria(ineligibleCriteria);
+    return [
+      ...super.requirementsAlmostMet, // Criteria copy from the config defined in admin panel
+      ...requirementsForIneligibleCriteria(ineligibleCriteria), // Copy defined in this file
+    ];
   }
 
   get almostEligibleStatusMessage(): string | undefined {
@@ -319,18 +265,7 @@ export class UsMeSCCPOpportunity extends UsMeExternalSnoozeOpportunityBase<
       // only expected for fully ineligible residents, who are not supported here anyway
       if (!eligibleDate) return;
 
-      const monthsRemaining = differenceInMonths(eligibleDate, new Date());
-      let remainingText =
-        monthsRemaining === 1
-          ? `${monthsRemaining} month`
-          : `${monthsRemaining} months`;
-      if (monthsRemaining === 0) {
-        const daysRemaining = differenceInDays(eligibleDate, new Date());
-        remainingText =
-          daysRemaining === 1
-            ? `${daysRemaining} day`
-            : `${daysRemaining} days`;
-      }
+      const remainingText = monthsOrDaysRemainingFromToday(eligibleDate);
       return `Will reach 30 months or fewer remaining on term in ${remainingText}`;
     }
 

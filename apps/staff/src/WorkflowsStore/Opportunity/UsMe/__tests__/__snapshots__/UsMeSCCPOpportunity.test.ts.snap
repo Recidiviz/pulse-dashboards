@@ -3,12 +3,13 @@
 exports[`almost eligible but for class A/B discipline > requirements met 1`] = `
 [
   {
-    "text": "Currently on eligible custody level: minimum",
-    "tooltip": "Currently on minimum or community custody",
+    "key": "usMeXMonthsRemainingOnSentence",
+    "text": "Has 30 or fewer months remaining on term: 29 more months remaining on sentence",
+    "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
   },
   {
-    "text": "Has 30 or fewer months remaining on term: 30 months remaining on sentence",
-    "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
+    "text": "Currently on eligible custody level: minimum",
+    "tooltip": "Currently on minimum or community custody",
   },
   {
     "text": "Has served minimum required time on term: Served at least 1/2 of sentence",
@@ -33,12 +34,13 @@ exports[`almost eligible but for class A/B discipline > requirements met 2`] = `
 exports[`almost eligible but for fraction of sentence served > requirements met 1`] = `
 [
   {
-    "text": "Currently on eligible custody level: minimum",
-    "tooltip": "Currently on minimum or community custody",
+    "key": "usMeXMonthsRemainingOnSentence",
+    "text": "Has 30 or fewer months remaining on term: 29 more months remaining on sentence",
+    "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
   },
   {
-    "text": "Has 30 or fewer months remaining on term: 35 months remaining on sentence",
-    "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
+    "text": "Currently on eligible custody level: minimum",
+    "tooltip": "Currently on minimum or community custody",
   },
   {
     "text": "No detainers, warrants, or other pending holds",
@@ -84,7 +86,8 @@ exports[`almost eligible but for months remaining > requirements met 1`] = `
 exports[`almost eligible but for months remaining > requirements met 2`] = `
 [
   {
-    "text": "Has 30 or fewer months remaining on term: 41 months remaining on sentence",
+    "key": "usMeXMonthsRemainingOnSentence",
+    "text": "Has 30 or fewer months remaining on term: 41 more months remaining on sentence",
     "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
   },
 ]
@@ -92,20 +95,21 @@ exports[`almost eligible but for months remaining > requirements met 2`] = `
 
 exports[`eligible with future x portion date 1`] = `
 {
-  "text": "Has 30 or fewer months remaining on term: 32 months remaining on sentence",
-  "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
+  "text": "Currently on eligible custody level: minimum",
+  "tooltip": "Currently on minimum or community custody",
 }
 `;
 
 exports[`fully eligible > requirements met 1`] = `
 [
   {
-    "text": "Currently on eligible custody level: minimum",
-    "tooltip": "Currently on minimum or community custody",
+    "key": "usMeXMonthsRemainingOnSentence",
+    "text": "Has 30 or fewer months remaining on term: 41 more months remaining on sentence",
+    "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
   },
   {
-    "text": "Has 30 or fewer months remaining on term: 32 months remaining on sentence",
-    "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
+    "text": "Currently on eligible custody level: minimum",
+    "tooltip": "Currently on minimum or community custody",
   },
   {
     "text": "Has served minimum required time on term: Served at least 2/3 of sentence",
@@ -124,7 +128,7 @@ exports[`fully eligible > requirements met 1`] = `
 
 exports[`requirements for half sentence served 1`] = `
 {
-  "text": "Has 30 or fewer months remaining on term: 30 months remaining on sentence",
-  "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
+  "text": "Currently on eligible custody level: community",
+  "tooltip": "Currently on minimum or community custody",
 }
 `;

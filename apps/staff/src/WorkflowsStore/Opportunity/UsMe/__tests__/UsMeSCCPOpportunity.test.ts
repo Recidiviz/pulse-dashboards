@@ -39,6 +39,11 @@ let root: RootStore;
 
 vi.mock("../../../subscriptions");
 
+const residentRecordWithNearReleaseDate = {
+  ...usMePersonRecord,
+  ...{ releaseDate: new Date(relativeFixtureDate({ months: 29 })) },
+};
+
 function createTestUnit(
   residentRecord: typeof usMePersonRecord,
   opportunityRecord: DocumentData,
@@ -93,7 +98,7 @@ test("requirements for half sentence served", () => {
 
 test("eligible with future x portion date", () => {
   createTestUnit(
-    usMePersonRecord,
+    residentRecordWithNearReleaseDate,
     usMeSccpFixtures.RES002eligibleToApplyBeforeXPortionServed.input,
   );
 
@@ -121,8 +126,8 @@ describe("almost eligible but for months remaining", () => {
   });
 
   test("almostEligibleStatusMessage", () => {
-    expect(opp.almostEligibleStatusMessage).toEqual(
-      "Will reach 30 months or fewer remaining on term in 5 months",
+    expect(opp.almostEligibleStatusMessage).toMatchInlineSnapshot(
+      `"Will reach 30 months or fewer remaining on term in 5 more months"`,
     );
   });
 });
@@ -141,45 +146,16 @@ describe("almost eligible but for months with days remaining", () => {
   });
 
   test("almostEligibleStatusMessage with days", () => {
-    expect(opp.almostEligibleStatusMessage).toEqual(
-      "Will reach 30 months or fewer remaining on term in 13 days",
+    expect(opp.almostEligibleStatusMessage).toMatchInlineSnapshot(
+      `"Will reach 30 months or fewer remaining on term in 13 more days"`,
     );
-  });
-});
-
-describe("ensure requirements text updates when source changes", () => {
-  test("from eligible to ineligible", () => {
-    // This is specifically to check for a bug where the first time we built
-    // requirements we accidentally overwrote the source template instead of
-    // copying it which made the requirements text never update until a reload.
-    createTestUnit(
-      usMePersonRecord,
-      usMeSccpFixtures.RES006fullyEligibleTwoThirdsPortion.input,
-    );
-
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    const textEligible = opp.requirementsMet.find(({ text }) =>
-      text.includes("months remaining on sentence"),
-    )!.text;
-
-    createTestUnit(
-      usMePersonRecord,
-      usMeSccpFixtures.RES001almostEligibleMonthsRemaining.input,
-    );
-
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    const textAlmostEligible = opp.requirementsAlmostMet.find(({ text }) =>
-      text.includes("months remaining on sentence"),
-    )!.text;
-
-    expect(textEligible).not.toEqual(textAlmostEligible);
   });
 });
 
 describe("almost eligible but for class A/B discipline", () => {
   beforeEach(() => {
     createTestUnit(
-      usMePersonRecord,
+      residentRecordWithNearReleaseDate,
       usMeSccpFixtures.RES003almostEligibleRecentViolation.input,
     );
   });
@@ -203,7 +179,7 @@ describe("almost eligible but for class A/B discipline", () => {
 describe("almost eligible but for fraction of sentence served", () => {
   beforeEach(() => {
     createTestUnit(
-      usMePersonRecord,
+      residentRecordWithNearReleaseDate,
       usMeSccpFixtures.RES005almostEligibleXPortion.input,
     );
   });

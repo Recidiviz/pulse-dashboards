@@ -375,14 +375,38 @@ export const mockApiOpportunityConfigurationResponse = {
       dynamicEligibilityText:
         "resident[|s] may be eligible for the Supervised Community Confinement Program",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: [],
+      eligibleCriteriaCopy: [
+        {
+          key: "usMeXMonthsRemainingOnSentence",
+          text: "Has 30 or fewer months remaining on term: {{monthsOrDaysRemainingFromToday opportunity.person.releaseDate}} remaining on sentence",
+          tooltip:
+            "No more than thirty (30) months remaining on the term of imprisonment or, " +
+            "in the case of a split sentence, on the unsuspended portion, after consideration " +
+            "of any deductions that the resident has received and retained under Title 17-A, " +
+            "Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines " +
+            "that the average statewide case load is no more than ninety (90) adult community " +
+            "corrections clients to one probation officer.",
+        },
+      ],
       emptyTabCopy: [],
       firestoreCollection: "US_ME-SCCPReferrals",
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 1,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "usMeXMonthsRemainingOnSentence",
+          text: "Has 30 or fewer months remaining on term: {{monthsOrDaysRemainingFromToday opportunity.person.releaseDate}} remaining on sentence",
+          tooltip:
+            "No more than thirty (30) months remaining on the term of imprisonment or, " +
+            "in the case of a split sentence, on the unsuspended portion, after consideration " +
+            "of any deductions that the resident has received and retained under Title 17-A, " +
+            "Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines " +
+            "that the average statewide case load is no more than ninety (90) adult community " +
+            "corrections clients to one probation officer.",
+        },
+      ],
       initialHeader:
         "Search for case managers above to review residents in their unit who are approaching SCCP eligibility and complete application paperwork.",
       isAlert: false,
