@@ -3,9 +3,9 @@
 exports[`copy for person where locationType='EMPLOYMENT' and method='IN_PERSON' 1`] = `
 "Hi Jane, this is a reminder that you have an upcoming employment contact tomorrow.
 
-Date: 4/14/2025
+Date: 4/14/25
 
-Time: Approximately 7:00 PM CDT
+Time: Approximately 7:00 AM CDT
 
 Location: At your place of employment
 
@@ -19,9 +19,9 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where locationType='EMPLOYMENT' and method='VIRTUAL' 1`] = `
 "Hi Jane, this is a reminder that you have an upcoming employment contact tomorrow.
 
-Date: 4/14/2025
+Date: 4/14/25
 
-Time: Approximately 7:00 PM CDT
+Time: Approximately 7:00 AM CDT
 
 Location: Virtual video call
 
@@ -35,9 +35,9 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where locationType='FIELD' and method='IN_PERSON' 1`] = `
 "Hi Jane, this is a reminder that you have an upcoming field contact tomorrow.
 
-Date: 4/14/2025
+Date: 4/14/25
 
-Time: Approximately 7:00 PM CDT
+Time: Approximately 7:00 AM CDT
 
 Location: 123 North Pole
 
@@ -51,9 +51,9 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where locationType='FIELD' and method='VIRTUAL' 1`] = `
 "Hi Jane, this is a reminder that you have an upcoming field contact tomorrow.
 
-Date: 4/14/2025
+Date: 4/14/25
 
-Time: Approximately 7:00 PM CDT
+Time: Approximately 7:00 AM CDT
 
 Location: Virtual video call
 
@@ -67,9 +67,9 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where locationType='HOME' and method='IN_PERSON' 1`] = `
 "Hi Jane, this is a reminder that you have an upcoming home contact tomorrow.
 
-Date: 4/14/2025
+Date: 4/14/25
 
-Time: Approximately 7:00 PM CDT
+Time: Approximately 7:00 AM CDT
 
 Location: Your home
 
@@ -83,9 +83,9 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where locationType='HOME' and method='VIRTUAL' 1`] = `
 "Hi Jane, this is a reminder that you have an upcoming home contact tomorrow.
 
-Date: 4/14/2025
+Date: 4/14/25
 
-Time: Approximately 7:00 PM CDT
+Time: Approximately 7:00 AM CDT
 
 Location: Your home via virtual video call
 
@@ -99,9 +99,9 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where locationType='OFFICE' and method='IN_PERSON' 1`] = `
 "Hi Jane, this is a reminder that you have an upcoming office contact tomorrow.
 
-Date: 4/14/2025
+Date: 4/14/25
 
-Time: Approximately 7:00 PM CDT
+Time: Approximately 7:00 AM CDT
 
 Location: 123 North Pole
 
@@ -115,9 +115,9 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where locationType='OFFICE' and method='VIRTUAL' 1`] = `
 "Hi Jane, this is a reminder that you have an upcoming office contact tomorrow.
 
-Date: 4/14/2025
+Date: 4/14/25
 
-Time: Approximately 7:00 PM CDT
+Time: Approximately 7:00 AM CDT
 
 Location: Virtual video call
 

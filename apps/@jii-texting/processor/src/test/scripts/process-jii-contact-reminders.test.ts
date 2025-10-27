@@ -378,9 +378,9 @@ describe("one person in DB with welcome text in progress", () => {
     expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`
       "Hi Jane, this is a reminder that you have an upcoming home contact tomorrow.
 
-      Date: 4/14/2025
+      Date: 4/14/25
 
-      Time: Approximately 7:00 PM CDT
+      Time: Approximately 7:00 AM CDT
 
       Location: Your home
 

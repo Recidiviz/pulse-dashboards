@@ -348,8 +348,11 @@ function getTexasReminderMessageBody(
   })();
 
   const contactDescription = method === "IN_PERSON" ? "arrive" : "call";
-
-  const dateStr = new Intl.DateTimeFormat("en-US").format(datetime);
+  
+  const dateStr = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "short", 
+    timeZone: "America/Chicago",
+  }).format(datetime);
   const timeStr = new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     minute: "numeric",

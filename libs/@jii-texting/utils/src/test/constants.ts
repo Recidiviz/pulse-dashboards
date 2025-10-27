@@ -195,7 +195,7 @@ export const fakeContactOne = {
   locationType: "HOME",
   method: "IN_PERSON",
   address: "123 North Pole",
-  datetime: new Date("2025-04-14"),
+  datetime: new Date("2025-04-14T12:00:00Z"),
   updateDatetime: new Date("2025-04-14T08:00:00Z"),
   reminderType: "WITHIN_ONE_DAY",
 };
@@ -219,7 +219,7 @@ export const fakeContactThree = {
   locationType: "OFFICE",
   method: "IN_PERSON",
   address: faker.location.streetAddress(),
-  datetime: new Date("2025-04-14"),
+  datetime: new Date("2025-04-14T12:00:00Z"),
   updateDatetime: new Date("2025-04-14T08:00:00Z"),
   reminderType: "WITHIN_ONE_DAY",
 };
