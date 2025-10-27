@@ -76,7 +76,7 @@ export class ResidentSelectorPresenter implements Hydratable {
   get selectOptions() {
     return this.filteredResidents.map((r) => ({
       value: r,
-      label: `${r.personName.givenNames} ${r.personName.surname} (${r.personExternalId})`,
+      label: `${r.personName.givenNames} ${r.personName.surname} (${r.displayId})`,
     }));
   }
 }
