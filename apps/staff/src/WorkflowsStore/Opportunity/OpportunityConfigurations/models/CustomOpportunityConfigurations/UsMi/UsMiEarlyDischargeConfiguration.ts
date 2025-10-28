@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DenialInputSettings } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMiEarlyDischargeConfiguration extends ApiOpportunityConfiguration {
@@ -26,16 +27,31 @@ export class UsMiEarlyDischargeConfiguration extends ApiOpportunityConfiguration
   }
 
   get maxSnoozeDaysByDenialReason() {
+    const snoozeLengthOverrides: Record<string, number | undefined> = {
+      PROGRAMMING: 365,
+    };
+
     if (this.userStore.activeFeatureVariants.indefiniteSnooze) {
-      return {
-        ...super.maxSnoozeDaysByDenialReason,
-        JUDGE: undefined,
-      };
+      snoozeLengthOverrides.JUDGE = undefined;
     }
-    return super.maxSnoozeDaysByDenialReason;
+
+    return {
+      ...super.maxSnoozeDaysByDenialReason,
+      ...snoozeLengthOverrides,
+    };
   }
 
   get snoozeReviewStatusMessage() {
     return "Indefinite Snooze Review";
+  }
+
+  get denialInputSettings(): Record<string, DenialInputSettings> {
+    return {
+      PROGRAMMING: {
+        required: true,
+        placeholder: "Please describe the outstanding programming required",
+        inputType: "text",
+      },
+    };
   }
 }
