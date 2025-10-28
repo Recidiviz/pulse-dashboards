@@ -32,7 +32,7 @@ const RoutePlannerSelectContainer = styled.div`
 
 const ScrollableWrapper = styled.div`
   height: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
 `;
 
 export const RoutePlannerClientSelect = ({

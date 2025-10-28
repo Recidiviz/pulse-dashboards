@@ -45,6 +45,9 @@ export const ManagedComponent: FC<{
   presenter: RoutePlannerPresenter;
 }> = observer(function RoutePlannerBody({ presenter }) {
   // TODO(#9639): Handle mobile view here
+  if (!presenter) {
+    return null;
+  }
 
   return (
     <RoutePlannerContainer>

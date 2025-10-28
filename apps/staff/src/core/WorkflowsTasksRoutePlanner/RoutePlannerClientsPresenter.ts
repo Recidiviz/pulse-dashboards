@@ -139,6 +139,10 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     return this.selectedPeople.map((person) => (person as Client).address);
   }
 
+  get selectedClients(): readonly JusticeInvolvedPerson[] {
+    return this.selectedPeople;
+  }
+
   isPersonSelected(person: JusticeInvolvedPerson) {
     return this.indexOfPerson(person) !== -1;
   }

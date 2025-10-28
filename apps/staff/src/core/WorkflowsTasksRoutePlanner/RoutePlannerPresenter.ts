@@ -41,11 +41,12 @@ export class RoutePlannerPresenter {
     return API_KEY;
   }
 
-  get mapIframeUrl(): string {
+  get startingAddress(): string {
     // TODO(#9405): Replace with the address of the logged-in user's DPO
-    const houstonDpoAddress =
-      "5400 N.SAM HOUSTON PKWY EAST HOUSTON TX 770320000";
+    return "5400 N.SAM HOUSTON PKWY EAST HOUSTON TX 770320000";
+  }
 
+  get mapIframeUrl(): string {
     const { selectedAddresses } = this.clientsPresenter;
     const waypoints =
       selectedAddresses.length === 0
@@ -55,8 +56,8 @@ export class RoutePlannerPresenter {
     const queryParams = {
       key: this.mapsApiKey,
       mode: "driving",
-      origin: houstonDpoAddress,
-      destination: houstonDpoAddress,
+      origin: this.startingAddress,
+      destination: this.startingAddress,
       ...waypoints,
     };
 
