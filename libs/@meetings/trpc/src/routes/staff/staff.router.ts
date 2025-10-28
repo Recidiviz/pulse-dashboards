@@ -19,7 +19,18 @@ import { auth0Procedure, router } from "~@meetings/trpc/init";
 
 export const staffRouter = router({
   getClients: auth0Procedure.query(async ({ ctx: { prisma, user } }) => {
-    console.log(user.pseudonymizedId);
+    console.log(user);
+
+    const querySelect = {
+      givenNames: true,
+      surname: true,
+      displayPersonExternalId: true,
+      personId: true,
+    };
+
+    if (user.pseudonymizedId === "RECIDIVIZ") {
+      return prisma.client.findMany({ select: querySelect });
+    }
 
     return prisma.client.findMany({
       where: {
@@ -31,12 +42,7 @@ export const staffRouter = router({
           },
         },
       },
-      select: {
-        givenNames: true,
-        surname: true,
-        displayPersonExternalId: true,
-        personId: true,
-      },
+      select: querySelect,
     });
   }),
 });

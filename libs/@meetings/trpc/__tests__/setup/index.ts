@@ -25,17 +25,21 @@ import {
 import Fastify from "fastify";
 import { FastifyInstance } from "fastify/types/instance";
 import fastifyAuth0Verify from "fastify-auth0-verify";
+import jestExtendedMatchers from "jest-extended";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
-import { beforeAll, beforeEach } from "vitest";
+import { beforeAll, beforeEach, expect } from "vitest";
 import { mock } from "vitest-mock-extended";
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
-import { createContext } from "~@meetings/trpc/context";
+import { Auth0User, createContext } from "~@meetings/trpc/context";
 import { AppRouter, appRouter } from "~@meetings/trpc/router";
 import { fakeStaff, seed } from "~@meetings/trpc/test/setup/seed";
 import { resetDb } from "~@meetings/trpc/test/setup/utils";
+
+expect.extend(jestExtendedMatchers);
+
 export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])
   : 3003;
@@ -75,14 +79,13 @@ vi.mock("@google-cloud/tasks", () => ({
   }),
 }));
 
-beforeAll(async () => {
-  init({
-    dsn: process.env["SENTRY_DSN"],
-    transport: sentryTransport,
-    maxValueLength: 10000,
-  });
-
-  const testServer = Fastify({
+export async function initFastifyAndSetUser(user: Auth0User) {
+  if (testServer) {
+    await testServer.close();
+    // Give the port time to be fully released
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  testServer = Fastify({
     logger: true,
   });
 
@@ -102,29 +105,19 @@ beforeAll(async () => {
     audience: "audience",
   });
 
-  // Override he jwtVerify function to always pass
+  // Override the jwtVerify function to always pass
   testServer.addHook("preHandler", (req, reply, done) => {
     req.jwtVerify = async () => {
       return;
     };
 
-    req.user = {
-      "https://dashboard.recidiviz.org/app_metadata": {
-        pseudonymizedId: fakeStaff.pseudonymizedId,
-      },
-    };
+    req.user = user;
     done();
   });
 
-  // Start listening.
-  testServer.listen({ port: testPort, host: testHost }, (err) => {
-    if (err) {
-      testServer.log.error(err);
-      process.exit(1);
-    } else {
-      console.log(`[ ready ] http://${testHost}:${testPort}`);
-    }
-  });
+  // Start listening and wait for the server to be ready
+  await testServer.listen({ port: testPort, host: testHost });
+  console.log(`[ ready ] http://${testHost}:${testPort}`);
 
   testTRPCClient = createTRPCClient<AppRouter>({
     links: [
@@ -141,6 +134,14 @@ beforeAll(async () => {
       }),
     ],
   });
+}
+
+beforeAll(async () => {
+  init({
+    dsn: process.env["SENTRY_DSN"],
+    transport: sentryTransport,
+    maxValueLength: 10000,
+  });
 });
 
 beforeEach(async () => {
@@ -148,4 +149,19 @@ beforeEach(async () => {
   await seed(testPrismaClient);
 
   testkit.reset();
+
+  await initFastifyAndSetUser({
+    "https://dashboard.recidiviz.org/app_metadata": {
+      stateCode: "US_NE",
+      pseudonymizedId: fakeStaff[0].pseudonymizedId,
+    },
+  });
+});
+
+afterEach(async () => {
+  if (testServer) {
+    await testServer.close();
+    // Give the port time to be fully released before the next test
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
 });

@@ -65,26 +65,27 @@ export const clientRouter = router({
   getMeetings: auth0Procedure
     .input(getMeetingsInputSchema)
     .query(async ({ input: { clientId }, ctx: { prisma, user } }) => {
-      const clientBelongsToStaff = await prisma.client.findFirst({
-        where: {
-          personId: clientId,
-          staff: {
-            some: {
-              staff: {
-                pseudonymizedId: user.pseudonymizedId,
+      if (user.pseudonymizedId !== "RECIDIVIZ") {
+        const clientBelongsToStaff = await prisma.client.findFirst({
+          where: {
+            personId: clientId,
+            staff: {
+              some: {
+                staff: {
+                  pseudonymizedId: user.pseudonymizedId,
+                },
               },
             },
           },
-        },
-      });
-
-      if (!clientBelongsToStaff) {
-        throw new TRPCError({
-          message: "Client not found",
-          code: "NOT_FOUND",
         });
-      }
 
+        if (!clientBelongsToStaff) {
+          throw new TRPCError({
+            message: "Client not found",
+            code: "NOT_FOUND",
+          });
+        }
+      }
       return await prisma.meeting.findMany({
         where: {
           clientId,

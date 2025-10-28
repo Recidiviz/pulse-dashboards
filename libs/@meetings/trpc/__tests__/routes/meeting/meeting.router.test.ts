@@ -24,7 +24,7 @@ import {
   testPrismaClient,
   testTRPCClient,
 } from "~@meetings/trpc/test/setup";
-import { fakeClient, fakeMeeting } from "~@meetings/trpc/test/setup/seed";
+import { fakeClients, fakeMeeting } from "~@meetings/trpc/test/setup/seed";
 
 const FAKE_DATE = new Date("2025-10-19");
 
@@ -33,7 +33,7 @@ describe("meeting router", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.getDetails.query({
-          clientId: fakeClient.personId,
+          clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
         }),
       ).rejects.toMatchObject({
@@ -44,7 +44,7 @@ describe("meeting router", () => {
 
     test("Should return meeting details if it exists", async () => {
       const result = await testTRPCClient.v1.meeting.getDetails.query({
-        clientId: fakeClient.personId,
+        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
       });
 
@@ -64,7 +64,7 @@ describe("meeting router", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.getSignedUrlForRecording.query({
-          clientId: fakeClient.personId,
+          clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
         }),
       ).rejects.toMatchObject({
@@ -76,7 +76,7 @@ describe("meeting router", () => {
     test("Returns a signed URL for the meeting recording", async () => {
       const result =
         await testTRPCClient.v1.meeting.getSignedUrlForRecording.query({
-          clientId: fakeClient.personId,
+          clientId: fakeClients[0].personId,
           meetingId: fakeMeeting.id,
         });
 
@@ -90,7 +90,7 @@ describe("meeting router", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.discardMeeting.mutate({
-          clientId: fakeClient.personId,
+          clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
         }),
       ).rejects.toMatchObject({
@@ -101,7 +101,7 @@ describe("meeting router", () => {
 
     test("Should delete meeting if it exists", async () => {
       await testTRPCClient.v1.meeting.discardMeeting.mutate({
-        clientId: fakeClient.personId,
+        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
       });
 
@@ -117,7 +117,7 @@ describe("meeting router", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.updateNotes.mutate({
-          clientId: fakeClient.personId,
+          clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
           notes: "These are some notes",
         }),
@@ -129,7 +129,7 @@ describe("meeting router", () => {
 
     test("Should update notes if meeting exists", async () => {
       await testTRPCClient.v1.meeting.updateNotes.mutate({
-        clientId: fakeClient.personId,
+        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
         notes: "These are some notes",
       });
@@ -161,7 +161,7 @@ describe("meeting router", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.endMeeting.mutate({
-          clientId: fakeClient.personId,
+          clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
           notes: "These are some notes",
         }),
@@ -175,7 +175,7 @@ describe("meeting router", () => {
       mockCloudTasksClient.createTask.mockRejectedValueOnce(new Error());
 
       await testTRPCClient.v1.meeting.endMeeting.mutate({
-        clientId: fakeClient.personId,
+        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
         notes: "These are some notes",
       });
@@ -200,7 +200,7 @@ describe("meeting router", () => {
 
     test("Should set meeting end time and queue stitching", async () => {
       await testTRPCClient.v1.meeting.endMeeting.mutate({
-        clientId: fakeClient.personId,
+        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
         notes: "These are some notes",
       });

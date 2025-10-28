@@ -26,23 +26,64 @@ import { StateCode } from "~@meetings/prisma/client";
 import { AuthUser, Context } from "~@meetings/trpc/types";
 import { verifyAuth0Token } from "~server-setup-plugin";
 
-type Auth0User = {
+export type Auth0User = {
   "https://dashboard.recidiviz.org/app_metadata": {
-    pseudonymizedId: string;
+    stateCode: "recidiviz" | StateCode;
+    pseudonymizedId?: string;
+    allowedStates?: string[];
   };
 };
 
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
 
-function formatUser(user: Auth0User | undefined): AuthUser | undefined {
+function formatAndVerifyUser(
+  user: Auth0User | undefined,
+  requestedState: string,
+): AuthUser | undefined {
   if (!user) {
     return undefined;
   }
 
+  // Grab the fields we want from the metadata since there is more in there than just these
+  const {
+    stateCode: userState,
+    pseudonymizedId,
+    allowedStates,
+  } = user["https://dashboard.recidiviz.org/app_metadata"];
+
+  // Check non-Recidiviz users first
+  if (userState !== "recidiviz") {
+    if (!Object.values(StateCode).includes(userState as StateCode)) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: `Unsupported state code provided in auth0 app_metadata: ${userState}`,
+      });
+    }
+    if (userState !== requestedState) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: `User with state code ${userState} cannot request data about state: ${requestedState}`,
+      });
+    }
+    if (!pseudonymizedId) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: `Missing pseudonymizedId for user`,
+      });
+    }
+  } else {
+    if (!allowedStates?.includes(requestedState)) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: `Recidiviz user cannot request data about state: ${requestedState}. File a go/access request for access`,
+      });
+    }
+  }
+
   return {
-    pseudonymizedId:
-      user["https://dashboard.recidiviz.org/app_metadata"].pseudonymizedId,
+    // we checked missing pseudonymized id above for non-Recidiviz users, so if it's missing here then they are recidiviz
+    pseudonymizedId: pseudonymizedId ?? "RECIDIVIZ",
   };
 }
 
@@ -70,8 +111,9 @@ export async function createContext(
   }
 
   // Cast since the returned object from verifyAuth0Token has no type information
-  const auth0User = (await verifyAuth0Token(opts)) as Auth0User;
-  const formattedUser = formatUser(auth0User);
+  const auth0User = (await verifyAuth0Token(opts)) as Auth0User | undefined;
+  const formattedUser = formatAndVerifyUser(auth0User, stateCode);
+  console.log(`formattedUser: ${JSON.stringify(formattedUser)}`);
 
   let prismaClient;
   try {

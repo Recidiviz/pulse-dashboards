@@ -29,6 +29,10 @@ export const testHost = process.env["HOST"] ?? "localhost";
 
 const FAKE_GCS_PORT = 4443;
 
+// Note: if you see the error "An error occurred getting a credential", try pulling the image
+// first outside of the test with:
+// docker pull fsouza/fake-gcs-server:1.52.3
+// docker pull testcontainers/ryuk:0.12.0
 const gcsContainer = await new GenericContainer("fsouza/fake-gcs-server:1.52.3")
   .withEntrypoint([
     "/bin/fake-gcs-server",

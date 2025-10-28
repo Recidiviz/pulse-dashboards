@@ -15,21 +15,71 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { testTRPCClient } from "~@meetings/trpc/test/setup";
-import { fakeClient } from "~@meetings/trpc/test/setup/seed";
+import {
+  initFastifyAndSetUser,
+  testTRPCClient,
+} from "~@meetings/trpc/test/setup";
+import { fakeClients, fakeStaff } from "~@meetings/trpc/test/setup/seed";
 
 describe("staff router", () => {
-  describe("getClients", () => {
-    test("returns list of clients", async () => {
+  describe("state user", () => {
+    test("getClients returns list of clients for staff member", async () => {
       const result = await testTRPCClient.v1.staff.getClients.query();
       expect(result).toEqual([
         {
+          personId: fakeClients[0].personId,
+          givenNames: fakeClients[0].givenNames,
+          surname: fakeClients[0].surname,
+          displayPersonExternalId: fakeClients[0].displayPersonExternalId,
+        },
+      ]);
+    });
+  });
+
+  describe("recidiviz user with pseudo ID set", () => {
+    beforeEach(async () => {
+      await initFastifyAndSetUser({
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "recidiviz",
+          pseudonymizedId: fakeStaff[0].pseudonymizedId,
+          allowedStates: ["US_NE"],
+        },
+      });
+    });
+
+    test("getClients returns list of clients for staff member", async () => {
+      const result = await testTRPCClient.v1.staff.getClients.query();
+      expect(result).toEqual([
+        {
+          personId: fakeClients[0].personId,
+          givenNames: fakeClients[0].givenNames,
+          surname: fakeClients[0].surname,
+          displayPersonExternalId: fakeClients[0].displayPersonExternalId,
+        },
+      ]);
+    });
+  });
+
+  describe("recidiviz user without pseudo ID set", () => {
+    beforeEach(async () => {
+      await initFastifyAndSetUser({
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "recidiviz",
+          allowedStates: ["US_NE"],
+        },
+      });
+    });
+
+    test("getClients returns list of clients for staff member", async () => {
+      const result = await testTRPCClient.v1.staff.getClients.query();
+      expect(result).toIncludeSameMembers(
+        fakeClients.map((fakeClient) => ({
           personId: fakeClient.personId,
           givenNames: fakeClient.givenNames,
           surname: fakeClient.surname,
           displayPersonExternalId: fakeClient.displayPersonExternalId,
-        },
-      ]);
+        })),
+      );
     });
   });
 });

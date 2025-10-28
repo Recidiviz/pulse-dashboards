@@ -21,50 +21,85 @@ import { Prisma, PrismaClient, StateCode } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
 
 export const intakeId = "intake-1";
-export const clientPseudoId = "client-pid-1";
+export const clientPseudoId1 = "client-pid-1";
+export const clientPseudoId2 = "client-pid-2";
 
-export const fakeStaff = {
-  staffId: BigInt(1),
-  stableStaffExternalId: "staff-ext-1",
-  stableStaffExternalIdType: "staff-ext-type-1",
-  pseudonymizedId: "staff-pid-1",
-  givenNames: faker.person.firstName(),
-  middleNames: faker.person.firstName(),
-  surname: faker.person.lastName(),
-  email: faker.internet.email(),
-  stateCode: StateCode.US_NE,
-} satisfies Prisma.StaffCreateInput;
-
-export const fakeClient = {
-  stateCode: StateCode.US_NE,
-  personId: BigInt(1),
-  stablePersonExternalId: "client-ext-1",
-  stablePersonExternalIdType: "client-ext-type-1",
-  displayPersonExternalId: "client-display-ext-1",
-  pseudonymizedId: clientPseudoId,
-  givenNames: faker.person.firstName(),
-  middleNames: faker.person.firstName(),
-  surname: faker.person.lastName(),
-  suffix: faker.person.suffix(),
-  birthDate: faker.date.birthdate(),
-  staff: {
-    create: {
-      staffId: fakeStaff.staffId,
-    },
+export const fakeStaff = [
+  {
+    staffId: BigInt(1),
+    stableStaffExternalId: "staff-ext-1",
+    stableStaffExternalIdType: "staff-ext-type-1",
+    pseudonymizedId: "staff-pid-1",
+    givenNames: faker.person.firstName(),
+    middleNames: faker.person.firstName(),
+    surname: faker.person.lastName(),
+    email: faker.internet.email(),
+    stateCode: StateCode.US_NE,
   },
-  supervisionType: "PAROLE",
-} satisfies Prisma.ClientCreateInput;
+  {
+    staffId: BigInt(2),
+    stableStaffExternalId: "staff-ext-2",
+    stableStaffExternalIdType: "staff-ext-type-1",
+    pseudonymizedId: "staff-pid-2",
+    givenNames: faker.person.firstName(),
+    middleNames: faker.person.firstName(),
+    surname: faker.person.lastName(),
+    email: faker.internet.email(),
+    stateCode: StateCode.US_NE,
+  },
+] satisfies Prisma.StaffCreateManyInput[];
+
+export const fakeClients = [
+  {
+    stateCode: StateCode.US_NE,
+    personId: BigInt(1),
+    stablePersonExternalId: "client-ext-1",
+    stablePersonExternalIdType: "client-ext-type-1",
+    displayPersonExternalId: "client-display-ext-1",
+    pseudonymizedId: clientPseudoId1,
+    givenNames: faker.person.firstName(),
+    middleNames: faker.person.firstName(),
+    surname: faker.person.lastName(),
+    suffix: faker.person.suffix(),
+    birthDate: faker.date.birthdate(),
+    staff: {
+      create: {
+        staffId: fakeStaff[0].staffId,
+      },
+    },
+    supervisionType: "PAROLE",
+  },
+  {
+    stateCode: StateCode.US_NE,
+    personId: BigInt(2),
+    stablePersonExternalId: "client-ext-2",
+    stablePersonExternalIdType: "client-ext-type-1",
+    displayPersonExternalId: "client-display-ext-2",
+    pseudonymizedId: clientPseudoId2,
+    givenNames: faker.person.firstName(),
+    middleNames: faker.person.firstName(),
+    surname: faker.person.lastName(),
+    suffix: faker.person.suffix(),
+    birthDate: faker.date.birthdate(),
+    staff: {
+      create: {
+        staffId: fakeStaff[1].staffId,
+      },
+    },
+    supervisionType: "PAROLE",
+  },
+] satisfies Prisma.ClientCreateInput[];
 
 export const fakeMeeting = {
   id: "meeting-1",
   staff: {
     connect: {
-      staffId: fakeStaff.staffId,
+      staffId: fakeStaff[0].staffId,
     },
   },
   client: {
     connect: {
-      personId: fakeClient.personId,
+      personId: fakeClients[0].personId,
     },
   },
   startTime: new Date(),
@@ -74,13 +109,19 @@ export const fakeMeeting = {
 
 export async function seed(prismaClient: PrismaClient) {
   // Seed Data
-  await prismaClient.staff.create({
+  await prismaClient.staff.createMany({
     data: fakeStaff,
   });
 
-  await prismaClient.client.create({
-    data: fakeClient,
-  });
+  // createMany doesn't allow adding connections at the same time, so do it one by one instead
+  // (this is fine since we have such a small number of fake clients)
+  await Promise.all(
+    fakeClients.map((client) =>
+      prismaClient.client.create({
+        data: client,
+      }),
+    ),
+  );
 
   await prismaClient.meeting.create({
     data: fakeMeeting,

@@ -18,64 +18,147 @@
 import { faker } from "@faker-js/faker";
 
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
-import { testPrismaClient, testTRPCClient } from "~@meetings/trpc/test/setup";
 import {
-  fakeClient,
+  initFastifyAndSetUser,
+  testPrismaClient,
+  testTRPCClient,
+} from "~@meetings/trpc/test/setup";
+import {
+  fakeClients,
   fakeMeeting,
   fakeStaff,
 } from "~@meetings/trpc/test/setup/seed";
 
 describe("client router", () => {
-  describe("createMeeting", () => {
-    test("Creates a meeting", async () => {
-      const startTime = faker.date.future();
+  describe("state user", () => {
+    describe("createMeeting", () => {
+      test("Creates a meeting", async () => {
+        const startTime = faker.date.future();
 
-      const result = await testTRPCClient.v1.client.createMeeting.mutate({
-        clientId: fakeClient.personId,
-        startTime,
-      });
+        const result = await testTRPCClient.v1.client.createMeeting.mutate({
+          clientId: fakeClients[0].personId,
+          startTime,
+        });
 
-      // Check expected fields are returned
-      expect(result).toEqual({
-        id: expect.any(String),
-        startTime,
-      });
+        // Check expected fields are returned
+        expect(result).toEqual({
+          id: expect.any(String),
+          startTime,
+        });
 
-      // Check meeting was created in DB
-      const meetings = await testPrismaClient.meeting.findMany({
-        where: { clientId: fakeClient.personId },
+        // Check meeting was created in DB
+        const meetings = await testPrismaClient.meeting.findMany({
+          where: { clientId: fakeClients[0].personId },
+        });
+        expect(meetings.length).toBe(2);
+        expect(meetings).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: result.id,
+              clientId: fakeClients[0].personId,
+              staffId: fakeStaff[0].staffId,
+              startTime,
+              endTime: null,
+              recordingsGCSBucket: "test-audio-bucket",
+              recordingsFolderPath: result.id,
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.NOT_STARTED,
+            }),
+            expect.objectContaining({
+              clientId: fakeClients[0].personId,
+              staffId: fakeStaff[0].staffId,
+              startTime: fakeMeeting.startTime,
+              endTime: null,
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.NOT_STARTED,
+            }),
+          ]),
+        );
       });
-      expect(meetings.length).toBe(2);
-      expect(meetings).toEqual(
-        expect.arrayContaining([
+    });
+
+    describe("getMeetings", () => {
+      test("Returns list of meetings", async () => {
+        const result = await testTRPCClient.v1.client.getMeetings.query({
+          clientId: fakeClients[0].personId,
+        });
+
+        // Check expected fields are returned
+        expect(result).toEqual([
           expect.objectContaining({
-            id: result.id,
-            clientId: fakeClient.personId,
-            staffId: fakeStaff.staffId,
-            startTime,
-            endTime: null,
-            recordingsGCSBucket: "test-audio-bucket",
-            recordingsFolderPath: result.id,
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.NOT_STARTED,
-          }),
-          expect.objectContaining({
-            clientId: fakeClient.personId,
-            staffId: fakeStaff.staffId,
+            id: fakeMeeting.id,
             startTime: fakeMeeting.startTime,
             endTime: null,
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.NOT_STARTED,
           }),
-        ]),
-      );
+        ]);
+      });
+
+      test("Returns error when client does not belong to staff", async () => {
+        await expect(
+          testTRPCClient.v1.client.getMeetings.query({
+            clientId: fakeClients[1].personId,
+          }),
+        ).rejects.toMatchObject({
+          message: "Client not found",
+          data: { code: "NOT_FOUND" },
+        });
+      });
     });
   });
 
-  describe("getMeetings", () => {
+  describe("recidiviz user with pseudo ID set", () => {
+    beforeEach(async () => {
+      await initFastifyAndSetUser({
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "recidiviz",
+          pseudonymizedId: fakeStaff[0].pseudonymizedId,
+          allowedStates: ["US_NE"],
+        },
+      });
+    });
+
+    describe("getMeetings", () => {
+      test("Returns list of meetings", async () => {
+        const result = await testTRPCClient.v1.client.getMeetings.query({
+          clientId: fakeClients[0].personId,
+        });
+
+        // Check expected fields are returned
+        expect(result).toEqual([
+          expect.objectContaining({
+            id: fakeMeeting.id,
+            startTime: fakeMeeting.startTime,
+            endTime: null,
+          }),
+        ]);
+      });
+
+      test("Returns error when client does not belong to staff", async () => {
+        await expect(
+          testTRPCClient.v1.client.getMeetings.query({
+            clientId: fakeClients[1].personId,
+          }),
+        ).rejects.toMatchObject({
+          message: "Client not found",
+          data: { code: "NOT_FOUND" },
+        });
+      });
+    });
+  });
+
+  describe("recidiviz user without pseudo ID set", () => {
+    beforeEach(async () => {
+      await initFastifyAndSetUser({
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "recidiviz",
+          allowedStates: ["US_NE"],
+        },
+      });
+    });
+
     test("Returns list of meetings", async () => {
-      const result = await testTRPCClient.v1.client.getMeetings.query({
-        clientId: fakeClient.personId,
+      let result = await testTRPCClient.v1.client.getMeetings.query({
+        clientId: fakeClients[0].personId,
       });
 
       // Check expected fields are returned
@@ -87,6 +170,14 @@ describe("client router", () => {
           postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
         }),
       ]);
+
+      // Check that we can also query a different client
+      result = await testTRPCClient.v1.client.getMeetings.query({
+        clientId: fakeClients[1].personId,
+      });
+
+      // There are no meetings for this client, but it should not error
+      expect(result).toEqual([]);
     });
   });
 });
