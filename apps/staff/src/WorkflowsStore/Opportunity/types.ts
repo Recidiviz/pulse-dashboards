@@ -178,6 +178,8 @@ export interface Opportunity<
   readonly denialConfirmationModalName?: DenialConfirmationModalName;
   isSubmitted: boolean;
   readonly submittedTabTitle: string;
+  readonly submittedButtonText: string;
+  readonly undoSubmittedButtonText: string;
   isInSupervisorReview: boolean;
   isInSnoozeReview: boolean;
   isInGrantReview: boolean;
@@ -261,6 +263,9 @@ export type OpportunityTab =
   // For US_AZ TPR/DTP opportunities
   | "Fast Trackers"
   | "Pending"
+
+  // For US_MI Custody Level Downgrade
+  | "Reduction Pending"
 
   // For US_AZ Admin Supervision
   | "Eligible per Initial Assessment"

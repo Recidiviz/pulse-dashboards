@@ -122,8 +122,8 @@ export const MenuButton = observer(function MenuButton({
 
   const toggleText = config.isAlert ? "Override?" : "Update status";
 
-  const submittedText = `Mark ${opportunity.submittedTabTitle}`;
-  const undoSubmitText = `Revert from ${opportunity.submittedTabTitle}`;
+  const submittedText = opportunity.submittedButtonText;
+  const undoSubmitText = opportunity.undoSubmittedButtonText;
 
   const denialText = opportunity.denial
     ? `Update ${config.denialNoun}`

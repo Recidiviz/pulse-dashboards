@@ -36,4 +36,18 @@ export class UsMiCustodyLevelDowngradeOpportunity extends OpportunityBase<
       usMiCustodyLevelDowngradeSchema.parse(record),
     );
   }
+
+  get submittedButtonText(): string {
+    if (this.config.submittedTabTitle === "Reduction Pending")
+      return "Mark Pending";
+
+    return super.submittedButtonText;
+  }
+
+  get undoSubmittedButtonText(): string {
+    if (this.config.submittedTabTitle === "Reduction Pending")
+      return "Revert from Pending";
+
+    return super.undoSubmittedButtonText;
+  }
 }

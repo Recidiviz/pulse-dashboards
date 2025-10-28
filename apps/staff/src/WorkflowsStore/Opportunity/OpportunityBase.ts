@@ -166,6 +166,8 @@ export class OpportunityBase<
       denied: computed,
       isSubmitted: computed,
       submittedUpdate: computed,
+      submittedButtonText: computed,
+      undoSubmittedButtonText: computed,
       bannerInfo: computed,
       isInSupervisorReview: computed,
       isInGrantReview: computed,
@@ -257,6 +259,14 @@ export class OpportunityBase<
     if (this.isIndefinitelySnoozed) {
       return this.denial?.updated?.by;
     }
+  }
+
+  get submittedButtonText(): string {
+    return `Mark ${this.config.submittedTabTitle}`;
+  }
+
+  get undoSubmittedButtonText(): string {
+    return `Revert from ${this.config.submittedTabTitle}`;
   }
 
   get snoozedOnDate(): Date | undefined {

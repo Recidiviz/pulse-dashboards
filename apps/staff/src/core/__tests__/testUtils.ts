@@ -91,6 +91,8 @@ export const mockOpportunity: Opportunity<Client> = {
   nonOMSRequirements: [],
   isSubmitted: false,
   submittedTabTitle: "Submitted",
+  submittedButtonText: "Mark Submitted",
+  undoSubmittedButtonText: "Revert from Submitted",
   submittedUpdate: undefined,
   markSubmittedAndGenerateToast: async () => undefined,
   deleteSubmitted: async () => undefined,
