@@ -38,13 +38,4 @@ export class UsMiEarlyDischargeConfiguration extends ApiOpportunityConfiguration
   get snoozeReviewStatusMessage() {
     return "Indefinite Snooze Review";
   }
-
-  get sidebarComponents() {
-    return [
-      "ActionHistory",
-      ...super.sidebarComponents,
-      // TODO(#10190): Add UsMiSecondaryOfficersAndDockets to admin panel
-      "UsMiSecondaryOfficersAndDockets",
-    ];
-  }
 }

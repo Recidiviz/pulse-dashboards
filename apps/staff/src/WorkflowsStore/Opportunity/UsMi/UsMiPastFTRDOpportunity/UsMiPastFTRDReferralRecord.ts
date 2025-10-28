@@ -24,7 +24,7 @@ import { usMiOfficersAndDocketsMetadataSchema } from "../common";
 
 const eligibleAndIneligibleCriteria = z
   .object({
-    supervisionPastFullTermCompletionDate: eligibleDateSchema.optional(),
+    supervisionTwoDaysPastFullTermCompletionDate: eligibleDateSchema.optional(),
   })
   .passthrough();
 
