@@ -25,7 +25,10 @@ import Schedule from "./calendar.png";
 import Chat from "./chat.png";
 import Clients from "./clients.png";
 import Cross from "./cross.png";
+import Filter from "./filter.png";
 import Home from "./home.png";
+import LeftIcon from "./left-icon.png";
+import Lock from "./lock.png";
 import Logo from "./logo.png";
 import Mail from "./mail.png";
 import Menu from "./menu.png";
@@ -65,6 +68,9 @@ const Icons = {
   Stop,
   Mail,
   Logo,
+  Filter,
+  LeftIcon,
+  Lock,
 };
 
 export default Icons;

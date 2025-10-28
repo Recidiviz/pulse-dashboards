@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-import { Image, TextInput, View } from "react-native";
+import React, { useState } from "react";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 
@@ -24,28 +24,50 @@ interface SearchBarProps {
   value: string;
   placeholder: string;
   onChange: (t: string) => void;
+  onExit?: () => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   value,
   placeholder,
   onChange,
-}) => (
-  <View className="flex-row items-center rounded-md border border-gray-300 bg-gray-50 px-2">
-    <Image
-      source={Icons.Search}
-      className="size-[18]"
-      style={{ resizeMode: "contain" }}
-    />
+  onExit,
+}) => {
+  const [isFocused, setIsFocused] = useState(false);
 
-    <TextInput
-      className="ml-1.5 h-10 flex-1 font-[inter] text-xs font-semibold text-black"
-      placeholder={placeholder}
-      placeholderTextColor="#999"
-      value={value}
-      onChangeText={onChange}
-    />
-  </View>
-);
+  return (
+    <View
+      className={`flex-1 flex-row items-center rounded-xl border px-3 ${
+        isFocused ? "border-primary" : "border-gray-300"
+      } bg-gray-50`}
+    >
+      <TouchableOpacity onPress={() => (isFocused ? onExit?.() : null)}>
+        <Image
+          source={isFocused || value ? Icons.LeftIcon : Icons.Search}
+          className="size-[16]"
+          style={{ resizeMode: "contain" }}
+        />
+      </TouchableOpacity>
+
+      <TextInput
+        className="mb-1 ml-2 h-10 flex-1 font-[inter] text-sm text-black"
+        placeholder={placeholder}
+        placeholderTextColor="#999"
+        value={value}
+        onChangeText={onChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+      />
+
+      {value?.length > 0 && (
+        <TouchableOpacity onPress={() => onChange("")}>
+          <View className="size-4 items-center justify-center rounded-full bg-[#9AA9B1]">
+            <Text className="text-[8px] font-extrabold text-white">✕</Text>
+          </View>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
 
 export default SearchBar;

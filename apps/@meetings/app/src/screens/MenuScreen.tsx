@@ -101,17 +101,17 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
           title="Home"
           onPress={() => handleMenuPress("Home")}
         />
-        <MenuItem
+        {/* <MenuItem
           icon={Icons.Trends}
           title="Trends"
           onPress={() => handleMenuPress("Trends")}
-        />
+        /> */}
         <MenuItem
           icon={Icons.Clients}
           title="Clients"
           onPress={() => handleMenuPress("Clients")}
         />
-        <MenuItem
+        {/* <MenuItem
           icon={Icons.Chat}
           title="Messages"
           badge={1}
@@ -128,7 +128,7 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
           icon={Icons.Resources}
           title="Resources"
           onPress={() => handleMenuPress("Resources")}
-        />
+        /> */}
       </ScrollView>
 
       <View className="bg-gray-200 px-4 py-[26px]">

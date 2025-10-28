@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView,Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 
@@ -37,34 +37,37 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
   };
 
   return (
-    <View className="my-[8] self-start">
+    <View className="z-50 my-2 self-start">
       <View className="flex-row items-center justify-between">
-        {label && <Text className="text-[14] text-gray-900">{label}:</Text>}
+        {label && <Text className="text-sm text-gray-500">{label}:</Text>}
 
         <TouchableOpacity
-          className="flex-row items-center gap-1.5 rounded-md bg-gray-100 p-2"
+          className="min-w-[100px] flex-row items-center justify-between rounded-md  bg-gray-100"
           onPress={() => setOpen((p) => !p)}
         >
-          <Text className="text-sm text-gray-900">{selected}</Text>
+          <Text className="px-1 text-sm text-gray-900" numberOfLines={1}>
+            {selected}
+          </Text>
           <Image
-            source={open ? Icons.ArrowRight : Icons.ArrowDown}
-            className="size-3.5"
-            style={{ resizeMode: "contain" }}
+            source={open ? Icons.ArrowUp : Icons.ArrowDown}
+            className="size-4"
           />
         </TouchableOpacity>
       </View>
 
       {open && (
-        <View className="absolute top-10 z-50 rounded-md  border border-gray-300 bg-white shadow-sm">
-          {options.map((opt) => (
-            <TouchableOpacity
-              key={opt}
-              className="p-2.5"
-              onPress={() => handleSelect(opt)}
-            >
-              <Text className="text-sm text-gray-700">{opt}</Text>
-            </TouchableOpacity>
-          ))}
+        <View className="absolute top-7 z-50 w-full rounded-md border border-gray-300 bg-white shadow-sm">
+          <ScrollView>
+            {options.map((opt) => (
+              <TouchableOpacity
+                key={opt}
+                className="p-2.5"
+                onPress={() => handleSelect(opt)}
+              >
+                <Text className="text-sm text-gray-700">{opt}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
       )}
     </View>

@@ -34,8 +34,8 @@ const Header: React.FC<HeaderProps> = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <SafeAreaView edges={["top"]} className="bg-gray-100">
-      <View className="flex-row items-center justify-between border-b border-gray-300 bg-gray-100 px-4 py-3">
+    <SafeAreaView edges={["top"]} className="bg-white">
+      <View className="flex-row items-center justify-between px-4 py-3">
         {showDrawer && (
           <TouchableOpacity onPress={() => setDrawerOpen(true)} className="p-1">
             <Image

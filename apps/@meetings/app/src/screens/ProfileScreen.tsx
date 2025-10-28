@@ -53,6 +53,7 @@ const ProfileScreen = () => {
     // Convert this back into a BigInt for TRPC calls
     personId: BigInt(route.params.client.personId),
   };
+
   const insets = useSafeAreaInsets();
 
   const [isCreating, setIsCreating] = useState(false);
@@ -134,7 +135,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-100">
+    <SafeAreaView className="flex-1">
       <View
         className={`absolute inset-x-0 top-0 z-50 rounded-b-[24px] bg-white pb-4 `}
         style={{
@@ -170,11 +171,11 @@ const ProfileScreen = () => {
           {!isCollapsed && (
             <View className="pt-8">
               <Text className="text-primary mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px]">
-                Mike Woods
+                {client.fullName}
               </Text>
 
               <Text className="text-primary text-[14px] leading-[16px] tracking-[-0.28px]">
-                ID: 123456 • Probation
+                ID: {client.displayPersonExternalId} • {client.supervision}
               </Text>
             </View>
           )}
@@ -240,7 +241,7 @@ const ProfileScreen = () => {
         <View className="flex-row items-center justify-between">
           <Text className="text-primary text-sm">
             {filteredMeetings.length} meeting
-            {filteredMeetings.length !== 1 ? "s" : ""}
+            {filteredMeetings.length > 1 ? "s" : ""}
           </Text>
           <Dropdown
             label="Sort by"
@@ -248,8 +249,27 @@ const ProfileScreen = () => {
             onSelect={(value) => console.log("Sort by:", value)}
           />
         </View>
-
-        {filteredMeetings.length > 0 ? (
+        {filteredMeetings.length === 0 ? (
+          <View className="items-center justify-center py-16">
+            <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
+              <Image source={Icons.Lock} className="size-14" />
+            </View>
+            <Text className="mb-2 text-center font-[LibreBaskerville] text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
+              No meetings found
+            </Text>
+            <Text className="mb-6 text-center font-[inter] text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+              Try adjusting your search or use different keywords.
+            </Text>
+            <TouchableOpacity
+              onPress={() => setSearchQuery("")}
+              className="rounded-full border border-gray-300 px-6 py-3"
+            >
+              <Text className="font-[inter] text-[16px] font-medium text-gray-700">
+                Clear search
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
           filteredMeetings.map((meeting, index) => (
             <MeetingCard
               key={`${meeting.id}-${index}`}
@@ -257,10 +277,6 @@ const ProfileScreen = () => {
               onPress={(id) => console.log("Clicked:", id)}
             />
           ))
-        ) : (
-          <View className="flex-1 items-center justify-center">
-            <Text className="text-center text-gray-500">No meeting found</Text>
-          </View>
         )}
       </ScrollView>
     </SafeAreaView>
