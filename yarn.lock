@@ -9397,8 +9397,8 @@ __metadata:
     eslint-plugin-tailwindcss: "npm:^3.18.2"
     expo: "npm:~52.0.47"
     expo-audio: "npm:~0.3.5"
+    expo-build-properties: "npm:~0.13.3"
     expo-notifications: "npm:~0.29.14"
-    expo-permissions: "npm:^14.4.0"
     expo-splash-screen: "npm:~0.29.24"
     expo-status-bar: "npm:~2.0.1"
     expo-system-ui: "npm:~4.0.9"
@@ -20770,7 +20770,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.12.0, ajv@npm:^8.8.2, ajv@npm:^8.9.0":
+"ajv@npm:^8.11.0, ajv@npm:^8.12.0, ajv@npm:^8.8.2, ajv@npm:^8.9.0":
   version: 8.17.1
   resolution: "ajv@npm:8.17.1"
   dependencies:
@@ -29771,6 +29771,18 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/dc8b92c2f41d08ddeee655224dccd2972742954bbf5141c577673bcf06baacf0802be6267600d252eec3cfbb2f0aa471648e5857b5c527914429a7418fe6dcaa
+  languageName: node
+  linkType: hard
+
+"expo-build-properties@npm:~0.13.3":
+  version: 0.13.3
+  resolution: "expo-build-properties@npm:0.13.3"
+  dependencies:
+    ajv: "npm:^8.11.0"
+    semver: "npm:^7.6.0"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/7302ac2403e0cd5d95d0f31c15dcf29a634f716cac022bc17e9ac2e405f577b4d0e2b45cb19b5659472e248824dfcf54250bebf309976a3ef308bc85c6f5d2b1
   languageName: node
   linkType: hard
 

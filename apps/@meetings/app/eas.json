@@ -8,7 +8,8 @@
         "YARN_ENABLE_IMMUTABLE_INSTALLS": "false",
         "APP_ENV": "production"
       },
-      "channel": "production"
+      "channel": "production",
+      "autoIncrement": true
     },
     "development": {
       "developmentClient": true,
@@ -34,5 +35,8 @@
   },
   "submit": {
     "production": {}
+  },
+  "cli": {
+    "appVersionSource": "remote"
   }
 }

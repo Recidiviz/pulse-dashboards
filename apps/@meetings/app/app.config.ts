@@ -30,6 +30,7 @@ const getDynamicAppConfig = (
       bundleIdentifier: PACKAGE,
       packageName: PACKAGE,
       scheme: SCHEME,
+      auth0Domain: "login.recidiviz.org",
     };
   }
 
@@ -39,6 +40,7 @@ const getDynamicAppConfig = (
       bundleIdentifier: `${PACKAGE}.preview`,
       packageName: `${PACKAGE}.preview`,
       scheme: `${SCHEME}-prev`,
+      auth0Domain: "login-staging.recidiviz.org",
     };
   }
 
@@ -47,14 +49,16 @@ const getDynamicAppConfig = (
     bundleIdentifier: `${PACKAGE}.dev`,
     packageName: `${PACKAGE}.dev`,
     scheme: `${SCHEME}-dev`,
+    auth0Domain: "login-staging.recidiviz.org",
   };
 };
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const { name, bundleIdentifier, packageName, scheme } = getDynamicAppConfig(
-    (process.env["APP_ENV"] as "development" | "preview" | "production") ??
-      "development",
-  );
+  const { name, bundleIdentifier, packageName, scheme, auth0Domain } =
+    getDynamicAppConfig(
+      (process.env["APP_ENV"] as "development" | "preview" | "production") ??
+        "development",
+    );
 
   return {
     ...config,
@@ -98,7 +102,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       [
         "react-native-auth0",
         {
-          domain: "login-staging.recidiviz.org",
+          domain: auth0Domain,
         },
       ],
       [
@@ -115,6 +119,14 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         {
           microphonePermission:
             "Allow $(PRODUCT_NAME) to access your microphone.",
+        },
+      ],
+      [
+        "expo-build-properties",
+        {
+          android: {
+            targetSdkVersion: 35,
+          },
         },
       ],
     ],
