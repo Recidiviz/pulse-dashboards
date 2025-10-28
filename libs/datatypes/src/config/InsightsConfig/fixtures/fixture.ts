@@ -157,10 +157,12 @@ export const rawInsightsConfigFixture: RawInsightsConfig = {
     {
       metricId: VITALS_METRIC_IDS.enum.timely_contact,
       titleDisplayName: "Timely Contact",
+      bodyDisplayName: "Contact",
     },
     {
       metricId: VITALS_METRIC_IDS.enum.timely_risk_assessment,
       titleDisplayName: "Timely Risk Assessment",
+      bodyDisplayName: "Assessment",
     },
   ],
   actionStrategyCopy: rawActionStrategyCopyFixture,
