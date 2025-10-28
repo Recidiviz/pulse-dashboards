@@ -33,6 +33,7 @@ export type UsMiSCCReviewDraftData = {
   OPT: boolean;
   STG1: boolean;
   STG2: boolean;
+  STG_NA: boolean;
   adminSeg: boolean;
   punSeg: boolean;
   tempSeg: boolean;
@@ -60,7 +61,7 @@ export type UsMiSCCReviewDraftData = {
   DD: boolean;
   CMO: boolean;
   ADD: boolean;
-  NA: boolean;
+  APPROVAL_NA: boolean;
   lastWardenInterview: boolean;
   lastADDInterview: boolean;
 

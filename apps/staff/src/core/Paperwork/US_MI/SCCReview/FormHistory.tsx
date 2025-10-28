@@ -180,6 +180,9 @@ const FormHistory: React.FC = () => {
         <div>
           <FormCheckbox name="STG2" label="II" />
         </div>
+        <div style={{ marginLeft: "8px" }}>
+          <FormCheckbox name="STG_NA" label="N/A" />
+        </div>
       </STGCell>
       <ApprovalCell>
         <div style={{ marginRight: "8px" }}>Approval Required for Release?</div>
@@ -193,7 +196,7 @@ const FormHistory: React.FC = () => {
           <FormCheckbox name="ADD" label="ADD" />
         </div>
         <div>
-          <FormCheckbox name="NA" label="N/A" />
+          <FormCheckbox name="APPROVAL_NA" label="N/A" />
         </div>
       </ApprovalCell>
       <Cell row={11} col={1} colSpan={4}>
