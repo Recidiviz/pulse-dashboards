@@ -31,36 +31,21 @@ afterEach(() => {
 });
 
 describe("isFeatureEnabled", () => {
-  it("returns false when no environment variable is set", () => {
-    const result = isFeatureEnabled("TEST_FEATURE", "dev");
+  it("returns false when feature flag is not set", () => {
+    const result = isFeatureEnabled("TEST_NOT_SET_FLAG", "dev");
     expect(result).toBe(false);
   });
 
   it("returns true when current environment is in enabled environments list", () => {
-    process.env["NEXT_PUBLIC_ENVIRONMENT_TEST_FEATURE"] = "dev,staging";
+    let result = isFeatureEnabled("TEST_FEATURE_DEV_STAGING", "dev");
+    expect(result).toBe(true);
 
-    const result = isFeatureEnabled("TEST_FEATURE", "dev");
+    result = isFeatureEnabled("TEST_FEATURE_DEV_STAGING", "staging");
     expect(result).toBe(true);
   });
 
   it("returns false when current environment is not in enabled environments list", () => {
-    process.env["NEXT_PUBLIC_ENVIRONMENT_TEST_FEATURE"] = "staging,prod";
-
-    const result = isFeatureEnabled("TEST_FEATURE", "dev");
-    expect(result).toBe(false);
-  });
-
-  it("handles environments with whitespace", () => {
-    process.env["NEXT_PUBLIC_ENVIRONMENT_TEST_FEATURE"] = "dev, staging, prod";
-
-    const result = isFeatureEnabled("TEST_FEATURE", "staging");
-    expect(result).toBe(true);
-  });
-
-  it("handles empty environment variable", () => {
-    process.env["NEXT_PUBLIC_ENVIRONMENT_TEST_FEATURE"] = "";
-
-    const result = isFeatureEnabled("TEST_FEATURE", "dev");
+    const result = isFeatureEnabled("TEST_FEATURE_DEV", "prod");
     expect(result).toBe(false);
   });
 });

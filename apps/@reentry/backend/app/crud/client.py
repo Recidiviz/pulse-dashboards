@@ -7,8 +7,17 @@ from sqlmodel import select
 from app.core.db import AsyncSession
 from app.crud.utils import apply_search_filter, paginate, sort_clients_by_name
 from app.models.assessment import Assessment
-from app.models.intake import Intake
-from app.models.models import Execution, Plan, PlanGeneration
+from app.models.intake import (
+    ClientAddress,
+    Intake,
+    IntakeMessage,
+    IntakeSurvey,
+    IntakeToken,
+)
+from app.models.intake_sections import ClientIntakeSection
+from app.models.models import Execution, Plan, PlanAsset, PlanGeneration
+from app.models.plan_decision_tree import PlanDecisionTree
+from app.models.recording import RecordingChunk, RecordingSession
 from app.routes.shared_models import ProcessingStatus
 from app.services.client_data.queries import Queries
 from app.services.client_data.types import ClientDataRecord
@@ -640,3 +649,116 @@ async def get_processing_status(
         item["client_pseudo_id"]: item["processing_status"]
         for item in response.get("items", [])
     }
+
+
+async def reset_client_data(session: AsyncSession, client_pseudo_id: str) -> int:
+    total_deleted = 0
+
+    recording_sessions_list = (
+        await session.exec(
+            select(RecordingSession).where(
+                RecordingSession.client_pseudo_id == client_pseudo_id
+            )
+        )
+    ).all()
+
+    for rs in recording_sessions_list:
+        chunks = await session.exec(
+            select(RecordingChunk).where(RecordingChunk.session_id == rs.id)
+        )
+        for chunk in chunks.all():
+            await session.delete(chunk)
+            total_deleted += 1
+
+    for rs in recording_sessions_list:
+        await session.delete(rs)
+        total_deleted += 1
+
+    intakes_list = (
+        await session.exec(
+            select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
+        )
+    ).all()
+
+    for intake in intakes_list:
+        messages = await session.exec(
+            select(IntakeMessage).where(IntakeMessage.intake_id == intake.id)
+        )
+        for msg in messages.all():
+            await session.delete(msg)
+            total_deleted += 1
+
+        sections = await session.exec(
+            select(ClientIntakeSection).where(
+                ClientIntakeSection.intake_id == intake.id
+            )
+        )
+        for section in sections.all():
+            await session.delete(section)
+            total_deleted += 1
+
+        tokens = await session.exec(
+            select(IntakeToken).where(IntakeToken.intake_id == intake.id)
+        )
+        for token in tokens.all():
+            await session.delete(token)
+            total_deleted += 1
+
+        addresses = await session.exec(
+            select(ClientAddress).where(ClientAddress.intake_id == intake.id)
+        )
+        for address in addresses.all():
+            await session.delete(address)
+            total_deleted += 1
+
+        surveys = await session.exec(
+            select(IntakeSurvey).where(IntakeSurvey.intake_id == intake.id)
+        )
+        for survey in surveys.all():
+            await session.delete(survey)
+            total_deleted += 1
+
+    for intake in intakes_list:
+        await session.delete(intake)
+        total_deleted += 1
+
+    plans_list = (
+        await session.exec(
+            select(Plan).where(Plan.client_pseudo_id == client_pseudo_id)
+        )
+    ).all()
+
+    for plan in plans_list:
+        assets = await session.exec(
+            select(PlanAsset).where(PlanAsset.plan_id == plan.id)
+        )
+        for asset in assets.all():
+            await session.delete(asset)
+            total_deleted += 1
+
+        generations = await session.exec(
+            select(PlanGeneration).where(PlanGeneration.plan_id == plan.id)
+        )
+        for generation in generations.all():
+            await session.delete(generation)
+            total_deleted += 1
+
+        decision_trees = await session.exec(
+            select(PlanDecisionTree).where(PlanDecisionTree.plan_id == plan.id)
+        )
+        for tree in decision_trees.all():
+            await session.delete(tree)
+            total_deleted += 1
+
+    for plan in plans_list:
+        await session.delete(plan)
+        total_deleted += 1
+
+    assessments = await session.exec(
+        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
+    )
+    for assessment in assessments.all():
+        await session.delete(assessment)
+        total_deleted += 1
+
+    return total_deleted

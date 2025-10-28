@@ -28,8 +28,10 @@ import {
 import Image from "next/image";
 
 import { $api } from "~@reentry/frontend/api";
+import { useClientReset } from "~@reentry/frontend/hooks/useClientReset";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { isFeatureEnabled } from "~@reentry/frontend/utils/feature_flags";
 
 interface DropdownProps {
   client: components["schemas"]["ClientResponse"];
@@ -68,6 +70,8 @@ const ActionButton: React.FC<DropdownProps> = ({
   // Mutation for retry processing
   const { mutateAsync: retryProcessingMutation, isPending: isRetrying } =
     $api.useMutation("post", "/clients/{client_pseudo_id}/retry-processing");
+
+  const { handleResetClient, isResettingInProgress } = useClientReset();
 
   const handleRetryProcessing = async () => {
     try {
@@ -194,6 +198,21 @@ const ActionButton: React.FC<DropdownProps> = ({
               >
                 Client Intake
               </a>
+
+              {isFeatureEnabled("INTAKE_RESET") &&
+                client.frontend_status !== "new" && (
+                  <button
+                    type="button"
+                    className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed border-t border-gray-200"
+                    role="menuitem"
+                    onClick={handleMenuItemClick(() => {
+                      handleResetClient(client.client_pseudo_id, onRefetch);
+                    })}
+                    disabled={isResettingInProgress}
+                  >
+                    {isResettingInProgress ? "Resetting..." : "Reset Client"}
+                  </button>
+                )}
             </div>
           </div>
         </FloatingPortal>

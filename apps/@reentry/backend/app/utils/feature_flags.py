@@ -1,18 +1,16 @@
-import os
-
 from app.core.config import settings
+from app.utils.feature_flags_config import FEATURE_FLAGS
 
 
 def is_feature_enabled(
     feature_name: str, current_env: str = settings.ENV_NAME.lower()
 ) -> bool:
-    env_var_name = f"RECIDIVIZ_ENVIRONMENT_{feature_name}"
-    enabled_environments = os.getenv(env_var_name, "")
+    if not feature_name or feature_name not in FEATURE_FLAGS:
+        return False
+
+    enabled_environments = FEATURE_FLAGS[feature_name]
 
     if not enabled_environments:
         return False
 
-    # split by comma
-    env_list = [env.strip().lower() for env in enabled_environments.split(",")]
-
-    return current_env in env_list
+    return current_env in [env.lower() for env in enabled_environments]

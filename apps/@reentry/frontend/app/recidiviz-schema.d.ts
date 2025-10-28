@@ -837,6 +837,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/intake/client/start-assessment-action-plan": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Trigger assessment + plan generation from external chat
+     * @description Schedules an assessment using provided chat messages.
+     */
+    post: operations["complete_external_chat_intake_client_start_assessment_action_plan_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/intake/internal/{pseudonymized_id}": {
     parameters: {
       query?: never;
@@ -1056,6 +1076,26 @@ export interface paths {
      */
     post: operations["get_processing_status_route_clients_processing_status_post"];
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/clients/{client_pseudo_id}/reset": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Reset Client Data
+     * @description Deletes all intake data for a client.
+     */
+    delete: operations["reset_client_data_clients__client_pseudo_id__reset_delete"];
     options?: never;
     head?: never;
     patch?: never;
@@ -1474,6 +1514,15 @@ export interface components {
        */
       file: string;
     };
+    /** ChatMessageInput */
+    ChatMessageInput: {
+      /** Role */
+      role: string;
+      /** Content */
+      content: string;
+      /** Section */
+      section?: string | null;
+    };
     /** ClientAddressResponse */
     ClientAddressResponse: {
       /** Street Address */
@@ -1562,6 +1611,13 @@ export interface components {
       /** State Code */
       state_code: string;
     };
+    /** ClientResetResponse */
+    ClientResetResponse: {
+      /** Client Pseudo Id */
+      client_pseudo_id: string;
+      /** Total Deleted */
+      total_deleted: number;
+    };
     /** ClientResponse */
     ClientResponse: {
       /**
@@ -1600,6 +1656,21 @@ export interface components {
       /** Client Pseudo Id */
       client_pseudo_id: string;
       processing_status: components["schemas"]["ProcessingStatus"];
+    };
+    /** CompleteExternalChatRequest */
+    CompleteExternalChatRequest: {
+      /** Messages */
+      messages: components["schemas"]["ChatMessageInput"][];
+      address: components["schemas"]["AddressSubmission"];
+    };
+    /** CompleteExternalChatResponse */
+    CompleteExternalChatResponse: {
+      /** Intake Id */
+      intake_id: string;
+      /** Status */
+      status: string;
+      /** Message */
+      message: string;
     };
     /** CompleteIntakeTranscriptionResponse */
     CompleteIntakeTranscriptionResponse: {
@@ -4710,6 +4781,39 @@ export interface operations {
       };
     };
   };
+  complete_external_chat_intake_client_start_assessment_action_plan_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CompleteExternalChatRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompleteExternalChatResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   verify_pseudo_date_of_birth_intake_internal__pseudonymized_id__post: {
     parameters: {
       query?: never;
@@ -5080,6 +5184,37 @@ export interface operations {
           "application/json": {
             [key: string]: components["schemas"]["ProcessingStatus"];
           };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reset_client_data_clients__client_pseudo_id__reset_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        client_pseudo_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ClientResetResponse"];
         };
       };
       /** @description Validation Error */

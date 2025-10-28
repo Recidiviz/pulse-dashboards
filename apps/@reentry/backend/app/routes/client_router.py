@@ -8,12 +8,16 @@ from sqlalchemy.exc import DBAPIError
 from sqlmodel import select
 
 from app.auth.auth_core import get_pseudonymized_id
+from app.core.config import settings
 from app.core.db import AsyncSession, get_session
 from app.crud.assessment import get_assessments_by_client_pseudo_id
 from app.crud.client import (
     get_client_status_updates,
     get_paginated_client_list,
     get_processing_status,
+)
+from app.crud.client import (
+    reset_client_data as crud_reset_client_data,
 )
 from app.crud.plan import create_plan, get_plan_by_client_pseudo_id, retry_plan_creation
 from app.models.execution import Execution, ExecutionStatus
@@ -27,6 +31,7 @@ from app.routes.shared_models import (
     ProcessingStatus,
 )
 from app.services.client_data.queries import Queries
+from app.utils.feature_flags import is_feature_enabled
 from app.utils.permission_utils import check_access
 
 logger = logging.getLogger(__name__)
@@ -463,3 +468,55 @@ async def get_processing_status_route(
     session: AsyncSession = Depends(get_session),
 ):
     return await get_processing_status(session, request.staff_pseudo_id)
+
+
+class ClientResetResponse(BaseModel):
+    client_pseudo_id: str
+    total_deleted: int
+
+
+@router.delete(
+    "/{client_pseudo_id}/reset",
+    response_model=ClientResetResponse,
+    summary="Reset Client Data",
+    description="Deletes all intake data for a client.",
+)
+async def reset_client_data(
+    client_pseudo_id: str,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+):
+    if not is_feature_enabled("INTAKE_RESET"):
+        raise HTTPException(
+            status_code=403,
+            detail=f"Reset feature is not enabled in this environment. Current Env: {settings.ENV_NAME.lower()}",
+        )
+
+    check_access(client_pseudo_id, pseudonymized_id)
+
+    client_record = Queries.get_client_by_pseudonymized_id_unsafe(client_pseudo_id)
+    if not client_record:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Client with pseudo_id {client_pseudo_id} not found",
+        )
+
+    logger.info(
+        f"Resetting intake data for client {client_pseudo_id} by staff {pseudonymized_id}"
+    )
+
+    try:
+        total_deleted = await crud_reset_client_data(session, client_pseudo_id)
+        await session.commit()
+        logger.info(
+            f"Successfully deleted {total_deleted} records for client {client_pseudo_id}"
+        )
+
+        return ClientResetResponse(
+            client_pseudo_id=client_pseudo_id, total_deleted=total_deleted
+        )
+
+    except Exception as e:
+        await session.rollback()
+        logger.exception(f"Error resetting client {client_pseudo_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to reset client data.")
