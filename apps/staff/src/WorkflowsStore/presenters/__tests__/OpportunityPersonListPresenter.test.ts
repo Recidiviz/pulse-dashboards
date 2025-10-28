@@ -76,19 +76,23 @@ function getPresenter({
   config = mockOpportunity.config,
   supervisionPresenter = undefined,
   workflowsStore = mockWorkflowsStore,
+  tenantStore: customTenantStore = tenantStore,
+  opportunityType = mockOpportunity.type,
 }: {
   config?: OpportunityConfiguration;
   supervisionPresenter?: SupervisionOpportunityPresenter;
   workflowsStore?: WorkflowsStore;
+  tenantStore?: TenantStore;
+  opportunityType?: typeof mockOpportunity.type;
 }): OpportunityPersonListPresenter {
   return new OpportunityPersonListPresenter(
     analyticsStore,
     firestoreStore,
-    tenantStore,
+    customTenantStore,
     workflowsStore,
     config,
     FEATURE_VARIANTS,
-    mockOpportunity.type,
+    opportunityType,
     supervisionPresenter,
   );
 }
@@ -394,6 +398,168 @@ describe("table view columns", () => {
   test("show Submitted For column when viewing submitted opportunities", () => {
     presenter.activeTab = mockOpportunity.submittedTabTitle as OpportunityTab;
     expect(presenter.enabledColumnIds["SUBMITTED_FOR"]).toBeTrue();
+  });
+
+  describe("denial reasons column", () => {
+    test("shows denial reasons column for US_MI custody level downgrade when all conditions met", () => {
+      const mockTenantStore = {
+        currentTenantId: "US_MI",
+      } as any as TenantStore;
+
+      const mockWorkflowsStoreWithSystem = {
+        ...mockWorkflowsStore,
+        activeSystem: "INCARCERATION",
+      } as any as WorkflowsStore;
+
+      vi.spyOn(
+        mockWorkflowsStoreWithSystem,
+        "allOpportunitiesByType",
+        "get",
+      ).mockReturnValue({
+        usMiCustodyLevelDowngrade: [
+          {
+            ...mockOpportunity,
+            type: "usMiCustodyLevelDowngrade",
+            tabTitle: () => "Marked Ineligible",
+          },
+        ],
+      });
+
+      presenter = getPresenter({
+        tenantStore: mockTenantStore,
+        workflowsStore: mockWorkflowsStoreWithSystem,
+        opportunityType: "usMiCustodyLevelDowngrade",
+      });
+
+      presenter.activeTab = "Eligible Now" as OpportunityTab;
+      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeFalse();
+      //only show column in denied Tab
+      presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
+      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeTrue();
+    });
+
+    test("hides denial reason column for other US_MI incarceration opportunities", () => {
+      const mockTenantStore = {
+        currentTenantId: "US_MI",
+      } as any as TenantStore;
+
+      const mockWorkflowsStoreWithSystem = {
+        ...mockWorkflowsStore,
+        activeSystem: "INCARCERATION",
+      } as any as WorkflowsStore;
+
+      vi.spyOn(
+        mockWorkflowsStoreWithSystem,
+        "allOpportunitiesByType",
+        "get",
+      ).mockReturnValue({
+        usMiSecurityClassificationCommitteeReview: [
+          {
+            ...mockOpportunity,
+            type: "usMiSecurityClassificationCommitteeReview",
+            tabTitle: () => "Marked Ineligible",
+          },
+        ],
+      });
+
+      presenter = getPresenter({
+        tenantStore: mockTenantStore,
+        workflowsStore: mockWorkflowsStoreWithSystem,
+        opportunityType: "usMiSecurityClassificationCommitteeReview",
+      });
+
+      presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
+      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeFalse();
+    });
+
+    test("hides denial reason column for US_MI supervision opportunities", () => {
+      const mockTenantStore = {
+        currentTenantId: "US_MI",
+      } as any as TenantStore;
+
+      const mockWorkflowsStoreWithSystem = {
+        ...mockWorkflowsStore,
+        activeSystem: "SUPERVISION",
+      } as any as WorkflowsStore;
+
+      vi.spyOn(
+        mockWorkflowsStoreWithSystem,
+        "allOpportunitiesByType",
+        "get",
+      ).mockReturnValue({
+        usMiEarlyDischarge: [
+          {
+            ...mockOpportunity,
+            type: "usMiEarlyDischarge",
+            tabTitle: () => "Marked Ineligible",
+          },
+        ],
+      });
+
+      presenter = getPresenter({
+        tenantStore: mockTenantStore,
+        workflowsStore: mockWorkflowsStoreWithSystem,
+        opportunityType: "usMiEarlyDischarge",
+      });
+
+      presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
+      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeFalse();
+    });
+
+    test("hides denial reason column for other custody level downgrade opportunities", () => {
+      const mockTenantStore = {
+        currentTenantId: "US_ID",
+      } as any as TenantStore;
+
+      const mockWorkflowsStoreWithSystem = {
+        ...mockWorkflowsStore,
+        activeSystem: "INCARCERATION",
+      } as any as WorkflowsStore;
+
+      vi.spyOn(
+        mockWorkflowsStoreWithSystem,
+        "allOpportunitiesByType",
+        "get",
+      ).mockReturnValue({
+        usIdCustodyLevelDowngrade: [
+          {
+            ...mockOpportunity,
+            type: "usIdCustodyLevelDowngrade",
+            tabTitle: () => "Marked Ineligible",
+          },
+        ],
+      });
+
+      presenter = getPresenter({
+        tenantStore: mockTenantStore,
+        workflowsStore: mockWorkflowsStoreWithSystem,
+        opportunityType: "usIdCustodyLevelDowngrade",
+      });
+
+      presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
+      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeFalse();
+    });
+
+    test("hides denial reasons column for US_TX", () => {
+      const mockTenantStore = {
+        currentTenantId: "US_TX",
+      } as any as TenantStore;
+
+      const mockWorkflowsStoreWithSystem = {
+        ...mockWorkflowsStore,
+        activeSystem: "INCARCERATION",
+      } as any as WorkflowsStore;
+
+      vi.spyOn(mockWorkflowsStoreWithSystem, "allOpportunitiesByType", "get");
+
+      presenter = getPresenter({
+        tenantStore: mockTenantStore,
+        workflowsStore: mockWorkflowsStoreWithSystem,
+      });
+
+      presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
+      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeFalse();
+    });
   });
 });
 

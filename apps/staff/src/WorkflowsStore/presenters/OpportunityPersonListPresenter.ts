@@ -211,6 +211,11 @@ export class OpportunityPersonListPresenter
       MAN_LIT_STATUS: ["usAzReleaseToTPR", "usAzReleaseToDTP"].includes(
         this.opportunityType,
       ),
+      DENIAL_REASONS:
+        this.isViewingDeniedTab &&
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI" &&
+        this.opportunityType === "usMiCustodyLevelDowngrade",
     };
   }
 

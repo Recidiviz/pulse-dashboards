@@ -228,7 +228,8 @@ export type OpportunityTableColumnId =
   | "ALMOST_ELIGIBLE_STATUS"
   | "AGREEMENT_STATUS"
   | "HOME_PLAN_STATUS"
-  | "MAN_LIT_STATUS";
+  | "MAN_LIT_STATUS"
+  | "DENIAL_REASONS";
 
 type OpportunityTableColumnDef = {
   header: string;
@@ -695,6 +696,16 @@ const TableView = observer(function TableView({
         return formatDurationFromOptionalDays(
           presenter.submittedForDays(row.original),
         );
+      },
+    },
+    {
+      header: "Denial Reasons",
+      id: "DENIAL_REASONS",
+      enableSorting: true,
+      sortingFn: "text",
+      accessorFn: (opp: Opportunity) => {
+        if (!opp.denial) return "";
+        return opp.denial.reasons.join(", ");
       },
     },
     {
