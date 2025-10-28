@@ -50,7 +50,7 @@ export function metadataToDates(
 ): DateInfo[] {
   const hasAcisDates = useDtp ? !!metadata.acisDtpDate : !!metadata.acisTprDate;
 
-  // Show all dates (TPR/DTP, CSBD, ERCD) if we have a date from ACIS
+  // Show ACIS date if we have it
   const acisDate = useDtp
     ? [
         {
@@ -65,13 +65,9 @@ export function metadataToDates(
         },
       ];
 
-  const realDates = [
-    ...acisDate,
-    { label: "CSBD / TR to ADD", date: optionalFieldToDate(metadata.csbdDate) },
-    { label: "ERCD", date: optionalFieldToDate(metadata.ercdDate) },
-  ];
+  const realDates = [...acisDate];
 
-  // If we don't have a date from ACIS, only show the projected TPR/DTP date
+  // If we don't have a date from ACIS, show the projected TPR/DTP date
   const projectedDates = useDtp
     ? [
         {
@@ -90,8 +86,29 @@ export function metadataToDates(
         },
       ];
 
+  const csbdMapping: Record<string, string> = {
+    "COMMUNITY SUPERVISION BEGIN DATE": "CSBD",
+    "TRANSITION TO ABSOLUTE DISCHARGE DATE": "TR to ADD",
+  };
+  const ercdMapping: Record<string, string> = {
+    "EARNED RELEASE CREDIT DATE": "ERCD",
+    "ABSOLUTE DISCHARGE DATE": "ADD",
+  };
+
+  const csbdDisplayName =
+    metadata.csbdOrTrToAdd && metadata.csbdOrTrToAdd.trim() !== ""
+      ? csbdMapping[metadata.csbdOrTrToAdd]
+      : "CSBD / TR to ADD";
+  const ercdDisplayName =
+    metadata.ercdOrAdd && metadata.ercdOrAdd.trim() !== ""
+      ? ercdMapping[metadata.ercdOrAdd]
+      : "ERCD";
+
+  // Always show CSBD, ERCD, SED, CSED dates
   return [
     ...(hasAcisDates ? realDates : projectedDates),
+    { label: csbdDisplayName, date: optionalFieldToDate(metadata.csbdDate) },
+    { label: ercdDisplayName, date: optionalFieldToDate(metadata.ercdDate) },
     { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
     { label: "CSED", date: optionalFieldToDate(metadata.csedDate) },
   ];

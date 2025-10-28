@@ -44,7 +44,7 @@ describe("UsAzDates metadataToDates tests", () => {
 
   const FAKE_TOOLTIP = "TOOLTIP";
 
-  it("shows Projected TPR, SED, and CSED when there is no real TPR date", () => {
+  it("shows Projected TPR, CSBD, ERCD, SED, and CSED when there is no real TPR date", () => {
     const metadataUnderTest = {
       ...FAKE_METADATA,
       acisTprDate: undefined,
@@ -57,12 +57,14 @@ describe("UsAzDates metadataToDates tests", () => {
         tooltip: FAKE_TOOLTIP,
         highlight: true,
       },
+      { label: "CSBD / TR to ADD", date: FAKE_DATES.csbdDate },
+      { label: "ERCD", date: FAKE_DATES.ercdDate },
       { label: "SED", date: FAKE_DATES.sedDate },
       { label: "CSED", date: FAKE_DATES.csedDate },
     ]);
   });
 
-  it("shows Projected DTP, SED, and CSED when there is no real DTP date", () => {
+  it("shows Projected DTP, CSBD, ERCD, SED, and CSED when there is no real DTP date", () => {
     const metadataUnderTest = {
       ...FAKE_METADATA,
       acisDtpDate: undefined,
@@ -75,6 +77,8 @@ describe("UsAzDates metadataToDates tests", () => {
         tooltip: FAKE_TOOLTIP,
         highlight: true,
       },
+      { label: "CSBD / TR to ADD", date: FAKE_DATES.csbdDate },
+      { label: "ERCD", date: FAKE_DATES.ercdDate },
       { label: "SED", date: FAKE_DATES.sedDate },
       { label: "CSED", date: FAKE_DATES.csedDate },
     ]);
