@@ -17,7 +17,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { isFeatureEnabled } from "../app/utils/feature_flags";
+import { isFeatureEnabled } from "../app/utils/featureFlags";
 
 const originalEnv = process.env;
 

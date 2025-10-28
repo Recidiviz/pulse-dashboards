@@ -15,34 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-//@ts-check
-
-const { composePlugins, withNx } = require("@nx/next");
-const { withSentryConfig } = require("@sentry/nextjs");
-const { isFeatureEnabled } = require("./config/featureFlagsBuildtime");
-
 /**
- * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
- **/
-const nextConfig = {
-  output: "standalone",
-  productionBrowserSourceMaps: isFeatureEnabled("ENABLE_SOURCE_MAPS"),
-};
+ * Run-time feature flag helper. For build-time use
+ * featureFlagsBuildtime.js
+ *
+ */
+import { FEATURE_FLAGS_CONFIG } from "../../config/featureFlagsConfig";
 
-const plugins = [
-  // Add more Next.js plugins to this list if needed.
-  withNx,
-];
+function getCurrentEnvironment(): string {
+  if (process.env["NEXT_PUBLIC_ENVIRONMENT"]) {
+    return process.env["NEXT_PUBLIC_ENVIRONMENT"].toLowerCase();
+  }
 
-module.exports = composePlugins(...plugins)(
-  withSentryConfig(nextConfig, {
-    org: process.env.SENTRY_ORG,
-    project: process.env.SENTRY_PROJECT,
-    silent: !process.env.CI,
-    widenClientFileUpload: true,
-    sourcemaps: {
-      disable: true,
-    },
-    disableLogger: true,
-  }),
-);
+  return "dev";
+}
+
+export function isFeatureEnabled(
+  featureName: string,
+  currentEnv: string = getCurrentEnvironment(),
+): boolean {
+  const enabledEnvironments = FEATURE_FLAGS_CONFIG[featureName];
+
+  if (!enabledEnvironments) {
+    return false;
+  }
+
+  // Split by comma and check if current environment is in the list
+  const envList = enabledEnvironments
+    .split(",")
+    .map((env: string) => env.trim().toLowerCase());
+
+
+  return envList.includes(currentEnv.toLowerCase());
+}

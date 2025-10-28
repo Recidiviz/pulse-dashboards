@@ -15,30 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FEATURE_FLAGS_CONFIG } from "../config/featureFlagsConfig";
+/**
+ * Set which features are enabled in which environments.
+ * Use a comma separate list of environments with lowercase names.
+ *
+ * This file uses CommonJS to be directly importable by buildtime helpers
+ * and during runtime.
+ *
+ */
+const FEATURE_FLAGS_CONFIG = {
+  TEST_FEATURE_DEV: "dev",
+  TEST_FEATURE_DEV_STAGING: "dev,staging",
+  ENABLE_SOURCE_MAPS: "development,dev,demo,staging",
+};
 
-function getCurrentEnvironment(): string {
-  if (process.env["NEXT_PUBLIC_ENVIRONMENT"]) {
-    return process.env["NEXT_PUBLIC_ENVIRONMENT"].toLowerCase();
-  }
-
-  return "dev";
-}
-
-export function isFeatureEnabled(
-  featureName: string,
-  currentEnv: string = getCurrentEnvironment(),
-): boolean {
-  const enabledEnvironments = FEATURE_FLAGS_CONFIG[featureName];
-
-  if (!enabledEnvironments) {
-    return false;
-  }
-
-  // Split by comma and check if current environment is in the list
-  const envList = enabledEnvironments
-    .split(",")
-    .map((env) => env.trim().toLowerCase());
-
-  return envList.includes(currentEnv.toLowerCase());
-}
+module.exports = { FEATURE_FLAGS_CONFIG };
