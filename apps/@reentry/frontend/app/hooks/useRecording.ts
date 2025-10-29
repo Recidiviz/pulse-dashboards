@@ -81,6 +81,8 @@ export const useRecording = ({
   const [chunkCount, setChunkCount] = useState(0);
   const recordingStartTimeRef = useRef<number | null>(null);
   const lastDataSendedTimeRef = useRef<number | null>(null);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+  const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
 
   const { mutateAsync: finalizeRecordingMutation } = $api.useMutation(
     "post",
@@ -222,6 +224,95 @@ export const useRecording = ({
     }
   }, [sessionId, finalizeRecordingMutation, getAccessToken]);
 
+  // Helper function to detect mobile or tablet devices
+  const isMobileOrTablet = useCallback((): boolean => {
+    const hasTouch =
+      "ontouchstart" in window ||
+      navigator.maxTouchPoints > 0 ||
+      ((navigator as { msMaxTouchPoints?: number }).msMaxTouchPoints ?? 0) > 0;
+
+    const isSmallScreen = window.matchMedia("(max-width: 1024px)").matches;
+
+    return hasTouch && isSmallScreen;
+  }, []);
+
+  // Request wake lock to keep screen awake during recording
+  const requestWakeLock = useCallback(async () => {
+    // Only apply wake lock on mobile and tablet devices
+    if (!isMobileOrTablet()) {
+      console.log("Wake lock not requested - not a mobile/tablet device");
+      return;
+    }
+
+    // Check if Wake Lock API is supported
+    if (!("wakeLock" in navigator)) {
+      console.warn("Wake Lock API not supported on this device");
+      return;
+    }
+
+    try {
+      // Check battery level before requesting wake lock
+      if ("getBattery" in navigator) {
+        try {
+          const battery = await (
+            navigator as Navigator & {
+              getBattery: () => Promise<{
+                level: number;
+                charging: boolean;
+              }>;
+            }
+          ).getBattery();
+          const batteryPercentage = Math.round(battery.level * 100);
+          setBatteryLevel(batteryPercentage);
+          console.log(
+            `Battery level: ${batteryPercentage}%, charging: ${battery.charging}`,
+          );
+        } catch (batteryError) {
+          console.warn("Could not retrieve battery information:", batteryError);
+        }
+      }
+
+      // Request wake lock
+      const wakeLock = await navigator.wakeLock.request("screen");
+      wakeLockRef.current = wakeLock;
+      console.log("Wake lock acquired successfully");
+
+      // Listen for wake lock release
+      wakeLock.addEventListener("release", () => {
+        console.log("Wake lock released");
+      });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      console.error("Error requesting wake lock:", errorMessage);
+      showErrorToast(
+        `Could not keep screen awake: ${errorMessage}${batteryLevel !== null ? ` (Battery: ${batteryLevel}%)` : ""}`,
+      );
+    }
+  }, [isMobileOrTablet, batteryLevel]);
+
+  // Release wake lock
+  const releaseWakeLock = useCallback(async () => {
+    if (wakeLockRef.current) {
+      try {
+        await wakeLockRef.current.release();
+        wakeLockRef.current = null;
+        console.log("Wake lock released manually");
+      } catch (error) {
+        console.error("Error releasing wake lock:", error);
+      }
+    }
+  }, []);
+
+  // Check if wake lock is active
+  const isWakeLockActive = useCallback((): boolean => {
+    return (
+      isMobileOrTablet() &&
+      wakeLockRef.current !== null &&
+      !wakeLockRef.current.released
+    );
+  }, []);
+
   const pauseRecording = useCallback(
     (event: Event | null = null, fromVisibilityChange = false) => {
       if (!sessionId || !clientPseudoId) {
@@ -257,37 +348,26 @@ export const useRecording = ({
           streamRef.current = null;
         }
       }
+
+      // Release wake lock when pausing
+      releaseWakeLock();
+
       console.log("Paused by visibility change:", fromVisibilityChange);
       setPausedByVisibilityChange(fromVisibilityChange);
       updateRecordingStatus("paused");
     },
-    [updateRecordingStatus],
+    [updateRecordingStatus, releaseWakeLock],
   );
 
   // Handle tab visibility changes (tab switching, minimization)
   // Only apply on mobile and tablet devices
   useEffect(() => {
-    // Detect if device is mobile or tablet
-    const isMobileOrTablet = (): boolean => {
-      // Check for touch support and screen size
-      const hasTouch =
-        "ontouchstart" in window ||
-        navigator.maxTouchPoints > 0 ||
-        ((navigator as { msMaxTouchPoints?: number }).msMaxTouchPoints ?? 0) >
-          0;
-
-      // Check screen width (typical mobile/tablet breakpoint)
-      const isSmallScreen = window.matchMedia("(max-width: 1024px)").matches;
-
-      return hasTouch && isSmallScreen;
-    };
-
     // Only set up visibility handler on mobile/tablet
     if (!isMobileOrTablet()) {
       return;
     }
 
-    const handleVisibilityChange = () => {
+    const handleVisibilityChange = async () => {
       if (document.hidden) {
         // Tab is hidden (user switched tabs or minimized browser)
         if (
@@ -303,8 +383,15 @@ export const useRecording = ({
           );
         }
       } else {
-        // Tab is visible again
+        // Tab is visible again - reacquire wake lock if recording
         console.log("Tab visible again");
+        if (
+          mediaRecorderRef.current &&
+          mediaRecorderRef.current.state === "recording"
+        ) {
+          console.log("Reacquiring wake lock after visibility change");
+          await requestWakeLock();
+        }
       }
     };
 
@@ -313,7 +400,7 @@ export const useRecording = ({
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [pauseRecording]);
+  }, [pauseRecording, isMobileOrTablet, requestWakeLock]);
 
   const handleTrackEnded = useCallback(async () => {
     console.warn("Microphone track ended - device disconnected");
@@ -458,6 +545,9 @@ export const useRecording = ({
 
       await updateRecordingStatus("recording");
 
+      // Request wake lock to keep screen awake on mobile/tablet
+      await requestWakeLock();
+
       showSuccessToast("Recording started");
     } catch (error) {
       console.error("Error starting recording:", error);
@@ -485,6 +575,7 @@ export const useRecording = ({
     handleRecordingStart,
     handleDataAvailable,
     handleRecordingError,
+    requestWakeLock,
   ]);
 
   const resumeRecording = useCallback(async () => {
@@ -537,6 +628,10 @@ export const useRecording = ({
 
       // Update status
       await updateRecordingStatus("recording");
+
+      // Request wake lock to keep screen awake on mobile/tablet
+      await requestWakeLock();
+
       showSuccessToast("Recording resumed");
     } catch (error) {
       console.error("Error resuming recording:", error);
@@ -564,6 +659,7 @@ export const useRecording = ({
     handleRecordingStart,
     handleDataAvailable,
     handleRecordingError,
+    requestWakeLock,
   ]);
 
   const stopRecording = useCallback(async () => {
@@ -586,6 +682,9 @@ export const useRecording = ({
       cleanupMediaResources(streamRef.current, null);
       streamRef.current = null;
 
+      // Release wake lock when stopping
+      releaseWakeLock();
+
       setUiStatus("processing");
 
       setTimeout(async () => {
@@ -605,7 +704,13 @@ export const useRecording = ({
 
       showSuccessToast("Recording stopped");
     }
-  }, [sessionId, uiStatus, onRecordingStopped, finalizeRecording]);
+  }, [
+    sessionId,
+    uiStatus,
+    onRecordingStopped,
+    finalizeRecording,
+    releaseWakeLock,
+  ]);
 
   // session recovery: check for paused sessions on mount and restore state
   useEffect(() => {
@@ -691,10 +796,12 @@ export const useRecording = ({
     mediaRecorderRef,
     cannotConnectToServer,
     pausedByVisibilityChange,
+    batteryLevel,
     startRecording,
     pauseRecording,
     resumeRecording,
     stopRecording,
     setSelectedMicrophone,
+    isWakeLockActive,
   };
 };

@@ -48,6 +48,7 @@ export interface RecordingState {
   isOnline: boolean;
   cannotConnectToServer: boolean;
   pausedByVisibilityChange: boolean;
+  batteryLevel: number | null;
 }
 
 export interface RecordingActions {
@@ -60,6 +61,7 @@ export interface RecordingActions {
   resumeRecording: () => void;
   stopRecording: () => void;
   setSelectedMicrophone: (deviceId: string) => void;
+  isWakeLockActive?: () => boolean;
 }
 
 export interface AudioCapabilities {

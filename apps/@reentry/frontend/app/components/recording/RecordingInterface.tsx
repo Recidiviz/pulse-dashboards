@@ -28,7 +28,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import EndAssessmentModal from "~@reentry/frontend/components/recording/modals/EndAssessmentModal";
 import LiveAssessmentModal from "~@reentry/frontend/components/recording/modals/LiveAssessmentModal";
@@ -40,6 +40,7 @@ import type {
   ClientRecordResponse,
   RecordingSessionResponse,
 } from "~@reentry/frontend/types/recording";
+import { showInfoToast } from "~@reentry/frontend/utils/toast";
 
 import AudioWaveform from "./AudioWaveform";
 import RecordingControls from "./RecordingControls";
@@ -67,6 +68,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
   >(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [recordDuration, setRecordDuration] = useState(0);
+  const [isWakeLockActive, setIsWakeLockActive] = useState(false);
 
   const blockNavigationRef = useRef(false);
 
@@ -163,6 +165,33 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     }
   }, [audioCapabilities.microphones, recording]);
 
+  const updateWakeLockState = useCallback(
+    (wakeLockActive: boolean) => {
+      if (!isWakeLockActive && wakeLockActive) {
+        showInfoToast("Opacity reduced to preserve battery during recording.");
+      }
+      setIsWakeLockActive(wakeLockActive);
+    },
+    [isWakeLockActive],
+  );
+
+  // Check wakelock status periodically to update overlay
+  useEffect(() => {
+    const checkWakeLock = () => {
+      if (recording.isWakeLockActive) {
+        const wakeLockActive = recording.isWakeLockActive();
+        console.log("Wake Lock Active:", wakeLockActive);
+        updateWakeLockState(wakeLockActive);
+      }
+    };
+
+    // Check immediately and then every second
+    checkWakeLock();
+    const interval = setInterval(checkWakeLock, 1000);
+
+    return () => clearInterval(interval);
+  }, [recording]);
+
   const openLiveAssessmentModal = (action: () => void) => {
     setModalConfirmAction(() => action);
     setLiveAssessmentOpen(true);
@@ -220,6 +249,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
             isOnline={recording.isOnline}
             cannotConnectToServer={recording.cannotConnectToServer}
             pausedByVisibilityChange={recording.pausedByVisibilityChange}
+            batteryLevel={recording.batteryLevel}
             actions={{
               startRecording: recording.startRecording,
               pauseRecording: recording.pauseRecording,
@@ -317,6 +347,23 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Dark overlay when wakelock is active to preserve battery */}
+      {isWakeLockActive && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.85)",
+            zIndex: 9999,
+            pointerEvents: "none",
+          }}
+          aria-hidden="true"
+        />
+      )}
     </div>
   );
 };

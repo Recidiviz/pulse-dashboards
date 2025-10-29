@@ -26,6 +26,7 @@ import {
 } from "@mui/material";
 
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
+import BatteryLevel from "~@reentry/frontend/components/recording/BatteryLevel";
 import StatusIndicators from "~@reentry/frontend/components/recording/StatusIndicators";
 import type {
   MediaDevice,
@@ -47,6 +48,7 @@ interface RecordingControlsProps {
   isOnline: boolean;
   cannotConnectToServer: boolean;
   pausedByVisibilityChange: boolean;
+  batteryLevel: number | null;
 }
 
 interface RecordingControlsButtonsProps {
@@ -70,6 +72,7 @@ interface RecordingStatusTextProps {
   isOnline: boolean;
   cannotConnectToServer: boolean;
   pausedByVisibilityChange: boolean;
+  batteryLevel: number | null;
   formatDuration: (seconds: number) => string;
 }
 
@@ -209,6 +212,7 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
   isOnline,
   cannotConnectToServer,
   pausedByVisibilityChange,
+  batteryLevel,
   formatDuration,
 }) => {
   if (!isRecordingSupported) {
@@ -245,9 +249,12 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
             <div className="space-y-1 sm:space-y-2">
               <div className="flex items-center justify-center space-x-2 text-red-600">
                 <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse flex-shrink-0" />
-                <Typography className="text-xs sm:text-sm">
-                  Recording in progress...
-                </Typography>
+                <div className="flex flex-col items-center justify-center">
+                  <Typography className="text-xs sm:text-sm">
+                    Recording in progress...
+                  </Typography>
+                  <BatteryLevel batteryLevel={batteryLevel} />
+                </div>
               </div>
               {recordDuration > 0 && (
                 <div className="flex items-center justify-center space-x-2">
@@ -272,11 +279,14 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
             <div className="space-y-1 sm:space-y-2">
               <div className="flex items-center justify-center space-x-2 text-gray-600">
                 <div className="w-3 h-3 bg-gray-600 rounded-full flex-shrink-0" />
-                <Typography className="text-xs sm:text-sm">
-                  {pausedByVisibilityChange
-                    ? "Recording paused due to tab switch - click Resume to continue"
-                    : "Recording paused - click Resume to continue"}
-                </Typography>
+                <div className="flex flex-col items-center justify-center">
+                  <Typography className="text-xs sm:text-sm">
+                    {pausedByVisibilityChange
+                      ? "Recording paused due to tab switch - click Resume to continue"
+                      : "Recording paused - click Resume to continue"}
+                  </Typography>
+                  <BatteryLevel batteryLevel={batteryLevel} />
+                </div>
               </div>
               {recordDuration > 0 && (
                 <div className="flex items-center justify-center space-x-2">
@@ -371,6 +381,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   isOnline,
   cannotConnectToServer,
   pausedByVisibilityChange,
+  batteryLevel,
 }) => {
   const formatDuration = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -380,11 +391,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
 
   return (
     <div className="w-full px-4 sm:px-6 py-4 sm:py-3 bg-white rounded-[32px] sm:rounded-[99px] outline outline-1 outline-offset-[-1px] outline-[#2b5469]/10 flex flex-col sm:flex-row items-center justify-center lg:justify-between gap-3 sm:gap-4 lg:gap-0">
-      <div className="hidden lg:block flex-shrink-0">
-        <div className="h-8 px-4 py-2 bg-[#006c67] rounded-[32px] flex items-center justify-center text-white text-[13px] font-medium">
-          {uploadDuration ? "Start Recording" : "Resume Recording"}
-        </div>
-      </div>
+      <div className="hidden lg:block flex-shrink-0"></div>
       <div className="flex items-center justify-center gap-4 order-1 sm:order-none">
         <RecordingStatusText
           recordingStatus={recordingStatus}
@@ -395,6 +402,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
           isOnline={isOnline}
           cannotConnectToServer={cannotConnectToServer}
           pausedByVisibilityChange={pausedByVisibilityChange}
+          batteryLevel={batteryLevel}
           formatDuration={formatDuration}
         />
       </div>
