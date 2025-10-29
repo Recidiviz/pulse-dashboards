@@ -81,17 +81,7 @@ Then, to run a migration so the changes appear in your local database, run:
 
 `nx run @sentencing/prisma:prisma-migrate`
 
-If you want to what's in your local database, run:
-
-`nx run @sentencing/prisma:prisma-studio`
-
-`libs/@sentencing/prisma/prisma/schema.prisma`
-
-Then, to run a migration so the changes appear in your local database, run:
-
-`nx run @sentencing/prisma:prisma-migrate`
-
-If you want to what's in your local database, run:
+If you want to see what's in your local database, run:
 
 `nx run @sentencing/prisma:prisma-studio`
 
