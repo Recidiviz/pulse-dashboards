@@ -17,9 +17,9 @@
 
 import { ConfigContext, ExpoConfig } from "expo/config";
 
-const APP_NAME = "Meeting Assistant";
-const PACKAGE = "com.recidiviz.meetings";
-const SCHEME = "meetings";
+const APP_NAME = "Recidiviz";
+const PACKAGE = "org.recidiviz.app";
+const SCHEME = "recidiviz";
 
 const getDynamicAppConfig = (
   environment: "development" | "preview" | "production",
@@ -63,7 +63,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   return {
     ...config,
     name,
-    slug: "meetings",
+    slug: "recidiviz",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
