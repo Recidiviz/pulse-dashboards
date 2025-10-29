@@ -360,7 +360,7 @@ const ClientsPage = () => {
       return {
         ...item,
         frontend_status: statusOverride || item.frontend_status,
-        intake_date_override: intakeDateOverride ?? item.intake?.updated_at,
+        intake_date: intakeDateOverride ?? item.intake?.updated_at,
       };
     });
 
@@ -437,10 +437,9 @@ const ClientsPage = () => {
     {
       name: "INTAKE DATE",
       selector: (row: ClientResponse) => row.intake?.created_at || "",
-      cell: (row: ClientResponse & { intake_date_override?: string }) => (
+      cell: (row: ClientResponse & { intake_date?: string }) => (
         <span className="text-[#002321] text-sm pointer-events-none">
-          {formatDate(row.intake_date_override) ??
-            (row.intake?.updated_at ? formatDate(row.intake.updated_at) : "-")}
+          {formatDate(row.intake_date)}
         </span>
       ),
       sortable: false,
