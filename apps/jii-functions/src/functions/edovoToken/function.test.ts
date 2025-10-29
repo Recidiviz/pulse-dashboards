@@ -206,15 +206,15 @@ test("succeeds with magic payload for Securus test accounts", async () => {
     .auth(`${mockEncryptedToken}`, { type: "bearer" });
 
   expect(resp.status).toBe(200);
-  // note here that the response is hard-coded to a specific MA test account,
+  // note here that the response is hard-coded to a specific test identity,
   // regardless of which state or ID was specified in the payload
   expect(resp.body).toEqual({
     firebaseToken: mockFirebaseTokenValue,
     user: {
-      stateCode: "US_MA",
+      stateCode: "US_AZ",
       permissions: [],
-      externalId: "RES002",
-      pseudonymizedId: "anonres002",
+      externalId: "RES001",
+      pseudonymizedId: "anonres001",
     },
   });
 });

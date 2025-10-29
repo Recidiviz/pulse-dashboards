@@ -84,10 +84,10 @@ export async function securusTestIdentity(
   if (securusFacilities.includes(userData.facility_name)) {
     // all securus test accounts are mapped to the same test data, for consistency
     return {
-      stateCode: "US_MA",
+      stateCode: "US_AZ",
       permissions: [],
-      externalId: "RES002",
-      pseudonymizedId: "anonres002",
+      externalId: "RES001",
+      pseudonymizedId: "anonres001",
     };
   }
   return;
