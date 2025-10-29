@@ -118,23 +118,21 @@ describe("staff router", () => {
     test("returns external 'in_progress' status when fetchProcessingStatus is not 'unknown' or 'not_started'", async () => {
       mswServer.use(processingStatusHandler("in_progress"));
 
-      const result = await testTRPCClient.staff.getAllClientsIntakeStatus.query(
-        {
+      const result =
+        await testTRPCClient.staff.getAllClientsIntakeStatusAndDate.query({
           staffPseudoId: fakeStaff.pseudonymizedId,
-        },
-      );
+        });
       // `in_progress` from v0 maps to `processing`
-      expect(result[fakeClient.pseudonymizedId]).toBe("processing");
+      expect(result[fakeClient.pseudonymizedId].status).toBe("processing");
     });
   });
 
   describe("getAllClientsIntakeStatus", () => {
     test("returns an empty map for a staffId with no clients", async () => {
-      const result = await testTRPCClient.staff.getAllClientsIntakeStatus.query(
-        {
+      const result =
+        await testTRPCClient.staff.getAllClientsIntakeStatusAndDate.query({
           staffPseudoId: "999999",
-        },
-      );
+        });
       expect(result).toEqual({});
     });
 
@@ -161,13 +159,17 @@ describe("staff router", () => {
         },
       });
 
-      const result = await testTRPCClient.staff.getAllClientsIntakeStatus.query(
-        {
+      const result =
+        await testTRPCClient.staff.getAllClientsIntakeStatusAndDate.query({
           staffPseudoId: fakeStaff.pseudonymizedId,
-        },
-      );
+        });
 
-      expect(result).toEqual({
+      const clientToStatus: Record<string, string> = {};
+      Object.entries(result).forEach(([clientPid, info]) => {
+        clientToStatus[clientPid] = info.status;
+      });
+
+      expect(clientToStatus).toEqual({
         "client-pid-1": "intake_in_progress",
         "client-pid-2": "new",
         "client-pid-3": "new",

@@ -340,8 +340,8 @@ const ClientsPage = () => {
     const staffPseudoId = auth.userAppMetadata?.pseudonymizedId;
     const enableGetClientsIntakeStatus = Boolean(stateCode && staffPseudoId);
 
-    const { data: intakeStatuses, isLoading } =
-      trpc.staff.getAllClientsIntakeStatus.useQuery(
+    const { data, isLoading } =
+      trpc.staff.getAllClientsIntakeStatusAndDate.useQuery(
         {
           staffPseudoId: staffPseudoId ?? "",
         },
@@ -350,13 +350,17 @@ const ClientsPage = () => {
 
     // Merges the status of existing clients with the new server's statuses
     const updatedItems = items.map((item) => {
-      if (!enableGetClientsIntakeStatus || !intakeStatuses) return item;
+      if (!enableGetClientsIntakeStatus || !data) return item;
       const pseudoId = item.client?.pseudonymized_client_id;
-      const statusOverride = pseudoId ? intakeStatuses[pseudoId] : undefined;
+      const statusOverride = pseudoId ? data[pseudoId]?.status : undefined;
+      const intakeDateOverride = pseudoId
+        ? data[pseudoId]?.intakeDate?.toISOString()
+        : undefined;
 
       return {
         ...item,
         frontend_status: statusOverride || item.frontend_status,
+        intake_date_override: intakeDateOverride ?? item.intake?.updated_at,
       };
     });
 
@@ -433,9 +437,10 @@ const ClientsPage = () => {
     {
       name: "INTAKE DATE",
       selector: (row: ClientResponse) => row.intake?.created_at || "",
-      cell: (row: ClientResponse) => (
+      cell: (row: ClientResponse & { intake_date_override?: string }) => (
         <span className="text-[#002321] text-sm pointer-events-none">
-          {row.intake?.updated_at ? formatDate(row.intake.updated_at) : "-"}
+          {formatDate(row.intake_date_override) ??
+            (row.intake?.updated_at ? formatDate(row.intake.updated_at) : "-")}
         </span>
       ),
       sortable: false,

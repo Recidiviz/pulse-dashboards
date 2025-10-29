@@ -72,7 +72,7 @@ export const staffRouter = router({
         }
       },
     ),
-  getAllClientsIntakeStatus: auth0Procedure
+  getAllClientsIntakeStatusAndDate: auth0Procedure
     .input(getAllClientsIntakeStatusInputSchema)
     .query(async ({ ctx: { prisma, req }, input: { staffPseudoId } }) => {
       const clients = await prisma.client.findMany({
@@ -90,15 +90,23 @@ export const staffRouter = router({
         },
       });
 
-      const clientToStatusMap: Record<string, string> = {};
+      const clientToStatusMap: Record<
+        string,
+        { status: string; intakeDate: Date | null }
+      > = {};
       const processingStatusMap = await staffUtils.fetchProcessingStatus(
         req,
         staffPseudoId,
       );
 
       clients.forEach((client) => {
-        clientToStatusMap[client.pseudonymizedId] =
-          staffUtils.resolveIntakeStatus(client, processingStatusMap);
+        clientToStatusMap[client.pseudonymizedId] = {
+          status: staffUtils.resolveIntakeStatus(client, processingStatusMap),
+          intakeDate:
+            client.Intake.length > 0
+              ? client.Intake[client.Intake.length - 1].startDate
+              : null,
+        };
       });
 
       return clientToStatusMap;
