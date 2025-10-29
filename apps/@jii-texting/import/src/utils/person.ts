@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { PrismaClient } from "@prisma/jii-texting/client";
+import { captureException } from "@sentry/node";
 import z from "zod";
 
 import { personImportSchema } from "~@jii-texting/import/models";
@@ -47,7 +48,10 @@ export async function transformAndLoadPersonData(
     const missingGroups = personData.group_ids.filter(
       (id) => !foundGroupNames.has(id),
     );
-    console.log(`Groups not found: ${missingGroups.join(", ")}`);
+    if (missingGroups.length) {
+      captureException(`Received unexpected group_ids in person.json file: ${missingGroups.join(",")}`)
+      console.log(`Groups not found: ${missingGroups.join(", ")}`);
+    }
 
     // Find the person if they exist
     const currentGroupsForPerson = await prismaClient.person.findUnique({
@@ -120,6 +124,7 @@ export async function transformAndLoadPersonData(
   }
 
   if (errors.length > 0) {
+    captureException("Encountered errors during person.json import. Check logs in the Cloud Run job")
     throw errors.join("\n");
   }
 }

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { PrismaClient } from "@prisma/jii-texting/client";
+import { captureException } from "@sentry/node";
 import z from "zod";
 
 import { contactImportSchema } from "~@jii-texting/import/models";
@@ -61,6 +62,7 @@ export async function transformAndLoadContactData(
       });
       processedContactIds.push(newContact.externalId);
     } catch (error) {
+      captureException(`Encountered error while inserting contact record: ${error}`)
       console.error("Failed to process contact record:", {
         contactId: contactData.contact_external_id,
         error: error instanceof Error ? error.message : String(error),
@@ -74,13 +76,21 @@ export async function transformAndLoadContactData(
   );
 
   for await (const noLongerEligibleContactId of noLongerEligibleContactIds) {
-    await prismaClient.contact.update({
-      where: {
-        externalId: noLongerEligibleContactId,
-      },
-      data: {
-        reminderType: null,
-      },
-    });
+    try {
+      await prismaClient.contact.update({
+        where: {
+          externalId: noLongerEligibleContactId,
+        },
+        data: {
+          reminderType: null,
+        },
+      });
+    } catch (error) {
+      captureException(`Encountered error while setting contact record reminderType to null: ${error}`)
+      console.error("Failed to process contact record:", {
+        contactId: noLongerEligibleContactId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   }
 }
