@@ -17,6 +17,7 @@
 
 import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
+import _ from "lodash";
 
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import { getSignedUrlForNewRecording } from "~@meetings/tasks";
@@ -40,7 +41,7 @@ export const meetingRouter = router({
     .query(
       async ({ input: { clientId, meetingId }, ctx: { prisma, user } }) => {
         try {
-          return await prisma.meeting.findUniqueOrThrow({
+          const meeting = await prisma.meeting.findUniqueOrThrow({
             where: {
               id: meetingId,
               clientId: clientId,
@@ -54,8 +55,34 @@ export const meetingRouter = router({
               endTime: true,
               notes: true,
               postMeetingProcessingStatus: true,
+              transcriptions: {
+                orderBy: {
+                  confidence: "desc",
+                },
+                take: 1,
+                select: {
+                  confidence: true,
+                  utterances: {
+                    orderBy: {
+                      startTimeMs: "asc",
+                    },
+                    select: {
+                      confidence: true,
+                      text: true,
+                      speaker: true,
+                      startTimeMs: true,
+                      endTimeMs: true,
+                    },
+                  },
+                },
+              },
             },
           });
+
+          return {
+            ..._.omit(meeting, ["transcriptions"]),
+            transcription: meeting.transcriptions[0],
+          };
         } catch (e) {
           if (
             e instanceof Prisma.PrismaClientKnownRequestError &&

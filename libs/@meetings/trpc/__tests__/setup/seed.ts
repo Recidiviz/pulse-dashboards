@@ -17,7 +17,12 @@
 
 import { faker } from "@faker-js/faker";
 
-import { Prisma, PrismaClient, StateCode } from "~@meetings/prisma/client";
+import {
+  Prisma,
+  PrismaClient,
+  StateCode,
+  TranscriptionProvider,
+} from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
 
 export const intakeId = "intake-1";
@@ -105,6 +110,61 @@ export const fakeMeeting = {
   startTime: new Date(),
   recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
   recordingsFolderPath: "meeting-1",
+  notes: "Sample meeting notes.",
+  transcriptions: {
+    create: [
+      {
+        provider: TranscriptionProvider.ASSEMBLYAI,
+        transcriptObject: {},
+        confidence: 0.95,
+        utterances: {
+          createMany: {
+            data: [
+              {
+                text: "Hello, this is second a sample utterance.",
+                speaker: "Speaker B",
+                startTimeMs: 3000,
+                endTimeMs: 6000,
+                confidence: 0.98,
+              },
+              {
+                text: "Hello, this is a sample utterance.",
+                speaker: "Speaker A",
+                startTimeMs: 0,
+                endTimeMs: 3000,
+                confidence: 0.98,
+              },
+            ],
+          },
+        },
+      },
+      {
+        provider: TranscriptionProvider.DEEPGRAM,
+        transcriptObject: {},
+        confidence: 0.91,
+        utterances: {
+          createMany: {
+            data: [
+              {
+                text: "Hello, this is second a sample utterance.",
+                speaker: "Speaker B",
+                startTimeMs: 3000,
+                endTimeMs: 6000,
+                confidence: 0.98,
+              },
+              {
+                text: "Hello, this is a sample utterance.",
+                speaker: "Speaker A",
+                startTimeMs: 0,
+                endTimeMs: 3000,
+                confidence: 0.98,
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
 } satisfies Prisma.MeetingCreateInput;
 
 export async function seed(prismaClient: PrismaClient) {

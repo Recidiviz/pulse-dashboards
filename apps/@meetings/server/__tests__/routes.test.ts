@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { TranscriptUtterance } from "assemblyai";
 import { describe, test, vi } from "vitest";
 
 import {
@@ -30,6 +31,26 @@ import {
 import { fakeMeeting } from "~@meetings/server/test/setup/seed";
 import * as tasks from "~@meetings/tasks";
 
+const FAKE_TRANSCRIPT_OBJECT = {
+  confidence: 0.95,
+  utterances: [
+    {
+      confidence: 0.98,
+      end: 3800,
+      speaker: "B",
+      start: 1800,
+      text: "This is the second mock transcription sentence.",
+    },
+    {
+      confidence: 0.96,
+      end: 1800,
+      speaker: "A",
+      start: 0,
+      text: "This is the first mock transcription sentence.",
+    },
+  ] satisfies Omit<TranscriptUtterance, "words">[],
+};
+
 const mockStitchAudio = vi.spyOn(tasks, "stitchAudio");
 const mockTranscribeAudioWithAssemblyAI = vi.spyOn(
   tasks,
@@ -41,11 +62,7 @@ mockStitchAudio.mockImplementation(async () => {
   return "final-path.m4a";
 });
 mockTranscribeAudioWithAssemblyAI.mockImplementation(
-  vi.fn().mockResolvedValue({
-    id: "mock-transcript-id",
-    status: "completed",
-    text: "This is a mock transcription.",
-  }),
+  vi.fn().mockResolvedValue(FAKE_TRANSCRIPT_OBJECT),
 );
 
 describe("tasks", () => {
@@ -274,7 +291,7 @@ describe("tasks", () => {
       );
     });
 
-    test("Should return 500 and set stitching error if there is no final recording path", async () => {
+    test("Should return 500 and set transcription error if there is no final recording path", async () => {
       await testPrismaClient.meeting.update({
         where: { id: fakeMeeting.id },
         data: { finalRecordingGCSPath: null },
@@ -355,7 +372,11 @@ describe("tasks", () => {
 
       const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
         where: { id: fakeMeeting.id },
-        include: { transcriptions: true },
+        include: {
+          transcriptions: {
+            include: { utterances: true },
+          },
+        },
       });
 
       expect(meeting).toEqual(
@@ -363,11 +384,24 @@ describe("tasks", () => {
           transcriptions: expect.arrayContaining([
             expect.objectContaining({
               provider: TranscriptionProvider.ASSEMBLYAI,
-              transcriptObject: expect.objectContaining({
-                id: "mock-transcript-id",
-                status: "completed",
-                text: "This is a mock transcription.",
-              }),
+              transcriptObject: FAKE_TRANSCRIPT_OBJECT,
+              confidence: 0.95,
+              utterances: expect.arrayContaining([
+                expect.objectContaining({
+                  text: "This is the second mock transcription sentence.",
+                  speaker: "B",
+                  startTimeMs: 1800,
+                  endTimeMs: 3800,
+                  confidence: 0.98,
+                }),
+                expect.objectContaining({
+                  text: "This is the first mock transcription sentence.",
+                  speaker: "A",
+                  startTimeMs: 0,
+                  endTimeMs: 1800,
+                  confidence: 0.96,
+                }),
+              ]),
             }),
           ]),
           postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,

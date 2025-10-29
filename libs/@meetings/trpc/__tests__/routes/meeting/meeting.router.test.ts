@@ -48,15 +48,33 @@ describe("meeting router", () => {
         meetingId: fakeMeeting.id,
       });
 
-      expect(result).toEqual(
-        expect.objectContaining({
-          id: fakeMeeting.id,
-          startTime: fakeMeeting.startTime,
-          endTime: null,
-          postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
-          notes: null,
-        }),
-      );
+      expect(result).toEqual({
+        id: fakeMeeting.id,
+        startTime: fakeMeeting.startTime,
+        endTime: null,
+        postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
+        notes: "Sample meeting notes.",
+        transcription: {
+          confidence: 0.95,
+          // These should be ordered by startTimeMs
+          utterances: [
+            {
+              confidence: 0.98,
+              endTimeMs: 3000,
+              speaker: "Speaker A",
+              startTimeMs: 0,
+              text: "Hello, this is a sample utterance.",
+            },
+            {
+              confidence: 0.98,
+              endTimeMs: 6000,
+              speaker: "Speaker B",
+              startTimeMs: 3000,
+              text: "Hello, this is second a sample utterance.",
+            },
+          ],
+        },
+      });
     });
   });
 

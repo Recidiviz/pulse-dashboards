@@ -178,7 +178,24 @@ model Transcription {
   // The transcript response, stored as a JSON object. We store the whole object because its possible we may want to use other fields in the future.
   /// [TranscriptType]
   transcriptObject Json
+  confidence       Float?
+  utterances       Utterance[]
 
   meeting   Meeting? @relation(fields: [meetingId], references: [id])
   meetingId String?
+
+  @@unique([provider, meetingId])
+}
+
+model Utterance {
+  id String @id @default(cuid())
+
+  text        String
+  speaker     String
+  startTimeMs Int
+  endTimeMs   Int
+  confidence  Float
+
+  transcription   Transcription @relation(fields: [transcriptionId], references: [id])
+  transcriptionId String
 }

@@ -242,6 +242,16 @@ export function registerTaskRoutes(app: FastifyInstance) {
           env.ASSEMBLYAI_API_KEY,
         );
 
+        const cleanedUtterances = (transcriptionResult.utterances ?? []).map(
+          (utterance) => ({
+            text: utterance.text,
+            speaker: utterance.speaker ?? "unknown",
+            startTimeMs: utterance.start,
+            endTimeMs: utterance.end,
+            confidence: utterance.confidence,
+          }),
+        );
+
         await prisma.meeting.update({
           where: {
             id: meetingId,
@@ -252,6 +262,12 @@ export function registerTaskRoutes(app: FastifyInstance) {
               create: {
                 provider: TranscriptionProvider.ASSEMBLYAI,
                 transcriptObject: transcriptionResult,
+                confidence: transcriptionResult.confidence,
+                utterances: {
+                  createMany: {
+                    data: cleanedUtterances,
+                  },
+                },
               },
             },
           },
