@@ -44,11 +44,11 @@ main:
           - condition: ${dry_run}
             next: append_dry_run_argument
         next: process_data
+    - skip_logic:
+        return: ${"Did not trigger processor execution"}
     - append_dry_run_argument:
         assign:
           - process_data_args: ${list.concat(process_data_args, "--dry-run")}
-    - skip_logic:
-        return: ${"Did not trigger processor execution"}
     - process_data:
         call: googleapis.run.v2.projects.locations.jobs.run
         args:
