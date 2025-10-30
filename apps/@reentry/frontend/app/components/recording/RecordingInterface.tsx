@@ -51,6 +51,7 @@ interface RecordingInterfaceProps {
   sessionData: RecordingSessionResponse | null | undefined;
   onRecordingStopped?: () => void;
   setNeedsAddress: (needs: boolean) => void;
+  onRecordingStatusChange?: (status: string) => void;
 }
 
 const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
@@ -58,6 +59,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
   sessionData,
   onRecordingStopped,
   setNeedsAddress,
+  onRecordingStatusChange,
 }) => {
   const { statusData } = useRecordingSessionStatus(sessionData?.id || "", true);
   const [recordingStopped, setRecordingStopped] = useState(false);
@@ -90,6 +92,11 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     onRecordingStopped: handleRecordingStopped,
     clientPseudoId: clientRecord?.pseudonymized_client_id,
   });
+
+  // Notify parent component of recording status changes
+  useEffect(() => {
+    onRecordingStatusChange?.(recording.uiStatus);
+  }, [recording.uiStatus, onRecordingStatusChange]);
 
   // Update record duration periodically when recording
   useEffect(() => {

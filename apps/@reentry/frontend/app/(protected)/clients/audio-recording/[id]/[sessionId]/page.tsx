@@ -35,6 +35,7 @@ const AudioRecordingPage: React.FC = () => {
   const { id, sessionId } = useParams() as { id: string; sessionId: string };
   const { getAccessToken } = useAuth();
   const [needsAddress, setNeedsAddress] = useState(false);
+  const [recordingStatus, setRecordingStatus] = useState<string>("created");
 
   // Get access token once per render
   const accessToken = getAccessToken();
@@ -164,11 +165,13 @@ const AudioRecordingPage: React.FC = () => {
           <TranscriptionSection
             sessionData={sessionData || null}
             onRefreshNeeded={() => refetchSession()}
+            recordingStatus={recordingStatus}
           />
           <RecordingInterface
             clientRecord={clientData}
             sessionData={sessionData || null}
             setNeedsAddress={setNeedsAddress}
+            onRecordingStatusChange={setRecordingStatus}
           />
         </div>
       </QueueProvider>

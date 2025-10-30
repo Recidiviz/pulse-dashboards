@@ -16,15 +16,13 @@
 // =============================================================================
 
 import type React from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 import TranscriptionConversation from "~@reentry/frontend/components/transcription/TranscriptionConversation";
 import { useRecordingSessionStatus } from "~@reentry/frontend/hooks/useRecordingSessionStatus";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 type RecordingSession = components["schemas"]["RecordingSessionResponse"];
-
-const NOT_STARTED_TRANSCRIPTION_STATUS = ["created", "recording", "paused"];
 
 const StatusMessage = ({
   title,
@@ -48,24 +46,19 @@ const StatusMessage = ({
 const TranscriptionSection: React.FC<{
   sessionData: RecordingSession | null;
   onRefreshNeeded?: () => void;
-}> = ({ sessionData, onRefreshNeeded }) => {
+  recordingStatus: string;
+}> = ({ sessionData, onRefreshNeeded, recordingStatus }) => {
   const { statusData } = useRecordingSessionStatus(sessionData?.id || "", true);
+
   useEffect(() => {
     if (statusData?.status === "completed") {
       onRefreshNeeded?.();
     }
   }, [statusData?.status]);
 
-  const status = sessionData?.status;
+  if (!sessionData || !recordingStatus) return null;
 
-  const transcriptionNotStarted = useMemo(
-    () => !!status && NOT_STARTED_TRANSCRIPTION_STATUS.includes(status),
-    [status],
-  );
-
-  if (!status) return null;
-
-  if (status === "error") {
+  if (recordingStatus === "error") {
     return (
       <StatusMessage
         title="Error"
@@ -74,16 +67,34 @@ const TranscriptionSection: React.FC<{
     );
   }
 
-  if (transcriptionNotStarted) {
+  if (recordingStatus === "created") {
     return (
       <StatusMessage
-        title="Intake Assessment Not Started"
-        message="Your transcript will appear here once you’ve completed the intake assessment. Start recording using the bar below to start the live assessment."
+        title="Assessment Not Started"
+        message="Your transcript will appear here once you've completed the assessment. Start recording using the bar below to start the live assessment."
       />
     );
   }
 
-  if (status === "processing") {
+  if (recordingStatus === "recording") {
+    return (
+      <StatusMessage
+        title="Assessment In Progress"
+        message="Your transcript will appear here once you've completed the assessment. Start recording using the bar below to start the live assessment."
+      />
+    );
+  }
+
+  if (recordingStatus === "paused") {
+    return (
+      <StatusMessage
+        title="Recording Paused"
+        message="Your transcript will appear here once you've completed the assessment. Resume recording using the bar below to continue."
+      />
+    );
+  }
+
+  if (recordingStatus === "processing") {
     return (
       <StatusMessage
         title="In Progress"
@@ -92,7 +103,7 @@ const TranscriptionSection: React.FC<{
     );
   }
 
-  if (status === "completed") {
+  if (recordingStatus === "completed") {
     return <TranscriptionConversation sessionId={sessionData?.id || ""} />;
   }
 
