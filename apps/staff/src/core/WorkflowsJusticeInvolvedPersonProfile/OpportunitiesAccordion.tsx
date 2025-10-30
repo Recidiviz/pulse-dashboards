@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { Sans14, Sans16, spacing } from "@recidiviz/design-system";
-import { sortBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import {
@@ -30,10 +29,12 @@ import {
 import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
+import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
-import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
+import { OpportunitiesAccordionPresenter } from "../../WorkflowsStore/presenters/OpportunitiesAccordionPresenter";
+import ModelHydrator from "../ModelHydrator";
 import { OpportunityPreviewPanel } from "../OpportunityCaseloadView/OpportunityPreviewPanel";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { OpportunityModule } from "./OpportunityModule";
@@ -166,75 +167,87 @@ export const AccordionSection = observer(function AccordionSection({
   );
 });
 
-export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
-  person,
-  hideEmpty = false,
-  formLinkButton,
-}: {
+type OpportunitiesAccordionProps = {
   person: JusticeInvolvedPerson;
   hideEmpty?: boolean;
   formLinkButton?: boolean;
+};
+
+export const ManagedComponent = observer(function OpportunitiesAccordion({
+  presenter: {
+    person,
+    hideEmpty,
+    formLinkButton,
+    opportunitiesToDisplayInAccordion,
+    selectedOpportunityOnFullProfile,
+    updateSelectedOpportunityOnFullProfile,
+  },
+}: {
+  presenter: OpportunitiesAccordionPresenter<JusticeInvolvedPerson>;
 }) {
-  const {
-    workflowsStore,
-    workflowsStore: { opportunityTypes, selectedOpportunityOnFullProfile },
-  } = useRootStore();
   const { setCurrentView } = useOpportunitySidePanel();
-
-  const opportunities = sortBy(
-    Object.values(person.opportunities)
-      .flat()
-      .filter((opp) => opp !== undefined) as unknown as Opportunity[],
-    (opp: Opportunity) => opportunityTypes.indexOf(opp.type),
-  );
-
-  const empty = hideEmpty ? null : (
-    <NoOpportunities>
-      <Sans16>None for now</Sans16>
-      <Sans14>New opportunities will appear here.</Sans14>
-    </NoOpportunities>
-  );
-
-  const hydrated = (
-    <AccordionWrapper
-      allowZeroExpanded
-      preExpanded={opportunities.length ? [opportunities[0].accordionKey] : [0]}
-    >
-      {opportunities.map((opportunity) => {
-        if (!opportunity) return undefined;
-
-        return (
-          <AccordionSection
-            key={`${opportunity.accordionKey}-${opportunity.selectId}`}
-            opportunity={opportunity}
-            formLinkButton={formLinkButton}
-            onDenialButtonClick={() => {
-              workflowsStore.updateSelectedOpportunityOnFullProfile(
-                opportunity,
-              );
-              setCurrentView("MARK_INELIGIBLE");
-            }}
-          />
-        );
-      })}
-      <OpportunityPreviewPanel
-        opportunity={selectedOpportunityOnFullProfile}
-        selectedPerson={person}
-        onClose={() =>
-          workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
+  if (opportunitiesToDisplayInAccordion.length === 0) {
+    return hideEmpty ? null : (
+      <NoOpportunities>
+        <Sans16>None for now</Sans16>
+        <Sans14>New opportunities will appear here.</Sans14>
+      </NoOpportunities>
+    );
+  } else {
+    return (
+      <AccordionWrapper
+        allowZeroExpanded
+        preExpanded={
+          opportunitiesToDisplayInAccordion.length
+            ? [opportunitiesToDisplayInAccordion?.[0].accordionKey]
+            : [0]
         }
-        onSubmit={() =>
-          workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
-        }
-        clearSelectedPersonOnClose={false}
-        shouldTrackOpportunityPreviewed={false}
-      />
-    </AccordionWrapper>
-  );
+      >
+        {opportunitiesToDisplayInAccordion.map((opportunity) => {
+          if (!opportunity) return undefined;
+          return (
+            <AccordionSection
+              key={`${opportunity.accordionKey}-${opportunity.selectId}`}
+              opportunity={opportunity}
+              formLinkButton={formLinkButton}
+              onDenialButtonClick={() => {
+                updateSelectedOpportunityOnFullProfile(opportunity);
+                setCurrentView("MARK_INELIGIBLE");
+              }}
+            />
+          );
+        })}
+        <OpportunityPreviewPanel
+          opportunity={selectedOpportunityOnFullProfile}
+          selectedPerson={person}
+          onClose={() => updateSelectedOpportunityOnFullProfile(undefined)}
+          onSubmit={() => updateSelectedOpportunityOnFullProfile(undefined)}
+          clearSelectedPersonOnClose={false}
+          shouldTrackOpportunityPreviewed={false}
+        />
+      </AccordionWrapper>
+    );
+  }
+});
 
-  return (
-    <SelectedPersonOpportunitiesHydrator
-      {...{ empty, hydrated, opportunityTypes, person }}
-    />
+function usePresenter({
+  person,
+  hideEmpty = false,
+  formLinkButton = false,
+}: OpportunitiesAccordionProps) {
+  const { workflowsStore } = useRootStore();
+  if (!workflowsStore) return null;
+  return new OpportunitiesAccordionPresenter(
+    workflowsStore,
+    person,
+    hideEmpty,
+    formLinkButton,
   );
+}
+
+export const OpportunitiesAccordion = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
+  HydratorComponent: ModelHydrator,
 });

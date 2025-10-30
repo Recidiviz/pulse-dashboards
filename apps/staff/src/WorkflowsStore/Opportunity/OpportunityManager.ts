@@ -77,7 +77,7 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
   }
 
   // The opportunity types that are enabled and that the person is eligible for
-  private get incomingOpportunityTypes(): OpportunityType[] {
+  get incomingOpportunityTypes(): OpportunityType[] {
     return intersection(
       this.eligibleOpportunityTypes,
       this.enabledOpportunityTypes,
