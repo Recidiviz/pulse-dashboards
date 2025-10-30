@@ -17,7 +17,7 @@
 
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 
-let checkpointer: PostgresSaver | undefined;
+const checkpointers: Record<string, PostgresSaver> = {};
 
 export function getIntakeCheckpointerForStateCode(stateCode: string) {
   const dbUrl =
@@ -34,9 +34,9 @@ export function getIntakeCheckpointerForStateCode(stateCode: string) {
     throw Error(`INTAKE_LANGGRAPH_CHECKPOINTER_SCHEMA is not provided.`);
   }
 
-  if (!checkpointer) {
-    checkpointer = PostgresSaver.fromConnString(dbUrl, { schema });
+  if (!checkpointers[dbUrl]) {
+    checkpointers[dbUrl] = PostgresSaver.fromConnString(dbUrl, { schema });
   }
 
-  return checkpointer;
+  return checkpointers[dbUrl];
 }
