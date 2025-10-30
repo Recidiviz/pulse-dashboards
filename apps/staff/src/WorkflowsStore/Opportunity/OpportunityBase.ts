@@ -943,13 +943,14 @@ export class OpportunityBase<
    * Returns the default snooze length in days based on the given reasons. Returns
    * undefined if auto snooze is enabled for this opportunity.
    */
-  defaultManualSnoozeDays(_: string[]): number | undefined {
-    return this.config.snooze?.defaultSnoozeDays !== undefined
-      ? Math.min(
-          getPersonDaysToRelease(this.person),
-          this.config.snooze?.defaultSnoozeDays,
-        )
-      : undefined;
+  defaultManualSnoozeDays(denialReasons: string[]): number | undefined {
+    const configuredDefaultSnoozeDays = this.config.snooze?.defaultSnoozeDays;
+    if (configuredDefaultSnoozeDays === undefined) return;
+
+    const maxManualSnoozeDays = this.maxManualSnoozeDays(denialReasons);
+    if (maxManualSnoozeDays === undefined) return configuredDefaultSnoozeDays;
+
+    return Math.min(maxManualSnoozeDays, configuredDefaultSnoozeDays);
   }
 
   /**

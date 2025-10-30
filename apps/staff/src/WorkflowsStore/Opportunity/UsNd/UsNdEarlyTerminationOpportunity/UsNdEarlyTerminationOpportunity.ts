@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { differenceInDays, startOfToday } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
@@ -74,5 +75,29 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
 
   get metadata(): UsNdEarlyTerminationReferralRecord["metadata"] | undefined {
     return this.record?.metadata;
+  }
+
+  // The snooze expiration date has to be capped at the expiration date of the
+  // sentence that can be Early Terminated. This date might differ from someone's
+  // overall supervision expiration date if they have multiple sentences and one of
+  // the sentences cannot be Early Terminated (i.e., a Parole sentence).
+  maxManualSnoozeDays(selectedReasons: string[]): number | undefined {
+    const today = startOfToday();
+
+    // Sentence expiration dates should always be in the future. If that is
+    // somehow not the case, default to the client record expiration date or today.
+    const { probationExpirationDate } = this.record.formInformation;
+    const backupDate = this.person.expirationDate ?? today;
+    const expirationDate =
+      probationExpirationDate < today ? backupDate : probationExpirationDate;
+
+    const manualSnoozeDays = super.maxManualSnoozeDays(selectedReasons);
+    const daysToSentenceExpiration = differenceInDays(expirationDate, today);
+    return Math.min(
+      daysToSentenceExpiration,
+      // If the maxManualSnoozeDays are undefined (reasons allow indefinite snooze),
+      // we should still limit the snooze expiration date til sentence expiration.
+      manualSnoozeDays === undefined ? Infinity : manualSnoozeDays,
+    );
   }
 }

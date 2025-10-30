@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { startOfToday } from "date-fns";
 import { z } from "zod";
 
+import { isTestEnv } from "~client-env-utils";
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 import { nullishAsUndefined, stringToIntSchema } from "../../schemaHelpers";
@@ -33,14 +35,19 @@ export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
       sentenceLengthMonths: stringToIntSchema,
       crimeNames: z.array(z.string()),
       probationStartDate: dateStringSchema,
-      probationExpirationDate: dateStringSchema,
       probationOfficerFullName: z.string(),
       statesAttorneyPhoneNumber: z.string(),
       statesAttorneyEmailAddress: z.string(),
       statesAttorneyMailingAddress: z.string(),
       statesAttorneyName: z.string(),
     })
-    .partial(),
+    .partial()
+    .extend({
+      probationExpirationDate: dateStringSchema.refine((val) => {
+        // Valid probation expiration dates must be in the future
+        return isTestEnv() || val > startOfToday();
+      }),
+    }),
   eligibleCriteria: z
     .object({
       supervisionPastEarlyDischargeDate: z

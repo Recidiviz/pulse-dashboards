@@ -318,7 +318,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const snoozeSection = (
     <>
-      {maxManualSnoozeDays && (
+      {!!maxManualSnoozeDays && (
         <SliderWrapper>
           <SliderLabel>Snooze for:</SliderLabel>
           <Slider
