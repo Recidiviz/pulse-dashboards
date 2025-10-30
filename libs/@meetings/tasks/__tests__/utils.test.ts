@@ -86,10 +86,13 @@ describe("utils", () => {
         });
     });
 
-    test("Should throw error if there are no recordings", async () => {
-      await expect(
-        stitchAudio(AUDIO_RECORDINGS_BUCKET_NAME, "non-existent-folder"),
-      ).rejects.toThrow("No audio files found to stitch");
+    test("Should return null if no audio files are found", async () => {
+      const result = await stitchAudio(
+        AUDIO_RECORDINGS_BUCKET_NAME,
+        "non-existent-folder",
+      );
+
+      expect(result).toBeNull();
     });
 
     test("Should stitch audio if meeting exists", async () => {

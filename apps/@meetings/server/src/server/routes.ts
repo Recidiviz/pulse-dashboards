@@ -138,6 +138,25 @@ export function registerTaskRoutes(app: FastifyInstance) {
           meeting.recordingsFolderPath,
         );
 
+        // If there is no audio to stitch, mark the meeting as completed and exit early without queuing transcription
+        if (!finalRecordingGCSPath) {
+          await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.COMPLETED,
+            },
+          });
+
+          return reply
+            .code(200)
+            .send(
+              "No audio files found to stitch; marking meeting as completed.",
+            );
+        }
+
         await prisma.meeting.update({
           where: {
             id: meetingId,

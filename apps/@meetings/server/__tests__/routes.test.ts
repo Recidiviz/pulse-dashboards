@@ -228,6 +228,35 @@ describe("tasks", () => {
       );
     });
 
+    test("Should return 200 and set completed if there is no audio to transcribe", async () => {
+      mockStitchAudio.mockImplementationOnce(async () => {
+        return null;
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/stitch-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toEqual(
+        "No audio files found to stitch; marking meeting as completed.",
+      );
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+      });
+
+      expect(meeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.COMPLETED,
+      );
+    });
+
     test("Should return 200 and set transcribing queued if audio stitching succeeds", async () => {
       const response = await testServer.inject({
         method: "POST",

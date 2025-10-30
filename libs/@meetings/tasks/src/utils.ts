@@ -64,7 +64,7 @@ export async function stitchAudio(bucketName: string, folderName: string) {
 
   const [files] = await bucket.getFiles({ prefix: `${folderName}/` });
   if (files.length === 0) {
-    throw new Error("No audio files found to stitch");
+    return null;
   }
 
   // Sort files by timestamp to ensure correct order
