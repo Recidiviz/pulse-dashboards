@@ -678,7 +678,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Clients shown here scored Low on their Initial Risk Assessment and do not require an ORAS. ACIS data suggest that they could be eligible to transfer to Administrative Supervision per policy. Please review 'Requirements to check'. If the client meets all criteria, they should be transferred to Administrative Supervision per policy.",
         },
         {
-          tab: "Recently Transferred in ACIS",
+          tab: "Transferred in ACIS",
           text: "Clients appear here after you confirm that their supervision level has been set to Administrative Supervision in ACIS. Clients who were successfully transferred will drop off this list after 24 hours. If a client continues to appear here, double check their supervision level in ACIS.",
         },
       ],
