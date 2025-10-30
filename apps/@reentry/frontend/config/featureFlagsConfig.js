@@ -26,6 +26,7 @@
 const FEATURE_FLAGS_CONFIG = {
   ENABLE_SOURCE_MAPS: "development,dev,demo,staging",
   INTAKE_RESET: "development,dev,demo,staging",
+  REGENERATE_WITH_PROMPT: "",
   TEST_FEATURE_DEV: "dev",
   TEST_FEATURE_DEV_STAGING: "dev,staging",
 };

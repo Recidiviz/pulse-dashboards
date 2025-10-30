@@ -22,6 +22,7 @@ import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDeta
 import RegeneratePlan from "~@reentry/frontend/components/action-plan/RegeneratePlan";
 import Resources from "~@reentry/frontend/components/action-plan/Resources";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 
 interface SidePanelProps {
   clientRecord: components["schemas"]["ClientRecordResponse"] | null;
@@ -97,14 +98,16 @@ const SidePanel = ({
               openResourceSection={openResourceSection}
               clientRecord={clientRecord}
             />
-            <RegeneratePlan
-              planId={planId}
-              startPolling={startPolling}
-              setRegenerationMessage={setRegenerationMessage}
-              dataDetailPlan={dataDetailPlan}
-              isPolling={isPolling}
-              clientRecord={clientRecord}
-            />
+            {isFeatureEnabled("REGENERATE_WITH_PROMPT") && (
+              <RegeneratePlan
+                planId={planId}
+                startPolling={startPolling}
+                setRegenerationMessage={setRegenerationMessage}
+                dataDetailPlan={dataDetailPlan}
+                isPolling={isPolling}
+                clientRecord={clientRecord}
+              />
+            )}
             <HomeAddressSection
               clientRecord={clientRecord}
               planId={planId}
