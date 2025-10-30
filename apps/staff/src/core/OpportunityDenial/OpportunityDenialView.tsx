@@ -385,6 +385,19 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     }
     setReasons(updatedReasons);
 
+    // Reset the slider value to default if the new selected reasons have a lower max snooze
+    // than the current slider value.
+    const updatedMaxManualSnoozeDays =
+      opportunity.maxManualSnoozeDays(updatedReasons);
+    if (
+      updatedMaxManualSnoozeDays &&
+      updatedMaxManualSnoozeDays < snoozeForDays
+    ) {
+      const updatedSliderValue =
+        opportunity.defaultManualSnoozeDays(updatedReasons) ?? 0;
+      setSnoozeForDays(updatedSliderValue);
+    }
+
     if (snoozeEnabled) {
       if (defaultAutoSnoozeFn && updatedReasons.length) {
         setAutoSnoozeUntil(
