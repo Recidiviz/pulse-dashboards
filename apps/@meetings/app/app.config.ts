@@ -21,9 +21,9 @@ const APP_NAME = "Recidiviz";
 const PACKAGE = "org.recidiviz.app";
 const SCHEME = "recidiviz";
 
-const getDynamicAppConfig = (
-  environment: "development" | "preview" | "production",
-) => {
+type Environment = "development" | "preview" | "staging" | "production";
+
+const getDynamicAppConfig = (environment: Environment) => {
   if (environment === "production") {
     return {
       name: APP_NAME,
@@ -31,6 +31,16 @@ const getDynamicAppConfig = (
       packageName: PACKAGE,
       scheme: SCHEME,
       auth0Domain: "login.recidiviz.org",
+    };
+  }
+
+  if (environment === "staging") {
+    return {
+      name: `${APP_NAME} Staging`,
+      bundleIdentifier: `${PACKAGE}.staging`,
+      packageName: `${PACKAGE}.staging`,
+      scheme: `${SCHEME}-staging`,
+      auth0Domain: "login-staging.recidiviz.org",
     };
   }
 
@@ -56,15 +66,14 @@ const getDynamicAppConfig = (
 export default ({ config }: ConfigContext): ExpoConfig => {
   const { name, bundleIdentifier, packageName, scheme, auth0Domain } =
     getDynamicAppConfig(
-      (process.env["APP_ENV"] as "development" | "preview" | "production") ??
-        "development",
+      (process.env["APP_ENV"] as Environment) ?? "development",
     );
 
   return {
     ...config,
     name,
     slug: "recidiviz",
-    version: "1.0.0",
+    version: "0.1.0",
     orientation: "portrait",
     icon: "./assets/images/Apple_icon.png",
     scheme,
@@ -128,7 +137,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ],
     extra: {
       eas: {
-        projectId: "6db95bf2-07f3-4753-890d-1950ac2a58fb",
+        projectId: "fce0159d-1a8d-493b-a891-e7413b1a8ea5",
       },
     },
     owner: "recidiviz",

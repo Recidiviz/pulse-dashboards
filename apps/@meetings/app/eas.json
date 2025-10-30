@@ -9,15 +9,20 @@
         "APP_ENV": "production"
       },
       "channel": "production",
+      "environment": "production",
       "autoIncrement": true
     },
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "env": {
-        "APP_ENV": "development"
+    "staging": {
+      "android": {
+        "buildType": "app-bundle"
       },
-      "channel": "development"
+      "env": {
+        "YARN_ENABLE_IMMUTABLE_INSTALLS": "false",
+        "APP_ENV": "staging"
+      },
+      "channel": "staging",
+      "environment": "preview",
+      "autoIncrement": true
     },
     "preview": {
       "distribution": "internal",
@@ -30,7 +35,17 @@
       "env": {
         "APP_ENV": "preview"
       },
-      "channel": "preview"
+      "channel": "preview",
+      "environment": "preview"
+    },
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "development"
+      },
+      "channel": "development",
+      "environment": "development"
     }
   },
   "submit": {
