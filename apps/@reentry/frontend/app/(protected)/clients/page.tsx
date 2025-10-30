@@ -25,16 +25,13 @@ import {
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import DataTable, {
-  SortOrder,
-  TableColumn,
-  TableStyles,
-} from "react-data-table-component";
+import DataTable, { TableColumn } from "react-data-table-component";
 
 import { $api } from "~@reentry/frontend/api";
 import CustomPagination from "~@reentry/frontend/components/base/CustomPagination";
 import { IconInput } from "~@reentry/frontend/components/base/SortingInput";
 import ActionButton from "~@reentry/frontend/components/clients/ActionButton";
+import { ClientsTableV2 } from "~@reentry/frontend/components/IntakeChatV2/ClientsTableV2/ClientsTableV2";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
@@ -42,7 +39,6 @@ import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useClientStatusPolling } from "~@reentry/frontend/hooks/useClientStatusPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
-import { trpc } from "~@reentry/frontend/trpc";
 
 type ClientResponse = components["schemas"]["ClientResponse"];
 
@@ -309,102 +305,6 @@ const ClientsPage = () => {
       </Box>
     );
   }
-
-  // V2-only table that fetches statuses via tRPC and merges into items
-  const ClientsTableV2: React.FC<{
-    items: ClientResponse[];
-    total: number;
-    page: number;
-    rowsPerPage: number;
-    customStyles: TableStyles;
-    onSort: (
-      column: TableColumn<ClientResponse>,
-      sortDirection: SortOrder,
-    ) => void;
-    SortIconComp: React.ReactNode;
-    buildColumns: (statusLoading?: boolean) => TableColumn<ClientResponse>[];
-    activeRowId: string | null;
-  }> = ({
-    items,
-    total,
-    page,
-    rowsPerPage,
-    customStyles,
-    onSort,
-    SortIconComp,
-    buildColumns,
-    activeRowId,
-  }) => {
-    const auth = useAuth();
-    const stateCode = auth.userAppMetadata?.stateCode ?? "";
-    const staffPseudoId = auth.userAppMetadata?.pseudonymizedId;
-    const enableGetClientsIntakeStatus = Boolean(stateCode && staffPseudoId);
-
-    const { data, isLoading } =
-      trpc.staff.getAllClientsIntakeStatusAndDate.useQuery(
-        {
-          staffPseudoId: staffPseudoId ?? "",
-        },
-        { enabled: enableGetClientsIntakeStatus },
-      );
-
-    // Merges the status of existing clients with the new server's statuses
-    const updatedItems = items.map((item) => {
-      if (!enableGetClientsIntakeStatus || !data) return item;
-      const pseudoId = item.client?.pseudonymized_client_id;
-      const statusOverride = pseudoId ? data[pseudoId]?.status : undefined;
-      const intakeDateOverride = pseudoId
-        ? data[pseudoId]?.intakeDate?.toISOString()
-        : undefined;
-
-      return {
-        ...item,
-        frontend_status: statusOverride || item.frontend_status,
-        intake_date: intakeDateOverride ?? item.intake?.updated_at,
-      };
-    });
-
-    const columns = buildColumns(isLoading);
-
-    return (
-      <DataTable
-        columns={columns}
-        data={updatedItems}
-        customStyles={customStyles}
-        sortIcon={SortIconComp}
-        onSort={onSort}
-        noHeader
-        responsive
-        highlightOnHover
-        noDataComponent={
-          <div className="text-gray-600 py-4 ">No clients found.</div>
-        }
-        conditionalRowStyles={[
-          {
-            when: (row) => row.client_pseudo_id === activeRowId,
-            style: {
-              backgroundColor: "bg-gray-200",
-              "&:hover": { backgroundColor: "bg-gray-200" },
-            },
-          },
-        ]}
-        pagination
-        paginationComponent={() => (
-          <CustomPagination
-            currentPage={page}
-            totalRows={total}
-            rowsPerPage={rowsPerPage}
-          />
-        )}
-        onRowClicked={(row) => {
-          if (row.processing_status === "not_started") {
-            window.location.href = `/clients/intake/${row.client_pseudo_id}`;
-          }
-        }}
-        pointerOnHover
-      />
-    );
-  };
 
   const buildColumns = (
     statusLoading?: boolean,
