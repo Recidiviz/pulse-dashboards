@@ -66,7 +66,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: "recidiviz",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/images/icon.png",
+    icon: "./assets/images/Apple_icon.png",
     scheme,
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
@@ -75,10 +75,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       bundleIdentifier: bundleIdentifier,
     },
     android: {
-      adaptiveIcon: {
-        foregroundImage: "./assets/images/adaptive-icon.png",
-        backgroundColor: "#ffffff",
-      },
       permissions: [
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS",
@@ -87,13 +83,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     web: {
       bundler: "metro",
-      favicon: "./assets/images/favicon.png",
+      favicon: "./assets/images/favicon-32x32.png",
     },
     plugins: [
       [
         "expo-splash-screen",
         {
-          image: "./assets/images/splash-icon.png",
+          image: "./assets/images/Apple_icon.png",
           imageWidth: 200,
           resizeMode: "contain",
           backgroundColor: "#ffffff",
