@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Opportunity } from "../types";
+
 export const convertStringToUTCDate = (dateString: string): Date => {
   const date = new Date(dateString);
   const dateYear = date.getUTCFullYear();
@@ -22,4 +24,18 @@ export const convertStringToUTCDate = (dateString: string): Date => {
   const dateDay = date.getUTCDate();
   const dateUTC = new Date(dateYear, dateMonth, dateDay);
   return dateUTC;
+};
+
+export const opportunityEligibilityDateComparator = (
+  a: Opportunity<any>,
+  b: Opportunity<any>,
+) => {
+  if (a.eligibilityDate && b.eligibilityDate) {
+    return +a.eligibilityDate - +b.eligibilityDate;
+  } else if (a.eligibilityDate) {
+    return +a.eligibilityDate;
+  } else if (b.eligibilityDate) {
+    return +b.eligibilityDate;
+  }
+  return 0;
 };

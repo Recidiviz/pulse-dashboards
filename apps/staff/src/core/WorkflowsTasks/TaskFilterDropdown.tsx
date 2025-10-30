@@ -32,11 +32,8 @@ import {
 import Checkbox from "../../components/Checkbox";
 import useIsMobile from "../../hooks/useIsMobile";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
-import {
-  TaskFilterField,
-  TaskFilterOption,
-  TaskFilterType,
-} from "../models/types";
+import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
+import { FilterField, FilterOption, FilterType } from "../models/types";
 import { MobileTaskFilterModal } from "./MobileTaskFilterModal";
 
 const FilterDropdownToggle = styled(DropdownToggle)`
@@ -210,7 +207,7 @@ const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
   checked,
   count,
 }: {
-  option: TaskFilterOption;
+  option: FilterOption;
   onClick: () => void;
   onClickOnly: () => void;
   checked: boolean;
@@ -257,10 +254,10 @@ const TaskFilterDropdownGroup = observer(function TaskFilterDropdownGroup({
   presenter,
   title,
 }: {
-  type: TaskFilterType;
-  field: TaskFilterField;
-  options: TaskFilterOption[];
-  presenter: CaseloadTasksPresenterV2;
+  type: FilterType;
+  field: FilterField;
+  options: FilterOption[];
+  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
   title: string;
 }) {
   return (
@@ -273,7 +270,7 @@ const TaskFilterDropdownGroup = observer(function TaskFilterDropdownGroup({
           checked={presenter.filterIsSelected(field, option)}
           onClick={() => presenter.toggleFilter(field, option)}
           onClickOnly={() => presenter.setOnlyFilterForField(field, option)}
-          count={presenter.numTasks(type, field, option)}
+          count={presenter.numItems(type, field, option)}
         />
       ))}
     </FilterGroup>
@@ -283,7 +280,7 @@ const TaskFilterDropdownGroup = observer(function TaskFilterDropdownGroup({
 const ClearAll = observer(function ClearAll({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenterV2;
+  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
 }) {
   if (presenter.allFiltersSelected) {
     return (
@@ -309,11 +306,11 @@ const ClearAll = observer(function ClearAll({
 export const TaskFilterDropdown = observer(function TaskFilterDropdown({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenterV2;
+  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
 }) {
   const { isMobile } = useIsMobile(true);
 
-  const { filters } = presenter;
+  const filters = presenter.filters;
 
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
 

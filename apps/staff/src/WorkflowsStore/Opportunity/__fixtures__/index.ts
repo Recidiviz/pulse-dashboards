@@ -112,6 +112,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   snoozeReviewStatusMessage: "Snooze Review",
   grantReviewStatusMessage: "Discharge Review",
   excludeIndefiniteSnoozesFromTableView: true,
+  enableWorkflowsFilter: false,
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

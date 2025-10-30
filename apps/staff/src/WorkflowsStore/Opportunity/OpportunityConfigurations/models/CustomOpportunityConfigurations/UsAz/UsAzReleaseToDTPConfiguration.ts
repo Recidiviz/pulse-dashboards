@@ -26,4 +26,8 @@ export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
       return "DTP or Projected DTP";
     }
   }
+
+  get enableWorkflowsFilter(): boolean {
+    return true;
+  }
 }

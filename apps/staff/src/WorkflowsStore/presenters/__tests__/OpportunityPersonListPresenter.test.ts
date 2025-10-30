@@ -18,6 +18,7 @@
 import tk from "timekeeper";
 
 import { mockOpportunity } from "../../../core/__tests__/testUtils";
+import OpportunitiesFilterStore from "../../../FilterStore/OpportunitiesFilterStore";
 import FirestoreStore from "../../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
@@ -44,6 +45,7 @@ const firestoreStore = {
 } as any as FirestoreStore;
 
 const tenantStore = {} as any as TenantStore;
+const mockFilterStore = {} as any as OpportunitiesFilterStore;
 
 const mockOpportunities = {
   [mockOpportunity.type]: [
@@ -78,17 +80,20 @@ function getPresenter({
   workflowsStore = mockWorkflowsStore,
   tenantStore: customTenantStore = tenantStore,
   opportunityType = mockOpportunity.type,
+  opportunitiesFilterStore = mockFilterStore,
 }: {
   config?: OpportunityConfiguration;
   supervisionPresenter?: SupervisionOpportunityPresenter;
   workflowsStore?: WorkflowsStore;
   tenantStore?: TenantStore;
   opportunityType?: typeof mockOpportunity.type;
+  opportunitiesFilterStore?: OpportunitiesFilterStore;
 }): OpportunityPersonListPresenter {
   return new OpportunityPersonListPresenter(
     analyticsStore,
     firestoreStore,
     customTenantStore,
+    opportunitiesFilterStore,
     workflowsStore,
     config,
     FEATURE_VARIANTS,

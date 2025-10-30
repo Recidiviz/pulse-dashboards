@@ -19,6 +19,7 @@ import { addDays, differenceInCalendarMonths } from "date-fns";
 import tk from "timekeeper";
 
 import { SupervisionTaskCategory } from "../../../core/WorkflowsTasks/fixtures";
+import TasksFilterStore from "../../../FilterStore/TasksFilterStore";
 import FirestoreStore from "../../../FirestoreStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import TenantStore from "../../../RootStore/TenantStore";
@@ -123,9 +124,15 @@ function getPresenter({
   tenantStore = mockTenantStore,
   analyticsStore = mockAnalyticsStore,
 }): CaseloadTasksPresenterV2 {
+  const filterStore = new TasksFilterStore(
+    analyticsStore,
+    tenantStore,
+    workflowsStore,
+  );
   return new CaseloadTasksPresenterV2(
     workflowsStore,
     tenantStore,
+    filterStore,
     analyticsStore,
     {} as FirestoreStore,
     {},
@@ -380,8 +387,8 @@ describe("CaseloadTasksPresenterV2", () => {
         changedFilterValue: "Low",
         changedFilterCategory: "supervisionLevel",
         changedFilterSelected: false,
-        onlyClicked: false,
         selectedFilters: {},
+        onlyClicked: false,
       });
 
       presenter.unsetFilter("supervisionLevel", { value: "High" });

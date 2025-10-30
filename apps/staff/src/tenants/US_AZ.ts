@@ -65,6 +65,68 @@ const US_AZ_CONFIG = {
   incarcerationStaffTitleOverride: "COIII",
   releaseDateCopyOverride: "SED",
   insightsNumDaysWithoutLogin: 14,
+  workflowsOpportunityFilterConfig: {
+    filters: [
+      {
+        title: "Agreement Form Signature Status",
+        field: "Agreement Form Signature Status",
+        type: "opportunity",
+        options: [
+          {
+            value: "Signed",
+          },
+          {
+            value: "Not Signed",
+          },
+          {
+            value: "Refusal to Sign",
+          },
+          {
+            value: "Declined 180+ Days Ago",
+          },
+        ],
+      },
+      {
+        title: "Mandatory Literacy Status",
+        field: "Mandatory Literacy Enrollment Information",
+        type: "opportunity",
+        options: [
+          {
+            value: "Currently Enrolled",
+          },
+          { value: "Completed" },
+        ],
+      },
+      {
+        title: "Home Plan Information",
+        field: "Home Plan Information",
+        type: "opportunity",
+        options: [
+          {
+            value: "Home Plan Not Started",
+          },
+          {
+            value: "Home Plan Approved",
+          },
+          {
+            value: "Home Plan Cancelled",
+          },
+          {
+            value: "Home Plan In Progress",
+          },
+          {
+            value: "Denied",
+          },
+          {
+            value: "Return to CC Supervisor",
+          },
+          {
+            value: "Return to COIII",
+          },
+        ],
+      },
+    ],
+  },
 } satisfies TenantConfig<"US_AZ">;
 
 export default US_AZ_CONFIG;

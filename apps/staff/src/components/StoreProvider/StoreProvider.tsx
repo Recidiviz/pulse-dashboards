@@ -19,6 +19,8 @@ import React, { useContext } from "react";
 
 import { OpportunityType } from "~datatypes";
 
+import OpportunitiesFilterStore from "../../FilterStore/OpportunitiesFilterStore";
+import TasksFilterStore from "../../FilterStore/TasksFilterStore";
 import FirestoreStore from "../../FirestoreStore";
 import { InsightsStore } from "../../InsightsStore/InsightsStore";
 import store, { RootStore } from "../../RootStore";
@@ -57,6 +59,8 @@ export interface PartiallyTypedRootStore {
   workflowsRootStore: WorkflowsRootStore;
   analyticsStore: AnalyticsStore;
   firestoreStore: FirestoreStore;
+  opportunitiesFilterStore: OpportunitiesFilterStore;
+  tasksFilterStore: TasksFilterStore;
   [key: string]: any;
 }
 

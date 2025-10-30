@@ -17,16 +17,23 @@
 
 import { arrayMove } from "@dnd-kit/sortable";
 import { differenceInDays, startOfToday } from "date-fns";
-import { difference, intersection, isEmpty, some } from "lodash";
+import { difference, intersection, isEmpty } from "lodash";
 import { action, makeAutoObservable, reaction } from "mobx";
 import pluralize from "pluralize";
 import toast from "react-hot-toast";
 
 import { OpportunityType } from "~datatypes";
 
+import {
+  FilterField,
+  FilterOption,
+  FilterSection,
+  FilterType,
+} from "../../core/models/types";
 import { OpportunityTableColumnId } from "../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { insightsUrl, workflowsUrl } from "../../core/views";
 import { formatSupervisionEndDatePhrase } from "../../core/WorkflowsJusticeInvolvedPersonProfile/utils";
+import OpportunitiesFilterStore from "../../FilterStore/OpportunitiesFilterStore";
 import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
@@ -66,11 +73,13 @@ export class OpportunityPersonListPresenter
   private tableViewSelectPresenter: TableViewSelectPresenter;
 
   private _navigablePeople: Opportunity<JusticeInvolvedPerson>[] = [];
+  readonly filters: FilterSection[];
 
   constructor(
     private readonly analyticsStore: AnalyticsStore,
     private readonly firestoreStore: FirestoreStore,
     private readonly tenantStore: TenantStore,
+    private readonly opportunitiesFilterStore: OpportunitiesFilterStore,
     private readonly workflowsStore: WorkflowsStore,
     public readonly config: OpportunityConfiguration,
     featureVariants: FeatureVariantRecord,
@@ -78,6 +87,7 @@ export class OpportunityPersonListPresenter
     private readonly supervisionPresenter?: SupervisionOpportunityPresenter,
   ) {
     this.isSupervisorHomepage = !!supervisionPresenter;
+    this.filters = this.opportunitiesFilterStore.filters;
 
     this.displayTabGroups = Object.keys(
       config.tabGroups,
@@ -140,11 +150,11 @@ export class OpportunityPersonListPresenter
     const opportunities = this.peopleInActiveTab;
     return {
       PERSON_NAME: true,
-      INSTANCE_DETAILS: some(opportunities, (opp) => !!opp.instanceDetails),
+      INSTANCE_DETAILS: opportunities.some((opp) => !!opp.instanceDetails),
       PERSON_DISPLAY_ID: true,
       ASSIGNED_STAFF_NAME:
         !this.isSupervisorHomepage &&
-        some(opportunities, (opp) => !!opp.person.assignedStaffId),
+        opportunities.some((opp) => !!opp.person.assignedStaffId),
       // TODO(#7921): More gracefully handle these special cases
       STATUS: ![
         "usAzTransferToAdministrativeSupervision",
@@ -152,7 +162,7 @@ export class OpportunityPersonListPresenter
         "usAzReleaseToDTP",
       ].includes(this.opportunityType),
       // TODO(#7921): More gracefully handle these special cases
-      ELIGIBILITY_DATE: some(opportunities, (opp) => !!opp.eligibilityDate),
+      ELIGIBILITY_DATE: opportunities.some((opp) => !!opp.eligibilityDate),
       RELEASE_DATE:
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         ![
@@ -187,15 +197,13 @@ export class OpportunityPersonListPresenter
         this.tenantStore.currentTenantId === "US_MI" &&
         this.opportunityType === "usMiCustodyLevelDowngrade",
       LAST_VIEWED: true,
-      ALMOST_ELIGIBLE_STATUS: some(
-        opportunities,
+      ALMOST_ELIGIBLE_STATUS: opportunities.some(
         (opp: Opportunity) =>
           !opp.denied && !opp.isSubmitted && opp.almostEligibleStatusMessage,
       ),
       SNOOZE_ENDS_IN:
         this.isViewingDeniedTab &&
-        some(
-          opportunities,
+        opportunities.some(
           (opp: Opportunity) =>
             !!this.snoozeEndsInDays(opp) ||
             !isEmpty(opp.indefiniteDenialReasons),
@@ -502,8 +510,26 @@ export class OpportunityPersonListPresenter
         (category) => peopleInActiveTabBySubcategory[category] ?? [],
       );
     } else {
-      this._navigablePeople = this.peopleInActiveTab;
+      this._navigablePeople = this.orderedOpportunitiesForSelectedCategory()
+        // Filter out consecutive repeats
+        .filter((client, i, allClients) => {
+          return i === 0 || client !== allClients[i - 1];
+        });
     }
+  }
+
+  orderedOpportunitiesForSelectedCategory(subcategory?: string): Opportunity[] {
+    let opps;
+    if (subcategory && this.peopleInActiveTabBySubcategory) {
+      opps = this.peopleInActiveTabBySubcategory[subcategory];
+    } else {
+      opps = this.peopleInActiveTab;
+    }
+
+    return this.opportunitiesFilterStore.orderedOpportunitiesForCategory(
+      this.selectedCategory,
+      opps,
+    );
   }
 
   headingText(subcategory: string) {
@@ -535,6 +561,25 @@ export class OpportunityPersonListPresenter
     }
     // When we don't have an active tab, there are no people in our current tab group
     return `Please select a different grouping. None of the ${this.justiceInvolvedPersonTitle}s were able to be grouped by ${toTitleCase(this.activeTabGroup.toLowerCase())}.`;
+  }
+
+  get displayedOpportunityCategories(): OpportunityTabGroup[] {
+    return this.displayTabGroups;
+  }
+
+  get selectedCategory() {
+    return (
+      this._activeTabGroup ??
+      // If the user hasn't selected anything, default to the first non-empty category
+      this.displayedOpportunityCategories.find(
+        (category) =>
+          this.opportunitiesFilterStore.countForOpportunityCategory(
+            category,
+            this.peopleInActiveTab,
+          ) > 0,
+      ) ??
+      this.displayedOpportunityCategories[0]
+    );
   }
 
   get selectedSearchablesCount() {
@@ -672,5 +717,62 @@ export class OpportunityPersonListPresenter
       opp.person.pseudonymizedId === this.selectedPerson?.pseudonymizedId &&
       opp.selectId === this.selectedOpportunity?.selectId
     );
+  }
+
+  // Filtering
+
+  filterIsSelected(field: FilterField, value: FilterOption): boolean {
+    return this.opportunitiesFilterStore.filterIsSelected(field, value);
+  }
+
+  toggleFilter(field: FilterField, option: FilterOption) {
+    return this.opportunitiesFilterStore.toggleFilter(field, option);
+  }
+
+  setOnlyFilterForField(field: FilterField, option: FilterOption) {
+    return this.opportunitiesFilterStore.setOnlyFilterForField(field, option);
+  }
+
+  // Return the number of total opportunities, regardless of the current category and filters.
+  numItems(type: FilterType, field: FilterField, option: FilterOption): number {
+    const allOpportunities =
+      this.opportunitiesFilterStore.allOpportunitiesForCategory(
+        "ELIGIBILITY STATUS",
+        this.peopleInActiveTab,
+        false,
+      );
+
+    return allOpportunities.filter((opp) => {
+      if (type === "opportunity") {
+        if (opp.record?.caseNotes[field]) {
+          return opp.record.caseNotes[field][0].noteTitle === option.value;
+        }
+      } else if (type === "person") {
+        // @ts-expect-error we don't currently narrow the type of field adequately
+        // but field should always be FilterFieldForPerson here
+        return opp.person[field] === option.value;
+      }
+      return false;
+    }).length;
+  }
+
+  clearFilters() {
+    return this.opportunitiesFilterStore.clearFilters();
+  }
+
+  get allFiltersSelected() {
+    return this.opportunitiesFilterStore.allFiltersSelected;
+  }
+
+  selectAllFilters() {
+    return this.opportunitiesFilterStore.selectAllFilters();
+  }
+
+  get someFiltersSet() {
+    return this.opportunitiesFilterStore.someFiltersSet;
+  }
+
+  trackFilterDropdownOpened() {
+    return this.opportunitiesFilterStore.trackOpportunityFilterDropdownOpened;
   }
 }

@@ -20,7 +20,11 @@ import qs from "query-string";
 
 import { SystemId } from "~datatypes";
 
-import { StaffFilter, WorkflowsTasksConfig } from "../../core/models/types";
+import {
+  StaffFilter,
+  WorkflowsOpportunityFilterConfig,
+  WorkflowsTasksConfig,
+} from "../../core/models/types";
 import { ClientDetailComponentName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";
@@ -227,6 +231,15 @@ export default class TenantStore {
         "DUE_THIS_MONTH",
       ]
     );
+  }
+
+  get workflowsOpportunityFilterConfig():
+    | WorkflowsOpportunityFilterConfig
+    | undefined {
+    if (!this.currentTenantId) return;
+
+    return this.tenantConfigs[this.currentTenantId]
+      .workflowsOpportunityFilterConfig;
   }
 
   get tasksConfiguration(): WorkflowsTasksConfig | undefined {

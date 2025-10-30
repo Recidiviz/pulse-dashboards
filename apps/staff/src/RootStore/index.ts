@@ -27,6 +27,8 @@ import {
   productionAuthConfig,
 } from "~staff-shared-server";
 
+import OpportunitiesFilterStore from "../FilterStore/OpportunitiesFilterStore";
+import TasksFilterStore from "../FilterStore/TasksFilterStore";
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
 import { TENANT_CONFIGS } from "../tenants";
@@ -38,6 +40,7 @@ import PageStore from "./PageStore";
 import TenantStore from "./TenantStore";
 import { TenantId } from "./types";
 import UserStore from "./UserStore";
+
 /**
  * Returns the auth settings configured for the current environment, if any.
  */
@@ -106,6 +109,10 @@ export class RootStore {
 
   firestoreStore: FirestoreStore;
 
+  opportunitiesFilterStore: OpportunitiesFilterStore;
+
+  tasksFilterStore: TasksFilterStore;
+
   insightsStore: InsightsStore;
 
   psiStore: PSIStore;
@@ -141,6 +148,18 @@ export class RootStore {
     });
 
     this.firestoreStore = new FirestoreStore({ rootStore: this });
+
+    this.opportunitiesFilterStore = new OpportunitiesFilterStore(
+      this.analyticsStore,
+      this.tenantStore,
+      this.workflowsStore,
+    );
+
+    this.tasksFilterStore = new TasksFilterStore(
+      this.analyticsStore,
+      this.tenantStore,
+      this.workflowsStore,
+    );
 
     this.insightsStore = new InsightsStore(this);
 

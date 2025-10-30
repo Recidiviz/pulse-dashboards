@@ -24,12 +24,9 @@ import { palette } from "~design-system";
 
 import Checkbox from "../../components/Checkbox";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
+import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { ModalCloseButton } from "../CaseloadSelect";
-import {
-  TaskFilterField,
-  TaskFilterOption,
-  TaskFilterType,
-} from "../models/types";
+import { FilterField, FilterOption, FilterType } from "../models/types";
 import { FilterGroup, FilterGroupHeader } from "./TaskFilterDropdown";
 
 const FullScreenModal = styled(Modal)`
@@ -106,7 +103,7 @@ const BiggerCheckboxContainer = styled.div`
 `;
 
 // unset default button styles
-const FilterOptionRow = styled.button`
+const TaskFilterOptionRow = styled.button`
   border: unset;
   background-color: unset;
   text-align: left;
@@ -123,14 +120,14 @@ const FilterCount = styled.div<{ $isZero: boolean }>`
   color: ${({ $isZero }) => ($isZero ? palette.slate30 : palette.pine4)};
 `;
 
-const FilterOption = styled.div`
+const TaskFilterOption = styled.div`
   width: auto;
   max-width: 90%;
   display: flex;
   gap: 8px;
 `;
 
-const FilterOptionText = styled.div`
+const TaskFilterOptionText = styled.div`
   color: ${palette.slate85};
   white-space: wrap;
 `;
@@ -171,20 +168,20 @@ const MobileTaskFilterItem = observer(function MobileTaskFilterItem({
   checked,
   count,
 }: {
-  option: TaskFilterOption;
+  option: FilterOption;
   onClick: () => void;
   checked: boolean;
   count: number;
 }) {
   return (
-    <FilterOptionRow
+    <TaskFilterOptionRow
       onClick={(e) => {
         e.preventDefault();
         onClick();
       }}
       disabled={count === 0}
     >
-      <FilterOption>
+      <TaskFilterOption>
         <BiggerCheckboxContainer>
           <Checkbox
             checked={checked}
@@ -192,17 +189,19 @@ const MobileTaskFilterItem = observer(function MobileTaskFilterItem({
             disabled={count === 0}
           />
         </BiggerCheckboxContainer>
-        <FilterOptionText>{option.label ?? option.value}</FilterOptionText>
-      </FilterOption>
+        <TaskFilterOptionText>
+          {option.label ?? option.value}
+        </TaskFilterOptionText>
+      </TaskFilterOption>
       {<FilterCount $isZero={count === 0}>{count}</FilterCount>}
-    </FilterOptionRow>
+    </TaskFilterOptionRow>
   );
 });
 
 const MobileClearAll = observer(function ClearAll({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenterV2;
+  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
 }) {
   if (presenter.allFiltersSelected) {
     return (
@@ -226,10 +225,10 @@ const MobileTaskFilterGroup = observer(function MobileTaskFilterGroup({
   presenter,
   title,
 }: {
-  type: TaskFilterType;
-  field: TaskFilterField;
-  options: TaskFilterOption[];
-  presenter: CaseloadTasksPresenterV2;
+  type: FilterType;
+  field: FilterField;
+  options: FilterOption[];
+  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
   title: string;
 }) {
   return (
@@ -243,7 +242,7 @@ const MobileTaskFilterGroup = observer(function MobileTaskFilterGroup({
             option={option}
             checked={checked}
             onClick={() => presenter.toggleFilter(field, option)}
-            count={presenter.numTasks(type, field, option)}
+            count={presenter.numItems(type, field, option)}
           />
         );
       })}
@@ -256,7 +255,7 @@ export const MobileTaskFilterModal = observer(function MobileTaskFilterModal({
   modalIsOpen,
   setModalIsOpen,
 }: {
-  presenter: CaseloadTasksPresenterV2;
+  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
   modalIsOpen: boolean;
   setModalIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {

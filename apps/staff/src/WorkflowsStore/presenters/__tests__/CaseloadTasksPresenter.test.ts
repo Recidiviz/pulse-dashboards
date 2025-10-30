@@ -18,6 +18,7 @@
 import { addDays } from "date-fns";
 
 import { SupervisionTaskCategory } from "../../../core/WorkflowsTasks/fixtures";
+import TasksFilterStore from "../../../FilterStore/TasksFilterStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import { JusticeInvolvedPerson } from "../../types";
@@ -75,10 +76,16 @@ function getPresenter({
   tenantStore = mockTenantStore,
   analyticsStore = mockAnalyticsStore,
 }): CaseloadTasksPresenter {
+  const filterStore = new TasksFilterStore(
+    analyticsStore,
+    tenantStore,
+    workflowsStore,
+  );
   return new CaseloadTasksPresenter(
     workflowsStore,
     tenantStore,
     analyticsStore,
+    filterStore,
   );
 }
 
@@ -235,13 +242,6 @@ describe("CaseloadTasksPresenter", () => {
       expect(presenter.countForCategory("employment")).toEqual(2);
       expect(presenter.countForCategory("contact")).toEqual(3);
     });
-
-    it("filters tasks by set filters", () => {
-      presenter.setFilter("supervisionLevel", { value: "Low" });
-
-      expect(presenter.countForCategory("employment")).toEqual(1);
-      expect(presenter.countForCategory("contact")).toEqual(2);
-    });
   });
 
   describe("storing filter state", () => {
@@ -250,24 +250,6 @@ describe("CaseloadTasksPresenter", () => {
     });
 
     it("starts with no filters selected", () => {
-      expect(presenter.selectedFilters).toEqual({});
-    });
-
-    it("stores selected filters", () => {
-      presenter.setFilter("supervisionLevel", { value: "Low" });
-      expect(presenter.selectedFilters).toEqual({
-        supervisionLevel: { value: "Low" },
-      });
-
-      presenter.setFilter("supervisionLevel", { value: "High" });
-      expect(presenter.selectedFilters).toEqual({
-        supervisionLevel: { value: "High" },
-      });
-    });
-
-    it("clears filters", () => {
-      presenter.setFilter("supervisionLevel", { value: "Low" });
-      presenter.resetFilters();
       expect(presenter.selectedFilters).toEqual({});
     });
   });

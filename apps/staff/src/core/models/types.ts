@@ -95,6 +95,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   workflowsHomepage?: WorkflowsPathSection;
   workflowsHomepageName?: string;
   workflowsTasksConfig?: WorkflowsTasksConfig;
+  workflowsOpportunityFilterConfig?: WorkflowsOpportunityFilterConfig;
   workflowsMethodologyUrl?: string;
   milestoneTypes?: MilestoneType[];
   workflowsStaffFilterFn?: StaffFilterFunction;
@@ -122,6 +123,10 @@ export type StaffFilter = {
 
 type ValidSnoozeForDays = 7 | 30 | 90;
 
+export type WorkflowsOpportunityFilterConfig = {
+  filters?: FilterSection[];
+};
+
 export type WorkflowsTasksConfig = {
   collection: FirestoreCollectionName;
   methodologyUrl?: string;
@@ -136,28 +141,32 @@ export type WorkflowsTasksConfig = {
       snoozeForOptionsInDays?: Array<ValidSnoozeForDays>;
     };
   };
-  filters?: TaskFilterSection[];
+  filters?: FilterSection[];
   columns?: TaskTableColumnId[];
   sideBarComponents?: ClientDetailComponentName[];
   categories?: SupervisionTaskCategory[];
   pageDescriptionMarkdown?: string;
 };
 
-export type TaskFilterOption = {
+export type FilterOption = {
   value: string;
   label?: string;
   shortLabel?: string;
 };
-export type TaskFilterFieldForPerson = keyof Client;
-export type TaskFilterFieldForTask = keyof SupervisionTask;
-export type TaskFilterField = TaskFilterFieldForPerson | TaskFilterFieldForTask;
-export type TaskFilterType = "person" | "task";
+export type FilterFieldForPerson = keyof Client;
+export type FilterFieldForTask = keyof SupervisionTask;
+export type FilterFieldForOpportunity = string;
+export type FilterField =
+  | FilterFieldForPerson
+  | FilterFieldForTask
+  | FilterFieldForOpportunity;
+export type FilterType = "person" | "task" | "opportunity";
 
-export type TaskFilterSection<T extends TaskFilterType = TaskFilterType> = {
+export type FilterSection<T extends FilterType = FilterType> = {
   title: string;
   type: T;
-  field: T extends "person" ? TaskFilterFieldForPerson : TaskFilterFieldForTask;
-  options: TaskFilterOption[];
+  field: FilterField;
+  options: FilterOption[];
 };
 
 export type SearchConfig<R, T extends TenantConfigId> = {

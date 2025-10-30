@@ -146,16 +146,16 @@ type TableViewChangedMetadata = {
   oldViewType: "table" | "list";
 };
 
-type TasksFilterChangedMetadata = {
+type FilterChangedMetadata = {
   changedFilterCategory: string;
   changedFilterValue: string;
   changedFilterSelected: boolean;
-  selectedFilters: Record<string, string[]>;
+  selectedFilters: Partial<Record<string, string[]>>;
   onlyClicked: boolean;
 };
 
-type TasksFiltersResetMetadata = {
-  selectedFiltersBeforeReset: Record<string, string[]>;
+type FiltersResetMetadata = {
+  selectedFiltersBeforeReset: Partial<Record<string, string[]>>;
 };
 
 type TasksTableCategoryMetadata = {
@@ -494,6 +494,22 @@ export default class AnalyticsStore {
     this.track("frontend.opportunity_previewed", metadata);
   }
 
+  trackOpportunityFilterDropdownOpened(): void {
+    this.track("frontend.opportunity_filter_dropdown_opened");
+  }
+
+  trackOpportunityFiltersCleared(): void {
+    this.track("frontend.opportunity_filters_cleared");
+  }
+
+  trackOpportunityFilterChanged(metadata: FilterChangedMetadata): void {
+    this.track("frontend.opportunity_filter_changed", metadata);
+  }
+
+  trackOpportunityFiltersReset(metadata: FiltersResetMetadata): void {
+    this.track("frontend.opportunity_filters_reset", metadata);
+  }
+
   trackTaskPreviewed(metadata: TasksTrackingMetadata): void {
     this.track("frontend.tasks_previewed", metadata);
   }
@@ -506,11 +522,11 @@ export default class AnalyticsStore {
     this.track("frontend.tasks_view_changed", metadata);
   }
 
-  trackTaskFilterChanged(metadata: TasksFilterChangedMetadata): void {
+  trackTaskFilterChanged(metadata: FilterChangedMetadata): void {
     this.track("frontend.tasks_filter_changed", metadata);
   }
 
-  trackTaskFiltersReset(metadata: TasksFiltersResetMetadata): void {
+  trackTaskFiltersReset(metadata: FiltersResetMetadata): void {
     this.track("frontend.tasks_filters_reset", metadata);
   }
 

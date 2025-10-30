@@ -117,12 +117,18 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
 });
 
 function usePresenter() {
-  const { workflowsStore, analyticsStore, tenantStore, firestoreStore } =
-    useRootStore();
+  const {
+    workflowsStore,
+    analyticsStore,
+    tenantStore,
+    firestoreStore,
+    tasksFilterStore,
+  } = useRootStore();
   const featureVariants = useFeatureVariants();
   return new CaseloadTasksPresenterV2(
     workflowsStore,
     tenantStore,
+    tasksFilterStore,
     analyticsStore,
     firestoreStore,
     featureVariants,

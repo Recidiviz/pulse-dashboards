@@ -162,6 +162,8 @@ export const apiOpportunityConfigurationSchema = z.object({
   supervisorReviewTabTitle: nullishAsUndefined(z.string()),
   grantReviewStatusMessage: nullishAsUndefined(z.string()),
   snoozeReviewStatusMessage: nullishAsUndefined(z.string()),
+
+  enableWorkflowsFilter: z.boolean().default(false),
 });
 
 export const apiOpportunityConfigurationResponseSchema = z.object({

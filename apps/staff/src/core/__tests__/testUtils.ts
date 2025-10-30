@@ -166,6 +166,7 @@ export const mockOpportunity: Opportunity<Client> = {
     snoozeReviewStatusMessage: "Snooze Review",
     grantReviewStatusMessage: "Under Review",
     excludeIndefiniteSnoozesFromTableView: true,
+    enableWorkflowsFilter: false,
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

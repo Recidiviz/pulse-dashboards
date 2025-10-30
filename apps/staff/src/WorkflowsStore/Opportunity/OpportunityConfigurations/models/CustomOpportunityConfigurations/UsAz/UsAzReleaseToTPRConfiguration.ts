@@ -26,4 +26,8 @@ export class UsAzReleaseToTPRConfiguration extends ApiOpportunityConfiguration {
       return "TPR or Projected TPR";
     }
   }
+
+  get enableWorkflowsFilter(): boolean {
+    return true;
+  }
 }

@@ -91,6 +91,7 @@ import { Heading, MaxWidth } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
 import { EligibilityStatusPill } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityModuleHeader";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
+import { TaskFilterDropdown } from "../WorkflowsTasks/TaskFilterDropdown";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
 import { CaseloadTable, CaseloadTableManualSorting } from "./CaseloadTable";
 import { LinkedOpportunityCallout } from "./LinkedOpportunityCallout";
@@ -336,10 +337,12 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
   opportunities,
   manualSorting,
   allColumns,
+  subcategory,
 }: OpportunityCaseloadComponentProps & {
   opportunities: Opportunity[];
   manualSorting?: CaseloadTableManualSorting; // returned by useState
   allColumns: OpportunityTableColumnDef[];
+  subcategory?: string;
 }) {
   const displayedColumns = allColumns.filter(
     (col) => presenter.enabledColumnIds[col.id],
@@ -348,7 +351,11 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
   return (
     <CaseloadTable
       expandedLastColumn
-      data={opportunities}
+      data={
+        presenter.config.enableWorkflowsFilter
+          ? presenter.orderedOpportunitiesForSelectedCategory(subcategory)
+          : opportunities
+      }
       columns={displayedColumns}
       onRowClick={(opp) => presenter.handleOpportunityClick(opp)}
       onRowRender={(opp) => {
@@ -444,6 +451,7 @@ const MultiTableView = observer(function MultiTableView({
                 opportunities={sortedOpps}
                 manualSorting={{ sorting, setSorting }}
                 allColumns={allColumns}
+                subcategory={category}
               />
             </AccordionItemPanel>
           </AccordionItem>
@@ -800,6 +808,10 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
     overdueOpportunityCalloutCopy,
   } = presenter;
 
+  const allOpportunities = presenter.config.enableWorkflowsFilter
+    ? presenter.orderedOpportunitiesForSelectedCategory()
+    : peopleInActiveTab;
+
   return (
     <>
       <MaxWidthWrapper>
@@ -834,6 +846,9 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
           <OpportunityTypeSelect presenter={presenter} />
           {!presenter.isSupervisorHomepage && !isTablet && <CaseloadSelect />}
           <TableViewToggle presenter={presenter} />
+          {presenter.config.enableWorkflowsFilter && (
+            <TaskFilterDropdown presenter={presenter} />
+          )}
         </FlexWrapper>
       </MaxWidthWrapper>
       {
@@ -874,7 +889,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         </OpportunityPageExplainer>
       )}
       {/* eslint-disable-next-line no-nested-ternary */}
-      {peopleInActiveTab.length === 0 ||
+      {allOpportunities.length === 0 ||
       presenter.selectedSearchablesCount === 0 ? (
         /* Empty tab display */
         <MaxWidthFlexWrapper fullWidth={!presenter.showListView}>
@@ -893,20 +908,30 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
       ) : peopleInActiveTabBySubcategory ? (
         /* List view subcategories display */
         (presenter.subcategoryOrder ?? [])
-          .filter((category) => peopleInActiveTabBySubcategory[category])
+          .filter((category) =>
+            presenter.config.enableWorkflowsFilter
+              ? presenter.orderedOpportunitiesForSelectedCategory(category)
+              : peopleInActiveTabBySubcategory[category],
+          )
           .map((category) => (
             <div key={category}>
               <SubcategoryHeading>
                 {presenter.headingText(category)}
               </SubcategoryHeading>
               <CaseloadOpportunityGrid
-                items={peopleInActiveTabBySubcategory[category]}
+                items={
+                  presenter.config.enableWorkflowsFilter
+                    ? presenter.orderedOpportunitiesForSelectedCategory(
+                        category,
+                      )
+                    : peopleInActiveTabBySubcategory[category]
+                }
               />
             </div>
           ))
       ) : (
         /* List view with no subcategories */
-        <CaseloadOpportunityGrid items={peopleInActiveTab} />
+        <CaseloadOpportunityGrid items={allOpportunities} />
       )}
       <OpportunityPreviewPanel
         opportunity={presenter.selectedOpportunity}
@@ -921,8 +946,13 @@ function usePresenter({
   opportunityType,
   supervisionPresenter,
 }: OpportunityPersonListProps) {
-  const { workflowsStore, analyticsStore, firestoreStore, tenantStore } =
-    useRootStore();
+  const {
+    workflowsStore,
+    analyticsStore,
+    firestoreStore,
+    tenantStore,
+    opportunitiesFilterStore,
+  } = useRootStore();
   const opportunityConfigs = useOpportunityConfigurations();
   const featureVariants = useFeatureVariants();
   const config = opportunityConfigs[opportunityType];
@@ -931,6 +961,7 @@ function usePresenter({
     analyticsStore,
     firestoreStore,
     tenantStore,
+    opportunitiesFilterStore,
     workflowsStore,
     config,
     featureVariants,

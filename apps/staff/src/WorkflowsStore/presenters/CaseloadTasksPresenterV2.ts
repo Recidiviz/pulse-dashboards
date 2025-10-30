@@ -15,28 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInCalendarMonths, isThisMonth, isThisWeek } from "date-fns";
-import { every, find, some, uniq } from "lodash";
 import { action, makeAutoObservable, reaction } from "mobx";
 
 import {
-  TaskFilterField,
-  TaskFilterFieldForPerson,
-  TaskFilterFieldForTask,
-  TaskFilterOption,
-  TaskFilterSection,
-  TaskFilterType,
-  WorkflowsTasksConfig,
+  FilterField,
+  FilterOption,
+  FilterSection,
+  FilterType,
 } from "../../core/models/types";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";
+import TasksFilterStore from "../../FilterStore/TasksFilterStore";
 import FirestoreStore from "../../FirestoreStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
 import { pluralizeWord } from "../../utils/formatStrings";
-import { PartialRecord } from "../../utils/typeUtils";
-import { taskDueDateComparator } from "../Task/TasksBase";
 import { SupervisionTask } from "../Task/types";
 import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
@@ -60,24 +54,22 @@ function sortPeopleByNextTaskDueDate(
   );
 }
 
-type SelectedFilters = PartialRecord<
-  TaskFilterField,
-  TaskFilterOption["value"][]
->;
-
 export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   private _selectedCategory: SupervisionTaskCategory | undefined = undefined;
-  private _selectedFilters: SelectedFilters = {};
   private tableViewSelectPresenter: TableViewSelectPresenter;
   private _navigablePeople: JusticeInvolvedPerson[] = [];
+  readonly filters: FilterSection[];
 
   constructor(
     protected workflowsStore: WorkflowsStore,
     protected tenantStore: TenantStore,
+    protected tasksFilterStore: TasksFilterStore,
     protected analyticsStore: AnalyticsStore,
     protected firestoreStore: FirestoreStore,
     protected featureVariants: FeatureVariantRecord,
   ) {
+    this.filters = this.tasksFilterStore.filters;
+
     // only update the list of tasks to navigate through when necessary,
     // to avoid changing the list when a task is snoozed
     reaction(
@@ -96,16 +88,6 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
       workflowsStore,
       featureVariants,
     );
-  }
-
-  get taskConfig(): WorkflowsTasksConfig {
-    const { tasksConfiguration, currentTenantId } = this.tenantStore;
-    if (!tasksConfiguration) {
-      throw new Error(
-        `Trying to initialize CaseloadTaskPresenter for state without task configuration: ${currentTenantId}`,
-      );
-    }
-    return tasksConfiguration;
   }
 
   get emptyTabText() {
@@ -131,11 +113,6 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     }
   }
 
-  // Tab categories used in the new tasks view
-  get displayedTaskCategories(): SupervisionTaskCategory[] {
-    return this.tenantStore.taskCategories;
-  }
-
   get selectedTaskCategory(): SupervisionTaskCategory {
     return this.showListView ? "ALL_TASKS_OLD" : this.selectedCategory;
   }
@@ -144,33 +121,23 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     this.analyticsStore.trackTaskTableCategorySelected({
       selectedCategory: newCategory,
       previousCategory: this.selectedCategory,
-      newTabRowCount: this.countForCategory(newCategory),
+      newTabRowCount:
+        this.tasksFilterStore.countForSupervisionTaskCategory(newCategory),
       selectedCaseloadIds: this.workflowsStore.searchStore.selectedSearchIds,
     });
 
     this._selectedCategory = newCategory;
   }
 
-  get selectedCategory() {
+  get selectedCategory(): SupervisionTaskCategory {
     return (
       this._selectedCategory ??
       // If the user hasn't selected anything, default to the first non-empty category
-      find(
-        this.displayedTaskCategories,
-        (category) => this.countForCategory(category) > 0,
+      this.displayedTaskCategories.find(
+        (category) =>
+          this.tasksFilterStore.countForSupervisionTaskCategory(category) > 0,
       ) ??
       this.displayedTaskCategories[0]
-    );
-  }
-
-  get someFiltersSet(): boolean {
-    const { filters } = this;
-
-    return some(
-      filters,
-      (filter) =>
-        this._selectedFilters[filter.field] &&
-        this._selectedFilters[filter.field]?.length !== 0,
     );
   }
 
@@ -186,133 +153,8 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     );
   }
 
-  allTasksForCategory(
-    category: SupervisionTaskCategory,
-    applyFilter = true,
-  ): SupervisionTask[] {
-    // If applyFilter is true, only return tasks for people that match the currently selected filters
-    // If applyFilter is false, return tasks for all people (regardless of filters)
-    const people = applyFilter
-      ? this.filteredPeople
-      : this.workflowsStore.caseloadPersons;
-
-    return people.flatMap((person) => {
-      const { supervisionTasks } = person;
-
-      if (!supervisionTasks) return [];
-
-      if (category === "HIDDEN") {
-        return supervisionTasks.orderedTasks.filter(
-          (t) => (this.taskMatchesFilters(t) || !applyFilter) && t.isSnoozed,
-        );
-      }
-
-      const hasThisWeekTab =
-        this.displayedTaskCategories.includes("DUE_THIS_WEEK");
-
-      return supervisionTasks.readyOrderedTasks.filter((t) => {
-        if (applyFilter && !this.taskMatchesFilters(t)) return false;
-
-        switch (category) {
-          case "ALL_TASKS":
-            return true;
-          case "OVERDUE":
-            return t.isOverdue;
-          case "DUE_THIS_WEEK":
-            return !t.isOverdue && isThisWeek(t.dueDate);
-          case "DUE_THIS_MONTH":
-            return (
-              !t.isOverdue &&
-              !(hasThisWeekTab && isThisWeek(t.dueDate)) &&
-              isThisMonth(t.dueDate)
-            );
-          case "DUE_NEXT_MONTH":
-            return differenceInCalendarMonths(t.dueDate, new Date()) === 1;
-          default:
-            return false;
-        }
-      });
-    });
-  }
-
-  orderedTasksForCategory(
-    category: SupervisionTaskCategory,
-  ): SupervisionTask[] {
-    return this.allTasksForCategory(category).sort(taskDueDateComparator);
-  }
-
-  orderedPersonsForCategory(
-    category: SupervisionTaskCategory,
-  ): JusticeInvolvedPerson[] {
-    return uniq(this.orderedTasksForCategory(category).map((t) => t.person));
-  }
-
-  taskMatchesFilters(task: SupervisionTask): boolean {
-    const filters = Object.entries(this.selectedFiltersForType("task"));
-
-    return every(
-      filters,
-      ([field, options]: [TaskFilterFieldForTask, string[]]) =>
-        // @ts-expect-error searchable fields are restricted to strings but TS does not know that
-        options.includes(task[field]),
-    );
-  }
-
-  // Return the number of total tasks, regardless of the current category and filters.
-  numTasks(
-    type: TaskFilterType,
-    field: TaskFilterField,
-    option: TaskFilterOption,
-  ): number {
-    const allTasks = this.allTasksForCategory("ALL_TASKS", false);
-
-    return allTasks.filter((task) => {
-      if (type === "task") {
-        // @ts-expect-error we don't currently narrow the type of field adequately
-        // but field should always be TaskFilterFieldForTask here
-        return task[field] === option.value;
-      } else if (type === "person") {
-        // @ts-expect-error same as above, with TaskFilterFieldForPerson
-        return task.person[field] === option.value;
-      }
-      return false;
-    }).length;
-  }
-
-  get orderedTasksForSelectedCategory(): SupervisionTask[] {
-    return this.orderedTasksForCategory(this.selectedCategory);
-  }
-
-  countForCategory(category: SupervisionTaskCategory): number {
-    return this.orderedTasksForCategory(category).length;
-  }
-
-  personMatchesFilters(person: JusticeInvolvedPerson): boolean {
-    const filters = Object.entries(this.selectedFiltersForType("person"));
-
-    const matchesPeopleFilters = every(
-      filters,
-      ([field, options]: [TaskFilterFieldForPerson, string[]]) =>
-        // @ts-expect-error searchable fields are restricted to strings but TS does not know that
-        options.includes(person[field]),
-    );
-
-    if (!matchesPeopleFilters) return false;
-
-    // return true if the person has any tasks that match the filters
-    return some(person.supervisionTasks?.orderedTasks ?? [], (task) =>
-      this.taskMatchesFilters(task),
-    );
-  }
-
-  get filteredPeople(): JusticeInvolvedPerson[] {
-    return this.workflowsStore.caseloadPersons.filter((p) =>
-      this.personMatchesFilters(p),
-    );
-  }
-
   get clientsWithOverdueTasks(): JusticeInvolvedPerson[] {
-    return this.filteredPeople
+    return this.tasksFilterStore.filteredPeople
       .filter(
         (person) => (person.supervisionTasks?.overdueTasks.length ?? 0) > 0,
       )
@@ -320,7 +162,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   }
 
   get clientsWithUpcomingTasks(): JusticeInvolvedPerson[] {
-    return this.filteredPeople
+    return this.tasksFilterStore.filteredPeople
       .filter(
         (person) =>
           (person.supervisionTasks?.overdueTasks.length ?? 0) === 0 &&
@@ -354,141 +196,54 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     return this._navigablePeople;
   }
 
-  // Filter controls
+  // Filtering
 
-  get filters(): TaskFilterSection[] {
-    const { filters } = this.taskConfig;
-    if (!filters) return [];
-
-    return filters;
-  }
-
-  get selectedFilters(): SelectedFilters {
-    return this._selectedFilters;
-  }
-
-  selectedFiltersForType(filterType: TaskFilterType): SelectedFilters {
-    return Object.fromEntries(
-      Object.entries(this._selectedFilters).filter(
-        ([field, _]) =>
-          this.filters.find((f) => f.field === field)?.type === filterType,
-      ),
+  get orderedTasksForSelectedCategory(): SupervisionTask[] {
+    return this.tasksFilterStore.orderedTasksForSelectedCategory(
+      this.selectedCategory,
     );
   }
 
-  filterIsSelected(
-    field: TaskFilterField,
-    { value }: TaskFilterOption,
-  ): boolean {
-    return Boolean(this._selectedFilters[field]?.includes(value));
+  filterIsSelected(field: FilterField, value: FilterOption): boolean {
+    return this.tasksFilterStore.filterIsSelected(field, value);
   }
 
-  get allFiltersSelected(): boolean {
-    const { filters } = this;
-
-    return every(
-      filters,
-      (filter) =>
-        this._selectedFilters[filter.field]?.length === filter.options.length,
-    );
+  toggleFilter(field: FilterField, option: FilterOption) {
+    return this.tasksFilterStore.toggleFilter(field, option);
   }
 
-  setFilter(field: TaskFilterField, option: TaskFilterOption) {
-    const { value } = option;
-
-    if (!this._selectedFilters[field]) {
-      this._selectedFilters[field] = [value];
-    } else if (!this.filterIsSelected(field, option)) {
-      this._selectedFilters[field]?.push(value);
-    }
-
-    this.analyticsStore.trackTaskFilterChanged({
-      changedFilterCategory: field,
-      changedFilterValue: option.value,
-      changedFilterSelected: true,
-      selectedFilters: this._selectedFilters,
-      onlyClicked: false,
-    });
+  setOnlyFilterForField(field: FilterField, option: FilterOption) {
+    return this.tasksFilterStore.setOnlyFilterForField(field, option);
   }
 
-  unsetFilter(field: TaskFilterField, option: TaskFilterOption) {
-    const { value } = option;
+  // Return the number of total tasks, regardless of the current category and filters.
+  numItems(type: FilterType, field: FilterField, option: FilterOption): number {
+    const allTasks = this.allTasksForCategory("ALL_TASKS", false);
 
-    if (this._selectedFilters[field]?.length === 1) {
-      // If only 1 filter selected, clear filters of that type
-      this._selectedFilters = Object.fromEntries(
-        Object.entries(this._selectedFilters).filter(([k, v]) => k !== field),
-      );
-    } else {
-      // If more than 1 filter selected, remove deselected filter
-      this._selectedFilters[field] = this._selectedFilters[field]?.filter(
-        (f) => f !== value,
-      );
-    }
-
-    this.analyticsStore.trackTaskFilterChanged({
-      changedFilterCategory: field,
-      changedFilterValue: option.value,
-      changedFilterSelected: false,
-      selectedFilters: this._selectedFilters,
-      onlyClicked: false,
-    });
+    return allTasks.filter((task) => {
+      if (type === "task") {
+        // @ts-expect-error we don't currently narrow the type of field adequately
+        // but field should always be FilterFieldForTask here
+        return task[field] === option.value;
+      } else if (type === "person") {
+        // @ts-expect-error same as above, with FilterFieldForPerson
+        return task.person[field] === option.value;
+      }
+      return false;
+    }).length;
   }
 
-  toggleFilter(field: TaskFilterField, option: TaskFilterOption) {
-    if (this.filterIsSelected(field, option)) {
-      this.unsetFilter(field, option);
-    } else {
-      this.setFilter(field, option);
-    }
-  }
-
-  setOnlyFilterForField(field: TaskFilterField, option: TaskFilterOption) {
-    const { value } = option;
-
-    this._selectedFilters[field] = [value];
-
-    this.analyticsStore.trackTaskFilterChanged({
-      changedFilterCategory: field,
-      changedFilterValue: option.value,
-      changedFilterSelected: true,
-      selectedFilters: this._selectedFilters,
-      onlyClicked: true,
-    });
-  }
-
-  // Select all filters
-  selectAllFilters() {
-    this.analyticsStore.trackTaskFiltersReset({
-      selectedFiltersBeforeReset: this._selectedFilters,
-    });
-
-    const {
-      taskConfig: { filters },
-    } = this;
-
-    if (!filters) return;
-
-    this._selectedFilters = {};
-
-    for (const filter of filters) {
-      this._selectedFilters[filter.field] = filter.options.map(
-        (option) => option.value,
-      );
-    }
-  }
-
-  // Deselect all filters. All tasks and people will show after this
   clearFilters() {
-    this._selectedFilters = {};
-
-    this.analyticsStore.trackTaskFiltersCleared();
+    return this.tasksFilterStore.clearFilters();
   }
 
-  trackFilterDropdownOpened() {
-    this.analyticsStore.trackTaskFilterDropdownOpened();
+  get allFiltersSelected() {
+    return this.tasksFilterStore.allFiltersSelected;
   }
 
+  selectAllFilters() {
+    return this.tasksFilterStore.selectAllFilters();
+  }
   // List vs Table controls
 
   get showListView() {
@@ -515,5 +270,52 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
 
   get tasksTableColumns(): TaskTableColumnId[] {
     return this.tenantStore.tasksTableColumns;
+  }
+
+  countForCategory(category: SupervisionTaskCategory): number {
+    return this.orderedTasksForCategory(category).length;
+  }
+
+  orderedTasksForCategory(
+    category: SupervisionTaskCategory,
+  ): SupervisionTask[] {
+    return this.tasksFilterStore.orderedTasksForCategory(category);
+  }
+
+  get someFiltersSet() {
+    return this.tasksFilterStore.someFiltersSet;
+  }
+
+  trackFilterDropdownOpened() {
+    return this.tasksFilterStore.trackTaskFilterDropdownOpened;
+  }
+
+  get displayedTaskCategories(): SupervisionTaskCategory[] {
+    return this.tasksFilterStore.displayedTaskCategories;
+  }
+
+  unsetFilter(field: FilterField, option: FilterOption) {
+    this.tasksFilterStore.unsetFilter(field, option);
+  }
+
+  allTasksForCategory(
+    category: SupervisionTaskCategory,
+    applyFilter = true,
+  ): SupervisionTask[] {
+    return this.tasksFilterStore.allTasksForCategory(category, applyFilter);
+  }
+
+  setFilter(field: FilterField, option: FilterOption) {
+    this.tasksFilterStore.setFilter(field, option);
+  }
+
+  get selectedFilters() {
+    return this.tasksFilterStore.selectedFilters;
+  }
+
+  orderedPersonsForCategory(
+    category: SupervisionTaskCategory,
+  ): JusticeInvolvedPerson[] {
+    return this.tasksFilterStore.orderedPersonsForCategory(category);
   }
 }

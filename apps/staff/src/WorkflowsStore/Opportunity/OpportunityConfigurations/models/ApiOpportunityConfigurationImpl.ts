@@ -474,4 +474,8 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get customSubmittedText(): string | undefined {
     return undefined;
   }
+
+  get enableWorkflowsFilter(): boolean {
+    return this.configurationObject.enableWorkflowsFilter ?? false;
+  }
 }

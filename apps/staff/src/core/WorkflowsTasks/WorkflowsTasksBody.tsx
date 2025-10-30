@@ -86,11 +86,13 @@ export const ManagedComponent = observer(function WorkflowsTaskBody({
 });
 
 function usePresenter() {
-  const { workflowsStore, analyticsStore, tenantStore } = useRootStore();
+  const { workflowsStore, analyticsStore, tenantStore, tasksFilterStore } =
+    useRootStore();
   return new CaseloadTasksPresenter(
     workflowsStore,
     tenantStore,
     analyticsStore,
+    tasksFilterStore,
   );
 }
 
