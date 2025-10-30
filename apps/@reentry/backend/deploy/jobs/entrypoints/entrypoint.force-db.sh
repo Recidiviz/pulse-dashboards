@@ -13,5 +13,5 @@ done
 echo "Cloud SQL Proxy is ready!"
 
 echo "Running seed-db with force option..."
-uv run python -m app.manage seed-db --force
+uv run python -m app.manage seed-db --wipe
 echo "Seed database completed successfully!"

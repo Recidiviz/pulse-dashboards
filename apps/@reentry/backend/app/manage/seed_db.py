@@ -26,6 +26,15 @@ async def db_is_empty():
     return True
 
 
+async def db_wipe():
+    async with engine.begin() as conn:
+        await conn.execute(sqlalchemy.text("DROP SCHEMA IF EXISTS public CASCADE;"))
+        await conn.execute(sqlalchemy.text("CREATE SCHEMA public;"))
+        await conn.execute(sqlalchemy.text("GRANT ALL ON SCHEMA public TO postgres;"))
+        await conn.execute(sqlalchemy.text("GRANT ALL ON SCHEMA public TO public;"))
+    print("Database completely wiped. Restart the backend service to recreate schema.")
+
+
 async def db_drop_and_recreate():
     # First drop any views (which are not tracked by SQLModel metadata)
     async with engine.begin() as conn:
@@ -195,14 +204,24 @@ async def seed_db_selective():
 
 
 @cli.command()
-async def seed_db(force: bool = False):
+async def seed_db(force: bool = False, wipe: bool = False):
     """
     Seed the database with system components.
 
     Args:
         force: If True, drops and recreates the entire database.
                If False, uses selective seeding to preserve user data.
+        wipe: If True, completely wipes the database without recreating anything.
+              To populate again, deploy a service or restart an already deployed one.
     """
+    if wipe:
+        if force:
+            print("ERROR: Cannot use both --wipe and --force flags together")
+            return
+        print("Wiping database...")
+        await db_wipe()
+        return
+
     print("Check if the database is not empty")
     is_empty = await db_is_empty()
 
