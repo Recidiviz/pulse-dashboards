@@ -141,5 +141,59 @@ describe("client router", () => {
         address: parseAddress("123 Main St, Boise, ID"),
       });
     });
+
+    test("should not update database if address parsing fails", async () => {
+      const invalidAddress = "InvalidAddress"; // Missing comma-separated parts
+      const originalClient = await testPrismaClient.client.findUnique({
+        where: { pseudonymizedId: fakeClient.pseudonymizedId },
+        select: { address: true },
+      });
+
+      expect(originalClient?.address).toBeNull();
+
+      await expect(
+        testTRPCClient.clientRecords.updateAddressStartAssessment.mutate({
+          clientPseudoId: fakeClient.pseudonymizedId,
+          address: invalidAddress,
+          intakeId: "test-intake-id",
+        }),
+      ).rejects.toThrow(
+        "Invalid address format. Expected at least 2 parts (city, state), got 1.",
+      );
+
+      // Verify database was not updated
+      const clientAfter = await testPrismaClient.client.findUnique({
+        where: { pseudonymizedId: fakeClient.pseudonymizedId },
+        select: { address: true },
+      });
+
+      expect(clientAfter?.address).toBe(originalClient?.address);
+    });
+
+    test("should update database if address parsing passes", async () => {
+      const validAddress = "C/O John Smith, 123 Main St, Apt. 2, Boise, ID";
+      const originalClient = await testPrismaClient.client.findUnique({
+        where: { pseudonymizedId: fakeClient.pseudonymizedId },
+        select: { address: true },
+      });
+
+      expect(originalClient?.address).toBeNull();
+
+      await expect(
+        testTRPCClient.clientRecords.updateAddressStartAssessment.mutate({
+          clientPseudoId: fakeClient.pseudonymizedId,
+          address: validAddress,
+          intakeId: "test-intake-id",
+        }),
+      ).resolves.not.toThrow();
+
+      // Verify database was successfully updated
+      const clientAfter = await testPrismaClient.client.findUnique({
+        where: { pseudonymizedId: fakeClient.pseudonymizedId },
+        select: { address: true },
+      });
+
+      expect(clientAfter?.address).toBe(validAddress);
+    });
   });
 });

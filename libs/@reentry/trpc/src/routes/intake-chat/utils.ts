@@ -106,16 +106,21 @@ export function parseAddress(
 
   const parts = address.split(",").map((part) => part.trim());
 
-  if (parts.length === 2) {
-    // No street address
-    const [city, state] = parts;
-    return { city, state };
-  } else if (parts.length === 3) {
-    const [street_address, city, state] = parts;
-    return { street_address, city, state };
-  } else {
+  if (parts.length < 2) {
     throw new Error(
-      `Invalid address format. Expected 2 or 3 parts, got ${parts.length}.`,
+      `Invalid address format. Expected at least 2 parts (city, state), got ${parts.length}.`,
     );
   }
+
+  // Parse from the end: last is state, second-to-last is city
+  const state = parts[parts.length - 1];
+  const city = parts[parts.length - 2];
+
+  // Everything before city is street_address (joined back with commas)
+  const street_address =
+    parts.length > 2 ? parts.slice(0, -2).join(", ") : undefined;
+
+  return street_address
+    ? { street_address, city, state }
+    : { city, state };
 }

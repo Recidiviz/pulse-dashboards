@@ -80,6 +80,9 @@ export const clientRouter = router({
           });
         }
 
+        // Parse and validate address before updating the DB - if address parsing fails for any reason is incorrect, we don't want to update the DB
+        const parsedAddress = parseAddress(address);
+
         await prisma.client.update({
           where: {
             pseudonymizedId: client.pseudonymizedId,
@@ -88,8 +91,6 @@ export const clientRouter = router({
             address,
           },
         });
-
-        const parsedAddress = parseAddress(address);
 
         // Kick off assessment and action plan generation based on chat history
         const { messages } = await getChatHistoryForClient(intakeId, stateCode);
