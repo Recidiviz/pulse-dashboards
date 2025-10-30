@@ -19,6 +19,7 @@ import { faker } from "@faker-js/faker";
 import { BaseMessage } from "@langchain/core/messages";
 import { describe, test } from "vitest";
 
+import { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
 import { getIntakeConfigForState } from "~@reentry/intake-agent/intake_configs/utils";
 import { StateCode } from "~@reentry/prisma/client";
 import {
@@ -38,6 +39,8 @@ import {
 
 let subscription: ReturnType<typeof testTRPCClient.intake.chat.subscribe>;
 const onData = vi.fn();
+
+vi.mocked(getIntakeCheckpointerForStateCode);
 
 const getSavedMessages = async (threadId: string): Promise<BaseMessage[]> => {
   const result = await sharedMemorySaver.get({
@@ -61,9 +64,12 @@ const waitForSavedMessages = async (
   return getSavedMessages(threadId);
 };
 
-const subscribeToIntakeChat = async (lastEventId?: string) => {
+const subscribeToIntakeChat = async (
+  lastEventId?: string,
+  stateCode = "US_ID",
+) => {
   subscription = testTRPCClient.intake.chat.subscribe(
-    { intakeId, ...(lastEventId ? { lastEventId } : {}) },
+    { intakeId, stateCode, ...(lastEventId ? { lastEventId } : {}) },
     {
       onData(data) {
         console.log("New data from server:", data);
@@ -217,6 +223,7 @@ describe("intake chat router", () => {
   describe("chat + reply", () => {
     beforeEach(() => {
       onData.mockClear();
+      vi.mocked(getIntakeCheckpointerForStateCode).mockClear();
     });
 
     afterEach(() => {
@@ -482,7 +489,7 @@ describe("intake chat router", () => {
       await expect(
         new Promise<void>((resolve, reject) => {
           testTRPCClient.intake.chat.subscribe(
-            { intakeId: "non-existent-intake-id" },
+            { intakeId: "non-existent-intake-id", stateCode: "US_ID" },
             {
               onData() {
                 resolve();
@@ -518,7 +525,7 @@ describe("intake chat router", () => {
       await expect(
         new Promise<void>((resolve, reject) => {
           testTRPCClient.intake.chat.subscribe(
-            { intakeId },
+            { intakeId, stateCode: "US_ID" },
             {
               onData() {
                 resolve();
@@ -683,6 +690,46 @@ describe("intake chat router", () => {
             ],
           }),
         }),
+      );
+    });
+
+    test("intake chat route should use the correct state code for checkpointer", async () => {
+      // Subscribe to the intake chat with a specific state code
+      await subscribeToIntakeChat(undefined, "US_TN");
+      await waitForSavedMessages(intakeId, 2);
+
+      // Verify that getIntakeCheckpointerForStateCode was called with the correct state code
+      expect(vi.mocked(getIntakeCheckpointerForStateCode)).toHaveBeenCalledWith(
+        "US_TN",
+      );
+
+      // Also verify the chat works correctly
+      expect(onData).toHaveBeenCalledWith({ type: "loading" });
+      expect(onData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: expect.any(String),
+          data: expect.objectContaining({
+            type: "response",
+            messages: expect.arrayContaining([
+              expect.objectContaining({
+                content: expect.any(String),
+                section: expect.any(String),
+                id: expect.any(String),
+              }),
+            ]),
+          }),
+        }),
+      );
+    });
+
+    test("intake chat route should use US_UT state code for checkpointer", async () => {
+      // Subscribe to the intake chat with US_UT state code
+      await subscribeToIntakeChat(undefined, "US_UT");
+      await waitForSavedMessages(intakeId, 2);
+
+      // Verify that getIntakeCheckpointerForStateCode was called with US_UT
+      expect(vi.mocked(getIntakeCheckpointerForStateCode)).toHaveBeenCalledWith(
+        "US_UT",
       );
     });
 

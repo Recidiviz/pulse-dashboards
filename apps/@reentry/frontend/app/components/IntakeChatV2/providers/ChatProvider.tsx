@@ -31,6 +31,7 @@ import {
   Intake,
   Message,
 } from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
+import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
 import { trpc } from "~@reentry/frontend/trpc";
 import { ConnectionStatus } from "~@reentry/frontend/trpc/types";
 
@@ -67,6 +68,7 @@ export const ChatProvider: React.FC<{
   const [messages, setMessages] = useState<ChatState["messages"]>([]);
   const [waitingForAIInput, setWaitingForAIInput] = useState(false);
   const [error, setError] = useState<string>();
+  const { stateCode } = useIntakeAuthContext();
 
   useEffect(() => {
     setMessages([]);
@@ -96,7 +98,7 @@ export const ChatProvider: React.FC<{
   const reply = trpc.intake.reply.useMutation();
   const completeIntake = trpc.intake.setEndDate.useMutation();
   trpc.intake.chat.useSubscription(
-    intake.id ? { intakeId: intake.id } : skipToken,
+    intake.id && stateCode ? { intakeId: intake.id, stateCode } : skipToken,
     {
       // TODO: Sort out the types for data
       onData(payload) {

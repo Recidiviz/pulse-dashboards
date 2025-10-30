@@ -24,6 +24,7 @@ export const intakeChatResponseInputSchema = z.object({
 
 export const intakeChatInputSchema = z.object({
   intakeId: z.string(),
+  stateCode: z.string(),
   lastEventId: z.string().nullish(),
 });
 

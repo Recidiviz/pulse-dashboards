@@ -255,7 +255,7 @@ export const intakeChatRouter = router({
     .input(intakeChatInputSchema)
     .subscription(async function* ({
       ctx: { prisma, user },
-      input: { intakeId, lastEventId },
+      input: { intakeId, lastEventId, stateCode },
       signal,
     }) {
       console.log(
@@ -302,7 +302,7 @@ export const intakeChatRouter = router({
 
         intakeAgentsAndStatuses[intakeId] = {
           agent: new IntakeAgent({
-            checkpointer: getIntakeCheckpointerForStateCode("US_ID"),
+            checkpointer: getIntakeCheckpointerForStateCode(stateCode),
             clientName,
             intakeId,
             config: intake.config,

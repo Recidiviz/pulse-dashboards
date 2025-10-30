@@ -103,9 +103,12 @@ vi.mock("@langchain/openai", () => {
  * to initialize a brand new chat session every time we run the tests.
  */
 export let sharedMemorySaver = new MemorySaver();
-vi.mock("~@reentry/intake-agent/get-checkpointer", () => ({
-  getIntakeCheckpointerForStateCode: () => sharedMemorySaver,
-}));
+
+vi.mock("~@reentry/intake-agent/get-checkpointer", () => {
+  return {
+    getIntakeCheckpointerForStateCode: vi.fn(() => sharedMemorySaver),
+  };
+});
 
 export const initWSClient = (token: string = testToken) => {
   return createWSClient({
