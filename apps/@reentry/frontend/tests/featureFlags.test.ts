@@ -17,7 +17,8 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { isFeatureEnabled } from "../app/utils/featureFlags";
+import { isFeatureEnabled as isFeatureEnabledRuntime } from "../app/utils/featureFlagsRuntime";
+import { isFeatureEnabled as isFeatureEnabledBuildtime } from "../config/featureFlagsBuildtime";
 
 const originalEnv = process.env;
 
@@ -32,20 +33,53 @@ afterEach(() => {
 
 describe("isFeatureEnabled", () => {
   it("returns false when feature flag is not set", () => {
-    const result = isFeatureEnabled("TEST_NOT_SET_FLAG", "dev");
+    const result = isFeatureEnabledRuntime("TEST_NOT_SET_FLAG", "dev");
     expect(result).toBe(false);
   });
 
   it("returns true when current environment is in enabled environments list", () => {
-    let result = isFeatureEnabled("TEST_FEATURE_DEV_STAGING", "dev");
+    let result = isFeatureEnabledRuntime("TEST_FEATURE_DEV_STAGING", "dev");
     expect(result).toBe(true);
 
-    result = isFeatureEnabled("TEST_FEATURE_DEV_STAGING", "staging");
+    result = isFeatureEnabledRuntime("TEST_FEATURE_DEV_STAGING", "staging");
     expect(result).toBe(true);
   });
 
   it("returns false when current environment is not in enabled environments list", () => {
-    const result = isFeatureEnabled("TEST_FEATURE_DEV", "prod");
+    const result = isFeatureEnabledRuntime("TEST_FEATURE_DEV", "prod");
     expect(result).toBe(false);
+  });
+
+  it("INTAKE_RESET is enabled in runtime for development, dev, demo and staging", () => {
+    expect(isFeatureEnabledRuntime("INTAKE_RESET", "development")).toBe(true);
+    expect(isFeatureEnabledRuntime("INTAKE_RESET", "dev")).toBe(true);
+    expect(isFeatureEnabledRuntime("INTAKE_RESET", "demo")).toBe(true);
+    expect(isFeatureEnabledRuntime("INTAKE_RESET", "staging")).toBe(true);
+  });
+
+  it("INTAKE_RESET is disabled in runtime for production", () => {
+    expect(isFeatureEnabledRuntime("INTAKE_RESET", "production")).toBe(false);
+    expect(isFeatureEnabledRuntime("INTAKE_RESET", "prod")).toBe(false);
+  });
+
+  describe("build-time flags", () => {
+    it("ENABLE_SOURCE_MAPS is enabled in dev, demo and staging", () => {
+      expect(isFeatureEnabledBuildtime("ENABLE_SOURCE_MAPS", "dev")).toBe(true);
+      expect(isFeatureEnabledBuildtime("ENABLE_SOURCE_MAPS", "demo")).toBe(
+        true,
+      );
+      expect(isFeatureEnabledBuildtime("ENABLE_SOURCE_MAPS", "staging")).toBe(
+        true,
+      );
+    });
+
+    it("ENABLE_SOURCE_MAPS is disabled in production", () => {
+      expect(
+        isFeatureEnabledBuildtime("ENABLE_SOURCE_MAPS", "production"),
+      ).toBe(false);
+      expect(isFeatureEnabledBuildtime("ENABLE_SOURCE_MAPS", "prod")).toBe(
+        false,
+      );
+    });
   });
 });

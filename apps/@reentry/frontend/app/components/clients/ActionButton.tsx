@@ -31,7 +31,7 @@ import { $api } from "~@reentry/frontend/api";
 import { useClientReset } from "~@reentry/frontend/hooks/useClientReset";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
-import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlags";
+import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 
 interface DropdownProps {
   client: components["schemas"]["ClientResponse"];
