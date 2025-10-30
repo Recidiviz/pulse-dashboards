@@ -30,34 +30,35 @@ const dataSourceProject = defineString("DATA_SOURCE_FIREBASE_PROJECT");
 
 // there can only be one firebase app instance, but we have to access the credentials within the function;
 // therefore we will cache it here the first time it's accessed
-let firebaseApp: App | undefined;
+let firebaseAppPromise: Promise<App> | undefined;
 
 async function getFirebaseApp(): Promise<App> {
-  if (firebaseApp) return firebaseApp;
+  if (firebaseAppPromise) return firebaseAppPromise;
 
-  // this is the service account key we will use to authenticate
-  const dataSourceCredential = await secrets.getLatestValue(
-    "DATA_SOURCE_FIREBASE_CREDENTIAL",
-  );
-  // the full credential exceeds the secrets character limit,
-  // which is why the private key field is stored separately (it is by far the largest value)
-  const dataSourceCredentialPrivateKey = await secrets.getLatestValue(
-    "DATA_SOURCE_FIREBASE_CREDENTIAL_PRIVATE_KEY",
-  );
+  // defining this function inside the closure so no one else calls it by accident
+  firebaseAppPromise = (async () => {
+    const dataSourceCredential = await secrets.getLatestValue(
+      "DATA_SOURCE_FIREBASE_CREDENTIAL",
+    );
+    // the full credential exceeds the secrets character limit,
+    // which is why the private key field is stored separately (it is by far the largest value)
+    const dataSourceCredentialPrivateKey = await secrets.getLatestValue(
+      "DATA_SOURCE_FIREBASE_CREDENTIAL_PRIVATE_KEY",
+    );
 
-  const firebaseCredential = {
-    ...JSON.parse(dataSourceCredential),
-    // this string may contain newlines, which we need to render as \n codes for valid JSON
-    private_key: dataSourceCredentialPrivateKey.replace(/\\n/gm, "\n"),
-  };
+    const firebaseCredential = {
+      ...JSON.parse(dataSourceCredential),
+      // this string may contain newlines, which we need to render as \n codes for valid JSON
+      private_key: dataSourceCredentialPrivateKey.replace(/\\n/gm, "\n"),
+    };
 
-  // cache the app object so we don't try to reinitialize it later
-  firebaseApp = firebaseAdmin.initializeApp({
-    projectId: dataSourceProject.value(),
-    credential: firebaseAdmin.credential.cert(firebaseCredential),
-  });
+    return firebaseAdmin.initializeApp({
+      projectId: dataSourceProject.value(),
+      credential: firebaseAdmin.credential.cert(firebaseCredential),
+    });
+  })();
 
-  return firebaseApp;
+  return firebaseAppPromise;
 }
 
 /**
