@@ -142,6 +142,7 @@ export const fakeCase = {
   id: "case-1",
   stateCode: StateCode.US_ID,
   dueDate: faker.date.future(),
+  customDueDate: faker.date.future(),
   county: fakeCounty.name,
   isCountyLocked: false,
   lsirScore: FAKE_CASE_LSIR_SCORE,

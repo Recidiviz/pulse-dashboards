@@ -338,6 +338,7 @@ model Case {
   districtId String?
 
   dueDate            DateTime?
+  customDueDate      DateTime?
   lsirLevel          String?
   reportType         ReportType?
   // Whether the LSIR score is locked and cannot be changed

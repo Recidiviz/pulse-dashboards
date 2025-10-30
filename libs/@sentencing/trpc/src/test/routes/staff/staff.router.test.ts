@@ -16,40 +16,20 @@
 // =============================================================================
 
 import { TRPCError } from "@trpc/server";
-import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
+import { testGetStaff } from "~@sentencing/trpc/test/common/utils";
 import { testPrismaClient, testTRPCClient } from "~@sentencing/trpc/test/setup";
-import {
-  fakeCase,
-  fakeClient,
-  fakeStaff,
-} from "~@sentencing/trpc/test/setup/seed";
+import { fakeStaff } from "~@sentencing/trpc/test/setup/seed";
 
 describe("staff router", () => {
   describe("getStaff", () => {
+    // eslint-disable-next-line vitest/expect-expect
     test("should return staff if staff exists", async () => {
       const returnedStaff = await testTRPCClient.staff.getStaff.query({
         pseudonymizedId: fakeStaff.pseudonymizedId,
       });
-
-      expect(returnedStaff).toEqual({
-        ..._.omit(fakeStaff, "externalId"),
-        cases: [
-          {
-            ..._.pick(fakeCase, [
-              "id",
-              "externalId",
-              "dueDate",
-              "reportType",
-              "status",
-              "offense",
-              "isCancelled",
-            ]),
-            client: _.pick(fakeClient, ["fullName", "externalId"]),
-          },
-        ],
-      });
+      testGetStaff(returnedStaff);
     });
 
     test("should throw error if staff does not exist", async () => {

@@ -15,39 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import _ from "lodash";
-import { describe, expect, test } from "vitest";
+import { describe, test } from "vitest";
 
 import { testTRPCClient } from "~@sentencing/server/test/setup";
 import {
-  fakeCase,
-  fakeClient,
-  fakeStaff,
+  fakeStaff
 } from "~@sentencing/server/test/setup/seed";
+import { testGetStaff } from "~@sentencing/trpc/test/common/utils";
+
 
 describe("Server", () => {
+  // eslint-disable-next-line vitest/expect-expect
   test("should include trpc routes", async () => {
     // If the trpc routes are not properly set up, this query will fail.
     const returnedStaff = await testTRPCClient.staff.getStaff.query({
       pseudonymizedId: fakeStaff.pseudonymizedId,
     });
+    
+    testGetStaff(returnedStaff)
 
-    expect(returnedStaff).toEqual({
-      ..._.omit(fakeStaff, "externalId"),
-      cases: [
-        {
-          ..._.pick(fakeCase, [
-            "id",
-            "externalId",
-            "dueDate",
-            "reportType",
-            "status",
-            "offense",
-            "isCancelled",
-          ]),
-          client: _.pick(fakeClient, ["fullName", "externalId"]),
-        },
-      ],
-    });
+
   });
 });

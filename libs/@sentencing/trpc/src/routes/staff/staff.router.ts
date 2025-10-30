@@ -41,6 +41,7 @@ export const staffRouter = router({
               id: true,
               externalId: true,
               dueDate: true,
+              customDueDate: true,
               reportType: true,
               status: true,
               isCancelled: true,
@@ -72,6 +73,7 @@ export const staffRouter = router({
         cases: staff.cases.map((c: (typeof staff.cases)[number]) => ({
           ...c,
           offense: c.offense?.name,
+          dueDate: c.customDueDate ?? c.dueDate,
         })),
       };
     }),

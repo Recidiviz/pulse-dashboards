@@ -55,9 +55,18 @@ export const caseRouter = router({
         captureException(e);
       }
 
+      const {
+        customDueDate,
+        dueDate,
+        offense,
+        county,
+        district,
+        client,
+        ...rest
+      } = caseData;
       // move offense to top level and include insight
       return {
-        ...caseData,
+        ...rest,
         reportType: caseData.reportType,
         recommendedOpportunities: caseData.recommendedOpportunities.map(
           (opportunity) => ({
@@ -69,18 +78,18 @@ export const caseRouter = router({
                 : opportunity.providerName,
           }),
         ),
-        offense: caseData.offense?.name,
-        county: caseData.county?.name ?? null,
-        district:
-          caseData.district?.name ?? caseData.county?.district?.name ?? null,
+        dueDate: customDueDate ?? dueDate,
+        offense: offense?.name,
+        county: county?.name ?? null,
+        district: district?.name ?? county?.district?.name ?? null,
         insight,
-        client: caseData.client
+        client: client
           ? {
-              ...caseData.client,
-              county: caseData.client?.county?.name ?? null,
+              ...client,
+              county: client?.county?.name ?? null,
               district:
-                caseData.client?.district?.name ??
-                caseData.client?.county?.district?.name ??
+                client?.district?.name ??
+                client?.county?.district?.name ??
                 null,
             }
           : null,
@@ -174,6 +183,7 @@ export const caseRouter = router({
                 }
               : undefined,
           },
+          customDueDate: attributes.customDueDate,
           recommendedOpportunities: {
             set: attributes.recommendedOpportunities?.map((opportunity) => ({
               opportunityName_providerName: {

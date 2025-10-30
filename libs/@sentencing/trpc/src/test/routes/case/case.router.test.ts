@@ -48,7 +48,23 @@ describe("case router", () => {
 
       expect(returnedCase).toEqual(
         expect.objectContaining({
-          ...fakeCase,
+          id: fakeCase.id,
+          externalId: fakeCase.externalId,
+          stateCode: fakeCase.stateCode,
+          reportType: fakeCase.reportType,
+          status: fakeCase.status,
+          offense: fakeCase.offense,
+          isCancelled: false,
+          isLsirScoreLocked: false,
+          // We return ONLY dueDate (customDueDate is omitted from payload)
+          dueDate: fakeCase.customDueDate,
+          county: "Abbott",
+          district: "District 1",
+          recommendedMaxSentenceLength: fakeCase.recommendedMaxSentenceLength,
+          recommendedMinSentenceLength: fakeCase.recommendedMinSentenceLength,
+          selectedRecommendation: fakeCase.selectedRecommendation,
+          substanceUseDisorderDiagnosis: fakeCase.substanceUseDisorderDiagnosis,
+          isReportTypeLocked: false,
           client: {
             ..._.pick(fakeClient, [
               "fullName",
@@ -61,8 +77,6 @@ describe("case router", () => {
             district: "District 1",
             isGenderLocked: false,
           },
-          isReportTypeLocked: false,
-          isCancelled: false,
           // Should return an insight object
           insight: expect.objectContaining({
             ..._.omit(fakeInsight, [
@@ -271,6 +285,7 @@ describe("case router", () => {
 
   describe("updateCase", () => {
     test("should update case", async () => {
+      const customDueDate = new Date("1,1,2030");
       await testTRPCClient.case.updateCase.mutate({
         id: fakeCase.id,
         attributes: {
@@ -298,6 +313,7 @@ describe("case router", () => {
           clientGender: "MALE",
           clientCounty: "Twin Falls",
           county: "Abbott",
+          customDueDate: customDueDate,
           recommendedMinSentenceLength: 10,
           recommendedMaxSentenceLength: 20,
           protectiveFactors: [
@@ -372,6 +388,7 @@ describe("case router", () => {
             ProtectiveFactor.ActiveInvolvementInCommunityActivities,
           ],
           otherProtectiveFactor: "Other Protective Factor",
+          customDueDate: customDueDate,
         }),
       );
     });

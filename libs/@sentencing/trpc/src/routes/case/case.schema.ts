@@ -110,5 +110,6 @@ export const updateCaseSchema = z.object({
     recommendedMaxSentenceLength: z.number().int().optional(),
     protectiveFactors: z.array(ProtectiveFactorEnum).optional(),
     otherProtectiveFactor: z.string().nullable().optional(),
+    customDueDate: z.date().nullable().optional(),
   }) satisfies z.ZodType<UpdateCaseInput>,
 });
