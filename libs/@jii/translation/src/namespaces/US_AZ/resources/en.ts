@@ -24,7 +24,8 @@ import sedDateInfoPage from "./sedDateInfoPage.md?raw";
 
 export default {
   lastUpdated:
-    "This information was last updated XXXX. It updates once per month.",
+    "This information was last updated on {{lastUpdatedDate, formatFullDate}}. It updates once per month.",
+  lastUpdatedNoDate: "This information updates once per month.",
   goLink: "Learn more about ",
   distanceFromTodayPast: "({{date, formatDistanceFromToday()}} ago)",
   distanceFromTodayFuture: "({{date, formatDistanceFromToday()}} from today)",

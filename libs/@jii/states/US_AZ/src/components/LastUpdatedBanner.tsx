@@ -15,27 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { FullWidthBanner } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
+import { useUsAzTranslations } from "~@jii/translation";
 
-import { NotFound } from "~@jii/common-ui";
-import { UsAzMoreInformation } from "~@jii/paths";
+export function LastUpdatedBanner() {
+  const { t } = useUsAzTranslations();
+  const {
+    resident: { metadata },
+  } = useSingleResidentContext();
 
-import { LastUpdatedBanner } from "../components/LastUpdatedBanner";
-import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
-import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
+  if (metadata.stateCode !== "US_AZ") return null;
 
-export function UsAzRouter() {
+  const { lastUpdatedDate } = metadata;
+
   return (
-    <div>
-      <LastUpdatedBanner />
-      <Routes>
-        <Route index element={<PageUsAzResidentHome />} />
-        <Route path="*" element={<NotFound />} />
-        <Route
-          path={UsAzMoreInformation.DateInfo.path}
-          element={<PageMoreInfoImportantDates />}
-        />
-      </Routes>
-    </div>
+    <FullWidthBanner>
+      {lastUpdatedDate
+        ? t(($) => $.lastUpdated, {
+            lastUpdatedDate: new Date(lastUpdatedDate),
+          })
+        : t(($) => $.lastUpdatedNoDate)}
+    </FullWidthBanner>
   );
 }

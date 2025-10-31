@@ -16,4 +16,5 @@
 // =============================================================================
 
 export * from "./DefinitionView";
+export * from "./LastUpdatedBanner";
 export * from "./UsAzSingleResidentHome";
