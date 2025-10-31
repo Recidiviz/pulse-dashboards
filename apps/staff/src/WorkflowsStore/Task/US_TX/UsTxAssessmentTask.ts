@@ -25,14 +25,27 @@ class UsTxAssessmentTask extends Task<"usTxAssessment"> {
     ? `TRAS - ${this.details.dueAssessmentType.replaceAll("TX_", "")}`
     : "TRAS";
 
-  get lastAssessment(): string | undefined {
-    if (this.details.eventType !== "assessment_completed") return;
+  get lastEventDate(): string | undefined {
     return formatWorkflowsDate(fieldToDate(this.details.eventDate));
   }
 
+  get lastEventCopy(): string | undefined {
+    switch (this.details.eventType) {
+      case "case_type_start":
+      case "case_type_end":
+        return "Case type change";
+      case "assessment_completed":
+        return "Last TRAS";
+      case "supervision_start_no_prior_assessment":
+      default:
+        // We don't expect other event types, but we should still display reasonable copy
+        return;
+    }
+  }
+
   get additionalDetails(): string {
-    return this.lastAssessment
-      ? `Last TRAS: ${this.lastAssessment}`
+    return this.lastEventCopy && this.lastEventDate
+      ? `${this.lastEventCopy}: ${this.lastEventDate}`
       : "No previous TRAS on record";
   }
 
