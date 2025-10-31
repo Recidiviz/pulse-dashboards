@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isSameDay } from "date-fns";
+
 import { CardHeading, CardValue, GoLink } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
@@ -51,10 +53,13 @@ export const DateInfoCard = ({
   const dateObj = new Date(date);
   const today = new Date();
   const isPastDate = dateObj < today;
+  const isToday = isSameDay(dateObj, today);
 
-  // Determine which distance translation to use based on whether date is past/future
+  // Determine which distance translation to use based on whether date is past/future/today
   const getDistanceTranslation = (dateValue: Date) => {
-    if (isPastDate) {
+    if (isToday) {
+      return t(($) => $.distanceFromTodayNow);
+    } else if (isPastDate) {
       return t(($) => $.distanceFromTodayPast, { date: dateValue });
     } else {
       return t(($) => $.distanceFromTodayFuture, { date: dateValue });

@@ -27,8 +27,11 @@ export default {
     "This information was last updated on {{lastUpdatedDate, formatFullDate}}. It updates once per month.",
   lastUpdatedNoDate: "This information updates once per month.",
   goLink: "Learn more about ",
-  distanceFromTodayPast: "({{date, formatDistanceFromToday()}} ago)",
-  distanceFromTodayFuture: "({{date, formatDistanceFromToday()}} from today)",
+  distanceFromTodayNow: "Today",
+  distanceFromTodayPast:
+    "({{date, formatDateRangeFromToday(delimiter: ' and ')}} ago)",
+  distanceFromTodayFuture:
+    "({{date, formatDateRangeFromToday(delimiter: ' and ')}} from today)",
   upcomingDateCopy:
     "Your date is coming up soon - stay on track to ensure that your date doesn't change. ",
   importantDates: {

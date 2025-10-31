@@ -15,10 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { enUS, es } from "date-fns/locale";
+
 export const fullDateFormatOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "long",
   day: "numeric",
+};
+
+const dateFnsLocales = {
+  en: enUS,
+  "en-US": enUS,
+  es: es,
+  "es-ES": es,
+} as const;
+
+/**
+ * Gets the date-fns locale for a language code, with fallback to English
+ */
+export const getDateFnsLocale = (lng?: string) => {
+  if (!lng) return dateFnsLocales.en;
+  return (
+    dateFnsLocales[lng as keyof typeof dateFnsLocales] || dateFnsLocales.en
+  );
 };
 
 export const daysTemplate = {

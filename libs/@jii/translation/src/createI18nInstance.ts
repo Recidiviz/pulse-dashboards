@@ -20,6 +20,7 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import ChainedBackend from "i18next-chained-backend";
 import resourcesToBackend from "i18next-resources-to-backend";
 
+import { formatDateRangeFromTodayFormatter } from "./plugins/formatters/dateRangeFromToday";
 import { formatDistanceFromTodayFormatter } from "./plugins/formatters/distanceFromToday";
 import { fullDateFormatter } from "./plugins/formatters/fullDate";
 import { monthYearFormatter } from "./plugins/formatters/monthYear";
@@ -90,6 +91,10 @@ export function createI18nInstance(
   newInstance.services.formatter?.addCached(
     "formatDistanceFromToday",
     formatDistanceFromTodayFormatter,
+  );
+  newInstance.services.formatter?.addCached(
+    "formatDateRangeFromToday",
+    formatDateRangeFromTodayFormatter,
   );
 
   return newInstance;

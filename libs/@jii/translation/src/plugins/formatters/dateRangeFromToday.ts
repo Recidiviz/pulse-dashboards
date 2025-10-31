@@ -15,24 +15,44 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatDistanceToNow } from "date-fns";
+import {
+  differenceInMonths,
+  formatDuration,
+  intervalToDuration,
+} from "date-fns";
 
 import { getDateFnsLocale } from "../../utils/date";
 import { CachedFormatFunction } from "./types";
 
 /**
- * Formatter that creates a distance from today string like "(2 months)"
+ * Formatter that creates a localized date range duration string from a given date to today
+ * For shorter durations (< 12 months), shows "X months and Y days".
+ * For longer durations, shows "X years and Y months".
  */
-export const formatDistanceFromTodayFormatter: CachedFormatFunction = (
+export const formatDateRangeFromTodayFormatter: CachedFormatFunction = (
   lng,
-  options: { fallbackText?: string },
+  options: { fallbackText?: string; delimiter?: string },
 ) => {
   const fallbackText = options.fallbackText ?? "";
+  const delimiter = options.delimiter;
   const locale = getDateFnsLocale(lng);
 
   return (value) => {
     if (!value) return fallbackText;
-    const distance = formatDistanceToNow(value, { locale });
-    return `${distance}`;
+
+    const today = new Date();
+    const start = value < today ? value : today;
+    const end = value < today ? today : value;
+    const monthDiff = Math.abs(differenceInMonths(end, start));
+
+    const durationFromExp = intervalToDuration({ start, end });
+
+    const formatOptions: Parameters<typeof formatDuration>[1] = {
+      format: monthDiff < 12 ? ["months", "days"] : ["years", "months"],
+      locale,
+      delimiter: delimiter ?? ", ", // Default to comma + space if no delimiter provided
+    };
+
+    return formatDuration(durationFromExp, formatOptions);
   };
 };
