@@ -21,7 +21,9 @@ import { formatWorkflowsDate, toTitleCase } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 
 class UsTxAssessmentTask extends Task<"usTxAssessment"> {
-  displayName = "TRAS";
+  displayName = this.details.dueAssessmentType
+    ? `TRAS - ${this.details.dueAssessmentType.replaceAll("TX_", "")}`
+    : "TRAS";
 
   get lastAssessment(): string | undefined {
     if (this.details.eventType !== "assessment_completed") return;

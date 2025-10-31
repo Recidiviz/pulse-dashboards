@@ -110,6 +110,7 @@ type UsTxAssessmentDetails = {
   dueAssessmentDate: string | null;
   eventDate: string;
   frequency: string;
+  dueAssessmentType?: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
