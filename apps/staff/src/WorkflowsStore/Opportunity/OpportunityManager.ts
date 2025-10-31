@@ -125,7 +125,10 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
         this.person.externalId,
         firestoreCollection,
         this.rootStore.currentTenantId,
-        supportsAlmostEligible,
+        {
+          includeEligible: true,
+          includeAlmostEligible: supportsAlmostEligible,
+        },
       );
 
     const oppList: InstanceType<typeof constructor>[] = [];

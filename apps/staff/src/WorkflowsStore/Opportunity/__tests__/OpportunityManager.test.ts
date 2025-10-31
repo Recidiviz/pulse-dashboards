@@ -337,7 +337,7 @@ describe("instantiateOpportunitiesByType", () => {
     await person.opportunityManager.hydrate();
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy.mock.lastCall?.[3]).toBeTrue();
+    expect(spy.mock.lastCall?.[3].includeAlmostEligible).toBeTrue();
   });
 
   test("fetch excludes almost eligible", async () => {
@@ -363,7 +363,7 @@ describe("instantiateOpportunitiesByType", () => {
     await person.opportunityManager.hydrate();
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy.mock.lastCall?.[3]).toBeFalse();
+    expect(spy.mock.lastCall?.[3].includeAlmostEligible).toBeFalse();
   });
 });
 

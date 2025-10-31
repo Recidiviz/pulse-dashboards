@@ -74,6 +74,7 @@ import {
 import { CollectionDocumentSubscription } from "../WorkflowsStore/subscriptions";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import {
+  AtLeastOneTrue,
   AutoSnoozeUpdate,
   ContactMethodType,
   ExternalSystemRequestStatus,
@@ -674,24 +675,33 @@ export default class FirestoreStore {
     personExternalId: string,
     opportunityTypeCollection: string,
     stateCode: string,
-    includeAlmostEligible: boolean,
-    includeIneligible = false,
+    byEligibilityStatus: AtLeastOneTrue<{
+      includeEligible: boolean;
+      includeAlmostEligible: boolean;
+      includeIneligible: boolean;
+    }>,
   ): Promise<DocumentData[]> {
-    const isEligibleConstraint = where("isEligible", "==", true);
+    const eligibilityConstraints = [];
+    if (byEligibilityStatus.includeEligible)
+      eligibilityConstraints.push(where("isEligible", "==", true));
+    if (byEligibilityStatus.includeAlmostEligible)
+      eligibilityConstraints.push(where("isAlmostEligible", "==", true));
+    if (byEligibilityStatus.includeIneligible)
+      eligibilityConstraints.push(
+        and(
+          where("isEligible", "==", false),
+          where("isAlmostEligible", "==", false),
+        ),
+      );
 
-    const eligibleOrAlmostEligibleConstraint = includeAlmostEligible
-      ? or(isEligibleConstraint, where("isAlmostEligible", "==", true))
-      : isEligibleConstraint;
-
-    const eligibilityConstraint = includeIneligible
-      ? or(
-          isEligibleConstraint,
-          and(
-            where("isAlmostEligible", "==", false),
-            where("isEligible", "==", false),
-          ),
-        )
-      : eligibleOrAlmostEligibleConstraint;
+    // This should never happen because the AtLeastOneTrue type prevents
+    // calling this method without at least one status included
+    // as true, but we add this check just to be safe.
+    if (!eligibilityConstraints.length) {
+      throw new Error(
+        "At least one eligibility status must be included to query opportunities",
+      );
+    }
 
     const results = await getDocs(
       query(
@@ -699,7 +709,7 @@ export default class FirestoreStore {
         and(
           where("externalId", "==", personExternalId),
           where("stateCode", "==", stateCode),
-          eligibilityConstraint,
+          or(...eligibilityConstraints),
         ),
       ),
     );

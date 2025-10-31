@@ -43,7 +43,7 @@ export function isEligibleOrAlmostEligible(
   if (!isHydrated(person.opportunityManager)) {
     throw new Error("isEligibleOrAlmostEligible: unhydrated person passed in.");
   }
-  
+
   return (
     person.opportunities?.[oppType]?.find((opp) => opp.type === oppType) !==
     undefined
@@ -60,7 +60,7 @@ export async function getRecordForIneligible(
   workflowsStore: WorkflowsStore,
   firestoreStore: FirestoreStore,
 ): Promise<DocumentData | undefined> {
-  const { firestoreCollection, supportsAlmostEligible } =
+  const { firestoreCollection } =
     workflowsStore.opportunityConfigurationStore.opportunities[oppType];
 
   const records: DocumentData[] =
@@ -68,14 +68,15 @@ export async function getRecordForIneligible(
       person.externalId,
       firestoreCollection,
       person.stateCode,
-      supportsAlmostEligible,
-      true,
+      {
+        includeIneligible: true,
+      },
     );
 
   // assumes 1 record per opptype for a person
   if (records.length > 1) {
     throw new Error("getRecordForInelgiible: more than one record for person");
   }
-  
+
   return records[0];
 }

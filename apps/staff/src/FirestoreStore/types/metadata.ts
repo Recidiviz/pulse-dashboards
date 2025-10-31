@@ -32,3 +32,10 @@ export type ExternalRequestUpdate<RequestData> = {
   status: ExternalSystemRequestStatus;
   submitted: UpdateLog;
 } & RequestData;
+
+/**
+ * Utility type that requires at least one property of T to be true
+ */
+export type AtLeastOneTrue<T extends Record<string, boolean>> = {
+  [K in keyof T]: Record<K, true> & Partial<Record<Exclude<keyof T, K>, boolean>>
+}[keyof T];
