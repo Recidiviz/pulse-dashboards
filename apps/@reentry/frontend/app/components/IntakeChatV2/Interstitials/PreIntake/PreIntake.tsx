@@ -17,9 +17,11 @@
 
 import React, { useState } from "react";
 
+import PreIntakeVideo from "~@reentry/frontend/components/IntakeChatV2/Interstitials/PreIntake/PreIntakeVideo";
+import StepOne from "~@reentry/frontend/components/IntakeChatV2/Interstitials/PreIntake/StepOne";
+import StepTwo from "~@reentry/frontend/components/IntakeChatV2/Interstitials/PreIntake/StepTwo";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
-import StepOne from "~@reentry/frontend/components/IntakeChatV2/PreIntake/StepOne";
-import StepTwo from "~@reentry/frontend/components/IntakeChatV2/PreIntake/StepTwo";
+import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
 import { trpc } from "~@reentry/frontend/trpc";
 import { showErrorToast } from "~@reentry/frontend/utils/toast";
 
@@ -28,7 +30,9 @@ interface PreIntakeProps {
 }
 
 const PreIntake: React.FC<PreIntakeProps> = ({ clientPseudoId }) => {
+  const { stateCode } = useIntakeAuthContext();
   const [step, setStep] = useState<1 | 2>(1);
+  const isUtah = stateCode === "US_UT";
 
   const utils = trpc.useUtils();
   const createIntakeMutation = trpc.intake.createIntake.useMutation({
@@ -55,7 +59,7 @@ const PreIntake: React.FC<PreIntakeProps> = ({ clientPseudoId }) => {
 
   const handleGoBack = () => {
     if (step === 1) {
-      window.history.back();
+      window.location.href = "/assessment";
     } else {
       setStep(1);
     }
@@ -68,6 +72,13 @@ const PreIntake: React.FC<PreIntakeProps> = ({ clientPseudoId }) => {
 
   if (createIntakeMutation.isPending) {
     return <Loading />;
+  }
+
+  // Utah users will video a pre-intake video instead of the regular text-based steps
+  if (isUtah) {
+    return (
+      <PreIntakeVideo onGoBack={handleGoBack} onStartIntake={onStartIntake} />
+    );
   }
 
   return (

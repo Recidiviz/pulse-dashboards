@@ -19,7 +19,7 @@ import React from "react";
 
 import common from "~@reentry/frontend/components/IntakeChatV2/Common.module.css";
 import { useScrollToBottom } from "~@reentry/frontend/components/IntakeChatV2/hooks/useScrollToBottom";
-import styles from "~@reentry/frontend/components/IntakeChatV2/PreIntake/PreIntake.module.css";
+import styles from "~@reentry/frontend/components/IntakeChatV2/Interstitials/PreIntake/PreIntake.module.css";
 import ScrollToBottomButton from "~@reentry/frontend/components/IntakeChatV2/ScrollToBottomButton/ScrollToBottomButton";
 
 interface StepTwoProps {

@@ -15,16 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Address from "~@reentry/frontend/components/IntakeChatV2/Address/Address";
+import { legacyApiRequest } from "~@reentry/frontend/components/IntakeChatV2/api/api";
 import ConversationLayout from "~@reentry/frontend/components/IntakeChatV2/Chat/ConversationLayout";
 import IntakeComplete from "~@reentry/frontend/components/IntakeChatV2/IntakeComplete/IntakeComplete";
+import PreIntake from "~@reentry/frontend/components/IntakeChatV2/Interstitials/PreIntake/PreIntake";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
-import PreIntake from "~@reentry/frontend/components/IntakeChatV2/PreIntake/PreIntake";
 import { ChatProvider } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
+import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
+import Survey from "~@reentry/frontend/components/IntakeChatV2/Survey/Survey";
 import { trpc } from "~@reentry/frontend/trpc";
 import { useTrpcConnection } from "~@reentry/frontend/trpc/TrpcReactQueryProvider";
+
+interface IntakeStatusResponse {
+  has_survey: boolean;
+}
 
 interface ChatProps {
   clientId: string | null;
@@ -32,7 +39,10 @@ interface ChatProps {
 
 const Chat = ({ clientId }: ChatProps) => {
   const connectionStatus = useTrpcConnection();
+  const { token } = useIntakeAuthContext();
   const [chatSessionKey, setChatSessionKey] = useState(0);
+  const [surveySubmitted, setSurveySubmitted] = useState(false);
+  const [isFetchingSurveyStatus, setIsFetchingSurveyStatus] = useState(false);
 
   if (!clientId) return null;
 
@@ -51,15 +61,46 @@ const Chat = ({ clientId }: ChatProps) => {
       },
     );
 
-  if (isLoadingIntake || isLoadingAddress) return <Loading />;
+  // Fetch survey status from old backend when intake is complete and address exists
+  // TODO: Consider porting survey status to new backend to avoid this extra request
+  useEffect(() => {
+    if (intake?.endDate && address && token && !surveySubmitted) {
+      setIsFetchingSurveyStatus(true);
+      legacyApiRequest<IntakeStatusResponse>(`/intake/client/${token}`, {
+        token,
+      })
+        .then((response) => {
+          if (response.has_survey) {
+            setSurveySubmitted(true);
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch survey status:", error);
+        })
+        .finally(() => {
+          setIsFetchingSurveyStatus(false);
+        });
+    }
+  }, [intake?.endDate, address, token, surveySubmitted]);
+
+  if (isLoadingIntake || isLoadingAddress || isFetchingSurveyStatus) {
+    return <Loading />;
+  }
 
   if (!intake) return <PreIntake clientPseudoId={clientId} />;
 
   if (intake.endDate) {
-    if (!address)
+    if (!address) {
       return <Address clientPseudoId={clientId} intakeId={intake.id} />;
+    }
+
+    if (!surveySubmitted) {
+      return <Survey onSurveySubmitted={() => setSurveySubmitted(true)} />;
+    }
+
     return <IntakeComplete />;
   }
+
   return (
     <ChatProvider
       key={chatSessionKey}

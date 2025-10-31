@@ -23,9 +23,17 @@ import {
 } from "~@reentry/frontend/components/IntakeChatV2/types";
 
 const API_BASE_URL = process.env["NEXT_PUBLIC_V2_API_URL"] || "";
+const LEGACY_API_BASE_URL = process.env["NEXT_PUBLIC_API_URL"] || "";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const legacyApiClient: AxiosInstance = axios.create({
+  baseURL: LEGACY_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -37,8 +45,12 @@ interface RequestOptions {
   body?: unknown;
 }
 
+interface LegacyRequestOptions extends RequestOptions {
+  token?: string;
+}
+
 /**
- * Base API caller using axios
+ * Base API caller using axios (for new V2 API)
  */
 export async function apiRequest<T>(
   endpoint: string,
@@ -51,6 +63,28 @@ export async function apiRequest<T>(
   };
 
   const response = await apiClient.request<T>(config);
+  return response.data;
+}
+
+/**
+ * Legacy API caller using axios (for non-V2 API)
+ */
+export async function legacyApiRequest<T>(
+  endpoint: string,
+  { method = "GET", body, token }: LegacyRequestOptions = {},
+): Promise<T> {
+  const config: AxiosRequestConfig = {
+    url: endpoint,
+    method,
+    data: body,
+    headers: token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : undefined,
+  };
+
+  const response = await legacyApiClient.request<T>(config);
   return response.data;
 }
 
