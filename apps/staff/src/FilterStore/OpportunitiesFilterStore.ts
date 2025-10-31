@@ -65,15 +65,12 @@ export default class OpportunitiesFilterStore extends FilterStoreBase {
   }
 
   get filterConfig(): WorkflowsOpportunityFilterConfig {
-    const { workflowsOpportunityFilterConfig, currentTenantId } =
+    const { workflowsOpportunityFilterConfig } =
       this.tenantStore;
-    if (!workflowsOpportunityFilterConfig) {
-      throw new Error(
-        `Trying to initialize OpportunitiesFilterStore for state without workflows opportunity filter configuration: ${currentTenantId}`,
-      );
-    }
 
-    return workflowsOpportunityFilterConfig;
+    return workflowsOpportunityFilterConfig || {
+      filters: [],
+    }
   }
 
   clearFilters = () => {

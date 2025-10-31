@@ -66,14 +66,9 @@ export default class TasksFilterStore extends FilterStoreBase {
   }
 
   get filterConfig(): WorkflowsTasksConfig {
-    const { tasksConfiguration, currentTenantId } = this.tenantStore;
+    const { tasksConfiguration } = this.tenantStore;
 
-    if (!tasksConfiguration) {
-      throw new Error(
-        `Trying to initialize TasksFilterStore for state without task configuration: ${currentTenantId}`,
-      );
-    }
-    return tasksConfiguration as WorkflowsTasksConfig;
+    return tasksConfiguration || ({} as WorkflowsTasksConfig);
   }
 
   clearFilters = () => {
