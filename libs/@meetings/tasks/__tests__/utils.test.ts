@@ -16,9 +16,10 @@
 // =============================================================================
 
 import { Storage } from "@google-cloud/storage";
-import { describe, expect, test } from "vitest";
+import { Transcript } from "assemblyai";
+import { describe, expect, test, vi } from "vitest";
 
-import { GCS_API_ENDPOINT } from "~@meetings/tasks/test/setup";
+import { GCS_API_ENDPOINT, mockAssemblyAI } from "~@meetings/tasks/test/setup";
 import {
   getSignedUrlForNewRecording,
   stitchAudio,
@@ -96,7 +97,7 @@ describe("utils", () => {
     });
 
     test("Should stitch audio if meeting exists", async () => {
-      await stitchAudio(
+      const stitchedAudioPath = await stitchAudio(
         AUDIO_RECORDINGS_BUCKET_NAME,
         "stitch-audio-test-folder",
       );
@@ -109,6 +110,8 @@ describe("utils", () => {
       const [files] = await storage
         .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
         .getFiles({ prefix: `stitch-audio-test-folder/` });
+
+      expect(stitchedAudioPath).toEqual("stitch-audio-test-folder/final.m4a");
       expect(files.map((f) => f.name)).toEqual(
         expect.arrayContaining([`stitch-audio-test-folder/final.m4a`]),
       );
@@ -116,6 +119,26 @@ describe("utils", () => {
   });
 
   describe("getAssemblyAITranscript", () => {
+    test("Should throw error if transcription comes back with error", async () => {
+      vi.mocked(mockAssemblyAI.transcripts.transcribe).mockResolvedValueOnce(
+        {
+          id: "mock-transcript-id",
+          status: "error",
+          error: "Mock transcription error",
+        } as Transcript, // Do this so we don't have to fill all of the fields which we won't use anyways
+      );
+
+      await expect(
+        transcribeAudioWithAssemblyAI(
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          "transcription-test-folder/final.m4a",
+          "test-api-key",
+        ),
+      ).rejects.toThrow(
+        "AssemblyAI transcription failed: Mock transcription error",
+      );
+    });
+
     test("Should return transcript", async () => {
       const transcript = await transcribeAudioWithAssemblyAI(
         AUDIO_RECORDINGS_BUCKET_NAME,

@@ -121,7 +121,7 @@ export async function stitchAudio(bucketName: string, folderName: string) {
     resumable: false,
   });
 
-  return `${bucketName}/${outputFileName}`;
+  return outputFileName;
 }
 
 export async function transcribeAudioWithAssemblyAI(
@@ -145,7 +145,7 @@ export async function transcribeAudioWithAssemblyAI(
   });
 
   // TODO: Add custom speaker labels once the API supports it
-  return await assemblyAiClient.transcripts.transcribe({
+  const transcriptionResult = await assemblyAiClient.transcripts.transcribe({
     audio: url,
     speaker_labels: true,
     format_text: true,
@@ -153,4 +153,12 @@ export async function transcribeAudioWithAssemblyAI(
     speech_model: "universal",
     language_detection: true,
   });
+
+  if (transcriptionResult.error) {
+    throw new Error(
+      `AssemblyAI transcription failed: ${transcriptionResult.error}`,
+    );
+  }
+
+  return transcriptionResult;
 }
