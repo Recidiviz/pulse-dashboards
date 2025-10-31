@@ -39,6 +39,8 @@ export const AGE_KEY = "age";
 
 export const GENDERS_KEY = "genders";
 
+export const CUSTOM_DUE_DATE_KEY = "customDueDate";
+
 export const OFFENSE_SUFFIX = "offense";
 
 export const OFFENSES_SUFFIX = "offenses";

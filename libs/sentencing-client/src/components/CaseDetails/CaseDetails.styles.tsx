@@ -17,7 +17,7 @@
 
 import { typography } from "@recidiviz/design-system";
 import { StylesConfig } from "react-select";
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components/macro";
 
 import { palette } from "~design-system";
 
@@ -1042,7 +1042,7 @@ export const AddRecommendationButton = styled(EditCaseDetailsButton)<{
   ${({ isAdded }) =>
     isAdded &&
     `
-      background-color: ${palette.slate10}; 
+      background-color: ${palette.slate10};
       border: 1px solid transparent;
       &:not(:disabled):hover {
         background-color: ${palette.white};
@@ -1242,6 +1242,180 @@ export const TextArea = styled.textarea<{ hasError?: boolean }>`
   &:focus {
     border-color: ${({ hasError }) =>
       hasError ? palette.signal.error : palette.pine4};
+  }
+`;
+
+export const CalendarResetButton = styled.button`
+  background: ${palette.white};
+  border: none;
+  color: ${palette.pine3};
+  padding: 16px 0 0 20px;
+  text-decoration: underline;
+`;
+
+export const CalendarHeader = styled.div`
+  ${typography.Sans14};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 0 8px 10px 8px;
+  border-bottom: 1px solid ${palette.slate05};
+  background: ${palette.white};
+`;
+
+export const CalendarCenter = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const CalendarYearStack = styled.div`
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const CalendarYearIconButton = styled.button.attrs({ type: "button" })`
+  background: ${palette.white};
+  border: none;
+  padding: 0;
+  justify-content: center;
+  line-height: 0;
+
+  svg {
+    width: 10px;
+    height: 10px;
+    display: block;
+  }
+`;
+
+export const CalendarMonthIconButton = styled.button.attrs({ type: "button" })`
+  background: ${palette.white};
+  border: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background: ${palette.slate10};
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+`;
+
+export const dateInputCss = css`
+  ${typography.Sans14};
+  padding: 12px 16px;
+  border: 1px solid ${palette.slate20};
+  border-radius: 6px;
+  color: ${palette.pine3};
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  width: 150px;
+  z-index: 1;
+`;
+
+export const dateCalendarIconCss = css`
+  position: absolute;
+  z-index: 2;
+  left: 80%;
+  margin-top: 20px;
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+`;
+
+export const calendarContainerCss = css`
+  ${typography.Sans14};
+  background: ${palette.white};
+  color: ${palette.pine3};
+  z-index: 1000;
+  border-radius: 8px;
+  border: 1px solid ${palette.slate20};
+  box-shadow: 8px 10px 7px ${palette.slate05};
+`;
+
+export const calendarDayCss = css`
+  width: 1.4rem;
+  height: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 0.5rem;
+
+  &:hover {
+    background: ${palette.pine4};
+    color: ${palette.white};
+    border-radius: 3px;
+  }
+`;
+
+export const calendarWeekCSS = css`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 8px, 8px;
+`;
+
+export const DatePickerWrapper = styled.div`
+  /* anchor the icon inside the input container */
+  .react-datepicker__input-container {
+    position: relative;
+  }
+
+  /* style the actual input element react-datepicker renders */
+  .react-datepicker__input-container input {
+    ${dateInputCss};
+  }
+
+  /* style the icon container (built-in class) OR your custom class */
+  .react-datepicker__calendar-icon {
+    ${dateCalendarIconCss};
+  }
+
+  .rcd-cal {
+    ${calendarContainerCss}
+  }
+
+  .rcd-cal .react-datepicker__month {
+    display: block;
+  }
+
+  /* Each week is a single row of 7 days */
+  .rcd-cal .react-datepicker__week {
+    ${calendarWeekCSS}
+  }
+
+  .rcd-cal .react-datepicker__day,
+  .rcd-cal .react-datepicker__day-name {
+    ${calendarDayCss}
+  }
+
+  .rcd-cal .react-datepicker__day--outside-month {
+    color: ${palette.slate30};
+    pointer-events: none;
+  }
+
+  .rcd-cal .react-datepicker__aria-live {
+    display: none;
+  }
+
+  .rcd-cal .react-datepicker__day-name {
+    display: none;
   }
 `;
 

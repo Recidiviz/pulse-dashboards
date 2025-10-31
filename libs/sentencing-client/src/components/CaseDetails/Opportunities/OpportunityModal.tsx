@@ -26,6 +26,7 @@ import {
   parseMentalHealthDiagnosesValue,
   parseNeedsToBeAddressedValue,
 } from "../Form/utils";
+import { FormValue } from "../types";
 import {
   ASAM_CARE_RECOMMENDATION_CRITERIA_KEY,
   DIAGNOSED_SUBSTANCE_USE_SEVERITY_CRITERIA_KEY,
@@ -57,7 +58,7 @@ type OpportunityModalProps = {
 
 const displayEligibilityCriterias = (
   key: keyof EligibilityCriteria,
-  value: number | string | string[] | boolean | null | undefined,
+  value: FormValue,
 ) => {
   const isArray = Array.isArray(value);
   const shouldDisplayLabelValue = [

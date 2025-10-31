@@ -89,7 +89,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
         ? [countyOfSentencingField]
         : [countyOfSentencingField, countyOfResidenceField];
 
-    const formattedOffense = stripFreeTextHelper(offense)
+    const formattedOffense = stripFreeTextHelper(offense);
     const attributesRow: AttributeLabelValue[] = [
       {
         key: REPORT_TYPE_KEY,

@@ -16,6 +16,8 @@
 // =============================================================================
 
 /// <reference types='vitest' />
+import { createRequire } from "node:module";
+
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig, splitVendorChunkPlugin } from "vite";
@@ -23,7 +25,23 @@ import macros from "vite-plugin-babel-macros";
 import { comlink } from "vite-plugin-comlink";
 import svgr from "vite-plugin-svgr";
 
+const require = createRequire(import.meta.url);
+const clsxEntry = require.resolve("clsx");
 export default defineConfig(() => ({
+  resolve: {
+    alias: {
+      // clsx alias:
+      // After bumping to clsx@2, the package uses "exports" with an ESM-first entry.
+      // In tooling/SSR (vite-node) some transitive deps (e.g. react-tabs, react-datepicker)
+      // can surface the ESM path (clsx.m.js). If Node’s CJS loader touches that path,
+      // it throws "Unexpected token 'export'".
+      //
+      // Mapping 'clsx' to its installed entry (via require.resolve) ensures Vite bundles
+      // the correct file for our environment and keeps this working across clsx v1/v2
+      // without fragile subpath imports like 'clsx/dist/clsx.js'.
+      clsx: clsxEntry,
+    },
+  },
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/staff",
 

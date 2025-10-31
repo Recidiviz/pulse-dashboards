@@ -48,7 +48,14 @@ export type FormAttributes = Omit<
 
 export type SelectedRecommendation = FormAttributes["selectedRecommendation"];
 
-export type FormValue = number | string | string[] | boolean | null | undefined;
+export type FormValue =
+  | number
+  | string
+  | string[]
+  | boolean
+  | null
+  | Date
+  | undefined;
 
 export type FormFieldBase = {
   key: keyof FormAttributes;

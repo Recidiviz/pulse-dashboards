@@ -19,6 +19,7 @@ import {
   ASAM_CARE_RECOMMENDATION_KEY,
   CLIENT_GENDER_KEY,
   COUNTIES_KEY,
+  CUSTOM_DUE_DATE_KEY,
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
   HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
   HAS_PREVIOUS_FELONY_KEY,
@@ -39,6 +40,7 @@ import {
 import ASAMCareRecommendationField from "./FormFields/ASAMCareRecommendationField";
 import ChildProtectiveServicesStatus from "./FormFields/ChildProtectiveServicesStatusField";
 import CountiesField from "./FormFields/CountiesField";
+import CustomDueDateField from "./FormFields/CustomDueDateField";
 import DevelopmentalDisabilityStatusField from "./FormFields/DevelopmentalDisabilityStatusField";
 import GenderField from "./FormFields/GenderField";
 import LsirScoreField from "./FormFields/LsirScoreField";
@@ -74,6 +76,11 @@ const PriorIncarcerationOrSupervisionNestedFields: FormField[] = [
 ];
 
 const FormFields: { [key: string]: FormFieldWithNestedFields } = {
+  [CUSTOM_DUE_DATE_KEY]: {
+    key: CUSTOM_DUE_DATE_KEY,
+    FieldComponent: CustomDueDateField,
+    isRequired: true,
+  },
   [OFFENSE_KEY]: {
     key: OFFENSE_KEY,
     FieldComponent: OffenseField,
