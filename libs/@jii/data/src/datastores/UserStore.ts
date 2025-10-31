@@ -15,13 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import i18next from "i18next";
-import { makeAutoObservable, when } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { z } from "zod";
 
 import { Permission } from "~@jii/auth";
 import { isDemoMode } from "~client-env-utils";
-import { isHydrated } from "~hydration-utils";
 
 import { AuthManager } from "../apis/auth/AuthManager";
 import { isAuthorizedState } from "../apis/auth/types";
@@ -31,6 +29,7 @@ import {
 } from "../apis/Segment/SegmentClient";
 import { stateCodes, stateConfigsByUrlSlug } from "../configs/stateConstants";
 import { StateCode } from "../configs/types";
+import { TranslationStore } from "./TranslationStore";
 
 export const USER_PROPERTY_KEYS = z.enum(["egtOnboardingSeen"]);
 type UserPropertyKey = z.infer<typeof USER_PROPERTY_KEYS>;
@@ -40,26 +39,16 @@ export class UserStore {
 
   authManager: AuthManager;
 
-  constructor() {
+  constructor(translationStore: TranslationStore) {
     makeAutoObservable(
       this,
       { authManager: false, segmentClient: false },
       { autoBind: true },
     );
 
-    this.authManager = new AuthManager();
+    this.authManager = new AuthManager(translationStore);
 
     this.segmentClient = new SegmentClient(new SegmentExternals(this));
-
-    // apply feature flag to translations - force default language
-    when(
-      () => isHydrated(this.authManager),
-      () => {
-        if (!this.hasPermission("translator")) {
-          i18next.changeLanguage("en-US");
-        }
-      },
-    );
   }
 
   private get authState() {

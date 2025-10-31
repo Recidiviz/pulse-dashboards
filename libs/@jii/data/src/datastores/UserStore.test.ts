@@ -20,6 +20,7 @@ import { configure } from "mobx";
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 
 import { SegmentClient } from "../apis/Segment/SegmentClient";
+import { TranslationStore } from "./TranslationStore";
 import { USER_PROPERTY_KEYS, UserStore } from "./UserStore";
 
 vi.mock("~client-env-utils");
@@ -33,7 +34,10 @@ beforeEach(() => {
   // make sure we are verifying the non-test behavior
   vi.mocked(isTestEnv).mockReturnValue(false);
 
-  store = new UserStore();
+  store = new UserStore(
+    // stubbing this because it just gets passed through to something we aren't using here
+    {} as TranslationStore,
+  );
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",

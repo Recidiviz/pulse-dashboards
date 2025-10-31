@@ -24,4 +24,7 @@ export const usMeResidentsConfig: ResidentsConfig = {
   home,
   eligibility: usMeEligibilityConfig,
   progress: usMeProgressModuleConfig,
+  translation: {
+    additionalLanguages: [],
+  },
 };

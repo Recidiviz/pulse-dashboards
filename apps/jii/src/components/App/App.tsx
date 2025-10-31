@@ -41,7 +41,6 @@ import {
   State,
   StateSelect,
 } from "~@jii/paths";
-import { initTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
 import { ErrorPage } from "../ErrorPage/ErrorPage";
@@ -59,6 +58,7 @@ import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { ResidentsLayoutRoute } from "../ResidentsLayoutRoute/ResidentsLayoutRoute";
 import { StateSpecificRouter } from "../StateSpecificRouter/StateSpecificRouter";
+import { TranslationProvider } from "../TranslationProvider/TranslationProvider";
 
 const StyledApp = styled.div`
   /* these properties prevent full-bleed sections from messing up the page width */
@@ -76,7 +76,6 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 initializeSentry();
-initTranslations();
 
 // doing this once (at the root off all <Routes>) allows Sentry to trace client-side URLs
 const SentryRoutes = withSentryReactRouterV6Routing(Routes);
@@ -85,44 +84,56 @@ export function App() {
   return (
     <ErrorBoundary fallback={ErrorPage}>
       <StoreProvider>
-        <GlobalStyleBase />
-        <GlobalStyle />
-        <StyledApp>
-          <SentryRoutes>
-            <Route path={SiteRoot.path} element={<PageRoot />}>
-              <Route index element={<PageHome />} />
-              <Route path={State.path}>
-                <Route index element={<PageState />} />
-                <Route element={<PageResidentsRoot />}>
-                  <Route element={<ResidentsLayoutRoute />}>
-                    <Route
-                      path={State.Resident.path}
-                      element={<PageSingleResidentRoot />}
-                    >
-                      <Route index path="*" element={<StateSpecificRouter />} />
+        <TranslationProvider>
+          <GlobalStyleBase />
+          <GlobalStyle />
+          <StyledApp>
+            <SentryRoutes>
+              <Route path={SiteRoot.path} element={<PageRoot />}>
+                <Route index element={<PageHome />} />
+                <Route path={State.path}>
+                  <Route index element={<PageState />} />
+                  <Route element={<PageResidentsRoot />}>
+                    <Route element={<ResidentsLayoutRoute />}>
+                      <Route
+                        path={State.Resident.path}
+                        element={<PageSingleResidentRoot />}
+                      >
+                        <Route
+                          index
+                          path="*"
+                          element={<StateSpecificRouter />}
+                        />
+                      </Route>
+                      <Route
+                        path={State.Search.path}
+                        element={<PageSearch />}
+                      />
                     </Route>
-                    <Route path={State.Search.path} element={<PageSearch />} />
                   </Route>
                 </Route>
-              </Route>
-              <Route element={<GenericLayoutRoute />}>
-                <Route
-                  path={EmailVerification.path}
-                  element={<PageVerifyEmail />}
-                />
-                <Route path={AfterLogin.path} element={<PageAfterLogin />} />
-                <Route
-                  path={EdovoLandingPage.path}
-                  element={<PageEdovoLanding />}
-                />
-                <Route path={StateSelect.path} element={<PageSelectState />} />
+                <Route element={<GenericLayoutRoute />}>
+                  <Route
+                    path={EmailVerification.path}
+                    element={<PageVerifyEmail />}
+                  />
+                  <Route path={AfterLogin.path} element={<PageAfterLogin />} />
+                  <Route
+                    path={EdovoLandingPage.path}
+                    element={<PageEdovoLanding />}
+                  />
+                  <Route
+                    path={StateSelect.path}
+                    element={<PageSelectState />}
+                  />
 
-                <Route path="*" element={<NotFound />} />
+                  <Route path="*" element={<NotFound />} />
+                </Route>
+                <Route path={OrijinSSOPage.path} element={<PageOrijinSSO />} />
               </Route>
-              <Route path={OrijinSSOPage.path} element={<PageOrijinSSO />} />
-            </Route>
-          </SentryRoutes>
-        </StyledApp>
+            </SentryRoutes>
+          </StyledApp>
+        </TranslationProvider>
       </StoreProvider>
     </ErrorBoundary>
   );

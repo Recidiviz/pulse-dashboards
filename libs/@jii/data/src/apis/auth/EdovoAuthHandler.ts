@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import i18next from "i18next";
 import { makeAutoObservable, runInAction } from "mobx";
 import { matchPath } from "react-router-dom";
 
@@ -28,6 +27,7 @@ import {
   isHydrationInProgress,
 } from "~hydration-utils";
 
+import { TranslationStore } from "../../datastores/TranslationStore";
 import { API_URL_BASE } from "./constants";
 import { AuthHandler } from "./types";
 
@@ -42,7 +42,7 @@ export class EdovoAuthHandler implements AuthHandler {
 
   private userIdToken: string;
 
-  constructor() {
+  constructor(private translationStore: TranslationStore) {
     makeAutoObservable(this, {}, { autoBind: true });
 
     this.userIdToken = this.tokenFromCurrentUrl();
@@ -88,8 +88,8 @@ export class EdovoAuthHandler implements AuthHandler {
         this.hydrationStateOverride = undefined;
       });
 
-      if (language && user.permissions?.includes("translator")) {
-        i18next.changeLanguage(language);
+      if (language) {
+        this.translationStore.i18n.changeLanguage(language);
       }
     } else {
       const authError =

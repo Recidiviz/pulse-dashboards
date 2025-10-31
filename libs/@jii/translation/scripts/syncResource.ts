@@ -47,6 +47,8 @@ import { TRANSLATOR_MODE_LANGUAGE_CODE } from "../src/constants";
 // en.json > {"foo": "Hello", "bar": {"baz": "Goodbye"}}
 // es.json > {"foo": "Hola", "bar": {"baz": "Adiós"}}
 
+/* eslint-disable no-console */
+
 const parser = new ArgumentParser({
   description:
     "Converts a CSV of translation strings into JSON resources for i18next",

@@ -15,19 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import i18next from "i18next";
 import { makeAutoObservable } from "mobx";
 
 import { SimpleNavLinkProps } from "~@jii/common-ui";
-import { UiStore, UserStore, windowIsIframe } from "~@jii/data";
+import { RootStore, windowIsIframe } from "~@jii/data";
 
 export type MenuLinks = Array<SimpleNavLinkProps>;
 
 export class NavMenuPresenter {
   constructor(
     public links: MenuLinks,
-    private userStore: UserStore,
-    private uiStore: UiStore,
+    private rootStore: RootStore,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
@@ -35,38 +33,41 @@ export class NavMenuPresenter {
   get showLogout(): boolean {
     // only an auth client enables logout functionality
     return (
-      !!this.userStore.authManager.authClient &&
+      !!this.rootStore.userStore.authManager.authClient &&
       // no logging out inside an iframe; we assume the parent window controls user session
       !windowIsIframe()
     );
   }
 
   get showTranslationMode(): boolean {
-    return this.userStore.hasPermission("translator");
+    return this.rootStore.userStore.hasPermission("translator");
   }
 
   get isTranslationMode(): boolean {
-    return this.uiStore.isTranslatorModeActive;
+    return this.rootStore.translationStore.isTranslatorModeActive;
   }
 
   /**
    * This is a no-op if authClient is not defined
    */
   logOut() {
-    this.userStore.authManager.authClient?.logOut();
+    this.rootStore.userStore.authManager.authClient?.logOut();
   }
 
   toggleTranslationMode() {
-    this.uiStore.isTranslatorModeActive = !this.uiStore.isTranslatorModeActive;
+    this.rootStore.translationStore.isTranslatorModeActive =
+      !this.rootStore.translationStore.isTranslatorModeActive;
   }
 
+  // eventually we expect to support more than two languages; for now we can just toggle
+  // English and Spanish for convenience
   toggleActiveLanguage() {
-    this.uiStore.isTranslatorModeActive = false;
+    this.rootStore.translationStore.isTranslatorModeActive = false;
 
-    if (i18next.language.startsWith("es")) {
-      i18next.changeLanguage("en");
+    if (this.rootStore.translationStore.currentLanguage.startsWith("es")) {
+      this.rootStore.translationStore.i18n.changeLanguage("en");
     } else {
-      i18next.changeLanguage("es");
+      this.rootStore.translationStore.i18n.changeLanguage("es");
     }
   }
 }

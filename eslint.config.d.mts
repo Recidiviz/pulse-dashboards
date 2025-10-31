@@ -24,10 +24,16 @@ export const TYPE_TAGS: Record<TagKey, string>;
 declare const baseConfig: ConfigArray;
 export default baseConfig;
 
-export const designSystemRestrictedImports: {
+type RestrictedImportsPath = {
   name: string;
-  importNames: string[];
+  importNames?: string[];
   message: string;
 };
+
+export const designSystemRestrictedImports: RestrictedImportsPath;
+
+export const jiiRestrictedImports: Array<RestrictedImportsPath>;
+
+export const reactRestrictedImports: Array<RestrictedImportsPath>;
 
 export const reactConfig: ConfigArray;

@@ -15,17 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import i18next from "i18next";
-
-import { initTranslations } from "../initTranslations";
+import { createI18nInstance } from "../createI18nInstance";
 
 export async function testTranslation(
   s: string,
   context?: Record<string, unknown>,
   lng = "en",
 ): Promise<string> {
-  await initTranslations();
-  const testInstance = i18next.cloneInstance({
+
+  const testInstance = createI18nInstance("_ALL_").cloneInstance({
     forkResourceStore: true,
     lng,
   });

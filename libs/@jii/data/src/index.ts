@@ -33,6 +33,7 @@ export * from "./contexts/SingleResidentContext";
 export * from "./datastores/LoginConfigStore";
 export * from "./datastores/ResidentsStore";
 export * from "./datastores/RootStore";
+export * from "./datastores/TranslationStore";
 export * from "./datastores/UiStore";
 export * from "./datastores/UserStore";
 export * from "./hooks/useStateCodeFromSlug";

@@ -20,30 +20,17 @@
 import tseslint from "typescript-eslint";
 
 import baseConfig, {
-  designSystemRestrictedImports,
+  jiiRestrictedImports,
   reactConfig,
 } from "../../../../eslint.config.mjs";
 
 export default tseslint.config(baseConfig, reactConfig, {
-  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
   rules: {
     "no-restricted-imports": [
       "error",
       {
-        paths: [
-          // Need to include these again because eslint doesn't deep merge rules
-          {
-            name: "styled-components",
-            message: "Please import from styled-components/macro.",
-          },
-          {
-            name: "react-router-dom",
-            importNames: ["useParams"],
-            message:
-              "Please import useTypedParams from react-router-typesafe-routes/dom instead",
-          },
-          designSystemRestrictedImports,
-        ],
+        paths: [...jiiRestrictedImports],
       },
     ],
   },

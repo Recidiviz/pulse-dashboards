@@ -15,12 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
+import { observer } from "mobx-react-lite";
+import { FC, ReactNode } from "react";
+import { I18nextProvider } from "react-i18next";
 
-export const usAzResidentsConfig: ResidentsConfig = {
-  home,
-  translation: {
-    additionalLanguages: [],
+import { useRootStore } from "~@jii/data";
+
+export const TranslationProvider: FC<{ children: ReactNode }> = observer(
+  function TranslationProvider({ children }) {
+    const {
+      translationStore: { i18n },
+    } = useRootStore();
+
+    return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
   },
-};
+);

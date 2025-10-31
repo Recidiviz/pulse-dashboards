@@ -193,6 +193,14 @@ export const designSystemRestrictedImports = {
   message: "Please import from ~design-system instead.",
 };
 
+export const reactRestrictedImports = [
+  {
+    name: "styled-components",
+    message: "Please import from styled-components/macro.",
+  },
+  designSystemRestrictedImports,
+];
+
 export const reactConfig = tseslint.config(
   {
     files: ["**/*.*ts", "**/*.*tsx", "**/*.*js", "**/*.*jsx"],
@@ -207,13 +215,7 @@ export const reactConfig = tseslint.config(
       "no-restricted-imports": [
         "error",
         {
-          paths: [
-            {
-              name: "styled-components",
-              message: "Please import from styled-components/macro.",
-            },
-            designSystemRestrictedImports,
-          ],
+          paths: [...reactRestrictedImports],
         },
       ],
       "getter-return": "off",
@@ -242,3 +244,20 @@ export const reactConfig = tseslint.config(
     },
   },
 );
+
+export const jiiRestrictedImports = [
+  // include these again because eslint will not deep-merge the rule options
+  ...reactRestrictedImports,
+  {
+    name: "react-router-dom",
+    importNames: ["useParams"],
+    message:
+      "Please import useTypedParams from react-router-typesafe-routes/dom instead",
+  },
+  {
+    name: "i18next",
+    importNames: ["default"],
+    message:
+      "Don't use the default i18next instance. Use the observable instance managed by TranslationStore instead.",
+  },
+];

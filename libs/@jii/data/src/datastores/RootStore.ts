@@ -27,6 +27,7 @@ import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
 import { StateCode } from "../configs/types";
 import { LoginConfigStore } from "./LoginConfigStore";
 import { ResidentsStore } from "./ResidentsStore";
+import { TranslationStore } from "./TranslationStore";
 import { UiStore } from "./UiStore";
 import { UserStore } from "./UserStore";
 
@@ -50,13 +51,17 @@ export class RootStore {
 
   loginConfigStore: LoginConfigStore;
 
+  translationStore: TranslationStore;
+
   constructor() {
     makeObservable(this, {
       populateResidentsStore: true,
       residentsStore: true,
     });
 
-    this.userStore = new UserStore();
+    this.translationStore = new TranslationStore(this);
+
+    this.userStore = new UserStore(this.translationStore);
 
     this.uiStore = new UiStore();
 
@@ -99,6 +104,9 @@ export class RootStore {
 
     const residentsStore = new ResidentsStore(this, stateCode, config);
     this.residentsStore = residentsStore;
+
+    // update the translations config at the same time to stay in sync with the newly fetched state
+    this.translationStore.updateI18n(config.translation);
 
     return residentsStore;
   }

@@ -195,9 +195,7 @@ const ManagedComponent: FC<{ presenter: NavMenuPresenter }> = observer(
 );
 
 function usePresenter({ links = [] }: { links?: MenuLinks }) {
-  const { userStore, uiStore } = useRootStore();
-
-  return new NavMenuPresenter(links, userStore, uiStore);
+  return new NavMenuPresenter(links, useRootStore());
 }
 
 export const NavMenu = withPresenterManager({

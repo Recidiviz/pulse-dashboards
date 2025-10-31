@@ -22,4 +22,7 @@ import { usMaEgtConfig } from "./egtConfig";
 export const usMaResidentsConfig: ResidentsConfig = {
   home,
   egt: usMaEgtConfig,
+  translation: {
+    additionalLanguages: [],
+  },
 };

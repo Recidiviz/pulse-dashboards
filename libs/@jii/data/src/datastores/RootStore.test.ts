@@ -29,6 +29,8 @@ beforeEach(() => {
 
 test("initialize residents datastore", async () => {
   vi.spyOn(OfflineAPIClient.prototype, "residentsConfig");
+  vi.spyOn(store.translationStore, "updateI18n");
+
   expect(store.residentsStore).toBeUndefined();
 
   await flowResult(store.populateResidentsStore("US_ME"));
@@ -36,4 +38,8 @@ test("initialize residents datastore", async () => {
   expect(store.residentsStore).toBeDefined();
   expect(store.apiClient.residentsConfig).toHaveBeenCalledWith("US_ME");
   expect(store.residentsStore?.config).toEqual(residentsConfigByState.US_ME);
+
+  expect(store.translationStore.updateI18n).toHaveBeenCalledWith(
+    residentsConfigByState.US_ME.translation,
+  );
 });

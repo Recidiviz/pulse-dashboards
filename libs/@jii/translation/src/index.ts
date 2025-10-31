@@ -16,7 +16,7 @@
 // =============================================================================
 
 export * from "./constants";
-export * from "./initTranslations";
+export * from "./createI18nInstance";
 export * from "./namespaces/common/useCommonTranslations";
 export * from "./namespaces/US_AZ/useUsAzTranslations";
 export * from "./namespaces/US_MA/useUsMaTranslations";

@@ -21,6 +21,7 @@ import { AuthorizedUserProfile } from "~@jii/auth";
 import { isDemoMode as isDemoEnv, isOfflineMode } from "~client-env-utils";
 import { Hydratable, HydrationState, isHydrated } from "~hydration-utils";
 
+import { TranslationStore } from "../../datastores/TranslationStore";
 import { isEdovoEnv } from "../../utils/edovo";
 import { Auth0AuthHandler } from "./Auth0AuthHandler";
 import { EdovoAuthHandler } from "./EdovoAuthHandler";
@@ -30,7 +31,7 @@ import { AuthHandler, AuthState, isAuthorizedState } from "./types";
 export class AuthManager implements Hydratable {
   private readonly handler: AuthHandler;
 
-  constructor() {
+  constructor(translationStore: TranslationStore) {
     makeAutoObservable<this, "handler">(this, {
       handler: false,
       authClient: false,
@@ -39,7 +40,7 @@ export class AuthManager implements Hydratable {
     if (isOfflineMode()) {
       this.handler = new OfflineAuthHandler();
     } else if (isEdovoEnv()) {
-      this.handler = new EdovoAuthHandler();
+      this.handler = new EdovoAuthHandler(translationStore);
     } else {
       this.handler = new Auth0AuthHandler();
     }

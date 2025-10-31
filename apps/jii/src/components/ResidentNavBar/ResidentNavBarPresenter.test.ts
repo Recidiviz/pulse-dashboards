@@ -17,7 +17,11 @@
 
 import { configure } from "mobx";
 
-import { residentsConfigByState, UserStore } from "~@jii/data";
+import {
+  residentsConfigByState,
+  TranslationStore,
+  UserStore,
+} from "~@jii/data";
 import { usMeResidents } from "~datatypes";
 
 import { ResidentNavBarPresenter } from "./ResidentNavBarPresenter";
@@ -31,7 +35,10 @@ const stateSlug = "maine";
 beforeEach(() => {
   configure({ safeDescriptors: false });
 
-  userStore = new UserStore();
+  userStore = new UserStore(
+    // stubbing this as it just gets passed through to something we aren't using here
+    {} as TranslationStore,
+  );
   vi.spyOn(userStore, "hasPermission").mockReturnValue(false);
 });
 

@@ -15,28 +15,44 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import i18nextDefaultInstance, { TFunction } from "i18next";
+import { createInstance } from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import ChainedBackend from "i18next-chained-backend";
 import resourcesToBackend from "i18next-resources-to-backend";
-import { initReactI18next } from "react-i18next";
 
 import { formatDistanceFromTodayFormatter } from "./plugins/formatters/distanceFromToday";
 import { fullDateFormatter } from "./plugins/formatters/fullDate";
 import { monthYearFormatter } from "./plugins/formatters/monthYear";
 
-let initPromise: Promise<TFunction> | undefined = undefined;
+export type SupportedLanguagesOption = Array<string> | "_ALL_";
 
-export const initTranslations = () => {
-  // prevent repeat init calls
-  if (initPromise) return initPromise;
+/**
+ * Generates a fresh i18next instance with our standard configuration (including plugins,
+ * custom formatters, etc)
+ * @param additionalLanguages if an array, members will be added on top of default English.
+ * else if the magic keyword, no language restrictions will be applied
+ * @returns a new i18next instance
+ */
+export function createI18nInstance(
+  additionalLanguages: SupportedLanguagesOption,
+) {
+  const supportedLngs = Array.isArray(additionalLanguages)
+    ? [
+        ...additionalLanguages,
+        // baseline/fallback language that states don't have to specify
+        "en",
+      ]
+    : false;
 
-  initPromise = i18nextDefaultInstance
-    .use(initReactI18next)
+  const newInstance = createInstance();
+  newInstance
     .use(ChainedBackend)
     .use(LanguageDetector)
     .init({
       fallbackLng: "en",
+      supportedLngs,
+      // this lets missing langauges fall back to a base version, e.g. es-ES > es
+      nonExplicitSupportedLngs: true,
       partialBundledLanguages: true,
       resources: {},
       interpolation: {
@@ -44,6 +60,7 @@ export const initTranslations = () => {
         escapeValue: false,
       },
       detection: {
+        // only Orijin devices use this
         lookupQuerystring: "locale",
       },
       backend: {
@@ -62,18 +79,18 @@ export const initTranslations = () => {
       },
     });
 
-  i18nextDefaultInstance.services.formatter?.addCached(
+  newInstance.services.formatter?.addCached(
     "formatFullDate",
     fullDateFormatter,
   );
-  i18nextDefaultInstance.services.formatter?.addCached(
+  newInstance.services.formatter?.addCached(
     "formatMonthYear",
     monthYearFormatter,
   );
-  i18nextDefaultInstance.services.formatter?.addCached(
+  newInstance.services.formatter?.addCached(
     "formatDistanceFromToday",
     formatDistanceFromTodayFormatter,
   );
 
-  return initPromise;
-};
+  return newInstance;
+}

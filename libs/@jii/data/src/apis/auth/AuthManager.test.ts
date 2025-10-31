@@ -17,18 +17,21 @@
 
 import { MockInstance } from "vitest";
 
-import { isDemoMode } from "~client-env-utils";
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import { HydrationState } from "~hydration-utils";
 
+import { RootStore } from "../../datastores/RootStore";
 import { isEdovoEnv } from "../../utils/edovo";
 import { Auth0AuthHandler } from "./Auth0AuthHandler";
 import { AuthManager } from "./AuthManager";
 import { EdovoAuthHandler } from "./EdovoAuthHandler";
+import { OfflineAuthHandler } from "./OfflineAuthHandler";
 import { AuthorizedUserProperties } from "./types";
 
 vi.mock("~client-env-utils");
 vi.mock("./Auth0AuthHandler");
 vi.mock("./EdovoAuthHandler");
+vi.mock("./OfflineAuthHandler");
 vi.mock("../../utils/edovo");
 
 let manager: AuthManager;
@@ -39,13 +42,14 @@ describe("using auth0", () => {
   beforeEach(() => {
     vi.mocked(isEdovoEnv).mockReturnValue(false);
 
-    manager = new AuthManager();
+    manager = new RootStore().userStore.authManager;
     handler = vi.mocked(Auth0AuthHandler).mock.instances[0];
   });
 
   test("uses the right handler", () => {
     expect(Auth0AuthHandler).toHaveBeenCalled();
     expect(EdovoAuthHandler).not.toHaveBeenCalled();
+    expect(OfflineAuthHandler).not.toHaveBeenCalled();
   });
 
   test("properties deferred to handler", () => {
@@ -144,8 +148,24 @@ describe("using edovo token", () => {
   test("triggered by environment check", () => {
     vi.mocked(isEdovoEnv).mockReturnValue(true);
 
-    manager = new AuthManager();
+    manager = new RootStore().userStore.authManager;
+
     expect(EdovoAuthHandler).toHaveBeenCalled();
     expect(Auth0AuthHandler).not.toHaveBeenCalled();
+    expect(OfflineAuthHandler).not.toHaveBeenCalled();
+  });
+});
+
+describe("offline", () => {
+  beforeEach(() => {
+    vi.mocked(isOfflineMode).mockReturnValue(true);
+
+    manager = new RootStore().userStore.authManager;
+  });
+
+  test("uses the right handler", () => {
+    expect(Auth0AuthHandler).not.toHaveBeenCalled();
+    expect(EdovoAuthHandler).not.toHaveBeenCalled();
+    expect(OfflineAuthHandler).toHaveBeenCalled();
   });
 });

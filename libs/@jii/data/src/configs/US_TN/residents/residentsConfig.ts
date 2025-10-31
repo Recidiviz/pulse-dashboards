@@ -21,4 +21,7 @@ import { home } from "../../defaults";
 
 export const usTnResidentsConfig: ResidentsConfig = {
   home,
+  translation: {
+    additionalLanguages: [],
+  },
 };

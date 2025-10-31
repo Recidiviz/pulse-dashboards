@@ -111,6 +111,10 @@ export type ComparisonPageConfig = {
   };
 };
 
+export type TranslationConfig = {
+  additionalLanguages: Array<string>;
+};
+
 export type ResidentsConfig = {
   home: {
     footer: {
@@ -127,6 +131,7 @@ export type ResidentsConfig = {
   eligibility?: EligibilityModuleConfig;
   progress?: ProgressModuleConfig;
   egt?: EarnedGoodTimeConfig;
+  translation: TranslationConfig;
 };
 
 export type EligibilityModuleConfig = {

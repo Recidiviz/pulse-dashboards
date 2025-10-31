@@ -15,10 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { MockInstance } from "vitest";
 
-import { RootStore, useRootStore } from "~@jii/data";
+import { Permission } from "~@jii/auth";
+import { RootStore, useRootStore, UserStore } from "~@jii/data";
+import { TRANSLATOR_MODE_LANGUAGE_CODE } from "~@jii/translation";
 
 import { NavMenu } from "./NavMenu";
 
@@ -30,12 +33,14 @@ vi.mock("~@jii/data", async (importOriginal) => {
 });
 
 let rootStore: RootStore;
+let permissionSpy: MockInstance<(permission: Permission) => boolean>;
 
 function simulateIframe() {
   vi.stubGlobal("parent", { foo: "bar" });
 }
 
 beforeEach(() => {
+  permissionSpy = vi.spyOn(UserStore.prototype, "hasPermission");
   rootStore = new RootStore();
   vi.mocked(useRootStore).mockReturnValue(rootStore);
 });
@@ -84,4 +89,83 @@ test("hide menu if empty", () => {
   expect(
     screen.queryByRole("button", { name: "Menu" }),
   ).not.toBeInTheDocument();
+});
+
+test("hide translator controls", () => {
+  render(
+    <MemoryRouter>
+      <NavMenu />
+    </MemoryRouter>,
+  );
+
+  // open the menu
+  fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+
+  expect(
+    screen.queryByRole("button", { name: "Enter Translator Mode" }),
+  ).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: "Toggle Eng/Esp" }),
+  ).not.toBeInTheDocument();
+});
+
+describe("with translator permission", () => {
+  beforeEach(() => {
+    permissionSpy.mockImplementation((p) => p === "translator");
+
+    render(
+      <MemoryRouter>
+        <NavMenu />
+      </MemoryRouter>,
+    );
+
+    // open the menu
+    fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+  });
+
+  test("show translator controls", () => {
+    expect(
+      screen.getByRole("button", { name: "Enter Translator Mode" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Toggle Eng/Esp" }),
+    ).toBeInTheDocument();
+  });
+
+  test("toggle translator mode", async () => {
+    fireEvent.click(
+      screen.getByRole("button", { name: "Enter Translator Mode" }),
+    );
+
+    const toggledButton = await screen.findByRole("button", {
+      name: "Exit Translator Mode",
+    });
+    expect(toggledButton).toBeInTheDocument();
+    expect(rootStore.translationStore.i18n.language).toBe(
+      TRANSLATOR_MODE_LANGUAGE_CODE,
+    );
+
+    fireEvent.click(toggledButton);
+    expect(
+      await screen.findByRole("button", { name: "Enter Translator Mode" }),
+    ).toBeInTheDocument();
+    expect(rootStore.translationStore.i18n.language).toBe("en-US");
+  });
+
+  test("toggle English and Spanish", async () => {
+    const toggleButton = screen.getByRole("button", {
+      name: "Toggle Eng/Esp",
+    });
+
+    fireEvent.click(toggleButton);
+
+    await waitFor(() =>
+      expect(rootStore.translationStore.i18n.language).toBe("es"),
+    );
+
+    fireEvent.click(toggleButton);
+    await waitFor(() =>
+      expect(rootStore.translationStore.i18n.language).toBe("en"),
+    );
+  });
 });
