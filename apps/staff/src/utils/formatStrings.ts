@@ -548,6 +548,63 @@ function appendDateSuffixIfMissing(label: string): string {
 const capitalizeName = (name: string) =>
   name.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 
+/**
+ * Return a formatted version of the provided address for frontend display.
+ *
+ * Assumes the param is an address from Texas, which arrives in this format:
+ * street city state ZIP
+ */
+function formatTexasAddress(address: string): string {
+  const capitalizationExceptions = [
+    "TX", // Texas
+    "FM", // Farm-to-market road
+    "CR", // County road
+    "PR", // Private road
+    "RV", // Recreational vehicle
+    "SW", // Southwest
+    "NW", // Northwest
+    "SE", // Southeast
+    "NE", // Northeast
+  ];
+
+  return (
+    address
+      // Replace any pipes since they are Google Maps URL special characters
+      .replace("|", ", ")
+
+      // The first word that is entirely composed of numbers is most likely the start
+      // of the street address. Anything before that is likely to be a description of
+      // the place and isn't necessary to include.
+      // If the address starts with a word of numbers, remove nothing from the start.
+      // If the address starts with something else, remove everything up to the first word of numbers.
+      .replace(/^(|.+? )(?=\d+\b)/, "")
+
+      // If the ZIP code is formatted as ZIP+4 or 9 digits, take the first 5 digits
+      .replace(/\d{5}-?\d{4}$/, (zip) => zip.slice(0, 5))
+
+      // Add a space after any comma or period with an alphabetic character directly after it,
+      // so that we can title case properly
+      .replace(/[.,](?=[A-Za-z])/g, (match) => match + " ")
+
+      // Remove any phone numbers where the digits are separated by spaces
+      .replace(/(1 )?\d{3} \d{3} \d{4}./g, "")
+
+      // Title case all words except common abbreviations in TX addresses
+      .split(" ")
+      .flatMap((word) => {
+        // Remove any double spaces and any words that contain a phone number
+        if (!word || word.match(/(1.?)?\d{3}.?\d{3}.?\d{4}/)) {
+          return [];
+        } else if (capitalizationExceptions.includes(word)) {
+          return [word];
+        } else {
+          return toTitleCase(word);
+        }
+      })
+      .join(" ")
+  );
+}
+
 export {
   appendDateSuffixIfMissing,
   capitalizeName,
@@ -570,6 +627,7 @@ export {
   formatNameLastFirst,
   formatOfficerLabel,
   formatPercent,
+  formatTexasAddress,
   formatWorkflowsDate,
   formatWorkflowsDateString,
   formatWorkflowsDateWithTime,

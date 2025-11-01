@@ -43,6 +43,7 @@ import {
 } from "../FirestoreStore/types";
 import type { RootStore } from "../RootStore";
 import { TENANT_CONFIGS } from "../tenants";
+import { formatTexasAddress } from "../utils/formatStrings";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
 import { SupervisionTaskInterface, SupervisionTasks } from "./Task/types";
@@ -268,6 +269,15 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
     // TODO(#8230): Check against dedicated in-custody flag
     return this.supervisionLevel === "In-custody";
+  }
+
+  // An address formatted nicely for external display
+  get formattedAddress(): string | undefined {
+    if (!this.address) return;
+
+    if (this.stateCode !== "US_TX") return this.address;
+
+    return formatTexasAddress(this.address);
   }
 
   get rawPhoneNumber(): string | undefined {

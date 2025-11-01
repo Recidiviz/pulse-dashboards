@@ -18,7 +18,7 @@
 import tk from "timekeeper";
 
 import * as utils from "../formatStrings";
-import { formatYearsMonthsFromNow } from "../formatStrings";
+import { formatTexasAddress, formatYearsMonthsFromNow } from "../formatStrings";
 
 describe("formatStrings", () => {
   it("get gender from array genderValuetoLabel", () => {
@@ -477,11 +477,13 @@ describe("formatStrings", () => {
 
   describe("htmlStringToString", () => {
     it("replaces <br> with new line", () => {
-      const originalString = "submitted on DATE <br> by: PERSON <BR>";
+      const originalString = "submitted on DATE<br> by: PERSON<BR>";
       const result = utils.htmlStringToString(originalString);
-      expect(result).toEqual(`submitted on DATE 
- by: PERSON 
-`);
+      expect(result).toMatchInlineSnapshot(`
+        "submitted on DATE
+         by: PERSON
+        "
+      `);
     });
 
     it("replaces nbsp with space", () => {
@@ -532,6 +534,123 @@ describe("formatStrings", () => {
       ["End", "End Date"],
     ])("matches casing for '%s'", (input, expected) => {
       expect(appendDateSuffixIfMissing(input)).toBe(expected);
+    });
+  });
+
+  describe("formatTexasAddress", () => {
+    it("handles normal addresses", () => {
+      expect(
+        formatTexasAddress("123 MAIN ST, ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+      expect(
+        formatTexasAddress("2 SOME LONG AVENUE, LONGER CITY NAME, TX 12345"),
+      ).toMatchInlineSnapshot(
+        `"2 Some Long Avenue, Longer City Name, TX 12345"`,
+      );
+      expect(
+        formatTexasAddress("99 COUNTY HWY 999 ANYTOWN TX 12345"),
+      ).toMatchInlineSnapshot(`"99 County Hwy 999 Anytown TX 12345"`);
+      expect(
+        formatTexasAddress("100 FM 100 ANYTOWN TX 12345"),
+      ).toMatchInlineSnapshot(`"100 FM 100 Anytown TX 12345"`);
+      expect(
+        formatTexasAddress("1000 5TH DRIVE APT#123, ANYTOWN, TX, 12345"),
+      ).toMatchInlineSnapshot(`"1000 5th Drive Apt#123, Anytown, Tx, 12345"`);
+    });
+
+    it("reformats ZIP codes at the end of addresses", () => {
+      expect(
+        formatTexasAddress("123 MAIN ST, ANYTOWN, TX 123450000"),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+      expect(
+        formatTexasAddress("123 MAIN ST, ANYTOWN, TX 12345-6789"),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+    });
+
+    it("removes pipes", () => {
+      expect(
+        formatTexasAddress("123 MAIN ST|APT#3, ANYTOWN, TX 12345"),
+      ).not.toContain("|");
+    });
+
+    it("removes words before the first all-numbers word", () => {
+      expect(
+        formatTexasAddress(
+          "FAKE NAME APARTMENTS, 123 MAIN ST, ANYTOWN, TX 12345",
+        ),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+
+      expect(
+        formatTexasAddress("ABC123 HOMES #456, 123 MAIN ST, ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+
+      expect(
+        formatTexasAddress(
+          "1ST STEP SOLUTIONS, 123 MAIN ST, ANYTOWN, TX 12345",
+        ),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+
+      expect(
+        formatTexasAddress("EXAMPLE'S RV PARK 123 MAIN ST, ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+    });
+
+    it("adds spaces only where needed after periods and commas", () => {
+      expect(
+        formatTexasAddress("123 S.MAIN ST, ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 S. Main St, Anytown, TX 12345"`);
+
+      expect(
+        formatTexasAddress("123 S. MAIN ST., ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 S. Main St., Anytown, TX 12345"`);
+    });
+
+    it("removes phone numbers in different formats", () => {
+      // all of these are present in our TX data
+      expect(
+        formatTexasAddress("123 MAIN ST 555 555 5555 ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St Anytown, TX 12345"`);
+      expect(
+        formatTexasAddress("123 MAIN ST 555.555.5555 ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St Anytown, TX 12345"`);
+      expect(
+        formatTexasAddress("123 MAIN ST #555.555.5555 ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St Anytown, TX 12345"`);
+      expect(
+        formatTexasAddress("123 MAIN ST 555/555/5555 ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St Anytown, TX 12345"`);
+      expect(
+        formatTexasAddress("123 MAIN ST, 5555555555, ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+      expect(
+        formatTexasAddress("123 MAIN ST, 1 555 555 5555, ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+      expect(
+        formatTexasAddress("123 MAIN ST, #555-555-5555, ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+      expect(
+        formatTexasAddress("123 MAIN ST, CELL#555-555-5555, ANYTOWN, TX 12345"),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+    });
+
+    it("removes multiple phone numbers when multiple are present", () => {
+      // multiple phone numbers
+      expect(
+        formatTexasAddress(
+          "123 MAIN ST, 555-555-5555/555-555-5555, ANYTOWN, TX 12345",
+        ),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+      expect(
+        formatTexasAddress(
+          "123 MAIN ST, 555-555-5555/555-555-5555 555.555.5555, ANYTOWN, TX 12345",
+        ),
+      ).toMatchInlineSnapshot(`"123 Main St, Anytown, TX 12345"`);
+
+      expect(
+        formatTexasAddress(
+          "123 MAIN ST, MOM 555 555 5555 BROTHER 555 555 5555, ANYTOWN, TX 12345",
+        ),
+      ).toMatchInlineSnapshot(`"123 Main St, Mom Brother Anytown, TX 12345"`);
     });
   });
 });

@@ -136,7 +136,9 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   // Public methods for handling the list of selected people
 
   get selectedAddresses() {
-    return this.selectedPeople.map((person) => (person as Client).address);
+    return this.selectedPeople.map(
+      (person) => (person as Client).formattedAddress,
+    );
   }
 
   get selectedClients(): readonly JusticeInvolvedPerson[] {

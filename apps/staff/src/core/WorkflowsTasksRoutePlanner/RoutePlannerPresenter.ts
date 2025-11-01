@@ -17,6 +17,7 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { formatTexasAddress } from "../../utils";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
 
@@ -43,7 +44,9 @@ export class RoutePlannerPresenter {
 
   get startingAddress(): string {
     // TODO(#9405): Replace with the address of the logged-in user's DPO
-    return "5400 N.SAM HOUSTON PKWY EAST HOUSTON TX 770320000";
+    return formatTexasAddress(
+      "5400 N.SAM HOUSTON PKWY EAST HOUSTON TX 770320000",
+    );
   }
 
   get mapIframeUrl(): string {
@@ -51,7 +54,9 @@ export class RoutePlannerPresenter {
     const waypoints =
       selectedAddresses.length === 0
         ? {}
-        : { waypoints: selectedAddresses.join("|") };
+        : {
+            waypoints: selectedAddresses.join("|"),
+          };
 
     const queryParams = {
       key: this.mapsApiKey,
