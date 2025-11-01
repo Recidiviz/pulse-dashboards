@@ -15,15 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Sans14, Sans24 } from "@recidiviz/design-system";
+import { Sans14, Sans24, TooltipTrigger } from "@recidiviz/design-system";
+import * as Sentry from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
+import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
-import { palette, spacing } from "~design-system";
+import { Button, palette, spacing } from "~design-system";
 
+import CopyIcon from "../../assets/static/images/copy.svg?react";
 import Star from "../../assets/static/images/grayStar.svg?react";
+import SendIcon from "../../assets/static/images/sendIcon.svg?react";
 import { Client } from "../../WorkflowsStore";
 import { Divider } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { RoutePlannerPresenter } from "./RoutePlannerPresenter";
@@ -57,9 +61,38 @@ const RouteDescriptionBox = styled.div`
   margin-left: ${rem(10)};
 `;
 
+const RouteDescriptionControls = styled.div`
+  display: flex;
+  margin-bottom: ${rem(14)};
+`;
+
+const CopyButton = styled.div`
+  height: ${rem(30)};
+  width: ${rem(20)};
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-left: auto;
+  margin-right: ${rem(spacing.sm)};
+
+  &:hover {
+    background: ${palette.slate05};
+    cursor: pointer;
+  }
+  &:active {
+    background: ${palette.slate20};
+    cursor: pointer;
+  }
+`;
+
+const EmailButtonText = styled.span`
+  margin-left: ${rem(spacing.sm)};
+`;
+
 const RouteDescriptionText = styled(Sans24)`
   color: ${palette.pine4};
-  margin-bottom: ${rem(14)};
 `;
 
 const RouteInfo = styled(Sans14)`
@@ -135,9 +168,44 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
 }) {
   if (presenter.clientsPresenter.selectedClients.length === 0) return null;
 
+  const onClickCopyLink = async () => {
+    const { mapDirectionsUrl } = presenter;
+    await navigator.clipboard.writeText(mapDirectionsUrl);
+    toast("Link copied to clipboard", {
+      position: "bottom-left",
+      duration: 5000,
+    });
+  };
+
+  const onClickEmailLink = async () => {
+    try {
+      await presenter.sendDirectionsEmail();
+      toast(`Email sent to ${presenter.userEmailAddress}`, {
+        position: "bottom-left",
+        duration: 5000,
+      });
+    } catch (e) {
+      toast.error("We couldn't send your email. Please try again.");
+      Sentry.captureException(e);
+    }
+  };
+
   return (
     <RouteDescriptionBox>
-      <RouteDescriptionText>Your journey</RouteDescriptionText>
+      <RouteDescriptionControls>
+        <RouteDescriptionText>Your trip</RouteDescriptionText>
+
+        <CopyButton onClick={onClickCopyLink}>
+          <TooltipTrigger contents={"Copy link to clipboard"}>
+            <CopyIcon />
+          </TooltipTrigger>
+        </CopyButton>
+
+        <Button shape={"block"} onClick={onClickEmailLink}>
+          <SendIcon />
+          <EmailButtonText>Email link to self</EmailButtonText>
+        </Button>
+      </RouteDescriptionControls>
 
       <RouteInfo>
         <AddressRow
