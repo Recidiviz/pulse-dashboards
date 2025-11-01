@@ -182,23 +182,19 @@ export class RoutePlannerPresenter {
     const { selectedAddresses } = this.clientsPresenter;
     const waypoints =
       selectedAddresses.length === 0
-        ? {}
+        ? { waypoints: "" }
         : {
             waypoints: selectedAddresses.join("|"),
           };
 
-    const queryParams = {
+    const queryParams = new URLSearchParams({
       key: this.mapsApiKey,
       mode: "driving",
       origin: this.startingAddress,
       destination: this.startingAddress,
       ...waypoints,
-    };
+    }).toString();
 
-    const formattedQueryParams = Object.entries(queryParams)
-      .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
-      .join("&");
-
-    return `${BASE_EMBED_URL}?${formattedQueryParams}`;
+    return `${BASE_EMBED_URL}?${queryParams}`;
   }
 }

@@ -26,6 +26,7 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
+import { formatTexasAddress } from "../../utils";
 import { PartialRecord } from "../../utils/typeUtils";
 import {
   Client,
@@ -35,6 +36,8 @@ import {
   WorkflowsStore,
 } from "../../WorkflowsStore";
 import { SearchStore } from "../../WorkflowsStore/SearchStore";
+
+const BASE_SEARCH_URL = "https://www.google.com/maps/search/";
 
 /**
  * Responsible for keeping track of selected clients and officers on the
@@ -131,6 +134,17 @@ export class RoutePlannerClientsPresenter implements Hydratable {
       type: this.TASK_TYPE_COPY[task.type] ?? "Other",
       scheduledStatus: "To-Do",
     };
+  }
+
+  /**
+   * Creates a Google Maps Search URL to the given address
+   */
+  mapsAddressLink(address: string) {
+    const params = new URLSearchParams({
+      api: "1",
+      query: formatTexasAddress(address),
+    }).toString();
+    return `${BASE_SEARCH_URL}?${params}`;
   }
 
   // Public methods for handling the list of selected people

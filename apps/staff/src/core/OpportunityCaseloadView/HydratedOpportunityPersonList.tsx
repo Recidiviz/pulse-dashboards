@@ -133,6 +133,7 @@ export const MaxWidthFlexWrapper = styled.div<{ fullWidth?: boolean }>`
   ${({ fullWidth }) => !fullWidth && MaxWidth}
 `;
 export const EmptyStateWrapper = styled.div`
+  min-height: ${rem(80)};
   width: 100%;
   margin-top: ${rem(spacing.md)};
   flex-grow: 1;

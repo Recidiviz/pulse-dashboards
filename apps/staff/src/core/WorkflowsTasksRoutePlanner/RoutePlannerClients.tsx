@@ -16,12 +16,12 @@
 // =============================================================================
 
 import {
-  animation,
   Pill,
   Sans12,
   Sans14,
   Sans16,
   spacing,
+  TooltipTrigger,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -55,8 +55,11 @@ const ClientsWrapper = styled.div`
 `;
 
 const OfficerSectionLabel = styled(SectionLabelText)`
-  margin-top: 0;
-  margin-bottom: ${rem(spacing.md)};
+  &:first-child {
+    margin-top: 0;
+  }
+
+  margin-bottom: ${rem(spacing.sm)};
   text-transform: uppercase;
 `;
 
@@ -71,6 +74,7 @@ const ClientCardGrid = styled.div`
 
 const BorderedClientCard = styled.div<{
   $selected: boolean;
+  $selectable: boolean;
 }>`
   border-radius: ${rem(8)};
   padding: ${rem(14)} ${rem(16)};
@@ -79,20 +83,27 @@ const BorderedClientCard = styled.div<{
   flex-direction: row;
 
   border: 1px solid;
-  border-color: ${({ $selected }) =>
-    $selected ? palette.slate50 : palette.slate20};
-  background-color: ${({ $selected }) =>
-    $selected ? palette.marble3 : palette.marble1};
-  transition: all ease ${animation.defaultDurationMs}ms;
 
-  :hover,
-  :focus {
-    border-color: ${({ $selected }) =>
-      $selected ? palette.slate80 : palette.slate50};
-    background-color: ${({ $selected }) =>
-      $selected ? palette.marble5 : palette.marble2};
-    cursor: pointer;
-  }
+  ${({ $selectable, $selected }) =>
+    $selectable &&
+    `border-color: ${$selected ? palette.slate50 : palette.slate20};
+      background-color: ${$selected ? palette.marble3 : palette.marble1};
+      transition: all ease 200ms;
+
+      :hover,
+      :focus {
+        border-color: ${$selected ? palette.slate80 : palette.slate50};
+        background-color: ${$selected ? palette.marble5 : palette.marble2};
+        cursor: pointer;
+      }`}
+
+  ${({ $selectable }) =>
+    !$selectable &&
+    `
+      border-color: ${palette.slate50};
+      background-color: ${palette.slate20};
+      cursor: not-allowed;
+    `}
 `;
 
 const ClientInfo = styled.div`
@@ -146,6 +157,11 @@ const SmallInfoText = styled(Sans14)`
   font-weight: 400;
 `;
 
+const SmallInfoLink = styled(Sans14)`
+  color: ${palette.signal.links};
+  text-decoration: underline;
+`;
+
 const SchedulingBadge = styled(Pill).attrs({
   color: "rgb(244, 233, 215)",
   filled: true,
@@ -166,8 +182,12 @@ const BaseCheckbox = styled.span`
   border-radius: ${rem(2)};
 `;
 
-const EmptyCheckbox = styled(BaseCheckbox)`
+const EmptyCheckbox = styled(BaseCheckbox)<{
+  $selectable: boolean;
+}>`
   border-color: ${palette.slate20};
+
+  ${({ $selectable }) => !$selectable && `cursor: not-allowed;`}
 `;
 
 const NumberedCheckbox = styled(BaseCheckbox)`
@@ -205,11 +225,15 @@ const ClientCard = observer(function ClientCard({
 
   const isSelected = presenter.isPersonSelected(person);
   const ordinalRank = presenter.indexOfPerson(person) + 1;
+  const isSelectable = person.formattedAddress !== undefined;
 
   return (
     <BorderedClientCard
+      $selectable={isSelectable}
       $selected={isSelected}
       onClick={() => {
+        if (!isSelectable) return;
+
         if (isSelected) {
           presenter.removePerson(person);
         } else {
@@ -222,7 +246,7 @@ const ClientCard = observer(function ClientCard({
           <CheckboxContents>{ordinalRank}</CheckboxContents>
         </NumberedCheckbox>
       ) : (
-        <EmptyCheckbox />
+        <EmptyCheckbox $selectable={isSelectable} />
       )}
 
       <ClientInfo>
@@ -239,7 +263,22 @@ const ClientCard = observer(function ClientCard({
         <AdditionalInfo>
           <InfoRow>
             <LocationIcon />
-            <SmallInfoText>{person.address}</SmallInfoText>
+
+            {person.address ? (
+              <a
+                href={presenter.mapsAddressLink(person.address)}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => {
+                  // Prevent link clicks from also selecting the person's card
+                  e.stopPropagation();
+                }}
+              >
+                <SmallInfoLink>{person.address}</SmallInfoLink>
+              </a>
+            ) : (
+              <SmallInfoText>No address on file</SmallInfoText>
+            )}
           </InfoRow>
           <InfoRow>
             <TagsIcon />
@@ -250,7 +289,11 @@ const ClientCard = observer(function ClientCard({
         <SchedulingBadge>{scheduledStatus}</SchedulingBadge>
       </ClientInfo>
 
-      <PhoneIcon />
+      {person.phoneNumber && (
+        <TooltipTrigger contents={`Phone number: ${person.phoneNumber}`}>
+          <PhoneIcon />
+        </TooltipTrigger>
+      )}
     </BorderedClientCard>
   );
 });
@@ -262,36 +305,54 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
 }) {
   const { selectedOfficers, contacts } = presenter;
 
+  const noContacts = Object.values(contacts).flat().length === 0;
+  const noOfficers = selectedOfficers.length === 0;
+  if (noContacts || noOfficers) {
+    const emptyStateText = noOfficers
+      ? "Select a caseload to show results."
+      : "None of the selected officers have contacts available.";
+
+    return (
+      <ClientsWrapper>
+        <EmptyStateWrapper>
+          <EmptyStateText>{emptyStateText}</EmptyStateText>
+        </EmptyStateWrapper>
+      </ClientsWrapper>
+    );
+  }
+
   return (
     <ClientsWrapper>
-      {selectedOfficers.length === 0 ? (
-        <EmptyStateWrapper>
-          <EmptyStateText>Select a caseload to show results.</EmptyStateText>
-        </EmptyStateWrapper>
-      ) : (
-        selectedOfficers.map(({ searchId, searchLabel }) => {
-          if (contacts[searchId] && contacts[searchId].length > 0) {
-            return (
-              <React.Fragment key={searchId}>
-                <OfficerSectionLabel>
-                  <span className="fs-exclude">{`Suggested contacts for ${searchLabel}`}</span>
-                </OfficerSectionLabel>
-                <ClientCardGrid>
-                  {contacts[searchId].map((task) => (
-                    <ClientCard
-                      key={`${task.person.pseudonymizedId}-${task.type}`}
-                      task={task}
-                      presenter={presenter}
-                    />
-                  ))}
-                </ClientCardGrid>
-              </React.Fragment>
-            );
-          } else {
-            return null;
-          }
-        })
-      )}
+      {selectedOfficers.map(({ searchId, searchLabel }) => {
+        if (!contacts[searchId]) return null;
+
+        const numContacts = contacts[searchId].length;
+        return (
+          <React.Fragment key={searchId}>
+            <OfficerSectionLabel>
+              <span className="fs-exclude">{`${numContacts} suggested contacts for ${searchLabel}`}</span>
+            </OfficerSectionLabel>
+
+            {numContacts > 0 ? (
+              <ClientCardGrid>
+                {contacts[searchId].map((task) => (
+                  <ClientCard
+                    key={`${task.person.pseudonymizedId}-${task.type}`}
+                    task={task}
+                    presenter={presenter}
+                  />
+                ))}
+              </ClientCardGrid>
+            ) : (
+              <EmptyStateWrapper>
+                <EmptyStateText>
+                  {"No home contacts available on this caseload."}
+                </EmptyStateText>
+              </EmptyStateWrapper>
+            )}
+          </React.Fragment>
+        );
+      })}
     </ClientsWrapper>
   );
 });
