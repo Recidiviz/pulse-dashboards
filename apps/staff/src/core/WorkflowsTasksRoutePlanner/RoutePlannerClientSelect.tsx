@@ -22,6 +22,7 @@ import ModelHydrator from "../ModelHydrator";
 import { Heading } from "../sharedComponents";
 import { TasksDescription } from "../WorkflowsTasks/TasksDescription";
 import { RoutePlannerClients } from "./RoutePlannerClients";
+import { RoutePlannerPlacePicker } from "./RoutePlannerPlacePicker";
 import { RoutePlannerPresenter } from "./RoutePlannerPresenter";
 
 const RoutePlannerSelectContainer = styled.div`
@@ -47,6 +48,7 @@ export const RoutePlannerClientSelect = ({
       <TasksDescription>
         To plan your home visit trips, select people below.
       </TasksDescription>
+      <RoutePlannerPlacePicker presenter={presenter} />
       <ScrollableWrapper>
         <ModelHydrator hydratable={presenter.clientsPresenter}>
           <RoutePlannerClients presenter={presenter.clientsPresenter} />

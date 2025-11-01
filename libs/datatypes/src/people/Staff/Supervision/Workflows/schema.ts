@@ -19,11 +19,20 @@ import { z } from "zod";
 
 import { ParsedRecord } from "~datatypes";
 
+import { nullishAsUndefined } from "../../../../utils/zod";
 import { workflowsStaffRecordBaseSchema } from "../../staffWorkflowsRecordBaseSchema";
 
 const usTxSupervisionStaffStateSpecificSchema = z.object({
   stateCode: z.literal("US_TX"),
   isInUnderstaffedOffice: z.boolean().default(false),
+  dpoAddress: nullishAsUndefined(
+    z.object({
+      line1: z.string(),
+      line2: nullishAsUndefined(z.string()),
+      city: z.string(),
+      zip: z.string(),
+    }),
+  ),
 });
 
 const supervisionStaffStateSpecificSchema = z.union([

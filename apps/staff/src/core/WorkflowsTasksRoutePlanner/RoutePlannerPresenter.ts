@@ -20,6 +20,7 @@ import { makeAutoObservable } from "mobx";
 
 import { formatTexasAddress, formatWorkflowsDate } from "../../utils";
 import { WorkflowsStore } from "../../WorkflowsStore";
+import { Officer } from "../../WorkflowsStore/Officer";
 import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -39,6 +40,7 @@ type MapDirectionsRequestProps = {
  */
 export class RoutePlannerPresenter {
   public readonly clientsPresenter: RoutePlannerClientsPresenter;
+  userPickedStartingAddress: string | undefined = undefined;
 
   constructor(private readonly workflowsStore: WorkflowsStore) {
     this.clientsPresenter = new RoutePlannerClientsPresenter(workflowsStore);
@@ -50,12 +52,56 @@ export class RoutePlannerPresenter {
     return API_KEY;
   }
 
-  get startingAddress(): string {
-    // TODO(#9405): Replace with the address of the logged-in user's DPO
-    return formatTexasAddress(
-      "5400 N.SAM HOUSTON PKWY EAST HOUSTON TX 770320000",
-    );
+  // Starting address picker and autocomplete settings
+
+  get startingAddress() {
+    return this.userPickedStartingAddress ?? this.startingAddressPlaceholder;
   }
+
+  get startingAddressPlaceholder(): string {
+    // Assemble addresses for all selected officers
+    const addresses = this.workflowsStore.searchStore.selectedSearchables.map(
+      (searchable) => {
+        if (
+          !(searchable instanceof Officer) ||
+          searchable.record.recordType !== "supervisionStaff"
+        ) {
+          return;
+        }
+        return searchable.record?.stateSpecificData?.dpoAddress;
+      },
+    );
+    const formattedAddresses = addresses
+      .filter((address) => !!address)
+      .map(
+        (address) =>
+          `${address.line1}${address.line2 ? " " + address.line2 : ""}, ${address.city}, TX ${address.zip}`,
+      );
+
+    if (formattedAddresses.length === 0) {
+      return "";
+    } else {
+      // Pick the first address as the placeholder
+      return formatTexasAddress(formattedAddresses[0]);
+    }
+  }
+  /**
+   * Return the center in meters of the circular region to limit address predictions toward
+   */
+  get locationBias(): { lat: number; lng: number } | undefined {
+    // The center of a circle encompassing all of Texas
+    return { lat: 31.3003, lng: -99.5935 };
+  }
+
+  /**
+   * Return the radius in meters of the circular region to limit address predictions toward
+   */
+  get radius(): number | undefined {
+    // The radius of a circle encompassing all of Texas
+    return 679100;
+  }
+
+  // Emailing the user with the URL of the map route
 
   /**
    * Return a URL that can be opened in a browser to show the current route, using
@@ -126,6 +172,8 @@ export class RoutePlannerPresenter {
       requestBody,
     );
   }
+
+  // Embedding the map itself
 
   /**
    * Return a URL of a route from the Google Maps Embed API in "directions" mode
