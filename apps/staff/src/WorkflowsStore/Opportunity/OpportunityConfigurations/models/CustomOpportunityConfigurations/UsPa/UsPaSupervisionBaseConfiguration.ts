@@ -18,9 +18,7 @@
 import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
-
 export class UsPaSupervisionConfiguration extends ApiOpportunityConfiguration {
-
   get tabGroups() {
     const { tabGroups } = this.configurationObject;
     if (tabGroups) return tabGroups;
@@ -34,5 +32,4 @@ export class UsPaSupervisionConfiguration extends ApiOpportunityConfiguration {
       "ELIGIBILITY STATUS": tabs as OpportunityTab[],
     };
   }
-
 }

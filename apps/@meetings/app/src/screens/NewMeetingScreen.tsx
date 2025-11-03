@@ -31,6 +31,7 @@ import {
   Image,
   Modal,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -44,6 +45,7 @@ import {
   requestNotificationPermissions,
   sendNotification,
 } from "../utils/notifications";
+import { getItem, removeItem, saveItem } from "../utils/storage";
 
 type ProfileNavProp = StackNavigationProp<RootStackParamList, "Profile">;
 type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
@@ -68,6 +70,7 @@ const NewMeetingScreen = () => {
     | "discarding"
     | "ending"
   >("idle");
+  const [note, setNote] = useState("");
 
   const audioRecorder = useAudioRecorder(RecordingPresets["HIGH_QUALITY"]);
   const recorderState = useAudioRecorderState(audioRecorder);
@@ -85,6 +88,10 @@ const NewMeetingScreen = () => {
         shouldPlayInBackground: true,
       });
     })();
+    (async () => {
+      const saved = await getItem("note");
+      setNote(saved);
+    })();
     requestNotificationPermissions();
   }, []);
 
@@ -93,20 +100,52 @@ const NewMeetingScreen = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recorderState.isRecording]);
 
+  const navigateToClientProfile = () => {
+    navigation.reset({
+      index: 1,
+      routes: [
+        { name: "Clients" },
+        {
+          name: "Profile",
+          params: {
+            client: {
+              personId: client.personId.toString(),
+              fullName: client.fullName,
+              displayPersonExternalId: client.displayPersonExternalId,
+              supervision: client.supervision,
+            },
+          },
+        },
+      ],
+    });
+  };
   const endMeetingMutation = trpc.v1.meeting.endMeeting.useMutation({
     onSuccess: () => {
       console.log("Meeting successfully ended and processing started");
-      navigation.navigate("Profile", {
-        client: {
-          personId: client.personId.toString(),
-          fullName: client.fullName,
-          displayPersonExternalId: client.displayPersonExternalId,
-          supervision: client.supervision,
-        },
-      });
+      navigateToClientProfile();
     },
     onError: (err) => {
       console.error("[endMeeting] Failed:", err);
+    },
+  });
+
+  const updateNotesMutation = trpc.v1.meeting.updateNotes.useMutation({
+    onSuccess: () => {
+      console.log("Notes updated successfully on server");
+    },
+    onError: (err) => {
+      console.error("[updateNotes] Failed:", err);
+    },
+  });
+
+  const discardMeetingMutation = trpc.v1.meeting.discardMeeting.useMutation({
+    onSuccess: () => {
+      console.log("Meeting discarded successfully");
+      navigateToClientProfile();
+    },
+    onError: (err) => {
+      console.error("[discardMeeting] Failed:", err);
+      Alert.alert("Error", "Failed to discard meeting. Please try again.");
     },
   });
 
@@ -140,6 +179,11 @@ const NewMeetingScreen = () => {
       await audioRecorder.stop();
       const uri = audioRecorder.uri;
       if (uri) await uploadSegmentToGCS(uri);
+      await updateNotesMutation.mutateAsync({
+        clientId: client.personId,
+        meetingId,
+        notes: note,
+      });
     } catch (err) {
       console.error("[UploadRecordingFailed] error:", err);
       Alert.alert("Upload Recording Failed");
@@ -165,11 +209,11 @@ const NewMeetingScreen = () => {
       if (recorderState.isRecording) {
         stopAndUploadRecording();
       }
+      await removeItem("note");
       await endMeetingMutation.mutateAsync({
         clientId: client.personId,
         meetingId,
-        // TODO: Umar to fill in the actual notes from transcription
-        notes: "Sample notes",
+        notes: note,
       });
     } catch (err) {
       console.error("[handleFinishAndSave] error:", err);
@@ -182,7 +226,10 @@ const NewMeetingScreen = () => {
   const handleDiscard = () => setStatus("discarding");
   const handleFinalDiscard = async () => {
     await audioRecorder.stop();
-    // TODO: implement meeting discard API
+    await discardMeetingMutation.mutateAsync({
+      clientId: client.personId,
+      meetingId,
+    });
     setStatus("idle");
   };
 
@@ -235,20 +282,17 @@ const NewMeetingScreen = () => {
         <Text className="text-primary text-lg font-semibold">Notepad</Text>
       </View>
 
-      <Text className="text-primary py-2">
-        Claims alibi – cousin's house (needs check). Says didn't enter store,
-        "just waiting outside"
-      </Text>
-      <Text className="text-primary py-2">
-        Mentioned partner Mike (unknown)
-      </Text>
-      <Text className="text-primary py-2">Nervous when asked about tools</Text>
-      <Text className="text-primary py-2">
-        Requests lighter sentence, willing to cooperate
-      </Text>
-      <Text className="text-primary py-2">
-        Asked about lawyer, declined for now
-      </Text>
+      <TextInput
+        className="text-primary"
+        value={note}
+        onChangeText={setNote}
+        placeholder="Write your notes..."
+        maxLength={100000}
+        multiline
+        onEndEditing={() => {
+          saveItem("note", note);
+        }}
+      />
     </View>
   );
   const isUploading = status === "uploading";
@@ -320,6 +364,7 @@ const NewMeetingScreen = () => {
       />
 
       <View className="flex-1 px-6">
+        {/* {RecordingNotes} */}
         {isMeetingActive ? RecordingNotes : RecordingIntro}
       </View>
 

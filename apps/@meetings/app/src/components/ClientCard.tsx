@@ -18,7 +18,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
-import { Image, ImageBackground, Text, View } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { Client } from "~@meetings/app/common/types";
 
@@ -41,25 +47,25 @@ const ClientCard = ({ client }: ClientProps) => {
 
   return (
     <View className="flex-row items-center border-b border-gray-300 px-2.5 py-3.5">
-      <View className="flex-1 flex-row items-center">
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("Profile", {
+            client: {
+              personId: client.personId.toString(),
+              fullName: client.fullName,
+              displayPersonExternalId: client.displayPersonExternalId,
+              supervision: client.supervision,
+            },
+          })
+        }
+        className="flex-1 flex-row items-center"
+      >
         <ImageBackground
           source={Icons.BgAvatar}
           className="mr-3 size-11 items-center justify-center"
           style={{ borderRadius: 22, overflow: "hidden" }}
         >
-          <Text
-            onPress={() =>
-              navigation.navigate("Profile", {
-                client: {
-                  personId: client.personId.toString(),
-                  fullName: client.fullName,
-                  displayPersonExternalId: client.displayPersonExternalId,
-                  supervision: client.supervision,
-                },
-              })
-            }
-            className="font-[inter] text-sm font-semibold text-white"
-          >
+          <Text className="font-[inter] text-sm font-semibold text-white">
             {getInitials(client.fullName)}
           </Text>
         </ImageBackground>
@@ -84,7 +90,7 @@ const ClientCard = ({ client }: ClientProps) => {
             </Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };

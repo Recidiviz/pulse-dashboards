@@ -38,7 +38,6 @@ import Icons from "../../assets/icons";
 import Dropdown from "../components/Dropdown";
 import MeetingCard from "../components/MeetingCard";
 import SearchBar from "../components/SearchBar";
-import meetings from "../data/meetings";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 
@@ -61,6 +60,17 @@ const ProfileScreen = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const scrollY = useRef(0);
+
+  const {
+    data: rawMeetings,
+    isLoading,
+    error,
+  } = trpc.v1.client.getMeetings.useQuery(
+    { clientId: client.personId },
+    {
+      enabled: !!client?.personId,
+    },
+  );
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentOffset = event.nativeEvent.contentOffset.y;
@@ -91,17 +101,57 @@ const ProfileScreen = () => {
     );
   };
 
-  // Filter meetings based on search query and active filters
-  const filteredMeetings = meetings.filter((meeting) => {
+  // Processed meetings and filter based on search query and active filters
+  const processedMeetings =
+    rawMeetings?.map((m) => {
+      const start = new Date(m.startTime);
+      const end = m.endTime ? new Date(m.endTime) : null;
+
+      // Duration in hh:mm:ss
+      const duration = end
+        ? new Date(end.getTime() - start.getTime())
+            .toISOString()
+            .substring(11, 19)
+        : null;
+
+      // Format date/time
+      const date = start.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "short",
+        day: "2-digit",
+      });
+      const time = `${start.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}${
+        end
+          ? ` - ${end.toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`
+          : ""
+      }`;
+
+      return {
+        id: m.id,
+        date,
+        time,
+        duration,
+        content: "",
+        status: m.postMeetingProcessingStatus,
+      };
+    }) || [];
+
+  const filteredMeetings = processedMeetings.filter((meeting) => {
     const matchesSearch =
       searchQuery === "" ||
       meeting.date?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      meeting.notes?.toLowerCase().includes(searchQuery.toLowerCase());
+      meeting.content?.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesFilters =
       activeFilters.length === 0 ||
       activeFilters.some((filter) =>
-        meeting.notes?.toLowerCase().includes(filter.toLowerCase()),
+        meeting.content?.toLowerCase().includes(filter.toLowerCase()),
       );
 
     return matchesSearch && matchesFilters;
@@ -133,6 +183,15 @@ const ProfileScreen = () => {
       setIsCreating(false);
     }
   };
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text className="text-base text-gray-700">Loading meetings...</Text>
+      </View>
+    );
+  }
+
+  if (error) throw error;
 
   return (
     <SafeAreaView className="flex-1">
@@ -185,7 +244,7 @@ const ProfileScreen = () => {
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
-        contentContainerClassName={`flex-grow px-4 ${
+        contentContainerClassName={`px-4 ${
           isCollapsed ? "pt-[70px]" : "pt-[120px]"
         }`}
       >
@@ -211,6 +270,9 @@ const ProfileScreen = () => {
           placeholder={"Enter keyword or phrase"}
           value={searchQuery}
           onChange={setSearchQuery}
+          onExit={() => {
+            setSearchQuery("");
+          }}
         />
 
         <View className="flex-row flex-wrap gap-2 py-2">

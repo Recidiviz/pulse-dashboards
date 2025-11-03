@@ -15,23 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export default [
-  {
-    id: "123456",
-    name: "Mike Woods",
-    supervision: "Probation",
-    lastMeeting: "5d ago",
-  },
-  {
-    id: "234567",
-    name: "Jessica Smith",
-    supervision: "Probation",
-    lastMeeting: "2w ago",
-  },
-  {
-    id: "345678",
-    name: "Tom Davis",
-    supervision: "Probation",
-    lastMeeting: "3m ago",
-  },
-];
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+export const saveItem = async (key: string, value: string) => {
+  await AsyncStorage.setItem(key, value);
+};
+
+export const getItem = async (key: string) => {
+  return (await AsyncStorage.getItem(key)) || "";
+};
+
+export const removeItem = async (key: string) => {
+  await AsyncStorage.removeItem(key);
+};

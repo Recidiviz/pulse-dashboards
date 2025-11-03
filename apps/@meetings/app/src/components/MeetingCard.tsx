@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useState } from "react";
+import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
@@ -25,14 +25,14 @@ type MeetingCardProps = {
     id: string;
     date: string;
     time: string;
-    duration: string;
-    notes: string;
+    duration: string | null;
+    content: string;
   };
   onPress?: (id: string) => void;
 };
 
 const MeetingCard = ({ meeting, onPress }: MeetingCardProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  // const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <TouchableOpacity
@@ -52,22 +52,21 @@ const MeetingCard = ({ meeting, onPress }: MeetingCardProps) => {
       </View>
 
       <Text className="text-primary mr-1 text-xs font-medium">
-        {meeting.time} • {meeting.duration}
+        {meeting.time} • {meeting.duration || "In progress..."}
       </Text>
-      <View className="my-2 border-b border-gray-200" />
-      <View className="mt-3">
+      {/* <View className="my-2 border-b border-gray-200" />
+       <View className="mt-3">
         <Text
           className="text-sm leading-5 text-gray-700"
           numberOfLines={isExpanded ? undefined : 2}
         >
-          {meeting.notes}
+          {meeting.content}
         </Text>
-
         <TouchableOpacity
           onPress={() => setIsExpanded(!isExpanded)}
           className="mt-1 flex-row items-center"
         >
-          <Text className="text-primary mr-1 text-xs font-medium">
+          <Text className="mr-1 text-xs font-medium text-primary">
             {isExpanded ? "Less" : "More"}
           </Text>
           <Image
@@ -76,7 +75,7 @@ const MeetingCard = ({ meeting, onPress }: MeetingCardProps) => {
             style={{ resizeMode: "contain" }}
           />
         </TouchableOpacity>
-      </View>
+      </View> */}
     </TouchableOpacity>
   );
 };

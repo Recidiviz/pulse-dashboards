@@ -131,7 +131,6 @@ describe("when eligibility is unclear", () => {
     },
   );
 
-
   it.each([[true], [false]])(
     "unclear eligibility requirements when ineligibility text is %s",
     (hasUnclearEligibilityText) => {
