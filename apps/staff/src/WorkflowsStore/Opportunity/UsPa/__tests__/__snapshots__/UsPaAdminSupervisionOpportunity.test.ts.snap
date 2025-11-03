@@ -1,5 +1,18 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`eligibility is unclear > eligibility unclear requirements when it is false that record has unclear eligibility text > eligibility unclear requirements 1`] = `[]`;
+
+exports[`eligibility is unclear > eligibility unclear requirements when it is true that record has unclear eligibility text > eligibility unclear requirements 1`] = `
+[
+  {
+    "text": "Client has pending charges that may affect eligibility.",
+  },
+  {
+    "text": "Previously flagged as NAE",
+  },
+]
+`;
+
 exports[`fully eligible > requirements met 1`] = `
 [
   {

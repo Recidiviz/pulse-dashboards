@@ -40,6 +40,9 @@ export const usPaSpecialCircumstancesSupervisionFixtures = {
       usPaNotEligibleOrMarkedIneligibleForAdminSupervision: {},
     },
     ineligibleCriteria: {},
+    metadata: {
+      tabName: "ELIGIBLE_NOW",
+    },
     caseNotes: {
       "Case Plan Goals": [
         {
@@ -77,6 +80,9 @@ export const usPaSpecialCircumstancesSupervisionFixtures = {
           noteTitle: "In progress",
         },
       ],
+    },
+    metadata: {
+      tabName: "ALMOST_ELIGIBLE",
     },
     isEligible: false,
     isAlmostEligible: true,

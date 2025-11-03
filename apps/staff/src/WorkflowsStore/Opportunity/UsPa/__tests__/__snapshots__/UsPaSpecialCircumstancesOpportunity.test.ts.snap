@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`fully eligible > requirements met 1`] = `
+[
+  {
+    "key": "usPaMeetsSpecialCircumstancesCriteriaForTimeServed",
+    "text": "Currently serving a special probation or parole case and has served on supervision for 10 years",
+    "tooltip": "Per policy 12.4.01.06, "special probation and special parole cases that have...one year or more of successful supervision" are eligible for SPC. Time on supervision is determined by the amount of time that has passed since the reentrant's release date.",
+  },
+  {
+    "key": "usPaMeetsSpecialCircumstancesCriteriaForSanctions",
+    "text": "No high level sanctions within the past year",
+    "tooltip": "Per policy 12.4.01.06, reentrants must have had a "satisfactory adjustment" over their supervision period. This tool uses a lack of high sanctions in the past year as a proxy for satisfactory adjustment while on supervision. ",
+  },
+  {
+    "key": "usPaNotEligibleOrMarkedIneligibleForAdminSupervision",
+    "text": "Not eligible for administrative supervision",
+  },
+]
+`;
+
+exports[`when eligibility is unclear > unclear eligibility requirements when ineligibility text is false 1`] = `[]`;
+
+exports[`when eligibility is unclear > unclear eligibility requirements when ineligibility text is true 1`] = `
+[
+  {
+    "text": "Client has pending charges that may affect eligibility.",
+  },
+  {
+    "text": "Previously flagged as NAE",
+  },
+]
+`;

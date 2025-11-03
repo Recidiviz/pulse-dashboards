@@ -35,6 +35,9 @@ export const usPaAdminSupervisionReferrals =
         statute37: false,
         drugUnreportedDisposition: true,
       },
+      metadata: {
+        tabName: "ELIGIBLE_NOW",
+      },
       isEligible: true,
       isAlmostEligible: false,
     },
@@ -56,6 +59,9 @@ export const usPaAdminSupervisionReferrals =
         statute37: false,
         drugUnreportedDisposition: true,
       },
+      metadata: {
+        tabName: "ELIGIBLE_NOW",
+      },
       isEligible: true,
       isAlmostEligible: false,
     },
@@ -73,6 +79,9 @@ export const usPaAdminSupervisionReferrals =
         statute30: true,
         statute37: false,
         drugUnreportedDisposition: true,
+      },
+      metadata: {
+        tabName: "ELIGIBLE_NOW",
       },
       isEligible: true,
       isAlmostEligible: false,

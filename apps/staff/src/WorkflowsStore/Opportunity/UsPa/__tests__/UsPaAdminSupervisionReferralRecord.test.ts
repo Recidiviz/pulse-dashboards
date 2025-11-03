@@ -31,6 +31,9 @@ const rawRecord: UsPaAdminSupervisionReferralRecordRaw = {
     },
   },
   ineligibleCriteria: {},
+  metadata: {
+    tabName: "ELIGIBLE_NOW",
+  },
   formInformation: {
     drugConviction: true,
     statute14: false,

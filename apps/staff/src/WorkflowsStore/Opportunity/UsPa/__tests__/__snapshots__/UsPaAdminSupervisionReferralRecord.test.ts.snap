@@ -21,7 +21,9 @@ exports[`parses empty ineligible offenses array 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
-  "metadata": {},
+  "metadata": {
+    "tabName": "ELIGIBLE_NOW",
+  },
   "stateCode": "US_PA",
 }
 `;
@@ -44,7 +46,9 @@ exports[`parses null reason fields 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
-  "metadata": {},
+  "metadata": {
+    "tabName": "ELIGIBLE_NOW",
+  },
   "stateCode": "US_PA",
 }
 `;
@@ -76,7 +80,9 @@ exports[`record parses as expected 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
-  "metadata": {},
+  "metadata": {
+    "tabName": "ELIGIBLE_NOW",
+  },
   "stateCode": "US_PA",
 }
 `;

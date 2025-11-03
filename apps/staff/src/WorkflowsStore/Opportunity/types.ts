@@ -287,7 +287,10 @@ export type OpportunityTab =
 
   // For US_ND Transfer to Min Facility
   | "Referral Submitted"
-  | "Snoozed";
+  | "Snoozed"
+
+  // For US_PA
+  | "Eligibility Unclear";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"

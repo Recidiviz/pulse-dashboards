@@ -40,6 +40,9 @@ export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRec
     },
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {
+      tabName: "ELIGIBLE_NOW",
+    },
   };
 
 export const usPaAdminSupervisionEligibleClientRecord: ClientRecord = {

@@ -19,15 +19,14 @@ import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
+import { usPaSpecialCircumstancesSupervisionFixtures } from "~datatypes";
+
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
-import {
-  usPaAdminSupervisionEligibleClientRecord,
-  usPaAdminSupervisionReferralRecord,
-} from "../__fixtures__";
-import { UsPaAdminSupervisionOpportunity } from "../UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
+import { usPaAdminSupervisionEligibleClientRecord } from "../__fixtures__";
+import { UsPaSpecialCircumstancesSupervisionOpportunity } from "../UsPaSpecialCircumstancesSupervisionOpportunity/UsPaSpecialCircumstancesSupervisionOpportunity";
 
-let opp: UsPaAdminSupervisionOpportunity;
+let opp: UsPaSpecialCircumstancesSupervisionOpportunity;
 let client: Client;
 let root: RootStore;
 
@@ -44,7 +43,10 @@ function createTestUnit(
   ]);
   client = new Client(clientRecord, root);
 
-  opp = new UsPaAdminSupervisionOpportunity(client, opportunityRecord);
+  opp = new UsPaSpecialCircumstancesSupervisionOpportunity(
+    client,
+    opportunityRecord,
+  );
 }
 
 beforeEach(() => {
@@ -55,15 +57,17 @@ beforeEach(() => {
 
 afterEach(() => {
   tk.reset();
-  vi.resetAllMocks();
   configure({ safeDescriptors: true });
 });
 
 describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(
-      usPaAdminSupervisionEligibleClientRecord,
-      usPaAdminSupervisionReferralRecord,
+      {
+        ...usPaAdminSupervisionEligibleClientRecord,
+        allEligibleOpportunities: ["usPaSpecialCircumstancesSupervision"],
+      },
+      usPaSpecialCircumstancesSupervisionFixtures.fullyEligible.input,
     );
   });
 
@@ -86,41 +90,29 @@ const createUsPaUnclearEligibilityTestUnit = (
       ]
     : [];
   const unclearEligibilityRecord = {
-    ...usPaAdminSupervisionReferralRecord,
+    ...usPaSpecialCircumstancesSupervisionFixtures.fullyEligible.input,
     metadata: {
-      ...usPaAdminSupervisionReferralRecord.metadata,
+      ...usPaSpecialCircumstancesSupervisionFixtures.fullyEligible.input
+        .metadata,
       tabName,
       eligibilityUnclearText: hasUnclearEligibleTabName
         ? eligibilityUnclearText
         : undefined,
     },
   };
-
   createTestUnit(
     usPaAdminSupervisionEligibleClientRecord,
     unclearEligibilityRecord,
   );
 };
 
-describe("eligibility is unclear", () => {
-  beforeEach(() => {
-    // this lets us spy on observables, e.g. computed getters
-    configure({ safeDescriptors: false });
-    tk.freeze(new Date(2022, 7, 1));
-  });
-
-  afterEach(() => {
-    tk.reset();
-    vi.resetAllMocks();
-    configure({ safeDescriptors: true });
-  });
-
+describe("when eligibility is unclear", () => {
   it.each([[true], [false]])("almost eligible resolves to %s", (hasTabName) => {
     createUsPaUnclearEligibilityTestUnit(hasTabName);
     expect(opp.almostEligible).toBe(hasTabName);
   });
 
-  it.each([[true], [false]])(
+    it.each([[true], [false]])(
     "eligibility is unclear when it is %s that record has unclear eligibility tab name",
     (hasTabName) => {
       createUsPaUnclearEligibilityTestUnit(hasTabName);
@@ -128,13 +120,12 @@ describe("eligibility is unclear", () => {
     },
   );
 
+
   it.each([[true], [false]])(
-    "eligibility unclear requirements when it is %s that record has unclear eligibility text",
+    "unclear eligibility requirements when ineligibility text is %s",
     (hasUnclearEligibilityText) => {
       createUsPaUnclearEligibilityTestUnit(true, hasUnclearEligibilityText);
-      expect(opp.eligibilityUnclearRequirements).toMatchSnapshot(
-        "eligibility unclear requirements",
-      );
+      expect(opp.eligibilityUnclearRequirements).toMatchSnapshot();
     },
   );
 });

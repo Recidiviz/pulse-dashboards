@@ -23,10 +23,9 @@ import {
 } from "~datatypes";
 
 import { Client } from "../../../Client";
-import { OpportunityBase } from "../../OpportunityBase";
+import { UsPaSupervisionOpportunityBase } from "../UsPaSupervisionOpportunityBase";
 
-export class UsPaSpecialCircumstancesSupervisionOpportunity extends OpportunityBase<
-  Client,
+export class UsPaSpecialCircumstancesSupervisionOpportunity extends UsPaSupervisionOpportunityBase<
   UsPaSpecialCircumstancesSupervisionRecord["output"]
 > {
   constructor(client: Client, record: DocumentData) {

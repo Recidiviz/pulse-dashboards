@@ -46,6 +46,28 @@ export const usPaSpecialCircumstancesSupervisionSchema =
         .nullable(),
     }),
     ineligibleCriteria: possiblyIneligibleCriteria,
+    // TODO (#10375): Remove passthrough once all necessary fields are added
+    metadata: z.union([
+      z.object({}).passthrough(),
+    z
+    .object({
+      tabName: z.literal("ELIGIBLE_NOW"),
+      eligibilityUnclearText: z.array(z.string()).nullish(),
+    })
+    .passthrough(),
+    z
+    .object({
+      tabName: z.literal("ALMOST_ELIGIBLE"),
+      eligibilityUnclearText: z.array(z.string()).nullish(),
+    })
+    .passthrough(),
+    z
+    .object({
+      tabName: z.literal("ELIGIBILITY_UNCLEAR"),
+      eligibilityUnclearText: z.array(z.string()),
+    })
+    .passthrough(),
+  ])
   });
 
 export type UsPaSpecialCircumstancesSupervisionRecord = ParsedRecord<

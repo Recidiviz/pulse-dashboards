@@ -28,7 +28,9 @@ exports[`schema for almostEligible 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
-  "metadata": {},
+  "metadata": {
+    "tabName": "ALMOST_ELIGIBLE",
+  },
   "stateCode": "US_PA",
 }
 `;
@@ -60,7 +62,9 @@ exports[`schema for fullyEligible 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
-  "metadata": {},
+  "metadata": {
+    "tabName": "ELIGIBLE_NOW",
+  },
   "stateCode": "US_PA",
 }
 `;
