@@ -49,17 +49,20 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   // there should always be at least one tab group to display the tab names from
   const tabGroup = Object.keys(tabGroups)[0] as OpportunityTabGroup;
   const tabTitles = Object.values(tabGroups)[0];
-  const oppsForEnabledTabs = opportunities.filter((opp) => {
-    return tabTitles.includes(opp.tabTitle(tabGroup));
-  });
+
+  const numOpportunitiesByTab = countBy(opportunities, (opp) =>
+    opp.tabTitle(tabGroup),
+  );
+
+  const numOpportunitiesByTabSorted = Object.fromEntries(
+    tabTitles
+      .filter((tabTitle) => numOpportunitiesByTab[tabTitle] > 0)
+      .map((tabTitle) => [tabTitle, numOpportunitiesByTab[tabTitle]]),
+  );
 
   // Some opportunities have opportunities for non-enabled tabs,
   // but we don't show a summary if those are the only opps
-  if (oppsForEnabledTabs.length === 0) return null;
-
-  const numOpportunitiesByTab = countBy(oppsForEnabledTabs, (opp) =>
-    opp.tabTitle(tabGroup),
-  );
+  if (Object.keys(numOpportunitiesByTabSorted).length === 0) return null;
 
   const navigationURL = officerPseudoId
     ? insightsUrl("supervisionOpportunity", {
@@ -72,7 +75,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
     <WorkflowsHomepageSummary
       url={navigationURL}
       headerText={eligibilityTextForCount(totalOpportunityCount)}
-      reviewStatusCounts={numOpportunitiesByTab}
+      reviewStatusCounts={numOpportunitiesByTabSorted}
       totalCount={totalOpportunityCount}
       people={people}
       showZeroGrantsPill={!!showZeroGrantsPill}
