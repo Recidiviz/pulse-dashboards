@@ -81,7 +81,11 @@ export const usPaAdminSupervisionReferrals =
         drugUnreportedDisposition: true,
       },
       metadata: {
-        tabName: "ELIGIBLE_NOW",
+        tabName: "ELIGIBILITY_UNCLEAR",
+        eligibilityUnclearText: [
+          "Some unclear eligibility text",
+          "Previously flagged as NAE",
+        ],
       },
       isEligible: true,
       isAlmostEligible: false,

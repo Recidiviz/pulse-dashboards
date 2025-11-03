@@ -37,6 +37,7 @@ import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRe
 import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguration";
 import { UsNdTransferToMinFacility } from "./UsNd/UsNdTransferToMinFacility";
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
+import { UsPaSupervisionConfiguration } from "./UsPa/UsPaSupervisionBaseConfiguration";
 import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfiguration";
 import { UsTnCompliantReporting2025PolicyConfiguration } from "./UsTn/UsTnCompliantReporting2025PolicyConfiguration";
 import { UsTnSuspensionofDirectSupervisionConfiguration } from "./UsTn/UsTnSuspensionofDirectSupervisionConfiguration";
@@ -90,6 +91,10 @@ const customOpportunityConfigurations: Partial<
 
   // Oregon
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,
+
+  // Pennsylvania
+  usPaAdminSupervision: UsPaSupervisionConfiguration,
+  usPaSpecialCircumstancesSupervision: UsPaSupervisionConfiguration,
 
   // Tennessee
   compliantReporting: CompliantReportingConfiguration,

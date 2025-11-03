@@ -19,6 +19,7 @@ import { DocumentData } from "firebase/firestore";
 
 import { OpportunityType } from "~datatypes";
 
+import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityTab } from "../types";
@@ -40,22 +41,28 @@ export abstract class UsPaSupervisionOpportunityBase<
   eligibilityUnclearText?: string[];
   /**
    * Whether the opportunity is in an "Eligibility Unclear" status,
-   * which is true when the metadata tab name or eligibility unclear text is present.
+   * which is true when the metadata tab name is "ELIGIBILITY_UNCLEAR".
    */
-  isEligibilityUnclear: boolean;
+  isEligibilityUnclear?: boolean;
 
   readonly eligibilityUnclearDisplayName = "Eligibility Unclear";
 
   constructor(
     client: Client,
     opportunityType: OpportunityType,
-    rootStore: any,
+    rootStore: RootStore,
     record: ReferralRecord,
   ) {
     super(client, opportunityType, rootStore, record);
-    const { eligibilityUnclearText, tabName } = record.metadata;
-    this.eligibilityUnclearText = eligibilityUnclearText;
-    this.isEligibilityUnclear = tabName === "ELIGIBILITY_UNCLEAR";
+
+    const isEligibilityUnclearEnabled =
+      !!rootStore.userStore.activeFeatureVariants.usPaUnclearEligibility;
+
+    if (isEligibilityUnclearEnabled) {
+      const { eligibilityUnclearText, tabName } = record.metadata;
+      this.eligibilityUnclearText = eligibilityUnclearText;
+      this.isEligibilityUnclear = tabName === "ELIGIBILITY_UNCLEAR";
+    }
   }
 
   /**
@@ -82,31 +89,38 @@ export abstract class UsPaSupervisionOpportunityBase<
     );
   }
 
-  eligibilityStatusLabel(includeReasons?: boolean) {
-    if (
+  /**
+   * This private getter determines if the opportunity is in a final state.
+   *
+   * If the opportunity is in a final state, such as denied or submitted,
+   * we no longer show the "Eligibility Unclear" status.
+   * However, if it is not in a final state (i.e. Almost Eligible or Eligible), we show the unclear status.
+   */
+  private get isOpportunityInFinalState() {
+    return (
       this.denied ||
       this.isSubmitted ||
       this.isGrantApproved ||
-      this.isInSnoozeReview
-    )
+      this.isInSnoozeReview ||
+      this.isInSupervisorReview
+    );
+  }
+
+  eligibilityStatusLabel(includeReasons?: boolean) {
+    if (this.isOpportunityInFinalState)
       return super.eligibilityStatusLabel(includeReasons);
-    if (this.isEligibilityUnclear) return this.eligibilityUnclearDisplayName;
-    return super.eligibilityStatusLabel(includeReasons);
+    else if (this.isEligibilityUnclear)
+      return this.eligibilityUnclearDisplayName;
+    else return super.eligibilityStatusLabel(includeReasons);
   }
 
   tabTitle(): OpportunityTab {
     // A non-permanent tab for unclear eligibility status while perceived US_PA eligibility criteria
     // accuracy and quality is improved. Expect this to be removed in the future and swallowed
     // into the standard eligibility flow.
-    if (
-      this.denied ||
-      this.isSubmitted ||
-      this.isGrantApproved ||
-      this.isInSnoozeReview ||
-      this.isInSupervisorReview
-    )
-      return super.tabTitle();
-    if (this.isEligibilityUnclear) return this.eligibilityUnclearDisplayName;
-    return super.tabTitle();
+    if (this.isOpportunityInFinalState) return super.tabTitle();
+    else if (this.isEligibilityUnclear)
+      return this.eligibilityUnclearDisplayName;
+    else return super.tabTitle();
   }
 }

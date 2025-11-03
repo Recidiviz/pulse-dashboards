@@ -65,3 +65,9 @@ export const usPaAdminSupervisionEligibleClientRecord: ClientRecord = {
   allEligibleOpportunities: ["usPaAdminSupervision"],
   personType: "CLIENT",
 };
+
+export const usPaSpecialCircumstancesEligibleClientRecord: ClientRecord = {
+  ...usPaAdminSupervisionEligibleClientRecord,
+  recordId: "us_pa_002",
+  allEligibleOpportunities: ["usPaSpecialCircumstancesSupervision"],
+};

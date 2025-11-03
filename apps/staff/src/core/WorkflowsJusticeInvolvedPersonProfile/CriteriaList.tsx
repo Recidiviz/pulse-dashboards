@@ -25,6 +25,7 @@ import { Icon, IconSVG, palette } from "~design-system";
 
 import { formatDollarAmount } from "../../utils/formatStrings";
 import { Opportunity, OpportunityRequirement } from "../../WorkflowsStore";
+import { UsPaSupervisionOpportunityBase } from "../../WorkflowsStore/Opportunity/UsPa/UsPaSupervisionOpportunityBase";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { InfoButton } from "./InfoButton";
 import OpportunityRecommendedLanguageModal from "./OpportunityRecommendedLanguageModal";
@@ -179,6 +180,12 @@ export const CriteriaList = observer(function CriteriaList({
           <CriteriaSectionHeading>
             {opportunity.config.nonOmsCriteriaHeader}
           </CriteriaSectionHeading>
+          {/* TODO (#10375): Remove eligibilityUnclearRequirements when requirements are ready */}
+          {opportunity instanceof UsPaSupervisionOpportunityBase &&
+            opportunity.eligibilityUnclearRequirements &&
+            opportunity.eligibilityUnclearRequirements.map(
+              almostMetReqToCriterion,
+            )}
           {opportunity.nonOMSRequirements.map(nonOMSReqToCriterion)}
         </>
       )}

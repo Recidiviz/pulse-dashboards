@@ -21,7 +21,20 @@ exports[`fully eligible > requirements met 1`] = `
 
 exports[`when eligibility is unclear > unclear eligibility requirements when ineligibility text is false 1`] = `[]`;
 
+exports[`when eligibility is unclear > unclear eligibility requirements when ineligibility text is false 2`] = `[]`;
+
 exports[`when eligibility is unclear > unclear eligibility requirements when ineligibility text is true 1`] = `
+[
+  {
+    "text": "Client has pending charges that may affect eligibility.",
+  },
+  {
+    "text": "Previously flagged as NAE",
+  },
+]
+`;
+
+exports[`when eligibility is unclear > unclear eligibility requirements when ineligibility text is true 2`] = `
 [
   {
     "text": "Client has pending charges that may affect eligibility.",

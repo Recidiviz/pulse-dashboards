@@ -42,6 +42,9 @@ function createTestUnit(
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
     "usPaAdminSupervision",
   ]);
+  vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
+    usPaUnclearEligibility: {},
+  });
   client = new Client(clientRecord, root);
 
   opp = new UsPaAdminSupervisionOpportunity(client, opportunityRecord);
@@ -125,6 +128,16 @@ describe("eligibility is unclear", () => {
     (hasTabName) => {
       createUsPaUnclearEligibilityTestUnit(hasTabName);
       expect(opp.isEligibilityUnclear).toBe(hasTabName);
+    },
+  );
+
+  it.each([[true], [false]])(
+    "eligibility unclear requirements when it is %s that record has unclear eligibility text",
+    (hasUnclearEligibilityText) => {
+      createUsPaUnclearEligibilityTestUnit(true, hasUnclearEligibilityText);
+      expect(opp.eligibilityUnclearRequirements).toMatchSnapshot(
+        "eligibility unclear requirements",
+      );
     },
   );
 

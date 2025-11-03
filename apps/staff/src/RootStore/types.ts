@@ -106,6 +106,7 @@ export type FeatureVariant =
 
   //// Pennsylvania
   | "usPaSpecialCircumstances"
+  | "usPaUnclearEligibility"
 
   //// Tennessee
   | "usTnCompliantReporting2025Policy"
@@ -201,6 +202,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},
   tasksRoutePlanner: {},
+  usPaUnclearEligibility: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
