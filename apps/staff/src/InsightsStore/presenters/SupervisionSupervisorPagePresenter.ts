@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { flowResult, makeAutoObservable } from "mobx";
+import pluralize from "pluralize";
 
 import { SupervisionOfficer, SupervisionOfficerSupervisor } from "~datatypes";
 import {
@@ -252,5 +253,17 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
   get insightsNumDaysWithoutLogin(): number {
     return this.supervisionStore.insightsStore.rootStore.tenantStore
       .insightsNumDaysWithoutLogin;
+  }
+
+  labelIsAcronym(label: string) {
+    return label.match(/\b([A-Z]+)\b/);
+  }
+
+  pluralizeAcronym(acronym: string, count: number) {
+    // pluralize preserves the casing of the string passed to it
+    // when we have an acronym, we want to keep the acronym in all caps
+    // when the acronym is plural, we want a lowercase "s"
+    // for example "CROs" rather than "CROS" or "cros"
+    return acronym + pluralize(acronym, count).split(acronym)[1].toLowerCase();
   }
 }

@@ -63,6 +63,8 @@ const InsightsUsageCard: React.FC<{
     labels,
     trackLastLoginUsageModuleViewed,
     insightsNumDaysWithoutLogin,
+    pluralizeAcronym,
+    labelIsAcronym,
   },
 }) {
   if (allOfficers.length === 0) return null;
@@ -71,13 +73,24 @@ const InsightsUsageCard: React.FC<{
   const numOfficersWithNoLoginActivityInLastXDays = allOfficers.filter(
     hasNoLoginActivityInNumDays,
   ).length;
+
+  const label = labelIsAcronym(labels.supervisionOfficerLabel)
+    ? pluralizeAcronym(
+        labels.supervisionOfficerLabel,
+        numOfficersWithNoLoginActivityInLastXDays,
+      )
+    : pluralize(
+        labels.supervisionOfficerLabel,
+        numOfficersWithNoLoginActivityInLastXDays,
+      );
+
   return (
     <CardWrapper style={{ maxWidth: "501px" }}>
       <CardHeader style={{ width: "100%" }}>
         <CardHeaderText>
           <CardTitle>Date of Last Login</CardTitle>
           <CardSubtitle>
-            {`${numOfficersWithNoLoginActivityInLastXDays} inactive ${pluralize(labels.supervisionOfficerLabel, numOfficersWithNoLoginActivityInLastXDays)}`}
+            {`${numOfficersWithNoLoginActivityInLastXDays} inactive ${label}`}
           </CardSubtitle>
         </CardHeaderText>
       </CardHeader>

@@ -89,6 +89,8 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     highlightedOfficersByMetric,
     userCanSubmitRosterChangeRequest,
     isUsageLoginActivityModuleDisplayed,
+    pluralizeAcronym,
+    labelIsAcronym
   } = presenter;
 
   let teamTooltip;
@@ -131,10 +133,13 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         tooltip: teamTooltip,
         info: (
           <>
-            {pluralize(
-              allOfficers.length,
-              toTitleCase(labels.supervisionOfficerLabel),
-            )}
+            {labelIsAcronym(labels.supervisionOfficerLabel)
+              ? allOfficers.length +
+                " " + pluralizeAcronym(labels.supervisionOfficerLabel, allOfficers.length)
+              : pluralize(
+                  allOfficers.length,
+                  toTitleCase(labels.supervisionOfficerLabel),
+                )}
             {userCanSubmitRosterChangeRequest && (
               <>
                 <Spacer size={spacing.sm} />
