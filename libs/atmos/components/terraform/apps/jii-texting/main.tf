@@ -184,6 +184,7 @@ module "process-jii-cloud-run-job" {
   env_vars                      = local.processor_job_env_vars
   cloud_run_deletion_protection = false
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
+  limits                        = { memory = "1Gi", cpu = "1" }
 }
 
 # Configure a Cloud Run job that will import the data into our CloudSQL DB
