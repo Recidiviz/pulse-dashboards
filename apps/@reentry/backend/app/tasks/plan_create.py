@@ -77,8 +77,9 @@ async def fetch_assets(
     if intake.intake_type == IntakeType.CONVERSATION.value:
         # messages format used to save the messages.json file
         for msg in intake_messages:
+            role = "client" if msg.from_role == "client" else "case manager"
             messages_json.append(
-                {"role": msg.from_role, "content": msg.content, "section": msg.section}
+                {"role": role, "content": msg.content, "section": msg.section}
             )
 
         # messages format to be used in the summary generation

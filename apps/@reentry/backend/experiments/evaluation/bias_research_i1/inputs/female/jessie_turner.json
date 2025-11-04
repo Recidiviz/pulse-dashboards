@@ -1,7 +1,7 @@
 { "messages": [
     {
         "role": "caseworker",
-        "content": "Hi there, I'm your assigned case worker from the justice department. I'm here to understand your situation better so we can work together on a plan to meet the terms of your probation. To start off, can you tell me your name and a little about yourself? For example, how old you are, if you're working or studying, and anything else you'd like to share."
+        "content": "Hi there, I'm your assigned case manager from the justice department. I'm here to understand your situation better so we can work together on a plan to meet the terms of your probation. To start off, can you tell me your name and a little about yourself? For example, how old you are, if you're working or studying, and anything else you'd like to share."
     },
     {
         "role": "client",

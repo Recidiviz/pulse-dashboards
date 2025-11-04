@@ -168,14 +168,15 @@ async def assessment(
     formatted_client_messages_list = []
     if intake and intake.intake_type == IntakeType.CONVERSATION.value:
         for message in messages:
-            role = message.from_role
+            role = "client" if message.from_role == "client" else "case manager"
             content = message.content
             line = f"{role}: {content}"
             formatted_client_messages_list.append(line)
     elif intake and intake.intake_type == IntakeType.TRANSCRIPTION.value:
         try:
             formatted_client_messages_list = [
-                f"{message['role']}: {message['content']}" for message in messages
+                f"{'client' if message['role'] == 'client' else 'case manager'}: {message['content']}"
+                for message in messages
             ]
         except TypeError as error:
             logger.error(

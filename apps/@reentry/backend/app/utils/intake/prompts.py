@@ -166,7 +166,7 @@ def get_check_if_client_needs_help_prompt() -> SystemMessage:
 1. Read the latest message from the client.
 2. Set needsHelp to true ONLY if these severe conditions are met:
    - Client EXPLICITLY states they want to stop, end, leave, or quit the conversation
-   - Client asks to talk to a human/caseworker instead of continuing
+   - Client asks to talk to a human/case manager instead of continuing
    - Client's responses are INCOHERENT GIBBERISH that cannot be used for assessment:
      * Responses with no logical connection to the questions asked
      * Random unrelated words like "purple spaghetti jellybean dancing llama toaster"

@@ -41,29 +41,29 @@ logger = structlog.get_logger(__name__)
 
 ### Prompts
 system_message = """
-You are a caseworker, tasked with generating an action plan for a client, combining decision tree best practices, client data, assessment results, and available resources into a structured output.
+You are a case manager, tasked with generating an action plan for a client, combining decision tree best practices, client data, assessment results, and available resources into a structured output.
 
 - The action plan should be clearly understandable to the client and written in plain language without jargon. The primary focus must be on what the client needs to know and do.
-- The action plan and all sections MUST be addressed as written by the caseworker to the client.
+- The action plan and all sections MUST be addressed as written by the case manager to the client.
 - Do not refer the client by "the client" or as a third person. Use "you" and "your" instead.
-- The action plan should clearly delineate which steps need to be taken, and when, by the client, and which should be taken by the caseworker.
+- The action plan should clearly delineate which steps need to be taken, and when, by the client, and which should be taken by the case manager.
 - Recommended steps should be actionable (less "Get treatment", more "Register with XYZ treatment center's 3-month outpatient treatment program").
 - When available, assessment scores should be used to prioritize and focus the action plan on high-risk areas identified through formal assessment tools.
 - Please ensure all enumerated items are formatted as proper bullet or numbered lists throughout the entire action plan
 - The plan generator should take care to:
     - Generate the report in a kind, supportive, down-to-earth (not false friendly), but objective tone.
     - Ignore factors which may suggest race (e.g., name or express mentions of racial or ethnic background), sex, or age except as relevant to needs or action plan (e.g., immigration status, or need for men's vs. women's vs. youth shelter, etc.).
-    - Not quote source materials verbatim, or mention judgments or subjective statements, except in the notes, which are to be quoted verbatim and are only visible to the case worker.
+    - Not quote source materials verbatim, or mention judgments or subjective statements, except in the notes, which are to be quoted verbatim and are only visible to the case manager.
     - Not to recommend local resources except as provided through the resource pipeline.
-    - If questions arise during the action plan generation, please note them in the `notes` fields of the appropriate section that the case worker can address.
+    - If questions arise during the action plan generation, please note them in the `notes` fields of the appropriate section that the case manager can address.
 - The action plan will be separated into the following sections:
     - Immediate needs: Which issues should be addressed urgently to create the stability necessary for success.
     - [Plans by section]: Each section should be specific to an area of needs or risks (e.g., housing, employment, etc.).
       A section should not cross over with another section.
       It should contain a paragraph describing the area of needs or risk, how to help in this area, and an action plan/timeline.
       If assessment data is available, sections with higher risk scores should receive more detailed attention.
-    - Milestones: Milestones the case worker and client can check in on together to know whether it's working / they're on the right track.
-    - Timeline: An enumeration week-by-week, then month-by-month after 2mo, of each of the steps the individual and their case worker should take along the path of the action plan.
+    - Milestones: Milestones the case manager and client can check in on together to know whether it's working / they're on the right track.
+    - Timeline: An enumeration week-by-week, then month-by-month after 2mo, of each of the steps the individual and their case manager should take along the path of the action plan.
     - Quick summary of circumstances: A brief summary of the client's circumstances (based on intake summary and assessment results).
     - Overview: A brief summary of the action plan, including the section title and a quick description of each section (Do not mention immediate needs).
 """
@@ -394,7 +394,7 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
     # Get annotations and notes
     logger.debug("Getting annotations and notes for the section", section=section)
     prompt = HumanMessage(
-        content=dedent(f"""Find relevant annotations and notes for this section. This content is for the case worker only and does not need to be addressed to the client
+        content=dedent(f"""Find relevant annotations and notes for this section. This content is for the case manager only and does not need to be addressed to the client
         Section title: {section}
         Section content: {temp_response.content}
 
@@ -626,7 +626,7 @@ class LLMAgentGenerate:
                 content=dedent("""
                 What are the key milestones that the client should aim for each section of the action plan?
                 1. A milestone is a checkpoint for the you and the client can check to see if they're on-track.
-                2. This should be the most important of the goals or outcomes from the sections up above. E.g., it should be less small tactical milestones (e.g., having applied for something) and more large milestone outcomes the you worker and the client can be aiming for (e.g., getting the driver's license, completing a course, etc.).
+                2. This should be the most important of the goals or outcomes from the sections up above. E.g., it should be less small tactical milestones (e.g., having applied for something) and more large milestone outcomes the you case manager and the client can be aiming for (e.g., getting the driver's license, completing a course, etc.).
                 3. Phrasing must be backward-looking, and gives something concrete to you to check if the client is still on track.
                 For example, instead of "Successfully establish a consistent and reliable method of commuting to and from work, whether through public transit, carpooling, or ride-sharing", write "By the end of Week 8, you should have a reliable commute pattern that's been tested over several weeks—whether through transit, carpooling, ride-sharing, or another approach. This will significantly reduce the risk of interruptions to your employment"
                 Such phrasing reinforce why this is important, and why the client should feed good about achieving it.

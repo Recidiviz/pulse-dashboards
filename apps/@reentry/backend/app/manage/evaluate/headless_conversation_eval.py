@@ -50,7 +50,7 @@ class ConversationEvaluator:
         conversation_text = ""
         ai_questions = []
         for exchange in conversation_history:
-            conversation_text += f"AI Caseworker: {exchange['ai']}\n"
+            conversation_text += f"AI Case manager: {exchange['ai']}\n"
             conversation_text += f"Client: {exchange['client']}\n\n"
             ai_questions.append(exchange["ai"])
 
@@ -74,7 +74,7 @@ class ConversationEvaluator:
         )
 
         evaluation_prompt = f"""
-You are an expert evaluator assessing the performance of an AI caseworker conducting intake assessments.
+You are an expert evaluator assessing the performance of an AI case manager conducting intake assessments.
 
 CONVERSATION TO EVALUATE:
 {conversation_text}
@@ -84,7 +84,7 @@ CONVERSATION TO EVALUATE:
 SECTION REQUIREMENTS FOR COMPLETED SECTIONS:
 {requirements_text}
 
-Please evaluate the AI caseworker's performance on the following criteria:
+Please evaluate the AI case manager's performance on the following criteria:
 
 1. TONE ASSESSMENT (1-10 scale):
    - Was the tone warm, professional, and trauma-informed?
@@ -281,10 +281,10 @@ Instructions:
         if self.conversation_history:
             conversation_context = "\n\nRecent conversation:\n"
             for exchange in self.conversation_history[-3:]:  # Last 3 exchanges
-                conversation_context += f"Caseworker: {exchange['ai']}\n"
+                conversation_context += f"case manager: {exchange['ai']}\n"
                 conversation_context += f"You: {exchange['client']}\n"
 
-        prompt = f'{persona_context}{conversation_context}\n\nCaseworker just said: "{ai_message}"\n\nRespond as {self.client_name}:'
+        prompt = f'{persona_context}{conversation_context}\n\nCase manager just said: "{ai_message}"\n\nRespond as {self.client_name}:'
 
         try:
             response = await self.llm.ainvoke([HumanMessage(content=prompt)])

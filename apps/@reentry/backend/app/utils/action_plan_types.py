@@ -41,7 +41,7 @@ class ActionPlanSectionPartial(BaseModel):
         description="If the reasoning reference that informed this section includes source documents, the annotations should be provided here"
     )
     notes: str | None = Field(
-        description="Optional notes at the destination of the case worker only"
+        description="Optional notes at the destination of the case manager only"
         "Indicate if you didn't found any resources to help the client.",
         default=None,
     )
@@ -69,7 +69,7 @@ class ActionPlanMilestone(BaseModel):
         description="Description of the milestone in markdown, 1 item list minimum"
     )
     notes: str | None = Field(
-        description="Optional notes at the destination of the case worker"
+        description="Optional notes at the destination of the case manager"
     )
 
 
@@ -85,7 +85,8 @@ class ActionPlanTimeline(BaseModel):
     )
     markdown_content: str = Field(description="The markdown content of the timeline")
     notes: str | None = Field(
-        description="Optional notes at the destination of the case worker", default=None
+        description="Optional notes at the destination of the case manager",
+        default=None,
     )
 
 
@@ -168,5 +169,3 @@ class CommonMessagesState(MessagesState):
 class TranscriptionMessage(BaseModel):
     role: Literal["client", "caseworker"]
     content: str
-
-

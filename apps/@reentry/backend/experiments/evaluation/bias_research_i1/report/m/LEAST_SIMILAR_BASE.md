@@ -667,7 +667,7 @@ By the end of Month 6, you should have built a connection with at least one ment
 ## Months 2-3
 1. Intermediate Progress:
    - Achieved stabilizing steps in housing, treatment, and job preparation.
-   - Maintained regular program attendance and communication with case workers.
+   - Maintained regular program attendance and communication with case managers.
 
 ## Months 4-6
 1. Long-Term Developments:

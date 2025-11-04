@@ -92,7 +92,7 @@ async def clarity(run: Run, example: Example):
     structured_llm_grader = eval_llm.with_structured_output(GradeClarity)
 
     # Prompt
-    criterium = "clarity: The action plan should clearly delineate which steps need to be taken, and when, by the client, and which should be taken by the caseworker. No step in the plan is without a time and an assignee."
+    criterium = "clarity: The action plan should clearly delineate which steps need to be taken, and when, by the client, and which should be taken by the case manager. No step in the plan is without a time and an assignee."
 
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -184,8 +184,8 @@ async def structure(run: Run, example: Example):
     - Background: Describes briefly the history of the person’s situation and what this action plan is intended to do.
     - Immediate needs: Which issues should be addressed urgently to create the stability necessary for success
     - [Plans by section]: Each section should be specific to an area of needs or risks (e.g., housing, employment, etc.)
-    - Milestones: Milestones the case worker and client can check in on together to know whether it’s working / they’re on the right track
-    - Timeline: An enumeration week-by-week, then month-by-month after 2mo, of each of the steps the individual and their case worker should take along the path of the action plan
+    - Milestones: Milestones the case manager and client can check in on together to know whether it’s working / they’re on the right track
+    - Timeline: An enumeration week-by-week, then month-by-month after 2mo, of each of the steps the individual and their case manager should take along the path of the action plan
     """
 
     prompt = ChatPromptTemplate.from_messages(
