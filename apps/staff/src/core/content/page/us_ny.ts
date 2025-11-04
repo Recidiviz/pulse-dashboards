@@ -17,6 +17,13 @@
 
 import { StateSpecificPageCopy } from "../types";
 
-const content: StateSpecificPageCopy = {};
+const content: StateSpecificPageCopy = {
+  prison: {
+    summary:
+      "This dashboard shows data on individuals who are admitted to New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly.",
+    methodology:
+      "This dashboard shows data on individuals who are admitted to New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly. \n- For more reports, please see: https://doccs.ny.gov/research-and-reports \n- For questions, please contact NYS DOCCS. \n",
+  },
+};
 
 export default content;

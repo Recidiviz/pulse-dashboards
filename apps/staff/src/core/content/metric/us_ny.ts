@@ -17,6 +17,13 @@
 
 import { StateSpecificMetricCopy } from "../types";
 
-const content: StateSpecificMetricCopy = {};
+const content: StateSpecificMetricCopy = {
+  prisonPopulationOverTime: {
+    title: "Prison population over time",
+    note: "Data labelled May 1, 2024 was actually generated May 4, 2024.",
+    methodology:
+      'The chart describes the historical incarceration population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. \n- Please note that data labelled May 1, 2024 was actually generated May 4, 2024.',
+  },
+};
 
 export default content;

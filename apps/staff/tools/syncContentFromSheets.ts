@@ -19,7 +19,7 @@ import createMetricCopyFile from "./createMetricCopyFile";
 import createPageCopyFile from "./createPageCopyFile";
 import { getGoogleSheet } from "./utils";
 
-const STATES_WITH_COPY_OVERRIDES = ["US_ID", "US_ND", "US_TN"];
+const STATES_WITH_COPY_OVERRIDES = ["US_ID", "US_ND", "US_TN", "US_NY"];
 
 const syncContentWithSheet = async () => {
   const docId = process.env.CONTENT_SHEET_ID || "";
