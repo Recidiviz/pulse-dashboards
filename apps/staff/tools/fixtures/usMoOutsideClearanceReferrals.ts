@@ -17,6 +17,8 @@
 
 import { z } from "zod";
 
+import { relativeFixtureDate } from "~datatypes";
+
 import { usMoWorkReleaseSchema } from "../../src/WorkflowsStore/Opportunity/UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseReferralRecord";
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
@@ -40,6 +42,9 @@ const data: UsMoOutsideClearanceReferralRecordRaw[] = [
       historyEscapesAbsconsions: [],
       historyViolationsLast24Months: [],
     },
+    metadata: {
+      currentC3Sanctions: [],
+    },
     caseNotes: {},
     isEligible: true,
     isAlmostEligible: false,
@@ -58,6 +63,9 @@ const data: UsMoOutsideClearanceReferralRecordRaw[] = [
     formInformation: {
       historyEscapesAbsconsions: [],
       historyViolationsLast24Months: [],
+    },
+    metadata: {
+      currentC3Sanctions: [],
     },
     caseNotes: {},
     isEligible: true,
@@ -78,6 +86,14 @@ const data: UsMoOutsideClearanceReferralRecordRaw[] = [
       historyEscapesAbsconsions: [],
       historyViolationsLast24Months: [],
     },
+    metadata: {
+      currentC3Sanctions: [
+        {
+          sanctionStartDate: relativeFixtureDate({ days: -30 }),
+          sanctionEndDate: relativeFixtureDate({ days: 30 }),
+        },
+      ],
+    },
     caseNotes: {},
     isEligible: true,
     isAlmostEligible: false,
@@ -96,6 +112,9 @@ const data: UsMoOutsideClearanceReferralRecordRaw[] = [
     formInformation: {
       historyEscapesAbsconsions: [],
       historyViolationsLast24Months: [],
+    },
+    metadata: {
+      currentC3Sanctions: [],
     },
     caseNotes: {},
     isEligible: true,

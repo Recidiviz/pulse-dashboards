@@ -34,6 +34,16 @@ export const usMoWorkReleaseSchema = opportunitySchemaBase.extend({
       })
       .array(),
   }),
+  metadata: z
+    .object({
+      currentC3Sanctions: z
+        .object({
+          sanctionStartDate: dateStringSchema,
+          sanctionEndDate: dateStringSchema,
+        })
+        .array(),
+    })
+    .passthrough(),
 });
 
 export type UsMoWorkReleaseReferralRecord = z.output<

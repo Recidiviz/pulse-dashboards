@@ -49,6 +49,7 @@ import {
 } from "./OpportunityDetailSidebarComponents";
 import UsMiLastAssessment from "./OpportunityDetailSidebarComponents/US_MI/UsMiLastAssessment";
 import UsMoAssessmentScores from "./OpportunityDetailSidebarComponents/US_MO/UsMoAssessmentScores";
+import UsMoC3Sanctions from "./OpportunityDetailSidebarComponents/US_MO/UsMoC3Sanctions";
 import UsMoEscapes from "./OpportunityDetailSidebarComponents/US_MO/UsMoEscapes";
 import UsMoGangInvolvement from "./OpportunityDetailSidebarComponents/US_MO/UsMoGangInvolvement";
 import UsMoOffenseHistory from "./OpportunityDetailSidebarComponents/US_MO/UsMoOffenseHistory";
@@ -101,6 +102,7 @@ export const OpportunityDetailSidebarComponents = {
   UsMoRestrictiveHousing,
   UsMoViolations,
   UsMoEscapes,
+  UsMoC3Sanctions,
   UsTnCommonlyUsedOverrideCodes,
   UsMiRestrictiveHousing,
   UsAzAcisInformation,

@@ -45,6 +45,9 @@ const data: UsMoWorkReleaseReferralRecordRaw[] = [
         { violationCode: "D1-02", violationDate: "2024-09-01" },
       ],
     },
+    metadata: {
+      currentC3Sanctions: [],
+    },
     caseNotes: {},
     isEligible: true,
     isAlmostEligible: false,
@@ -65,6 +68,9 @@ const data: UsMoWorkReleaseReferralRecordRaw[] = [
       historyViolationsLast24Months: [
         { violationCode: "D1-02", violationDate: "2024-09-01" },
       ],
+    },
+    metadata: {
+      currentC3Sanctions: [],
     },
     caseNotes: {},
     isEligible: true,

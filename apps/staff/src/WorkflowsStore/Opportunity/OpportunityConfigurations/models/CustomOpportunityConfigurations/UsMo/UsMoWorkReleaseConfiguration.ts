@@ -49,6 +49,7 @@ export class UsMoWorkReleaseConfiguration extends ApiOpportunityConfiguration {
       "UsMoSentences",
       "UsMoGangInvolvement",
       "UsMoViolations",
+      "UsMoC3Sanctions",
       "UsMoEscapes",
       "UsMoSolitary",
       "UsMoProgramParticipation",
