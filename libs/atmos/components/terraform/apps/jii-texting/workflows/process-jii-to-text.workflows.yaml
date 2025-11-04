@@ -39,8 +39,6 @@ main:
               - ${"--workflow-execution-id=" + workflow_execution.body.workflowExecutionId}
     - process_data_switch:
         switch:
-          - condition: ${state_code == "US_TX"}
-            next: skip_logic
           - condition: ${dry_run}
             next: append_dry_run_argument
         next: process_data
