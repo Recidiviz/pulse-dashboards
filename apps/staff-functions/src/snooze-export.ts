@@ -36,6 +36,7 @@ type SnoozeState = {
   denial_reasons: string[];
   other_reason?: string;
   as_of: string;
+  user_input?: Record<string, string>;
 };
 
 class SnoozeExporter extends FirestoreExporter<SnoozeState> {
@@ -79,6 +80,7 @@ class SnoozeExporter extends FirestoreExporter<SnoozeState> {
       denial_reasons: denial.reasons,
       other_reason: denial.otherReason,
       as_of: formatDate(startOfToday()),
+      user_input: denial.userInput,
     };
 
     if (manualSnooze) {
