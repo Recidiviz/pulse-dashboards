@@ -108,9 +108,14 @@ const ChatInput = () => {
 
       <Box className="flex items-end">
         <Box
-          className={
-            "flex items-center justify-center flex-1 relative rounded-xl bg-white border border-[#2B546933] p-1 transition-all"
-          }
+            className={`
+                flex items-center justify-center flex-1 relative rounded-xl bg-white
+                border p-1 transition-all duration-200
+                hover:shadow-lg
+                focus-within:border-[#1A3744] focus-within:shadow-md focus-within:ring-2 focus-within:ring-[#1A3744]/20
+                ${isInputDisabled ? 'border-[#2B546933]': 'border-[#224557] shadow-lg'}
+                `
+            }
         >
           <TextareaAutosize
             ref={textareaRef}
@@ -121,7 +126,7 @@ const ChatInput = () => {
             placeholder={getPlaceholderText()}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            className={`
+            className={` focus:placeholder-opacity-30
 							w-full max-w-[800px]
 							border-none outline-none resize-none
 							overflow-auto font-public text-md
@@ -139,7 +144,7 @@ const ChatInput = () => {
               className={`text-[#2B5469] ${
                 isInputDisabled || !inputValue.trim()
                   ? "text-opacity-20"
-                  : "text-opacity-60"
+                  : "text-opacity-80"
               } text-[17px] rotate-[-50deg] leading-[22px] tracking-[-0.43px] font-normal`}
             />
           </IconButton>
