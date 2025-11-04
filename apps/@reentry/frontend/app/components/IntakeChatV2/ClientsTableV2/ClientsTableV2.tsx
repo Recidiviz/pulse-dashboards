@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import DataTable, {
   SortOrder,
@@ -60,6 +61,7 @@ export const ClientsTableV2: React.FC<ClientsTableV2Props> = ({
   const stateCode = auth.userAppMetadata?.stateCode ?? "";
   const staffPseudoId = auth.userAppMetadata?.pseudonymizedId;
   const enableGetClientsIntakeStatus = Boolean(stateCode && staffPseudoId);
+  const router = useRouter();
 
   const { data, isLoading } =
     trpc.staff.getAllClientsIntakeStatusAndDate.useQuery(
@@ -127,9 +129,7 @@ export const ClientsTableV2: React.FC<ClientsTableV2Props> = ({
         />
       )}
       onRowClicked={(row) => {
-        if (row.processing_status === "not_started") {
-          window.location.href = `/clients/intake/${row.client_pseudo_id}`;
-        }
+        router.push(`/clients/intake/${row.client_pseudo_id}`);
       }}
       pointerOnHover
     />
