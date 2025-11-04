@@ -21,6 +21,8 @@
 export const MAX_RETRY_ATTEMPTS = 3;
 export const BQ_DATASET_ID = "twilio_webhook_requests";
 export const BQ_REPLIES_VIEW_ID = "jii_texting_incoming_messages";
+// This is set to one less than the connection limit calculated by Prisma and seen here: https://github.com/Recidiviz/pulse-dashboards/issues/10403
+export const PROMISES_BATCH_SIZE = 4;
 
 /****************************
  * Idaho LSU Constants *

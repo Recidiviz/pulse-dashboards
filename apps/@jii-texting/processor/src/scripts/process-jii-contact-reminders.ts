@@ -22,7 +22,9 @@ import {
   auditNumMessagesAttemptedChangeRatio,
   PERSON_WITH_CONTACTS_AND_MESSAGES,
   processIndividualJiiContactReminders,
+  PROMISES_BATCH_SIZE,
   ScriptAction,
+  throttlePromises,
   updateMessageStatuses,
 } from "~@jii-texting/utils";
 import { TwilioAPIClient } from "~twilio-api";
@@ -85,8 +87,8 @@ export async function processJiiContactReminders({
     REMINDER_TEXT_SENT: [],
   };
 
-  await Promise.all(
-    jiiToText.map(async (jii) => {
+  const processPromiseFns = jiiToText.map((jii) =>
+    async () => {
       const actions = await processIndividualJiiContactReminders(
         jii,
         workflowExecutionId,
@@ -95,11 +97,26 @@ export async function processJiiContactReminders({
         twilioClient,
       );
 
-      actions.forEach((action) => {
-        results[action as ScriptAction].push(jii.pseudonymizedId);
-      });
-    }),
+      return {
+        id: jii.pseudonymizedId,
+        actions: actions as ScriptAction[],
+      };
+    },
   );
+
+  // TODO(#10425): Rather than batching promises, consider scoping out how to do batched writes
+  const allProcessedResults = await throttlePromises(
+    processPromiseFns,
+    PROMISES_BATCH_SIZE,
+  );
+
+  for (const result of allProcessedResults) {
+    for (const action of result.actions) {
+      if (results[action]) {
+        results[action].push(result.id);
+      }
+    }
+  }
 
   for (const key in results) {
     console.log(`${key}: ${results[key as ScriptAction]}`);

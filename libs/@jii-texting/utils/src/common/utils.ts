@@ -40,11 +40,13 @@ import {
   PersonWithWelcomeMessageSeries,
   ReminderMessageSeriesWithAttempts,
   ScriptAction,
+  throttlePromises,
   WelcomeMessageSeriesWithAttempts,
 } from "~@jii-texting/utils";
 import {
   EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS,
   MAX_RETRY_ATTEMPTS,
+  PROMISES_BATCH_SIZE,
   US_ID_LSU_LEARN_MORE,
   US_ID_LSU_VISIT_LINK,
   US_TX_EARLIEST_MESSAGE_SEND_UTC_HOURS,
@@ -1433,28 +1435,29 @@ export async function updateMessageStatuses(
 
   let numUpdatedMessages = 0;
 
-  await Promise.all(
-    allMessagesToUpdate.flatMap(({ type, messages }) =>
-      messages.map(async (attempt) => {
-        try {
-          await updateMessageAttempt(
-            prisma,
-            twilio,
-            attempt.status,
-            attempt.twilioMessageSid,
-            type,
-          );
-          numUpdatedMessages++;
-        } catch (e) {
-          // Don't completely fail on individual errors
-          console.log(
-            `Error when updating message with twilio id: ${attempt.twilioMessageSid}. ${e}`,
-          );
-          captureException(`Failed to update the status of message: ${e}`);
-        }
-      }),
-    ),
+  const updatePromiseFns = allMessagesToUpdate.flatMap(({ type, messages }) =>
+    messages.map((attempt) => async () => {
+      try {
+        await updateMessageAttempt(
+          prisma,
+          twilio,
+          attempt.status,
+          attempt.twilioMessageSid,
+          type,
+        );
+
+        numUpdatedMessages++;
+      } catch (e) {
+        console.log(
+          `Error when updating message with twilio id: ${attempt.twilioMessageSid}. ${e}`,
+        );
+        captureException(`Failed to update the status of message: ${e}`);
+      }
+    }),
   );
+
+  // TODO(#10425): Rather than batching promises, consider scoping out how to do batched writes
+  await throttlePromises(updatePromiseFns, PROMISES_BATCH_SIZE);
 
   console.log(
     `Updated ${numUpdatedMessages} messages out of ${numMessagesToUpdate} in-progress messages`,
