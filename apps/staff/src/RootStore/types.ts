@@ -75,6 +75,7 @@ export type FeatureVariant =
   | "supervisionUnrestrictedSearch"
   | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
+  | "ineligibleOpportunityTypesOnFullProfile"
 
   //// Arizona
   | "usAzFacilitySearch"
@@ -202,6 +203,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},
   tasksRoutePlanner: {},
+  ineligibleOpportunityTypesOnFullProfile: {},
   usPaUnclearEligibility: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
