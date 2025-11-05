@@ -53,7 +53,7 @@ Most credits from last month should appear in this app by the 13th. Credits upda
             </ul></td>
         </tr>
         <tr>
-            <th scope="row">Bonus Behavior</th>
+            <th scope="row">Bonus Program</th>
             <td>+2 days/month</td>
             <td><ul>
                 <li>In minimum custody</li>
