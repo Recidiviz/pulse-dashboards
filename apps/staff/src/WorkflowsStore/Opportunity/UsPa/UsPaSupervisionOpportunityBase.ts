@@ -47,6 +47,8 @@ export abstract class UsPaSupervisionOpportunityBase<
 
   readonly eligibilityUnclearDisplayName = "Eligibility Unclear";
 
+  private isEligibilityUnclearEnabled: boolean;
+
   constructor(
     client: Client,
     opportunityType: OpportunityType,
@@ -55,10 +57,10 @@ export abstract class UsPaSupervisionOpportunityBase<
   ) {
     super(client, opportunityType, rootStore, record);
 
-    const isEligibilityUnclearEnabled =
+    this.isEligibilityUnclearEnabled =
       !!rootStore.userStore.activeFeatureVariants.usPaUnclearEligibility;
 
-    if (isEligibilityUnclearEnabled) {
+    if (this.isEligibilityUnclearEnabled) {
       const { eligibilityUnclearText, tabName } = record.metadata;
       this.eligibilityUnclearText = eligibilityUnclearText;
       this.isEligibilityUnclear = tabName === "ELIGIBILITY_UNCLEAR";
@@ -107,7 +109,7 @@ export abstract class UsPaSupervisionOpportunityBase<
   }
 
   eligibilityStatusLabel(includeReasons?: boolean) {
-    if (this.isOpportunityInFinalState)
+    if (!this.isEligibilityUnclearEnabled || this.isOpportunityInFinalState)
       return super.eligibilityStatusLabel(includeReasons);
     else if (this.isEligibilityUnclear)
       return this.eligibilityUnclearDisplayName;
@@ -118,7 +120,8 @@ export abstract class UsPaSupervisionOpportunityBase<
     // A non-permanent tab for unclear eligibility status while perceived US_PA eligibility criteria
     // accuracy and quality is improved. Expect this to be removed in the future and swallowed
     // into the standard eligibility flow.
-    if (this.isOpportunityInFinalState) return super.tabTitle();
+    if (!this.isEligibilityUnclearEnabled || this.isOpportunityInFinalState)
+      return super.tabTitle();
     else if (this.isEligibilityUnclear)
       return this.eligibilityUnclearDisplayName;
     else return super.tabTitle();

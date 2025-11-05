@@ -24,8 +24,11 @@ export class UsPaSupervisionConfiguration extends ApiOpportunityConfiguration {
     if (tabGroups) return tabGroups;
 
     const tabs = [...super.defaultEligibilityStatusTabs()];
-    const almostEligibleIdx = 2;
-    tabs.splice(almostEligibleIdx, 0, "Eligibility Unclear");
+
+    if (this.userStore.activeFeatureVariants.usPaUnclearEligibility) {
+      const almostEligibleIdx = 2;
+      tabs.splice(almostEligibleIdx, 0, "Eligibility Unclear");
+    }
 
     return {
       ...super.tabGroups,
