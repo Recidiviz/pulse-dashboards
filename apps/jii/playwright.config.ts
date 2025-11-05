@@ -71,4 +71,8 @@ export default defineConfig({
     url: baseURL,
     reuseExistingServer: !process.env.CI,
   },
+  // overriding the default to keep platform out of the filename
+  // (otherwise dev and CI expect different snapshot files).
+  snapshotPathTemplate:
+    "{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{-projectName}{ext}",
 });

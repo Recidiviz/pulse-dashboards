@@ -15,18 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { permissionSchema } from "~@jii/auth";
+import { z } from "zod";
+
+import { Permission, permissionSchema } from "~@jii/auth";
 import { HydrationState } from "~hydration-utils";
 
 import { stateCodes } from "../../configs/stateConstants";
 import { AuthHandler } from "./types";
 
+const permissionsArraySchema = z.array(permissionSchema);
+
 export class OfflineAuthHandler implements AuthHandler {
   get userProfile(): AuthHandler["userProfile"] {
+    let permissionsOverride: Array<Permission> | undefined;
+    try {
+      const storedValue = localStorage.getItem("offlinePermissionsOverride");
+      if (storedValue) {
+        permissionsOverride = permissionsArraySchema.parse(
+          JSON.parse(storedValue),
+        );
+
+        // eslint-disable-next-line no-console
+        console.log(
+          "Offline mode: reading permissions from localStorage.offlinePermissionsOverride",
+        );
+      }
+    } catch {
+      console.warn(
+        "localStorage.offlinePermissionsOverride contained an invalid value; using default permissions.",
+      );
+    }
+
     return {
       stateCode: "RECIDIVIZ",
       allowedStates: [...stateCodes.options],
-      permissions: [...permissionSchema.options],
+      permissions: permissionsOverride ?? [...permissionSchema.options],
     };
   }
 
