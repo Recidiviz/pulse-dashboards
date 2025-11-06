@@ -190,6 +190,11 @@ module "audio_gcs_bucket" {
   bucket_admins = {
     (local.etl_bucket_name) = "serviceAccount:${google_service_account.default.email}"
   }
+  cors = [{
+    origin = ["http://localhost:19000/"]
+    method = ["PUT"]
+    response_header = ["Content-Type"]
+  }]
 }
 
 module "gcs_bucket" {

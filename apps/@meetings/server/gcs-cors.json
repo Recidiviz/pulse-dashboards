@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["http://localhost:19000/"],
+    "method": ["PUT"],
+    "responseHeader": ["Content-Type"]
+  }
+]

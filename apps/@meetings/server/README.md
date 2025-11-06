@@ -7,8 +7,6 @@ Some technical details:
 - The API is defined using [trpc](https://trpc.io/), a type-safe RPC library for TypeScript
 - The server uses [Prisma](https://www.prisma.io/) to interact with the database.
 
-
-
 ## Development
 
 If you haven't already, follow the setup instructions in the root README to install dependencies.
@@ -18,7 +16,10 @@ If you haven't already, follow the setup instructions in the root README to inst
    This way, `nx` will automatically pick up the correct environment variables based on the targets you are running.
 
 2. Make sure you have your Docker daemon running.
-3. To point to your own GCS bucket for local development, create an `.env.dev` file in this directory with the following contents:
+3. To point to your own GCS bucket for local development:
+   1. Create a GCS bucket in the recidiviz-dashboard-staging project with the pattern `recidiviz-dashboard-staging-[your-name]-meetings-test-bucket`
+   1. Set the CORS policy on the bucket by running `gcloud storage buckets update gs://[your-bucket-name] --cors-file=apps/@meetings/server/gcs-cors.json`
+   1. create an `.env.dev` file in this directory with the following contents:
 
    ```
    AUDIO_RECORDINGS_BUCKET_NAME=your-bucket-name
