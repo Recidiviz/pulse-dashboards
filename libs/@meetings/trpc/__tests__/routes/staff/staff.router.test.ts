@@ -19,7 +19,11 @@ import {
   initFastifyAndSetUser,
   testTRPCClient,
 } from "~@meetings/trpc/test/setup";
-import { fakeClients, fakeStaff } from "~@meetings/trpc/test/setup/seed";
+import {
+  fakeClients,
+  fakeMeeting,
+  fakeStaff,
+} from "~@meetings/trpc/test/setup/seed";
 
 describe("staff router", () => {
   describe("state user", () => {
@@ -31,6 +35,7 @@ describe("staff router", () => {
           givenNames: fakeClients[0].givenNames,
           surname: fakeClients[0].surname,
           displayPersonExternalId: fakeClients[0].displayPersonExternalId,
+          activeMeetingId: fakeMeeting.id,
         },
       ]);
     });
@@ -55,6 +60,7 @@ describe("staff router", () => {
           givenNames: fakeClients[0].givenNames,
           surname: fakeClients[0].surname,
           displayPersonExternalId: fakeClients[0].displayPersonExternalId,
+          activeMeetingId: fakeMeeting.id,
         },
       ]);
     });
@@ -70,16 +76,24 @@ describe("staff router", () => {
       });
     });
 
-    test("getClients returns list of clients for staff member", async () => {
+    test("getClients returns list of clients for staff member with active meeting id", async () => {
       const result = await testTRPCClient.v1.staff.getClients.query();
-      expect(result).toIncludeSameMembers(
-        fakeClients.map((fakeClient) => ({
-          personId: fakeClient.personId,
-          givenNames: fakeClient.givenNames,
-          surname: fakeClient.surname,
-          displayPersonExternalId: fakeClient.displayPersonExternalId,
-        })),
-      );
+      expect(result).toIncludeSameMembers([
+        {
+          personId: fakeClients[0].personId,
+          givenNames: fakeClients[0].givenNames,
+          surname: fakeClients[0].surname,
+          displayPersonExternalId: fakeClients[0].displayPersonExternalId,
+          activeMeetingId: fakeMeeting.id,
+        },
+        {
+          personId: fakeClients[1].personId,
+          givenNames: fakeClients[1].givenNames,
+          surname: fakeClients[1].surname,
+          displayPersonExternalId: fakeClients[1].displayPersonExternalId,
+          activeMeetingId: null,
+        },
+      ]);
     });
   });
 });

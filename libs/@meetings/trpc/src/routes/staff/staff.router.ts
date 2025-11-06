@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import _ from "lodash";
+
+import { Prisma } from "~@meetings/prisma/client/client";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 
 export const staffRouter = router({
@@ -26,23 +29,40 @@ export const staffRouter = router({
       surname: true,
       displayPersonExternalId: true,
       personId: true,
-    };
+      // Only get the latest active meeting, if it exists
+      meetings: {
+        select: { id: true },
+        where: {
+          endTime: null,
+        },
+        orderBy: {
+          startTime: "desc",
+        },
+        take: 1,
+      },
+    } satisfies Prisma.ClientSelect;
 
+    let clients;
     if (user.pseudonymizedId === "RECIDIVIZ") {
-      return prisma.client.findMany({ select: querySelect });
-    }
-
-    return prisma.client.findMany({
-      where: {
-        staff: {
-          some: {
-            staff: {
-              pseudonymizedId: user.pseudonymizedId,
+      clients = prisma.client.findMany({ select: querySelect });
+    } else {
+      clients = prisma.client.findMany({
+        where: {
+          staff: {
+            some: {
+              staff: {
+                pseudonymizedId: user.pseudonymizedId,
+              },
             },
           },
         },
-      },
-      select: querySelect,
-    });
+        select: querySelect,
+      });
+    }
+
+    return (await clients).map((client) => ({
+      ..._.omit(client, ["meetings"]),
+      activeMeetingId: client.meetings[0]?.id ?? null,
+    }));
   }),
 });

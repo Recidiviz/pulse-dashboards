@@ -18,7 +18,7 @@
 import { describe } from "vitest";
 
 import { testTRPCClient } from "~@meetings/server/test/setup";
-import { fakeClient } from "~@meetings/server/test/setup/seed";
+import { fakeClient, fakeMeeting } from "~@meetings/server/test/setup/seed";
 
 describe("server", () => {
   test("should include trpc routes", async () => {
@@ -31,6 +31,7 @@ describe("server", () => {
         givenNames: fakeClient.givenNames,
         surname: fakeClient.surname,
         displayPersonExternalId: fakeClient.displayPersonExternalId,
+        activeMeetingId: fakeMeeting.id,
       },
     ]);
   });
