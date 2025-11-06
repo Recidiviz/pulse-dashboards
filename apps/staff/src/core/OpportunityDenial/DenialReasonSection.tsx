@@ -121,6 +121,7 @@ export const DenialReasonSection = function DenialReasonSection({
                   onChange={(newValue) => handleUserInput(code, newValue)}
                   inputType={denialInputSettings[code].inputType}
                   prefix={denialInputSettings[code].prefix}
+                  isOptional={!denialInputSettings[code].required}
                 />
               )}
           </>

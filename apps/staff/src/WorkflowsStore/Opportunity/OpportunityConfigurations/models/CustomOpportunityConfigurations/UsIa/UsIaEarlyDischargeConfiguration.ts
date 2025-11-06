@@ -56,9 +56,9 @@ export class UsIaEarlyDischargeConfiguration extends ApiOpportunityConfiguration
     if (this.userStore.activeFeatureVariants.usIaFinesAndFees) {
       return {
         "FINES & FEES": {
-          required: true,
+          required: false,
           heading: "Remaining fees (COFO + Restitution):",
-          placeholder: "Please enter the total amount of remaining fees",
+          placeholder: "(Optional) Enter the total remaining fees amount",
           inputType: "number",
           minCharacters: 1,
           maxCharacters: 10,
