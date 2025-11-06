@@ -519,9 +519,16 @@ export class OpportunityPersonListPresenter
   }
 
   orderedOpportunitiesForSelectedCategory(subcategory?: string): Opportunity[] {
-    let opps;
-    if (subcategory && this.peopleInActiveTabBySubcategory) {
+    let opps: Opportunity[];
+    if (
+      subcategory &&
+      this.peopleInActiveTabBySubcategory &&
+      this.peopleInActiveTabBySubcategory[subcategory]
+    ) {
       opps = this.peopleInActiveTabBySubcategory[subcategory];
+    } else if (subcategory) {
+      // We are within a subcategory section, but there are no active clients in this subcategory
+      opps = [];
     } else {
       opps = this.peopleInActiveTab;
     }
