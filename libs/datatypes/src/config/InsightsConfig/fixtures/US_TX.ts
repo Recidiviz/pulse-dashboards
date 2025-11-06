@@ -86,7 +86,7 @@ export const US_TX: InsightsConfig = {
     {
       metricId: "timely_contact_due_date_based",
       titleDisplayName: "Timely Contact",
-      bodyDisplayName: "Client",
+      bodyDisplayName: "Contact",
     },
   ],
   vitalsMetricsMethodologyUrl:

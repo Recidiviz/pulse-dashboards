@@ -70,7 +70,7 @@ export const US_AZ: InsightsConfig = {
   supervisionDistrictLabel: "regional office",
   supervisionDistrictManagerLabel: "group supervisor",
   supervisionJiiLabel: "client",
-  supervisionOfficerLabel: "cro",
+  supervisionOfficerLabel: "CRO",
   supervisionSupervisorLabel: "unit supervisor",
   supervisionUnitLabel: "--",
   supervisorHasNoOfficersWithEligibleClientsLabel:
