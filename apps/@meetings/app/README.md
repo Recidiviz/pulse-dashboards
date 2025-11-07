@@ -20,3 +20,15 @@ Running against local fixture data:
 Running against the live staging backend:
 
 1. Run `nx dev:android @meetings/app`
+
+### Offline Mode with Skip Authentication
+
+When running in offline mode against a local server, you can skip the Auth0 authentication flow:
+
+1. Ensure the backend server is running in development mode (`NODE_ENV=development`)
+1. Set the environment variable `EXPO_PUBLIC_OFFLINE_MODE=true` in your `.env` file
+1. Run `nx offline:android @meetings/app` (or `nx offline:ios @meetings/app`)
+1. On the login screen, click "Skip Authentication (Offline Mode)"
+1. The app will bypass Auth0 and the backend will use a mock user with `pseudonymizedId: "staff-pid-1"`
+
+**Note**: Skip authentication is only allowed when the backend is running in development mode for security reasons.

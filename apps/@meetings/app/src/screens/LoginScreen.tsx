@@ -32,13 +32,25 @@ import Icons from "../../assets/icons";
 import LearnMoreSheet from "../components/LearnMoreSheet";
 import PrimaryButton from "../components/PrimaryButton";
 
-const LoginScreen = () => {
+const OFFLINE_MODE = process.env["EXPO_PUBLIC_OFFLINE_MODE"] === "true";
+
+const LoginScreen = ({
+  onSkipAuth,
+}: {
+  onSkipAuth?: () => void;
+}) => {
   const { authorize } = useAuth0();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const handleContinue = async () => {
     const audience = process.env["EXPO_PUBLIC_AUTH0_AUDIENCE"];
     await authorize({ audience });
+  };
+
+  const handleSkipAuth = () => {
+    if (onSkipAuth) {
+      onSkipAuth();
+    }
   };
 
   const openSheet = () => bottomSheetRef.current?.expand();
@@ -60,6 +72,15 @@ const LoginScreen = () => {
           </Text>
 
           <PrimaryButton label="Continue" onPress={handleContinue} />
+
+          {/* Skip Auth Link for Offline Mode */}
+          {OFFLINE_MODE && (
+            <TouchableOpacity onPress={handleSkipAuth} className="mt-4">
+              <Text className="text-center text-sm font-medium text-blue-600">
+                Skip Authentication (Offline Mode)
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </KeyboardAvoidingView>
 

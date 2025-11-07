@@ -79,7 +79,10 @@ vi.mock("@google-cloud/tasks", () => ({
   }),
 }));
 
-export async function initFastifyAndSetUser(user: Auth0User) {
+export async function initFastifyAndSetUser(
+  user?: Auth0User,
+  options?: { skipAuth?: boolean },
+) {
   if (testServer) {
     await testServer.close();
     // Give the port time to be fully released
@@ -111,7 +114,7 @@ export async function initFastifyAndSetUser(user: Auth0User) {
       return;
     };
 
-    req.user = user;
+    if (user) req.user = user;
     done();
   });
 
@@ -124,10 +127,17 @@ export async function initFastifyAndSetUser(user: Auth0User) {
       httpBatchLink({
         url: `http://${testHost}:${testPort}`,
         headers() {
-          return {
-            Authorization: "Bearer test-token",
+          const headers: Record<string, string> = {
             StateCode: "US_NE",
           };
+
+          if (options?.skipAuth) {
+            headers["X-Skip-Auth"] = "true";
+          } else {
+            headers["Authorization"] = "Bearer test-token";
+          }
+
+          return headers;
         },
         // Required to get Date objects to serialize correctly.
         transformer: superjson,

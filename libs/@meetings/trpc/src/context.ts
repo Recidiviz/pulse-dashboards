@@ -23,6 +23,7 @@ import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
+import env from "~@meetings/trpc/env";
 import { AuthUser, Context } from "~@meetings/trpc/types";
 import { verifyAuth0Token } from "~server-setup-plugin";
 
@@ -36,6 +37,7 @@ export type Auth0User = {
 
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
+const SKIP_AUTH_HEADER_KEY = "x-skip-auth";
 
 function formatAndVerifyUser(
   user: Auth0User | undefined,
@@ -110,9 +112,31 @@ export async function createContext(
     });
   }
 
-  // Cast since the returned object from verifyAuth0Token has no type information
-  const auth0User = (await verifyAuth0Token(opts)) as Auth0User | undefined;
-  const formattedUser = formatAndVerifyUser(auth0User, stateCode);
+  // Check for skip auth in offline mode (dev only)
+  const skipAuthHeader = req.headers[SKIP_AUTH_HEADER_KEY];
+  const isDevMode = env.NODE_ENV === "development";
+  const shouldSkipAuth = skipAuthHeader === "true";
+  if (shouldSkipAuth && !isDevMode) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Auth can only be skipped on a server running in dev mode",
+    });
+  }
+
+  let formattedUser: AuthUser | undefined;
+
+  if (shouldSkipAuth) {
+    // In dev mode with skip auth, create a mock user
+    console.log("Skipping Auth0 verification in dev mode - using mock user");
+    formattedUser = {
+      pseudonymizedId: "staff-pid-1",
+    };
+  } else {
+    // Cast since the returned object from verifyAuth0Token has no type information
+    const auth0User = (await verifyAuth0Token(opts)) as Auth0User | undefined;
+    formattedUser = formatAndVerifyUser(auth0User, stateCode);
+  }
+
   console.log(`formattedUser: ${JSON.stringify(formattedUser)}`);
 
   let prismaClient;

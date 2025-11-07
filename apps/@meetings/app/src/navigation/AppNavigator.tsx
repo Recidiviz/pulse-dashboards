@@ -35,12 +35,26 @@ const trpcUrl =
 
 const AppNavigator = () => {
   const { user, isLoading, getCredentials } = useAuth0();
+  // skipAuth state triggers re-render when user clicks "Skip Authentication"
+  const [skipAuth, setSkipAuth] = React.useState(false);
+  // skipAuthRef allows the TRPC headers() function to access current value
+  // (headers() is defined once at initialization, so it needs a ref not state)
+  const skipAuthRef = React.useRef(false);
   const [trpcClient] = React.useState(() =>
     trpc.createClient({
       links: [
         httpBatchLink({
           url: trpcUrl,
           async headers() {
+            // In skip auth mode, send a special header
+            // Use ref here since this closure is created once during initialization
+            if (skipAuthRef.current) {
+              return {
+                "X-Skip-Auth": "true",
+                statecode: "US_NE",
+              };
+            }
+
             const creds = await getCredentials();
             return {
               Authorization: `Bearer ${creds?.accessToken}`,
@@ -54,10 +68,16 @@ const AppNavigator = () => {
     }),
   );
 
+  const handleSkipAuth = () => {
+    // Update both ref (for TRPC headers) and state (to trigger re-render)
+    skipAuthRef.current = true;
+    setSkipAuth(true);
+  };
+
   if (isLoading) {
     return null;
   }
-  const loggedIn = user !== undefined && user !== null;
+  const loggedIn = (user !== undefined && user !== null) || skipAuth;
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
@@ -65,7 +85,11 @@ const AppNavigator = () => {
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {!loggedIn ? (
-              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Login">
+                {(props) => (
+                  <LoginScreen {...props} onSkipAuth={handleSkipAuth} />
+                )}
+              </Stack.Screen>
             ) : (
               <Stack.Screen name="Main" component={DrawerNavigator} />
             )}

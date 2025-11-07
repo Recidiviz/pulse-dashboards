@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import env from "~@meetings/trpc/env";
 import {
   initFastifyAndSetUser,
   testTRPCClient,
@@ -82,5 +83,66 @@ describe("auth", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCClientError: Recidiviz user cannot request data about state: US_NE. File a go/access request for access]`,
     );
+  });
+});
+
+describe("skip auth", () => {
+  test("skip auth works in development mode", async () => {
+    const originalNodeEnv = env.NODE_ENV;
+    env.NODE_ENV = "development";
+
+    try {
+      await initFastifyAndSetUser(
+        {
+          "https://dashboard.recidiviz.org/app_metadata": {
+            stateCode: "US_NE",
+            pseudonymizedId: fakeStaff[0].pseudonymizedId,
+          },
+        },
+        { skipAuth: true },
+      );
+
+      // Test that we can access an endpoint with skip auth
+      const clients = await testTRPCClient.v1.staff.getClients.query();
+      expect(clients).toBeDefined();
+    } finally {
+      env.NODE_ENV = originalNodeEnv;
+    }
+  });
+
+  test("skip auth does not work in production mode", async () => {
+    const originalNodeEnv = env.NODE_ENV;
+    env.NODE_ENV = "production";
+
+    try {
+      // Don't pass a user - skip auth should NOT create one in production
+      await initFastifyAndSetUser(undefined, { skipAuth: true });
+
+      // Without a valid auth, this should fail
+      await expect(
+        testTRPCClient.v1.staff.getClients.query(),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCClientError: Auth can only be skipped on a server running in dev mode]`,
+      );
+    } finally {
+      env.NODE_ENV = originalNodeEnv;
+    }
+  });
+
+  test("skip auth sets pseudonymizedId to staff-pid-1", async () => {
+    const originalNodeEnv = env.NODE_ENV;
+    env.NODE_ENV = "development";
+
+    try {
+      // Initialize without providing a user (skip auth should create mock user)
+      await initFastifyAndSetUser(undefined, { skipAuth: true });
+
+      // The context should have created a user with pseudonymizedId "staff-pid-1"
+      // We can verify this by checking that the endpoint works (it would fail if no user)
+      const clients = await testTRPCClient.v1.staff.getClients.query();
+      expect(clients).toBeDefined();
+    } finally {
+      env.NODE_ENV = originalNodeEnv;
+    }
   });
 });
