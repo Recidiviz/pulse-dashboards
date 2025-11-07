@@ -172,6 +172,7 @@ export class OpportunityPersonListPresenter
           "usMiAddInPersonSecurityClassificationCommitteeReview",
           "usMiWardenInPersonSecurityClassificationCommitteeReview",
           "usMiCustodyLevelDowngrade",
+          "usIdCustodyLevelDowngrade",
         ].includes(this.opportunityType),
       SUPERVISION_EXPIRATION_DATE:
         this.workflowsStore.activeSystem === "SUPERVISION" &&
@@ -182,6 +183,7 @@ export class OpportunityPersonListPresenter
           "usMiPastFTRD",
           "usTnExpiration",
         ].includes(this.opportunityType),
+      US_ID_EPRD: this.opportunityType === "usIdCustodyLevelDowngrade",
       US_NE_PEDD_DATE:
         this.workflowsStore.activeSystem === "SUPERVISION" &&
         this.tenantStore.currentTenantId === "US_NE",
@@ -196,6 +198,7 @@ export class OpportunityPersonListPresenter
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         this.tenantStore.currentTenantId === "US_MI" &&
         this.opportunityType === "usMiCustodyLevelDowngrade",
+        
       LAST_VIEWED: true,
       ALMOST_ELIGIBLE_STATUS: opportunities.some(
         (opp: Opportunity) =>

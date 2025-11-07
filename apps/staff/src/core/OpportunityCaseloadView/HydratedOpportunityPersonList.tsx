@@ -70,6 +70,7 @@ import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/
 import {
   formatDurationFromOptionalDays,
   formatWorkflowsDate,
+  formatWorkflowsDateString,
 } from "../../utils/formatStrings";
 import {
   Client,
@@ -219,6 +220,7 @@ export type OpportunityTableColumnId =
   | "ELIGIBILITY_DATE"
   | "RELEASE_DATE"
   | "SUPERVISION_EXPIRATION_DATE"
+  | "US_ID_EPRD"
   | "US_NE_PEDD_DATE"
   | "US_MI_UNIT_ID"
   | "US_MI_ERD"
@@ -529,6 +531,24 @@ const TableView = observer(function TableView({
           return "Serving a life sentence";
         }
         return `${formatWorkflowsDate(person.releaseDate)}`;
+      },
+    },
+    {
+      header: "Earliest Possible Release Date",
+      id: "US_ID_EPRD",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: ({ person }: Opportunity) => {
+        if (
+          person instanceof Resident &&
+          person.metadata.stateCode === "US_ID"
+        ) {
+          return person.metadata.earliestPossibleReleaseDate
+            ? formatWorkflowsDateString(
+                person.metadata.earliestPossibleReleaseDate,
+              )
+            : formatWorkflowsDate(person.releaseDate);
+        }
       },
     },
     {

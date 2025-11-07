@@ -33,6 +33,7 @@ import {
   ResidentProfileProps,
   ResidentWithOptionalOpportunityProps,
 } from "../types";
+import { UsIdEarliestPossibleReleaseDate } from "./US_ID/UsIdEarliestPossibleReleaseDate";
 import { UsMiEarliestReleaseDate } from "./US_MI/UsMiEarliestReleaseDate";
 import { UsMiMinMaxReleaseDates } from "./US_MI/UsMiMinMaxReleaseDates";
 import { UsNdIncarcerationDetails } from "./US_ND/UsNdIncarcerationDetails";
@@ -60,6 +61,10 @@ const ReleaseDate = observer(function ReleaseDate({
 
   if (opportunity?.type === "usMiCustodyLevelDowngrade") {
     return <UsMiEarliestReleaseDate resident={resident} />;
+  }
+
+  if (opportunity?.type === "usIdCustodyLevelDowngrade") {
+    return <UsIdEarliestPossibleReleaseDate resident={resident} />;
   }
 
   return (
