@@ -163,9 +163,10 @@ const AudioRecordingPage: React.FC = () => {
             sessionData={sessionData || null}
           />
           <TranscriptionSection
-            sessionData={sessionData || null}
+            sessionDataId={sessionData?.id || null}
             onRefreshNeeded={() => refetchSession()}
             recordingStatus={recordingStatus}
+            sessionStatus={sessionData?.status}
           />
           <RecordingInterface
             clientRecord={clientData}

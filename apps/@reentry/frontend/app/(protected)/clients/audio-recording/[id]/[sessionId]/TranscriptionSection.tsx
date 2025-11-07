@@ -20,9 +20,6 @@ import { useEffect } from "react";
 
 import TranscriptionConversation from "~@reentry/frontend/components/transcription/TranscriptionConversation";
 import { useRecordingSessionStatus } from "~@reentry/frontend/hooks/useRecordingSessionStatus";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
-
-type RecordingSession = components["schemas"]["RecordingSessionResponse"];
 
 const StatusMessage = ({
   title,
@@ -44,11 +41,12 @@ const StatusMessage = ({
 );
 
 const TranscriptionSection: React.FC<{
-  sessionData: RecordingSession | null;
+  sessionDataId: string | null;
   onRefreshNeeded?: () => void;
   recordingStatus: string;
-}> = ({ sessionData, onRefreshNeeded, recordingStatus }) => {
-  const { statusData } = useRecordingSessionStatus(sessionData?.id || "", true);
+  sessionStatus: string | null | undefined;
+}> = ({ sessionDataId, onRefreshNeeded, recordingStatus, sessionStatus }) => {
+  const { statusData } = useRecordingSessionStatus(sessionDataId || "", true);
 
   useEffect(() => {
     if (statusData?.status === "completed") {
@@ -56,7 +54,11 @@ const TranscriptionSection: React.FC<{
     }
   }, [statusData?.status]);
 
-  if (!sessionData || !recordingStatus) return null;
+  if (!sessionDataId || !recordingStatus) return null;
+
+  if (sessionStatus === "completed") {
+    return <TranscriptionConversation sessionId={sessionDataId || ""} />;
+  }
 
   if (recordingStatus === "error") {
     return (
@@ -104,7 +106,7 @@ const TranscriptionSection: React.FC<{
   }
 
   if (recordingStatus === "completed") {
-    return <TranscriptionConversation sessionId={sessionData?.id || ""} />;
+    return <TranscriptionConversation sessionId={sessionDataId || ""} />;
   }
 
   return null;
