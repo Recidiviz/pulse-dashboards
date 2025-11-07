@@ -15,6 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { pipeline } from "node:stream/promises";
+
 import { captureException } from "@sentry/node";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
@@ -33,7 +38,11 @@ import {
 } from "~@meetings/prisma/client";
 import env from "~@meetings/server/env";
 import { queueTranscriptionTask } from "~@meetings/server/server/utils";
-import { stitchAudio, transcribeAudioWithAssemblyAI } from "~@meetings/tasks";
+import {
+  cleanupOfflineFiles,
+  stitchAudio,
+  transcribeAudioWithAssemblyAI,
+} from "~@meetings/tasks";
 
 class AuthError extends Error {
   errorCode: number;
@@ -76,7 +85,7 @@ async function verifyGoogleIdToken(authorizationHeaders: string | undefined) {
 async function authenticateInternalRequestPreHandlerFn<
   T extends FastifyRequest,
 >(request: T, reply: FastifyReply) {
-  if (process.env["NODE_ENV"] === "development") {
+  if (env.NODE_ENV === "development") {
     // Skip authentication in development mode
     return;
   }
@@ -96,6 +105,63 @@ async function authenticateInternalRequestPreHandlerFn<
 export function registerTaskRoutes(app: FastifyInstance) {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
+
+  // Add content type parser for audio files - don't parse, just flag as handled
+  app.addContentTypeParser(
+    ["audio/m4a", "audio/x-m4a", "audio/mp4", "audio/*"],
+    (req, payload, done) => {
+      // Don't parse the body, just indicate we're handling this content type
+      // The raw stream will be available via req.raw
+      done(null);
+    },
+  );
+
+  // Upload endpoint for offline mode
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "PUT",
+    url: "/upload-audio/:meetingId/:filename",
+    schema: {
+      params: z.object({
+        meetingId: z.string(),
+        filename: z.string(),
+      }),
+    },
+    handler: async (req, reply) => {
+      if (!env.IS_OFFLINE) {
+        return reply
+          .status(400)
+          .send(
+            "Uploading to server is only valid when running in offline mode",
+          );
+      }
+
+      const { meetingId, filename } = req.params;
+
+      try {
+        // Create directory if it doesn't exist
+        const localStorageDir =
+          env.OFFLINE_STORAGE_DIR ?? path.join(os.tmpdir(), "meetings-offline");
+        const meetingDir = path.join(localStorageDir, meetingId);
+
+        if (!fs.existsSync(meetingDir)) {
+          fs.mkdirSync(meetingDir, { recursive: true });
+        }
+
+        const filePath = path.join(meetingDir, filename);
+
+        // Save the uploaded file from the raw request stream
+        const fileStream = fs.createWriteStream(filePath);
+        await pipeline(req.raw, fileStream);
+
+        console.log(`Saved audio file to ${filePath}`);
+
+        reply.code(200).send("File uploaded successfully");
+      } catch (e) {
+        console.error("Error uploading file:", e);
+        reply.code(500).send("Error uploading file");
+      }
+    },
+  });
 
   // TODO(#10219): Remove route-level authentication once this is moved to an internal-only service
   app.withTypeProvider<ZodTypeProvider>().route({
@@ -291,6 +357,9 @@ export function registerTaskRoutes(app: FastifyInstance) {
             },
           },
         });
+
+        // Clean up offline files after successful transcription
+        await cleanupOfflineFiles(meetingId);
       } catch (e) {
         await prisma.meeting.update({
           where: {

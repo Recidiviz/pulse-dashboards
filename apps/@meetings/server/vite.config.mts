@@ -41,6 +41,7 @@ export default defineConfig(() => ({
       reportsDirectory: "../../../coverage/apps/@meetings/server",
       provider: "v8",
     },
+    clearMocks: true,
     // We need to set this up this way because:
     // 1. The vitest vscode extension doesn't load any environment variables, so it needs backups
     // 2. The env variables for local testing and CI are different

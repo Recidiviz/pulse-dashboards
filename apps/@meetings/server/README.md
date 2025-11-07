@@ -31,6 +31,32 @@ If you haven't already, follow the setup instructions in the root README to inst
 5. [Only if this is the first time you're setting up the project/you want to re-seed the database] Run `nx run @meetings/prisma:docker && nx run @meetings/prisma:prisma-seed` to seed the database with initial data.
 6. Start the server with `nx dev @meetings/server`.
 
+### Offline Mode (No GCS)
+
+If you want to run the meeting assistant without connecting to Google Cloud Storage (useful for local development or testing), you can enable offline mode:
+
+1. In your `.env.dev` file, add the following:
+
+   ```
+   IS_OFFLINE=true
+   OFFLINE_STORAGE_DIR=/path/to/local/storage  # Optional, defaults to system temp directory
+   ```
+
+2. Start the server with `nx dev @meetings/server`.
+
+**How Offline Mode Works:**
+
+- Audio recordings are stored locally on your file system instead of GCS
+- The signed URL endpoint returns a local HTTP endpoint (`/upload-audio/:meetingId/:filename`)
+- Stitching and transcription read from local files
+- Files are automatically cleaned up after transcription completes
+- No GCS bucket or service account credentials needed
+
+**Environment Variables:**
+
+- `IS_OFFLINE`: Set to `"true"` to enable offline mode (default: `false`)
+- `OFFLINE_STORAGE_DIR`: Directory for storing audio files locally (default: `{system-temp}/meetings-offline`)
+
 ### Updating the prisma schema
 
 Instructions for updating the prisma schema are in the [prisma README](../../libs/@meetings/prisma/README.md).

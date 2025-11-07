@@ -15,12 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+
 import { Storage } from "@google-cloud/storage";
 import { Transcript } from "assemblyai";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { GCS_API_ENDPOINT, mockAssemblyAI } from "~@meetings/tasks/test/setup";
 import {
+  cleanupOfflineFiles,
   getSignedUrlForNewRecording,
   stitchAudio,
   transcribeAudioWithAssemblyAI,
@@ -235,6 +240,213 @@ describe("utils", () => {
             text: "transcription",
           },
         ],
+      });
+    });
+  });
+
+  describe("Offline mode", () => {
+    const originalOfflineMode = process.env["IS_OFFLINE"];
+    const originalOfflineStorageDir = process.env["OFFLINE_STORAGE_DIR"];
+    const testStorageDir = path.join(os.tmpdir(), "test-offline-storage");
+
+    beforeEach(() => {
+      // Enable offline mode for these tests
+      process.env["IS_OFFLINE"] = "true";
+      process.env["OFFLINE_STORAGE_DIR"] = testStorageDir;
+
+      // Create test storage directory
+      if (!fs.existsSync(testStorageDir)) {
+        fs.mkdirSync(testStorageDir, { recursive: true });
+      }
+    });
+
+    afterEach(() => {
+      // Restore original env vars
+      process.env["IS_OFFLINE"] = originalOfflineMode;
+      process.env["OFFLINE_STORAGE_DIR"] = originalOfflineStorageDir;
+
+      // Clean up test storage directory
+      if (fs.existsSync(testStorageDir)) {
+        fs.rmSync(testStorageDir, { recursive: true, force: true });
+      }
+    });
+
+    describe("getSignedUrlForNewRecording (offline)", () => {
+      beforeAll(() => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date("2025-10-19"));
+      });
+
+      afterAll(() => {
+        vi.useRealTimers();
+      });
+
+      test("Should return local endpoint URL in offline mode", async () => {
+        const url = await getSignedUrlForNewRecording(
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          "test-meeting-id",
+        );
+
+        // 1760832000 = seconds since epoch for Oct 19, 2025
+        expect(url).toEqual(
+          "http://localhost:3002/upload-audio/test-meeting-id/1760832000.m4a",
+        );
+      });
+    });
+
+    describe("stitchAudio (offline)", () => {
+      const meetingId = "offline-stitch-test-meeting";
+      const meetingDir = path.join(testStorageDir, meetingId);
+
+      beforeEach(() => {
+        // Create meeting directory with test audio files
+        fs.mkdirSync(meetingDir, { recursive: true });
+
+        // Copy test audio files
+        fs.copyFileSync("__tests__/data/1.m4a", path.join(meetingDir, "1.m4a"));
+        fs.copyFileSync("__tests__/data/2.m4a", path.join(meetingDir, "2.m4a"));
+        fs.copyFileSync("__tests__/data/3.m4a", path.join(meetingDir, "3.m4a"));
+      });
+
+      test("Should return null if meeting directory doesn't exist", async () => {
+        const result = await stitchAudio(
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          "non-existent-meeting",
+        );
+
+        expect(result).toBeNull();
+      });
+
+      test("Should return null if meeting directory has no audio files", async () => {
+        const emptyMeetingId = "empty-meeting";
+        const emptyMeetingDir = path.join(testStorageDir, emptyMeetingId);
+        fs.mkdirSync(emptyMeetingDir, { recursive: true });
+
+        const result = await stitchAudio(
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          emptyMeetingId,
+        );
+
+        expect(result).toBeNull();
+      });
+
+      test("Should stitch audio files and save locally", async () => {
+        const result = await stitchAudio(
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          meetingId,
+        );
+
+        expect(result).toEqual(`${meetingId}/final.m4a`);
+
+        // Verify final file exists
+        const finalPath = path.join(meetingDir, "final.m4a");
+        expect(fs.existsSync(finalPath)).toBe(true);
+
+        // Verify final file has content
+        const stats = fs.statSync(finalPath);
+        expect(stats.size).toBeGreaterThan(0);
+      });
+
+      test("Should sort files by timestamp", async () => {
+        // Create files with different timestamps
+        const timestamps = [1000, 3000, 2000];
+        for (const ts of timestamps) {
+          fs.copyFileSync(
+            "__tests__/data/1.m4a",
+            path.join(meetingDir, `${ts}.m4a`),
+          );
+        }
+
+        const result = await stitchAudio(
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          meetingId,
+        );
+
+        expect(result).toEqual(`${meetingId}/final.m4a`);
+
+        // Verify final file was created
+        const finalPath = path.join(meetingDir, "final.m4a");
+        expect(fs.existsSync(finalPath)).toBe(true);
+      });
+    });
+
+    describe("transcribeAudioWithAssemblyAI (offline)", () => {
+      const meetingId = "offline-transcribe-test-meeting";
+      const meetingDir = path.join(testStorageDir, meetingId);
+
+      beforeEach(() => {
+        // Create meeting directory with final audio file
+        fs.mkdirSync(meetingDir, { recursive: true });
+        fs.copyFileSync(
+          "__tests__/data/1.m4a",
+          path.join(meetingDir, "final.m4a"),
+        );
+      });
+
+      test("Should use local file path for transcription", async () => {
+        const finalRecordingPath = `${meetingId}/final.m4a`;
+
+        const transcript = await transcribeAudioWithAssemblyAI(
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          finalRecordingPath,
+          "test-api-key",
+        );
+
+        expect(transcript).toBeDefined();
+        expect(transcript.status).toBe("completed");
+
+        // Verify AssemblyAI was called with local file path
+        expect(mockAssemblyAI.transcripts.transcribe).toHaveBeenCalledWith(
+          expect.objectContaining({
+            audio: path.join(testStorageDir, meetingId, "final.m4a"),
+          }),
+        );
+      });
+    });
+
+    describe("cleanupOfflineFiles", () => {
+      test("Should delete meeting directory and all files", async () => {
+        const meetingId = "cleanup-test-meeting";
+        const meetingDir = path.join(testStorageDir, meetingId);
+
+        // Create meeting directory with files
+        fs.mkdirSync(meetingDir, { recursive: true });
+        fs.writeFileSync(path.join(meetingDir, "1.m4a"), "test data 1");
+        fs.writeFileSync(path.join(meetingDir, "2.m4a"), "test data 2");
+        fs.writeFileSync(path.join(meetingDir, "final.m4a"), "final audio");
+
+        // Verify files exist
+        expect(fs.existsSync(meetingDir)).toBe(true);
+        expect(fs.readdirSync(meetingDir).length).toBe(3);
+
+        // Cleanup
+        await cleanupOfflineFiles(meetingId);
+
+        // Verify directory was deleted
+        expect(fs.existsSync(meetingDir)).toBe(false);
+      });
+
+      test("Should not throw error if meeting directory doesn't exist", async () => {
+        await expect(
+          cleanupOfflineFiles("non-existent-meeting"),
+        ).resolves.not.toThrow();
+      });
+
+      test("Should not cleanup in online mode", async () => {
+        process.env["IS_OFFLINE"] = "false";
+
+        const meetingId = "online-mode-meeting";
+        const meetingDir = path.join(testStorageDir, meetingId);
+
+        // Create meeting directory with files
+        fs.mkdirSync(meetingDir, { recursive: true });
+        fs.writeFileSync(path.join(meetingDir, "final.m4a"), "final audio");
+
+        // Cleanup should not delete in online mode
+        await cleanupOfflineFiles(meetingId);
+
+        // Verify directory still exists
+        expect(fs.existsSync(meetingDir)).toBe(true);
       });
     });
   });

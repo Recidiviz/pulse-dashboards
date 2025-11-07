@@ -22,6 +22,7 @@ import {
   PostMeetingProcessingStatus,
   TranscriptionProvider,
 } from "~@meetings/prisma/client";
+import env from "~@meetings/server/env";
 import {
   mockCloudTasksClient,
   setGetPayloadImp,
@@ -56,6 +57,7 @@ const mockTranscribeAudioWithAssemblyAI = vi.spyOn(
   tasks,
   "transcribeAudioWithAssemblyAI",
 );
+const mockCleanupOfflineFiles = vi.spyOn(tasks, "cleanupOfflineFiles");
 
 // Make these succeed by default
 mockStitchAudio.mockImplementation(async () => {
@@ -63,6 +65,9 @@ mockStitchAudio.mockImplementation(async () => {
 });
 mockTranscribeAudioWithAssemblyAI.mockImplementation(
   vi.fn().mockResolvedValue(FAKE_TRANSCRIPT_OBJECT),
+);
+mockCleanupOfflineFiles.mockImplementation(
+  vi.fn().mockResolvedValue(undefined),
 );
 
 describe("tasks", () => {
@@ -436,6 +441,190 @@ describe("tasks", () => {
           postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
         }),
       );
+    });
+
+    test("Should call cleanupOfflineFiles after successful transcription", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(mockCleanupOfflineFiles).toHaveBeenCalledWith(fakeMeeting.id);
+    });
+
+    test("Should not call cleanupOfflineFiles if transcription fails", async () => {
+      mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(async () => {
+        throw new Error("Transcription failed");
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(500);
+      expect(mockCleanupOfflineFiles).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("/upload-audio (offline mode)", () => {
+    const originalOfflineMode = env.IS_OFFLINE;
+    const originalOfflineStorageDir = env.OFFLINE_STORAGE_DIR;
+    const testStorageDir = "/tmp/test-offline-upload-storage";
+
+    beforeEach(() => {
+      // Enable offline mode for these tests
+      env.IS_OFFLINE = true;
+      env.OFFLINE_STORAGE_DIR = testStorageDir;
+
+      // Create test storage directory
+      if (!require("fs").existsSync(testStorageDir)) {
+        require("fs").mkdirSync(testStorageDir, { recursive: true });
+      }
+    });
+
+    afterEach(() => {
+      // Restore original env vars
+      env.IS_OFFLINE = originalOfflineMode;
+      env.OFFLINE_STORAGE_DIR = originalOfflineStorageDir;
+
+      // Clean up test storage directory
+      if (require("fs").existsSync(testStorageDir)) {
+        require("fs").rmSync(testStorageDir, { recursive: true, force: true });
+      }
+    });
+
+    test("Should return 400 if offline mode is not enabled", async () => {
+      env.IS_OFFLINE = false;
+
+      const response = await testServer.inject({
+        method: "PUT",
+        url: "/upload-audio/test-meeting/test-file.m4a",
+        payload: Buffer.from("test audio data"),
+        headers: {
+          "content-type": "audio/m4a",
+        },
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toContain(
+        "Uploading to server is only valid when running in offline mode",
+      );
+    });
+
+    test("Should successfully upload audio file", async () => {
+      const meetingId = "test-meeting-123";
+      const filename = "1234567890.m4a";
+      const audioData = Buffer.from("test audio data");
+
+      const response = await testServer.inject({
+        method: "PUT",
+        url: `/upload-audio/${meetingId}/${filename}`,
+        payload: audioData,
+        headers: {
+          "content-type": "audio/m4a",
+        },
+      });
+
+      console.log(response);
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("File uploaded successfully");
+
+      // Verify file was saved
+      const fs = require("fs");
+      const path = require("path");
+      const savedFilePath = path.join(testStorageDir, meetingId, filename);
+      expect(fs.existsSync(savedFilePath)).toBe(true);
+
+      const savedData = fs.readFileSync(savedFilePath);
+      expect(savedData.toString()).toBe("test audio data");
+    });
+
+    test("Should create meeting directory if it doesn't exist", async () => {
+      const meetingId = "new-meeting-456";
+      const filename = "1234567890.m4a";
+      const audioData = Buffer.from("test audio data");
+
+      const response = await testServer.inject({
+        method: "PUT",
+        url: `/upload-audio/${meetingId}/${filename}`,
+        payload: audioData,
+        headers: {
+          "content-type": "audio/m4a",
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      // Verify directory was created
+      const fs = require("fs");
+      const path = require("path");
+      const meetingDir = path.join(testStorageDir, meetingId);
+      expect(fs.existsSync(meetingDir)).toBe(true);
+    });
+
+    test("Should handle multiple file uploads to same meeting", async () => {
+      const meetingId = "multi-file-meeting";
+      const files = [
+        { name: "1000.m4a", data: "audio segment 1" },
+        { name: "2000.m4a", data: "audio segment 2" },
+        { name: "3000.m4a", data: "audio segment 3" },
+      ];
+
+      for (const file of files) {
+        // eslint-disable-next-line no-await-in-loop
+        const response = await testServer.inject({
+          method: "PUT",
+          url: `/upload-audio/${meetingId}/${file.name}`,
+          payload: Buffer.from(file.data),
+          headers: {
+            "content-type": "audio/m4a",
+          },
+        });
+
+        expect(response.statusCode).toBe(200);
+      }
+
+      // Verify all files were saved
+      const fs = require("fs");
+      const path = require("path");
+      const meetingDir = path.join(testStorageDir, meetingId);
+      const savedFiles = fs.readdirSync(meetingDir);
+
+      expect(savedFiles).toHaveLength(3);
+      expect(savedFiles).toContain("1000.m4a");
+      expect(savedFiles).toContain("2000.m4a");
+      expect(savedFiles).toContain("3000.m4a");
+    });
+
+    test("Should accept different audio content types", async () => {
+      const meetingId = "content-type-test";
+      const contentTypes = ["audio/m4a", "audio/x-m4a", "audio/mp4"];
+
+      for (const contentType of contentTypes) {
+        // eslint-disable-next-line no-await-in-loop
+        const response = await testServer.inject({
+          method: "PUT",
+          url: `/upload-audio/${meetingId}/test-${contentType.replace("/", "-")}.m4a`,
+          payload: Buffer.from("test data"),
+          headers: {
+            "content-type": contentType,
+          },
+        });
+
+        expect(response.statusCode).toBe(200);
+      }
     });
   });
 });
