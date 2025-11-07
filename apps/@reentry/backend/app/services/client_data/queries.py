@@ -287,12 +287,22 @@ class Queries:
         client.state_code,
         FROM (
         SELECT
-            *
+            external_id,
+            pseudonymized_id,
+            email,
+            full_name,
+            client_ids,
+            state_code
         FROM
             `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CASE_MANAGER_TABLE}`
         UNION ALL
         SELECT
-            *
+            external_id,
+            pseudonymized_id,
+            email,
+            full_name,
+            client_ids,
+            state_code
         FROM
             `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_SUPERVISION_OFFICER_TABLE}`) officer,
         UNNEST(officer.client_ids) AS client_external_id
@@ -395,12 +405,22 @@ class Queries:
         state_code
         FROM (
         SELECT
-            *
+            external_id,
+            pseudonymized_id,
+            email,
+            full_name,
+            client_ids,
+            state_code
         FROM
             `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CASE_MANAGER_TABLE}`
         UNION ALL
         SELECT
-            *
+            external_id,
+            pseudonymized_id,
+            email,
+            full_name,
+            client_ids,
+            state_code
         FROM
             `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_SUPERVISION_OFFICER_TABLE}`)
         WHERE
