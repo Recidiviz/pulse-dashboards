@@ -790,6 +790,7 @@ describe("tracking", () => {
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
       opportunityId: opp.sentryTrackingId,
+      tabTitle: opp.tabTitle(),
     });
   });
 

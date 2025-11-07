@@ -490,7 +490,7 @@ export default class AnalyticsStore {
     this.track("frontend.caseload_search", metadata);
   }
 
-  trackOpportunityPreviewed(metadata: OpportunityTrackingMetadata): void {
+  trackOpportunityPreviewed(metadata: OpportunityTrackingMetadata & { tabTitle: OpportunityTab }): void {
     this.track("frontend.opportunity_previewed", metadata);
   }
 

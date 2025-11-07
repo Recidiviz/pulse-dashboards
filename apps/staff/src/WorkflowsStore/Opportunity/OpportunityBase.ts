@@ -731,6 +731,7 @@ export class OpportunityBase<
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
       opportunityId: this.sentryTrackingId,
+      tabTitle: this.tabTitle(),
     });
   }
 
