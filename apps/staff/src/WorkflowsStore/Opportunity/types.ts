@@ -311,6 +311,7 @@ export type OpportunityMapping = {
 export interface OpportunityManagerInterface extends Hydratable {
   opportunities: OpportunityMapping;
   incomingOpportunityTypes: OpportunityType[];
+  ineligibleOpportunityTypes: OpportunityType[];
   setSelectedOpportunityTypes: (opportunityTypes: OpportunityType[]) => void;
 }
 

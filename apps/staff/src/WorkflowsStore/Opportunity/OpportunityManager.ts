@@ -17,7 +17,7 @@
 
 import * as Sentry from "@sentry/react";
 import { DocumentData } from "firebase/firestore";
-import { intersection } from "lodash";
+import { difference, intersection } from "lodash";
 import { makeAutoObservable, runInAction, set } from "mobx";
 
 import {
@@ -83,6 +83,13 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
       this.enabledOpportunityTypes,
     ) as OpportunityType[];
   }
+
+  get ineligibleOpportunityTypes(): OpportunityType[] {
+      return difference(
+        this.enabledOpportunityTypes,
+        this.incomingOpportunityTypes,
+      );
+  };
 
   setSelectedOpportunityTypes(opportunityTypes: OpportunityType[]): void {
     runInAction(() => (this.selectedOpportunityTypes = opportunityTypes));

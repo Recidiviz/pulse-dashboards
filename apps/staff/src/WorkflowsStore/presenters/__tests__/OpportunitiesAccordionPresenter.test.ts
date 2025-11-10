@@ -18,17 +18,17 @@
 import { configure } from "mobx";
 
 import { OpportunityType } from "~datatypes";
-import {
-  isHydrated,
-  unpackAggregatedErrors,
-} from "~hydration-utils";
+import { isHydrated, unpackAggregatedErrors } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
 import { mockIneligibleClient } from "../../__fixtures__";
 import { Client } from "../../Client";
 import { LSUOpportunity } from "../../Opportunity";
-import { LSUReferralRecordFixture } from "../../Opportunity/UsId/__fixtures__";
-import { Resident } from "../../Resident";
+import { PastFTRDOpportunityBase } from "../../Opportunity/PastFTRDOpportunityBase";
+import {
+  LSUReferralRecordFixture,
+  pastFTRDRecordEligibleFixture,
+} from "../../Opportunity/UsId/__fixtures__";
 import { JusticeInvolvedPerson } from "../../types";
 import { OpportunitiesAccordionPresenter } from "../OpportunitiesAccordionPresenter";
 
@@ -42,21 +42,22 @@ beforeEach(() => {
   vi.restoreAllMocks();
   vi.resetAllMocks();
   rootStore = new RootStore();
+  rootStore.tenantStore.currentTenantId = "US_ID";
 });
 
 afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-function setTestEnabledOppTypes(oppTypes: OpportunityType[]) {
-  vi.spyOn(
-    rootStore.workflowsRootStore.opportunityConfigurationStore,
-    "enabledOpportunityTypes",
-    "get",
-  ).mockReturnValue(oppTypes);
-}
-
-function initializePresenter() {
+function initializePresenter({
+  showIneligibleOpportunities,
+  enabledTypes,
+  pastFTRDSupportsIneligible = true,
+}: {
+  showIneligibleOpportunities: boolean;
+  enabledTypes: OpportunityType[];
+  pastFTRDSupportsIneligible?: boolean;
+}) {
   const client = new Client(
     {
       ...mockIneligibleClient,
@@ -65,72 +66,254 @@ function initializePresenter() {
     rootStore,
   );
 
-  rootStore.tenantStore.currentTenantId = "US_ID";
   rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+  const configs =
+    rootStore.workflowsRootStore.opportunityConfigurationStore.opportunities;
+  rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated({
+    ...configs,
+    pastFTRD: {
+      ...configs.pastFTRD,
+      supportsIneligible: pastFTRDSupportsIneligible,
+    },
+  });
   opportunity = new LSUOpportunity(client, LSUReferralRecordFixture);
 
   presenter = new OpportunitiesAccordionPresenter(
     rootStore.workflowsStore,
-    client as unknown as Resident & Client,
+    client,
     false,
     false,
+    showIneligibleOpportunities,
   );
 
   person = presenter.person;
+
+  vi.spyOn(
+    rootStore.workflowsRootStore.opportunityConfigurationStore,
+    "enabledOpportunityTypes",
+    "get",
+  ).mockReturnValue(enabledTypes);
 }
 
-describe("OpportunitiesAccordionPresenter eligible and almost eligible opportunities", () => {
-  it("should be hydrated initially", () => {
-    initializePresenter();
-    setTestEnabledOppTypes(["LSU"]);
-    expect(isHydrated(presenter)).toBeTrue();
+/**
+ * Mocks the hydration state and opportunities for the person.
+ * @param param0 - Object containing flags for whether the person has pastFTRD records and LSU records.
+ */
+function opportunityHydratorsReturn({
+  hasPastFTRDRecords,
+  hasLSURecords,
+}: {
+  /**
+   * Ineligible case (pastFTRD opportunity)
+   */
+  hasPastFTRDRecords: boolean;
+  /**
+   * Eligible and almost eligible case (LSU opportunity)
+   */
+  hasLSURecords: boolean;
+}) {
+  vi.spyOn(person.opportunityManager, "hydrationState", "get").mockReturnValue({
+    status: "hydrated",
   });
 
-  test("successful hydration", async () => {
-    initializePresenter();
-    setTestEnabledOppTypes(["LSU"]);
-    rootStore.tenantStore.currentTenantId = "US_ID";
-
-    vi.spyOn(
-      person.opportunityManager,
-      "hydrationState",
-      "get",
-    ).mockReturnValue({ status: "hydrated" });
-
-    vi.spyOn(person.opportunityManager, "opportunities", "get").mockReturnValue(
-      {
-        LSU: [opportunity],
-      },
-    );
-
-    await presenter.hydrate();
-    expect(isHydrated(presenter)).toBeTrue();
-
-    expect(presenter.opportunitiesToDisplayInAccordion.length).toEqual(1);
-    expect(presenter.opportunitiesToDisplayInAccordion[0].type).toEqual("LSU");
+  vi.spyOn(person.opportunityManager, "opportunities", "get").mockReturnValue({
+    ...(hasLSURecords ? { LSU: [opportunity] } : {}),
   });
 
-  test("failed hydration", async () => {
-    initializePresenter();
+  vi.spyOn(
+    rootStore.firestoreStore,
+    "getOpportunitiesForJIIAndOpportunityType",
+  ).mockResolvedValue(
+    hasPastFTRDRecords
+      ? [
+          {
+            ...pastFTRDRecordEligibleFixture,
+            almostEligible: false,
+            isEligible: false,
+          },
+        ]
+      : [],
+  );
 
-    vi.spyOn(
-      person.opportunityManager,
-      "hydrationState",
-      "get",
-    ).mockReturnValue({ status: "failed" , error: new AggregateError(["Hydration failed"]) });
-
-    vi.spyOn(person.opportunityManager, "opportunities", "get").mockReturnValue(
-      {},
-    );
-
-    await presenter.hydrate();
-
-    expect(presenter.opportunitiesToDisplayInAccordion).toBeEmpty();
-    expect(isHydrated(presenter)).toBeFalse();
-    expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
-      [
-        "Hydration failed",
-      ]
-    `);
+  vi.spyOn(
+    PastFTRDOpportunityBase.prototype,
+    "hydrationState",
+    "get",
+  ).mockReturnValue({
+    status: "hydrated",
   });
-});
+}
+
+const testCases = [
+  // - Supported ineligible opportunities have supportsIneligible = true in their configuration
+  // - Unsupported ineligible opportunities have supportsIneligible = false in their configuration
+  // - The presenter.showIneligibleOpportunities flag controls whether ineligible opportunities
+  // are shown and hydrated at all.
+  {
+    description: "does not show supported ineligible opps",
+    showIneligibleOpportunities: false,
+    enabledTypes: ["LSU"] as OpportunityType[],
+    pastFTRDSupportsIneligible: true,
+    expectedSuccessTypes: ["LSU"],
+  },
+  {
+    description: "does not show unsupported ineligible opps",
+    showIneligibleOpportunities: false,
+    enabledTypes: ["LSU"] as OpportunityType[],
+    pastFTRDSupportsIneligible: false,
+    expectedSuccessTypes: ["LSU"],
+  },
+  {
+    description: "shows supported ineligible opps",
+    showIneligibleOpportunities: true,
+    enabledTypes: ["LSU", "pastFTRD"] as OpportunityType[],
+    pastFTRDSupportsIneligible: true,
+    expectedSuccessTypes: ["LSU", "pastFTRD"],
+  },
+  {
+    description: "shows unsupported ineligible opps",
+    showIneligibleOpportunities: true,
+    enabledTypes: ["LSU", "pastFTRD"] as OpportunityType[],
+    pastFTRDSupportsIneligible: false,
+    expectedSuccessTypes: ["LSU"],
+  },
+];
+
+describe.each(testCases)(
+  "$description",
+  ({
+    showIneligibleOpportunities,
+    enabledTypes,
+    pastFTRDSupportsIneligible,
+    expectedSuccessTypes,
+  }) => {
+    test("initial hydration state", () => {
+      initializePresenter({
+        showIneligibleOpportunities,
+        enabledTypes,
+        pastFTRDSupportsIneligible,
+      });
+
+      expect(presenter.hydrationState).toMatchSnapshot();
+    });
+
+    test("has no opportunities to display when hydration has not started", () => {
+      initializePresenter({
+        showIneligibleOpportunities,
+        enabledTypes,
+        pastFTRDSupportsIneligible,
+      });
+
+      expect(presenter.opportunitiesToDisplayInAccordion).toBeEmpty();
+    });
+
+    test("successful hydration when firebase returns a ineligible (pastFTRD) and eligible record (LSU)", async () => {
+      initializePresenter({
+        showIneligibleOpportunities,
+        enabledTypes,
+        pastFTRDSupportsIneligible,
+      });
+
+      opportunityHydratorsReturn({
+        hasPastFTRDRecords: true,
+        hasLSURecords: true,
+      });
+
+      await presenter.hydrate();
+      expect(isHydrated(presenter)).toBeTrue();
+
+      expect(
+        presenter.opportunitiesToDisplayInAccordion.map((opp) => opp.type),
+      ).toContainAllValues(expectedSuccessTypes);
+    });
+
+    test("successful hydration when firebase returns only an eligible record (LSU)", async () => {
+      initializePresenter({
+        showIneligibleOpportunities,
+        enabledTypes,
+        pastFTRDSupportsIneligible,
+      });
+
+      opportunityHydratorsReturn({
+        hasPastFTRDRecords: false,
+        hasLSURecords: true,
+      });
+
+      await presenter.hydrate();
+      expect(isHydrated(presenter)).toBeTrue();
+
+      expect(
+        presenter.opportunitiesToDisplayInAccordion.map((opp) => opp.type),
+      ).toContainAllValues(["LSU"]);
+    });
+
+    test("successful hydration when firebase only returns an ineligible record (pastFTRD)", async () => {
+      initializePresenter({
+        showIneligibleOpportunities,
+        enabledTypes,
+        pastFTRDSupportsIneligible,
+      });
+
+      vi.spyOn(
+        person.opportunityManager,
+        "hydrationState",
+        "get",
+      ).mockReturnValue({ status: "hydrated" });
+
+      opportunityHydratorsReturn({
+        hasPastFTRDRecords: true,
+        hasLSURecords: false,
+      });
+
+      await presenter.hydrate();
+      expect(isHydrated(presenter)).toBeTrue();
+
+      const expectedType =
+        pastFTRDSupportsIneligible && showIneligibleOpportunities
+          ? ["pastFTRD"]
+          : [];
+
+      expect(
+        presenter.opportunitiesToDisplayInAccordion.map((opp) => opp.type),
+      ).toContainAllValues(expectedType);
+    });
+
+    test(`failed presenter when opportunityTypes are missing`, async () => {
+      initializePresenter({
+        showIneligibleOpportunities,
+        enabledTypes,
+        pastFTRDSupportsIneligible,
+      });
+
+      opportunityHydratorsReturn({
+        hasPastFTRDRecords: true,
+        hasLSURecords: true,
+      });
+
+      vi.spyOn(
+        person.opportunityManager,
+        "hydrationState",
+        "get",
+      ).mockReturnValue({
+        status: "failed",
+        error: new Error("Failed to hydrate opportunity manager"),
+      });
+
+      vi.spyOn(
+        PastFTRDOpportunityBase.prototype,
+        "hydrationState",
+        "get",
+      ).mockReturnValue({
+        status: "failed",
+        error: new Error("Failed to hydrate pastFTRD opportunity"),
+      });
+
+      await presenter.hydrate();
+
+      expect(presenter.hydrationState.status).toBe("failed");
+      expect(unpackAggregatedErrors(presenter)).toMatchSnapshot(
+        "expect errors",
+      );
+    });
+  },
+);

@@ -171,6 +171,7 @@ type OpportunitiesAccordionProps = {
   person: JusticeInvolvedPerson;
   hideEmpty?: boolean;
   formLinkButton?: boolean;
+  showIneligibleOpportunityTypes?: boolean;
 };
 
 export const ManagedComponent = observer(function OpportunitiesAccordion({
@@ -234,14 +235,18 @@ function usePresenter({
   person,
   hideEmpty = false,
   formLinkButton = false,
+  showIneligibleOpportunityTypes = false,
 }: OpportunitiesAccordionProps) {
   const { workflowsStore } = useRootStore();
   if (!workflowsStore) return null;
+  const { ineligibleOpportunityTypesOnFullProfile } =
+    workflowsStore.featureVariants;
   return new OpportunitiesAccordionPresenter(
     workflowsStore,
     person,
     hideEmpty,
     formLinkButton,
+    showIneligibleOpportunityTypes && !!ineligibleOpportunityTypesOnFullProfile,
   );
 }
 

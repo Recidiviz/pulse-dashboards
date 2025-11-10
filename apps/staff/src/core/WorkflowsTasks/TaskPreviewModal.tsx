@@ -123,7 +123,7 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
           {opportunitiesToDisplay && (
             <>
               <TaskItemHeader>Opportunities</TaskItemHeader>
-              <OpportunitiesAccordion hideEmpty person={selectedClient} />
+              <OpportunitiesAccordion hideEmpty person={selectedClient} showIneligibleOpportunityTypes={false} />
             </>
           )}
           <TaskItemHeader>Client Details</TaskItemHeader>

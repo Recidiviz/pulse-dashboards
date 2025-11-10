@@ -1,0 +1,50 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`'does not show supported ineligible op…' > failed presenter when opportunityTypes are missing > expect errors 1`] = `
+[
+  [Error: Failed to hydrate opportunity manager],
+]
+`;
+
+exports[`'does not show supported ineligible op…' > initial hydration state 1`] = `
+{
+  "status": "hydrated",
+}
+`;
+
+exports[`'does not show unsupported ineligible …' > failed presenter when opportunityTypes are missing > expect errors 1`] = `
+[
+  [Error: Failed to hydrate opportunity manager],
+]
+`;
+
+exports[`'does not show unsupported ineligible …' > initial hydration state 1`] = `
+{
+  "status": "hydrated",
+}
+`;
+
+exports[`'shows supported ineligible opps' > failed presenter when opportunityTypes are missing > expect errors 1`] = `
+[
+  [Error: Failed to hydrate opportunity manager],
+  [Error: Failed to hydrate pastFTRD opportunity],
+]
+`;
+
+exports[`'shows supported ineligible opps' > initial hydration state 1`] = `
+{
+  "status": "needs hydration",
+}
+`;
+
+exports[`'shows unsupported ineligible opps' > failed presenter when opportunityTypes are missing > expect errors 1`] = `
+[
+  [Error: Failed to hydrate opportunity manager],
+]
+`;
+
+exports[`'shows unsupported ineligible opps' > initial hydration state 1`] = `
+{
+  "status": "needs hydration",
+}
+`;
