@@ -108,5 +108,13 @@
       "Edit(.decrypted*)",
       "Edit(opportunityPageConfig.json)"
     ]
+  },
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "http/json",
+    "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "https://us-central1-recidiviz-security.cloudfunctions.net/claude-telemetry-collector/v1/metrics",
+    "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT": "https://us-central1-recidiviz-security.cloudfunctions.net/claude-telemetry-collector/v1/logs",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORTER": "otlp"
   }
 }
