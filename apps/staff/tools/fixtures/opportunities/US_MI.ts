@@ -525,9 +525,11 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
+        "ActionHistory",
         "UsMiEarlyDischargeIcDetails",
         "ClientProfileDetails",
         "EligibilityDate",
+        "UsMiSecondaryOfficersAndDockets",
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
@@ -717,7 +719,10 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["ClientProfileDetails"],
+      sidebarComponents: [
+        "ClientProfileDetails",
+        "UsMiSecondaryOfficersAndDockets",
+      ],
       snooze: {
         autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
       },

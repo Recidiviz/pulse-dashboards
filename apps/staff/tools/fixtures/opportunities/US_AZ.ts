@@ -20,8 +20,7 @@ import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore
 export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
     usAzReleaseToDTP: {
-      callToAction:
-        "This tool helps staff prioritize inmates for early release through the Drug Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. ",
+      callToAction: "",
       caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
@@ -222,7 +221,8 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
-      subheading: null,
+      subheading:
+        "This tool helps staff prioritize inmates for early release through the Drug Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. [Learn more](https://docs.google.com/document/d/1-wa_2D7vzfV4QfKxykp8HKDSt52ROmUjOza9GFIuID8/edit?tab=t.0#heading=h.r6s5tyc7ut6c)",
       submittedTabTitle: "Pending",
       supportsIneligible: false,
       supportsSubmitted: true,
@@ -267,8 +267,7 @@ export const mockApiOpportunityConfigurationResponse = {
       zeroGrantsTooltip: null,
     },
     usAzReleaseToTPR: {
-      callToAction:
-        "This tool helps staff prioritize inmates for early release through the Standard Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. ",
+      callToAction: "",
       caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
@@ -470,7 +469,8 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
-      subheading: null,
+      subheading:
+        "This tool helps staff prioritize inmates for early release through the Standard Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. [Learn more](https://docs.google.com/document/d/1-wa_2D7vzfV4QfKxykp8HKDSt52ROmUjOza9GFIuID8/edit?tab=t.0#heading=h.r6s5tyc7ut6c)",
       submittedTabTitle: "Pending",
       supportsIneligible: false,
       supportsSubmitted: true,
@@ -544,48 +544,48 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: "Marked Ineligible",
       displayName: "Administrative Supervision",
       dynamicEligibilityText:
-        "client[|s] may be eligible for transfer to Administrative Supervision.",
+        "client[|s] may be eligible for Administrative Supervision.",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
           key: "usAzAnyRiskScoreBut15MonthsViolationFree",
-          text: '{{#if \n    (or\n      (or\n        (or\n            (eq orasAssessmentLevel "LOW" )\n            (eq orasAssessmentLevel "MODERATE" )\n        )\n        (eq orasAssessmentLevel "LOW_MODERATE" )\n      )\n      (eq intakeAssessmentLevel "MINIMUM" )\n    )\n}}\nEligible risk score\n{{else}}\nOn supervision 15 months violation free despite ineligible risk score\n{{/if}}\n\n',
+          text: '{{#if \n    (or\n      (or\n        (or\n            (eq orasAssessmentLevel "LOW" )\n            (eq orasAssessmentLevel "MODERATE" )\n        )\n        (eq orasAssessmentLevel "LOW_MODERATE" )\n      )\n      (eq intakeAssessmentLevel "MINIMUM" )\n    )\n}}\nEligible risk score\n{{else}}\nOn supervision 15 months violation free despite risk score\n{{/if}}\n\n',
           tooltip:
-            "(1.1) Risk and needs assessment shows a risk determination of moderate or lower, unless the client qualifies for administrative supervision under section 8.1.9.",
+            '{{#if \n    (or\n      (or\n        (or\n            (eq orasAssessmentLevel "LOW" )\n            (eq orasAssessmentLevel "MODERATE" )\n        )\n        (eq orasAssessmentLevel "LOW_MODERATE" )\n      )\n      (eq intakeAssessmentLevel "MINIMUM" )\n    )\n}}\n(DO 1007 8.1.1 - 8.1.1.1) Risk and needs assessment shows a risk determination of moderate or lower. Clients that score Minimum on the Initial Community Risk Assessment and who therefore do not receive additional risk and needs assessment are not required to meet criteria 8.1.1 above.\n{{else}}\n(DO 1007 8.1.9) Clients with any risk score or offenses are eligible for administrative supervision if they meet the other criteria and have completed 15 consecutive months of supervision with no formal sanctions or interventions and the supervisor approves the placement on administrative supervision. See DO for more detail. \n{{/if}}',
         },
         {
           key: "usAzIneligibleOffensesBut15MonthsViolationFree",
-          text: "{{#if \n  (and\n    (eq ineligibleConvictions null )\n    (eq ineligibleOffenses null )\n)\n}}\nNo current or prior convictions of exclusionary offenses\n{{else}}\nOn supervision 15 months violation free despite ineligible offenses/convictions \n{{/if}}\n\n",
+          text: "{{#if \n  (and\n    (eq ineligibleConvictions null )\n    (eq ineligibleOffenses null )\n)\n}}\nNo current or prior convictions of exclusionary offenses\n{{else}}\nOn supervision 15 months violation free despite offenses/convictions \n{{/if}}\n\n",
           tooltip:
-            "(1.2) No current or prior convictions of a registrable sex offense or felony domestic violence offense, or current convictions of felony arson or murder, unless the client qualifies for administrative supervision under section 8.1.9.\n\n",
+            "{{#if \n  (and\n    (eq ineligibleConvictions null )\n    (eq ineligibleOffenses null )\n)\n}}\n(DO 1007 8.1.2) No current or prior convictions of a registerable sexual offense or felony domestic violence offense, or current convictions of felony arson or murder, unless the client qualifies for administrative supervision under Section 8.1.9. See  Attachment A of DO 1007 for a list of offenses excluded under this section.\n{{else}}\n(DO 1007 8.1.9) Clients with any risk score or offenses are eligible for administrative supervision if they meet the other criteria and have completed 15 consecutive months of supervision with no formal sanctions or interventions and the supervisor approves the placement on administrative supervision. See DO for more detail. \n{{/if}}",
         },
         {
           key: "usAzRiskReleaseAssessmentIsCompleted",
           text: "Initial intake and needs assessment complete",
           tooltip:
-            "(1.3) Has completed initial intake and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (eg. telephone or by video call).",
+            "(DO 1007 8.1.3) Has completed initial intake and risk and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (e.g., by telephone or video call).",
         },
         {
           key: "usAzOrasEmployedDisabledRetiredOrStudent",
           text: "Currently employed, disabled, retired, or in school",
           tooltip:
-            "(1.5) Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4. A client may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, application for disability status, inability to work, or retirement. For the purpose of this policy, clients providing caregiving for a family member may also be considered to meet this condition.",
+            "(DO 1007 8.1.5) Currently employed, disabled, retired, or in school, as assessed in the risk and needs assessment. See DO for more details. ",
         },
         {
           key: "usAzMentalHealthScore3OrBelow",
           text: "Mental Health Score of 3 or below",
-          tooltip: "(1.6) Mental Health Score of 3 or below.",
+          tooltip: "(DO 1007 8.1.6) Mental Health Score below 4.",
         },
         {
           key: "usAzNotSeverelyMentallyIll",
           text: "Not SMI-C",
-          tooltip: "(1.7) Not SMI-C.",
+          tooltip: "(DO 1007 8.1.7) Not SMI-C.",
         },
         {
           key: "usAzOrasHasSubstanceUseIssues",
           text: "Not currently dealing with substance use issues",
           tooltip:
-            "(1.8) Not currently dealing with substance use issues, as assessed in ORAS question 5.4. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from this requirement. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
+            "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
       ],
       emptyTabCopy: [
@@ -607,7 +607,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       firestoreCollection: "US_AZ-TransferToAdminSupervision",
-      hideDenialRevert: false,
+      hideDenialRevert: true,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 5,
@@ -622,20 +622,20 @@ export const mockApiOpportunityConfigurationResponse = {
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
-        "https://drive.google.com/file/d/1yKtEL4-wR9VB1hdyxqzPeJDGBMwjs6Sz/view",
+        "https://drive.google.com/file/d/1U_V_4Xgj3rIWAFjLSbta-MojehPSU-YE/view?usp=drive_link",
       nonOmsCriteria: [
         {
-          text: "Requires validation of criteria (1.4): A client has achieved stable housing while on supervision",
+          text: "Requires validation of DO 1007 section 8.1.4: A client has achieved stable housing while on supervision",
           tooltip:
-            "See policy section 8.1.4 for details on what qualifies as stable housing.",
+            "See DO 1007 section 8.1.4 for details on what qualifies as stable housing.",
         },
         {
-          text: "{{#if record.metadata.isMaybeEligible}}Requires validation of criteria (1.5): Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4{{/if}}",
+          text: "{{#if record.metadata.isMaybeEligible}}Requires validation of DO 1007 section 8.1.5: Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4{{/if}}",
           tooltip:
             "Alternate Eligibility: An offender may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, or retirement. For the purpose of this policy, people providing caregiving for a family member may also be considered to meet this condition. ",
         },
         {
-          text: "{{#if record.metadata.isMaybeEligible}}Requires validation of criteria (1.8): Not currently dealing with substance uses issues, as assessed in ORAS question 5.4 {{/if}}",
+          text: "{{#if record.metadata.isMaybeEligible}}Requires validation of DO 1007 section 8.1.8: Not currently dealing with substance uses issues, as assessed in ORAS question 5.4 {{/if}}",
           tooltip:
             "Alternate Eligibility: An offender may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
@@ -671,15 +671,19 @@ export const mockApiOpportunityConfigurationResponse = {
       tabPrefaceCopy: [
         {
           tab: "Eligible per ORAS",
-          text: "Clients shown in this tab have received an ORAS. Their ORAS results and other ACIS data suggest that they are eligible to transfer to Administrative Supervision. If you can confirm they have stable housing, they should be transferred to Administrative Supervision per policy.",
+          text: "Clients in this tab have an ORAS score. Based on ORAS results and ACIS data, they appear eligible for Administrative Supervision. Review housing stability and transfer eligible clients to Administrative Supervision per policy.",
         },
         {
           tab: "Eligible per Initial Assessment",
-          text: "Clients shown here scored Low on their Initial Risk Assessment and do not require an ORAS. ACIS data suggest that they could be eligible to transfer to Administrative Supervision per policy. Please review 'Requirements to check'. If the client meets all criteria, they should be transferred to Administrative Supervision per policy.",
+          text: "These clients scored Low on the Initial Risk Assessment (no ORAS needed). Verify all items under “Requirements to Check” (shown when you click on the individual client). If all criteria are met, complete the transfer per policy.",
         },
         {
           tab: "Transferred in ACIS",
           text: "Clients appear here after you confirm that their supervision level has been set to Administrative Supervision in ACIS. Clients who were successfully transferred will drop off this list after 24 hours. If a client continues to appear here, double check their supervision level in ACIS.",
+        },
+        {
+          tab: "Marked Ineligible",
+          text: "This tab shows clients whose status was updated in this tool. Status updates do not write back to ACIS. ",
         },
       ],
       tooltipEligibilityText: null,

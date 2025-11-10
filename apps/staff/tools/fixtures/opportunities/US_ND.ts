@@ -84,9 +84,9 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usNdImpliedValidEarlyTerminationSentenceType",
-          text: "Serving {{lowerCase supervisionType}} sentence",
+          text: 'Serving {{#if (eq supervisionType "IC PAROLE")}}IC Parole{{else if (eq supervisionType "IC PROBATION")}}IC Probation{{else}}{{lowerCase supervisionType}}{{/if}} sentence',
           tooltip:
-            "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
+            "Policy requirement: Serving a suspended, deferred, IC-probation, or IC-parole sentence.",
         },
         {
           key: "usNdNotInActiveRevocationStatus",
@@ -144,13 +144,38 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_ND",
-      strictlyIneligibleCriteriaCopy: [],
+      strictlyIneligibleCriteriaCopy: [
+        {
+          key: "UsNdImpliedValidEarlyTerminationSupervisionLevel",
+          text: "Currently on {{lowerCase supervisionLevel}} supervision",
+          tooltip:
+            "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
+        },
+        {
+          key: "UsNdImpliedValidEarlyTerminationSentenceType",
+          text: "Serving an ineligible sentence type: {{lowerCase supervisionType}}",
+          tooltip:
+            "Policy requirement: Serving a suspended, deferred, IC-probation, or IC-parole sentence.",
+        },
+        {
+          key: "custodyLevelIsMinimum",
+          text: "Custody level is not minimum",
+          tooltip:
+            "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
+        },
+        {
+          key: "supervisionPastEarlyDischargeDate",
+          text: "Early termination date (as calculated by DOCSTARS) is more than 3 months away",
+          tooltip:
+            "Policy requirement: must be passed early termination date (as calculated by DOCSTARS)",
+        },
+      ],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
         "Review clients eligible for early termination and complete the auto-filled paperwork to file with the court.",
       submittedTabTitle: null,
-      supportsIneligible: false,
+      supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,

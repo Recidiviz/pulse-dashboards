@@ -37,6 +37,8 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         { key: "NCO", text: "NCO: Has active NCO, CPO, or restraining order" },
         { key: "ILOCK", text: "ILOCK: Has active interlock device" },
+        { key: "DUI", text: "DUI" },
+        { key: "VIOLATION_REPORT", text: "New or pending violation report" },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
@@ -268,7 +270,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify people whose full-term release date has passed so that they can be moved to history in order to right-size caseloads. Review clients whose full-term release date has passed and discharge them in Atlas.",
+        "This alert helps staff identify people whose full-term release date has passed or is within the next 60 days. Review clients whose full-term release date has passed and discharge them in Atlas.",
       submittedTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,

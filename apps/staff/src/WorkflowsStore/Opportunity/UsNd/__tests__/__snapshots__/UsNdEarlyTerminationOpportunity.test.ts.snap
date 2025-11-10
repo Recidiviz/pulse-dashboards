@@ -25,7 +25,7 @@ exports[`almost eligible past discharge date coming up > requirements met 1`] = 
   {
     "key": "usNdImpliedValidEarlyTerminationSentenceType",
     "text": "Serving probation sentence",
-    "tooltip": "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
+    "tooltip": "Policy requirement: Serving a suspended, deferred, IC-probation, or IC-parole sentence.",
   },
   {
     "key": "usNdNotInActiveRevocationStatus",
@@ -50,7 +50,7 @@ exports[`fully eligible > requirements met 1`] = `
   {
     "key": "usNdImpliedValidEarlyTerminationSentenceType",
     "text": "Serving probation sentence",
-    "tooltip": "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
+    "tooltip": "Policy requirement: Serving a suspended, deferred, IC-probation, or IC-parole sentence.",
   },
   {
     "key": "usNdNotInActiveRevocationStatus",

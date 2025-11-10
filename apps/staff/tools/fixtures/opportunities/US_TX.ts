@@ -27,7 +27,7 @@ export const mockApiOpportunityConfigurationResponse = {
       denialNoun: null,
       denialReasons: [
         {
-          key: "FEES ",
+          key: "FEES",
           text: "Client has not demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
         },
         {
@@ -65,7 +65,16 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 2,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "supervisionLevelIsMinimumFor3Years",
+          text: "{{daysUntil eligibleDate}} days until 3 years on Low ({{date eligibleDate}})",
+        },
+        {
+          key: "noWarrantWithSustainedViolationWithin2Years",
+          text: "{{daysUntil eligibleDate}} days until 2 years with no sustained violation ({{date eligibleDate}})",
+        },
+      ],
       initialHeader:
         "Review clients who may be eligible for Annual Report Status",
       isAlert: false,
@@ -168,7 +177,24 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 1,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "supervisionLevelIsMinimumOrLimitedFor3Years",
+          text: "{{daysUntil eligibleDate}} days until 3 years on Low ({{date eligibleDate}})",
+        },
+        {
+          key: "usTxServedAtLeastHalfOfRemainingSupervisionSentence",
+          text: "{{daysUntil eligibleDate}} days until served at least half of remaining sentence ({{date eligibleDate}})",
+        },
+        {
+          key: "noSupervisionSustainedViolationWithin2Years",
+          text: "{{daysUntil eligibleDate}} days until 2 years without any sustained violations ({{date eligibleDate}})",
+        },
+        {
+          key: "usTxNoWarrantWithSustainedViolationWithin2Years",
+          text: "{{daysUntil eligibleDate}} days until 2 years without any warrants that sustained a violation ({{date eligibleDate}})",
+        },
+      ],
       initialHeader:
         "Review clients who may be eligible for Early Release from Supervision",
       isAlert: false,
