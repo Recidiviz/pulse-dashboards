@@ -102,7 +102,7 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
 
   get customStatusPalette() {
     if (this.denied) {
-      return OPPORTUNITY_STATUS_COLORS.ineligible;
+      return OPPORTUNITY_STATUS_COLORS.denied;
     }
     if (this.record.metadata.tabName === "REPORT_SUBMITTED") {
       return OPPORTUNITY_STATUS_COLORS.submitted;

@@ -151,6 +151,17 @@ export const CriteriaList = observer(function CriteriaList({
     return reqToCriterion(req, i, icon);
   };
 
+  const notMetReqToCriterion = (req: OpportunityRequirement, i: number) => {
+    const icon = (
+      <CriterionIcon
+        kind={IconSVG.Error}
+        color={colors?.iconIneligible}
+        size={14}
+      />
+    );
+    return reqToCriterion(req, i, icon);
+  };
+
   const nonOMSReqToCriterion = (req: OpportunityRequirement, i: number) => {
     const icon = (
       <CriterionIcon kind={IconSVG.Check} color={palette.slate30} size={14} />
@@ -172,9 +183,9 @@ export const CriteriaList = observer(function CriteriaList({
             {opportunity.config.omsCriteriaHeader}
           </CriteriaSectionHeading>
         )}
+      {opportunity.requirementsNotMet.map(notMetReqToCriterion)}
       {opportunity.requirementsAlmostMet.map(almostMetReqToCriterion)}
       {opportunity.requirementsMet.map(metReqToCriterion)}
-
       {opportunity.nonOMSRequirements.length > 0 && (
         <>
           <CriteriaSectionHeading>

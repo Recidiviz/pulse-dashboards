@@ -45,6 +45,7 @@ export const mockOpportunityConfigs = Object.fromEntries(
 export const mockOpportunity: Opportunity<Client> = {
   record: {},
   almostEligible: false,
+  isIneligible: false,
   caseNoteHeaders: [],
   person: {
     displayPreferredName: "Client Name",
@@ -60,6 +61,7 @@ export const mockOpportunity: Opportunity<Client> = {
   hydrationState: { status: "hydrated" },
   requirementsAlmostMet: [],
   requirementsMet: [],
+  requirementsNotMet: [],
   reviewStatus: "PENDING",
   snoozedBy: undefined,
   snoozedOnDate: new Date(),

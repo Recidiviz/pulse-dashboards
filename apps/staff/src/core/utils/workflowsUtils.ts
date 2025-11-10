@@ -27,6 +27,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
   eligible: {
     icon: palette.signal.highlight,
     iconAlmost: palette.data.gold1,
+    iconIneligible: palette.signal.error,
     background: "transparent",
     border: rgba(palette.slate20, 0.2),
     text: palette.pine4,
@@ -39,6 +40,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
   almostEligible: {
     icon: palette.signal.highlight,
     iconAlmost: palette.data.gold1,
+    iconIneligible: palette.signal.error,
     background: "transparent",
     border: rgba(palette.slate20, 0.2),
     text: palette.pine4,
@@ -51,6 +53,20 @@ export const OPPORTUNITY_STATUS_COLORS = {
   ineligible: {
     icon: palette.signal.highlight,
     iconAlmost: palette.data.gold1,
+    iconIneligible: palette.signal.error,
+    background: "transparent",
+    border: rgba(palette.slate20, 0.2),
+    text: palette.pine4,
+    buttonFill: palette.signal.links,
+    link: palette.signal.error,
+    badgeBackground: "rgb(255,244,249)",
+    badgeBorder: "rgb(255,204,223)",
+    badgeText: "rgb(179,9,60)",
+  },
+  denied: {
+    icon: palette.signal.highlight,
+    iconAlmost: palette.data.gold1,
+    iconIneligible: palette.signal.error,
     background: "transparent",
     border: rgba(palette.slate20, 0.2),
     text: palette.pine4,
@@ -63,6 +79,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
   submitted: {
     icon: palette.signal.highlight,
     iconAlmost: palette.data.gold1,
+    iconIneligible: palette.signal.error,
     background: "transparent",
     border: rgba(palette.slate20, 0.2),
     text: palette.pine4,
@@ -75,6 +92,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
   alert: {
     icon: palette.signal.error,
     iconAlmost: palette.signal.error,
+    iconIneligible: palette.signal.error,
     background: "transparent",
     border: rgba(palette.slate20, 0.2),
     text: palette.signal.error,
@@ -87,6 +105,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
   alertOverride: {
     icon: rgba(palette.slate, 0.4),
     iconAlmost: rgba(palette.slate, 0.4),
+    iconIneligible: palette.signal.error,
     background: "transparent",
     border: rgba(palette.slate20, 0.2),
     text: palette.slate85,
@@ -99,6 +118,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
   eligibleOverride: {
     icon: palette.signal.highlight,
     iconAlmost: palette.signal.error,
+    iconIneligible: palette.signal.error,
     background: "transparent",
     border: rgba(palette.slate20, 0.2),
     text: palette.pine4,
@@ -119,8 +139,12 @@ export function useStatusColors({
   denial,
   almostEligible,
   customStatusPalette,
+  isIneligible
 }: Opportunity): StatusPalette {
   if (customStatusPalette) return customStatusPalette;
+
+  if (isIneligible)
+    return OPPORTUNITY_STATUS_COLORS.ineligible;
 
   if (isSubmitted) return OPPORTUNITY_STATUS_COLORS.submitted;
 
@@ -135,7 +159,7 @@ export function useStatusColors({
   }
 
   if (denial) {
-    return OPPORTUNITY_STATUS_COLORS.ineligible;
+    return OPPORTUNITY_STATUS_COLORS.denied;
   }
 
   if (almostEligible) {

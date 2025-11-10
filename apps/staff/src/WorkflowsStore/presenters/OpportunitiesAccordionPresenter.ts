@@ -190,9 +190,9 @@ export class OpportunitiesAccordionPresenter<
     ).then(
       // OUTER RESULT HANDLING
       (resultsForAllOpportunityTypes) => {
-        const missingOpportunityTypes = Object.keys(
-          ineligibleOpportunityMapping,
-        ).filter((t) => !(t in ineligibleOpportunityMapping));
+        const missingOpportunityTypes = ineligibleOpportunityTypes.filter(
+          (t) => !(t in ineligibleOpportunityMapping),
+        );
         if (!missingOpportunityTypes.length) return;
         const errors = resultsForAllOpportunityTypes
           .filter((result) => result.status === "rejected")
@@ -258,11 +258,10 @@ export class OpportunitiesAccordionPresenter<
           if (!(result.reason instanceof FeatureGateError)) {
             // don't log routine feature flag checks, but do log everything else
             Sentry.captureException(result.reason);
-            processed.errors.push(result.reason);
           }
           return processed;
         },
-        { errors: [] as Error[], opportunities: [] as Opportunity[] },
+        { opportunities: [] as Opportunity[] },
       );
 
       if (opportunities.length === 0) return;

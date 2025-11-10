@@ -24,7 +24,7 @@ import {
   startOfToday,
 } from "date-fns";
 import { DocumentData, Timestamp } from "firebase/firestore";
-import { isEmpty, pick } from "lodash";
+import { isEmpty, pick, pickBy } from "lodash";
 import { action, computed, makeObservable, when } from "mobx";
 
 import { OpportunityType } from "~datatypes";
@@ -855,15 +855,34 @@ export class OpportunityBase<
   get requirementsAlmostMet(): OpportunityRequirement[] {
     const {
       record,
-      config: { ineligibleCriteriaCopy },
+      isIneligible,
+      config: { ineligibleCriteriaCopy, strictlyIneligibleCriteriaCopy },
     } = this;
     if (!record) return [];
+
     return hydrateUntypedCriteria(
       record.ineligibleCriteria,
-      ineligibleCriteriaCopy,
+      isIneligible ? pickBy(ineligibleCriteriaCopy, (_, key) => !(key in strictlyIneligibleCriteriaCopy)) : ineligibleCriteriaCopy,
       this,
       this.criteriaFormatters,
     );
+  }
+
+  get requirementsNotMet(): OpportunityRequirement[] {
+    const {
+      record,
+      isIneligible,
+      config: { strictlyIneligibleCriteriaCopy },
+    } = this;
+    if (!isIneligible || !record) return [];
+
+
+    return hydrateUntypedCriteria(
+      record.ineligibleCriteria,
+      strictlyIneligibleCriteriaCopy,
+      this,
+      this.criteriaFormatters,
+    ).filter((req) => req.text);
   }
 
   get nonOMSRequirements(): OpportunityRequirement[] {
@@ -883,8 +902,18 @@ export class OpportunityBase<
       .filter((req) => req.text);
   }
 
+  /**
+   * Returns true if the opportunity record is almost eligible (isAlmostEligible is true).
+   */
   get almostEligible(): boolean {
     return this.record.isAlmostEligible;
+  }
+
+  /**
+   * Returns true if the opportunity record is ineligible (isEligible is false) and not almost eligible
+   */
+  get isIneligible(): boolean {
+    return !this.record.isEligible && !this.almostEligible;
   }
 
   get denied(): boolean {
@@ -1234,6 +1263,8 @@ export class OpportunityBase<
     } = this;
 
     if (!isHydrated(this)) return null;
+
+    if (this.isIneligible) return "Ineligible";
 
     if (denial?.reasons.length) {
       const statusText = isAlert

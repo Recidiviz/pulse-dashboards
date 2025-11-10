@@ -18,12 +18,14 @@
 import { Pill, Sans16, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { useMatch } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
 
-import { isEligibleOrAlmostEligible, Opportunity } from "../../WorkflowsStore";
+import { Opportunity } from "../../WorkflowsStore";
 import { useStatusColors } from "../utils/workflowsUtils";
+import { WORKFLOWS_PATHS } from "../views";
 
 const TitleText = styled(Sans16)`
   color: ${palette.pine1};
@@ -56,12 +58,12 @@ export const EligibilityStatusPill = observer(function EligibilityStatusPill({
   opportunity: Opportunity;
 }) {
   const colors = useStatusColors(opportunity);
-  const showEligibilityStatus = isEligibleOrAlmostEligible(
-    opportunity.person,
-    opportunity.type,
-  );
+  const isClientProfile = useMatch(WORKFLOWS_PATHS.clientProfile);
+  const isResidentProfile = useMatch(WORKFLOWS_PATHS.residentProfile);
+  const isFullProfilePage = isClientProfile || isResidentProfile;
+  
   return (
-    showEligibilityStatus && (
+    (!opportunity.isIneligible || isFullProfilePage) && (
       <EligibilityStatusPillStyled
         className="EligibilityStatus"
         filled

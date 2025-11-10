@@ -120,6 +120,7 @@ export interface Opportunity<
   record: DocumentData | undefined;
   actedOnTextAddition?: ActedOnTextAddition;
   almostEligible: boolean;
+  isIneligible: boolean;
   // TODO: move this to status component once almost-eligible is standardized on TES
   almostEligibleStatusMessage?: string;
   almostEligibleRecommendedNote?: { title: string; text: string };
@@ -129,6 +130,7 @@ export interface Opportunity<
   form?: FormBase<any>;
   requirementsAlmostMet: OpportunityRequirement[];
   requirementsMet: OpportunityRequirement[];
+  requirementsNotMet: OpportunityRequirement[];
   nonOMSRequirements: OpportunityRequirement[];
   reviewStatus: OpportunityStatus;
   readonly type: OpportunityType;

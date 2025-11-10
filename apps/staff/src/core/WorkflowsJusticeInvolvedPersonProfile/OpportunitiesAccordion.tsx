@@ -153,7 +153,9 @@ export const AccordionSection = observer(function AccordionSection({
                 isVisible={expanded}
                 opportunity={opportunity}
                 formLinkButton={formLinkButton && !!opportunity.form}
-                hideActionButtons={hideActionButtons}
+                // If the opportunity is determined to be ineligible by our system (not marked ineligible/denied), 
+                // we hide the action buttons
+                hideActionButtons={hideActionButtons || opportunity.isIneligible}
                 shouldTrackOpportunityPreviewed={
                   shouldTrackOpportunityPreviewed
                 }
