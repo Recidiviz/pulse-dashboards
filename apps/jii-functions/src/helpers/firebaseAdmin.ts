@@ -124,7 +124,7 @@ export async function checkResidentsRoster(
   userId: string,
 ): Promise<AuthorizedUserProfile | undefined> {
   let userResidentRecord;
-  if (stateCode === "US_NE") {
+  if (stateCode === "US_NE" || stateCode === "US_AZ") {
     userResidentRecord = await getResidentRecordForDisplayId(stateCode, userId);
   } else {
     userResidentRecord = (

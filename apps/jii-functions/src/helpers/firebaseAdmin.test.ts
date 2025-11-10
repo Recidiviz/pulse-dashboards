@@ -28,10 +28,13 @@ const mockSecrets: Record<string, string> = {
   DATA_SOURCE_FIREBASE_CREDENTIAL_PRIVATE_KEY: "test-key",
 };
 
-test("don't init Firestore twice", async () => {
+beforeEach(() => {
   vi.mocked(secrets).getLatestValue.mockImplementation(
     async (k) => mockSecrets[k] ?? "",
   );
+});
+
+test("don't init Firestore twice", async () => {
   // @ts-expect-error just stubbing what we need for this test
   vi.mocked(firebaseAdmin).firestore.mockResolvedValue({
     doc: vi
@@ -47,4 +50,47 @@ test("don't init Firestore twice", async () => {
   await Promise.all([p1, p2]);
 
   expect(firebaseAdmin.initializeApp).toHaveBeenCalledOnce();
+});
+
+describe("check residents roster", () => {
+  test("using person external ID", async () => {
+    const firestoreDocMock = vi
+      .fn()
+      .mockReturnValue({ get: vi.fn().mockResolvedValue({ data: vi.fn() }) });
+
+    // @ts-expect-error just stubbing what we need for this test
+    vi.mocked(firebaseAdmin).firestore.mockResolvedValue({
+      doc: firestoreDocMock,
+    });
+
+    await checkResidentsRoster("US_TN", "abc123");
+
+    expect(firestoreDocMock).toHaveBeenCalledWith("residents/us_tn_abc123");
+  });
+
+  test.each(["US_NE", "US_AZ"])(
+    "using display ID for %s",
+    async (stateCode) => {
+      const firestoreMock: Record<string, unknown> = {
+        get: () => ({ docs: [{ data: vi.fn() }] }),
+      };
+
+      const collectionMock = vi.fn().mockReturnValue(firestoreMock);
+      firestoreMock["collection"] = collectionMock;
+      const whereMock = vi.fn().mockReturnValue(firestoreMock);
+      firestoreMock["where"] = whereMock;
+      const limitMock = vi.fn().mockReturnValue(firestoreMock);
+      firestoreMock["limit"] = limitMock;
+
+      // @ts-expect-error just stubbing what we need for this test
+      vi.mocked(firebaseAdmin).firestore.mockResolvedValue(firestoreMock);
+
+      await checkResidentsRoster(stateCode, "abc123");
+
+      expect(collectionMock).toHaveBeenCalledWith("residents");
+      expect(whereMock).toHaveBeenCalledWith("stateCode", "==", stateCode);
+      expect(whereMock).toHaveBeenCalledWith("displayId", "==", "abc123");
+      expect(limitMock).toHaveBeenCalledWith(1);
+    },
+  );
 });
