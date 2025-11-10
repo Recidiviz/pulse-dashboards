@@ -65,11 +65,14 @@ export type UsMoWorkReleaseDraftData = {
   fullDuty: boolean;
   limitedDuty: boolean;
   sentence: string;
+  sentenceTrimmed: string;
   releaseDatesType: string;
   detailsReleaseDates: string;
   detainer: string;
   completedPrograms: string;
+  completedProgramsTrimmed: string;
   incarcerationAdjustmentRecord: string;
+  incarcerationAdjustmentRecordTrimmed: string;
   substanceUseHistory: string;
   organizedCrimeInvolvement: string;
   historyOfViolence: string;
@@ -81,4 +84,5 @@ export type UsMoWorkReleaseDraftData = {
   summary: string;
   additionalInformationNotPreviouslyAddressed: string;
   workReleaseOutsideAssignmentInformation: string;
+  opportunityName: string;
 };

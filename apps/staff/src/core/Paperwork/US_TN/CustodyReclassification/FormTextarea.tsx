@@ -23,7 +23,8 @@ import type { TextareaAutosizeProps } from "react-textarea-autosize/dist/declara
 import styled from "styled-components/macro";
 
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "../../utils";
+import { useAnimatedValue } from "../../useAnimatedValue";
+import { useReactiveInput } from "../../utils";
 import { FormDataType } from "./types";
 
 export const Textarea = styled(TextareaAutosize)`

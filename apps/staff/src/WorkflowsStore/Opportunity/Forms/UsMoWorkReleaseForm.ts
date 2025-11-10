@@ -15,12 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { sortBy } from "lodash";
+
 import { usMoFormatSentenceLength } from "~datatypes";
 
+import { renderDocx } from "../../../core/Paperwork/DOCXFormGenerator";
 import {
   fillAndSavePDF,
+  getPdfTemplate,
   PDFFillerFunc,
 } from "../../../core/Paperwork/PDFFormFiller";
+import { downloadZipFile } from "../../../core/Paperwork/utils";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatDate } from "../../../utils/formatStrings";
 import { UsMoWorkReleaseOpportunity } from "../UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseOpportunity";
@@ -28,12 +33,7 @@ import { UsMoWorkReleaseDraftData } from "../UsMo/UsMoWorkReleaseOpportunity/UsM
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 function formatList<T>(items: T[], formatFn: (item: T) => string): string {
-  return items.length > 0
-    ? items
-        .map(formatFn)
-        // .map((item) => `* ${item}`)
-        .join("; ")
-    : "None Noted";
+  return items.length > 0 ? items.map(formatFn).join("\n") : "None Noted";
 }
 
 const fillerFunc: PDFFillerFunc<UsMoWorkReleaseDraftData> = async (
@@ -56,7 +56,7 @@ const fillerFunc: PDFFillerFunc<UsMoWorkReleaseDraftData> = async (
   set("form1[0].MainSF[0].RcaSF[0].I[0]", formData.scoreI); // PDFTextField
   set("form1[0].MainSF[0].RcaSF[0].E[0]", formData.scoreE); // PDFTextField
   set("form1[0].MainSF[0].RcaSF[0].C[0]", formData.scoreC); // PDFTextField
-  set("form1[0].MainSF[0].SentenceSF[0].Sentence[0]", formData.sentence); // PDFTextField
+  set("form1[0].MainSF[0].SentenceSF[0].Sentence[0]", formData.sentenceTrimmed); // PDFTextField
   set(
     "form1[0].MainSF[0].HeadingReleaseDatesSF[0].ReleaseDates[0]",
     formData.releaseDatesType,
@@ -68,11 +68,11 @@ const fillerFunc: PDFFillerFunc<UsMoWorkReleaseDraftData> = async (
   set("form1[0].MainSF[0].DetainerSF[0].Detainer[0]", formData.detainer); // PDFTextField
   set(
     "form1[0].MainSF[0].CompletedProgramsSF[0].CompletedPrograms[0]",
-    formData.completedPrograms,
+    formData.completedProgramsTrimmed,
   ); // PDFTextField
   set(
     "form1[0].MainSF[0].IncarcerationSF[0].IncarcerationAdjustmentRecord[0]",
-    formData.incarcerationAdjustmentRecord,
+    formData.incarcerationAdjustmentRecordTrimmed,
   ); // PDFTextField
   set(
     "form1[0].MainSF[0].SubstanceUseSF[0].SubstanceUseHistory[0]",
@@ -298,6 +298,13 @@ export class UsMoWorkReleaseForm extends FormBase<
         return {};
       }
 
+      const addendumListCutoff = 5;
+
+      const opportunityName =
+        this.opportunity.type === "usMoWorkRelease"
+          ? "Supervised Work Release"
+          : "Outside Clearance";
+
       const out: Partial<UsMoWorkReleaseDraftData> = {
         institution: person.facilityId,
         date: formatDate(new Date()),
@@ -310,22 +317,11 @@ export class UsMoWorkReleaseForm extends FormBase<
         scoreI: metadata.institutionalRiskScore?.toString() ?? "",
         scoreE: metadata.educationScore?.toString() ?? "",
         scoreC: (person.custodyLevel ?? "").replace("C-", ""),
-        sentence: formatList(metadata.latestCycleSentences, (s) => {
-          return `${s.offense} - ${usMoFormatSentenceLength(s)}`;
-        }),
         // releaseDatesType: formInformation.releaseDate.releaseDateType,
         // detailsReleaseDates: formatDate(
         //   formInformation.releaseDate.releaseDate,
         // ),
         detainer: "",
-        completedPrograms: formatList(
-          metadata.latestCycleCompletedPrograms,
-          (p) => `${p.program} - ${p.status} - ${formatDate(p.completionDate)}`,
-        ),
-        incarcerationAdjustmentRecord: formatList(
-          formInformation.historyViolationsLast24Months,
-          (v) => `${formatDate(v.violationDate)} - ${v.violationCode}`,
-        ),
         substanceUseHistory: "",
         organizedCrimeInvolvement: metadata.gangAffiliation ?? "",
         escapeAbscond: formatList(
@@ -338,25 +334,106 @@ export class UsMoWorkReleaseForm extends FormBase<
             }`,
         ),
         summary: "",
-        additionalInformationNotPreviouslyAddressed: `${person.displayName} is recommended for ${
-          this.opportunity.type === "usMoWorkRelease"
-            ? "Supervised Work Release"
-            : "Outside Clearance"
-        }`,
+        additionalInformationNotPreviouslyAddressed: `${person.displayName} is recommended for ${opportunityName}`,
+        opportunityName,
       };
+
+      const sentences = metadata.latestCycleSentences;
+      const sentenceFmt = (s: (typeof sentences)[number]) => {
+        return `${s.offense} - ${usMoFormatSentenceLength(s)}`;
+      };
+      if (sentences.length <= addendumListCutoff) {
+        out.sentenceTrimmed = formatList(sentences, sentenceFmt);
+      } else {
+        out.sentenceTrimmed =
+          formatList(sentences.slice(0, addendumListCutoff), sentenceFmt) +
+          "\n (Please see attachment for full list of current cycle sentences)";
+        out.sentence = formatList(sentences, sentenceFmt);
+      }
+
+      const programs = sortBy(
+        metadata.latestCycleCompletedPrograms,
+        (p) => -(p.completionDate ?? 0),
+      );
+      const programFmt = (p: (typeof programs)[number]) => {
+        return `${p.program} - ${p.status} - ${formatDate(p.completionDate)}`;
+      };
+      if (programs.length <= addendumListCutoff) {
+        out.completedProgramsTrimmed = formatList(programs, programFmt);
+      } else {
+        out.completedProgramsTrimmed =
+          formatList(programs.slice(0, addendumListCutoff), programFmt) +
+          "\n (Please see attachment for full list of completed programs)";
+        out.completedPrograms = formatList(programs, programFmt);
+      }
+
+      const violations = sortBy(
+        formInformation.historyViolationsLast24Months,
+        (p) => -(p.violationDate ?? 0),
+      );
+      const violationFmt = (v: (typeof violations)[number]) => {
+        return `${formatDate(v.violationDate)} - ${v.violationCode}`;
+      };
+      const violationsListCutoff = 3; // This field is a little shorter and only fits 3 total lines
+      if (violations.length <= violationsListCutoff) {
+        out.incarcerationAdjustmentRecordTrimmed = formatList(
+          violations,
+          violationFmt,
+        );
+      } else {
+        out.incarcerationAdjustmentRecordTrimmed =
+          formatList(violations.slice(0, violationsListCutoff), violationFmt) +
+          "\n (Please see attachment for full list of violations in the past two years)";
+        out.incarcerationAdjustmentRecord = formatList(
+          violations,
+          violationFmt,
+        );
+      }
+
       return out;
     };
 
   async fillAndSaveFile(): Promise<void> {
     const oppName = this.opportunity.config.label;
 
-    await fillAndSavePDF(
-      `${this.person.displayName} - ${oppName} Screening Form.pdf`,
+    const nameBase = `${this.person.displayName} - ${oppName} Screening Form`;
+
+    const hasAddendum =
+      !!this.formData.sentence ||
+      !!this.formData.completedPrograms ||
+      !!this.formData.incarcerationAdjustmentRecord;
+
+    if (!hasAddendum) {
+      fillAndSavePDF(
+        `${nameBase}.pdf`,
+        "US_MO",
+        "work_release_template.pdf",
+        fillerFunc,
+        this.formData,
+        this.rootStore.getTokenSilently,
+      );
+      return;
+    }
+
+    const pdfTemplate = await getPdfTemplate(
       "US_MO",
       "work_release_template.pdf",
-      fillerFunc,
-      this.formData,
       this.rootStore.getTokenSilently,
+      fillerFunc,
     );
+
+    downloadZipFile(`${nameBase} with Addendum.zip`, [
+      {
+        filename: `${nameBase}.pdf`,
+        fileContents: await pdfTemplate(this.formData),
+      },
+      await renderDocx(
+        `${nameBase} Addendum.docx`,
+        "US_MO",
+        "work_release_addendum.docx",
+        this.formData,
+        this.rootStore.getTokenSilently,
+      ),
+    ]);
   }
 }

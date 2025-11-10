@@ -27,7 +27,8 @@ import styled from "styled-components/macro";
 import { palette } from "~design-system";
 
 import { useOpportunityFormContext } from "./OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "./utils";
+import { useAnimatedValue } from "./useAnimatedValue";
+import { useReactiveInput } from "./utils";
 
 export const Textarea = styled(TextareaAutosize)`
   display: inline-block;

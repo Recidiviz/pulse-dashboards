@@ -36,8 +36,8 @@ import { useOpportunityFormContext } from "./OpportunityFormContext";
 import {
   DEFAULT_ANIMATION_DURATION,
   useAnimatedValue,
-  useReactiveInput,
-} from "./utils";
+} from "./useAnimatedValue";
+import { useReactiveInput } from "./utils";
 
 const ThemeContainer = styled.div`
   --mdc-typography-subtitle1-font-family: "Public Sans";

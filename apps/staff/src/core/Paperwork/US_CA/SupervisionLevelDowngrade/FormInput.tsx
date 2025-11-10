@@ -21,7 +21,8 @@ import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "../../utils";
+import { useAnimatedValue } from "../../useAnimatedValue";
+import { useReactiveInput } from "../../utils";
 import { Input } from "./styles";
 
 type FormInputProps = StyledComponentProps<

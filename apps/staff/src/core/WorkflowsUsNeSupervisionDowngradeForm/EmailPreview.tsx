@@ -25,7 +25,8 @@ import styled from "styled-components/macro";
 
 import { UsNeSupervisionDowngradeForm } from "../../WorkflowsStore/Opportunity/Forms/UsNeSupervisionDowngradeForm";
 import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "../Paperwork/utils";
+import { useAnimatedValue } from "../Paperwork/useAnimatedValue";
+import { useReactiveInput } from "../Paperwork/utils";
 
 export const Textarea = styled(TextareaAutosize)`
   width: 80%;

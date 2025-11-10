@@ -28,7 +28,8 @@ import { palette } from "~design-system";
 
 import { UsNdEarlyTerminationDraftData } from "../../../../WorkflowsStore";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "../../utils";
+import { useAnimatedValue } from "../../useAnimatedValue";
+import { useReactiveInput } from "../../utils";
 
 export const Textarea = styled(TextareaAutosize)`
   display: inline-block;

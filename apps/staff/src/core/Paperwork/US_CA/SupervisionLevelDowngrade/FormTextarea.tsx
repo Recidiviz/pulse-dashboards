@@ -24,7 +24,8 @@ import styled from "styled-components/macro";
 
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "../../utils";
+import { useAnimatedValue } from "../../useAnimatedValue";
+import { useReactiveInput } from "../../utils";
 
 export const Textarea = styled(TextareaAutosize)`
   display: block;

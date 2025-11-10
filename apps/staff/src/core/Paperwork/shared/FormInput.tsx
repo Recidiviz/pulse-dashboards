@@ -21,7 +21,8 @@ import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
 import { useOpportunityFormContext } from "../OpportunityFormContext";
 import { FormDataFieldName } from "../US_TX/types";
-import { useAnimatedValue, useReactiveInput } from "../utils";
+import { useAnimatedValue } from "../useAnimatedValue";
+import { useReactiveInput } from "../utils";
 import { Input } from "./styles";
 
 export type FormInputValueGetter = (value: any) => any;

@@ -26,7 +26,8 @@ import styled from "styled-components/macro";
 import { palette } from "~design-system";
 
 import { useOpportunityFormContext } from "./OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "./utils";
+import { useAnimatedValue } from "./useAnimatedValue";
+import { useReactiveInput } from "./utils";
 
 export interface DOCXFormInputProps<DraftData> {
   name: Extract<keyof DraftData, string>;

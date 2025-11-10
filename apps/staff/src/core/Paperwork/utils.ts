@@ -17,73 +17,17 @@
 
 import { captureException } from "@sentry/react";
 import saveAs from "file-saver";
-import { debounce, isString, throttle } from "lodash";
+import { debounce, throttle } from "lodash";
 import { autorun, reaction } from "mobx";
 import PizZip from "pizzip";
 import { rem } from "polished";
 import * as React from "react";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
 import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
 import { PrintablePageMargin } from "./styles";
 
 export const REACTIVE_INPUT_UPDATE_DELAY = 2000;
-
-export const DEFAULT_ANIMATION_DURATION = 1750;
-
-export const useAnimatedValue = (
-  input: MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>,
-  value?: string,
-  duration = DEFAULT_ANIMATION_DURATION,
-  delay = 250,
-): boolean => {
-  const [mountedAt, setMountedAt] = useState<number>(+new Date() + delay);
-  const [animated, setAnimated] = useState<boolean>(false);
-  const { workflowsStore } = useRootStore();
-
-  useEffect(() => {
-    let animationFrameId = 0;
-    const animate = () => {
-      if (!input.current || !value || !isString(value)) return;
-
-      const elapsed = +new Date() - mountedAt;
-
-      const range = Math.ceil(value.length * Math.min(1, elapsed / duration));
-
-      input.current.value = value.substr(0, range);
-
-      if (elapsed <= duration) {
-        animationFrameId = requestAnimationFrame(animate);
-      } else {
-        setAnimated(true);
-      }
-    };
-
-    if (input.current) {
-      animationFrameId = requestAnimationFrame(animate);
-    }
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [input, mountedAt, duration, value, setAnimated]);
-
-  // Effect that triggers when a user selects the Download CTA and stops the form-filling animation
-  useEffect(() => {
-    return reaction(
-      () => workflowsStore.formIsDownloading,
-      () => {
-        if (workflowsStore.formIsDownloading) {
-          setMountedAt(0);
-          setAnimated(true);
-        }
-      },
-    );
-  }, [workflowsStore]);
-
-  return animated;
-};
 
 export interface ResizeFormLayout {
   margin: number;
