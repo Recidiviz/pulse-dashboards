@@ -21,4 +21,16 @@ export class LSUConfiguration extends ApiOpportunityConfiguration {
   get supportsAlmostEligible() {
     return true;
   }
+
+  get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {
+    const snoozeLengthOverrides = {
+      DUI: 365, // DUI - 1 year
+      NCO: 365, // Active NCO - 1 year
+    };
+
+    return {
+      ...super.maxSnoozeDaysByDenialReason,
+      ...snoozeLengthOverrides,
+    };
+  }
 }
