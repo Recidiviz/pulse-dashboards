@@ -17,11 +17,7 @@
 
 import { configure } from "mobx";
 
-import {
-  residentsConfigByState,
-  TranslationStore,
-  UserStore,
-} from "~@jii/data";
+import { TranslationStore, UserStore } from "~@jii/data";
 import { usMeResidents } from "~datatypes";
 
 import { ResidentNavBarPresenter } from "./ResidentNavBarPresenter";
@@ -48,11 +44,10 @@ afterEach(() => {
 
 describe("with resident route", () => {
   beforeEach(() => {
-    presenter = new ResidentNavBarPresenter(
-      residentsConfigByState.US_ME,
-      userStore,
-      { stateSlug, personPseudoId: testResident.pseudonymizedId },
-    );
+    presenter = new ResidentNavBarPresenter(userStore, {
+      stateSlug,
+      personPseudoId: testResident.pseudonymizedId,
+    });
   });
 
   test("link to home", () => {
@@ -77,32 +72,11 @@ describe("with resident route", () => {
       end: true,
     });
   });
-
-  test("links to opportunities", () => {
-    expect(presenter.menuLinks).toMatchInlineSnapshot(`
-      [
-        {
-          "children": "Work Release",
-          "end": false,
-          "to": "/maine/anonres001/eligibility/work-release",
-        },
-        {
-          "children": "Supervised Community Confinement Program (SCCP)",
-          "end": false,
-          "to": "/maine/anonres001/eligibility/sccp",
-        },
-      ]
-    `);
-  });
 });
 
 describe("with non-resident route", () => {
   beforeEach(() => {
-    presenter = new ResidentNavBarPresenter(
-      residentsConfigByState.US_ME,
-      userStore,
-      { stateSlug },
-    );
+    presenter = new ResidentNavBarPresenter(userStore, { stateSlug });
   });
 
   test("links exclude search", () => {

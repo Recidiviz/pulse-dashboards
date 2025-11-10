@@ -18,13 +18,12 @@
 import { makeAutoObservable } from "mobx";
 
 import { SimpleNavLinkProps } from "~@jii/common-ui";
-import { ResidentsConfig, UserStore } from "~@jii/data";
+import { UserStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { RouteParams } from "~@jii/paths";
 
 export class ResidentNavBarPresenter {
   constructor(
-    private config: ResidentsConfig,
     private userStore: UserStore,
     private routeParams:
       | RouteParams<typeof State.Resident>
@@ -62,25 +61,6 @@ export class ResidentNavBarPresenter {
 
   get menuLinks(): Array<SimpleNavLinkProps> {
     const links: Array<SimpleNavLinkProps> = [];
-
-    const { routeParams } = this;
-    if (
-      "personPseudoId" in routeParams &&
-      this.config.eligibility?.incarcerationOpportunities
-    ) {
-      links.push(
-        ...Object.values(
-          this.config.eligibility.incarcerationOpportunities,
-        ).map((c) => ({
-          children: c.name,
-          to: State.Resident.Eligibility.Opportunity.buildPath({
-            ...routeParams,
-            opportunitySlug: c.urlSlug,
-          }),
-          end: false,
-        })),
-      );
-    }
 
     if (this.userStore.hasPermission("enhanced")) {
       links.push({

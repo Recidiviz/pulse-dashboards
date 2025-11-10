@@ -20,11 +20,9 @@ import { flowResult, makeAutoObservable, when } from "mobx";
 import {
   EligibilityModuleConfig,
   IncarcerationOpportunityId,
-  OpportunityRecord,
   ResidentsStore,
   SingleResidentContext,
 } from "~@jii/data";
-import { ResidentRecord } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 export class SingleResidentHydratorPresenter implements Hydratable {
@@ -122,21 +120,6 @@ export class SingleResidentHydratorPresenter implements Hydratable {
     );
 
     await Promise.all([residentPopulated, ...opportunitiesPopulated]);
-
-    // if we've gotten this far we can be confident that the necessary data exists
-    const resident = this.resident as ResidentRecord;
-    this.opportunityTypes.forEach((oppType) => {
-      const residentEligibility =
-        residentsStore.residentOpportunityRecordsByExternalId.get(externalId)?.[
-          oppType
-        ] as OpportunityRecord<typeof oppType>;
-
-      residentsStore.populateEligibilityReportFromData(
-        oppType,
-        resident,
-        residentEligibility,
-      );
-    });
   }
 
   private expectResidentDataPopulated(): SingleResidentContext {
@@ -166,20 +149,21 @@ export class SingleResidentHydratorPresenter implements Hydratable {
     }
 
     const opportunities = this.opportunityTypes.map((oppType) => {
-      const report = this.residentsStore.residentEligibilityReportsByExternalId
-        .get(resident.personExternalId)
-        ?.get(oppType);
+      const opportunityRecord =
+        this.residentsStore.residentOpportunityRecordsByExternalId.get(
+          resident.personExternalId,
+        )?.[oppType];
 
-      if (report) {
+      if (opportunityRecord) {
         return {
           opportunityId: oppType,
           opportunityConfig: this.opportunityConfig(oppType),
-          eligibilityReport: report,
+          opportunityRecord,
         };
       }
 
       throw new Error(
-        `Failed to populate ${oppType} eligibility report for resident ${this.residentPseudoId}`,
+        `Failed to populate ${oppType} eligibility data for resident ${this.residentPseudoId}`,
       );
     });
 

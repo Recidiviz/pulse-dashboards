@@ -23,11 +23,11 @@ test("no state code", () => {
 });
 
 test("valid state code", () => {
-  vi.stubGlobal("location", { pathname: "/maine" });
-  expect(stateCodeFromCurrentUrl()).toBe("US_ME");
+  vi.stubGlobal("location", { pathname: "/mass" });
+  expect(stateCodeFromCurrentUrl()).toBe("US_MA");
 
-  vi.stubGlobal("location", { pathname: "/maine/some-resident-id" });
-  expect(stateCodeFromCurrentUrl()).toBe("US_ME");
+  vi.stubGlobal("location", { pathname: "/mass/some-resident-id" });
+  expect(stateCodeFromCurrentUrl()).toBe("US_MA");
 });
 
 test("invalid state code", () => {

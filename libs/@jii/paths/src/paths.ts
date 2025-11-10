@@ -33,31 +33,6 @@ export const OrijinSSOPage = route("orijin/sso");
 
 export const EdovoLandingPage = route("edovo/:token");
 
-const InfoPage = route(":pageSlug");
-
-export const Eligibility = route(
-  "eligibility",
-  {},
-  {
-    Opportunity: route(
-      ":opportunitySlug",
-      {},
-      {
-        InfoPage,
-      },
-    ),
-    Comparison: route("compare/:opportunitySlug1/:opportunitySlug2"),
-  },
-);
-
-export const Progress = route(
-  "progress",
-  {},
-  {
-    InfoPage,
-  },
-);
-
 export const EGT = route(
   "earned-good-time",
   {},
@@ -92,8 +67,6 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
     ":personPseudoId",
     {},
     {
-      Eligibility,
-      Progress,
       EGT,
       UsTnMoreInformation,
       UsAzMoreInformation,

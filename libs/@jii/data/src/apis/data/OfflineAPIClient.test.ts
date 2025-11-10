@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
+import { outputFixture, usAzResidents, usMeSccpFixtures } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { RootStore } from "../../datastores/RootStore";
@@ -23,7 +23,7 @@ import { OfflineAPIClient } from "./OfflineAPIClient";
 
 let api: OfflineAPIClient;
 
-const stateCodeMock = "US_ME";
+const stateCodeMock = "US_AZ";
 
 beforeEach(() => {
   api = new OfflineAPIClient(new RootStore());
@@ -33,11 +33,11 @@ test("residents should reflect state code", async () => {
   const residents = await api.residents(stateCodeMock);
   // sanity check
   expect(residents.length).toBeGreaterThan(0);
-  residents.forEach((r) => expect(r.stateCode).toBe("US_ME"));
+  residents.forEach((r) => expect(r.stateCode).toBe("US_AZ"));
 });
 
 test("fetch single resident", async () => {
-  const expectedRes = usMeResidents[0];
+  const expectedRes = usAzResidents[0];
 
   const fetched = await api.residentById(
     stateCodeMock,
@@ -51,26 +51,27 @@ test("missing single resident", async () => {
   await expect(
     api.residentById(stateCodeMock, "does-not-exist"),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[Error: Missing data for resident does-not-exist in US_ME]`,
+    `[Error: Missing data for resident does-not-exist in US_AZ]`,
   );
 });
 
 test("local config object", async () => {
-  const expectedConfig = residentsConfigByState.US_ME;
+  const expectedConfig = residentsConfigByState.US_AZ;
 
   const fetched = await api.residentsConfig(stateCodeMock);
 
   expect(fetched).toEqual(expectedConfig);
 });
 
-test("eligibility record", async () => {
+// TODO: revive this once we have AZ eligibility data
+test.skip("eligibility record", async () => {
   const expectedRecord = outputFixture(
     usMeSccpFixtures.RES004fullyEligibleHalfPortion,
   );
 
   const fetched = await api.residentEligibility(
     stateCodeMock,
-    usMeResidents[3].personExternalId,
+    usAzResidents[3].personExternalId,
     "usMeSCCP",
   );
 

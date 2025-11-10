@@ -42,12 +42,14 @@ test("authorized", () => {
     {
       status: "authorized",
       userProfile: {
-        stateCode: "US_ME",
+        stateCode: "US_TN",
       },
     },
   );
 
-  render(<RequiresStateAuth stateUrlSlug="maine">protected</RequiresStateAuth>);
+  render(
+    <RequiresStateAuth stateUrlSlug="tennessee">protected</RequiresStateAuth>,
+  );
 
   expect(screen.getByText("protected")).toBeInTheDocument();
 });

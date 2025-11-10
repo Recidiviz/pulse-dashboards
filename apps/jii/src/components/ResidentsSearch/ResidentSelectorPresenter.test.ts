@@ -20,7 +20,7 @@ import { keyBy } from "lodash";
 import { configure, set } from "mobx";
 
 import { residentsConfigByState, ResidentsStore, RootStore } from "~@jii/data";
-import { usMeResidents } from "~datatypes";
+import { usMaResidents } from "~datatypes";
 
 import { ResidentSelectorPresenter } from "./ResidentSelectorPresenter";
 
@@ -28,7 +28,7 @@ let residentsStore: ResidentsStore;
 let presenter: ResidentSelectorPresenter;
 let rootStore: RootStore;
 
-const TEST_FACILITY_ID = "FACILITY NAME";
+const TEST_FACILITY_ID = "DEMO FACILITY";
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -37,15 +37,15 @@ beforeEach(() => {
     {
       status: "authorized",
       userProfile: {
-        stateCode: "US_ME",
+        stateCode: "US_MA",
       },
     },
   );
 
   residentsStore = new ResidentsStore(
     rootStore,
-    "US_ME",
-    residentsConfigByState.US_ME,
+    "US_MA",
+    residentsConfigByState.US_MA,
   );
   presenter = new ResidentSelectorPresenter(residentsStore, TEST_FACILITY_ID);
 });
@@ -63,7 +63,7 @@ describe("hydration", () => {
   test("already hydrated", () => {
     set(
       residentsStore.residentsByExternalId,
-      keyBy(usMeResidents, "personExternalId"),
+      keyBy(usMaResidents, "personExternalId"),
     );
 
     expect(presenter.hydrationState.status).toBe("hydrated");
@@ -81,7 +81,22 @@ describe("hydration", () => {
       expect(presenter.hydrationState.status).toBe("hydrated"),
     );
 
-    expect(presenter.selectOptions).toMatchSnapshot();
+    // main thing to note here is the sort order
+    expect(presenter.selectOptions.map((o) => o.label)).toMatchInlineSnapshot(`
+      [
+        "Laurence Baumbach (RES001)",
+        "Marty Fahey (RES004)",
+        "Dan Krajcik (RES002)",
+        "Israel Willms (RES003)",
+      ]
+      `);
+    expect(presenter.selectOptions.map((o) => o.value)).toEqual([
+      usMaResidents[0],
+      usMaResidents[3],
+      usMaResidents[1],
+      usMaResidents[2],
+    ]);
+
     expect(residentsStore.populateResidents).toHaveBeenCalledWith(
       [["facilityId", "==", TEST_FACILITY_ID]],
       true,

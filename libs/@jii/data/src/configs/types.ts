@@ -17,75 +17,11 @@
 
 import { z } from "zod";
 
-import { ParsedRecord, ResidentRecord } from "~datatypes";
-
-import {
-  EligibilityReport,
-  EligibilityStatus,
-} from "../models/EligibilityReport/types";
-import { NonEmptyArray } from "../utils/types";
 import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
 import { stateCodes } from "./stateConstants";
 
-export type RequirementCopy = { criterion: string; ineligibleReason?: string };
-
-export type SummaryContent = {
-  heading: string;
-  body: string;
-};
-
-type FullPageConfig = {
-  linkText: string;
-  urlSlug: string;
-  heading: string;
-  body: string;
-};
-
-type EligibilityPageSection = {
-  /**
-   * Short version that appears on the main eligibility page
-   */
-  summary: SummaryContent;
-  /**
-   * Long version that is linked to from the main eligibility page
-   */
-  fullPage: FullPageConfig;
-  /**
-   * Sections are always shown by default; set true to suppress for ineligible people
-   */
-  hideWhenIneligible?: boolean;
-};
-
 export type OpportunityConfig = {
-  urlSlug: string;
   firestoreCollection: string;
-  name: string;
-  description: string;
-  /**
-   * Required section that has a specific format
-   */
-  requirements: {
-    summary: {
-      heading: string;
-      trackedCriteria: Record<string, RequirementCopy>;
-      untrackedCriteria: Array<RequirementCopy>;
-      /**
-       * Template strings are supported here
-       */
-      highlights: Array<{ label: string; value: string }>;
-    };
-    fullPage?: FullPageConfig;
-  };
-  /**
-   * Optional copy-only sections that will appear below requirements
-   */
-  sections: Array<EligibilityPageSection>;
-  /**
-   * Could be an abbreviation or other identifier that may be inserted
-   * into menus and headings to refer to this opportunity generically
-   */
-  shortName: string;
-  statusLabels: Record<EligibilityStatus, string>;
 };
 
 export const incarcerationOpportunityIdEnum = z.enum([
@@ -96,20 +32,6 @@ export const incarcerationOpportunityIdEnum = z.enum([
 export type IncarcerationOpportunityId = z.infer<
   typeof incarcerationOpportunityIdEnum
 >;
-
-export type ComparisonPageConfig = {
-  opportunities: [IncarcerationOpportunityId, IncarcerationOpportunityId];
-  summary: {
-    text: string;
-    linkText: string;
-  };
-  fullPage: {
-    heading: string;
-    body: string;
-    tableRows: NonEmptyArray<[string, string, string]>;
-    linkText: string;
-  };
-};
 
 export type TranslationConfig = {
   additionalLanguages: Array<string>;
@@ -129,28 +51,16 @@ export type ResidentsConfig = {
     };
   };
   eligibility?: EligibilityModuleConfig;
-  progress?: ProgressModuleConfig;
   egt?: EarnedGoodTimeConfig;
   translation: TranslationConfig;
 };
 
 export type EligibilityModuleConfig = {
-  home: {
-    title: string;
-  };
   incarcerationOpportunities: Partial<
     Record<IncarcerationOpportunityId, OpportunityConfig>
   >;
   // this is an array to support later expansion, but for now we don't support
   // there being more than one of these pages in the implementation
-  comparisons?: [ComparisonPageConfig];
-};
-
-export type ProgressModuleConfig = {
-  home: {
-    title: string;
-  };
-  progressPage: FullPageConfig & { teaserText: string };
 };
 
 export type EarnedGoodTimeConfig = {
@@ -165,17 +75,9 @@ export type ResidentOpportunitySchemaMapping =
 /**
  * Maps opportunity ID to its successfully parsed record format
  */
-export type OpportunityRecord<O extends IncarcerationOpportunityId> =
-  ParsedRecord<ResidentOpportunitySchemaMapping[O]>["output"];
-
-/**
- * Mapping of opportunity IDs to their compatible EligibilityReport constructors
- */
-export type ResidentEligibilityReportMapping = {
-  [Id in IncarcerationOpportunityId]: new (
-    ...args: [ResidentRecord, OpportunityConfig, OpportunityRecord<Id>]
-  ) => EligibilityReport;
-};
+export type OpportunityRecord<O extends IncarcerationOpportunityId> = z.infer<
+  ResidentOpportunitySchemaMapping[O]
+>;
 
 export type StateConfig<Code extends StateCode = StateCode> = {
   stateCode: Code;

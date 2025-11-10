@@ -17,19 +17,8 @@
 
 import { configure, flowResult } from "mobx";
 
-import {
-  ResidentsStore,
-  RootStore,
-  usMeEligibilityConfig,
-  UsMeSCCPEligibilityReport,
-  UsMeWorkReleaseEligibilityReport,
-} from "~@jii/data";
-import {
-  outputFixture,
-  usMeResidents,
-  usMeSccpFixtures,
-  usMeWorkReleaseFixtures,
-} from "~datatypes";
+import { ResidentsStore, RootStore } from "~@jii/data";
+import { usTnResidents } from "~datatypes";
 import { hydrationFailure } from "~hydration-utils";
 
 import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresenter";
@@ -37,35 +26,11 @@ import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresent
 let presenter: SingleResidentHydratorPresenter;
 let store: ResidentsStore;
 
-const testResident = usMeResidents[0];
+const testResident = usTnResidents[0];
 
-// too big for a snapshot but we want to verify that it gets assembled correctly
 const expectedData = {
   resident: testResident,
-  opportunities: [
-    {
-      opportunityId: "usMeWorkRelease",
-      opportunityConfig:
-        usMeEligibilityConfig.incarcerationOpportunities.usMeWorkRelease,
-      eligibilityReport: new UsMeWorkReleaseEligibilityReport(
-        testResident,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        usMeEligibilityConfig.incarcerationOpportunities.usMeWorkRelease!,
-        usMeWorkReleaseFixtures.RES001Eligible,
-      ),
-    },
-    {
-      opportunityId: "usMeSCCP",
-      opportunityConfig:
-        usMeEligibilityConfig.incarcerationOpportunities.usMeSCCP,
-      eligibilityReport: new UsMeSCCPEligibilityReport(
-        testResident,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        usMeEligibilityConfig.incarcerationOpportunities.usMeSCCP!,
-        outputFixture(usMeSccpFixtures.RES001almostEligibleMonthsRemaining),
-      ),
-    },
-  ],
+  opportunities: [],
 };
 
 beforeEach(() => {
@@ -79,7 +44,7 @@ afterEach(() => {
 describe("with resident ID from URL", () => {
   beforeEach(async () => {
     const rootStore = new RootStore();
-    await flowResult(rootStore.populateResidentsStore("US_ME"));
+    await flowResult(rootStore.populateResidentsStore("US_TN"));
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     store = rootStore.residentsStore!;
     vi.spyOn(
@@ -89,7 +54,7 @@ describe("with resident ID from URL", () => {
     ).mockReturnValue({
       status: "authorized",
       userProfile: {
-        stateCode: "US_ME",
+        stateCode: "US_TN",
       },
     });
 
@@ -121,7 +86,7 @@ describe("with resident ID from URL", () => {
 describe("with resident ID from user data", () => {
   beforeEach(async () => {
     const rootStore = new RootStore();
-    await flowResult(rootStore.populateResidentsStore("US_ME"));
+    await flowResult(rootStore.populateResidentsStore("US_TN"));
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     store = rootStore.residentsStore!;
     vi.spyOn(
@@ -131,7 +96,7 @@ describe("with resident ID from user data", () => {
     ).mockReturnValue({
       status: "authorized",
       userProfile: {
-        stateCode: "US_ME",
+        stateCode: "US_TN",
         externalId: testResident.personExternalId,
         pseudonymizedId: testResident.pseudonymizedId,
       },
@@ -163,11 +128,11 @@ describe("with resident ID from user data", () => {
 });
 
 describe("fetching data for wrong user", () => {
-  const wrongTestResident = usMeResidents[1];
+  const wrongTestResident = usTnResidents[1];
 
   beforeEach(async () => {
     const rootStore = new RootStore();
-    await flowResult(rootStore.populateResidentsStore("US_ME"));
+    await flowResult(rootStore.populateResidentsStore("US_TN"));
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     store = rootStore.residentsStore!;
     vi.spyOn(
@@ -177,7 +142,7 @@ describe("fetching data for wrong user", () => {
     ).mockReturnValue({
       status: "authorized",
       userProfile: {
-        stateCode: "US_ME",
+        stateCode: "US_TN",
         externalId: testResident.personExternalId,
         pseudonymizedId: testResident.pseudonymizedId,
       },

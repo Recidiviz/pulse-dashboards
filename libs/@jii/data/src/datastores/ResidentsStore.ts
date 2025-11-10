@@ -23,14 +23,12 @@ import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
 
 import { DataAPI } from "../apis/data/interface";
-import { residentEligibilityReportConstructors } from "../configs/residentEligibilityReportConstructors";
 import {
   IncarcerationOpportunityId,
   OpportunityRecord,
   ResidentsConfig,
   StateCode,
 } from "../configs/types";
-import { EligibilityReport } from "../models/EligibilityReport/types";
 import type { RootStore } from "./RootStore";
 
 // because we use a mapped type to ensure key-value agreement, this can't be an ES6 Map
@@ -50,11 +48,6 @@ export class ResidentsStore {
   residentOpportunityRecordsByExternalId: Map<
     string,
     OpportunityRecordMapping
-  > = new Map();
-
-  residentEligibilityReportsByExternalId: Map<
-    string,
-    Map<IncarcerationOpportunityId, EligibilityReport>
   > = new Map();
 
   locations: Array<LocationRecord> = [];
@@ -194,61 +187,6 @@ export class ResidentsStore {
       this.residentOpportunityRecordsByExternalId.set(
         residentExternalId,
         opportunityMap,
-      );
-    }
-  }
-
-  isResidentEligibilityReportPopulated(
-    residentExternalId: string,
-    opportunityId: IncarcerationOpportunityId,
-  ): boolean {
-    return !!this.residentEligibilityReportsByExternalId
-      .get(residentExternalId)
-      ?.has(opportunityId);
-  }
-
-  /**
-   * Populates {@link residentEligibilityReportsByExternalId} with an {@link EligibilityReport} object
-   * for the given resident and opportunity, if it does not already exist.
-   */
-  populateEligibilityReportFromData<OppId extends IncarcerationOpportunityId>(
-    opportunityId: OppId,
-    resident: ResidentRecord,
-    opportunity: OpportunityRecord<OppId>,
-  ) {
-    const residentExternalId = resident.personExternalId;
-
-    if (
-      this.isResidentEligibilityReportPopulated(
-        residentExternalId,
-        opportunityId,
-      )
-    ) {
-      return;
-    }
-
-    const config =
-      this.config.eligibility?.incarcerationOpportunities[opportunityId];
-
-    if (!config) {
-      throw new Error(`Opportunity ${opportunityId} is not configured`);
-    }
-
-    const ReportConstructor =
-      residentEligibilityReportConstructors[opportunityId];
-
-    const mapping =
-      this.residentEligibilityReportsByExternalId.get(residentExternalId) ??
-      new Map();
-
-    mapping.set(
-      opportunityId,
-      new ReportConstructor(resident, config, opportunity),
-    );
-    if (!this.residentEligibilityReportsByExternalId.has(residentExternalId)) {
-      this.residentEligibilityReportsByExternalId.set(
-        residentExternalId,
-        mapping,
       );
     }
   }

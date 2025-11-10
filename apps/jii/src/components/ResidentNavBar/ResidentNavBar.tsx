@@ -105,11 +105,7 @@ function usePresenter() {
 
   const routeParams = useParamsResidentOptional();
 
-  return new ResidentNavBarPresenter(
-    residentsStore.config,
-    residentsStore.userStore,
-    routeParams,
-  );
+  return new ResidentNavBarPresenter(residentsStore.userStore, routeParams);
 }
 
 export const ResidentNavBar = withPresenterManager({

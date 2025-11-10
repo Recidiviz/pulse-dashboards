@@ -18,9 +18,9 @@
 import { createContext } from "react";
 
 import {
-  EligibilityReport,
   IncarcerationOpportunityId,
   OpportunityConfig,
+  OpportunityRecord,
   useRequiredContext,
 } from "~@jii/data";
 import { ResidentRecord } from "~datatypes";
@@ -28,7 +28,7 @@ import { ResidentRecord } from "~datatypes";
 export type OpportunityData = {
   opportunityId: IncarcerationOpportunityId;
   opportunityConfig: OpportunityConfig;
-  eligibilityReport: EligibilityReport;
+  opportunityRecord: OpportunityRecord<IncarcerationOpportunityId>;
 };
 
 export type SingleResidentContext = {

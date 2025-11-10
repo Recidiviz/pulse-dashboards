@@ -18,7 +18,7 @@
 import { waitFor } from "@testing-library/react";
 import { z } from "zod";
 
-import { usMeResidents, usMeSccpFixtures } from "~datatypes";
+import { usAzResidents, usMeSccpFixtures } from "~datatypes";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
@@ -34,7 +34,7 @@ const getFirebaseTokenMock = vi.fn();
 
 const projectIdMock = "test-project-id";
 const apiKeyMock = "test-api-key";
-const stateCodeMock = "US_ME";
+const stateCodeMock = "US_AZ";
 
 beforeEach(() => {
   getFirebaseTokenMock.mockResolvedValue("test-firebase-token");
@@ -45,7 +45,7 @@ beforeEach(() => {
     authManager: {
       getFirebaseToken: getFirebaseTokenMock,
     } as unknown as AuthManager,
-    config: residentsConfigByState.US_ME,
+    config: residentsConfigByState.US_AZ,
   });
 });
 
@@ -74,7 +74,7 @@ describe("after authentication", () => {
   });
 
   describe("resident", () => {
-    const record = usMeResidents[0];
+    const record = usAzResidents[0];
 
     test("exists", async () => {
       vi.mocked(FirestoreAPIClient.prototype.resident).mockResolvedValue(
@@ -105,7 +105,8 @@ describe("after authentication", () => {
     });
   });
 
-  describe("eligibility", () => {
+  // TODO: revive this once we have AZ eligibility data
+  describe.skip("eligibility", () => {
     const record = usMeSccpFixtures.RES004fullyEligibleHalfPortion.output;
 
     test("exists", async () => {
@@ -124,7 +125,7 @@ describe("after authentication", () => {
           .calls[0],
       ).toEqual([
         stateCodeMock,
-        { raw: "US_ME-SCCPReferrals" },
+        { raw: "US_AZ-SCCPReferrals" },
         "abc123",
         expect.any(z.ZodType),
       ]);
@@ -146,7 +147,7 @@ describe("after authentication", () => {
   });
 
   describe("residents", () => {
-    const records = usMeResidents;
+    const records = usAzResidents;
 
     test("exists", async () => {
       vi.mocked(FirestoreAPIClient.prototype.residents).mockResolvedValue([
@@ -191,7 +192,7 @@ test("with proxy option", () => {
     authManager: {
       getFirebaseToken: getFirebaseTokenMock,
     } as unknown as AuthManager,
-    config: residentsConfigByState.US_ME,
+    config: residentsConfigByState.US_AZ,
   });
 
   expect(FirestoreAPIClient).toHaveBeenLastCalledWith(

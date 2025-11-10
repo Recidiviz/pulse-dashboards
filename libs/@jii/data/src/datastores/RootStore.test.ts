@@ -33,13 +33,13 @@ test("initialize residents datastore", async () => {
 
   expect(store.residentsStore).toBeUndefined();
 
-  await flowResult(store.populateResidentsStore("US_ME"));
+  await flowResult(store.populateResidentsStore("US_MA"));
 
   expect(store.residentsStore).toBeDefined();
-  expect(store.apiClient.residentsConfig).toHaveBeenCalledWith("US_ME");
-  expect(store.residentsStore?.config).toEqual(residentsConfigByState.US_ME);
+  expect(store.apiClient.residentsConfig).toHaveBeenCalledWith("US_MA");
+  expect(store.residentsStore?.config).toEqual(residentsConfigByState.US_MA);
 
   expect(store.translationStore.updateI18n).toHaveBeenCalledWith(
-    residentsConfigByState.US_ME.translation,
+    residentsConfigByState.US_MA.translation,
   );
 });

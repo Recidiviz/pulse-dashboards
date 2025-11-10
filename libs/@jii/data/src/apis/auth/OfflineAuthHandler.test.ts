@@ -30,7 +30,6 @@ test("mock user profile in offline mode", () => {
         "US_AZ",
         "US_ID",
         "US_MA",
-        "US_ME",
         "US_NE",
         "US_TN",
         "US_UT",

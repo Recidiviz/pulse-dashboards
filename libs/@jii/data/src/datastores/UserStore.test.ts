@@ -42,7 +42,7 @@ beforeEach(() => {
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
     userProfile: {
-      stateCode: "US_ME",
+      stateCode: "US_NE",
       externalId: "123456",
       pseudonymizedId: "test-pid",
     },
@@ -54,7 +54,7 @@ afterEach(() => {
 });
 
 test("state authorization for external user", () => {
-  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("nebraska")).toBeTrue();
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
@@ -65,13 +65,13 @@ test("state authorization for external user", () => {
     },
   });
 
-  expect(store.isAuthorizedForStateUrl("maine")).toBeFalse();
+  expect(store.isAuthorizedForStateUrl("nebraska")).toBeFalse();
 });
 
 test("state authorization for external demo user", () => {
   vi.mocked(isDemoMode).mockReturnValue(true);
 
-  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("nebraska")).toBeTrue();
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
@@ -82,7 +82,7 @@ test("state authorization for external demo user", () => {
     },
   });
 
-  expect(store.isAuthorizedForStateUrl("maine")).toBeFalse();
+  expect(store.isAuthorizedForStateUrl("nebraska")).toBeFalse();
 });
 
 test("state authorization for internal user", () => {
@@ -90,11 +90,11 @@ test("state authorization for internal user", () => {
     status: "authorized",
     userProfile: {
       stateCode: "RECIDIVIZ",
-      allowedStates: ["US_ME"],
+      allowedStates: ["US_NE"],
     },
   });
 
-  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("nebraska")).toBeTrue();
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
@@ -103,7 +103,7 @@ test("state authorization for internal user", () => {
       allowedStates: ["US_XX"],
     },
   });
-  expect(store.isAuthorizedForStateUrl("maine")).toBeFalse();
+  expect(store.isAuthorizedForStateUrl("nebraska")).toBeFalse();
 });
 
 test("authorize all states for internal demo user", () => {
@@ -113,10 +113,10 @@ test("authorize all states for internal demo user", () => {
     status: "authorized",
     userProfile: {
       stateCode: "RECIDIVIZ",
-      allowedStates: ["US_ME"],
+      allowedStates: ["US_NE"],
     },
   });
-  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("nebraska")).toBeTrue();
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
@@ -125,7 +125,7 @@ test("authorize all states for internal demo user", () => {
       allowedStates: ["US_XX"],
     },
   });
-  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("nebraska")).toBeTrue();
 });
 
 test("authorize multiple states for user", () => {
@@ -133,11 +133,11 @@ test("authorize multiple states for user", () => {
     status: "authorized",
     userProfile: {
       stateCode: "PARTNER",
-      allowedStates: ["US_ME", "US_MA"],
+      allowedStates: ["US_NE", "US_MA"],
     },
   });
 
-  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("nebraska")).toBeTrue();
   expect(store.isAuthorizedForStateUrl("mass")).toBeTrue();
   expect(store.isAuthorizedForStateUrl("idaho")).toBeFalse();
 });
@@ -149,7 +149,7 @@ test("has permission", () => {
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
     userProfile: {
-      stateCode: "US_ME",
+      stateCode: "US_NE",
       permissions: ["enhanced"],
     },
   });
@@ -189,7 +189,7 @@ test("do not identify to trackers when user has no pseudo ID", () => {
     status: "authorized",
     userProfile: {
       stateCode: "RECIDIVIZ",
-      allowedStates: ["US_ME"],
+      allowedStates: ["US_NE"],
     },
   });
 
@@ -204,23 +204,23 @@ test("allowed states", () => {
     .mockReturnValue({
       status: "authorized",
       userProfile: {
-        stateCode: "US_ME",
+        stateCode: "US_NE",
         externalId: "123456",
         pseudonymizedId: "test-pid",
       },
     });
 
-  expect(store.allowedStates).toEqual(["US_ME"]);
+  expect(store.allowedStates).toEqual(["US_NE"]);
 
   authStateSpy.mockReturnValue({
     status: "authorized",
     userProfile: {
       stateCode: "PARTNER",
-      allowedStates: ["US_ME", "US_MA", "US_ID"],
+      allowedStates: ["US_NE", "US_MA", "US_ID"],
     },
   });
   expect(store.allowedStates).toEqual(
-    expect.arrayContaining(["US_ME", "US_MA", "US_ID"]),
+    expect.arrayContaining(["US_NE", "US_MA", "US_ID"]),
   );
 });
 

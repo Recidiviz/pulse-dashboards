@@ -56,7 +56,7 @@ beforeEach(() => {
   vi.mocked(AnalyticsBrowser).prototype.page = pageMock;
   vi.mocked(AnalyticsBrowser).prototype.track = trackMock;
   vi.mocked(AnalyticsBrowser).prototype.load = loadMock;
-  vi.mocked(stateCodeFromCurrentUrl).mockReturnValue("US_ME");
+  vi.mocked(stateCodeFromCurrentUrl).mockReturnValue("US_AZ");
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   loadMock.mockImplementation((opts: any) => {
@@ -93,7 +93,7 @@ describe("When no write key is configured", () => {
     expect(identifyMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Identifying user: test-id, with traits: {"sessionId":"mock-uuid","stateCode":"US_ME","isRecidivizUser":false}",
+        "[Analytics] Identifying user: test-id, with traits: {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false}",
       ]
     `);
   });
@@ -105,7 +105,7 @@ describe("When no write key is configured", () => {
     expect(trackMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Tracking event name: frontend_event_type, with properties: {"sessionId":"mock-uuid","stateCode":"US_ME","isRecidivizUser":false,"foo":"bar"}",
+        "[Analytics] Tracking event name: frontend_event_type, with properties: {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false,"foo":"bar"}",
       ]
     `);
   });
@@ -115,7 +115,7 @@ describe("When no write key is configured", () => {
     expect(pageMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Tracking pageview: http://localhost:3000/, with properties: {"sessionId":"mock-uuid","stateCode":"US_ME","isRecidivizUser":false}",
+        "[Analytics] Tracking pageview: http://localhost:3000/, with properties: {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false}",
       ]
     `);
   });
@@ -144,7 +144,7 @@ describe("Staging mode", () => {
         {
           "isRecidivizUser": false,
           "sessionId": "mock-uuid",
-          "stateCode": "US_ME",
+          "stateCode": "US_AZ",
         },
       ]
     `);
@@ -163,7 +163,7 @@ describe("Staging mode", () => {
           "foo": "bar",
           "isRecidivizUser": false,
           "sessionId": "mock-uuid",
-          "stateCode": "US_ME",
+          "stateCode": "US_AZ",
         },
       ]
     `);
@@ -201,7 +201,7 @@ describe("Production environment", () => {
         {
           "isRecidivizUser": false,
           "sessionId": "mock-uuid",
-          "stateCode": "US_ME",
+          "stateCode": "US_AZ",
         },
       ]
     `);
@@ -220,7 +220,7 @@ describe("Production environment", () => {
           "foo": "bar",
           "isRecidivizUser": false,
           "sessionId": "mock-uuid",
-          "stateCode": "US_ME",
+          "stateCode": "US_AZ",
         },
       ]
     `);
@@ -234,7 +234,7 @@ describe("Production environment", () => {
         {
           "isRecidivizUser": false,
           "sessionId": "mock-uuid",
-          "stateCode": "US_ME",
+          "stateCode": "US_AZ",
         },
       ]
     `);
@@ -271,7 +271,7 @@ describe("Recidiviz user in staging", () => {
           "foo": "bar",
           "isRecidivizUser": true,
           "sessionId": "mock-uuid",
-          "stateCode": "US_ME",
+          "stateCode": "US_AZ",
         },
       ]
     `);
@@ -285,7 +285,7 @@ describe("Recidiviz user in staging", () => {
         {
           "isRecidivizUser": true,
           "sessionId": "mock-uuid",
-          "stateCode": "US_ME",
+          "stateCode": "US_AZ",
         },
       ]
     `);
@@ -315,7 +315,7 @@ describe("Recidiviz user in production", () => {
     expect(identifyMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Identifying user: test-id, with traits: {"sessionId":"mock-uuid","stateCode":"US_ME","isRecidivizUser":true}",
+        "[Analytics] Identifying user: test-id, with traits: {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":true}",
       ]
     `);
   });
@@ -327,7 +327,7 @@ describe("Recidiviz user in production", () => {
     expect(trackMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Tracking event name: frontend_prod_event, with properties: {"sessionId":"mock-uuid","stateCode":"US_ME","isRecidivizUser":true,"foo":"bar"}",
+        "[Analytics] Tracking event name: frontend_prod_event, with properties: {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":true,"foo":"bar"}",
       ]
     `);
   });

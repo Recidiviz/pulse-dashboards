@@ -34,15 +34,15 @@ beforeEach(() => {
     {
       status: "authorized",
       userProfile: {
-        stateCode: "US_ME",
+        stateCode: "US_MA",
       },
     },
   );
 
   residentsStore = new ResidentsStore(
     rootStore,
-    "US_ME",
-    residentsConfigByState.US_ME,
+    "US_MA",
+    residentsConfigByState.US_MA,
   );
   presenter = new ResidentsSearchPresenter(residentsStore, rootStore.uiStore);
 });
@@ -59,7 +59,7 @@ describe("hydration", () => {
 
   test("already hydrated", () => {
     set(residentsStore.locations, [
-      [locationRecordFixtures.find((r) => r.stateCode === "US_ME")],
+      [locationRecordFixtures.find((r) => r.stateCode === "US_MA")],
     ]);
 
     expect(presenter.hydrationState.status).toBe("hydrated");
@@ -81,7 +81,7 @@ describe("hydration", () => {
       [
         {
           "label": "Demo Facility",
-          "value": "FACILITY NAME",
+          "value": "DEMO FACILITY",
         },
       ]
     `);
@@ -95,11 +95,11 @@ describe("facility filter", () => {
   });
 
   test("set value", async () => {
-    presenter.setResidentsFilter("FACILITY NAME");
+    presenter.setResidentsFilter("DEMO FACILITY");
     expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(`
       {
         "label": "Demo Facility",
-        "value": "FACILITY NAME",
+        "value": "DEMO FACILITY",
       }
     `);
   });

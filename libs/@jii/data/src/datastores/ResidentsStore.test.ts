@@ -17,12 +17,16 @@
 
 import { flowResult } from "mobx";
 
-import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
+import {
+  outputFixture,
+  usAzResidents,
+  usMeResidents,
+  usMeSccpFixtures,
+} from "~datatypes";
 import { FilterParams } from "~firestore-api";
 
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
 import { residentsConfigByState } from "../configs/residentsConfig";
-import { UsMeSCCPEligibilityReport } from "../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
 import { ResidentsStore } from "./ResidentsStore";
 import { RootStore } from "./RootStore";
 
@@ -32,8 +36,8 @@ beforeEach(() => {
   vi.restoreAllMocks();
   store = new ResidentsStore(
     new RootStore(),
-    "US_ME",
-    residentsConfigByState.US_ME,
+    "US_AZ",
+    residentsConfigByState.US_AZ,
   );
 });
 
@@ -43,7 +47,7 @@ describe("populate residents", () => {
 
     await flowResult(store.populateResidents());
 
-    usMeResidents.forEach((r) => {
+    usAzResidents.forEach((r) => {
       expect(store.residentsByExternalId.get(r.personExternalId)).toEqual(r);
     });
   });
@@ -75,7 +79,7 @@ describe("populate residents", () => {
     const filter: FilterParams = ["foo", "==", "bar"];
     await flowResult(store.populateResidents([filter]));
 
-    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledWith("US_ME", [
+    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledWith("US_AZ", [
       filter,
     ]);
   });
@@ -94,7 +98,7 @@ describe("populate residents", () => {
 
 describe("populate single resident", () => {
   test("succeeds", async () => {
-    const expectedRes = usMeResidents[1];
+    const expectedRes = usAzResidents[1];
 
     expect(
       store.residentsByExternalId.get(expectedRes.personExternalId),
@@ -111,12 +115,12 @@ describe("populate single resident", () => {
     await expect(
       flowResult(store.populateResidentById("does-not-exist")),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: Missing data for resident does-not-exist in US_ME]`,
+      `[Error: Missing data for resident does-not-exist in US_AZ]`,
     );
   });
 
   test("does not refetch if already populated", async () => {
-    const expectedRes = usMeResidents[1];
+    const expectedRes = usAzResidents[1];
 
     vi.spyOn(OfflineAPIClient.prototype, "residentById");
 
@@ -129,7 +133,9 @@ describe("populate single resident", () => {
   });
 });
 
-describe("populate resident eligibility", () => {
+// TODO: revive these when we have actual AZ eligibility data. The logic here still holds but
+// they'll fail in the meantime because we can't instantiate a store with US_ME
+describe.skip("populate resident eligibility", () => {
   test("succeeds", async () => {
     const expectedRes = usMeResidents[1];
     const expectedEligibility = outputFixture(
@@ -210,50 +216,5 @@ describe("populate resident eligibility", () => {
     expect(
       OfflineAPIClient.prototype.residentEligibility,
     ).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe("populate resident eligibility report", () => {
-  const res = usMeResidents[1];
-  const oppId = "usMeSCCP";
-  const opp = outputFixture(usMeSccpFixtures.RES004fullyEligibleHalfPortion);
-
-  test("succeeds", () => {
-    store.populateEligibilityReportFromData(oppId, res, opp);
-    expect(
-      store.residentEligibilityReportsByExternalId
-        .get(res.personExternalId)
-        ?.get(oppId),
-    ).toBeInstanceOf(UsMeSCCPEligibilityReport);
-  });
-
-  test("fails if config is missing", () => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    store.config.eligibility!.incarcerationOpportunities = {};
-
-    expect(() =>
-      store.populateEligibilityReportFromData(oppId, res, opp),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[Error: Opportunity usMeSCCP is not configured]`,
-    );
-  });
-
-  test("does not recreate if already populated", () => {
-    store.populateEligibilityReportFromData(oppId, res, opp);
-
-    const firstReport = store.residentEligibilityReportsByExternalId
-      .get(res.personExternalId)
-      ?.get(oppId);
-    // sanity check
-    expect(firstReport).toBeDefined();
-
-    // populate again
-    store.populateEligibilityReportFromData(oppId, res, opp);
-
-    // report has not changed
-    const currentReport = store.residentEligibilityReportsByExternalId
-      .get(res.personExternalId)
-      ?.get(oppId);
-    expect(currentReport).toBe(firstReport);
   });
 });
