@@ -235,6 +235,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIaEarlyDischargeForms: {},
         usIaFinesAndFees: {},
         usIaSupervisionLevelDowngrade: {},
+        hideDenialRevert: { activeTenants: ["US_AZ"] },
       }
     : {
         ...allFeatureVariants,
