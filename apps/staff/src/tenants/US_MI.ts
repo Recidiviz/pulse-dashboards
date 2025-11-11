@@ -46,6 +46,13 @@ const US_MI_CONFIG = {
           searchType: "FACILITY",
           searchField: ["facilityId"],
           searchTitle: "facility",
+          restrictedToFeatureVariant: "usMiFacilitySearch",
+        },
+        {
+          searchType: "INCARCERATION_OFFICER",
+          searchField: ["officerId"],
+          searchTitle: "case manager",
+          restrictedToFeatureVariant: "usMiCaseManagerSearch",
         },
       ],
     },
