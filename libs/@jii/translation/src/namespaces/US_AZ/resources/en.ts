@@ -37,11 +37,11 @@ export default {
   importantDates: {
     sectionHeader: "Your Important Dates",
     sectionSubHeader:
-      "These are all the dates that Time Computation has calculated for your sentence. Dates may change if you get a disciplinary infraction, or get lost time restored. Tap 'Learn More' to see what you need to do in order to be released on any date.",
+      "These are all the dates that Time Comp has calculated for your sentence. These dates may change if you get a disciplinary infraction, or get lost time restored. You may also see some dates appear or disappear  depending on if you meet the criteria to qualify for them. Tap “Learn More” to see what you need to do in order to be released on a particular date",
     dates: {
       acisTprDate: {
         title: "Standard Transition Program (TPR)",
-        info: "Release up to 90 days earlier, if you agree to attend a program in the community; must meet criteria.",
+        info: "Release up to 90 days earlier, if you agree to attend a program in the community; must meet criteria. You may also hear this called “Transition Program Release” (TPR) or “Transition Release”.",
         shortName: "TPR",
         value: "{{acisTprDate, formatFullDate}}",
         moreInfo: {
@@ -51,7 +51,7 @@ export default {
       },
       acisDtpDate: {
         title: "Drug Transition Program (DTP)",
-        info: "TKTK",
+        info: "Release up to 90 days earlier, if you agree to attend a program in the community; must meet criteria. This is a version of Transition Program Release (TPR) for people with only drug possession or use charges.",
         shortName: "DTP",
         value: "{{acisDtpDate, formatFullDate}}",
         moreInfo: {
@@ -65,7 +65,8 @@ export default {
         shortName: "CSBD",
         value: "{{csbdDate, formatFullDate}}",
         moreInfo: {
-          heading: "Community Supervision Begin Date (CSBD)",
+          heading:
+            "Community Supervision Begin Date (CSBD) / Temporary Release to Absolute Discharge Date (TR to ADD)",
           body: csbdDateInfoPage,
         },
       },
@@ -75,13 +76,14 @@ export default {
         shortName: "ERCD",
         value: "{{ercdDate, formatFullDate}}",
         moreInfo: {
-          heading: "Earned Release Credit Date (ERCD)",
+          heading:
+            "Earned Release Credit Date (ERCD) / Absolute Discharge Date (ADD)",
           body: ercdDateInfoPage,
         },
       },
       sedDate: {
         title: "100% Date (Flat Sentence, SED)",
-        info: "The full term of your sentence; when you will be released, unless you decline conditions of supervision.",
+        info: "The full term of your sentence; when you can be released if you haven’t met conditions for earlier release types. May require you to agree to conditions of supervision.",
         shortName: "SED",
         value: "{{sedDate, formatFullDate}}",
         moreInfo: {
@@ -97,6 +99,28 @@ export default {
         moreInfo: {
           heading: "115% Date (CSED)",
           body: csedDateInfoPage,
+        },
+      },
+      addDate: {
+        title: "Absolute Discharge Date (ADD)",
+        info: "The earliest date you can be released to Probation based on Earned Release Credits – usually, a minimum of 85.7% of your sentence.",
+        shortName: "ADD",
+        value: "{{addDate, formatFullDate}}",
+        moreInfo: {
+          heading:
+            "Earned Release Credit Date (ERCD) / Absolute Discharge Date (ADD)",
+          body: ercdDateInfoPage,
+        },
+      },
+      trToAddDate: {
+        title: "Transition to Absolute Discharge Date (TR to ADD)",
+        info: "Allows for release up to 90 days before your ADD (Absolute Discharge Date); must meet criteria.",
+        shortName: "TR to ADD",
+        value: "{{trToAddDate, formatFullDate}}",
+        moreInfo: {
+          heading:
+            "Community Supervision Begin Date (CSBD) / Temporary Release to Absolute Discharge Date (TR to ADD)",
+          body: csbdDateInfoPage,
         },
       },
     },

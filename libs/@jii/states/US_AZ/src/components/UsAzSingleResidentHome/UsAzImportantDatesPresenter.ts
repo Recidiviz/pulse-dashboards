@@ -19,8 +19,8 @@ import { makeAutoObservable } from "mobx";
 
 import { ResidentRecord } from "~datatypes";
 
-// Shared constant for all US_AZ date field names
-export const US_AZ_DATE_FIELDS = [
+// Shared constant for all US_AZ date field names that exist on metadata
+export const US_AZ_METADATA_DATE_FIELDS = [
   "acisTprDate",
   "acisDtpDate",
   "csbdDate",
@@ -28,7 +28,20 @@ export const US_AZ_DATE_FIELDS = [
   "sedDate",
   "csedDate",
 ] as const;
-export type UsAzDateField = (typeof US_AZ_DATE_FIELDS)[number];
+
+// All possible date keys that can appear in DateEntry (includes transformed keys)
+export const US_AZ_DATE_KEYS = [
+  ...US_AZ_METADATA_DATE_FIELDS,
+  "addDate",
+  "trToAddDate",
+] as const;
+
+export type UsAzMetadataDateField = (typeof US_AZ_METADATA_DATE_FIELDS)[number];
+export type UsAzDateField = (typeof US_AZ_DATE_KEYS)[number];
+
+function isUsAzDateField(key: string): key is UsAzDateField {
+  return US_AZ_DATE_KEYS.includes(key as UsAzDateField);
+}
 
 export interface DateEntry {
   key: string;
@@ -58,10 +71,31 @@ export class UsAzImportantDatesPresenter {
     const hasAcisDtpDate = !!this.metadata.acisDtpDate;
 
     // Filter out undefined dates and prioritize acisDtpDates over acisTprDates
-    const entries = US_AZ_DATE_FIELDS.flatMap((field) => {
+    const entries = US_AZ_METADATA_DATE_FIELDS.flatMap((field) => {
       const date = this.metadata[field];
       if (!date) return [];
       if (field === "acisTprDate" && hasAcisDtpDate) return [];
+
+      /* ercd and csbd dates should have different copy based on whether the individual
+      has Community Supervision or Probation after their sentence: */
+      if (field === "ercdDate") {
+        const key =
+          this.metadata.ercdOrAdd === "ABSOLUTE DISCHARGE DATE"
+            ? "addDate"
+            : "ercdDate";
+        return [{ key, date }];
+      }
+
+      // Use metadata.csbdOrTrToAdd to determine the key for csbdDate
+      if (field === "csbdDate") {
+        const key =
+          this.metadata.csbdOrTrToAdd ===
+          "TRANSITION TO ABSOLUTE DISCHARGE DATE"
+            ? "trToAddDate"
+            : "csbdDate";
+        return [{ key, date }];
+      }
+
       return [{ key: field, date }];
     });
 
@@ -82,7 +116,10 @@ export class UsAzImportantDatesPresenter {
         isUpcoming: entryDate >= today && entryDate <= thirtyOneDaysFromNow,
       };
 
-      if (["acisTprDate", "acisDtpDate"].includes(entry.key)) {
+      if (
+        ["acisTprDate", "acisDtpDate"].includes(entry.key) &&
+        isUsAzDateField(entry.key)
+      ) {
         result.highlightType = entry.key;
       }
 
