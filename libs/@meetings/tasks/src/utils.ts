@@ -18,6 +18,7 @@
 import fs from "node:fs";
 import os from "node:os";
 
+import { createClient } from "@deepgram/sdk";
 import { Storage } from "@google-cloud/storage";
 import { AssemblyAI } from "assemblyai";
 import ffmpegPath from "ffmpeg-static";
@@ -290,4 +291,42 @@ export async function cleanupOfflineFiles(meetingId: string) {
     fs.rmSync(meetingDir, { recursive: true, force: true });
     console.log(`Cleaned up offline files for meeting ${meetingId}`);
   }
+}
+
+export async function transcribeAudioWithDeepgram(
+  bucketName: string,
+  finalRecordingFilePath: string,
+  apiKey: string,
+) {
+  const storage = new Storage();
+  const bucket = storage.bucket(bucketName);
+
+  const file = bucket.file(finalRecordingFilePath);
+
+  const [url] = await file.getSignedUrl({
+    version: "v4",
+    action: "read",
+    expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+  });
+
+  const deepgramClient = createClient(apiKey);
+
+  // TODO(#10407): Add custom speaker labels once the API supports it
+  const transcriptionResult =
+    await deepgramClient.listen.prerecorded.transcribeUrl(
+      { url },
+      {
+        model: "nova-3",
+        punctuate: true,
+        diarize: true,
+      },
+    );
+
+  if (transcriptionResult.error) {
+    throw new Error(
+      `Deepgram transcription failed: ${transcriptionResult.error}`,
+    );
+  }
+
+  return transcriptionResult.result;
 }

@@ -74,6 +74,7 @@ export default defineConfig(() => ({
         "https://test-server.app/stitch-audio",
       NODE_ENV: process.env["NODE_ENV"] ?? "production",
       ASSEMBLYAI_API_KEY: process.env["ASSEMBLYAI_API_KEY"] ?? "noop",
+      DEEPGRAM_API_KEY: process.env["DEEPGRAM_API_KEY"] ?? "noop",
       TRANSCRIPTION_TASK_QUEUE_NAME:
         process.env["TRANSCRIPTION_TASK_QUEUE_NAME"] ??
         "transcription-task-queue",

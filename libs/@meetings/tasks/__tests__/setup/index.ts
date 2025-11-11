@@ -17,6 +17,7 @@
 
 import { request } from "node:http";
 
+import { DeepgramClient } from "@deepgram/sdk";
 import { File } from "@google-cloud/storage";
 import { AssemblyAI } from "assemblyai";
 import { GenericContainer } from "testcontainers";
@@ -176,5 +177,30 @@ export const mockAssemblyAI = mock<AssemblyAI>({
 vi.mock("assemblyai", () => ({
   AssemblyAI: vi.fn().mockImplementation(() => {
     return mockAssemblyAI;
+  }),
+}));
+
+export const mockDeepgram = mock<DeepgramClient>({
+  listen: {
+    prerecorded: {
+      transcribeUrl: vi.fn().mockResolvedValue({
+        utterances: [
+          {
+            confidence: 0.96,
+            end: 1800,
+            speaker: 0,
+            start: 0,
+            transcript: "This is a mock transcription.",
+          },
+        ],
+      }),
+    },
+  },
+});
+
+// Mock Deepgram client
+vi.mock("@deepgram/sdk", () => ({
+  createClient: vi.fn().mockImplementation(() => {
+    return mockDeepgram;
   }),
 }));

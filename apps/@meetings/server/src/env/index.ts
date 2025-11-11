@@ -30,6 +30,7 @@ const envSchema = z.object({
     .string()
     .min(1, "TRANSCRIPTION_TASK_REQUEST_URL is required"),
   ASSEMBLYAI_API_KEY: z.string().min(1, "ASSEMBLYAI_API_KEY is required"),
+  DEEPGRAM_API_KEY: z.string().min(1, "DEEPGRAM_API_KEY is required"),
   NODE_ENV: z.string().min(1, "NODE_ENV is required"),
   IS_OFFLINE: z.coerce.boolean().default(false),
   OFFLINE_STORAGE_DIR: z.string().optional(),

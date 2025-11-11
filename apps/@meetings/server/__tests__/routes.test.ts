@@ -26,13 +26,14 @@ import env from "~@meetings/server/env";
 import {
   mockCloudTasksClient,
   setGetPayloadImp,
+  testAndGetSentryReports,
   testPrismaClient,
   testServer,
 } from "~@meetings/server/test/setup";
 import { fakeMeeting } from "~@meetings/server/test/setup/seed";
 import * as tasks from "~@meetings/tasks";
 
-const FAKE_TRANSCRIPT_OBJECT = {
+const FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT = {
   confidence: 0.95,
   utterances: [
     {
@@ -52,10 +53,40 @@ const FAKE_TRANSCRIPT_OBJECT = {
   ] satisfies Omit<TranscriptUtterance, "words">[],
 };
 
+const FAKE_DEEPGRAM_TRANSCRIPT_OBJECT = {
+  results: {
+    channels: [
+      {
+        language_confidence: 0.5,
+      },
+    ],
+    utterances: [
+      {
+        confidence: 0.98,
+        end: 3800,
+        speaker: 0,
+        start: 1800,
+        transcript: "This is the second mock transcription sentence.",
+      },
+      {
+        confidence: 0.96,
+        end: 1800,
+        speaker: 1,
+        start: 0,
+        transcript: "This is the first mock transcription sentence.",
+      },
+    ],
+  },
+};
+
 const mockStitchAudio = vi.spyOn(tasks, "stitchAudio");
 const mockTranscribeAudioWithAssemblyAI = vi.spyOn(
   tasks,
   "transcribeAudioWithAssemblyAI",
+);
+const mockTranscribeAudioWithDeepgram = vi.spyOn(
+  tasks,
+  "transcribeAudioWithDeepgram",
 );
 const mockCleanupOfflineFiles = vi.spyOn(tasks, "cleanupOfflineFiles");
 
@@ -63,11 +94,14 @@ const mockCleanupOfflineFiles = vi.spyOn(tasks, "cleanupOfflineFiles");
 mockStitchAudio.mockImplementation(async () => {
   return "final-path.m4a";
 });
-mockTranscribeAudioWithAssemblyAI.mockImplementation(
-  vi.fn().mockResolvedValue(FAKE_TRANSCRIPT_OBJECT),
-);
 mockCleanupOfflineFiles.mockImplementation(
   vi.fn().mockResolvedValue(undefined),
+);
+mockTranscribeAudioWithAssemblyAI.mockImplementation(
+  vi.fn().mockResolvedValue(FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT),
+);
+mockTranscribeAudioWithDeepgram.mockImplementation(
+  vi.fn().mockResolvedValue(FAKE_DEEPGRAM_TRANSCRIPT_OBJECT),
 );
 
 describe("tasks", () => {
@@ -358,9 +392,12 @@ describe("tasks", () => {
       );
     });
 
-    test("Should return 500 and set transcription error if transcription fails", async () => {
+    test("Should return 500 and set transcription error if both transcriptions fail", async () => {
       mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(async () => {
-        throw new Error("Transcription failed");
+        throw new Error("Assembly transcription failed");
+      });
+      mockTranscribeAudioWithDeepgram.mockImplementationOnce(async () => {
+        throw new Error("Deepgram transcription failed");
       });
 
       const response = await testServer.inject({
@@ -377,7 +414,9 @@ describe("tasks", () => {
       expect(JSON.parse(response.body)).toEqual(
         expect.objectContaining({
           error: "Internal Server Error",
-          message: "Transcription failed",
+          message: `Both AssemblyAI and Deepgram transcriptions failed with these errors:
+            AssemblyAI: Error: Assembly transcription failed
+            Deepgram: Error: Deepgram transcription failed`,
         }),
       );
 
@@ -390,7 +429,11 @@ describe("tasks", () => {
       );
     });
 
-    test("Should return 200 if transcribing succeeds", async () => {
+    test("Should return 200 if at least one transcription passes and capture any errors", async () => {
+      mockTranscribeAudioWithDeepgram.mockImplementationOnce(async () => {
+        throw new Error("Deepgram transcription failed");
+      });
+
       const response = await testServer.inject({
         method: "POST",
         url: "/transcribe-audio",
@@ -415,10 +458,10 @@ describe("tasks", () => {
 
       expect(meeting).toEqual(
         expect.objectContaining({
-          transcriptions: expect.arrayContaining([
+          transcriptions: [
             expect.objectContaining({
               provider: TranscriptionProvider.ASSEMBLYAI,
-              transcriptObject: FAKE_TRANSCRIPT_OBJECT,
+              transcriptObject: FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
               confidence: 0.95,
               utterances: expect.arrayContaining([
                 expect.objectContaining({
@@ -437,7 +480,86 @@ describe("tasks", () => {
                 }),
               ]),
             }),
-          ]),
+          ],
+          postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
+        }),
+      );
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "Deepgram transcription failed",
+      );
+    });
+
+    test("Should return 200 and store both transcripts if both transcriptions work", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toEqual("Transcription completed successfully");
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+        include: {
+          transcriptions: {
+            include: { utterances: true },
+          },
+        },
+      });
+
+      expect(meeting).toEqual(
+        expect.objectContaining({
+          transcriptions: [
+            expect.objectContaining({
+              provider: TranscriptionProvider.ASSEMBLYAI,
+              transcriptObject: FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
+              confidence: 0.95,
+              utterances: expect.arrayContaining([
+                expect.objectContaining({
+                  text: "This is the second mock transcription sentence.",
+                  speaker: "B",
+                  startTimeMs: 1800,
+                  endTimeMs: 3800,
+                  confidence: 0.98,
+                }),
+                expect.objectContaining({
+                  text: "This is the first mock transcription sentence.",
+                  speaker: "A",
+                  startTimeMs: 0,
+                  endTimeMs: 1800,
+                  confidence: 0.96,
+                }),
+              ]),
+            }),
+            expect.objectContaining({
+              provider: TranscriptionProvider.DEEPGRAM,
+              transcriptObject: FAKE_DEEPGRAM_TRANSCRIPT_OBJECT,
+              confidence: 0.5,
+              utterances: expect.arrayContaining([
+                expect.objectContaining({
+                  text: "This is the second mock transcription sentence.",
+                  speaker: "0",
+                  startTimeMs: 1800,
+                  endTimeMs: 3800,
+                  confidence: 0.98,
+                }),
+                expect.objectContaining({
+                  text: "This is the first mock transcription sentence.",
+                  speaker: "1",
+                  startTimeMs: 0,
+                  endTimeMs: 1800,
+                  confidence: 0.96,
+                }),
+              ]),
+            }),
+          ],
           postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
         }),
       );
@@ -460,6 +582,9 @@ describe("tasks", () => {
 
     test("Should not call cleanupOfflineFiles if transcription fails", async () => {
       mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(async () => {
+        throw new Error("Transcription failed");
+      });
+      mockTranscribeAudioWithDeepgram.mockImplementationOnce(async () => {
         throw new Error("Transcription failed");
       });
 

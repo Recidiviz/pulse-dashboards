@@ -34,15 +34,13 @@ import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import {
   PostMeetingProcessingStatus,
   StateCode,
-  TranscriptionProvider,
 } from "~@meetings/prisma/client";
 import env from "~@meetings/server/env";
-import { queueTranscriptionTask } from "~@meetings/server/server/utils";
 import {
-  cleanupOfflineFiles,
-  stitchAudio,
-  transcribeAudioWithAssemblyAI,
-} from "~@meetings/tasks";
+  handleTranscriptions,
+  queueTranscriptionTask,
+} from "~@meetings/server/server/utils";
+import { cleanupOfflineFiles, stitchAudio } from "~@meetings/tasks";
 
 class AuthError extends Error {
   errorCode: number;
@@ -321,21 +319,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
           throw new Error("Final recording GCS path is not set for meeting");
         }
 
-        const transcriptionResult = await transcribeAudioWithAssemblyAI(
-          meeting.recordingsGCSBucket,
-          meeting.finalRecordingGCSPath,
-          env.ASSEMBLYAI_API_KEY,
-        );
-
-        const cleanedUtterances = (transcriptionResult.utterances ?? []).map(
-          (utterance) => ({
-            text: utterance.text,
-            speaker: utterance.speaker ?? "unknown",
-            startTimeMs: utterance.start,
-            endTimeMs: utterance.end,
-            confidence: utterance.confidence,
-          }),
-        );
+        const transcriptions = await handleTranscriptions({
+          meetingId,
+          recordingsGCSBucket: meeting.recordingsGCSBucket,
+          finalRecordingGCSPath: meeting.finalRecordingGCSPath,
+        });
 
         await prisma.meeting.update({
           where: {
@@ -344,16 +332,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
           data: {
             postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
             transcriptions: {
-              create: {
-                provider: TranscriptionProvider.ASSEMBLYAI,
-                transcriptObject: transcriptionResult,
-                confidence: transcriptionResult.confidence,
-                utterances: {
-                  createMany: {
-                    data: cleanedUtterances,
-                  },
-                },
-              },
+              create: transcriptions,
             },
           },
         });

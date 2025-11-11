@@ -3996,6 +3996,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@deepgram/captions@npm:^1.1.1":
+  version: 1.2.0
+  resolution: "@deepgram/captions@npm:1.2.0"
+  dependencies:
+    dayjs: "npm:^1.11.10"
+  checksum: 10c0/44c019f9c2da347427a1a5934428d768b1532f0546b2df46740d29983847eaa3d7e1323ff5ec71b4c8d05c5541cf9a5901bf41330a0c14a5ad4f13eea8641766
+  languageName: node
+  linkType: hard
+
+"@deepgram/sdk@npm:^4.11.2":
+  version: 4.11.2
+  resolution: "@deepgram/sdk@npm:4.11.2"
+  dependencies:
+    "@deepgram/captions": "npm:^1.1.1"
+    "@types/node": "npm:^18.19.39"
+    cross-fetch: "npm:^3.1.5"
+    deepmerge: "npm:^4.3.1"
+    events: "npm:^3.3.0"
+    ws: "npm:^8.17.0"
+  checksum: 10c0/5dde95c5a1ffef315d8f33e4e5de1c1792bf6d864eea3558bb3c3f54e61126076c7a146bad0d976f1a9e38ac1888fea6038ae17856115918c546247679fc2731
+  languageName: node
+  linkType: hard
+
 "@derhuerst/http-basic@npm:^8.2.0":
   version: 8.2.4
   resolution: "@derhuerst/http-basic@npm:8.2.4"
@@ -18276,6 +18299,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^18.19.39":
+  version: 18.19.130
+  resolution: "@types/node@npm:18.19.130"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/22ba2bc9f8863101a7e90a56aaeba1eb3ebdc51e847cef4a6d188967ab1acbce9b4f92251372fd0329ecb924bbf610509e122c3dfe346c04dbad04013d4ad7d0
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^20.12.11":
   version: 20.19.21
   resolution: "@types/node@npm:20.19.21"
@@ -26472,6 +26504,13 @@ __metadata:
   version: 4.0.14
   resolution: "date-format@npm:4.0.14"
   checksum: 10c0/1c67a4d77c677bb880328c81d81f5b9ed7fbf672bdaff74e5a0f7314b21188f3a829b06acf120c70cc1df876a7724e3e5c23d511e86d64656a3035a76ac3930b
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.10":
+  version: 1.11.19
+  resolution: "dayjs@npm:1.11.19"
+  checksum: 10c0/7d8a6074a343f821f81ea284d700bd34ea6c7abbe8d93bce7aba818948957c1b7f56131702e5e890a5622cdfc05dcebe8aed0b8313bdc6838a594d7846b0b000
   languageName: node
   linkType: hard
 
@@ -47333,6 +47372,7 @@ __metadata:
     "@cascadia-code/scroll-to-hash-element": "npm:^2.0.2"
     "@commander-js/extra-typings": "npm:^13.1.0"
     "@cucumber/cucumber": "npm:^7.1.0"
+    "@deepgram/sdk": "npm:^4.11.2"
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
     "@dnd-kit/sortable": "npm:^8.0.0"

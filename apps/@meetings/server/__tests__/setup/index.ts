@@ -41,7 +41,17 @@ export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_NE);
 
 const { testkit, sentryTransport } = sentryTestkit();
 
-export { testkit };
+export async function testAndGetSentryReports(expectedLength = 1) {
+  // Use waitFor because sentry-testkit can be async
+  const sentryReports = await vi.waitFor(async () => {
+    const reports = testkit.reports();
+    expect(reports).toHaveLength(expectedLength);
+
+    return reports;
+  });
+
+  return sentryReports;
+}
 
 export let testServer: FastifyInstance;
 
