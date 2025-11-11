@@ -39,6 +39,9 @@ components:
         bucket_admins: 
           jii-texting-etl-data: "serviceAccount:{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com,serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
           jii-texting-etl-data-archive: "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+        set_viewer_roles: true
+        viewers:
+          - "serviceAccount:{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com"
       metadata:
         component: vendor/cloud-storage-bucket
 
