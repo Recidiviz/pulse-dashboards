@@ -21,6 +21,27 @@ from main import app as fastapi_app
 test_data_directory = Path(__file__).parent / "data"
 
 
+@pytest.fixture(autouse=True)
+def prevent_resource_api_call(request, monkeypatch):
+    """
+    Prevents us from calling the actual Resource API in unit tests,
+    does not affect tests marked with pytest.mark.integration
+
+    request and monkeypatch are built-in pytest fixtures.
+    https://docs.pytest.org/en/stable/how-to/monkeypatch.html
+    """
+
+    if "integration" not in request.keywords:
+        monkeypatch.setattr(
+            "app.services.resources.list_resources.discover_resources",
+            MagicMock(
+                side_effect=RuntimeError(
+                    "The Resource API should not be called for unit tests, please mock it for your test."
+                )
+            ),
+        )
+
+
 @pytest.fixture
 def assert_response():
     def _assert_response(resp, expected_status_code):

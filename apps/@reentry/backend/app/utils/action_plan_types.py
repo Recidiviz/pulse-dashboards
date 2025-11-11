@@ -4,7 +4,11 @@ from typing import Annotated, Literal
 from langgraph.graph import MessagesState
 from pydantic import BaseModel, Field
 
-from app.services.resources import Resource, ResourceCategory, ResourceSubcategory
+from app.services.resources.resource_taxonomy import (
+    ResourceCategory,
+    ResourceSubcategory,
+)
+from app.services.resources.types import Resource
 
 
 ### Result Types

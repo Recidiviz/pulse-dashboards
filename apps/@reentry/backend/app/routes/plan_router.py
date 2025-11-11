@@ -51,14 +51,16 @@ from app.routes.base import (
 from app.routes.shared_models import AddressSubmission, ClientRecordResponse
 from app.routes.shared_models import PlanResponse as BasePlanResponse
 from app.services.client_data.queries import Queries
-from app.services.resources import (
+from app.services.resources.list_resources import list_resources
+from app.services.resources.resource_taxonomy import (
+    ResourceCategory,
+    ResourceSubcategory,
+)
+from app.services.resources.types import (
     GetPlanResourcesRequest,
     GetResourcesRequest,
     GetResourcesResponse,
     Resource,
-    ResourceCategory,
-    ResourceSubcategory,
-    list_resources,
 )
 
 from ..utils.PrometheusBackgroundThreadManager import (
@@ -588,8 +590,7 @@ async def search_resources(
             category=request.category,
             subcategory=request.subcategory,
             client_info_json=client_info,
-            exclude_names=request.exclude,
-            exclude_ids=None,
+            keywords_to_exclude=request.exclude,
             limit=10,
         )
         # Get resources using list_resources function

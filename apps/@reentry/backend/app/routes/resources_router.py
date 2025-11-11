@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
-from app.services.resources import (
+from app.services.resources.list_resources import list_resources
+from app.services.resources.types import (
     GetResourcesRequest,
     GetResourcesResponse,
-    list_resources,
 )
 
 router = APIRouter()

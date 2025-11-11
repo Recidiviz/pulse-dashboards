@@ -24,7 +24,7 @@ from app.crud.plan_generation import (
 )
 from app.models.models import PlanGeneration
 from app.services.client_data.queries import Queries
-from app.services.resources import ClientExtractedInfo, Resource
+from app.services.resources.types import ClientExtractedInfo, Resource
 from app.utils.action_plan_types import (
     ActionPlanMilestones,
     ActionPlanSection,

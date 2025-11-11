@@ -40,8 +40,8 @@ def test_convert_to_markdown_replaces_quotes():
                 "resources": [
                     {
                         "id": "84d81c07-7c7a-4356-a689-75d496faf691",
-                        "category": "Basic Needs",
-                        "subcategory": "Housing",
+                        "category": "Housing",
+                        "subcategory": "Transitional housing",
                         "name": "Boise City/Ada County Housing Authorities",
                         "phone": "(208) 345-4907",
                         "description": None,
@@ -56,7 +56,7 @@ def test_convert_to_markdown_replaces_quotes():
                         "ratingCount": 54,
                         "operationalStatus": None,
                         "price_level": None,
-                        "transport_mode": "driving",
+                        "transport_mode": "DRIVE",
                         "transport_minutes": 12,
                     },
                 ],

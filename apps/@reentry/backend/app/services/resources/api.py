@@ -1,281 +1,209 @@
-from typing import Generic, List, Optional, TypeVar
-from uuid import UUID
+from urllib.parse import urljoin
 
 import httpx
 import structlog
-from pydantic import BaseModel
+from fastapi import status
+from pydantic import BaseModel, Field, ValidationError
 
 from app.core.config import settings
-from app.services.resources import (
-    GetResourcesRequest,
-    GetResourcesResponse,
-    Resource,
-    ResourceFailureReason,
+from app.services.resources.resource_taxonomy import (
+    ProviderOrigin,
+    ResourceCategory,
+    ResourceSubcategory,
 )
-
-from ..resources import ParameterSearchBodyParams, ResourceCategory, ResourceSubcategory
-from . import (
-    DistanceMode,
-)
+from app.services.resources.types import GetResourcesRequest, TravelMode
 
 logger = structlog.get_logger(__name__)
 
+DISCOVER_ENDPOINT = "/v0/discover"
 
-class ApiSearchResult(BaseModel):
-    # Resource Identification
-    id: UUID
-    uri: str
+
+class ResourceAPIFailure(Exception):
+    """
+    Raised when the external resource API returns a server error (5xx), or when
+    the response cannot be parsed into the expected format.
+
+    This indicates a problem with the external API service or an incompatible
+    response format.
+    """
+
+
+class BadResourceAPIRequest(Exception):
+    """
+    Raised when the external resource API returns a 422 Unprocessable Entity status.
+
+    This indicates that the request parameters were invalid or malformed according
+    to the API's validation rules.
+    """
+
+
+class LatLon(BaseModel):
+    """Geographic coordinates in decimal degrees format."""
+
+    latitude: float
+    longitude: float
+
+
+class DiscoveredResource(BaseModel):
+    """
+    A resource discovered near a given location.
+
+    Contains location information, provider details, ratings, and optional
+    travel information if a travel mode was specified in the request.
+    """
+
+    # Location Information
+    google_place_id: str
+    address: str
+    location: LatLon
 
     # Core Information
-    name: str
-    category: ResourceCategory
-    subcategory: Optional[ResourceSubcategory] = None
+    category: ResourceCategory = Field(
+        description="The parent category for the requested resource."
+    )
+    subcategory: ResourceSubcategory = Field(
+        description="The subcategory for the requested resource."
+    )
+    name: str = Field(
+        description="The name of the provider for a resource.",
+    )
+    email: str | None = Field(
+        default=None,
+        description="The resource provider's email address",
+    )
+    phone: str | None = Field(
+        default=None,
+        description="The provider's phone number in the format 123-456-7890",
+    )
+    website: str | None = Field(
+        default=None,
+        description="The provider's website URL",
+    )
+    description: str | None = Field(
+        default=None,
+        description="A description of the provider, generally, separate from a resource.",
+    )
+    origin: ProviderOrigin
 
-    # Location
-    lat: float
-    lon: float
-    street: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    zip: Optional[str] = None
-
-    # Contact Information
-    website: Optional[str] = None
-    maps_url: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
-
-    # Content
-    description: Optional[str] = None
-    tags: Optional[List[str]] = None
-
-    # Metadata
-    origin: str
-    banned: Optional[bool] = None
-    banned_reason: Optional[str] = None
-    score: Optional[float] = None
-
-    # LLM Evaluation
-    llm_rank: Optional[int] = None
-    llm_valid: Optional[bool] = None
-
-    # External Ratings
-    rating: Optional[float] = None
-    ratingCount: Optional[int] = None
-    operationalStatus: Optional[str] = None
-    price_level: Optional[str] = None
+    # External Ratings from Google
+    rating: float | None
+    rating_count: int | None
 
     # Travel Information
-    transport_mode: Optional[DistanceMode] = None
-    transport_minutes: Optional[int] = None
+    travel_mode: TravelMode | None
+    travel_duration_minutes: int | None
+    travel_distance_miles: float | None
 
 
-T = TypeVar("T")
-
-
-class APIResponse(BaseModel, Generic[T]):
-    data: T
-
-
-async def search_resource_api(
-    params: ParameterSearchBodyParams,
-) -> List[ApiSearchResult]:
+def get_bad_response_detail(response: httpx.Response) -> str:
     """
-    Make an HTTP request to the external resources API.
+    Extracts error detail from a failed API response.
 
     Args:
-        params: The search parameters
+        response: The httpx response object from a failed request
 
     Returns:
-        List of search results
+        A human-readable error message, or a generic message if parsing fails
     """
-    api_url = settings.EXTERNAL_RESOURCES_API_URL
-    if not api_url:
-        raise ValueError("EXTERNAL_RESOURCES_API_URL is not configured in settings")
-
-    resources_api_key = settings.RESOURCES_API_KEY
-    if not resources_api_key:
-        raise ValueError("RESOURCES_API_KEY is not configured in settings")
-
-    async with httpx.AsyncClient() as client:
-        request_json = params.dict(exclude_none=True)
-        response = await client.post(
-            f"{api_url}/parameter-search",
-            json=request_json,
-            headers={"x-api-key": settings.RESOURCES_API_KEY},
-            timeout=30.0,  # 30 second timeout
+    try:
+        err_json = response.json()
+        return str(err_json["detail"])
+    except Exception as exc:
+        logger.error(
+            "Could not parse response from API",
+            status_code=response.status_code,
+            exc=exc,
         )
-
-        if response.status_code != 200:
-            raise Exception(
-                f"API request failed with status {response.status_code}: {response.text}"
-            )
-
-        result = APIResponse[List[ApiSearchResult]].parse_obj(response.json())
-        logger.debug("Resource API Response", request=request_json, result=result)
-        return result.data
+    return "Unknown reason, see logs."
 
 
-def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
+async def discover_resources(
+    client: httpx.AsyncClient,
+    params: GetResourcesRequest,
+) -> list[DiscoveredResource]:
     """
-    Convert an external API search result to an internal Resource model.
+    Discovers resources near a location using the external resources API.
+
+    Makes an authenticated POST request to the external resources API to find
+    resources matching the given category, subcategory, and location criteria.
 
     Args:
-        result: The API search result
+        client: Configured httpx AsyncClient for making HTTP requests.
+        params: Search parameters including category, subcategory, address, distance,
+            and optional travel mode
 
     Returns:
-        Internal Resource model
+        List of discovered resources, empty list if no resources found (204 response)
+
+    Raises:
+        EnvironmentError: If RESOURCE_API_URL or RESOURCE_API_KEY are not configured
+        BadResourceAPIRequest: If the API returns 422 (invalid request parameters)
+        ResourceAPIFailure: If the API returns a server error (5xx) or response cannot be parsed
     """
-    # Build address if components are available
-    address = None
-    if result.street:
-        address_parts = []
-        if result.street:
-            address_parts.append(result.street)
-        if result.city:
-            address_parts.append(result.city)
-        if result.state:
-            state_zip = result.state
-            if result.zip:
-                state_zip += f" {result.zip}"
-            address_parts.append(state_zip)
 
-        if address_parts:
-            address = ", ".join(address_parts)
+    # These fields are required in the pydantic settings, so they should always exist
+    # before this function is called. Always nice to double check, though!
+    if not settings.RESOURCE_API_URL:
+        raise EnvironmentError("RESOURCE_API_URL is not configured in settings")
 
-    # Convert external API result to internal Resource model
-    resource = Resource(
-        id=str(result.id),
-        category=result.category,
-        subcategory=result.subcategory,
-        name=result.name,
-        phone=result.phone,
-        address=address,
-        website=result.website,
-        email=result.email,
-        transport_minutes=result.transport_minutes,
-        transport_mode=result.transport_mode,
-        rating=result.rating,
-        ratingCount=result.ratingCount,
-        score=result.score,
+    if not settings.RESOURCE_API_KEY:
+        raise EnvironmentError("RESOURCE_API_KEY is not configured in settings")
+
+    url = urljoin(settings.RESOURCE_API_URL, DISCOVER_ENDPOINT)
+    response = await client.post(
+        url=url,
+        json=params.model_dump(),
+        headers={"x-api-key": settings.RESOURCE_API_KEY},
+        timeout=10,
     )
-
-    return resource
-
-
-async def list_external_resources(request: GetResourcesRequest) -> GetResourcesResponse:
-    """
-    List resources from the external API based on the request parameters.
-
-    Args:
-        request: The resources request
-        limit: Optional limit of results per resource type
-
-    Returns:
-        GetResourcesResponse with the list of resources
-    """
-    # Check if external API is configured
-    api_url = settings.EXTERNAL_RESOURCES_API_URL
-    if not api_url:
-        logger.error("External resources API URL not configured")
-        raise ValueError("EXTERNAL_RESOURCES_API_URL is not configured in settings")
-
-    logger.debug(
-        "Starting external resources search",
-        category=request.category,
-        subcategory=request.subcategory,
-        travel_mode=request.travel_mode,
-        distance=request.distance_miles,
-    )
-
-    # Prepare result list
-    resources = []
-    category = request.category
-    subcategory = request.subcategory
+    if response.status_code == status.HTTP_204_NO_CONTENT:
+        logger.debug("No resources found from the Resource API", params=params)
+        return []
 
     try:
-        # Create search parameters
-        params = ParameterSearchBodyParams(
-            category=category,
-            subcategory=subcategory,
-            # TODO(#10014): Deprecate this field in the new API
-            textSearch="",
-            address=request.address,
-            distance=request.distance_miles,
-            mode=request.travel_mode,
-            time=None,
+        response.raise_for_status()
+        raw_resource_list = response.json()
+    except Exception as exc:
+        err_detail = get_bad_response_detail(response)
+        if response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY:
+            raise BadResourceAPIRequest(
+                f"We sent an incorrect request to the Resource API: {err_detail}"
+            ) from exc
+        if response.status_code == status.HTTP_404_NOT_FOUND:
+            raise BadResourceAPIRequest(
+                f"Resource API endpoint not found: {url}"
+            ) from exc
+        raise ResourceAPIFailure(f"The Resource API failed: {err_detail}") from exc
+
+    resources = []
+    logger.debug("Received %s resources from API", len(raw_resource_list))
+    for raw_data in raw_resource_list:
+        try:
+            resources.append(DiscoveredResource(**raw_data))
+        except ValidationError:
+            logger.error("Unable to parse Resource API data", raw_data=raw_data)
+    if raw_resource_list and not any(resources):
+        raise ResourceAPIFailure(
+            "Unable to parse Resource API data, does raw output match the "
+            f"expected output schema of {DISCOVER_ENDPOINT}?"
         )
+    return resources
 
-        # Call the API
-        results = await search_resource_api(params)
-        logger.debug(
-            "External API returned results",
-            category=category,
-            subcategory=subcategory,
-            results_count=len(results),
+
+# Can gut check with
+# uv run --env-file .env python -m app.services.resources.api
+if __name__ == "__main__":
+    import asyncio
+
+    async def main():
+        req = GetResourcesRequest(
+            category=ResourceCategory.BASIC_NEEDS,
+            subcategory=ResourceSubcategory.FINANCIAL_ASSISTANCE,
+            # Can be a locale, skips travel information
+            address="Ogden, UT",
         )
+        async with httpx.AsyncClient() as client:
+            resources = await discover_resources(client, req)
+        return resources
 
-        # Process results
-        excluded_by_name = 0
-        excluded_by_id = 0
-
-        # Process results
-        for result in results:
-            # Skip if excluded by name
-            if request.exclude_names and any(
-                exclude.lower() in result.name.lower()
-                for exclude in request.exclude_names
-            ):
-                excluded_by_name += 1
-                continue
-
-            # Convert to internal model
-            resource = _convert_to_internal_resource(result)
-
-            # Skip if excluded by ID
-            if request.exclude_ids and resource.id in request.exclude_ids:
-                excluded_by_id += 1
-                continue
-
-            # Add to results
-            resources.append(resource)
-
-        logger.info(
-            "External resources search completed",
-            category=category,
-            subcategory=subcategory,
-            total_found=len(results),
-            excluded_by_name=excluded_by_name,
-            excluded_by_id=excluded_by_id,
-            final_count=len(resources),
-        )
-
-        if len(resources) == 0:
-            return GetResourcesResponse(
-                resources=[],
-                failure_reason=ResourceFailureReason.NO_RESULTS_FOUND,
-                error_message=None,
-            )
-        else:
-            return GetResourcesResponse(
-                resources=resources,
-                failure_reason=ResourceFailureReason.SUCCESS,
-                error_message=None,
-            )
-
-    except Exception as error:
-        logger.exception(
-            "Failed to fetch external resources",
-            category=category,
-            subcategory=subcategory,
-            address=request.address,
-            error=str(error),
-            exc_info=error,
-        )
-        return GetResourcesResponse(
-            resources=[],
-            failure_reason=ResourceFailureReason.API_ERROR,
-            error_message=str(error),
-        )
-
-    return GetResourcesResponse(resources=resources)
+    asyncio.run(main())

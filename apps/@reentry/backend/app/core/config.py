@@ -50,9 +50,8 @@ class Settings(BaseSettings):
     FABRK_API_URL: str = "https://api.fabrk.ai"
     FABRK_BEARER_TOKEN: str
     # External resources API configuration
-    USE_EXTERNAL_RESOURCES_API: bool = False
-    EXTERNAL_RESOURCES_API_URL: Optional[str] = None
-    RESOURCES_API_KEY: Optional[str] = None
+    RESOURCE_API_URL: str
+    RESOURCE_API_KEY: str
 
     ALLOW_EXPERIMENTS: bool = False
     VCR_CLIENT_INTAKE: bool = False

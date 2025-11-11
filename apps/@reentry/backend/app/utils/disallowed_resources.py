@@ -15,6 +15,12 @@ DISALLOWED_RESOURCE_NAMES = {
     }
 }
 
+# The CPA should never include correctional facilities as a resource.
+# Pass this data into the 'keywords_to_exclude' field of the request
+ALWAYS_EXCLUDED_RESOURCE_KEYWORDS = {
+    "correctional",
+}
+
 
 DISALLOWED_RESOURCE_ADDRESSES = {
     address.lower()

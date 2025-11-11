@@ -11,13 +11,17 @@ from pydantic import ValidationError
 
 from app.core.config import gen_model as model
 from app.core.config import tracer
-from app.services.resources import (
+from app.services.resources.list_resources import (
+    list_resources,
+)
+from app.services.resources.resource_taxonomy import (
     CATEGORY_SUBCATEGORY_MAP,
+)
+from app.services.resources.types import (
     ClientExtractedInfo,
     GetResourcesRequest,
     Resource,
-    ResourceFailureReason,
-    list_resources,
+    ResourceAPIResultType,
 )
 from app.utils.action_plan_types import (
     ActionPlan,
@@ -173,21 +177,25 @@ async def fetch_resources_with_retry(
             logger.debug(f"Resource fetch attempt {attempt + 1}/{max_retries + 1}")
             result = await list_resources(current_request)
 
-            if result.failure_reason == ResourceFailureReason.SUCCESS:
+            if result.result == ResourceAPIResultType.SUCCESS:
                 resources = result.resources
                 logger.debug(
                     f"Successfully fetched {len(resources)} resources on attempt {attempt + 1}"
                 )
                 return resources
-            elif result.failure_reason == ResourceFailureReason.API_ERROR:
+            if result.result == ResourceAPIResultType.BAD_REQUEST:
+                logger.warning(
+                    f"We sent a bad resource API request on attempt {attempt + 1}: {result.error_message}"
+                )
+                return []
+            # TODO: We could update the request to potentially broaden the search.
+            if result.result == ResourceAPIResultType.NO_RESULTS_FOUND:
+                logger.debug(f"No results found on attempt {attempt + 1}")
+                return []
+            if result.result == ResourceAPIResultType.API_ERROR:
                 logger.warning(
                     f"API error on attempt {attempt + 1}: {result.error_message}"
                 )
-            elif result.failure_reason == ResourceFailureReason.NO_RESULTS_FOUND:
-                # if there were not results we can modify the request to broaden the search, pending to define with the client
-                # but in theory this should be done for the resources api
-                # current_request = modified_request_with_broader_search
-                logger.debug(f"No results found on attempt {attempt + 1}")
         except Exception as e:
             logger.exception(f"Unexpected error on attempt {attempt + 1}: {str(e)}")
 
@@ -222,7 +230,7 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
                     subcategory=subcategory,
                     limit=2,
                     client_info=state["client_extracted_info"],
-                    exclude_names=None,
+                    keywords_to_exclude=None,
                     exclude_ids=None,
                 )
                 try:
@@ -256,7 +264,7 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
                         category=category,
                         subcategory=None,
                         client_info=state["client_extracted_info"],
-                        exclude_names=None,
+                        keywords_to_exclude=None,
                         exclude_ids=None,
                         limit=2,
                     )
