@@ -338,7 +338,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents who may be newly eligible for a custody level reduction because they have not had a Class I or II misconduct in over 6 months. ",
-      submittedTabTitle: "Reduction Pending",
+      submittedTabTitle: "Pending Re-screen",
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
