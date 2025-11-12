@@ -1101,6 +1101,46 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/clients/admin/add": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Add Client to BigQuery
+     * @description Admin endpoint to add a new client directly to BigQuery.
+     */
+    post: operations["add_client_route_clients_admin_add_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/clients/admin/remove": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove Client from BigQuery
+     * @description Admin endpoint to remove a client from BigQuery by name and date of birth.
+     */
+    delete: operations["remove_client_route_clients_admin_remove_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/recordings/sessions/clients/{client_pseudo_id}": {
     parameters: {
       query?: never;
@@ -1297,6 +1337,33 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    /** AddClientRequest */
+    AddClientRequest: {
+      /** Given Names */
+      given_names: string;
+      /** Surname */
+      surname: string;
+      /**
+       * Birthdate
+       * Format: date
+       */
+      birthdate: string;
+      /** State Code */
+      state_code: string;
+      /** Middle Names */
+      middle_names?: string | null;
+      /** Name Suffix */
+      name_suffix?: string | null;
+    };
+    /** AddClientResponse */
+    AddClientResponse: {
+      /** External Client Id */
+      external_client_id: string;
+      /** Pseudonymized Client Id */
+      pseudonymized_client_id: string;
+      /** Message */
+      message: string;
+    };
     /** AddressSubmission */
     AddressSubmission: {
       /**
@@ -2702,6 +2769,25 @@ export interface components {
       | "processing"
       | "error"
       | "completed";
+    /** RemoveClientRequest */
+    RemoveClientRequest: {
+      /** First Name */
+      first_name: string;
+      /** Last Name */
+      last_name: string;
+      /**
+       * Date Of Birth
+       * Format: date
+       */
+      date_of_birth: string;
+    };
+    /** RemoveClientResponse */
+    RemoveClientResponse: {
+      /** Message */
+      message: string;
+      /** Pseudonymized Client Id */
+      pseudonymized_client_id: string;
+    };
     /** Resource */
     Resource: {
       /**
@@ -5215,6 +5301,72 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["ClientResetResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  add_client_route_clients_admin_add_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AddClientRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AddClientResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  remove_client_route_clients_admin_remove_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RemoveClientRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RemoveClientResponse"];
         };
       };
       /** @description Validation Error */

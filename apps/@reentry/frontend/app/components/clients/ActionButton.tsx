@@ -28,6 +28,7 @@ import {
 import Image from "next/image";
 
 import { $api } from "~@reentry/frontend/api";
+import { useClientDelete } from "~@reentry/frontend/hooks/useClientDelete";
 import { useClientReset } from "~@reentry/frontend/hooks/useClientReset";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
@@ -39,6 +40,7 @@ interface DropdownProps {
   onToggle: () => void;
   onRefetch: () => void;
   dropdownRef: React.RefObject<HTMLDivElement> | null;
+  setIsDeletingClient?: (isDeleting: boolean) => void;
 }
 
 const ActionButton: React.FC<DropdownProps> = ({
@@ -47,6 +49,7 @@ const ActionButton: React.FC<DropdownProps> = ({
   onToggle,
   onRefetch,
   dropdownRef,
+  setIsDeletingClient,
 }) => {
   const { getAccessToken } = useAuth();
 
@@ -72,6 +75,7 @@ const ActionButton: React.FC<DropdownProps> = ({
     $api.useMutation("post", "/clients/{client_pseudo_id}/retry-processing");
 
   const { handleResetClient, isResettingInProgress } = useClientReset();
+  const { handleDeleteClient, isDeletingInProgress } = useClientDelete();
 
   const handleRetryProcessing = async () => {
     try {
@@ -213,6 +217,31 @@ const ActionButton: React.FC<DropdownProps> = ({
                     {isResettingInProgress ? "Resetting..." : "Reset Client"}
                   </button>
                 )}
+
+              {isFeatureEnabled("CLIENT_DELETION") &&
+                client.client &&
+                (() => {
+                  const clientData = client.client;
+                  return (
+                    <button
+                      type="button"
+                      className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed border-t border-gray-200"
+                      role="menuitem"
+                      onClick={handleMenuItemClick(() => {
+                        handleDeleteClient(
+                          clientData.full_name.given_names,
+                          clientData.full_name.surname,
+                          clientData.birthdate,
+                          onRefetch,
+                          setIsDeletingClient,
+                        );
+                      })}
+                      disabled={isDeletingInProgress}
+                    >
+                      {isDeletingInProgress ? "Deleting..." : "Delete Client"}
+                    </button>
+                  );
+                })()}
             </div>
           </div>
         </FloatingPortal>

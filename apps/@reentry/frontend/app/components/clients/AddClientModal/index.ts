@@ -15,22 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/**
- * Set which features are enabled in which environments.
- * Use a comma separate list of environments with lowercase names.
- *
- * This file uses CommonJS to be directly importable by buildtime helpers
- * and during runtime.
- *
- */
-const FEATURE_FLAGS_CONFIG = {
-  ENABLE_SOURCE_MAPS: "development,dev,demo,staging",
-  CLIENT_ADDITION: "development,dev,demo",
-  CLIENT_DELETION: "development,dev,demo",
-  INTAKE_RESET: "development,dev,demo,staging",
-  REGENERATE_WITH_PROMPT: "",
-  TEST_FEATURE_DEV: "dev",
-  TEST_FEATURE_DEV_STAGING: "dev,staging",
-};
-
-module.exports = { FEATURE_FLAGS_CONFIG };
+export type { AddClientFormData } from "./AddClientModal";
+export { default } from "./AddClientModal";

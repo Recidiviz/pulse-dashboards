@@ -25,13 +25,21 @@ Example of a case manager record
 
 """
 
+import json
 import pickle
+import random
+import time
+import uuid
 from datetime import date
 from typing import Optional
 
 from google.cloud import bigquery
 
 from app.core.config import settings
+from app.services.client_data.exceptions import (
+    ClientAlreadyExistsError,
+    ClientNotFoundError,
+)
 from app.services.client_data.types import (
     CaseWorkerDataRecord,
     ClientDataRecord,
@@ -488,3 +496,356 @@ class Queries:
                 f"Error fetching caseworker by pseudonymized staff ID: {str(e)}"
             )
             return None
+
+    @staticmethod
+    def get_pseudonymized_id_by_names_and_dob(
+        first_name: str, last_name: str, date_of_birth: date
+    ) -> Optional[str]:
+        try:
+            client = Queries.get_client_by_names_and_dob(
+                first_name=first_name, last_name=last_name, date_of_birth=date_of_birth
+            )
+            return client.pseudonymized_client_id if client else None
+        except Exception as e:
+            logger.exception(
+                f"Failed to get pseudonymized_id for {first_name} {last_name}: {str(e)}"
+            )
+            return None
+
+    @staticmethod
+    def get_staff_external_id_from_pseudonymized_id(
+        staff_pseudonymized_id: str,
+    ) -> Optional[str]:
+        query = f"""
+        SELECT external_id
+        FROM `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CASE_MANAGER_TABLE}`
+        WHERE pseudonymized_id = @staff_pseudonymized_id
+        LIMIT 1
+        """
+
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter(
+                    "staff_pseudonymized_id", "STRING", staff_pseudonymized_id
+                )
+            ]
+        )
+
+        try:
+            client = get_bigquery_client()
+            query_job = client.query(query, job_config=job_config)
+            results = list(query_job.result())
+
+            if results:
+                return results[0].external_id
+            else:
+                logger.warning(
+                    f"No case manager found with pseudonymized_id: {staff_pseudonymized_id}"
+                )
+                return None
+        except Exception as e:
+            logger.exception(
+                f"Failed to get staff external_id for pseudonymized_id {staff_pseudonymized_id}: {str(e)}"
+            )
+            return None
+
+    @staticmethod
+    def add_client(
+        given_names: str,
+        surname: str,
+        birthdate: date,
+        state_code: str,
+        staff_pseudonymized_id: str,
+        middle_names: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> ClientDataRecord:
+        staff_id = Queries.get_staff_external_id_from_pseudonymized_id(
+            staff_pseudonymized_id
+        )
+        if not staff_id:
+            raise ValueError(
+                f"Could not find staff member with pseudonymized_id: {staff_pseudonymized_id}"
+            )
+
+        logger.info(
+            f"Adding client: {given_names} {surname}, DOB: {birthdate}, State: {state_code}, Staff ID: {staff_id}"
+        )
+        lock_key = "lock:add_client"
+        lock = redis_client.lock(lock_key, timeout=30, blocking_timeout=10)
+
+        try:
+            if not lock.acquire(blocking=True):
+                raise Exception(
+                    "Could not acquire lock to add client. Another client addition is in progress. Please try again."
+                )
+
+            existing_client = Queries.get_client_by_names_and_dob(
+                first_name=given_names,
+                last_name=surname,
+                date_of_birth=birthdate,
+            )
+
+            if existing_client:
+                error_msg = (
+                    f"Client '{given_names} {surname}' with birth date {birthdate} already exists. "
+                    f"Found in {existing_client.state_code} with ID {existing_client.external_client_id}."
+                )
+                logger.warning(error_msg)
+                raise ClientAlreadyExistsError(error_msg)
+
+            timestamp = int(time.time())
+            random_digits = random.randint(10, 99)
+            external_id = f"CLIENT-{timestamp}{random_digits}"
+            pseudonymized_id = str(uuid.uuid4())
+
+            full_name_dict = {
+                "given_names": given_names,
+                "middle_names": middle_names or "",
+                "surname": surname,
+                "name_suffix": name_suffix or "",
+            }
+            full_name_json = json.dumps(full_name_dict)
+
+            query = f"""
+            INSERT INTO `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
+            (external_id, pseudonymized_id, staff_id, full_name, birthdate, state_code)
+            VALUES
+            (@external_id, @pseudonymized_id, @staff_id, @full_name, @birthdate, @state_code)
+            """
+
+            job_config = bigquery.QueryJobConfig(
+                query_parameters=[
+                    bigquery.ScalarQueryParameter("external_id", "STRING", external_id),
+                    bigquery.ScalarQueryParameter(
+                        "pseudonymized_id", "STRING", pseudonymized_id
+                    ),
+                    bigquery.ScalarQueryParameter("staff_id", "STRING", staff_id),
+                    bigquery.ScalarQueryParameter(
+                        "full_name", "STRING", full_name_json
+                    ),
+                    bigquery.ScalarQueryParameter("birthdate", "DATE", birthdate),
+                    bigquery.ScalarQueryParameter("state_code", "STRING", state_code),
+                ]
+            )
+
+            client = get_bigquery_client()
+            query_job = client.query(query, job_config=job_config)
+            result = query_job.result()
+            logger.info(f"BigQuery INSERT query_job: {query_job}")
+            logger.info(f"BigQuery INSERT result: {result}")
+
+            logger.info(
+                f"Successfully added client {external_id} ({given_names} {surname}) to BigQuery"
+            )
+
+            Queries.add_client_to_case_manager(staff_pseudonymized_id, external_id)
+
+            # Invalidate cache for staff's client list
+            staff_clients_cache_key = f"staff_clients:{staff_pseudonymized_id}"
+            caseworker_cache_key = f"caseworker:{staff_pseudonymized_id}"
+            redis_client.delete(staff_clients_cache_key)
+            redis_client.delete(caseworker_cache_key)
+            logger.info(
+                f"Invalidated cache keys: {staff_clients_cache_key}, {caseworker_cache_key}"
+            )
+
+            return ClientDataRecord(
+                external_client_id=external_id,
+                pseudonymized_client_id=pseudonymized_id,
+                full_name=FullNameModel(**full_name_dict),
+                birthdate=birthdate,
+                state_code=state_code,
+            )
+
+        except ClientAlreadyExistsError:
+            raise
+        except Exception as e:
+            logger.exception(f"Failed to add client to BigQuery: {str(e)}")
+            raise Exception(f"Failed to add client: {str(e)}") from e
+        finally:
+            try:
+                lock.release()
+            except Exception as e:
+                logger.exception(f"Failed to release add_client lock: {str(e)}")
+
+    @staticmethod
+    def remove_client(
+        pseudonymized_client_id: str, staff_pseudonymized_id: str
+    ) -> None:
+        logger.info(f"Removing client with pseudonymized_id: {pseudonymized_client_id}")
+
+        lock_key = "lock:remove_client"
+        lock = redis_client.lock(lock_key, timeout=30, blocking_timeout=10)
+
+        try:
+            if not lock.acquire(blocking=True):
+                raise Exception(
+                    "Could not acquire lock to remove client. Another client removal is in progress. Please try again."
+                )
+
+            query_client = f"""
+            SELECT external_id, staff_id, full_name, birthdate
+            FROM `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
+            WHERE pseudonymized_id = @pseudonymized_id
+            LIMIT 1
+            """
+
+            job_config = bigquery.QueryJobConfig(
+                query_parameters=[
+                    bigquery.ScalarQueryParameter(
+                        "pseudonymized_id", "STRING", pseudonymized_client_id
+                    ),
+                ]
+            )
+
+            client = get_bigquery_client()
+            query_job = client.query(query_client, job_config=job_config)
+            results = query_job.result()
+
+            rows = list(results)
+            if not rows:
+                raise ClientNotFoundError(
+                    f"Client with pseudonymized_id {pseudonymized_client_id} not found in database"
+                )
+
+            external_client_id = rows[0].external_id
+            full_name_json = rows[0].full_name
+            birthdate = rows[0].birthdate
+
+            # Delete the client from client table
+            delete_query = f"""
+            DELETE FROM `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
+            WHERE pseudonymized_id = @pseudonymized_id
+            """
+
+            delete_job_config = bigquery.QueryJobConfig(
+                query_parameters=[
+                    bigquery.ScalarQueryParameter(
+                        "pseudonymized_id", "STRING", pseudonymized_client_id
+                    ),
+                ]
+            )
+
+            delete_job = client.query(delete_query, job_config=delete_job_config)
+            delete_job.result()
+
+            logger.info(
+                f"Successfully deleted client {external_client_id} (pseudonymized: {pseudonymized_client_id}) from BigQuery"
+            )
+
+            Queries.remove_client_from_case_manager(
+                staff_pseudonymized_id, external_client_id
+            )
+
+            # Invalidate cache
+            full_name_data = json.loads(full_name_json)
+            given_names = full_name_data.get("given_names", "")
+            surname = full_name_data.get("surname", "")
+
+            cache_key_pseudo = f"client_by_pseudo:{pseudonymized_client_id}"
+            cache_key_name_dob = (
+                f"client_by_name_dob:{given_names}:{surname}:{birthdate}"
+            )
+
+            redis_client.delete(cache_key_pseudo)
+            redis_client.delete(cache_key_name_dob)
+
+            # Invalidate staff's client list cache
+            staff_clients_cache_key = f"staff_clients:{staff_pseudonymized_id}"
+            caseworker_cache_key = f"caseworker:{staff_pseudonymized_id}"
+            redis_client.delete(staff_clients_cache_key)
+            redis_client.delete(caseworker_cache_key)
+
+            logger.info(
+                f"Invalidated cache keys: {cache_key_pseudo}, {cache_key_name_dob}, {staff_clients_cache_key}, {caseworker_cache_key}"
+            )
+
+            logger.info(f"Successfully removed client {external_client_id} completely")
+
+        except ClientNotFoundError:
+            raise
+        except Exception as e:
+            logger.exception(f"Failed to remove client from BigQuery: {str(e)}")
+            raise Exception(f"Failed to remove client: {str(e)}") from e
+        finally:
+            try:
+                lock.release()
+            except Exception as e:
+                logger.exception(f"Failed to release remove_client lock: {str(e)}")
+
+    @staticmethod
+    def add_client_to_case_manager(staff_pseudonymized_id: str, client_id: str) -> None:
+        logger.info(
+            f"Adding client {client_id} to case manager {staff_pseudonymized_id}"
+        )
+
+        query = f"""
+        UPDATE `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CASE_MANAGER_TABLE}`
+        SET client_ids = ARRAY_CONCAT(
+          IFNULL(client_ids, []),
+          [@client_id]
+        )
+        WHERE pseudonymized_id = @staff_pseudonymized_id
+        """
+
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter(
+                    "staff_pseudonymized_id", "STRING", staff_pseudonymized_id
+                ),
+                bigquery.ScalarQueryParameter("client_id", "STRING", client_id),
+            ]
+        )
+
+        try:
+            client = get_bigquery_client()
+            query_job = client.query(query, job_config=job_config)
+            query_job.result()
+            logger.info(
+                f"Successfully added client {client_id} to case manager {staff_pseudonymized_id}"
+            )
+        except Exception as e:
+            logger.exception(
+                f"Failed to add client {client_id} to case manager {staff_pseudonymized_id}: {str(e)}"
+            )
+            raise
+
+    @staticmethod
+    def remove_client_from_case_manager(
+        staff_pseudonymized_id: str, client_id: str
+    ) -> None:
+        logger.info(
+            f"Removing client {client_id} from case manager {staff_pseudonymized_id}"
+        )
+
+        query = f"""
+        UPDATE `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CASE_MANAGER_TABLE}`
+        SET client_ids = ARRAY(
+          SELECT element
+          FROM UNNEST(client_ids) AS element
+          WHERE element != @client_id
+        )
+        WHERE pseudonymized_id = @staff_pseudonymized_id
+        """
+
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter(
+                    "staff_pseudonymized_id", "STRING", staff_pseudonymized_id
+                ),
+                bigquery.ScalarQueryParameter("client_id", "STRING", client_id),
+            ]
+        )
+
+        try:
+            client = get_bigquery_client()
+            query_job = client.query(query, job_config=job_config)
+            query_job.result()
+            logger.info(
+                f"Successfully removed client {client_id} from case manager {staff_pseudonymized_id}"
+            )
+        except Exception as e:
+            logger.exception(
+                f"Failed to remove client {client_id} from case manager {staff_pseudonymized_id}: {str(e)}"
+            )
+            raise

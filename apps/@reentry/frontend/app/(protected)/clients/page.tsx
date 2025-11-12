@@ -31,6 +31,9 @@ import { $api } from "~@reentry/frontend/api";
 import CustomPagination from "~@reentry/frontend/components/base/CustomPagination";
 import { IconInput } from "~@reentry/frontend/components/base/SortingInput";
 import ActionButton from "~@reentry/frontend/components/clients/ActionButton";
+import AddClientModal, {
+  type AddClientFormData,
+} from "~@reentry/frontend/components/clients/AddClientModal";
 import { ClientsTableV2 } from "~@reentry/frontend/components/IntakeChatV2/ClientsTableV2/ClientsTableV2";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { PageView } from "~@reentry/frontend/components/PageView";
@@ -39,6 +42,7 @@ import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useClientStatusPolling } from "~@reentry/frontend/hooks/useClientStatusPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 
 type ClientResponse = components["schemas"]["ClientResponse"];
 
@@ -126,6 +130,9 @@ const ClientsPage = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [activeRowId, setActiveRowId] = useState<string | null>(null);
+  const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false);
+  const [isAddingClient, setIsAddingClient] = useState(false);
+  const [isDeletingClient, setIsDeletingClient] = useState(false);
 
   // Ref to detect clicks outside dropdowm
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -216,6 +223,38 @@ const ClientsPage = () => {
       },
     },
   );
+
+  const { mutateAsync: addClientMutation } = $api.useMutation(
+    "post",
+    "/clients/admin/add",
+  );
+
+  const handleAddClient = async (data: AddClientFormData) => {
+    setIsAddingClient(true);
+    try {
+      await addClientMutation({
+        body: {
+          given_names: data.given_names,
+          surname: data.surname,
+          birthdate: data.birthdate,
+          state_code: data.state_code,
+        },
+        headers: {
+          Authorization: `Bearer ${auth.getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      setIsAddClientModalOpen(false);
+      refetch();
+
+      const params = new URLSearchParams(searchParams);
+      params.set("page", "1");
+      router.push(`?${params.toString()}`);
+    } finally {
+      setIsAddingClient(false);
+    }
+  };
 
   const handleSort = (column, sortDirection) => {
     const columnMapping = {
@@ -370,6 +409,7 @@ const ClientsPage = () => {
             handleToggleDropdown(`dropdown-${row.client_pseudo_id}`)
           }
           onRefetch={refetch}
+          setIsDeletingClient={setIsDeletingClient}
         />
       ),
       width: "50px",
@@ -457,7 +497,7 @@ const ClientsPage = () => {
               <div className="text-[#2b5469]/70 text-lg font-medium leading-snug">
                 All clients on your caseload are displayed below.
               </div>
-              <div className="flex flex-col md:flex-row gap-4 w-full max-w-md">
+              <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
                 <IconInput
                   placeholder="Search by name..."
                   startIcon={
@@ -512,6 +552,15 @@ const ClientsPage = () => {
                     fontSize="small"
                   />
                 </div>
+                {isFeatureEnabled("CLIENT_ADDITION") && (
+                  <button
+                    type="button"
+                    onClick={() => setIsAddClientModalOpen(true)}
+                    className="px-4 py-2 bg-[#003331] text-white text-sm font-medium rounded-full hover:bg-gray-950 transition-colors whitespace-nowrap"
+                  >
+                    Add Client
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -539,6 +588,19 @@ const ClientsPage = () => {
           </div>
         </div>
       </div>
+      <AddClientModal
+        isOpen={isAddClientModalOpen}
+        onClose={() => setIsAddClientModalOpen(false)}
+        onSubmit={handleAddClient}
+        isLoading={isAddingClient}
+      />
+      {isDeletingClient && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <Loading message="Deleting client..." />
+          </div>
+        </div>
+      )}
     </>
   );
 };

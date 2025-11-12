@@ -15,22 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/**
- * Set which features are enabled in which environments.
- * Use a comma separate list of environments with lowercase names.
- *
- * This file uses CommonJS to be directly importable by buildtime helpers
- * and during runtime.
- *
- */
-const FEATURE_FLAGS_CONFIG = {
-  ENABLE_SOURCE_MAPS: "development,dev,demo,staging",
-  CLIENT_ADDITION: "development,dev,demo",
-  CLIENT_DELETION: "development,dev,demo",
-  INTAKE_RESET: "development,dev,demo,staging",
-  REGENERATE_WITH_PROMPT: "",
-  TEST_FEATURE_DEV: "dev",
-  TEST_FEATURE_DEV_STAGING: "dev,staging",
-};
+export interface MonthOption {
+  value: string;
+  label: string;
+}
 
-module.exports = { FEATURE_FLAGS_CONFIG };
+export const MONTHS: MonthOption[] = [
+  { value: "1", label: "January" },
+  { value: "2", label: "February" },
+  { value: "3", label: "March" },
+  { value: "4", label: "April" },
+  { value: "5", label: "May" },
+  { value: "6", label: "June" },
+  { value: "7", label: "July" },
+  { value: "8", label: "August" },
+  { value: "9", label: "September" },
+  { value: "10", label: "October" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
+];
+
+export const DAYS = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+
+export function getYearOptions(): string[] {
+  const currentYear = new Date().getFullYear();
+  return Array.from({ length: currentYear - 1899 }, (_, i) =>
+    (currentYear - i).toString(),
+  );
+}
