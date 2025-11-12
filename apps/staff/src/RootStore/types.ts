@@ -251,6 +251,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_TN"],
         },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
+        hideDenialRevert: { activeTenants: ["US_AZ"] },
       };
 
 export type LanternMethodologyByTenant = {
