@@ -21,6 +21,7 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 export class UsIdFacilitiesConfiguration extends ApiOpportunityConfiguration {
   get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {
     const snoozeLengthOverrides = {
+      DENIED: undefined,
       ESCAPE_ABSCONSION: undefined,
       SEX_OFFENSE: undefined,
     };
