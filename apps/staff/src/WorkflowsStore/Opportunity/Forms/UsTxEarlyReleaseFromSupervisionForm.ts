@@ -28,7 +28,7 @@ import { FormBase } from "./FormBase";
 
 const fillerFunc: PDFFillerFunc<
   UsTxEarlyReleaseFromSupervisionDraftData
-> = async (formData, set, form, doc) => {
+> = async (formData, set, form) => {
   set("clientName", formData.clientName); // PDFTextField
   set("tdcjNumberAndSid", formData.tdcjNumberAndSid); // PDFTextField
   set("eligibilityMonthString", formData.eligibilityMonthString); // PDFTextField

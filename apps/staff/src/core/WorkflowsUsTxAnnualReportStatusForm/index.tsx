@@ -15,14 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import jsPDF from "jspdf";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 
 import { Opportunity } from "../../WorkflowsStore";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
-import { generate } from "../Paperwork/PDFFormGenerator";
 import { PrintablePage } from "../Paperwork/styles";
 import FormPSV323D from "../Paperwork/US_TX/UsTxAnnualReportStatus/PSV-323D";
 
@@ -41,22 +39,12 @@ const WorkflowsUsTxAnnualReportStatusForm = observer(
       setIsMissingContent(!(pages && pages.length > 0));
     }, [formRef]);
 
-    const onClickDownload = async () => {
-      return generate(formRef.current, `${PrintablePage}`).then(
-        (pdf: jsPDF) => {
-          pdf.save(
-            `${opportunity.person.displayName} - Annual Reporting Status Form.pdf`,
-          );
-        },
-      );
-    };
-
     return (
       <FormContainer
         agencyName="TDCJ"
         heading={opportunity.config.label}
         isMissingContent={isMissingContent}
-        onClickDownload={onClickDownload}
+        onClickDownload={async () => opportunity.form?.fillAndSaveFile()}
         downloadButtonLabel="Download Form"
         opportunity={opportunity}
       >
