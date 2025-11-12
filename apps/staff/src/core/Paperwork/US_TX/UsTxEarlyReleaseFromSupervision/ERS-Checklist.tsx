@@ -75,6 +75,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="atLeastHalfTimeCheck"
+                id="atLeastHalfTimeCheckYes"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
@@ -82,6 +83,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="atLeastHalfTimeCheck"
+                id="atLeastHalfTimeCheckNo"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
@@ -108,6 +110,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="minimumThreeYearsSupervisionCheck"
+                id="minimumThreeYearsSupervisionCheckYes"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
@@ -115,6 +118,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="minimumThreeYearsSupervisionCheck"
+                id="minimumThreeYearsSupervisionCheckNo"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
@@ -142,6 +146,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="goodFaithFeesAndEducationCheck"
+                id="goodFaithFeesAndEducationCheckYes"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
@@ -149,6 +154,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="goodFaithFeesAndEducationCheck"
+                id="goodFaithFeesAndEducationCheckNo"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
@@ -177,6 +183,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="restitutionObligationsCheck"
+                id="restitutionObligationsCheckYes"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
@@ -184,6 +191,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="restitutionObligationsCheck"
+                id="restitutionObligationsCheckNo"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
@@ -208,12 +216,17 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row justifyContentStart unsetMargin>
             <ErsItem width={25}>
-              <FormCheckbox toggleable name="warrantCheck"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                id="warrantCheckYes"
+                name="warrantCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
               <FormCheckbox
                 toggleable
                 invert
+                id="warrantCheckNo"
                 name="warrantCheck"
               ></FormCheckbox>
             </ErsItem>
@@ -242,6 +255,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="noViolationsCertificateCheck"
+                id="noViolationsCertificateCheckYes"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
@@ -249,6 +263,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="noViolationsCertificateCheck"
+                id="noViolationsCertificateCheckNo"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
@@ -275,6 +290,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="societyBestInterestCheck"
+                id="societyBestInterestCheckYes"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
@@ -282,6 +298,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="societyBestInterestCheck"
+                id="societyBestInterestCheckNo"
               ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
@@ -335,6 +352,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="supervisingOfficerRecommendCheck"
+                id="supervisingOfficerRecommendCheckYes"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
@@ -348,6 +366,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="supervisingOfficerRecommendCheck"
+                id="supervisingOfficerRecommendCheckNo"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
@@ -388,6 +407,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="unitSupervisorConcurWithSupervisingOfficerCheck"
+                id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
@@ -401,6 +421,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="unitSupervisorConcurWithSupervisingOfficerCheck"
+                id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
@@ -441,6 +462,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+                id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
@@ -454,6 +476,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+                id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
@@ -494,6 +517,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+                id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
@@ -507,6 +531,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+                id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
@@ -545,6 +570,7 @@ const ERSChecklist: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="regionDirectorConcurWithSupervisingOfficerCheck"
+                id="regionDirectorConcurWithSupervisingOfficerCheckYes"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
@@ -560,6 +586,7 @@ const ERSChecklist: React.FC = () => {
                 toggleable
                 invert
                 name="regionDirectorConcurWithSupervisingOfficerCheck"
+                id="regionDirectorConcurWithSupervisingOfficerCheckNo"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>

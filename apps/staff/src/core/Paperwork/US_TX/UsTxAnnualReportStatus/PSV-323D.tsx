@@ -74,6 +74,7 @@ const FormPSV323D: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="threeYearsTRASCheck"
+                id="threeYearsTRASCheckYes"
               ></FormCheckbox>
             </Item>
             <Item width={25}>
@@ -81,6 +82,7 @@ const FormPSV323D: React.FC = () => {
                 toggleable
                 invert
                 name="threeYearsTRASCheck"
+                id="threeYearsTRASCheckNo"
               ></FormCheckbox>
             </Item>
             <Item>Comments:</Item>
@@ -108,6 +110,7 @@ const FormPSV323D: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="complianceFeesAndEducationCheck"
+                id="complianceFeesAndEducationCheckYes"
               ></FormCheckbox>
             </Item>
             <Item width={25}>
@@ -115,6 +118,7 @@ const FormPSV323D: React.FC = () => {
                 toggleable
                 invert
                 name="complianceFeesAndEducationCheck"
+                id="complianceFeesAndEducationCheckNo"
               ></FormCheckbox>
             </Item>
             <Item>Comments:</Item>
@@ -143,6 +147,7 @@ const FormPSV323D: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="restitutionObligationsCheck"
+                id="restitutionObligationsCheckYes"
               ></FormCheckbox>
             </Item>
             <Item width={25}>
@@ -150,6 +155,7 @@ const FormPSV323D: React.FC = () => {
                 toggleable
                 invert
                 name="restitutionObligationsCheck"
+                id="restitutionObligationsCheckNo"
               ></FormCheckbox>
             </Item>
             <Item>Comments:</Item>
@@ -174,13 +180,14 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row justifyContentStart>
             <Item width={25}>
-              <FormCheckbox toggleable name="warrantCheck"></FormCheckbox>
+              <FormCheckbox toggleable name="warrantCheck" id="warrantCheckYes"></FormCheckbox>
             </Item>
             <Item width={25}>
               <FormCheckbox
                 toggleable
                 invert
                 name="warrantCheck"
+                id="warrantCheckNo"
               ></FormCheckbox>
             </Item>
             <Item>Comments:</Item>
@@ -207,6 +214,7 @@ const FormPSV323D: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="societyBestInterestCheck"
+                id="societyBestInterestCheckYes"
               ></FormCheckbox>
             </Item>
             <Item width={25}>
@@ -214,6 +222,7 @@ const FormPSV323D: React.FC = () => {
                 toggleable
                 invert
                 name="societyBestInterestCheck"
+                id="societyBestInterestCheckNo"
               ></FormCheckbox>
             </Item>
             <Item>Comments:</Item>
@@ -267,6 +276,7 @@ const FormPSV323D: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="supervisingOfficerRecommendCheck"
+                id="supervisingOfficerRecommendCheckYes"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
@@ -280,6 +290,7 @@ const FormPSV323D: React.FC = () => {
                 toggleable
                 invert
                 name="supervisingOfficerRecommendCheck"
+                id="supervisingOfficerRecommendCheckNo"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
@@ -320,6 +331,7 @@ const FormPSV323D: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="unitSupervisorConcurWithSupervisingOfficerCheck"
+                id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
@@ -333,6 +345,7 @@ const FormPSV323D: React.FC = () => {
                 toggleable
                 invert
                 name="unitSupervisorConcurWithSupervisingOfficerCheck"
+                id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
@@ -373,6 +386,7 @@ const FormPSV323D: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+                id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
@@ -386,6 +400,7 @@ const FormPSV323D: React.FC = () => {
                 toggleable
                 invert
                 name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+                id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
@@ -426,6 +441,7 @@ const FormPSV323D: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+                id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
@@ -439,6 +455,7 @@ const FormPSV323D: React.FC = () => {
                 toggleable
                 invert
                 name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+                id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
@@ -477,6 +494,7 @@ const FormPSV323D: React.FC = () => {
               <FormCheckbox
                 toggleable
                 name="regionDirectorConcurWithSupervisingOfficerCheck"
+                id="regionDirectorConcurWithSupervisingOfficerCheckYes"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
@@ -490,6 +508,7 @@ const FormPSV323D: React.FC = () => {
                 toggleable
                 invert
                 name="regionDirectorConcurWithSupervisingOfficerCheck"
+                id="regionDirectorConcurWithSupervisingOfficerCheckNo"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>

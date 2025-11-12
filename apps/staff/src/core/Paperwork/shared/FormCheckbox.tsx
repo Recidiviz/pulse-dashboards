@@ -30,12 +30,14 @@ export type FormCheckboxProps = StyledComponentProps<
   { type: "checkbox" },
   "type"
 > & {
+  id: string;
   name: FormDataFieldName;
   invert?: boolean;
   toggleable?: boolean;
 };
 
 const FormCheckbox: React.FC<FormCheckboxProps> = ({
+  id,
   name,
   invert,
   toggleable,
@@ -54,7 +56,7 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({
     <Checkbox
       {...props}
       checked={value !== undefined && value !== !!invert}
-      id={name}
+      id={id}
       name={name}
       onChange={onChange}
       type="checkbox"
