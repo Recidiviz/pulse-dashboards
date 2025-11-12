@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { toDateList } from "~datatypes";
+
 import { toTitleCase } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 
@@ -27,6 +29,11 @@ class UsTxHomeContactEdgeCaseTask extends Task<"usTxHomeContactEdgeCase"> {
 
   get frequency(): string {
     return toTitleCase(this.details.contactCadence);
+  }
+
+  get scheduledContactDates() {
+    if (!this.details.scheduledContactDates) return;
+    return toDateList(this.details.scheduledContactDates);
   }
 }
 

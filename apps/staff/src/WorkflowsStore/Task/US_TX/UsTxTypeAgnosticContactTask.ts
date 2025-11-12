@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fieldToDate } from "~datatypes";
+import { fieldToDate, toDateList } from "~datatypes";
 
 import { formatWorkflowsDate, generateSerialListString } from "../../../utils";
 import { toTitleCase } from "../../../utils/formatStrings";
@@ -55,6 +55,11 @@ class UsTxTypeAgnosticContactTask<
 
   get frequency(): string {
     return toTitleCase(this.details.contactCadence);
+  }
+
+  get scheduledContactDates() {
+    if (!this.details.scheduledContactDates) return;
+    return toDateList(this.details.scheduledContactDates);
   }
 }
 

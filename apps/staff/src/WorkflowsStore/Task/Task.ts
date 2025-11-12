@@ -111,6 +111,24 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     return "";
   }
 
+  get scheduledContactDates(): Date[] | undefined {
+    // This is reimplemented directly on the classes for the tasks that currently use it
+    return;
+  }
+
+  // A contact was scheduled if any of the scheduled contact dates for this person
+  // are in the future.
+  get futureScheduledContacts(): Date[] | undefined {
+    if (!this.scheduledContactDates) return undefined;
+    return this.scheduledContactDates.filter((date) => date >= startOfToday());
+  }
+
+  get hasFutureScheduledContact(): boolean {
+    return Boolean(
+      this.futureScheduledContacts && this.futureScheduledContacts.length > 0,
+    );
+  }
+
   get snoozeInfo(): SnoozeInfo | undefined {
     if (!this.updates?.snoozedOn) return;
     return {

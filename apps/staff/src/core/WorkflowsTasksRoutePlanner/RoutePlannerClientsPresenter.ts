@@ -28,6 +28,7 @@ import {
 } from "~hydration-utils";
 
 import { GeocodingResponse, GeocodingStatus } from "../../FirestoreStore";
+import { formatWorkflowsDateWithoutYear } from "../../utils";
 import { PartialRecord } from "../../utils/typeUtils";
 import {
   Client,
@@ -134,7 +135,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     "We couldn't find any results for this address. Please check for typos and correct the address in OIMS. Updates in OIMS will be reflected in 1-2 business days.";
 
   /**
-   * @returns copy used in ClientCard for a specific task
+   * @returns copy and information used in ClientCard for a specific task
    */
   getClientCardCopy(task: SupervisionTask) {
     const person = task.person as Client;
@@ -144,7 +145,10 @@ export class RoutePlannerClientsPresenter implements Hydratable {
         this.SHORT_SUPERVISION_LEVEL_COPY[person.supervisionLevel] ?? "Other",
       supervisionTooltip: person.supervisionLevel,
       type: this.TASK_TYPE_COPY[task.type] ?? "Other",
-      scheduledStatus: "To-Do",
+      scheduledStatus: task.hasFutureScheduledContact
+        ? `Scheduled for ${task.futureScheduledContacts?.map((date) => formatWorkflowsDateWithoutYear(date)).join(", ")}`
+        : "To-Do",
+      isScheduled: task.hasFutureScheduledContact,
     };
   }
 

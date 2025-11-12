@@ -254,6 +254,10 @@ function formatWorkflowsDateWithTime(date?: Date): string {
   return formatDate(date, "MMM d, yyyy h:mm a");
 }
 
+function formatWorkflowsDateWithoutYear(date?: Date): string {
+  return formatDate(date, "MMM d");
+}
+
 function formatWorkflowsDateString(
   date?: string | null,
   fallback = "Unknown",
@@ -632,6 +636,7 @@ export {
   formatTexasAddress,
   formatWorkflowsDate,
   formatWorkflowsDateString,
+  formatWorkflowsDateWithoutYear,
   formatWorkflowsDateWithTime,
   formatYearsMonthsFromNow,
   genderValueToHumanReadable,

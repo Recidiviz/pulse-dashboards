@@ -60,3 +60,11 @@ export const dateStringSchema = dateStringSchemaWithoutTimeShift.transform(
     return value;
   },
 );
+
+/**
+ * Helper function that parses an array of dates from the provided string and returns the array.
+ * @param dates A list of 0 or more ISO-formatted date strings separated by commas
+ */
+export function toDateList(dates: string): Date[] {
+  return dates.split(", ").map((date) => dateStringSchema.parse(date));
+}

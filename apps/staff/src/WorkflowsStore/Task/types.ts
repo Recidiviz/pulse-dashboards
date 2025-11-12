@@ -80,6 +80,7 @@ type UsTxContactDetails = {
   overdueFlag: boolean;
   typeOfContact: string;
   contactCadence: string;
+  scheduledContactDates: string | null;
 };
 
 type UsTxOverridableContactDetails = UsTxContactDetails & {
@@ -98,11 +99,13 @@ type UsTxTypeAgnosticContactDetails = {
   contactTypesAccepted: string;
   officerInCriticallyUnderstaffedLocation: boolean;
   overrideContactTypesAccepted: string;
+  scheduledContactDates: string | null;
 };
 
 type UsTxEdgeCaseContactDetails = {
   reasonForContact: string;
   contactCadence: string;
+  scheduledContactDates: string | null;
 };
 
 type UsTxAssessmentDetails = {
@@ -208,6 +211,13 @@ export type SupervisionTask<
   dueDateDisplayLong: string;
   dueDateDisplayShort: string;
   frequency: string;
+
+  // these fields refer to appointments, rather than whether the contact is called a
+  // "scheduled contact" or "unscheduled contact"
+  scheduledContactDates: Date[] | undefined;
+  futureScheduledContacts: Date[] | undefined;
+  hasFutureScheduledContact: boolean;
+
   additionalDetails?: string;
   vitalsMetricId?: VitalsMetricId;
   updateSupervisionTask: (snoozeForDays?: number) => void;
