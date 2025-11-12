@@ -76,6 +76,7 @@ import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import {
   AtLeastOneTrue,
   AutoSnoozeUpdate,
+  ClientAddressUpdate,
   ContactMethodType,
   ExternalSystemRequestStatus,
   FormUpdate,
@@ -374,6 +375,17 @@ export default class FirestoreStore {
     );
 
     return this.updateClientUpdatesV2Document(recordId, taskDocRef, update);
+  }
+
+  async updateAddressUpdates(
+    recordId: string,
+    update: PartialWithFieldValue<ClientAddressUpdate>,
+  ) {
+    const addressDocRef = this.doc({ key: "clientUpdatesV2" }, recordId);
+
+    return this.updateClientUpdatesV2Document(recordId, addressDocRef, {
+      addressUpdate: update,
+    });
   }
 
   async updateForm(

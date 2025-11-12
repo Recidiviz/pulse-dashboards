@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { UpdateLog } from "./metadata";
+
 export type PersonUpdateType = "preferredName" | "preferredContactMethod";
 export const contactMethods = ["Call", "Text", "Email", "None"];
 export type ContactMethodType = (typeof contactMethods)[number];
@@ -29,4 +31,36 @@ export type PortionServedDates = {
 export type PersonUpdateRecord = {
   preferredName?: string;
   preferredContactMethod?: ContactMethodType;
+
+  // Information related to Google Maps Geocoding API results for a client's address
+  addressUpdate?: ClientAddressUpdate;
 };
+
+export enum GeocodingStatus {
+  // The request succeeded and gave a result referring to a valid street address
+  Success = "SUCCESS",
+  // The request succeeded but returned multiple results, zero results, or a result
+  // referring to a non-street address
+  BadResult = "BAD_RESULT",
+  // The request resulted in an error
+  Error = "ERROR",
+}
+
+export type GeocodingResponse =
+  | {
+      status: GeocodingStatus.BadResult | GeocodingStatus.Error;
+      placeId?: never;
+    }
+  | {
+      status: GeocodingStatus.Success;
+      placeId: string;
+    };
+
+export type ClientAddressInfo = {
+  address: string; // The address we sent to Google Maps Geocoding API
+  result: GeocodingResponse; // The response from Google Maps Geocoding API
+};
+
+export type ClientAddressUpdate = {
+  updated: UpdateLog;
+} & ClientAddressInfo;

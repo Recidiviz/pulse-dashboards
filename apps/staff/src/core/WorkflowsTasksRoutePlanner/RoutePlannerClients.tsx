@@ -45,6 +45,7 @@ import {
   TooltipSectionDetails,
   TooltipSectionHeader,
 } from "../sharedComponents";
+import { InfoButton } from "../WorkflowsJusticeInvolvedPersonProfile/InfoButton";
 import { WorkflowsTooltip } from "../WorkflowsTooltip";
 import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
 
@@ -225,19 +226,22 @@ const ClientCard = observer(function ClientCard({
 
   const isSelected = presenter.isPersonSelected(person);
   const ordinalRank = presenter.indexOfPerson(person) + 1;
-  const isSelectable = person.formattedAddress !== undefined;
+
+  const hasAddress = person.formattedAddress !== undefined;
+  const hasBadAddress = presenter.hasBadAddress(person);
+  const isSelectable = hasAddress && !hasBadAddress;
 
   return (
     <BorderedClientCard
       $selectable={isSelectable}
       $selected={isSelected}
-      onClick={() => {
+      onClick={async () => {
         if (!isSelectable) return;
 
         if (isSelected) {
           presenter.removePerson(person);
         } else {
-          presenter.addPerson(person);
+          await presenter.addPerson(person);
         }
       }}
     >
@@ -264,18 +268,28 @@ const ClientCard = observer(function ClientCard({
           <InfoRow>
             <LocationIcon />
 
-            {person.address ? (
-              <a
-                href={presenter.mapsAddressLink(person.address)}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => {
-                  // Prevent link clicks from also selecting the person's card
-                  e.stopPropagation();
-                }}
-              >
-                <SmallInfoLink>{person.address}</SmallInfoLink>
-              </a>
+            {person.formattedAddress ? (
+              <>
+                <a
+                  href={presenter.mapsAddressLink(person.formattedAddress)}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => {
+                    // Prevent link clicks from also selecting the person's card
+                    e.stopPropagation();
+                  }}
+                >
+                  <SmallInfoLink>{person.address}</SmallInfoLink>
+                </a>
+                {hasBadAddress && (
+                  <TooltipTrigger
+                    contents={presenter.badAddressCopy}
+                    maxWidth={340}
+                  >
+                    <InfoButton infoUrl={undefined} />
+                  </TooltipTrigger>
+                )}
+              </>
             ) : (
               <SmallInfoText>No address on file</SmallInfoText>
             )}

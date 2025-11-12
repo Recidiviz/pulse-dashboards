@@ -216,10 +216,10 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
         <AddressDivider />
 
         {presenter.clientsPresenter.selectedClients.map((client, i) => {
+          // TODO(#9712) Remove this cast
           const { formattedAddress, displayPreferredName } = client as Client;
           if (!formattedAddress) return null;
           return (
-            // TODO(#9712) Remove this cast
             <React.Fragment key={client.pseudonymizedId}>
               <AddressRow
                 address={formattedAddress}

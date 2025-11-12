@@ -104,16 +104,17 @@ export class RoutePlannerPresenter {
   // Emailing the user with the URL of the map route
 
   /**
-   * Return a URL that can be opened in a browser to show the current route, using
-   * the Google Maps Directions URLs API
+   * Return a URL that can be opened in a browser to show the current route in Google Maps.
+   * The URL is structured using the Google Maps URLs API in "directions" mode.
    */
   get mapDirectionsUrl(): string {
     const { selectedAddresses } = this.clientsPresenter;
+    const formattedWaypoints = selectedAddresses.join("|");
     const waypoints =
       selectedAddresses.length === 0
         ? {}
         : {
-            waypoints: selectedAddresses.join("|"),
+            waypoints: formattedWaypoints,
           };
 
     const queryParams = {
@@ -176,15 +177,17 @@ export class RoutePlannerPresenter {
   // Embedding the map itself
 
   /**
-   * Return a URL of a route from the Google Maps Embed API in "directions" mode
+   * Return a URL that can be used as the source of an iframe to show a route
+   * in Google Maps. The URL is structured using the Google Maps Embed API in "directions" mode
    */
   get mapIframeUrl(): string {
     const { selectedAddresses } = this.clientsPresenter;
+    const formattedWaypoints = selectedAddresses.join("|");
     const waypoints =
       selectedAddresses.length === 0
-        ? { waypoints: "" }
+        ? { waypoints: "" } // TODO(#10069): change embed when there are no addresses
         : {
-            waypoints: selectedAddresses.join("|"),
+            waypoints: formattedWaypoints,
           };
 
     const queryParams = new URLSearchParams({

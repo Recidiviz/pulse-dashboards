@@ -558,7 +558,6 @@ function formatTexasAddress(address: string): string {
   const capitalizationExceptions = [
     "TX", // Texas
     "FM", // Farm-to-market road
-    "CR", // County road
     "PR", // Private road
     "RV", // Recreational vehicle
     "SW", // Southwest
@@ -595,6 +594,9 @@ function formatTexasAddress(address: string): string {
         // Remove any double spaces and any words that contain a phone number
         if (!word || word.match(/(1.?)?\d{3}.?\d{3}.?\d{4}/)) {
           return [];
+        } else if (word === "CR") {
+          // Special case: normalize County Road
+          return ["Co", "Rd"];
         } else if (capitalizationExceptions.includes(word)) {
           return [word];
         } else {

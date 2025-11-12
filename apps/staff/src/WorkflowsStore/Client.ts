@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { subYears } from "date-fns";
 import dedent from "dedent";
 import { deleteField, FieldValue, serverTimestamp } from "firebase/firestore";
 import { capitalize, mapValues, toUpper } from "lodash";
@@ -35,6 +36,8 @@ import {
 import { reasonsIncludesOtherKey } from "../core/utils/workflowsUtils";
 import { workflowsUrl } from "../core/views";
 import {
+  ClientAddressInfo,
+  ClientAddressUpdate,
   DeclineReason,
   MilestonesMessage,
   PortionServedDates,
@@ -278,6 +281,37 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     if (this.stateCode !== "US_TX") return this.address;
 
     return formatTexasAddress(this.address);
+  }
+
+  // The user-generated data about this person's address, from clientUpdatesV2 in Firestore
+  get addressUpdate(): ClientAddressUpdate | undefined {
+    return this.updates?.addressUpdate;
+  }
+
+  // This person's address update in Firestore is currently valid iff
+  // we got a result that wasn't Error for their current address within the past year.
+  // (Google Maps recommends refreshing Place IDs that are more than 12 months old.)
+  // If this method returns undefined, there is no valid address update.
+  get validatedAddressUpdate() {
+    const { addressUpdate, formattedAddress } = this;
+    if (
+      addressUpdate &&
+      addressUpdate.address === formattedAddress &&
+      addressUpdate.updated.date.toDate() > subYears(new Date(), 1)
+    ) {
+      return addressUpdate;
+    }
+  }
+
+  async updateAddressUpdates(info: ClientAddressInfo) {
+    const updated = {
+      by: this.rootStore.workflowsStore.currentUserEmail,
+      date: serverTimestamp(),
+    };
+    await this.rootStore.firestoreStore.updateAddressUpdates(this.recordId, {
+      updated,
+      ...info,
+    });
   }
 
   get rawPhoneNumber(): string | undefined {
