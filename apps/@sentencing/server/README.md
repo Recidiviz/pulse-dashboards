@@ -40,7 +40,7 @@ Complete the initial dependency setup by following the instructions in the root 
 **Step 1: Obtain Feature Access & Permissions**
 The PSI/Sentencing features are currently configured for certain states. You need a Auth0 user account associated with these states to proceed.
 
-Submit an access request through the Security team to be granted access to North Dakota (ND) and Idaho (ID) via our Auth0 staging tenant.
+Submit an access request through the Security team to be granted access to North Dakota (ND), Idaho (ID), or Missouri (MO) via our Auth0 staging tenant.
 
 **Step 2: Load Environment Variables**
 Before running the server, you must securely fetch the necessary secrets (like `AUTH0_CLIENT_SECRET` and database URLs) from Google Cloud Secret Manager.
@@ -91,9 +91,9 @@ Note: This is just for the application to support a new state. You will still ne
 
 Note: this process is the same for both staging and production.
 
-1. For the new state, create a new database in the Cloud SQL instance. The naming convention for these databases is the tenant id in all lowercase, like `us_ca` for California.
+1. Add the new state database to the Terraform configuration. In `libs/atmos/components/terraform/apps/sentencing/main.tf`, add the state code (in lowercase) to the `additional_databases` list in the `module.database` block. The naming convention for these databases is the tenant id in all lowercase, like `us_ca` for California. After merging and applying the Terraform changes, the database will be created automatically in the Cloud SQL instance along with its corresponding Google Secret Manager secret for the connection string.
 
-2. Next, add a new environment variable for the new state's database connection string to `env_[prod/staging]_sentencing_server` in Google Secrets. The naming convention for these environment variables is `DATABASE_URL_{STATE_ABBREVIATION}`. For example, if you wanted to add support for the state of California, you would add an environment variable called `DATABASE_URL_US_CA` with the connection string for the California database.
+2. Next, add a new environment variable for the new state's database connection string to the `sentencing_server.enc.yaml` file located at `libs/atmos/components/terraform/env-secrets/secrets/sentencing_server.enc.yaml`. You'll need to decrypt the file with SOPS, add the `DATABASE_URL_{STATE_ABBREVIATION}` variable to both `env_staging_sentencing_server` and `env_prod_sentencing_server` sections, then re-encrypt it. For example, if you wanted to add support for the state of California, you would add an environment variable called `DATABASE_URL_US_CA`. You can find the connection string value in the Google Secret Manager secret that was automatically created by Terraform in step 1 (it will be named `sentencing_us_ca_db_url`).
 
 3. Under the `migrate-db` target in the `sentencing` `project.json` file, append `DATABASE_URL_{STATE_ABBREVIATION}=$DATABASE_URL_{STATE_ABBREVIATION}` to the `--set-env-vars` portion of the `command`. This will ensure that the database migration job has the correct environment variables.
 
