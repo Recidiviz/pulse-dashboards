@@ -11,7 +11,7 @@ gcloud run jobs deploy ss-migrate-preview-db-$VERSION \
   --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server-preview:$VERSION \
   --region us-central1 --execute-now --wait \
   --command ./scripts/migrate-dbs.sh \
-  --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID-$VERSION,DATABASE_URL_US_ND=$DATABASE_URL_US_ND-$VERSION \
+  --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID-$VERSION,DATABASE_URL_US_ND=$DATABASE_URL_US_ND-$VERSION,DATABASE_URL_US_MO=$DATABASE_URL_US_MO-$VERSION, \
   --project recidiviz-dashboard-staging \
   --set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION \
   --service-account sentencing@recidiviz-dashboard-staging.iam.gserviceaccount.com
