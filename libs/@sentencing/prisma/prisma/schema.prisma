@@ -87,6 +87,10 @@ model Staff {
   // TODO(Recidiviz/recidiviz-data#40011) Make this a self-relation and update metric exports to include supervisee data
   supervisorId  String?
   supervisesAll Boolean?
+
+  // SAR-specific fields for Missouri
+  officeAddress     String?
+  officePhoneNumber String?
 }
 
 model Client {
@@ -98,6 +102,7 @@ model Client {
   gender    Gender
   birthDate DateTime
   cases     Case[]
+  sentencingAssessmentReports SentencingAssessmentReport[]
 
   // County and District fields must be mutually exclusive (this is currently enforced via SQL)
   // If a county is ever set, it will always include the district, and must be the single source of truth for both fields
@@ -111,6 +116,12 @@ model Client {
   isGenderLocked Boolean @default(false)
   // Whether the county of residence is locked and cannot be changed
   isCountyLocked Boolean @default(false)
+
+  // SAR-specific fields for Missouri
+  ssn          String?
+  motherName   String?
+  fatherName   String?
+  guardianName String?
 }
 
 enum ReportType {
@@ -248,6 +259,71 @@ enum ProtectiveFactor {
   Other
 }
 
+// SAR-specific enums
+enum Division {
+  Criminal
+  Juvenile
+  Family
+}
+
+enum FelonyClass {
+  ClassA
+  ClassB
+  ClassC
+  ClassD
+  ClassE
+  Unclassified
+}
+
+enum LevelOfEducation {
+  NoFormalSchooling
+  ElementarySchool
+  MiddleSchool
+  SomeHighSchool
+  HighSchoolDiplomaOrGED
+  SomeCollege
+  AssociateDegree
+  BachelorsDegree
+  MastersDegree
+  DoctorateDegree
+}
+
+enum AssessmentType {
+  ORAS_CST
+  ORAS_PST
+  ORAS_REENTRY
+  Other
+}
+
+enum SubstanceType {
+  Alcohol
+  Marijuana
+  Cocaine
+  Methamphetamine
+  Heroin
+  Prescription_Opioids
+  Benzodiazepines
+  Hallucinogens
+  Inhalants
+  Other
+}
+
+enum FrequencyOfUse {
+  Daily
+  Weekly
+  Monthly
+  Occasionally
+  Rarely
+}
+
+enum MethodOfUse {
+  Oral
+  Smoking
+  Injection
+  Snorting
+  Other
+}
+
 model Opportunity {
   id                  String              @id @default(cuid())
   lastUpdatedAt       DateTime
@@ -298,6 +374,7 @@ model Offense {
   mandatoryMinimums MandatoryMinimum[]
 
   Case                  Case[]
+  Charge                Charge[]
   insightOffenses       Insight[] @relation("InsightOffenses")
   insightRollupOffenses Insight[] @relation("InsightRollupOffenses")
 }
@@ -484,4 +561,115 @@ model District {
   counties  County[]
   Case      Case[]
   Client    Client[]
+}
+
+// SAR-specific models for Missouri
+model SentencingAssessmentReport {
+  externalId String    @id
+  id         String    @unique @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  status    CaseStatus @default(NotYetStarted)
+
+  client   Client @relation(fields: [clientId], references: [externalId])
+  clientId String
+
+  // Basic case information
+  requestingJudgeName String?   // Judge who requested the report
+  dateRequested       DateTime? // When the report was requested
+  dateDueToCourt      DateTime? // Deadline for the report
+  division            Division?
+  address             String?
+
+  // Needs and factors
+  needsToBeAddressed NeedToBeAddressed[]
+  mitigatingFactors  NeedToBeAddressed[] // Using same enum structure as needsToBeAddressed
+
+  // Education
+  levelOfEducation LevelOfEducation?
+
+  // ORAS Assessment data (point-in-time snapshot)
+  assessmentScore           Int?
+  assessmentType            AssessmentType?
+  assessmentDate            DateTime?
+  assessmentAdministeredBy  String?
+  criminalHistoryLevel      Int?
+  educationLevelScore       Int? // Renamed to avoid confusion with levelOfEducation
+  neighborhoodLevel         Int?
+  substanceAbuseLevel       Int?
+  familySocialSupportLevel  Int?
+  peerAssociatesLevel       Int?
+  criminalBehaviorLevel     Int?
+
+  // Free text sections
+  defendantStatement            String?
+  victimImpactStatement         String?
+  criminalHistorySummary        String?
+  employerAtOffense             String?
+  currentEmployer               String?
+  employmentSummary             String?
+  familyAndSocialSupportSummary String?
+  homePlan                      String?
+  housingSummary                String?
+  drugHistorySummary            String?
+  peerAssociatesSummary         String?
+  criminalAttitudesSummary      String?
+  responsivityAndBarriersSummary String?
+  communityStrategyRecommendation String?
+  institutionalStrategyRecommendation String?
+
+  // Relationships
+  charges      Charge[]
+  drugHistories DrugHistory[]
+
+  // Metadata stored as JSON
+  // Tracks form completion state including:
+  // - sectionsCompleted: string[] - Sections that have been filled out
+  // - sectionsSkipped: string[] - Sections that were intentionally skipped
+  // - sectionsInProgress: string[] - Sections that were started but not completed
+  metadata Json?
+}
+
+model Charge {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sentencingAssessmentReport   SentencingAssessmentReport @relation(fields: [sentencingAssessmentReportId], references: [id], onDelete: Cascade)
+  sentencingAssessmentReportId String
+
+  // Offense information
+  offense   Offense @relation(fields: [offenseId], references: [id])
+  offenseId String
+
+  // Charge details (locked fields from import)
+  felonyClass FelonyClass?
+  caseNum     String?
+  moCode      String?
+  judgeName   String?
+  division    Division?
+
+  // Attorneys
+  prosecutingAttorney String?
+  defenseAttorney     String?
+
+  // Plea information
+  pleaAgreement Plea?
+  pleaDate      DateTime?
+  sentencingDate DateTime?
+}
+
+model DrugHistory {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sentencingAssessmentReport   SentencingAssessmentReport @relation(fields: [sentencingAssessmentReportId], references: [id], onDelete: Cascade)
+  sentencingAssessmentReportId String
+
+  substance       SubstanceType?
+  ageOfRegularUse Int?
+  lastUse         DateTime?
+  heaviestUse     FrequencyOfUse?
+  method          MethodOfUse?
 }

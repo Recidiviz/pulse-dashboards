@@ -35,6 +35,8 @@ export const SupervisorInfoFixture: Supervisor = {
         email: "staff.member@example.com",
         supervisorId: null,
         supervisesAll: null,
+        officeAddress: null,
+        officePhoneNumber: null,
       },
     ],
   },
@@ -47,4 +49,7 @@ export const SupervisorInfoFixture: Supervisor = {
   supervisorId: null,
   supervisesAll: null,
   externalId: undefined,
+  officeAddress: null,
+  officePhoneNumber: null,
+  
 };
