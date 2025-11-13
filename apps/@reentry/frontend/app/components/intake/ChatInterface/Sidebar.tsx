@@ -110,10 +110,10 @@ const Sidebar: FC<SidebarProps> = ({ onClose }) => {
         </div>
 
         <div className="flex flex-col gap-0.3 pt-0.3 pb-1.5 flex-1 w-full">
-          <h3 className="text-sm font-bold leading-snug tracking-tight text-[#012322]">
+          <h3 className="text-[16px] font-bold leading-snug tracking-tight text-[#012322]">
             {text}
           </h3>
-          <p className="font-public text-sm font-medium leading-snug tracking-tight text-[#2B5469D9] w-full">
+          <p className="font-public text-[16px] font-medium leading-snug tracking-tight text-[#2B5469D9] w-full">
             {description}
           </p>
         </div>

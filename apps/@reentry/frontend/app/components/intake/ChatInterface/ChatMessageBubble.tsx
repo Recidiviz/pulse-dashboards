@@ -143,7 +143,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
             <div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-white text-[#1E3A3A] break-words">
               <Typography
                 variant="body1"
-                className="font-inter text-[16px] leading-[1.2] font-normal break-words whitespace-pre-wrap"
+                className="font-inter !text-[18px] leading-[1.2] font-normal break-words whitespace-pre-wrap"
               >
                 {isTyping ? <TypingDots /> : message?.content}
               </Typography>
