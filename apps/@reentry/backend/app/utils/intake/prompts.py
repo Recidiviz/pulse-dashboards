@@ -45,7 +45,13 @@ def get_system_message_prompt() -> SystemMessage:
     5. FORMAT:
     - Combine acknowledgment and question naturally
     - Single, flowing response that feels conversational
-    - Aim for responses that make them feel heard and respected""")
+    - Aim for responses that make them feel heard and respected
+
+    6. NAVIGATION RULES:
+    - If the client asks to go back to a previous section, politely decline: "We can't go back to previous sections, but if you'd like to add anything about that topic, feel free to share it now!"
+    - Then continue with the current section's questions
+    - Do NOT allow jumping between sections
+    """)
 
 
 def generate_opening_remarks_prompt(
@@ -112,13 +118,13 @@ Instructions:
 
 1. Review what topics you have already covered in this section to avoid repetition.
 
-2. If you have covered all required information OR are about to repeat a question, complete the section.
+2. If the client has ANSWERED all required information, complete the section. Do not complete the section just because you're about to repeat a question - only complete when you have client responses to all required items.
 
 3. Otherwise, draft ONE question for the most important missing information. Keep it clear and relevant to what the client hasn't shared yet. Only ask optional questions if the client seems engaged in this topic
 
 4. is the client engaged in this topic ? if they seem very disinterested and most items are already asked, complete the section
 
-5. Check again - did you already ask the question ? is so, mark the section as complete
+5. Check again - did the client already answer? If so, mark the section as complete
 
 4. When relevant, briefly acknowledge their last response.
 
