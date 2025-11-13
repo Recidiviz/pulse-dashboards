@@ -21,7 +21,10 @@ import { useRootStore } from "../../../../components/StoreProvider";
 import { RootStore } from "../../../../RootStore";
 import { UsIaEarlyDischargeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsIa";
 import { OpportunitySidePanelProvider } from "../../../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
-import { deleteSubmitted, markSubmittedAndToast } from "../../MenuButton";
+import {
+  deleteSubmitted,
+  markSubmittedAndToast,
+} from "../../SubmissionMenuButton";
 import UsIaMenuButton from "../UsIaMenuButton";
 
 vi.mock("../../../../components/StoreProvider", () => ({
