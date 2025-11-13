@@ -57,11 +57,34 @@
         "command": "env-cmd -f .env.offline wdio ./wdio.conf.js --suite workflows --retry 2"
       }
     },
-    "test-zod": {
+    "copy-service-accounts": {
       "executor": "nx:run-commands",
       "options": {
+        "commands": [
+          "cp ../../libs/staff-shared-server/recidiviz-*-firebase-service-account.json . 2>/dev/null || echo 'No service account files found to copy'"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "validate-service-accounts": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test -f recidiviz-dev-firebase-service-account.json || (echo 'Missing service account file. Run: nx load-dev-config-files staff-shared-server && nx copy-service-accounts staff' && exit 1)",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test-zod": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["staff-shared-server"],
+          "target": "load-dev-config-files"
+        },
+        "copy-service-accounts"
+      ],
+      "options": {
         "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_dev_server && vite-node tools/testZodSchema.ts'"
+        "command": "bash -c '. load_environment.sh env_dev_server && vite-node tools/testZodSchema.ts {args}'"
       }
     },
     "env-dev-spa": {

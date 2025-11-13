@@ -19,8 +19,10 @@
 
 import { Firestore } from "@google-cloud/firestore";
 import { ArgumentParser } from "argparse";
+import fs from "fs";
 import prompts from "prompts";
 import { z } from "zod";
+import { $ } from "zx";
 
 import {
   clientRecordSchema,
@@ -79,6 +81,24 @@ import { usTnSuspensionOfDirectSupervisionSchema } from "../src/WorkflowsStore/O
 import { usUtEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsUt";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
+
+async function ensureServiceAccountExists(): Promise<void> {
+  if (FIREBASE_CREDENTIAL && !fs.existsSync(FIREBASE_CREDENTIAL)) {
+    console.log(`Service account file not found: ${FIREBASE_CREDENTIAL}`);
+    console.log('Attempting to refresh service account files...');
+    try {
+      await $`nx copy-service-accounts staff`;
+      if (!fs.existsSync(FIREBASE_CREDENTIAL)) {
+        throw new Error(`Service account file still not found after refresh: ${FIREBASE_CREDENTIAL}`);
+      }
+      console.log('Service account files refreshed successfully');
+    } catch (error) {
+      console.error('Failed to refresh service account files:', error);
+      console.log('Please run: nx load-dev-config-files staff-shared-server && nx copy-service-accounts staff');
+      throw error;
+    }
+  }
+}
 
 function getDb() {
   const fsSettings: FirebaseFirestore.Settings = FIREBASE_CREDENTIAL
@@ -449,8 +469,17 @@ type Args = {
 
 const args = parser.parse_args() as Args;
 
-if (args.all) {
-  automatic(args);
-} else {
-  manual(args);
+async function main() {
+  await ensureServiceAccountExists();
+
+  if (args.all) {
+    await automatic(args);
+  } else {
+    await manual(args);
+  }
 }
+
+main().catch(error => {
+  console.error('Script failed:', error);
+  process.exit(1);
+});

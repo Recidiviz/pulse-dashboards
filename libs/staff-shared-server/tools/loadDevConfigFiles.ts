@@ -30,6 +30,11 @@ const projectRootDir = path.join(__dirname, "../");
 // but because they are also referenced directly in code,
 // they should be inside src as well. giving them their own directory is cleaner
 const srcConfigsDir = path.join(__dirname, "../src/configs");
+// apps that need service account files copied to them
+const additionalCopyLocations = [
+  path.join(__dirname, "../../../apps/staff"),
+  // Add other apps that need service accounts here as needed
+];
 
 await Promise.all(
   Object.entries(serviceAccountSecretsToFiles).map(
@@ -40,10 +45,19 @@ await Promise.all(
         throw new Error(`unexpected empty config secret: ${secret}`);
       }
 
-      await Promise.all([
+      const copyOperations = [
         fs.writeFile(path.join(projectRootDir, filename), fileContents),
         fs.writeFile(path.join(srcConfigsDir, filename), fileContents),
-      ]);
+        // Copy to additional locations, with error handling
+        ...additionalCopyLocations.map(dir =>
+          fs.writeFile(path.join(dir, filename), fileContents).catch(err => {
+            console.warn(`Could not copy ${filename} to ${dir}:`, err.message);
+          })
+        )
+      ];
+
+      await Promise.all(copyOperations);
+      console.log(`Updated ${filename} in ${2 + additionalCopyLocations.length} locations`);
     },
   ),
 );
