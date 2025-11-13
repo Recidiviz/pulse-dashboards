@@ -196,6 +196,12 @@ CATEGORY_SUBCATEGORY_MAP: dict[ResourceCategory, list[ResourceSubcategory]] = {
     ],
 }
 
+SUBCATEGORY_TO_CATEGORY = {
+    subcategory: category
+    for category, subcategories in CATEGORY_SUBCATEGORY_MAP.items()
+    for subcategory in subcategories
+}
+
 
 def validate_categorization(
     category: ResourceCategory, subcategory: ResourceSubcategory
