@@ -59,7 +59,7 @@ const LoadingSpinner = ({
       <div className="w-12 h-12 border-4 border-gray-400 border-t-transparent rounded-full animate-spin mb-4" />
       <p
         className={
-          "flex justify-center items-center mb-4 text-[#2b5469]/70 text-base"
+          "flex justify-center items-center mb-4 text-[#2b5469]/70 text-base px-2 md:px-0 "
         }
       >
         <>{message}</>

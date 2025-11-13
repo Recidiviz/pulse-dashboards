@@ -317,7 +317,7 @@ const ActionPlanPage = () => {
           {isPolling && (
             <LoadingSpinner
               progress={progress || 0}
-              message={message || ""}
+              message={`${message}. This may take several minutes, so feel free to return to this page later.`}
               startTime={startTime || 0}
               regenerationInProgress={isPolling}
               regenerationMessage={regenerationMessage}
