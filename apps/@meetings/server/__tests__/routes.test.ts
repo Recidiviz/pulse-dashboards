@@ -35,6 +35,7 @@ import * as tasks from "~@meetings/tasks";
 
 const FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT = {
   confidence: 0.95,
+  summary: "This is a mock summary of the transcription.",
   utterances: [
     {
       confidence: 0.98,
@@ -60,6 +61,7 @@ const FAKE_DEEPGRAM_TRANSCRIPT_OBJECT = {
         language_confidence: 0.5,
       },
     ],
+    summary: { result: "This is a mock summary of the transcription." },
     utterances: [
       {
         confidence: 0.98,
@@ -521,6 +523,7 @@ describe("tasks", () => {
               provider: TranscriptionProvider.ASSEMBLYAI,
               transcriptObject: FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
               confidence: 0.95,
+              summary: "This is a mock summary of the transcription.",
               utterances: expect.arrayContaining([
                 expect.objectContaining({
                   text: "This is the second mock transcription sentence.",
@@ -542,6 +545,7 @@ describe("tasks", () => {
               provider: TranscriptionProvider.DEEPGRAM,
               transcriptObject: FAKE_DEEPGRAM_TRANSCRIPT_OBJECT,
               confidence: 0.5,
+              summary: "This is a mock summary of the transcription.",
               utterances: expect.arrayContaining([
                 expect.objectContaining({
                   text: "This is the second mock transcription sentence.",

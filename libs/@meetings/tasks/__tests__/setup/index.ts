@@ -90,6 +90,7 @@ export const mockAssemblyAI = mock<AssemblyAI>({
       id: "mock-transcript-id",
       status: "completed",
       text: "This is a mock transcription.",
+      summary: "This is a mock summary of the transcription.",
       words: [
         {
           text: "This",
@@ -184,23 +185,31 @@ export const mockDeepgram = mock<DeepgramClient>({
   listen: {
     prerecorded: {
       transcribeUrl: vi.fn().mockResolvedValue({
-        utterances: [
-          {
-            confidence: 0.96,
-            end: 1800,
-            speaker: 0,
-            start: 0,
-            transcript: "This is a mock transcription.",
-          },
-        ],
+        result: {
+          summary: "This is a mock summary of the transcription.",
+          utterances: [
+            {
+              confidence: 0.96,
+              end: 1800,
+              speaker: 0,
+              start: 0,
+              transcript: "This is a mock transcription.",
+            },
+          ],
+        },
       }),
     },
   },
 });
 
 // Mock Deepgram client
-vi.mock("@deepgram/sdk", () => ({
-  createClient: vi.fn().mockImplementation(() => {
-    return mockDeepgram;
-  }),
-}));
+vi.mock("@deepgram/sdk", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    // @ts-expect-error TS is unhappy about spreading 'actual' here
+    ...actual,
+    createClient: vi.fn().mockImplementation(() => {
+      return mockDeepgram;
+    }),
+  };
+});

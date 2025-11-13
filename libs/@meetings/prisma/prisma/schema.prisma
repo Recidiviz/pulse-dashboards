@@ -180,6 +180,7 @@ model Transcription {
   transcriptObject Json
   confidence       Float?
   utterances       Utterance[]
+  summary          String?
 
   meeting   Meeting? @relation(fields: [meetingId], references: [id])
   meetingId String?

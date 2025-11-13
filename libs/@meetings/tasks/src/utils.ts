@@ -264,6 +264,9 @@ export async function transcribeAudioWithAssemblyAI(
     punctuate: true,
     speech_model: "universal",
     language_detection: true,
+    summarization: true,
+    summary_model: "conversational",
+    summary_type: "bullets_verbose",
   });
 
   if (transcriptionResult.error) {
@@ -311,7 +314,6 @@ export async function transcribeAudioWithDeepgram(
 
   const deepgramClient = createClient(apiKey);
 
-  // TODO(#10407): Add custom speaker labels once the API supports it
   const transcriptionResult =
     await deepgramClient.listen.prerecorded.transcribeUrl(
       { url },
@@ -319,6 +321,7 @@ export async function transcribeAudioWithDeepgram(
         model: "nova-3",
         punctuate: true,
         diarize: true,
+        summarize: true,
       },
     );
 

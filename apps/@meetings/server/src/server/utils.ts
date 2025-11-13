@@ -132,6 +132,7 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
       provider: TranscriptionProvider.ASSEMBLYAI,
       transcriptObject: assemblyAiTransriptionResult,
       confidence: assemblyAiTransriptionResult.confidence,
+      summary: assemblyAiTransriptionResult.summary,
       utterances: {
         createMany: {
           data: cleanedAssemblyAIUtterances,
@@ -162,6 +163,7 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
       confidence:
         deepgramTranscriptionResult.results.channels[0]?.language_confidence ??
         0,
+      summary: deepgramTranscriptionResult.results.summary?.result,
       utterances: {
         createMany: {
           data: cleanedDeepgramUtterances,

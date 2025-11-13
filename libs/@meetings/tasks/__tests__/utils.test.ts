@@ -19,16 +19,22 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+import { DeepgramError } from "@deepgram/sdk";
 import { Storage } from "@google-cloud/storage";
 import { Transcript } from "assemblyai";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { GCS_API_ENDPOINT, mockAssemblyAI } from "~@meetings/tasks/test/setup";
+import {
+  GCS_API_ENDPOINT,
+  mockAssemblyAI,
+  mockDeepgram,
+} from "~@meetings/tasks/test/setup";
 import {
   cleanupOfflineFiles,
   getSignedUrlForNewRecording,
   stitchAudio,
   transcribeAudioWithAssemblyAI,
+  transcribeAudioWithDeepgram,
 } from "~@meetings/tasks/utils";
 
 const AUDIO_RECORDINGS_BUCKET_NAME = "test-audio-recordings";
@@ -123,7 +129,7 @@ describe("utils", () => {
     });
   });
 
-  describe("getAssemblyAITranscript", () => {
+  describe("transcribeAudioWithAssemblyAI", () => {
     test("Should throw error if transcription comes back with error", async () => {
       vi.mocked(mockAssemblyAI.transcripts.transcribe).mockResolvedValueOnce(
         {
@@ -156,6 +162,7 @@ describe("utils", () => {
         id: "mock-transcript-id",
         language_code: "en",
         status: "completed",
+        summary: "This is a mock summary of the transcription.",
         text: "This is a mock transcription.",
         utterances: [
           {
@@ -238,6 +245,48 @@ describe("utils", () => {
             speaker: "A",
             start: 1100,
             text: "transcription",
+          },
+        ],
+      });
+    });
+  });
+
+  describe("transcribeAudioWithDeepgram", () => {
+    test("Should throw error if transcription comes back with error", async () => {
+      vi.mocked(
+        mockDeepgram.listen.prerecorded.transcribeUrl,
+      ).mockResolvedValueOnce({
+        error: new DeepgramError("Mock transcription error"),
+        result: null,
+      });
+
+      await expect(
+        transcribeAudioWithDeepgram(
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          "transcription-test-folder/final.m4a",
+          "test-api-key",
+        ),
+      ).rejects.toThrow(
+        "Deepgram transcription failed: DeepgramError: Mock transcription error",
+      );
+    });
+
+    test("Should return transcript", async () => {
+      const transcript = await transcribeAudioWithDeepgram(
+        AUDIO_RECORDINGS_BUCKET_NAME,
+        "transcription-test-folder/final.m4a",
+        "test-api-key",
+      );
+
+      expect(transcript).toEqual({
+        summary: "This is a mock summary of the transcription.",
+        utterances: [
+          {
+            confidence: 0.96,
+            end: 1800,
+            speaker: 0,
+            start: 0,
+            transcript: "This is a mock transcription.",
           },
         ],
       });
