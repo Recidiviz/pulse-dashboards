@@ -74,7 +74,7 @@ const LinearChatComponent: React.FC = () => {
       <ConnectionErrorAlert />
       {/* Header */}
       <div className="relative max-w-full overflow-x-hidden">
-        <ChatHeader />
+        <ChatHeader isConversationInProgress={true} />
       </div>
       {/* Main content */}
       <div className="relative flex-1 flex overflow-hidden">

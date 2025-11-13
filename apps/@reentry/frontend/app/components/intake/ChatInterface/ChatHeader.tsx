@@ -17,11 +17,29 @@
 
 import { Box, Typography } from "@mui/material";
 import type React from "react";
+import { useState } from "react";
 
+import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { ClientAvatar } from "~@reentry/frontend/components/intake/ChatInterface/CustomAvatar";
+import EndChatModal from "~@reentry/frontend/components/intake/EndChatModal";
 import { useSocket } from "~@reentry/frontend/websockets/IntakeSocketContext";
 
-const ChatHeader: React.FC = () => {
+interface ChatHeaderProps {
+  isConversationInProgress?: boolean;
+}
+
+const ChatHeader: React.FC<ChatHeaderProps> = ({
+  isConversationInProgress = false,
+}: ChatHeaderProps) => {
+  const [isEndChatModalOpen, setIsEndChatModalOpen] = useState(false);
+  const onConfirmEndChat = () => {
+    sessionStorage.removeItem("intake_token");
+    sessionStorage.removeItem("preIntakeStep");
+    sessionStorage.removeItem("client_pseudo_id");
+    sessionStorage.removeItem("conversationStarted");
+    window.location.href = "/assessment";
+  };
+
   const {
     intakeContext: {
       client_name,
@@ -100,6 +118,22 @@ const ChatHeader: React.FC = () => {
             </div>
           </Box>
         </Box>
+        {isConversationInProgress && (
+          <>
+            <Box className="flex justify-end px-4 sm:px-8 py-3 ">
+              <PrimaryButton
+                className={"w-[100px] md:max-w-lg"}
+                buttonText="End chat"
+                onClick={() => setIsEndChatModalOpen(true)}
+              />
+            </Box>
+            <EndChatModal
+              isOpen={isEndChatModalOpen}
+              onClose={() => setIsEndChatModalOpen(false)}
+              onConfirm={onConfirmEndChat}
+            />
+          </>
+        )}
 
         {/* Progress indicator — only on small screens */}
         <div className="lg:hidden">
