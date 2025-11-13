@@ -154,7 +154,7 @@ export const apiOpportunityConfigurationSchema = z.object({
   caseNoteHeaders: nullishAsUndefined(z.array(z.string())),
 
   caseNotesTitle: nullishAsUndefined(z.string()),
-  markSubmittedOnFormDownload: z.boolean().default(true),
+  markSubmittedOnFormDownload: nullishAsUndefined(z.boolean()),
   indefiniteSnoozeSectionHeader: nullishAsUndefined(z.string()),
   indefiniteSnoozeSectionSubheading: nullishAsUndefined(z.string()),
 
@@ -164,6 +164,8 @@ export const apiOpportunityConfigurationSchema = z.object({
   snoozeReviewStatusMessage: nullishAsUndefined(z.string()),
 
   enableWorkflowsFilter: z.boolean().default(false),
+  grantApprovedTabTitle: nullishAsUndefined(z.string()),
+  grantApprovedStatusMessage: nullishAsUndefined(z.string()),
 });
 
 export const apiOpportunityConfigurationResponseSchema = z.object({

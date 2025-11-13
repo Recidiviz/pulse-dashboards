@@ -136,6 +136,8 @@ export interface OpportunityConfiguration {
   supportsSupervisorReviewOnSnooze: boolean;
 
   supervisorReviewTabTitle: OpportunityTab;
+  grantApprovedTabTitle: OpportunityTab;
+  grantApprovedStatusMessage: string;
   snoozeReviewStatusMessage: string;
   grantReviewStatusMessage: string;
   excludeIndefiniteSnoozesFromTableView: boolean;

@@ -73,6 +73,20 @@ const setSupervisorResponse = async (
   });
 };
 
+const requestGrant = async (opportunity: Opportunity) => {
+  await opportunity.setOfficerAction({ type: "APPROVAL" });
+
+  toast(
+    <OpportunityStatusUpdateToast
+      toastText={`Marked ${opportunity.person.displayName} as ${opportunity.tabTitle()} for ${opportunity.config.label}`}
+    />,
+    {
+      id: "requestToast", // prevent duplicate toasts
+      position: "bottom-left",
+    },
+  );
+};
+
 export const markSubmittedAndToast = async ({
   opportunity,
   subcategory,
@@ -96,7 +110,6 @@ export const markSubmittedAndToast = async ({
   }
 };
 
-// TODO(#9558): Add menu items for opportunity grant review
 const SupervisorSnoozeReviewItems = observer(
   function SupervisorSnoozeReviewItems({
     opportunity,
@@ -123,6 +136,52 @@ const SupervisorSnoozeReviewItems = observer(
     );
   },
 );
+
+const SupervisorGrantReviewItems = observer(
+  function SupervisorGrantReviewItems({
+    opportunity,
+    onDenialButtonClick = () => null,
+  }: {
+    opportunity: Opportunity;
+    onDenialButtonClick?: () => void;
+  }) {
+    return (
+      <>
+        <OpportunityStatusDropdownMenuItem
+          onClick={async () => {
+            await setSupervisorResponse(opportunity, "APPROVAL");
+          }}
+        >
+          {"Approve Request"}
+        </OpportunityStatusDropdownMenuItem>
+        <OpportunityStatusDropdownMenuItem
+          onClick={async () => {
+            await opportunity.setSupervisorResponse({ type: "DENIAL" });
+            onDenialButtonClick();
+          }}
+        >
+          {"Deny Request"}
+        </OpportunityStatusDropdownMenuItem>
+      </>
+    );
+  },
+);
+
+const OfficerGrantRequestItem = observer(function OfficerGrantRequestItem({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
+  return (
+    <OpportunityStatusDropdownMenuItem
+      onClick={async () => {
+        await requestGrant(opportunity);
+      }}
+    >
+      {"Submit for Supervisor Approval"}
+    </OpportunityStatusDropdownMenuItem>
+  );
+});
 
 const DenialItem = observer(function DenialItem({
   opportunity,
@@ -237,12 +296,32 @@ const MenuItems = observer(function MenuItems({
   opportunity: Opportunity;
   onDenialButtonClick?: () => void;
 }) {
+  const shouldShowSubmittedItems =
+    !opportunity.config.supportsSupervisorReviewOnGrants ||
+    opportunity.isGrantApproved ||
+    opportunity.isSubmitted;
+
+  const shouldShowGrantRequestItem =
+    opportunity.config.supportsSupervisorReviewOnGrants &&
+    !opportunity.isGrantApproved &&
+    !opportunity.isSubmitted;
+
   if (opportunity.isInSnoozeReview)
     return <SupervisorSnoozeReviewItems opportunity={opportunity} />;
+  if (opportunity.isInGrantReview)
+    return (
+      <SupervisorGrantReviewItems
+        opportunity={opportunity}
+        onDenialButtonClick={onDenialButtonClick}
+      />
+    );
 
   return (
     <>
-      {<SubmittedItems opportunity={opportunity} />}
+      {shouldShowSubmittedItems && <SubmittedItems opportunity={opportunity} />}
+      {shouldShowGrantRequestItem && (
+        <OfficerGrantRequestItem opportunity={opportunity} />
+      )}
       {opportunity.config.supportsDenial && (
         <DenialItem
           opportunity={opportunity}

@@ -52,15 +52,14 @@ function OfficerActionContents({
   action: OfficerAction;
 }): React.ReactElement | undefined {
   if (action.type === "APPROVAL") {
-    if (!action.notes) {
-      return undefined;
-    }
     return (
       <div>
         <SecureSmallDetailsCopy>
           Request for Grant Review
         </SecureSmallDetailsCopy>
-        <SecureSmallDetailsCopy>{action.notes}</SecureSmallDetailsCopy>
+        {action.notes && (
+          <SecureSmallDetailsCopy>{action.notes}</SecureSmallDetailsCopy>
+        )}
       </div>
     );
   }
@@ -114,9 +113,6 @@ function ActionEntry({
 }: {
   action: OfficerAction;
 }): React.ReactElement | null {
-  if (isApprovalWithEmptyNotes(action)) {
-    return null;
-  }
   const response = action.supervisorResponse;
   let actionText: string;
   if (action.type === "DENIAL" && !action.requestedSnoozeLength) {
@@ -148,16 +144,10 @@ function ActionEntry({
   );
 }
 
-const isApprovalWithEmptyNotes = (action: OfficerAction) =>
-  action.type === "APPROVAL" && !action.notes;
-
 export const ActionHistory = observer(function ActionHistory({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement | null {
-  if (
-    !opportunity.actionHistory?.length ||
-    opportunity.actionHistory.every(isApprovalWithEmptyNotes)
-  ) {
+  if (!opportunity.actionHistory?.length) {
     return null;
   }
 

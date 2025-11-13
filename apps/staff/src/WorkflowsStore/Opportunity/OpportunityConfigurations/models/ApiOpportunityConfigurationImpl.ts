@@ -169,6 +169,9 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
       "Eligible Now",
       ...(this.supportsAlmostEligible ? [almostEligibleTabTitle] : []),
       ...(this.supportsSupervisorReview ? [this.supervisorReviewTabTitle] : []),
+      ...(this.supportsSupervisorReviewOnGrants
+        ? [this.grantApprovedTabTitle]
+        : []),
       ...(this.supportsSubmitted ? [this.submittedTabTitle] : []),
       ...(this.supportsDenial ? [this.deniedTabTitle] : []),
     ];
@@ -355,7 +358,12 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get markSubmittedOnFormDownload() {
-    return this.configurationObject.markSubmittedOnFormDownload ?? true;
+    // If we require approval before granting an opportunity, we should not mark
+    // submitted on form download.
+    return (
+      this.configurationObject.markSubmittedOnFormDownload ??
+      !this.supportsSupervisorReviewOnGrants
+    );
   }
 
   get snoozeCompanionOpportunityTypes(): OpportunityType[] {
@@ -461,6 +469,21 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get supervisorReviewTabTitle() {
     return (this.configurationObject.supervisorReviewTabTitle ??
       "Supervisor Review") as OpportunityTab;
+  }
+
+  /**
+   * The tab title for opportunity grant requests that have been approved.
+   */
+  get grantApprovedTabTitle() {
+    return (this.configurationObject.supervisorReviewTabTitle ??
+      "Approved by Supervisor") as OpportunityTab;
+  }
+
+  get grantApprovedStatusMessage() {
+    return (
+      this.configurationObject.snoozeReviewStatusMessage ??
+      "Approved by Supervisor"
+    );
   }
 
   get snoozeReviewStatusMessage() {

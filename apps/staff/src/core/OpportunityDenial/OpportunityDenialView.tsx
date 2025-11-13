@@ -171,20 +171,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     onSubmit();
   };
 
-  const clearDenialsAndSubmissions = async () => {
-    if (opportunity.denied) {
-      await opportunity.deleteOpportunityDenialAndSnooze();
-    }
-    if (opportunity.isSubmitted) {
-      await opportunity.deleteSubmitted();
-    }
-  };
-
   const handleIndefiniteSnoozeRequest = async () => {
-    // If a client is moving into snooze review, we should
-    // delete denials and submissions, if applicable.
-    await clearDenialsAndSubmissions();
-
     await opportunity.setOfficerAction({
       type: "DENIAL",
       denialReasons: reasons,
@@ -205,9 +192,6 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   };
 
   const handleSupervisorReviewRequest = async () => {
-    // If a client is moving into snooze review, we should
-    // delete denials and submissions, if applicable.
-    await clearDenialsAndSubmissions();
     await opportunity.setOfficerAction({
       type: "DENIAL",
       denialReasons: reasons,

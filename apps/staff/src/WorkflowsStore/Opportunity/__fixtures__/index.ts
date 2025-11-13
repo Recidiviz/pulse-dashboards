@@ -111,6 +111,8 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   supervisorReviewTabTitle: "Supervisor Review",
   snoozeReviewStatusMessage: "Snooze Review",
   grantReviewStatusMessage: "Discharge Review",
+  grantApprovedStatusMessage: "Approved by Supervisor",
+  grantApprovedTabTitle: "Approved by Supervisor",
   excludeIndefiniteSnoozesFromTableView: true,
   enableWorkflowsFilter: false,
 };

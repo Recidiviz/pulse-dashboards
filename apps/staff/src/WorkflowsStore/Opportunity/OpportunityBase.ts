@@ -812,6 +812,10 @@ export class OpportunityBase<
     );
   }
 
+  /**
+   * Returns true if an officer has requested an opportunity grant, and that request
+   * has been approved
+   */
   get isGrantApproved(): boolean {
     return (
       !!this.latestAction &&
@@ -821,10 +825,19 @@ export class OpportunityBase<
     );
   }
 
+  get grantApprovedTabTitle(): OpportunityTab {
+    return this.config.grantApprovedTabTitle;
+  }
+
+  get grantApprovedStatusMessage(): string {
+    return this.config.grantApprovedStatusMessage;
+  }
+
   tabTitle(category?: OpportunityTabGroup): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
     if (this.isSubmitted) return this.submittedTabTitle;
     if (this.isInSupervisorReview) return this.supervisorReviewTabTitle;
+    if (this.isGrantApproved) return this.grantApprovedTabTitle;
     if (this.almostEligible) return "Almost Eligible";
     return "Eligible Now";
   }
@@ -862,7 +875,12 @@ export class OpportunityBase<
 
     return hydrateUntypedCriteria(
       record.ineligibleCriteria,
-      isIneligible ? pickBy(ineligibleCriteriaCopy, (_, key) => !(key in strictlyIneligibleCriteriaCopy)) : ineligibleCriteriaCopy,
+      isIneligible
+        ? pickBy(
+            ineligibleCriteriaCopy,
+            (_, key) => !(key in strictlyIneligibleCriteriaCopy),
+          )
+        : ineligibleCriteriaCopy,
       this,
       this.criteriaFormatters,
     );
@@ -875,7 +893,6 @@ export class OpportunityBase<
       config: { strictlyIneligibleCriteriaCopy },
     } = this;
     if (!isIneligible || !record) return [];
-
 
     return hydrateUntypedCriteria(
       record.ineligibleCriteria,
@@ -1002,6 +1019,15 @@ export class OpportunityBase<
   async setOfficerAction(
     officerActionParams: OfficerApprovalAction | OfficerDenialAction,
   ): Promise<void> {
+    // If a client is moving into review, we should
+    // delete denials and submissions, if applicable.
+    if (this.denied) {
+      await this.deleteOpportunityDenialAndSnooze();
+    }
+    if (this.isSubmitted) {
+      await this.deleteSubmitted();
+    }
+
     const officerAction = {
       date: Timestamp.fromDate(new Date()),
       by: this.userName,
@@ -1260,6 +1286,8 @@ export class OpportunityBase<
       grantReviewStatusMessage,
       snoozeReviewStatusMessage,
       isIndefinitelySnoozed,
+      isGrantApproved,
+      grantApprovedStatusMessage,
     } = this;
 
     if (!isHydrated(this)) return null;
@@ -1285,6 +1313,10 @@ export class OpportunityBase<
       return includeReasons && almostEligibleStatusMessage
         ? almostEligibleStatusMessage
         : "Almost eligible";
+    }
+
+    if (isGrantApproved) {
+      return grantApprovedStatusMessage;
     }
 
     if (isInSnoozeReview) {

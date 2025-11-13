@@ -231,6 +231,7 @@ export interface Opportunity<
   ) => Promise<void>;
   indefiniteDenialReasons: DenialReasonsMap;
   denialViewPrompt: string;
+  isGrantApproved: boolean;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
@@ -261,6 +262,7 @@ export type OpportunityTab =
   | "In Progress"
   | "Submitted"
   | "Supervisor Review"
+  | "Approved by Supervisor"
 
   // For US_AZ TPR/DTP opportunities
   | "Fast Trackers"
