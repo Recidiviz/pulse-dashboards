@@ -96,15 +96,43 @@ function createTestUnit() {
     metadata: {
       daysInCollapsedSolitarySession: 35,
       lessThan24MonthsFromErd: false,
-      recentBondableOffenses: "(423, 2023-12-27)",
-      recentNonbondableOffenses: "(008, 2023-05-31)",
-      adSegStaysAndReasonsWithin3Yrs: [
-        "(2021-11-03,014,)",
-        "(2022-03-02,014,)",
-        "(2021-08-02,030,)",
-        "(2023-10-12,003,014,029,)",
-        "(2022-05-16,014,)",
-        "(2022-04-30,012,)",
+      jsonRecentBondableOffenses: [
+        { bondableOffense: "423", bondableIncidentDate: "2023-12-27" },
+      ],
+      jsonRecentNonbondableOffenses: [
+        { nonbondableOffense: "008", nonbondableIncidentDate: "2023-05-31" },
+      ],
+      jsonAdSegStaysAndReasonsWithin3Yrs: [
+        {
+          stayStartDate: "2021-11-03",
+          stayEndDate: "2021-11-03",
+          stayOffenses: "014",
+        },
+        {
+          stayStartDate: "2022-03-02",
+          stayEndDate: "2022-03-02",
+          stayOffenses: "014",
+        },
+        {
+          stayStartDate: "2021-08-02",
+          stayEndDate: "2021-08-02",
+          stayOffenses: "030",
+        },
+        {
+          stayStartDate: "2023-10-12",
+          stayEndDate: "2023-10-12",
+          stayOffenses: "003,014,029",
+        },
+        {
+          stayStartDate: "2022-05-16",
+          stayEndDate: "2022-05-16",
+          stayOffenses: "014",
+        },
+        {
+          stayStartDate: "2022-04-30",
+          stayEndDate: "2022-04-30",
+          stayOffenses: "012",
+        },
       ],
       neededProgramming: "101",
       completedProgramming: "105",

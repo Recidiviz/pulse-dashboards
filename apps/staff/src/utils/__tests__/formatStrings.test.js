@@ -653,4 +653,35 @@ describe("formatStrings", () => {
       ).toMatchInlineSnapshot(`"123 Main St, Mom Brother Anytown, TX 12345"`);
     });
   });
+
+  describe("formatDateRange", () => {
+    it("formats short duration (< 6 months) with months and days", () => {
+      const start = new Date("2024-01-01");
+      const end = new Date("2024-03-15");
+      const result = utils.formatDateRange(start, end);
+      expect(result).toBe("2 months and 14 days");
+    });
+
+    it("formats longer duration (>= 6 months) with years and months", () => {
+      const start = new Date("2023-01-01");
+      const end = new Date("2024-03-01");
+      const result = utils.formatDateRange(start, end);
+      expect(result).toBe("1 year and 2 months");
+    });
+
+    it("formats same-day duration", () => {
+      const start = new Date("2024-01-01");
+      const end = new Date("2024-01-01");
+      const result = utils.formatDateRange(start, end);
+      // date-fns formatDuration returns empty string for zero duration
+      expect(result).toBe("");
+    });
+
+    it("handles reversed dates (end before start)", () => {
+      const start = new Date("2024-03-15");
+      const end = new Date("2024-01-01");
+      const result = utils.formatDateRange(start, end);
+      expect(result).toBe("2 months and 14 days");
+    });
+  });
 });

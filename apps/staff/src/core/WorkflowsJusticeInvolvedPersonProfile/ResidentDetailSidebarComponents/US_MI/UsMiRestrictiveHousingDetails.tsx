@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,17 @@
 // =============================================================================
 
 import React from "react";
+import styled from "styled-components/macro";
 
-import { usMiSecurityClassificationCommitteeReviewRecord } from "~datatypes";
+import {
+  UsMiBondableOffense,
+  UsMiNonbondableOffense,
+  usMiSecurityClassificationCommitteeReviewRecord,
+  UsMiSegregationStay,
+} from "~datatypes";
+import { palette } from "~design-system";
 
-import { formatWorkflowsDate } from "../../../../utils";
+import { formatDateRange, formatWorkflowsDate } from "../../../../utils";
 import { usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
 import { usMiSecurityClassificationCommitteeReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
 import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
@@ -31,6 +38,80 @@ import {
   SecureDetailsList,
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
+
+const OffenseCode = styled.div`
+  margin-top: 0.25rem;
+  color: ${palette.slate60};
+`;
+
+export const SegregationHistory: React.FC<{
+  stays: UsMiSegregationStay[];
+}> = ({ stays }) => {
+  if (stays.length === 0) return <>N/A</>;
+
+  return (
+    <>
+      {stays.map((stay) => (
+        <div key={`${stay.stayStartDate}`}>
+          {formatWorkflowsDate(stay.stayStartDate)} -{" "}
+          {formatWorkflowsDate(stay.stayEndDate)} (
+          {formatDateRange(stay.stayStartDate, stay.stayEndDate)})
+          {stay.stayOffenses && stay.stayOffenses.trim() && (
+            <OffenseCode>
+              • Code: {stay.stayOffenses.replace(/,+$/, "")}
+            </OffenseCode>
+          )}
+        </div>
+      ))}
+    </>
+  );
+};
+
+export const MisconductHistory: React.FC<{
+  bondableOffenses: UsMiBondableOffense[];
+  nonbondableOffenses: UsMiNonbondableOffense[];
+}> = ({ bondableOffenses, nonbondableOffenses }) => {
+  if (bondableOffenses.length === 0 && nonbondableOffenses.length === 0) {
+    return <>N/A</>;
+  }
+
+  const allOffenses = [
+    ...bondableOffenses.map((o) => ({
+      date: o.bondableIncidentDate,
+      code: o.bondableOffense,
+    })),
+    ...nonbondableOffenses.map((o) => ({
+      date: o.nonbondableIncidentDate,
+      code: o.nonbondableOffense,
+    })),
+  ].sort((a, b) => (a.date?.getTime() ?? 0) - (b.date?.getTime() ?? 0));
+
+  // Group offenses by date (offenses are already sorted, so just check the last group)
+  const groupedByDate: Array<{ date: Date; codes: string[] }> = [];
+
+  allOffenses.forEach((offense) => {
+    if (!offense.date || !offense.code) return;
+
+    const lastGroup = groupedByDate[groupedByDate.length - 1];
+
+    if (lastGroup && lastGroup.date.getTime() === offense.date.getTime()) {
+      lastGroup.codes.push(offense.code);
+    } else {
+      groupedByDate.push({ date: offense.date, codes: [offense.code] });
+    }
+  });
+
+  return (
+    <>
+      {groupedByDate.map(({ date, codes }) => (
+        <div key={`offense-${date.getTime()}`}>
+          {formatWorkflowsDate(date)}
+          <OffenseCode>• Code: {codes.join(", ")}</OffenseCode>
+        </div>
+      ))}
+    </>
+  );
+};
 
 export function UsMiRestrictiveHousing({
   opportunity,
@@ -54,16 +135,12 @@ export function UsMiRestrictiveHousing({
   const {
     daysInCollapsedSolitarySession,
     lessThan24MonthsFromErd,
-    recentNonbondableOffenses,
-    recentBondableOffenses,
-    adSegStaysAndReasonsWithin3Yrs,
+    jsonAdSegStaysAndReasonsWithin3Yrs,
+    jsonRecentBondableOffenses,
+    jsonRecentNonbondableOffenses,
     solitarySessionStartDate,
     solitarySessionType,
   } = opportunityRecord.metadata;
-
-  const misconductHistory = recentBondableOffenses
-    ? `${recentBondableOffenses}${recentNonbondableOffenses ? ", " + recentNonbondableOffenses : ""}`
-    : recentNonbondableOffenses ?? "N/A";
 
   // TODO(#5399): Add SMI designation and programming once the data's available
   return (
@@ -80,13 +157,16 @@ export function UsMiRestrictiveHousing({
 
           <DetailsSubheading>Prior Segregation History</DetailsSubheading>
           <SecureDetailsContent>
-            {adSegStaysAndReasonsWithin3Yrs?.length
-              ? adSegStaysAndReasonsWithin3Yrs
-              : "N/A"}
+            <SegregationHistory stays={jsonAdSegStaysAndReasonsWithin3Yrs} />
           </SecureDetailsContent>
 
           <DetailsSubheading>Misconduct History</DetailsSubheading>
-          <SecureDetailsContent>{misconductHistory}</SecureDetailsContent>
+          <SecureDetailsContent>
+            <MisconductHistory
+              bondableOffenses={jsonRecentBondableOffenses}
+              nonbondableOffenses={jsonRecentNonbondableOffenses}
+            />
+          </SecureDetailsContent>
           <DetailsSubheading>Less than 24 months from ERD?</DetailsSubheading>
           <SecureDetailsContent>
             {lessThan24MonthsFromErd ? "Yes" : "No"}

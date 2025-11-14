@@ -64,15 +64,42 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
       ineligibleCriteria: {},
       metadata: {
         daysInCollapsedSolitarySession: 25,
-        recentBondableOffenses: "(423, 2023-12-27)",
-        recentNonbondableOffenses: "(008, 2023-05-31)",
-        adSegStaysAndReasonsWithin3Yrs: [
-          "(2021-11-03,014,)",
-          "(2022-03-02,014,)",
-          "(2021-08-02,030,)",
-          "(2023-10-12,003,014,029,)",
-          "(2022-05-16,014,)",
-          "(2022-04-30,012,)",
+        jsonRecentBondableOffenses: [
+          { bondableOffense: "423", bondableIncidentDate: "2023-12-27" },
+        ],
+        jsonRecentNonbondableOffenses: [
+          { nonbondableOffense: "008", nonbondableIncidentDate: "2023-05-31" },
+        ],
+        jsonAdSegStaysAndReasonsWithin3Yrs: [
+          {
+            stayStartDate: "2021-11-03",
+            stayEndDate: "2021-11-03",
+            stayOffenses: "014",
+          },
+
+          {
+            stayStartDate: "2022-03-02",
+            stayEndDate: "2022-03-02",
+            stayOffenses: "014",
+          },
+
+          {
+            stayStartDate: "2021-08-02",
+            stayEndDate: "2021-08-02",
+            stayOffenses: "030",
+          },
+
+          {
+            stayStartDate: "2022-05-16",
+            stayEndDate: "2022-05-16",
+            stayOffenses: "014",
+          },
+
+          {
+            stayStartDate: "2022-04-30",
+            stayEndDate: "2022-04-30",
+            stayOffenses: "012",
+          },
         ],
         neededProgramming: "101",
         completedProgramming: "105",
@@ -116,10 +143,15 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
       metadata: {
         daysInCollapsedSolitarySession: 50,
         lessThan24MonthsFromErd: true,
-        recentBondableOffenses:
-          "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
-        recentNonbondableOffenses: "(008, 2023-05-31)",
-        adSegStaysAndReasonsWithin3Yrs: [],
+        jsonRecentBondableOffenses: [
+          { bondableOffense: "020", bondableIncidentDate: "2024-02-26" },
+          { bondableOffense: "057", bondableIncidentDate: "2023-12-05" },
+          { bondableOffense: "057", bondableIncidentDate: "2024-01-31" },
+        ],
+        jsonRecentNonbondableOffenses: [
+          { nonbondableOffense: "008", nonbondableIncidentDate: "2023-05-31" },
+        ],
+        jsonAdSegStaysAndReasonsWithin3Yrs: [],
         neededProgramming: "101",
       },
       isEligible: true,
@@ -161,9 +193,19 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
       metadata: {
         daysInCollapsedSolitarySession: 30,
         lessThan24MonthsFromErd: false,
-        recentBondableOffenses: "(020, 2024-02-26)",
-        recentNonbondableOffenses: "(008, 2023-05-31)",
-        adSegStaysAndReasonsWithin3Yrs: ["(2022-11-07,003,)"],
+        jsonRecentBondableOffenses: [
+          { bondableOffense: "020", bondableIncidentDate: "2024-02-26" },
+        ],
+        jsonRecentNonbondableOffenses: [
+          { nonbondableOffense: "008", nonbondableIncidentDate: "2023-05-31" },
+        ],
+        jsonAdSegStaysAndReasonsWithin3Yrs: [
+          {
+            stayStartDate: "2022-11-07",
+            stayEndDate: "2022-11-07",
+            stayOffenses: "003",
+          },
+        ],
         neededProgramming: "105",
       },
       isEligible: false,
@@ -205,9 +247,19 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
       metadata: {
         daysInCollapsedSolitarySession: 30,
         lessThan24MonthsFromErd: false,
-        recentBondableOffenses: "(020, 2024-02-26)",
-        recentNonbondableOffenses: "(008, 2023-05-31)",
-        adSegStaysAndReasonsWithin3Yrs: ["(2022-11-07,003,)"],
+        jsonRecentBondableOffenses: [
+          { bondableOffense: "020", bondableIncidentDate: "2024-02-26" },
+        ],
+        jsonRecentNonbondableOffenses: [
+          { nonbondableOffense: "008", nonbondableIncidentDate: "2023-05-31" },
+        ],
+        jsonAdSegStaysAndReasonsWithin3Yrs: [
+          {
+            stayStartDate: "2022-11-07",
+            stayEndDate: "2022-11-07",
+            stayOffenses: "003",
+          },
+        ],
         neededProgramming: "105",
       },
       isEligible: false,

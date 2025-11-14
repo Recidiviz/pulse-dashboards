@@ -33,6 +33,22 @@ const possiblyIneligibleCriteria = z
   .partial()
   .passthrough();
 
+const jsonAdSegStaySchema = z.object({
+  stayStartDate: dateStringSchema,
+  stayEndDate: dateStringSchema,
+  stayOffenses: z.string(),
+});
+
+const jsonRecentBondableOffenseSchema = z.object({
+  bondableOffense: z.string(),
+  bondableIncidentDate: dateStringSchema,
+});
+
+const jsonRecentNonbondableOffenseSchema = z.object({
+  nonbondableOffense: z.string(),
+  nonbondableIncidentDate: dateStringSchema,
+});
+
 export const usMiSecurityClassificationCommitteeReviewSchema =
   opportunitySchemaBase.extend({
     eligibleCriteria: possiblyIneligibleCriteria.extend({
@@ -58,18 +74,32 @@ export const usMiSecurityClassificationCommitteeReviewSchema =
     }),
     metadata: z.object({
       daysInCollapsedSolitarySession: z.coerce.number(),
-      recentBondableOffenses: z.string().nullish(),
-      recentNonbondableOffenses: z.string().optional(),
-      adSegStaysAndReasonsWithin3Yrs: z.array(z.string()).optional(),
       lessThan24MonthsFromErd: z.boolean().optional(),
       neededProgramming: z.string().optional(),
       completedProgramming: z.string().optional(),
       solitarySessionStartDate: dateStringSchema.optional(),
       solitarySessionType: z.string().optional(),
+      jsonAdSegStaysAndReasonsWithin3Yrs: z
+        .array(jsonAdSegStaySchema)
+        .default([]),
+      jsonRecentBondableOffenses: z
+        .array(jsonRecentBondableOffenseSchema)
+        .default([]),
+      jsonRecentNonbondableOffenses: z
+        .array(jsonRecentNonbondableOffenseSchema)
+        .default([]),
     }),
     isOverdue: z.boolean(),
   });
 
 export type usMiSecurityClassificationCommitteeReviewRecord = ParsedRecord<
   typeof usMiSecurityClassificationCommitteeReviewSchema
+>;
+
+export type UsMiSegregationStay = z.output<typeof jsonAdSegStaySchema>;
+export type UsMiBondableOffense = z.output<
+  typeof jsonRecentBondableOffenseSchema
+>;
+export type UsMiNonbondableOffense = z.output<
+  typeof jsonRecentNonbondableOffenseSchema
 >;

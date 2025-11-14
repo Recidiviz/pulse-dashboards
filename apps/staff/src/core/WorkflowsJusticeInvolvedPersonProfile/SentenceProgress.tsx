@@ -17,12 +17,7 @@
 
 import { Sans14, spacing, typography } from "@recidiviz/design-system";
 import { scaleTime } from "d3-scale";
-import {
-  differenceInMonths,
-  formatDuration,
-  intervalToDuration,
-  startOfDay,
-} from "date-fns";
+import { startOfDay } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -31,7 +26,7 @@ import styled from "styled-components/macro";
 import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { formatWorkflowsDate } from "../../utils";
+import { formatDateRange, formatWorkflowsDate } from "../../utils";
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
@@ -107,16 +102,6 @@ const TimelineSentence = styled.line`
 const TimelineToday = styled.circle`
   r: ${rem(4.5)};
 `;
-
-function formatDateRange(start: Date, end: Date): string {
-  const monthDiff = Math.abs(differenceInMonths(end, start));
-
-  const durationFromExp = intervalToDuration({ start, end });
-  return `${formatDuration(durationFromExp, {
-    format: monthDiff < 6 ? ["months", "days"] : ["years", "months"],
-    delimiter: " and ",
-  })}`;
-}
 
 function formatSentenceLength(startDate: Date, expirationDate: Date): string {
   return formatDateRange(startDate, expirationDate);

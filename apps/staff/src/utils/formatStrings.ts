@@ -20,6 +20,7 @@ import Base64 from "crypto-js/enc-base64";
 import SHA256 from "crypto-js/sha256";
 import {
   addDays,
+  differenceInMonths,
   format,
   formatDuration,
   intervalToDuration,
@@ -297,6 +298,21 @@ function formatYearsMonthsFromNow(date: Date): string {
 function formatDaysToYearsMonthsPast(days: number): string {
   const startDate = addDays(new Date(), -days);
   return formatYearsMonthsFromNow(startDate);
+}
+
+/*
+  Given two dates, returns the duration between them in a human-readable format.
+  For shorter durations (< 6 months), shows "X months and Y days".
+  For longer durations, shows "X years and Y months".
+ */
+function formatDateRange(start: Date, end: Date): string {
+  const monthDiff = Math.abs(differenceInMonths(end, start));
+
+  const durationFromExp = intervalToDuration({ start, end });
+  return `${formatDuration(durationFromExp, {
+    format: monthDiff < 6 ? ["months", "days"] : ["years", "months"],
+    delimiter: " and ",
+  })}`;
 }
 
 function getFirstName(fullName: string): string {
@@ -619,6 +635,7 @@ export {
   encrypt,
   formatCurrentAddress,
   formatDate,
+  formatDateRange,
   formatDateToISO,
   formatDaysToYearsMonthsPast,
   formatDistrictLabel,

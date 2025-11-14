@@ -1,0 +1,105 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`UsMiRestrictiveHousingDetails helper functions > SegregationHistory > formats multiple segregation stays 1`] = `
+.c0 {
+  margin-top: 0.25rem;
+  color: rgba(43,84,105,0.6);
+}
+
+<div>
+  <div>
+    Jan 1, 2023
+     -
+     
+    Mar 1, 2023
+     (
+    2 months
+    )
+    <div
+      class="c0"
+    >
+      • Code: 
+      014
+    </div>
+  </div>
+  <div>
+    Jun 1, 2023
+     -
+     
+    Aug 1, 2023
+     (
+    2 months
+    )
+    <div
+      class="c0"
+    >
+      • Code: 
+      030,003
+    </div>
+  </div>
+</div>
+`;
+
+exports[`UsMiRestrictiveHousingDetails helper functions > SegregationHistory > formats single segregation stay with dates and offense codes 1`] = `
+.c0 {
+  margin-top: 0.25rem;
+  color: rgba(43,84,105,0.6);
+}
+
+<div>
+  <div>
+    Jan 1, 2023
+     -
+     
+    Mar 1, 2023
+     (
+    2 months
+    )
+    <div
+      class="c0"
+    >
+      • Code: 
+      014
+    </div>
+  </div>
+</div>
+`;
+
+exports[`UsMiRestrictiveHousingDetails helper functions > SegregationHistory > handles stays with empty offense codes 1`] = `
+<div>
+  <div>
+    Jan 1, 2023
+     -
+     
+    Mar 1, 2023
+     (
+    2 months
+    )
+  </div>
+</div>
+`;
+
+exports[`UsMiRestrictiveHousingDetails helper functions > SegregationHistory > removes trailing commas from offense codes 1`] = `
+.c0 {
+  margin-top: 0.25rem;
+  color: rgba(43,84,105,0.6);
+}
+
+<div>
+  <div>
+    Jan 1, 2023
+     -
+     
+    Mar 1, 2023
+     (
+    2 months
+    )
+    <div
+      class="c0"
+    >
+      • Code: 
+      014,030
+    </div>
+  </div>
+</div>
+`;

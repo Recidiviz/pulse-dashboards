@@ -36,14 +36,28 @@ exports[`schema for almostEligible1 1`] = `
   "isEligible": false,
   "isOverdue": false,
   "metadata": {
-    "adSegStaysAndReasonsWithin3Yrs": [
-      "(2022-11-07,003,)",
-    ],
     "daysInCollapsedSolitarySession": 30,
+    "jsonAdSegStaysAndReasonsWithin3Yrs": [
+      {
+        "stayEndDate": 2022-11-07T00:00:00.000Z,
+        "stayOffenses": "003",
+        "stayStartDate": 2022-11-07T00:00:00.000Z,
+      },
+    ],
+    "jsonRecentBondableOffenses": [
+      {
+        "bondableIncidentDate": 2024-02-26T00:00:00.000Z,
+        "bondableOffense": "020",
+      },
+    ],
+    "jsonRecentNonbondableOffenses": [
+      {
+        "nonbondableIncidentDate": 2023-05-31T00:00:00.000Z,
+        "nonbondableOffense": "008",
+      },
+    ],
     "lessThan24MonthsFromErd": false,
     "neededProgramming": "105",
-    "recentBondableOffenses": "(020, 2024-02-26)",
-    "recentNonbondableOffenses": "(008, 2023-05-31)",
   },
   "stateCode": "US_MI",
 }
@@ -85,14 +99,28 @@ exports[`schema for almostEligible2 1`] = `
   "isEligible": false,
   "isOverdue": false,
   "metadata": {
-    "adSegStaysAndReasonsWithin3Yrs": [
-      "(2022-11-07,003,)",
-    ],
     "daysInCollapsedSolitarySession": 30,
+    "jsonAdSegStaysAndReasonsWithin3Yrs": [
+      {
+        "stayEndDate": 2022-11-07T00:00:00.000Z,
+        "stayOffenses": "003",
+        "stayStartDate": 2022-11-07T00:00:00.000Z,
+      },
+    ],
+    "jsonRecentBondableOffenses": [
+      {
+        "bondableIncidentDate": 2024-02-26T00:00:00.000Z,
+        "bondableOffense": "020",
+      },
+    ],
+    "jsonRecentNonbondableOffenses": [
+      {
+        "nonbondableIncidentDate": 2023-05-31T00:00:00.000Z,
+        "nonbondableOffense": "008",
+      },
+    ],
     "lessThan24MonthsFromErd": false,
     "neededProgramming": "105",
-    "recentBondableOffenses": "(020, 2024-02-26)",
-    "recentNonbondableOffenses": "(008, 2023-05-31)",
   },
   "stateCode": "US_MI",
 }
@@ -138,19 +166,48 @@ exports[`schema for fullyEligible1 1`] = `
   "isEligible": true,
   "isOverdue": true,
   "metadata": {
-    "adSegStaysAndReasonsWithin3Yrs": [
-      "(2021-11-03,014,)",
-      "(2022-03-02,014,)",
-      "(2021-08-02,030,)",
-      "(2023-10-12,003,014,029,)",
-      "(2022-05-16,014,)",
-      "(2022-04-30,012,)",
-    ],
     "completedProgramming": "105",
     "daysInCollapsedSolitarySession": 25,
+    "jsonAdSegStaysAndReasonsWithin3Yrs": [
+      {
+        "stayEndDate": 2021-11-03T00:00:00.000Z,
+        "stayOffenses": "014",
+        "stayStartDate": 2021-11-03T00:00:00.000Z,
+      },
+      {
+        "stayEndDate": 2022-03-02T00:00:00.000Z,
+        "stayOffenses": "014",
+        "stayStartDate": 2022-03-02T00:00:00.000Z,
+      },
+      {
+        "stayEndDate": 2021-08-02T00:00:00.000Z,
+        "stayOffenses": "030",
+        "stayStartDate": 2021-08-02T00:00:00.000Z,
+      },
+      {
+        "stayEndDate": 2022-05-16T00:00:00.000Z,
+        "stayOffenses": "014",
+        "stayStartDate": 2022-05-16T00:00:00.000Z,
+      },
+      {
+        "stayEndDate": 2022-04-30T00:00:00.000Z,
+        "stayOffenses": "012",
+        "stayStartDate": 2022-04-30T00:00:00.000Z,
+      },
+    ],
+    "jsonRecentBondableOffenses": [
+      {
+        "bondableIncidentDate": 2023-12-27T00:00:00.000Z,
+        "bondableOffense": "423",
+      },
+    ],
+    "jsonRecentNonbondableOffenses": [
+      {
+        "nonbondableIncidentDate": 2023-05-31T00:00:00.000Z,
+        "nonbondableOffense": "008",
+      },
+    ],
     "neededProgramming": "101",
-    "recentBondableOffenses": "(423, 2023-12-27)",
-    "recentNonbondableOffenses": "(008, 2023-05-31)",
   },
   "stateCode": "US_MI",
 }
@@ -189,12 +246,30 @@ exports[`schema for fullyEligible2 1`] = `
   "isEligible": true,
   "isOverdue": false,
   "metadata": {
-    "adSegStaysAndReasonsWithin3Yrs": [],
     "daysInCollapsedSolitarySession": 50,
+    "jsonAdSegStaysAndReasonsWithin3Yrs": [],
+    "jsonRecentBondableOffenses": [
+      {
+        "bondableIncidentDate": 2024-02-26T00:00:00.000Z,
+        "bondableOffense": "020",
+      },
+      {
+        "bondableIncidentDate": 2023-12-05T00:00:00.000Z,
+        "bondableOffense": "057",
+      },
+      {
+        "bondableIncidentDate": 2024-01-31T00:00:00.000Z,
+        "bondableOffense": "057",
+      },
+    ],
+    "jsonRecentNonbondableOffenses": [
+      {
+        "nonbondableIncidentDate": 2023-05-31T00:00:00.000Z,
+        "nonbondableOffense": "008",
+      },
+    ],
     "lessThan24MonthsFromErd": true,
     "neededProgramming": "101",
-    "recentBondableOffenses": "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
-    "recentNonbondableOffenses": "(008, 2023-05-31)",
   },
   "stateCode": "US_MI",
 }
