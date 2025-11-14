@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 from app.core.config import gen_model as model
 from app.core.config import tracer
-from app.services.resources.types import Resource
+from app.services.resources import Resource
 from app.utils.action_plan_types import (
     ActionPlan,
     ActionPlanMarkdown,

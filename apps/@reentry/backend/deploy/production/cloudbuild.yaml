@@ -45,7 +45,7 @@ steps:
       - "--set-secrets=RECIDIVIZ_OPENAI_API_KEY=RECIDIVIZ_OPENAI_API_KEY_PROD:latest"
       - "--set-secrets=RECIDIVIZ_FABRK_BEARER_TOKEN=RECIDIVIZ_FABRK_BEARER_TOKEN_PROD:latest"
       - "--set-secrets=RECIDIVIZ_POSTGRES_PASSWORD=RECIDIVIZ_POSTGRES_PASSWORD_PROD:latest"
-      - "--set-secrets=RECIDIVIZ_RESOURCE_API_KEY=RECIDIVIZ_RESOURCES_API_KEY_PROD:latest"
+      - "--set-secrets=RECIDIVIZ_RESOURCES_API_KEY=RECIDIVIZ_RESOURCES_API_KEY_PROD:latest"
       - "--set-secrets=RECIDIVIZ_AUTH0_CLIENT_ID=RECIDIVIZ_AUTH0_CLIENT_ID_PROD:latest"
       - "--set-secrets=RECIDIVIZ_JWT_SECRET_KEY=RECIDIVIZ_JWT_SECRET_KEY_PROD:latest"
       - "--set-secrets=RECIDIVIZ_BQ_PROJECT_ID=RECIDIVIZ_BQ_PROJECT_ID_PROD:latest"
@@ -70,10 +70,11 @@ steps:
         RECIDIVIZ_VCR_CLIENT_INTAKE=true,
         RECIDIVIZ_ALLOWED_ORIGINS=https://plan.recidiviz.org,
         RECIDIVIZ_LANGCHAIN_PROJECT=dev-recidiviz,
-        RECIDIVIZ_RESOURCE_API_URL=https://resource-api-prod-773019812766.us-central1.run.app,
+        RECIDIVIZ_EXTERNAL_RESOURCES_API_URL=https://resources-api-773019812766.us-central1.run.app,
         RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE=true,
         RECIDIVIZ_AUTH0_AUDIENCE=https://api.recidiviz.org,
         RECIDIVIZ_AUTH0_DOMAIN=login.recidiviz.org,
+        RECIDIVIZ_USE_EXTERNAL_RESOURCES_API=true,
         RECIDIVIZ_JWT_ALGORITHM=HS256,
         RECIDIVIZ_GCS_BUCKET_NAME=recidiviz-recording-bucket-production,
         RECIDIVIZ_GCS_SERVICE_ACCOUNT_EMAIL=reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com,
@@ -109,7 +110,7 @@ steps:
       - "--set-secrets=RECIDIVIZ_FABRK_BEARER_TOKEN=RECIDIVIZ_FABRK_BEARER_TOKEN_PROD:latest"
       - "--set-secrets=RECIDIVIZ_POSTGRES_PASSWORD=RECIDIVIZ_POSTGRES_PASSWORD_PROD:latest"
       - "--set-secrets=RECIDIVIZ_AUTH0_CLIENT_ID=RECIDIVIZ_AUTH0_CLIENT_ID_PROD:latest"
-      - "--set-secrets=RECIDIVIZ_RESOURCE_API_KEY=RECIDIVIZ_RESOURCES_API_KEY_PROD:latest"
+      - "--set-secrets=RECIDIVIZ_RESOURCES_API_KEY=RECIDIVIZ_RESOURCES_API_KEY_PROD:latest"
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
       - "--set-secrets=RECIDIVIZ_JWT_SECRET_KEY=RECIDIVIZ_JWT_SECRET_KEY_PROD:latest"
       - "--set-env-vars"
@@ -127,10 +128,11 @@ steps:
         RECIDIVIZ_LANGCHAIN_ENDPOINT=https://api.smith.langchain.com,
         RECIDIVIZ_LANGCHAIN_PROJECT=dev-recidiviz,
         RECIDIVIZ_VCR_CLIENT_INTAKE=true,
-        RECIDIVIZ_RESOURCE_API_URL=https://resource-api-prod-773019812766.us-central1.run.app,
+        RECIDIVIZ_EXTERNAL_RESOURCES_API_URL=https://resources-api-773019812766.us-central1.run.app,
         RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE=true,
         RECIDIVIZ_AUTH0_AUDIENCE=https://api.recidiviz.org,
         RECIDIVIZ_AUTH0_DOMAIN=login.recidiviz.org,
+        RECIDIVIZ_USE_EXTERNAL_RESOURCES_API=true,
         RECIDIVIZ_JWT_ALGORITHM=HS256,
         RECIDIVIZ_ALLOWED_ORIGINS=http://34.107.140.51,
         RECIDIVIZ_GCS_BUCKET_NAME=recidiviz-recording-bucket-production,

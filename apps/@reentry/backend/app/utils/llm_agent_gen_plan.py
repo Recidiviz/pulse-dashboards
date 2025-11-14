@@ -1,7 +1,6 @@
 import asyncio
-from collections import defaultdict
 from textwrap import dedent
-from typing import Iterable, Literal
+from typing import Literal
 
 import structlog
 from langchain_core.messages import AIMessage, HumanMessage
@@ -12,18 +11,13 @@ from pydantic import ValidationError
 
 from app.core.config import gen_model as model
 from app.core.config import tracer
-from app.services.resources.list_resources import (
-    list_resources,
-)
-from app.services.resources.resource_taxonomy import (
+from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
-    SUBCATEGORY_TO_CATEGORY,
-)
-from app.services.resources.types import (
     ClientExtractedInfo,
     GetResourcesRequest,
     Resource,
-    ResourceAPIResultType,
+    ResourceFailureReason,
+    list_resources,
 )
 from app.utils.action_plan_types import (
     ActionPlan,
@@ -33,7 +27,6 @@ from app.utils.action_plan_types import (
     ActionPlanResourcesAssociations,
     ActionPlanSection,
     ActionPlanSectionPartial,
-    ActionPlanSectionResourceTypes,
     ActionPlanTimelines,
     AreaOfRiskNeeds,
     CommonMessagesState,
@@ -137,6 +130,17 @@ def format_resources_for_display(resources: list[Resource]) -> str:
             ratings_info.append(
                 f"Rating: {resource.rating}/5 ({resource.ratingCount} reviews)"
             )
+        if resource.operationalStatus:
+            ratings_info.append(f"Status: {resource.operationalStatus}")
+        if resource.price_level:
+            ratings_info.append(f"Price Level: {resource.price_level}")
+        if ratings_info:
+            formatted_output += "   Additional Information:\n"
+            for info in ratings_info:
+                formatted_output += f"   - {info}\n"
+
+        if resource.tags:
+            formatted_output += f"   Tags: {', '.join(resource.tags)}\n"
 
         formatted_output += "\n"
 
@@ -145,7 +149,7 @@ def format_resources_for_display(resources: list[Resource]) -> str:
 
 async def fetch_resources_with_retry(
     request: GetResourcesRequest, max_retries: int = 2
-) -> list[Resource]:
+):
     """
     Fetch resources with retry logic for both API errors and no results found.
 
@@ -169,25 +173,21 @@ async def fetch_resources_with_retry(
             logger.debug(f"Resource fetch attempt {attempt + 1}/{max_retries + 1}")
             result = await list_resources(current_request)
 
-            if result.result == ResourceAPIResultType.SUCCESS:
+            if result.failure_reason == ResourceFailureReason.SUCCESS:
                 resources = result.resources
                 logger.debug(
                     f"Successfully fetched {len(resources)} resources on attempt {attempt + 1}"
                 )
                 return resources
-            if result.result == ResourceAPIResultType.BAD_REQUEST:
-                logger.warning(
-                    f"We sent a bad resource API request on attempt {attempt + 1}: {result.error_message}"
-                )
-                return []
-            # TODO: We could update the request to potentially broaden the search.
-            if result.result == ResourceAPIResultType.NO_RESULTS_FOUND:
-                logger.debug(f"No results found on attempt {attempt + 1}")
-                return []
-            if result.result == ResourceAPIResultType.API_ERROR:
+            elif result.failure_reason == ResourceFailureReason.API_ERROR:
                 logger.warning(
                     f"API error on attempt {attempt + 1}: {result.error_message}"
                 )
+            elif result.failure_reason == ResourceFailureReason.NO_RESULTS_FOUND:
+                # if there were not results we can modify the request to broaden the search, pending to define with the client
+                # but in theory this should be done for the resources api
+                # current_request = modified_request_with_broader_search
+                logger.debug(f"No results found on attempt {attempt + 1}")
         except Exception as e:
             logger.exception(f"Unexpected error on attempt {attempt + 1}: {str(e)}")
 
@@ -195,91 +195,82 @@ async def fetch_resources_with_retry(
     return []
 
 
-# TODO(#10014): Update section_resource_types to only use subcategories.
-# We could also request and deduplicate resources across sections before
-# generating them.
-def build_resource_requests_for_section(
-    section_resource_types: ActionPlanSectionResourceTypes,
-    client_extracted_info: ClientExtractedInfo,
-) -> Iterable[GetResourcesRequest]:
-    """Prepares Resource API requests for the given association.
-
-    If a subcategory is included, we make a request for it with it's parent category.
-    If no subcategories were included but valid categories are,
-    we make a request for each subcategory in those categories.
-
-    For example if categories are BASIC_NEEDS and EMPLOYMENT
-    and subcategories is just FOOD_ASSISTANCE. We will make
-    a request for (BASIC_NEEDS, FOOD_ASSISTANCE).
-
-    If there are no subcategories but there is a category of EMPLOYMENT,
-    then we make a request for each subcategory in EMPLOYMENT.
-    """
-    pairings = defaultdict(list)
-
-    # We include every valid subcategory
-    for subcategory in section_resource_types.subcategories:
-        if (category := SUBCATEGORY_TO_CATEGORY.get(subcategory)) is not None:
-            pairings[category].append(subcategory)
-
-    # If there were no valid subcategories, we will check for valid categories
-    # and make requests for every subcategory in that category.
-    if not pairings:
-        for category in section_resource_types.categories:
-            if (subcategories := CATEGORY_SUBCATEGORY_MAP.get(category)) is not None:
-                pairings[category] = subcategories
-
-    for category, subcategories in pairings.items():
-        for subcategory in subcategories:
-            yield GetResourcesRequest.from_client_extracted_info(
-                category=category,
-                subcategory=subcategory,
-                limit=2,
-                client_info=client_extracted_info,
-                keywords_to_exclude=None,
-            )
-
-
-async def get_resources_for_section(
-    requests: list[GetResourcesRequest],
-) -> list[Resource]:
-    """Concurrently requests resources for all given requests and returns found resources."""
-    resources = []
-    tasks = (fetch_resources_with_retry(request, max_retries=2) for request in requests)
-    results = await asyncio.gather(*tasks, return_exceptions=True)
-    for request, result in zip(requests, results):
-        if isinstance(result, Exception):
-            logger.error(
-                "Failed to fetch resources for subcategory",
-                category=request.category,
-                subcategory=request.subcategory,
-                error=str(result),
-            )
-        elif isinstance(result, list):
-            resources.extend(result)
-        else:
-            logger.error(
-                "Unexpected type from fetch_resources_with_retry",
-                category=request.category,
-                subcategory=request.subcategory,
-                error=str(result),
-            )
-    return resources
-
-
 async def call_generate_section(config: dict, state: ExtendedMessagesState):
     # This function is shared with LLMAgentEdit
     section = state["section_to_generate"]
     logger.debug("Generating section", section=section)
+    resources = []
+    for association in state["resources_associations"].associations:
+        if association.section_title == section:
+            # First, handle all specified subcategories
+            for subcategory in association.subcategories:
+                # Find the parent category for this subcategory
+                parent_category = None
+                for category, subcategories in CATEGORY_SUBCATEGORY_MAP.items():
+                    if subcategory in subcategories:
+                        parent_category = category
+                        break
+                if not parent_category:
+                    logger.warning(
+                        "No parent category found for subcategory",
+                        subcategory=subcategory,
+                    )
+                    continue
 
-    section_resource_requests = []
-    for section_resource_types in state["resources_associations"].associations:
-        if section_resource_types.section_title == section:
-            section_resource_requests.extend(
-                build_resource_requests_for_section(section_resource_types, state)
-            )
+                request = GetResourcesRequest.from_client_extracted_info(
+                    category=parent_category,
+                    subcategory=subcategory,
+                    limit=2,
+                    client_info=state["client_extracted_info"],
+                    exclude_names=None,
+                    exclude_ids=None,
+                )
+                try:
+                    fetched_resources = await fetch_resources_with_retry(
+                        request, max_retries=2
+                    )
+                    resources.extend(fetched_resources)
+                except Exception as error:
+                    logger.error(
+                        "Failed to fetch resources for subcategory",
+                        category=parent_category,
+                        subcategory=subcategory,
+                        error=str(error),
+                    )
+            # Then handle categories that don't have specific subcategories listed
+            for category in association.categories:
+                # Check if this category already had subcategories handled
+                subcategories_handled = False
+                for subcategory in association.subcategories:
+                    if any(
+                        subcategory in subcat_list
+                        for cat, subcat_list in CATEGORY_SUBCATEGORY_MAP.items()
+                        if cat == category
+                    ):
+                        subcategories_handled = True
+                        break
 
-    resources = await get_resources_for_section(section_resource_requests)
+                # If no subcategories were handled for this category, get all resources for the category
+                if not subcategories_handled:
+                    request = GetResourcesRequest.from_client_extracted_info(
+                        category=category,
+                        subcategory=None,
+                        client_info=state["client_extracted_info"],
+                        exclude_names=None,
+                        exclude_ids=None,
+                        limit=2,
+                    )
+                    try:
+                        fetched_resources = await fetch_resources_with_retry(
+                            request, max_retries=2
+                        )
+                        resources.extend(fetched_resources)
+                    except Exception as error:
+                        logger.error(
+                            "Failed to fetch resources for category",
+                            category=category,
+                            error=str(error),
+                        )
 
     message = HumanMessage(
         content=dedent(f"""

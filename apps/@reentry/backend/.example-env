@@ -80,8 +80,9 @@ RECIDIVIZ_LANGCHAIN_PROJECT="dev-recidiviz"
 # ----------------------------------------------- #
 # Resources API
 # ----------------------------------------------- #
-RECIDIVIZ_RESOURCE_API_URL=
-RECIDIVIZ_RESOURCE_API_KEY=
+RECIDIVIZ_USE_EXTERNAL_RESOURCES_API=False
+RECIDIVIZ_EXTERNAL_RESOURCES_API_URL=
+RECIDIVIZ_RESOURCES_API_KEY=
 
 
 

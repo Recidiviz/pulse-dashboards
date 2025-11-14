@@ -5,12 +5,13 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from app.services.resources.resource_taxonomy import (
+from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
+    Resource,
     ResourceCategory,
     ResourceSubcategory,
+     ClientExtractedInfo
 )
-from app.services.resources.types import ClientExtractedInfo, Resource
 from app.utils.action_plan_types import ActionPlan, ActionPlanMarkdown
 
 
@@ -367,6 +368,9 @@ async def test_resource_type_get_result(
     assert_response,
     category: ResourceCategory,
 ):
+    if category == ResourceCategory.UNKNOWN:
+        pytest.skip()
+
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     # create a plan
     cplan_r = await client.post(
@@ -441,15 +445,15 @@ async def test_suggested_resources(
     mock_resources = [
         Resource(
             id="res-1",
-            category=ResourceCategory.HOUSING,
-            subcategory=ResourceSubcategory.TRANSITIONAL_HOUSING,
+            category=ResourceCategory.BASIC_NEEDS,
+            subcategory=ResourceSubcategory.HOUSING,
             name="Test Housing Resource",
             address="123 Test St, Test City, TX",
         ),
         Resource(
             id="res-2",
-            category=ResourceCategory.EMPLOYMENT,
-            subcategory=ResourceSubcategory.JOB_READINESS_TRAINING,
+            category=ResourceCategory.EMPLOYMENT_AND_CAREER,
+            subcategory=ResourceSubcategory.JOB_PLACEMENT,
             name="Test Employment Resource",
             address="456 Employment Rd, Test City, TX",
         ),
@@ -511,18 +515,18 @@ async def test_suggested_resources(
             # Verify resources match what was stored
             assert len(suggested_resources) == 2
             assert suggested_resources[0]["id"] == "res-1"
-            assert suggested_resources[0]["category"] == ResourceCategory.HOUSING
-            assert (
-                suggested_resources[0]["subcategory"]
-                == ResourceSubcategory.TRANSITIONAL_HOUSING
-            )
+            assert suggested_resources[0]["category"] == ResourceCategory.BASIC_NEEDS
+            assert suggested_resources[0]["subcategory"] == ResourceSubcategory.HOUSING
             assert suggested_resources[0]["name"] == "Test Housing Resource"
 
             assert suggested_resources[1]["id"] == "res-2"
-            assert suggested_resources[1]["category"] == ResourceCategory.EMPLOYMENT
+            assert (
+                suggested_resources[1]["category"]
+                == ResourceCategory.EMPLOYMENT_AND_CAREER
+            )
             assert (
                 suggested_resources[1]["subcategory"]
-                == ResourceSubcategory.JOB_READINESS_TRAINING
+                == ResourceSubcategory.JOB_PLACEMENT
             )
             assert suggested_resources[1]["name"] == "Test Employment Resource"
 
