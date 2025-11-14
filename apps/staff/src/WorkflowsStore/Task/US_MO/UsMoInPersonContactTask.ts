@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,22 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const FIRESTORE_GENERAL_COLLECTION_MAP = {
-  supervisionStaff: "supervisionStaff",
-  incarcerationStaff: "incarcerationStaff",
-  userUpdates: "userUpdates",
-  clients: "clients",
-  residents: "residents",
-  clientUpdates: "clientUpdates",
-  clientUpdatesV2: "clientUpdatesV2",
-  clientOpportunityUpdates: "clientOpportunityUpdates",
-  locations: "locations",
-  milestonesMessages: "milestonesMessages",
-  taskUpdates: "taskUpdates",
-  usIdSupervisionTasks: "US_ID-supervisionTasks",
-  usMoSupervisionTasks: "US_MO-supervisionTasks",
-  usNdSupervisionTasks: "US_ND-supervisionTasks",
-  usNeSupervisionTasks: "US_NE-supervisionTasks",
-  usTxSupervisionTasks: "US_TX-supervisionTasks",
-  clientFormUpdates: "clientFormUpdates",
-} as const;
+import { fieldToDate } from "~datatypes";
+
+import { formatWorkflowsDate, toTitleCase } from "../../../utils";
+import { Task } from "../Task";
+
+class UsMoInPersonContactTask extends Task<"usMoInPersonContact"> {
+  displayName = "In-person Contact";
+
+  get additionalDetails() {
+    const { lastContactDate } = this.details;
+    return lastContactDate
+      ? `Last in-person contact on ${formatWorkflowsDate(fieldToDate(lastContactDate))}`
+      : "No previous in-person contact on record";
+  }
+
+  get frequency() {
+    return toTitleCase(this.details.contactCadence);
+  }
+}
+
+export default UsMoInPersonContactTask;

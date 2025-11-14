@@ -19,6 +19,9 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
+import UsMoEmploymentVerificationTask from "../WorkflowsStore/Task/US_MO/UsMoEmploymentVerificationTask";
+import UsMoInPersonContactTask from "../WorkflowsStore/Task/US_MO/UsMoInPersonContactTask";
+import UsMoPositiveHomeVisitTask from "../WorkflowsStore/Task/US_MO/UsMoPositiveHomeVisitTask";
 
 const US_MO_CONFIG = {
   name: "Missouri",
@@ -26,10 +29,36 @@ const US_MO_CONFIG = {
   domain: "doc.mo.gov",
   availableStateCodes: [pathways.US_MO],
   enableUserRestrictions: true,
-  workflowsSupportedSystems: ["INCARCERATION"],
+  workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsMethodologyUrl:
     "https://docs.google.com/document/d/e/2PACX-1vToMOcOU3qmUUF9J86R4MaqjcZIogwq5FwuqWqWLFiY2cPCsgq98E_HgbQ5PPJWexRT-n7pWqcqY5Xz/pub",
+  workflowsTasksConfig: {
+    collection: "usMoSupervisionTasks",
+    tasks: {
+      usMoEmploymentVerification: {
+        constructor: UsMoEmploymentVerificationTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usMoPositiveHomeVisit: {
+        constructor: UsMoPositiveHomeVisitTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usMoInPersonContact: {
+        constructor: UsMoInPersonContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+    },
+  },
   workflowsSystemConfigs: {
+    SUPERVISION: {
+      search: [
+        {
+          searchType: "OFFICER",
+          searchField: ["officerId"],
+          searchTitle: "officer",
+        },
+      ],
+    },
     INCARCERATION: {
       search: [
         {
@@ -47,7 +76,7 @@ const US_MO_CONFIG = {
     },
   },
   navigation: {
-    workflows: ["home", "clients", "residents"],
+    workflows: ["home", "tasks", "clients", "residents"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,
