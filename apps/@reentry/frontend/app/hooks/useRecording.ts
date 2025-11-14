@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { captureException, withScope } from "@sentry/nextjs";
+import NoSleep from "nosleep.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
@@ -82,12 +83,26 @@ export const useRecording = ({
   const recordingStartTimeRef = useRef<number | null>(null);
   const lastDataSendedTimeRef = useRef<number | null>(null);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+  const noSleepRef = useRef<NoSleep | null>(null);
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
 
   const { mutateAsync: finalizeRecordingMutation } = $api.useMutation(
     "post",
     "/recordings/sessions/{session_id}/finalize",
   );
+
+  // Initialize NoSleep on mount
+  useEffect(() => {
+    if (!noSleepRef.current) {
+      noSleepRef.current = new NoSleep();
+    }
+    return () => {
+      // Cleanup on unmount
+      if (noSleepRef.current?.isEnabled) {
+        noSleepRef.current.disable();
+      }
+    };
+  }, []);
 
   // Track online/offline status
   const isBackOnline = useCallback(() => {
@@ -236,6 +251,30 @@ export const useRecording = ({
     return hasTouch && isSmallScreen;
   }, []);
 
+  // Release wake lock
+  const releaseWakeLock = useCallback(async () => {
+    // Release Wake Lock API if active
+    if (wakeLockRef.current) {
+      try {
+        await wakeLockRef.current.release();
+        wakeLockRef.current = null;
+        console.log("Wake Lock API released manually");
+      } catch (error) {
+        console.error("Error releasing wake lock:", error);
+      }
+    }
+
+    // Disable NoSleep if active
+    if (noSleepRef.current?.isEnabled) {
+      try {
+        noSleepRef.current.disable();
+        console.log("NoSleep disabled manually");
+      } catch (error) {
+        console.error("Error disabling NoSleep:", error);
+      }
+    }
+  }, []);
+
   // Request wake lock to keep screen awake during recording
   const requestWakeLock = useCallback(async () => {
     // Only apply wake lock on mobile and tablet devices
@@ -244,74 +283,79 @@ export const useRecording = ({
       return;
     }
 
-    // Check if Wake Lock API is supported
-    if (!("wakeLock" in navigator)) {
-      console.warn("Wake Lock API not supported on this device");
-      return;
+    // Check battery level before requesting wake lock
+    if ("getBattery" in navigator) {
+      try {
+        const battery = await (
+          navigator as Navigator & {
+            getBattery: () => Promise<{
+              level: number;
+              charging: boolean;
+            }>;
+          }
+        ).getBattery();
+        const batteryPercentage = Math.round(battery.level * 100);
+        setBatteryLevel(batteryPercentage);
+        console.log(
+          `Battery level: ${batteryPercentage}%, charging: ${battery.charging}`,
+        );
+      } catch (batteryError) {
+        console.warn("Could not retrieve battery information:", batteryError);
+      }
     }
 
-    try {
-      // Check battery level before requesting wake lock
-      if ("getBattery" in navigator) {
-        try {
-          const battery = await (
-            navigator as Navigator & {
-              getBattery: () => Promise<{
-                level: number;
-                charging: boolean;
-              }>;
-            }
-          ).getBattery();
-          const batteryPercentage = Math.round(battery.level * 100);
-          setBatteryLevel(batteryPercentage);
-          console.log(
-            `Battery level: ${batteryPercentage}%, charging: ${battery.charging}`,
-          );
-        } catch (batteryError) {
-          console.warn("Could not retrieve battery information:", batteryError);
-        }
+    // Try Wake Lock API first
+    if ("wakeLock" in navigator) {
+      try {
+        // Request wake lock
+        const wakeLock = await navigator.wakeLock.request("screen");
+        wakeLockRef.current = wakeLock;
+        console.log("Wake Lock API acquired successfully");
+
+        // Listen for wake lock release
+        wakeLock.addEventListener("release", () => {
+          console.log("Wake lock released");
+        });
+
+        return;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        console.warn("Wake Lock API failed, falling back to NoSleep:", errorMessage);
       }
+    }
 
-      // Request wake lock
-      const wakeLock = await navigator.wakeLock.request("screen");
-      wakeLockRef.current = wakeLock;
-      console.log("Wake lock acquired successfully");
-
-      // Listen for wake lock release
-      wakeLock.addEventListener("release", () => {
-        console.log("Wake lock released");
-      });
+    // Fallback to NoSleep if Wake Lock API is not supported or failed
+    try {
+      if (noSleepRef.current && !noSleepRef.current.isEnabled) {
+        await noSleepRef.current.enable();
+        console.log("NoSleep enabled successfully (fallback for iOS Safari)");
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
-      console.error("Error requesting wake lock:", errorMessage);
+      console.error("Error enabling NoSleep:", errorMessage);
       showErrorToast(
         `Could not keep screen awake: ${errorMessage}${batteryLevel !== null ? ` (Battery: ${batteryLevel}%)` : ""}`,
       );
     }
-  }, [isMobileOrTablet, batteryLevel]);
-
-  // Release wake lock
-  const releaseWakeLock = useCallback(async () => {
-    if (wakeLockRef.current) {
-      try {
-        await wakeLockRef.current.release();
-        wakeLockRef.current = null;
-        console.log("Wake lock released manually");
-      } catch (error) {
-        console.error("Error releasing wake lock:", error);
-      }
-    }
-  }, []);
+  }, [isMobileOrTablet, batteryLevel, releaseWakeLock]);
 
   // Check if wake lock is active
   const isWakeLockActive = useCallback((): boolean => {
-    return (
-      isMobileOrTablet() &&
-      wakeLockRef.current !== null &&
-      !wakeLockRef.current.released
-    );
-  }, []);
+    if (!isMobileOrTablet()) {
+      return false;
+    }
+
+    // Check if Wake Lock API is active
+    const isWakeLockAPIActive =
+      wakeLockRef.current !== null && !wakeLockRef.current.released;
+
+    // Check if NoSleep is active
+    const isNoSleepActive = noSleepRef.current?.isEnabled ?? false;
+
+    return isWakeLockAPIActive || isNoSleepActive;
+  }, [isMobileOrTablet]);
 
   const pauseRecording = useCallback(
     (event: Event | null = null, fromVisibilityChange = false) => {

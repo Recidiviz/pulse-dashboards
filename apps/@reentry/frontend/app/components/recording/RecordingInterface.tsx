@@ -52,6 +52,7 @@ interface RecordingInterfaceProps {
   onRecordingStopped?: () => void;
   setNeedsAddress: (needs: boolean) => void;
   onRecordingStatusChange?: (status: string) => void;
+  onSafeNavigateReady?: (safeNavigate: (path: string) => void) => void;
 }
 
 const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
@@ -60,6 +61,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
   onRecordingStopped,
   setNeedsAddress,
   onRecordingStatusChange,
+  onSafeNavigateReady,
 }) => {
   const { statusData } = useRecordingSessionStatus(sessionData?.id || "", true);
   const [recordingStopped, setRecordingStopped] = useState(false);
@@ -69,6 +71,9 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     (() => void) | null
   >(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(
+    null,
+  );
   const [recordDuration, setRecordDuration] = useState(0);
   const [isWakeLockActive, setIsWakeLockActive] = useState(false);
 
@@ -128,6 +133,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
   // Block navigation when recording is active
   useEffect(() => {
     const isRecordingActive = recording.uiStatus === "recording";
+    console.log(isRecordingActive);
     blockNavigationRef.current = isRecordingActive;
 
     if (isRecordingActive) {
@@ -139,6 +145,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
       };
 
       const handlePopState = (e: PopStateEvent) => {
+        console.log("handlePopState triggered");
         if (blockNavigationRef.current) {
           e.preventDefault();
           window.history.pushState(null, "", window.location.pathname);
@@ -214,6 +221,28 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     setEndAssessmentOpen(false);
     setNeedsAddress(true);
   };
+
+  // Safe navigation function that checks if recording is active
+  const safeNavigate = useCallback(
+    (path: string) => {
+      if (recording.uiStatus === "recording") {
+        // Recording is active, show confirmation dialog
+        setPendingNavigation(path);
+        setConfirmDialogOpen(true);
+      } else {
+        // No active recording, navigate directly
+        router.push(path);
+      }
+    },
+    [recording.uiStatus, router],
+  );
+
+  // Expose safeNavigate function to parent component
+  useEffect(() => {
+    if (onSafeNavigateReady) {
+      onSafeNavigateReady(safeNavigate);
+    }
+  }, [onSafeNavigateReady, safeNavigate]);
 
   if (!clientRecord || !sessionData) {
     return (
@@ -310,9 +339,18 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
         open={confirmDialogOpen}
         onClose={() => {
           setConfirmDialogOpen(false);
+          setPendingNavigation(null);
         }}
         aria-labelledby="confirm-dialog-title"
         aria-describedby="confirm-dialog-description"
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{
+          sx: {
+            m: 2,
+            maxHeight: "calc(100% - 32px)",
+          },
+        }}
       >
         <DialogTitle id="confirm-dialog-title">Active Recording</DialogTitle>
         <DialogContent>
@@ -320,12 +358,22 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
             You have an active recording. Are you sure you want to leave?
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
+        <DialogActions
+          sx={{
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 1,
+            px: 3,
+            pb: 2,
+          }}
+        >
           <Button
             onClick={() => {
               setConfirmDialogOpen(false);
+              setPendingNavigation(null);
             }}
             color="primary"
+            fullWidth
+            sx={{ order: { xs: 2, sm: 1 } }}
           >
             Cancel
           </Button>
@@ -338,17 +386,26 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
                 recording.pauseRecording();
               }
 
-              // Navigate based on client record availability
-              if (clientRecord?.pseudonymized_client_id) {
-                router.push(
-                  `/clients/intake/${clientRecord.pseudonymized_client_id}`,
-                );
+              // Navigate based on pending navigation or default behavior
+              if (pendingNavigation) {
+                // Navigation triggered by safeNavigate (programmatic)
+                router.push(pendingNavigation);
+                setPendingNavigation(null);
               } else {
-                router.back();
+                // Navigation triggered by back button or other means
+                if (clientRecord?.pseudonymized_client_id) {
+                  router.push(
+                    `/clients/intake/${clientRecord.pseudonymized_client_id}`,
+                  );
+                } else {
+                  router.back();
+                }
               }
             }}
             color="error"
             variant="contained"
+            fullWidth
+            sx={{ order: { xs: 1, sm: 2 } }}
           >
             Leave
           </Button>

@@ -63,7 +63,7 @@ export default function LiveAssessmentModal({
       title="Start Live Intake Assessment"
       onClose={onClose}
     >
-      <div className="text-[#2a5469]/90 text-sm font-medium font-['Public_Sans'] space-y-4">
+      <div className="text-[#2a5469]/90 text-sm sm:text-sm font-medium font-['Public_Sans'] space-y-4">
         <p>
           Before proceeding, please inform all parties present that this session
           is being recorded and transcribed by artificial intelligence to create
@@ -78,7 +78,7 @@ export default function LiveAssessmentModal({
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-2">
         <label
           htmlFor="fullName"
-          className="text-[#004d47] text-[13px] font-medium font-['Public_Sans']"
+          className="text-[#004d47] text-[13px] sm:text-[13px] font-medium font-['Public_Sans']"
         >
           Enter your full name to confirm consent
         </label>
@@ -89,25 +89,25 @@ export default function LiveAssessmentModal({
           onChange={(e) => setFullName(e.target.value)}
           placeholder="John Doe"
           required
-          className="px-4 py-3 rounded-lg outline outline-1 outline-[#345262]/30 text-[#2a5469]/90 text-[13px] placeholder:text-[#2a5469]/50 font-medium font-['Public_Sans']"
+          className="px-4 py-3 rounded-lg outline outline-1 outline-[#345262]/30 text-[#2a5469]/90 text-[13px] sm:text-[13px] placeholder:text-[#2a5469]/50 font-medium font-['Public_Sans'] w-full"
         />
-        <div className="flex gap-3 mt-3">
+        <div className="flex flex-col sm:flex-row gap-3 mt-3">
           <PrimaryButton buttonText="Cancel" onClick={onClose} />
           <Tooltip title={getTooltipTitle()}>
             <span className="flex-1">
               <button
                 type="submit"
                 disabled={!fullName.trim() || (!isOnline && !isPaused)}
-                className={`w-full h-8 px-4 py-2 rounded-[32px] text-[13px] font-medium leading-none transition-colors duration-300 flex items-center justify-center gap-2 ${
+                className={`w-full min-h-[32px] px-4 py-2 rounded-[32px] text-[13px] font-medium leading-tight transition-colors duration-300 flex items-center justify-center gap-2 ${
                   fullName.trim() && (isOnline || isPaused)
                     ? "bg-[#006c67] text-white hover:bg-[#005752]"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                Confirm & Start Recording
+                <span className="truncate">Confirm & Start Recording</span>
                 {!isOnline && (
                   <SignalWifiConnectedNoInternet4Icon
-                    className="text-red-600"
+                    className="text-red-600 flex-shrink-0"
                     style={{ fontSize: 16 }}
                   />
                 )}

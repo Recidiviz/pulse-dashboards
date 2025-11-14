@@ -20,47 +20,49 @@ import type React from "react";
 import Modal from "react-modal";
 
 interface BaseModalProps {
-	isOpen: boolean;
-	title: string;
-	children: React.ReactNode;
-	onClose: () => void;
+  isOpen: boolean;
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
 }
 
 const BaseModal: React.FC<BaseModalProps> = ({
-	isOpen,
-	title,
-	children,
-	onClose,
+  isOpen,
+  title,
+  children,
+  onClose,
 }) => {
-	return (
-		<Modal
-			isOpen={isOpen}
-			onRequestClose={onClose}
-			className="outline-none"
-			overlayClassName="fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
-			ariaHideApp={false}
-		>
-			<div className="w-full max-w-[410px] bg-white rounded-xl shadow-[0px_8px_56px_0px_rgba(43,84,105,0.12)] shadow-[0px_4px_8px_0px_rgba(43,84,105,0.06)] shadow-[0px_0px_1px_0px_rgba(43,84,105,0.10)] inline-flex flex-col justify-start items-end overflow-hidden">
-				{/* Header */}
-				<div className="self-stretch px-4 py-3 border-b border-[#2b5469]/20 flex justify-between items-center">
-					<div className="text-[#002321] text-base font-medium font-['Public_Sans'] leading-tight">
-						{title}
-					</div>
-					<button
-						className="p-1 hover:bg-gray-100 rounded"
-						onClick={onClose}
-						aria-label="Close modal"
-						type="button"
-					>
-						<X size={14} className="text-[#004D48]" />
-					</button>
-				</div>
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      className="outline-none"
+      overlayClassName="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+      ariaHideApp={false}
+    >
+      <div className="w-full max-w-[410px] max-h-[90vh] bg-white rounded-xl shadow-[0px_8px_56px_0px_rgba(43,84,105,0.12)] shadow-[0px_4px_8px_0px_rgba(43,84,105,0.06)] shadow-[0px_0px_1px_0px_rgba(43,84,105,0.10)] flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="flex-shrink-0 px-4 py-3 border-b border-[#2b5469]/20 flex justify-between items-center">
+          <div className="text-[#002321] text-base font-medium font-['Public_Sans'] leading-tight">
+            {title}
+          </div>
+          <button
+            className="p-1 hover:bg-gray-100 rounded"
+            onClick={onClose}
+            aria-label="Close modal"
+            type="button"
+          >
+            <X size={14} className="text-[#004D48]" />
+          </button>
+        </div>
 
-				{/* Body */}
-				<div className="self-stretch p-4 flex flex-col gap-5">{children}</div>
-			</div>
-		</Modal>
-	);
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
+          {children}
+        </div>
+      </div>
+    </Modal>
+  );
 };
 
 export default BaseModal;

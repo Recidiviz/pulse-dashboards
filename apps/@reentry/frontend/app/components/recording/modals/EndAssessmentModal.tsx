@@ -105,8 +105,8 @@ export default function EndAssessmentModal({
     if (isStopping) {
       return (
         <>
-          <div className="flex flex-row items-center justify-center gap-3">
-            <p className="text-[#2a5469]/90 text-lg font-semibold font-['Public_Sans'] leading-normal text-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <p className="text-[#2a5469]/90 text-base sm:text-lg font-semibold font-['Public_Sans'] leading-normal text-center">
               Ending and Syncing pending chunks...
             </p>
             <StatusIndicators
@@ -123,9 +123,9 @@ export default function EndAssessmentModal({
     if (cannotConnectToServer) {
       return (
         <>
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-start gap-2 mb-4">
             <SignalWifiConnectedNoInternet4Icon
-              className="text-orange-500"
+              className="text-orange-500 flex-shrink-0 mt-0.5"
               style={{ fontSize: 24 }}
             />
             <p className="text-[#2a5469]/90 text-sm font-medium font-['Public_Sans'] leading-[16.80px]">
@@ -134,12 +134,12 @@ export default function EndAssessmentModal({
             </p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <PrimaryButton buttonText="Close" onClick={onClose} />
             {isRecording && onPause && (
               <PrimaryButton
                 buttonText="Pause Recording"
-                className="flex-1 h-8 px-4 py-2 bg-gray-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
+                className="flex-1 min-h-[32px] px-4 py-2 bg-gray-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
                 onClick={() => {
                   onPause();
                   onClose();
@@ -154,9 +154,9 @@ export default function EndAssessmentModal({
     if (!isOnline) {
       return (
         <>
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-start gap-2 mb-4">
             <SignalWifiConnectedNoInternet4Icon
-              className="text-red-600"
+              className="text-red-600 flex-shrink-0 mt-0.5"
               style={{ fontSize: 24 }}
             />
             <p className="text-[#2a5469]/90 text-sm font-medium font-['Public_Sans'] leading-[16.80px]">
@@ -165,12 +165,12 @@ export default function EndAssessmentModal({
             </p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <PrimaryButton buttonText="Close" onClick={onClose} />
             {isRecording && onPause && (
               <PrimaryButton
                 buttonText="Pause Recording"
-                className="flex-1 h-8 px-4 py-2 bg-gray-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
+                className="flex-1 min-h-[32px] px-4 py-2 bg-gray-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
                 onClick={() => {
                   onPause();
                   onClose();
@@ -188,12 +188,12 @@ export default function EndAssessmentModal({
           If you end the assessment now, you will not be able to start it again.
         </p>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <PrimaryButton buttonText="Continue Assessment" onClick={onClose} />
           <PrimaryButton
             buttonText={isStopping ? `Stopping...` : "Yes, End Assessment"}
             disabled={isStopping}
-            className="flex-1 h-8 px-4 py-2 bg-[#006c67] rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
+            className="flex-1 min-h-[32px] px-4 py-2 bg-[#006c67] rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
             onClick={handleEndAssessment}
           />
         </div>

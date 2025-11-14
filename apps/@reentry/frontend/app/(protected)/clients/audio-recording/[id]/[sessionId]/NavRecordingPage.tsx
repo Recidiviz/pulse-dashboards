@@ -22,13 +22,13 @@ import React from "react";
 
 import BackButton from "~@reentry/frontend/components/base/BackButton";
 
-const NavRecordingPage = () => {
+const NavRecordingPage = ({safeNavigate}: {safeNavigate: ((path: string) => void) | null}) => {
 
   return (
     <nav className="w-full h-[65px] px-6 bg-white border-b border-[#2b5469]/20 justify-between items-center inline-flex print:hidden">
       <div className="grow shrink basis-0 h-[65px] justify-between items-center flex">
         <div className="pr-6 justify-start items-center gap-4 flex">
-          <BackButton />
+          <BackButton onClick={() => safeNavigate?.("/clients")} />
         </div>
         <div className="pl-6 justify-start items-center gap-4 flex">
         </div>

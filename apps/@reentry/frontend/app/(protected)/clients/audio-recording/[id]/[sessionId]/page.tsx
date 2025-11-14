@@ -36,7 +36,7 @@ const AudioRecordingPage: React.FC = () => {
   const { getAccessToken } = useAuth();
   const [needsAddress, setNeedsAddress] = useState(false);
   const [recordingStatus, setRecordingStatus] = useState<string>("created");
-
+  const [safeNavigate, setSafeNavigate] = useState<((path: string) => void) | null>(null);
   // Get access token once per render
   const accessToken = getAccessToken();
 
@@ -156,7 +156,7 @@ const AudioRecordingPage: React.FC = () => {
     <>
       <PageView />
       <QueueProvider>
-        <NavRecordingPage />
+        <NavRecordingPage safeNavigate={safeNavigate} />
         <div className="min-h-[calc(100vh-65px)] self-stretch px-4 md:p-10 bg-[#f9fafa] flex flex-col items-start gap-5">
           <UserSummary
             clientData={clientData}
@@ -173,6 +173,7 @@ const AudioRecordingPage: React.FC = () => {
             sessionData={sessionData || null}
             setNeedsAddress={setNeedsAddress}
             onRecordingStatusChange={setRecordingStatus}
+            onSafeNavigateReady={(navigate) => setSafeNavigate(() => navigate)}
           />
         </div>
       </QueueProvider>
