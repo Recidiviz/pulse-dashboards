@@ -15,13 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./CompliantReportingOpportunity";
-export * from "./UsTnAnnualReclassificationReviewOpportunity";
-export * from "./UsTnCompliantReporting2025PolicyOpportunity";
-export * from "./UsTnCustodyLevelDowngradeOpportunity";
-export * from "./UsTnExpirationOpportunity";
-export * from "./UsTnInitialClassification2026Opportunity";
-export * from "./UsTnInitialClassificationOpportunity";
-export * from "./UsTnSharedCriteria";
-export * from "./UsTnSupervisionLevelDowngradeOpportunity";
-export * from "./UsTnSuspensionOfDirectSupervisionOpportunity";
+import { usTnInitialClassification2026PolicyFixtures } from "./fixtures";
+import { usTnInitialClassification2026Schema } from "./schema";
+
+test.each(
+  Object.keys(usTnInitialClassification2026PolicyFixtures) as Array<
+    keyof typeof usTnInitialClassification2026PolicyFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usTnInitialClassification2026Schema.parse(
+      usTnInitialClassification2026PolicyFixtures[key].input,
+    ),
+  ).toMatchSnapshot();
+});

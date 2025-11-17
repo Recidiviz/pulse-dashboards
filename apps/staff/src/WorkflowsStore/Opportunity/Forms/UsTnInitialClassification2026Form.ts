@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./CompliantReportingOpportunity";
-export * from "./UsTnAnnualReclassificationReviewOpportunity";
-export * from "./UsTnCompliantReporting2025PolicyOpportunity";
-export * from "./UsTnCustodyLevelDowngradeOpportunity";
-export * from "./UsTnExpirationOpportunity";
-export * from "./UsTnInitialClassification2026Opportunity";
-export * from "./UsTnInitialClassificationOpportunity";
-export * from "./UsTnSharedCriteria";
-export * from "./UsTnSupervisionLevelDowngradeOpportunity";
-export * from "./UsTnSuspensionOfDirectSupervisionOpportunity";
+import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
+import { UsTnInitialClassification2026Opportunity } from "../UsTn";
+import { FormBase } from "./FormBase";
+
+export class UsTnInitialClassification2026Form extends FormBase<
+  // TODO: Add real draft data typing
+  Record<string, string>,
+  UsTnInitialClassification2026Opportunity
+> {
+  navigateToFormText = "Auto-fill paperwork";
+
+  get formContents(): OpportunityFormComponentName {
+    return "FormUsTnInitialClassification2026";
+  }
+
+  prefilledDataTransformer() {
+    return {};
+  }
+}

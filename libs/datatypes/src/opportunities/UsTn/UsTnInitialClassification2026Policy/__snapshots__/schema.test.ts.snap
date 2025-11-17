@@ -1,0 +1,43 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsNotMax": null,
+    "notHasInitialClassificationInStatePrisonCustody": null,
+  },
+  "externalId": "RES003",
+  "formInformation": {
+    "calculatedTotalScore": 11,
+    "classificationType": "STUB",
+    "gangAffiliationId": "STUB",
+    "healthClassification": "STUB",
+    "lastCafDate": 2025-01-15T00:00:00.000Z,
+    "lastCafTotal": 10,
+    "latestClassificationDate": 2025-02-20T00:00:00.000Z,
+    "latestOverrideReason": null,
+    "latestVantageCompletedDate": 2025-01-10T00:00:00.000Z,
+    "latestVantageRiskLevel": "STUB",
+    "levelOfCare": "LVL1",
+    "q1Score": 2,
+    "q2Score": 10,
+    "q3Score": -3,
+    "q4Score": 2,
+    "q5Score": -1,
+    "q6Score": 0,
+    "q7Score": 1,
+    "sentenceEffectiveDate": 2024-12-01T00:00:00.000Z,
+    "sentenceExpirationDate": 2028-12-01T00:00:00.000Z,
+    "sentenceFullExpirationDate": 2029-12-01T00:00:00.000Z,
+    "sentenceReleaseEligibilityDate": 2027-06-01T00:00:00.000Z,
+    "sentenceSafetyValveDate": 2030-12-01T00:00:00.000Z,
+    "statusAtHearingSeg": null,
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_TN",
+}
+`;

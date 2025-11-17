@@ -117,6 +117,7 @@ export type FeatureVariant =
   | "usTnInitialClassification"
   | "usTnSuspensionOfDirectSupervision"
   | "usTnTEPENotesForAll"
+  | "usTn2026ClassificationPolicyPilot"
 
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
@@ -195,6 +196,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIaSupervisionLevelDowngrade: {},
   operationsDrilldown: {},
   usTnInitialClassification: {},
+  usTn2026ClassificationPolicyPilot: {},
   insightsStaffUsage: {},
   usTnTEPENotesForAll: {},
   usMoSearchByUnit: {},

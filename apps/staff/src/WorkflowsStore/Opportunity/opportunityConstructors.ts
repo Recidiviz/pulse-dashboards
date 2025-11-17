@@ -42,16 +42,22 @@ import {
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from ".";
-import { UsArInstitutionalWorkerStatusOpportunity } from "./UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusOpportunity";
-import { UsAzReleaseToDTPOpportunity } from "./UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPOpportunity";
-import { UsAzReleaseToTPROpportunity } from "./UsAz/UsAzReleaseToTPROpportunity/UsAzReleaseToTPROpportunity";
+import { UsArInstitutionalWorkerStatusOpportunity } from "./UsAr";
+import {
+  UsAzReleaseToDTPOpportunity,
+  UsAzReleaseToTPROpportunity,
+} from "./UsAz";
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "./UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
-import { UsIaEarlyDischargeOpportunity } from "./UsIa";
-import { UsIaSupervisionLevelDowngradeOpportunity } from "./UsIa";
-import { UsIdExpandedCRCOpportunity } from "./UsId";
-import { UsIdCRCResidentWorkerOpportunity } from "./UsId/UsIdCRCResidentWorkerOpportunity/UsIdCRCResidentWorkerOpportunity";
+import {
+  UsIaEarlyDischargeOpportunity,
+  UsIaSupervisionLevelDowngradeOpportunity,
+} from "./UsIa";
+import {
+  UsIdCustodyLevelDowngradeOpportunity,
+  UsIdExpandedCRCOpportunity,
+} from "./UsId";
+import { UsIdCRCResidentWorkerOpportunity } from "./UsId/UsIdCRCResidentWorkerOpportunity";
 import { UsIdCRCWorkReleaseOpportunity } from "./UsId/UsIdCRCWorkReleaseOpportunity";
-import { UsIdCustodyLevelDowngradeOpportunity } from "./UsId/UsIdCustodyLevelDowngradeOpportunity";
 import {
   UsMeFurloughReleaseOpportunity,
   UsMeSCCPOpportunity,
@@ -75,8 +81,11 @@ import {
   UsTnInitialClassificationOpportunity,
   UsTnSuspensionOfDirectSupervisionOpportunity,
 } from "./UsTn";
-import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
-import { UsTnCompliantReporting2025PolicyOpportunity } from "./UsTn/UsTnCompliantReporting2025PolicyOpportunity";
+import {
+  UsTnAnnualReclassificationReviewOpportunity,
+  UsTnCompliantReporting2025PolicyOpportunity,
+  UsTnInitialClassification2026Opportunity,
+} from "./UsTn";
 import { UsTxAnnualReportStatusOpportunity } from "./UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
 import { UsTxEarlyReleaseFromSupervisionOpportunity } from "./UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
 import { UsUtEarlyTerminationOpportunity } from "./UsUt";
@@ -161,6 +170,7 @@ export const opportunityConstructors = {
   // US_TN
   usTnAnnualReclassification: UsTnAnnualReclassificationReviewOpportunity,
   usTnInitialClassification: UsTnInitialClassificationOpportunity,
+  usTnInitialClassification2026Policy: UsTnInitialClassification2026Opportunity,
   compliantReporting: CompliantReportingOpportunity,
   usTnCompliantReporting2025Policy: UsTnCompliantReporting2025PolicyOpportunity,
   usTnExpiration: UsTnExpirationOpportunity,

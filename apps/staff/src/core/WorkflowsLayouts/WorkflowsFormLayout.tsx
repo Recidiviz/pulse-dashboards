@@ -47,6 +47,7 @@ import { FormUsMiSCCReview } from "../Paperwork/US_MI/SCCReview/FormUsMiSCCRevie
 import { FormUsMoWorkRelease } from "../Paperwork/US_MO/WorkRelease/FormUsMoWorkRelease";
 import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
 import { WorkflowsFormUsTnSuspensionOfDirectSupervision } from "../Paperwork/US_TN/SuspensionOfDirectSupervision/WorkflowsFormUsTnSuspensionOfDirectSupervision";
+import { FormUsTnInitialClassification2026 } from "../Paperwork/US_TN/UsTnInitialClassification2026/FormUsTnInitialClassification2026";
 import { workflowsUrl } from "../views";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
@@ -109,6 +110,7 @@ const FormComponents = {
   FormWorkRelease,
   WorkflowsUsTnExpirationForm,
   WorkflowsUsTnReclassForm,
+  FormUsTnInitialClassification2026,
   WorkflowsUsCaSupervisionLevelDowngradeForm,
   WorkflowsUsCaSupervisionLevelDowngradeForm3043,
   FormFurloughRelease,

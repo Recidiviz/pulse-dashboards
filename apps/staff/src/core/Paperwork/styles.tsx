@@ -23,7 +23,22 @@ import { DIMENSIONS_PX } from "./PDFFormGenerator";
 type PrintablePageProps = {
   stretchable?: boolean;
   lineHeight?: number;
+  landscape?: boolean;
 };
+
+function pageHeight(landscape = false): string {
+  if (landscape) {
+    return rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN);
+  }
+  return rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN);
+}
+
+function pageWidth(landscape = false): string {
+  if (landscape) {
+    return rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN);
+  }
+  return rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN);
+}
 
 export const PrintablePage = styled.div.attrs({
   className: "form-page",
@@ -31,20 +46,11 @@ export const PrintablePage = styled.div.attrs({
   display: flex;
   flex-direction: column;
   background-color: white;
-  height: ${(p) =>
-    p.stretchable
-      ? undefined
-      : rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
-  max-height: ${(p) =>
-    p.stretchable
-      ? undefined
-      : rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
-  min-height: ${(p) =>
-    p.stretchable
-      ? rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)
-      : undefined};
-  width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
-  max-width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
+  height: ${(p) => (p.stretchable ? undefined : pageHeight(p.landscape))};
+  max-height: ${(p) => (p.stretchable ? undefined : pageHeight(p.landscape))};
+  min-height: ${(p) => (p.stretchable ? pageHeight(p.landscape) : undefined)};
+  width: ${(p) => pageWidth(p.landscape)};
+  max-width: ${(p) => pageWidth(p.landscape)};
   overflow: hidden;
   color: black;
   font-family: Arial, serif;
@@ -54,18 +60,18 @@ export const PrintablePage = styled.div.attrs({
   line-height: ${({ lineHeight }) => lineHeight ?? 1.3};
 `;
 
-export const PrintablePageMargin = styled.div<{ stretchable?: boolean }>`
+export const PrintablePageMargin = styled.div<{
+  stretchable?: boolean;
+  landscape?: boolean;
+}>`
   background-color: white;
   padding: ${rem(18)};
   box-sizing: content-box;
   transform-origin: 0 0;
 
-  height: ${(p) =>
-    p.stretchable ? "none" : rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
-  max-height: ${(p) =>
-    p.stretchable ? "none" : rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
-  min-height: ${(p) =>
-    p.stretchable ? rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN) : "none"};
-  width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
-  max-width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
+  height: ${(p) => (p.stretchable ? "none" : pageHeight(p.landscape))};
+  max-height: ${(p) => (p.stretchable ? "none" : pageHeight(p.landscape))};
+  min-height: ${(p) => (p.stretchable ? pageHeight(p.landscape) : "none")};
+  width: ${(p) => pageWidth(p.landscape)};
+  max-width: ${(p) => pageWidth(p.landscape)};
 `;

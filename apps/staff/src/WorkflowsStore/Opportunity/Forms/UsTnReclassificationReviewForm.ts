@@ -31,7 +31,7 @@ import {
   UsTnCustodyLevelDowngradeOpportunity,
   UsTnSharedReclassificationDraftData,
 } from "../UsTn";
-import { UsTnInitialClassificationOpportunity } from "../UsTn/UsTnInitialClassificationOpportunity";
+import { UsTnInitialClassificationOpportunity } from "../UsTn";
 import { FormBase } from "./FormBase";
 
 function formatViolationNotes(
