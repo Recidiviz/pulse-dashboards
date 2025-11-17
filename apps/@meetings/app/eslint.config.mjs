@@ -40,6 +40,7 @@ export default [
     // Override or add rules here
     rules: {
       "tailwindcss/no-custom-classname": "off",
+      "tailwindcss/classnames-order": "off", // conflicts with prettier
     },
   },
   {
