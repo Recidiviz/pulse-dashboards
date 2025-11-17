@@ -53,10 +53,7 @@ const ERSChecklist: React.FC = () => {
             </ErsItem>
             <ErsItem>
               Eligibility Month:
-              <FormInput
-                name="eligibilityMonthString"
-                style={{ width: 175 }}
-              />
+              <FormInput name="eligibilityMonthString" style={{ width: 175 }} />
             </ErsItem>
           </Row>
         </ErsItem>
@@ -100,8 +97,8 @@ const ERSChecklist: React.FC = () => {
           <ErsItem width={25}>N</ErsItem>
           <ErsItem width={508}>
             2. The client has been under supervision for a minimum of three
-            years on the current period of supervision to include at least
-            three years on Low supervision level as determined by the TRAS.
+            years on the current period of supervision to include at least three
+            years on Low supervision level as determined by the TRAS.
           </ErsItem>
         </Row>
         <Row justifyContentStart unsetMargin>
@@ -136,8 +133,8 @@ const ERSChecklist: React.FC = () => {
           <ErsItem width={508}>
             3. The client has demonstrated a good faith effort to comply with
             supervision, crime victim fees and Post Secondary Education
-            Reimbursement required as of release, which will continue to be
-            due monthly, unless paid in advance.
+            Reimbursement required as of release, which will continue to be due
+            monthly, unless paid in advance.
           </ErsItem>
         </Row>
         <Row justifyContentStart unsetMargin>
@@ -172,9 +169,9 @@ const ERSChecklist: React.FC = () => {
           <ErsItem width={508}>
             4. The client has maintained compliance with all restitution
             obligations in accordance with PD/POP 3.1.6 for the preceding two
-            years of supervision, which will continue to be due each month
-            until paid in full. **The client's restitution obligations do not
-            have to be paid in full to qualify**
+            years of supervision, which will continue to be due each month until
+            paid in full. **The client's restitution obligations do not have to
+            be paid in full to qualify**
           </ErsItem>
         </Row>
         <Row justifyContentStart unsetMargin>
@@ -207,10 +204,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem width={25}>Y</ErsItem>
           <ErsItem width={25}>N</ErsItem>
           <ErsItem width={508}>
-            5. The client has not had a warrant issued within the preceding
-            two years of supervision. This does not apply to a warrant issued
-            in which a subsequent investigation or administrative review did
-            not sustain the violation.
+            5. The client has not had a warrant issued within the preceding two
+            years of supervision. This does not apply to a warrant issued in
+            which a subsequent investigation or administrative review did not
+            sustain the violation.
           </ErsItem>
         </Row>
         <Row justifyContentStart unsetMargin>
@@ -243,10 +240,9 @@ const ERSChecklist: React.FC = () => {
           <ErsItem width={25}>Y</ErsItem>
           <ErsItem width={25}>N</ErsItem>
           <ErsItem width={508}>
-            6. The client has not committed any violation of rules or
-            conditions of release as indicated on their Certificate of
-            Parole/Mandatory Supervision, during the preceding two year period
-            of supervision.
+            6. The client has not committed any violation of rules or conditions
+            of release as indicated on their Certificate of Parole/Mandatory
+            Supervision, during the preceding two year period of supervision.
           </ErsItem>
         </Row>
         <Row justifyContentStart unsetMargin>
@@ -311,8 +307,8 @@ const ERSChecklist: React.FC = () => {
           </ErsItem>
         </Row>
         <Row style={{ fontSize: 8, fontWeight: "bold" }}>
-          This form should be forwarded through the supervising officer's
-          entire chain of command, regardless of the recommendation.
+          This form should be forwarded through the supervising officer's entire
+          chain of command, regardless of the recommendation.
         </Row>
         <Row style={{ fontSize: 8, fontWeight: "bold" }}>
           The Region Director will make the final decision regarding the
@@ -350,9 +346,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem textAlignCenter>
             <FormCheckbox
               toggleable
-              name="supervisingOfficerRecommendCheck"
+              name="supervisingOfficerRecommendCheckYes"
               id="supervisingOfficerRecommendCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="supervisingOfficerRecommendCheckNo"
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -363,10 +360,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem textAlignCenter>
             <FormCheckbox
               toggleable
-              invert
-              name="supervisingOfficerRecommendCheck"
+              name="supervisingOfficerRecommendCheckNo"
               id="supervisingOfficerRecommendCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="supervisingOfficerRecommendCheckYes"
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -405,9 +402,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem textAlignCenter>
             <FormCheckbox
               toggleable
-              name="unitSupervisorConcurWithSupervisingOfficerCheck"
+              name="unitSupervisorConcurWithSupervisingOfficerCheckYes"
               id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="unitSupervisorConcurWithSupervisingOfficerCheckNo"
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -418,10 +416,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem textAlignCenter>
             <FormCheckbox
               toggleable
-              invert
-              name="unitSupervisorConcurWithSupervisingOfficerCheck"
+              name="unitSupervisorConcurWithSupervisingOfficerCheckNo"
               id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="unitSupervisorConcurWithSupervisingOfficerCheckYes"
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -460,9 +458,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem textAlignCenter>
             <FormCheckbox
               toggleable
-              name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+              name="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
               id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -473,10 +472,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem textAlignCenter>
             <FormCheckbox
               toggleable
-              invert
-              name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+              name="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
               id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -515,9 +514,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem textAlignCenter>
             <FormCheckbox
               toggleable
-              name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+              name="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
               id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -528,10 +528,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem textAlignCenter>
             <FormCheckbox
               toggleable
-              invert
-              name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+              name="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
               id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -568,9 +568,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem textAlignCenter>
             <FormCheckbox
               toggleable
-              name="regionDirectorConcurWithSupervisingOfficerCheck"
+              name="regionDirectorConcurWithSupervisingOfficerCheckYes"
               id="regionDirectorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="regionDirectorConcurWithSupervisingOfficerCheckNo"
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -583,10 +584,10 @@ const ERSChecklist: React.FC = () => {
           <ErsItem textAlignCenter>
             <FormCheckbox
               toggleable
-              invert
-              name="regionDirectorConcurWithSupervisingOfficerCheck"
+              name="regionDirectorConcurWithSupervisingOfficerCheckNo"
               id="regionDirectorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="regionDirectorConcurWithSupervisingOfficerCheckYes"
             ></FormCheckbox>
           </ErsItem>
         </Grid>

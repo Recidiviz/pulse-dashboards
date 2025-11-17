@@ -34,6 +34,7 @@ export type FormCheckboxProps = StyledComponentProps<
   name: FormDataFieldName;
   invert?: boolean;
   toggleable?: boolean;
+  manualInvert?: string;
 };
 
 const FormCheckbox: React.FC<FormCheckboxProps> = ({
@@ -41,6 +42,7 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({
   name,
   invert,
   toggleable,
+  manualInvert,
   ...props
 }) => {
   const opportunityForm = useOpportunityFormContext();
@@ -48,6 +50,9 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({
     let newVal: boolean | FieldValue = event.target.checked !== !!invert;
     if (toggleable && !event.target.checked) newVal = deleteField();
     opportunityForm.updateDraftData(name, newVal);
+    if (manualInvert) {
+      opportunityForm.updateDraftData(manualInvert, !newVal);
+    }
   };
 
   const value = opportunityForm.formData[name];
