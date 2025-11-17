@@ -13,7 +13,7 @@ UT_CCCI = [
         - What type of work they are looking for after they are released
         - How many hours per week they are looking to work
         - Will they be returning the job they had before entering the facility
-        - optional: Do they have any specific goals or aspirations for the work they are looking for
+        - Do they have any specific goals or aspirations for the work they are looking for
     c. If no, and they are not looking for work:
         - Are they receiving any social security or disability benefits
         - Or are they planning to be a homemaker
@@ -27,7 +27,7 @@ UT_CCCI = [
         - What type of school they are planning to attend
         - What type of program they are planning to enroll in
         - How many hours per week they are planning to attend school
-        - optional: Do they have any specific goals or aspirations for their education
+        - Do they have any specific goals or aspirations for their education
 2. The client's highest level of education completed (such as high school, GED, college)
 3. If they have any degrees or certifications
 4. If they are currently enrolled in any courses or programs in the facility""",
@@ -48,9 +48,10 @@ UT_CCCI = [
 3. Do they have strong, positive relationships with their other family members""",
     },
     {
-        "title": "Accommodation",
+        "title": "Housing",
         "description": "We'll talk about your housing situation before entering the facility and your plans for housing after release.",
-        "required_information": """1. Do they have a place to stay immediately after release
+        "required_information": """1. Where did they live before entering the facility?
+2. Do they have a place to stay immediately after release?
 3. Where do they plan to live long-term after release, and is it the same as the place they lived before or the place they plan to stay immediately after release
 4. What are their goals related to housing after release""",
     },
