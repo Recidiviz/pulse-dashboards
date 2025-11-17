@@ -47,7 +47,8 @@ export const US_AZ: InsightsConfig = {
   caseloadCategories: [],
   clientEvents: [],
   exclusionReasonDescription: "--",
-  learnMoreUrl: "--",
+  learnMoreUrl:
+    "https://docs.google.com/document/d/e/2PACX-1vRmhDnaMChRWXChmkIFVK5MgOhBXL8qO_juVKM3hg9YdHlajCmK1n6BIerxlI09-DaIjjbL7hYGbAPr/pub",
   metrics: [
     {
       name: "task_completions_transfer_to_limited_supervision",
