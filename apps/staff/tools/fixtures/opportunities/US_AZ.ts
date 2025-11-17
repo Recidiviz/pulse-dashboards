@@ -222,7 +222,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       subheading:
-        "This tool helps staff prioritize inmates for early release through the Drug Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. [Learn more](https://docs.google.com/document/d/1-wa_2D7vzfV4QfKxykp8HKDSt52ROmUjOza9GFIuID8/edit?tab=t.0#heading=h.r6s5tyc7ut6c)",
+        "This tool helps staff prioritize inmates for early release through the Drug Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. [Learn more](https://docs.google.com/document/d/e/2PACX-1vTUcDC7U_T-u1vch4wQNB8POs1-TJhaUFodbv0srptCdQzHX7yRItEOYzlSyY2CNu8eDIlWibGeFvY-/pub)",
       submittedTabTitle: "Pending",
       supportsIneligible: false,
       supportsSubmitted: true,
@@ -470,7 +470,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       subheading:
-        "This tool helps staff prioritize inmates for early release through the Standard Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. [Learn more](https://docs.google.com/document/d/1-wa_2D7vzfV4QfKxykp8HKDSt52ROmUjOza9GFIuID8/edit?tab=t.0#heading=h.r6s5tyc7ut6c)",
+        "This tool helps staff prioritize inmates for early release through the Standard Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. [Learn more](https://docs.google.com/document/d/e/2PACX-1vTUcDC7U_T-u1vch4wQNB8POs1-TJhaUFodbv0srptCdQzHX7yRItEOYzlSyY2CNu8eDIlWibGeFvY-/pub)",
       submittedTabTitle: "Pending",
       supportsIneligible: false,
       supportsSubmitted: true,
@@ -515,8 +515,7 @@ export const mockApiOpportunityConfigurationResponse = {
       zeroGrantsTooltip: null,
     },
     usAzTransferToAdministrativeSupervision: {
-      callToAction:
-        "Identify clients who are eligible for Administrative Supervision and adjust their supervision level in ACIS.",
+      callToAction: "",
       caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
@@ -652,7 +651,8 @@ export const mockApiOpportunityConfigurationResponse = {
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
-      subheading: null,
+      subheading:
+        "Identify clients who are eligible for Administrative Supervision and adjust their supervision level in ACIS. [Learn More](https://docs.google.com/document/d/e/2PACX-1vQ55ljjO7rz-6UiHGLwEcH7WR6_ZZIbEynN-92kO5D61wfKIZZVewqLxQdQfjOtv6vnKDSmQKLX9xui/pub)",
       submittedTabTitle: "Transferred in ACIS",
       supportsIneligible: false,
       supportsSubmitted: true,

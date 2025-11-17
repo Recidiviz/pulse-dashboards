@@ -28,43 +28,43 @@ export const mockApiOpportunityConfigurationResponse = {
       denialReasons: [
         {
           key: "FINES & FEES",
-          text: "Client is not making efforts to reduce financial obligations",
+          text: "Reentrant is not making efforts to reduce financial obligations",
         },
         {
           key: "SPECIAL CONDITIONS",
-          text: "Client has not fulfilled special conditions or treatment requirements",
+          text: "Reentrant has not fulfilled special conditions or treatment requirements",
         },
         {
           key: "PFA",
-          text: "Client is named in a PFA order or has a history of PFAs",
+          text: "Reentrant is named in a PFA order or has a history of PFAs",
         },
         {
           key: "SEX",
-          text: "Client is an SVP or is supervised under the sex offender protocol",
+          text: "Reentrant is an SVP or is supervised under the sex offender protocol",
         },
         {
           key: "UNREPORTED",
-          text: "Client has an out of state charge or an unreported disposition on an offense that makes them ineligible per form 402",
+          text: "Reentrant has an out of state charge or an unreported disposition on an offense that makes them ineligible per form 402",
         },
         {
           key: "DRUG",
-          text: "Client has a drug offense that makes them ineligible per form 402a",
+          text: "Reentrant has a drug offense that makes them ineligible per form 402a",
         },
         {
           key: "VIOLENT",
-          text: "Client was convicted of a crime of violence as defined by 42 Pa.C.S. § 9714(g)",
+          text: "Reentrant was convicted of a crime of violence as defined by 42 Pa.C.S. § 9714(g)",
         },
         {
           key: "DUI",
-          text: " Client was charged with 75 PA C.S. 3731 relating to DUI/Controlled Substance and their case involved bodily injury",
+          text: " Reentrant was charged with 75 PA C.S. 3731 relating to DUI/Controlled Substance and their case involved bodily injury",
         },
         {
           key: "OBSC",
-          text: "Client was charged with 18 PA. C.S. 5903(4)(5)(6) relating to obscene/sexual material/performance and the victim was a minor",
+          text: "Reentrant was charged with 18 PA. C.S. 5903(4)(5)(6) relating to obscene/sexual material/performance and the victim was a minor",
         },
         {
           key: "FIREARM",
-          text: "Client has a sentencing enhancement of 42 Pa. C.S. 9712 (related to firearms) or 204 PA Code 303.10(a) (related to deadly weapons)",
+          text: "Reentrant has a sentencing enhancement of 42 Pa. C.S. 9712 (related to firearms) or 204 PA Code 303.10(a) (related to deadly weapons)",
         },
         { key: "Other", text: "Other, please specify a reason" },
       ],
@@ -194,19 +194,19 @@ export const mockApiOpportunityConfigurationResponse = {
       denialReasons: [
         {
           key: "FINES & FEES",
-          text: "Client is not making efforts to reduce financial obligations",
+          text: "Reentrant is not making efforts to reduce financial obligations",
         },
         {
           key: "SATISFACTORY",
-          text: "Client has not had a satisfactory adjustment over their term of supervision",
+          text: "Reentrant has not had a satisfactory adjustment over their term of supervision",
         },
         {
           key: "SPECIAL CONDITIONS",
-          text: "Client has not fulfilled special conditions or treatment requirements",
+          text: "Reentrant has not fulfilled special conditions or treatment requirements",
         },
         {
           key: "SEX",
-          text: "Client is an SVP or is supervised under the sex offender protocol",
+          text: "Reentrant is an SVP or is supervised under the sex offender protocol",
         },
         { key: "Other", text: "Other, please specify a reason" },
       ],

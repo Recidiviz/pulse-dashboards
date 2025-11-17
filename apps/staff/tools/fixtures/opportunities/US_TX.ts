@@ -68,11 +68,11 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "supervisionLevelIsMinimumFor3Years",
-          text: "{{daysUntil eligibleDate}} days until 3 years on Low ({{date eligibleDate}})",
+          text: "Less than one month until 3 years on Low",
         },
         {
-          key: "noWarrantWithSustainedViolationWithin2Years",
-          text: "{{daysUntil eligibleDate}} days until 2 years with no sustained violation ({{date eligibleDate}})",
+          key: "usTxNoWarrantWithSustainedViolationWithin2Years",
+          text: "Less than one month until 2 years with no sustained violation",
         },
       ],
       initialHeader:
@@ -156,7 +156,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Has been under supervision for at least one half of the time that remained on their sentence when released to parole or mandatory supervision",
         },
         {
-          key: "supervisionLevelIsMinimumFor3Years",
+          key: "supervisionLevelIsMinimumOrLimitedFor3Years",
           text: "Has satisfactorily completed three years on Low supervision",
           tooltip: "As determined by the Texas Risk Assessment System (TRAS)",
         },
@@ -180,19 +180,19 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "supervisionLevelIsMinimumOrLimitedFor3Years",
-          text: "{{daysUntil eligibleDate}} days until 3 years on Low ({{date eligibleDate}})",
+          text: "Less than one month until 3 years on Low",
         },
         {
           key: "usTxServedAtLeastHalfOfRemainingSupervisionSentence",
-          text: "{{daysUntil eligibleDate}} days until served at least half of remaining sentence ({{date eligibleDate}})",
+          text: "Less than one month until served at least half of remaining sentence",
         },
         {
           key: "noSupervisionSustainedViolationWithin2Years",
-          text: "{{daysUntil eligibleDate}} days until 2 years without any sustained violations ({{date eligibleDate}})",
+          text: "Less than one month until 2 years without any sustained violations",
         },
         {
           key: "usTxNoWarrantWithSustainedViolationWithin2Years",
-          text: "{{daysUntil eligibleDate}} days until 2 years without any warrants that sustained a violation ({{date eligibleDate}})",
+          text: "Less than one month until 2 years without any warrants that sustained a violation",
         },
       ],
       initialHeader:

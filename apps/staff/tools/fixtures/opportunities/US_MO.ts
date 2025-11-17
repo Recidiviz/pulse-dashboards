@@ -46,6 +46,10 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         { key: "SANCTIONS", text: "Has disqualifying C-3 sanction(s)" },
         {
+          key: "MEDICAL",
+          text: "Has a medical condition preventing participation",
+        },
+        {
           key: "SOP",
           text: "Does not meet other, institution-specific criteria in standard operating procedures",
         },
@@ -427,6 +431,10 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         { key: "EMPLOYER", text: "Receiving employer denied the placement" },
         { key: "SANCTIONS", text: "Has disqualifying C-3 sanction(s)" },
+        {
+          key: "MEDICAL",
+          text: "Has a medical condition preventing participation",
+        },
         {
           key: "SOP",
           text: "Does not meet other, institution-specific criteria in standard operating procedures",
