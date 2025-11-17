@@ -84,6 +84,7 @@ model Staff {
 
   email         String
   cases         Case[]
+  sentencingAssessmentReports SentencingAssessmentReport[]
   // TODO(Recidiviz/recidiviz-data#40011) Make this a self-relation and update metric exports to include supervisee data
   supervisorId  String?
   supervisesAll Boolean?
@@ -321,6 +322,23 @@ enum MethodOfUse {
   Smoking
   Injection
   Snorting
+  Other
+}
+
+enum MitigatingFactor {
+  NoPriorCriminalConvictions
+  SteadyEmployment
+  NoHistoryOfViolentBehavior
+  NoSubstanceAbuseIssues
+  NoDiagnosisOfMentalIllness
+  HistoryOfSuccessUnderSupervision
+  FinancialStability
+  HighSchoolDiplomaOrHigher
+  StrongSocialSupportNetwork
+  CloseFamilyTies
+  CurrentlyParticipatingInTreatment
+  EnrolledInEducationalOrVocationalTraining
+  ActiveInvolvementInCommunityActivities
   Other
 }
 
@@ -574,6 +592,9 @@ model SentencingAssessmentReport {
   client   Client @relation(fields: [clientId], references: [externalId])
   clientId String
 
+  staff    Staff?  @relation(fields: [staffId], references: [externalId])
+  staffId  String?
+
   // Basic case information
   requestingJudgeName String?   // Judge who requested the report
   dateRequested       DateTime? // When the report was requested
@@ -583,7 +604,9 @@ model SentencingAssessmentReport {
 
   // Needs and factors
   needsToBeAddressed NeedToBeAddressed[]
-  mitigatingFactors  NeedToBeAddressed[] // Using same enum structure as needsToBeAddressed
+  otherNeedToBeAddressed String?
+  mitigatingFactors  MitigatingFactor[]
+  otherMitigatingFactor String?
 
   // Education
   levelOfEducation LevelOfEducation?

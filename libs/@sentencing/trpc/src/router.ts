@@ -21,6 +21,7 @@ import { countyRouter } from "~@sentencing/trpc/routes/county/county.router";
 import { insightRouter } from "~@sentencing/trpc/routes/insight/insight.router";
 import { offenseRouter } from "~@sentencing/trpc/routes/offense/offense.router";
 import { opportunityRouter } from "~@sentencing/trpc/routes/opportunity/opportunity.router";
+import { sarRouter } from "~@sentencing/trpc/routes/sar/sar.router";
 import { staffRouter } from "~@sentencing/trpc/routes/staff/staff.router";
 import { supervisorRouter } from "~@sentencing/trpc/routes/supervisor/supervisor.router";
 
@@ -32,6 +33,7 @@ export const appRouter = router({
   offense: offenseRouter,
   county: countyRouter,
   insight: insightRouter,
+  sar: sarRouter,
 });
 
 // export type definition of API

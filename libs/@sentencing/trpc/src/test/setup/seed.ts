@@ -18,8 +18,13 @@
 import { faker } from "@faker-js/faker";
 
 import {
+  AssessmentType,
   CaseStatus,
+  Division,
   Gender,
+  LevelOfEducation,
+  MitigatingFactor,
+  NeedToBeAddressed,
   OnboardingTopic,
   Plea,
   PrismaClient,
@@ -213,6 +218,75 @@ export const fakeCasePrismaInput = {
   },
 } satisfies CaseCreateInput;
 
+export const fakeSARClient = {
+  externalId: "sar-client-ext-1",
+  pseudonymizedId: "sar-client-pid-1",
+  fullName: faker.person.fullName(),
+  stateCode: StateCode.US_ID,
+  gender: Gender.MALE,
+  isCountyLocked: false,
+  birthDate: faker.date.birthdate(),
+  ssn: faker.string.numeric(9),
+  motherName: faker.person.fullName(),
+  fatherName: faker.person.fullName(),
+  guardianName: null,
+} satisfies ClientCreateInput;
+
+export const fakeSARStaff = {
+  externalId: "sar-staff-ext-1",
+  pseudonymizedId: "sar-staff-pid-1",
+  fullName: faker.person.fullName(),
+  email: faker.internet.email(),
+  stateCode: StateCode.US_ID,
+  hasLoggedIn: true,
+  supervisorId: null,
+  supervisesAll: null,
+  officeAddress: faker.location.streetAddress(),
+  officePhoneNumber: faker.phone.number(),
+} satisfies StaffCreateInput;
+
+export const fakeSAR = {
+  externalId: "sar-ext-1",
+  id: "sar-1",
+  status: CaseStatus.InProgress,
+  requestingJudgeName: faker.person.fullName(),
+  dateRequested: faker.date.recent(),
+  dateDueToCourt: faker.date.future(),
+  division: Division.Criminal,
+  address: faker.location.streetAddress(),
+  needsToBeAddressed: [NeedToBeAddressed.SubstanceUse, NeedToBeAddressed.MentalHealth],
+  otherNeedToBeAddressed: null,
+  mitigatingFactors: [MitigatingFactor.SteadyEmployment, MitigatingFactor.StrongSocialSupportNetwork],
+  otherMitigatingFactor: null,
+  levelOfEducation: LevelOfEducation.HighSchoolDiplomaOrGED,
+  assessmentScore: 7,
+  assessmentType: AssessmentType.ORAS_CST,
+  assessmentDate: faker.date.recent(),
+  assessmentAdministeredBy: faker.person.fullName(),
+  criminalHistoryLevel: 3,
+  educationLevelScore: 2,
+  neighborhoodLevel: 4,
+  substanceAbuseLevel: 5,
+  familySocialSupportLevel: 2,
+  peerAssociatesLevel: 3,
+  criminalBehaviorLevel: 4,
+  defendantStatement: faker.lorem.paragraph(),
+  victimImpactStatement: faker.lorem.paragraph(),
+  criminalHistorySummary: faker.lorem.paragraph(),
+  employerAtOffense: faker.company.name(),
+  currentEmployer: faker.company.name(),
+  employmentSummary: faker.lorem.paragraph(),
+  familyAndSocialSupportSummary: faker.lorem.paragraph(),
+  homePlan: faker.lorem.paragraph(),
+  housingSummary: faker.lorem.paragraph(),
+  drugHistorySummary: faker.lorem.paragraph(),
+  peerAssociatesSummary: faker.lorem.paragraph(),
+  criminalAttitudesSummary: faker.lorem.paragraph(),
+  responsivityAndBarriersSummary: faker.lorem.paragraph(),
+  communityStrategyRecommendation: faker.lorem.paragraph(),
+  institutionalStrategyRecommendation: faker.lorem.paragraph(),
+};
+
 export const fakeRecidivismSeries = createFakeRecidivismSeries();
 
 export const fakeDispositions = [
@@ -332,4 +406,27 @@ export async function seed(prismaClient: PrismaClient) {
       data: fakeInsightPrismaInput,
     })
   ).id;
+
+  // Seed SAR data (using US_ID for test database compatibility)
+  await prismaClient.client.create({
+    data: fakeSARClient,
+  });
+  await prismaClient.staff.create({
+    data: fakeSARStaff,
+  });
+  await prismaClient.sentencingAssessmentReport.create({
+    data: {
+      ...fakeSAR,
+      client: {
+        connect: {
+          externalId: fakeSARClient.externalId,
+        },
+      },
+      staff: {
+        connect: {
+          externalId: fakeSARStaff.externalId,
+        },
+      },
+    },
+  });
 }
