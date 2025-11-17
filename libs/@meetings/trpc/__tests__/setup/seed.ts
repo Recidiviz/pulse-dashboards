@@ -117,6 +117,7 @@ export const fakeMeeting = {
         provider: TranscriptionProvider.ASSEMBLYAI,
         transcriptObject: {},
         confidence: 0.95,
+        summary: "This is a sample summary of the meeting.",
         utterances: {
           createMany: {
             data: [

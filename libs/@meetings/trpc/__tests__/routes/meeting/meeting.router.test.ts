@@ -56,6 +56,7 @@ describe("meeting router", () => {
         notes: "Sample meeting notes.",
         transcription: {
           confidence: 0.95,
+          summary: "This is a sample summary of the meeting.",
           // These should be ordered by startTimeMs
           utterances: [
             {

@@ -62,6 +62,7 @@ export const meetingRouter = router({
                 take: 1,
                 select: {
                   confidence: true,
+                  summary: true,
                   utterances: {
                     orderBy: {
                       startTimeMs: "asc",
