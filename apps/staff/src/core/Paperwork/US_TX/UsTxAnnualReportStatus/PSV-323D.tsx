@@ -53,10 +53,7 @@ const FormPSV323D: React.FC = () => {
             </Item>
             <Item>
               Eligibility Month:
-              <FormInput
-                name="eligibilityMonthString"
-                style={{ width: 175 }}
-              />
+              <FormInput name="eligibilityMonthString" style={{ width: 175 }} />
             </Item>
           </Row>
         </Item>
@@ -100,8 +97,8 @@ const FormPSV323D: React.FC = () => {
           <Item width={508}>
             2. The client has demonstrated a good faith effort to comply with
             supervision, crime victim fees and Post Secondary Education
-            reimbursement required as of release, which will continue to be
-            due monthly, unless paid in advance.
+            reimbursement required as of release, which will continue to be due
+            monthly, unless paid in advance.
           </Item>
         </Row>
         <Row justifyContentStart>
@@ -136,9 +133,9 @@ const FormPSV323D: React.FC = () => {
           <Item width={508}>
             3. The client has maintained compliance with all restitution
             obligations in accordance to PD/POP-3.1.6 for the preceding two
-            years of supervision, which will continue to be due each month
-            until fully paid. **The client's restitution obligations do not
-            have to be paid in full to qualify.**
+            years of supervision, which will continue to be due each month until
+            fully paid. **The client's restitution obligations do not have to be
+            paid in full to qualify.**
           </Item>
         </Row>
         <Row justifyContentStart>
@@ -171,15 +168,19 @@ const FormPSV323D: React.FC = () => {
           <Item width={25}>Y</Item>
           <Item width={25}>N</Item>
           <Item width={508}>
-            4. The client has not had a warrant issued with in the preceding
-            two years of supervision. This does not apply to a warrant issued
-            in which a subsequent investigation or administrative review did
-            not sustain the violation.
+            4. The client has not had a warrant issued with in the preceding two
+            years of supervision. This does not apply to a warrant issued in
+            which a subsequent investigation or administrative review did not
+            sustain the violation.
           </Item>
         </Row>
         <Row justifyContentStart>
           <Item width={25}>
-            <FormCheckbox toggleable name="warrantCheck" id="warrantCheckYes"></FormCheckbox>
+            <FormCheckbox
+              toggleable
+              name="warrantCheck"
+              id="warrantCheckYes"
+            ></FormCheckbox>
           </Item>
           <Item width={25}>
             <FormCheckbox
@@ -235,8 +236,8 @@ const FormPSV323D: React.FC = () => {
           </Item>
         </Row>
         <Row style={{ fontSize: 8, fontWeight: "bold" }}>
-          This form should be forwarded through the supervising officer's
-          entire chain of command, regardless of the recommendation.
+          This form should be forwarded through the supervising officer's entire
+          chain of command, regardless of the recommendation.
         </Row>
         <Row style={{ fontSize: 8, fontWeight: "bold" }}>
           The Region Director will make the final decision regarding the
@@ -274,9 +275,10 @@ const FormPSV323D: React.FC = () => {
           <Item textAlignCenter>
             <FormCheckbox
               toggleable
-              name="supervisingOfficerRecommendCheck"
+              name="supervisingOfficerRecommendCheckYes"
               id="supervisingOfficerRecommendCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="supervisingOfficerRecommendCheckNo"
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -287,10 +289,10 @@ const FormPSV323D: React.FC = () => {
           <Item textAlignCenter>
             <FormCheckbox
               toggleable
-              invert
-              name="supervisingOfficerRecommendCheck"
+              name="supervisingOfficerRecommendCheckNo"
               id="supervisingOfficerRecommendCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="supervisingOfficerRecommendCheckYes"
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -329,9 +331,10 @@ const FormPSV323D: React.FC = () => {
           <Item textAlignCenter>
             <FormCheckbox
               toggleable
-              name="unitSupervisorConcurWithSupervisingOfficerCheck"
+              name="unitSupervisorConcurWithSupervisingOfficerCheckYes"
               id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="unitSupervisorConcurWithSupervisingOfficerCheckNo"
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -342,10 +345,10 @@ const FormPSV323D: React.FC = () => {
           <Item textAlignCenter>
             <FormCheckbox
               toggleable
-              invert
-              name="unitSupervisorConcurWithSupervisingOfficerCheck"
+              name="unitSupervisorConcurWithSupervisingOfficerCheckNo"
               id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="unitSupervisorConcurWithSupervisingOfficerCheckYes"
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -384,9 +387,10 @@ const FormPSV323D: React.FC = () => {
           <Item textAlignCenter>
             <FormCheckbox
               toggleable
-              name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+              name="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
               id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -397,10 +401,10 @@ const FormPSV323D: React.FC = () => {
           <Item textAlignCenter>
             <FormCheckbox
               toggleable
-              invert
-              name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+              name="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
               id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -439,9 +443,10 @@ const FormPSV323D: React.FC = () => {
           <Item textAlignCenter>
             <FormCheckbox
               toggleable
-              name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+              name="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
               id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -452,10 +457,10 @@ const FormPSV323D: React.FC = () => {
           <Item textAlignCenter>
             <FormCheckbox
               toggleable
-              invert
-              name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+              name="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
               id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -492,9 +497,10 @@ const FormPSV323D: React.FC = () => {
           <Item textAlignCenter>
             <FormCheckbox
               toggleable
-              name="regionDirectorConcurWithSupervisingOfficerCheck"
+              name="regionDirectorConcurWithSupervisingOfficerCheckYes"
               id="regionDirectorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="regionDirectorConcurWithSupervisingOfficerCheckNo"
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -505,10 +511,10 @@ const FormPSV323D: React.FC = () => {
           <Item textAlignCenter>
             <FormCheckbox
               toggleable
-              invert
-              name="regionDirectorConcurWithSupervisingOfficerCheck"
+              name="regionDirectorConcurWithSupervisingOfficerCheckNo"
               id="regionDirectorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
+              manualInvert="regionDirectorConcurWithSupervisingOfficerCheckYes"
             ></FormCheckbox>
           </Item>
         </Grid>

@@ -65,11 +65,11 @@ const fillerFunc: PDFFillerFunc<UsTxAnnualReportStatusDraftData> = async (
   set("supervisingOfficerDate", formData.supervisingOfficerDate); // PDFTextField
   set(
     "supervisingOfficerRecommendCheck",
-    formData.supervisingOfficerRecommendCheck,
+    formData.supervisingOfficerRecommendCheckYes,
   ); // PDFCheckBox
   set(
     "supervisingOfficerRecommendCheckNo",
-    !formData.supervisingOfficerRecommendCheck,
+    formData.supervisingOfficerRecommendCheckNo,
   ); // PDFCheckBox
   set("supervisingOfficerSignature", formData.supervisingOfficerSignature); // PDFTextField
   set("supervisingOfficerRemarks", formData.supervisingOfficerRemarks); // PDFTextField
@@ -77,11 +77,11 @@ const fillerFunc: PDFFillerFunc<UsTxAnnualReportStatusDraftData> = async (
   set("unitSupervisorName", formData.unitSupervisorName); // PDFTextField
   set(
     "unitSupervisorConcurWithSupervisingOfficerCheck",
-    formData.unitSupervisorConcurWithSupervisingOfficerCheck,
+    formData.unitSupervisorConcurWithSupervisingOfficerCheckYes,
   ); // PDFCheckBox
   set(
     "unitSupervisorConcurWithSupervisingOfficerCheckNo",
-    !formData.unitSupervisorConcurWithSupervisingOfficerCheck,
+    formData.unitSupervisorConcurWithSupervisingOfficerCheckNo,
   ); // PDFCheckBox
   set("unitSupervisorDate", formData.unitSupervisorDate); // PDFTextField
   set("unitSupervisorSignature", formData.unitSupervisorSignature); // PDFTextField
@@ -91,11 +91,11 @@ const fillerFunc: PDFFillerFunc<UsTxAnnualReportStatusDraftData> = async (
   set("paroleSupervisorDate", formData.paroleSupervisorDate); // PDFTextField
   set(
     "paroleSupervisorConcurWithSupervisingOfficerCheck",
-    formData.paroleSupervisorConcurWithSupervisingOfficerCheck,
+    formData.paroleSupervisorConcurWithSupervisingOfficerCheckYes,
   ); // PDFCheckBox
   set(
     "paroleSupervisorConcurWithSupervisingOfficerCheckNo",
-    !formData.paroleSupervisorConcurWithSupervisingOfficerCheck,
+    formData.paroleSupervisorConcurWithSupervisingOfficerCheckNo,
   ); // PDFCheckBox
   set("paroleSupervisorSignature", formData.paroleSupervisorSignature); // PDFTextField
   set("paroleSupervisorRemarks", formData.paroleSupervisorRemarks); // PDFTextField
@@ -104,11 +104,11 @@ const fillerFunc: PDFFillerFunc<UsTxAnnualReportStatusDraftData> = async (
   set("assistantRegionDirectorDate", formData.assistantRegionDirectorDate); // PDFTextField
   set(
     "assistantRegionDirectorConcurWithSupervisingOfficerCheck",
-    formData.assistantRegionDirectorConcurWithSupervisingOfficerCheck,
+    formData.assistantRegionDirectorConcurWithSupervisingOfficerCheckYes,
   ); // PDFCheckBox
   set(
     "assistantRegionDirectorConcurWithSupervisingOfficerCheckNo",
-    !formData.assistantRegionDirectorConcurWithSupervisingOfficerCheck,
+    formData.assistantRegionDirectorConcurWithSupervisingOfficerCheckNo,
   ); // PDFCheckBox
   set(
     "assistantRegionDirectorSignature",
@@ -123,11 +123,11 @@ const fillerFunc: PDFFillerFunc<UsTxAnnualReportStatusDraftData> = async (
   set("regionDirectorDate", formData.regionDirectorDate); // PDFTextField
   set(
     "regionDirectorConcurWithSupervisingOfficerCheck",
-    formData.regionDirectorConcurWithSupervisingOfficerCheck,
+    formData.regionDirectorConcurWithSupervisingOfficerCheckYes,
   ); // PDFCheckBox
   set(
     "regionDirectorConcurWithSupervisingOfficerCheckNo",
-    !formData.regionDirectorConcurWithSupervisingOfficerCheck,
+    formData.regionDirectorConcurWithSupervisingOfficerCheckNo,
   ); // PDFCheckBox
   set("regionDirectorSignature", formData.regionDirectorSignature); // PDFTextField
   set("regionDirectorRemarks", formData.regionDirectorRemarks); // PDFTextField
