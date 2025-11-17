@@ -21,7 +21,7 @@ import styled from "styled-components/macro";
 import { formatWorkflowsDate } from "../../../../utils";
 import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { PrintablePage } from "../../styles";
 import idocLogo from "./assets/idocLogo.png";
 import { FormPage } from "./constants";
 import { FormUsIaEarlyDischargeInput } from "./FormComponents";
@@ -366,20 +366,18 @@ export const ParoleDischarge = () => {
   const form = useOpportunityFormContext() as UsIaEarlyDischargeForm;
 
   return (
-    <PrintablePageMargin>
-      <PrintablePage>
-        <FormPage>
-          <Header />
-          <FormBody>
-            <Title>Parole Discharge</Title>
-            <MainStatement />
-            <DischargeInformation />
-            <SentenceInformation />
-            <Signatures form={form} />
-            <LegalInformation />
-          </FormBody>
-        </FormPage>
-      </PrintablePage>
-    </PrintablePageMargin>
+    <PrintablePage>
+      <FormPage>
+        <Header />
+        <FormBody>
+          <Title>Parole Discharge</Title>
+          <MainStatement />
+          <DischargeInformation />
+          <SentenceInformation />
+          <Signatures form={form} />
+          <LegalInformation />
+        </FormBody>
+      </FormPage>
+    </PrintablePage>
   );
 };

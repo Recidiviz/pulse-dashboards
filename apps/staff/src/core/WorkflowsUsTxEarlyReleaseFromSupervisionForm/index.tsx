@@ -21,7 +21,7 @@ import React, { useEffect, useState } from "react";
 import { Opportunity } from "../../WorkflowsStore";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
-import { PrintablePage } from "../Paperwork/styles";
+import { PrintablePageContainer } from "../Paperwork/styles";
 import ERSChecklist from "../Paperwork/US_TX/UsTxEarlyReleaseFromSupervision/ERS-Checklist";
 
 const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
@@ -35,7 +35,7 @@ const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
 
     useEffect(() => {
       // prevent the ability to download form before it has been rendered
-      const pages = formRef.current?.querySelectorAll(PrintablePage);
+      const pages = formRef.current?.querySelectorAll(PrintablePageContainer);
       setIsMissingContent(!(pages && pages.length > 0));
     }, [formRef]);
 

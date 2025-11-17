@@ -24,7 +24,7 @@ import styled from "styled-components/macro";
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { PrintablePage } from "../../styles";
 import SealPng from "../common/Seal.png";
 import AssessmentQuestion from "./AssessmentQuestion";
 import {
@@ -84,88 +84,80 @@ const ClassificationCustodyAssessment: React.FC = () => {
 
   return (
     <>
-      <PrintablePageMargin>
-        <PrintablePage>
-          <FormContainer {...formViewerContext}>
-            <CoverSheet />
-          </FormContainer>
-        </PrintablePage>
-      </PrintablePageMargin>
-      <PrintablePageMargin stretchable>
-        <PrintablePage stretchable>
-          <FormContainer {...formViewerContext}>
-            <Header>
-              <Seal />
-              <div>
-                TENNESSEE DEPARTMENT OF CORRECTION <br />
-                CLASSIFICATION CUSTODY ASSESSMENT <br />
-                <Label>
-                  INSTITUTION:{" "}
-                  <FormInput
-                    style={{ borderBottom: "0.5px solid black" }}
-                    name="institutionName"
-                  />
-                </Label>
-              </div>
-            </Header>
-            <HeaderFields />
+      <PrintablePage>
+        <FormContainer {...formViewerContext}>
+          <CoverSheet />
+        </FormContainer>
+      </PrintablePage>
+      <PrintablePage stretchable>
+        <FormContainer {...formViewerContext}>
+          <Header>
+            <Seal />
             <div>
-              {scheduleA.map(([q, i]) => (
-                <AssessmentQuestion
-                  questionSpec={q}
-                  questionNumber={i}
-                  key={i}
-                  supportingText={handleSupportingText(i)}
+              TENNESSEE DEPARTMENT OF CORRECTION <br />
+              CLASSIFICATION CUSTODY ASSESSMENT <br />
+              <Label>
+                INSTITUTION:{" "}
+                <FormInput
+                  style={{ borderBottom: "0.5px solid black" }}
+                  name="institutionName"
                 />
-              ))}
+              </Label>
             </div>
-            <AssessmentScore
-              score={scheduleAScore}
-              scoreText={scheduleAText}
-              title="SCHEDULE A SCALE (SUM OF ITEMS 1 THROUGH 4)"
-              levels={[
-                { text: "Close", min: 10, max: 14 },
-                { text: "Maximum", min: 15 },
-                { text: "Complete Schedule B", max: 9 },
-              ]}
-            />
-          </FormContainer>
-        </PrintablePage>
-      </PrintablePageMargin>
-      <PrintablePageMargin stretchable>
-        <PrintablePage stretchable>
-          <FormContainer {...formViewerContext}>
-            <div>
-              {scheduleB.map(([q, i]) => (
-                <AssessmentQuestion
-                  questionSpec={q}
-                  questionNumber={i}
-                  key={i}
-                  disabled={scheduleBSkipped}
-                  supportingText={handleSupportingText(i)}
-                />
-              ))}
-            </div>
-            <AssessmentScore
-              title="CUSTODY LEVEL SCALE FOR TOTAL A+B (CAF SCORE)"
-              score={totalScore}
-              scoreText={totalText}
-              levels={[
-                { text: "Close", min: 17 },
-                { text: "Medium", min: 7, max: 16 },
-                { text: "Minimum", max: 6 },
-              ]}
-            />
-          </FormContainer>
-        </PrintablePage>
-      </PrintablePageMargin>
-      <PrintablePageMargin>
-        <PrintablePage>
-          <FormContainer {...formViewerContext}>
-            <HearingNotice />
-          </FormContainer>
-        </PrintablePage>
-      </PrintablePageMargin>
+          </Header>
+          <HeaderFields />
+          <div>
+            {scheduleA.map(([q, i]) => (
+              <AssessmentQuestion
+                questionSpec={q}
+                questionNumber={i}
+                key={i}
+                supportingText={handleSupportingText(i)}
+              />
+            ))}
+          </div>
+          <AssessmentScore
+            score={scheduleAScore}
+            scoreText={scheduleAText}
+            title="SCHEDULE A SCALE (SUM OF ITEMS 1 THROUGH 4)"
+            levels={[
+              { text: "Close", min: 10, max: 14 },
+              { text: "Maximum", min: 15 },
+              { text: "Complete Schedule B", max: 9 },
+            ]}
+          />
+        </FormContainer>
+      </PrintablePage>
+      <PrintablePage stretchable>
+        <FormContainer {...formViewerContext}>
+          <div>
+            {scheduleB.map(([q, i]) => (
+              <AssessmentQuestion
+                questionSpec={q}
+                questionNumber={i}
+                key={i}
+                disabled={scheduleBSkipped}
+                supportingText={handleSupportingText(i)}
+              />
+            ))}
+          </div>
+          <AssessmentScore
+            title="CUSTODY LEVEL SCALE FOR TOTAL A+B (CAF SCORE)"
+            score={totalScore}
+            scoreText={totalText}
+            levels={[
+              { text: "Close", min: 17 },
+              { text: "Medium", min: 7, max: 16 },
+              { text: "Minimum", max: 6 },
+            ]}
+          />
+        </FormContainer>
+      </PrintablePage>
+      <PrintablePage>
+        <FormContainer {...formViewerContext}>
+          <HearingNotice />
+        </FormContainer>
+      </PrintablePage>
     </>
   );
 };

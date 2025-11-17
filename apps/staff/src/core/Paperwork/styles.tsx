@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { rem } from "polished";
+import { ReactNode } from "react";
 import styled from "styled-components/macro";
 
 import { DIMENSIONS_PX } from "./PDFFormGenerator";
@@ -40,7 +41,7 @@ function pageWidth(landscape = false): string {
   return rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN);
 }
 
-export const PrintablePage = styled.div.attrs({
+export const PrintablePageContainer = styled.div.attrs({
   className: "form-page",
 })<PrintablePageProps>`
   display: flex;
@@ -60,10 +61,9 @@ export const PrintablePage = styled.div.attrs({
   line-height: ${({ lineHeight }) => lineHeight ?? 1.3};
 `;
 
-export const PrintablePageMargin = styled.div<{
-  stretchable?: boolean;
-  landscape?: boolean;
-}>`
+export const PrintablePageMargin = styled.div<
+  Exclude<PrintablePageProps, "lineHeight">
+>`
   background-color: white;
   padding: ${rem(18)};
   box-sizing: content-box;
@@ -75,3 +75,15 @@ export const PrintablePageMargin = styled.div<{
   width: ${(p) => pageWidth(p.landscape)};
   max-width: ${(p) => pageWidth(p.landscape)};
 `;
+
+export const PrintablePage = (
+  props: PrintablePageProps & { children: ReactNode },
+) => {
+  return (
+    <PrintablePageMargin {...props}>
+      <PrintablePageContainer {...props}>
+        {props.children}
+      </PrintablePageContainer>
+    </PrintablePageMargin>
+  );
+};

@@ -20,14 +20,14 @@ import { useContext } from "react";
 import styled from "styled-components/macro";
 
 import { FormViewerContext } from "../../FormViewer";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { PrintablePage } from "../../styles";
 import FormFooter from "./FormFooter";
 import FormHeader from "./FormHeader";
 import FormSectionOne from "./FormSectionOne";
 import FormSectionTwo from "./FormSectionTwo";
 import { FormContainer } from "./styles";
 
-const PageMargin = styled(PrintablePageMargin)`
+const PaddedPrintablePage = styled(PrintablePage)`
   padding: ${rem(30)};
 `;
 
@@ -35,16 +35,14 @@ const FormCDCR1657 = () => {
   const formViewerContext = useContext(FormViewerContext);
 
   return (
-    <PageMargin>
-      <PrintablePage>
-        <FormContainer {...formViewerContext}>
-          <FormHeader />
-          <FormSectionOne />
-          <FormSectionTwo />
-          <FormFooter />
-        </FormContainer>
-      </PrintablePage>
-    </PageMargin>
+    <PaddedPrintablePage>
+      <FormContainer {...formViewerContext}>
+        <FormHeader />
+        <FormSectionOne />
+        <FormSectionTwo />
+        <FormFooter />
+      </FormContainer>
+    </PaddedPrintablePage>
   );
 };
 

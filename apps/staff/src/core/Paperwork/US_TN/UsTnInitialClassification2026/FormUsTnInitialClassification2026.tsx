@@ -23,7 +23,7 @@ import styled from "styled-components/macro";
 import { Opportunity } from "../../../../WorkflowsStore";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { PrintablePage } from "../../styles";
 
 const FormPage = styled.div`
   font-family: "Arial";
@@ -52,11 +52,9 @@ export const FormUsTnInitialClassification2026 = observer(
         downloadButtonLabel="Download as .DOCX"
       >
         <FormViewer formRef={formRef}>
-          <PrintablePageMargin landscape>
-            <PrintablePage landscape>
-              <FormPage>I am a page</FormPage>
-            </PrintablePage>
-          </PrintablePageMargin>
+          <PrintablePage landscape>
+            <FormPage>I am a page</FormPage>
+          </PrintablePage>
         </FormViewer>
       </FormContainer>
     );

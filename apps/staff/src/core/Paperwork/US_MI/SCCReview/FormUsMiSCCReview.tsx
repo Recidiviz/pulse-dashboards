@@ -27,7 +27,7 @@ import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { PrintablePage } from "../../styles";
 import FormFooter from "./FormFooter";
 import FormGeneralInfo from "./FormGeneralInfo";
 import FormHeading from "./FormHeading";
@@ -95,20 +95,18 @@ export const FormUsMiSCCReview = observer(function FormUsMiSCCReview({
       downloadButtonLabel="Download as .DOCX"
     >
       <FormViewer formRef={formRef}>
-        <PrintablePageMargin>
-          <PrintablePage>
-            <FormPage>
-              <FormHeading />
-              <FormGeneralInfo />
-              <FormHistory />
-              <FormTeamEvaluation />
-              <FormSCCAction />
-              <FormReview />
-              <FormInterviews />
-              <FormFooter />
-            </FormPage>
-          </PrintablePage>
-        </PrintablePageMargin>
+        <PrintablePage>
+          <FormPage>
+            <FormHeading />
+            <FormGeneralInfo />
+            <FormHistory />
+            <FormTeamEvaluation />
+            <FormSCCAction />
+            <FormReview />
+            <FormInterviews />
+            <FormFooter />
+          </FormPage>
+        </PrintablePage>
       </FormViewer>
     </FormContainer>
   );

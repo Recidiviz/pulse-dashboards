@@ -22,7 +22,7 @@ import styled from "styled-components/macro";
 
 import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { PrintablePage } from "../../styles";
 import { FormPage } from "./constants";
 import {
   FormUsIaEarlyDischargeInput,
@@ -445,19 +445,17 @@ export const CbcDischargeReport = observer(function CbcDischargeReport() {
   } = form;
 
   return (
-    <PrintablePageMargin stretchable>
-      <PrintablePage stretchable>
-        <FormPage>
-          <FormHeader />
-          <ClientDetails />
-          {[...Array(numberOfCharges).keys()].map((i) => (
-            <ChargeTable form={form} chargeNumber={i} key={i} />
-          ))}
-          <ProgressAndRecommendations />
-          <SubmissionAndSignature form={form} />
-          <Footer />
-        </FormPage>
-      </PrintablePage>
-    </PrintablePageMargin>
+    <PrintablePage stretchable>
+      <FormPage>
+        <FormHeader />
+        <ClientDetails />
+        {[...Array(numberOfCharges).keys()].map((i) => (
+          <ChargeTable form={form} chargeNumber={i} key={i} />
+        ))}
+        <ProgressAndRecommendations />
+        <SubmissionAndSignature form={form} />
+        <Footer />
+      </FormPage>
+    </PrintablePage>
   );
 });

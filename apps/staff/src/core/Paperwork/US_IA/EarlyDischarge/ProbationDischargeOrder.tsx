@@ -18,7 +18,7 @@
 import styled from "styled-components/macro";
 
 import { Checkbox } from "../../FormCheckbox";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { PrintablePage } from "../../styles";
 import { FormPage } from "./constants";
 import {
   FormUsIaEarlyDischargeCheckbox,
@@ -255,17 +255,15 @@ function MailACopy() {
 
 export const ProbationDischargeOrder = () => {
   return (
-    <PrintablePageMargin>
-      <PrintablePage>
-        <MarginedFormPage>
-          <Header />
-          <CaseSummary />
-          <DischargeOrder />
-          <Checkboxes />
-          <RestorationOfRights />
-          <MailACopy />
-        </MarginedFormPage>
-      </PrintablePage>
-    </PrintablePageMargin>
+    <PrintablePage>
+      <MarginedFormPage>
+        <Header />
+        <CaseSummary />
+        <DischargeOrder />
+        <Checkboxes />
+        <RestorationOfRights />
+        <MailACopy />
+      </MarginedFormPage>
+    </PrintablePage>
   );
 };

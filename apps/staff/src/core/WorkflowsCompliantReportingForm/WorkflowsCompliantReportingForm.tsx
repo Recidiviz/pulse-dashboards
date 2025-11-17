@@ -24,7 +24,7 @@ import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import { generate } from "../Paperwork/PDFFormGenerator";
-import { PrintablePage } from "../Paperwork/styles";
+import { PrintablePageContainer } from "../Paperwork/styles";
 import FormCR3947Rev0518 from "../Paperwork/US_TN/CompliantReporting";
 
 const WorkflowsCompliantReportingForm = ({
@@ -37,14 +37,18 @@ const WorkflowsCompliantReportingForm = ({
   const [isMissingContent, setIsMissingContent] = useState(false);
 
   useEffect(() => {
-    const pages = formRef.current?.querySelectorAll(PrintablePage);
+    const pages = formRef.current?.querySelectorAll(PrintablePageContainer);
     setIsMissingContent(!(pages && pages.length > 0));
   }, [formRef]);
 
   const onClickDownload = async () => {
-    return generate(formRef.current, `${PrintablePage}`).then((pdf: jsPDF) => {
-      pdf.save(`${opportunity.person.displayName} - Form CR3947 Rev05-18.pdf`);
-    });
+    return generate(formRef.current, `${PrintablePageContainer}`).then(
+      (pdf: jsPDF) => {
+        pdf.save(
+          `${opportunity.person.displayName} - Form CR3947 Rev05-18.pdf`,
+        );
+      },
+    );
   };
 
   return (

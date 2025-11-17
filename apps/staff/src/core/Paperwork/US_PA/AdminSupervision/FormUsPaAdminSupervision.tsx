@@ -26,7 +26,7 @@ import { UsPaAdminSupervisionOpportunity } from "../../../../WorkflowsStore/Oppo
 import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { PrintablePage } from "../../styles";
 import {
   FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY,
   strings,
@@ -126,38 +126,34 @@ export const FormUsPaAdminSupervision = observer(
         }
       >
         <FormViewer formRef={formRef}>
-          <PrintablePageMargin>
-            <PrintablePage>
-              <FormPage>
-                <FormContent>
-                  <FormHeading />
-                  <FormClientDetails />
-                  <OffenseHistoryChecklist />
-                  <CriteriaChecklist />
-                  <SignOffSection />
-                </FormContent>
-                <Footer text={strings.footer} />
-              </FormPage>
-            </PrintablePage>
-          </PrintablePageMargin>
-          <PrintablePageMargin>
-            <PrintablePage>
-              <FormPage>
-                <FormContent>
-                  <WorksheetHeader />
-                  {worksheetSectionsCopy.map((section) => {
-                    return (
-                      <WorksheetSection
-                        key={section.sectionNumber}
-                        {...section}
-                      />
-                    );
-                  })}
-                </FormContent>
-                <Footer text={strings.addendumFooter} />
-              </FormPage>
-            </PrintablePage>
-          </PrintablePageMargin>
+          <PrintablePage>
+            <FormPage>
+              <FormContent>
+                <FormHeading />
+                <FormClientDetails />
+                <OffenseHistoryChecklist />
+                <CriteriaChecklist />
+                <SignOffSection />
+              </FormContent>
+              <Footer text={strings.footer} />
+            </FormPage>
+          </PrintablePage>
+          <PrintablePage>
+            <FormPage>
+              <FormContent>
+                <WorksheetHeader />
+                {worksheetSectionsCopy.map((section) => {
+                  return (
+                    <WorksheetSection
+                      key={section.sectionNumber}
+                      {...section}
+                    />
+                  );
+                })}
+              </FormContent>
+              <Footer text={strings.addendumFooter} />
+            </FormPage>
+          </PrintablePage>
         </FormViewer>
       </FormContainer>
     );

@@ -22,506 +22,504 @@ import FormCheckbox from "../../shared/FormCheckbox";
 import FormHeader from "../../shared/FormHeader";
 import FormInput from "../../shared/FormInput";
 import { Footer, FormContainer, Grid, Item, Row } from "../../shared/styles";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { PrintablePage } from "../../styles";
 
 const FormPSV323D: React.FC = () => {
   const formViewerContext = useContext(FormViewerContext);
 
   return (
-    <PrintablePageMargin>
-      <PrintablePage>
-        <FormContainer {...formViewerContext}>
-          <Item style={{ padding: "unset" }}>
-            <FormHeader
-              titleLineOne="Annual Reporting"
-              titleLineTwo="Checklist, Recommendation, and Determination Form"
-              subTitle="Clients who meet the following criteria may be recommended for annual reporting."
-            />
-            <Row paddingLeft>
-              <Item>
-                Client's Name:
-                <FormInput
-                  name="clientName"
-                  placeholder="Enter First, Last Name"
-                  style={{ width: 412 }}
-                />
-              </Item>
-            </Row>
-            <Row paddingLeft justifyContentStart>
-              <Item>
-                TDCJ/SID #:
-                <FormInput name="tdcjNumberAndSid" style={{ width: 175 }} />
-              </Item>
-              <Item>
-                Eligibility Month:
-                <FormInput
-                  name="eligibilityMonthString"
-                  style={{ width: 175 }}
-                />
-              </Item>
-            </Row>
+    <PrintablePage>
+      <FormContainer {...formViewerContext}>
+        <Item style={{ padding: "unset" }}>
+          <FormHeader
+            titleLineOne="Annual Reporting"
+            titleLineTwo="Checklist, Recommendation, and Determination Form"
+            subTitle="Clients who meet the following criteria may be recommended for annual reporting."
+          />
+          <Row paddingLeft>
+            <Item>
+              Client's Name:
+              <FormInput
+                name="clientName"
+                placeholder="Enter First, Last Name"
+                style={{ width: 412 }}
+              />
+            </Item>
+          </Row>
+          <Row paddingLeft justifyContentStart>
+            <Item>
+              TDCJ/SID #:
+              <FormInput name="tdcjNumberAndSid" style={{ width: 175 }} />
+            </Item>
+            <Item>
+              Eligibility Month:
+              <FormInput
+                name="eligibilityMonthString"
+                style={{ width: 175 }}
+              />
+            </Item>
+          </Row>
+        </Item>
+        <Row justifyContentStart>
+          <Item width={25}>Y</Item>
+          <Item width={25}>N</Item>
+          <Item width={508}>
+            1. The client has satisfactorily completed three years on Low
+            supervision by the Texas Risk Assessment System (TRAS).
           </Item>
-          <Row justifyContentStart>
-            <Item width={25}>Y</Item>
-            <Item width={25}>N</Item>
-            <Item width={508}>
-              1. The client has satisfactorily completed three years on Low
-              supervision by the Texas Risk Assessment System (TRAS).
-            </Item>
-          </Row>
-          <Row justifyContentStart>
-            <Item width={25}>
-              <FormCheckbox
-                toggleable
-                name="threeYearsTRASCheck"
-                id="threeYearsTRASCheckYes"
-              ></FormCheckbox>
-            </Item>
-            <Item width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="threeYearsTRASCheck"
-                id="threeYearsTRASCheckNo"
-              ></FormCheckbox>
-            </Item>
-            <Item>Comments:</Item>
-          </Row>
-          <Row paddingLeft>
-            <Item>
-              <FormInput
-                name="comment1"
-                style={{ width: 500, borderBottom: "solid thin" }}
-              />
-            </Item>
-          </Row>
-          <Row justifyContentStart>
-            <Item width={25}>Y</Item>
-            <Item width={25}>N</Item>
-            <Item width={508}>
-              2. The client has demonstrated a good faith effort to comply with
-              supervision, crime victim fees and Post Secondary Education
-              reimbursement required as of release, which will continue to be
-              due monthly, unless paid in advance.
-            </Item>
-          </Row>
-          <Row justifyContentStart>
-            <Item width={25}>
-              <FormCheckbox
-                toggleable
-                name="complianceFeesAndEducationCheck"
-                id="complianceFeesAndEducationCheckYes"
-              ></FormCheckbox>
-            </Item>
-            <Item width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="complianceFeesAndEducationCheck"
-                id="complianceFeesAndEducationCheckNo"
-              ></FormCheckbox>
-            </Item>
-            <Item>Comments:</Item>
-          </Row>
-          <Row paddingLeft>
-            <Item>
-              <FormInput
-                name="comment2"
-                style={{ width: 500, borderBottom: "solid thin" }}
-              />
-            </Item>
-          </Row>
-          <Row justifyContentStart>
-            <Item width={25}>Y</Item>
-            <Item width={25}>N</Item>
-            <Item width={508}>
-              3. The client has maintained compliance with all restitution
-              obligations in accordance to PD/POP-3.1.6 for the preceding two
-              years of supervision, which will continue to be due each month
-              until fully paid. **The client's restitution obligations do not
-              have to be paid in full to qualify.**
-            </Item>
-          </Row>
-          <Row justifyContentStart>
-            <Item width={25}>
-              <FormCheckbox
-                toggleable
-                name="restitutionObligationsCheck"
-                id="restitutionObligationsCheckYes"
-              ></FormCheckbox>
-            </Item>
-            <Item width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="restitutionObligationsCheck"
-                id="restitutionObligationsCheckNo"
-              ></FormCheckbox>
-            </Item>
-            <Item>Comments:</Item>
-          </Row>
-          <Row paddingLeft>
-            <Item>
-              <FormInput
-                name="comment3"
-                style={{ width: 500, borderBottom: "solid thin" }}
-              />
-            </Item>
-          </Row>
-          <Row justifyContentStart>
-            <Item width={25}>Y</Item>
-            <Item width={25}>N</Item>
-            <Item width={508}>
-              4. The client has not had a warrant issued with in the preceding
-              two years of supervision. This does not apply to a warrant issued
-              in which a subsequent investigation or administrative review did
-              not sustain the violation.
-            </Item>
-          </Row>
-          <Row justifyContentStart>
-            <Item width={25}>
-              <FormCheckbox toggleable name="warrantCheck" id="warrantCheckYes"></FormCheckbox>
-            </Item>
-            <Item width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="warrantCheck"
-                id="warrantCheckNo"
-              ></FormCheckbox>
-            </Item>
-            <Item>Comments:</Item>
-          </Row>
-          <Row paddingLeft>
-            <Item>
-              <FormInput
-                name="comment4"
-                style={{ width: 500, borderBottom: "solid thin" }}
-              />
-            </Item>
-          </Row>
-          <Row justifyContentStart>
-            <Item width={25}>Y</Item>
-            <Item width={25}>N</Item>
-            <Item width={508}>
-              5. It is in the best interest of society, per the supervising
-              officer's discretion for the client's reporting status to be
-              modified to Annual Report.
-            </Item>
-          </Row>
-          <Row justifyContentStart>
-            <Item width={25}>
-              <FormCheckbox
-                toggleable
-                name="societyBestInterestCheck"
-                id="societyBestInterestCheckYes"
-              ></FormCheckbox>
-            </Item>
-            <Item width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="societyBestInterestCheck"
-                id="societyBestInterestCheckNo"
-              ></FormCheckbox>
-            </Item>
-            <Item>Comments:</Item>
-          </Row>
-          <Row paddingLeft>
-            <Item>
-              <FormInput
-                name="comment5"
-                style={{ width: 500, borderBottom: "solid thin" }}
-              />
-            </Item>
-          </Row>
-          <Row style={{ fontSize: 8, fontWeight: "bold" }}>
-            This form should be forwarded through the supervising officer's
-            entire chain of command, regardless of the recommendation.
-          </Row>
-          <Row style={{ fontSize: 8, fontWeight: "bold" }}>
-            The Region Director will make the final decision regarding the
-            client's Annual Report eligibility
-          </Row>
-          <Grid columns="2.6fr 1.8fr 2.9fr">
-            <Item>
-              Supervising Officer:{" "}
-              <FormInput
-                name="officerName"
-                style={{
-                  borderRight: "unset",
-                  fontSize: "8px",
-                  marginLeft: "5px",
-                }}
-              />
-            </Item>
-            <Item>
-              Date:
-              <FormInput
-                name="supervisingOfficerDate"
-                style={{ borderRight: "unset" }}
-              />
-            </Item>
-            <Item textAlignCenter>
-              Supervising Officer Recommend Client for Annual Report
-            </Item>
-          </Grid>
-          <Grid columns="4.44fr 1.45fr 1.45fr">
-            <Item>
-              Signature confirms that all checklist information has been
-              thoroughly reviewed.
-            </Item>
-            <Item textAlignCenter>Yes</Item>
-            <Item textAlignCenter>
-              <FormCheckbox
-                toggleable
-                name="supervisingOfficerRecommendCheck"
-                id="supervisingOfficerRecommendCheckYes"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </Item>
-          </Grid>
-          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
-            <Item>Signature:</Item>
-            <FormInput name="supervisingOfficerSignature" />
-            <Item textAlignCenter>No</Item>
-            <Item textAlignCenter>
-              <FormCheckbox
-                toggleable
-                invert
-                name="supervisingOfficerRecommendCheck"
-                id="supervisingOfficerRecommendCheckNo"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </Item>
-          </Grid>
-          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
-            <Item>Remarks:</Item>
-            <FormInput name="supervisingOfficerRemarks" />
-          </Grid>
-          <Item
-            style={{ lineHeight: "unset", height: "3px", display: "flex" }}
-          ></Item>
-          <Grid columns="2.6fr 1.8fr 2.9fr">
-            <Item>
-              Unit Supervisor:{" "}
-              <FormInput
-                name="unitSupervisorName"
-                style={{ borderRight: "unset" }}
-              />
-            </Item>
-            <Item>
-              Date:
-              <FormInput
-                name="unitSupervisorDate"
-                style={{ borderRight: "unset" }}
-              />
-            </Item>
-            <Item textAlignCenter>
-              Concur with Supervising Officer's Decision
-            </Item>
-          </Grid>
-          <Grid columns="4.44fr 1.45fr 1.45fr">
-            <Item>
-              Signature confirms that all checklist information has been
-              thoroughly reviewed.
-            </Item>
-            <Item textAlignCenter>Yes</Item>
-            <Item textAlignCenter>
-              <FormCheckbox
-                toggleable
-                name="unitSupervisorConcurWithSupervisingOfficerCheck"
-                id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </Item>
-          </Grid>
-          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
-            <Item>Signature:</Item>
-            <FormInput name="unitSupervisorSignature" />
-            <Item textAlignCenter>No</Item>
-            <Item textAlignCenter>
-              <FormCheckbox
-                toggleable
-                invert
-                name="unitSupervisorConcurWithSupervisingOfficerCheck"
-                id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </Item>
-          </Grid>
-          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
-            <Item>Remarks:</Item>
-            <FormInput name="unitSupervisorRemarks" />
-          </Grid>
-          <Item
-            style={{ lineHeight: "unset", height: "3px", display: "flex" }}
-          ></Item>
-          <Grid columns="2.6fr 1.8fr 2.9fr">
-            <Item>
-              Parole Supervisor:{" "}
-              <FormInput
-                name="paroleSupervisorName"
-                style={{ borderRight: "unset" }}
-              />
-            </Item>
-            <Item>
-              Date:
-              <FormInput
-                name="paroleSupervisorDate"
-                style={{ borderRight: "unset" }}
-              />
-            </Item>
-            <Item textAlignCenter>
-              Concur with Supervising Officer's Decision
-            </Item>
-          </Grid>
-          <Grid columns="4.44fr 1.45fr 1.45fr">
-            <Item>
-              Signature confirms that all checklist information has been
-              thoroughly reviewed.
-            </Item>
-            <Item textAlignCenter>Yes</Item>
-            <Item textAlignCenter>
-              <FormCheckbox
-                toggleable
-                name="paroleSupervisorConcurWithSupervisingOfficerCheck"
-                id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </Item>
-          </Grid>
-          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
-            <Item>Signature:</Item>
-            <FormInput name="paroleSupervisorSignature" />
-            <Item textAlignCenter>No</Item>
-            <Item textAlignCenter>
-              <FormCheckbox
-                toggleable
-                invert
-                name="paroleSupervisorConcurWithSupervisingOfficerCheck"
-                id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </Item>
-          </Grid>
-          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
-            <Item>Remarks:</Item>
-            <FormInput name="paroleSupervisorRemarks" />
-          </Grid>
-          <Item
-            style={{ lineHeight: "unset", height: "3px", display: "flex" }}
-          ></Item>
-          <Grid columns="2.6fr 1.8fr 2.9fr">
-            <Item>
-              Assistant Region Director:{" "}
-              <FormInput
-                name="assistantRegionDirectorName"
-                style={{ borderRight: "unset" }}
-              />
-            </Item>
-            <Item>
-              Date:
-              <FormInput
-                name="assistantRegionDirectorDate"
-                style={{ borderRight: "unset" }}
-              />
-            </Item>
-            <Item textAlignCenter>
-              Concur with Supervising Officer's Decision
-            </Item>
-          </Grid>
-          <Grid columns="4.44fr 1.45fr 1.45fr">
-            <Item>
-              Signature confirms that all checklist information has been
-              thoroughly reviewed.
-            </Item>
-            <Item textAlignCenter>Yes</Item>
-            <Item textAlignCenter>
-              <FormCheckbox
-                toggleable
-                name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
-                id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </Item>
-          </Grid>
-          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
-            <Item>Signature:</Item>
-            <FormInput name="assistantRegionDirectorSignature" />
-            <Item textAlignCenter>No</Item>
-            <Item textAlignCenter>
-              <FormCheckbox
-                toggleable
-                invert
-                name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
-                id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </Item>
-          </Grid>
-          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
-            <Item>Remarks:</Item>
-            <FormInput name="assistantRegionDirectorRemarks" />
-          </Grid>
-          <Item
-            style={{ lineHeight: "unset", height: "3px", display: "flex" }}
-          ></Item>
-          <Grid columns="2.6fr 1.8fr 2.9fr">
-            <Item>
-              Region Director:{" "}
-              <FormInput
-                name="regionDirectorName"
-                style={{ borderRight: "unset" }}
-              />
-            </Item>
-            <Item>
-              Date:
-              <FormInput
-                name="regionDirectorDate"
-                style={{ borderRight: "unset" }}
-              />
-            </Item>
-            <Item textAlignCenter>Final Authority</Item>
-          </Grid>
-          <Grid columns="4.44fr 1.45fr 1.45fr">
-            <Item>
-              Signature confirms that all checklist information has been
-              thoroughly reviewed.
-            </Item>
-            <Item textAlignCenter>Yes</Item>
-            <Item textAlignCenter>
-              <FormCheckbox
-                toggleable
-                name="regionDirectorConcurWithSupervisingOfficerCheck"
-                id="regionDirectorConcurWithSupervisingOfficerCheckYes"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </Item>
-          </Grid>
-          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
-            <Item>Signature:</Item>
-            <FormInput name="regionDirectorSignature" />
-            <Item textAlignCenter>No</Item>
-            <Item textAlignCenter>
-              <FormCheckbox
-                toggleable
-                invert
-                name="regionDirectorConcurWithSupervisingOfficerCheck"
-                id="regionDirectorConcurWithSupervisingOfficerCheckNo"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </Item>
-          </Grid>
-          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
-            <Item>Remarks:</Item>
-            <FormInput name="regionDirectorRemarks" />
-          </Grid>
+        </Row>
+        <Row justifyContentStart>
+          <Item width={25}>
+            <FormCheckbox
+              toggleable
+              name="threeYearsTRASCheck"
+              id="threeYearsTRASCheckYes"
+            ></FormCheckbox>
+          </Item>
+          <Item width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="threeYearsTRASCheck"
+              id="threeYearsTRASCheckNo"
+            ></FormCheckbox>
+          </Item>
+          <Item>Comments:</Item>
+        </Row>
+        <Row paddingLeft>
+          <Item>
+            <FormInput
+              name="comment1"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </Item>
+        </Row>
+        <Row justifyContentStart>
+          <Item width={25}>Y</Item>
+          <Item width={25}>N</Item>
+          <Item width={508}>
+            2. The client has demonstrated a good faith effort to comply with
+            supervision, crime victim fees and Post Secondary Education
+            reimbursement required as of release, which will continue to be
+            due monthly, unless paid in advance.
+          </Item>
+        </Row>
+        <Row justifyContentStart>
+          <Item width={25}>
+            <FormCheckbox
+              toggleable
+              name="complianceFeesAndEducationCheck"
+              id="complianceFeesAndEducationCheckYes"
+            ></FormCheckbox>
+          </Item>
+          <Item width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="complianceFeesAndEducationCheck"
+              id="complianceFeesAndEducationCheckNo"
+            ></FormCheckbox>
+          </Item>
+          <Item>Comments:</Item>
+        </Row>
+        <Row paddingLeft>
+          <Item>
+            <FormInput
+              name="comment2"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </Item>
+        </Row>
+        <Row justifyContentStart>
+          <Item width={25}>Y</Item>
+          <Item width={25}>N</Item>
+          <Item width={508}>
+            3. The client has maintained compliance with all restitution
+            obligations in accordance to PD/POP-3.1.6 for the preceding two
+            years of supervision, which will continue to be due each month
+            until fully paid. **The client's restitution obligations do not
+            have to be paid in full to qualify.**
+          </Item>
+        </Row>
+        <Row justifyContentStart>
+          <Item width={25}>
+            <FormCheckbox
+              toggleable
+              name="restitutionObligationsCheck"
+              id="restitutionObligationsCheckYes"
+            ></FormCheckbox>
+          </Item>
+          <Item width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="restitutionObligationsCheck"
+              id="restitutionObligationsCheckNo"
+            ></FormCheckbox>
+          </Item>
+          <Item>Comments:</Item>
+        </Row>
+        <Row paddingLeft>
+          <Item>
+            <FormInput
+              name="comment3"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </Item>
+        </Row>
+        <Row justifyContentStart>
+          <Item width={25}>Y</Item>
+          <Item width={25}>N</Item>
+          <Item width={508}>
+            4. The client has not had a warrant issued with in the preceding
+            two years of supervision. This does not apply to a warrant issued
+            in which a subsequent investigation or administrative review did
+            not sustain the violation.
+          </Item>
+        </Row>
+        <Row justifyContentStart>
+          <Item width={25}>
+            <FormCheckbox toggleable name="warrantCheck" id="warrantCheckYes"></FormCheckbox>
+          </Item>
+          <Item width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="warrantCheck"
+              id="warrantCheckNo"
+            ></FormCheckbox>
+          </Item>
+          <Item>Comments:</Item>
+        </Row>
+        <Row paddingLeft>
+          <Item>
+            <FormInput
+              name="comment4"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </Item>
+        </Row>
+        <Row justifyContentStart>
+          <Item width={25}>Y</Item>
+          <Item width={25}>N</Item>
+          <Item width={508}>
+            5. It is in the best interest of society, per the supervising
+            officer's discretion for the client's reporting status to be
+            modified to Annual Report.
+          </Item>
+        </Row>
+        <Row justifyContentStart>
+          <Item width={25}>
+            <FormCheckbox
+              toggleable
+              name="societyBestInterestCheck"
+              id="societyBestInterestCheckYes"
+            ></FormCheckbox>
+          </Item>
+          <Item width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="societyBestInterestCheck"
+              id="societyBestInterestCheckNo"
+            ></FormCheckbox>
+          </Item>
+          <Item>Comments:</Item>
+        </Row>
+        <Row paddingLeft>
+          <Item>
+            <FormInput
+              name="comment5"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </Item>
+        </Row>
+        <Row style={{ fontSize: 8, fontWeight: "bold" }}>
+          This form should be forwarded through the supervising officer's
+          entire chain of command, regardless of the recommendation.
+        </Row>
+        <Row style={{ fontSize: 8, fontWeight: "bold" }}>
+          The Region Director will make the final decision regarding the
+          client's Annual Report eligibility
+        </Row>
+        <Grid columns="2.6fr 1.8fr 2.9fr">
+          <Item>
+            Supervising Officer:{" "}
+            <FormInput
+              name="officerName"
+              style={{
+                borderRight: "unset",
+                fontSize: "8px",
+                marginLeft: "5px",
+              }}
+            />
+          </Item>
+          <Item>
+            Date:
+            <FormInput
+              name="supervisingOfficerDate"
+              style={{ borderRight: "unset" }}
+            />
+          </Item>
+          <Item textAlignCenter>
+            Supervising Officer Recommend Client for Annual Report
+          </Item>
+        </Grid>
+        <Grid columns="4.44fr 1.45fr 1.45fr">
+          <Item>
+            Signature confirms that all checklist information has been
+            thoroughly reviewed.
+          </Item>
+          <Item textAlignCenter>Yes</Item>
+          <Item textAlignCenter>
+            <FormCheckbox
+              toggleable
+              name="supervisingOfficerRecommendCheck"
+              id="supervisingOfficerRecommendCheckYes"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </Item>
+        </Grid>
+        <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
+          <Item>Signature:</Item>
+          <FormInput name="supervisingOfficerSignature" />
+          <Item textAlignCenter>No</Item>
+          <Item textAlignCenter>
+            <FormCheckbox
+              toggleable
+              invert
+              name="supervisingOfficerRecommendCheck"
+              id="supervisingOfficerRecommendCheckNo"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </Item>
+        </Grid>
+        <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <Item>Remarks:</Item>
+          <FormInput name="supervisingOfficerRemarks" />
+        </Grid>
+        <Item
+          style={{ lineHeight: "unset", height: "3px", display: "flex" }}
+        ></Item>
+        <Grid columns="2.6fr 1.8fr 2.9fr">
+          <Item>
+            Unit Supervisor:{" "}
+            <FormInput
+              name="unitSupervisorName"
+              style={{ borderRight: "unset" }}
+            />
+          </Item>
+          <Item>
+            Date:
+            <FormInput
+              name="unitSupervisorDate"
+              style={{ borderRight: "unset" }}
+            />
+          </Item>
+          <Item textAlignCenter>
+            Concur with Supervising Officer's Decision
+          </Item>
+        </Grid>
+        <Grid columns="4.44fr 1.45fr 1.45fr">
+          <Item>
+            Signature confirms that all checklist information has been
+            thoroughly reviewed.
+          </Item>
+          <Item textAlignCenter>Yes</Item>
+          <Item textAlignCenter>
+            <FormCheckbox
+              toggleable
+              name="unitSupervisorConcurWithSupervisingOfficerCheck"
+              id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </Item>
+        </Grid>
+        <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
+          <Item>Signature:</Item>
+          <FormInput name="unitSupervisorSignature" />
+          <Item textAlignCenter>No</Item>
+          <Item textAlignCenter>
+            <FormCheckbox
+              toggleable
+              invert
+              name="unitSupervisorConcurWithSupervisingOfficerCheck"
+              id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </Item>
+        </Grid>
+        <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <Item>Remarks:</Item>
+          <FormInput name="unitSupervisorRemarks" />
+        </Grid>
+        <Item
+          style={{ lineHeight: "unset", height: "3px", display: "flex" }}
+        ></Item>
+        <Grid columns="2.6fr 1.8fr 2.9fr">
+          <Item>
+            Parole Supervisor:{" "}
+            <FormInput
+              name="paroleSupervisorName"
+              style={{ borderRight: "unset" }}
+            />
+          </Item>
+          <Item>
+            Date:
+            <FormInput
+              name="paroleSupervisorDate"
+              style={{ borderRight: "unset" }}
+            />
+          </Item>
+          <Item textAlignCenter>
+            Concur with Supervising Officer's Decision
+          </Item>
+        </Grid>
+        <Grid columns="4.44fr 1.45fr 1.45fr">
+          <Item>
+            Signature confirms that all checklist information has been
+            thoroughly reviewed.
+          </Item>
+          <Item textAlignCenter>Yes</Item>
+          <Item textAlignCenter>
+            <FormCheckbox
+              toggleable
+              name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+              id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </Item>
+        </Grid>
+        <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
+          <Item>Signature:</Item>
+          <FormInput name="paroleSupervisorSignature" />
+          <Item textAlignCenter>No</Item>
+          <Item textAlignCenter>
+            <FormCheckbox
+              toggleable
+              invert
+              name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+              id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </Item>
+        </Grid>
+        <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <Item>Remarks:</Item>
+          <FormInput name="paroleSupervisorRemarks" />
+        </Grid>
+        <Item
+          style={{ lineHeight: "unset", height: "3px", display: "flex" }}
+        ></Item>
+        <Grid columns="2.6fr 1.8fr 2.9fr">
+          <Item>
+            Assistant Region Director:{" "}
+            <FormInput
+              name="assistantRegionDirectorName"
+              style={{ borderRight: "unset" }}
+            />
+          </Item>
+          <Item>
+            Date:
+            <FormInput
+              name="assistantRegionDirectorDate"
+              style={{ borderRight: "unset" }}
+            />
+          </Item>
+          <Item textAlignCenter>
+            Concur with Supervising Officer's Decision
+          </Item>
+        </Grid>
+        <Grid columns="4.44fr 1.45fr 1.45fr">
+          <Item>
+            Signature confirms that all checklist information has been
+            thoroughly reviewed.
+          </Item>
+          <Item textAlignCenter>Yes</Item>
+          <Item textAlignCenter>
+            <FormCheckbox
+              toggleable
+              name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+              id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </Item>
+        </Grid>
+        <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
+          <Item>Signature:</Item>
+          <FormInput name="assistantRegionDirectorSignature" />
+          <Item textAlignCenter>No</Item>
+          <Item textAlignCenter>
+            <FormCheckbox
+              toggleable
+              invert
+              name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+              id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </Item>
+        </Grid>
+        <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <Item>Remarks:</Item>
+          <FormInput name="assistantRegionDirectorRemarks" />
+        </Grid>
+        <Item
+          style={{ lineHeight: "unset", height: "3px", display: "flex" }}
+        ></Item>
+        <Grid columns="2.6fr 1.8fr 2.9fr">
+          <Item>
+            Region Director:{" "}
+            <FormInput
+              name="regionDirectorName"
+              style={{ borderRight: "unset" }}
+            />
+          </Item>
+          <Item>
+            Date:
+            <FormInput
+              name="regionDirectorDate"
+              style={{ borderRight: "unset" }}
+            />
+          </Item>
+          <Item textAlignCenter>Final Authority</Item>
+        </Grid>
+        <Grid columns="4.44fr 1.45fr 1.45fr">
+          <Item>
+            Signature confirms that all checklist information has been
+            thoroughly reviewed.
+          </Item>
+          <Item textAlignCenter>Yes</Item>
+          <Item textAlignCenter>
+            <FormCheckbox
+              toggleable
+              name="regionDirectorConcurWithSupervisingOfficerCheck"
+              id="regionDirectorConcurWithSupervisingOfficerCheckYes"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </Item>
+        </Grid>
+        <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
+          <Item>Signature:</Item>
+          <FormInput name="regionDirectorSignature" />
+          <Item textAlignCenter>No</Item>
+          <Item textAlignCenter>
+            <FormCheckbox
+              toggleable
+              invert
+              name="regionDirectorConcurWithSupervisingOfficerCheck"
+              id="regionDirectorConcurWithSupervisingOfficerCheckNo"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </Item>
+        </Grid>
+        <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <Item>Remarks:</Item>
+          <FormInput name="regionDirectorRemarks" />
+        </Grid>
 
-          <Footer>PSV-323D (Rev. 07/01/2025)</Footer>
-        </FormContainer>
-      </PrintablePage>
-    </PrintablePageMargin>
+        <Footer>PSV-323D (Rev. 07/01/2025)</Footer>
+      </FormContainer>
+    </PrintablePage>
   );
 };
 

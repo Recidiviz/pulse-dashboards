@@ -22,584 +22,582 @@ import FormCheckbox from "../../shared/FormCheckbox";
 import FormHeader from "../../shared/FormHeader";
 import FormInput from "../../shared/FormInput";
 import { ErsItem, Footer, FormContainer, Grid, Row } from "../../shared/styles";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { PrintablePage } from "../../styles";
 
 const ERSChecklist: React.FC = () => {
   const formViewerContext = useContext(FormViewerContext);
 
   return (
-    <PrintablePageMargin>
-      <PrintablePage lineHeight={1.25}>
-        <FormContainer {...formViewerContext} style={{ fontSize: "8px" }}>
-          <ErsItem style={{ padding: "unset" }}>
-            <FormHeader
-              titleLineOne="Early Release from Supervision (ERS)"
-              titleLineTwo="Checklist, Recommendation, and Determination Form"
-              subTitle="Clients who meet the following criteria may be recommended for ERS."
-            />
-            <Row paddingLeft>
-              <ErsItem>
-                Client's Name:
-                <FormInput
-                  name="clientName"
-                  placeholder="Enter First, Last Name"
-                  style={{ width: 412 }}
-                />
-              </ErsItem>
-            </Row>
-            <Row paddingLeft justifyContentStart>
-              <ErsItem>
-                TDCJ/SID #:
-                <FormInput name="tdcjNumberAndSid" style={{ width: 175 }} />
-              </ErsItem>
-              <ErsItem>
-                Eligibility Month:
-                <FormInput
-                  name="eligibilityMonthString"
-                  style={{ width: 175 }}
-                />
-              </ErsItem>
-            </Row>
+    <PrintablePage lineHeight={1.25}>
+      <FormContainer {...formViewerContext} style={{ fontSize: "8px" }}>
+        <ErsItem style={{ padding: "unset" }}>
+          <FormHeader
+            titleLineOne="Early Release from Supervision (ERS)"
+            titleLineTwo="Checklist, Recommendation, and Determination Form"
+            subTitle="Clients who meet the following criteria may be recommended for ERS."
+          />
+          <Row paddingLeft>
+            <ErsItem>
+              Client's Name:
+              <FormInput
+                name="clientName"
+                placeholder="Enter First, Last Name"
+                style={{ width: 412 }}
+              />
+            </ErsItem>
+          </Row>
+          <Row paddingLeft justifyContentStart>
+            <ErsItem>
+              TDCJ/SID #:
+              <FormInput name="tdcjNumberAndSid" style={{ width: 175 }} />
+            </ErsItem>
+            <ErsItem>
+              Eligibility Month:
+              <FormInput
+                name="eligibilityMonthString"
+                style={{ width: 175 }}
+              />
+            </ErsItem>
+          </Row>
+        </ErsItem>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>Y</ErsItem>
+          <ErsItem width={25}>N</ErsItem>
+          <ErsItem width={508}>
+            1. The client has been under supervision for at least one-half the
+            time that remained on their current sentence when released from
+            prison.
           </ErsItem>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>Y</ErsItem>
-            <ErsItem width={25}>N</ErsItem>
-            <ErsItem width={508}>
-              1. The client has been under supervision for at least one-half the
-              time that remained on their current sentence when released from
-              prison.
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                name="atLeastHalfTimeCheck"
-                id="atLeastHalfTimeCheckYes"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="atLeastHalfTimeCheck"
-                id="atLeastHalfTimeCheckNo"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem>Comments:</ErsItem>
-          </Row>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              name="atLeastHalfTimeCheck"
+              id="atLeastHalfTimeCheckYes"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="atLeastHalfTimeCheck"
+              id="atLeastHalfTimeCheckNo"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem>Comments:</ErsItem>
+        </Row>
+        <Row paddingLeft>
+          <ErsItem>
+            <FormInput
+              name="comment1"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>Y</ErsItem>
+          <ErsItem width={25}>N</ErsItem>
+          <ErsItem width={508}>
+            2. The client has been under supervision for a minimum of three
+            years on the current period of supervision to include at least
+            three years on Low supervision level as determined by the TRAS.
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              name="minimumThreeYearsSupervisionCheck"
+              id="minimumThreeYearsSupervisionCheckYes"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="minimumThreeYearsSupervisionCheck"
+              id="minimumThreeYearsSupervisionCheckNo"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem>Comments:</ErsItem>
+        </Row>
+        <Row paddingLeft>
+          <ErsItem>
+            <FormInput
+              name="comment2"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>Y</ErsItem>
+          <ErsItem width={25}>N</ErsItem>
+          <ErsItem width={508}>
+            3. The client has demonstrated a good faith effort to comply with
+            supervision, crime victim fees and Post Secondary Education
+            Reimbursement required as of release, which will continue to be
+            due monthly, unless paid in advance.
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              name="goodFaithFeesAndEducationCheck"
+              id="goodFaithFeesAndEducationCheckYes"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="goodFaithFeesAndEducationCheck"
+              id="goodFaithFeesAndEducationCheckNo"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem>Comments:</ErsItem>
           <Row paddingLeft>
             <ErsItem>
               <FormInput
-                name="comment1"
+                name="comment3"
                 style={{ width: 500, borderBottom: "solid thin" }}
               />
             </ErsItem>
           </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>Y</ErsItem>
-            <ErsItem width={25}>N</ErsItem>
-            <ErsItem width={508}>
-              2. The client has been under supervision for a minimum of three
-              years on the current period of supervision to include at least
-              three years on Low supervision level as determined by the TRAS.
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                name="minimumThreeYearsSupervisionCheck"
-                id="minimumThreeYearsSupervisionCheckYes"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="minimumThreeYearsSupervisionCheck"
-                id="minimumThreeYearsSupervisionCheckNo"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem>Comments:</ErsItem>
-          </Row>
-          <Row paddingLeft>
-            <ErsItem>
-              <FormInput
-                name="comment2"
-                style={{ width: 500, borderBottom: "solid thin" }}
-              />
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>Y</ErsItem>
-            <ErsItem width={25}>N</ErsItem>
-            <ErsItem width={508}>
-              3. The client has demonstrated a good faith effort to comply with
-              supervision, crime victim fees and Post Secondary Education
-              Reimbursement required as of release, which will continue to be
-              due monthly, unless paid in advance.
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                name="goodFaithFeesAndEducationCheck"
-                id="goodFaithFeesAndEducationCheckYes"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="goodFaithFeesAndEducationCheck"
-                id="goodFaithFeesAndEducationCheckNo"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem>Comments:</ErsItem>
-            <Row paddingLeft>
-              <ErsItem>
-                <FormInput
-                  name="comment3"
-                  style={{ width: 500, borderBottom: "solid thin" }}
-                />
-              </ErsItem>
-            </Row>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>Y</ErsItem>
-            <ErsItem width={25}>N</ErsItem>
-            <ErsItem width={508}>
-              4. The client has maintained compliance with all restitution
-              obligations in accordance with PD/POP 3.1.6 for the preceding two
-              years of supervision, which will continue to be due each month
-              until paid in full. **The client's restitution obligations do not
-              have to be paid in full to qualify**
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                name="restitutionObligationsCheck"
-                id="restitutionObligationsCheckYes"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="restitutionObligationsCheck"
-                id="restitutionObligationsCheckNo"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem>Comments:</ErsItem>
-          </Row>
-          <Row paddingLeft>
-            <ErsItem>
-              <FormInput
-                name="comment4"
-                style={{ width: 500, borderBottom: "solid thin" }}
-              />
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>Y</ErsItem>
-            <ErsItem width={25}>N</ErsItem>
-            <ErsItem width={508}>
-              5. The client has not had a warrant issued within the preceding
-              two years of supervision. This does not apply to a warrant issued
-              in which a subsequent investigation or administrative review did
-              not sustain the violation.
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                id="warrantCheckYes"
-                name="warrantCheck"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                id="warrantCheckNo"
-                name="warrantCheck"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem>Comments:</ErsItem>
-          </Row>
-          <Row paddingLeft>
-            <ErsItem>
-              <FormInput
-                name="comment5"
-                style={{ width: 500, borderBottom: "solid thin" }}
-              />
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>Y</ErsItem>
-            <ErsItem width={25}>N</ErsItem>
-            <ErsItem width={508}>
-              6. The client has not committed any violation of rules or
-              conditions of release as indicated on their Certificate of
-              Parole/Mandatory Supervision, during the preceding two year period
-              of supervision.
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                name="noViolationsCertificateCheck"
-                id="noViolationsCertificateCheckYes"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="noViolationsCertificateCheck"
-                id="noViolationsCertificateCheckNo"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem>Comments:</ErsItem>
-          </Row>
-          <Row paddingLeft>
-            <ErsItem>
-              <FormInput
-                name="comment6"
-                style={{ width: 500, borderBottom: "solid thin" }}
-              />
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>Y</ErsItem>
-            <ErsItem width={25}>N</ErsItem>
-            <ErsItem width={508}>
-              7. It is in the best interest of society, per the supervising
-              officer's discretion for the client's reporting status to be
-              modified to ERS.
-            </ErsItem>
-          </Row>
-          <Row justifyContentStart unsetMargin>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                name="societyBestInterestCheck"
-                id="societyBestInterestCheckYes"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem width={25}>
-              <FormCheckbox
-                toggleable
-                invert
-                name="societyBestInterestCheck"
-                id="societyBestInterestCheckNo"
-              ></FormCheckbox>
-            </ErsItem>
-            <ErsItem>Comments:</ErsItem>
-          </Row>
-          <Row paddingLeft>
-            <ErsItem>
-              <FormInput
-                name="comment7"
-                style={{ width: 500, borderBottom: "solid thin" }}
-              />
-            </ErsItem>
-          </Row>
-          <Row style={{ fontSize: 8, fontWeight: "bold" }}>
-            This form should be forwarded through the supervising officer's
-            entire chain of command, regardless of the recommendation.
-          </Row>
-          <Row style={{ fontSize: 8, fontWeight: "bold" }}>
-            The Region Director will make the final decision regarding the
-            client's ERS eligibility
-          </Row>
-          <Grid columns="2.6fr 1.8fr 2.9fr">
-            <ErsItem>
-              Supervising Officer:
-              <FormInput
-                name="officerName"
-                style={{
-                  borderRight: "unset",
-                  fontSize: "8px",
-                  marginLeft: "5px",
-                }}
-              />
-            </ErsItem>
-            <ErsItem>
-              Date:
-              <FormInput
-                name="supervisingOfficerDate"
-                style={{ borderRight: "unset" }}
-              />
-            </ErsItem>
-            <ErsItem textAlignCenter>
-              Supervising Officer Recommend Client for ERS
-            </ErsItem>
-          </Grid>
-          <Grid columns="4.44fr 1.45fr 1.45fr">
-            <ErsItem>
-              Signature confirms all checklist information has been thoroughly
-              reviewed.
-            </ErsItem>
-            <ErsItem textAlignCenter>Yes</ErsItem>
-            <ErsItem textAlignCenter>
-              <FormCheckbox
-                toggleable
-                name="supervisingOfficerRecommendCheck"
-                id="supervisingOfficerRecommendCheckYes"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </ErsItem>
-          </Grid>
-          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
-            <ErsItem>Signature:</ErsItem>
-            <FormInput name="supervisingOfficerSignature" />
-            <ErsItem textAlignCenter>No</ErsItem>
-            <ErsItem textAlignCenter>
-              <FormCheckbox
-                toggleable
-                invert
-                name="supervisingOfficerRecommendCheck"
-                id="supervisingOfficerRecommendCheckNo"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </ErsItem>
-          </Grid>
-          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
-            <ErsItem>Remarks:</ErsItem>
-            <FormInput name="supervisingOfficerRemarks" />
-          </Grid>
-          <ErsItem
-            style={{ lineHeight: "unset", height: "3px", display: "flex" }}
-          ></ErsItem>
-          <Grid columns="2.6fr 1.8fr 2.9fr">
-            <ErsItem>
-              Unit Supervisor:{" "}
-              <FormInput
-                name="unitSupervisorName"
-                style={{ borderRight: "unset" }}
-              />
-            </ErsItem>
-            <ErsItem>
-              Date:
-              <FormInput
-                name="unitSupervisorDate"
-                style={{ borderRight: "unset" }}
-              />
-            </ErsItem>
-            <ErsItem textAlignCenter>
-              Concur with Supervising Officer's Decision
-            </ErsItem>
-          </Grid>
-          <Grid columns="4.44fr 1.45fr 1.45fr">
-            <ErsItem>
-              Signature confirms all checklist information has been thoroughly
-              reviewed.
-            </ErsItem>
-            <ErsItem textAlignCenter>Yes</ErsItem>
-            <ErsItem textAlignCenter>
-              <FormCheckbox
-                toggleable
-                name="unitSupervisorConcurWithSupervisingOfficerCheck"
-                id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </ErsItem>
-          </Grid>
-          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
-            <ErsItem>Signature:</ErsItem>
-            <FormInput name="unitSupervisorSignature" />
-            <ErsItem textAlignCenter>No</ErsItem>
-            <ErsItem textAlignCenter>
-              <FormCheckbox
-                toggleable
-                invert
-                name="unitSupervisorConcurWithSupervisingOfficerCheck"
-                id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </ErsItem>
-          </Grid>
-          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
-            <ErsItem>Remarks:</ErsItem>
-            <FormInput name="unitSupervisorRemarks" />
-          </Grid>
-          <ErsItem
-            style={{ lineHeight: "unset", height: "3px", display: "flex" }}
-          ></ErsItem>
-          <Grid columns="2.6fr 1.8fr 2.9fr">
-            <ErsItem>
-              Parole Supervisor:{" "}
-              <FormInput
-                name="paroleSupervisorName"
-                style={{ borderRight: "unset" }}
-              />
-            </ErsItem>
-            <ErsItem>
-              Date:
-              <FormInput
-                name="paroleSupervisorDate"
-                style={{ borderRight: "unset" }}
-              />
-            </ErsItem>
-            <ErsItem textAlignCenter>
-              Concur with Supervising Officer's Decision
-            </ErsItem>
-          </Grid>
-          <Grid columns="4.44fr 1.45fr 1.45fr">
-            <ErsItem>
-              Signature confirms all checklist information has been thoroughly
-              reviewed.
-            </ErsItem>
-            <ErsItem textAlignCenter>Yes</ErsItem>
-            <ErsItem textAlignCenter>
-              <FormCheckbox
-                toggleable
-                name="paroleSupervisorConcurWithSupervisingOfficerCheck"
-                id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </ErsItem>
-          </Grid>
-          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
-            <ErsItem>Signature:</ErsItem>
-            <FormInput name="paroleSupervisorSignature" />
-            <ErsItem textAlignCenter>No</ErsItem>
-            <ErsItem textAlignCenter>
-              <FormCheckbox
-                toggleable
-                invert
-                name="paroleSupervisorConcurWithSupervisingOfficerCheck"
-                id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </ErsItem>
-          </Grid>
-          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
-            <ErsItem>Remarks:</ErsItem>
-            <FormInput name="paroleSupervisorRemarks" />
-          </Grid>
-          <ErsItem
-            style={{ lineHeight: "unset", height: "3px", display: "flex" }}
-          ></ErsItem>
-          <Grid columns="2.6fr 1.8fr 2.9fr">
-            <ErsItem>
-              Assistant Region Director:{" "}
-              <FormInput
-                name="assistantRegionDirectorName"
-                style={{ borderRight: "unset" }}
-              />
-            </ErsItem>
-            <ErsItem>
-              Date:
-              <FormInput
-                name="assistantRegionDirectorDate"
-                style={{ borderRight: "unset" }}
-              />
-            </ErsItem>
-            <ErsItem textAlignCenter>
-              Concur with Supervising Officer's Decision
-            </ErsItem>
-          </Grid>
-          <Grid columns="4.44fr 1.45fr 1.45fr">
-            <ErsItem>
-              Signature confirms all checklist information has been thoroughly
-              reviewed.
-            </ErsItem>
-            <ErsItem textAlignCenter>Yes</ErsItem>
-            <ErsItem textAlignCenter>
-              <FormCheckbox
-                toggleable
-                name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
-                id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </ErsItem>
-          </Grid>
-          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
-            <ErsItem>Signature:</ErsItem>
-            <FormInput name="assistantRegionDirectorSignature" />
-            <ErsItem textAlignCenter>No</ErsItem>
-            <ErsItem textAlignCenter>
-              <FormCheckbox
-                toggleable
-                invert
-                name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
-                id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </ErsItem>
-          </Grid>
-          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
-            <ErsItem>Remarks:</ErsItem>
-            <FormInput name="assistantRegionDirectorRemarks" />
-          </Grid>
-          <ErsItem
-            style={{ lineHeight: "unset", height: "3px", display: "flex" }}
-          ></ErsItem>
-          <Grid columns="2.6fr 1.8fr 2.9fr">
-            <ErsItem>
-              Region Director:{" "}
-              <FormInput
-                name="regionDirectorName"
-                style={{ borderRight: "unset" }}
-              />
-            </ErsItem>
-            <ErsItem>
-              Date:
-              <FormInput
-                name="regionDirectorDate"
-                style={{ borderRight: "unset" }}
-              />
-            </ErsItem>
-            <ErsItem textAlignCenter>Final Authority</ErsItem>
-          </Grid>
-          <Grid columns="4.44fr 1.45fr 1.45fr">
-            <ErsItem>
-              Signature confirms all checklist information has been thoroughly
-              reviewed.
-            </ErsItem>
-            <ErsItem textAlignCenter>Recommend for ERS</ErsItem>
-            <ErsItem textAlignCenter>
-              <FormCheckbox
-                toggleable
-                name="regionDirectorConcurWithSupervisingOfficerCheck"
-                id="regionDirectorConcurWithSupervisingOfficerCheckYes"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </ErsItem>
-          </Grid>
-          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
-            <ErsItem>Signature:</ErsItem>
-            <FormInput name="regionDirectorSignature" />
-            <ErsItem textAlignCenter style={{ fontSize: "7px" }}>
-              Does Not Recommend for ERS
-            </ErsItem>
-            <ErsItem textAlignCenter>
-              <FormCheckbox
-                toggleable
-                invert
-                name="regionDirectorConcurWithSupervisingOfficerCheck"
-                id="regionDirectorConcurWithSupervisingOfficerCheckNo"
-                style={{ height: "10px", verticalAlign: "middle" }}
-              ></FormCheckbox>
-            </ErsItem>
-          </Grid>
-          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
-            <ErsItem>Remarks:</ErsItem>
-            <FormInput name="regionDirectorRemarks" />
-          </Grid>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>Y</ErsItem>
+          <ErsItem width={25}>N</ErsItem>
+          <ErsItem width={508}>
+            4. The client has maintained compliance with all restitution
+            obligations in accordance with PD/POP 3.1.6 for the preceding two
+            years of supervision, which will continue to be due each month
+            until paid in full. **The client's restitution obligations do not
+            have to be paid in full to qualify**
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              name="restitutionObligationsCheck"
+              id="restitutionObligationsCheckYes"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="restitutionObligationsCheck"
+              id="restitutionObligationsCheckNo"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem>Comments:</ErsItem>
+        </Row>
+        <Row paddingLeft>
+          <ErsItem>
+            <FormInput
+              name="comment4"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>Y</ErsItem>
+          <ErsItem width={25}>N</ErsItem>
+          <ErsItem width={508}>
+            5. The client has not had a warrant issued within the preceding
+            two years of supervision. This does not apply to a warrant issued
+            in which a subsequent investigation or administrative review did
+            not sustain the violation.
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              id="warrantCheckYes"
+              name="warrantCheck"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              id="warrantCheckNo"
+              name="warrantCheck"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem>Comments:</ErsItem>
+        </Row>
+        <Row paddingLeft>
+          <ErsItem>
+            <FormInput
+              name="comment5"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>Y</ErsItem>
+          <ErsItem width={25}>N</ErsItem>
+          <ErsItem width={508}>
+            6. The client has not committed any violation of rules or
+            conditions of release as indicated on their Certificate of
+            Parole/Mandatory Supervision, during the preceding two year period
+            of supervision.
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              name="noViolationsCertificateCheck"
+              id="noViolationsCertificateCheckYes"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="noViolationsCertificateCheck"
+              id="noViolationsCertificateCheckNo"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem>Comments:</ErsItem>
+        </Row>
+        <Row paddingLeft>
+          <ErsItem>
+            <FormInput
+              name="comment6"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>Y</ErsItem>
+          <ErsItem width={25}>N</ErsItem>
+          <ErsItem width={508}>
+            7. It is in the best interest of society, per the supervising
+            officer's discretion for the client's reporting status to be
+            modified to ERS.
+          </ErsItem>
+        </Row>
+        <Row justifyContentStart unsetMargin>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              name="societyBestInterestCheck"
+              id="societyBestInterestCheckYes"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem width={25}>
+            <FormCheckbox
+              toggleable
+              invert
+              name="societyBestInterestCheck"
+              id="societyBestInterestCheckNo"
+            ></FormCheckbox>
+          </ErsItem>
+          <ErsItem>Comments:</ErsItem>
+        </Row>
+        <Row paddingLeft>
+          <ErsItem>
+            <FormInput
+              name="comment7"
+              style={{ width: 500, borderBottom: "solid thin" }}
+            />
+          </ErsItem>
+        </Row>
+        <Row style={{ fontSize: 8, fontWeight: "bold" }}>
+          This form should be forwarded through the supervising officer's
+          entire chain of command, regardless of the recommendation.
+        </Row>
+        <Row style={{ fontSize: 8, fontWeight: "bold" }}>
+          The Region Director will make the final decision regarding the
+          client's ERS eligibility
+        </Row>
+        <Grid columns="2.6fr 1.8fr 2.9fr">
+          <ErsItem>
+            Supervising Officer:
+            <FormInput
+              name="officerName"
+              style={{
+                borderRight: "unset",
+                fontSize: "8px",
+                marginLeft: "5px",
+              }}
+            />
+          </ErsItem>
+          <ErsItem>
+            Date:
+            <FormInput
+              name="supervisingOfficerDate"
+              style={{ borderRight: "unset" }}
+            />
+          </ErsItem>
+          <ErsItem textAlignCenter>
+            Supervising Officer Recommend Client for ERS
+          </ErsItem>
+        </Grid>
+        <Grid columns="4.44fr 1.45fr 1.45fr">
+          <ErsItem>
+            Signature confirms all checklist information has been thoroughly
+            reviewed.
+          </ErsItem>
+          <ErsItem textAlignCenter>Yes</ErsItem>
+          <ErsItem textAlignCenter>
+            <FormCheckbox
+              toggleable
+              name="supervisingOfficerRecommendCheck"
+              id="supervisingOfficerRecommendCheckYes"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </ErsItem>
+        </Grid>
+        <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
+          <ErsItem>Signature:</ErsItem>
+          <FormInput name="supervisingOfficerSignature" />
+          <ErsItem textAlignCenter>No</ErsItem>
+          <ErsItem textAlignCenter>
+            <FormCheckbox
+              toggleable
+              invert
+              name="supervisingOfficerRecommendCheck"
+              id="supervisingOfficerRecommendCheckNo"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </ErsItem>
+        </Grid>
+        <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <ErsItem>Remarks:</ErsItem>
+          <FormInput name="supervisingOfficerRemarks" />
+        </Grid>
+        <ErsItem
+          style={{ lineHeight: "unset", height: "3px", display: "flex" }}
+        ></ErsItem>
+        <Grid columns="2.6fr 1.8fr 2.9fr">
+          <ErsItem>
+            Unit Supervisor:{" "}
+            <FormInput
+              name="unitSupervisorName"
+              style={{ borderRight: "unset" }}
+            />
+          </ErsItem>
+          <ErsItem>
+            Date:
+            <FormInput
+              name="unitSupervisorDate"
+              style={{ borderRight: "unset" }}
+            />
+          </ErsItem>
+          <ErsItem textAlignCenter>
+            Concur with Supervising Officer's Decision
+          </ErsItem>
+        </Grid>
+        <Grid columns="4.44fr 1.45fr 1.45fr">
+          <ErsItem>
+            Signature confirms all checklist information has been thoroughly
+            reviewed.
+          </ErsItem>
+          <ErsItem textAlignCenter>Yes</ErsItem>
+          <ErsItem textAlignCenter>
+            <FormCheckbox
+              toggleable
+              name="unitSupervisorConcurWithSupervisingOfficerCheck"
+              id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </ErsItem>
+        </Grid>
+        <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
+          <ErsItem>Signature:</ErsItem>
+          <FormInput name="unitSupervisorSignature" />
+          <ErsItem textAlignCenter>No</ErsItem>
+          <ErsItem textAlignCenter>
+            <FormCheckbox
+              toggleable
+              invert
+              name="unitSupervisorConcurWithSupervisingOfficerCheck"
+              id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </ErsItem>
+        </Grid>
+        <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <ErsItem>Remarks:</ErsItem>
+          <FormInput name="unitSupervisorRemarks" />
+        </Grid>
+        <ErsItem
+          style={{ lineHeight: "unset", height: "3px", display: "flex" }}
+        ></ErsItem>
+        <Grid columns="2.6fr 1.8fr 2.9fr">
+          <ErsItem>
+            Parole Supervisor:{" "}
+            <FormInput
+              name="paroleSupervisorName"
+              style={{ borderRight: "unset" }}
+            />
+          </ErsItem>
+          <ErsItem>
+            Date:
+            <FormInput
+              name="paroleSupervisorDate"
+              style={{ borderRight: "unset" }}
+            />
+          </ErsItem>
+          <ErsItem textAlignCenter>
+            Concur with Supervising Officer's Decision
+          </ErsItem>
+        </Grid>
+        <Grid columns="4.44fr 1.45fr 1.45fr">
+          <ErsItem>
+            Signature confirms all checklist information has been thoroughly
+            reviewed.
+          </ErsItem>
+          <ErsItem textAlignCenter>Yes</ErsItem>
+          <ErsItem textAlignCenter>
+            <FormCheckbox
+              toggleable
+              name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+              id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </ErsItem>
+        </Grid>
+        <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
+          <ErsItem>Signature:</ErsItem>
+          <FormInput name="paroleSupervisorSignature" />
+          <ErsItem textAlignCenter>No</ErsItem>
+          <ErsItem textAlignCenter>
+            <FormCheckbox
+              toggleable
+              invert
+              name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+              id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </ErsItem>
+        </Grid>
+        <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <ErsItem>Remarks:</ErsItem>
+          <FormInput name="paroleSupervisorRemarks" />
+        </Grid>
+        <ErsItem
+          style={{ lineHeight: "unset", height: "3px", display: "flex" }}
+        ></ErsItem>
+        <Grid columns="2.6fr 1.8fr 2.9fr">
+          <ErsItem>
+            Assistant Region Director:{" "}
+            <FormInput
+              name="assistantRegionDirectorName"
+              style={{ borderRight: "unset" }}
+            />
+          </ErsItem>
+          <ErsItem>
+            Date:
+            <FormInput
+              name="assistantRegionDirectorDate"
+              style={{ borderRight: "unset" }}
+            />
+          </ErsItem>
+          <ErsItem textAlignCenter>
+            Concur with Supervising Officer's Decision
+          </ErsItem>
+        </Grid>
+        <Grid columns="4.44fr 1.45fr 1.45fr">
+          <ErsItem>
+            Signature confirms all checklist information has been thoroughly
+            reviewed.
+          </ErsItem>
+          <ErsItem textAlignCenter>Yes</ErsItem>
+          <ErsItem textAlignCenter>
+            <FormCheckbox
+              toggleable
+              name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+              id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </ErsItem>
+        </Grid>
+        <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
+          <ErsItem>Signature:</ErsItem>
+          <FormInput name="assistantRegionDirectorSignature" />
+          <ErsItem textAlignCenter>No</ErsItem>
+          <ErsItem textAlignCenter>
+            <FormCheckbox
+              toggleable
+              invert
+              name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+              id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </ErsItem>
+        </Grid>
+        <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <ErsItem>Remarks:</ErsItem>
+          <FormInput name="assistantRegionDirectorRemarks" />
+        </Grid>
+        <ErsItem
+          style={{ lineHeight: "unset", height: "3px", display: "flex" }}
+        ></ErsItem>
+        <Grid columns="2.6fr 1.8fr 2.9fr">
+          <ErsItem>
+            Region Director:{" "}
+            <FormInput
+              name="regionDirectorName"
+              style={{ borderRight: "unset" }}
+            />
+          </ErsItem>
+          <ErsItem>
+            Date:
+            <FormInput
+              name="regionDirectorDate"
+              style={{ borderRight: "unset" }}
+            />
+          </ErsItem>
+          <ErsItem textAlignCenter>Final Authority</ErsItem>
+        </Grid>
+        <Grid columns="4.44fr 1.45fr 1.45fr">
+          <ErsItem>
+            Signature confirms all checklist information has been thoroughly
+            reviewed.
+          </ErsItem>
+          <ErsItem textAlignCenter>Recommend for ERS</ErsItem>
+          <ErsItem textAlignCenter>
+            <FormCheckbox
+              toggleable
+              name="regionDirectorConcurWithSupervisingOfficerCheck"
+              id="regionDirectorConcurWithSupervisingOfficerCheckYes"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </ErsItem>
+        </Grid>
+        <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
+          <ErsItem>Signature:</ErsItem>
+          <FormInput name="regionDirectorSignature" />
+          <ErsItem textAlignCenter style={{ fontSize: "7px" }}>
+            Does Not Recommend for ERS
+          </ErsItem>
+          <ErsItem textAlignCenter>
+            <FormCheckbox
+              toggleable
+              invert
+              name="regionDirectorConcurWithSupervisingOfficerCheck"
+              id="regionDirectorConcurWithSupervisingOfficerCheckNo"
+              style={{ height: "10px", verticalAlign: "middle" }}
+            ></FormCheckbox>
+          </ErsItem>
+        </Grid>
+        <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <ErsItem>Remarks:</ErsItem>
+          <FormInput name="regionDirectorRemarks" />
+        </Grid>
 
-          <Footer>PSV-323A (Rev. 07/01/2025)</Footer>
-        </FormContainer>
-      </PrintablePage>
-    </PrintablePageMargin>
+        <Footer>PSV-323A (Rev. 07/01/2025)</Footer>
+      </FormContainer>
+    </PrintablePage>
   );
 };
 
