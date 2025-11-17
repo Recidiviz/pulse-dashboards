@@ -29,6 +29,8 @@ main:
                   env:
                     - name: STATE_CODE
                       value: ${state_code}
+                    - name: FILES
+                      value: sentencing_counties_and_districts.json,sentencing_staff_record.json,sentencing_client_record.json,sentencing_charge_record.json,sentencing_community_opportunity_record.json,sentencing_case_record.json,case_insights_record.json
           result: job_execution
         except:
           as: e
