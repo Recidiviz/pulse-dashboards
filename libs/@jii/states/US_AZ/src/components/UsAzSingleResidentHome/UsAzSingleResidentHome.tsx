@@ -16,11 +16,13 @@
 // =============================================================================
 
 import { UsAzImportantDates } from "./UsAzImportantDates";
+import { UsAzImportantDatesLink } from "./UsAzImportantDatesLink";
 
 export function UsAzSingleResidentHome() {
   return (
     <div>
       <UsAzImportantDates />
+      <UsAzImportantDatesLink />
     </div>
   );
 }

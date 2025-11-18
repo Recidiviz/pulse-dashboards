@@ -15,30 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useTypedParams } from "react-router-typesafe-routes/dom";
-
 import { usePageTitle } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
 import { DefinitionView } from "../components/DefinitionView";
 
 export function PageMoreInfoImportantDates() {
   const { t } = useUsAzTranslations();
-  const { dateType } = useTypedParams(
-    State.Resident.UsAzMoreInformation.DateInfo,
-  );
 
-  const heading = t(
-    ($) =>
-      $.importantDates.dates[dateType as keyof typeof $.importantDates.dates]
-        .moreInfo.heading,
-  );
-  const body = t(
-    ($) =>
-      $.importantDates.dates[dateType as keyof typeof $.importantDates.dates]
-        .moreInfo.body,
-  );
+  const { heading, body } = t(($) => $.importantDates.moreInfo, {
+    returnObjects: true,
+  });
 
   usePageTitle(heading);
 

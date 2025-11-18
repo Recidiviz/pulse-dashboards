@@ -19,6 +19,8 @@ import { ResidentRecord } from "~datatypes";
 
 import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
 
+const mockMarkdownContent = `## H0\n## H1\n## H2\n## H3\n## H4\n## H5\n## H6`;
+
 const mockAzResident = {
   stateCode: "US_AZ",
   metadata: {
@@ -54,12 +56,18 @@ const mockCaResident = {
 describe("UsAzImportantDatesPresenter", () => {
   describe("metadata", () => {
     it("returns the metadata blob when the state code is US_AZ", () => {
-      const presenter = new UsAzImportantDatesPresenter(mockAzResident);
+      const presenter = new UsAzImportantDatesPresenter(
+        mockAzResident,
+        mockMarkdownContent,
+      );
       expect(presenter.metadata).toEqual(mockAzResident.metadata);
     });
 
     it("throws an error when the state code is not US_AZ", () => {
-      const presenter = new UsAzImportantDatesPresenter(mockCaResident);
+      const presenter = new UsAzImportantDatesPresenter(
+        mockCaResident,
+        mockMarkdownContent,
+      );
       expect(() => presenter.metadata).toThrow(
         "Invalid state code for UsAzImportantDatesPresenter: US_CA",
       );
@@ -68,7 +76,10 @@ describe("UsAzImportantDatesPresenter", () => {
 
   describe("dateEntries", () => {
     it("sorts dates by earliest first and highlights acisTprDate", () => {
-      const presenter = new UsAzImportantDatesPresenter(mockAzResident);
+      const presenter = new UsAzImportantDatesPresenter(
+        mockAzResident,
+        mockMarkdownContent,
+      );
       const entries = presenter.dateEntries;
 
       // Check sorting order
@@ -95,10 +106,25 @@ describe("UsAzImportantDatesPresenter", () => {
     it("handles all null dates correctly", () => {
       const presenter = new UsAzImportantDatesPresenter(
         mockAzResidentAllNullDates,
+        mockMarkdownContent,
       );
       const entries = presenter.dateEntries;
 
       expect(entries).toHaveLength(0);
+    });
+
+    it("assigns infoPageHash to each date entry", () => {
+      const presenter = new UsAzImportantDatesPresenter(
+        mockAzResident,
+        mockMarkdownContent,
+      );
+      const entries = presenter.dateEntries;
+
+      // Verify all entries have an infoPageHash
+      entries.forEach((entry) => {
+        expect(entry.infoPageHash).toBeTruthy();
+        expect(typeof entry.infoPageHash).toBe("string");
+      });
     });
   });
 });

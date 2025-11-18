@@ -32,7 +32,7 @@ export function UsAzRouter() {
         <Route index element={<PageUsAzResidentHome />} />
         <Route path="*" element={<NotFound />} />
         <Route
-          path={UsAzMoreInformation.DateInfo.path}
+          path={UsAzMoreInformation.ImportantDates.path}
           element={<PageMoreInfoImportantDates />}
         />
       </Routes>

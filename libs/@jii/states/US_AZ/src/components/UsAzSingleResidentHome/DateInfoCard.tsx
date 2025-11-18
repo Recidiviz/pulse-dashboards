@@ -37,6 +37,7 @@ export interface DateInfoCardProps {
   dateKey: UsAzDateField;
   isUpcoming: boolean;
   highlightType?: UsAzDateField;
+  infoPageHash: string;
 }
 
 export const DateInfoCard = ({
@@ -47,6 +48,7 @@ export const DateInfoCard = ({
   dateKey,
   isUpcoming,
   highlightType,
+  infoPageHash,
 }: DateInfoCardProps) => {
   const { t } = useUsAzTranslations();
 
@@ -99,9 +101,9 @@ export const DateInfoCard = ({
       </DateInfoContent>
       <LearnMoreLinkWrapper>
         <GoLink
-          to={State.Resident.$.UsAzMoreInformation.DateInfo.buildRelativePath({
-            dateType: dateKey,
-          })}
+          to={`${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
+            {},
+          )}#${infoPageHash}`}
         >
           {t(($) => $.goLink)}
           {shortName}

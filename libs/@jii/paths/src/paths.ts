@@ -58,7 +58,7 @@ export const UsAzMoreInformation = route(
   "more-information",
   {},
   {
-    DateInfo: route("date/:dateType"),
+    ImportantDates: route("important-dates", { hash: [] }),
   },
 );
 

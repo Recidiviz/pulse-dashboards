@@ -17,6 +17,7 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { extractHeadingIds } from "~@jii/translation";
 import { ResidentRecord } from "~datatypes";
 
 // Shared constant for all US_AZ date field names that exist on metadata
@@ -48,10 +49,17 @@ export interface DateEntry {
   date: string;
   isUpcoming: boolean; // Within 31 days
   highlightType?: UsAzDateField;
+  infoPageHash: string;
 }
 
 export class UsAzImportantDatesPresenter {
-  constructor(public readonly resident: ResidentRecord) {
+  private readonly headingIds: string[];
+
+  constructor(
+    public readonly resident: ResidentRecord,
+    markdownContent: string,
+  ) {
+    this.headingIds = extractHeadingIds(markdownContent);
     makeAutoObservable(this, undefined, { autoBind: true });
   }
 
@@ -109,11 +117,25 @@ export class UsAzImportantDatesPresenter {
     const thirtyOneDaysFromNow = new Date(today);
     thirtyOneDaysFromNow.setDate(today.getDate() + 31);
 
+    // Map date keys to their corresponding heading index
+    const keyToHeadingIndex: Record<string, number> = {
+      acisTprDate: 1,
+      acisDtpDate: 2,
+      csbdDate: 3,
+      trToAddDate: 3,
+      ercdDate: 4,
+      addDate: 4,
+      sedDate: 5,
+      csedDate: 6,
+    };
+
     return sortedEntries.map((entry) => {
       const entryDate = new Date(entry.date);
+      const headingIndex = keyToHeadingIndex[entry.key];
       const result: DateEntry = {
         ...entry,
         isUpcoming: entryDate >= today && entryDate <= thirtyOneDaysFromNow,
+        infoPageHash: this.headingIds[headingIndex] || "",
       };
 
       if (

@@ -43,7 +43,7 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
             {t(($) => $.importantDates.sectionSubHeader)}
           </SectionSubHeader>
           {presenter.dateEntries.map(
-            ({ key, date, isUpcoming, highlightType }) => {
+            ({ key, date, isUpcoming, highlightType, infoPageHash }) => {
               const dateKey = key as UsAzDateField;
 
               return (
@@ -58,6 +58,7 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
                   )}
                   isUpcoming={isUpcoming}
                   highlightType={highlightType}
+                  infoPageHash={infoPageHash}
                 />
               );
             },
@@ -69,8 +70,10 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
 
 function usePresenter() {
   const { resident } = useSingleResidentContext();
+  const { t } = useUsAzTranslations();
+  const markdownContent = t(($) => $.importantDates.moreInfo.body);
 
-  return new UsAzImportantDatesPresenter(resident);
+  return new UsAzImportantDatesPresenter(resident, markdownContent);
 }
 
 export const UsAzImportantDates = withPresenterManager({

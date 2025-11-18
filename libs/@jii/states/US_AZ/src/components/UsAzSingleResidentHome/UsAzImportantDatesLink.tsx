@@ -15,23 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
+import { Link } from "react-router-dom";
+import styled from "styled-components/macro";
 
-import { BackLink, InfoPage } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
+import { useUsAzTranslations } from "~@jii/translation";
+import { Icon, palette } from "~design-system";
 
-type DefinitionViewProps = {
-  heading: string;
-  body: string;
-};
+const LinkContainer = styled.div`
+  margin-top: ${rem(spacing.lg)};
+  margin-bottom: ${rem(spacing.lg)};
+  width: 100%;
+  text-align: center;
+`;
 
-export const DefinitionView = (props: DefinitionViewProps) => {
-  const params = useTypedParams(State.Resident.UsAzMoreInformation);
+const StyledLink = styled(Link)`
+  color: ${palette.pine4};
+  text-decoration: none;
+`;
 
+export const UsAzImportantDatesLink = () => {
+  const { t } = useUsAzTranslations();
   return (
-    <>
-      <BackLink to={State.Resident.buildPath(params)} children="Home" />
-      <InfoPage {...props} />
-    </>
+    <LinkContainer>
+      <StyledLink
+        to={State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
+          {},
+        )}
+      >
+        {t(($) => $.goLinkFull)} <Icon kind="Arrow" size={12} />
+      </StyledLink>
+    </LinkContainer>
   );
 };
