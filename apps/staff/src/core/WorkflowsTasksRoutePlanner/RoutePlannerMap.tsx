@@ -28,7 +28,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
-import { Button, palette, spacing } from "~design-system";
+import { Button, Icon, IconSVG, palette, spacing } from "~design-system";
 
 import CopyIcon from "../../assets/static/images/copy.svg?react";
 import Star from "../../assets/static/images/grayStar.svg?react";
@@ -94,17 +94,17 @@ const RouteDescriptionBox = styled.div<{
 const RouteDescriptionControls = styled.div`
   display: flex;
   margin-bottom: ${rem(14)};
+  gap: ${rem(spacing.xs)};
 `;
 
-const CopyButton = styled.div`
+const IconButton = styled.div`
+  color: ${palette.slate80};
   height: ${rem(30)};
   width: ${rem(20)};
 
   display: flex;
   justify-content: center;
   align-items: center;
-
-  margin-right: ${rem(spacing.sm)};
 
   &:hover {
     background: ${palette.slate05};
@@ -220,7 +220,15 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
   presenter: RoutePlannerPresenter;
   isMobile: boolean;
 }) {
-  if (presenter.clientsPresenter.selectedClients.length === 0) return null;
+  if (presenter.clientsPresenter.selectedClients.length === 0) {
+    return (
+      <RouteDescriptionBoxContainer>
+        <RouteDescriptionBox $isMobile={isMobile}>
+          Select some clients to show results.
+        </RouteDescriptionBox>
+      </RouteDescriptionBoxContainer>
+    );
+  }
 
   const onClickCopyLink = async () => {
     const { mapDirectionsUrl } = presenter;
@@ -263,13 +271,29 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
               </Button>
             </a>
           ) : (
-            /* On desktop, show copy to clipboard and email links */
+            /* On desktop, show open, copy to clipboard, and email links */
             <>
-              <CopyButton onClick={onClickCopyLink}>
+              <a
+                href={presenter.mapDirectionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <IconButton>
+                  <TooltipTrigger contents={"Open route link in new tab"}>
+                    <Icon
+                      kind={IconSVG.Open}
+                      fill={palette.slate50}
+                      height={12}
+                    />
+                  </TooltipTrigger>
+                </IconButton>
+              </a>
+
+              <IconButton onClick={onClickCopyLink}>
                 <TooltipTrigger contents={"Copy route link to clipboard"}>
                   <CopyIcon />
                 </TooltipTrigger>
-              </CopyButton>
+              </IconButton>
 
               <Button shape={"block"} onClick={onClickEmailLink}>
                 <SendIcon />
@@ -282,7 +306,11 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
         <RouteInfo>
           <AddressRow
             address={presenter.startingAddress}
-            label={"Your office"}
+            label={
+              presenter.userPickedStartingAddress
+                ? "Your starting point"
+                : "Your office"
+            }
             displayStar={true}
           />
           <AddressDivider />

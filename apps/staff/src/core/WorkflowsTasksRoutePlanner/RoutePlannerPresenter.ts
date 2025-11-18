@@ -24,7 +24,11 @@ import { Officer } from "../../WorkflowsStore/Officer";
 import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+// The Google Maps Embed API is documented here: https://developers.google.com/maps/documentation/embed/embedding-map
+const BASE_EMBED_URL_NO_POINTS = "https://www.google.com/maps/embed/v1/view";
 const BASE_EMBED_URL = "https://www.google.com/maps/embed/v1/directions";
+
+// The Google Maps directions URLs API is documented here: https://developers.google.com/maps/documentation/urls/get-started
 const BASE_DIRECTIONS_URL = "https://www.google.com/maps/dir/";
 
 type MapDirectionsRequestProps = {
@@ -32,6 +36,17 @@ type MapDirectionsRequestProps = {
   emailSubject: string;
   emailBody: string;
 };
+
+function formatTexasDpoAddress(address: {
+  line1: string;
+  line2?: string | undefined;
+  city: string;
+  zip: string;
+}): string {
+  return formatTexasAddress(
+    `${address.line1}${address.line2 ? " " + address.line2 : ""}, ${address.city}, TX ${address.zip}`,
+  );
+}
 
 /**
  * Responsible for handling map-related data for the Tasks Route Planner page.
@@ -60,38 +75,50 @@ export class RoutePlannerPresenter {
   }
 
   get startingAddressPlaceholder(): string {
-    // Assemble addresses for all selected officers
-    const addresses = this.workflowsStore.searchStore.selectedSearchables.map(
-      (searchable) => {
-        if (
-          !(searchable instanceof Officer) ||
-          searchable.record.recordType !== "supervisionStaff"
-        ) {
-          return;
-        }
-        return searchable.record?.stateSpecificData?.dpoAddress;
-      },
-    );
+    const { selectedClients } = this.clientsPresenter;
+    let addresses;
+    if (selectedClients.length > 0) {
+      // If we have any selected people, get potential starting addresses from
+      // the officers of the selected people.
+      addresses = selectedClients
+        .map((client) => client.assignedStaff)
+        .map((officer) => {
+          if (officer?.recordType !== "supervisionStaff") {
+            return;
+          }
+          return officer?.stateSpecificData?.dpoAddress;
+        });
+    } else {
+      // Otherwise, get addresses for all searched-for officers
+      addresses = this.workflowsStore.searchStore.selectedSearchables.map(
+        (searchable) => {
+          if (
+            !(searchable instanceof Officer) ||
+            searchable.record.recordType !== "supervisionStaff"
+          ) {
+            return;
+          }
+          return searchable.record?.stateSpecificData?.dpoAddress;
+        },
+      );
+    }
+
+    // Pick the first valid address from the list
     const formattedAddresses = addresses
       .filter((address) => !!address)
-      .map(
-        (address) =>
-          `${address.line1}${address.line2 ? " " + address.line2 : ""}, ${address.city}, TX ${address.zip}`,
-      );
+      .map((address) => formatTexasDpoAddress(address));
 
-    if (formattedAddresses.length === 0) {
-      return "";
-    } else {
-      // Pick the first address as the placeholder
-      return formatTexasAddress(formattedAddresses[0]);
+    if (formattedAddresses.length !== 0) {
+      return formattedAddresses[0];
     }
+    return "";
   }
   /**
    * Return the center in meters of the circular region to limit address predictions toward
    */
-  get locationBias(): { lat: number; lng: number } | undefined {
+  get locationBias(): { lat: number; lng: number } {
     // The center of a circle encompassing all of Texas
-    return { lat: 31.3003, lng: -99.5935 };
+    return { lat: 31.2, lng: -99.9 };
   }
 
   /**
@@ -99,7 +126,15 @@ export class RoutePlannerPresenter {
    */
   get radius(): number | undefined {
     // The radius of a circle encompassing all of Texas
-    return 679100;
+    return 660000;
+  }
+
+  /**
+   * Return the zoom level to use for the map. This can range from 0 to 21.
+   * https://developers.google.com/maps/documentation/embed/embedding-map#view_mode
+   */
+  get zoomLevel(): number {
+    return 6;
   }
 
   // Emailing the user with the URL of the map route
@@ -109,21 +144,29 @@ export class RoutePlannerPresenter {
    * The URL is structured using the Google Maps URLs API in "directions" mode.
    */
   get mapDirectionsUrl(): string {
-    const { selectedAddresses } = this.clientsPresenter;
-    const formattedWaypoints = selectedAddresses.join("|");
-    const waypoints =
-      selectedAddresses.length === 0
-        ? {}
-        : {
-            waypoints: formattedWaypoints,
-          };
+    const { selectedFormattedAddresses, selectedPlaceIds } =
+      this.clientsPresenter;
+
+    const formattedWaypoints = selectedFormattedAddresses
+      .slice(0, -1)
+      .join("|");
+    const formattedWaypointPlaceIds = selectedPlaceIds.slice(0, -1).join("|");
 
     const queryParams = {
       api: 1,
       travelmode: "driving",
       origin: this.startingAddress,
-      destination: this.startingAddress,
-      ...waypoints,
+      destination:
+        selectedFormattedAddresses[selectedFormattedAddresses.length - 1],
+      destination_place_id: selectedPlaceIds[selectedPlaceIds.length - 1],
+      // There are only intermediate waypoints when there are 2 or more selected addresses.
+      // Giving an empty parameter for waypoints leads to an error.
+      ...(selectedFormattedAddresses.length >= 2
+        ? {
+            waypoints: formattedWaypoints,
+            waypoint_place_ids: formattedWaypointPlaceIds,
+          }
+        : {}),
     };
 
     const formattedQueryParams = Object.entries(queryParams)
@@ -182,21 +225,33 @@ export class RoutePlannerPresenter {
    * in Google Maps. The URL is structured using the Google Maps Embed API in "directions" mode
    */
   get mapIframeUrl(): string {
-    const { selectedAddresses } = this.clientsPresenter;
-    const formattedWaypoints = selectedAddresses.join("|");
-    const waypoints =
-      selectedAddresses.length === 0
-        ? { waypoints: "" } // TODO(#10069): change embed when there are no addresses
-        : {
-            waypoints: formattedWaypoints,
-          };
+    const { selectedPlaceIds } = this.clientsPresenter;
 
+    if (selectedPlaceIds.length === 0) {
+      const queryParams = new URLSearchParams({
+        key: this.mapsApiKey,
+        center: `${this.locationBias.lat},${this.locationBias.lng}`,
+        zoom: String(this.zoomLevel),
+      }).toString();
+      return `${BASE_EMBED_URL_NO_POINTS}?${queryParams}`;
+    }
+
+    const formattedAddresses = selectedPlaceIds.map(
+      (placeId) => `place_id:${placeId}`,
+    );
+    const formattedWaypoints = formattedAddresses.slice(0, -1).join("|");
     const queryParams = new URLSearchParams({
       key: this.mapsApiKey,
       mode: "driving",
       origin: this.startingAddress,
-      destination: this.startingAddress,
-      ...waypoints,
+      destination: formattedAddresses[formattedAddresses.length - 1],
+      // There are only intermediate waypoints when there are 2 or more selected addresses.
+      // Giving an empty parameter for waypoints leads to an error.
+      ...(formattedAddresses.length >= 2
+        ? {
+            waypoints: formattedWaypoints,
+          }
+        : {}),
     }).toString();
 
     return `${BASE_EMBED_URL}?${queryParams}`;

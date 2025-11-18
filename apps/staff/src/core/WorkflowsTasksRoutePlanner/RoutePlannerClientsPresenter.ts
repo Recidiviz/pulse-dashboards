@@ -240,11 +240,17 @@ export class RoutePlannerClientsPresenter implements Hydratable {
 
   // Public methods for handling the list of selected people
 
-  get selectedAddresses(): string[] {
+  // Ordered list of formatted addresses used for display and Google Maps links
+  get selectedFormattedAddresses(): string[] {
     return this.selectedPeople.map(
-      (person) =>
-        this.placeIds[person.pseudonymizedId] ??
-        (person as Client).formattedAddress,
+      (person) => (person as Client).formattedAddress ?? "",
+    );
+  }
+
+  // Ordered list of place IDs used for generating Google Maps links
+  get selectedPlaceIds(): string[] {
+    return this.selectedPeople.map(
+      (person) => this.placeIds[person.pseudonymizedId],
     );
   }
 
@@ -299,7 +305,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
 
     if (result.status === GeocodingStatus.Success) {
       runInAction(() => {
-        this.placeIds[person.pseudonymizedId] = `place_id:${result.placeId}`;
+        this.placeIds[person.pseudonymizedId] = result.placeId;
         this.selectedPeople.push(person);
       });
     } else {

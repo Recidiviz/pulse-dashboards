@@ -98,12 +98,12 @@ describe("Gets address info from addressUpdate when not locally stored", () => {
       },
     } as Client;
 
-    expect(presenter.selectedAddresses).toBeEmpty();
+    expect(presenter.selectedPlaceIds).toBeEmpty();
 
     await presenter.addPerson(client);
     expect(presenter.isPersonSelected(client)).toBeTrue();
     expect(presenter.indexOfPerson(client)).toEqual(0);
-    expect(presenter.selectedAddresses).toEqual([`place_id:${fakePlaceId}`]);
+    expect(presenter.selectedPlaceIds).toEqual([fakePlaceId]);
   });
 
   it("Does not add client with BAD_RESULT geocoding result from Firestore", async () => {
@@ -120,7 +120,7 @@ describe("Gets address info from addressUpdate when not locally stored", () => {
 
     await presenter.addPerson(client);
     expect(presenter.isPersonSelected(client)).toBeFalse();
-    expect(presenter.selectedAddresses).toBeEmpty();
+    expect(presenter.selectedPlaceIds).toBeEmpty();
   });
 });
 
