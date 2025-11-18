@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { subDays } from "date-fns";
 import { configure } from "mobx";
 
 import {
   InsightsConfigFixture,
+  SupervisionOfficer,
   supervisionOfficerSupervisorsFixture,
 } from "~datatypes";
 import { unpackAggregatedErrors } from "~hydration-utils";
@@ -153,4 +155,75 @@ test("supervisor has no officer outcomes", async () => {
       "status": "hydrated",
     }
   `);
+});
+
+describe("last login module / numOfficersWithNoLoginActivityInLastXDays", () => {
+  const today = new Date(2025, 2, 25);
+  beforeEach(() => {
+    vi.setSystemTime(today);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("counts people who never logged in", () => {
+    vi.spyOn(presenter, "allOfficers", "get").mockReturnValue([
+      { latestLoginDate: null },
+      { latestLoginDate: null },
+      { latestLoginDate: null },
+    ] as SupervisionOfficer[]);
+    vi.spyOn(presenter, "insightsNumDaysWithoutLogin", "get").mockReturnValue(
+      14,
+    );
+    expect(presenter.numOfficersWithNoLoginActivityInLastXDays).toBe(3);
+  });
+
+  it("counts logins depending on whether or not they fall within the threshold", () => {
+    vi.spyOn(presenter, "allOfficers", "get").mockReturnValue([
+      { latestLoginDate: today },
+      { latestLoginDate: subDays(today, 1) },
+      { latestLoginDate: subDays(today, 20) },
+      { latestLoginDate: subDays(today, 3) },
+      { latestLoginDate: subDays(today, 29) },
+      { latestLoginDate: subDays(today, 15) },
+      { latestLoginDate: subDays(today, 15) },
+      { latestLoginDate: subDays(today, 13) },
+      { latestLoginDate: subDays(today, 6) },
+      { latestLoginDate: subDays(today, 8) },
+      { latestLoginDate: subDays(today, 22) },
+      { latestLoginDate: subDays(today, 1) },
+    ] as SupervisionOfficer[]);
+
+    vi.spyOn(presenter, "insightsNumDaysWithoutLogin", "get").mockReturnValue(
+      30,
+    );
+    expect(presenter.numOfficersWithNoLoginActivityInLastXDays).toBe(0);
+
+    vi.spyOn(presenter, "insightsNumDaysWithoutLogin", "get").mockReturnValue(
+      21,
+    );
+    expect(presenter.numOfficersWithNoLoginActivityInLastXDays).toBe(2);
+
+    vi.spyOn(presenter, "insightsNumDaysWithoutLogin", "get").mockReturnValue(
+      14,
+    );
+    expect(presenter.numOfficersWithNoLoginActivityInLastXDays).toBe(5);
+
+    vi.spyOn(presenter, "insightsNumDaysWithoutLogin", "get").mockReturnValue(
+      7,
+    );
+    expect(presenter.numOfficersWithNoLoginActivityInLastXDays).toBe(7);
+  });
+
+  it("counts someone who logged in exactly at the threshold as having logged in", () => {
+    vi.spyOn(presenter, "allOfficers", "get").mockReturnValue([
+      { latestLoginDate: subDays(today, 14) },
+    ] as SupervisionOfficer[]);
+
+    vi.spyOn(presenter, "insightsNumDaysWithoutLogin", "get").mockReturnValue(
+      14,
+    );
+    expect(presenter.numOfficersWithNoLoginActivityInLastXDays).toBe(0);
+  });
 });

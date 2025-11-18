@@ -63,16 +63,13 @@ const InsightsUsageCard: React.FC<{
     labels,
     trackLastLoginUsageModuleViewed,
     insightsNumDaysWithoutLogin,
+    numOfficersWithNoLoginActivityInLastXDays,
     pluralizeAcronym,
     labelIsAcronym,
   },
 }) {
   if (allOfficers.length === 0) return null;
   trackLastLoginUsageModuleViewed();
-
-  const numOfficersWithNoLoginActivityInLastXDays = allOfficers.filter(
-    hasNoLoginActivityInNumDays,
-  ).length;
 
   const label = labelIsAcronym(labels.supervisionOfficerLabel)
     ? pluralizeAcronym(

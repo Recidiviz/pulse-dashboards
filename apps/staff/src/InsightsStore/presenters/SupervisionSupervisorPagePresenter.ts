@@ -25,6 +25,7 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
+import { hasNoLoginActivityInNumDays } from "../../core/InsightsStaffUsage/InsightsStaffUsageCard";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { HighlightedOfficersDetail } from "./types";
 import { getHighlightedOfficersByMetric } from "./utils";
@@ -250,9 +251,17 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     return this.hydrator.hydrationState;
   }
 
+  // Methods related to the Last Login module
+
   get insightsNumDaysWithoutLogin(): number {
     return this.supervisionStore.insightsStore.rootStore.tenantStore
       .insightsNumDaysWithoutLogin;
+  }
+
+  get numOfficersWithNoLoginActivityInLastXDays(): number {
+    return this.allOfficers.filter((officer) =>
+      hasNoLoginActivityInNumDays(officer, this.insightsNumDaysWithoutLogin),
+    ).length;
   }
 
   labelIsAcronym(label: string) {
