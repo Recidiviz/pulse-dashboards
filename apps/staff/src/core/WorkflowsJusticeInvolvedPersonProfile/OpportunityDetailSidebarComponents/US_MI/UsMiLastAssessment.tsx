@@ -20,11 +20,11 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { Icon } from "~design-system";
 import { palette } from "~design-system";
 
 import { formatWorkflowsDate } from "../../../../utils/formatStrings";
 import { UsMiCustodyLevelDowngradeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiCustodyLevelDowngradeOpportunity";
+import { AlignedIcon } from "../../../sharedComponents";
 import {
   DetailsHeading,
   DetailsSection,
@@ -34,10 +34,6 @@ import {
   SidebarTableRow,
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
-
-const AlignedIcon = styled(Icon)`
-  vertical-align: text-bottom;
-`;
 
 const NoAssessmentSince26Wrapper = styled.dd`
   margin-bottom: ${rem(spacing.sm)};
@@ -53,7 +49,7 @@ const SecureCopy = styled.span.attrs({
 const NoAssessmentSince26Notice = ({ name }: { name: string }) => {
   return (
     <NoAssessmentSince26Wrapper>
-      <AlignedIcon kind="Info" size={14} />{" "}
+      <AlignedIcon kind="Info" size={14} $alignment={"text-bottom"} />{" "}
       <SecureCopy>{name} turned 26 after their most recent screen.</SecureCopy>
     </NoAssessmentSince26Wrapper>
   );

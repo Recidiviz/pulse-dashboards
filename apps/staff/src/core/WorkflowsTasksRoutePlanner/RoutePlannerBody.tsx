@@ -27,6 +27,7 @@ import styled from "styled-components/macro";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { RoutePlannerClientSelect } from "./RoutePlannerClientSelect";
 import { RoutePlannerMap } from "./RoutePlannerMap";
 import { RoutePlannerPresenter } from "./RoutePlannerPresenter";
@@ -38,16 +39,41 @@ const RoutePlannerContainer = styled.div`
   flex-direction: row;
 `;
 
-const RoutePlannerSelectArea = styled.div`
+const RoutePlannerSelectArea = styled.div<{
+  $isMobile: boolean;
+}>`
   flex: none;
-  width: ${rem(850)};
-  padding-right: ${rem(spacing.lg)};
+  ${({ $isMobile }) => !$isMobile && `width: 55vw;`}
+  height: 100%;
+
+  padding-right: ${({ $isMobile }) =>
+    $isMobile ? rem(spacing.xs) : rem(spacing.lg)};
 `;
+
+const MobileRoutePlannerMain = observer(function RoutePlannerMain({
+  presenter,
+}: {
+  presenter: RoutePlannerPresenter;
+}) {
+  if (presenter.isMapView) {
+    return <RoutePlannerMap presenter={presenter} isMobile={true} />;
+  } else {
+    return (
+      <RoutePlannerSelectArea $isMobile={true}>
+        <RoutePlannerClientSelect presenter={presenter} isMobile={true} />
+      </RoutePlannerSelectArea>
+    );
+  }
+});
 
 export const ManagedComponent: FC<{
   presenter: RoutePlannerPresenter;
 }> = observer(function RoutePlannerBody({ presenter }) {
-  // TODO(#9639): Handle mobile view here
+  // This constant is weirdly named; when it's true, the screen width is at an iPad
+  // in landscape mode or smaller. We choose this breakpoint in order to handle
+  // phones with a tall screen in landscape mode
+  const { isLaptop } = useIsMobile(true);
+
   if (!presenter) {
     return null;
   }
@@ -55,12 +81,16 @@ export const ManagedComponent: FC<{
   return (
     <>
       <APILoader apiKey={presenter.mapsApiKey} />
-      <RoutePlannerContainer>
-        <RoutePlannerSelectArea>
-          <RoutePlannerClientSelect presenter={presenter} />
-        </RoutePlannerSelectArea>
-        <RoutePlannerMap presenter={presenter} />
-      </RoutePlannerContainer>
+      {isLaptop ? (
+        <MobileRoutePlannerMain presenter={presenter} />
+      ) : (
+        <RoutePlannerContainer>
+          <RoutePlannerSelectArea $isMobile={false}>
+            <RoutePlannerClientSelect presenter={presenter} isMobile={false} />
+          </RoutePlannerSelectArea>
+          <RoutePlannerMap presenter={presenter} isMobile={false} />
+        </RoutePlannerContainer>
+      )}
     </>
   );
 });

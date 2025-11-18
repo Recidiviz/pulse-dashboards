@@ -28,7 +28,7 @@ export const WorkflowsTasksRoutePlanner = () => {
   }
 
   return (
-    <WorkflowsNavLayout limitedWidth={false}>
+    <WorkflowsNavLayout limitedWidth={false} showHomeButton={false}>
       <RoutePlannerBody />
     </WorkflowsNavLayout>
   );

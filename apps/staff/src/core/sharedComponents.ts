@@ -26,7 +26,7 @@ import {
 import { rem, rgba } from "polished";
 import styled from "styled-components/macro";
 
-import { Button, palette } from "~design-system";
+import { Button, Icon, palette } from "~design-system";
 
 import TealStar from "../assets/static/images/tealStar.svg?react";
 import cssVars from "./CoreConstants.module.scss";
@@ -193,4 +193,10 @@ export const MaxWidthWithSidebar = `
   @media screen and (max-width: ${cssVars.breakpointXs}) {
     max-width: unset;
   }
+`;
+
+export const AlignedIcon = styled(Icon)<{
+  $alignment: string;
+}>`
+  vertical-align: ${({ $alignment }) => $alignment};
 `;

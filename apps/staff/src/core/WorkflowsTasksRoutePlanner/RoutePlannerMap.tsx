@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Sans14, Sans24, TooltipTrigger } from "@recidiviz/design-system";
+import {
+  Sans14,
+  Sans24,
+  TooltipTrigger,
+  typography,
+} from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -29,6 +34,7 @@ import CopyIcon from "../../assets/static/images/copy.svg?react";
 import Star from "../../assets/static/images/grayStar.svg?react";
 import SendIcon from "../../assets/static/images/sendIcon.svg?react";
 import { Client } from "../../WorkflowsStore";
+import { AlignedIcon } from "../sharedComponents";
 import { Divider } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { RoutePlannerPresenter } from "./RoutePlannerPresenter";
 
@@ -46,19 +52,43 @@ const MapFrame = styled.iframe`
   height: 100%;
 `;
 
-const RouteDescriptionBox = styled.div`
+const SwitchToClientView = styled.button`
+  color: ${palette.slate80};
+  max-width: fit-content;
+  padding: ${rem(spacing.sm)};
+
+  margin-top: ${rem(spacing.sm)};
+
+  background-color: ${palette.marble1};
+  border: 1px solid ${palette.slate20};
+  box-shadow: 0 ${rem(4)} ${rem(16)} 0 ${palette.slate20};
+  border-radius: ${rem(4)};
+`;
+
+const SwitchToClientViewText = styled.span`
+  ${typography.Sans14}
+
+  margin-left: ${rem(spacing.sm)};
+`;
+
+const RouteDescriptionBoxContainer = styled.div`
+  position: absolute;
+  margin-top: ${rem(10)};
+  margin-left: ${rem(10)};
+`;
+
+const RouteDescriptionBox = styled.div<{
+  $isMobile: boolean;
+}>`
   min-width: 0;
-  width: ${rem(400)};
+  width: ${({ $isMobile }) =>
+    $isMobile ? `calc(100% - ${rem(54)})` : rem(400)};
   border-radius: ${rem(8)};
   padding: ${rem(16)};
 
   background-color: ${palette.marble1};
   border: 1px solid ${palette.slate20};
   box-shadow: 0 ${rem(4)} ${rem(16)} 0 ${palette.slate20};
-
-  position: absolute;
-  margin-top: ${rem(10)};
-  margin-left: ${rem(10)};
 `;
 
 const RouteDescriptionControls = styled.div`
@@ -74,7 +104,6 @@ const CopyButton = styled.div`
   justify-content: center;
   align-items: center;
 
-  margin-left: auto;
   margin-right: ${rem(spacing.sm)};
 
   &:hover {
@@ -93,10 +122,11 @@ const EmailButtonText = styled.span`
 
 const RouteDescriptionText = styled(Sans24)`
   color: ${palette.pine4};
+  margin-right: auto;
 `;
 
 const RouteInfo = styled(Sans14)`
-  max-height: ${rem(150)};
+  max-height: ${rem(120)};
   overflow-y: auto;
 `;
 
@@ -161,10 +191,34 @@ const AddressRow = function AddressRow({
   );
 };
 
-const RoutePlannerDescription = observer(function RoutePlannerDescription({
+function SwitchToClientViewButton({
   presenter,
 }: {
   presenter: RoutePlannerPresenter;
+}) {
+  return (
+    <SwitchToClientView
+      onClick={() => {
+        presenter.isMapView = false;
+      }}
+    >
+      <AlignedIcon
+        kind={"Arrow"}
+        size={13}
+        rotate={180}
+        $alignment={"middle"}
+      />
+      <SwitchToClientViewText>Back to list</SwitchToClientViewText>
+    </SwitchToClientView>
+  );
+}
+
+const RoutePlannerDescription = observer(function RoutePlannerDescription({
+  presenter,
+  isMobile,
+}: {
+  presenter: RoutePlannerPresenter;
+  isMobile: boolean;
 }) {
   if (presenter.clientsPresenter.selectedClients.length === 0) return null;
 
@@ -191,59 +245,81 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
   };
 
   return (
-    <RouteDescriptionBox>
-      <RouteDescriptionControls>
-        <RouteDescriptionText>Your trip</RouteDescriptionText>
+    <RouteDescriptionBoxContainer>
+      <RouteDescriptionBox $isMobile={isMobile}>
+        <RouteDescriptionControls>
+          <RouteDescriptionText>Your trip</RouteDescriptionText>
 
-        <CopyButton onClick={onClickCopyLink}>
-          <TooltipTrigger contents={"Copy link to clipboard"}>
-            <CopyIcon />
-          </TooltipTrigger>
-        </CopyButton>
+          {isMobile ? (
+            /* On mobile, show a link to open the map in Google Maps app */
+            <a
+              href={presenter.mapDirectionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button shape={"block"}>
+                <SendIcon />
+                <EmailButtonText>Open in Maps</EmailButtonText>
+              </Button>
+            </a>
+          ) : (
+            /* On desktop, show copy to clipboard and email links */
+            <>
+              <CopyButton onClick={onClickCopyLink}>
+                <TooltipTrigger contents={"Copy route link to clipboard"}>
+                  <CopyIcon />
+                </TooltipTrigger>
+              </CopyButton>
 
-        <Button shape={"block"} onClick={onClickEmailLink}>
-          <SendIcon />
-          <EmailButtonText>Email link to self</EmailButtonText>
-        </Button>
-      </RouteDescriptionControls>
+              <Button shape={"block"} onClick={onClickEmailLink}>
+                <SendIcon />
+                <EmailButtonText>Email route link to me</EmailButtonText>
+              </Button>
+            </>
+          )}
+        </RouteDescriptionControls>
 
-      <RouteInfo>
-        <AddressRow
-          address={presenter.startingAddress}
-          label={"Your office"}
-          displayStar={true}
-        />
-        <AddressDivider />
+        <RouteInfo>
+          <AddressRow
+            address={presenter.startingAddress}
+            label={"Your office"}
+            displayStar={true}
+          />
+          <AddressDivider />
 
-        {presenter.clientsPresenter.selectedClients.map((client, i) => {
-          // TODO(#9712) Remove this cast
-          const { formattedAddress, displayPreferredName } = client as Client;
-          if (!formattedAddress) return null;
-          return (
-            <React.Fragment key={client.pseudonymizedId}>
-              <AddressRow
-                address={formattedAddress}
-                label={displayPreferredName}
-                index={i + 1}
-                displayStar={false}
-              />
-              <AddressDivider />
-            </React.Fragment>
-          );
-        })}
-      </RouteInfo>
-    </RouteDescriptionBox>
+          {presenter.clientsPresenter.selectedClients.map((client, i) => {
+            // TODO(#9712) Remove this cast
+            const { formattedAddress, displayPreferredName } = client as Client;
+            if (!formattedAddress) return null;
+            return (
+              <React.Fragment key={client.pseudonymizedId}>
+                <AddressRow
+                  address={formattedAddress}
+                  label={displayPreferredName}
+                  index={i + 1}
+                  displayStar={false}
+                />
+                <AddressDivider />
+              </React.Fragment>
+            );
+          })}
+        </RouteInfo>
+      </RouteDescriptionBox>
+      {isMobile && <SwitchToClientViewButton presenter={presenter} />}
+    </RouteDescriptionBoxContainer>
   );
 });
 
 export const RoutePlannerMap = observer(function RoutePlannerMap({
   presenter,
+  isMobile,
 }: {
   presenter: RoutePlannerPresenter;
+  isMobile: boolean;
 }) {
   return (
     <MapContainer>
-      <RoutePlannerDescription presenter={presenter} />
+      <RoutePlannerDescription presenter={presenter} isMobile={isMobile} />
       <MapFrame title="Map" src={presenter.mapIframeUrl} />
     </MapContainer>
   );

@@ -44,21 +44,35 @@ const OfficerSectionLabel = styled(SectionLabelText)`
   text-transform: uppercase;
 `;
 
-const ClientCardGrid = styled.div`
+const ClientCardGrid = styled.div<{
+  $isMobile: boolean;
+}>`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: ${rem(18)};
+  ${({ $isMobile }) =>
+    !$isMobile &&
+    `
+        grid-template-columns: 1fr 1fr;
+        column-gap: ${rem(18)};
+      `}
   row-gap: ${rem(15)};
 
   margin-bottom: ${rem(spacing.lg)};
 `;
 
+// Make room for the map view button
+const Spacer = styled.div`
+  min-height: ${rem(20)};
+`;
+
 export const RoutePlannerClients = observer(function RoutePlannerClients({
   presenter,
+  isMobile,
 }: {
   presenter: RoutePlannerClientsPresenter;
+  isMobile: boolean;
 }) {
   const { selectedOfficers, contacts } = presenter;
+  const showMapViewButton = isMobile && presenter.selectedClients.length > 0;
 
   const noContacts = Object.values(contacts).flat().length === 0;
   const noOfficers = selectedOfficers.length === 0;
@@ -85,16 +99,17 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
         return (
           <React.Fragment key={searchId}>
             <OfficerSectionLabel>
-              <span className="fs-exclude">{`${numContacts} suggested contacts for ${searchLabel}`}</span>
+              <span className="fs-exclude">{`${numContacts} contacts for ${searchLabel}`}</span>
             </OfficerSectionLabel>
 
             {numContacts > 0 ? (
-              <ClientCardGrid>
+              <ClientCardGrid $isMobile={isMobile}>
                 {contacts[searchId].map((task) => (
                   <ClientCard
                     key={`${task.person.pseudonymizedId}-${task.type}`}
                     task={task}
                     presenter={presenter}
+                    isMobile={isMobile}
                   />
                 ))}
               </ClientCardGrid>
@@ -108,6 +123,7 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
           </React.Fragment>
         );
       })}
+      {showMapViewButton && <Spacer />}
     </ClientsWrapper>
   );
 });

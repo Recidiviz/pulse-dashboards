@@ -568,7 +568,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         <CaseloadSelectMobileButton onClick={() => setModalIsOpen(true)}>
           {selectedSearchIds.length > 0
             ? `${selectedSearchIds.length} selected`
-            : "Click to search caseloads"}
+            : "Click to select caseloads"}
           &nbsp;
           <Icon kind={IconSVG.DownChevron} width={8} />
         </CaseloadSelectMobileButton>

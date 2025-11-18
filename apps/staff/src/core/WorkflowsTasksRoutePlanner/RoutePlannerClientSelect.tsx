@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import styled from "styled-components/macro";
+
+import { Button, spacing } from "~design-system";
 
 import { CaseloadSelect } from "../CaseloadSelect";
 import ModelHydrator from "../ModelHydrator";
+import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import { Heading } from "../sharedComponents";
 import { TasksDescription } from "../WorkflowsTasks/TasksDescription";
 import { RoutePlannerClients } from "./RoutePlannerClients";
@@ -33,27 +38,66 @@ const RoutePlannerSelectContainer = styled.div`
 
 const ScrollableWrapper = styled.div`
   height: 100%;
-  overflow-y: scroll;
+  min-height: 30vh;
+  overflow-y: auto;
 `;
 
-export const RoutePlannerClientSelect = ({
-  presenter,
-}: {
-  presenter: RoutePlannerPresenter;
-}) => {
-  return (
-    <RoutePlannerSelectContainer>
-      <CaseloadSelect />
-      <Heading>Home contact route planner</Heading>
-      <TasksDescription>
-        To plan your home visit trips, select people below.
-      </TasksDescription>
-      <RoutePlannerPlacePicker presenter={presenter} />
-      <ScrollableWrapper>
-        <ModelHydrator hydratable={presenter.clientsPresenter}>
-          <RoutePlannerClients presenter={presenter.clientsPresenter} />
-        </ModelHydrator>
-      </ScrollableWrapper>
-    </RoutePlannerSelectContainer>
-  );
-};
+const SwitchToMapViewButtonContainer = styled.div`
+  position: fixed;
+  width: 100%;
+  padding-right: ${rem(spacing.xl)};
+  bottom: ${rem(NAV_BAR_HEIGHT + spacing.md)};
+`;
+
+const SwitchToMapViewButton = styled(Button)`
+  width: 80%;
+  margin: auto;
+`;
+
+export const RoutePlannerClientSelect = observer(
+  function RoutePlannerClientSelect({
+    presenter,
+    isMobile,
+  }: {
+    presenter: RoutePlannerPresenter;
+    isMobile: boolean;
+  }) {
+    const numSelectedClients =
+      presenter.clientsPresenter.selectedClients.length;
+
+    const showMapViewButton = isMobile && numSelectedClients > 0;
+
+    return (
+      <RoutePlannerSelectContainer>
+        <CaseloadSelect />
+
+        <Heading isMobile={isMobile}>Home contact route planner</Heading>
+        <TasksDescription>
+          To plan your home visit trips, select clients below.
+        </TasksDescription>
+        <RoutePlannerPlacePicker presenter={presenter} />
+
+        <ScrollableWrapper>
+          <ModelHydrator hydratable={presenter.clientsPresenter}>
+            <RoutePlannerClients
+              presenter={presenter.clientsPresenter}
+              isMobile={isMobile}
+            />
+          </ModelHydrator>
+        </ScrollableWrapper>
+
+        {showMapViewButton && (
+          <SwitchToMapViewButtonContainer>
+            <SwitchToMapViewButton
+              onClick={() => {
+                presenter.isMapView = true;
+              }}
+            >
+              See map view ({numSelectedClients} selected)
+            </SwitchToMapViewButton>
+          </SwitchToMapViewButtonContainer>
+        )}
+      </RoutePlannerSelectContainer>
+    );
+  },
+);

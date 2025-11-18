@@ -134,7 +134,7 @@ export const MaxWidthFlexWrapper = styled.div<{ fullWidth?: boolean }>`
   ${({ fullWidth }) => !fullWidth && MaxWidth}
 `;
 export const EmptyStateWrapper = styled.div`
-  min-height: ${rem(80)};
+  min-height: ${rem(50)};
   width: 100%;
   margin-top: ${rem(spacing.md)};
   flex-grow: 1;
@@ -152,6 +152,7 @@ export const EmptyStateWrapper = styled.div`
 export const EmptyStateText = styled(Sans18)`
   color: ${palette.slate80};
   width: 50%;
+  min-width: ${rem(320)};
 `;
 
 const SubcategoryHeading = styled(Sans14)`

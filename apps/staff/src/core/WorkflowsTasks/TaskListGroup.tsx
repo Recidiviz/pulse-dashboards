@@ -26,9 +26,10 @@ import {
 } from "react-accessible-accordion";
 import styled from "styled-components/macro";
 
-import { Icon, palette } from "~design-system";
+import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { AlignedIcon } from "../sharedComponents";
 import { Divider } from "./styles";
 
 const CountPill = styled(Pill)`
@@ -45,13 +46,6 @@ const TaskListItemButton = styled(AccordionItemButton)`
       background-color: ${palette.slate20};
     }
   }
-`;
-
-const AlignedIcon = styled(Icon)<{
-  $align: boolean;
-}>`
-  ${({ $align }) =>
-    $align ? `vertical-align: middle;` : `vertical-align: baseline;`}
 `;
 
 type TaskListGroupProps<T = any> = {
@@ -82,7 +76,7 @@ export const TaskListGroup: React.FC<TaskListGroupProps> = ({
                 kind={"DownChevron"}
                 size={12}
                 rotate={expanded ? 0 : 270}
-                $align={!!expanded}
+                $alignment={expanded ? "middle" : "baseline"}
               />
             )}
           </AccordionItemState>{" "}

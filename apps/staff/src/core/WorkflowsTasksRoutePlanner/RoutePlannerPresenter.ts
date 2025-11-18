@@ -41,6 +41,7 @@ type MapDirectionsRequestProps = {
 export class RoutePlannerPresenter {
   public readonly clientsPresenter: RoutePlannerClientsPresenter;
   userPickedStartingAddress: string | undefined = undefined;
+  isMapView = false;
 
   constructor(private readonly workflowsStore: WorkflowsStore) {
     this.clientsPresenter = new RoutePlannerClientsPresenter(workflowsStore);

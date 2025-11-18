@@ -25,9 +25,10 @@ import {
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { useState } from "react";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, Icon, palette } from "~design-system";
 
 import LocationIcon from "../../assets/static/images/locationPin.svg?react";
 import PhoneIcon from "../../assets/static/images/phone.svg?react";
@@ -46,6 +47,7 @@ import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
 const BorderedClientCard = styled.div<{
   $selected: boolean;
   $selectable: boolean;
+  $isMobile: boolean;
 }>`
   border-radius: ${rem(8)};
   padding: ${rem(14)} ${rem(16)};
@@ -60,9 +62,13 @@ const BorderedClientCard = styled.div<{
     `border-color: ${$selected ? palette.slate50 : palette.slate20};
       background-color: ${$selected ? palette.marble3 : palette.marble1};
       transition: all ease 200ms;
+    `}
 
-      :hover,
-      :focus {
+  ${({ $selectable, $selected, $isMobile }) =>
+    $selectable &&
+    !$isMobile &&
+    `:hover,
+     :focus {
         border-color: ${$selected ? palette.slate80 : palette.slate50};
         background-color: ${$selected ? palette.marble5 : palette.marble2};
         cursor: pointer;
@@ -71,8 +77,8 @@ const BorderedClientCard = styled.div<{
   ${({ $selectable }) =>
     !$selectable &&
     `
-      border-color: ${palette.slate50};
-      background-color: ${palette.slate20};
+      border-color: ${palette.slate15};
+      background-color: ${palette.marble3};
       cursor: not-allowed;
     `}
 `;
@@ -113,6 +119,12 @@ const AdditionalInfo = styled.div`
   gap: ${rem(spacing.xs)};
 `;
 
+const JustifiedInfo = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
 const InfoRow = styled.div`
   display: flex;
   flex-direction: row;
@@ -143,6 +155,13 @@ const SchedulingBadge = styled(Pill).attrs({
   font-weight: 400;
 `;
 
+const CallButton = styled(Button).attrs({ shape: "block" })`
+  margin-left: auto;
+
+  display: flex;
+  gap: ${rem(spacing.sm)};
+`;
+
 const BaseCheckbox = styled.span`
   height: ${rem(16)};
   width: ${rem(16)};
@@ -170,6 +189,10 @@ const CheckboxContents = styled(Sans12)`
   text-align: center;
 `;
 
+const Caret = styled(Icon)`
+  margin-top: ${rem(4)};
+`;
+
 function SupervisionLevelTooltip({ copy }: { copy: string }) {
   return (
     <TooltipSection>
@@ -181,13 +204,86 @@ function SupervisionLevelTooltip({ copy }: { copy: string }) {
   );
 }
 
-export const ClientCard = observer(function ClientCard({
+// A collapsed version of the ClientCard, only for use on mobile
+const CollapsedClientCard = observer(function ClientCard({
   task,
   presenter,
+  onDropdownClick,
 }: {
   task: SupervisionTask;
   presenter: RoutePlannerClientsPresenter;
+  onDropdownClick: () => void;
 }) {
+  const person = task.person as Client;
+
+  const { supervisionLevelShort, supervisionTooltip } =
+    presenter.getClientCardCopy(task);
+
+  const isSelected = presenter.isPersonSelected(person);
+  const ordinalRank = presenter.indexOfPerson(person) + 1;
+
+  const hasAddress = person.formattedAddress !== undefined;
+  const hasBadAddress = presenter.hasBadAddress(person);
+  const isSelectable = hasAddress && !hasBadAddress;
+
+  return (
+    <BorderedClientCard
+      $selectable={isSelectable}
+      $selected={isSelected}
+      $isMobile={true}
+      onClick={async () => {
+        if (!isSelectable) return;
+
+        if (isSelected) {
+          presenter.removePerson(person);
+        } else {
+          await presenter.addPerson(person);
+        }
+      }}
+    >
+      {isSelected ? (
+        <NumberedCheckbox>
+          <CheckboxContents>{ordinalRank}</CheckboxContents>
+        </NumberedCheckbox>
+      ) : (
+        <EmptyCheckbox $selectable={isSelectable} />
+      )}
+
+      <ClientInfo>
+        <NameRow>
+          <Name>{person.displayPreferredNameLastFirst}</Name>
+          <WorkflowsTooltip
+            person={person}
+            contents={<SupervisionLevelTooltip copy={supervisionTooltip} />}
+          >
+            <SupervisionLevel>{supervisionLevelShort}</SupervisionLevel>
+          </WorkflowsTooltip>
+        </NameRow>
+      </ClientInfo>
+      <Caret
+        kind={"DownChevron"}
+        size={12}
+        rotate={270}
+        onClick={(e) => {
+          // Prevent clicks from also selecting the person's card
+          e.stopPropagation();
+          onDropdownClick();
+        }}
+      />
+    </BorderedClientCard>
+  );
+});
+
+export const ClientCard = observer(function ClientCard({
+  task,
+  presenter,
+  isMobile,
+}: {
+  task: SupervisionTask;
+  presenter: RoutePlannerClientsPresenter;
+  isMobile: boolean;
+}) {
+  const [collapsed, setCollapsed] = useState(true);
   const person = task.person as Client;
 
   const {
@@ -205,10 +301,23 @@ export const ClientCard = observer(function ClientCard({
   const hasBadAddress = presenter.hasBadAddress(person);
   const isSelectable = hasAddress && !hasBadAddress;
 
+  if (collapsed && isMobile) {
+    return (
+      <CollapsedClientCard
+        task={task}
+        presenter={presenter}
+        onDropdownClick={() => {
+          setCollapsed(false);
+        }}
+      />
+    );
+  }
+
   return (
     <BorderedClientCard
       $selectable={isSelectable}
       $selected={isSelected}
+      $isMobile={isMobile}
       onClick={async () => {
         if (!isSelectable) return;
 
@@ -274,17 +383,39 @@ export const ClientCard = observer(function ClientCard({
           </InfoRow>
         </AdditionalInfo>
 
-        <SchedulingBadge
-          color={isScheduled ? palette.slate10 : "rgb(244, 233, 215)"}
-        >
-          {scheduledStatus}
-        </SchedulingBadge>
+        <JustifiedInfo>
+          <SchedulingBadge
+            color={isScheduled ? palette.slate10 : "rgb(244, 233, 215)"}
+          >
+            {scheduledStatus}
+          </SchedulingBadge>
+
+          {isMobile && person.phoneNumber && (
+            <a href={`tel:${person.phoneNumber}`}>
+              <CallButton>
+                <PhoneIcon fill={palette.marble1} /> Call
+              </CallButton>
+            </a>
+          )}
+        </JustifiedInfo>
       </ClientInfo>
 
-      {person.phoneNumber && (
+      {person.phoneNumber && !isMobile && (
         <TooltipTrigger contents={`Phone number: ${person.phoneNumber}`}>
-          <PhoneIcon />
+          <PhoneIcon fill={palette.pine4} />
         </TooltipTrigger>
+      )}
+
+      {isMobile && (
+        <Caret
+          kind={"DownChevron"}
+          size={12}
+          onClick={(e) => {
+            // Prevent clicks from also selecting the person's card
+            e.stopPropagation();
+            setCollapsed(true);
+          }}
+        />
       )}
     </BorderedClientCard>
   );

@@ -26,7 +26,11 @@ import { palette } from "~design-system";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationBackButton } from "../NavigationBackButton";
-import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
+import {
+  NAV_BAR_HEIGHT,
+  NavigationLayout,
+  OverviewNavLinks,
+} from "../NavigationLayout";
 import { MaxWidth } from "../sharedComponents";
 import { workflowsUrl } from "../views";
 
@@ -49,8 +53,15 @@ const Main = styled.main<{
       : `${rem(spacing.xl)} ${rem(spacing.lg)}`}};
 
   /* leaving extra space for the Intercom button */
-  padding-bottom: ${rem(spacing.md * 5)};
-  height: calc(100% - ${rem(spacing.md * 5 + spacing.xl)});
+  ${({ isMobile }) =>
+    isMobile
+      ? `
+      padding-bottom: ${rem(spacing.md)};
+      height: calc(100% - ${rem(spacing.md + NAV_BAR_HEIGHT)});
+  `
+      : `padding-bottom: ${rem(spacing.md * 5)};
+  height: calc(100% - ${rem(spacing.md * 5 + spacing.xl)});`}
+  
 
   ${(props) =>
     props.$limitedWidth &&
@@ -61,6 +72,7 @@ const Main = styled.main<{
 `;
 
 const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
+  max-width: fit-content;
   padding: ${rem(spacing.lg)};
   padding-bottom: 0;
   ${(props) =>
@@ -76,8 +88,13 @@ const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
 
 export const WorkflowsNavLayout: React.FC<{
   limitedWidth?: boolean;
+  showHomeButton?: boolean;
   children?: React.ReactNode;
-}> = observer(function WorkflowsNavLayout({ limitedWidth = true, children }) {
+}> = observer(function WorkflowsNavLayout({
+  limitedWidth = true,
+  showHomeButton = true,
+  children,
+}) {
   const {
     workflowsStore: {
       homepage: workflowsHomepage,
@@ -102,7 +119,7 @@ export const WorkflowsNavLayout: React.FC<{
       >
         <OverviewNavLinks />
       </NavigationLayout>
-      {!activePageIsHomepage && (
+      {!activePageIsHomepage && showHomeButton && (
         <BackButtonWrapper $fixed={!isLaptop && limitedWidth}>
           <NavigationBackButton
             action={{ url: workflowsUrl(workflowsHomepage) }}
