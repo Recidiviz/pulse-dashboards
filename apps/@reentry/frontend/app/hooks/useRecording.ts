@@ -251,6 +251,28 @@ export const useRecording = ({
     return hasTouch && isSmallScreen;
   }, []);
 
+  // Helper function to detect iOS devices (iPhone/iPad)
+  const isIOSDevice = useCallback((): boolean => {
+    if (typeof window === "undefined" || typeof navigator === "undefined") {
+      return false;
+    }
+
+    // Use the standard way to access userAgent
+    const userAgent = navigator.userAgent;
+
+    // Check for iPhone, iPad, or iPod
+    // (window as any).MSStream is used for old IE versions, you can often remove it
+    // unless you need to support very old versions of those browsers.
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent); // MSStream check is now often unnecessary
+
+    // Check for iPad on iOS 13+ which identifies as Mac
+    // navigator.platform is now deprecated but still works for this check.
+    const isIPadOS =
+      navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+
+    return isIOS || isIPadOS;
+  }, []);
+
   // Release wake lock
   const releaseWakeLock = useCallback(async () => {
     // Release Wake Lock API if active
@@ -304,7 +326,32 @@ export const useRecording = ({
       }
     }
 
-    // Try Wake Lock API first
+    // For iOS devices (iPhone/iPad), always use NoSleep
+    // Wake Lock API is unreliable on iOS
+    const isIOS = isIOSDevice();
+    if (isIOS) {
+      console.log("iOS device detected - using NoSleep directly");
+      try {
+        if (noSleepRef.current && !noSleepRef.current.isEnabled) {
+          await noSleepRef.current.enable();
+          console.log("NoSleep enabled successfully on iOS device");
+        }
+        return;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        console.error("Error enabling NoSleep on iOS:", errorMessage);
+        showErrorToast(
+          `Could not keep screen awake: ${errorMessage}${batteryLevel !== null ? ` (Battery: ${batteryLevel}%)` : ""}`,
+        );
+        return;
+      }
+    }
+
+    // For non-iOS devices, try Wake Lock API first
+    let wakeLockFailed = false;
+    let wakeLockError: Error | null = null;
+
     if ("wakeLock" in navigator) {
       try {
         // Request wake lock
@@ -319,9 +366,25 @@ export const useRecording = ({
 
         return;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        console.warn("Wake Lock API failed, falling back to NoSleep:", errorMessage);
+        wakeLockFailed = true;
+        wakeLockError =
+          error instanceof Error ? error : new Error("Unknown error");
+
+        // Check if the error is specifically a permission denied error
+        const isPermissionDenied =
+          (error as DOMException)?.name === "NotAllowedError" ||
+          wakeLockError.message.toLowerCase().includes("permission");
+
+        if (isPermissionDenied) {
+          console.warn(
+            "Wake Lock API permission denied, falling back to NoSleep",
+          );
+        } else {
+          console.warn(
+            "Wake Lock API failed, falling back to NoSleep:",
+            wakeLockError.message,
+          );
+        }
       }
     }
 
@@ -329,17 +392,28 @@ export const useRecording = ({
     try {
       if (noSleepRef.current && !noSleepRef.current.isEnabled) {
         await noSleepRef.current.enable();
-        console.log("NoSleep enabled successfully (fallback for iOS Safari)");
+        console.log(
+          "NoSleep enabled successfully" +
+            (wakeLockFailed
+              ? " (fallback from Wake Lock API)"
+              : " (Wake Lock API not supported)"),
+        );
       }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       console.error("Error enabling NoSleep:", errorMessage);
+
+      // Show error only if both Wake Lock API and NoSleep failed
+      const combinedError = wakeLockError
+        ? `Wake Lock API: ${wakeLockError.message}, NoSleep: ${errorMessage}`
+        : errorMessage;
+
       showErrorToast(
-        `Could not keep screen awake: ${errorMessage}${batteryLevel !== null ? ` (Battery: ${batteryLevel}%)` : ""}`,
+        `Could not keep screen awake: ${combinedError}${batteryLevel !== null ? ` (Battery: ${batteryLevel}%)` : ""}`,
       );
     }
-  }, [isMobileOrTablet, batteryLevel, releaseWakeLock]);
+  }, [isMobileOrTablet, isIOSDevice, batteryLevel, releaseWakeLock]);
 
   // Check if wake lock is active
   const isWakeLockActive = useCallback((): boolean => {
