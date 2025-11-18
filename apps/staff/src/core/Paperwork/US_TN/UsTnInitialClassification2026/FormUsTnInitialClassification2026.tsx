@@ -24,16 +24,88 @@ import { Opportunity } from "../../../../WorkflowsStore";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { PrintablePage } from "../../styles";
+import { MultichoiceScore } from "./MultichoiceScore";
 
 const FormPage = styled.div`
   font-family: "Arial";
   display: flex;
   height: 100%;
   flex-direction: column;
-  font-size: ${rem(9)};
+  font-size: ${rem(10)};
   color: black;
   background-color: white;
+  padding: 3rem 4.25rem;
 `;
+
+const Header = styled.h1`
+  font-family: "Arial";
+  text-align: center;
+  font-weight: 600;
+  font-size: ${rem(10)};
+  width: 100%;
+  letter-spacing: -0.01rem;
+`;
+
+const QUESTIONS = [
+  {
+    title: "PRIOR VIOLENT FELONY CONVICTIONS",
+    choices: [
+      {
+        label: "Violent Felony Conviction in Last 2 Years",
+        value: 4,
+      },
+      {
+        label: "Violent Felony Conviction in Last 3-5 Years",
+        value: 2,
+      },
+    ],
+  },
+  {
+    title: "SEVERITY OF CURRENT OFFENSE (Rate Most Serious)",
+    choices: [
+      { label: "Low", value: 10 },
+      { label: "Moderate", value: 11 },
+      { label: "High", value: 13 },
+      { label: "Highest", value: 15 },
+    ],
+  },
+  {
+    title: "NONVIOLENT CLASS B OR C DISCIPLINARY REPORTS SINCE RECEPTION",
+    choices: [
+      { label: "Yes", value: 6 },
+      { label: "No", value: -1 },
+    ],
+  },
+  {
+    title: "NONVIOLENT CLASS A DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
+    choices: [
+      { label: "Yes", value: 20 },
+      { label: "No", value: -1 },
+    ],
+  },
+  {
+    title: "VIOLENT CLASS A OR B DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
+    choices: [
+      { label: "Yes", value: 30 },
+      { label: "No", value: -1 },
+    ],
+  },
+  {
+    title: "AGE",
+    choices: [
+      { label: "21 or Younger", value: 11 },
+      { label: "22 - 25", value: 8 },
+      { label: "26 - 30", value: 2 },
+      { label: "31 - 35", value: -1 },
+      { label: "36 - 40", value: -2 },
+      { label: "41 - 45", value: -4 },
+      { label: "Older than 45", value: -6 },
+    ],
+  },
+] satisfies Array<{
+  title: string;
+  choices: Array<{ label: string; value: number }>;
+}>;
 
 export const FormUsTnInitialClassification2026 = observer(
   function FormUsTnInitialClassification2026({
@@ -53,7 +125,23 @@ export const FormUsTnInitialClassification2026 = observer(
       >
         <FormViewer formRef={formRef}>
           <PrintablePage landscape>
-            <FormPage>I am a page</FormPage>
+            <FormPage>
+              <Header>TENNESSEE CLASSIFICATION INSTRUMENT: DIAGNOSTIC</Header>
+              <MultichoiceScore questionNumber={1} {...QUESTIONS[0]} />
+              <MultichoiceScore questionNumber={2} {...QUESTIONS[1]} />
+              <MultichoiceScore questionNumber={3} {...QUESTIONS[2]} />
+            </FormPage>
+          </PrintablePage>
+          <PrintablePage landscape>
+            <FormPage>
+              <MultichoiceScore questionNumber={4} {...QUESTIONS[3]} />
+              <MultichoiceScore questionNumber={5} {...QUESTIONS[4]} />
+            </FormPage>
+          </PrintablePage>
+          <PrintablePage landscape>
+            <FormPage>
+              <MultichoiceScore questionNumber={6} {...QUESTIONS[5]} />
+            </FormPage>
           </PrintablePage>
         </FormViewer>
       </FormContainer>
