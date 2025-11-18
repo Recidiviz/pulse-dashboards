@@ -346,7 +346,7 @@ export const RoutePlannerMap = observer(function RoutePlannerMap({
   isMobile: boolean;
 }) {
   return (
-    <MapContainer>
+    <MapContainer className="fs-exclude">
       <RoutePlannerDescription presenter={presenter} isMobile={isMobile} />
       <MapFrame title="Map" src={presenter.mapIframeUrl} />
     </MapContainer>

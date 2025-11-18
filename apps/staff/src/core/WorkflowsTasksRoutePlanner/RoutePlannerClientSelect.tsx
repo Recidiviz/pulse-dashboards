@@ -73,7 +73,10 @@ export const RoutePlannerClientSelect = observer(
 
         <Heading isMobile={isMobile}>Home contact route planner</Heading>
         <TasksDescription>
-          To plan your home visit trips, select clients below.
+          You can pre-plan your driving route for home contacts before you head
+          out. Search across one or more caseloads to find clients who have home
+          contacts due for the month, select and re-order clients to optimize
+          your route, and track your estimated driving time & distance.
         </TasksDescription>
         <RoutePlannerPlacePicker presenter={presenter} />
 

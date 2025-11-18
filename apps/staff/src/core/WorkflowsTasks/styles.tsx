@@ -51,7 +51,7 @@ export const TasksCaption = styled(Sans14)`
 
 export const TasksDescriptionContainer = styled(TasksCaption)`
   margin-bottom: ${rem(spacing.lg)};
-  max-width: ${rem(540)};
+  margin-right: ${rem(64)};
 `;
 
 export const TasksBodyContainer = styled.div`

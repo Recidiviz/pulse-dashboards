@@ -71,11 +71,9 @@ describe("getPathWithoutParams", () => {
     );
   });
 
-  it("returns /workflows/tasks for home contact route planner", () => {
+  it("returns /workflows/tasks for route planner", () => {
     const basePath = "/workflows/tasks";
-    expect(
-      getPathWithoutParams(`${basePath}/home-contact-route-planner`),
-    ).toEqual(basePath);
+    expect(getPathWithoutParams(`${basePath}/route-planner`)).toEqual(basePath);
   });
 });
 

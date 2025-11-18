@@ -256,7 +256,7 @@ export const WORKFLOWS_PATHS: Record<WorkflowsPage | "workflows", string> = {
   workflows: `/${DASHBOARD_VIEWS.workflows}`,
   home: `/${DASHBOARD_VIEWS.workflows}/home`,
   tasks: `/${DASHBOARD_VIEWS.workflows}/tasks`,
-  tasksRoutePlanner: `/${DASHBOARD_VIEWS.workflows}/tasks/home-contact-route-planner`,
+  tasksRoutePlanner: `/${DASHBOARD_VIEWS.workflows}/tasks/route-planner`,
   milestones: `/${DASHBOARD_VIEWS.workflows}/milestones`,
   clients: `/${DASHBOARD_VIEWS.workflows}/clients`,
   residents: `/${DASHBOARD_VIEWS.workflows}/residents`,

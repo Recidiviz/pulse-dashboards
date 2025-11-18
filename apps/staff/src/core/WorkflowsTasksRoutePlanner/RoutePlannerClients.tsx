@@ -78,8 +78,8 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
   const noOfficers = selectedOfficers.length === 0;
   if (noContacts || noOfficers) {
     const emptyStateText = noOfficers
-      ? "Select a caseload to show results."
-      : "None of the selected officers have contacts available.";
+      ? "Select one or more caseloads to see a list of suggested clients with home contacts due this month."
+      : "None of the selected officers have contacts due this month.";
 
     return (
       <ClientsWrapper>
@@ -99,7 +99,7 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
         return (
           <React.Fragment key={searchId}>
             <OfficerSectionLabel>
-              <span className="fs-exclude">{`${numContacts} contacts for ${searchLabel}`}</span>
+              <span className="fs-exclude">{`${numContacts} contacts due this month for ${searchLabel}`}</span>
             </OfficerSectionLabel>
 
             {numContacts > 0 ? (
@@ -116,7 +116,7 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
             ) : (
               <EmptyStateWrapper>
                 <EmptyStateText>
-                  {"No home contacts available on this caseload."}
+                  {"No home contacts due this month."}
                 </EmptyStateText>
               </EmptyStateWrapper>
             )}

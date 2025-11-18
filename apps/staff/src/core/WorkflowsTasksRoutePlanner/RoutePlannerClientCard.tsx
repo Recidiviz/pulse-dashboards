@@ -249,7 +249,7 @@ const CollapsedClientCard = observer(function ClientCard({
         <EmptyCheckbox $selectable={isSelectable} />
       )}
 
-      <ClientInfo>
+      <ClientInfo className="fs-exclude">
         <NameRow>
           <Name>{person.displayPreferredNameLastFirst}</Name>
           <WorkflowsTooltip
@@ -336,7 +336,7 @@ export const ClientCard = observer(function ClientCard({
         <EmptyCheckbox $selectable={isSelectable} />
       )}
 
-      <ClientInfo>
+      <ClientInfo className="fs-exclude">
         <NameRow>
           <Name>{person.displayPreferredNameLastFirst}</Name>
           <WorkflowsTooltip
@@ -374,7 +374,7 @@ export const ClientCard = observer(function ClientCard({
                 )}
               </>
             ) : (
-              <SmallInfoText>No address on file</SmallInfoText>
+              <SmallInfoText>No address on file in OIMS</SmallInfoText>
             )}
           </InfoRow>
           <InfoRow>
@@ -401,7 +401,10 @@ export const ClientCard = observer(function ClientCard({
       </ClientInfo>
 
       {person.phoneNumber && !isMobile && (
-        <TooltipTrigger contents={`Phone number: ${person.phoneNumber}`}>
+        <TooltipTrigger
+          className="fs-exclude"
+          contents={`Phone number: ${person.phoneNumber}`}
+        >
           <PhoneIcon fill={palette.pine4} />
         </TooltipTrigger>
       )}
