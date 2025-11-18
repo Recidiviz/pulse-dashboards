@@ -117,25 +117,14 @@ export class UsAzImportantDatesPresenter {
     const thirtyOneDaysFromNow = new Date(today);
     thirtyOneDaysFromNow.setDate(today.getDate() + 31);
 
-    // Map date keys to their corresponding heading index
-    const keyToHeadingIndex: Record<string, number> = {
-      acisTprDate: 1,
-      acisDtpDate: 2,
-      csbdDate: 3,
-      trToAddDate: 3,
-      ercdDate: 4,
-      addDate: 4,
-      sedDate: 5,
-      csedDate: 6,
-    };
-
     return sortedEntries.map((entry) => {
       const entryDate = new Date(entry.date);
-      const headingIndex = keyToHeadingIndex[entry.key];
       const result: DateEntry = {
         ...entry,
         isUpcoming: entryDate >= today && entryDate <= thirtyOneDaysFromNow,
-        infoPageHash: this.headingIds[headingIndex] || "",
+        infoPageHash: this.getInfoPageHashForDateKey(
+          entry.key as UsAzDateField,
+        ),
       };
 
       if (
@@ -147,5 +136,25 @@ export class UsAzImportantDatesPresenter {
 
       return result;
     });
+  }
+
+  get hasNoDates(): boolean {
+    return this.dateEntries.length === 0;
+  }
+
+  getInfoPageHashForDateKey(dateKey: UsAzDateField): string {
+    const keyToHeadingIndex: Record<string, number> = {
+      acisTprDate: 1,
+      acisDtpDate: 2,
+      csbdDate: 3,
+      trToAddDate: 3,
+      ercdDate: 4,
+      addDate: 4,
+      sedDate: 5,
+      csedDate: 6,
+    };
+
+    const headingIndex = keyToHeadingIndex[dateKey];
+    return this.headingIds[headingIndex] || "";
   }
 }

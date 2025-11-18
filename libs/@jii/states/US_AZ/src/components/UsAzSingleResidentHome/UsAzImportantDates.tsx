@@ -23,6 +23,7 @@ import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
 import { DateInfoCard } from "./DateInfoCard";
+import { DateInfoCardSkeleton } from "./DateInfoCardSkeleton";
 import { SectionSubHeader } from "./styles";
 import {
   UsAzDateField,
@@ -42,26 +43,40 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
           <SectionSubHeader as="p">
             {t(($) => $.importantDates.sectionSubHeader)}
           </SectionSubHeader>
-          {presenter.dateEntries.map(
-            ({ key, date, isUpcoming, highlightType, infoPageHash }) => {
-              const dateKey = key as UsAzDateField;
+          {presenter.hasNoDates ? (
+            /* Show skeleton cards for SED and CSED only */
+            <>
+              <DateInfoCardSkeleton
+                dateKey="sedDate"
+                infoPageHash={presenter.getInfoPageHashForDateKey("sedDate")}
+              />
+              <DateInfoCardSkeleton
+                dateKey="csedDate"
+                infoPageHash={presenter.getInfoPageHashForDateKey("csedDate")}
+              />
+            </>
+          ) : (
+            presenter.dateEntries.map(
+              ({ key, date, isUpcoming, highlightType, infoPageHash }) => {
+                const dateKey = key as UsAzDateField;
 
-              return (
-                <DateInfoCard
-                  key={key}
-                  title={t(($) => $.importantDates.dates[dateKey].title)}
-                  date={date}
-                  info={t(($) => $.importantDates.dates[dateKey].info)}
-                  dateKey={dateKey}
-                  shortName={t(
-                    ($) => $.importantDates.dates[dateKey].shortName,
-                  )}
-                  isUpcoming={isUpcoming}
-                  highlightType={highlightType}
-                  infoPageHash={infoPageHash}
-                />
-              );
-            },
+                return (
+                  <DateInfoCard
+                    key={key}
+                    title={t(($) => $.importantDates.dates[dateKey].title)}
+                    date={date}
+                    info={t(($) => $.importantDates.dates[dateKey].info)}
+                    dateKey={dateKey}
+                    shortName={t(
+                      ($) => $.importantDates.dates[dateKey].shortName,
+                    )}
+                    isUpcoming={isUpcoming}
+                    infoPageHash={infoPageHash}
+                    highlightType={highlightType}
+                  />
+                );
+              },
+            )
           )}
         </section>
       </div>
