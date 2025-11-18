@@ -15,9 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import aboutInfoPage from "./aboutInfoPage.md?raw";
 import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
 
 export default {
+  about: {
+    heading: "About the App",
+    body: aboutInfoPage,
+  },
+  homePageLinkText: "Home Page",
+  backToHomePageLinkText: "Back to Home",
+  moreInfoPageLinksHeading: "More Information",
+  backToTopLinkText: "Back to top",
   lastUpdated:
     "This information was last updated on {{lastUpdatedDate, formatFullDate}}. It updates once per month.",
   lastUpdatedNoDate: "This information updates once per month.",

@@ -17,42 +17,34 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { BackLink, InfoPage, PageLinksFooter } from "~@jii/common-ui";
-import { ScreenFillingWrapper } from "~@jii/layout";
+import { usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
-type DefinitionViewProps = {
-  heading: string;
-  body: string;
-  moreInfoPageLinks?: { text: string; url: string }[];
-};
+import { DefinitionView } from "../components/DefinitionView";
 
-export const DefinitionView = (props: DefinitionViewProps) => {
-  const params = useTypedParams(State.Resident.UsAzMoreInformation);
+export function PageMoreInfoAbout() {
   const { t } = useUsAzTranslations();
+
+  usePageTitle(t(($) => $.about.heading));
+  const pathParams = useTypedParams(State.Resident.UsAzMoreInformation);
+
   return (
-    <ScreenFillingWrapper
-      top={
-        <>
-          <BackLink
-            to={State.Resident.buildPath(params)}
-            children={t(($) => $.backToHomePageLinkText)}
-          />
-          <InfoPage {...props} />
-        </>
-      }
-      bottom={
-        props.moreInfoPageLinks && (
-          <PageLinksFooter
-            contents={{
-              pageLinksHeading: t(($) => $.moreInfoPageLinksHeading),
-              pageLinks: props.moreInfoPageLinks,
-              topLinkText: t(($) => $.backToTopLinkText),
-            }}
-          />
-        )
-      }
+    <DefinitionView
+      heading={t(($) => $.about.heading)}
+      body={t(($) => $.about.body)}
+      moreInfoPageLinks={[
+        {
+          text: t(($) => $.homePageLinkText),
+          url: State.Resident.buildPath(pathParams),
+        },
+        {
+          text: t(($) => $.importantDates.moreInfo.heading),
+          url: State.Resident.UsAzMoreInformation.ImportantDates.buildPath(
+            pathParams,
+          ),
+        },
+      ]}
     />
   );
-};
+}

@@ -21,6 +21,7 @@ import { NotFound } from "~@jii/common-ui";
 import { UsAzMoreInformation } from "~@jii/paths";
 
 import { LastUpdatedBanner } from "../components/LastUpdatedBanner";
+import { PageMoreInfoAbout } from "../pages/PageMoreInfoAbout";
 import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
 import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
 
@@ -34,6 +35,10 @@ export function UsAzRouter() {
         <Route
           path={UsAzMoreInformation.ImportantDates.path}
           element={<PageMoreInfoImportantDates />}
+        />
+        <Route
+          path={UsAzMoreInformation.About.path}
+          element={<PageMoreInfoAbout />}
         />
       </Routes>
     </div>

@@ -19,8 +19,7 @@ import { makeAutoObservable } from "mobx";
 
 import { SimpleNavLinkProps } from "~@jii/common-ui";
 import { UserStore } from "~@jii/data";
-import { State } from "~@jii/paths";
-import { RouteParams } from "~@jii/paths";
+import { RouteParams, State } from "~@jii/paths";
 
 export class ResidentNavBarPresenter {
   constructor(
@@ -43,20 +42,31 @@ export class ResidentNavBarPresenter {
 
   // TODO(#10032): [JII][P2] Parameterize additional top-level links in ResidentNavBar
   get additionalTopBarLinks(): { label: string; to: string }[] {
-    if (
-      !("personPseudoId" in this.routeParams) ||
-      this.routeParams.stateSlug !== "tennessee"
-    )
-      return [];
+    if (!("personPseudoId" in this.routeParams)) return [];
 
-    return [
-      {
-        label: "About",
-        to: State.Resident.UsTnMoreInformation.About.buildPath(
-          this.routeParams,
-        ),
-      },
-    ];
+    if (this.routeParams.stateSlug === "tennessee") {
+      return [
+        {
+          label: "About",
+          to: State.Resident.UsTnMoreInformation.About.buildPath(
+            this.routeParams,
+          ),
+        },
+      ];
+    }
+
+    if (this.routeParams.stateSlug === "arizona") {
+      return [
+        {
+          label: "About",
+          to: State.Resident.UsAzMoreInformation.About.buildPath(
+            this.routeParams,
+          ),
+        },
+      ];
+    }
+
+    return [];
   }
 
   get menuLinks(): Array<SimpleNavLinkProps> {

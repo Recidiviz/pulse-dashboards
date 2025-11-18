@@ -58,6 +58,7 @@ export const UsAzMoreInformation = route(
   "more-information",
   {},
   {
+    About: route("about"),
     ImportantDates: route("important-dates", { hash: [] }),
   },
 );
