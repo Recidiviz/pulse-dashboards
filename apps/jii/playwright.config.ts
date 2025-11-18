@@ -58,6 +58,7 @@ export default defineConfig({
               localStorage: [
                 // mark MA onboarding as seen by default. override as needed in tests
                 { name: "egtOnboardingSeen", value: formatISO(Date.now()) },
+                { name: "azOnboardingSeen", value: formatISO(Date.now()) },
               ],
             },
           ],

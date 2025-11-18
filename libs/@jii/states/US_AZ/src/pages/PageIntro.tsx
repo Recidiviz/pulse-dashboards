@@ -15,17 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
+import { Onboarding } from "../components/Onboarding/Onboarding";
 
-import { OnboardingTakeover } from "../components/Onboarding/OnboardingTakeover";
-import { UsAzSingleResidentHome } from "../components/UsAzSingleResidentHome";
-
-export function PageUsAzResidentHome() {
-  usePageTitle("Home");
-
-  return (
-    <OnboardingTakeover>
-      <UsAzSingleResidentHome />
-    </OnboardingTakeover>
-  );
-}
+export const PageIntro = () => {
+  return <Onboarding />;
+};

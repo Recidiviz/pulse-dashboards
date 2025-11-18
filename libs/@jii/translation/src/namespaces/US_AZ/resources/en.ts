@@ -17,6 +17,7 @@
 
 import aboutInfoPage from "./aboutInfoPage.md?raw";
 import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
+import onboardingInfoPage from "./onboardingInfoPage.md?raw";
 
 export default {
   about: {
@@ -39,6 +40,11 @@ export default {
     "({{date, formatDateRangeFromToday(delimiter: ' and ')}} from today)",
   upcomingDateCopy:
     "Your date is coming up soon - stay on track to ensure that your date doesn't change. ",
+  onboarding: {
+    heading: "Tool disclaimer",
+    body: onboardingInfoPage,
+    continueLink: "I understand, take me to the tool",
+  },
   importantDates: {
     sectionHeader: "Your Important Dates",
     sectionSubHeader:

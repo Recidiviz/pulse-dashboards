@@ -31,7 +31,10 @@ import { stateCodes, stateConfigsByUrlSlug } from "../configs/stateConstants";
 import { StateCode } from "../configs/types";
 import { TranslationStore } from "./TranslationStore";
 
-export const USER_PROPERTY_KEYS = z.enum(["egtOnboardingSeen"]);
+export const USER_PROPERTY_KEYS = z.enum([
+  "egtOnboardingSeen",
+  "azOnboardingSeen",
+]);
 type UserPropertyKey = z.infer<typeof USER_PROPERTY_KEYS>;
 
 export class UserStore {

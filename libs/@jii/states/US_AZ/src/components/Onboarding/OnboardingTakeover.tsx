@@ -15,17 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
+import { FC, ReactNode } from "react";
 
-import { OnboardingTakeover } from "../components/Onboarding/OnboardingTakeover";
-import { UsAzSingleResidentHome } from "../components/UsAzSingleResidentHome";
+import { Redirect } from "~@jii/common-ui";
+import { useRootStore } from "~@jii/data";
+import { State } from "~@jii/paths";
 
-export function PageUsAzResidentHome() {
-  usePageTitle("Home");
+export const OnboardingTakeover: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const { userStore } = useRootStore();
 
-  return (
-    <OnboardingTakeover>
-      <UsAzSingleResidentHome />
-    </OnboardingTakeover>
-  );
-}
+  const hasSeenOnboarding = !!userStore.getUserProperty("azOnboardingSeen");
+
+  if (!hasSeenOnboarding) {
+    return (
+      <Redirect
+        to={State.Resident.$.UsAzMoreInformation.Intro.buildRelativePath({})}
+      />
+    );
+  }
+
+  return children;
+};
