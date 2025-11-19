@@ -98,6 +98,10 @@ export type FeatureVariant =
   | "usMeCaseNoteSnooze"
   | "usMoOverdueRHPilot"
 
+  //// Michigan
+  | "usMiFacilitySearch"
+  | "usMiCaseManagerSearch"
+
   //// Missouri
   | "usMoSearchByUnit"
   | "usMoWorkRelease"
@@ -201,6 +205,8 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnTEPENotesForAll: {},
   usMoSearchByUnit: {},
   usMoWorkRelease: {},
+  usMiCaseManagerSearch: {},
+  usMiFacilitySearch: {},
   indefiniteSnooze: {},
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},
@@ -222,6 +228,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usAzFacilitySearch: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},
+        usMiCaseManagerSearch: {},
+        usMiFacilitySearch: {},
         usMoOverdueRHPilot: {},
         usOrEarnedDischargeSentence: {},
         usTnExpiration: {},
