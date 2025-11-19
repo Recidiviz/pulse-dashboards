@@ -16,19 +16,13 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React from "react";
-import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
+import React, { InputHTMLAttributes } from "react";
 
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { Checkbox } from "./styles";
 import { FormDataType } from "./types";
 
-export type FormCheckboxProps = StyledComponentProps<
-  "input",
-  DefaultTheme,
-  { type: "checkbox" },
-  "type"
-> & {
+export type FormCheckboxProps = InputHTMLAttributes<HTMLInputElement> & {
   name: keyof FormDataType;
 };
 

@@ -19,7 +19,7 @@ import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React, { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -63,10 +63,10 @@ export const InsightsBreadcrumbs: React.FC<InsightsBreadcrumbsProps> = ({
     <Wrapper>
       {previousPages.map((page, index) => (
         // eslint-disable-next-line react/no-array-index-key
-        (<React.Fragment key={index}>
+        <React.Fragment key={index}>
           <PreviousPage to={page.url}>{page.title}</PreviousPage>
           {index < previousPages.length - 1 && <Separator>/</Separator>}
-        </React.Fragment>)
+        </React.Fragment>
       ))}
       <Separator>/</Separator>
       <CurrentPage>{children}</CurrentPage>

@@ -29,7 +29,7 @@ import { ClientProfileProps } from "../types";
 
 export function ClientHousing({
   client,
-}: ClientProfileProps): React.ReactElement {
+}: ClientProfileProps): React.ReactElement<any> {
   return (
     <DetailsSection>
       <DetailsHeading>Housing</DetailsHeading>

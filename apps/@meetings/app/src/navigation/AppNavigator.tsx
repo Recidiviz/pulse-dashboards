@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import React from "react";
@@ -27,7 +27,7 @@ import LoginScreen from "../screens/LoginScreen";
 import { trpc } from "../trpc/client";
 import DrawerNavigator from "./DrawerNavigator";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
 
 const trpcUrl =
@@ -55,7 +55,10 @@ const AppNavigator = () => {
               };
             }
 
-            const creds = await getCredentials();
+            const audience = process.env["EXPO_PUBLIC_AUTH0_AUDIENCE"];
+            const creds = await getCredentials(undefined, undefined, {
+              audience,
+            });
             return {
               Authorization: `Bearer ${creds?.accessToken}`,
               // TODO: Extract statecode from Auth0 token

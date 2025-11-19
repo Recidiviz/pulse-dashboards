@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";

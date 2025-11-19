@@ -17,7 +17,7 @@
 
 import { toTitleCase } from "@artsy/to-title-case";
 import { typography } from "@recidiviz/design-system";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   Dropdown,
@@ -35,7 +35,6 @@ const SelectorDropdownToggleButtonText = styled.div`
 `;
 const SelectorDropdownToggleButton = styled(DropdownToggle).attrs({
   kind: "borderless",
-  size: "sm",
   showCaret: true,
 })`
   color: ${palette.signal.links};

@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mount } from "enzyme";
+import { render } from "@testing-library/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Mock } from "vitest";
 
 import { useUserStore } from "../../../components/StoreProvider";
-import { AvatarImage, AvatarInitials, UserAvatar } from "../UserAvatar";
+import { UserAvatar } from "../UserAvatar";
 
 vi.mock("../../../components/StoreProvider");
 
@@ -33,7 +33,7 @@ describe("UserAvatar tests", () => {
       },
     };
     (useUserStore as Mock).mockReturnValue(userStore);
-    return mount(
+    return render(
       <Router>
         <UserAvatar />
       </Router>,
@@ -41,17 +41,24 @@ describe("UserAvatar tests", () => {
   };
 
   it("renders a span with the first letter of the user's name when the profile image is from Gravatar", () => {
-    const avatar = renderAvatar("Essun", "https://s.gravatar.com/avatar/foo");
-    expect(avatar.find(`${AvatarInitials}`).text()).toEqual("E");
+    const { container } = renderAvatar(
+      "Essun",
+      "https://s.gravatar.com/avatar/foo",
+    );
+    const avatarInitials = container.querySelector(".UserAvatar > div");
+    expect(avatarInitials).toHaveTextContent("E");
   });
 
   it("renders an image when the profile icon is not from Gravatar.", () => {
-    const avatar = renderAvatar(
+    const { container } = renderAvatar(
       "Essun",
       "https://the-fulcrum.com/avatar/indite",
     );
-    expect(
-      avatar.find(`${AvatarImage}`)?.prop("style")?.backgroundImage,
-    ).toEqual(`url("https://the-fulcrum.com/avatar/indite")`);
+    const avatarImage = container.querySelector(
+      ".UserAvatar > div",
+    ) as HTMLElement;
+    expect(avatarImage?.style.backgroundImage).toEqual(
+      `url(https://the-fulcrum.com/avatar/indite)`,
+    );
   });
 });

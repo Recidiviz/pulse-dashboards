@@ -18,7 +18,7 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import moment from "moment";
 import { rem } from "polished";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { ClientInfo } from "~datatypes";
 import { palette } from "~design-system";
@@ -74,7 +74,7 @@ function ClientDetails({
   client,
 }: {
   client: ClientInfo;
-}): React.ReactElement | null {
+}): React.ReactElement<any> | null {
   const { raceOrEthnicity, gender, birthdate } = client;
 
   if (!client) return null;
@@ -120,7 +120,7 @@ function ClientSupervisionDetails({
   supervisionDetails?: SupervisionDetails;
   eventsLabel: string;
   outcomeDate: Date;
-}): React.ReactElement | null {
+}): React.ReactElement<any> | null {
   if (!supervisionDetails) return null;
 
   return (

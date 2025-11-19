@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Container } from "reactstrap";
 
 import { Menubar } from "~design-system";
 
@@ -77,7 +76,7 @@ const MethodologyPathways: React.FC = () => {
   return (
     <PageTemplate mobileNavigation={<MobileNavigation />}>
       <div className="Methodology">
-        <Container className="col-md-9 col-12">
+        <div className="container col-md-9 col-12">
           <section>
             <h1 className="Methodology__main-title">{Methodology.title}</h1>
             <h2
@@ -155,7 +154,7 @@ const MethodologyPathways: React.FC = () => {
               );
             })}
           </div>
-        </Container>
+        </div>
       </div>
     </PageTemplate>
   );

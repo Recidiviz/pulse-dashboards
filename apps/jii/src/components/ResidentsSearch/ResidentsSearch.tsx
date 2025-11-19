@@ -19,7 +19,7 @@ import { Header34, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC, useId } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Selector } from "~@jii/common-ui";
 import { useResidentsContext, useRootStore } from "~@jii/data";

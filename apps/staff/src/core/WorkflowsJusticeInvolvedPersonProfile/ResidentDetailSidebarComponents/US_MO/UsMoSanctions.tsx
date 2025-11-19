@@ -30,7 +30,7 @@ export function UsMoSanctions({
   sanctions,
 }: {
   sanctions: UsMoSanctionInfo[] | undefined;
-}): React.ReactElement {
+}): React.ReactElement<any> {
   const D1_SANCTION_DATE_COPY = (
     sanctionStartDate: UsMoSanctionInfo["sanctionStartDate"],
     sanctionExpirationDate: UsMoSanctionInfo["sanctionExpirationDate"],

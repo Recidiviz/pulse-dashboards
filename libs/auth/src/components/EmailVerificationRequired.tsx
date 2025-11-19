@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { typography } from "@recidiviz/design-system";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 const Heading = styled.h1`
   ${typography.Header34}

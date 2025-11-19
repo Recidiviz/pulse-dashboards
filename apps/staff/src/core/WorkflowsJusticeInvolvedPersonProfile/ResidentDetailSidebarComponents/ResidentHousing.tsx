@@ -29,7 +29,7 @@ import { UsTnFacilityAdmissionDateSubsection } from "./US_TN/UsTnFacilityAdmissi
 
 export function ResidentHousing({
   resident,
-}: ResidentProfileProps): React.ReactElement {
+}: ResidentProfileProps): React.ReactElement<any> {
   return (
     <DetailsSection>
       <DetailsHeading>Housing</DetailsHeading>

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { toTitleCase } from "@artsy/to-title-case";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

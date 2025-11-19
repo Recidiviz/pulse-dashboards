@@ -23,7 +23,7 @@ import { OpportunityProfileProps } from "../../types";
 
 export function UsMiMinMaxReleaseDates({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   return (
     <>
       <DetailsSubheading>Min Release Date</DetailsSubheading>

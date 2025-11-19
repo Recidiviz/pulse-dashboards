@@ -21,8 +21,6 @@ import "jest-styled-components";
 
 import { ResizeObserver } from "@juggle/resize-observer";
 import { cleanup } from "@testing-library/react";
-import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
-import { configure } from "enzyme";
 import { toHaveNoViolations } from "jest-axe";
 import * as jestExtendedMatchers from "jest-extended";
 import { configure as configureMobx } from "mobx";
@@ -58,8 +56,6 @@ configureMobx({
 });
 
 initI18n();
-
-configure({ adapter: new Adapter() });
 
 process.env = {
   ...process.env,

@@ -24,10 +24,10 @@ import SentryErrorBoundary from "../components/SentryErrorBoundary";
 import { useCoreStore } from "./CoreStoreProvider";
 
 interface Props {
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
 }
 
-function ErrorBoundary({ children }: Props): React.ReactElement {
+function ErrorBoundary({ children }: Props): React.ReactElement<any> {
   const { currentTenantId, filters } = useCoreStore();
 
   const handleBeforeCapture = (scope: Sentry.Scope) => {

@@ -17,9 +17,8 @@
 
 import { deleteField, FieldValue } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
-import React from "react";
-import styled from "styled-components/macro";
-import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
+import React, { InputHTMLAttributes } from "react";
+import styled from "styled-components";
 
 import { UsPaAdminSupervisionDraftData } from "../../../../WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
@@ -33,12 +32,7 @@ const Checkbox = styled.input.attrs({
   margin: 0 0.25em 0 0;
 `;
 
-export type FormCheckboxProps = StyledComponentProps<
-  "input",
-  DefaultTheme,
-  { type: "checkbox" },
-  "type"
-> & {
+export type FormCheckboxProps = InputHTMLAttributes<HTMLInputElement> & {
   name: keyof UsPaAdminSupervisionDraftData;
   invert?: boolean;
   toggleable?: boolean;

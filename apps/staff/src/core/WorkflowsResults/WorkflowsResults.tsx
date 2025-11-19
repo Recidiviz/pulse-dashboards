@@ -18,7 +18,7 @@
 import { Sans18, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -73,7 +73,7 @@ function WorkflowsResults({
   headerText,
   callToActionText,
   children,
-}: WorkflowsResultsProps): React.ReactElement | null {
+}: WorkflowsResultsProps): React.ReactElement<any> | null {
   const { isMobile } = useIsMobile(true);
 
   return (

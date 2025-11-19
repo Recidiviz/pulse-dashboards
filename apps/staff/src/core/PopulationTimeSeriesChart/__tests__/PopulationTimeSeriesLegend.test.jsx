@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mount } from "enzyme";
+import { render } from "@testing-library/react";
 import React from "react";
 
 import PopulationTimeSeriesTooltip from "../PopulationTimeSeriesTooltip";
@@ -27,36 +27,39 @@ describe("Tests for PopulationTimeseries Tooltip", () => {
   };
 
   const renderTooltip = (props) => {
-    return mount(<PopulationTimeSeriesTooltip d={props} />);
+    return render(<PopulationTimeSeriesTooltip d={props} />);
   };
 
   it("displays year and month", () => {
-    const tooltip = renderTooltip(baseProps);
-    expect(tooltip.find(".PopulationTimeseriesTooltip__date").text()).toEqual(
-      "February 2021",
+    const { container } = renderTooltip(baseProps);
+    const dateElement = container.querySelector(
+      ".PopulationTimeseriesTooltip__date",
     );
+    expect(dateElement).toHaveTextContent("February 2021");
   });
 
   it("displays value with commas", () => {
-    const tooltip = renderTooltip(baseProps);
-    expect(tooltip.find(".PopulationTimeseriesTooltip__value").text()).toEqual(
-      "7,000",
+    const { container } = renderTooltip(baseProps);
+    const valueElement = container.querySelector(
+      ".PopulationTimeseriesTooltip__value",
     );
+    expect(valueElement).toHaveTextContent("7,000");
   });
 
   it("displays uncertainties", () => {
-    const tooltip = renderTooltip({
+    const { container } = renderTooltip({
       lowerBound: 6000,
       upperBound: 8000,
       ...baseProps,
     });
-    expect(tooltip.find(".PopulationTimeseriesTooltip__bottom").text()).toEqual(
-      "(6000, 8000)",
+    const bottomElement = container.querySelector(
+      ".PopulationTimeseriesTooltip__bottom",
     );
+    expect(bottomElement).toHaveTextContent("(6000, 8000)");
   });
 
   it("does not display when hovering over edges of summary box", () => {
-    const tooltip = renderTooltip({ parentSummary: {}, ...baseProps });
-    expect(tooltip.html()).toBeNull();
+    const { container } = renderTooltip({ parentSummary: {}, ...baseProps });
+    expect(container.firstChild).toBeNull();
   });
 });

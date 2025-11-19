@@ -20,9 +20,9 @@ import * as React from "react";
 import { MenuItemElement, ToggleElement } from "./Dropdown.styles";
 
 class DropdownFocusManager {
-  dropdown: React.RefObject<HTMLElement> | null;
+  dropdown: React.RefObject<HTMLElement | null> | null;
 
-  constructor(dropdown: React.RefObject<HTMLElement> | null) {
+  constructor(dropdown: React.RefObject<HTMLElement | null> | null) {
     this.dropdown = dropdown;
   }
 

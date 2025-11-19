@@ -24,7 +24,7 @@ import { ResidentProfileProps } from "../types";
 
 export function UsAzResidentInformation({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   const { stateCode } = resident;
 
   if (stateCode !== "US_AZ") return null;

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";

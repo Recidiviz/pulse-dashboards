@@ -18,9 +18,9 @@
 import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
+import { type JSX, useState } from "react";
 import toast from "react-hot-toast";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { CharacterCountTextField } from "../../../components/CharacterCountTextField";
 import Checkbox from "../../../components/Checkbox";

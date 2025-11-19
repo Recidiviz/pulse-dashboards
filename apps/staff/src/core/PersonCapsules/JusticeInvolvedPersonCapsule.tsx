@@ -25,9 +25,9 @@ import {
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
+import React, { type JSX } from "react";
 import { Link } from "react-router-dom";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 import { PersonInitialsAvatar } from "~ui";
@@ -116,7 +116,7 @@ const SIZES = {
 
 const ProfileLinkWrapper: React.FC<{
   link: string;
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
 }> = ({ link, children }) => (
   <StyledLink className="PersonProfileLink" to={link}>
     <TooltipTrigger contents="Go to profile">{children}</TooltipTrigger>

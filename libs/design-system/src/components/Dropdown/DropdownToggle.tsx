@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { rem } from "polished";
+import type { JSX } from "react";
 import * as React from "react";
 
 import { ButtonProps } from "../Button";

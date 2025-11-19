@@ -21,7 +21,7 @@ import { now } from "mobx-utils";
 import { rem } from "polished";
 import { ComponentType, useEffect, useState } from "react";
 import MarkdownView from "react-showdown";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { ActionStrategyCopy } from "~datatypes";
 import { Button, Icon, palette } from "~design-system";
@@ -80,7 +80,6 @@ const ModalControls = styled.div`
   .InsightsActionStrategyModal__close {
     grid-column: 2;
     justify-self: flex-end;
-  }
   }
 `;
 
@@ -176,7 +175,7 @@ const ActionStrategyList = ({
   actionStrategies: ActionStrategyCopy;
   onActionStrategySelect: (item: ActionStrategyCopy[string]) => void;
   insightsLanternState: boolean;
-}): React.ReactElement | null => {
+}): React.ReactElement<any> | null => {
   const actionStrategiesList = Object.entries(actionStrategies);
 
   const title = insightsLanternState
@@ -203,7 +202,7 @@ const ActionStrategy = ({
   actionStrategy,
 }: {
   actionStrategy: ActionStrategyCopy[string] | undefined;
-}): React.ReactElement | null => {
+}): React.ReactElement<any> | null => {
   return (
     <div>
       <ModalHeader>{actionStrategy?.prompt}</ModalHeader>

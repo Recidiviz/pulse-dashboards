@@ -19,7 +19,7 @@ import { Sans14, Sans16, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { ReactElement } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Icon, IconSVG, palette } from "~design-system";
 
@@ -76,7 +76,7 @@ export const CriteriaList = observer(function CriteriaList({
   opportunity,
 }: {
   opportunity: Opportunity;
-}): React.ReactElement {
+}): React.ReactElement<any> {
   const colors = useStatusColors(opportunity);
 
   const alert = opportunity.config.isAlert;
@@ -85,7 +85,7 @@ export const CriteriaList = observer(function CriteriaList({
   const reqToCriterion = (
     { isHeading, text, tooltip, key }: OpportunityRequirement,
     i: number,
-    iconType: ReactElement,
+    iconType: ReactElement<any>,
     useRecommendedLanguage?: boolean,
   ) => {
     const tooltipElem = (

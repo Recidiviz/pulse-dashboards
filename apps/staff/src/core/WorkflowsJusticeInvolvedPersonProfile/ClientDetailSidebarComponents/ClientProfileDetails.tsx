@@ -25,7 +25,7 @@ import { Supervision } from "./Supervision";
 
 export function ClientProfileDetails({
   client,
-}: ClientProfileProps): React.ReactElement {
+}: ClientProfileProps): React.ReactElement<any> {
   return (
     <>
       <Supervision client={client} />

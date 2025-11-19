@@ -19,7 +19,7 @@
 import { zip } from "lodash";
 import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { FormViewerContext } from "../../FormViewer";

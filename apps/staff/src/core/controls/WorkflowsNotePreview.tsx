@@ -17,7 +17,7 @@
 
 import { Sans12, Sans14, Sans24, spacing } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

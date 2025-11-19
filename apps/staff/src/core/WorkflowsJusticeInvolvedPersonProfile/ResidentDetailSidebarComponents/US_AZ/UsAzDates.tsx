@@ -18,7 +18,7 @@
 import { Sans14, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { ResidentMetadata } from "~datatypes";
 import { Icon } from "~design-system";
@@ -116,7 +116,7 @@ export function metadataToDates(
 
 export function UsAzDates({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   const { metadata } = resident;
 
   if (metadata.stateCode !== "US_AZ") return null;

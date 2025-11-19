@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import { FormContainer } from "../../FormContainer";
@@ -113,7 +113,7 @@ export const FormUsTnInitialClassification2026 = observer(
   }: {
     opportunity: Opportunity;
   }) {
-    const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+    const formRef = React.useRef<HTMLDivElement>(null);
 
     return (
       <FormContainer

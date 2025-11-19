@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord, toTitleCase } from "../../utils";

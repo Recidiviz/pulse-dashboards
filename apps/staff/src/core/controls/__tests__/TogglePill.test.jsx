@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mount } from "enzyme";
+import { render } from "@testing-library/react";
 import React from "react";
 
 import TogglePill from "../TogglePill";
 
 describe("TogglePill tests", () => {
   const renderTogglePill = () => {
-    return mount(
+    return render(
       <TogglePill
         currentValue="left"
         leftPill={{ label: "Left", value: "left" }}
@@ -33,14 +33,16 @@ describe("TogglePill tests", () => {
   };
 
   it("Should render two options", () => {
-    const selector = renderTogglePill();
-
-    expect(selector.find(".TogglePill__button")).toHaveLength(2);
+    const { container } = renderTogglePill();
+    const buttons = container.querySelectorAll(".TogglePill__button");
+    expect(buttons).toHaveLength(2);
   });
 
   it("One one option should be checked", () => {
-    const selector = renderTogglePill();
-
-    expect(selector.find(".TogglePill__button--selected")).toHaveLength(1);
+    const { container } = renderTogglePill();
+    const selectedButtons = container.querySelectorAll(
+      ".TogglePill__button--selected",
+    );
+    expect(selectedButtons).toHaveLength(1);
   });
 });

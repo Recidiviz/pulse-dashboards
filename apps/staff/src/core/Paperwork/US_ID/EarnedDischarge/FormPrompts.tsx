@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import * as React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { EarnedDischargeOpportunity } from "../../../../WorkflowsStore";
 import { Prompt } from "../../FormPrompt";

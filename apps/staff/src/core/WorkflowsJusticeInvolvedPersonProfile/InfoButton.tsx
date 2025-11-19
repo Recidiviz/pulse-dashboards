@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Icon, palette } from "~design-system";
 
@@ -33,7 +33,7 @@ export function InfoButton({
   infoUrl,
 }: {
   infoUrl: string | undefined;
-}): React.ReactElement {
+}): React.ReactElement<any> {
   return (
     <InfoLink href={infoUrl} target="_blank" rel="noreferrer">
       <Icon kind="Info" size={12} />

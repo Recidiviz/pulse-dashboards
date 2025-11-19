@@ -17,6 +17,7 @@
 
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
+import type { JSX } from "react";
 
 import WebFormField, { WebFormFieldProps } from "./WebFormField";
 

@@ -18,7 +18,7 @@
 import { Sans14, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Icon, palette } from "~design-system";
 
@@ -73,6 +73,7 @@ export const OpportunityBanner = function OpportunityBanner({
       <BannerText>{bannerInfo.previewBannerText} </BannerText>
       <BannerLink to={bannerInfo.link} onClick={() => bannerInfo.onLinkClick()}>
         {bannerInfo.linkText}
+        {/* @ts-expect-error https://github.com/styled-components/styled-components/issues/4314 */}
         <InlineArrow />
       </BannerLink>
     </Banner>

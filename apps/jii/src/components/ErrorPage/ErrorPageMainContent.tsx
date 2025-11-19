@@ -16,7 +16,6 @@
 // =============================================================================
 
 import dedent from "dedent";
-import { ReactElement } from "react";
 
 import { CopyWrapper, PageContainer } from "~@jii/common-ui";
 import { useCommonTranslations } from "~@jii/translation";
@@ -25,9 +24,7 @@ type ErrorPageProps = {
   error: Error;
 };
 
-const ErrorPageMainContentWrapped = ({
-  error,
-}: ErrorPageProps): ReactElement => {
+const ErrorPageMainContentWrapped = ({ error }: ErrorPageProps) => {
   const { t } = useCommonTranslations();
 
   const contents = dedent`# ${t(($) => $.errorPage.heading)}

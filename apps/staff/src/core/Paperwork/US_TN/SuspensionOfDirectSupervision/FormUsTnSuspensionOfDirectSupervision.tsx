@@ -25,7 +25,7 @@ import {
 import { rem } from "polished";
 import * as React from "react";
 import { useState } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import stateSeal from "~shared-assets/images/state-seals/US_TN_BW.png";
 
@@ -202,8 +202,7 @@ const defaultColumns = [
 export const FormSkeleton: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
-
+  const formRef = React.useRef<HTMLDivElement>(null);
   const {
     layout: { margin },
     resize,

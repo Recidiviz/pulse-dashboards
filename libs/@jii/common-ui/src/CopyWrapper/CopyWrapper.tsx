@@ -20,7 +20,7 @@ import Markdown, { MarkdownToJSX } from "markdown-to-jsx";
 import { rem } from "polished";
 import { FC } from "react";
 import { Link } from "react-router-dom";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 

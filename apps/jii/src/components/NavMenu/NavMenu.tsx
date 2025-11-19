@@ -28,7 +28,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC, useEffect, useId, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { PAGE_PADDING, STICKY_HEADER_ZINDEX } from "~@jii/common-ui";
 import { useRootStore } from "~@jii/data";

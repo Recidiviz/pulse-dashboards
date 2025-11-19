@@ -17,7 +17,8 @@
 
 import { Sans18 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import styled from "styled-components/macro";
+import type { JSX } from "react";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

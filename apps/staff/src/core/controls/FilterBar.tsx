@@ -28,7 +28,7 @@ const FILTER_BAR_STYLE = {
 };
 
 const FilterBar: React.FC<{
-  details?: React.ReactElement;
+  details?: React.ReactElement<any>;
   children: React.ReactNode;
   containerRef?: any;
   filtersRef?: any;

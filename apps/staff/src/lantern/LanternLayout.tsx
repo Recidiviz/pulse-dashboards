@@ -37,7 +37,7 @@ import LanternStoreProvider from "./LanternStoreProvider";
 import LanternTopBar from "./LanternTopBar";
 import Revocations from "./Revocations";
 
-const LanternLayout: React.FC = (): React.ReactElement | null => {
+const LanternLayout: React.FC = (): React.ReactElement<any> | null => {
   // TODO(#5636) Eliminate PartiallyTypedRootStore
   const { currentTenantId } = useRootStore() as PartiallyTypedRootStore;
   const userStore = useUserStore();

@@ -59,7 +59,7 @@ export default defineConfig(() => ({
     comlink(),
     react({
       babel: {
-        plugins: ["babel-plugin-macros"],
+        plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
       },
     }),
     macros(),

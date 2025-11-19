@@ -36,7 +36,7 @@ function UsMoConductViolationsList({
   cdvs,
 }: {
   cdvs: UsMoConductViolationInfo[];
-}): React.ReactElement {
+}): React.ReactElement<any> {
   return cdvs.length > 0 && cdvs ? (
     <>
       {cdvs.map(({ cdvDate, cdvRule }: UsMoConductViolationInfo) => {
@@ -57,7 +57,7 @@ export function UsMoConductViolations({
   majorCdvs,
   cdvsSinceLastHearing,
   numMinorCdvsBeforeLastHearing,
-}: UsMoConductViolationMetadata): React.ReactElement {
+}: UsMoConductViolationMetadata): React.ReactElement<any> {
   return (
     <DetailsSection>
       <DetailsHeading>Conduct Violations</DetailsHeading>

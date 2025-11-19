@@ -18,9 +18,9 @@
 import * as React from "react";
 
 class MenubarFocusManager {
-  menubar: React.RefObject<HTMLElement> | null;
+  menubar: React.RefObject<HTMLElement | null> | null;
 
-  constructor(menubar: React.RefObject<HTMLElement> | null) {
+  constructor(menubar: React.RefObject<HTMLElement | null> | null) {
     this.menubar = menubar;
   }
 

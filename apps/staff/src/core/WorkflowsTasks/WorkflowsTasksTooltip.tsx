@@ -108,7 +108,7 @@ const TooltipDetails: React.FC<TooltipDetailsProps> = ({ person, tasks }) => {
 type TaskClientTooltipProps = {
   person: JusticeInvolvedPerson;
   tasks: SupervisionTask<SupervisionTaskType>[];
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
   displayOnMobile?: boolean;
 };
 

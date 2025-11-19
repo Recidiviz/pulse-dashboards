@@ -17,7 +17,7 @@
 
 import { rem } from "polished";
 import { FC, memo } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import wordmarkUrl from "./wordmark.svg";
 import wordmarkHighContrastUrl from "./wordmark-hc-wob.svg";

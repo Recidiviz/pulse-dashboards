@@ -17,7 +17,7 @@
 
 import { identity } from "lodash";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { type JSX } from "react";
 
 import { Client } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";

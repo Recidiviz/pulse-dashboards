@@ -39,7 +39,7 @@ import ReactSelect, {
   SelectComponentsConfig,
   StylesConfig,
 } from "react-select";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, Icon, IconSVG, palette } from "~design-system";
 

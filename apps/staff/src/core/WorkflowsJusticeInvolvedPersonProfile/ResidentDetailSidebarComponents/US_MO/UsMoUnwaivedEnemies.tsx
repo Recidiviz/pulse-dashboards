@@ -27,7 +27,7 @@ export function UsMoUnwaivedEnemies({
   unwaivedEnemies,
 }: {
   unwaivedEnemies: UsMoUnwaivedEnemyInfo[] | undefined;
-}): React.ReactElement {
+}): React.ReactElement<any> {
   return (
     <SecureDetailsList>
       <DetailsHeading>Unwaived Enemies</DetailsHeading>

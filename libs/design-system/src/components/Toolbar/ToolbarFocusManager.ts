@@ -20,9 +20,9 @@ import * as React from "react";
 import { ToolbarItemElement } from "./ToolbarItem";
 
 class ToolbarFocusManager {
-  toolbar: React.RefObject<HTMLElement> | null;
+  toolbar: React.RefObject<HTMLElement | null> | null;
 
-  constructor(toolbar: React.RefObject<HTMLElement> | null) {
+  constructor(toolbar: React.RefObject<HTMLElement | null> | null) {
     this.toolbar = toolbar;
   }
 

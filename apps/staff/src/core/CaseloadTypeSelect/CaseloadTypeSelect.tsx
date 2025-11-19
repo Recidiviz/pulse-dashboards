@@ -26,7 +26,7 @@ import { toTitleCase } from "../../utils";
 import { PillButton } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
 const CaseloadTypeSelect = observer(
-  function CaseloadTypeSelect(): React.ReactElement | null {
+  function CaseloadTypeSelect(): React.ReactElement<any> | null {
     const rootStore = useRootStore();
     const { workflowsStore } = rootStore;
     const {

@@ -27,7 +27,7 @@ import {
 import { observer } from "mobx-react-lite";
 import * as React from "react";
 import { useRef } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -77,6 +77,7 @@ const WebFormSelectField: React.FC<WebFormSelectFieldProps> = ({
 
   return (
     <ThemeContainer>
+      {/* @ts-expect-error rmwc is in maintenance mode; not going to worry about this */}
       <Select
         {...props}
         helpText={{ validationMsg, persistent }}

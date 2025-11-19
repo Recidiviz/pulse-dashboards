@@ -35,7 +35,7 @@ import { UsNeSupervisionDetails } from "./US_NE/UsNeSupervisionDetails";
 
 export function Supervision({
   client,
-}: ClientProfileProps): React.ReactElement {
+}: ClientProfileProps): React.ReactElement<any> {
   const {
     tenantStore: {
       labels: { supervisionEndDateCopy },
@@ -91,7 +91,7 @@ export function Supervision({
 
 function StateSpecificSupervisionDetails({
   client,
-}: ClientProfileProps): React.ReactElement | null {
+}: ClientProfileProps): React.ReactElement<any> | null {
   switch (client.stateCode) {
     case "US_NE":
       return <UsNeSupervisionDetails client={client} />;

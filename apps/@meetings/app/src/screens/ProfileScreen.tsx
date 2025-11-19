@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -41,7 +41,10 @@ import SearchBar from "../components/SearchBar";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 
-type NewMeetingNavProp = StackNavigationProp<RootStackParamList, "NewMeeting">;
+type NewMeetingNavProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "NewMeeting"
+>;
 type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
 
 const ProfileScreen = () => {
@@ -229,11 +232,11 @@ const ProfileScreen = () => {
 
           {!isCollapsed && (
             <View className="pt-8">
-              <Text className="text-primary mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px]">
+              <Text className="mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
                 {client.fullName}
               </Text>
 
-              <Text className="text-primary text-[14px] leading-[16px] tracking-[-0.28px]">
+              <Text className="text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
                 ID: {client.displayPersonExternalId} • {client.supervision}
               </Text>
             </View>
@@ -249,7 +252,7 @@ const ProfileScreen = () => {
         }`}
       >
         <View className="flex-row items-center justify-between py-2">
-          <Text className="text-primary text-xl font-semibold">
+          <Text className="text-xl font-semibold text-primary">
             Meetings{" "}
             <Text className="text-gray-400">({filteredMeetings.length})</Text>
           </Text>
@@ -290,7 +293,7 @@ const ProfileScreen = () => {
               >
                 <Text
                   className={`${
-                    isActive ? "text-primary font-medium" : "text-gray-700"
+                    isActive ? "font-medium text-primary" : "text-gray-700"
                   } text-sm`}
                 >
                   {filter}
@@ -301,7 +304,7 @@ const ProfileScreen = () => {
         </View>
 
         <View className="flex-row items-center justify-between">
-          <Text className="text-primary text-sm">
+          <Text className="text-sm text-primary">
             {filteredMeetings.length} meeting
             {filteredMeetings.length > 1 ? "s" : ""}
           </Text>

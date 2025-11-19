@@ -19,7 +19,7 @@ import { Pill, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
 import MarkdownView from "react-showdown";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

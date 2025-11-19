@@ -45,7 +45,7 @@ const INTERSTATE_COPY = {
 
 export function UsMiEarlyDischargeIcDetails({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   if (!(opportunity instanceof UsMiEarlyDischargeOpportunity)) {
     return null;
   }

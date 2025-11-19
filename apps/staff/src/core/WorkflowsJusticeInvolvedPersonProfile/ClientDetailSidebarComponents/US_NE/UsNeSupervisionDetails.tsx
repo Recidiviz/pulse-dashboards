@@ -21,7 +21,7 @@ import { ClientProfileProps } from "../../types";
 
 export function UsNeSupervisionDetails({
   client: { metadata },
-}: ClientProfileProps): React.ReactElement | null {
+}: ClientProfileProps): React.ReactElement<any> | null {
   if (metadata.stateCode !== "US_NE") return null;
 
   const dateString = metadata.paroleEarnedDischargeDate

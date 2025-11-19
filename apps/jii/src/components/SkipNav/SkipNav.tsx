@@ -17,7 +17,7 @@
 
 import { createContext, JSX, ReactNode, useContext, useId } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { STICKY_HEADER_ZINDEX } from "~@jii/common-ui";
 import { useCommonTranslations } from "~@jii/translation";

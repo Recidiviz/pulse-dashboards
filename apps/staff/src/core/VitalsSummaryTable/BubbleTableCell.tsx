@@ -16,10 +16,15 @@
 // =============================================================================
 
 import cx from "classnames";
-import PropTypes from "prop-types";
 import React from "react";
 
-const BubbleTableCell: React.FC<{ value: number }> = ({ value }) => (
+interface BubbleTableCellProps {
+  value: number;
+}
+
+const BubbleTableCell: React.FC<{ value: number }> = ({
+  value,
+}: BubbleTableCellProps) => (
   <span
     key={value}
     className={cx("VitalsSummaryTable__bubble", {
@@ -32,9 +37,5 @@ const BubbleTableCell: React.FC<{ value: number }> = ({ value }) => (
     {value}%
   </span>
 );
-
-BubbleTableCell.propTypes = {
-  value: PropTypes.number.isRequired,
-};
 
 export default BubbleTableCell;

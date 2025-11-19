@@ -17,7 +17,7 @@
 
 import { Debug } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
-import React, { useEffect } from "react";
+import React, { type JSX, useEffect } from "react";
 import {
   createRoutesFromChildren,
   matchRoutes,
@@ -29,7 +29,7 @@ import {
 import ErrorMessage from "./ErrorMessage";
 
 interface Props {
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
   handleBeforeCapture?: (scope: Sentry.Scope) => void;
 }
 

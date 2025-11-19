@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";

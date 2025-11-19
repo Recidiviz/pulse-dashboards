@@ -18,7 +18,7 @@
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Card, CopyWrapper } from "~@jii/common-ui";
 import { Icon } from "~design-system";

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Loading as LoadingSpinner } from "@recidiviz/design-system";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 const LoadingContainer = styled.div`
   position: fixed;

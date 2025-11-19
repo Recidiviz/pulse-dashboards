@@ -19,7 +19,7 @@ import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   ActivityList,

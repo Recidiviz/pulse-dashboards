@@ -17,7 +17,7 @@
 
 import { Assets } from "@recidiviz/design-system";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 const LogoImg = styled.img`
   width: auto;

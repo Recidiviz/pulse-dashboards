@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { compiler } from "markdown-to-jsx";
+import { JSX } from "react";
 
 /**
  * Extracts all h2 heading IDs from the markdown content in order.

@@ -16,8 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React, { MutableRefObject, useRef } from "react";
-import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
+import React, { InputHTMLAttributes, useRef } from "react";
 
 import { useOpportunityFormContext } from "../OpportunityFormContext";
 import { FormDataFieldName } from "../US_TX/types";
@@ -29,21 +28,14 @@ export type FormInputValueGetter = (value: any) => any;
 
 export type FormInputValueBuilder = (data: any, value: string) => string;
 
-type FormInputProps = StyledComponentProps<
-  "input",
-  DefaultTheme,
-  object,
-  never
-> & {
+type FormInputProps = InputHTMLAttributes<HTMLInputElement> & {
   name: FormDataFieldName;
 };
 
 const FormInput: React.FC<FormInputProps> = ({ name, ...props }) => {
   const form = useOpportunityFormContext();
   const [value, onChange] = useReactiveInput<HTMLInputElement>(name, form);
-  const inputRef = useRef<HTMLInputElement>(
-    null,
-  ) as MutableRefObject<HTMLInputElement>;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const hasAnimated = useAnimatedValue(inputRef, value);
 

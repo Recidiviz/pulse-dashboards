@@ -18,7 +18,7 @@
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import * as React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import DOCXFormInput from "../../DOCXFormInput";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
@@ -113,7 +113,7 @@ const FormTransformContainer = styled.section`
 export const FormSkeleton: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+  const formRef = React.useRef<HTMLDivElement>(null);
 
   const {
     layout: { margin },

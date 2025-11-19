@@ -18,7 +18,7 @@
 import { animation, typography } from "@recidiviz/design-system";
 import { useEffect, useState } from "react";
 import MarkdownView from "react-showdown";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 

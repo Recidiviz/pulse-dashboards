@@ -42,7 +42,7 @@ import { UsTnFacilityAdmissionDateSubsection } from "./US_TN/UsTnFacilityAdmissi
 const ReleaseDate = observer(function ReleaseDate({
   resident,
   opportunity,
-}: ResidentWithOptionalOpportunityProps): React.ReactElement {
+}: ResidentWithOptionalOpportunityProps): React.ReactElement<any> {
   const {
     tenantStore: {
       labels: { releaseDateCopy },
@@ -82,7 +82,7 @@ const ReleaseDate = observer(function ReleaseDate({
 export function Incarceration({
   resident,
   opportunity,
-}: ResidentWithOptionalOpportunityProps): React.ReactElement {
+}: ResidentWithOptionalOpportunityProps): React.ReactElement<any> {
   const {
     tenantStore: {
       labels: { incarcerationStaffTitle },
@@ -129,7 +129,7 @@ export function Incarceration({
 
 function StateSpecificIncarcerationDetails({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   switch (resident.stateCode) {
     case "US_ND":
       return <UsNdIncarcerationDetails resident={resident} />;

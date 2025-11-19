@@ -25,7 +25,11 @@ export default defineConfig(() => ({
   cacheDir: "../../node_modules/.vite/libs/sentencing-client",
 
   plugins: [
-    react({ babel: { plugins: ["babel-plugin-macros"] } }),
+    react({
+      babel: {
+        plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
+      },
+    }),
     nxViteTsPaths(),
     svgr(),
   ],

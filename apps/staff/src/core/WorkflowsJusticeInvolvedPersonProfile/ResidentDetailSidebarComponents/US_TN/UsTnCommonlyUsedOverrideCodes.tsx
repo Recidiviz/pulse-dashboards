@@ -28,7 +28,7 @@ import { OpportunityProfileProps } from "../../types";
 
 export function UsTnCommonlyUsedOverrideCodes({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   const overrideCodes = {
     C1DEC: "Maximum to Close decrease",
     C2DEC: "Non-assaultive disciplinary",

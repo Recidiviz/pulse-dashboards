@@ -24,7 +24,7 @@ import { rem } from "polished";
 import { FC, ReactNode, useEffect, useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import useMeasure from "react-use-measure";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   HEADER_ANIMATION_OPTIONS,

@@ -18,19 +18,13 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { defer } from "lodash";
 import { rem, rgba } from "polished";
-import {
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Column, useFlexLayout, useTable } from "react-table";
 import WindowScroller from "react-virtualized/dist/commonjs/WindowScroller";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList, FixedSizeList as List } from "react-window";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -135,9 +129,7 @@ const InsightsTable = <T extends object>({
   const [scrollIndex, setScrollIndex] = useState(0);
   const location = useLocation();
 
-  const listRef = useRef<FixedSizeList>(
-    null,
-  ) as MutableRefObject<FixedSizeList>;
+  const listRef = useRef<FixedSizeList>(null);
   useEffect(() => {
     listRef.current?.scrollToItem(scrollIndex);
   }, [scrollIndex]);
@@ -261,7 +253,9 @@ const InsightsTable = <T extends object>({
         <AutoSizer>
           {({ width }) => (
             <WindowScroller
-              ref={(ref) => handleHideColumnWidth(ref, width)}
+              ref={(ref) => {
+                handleHideColumnWidth(ref, width);
+              }}
               scrollElement={scrollElement || window}
             >
               {({ height }) => {

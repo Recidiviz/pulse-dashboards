@@ -33,7 +33,7 @@ const WorkflowsCompliantReportingForm = ({
   opportunity: Opportunity;
 }) => {
   const form = useOpportunityFormContext();
-  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+  const formRef = React.useRef<HTMLDivElement>(null);
   const [isMissingContent, setIsMissingContent] = useState(false);
 
   useEffect(() => {
@@ -42,6 +42,9 @@ const WorkflowsCompliantReportingForm = ({
   }, [formRef]);
 
   const onClickDownload = async () => {
+    if (!formRef.current) {
+      return;
+    }
     return generate(formRef.current, `${PrintablePageContainer}`).then(
       (pdf: jsPDF) => {
         pdf.save(

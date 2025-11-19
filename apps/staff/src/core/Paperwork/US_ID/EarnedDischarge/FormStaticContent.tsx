@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   FormColGroup,
@@ -63,7 +63,7 @@ type SignatureRowProps = {
 
 const SignatureRow = ({
   signatureOf,
-}: SignatureRowProps): React.ReactElement => {
+}: SignatureRowProps): React.ReactElement<any> => {
   return (
     <SignatureContainer>
       <FormColGroup widths={[22, 24, 48, 6]} />

@@ -17,7 +17,7 @@
 
 import { AnchorHTMLAttributes } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Icon } from "~design-system";
 
@@ -53,6 +53,7 @@ export function InternalOrExternalLink({
     return (
       <a {...props}>
         {children}
+        {/* @ts-expect-error https://github.com/styled-components/styled-components/issues/4314 */}
         {icon && <InlineIcon />}
       </a>
     );
@@ -61,6 +62,7 @@ export function InternalOrExternalLink({
   return (
     <Link to={props.href ?? ""}>
       {children}
+      {/* @ts-expect-error https://github.com/styled-components/styled-components/issues/4314 */}
       {icon && <InlineIcon />}
     </Link>
   );

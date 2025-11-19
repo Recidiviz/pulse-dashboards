@@ -18,7 +18,7 @@
 import { Modal, Serif24, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -263,7 +263,7 @@ export const MobileTaskFilterModal = observer(function MobileTaskFilterModal({
   return (
     <FullScreenModal
       isOpen={modalIsOpen}
-      onRequestClose={(e) => {
+      onRequestClose={(e: React.MouseEvent | React.KeyboardEvent) => {
         setModalIsOpen(false);
       }}
     >

@@ -193,13 +193,7 @@ export const designSystemRestrictedImports = {
   message: "Please import from ~design-system instead.",
 };
 
-export const reactRestrictedImports = [
-  {
-    name: "styled-components",
-    message: "Please import from styled-components/macro.",
-  },
-  designSystemRestrictedImports,
-];
+export const reactRestrictedImports = [designSystemRestrictedImports];
 
 export const reactConfig = tseslint.config(
   {

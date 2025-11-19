@@ -18,7 +18,7 @@
 import { action } from "mobx";
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";

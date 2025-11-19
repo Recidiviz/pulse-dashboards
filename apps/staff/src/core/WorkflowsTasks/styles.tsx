@@ -23,7 +23,7 @@ import {
   spacing,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
-import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
+import styled, { CSSProp } from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -84,7 +84,7 @@ export const TaskDivider = styled.hr`
 
 export const TaskDueDate = styled.div<{
   overdue: boolean;
-  font: FlattenSimpleInterpolation;
+  font: CSSProp;
   marginLeft?: string;
   isMobile?: boolean;
 }>`

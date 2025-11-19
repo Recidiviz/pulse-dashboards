@@ -32,7 +32,7 @@ export function UsMoClasses({
   classes,
 }: {
   classes: UsMoClassInfo[];
-}): React.ReactElement {
+}): React.ReactElement<any> {
   return (
     <DetailsSection>
       <DetailsHeading>Up to 10 Most Recent Classes</DetailsHeading>

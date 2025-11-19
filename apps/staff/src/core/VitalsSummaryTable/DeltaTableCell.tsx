@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,21 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import PropTypes from "prop-types";
 import React from "react";
 
 import PercentDelta from "../controls/PercentDelta";
 
-const DeltaTableCell: React.FC<{ value: number }> = ({ value }) => {
+interface DeltaTableCellProps {
+  value: number;
+}
+
+const DeltaTableCell: React.FC<{ value: number }> = ({
+  value,
+}: DeltaTableCellProps) => {
   return (
     <div className="VitalsSummaryTable__change">
       <PercentDelta value={value} width={14} height={12} improvesOnIncrease />
     </div>
   );
-};
-
-DeltaTableCell.propTypes = {
-  value: PropTypes.number.isRequired,
 };
 
 export default DeltaTableCell;

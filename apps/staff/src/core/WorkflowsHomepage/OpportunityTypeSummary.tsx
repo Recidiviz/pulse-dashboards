@@ -39,7 +39,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   opportunityType: OpportunityType;
   officerPseudoId?: string;
   showZeroGrantsPill?: boolean;
-}): React.ReactElement | null {
+}): React.ReactElement<any> | null {
   const { eligibilityTextForCount, urlSection, zeroGrantsTooltip, tabGroups } =
     useOpportunityConfigurations()[opportunityType];
 

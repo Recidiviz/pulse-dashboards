@@ -16,7 +16,7 @@
 // =============================================================================
 
 import * as React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 const ContentContainer = styled.div`
   display: flex;

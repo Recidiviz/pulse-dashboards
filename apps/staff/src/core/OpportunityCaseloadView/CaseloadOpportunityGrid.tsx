@@ -21,7 +21,7 @@ import { useCallback } from "react";
 import WindowScroller from "react-virtualized/dist/commonjs/WindowScroller";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";

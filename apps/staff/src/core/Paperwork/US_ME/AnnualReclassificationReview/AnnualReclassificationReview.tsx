@@ -18,7 +18,7 @@
 import { startCase } from "lodash";
 import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsMeAnnualReclassificationReviewData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMeAnnualReclassificationReviewForm";
@@ -86,7 +86,7 @@ function AnnualClassificationReview({
     >
       {previewImages.map((image, index) => (
         // eslint-disable-next-line react/no-array-index-key
-        (<FormPreviewPage key={index} src={image} />)
+        <FormPreviewPage key={index} src={image} />
       ))}
     </FormContainer>
   );

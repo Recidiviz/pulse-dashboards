@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import * as React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { useResizeForm } from "./utils";
@@ -29,7 +29,7 @@ const FormViewerGrid = styled.div`
 `;
 
 interface FormViewerProps {
-  formRef?: React.MutableRefObject<HTMLDivElement>;
+  formRef?: React.RefObject<HTMLDivElement | null>;
   children: React.ReactNode;
 }
 
@@ -42,8 +42,7 @@ export const FormViewerContext = React.createContext<FormViewerContextData>({
 });
 
 const FormViewer: React.FC<FormViewerProps> = ({ formRef, children }) => {
-  const backupFormRef =
-    React.useRef() as React.MutableRefObject<HTMLDivElement>;
+  const backupFormRef = React.useRef<HTMLDivElement>(null);
   const internalFormRef = formRef ?? backupFormRef;
   useResizeForm(internalFormRef);
   const { workflowsStore } = useRootStore();

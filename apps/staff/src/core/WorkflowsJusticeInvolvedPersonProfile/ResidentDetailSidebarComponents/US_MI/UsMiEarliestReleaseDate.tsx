@@ -23,7 +23,7 @@ import { ResidentProfileProps } from "../../types";
 
 export function UsMiEarliestReleaseDate({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   if (resident.metadata.stateCode !== "US_MI") {
     return null;
   }

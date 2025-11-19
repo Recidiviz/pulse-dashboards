@@ -24,10 +24,10 @@ import SentryErrorBoundary from "../components/SentryErrorBoundary";
 import { useLanternStore } from "./LanternStoreProvider";
 
 interface Props {
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
 }
 
-function ErrorBoundary({ children }: Props): React.ReactElement {
+function ErrorBoundary({ children }: Props): React.ReactElement<any> {
   const {
     userRestrictionsStore: { allowedSupervisionLocationIds },
     currentTenantId,

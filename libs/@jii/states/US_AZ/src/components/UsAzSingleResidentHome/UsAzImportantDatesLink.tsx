@@ -18,7 +18,7 @@
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";

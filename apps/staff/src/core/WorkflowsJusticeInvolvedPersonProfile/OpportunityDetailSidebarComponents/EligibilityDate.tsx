@@ -31,7 +31,7 @@ const FALLBACK_ELIGIBILITY_TEXT = "First Day of Eligibility";
 
 export function EligibilityDate({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   const {
     config: { eligibilityDateText = FALLBACK_ELIGIBILITY_TEXT },
     eligibilityDate,

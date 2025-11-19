@@ -29,7 +29,7 @@ import { Prompt } from "../../FormPrompt";
 const getMetadataPrompts = (
   client?: Client,
   metadata: Partial<UsNdEarlyTerminationReferralRecord["metadata"]> = {},
-): React.ReactChild[] => {
+): (React.ReactElement<any> | number | string)[] => {
   const prompts = [];
   if (metadata.outOfState) {
     prompts.push(

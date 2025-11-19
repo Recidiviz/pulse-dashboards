@@ -20,7 +20,7 @@ import Markdown from "markdown-to-jsx";
 import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { FullBleedContainer, PAGE_WIDTH } from "~@jii/common-ui";
 import { useRootStore } from "~@jii/data";

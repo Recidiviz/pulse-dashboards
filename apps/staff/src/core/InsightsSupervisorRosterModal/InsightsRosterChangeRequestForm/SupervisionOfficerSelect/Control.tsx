@@ -21,7 +21,7 @@ import { rem } from "polished";
 import React from "react";
 import DropdownItem from "react-bootstrap/esm/DropdownItem";
 import { components, ControlProps } from "react-select";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { RosterChangeRequest, rosterChangeRequestSchema } from "~datatypes";
 import {
@@ -118,7 +118,7 @@ export const Control = memoize(
                     <StyledDropdownMenuItem
                       as={DropdownItem}
                       key={action}
-                      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                      onClick={(e) => {
                         e.stopPropagation();
                         if (!selected) handleSetValue(action)();
                       }}
@@ -133,6 +133,7 @@ export const Control = memoize(
                     >
                       <FlexWrapper>
                         <div>{humanReadableTitleCase(action)}</div>
+                        {/* @ts-expect-error https://github.com/styled-components/styled-components/issues/4314 */}
                         {selected && <SelectedCheckmarkIndicator />}
                       </FlexWrapper>
                     </StyledDropdownMenuItem>

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import UsMoAssessmentScores from "../OpportunityDetailSidebarComponents/US_MO/UsMoAssessmentScores";
 import UsMoGangInvolvement from "../OpportunityDetailSidebarComponents/US_MO/UsMoGangInvolvement";
@@ -36,7 +36,7 @@ const Wrapper = styled.div`
 
 export function UsMoResidentInformation({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   const { metadata } = resident;
 
   if (metadata.stateCode !== "US_MO") {

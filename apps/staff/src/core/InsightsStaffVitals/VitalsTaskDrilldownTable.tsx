@@ -27,7 +27,7 @@ import {
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useMemo } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Icon, palette } from "~design-system";
 

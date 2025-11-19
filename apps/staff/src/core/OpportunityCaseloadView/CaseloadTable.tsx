@@ -30,7 +30,7 @@ import {
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { Dispatch, SetStateAction, useState } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -38,9 +38,8 @@ import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { NAV_BAR_HEIGHT } from "../NavigationLayout";
-import {StatusAwareButton} from "../OpportunityDenial/MenuButton.styles";
+import { StatusAwareButton } from "../OpportunityDenial/MenuButton.styles";
 import { PersonIdWithCopyIcon } from "../PersonId/PersonId";
-
 
 const Table = styled.table`
   width: 100%;
@@ -133,7 +132,7 @@ const Row = styled.tr<{ $isSelected?: boolean }>`
   }
 
   // Only show UsAzMarkSubmittedButton and NavigateToFormButton buttons on row hover
-  :not(:hover, :focus) {
+  &:not(:hover, :focus) {
     ${NavigateToFormButtonStyle}, ${StatusAwareButton} {
       display: none;
     }
@@ -145,8 +144,8 @@ const TableBody = styled.tbody`
 
   /* Give the hover state to only body rows, not header rows */
   & ${Row} {
-    :hover,
-    :focus {
+    &:hover,
+    &:focus {
       background-color: ${palette.marble2};
       cursor: pointer;
     }

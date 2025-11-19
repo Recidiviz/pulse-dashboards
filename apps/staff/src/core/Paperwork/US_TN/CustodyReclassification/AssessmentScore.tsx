@@ -17,7 +17,7 @@
 
 // TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { rangeString } from "../../../../utils";
 import AssessmentItem, { SubItem } from "./AssessmentItem";

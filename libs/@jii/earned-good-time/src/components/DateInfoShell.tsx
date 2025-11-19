@@ -18,7 +18,7 @@
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC, ReactNode } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { CardHeading, Chip } from "~@jii/common-ui";
 

@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { ComponentType, useEffect, useRef, useState } from "react";
 import { Column } from "react-table";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { FullName, SupervisionOfficerMetricEvent } from "~datatypes";
 

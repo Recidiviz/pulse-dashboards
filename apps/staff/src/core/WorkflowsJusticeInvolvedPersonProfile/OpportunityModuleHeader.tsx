@@ -19,7 +19,7 @@ import { Pill, Sans16, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useMatch } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -61,7 +61,7 @@ export const EligibilityStatusPill = observer(function EligibilityStatusPill({
   const isClientProfile = useMatch(WORKFLOWS_PATHS.clientProfile);
   const isResidentProfile = useMatch(WORKFLOWS_PATHS.residentProfile);
   const isFullProfilePage = isClientProfile || isResidentProfile;
-  
+
   return (
     (!opportunity.isIneligible || isFullProfilePage) && (
       <EligibilityStatusPillStyled

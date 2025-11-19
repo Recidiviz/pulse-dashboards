@@ -22,7 +22,7 @@ import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import superjson from "superjson";
 
 import { palette } from "~design-system";
@@ -181,7 +181,9 @@ const ProfileDetailsWrapper = styled.div`
 
 export const DETAILS_NOT_AVAILABLE_STRING = "currently not available";
 
-function AdditionalDetails({ person }: PersonProfileProps): React.ReactElement {
+function AdditionalDetails({
+  person,
+}: PersonProfileProps): React.ReactElement<any> {
   if (person instanceof Client) {
     return <ClientDetails client={person} />;
   }
@@ -195,7 +197,7 @@ function AdditionalDetails({ person }: PersonProfileProps): React.ReactElement {
 
 const ClientDetails = observer(function ClientDetails({
   client,
-}: ClientProfileProps): React.ReactElement {
+}: ClientProfileProps): React.ReactElement<any> {
   return (
     <>
       {client.stateCode === "US_UT" ? (
@@ -241,7 +243,7 @@ const ClientDetails = observer(function ClientDetails({
 
 const ResidentDetails = observer(function ResidentDetails({
   resident,
-}: ResidentProfileProps): React.ReactElement {
+}: ResidentProfileProps): React.ReactElement<any> {
   return (
     <>
       <PartialTime person={resident} />
@@ -255,7 +257,7 @@ const ResidentDetails = observer(function ResidentDetails({
 
 function StateSpecificResidentInformation({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   switch (resident.stateCode) {
     case "US_AR":
       return <UsArResidentInformation resident={resident} />;
@@ -273,7 +275,7 @@ function StateSpecificResidentInformation({
 }
 
 const PreferredName: React.FC<ClientProfileProps> = observer(
-  function PreferredName({ client }): React.ReactElement {
+  function PreferredName({ client }): React.ReactElement<any> {
     const name =
       client.preferredName || toJS(client.fullName).givenNames || "Unknown";
     return (
@@ -291,7 +293,7 @@ type ContactDetailsType = { isMobile: boolean } & PersonProfileProps;
 function ContactDetails({
   person,
   isMobile,
-}: ContactDetailsType): React.ReactElement | null {
+}: ContactDetailsType): React.ReactElement<any> | null {
   if (!(person instanceof Client)) return null;
 
   return (
@@ -328,7 +330,7 @@ function ContactDetails({
 }
 
 export const FullProfile = observer(
-  function FullProfile(): React.ReactElement | null {
+  function FullProfile(): React.ReactElement<any> | null {
     const {
       workflowsStore: { selectedPerson: person },
       userStore,

@@ -18,7 +18,7 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { subMonths } from "date-fns";
 import { rem } from "polished";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { Icon, palette } from "~design-system";
 

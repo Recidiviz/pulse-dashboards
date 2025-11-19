@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import { now } from "mobx-utils";
 import { rem } from "polished";
 import { ReactNode, useEffect, useState } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -133,7 +133,7 @@ export const InsightsTooltip = ({
   maxWidth,
   children,
 }: {
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
   contents: ReactNode;
   maxWidth?: number;
 }) => {

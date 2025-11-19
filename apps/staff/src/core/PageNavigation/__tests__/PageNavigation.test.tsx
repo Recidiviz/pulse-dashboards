@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mount } from "enzyme";
+import { render } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 import { Mock } from "vitest";
@@ -53,7 +53,7 @@ const useQueryParamsMock = useQueryParams as Mock;
 
 describe("CoreLayout tests", () => {
   const renderPageNavigation = () => {
-    return mount(
+    return render(
       <MemoryRouter>
         <PageNavigation />
       </MemoryRouter>,
@@ -109,38 +109,43 @@ describe("CoreLayout tests", () => {
   });
 
   it("Should render a link for each page option", () => {
-    const selector = renderPageNavigation();
-    expect(selector.find("Link.PageNavigation__option")).toHaveLength(3);
+    const { container } = renderPageNavigation();
+    const options = container.querySelectorAll(".PageNavigation__option");
+    expect(options).toHaveLength(3);
   });
 
   it("Add bar above current page", () => {
     coreStoreMock.page = "page1";
 
-    const selector = renderPageNavigation();
-    expect(selector.find("Link.PageNavigation__option--selected")).toHaveLength(
-      1,
+    const { container } = renderPageNavigation();
+    const selectedOptions = container.querySelectorAll(
+      ".PageNavigation__option--selected",
     );
+    expect(selectedOptions).toHaveLength(1);
   });
 
   it("Don't add bars above any page selectors if not in one", () => {
     coreStoreMock.page = "disabledPage";
 
-    const selector = renderPageNavigation();
-    expect(selector.find("Link.PageNavigation__option--selected")).toHaveLength(
-      0,
+    const { container } = renderPageNavigation();
+    const selectedOptions = container.querySelectorAll(
+      ".PageNavigation__option--selected",
     );
+    expect(selectedOptions).toHaveLength(0);
   });
 
   describe("Insights link", () => {
     it("Hides if not enabled", () => {
-      const selector = renderPageNavigation();
-      expect(selector.find("InsightsLink>DropdownMenuItem")).toHaveLength(0);
+      const { container } = renderPageNavigation();
+      const insightsLink = container.querySelector("a[href*='insights']");
+      expect(insightsLink).not.toBeInTheDocument();
     });
 
     it("Shows if enabled", () => {
       rootStoreMock.userStore.userAllowedNavigation.insights = [];
-      const selector = renderPageNavigation();
-      expect(selector.find("InsightsLink>DropdownMenuItem")).toHaveLength(1);
+      const { container } = renderPageNavigation();
+      const insightsLink = container.querySelector("a[href*='insights']");
+      expect(insightsLink).toBeInTheDocument();
     });
   });
 });

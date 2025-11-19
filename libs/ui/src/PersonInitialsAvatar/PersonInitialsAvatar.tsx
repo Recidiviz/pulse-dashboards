@@ -19,7 +19,7 @@ import { Sans14 } from "@recidiviz/design-system";
 import Avatar from "boring-avatars";
 import { rem } from "polished";
 import React from "react";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -31,28 +31,24 @@ interface AvatarProps {
   solidColor?: string;
 }
 
-interface AvatarElementProps {
-  size: number;
-}
-
-const AvatarElement = styled.div(
-  ({ size }: AvatarElementProps) => css`
+const AvatarElement = styled.div<{ $size: number }>`
+  ${({ $size }) => css`
     align-items: center;
     border-radius: ${rem(8)};
     display: flex;
-    height: ${rem(size)};
-    line-height: ${rem(size)};
+    height: ${rem($size)};
+    line-height: ${rem($size)};
     justify-content: center;
     overflow: hidden;
     position: relative;
-    width: ${rem(size)};
+    width: ${rem($size)};
 
     & svg {
       left: 0;
       position: absolute;
     }
-  `,
-);
+  `}
+`;
 
 const AvatarInitials = styled(Sans14)<{ size: number }>`
   color: white;
@@ -87,7 +83,7 @@ export const PersonInitialsAvatar: React.FC<AvatarProps> = ({
   const colors = solidColor ? [solidColor] : palette.data.profileColorOrder;
 
   return (
-    <AvatarElement className="UserAvatar" size={size}>
+    <AvatarElement className="UserAvatar" $size={size}>
       <Avatar
         variant="marble"
         size={size}

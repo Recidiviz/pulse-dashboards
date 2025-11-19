@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { formatWorkflowsDate } from "../../../../utils/formatStrings";
 import {
@@ -43,7 +43,7 @@ const DocketContainer = styled.div`
 
 export function UsMiSecondaryOfficersAndDockets({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   if (
     !(
       opportunity instanceof UsMiEarlyDischargeOpportunity ||

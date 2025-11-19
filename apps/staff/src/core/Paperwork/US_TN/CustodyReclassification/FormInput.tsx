@@ -17,8 +17,7 @@
 
 // TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
 import { observer } from "mobx-react-lite";
-import React, { MutableRefObject, useRef } from "react";
-import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
+import React, { InputHTMLAttributes, useRef } from "react";
 
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { useAnimatedValue } from "../../useAnimatedValue";
@@ -30,12 +29,7 @@ export type FormInputValueGetter = (value: any) => any;
 
 export type FormInputValueBuilder = (data: any, value: string) => string;
 
-type FormInputProps = StyledComponentProps<
-  "input",
-  DefaultTheme,
-  object,
-  never
-> & {
+type FormInputProps = InputHTMLAttributes<HTMLInputElement> & {
   name: keyof FormDataType;
   hideValue?: boolean;
 };
@@ -43,9 +37,7 @@ type FormInputProps = StyledComponentProps<
 const FormInput: React.FC<FormInputProps> = ({ name, hideValue, ...props }) => {
   const form = useOpportunityFormContext();
   const [value, onChange] = useReactiveInput<HTMLInputElement>(name, form);
-  const inputRef = useRef<HTMLInputElement>(
-    null,
-  ) as MutableRefObject<HTMLInputElement>;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const valueForDisplay = hideValue ? "" : value;
 

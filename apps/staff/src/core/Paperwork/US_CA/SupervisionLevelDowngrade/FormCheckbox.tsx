@@ -16,18 +16,13 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
+import { InputHTMLAttributes } from "react";
 
 import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 
-type FormCheckboxProps = StyledComponentProps<
-  "input",
-  DefaultTheme,
-  object,
-  never
-> & {
+type FormCheckboxProps = InputHTMLAttributes<HTMLInputElement> & {
   name: keyof UsCaSupervisionLevelDowngradeDraftData;
   invert?: boolean;
   disabled?: boolean;

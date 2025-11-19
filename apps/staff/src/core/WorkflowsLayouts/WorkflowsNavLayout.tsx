@@ -19,7 +19,7 @@ import { spacing, typography, zindex } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -50,7 +50,7 @@ const Main = styled.main<{
   padding: ${({ isMobile }) =>
     isMobile
       ? `${rem(spacing.lg)} ${rem(spacing.md)}`
-      : `${rem(spacing.xl)} ${rem(spacing.lg)}`}};
+      : `${rem(spacing.xl)} ${rem(spacing.lg)}`};
 
   /* leaving extra space for the Intercom button */
   ${({ isMobile }) =>

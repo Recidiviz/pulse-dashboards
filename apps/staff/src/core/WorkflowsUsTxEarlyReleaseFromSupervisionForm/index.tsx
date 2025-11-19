@@ -30,7 +30,7 @@ const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
   }: {
     opportunity: Opportunity;
   }) {
-    const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+    const formRef = React.useRef<HTMLDivElement>(null);
     const [isMissingContent, setIsMissingContent] = useState(false);
 
     useEffect(() => {

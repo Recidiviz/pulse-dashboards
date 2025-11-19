@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
+import { type JSX, useEffect, useState } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { TextMessageStatus, TextMessageStatuses } from "../../FirestoreStore";

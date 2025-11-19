@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useContext } from "react";
+import { type JSX, useContext } from "react";
 
 import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";

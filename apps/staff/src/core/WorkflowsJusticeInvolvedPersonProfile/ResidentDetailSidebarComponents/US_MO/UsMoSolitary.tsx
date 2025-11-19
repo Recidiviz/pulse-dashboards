@@ -26,7 +26,7 @@ import { ResidentProfileProps } from "../../types";
 
 export function UsMoSolitary({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   const { metadata } = resident;
 
   if (metadata.stateCode !== "US_MO") return null;

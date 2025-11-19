@@ -23,7 +23,7 @@ import { ResidentProfileProps } from "../../types";
 
 export function UsTnFacilityAdmissionDateSubsection({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   if (!resident.usTnFacilityAdmissionDate) {
     return null;
   }

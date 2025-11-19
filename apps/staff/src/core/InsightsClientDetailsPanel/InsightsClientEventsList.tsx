@@ -17,7 +17,7 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { ClientEvent } from "~datatypes";
 import { palette } from "~design-system";
@@ -58,7 +58,7 @@ const Event = ({
 }: {
   event: ClientEvent;
   clientEventTypes: Set<string>;
-}): React.ReactElement | null => {
+}): React.ReactElement<any> | null => {
   const showDescription = clientEventTypes.has(event.metricId);
 
   const attributes =

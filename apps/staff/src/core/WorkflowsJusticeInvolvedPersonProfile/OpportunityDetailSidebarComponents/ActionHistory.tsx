@@ -20,7 +20,7 @@ import { addDays } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   formatWorkflowsDate,
@@ -50,7 +50,7 @@ function OfficerActionContents({
   action,
 }: {
   action: OfficerAction;
-}): React.ReactElement | undefined {
+}): React.ReactElement<any> | undefined {
   if (action.type === "APPROVAL") {
     return (
       <div>
@@ -93,7 +93,7 @@ function PersonHeader({
 }: {
   personName: string;
   date: Timestamp;
-}): React.ReactElement | null {
+}): React.ReactElement<any> | null {
   return (
     <SmallDetailsHeader>
       <PersonInfoWrapper>
@@ -112,7 +112,7 @@ function ActionEntry({
   action,
 }: {
   action: OfficerAction;
-}): React.ReactElement | null {
+}): React.ReactElement<any> | null {
   const response = action.supervisorResponse;
   let actionText: string;
   if (action.type === "DENIAL" && !action.requestedSnoozeLength) {
@@ -146,7 +146,7 @@ function ActionEntry({
 
 export const ActionHistory = observer(function ActionHistory({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   if (!opportunity.actionHistory?.length) {
     return null;
   }

@@ -28,7 +28,7 @@ import { ClientProfileProps } from "../types";
 
 export function ClientEmployer({
   client,
-}: ClientProfileProps): React.ReactElement | null {
+}: ClientProfileProps): React.ReactElement<any> | null {
   const employers = client.currentEmployers;
   if (!employers || employers.length < 1) return null;
 

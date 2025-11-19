@@ -20,7 +20,7 @@ import { addDays } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   formatWorkflowsDate,
@@ -46,7 +46,7 @@ function OfficerActionContents({
   action,
 }: {
   action: OfficerAction;
-}): React.ReactElement | undefined {
+}): React.ReactElement<any> | undefined {
   if (action.type === "APPROVAL") {
     if (!action.notes) {
       return undefined;
@@ -80,7 +80,7 @@ function PersonHeader({
 }: {
   personName: string;
   date: Timestamp;
-}): React.ReactElement | null {
+}): React.ReactElement<any> | null {
   return (
     <SmallDetailsHeader>
       <PersonInfoWrapper>
@@ -96,7 +96,7 @@ function ActionEntry({
   action,
 }: {
   action: OfficerAction;
-}): React.ReactElement | null {
+}): React.ReactElement<any> | null {
   if (isApprovalWithEmptyNotes(action)) {
     return null;
   }
@@ -125,7 +125,7 @@ const isApprovalWithEmptyNotes = (action: OfficerAction) =>
 export const UsIaActionPlansAndNotes = observer(
   function UsIaActionPlansAndNotes({
     opportunity,
-  }: OpportunityProfileProps): React.ReactElement | null {
+  }: OpportunityProfileProps): React.ReactElement<any> | null {
     if (
       !(opportunity instanceof UsIaEarlyDischargeOpportunity) ||
       !opportunity.mostRecentActions?.length ||

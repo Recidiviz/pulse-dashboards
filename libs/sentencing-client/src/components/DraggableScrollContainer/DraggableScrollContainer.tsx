@@ -22,7 +22,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import ChevronIcon from "../assets/chevron-down.svg?react";
 import * as Styled from "../CaseDetails/CaseDetails.styles";

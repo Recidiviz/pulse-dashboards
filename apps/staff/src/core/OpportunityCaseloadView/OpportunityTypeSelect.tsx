@@ -19,7 +19,7 @@ import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   Dropdown,
@@ -86,6 +86,7 @@ export const OpportunityTypeSelect = observer(function OpportunityTypeSelect({
             <FlexWrapper>
               {opportunityConfigs[oppType].label}
               {oppType === selectedOpportunityType && (
+                // @ts-expect-error https://github.com/styled-components/styled-components/issues/4314
                 <SelectedCheckmarkIndicator />
               )}
             </FlexWrapper>

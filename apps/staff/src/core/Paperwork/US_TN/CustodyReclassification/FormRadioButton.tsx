@@ -17,10 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import * as React from "react";
-import styled, {
-  DefaultTheme,
-  StyledComponentProps,
-} from "styled-components/macro";
+import styled from "styled-components";
 
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
@@ -30,12 +27,7 @@ export const SquareInputSelector = styled.input`
   height: 1em;
 `;
 
-type FormRadioButtonProps = StyledComponentProps<
-  typeof SquareInputSelector,
-  DefaultTheme,
-  object,
-  never
-> & {
+type FormRadioButtonProps = React.InputHTMLAttributes<HTMLInputElement> & {
   name: keyof FormDataType;
   targetValue: string | boolean;
   label: string;

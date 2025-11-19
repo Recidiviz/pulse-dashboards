@@ -17,7 +17,7 @@
 
 import { rem } from "polished";
 import * as React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { CRITERIA_LABELS, GRAY_BACKGROUND, strings } from "./constants";
 import { BlueCell, GreyCell, WhiteCell } from "./CriteriaChecklistCells";

@@ -75,7 +75,7 @@ export function FormUsIaEarlyDischargeParole({
 }: {
   opportunity: Opportunity;
 }) {
-  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+  const formRef = React.useRef<HTMLDivElement>(null);
 
   if (!(opportunity instanceof UsIaEarlyDischargeOpportunity)) {
     return null;

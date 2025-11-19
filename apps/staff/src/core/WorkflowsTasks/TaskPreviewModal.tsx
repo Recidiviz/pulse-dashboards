@@ -19,7 +19,7 @@ import { Sans12, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { Fragment } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -123,7 +123,11 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
           {opportunitiesToDisplay && (
             <>
               <TaskItemHeader>Opportunities</TaskItemHeader>
-              <OpportunitiesAccordion hideEmpty person={selectedClient} showIneligibleOpportunityTypes={false} />
+              <OpportunitiesAccordion
+                hideEmpty
+                person={selectedClient}
+                showIneligibleOpportunityTypes={false}
+              />
             </>
           )}
           <TaskItemHeader>Client Details</TaskItemHeader>

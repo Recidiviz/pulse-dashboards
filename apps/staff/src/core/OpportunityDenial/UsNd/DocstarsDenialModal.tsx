@@ -21,9 +21,9 @@ import { startOfToday } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useEffect, useState } from "react";
+import { type JSX, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

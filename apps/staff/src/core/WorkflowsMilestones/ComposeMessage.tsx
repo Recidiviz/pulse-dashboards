@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, type JSX, SetStateAction, useState } from "react";
 
 import {
   useFeatureVariants,

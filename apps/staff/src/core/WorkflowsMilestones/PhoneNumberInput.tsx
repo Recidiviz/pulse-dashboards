@@ -18,7 +18,7 @@
 import { TooltipTrigger, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Icon, palette } from "~design-system";
 

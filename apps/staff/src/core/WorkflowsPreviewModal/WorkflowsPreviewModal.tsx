@@ -18,8 +18,8 @@
 import { DrawerModal, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React, { FC, useEffect, useMemo, useState } from "react";
-import styled from "styled-components/macro";
+import React, { FC, type JSX, useEffect, useMemo, useState } from "react";
+import styled from "styled-components";
 
 import { Button, Icon, palette } from "~design-system";
 
@@ -142,7 +142,7 @@ type PreviewModalProps = {
   onClose?: () => void;
   onBackClick?: () => void;
   clearSelectedPersonOnClose?: boolean;
-  contentRef?: React.MutableRefObject<HTMLDivElement | null>;
+  contentRef?: React.RefObject<HTMLDivElement | null>;
 };
 
 export const WorkflowsPreviewModal: FC<PreviewModalProps> = observer(
@@ -201,7 +201,7 @@ export const WorkflowsPreviewModal: FC<PreviewModalProps> = observer(
         closeTimeoutMS={CLOSE_TIMEOUT_MS}
         width={MODAL_WIDTH}
         isMobile={isMobile}
-        contentRef={(node) => {
+        contentRef={(node: HTMLDivElement | null) => {
           if (contentRef) {
             contentRef.current = node;
           }

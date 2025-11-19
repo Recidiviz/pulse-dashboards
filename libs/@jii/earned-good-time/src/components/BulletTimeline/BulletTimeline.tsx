@@ -18,7 +18,7 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { Fragment } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { preventFlexibleLayoutOverflow } from "~@jii/common-ui";
 import { palette } from "~design-system";
@@ -38,18 +38,17 @@ const BULLET_SIZE = 12;
 const BULLET_CONNECTOR_WIDTH = 1;
 const BULLET_CONNECTOR_PAD = 3;
 
-const BulletTimelineList = styled.dl` {
-    ${typography.Sans14}
+const BulletTimelineList = styled.dl`
+  ${typography.Sans14}
 
-    color: ${palette.slate85};
-    display: grid;
-    grid-template-columns: auto 1fr;
-    justify-content: start;
-    padding-left: ${rem(BULLET_PADDING)};
+  color: ${palette.slate85};
+  display: grid;
+  grid-template-columns: auto 1fr;
+  justify-content: start;
+  padding-left: ${rem(BULLET_PADDING)};
 
-    & :last-of-type {
-      color: ${palette.pine1};
-    }
+  & :last-of-type {
+    color: ${palette.pine1};
   }
 
   dt {

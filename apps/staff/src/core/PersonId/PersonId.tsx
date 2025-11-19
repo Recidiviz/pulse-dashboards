@@ -20,7 +20,7 @@ import { rem } from "polished";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import useClipboard from "react-use-clipboard";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

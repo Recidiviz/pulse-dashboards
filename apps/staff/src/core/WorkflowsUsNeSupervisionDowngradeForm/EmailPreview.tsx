@@ -19,9 +19,9 @@ import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import * as React from "react";
-import { MutableRefObject, useRef } from "react";
+import { useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { UsNeSupervisionDowngradeForm } from "../../WorkflowsStore/Opportunity/Forms/UsNeSupervisionDowngradeForm";
 import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
@@ -47,9 +47,7 @@ const EmailPreview: React.FC = observer(function EmailPreview() {
     opportunityForm,
   );
 
-  const inputRef = useRef<HTMLTextAreaElement>(
-    null,
-  ) as MutableRefObject<HTMLTextAreaElement>;
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // On mount, the autosize input has its value set, which causes it to resize to fit its content. During animation,
   // we modify the element's value attribute in place which does not trigger resize.

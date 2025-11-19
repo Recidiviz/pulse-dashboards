@@ -19,7 +19,7 @@ import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useId } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Selector, SelectorProps } from "~@jii/common-ui";
 import { Button } from "~design-system";
@@ -45,7 +45,7 @@ const SelectWrapper = styled.div`
   justify: space-between;
 
   & > div {
-    flex 4 0 55%;
+    flex: 4 0 55%;
   }
 
   & > button {

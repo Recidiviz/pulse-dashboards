@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mount } from "enzyme";
+import { render } from "@testing-library/react";
 import React from "react";
 
 import styles from "../../CoreConstants.module.scss";
@@ -35,7 +35,7 @@ describe("PercentDelta", () => {
     height = 10,
     improvesOnIncrease = false,
   }: PropTypes) => {
-    return mount(
+    return render(
       <PercentDelta
         value={value}
         width={width}
@@ -73,44 +73,54 @@ describe("PercentDelta", () => {
     ].forEach((testSetup) => {
       const [value, improvesOnIncrease, expectedProps]: any[] = testSetup;
 
-      const wrapper = renderPercentDelta({
+      const { container } = renderPercentDelta({
         value,
         improvesOnIncrease,
       });
-      expect(wrapper.find(".PercentDelta").prop("style")).toEqual({
-        color: expectedProps.color,
-      });
-      expect(wrapper.find("Icon").props()).toMatchObject({
-        fill: expectedProps.color,
-        rotate: expectedProps.rotate,
-      });
+      const percentDelta = container.querySelector(
+        ".PercentDelta",
+      ) as HTMLElement;
+      expect(percentDelta).toHaveStyle({ color: expectedProps.color });
+
+      const icon = container.querySelector("svg");
+      expect(icon?.getAttribute("fill")).toEqual(expectedProps.color);
+      expect(icon?.getAttribute("transform")).toEqual(
+        `rotate(${expectedProps.rotate})`,
+      );
     });
   });
 
   it("does not render an icon when there is no change", () => {
-    const wrapper = renderPercentDelta({
+    const { container } = renderPercentDelta({
       value: 0,
     });
-    expect(wrapper.find(".PercentDelta").prop("style")).toEqual({
-      color: styles.slate60,
-    });
-    expect(wrapper.find("Icon").exists()).toEqual(false);
+    const percentDelta = container.querySelector(
+      ".PercentDelta",
+    ) as HTMLElement;
+    expect(percentDelta).toHaveStyle({ color: styles.slate60 });
+
+    const icon = container.querySelector("svg");
+    expect(icon).not.toBeInTheDocument();
   });
 
   it("does not render an icon when the change is undefined", () => {
-    const wrapper = renderPercentDelta({
+    const { container } = renderPercentDelta({
       value: undefined,
     });
-    expect(wrapper.find(".PercentDelta").prop("style")).toEqual({
-      color: styles.slate60,
-    });
-    expect(wrapper.find("Icon").exists()).toEqual(false);
+    const percentDelta = container.querySelector(
+      ".PercentDelta",
+    ) as HTMLElement;
+    expect(percentDelta).toHaveStyle({ color: styles.slate60 });
+
+    const icon = container.querySelector("svg");
+    expect(icon).not.toBeInTheDocument();
   });
 
   it("displays N/A when the change is undefined", () => {
-    const wrapper = renderPercentDelta({
+    const { container } = renderPercentDelta({
       value: undefined,
     });
-    expect(wrapper.find(".PercentDelta__value").text()).toEqual("N/A");
+    const percentDeltaValue = container.querySelector(".PercentDelta__value");
+    expect(percentDeltaValue).toHaveTextContent("N/A");
   });
 });

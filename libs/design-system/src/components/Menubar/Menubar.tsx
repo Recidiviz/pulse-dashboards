@@ -16,8 +16,8 @@
 // =============================================================================
 
 import * as React from "react";
-import { useRef, useState } from "react";
-import styled, { css } from "styled-components/macro";
+import { type JSX, useRef, useState } from "react";
+import styled, { css } from "styled-components";
 
 import { palette } from "../../styles";
 import MenubarContext from "./MenubarContext";

@@ -26,7 +26,7 @@ import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import MilestonesCaseloadView from "./MilestonesCaseloadView";
 
 const WorkflowsMilestones = observer(
-  function WorkflowsMilestones(): React.ReactElement | null {
+  function WorkflowsMilestones(): React.ReactElement<any> | null {
     const {
       workflowsStore: { justiceInvolvedPersonTitle },
     } = useRootStore();

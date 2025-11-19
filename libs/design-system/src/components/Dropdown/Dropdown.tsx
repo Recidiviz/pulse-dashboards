@@ -16,7 +16,7 @@
 // =============================================================================
 
 import * as React from "react";
-import { useRef, useState } from "react";
+import { type JSX, useRef, useState } from "react";
 
 import { DropdownElement } from "./Dropdown.styles";
 import DropdownContext from "./DropdownContext";

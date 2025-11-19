@@ -41,7 +41,7 @@ const WorkflowsUsTnReclassForm = ({
 }: {
   opportunity: Opportunity;
 }) => {
-  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+  const formRef = React.useRef<HTMLDivElement>(null);
   const form = opportunity.form as UsTnReclassificationReviewForm;
   const resident = opportunity.person;
   const [showCafScoresModal, setShowCafScoresModal] = useState(true);

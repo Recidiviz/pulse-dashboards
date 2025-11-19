@@ -16,7 +16,7 @@
 // =============================================================================
 
 import * as React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import DOCXFormInput from "../../DOCXFormInput";
 import {
@@ -28,7 +28,11 @@ import {
 
 interface FormHeadingLineItemProps {
   className?: string;
-  children?: React.ReactChild | React.ReactChild[];
+  children?:
+    | React.ReactElement<any>
+    | number
+    | string
+    | (React.ReactElement<any> | number | string)[];
   separator?: string;
   suffix?: string | boolean;
   style?: any;

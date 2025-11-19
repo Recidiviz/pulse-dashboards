@@ -28,7 +28,7 @@ import {
 import { observer } from "mobx-react-lite";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Icon, IconSVG, palette } from "~design-system";
 
@@ -169,6 +169,7 @@ const WebFormField: React.FC<WebFormFieldProps> = ({
 
   return (
     <ThemeContainer>
+      {/* @ts-expect-error rmwc is in maintenance mode; not going to worry about this */}
       <TextField
         {...props}
         invalid={isInvalid()}

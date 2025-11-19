@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import pluralize from "pluralize";
 import { rem, rgba } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 
@@ -133,7 +133,7 @@ const InsightsSupervisorRosterModal: React.FC<RosterModalType> = ({
         <StyledDrawerModalV2
           isMobile={isMobile}
           isOpen={isModalOpen}
-          onRequestClose={(e) => {
+          onRequestClose={(e: React.MouseEvent | React.KeyboardEvent) => {
             e.preventDefault();
             e.stopPropagation();
             closeModal();

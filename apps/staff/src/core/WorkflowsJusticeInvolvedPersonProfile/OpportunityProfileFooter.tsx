@@ -17,7 +17,7 @@
 
 import { Sans16, TooltipTrigger } from "@recidiviz/design-system";
 import { useCallback, useEffect } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 

@@ -164,7 +164,7 @@ const FormUsCaSupervisionLeveDowngrade = observer(
   }) {
     const { getTokenSilently } = useRootStore();
 
-    const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+    const formRef = React.useRef<HTMLDivElement>(null);
 
     const onClickDownload = async () => {
       const formData = opportunity?.form?.formData;

@@ -14,11 +14,6 @@ export default tseslint.config(baseConfig, <% if (isReact) { %>reactConfig, <% }
       "error",
       {
         paths: [
-          // Need to include these again because eslint doesn't deep merge rules
-          {
-            name: "styled-components",
-            message: "Please import from styled-components/macro.",
-          },
           <% if (isReact) { %> {
             name: "react-router-dom",
             importNames: ["useParams"],
@@ -31,4 +26,3 @@ export default tseslint.config(baseConfig, <% if (isReact) { %>reactConfig, <% }
     ],
   },
 });
-

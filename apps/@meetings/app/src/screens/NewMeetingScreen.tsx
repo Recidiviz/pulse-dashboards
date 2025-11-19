@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   AudioModule,
   RecordingPresets,
@@ -47,7 +47,7 @@ import {
 } from "../utils/notifications";
 import { getItem, removeItem, saveItem } from "../utils/storage";
 
-type ProfileNavProp = StackNavigationProp<RootStackParamList, "Profile">;
+type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Profile">;
 type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
 
 const NewMeetingScreen = () => {
@@ -248,7 +248,7 @@ const NewMeetingScreen = () => {
     return (
       <View className="flex-1 flex-row items-center justify-center bg-white">
         <ActivityIndicator size="small" color="text-primary" />
-        <Text className="text-primary p-4 text-lg font-medium">
+        <Text className="p-4 text-lg font-medium text-primary">
           Meeting ending...
         </Text>
       </View>
@@ -264,7 +264,7 @@ const NewMeetingScreen = () => {
         <Image source={Icons.Microphone} className="size-8" />
       </View>
 
-      <Text className="text-primary mb-2 text-center text-2xl font-bold leading-8 tracking-[-0.014rem]">
+      <Text className="mb-2 text-center text-2xl font-bold leading-8 tracking-[-0.014rem] text-primary">
         Meeting Recording
       </Text>
 
@@ -279,7 +279,7 @@ const NewMeetingScreen = () => {
     <View className="mt-6">
       <View className="mb-2 flex-row items-center">
         <Image source={Icons.Notes} className="mr-2 size-5" />
-        <Text className="text-primary text-lg font-semibold">Notepad</Text>
+        <Text className="text-lg font-semibold text-primary">Notepad</Text>
       </View>
 
       <TextInput
@@ -369,7 +369,7 @@ const NewMeetingScreen = () => {
       </View>
 
       <View className="rounded-t-2xl bg-gray-100 px-6 py-12">
-        <Text className="text-primary text-center text-base font-semibold">
+        <Text className="text-center text-base font-semibold text-primary">
           {client.fullName}
         </Text>
         <Text className="mb-4 text-center text-sm text-gray-600">

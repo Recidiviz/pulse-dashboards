@@ -20,9 +20,9 @@ import "./StatusMessage.scss";
 import React from "react";
 
 type Props = {
-  icon: React.ReactElement;
+  icon: React.ReactElement<any>;
   title: string;
-  subtitle?: string | React.ReactElement;
+  subtitle?: string | React.ReactElement<any>;
   children: React.ReactNode;
 };
 

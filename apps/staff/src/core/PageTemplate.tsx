@@ -18,22 +18,19 @@
 import "../assets/styles/index.scss";
 import "./PageTemplate.scss";
 
-import PropTypes from "prop-types";
+interface PageTemplateProps {
+  children: React.ReactNode;
+  filters?: React.ReactNode;
+  leftPanel?: React.ReactNode;
+  mobileNavigation?: React.ReactNode;
+}
 
-// Newer versions of Typescript infer the argument types too narrowly for this function;
-// previously they all were just typed as any
-/**
- * @param {Object} props
- * @param {any} [props.filters]
- * @param {any} [props.leftPanel]
- * @param {any} [props.mobileNavigation]
- */
 function PageTemplate({
   children,
   filters = null,
   leftPanel = null,
   mobileNavigation = null,
-}) {
+}: PageTemplateProps) {
   return (
     <div className="PageTemplate">
       {mobileNavigation}
@@ -47,18 +44,5 @@ function PageTemplate({
     </div>
   );
 }
-
-PageTemplate.defaultProps = {
-  filters: null,
-  leftPanel: null,
-  mobileNavigation: null,
-};
-
-PageTemplate.propTypes = {
-  children: PropTypes.node.isRequired,
-  filters: PropTypes.node,
-  leftPanel: PropTypes.node,
-  mobileNavigation: PropTypes.node,
-};
 
 export default PageTemplate;

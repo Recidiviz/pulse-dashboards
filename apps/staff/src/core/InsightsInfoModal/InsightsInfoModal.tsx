@@ -20,7 +20,7 @@ import { rem } from "polished";
 import React from "react";
 import { Link } from "react-router-dom";
 import MarkdownView from "react-showdown";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, Icon, palette } from "~design-system";
 
@@ -148,7 +148,7 @@ const InsightsInfoModal: React.FC<InsightsInfoModalType> = ({
       >
         <StyledModal
           isOpen={modalIsOpen}
-          onRequestClose={(e) => {
+          onRequestClose={(e: React.MouseEvent | React.KeyboardEvent) => {
             e.preventDefault();
             e.stopPropagation();
             setModalIsOpen(false);

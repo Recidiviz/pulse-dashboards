@@ -17,7 +17,7 @@
 
 import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import p1 from "~shared-assets/images/form-previews/US_ME/SCCP/p1.png";
 import p2 from "~shared-assets/images/form-previews/US_ME/SCCP/p2.png";

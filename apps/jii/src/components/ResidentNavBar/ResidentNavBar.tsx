@@ -22,7 +22,7 @@ import { FC } from "react";
 // we are using useParams to make a custom hook in this file
 // eslint-disable-next-line no-restricted-imports
 import { NavLink, useParams } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { useResidentsContext } from "~@jii/data";
 import { RouteParams, State } from "~@jii/paths";

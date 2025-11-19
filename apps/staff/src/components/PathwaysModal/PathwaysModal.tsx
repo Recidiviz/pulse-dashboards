@@ -27,7 +27,7 @@ type Props = {
   isShowing: boolean;
   hide: () => void;
   title?: string;
-  footer?: React.ReactElement;
+  footer?: React.ReactElement<any>;
   backgroundColor?: string;
   children?: React.ReactNode;
 };
@@ -40,7 +40,7 @@ const PathwaysModal: React.FC<Props> = ({
   backgroundColor,
   children,
 }) => {
-  const ref: any = useRef();
+  const ref: any = useRef(undefined);
   useOnClickOutside(ref, hide);
 
   useEffect(() => {

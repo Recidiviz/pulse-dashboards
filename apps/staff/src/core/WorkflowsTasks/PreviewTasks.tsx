@@ -19,7 +19,7 @@ import { Sans14, Sans16, spacing, typography } from "@recidiviz/design-system";
 import { uniqBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

@@ -17,7 +17,7 @@
 
 import { Sans16, typography } from "@recidiviz/design-system";
 import { Text } from "@visx/text";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

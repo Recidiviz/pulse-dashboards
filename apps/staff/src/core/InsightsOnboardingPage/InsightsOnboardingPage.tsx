@@ -26,7 +26,7 @@ import { rem } from "polished";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import MarkdownView from "react-showdown";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 

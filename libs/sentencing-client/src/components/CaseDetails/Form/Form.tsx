@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import type { JSX } from "react";
 
 import { filterExcludedAttributes } from "../../../../src/geoConfigs/utils";
 import { useStore } from "../../StoreProvider/StoreProvider";

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { components, OptionProps } from "react-select";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

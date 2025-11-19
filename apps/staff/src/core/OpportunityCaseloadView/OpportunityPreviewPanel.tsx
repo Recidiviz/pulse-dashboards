@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useCallback, useEffect, useRef } from "react";
+import { type JSX, useCallback, useEffect, useRef } from "react";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenialView } from "../OpportunityDenial";

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Body19, Header34 } from "@recidiviz/design-system";
-import { FC, ReactElement } from "react";
+import { FC } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
 import { PageContainer, usePageTitle } from "~@jii/common-ui";
@@ -24,7 +24,7 @@ import { AfterLogin } from "~@jii/paths";
 import { useCommonTranslations } from "~@jii/translation";
 import { UsMaUnknownUserError } from "~@jii/US_MA";
 
-const GenericError = (): ReactElement => {
+const GenericError = () => {
   const { t } = useCommonTranslations();
 
   const title = t(($) => $.unknownUser.heading);

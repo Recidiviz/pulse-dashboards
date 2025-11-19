@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import simplur from "simplur";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord } from "../../utils";

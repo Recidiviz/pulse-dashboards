@@ -26,7 +26,7 @@ import type FiltersStore from "./LanternStore/FiltersStore";
 const LanternContext = React.createContext<LanternStore | undefined>(undefined);
 
 interface ProviderProps {
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
 }
 
 const LanternStoreProvider: React.FC<ProviderProps> = ({ children }) => {

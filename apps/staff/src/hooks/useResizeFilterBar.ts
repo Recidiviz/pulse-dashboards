@@ -20,8 +20,8 @@ import { useEffect, useState } from "react";
 import { EnabledFilters } from "../core/types/filters";
 
 const useResizeFilterBar = (
-  filtersRef: React.MutableRefObject<HTMLElement>,
-  containerRef: React.MutableRefObject<HTMLElement>,
+  filtersRef: React.RefObject<HTMLElement | undefined>,
+  containerRef: React.RefObject<HTMLElement | undefined>,
   enabledFilters: EnabledFilters,
   enableMetricModeToggle?: boolean,
 ): number => {
@@ -43,11 +43,17 @@ const useResizeFilterBar = (
   };
 
   useEffect(() => {
+    if (!filtersRef.current) {
+      return;
+    }
     const filtersWidths = Array.from(filtersRef.current?.children).map(
       (item: any) => item.getBoundingClientRect().width,
     );
 
     const handleResize = () => {
+      if (!containerRef.current) {
+        return;
+      }
       const containerWidth = containerRef.current?.offsetWidth;
       const count = getRenderCount(filtersWidths, containerWidth, 140);
       setRenderCount(enableMetricModeToggle ? count - 1 : count);

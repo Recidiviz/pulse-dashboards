@@ -17,7 +17,7 @@
 
 import { typography } from "@recidiviz/design-system";
 import { FC, memo, ReactNode } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Hydrator } from "~hydration-utils";
 

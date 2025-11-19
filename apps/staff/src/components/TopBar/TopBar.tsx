@@ -16,7 +16,7 @@
 // =============================================================================
 
 import cn from "classnames";
-import React from "react";
+import React, { type JSX } from "react";
 
 interface Props {
   children: JSX.Element[];

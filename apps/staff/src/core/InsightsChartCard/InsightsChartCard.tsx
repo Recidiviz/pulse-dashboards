@@ -20,7 +20,7 @@ import { rem } from "polished";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import useMeasure from "react-use-measure";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Icon, IconSVG, palette } from "~design-system";
 
@@ -88,7 +88,7 @@ const Content = styled.div`
 type InsightsChartCardType = {
   title: string;
   subtitle?: string;
-  infoModal?: React.ReactElement;
+  infoModal?: React.ReactElement<any>;
   url?: string;
   rate?: string;
   children?: React.ReactNode;

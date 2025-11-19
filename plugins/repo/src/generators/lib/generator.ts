@@ -179,7 +179,7 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
     if (options.libType === "react") {
       configSource = configSource.replace(
         /react\(\)/,
-        `react({ babel: { plugins: ["babel-plugin-macros"] } })`,
+        `react({ babel: { plugins: ["babel-plugin-macros", "babel-plugin-styled-components"] } })`,
       );
     }
 

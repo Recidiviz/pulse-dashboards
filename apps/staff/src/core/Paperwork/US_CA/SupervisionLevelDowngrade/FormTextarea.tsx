@@ -17,10 +17,10 @@
 
 import { observer } from "mobx-react-lite";
 import * as React from "react";
-import { MutableRefObject, useRef } from "react";
+import { useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import type { TextareaAutosizeProps } from "react-textarea-autosize/dist/declarations/src";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
@@ -50,9 +50,7 @@ const FormTextarea: React.FC<FormTextareaProps> = observer(
       opportunityForm,
     );
 
-    const inputRef = useRef<HTMLTextAreaElement>(
-      null,
-    ) as MutableRefObject<HTMLTextAreaElement>;
+    const inputRef = useRef<HTMLTextAreaElement>(null);
 
     // On mount, the autosize input has its value set, which causes it to resize to fit its content. During animation,
     // we modify the element's value attribute in place which does not trigger resize.

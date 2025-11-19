@@ -39,7 +39,7 @@ interface DropdownProps {
   isOpen: boolean;
   onToggle: () => void;
   onRefetch: () => void;
-  dropdownRef: React.RefObject<HTMLDivElement> | null;
+  dropdownRef: React.RefObject<HTMLDivElement | null> | null;
   setIsDeletingClient?: (isDeleting: boolean) => void;
 }
 

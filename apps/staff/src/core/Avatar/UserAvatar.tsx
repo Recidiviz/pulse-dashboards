@@ -18,7 +18,7 @@
 import Avatar from "boring-avatars";
 import { rem } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -28,29 +28,24 @@ interface AvatarProps {
   size?: number;
 }
 
-interface AvatarElementProps {
-  size: number;
-}
+const AvatarElement = styled.div<{ $size: number }>`
+  ${({ $size }) => css`
+    line-height: ${rem($size)};
+    height: ${rem($size)};
+    width: ${rem($size)};
+    overflow: hidden;
+    position: relative;
 
-const AvatarElement = styled.div(
-  ({ size }: AvatarElementProps) => `
-  line-height: ${rem(size)};
-  height: ${rem(size)};
-  width: ${rem(size)};
-  overflow: hidden;
-  position: relative;
-  
-  svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 8px;
-
-  }
-`,
-);
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 8px;
+    }
+  `}
+`;
 
 export const AvatarInitials = styled.div`
   font-size: ${rem(10)};
@@ -88,7 +83,7 @@ const UserAvatar: React.FC<AvatarProps> = ({ size = 32 }) => {
 
   if (useBoringAvatars) {
     return (
-      <AvatarElement size={size} className="UserAvatar">
+      <AvatarElement $size={size} className="UserAvatar">
         <Avatar
           variant="marble"
           size={size}
@@ -108,7 +103,7 @@ const UserAvatar: React.FC<AvatarProps> = ({ size = 32 }) => {
   }
 
   return (
-    <AvatarElement size={size} className="UserAvatar">
+    <AvatarElement $size={size} className="UserAvatar">
       <AvatarImage
         style={{
           backgroundImage: `url("${user.picture}")`,

@@ -20,6 +20,7 @@ import "../global.css";
 import * as Sentry from "@sentry/react-native";
 import React from "react";
 import { Auth0Provider } from "react-native-auth0";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import config from "~@meetings/app/auth0-config";
 
@@ -44,11 +45,13 @@ BigInt.prototype.toJSON = function () {
 
 const App = () => {
   return (
-    <Auth0Provider domain={config.domain} clientId={config.clientId}>
-      <AppErrorBoundary>
-        <AppNavigator />
-      </AppErrorBoundary>
-    </Auth0Provider>
+    <GestureHandlerRootView>
+      <Auth0Provider domain={config.domain} clientId={config.clientId}>
+        <AppErrorBoundary>
+          <AppNavigator />
+        </AppErrorBoundary>
+      </Auth0Provider>
+    </GestureHandlerRootView>
   );
 };
 

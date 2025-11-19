@@ -28,7 +28,7 @@ export type UsIaEarlyDischargeInputProps =
 
 export const FormUsIaEarlyDischargeInput = (
   props: UsIaEarlyDischargeInputProps,
-): React.ReactElement => {
+): React.ReactElement<any> => {
   return <DOCXFormInput<UsIaEarlyDischargeDraftData> {...props} />;
 };
 
@@ -67,7 +67,7 @@ type TextAreaProps = FormTextAreaProps<UsIaEarlyDischargeDraftData>;
 
 export const FormUsIaEarlyDischargeTextArea = (
   props: TextAreaProps,
-): React.ReactElement => {
+): React.ReactElement<any> => {
   return (
     <DOCXFormTextArea<UsIaEarlyDischargeDraftData>
       style={{ fontFamily: "Arial, sans-serif" }}

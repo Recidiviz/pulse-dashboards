@@ -17,7 +17,7 @@
 
 import { Card, typography } from "@recidiviz/design-system";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import coreStyles from "../CoreConstants.module.scss";
 

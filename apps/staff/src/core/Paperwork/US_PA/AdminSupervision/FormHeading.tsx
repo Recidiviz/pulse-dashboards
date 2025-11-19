@@ -17,7 +17,7 @@
 
 import { rem } from "polished";
 import * as React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
 import { Logo } from "./PDOCLogo";

@@ -33,7 +33,7 @@
 import { animation, iconToDataURI } from "@recidiviz/design-system";
 import { darken, rem } from "polished";
 import * as React from "react";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { Icon, IconSVG } from "~design-system";
 import { palette } from "~design-system";

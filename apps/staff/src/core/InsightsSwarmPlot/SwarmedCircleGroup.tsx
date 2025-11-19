@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { JSX } from "react";
+
 import { SwarmPoint } from "../../InsightsStore/presenters/SwarmPresenter/types";
 import { GOAL_COLORS } from "./constants";
 

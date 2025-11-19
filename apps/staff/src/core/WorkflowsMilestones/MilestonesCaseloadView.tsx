@@ -20,8 +20,8 @@ import { reduce } from "lodash";
 import { uniq } from "lodash/fp";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useCallback, useEffect, useState } from "react";
-import styled from "styled-components/macro";
+import { type JSX, useCallback, useEffect, useState } from "react";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

@@ -45,7 +45,7 @@ const Drawer: React.FC<Props> = ({
   id,
   children,
 }) => {
-  const ref: any = useRef();
+  const ref: any = useRef(undefined);
   useOnClickOutside(ref, hide);
   const [isTransitioning, setIsTransitioning] = useState(false);
 

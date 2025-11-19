@@ -26,7 +26,7 @@ import { ResidentProfileProps } from "../../types";
 
 export function UsIdEarliestPossibleReleaseDate({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   if (resident.metadata.stateCode !== "US_ID") {
     return null;
   }

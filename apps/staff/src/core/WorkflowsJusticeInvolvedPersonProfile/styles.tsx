@@ -17,7 +17,7 @@
 
 import { spacing, TooltipTrigger, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 
@@ -150,7 +150,7 @@ export const Divider = styled.hr`
     display: none;
   }
 
-  :last-child {
+  &:last-child {
     display: none;
   }
 `;

@@ -39,7 +39,7 @@ import { UsMoUnwaivedEnemies } from "./UsMoUnwaivedEnemies";
 
 export function UsMoRestrictiveHousing({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   if (!(opportunity instanceof UsMoOverdueRestrictiveHousingBase)) {
     return null;
   }

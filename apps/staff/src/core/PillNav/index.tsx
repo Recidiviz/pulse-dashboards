@@ -18,7 +18,7 @@
 import { Sans14, spacing } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
 import { useEffect, useState } from "react";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 

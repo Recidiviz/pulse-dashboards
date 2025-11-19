@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   BackLink,

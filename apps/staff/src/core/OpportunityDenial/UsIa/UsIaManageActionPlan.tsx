@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
+import { type JSX, useState } from "react";
 import toast from "react-hot-toast";
 
 import { CharacterCountTextField } from "../../../components/CharacterCountTextField";

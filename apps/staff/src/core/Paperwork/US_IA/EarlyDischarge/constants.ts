@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { rem } from "polished";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 export const FORM_US_IA_CBC_REPORT_FONT_FAMILY = "Arial, sans-serif";
 

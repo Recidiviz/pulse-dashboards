@@ -17,7 +17,7 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { palette } from "../../styles";
 import { Button } from "../Button";

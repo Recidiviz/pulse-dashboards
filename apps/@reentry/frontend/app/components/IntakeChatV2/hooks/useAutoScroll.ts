@@ -18,7 +18,7 @@
 import { RefObject, useEffect, useRef } from "react";
 
 export function useAutoScroll(
-  containerRef: RefObject<HTMLElement>,
+  containerRef: RefObject<HTMLElement | null>,
   dependencies: unknown[] = [],
   threshold = 5,
 ) {

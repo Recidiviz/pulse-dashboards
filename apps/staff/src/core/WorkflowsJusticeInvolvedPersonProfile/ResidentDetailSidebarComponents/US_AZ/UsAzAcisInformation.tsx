@@ -18,7 +18,7 @@
 import { Pill, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -44,7 +44,7 @@ const CaseNoteDivider = styled.hr`
   border-top: 1px solid ${palette.slate10};
   margin: ${rem(spacing.md)} 0;
 
-  :last-child {
+  &:last-child {
     display: none;
   }
 `;

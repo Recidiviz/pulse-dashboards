@@ -18,8 +18,8 @@
 import { Sans18 } from "@recidiviz/design-system";
 import { debounce, xor } from "lodash";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
-import styled from "styled-components/macro";
+import { type JSX, useState } from "react";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

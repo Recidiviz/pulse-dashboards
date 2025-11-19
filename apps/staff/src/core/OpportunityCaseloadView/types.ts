@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { JSX } from "react";
+
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 
 export type OPPORTUNITY_SIDE_PANEL_VIEW =

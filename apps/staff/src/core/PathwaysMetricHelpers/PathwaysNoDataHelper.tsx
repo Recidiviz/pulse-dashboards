@@ -19,7 +19,7 @@ import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { ReactNode } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import NoDataLogo from "../../assets/static/images/no_data_logo.svg?react";
 import { StatusMessage } from "../../components/StatusMessage";

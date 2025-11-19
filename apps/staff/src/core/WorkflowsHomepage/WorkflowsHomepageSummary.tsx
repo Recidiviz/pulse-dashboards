@@ -19,7 +19,7 @@ import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Icon, IconSVG, palette } from "~design-system";
 import { PersonInitialsAvatar } from "~ui";
@@ -46,7 +46,7 @@ const HomepageSummaryLink = styled(Link)<{
   padding: ${rem(spacing.md)} ${rem(spacing.md)} ${rem(spacing.xxl)}
     ${rem(spacing.md)};
   border-bottom: 1px solid ${palette.slate20};
-  :first-child {
+  &:first-child {
     border-top: 1px solid ${palette.slate20};
   }
   &:hover,
@@ -157,7 +157,7 @@ export const WorkflowsHomepageSummary = observer(
     people,
     showZeroGrantsPill,
     zeroGrantsTooltip,
-  }: WorkflowsHomepageSummaryProps): React.ReactElement | null {
+  }: WorkflowsHomepageSummaryProps): React.ReactElement<any> | null {
     const { isMobile } = useIsMobile(true);
     const defaultAvatarsShown = totalCount < 4 ? totalCount : 4;
     const sliceIndex =

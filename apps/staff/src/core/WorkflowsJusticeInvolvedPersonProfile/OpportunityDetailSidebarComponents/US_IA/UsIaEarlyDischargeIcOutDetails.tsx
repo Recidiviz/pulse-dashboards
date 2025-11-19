@@ -28,7 +28,7 @@ import { OpportunityProfileProps } from "../../types";
 
 export function UsIaEarlyDischargeIcOutDetails({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   if (
     !(opportunity instanceof UsIaEarlyDischargeOpportunity) ||
     opportunity.person.record.custodialAuthority !== "OTHER_STATE"

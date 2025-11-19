@@ -34,7 +34,7 @@ import { ResidentProfileProps } from "../../types";
 // the generic Incarceration one.
 export function UsMoIncarceration({
   resident,
-}: ResidentProfileProps): React.ReactElement {
+}: ResidentProfileProps): React.ReactElement<any> {
   return (
     <DetailsSection>
       <DetailsHeading>Incarceration</DetailsHeading>

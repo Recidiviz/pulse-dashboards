@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { EarnedDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsId";
 import DOCXFormInput, { DOCXFormInputProps } from "../../DOCXFormInput";
@@ -26,7 +26,9 @@ export const FORM_US_ID_EARLY_DISCHARGE_LETTER_SPACING = `-0.02em`;
 
 export type FormEDInputProps = DOCXFormInputProps<EarnedDischargeDraftData>;
 
-export const FormEDInput = (props: FormEDInputProps): React.ReactElement => (
+export const FormEDInput = (
+  props: FormEDInputProps,
+): React.ReactElement<any> => (
   <DOCXFormInput<EarnedDischargeDraftData> {...props} />
 );
 
@@ -59,12 +61,12 @@ type FormColGroupsProps = {
 
 export const FormColGroup = ({
   widths,
-}: FormColGroupsProps): React.ReactElement => {
+}: FormColGroupsProps): React.ReactElement<any> => {
   return (
     <colgroup>
       {widths.map((w, index) => (
         // eslint-disable-next-line react/no-array-index-key
-        (<col style={{ width: `${w}%` }} key={`${w}-${index}`} />)
+        <col style={{ width: `${w}%` }} key={`${w}-${index}`} />
       ))}
     </colgroup>
   );
@@ -72,7 +74,7 @@ export const FormColGroup = ({
 
 export const FormEDInputCell = (
   props: FormEDInputProps,
-): React.ReactElement => (
+): React.ReactElement<any> => (
   <td>
     <FormEDInput {...props} />
   </td>

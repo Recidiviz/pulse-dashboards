@@ -20,7 +20,7 @@ import { debounce } from "lodash";
 import { reaction } from "mobx";
 import { rgba } from "polished";
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Icon, IconSVG, palette } from "~design-system";
 

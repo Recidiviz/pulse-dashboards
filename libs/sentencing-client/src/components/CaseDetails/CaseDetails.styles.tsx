@@ -17,7 +17,7 @@
 
 import { typography } from "@recidiviz/design-system";
 import { StylesConfig } from "react-select";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 

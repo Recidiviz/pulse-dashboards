@@ -19,7 +19,7 @@ import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useState } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -90,7 +90,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     userCanSubmitRosterChangeRequest,
     isUsageLoginActivityModuleDisplayed,
     pluralizeAcronym,
-    labelIsAcronym
+    labelIsAcronym,
   } = presenter;
 
   let teamTooltip;
@@ -135,7 +135,11 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
           <>
             {labelIsAcronym(labels.supervisionOfficerLabel)
               ? allOfficers.length +
-                " " + pluralizeAcronym(labels.supervisionOfficerLabel, allOfficers.length)
+                " " +
+                pluralizeAcronym(
+                  labels.supervisionOfficerLabel,
+                  allOfficers.length,
+                )
               : pluralize(
                   allOfficers.length,
                   toTitleCase(labels.supervisionOfficerLabel),

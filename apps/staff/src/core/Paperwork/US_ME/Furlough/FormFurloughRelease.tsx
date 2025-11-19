@@ -18,7 +18,7 @@
 import { startCase } from "lodash";
 import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import {

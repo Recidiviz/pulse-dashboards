@@ -24,7 +24,7 @@ import {
   typography,
 } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, Icon, palette } from "~design-system";
 
@@ -104,7 +104,7 @@ export const TextAreaWrapper = styled.div`
   }
 `;
 
-export const TextAreaInput = styled.textarea.attrs({ type: "text" })`
+export const TextAreaInput = styled.textarea.attrs({ typeof: "text" })`
   background: ${palette.marble3};
   border-radius: ${rem(4)};
   border: 2px solid transparent;

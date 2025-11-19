@@ -17,7 +17,7 @@
 
 import { typography } from "@recidiviz/design-system";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import styles from "../CoreConstants.module.scss";
 import ModelHydrator from "../ModelHydrator";

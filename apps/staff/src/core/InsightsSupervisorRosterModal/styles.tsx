@@ -19,7 +19,7 @@ import { spacing, typography } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
 import { Button as LinkButton, ListGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button as ActionButton, palette } from "~design-system";
 

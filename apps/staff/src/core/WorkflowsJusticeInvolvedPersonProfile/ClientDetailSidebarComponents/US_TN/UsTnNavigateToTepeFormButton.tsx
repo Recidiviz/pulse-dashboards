@@ -17,9 +17,9 @@
 
 import { ButtonProps, spacing } from "@recidiviz/design-system";
 import { darken, rem } from "polished";
-import { useState } from "react";
+import { type JSX, useState } from "react";
 import { Link, LinkProps, useLocation, useParams } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   Dropdown,

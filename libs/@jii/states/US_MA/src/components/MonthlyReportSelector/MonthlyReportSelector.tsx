@@ -18,7 +18,7 @@
 import { descending } from "d3-array";
 import { observer } from "mobx-react-lite";
 import { useId } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Selector, SelectorProps } from "~@jii/common-ui";
 import { useUsMaTranslations } from "~@jii/translation";

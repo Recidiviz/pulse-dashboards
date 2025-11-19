@@ -17,7 +17,7 @@
 
 import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsMeMediumTrusteeFormData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMeMediumTrusteeForm";
@@ -69,7 +69,7 @@ function MediumTrustee({ opportunity }: { opportunity: Opportunity }) {
     >
       {previewImages.map((image, index) => (
         // eslint-disable-next-line react/no-array-index-key
-        (<FormPreviewPage key={index} src={image} />)
+        <FormPreviewPage key={index} src={image} />
       ))}
     </FormContainer>
   );

@@ -18,7 +18,7 @@
 import { Sans14 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   Dropdown,
@@ -85,7 +85,7 @@ const ContactButton = styled(DropdownToggle).attrs({
 const ContactOption = styled.div``;
 
 export const PreferredContact: React.FC<ClientProfileProps> = observer(
-  function PreferredContact({ client }): React.ReactElement {
+  function PreferredContact({ client }): React.ReactElement<any> {
     const { preferredContactMethod } = client;
     const [value, setValue] = useState(preferredContactMethod || "None");
 

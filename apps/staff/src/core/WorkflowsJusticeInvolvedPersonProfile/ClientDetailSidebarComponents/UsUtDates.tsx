@@ -18,7 +18,7 @@
 import { Sans14 } from "@recidiviz/design-system";
 import { add, startOfToday } from "date-fns";
 import pluralize from "pluralize";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -94,7 +94,7 @@ export function utDates({
 
 export function UsUtDates({
   client,
-}: ClientProfileProps): React.ReactElement | null {
+}: ClientProfileProps): React.ReactElement<any> | null {
   const { metadata } = client;
 
   if (metadata.stateCode !== "US_UT") return null;

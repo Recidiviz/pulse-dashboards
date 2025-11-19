@@ -29,7 +29,7 @@ import { OpportunityProfileProps } from "../types";
 
 export function SentenceDates({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   const { sentenceStart, sentenceExpiration } = opportunity;
 
   return (

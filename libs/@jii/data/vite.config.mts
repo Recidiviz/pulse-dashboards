@@ -24,7 +24,11 @@ export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/libs/@jii/data",
   plugins: [
-    react({ babel: { plugins: ["babel-plugin-macros"] } }),
+    react({
+      babel: {
+        plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
+      },
+    }),
     nxViteTsPaths(),
     nxCopyAssetsPlugin(["*.md"]),
   ],

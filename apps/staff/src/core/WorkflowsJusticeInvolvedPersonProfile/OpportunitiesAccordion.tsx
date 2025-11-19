@@ -26,7 +26,7 @@ import {
   AccordionItemPanel,
   AccordionItemState,
 } from "react-accessible-accordion";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
@@ -153,9 +153,11 @@ export const AccordionSection = observer(function AccordionSection({
                 isVisible={expanded}
                 opportunity={opportunity}
                 formLinkButton={formLinkButton && !!opportunity.form}
-                // If the opportunity is determined to be ineligible by our system (not marked ineligible/denied), 
+                // If the opportunity is determined to be ineligible by our system (not marked ineligible/denied),
                 // we hide the action buttons
-                hideActionButtons={hideActionButtons || opportunity.isIneligible}
+                hideActionButtons={
+                  hideActionButtons || opportunity.isIneligible
+                }
                 shouldTrackOpportunityPreviewed={
                   shouldTrackOpportunityPreviewed
                 }

@@ -17,14 +17,14 @@
 
 import { isString } from "lodash";
 import { reaction } from "mobx";
-import { MutableRefObject, useEffect, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 
 export const DEFAULT_ANIMATION_DURATION = 1750;
 
 export const useAnimatedValue = (
-  input: MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>,
+  input: RefObject<HTMLInputElement | HTMLTextAreaElement | null>,
   value?: string,
   duration = DEFAULT_ANIMATION_DURATION,
   delay = 250,

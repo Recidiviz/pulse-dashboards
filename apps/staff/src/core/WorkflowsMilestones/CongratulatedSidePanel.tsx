@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import type { JSX } from "react";
 
 import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";
 import { TextMessageStatuses } from "../../FirestoreStore";

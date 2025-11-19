@@ -21,7 +21,7 @@ import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import toast from "react-hot-toast";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -116,7 +116,7 @@ export const UsArApprovedVisitors = observer(function UsArApprovedVisitors({
   opportunity,
 }: {
   opportunity: Opportunity;
-}): React.ReactElement | null {
+}): React.ReactElement<any> | null {
   const { getTokenSilently } = useRootStore();
   if (!(opportunity instanceof UsArInstitutionalWorkerStatusOpportunity))
     return null;

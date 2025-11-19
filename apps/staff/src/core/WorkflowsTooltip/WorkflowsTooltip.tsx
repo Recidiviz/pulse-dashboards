@@ -43,7 +43,7 @@ export const TooltipDetails: React.FC<{
 type WorkflowsTooltipProps = {
   person: JusticeInvolvedPerson;
   contents?: React.ReactNode;
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
   displayOnMobile?: boolean;
 };
 

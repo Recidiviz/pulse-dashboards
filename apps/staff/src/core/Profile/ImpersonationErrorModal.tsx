@@ -16,8 +16,8 @@
 // =============================================================================
 
 import { Modal } from "@recidiviz/design-system";
-import { useEffect, useState } from "react";
-import styled from "styled-components/macro";
+import { type JSX, useEffect, useState } from "react";
+import styled from "styled-components";
 
 import { Button, Icon, palette } from "~design-system";
 

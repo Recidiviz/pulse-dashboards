@@ -15,13 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReactElement } from "react";
-
 import { AppLayout } from "../AppLayout/AppLayout";
 import { NavMenu } from "../NavMenu/NavMenu";
 import { ErrorPageMainContent } from "./ErrorPageMainContent";
 
-export const ErrorPage = ({ error }: { error: Error }): ReactElement => {
+export const ErrorPage = ({ error }: { error: Error }) => {
   return (
     <AppLayout
       main={<ErrorPageMainContent error={error} />}

@@ -18,7 +18,7 @@
 import { ExternalPropsContext } from "@recidiviz/design-system";
 import React, { useContext } from "react";
 
-export function IconGoSvg(): React.ReactElement {
+export function IconGoSvg(): React.ReactElement<any> {
   const { color, ...iconProps } = useContext(ExternalPropsContext);
 
   return (
@@ -33,7 +33,7 @@ export function IconGoSvg(): React.ReactElement {
   );
 }
 
-export function IconPeopleSvg(): React.ReactElement {
+export function IconPeopleSvg(): React.ReactElement<any> {
   const { color, ...iconProps } = useContext(ExternalPropsContext);
 
   return (

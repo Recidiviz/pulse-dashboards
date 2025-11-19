@@ -42,7 +42,7 @@ export interface UseResizeForm {
 }
 
 export const useResizeForm = (
-  formRef: React.MutableRefObject<HTMLDivElement>,
+  formRef: React.RefObject<HTMLDivElement | null>,
   pageSelector = `${PrintablePageMargin}`,
 ): UseResizeForm => {
   const [layout, setLayout] = useState<ResizeFormLayout>({

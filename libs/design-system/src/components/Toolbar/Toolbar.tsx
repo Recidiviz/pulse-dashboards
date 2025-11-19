@@ -17,8 +17,8 @@
 
 import { typography } from "@recidiviz/design-system";
 import * as React from "react";
-import { useRef, useState } from "react";
-import styled from "styled-components/macro";
+import { type JSX, useRef, useState } from "react";
+import styled from "styled-components";
 
 import { palette } from "../../styles";
 import ToolbarContext from "./ToolbarContext";

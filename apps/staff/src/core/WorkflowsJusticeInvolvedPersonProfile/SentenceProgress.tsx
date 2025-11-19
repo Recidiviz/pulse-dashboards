@@ -21,7 +21,7 @@ import { startOfDay } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -135,7 +135,7 @@ const OfficerAssignmentDisplay = ({ officerId }: { officerId?: string }) => {
 
 function StateSpecificSupervisionDetails({
   client,
-}: ClientProfileProps): React.ReactElement | null {
+}: ClientProfileProps): React.ReactElement<any> | null {
   switch (client.stateCode) {
     case "US_TN":
       return <UsTnNavigateToTepeFormButton client={client} />;
@@ -160,7 +160,7 @@ export const ProgressTimeline = ({
   fallbackComponent: React.ReactNode;
   timelineLabels: TimelineLabels;
   person: JusticeInvolvedPerson;
-}): React.ReactElement => {
+}): React.ReactElement<any> => {
   // can't visualize anything if we don't have both valid dates
   if (!startDate || !endDate || endDate <= startDate)
     return <>{fallbackComponent}</>;
@@ -249,7 +249,7 @@ export const ProgressTimeline = ({
 
 export function SupervisionProgress({
   client,
-}: ClientProfileProps): React.ReactElement {
+}: ClientProfileProps): React.ReactElement<any> {
   const {
     supervisionStartDate,
     expirationDate,
@@ -271,7 +271,7 @@ export function SupervisionProgress({
 
 export function IncarcerationProgress({
   resident,
-}: ResidentProfileProps): React.ReactElement {
+}: ResidentProfileProps): React.ReactElement<any> {
   const {
     admissionDate,
     releaseDate,

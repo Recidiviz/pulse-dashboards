@@ -24,7 +24,11 @@ export default defineConfig(() => ({
   cacheDir: "../../node_modules/.vite/libs/auth",
 
   plugins: [
-    react({ babel: { plugins: ["babel-plugin-macros"] } }),
+    react({
+      babel: {
+        plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
+      },
+    }),
     nxViteTsPaths(),
   ],
 

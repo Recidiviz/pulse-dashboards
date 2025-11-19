@@ -18,8 +18,9 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { format, isEqual } from "date-fns";
 import { rem } from "polished";
+import type { JSX } from "react";
 import MarkdownView from "react-showdown";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

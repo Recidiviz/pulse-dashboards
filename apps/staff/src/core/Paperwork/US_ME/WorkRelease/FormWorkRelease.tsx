@@ -17,7 +17,7 @@
 
 import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   Opportunity,

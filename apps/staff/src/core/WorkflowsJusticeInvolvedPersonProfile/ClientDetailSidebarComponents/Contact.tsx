@@ -30,7 +30,7 @@ import { ClientProfileProps } from "../types";
 
 export function Contact({
   client,
-}: ClientProfileProps): React.ReactElement | null {
+}: ClientProfileProps): React.ReactElement<any> | null {
   if (!client.phoneNumber && !client.emailAddress && !client.address)
     return null;
 

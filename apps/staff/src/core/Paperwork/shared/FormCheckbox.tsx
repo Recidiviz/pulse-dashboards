@@ -17,19 +17,13 @@
 
 import { deleteField, FieldValue } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
-import React from "react";
-import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
+import React, { InputHTMLAttributes } from "react";
 
 import { useOpportunityFormContext } from "../OpportunityFormContext";
 import { FormDataFieldName } from "./../US_TX/types";
 import { Checkbox } from "./styles";
 
-export type FormCheckboxProps = StyledComponentProps<
-  "input",
-  DefaultTheme,
-  { type: "checkbox" },
-  "type"
-> & {
+export type FormCheckboxProps = InputHTMLAttributes<HTMLInputElement> & {
   id: string;
   name: FormDataFieldName;
   invert?: boolean;

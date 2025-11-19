@@ -20,9 +20,9 @@ import { captureException } from "@sentry/react";
 import { compiler } from "markdown-to-jsx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC } from "react";
+import { FC, type JSX } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { styles } from "~@jii/common-ui";
 import { palette } from "~design-system";

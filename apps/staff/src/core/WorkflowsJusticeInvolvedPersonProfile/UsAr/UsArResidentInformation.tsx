@@ -32,7 +32,7 @@ import { ResidentProfileProps } from "../types";
 
 export function UsArResidentInformation({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   const { metadata } = resident;
 
   if (metadata.stateCode !== "US_AR") return null;
@@ -61,7 +61,7 @@ function UsArGoodTimeClassification({
   },
 }: {
   metadata: ResidentMetadata<"US_AR">;
-}): React.ReactElement {
+}): React.ReactElement<any> {
   return (
     <DetailsSection>
       <DetailsHeading>Good Time Classification</DetailsHeading>
@@ -98,7 +98,7 @@ function UsArCurrentStatus({
   metadata: { currentLocation, currentSentences },
 }: {
   metadata: ResidentMetadata<"US_AR">;
-}): React.ReactElement {
+}): React.ReactElement<any> {
   return (
     <DetailsSection>
       <DetailsHeading>Current Status</DetailsHeading>
@@ -132,7 +132,7 @@ function UsArReleaseDates({
   metadata: { paroleEligibilityDate, maxFlatReleaseDate, projectedReleaseDate },
 }: {
   metadata: ResidentMetadata<"US_AR">;
-}): React.ReactElement {
+}): React.ReactElement<any> {
   return (
     <DetailsSection>
       <DetailsHeading>Release Dates</DetailsHeading>
@@ -158,7 +158,7 @@ function UsArProgramming({
   metadata: { programAchievement },
 }: {
   metadata: ResidentMetadata<"US_AR">;
-}): React.ReactElement {
+}): React.ReactElement<any> {
   return (
     <DetailsSection>
       <DetailsHeading>Programming</DetailsHeading>

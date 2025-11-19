@@ -17,7 +17,7 @@
 
 import { animation } from "@recidiviz/design-system";
 import { darken } from "polished";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 

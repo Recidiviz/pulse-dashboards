@@ -19,7 +19,7 @@ import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsPaAdminSupervisionOpportunity } from "../../../../WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
@@ -97,7 +97,7 @@ export const FormUsPaAdminSupervision = observer(
   }: {
     opportunity: Opportunity;
   }) {
-    const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+    const formRef = React.useRef<HTMLDivElement>(null);
 
     if (
       !opportunity ||

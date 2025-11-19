@@ -18,7 +18,7 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
 import { FC, ReactNode } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

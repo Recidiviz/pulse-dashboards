@@ -21,7 +21,7 @@ import { rem } from "polished";
 import { FC } from "react";
 import useMeasure from "react-use-measure";
 import OrdinalFrame from "semiotic/lib/OrdinalFrame";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { preventFlexibleLayoutOverflow } from "~@jii/common-ui";
 import { useUsMaTranslations } from "~@jii/translation";

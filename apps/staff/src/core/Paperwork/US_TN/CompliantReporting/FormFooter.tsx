@@ -31,7 +31,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 const FormFooterElement = styled.div`
   display: flex;

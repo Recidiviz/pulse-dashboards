@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import {
   Image,
@@ -31,7 +31,7 @@ import { Client } from "~@meetings/app/common/types";
 import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 
-type ProfileNavProp = StackNavigationProp<RootStackParamList, "Clients">;
+type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients">;
 
 interface ClientProps {
   client: Client;

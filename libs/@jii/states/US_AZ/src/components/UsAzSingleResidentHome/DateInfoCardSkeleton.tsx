@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { FC } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { CardHeading, CardValue, GoLink } from "~@jii/common-ui";
 import { State } from "~@jii/paths";

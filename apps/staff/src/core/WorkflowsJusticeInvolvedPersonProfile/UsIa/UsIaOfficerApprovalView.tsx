@@ -20,14 +20,17 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 
 import { CharacterCountTextField } from "../../../components/CharacterCountTextField/CharacterCountTextField";
 import Checkbox from "../../../components/Checkbox";
 import { useRootStore } from "../../../components/StoreProvider";
-import { UsIaEarlyDischargeOpportunity, UsIaSupervisionLevelDowngradeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
+import {
+  UsIaEarlyDischargeOpportunity,
+  UsIaSupervisionLevelDowngradeOpportunity,
+} from "../../../WorkflowsStore/Opportunity/UsIa";
 import {
   DEFAULT_MAX_CHAR_LENGTH,
   DEFAULT_MIN_CHAR_LENGTH,
@@ -76,12 +79,16 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
     const [additionalNotes, setAdditionalNotes] = useState("");
     if (
       !opportunity?.person ||
-      !(opportunity instanceof UsIaEarlyDischargeOpportunity || opportunity instanceof UsIaSupervisionLevelDowngradeOpportunity)
+      !(
+        opportunity instanceof UsIaEarlyDischargeOpportunity ||
+        opportunity instanceof UsIaSupervisionLevelDowngradeOpportunity
+      )
     ) {
       return null;
     }
 
-    const isEarlyDischargeOpp = opportunity instanceof UsIaEarlyDischargeOpportunity
+    const isEarlyDischargeOpp =
+      opportunity instanceof UsIaEarlyDischargeOpportunity;
 
     const canSubmit =
       isConfirmed &&
@@ -107,8 +114,7 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
             },
           );
         }
-      }
-      else {
+      } else {
         opportunity.markSubmittedAndGenerateToast().then((message) => {
           if (message) {
             toast(<OpportunityStatusUpdateToast toastText={message} />, {
@@ -144,18 +150,26 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
             I confirm that all requirements have been checked.
           </Checkbox>
 
-          {isEarlyDischargeOpp && <CharacterCountTextField
-            id="additional-notes"
-            header="Additional Notes"
-            label="Enter any additional information"
-            value={additionalNotes}
-            onChange={(newValue) => setAdditionalNotes(newValue)}
-            minLength={DEFAULT_MIN_CHAR_LENGTH}
-            maxLength={DEFAULT_MAX_CHAR_LENGTH}
-            placeholder="Add notes for supervisor review..."
-            isOptional={true}
-          />}
-          <TooltipTrigger contents={isEarlyDischargeOpp ? "To move to 'Supervisor Review'" : "To Mark Downgraded"}>
+          {isEarlyDischargeOpp && (
+            <CharacterCountTextField
+              id="additional-notes"
+              header="Additional Notes"
+              label="Enter any additional information"
+              value={additionalNotes}
+              onChange={(newValue) => setAdditionalNotes(newValue)}
+              minLength={DEFAULT_MIN_CHAR_LENGTH}
+              maxLength={DEFAULT_MAX_CHAR_LENGTH}
+              placeholder="Add notes for supervisor review..."
+              isOptional={true}
+            />
+          )}
+          <TooltipTrigger
+            contents={
+              isEarlyDischargeOpp
+                ? "To move to 'Supervisor Review'"
+                : "To Mark Downgraded"
+            }
+          >
             <SaveButton
               shape="block"
               disabled={!canSubmit}

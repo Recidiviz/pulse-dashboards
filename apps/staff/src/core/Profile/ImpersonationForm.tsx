@@ -17,8 +17,8 @@
 
 import "./Profile.scss";
 
-import React, { MutableRefObject, useRef, useState } from "react";
-import styled from "styled-components/macro";
+import React, { useRef, useState } from "react";
+import styled from "styled-components";
 
 import { isOfflineMode } from "~client-env-utils";
 import { Button, palette } from "~design-system";
@@ -53,9 +53,7 @@ export const ImpersonationForm: React.FC<{
     string | null
   >();
 
-  const inputRef = useRef<HTMLInputElement>(
-    null,
-  ) as MutableRefObject<HTMLInputElement>;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const setInputRef = React.useCallback(
     (inputElement: HTMLInputElement | null) => {
@@ -91,7 +89,7 @@ export const ImpersonationForm: React.FC<{
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               event.preventDefault();
-              handleEmailInput(inputRef.current.value);
+              handleEmailInput(inputRef.current?.value);
             }
           }}
         />
@@ -102,7 +100,7 @@ export const ImpersonationForm: React.FC<{
       <div className="Profile__impersonation__submit">
         <Button
           className="Profile__impersonation__button"
-          onClick={() => handleEmailInput(inputRef.current.value)}
+          onClick={() => handleEmailInput(inputRef.current?.value)}
           disabled={isOfflineMode()}
         >
           Impersonate

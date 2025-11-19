@@ -20,7 +20,7 @@ import * as Sentry from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import toast from "react-hot-toast";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 
@@ -105,7 +105,7 @@ export const FormContainer = observer(function FormContainer({
   dataProviso,
   opportunity,
   children,
-}: FormHeaderProps): React.ReactElement {
+}: FormHeaderProps): React.ReactElement<any> {
   const { form } = opportunity;
   const isDownloadButtonDisabled = isMissingContent || false;
   const { formRevertButton } = useFeatureVariants();

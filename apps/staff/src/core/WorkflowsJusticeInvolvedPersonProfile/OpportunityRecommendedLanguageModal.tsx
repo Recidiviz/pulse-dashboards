@@ -27,7 +27,7 @@ import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React, { useState } from "react";
 import useClipboard from "react-use-clipboard";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { Button, Icon, palette } from "~design-system";
 

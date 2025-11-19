@@ -52,7 +52,7 @@ export interface RecordingState {
 }
 
 export interface RecordingActions {
-  mediaRecorderRef?: React.MutableRefObject<MediaRecorder | null>;
+  mediaRecorderRef?: React.RefObject<MediaRecorder | null>;
   startRecording: () => Promise<void>;
   pauseRecording: (
     event?: Event | null,

@@ -26,7 +26,7 @@ import { ResidentProfileProps } from "../../types";
 
 export function UsIdPastTwoYearsAlert({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   if (
     resident.admissionDate === undefined ||
     differenceInYears(new Date(), resident.admissionDate) < 2

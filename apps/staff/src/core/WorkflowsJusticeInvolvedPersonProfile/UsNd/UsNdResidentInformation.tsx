@@ -22,7 +22,7 @@ import { ResidentProfileProps } from "../types";
 
 export function UsNdResidentInformation({
   resident,
-}: ResidentProfileProps): React.ReactElement | null {
+}: ResidentProfileProps): React.ReactElement<any> | null {
   const { stateCode } = resident;
 
   if (stateCode !== "US_ND") return null;

@@ -24,7 +24,7 @@ import {
   AccordionItemPanel,
   AccordionItemState,
 } from "react-accessible-accordion";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

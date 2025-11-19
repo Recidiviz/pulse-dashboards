@@ -25,7 +25,7 @@ const CoreContext = React.createContext<CoreStore | undefined>(undefined);
 const coreStore = new CoreStore(RootStore);
 
 interface ProviderProps {
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
 }
 
 const CoreStoreProvider: React.FC<ProviderProps> = ({ children }) => {

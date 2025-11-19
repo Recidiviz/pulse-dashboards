@@ -17,7 +17,8 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import styled from "styled-components/macro";
+import type { JSX } from "react";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

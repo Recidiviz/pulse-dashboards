@@ -16,7 +16,7 @@
 // =============================================================================
 
 import * as React from "react";
-import { useContext } from "react";
+import { type JSX, useContext } from "react";
 
 import { MenuElement } from "./Dropdown.styles";
 import DropdownContext from "./DropdownContext";
@@ -37,7 +37,12 @@ export const DropdownMenu = ({
   const { shown } = useContext(DropdownContext);
 
   return (
-    <MenuElement alignment={alignment} className={className} shown={shown} aria-label={ariaLabel || "Dropdown Menu"}>
+    <MenuElement
+      alignment={alignment}
+      className={className}
+      shown={shown}
+      aria-label={ariaLabel || "Dropdown Menu"}
+    >
       {children}
     </MenuElement>
   );

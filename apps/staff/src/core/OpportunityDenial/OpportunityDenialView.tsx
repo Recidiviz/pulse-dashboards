@@ -19,9 +19,9 @@ import { Sans14, typography } from "@recidiviz/design-system";
 import { parseISO, startOfToday } from "date-fns";
 import { isEmpty, isEqual, omit, pick, some, xor } from "lodash";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { type JSX, useState } from "react";
 import toast from "react-hot-toast";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

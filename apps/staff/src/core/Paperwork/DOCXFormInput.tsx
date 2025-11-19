@@ -19,9 +19,9 @@ import { animation } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { transparentize } from "polished";
 import * as React from "react";
-import { MutableRefObject, useRef } from "react";
+import { useRef } from "react";
 import AutosizeInput from "react-input-autosize";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -81,9 +81,7 @@ const DOCXFormInput = observer(function FormInput<DraftData>({
     opportunityForm,
   );
 
-  const inputRef = useRef<HTMLInputElement>(
-    null,
-  ) as MutableRefObject<HTMLInputElement>;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const setInputRef = React.useCallback(
     (inputElement: HTMLInputElement | null) => {

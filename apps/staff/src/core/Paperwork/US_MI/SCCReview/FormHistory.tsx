@@ -18,7 +18,7 @@
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import * as React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { UsMiSCCReviewDraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewForm";
 import { FormCheckbox, FormInput } from "./FormUtils";

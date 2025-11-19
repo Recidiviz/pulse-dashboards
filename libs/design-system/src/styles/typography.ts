@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { css, FlattenSimpleInterpolation } from "styled-components/macro";
+import { css, CSSProp } from "styled-components";
 
 import * as sassVars from "../scss/typography/_variables.scss";
 
@@ -42,10 +42,7 @@ const TYPOGRAPHY_LEVELS = [
 ] as const;
 type TypographyLevel = (typeof TYPOGRAPHY_LEVELS)[number];
 
-export type TypographyStyles = Record<
-  TypographyLevel,
-  FlattenSimpleInterpolation
->;
+export type TypographyStyles = Record<TypographyLevel, CSSProp>;
 
 export const typography: TypographyStyles = TYPOGRAPHY_LEVELS.reduce(
   (accumulatedStyles, level) => {

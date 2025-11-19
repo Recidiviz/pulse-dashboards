@@ -61,8 +61,8 @@ const PathwaysFilterBar: React.FC<{
 
   const isMobile = useIsMobile();
 
-  const filtersRef = React.useRef() as React.MutableRefObject<HTMLElement>;
-  const containerRef = React.useRef() as React.MutableRefObject<HTMLElement>;
+  const filtersRef = React.useRef<HTMLElement>(undefined);
+  const containerRef = React.useRef<HTMLElement>(undefined);
 
   const enabledFiltersDisplayCount = useResizeFilterBar(
     filtersRef,

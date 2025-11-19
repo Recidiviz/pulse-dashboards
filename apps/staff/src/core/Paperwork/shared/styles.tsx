@@ -33,7 +33,7 @@
 // =============================================================================
 import { animation, iconToDataURI } from "@recidiviz/design-system";
 import { darken, rem } from "polished";
-import styled, { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 
 import { Icon, IconSVG, palette } from "~design-system";
 

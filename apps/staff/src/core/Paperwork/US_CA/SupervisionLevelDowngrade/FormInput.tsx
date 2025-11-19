@@ -16,8 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React, { MutableRefObject, useRef } from "react";
-import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
+import React, { InputHTMLAttributes, useRef } from "react";
 
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
@@ -25,12 +24,7 @@ import { useAnimatedValue } from "../../useAnimatedValue";
 import { useReactiveInput } from "../../utils";
 import { Input } from "./styles";
 
-type FormInputProps = StyledComponentProps<
-  "input",
-  DefaultTheme,
-  object,
-  never
-> & {
+type FormInputProps = InputHTMLAttributes<HTMLInputElement> & {
   name: keyof UsCaSupervisionLevelDowngradeDraftData;
 };
 
@@ -40,9 +34,7 @@ type FormInputProps = StyledComponentProps<
 const FormInput: React.FC<FormInputProps> = ({ name, ...props }) => {
   const form = useOpportunityFormContext();
   const [value, onChange] = useReactiveInput<HTMLInputElement>(name, form);
-  const inputRef = useRef<HTMLInputElement>(
-    null,
-  ) as MutableRefObject<HTMLInputElement>;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const hasAnimated = useAnimatedValue(inputRef, value);
 

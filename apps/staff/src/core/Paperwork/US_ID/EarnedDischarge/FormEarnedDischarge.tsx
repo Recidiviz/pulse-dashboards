@@ -19,7 +19,7 @@ import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import * as React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   Client,
@@ -87,7 +87,7 @@ export const FormEarnedDischarge = observer(function FormEarnedDischarge({
 }: {
   opportunity: Opportunity;
 }) {
-  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+  const formRef = React.useRef<HTMLDivElement>(null);
 
   const { resize } = useResizeForm(formRef, `${FormTransformContainer}`);
 

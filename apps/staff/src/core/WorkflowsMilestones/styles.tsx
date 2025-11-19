@@ -23,7 +23,7 @@ import {
   typography,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
-import styled, { css, keyframes } from "styled-components/macro";
+import styled, { css, keyframes } from "styled-components";
 
 import { Button, palette } from "~design-system";
 

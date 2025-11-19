@@ -28,7 +28,7 @@ import {
 } from "@recidiviz/design-system";
 import { ErrorBoundary, withSentryReactRouterV6Routing } from "@sentry/react";
 import { Route, Routes } from "react-router-dom";
-import styled, { createGlobalStyle } from "styled-components/macro";
+import styled, { createGlobalStyle } from "styled-components";
 
 import { NotFound } from "~@jii/common-ui";
 import { initializeSentry, StoreProvider } from "~@jii/data";

@@ -18,7 +18,7 @@
 // TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
 import { observer } from "mobx-react-lite";
 import React, { ChangeEventHandler } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import AssessmentItem, { SubItem } from "./AssessmentItem";

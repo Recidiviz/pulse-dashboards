@@ -17,7 +17,7 @@
 
 import { Pill, Sans14, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { palette } from "~design-system";
 

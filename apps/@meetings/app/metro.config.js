@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const { withNxMetro } = require("@nx/expo");
 const { getSentryExpoConfig } = require("@sentry/react-native/metro");
 const { mergeConfig } = require("metro-config");
 const { withNativeWind } = require("nativewind/metro");
@@ -40,12 +39,6 @@ const customConfig = {
   },
 };
 
-module.exports = withNxMetro(mergeConfig(defaultConfig, customConfig), {
-  // Change this to true to see debugging info.
-  // Useful if you have issues resolving modules
-  debug: false,
-  // all the file extensions used for imports other than 'ts', 'tsx', 'js', 'jsx', 'json'
-  extensions: [],
-  // Specify folders to watch, in addition to Nx defaults (workspace libraries and node_modules)
-  watchFolders: [],
-}).then((config) => withNativeWind(config, { input: "./global.css" }));
+module.exports = withNativeWind(mergeConfig(defaultConfig, customConfig), {
+  input: "./global.css",
+});

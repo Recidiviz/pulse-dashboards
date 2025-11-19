@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import lanternLogo from "../../assets/static/images/lantern_logo.png";
 

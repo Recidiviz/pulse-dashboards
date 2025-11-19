@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import { Accordion } from "react-accessible-accordion";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";

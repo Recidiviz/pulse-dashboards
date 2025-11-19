@@ -38,7 +38,7 @@ function ModelHydrator({
   hydratable,
   className,
   loading,
-}: ModelHydratorProps): React.ReactElement {
+}: ModelHydratorProps): React.ReactElement<any> {
   return (
     <Hydrator
       {...{ children, hydratable, className }}

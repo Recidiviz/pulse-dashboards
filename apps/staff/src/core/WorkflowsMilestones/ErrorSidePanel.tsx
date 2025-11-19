@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import type { JSX } from "react";
 
 import RedExcalamationPoint from "../../assets/static/images/redExcalamation.svg?react";
 import { formatWorkflowsDate } from "../../utils/formatStrings";

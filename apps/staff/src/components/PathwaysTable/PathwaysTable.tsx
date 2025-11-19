@@ -78,7 +78,7 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
     return rowHeights[index];
   };
 
-  const listRef: React.LegacyRef<List> = React.createRef();
+  const listRef: React.Ref<List> = React.createRef();
 
   useEffect(() => {
     listRef.current?.resetAfterIndex(0);

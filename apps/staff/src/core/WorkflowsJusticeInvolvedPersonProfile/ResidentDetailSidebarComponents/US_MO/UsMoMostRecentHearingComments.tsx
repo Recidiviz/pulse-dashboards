@@ -31,7 +31,7 @@ import {
 
 export function UsMoMostRecentHearingComments(props: {
   mostRecentHearingComments: UsMoMostRecentHearingCommentsMetadata;
-}): React.ReactElement {
+}): React.ReactElement<any> {
   const { mostRecentHearingComments } = props;
 
   return (

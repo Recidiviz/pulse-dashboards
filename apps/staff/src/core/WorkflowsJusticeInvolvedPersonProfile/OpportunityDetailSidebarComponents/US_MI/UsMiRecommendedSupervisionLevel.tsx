@@ -31,7 +31,7 @@ import { OpportunityProfileProps } from "../../types";
 
 export function UsMiRecommendedSupervisionLevel({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   if (!(opportunity instanceof UsMiClassificationReviewOpportunity)) {
     return null;
   }

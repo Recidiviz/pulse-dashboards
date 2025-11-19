@@ -17,7 +17,7 @@
 
 import { rem } from "polished";
 import { FC, ReactNode } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { FullBleedContainer, PageContainer } from "~@jii/common-ui";
 import { palette } from "~design-system";

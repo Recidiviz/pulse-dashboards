@@ -15,13 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animated, useTransition } from "@react-spring/web";
 import { Loading } from "@recidiviz/design-system";
-import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useEffect } from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { isHydrationUntouched } from "../Hydratable/utils";
 import { HydratorProps } from "./types";
@@ -31,7 +29,7 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-const StatusWrapper = styled(animated.div)`
+const StatusWrapper = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
@@ -44,18 +42,10 @@ const StatusWrapper = styled(animated.div)`
   }
 `;
 
-const ContentWrapper = styled(animated.div)`
+const ContentWrapper = styled.div`
   height: 100%;
   width: 100%;
 `;
-
-const crossFade = {
-  initial: { opacity: 1, top: 0 },
-  from: { opacity: 0 },
-  enter: { opacity: 1 },
-  leave: { opacity: 0, position: "absolute" },
-  config: { friction: 40, tension: 280 },
-} as const;
 
 /**
  * Observes the provided `hydratable` and only renders `children` if it is hydrated;
@@ -78,34 +68,32 @@ export const Hydrator: React.FC<HydratorProps> = observer(function Hydrator({
     }
   }, [hydratable, needsHydration]);
 
-  const transitions = useTransition(hydrationStatus, crossFade);
+  let content: React.ReactNode;
+  switch (hydrationStatus) {
+    case "needs hydration":
+    case "loading":
+      switch (loading) {
+        case null:
+          content = null;
+          break;
+        case undefined:
+          content = (
+            <StatusWrapper>
+              <Loading />
+            </StatusWrapper>
+          );
+          break;
+        default:
+          content = <StatusWrapper>{loading}</StatusWrapper>;
+      }
+      break;
+    case "failed":
+      content = <StatusWrapper>{failed}</StatusWrapper>;
+      break;
+    case "hydrated":
+      content = <ContentWrapper>{children}</ContentWrapper>;
+      break;
+  }
 
-  return (
-    <Wrapper className={className}>
-      {transitions((style, item) => {
-        switch (item) {
-          case "needs hydration":
-          case "loading":
-            switch (loading) {
-              case null:
-                return null;
-              case undefined:
-                return (
-                  <StatusWrapper style={style}>
-                    <Loading />
-                  </StatusWrapper>
-                );
-              default:
-                return <StatusWrapper style={style}>{loading}</StatusWrapper>;
-            }
-          case "failed":
-            return <StatusWrapper style={style}>{failed}</StatusWrapper>;
-          case "hydrated":
-            return <ContentWrapper style={style}>{children}</ContentWrapper>;
-          default:
-            return assertNever(item);
-        }
-      })}
-    </Wrapper>
-  );
+  return <Wrapper className={className}>{content}</Wrapper>;
 });

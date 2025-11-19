@@ -19,7 +19,7 @@ import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import simplur from "simplur";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import { SupervisionOfficer } from "~datatypes";
 import { Button, Icon, palette } from "~design-system";

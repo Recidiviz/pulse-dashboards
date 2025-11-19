@@ -18,7 +18,6 @@
 import "@testing-library/jest-dom";
 import "jest-styled-components";
 
-import { Globals } from "@react-spring/web";
 import { toHaveNoViolations } from "jest-axe";
 import jestExtendedMatchers from "jest-extended";
 import { freeze } from "timekeeper";
@@ -42,11 +41,6 @@ window.ResizeObserver = ResizeObserver;
 
 beforeAll(() => {
   fetchMocker.enableMocks();
-
-  // speeds up animated transitions in UI tests; they still happen async but complete immediately
-  Globals.assign({
-    skipAnimation: true,
-  });
 });
 
 beforeEach(() => {

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { parseJSON } from "date-fns";
-import React from "react";
+import React, { type JSX } from "react";
 
 import * as pathwaysTenants from "../../../RootStore/TenantStore/pathwaysTenants";
 import { formatWorkflowsDate } from "../../../utils";
@@ -93,7 +93,7 @@ export function ProbationSpecialConditionsMarkup(
 
 export function SpecialConditions({
   client,
-}: ClientProfileProps): React.ReactElement | null {
+}: ClientProfileProps): React.ReactElement<any> | null {
   const emptySpecialConditionStrings =
     STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_STRINGS[client.stateCode];
   if (!emptySpecialConditionStrings) return null;

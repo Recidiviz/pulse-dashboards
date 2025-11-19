@@ -55,7 +55,7 @@ const VitalsSummaryCard: React.FC<PropTypes> = ({
   title,
   percentage,
   status,
-  selected,
+  selected = false,
   onClick,
 }) => (
   <div
@@ -87,9 +87,5 @@ const VitalsSummaryCard: React.FC<PropTypes> = ({
     </div>
   </div>
 );
-
-VitalsSummaryCard.defaultProps = {
-  selected: false,
-};
 
 export default VitalsSummaryCard;

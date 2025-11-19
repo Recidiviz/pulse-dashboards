@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React from "react";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 import {
   UsMiBondableOffense,
@@ -115,7 +115,7 @@ export const MisconductHistory: React.FC<{
 
 export function UsMiRestrictiveHousing({
   opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
+}: OpportunityProfileProps): React.ReactElement<any> | null {
   if (
     !(
       opportunity instanceof
