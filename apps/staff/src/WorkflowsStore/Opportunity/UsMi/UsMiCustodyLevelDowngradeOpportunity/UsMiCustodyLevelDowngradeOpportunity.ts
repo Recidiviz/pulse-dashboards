@@ -38,16 +38,10 @@ export class UsMiCustodyLevelDowngradeOpportunity extends OpportunityBase<
   }
 
   get submittedButtonText(): string {
-    if (this.config.submittedTabTitle === "Reduction Pending")
-      return "Mark Pending";
-
-    return super.submittedButtonText;
+    return "Mark Pending";
   }
 
   get undoSubmittedButtonText(): string {
-    if (this.config.submittedTabTitle === "Reduction Pending")
-      return "Revert from Pending";
-
-    return super.undoSubmittedButtonText;
+    return "Revert from Pending";
   }
 }
