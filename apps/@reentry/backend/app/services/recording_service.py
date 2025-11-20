@@ -360,17 +360,50 @@ class RecordingService:
     async def list_chunk_files(self, session_id: str) -> List[str]:
         prefix = f"recordings/{session_id}/chunks/"
 
-        objects = await self.storage.list_objects(
-            bucket=self.bucket_name, params={"prefix": prefix}
-        )
-
         chunk_files = []
-        for obj in objects.get("items", []):
-            name = obj["name"]
-            if name.startswith(prefix) and name.endswith(".webm") and "chunk_" in name:
-                chunk_files.append(name)
+        page_token = None
+
+        # Handle pagination to get all chunks (API returns max 1000 per request)
+        while True:
+            params = {
+                "prefix": prefix,
+                "maxResults": 1000,  # Explicitly set max results per page
+            }
+            if page_token:
+                params["pageToken"] = page_token
+
+            objects = await self.storage.list_objects(
+                bucket=self.bucket_name, params=params
+            )
+
+            # Check if we got any items
+            items = objects.get("items", [])
+            if not items:
+                logger.warning(f"No items returned for session {session_id}")
+                break
+
+            for obj in items:
+                name = obj["name"]
+                if (
+                    name.startswith(prefix)
+                    and name.endswith(".webm")
+                    and "chunk_" in name
+                ):
+                    chunk_files.append(name)
+
+            # Check if there are more pages
+            page_token = objects.get("nextPageToken")
+            if not page_token:
+                break
+
+            logger.debug(
+                f"Fetching next page, found {len(chunk_files)} chunks so far..."
+            )
 
         chunk_files.sort(key=extract_timestamp_from_filename)
+        logger.info(
+            f"Found {len(chunk_files)} total chunk files for session {session_id}"
+        )
         return chunk_files
 
     async def download_single_chunk(self, file_path: str) -> bytes:
