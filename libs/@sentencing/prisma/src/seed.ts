@@ -27,13 +27,15 @@ import {
   AsamLevelOfCareRecommendationCriterion,
   CaseStatus,
   DiagnosedSubstanceUseDisorderCriterion,
+  Division,
+  FelonyClass,
   Gender,
   Plea,
   PriorCriminalHistoryCriterion,
   Prisma,
   ReportType,
   StateCode,
-  SubstanceUseDiagnosis,
+  SubstanceUseDiagnosis
 } from "./client/client";
 interface Auth0TokenResponse {
   access_token: string;
@@ -121,12 +123,12 @@ async function addCounties(
   return new Map(countyRows.map((c: CountyRow) => [c.name, c.id]));
 }
 
-async function addClientsAndCases(
+async function addPSIClientsAndCases(
   countyByName: Map<string, string>,
   staff: Prisma.StaffCreateInput,
   offenses: Prisma.OffenseCreateInput[],
 ) {
-  /* Add and link 10 clients and cases to local user */
+  /* Add and link 10 clients and PSI cases to local user */
   const clients: { externalId: string }[] = [];
   for (let i = 0; i < 10; i++) {
     const externalId = faker.string.uuid();
@@ -201,6 +203,82 @@ async function addClientsAndCases(
         status: CaseStatus.NotYetStarted,
       },
     });
+  }
+}
+
+async function addSARClientsAndReports(
+  staff: Prisma.StaffCreateInput,
+  offenses: Prisma.OffenseCreateInput[],
+) {
+  /* Add 5 SAR clients and reports with charges */
+  const clients: { externalId: string }[] = [];
+
+  // Create 5 clients for Missouri
+  for (let i = 0; i < 5; i++) {
+    const externalId = faker.string.uuid();
+    const gender = faker.helpers.arrayElement([
+      Gender.MALE,
+      Gender.FEMALE,
+      Gender.NON_BINARY,
+    ]);
+    const sex = gender === Gender.MALE ? "male" : "female";
+
+    await prisma.client.create({
+      data: {
+        externalId,
+        pseudonymizedId: faker.string.alphanumeric({ length: 15 }),
+        fullName: faker.person.fullName({ sex }),
+        stateCode: StateCode.US_MO,
+        gender,
+        birthDate: faker.date.birthdate(),
+      },
+      select: { externalId: true },
+    });
+
+    clients.push({ externalId });
+  }
+
+  // Create SAR reports for each client
+  for (let i = 0; i < 5; i++) {
+    const clientId = clients[i].externalId;
+
+    // Create the SAR with minimal imported data
+    const sar = await prisma.sentencingAssessmentReport.create({
+      data: {
+        externalId: faker.string.uuid(),
+        client: {
+          connect: { externalId: clientId },
+        },
+        staff: {
+          connect: { pseudonymizedId: staff.pseudonymizedId },
+        },
+        status: faker.helpers.enumValue(CaseStatus),
+        requestingJudgeName: faker.person.fullName(),
+        dateRequested: faker.date.recent(),
+        dateDueToCourt: faker.date.future(),
+        dueDate: faker.date.future(),
+        division: faker.helpers.enumValue(Division),
+        address: faker.location.streetAddress(),
+      },
+    });
+
+    // Add 1-3 charges per SAR with only imported fields: offense name, felony class, cause number
+    const numCharges = faker.number.int({ min: 1, max: 3 });
+    for (let j = 0; j < numCharges; j++) {
+      await prisma.charge.create({
+        data: {
+          sentencingAssessmentReport: {
+            connect: { id: sar.id },
+          },
+          offense: {
+            connect: { name: faker.helpers.arrayElement(offenses).name },
+          },
+          // Only imported fields - the rest will be filled in by users
+          causeNum: `${faker.string.numeric(2)}-CR-${faker.string.numeric(5)}`,
+          felonyClass: faker.helpers.enumValue(FelonyClass),
+        },
+      });
+    }
   }
 }
 
@@ -436,8 +514,11 @@ async function main() {
   console.log("Adding Offenses...");
   const offenses = await addOffenses();
 
-  console.log("Adding Clients and Cases...");
-  await addClientsAndCases(countyByName, staff, offenses);
+  console.log("Adding PSI Clients and Cases...");
+  await addPSIClientsAndCases(countyByName, staff, offenses);
+
+  console.log("Adding SAR Clients and Reports...");
+  await addSARClientsAndReports(staff, offenses);
 
   // TODO(#10194) Add recidivism data to power visualizations
 }

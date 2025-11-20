@@ -668,7 +668,7 @@ model Charge {
 
   // Charge details (locked fields from import)
   felonyClass FelonyClass?
-  caseNum     String?
+  causeNum     String?
   moCode      String?
   judgeName   String?
   division    Division?
