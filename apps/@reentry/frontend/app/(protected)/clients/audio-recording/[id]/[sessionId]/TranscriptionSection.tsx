@@ -60,7 +60,16 @@ const TranscriptionSection: React.FC<{
     return <TranscriptionConversation sessionId={sessionDataId || ""} />;
   }
 
-  if (recordingStatus === "error") {
+  if (sessionStatus === "processing") {
+    return (
+      <StatusMessage
+        title="In Progress"
+        message="Your transcript is being processed. Please wait while we finish the transcription."
+      />
+    );
+  }
+
+  if (sessionStatus === "error") {
     return (
       <StatusMessage
         title="Error"
@@ -95,20 +104,7 @@ const TranscriptionSection: React.FC<{
       />
     );
   }
-
-  if (recordingStatus === "processing") {
-    return (
-      <StatusMessage
-        title="In Progress"
-        message="Your transcript is being processed. Please wait while we finish the transcription."
-      />
-    );
-  }
-
-  if (recordingStatus === "completed") {
-    return <TranscriptionConversation sessionId={sessionDataId || ""} />;
-  }
-
+  
   return null;
 };
 
