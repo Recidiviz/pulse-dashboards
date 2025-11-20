@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
+import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
 const US_IA_CONFIG = {
@@ -40,6 +41,7 @@ const US_IA_CONFIG = {
     },
   },
   navigation: {
+    insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", "clients"],
   },
 } satisfies TenantConfig<"US_IA">;
