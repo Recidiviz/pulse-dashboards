@@ -58,6 +58,20 @@ export const staffRouter = router({
               },
             },
           },
+          sentencingAssessmentReports: {
+            select: {
+              id: true,
+              externalId: true,
+              dueDate: true,
+              status: true,
+              client: {
+                select: {
+                  externalId: true,
+                  fullName: true,
+                },
+              },
+            },
+          },
         },
       });
 

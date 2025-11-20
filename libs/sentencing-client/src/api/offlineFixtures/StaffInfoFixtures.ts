@@ -91,4 +91,5 @@ export const StaffInfoFixture: Staff = {
       isCancelled: false,
     },
   ],
+  sentencingAssessmentReports: [],
 };

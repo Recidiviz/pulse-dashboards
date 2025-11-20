@@ -252,11 +252,18 @@ export const fakeSAR = {
   requestingJudgeName: faker.person.fullName(),
   dateRequested: faker.date.recent(),
   dateDueToCourt: faker.date.future(),
+  dueDate: faker.date.future(),
   division: Division.Criminal,
   address: faker.location.streetAddress(),
-  needsToBeAddressed: [NeedToBeAddressed.SubstanceUse, NeedToBeAddressed.MentalHealth],
+  needsToBeAddressed: [
+    NeedToBeAddressed.SubstanceUse,
+    NeedToBeAddressed.MentalHealth,
+  ],
   otherNeedToBeAddressed: null,
-  mitigatingFactors: [MitigatingFactor.SteadyEmployment, MitigatingFactor.StrongSocialSupportNetwork],
+  mitigatingFactors: [
+    MitigatingFactor.SteadyEmployment,
+    MitigatingFactor.StrongSocialSupportNetwork,
+  ],
   otherMitigatingFactor: null,
   levelOfEducation: LevelOfEducation.HighSchoolDiplomaOrGED,
   assessmentScore: 7,
@@ -424,7 +431,7 @@ export async function seed(prismaClient: PrismaClient) {
       },
       staff: {
         connect: {
-          externalId: fakeSARStaff.externalId,
+          externalId: fakeStaff.externalId,
         },
       },
     },

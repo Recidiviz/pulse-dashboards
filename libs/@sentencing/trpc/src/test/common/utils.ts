@@ -24,6 +24,8 @@ import { testkit } from "~@sentencing/trpc/test/setup";
 import {
   fakeCase,
   fakeClient,
+  fakeSAR,
+  fakeSARClient,
   fakeStaff,
 } from "~@sentencing/trpc/test/setup/seed";
 
@@ -47,6 +49,7 @@ export async function testGetStaff(returnedStaff: staffRouterOutput) {
     expect.objectContaining({
       ..._.omit(fakeStaff, ["externalId", "dueDate"]),
       cases: expect.any(Array),
+      sentencingAssessmentReports: expect.any(Array),
     }),
   );
 
@@ -72,4 +75,21 @@ export async function testGetStaff(returnedStaff: staffRouterOutput) {
   // Since there is a customDueDate it should be the effective due date of the case
   // - dueDate returned by the API should equal (customDueDate ?? dueDate) from the seed
   expect(fakeCase.customDueDate).toBe(staffCase.dueDate);
+
+  // Validate SAR data
+  expect(returnedStaff.sentencingAssessmentReports).toHaveLength(1);
+
+  const [sar] = returnedStaff.sentencingAssessmentReports;
+
+  expect(sar).toEqual(
+    expect.objectContaining({
+      id: fakeSAR.id,
+      externalId: fakeSAR.externalId,
+      dueDate: fakeSAR.dueDate,
+      status: fakeSAR.status,
+      client: expect.objectContaining(
+        _.pick(fakeSARClient, ["fullName", "externalId"]),
+      ),
+    }),
+  );
 }

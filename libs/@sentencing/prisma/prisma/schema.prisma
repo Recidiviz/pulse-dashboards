@@ -588,6 +588,7 @@ model SentencingAssessmentReport {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   status    CaseStatus @default(NotYetStarted)
+  dueDate            DateTime?
 
   client   Client @relation(fields: [clientId], references: [externalId])
   clientId String
