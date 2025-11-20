@@ -40,7 +40,7 @@ import type {
   ClientRecordResponse,
   RecordingSessionResponse,
 } from "~@reentry/frontend/types/recording";
-import { showInfoToast } from "~@reentry/frontend/utils/toast";
+import { showInfoToast } from "~@reentry/frontend-shared";
 
 import AudioWaveform from "./AudioWaveform";
 import RecordingControls from "./RecordingControls";

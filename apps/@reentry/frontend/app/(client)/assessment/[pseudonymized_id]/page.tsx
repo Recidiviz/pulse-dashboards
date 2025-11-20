@@ -19,9 +19,11 @@
 
 import { useEffect, useState } from "react";
 
-import ConfirmBirthdate from "~@reentry/frontend/components/intake/ChatInterface/ConfirmBirthday";
-import IntakeRouter from "~@reentry/frontend/components/intake/IntakeRouter";
-import { IntakeSocketProvider } from "~@reentry/frontend/websockets/IntakeSocketContext";
+import {
+  ConfirmBirthdatePage,
+  IntakeRouter,
+  IntakeSocketProvider,
+} from "~@reentry/frontend-shared";
 
 export default function Intake({
   params,
@@ -56,9 +58,10 @@ export default function Intake({
   if (!authorized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <ConfirmBirthdate
+        <ConfirmBirthdatePage
           pseudonymized_id={pseudonymized_id}
           mode={"pseudoDob"}
+          onConfirmation={() => window.location.reload()}
         />
       </div>
     );

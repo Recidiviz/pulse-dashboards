@@ -63,6 +63,9 @@
       "~@meetings/trpc-types": ["libs/@meetings/trpc-types/src/index.ts"],
       "~@meetings/trpc/*": ["libs/@meetings/trpc/src/*"],
       "~@meetings/trpc/test/*": ["libs/@meetings/trpc/__tests__/*"],
+      "~@reentry/frontend-shared": [
+        "libs/@reentry/frontend-shared/src/index.ts"
+      ],
       "~@reentry/frontend/*": ["apps/@reentry/frontend/app/*"],
       "~@reentry/import": ["apps/@reentry/import/src/index.ts"],
       "~@reentry/import/*": ["apps/@reentry/import/src/*"],
@@ -71,6 +74,9 @@
       "~@reentry/intake-agent/*": ["libs/@reentry/intake-agent/src/*"],
       "~@reentry/intake-agent/evaluate/*": [
         "libs/@reentry/intake-agent/evaluate/*"
+      ],
+      "~@reentry/openapi-types": [
+        "libs/@reentry/openapi-types/src/recidiviz-schema.d.ts"
       ],
       "~@reentry/prisma": ["libs/@reentry/prisma/src/index.ts"],
       "~@reentry/prisma/*": ["libs/@reentry/prisma/src/*"],
@@ -118,7 +124,8 @@
       "~shared-assets/*": ["libs/shared-assets/src/*"],
       "~staff-shared-server": ["libs/staff-shared-server/src/index.ts"],
       "~twilio-api": ["libs/twilio-api/src/index.ts"],
-      "~ui": ["libs/ui/src/index.ts"]
+      "~ui": ["libs/ui/src/index.ts"],
+      "~utils": ["libs/utils/src/index.ts"]
     },
     "resolveJsonModule": true,
     "rootDir": ".",

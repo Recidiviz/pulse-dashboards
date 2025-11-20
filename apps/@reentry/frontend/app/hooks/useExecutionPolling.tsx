@@ -17,10 +17,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useAuth } from "~@reentry/frontend/lib/auth";
-
-import { $api } from "../api";
-
+import { $api } from "~@reentry/frontend/api";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 interface UseExecutionPollingProps {
   interval?: number;
 }

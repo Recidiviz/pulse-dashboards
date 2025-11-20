@@ -18,26 +18,27 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-	content: [
-		"./pages/**/*.{js,ts,jsx,tsx,mdx}",
-		"./components/**/*.{js,ts,jsx,tsx,mdx}",
-		"./app/**/*.{js,ts,jsx,tsx,mdx}",
-	],
-	theme: {
-		extend: {
-			screens: {
-				screen: { raw: "screen" },
-				print: { raw: "print" },
-			},
-			colors: {
-				background: "var(--background)",
-				foreground: "var(--foreground)",
-			},
-			fontFamily: {
-				public: ['"Public Sans"', "sans-serif"],
-			},
-		},
-	},
-	plugins: [],
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../../libs/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      screens: {
+        screen: { raw: "screen" },
+        print: { raw: "print" },
+      },
+      colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+      },
+      fontFamily: {
+        public: ['"Public Sans"', "sans-serif"],
+      },
+    },
+  },
+  plugins: [],
 };
 export default config;

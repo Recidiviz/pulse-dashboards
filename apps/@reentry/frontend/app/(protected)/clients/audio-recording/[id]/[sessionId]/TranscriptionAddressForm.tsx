@@ -22,8 +22,8 @@ import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import type { components } from "~@reentry/openapi-types";
 
 interface AddressFormData {
   streetAddress?: string;
@@ -64,7 +64,9 @@ const TranscriptionAddressForm = ({
     }
 
     if (clientData) {
-      trackClientHomeAddressSubmitted({justiceInvolvedPersonId: clientData.pseudonymized_client_id})
+      trackClientHomeAddressSubmitted({
+        justiceInvolvedPersonId: clientData.pseudonymized_client_id,
+      });
     }
 
     setIsSubmitting(true);

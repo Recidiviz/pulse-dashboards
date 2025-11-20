@@ -19,12 +19,14 @@
 
 import { useEffect, useState } from "react";
 
-import ConfirmBirthdate from "~@reentry/frontend/components/intake/ChatInterface/ConfirmBirthday";
-import IntakeRouter from "~@reentry/frontend/components/intake/IntakeRouter";
 import IntakeChatV2 from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
 import { IntakeAuthProvider } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
-import { IntakeSocketProvider } from "~@reentry/frontend/websockets/IntakeSocketContext";
+import {
+  ConfirmBirthdatePage,
+  IntakeRouter,
+  IntakeSocketProvider,
+} from "~@reentry/frontend-shared";
 
 export default function Intake() {
   const [loading, setLoading] = useState(true);
@@ -62,7 +64,10 @@ export default function Intake() {
   if (!authorized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <ConfirmBirthdate mode={"nonPseudoId"} />
+        <ConfirmBirthdatePage
+          mode={"nonPseudoId"}
+          onConfirmation={() => window.location.reload()}
+        />
       </div>
     );
   }

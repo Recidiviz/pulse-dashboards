@@ -30,9 +30,9 @@ import Image from "next/image";
 import { $api } from "~@reentry/frontend/api";
 import { useClientDelete } from "~@reentry/frontend/hooks/useClientDelete";
 import { useClientReset } from "~@reentry/frontend/hooks/useClientReset";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
+import type { components } from "~@reentry/openapi-types";
 
 interface DropdownProps {
   client: components["schemas"]["ClientResponse"];

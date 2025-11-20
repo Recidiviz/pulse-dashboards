@@ -30,7 +30,7 @@ import {
 import superjson from "superjson";
 
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { trpc, trpcUrl } from "~@reentry/frontend/trpc";
 import {
   ConnectionState,

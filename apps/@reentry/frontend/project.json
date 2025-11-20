@@ -197,7 +197,7 @@
     "openapi": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "openapi-typescript http://127.0.0.1:8000/openapi.json -o app/recidiviz-schema.d.ts",
+        "command": "openapi-typescript http://127.0.0.1:8000/openapi.json -o libs/@reentry/openapi-types/src/recidiviz-schema.d.ts",
         "cwd": "{projectRoot}"
       }
     }

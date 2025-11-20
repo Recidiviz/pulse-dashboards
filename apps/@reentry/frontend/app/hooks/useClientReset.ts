@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { $api } from "~@reentry/frontend/api";
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 /**
  * Hook for resetting client intake data

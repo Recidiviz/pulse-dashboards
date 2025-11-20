@@ -23,7 +23,7 @@ import StepTwo from "~@reentry/frontend/components/IntakeChatV2/Interstitials/Pr
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
 import { trpc } from "~@reentry/frontend/trpc";
-import { showErrorToast } from "~@reentry/frontend/utils/toast";
+import { showErrorToast } from "~@reentry/frontend-shared";
 
 interface PreIntakeProps {
   clientPseudoId: string;

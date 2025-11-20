@@ -20,11 +20,13 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useState } from "react";
 
-import ChatbotInterface from "~@reentry/frontend/components/intake/ChatInterface/ChatbotInterface";
-import ChatHeader from "~@reentry/frontend/components/intake/ChatInterface/ChatHeader";
-import Sidebar from "~@reentry/frontend/components/intake/ChatInterface/Sidebar";
-import { ConnectionErrorAlert } from "~@reentry/frontend/websockets/components/ConnectionErrorAlert";
-import { useSocket } from "~@reentry/frontend/websockets/IntakeSocketContext";
+import {
+  ChatbotInterface,
+  ChatHeader,
+  ConnectionErrorAlert,
+  Sidebar,
+  useSocket,
+} from "~@reentry/frontend-shared";
 
 const LinearChatComponent: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

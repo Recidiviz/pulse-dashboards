@@ -17,7 +17,7 @@
 
 "use client";
 
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 const EmailVerificationState = () => {
   const { logout } = useAuth();

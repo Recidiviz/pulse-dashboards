@@ -20,11 +20,12 @@
 import { captureException } from "@sentry/nextjs";
 import { createContext, ReactNode, useContext, useEffect } from "react";
 
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { analytics } from "~@reentry/frontend/lib/segment";
+import { IntakeAnalytics } from "~@reentry/frontend-shared";
 
 // Types
-interface AnalyticsContextProps {
+interface AnalyticsContextProps extends IntakeAnalytics {
   identify: (userId: string) => void;
   pageView: (pagePath: string) => void;
   track: (eventName: string, metadata: Record<string, unknown>) => void;
@@ -42,12 +43,6 @@ interface AnalyticsContextProps {
     justiceInvolvedPersonId: string;
     sessionId: string;
     status: string;
-  }) => void;
-  trackIntakeChatClientLogin: (metadata: {
-    justiceInvolvedPersonId: string;
-  }) => void;
-  trackIntakeChatClientAddressSubmitted: (metadata: {
-    justiceInvolvedPersonId: string;
   }) => void;
 }
 
@@ -160,16 +155,26 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
       analytics.track(`frontend_cpa_intake_chat_${eventName}`, metadata);
   };
 
-  const trackIntakeChatClientLogin = (metadata: {
-    justiceInvolvedPersonId: string;
+  const trackIntakeChatClientLogin = ({
+    // renaming this for backwards compatibility between the intake interface
+    // and the existing event structure
+    justiceInvolvedPersonPseudoId: justiceInvolvedPersonId,
+  }: {
+    justiceInvolvedPersonPseudoId: string;
   }) => {
-    trackIntakeChatEvent("client_login", metadata);
+    trackIntakeChatEvent("client_login", { justiceInvolvedPersonId });
   };
 
-  const trackIntakeChatClientAddressSubmitted = (metadata: {
-    justiceInvolvedPersonId: string;
+  const trackIntakeChatClientAddressSubmitted = ({
+    // renaming this for backwards compatibility between the intake interface
+    // and the existing event structure
+    justiceInvolvedPersonPseudoId: justiceInvolvedPersonId,
+  }: {
+    justiceInvolvedPersonPseudoId: string;
   }) => {
-    trackIntakeChatEvent("client_address_submitted", metadata);
+    trackIntakeChatEvent("client_address_submitted", {
+      justiceInvolvedPersonId,
+    });
   };
 
   const trackClientHomeAddressSubmitted = (metadata: {

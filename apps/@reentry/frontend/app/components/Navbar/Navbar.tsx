@@ -21,7 +21,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import UserDropdown from "~@reentry/frontend/components/auth/userDropdown";
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 const Navbar = () => {
   const { state, login, logout } = useAuth();

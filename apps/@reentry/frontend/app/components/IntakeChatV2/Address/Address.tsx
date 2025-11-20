@@ -19,11 +19,11 @@ import React, { useMemo, useState } from "react";
 
 import { trpc } from "~@reentry/frontend/trpc";
 import {
+  IntakeChatV2CommonStyles as common,
   showErrorToast,
   showSuccessToast,
-} from "~@reentry/frontend/utils/toast";
+} from "~@reentry/frontend-shared";
 
-import common from "../Common.module.css";
 import styles from "./Address.module.css";
 
 interface AddressProps {

@@ -17,8 +17,8 @@
 
 import { createContext } from "react";
 
-import { useRequiredContext } from "~@jii/data";
 import { UsMaResidentMetadata } from "~datatypes";
+import { useRequiredContext } from "~utils";
 
 import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
 

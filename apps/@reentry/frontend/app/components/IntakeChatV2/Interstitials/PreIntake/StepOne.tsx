@@ -17,8 +17,8 @@
 
 import React from "react";
 
-import common from "~@reentry/frontend/components/IntakeChatV2/Common.module.css";
 import styles from "~@reentry/frontend/components/IntakeChatV2/Interstitials/PreIntake/PreIntake.module.css";
+import { IntakeChatV2CommonStyles as common } from "~@reentry/frontend-shared";
 
 interface StepOneProps {
   onContinue: () => void;

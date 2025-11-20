@@ -22,14 +22,14 @@ import { useEffect, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import { InfoTooltip } from "~@reentry/frontend/components/base/InfoTooltip";
-import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
+  PrimaryButton,
   showErrorToast,
   showSuccessToast,
-} from "~@reentry/frontend/utils/toast";
+} from "~@reentry/frontend-shared";
+import type { components } from "~@reentry/openapi-types";
 
 interface HomeAddressSectionProps {
   planId: string;

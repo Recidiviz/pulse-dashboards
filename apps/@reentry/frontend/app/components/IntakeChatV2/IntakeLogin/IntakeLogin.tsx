@@ -21,13 +21,15 @@ import Image from "next/image";
 import React, { useState } from "react";
 
 import { getIntakeToken } from "~@reentry/frontend/components/IntakeChatV2/api/api";
-import common from "~@reentry/frontend/components/IntakeChatV2/Common.module.css";
 import styles from "~@reentry/frontend/components/IntakeChatV2/IntakeLogin/IntakeLogin.module.css";
 import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
 import { IntakeFields } from "~@reentry/frontend/components/IntakeChatV2/types";
 import { validateIntakeFields } from "~@reentry/frontend/components/IntakeChatV2/utils";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
-import { showSuccessToast } from "~@reentry/frontend/utils/toast";
+import {
+  IntakeChatV2CommonStyles as common,
+  showSuccessToast,
+} from "~@reentry/frontend-shared";
 
 export default function IntakeLogin() {
   const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +79,9 @@ export default function IntakeLogin() {
       if (!clientPseudoId)
         throw new Error("There was an issue verifying the client.");
 
-      trackIntakeChatClientLogin({ justiceInvolvedPersonId: clientPseudoId });
+      trackIntakeChatClientLogin({
+        justiceInvolvedPersonPseudoId: clientPseudoId,
+      });
 
       showSuccessToast(`Success! Welcome, ${formattedFirstName}.`);
       setToken(token);

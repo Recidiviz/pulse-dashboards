@@ -18,7 +18,7 @@
 import { useEffect, useState } from "react";
 
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import type { components } from "~@reentry/openapi-types";
 
 import LoadingSpinner from "../base/LoadingSpinner";
 

@@ -29,14 +29,16 @@ import { $api } from "~@reentry/frontend/api";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import RecordingInterface from "~@reentry/frontend/components/recording/RecordingInterface";
 import { QueueProvider } from "~@reentry/frontend/contexts/QueueContext";
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 const AudioRecordingPage: React.FC = () => {
   const { id, sessionId } = useParams() as { id: string; sessionId: string };
   const { getAccessToken } = useAuth();
   const [needsAddress, setNeedsAddress] = useState(false);
   const [recordingStatus, setRecordingStatus] = useState<string>("created");
-  const [safeNavigate, setSafeNavigate] = useState<((path: string) => void) | null>(null);
+  const [safeNavigate, setSafeNavigate] = useState<
+    ((path: string) => void) | null
+  >(null);
   // Get access token once per render
   const accessToken = getAccessToken();
 
@@ -66,25 +68,30 @@ const AudioRecordingPage: React.FC = () => {
     },
   });
 
-  const { data: intakeData, refetch: refetchIntakeData, isLoading: intakeLoading } = $api.useQuery(
-    "get",
-    "/intake/admin/{client_pseudo_id}",
-    {
-      params: {
-        path: { client_pseudo_id: id },
-      },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
+  const {
+    data: intakeData,
+    refetch: refetchIntakeData,
+    isLoading: intakeLoading,
+  } = $api.useQuery("get", "/intake/admin/{client_pseudo_id}", {
+    params: {
+      path: { client_pseudo_id: id },
     },
-  );
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
 
   useEffect(() => {
     // check if the recordingsession is completed and intake needs address
-    if (!sessionLoading && !intakeLoading && ["processing", "completed"].includes(`${sessionData?.status}`) && !intakeData?.address) {
+    if (
+      !sessionLoading &&
+      !intakeLoading &&
+      ["processing", "completed"].includes(`${sessionData?.status}`) &&
+      !intakeData?.address
+    ) {
       setNeedsAddress(true);
-    }else {
+    } else {
       setNeedsAddress(false);
     }
   }, [sessionData?.status, intakeData?.address, sessionLoading, intakeLoading]);
@@ -94,7 +101,7 @@ const AudioRecordingPage: React.FC = () => {
     if (clientError || sessionError) {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); // needed for getting microphone permission.
       try {
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       } catch (error) {
         console.error("Error stopping permission stream tracks:", error);
       }

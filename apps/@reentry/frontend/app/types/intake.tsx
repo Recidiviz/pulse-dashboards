@@ -17,67 +17,67 @@
 
 import type { ReactNode } from "react";
 
-import type { components } from "../recidiviz-schema";
+import { components } from "~@reentry/openapi-types";
 
 export interface Section {
-	title: string;
-	description: string;
-	status?: string;
+  title: string;
+  description: string;
+  status?: string;
 }
 
 export interface Topic {
-	title: string;
-	description: string;
-	status?: string;
+  title: string;
+  description: string;
+  status?: string;
 }
 
 export interface SidebarProps {
-	topics: Section[];
-	currentTopicIndex: number;
-	completedSections: string[];
+  topics: Section[];
+  currentTopicIndex: number;
+  completedSections: string[];
 }
 
 export type Message = components["schemas"]["IntakeMessageResponse"] & {
-	is_streaming?: boolean;
+  is_streaming?: boolean;
 };
 
 export interface UseChatMessagesResult {
-	topicMessages: Message[][];
-	currentTopicIndex: number;
-	handleSend: (message: string) => void;
-	inputValue: string;
-	setInputValue: (value: string) => void;
-	handleNextTopic: () => void;
+  topicMessages: Message[][];
+  currentTopicIndex: number;
+  handleSend: (message: string) => void;
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  handleNextTopic: () => void;
 }
 
 export interface ChatInputProps {
-	inputValue: string;
-	onInputChange: (value: string) => void;
-	onSend: () => void;
-	onKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-	isPaused?: boolean;
-	connectionStatus?: string;
-	isDisabled?: boolean;
-	conversationEnded?: boolean;
+  inputValue: string;
+  onInputChange: (value: string) => void;
+  onSend: () => void;
+  onKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  isPaused?: boolean;
+  connectionStatus?: string;
+  isDisabled?: boolean;
+  conversationEnded?: boolean;
 }
 
 export interface ChatMessagesProps {
-	messages: Message[];
-	isTyping: boolean;
-	isLoading?: boolean;
-	inputValue: string;
-	setInputValue: (value: string) => void;
-	handleSend: () => void;
-	handleKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-	isPaused: boolean;
-	wsState?: string;
-	connectionStatus: string;
-	isDisabled: boolean;
-	conversationEnded: boolean;
-	scrollToBottom?: () => void;
+  messages: Message[];
+  isTyping: boolean;
+  isLoading?: boolean;
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  handleSend: () => void;
+  handleKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  isPaused: boolean;
+  wsState?: string;
+  connectionStatus: string;
+  isDisabled: boolean;
+  conversationEnded: boolean;
+  scrollToBottom?: () => void;
 }
 
 export interface SocketProviderProps {
-	children: ReactNode;
-	clientPseudoId: string;
+  children: ReactNode;
+  clientPseudoId: string;
 }

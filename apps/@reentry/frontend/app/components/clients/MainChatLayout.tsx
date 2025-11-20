@@ -21,7 +21,7 @@ import { MenuIcon, XIcon } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 
-import ChatHeader from "~@reentry/frontend/components/intake/ChatInterface/ChatHeader";
+import { ChatHeader } from "~@reentry/frontend-shared";
 
 interface MainLayoutProps {
   sidebar: React.ReactNode;

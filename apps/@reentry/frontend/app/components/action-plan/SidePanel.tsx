@@ -21,8 +21,8 @@ import HomeAddressSection from "~@reentry/frontend/components/action-plan/HomeAd
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
 import RegeneratePlan from "~@reentry/frontend/components/action-plan/RegeneratePlan";
 import Resources from "~@reentry/frontend/components/action-plan/Resources";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
+import type { components } from "~@reentry/openapi-types";
 
 interface SidePanelProps {
   clientRecord: components["schemas"]["ClientRecordResponse"] | null;

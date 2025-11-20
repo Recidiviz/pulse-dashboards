@@ -19,7 +19,7 @@
 
 import type React from "react";
 
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 interface LoginButtonProps {
   className?: string;

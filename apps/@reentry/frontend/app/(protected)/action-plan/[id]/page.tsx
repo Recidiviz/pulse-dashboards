@@ -27,12 +27,9 @@ import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
 import LoadingSpinner from "~@reentry/frontend/components/base/LoadingSpinner";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
-import {
-  showErrorToast,
-  showSuccessToast,
-} from "~@reentry/frontend/utils/toast";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
+import type { components } from "~@reentry/openapi-types";
 
 type ResourceType = components["schemas"]["Resource"];
 
@@ -275,8 +272,12 @@ const ActionPlanPage = () => {
     );
   return (
     <>
-      <PageView/>
-      <div className={"bg-white w-full screen:h-[calc(100vh-65px)] flex flex-col md:flex-row"}>
+      <PageView />
+      <div
+        className={
+          "bg-white w-full screen:h-[calc(100vh-65px)] flex flex-col md:flex-row"
+        }
+      >
         <div className="w-full h-full justify-start items-start inline-flex flex flex-col md:flex-row">
           <SidePanel
             clientRecord={dataDetailPlan.client_record}
@@ -317,7 +318,7 @@ const ActionPlanPage = () => {
           {isPolling && (
             <LoadingSpinner
               progress={progress || 0}
-              message={`${message? `${message}.`: ""} This may take several minutes, so feel free to return to this page later.`}
+              message={`${message ? `${message}.` : ""} This may take several minutes, so feel free to return to this page later.`}
               startTime={startTime || 0}
               regenerationInProgress={isPolling}
               regenerationMessage={regenerationMessage}
@@ -326,7 +327,8 @@ const ActionPlanPage = () => {
           {!isLoadingDetailPlan && errorDetailPlan && (
             <div className="flex flex-col items-center space-y-4 w-full h-full justify-center ">
               <div className="text-[#003331] text-lg font-medium">
-                An error occured, plan may not have been started for this client.
+                An error occurred, plan may not have been started for this
+                client.
               </div>
             </div>
           )}

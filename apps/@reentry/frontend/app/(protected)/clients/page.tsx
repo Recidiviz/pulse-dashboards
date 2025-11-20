@@ -40,9 +40,9 @@ import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useClientStatusPolling } from "~@reentry/frontend/hooks/useClientStatusPolling";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
+import type { components } from "~@reentry/openapi-types";
 
 type ClientResponse = components["schemas"]["ClientResponse"];
 

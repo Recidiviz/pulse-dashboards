@@ -26,8 +26,9 @@ import {
   useState,
 } from "react";
 
+import { globalAuthStore } from "~@reentry/frontend-shared";
+
 import { getAuthSettings } from "./authConfig";
-import { globalAuthStore } from "./globalAuthStore";
 import type { AuthContextType, AuthState } from "./types";
 
 // Create the auth context with default values
@@ -67,6 +68,36 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const appMetadataKey = `${METADATA_NAMESPACE}app_metadata`;
   const userAppMetadata = authStore?.user?.[appMetadataKey];
 
+  // Helper function to check authentication status
+  const checkAuthentication = async (store: AuthStore) => {
+    try {
+      console.log("Checking authentication status...");
+
+      const isAuthenticated = await store.checkForAuthentication();
+
+      setState({
+        isAuthorized: isAuthenticated,
+        isLoading: false,
+        user: store.user,
+        emailVerified: store.emailVerified,
+        error: null,
+      });
+
+      return isAuthenticated;
+    } catch (error) {
+      console.error("Authentication check failed:", error);
+      setState({
+        isAuthorized: false,
+        isLoading: false,
+        error:
+          error instanceof Error
+            ? error
+            : new Error("Unknown error during authentication check"),
+      });
+      return false;
+    }
+  };
+
   // Initialize the auth store
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -84,7 +115,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         // Check authentication status on init (useful for page refresh)
         if (window.location.pathname !== "/auth/callback") {
-          // eslint-disable-next-line no-use-before-define
           await checkAuthentication(store);
         }
       } catch (error) {
@@ -127,36 +157,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       fetchAndUpdateToken();
     }
   }, [state.isAuthorized, authStore]);
-
-  // Helper function to check authentication status
-  const checkAuthentication = async (store: AuthStore) => {
-    try {
-      console.log("Checking authentication status...");
-
-      const isAuthenticated = await store.checkForAuthentication();
-
-      setState({
-        isAuthorized: isAuthenticated,
-        isLoading: false,
-        user: store.user,
-        emailVerified: store.emailVerified,
-        error: null,
-      });
-
-      return isAuthenticated;
-    } catch (error) {
-      console.error("Authentication check failed:", error);
-      setState({
-        isAuthorized: false,
-        isLoading: false,
-        error:
-          error instanceof Error
-            ? error
-            : new Error("Unknown error during authentication check"),
-      });
-      return false;
-    }
-  };
 
   // Login function
   const login = async () => {

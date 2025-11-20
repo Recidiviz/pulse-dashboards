@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import type { components } from "~@reentry/openapi-types";
 
 export type RecordingSessionResponse =
   components["schemas"]["RecordingSessionResponse"];

@@ -19,8 +19,8 @@ import SendIcon from "@mui/icons-material/Send";
 import React, { useEffect, useRef, useState } from "react";
 
 import styles from "~@reentry/frontend/components/IntakeChatV2/Chat/ChatInput.module.css";
-import common from "~@reentry/frontend/components/IntakeChatV2/Common.module.css";
 import { useChatContext } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
+import { IntakeChatV2CommonStyles as common } from "~@reentry/frontend-shared";
 
 const ChatInput: React.FC = () => {
   const {

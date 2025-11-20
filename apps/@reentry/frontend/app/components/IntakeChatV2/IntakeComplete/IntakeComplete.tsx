@@ -17,8 +17,10 @@
 
 import React from "react";
 
-import common from "../Common.module.css";
-import styles from "./IntakeComplete.module.css";
+import {
+  IntakeChatV2CommonStyles as common,
+  IntakeCompleteStyles as styles,
+} from "~@reentry/frontend-shared";
 
 interface IntakeCompleteProps {
   onBackToHome?: () => void;

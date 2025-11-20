@@ -21,13 +21,10 @@ import type React from "react";
 import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
-import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import {
-  showErrorToast,
-  showSuccessToast,
-} from "~@reentry/frontend/utils/toast";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
+import { PrimaryButton } from "~@reentry/frontend-shared";
 
 interface AudioRecordingsProps {
   clientPseudoId: string;
@@ -37,7 +34,7 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
   clientPseudoId,
 }) => {
   const { getAccessToken } = useAuth();
-  const {trackClientIntakeManuallyEnabled} = useAnalytics();
+  const { trackClientIntakeManuallyEnabled } = useAnalytics();
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
 
@@ -62,7 +59,9 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
   );
 
   const handleCreateSession = async () => {
-    trackClientIntakeManuallyEnabled({justiceInvolvedPersonId: clientPseudoId})
+    trackClientIntakeManuallyEnabled({
+      justiceInvolvedPersonId: clientPseudoId,
+    });
     setIsCreating(true);
     try {
       const newSession = await createSession({

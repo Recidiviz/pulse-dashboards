@@ -20,11 +20,8 @@ import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import IntakeSwitch from "~@reentry/frontend/components/intake/IntakeSwitchButton";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import {
-  showErrorToast,
-  showSuccessToast,
-} from "~@reentry/frontend/utils/toast";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 interface InternalAccessToggleProps {
   clientPseudoId: string;

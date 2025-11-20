@@ -17,7 +17,7 @@
 
 import Image from "next/image";
 
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import type { components } from "~@reentry/openapi-types";
 
 import BackButton from "../base/BackButton";
 

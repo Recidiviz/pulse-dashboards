@@ -36,7 +36,12 @@ export const TYPE_TAGS = {
 
 export default tseslint.config(
   {
-    ignores: ["**/dist", "vite.config.mts.timestamp-*", "**/.next/**"],
+    ignores: [
+      "**/dist",
+      "vite.config.mts.timestamp-*",
+      "**/.next/**",
+      "**/next-env.d.ts",
+    ],
   },
   {
     plugins: {

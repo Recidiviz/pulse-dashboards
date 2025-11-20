@@ -19,9 +19,11 @@
 
 import { useEffect, useState } from "react";
 
-import ConfirmBirthdate from "~@reentry/frontend/components/intake/ChatInterface/ConfirmBirthday";
-import IntakeRouter from "~@reentry/frontend/components/intake/IntakeRouter";
-import { IntakeSocketProvider } from "~@reentry/frontend/websockets/IntakeSocketContext";
+import {
+  ConfirmBirthdatePage,
+  IntakeRouter,
+  IntakeSocketProvider,
+} from "~@reentry/frontend-shared";
 
 export default function Intake({ params }: { params: { token: string } }) {
   const [loading, setLoading] = useState(true);
@@ -46,7 +48,11 @@ export default function Intake({ params }: { params: { token: string } }) {
   if (!authorized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <ConfirmBirthdate token={token} mode="dob" />
+        <ConfirmBirthdatePage
+          token={token}
+          mode="dob"
+          onConfirmation={() => window.location.reload()}
+        />
       </div>
     );
   }

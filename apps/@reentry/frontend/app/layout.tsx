@@ -23,10 +23,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 
-import { AuthProvider } from "~@reentry/frontend/lib/auth";
+import { AuthProvider } from "~@reentry/frontend/lib/auth/authContext";
 import { TrpcReactQueryProvider } from "~@reentry/frontend/trpc/TrpcReactQueryProvider";
 
 import { AnalyticsProvider } from "./contexts/AnalyticsProvider";
+import { IntakeIntegrationProvider } from "./contexts/IntakeIntegrationProvider";
 import { Providers } from "./providers";
 
 const geistSans = localFont({
@@ -73,7 +74,9 @@ export default function RootLayout({
                 writeKey={process.env["NEXT_PUBLIC_SEGMENT_WRITE_KEY"]}
               >
                 <TrpcReactQueryProvider>
-                  {children}
+                  <IntakeIntegrationProvider>
+                    {children}
+                  </IntakeIntegrationProvider>
                   {process.env["NEXT_PUBLIC_GA_ID"] && (
                     <GoogleAnalytics gaId={process.env["NEXT_PUBLIC_GA_ID"]} />
                   )}

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { components } from "~@reentry/frontend/recidiviz-schema";
+import { components } from "~@reentry/openapi-types";
 
 export type ClientRecord = components["schemas"]["ClientRecordResponse"];
 export type ClientIntakeSection =

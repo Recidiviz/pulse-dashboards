@@ -17,7 +17,7 @@
 
 import type { FC } from "react";
 
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import type { components } from "~@reentry/openapi-types";
 
 type ClientIntakeSection = components["schemas"]["ClientIntakeSectionResponse"];
 

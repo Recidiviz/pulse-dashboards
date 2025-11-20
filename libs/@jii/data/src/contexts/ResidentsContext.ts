@@ -17,7 +17,8 @@
 
 import { createContext } from "react";
 
-import { ResidentsStore, useRequiredContext } from "~@jii/data";
+import { ResidentsStore } from "~@jii/data";
+import { useRequiredContext } from "~utils";
 
 export type ResidentsContext = {
   residentsStore: ResidentsStore;

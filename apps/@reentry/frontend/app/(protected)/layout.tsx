@@ -19,7 +19,7 @@
 import { usePathname } from "next/navigation";
 
 import Navbar from "~@reentry/frontend/components/Navbar/Navbar";
-import { ProtectedRoute } from "~@reentry/frontend/lib/auth";
+import { ProtectedRoute } from "~@reentry/frontend/lib/auth/routeGuards";
 
 export default function ProtectedLayout({ children }) {
   const pathname = usePathname();

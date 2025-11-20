@@ -24,7 +24,7 @@ import Chatbubble from "~@reentry/frontend/(protected)/clients/intake/[id]/Chatb
 import Sidebar from "~@reentry/frontend/(protected)/clients/intake/[id]/Sidebar";
 import { StatusPill } from "~@reentry/frontend/components/base/StatusPill";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import type { components } from "~@reentry/openapi-types";
 
 type ClientRecord = components["schemas"]["ClientRecordResponse"];
 type Intake = components["schemas"]["IntakeWithSectionsResponse"];

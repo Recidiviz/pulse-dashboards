@@ -17,7 +17,8 @@
 
 "use client";
 
-import { ProtectedRoute, useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { ProtectedRoute } from "~@reentry/frontend/lib/auth/routeGuards";
 
 export default function Profile() {
   const { state } = useAuth();

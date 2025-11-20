@@ -21,9 +21,9 @@ import { MessageSquare } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
-import { ChatMessageBubble } from "~@reentry/frontend/components/intake/ChatInterface/ChatMessageBubble";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { ChatMessageBubble } from "~@reentry/frontend-shared";
+import type { components } from "~@reentry/openapi-types";
 
 type IntakeMessage = components["schemas"]["IntakeMessageResponse"];
 type ClientIntakeSection = components["schemas"]["ClientIntakeSectionResponse"];

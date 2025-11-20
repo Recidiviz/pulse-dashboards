@@ -18,8 +18,9 @@
 import { observer } from "mobx-react-lite";
 import { createContext } from "react";
 
-import { useRequiredContext, useSingleResidentContext } from "~@jii/data";
+import { useSingleResidentContext } from "~@jii/data";
 import { UsNeResidentMetadata } from "~datatypes";
+import { useRequiredContext } from "~utils";
 
 import { UsNeCopy, usNeCopy } from "../configs/copy";
 

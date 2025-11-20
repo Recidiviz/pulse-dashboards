@@ -24,7 +24,7 @@ import { useEffect, useState } from "react";
 import { $api } from "~@reentry/frontend/api";
 import Breadcrumb from "~@reentry/frontend/components/base/Breadcrumb";
 import RevisionsTable from "~@reentry/frontend/components/DecisionTrees/RevisionsTable";
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 const DynamicMarkdownEditor = dynamic(
   () => import("@uiw/react-markdown-editor").then((mod) => mod.default),

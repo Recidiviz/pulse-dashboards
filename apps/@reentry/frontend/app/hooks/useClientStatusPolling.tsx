@@ -19,8 +19,8 @@
 import { useEffect, useRef } from "react";
 
 import { $api } from "~@reentry/frontend/api";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import type { components } from "~@reentry/openapi-types";
 
 interface UseClientStatusPollingProps {
   enabled: boolean;

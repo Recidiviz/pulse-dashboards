@@ -1,0 +1,16 @@
+{
+  "name": "@reentry/frontend-shared",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@reentry/frontend-shared/src",
+  "projectType": "library",
+  "tags": ["scope:client", "type:feature"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p ./tsconfig.lib.json"],
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

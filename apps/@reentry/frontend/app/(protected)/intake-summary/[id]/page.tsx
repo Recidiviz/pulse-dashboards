@@ -24,16 +24,19 @@ import { useReactToPrint } from "react-to-print";
 
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
-import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import { extractCompleteCSS, generatePDF } from "~@reentry/frontend/utils/pdfGenerator";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
+  extractCompleteCSS,
+  generatePDF,
+} from "~@reentry/frontend/utils/pdfGenerator";
+import {
+  PrimaryButton,
   showErrorToast,
   showSuccessToast,
-} from "~@reentry/frontend/utils/toast";
+} from "~@reentry/frontend-shared";
 
 import styles from "./markdown.module.css";
 
@@ -61,7 +64,7 @@ const IntakeSummaryPage = () => {
       }
     `,
     onBeforePrint: () => {
-      track("intake_summary_printed", { justiceInvolvedPersonId: id  });
+      track("intake_summary_printed", { justiceInvolvedPersonId: id });
       return Promise.resolve();
     },
   });
@@ -156,7 +159,7 @@ const IntakeSummaryPage = () => {
       setIsDownloading(false);
       return;
     }
-    if(!accessToken) {
+    if (!accessToken) {
       setIsDownloading(false);
       return;
     }
@@ -164,7 +167,7 @@ const IntakeSummaryPage = () => {
     const extractedCSSResult = extractCompleteCSS(element, {
       includeChildren: true,
       includeMediaQueries: true,
-      includeAnimations: true
+      includeAnimations: true,
     });
     const pdfCSS = `
       ${extractedCSSResult.combined}
@@ -200,10 +203,18 @@ const IntakeSummaryPage = () => {
   return (
     <>
       <PageView />
-      <div className={"bg-white w-full screen:h-[calc(100vh-65px)] flex flex-col md:flex-row"}>
+      <div
+        className={
+          "bg-white w-full screen:h-[calc(100vh-65px)] flex flex-col md:flex-row"
+        }
+      >
         <div className="w-full md:w-[25%] h-auto self-stretch bg-white  flex-col justify-start items-center gap-2 inline-flex print:hidden">
           <div className="self-stretch h-full flex-col justify-start items-start flex">
-            <ProfileDetail clientRecord={dataPlan?.client_record} isExpanded={undefined} setIsExpanded={()=> console.log("expanded")} />
+            <ProfileDetail
+              clientRecord={dataPlan?.client_record}
+              isExpanded={undefined}
+              setIsExpanded={() => console.log("expanded")}
+            />
           </div>
         </div>
         <div className="w-full md:w-[75%] h-full grow shrink basis-0 self-stretch px-6 md:px-14 py-8 bg-white flex-col justify-start items-center gap-2 inline-flex overflow-y-auto  border-l border-[#2b5469]/20">

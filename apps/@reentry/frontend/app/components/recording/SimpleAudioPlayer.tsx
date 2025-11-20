@@ -22,8 +22,8 @@ import React, { useEffect, useState } from "react";
 import { $api } from "~@reentry/frontend/api";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useRecordingSessionStatus } from "~@reentry/frontend/hooks/useRecordingSessionStatus";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import { showErrorToast } from "~@reentry/frontend/utils/toast";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { showErrorToast } from "~@reentry/frontend-shared";
 
 interface SimpleAudioPlayerProps {
   sessionId: string;

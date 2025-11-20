@@ -17,8 +17,8 @@
 
 import { createContext } from "react";
 
-import { useRequiredContext } from "~@jii/data";
 import { UsTnCreditActivity, UsTnResidentMetadata } from "~datatypes";
+import { useRequiredContext } from "~utils";
 
 export type UsTnMonthlyReport = {
   formattedMonth: string;

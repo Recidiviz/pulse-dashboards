@@ -24,9 +24,9 @@ import DataTable, {
 } from "react-data-table-component";
 
 import CustomPagination from "~@reentry/frontend/components/base/CustomPagination";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { trpc } from "~@reentry/frontend/trpc";
+import type { components } from "~@reentry/openapi-types";
 
 type ClientResponse = components["schemas"]["ClientResponse"];
 

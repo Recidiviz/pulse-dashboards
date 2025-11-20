@@ -20,7 +20,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 export default function AuthCallback() {
   const { authStore, state } = useAuth();

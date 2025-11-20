@@ -16,23 +16,23 @@
 // =============================================================================
 
 export interface Action {
-	title: string;
-	subtitle: string;
-	options: {
-		label: string;
-		key: string;
-	}[];
-	value?: string;
+  title: string;
+  subtitle: string;
+  options: {
+    label: string;
+    key: string;
+  }[];
+  value?: string;
 }
 
 export interface Section {
-	title: string;
-	subsections?: Section[];
-	text: string;
-	active?: boolean;
+  title: string;
+  subsections?: Section[];
+  text: string;
+  active?: boolean;
 }
 
 export interface AppData {
-	actions: Action[];
-	sections: Section[];
+  actions: Action[];
+  sections: Section[];
 }

@@ -27,7 +27,7 @@ import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDeta
 import Summary from "~@reentry/frontend/components/intake/Summary";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 const IntakeManagementPage = () => {
   const { id } = useParams() as { id: string };

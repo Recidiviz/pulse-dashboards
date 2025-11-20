@@ -20,20 +20,20 @@ import { useState } from "react";
 import { FiLink } from "react-icons/fi";
 
 import { $api } from "~@reentry/frontend/api";
-import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import AudioRecordings from "~@reentry/frontend/components/intake/VoiceIntake/AudioRecordings";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
-import { useAuth } from "~@reentry/frontend/lib/auth";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { trpc } from "~@reentry/frontend/trpc";
 import { formatDateMMDDYYYY } from "~@reentry/frontend/utils/index";
 import { getStateName } from "~@reentry/frontend/utils/states";
 import {
+  PrimaryButton,
   showErrorToast,
   showSuccessToast,
-} from "~@reentry/frontend/utils/toast";
+} from "~@reentry/frontend-shared";
+import type { components } from "~@reentry/openapi-types";
 
 const formatAddress = (
   address: components["schemas"]["AddressSubmission"] | null | undefined,
@@ -267,7 +267,9 @@ const ClientSummaryCardLegacy: React.FC<ClientSummaryCardProps> = ({
   const startIntake = async () => {
     setLinkLoading(true);
     try {
-      trackClientIntakeManuallyEnabled({justiceInvolvedPersonId: clientRecord.pseudonymized_client_id})
+      trackClientIntakeManuallyEnabled({
+        justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,
+      });
       await startIntakeAsync({
         params: {
           path: { client_pseudo_id: clientRecord.pseudonymized_client_id },
@@ -306,7 +308,7 @@ const ClientSummaryCardV2: React.FC<ClientSummaryCardProps> = ({
   intake,
 }) => {
   const auth = useAuth();
-  const {trackClientIntakeManuallyEnabled} = useAnalytics();
+  const { trackClientIntakeManuallyEnabled } = useAnalytics();
   const [linkLoading, setLinkLoading] = useState(false);
   const clientPseudoId = clientRecord.pseudonymized_client_id;
   const staffPseudoId = auth.userAppMetadata?.pseudonymizedId || "";
@@ -330,7 +332,9 @@ const ClientSummaryCardV2: React.FC<ClientSummaryCardProps> = ({
   });
 
   const startIntake = async () => {
-    trackClientIntakeManuallyEnabled({justiceInvolvedPersonId: clientPseudoId}) 
+    trackClientIntakeManuallyEnabled({
+      justiceInvolvedPersonId: clientPseudoId,
+    });
     setLinkLoading(true);
     try {
       await toggleIntake.mutateAsync({

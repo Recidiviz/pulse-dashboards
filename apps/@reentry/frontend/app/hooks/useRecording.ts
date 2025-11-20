@@ -22,7 +22,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { $api } from "~@reentry/frontend/api";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useQueue } from "~@reentry/frontend/contexts/QueueContext";
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import type {
   RecordingActions,
   RecordingState,
@@ -34,10 +34,7 @@ import {
   cleanupMediaResources,
   validateRecordingCapabilities,
 } from "~@reentry/frontend/utils/recording";
-import {
-  showErrorToast,
-  showSuccessToast,
-} from "~@reentry/frontend/utils/toast";
+import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import { useUpdateRecordingStatus } from "./useUpdateRecordingStatus";
 

@@ -22,8 +22,7 @@ import { type ReactNode } from "react";
 import EmailVerificationState from "~@reentry/frontend/components/auth/EmailVerificationState";
 import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
 import UnauthorizedState from "~@reentry/frontend/components/auth/UnauthorizedState";
-
-import { useAuth } from "./authContext";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 interface ProtectedRouteProps {
   children: ReactNode;

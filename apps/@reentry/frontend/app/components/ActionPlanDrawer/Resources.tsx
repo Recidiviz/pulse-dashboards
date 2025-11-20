@@ -19,7 +19,7 @@ import { FormControl, MenuItem } from "@mui/material";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
 import { useEffect, useState } from "react";
 
-import type { Action } from "~@reentry/frontend/types";
+import { Action } from "~@reentry/frontend/types";
 
 const ResourceAction = ({ action, _idx }: { action: Action; _idx: number }) => {
   const [internalAction, setInternalAction] = useState<null | Action>(null);

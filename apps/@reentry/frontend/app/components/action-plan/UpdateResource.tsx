@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { PrimaryButton } from "~@reentry/frontend-shared";
 
 const updateResource = ({
   onUpdate,

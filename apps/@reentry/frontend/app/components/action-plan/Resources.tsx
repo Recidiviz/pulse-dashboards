@@ -18,7 +18,7 @@
 import Image from "next/image";
 
 import { InfoTooltip } from "~@reentry/frontend/components/base/InfoTooltip";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import type { components } from "~@reentry/openapi-types";
 
 import ResourcesList from "./ResourcesList";
 

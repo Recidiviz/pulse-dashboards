@@ -22,7 +22,7 @@ import DataTable from "react-data-table-component";
 
 import { $api } from "~@reentry/frontend/api";
 import Breadcrumb from "~@reentry/frontend/components/base/Breadcrumb";
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 const DecisionTreeTable = () => {
   const [page, setPage] = useState(1);

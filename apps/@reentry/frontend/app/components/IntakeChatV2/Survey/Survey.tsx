@@ -19,10 +19,7 @@ import React, { useState } from "react";
 
 import { legacyApiRequest } from "~@reentry/frontend/components/IntakeChatV2/api/api";
 import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
-import {
-  showErrorToast,
-  showSuccessToast,
-} from "~@reentry/frontend/utils/toast";
+import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import styles from "./Survey.module.css";
 

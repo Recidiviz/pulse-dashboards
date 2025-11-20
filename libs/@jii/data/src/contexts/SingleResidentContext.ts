@@ -21,9 +21,9 @@ import {
   IncarcerationOpportunityId,
   OpportunityConfig,
   OpportunityRecord,
-  useRequiredContext,
 } from "~@jii/data";
 import { ResidentRecord } from "~datatypes";
+import { useRequiredContext } from "~utils";
 
 export type OpportunityData = {
   opportunityId: IncarcerationOpportunityId;

@@ -21,7 +21,7 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import type React from "react";
 
 import { $api } from "~@reentry/frontend/api";
-import { useAuth } from "~@reentry/frontend/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 interface TranscriptionViewProps {
   sessionId: string;

@@ -17,17 +17,8 @@
 
 "use client";
 
-import createFetchClient from "openapi-fetch";
-import createClient from "openapi-react-query";
-
-import type { paths } from "~@reentry/frontend/recidiviz-schema";
+import { createApiClient } from "~@reentry/frontend-shared";
 
 import { BACKEND_URL } from "./constants";
-import { authMiddleware } from "./lib/auth/authMiddleware";
 
-const fetchClient = createFetchClient<paths>({
-  baseUrl: BACKEND_URL,
-});
-fetchClient.use(authMiddleware);
-
-export const $api = createClient(fetchClient);
+export const $api = createApiClient(BACKEND_URL);
