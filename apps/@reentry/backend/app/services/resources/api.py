@@ -54,9 +54,7 @@ class ApiSearchResult(BaseModel):
     travel_distance_miles: Optional[int] = None
 
 
-async def search_resource_api(
-    params: LegacyResourceRequest,
-) -> List[ApiSearchResult]:
+async def call_resource_api(params: LegacyResourceRequest) -> List[ApiSearchResult]:
     """
     Make an HTTP request to the external resources API.
 
@@ -66,18 +64,10 @@ async def search_resource_api(
     Returns:
         List of search results
     """
-    api_url = settings.EXTERNAL_RESOURCES_API_URL
-    if not api_url:
-        raise ValueError("EXTERNAL_RESOURCES_API_URL is not configured in settings")
-
-    resources_api_key = settings.RESOURCES_API_KEY
-    if not resources_api_key:
-        raise ValueError("RESOURCES_API_KEY is not configured in settings")
-
     async with httpx.AsyncClient() as client:
         request_json = params.model_dump(exclude_none=False)
         response = await client.post(
-            f"{api_url}/legacy",
+            f"{settings.EXTERNAL_RESOURCES_API_URL}/legacy",
             json=request_json,
             headers={"x-api-key": settings.RESOURCES_API_KEY},
             timeout=30.0,  # 30 second timeout
@@ -158,7 +148,7 @@ async def list_external_resources(request: GetResourcesRequest) -> GetResourcesR
             distance_miles=request.distance_miles,
             mode=request.travel_mode,
         )
-        results = await search_resource_api(params)
+        results = await call_resource_api(params)
         logger.debug(
             "External API returned results",
             category=category,

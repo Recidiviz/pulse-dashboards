@@ -50,7 +50,6 @@ class Settings(BaseSettings):
     FABRK_API_URL: str = "https://api.fabrk.ai"
     FABRK_BEARER_TOKEN: str
     # External resources API configuration
-    USE_EXTERNAL_RESOURCES_API: bool = False
     EXTERNAL_RESOURCES_API_URL: str
     RESOURCES_API_KEY: str
 

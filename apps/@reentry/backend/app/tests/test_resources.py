@@ -1,6 +1,8 @@
+import asyncio
+from unittest.mock import AsyncMock, patch
+
 import pytest
 
-from app.core.config import settings
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
     ClientExtractedInfo,
@@ -11,6 +13,7 @@ from app.services.resources import (
     TravelMode,
     list_resources,
 )
+from app.services.resources.api import ApiSearchResult, Location
 from app.utils.disallowed_resources import DISALLOWED_RESOURCE_NAMES
 
 
@@ -192,70 +195,53 @@ async def test_resource_type_get_result(resource_type: ResourceCategory):
 
 
 @pytest.mark.asyncio
-async def test_get_resources_invalid_resource_type():
-    from app.services.resources import GetResourcesRequest
-    from app.services.resources.stub_resources import _list_resources_internal
-
-    with pytest.raises(Exception):
-        # Use an invalid category
-        request = GetResourcesRequest(
-            category="INVALID_CATEGORY", address="123 Anywhere St, UT 84057", limit=10
-        )
-        _list_resources_internal(request)
-
-
-@pytest.mark.asyncio
-async def test_get_resources_with_exclusion():
-    # Using housing resource type, exclude "Safe Harbor Shelter"
-    from app.services.resources import GetResourcesRequest
-    from app.services.resources.stub_resources import _list_resources_internal
-
-    # Using shelter resource type, exclude a resource
-    category = ResourceCategory.BASIC_NEEDS
-    subcategory = ResourceSubcategory.HOUSING
-    request = GetResourcesRequest(
-        category=category,
-        subcategory=subcategory,
-        address="123 Anywhere St, UT 84057",
-        limit=10,
-    )
-    response = _list_resources_internal(request)
-    assert response is not None
-    assert response.resources is not None
-
-    # Check if we have resources to test with
-    if len(response.resources) > 0:
-        resource_name = response.resources[0].name
-
-        # Now exclude it
-        request.exclude_names = [resource_name]
-        response = _list_resources_internal(request)
-        assert response is not None
-        assert response.resources is not None
-
-        # The excluded resource should not be in the results
-        names_after_exclusion = [r.name.lower() for r in response.resources]
-        assert resource_name.lower() not in names_after_exclusion
-
-
-@pytest.mark.asyncio
 async def test_get_resources_success_status():
     """Test that successful resource retrieval returns SUCCESS status"""
-    from app.services.resources import GetResourcesRequest, list_resources
 
-    # Use a category that should have resources
-    request = GetResourcesRequest(
-        category=ResourceCategory.BASIC_NEEDS,
-        subcategory=ResourceSubcategory.HOUSING,
-        address="123 Anywhere St, UT 84057",
-        limit=10,
-    )
-    response = await list_resources(request)
+    # Mock the API call to return a resource
+    mock_results = [
+        ApiSearchResult(
+            google_place_id="test_place_123",
+            name="Test Housing Resource",
+            category=ResourceCategory.BASIC_NEEDS,
+            subcategory=ResourceSubcategory.HOUSING,
+            origin="TEST",
+            location=Location(latitude=40.2969, longitude=-111.6946),
+            address="123 Test St, Orem, UT 84057",
+            phone="555-1234",
+            website="https://test-resource.example.com",
+            rating=4.5,
+            rating_count=100,
+        )
+    ]
 
-    if response.resources:
+    with patch(
+        "app.services.resources.api.call_resource_api",
+        new_callable=AsyncMock,
+    ) as mock_api:
+        mock_api.return_value = mock_results
+
+        # Use a category that should have resources
+        request = GetResourcesRequest(
+            category=ResourceCategory.BASIC_NEEDS,
+            subcategory=ResourceSubcategory.HOUSING,
+            address="123 Anywhere St, UT 84057",
+            limit=10,
+        )
+        response = await list_resources(request)
+
+        # Should have resources and SUCCESS status
+        assert response.resources
+        assert len(response.resources) > 0
         assert response.failure_reason == ResourceFailureReason.SUCCESS
         assert response.error_message is None
-    else:
+
+        # Test with empty results
+        mock_api.return_value = []
+        response = await list_resources(request)
+
+        # Should have no resources and NO_RESULTS_FOUND status
+        assert len(response.resources) == 0
         assert response.failure_reason == ResourceFailureReason.NO_RESULTS_FOUND
         assert response.error_message is None
 
@@ -297,55 +283,6 @@ async def test_fetch_resources_with_retry_no_results():
 
     # Should still return a list (even if empty)
     assert isinstance(resources, list)
-
-
-# Update existing API tests
-@pytest.mark.parametrize(
-    "category",
-    list(CATEGORY_SUBCATEGORY_MAP.keys()),
-)
-async def test_resource_type_get_result_api(client, category: ResourceCategory):
-    # Get the first subcategory from the list (if available)
-    subcategories = CATEGORY_SUBCATEGORY_MAP[category]
-    subcategory = subcategories[0] if subcategories else None
-    # Convert enum to string value
-    category_str = category.value if category else None
-    subcategory_str = subcategory.value if subcategory else None
-    print({"category": category_str, "subcategory": subcategory_str})
-    response = await client.post(
-        "/resources",
-        json={
-            "category": category_str,
-            "subcategory": subcategory_str,
-            "address": "123 Anywhere St, UT 84057",
-        },
-    )
-    assert response.status_code == 200
-    response_json = response.json()
-    assert response_json is not None
-
-    # Test new fields in API response
-    assert "failure_reason" in response_json
-    assert "error_message" in response_json
-
-    if category_str != "Unknown":
-        assert len(response_json["resources"]) > 0
-        # Should be success if resources found
-        if response_json["resources"]:
-            assert (
-                response_json["failure_reason"] == ResourceFailureReason.SUCCESS.value
-            )
-        else:
-            assert (
-                response_json["failure_reason"]
-                == ResourceFailureReason.NO_RESULTS_FOUND.value
-            )
-
-        for resource in response_json["resources"]:
-            assert resource["category"] == category
-            assert resource["subcategory"] == subcategory
-            assert resource["name"] is not None
-            assert resource["address"] is not None
 
 
 async def test_get_resources_with_exclusion_api(client):
@@ -408,25 +345,12 @@ async def test_get_resources_invalid_resource_type_api(client):
 @pytest.mark.asyncio
 @pytest.mark.integration
 async def test_call_list_resources():
-    from app.services.resources import GetResourcesRequest
-
     request = GetResourcesRequest(
         category=ResourceCategory.EMPLOYMENT_AND_CAREER,
         address="748 N 1340 W Orem, UT 84057",
-        can_drive=True,
-        transit_pass=True,
         limit=50,
     )
-
-    previous_env_name = settings.ENV_NAME
-    settings.ENV_NAME = ""  # to call external api need to unset this variable.
-    settings.USE_EXTERNAL_RESOURCES_API = True
-    assert settings.EXTERNAL_RESOURCES_API_URL
-
     response = await list_resources(request)
-    settings.ENV_NAME = previous_env_name
-    settings.USE_EXTERNAL_RESOURCES_API = False
-
     print(f"Request: {request}")
     print(f"Response: {response}")
     assert response.resources, "Expected resources but got None or empty list"
@@ -477,14 +401,6 @@ def test_resource_is_allowed():
 @pytest.mark.asyncio
 @pytest.mark.integration
 async def test_disallowed_resources():
-    from app.core.config import settings
-    from app.services.resources import GetResourcesRequest
-
-    assert settings.EXTERNAL_RESOURCES_API_URL
-    previous_env_name = settings.ENV_NAME
-    settings.ENV_NAME = ""  # to call external api need to unset this variable.
-    settings.USE_EXTERNAL_RESOURCES_API = True
-
     correctional_centers_address = {
         "80 South Orange Street, Salt Lake City, UT",
         "748 North 1340 W, Orem, UT",
@@ -493,26 +409,17 @@ async def test_disallowed_resources():
         "2445 South Water Tower Way, Ogden, UT",
         "2588 West 2365 South, West Valley City, UT",
     }
-    all_found_resource_names: set[str] = set()
-
-    for current_address in correctional_centers_address:
-        for resource_category in ResourceCategory:
-            request = GetResourcesRequest(
-                category=resource_category,
-                address=current_address,
-                can_drive=True,
-                transit_pass=True,
-                limit=50,
-            )
-
-            response = await list_resources(request)
-
-            for resource in response.resources:
-                all_found_resource_names.add(resource.name)
-
-    settings.ENV_NAME = previous_env_name
-    settings.USE_EXTERNAL_RESOURCES_API = False
-
-    print(f"All found resource names: {all_found_resource_names}")
-    for name in DISALLOWED_RESOURCE_NAMES:
-        assert name not in all_found_resource_names
+    requests = [
+        GetResourcesRequest(
+            category=resource_category,
+            address=current_address,
+            limit=50,
+        )
+        for current_address in correctional_centers_address
+        for resource_category in ResourceCategory
+    ]
+    responses = await asyncio.gather(*map(list_resources, requests))
+    all_found_resource_names: set[str] = {
+        resource.name for response in responses for resource in response.resources
+    }
+    assert not all_found_resource_names.intersection((DISALLOWED_RESOURCE_NAMES))

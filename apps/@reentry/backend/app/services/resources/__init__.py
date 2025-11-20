@@ -4,7 +4,6 @@ from typing import List, Optional, Set, TypeAlias
 
 from pydantic import BaseModel, Field, TypeAdapter, field_validator
 
-from app.core.config import settings
 from app.utils.disallowed_resources import (
     DISALLOWED_RESOURCE_ADDRESSES,
     DISALLOWED_RESOURCE_NAMES,
@@ -424,49 +423,19 @@ async def list_resources(request: GetResourcesRequest) -> GetResourcesResponse:
     Returns:
         GetResourcesResponse with resources
     """
+    # Import exists here to avoid circular imports.
+    # TODO: Refactor modle to avoid this
+    from app.services.resources.api import list_external_resources
 
-    from app.services.resources.stub_resources import _list_resources_internal
-
-    # Always use built-in resources in test environment
-    if settings.ENV_NAME == "pytest":
-        internal_result = _list_resources_internal(request)
-        filtered_resources = [
-            r for r in internal_result.resources if resource_is_allowed(r)
-        ]
-        return GetResourcesResponse(
-            resources=filtered_resources,
-            failure_reason=ResourceFailureReason.SUCCESS
-            if internal_result.resources
-            else ResourceFailureReason.NO_RESULTS_FOUND,
-        )
-
-    # Otherwise check if external API should be used
-    use_external_api = settings.USE_EXTERNAL_RESOURCES_API
-    external_api_url = settings.EXTERNAL_RESOURCES_API_URL
-
-    if use_external_api and external_api_url:
-        # Use the external API
-        from app.services.resources.api import list_external_resources
-
-        response = await list_external_resources(request)
-        filtered_resources = [r for r in response.resources if resource_is_allowed(r)]
-        return GetResourcesResponse(
-            resources=filtered_resources,
-            failure_reason=response.failure_reason,
-            error_message=response.error_message,
-        )
-    else:
-        # Use the built-in resources
-        internal_result = _list_resources_internal(request)
-        filtered_resources = [
-            r for r in internal_result.resources if resource_is_allowed(r)
-        ]
-        return GetResourcesResponse(
-            resources=filtered_resources,
-            failure_reason=ResourceFailureReason.SUCCESS
-            if internal_result.resources
-            else ResourceFailureReason.NO_RESULTS_FOUND,
-        )
+    response = await list_external_resources(request)
+    filtered_resources = [r for r in response.resources if resource_is_allowed(r)]
+    return GetResourcesResponse(
+        resources=filtered_resources,
+        failure_reason=response.failure_reason
+        if filtered_resources
+        else ResourceFailureReason.NO_RESULTS_FOUND,
+        error_message=response.error_message,
+    )
 
 
 def resource_is_allowed(
