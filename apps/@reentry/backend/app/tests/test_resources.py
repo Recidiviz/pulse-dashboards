@@ -4,11 +4,11 @@ from app.core.config import settings
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
     ClientExtractedInfo,
-    DistanceMode,
     GetResourcesRequest,
     ResourceCategory,
     ResourceFailureReason,
     ResourceSubcategory,
+    TravelMode,
     list_resources,
 )
 from app.utils.disallowed_resources import DISALLOWED_RESOURCE_NAMES
@@ -129,7 +129,7 @@ def test_build_GetResourcesRequest__travel_info():
         exclude_names=None,
         exclude_ids=None,
     )
-    assert walking.travel_mode == DistanceMode.WALKING
+    assert walking.travel_mode == TravelMode.WALKING
     assert walking.distance_miles == 5
 
     client_info = ClientExtractedInfo(
@@ -144,7 +144,7 @@ def test_build_GetResourcesRequest__travel_info():
         exclude_names=None,
         exclude_ids=None,
     )
-    assert request.travel_mode == DistanceMode.DRIVING
+    assert request.travel_mode == TravelMode.DRIVING
     assert request.distance_miles == 100
 
     # We default to no travel mode within 100 miles if building directly

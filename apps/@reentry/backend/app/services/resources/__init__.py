@@ -20,11 +20,11 @@ class ResourceOrigin(str, Enum):
     LOADER = "LOADER"
 
 
-class DistanceMode(str, Enum):
-    DRIVING = "driving"
-    WALKING = "walking"
-    BICYCLING = "bicycling"
-    TRANSIT = "transit"
+class TravelMode(str, Enum):
+    DRIVING = "DRIVE"
+    WALKING = "WALK"
+    BICYCLING = "BICYCLE"
+    TRANSIT = "TRANSIT"
 
 
 class ResourceCategory(str, Enum):
@@ -164,10 +164,9 @@ CATEGORY_SUBCATEGORY_MAP = {
 }
 
 
-class ParameterSearchBodyParams(BaseModel):
+class LegacyResourceRequest(BaseModel):
     # Required Parameters
     category: ResourceCategory = Field(description="Category (e.g. 'BASIC_NEEDS')")
-    textSearch: str = Field(description="Text to search for")
     address: str = Field(
         description="Full address (e.g. '123 Main St, Cityville, CA 12345')"
     )
@@ -176,18 +175,13 @@ class ParameterSearchBodyParams(BaseModel):
     subcategory: Optional[ResourceSubcategory] = Field(
         None, description="Subcategory (e.g. 'HOUSING')"
     )
-
-    # Pagination
-    limit: Optional[int] = Field(default=20, description="Results limit (default: 20)")
-    offset: Optional[int] = Field(default=0, description="Results offset (default: 0)")
-
-    # Distance/Time Parameters
-    distance: Optional[int] = Field(100, description="Distance in miles (default: 100)")
-    time: Optional[int] = Field(None, description="Time in minutes")
-
-    mode: Optional[DistanceMode] = Field(
-        None, description="Travel mode: driving, walking, bicycling, transit"
+    distance_miles: int = Field(
+        default=100, description="Distance in miles (default: 100)"
     )
+    mode: TravelMode | None = Field(
+        default=None, description="Travel mode: DRIVE, WALK, BICYCLE, TRANSIT"
+    )
+    limit: int = Field(default=20, description="Results limit (default: 20)")
 
     # Validation
     @field_validator("mode")
@@ -270,7 +264,7 @@ class GetResourcesRequest(BaseModel):
         default=100,
         description="The distance in miles from this request's address to search within.",
     )
-    travel_mode: DistanceMode | None = Field(
+    travel_mode: TravelMode | None = Field(
         default=None,
         description="Preferred travel mode (driving, walking, bicycling, transit)",
     )
@@ -348,13 +342,13 @@ class GetResourcesRequest(BaseModel):
     @staticmethod
     def _mode_and_distance_from_client_extracted_info(client_info: ClientExtractedInfo):
         if client_info.can_drive is not False:
-            return DistanceMode.DRIVING, 100
+            return TravelMode.DRIVING, 100
         elif client_info.transit_pass is not False:
-            return DistanceMode.TRANSIT, 50
+            return TravelMode.TRANSIT, 50
         elif client_info.can_bike is not False:
-            return DistanceMode.BICYCLING, 10
+            return TravelMode.BICYCLING, 10
         elif client_info.can_walk is not False:
-            return DistanceMode.WALKING, 5
+            return TravelMode.WALKING, 5
         return None, 100
 
 
@@ -393,7 +387,7 @@ class Resource(BaseModel):
     operationalStatus: Optional[str] = None
     price_level: Optional[str] = None
 
-    transport_mode: DistanceMode | None = None
+    transport_mode: TravelMode | None = None
     transport_minutes: int | None = None
 
 

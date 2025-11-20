@@ -56,7 +56,7 @@ def test_convert_to_markdown_replaces_quotes():
                         "ratingCount": 54,
                         "operationalStatus": None,
                         "price_level": None,
-                        "transport_mode": "driving",
+                        "transport_mode": "DRIVE",
                         "transport_minutes": 12,
                     },
                 ],

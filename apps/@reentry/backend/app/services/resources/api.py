@@ -1,8 +1,8 @@
-from typing import Generic, List, Optional, TypeVar
-from uuid import UUID
+from typing import List, Optional
 
 import httpx
 import structlog
+from fastapi import status
 from pydantic import BaseModel
 
 from app.core.config import settings
@@ -13,72 +13,49 @@ from app.services.resources import (
     ResourceFailureReason,
 )
 
-from ..resources import ParameterSearchBodyParams, ResourceCategory, ResourceSubcategory
+from ..resources import LegacyResourceRequest, ResourceCategory, ResourceSubcategory
 from . import (
-    DistanceMode,
+    TravelMode,
 )
 
 logger = structlog.get_logger(__name__)
 
 
-class ApiSearchResult(BaseModel):
-    # Resource Identification
-    id: UUID
-    uri: str
+class Location(BaseModel):
+    latitude: float
+    longitude: float
 
+
+class ApiSearchResult(BaseModel):
     # Core Information
+    google_place_id: str
     name: str
     category: ResourceCategory
     subcategory: Optional[ResourceSubcategory] = None
+    origin: str
+    description: Optional[str] = None
 
     # Location
-    lat: float
-    lon: float
-    street: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    zip: Optional[str] = None
+    location: Location
+    address: str
 
     # Contact Information
     website: Optional[str] = None
-    maps_url: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
 
-    # Content
-    description: Optional[str] = None
-    tags: Optional[List[str]] = None
-
-    # Metadata
-    origin: str
-    banned: Optional[bool] = None
-    banned_reason: Optional[str] = None
-    score: Optional[float] = None
-
-    # LLM Evaluation
-    llm_rank: Optional[int] = None
-    llm_valid: Optional[bool] = None
-
     # External Ratings
     rating: Optional[float] = None
-    ratingCount: Optional[int] = None
-    operationalStatus: Optional[str] = None
-    price_level: Optional[str] = None
+    rating_count: Optional[int] = None
 
     # Travel Information
-    transport_mode: Optional[DistanceMode] = None
-    transport_minutes: Optional[int] = None
-
-
-T = TypeVar("T")
-
-
-class APIResponse(BaseModel, Generic[T]):
-    data: T
+    travel_mode: Optional[TravelMode] = None
+    travel_duration_minutes: Optional[int] = None
+    travel_distance_miles: Optional[int] = None
 
 
 async def search_resource_api(
-    params: ParameterSearchBodyParams,
+    params: LegacyResourceRequest,
 ) -> List[ApiSearchResult]:
     """
     Make an HTTP request to the external resources API.
@@ -98,22 +75,20 @@ async def search_resource_api(
         raise ValueError("RESOURCES_API_KEY is not configured in settings")
 
     async with httpx.AsyncClient() as client:
-        request_json = params.dict(exclude_none=True)
+        request_json = params.model_dump(exclude_none=False)
         response = await client.post(
-            f"{api_url}/parameter-search",
+            f"{api_url}/legacy",
             json=request_json,
             headers={"x-api-key": settings.RESOURCES_API_KEY},
             timeout=30.0,  # 30 second timeout
         )
-
+        if response.status_code == status.HTTP_204_NO_CONTENT:
+            return []
         if response.status_code != 200:
             raise Exception(
                 f"API request failed with status {response.status_code}: {response.text}"
             )
-
-        result = APIResponse[List[ApiSearchResult]].parse_obj(response.json())
-        logger.debug("Resource API Response", request=request_json, result=result)
-        return result.data
+        return [ApiSearchResult.model_validate(data) for data in response.json()]
 
 
 def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
@@ -126,40 +101,22 @@ def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
     Returns:
         Internal Resource model
     """
-    # Build address if components are available
-    address = None
-    if result.street:
-        address_parts = []
-        if result.street:
-            address_parts.append(result.street)
-        if result.city:
-            address_parts.append(result.city)
-        if result.state:
-            state_zip = result.state
-            if result.zip:
-                state_zip += f" {result.zip}"
-            address_parts.append(state_zip)
-
-        if address_parts:
-            address = ", ".join(address_parts)
-
     # Convert external API result to internal Resource model
     resource = Resource(
-        id=str(result.id),
+        id=result.google_place_id,
         category=result.category,
         subcategory=result.subcategory,
         name=result.name,
         phone=result.phone,
-        address=address,
+        address=result.address,
         website=result.website,
         email=result.email,
-        transport_minutes=result.transport_minutes,
-        transport_mode=result.transport_mode,
+        transport_minutes=result.travel_duration_minutes,
+        transport_mode=result.travel_mode,
         rating=result.rating,
-        ratingCount=result.ratingCount,
-        score=result.score,
+        ratingCount=result.rating_count,
+        score=None,
     )
-
     return resource
 
 
@@ -194,19 +151,13 @@ async def list_external_resources(request: GetResourcesRequest) -> GetResourcesR
     subcategory = request.subcategory
 
     try:
-        # Create search parameters
-        params = ParameterSearchBodyParams(
+        params = LegacyResourceRequest(
             category=category,
             subcategory=subcategory,
-            # TODO(#10014): Deprecate this field in the new API
-            textSearch="",
             address=request.address,
-            distance=request.distance_miles,
+            distance_miles=request.distance_miles,
             mode=request.travel_mode,
-            time=None,
         )
-
-        # Call the API
         results = await search_resource_api(params)
         logger.debug(
             "External API returned results",
