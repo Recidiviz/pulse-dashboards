@@ -16,23 +16,20 @@
 // =============================================================================
 
 import { rem } from "polished";
+import { ReactNode } from "react";
 import styled from "styled-components";
+
+import { BoldWeight } from "./styles";
 
 const Container = styled.div`
   display: grid;
   grid-template-columns: 3% 85% auto;
   margin: 0.5rem 0;
   width: 95%;
-
-  & th {
-    font-weight: 600;
-    font-size: ${rem(10)};
-    letter-spacing: -0.01rem;
-  }
 `;
 
 const Header = styled.div`
-  font-weight: 600;
+  ${BoldWeight};
   font-size: ${rem(10)};
   letter-spacing: -0.01rem;
 `;
@@ -47,6 +44,13 @@ const ChoiceContainer = styled.div`
 const ChoiceConnector = styled.div`
   flex-grow: 1;
   border-bottom: 1px solid black;
+`;
+
+const ChildrenContainer = styled.div`
+  grid-column: 2 / 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
 `;
 
 type ChoiceOption = { label: string; value: number };
@@ -73,10 +77,12 @@ export function MultichoiceScore({
   questionNumber,
   title,
   choices,
+  children,
 }: {
   title: string;
   questionNumber: number;
   choices: Array<ChoiceOption>;
+  children?: ReactNode;
 }) {
   return (
     <Container>
@@ -90,6 +96,7 @@ export function MultichoiceScore({
           lastChoice={index === choices.length - 1}
         />
       ))}
+      {children && <ChildrenContainer>{children}</ChildrenContainer>}
     </Container>
   );
 }

@@ -25,9 +25,13 @@ import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { PrintablePage } from "../../styles";
 import { MultichoiceScore } from "./MultichoiceScore";
+import { BoldWeight, FormFont } from "./styles";
+import { TextboxWithHeader } from "./TextboxWithHeader";
+import { TotalScore } from "./TotalScore";
+import { YesNoQuestion } from "./YesNoQuestion";
 
 const FormPage = styled.div`
-  font-family: "Arial";
+  ${FormFont}
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -38,9 +42,9 @@ const FormPage = styled.div`
 `;
 
 const Header = styled.h1`
-  font-family: "Arial";
+  ${FormFont}
+  ${BoldWeight}
   text-align: center;
-  font-weight: 600;
   font-size: ${rem(10)};
   width: 100%;
   letter-spacing: -0.01rem;
@@ -127,20 +131,35 @@ export const FormUsTnInitialClassification2026 = observer(
           <PrintablePage landscape>
             <FormPage>
               <Header>TENNESSEE CLASSIFICATION INSTRUMENT: DIAGNOSTIC</Header>
-              <MultichoiceScore questionNumber={1} {...QUESTIONS[0]} />
-              <MultichoiceScore questionNumber={2} {...QUESTIONS[1]} />
-              <MultichoiceScore questionNumber={3} {...QUESTIONS[2]} />
+              <MultichoiceScore questionNumber={1} {...QUESTIONS[0]}>
+                <TextboxWithHeader header={"List convictions:"} />
+              </MultichoiceScore>
+              <MultichoiceScore questionNumber={2} {...QUESTIONS[1]}>
+                <TextboxWithHeader header={"List offenses:"} />
+              </MultichoiceScore>
+              <MultichoiceScore questionNumber={3} {...QUESTIONS[2]}>
+                <TextboxWithHeader header={"List disciplinaries:"} />
+              </MultichoiceScore>
             </FormPage>
           </PrintablePage>
           <PrintablePage landscape>
             <FormPage>
-              <MultichoiceScore questionNumber={4} {...QUESTIONS[3]} />
-              <MultichoiceScore questionNumber={5} {...QUESTIONS[4]} />
+              <MultichoiceScore questionNumber={4} {...QUESTIONS[3]}>
+                <TextboxWithHeader header={"List disciplinaries:"} />
+              </MultichoiceScore>
+              <MultichoiceScore questionNumber={5} {...QUESTIONS[4]}>
+                <TextboxWithHeader header={"List disciplinaries:"} />
+                <YesNoQuestion question="3+ Violent Class A or B disciplinaries in Previous Six Months" />
+                <TextboxWithHeader header={"List disciplinaries:"} />
+                <YesNoQuestion question="Homicide Disciplinary" />
+                <TextboxWithHeader header={"List disciplinaries:"} />
+              </MultichoiceScore>
             </FormPage>
           </PrintablePage>
           <PrintablePage landscape>
             <FormPage>
               <MultichoiceScore questionNumber={6} {...QUESTIONS[5]} />
+              <TotalScore score={17} />
             </FormPage>
           </PrintablePage>
         </FormViewer>
