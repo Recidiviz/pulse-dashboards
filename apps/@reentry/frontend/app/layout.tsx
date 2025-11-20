@@ -25,10 +25,10 @@ import { ToastContainer } from "react-toastify";
 
 import { AuthProvider } from "~@reentry/frontend/lib/auth/authContext";
 import { TrpcReactQueryProvider } from "~@reentry/frontend/trpc/TrpcReactQueryProvider";
+import { QueryProvider } from "~@reentry/frontend-shared";
 
 import { AnalyticsProvider } from "./contexts/AnalyticsProvider";
 import { IntakeIntegrationProvider } from "./contexts/IntakeIntegrationProvider";
-import { Providers } from "./providers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -67,7 +67,7 @@ export default function RootLayout({
       <body
         className={`${publicSans.variable} ${geistSans.variable} ${geistMono.variable} antialiased h-screen`}
       >
-        <Providers>
+        <QueryProvider>
           <AppRouterCacheProvider>
             <AuthProvider>
               <AnalyticsProvider
@@ -85,7 +85,7 @@ export default function RootLayout({
             </AuthProvider>
             <ToastContainer />
           </AppRouterCacheProvider>
-        </Providers>
+        </QueryProvider>
       </body>
     </html>
   );

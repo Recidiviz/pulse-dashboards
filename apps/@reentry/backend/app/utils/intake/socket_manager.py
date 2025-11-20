@@ -46,7 +46,7 @@ mgr = socketio.AsyncRedisManager(f"{settings.REDIS_URL}", channel="intake_channe
 sio = socketio.AsyncServer(
     async_mode="asgi",
     client_manager=mgr,
-    cors_allowed_origins=settings.ALLOWED_ORIGINS,
+    cors_allowed_origins=settings.ALLOWED_ORIGINS.split(","),
     # logger=True,
     engineio_logger=True,
     cookie={"name": "test", "httpOnly": False, "path": "/custom"},

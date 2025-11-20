@@ -87,7 +87,7 @@ RECIDIVIZ_RESOURCES_API_KEY=
 
 
 # ----------------------------------------------- #
-RECIDIVIZ_ALLOWED_ORIGINS=http://localhost:3000
+RECIDIVIZ_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:4200
 
 
 # ----------------------------------------------- #

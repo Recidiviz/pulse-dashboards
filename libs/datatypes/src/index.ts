@@ -86,6 +86,7 @@ export * from "./people/Resident/schema";
 export type * from "./people/Resident/US_AR/metadata/schema";
 export * from "./people/Resident/US_AZ/fixtures";
 export type * from "./people/Resident/US_AZ/metadata/schema";
+export * from "./people/Resident/US_ID/fixtures";
 export type * from "./people/Resident/US_ID/metadata/schema";
 export * from "./people/Resident/US_MA/metadata/fixtures";
 export * from "./people/Resident/US_MA/metadata/schema";

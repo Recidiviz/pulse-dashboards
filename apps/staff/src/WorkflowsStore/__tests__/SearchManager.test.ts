@@ -19,9 +19,8 @@ import { and, FieldPath, or, query, where } from "firebase/firestore";
 import { observable } from "mobx";
 import { Mock } from "vitest";
 
-import { ClientRecord, ResidentRecord } from "~datatypes";
+import { ClientRecord, rawUsIdResidents, ResidentRecord } from "~datatypes";
 
-import { usIdResidents } from "../../../tools/fixtures/residents/usIdResidents";
 import { WorkflowsSystemConfig } from "../../core/models/types";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
@@ -375,7 +374,7 @@ describe("matchingPersonsGrouped", () => {
   });
 
   test("searchFieldValue is adjusted for CRC locations", () => {
-    const residentRecords = usIdResidents;
+    const residentRecords = rawUsIdResidents;
     const incarcerationSystemConfig = {
       search: [
         {
@@ -414,7 +413,7 @@ describe("matchingPersonsGrouped", () => {
   });
 
   test("searchFieldValue with multiple locations", () => {
-    const residentRecords = usIdResidents;
+    const residentRecords = rawUsIdResidents;
     const incarcerationSystemConfig = {
       search: [
         {

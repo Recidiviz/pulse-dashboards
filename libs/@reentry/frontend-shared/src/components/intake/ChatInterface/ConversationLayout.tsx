@@ -40,7 +40,7 @@ const LinearChatComponent: React.FC = () => {
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        height="100vh"
+        height="100%"
       >
         <ConnectionErrorAlert />
         <Typography variant="h6" sx={{ mt: 2 }}>
@@ -58,7 +58,7 @@ const LinearChatComponent: React.FC = () => {
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        height="100vh"
+        height="100%"
       >
         <ConnectionErrorAlert />
         <CircularProgress size={40} />
@@ -70,7 +70,7 @@ const LinearChatComponent: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-slate-50">
+    <div className="flex flex-col h-full bg-slate-50">
       <ConnectionErrorAlert />
       {/* Header */}
       <div className="relative max-w-full overflow-x-hidden">

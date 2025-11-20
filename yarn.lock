@@ -47435,6 +47435,7 @@ __metadata:
     superjson: "npm:^2.2.1"
     supertest: "npm:^6.0.1"
     tailwindcss: "npm:^3.4.17"
+    tailwindcss-scoped-preflight: "npm:^3.5.3"
     testcontainers: "npm:^11.6.0"
     timekeeper: "npm:^2.2.0"
     ts-jest: "npm:^29.4.0"
@@ -51658,6 +51659,16 @@ __metadata:
   version: 6.2.0
   resolution: "tabbable@npm:6.2.0"
   checksum: 10c0/ced8b38f05f2de62cd46836d77c2646c42b8c9713f5bd265daf0e78ff5ac73d3ba48a7ca45f348bafeef29b23da7187c72250742d37627883ef89cbd7fa76898
+  languageName: node
+  linkType: hard
+
+"tailwindcss-scoped-preflight@npm:^3.5.3":
+  version: 3.5.3
+  resolution: "tailwindcss-scoped-preflight@npm:3.5.3"
+  peerDependencies:
+    postcss: ^8
+    tailwindcss: ^3
+  checksum: 10c0/f35df4f399911eed3a7befa75d8140209a04ab37057783b1158a857c900b9e26c8db6176d9255447d13fac93adcc602d901975a5bb0e2afff69013b20e5039a6
   languageName: node
   linkType: hard
 

@@ -191,7 +191,7 @@ export function ConfirmBirthdatePage({
   };
 
   return (
-    <div className="min-h-screen flex flex-col p-6">
+    <div className="min-h-full flex flex-col p-6">
       {/* Logo */}
       <div className="w-full flex justify-center pt-8 pb-4">
         <Image

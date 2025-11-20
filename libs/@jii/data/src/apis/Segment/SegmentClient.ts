@@ -20,6 +20,7 @@
 import { AnalyticsBrowser } from "@segment/analytics-next";
 import { v4 as uuidv4 } from "uuid";
 
+import type { IntakeAnalytics } from "~@reentry/frontend-shared";
 import { isTestEnv } from "~client-env-utils";
 
 import { proxyHost } from "../../utils/proxy";
@@ -34,7 +35,7 @@ export type SegmentClientExternals = {
  * Depends on the VITE_SEGMENT_WRITE_KEY environment variable to configure a Segment connection;
  * if this value is missing the client will operate in offline mode (events will only be logged to the console)
  */
-export class SegmentClient {
+export class SegmentClient implements IntakeAnalytics {
   private segment: AnalyticsBrowser;
 
   readonly sessionId = uuidv4();
@@ -134,5 +135,18 @@ export class SegmentClient {
       );
     }
     this.segment.page(properties);
+  }
+
+  // the event names seen here are the same as used in CPA.
+  // not necessarily required, but convenient
+  trackIntakeChatClientLogin(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+  }) {
+    this.track("frontend_cpa_intake_chat_client_login", metadata);
+  }
+  trackIntakeChatClientAddressSubmitted(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+  }) {
+    this.track("frontend_cpa_intake_chat_client_address_submitted", metadata);
   }
 }

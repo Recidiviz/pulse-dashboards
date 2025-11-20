@@ -39,6 +39,7 @@
       "~@jii/US_TN": ["libs/@jii/states/US_TN/src/index.ts"],
       "~@jii/US_UT": ["libs/@jii/states/US_UT/src/index.ts"],
       "~@jii/auth": ["libs/@jii/auth/src/index.ts"],
+      "~@jii/case-planning": ["libs/@jii/case-planning/src/index.ts"],
       "~@jii/common-ui": ["libs/@jii/common-ui/src/index.ts"],
       "~@jii/data": ["libs/@jii/data/src/index.ts"],
       "~@jii/earned-good-time": ["libs/@jii/earned-good-time/src/index.ts"],

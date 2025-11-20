@@ -18,13 +18,13 @@
 import {
   RawResidentRecord,
   rawUsAzResidents,
+  rawUsIdResidents,
   rawUsMaResidents,
   rawUsNeResidents,
   rawUsTnResidents,
 } from "~datatypes";
 
 import { usArResidents } from "./residents/usArResidents";
-import { usIdResidents } from "./residents/usIdResidents";
 import { usMeResidents } from "./residents/usMeResidents";
 import { usMiResidents } from "./residents/usMiResidents";
 import { usMoResidents } from "./residents/usMoResidents";
@@ -37,7 +37,7 @@ export type ResidentFixture = PersonFixture<RawResidentRecord>;
 const data: Array<ResidentFixture | RawResidentRecord> = [
   ...rawUsAzResidents,
   ...usArResidents,
-  ...usIdResidents,
+  ...rawUsIdResidents,
   ...rawUsMaResidents,
   ...usMeResidents,
   ...usMiResidents,

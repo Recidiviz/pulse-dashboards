@@ -962,6 +962,144 @@ exports[`schema for 'US_AZ' 'RES026' 1`] = `
 }
 `;
 
+exports[`schema for 'US_ID' 'RES001' 1`] = `
+{
+  "admissionDate": 2019-08-12T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usIdExpandedCRC",
+    "usIdCustodyLevelDowngrade",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES001",
+  "facilityId": "FACILITY1",
+  "gender": "MALE",
+  "metadata": {
+    "crcFacilities": [
+      "CRC LRC",
+    ],
+    "initialParoleHearingDate": "2020-03-12",
+    "nextParoleHearingDate": "2024-09-15",
+    "stateCode": "US_ID",
+    "tentativeParoleDate": "2025-02-10",
+  },
+  "personExternalId": "RES001",
+  "personName": {
+    "givenNames": "Andre",
+    "middleNames": "Isaiah",
+    "surname": "Hall",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres001",
+  "recordId": "us_id_res001",
+  "releaseDate": 2025-10-22T00:00:00.000Z,
+  "stateCode": "US_ID",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_ID' 'RES002' 1`] = `
+{
+  "admissionDate": 2020-01-12T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usIdCRCWorkRelease",
+    "usIdCustodyLevelDowngrade",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES002",
+  "facilityId": "FACILITY1",
+  "gender": "MALE",
+  "metadata": {
+    "crcFacilities": [
+      "CRC LRC",
+      "CRC PRC",
+    ],
+    "initialParoleHearingDate": "2021-03-12",
+    "nextParoleHearingDate": "2024-09-15",
+    "stateCode": "US_ID",
+    "tentativeParoleDate": "2025-02-10",
+  },
+  "personExternalId": "RES002",
+  "personName": {
+    "givenNames": "Antonio",
+    "surname": "Martin",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres002",
+  "recordId": "us_id_res002",
+  "releaseDate": 2026-07-06T00:00:00.000Z,
+  "stateCode": "US_ID",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_ID' 'RES003' 1`] = `
+{
+  "admissionDate": 2017-07-12T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usIdCRCWorkRelease",
+    "usIdCRCResidentWorker",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES003",
+  "facilityId": "FACILITY1",
+  "gender": "MALE",
+  "metadata": {
+    "crcFacilities": [
+      "CRC PRC",
+    ],
+    "initialParoleHearingDate": "2018-05-18",
+    "nextParoleHearingDate": "2024-09-15",
+    "stateCode": "US_ID",
+    "tentativeParoleDate": "2026-02-10",
+  },
+  "personExternalId": "RES003",
+  "personName": {
+    "givenNames": "Walter",
+    "surname": "Brown",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres003",
+  "recordId": "us_id_res003",
+  "releaseDate": 2027-06-06T00:00:00.000Z,
+  "stateCode": "US_ID",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_ID' 'RES004' 1`] = `
+{
+  "admissionDate": 2021-07-12T00:00:00.000Z,
+  "allEligibleOpportunities": [
+    "usIdCRCResidentWorker",
+  ],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES004",
+  "facilityId": "FACILITY1",
+  "gender": "MALE",
+  "metadata": {
+    "crcFacilities": [
+      "CRC LRC",
+      "CRC PRC",
+    ],
+    "initialParoleHearingDate": "2023-03-12",
+    "nextParoleHearingDate": "2024-09-15",
+    "stateCode": "US_ID",
+    "tentativeParoleDate": "2025-09-10",
+  },
+  "personExternalId": "RES004",
+  "personName": {
+    "givenNames": "Nathan",
+    "surname": "Torres",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres004",
+  "recordId": "us_id_res004",
+  "releaseDate": 2027-06-06T00:00:00.000Z,
+  "stateCode": "US_ID",
+  "unitId": "UNIT A",
+}
+`;
+
 exports[`schema for 'US_MA' 'RES001' 1`] = `
 {
   "allEligibleOpportunities": [],

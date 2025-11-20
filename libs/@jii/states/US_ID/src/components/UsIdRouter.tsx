@@ -17,12 +17,14 @@
 
 import { Route, Routes } from "react-router-dom";
 
-import { NotFound, RedirectToReentryApp } from "~@jii/common-ui";
+import { NotFound } from "~@jii/common-ui";
+
+import { PageIntakeAssessment } from "./pages/PageIntakeAssessment";
 
 export const UsIdRouter = () => {
   return (
     <Routes>
-      <Route index element={<RedirectToReentryApp />} />
+      <Route index element={<PageIntakeAssessment />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

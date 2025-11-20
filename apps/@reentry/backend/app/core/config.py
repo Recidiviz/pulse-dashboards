@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     LANGCHAIN_ENDPOINT: str | None = "https://api.smith.langchain.com"
     LANGCHAIN_PROJECT: str | None = "dev-recidiviz"
     ANTHROPIC_API_KEY: str | None = None
-    ALLOWED_ORIGINS: str = "http://localhost:3000"
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:4200"
     DT_MODEL_PROVIDER: str = "openai"
     DT_MODEL_NAME: str = "o4-mini"
     DT_MODEL_VERSION: str = "2025-04-16"

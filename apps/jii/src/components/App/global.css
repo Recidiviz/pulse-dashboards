@@ -1,2 +1,8 @@
 /* styled-components discourages @import for global styles so this is separate */
-@import "modern-normalize"
+@import "modern-normalize";
+@import "react-toastify/dist/ReactToastify.css";
+
+/* some of our shared components use Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+"use client";
+
 import { Box, Typography } from "@mui/material";
 import type React from "react";
 import { useState } from "react";

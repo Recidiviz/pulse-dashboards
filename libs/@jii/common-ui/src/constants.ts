@@ -16,3 +16,9 @@
 // =============================================================================
 
 export const PAGE_WIDTH = 800;
+
+/**
+ * Tailwind styles will be scoped to elements within this class,
+ * since most of the app does not use it
+ */
+export const TAILWIND_WRAPPER_CLASS = "tailwind-wrapper";

@@ -28,6 +28,7 @@ export * from "./components/intake/IntakeRouter";
 export { default as IntakeChatV2CommonStyles } from "./components/IntakeChatV2/Common.module.css";
 export { default as IntakeCompleteStyles } from "./components/IntakeChatV2/IntakeComplete/IntakeComplete.module.css";
 export * from "./components/modals/BaseModal";
+export * from "./components/QueryProvider/QueryProvider";
 export * from "./contexts/ApplicationContext";
 export * from "./utils/toast";
 export * from "./websockets/components/ConnectionErrorAlert";

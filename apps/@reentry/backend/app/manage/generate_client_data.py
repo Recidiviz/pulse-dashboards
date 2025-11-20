@@ -14,6 +14,7 @@ from .base import cli
 # Path to the clients data directory
 PROJECT_ROOT = Path(__file__).parent.parent.parent  # Gets to backend/ directory
 EXAMPLES_DIR = PROJECT_ROOT / "data" / "examples"
+INTEGRATION_FIXTURES_DIR = PROJECT_ROOT / "data" / "fixtures"
 CLIENTS_DATA_DIR = EXAMPLES_DIR / "clients"
 
 
@@ -429,6 +430,14 @@ def generate_client_data(
                 ),
             }
         )
+
+    if mode == "dev":
+        # include static client fixture data
+        with open(INTEGRATION_FIXTURES_DIR / "clients.json", "r") as f:
+            while line := f.readline():
+                record = json.loads(line)
+                clients.append(record)
+                special_staff["client_ids"].append(record["external_id"])
 
     # Create the clients data directory if it doesn't exist
     CLIENTS_DATA_DIR.mkdir(parents=True, exist_ok=True)

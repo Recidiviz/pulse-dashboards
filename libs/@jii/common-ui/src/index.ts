@@ -38,7 +38,6 @@ export * from "./InfoPage/InfoPage";
 export * from "./NotFound/NotFound";
 export * from "./PageLinksFooter/PageLinksFooter";
 export * from "./Redirect/Redirect";
-export * from "./RedirectToReentryApp/RedirectToReentryApp";
 export * from "./Selector/Selector";
 export * from "./SimpleLinkProps";
 export * from "./styles";

@@ -28,6 +28,7 @@ import {
 } from "@recidiviz/design-system";
 import { ErrorBoundary, withSentryReactRouterV6Routing } from "@sentry/react";
 import { Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import styled, { createGlobalStyle } from "styled-components";
 
 import { NotFound } from "~@jii/common-ui";
@@ -133,6 +134,7 @@ export function App() {
               </Route>
             </SentryRoutes>
           </StyledApp>
+          <ToastContainer />
         </TranslationProvider>
       </StoreProvider>
     </ErrorBoundary>
