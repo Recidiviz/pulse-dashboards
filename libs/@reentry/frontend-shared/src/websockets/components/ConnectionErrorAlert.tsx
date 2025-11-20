@@ -51,7 +51,7 @@ export const ConnectionErrorAlert = () => {
   }
 
   return (
-    <Box sx={{ width: "100%", position: "fixed", top: 0, zIndex: 1100 }}>
+    <Box sx={{ width: "100%", position: "absolute", top: 0, zIndex: 1100 }}>
       <Alert
         severity={connectionStatus === "error" ? "warning" : "info"}
         action={

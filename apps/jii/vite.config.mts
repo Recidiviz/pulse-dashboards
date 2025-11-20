@@ -18,8 +18,29 @@
 /// <reference types='vitest' />
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, ProxyOptions } from "vite";
 
+// will use this proxy to connect with CPA staging backend, when the configuration exists
+const proxyOptions: Record<string, ProxyOptions> = {};
+
+const cpaBackendUrl = process.env["VITE_CASE_PLANNING_BACKEND_URL"];
+const cpaProxyTargetUrl = process.env["CASE_PLANNING_PROXY_TARGET"];
+
+if (cpaBackendUrl && cpaProxyTargetUrl) {
+  const socketPathPrefix = new URL(cpaBackendUrl).pathname;
+  proxyOptions[socketPathPrefix] = {
+    target: cpaProxyTargetUrl,
+    // this gets around CORS restrictions for development
+    changeOrigin: true,
+    ws: true,
+    rewrite: (path) => path.replace(new RegExp(`^${socketPathPrefix}`), ""),
+    configure(proxy) {
+      proxy.on("proxyReqWs", (req) => {
+        req.setHeader("Origin", `${process.env["CASE_PLANNING_PROXY_ORIGIN"]}`);
+      });
+    },
+  };
+}
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/jii",
@@ -27,6 +48,7 @@ export default defineConfig(() => ({
   server: {
     port: 4200,
     host: "localhost",
+    proxy: proxyOptions,
   },
 
   preview: {
