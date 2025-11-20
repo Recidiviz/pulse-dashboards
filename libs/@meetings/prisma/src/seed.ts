@@ -19,6 +19,7 @@
 
 import { faker } from "@faker-js/faker";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Transcript } from "assemblyai";
 
 import {
   Client,
@@ -34,6 +35,8 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Clean up existing data
+  await prisma.utterance.deleteMany({});
+  await prisma.transcription.deleteMany({});
   await prisma.meeting.deleteMany({});
   await prisma.clientsToStaff.deleteMany({});
   await prisma.client.deleteMany({});
@@ -95,6 +98,29 @@ async function main() {
         staffId: seededStaff.staffId,
         recordingsGCSBucket: "test-audio-bucket",
         recordingsFolderPath: `meeting-${createdClient.personId}`,
+        transcriptions: {
+          create: [
+            {
+              id: `meeting-${createdClient.personId}`,
+              provider: faker.helpers.arrayElement(["ASSEMBLYAI", "DEEPGRAM"]),
+              transcriptObject: {} as Transcript,
+              confidence: faker.number.float(),
+              utterances: {
+                create: Array.from({ length: 5 }, (_, i) => ({
+                  confidence: faker.number.float(),
+                  endTimeMs: (i + 1) * 3000,
+                  speaker: faker.helpers.arrayElement([
+                    "Speaker A",
+                    "Speaker B",
+                  ]),
+                  startTimeMs: i * 3000,
+                  text: faker.lorem.sentence(),
+                })),
+              },
+              summary: faker.lorem.paragraph(),
+            },
+          ],
+        },
       },
     });
   }
