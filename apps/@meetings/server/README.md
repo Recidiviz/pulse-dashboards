@@ -104,3 +104,20 @@ The preview database is only cloned from the staging database once per PR. If yo
 ## Deployment
 
 Please only deploy the meetings server via the `nx deploy` command. This will ensure that the correct environment variables are used for the deployment.
+
+## Reprocessing Meetings
+
+There is an internal API endpoint to reprocess meetings. This can be used to re-run post-meeting processing steps (like audio stitching and transcription) for a specific meeting in the case that something went wrong during the initial processing or you want to re-run processing with updated logic.
+
+The endpoint is a POST request to `/reprocess-meeting` with the following body parameters:
+- `stateCode`: The state code of the meeting to reprocess (e.g. `US_CA` for California)
+- `meetingId`: The ID of the meeting to reprocess
+- `step` (optional): The specific post-meeting processing step to reprocess. Valid values are `stitching` and `transcription`. If not provided, the server will determine the appropriate step to reprocess based on the current status of the meeting.
+
+You will need to pass a Google Identity Token in the `Authorization` header of the request. The token must be for a service account that has permission to access the meetings server (`meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com` for the staging and demo servers, and `meetings@recidiviz-dashboard-production.iam.gserviceaccount.com` for the production server). 
+
+1. You can generate a token by following the instructions at https://docs.cloud.google.com/iam/docs/create-short-lived-credentials-direct#console_4
+
+2. You can attach the token to your request using the `Authorization` header:
+
+```-H "Authorization: Bearer {your_id_token}"```

@@ -34,6 +34,12 @@ const envSchema = z.object({
   NODE_ENV: z.string().min(1, "NODE_ENV is required"),
   IS_OFFLINE: z.coerce.boolean().default(false),
   OFFLINE_STORAGE_DIR: z.string().optional(),
+  STITCHING_TASK_QUEUE_NAME: z
+    .string()
+    .min(1, "STITCHING_TASK_QUEUE_NAME is required"),
+  STITCHING_TASK_REQUEST_URL: z
+    .string()
+    .min(1, "STITCHING_TASK_REQUEST_URL is required"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

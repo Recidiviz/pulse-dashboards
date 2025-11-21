@@ -37,10 +37,13 @@ import {
 } from "~@meetings/prisma/client";
 import env from "~@meetings/server/env";
 import {
+  getStepFromMeetingStatus,
+  getStepFromUserSetStep,
   handleTranscriptions,
   queueTranscriptionTask,
 } from "~@meetings/server/server/utils";
 import { cleanupOfflineFiles, stitchAudio } from "~@meetings/tasks";
+import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 
 class AuthError extends Error {
   errorCode: number;
@@ -165,7 +168,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
     url: "/stitch-audio",
-    // Define your schema
     schema: {
       body: z.object({
         stateCode: z.nativeEnum(StateCode),
@@ -245,7 +247,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
       }
 
       try {
-        await queueTranscriptionTask(stateCode, meetingId);
+        await queueTranscriptionTask(stateCode, meetingId, prisma);
       } catch (e) {
         await prisma.meeting.update({
           where: {
@@ -266,16 +268,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
           );
       }
 
-      await prisma.meeting.update({
-        where: {
-          id: meetingId,
-        },
-        data: {
-          finalRecordingGCSPath,
-          postMeetingProcessingStatus:
-            PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
-        },
-      });
+
 
       reply.code(200).send("Audio stitching completed successfully");
     },
@@ -284,7 +277,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
     url: "/transcribe-audio",
-    // Define your schema
     schema: {
       body: z.object({
         stateCode: z.nativeEnum(StateCode),
@@ -355,6 +347,90 @@ export function registerTaskRoutes(app: FastifyInstance) {
       }
 
       reply.code(200).send("Transcription completed successfully");
+    },
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/reprocess-meeting",
+    schema: {
+      body: z.object({
+        stateCode: z.nativeEnum(StateCode),
+        meetingId: z.string(),
+        step: z.enum(["stitching", "transcription"]).optional(),
+      }),
+    },
+    preHandler: [authenticateInternalRequestPreHandlerFn],
+    handler: async (req, reply) => {
+      const { stateCode, meetingId, step } = req.body;
+
+      const prisma = getPrismaClientForStateCode(stateCode);
+
+      // Try and find the meeting and fail fast if it doesn't exist
+      const meeting = await prisma.meeting.findUniqueOrThrow({
+        where: {
+          id: meetingId,
+        },
+      });
+
+      const stepToProcess =
+        getStepFromUserSetStep(step) ??
+        getStepFromMeetingStatus(meeting.postMeetingProcessingStatus);
+
+      if (!stepToProcess) {
+        return reply
+          .code(200)
+          .send(
+            "Nothing to queue - meeting is being actively processed or is completed.",
+          );
+      } else if (stepToProcess === "STITCHING") {
+        try {
+          await queueStitchingTask(stateCode, meetingId, prisma);
+        } catch (e) {
+          // Don't throw the error because we want to update the status
+          captureException(e);
+
+          await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.STITCHING_ERROR,
+            },
+          });
+
+          return reply.code(200).send("Audio stitching task queueing failed.");
+        }
+
+        return reply
+          .code(200)
+          .send("Audio stitching task queued successfully.");
+      } else if (stepToProcess === "TRANSCRIPTION") {
+        try {
+          await queueTranscriptionTask(stateCode, meetingId, prisma);
+        } catch (e) {
+          await prisma.meeting.update({
+            where: {
+              id: meetingId,
+            },
+            data: {
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
+            },
+          });
+
+          // Capture the exception but don't fail the task, since stitching succeeded
+          captureException(e);
+          return reply
+            .code(200)
+            .send(
+              "Audio stitching completed successfully; queuing transcription failed.",
+            );
+        }
+
+        return reply.code(200).send("Transcription task queued successfully.");
+      }
     },
   });
 }

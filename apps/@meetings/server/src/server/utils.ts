@@ -18,7 +18,11 @@
 import { CloudTasksClient, protos } from "@google-cloud/tasks";
 import { captureException } from "@sentry/node";
 
-import { TranscriptionProvider } from "~@meetings/prisma/client";
+import {
+  PostMeetingProcessingStatus,
+  PrismaClient,
+  TranscriptionProvider,
+} from "~@meetings/prisma/client";
 import env from "~@meetings/server/env";
 import {
   transcribeAudioWithAssemblyAI,
@@ -74,7 +78,20 @@ export async function queueTranscriptionTaskCloud(
 export async function queueTranscriptionTask(
   stateCode: string,
   meetingId: string,
+  prisma: PrismaClient,
 ) {
+  // Go ahead and set the status to stitching queued so we don't accidentally overwrite it from the other process
+
+  await prisma.meeting.update({
+    where: {
+      id: meetingId,
+    },
+    data: {
+      postMeetingProcessingStatus:
+        PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
+    },
+  });
+
   // If we're on a local environment, there is no way to emulate Cloud Tasks, so we just call endpoint directly
   if (env.NODE_ENV === "development") {
     // Don't await to avoid blocking
@@ -177,4 +194,27 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
   }
 
   return transcriptions;
+}
+
+export function getStepFromUserSetStep(step?: string) {
+  switch (step) {
+    case "stitching":
+      return "STITCHING";
+    case "transcription":
+      return "TRANSCRIPTION";
+    default:
+      return undefined;
+  }
+}
+
+export function getStepFromMeetingStatus(status: PostMeetingProcessingStatus) {
+  switch (status) {
+    case PostMeetingProcessingStatus.NOT_STARTED:
+    case PostMeetingProcessingStatus.STITCHING_ERROR:
+      return "STITCHING";
+    case PostMeetingProcessingStatus.TRANSCRIPTION_ERROR:
+      return "TRANSCRIPTION";
+    default:
+      return undefined;
+  }
 }

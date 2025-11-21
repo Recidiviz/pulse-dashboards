@@ -21,7 +21,6 @@ import _ from "lodash";
 
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import { getSignedUrlForNewRecording } from "~@meetings/tasks";
-import env from "~@meetings/trpc/env";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   discardMeetingInputSchema,
@@ -30,10 +29,7 @@ import {
   getSignedUrlForRecordingInputSchema,
   updateNotesInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
-import {
-  queueStitchingTaskCloud,
-  queueStitchingTaskLocal,
-} from "~@meetings/trpc/routes/meeting/utils";
+import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 
 export const meetingRouter = router({
   getDetails: auth0Procedure
@@ -193,28 +189,8 @@ export const meetingRouter = router({
           throw e;
         }
 
-        // Go ahead and set the status to stitching queued so we don't accidentally overwrite it from the other process
-        await prisma.meeting.update({
-          where: {
-            id: meetingId,
-            clientId: clientId,
-            staff: {
-              pseudonymizedId: user.pseudonymizedId,
-            },
-          },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.STITCHING_QUEUED,
-          },
-        });
-
         try {
-          // If we're on a local environment, there is no way to emulate Cloud Tasks, so we just call endpoint directly
-          if (env.NODE_ENV === "development") {
-            await queueStitchingTaskLocal(stateCode, meetingId);
-          } else {
-            await queueStitchingTaskCloud(stateCode, meetingId);
-          }
+          await queueStitchingTask(stateCode, meetingId, prisma);
         } catch (e) {
           // Don't throw the error because the meeting should still be ended
           captureException(e);

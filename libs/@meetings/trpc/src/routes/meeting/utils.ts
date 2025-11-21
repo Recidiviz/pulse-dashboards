@@ -17,6 +17,10 @@
 
 import { CloudTasksClient, protos } from "@google-cloud/tasks";
 
+import {
+  PostMeetingProcessingStatus,
+  PrismaClient,
+} from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
 
 export async function queueStitchingTaskLocal(
@@ -63,4 +67,27 @@ export async function queueStitchingTaskCloud(
   };
 
   await cloudTaskClient.createTask(request);
+}
+
+export async function queueStitchingTask(
+  stateCode: string,
+  meetingId: string,
+  prisma: PrismaClient,
+) {
+  // Go ahead and set the status to stitching queued so we don't accidentally overwrite it from the other process
+  await prisma.meeting.update({
+    where: {
+      id: meetingId,
+    },
+    data: {
+      postMeetingProcessingStatus: PostMeetingProcessingStatus.STITCHING_QUEUED,
+    },
+  });
+
+  // If we're on a local environment, there is no way to emulate Cloud Tasks, so we just call endpoint directly
+  if (env.NODE_ENV === "development") {
+    await queueStitchingTaskLocal(stateCode, meetingId);
+  } else {
+    await queueStitchingTaskCloud(stateCode, meetingId);
+  }
 }

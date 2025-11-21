@@ -323,6 +323,24 @@ describe("tasks", () => {
             PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
         }),
       );
+
+      expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith({
+        parent:
+          "projects/test-project/locations/us-central1/queues/transcription-task-queue",
+        task: {
+          httpRequest: {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: expect.any(Buffer),
+            httpMethod: "POST",
+            url: env.TRANSCRIPTION_TASK_REQUEST_URL,
+            oidcToken: {
+              serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
+            },
+          },
+        },
+      });
     });
   });
 
@@ -754,6 +772,270 @@ describe("tasks", () => {
 
         expect(response.statusCode).toBe(200);
       }
+    });
+  });
+
+  describe("/reprocess-meeting", () => {
+    test("Should return authorization error if auth is not valid", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/reprocess-meeting",
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(401);
+      expect(JSON.parse(response.body)).toEqual(
+        expect.objectContaining({
+          error: "Unauthorized",
+          message: "No bearer token was provided",
+        }),
+      );
+    });
+
+    test("Should return 500 if meeting does not exist", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/reprocess-meeting",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: "Not a meeting",
+        },
+      });
+
+      expect(response.statusCode).toBe(500);
+      expect(JSON.parse(response.body)).toEqual(
+        expect.objectContaining({
+          error: "Internal Server Error",
+          message: expect.stringContaining(
+            "Invalid `prisma.meeting.findUniqueOrThrow()` invocation",
+          ),
+        }),
+      );
+    });
+
+    describe("without step", () => {
+      test.each([
+        PostMeetingProcessingStatus.NOT_STARTED,
+        PostMeetingProcessingStatus.STITCHING_ERROR,
+      ])(
+        "Should queue audio stitching if processing has not started/has an error",
+        async (startStatus) => {
+          await testPrismaClient.meeting.update({
+            where: { id: fakeMeeting.id },
+            data: {
+              postMeetingProcessingStatus: startStatus,
+            },
+          });
+
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/reprocess-meeting",
+            headers: { authorization: `Bearer token` },
+            body: {
+              stateCode: "US_NE",
+              meetingId: fakeMeeting.id,
+            },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(response.body).toEqual(
+            "Audio stitching task queued successfully.",
+          );
+
+          const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+            where: { id: fakeMeeting.id },
+          });
+
+          expect(meeting.postMeetingProcessingStatus).toBe(
+            PostMeetingProcessingStatus.STITCHING_QUEUED,
+          );
+
+          expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith({
+            parent:
+              "projects/test-project/locations/us-central1/queues/test-stitching-task-queue",
+            task: {
+              httpRequest: {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: expect.any(Buffer),
+                httpMethod: "POST",
+                url: env.STITCHING_TASK_REQUEST_URL,
+                oidcToken: {
+                  serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
+                },
+              },
+            },
+          });
+        },
+      );
+
+      test("Should queue transcription if there was a transcription error", async () => {
+        await testPrismaClient.meeting.update({
+          where: { id: fakeMeeting.id },
+          data: {
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
+          },
+        });
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/reprocess-meeting",
+          headers: { authorization: `Bearer token` },
+          body: {
+            stateCode: "US_NE",
+            meetingId: fakeMeeting.id,
+          },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toEqual(
+          "Transcription task queued successfully.",
+        );
+
+        const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+          where: { id: fakeMeeting.id },
+        });
+
+        expect(meeting.postMeetingProcessingStatus).toBe(
+          PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
+        );
+
+        expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith({
+          parent:
+            "projects/test-project/locations/us-central1/queues/transcription-task-queue",
+          task: {
+            httpRequest: {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: expect.any(Buffer),
+              httpMethod: "POST",
+              url: env.TRANSCRIPTION_TASK_REQUEST_URL,
+              oidcToken: {
+                serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
+              },
+            },
+          },
+        });
+      });
+
+      test.each([
+        PostMeetingProcessingStatus.STITCHING_IN_PROGRESS,
+        PostMeetingProcessingStatus.STITCHING_QUEUED,
+        PostMeetingProcessingStatus.TRANSCRIPTION_IN_PROGRESS,
+        PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
+        PostMeetingProcessingStatus.COMPLETED,
+      ])(
+        "Should do nothing if processing is queued/in-progress/completed",
+        async (startStatus) => {
+          await testPrismaClient.meeting.update({
+            where: { id: fakeMeeting.id },
+            data: {
+              postMeetingProcessingStatus: startStatus,
+            },
+          });
+
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/reprocess-meeting",
+            headers: { authorization: `Bearer token` },
+            body: {
+              stateCode: "US_NE",
+              meetingId: fakeMeeting.id,
+            },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(response.body).toEqual(
+            "Nothing to queue - meeting is being actively processed or is completed.",
+          );
+
+          const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+            where: { id: fakeMeeting.id },
+          });
+
+          expect(meeting.postMeetingProcessingStatus).toBe(startStatus);
+
+          expect(mockCloudTasksClient.createTask).not.toHaveBeenCalled();
+        },
+      );
+    });
+
+    describe("with step", () => {
+      test("Should throw error if invalid step is provided", async () => {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/reprocess-meeting",
+          headers: { authorization: `Bearer token` },
+          body: {
+            stateCode: "US_NE",
+            meetingId: fakeMeeting.id,
+            step: "invalid-step",
+          },
+        });
+
+        expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body)).toEqual(
+          expect.objectContaining({
+            code: "FST_ERR_VALIDATION",
+          }),
+        );
+      });
+    });
+
+    test("Should start step even if it doesn't match the implied next step", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: {
+          postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
+        },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/reprocess-meeting",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+          step: "transcription",
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toEqual("Transcription task queued successfully.");
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+      });
+
+      expect(meeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
+      );
+
+      expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith({
+        parent:
+          "projects/test-project/locations/us-central1/queues/transcription-task-queue",
+        task: {
+          httpRequest: {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: expect.any(Buffer),
+            httpMethod: "POST",
+            url: env.TRANSCRIPTION_TASK_REQUEST_URL,
+            oidcToken: {
+              serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
+            },
+          },
+        },
+      });
     });
   });
 });
