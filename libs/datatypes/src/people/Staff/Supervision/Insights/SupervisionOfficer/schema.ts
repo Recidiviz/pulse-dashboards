@@ -21,7 +21,7 @@ import { addDisplayName } from "../../../../../people/utils/addDisplayName";
 import { fullNameSchema } from "../../../../../people/utils/fullNameSchema";
 import {
   dateStringSchema,
-  getReadableSupervisionLocation as handleUnknownSupervisonLocation,
+  getReadableSupervisionLocation,
   nullishAsUndefined,
 } from "../../../../../utils/zod";
 
@@ -31,7 +31,10 @@ export const supervisionOfficerSchema = z
     externalId: z.string(),
     pseudonymizedId: z.string(),
     email: z.string().nullable(),
-    district: z.string().transform((d) => handleUnknownSupervisonLocation(d)),
+    district: z
+      .string()
+      .nullable()
+      .transform((d) => getReadableSupervisionLocation(d)),
     supervisorExternalIds: z.array(z.string()),
     // TODO #6793 Make includeInOutcomes a required field once endpoint response has this field
     includeInOutcomes: nullishAsUndefined(z.boolean()),
