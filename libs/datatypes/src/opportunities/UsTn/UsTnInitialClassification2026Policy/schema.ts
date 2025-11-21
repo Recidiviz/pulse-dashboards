@@ -28,6 +28,16 @@ export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
         custodyLevelIsNotMax: z.null(),
         notHasInitialClassificationInStatePrisonCustody: z.null(),
       })
+      .partial()
+      .passthrough(),
+    ineligibleCriteria: z
+      .object({
+        custodyLevelIsNotMax: z.object({}).passthrough(),
+        notHasInitialClassificationInStatePrisonCustody: z
+          .object({})
+          .passthrough(),
+      })
+      .partial()
       .passthrough(),
     formInformation: z
       .object({

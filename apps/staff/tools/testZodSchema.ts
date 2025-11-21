@@ -38,6 +38,7 @@ import {
   usMiSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
   usPaSpecialCircumstancesSupervisionSchema,
+  usTnInitialClassification2026Schema,
 } from "~datatypes";
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
@@ -85,16 +86,20 @@ const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
 async function ensureServiceAccountExists(): Promise<void> {
   if (FIREBASE_CREDENTIAL && !fs.existsSync(FIREBASE_CREDENTIAL)) {
     console.log(`Service account file not found: ${FIREBASE_CREDENTIAL}`);
-    console.log('Attempting to refresh service account files...');
+    console.log("Attempting to refresh service account files...");
     try {
       await $`nx copy-service-accounts staff`;
       if (!fs.existsSync(FIREBASE_CREDENTIAL)) {
-        throw new Error(`Service account file still not found after refresh: ${FIREBASE_CREDENTIAL}`);
+        throw new Error(
+          `Service account file still not found after refresh: ${FIREBASE_CREDENTIAL}`,
+        );
       }
-      console.log('Service account files refreshed successfully');
+      console.log("Service account files refreshed successfully");
     } catch (error) {
-      console.error('Failed to refresh service account files:', error);
-      console.log('Please run: nx load-dev-config-files staff-shared-server && nx copy-service-accounts staff');
+      console.error("Failed to refresh service account files:", error);
+      console.log(
+        "Please run: nx load-dev-config-files staff-shared-server && nx copy-service-accounts staff",
+      );
       throw error;
     }
   }
@@ -200,6 +205,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usTnCustodyLevelDowngrade: usTnCustodyLevelDowngradeSchema,
   usTnExpiration: usTnExpirationSchema,
   usTnInitialClassification: usTnInitialClassificationSchema,
+  usTnInitialClassification2026Policy: usTnInitialClassification2026Schema,
   usTnSuspensionOfDirectSupervision: usTnSuspensionOfDirectSupervisionSchema,
 
   // US_UT
@@ -479,7 +485,7 @@ async function main() {
   }
 }
 
-main().catch(error => {
-  console.error('Script failed:', error);
+main().catch((error) => {
+  console.error("Script failed:", error);
   process.exit(1);
 });
