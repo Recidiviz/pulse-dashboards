@@ -18,7 +18,7 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import { OpportunityType } from "~datatypes";
@@ -48,7 +48,7 @@ import { FormUsMoWorkRelease } from "../Paperwork/US_MO/WorkRelease/FormUsMoWork
 import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
 import { WorkflowsFormUsTnSuspensionOfDirectSupervision } from "../Paperwork/US_TN/SuspensionOfDirectSupervision/WorkflowsFormUsTnSuspensionOfDirectSupervision";
 import { FormUsTnInitialClassification2026 } from "../Paperwork/US_TN/UsTnInitialClassification2026/FormUsTnInitialClassification2026";
-import { workflowsUrl } from "../views";
+import { INSIGHTS_PATHS, insightsUrl, workflowsUrl } from "../views";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
@@ -171,6 +171,8 @@ const HydratedWorkflowsFormLayout = observer(
   }) {
     const { currentView, setCurrentView } = useOpportunitySidePanel();
     const navigate = useNavigate();
+    const { pathname } = useLocation();
+    const { officerPseudoId } = useParams();
 
     const { selectedOpportunity, selectedPerson, workflowsMethodologyUrl } =
       presenter;
@@ -185,9 +187,18 @@ const HydratedWorkflowsFormLayout = observer(
 
     const handleBack = () => {
       if (currentView === "OPPORTUNITY_PREVIEW") {
-        if (selectedOpportunity?.config.urlSection) {
+        const isInsights = pathname.startsWith(INSIGHTS_PATHS.supervision);
+        const urlSection = selectedOpportunity?.config.urlSection;
+        if (isInsights && urlSection && officerPseudoId) {
+          navigate(
+            insightsUrl("supervisionOpportunity", {
+              officerPseudoId: officerPseudoId,
+              opportunityTypeUrl: urlSection,
+            }),
+          );
+        } else if (selectedOpportunity?.config.urlSection) {
           const parentUrl = workflowsUrl("opportunityClients", {
-            urlSection: selectedOpportunity.config.urlSection,
+            urlSection,
           });
 
           navigate(parentUrl);
