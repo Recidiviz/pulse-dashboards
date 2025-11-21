@@ -6,7 +6,16 @@ Sentence Reduction Credits are a reward for good behavior and for successfully c
 
 Most credits from last month should appear in this app by the 13th. Credits update here with a 1-3 day delay after TDOC staff entry.
 
-## What types of credits are there, and how much can you earn?
+## Why don’t I see all the credits I expected for a month?
+If your credits seem lower than expected, walk through the checklist below. You may not have received credits if:
+- You had a **disciplinary violation** during that month.
+- You spent any time in **maximum custody** or **punitive segregation** during that month.
+- Your **STRONG-R** assessment was more than a year old during that month.
+- You didn’t earn any **program credits** that month. (Behavior credits can only be earned in months when you also earn program credits.)
+
+After checking all of these: if none apply to your month, talk with your Counselor.
+
+## What types of credits are there, and how do you earn them?
 
 <table>
     <thead>
@@ -97,7 +106,7 @@ Most people can earn credits if they meet the following requirements:
 - **EXP (Max)**: see the rules under Expiration Date.
 - **FXP**: does not move.
 
-## How credits can be lost
+## Why did I lose credits?
 
 - A **Class A** disciplinary conviction can take away credits you already earned. The amount of time you can lose ranges from 9 to 15 months, depending on how many disciplinary infractions you have gotten in the past, and if past ones were Class A, B, or C.
   - People serving sentences which started before March 1, 1986 may also lose credits for Class B and Class C disciplinaries.
