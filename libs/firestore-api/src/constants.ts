@@ -28,6 +28,7 @@ export const FIRESTORE_GENERAL_COLLECTION_MAP = {
   milestonesMessages: "milestonesMessages",
   taskUpdates: "taskUpdates",
   usIdSupervisionTasks: "US_ID-supervisionTasks",
+  usIdSupervisionTasksV2: "US_ID-supervisionTasksV2",
   usMoSupervisionTasks: "US_MO-supervisionTasks",
   usNdSupervisionTasks: "US_ND-supervisionTasks",
   usNeSupervisionTasks: "US_NE-supervisionTasks",

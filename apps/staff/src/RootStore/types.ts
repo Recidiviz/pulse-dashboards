@@ -93,6 +93,7 @@ export type FeatureVariant =
   | "usIdCaseManagerSearch"
   | "usIdCRCFacilitySearch"
   | "usIdDistrictSearch"
+  | "usIdTasksV2"
 
   //// Maine
   | "usMeCaseNoteSnooze"
@@ -213,6 +214,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   tasksRoutePlanner: {},
   ineligibleOpportunityTypesOnFullProfile: {},
   usPaUnclearEligibility: {},
+  usIdTasksV2: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -246,10 +248,12 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIaFinesAndFees: {},
         usIaSupervisionLevelDowngrade: {},
         hideDenialRevert: { activeTenants: ["US_AZ"] },
+        usIdTasksV2: undefined,
       }
     : {
         ...allFeatureVariants,
         // Undefined so that Recidiviz users see both FVs in staging
+        usIdTasksV2: undefined,
         usOrEarnedDischargeSentence: undefined,
         usMeCaseNoteSnooze: isDemoMode() ? undefined : {},
         outcomesModule: {

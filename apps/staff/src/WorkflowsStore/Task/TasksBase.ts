@@ -86,7 +86,8 @@ export abstract class TasksBase<
     // TODO(#7033): Change this to a query instead of a subscription´
     this.taskSubscription = new CollectionDocumentSubscription<TaskRecord>(
       this.rootStore.firestoreStore,
-      { key: tasksConfiguration.collection },
+      // TODO:(#10615): Remove feature flag once V2 is fully rolled out
+      { key: rootStore.userStore.activeFeatureVariants.usIdTasksV2 && person.stateCode === "US_ID" ? "usIdSupervisionTasksV2" : tasksConfiguration.collection },
       person.recordId,
       undefined,
       validateRecord,
