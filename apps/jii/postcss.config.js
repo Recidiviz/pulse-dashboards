@@ -15,9 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+const { join } = require("path");
+
 module.exports = {
   plugins: {
-    tailwindcss: {},
+    tailwindcss: {
+      config: join(__dirname, "tailwind.config.ts"),
+    },
     autoprefixer: {},
   },
 };

@@ -15,18 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { join } from "path";
 import type { Config } from "tailwindcss";
 import {
   isolateInsideOfContainer,
   scopedPreflightStyles,
 } from "tailwindcss-scoped-preflight";
 
-// the aliasing machinery does not work for this config file
+// the aliasing machinery does not work for this config file,
+// and we don't want to import the entire index barrel file here anyway
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { TAILWIND_WRAPPER_CLASS } from "../../libs/@jii/common-ui/src/constants";
 
 const config: Config = {
-  content: ["../../libs/**/*.{js,ts,jsx,tsx,mdx}"],
+  content: [join(__dirname, "../../libs/**/*.{js,ts,jsx,tsx,mdx}")],
   theme: {
     extend: {
       screens: {
