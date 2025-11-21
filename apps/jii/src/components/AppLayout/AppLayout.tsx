@@ -29,7 +29,6 @@ import styled from "styled-components";
 import {
   HEADER_ANIMATION_OPTIONS,
   HEADER_HEIGHT,
-  HEADER_PORTAL_ID,
   HeaderBarContainer,
   HIDDEN_HEADER_OFFSET,
   STICKY_HEADER_ZINDEX,
@@ -165,9 +164,6 @@ export const AppLayout: FC<{ header?: ReactNode; main: ReactNode }> = observer(
                 {header}
               </HeaderBar>
             </HeaderBarContainer>
-            {/* This is a placeholder for components that may be rendered by ./HeaderPortal.
-            This component should not give it any children or otherwise interfere with it */}
-            <div id={HEADER_PORTAL_ID} />
           </Header>
           <MainContent>{main}</MainContent>
         </Wrapper>

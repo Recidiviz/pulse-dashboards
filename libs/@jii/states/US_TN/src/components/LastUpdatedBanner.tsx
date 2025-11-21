@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FullWidthBanner } from "~@jii/common-ui";
-import { formatFullDate, useSingleResidentContext } from "~@jii/data";
+import { observer } from "mobx-react-lite";
 
-export function LastUpdatedBanner() {
+import { formatFullDate, useSingleResidentContext } from "~@jii/data";
+import { FullWidthBanner } from "~@jii/layout";
+
+export const LastUpdatedBanner = observer(function LastUpdatedBanner() {
   const {
     resident: { metadata },
   } = useSingleResidentContext();
@@ -33,4 +35,4 @@ export function LastUpdatedBanner() {
       will appear here by the 13th.
     </FullWidthBanner>
   );
-}
+});

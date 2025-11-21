@@ -17,15 +17,15 @@
 
 import { observer } from "mobx-react-lite";
 
-import { FullWidthBanner, usePageTitle } from "~@jii/common-ui";
+import { usePageTitle } from "~@jii/common-ui";
+import { FullWidthBanner } from "~@jii/layout";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
 import { useEGTDataContext } from "../EGTDataContext/context";
 import { SkeletonThemeProvider } from "../SkeletonThemeProvider";
 import { ActivityChart, ActivityChartSkeleton } from "./ActivityChart";
-import { DatesSection } from "./DatesSection";
-import { DatesSectionSkeleton } from "./DatesSection";
+import { DatesSection, DatesSectionSkeleton } from "./DatesSection";
 import { EmptyState } from "./EmptyState";
 import { MonthlyReportHomepageCard } from "./MonthlyReport/MonthlyReportHomepageCard";
 import { MonthlyReportHomepageCardSkeleton } from "./MonthlyReport/MonthlyReportHomepageCardSkeleton";

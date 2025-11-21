@@ -16,20 +16,35 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { ReactNode } from "react";
 import styled from "styled-components";
 
+import {
+  HEADER_ANIMATION_OPTIONS,
+  HEADER_HEIGHT,
+  HIDDEN_HEADER_OFFSET,
+  PageContainer,
+  STICKY_HEADER_ZINDEX,
+} from "~@jii/common-ui";
+import { useRootStore } from "~@jii/data";
 import { palette } from "~design-system";
 
-import { FullBleedContainer, PageContainer } from "./BaseLayout/BaseLayout";
-import { HeaderPortal } from "./Header/HeaderPortal";
-
-const Container = styled(FullBleedContainer)`
+const Container = styled.div<{ $hideHeader: boolean }>`
   ${typography.Sans14}
 
-  background: ${palette.marble2};
+  background: ${palette.marble3};
   color: ${palette.slate85};
   text-align: center;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: -${rem(spacing.xl)};
+  position: sticky;
+  top: ${({ $hideHeader }: { $hideHeader: boolean }) =>
+    $hideHeader ? `-${rem(HIDDEN_HEADER_OFFSET)}` : rem(HEADER_HEIGHT)};
+  z-index: ${STICKY_HEADER_ZINDEX - 1};
+  transition: top ${HEADER_ANIMATION_OPTIONS};
 
   ${PageContainer} {
     padding-bottom: ${rem(spacing.md)};
@@ -37,12 +52,20 @@ const Container = styled(FullBleedContainer)`
   }
 `;
 
-export function FullWidthBanner({ children }: { children: React.ReactNode }) {
-  return (
-    <HeaderPortal>
-      <Container>
-        <PageContainer>{children}</PageContainer>
-      </Container>
-    </HeaderPortal>
-  );
+interface FullWidthBannerProps {
+  children: ReactNode;
 }
+
+export const FullWidthBanner = observer(function FullWidthBanner({
+  children,
+}: FullWidthBannerProps) {
+  const {
+    uiStore: { hideHeaderBar },
+  } = useRootStore();
+
+  return (
+    <Container $hideHeader={hideHeaderBar}>
+      <PageContainer>{children}</PageContainer>
+    </Container>
+  );
+});

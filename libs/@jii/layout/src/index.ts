@@ -16,4 +16,5 @@
 // =============================================================================
 
 export * from "./constants";
+export * from "./FullWidthBanner";
 export * from "./ScreenFillingWrapper/ScreenFillingWrapper";

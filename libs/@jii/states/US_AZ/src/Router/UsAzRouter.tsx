@@ -20,7 +20,6 @@ import { Route, Routes } from "react-router-dom";
 import { NotFound } from "~@jii/common-ui";
 import { UsAzMoreInformation } from "~@jii/paths";
 
-import { LastUpdatedBanner } from "../components/LastUpdatedBanner";
 import { PageIntro } from "../pages/PageIntro";
 import { PageMoreInfoAbout } from "../pages/PageMoreInfoAbout";
 import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
@@ -29,7 +28,6 @@ import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
 export function UsAzRouter() {
   return (
     <div>
-      <LastUpdatedBanner />
       <Routes>
         <Route index element={<PageUsAzResidentHome />} />
         <Route path={UsAzMoreInformation.Intro.path} element={<PageIntro />} />

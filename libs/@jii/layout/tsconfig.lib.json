@@ -39,6 +39,7 @@
     "src/**/*.js",
     "src/**/*.jsx",
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.tsx",
+    "../common-ui/src/@types/scss.d.ts"
   ]
 }

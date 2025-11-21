@@ -15,37 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Header34,
-  Sans14,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
-import { rem } from "polished";
+import { Header34, Sans14, spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
-import {
-  FullBleedContainer,
-  HeaderPortal,
-  PageContainer,
-} from "~@jii/common-ui";
 import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
+import { FullWidthBanner } from "~@jii/layout";
 import { palette } from "~design-system";
 
 import { useUsNeContext } from "./usNeContext";
-
-const LastUpdatedBanner = styled(FullBleedContainer)`
-  ${typography.Sans14}
-
-  background: ${palette.pine4};
-  color: ${palette.white};
-  text-align: center;
-
-  ${PageContainer} {
-    padding-bottom: ${rem(spacing.md)};
-    padding-top: ${rem(spacing.md)};
-  }
-`;
 
 const HeaderFieldsContainer = styled.div`
   display: flex;
@@ -65,7 +43,7 @@ const SubtitleLabel = styled(Sans14)`
   margin-right: 4px;
 `;
 
-const UsNeHomeHeader = () => {
+const UsNeHomeHeader = observer(function UsNeHomeHeader() {
   const { copy, metadata } = useUsNeContext();
   const { resident } = useSingleResidentContext();
   const sectionCopy = copy.home;
@@ -74,13 +52,9 @@ const UsNeHomeHeader = () => {
     .filter((f) => f.hydrated !== ""); // drop empty (e.g., optional mandatory minimum sentence)
   return (
     <>
-      <HeaderPortal>
-        <LastUpdatedBanner>
-          <PageContainer>
-            {hydrateTemplate(copy.lastUpdated, metadata)}
-          </PageContainer>
-        </LastUpdatedBanner>
-      </HeaderPortal>
+      <FullWidthBanner>
+        {hydrateTemplate(copy.lastUpdated, metadata)}
+      </FullWidthBanner>
       <header>
         <Header34 as="h1">{sectionCopy.pageTitle}</Header34>
         <HeaderFieldsContainer>
@@ -94,6 +68,6 @@ const UsNeHomeHeader = () => {
       </header>
     </>
   );
-};
+});
 
 export default UsNeHomeHeader;

@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { LastUpdatedBanner } from "../LastUpdatedBanner";
 import { UsTnImportantDates } from "./UsTnImportantDates";
 import { UsTnMonthlyReports } from "./UsTnMonthlyReports";
 
 export function UsTnSingleResidentHome() {
   return (
     <div>
+      <LastUpdatedBanner />
       <UsTnImportantDates />
       <UsTnMonthlyReports />
     </div>

@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FullWidthBanner } from "~@jii/common-ui";
+import { observer } from "mobx-react-lite";
+
 import { useSingleResidentContext } from "~@jii/data";
+import { FullWidthBanner } from "~@jii/layout";
 import { useUsAzTranslations } from "~@jii/translation";
 
-export function LastUpdatedBanner() {
+export const LastUpdatedBanner = observer(function LastUpdatedBanner() {
   const { t } = useUsAzTranslations();
   const {
     resident: { metadata },
@@ -38,4 +40,4 @@ export function LastUpdatedBanner() {
         : t(($) => $.lastUpdatedNoDate)}
     </FullWidthBanner>
   );
-}
+});

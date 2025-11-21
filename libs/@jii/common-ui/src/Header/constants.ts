@@ -26,5 +26,3 @@ export const HEADER_BORDER_WIDTH = 1;
 export const HIDDEN_HEADER_OFFSET = HEADER_HEIGHT + HEADER_BORDER_WIDTH;
 
 export const HEADER_ANIMATION_OPTIONS = "300ms ease-in-out";
-
-export const HEADER_PORTAL_ID = "app-layout-header-portal";
