@@ -5,12 +5,14 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
+from app.crud.intake import create_intake, update_client_address
+from app.models.intake import IntakeType
+from app.routes.shared_models import AddressSubmission
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
     Resource,
     ResourceCategory,
     ResourceSubcategory,
-     ClientExtractedInfo
 )
 from app.utils.action_plan_types import ActionPlan, ActionPlanMarkdown
 
@@ -140,7 +142,7 @@ async def test_plan_generation(
         "app.utils.llm_agent_qa.LLMAgentQA.call",
         new_callable=AsyncMock,
     ) as mock_find:
-        mock_find.return_value = ClientExtractedInfo()
+        mock_find.return_value = {}
         with patch(
             "app.utils.llm_agent_gen_plan.LLMAgentGenerate.generate",
             new_callable=AsyncMock,
@@ -238,7 +240,7 @@ async def test_plan_generation_manually(
         "app.utils.llm_agent_qa.LLMAgentQA.call",
         new_callable=AsyncMock,
     ) as mock_find:
-        mock_find.return_value = ClientExtractedInfo()
+        mock_find.return_value = {}
         # create a generation
         with patch(
             "app.utils.llm_agent_gen_plan.LLMAgentGenerate.generate",
@@ -464,7 +466,7 @@ async def test_suggested_resources(
         "app.utils.llm_agent_qa.LLMAgentQA.call",
         new_callable=AsyncMock,
     ) as mock_find:
-        mock_find.return_value = ClientExtractedInfo()
+        mock_find.return_value = {}
         # Create a generation with mock resources
         with patch(
             "app.utils.llm_agent_gen_plan.LLMAgentGenerate.generate",
@@ -564,7 +566,7 @@ async def test_regeneration_notify_set_on_prompt_generation(
         "app.utils.llm_agent_qa.LLMAgentQA.call",
         new_callable=AsyncMock,
     ) as mock_find:
-        mock_find.return_value = ClientExtractedInfo()
+        mock_find.return_value = {}
         with patch(
             "app.utils.llm_agent_gen_plan.LLMAgentGenerate.generate",
             new_callable=AsyncMock,
@@ -646,7 +648,7 @@ async def test_set_notify_endpoint(
         "app.utils.llm_agent_qa.LLMAgentQA.call",
         new_callable=AsyncMock,
     ) as mock_find:
-        mock_find.return_value = ClientExtractedInfo()
+        mock_find.return_value = {}
         with patch(
             "app.utils.llm_agent_gen_plan.LLMAgentGenerate.generate",
             new_callable=AsyncMock,
@@ -737,3 +739,163 @@ async def test_set_notify_endpoint_error_cases(
 
     response = await client.post(f"/plans/{plan_id}/set-notify", json={"notify": False})
     assert response.status_code == 404
+
+
+class TestGetClientInfo:
+    """Tests for GET /plans/{id}/client-info endpoint"""
+
+    @pytest.fixture(autouse=True)
+    async def setup_intake_and_plan(
+        self, mock_clientdata_service, async_session, client, assert_response
+    ):
+        """Create an intial intake and plan for all tests."""
+        self.client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+        await create_intake(async_session, self.client_pseudo_id, IntakeType.EXTERNAL)
+        response = await client.post(
+            "/plans",
+            json={
+                "client_pseudo_id": self.client_pseudo_id,
+                "no_initial_generation": True,
+            },
+        )
+        assert_response(response, 200)
+        self.plan_id = response.json()["id"]
+
+    @pytest.mark.asyncio
+    async def test_returns_address_when_exists(
+        self, async_session, client, assert_response
+    ):
+        """Test GET returns address when it exists"""
+        address_data = AddressSubmission(
+            street_address="123 Main St", city="Portland", state="OR"
+        )
+        await update_client_address(async_session, self.client_pseudo_id, address_data)
+        response = await client.get(f"/plans/{self.plan_id}/client-info")
+        assert_response(response, 200)
+        data = response.json()
+        assert data["home"] == "123 Main St, Portland, OR"
+
+    @pytest.mark.asyncio
+    async def test_returns_none_when_no_address(self, client, assert_response):
+        """Test GET returns None when no address exists"""
+        response = await client.get(f"/plans/{self.plan_id}/client-info")
+        assert_response(response, 200)
+        data = response.json()
+        assert data["home"] is None
+
+    @pytest.mark.asyncio
+    async def test_returns_404_for_nonexistent_plan(self, client):
+        """Test GET returns 404 when plan doesn't exist"""
+        fake_plan_id = uuid.uuid4()
+        response = await client.get(f"/plans/{fake_plan_id}/client-info")
+        assert response.status_code == 404
+        assert "Plan not found" in response.json()["detail"]
+
+
+class TestPatchClientInfoAddress:
+    """Tests for PATCH /plans/{id}/client-info/address endpoint"""
+
+    @pytest.fixture(autouse=True)
+    async def setup_intake_and_plan(
+        self, client, assert_response, mock_clientdata_service, async_session
+    ):
+        """Create an initial intake and plan for tests."""
+
+        self.client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+        await create_intake(async_session, self.client_pseudo_id, IntakeType.EXTERNAL)
+
+        response = await client.post(
+            "/plans",
+            json={
+                "client_pseudo_id": self.client_pseudo_id,
+                "no_initial_generation": True,
+            },
+        )
+        assert_response(response, 200)
+        self.plan_id = response.json()["id"]
+
+    @pytest.fixture(autouse=True)
+    def mock_schedule_execution(self):
+        """Mock PlanGeneration.schedule_execution to bypass background task execution"""
+        with patch(
+            "app.models.models.PlanGeneration.schedule_execution",
+            new_callable=AsyncMock,
+        ) as mock:
+            yield mock
+
+    @pytest.mark.asyncio
+    async def test_updates_address_and_triggers_regeneration(
+        self,
+        mock_schedule_execution,
+        client,
+        assert_response,
+    ):
+        """Test PATCH updates address and triggers regeneration successfully"""
+        # Update address
+        response = await client.patch(
+            f"/plans/{self.plan_id}/client-info/address",
+            json={
+                "street_address": "456 Oak Ave",
+                "city": "Seattle",
+                "state": "WA",
+            },
+        )
+        assert_response(response, 200)
+        data = response.json()
+
+        # Verify generation was created
+        assert data["plan_id"] == self.plan_id
+
+        # Verify schedule_execution was called (generation was triggered)
+        mock_schedule_execution.assert_called_once()
+
+        # Verify address was persisted to database
+        response = await client.get(f"/plans/{self.plan_id}/client-info")
+        assert_response(response, 200)
+        data = response.json()
+        assert data["home"] == "456 Oak Ave, Seattle, WA"
+
+    @pytest.mark.asyncio
+    async def test_returns_404_for_nonexistent_plan(self, client):
+        """Test PATCH returns 404 when plan doesn't exist"""
+        fake_plan_id = uuid.uuid4()
+
+        response = await client.patch(
+            f"/plans/{fake_plan_id}/client-info/address",
+            json={
+                "street_address": "123 Main St",
+                "city": "Portland",
+                "state": "OR",
+            },
+        )
+        assert response.status_code == 404
+        assert "Plan not found" in response.json()["detail"]
+
+    @pytest.mark.asyncio
+    async def test_updates_from_no_address_to_having_address(
+        self, mock_schedule_execution, client, assert_response
+    ):
+        """Test workflow: GET (no address) -> PATCH (add) -> GET (verify)"""
+        # Verify no address initially
+        response = await client.get(f"/plans/{self.plan_id}/client-info")
+        assert_response(response, 200)
+        assert response.json()["home"] is None
+
+        # Add address via PATCH
+        response = await client.patch(
+            f"/plans/{self.plan_id}/client-info/address",
+            json={
+                "street_address": "789 Pine St",
+                "city": "Austin",
+                "state": "TX",
+            },
+        )
+        assert_response(response, 200)
+
+        # Verify schedule_execution was called (generation was triggered)
+        mock_schedule_execution.assert_called_once()
+
+        # Verify address now exists
+        response = await client.get(f"/plans/{self.plan_id}/client-info")
+        assert_response(response, 200)
+        assert response.json()["home"] == "789 Pine St, Austin, TX"

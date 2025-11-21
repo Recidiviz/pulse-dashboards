@@ -54,6 +54,7 @@ class Plan(BaseModel, table=True):
     create_execution: Mapped[Optional[Execution]] = Relationship(
         sa_relationship_kwargs={"lazy": "selectin"}
     )
+    # TODO: This column is not used and can be removed.
     client_extracted_info: Dict | None = Field(
         sa_type=JSON, nullable=True, default=None
     )

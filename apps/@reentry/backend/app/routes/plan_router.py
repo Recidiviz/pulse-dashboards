@@ -1,4 +1,3 @@
-import copy
 import logging
 import uuid
 from datetime import datetime
@@ -15,7 +14,7 @@ from weasyprint import CSS, HTML
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
-from app.crud.intake import update_client_address
+from app.crud.intake import get_collected_address_for_client, update_client_address
 from app.crud.plan import (
     create_plan,
     delete_plan_by_id,
@@ -75,6 +74,8 @@ class ClientAddressUpdate(BaseModel):
     home: str
 
 
+# TODO: This now only returns the home field, this response
+# and the endpoint can be refactored.
 class ClientInfoResponse(BaseModel):
     home: Optional[str] = None
     work: Optional[str] = None
@@ -572,27 +573,28 @@ async def search_resources(
     request: GetPlanResourcesRequest,
     session: AsyncSession = Depends(get_session),
 ):
-    # Get the plan
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
+    client_pseudo_id = plan.client_pseudo_id
+    if not client_pseudo_id:
+        raise HTTPException(status_code=404, detail="Client pseudo ID not found")
+
+    home_address = await get_collected_address_for_client(session, client_pseudo_id)
+    if not home_address:
+        raise HTTPException(
+            status_code=400, detail="Client address not available for this plan"
+        )
     try:
-        client_info = plan.client_extracted_info
-        if not client_info:
-            raise HTTPException(
-                status_code=400, detail="Client info not available for this plan"
-            )
-        # Create the resources request with client info
-        resource_request = GetResourcesRequest.from_client_extracted_json(
+        resource_request = GetResourcesRequest(
             category=request.category,
             subcategory=request.subcategory,
-            client_info_json=client_info,
+            address=home_address.as_formatted_string(),
             exclude_names=request.exclude,
             exclude_ids=None,
             limit=10,
         )
-        # Get resources using list_resources function
         return await list_resources(resource_request)
     except Exception as e:
         logger.exception(f"Error processing plan data for plan {id}: {str(e)}")
@@ -649,8 +651,8 @@ async def router_delete_asset(
 @router.get(
     "/plans/{id}/client-info",
     response_model=ClientInfoResponse,
-    summary="Get Client Info",
-    description="Get the latest client's extracted information including addresses and transportation options.",
+    summary="Get client's home address.",
+    description="Returns the client's home address from intake (or last update from UI).",
 )
 async def get_client_info(
     id: uuid.UUID,
@@ -659,9 +661,14 @@ async def get_client_info(
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
-
-    client_info = plan.client_extracted_info or {}
-    return ClientInfoResponse(**client_info)
+    if not plan.client_pseudo_id:
+        raise HTTPException(
+            status_code=404, detail="Could not identify client from plan."
+        )
+    address_obj = await get_collected_address_for_client(session, plan.client_pseudo_id)
+    return ClientInfoResponse(
+        home=address_obj.as_formatted_string() if address_obj else None
+    )
 
 
 @router.patch(
@@ -673,39 +680,28 @@ async def get_client_info(
         "to update the address used for resource recommendations. It will trigger a new generation."
     ),
 )
-async def update_client_info_address(
+async def update_client_address_and_regenerate_plan(
     id: uuid.UUID,
     address_data: AddressSubmission,
     session: AsyncSession = Depends(get_session),
 ):
+    """
+    This function updates the client address, which is accessed through the
+    client's intake.
+    It then generates a new plan based on the updated address.
+    """
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
-    # update address both in the plan extracted information AND in the intake.
-    # the intake is the source of thruth, but there is no need to call client data extraction again
+    if not plan.client_pseudo_id:
+        raise HTTPException(
+            status_code=404, detail="Could not identify client from plan."
+        )
+
     await update_client_address(
         session, client_pseudo_id=plan.client_pseudo_id, address_data=address_data
     )
-
-    # XXX Why deepcopy is necessary:
-    # When you modify a field within client_extracted_info, SQLAlchemy does not
-    # automatically detect the change. This is true even if you use setattr,
-    # because the id of client_extracted_info remains unchanged. Consequently,
-    # the modification will not be committed, and the refresh operation would
-    # revert client_extracted_info to its original state.
-    client_info = copy.deepcopy(plan.client_extracted_info) or {}
-    client_info["home"] = address_data.as_combined_string()
-    updated_plan = await update_plan_field(
-        session=session,
-        plan_id=id,
-        field_name="client_extracted_info",
-        new_value=client_info,
-    )
-
-    if updated_plan is None:
-        raise HTTPException(status_code=500, detail="Failed to update plan")
-
     llm_regenerations_total_counter.inc()
     plan_gen = PlanGeneration(
         plan_id=id,

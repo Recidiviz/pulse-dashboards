@@ -13,7 +13,6 @@ from app.core.config import gen_model as model
 from app.core.config import tracer
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
-    ClientExtractedInfo,
     GetResourcesRequest,
     Resource,
     ResourceFailureReason,
@@ -72,7 +71,6 @@ You are a case manager, tasked with generating an action plan for a client, comb
 ### Graph state
 class ExtendedMessagesState(CommonMessagesState):
     resources_associations: ActionPlanResourcesAssociations | None
-    client_extracted_info: ClientExtractedInfo
 
 
 ### Transition functions
@@ -84,7 +82,6 @@ def call_generate_sections(state: ExtendedMessagesState) -> Literal["section"]:
                 "messages": state["messages"],
                 "section_to_generate": section,
                 "resources_associations": state["resources_associations"],
-                "client_extracted_info": state["client_extracted_info"],
             },
         )
         for section in state["sections_to_generate"]
@@ -195,7 +192,9 @@ async def fetch_resources_with_retry(
     return []
 
 
-async def call_generate_section(config: dict, state: ExtendedMessagesState):
+async def call_generate_section(
+    config: dict, state: ExtendedMessagesState, client_address: str
+):
     # This function is shared with LLMAgentEdit
     section = state["section_to_generate"]
     logger.debug("Generating section", section=section)
@@ -217,11 +216,11 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
                     )
                     continue
 
-                request = GetResourcesRequest.from_client_extracted_info(
+                request = GetResourcesRequest(
                     category=parent_category,
                     subcategory=subcategory,
+                    address=client_address,
                     limit=2,
-                    client_info=state["client_extracted_info"],
                     exclude_names=None,
                     exclude_ids=None,
                 )
@@ -252,10 +251,10 @@ async def call_generate_section(config: dict, state: ExtendedMessagesState):
 
                 # If no subcategories were handled for this category, get all resources for the category
                 if not subcategories_handled:
-                    request = GetResourcesRequest.from_client_extracted_info(
+                    request = GetResourcesRequest(
                         category=category,
                         subcategory=None,
-                        client_info=state["client_extracted_info"],
+                        address=client_address,
                         exclude_names=None,
                         exclude_ids=None,
                         limit=2,
@@ -465,13 +464,13 @@ class LLMAgentGenerate:
         self,
         client_data,
         decision_tree_statements,
-        client_extracted_info,
+        client_address,
         previous_sections: list[str] | None,
         thread_id,
     ):
         self.client_data = client_data
         self.decision_tree_statements = decision_tree_statements
-        self.client_extracted_info = client_extracted_info
+        self.client_address = client_address
         self.previous_sections = previous_sections
 
         self.config = {
@@ -569,7 +568,9 @@ class LLMAgentGenerate:
             return state
 
         async def call_generate_section_node(state: ExtendedMessagesState):
-            return await call_generate_section(config=self.config, state=state)
+            return await call_generate_section(
+                config=self.config, state=state, client_address=self.client_address
+            )
 
         async def call_generate_timeline(state: MessagesState):
             logger.debug("Generating timeline")
@@ -730,6 +731,7 @@ class LLMAgentGenerate:
         user_prompt = dedent(f"""
         ---
         Client Data: {self.client_data}
+        Address: {self.client_address}
         ---
         """)
 
@@ -747,7 +749,6 @@ class LLMAgentGenerate:
                 "plan": None,
                 "generated_timeline": None,
                 "generated_milestones": None,
-                "client_extracted_info": self.client_extracted_info,
             },
             self.config,
             stream_mode="values",

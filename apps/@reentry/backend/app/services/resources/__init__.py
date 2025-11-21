@@ -206,50 +206,6 @@ class GetPlanResourcesRequest(BaseModel):
     )
 
 
-# Not doing a docstring as the LLM may pull information from that.
-# This is data from the 'client_extracted_info' field of the Plan
-# DB model, which is JSON when in the DB and a dict in pydantic.
-class ClientExtractedInfo(BaseModel):
-    home: str | None = Field(
-        default=None,
-        description="Client's home address, which can be a full address (preferred), a zip code, or a landmark.",
-    )
-
-    work: str | None = Field(
-        default=None,
-        description="Client's work address, which can be a full address (preferred), a zip code, or a landmark.",
-    )
-
-    school: str | None = Field(
-        default=None,
-        description="Client's school address, which can be a full address (preferred), a zip code, or a landmark.",
-    )
-
-    probation_office: str | None = Field(
-        default=None,
-        description=(
-            "Client's probation office address, which can be a full address (preferred), "
-            "a zip code, or a landmark."
-        ),
-    )
-
-    can_drive: bool | None = Field(
-        default=False, description="Whether the client has a car"
-    )
-
-    can_walk: bool | None = Field(
-        default=True, description="Whether the client can comfortably walk"
-    )
-
-    can_bike: bool | None = Field(
-        default=False, description="Whether the client has a bike"
-    )
-
-    transit_pass: bool | None = Field(
-        default=False, description="Whether the client has a transit pass"
-    )
-
-
 class GetResourcesRequest(BaseModel):
     category: ResourceCategory = Field(description="Resource category")
     # TODO(#10014): Have subcategory be required in the new API
@@ -275,80 +231,6 @@ class GetResourcesRequest(BaseModel):
         default_factory=list, description="List of resource IDs to exclude from results"
     )
     limit: Optional[int] = Field(default=10, description="How many")
-
-    @classmethod
-    def from_client_extracted_info(
-        cls,
-        *,
-        category: ResourceCategory,
-        subcategory: Optional[ResourceSubcategory],
-        exclude_names: Optional[List[str]],
-        exclude_ids: Optional[List[str]],
-        client_info: ClientExtractedInfo,
-        limit: Optional[int] = 10,
-    ) -> "GetResourcesRequest":
-        address = cls._address_from_client_extracted_info(client_info)
-        travel_mode, distance_miles = cls._mode_and_distance_from_client_extracted_info(
-            client_info
-        )
-        return GetResourcesRequest(
-            category=category,
-            subcategory=subcategory,
-            address=address,
-            travel_mode=travel_mode,
-            distance_miles=distance_miles,
-            exclude_names=exclude_names or [],
-            exclude_ids=exclude_ids or [],
-            limit=limit,
-        )
-
-    @classmethod
-    def from_client_extracted_json(
-        cls,
-        *,
-        category: ResourceCategory,
-        subcategory: Optional[ResourceSubcategory],
-        exclude_names: Optional[List[str]],
-        exclude_ids: Optional[List[str]],
-        client_info_json: dict,
-        limit: Optional[int] = 10,
-    ):
-        client_info = ClientExtractedInfo.model_validate(client_info_json, strict=True)
-        return cls.from_client_extracted_info(
-            category=category,
-            subcategory=subcategory,
-            exclude_names=exclude_names,
-            exclude_ids=exclude_ids,
-            client_info=client_info,
-            limit=limit,
-        )
-
-    @staticmethod
-    def _address_from_client_extracted_info(client_info: ClientExtractedInfo):
-        if client_info.home:
-            return client_info.home
-        if client_info.work:
-            return client_info.work
-        if client_info.school:
-            return client_info.school
-        if client_info.probation_office:
-            return client_info.probation_office
-        raise ValueError(
-            "At least one address (home, work, school, or probation_office) is "
-            "required to request resources."
-        )
-
-    @staticmethod
-    def _mode_and_distance_from_client_extracted_info(client_info: ClientExtractedInfo):
-        if client_info.can_drive is not False:
-            return TravelMode.DRIVING, 100
-        elif client_info.transit_pass is not False:
-            return TravelMode.TRANSIT, 50
-        elif client_info.can_bike is not False:
-            return TravelMode.BICYCLING, 10
-        elif client_info.can_walk is not False:
-            return TravelMode.WALKING, 5
-        return None, 100
 
 
 class Resource(BaseModel):

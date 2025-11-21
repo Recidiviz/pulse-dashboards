@@ -13,6 +13,7 @@ from taskiq import TaskiqDepends
 from taskiq.depends.progress_tracker import ProgressTracker
 
 from app.core.db import AsyncSession, get_session
+from app.crud.intake import get_collected_address_for_client
 from app.crud.plan_decision_tree import (
     PlanDecisionTree,
     get_plan_decision_tree_by_plan_id,
@@ -24,7 +25,7 @@ from app.crud.plan_generation import (
 )
 from app.models.models import PlanGeneration
 from app.services.client_data.queries import Queries
-from app.services.resources import ClientExtractedInfo, Resource
+from app.services.resources import Resource
 from app.utils.action_plan_types import (
     ActionPlanMilestones,
     ActionPlanSection,
@@ -32,7 +33,6 @@ from app.utils.action_plan_types import (
 )
 from app.utils.llm_agent_edit_plan import LLMAgentEdit
 from app.utils.llm_agent_gen_plan import LLMAgentGenerate
-from app.utils.llm_agent_qa import LLMAgentQA
 
 from .base import broker
 from .plan_decision_tree import get_plan_asset
@@ -150,11 +150,7 @@ async def generate_action_plan_task(
         )
 
 
-async def get_client_background_data(
-    gen: PlanGeneration, session: AsyncSession
-) -> tuple[str, str]:
-    from app.crud.intake import get_collected_address_for_client
-
+async def get_client_background_data(gen: PlanGeneration, session: AsyncSession) -> str:
     asset_messages = await get_plan_asset(session, gen.plan_id, "messages.json")
     asset_summary = await get_plan_asset(session, gen.plan_id, "summary.md")
     asset_assessment_summary = await get_plan_asset(
@@ -179,19 +175,6 @@ async def get_client_background_data(
     if not client_data:
         raise ValueError("No client data found")
 
-    # Extract address
-    collected_address = await get_collected_address_for_client(
-        session, gen.plan.client_pseudo_id
-    )
-    home_address = ""
-    if collected_address:
-        parts = []
-        if collected_address.street_address:
-            parts.append(collected_address.street_address)
-        parts.append(collected_address.city)
-        parts.append(collected_address.state)
-        home_address = ", ".join(parts)
-
     # Get client data using client_pseudo_id
     # Using unsafe version since this is a background task and we don't have access to current user
     # In production, this should use a service account with appropriate permissions
@@ -201,14 +184,10 @@ async def get_client_background_data(
     if record:
         record_dict = record.model_dump()
 
-    # always use current address from the intake
-    record_dict.update({"home_current_address": home_address})
     formatted_record = "\n".join(
         f"{key}: {value}" for key, value in record_dict.items()
     )
-    client_data = f"# Client informations\n\n{formatted_record}\n\n{client_data}"
-
-    return client_data, home_address
+    return f"# Client informations\n\n{formatted_record}\n\n{client_data}"
 
 
 async def _regenerate_action_plan(
@@ -294,11 +273,22 @@ async def _regenerate_action_plan(
             {"milestones": current_milestones}
         )
 
+    # Both the plan and client_pseudo_id are optional on the models,
+    # so we check existence for each.
+    if not gen.plan:
+        raise ValueError("Could not get client information for plan.")
+    if not (client_pseudo_id := gen.plan.client_pseudo_id):
+        raise ValueError("Could not get client information for plan.")
+    client_address = await get_collected_address_for_client(session, client_pseudo_id)
+    if not client_address:
+        raise ValueError("Could not get client address for plan.")
+
     agent = LLMAgentEdit(
         messages=messages,
         current_sections=current_sections,
         suggested_resources=suggested_resources,
         thread_id=gen.plan_id.hex,
+        client_address=client_address.as_formatted_string(),
         current_timeline=current_timeline,
         current_milestones=current_milestones,
     )
@@ -313,7 +303,6 @@ async def _regenerate_action_plan(
 async def _generate_new_action_plan(
     execution: Execution,
     gen: PlanGeneration,
-    client_extracted_info,
     previous_sections: list[str] | None,
     session: AsyncSession,
     task_logger: structlog.BoundLogger,
@@ -340,7 +329,15 @@ async def _generate_new_action_plan(
     await execution.log_progress(
         session, 30, "Fetching client data", logger=task_logger
     )
-    client_data, _ = await get_client_background_data(gen, session)
+    client_data = await get_client_background_data(gen, session)
+
+    # Both the plan and client_pseudo_id are optional on the models,
+    # so we check existence for each.
+    if not gen.plan:
+        raise ValueError("Could not get client information for plan.")
+    if not (client_pseudo_id := gen.plan.client_pseudo_id):
+        raise ValueError("Could not get client information for plan.")
+    client_address = await get_collected_address_for_client(session, client_pseudo_id)
 
     await execution.log_progress(
         session, 40, "Preparing decision tree data", logger=task_logger
@@ -361,40 +358,13 @@ async def _generate_new_action_plan(
     agent = LLMAgentGenerate(
         client_data=client_data,
         decision_tree_statements=decision_tree_statements,
-        client_extracted_info=client_extracted_info,
         previous_sections=previous_sections,
+        client_address=client_address,
         thread_id=gen.plan_id,
     )
 
     action_plan = await agent.generate()
     return action_plan
-
-
-async def _extract_client_info(
-    session: AsyncSession,
-    gen: PlanGeneration,
-    execution: Execution,
-    task_logger: structlog.BoundLogger,
-) -> ClientExtractedInfo:
-    if gen.plan.client_extracted_info:
-        try:
-            result = ClientExtractedInfo.model_validate(gen.plan.client_extracted_info)
-            return result
-        except Exception:
-            logger.warning("Failed to convert to ClientExtractedInfo, redo extraction")
-
-    client_data, home_address = await get_client_background_data(gen, session)
-    prompt = """Here is information about a client, please extract the relevant information:"""
-
-    agent = LLMAgentQA(client_data, gen.plan_id)
-
-    client_extracted_info = await agent.call(prompt, ClientExtractedInfo)
-    client_extracted_info.home = home_address
-
-    gen.plan.client_extracted_info = client_extracted_info.model_dump()
-    logger.debug("Extracting client data", client_extracted_info=client_extracted_info)
-
-    return client_extracted_info
 
 
 async def _get_latest_plan_generation(
@@ -433,14 +403,6 @@ async def generate_action_plan(
         session, 5, "Generating action plan", logger=task_logger
     )
 
-    # Get client information from LLM + Intake
-    client_extracted_info = await _extract_client_info(
-        session,
-        gen,
-        execution=execution,
-        task_logger=task_logger,
-    )
-
     # Check if there is a previous plan generated
     latest_plan_generation = await _get_latest_plan_generation(session, gen)
 
@@ -471,7 +433,6 @@ async def generate_action_plan(
         action_plan = await _generate_new_action_plan(
             execution=execution,
             gen=gen,
-            client_extracted_info=client_extracted_info,
             previous_sections=previous_sections,
             session=session,
             task_logger=task_logger,

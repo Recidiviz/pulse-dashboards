@@ -85,6 +85,7 @@ class LLMAgentEdit:
         current_sections: list[ActionPlanSection],
         suggested_resources: list[Resource],
         thread_id,
+        client_address: str,
         current_timeline: ActionPlanTimelines | None = None,
         current_milestones: ActionPlanMilestones | None = None,
     ):
@@ -100,6 +101,7 @@ class LLMAgentEdit:
         self.suggested_resources = suggested_resources
         self.current_timeline = current_timeline
         self.current_milestones = current_milestones
+        self.client_address = client_address
 
         async def call_select_starting_node(state: ExtendedMessagesState):
             logger.debug("Selecting starting node")
@@ -214,7 +216,7 @@ class LLMAgentEdit:
             }
 
         async def _call_generate_section(state: ExtendedMessagesState):
-            return await call_generate_section(self.config, state)
+            return await call_generate_section(self.config, state, self.client_address)
 
         async def call_generate_timeline(state: ExtendedMessagesState):
             logger.debug("Generating timeline")
