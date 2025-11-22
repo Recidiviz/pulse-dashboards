@@ -78,7 +78,9 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
       </TasksHeader>
 
       <TasksTopbarContainer $isMobile={isMobile}>
-        <TasksDescription>{presenter.pageDescriptionMarkdown}</TasksDescription>
+        <TasksDescription showRoutePlannerLink={presenter.showRoutePlannerLink}>
+          {presenter.pageDescriptionMarkdown}
+        </TasksDescription>
         <TableControls $isMobile={isMobile}>
           <TableViewToggle presenter={presenter} />
           <TaskFilterDropdown presenter={presenter} />

@@ -15,33 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Markdown from "markdown-to-jsx";
-import React from "react";
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
-import { RoutePlannerLink } from "../WorkflowsTasksRoutePlanner/RoutePlannerLink";
-import { TasksDescriptionContainer } from "./styles";
+import { workflowsUrl } from "../views";
+import { TasksCaption } from "../WorkflowsTasks/styles";
 
-export const TasksDescription: React.FC<{
-  children: string;
-  showRoutePlannerLink?: boolean;
-}> = ({ children, showRoutePlannerLink = false }) => (
-  <TasksDescriptionContainer>
-    <Markdown
-      options={{
-        forceInline: true,
-        overrides: {
-          a: {
-            props: {
-              target: "_blank",
-              rel: "noopener noreferrer",
-            },
-          },
-        },
-      }}
-    >
-      {children}
-    </Markdown>
+const TasksDescriptionText = styled(TasksCaption)`
+  margin-top: ${rem(spacing.sm)};
+`;
 
-    {showRoutePlannerLink && <RoutePlannerLink />}
-  </TasksDescriptionContainer>
-);
+export function RoutePlannerLink() {
+  return (
+    <TasksDescriptionText>
+      Heading out for contacts?{" "}
+      <Link to={workflowsUrl("tasksRoutePlanner")}>
+        Try using our Home Contact Route Planner →
+      </Link>
+    </TasksDescriptionText>
+  );
+}

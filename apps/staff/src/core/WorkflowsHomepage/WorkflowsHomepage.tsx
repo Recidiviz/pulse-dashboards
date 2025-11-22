@@ -28,6 +28,7 @@ import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
 import { OpportunitySummaries } from "./OpportunitySummaries";
 import { TasksSummary } from "./TasksSummary";
+import { TasksCards } from "./WorkflowsHomepageTasksCards";
 
 const ManagedComponent = observer(function WorkflowsHomepage({
   presenter,
@@ -40,6 +41,7 @@ const ManagedComponent = observer(function WorkflowsHomepage({
     hasOpportunities,
     showTasksSummaryTop,
     showTasksSummaryBottom,
+    showTasksSummaryCard,
     tasks,
     ctaAndHeaderText: { headerText, ctaText },
   } = presenter;
@@ -50,6 +52,7 @@ const ManagedComponent = observer(function WorkflowsHomepage({
       <CaseloadSelect />
       <ModelHydrator hydratable={presenter}>
         <WorkflowsResults headerText={headerText} callToActionText={ctaText}>
+          {showTasksSummaryCard && <TasksCards tasks={tasks} />}
           {showTasksSummaryTop && <TasksSummary tasks={tasks} />}
           {hasOpportunities &&
             activeOpportunityTypes &&

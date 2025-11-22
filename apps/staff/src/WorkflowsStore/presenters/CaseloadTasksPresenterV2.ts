@@ -318,4 +318,12 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   ): JusticeInvolvedPerson[] {
     return this.tasksFilterStore.orderedPersonsForCategory(category);
   }
+
+  // Route planner-related settings
+  get showRoutePlannerLink() {
+    return Boolean(
+      this.workflowsStore.rootStore.userStore.activeFeatureVariants
+        .tasksRoutePlanner,
+    );
+  }
 }

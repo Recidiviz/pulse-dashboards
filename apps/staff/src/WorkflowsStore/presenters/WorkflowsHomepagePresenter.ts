@@ -31,6 +31,12 @@ import { OpportunityConfigurationStore } from "../Opportunity/OpportunityConfigu
 import { WorkflowsStore } from "../WorkflowsStore";
 import { CaseloadOpportunitiesPresenter } from "./CaseloadOpportunitiesPresenter";
 
+enum HomepageSpot {
+  TOP,
+  BOTTOM,
+  CARD,
+}
+
 export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
   constructor(
     workflowsStore: WorkflowsStore,
@@ -159,24 +165,53 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     return this.workflowsStore.supportsMultipleSystems;
   }
 
+  /**
+   * Return true if tasks should be shown on the homepage in some form.
+   */
   get showTasksSummary() {
     const { currentTenantConfig } = this.workflowsStore.rootStore.tenantStore;
     return (
+      // tasks exists for this tenant, and
       !!currentTenantConfig?.navigation?.workflows?.includes("tasks") &&
+      // the current caseload has tasks available, and
       this.workflowsStore.hasSupervisionTasks &&
+      // the current user has access to tasks
       this.workflowsStore.rootStore.userStore.canUserAccessTasks
     );
   }
 
-  get showTasksSummaryTop() {
-    return (
-      this.showTasksSummary &&
-      this.workflowsStore.rootStore.currentTenantId === "US_TX"
-    );
+  /**
+   * Return location of the tasks on the workflows homepage relative to the opportunity summaries
+   */
+  get tasksSummaryLocation(): HomepageSpot {
+    if (
+      this.workflowsStore.rootStore.userStore.activeFeatureVariants
+        .tasksRoutePlanner
+    ) {
+      return HomepageSpot.CARD;
+    } else if (this.workflowsStore.rootStore.currentTenantId === "US_TX") {
+      // TODO(#9369) When Tasks Route Planner is fully launched in Texas, we can remove
+      // this case
+      return HomepageSpot.TOP;
+    } else {
+      return HomepageSpot.BOTTOM;
+    }
   }
 
+  get showTasksSummaryTop() {
+    return (
+      this.showTasksSummary && this.tasksSummaryLocation === HomepageSpot.TOP
+    );
+  }
   get showTasksSummaryBottom() {
-    return this.showTasksSummary && !this.showTasksSummaryTop;
+    return (
+      this.showTasksSummary && this.tasksSummaryLocation === HomepageSpot.BOTTOM
+    );
+  }
+  get showTasksSummaryCard() {
+    return (
+      this.showTasksSummary && this.tasksSummaryLocation === HomepageSpot.CARD
+    );
   }
 
   get tasks() {
