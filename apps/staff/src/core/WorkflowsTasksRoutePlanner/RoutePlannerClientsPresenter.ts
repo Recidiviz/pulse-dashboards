@@ -54,6 +54,8 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   // Map from pseudonymized IDs of clients to formatted place ID strings that can be used as
   // a waypoint (address) in a Google Maps embed.
   private placeIds: Record<string, string> = {};
+  // Prevent trying to add multiple people while we're waiting to see if some person can be added
+  isAddingPerson = false;
 
   private TASK_TYPE_COPY: PartialRecord<SupervisionTaskType, string> = {
     usTxHomeContactScheduled: "Scheduled",
@@ -272,6 +274,8 @@ export class RoutePlannerClientsPresenter implements Hydratable {
    * Adds a person to the list of addresses, geocoding their address if necessary.
    */
   async addPerson(person: Client) {
+    if (this.isAddingPerson) return;
+
     if (!person.formattedAddress) {
       captureException(
         new Error(
@@ -287,6 +291,8 @@ export class RoutePlannerClientsPresenter implements Hydratable {
       this.selectedPeople.push(person);
       return;
     }
+
+    this.isAddingPerson = true;
 
     // If the person has a valid address update, we can use its results.
     // If they don't (i.e. no update stored in Firestore, or it isn't valid,
@@ -307,12 +313,14 @@ export class RoutePlannerClientsPresenter implements Hydratable {
       runInAction(() => {
         this.placeIds[person.pseudonymizedId] = result.placeId;
         this.selectedPeople.push(person);
+        this.isAddingPerson = false;
       });
     } else {
       toast(this.badAddressCopy, {
         duration: TOAST_DURATION,
         id: `${person.pseudonymizedId}-address-no-results`, // prevent duplicate toasts
       });
+      this.isAddingPerson = false;
     }
   }
 

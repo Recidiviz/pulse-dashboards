@@ -56,7 +56,6 @@ function formatTexasDpoAddress(address: {
 export class RoutePlannerPresenter {
   public readonly clientsPresenter: RoutePlannerClientsPresenter;
   userPickedStartingAddress: string | undefined = undefined;
-  isMapView = false;
 
   constructor(private readonly workflowsStore: WorkflowsStore) {
     this.clientsPresenter = new RoutePlannerClientsPresenter(workflowsStore);
@@ -255,5 +254,27 @@ export class RoutePlannerPresenter {
     }).toString();
 
     return `${BASE_EMBED_URL}?${queryParams}`;
+  }
+
+  // Controls related to the mobile map view
+  isMapView = false;
+
+  /**
+   * Returns whether a button to switch to the map view of the tool should be displayed
+   */
+  get showMobileMapViewButton() {
+    return (
+      this.clientsPresenter.selectedClients.length > 0 ||
+      this.clientsPresenter.isAddingPerson
+    );
+  }
+
+  /**
+   * Returns copy for a button to switch to the map view of the tool
+   */
+  get mapViewButtonCopy() {
+    return this.clientsPresenter.isAddingPerson
+      ? `Loading map...`
+      : `See map view (${this.clientsPresenter.selectedClients.length} selected)`;
   }
 }

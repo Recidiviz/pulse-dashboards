@@ -62,10 +62,7 @@ export const RoutePlannerClientSelect = observer(
     presenter: RoutePlannerPresenter;
     isMobile: boolean;
   }) {
-    const numSelectedClients =
-      presenter.clientsPresenter.selectedClients.length;
-
-    const showMapViewButton = isMobile && numSelectedClients > 0;
+    const showMapViewButton = isMobile && presenter.showMobileMapViewButton;
 
     return (
       <RoutePlannerSelectContainer>
@@ -96,7 +93,7 @@ export const RoutePlannerClientSelect = observer(
                 presenter.isMapView = true;
               }}
             >
-              See map view ({numSelectedClients} selected)
+              {presenter.mapViewButtonCopy}
             </SwitchToMapViewButton>
           </SwitchToMapViewButtonContainer>
         )}

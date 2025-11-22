@@ -48,6 +48,7 @@ const BorderedClientCard = styled.div<{
   $selected: boolean;
   $selectable: boolean;
   $isMobile: boolean;
+  $waiting: boolean;
 }>`
   border-radius: ${rem(8)};
   padding: ${rem(14)} ${rem(16)};
@@ -80,6 +81,15 @@ const BorderedClientCard = styled.div<{
       border-color: ${palette.slate15};
       background-color: ${palette.marble3};
       cursor: not-allowed;
+    `}
+
+  ${({ $waiting }) =>
+    $waiting &&
+    `
+      cursor: wait !important;
+      * {
+        cursor: wait !important;
+      }
     `}
 `;
 
@@ -230,6 +240,7 @@ const CollapsedClientCard = observer(function ClientCard({
     <BorderedClientCard
       $selectable={isSelectable}
       $selected={isSelected}
+      $waiting={presenter.isAddingPerson}
       $isMobile={true}
       onClick={async () => {
         if (!isSelectable) return;
@@ -318,6 +329,7 @@ export const ClientCard = observer(function ClientCard({
       $selectable={isSelectable}
       $selected={isSelected}
       $isMobile={isMobile}
+      $waiting={presenter.isAddingPerson}
       onClick={async () => {
         if (!isSelectable) return;
 
