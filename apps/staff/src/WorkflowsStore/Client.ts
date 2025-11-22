@@ -20,7 +20,7 @@ import dedent from "dedent";
 import { deleteField, FieldValue, serverTimestamp } from "firebase/firestore";
 import { capitalize, mapValues, toUpper } from "lodash";
 import { action, makeObservable, override } from "mobx";
-import { format as formatPhone } from "phone-fns";
+import { format as formatPhone, uglify } from "phone-fns";
 import { toast } from "react-hot-toast";
 
 import {
@@ -314,8 +314,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     });
   }
 
-  get rawPhoneNumber(): string | undefined {
-    return this._rawPhoneNumber;
+  // Phone number formatted as a tel: URI. In global numbers, certain characters are
+  // not allowed: https://www.rfc-editor.org/rfc/rfc3966#section-5.1.1
+  get phoneNumberUri(): string | undefined {
+    return this._rawPhoneNumber
+      ? `tel:${uglify(this._rawPhoneNumber)}`
+      : undefined;
   }
 
   get phoneNumber(): string | undefined {

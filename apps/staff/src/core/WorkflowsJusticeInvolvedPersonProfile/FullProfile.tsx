@@ -302,7 +302,7 @@ function ContactDetails({
         <ContactLabel>Contacts</ContactLabel>
         <ContactValue className="fs-exclude">
           {person.phoneNumber ? (
-            <PhoneNumber href={`tel:${person.rawPhoneNumber}`}>
+            <PhoneNumber href={person.phoneNumberUri}>
               {person.phoneNumber}
             </PhoneNumber>
           ) : (

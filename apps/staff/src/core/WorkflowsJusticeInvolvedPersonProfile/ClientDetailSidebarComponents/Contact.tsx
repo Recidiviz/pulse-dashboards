@@ -43,7 +43,7 @@ export function Contact({
             <>
               <DetailsSubheading>Telephone</DetailsSubheading>
               <SecureDetailsContent>
-                <PhoneNumber href={`tel:${client.rawPhoneNumber}`}>
+                <PhoneNumber href={client.phoneNumberUri}>
                   {client.phoneNumber}
                 </PhoneNumber>
               </SecureDetailsContent>

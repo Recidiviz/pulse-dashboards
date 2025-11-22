@@ -151,8 +151,13 @@ const SmallInfoText = styled(Sans14)`
 `;
 
 const SmallInfoLink = styled(Sans14)`
-  color: ${palette.signal.links};
-  text-decoration: underline;
+  color: ${palette.signal.selected};
+  :hover,
+  :focus,
+  :active {
+    color: ${palette.signal.notification};
+    text-decoration: underline;
+  }
 `;
 
 const SchedulingBadge = styled(Pill).attrs({
@@ -403,7 +408,7 @@ export const ClientCard = observer(function ClientCard({
           </SchedulingBadge>
 
           {isMobile && person.phoneNumber && (
-            <a href={`tel:${person.phoneNumber}`}>
+            <a href={person.phoneNumberUri}>
               <CallButton>
                 <PhoneIcon fill={palette.marble1} /> Call
               </CallButton>

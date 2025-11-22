@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { ButtonProps, spacing } from "@recidiviz/design-system";
-import { darken, rem } from "polished";
+import { rem } from "polished";
 import type { JSX } from "react";
 import { Link, LinkProps, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -39,11 +39,6 @@ export const NavigateToFormButtonStyle = styled(Button).attrs({
   height: 40px;
   max-width: ${rem(200)};
   padding: ${rem(spacing.xs)} ${rem(spacing.md)};
-
-  &:hover,
-  &:focus {
-    background: ${(props) => darken(0.1, props.buttonFill)};
-  }
 `;
 
 type NavigateToFormButtonProps = Omit<LinkProps, "to" | "onClick"> &

@@ -43,13 +43,13 @@ const primaryStyles = css`
   color: ${palette.white};
 
   &:hover,
-  &:focus {
-    background-color: ${palette.pine4};
+  &:focus-visible {
+    background-color: ${palette.pine3};
   }
 
   &:active,
   &[aria-expanded="true"] {
-    background-color: ${palette.pine3};
+    background-color: ${palette.pine2};
   }
 
   &:disabled {
@@ -64,7 +64,7 @@ const secondaryStyles = css`
   color: ${palette.text.normal};
 
   &:hover,
-  &:focus {
+  &:focus-visible {
     background-color: ${palette.slate20};
     color: ${palette.pine4};
   }
