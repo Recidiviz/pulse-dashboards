@@ -31,3 +31,18 @@ server.listen({ port, host }, (err) => {
     console.log(`[ ready ] http://${host}:${port}`);
   }
 });
+
+if (import.meta.hot && process.env["NODE_ENV"] === "development") {
+  // TODO(#10276) Refactor into a script that can be used by all BEs in pulse-dashboards
+  async function killServer() {
+    await server.close();
+  }
+
+  import.meta.hot.on("vite:beforeFullReload", () => {
+    killServer();
+  });
+
+  import.meta.hot.dispose(() => {
+    killServer();
+  });
+}
