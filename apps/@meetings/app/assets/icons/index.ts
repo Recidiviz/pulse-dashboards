@@ -24,11 +24,14 @@ import BgAvatar from "./bg-avatar.png";
 import Schedule from "./calendar.png";
 import Chat from "./chat.png";
 import Clients from "./clients.png";
+import Clock from "./clock.png";
 import Cross from "./cross.png";
 import Filter from "./filter.png";
 import Home from "./home.png";
 import LeftIcon from "./left-icon.png";
 import Lock from "./lock.png";
+import LockBig from "./lock-big.png";
+import LockSmall from "./lock-small.png";
 import Logo from "./logo.png";
 import Mail from "./mail.png";
 import Menu from "./menu.png";
@@ -40,6 +43,7 @@ import Plus from "./plus.png";
 import Record from "./record.png";
 import Resources from "./resources.png";
 import Search from "./search.png";
+import Share from "./share.png";
 import Stop from "./stop.png";
 import Trends from "./trends.png";
 
@@ -71,6 +75,10 @@ const Icons = {
   Filter,
   LeftIcon,
   Lock,
+  Share,
+  Clock,
+  LockBig,
+  LockSmall
 };
 
 export default Icons;

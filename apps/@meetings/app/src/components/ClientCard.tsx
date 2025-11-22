@@ -65,13 +65,13 @@ const ClientCard = ({ client }: ClientProps) => {
           className="mr-3 size-11 items-center justify-center"
           style={{ borderRadius: 22, overflow: "hidden" }}
         >
-          <Text className="font-[inter] text-sm font-semibold text-white">
+          <Text className="font-inter text-sm font-semibold text-white">
             {getInitials(client.fullName)}
           </Text>
         </ImageBackground>
         <View className="flex-1">
           <View className="flex-row items-center">
-            <Text className="mr-1.5 font-[inter] text-base font-semibold text-gray-900">
+            <Text className="mr-1.5 font-inter text-base font-semibold text-gray-900">
               {client.fullName}
             </Text>
             <Image

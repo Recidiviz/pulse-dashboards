@@ -84,10 +84,10 @@ const ClientsScreen = () => {
       <Header />
       <ScrollView>
         <View className={"rounded-b-[24px] bg-white p-4"}>
-          <Text className="font-[inter] text-3xl font-semibold text-black">
+          <Text className="font-inter text-3xl font-semibold text-black">
             Clients
           </Text>
-          <Text className="my-2 font-[inter] text-sm font-normal text-[#707070]">
+          <Text className="my-2 font-inter text-sm font-normal text-[#707070]">
             All clients on your caseload are displayed below
           </Text>
           <View className="mt-3 flex-row items-center">
@@ -125,17 +125,17 @@ const ClientsScreen = () => {
               <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
                 <Image source={Icons.Lock} className="size-14" />
               </View>
-              <Text className="mb-2 text-center font-[LibreBaskerville] text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
+              <Text className="mb-2 text-center font-libre-baskerville text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
                 No clients found
               </Text>
-              <Text className="mb-6 text-center font-[inter] text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+              <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
                 Try adjusting your search or use different keywords.
               </Text>
               <TouchableOpacity
                 onPress={() => setSearch("")}
                 className="rounded-full border border-gray-300 px-6 py-3"
               >
-                <Text className="font-[inter] text-[16px] font-medium text-gray-700">
+                <Text className="font-inter text-[16px] font-medium text-gray-700">
                   Clear search
                 </Text>
               </TouchableOpacity>

@@ -50,7 +50,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       </TouchableOpacity>
 
       <TextInput
-        className="mb-1 ml-2 h-10 flex-1 font-[inter] text-sm text-black"
+        className="mb-1 ml-2 h-10 flex-1 font-inter text-sm text-black"
         placeholder={placeholder}
         placeholderTextColor="#999"
         value={value}

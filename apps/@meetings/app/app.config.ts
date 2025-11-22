@@ -134,6 +134,15 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           },
         },
       ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/LibreBaskerville-Bold.ttf",
+            "./assets/fonts/Inter.ttf"
+          ],
+        }
+      ]
     ],
     extra: {
       eas: {

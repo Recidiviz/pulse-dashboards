@@ -319,17 +319,17 @@ const ProfileScreen = () => {
             <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
               <Image source={Icons.Lock} className="size-14" />
             </View>
-            <Text className="mb-2 text-center font-[LibreBaskerville] text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
+            <Text className="mb-2 text-center font-libre-baskerville text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
               No meetings found
             </Text>
-            <Text className="mb-6 text-center font-[inter] text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+            <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
               Try adjusting your search or use different keywords.
             </Text>
             <TouchableOpacity
               onPress={() => setSearchQuery("")}
               className="rounded-full border border-gray-300 px-6 py-3"
             >
-              <Text className="font-[inter] text-[16px] font-medium text-gray-700">
+              <Text className="font-inter text-[16px] font-medium text-gray-700">
                 Clear search
               </Text>
             </TouchableOpacity>
@@ -339,7 +339,7 @@ const ProfileScreen = () => {
             <MeetingCard
               key={`${meeting.id}-${index}`}
               meeting={meeting}
-              onPress={(id) => console.log("Clicked:", id)}
+              client={route.params.client}
             />
           ))
         )}

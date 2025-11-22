@@ -21,6 +21,7 @@ import { Modal } from "react-native";
 
 import ClientsScreen from "../screens/ClientsScreen";
 import HomeScreen from "../screens/HomeScreen";
+import MeetingScreen from "../screens/MeetingScreen";
 import MenuScreen from "../screens/MenuScreen";
 import NewMeetingScreen from "../screens/NewMeetingScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -49,6 +50,21 @@ export type RootStackParamList = {
     };
     meetingId: string;
   };
+  Meeting: {
+    client: {
+      personId: string;
+      fullName: string;
+      displayPersonExternalId: string;
+      supervision: string;
+    };
+    meeting: {
+      id: string;
+      date: string;
+      time: string;
+      duration: string | null;
+      content: string;
+    };
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -67,6 +83,7 @@ export default function DrawerNavigator() {
         <Stack.Screen name="Resources" component={HomeScreen} /> */}
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="NewMeeting" component={NewMeetingScreen} />
+        <Stack.Screen name="Meeting" component={MeetingScreen} />
       </Stack.Navigator>
 
       <Modal

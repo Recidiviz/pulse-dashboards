@@ -18,6 +18,9 @@
 const { getSentryExpoConfig } = require("@sentry/react-native/metro");
 const { mergeConfig } = require("metro-config");
 const { withNativeWind } = require("nativewind/metro");
+const {
+  wrapWithReanimatedMetroConfig,
+} = require('react-native-reanimated/metro-config');
 
 const defaultConfig = getSentryExpoConfig(__dirname);
 const { assetExts, sourceExts } = defaultConfig.resolver;
@@ -39,6 +42,6 @@ const customConfig = {
   },
 };
 
-module.exports = withNativeWind(mergeConfig(defaultConfig, customConfig), {
+module.exports = wrapWithReanimatedMetroConfig(withNativeWind(mergeConfig(defaultConfig, customConfig), {
   input: "./global.css",
-});
+}));

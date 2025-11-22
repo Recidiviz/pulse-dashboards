@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
+import { RootStackParamList } from "../navigation/DrawerNavigator";
+
+type MeetingNavProp = NativeStackNavigationProp<RootStackParamList, "Meeting">;
 
 type MeetingCardProps = {
   meeting: {
@@ -28,20 +33,26 @@ type MeetingCardProps = {
     duration: string | null;
     content: string;
   };
-  onPress?: (id: string) => void;
+  client: {
+    personId: string;
+    fullName: string;
+    displayPersonExternalId: string;
+    supervision: string;
+  };
 };
 
-const MeetingCard = ({ meeting, onPress }: MeetingCardProps) => {
+const MeetingCard = ({ meeting, client }: MeetingCardProps) => {
+  const navigation = useNavigation<MeetingNavProp>();
   // const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={() => onPress && onPress(meeting.id)}
+      onPress={() => navigation.navigate("Meeting", { meeting, client })}
       className="mb-3 rounded-2xl bg-white p-4 shadow-sm"
     >
       <View className="flex-row items-center justify-between">
-        <Text className="text-primary font-[inter] text-base font-semibold">
+        <Text className="font-inter text-base font-semibold text-primary">
           {meeting.date}
         </Text>
         <Image
@@ -51,7 +62,7 @@ const MeetingCard = ({ meeting, onPress }: MeetingCardProps) => {
         />
       </View>
 
-      <Text className="text-primary mr-1 text-xs font-medium">
+      <Text className="mr-1 text-xs font-medium text-primary">
         {meeting.time} • {meeting.duration || "In progress..."}
       </Text>
       {/* <View className="my-2 border-b border-gray-200" />

@@ -15,25 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  // NOTE: Update this to include the paths to all files that contain Nativewind classes.
-  content: [
-    "./src/App.tsx",
-    "./src/components/**/*.{js,jsx,ts,tsx}",
-    "./src/screens/**/*.{js,jsx,ts,tsx}",
-  ],
-  presets: [require("nativewind/preset")],
-  theme: {
-    extend: {
-      colors: {
-        primary: "#003331",
-      },
-      fontFamily: {
-        "libre-baskerville": ["LibreBaskerville-Bold", "serif"],
-        "inter": ["Inter", "sans-serif"],
-      },
-    },
-  },
-  plugins: [],
+import { Text } from "react-native";
+
+type Props = {
+  notes?: string | null;
 };
+
+const MeetingsNotesTab = ({ notes }: Props) => {
+
+  if (!notes) {
+    return (
+      <Text className="text-center text-base leading-[22px] font-inter">
+        No notes taken for this meeting.
+      </Text>
+    );
+  }
+
+  return <Text className="text-base leading-[22px] font-inter">{notes}</Text>;
+}
+
+export default MeetingsNotesTab;
