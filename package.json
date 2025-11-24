@@ -383,7 +383,6 @@
     "eslint-plugin-wdio": "^9.9.1",
     "eslint-plugin-yml": "^1.16.0",
     "execa": "^9.6.0",
-    "expo-dev-client": "~5.0.20",
     "expo-doctor": "^1.17.7",
     "factory.ts": "^1.4.1",
     "flat": "^6.0.1",
