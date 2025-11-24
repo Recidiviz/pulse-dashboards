@@ -23,6 +23,7 @@ import styled from "styled-components";
 
 import { Icon, palette } from "~design-system";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionTask } from "../../WorkflowsStore/Task/types";
 import { workflowsUrl } from "../views";
@@ -125,10 +126,19 @@ const WorkflowsHomepageCard = function WorkflowsHomepageCard({
   subheading: string;
   badgeText?: string;
 }) {
+  const { analyticsStore } = useRootStore();
   const { isMobile } = useIsMobile(true);
 
   return (
-    <ClickableCard $isMobile={isMobile} to={url}>
+    <ClickableCard
+      $isMobile={isMobile}
+      to={url}
+      onClick={() => {
+        analyticsStore.trackWorkflowsHomepageCardClicked({
+          destinationUrl: url,
+        });
+      }}
+    >
       <CardHeaderSection>
         <CardHeading>{heading}</CardHeading>
         {badgeText !== undefined && <CardBadge>{badgeText}</CardBadge>}

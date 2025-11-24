@@ -20,6 +20,7 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { workflowsUrl } from "../views";
 import { TasksCaption } from "../WorkflowsTasks/styles";
 
@@ -28,10 +29,17 @@ const TasksDescriptionText = styled(TasksCaption)`
 `;
 
 export function RoutePlannerLink() {
+  const { analyticsStore } = useRootStore();
+
   return (
     <TasksDescriptionText>
       Heading out for contacts?{" "}
-      <Link to={workflowsUrl("tasksRoutePlanner")}>
+      <Link
+        to={workflowsUrl("tasksRoutePlanner")}
+        onClick={() => {
+          analyticsStore.trackTasksNavigateToRoutePlannerLinkClicked();
+        }}
+      >
         Try using our Home Contact Route Planner →
       </Link>
     </TasksDescriptionText>

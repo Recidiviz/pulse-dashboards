@@ -21,6 +21,7 @@ import styled from "styled-components";
 
 import { Button, spacing } from "~design-system";
 
+import { RoutePlannerRouteEvent } from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import ModelHydrator from "../ModelHydrator";
 import { NAV_BAR_HEIGHT } from "../NavigationLayout";
@@ -90,6 +91,9 @@ export const RoutePlannerClientSelect = observer(
           <SwitchToMapViewButtonContainer>
             <SwitchToMapViewButton
               onClick={() => {
+                presenter.trackRoutePlannerRouteEvent(
+                  RoutePlannerRouteEvent.MapOpenedMobile,
+                );
                 presenter.isMapView = true;
               }}
             >

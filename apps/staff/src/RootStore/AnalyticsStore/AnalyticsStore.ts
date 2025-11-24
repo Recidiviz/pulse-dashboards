@@ -233,6 +233,41 @@ export type NavigateToPersonProfileLinkClickedMetadata = {
   opportunityType: OpportunityType;
 };
 
+export type WorkflowsHomepageCardClickedMetadata = {
+  destinationUrl: string;
+};
+
+export enum RoutePlannerClientEvent {
+  Surfaced = "frontend.route_planner_client_surfaced",
+  AddressClicked = "frontend.route_planner_client_address_clicked",
+  AddressGeocoded = "frontend.route_planner_client_address_geocoded",
+  AddressGeocodingFailure = "frontend.route_planner_client_address_geocoding_failure",
+  CardToggledMobile = "frontend.route_planner_client_card_toggled_mobile",
+  PhoneCalledMobile = "frontend.route_planner_client_phone_called_mobile",
+}
+
+type RoutePlannerClientMetadata = {
+  pseudonymizedId: string;
+};
+
+export enum RoutePlannerRouteEvent {
+  MapOpenedMobile = "frontend.route_planner_map_opened_mobile",
+  LinkCopied = "frontend.route_planner_route_link_copied",
+  LinkOpened = "frontend.route_planner_route_link_opened",
+  LinkEmailed = "frontend.route_planner_route_link_emailed",
+}
+
+type RoutePlannerStartingAddressMetadata = {
+  startingAddress: string;
+};
+
+type RoutePlannerSelectedClientsMetadata = {
+  selectedClientPseudoIds: string[];
+};
+
+export type RoutePlannerRouteMetadata = RoutePlannerStartingAddressMetadata &
+  RoutePlannerSelectedClientsMetadata;
+
 export default class AnalyticsStore {
   rootStore;
   segment;
@@ -490,7 +525,9 @@ export default class AnalyticsStore {
     this.track("frontend.caseload_search", metadata);
   }
 
-  trackOpportunityPreviewed(metadata: OpportunityTrackingMetadata & { tabTitle: OpportunityTab }): void {
+  trackOpportunityPreviewed(
+    metadata: OpportunityTrackingMetadata & { tabTitle: OpportunityTab },
+  ): void {
     this.track("frontend.opportunity_previewed", metadata);
   }
 
@@ -547,6 +584,10 @@ export default class AnalyticsStore {
     selectedSearchIds: string[];
   }): void {
     this.track("frontend.task_filter_selected", metadata);
+  }
+
+  trackTasksNavigateToRoutePlannerLinkClicked(): void {
+    this.track("tasks_navigate_to_route_planner_link_clicked");
   }
 
   trackOpportunityMarkedSubmitted(metadata: OpportunityTrackingMetadata): void {
@@ -671,6 +712,12 @@ export default class AnalyticsStore {
     this.track("frontend.last_login_usage_module_viewed", metadata);
   }
 
+  trackWorkflowsHomepageCardClicked(
+    metadata: WorkflowsHomepageCardClickedMetadata,
+  ) {
+    this.track("frontend.workflows_homepage_card_clicked", metadata);
+  }
+
   /****************************
    * Case Notes Search Tracking *
    ****************************/
@@ -690,6 +737,43 @@ export default class AnalyticsStore {
     docId: string;
   }) {
     this.track("frontend.case_note_search_note_clicked", metadata);
+  }
+
+  /****************************
+   * Route Planner Tracking *
+   ****************************/
+
+  trackRoutePlannerClientEvent(
+    eventType: RoutePlannerClientEvent,
+    metadata: RoutePlannerClientMetadata,
+  ) {
+    this.track(eventType, metadata);
+  }
+
+  trackRoutePlannerRouteEvent(
+    eventType: RoutePlannerRouteEvent,
+    metadata: RoutePlannerStartingAddressMetadata &
+      RoutePlannerSelectedClientsMetadata,
+  ) {
+    this.track(eventType, metadata);
+  }
+
+  trackRoutePlannerStartingAddressChanged(
+    metadata: RoutePlannerStartingAddressMetadata & { previousAddress: string },
+  ) {
+    this.track("frontend.route_planner_starting_address_changed", metadata);
+  }
+
+  trackRoutePlannerClientSelected(
+    metadata: RoutePlannerClientMetadata & RoutePlannerSelectedClientsMetadata,
+  ) {
+    this.track("frontend.route_planner_client_selected", metadata);
+  }
+
+  trackRoutePlannerClientDeselected(
+    metadata: RoutePlannerClientMetadata & RoutePlannerSelectedClientsMetadata,
+  ) {
+    this.track("frontend.route_planner_client_deselected", metadata);
   }
 
   /****************************

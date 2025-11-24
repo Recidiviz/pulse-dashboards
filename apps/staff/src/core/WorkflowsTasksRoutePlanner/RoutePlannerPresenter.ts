@@ -18,6 +18,11 @@
 import dedent from "dedent";
 import { makeAutoObservable } from "mobx";
 
+import AnalyticsStore from "../../RootStore/AnalyticsStore";
+import {
+  RoutePlannerRouteEvent,
+  RoutePlannerRouteMetadata,
+} from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { formatTexasAddress, formatWorkflowsDate } from "../../utils";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { Officer } from "../../WorkflowsStore/Officer";
@@ -55,10 +60,12 @@ function formatTexasDpoAddress(address: {
  */
 export class RoutePlannerPresenter {
   public readonly clientsPresenter: RoutePlannerClientsPresenter;
-  userPickedStartingAddress: string | undefined = undefined;
+  private readonly analyticsStore: AnalyticsStore;
+  private _userPickedStartingAddress: string | undefined = undefined;
 
   constructor(private readonly workflowsStore: WorkflowsStore) {
     this.clientsPresenter = new RoutePlannerClientsPresenter(workflowsStore);
+    this.analyticsStore = workflowsStore.rootStore.analyticsStore;
 
     makeAutoObservable(this);
   }
@@ -69,8 +76,16 @@ export class RoutePlannerPresenter {
 
   // Starting address picker and autocomplete settings
 
+  set userPickedStartingAddress(newAddress: string) {
+    this.analyticsStore.trackRoutePlannerStartingAddressChanged({
+      startingAddress: newAddress,
+      previousAddress: this.startingAddress,
+    });
+    this._userPickedStartingAddress = newAddress;
+  }
+
   get startingAddress() {
-    return this.userPickedStartingAddress ?? this.startingAddressPlaceholder;
+    return this._userPickedStartingAddress ?? this.startingAddressPlaceholder;
   }
 
   get startingAddressPlaceholder(): string {
@@ -276,5 +291,21 @@ export class RoutePlannerPresenter {
     return this.clientsPresenter.isAddingPerson
       ? `Loading map...`
       : `See map view (${this.clientsPresenter.selectedClients.length} selected)`;
+  }
+
+  // Tracking
+
+  get routeEventMetadata(): RoutePlannerRouteMetadata {
+    return {
+      startingAddress: this.startingAddress,
+      selectedClientPseudoIds: this.clientsPresenter.selectedClientPseudoIds,
+    };
+  }
+
+  trackRoutePlannerRouteEvent(eventType: RoutePlannerRouteEvent) {
+    this.analyticsStore.trackRoutePlannerRouteEvent(
+      eventType,
+      this.routeEventMetadata,
+    );
   }
 }

@@ -28,6 +28,8 @@ import {
 } from "~hydration-utils";
 
 import { GeocodingResponse, GeocodingStatus } from "../../FirestoreStore";
+import AnalyticsStore from "../../RootStore/AnalyticsStore";
+import { RoutePlannerClientEvent } from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { formatWorkflowsDateWithoutYear } from "../../utils";
 import { PartialRecord } from "../../utils/typeUtils";
 import {
@@ -50,6 +52,7 @@ const TOAST_DURATION = 7000;
  */
 export class RoutePlannerClientsPresenter implements Hydratable {
   private readonly searchStore: SearchStore;
+  private readonly analyticsStore: AnalyticsStore;
   private selectedPeople: JusticeInvolvedPerson[] = [];
   // Map from pseudonymized IDs of clients to formatted place ID strings that can be used as
   // a waypoint (address) in a Google Maps embed.
@@ -73,6 +76,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
 
   constructor(private readonly workflowsStore: WorkflowsStore) {
     this.searchStore = workflowsStore.searchStore;
+    this.analyticsStore = workflowsStore.rootStore.analyticsStore;
     makeAutoObservable(this);
 
     // If the selected officers change, deselect people who were on a caseload that was removed
@@ -173,6 +177,11 @@ export class RoutePlannerClientsPresenter implements Hydratable {
    * @returns The result of the geocoding request as a GeocodingResponse
    */
   async geocode(person: Client, address: string): Promise<GeocodingResponse> {
+    this.analyticsStore.trackRoutePlannerClientEvent(
+      RoutePlannerClientEvent.AddressGeocoded,
+      { pseudonymizedId: person.pseudonymizedId },
+    );
+
     const result = await this.sendGeocodingRequest(address);
     await person.updateAddressUpdates({
       address,
@@ -260,6 +269,10 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     return this.selectedPeople;
   }
 
+  get selectedClientPseudoIds(): string[] {
+    return this.selectedPeople.map((client) => client.pseudonymizedId);
+  }
+
   isPersonSelected(person: JusticeInvolvedPerson) {
     return this.indexOfPerson(person) !== -1;
   }
@@ -314,6 +327,10 @@ export class RoutePlannerClientsPresenter implements Hydratable {
         this.placeIds[person.pseudonymizedId] = result.placeId;
         this.selectedPeople.push(person);
         this.isAddingPerson = false;
+        this.analyticsStore.trackRoutePlannerClientSelected({
+          pseudonymizedId: person.pseudonymizedId,
+          selectedClientPseudoIds: this.selectedClientPseudoIds,
+        });
       });
     } else {
       toast(this.badAddressCopy, {
@@ -321,6 +338,12 @@ export class RoutePlannerClientsPresenter implements Hydratable {
         id: `${person.pseudonymizedId}-address-no-results`, // prevent duplicate toasts
       });
       this.isAddingPerson = false;
+      this.analyticsStore.trackRoutePlannerClientEvent(
+        RoutePlannerClientEvent.AddressGeocodingFailure,
+        {
+          pseudonymizedId: person.pseudonymizedId,
+        },
+      );
     }
   }
 
@@ -334,6 +357,20 @@ export class RoutePlannerClientsPresenter implements Hydratable {
       );
     } else {
       this.selectedPeople.splice(i, 1);
+      this.analyticsStore.trackRoutePlannerClientDeselected({
+        pseudonymizedId: person.pseudonymizedId,
+        selectedClientPseudoIds: this.selectedClientPseudoIds,
+      });
     }
+  }
+
+  // Tracking
+  trackRoutePlannerClientEvent(
+    eventType: RoutePlannerClientEvent,
+    client: JusticeInvolvedPerson,
+  ) {
+    this.analyticsStore.trackRoutePlannerClientEvent(eventType, {
+      pseudonymizedId: client.pseudonymizedId,
+    });
   }
 }

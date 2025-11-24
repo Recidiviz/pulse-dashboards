@@ -24,6 +24,7 @@ import styled from "styled-components";
 import { Icon, IconSVG, palette } from "~design-system";
 import { PersonInitialsAvatar } from "~ui";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import InsightsPill from "../InsightsPill";
@@ -158,6 +159,8 @@ export const WorkflowsHomepageSummary = observer(
     showZeroGrantsPill,
     zeroGrantsTooltip,
   }: WorkflowsHomepageSummaryProps): React.ReactElement<any> | null {
+    const { analyticsStore } = useRootStore();
+
     const { isMobile } = useIsMobile(true);
     const defaultAvatarsShown = totalCount < 4 ? totalCount : 4;
     const sliceIndex =
@@ -168,7 +171,15 @@ export const WorkflowsHomepageSummary = observer(
     const additionalCount = totalCount - sliceIndex;
 
     return (
-      <HomepageSummaryLink $isMobile={isMobile} to={url}>
+      <HomepageSummaryLink
+        $isMobile={isMobile}
+        to={url}
+        onClick={() => {
+          analyticsStore.trackWorkflowsHomepageCardClicked({
+            destinationUrl: url,
+          });
+        }}
+      >
         <HomepageHeaderWrapper $isMobile={isMobile}>
           <HomepageHeader $isMobile={isMobile}>{headerText}</HomepageHeader>
           <ReviewStatusWrapper>

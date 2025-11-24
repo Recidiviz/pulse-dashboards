@@ -18,12 +18,22 @@
 import { Mock } from "vitest";
 
 import { GeocodingStatus } from "../../../FirestoreStore";
+import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import { Client, WorkflowsStore } from "../../../WorkflowsStore";
 import { RoutePlannerClientsPresenter } from "../RoutePlannerClientsPresenter";
+
+const mockAnalyticsStore = {
+  trackRoutePlannerClientEvent: vi.fn(),
+  trackRoutePlannerClientSelected: vi.fn(),
+  trackRoutePlannerClientDeselected: vi.fn(),
+} as any as AnalyticsStore;
 
 const mockWorkflowsStore = {
   searchStore: {
     selectedSearchIds: [],
+  },
+  rootStore: {
+    analyticsStore: mockAnalyticsStore,
   },
 } as any as WorkflowsStore;
 let presenter: RoutePlannerClientsPresenter;

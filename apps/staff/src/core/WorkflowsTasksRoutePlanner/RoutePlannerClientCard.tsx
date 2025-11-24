@@ -33,7 +33,9 @@ import { Button, Icon, palette } from "~design-system";
 import LocationIcon from "../../assets/static/images/locationPin.svg?react";
 import PhoneIcon from "../../assets/static/images/phone.svg?react";
 import TagsIcon from "../../assets/static/images/tags.svg?react";
+import { RoutePlannerClientEvent } from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { Client, SupervisionTask } from "../../WorkflowsStore";
+import { usePersonTracking } from "../hooks/usePersonTracking";
 import {
   TooltipRow,
   TooltipSection,
@@ -68,8 +70,8 @@ const BorderedClientCard = styled.div<{
   ${({ $selectable, $selected, $isMobile }) =>
     $selectable &&
     !$isMobile &&
-    `:hover,
-     :focus {
+    `&:hover,
+     &:focus {
         border-color: ${$selected ? palette.slate80 : palette.slate50};
         background-color: ${$selected ? palette.marble5 : palette.marble2};
         cursor: pointer;
@@ -152,9 +154,9 @@ const SmallInfoText = styled(Sans14)`
 
 const SmallInfoLink = styled(Sans14)`
   color: ${palette.signal.selected};
-  :hover,
-  :focus,
-  :active {
+  &:hover,
+  &:focus,
+  &:active {
     color: ${palette.signal.notification};
     text-decoration: underline;
   }
@@ -301,6 +303,12 @@ export const ClientCard = observer(function ClientCard({
 }) {
   const [collapsed, setCollapsed] = useState(true);
   const person = task.person as Client;
+  usePersonTracking(person, () => {
+    presenter.trackRoutePlannerClientEvent(
+      RoutePlannerClientEvent.Surfaced,
+      person,
+    );
+  });
 
   const {
     supervisionLevelShort,
@@ -323,6 +331,10 @@ export const ClientCard = observer(function ClientCard({
         task={task}
         presenter={presenter}
         onDropdownClick={() => {
+          presenter.trackRoutePlannerClientEvent(
+            RoutePlannerClientEvent.CardToggledMobile,
+            person,
+          );
           setCollapsed(false);
         }}
       />
@@ -377,6 +389,11 @@ export const ClientCard = observer(function ClientCard({
                   onClick={(e) => {
                     // Prevent link clicks from also selecting the person's card
                     e.stopPropagation();
+
+                    presenter.trackRoutePlannerClientEvent(
+                      RoutePlannerClientEvent.AddressClicked,
+                      person,
+                    );
                   }}
                 >
                   <SmallInfoLink>{person.address}</SmallInfoLink>
@@ -408,7 +425,18 @@ export const ClientCard = observer(function ClientCard({
           </SchedulingBadge>
 
           {isMobile && person.phoneNumber && (
-            <a href={person.phoneNumberUri}>
+            <a
+              href={person.phoneNumberUri}
+              onClick={(e) => {
+                // Prevent link clicks from also selecting the person's card
+                e.stopPropagation();
+
+                presenter.trackRoutePlannerClientEvent(
+                  RoutePlannerClientEvent.PhoneCalledMobile,
+                  person,
+                );
+              }}
+            >
               <CallButton>
                 <PhoneIcon fill={palette.marble1} /> Call
               </CallButton>
@@ -433,6 +461,10 @@ export const ClientCard = observer(function ClientCard({
           onClick={(e) => {
             // Prevent clicks from also selecting the person's card
             e.stopPropagation();
+            presenter.trackRoutePlannerClientEvent(
+              RoutePlannerClientEvent.CardToggledMobile,
+              person,
+            );
             setCollapsed(true);
           }}
         />

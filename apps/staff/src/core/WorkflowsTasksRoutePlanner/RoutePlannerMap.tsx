@@ -33,6 +33,7 @@ import { Button, Icon, IconSVG, palette, spacing } from "~design-system";
 import CopyIcon from "../../assets/static/images/copy.svg?react";
 import Star from "../../assets/static/images/grayStar.svg?react";
 import SendIcon from "../../assets/static/images/sendIcon.svg?react";
+import { RoutePlannerRouteEvent } from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { Client } from "../../WorkflowsStore";
 import { AlignedIcon } from "../sharedComponents";
 import { Divider } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
@@ -231,6 +232,8 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
   }
 
   const onClickCopyLink = async () => {
+    presenter.trackRoutePlannerRouteEvent(RoutePlannerRouteEvent.LinkCopied);
+
     const { mapDirectionsUrl } = presenter;
     await navigator.clipboard.writeText(mapDirectionsUrl);
     toast("Link copied to clipboard", {
@@ -240,6 +243,8 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
   };
 
   const onClickEmailLink = async () => {
+    presenter.trackRoutePlannerRouteEvent(RoutePlannerRouteEvent.LinkEmailed);
+
     try {
       await presenter.sendDirectionsEmail();
       toast(`Email sent to ${presenter.userEmailAddress}`, {
@@ -264,6 +269,11 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
               href={presenter.mapDirectionsUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                presenter.trackRoutePlannerRouteEvent(
+                  RoutePlannerRouteEvent.LinkOpened,
+                );
+              }}
             >
               <Button shape={"block"}>
                 <SendIcon />
@@ -277,6 +287,11 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
                 href={presenter.mapDirectionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => {
+                  presenter.trackRoutePlannerRouteEvent(
+                    RoutePlannerRouteEvent.LinkOpened,
+                  );
+                }}
               >
                 <IconButton>
                   <TooltipTrigger contents={"Open route link in new tab"}>
