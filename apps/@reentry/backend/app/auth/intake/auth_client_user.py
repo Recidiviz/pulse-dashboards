@@ -181,7 +181,7 @@ async def validate_non_pseudo_id(
     )
 
     if not record:
-        return ValidationResult.error_result("Verification failed. Please try again.")
+        return ValidationResult.error_result("No match for the provided name and date of birth. Please try again.")
 
     client_pseudo_id = record.pseudonymized_client_id
 
@@ -192,13 +192,13 @@ async def validate_non_pseudo_id(
             f"Intake record not found for client pseudo ID: {client_pseudo_id}"
         )
         return ValidationResult.error_result(
-            "Login failed. Please contact your case worker for assistance."
+            "Intake not enabled. Please contact your case worker for assistance."
         )
 
     if not intake_record.internal_access:
         logger.error(f"Intake not enabled for client pseudo ID: {client_pseudo_id}")
         return ValidationResult.error_result(
-            "Intake not enabled. Please contact your case worker for assistance."
+            "Internal access is not enabled. Please contact your case worker for assistance."
         )
 
     token_data = create_client_response(client_pseudo_id, record.full_name)
