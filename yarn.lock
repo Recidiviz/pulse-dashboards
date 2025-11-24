@@ -9544,7 +9544,7 @@ __metadata:
     expo: "npm:^54.0.0"
     expo-audio: "npm:~1.0.14"
     expo-build-properties: "npm:~1.0.9"
-    expo-font: "npm:~13.0.4"
+    expo-font: "npm:~14.0.9"
     expo-notifications: "npm:~0.32.12"
     expo-splash-screen: "npm:~31.0.10"
     expo-status-bar: "npm:~3.0.8"
@@ -29741,18 +29741,6 @@ __metadata:
     expo: "*"
     react-native: "*"
   checksum: 10c0/c0c4017429f0f43790d5a5587e56deca77015e959a8667c4ee3890a42d47a4389775ebfeb4951d0f7942ef7d416eb487928f6447f64a86cad58326181917e3c8
-  languageName: node
-  linkType: hard
-
-"expo-font@npm:~13.0.4":
-  version: 13.0.4
-  resolution: "expo-font@npm:13.0.4"
-  dependencies:
-    fontfaceobserver: "npm:^2.1.0"
-  peerDependencies:
-    expo: "*"
-    react: "*"
-  checksum: 10c0/3b9835f622b9e7f436909d76a88f6593e7d75dead586cbb3269abc75edb2a8e69b6d8c4f0faf7f979276675449ba6455cda72c7483744c878afe85b2c871a9e8
   languageName: node
   linkType: hard
 
