@@ -37,20 +37,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <View
-      className={`flex-1 flex-row items-center rounded-xl border px-3 ${
+      className={`flex-1 flex-row items-center rounded-xl border px-3 sm:max-w-[300px] ${
         isFocused ? "border-primary" : "border-gray-300"
       } bg-gray-50`}
     >
       <TouchableOpacity onPress={() => (isFocused ? onExit?.() : null)}>
         <Image
           source={isFocused || value ? Icons.LeftIcon : Icons.Search}
-          className="size-[16]"
-          style={{ resizeMode: "contain" }}
+          className="!size-[16]"
         />
       </TouchableOpacity>
 
       <TextInput
-        className="mb-1 ml-2 h-10 flex-1 font-inter text-sm text-black"
+        className="mx-2 h-10 flex-1 font-[inter] text-sm text-black outline-none"
         placeholder={placeholder}
         placeholderTextColor="#999"
         value={value}

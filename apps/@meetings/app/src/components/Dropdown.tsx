@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { Image, ScrollView,Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 
@@ -50,7 +50,7 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
           </Text>
           <Image
             source={open ? Icons.ArrowUp : Icons.ArrowDown}
-            className="size-4"
+            className="!size-4"
           />
         </TouchableOpacity>
       </View>

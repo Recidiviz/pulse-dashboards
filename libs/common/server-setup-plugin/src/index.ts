@@ -95,7 +95,7 @@ export function buildCommonServer<TRouter extends AnyRouter>(
 
   server.register(cors, {
     origin: "*",
-    methods: ["POST", "GET", "OPTIONS"],
+    methods: ["POST", "GET", "OPTIONS", "PUT"],
     credentials: true,
   });
 

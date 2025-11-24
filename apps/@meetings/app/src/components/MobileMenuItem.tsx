@@ -26,14 +26,19 @@ import {
 
 import Icons from "../../assets/icons";
 
-type MenuItemProps = {
+type MobileMenuItemProps = {
   icon: ImageSourcePropType;
   title: string;
   badge?: number;
   onPress?: () => void;
 };
 
-const MenuItem = ({ icon, title, badge, onPress }: MenuItemProps) => {
+const MobileMenuItem = ({
+  icon,
+  title,
+  badge,
+  onPress,
+}: MobileMenuItemProps) => {
   return (
     <TouchableOpacity
       className="flex-row items-center justify-between py-4"
@@ -42,7 +47,7 @@ const MenuItem = ({ icon, title, badge, onPress }: MenuItemProps) => {
       <View className="flex-row items-center">
         <Image
           source={icon}
-          className="mr-3 size-6"
+          className="mr-3 !size-6"
           style={{ resizeMode: "contain" }}
         />
         <Text className="text-base font-medium">{title}</Text>
@@ -56,11 +61,11 @@ const MenuItem = ({ icon, title, badge, onPress }: MenuItemProps) => {
       </View>
       <Image
         source={Icons.ArrowRight}
-        className="size-3.5"
+        className="!size-3.5"
         style={{ resizeMode: "contain", tintColor: "#000000" }}
       />
     </TouchableOpacity>
   );
 };
 
-export default MenuItem;
+export default MobileMenuItem;

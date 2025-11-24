@@ -21,6 +21,7 @@ import ArrowRight from "./arrow-right.png";
 import ArrowUp from "./arrow-up.png";
 import Bell from "./bell.png";
 import BgAvatar from "./bg-avatar.png";
+import Brand from "./brand.png";
 import Schedule from "./calendar.png";
 import Chat from "./chat.png";
 import Clients from "./clients.png";
@@ -75,10 +76,11 @@ const Icons = {
   Filter,
   LeftIcon,
   Lock,
+  Brand,
   Share,
   Clock,
   LockBig,
-  LockSmall
+  LockSmall,
 };
 
 export default Icons;

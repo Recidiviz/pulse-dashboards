@@ -85,6 +85,22 @@
         "parallel": false
       },
       "cwd": "{workspaceRoot}"
+    },
+    "offline:web": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["load-env-file-gcp"],
+      "options": {
+        "commands": ["nx start @meetings/app --web"]
+      },
+      "cwd": "{workspaceRoot}"
+    },
+    "dev:web": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["load-env-file-eas"],
+      "options": {
+        "commands": ["nx start @meetings/app --web"]
+      },
+      "cwd": "{workspaceRoot}"
     }
   }
 }

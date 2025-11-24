@@ -16,12 +16,20 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { Client } from "~@meetings/app/common/types";
 
 import Icons from "../../assets/icons";
-import ClientCard from "../components/ClientCard";
+import ClientsCardsList from "../components/ClientsCardsList";
+import ClientsCardsTable from "../components/ClientsCardsTable.web";
 import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import SearchBar from "../components/SearchBar";
@@ -82,72 +90,87 @@ const ClientsScreen = () => {
   return (
     <View className="flex-1">
       <Header />
-      <ScrollView>
-        <View className={"rounded-b-[24px] bg-white p-4"}>
-          <Text className="font-inter text-3xl font-semibold text-black">
-            Clients
-          </Text>
-          <Text className="my-2 font-inter text-sm font-normal text-[#707070]">
-            All clients on your caseload are displayed below
-          </Text>
-          <View className="mt-3 flex-row items-center">
-            <SearchBar
-              value={search}
-              onChange={setSearch}
-              placeholder="Search clients by name"
-              onExit={() => {
-                setSearch("");
-              }}
-            />
-            {/* <TouchableOpacity className="ml-2 rounded-xl border border-gray-300 bg-gray-50 p-2.5">
+      <ScrollView className="flex-1" contentContainerClassName="grow">
+        <View className="mx-auto w-full max-w-[960px] flex-1">
+          <View
+            className={
+              "rounded-b-[24px] bg-white p-4 sm:flex-row sm:justify-between sm:gap-x-4 md:bg-[initial]"
+            }
+          >
+            <View>
+              <Text className="font-inter text-3xl font-semibold text-black">
+                Clients
+              </Text>
+              <Text className="my-2 font-inter text-sm font-normal text-[#707070]">
+                All clients on your caseload are displayed below
+              </Text>
+            </View>
+            <View className="mt-3 grow flex-row items-center justify-end">
+              <SearchBar
+                value={search}
+                onChange={setSearch}
+                placeholder="Search clients by name"
+                onExit={() => {
+                  setSearch("");
+                }}
+              />
+              {/* <TouchableOpacity className="ml-2 size-10 items-center justify-center rounded-xl border border-gray-300 bg-gray-50">
               <Image
                 source={Icons.Filter}
-                className="size-[16]"
+                className="!size-[16]"
                 style={{ resizeMode: "contain" }}
               />
             </TouchableOpacity> */}
-          </View>
-        </View>
-        <View className="flex-row items-center justify-between px-4">
-          <Text className="text-sm text-[#707070]">
-            {filteredClients.length} client
-            {filteredClients.length > 1 ? "s" : ""}
-          </Text>
-          <Dropdown
-            label="Sort by"
-            options={["Name (A-Z)", "ID"]}
-            onSelect={setSortBy}
-          />
-        </View>
-        <View className="p-4 pt-0">
-          {filteredClients.length === 0 ? (
-            <View className="items-center justify-center py-16">
-              <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
-                <Image source={Icons.Lock} className="size-14" />
-              </View>
-              <Text className="mb-2 text-center font-libre-baskerville text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
-                No clients found
-              </Text>
-              <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
-                Try adjusting your search or use different keywords.
-              </Text>
-              <TouchableOpacity
-                onPress={() => setSearch("")}
-                className="rounded-full border border-gray-300 px-6 py-3"
-              >
-                <Text className="font-inter text-[16px] font-medium text-gray-700">
-                  Clear search
-                </Text>
-              </TouchableOpacity>
             </View>
-          ) : (
-            filteredClients.map((client) => (
-              <ClientCard
-                key={client.displayPersonExternalId}
-                client={client}
-              />
-            ))
-          )}
+          </View>
+          <View className="z-10 flex-row items-center justify-between px-4">
+            <Text className="text-sm text-[#707070]">
+              {filteredClients.length} client
+              {filteredClients.length > 1 ? "s" : ""}
+            </Text>
+            <Dropdown
+              label="Sort by"
+              options={["Name (A-Z)", "ID"]}
+              onSelect={setSortBy}
+            />
+          </View>
+          <View className="grow basis-0 p-4 pt-0">
+            {filteredClients.length === 0 ? (
+              <View className="items-center justify-center py-16">
+                <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
+                  <Image source={Icons.Lock} className="!size-14" />
+                </View>
+                <Text className="font-LibreBaskerville mb-2 text-center text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
+                  No clients found
+                </Text>
+                <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+                  Try adjusting your search or use different keywords.
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setSearch("")}
+                  className="rounded-full border border-gray-300 px-6 py-3"
+                >
+                  <Text className="font-inter text-[16px] font-medium text-gray-700">
+                    Clear search
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              Platform.select({
+                native: <ClientsCardsList clients={filteredClients} />,
+                web: (
+                  <View className="pb-4">
+                    <View className="md:hidden">
+                      <ClientsCardsList clients={filteredClients} />
+                    </View>
+                    <View className="hidden md:block">
+                      <ClientsCardsTable clients={filteredClients} />
+                    </View>
+                  </View>
+                ),
+              })
+            )}
+          </View>
         </View>
       </ScrollView>
     </View>

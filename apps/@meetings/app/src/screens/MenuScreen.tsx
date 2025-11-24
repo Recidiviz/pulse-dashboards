@@ -29,7 +29,7 @@ import { useAuth0 } from "react-native-auth0";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
-import MenuItem from "../components/MenuItem";
+import MobileMenuItem from "../components/MobileMenuItem";
 
 const MenuTextItem = ({
   title,
@@ -71,47 +71,49 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
     <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
       <View className="flex-row items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
         <TouchableOpacity onPress={onClose}>
-          <Image source={Icons.Cross} className="size-6" />
+          <Image source={Icons.Cross} className="!size-6" />
         </TouchableOpacity>
-        <Text className="text-primary text-base font-semibold">Navigation</Text>
+        <Text className="text-base font-semibold text-primary">Navigation</Text>
         <TouchableOpacity onPress={() => console.log("Bell pressed")}>
-          <Image source={Icons.Bell} className="size-6" />
+          <Image source={Icons.Bell} className="!size-6" />
         </TouchableOpacity>
       </View>
 
-      <View className="m-[15px] h-[78px] w-[374px] flex-row items-center self-center rounded-[15px] bg-[#C1E3D83B] p-4">
-        <ImageBackground
-          source={Icons.BgAvatar}
-          className="mr-3 size-12 items-center justify-center overflow-hidden rounded-full"
-        >
-          <Text className="text-white">SS</Text>
-        </ImageBackground>
-        <View>
-          <Text className="text-primary text-base font-semibold">
-            Sam Smith
-          </Text>
-          <Text className="text-sm text-[#355362D9]">user@example.com</Text>
+      <View className="w-full px-4">
+        <View className="m-[15px] h-[78px] w-full flex-row items-center self-center rounded-[15px] bg-[#C1E3D83B] p-4">
+          <ImageBackground
+            source={Icons.BgAvatar}
+            className="mr-3 size-12 items-center justify-center overflow-hidden rounded-full"
+          >
+            <Text className="text-white">SS</Text>
+          </ImageBackground>
+          <View>
+            <Text className="text-base font-semibold text-primary">
+              Sam Smith
+            </Text>
+            <Text className="text-sm text-[#355362D9]">user@example.com</Text>
+          </View>
         </View>
       </View>
 
       <ScrollView className="flex-1 p-4">
         <Text className="text-xs text-gray-500">Global</Text>
-        <MenuItem
+        <MobileMenuItem
           icon={Icons.Home}
           title="Home"
           onPress={() => handleMenuPress("Home")}
         />
-        {/* <MenuItem
+        {/* <MobileMenuItem
           icon={Icons.Trends}
           title="Trends"
           onPress={() => handleMenuPress("Trends")}
         /> */}
-        <MenuItem
+        <MobileMenuItem
           icon={Icons.Clients}
           title="Clients"
           onPress={() => handleMenuPress("Clients")}
         />
-        {/* <MenuItem
+        {/* <MobileMenuItem
           icon={Icons.Chat}
           title="Messages"
           badge={1}
@@ -119,12 +121,12 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
         />
 
         <Text className="mt-[15px] text-xs text-gray-500">Tools</Text>
-        <MenuItem
+        <MobileMenuItem
           icon={Icons.Schedule}
           title="Schedule"
           onPress={() => handleMenuPress("Schedule")}
         />
-        <MenuItem
+        <MobileMenuItem
           icon={Icons.Resources}
           title="Resources"
           onPress={() => handleMenuPress("Resources")}

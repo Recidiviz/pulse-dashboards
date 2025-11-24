@@ -19,6 +19,8 @@
  * @see https://prettier.io/docs/configuration
  * @type {import("prettier").Config}
  */
-export const config = {
+const config = {
   plugins: ["prettier-plugin-tailwindcss"],
 };
+
+module.exports = config;

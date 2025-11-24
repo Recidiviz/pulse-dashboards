@@ -22,7 +22,7 @@ import Header from "../components/Header";
 
 const HomeScreen: React.FC = () => {
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1">
       <Header />
       <View className="flex-1 items-center justify-center">
         <Text className="text-xl font-semibold">Home Screen</Text>

@@ -15,14 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// enables fast refresh for web
-import "@expo/metro-runtime";
+import React from "react";
+import { Text, TouchableOpacity } from "react-native";
 
-import { registerRootComponent } from "expo";
+type DesktopMenuItemProps = {
+  title: string;
+  isActive: boolean;
+  onPress?: () => void;
+};
 
-import App from "~@meetings/app/App";
+const DesktopMenuItem = ({
+  title,
+  isActive,
+  onPress,
+}: DesktopMenuItemProps) => {
+  return (
+    <TouchableOpacity
+      className={`h-full flex-row items-center justify-between border-y-4 border-b-transparent ${isActive ? "border-[#006C67]" : "border-transparent"}`}
+      onPress={onPress}
+    >
+      <Text
+        className={`px-1 text-sm font-medium ${isActive ? "text-primary" : "text-[#355362D9]"}`}
+      >
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+};
 
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-registerRootComponent(App);
+export default DesktopMenuItem;

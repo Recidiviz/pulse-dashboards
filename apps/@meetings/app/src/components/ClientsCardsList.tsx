@@ -18,55 +18,48 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
-import {
-  Image,
-  ImageBackground,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ImageBackground, Text, View } from "react-native";
 
 import { Client } from "~@meetings/app/common/types";
 
 import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { getClientInitials } from "../utils/format";
 
 type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients">;
 
-interface ClientProps {
-  client: Client;
+interface ClientsProps {
+  clients: Client[];
 }
 
-const ClientCard = ({ client }: ClientProps) => {
+const ClientsCardsList = ({ clients }: ClientsProps) => {
   const navigation = useNavigation<ProfileNavProp>();
 
-  const getInitials = (name: string) => {
-    const parts = name.trim().split(" ");
-    return (parts[0][0] + (parts.pop() || "")[0]).toUpperCase();
-  };
-
-  return (
-    <View className="flex-row items-center border-b border-gray-300 px-2.5 py-3.5">
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate("Profile", {
-            client: {
-              personId: client.personId.toString(),
-              fullName: client.fullName,
-              displayPersonExternalId: client.displayPersonExternalId,
-              supervision: client.supervision,
-            },
-          })
-        }
-        className="flex-1 flex-row items-center"
-      >
+  return clients.map((client) => (
+    <View
+      key={client.personId}
+      className="flex-row items-center border-b border-gray-300 px-2.5 py-3.5"
+    >
+      <View className="flex-1 flex-row items-center">
         <ImageBackground
           source={Icons.BgAvatar}
-          className="mr-3 size-11 items-center justify-center"
-          style={{ borderRadius: 22, overflow: "hidden" }}
+          className="mr-3 size-11 items-center justify-center overflow-hidden rounded-full"
+          imageClassName="!size-11"
         >
-          <Text className="font-inter text-sm font-semibold text-white">
-            {getInitials(client.fullName)}
+          <Text
+            onPress={() =>
+              navigation.navigate("Profile", {
+                client: {
+                  personId: client.personId.toString(),
+                  fullName: client.fullName,
+                  displayPersonExternalId: client.displayPersonExternalId,
+                  supervision: client.supervision,
+                },
+              })
+            }
+            className="font-[inter] text-sm font-semibold text-white"
+          >
+            {getClientInitials(client.fullName)}
           </Text>
         </ImageBackground>
         <View className="flex-1">
@@ -74,11 +67,7 @@ const ClientCard = ({ client }: ClientProps) => {
             <Text className="mr-1.5 font-inter text-base font-semibold text-gray-900">
               {client.fullName}
             </Text>
-            <Image
-              source={Icons.ArrowRight}
-              className="size-3.5"
-              style={{ resizeMode: "contain" }}
-            />
+            <Image source={Icons.ArrowRight} className="!size-3.5" />
           </View>
 
           <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
@@ -90,9 +79,9 @@ const ClientCard = ({ client }: ClientProps) => {
             </Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </View>
     </View>
-  );
+  ));
 };
 
-export default ClientCard;
+export default ClientsCardsList;

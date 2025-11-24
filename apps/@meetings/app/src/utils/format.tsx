@@ -15,14 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// enables fast refresh for web
-import "@expo/metro-runtime";
+import { Client } from "../common/types";
 
-import { registerRootComponent } from "expo";
-
-import App from "~@meetings/app/App";
-
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-registerRootComponent(App);
+export const getClientInitials = (name: Client["fullName"]) => {
+  const parts = name.trim().split(" ");
+  return (parts[0][0] + (parts.pop() || "")[0]).toUpperCase();
+};
