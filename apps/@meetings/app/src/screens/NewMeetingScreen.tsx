@@ -169,7 +169,7 @@ const NewMeetingScreen = () => {
 
   const startRecording = async () => {
     await audioRecorder.prepareToRecordAsync();
-    audioRecorder.recordForDuration(MAX_RECORDING_SECONDS);
+    audioRecorder.record({ forDuration: MAX_RECORDING_SECONDS });
     setStatus("recording");
   };
   const stopRecording = () => setStatus("stopping");
@@ -199,6 +199,8 @@ const NewMeetingScreen = () => {
       startRecording();
     } else if (status === "recording") {
       setStatus("uploading");
+      // We shouldn't need to `await` here because we don't need the recording to have been uploaded
+      // until the meeting is ended.
       stopAndUploadRecording();
     }
   };
@@ -207,7 +209,10 @@ const NewMeetingScreen = () => {
     setStatus("ending");
     try {
       if (recorderState.isRecording) {
-        stopAndUploadRecording();
+        // Here we do want to make sure the recording is uploaded, otherwise we get a race condition
+        // where the upload might not have finished before we start stitching, which happens when
+        // we call endMeeting.
+        await stopAndUploadRecording();
       }
       await removeItem("note");
       await endMeetingMutation.mutateAsync({
