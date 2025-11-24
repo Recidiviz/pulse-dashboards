@@ -20,8 +20,14 @@ import { MemoryRouter } from "react-router-dom";
 import { MockInstance } from "vitest";
 
 import { Permission } from "~@jii/auth";
-import { RootStore, useRootStore, UserStore } from "~@jii/data";
+import {
+  RootStore,
+  SingleResidentContextProvider,
+  useRootStore,
+  UserStore,
+} from "~@jii/data";
 import { TRANSLATOR_MODE_LANGUAGE_CODE } from "~@jii/translation";
+import { ResidentRecord } from "~datatypes";
 
 import { NavMenu } from "./NavMenu";
 
@@ -167,5 +173,53 @@ describe("with translator permission", () => {
     await waitFor(() =>
       expect(rootStore.translationStore.i18n.language).toBe("en"),
     );
+  });
+});
+
+describe("resident info display", () => {
+  const mockResident: ResidentRecord = {
+    displayId: "12345",
+    personName: {
+      givenNames: "John",
+      surname: "Doe",
+      middleNames: "Q",
+    },
+    stateCode: "US_ID",
+    pseudonymizedId: "pseudo-123",
+  } as ResidentRecord;
+
+  test("shows resident name and DOC ID when context is provided", () => {
+    const contextValue = {
+      resident: mockResident,
+      opportunities: [],
+    };
+
+    render(
+      <MemoryRouter>
+        <SingleResidentContextProvider value={contextValue}>
+          <NavMenu />
+        </SingleResidentContextProvider>
+      </MemoryRouter>,
+    );
+
+    // open the menu
+    fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("DOC ID: 12345")).toBeInTheDocument();
+  });
+
+  test("does not show resident info when context is not provided", () => {
+    render(
+      <MemoryRouter>
+        <NavMenu />
+      </MemoryRouter>,
+    );
+
+    // open the menu
+    fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+
+    expect(screen.queryByText(/John/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/DOC ID/)).not.toBeInTheDocument();
   });
 });

@@ -95,17 +95,19 @@ export function App() {
                 <Route path={State.path}>
                   <Route index element={<PageState />} />
                   <Route element={<PageResidentsRoot />}>
-                    <Route element={<ResidentsLayoutRoute />}>
-                      <Route
-                        path={State.Resident.path}
-                        element={<PageSingleResidentRoot />}
-                      >
+                    <Route
+                      path={State.Resident.path}
+                      element={<PageSingleResidentRoot />}
+                    >
+                      <Route element={<ResidentsLayoutRoute />}>
                         <Route
                           index
                           path="*"
                           element={<StateSpecificRouter />}
                         />
                       </Route>
+                    </Route>
+                    <Route element={<ResidentsLayoutRoute />}>
                       <Route
                         path={State.Search.path}
                         element={<PageSearch />}

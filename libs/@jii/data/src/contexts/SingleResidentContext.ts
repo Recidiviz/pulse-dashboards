@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 
 import {
   IncarcerationOpportunityId,
@@ -42,4 +42,8 @@ export const SingleResidentContextProvider = context.Provider;
 
 export function useSingleResidentContext() {
   return useRequiredContext(context);
+}
+
+export function useSingleResidentContextOptional() {
+  return useContext(context);
 }

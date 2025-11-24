@@ -19,6 +19,7 @@ import { makeAutoObservable } from "mobx";
 
 import { SimpleNavLinkProps } from "~@jii/common-ui";
 import { RootStore, windowIsIframe } from "~@jii/data";
+import { ResidentRecord } from "~datatypes";
 
 export type MenuLinks = Array<SimpleNavLinkProps>;
 
@@ -26,8 +27,18 @@ export class NavMenuPresenter {
   constructor(
     public links: MenuLinks,
     private rootStore: RootStore,
+    public readonly resident?: ResidentRecord,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
+  }
+
+  get personDisplayId(): string | undefined {
+    return this.resident?.displayId;
+  }
+
+  get personName(): string | undefined {
+    if (!this.resident) return undefined;
+    return `${this.resident.personName.givenNames} ${this.resident.personName.surname}`;
   }
 
   get showLogout(): boolean {

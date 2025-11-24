@@ -31,9 +31,8 @@ import { NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { PAGE_PADDING, STICKY_HEADER_ZINDEX } from "~@jii/common-ui";
-import { useRootStore } from "~@jii/data";
-import { Icon } from "~design-system";
-import { Button, palette } from "~design-system";
+import { useRootStore, useSingleResidentContextOptional } from "~@jii/data";
+import { Button, Icon, palette, typography } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { MenuLinks, NavMenuPresenter } from "./NavMenuPresenter";
@@ -81,6 +80,28 @@ const MenuButton = styled(Button).attrs({ kind: "borderless", shape: "block" })`
   svg {
     margin-right: 0.5em;
   }
+`;
+
+const ResidentInfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.xs)};
+  padding-bottom: ${rem(spacing.sm)};
+  margin-bottom: ${rem(spacing.sm)};
+  border-bottom: 1px solid ${palette.slate30};
+  align-items: flex-end;
+`;
+
+const ResidentName = styled.div`
+  font-size: ${rem(16)};
+  font-weight: 600;
+  line-height: 1.2;
+  color: ${palette.pine3};
+`;
+
+const DocId = styled.div`
+  ${typography.Sans14}
+  color: ${palette.slate70};
 `;
 
 /**
@@ -140,6 +161,8 @@ const ManagedComponent: FC<{ presenter: NavMenuPresenter }> = observer(
       toggleTranslationMode,
       isTranslationMode,
       toggleActiveLanguage,
+      personDisplayId,
+      personName,
     } = presenter;
 
     // don't show a useless empty menu
@@ -165,6 +188,12 @@ const ManagedComponent: FC<{ presenter: NavMenuPresenter }> = observer(
             style={floatingStyles}
             {...getFloatingProps()}
           >
+            {(personName || personDisplayId) && (
+              <ResidentInfoWrapper>
+                {personName && <ResidentName>{personName}</ResidentName>}
+                {personDisplayId && <DocId>DOC ID: {personDisplayId}</DocId>}
+              </ResidentInfoWrapper>
+            )}
             {links.map((link) => (
               <NavLink key={link.to} {...link} />
             ))}
@@ -195,7 +224,8 @@ const ManagedComponent: FC<{ presenter: NavMenuPresenter }> = observer(
 );
 
 function usePresenter({ links = [] }: { links?: MenuLinks }) {
-  return new NavMenuPresenter(links, useRootStore());
+  const residentContext = useSingleResidentContextOptional();
+  return new NavMenuPresenter(links, useRootStore(), residentContext?.resident);
 }
 
 export const NavMenu = withPresenterManager({
