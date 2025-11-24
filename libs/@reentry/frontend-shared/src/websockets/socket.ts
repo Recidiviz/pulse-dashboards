@@ -33,16 +33,13 @@ export type SocketConnection = Socket<
 >;
 
 export function createSocket(url: string): SocketConnection {
-  // have to separate path from hostname because socket.io interprets
-  // URL paths as namespaces. we may use paths for the reverse proxy
-  // but they will be stripped out of the final request which will just go to /socket.io
-  const socketUrl = new URL(url);
-  const socketHost = socketUrl.origin;
-  const socketPathPrefix = socketUrl.pathname;
+  const socketUrl = new URL(`${url}/socket.io`);
 
-  return io(socketHost, {
+  // have to separate path from hostname because socket.io interprets
+  // URL paths as namespaces. we may use longer paths when reverse-proxying
+  return io(socketUrl.origin, {
     autoConnect: false,
-    path: `${socketPathPrefix === "/" ? "" : socketPathPrefix}/socket.io`,
+    path: socketUrl.pathname,
     transports: ["websocket"],
     // Add custom headers to ensure environment data is preserved during reconnections
     extraHeaders: {

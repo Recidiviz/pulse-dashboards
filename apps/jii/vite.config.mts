@@ -18,29 +18,13 @@
 /// <reference types='vitest' />
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import react from "@vitejs/plugin-react";
-import { defineConfig, ProxyOptions } from "vite";
+import { defineConfig } from "vite";
 
-// will use this proxy to connect with CPA staging backend, when the configuration exists
-const proxyOptions: Record<string, ProxyOptions> = {};
+// ignoring the nx rules here since this is just tooling,
+// and we don't want to import the entire library here anyway
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { REENTRY_BACKEND_PATH } from "../../libs/@jii/case-planning/src/constants";
 
-const cpaBackendUrl = process.env["VITE_CASE_PLANNING_BACKEND_URL"];
-const cpaProxyTargetUrl = process.env["CASE_PLANNING_PROXY_TARGET"];
-
-if (cpaBackendUrl && cpaProxyTargetUrl) {
-  const socketPathPrefix = new URL(cpaBackendUrl).pathname;
-  proxyOptions[socketPathPrefix] = {
-    target: cpaProxyTargetUrl,
-    // this gets around CORS restrictions for development
-    changeOrigin: true,
-    ws: true,
-    rewrite: (path) => path.replace(new RegExp(`^${socketPathPrefix}`), ""),
-    configure(proxy) {
-      proxy.on("proxyReqWs", (req) => {
-        req.setHeader("Origin", `${process.env["CASE_PLANNING_PROXY_ORIGIN"]}`);
-      });
-    },
-  };
-}
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/jii",
@@ -48,7 +32,27 @@ export default defineConfig(() => ({
   server: {
     port: 4200,
     host: "localhost",
-    proxy: proxyOptions,
+    // result here should be equivalent to that in apps/jii-reverse-proxy
+    proxy: {
+      [REENTRY_BACKEND_PATH]: {
+        target: process.env["CASE_PLANNING_PROXY_TARGET"],
+        ws: true,
+        changeOrigin: true,
+        rewrite: (path) => {
+          return path.replace(REENTRY_BACKEND_PATH, "");
+        },
+        configure(proxy) {
+          // not all environments need this necessarily, but use it if configured
+          const proxyOrigin = process.env["CASE_PLANNING_PROXY_ORIGIN"];
+          if (!proxyOrigin) return;
+
+          proxy.on("proxyReqWs", (req) => {
+            // this overrides CORS restrictions for development
+            req.setHeader("Origin", proxyOrigin);
+          });
+        },
+      },
+    },
   },
 
   preview: {

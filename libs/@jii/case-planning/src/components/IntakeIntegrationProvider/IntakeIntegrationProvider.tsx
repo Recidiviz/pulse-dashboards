@@ -24,11 +24,14 @@ import {
   createSocket,
 } from "~@reentry/frontend-shared";
 
+import { REENTRY_BACKEND_PATH } from "../../constants";
 import { Image } from "../Image";
 
-const INTAKE_BACKEND_URL = import.meta.env["VITE_CASE_PLANNING_BACKEND_URL"];
-const socket = createSocket(INTAKE_BACKEND_URL);
-const $api = createApiClient(INTAKE_BACKEND_URL);
+// client SDKs want a fully qualified URL, not just an absolute path. A proxy will handle this
+const REENTRY_BACKEND_URL = `${window.location.origin}${REENTRY_BACKEND_PATH}`;
+
+const socket = createSocket(REENTRY_BACKEND_URL);
+const $api = createApiClient(REENTRY_BACKEND_URL);
 
 const applicationContext = { socket, $api, Image };
 
