@@ -325,23 +325,6 @@ enum MethodOfUse {
   Other
 }
 
-enum MitigatingFactor {
-  NoPriorCriminalConvictions
-  SteadyEmployment
-  NoHistoryOfViolentBehavior
-  NoSubstanceAbuseIssues
-  NoDiagnosisOfMentalIllness
-  HistoryOfSuccessUnderSupervision
-  FinancialStability
-  HighSchoolDiplomaOrHigher
-  StrongSocialSupportNetwork
-  CloseFamilyTies
-  CurrentlyParticipatingInTreatment
-  EnrolledInEducationalOrVocationalTraining
-  ActiveInvolvementInCommunityActivities
-  Other
-}
-
 model Opportunity {
   id                  String              @id @default(cuid())
   lastUpdatedAt       DateTime
@@ -606,7 +589,7 @@ model SentencingAssessmentReport {
   // Needs and factors
   needsToBeAddressed NeedToBeAddressed[]
   otherNeedToBeAddressed String?
-  mitigatingFactors  MitigatingFactor[]
+  mitigatingFactors  ProtectiveFactor[]
   otherMitigatingFactor String?
 
   // Education

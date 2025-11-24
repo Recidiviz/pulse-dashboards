@@ -23,7 +23,6 @@ import {
   Division,
   Gender,
   LevelOfEducation,
-  MitigatingFactor,
   NeedToBeAddressed,
   OnboardingTopic,
   Plea,
@@ -31,7 +30,7 @@ import {
   ProtectiveFactor,
   ReportType,
   StateCode,
-  SubstanceUseDiagnosis,
+  SubstanceUseDiagnosis
 } from "~@sentencing/prisma/client";
 import {
   CaseCreateInput,
@@ -261,8 +260,8 @@ export const fakeSAR = {
   ],
   otherNeedToBeAddressed: null,
   mitigatingFactors: [
-    MitigatingFactor.SteadyEmployment,
-    MitigatingFactor.StrongSocialSupportNetwork,
+    ProtectiveFactor.SteadyEmployment,
+    ProtectiveFactor.StrongSocialSupportNetwork,
   ],
   otherMitigatingFactor: null,
   levelOfEducation: LevelOfEducation.HighSchoolDiplomaOrGED,
