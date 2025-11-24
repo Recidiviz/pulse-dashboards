@@ -36,6 +36,24 @@ if ((await $`git status --porcelain`).stdout.trim() !== "") {
   process.exit(1);
 }
 
+// Update gcloud ADC and Firebase CLI credentials if not already logged in.
+// We don't check the output of the command because without credentials,
+// something will fail later on.
+console.log("Checking gcloud ADC and Firebase CLI credentials...");
+try {
+  await $`gcloud auth application-default print-access-token --quiet`;
+} catch {
+  await $`gcloud auth login --update-adc`;
+}
+
+if (
+  (await $`firebase login:list`).stdout
+    .trim()
+    .includes("No authorized accounts")
+) {
+  await $`firebase login --reauth`;
+}
+
 // Get the most recent release
 console.log("Reading GitHub access token from Secret Manager...");
 const secretClient = new SecretManagerServiceClient({
