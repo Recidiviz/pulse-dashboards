@@ -15,9 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { startCase } from "lodash";
+
 import { Client } from "../common/types";
 
 export const getClientInitials = (name: Client["fullName"]) => {
   const parts = name.trim().split(" ");
   return (parts[0][0] + (parts.pop() || "")[0]).toUpperCase();
 };
+
+export const humanReadableTitleCase = (str: string): string =>
+  startCase(str.toLowerCase());

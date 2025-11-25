@@ -41,6 +41,7 @@ import MeetingSheet from "../components/MeetingSheet";
 import SubHeader from "../components/SubHeader";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
+import { humanReadableTitleCase } from "../utils/format";
 import {
   requestNotificationPermissions,
   sendNotification,
@@ -378,7 +379,8 @@ const NewMeetingScreen = () => {
           {client.fullName}
         </Text>
         <Text className="mb-4 text-center text-sm text-gray-600">
-          ID: {client.displayPersonExternalId} • {client.supervision}
+          ID: {client.displayPersonExternalId} •{" "}
+          {humanReadableTitleCase(client.supervision)}
         </Text>
 
         {RecordingControls}

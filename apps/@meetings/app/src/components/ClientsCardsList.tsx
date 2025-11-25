@@ -24,7 +24,7 @@ import { Client } from "~@meetings/app/common/types";
 
 import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
-import { getClientInitials } from "../utils/format";
+import { getClientInitials, humanReadableTitleCase } from "../utils/format";
 
 type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients">;
 
@@ -72,7 +72,7 @@ const ClientsCardsList = ({ clients }: ClientsProps) => {
 
           <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
             <Text className="text-xs text-gray-600">
-              ID: {client.displayPersonExternalId} • {client.supervision}
+              ID: {client.displayPersonExternalId} • {humanReadableTitleCase(client.supervision)}
             </Text>
             <Text className="text-xs text-gray-600">
               Last meeting {client.lastMeeting}

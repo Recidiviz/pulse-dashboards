@@ -61,7 +61,7 @@ const ClientsScreen = () => {
     return rawClients.map((c) => ({
       ...c,
       fullName: `${c.givenNames} ${c.surname}`,
-      supervision: "Probation", // TODO: remove hardcode
+      supervision: c.supervisionType,
       lastMeeting: "5d ago", // TODO: remove hardcode
     }));
   }, [rawClients]);

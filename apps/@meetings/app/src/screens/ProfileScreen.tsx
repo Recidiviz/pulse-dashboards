@@ -40,6 +40,7 @@ import MeetingCard from "../components/MeetingCard";
 import SearchBar from "../components/SearchBar";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
+import { humanReadableTitleCase } from "../utils/format";
 
 type NewMeetingNavProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -254,7 +255,8 @@ const ProfileScreen = () => {
               </Text>
 
               <Text className="text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
-                ID: {client.displayPersonExternalId} • {client.supervision}
+                ID: {client.displayPersonExternalId} •{" "}
+                {humanReadableTitleCase(client.supervision)}
               </Text>
             </View>
           )}

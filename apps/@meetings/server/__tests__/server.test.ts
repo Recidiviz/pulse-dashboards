@@ -32,6 +32,7 @@ describe("server", () => {
         surname: fakeClient.surname,
         displayPersonExternalId: fakeClient.displayPersonExternalId,
         activeMeetingId: fakeMeeting.id,
+        supervisionType: fakeClient.supervisionType,
       },
     ]);
   });

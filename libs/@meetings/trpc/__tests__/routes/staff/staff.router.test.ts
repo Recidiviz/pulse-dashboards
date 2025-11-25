@@ -36,6 +36,7 @@ describe("staff router", () => {
           surname: fakeClients[0].surname,
           displayPersonExternalId: fakeClients[0].displayPersonExternalId,
           activeMeetingId: fakeMeeting.id,
+          supervisionType: fakeClients[0].supervisionType,
         },
       ]);
     });
@@ -61,6 +62,7 @@ describe("staff router", () => {
           surname: fakeClients[0].surname,
           displayPersonExternalId: fakeClients[0].displayPersonExternalId,
           activeMeetingId: fakeMeeting.id,
+          supervisionType: fakeClients[0].supervisionType,
         },
       ]);
     });
@@ -85,6 +87,7 @@ describe("staff router", () => {
           surname: fakeClients[0].surname,
           displayPersonExternalId: fakeClients[0].displayPersonExternalId,
           activeMeetingId: fakeMeeting.id,
+          supervisionType: fakeClients[0].supervisionType,
         },
         {
           personId: fakeClients[1].personId,
@@ -92,6 +95,7 @@ describe("staff router", () => {
           surname: fakeClients[1].surname,
           displayPersonExternalId: fakeClients[1].displayPersonExternalId,
           activeMeetingId: null,
+          supervisionType: fakeClients[1].supervisionType,
         },
       ]);
     });

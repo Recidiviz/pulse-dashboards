@@ -29,6 +29,7 @@ export const staffRouter = router({
       surname: true,
       displayPersonExternalId: true,
       personId: true,
+      supervisionType: true,
       // Only get the latest active meeting, if it exists
       meetings: {
         select: { id: true },
