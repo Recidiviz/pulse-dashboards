@@ -17,7 +17,7 @@
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -47,6 +47,11 @@ type NewMeetingNavProp = NativeStackNavigationProp<
 >;
 type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
 
+enum MeetingsSort {
+  NEWEST_FIRST = "Date (Latest first)",
+  OLDEST_FIRST = "Date (Oldest first)",
+}
+
 const ProfileScreen = () => {
   const navigation = useNavigation<NewMeetingNavProp>();
   const route = useRoute<NewMeetingRouteProp>();
@@ -62,6 +67,7 @@ const ProfileScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<MeetingsSort>(MeetingsSort.NEWEST_FIRST);
   const scrollY = useRef(0);
 
   const {
@@ -103,10 +109,21 @@ const ProfileScreen = () => {
         : [...prev, filter],
     );
   };
+  
+  const sortedMeetings = useMemo(() => {
+    if (!rawMeetings) return [];
+    return rawMeetings.sort((a, b) => {
+      if (sortBy === MeetingsSort.NEWEST_FIRST) {
+        return new Date(b.startTime).getTime() - new Date(a.startTime).getTime();
+      } else {
+        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+      }
+    });
+  }, [sortBy, rawMeetings]);
 
   // Processed meetings and filter based on search query and active filters
   const processedMeetings =
-    rawMeetings?.map((m) => {
+    sortedMeetings.map((m) => {
       const start = new Date(m.startTime);
       const end = m.endTime ? new Date(m.endTime) : null;
 
@@ -158,7 +175,7 @@ const ProfileScreen = () => {
       );
 
     return matchesSearch && matchesFilters;
-  });
+  });  
 
   const createMeetingMutation = trpc.v1.client.createMeeting.useMutation();
   const handleCreateMeeting = async () => {
@@ -310,8 +327,8 @@ const ProfileScreen = () => {
           </Text>
           <Dropdown
             label="Sort by"
-            options={["Date (Latest first)", "Date (Oldest first)", "Duration"]}
-            onSelect={(value) => console.log("Sort by:", value)}
+            options={Object.values(MeetingsSort)}
+            onSelect={(value) => setSortBy(value as MeetingsSort)}
           />
         </View>
         {filteredMeetings.length === 0 ? (
