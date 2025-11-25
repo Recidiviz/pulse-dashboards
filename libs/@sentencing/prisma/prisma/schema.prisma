@@ -195,6 +195,12 @@ enum CaseStatus {
   Complete
 }
 
+enum SectionStatus {
+  Incomplete
+  Complete
+  Skipped
+}
+
 enum PriorCriminalHistoryCriterion {
   None
   Significant

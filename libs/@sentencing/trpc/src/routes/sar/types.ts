@@ -15,9 +15,61 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
 import type { Prisma } from "~@sentencing/prisma/client";
+import { sarMetadataSchema } from "~@sentencing/trpc/routes/sar/sar.schema";
+
+export type SARMetadata = z.infer<typeof sarMetadataSchema>;
 
 export type GetSARInput = Pick<
   Prisma.SentencingAssessmentReportWhereUniqueInput,
   "id"
 >;
+
+export type UpsertSARInput = Pick<
+  Prisma.SentencingAssessmentReportUpdateInput,
+  | "status"
+  | "address"
+  | "needsToBeAddressed"
+  | "otherNeedToBeAddressed"
+  | "mitigatingFactors"
+  | "otherMitigatingFactor"
+  | "levelOfEducation"
+  | "defendantStatement"
+  | "victimImpactStatement"
+  | "criminalHistorySummary"
+  | "employerAtOffense"
+  | "currentEmployer"
+  | "employmentSummary"
+  | "familyAndSocialSupportSummary"
+  | "homePlan"
+  | "housingSummary"
+  | "drugHistorySummary"
+  | "peerAssociatesSummary"
+  | "criminalAttitudesSummary"
+  | "responsivityAndBarriersSummary"
+  | "communityStrategyRecommendation"
+  | "institutionalStrategyRecommendation"
+> & {
+  ssn?: string | null;
+  motherName?: string | null;
+  fatherName?: string | null;
+  guardianName?: string | null;
+  metadata?: Prisma.InputJsonValue;
+  charges?: {
+    id: string;
+    prosecutingAttorney?: string | null;
+    defenseAttorney?: string | null;
+    pleaAgreement?: Prisma.ChargeUpdateInput["pleaAgreement"];
+    pleaDate?: Date | null;
+    sentencingDate?: Date | null;
+  }[];
+  drugHistories?: {
+    substance?: Prisma.DrugHistoryUpdateInput["substance"];
+    ageOfRegularUse?: number | null;
+    lastUse?: Date | null;
+    heaviestUse?: Prisma.DrugHistoryUpdateInput["heaviestUse"];
+    method?: Prisma.DrugHistoryUpdateInput["method"];
+  }[];
+};

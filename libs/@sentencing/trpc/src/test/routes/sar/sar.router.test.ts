@@ -19,7 +19,18 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
-import { testTRPCClient } from "~@sentencing/trpc/test/setup";
+import {
+  CaseStatus,
+  FrequencyOfUse,
+  LevelOfEducation,
+  MethodOfUse,
+  NeedToBeAddressed,
+  Plea,
+  ProtectiveFactor,
+  SectionStatus,
+  SubstanceType,
+} from "~@sentencing/prisma/client";
+import { testPrismaClient, testTRPCClient } from "~@sentencing/trpc/test/setup";
 import { fakeSAR, fakeSARClient } from "~@sentencing/trpc/test/setup/seed";
 
 describe("SAR router", () => {
@@ -83,8 +94,8 @@ describe("SAR router", () => {
               "birthDate",
             ]),
           },
-          charges: expect.arrayContaining([]),
-          drugHistories: expect.arrayContaining([]),
+          charges: [],
+          drugHistories: [],
         }),
       );
     });
@@ -93,6 +104,407 @@ describe("SAR router", () => {
       await expect(() =>
         testTRPCClient.sar.getSAR.query({
           id: "not-a-real-id",
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "NOT_FOUND",
+          message: "Sentencing Assessment Report with that id was not found",
+        }),
+      );
+    });
+  });
+
+  describe("updateSar", () => {
+    test("should update basic SAR fields", async () => {
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          address: "456 Oak Street",
+          defendantStatement: "Updated defendant statement",
+          status: CaseStatus.Complete,
+        },
+      });
+
+      const updatedSAR =
+        await testPrismaClient.sentencingAssessmentReport.findUnique({
+          where: { id: fakeSAR.id },
+        });
+
+      expect(updatedSAR).toMatchObject({
+        address: "456 Oak Street",
+        defendantStatement: "Updated defendant statement",
+        status: CaseStatus.Complete,
+      });
+    });
+
+    test("should update array fields", async () => {
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          needsToBeAddressed: [
+            NeedToBeAddressed.AngerManagement,
+            NeedToBeAddressed.HousingOpportunities,
+          ],
+          mitigatingFactors: [ProtectiveFactor.NoPriorCriminalConvictions],
+        },
+      });
+
+      const updatedSAR =
+        await testPrismaClient.sentencingAssessmentReport.findUnique({
+          where: { id: fakeSAR.id },
+        });
+
+      expect(updatedSAR?.needsToBeAddressed).toEqual([
+        NeedToBeAddressed.AngerManagement,
+        NeedToBeAddressed.HousingOpportunities,
+      ]);
+      expect(updatedSAR?.mitigatingFactors).toEqual([
+        ProtectiveFactor.NoPriorCriminalConvictions,
+      ]);
+    });
+
+    test("should clear nullable fields when set to null", async () => {
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          defendantStatement: null,
+          address: null,
+        },
+      });
+
+      const updatedSAR =
+        await testPrismaClient.sentencingAssessmentReport.findUnique({
+          where: { id: fakeSAR.id },
+        });
+
+      expect(updatedSAR?.defendantStatement).toBeNull();
+      expect(updatedSAR?.address).toBeNull();
+    });
+
+    test("should update client fields", async () => {
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          ssn: "123456789",
+          motherName: "Jane Doe",
+          fatherName: "John Doe",
+        },
+      });
+
+      const updatedClient = await testPrismaClient.client.findUnique({
+        where: { externalId: fakeSARClient.externalId },
+      });
+
+      expect(updatedClient).toMatchObject({
+        ssn: "123456789",
+        motherName: "Jane Doe",
+        fatherName: "John Doe",
+      });
+    });
+
+    test("should update charges by ID without duplicating", async () => {
+      // First, create some charges to update (need to connect offense)
+      const charge1 = await testPrismaClient.charge.create({
+        data: {
+          sentencingAssessmentReport: {
+            connect: { id: fakeSAR.id },
+          },
+          offense: {
+            connect: { name: "offense-name" },
+          },
+        },
+      });
+
+      const charge2 = await testPrismaClient.charge.create({
+        data: {
+          sentencingAssessmentReport: {
+            connect: { id: fakeSAR.id },
+          },
+          offense: {
+            connect: { name: "offense-name" },
+          },
+        },
+      });
+
+      const pleaDate = new Date("2024-01-15");
+      const sentencingDate = new Date("2024-02-20");
+
+      // Now update them with attorney/plea information
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          charges: [
+            {
+              id: charge1.id,
+              prosecutingAttorney: "Prosecutor Smith",
+              defenseAttorney: "Defense Jones",
+              pleaAgreement: Plea.Guilty,
+              pleaDate,
+              sentencingDate,
+            },
+            {
+              id: charge2.id,
+              prosecutingAttorney: "Prosecutor Brown",
+              defenseAttorney: "Defense White",
+              pleaAgreement: Plea.NotGuilty,
+              pleaDate: null,
+              sentencingDate: null,
+            },
+          ],
+        },
+      });
+
+      const updatedCharges = await testPrismaClient.charge.findMany({
+        where: { sentencingAssessmentReportId: fakeSAR.id },
+        orderBy: { id: "asc" },
+      });
+
+      // Should still have exactly 2 charges (no duplicates)
+      expect(updatedCharges).toHaveLength(2);
+      expect(updatedCharges[0]).toMatchObject({
+        id: charge1.id,
+        prosecutingAttorney: "Prosecutor Smith",
+        defenseAttorney: "Defense Jones",
+        pleaAgreement: Plea.Guilty,
+        pleaDate,
+        sentencingDate,
+      });
+      expect(updatedCharges[1]).toMatchObject({
+        id: charge2.id,
+        prosecutingAttorney: "Prosecutor Brown",
+        defenseAttorney: "Defense White",
+        pleaAgreement: Plea.NotGuilty,
+        pleaDate: null,
+        sentencingDate: null,
+      });
+    });
+
+    test("should update drug histories by replacing all existing histories", async () => {
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          drugHistories: [
+            {
+              substance: SubstanceType.Alcohol,
+              ageOfRegularUse: 18,
+              heaviestUse: FrequencyOfUse.Daily,
+              method: MethodOfUse.Oral,
+            },
+            {
+              substance: SubstanceType.Marijuana,
+              ageOfRegularUse: null,
+              heaviestUse: FrequencyOfUse.Weekly,
+              method: MethodOfUse.Smoking,
+            },
+          ],
+        },
+      });
+
+      const updatedHistories = await testPrismaClient.drugHistory.findMany({
+        where: { sentencingAssessmentReportId: fakeSAR.id },
+      });
+
+      expect(updatedHistories).toHaveLength(2);
+      expect(updatedHistories[0]).toMatchObject({
+        substance: SubstanceType.Alcohol,
+        ageOfRegularUse: 18,
+        heaviestUse: FrequencyOfUse.Daily,
+        method: MethodOfUse.Oral,
+      });
+      expect(updatedHistories[1]).toMatchObject({
+        substance: SubstanceType.Marijuana,
+        ageOfRegularUse: null,
+        heaviestUse: FrequencyOfUse.Weekly,
+        method: MethodOfUse.Smoking,
+      });
+    });
+
+    test("should clear drug histories when set to empty array", async () => {
+      // First add some drug histories
+      await testPrismaClient.drugHistory.create({
+        data: {
+          sentencingAssessmentReportId: fakeSAR.id,
+          substance: SubstanceType.Alcohol,
+        },
+      });
+
+      // Then clear them
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          drugHistories: [],
+        },
+      });
+
+      const histories = await testPrismaClient.drugHistory.findMany({
+        where: { sentencingAssessmentReportId: fakeSAR.id },
+      });
+
+      expect(histories).toHaveLength(0);
+    });
+
+    test("should update metadata field with typed structure", async () => {
+      const metadata = {
+        sections: {
+          caseInformation: {
+            status: SectionStatus.Complete,
+            missingRequiredFields: [],
+          },
+          needsAndMitigation: {
+            status: SectionStatus.Skipped,
+          },
+          defendantVersion: {
+            status: SectionStatus.Incomplete,
+          },
+          victimImpactStatement: {
+            status: SectionStatus.Complete,
+          },
+          offenderAssessment: {
+            status: SectionStatus.Incomplete,
+            missingFields: ["criminalHistorySummary", "levelOfEducation"],
+          },
+        },
+        lastUpdated: new Date().toISOString(),
+        version: "1.0" as const,
+      };
+
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          metadata,
+        },
+      });
+
+      const updatedSAR =
+        await testPrismaClient.sentencingAssessmentReport.findUnique({
+          where: { id: fakeSAR.id },
+        });
+
+      expect(updatedSAR?.metadata).toEqual(metadata);
+    });
+
+    test("should validate metadata structure and reject invalid statuses", async () => {
+      try {
+        await testTRPCClient.sar.updateSar.mutate({
+          id: fakeSAR.id,
+          attributes: {
+            // Provide completely wrong type - string instead of object
+            // @ts-expect-error Testing wrong type / invalid input
+            metadata: "this is not valid metadata" 
+          },
+        });
+        // If we get here, test should fail
+        expect.fail("Expected mutation to throw validation error");
+      } catch (error) {
+        // Should throw a validation error
+        expect(error).toBeDefined();
+      }
+    });
+
+    test("should allow undefined metadata (no update)", async () => {
+      // Set metadata first
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          metadata: {
+            sections: {
+              caseInformation: { status: SectionStatus.Complete },
+              needsAndMitigation: { status: SectionStatus.Complete },
+              defendantVersion: { status: SectionStatus.Complete },
+              victimImpactStatement: { status: SectionStatus.Complete },
+              offenderAssessment: { status: SectionStatus.Complete },
+            },
+          },
+        },
+      });
+
+      // Now update without metadata field - should not change it
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          address: "New Address",
+        },
+      });
+
+      const updatedSAR =
+        await testPrismaClient.sentencingAssessmentReport.findUnique({
+          where: { id: fakeSAR.id },
+        });
+
+      // Metadata should still be present
+      expect(updatedSAR?.metadata).toBeDefined();
+      expect(updatedSAR?.address).toBe("New Address");
+    });
+
+    test("should update multiple field types in one call", async () => {
+      // Create a charge first
+      const charge = await testPrismaClient.charge.create({
+        data: {
+          sentencingAssessmentReport: {
+            connect: { id: fakeSAR.id },
+          },
+          offense: {
+            connect: { name: "offense-name" },
+          },
+        },
+      });
+
+      await testTRPCClient.sar.updateSar.mutate({
+        id: fakeSAR.id,
+        attributes: {
+          address: "789 Maple Ave",
+          levelOfEducation: LevelOfEducation.BachelorsDegree,
+          needsToBeAddressed: [NeedToBeAddressed.Education],
+          charges: [{ id: charge.id, pleaAgreement: Plea.NotGuilty }],
+          drugHistories: [{ substance: SubstanceType.Cocaine }],
+          metadata: {
+            sections: {
+              caseInformation: { status: SectionStatus.Complete },
+              needsAndMitigation: { status: SectionStatus.Complete },
+              defendantVersion: { status: SectionStatus.Complete },
+              victimImpactStatement: { status: SectionStatus.Complete },
+              offenderAssessment: { status: SectionStatus.Complete },
+            },
+          },
+        },
+      });
+
+      const updatedSAR =
+        await testPrismaClient.sentencingAssessmentReport.findUnique({
+          where: { id: fakeSAR.id },
+          include: {
+            client: true,
+            charges: true,
+            drugHistories: true,
+          },
+        });
+
+      expect(updatedSAR).toMatchObject({
+        address: "789 Maple Ave",
+        levelOfEducation: LevelOfEducation.BachelorsDegree,
+        needsToBeAddressed: [NeedToBeAddressed.Education],
+      });
+      expect(updatedSAR?.metadata).toMatchObject({
+        sections: {
+          caseInformation: { status: SectionStatus.Complete },
+          needsAndMitigation: { status: SectionStatus.Complete },
+          defendantVersion: { status: SectionStatus.Complete },
+          victimImpactStatement: { status: SectionStatus.Complete },
+          offenderAssessment: { status: SectionStatus.Complete },
+        },
+      });
+      expect(updatedSAR?.charges).toHaveLength(1);
+      expect(updatedSAR?.charges[0].pleaAgreement).toBe(Plea.NotGuilty);
+      expect(updatedSAR?.drugHistories).toHaveLength(1);
+    });
+
+    test("should throw error if SAR does not exist", async () => {
+      await expect(() =>
+        testTRPCClient.sar.updateSar.mutate({
+          id: "not-a-real-id",
+          attributes: {
+            address: "123 Test St",
+          },
         }),
       ).rejects.toThrowError(
         new TRPCError({

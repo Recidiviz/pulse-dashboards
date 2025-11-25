@@ -20,21 +20,19 @@ import { z } from "zod";
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
 import {
   AsamCareRecommendation,
-  CaseStatus,
   Gender,
   MentalHealthDiagnosis,
-  NeedToBeAddressed,
   OnboardingTopic,
-  Plea,
   ProtectiveFactor,
   ReportType,
-  SubstanceUseDiagnosis,
+  SubstanceUseDiagnosis
 } from "~@sentencing/prisma/client";
 import {
   GetCaseInput,
   OpportunityNameIdentifier,
   UpdateCaseInput,
 } from "~@sentencing/trpc/routes/case/types";
+import { CaseStatusEnum, NeedsToBeAddressedEnum, PleaEnum } from "~@sentencing/trpc/routes/common/constants";
 
 export const getCaseInputSchema = z.object({
   id: z.string(),
@@ -45,12 +43,6 @@ const SubstanceUseDiagnosisEnum = z.nativeEnum(SubstanceUseDiagnosis);
 const AsamCareRecommendationEnum = z.nativeEnum(AsamCareRecommendation);
 
 const MentalHealthDiagnosisEnum = z.nativeEnum(MentalHealthDiagnosis);
-
-const PleaEnum = z.nativeEnum(Plea);
-
-const NeedsToBeAddressedEnum = z.nativeEnum(NeedToBeAddressed);
-
-const CaseStatusEnum = z.nativeEnum(CaseStatus);
 
 const OnboardingTopicEnum = z.nativeEnum(OnboardingTopic);
 
