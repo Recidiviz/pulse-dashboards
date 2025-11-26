@@ -45,7 +45,7 @@ const Separator = styled.span`
 const CurrentPage = styled.span`
   color: ${palette.slate85};
 `;
-type Page = {
+export type Page = {
   title: string;
   url: string;
 };

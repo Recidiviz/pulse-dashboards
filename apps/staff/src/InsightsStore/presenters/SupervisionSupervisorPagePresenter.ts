@@ -26,9 +26,10 @@ import {
 } from "~hydration-utils";
 
 import { hasNoLoginActivityInNumDays } from "../../core/InsightsStaffUsage/InsightsStaffUsageCard";
+import { Page } from "../../core/InsightsSupervisorPage/InsightsBreadcrumbs";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { HighlightedOfficersDetail } from "./types";
-import { getHighlightedOfficersByMetric } from "./utils";
+import { getBreadcrumbsPages, getHighlightedOfficersByMetric } from "./utils";
 
 export class SupervisionSupervisorPagePresenter implements Hydratable {
   protected hydrator: HydratesFromSource;
@@ -90,6 +91,10 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
 
   get labels() {
     return this.supervisionStore.labels;
+  }
+
+  get previousPages(): Page[] {
+    return getBreadcrumbsPages(this.userCanAccessAllSupervisors);
   }
 
   /**

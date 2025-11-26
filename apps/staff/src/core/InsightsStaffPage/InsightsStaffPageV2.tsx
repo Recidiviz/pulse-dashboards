@@ -36,7 +36,6 @@ import {
 } from "../InsightsStaffUsage/InsightsStaffUsageCard";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
 import ModelHydrator from "../ModelHydrator";
-import { insightsUrl } from "../views";
 import { InsightsOpportunitySummary } from "./InsightsOpportunitySummary";
 import { InsightsStaffOutcomesSection } from "./InsightsStaffOutcomesSection";
 import { InsightsStaffVitals } from "./InsightsStaffVitals";
@@ -54,12 +53,11 @@ const ManagedComponent = observer(function StaffPage({
     officerPseudoId,
     supervisorsInfo,
     goToSupervisorInfo,
-    labels,
-    userCanAccessAllSupervisors,
     numClientsOnCaseload,
     shouldShowAvgDailyCaseload,
     userCanViewUsageActivity,
     isCurrentOfficerUserRestrictedFromSupervisorsList,
+    previousPages,
   } = presenter;
 
   type InfoItem = NonNullable<
@@ -127,24 +125,7 @@ const ManagedComponent = observer(function StaffPage({
       contentsAboveTitle={
         supervisorsInfo &&
         goToSupervisorInfo && (
-          <InsightsBreadcrumbs
-            previousPages={[
-              ...(userCanAccessAllSupervisors
-                ? [
-                    {
-                      title: "All Supervisors",
-                      url: insightsUrl("supervisionSupervisorsList"),
-                    },
-                  ]
-                : []),
-              {
-                title: `${goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
-                url: insightsUrl("supervisionSupervisor", {
-                  supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
-                }),
-              },
-            ]}
-          >
+          <InsightsBreadcrumbs previousPages={previousPages}>
             {officerRecord?.displayName} Profile
           </InsightsBreadcrumbs>
         )

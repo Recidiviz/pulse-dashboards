@@ -27,7 +27,11 @@ import { castToError, Hydratable, HydratesFromSource } from "~hydration-utils";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import { ConfigLabels, OfficerOutcomesData } from "./types";
-import { getOfficerOutcomesData, isExcludedSupervisionOfficer } from "./utils";
+import {
+  getBreadcrumbsPages,
+  getOfficerOutcomesData,
+  isExcludedSupervisionOfficer,
+} from "./utils";
 
 export abstract class SupervisionOfficerPresenterBase
   extends SupervisionBasePresenter
@@ -90,6 +94,7 @@ export abstract class SupervisionOfficerPresenterBase
         hydrate: true,
         hydrationState: true,
         metricConfigsById: true,
+        previousPages: true,
       },
       { autoBind: true },
     );
@@ -164,6 +169,15 @@ export abstract class SupervisionOfficerPresenterBase
 
   get officerRecord() {
     return this.supervisionStore.officerRecord ?? this.fetchedOfficerRecord;
+  }
+
+  get previousPages() {
+    return getBreadcrumbsPages(
+      this.userCanAccessAllSupervisors,
+      this.labels,
+      this.goToSupervisorInfo,
+      this.officerRecord,
+    );
   }
 
   protected get officerOutcomes() {

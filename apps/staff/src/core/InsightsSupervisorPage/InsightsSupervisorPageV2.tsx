@@ -35,7 +35,6 @@ import { InsightsManagedUsageCard } from "../InsightsStaffUsage/InsightsStaffUsa
 import { InsightsManagedSupervisorRosterModal } from "../InsightsSupervisorRosterModal/InsightsManagedSupervisorRosterModal";
 import ModelHydrator from "../ModelHydrator";
 import { Spacer } from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
-import { insightsUrl } from "../views";
 import { InsightsBreadcrumbs } from "./InsightsBreadcrumbs";
 import { InsightsOutcomesModule } from "./InsightsOutcomesModule";
 import { InsightsSupervisorOpportunityDetailSection } from "./InsightsSupervisorOpportunityDetailSection";
@@ -91,6 +90,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     isUsageLoginActivityModuleDisplayed,
     pluralizeAcronym,
     labelIsAcronym,
+    previousPages,
   } = presenter;
 
   let teamTooltip;
@@ -168,18 +168,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       hasSupervisionInfoModal={false}
       contentsAboveTitle={
         userCanAccessAllSupervisors && (
-          <InsightsBreadcrumbs
-            previousPages={
-              userCanAccessAllSupervisors
-                ? [
-                    {
-                      title: "All Supervisors",
-                      url: insightsUrl("supervisionSupervisorsList"),
-                    },
-                  ]
-                : []
-            }
-          >
+          <InsightsBreadcrumbs previousPages={previousPages}>
             {supervisorInfo?.displayName}
           </InsightsBreadcrumbs>
         )

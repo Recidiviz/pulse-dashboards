@@ -22,10 +22,17 @@ import {
   MetricConfig,
   SupervisionOfficer,
   SupervisionOfficerOutcomes,
+  SupervisionOfficerSupervisor,
 } from "~datatypes";
 
+import { Page } from "../../core/InsightsSupervisorPage/InsightsBreadcrumbs";
+import { insightsUrl } from "../../core/views";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { HighlightedOfficersDetail, OfficerOutcomesData } from "./types";
+import {
+  ConfigLabels,
+  HighlightedOfficersDetail,
+  OfficerOutcomesData,
+} from "./types";
 
 export const THIRTY_SECONDS = 1000 * 30;
 export const TEN_SECONDS = 1000 * 10;
@@ -164,4 +171,39 @@ export function getHighlightedOfficersByMetric(
       return;
     }),
   );
+}
+
+export function getBreadcrumbsPages(
+  userCanAccessAllSupervisors: boolean,
+  labels?: Pick<ConfigLabels, "supervisionSupervisorLabel">,
+  supervisorInfo?: SupervisionOfficerSupervisor,
+  officerInfo?: SupervisionOfficer,
+): Page[] {
+  const previousPages: Page[] = [];
+
+  if (userCanAccessAllSupervisors) {
+    previousPages.push({
+      title: "All Supervisors",
+      url: insightsUrl("supervisionSupervisorsList"),
+    });
+  }
+
+  if (supervisorInfo && labels) {
+    previousPages.push({
+      title: `${supervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
+      url: insightsUrl("supervisionSupervisor", {
+        supervisorPseudoId: supervisorInfo.pseudonymizedId,
+      }),
+    });
+  }
+  if (officerInfo) {
+    previousPages.push({
+      title: `${officerInfo.displayName} Profile`,
+      url: insightsUrl("supervisionStaff", {
+        officerPseudoId: officerInfo.pseudonymizedId,
+      }),
+    });
+  }
+
+  return previousPages;
 }

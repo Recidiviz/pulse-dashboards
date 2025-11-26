@@ -61,9 +61,9 @@ const ManagedComponent = observer(function MetricPage({
     timePeriod,
     labels,
     methodologyUrl,
-    userCanAccessAllSupervisors,
     ctaText,
     numClientsOnCaseload,
+    previousPages,
   } = presenter;
 
   const supervisorLinkProps = goToSupervisorInfo && {
@@ -191,34 +191,7 @@ const ManagedComponent = observer(function MetricPage({
       pageDescription={pageDescription}
       infoItems={infoItems}
       contentsAboveTitle={
-        <InsightsBreadcrumbs
-          previousPages={[
-            ...(userCanAccessAllSupervisors
-              ? [
-                  {
-                    title: "All Supervisors",
-                    url: insightsUrl("supervisionSupervisorsList"),
-                  },
-                ]
-              : []),
-            ...(goToSupervisorInfo
-              ? [
-                  {
-                    title: `${goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
-                    url: insightsUrl("supervisionSupervisor", {
-                      supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
-                    }),
-                  },
-                ]
-              : []),
-            {
-              title: `${officerOutcomesData.displayName} Profile`,
-              url: insightsUrl("supervisionStaff", {
-                officerPseudoId: officerOutcomesData.pseudonymizedId,
-              }),
-            },
-          ]}
-        >
+        <InsightsBreadcrumbs previousPages={previousPages}>
           {toTitleCase(eventName)} Metric
         </InsightsBreadcrumbs>
       }

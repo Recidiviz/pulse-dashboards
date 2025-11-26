@@ -30,7 +30,6 @@ import { Body } from "../InsightsPageLayout/InsightsPageLayout";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
 import ModelHydrator from "../ModelHydrator";
 import { HydratedOpportunityPersonList } from "../OpportunityCaseloadView/HydratedOpportunityPersonList";
-import { insightsUrl } from "../views";
 
 const Wrapper = styled.div`
   display: flex;
@@ -46,13 +45,11 @@ export const OpportunityPageWithPresenter = observer(
   }) {
     const {
       officerRecord,
-      goToSupervisorInfo,
-      labels,
-      userCanAccessAllSupervisors,
       opportunityType,
       opportunities,
       opportunityLabel,
       opportunitiesByType,
+      previousPages,
     } = presenter;
 
     // If the presenter is hydrated and we're on an opportunity page, this stuff should
@@ -71,34 +68,7 @@ export const OpportunityPageWithPresenter = observer(
       <InsightsPageLayout
         limitedWidth={false}
         contentsAboveTitle={
-          <InsightsBreadcrumbs
-            previousPages={[
-              ...(userCanAccessAllSupervisors
-                ? [
-                    {
-                      title: "All Supervisors",
-                      url: insightsUrl("supervisionSupervisorsList"),
-                    },
-                  ]
-                : []),
-              ...(goToSupervisorInfo
-                ? [
-                    {
-                      title: `${goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
-                      url: insightsUrl("supervisionSupervisor", {
-                        supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
-                      }),
-                    },
-                  ]
-                : []),
-              {
-                title: `${officerRecord.displayName} Profile`,
-                url: insightsUrl("supervisionStaff", {
-                  officerPseudoId: officerRecord.pseudonymizedId,
-                }),
-              },
-            ]}
-          >
+          <InsightsBreadcrumbs previousPages={previousPages}>
             {opportunityLabel}
           </InsightsBreadcrumbs>
         }

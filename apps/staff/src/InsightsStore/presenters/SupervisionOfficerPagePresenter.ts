@@ -19,12 +19,13 @@ import { makeObservable, override } from "mobx";
 
 import { HydratesFromSource } from "~hydration-utils";
 
+import { Page } from "../../core/InsightsSupervisorPage/InsightsBreadcrumbs";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
-import { isExcludedSupervisionOfficer } from "./utils";
+import { getBreadcrumbsPages, isExcludedSupervisionOfficer } from "./utils";
 
 export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonStore(
   SupervisionOfficerPresenterBase,
@@ -48,6 +49,7 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
       numClientsOnCaseload: true,
       hydrate: override,
       hydrationState: override,
+      previousPages: override,
     });
 
     this.personFieldsToHydrate = ["opportunityManager"];
@@ -94,12 +96,24 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
     );
   }
 
+  get previousPages(): Page[] {
+    return getBreadcrumbsPages(
+      this.userCanAccessAllSupervisors,
+      this.labels,
+      this.goToSupervisorInfo,
+    );
+  }
+
   get userCanViewUsageActivity(): boolean {
     return this.supervisionStore.userCanViewUsageActivity;
   }
 
   protected expectMetricsPopulated() {
-    if (isExcludedSupervisionOfficer(this.fetchedOfficerRecord) || this.isCurrentOfficerUserRestrictedFromSupervisorsList) return;
+    if (
+      isExcludedSupervisionOfficer(this.fetchedOfficerRecord) ||
+      this.isCurrentOfficerUserRestrictedFromSupervisorsList
+    )
+      return;
     super.expectMetricsPopulated();
   }
 
