@@ -24,6 +24,9 @@ import { Task } from "../Task";
 import { SupervisionTasksCaseType } from "../types";
 import { US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE } from "../utils";
 
+/**
+ * TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
+ */
 class UsIdContactTask extends Task<"contact"> {
   displayName = "Contact";
   vitalsMetricId = "timely_contact" as const;

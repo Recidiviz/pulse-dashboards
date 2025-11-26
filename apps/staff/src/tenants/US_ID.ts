@@ -26,8 +26,12 @@ import {
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import UsIdContactTask from "../WorkflowsStore/Task/US_ID/UsIdContactTask";
 import UsIdEmploymentVerificationTask from "../WorkflowsStore/Task/US_ID/UsIdEmploymentVerificationTask";
+import UsIdEmploymentVerificationTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdEmploymentVerificationTaskV2";
+import UsIdFaceToFaceContactTask from "../WorkflowsStore/Task/US_ID/UsIdFaceToFaceContactTask";
 import UsIdHomeVisitTask from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTask";
+import UsIdHomeVisitTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTaskV2";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdRiskAssessmentTask";
+import UsIdRiskAssessmentTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdRiskAssessmentTaskV2";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const US_ID_CONFIG = {
@@ -47,18 +51,38 @@ const US_ID_CONFIG = {
     pageDescriptionMarkdown:
       "The clients below might have upcoming requirements this month. Hiding a below task will not change an officer's timeliness percentage in the Operations metrics.",
     tasks: {
+      usIdFaceToFaceContact: {
+        constructor: UsIdFaceToFaceContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usIdHomeVisit: {
+        constructor: UsIdHomeVisitTaskV2,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usIdEmploymentVerification: {
+        constructor: UsIdEmploymentVerificationTaskV2,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usIdRiskAssessment: {
+        constructor: UsIdRiskAssessmentTaskV2,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
       assessment: {
         constructor: UsIdRiskAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
+      // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
       contact: {
         constructor: UsIdContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
+      // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
       homeVisit: {
         constructor: UsIdHomeVisitTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
+      // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
       employment: {
         constructor: UsIdEmploymentVerificationTask,
         snoozeForOptionsInDays: [7, 30, 90],

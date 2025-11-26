@@ -19,6 +19,8 @@
 // https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/pipeline/utils/state_utils/us_id/us_id_supervision_compliance.py
 import { SupervisionTasksCaseType } from "./types";
 
+// TODO (#10615): Delete this file when UsIdTasksV2 is fully rolled out.
+
 type ContactStandard = { contacts: number; days: number };
 
 export const US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE: Record<

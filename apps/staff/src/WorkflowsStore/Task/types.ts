@@ -121,6 +121,15 @@ type UsTxAssessmentDetails = {
   dueAssessmentType?: string;
 };
 
+export type UsIdTaskBaseDetails = {
+  contactCadence: string;
+  lastContactDate: string | null;
+};
+
+type UsIdRiskAssessmentTaskV2 = UsIdTaskBaseDetails & {
+  riskLevel: string | null;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type CheckSupervisionTaskDetailsMappingType = Expect<
   Extends<
@@ -134,10 +143,18 @@ export const SUPERVISION_NEED_TYPES = ["employmentNeed"] as const;
 export type SupervisionNeedType = (typeof SUPERVISION_NEED_TYPES)[number];
 
 export const SUPERVISION_TASK_TYPES = [
+  // TODO(#10615): Remove 'homeVisit' v1 (keep v2, usIdHomeVisit) task type when UsIdTasksV2 is fully rolled out.
   "homeVisit",
+  "usIdHomeVisit",
+  // TODO(#10615): Remove 'assessment' v1 (keep v2, usIdRiskAssessment) task type when UsIdTasksV2 is fully rolled out.
   "assessment",
+  "usIdRiskAssessment",
+  // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
   "contact",
+  "usIdFaceToFaceContact",
+  // TODO(#10615): Remove 'employment' v1 (keep v2, usIdEmploymentVerification) task type when UsIdTasksV2 is fully rolled out.
   "employment",
+  "usIdEmploymentVerification",
   "usMoEmploymentVerification",
   "usMoPositiveHomeVisit",
   "usMoInPersonContact",
@@ -165,6 +182,7 @@ export type SupervisionTaskType = (typeof SUPERVISION_TASK_TYPES)[number];
 export type SupervisionDetails =
   | UsIdHomeVisitDetails
   | UsIdAssessmentDetails
+  | UsIdTaskBaseDetails
   | UsIdContactDetails
   | UsIdEmploymentDetails
   | UsMoTaskDetails
@@ -176,10 +194,18 @@ export type SupervisionDetails =
   | UsTxAssessmentDetails;
 
 export type SupervisionDetailsForTask = {
+  // TODO(#10615): Remove 'homeVisit' v1 (keep v2, usIdHomeVisit) task type when UsIdTasksV2 is fully rolled out.
   homeVisit: UsIdHomeVisitDetails;
+  usIdHomeVisit: UsIdTaskBaseDetails;
+  // TODO(#10615): Remove 'assessment' v1 (keep v2, usIdRiskAssessment) task type when UsIdTasksV2 is fully rolled out.
   assessment: UsIdAssessmentDetails;
+  // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
+  usIdRiskAssessment: UsIdRiskAssessmentTaskV2;
   contact: UsIdContactDetails;
+  // TODO(#10615): Remove 'employment' v1 (keep v2, usIdEmploymentVerification) task type when UsIdTasksV2 is fully rolled out.
+  usIdFaceToFaceContact: UsIdTaskBaseDetails;
   employment: UsIdEmploymentDetails;
+  usIdEmploymentVerification: UsIdTaskBaseDetails;
   usMoPositiveHomeVisit: UsMoTaskDetails;
   usMoEmploymentVerification: UsMoTaskDetails;
   usMoInPersonContact: UsMoTaskDetails;
@@ -258,6 +284,12 @@ export type UsTxSimpleContactTaskType =
 export type UsTxAgnosticContactTaskType =
   | "usTxTypeAgnosticContact"
   | "usTxVirtualOrOfficeContact";
+
+export type UsIdAgnosticTaskType =
+  | "usIdFaceToFaceContact"
+  | "usIdHomeVisit"
+  | "usIdEmploymentVerification"
+  | "usIdRiskAssessment";
 
 type TasksStateCode = {
   [K in keyof SpecificTenantConfigs]: SpecificTenantConfigs[K] extends {

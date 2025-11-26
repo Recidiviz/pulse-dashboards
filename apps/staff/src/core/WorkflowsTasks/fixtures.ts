@@ -47,11 +47,17 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   DUE_THIS_MONTH: "Due this month",
   DUE_NEXT_MONTH: "Due next month",
   HIDDEN: "Hidden",
+  // TODO(#10615): START - Remove the v1 task labels when UsIdTasksV2 is fully rolled out.
   assessment: "Risk Assessments",
   contact: "Contacts",
   homeVisit: "Home Contacts",
   employment: "Employment Verification",
+  // TODO(#10615): END - Remove the v1 task labels when UsIdTasksV2 is fully rolled out.
   employmentNeed: "Unemployed",
+  usIdEmploymentVerification: "Employment Verifications",
+  usIdFaceToFaceContact: "Contacts",
+  usIdHomeVisit: "Home Visits",
+  usIdRiskAssessment: "Risk Assessments",
   usMoEmploymentVerification: "Employment Verifications",
   usMoPositiveHomeVisit: "Positive Home Visits",
   usMoInPersonContact: "In-Person Contacts",
