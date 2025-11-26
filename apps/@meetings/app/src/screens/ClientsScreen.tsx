@@ -29,7 +29,7 @@ import { Client } from "~@meetings/app/common/types";
 
 import Icons from "../../assets/icons";
 import ClientsCardsList from "../components/ClientsCardsList";
-import ClientsCardsTable from "../components/ClientsCardsTable.web";
+import ClientsTable from "../components/ClientsTable.web";
 import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import SearchBar from "../components/SearchBar";
@@ -106,14 +106,16 @@ const ClientsScreen = () => {
               </Text>
             </View>
             <View className="mt-3 grow flex-row items-center justify-end">
-              <SearchBar
-                value={search}
-                onChange={setSearch}
-                placeholder="Search clients by name"
-                onExit={() => {
-                  setSearch("");
-                }}
-              />
+              <View className="w-full sm:max-w-[300px]">
+                <SearchBar
+                  value={search}
+                  onChange={setSearch}
+                  placeholder="Search clients by name"
+                  onExit={() => {
+                    setSearch("");
+                  }}
+                />
+              </View>
               {/* <TouchableOpacity className="ml-2 size-10 items-center justify-center rounded-xl border border-gray-300 bg-gray-50">
               <Image
                 source={Icons.Filter}
@@ -123,7 +125,7 @@ const ClientsScreen = () => {
             </TouchableOpacity> */}
             </View>
           </View>
-          <View className="z-10 flex-row items-center justify-between px-4">
+          <View className="z-10 my-4 flex-row items-center justify-between px-4">
             <Text className="text-sm text-[#707070]">
               {filteredClients.length} client
               {filteredClients.length > 1 ? "s" : ""}
@@ -164,7 +166,7 @@ const ClientsScreen = () => {
                       <ClientsCardsList clients={filteredClients} />
                     </View>
                     <View className="hidden md:block">
-                      <ClientsCardsTable clients={filteredClients} />
+                      <ClientsTable clients={filteredClients} />
                     </View>
                   </View>
                 ),

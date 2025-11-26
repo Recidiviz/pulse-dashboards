@@ -24,5 +24,13 @@ export const getClientInitials = (name: Client["fullName"]) => {
   return (parts[0][0] + (parts.pop() || "")[0]).toUpperCase();
 };
 
+export const formatDuration = (duration: string) => {
+  const [hours, minutes, seconds] = duration.split(":").map(Number);
+
+  if (hours > 0) return `${hours}h`;
+  if (minutes > 0) return `${minutes}m`;
+  return `${seconds}s`;
+};
+
 export const humanReadableTitleCase = (str: string): string =>
   startCase(str.toLowerCase());

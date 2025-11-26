@@ -25,14 +25,18 @@ import {
   OnboardingTopic,
   ProtectiveFactor,
   ReportType,
-  SubstanceUseDiagnosis
+  SubstanceUseDiagnosis,
 } from "~@sentencing/prisma/client";
 import {
   GetCaseInput,
   OpportunityNameIdentifier,
   UpdateCaseInput,
 } from "~@sentencing/trpc/routes/case/types";
-import { CaseStatusEnum, NeedsToBeAddressedEnum, PleaEnum } from "~@sentencing/trpc/routes/common/constants";
+import {
+  CaseStatusEnum,
+  NeedsToBeAddressedEnum,
+  PleaEnum,
+} from "~@sentencing/trpc/routes/common/constants";
 
 export const getCaseInputSchema = z.object({
   id: z.string(),

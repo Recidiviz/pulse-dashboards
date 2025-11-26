@@ -65,10 +65,10 @@ export const sarRouter = router({
           client: {
             select: {
               fullName: true,
-              gender: true,  // Returned for display but not editable (state data)
+              gender: true, // Returned for display but not editable (state data)
               ssn: true,
-              externalId: true, 
-              birthDate: true,  // Returned for display but not editable (state data)
+              externalId: true,
+              birthDate: true, // Returned for display but not editable (state data)
             },
           },
         },

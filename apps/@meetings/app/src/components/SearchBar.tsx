@@ -37,7 +37,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <View
-      className={`flex-1 flex-row items-center rounded-xl border px-3 sm:max-w-[300px] ${
+      className={`w-full flex-1 flex-row items-center rounded-xl border px-3 ${
         isFocused ? "border-primary" : "border-gray-300"
       } bg-gray-50`}
     >

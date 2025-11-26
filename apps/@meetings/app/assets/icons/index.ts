@@ -19,14 +19,16 @@ import ArrowDown from "./arrow-down.png";
 import ArrowLeft from "./arrow-left.png";
 import ArrowRight from "./arrow-right.png";
 import ArrowUp from "./arrow-up.png";
+import ArrowUpGreen from "./arrow-up-green.png";
 import Bell from "./bell.png";
 import BgAvatar from "./bg-avatar.png";
 import Brand from "./brand.png";
-import Schedule from "./calendar.png";
+import Calendar from "./calendar.png";
 import Chat from "./chat.png";
 import Clients from "./clients.png";
 import Clock from "./clock.png";
 import Cross from "./cross.png";
+import CrossRound from "./cross-round.png";
 import Filter from "./filter.png";
 import Home from "./home.png";
 import LeftIcon from "./left-icon.png";
@@ -42,7 +44,9 @@ import Pause from "./pause.png";
 import Play from "./play.png";
 import Plus from "./plus.png";
 import Record from "./record.png";
+import Reset from "./reset.png";
 import Resources from "./resources.png";
+import Schedule from "./schedule.png";
 import Search from "./search.png";
 import Share from "./share.png";
 import Stop from "./stop.png";
@@ -55,6 +59,7 @@ const Icons = {
   Clients,
   Chat,
   Schedule,
+  Calendar,
   Resources,
   ArrowDown,
   ArrowRight,
@@ -81,6 +86,9 @@ const Icons = {
   Clock,
   LockBig,
   LockSmall,
+  Reset,
+  CrossRound,
+  ArrowUpGreen,
 };
 
 export default Icons;

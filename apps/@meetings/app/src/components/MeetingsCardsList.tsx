@@ -26,13 +26,13 @@ import { RootStackParamList } from "../navigation/DrawerNavigator";
 type MeetingNavProp = NativeStackNavigationProp<RootStackParamList, "Meeting">;
 
 type MeetingCardProps = {
-  meeting: {
+  meetings: {
     id: string;
     date: string;
     time: string;
     duration: string | null;
     content: string;
-  };
+  }[];
   client: {
     personId: string;
     fullName: string;
@@ -41,12 +41,13 @@ type MeetingCardProps = {
   };
 };
 
-const MeetingCard = ({ meeting, client }: MeetingCardProps) => {
+const MeetingsCardsList = ({ meetings, client }: MeetingCardProps) => {
   const navigation = useNavigation<MeetingNavProp>();
   // const [isExpanded, setIsExpanded] = useState(false);
 
-  return (
+  return meetings.map((meeting, index) => (
     <TouchableOpacity
+      key={`${meeting.id}-${index}`}
       activeOpacity={0.9}
       onPress={() => navigation.navigate("Meeting", { meeting, client })}
       className="mb-3 rounded-2xl bg-white p-4 shadow-sm"
@@ -57,7 +58,7 @@ const MeetingCard = ({ meeting, client }: MeetingCardProps) => {
         </Text>
         <Image
           source={Icons.ArrowRight}
-          className="ml-2 size-3.5"
+          className="ml-2 !size-3.5"
           style={{ resizeMode: "contain" }}
         />
       </View>
@@ -82,13 +83,13 @@ const MeetingCard = ({ meeting, client }: MeetingCardProps) => {
           </Text>
           <Image
             source={isExpanded ? Icons.ArrowUp : Icons.ArrowDown}
-            className="size-3.5"
+            className="!size-3.5"
             style={{ resizeMode: "contain" }}
           />
         </TouchableOpacity>
       </View> */}
     </TouchableOpacity>
-  );
+  ));
 };
 
-export default MeetingCard;
+export default MeetingsCardsList;

@@ -204,7 +204,7 @@ const MeetingScreen = () => {
         className="absolute inset-x-0 top-0 z-50 flex flex-col rounded-b-[24px] bg-white px-4"
         style={[{ paddingTop: insets.top }, headerStyle]}
       >
-        <View className="flex flex-row items-center justify-between h-16">
+        <View className="flex h-16 flex-row items-center justify-between">
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image
               source={Icons.ArrowLeft}
@@ -217,10 +217,10 @@ const MeetingScreen = () => {
             className="flex flex-col items-center gap-0.5"
             style={[topDateStyle]}
           >
-            <Text className="text-primary text-lg font-semibold leading-[22px] font-inter">
+            <Text className="font-inter text-lg font-semibold leading-[22px] text-primary">
               {meetingDate}
             </Text>
-            <Text className="text-sm font-normal leading-[16px] text-gray-500 font-inter">
+            <Text className="font-inter text-sm font-normal leading-[16px] text-gray-500">
               {client.fullName}
             </Text>
           </Animated.View>
@@ -244,13 +244,13 @@ const MeetingScreen = () => {
           </Animated.View>
 
           <Animated.View
-            className="flex flex-row items-baseline gap-x-2 gap-y-1 flex-wrap"
+            className="flex flex-row flex-wrap items-baseline gap-x-2 gap-y-1"
             style={[userNameStyle]}
           >
-            <Text className="text-primary text-base font-semibold leading-[20px] font-inter">
+            <Text className="font-inter text-base font-semibold leading-[20px] text-primary">
               {client.fullName}
             </Text>
-            <Text className="text-sm font-normal leading-[16px] text-gray-500 font-inter">
+            <Text className="font-inter text-sm font-normal leading-[16px] text-gray-500">
               ID: {client.displayPersonExternalId} •{" "}
               {humanReadableTitleCase(client.supervision)}
             </Text>
@@ -259,7 +259,7 @@ const MeetingScreen = () => {
             className="flex flex-col gap-2"
             style={[bottomDateStyle]}
           >
-            <Text className="text-primary text-xl font-semibold leading-[24px] font-inter">
+            <Text className="font-inter text-xl font-semibold leading-[24px] text-primary">
               Meeting: {meetingDate}
             </Text>
             <View className="flex flex-row items-center gap-1">
@@ -268,7 +268,7 @@ const MeetingScreen = () => {
                 className="size-3"
                 resizeMode="contain"
               />
-              <Text className="text-sm font-normal leading-[14px] text-gray-500 font-inter">
+              <Text className="font-inter text-sm font-normal leading-[14px] text-gray-500">
                 {time}
                 {duration ? ` • ${duration}` : ""}
               </Text>

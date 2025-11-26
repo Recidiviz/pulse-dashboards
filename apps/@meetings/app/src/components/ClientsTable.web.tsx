@@ -1,0 +1,142 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React from "react";
+import {
+  Image,
+  ImageBackground,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { Client } from "~@meetings/app/common/types";
+
+import Icons from "../../assets/icons";
+import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { getClientInitials } from "../utils/format";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadCell,
+  TableHeadRow,
+  TableRow,
+} from "./Table.web";
+
+type ProfileNavProp = StackNavigationProp<RootStackParamList, "Clients">;
+
+interface ClientsProps {
+  clients: Client[];
+}
+
+const ClientsTable = ({ clients }: ClientsProps) => {
+  const navigation = useNavigation<ProfileNavProp>();
+
+  return (
+    <Table>
+      <TableHead>
+        <TableHeadRow>
+          <TableHeadCell>NAME</TableHeadCell>
+          <TableHeadCell>ID</TableHeadCell>
+          <TableHeadCell>STATUS</TableHeadCell>
+          <TableHeadCell>LAST MEETING</TableHeadCell>
+          <TableHeadCell></TableHeadCell>
+        </TableHeadRow>
+      </TableHead>
+      <TableBody>
+        {clients.map((client) => (
+          <TableRow key={client.personId}>
+            <TableCell>
+              <View className="flex h-full flex-row items-center gap-3">
+                <ImageBackground
+                  source={Icons.BgAvatar}
+                  className="size-11 items-center justify-center overflow-hidden rounded-full"
+                  imageClassName="!size-11"
+                >
+                  <Text className="font-['Public_Sans'] text-base font-semibold text-white">
+                    {getClientInitials(client.fullName)}
+                  </Text>
+                </ImageBackground>
+                <Text className="font-inter text-base font-medium text-primary">
+                  {client.fullName}
+                </Text>
+              </View>
+            </TableCell>
+            <TableCell>{client.displayPersonExternalId}</TableCell>
+            <TableCell>{client.supervision}</TableCell>
+            <TableCell>
+              <Text className="font-inter text-base text-[#355362D9]">
+                Last meeting{" "}
+                <Text className="font-bold">{client.lastMeeting}</Text>
+              </Text>
+            </TableCell>
+            <TableCell>
+              <TouchableOpacity
+                className="invisible size-5 items-center justify-center group-hover:visible"
+                onPress={() =>
+                  navigation.navigate("Profile", {
+                    client: {
+                      personId: client.personId.toString(),
+                      fullName: client.fullName,
+                      displayPersonExternalId: client.displayPersonExternalId,
+                      supervision: client.supervision,
+                    },
+                  })
+                }
+              >
+                <Image source={Icons.ArrowRight} className="!size-full" />
+              </TouchableOpacity>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+      {/*
+      // TODO: Add footer and pagination
+      <TableFooter>
+        <TableFooterRow>
+          <TableFooterCell colSpan={5}>
+            <View className="flex flex-row items-center justify-center gap-2 py-2">
+              <TouchableOpacity>
+                <Image
+                  source={Icons.ArrowLeft}
+                  className="!size-3"
+                  style={{ resizeMode: "contain" }}
+                />
+              </TouchableOpacity>
+              <Text className="font-inter text-sm font-medium text-[#355362D9]">
+                Showing 1-7 of 112
+              </Text>
+              <TouchableOpacity>
+                <Image
+                  source={Icons.ArrowRight}
+                  className="!size-3"
+                  style={{ resizeMode: "contain" }}
+                />
+              </TouchableOpacity>
+            </View>
+          </TableFooterCell>
+        </TableFooterRow>
+      </TableFooter> */}
+    </Table>
+  );
+};
+
+export default ClientsTable;

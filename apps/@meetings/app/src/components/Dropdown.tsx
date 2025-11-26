@@ -37,34 +37,52 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
   };
 
   return (
-    <View className="z-50 my-2 self-start">
+    <View className="z-50 self-start">
       <View className="flex-row items-center justify-between">
-        {label && <Text className="text-sm text-gray-500">{label}:</Text>}
+        {label && (
+          <Text className="text-sm text-[#355362D9] md:text-base">
+            {label}:
+          </Text>
+        )}
 
         <TouchableOpacity
           className="min-w-[100px] flex-row items-center justify-between rounded-md  bg-gray-100"
           onPress={() => setOpen((p) => !p)}
         >
-          <Text className="px-1 text-sm text-gray-900" numberOfLines={1}>
+          <Text
+            className="px-1 text-sm text-[#004D48] md:text-base md:font-medium"
+            numberOfLines={1}
+          >
             {selected}
           </Text>
           <Image
-            source={open ? Icons.ArrowUp : Icons.ArrowDown}
+            source={open ? Icons.ArrowUpGreen : Icons.ArrowDown}
             className="!size-4"
           />
         </TouchableOpacity>
       </View>
 
       {open && (
-        <View className="absolute top-7 z-50 w-full rounded-md border border-gray-300 bg-white shadow-sm">
+        <View
+          className="absolute top-7 z-50 w-full rounded-lg border border-[#EDF1F1] bg-white p-1"
+          style={{
+            shadowColor: "#29605F",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 10,
+            elevation: 5,
+          }}
+        >
           <ScrollView>
             {options.map((opt) => (
               <TouchableOpacity
                 key={opt}
-                className="p-2.5"
+                className="group rounded p-2.5 hover:bg-[#F4F5F5]"
                 onPress={() => handleSelect(opt)}
               >
-                <Text className="text-sm text-gray-700">{opt}</Text>
+                <Text className="text-sm font-medium text-[#355362D9] group-hover:text-[#004D48]">
+                  {opt}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>

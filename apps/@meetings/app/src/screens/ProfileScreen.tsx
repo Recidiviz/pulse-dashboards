@@ -17,13 +17,14 @@
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Platform,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -36,7 +37,9 @@ import {
 
 import Icons from "../../assets/icons";
 import Dropdown from "../components/Dropdown";
-import MeetingCard from "../components/MeetingCard";
+import Header from "../components/Header";
+import MeetingsCardsList from "../components/MeetingsCardsList";
+import MeetingsTable from "../components/MeetingsTable.web";
 import SearchBar from "../components/SearchBar";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
@@ -68,8 +71,8 @@ const ProfileScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [mobileHeaderHeight, setMobileHeaderHeight] = useState(0);
   const [sortBy, setSortBy] = useState<MeetingsSort>(MeetingsSort.NEWEST_FIRST);
-  const scrollY = useRef(0);
 
   const {
     data: rawMeetings,
@@ -86,13 +89,8 @@ const ProfileScreen = () => {
     const currentOffset = event.nativeEvent.contentOffset.y;
 
     // Only collapse when scrolling down past 50px
-    if (currentOffset > 50 && currentOffset > scrollY.current) {
-      setIsCollapsed(true);
-    } else if (currentOffset < 30) {
-      setIsCollapsed(false);
-    }
-
-    scrollY.current = currentOffset;
+    if (currentOffset > 50) setIsCollapsed(true);
+    else setIsCollapsed(false);
   };
 
   const filterOptions = [
@@ -110,14 +108,18 @@ const ProfileScreen = () => {
         : [...prev, filter],
     );
   };
-  
+
   const sortedMeetings = useMemo(() => {
     if (!rawMeetings) return [];
     return rawMeetings.sort((a, b) => {
       if (sortBy === MeetingsSort.NEWEST_FIRST) {
-        return new Date(b.startTime).getTime() - new Date(a.startTime).getTime();
+        return (
+          new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
+        );
       } else {
-        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+        return (
+          new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+        );
       }
     });
   }, [sortBy, rawMeetings]);
@@ -176,7 +178,7 @@ const ProfileScreen = () => {
       );
 
     return matchesSearch && matchesFilters;
-  });  
+  });
 
   const createMeetingMutation = trpc.v1.client.createMeeting.useMutation();
   const handleCreateMeeting = async () => {
@@ -214,154 +216,247 @@ const ProfileScreen = () => {
 
   if (error) throw error;
 
+  const mobileContentPadding = mobileHeaderHeight - insets.top;
+
+  const renderMeetingsContent = () => {
+    if (processedMeetings.length === 0) {
+      return (
+        <View className="items-center justify-center py-16">
+          <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
+            <Image source={Icons.Calendar} className="!size-14" />
+          </View>
+          <Text className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
+            No meetings yet
+          </Text>
+          <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+            Create a new meeting when you’re ready.
+          </Text>
+          <TouchableOpacity
+            onPress={handleCreateMeeting}
+            className="rounded-full bg-[#006C67] px-6 py-3"
+          >
+            <Text className="font-inter text-[16px] font-medium text-white">
+              + Meeting
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    if (filteredMeetings.length === 0) {
+      return (
+        <View className="items-center justify-center py-16">
+          <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
+            <Image source={Icons.Lock} className="!size-14" />
+          </View>
+          <Text className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
+            No meetings match your search
+          </Text>
+          <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
+            Try adjusting your search or use different keywords.
+          </Text>
+          <TouchableOpacity
+            onPress={() => setSearchQuery("")}
+            className="rounded-full border border-gray-300 px-6 py-3"
+          >
+            <Text className="font-inter text-[16px] font-medium text-gray-700">
+              Clear search
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return Platform.select({
+      native: (
+        <MeetingsCardsList
+          meetings={filteredMeetings}
+          client={route.params.client}
+        />
+      ),
+      web: (
+        <View className="pb-4">
+          <View className="md:hidden">
+            <MeetingsCardsList
+              meetings={filteredMeetings}
+              client={route.params.client}
+            />
+          </View>
+          <View className="hidden md:block">
+            <MeetingsTable
+              meetings={filteredMeetings}
+              client={route.params.client}
+            />
+          </View>
+        </View>
+      ),
+    });
+  };
+
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView edges={["top"]} className="flex-1 grow">
+      <View className="z-10 hidden md:block">
+        <Header />
+      </View>
       <View
-        className={`absolute inset-x-0 top-0 z-50 rounded-b-[24px] bg-white pb-4 `}
+        className={`absolute inset-x-0 top-0 z-50 rounded-b-[24px] border-b border-[#F4F5F5] bg-white px-4 pb-4 md:hidden ${Platform.OS === "web" ? "!pt-4" : ""}`}
         style={{
           paddingTop: insets.top,
           shadowColor: isCollapsed ? "#000" : "transparent",
         }}
+        onLayout={(e) =>
+          setMobileHeaderHeight(
+            Math.max(mobileHeaderHeight, e.nativeEvent.layout.height),
+          )
+        }
       >
-        <View className="px-4">
-          <View className="flex-row items-center justify-between">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+        <View className="flex-row items-center justify-between">
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={Icons.ArrowLeft}
+              className="!size-6"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+
+          {isCollapsed && (
+            <TouchableOpacity
+              className="px-2"
+              onPress={handleCreateMeeting}
+              disabled={isCreating}
+            >
               <Image
-                source={Icons.ArrowLeft}
-                className="size-6"
+                source={Icons.Plus}
+                className="!size-6"
                 resizeMode="contain"
               />
             </TouchableOpacity>
-
-            {isCollapsed && (
-              <TouchableOpacity
-                className="px-2"
-                onPress={handleCreateMeeting}
-                disabled={isCreating}
-              >
-                <Image
-                  source={Icons.Plus}
-                  className="size-6"
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
-            )}
-          </View>
-
-          {!isCollapsed && (
-            <View className="pt-8">
-              <Text className="mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
-                {client.fullName}
-              </Text>
-
-              <Text className="text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
-                ID: {client.displayPersonExternalId} •{" "}
-                {humanReadableTitleCase(client.supervision)}
-              </Text>
-            </View>
           )}
         </View>
+
+        {!isCollapsed && (
+          <View className="pt-8">
+            <Text className="mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
+              {client.fullName}
+            </Text>
+
+            <Text className="text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
+              ID: {client.displayPersonExternalId} •{" "}
+              {humanReadableTitleCase(client.supervision)}
+            </Text>
+          </View>
+        )}
       </View>
 
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
-        contentContainerClassName={`px-4 ${
-          isCollapsed ? "pt-[70px]" : "pt-[120px]"
-        }`}
+        className="grow md:!pt-0"
+        contentContainerClassName="flex-grow px-4 md:pt-10"
+        style={{ paddingTop: mobileContentPadding }}
       >
-        <View className="flex-row items-center justify-between py-2">
-          <Text className="text-xl font-semibold text-primary">
-            Meetings{" "}
-            <Text className="text-gray-400">({filteredMeetings.length})</Text>
-          </Text>
+        <View className="mx-auto mb-4 hidden w-full max-w-[960px] items-start md:flex xl:absolute xl:left-10 xl:max-w-none">
+          {/* TODO: back button under discussion with design team */}
           <TouchableOpacity
-            className="w-[100px] flex-row items-center justify-center rounded-full bg-[#006C67] px-4 py-2"
-            onPress={handleCreateMeeting}
-            disabled={isCreating}
+            className="flex-row items-center gap-2"
+            onPress={navigation.goBack}
           >
-            {isCreating ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text className="font-medium text-white">+ Meeting</Text>
-            )}
+            <Image source={Icons.ArrowLeft} className="!size-3" />
+            <Text className="text-sm font-medium text-[#355362D9]">Back</Text>
           </TouchableOpacity>
         </View>
-
-        <SearchBar
-          placeholder={"Enter keyword or phrase"}
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onExit={() => {
-            setSearchQuery("");
-          }}
-        />
-
-        <View className="flex-row flex-wrap gap-2 py-2">
-          {filterOptions.map((filter) => {
-            const isActive = activeFilters.includes(filter);
-            return (
-              <TouchableOpacity
-                key={filter}
-                className={`rounded-[5px] border px-4 py-1 ${
-                  isActive
-                    ? "border-primary bg-white"
-                    : "border-gray-300 bg-white"
-                }`}
-                onPress={() => toggleFilter(filter)}
-              >
-                <Text
-                  className={`${
-                    isActive ? "font-medium text-primary" : "text-gray-700"
-                  } text-sm`}
-                >
-                  {filter}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        <View className="flex-row items-center justify-between">
-          <Text className="text-sm text-primary">
-            {filteredMeetings.length} meeting
-            {filteredMeetings.length > 1 ? "s" : ""}
+        <View className="mx-auto w-full max-w-[960px] flex-1">
+          <Text className="hidden font-libre-baskerville text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary md:block md:text-[32px]">
+            {client.fullName}
           </Text>
-          <Dropdown
-            label="Sort by"
-            options={Object.values(MeetingsSort)}
-            onSelect={(value) => setSortBy(value as MeetingsSort)}
-          />
-        </View>
-        {filteredMeetings.length === 0 ? (
-          <View className="items-center justify-center py-16">
-            <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
-              <Image source={Icons.Lock} className="size-14" />
-            </View>
-            <Text className="mb-2 text-center font-libre-baskerville text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
-              No meetings found
-            </Text>
-            <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
-              Try adjusting your search or use different keywords.
+          <Text className="mt-1 hidden text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">
+            ID: {client.displayPersonExternalId} • {client.supervision}
+          </Text>
+          <View className="my-4 flex-row items-center justify-between">
+            <Text className="text-xl font-semibold text-primary md:text-2xl">
+              Meetings{" "}
+              <Text className="text-gray-400">({filteredMeetings.length})</Text>
             </Text>
             <TouchableOpacity
-              onPress={() => setSearchQuery("")}
-              className="rounded-full border border-gray-300 px-6 py-3"
+              className="w-[100px] flex-row items-center justify-center rounded-full bg-[#006C67] px-4 py-2"
+              onPress={handleCreateMeeting}
+              disabled={isCreating}
             >
-              <Text className="font-inter text-[16px] font-medium text-gray-700">
-                Clear search
-              </Text>
+              {isCreating ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text className="font-medium text-white">+ Meeting</Text>
+              )}
             </TouchableOpacity>
           </View>
-        ) : (
-          filteredMeetings.map((meeting, index) => (
-            <MeetingCard
-              key={`${meeting.id}-${index}`}
-              meeting={meeting}
-              client={route.params.client}
+
+          <View className="w-full">
+            <SearchBar
+              placeholder={"Enter keyword or phrase"}
+              value={searchQuery}
+              onChange={setSearchQuery}
             />
-          ))
-        )}
+          </View>
+
+          <View className="gap-2 py-2 md:flex-row md:items-center">
+            <Text className="text-sm text-[#355362D9] md:text-base">
+              Filter by meeting topics:
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
+              {/* TODO: filters are under discussion with design team */}
+              {filterOptions.map((filter) => {
+                const isActive = activeFilters.includes(filter);
+                return (
+                  <TouchableOpacity
+                    key={filter}
+                    className={`flex-row items-center gap-2 rounded-[5px] border px-3 py-1 ${
+                      isActive
+                        ? "border-[#00665F] bg-[#C1E3D83B]"
+                        : "border-gray-300 bg-white"
+                    }`}
+                    onPress={() => toggleFilter(filter)}
+                  >
+                    <Text
+                      className={`text-sm font-medium ${
+                        isActive ? "text-primary" : "text-gray-700"
+                      }`}
+                    >
+                      {filter}
+                    </Text>
+                    {isActive && (
+                      <Image source={Icons.CrossRound} className="!size-4" />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+              {activeFilters.length > 0 && (
+                <TouchableOpacity
+                  className="group flex-row items-center gap-1 rounded-full px-4 py-1 hover:bg-[#4D5255]"
+                  onPress={() => setActiveFilters([])}
+                >
+                  <Image
+                    source={Icons.Reset}
+                    className="!size-3 group-hover:invert"
+                  />
+                  <Text className="text-sm text-[#252C32] group-hover:text-white">
+                    Reset
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+
+          <View className="z-10 my-4 flex-row items-center justify-between">
+            <Text className="text-sm text-[#9AA6AC]">
+              {filteredMeetings.length} meeting
+              {filteredMeetings.length > 1 ? "s" : ""}
+            </Text>
+            <Dropdown
+              label="Sort by"
+              options={Object.values(MeetingsSort)}
+              onSelect={(value) => setSortBy(value as MeetingsSort)}
+            />
+          </View>
+          <View className="grow basis-0 pb-8">{renderMeetingsContent()}</View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
