@@ -26,4 +26,8 @@ export class UsTxAnnualReportStatusConfiguration extends ApiOpportunityConfigura
 
     return { ...super.maxSnoozeDaysByDenialReason, ...snoozeLengthOverrides };
   }
+
+  get markSubmittedOnFormDownload() {
+    return false;
+  }
 }

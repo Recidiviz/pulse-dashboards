@@ -26,4 +26,8 @@ export class UsTxEarlyReleaseFromSupervisionConfiguration extends ApiOpportunity
 
     return { ...super.maxSnoozeDaysByDenialReason, ...snoozeLengthOverrides };
   }
+
+  get markSubmittedOnFormDownload() {
+    return false;
+  }
 }
