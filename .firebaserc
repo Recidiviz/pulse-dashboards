@@ -7,7 +7,9 @@
     "demo": "recidiviz-dashboard-demo",
     "default": "recidiviz-dashboard-stag-e1108",
     "jii-staging": "recidiviz-jii-staging",
-    "jii-production": "recidiviz-jii-production"
+    "jii-production": "recidiviz-jii-production",
+    "meetings-staging": "recidiviz-meetings-staging",
+    "meetings-production": "recidiviz-meetings"
   },
   "targets": {
     "recidiviz-jii-staging": {

@@ -29,7 +29,7 @@
         "dev": {
           "args": "--environment development"
         },
-        "preview": {
+        "staging": {
           "args": "--environment preview"
         },
         "production": {
@@ -101,6 +101,29 @@
         "commands": ["nx start @meetings/app --web"]
       },
       "cwd": "{workspaceRoot}"
+    },
+    "build:web": {
+      "dependsOn": [{ "target": "load-env-file-eas", "params": "forward" }],
+      "command": "nx export @meetings/app -p web",
+      "cache": false,
+      "configurations": {
+        "dev": {},
+        "staging": {},
+        "production": {}
+      }
+    },
+    "deploy:web": {
+      "dependsOn": [{ "target": "build:web", "params": "forward" }],
+      "command": "firebase deploy --config firebase.meetings.json",
+      "configurations": {
+        "staging": {
+          "args": "--project meetings-staging --only hosting"
+        },
+        "production": {
+          "args": "--project meetings-production --only hosting"
+        }
+      },
+      "defaultConfiguration": "staging"
     }
   }
 }
