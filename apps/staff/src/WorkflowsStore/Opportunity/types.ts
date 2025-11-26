@@ -294,7 +294,13 @@ export type OpportunityTab =
   | "Snoozed"
 
   // For US_PA
-  | "Eligibility Unclear";
+  | "Eligibility Unclear"
+
+  //For US_MI
+  | "Eligible for Re-screen Now"
+  | "Almost Eligible for Re-screen"
+  | "Re-screen Pending"
+  | "Movement Pending";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"

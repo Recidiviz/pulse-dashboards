@@ -26,6 +26,7 @@ export const usMiCustodyLevelDowngradeSchema = opportunitySchemaBase.extend({
     managementLevelRawScore: z.coerce.number(),
     mostRecentAssessmentDate: dateStringSchema,
     noAssessmentSince26: z.boolean(),
+    tabName: z.string(),
   }),
 });
 

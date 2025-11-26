@@ -19,6 +19,7 @@ import { DocumentData } from "firebase/firestore";
 
 import { Resident } from "../../../Resident";
 import { OpportunityBase } from "../../OpportunityBase";
+import { OpportunityTab } from "../../types";
 import {
   UsMiCustodyLevelDowngradeReferralRecord,
   usMiCustodyLevelDowngradeSchema,
@@ -38,10 +39,22 @@ export class UsMiCustodyLevelDowngradeOpportunity extends OpportunityBase<
   }
 
   get submittedButtonText(): string {
-    return "Mark Pending";
+    return "Move to Re-screen Pending";
   }
 
   get undoSubmittedButtonText(): string {
-    return "Revert from Pending";
+    return "Revert from Re-screen Pending";
+  }
+  tabTitle(): OpportunityTab {
+    if (this.denied) return this.deniedTabTitle;
+    if (this.isSubmitted) return this.submittedTabTitle;
+    if (this.record.metadata.tabName === "ELIGIBLE_FOR_ASSESSMENT") {
+      if (this.almostEligible) return "Almost Eligible for Re-screen";
+      return "Eligible for Re-screen Now";
+    }
+    if (this.record.metadata.tabName === "ELIGIBLE_FOR_MOVEMENT") {
+      return "Movement Pending";
+    }
+    return super.tabTitle();
   }
 }
