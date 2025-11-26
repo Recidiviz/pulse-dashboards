@@ -35,7 +35,7 @@ async function createNodesInternal(
       [projectRoot]: {
         targets: {
           projectTags: {
-            executor: "repo:projectTags",
+            executor: "~repo:projectTags",
             cache: true,
           },
         },
