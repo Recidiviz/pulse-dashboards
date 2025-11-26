@@ -10,7 +10,9 @@
   "author": "Recidiviz <team@recidiviz.org>",
   "license": "GNU General Public License v3",
   "workspaces": [
-    "apps/@meetings/app"
+    "apps/@meetings/app",
+    "apps/staff",
+    "plugins/repo"
   ],
   "dependencies": {
     "@artsy/to-title-case": "^1.1.0",

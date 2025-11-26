@@ -47796,6 +47796,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"repo@workspace:plugins/repo":
+  version: 0.0.0-use.local
+  resolution: "repo@workspace:plugins/repo"
+  languageName: unknown
+  linkType: soft
+
 "request@npm:^2.88.0, request@npm:^2.88.2":
   version: 2.88.2
   resolution: "request@npm:2.88.2"
