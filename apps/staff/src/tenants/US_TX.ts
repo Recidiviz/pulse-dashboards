@@ -63,7 +63,8 @@ const US_TX_CONFIG = {
           for most offices click [here](https://docs.google.com/document/d/e/2PACX-1vQamrgWtwG-kUfm6sBTRjRCYlFAZmMUQRHvoZ-fLU_YO0YfEElrVG7Rgq9NFdIq-NbcD_aILsZvWT2Z/pub)
           and for designated 'Critically Understaffed' offices click
           [here](https://docs.google.com/document/d/e/2PACX-1vTIXGLHHXQ0STYmapw4pzAcW3j3I8455jaaEH6d61-btlzkiPzS-GQaYJu3aG32o8B1i1mzRWwXbHbV/pub).
-          To read official TDCJ policy about completing TRAS, click [here](https://www.tdcj.texas.gov/documents/pd/03.02.05_parole_policy.pdf).`,
+          To read official TDCJ policy about completing TRAS, click [here](https://www.tdcj.texas.gov/documents/pd/03.02.05_parole_policy.pdf).
+          To read official TDCJ policy about the Initial Interview and Final Summary, click [here](https://www.tdcj.texas.gov/documents/pd/03.01.01_parole_policy.pdf).`,
     tasks: {
       usTxCollateralContactScheduled: {
         constructor: usTxCollateralContactScheduled,

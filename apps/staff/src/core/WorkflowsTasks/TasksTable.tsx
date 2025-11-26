@@ -22,7 +22,7 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { Icon, palette } from "~design-system";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import {
@@ -90,23 +90,72 @@ function PersonIdCell({ row }: { row: Row<SupervisionTask> }) {
   );
 }
 
+// Supports links to policy documents in the Case Type cell for special programs in Texas.
+// If we need to update/expand to more states, consider refactoring this to make it more sustainable
+function policyLinkForCaseType({
+  caseType,
+  stateCode,
+}: Client): string | undefined {
+  if (stateCode !== "US_TX") return;
+
+  // TC ("therapeutic community")
+  if (caseType.toLowerCase().startsWith("substance abuse")) {
+    return "https://www.tdcj.texas.gov/documents/pd/03.08.01_parole_policy.pdf";
+  }
+  switch (caseType) {
+    // SNOP ("special needs offender program")
+    case "Mentally ill":
+    case "Intellectually disabled":
+    case "Terminally ill / Physically handicapped":
+      return "https://www.tdcj.texas.gov/documents/pd/03.07.01_parole_policy.pdf";
+    // SISP ("super-intensive supervision")
+    case "Super-intensive supervision":
+      return "https://www.tdcj.texas.gov/documents/pd/03.15.01_parole_policy.pdf";
+    default:
+      return;
+  }
+}
+
 function CaseTypeCell({ row }: { row: Row<SupervisionTask> }) {
   const { person } = row.original;
-  const { caseType } = person as Client;
+  const { caseType, stateCode } = person as Client;
+
+  const link = policyLinkForCaseType(person as Client);
+
   return (
     <>
-      {caseType}{" "}
-      {caseType.toLowerCase().startsWith("substance abuse") &&
-        person.stateCode === "US_TX" && (
-          <StyledInfoButton>
-            <TooltipTrigger contents="Note: Phase information may be inaccurate if referral and attendance details are not up-to-date in OIMS. Click here for a guide on how to enter referral details in OIMS so that the most accurate phases appear in this tool.">
-              <InfoButton
-                infoUrl={
-                  "https://docs.google.com/document/d/e/2PACX-1vQamrgWtwG-kUfm6sBTRjRCYlFAZmMUQRHvoZ-fLU_YO0YfEElrVG7Rgq9NFdIq-NbcD_aILsZvWT2Z/pub#h.ptv2xvkqdjv2"
-                }
-              />
+      {caseType}
+      {link && (
+        <>
+          {" "}
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <TooltipTrigger contents="Click to read TDCJ policy relating to this case type.">
+              <Icon kind="Open" size={12} />
             </TooltipTrigger>
-          </StyledInfoButton>
+          </a>
+        </>
+      )}
+      {caseType.toLowerCase().startsWith("substance abuse") &&
+        stateCode === "US_TX" && (
+          <>
+            {" "}
+            <StyledInfoButton>
+              <TooltipTrigger contents="Note: Phase information may be inaccurate if referral and attendance details are not up-to-date in OIMS. Click here for a guide on how to enter referral details in OIMS so that the most accurate phases appear in this tool.">
+                <InfoButton
+                  infoUrl={
+                    "https://docs.google.com/document/d/e/2PACX-1vQamrgWtwG-kUfm6sBTRjRCYlFAZmMUQRHvoZ-fLU_YO0YfEElrVG7Rgq9NFdIq-NbcD_aILsZvWT2Z/pub#h.ptv2xvkqdjv2"
+                  }
+                />
+              </TooltipTrigger>
+            </StyledInfoButton>
+          </>
         )}
     </>
   );
