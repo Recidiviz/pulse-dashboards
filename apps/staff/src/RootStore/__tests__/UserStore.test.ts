@@ -1017,6 +1017,7 @@ describe("feature variants", () => {
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
+        "SARBuilder": {},
         "TEST": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
@@ -1076,6 +1077,7 @@ describe("feature variants", () => {
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
         "EXTRA_FV": {},
+        "SARBuilder": {},
         "TEST": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
@@ -1134,6 +1136,7 @@ describe("feature variants", () => {
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
+        "SARBuilder": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
         "editCountyFields": {},

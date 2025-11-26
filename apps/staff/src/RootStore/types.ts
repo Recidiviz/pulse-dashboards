@@ -140,7 +140,8 @@ export type FeatureVariant =
   | "protectiveFactors"
   | "editCountyFields"
   | "mandatoryMinimum"
-  | "snoozeCompanions";
+  | "snoozeCompanions"
+  | "SARBuilder";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -215,6 +216,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   ineligibleOpportunityTypesOnFullProfile: {},
   usPaUnclearEligibility: {},
   usIdTasksV2: {},
+  SARBuilder: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -266,6 +268,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
         hideDenialRevert: { activeTenants: ["US_AZ"] },
+        SARBuilder: { activeTenants: ["US_MO"] },
       };
 
 export type LanternMethodologyByTenant = {
