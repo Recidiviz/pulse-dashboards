@@ -15,21 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import NotFound from "../../components/NotFound";
-import { useFeatureVariants } from "../../components/StoreProvider";
-import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { RoutePlannerBody } from "./RoutePlannerBody";
+import { parentOf } from "../WorkflowsBackButton";
 
-export const WorkflowsTasksRoutePlanner = () => {
-  const { tasksRoutePlanner } = useFeatureVariants();
+describe("parentOf", () => {
+  it("returns opportunity clients page for opportunity action pages", () => {
+    expect(parentOf(["someOpportunity", "personId", "opportunityId"])).toEqual(
+      "/workflows/someOpportunity",
+    );
+  });
 
-  if (!tasksRoutePlanner) {
-    return <NotFound />;
-  }
+  it("returns /tasks for route planner", () => {
+    expect(parentOf(["tasks", "route-planner"])).toEqual("/workflows/tasks");
+  });
 
-  return (
-    <WorkflowsNavLayout limitedWidth={false}>
-      <RoutePlannerBody />
-    </WorkflowsNavLayout>
-  );
-};
+  it("returns /clients and /residents for client/resident profile", () => {
+    expect(parentOf(["clients", "personId"])).toEqual("/workflows/clients");
+    expect(parentOf(["residents", "personId"])).toEqual("/workflows/residents");
+  });
+});

@@ -32,6 +32,7 @@ import { RoutePlannerPlacePicker } from "./RoutePlannerPlacePicker";
 import { RoutePlannerPresenter } from "./RoutePlannerPresenter";
 
 const RoutePlannerSelectContainer = styled.div`
+  padding-top: ${rem(spacing.lg)};
   height: 100%;
   display: flex;
   flex-direction: column;

@@ -25,14 +25,13 @@ import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { NavigationBackButton } from "../NavigationBackButton";
 import {
   NAV_BAR_HEIGHT,
   NavigationLayout,
   OverviewNavLinks,
 } from "../NavigationLayout";
 import { MaxWidth } from "../sharedComponents";
-import { workflowsUrl } from "../views";
+import { WorkflowsBackButton } from "./WorkflowsBackButton";
 
 const Wrapper = styled.div`
   ${typography.Sans14};
@@ -61,7 +60,6 @@ const Main = styled.main<{
   `
       : `padding-bottom: ${rem(spacing.md * 5)};
   height: calc(100% - ${rem(spacing.md * 5 + spacing.xl)});`}
-  
 
   ${(props) =>
     props.$limitedWidth &&
@@ -88,19 +86,10 @@ const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
 
 export const WorkflowsNavLayout: React.FC<{
   limitedWidth?: boolean;
-  showHomeButton?: boolean;
   children?: React.ReactNode;
-}> = observer(function WorkflowsNavLayout({
-  limitedWidth = true,
-  showHomeButton = true,
-  children,
-}) {
+}> = observer(function WorkflowsNavLayout({ limitedWidth = true, children }) {
   const {
-    workflowsStore: {
-      homepage: workflowsHomepage,
-      activePageIsHomepage,
-      activePageIsTasks,
-    },
+    workflowsStore: { activePageIsTasks },
     tenantStore,
   } = useRootStore();
   const { isMobile, isLaptop } = useIsMobile(true);
@@ -119,15 +108,9 @@ export const WorkflowsNavLayout: React.FC<{
       >
         <OverviewNavLinks />
       </NavigationLayout>
-      {!activePageIsHomepage && showHomeButton && (
-        <BackButtonWrapper $fixed={!isLaptop && limitedWidth}>
-          <NavigationBackButton
-            action={{ url: workflowsUrl(workflowsHomepage) }}
-          >
-            Home
-          </NavigationBackButton>
-        </BackButtonWrapper>
-      )}
+      <BackButtonWrapper $fixed={!isLaptop && limitedWidth}>
+        <WorkflowsBackButton />
+      </BackButtonWrapper>
       <Main isMobile={isMobile} $limitedWidth={limitedWidth}>
         {children}
       </Main>

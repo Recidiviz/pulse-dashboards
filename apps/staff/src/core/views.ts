@@ -220,6 +220,14 @@ export const WORKFLOWS_PATH_SECTIONS = [
   "milestones",
 ] as const;
 export type WorkflowsPathSection = (typeof WORKFLOWS_PATH_SECTIONS)[number];
+export const isWorkflowsPathSection = (
+  s: string,
+): s is WorkflowsPathSection => {
+  // we relax the type here to satisfy TS about using `includes` with a string
+  const WORKFLOWS_PATH_SECTIONS_STRINGS: readonly string[] =
+    WORKFLOWS_PATH_SECTIONS;
+  return WORKFLOWS_PATH_SECTIONS_STRINGS.includes(s);
+};
 
 // Routes not associated with an opportunity or task that should have an
 // active system selected.

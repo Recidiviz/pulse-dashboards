@@ -28,7 +28,7 @@ import { palette } from "~design-system";
 import { RoutePlannerPresenter } from "./RoutePlannerPresenter";
 
 const PlacePickerContainer = styled.div`
-  margin-bottom: ${rem(spacing.lg)};
+  margin-bottom: ${rem(spacing.xxs)};
 `;
 
 const PlacePickerLabel = styled.div`
