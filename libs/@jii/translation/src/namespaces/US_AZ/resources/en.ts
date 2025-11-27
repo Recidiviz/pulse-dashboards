@@ -54,61 +54,61 @@ export default {
       body: importantDatesInfoPage,
     },
     dates: {
-      acisTprDate: {
+      acisTprDateRaw: {
         title: "Standard Transition Program (TPR)",
         info: "Release up to 90 days earlier, if you agree to attend a program in the community; must meet criteria. You may also hear this called “Transition Program Release” (TPR) or “Transition Release”.",
         skeletonInfo: "",
         shortName: "TPR",
-        value: "{{acisTprDate, formatFullDate}}",
+        value: "{{acisTprDateRaw, formatFullDate}}",
       },
-      acisDtpDate: {
+      acisDtpDateRaw: {
         title: "Drug Transition Program (DTP)",
         info: "Release up to 90 days earlier, if you agree to attend a program in the community; must meet criteria. This is a version of Transition Program Release (TPR) for people with only drug possession or use charges.",
         skeletonInfo: "",
         shortName: "DTP",
-        value: "{{acisDtpDate, formatFullDate}}",
+        value: "{{acisDtpDateRaw, formatFullDate}}",
       },
-      csbdDate: {
+      csbdDateRaw: {
         title: "Community Supervision Begin Date (CSBD)",
         info: "Also called a Transition Release (TR) date, allows for release up to 90 days before your ERCD; must meet criteria.",
         skeletonInfo: "",
         shortName: "CSBD",
-        value: "{{csbdDate, formatFullDate}}",
+        value: "{{csbdDateRaw, formatFullDate}}",
       },
-      ercdDate: {
+      ercdDateRaw: {
         title: "Earned Release Credit Date (ERCD)",
         info: "The earliest date you can be released based on Earned Release Credits – usually, a minimum of 85.7% of your sentence.",
         skeletonInfo: "",
         shortName: "ERCD",
-        value: "{{ercdDate, formatFullDate}}",
+        value: "{{ercdDateRaw, formatFullDate}}",
       },
-      sedDate: {
+      sedDateRaw: {
         title: "100% Date (Flat Sentence, SED)",
         info: "The full term of your sentence; when you can be released if you haven’t met conditions for earlier release types. May require you to agree to conditions of supervision.",
         skeletonInfo: "TKTK",
         shortName: "SED",
-        value: "{{sedDate, formatFullDate}}",
+        value: "{{sedDateRaw, formatFullDate}}",
       },
-      csedDate: {
+      csedDateRaw: {
         title: "115% Date (CSED)",
         info: "The last day that you can be under ADCRR supervision for your current sentence.",
         skeletonInfo: "TKTK",
         shortName: "CSED",
-        value: "{{csedDate, formatFullDate}}",
+        value: "{{csedDateRaw, formatFullDate}}",
       },
-      addDate: {
+      addDateRaw: {
         title: "Absolute Discharge Date (ADD)",
         info: "The earliest date you can be released to Probation based on Earned Release Credits – usually, a minimum of 85.7% of your sentence.",
         skeletonInfo: "",
         shortName: "ADD",
-        value: "{{addDate, formatFullDate}}",
+        value: "{{addDateRaw, formatFullDate}}",
       },
-      trToAddDate: {
+      trToAddDateRaw: {
         title: "Transition to Absolute Discharge Date (TR to ADD)",
         info: "Allows for release up to 90 days before your ADD (Absolute Discharge Date); must meet criteria.",
         skeletonInfo: "",
         shortName: "TR to ADD",
-        value: "{{trToAddDate, formatFullDate}}",
+        value: "{{trToAddDateRaw, formatFullDate}}",
       },
     },
   },

@@ -25,12 +25,12 @@ const mockAzResident = {
   stateCode: "US_AZ",
   metadata: {
     stateCode: "US_AZ",
-    acisTprDate: "2024-03-15",
-    acisDtpDate: undefined,
-    csbdDate: "2024-01-10", // earliest date
-    ercdDate: "2024-06-01",
-    sedDate: "2024-12-01", // latest date
-    csedDate: undefined,
+    acisTprDateRaw: "2024-03-15",
+    acisDtpDateRaw: undefined,
+    csbdDateRaw: "2024-01-10", // earliest date
+    ercdDateRaw: "2024-06-01",
+    sedDateRaw: "2024-12-01", // latest date
+    csedDateRaw: undefined,
   },
 } as never as ResidentRecord;
 
@@ -38,11 +38,11 @@ const mockAzResidentAllNullDates = {
   stateCode: "US_AZ",
   metadata: {
     stateCode: "US_AZ",
-    acisTprDate: undefined,
-    csbdDate: undefined,
-    ercdDate: undefined,
-    sedDate: undefined,
-    csedDate: undefined,
+    acisTprDateRaw: undefined,
+    csbdDateRaw: undefined,
+    ercdDateRaw: undefined,
+    sedDateRaw: undefined,
+    csedDateRaw: undefined,
   },
 } as never as ResidentRecord;
 
@@ -83,19 +83,19 @@ describe("UsAzImportantDatesPresenter", () => {
       const entries = presenter.dateEntries;
 
       // Check sorting order
-      expect(entries[0].key).toBe("csbdDate");
+      expect(entries[0].key).toBe("csbdDateRaw");
       expect(entries[0].date).toBe("2024-01-10");
       expect(entries[0].highlightType).toBeUndefined();
 
-      expect(entries[1].key).toBe("acisTprDate");
+      expect(entries[1].key).toBe("acisTprDateRaw");
       expect(entries[1].date).toBe("2024-03-15");
-      expect(entries[1].highlightType).toBe("acisTprDate");
+      expect(entries[1].highlightType).toBe("acisTprDateRaw");
 
-      expect(entries[2].key).toBe("ercdDate");
+      expect(entries[2].key).toBe("ercdDateRaw");
       expect(entries[2].date).toBe("2024-06-01");
       expect(entries[2].highlightType).toBeUndefined();
 
-      expect(entries[3].key).toBe("sedDate");
+      expect(entries[3].key).toBe("sedDateRaw");
       expect(entries[3].date).toBe("2024-12-01");
       expect(entries[3].highlightType).toBeUndefined();
 

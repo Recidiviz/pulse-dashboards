@@ -47,10 +47,10 @@ export const StyledCard = styled(Card)<StyledCardProps>`
 
   /* Highlight border styling */
   ${({ $highlightType }) => {
-    if ($highlightType === "acisTprDate") {
+    if ($highlightType === "acisTprDateRaw") {
       return `border-top: 8px solid ${palette.pine3};`;
     }
-    if ($highlightType === "acisDtpDate") {
+    if ($highlightType === "acisDtpDateRaw") {
       return `border-top: 8px solid #624488;`;
     }
     return "";

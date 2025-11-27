@@ -21,23 +21,17 @@ import { extractHeadingIds } from "~@jii/translation";
 import { ResidentRecord } from "~datatypes";
 
 // Shared constant for all US_AZ date field names that exist on metadata
-export const US_AZ_METADATA_DATE_FIELDS = [
-  "acisTprDate",
-  "acisDtpDate",
-  "csbdDate",
-  "ercdDate",
-  "sedDate",
-  "csedDate",
-] as const;
-
-// All possible date keys that can appear in DateEntry (includes transformed keys)
 export const US_AZ_DATE_KEYS = [
-  ...US_AZ_METADATA_DATE_FIELDS,
-  "addDate",
-  "trToAddDate",
+  "acisTprDateRaw",
+  "acisDtpDateRaw",
+  "csbdDateRaw",
+  "ercdDateRaw",
+  "sedDateRaw",
+  "csedDateRaw",
+  "addDateRaw",
+  "trToAddDateRaw",
 ] as const;
 
-export type UsAzMetadataDateField = (typeof US_AZ_METADATA_DATE_FIELDS)[number];
 export type UsAzDateField = (typeof US_AZ_DATE_KEYS)[number];
 
 function isUsAzDateField(key: string): key is UsAzDateField {
@@ -76,34 +70,13 @@ export class UsAzImportantDatesPresenter {
 
   get dateEntries(): DateEntry[] {
     // Check if acisDtpDate exists to determine whether to exclude acisTprDate
-    const hasAcisDtpDate = !!this.metadata.acisDtpDate;
+    const hasAcisDtpDate = !!this.metadata.acisDtpDateRaw;
 
     // Filter out undefined dates and prioritize acisDtpDates over acisTprDates
-    const entries = US_AZ_METADATA_DATE_FIELDS.flatMap((field) => {
+    const entries = US_AZ_DATE_KEYS.flatMap((field) => {
       const date = this.metadata[field];
       if (!date) return [];
-      if (field === "acisTprDate" && hasAcisDtpDate) return [];
-
-      /* ercd and csbd dates should have different copy based on whether the individual
-      has Community Supervision or Probation after their sentence: */
-      if (field === "ercdDate") {
-        const key =
-          this.metadata.ercdOrAdd === "ABSOLUTE DISCHARGE DATE"
-            ? "addDate"
-            : "ercdDate";
-        return [{ key, date }];
-      }
-
-      // Use metadata.csbdOrTrToAdd to determine the key for csbdDate
-      if (field === "csbdDate") {
-        const key =
-          this.metadata.csbdOrTrToAdd ===
-          "TRANSITION TO ABSOLUTE DISCHARGE DATE"
-            ? "trToAddDate"
-            : "csbdDate";
-        return [{ key, date }];
-      }
-
+      if (field === "acisTprDateRaw" && hasAcisDtpDate) return [];
       return [{ key: field, date }];
     });
 
@@ -128,7 +101,7 @@ export class UsAzImportantDatesPresenter {
       };
 
       if (
-        ["acisTprDate", "acisDtpDate"].includes(entry.key) &&
+        ["acisTprDateRaw", "acisDtpDateRaw"].includes(entry.key) &&
         isUsAzDateField(entry.key)
       ) {
         result.highlightType = entry.key;
@@ -144,14 +117,14 @@ export class UsAzImportantDatesPresenter {
 
   getInfoPageHashForDateKey(dateKey: UsAzDateField): string {
     const keyToHeadingIndex: Record<string, number> = {
-      acisTprDate: 1,
-      acisDtpDate: 2,
-      csbdDate: 3,
-      trToAddDate: 3,
-      ercdDate: 4,
-      addDate: 4,
-      sedDate: 5,
-      csedDate: 6,
+      acisTprDateRaw: 1,
+      acisDtpDateRaw: 2,
+      csbdDateRaw: 3,
+      trToAddDateRaw: 3,
+      ercdDateRaw: 4,
+      addDateRaw: 4,
+      sedDateRaw: 5,
+      csedDateRaw: 6,
     };
 
     const headingIndex = keyToHeadingIndex[dateKey];

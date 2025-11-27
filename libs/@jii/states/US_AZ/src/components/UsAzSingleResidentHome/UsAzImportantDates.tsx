@@ -47,12 +47,14 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
             /* Show skeleton cards for SED and CSED only */
             <>
               <DateInfoCardSkeleton
-                dateKey="sedDate"
-                infoPageHash={presenter.getInfoPageHashForDateKey("sedDate")}
+                dateKey="sedDateRaw"
+                infoPageHash={presenter.getInfoPageHashForDateKey("sedDateRaw")}
               />
               <DateInfoCardSkeleton
-                dateKey="csedDate"
-                infoPageHash={presenter.getInfoPageHashForDateKey("csedDate")}
+                dateKey="csedDateRaw"
+                infoPageHash={presenter.getInfoPageHashForDateKey(
+                  "csedDateRaw",
+                )}
               />
             </>
           ) : (
