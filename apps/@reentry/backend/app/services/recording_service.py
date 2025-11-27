@@ -190,8 +190,19 @@ def group_chunks_by_start(file_paths: List[str]) -> List[List[str]]:
     return groups
 
 
-def group_chunks_by_start_timestamp(file_paths: List[str]) -> List[List[str]]:
-    """Group chunks by _start markers, ordered by timestamp."""
+def group_chunks_by_start_timestamp(
+    file_paths: List[str], max_chunks_per_group: int = 100
+) -> List[List[str]]:
+    """Group chunks by _start markers, ordered by timestamp.
+
+    Groups are split when:
+    1. A new _start marker is encountered
+    2. The current group reaches max_chunks_per_group size
+
+    Args:
+        file_paths: List of file paths to group
+        max_chunks_per_group: Maximum number of chunks per group (default: 100)
+    """
     if not file_paths:
         return []
 
@@ -204,13 +215,22 @@ def group_chunks_by_start_timestamp(file_paths: List[str]) -> List[List[str]]:
         filename = file_path.split("/")[-1]
 
         if "_start" in filename:
+            # Save current group if it exists
             if current_group:
                 groups.append(current_group)
+            # Start a new group with the _start marker
             current_group = [file_path]
         else:
-            if current_group:
+            # Check if adding this file would exceed max_chunks_per_group
+            if len(current_group) >= max_chunks_per_group:
+                # Save current group and start a new one
+                groups.append(current_group)
+                current_group = [file_path]
+            else:
+                # Add to current group (or start first group if empty)
                 current_group.append(file_path)
 
+    # Don't forget the last group
     if current_group:
         groups.append(current_group)
 
@@ -466,43 +486,69 @@ class RecordingService:
 
         logger.info(f"Found {len(chunk_files)} chunk files for session {session_id}")
 
-        groups = group_chunks_by_start_timestamp(chunk_files)
-        logger.info(f"Found {len(groups)} groups for session {session_id}")
+        sorted_files = sorted(chunk_files, key=extract_timestamp_from_filename)
+
+        # Split into recording sessions based on _start markers
+        sessions = []
+        current_session = []
+
+        for file_path in sorted_files:
+            filename = file_path.split("/")[-1]
+            if "_start" in filename and current_session:
+                # New recording session started
+                sessions.append(current_session)
+                current_session = [file_path]
+            else:
+                current_session.append(file_path)
+
+        if current_session:
+            sessions.append(current_session)
+
+        logger.info(f"Found {len(sessions)} recording sessions for {session_id}")
 
         uploaded_groups = []
+        loop = asyncio.get_event_loop()
 
-        processed_group_idx = 0
-        for group_index, group_chunks in enumerate(groups):
-            try:
-                logger.info(
-                    f"Processing group {group_index} with {len(group_chunks)} chunks"
-                )
-                logger.debug(
-                    f"Group {group_index} chunk objects: {group_chunks} (session {session_id})"
-                )
+        for session_idx, session_chunks in enumerate(sessions):
+            logger.info(
+                f"Processing session {session_idx} with {len(session_chunks)} chunks"
+            )
 
-                # Download bytes for this group
-                downloaded: List[tuple[str, bytes]] = []
-                for path in group_chunks:
-                    data = await self.download_single_chunk(path)
-                    downloaded.append((path, data))
+            # Extract EBML header for THIS session
+            first_chunk_data = await self.download_single_chunk(session_chunks[0])
 
-                # Find subgroup boundaries: any non-start chunk that begins with EBML
-                boundaries = [0]
-                for i in range(1, len(downloaded)):
-                    name_i = downloaded[i][0].split("/")[-1]
-                    if (
-                        downloaded[i][1].startswith(EBML_MAGIC)
-                        and "_start" not in name_i
-                    ):
-                        boundaries.append(i)
-                boundaries.append(len(downloaded))
+            if not first_chunk_data.startswith(EBML_MAGIC):
+                logger.error(f"Session {session_idx} first chunk missing EBML header")
+                continue
 
-                loop = asyncio.get_event_loop()
-                for b in range(len(boundaries) - 1):
-                    sub_start = boundaries[b]
-                    sub_end = boundaries[b + 1]
-                    sub = downloaded[sub_start:sub_end]
+            cluster_index = first_chunk_data.find(CLUSTER_MAGIC)
+            if cluster_index <= 0:
+                logger.error(f"Session {session_idx} first chunk missing Cluster")
+                continue
+
+            ebml_header = first_chunk_data[:cluster_index]
+            logger.info(
+                f"Extracted EBML header ({len(ebml_header)} bytes) for session {session_idx}"
+            )
+
+            # Split this session into groups of 100 chunks
+            session_groups = []
+            for i in range(0, len(session_chunks), 100):
+                session_groups.append(session_chunks[i : i + 100])
+
+            logger.info(f"Session {session_idx}: created {len(session_groups)} groups")
+
+            for group_idx, group_chunks in enumerate(session_groups):
+                try:
+                    logger.info(
+                        f"Processing session {session_idx}, group {group_idx} with {len(group_chunks)} chunks"
+                    )
+
+                    # Download chunks for this group
+                    downloaded: List[tuple[str, bytes]] = []
+                    for path in group_chunks:
+                        data = await self.download_single_chunk(path)
+                        downloaded.append((path, data))
 
                     temp_concat_path = None
                     temp_reencode_path = None
@@ -517,20 +563,26 @@ class RecordingService:
                         ) as temp_reencode:
                             temp_reencode_path = temp_reencode.name
 
-                        # Byte-append subgroup, stripping unexpected EBML from non-start chunks
+                        # Concatenate with session-specific EBML header
                         with open(temp_concat_path, "wb") as out_f:
-                            for j, (p, d) in enumerate(sub):
+                            # Write EBML header from this session
+                            out_f.write(ebml_header)
+
+                            # Write cluster data from all chunks
+                            for j, (p, d) in enumerate(downloaded):
                                 fname = p.split("/")[-1]
-                                is_start = j == 0 or "_start" in fname
-                                if not is_start and d.startswith(EBML_MAGIC):
+
+                                if d.startswith(EBML_MAGIC):
+                                    # Strip EBML header, keep only clusters
                                     ci = d.find(CLUSTER_MAGIC)
                                     if ci > 0:
                                         d = d[ci:]
                                     else:
                                         logger.warning(
-                                            f"Skipping non-start EBML chunk without Cluster: {fname}"
+                                            f"Skipping chunk without Cluster: {fname}"
                                         )
                                         continue
+
                                 out_f.write(d)
 
                         await loop.run_in_executor(
@@ -543,7 +595,9 @@ class RecordingService:
                         with open(temp_reencode_path, "rb") as f:
                             re_data = f.read()
 
-                        out_path = f"recordings/{session_id}/groups/group_{processed_group_idx}.webm"
+                        # Use global index for output naming
+                        global_group_idx = len(uploaded_groups)
+                        out_path = f"recordings/{session_id}/groups/group_{global_group_idx}.webm"
                         await self.storage.upload(
                             bucket=self.bucket_name,
                             object_name=out_path,
@@ -552,9 +606,10 @@ class RecordingService:
                         )
                         uploaded_groups.append(out_path)
                         logger.info(
-                            f"Uploaded subgroup {b} (group index {processed_group_idx}) to {out_path}"
+                            f"Uploaded session {session_idx} group {group_idx} "
+                            f"(global index {global_group_idx}) to {out_path}"
                         )
-                        processed_group_idx += 1
+
                     finally:
                         try:
                             if temp_concat_path and os.path.exists(temp_concat_path):
@@ -568,14 +623,13 @@ class RecordingService:
                                 f"Failed to cleanup temp files: {cleanup_error}"
                             )
 
-            except Exception as e:
-                logger.error(f"Failed to process group {group_index}: {e}")
-                # Continue with other groups
-                raise
+                except Exception as e:
+                    logger.error(
+                        f"Failed to process session {session_idx} group {group_idx}: {e}"
+                    )
+                    raise
 
-        logger.info(
-            f"Successfully processed {len(uploaded_groups)} out of {len(groups)} groups"
-        )
+        logger.info(f"Successfully processed {len(uploaded_groups)} total groups")
         return uploaded_groups
 
     async def generate_signed_url(
