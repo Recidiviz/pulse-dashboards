@@ -79,7 +79,6 @@ export const useRecording = ({
   const [chunkCount, setChunkCount] = useState(0);
   const recordingStartTimeRef = useRef<number | null>(null);
   const lastDataSendedTimeRef = useRef<number | null>(null);
-  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
   const noSleepRef = useRef<NoSleep | null>(null);
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
 
@@ -248,46 +247,13 @@ export const useRecording = ({
     return hasTouch && isSmallScreen;
   }, []);
 
-  // Helper function to detect iOS devices (iPhone/iPad)
-  const isIOSDevice = useCallback((): boolean => {
-    if (typeof window === "undefined" || typeof navigator === "undefined") {
-      return false;
-    }
-
-    // Use the standard way to access userAgent
-    const userAgent = navigator.userAgent;
-
-    // Check for iPhone, iPad, or iPod
-    // (window as any).MSStream is used for old IE versions, you can often remove it
-    // unless you need to support very old versions of those browsers.
-    const isIOS = /iPad|iPhone|iPod/.test(userAgent); // MSStream check is now often unnecessary
-
-    // Check for iPad on iOS 13+ which identifies as Mac
-    // navigator.platform is now deprecated but still works for this check.
-    const isIPadOS =
-      navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
-
-    return isIOS || isIPadOS;
-  }, []);
-
   // Release wake lock
   const releaseWakeLock = useCallback(async () => {
-    // Release Wake Lock API if active
-    if (wakeLockRef.current) {
-      try {
-        await wakeLockRef.current.release();
-        wakeLockRef.current = null;
-        console.log("Wake Lock API released manually");
-      } catch (error) {
-        console.error("Error releasing wake lock:", error);
-      }
-    }
-
     // Disable NoSleep if active
     if (noSleepRef.current?.isEnabled) {
       try {
         noSleepRef.current.disable();
-        console.log("NoSleep disabled manually");
+        console.log("NoSleep disabled");
       } catch (error) {
         console.error("Error disabling NoSleep:", error);
       }
@@ -323,94 +289,23 @@ export const useRecording = ({
       }
     }
 
-    // For iOS devices (iPhone/iPad), always use NoSleep
-    // Wake Lock API is unreliable on iOS
-    const isIOS = isIOSDevice();
-    if (isIOS) {
-      console.log("iOS device detected - using NoSleep directly");
-      try {
-        if (noSleepRef.current && !noSleepRef.current.isEnabled) {
-          await noSleepRef.current.enable();
-          console.log("NoSleep enabled successfully on iOS device");
-        }
-        return;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        console.error("Error enabling NoSleep on iOS:", errorMessage);
-        showErrorToast(
-          `Could not keep screen awake: ${errorMessage}${batteryLevel !== null ? ` (Battery: ${batteryLevel}%)` : ""}`,
-        );
-        return;
-      }
-    }
-
-    // For non-iOS devices, try Wake Lock API first
-    let wakeLockFailed = false;
-    let wakeLockError: Error | null = null;
-
-    if ("wakeLock" in navigator) {
-      try {
-        // Request wake lock
-        const wakeLock = await navigator.wakeLock.request("screen");
-        wakeLockRef.current = wakeLock;
-        console.log("Wake Lock API acquired successfully");
-
-        // Listen for wake lock release
-        wakeLock.addEventListener("release", () => {
-          console.log("Wake lock released");
-        });
-
-        return;
-      } catch (error) {
-        wakeLockFailed = true;
-        wakeLockError =
-          error instanceof Error ? error : new Error("Unknown error");
-
-        // Check if the error is specifically a permission denied error
-        const isPermissionDenied =
-          (error as DOMException)?.name === "NotAllowedError" ||
-          wakeLockError.message.toLowerCase().includes("permission");
-
-        if (isPermissionDenied) {
-          console.warn(
-            "Wake Lock API permission denied, falling back to NoSleep",
-          );
-        } else {
-          console.warn(
-            "Wake Lock API failed, falling back to NoSleep:",
-            wakeLockError.message,
-          );
-        }
-      }
-    }
-
-    // Fallback to NoSleep if Wake Lock API is not supported or failed
+    // For all mobile/tablet devices, use NoSleep.js
+    // This ensures consistent behavior across iOS and Android
+    console.log("Mobile/tablet device detected - using NoSleep");
     try {
       if (noSleepRef.current && !noSleepRef.current.isEnabled) {
         await noSleepRef.current.enable();
-        console.log(
-          "NoSleep enabled successfully" +
-            (wakeLockFailed
-              ? " (fallback from Wake Lock API)"
-              : " (Wake Lock API not supported)"),
-        );
+        console.log("NoSleep enabled successfully on mobile/tablet device");
       }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       console.error("Error enabling NoSleep:", errorMessage);
-
-      // Show error only if both Wake Lock API and NoSleep failed
-      const combinedError = wakeLockError
-        ? `Wake Lock API: ${wakeLockError.message}, NoSleep: ${errorMessage}`
-        : errorMessage;
-
       showErrorToast(
-        `Could not keep screen awake: ${combinedError}${batteryLevel !== null ? ` (Battery: ${batteryLevel}%)` : ""}`,
+        `Could not keep screen awake: ${errorMessage}${batteryLevel !== null ? ` (Battery: ${batteryLevel}%)` : ""}`,
       );
     }
-  }, [isMobileOrTablet, isIOSDevice, batteryLevel, releaseWakeLock]);
+  }, [isMobileOrTablet, batteryLevel]);
 
   // Check if wake lock is active
   const isWakeLockActive = useCallback((): boolean => {
@@ -418,14 +313,10 @@ export const useRecording = ({
       return false;
     }
 
-    // Check if Wake Lock API is active
-    const isWakeLockAPIActive =
-      wakeLockRef.current !== null && !wakeLockRef.current.released;
-
     // Check if NoSleep is active
     const isNoSleepActive = noSleepRef.current?.isEnabled ?? false;
 
-    return isWakeLockAPIActive || isNoSleepActive;
+    return isNoSleepActive;
   }, [isMobileOrTablet]);
 
   const pauseRecording = useCallback(
