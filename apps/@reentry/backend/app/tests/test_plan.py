@@ -17,15 +17,21 @@ from app.services.resources import (
 from app.utils.action_plan_types import ActionPlan, ActionPlanMarkdown
 
 
-@pytest.mark.asyncio
-async def test_plan_create(
-    mock_clientdata_service,
-    client,
-    async_session,
-    assert_response,
+@pytest.fixture
+async def setup_intake_address_and_plan(
+    mock_clientdata_service, async_session, client, assert_response
 ):
+    """Create an initial intake and plan for tests that need them."""
+    from app.crud.intake import create_intake
+    from app.models.intake import IntakeType
+
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    # Create test plan
+    await create_intake(async_session, client_pseudo_id, IntakeType.EXTERNAL)
+    address_data = AddressSubmission(
+        street_address="123 Main St", city="Portland", state="OR"
+    )
+    await update_client_address(async_session, client_pseudo_id, address_data)
+
     response = await client.post(
         "/plans",
         json={
@@ -33,18 +39,35 @@ async def test_plan_create(
             "no_initial_generation": True,
         },
     )
+    assert_response(response, 200)
+    plan_id = response.json()["id"]
 
+    return {
+        "client_pseudo_id": client_pseudo_id,
+        "plan_id": plan_id,
+    }
+
+
+@pytest.mark.asyncio
+async def test_plan_create(
+    setup_intake_address_and_plan,
+    client,
+    async_session,
+    assert_response,
+):
+    client_pseudo_id = setup_intake_address_and_plan["client_pseudo_id"]
+    plan_id = setup_intake_address_and_plan["plan_id"]
+
+    # The plan was already created by the fixture, verify it via API
+    response = await client.get(f"/plans/{plan_id}")
     assert_response(response, 200)
     data = response.json()
 
     # Verify the plan was created successfully
-    assert data["id"] is not None
+    assert data["id"] == plan_id
     assert data["client_pseudo_id"] == client_pseudo_id
     assert data["created_at"] is not None
     assert data["updated_at"] is not None
-
-    # Skip client_record assertion for now since it's not essential
-    # assert data["client_record"] is not None
 
 
 @pytest.mark.asyncio
@@ -58,22 +81,13 @@ async def test_plan_get_404(
 
 @pytest.mark.asyncio
 async def test_plan_get(
-    mock_clientdata_service,
+    setup_intake_address_and_plan,
     client,
     async_session,
     assert_response,
 ):
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    # create a plan
-    response = await client.post(
-        "/plans",
-        json={
-            "client_pseudo_id": client_pseudo_id,
-            "no_initial_generation": True,
-        },
-    )
-    assert_response(response, 200)
-    plan_id = response.json()["id"]
+    client_pseudo_id = setup_intake_address_and_plan["client_pseudo_id"]
+    plan_id = setup_intake_address_and_plan["plan_id"]
 
     # get a plan
     response = await client.get(f"/plans/{plan_id}")
@@ -105,22 +119,12 @@ async def test_plan_get(
 
 @pytest.mark.asyncio
 async def test_plan_generation(
-    mock_clientdata_service,
+    setup_intake_address_and_plan,
     client,
     async_session,
     assert_response,
 ):
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    # create a plan
-    response = await client.post(
-        "/plans",
-        json={
-            "client_pseudo_id": client_pseudo_id,
-            "no_initial_generation": True,
-        },
-    )
-    assert_response(response, 200)
-    plan_id = response.json()["id"]
+    plan_id = setup_intake_address_and_plan["plan_id"]
 
     # populate client assets
     for filename, name, mimetype in [
@@ -209,22 +213,12 @@ async def test_plan_generation(
 
 @pytest.mark.asyncio
 async def test_plan_generation_manually(
-    mock_clientdata_service,
+    setup_intake_address_and_plan,
     client,
     async_session,
     assert_response,
 ):
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    # create a plan
-    response = await client.post(
-        "/plans",
-        json={
-            "client_pseudo_id": client_pseudo_id,
-            "no_initial_generation": True,
-        },
-    )
-    assert_response(response, 200)
-    plan_id = response.json()["id"]
+    plan_id = setup_intake_address_and_plan["plan_id"]
 
     # populate client assets
     for filename, name, mimetype in [
@@ -306,23 +300,12 @@ async def test_plan_generation_manually(
 
 @pytest.mark.asyncio
 async def test_plan_assets(
-    mock_clientdata_service,
+    setup_intake_address_and_plan,
     client,
     async_session,
     assert_response,
 ):
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    # create a plan
-    response = await client.post(
-        "/plans",
-        json={
-            "client_pseudo_id": client_pseudo_id,
-            "no_initial_generation": True,
-        },
-    )
-    assert_response(response, 200)
-    plan_id = response.json()["id"]
+    plan_id = setup_intake_address_and_plan["plan_id"]
 
     # create a fake file with "helloworld" content
     fake_file_content = "helloworld"
@@ -364,7 +347,7 @@ async def test_plan_assets(
 )
 @pytest.mark.asyncio
 async def test_resource_type_get_result(
-    mock_clientdata_service,
+    setup_intake_address_and_plan,
     client,
     async_session,
     assert_response,
@@ -373,7 +356,7 @@ async def test_resource_type_get_result(
     if category == ResourceCategory.UNKNOWN:
         pytest.skip()
 
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    client_pseudo_id = setup_intake_address_and_plan["client_pseudo_id"]
     # create a plan
     cplan_r = await client.post(
         "/plans",
@@ -416,22 +399,12 @@ async def test_resource_type_get_result(
 
 @pytest.mark.asyncio
 async def test_suggested_resources(
-    mock_clientdata_service,
+    setup_intake_address_and_plan,
     client,
     async_session,
     assert_response,
 ):
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    # Create a plan
-    response = await client.post(
-        "/plans",
-        json={
-            "client_pseudo_id": client_pseudo_id,
-            "no_initial_generation": True,
-        },
-    )
-    assert_response(response, 200)
-    plan_id = response.json()["id"]
+    plan_id = setup_intake_address_and_plan["plan_id"]
 
     # Upload assets
     for filename, name, mimetype in [
@@ -535,23 +508,13 @@ async def test_suggested_resources(
 
 @pytest.mark.asyncio
 async def test_regeneration_notify_set_on_prompt_generation(
-    mock_clientdata_service,
+    setup_intake_address_and_plan,
     client,
     async_session,
     assert_response,
 ):
     """Test that regeneration_notify is set to True when generating with a prompt"""
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    response = await client.post(
-        "/plans",
-        json={
-            "client_pseudo_id": client_pseudo_id,
-            "no_initial_generation": True,
-        },
-    )
-    assert_response(response, 200)
-    plan_id = response.json()["id"]
+    plan_id = setup_intake_address_and_plan["plan_id"]
 
     for filename, name, mimetype in [
         ("client_messages.json", "messages.json", "application/json"),
@@ -617,23 +580,13 @@ async def test_regeneration_notify_set_on_prompt_generation(
 
 @pytest.mark.asyncio
 async def test_set_notify_endpoint(
-    mock_clientdata_service,
+    setup_intake_address_and_plan,
     client,
     async_session,
     assert_response,
 ):
     """Test the /plans/{id}/set-notify endpoint"""
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    response = await client.post(
-        "/plans",
-        json={
-            "client_pseudo_id": client_pseudo_id,
-            "no_initial_generation": True,
-        },
-    )
-    assert_response(response, 200)
-    plan_id = response.json()["id"]
+    plan_id = setup_intake_address_and_plan["plan_id"]
 
     for filename, name, mimetype in [
         ("client_messages.json", "messages.json", "application/json"),
@@ -715,7 +668,7 @@ async def test_set_notify_endpoint(
 
 @pytest.mark.asyncio
 async def test_set_notify_endpoint_error_cases(
-    mock_clientdata_service,
+    setup_intake_address_and_plan,
     client,
     async_session,
     assert_response,
@@ -726,16 +679,7 @@ async def test_set_notify_endpoint_error_cases(
     )
     assert response.status_code == 404
 
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    response = await client.post(
-        "/plans",
-        json={
-            "client_pseudo_id": client_pseudo_id,
-            "no_initial_generation": True,
-        },
-    )
-    assert_response(response, 200)
-    plan_id = response.json()["id"]
+    plan_id = setup_intake_address_and_plan["plan_id"]
 
     response = await client.post(f"/plans/{plan_id}/set-notify", json={"notify": False})
     assert response.status_code == 404

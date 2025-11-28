@@ -111,7 +111,7 @@ const formatFrontendStatus = (status: string) => {
     intake_in_progress: "Intake In Progress",
     processing: "Processing",
     intake_complete: "Intake Complete",
-    error: "Error",
+    error: "Error, please retry processing",
     unknown: "Unknown",
   };
   return statusMap[status] || "Unknown";
@@ -324,7 +324,7 @@ const ClientsPage = () => {
   // Set up polling for status updates
   useClientStatusPolling({
     enabled: hasInProgressClients,
-    interval: 5000, // Poll every 5 seconds
+    interval: 10000, // Poll every 10 seconds
     onStatusUpdate: handleStatusUpdate,
   });
 

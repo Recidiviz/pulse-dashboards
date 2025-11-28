@@ -66,11 +66,15 @@ def compute_frontend_status(
     if intake_status == "completed":
         if processing_status == ProcessingStatus.IN_PROGRESS:
             return "processing"
+        if processing_status == ProcessingStatus.NOT_STARTED:
+            return "processing"
         if processing_status == ProcessingStatus.COMPLETED:
             return "intake_complete"
         if processing_status == ProcessingStatus.FAILED:
             return "error"
-        return "processing"
+        if processing_status == ProcessingStatus.NEEDS_RETRY:
+            return "error"
+        return "error"
 
     if intake_status == "error":
         return "error"

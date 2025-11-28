@@ -338,6 +338,8 @@ async def _generate_new_action_plan(
     if not (client_pseudo_id := gen.plan.client_pseudo_id):
         raise ValueError("Could not get client information for plan.")
     client_address = await get_collected_address_for_client(session, client_pseudo_id)
+    if not client_address:
+        raise ValueError("Could not get client address for plan.")
 
     await execution.log_progress(
         session, 40, "Preparing decision tree data", logger=task_logger
@@ -359,7 +361,7 @@ async def _generate_new_action_plan(
         client_data=client_data,
         decision_tree_statements=decision_tree_statements,
         previous_sections=previous_sections,
-        client_address=client_address,
+        client_address=client_address.as_formatted_string(),
         thread_id=gen.plan_id,
     )
 

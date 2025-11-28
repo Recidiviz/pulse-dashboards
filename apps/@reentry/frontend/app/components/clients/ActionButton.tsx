@@ -176,7 +176,7 @@ const ActionButton: React.FC<DropdownProps> = ({
               )}
 
               {/* Show links if there is a plan */}
-              {client.plans && (
+              {client.plans && client.processing_status == "completed" && (
                 <>
                   <a
                     href={`/intake-summary/${client.client_pseudo_id}`}
