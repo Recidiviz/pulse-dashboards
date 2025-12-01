@@ -54,6 +54,7 @@ dependencies = [
     "imageio-ffmpeg>=0.4.8",
     "google-cloud-speech>=2.33.0",
     "weasyprint>=66.0",
+    "google-cloud-texttospeech>=2.33.0",
 ]
 
 [tool.ruff]

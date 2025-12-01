@@ -26,7 +26,12 @@ import { ChatMessageBubble } from "./ChatMessageBubble";
 
 export const ChatbotInterface: React.FC = () => {
   const {
-    intakeContext: { messages, waitingForAIInput, connectionStatus },
+    intakeContext: {
+      messages,
+      waitingForAIInput,
+      connectionStatus,
+      clientPseudoId,
+    },
   } = useSocket();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -82,7 +87,11 @@ export const ChatbotInterface: React.FC = () => {
           {/* Show typing indicator when AI is thinking or when no messages initially */}
           {waitingForAIInput ||
           (!messages.length && connectionStatus === "connected") ? (
-            <ChatMessageBubble key="typing-indicator" isTyping={true} />
+            <ChatMessageBubble
+              key="typing-indicator"
+              isTyping={true}
+              clientPseudoId={clientPseudoId}
+            />
           ) : null}
 
           <div ref={messagesEndRef} />
@@ -91,7 +100,7 @@ export const ChatbotInterface: React.FC = () => {
 
       {/* Input */}
       <div className="shrink-0 pb-6">
-        <ChatInput />
+        <ChatInput clientPseudoId={clientPseudoId} />
       </div>
     </div>
   );

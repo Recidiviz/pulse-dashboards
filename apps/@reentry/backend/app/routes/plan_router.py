@@ -1,11 +1,14 @@
 import logging
+import os
+import shutil
+import tempfile
 import uuid
 from datetime import datetime
 from io import BytesIO
 from typing import List, Optional
 
 import orjson
-from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
@@ -59,6 +62,7 @@ from app.services.resources import (
     ResourceSubcategory,
     list_resources,
 )
+from app.tasks.transcribe_audio_with_deepgram import deepgram_transcription_diarization
 
 from ..utils.PrometheusBackgroundThreadManager import (
     llm_plan_creation_total_counter,
@@ -795,3 +799,37 @@ async def generate_pdf(request: PDFRequest):
     except Exception as e:
         logger.exception(f"PDF generation failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
+
+
+@router.post(
+    "/transcribe",
+    summary="Transcribe audio file",
+    description="Transcribes an uploaded audio file and returns the conversation",
+    tags=["Intake assessment"],
+)
+async def transcribe_audio_route(
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(get_session),
+):
+    # Create a temporary file to save the uploaded audio
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_file:
+        shutil.copyfileobj(file.file, temp_file)
+        temp_file_path = temp_file.name
+    transcription = ""
+    try:
+        response_dict = await deepgram_transcription_diarization(
+            temp_file_path,
+            "api-request",
+            diarize=False,
+        )
+        channels = response_dict.get("results", {}).get("channels", [])
+        if channels:
+            transcription = channels[0].get("alternatives", [{}])[0].get("transcript")
+    except Exception as e:
+        logger.error(f"Transcription failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        # Clean up the temporary file
+        if os.path.exists(temp_file_path):
+            os.unlink(temp_file_path)
+    return {"transcription": transcription}

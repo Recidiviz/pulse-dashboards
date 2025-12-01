@@ -52,6 +52,23 @@ class DeepgramTranscriptionInput(BaseModel):
     results: DeepgramResultInput
 
 
+class DeepgramParagraphs(BaseModel):
+    transcript: str
+    paragraphs: List[Dict]
+
+
+class DeepgramAlternativeInput(BaseModel):
+    transcript: str
+    confidence: float
+    words: List[DeepgramWordInput]
+    paragraphs: Optional[DeepgramParagraphs] = None
+
+
+class DeepgramTranscriptionOutput(BaseModel):
+    metadata: DeepgramMetadataInput
+    results: DeepgramResultInput
+
+
 ### GCP INPUT DATA MODELS ###
 
 

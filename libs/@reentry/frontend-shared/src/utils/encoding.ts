@@ -15,37 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-"use client";
+/**
+ * Converts a base64-encoded string to a Blob
+ * @param base64 - The base64-encoded string
+ * @param mimeType - The MIME type for the Blob (e.g., 'audio/mpeg', 'image/png', 'application/pdf')
+ * @returns A Blob containing the decoded data
+ */
+export function base64ToBlob(base64: string, mimeType: string): Blob {
+  const byteCharacters = atob(base64);
+  const byteNumbers = new Array(byteCharacters.length);
 
-import createFetchClient from "openapi-fetch";
-import createClient, { OpenapiQueryClient } from "openapi-react-query";
-
-import type { paths } from "~@reentry/openapi-types";
-
-import { authMiddleware } from "./auth/authMiddleware";
-
-// api singleton
-let client: $Api | undefined;
-let storedBaseUrl: string | undefined;
-
-export function createApiClient(baseUrl: string): $Api {
-  if (client) return client;
-
-  storedBaseUrl = baseUrl;
-  const fetchClient = createFetchClient<paths>({
-    baseUrl,
-  });
-  fetchClient.use(authMiddleware);
-
-  client = createClient(fetchClient);
-  return client;
-}
-
-export function getBaseUrl(): string {
-  if (!storedBaseUrl) {
-    throw new Error("API client not initialized. Call createApiClient first.");
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
   }
-  return storedBaseUrl;
-}
 
-export type $Api = OpenapiQueryClient<paths>;
+  const byteArray = new Uint8Array(byteNumbers);
+  return new Blob([byteArray], { type: mimeType });
+}

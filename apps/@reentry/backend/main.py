@@ -31,6 +31,7 @@ from app.routes import (
     client_router,
     decision_tree_router,
     execution_router,
+    google_stt_tts_router,
     intake_admin_router,
     intake_client_router,
     intake_internal_router,
@@ -155,6 +156,7 @@ exclude_paths = [
     "/intake/client",
     "/intake/internal",
     "/intake/client/start-assessment-action-plan",
+    "/transcribe",
 ]
 
 auth0_config = get_auth0_config()
@@ -188,6 +190,7 @@ app.include_router(decision_tree_router.router, prefix="/decision-trees")
 app.include_router(assessment_tree_router.router, prefix="/assessment-trees")
 app.include_router(assessment_router.router, prefix="/assessments")
 app.include_router(execution_router.router, prefix="/executions")
+app.include_router(google_stt_tts_router.router, prefix="/google")
 app.include_router(intake_client_router.router, prefix="/intake/client")
 app.include_router(intake_internal_router.router, prefix="/intake/internal")
 app.include_router(intake_admin_router.router, prefix="/intake/admin")

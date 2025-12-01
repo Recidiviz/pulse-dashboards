@@ -149,4 +149,22 @@ export class SegmentClient implements IntakeAnalytics {
   }) {
     this.track("frontend_cpa_intake_chat_client_address_submitted", metadata);
   }
+
+  trackIntakeChatSttEvent(
+    eventName: string,
+    metadata: {
+      justiceInvolvedPersonPseudoId: string;
+    },
+  ) {
+    this.track(`frontend_cpa_intake_chat_stt_${eventName}`, metadata);
+  }
+
+  trackIntakeChatTtsEvent(
+    eventName: string,
+    metadata: {
+      justiceInvolvedPersonPseudoId: string;
+    },
+  ) {
+    this.track(`frontend_cpa_intake_chat_tts_${eventName}`, metadata);
+  }
 }

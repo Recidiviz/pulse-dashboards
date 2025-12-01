@@ -21,10 +21,12 @@ import type React from "react";
 import type { components } from "~@reentry/openapi-types";
 
 import { CaseWorkerAvatar, ClientAvatar } from "./CustomAvatar";
+import { TTSButton } from "./TTSButton";
 interface MessageBubbleProps {
   message?: components["schemas"]["IntakeMessageResponse"];
   name?: string;
   isTyping?: boolean;
+  clientPseudoId?: string | null;
 }
 
 const TypingDots: React.FC = () => (
@@ -91,6 +93,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
   message,
   name,
   isTyping = false,
+  clientPseudoId,
 }) => {
   // Return nothing if no message and not typing
   if (!message && !isTyping) {
@@ -136,19 +139,29 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
             <CaseWorkerAvatar />
           </div>
 
-          {/* Message Bubble */}
-          <div className="relative inline-flex flex-col items-start">
-            <div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-white text-[#1E3A3A] break-words">
-              <Typography
-                variant="body1"
-                className="font-inter !text-[18px] leading-[1.2] font-normal break-words whitespace-pre-wrap"
-              >
-                {isTyping ? <TypingDots /> : message?.content}
-              </Typography>
+          {/* Message Bubble with TTS Button */}
+          <div className="flex items-start gap-2">
+            <div className="relative inline-flex flex-col items-start">
+              <div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-white text-[#1E3A3A] break-words">
+                <Typography
+                  variant="body1"
+                  className="font-inter !text-[18px] leading-[1.2] font-normal break-words whitespace-pre-wrap"
+                >
+                  {isTyping ? <TypingDots /> : message?.content}
+                </Typography>
+              </div>
+
+              {/* Tail */}
+              <CaseWorkerBubbleTail />
             </div>
 
-            {/* Tail */}
-            <CaseWorkerBubbleTail />
+            {/* TTS Button */}
+            {!isTyping && message?.content && (
+              <TTSButton
+                text={message.content}
+                clientPseudoId={clientPseudoId}
+              />
+            )}
           </div>
         </div>
       )}

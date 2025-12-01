@@ -28,7 +28,7 @@ import { IntakeAnalytics } from "~@reentry/frontend-shared";
 interface AnalyticsContextProps extends IntakeAnalytics {
   identify: (userId: string) => void;
   pageView: (pagePath: string) => void;
-  track: (eventName: string, metadata: Record<string, unknown>) => void;
+  track: (eventName: string, metadata?: Record<string, unknown>) => void;
   trackClientIntakeChatHistoryViewed: (metadata: {
     justiceInvolvedPersonId: string;
     section: string;
@@ -44,6 +44,18 @@ interface AnalyticsContextProps extends IntakeAnalytics {
     sessionId: string;
     status: string;
   }) => void;
+  trackIntakeChatSttEvent: (
+    eventName: string,
+    metadata: {
+      justiceInvolvedPersonPseudoId: string;
+    },
+  ) => void;
+  trackIntakeChatTtsEvent: (
+    eventName: string,
+    metadata: {
+      justiceInvolvedPersonPseudoId: string;
+    },
+  ) => void;
 }
 
 interface AnalyticsProviderProps {
@@ -177,6 +189,32 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     });
   };
 
+  const trackIntakeChatSttEvent = (
+    eventName: string,
+    {
+      // renaming this for backwards compatibility between the intake interface
+      // and the existing event structure
+      justiceInvolvedPersonPseudoId: justiceInvolvedPersonId,
+    }: {
+      justiceInvolvedPersonPseudoId: string;
+    },
+  ) => {
+    trackIntakeChatEvent(`stt_${eventName}`, { justiceInvolvedPersonId });
+  };
+
+  const trackIntakeChatTtsEvent = (
+    eventName: string,
+    {
+      // renaming this for backwards compatibility between the intake interface
+      // and the existing event structure
+      justiceInvolvedPersonPseudoId: justiceInvolvedPersonId,
+    }: {
+      justiceInvolvedPersonPseudoId: string;
+    },
+  ) => {
+    trackIntakeChatEvent(`tts_${eventName}`, { justiceInvolvedPersonId });
+  };
+
   const trackClientHomeAddressSubmitted = (metadata: {
     justiceInvolvedPersonId: string;
   }) => {
@@ -210,6 +248,8 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
         trackIntakeChatClientLogin,
         trackClientHomeAddressSubmitted,
         trackIntakeChatClientAddressSubmitted,
+        trackIntakeChatSttEvent,
+        trackIntakeChatTtsEvent,
       }}
     >
       {children}

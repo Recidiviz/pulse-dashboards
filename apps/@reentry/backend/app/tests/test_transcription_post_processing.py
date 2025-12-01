@@ -286,7 +286,7 @@ class TestTranscriptionProcessor:
         )
 
         with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(result.dict(), f, indent=2, ensure_ascii=False)
+            json.dump(result.model_dump(), f, indent=2, ensure_ascii=False)
 
         # Verify file was created and contains expected data
         assert output_file.exists()
@@ -313,7 +313,7 @@ class TestTranscriptionProcessor:
         )
 
         with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(result.dict(), f, indent=2, ensure_ascii=False)
+            json.dump(result.model_dump(), f, indent=2, ensure_ascii=False)
 
         # Verify file was created and contains expected data
         assert output_file.exists()

@@ -53,6 +53,14 @@ export interface IntakeAnalytics {
   trackIntakeChatClientAddressSubmitted: (
     metadata: IntakeAnalyticsMetadata,
   ) => void;
+  trackIntakeChatSttEvent: (
+    eventName: string,
+    metadata: IntakeAnalyticsMetadata,
+  ) => void;
+  trackIntakeChatTtsEvent: (
+    eventName: string,
+    metadata: IntakeAnalyticsMetadata,
+  ) => void;
 }
 
 /**
