@@ -15,16 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { fieldToDate } from "~datatypes";
+
+import { formatDate } from "../../../utils";
 import UsIdTaskBase from "./UsIdTaskBase";
 
-class UsIdRiskAssessmentTaskV2 extends UsIdTaskBase<"usIdRiskAssessment"> {
-  displayName = "Risk Assessment";
+class UsIdAssessmentTask extends UsIdTaskBase<"usIdAssessment"> {
+  displayName = "Assessment";
   vitalsMetricId = "timely_risk_assessment" as const;
-  taskAction = "assessed";
+  taskAction = "assessment";
+
+  get lastContacted(): string | undefined {
+    const { lastAssessmentDate } = this.details;
+    if (!lastAssessmentDate) return;
+    return formatDate(fieldToDate(lastAssessmentDate));
+  }
 
   get additionalDetails(): string {
     return `${super.additionalDetails}\nScore: ${this.person.supervisionLevel}`;
   }
 }
 
-export default UsIdRiskAssessmentTaskV2;
+export default UsIdAssessmentTask;

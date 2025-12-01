@@ -24,6 +24,7 @@ import {
   PATHWAYS_SECTIONS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
+import UsIdAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdAssessmentTask";
 import UsIdContactTask from "../WorkflowsStore/Task/US_ID/UsIdContactTask";
 import UsIdEmploymentVerificationTask from "../WorkflowsStore/Task/US_ID/UsIdEmploymentVerificationTask";
 import UsIdEmploymentVerificationTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdEmploymentVerificationTaskV2";
@@ -31,7 +32,6 @@ import UsIdFaceToFaceContactTask from "../WorkflowsStore/Task/US_ID/UsIdFaceToFa
 import UsIdHomeVisitTask from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTask";
 import UsIdHomeVisitTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTaskV2";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdRiskAssessmentTask";
-import UsIdRiskAssessmentTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdRiskAssessmentTaskV2";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const US_ID_CONFIG = {
@@ -63,8 +63,8 @@ const US_ID_CONFIG = {
         constructor: UsIdEmploymentVerificationTaskV2,
         snoozeForOptionsInDays: [7, 30, 90],
       },
-      usIdRiskAssessment: {
-        constructor: UsIdRiskAssessmentTaskV2,
+      usIdAssessment: {
+        constructor: UsIdAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
@@ -119,22 +119,22 @@ const US_ID_CONFIG = {
         options: [
           {
             value: "usIdFaceToFaceContact",
-            label: "Contact",
+            label: "Face-to-Face Contact",
+            shortLabel: "Contact",
           },
           {
             value: "usIdHomeVisit",
-            shortLabel: "Home Visit",
             label: "Home Visit",
           },
           {
-            value: "usIdRiskAssessment",
-            shortLabel: "Risk Assessment",
+            value: "usIdAssessment",
             label: "Risk Assessment",
+            shortLabel: "Assessment",
           },
           {
             value: "usIdEmploymentVerification",
-            shortLabel: "Employment Verification",
             label: "Employment Verification",
+            shortLabel: "Employment",
           },
         ],
       },
