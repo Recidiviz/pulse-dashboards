@@ -112,6 +112,32 @@ const US_ID_CONFIG = {
           },
         ],
       },
+      {
+        title: "Task Type",
+        field: "type",
+        type: "task",
+        options: [
+          {
+            value: "usIdFaceToFaceContact",
+            label: "Contact",
+          },
+          {
+            value: "usIdHomeVisit",
+            shortLabel: "Home Visit",
+            label: "Home Visit",
+          },
+          {
+            value: "usIdRiskAssessment",
+            shortLabel: "Risk Assessment",
+            label: "Risk Assessment",
+          },
+          {
+            value: "usIdEmploymentVerification",
+            shortLabel: "Employment Verification",
+            label: "Employment Verification",
+          },
+        ],
+      },
     ],
   },
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],

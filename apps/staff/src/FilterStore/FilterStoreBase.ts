@@ -37,7 +37,7 @@ export default abstract class FilterStoreBase {
     protected readonly analyticsStore: AnalyticsStore,
     readonly tenantStore: TenantStore,
     protected readonly workflowsStore: WorkflowsStore,
-  ) {}
+  ) { }
 
   // Shared filter controls
 
@@ -58,7 +58,13 @@ export default abstract class FilterStoreBase {
     const { filters } = this.filterConfig;
     if (!filters) return [];
 
-    return filters;
+
+    // TODO(#10615): Remove filter condition when UsIdTasksV2 is fully rolled out.
+    return filters.filter(({ title }) => {
+      // Special case: hide "Task Type" filter for US_ID without v2 flag
+      if (title === "Task Type" && this.workflowsStore.isUsIdLegacyTasksEnabled) return false;
+      return true;
+    });
   }
 
   get someFiltersSet(): boolean {

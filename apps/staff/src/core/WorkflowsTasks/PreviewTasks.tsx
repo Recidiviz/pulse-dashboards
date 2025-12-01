@@ -24,6 +24,7 @@ import styled from "styled-components";
 import { palette } from "~design-system";
 
 import StopwatchIcon from "../../assets/static/images/stopwatch.svg?react";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { formatDate, formatWorkflowsDate } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
@@ -242,7 +243,9 @@ const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
     </SnoozedTaskInfoBox>
   );
 };
-
+/**
+ * TODO(#10615): Delete TaskPreview when UsIdTasksV2 is fully rolled out.
+ */
 const TaskPreview = ({
   task,
   showSnoozeDropdown,
@@ -347,6 +350,7 @@ export const PreviewTasks = observer(function PreviewTasks({
   showSnoozeDropdown: boolean;
   empty?: React.ReactNode;
 }) {
+  const { isUsIdLegacyTasksEnabled } = useRootStore().workflowsStore;
   const tasks = uniqBy(person.supervisionTasks?.orderedTasks ?? [], "type");
   const needs = person.supervisionTasks?.needs ?? [];
 
@@ -360,7 +364,8 @@ export const PreviewTasks = observer(function PreviewTasks({
     <TasksWrapper>
       <TaskItems>
         {tasks.map((task) => {
-          if (person.stateCode === "US_ID")
+          // Legacy Tasks - TODO(#10615): Remove TaskPreview when UsIdTasksV2 is fully rolled out.
+          if (isUsIdLegacyTasksEnabled)
             return (
               <TaskPreview
                 key={task.key}

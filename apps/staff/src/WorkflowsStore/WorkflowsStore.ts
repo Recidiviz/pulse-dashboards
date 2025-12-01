@@ -197,7 +197,7 @@ export class WorkflowsStore implements Hydratable {
       () => {
         // This reaction exists primarily to trigger observation of staffSubscription
         // for scenarios where a user navigate directly to an opportunity page and then
-        // clicks the "back" button to go to the opportunity overview page with caseloads.        
+        // clicks the "back" button to go to the opportunity overview page with caseloads.
       },
     );
 
@@ -934,5 +934,12 @@ export class WorkflowsStore implements Hydratable {
 
   get activePageIsTasks(): boolean {
     return this.activePage.page === "tasks";
+  }
+
+  get isUsIdLegacyTasksEnabled(): boolean {
+    return (
+      !this.featureVariants.usIdTasksV2 &&
+      this.rootStore.tenantStore.currentTenantId === "US_ID"
+    );
   }
 }

@@ -87,7 +87,13 @@ export abstract class TasksBase<
     this.taskSubscription = new CollectionDocumentSubscription<TaskRecord>(
       this.rootStore.firestoreStore,
       // TODO:(#10615): Remove feature flag once V2 is fully rolled out
-      { key: rootStore.userStore.activeFeatureVariants.usIdTasksV2 && person.stateCode === "US_ID" ? "usIdSupervisionTasksV2" : tasksConfiguration.collection },
+      {
+        key:
+          rootStore.userStore.activeFeatureVariants.usIdTasksV2 &&
+          person.stateCode === "US_ID"
+            ? "usIdSupervisionTasksV2"
+            : tasksConfiguration.collection,
+      },
       person.recordId,
       undefined,
       validateRecord,

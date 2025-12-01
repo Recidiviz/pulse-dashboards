@@ -18,8 +18,8 @@
 import UsIdTaskBase from "./UsIdTaskBase";
 
 class UsIdHomeVisitTaskV2 extends UsIdTaskBase<"usIdHomeVisit"> {
-  displayName = "Home Contact";
-  taskAction = "home contact";
+  displayName = "Home Visit";
+  taskAction = "home visit";
 }
 
 export default UsIdHomeVisitTaskV2;

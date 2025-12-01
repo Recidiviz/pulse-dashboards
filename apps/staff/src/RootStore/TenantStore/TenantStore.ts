@@ -223,14 +223,17 @@ export default class TenantStore {
   }
 
   get taskCategories(): SupervisionTaskCategory[] {
-    return (
-      this.tasksConfiguration?.categories ?? [
-        "ALL_TASKS",
-        "OVERDUE",
-        "DUE_THIS_WEEK",
-        "DUE_THIS_MONTH",
-      ]
-    );
+    const tasksDefault: SupervisionTaskCategory[] = [
+      "ALL_TASKS",
+      "OVERDUE",
+      "DUE_THIS_WEEK",
+      "DUE_THIS_MONTH",
+    ];
+    // TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
+    if (!this.rootStore.workflowsStore.isUsIdLegacyTasksEnabled)
+      return tasksDefault;
+
+    return this.tasksConfiguration?.categories ?? tasksDefault;
   }
 
   get workflowsOpportunityFilterConfig():

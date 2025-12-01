@@ -37,10 +37,10 @@ const CaseloadSelectWrapper = styled.div`
 const WorkflowsTasks = observer(function WorkflowsTasks() {
   const {
     workflowsStore: {
+      isUsIdLegacyTasksEnabled,
       justiceInvolvedPersonTitle,
       searchStore: { workflowsSearchFieldTitle, selectedSearchIds },
     },
-    currentTenantId,
   } = useRootStore();
 
   const empty = (
@@ -65,8 +65,9 @@ const WorkflowsTasks = observer(function WorkflowsTasks() {
     </TasksBodyContainer>
   );
 
+
   return (
-    <WorkflowsNavLayout limitedWidth={currentTenantId === "US_ID"}>
+    <WorkflowsNavLayout limitedWidth={isUsIdLegacyTasksEnabled}>
       <CaseloadSelectWrapper>
         <CaseloadSelect />
       </CaseloadSelectWrapper>
@@ -74,11 +75,8 @@ const WorkflowsTasks = observer(function WorkflowsTasks() {
         initial={initial}
         empty={empty}
         hydrated={
-          currentTenantId === "US_ID" ? (
-            <WorkflowsTasksBody />
-          ) : (
-            <WorkflowsTasksBodyV2 />
-          )
+          // TODO(#10615): Remove WorkflowsTasksBody when UsIdTasksV2 is fully rolled out.
+          isUsIdLegacyTasksEnabled ? <WorkflowsTasksBody /> : <WorkflowsTasksBodyV2 />
         }
       />
     </WorkflowsNavLayout>

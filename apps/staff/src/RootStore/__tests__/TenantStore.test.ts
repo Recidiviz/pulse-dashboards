@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TenantConfigs } from "../../tenants";
+import { WorkflowsStore } from "../../WorkflowsStore";
 import RootStore from "..";
 import TenantStore, {
   CURRENT_TENANT_IN_SESSION,
@@ -60,6 +61,8 @@ describe("TenantStore", () => {
   const createMockRootStore = (mockUserStore: any) =>
     ({
       userStore: mockUserStore as UserStore,
+      // TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
+      workflowsStore: { isUsIdLegacyTasksEnabled: false } as WorkflowsStore,
     }) as typeof RootStore;
 
   beforeEach(() => {

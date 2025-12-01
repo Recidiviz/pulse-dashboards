@@ -96,6 +96,9 @@ function usePresenter() {
   );
 }
 
+/**
+ * TODO(#10615): Delete WorkflowsTasksBody when UsIdTasksV2 is fully rolled out.
+ */
 export const WorkflowsTasksBody = withPresenterManager({
   usePresenter,
   managerIsObserver: true,

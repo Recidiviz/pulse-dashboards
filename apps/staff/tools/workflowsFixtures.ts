@@ -65,6 +65,7 @@ import { usIdExpandedCRCReferrals } from "./fixtures/UsIdExpandedCRCReferrals";
 import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
 import { usIdSupervisionLevelDowngradeReferrals } from "./fixtures/usIdSupervisionLevelDowngradeReferrals";
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
+import { usIdSupervisionTasksV2Data } from "./fixtures/usIdSupervisionTasksV2";
 import { usMeEarlyTerminationReferralsFixture } from "./fixtures/usMeEarlyTerminationReferrals";
 import { usMeFurloughReleaseFixture } from "./fixtures/UsMeFurloughReleaseReferrals";
 import { usMeWorkReleaseReferrals } from "./fixtures/usMeWorkReleaseReferrals";
@@ -145,7 +146,9 @@ const GENERAL_FIXTURES_TO_LOAD: Partial<
     data: [...residentsData.data],
   },
   locations: locationsData,
+  // TODO(#10615): Remove once UsIdTasksV2 is fully rolled out
   usIdSupervisionTasks: usIdSupervisionTasksData,
+  usIdSupervisionTasksV2: usIdSupervisionTasksV2Data,
   usTxSupervisionTasks: usTxSupervisionTasksData,
   usNeSupervisionTasks: usNeSupervisionTasksData,
 } as const;
