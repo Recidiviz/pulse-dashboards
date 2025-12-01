@@ -106,7 +106,7 @@ export default function EndAssessmentModal({
         <>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <p className="text-[#2a5469]/90 text-base sm:text-lg font-semibold font-['Public_Sans'] leading-normal text-center">
-              Ending and Syncing pending chunks...
+              Ending and Syncing audio...
             </p>
             <StatusIndicators
               isOnline={isOnline}

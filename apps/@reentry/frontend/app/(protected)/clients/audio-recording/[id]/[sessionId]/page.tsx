@@ -113,10 +113,12 @@ const AudioRecordingPage: React.FC = () => {
     handleClientError();
   }, [clientError, sessionError]);
 
-  const handleAddressFormClose = () => {
+  const handleAddressFormClose = async() => {
+    await refetchSession();
+    await refetchIntakeData();
+    // Wait 2 seconds before closing
+    await new Promise(resolve => setTimeout(resolve, 2000));
     setNeedsAddress(false);
-    refetchSession();
-    refetchIntakeData();
   };
 
   if (clientLoading || sessionLoading) {

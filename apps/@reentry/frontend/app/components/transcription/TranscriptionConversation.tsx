@@ -22,6 +22,7 @@ import type React from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { formatDuration } from "~@reentry/frontend/utils";
 
 interface TranscriptionViewProps {
   sessionId: string;
@@ -108,7 +109,6 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
   }
 
   const transcription = data;
-
   return (
     <div className="self-stretch flex-1 flex flex-col justify-start items-center gap-5 p-6">
       {/* Header with metadata */}
@@ -120,10 +120,10 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
         <div className="flex flex-wrap gap-6 text-[#2a5469]/90 text-sm font-medium font-['Public_Sans']">
           <div>
             <strong>Total Duration:</strong>{" "}
-            {transcription.metadata.totalDuration}
-          </div>
-          <div>
-            <strong>Total Turns:</strong> {transcription.metadata.totalTurns}
+            {formatDuration(
+              Number(transcription.metadata.totalDuration.replace("s", "")) *
+                1000,
+            )}
           </div>
         </div>
       </div>
@@ -159,8 +159,11 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
                   <span>
                     {formatTime(turn.startTime)} - {formatTime(turn.endTime)}
                   </span>
-                  <span>{turn.duration}</span>
-                  <span>{turn.wordCount} words</span>
+                  <span>
+                    {formatDuration(
+                      Number(turn.duration.replace("s", "")) * 1000,
+                    )}
+                  </span>
                 </div>
               </div>
 

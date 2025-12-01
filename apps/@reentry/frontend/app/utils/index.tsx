@@ -32,3 +32,10 @@ export const formatDateMMDDYYYY = (dateInput) => {
 	// Format as MM/DD/YYYY
 	return `${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}/${year}`;
 };
+
+export const formatDuration = (milliseconds: number): string => {
+	const totalSeconds = Math.floor(milliseconds / 1000);
+	const minutes = Math.floor(totalSeconds / 60);
+	const remainingSeconds = totalSeconds % 60;
+	return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+};

@@ -22,6 +22,7 @@ import WaveSurfer from "wavesurfer.js";
 import RecordPlugin from "wavesurfer.js/dist/plugins/record.esm.js";
 
 import type { UIRecordingStatus } from "~@reentry/frontend/types/recording";
+import { formatDuration } from "~@reentry/frontend/utils";
 
 interface AudioWaveformProps {
   selectedMicrophone?: string;
@@ -43,13 +44,6 @@ const AudioWaveform: React.FC<AudioWaveformProps> = ({
   const waveformRef = useRef<HTMLDivElement>(null);
   const waveSurferRef = useRef<WaveSurfer | null>(null);
   const recordPluginRef = useRef<RecordPlugin | null>(null);
-
-  const formatDuration = (milliseconds: number): string => {
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const remainingSeconds = totalSeconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-  };
 
   useEffect(() => {
     if (!waveformRef.current || !isRecordingSupported) return;

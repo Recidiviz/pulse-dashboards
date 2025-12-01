@@ -32,6 +32,7 @@ import type {
   RecordingActions,
   UIRecordingStatus,
 } from "~@reentry/frontend/types/recording";
+import { formatDuration } from "~@reentry/frontend/utils";
 import { PrimaryButton } from "~@reentry/frontend-shared";
 
 interface RecordingControlsProps {
@@ -66,14 +67,12 @@ interface RecordingControlsButtonsProps {
 interface RecordingStatusTextProps {
   recordingStatus: UIRecordingStatus;
   isRecordingSupported: boolean;
-  chunkCount: number;
   uploadDuration: number;
   recordDuration: number;
   isOnline: boolean;
   cannotConnectToServer: boolean;
   pausedByVisibilityChange: boolean;
   batteryLevel: number | null;
-  formatDuration: (seconds: number) => string;
 }
 
 const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
@@ -206,14 +205,12 @@ const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
 const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
   recordingStatus,
   isRecordingSupported,
-  chunkCount,
   uploadDuration,
   recordDuration,
   isOnline,
   cannotConnectToServer,
   pausedByVisibilityChange,
   batteryLevel,
-  formatDuration,
 }) => {
   if (!isRecordingSupported) {
     return (
@@ -230,8 +227,7 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
             {uploadDuration > 0 && (
               <div className="flex items-center justify-center space-x-2">
                 <Typography className="text-[10px] sm:text-xs text-gray-500">
-                  Duration: {formatDuration(uploadDuration)} ({chunkCount}{" "}
-                  chunks)
+                  Duration: {formatDuration(uploadDuration * 1000)}
                 </Typography>
                 <StatusIndicators
                   isOnline={isOnline}
@@ -259,8 +255,7 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
               {recordDuration > 0 && (
                 <div className="flex items-center justify-center space-x-2">
                   <Typography className="text-[10px] sm:text-xs text-gray-500">
-                    Duration: {formatDuration(recordDuration)} ({chunkCount}{" "}
-                    chunks)
+                    Duration: {formatDuration(recordDuration * 1000)}
                   </Typography>
                   <StatusIndicators
                     isOnline={isOnline}
@@ -291,8 +286,7 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
               {recordDuration > 0 && (
                 <div className="flex items-center justify-center space-x-2">
                   <Typography className="text-[10px] sm:text-xs text-gray-500">
-                    Duration: {formatDuration(recordDuration)} ({chunkCount}{" "}
-                    chunks)
+                    Duration: {formatDuration(recordDuration * 1000)}
                   </Typography>
                   <StatusIndicators
                     isOnline={isOnline}
@@ -318,8 +312,7 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
               {uploadDuration > 0 && (
                 <div className="flex items-center justify-center">
                   <Typography className="text-[10px] sm:text-xs text-gray-500">
-                    Finalizing {formatDuration(uploadDuration)} of audio (
-                    {chunkCount} chunks)
+                    Finalizing {formatDuration(uploadDuration * 1000)} of audio
                   </Typography>
                 </div>
               )}
@@ -339,8 +332,7 @@ const RecordingStatusText: React.FC<RecordingStatusTextProps> = ({
               {uploadDuration > 0 && (
                 <div className="flex items-center justify-center">
                   <Typography className="text-[10px] sm:text-xs text-gray-500">
-                    Total duration: {formatDuration(uploadDuration)} (
-                    {chunkCount} chunks)
+                    Total duration: {formatDuration(uploadDuration * 1000)}
                   </Typography>
                 </div>
               )}
@@ -372,7 +364,6 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   selectedMicrophone,
   microphones,
   isRecordingSupported,
-  chunkCount = 0,
   uploadDuration = 0,
   recordDuration = 0,
   actions,
@@ -383,12 +374,6 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   pausedByVisibilityChange,
   batteryLevel,
 }) => {
-  const formatDuration = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-  };
-
   return (
     <div className="w-full px-4 sm:px-6 py-4 sm:py-3 bg-white rounded-[32px] sm:rounded-[99px] outline outline-1 outline-offset-[-1px] outline-[#2b5469]/10 flex flex-col sm:flex-row items-center justify-center lg:justify-between gap-3 sm:gap-4 lg:gap-0">
       <div className="hidden lg:block flex-shrink-0"></div>
@@ -396,14 +381,12 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
         <RecordingStatusText
           recordingStatus={recordingStatus}
           isRecordingSupported={isRecordingSupported}
-          chunkCount={chunkCount}
           uploadDuration={uploadDuration}
           recordDuration={recordDuration}
           isOnline={isOnline}
           cannotConnectToServer={cannotConnectToServer}
           pausedByVisibilityChange={pausedByVisibilityChange}
           batteryLevel={batteryLevel}
-          formatDuration={formatDuration}
         />
       </div>
       <div className="flex items-center justify-center gap-3 order-2 sm:order-none w-full sm:w-auto">
