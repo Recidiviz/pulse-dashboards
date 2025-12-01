@@ -38,7 +38,7 @@ import {
   SortOrderTrackingMetadata,
 } from "~sentencing-client";
 
-import { SearchType } from "../../core/models/types";
+import { SearchType, TaskFilterValue } from "../../core/models/types";
 import { MilestonesTab } from "../../core/WorkflowsMilestones/MilestonesCaseloadView";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { DeclineReason } from "../../FirestoreStore";
@@ -148,14 +148,14 @@ type TableViewChangedMetadata = {
 
 type FilterChangedMetadata = {
   changedFilterCategory: string;
-  changedFilterValue: string;
+  changedFilterValue: TaskFilterValue;
   changedFilterSelected: boolean;
-  selectedFilters: Partial<Record<string, string[]>>;
+  selectedFilters: Partial<Record<string, TaskFilterValue[]>>;
   onlyClicked: boolean;
 };
 
 type FiltersResetMetadata = {
-  selectedFiltersBeforeReset: Partial<Record<string, string[]>>;
+  selectedFiltersBeforeReset: Partial<Record<string, TaskFilterValue[]>>;
 };
 
 type TasksTableCategoryMetadata = {

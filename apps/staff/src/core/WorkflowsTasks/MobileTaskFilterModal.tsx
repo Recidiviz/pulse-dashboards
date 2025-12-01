@@ -185,7 +185,7 @@ const MobileTaskFilterItem = observer(function MobileTaskFilterItem({
         <BiggerCheckboxContainer>
           <Checkbox
             checked={checked}
-            value={option.value}
+            value={String(option.value)}
             disabled={count === 0}
           />
         </BiggerCheckboxContainer>
@@ -238,7 +238,7 @@ const MobileTaskFilterGroup = observer(function MobileTaskFilterGroup({
         const checked = presenter.filterIsSelected(field, option);
         return (
           <MobileTaskFilterItem
-            key={option.value}
+            key={String(option.value)}
             option={option}
             checked={checked}
             onClick={() => presenter.toggleFilter(field, option)}

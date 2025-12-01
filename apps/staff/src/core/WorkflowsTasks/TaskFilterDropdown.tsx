@@ -221,14 +221,14 @@ const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
         e.preventDefault();
         if (!disabled) onClick();
       }}
-      key={option.value}
+      key={String(option.value)}
       $disabled={disabled}
     >
       <FilterOptionLabel $disabled={false}>
         <FilterCheckboxContainer>
           <Checkbox
             checked={checked}
-            value={option.value}
+            value={String(option.value)}
             disabled={disabled}
           />
         </FilterCheckboxContainer>
@@ -265,7 +265,7 @@ const TaskFilterDropdownGroup = observer(function TaskFilterDropdownGroup({
       <FilterGroupHeader>{title}</FilterGroupHeader>
       {options.map((option) => (
         <TaskFilterDropdownItem
-          key={option.value}
+          key={String(option.value)}
           option={option}
           checked={presenter.filterIsSelected(field, option)}
           onClick={() => presenter.toggleFilter(field, option)}

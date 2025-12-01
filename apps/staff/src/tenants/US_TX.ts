@@ -124,6 +124,7 @@ const US_TX_CONFIG = {
       "caseType",
       "supervisionLevel",
       "assignedTo",
+      "appointmentStatus",
     ],
     filters: [
       {
@@ -254,6 +255,21 @@ const US_TX_CONFIG = {
           },
           {
             value: "Non-reporting",
+          },
+        ],
+      },
+      {
+        title: "Appointment status",
+        field: "hasFutureScheduledContact",
+        type: "task",
+        options: [
+          {
+            value: true,
+            label: "Upcoming appointment",
+          },
+          {
+            value: false,
+            label: "Not yet scheduled",
           },
         ],
       },

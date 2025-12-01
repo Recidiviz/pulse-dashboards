@@ -116,16 +116,30 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     return;
   }
 
-  // A contact was scheduled if any of the scheduled contact dates for this person
-  // are in the future.
+  /**
+   * @returns An array of the scheduled contact dates for this task that are today
+   *          or later, without duplicates, sorted in ascending order;
+   *          an empty list if there are no future scheduled contact dates;
+   *          or undefined if scheduled contact dates don't apply to this task type
+   */
   get futureScheduledContacts(): Date[] | undefined {
     if (!this.scheduledContactDates) return undefined;
-    return this.scheduledContactDates.filter((date) => date >= startOfToday());
+
+    const futureContacts = this.scheduledContactDates.filter(
+      (date) => date >= startOfToday(),
+    );
+    // We might have duplicate scheduled contact dates that should be removed
+    return Array.from(new Set(futureContacts)).sort();
   }
 
-  get hasFutureScheduledContact(): boolean {
-    return Boolean(
-      this.futureScheduledContacts && this.futureScheduledContacts.length > 0,
+  /**
+   * @returns true if there is at least one scheduled contact date in the future,
+   *          false if all scheduled dates were in the past,
+   *          undefined if scheduled contact dates don't apply to this task type
+   */
+  get hasFutureScheduledContact(): boolean | undefined {
+    return (
+      this.futureScheduledContacts && this.futureScheduledContacts.length > 0
     );
   }
 

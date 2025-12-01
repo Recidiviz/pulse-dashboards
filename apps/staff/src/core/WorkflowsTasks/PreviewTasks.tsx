@@ -305,6 +305,19 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
             <div>{task.additionalDetails}</div>
           </TaskTimelineText>
 
+          {task.futureScheduledContacts &&
+            task.futureScheduledContacts.length > 0 && (
+              <>
+                <TaskTimelineDonut lineBelow />
+                <TaskTimelineText>
+                  <div>
+                    Next scheduled appointment:{" "}
+                    {formatWorkflowsDate(task.futureScheduledContacts[0])}
+                  </div>
+                </TaskTimelineText>
+              </>
+            )}
+
           <TaskTimelineDonut />
           <TaskTimelineText>
             <TaskTimelineDueDate overdue={task.isOverdue}>

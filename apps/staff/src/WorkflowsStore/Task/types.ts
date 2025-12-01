@@ -253,7 +253,7 @@ export type SupervisionTask<
   // "scheduled contact" or "unscheduled contact"
   scheduledContactDates: Date[] | undefined;
   futureScheduledContacts: Date[] | undefined;
-  hasFutureScheduledContact: boolean;
+  hasFutureScheduledContact: boolean | undefined;
 
   additionalDetails?: string;
   vitalsMetricId?: VitalsMetricId;

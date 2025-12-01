@@ -147,8 +147,9 @@ export type WorkflowsTasksConfig = {
   pageDescriptionMarkdown?: string;
 };
 
+export type TaskFilterValue = string | boolean;
 export type FilterOption = {
-  value: string;
+  value: TaskFilterValue;
   label?: string;
   shortLabel?: string;
 };

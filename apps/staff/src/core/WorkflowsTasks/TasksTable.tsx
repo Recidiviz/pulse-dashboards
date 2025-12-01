@@ -18,6 +18,7 @@
 import { spacing, TooltipTrigger } from "@recidiviz/design-system";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
+import pluralize from "pluralize";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -28,6 +29,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import {
   formatDueDateFromToday,
   formatWorkflowsDate,
+  formatWorkflowsDateWithoutYear,
   toTitleCase,
 } from "../../utils/formatStrings";
 import { Client, SupervisionTask } from "../../WorkflowsStore";
@@ -295,6 +297,28 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       enableSorting: true,
       sortingFn: "text",
       cell: OfficerNameCell,
+    },
+    {
+      header: "Appointment Status",
+      id: "appointmentStatus",
+      accessorFn: ({ futureScheduledContacts, details }) => {
+        if (!("scheduledContactDates" in details)) {
+          return "–";
+        }
+
+        if (futureScheduledContacts?.length) {
+          // simplur hides the quantity when passed in an array
+          const numAppointments = futureScheduledContacts.length;
+          const dates = futureScheduledContacts
+            .map(formatWorkflowsDateWithoutYear)
+            .join(", ");
+          return `Upcoming ${pluralize("appointment", numAppointments)}: ${dates}`;
+        } else {
+          return "Not yet scheduled";
+        }
+      },
+      enableSorting: true,
+      sortingFn: "text",
     },
   ] as const satisfies ColumnDef<SupervisionTask>[];
 
