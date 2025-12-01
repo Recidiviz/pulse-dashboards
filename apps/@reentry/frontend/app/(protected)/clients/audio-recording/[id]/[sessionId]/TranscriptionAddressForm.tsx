@@ -23,13 +23,10 @@ import { useState } from "react";
 import { $api } from "~@reentry/frontend/api";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import {
+  FullAddressForm,
+} from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
-
-interface AddressFormData {
-  streetAddress?: string;
-  city: string;
-  state: string;
-}
 
 interface AddressFormProps {
   onError: (error: string) => void;
@@ -44,24 +41,31 @@ const TranscriptionAddressForm = ({
 }: AddressFormProps) => {
   const { getAccessToken } = useAuth();
   const { trackClientHomeAddressSubmitted } = useAnalytics();
-  const [formData, setFormData] = useState<AddressFormData>({
-    streetAddress: "",
-    city: "",
-    state: "",
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [addressInput, setAddressInput] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [addressError, setAddressError] = useState<string | null>(null);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const { mutateAsync: submitAddressMutation } = $api.useMutation(
     "post",
     "/transcriptions/{client_pseudo_id}/complete-intake-transcription",
   );
 
+  const handleAddressChange = (value: string) => {
+    setAddressInput(value);
+    setAddressError(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.city.trim() || !formData.state.trim()) {
-      onError("City and state are required");
+
+    // Validate state and city before submitting
+    if (!isFormValid) {
       return;
     }
+    
 
     if (clientData) {
       trackClientHomeAddressSubmitted({
@@ -78,9 +82,9 @@ const TranscriptionAddressForm = ({
           },
         },
         body: {
-          street_address: formData.streetAddress,
-          city: formData.city,
-          state: formData.state,
+          street_address: addressInput || null,
+          city: city,
+          state: state,
         },
         headers: {
           Authorization: `Bearer ${getAccessToken()}`,
@@ -135,73 +139,25 @@ const TranscriptionAddressForm = ({
                 onSubmit={handleSubmit}
                 className="space-y-4 max-w-lg m-auto"
               >
-                <div>
-                  <label
-                    htmlFor="streetAddress"
-                    className="block font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
-                  >
-                    Street Address
-                  </label>
-                  <input
-                    type="text"
-                    id="streetAddress"
-                    value={formData.streetAddress}
-                    placeholder="123 Reentry Way"
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        streetAddress: e.target.value,
-                      })
-                    }
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
+                <div className="space-y-4 [&>div]:mb-0 [&_label]:text-[16px] [&_label]:tracking-[-0.02em] [&_label]:text-[#012322] [&_label]:font-medium [&_input]:p-3 [&_input]:rounded-lg [&_input]:border-gray-300 [&_input]:focus:border-gray-900 [&_button]:p-3 [&_button]:rounded-lg [&_button]:border-gray-300 [&_button]:focus:border-gray-900">
+                  <FullAddressForm
+                    addressValue={addressInput}
+                    cityValue={city}
+                    stateValue={state}
+                    onAddressChange={handleAddressChange}
+                    onCityChange={setCity}
+                    onStateChange={setState}
+                    disabled={isSubmitting}
+                    addressError={addressError}
+                    onFormValidChange={setIsFormValid}
+                    twoColumns={true}
                   />
                 </div>
 
-                <div className="w-full flex justify-center gap-4 mt-10 flex-col sm:flex-row ">
-                  <div className="flex flex-col flex-grow">
-                    <label
-                      htmlFor="city"
-                      className="block font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
-                    >
-                      City (required)
-                    </label>
-                    <input
-                      type="text"
-                      id="city"
-                      required
-                      placeholder="Anywhere"
-                      value={formData.city}
-                      onChange={(e) =>
-                        setFormData({ ...formData, city: e.target.value })
-                      }
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
-                    />
-                  </div>
-
-                  <div className="flex flex-col flex-grow">
-                    <label
-                      htmlFor="state"
-                      className="block font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
-                    >
-                      State (required)
-                    </label>
-                    <input
-                      type="text"
-                      id="state"
-                      required
-                      placeholder="NY"
-                      value={formData.state}
-                      onChange={(e) =>
-                        setFormData({ ...formData, state: e.target.value })
-                      }
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
-                    />
-                  </div>
-                </div>
-                <div className="w-11/12">
+                <div className="w-12/12">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !isFormValid || !city || !state}
                     className="hover:bg-gray-950 text-white rounded-full py-2 w-full disabled:opacity-50 bg-[#003331]"
                   >
                     {isSubmitting ? (

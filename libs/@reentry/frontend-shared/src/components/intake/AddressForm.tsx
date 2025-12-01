@@ -21,6 +21,7 @@ import type React from "react";
 import { useState } from "react";
 
 import { useApplicationContext } from "../../contexts/ApplicationContext";
+import FullAddressForm from "../FullAddressForm";
 
 interface AddressFormData {
   streetAddress?: string;
@@ -41,6 +42,9 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
     state: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [addressInput, setAddressInput] = useState("");
+  const [addressError, setAddressError] = useState<string | null>(null);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const { mutateAsync: submitAddressMutation } = $api.useMutation(
     "post",
@@ -63,10 +67,16 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
     return "";
   };
 
+  const handleAddressChange = (value: string) => {
+    setAddressInput(value);
+    setAddressError(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.city.trim() || !formData.state.trim()) {
-      onError("City and state are required");
+
+    // Validate state and city before submitting
+    if (!isFormValid) {
       return;
     }
 
@@ -74,7 +84,7 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
     try {
       const response = await submitAddressMutation({
         body: {
-          street_address: formData.streetAddress,
+          street_address: addressInput,
           city: formData.city,
           state: formData.state,
         },
@@ -141,73 +151,34 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
                 onSubmit={handleSubmit}
                 className="space-y-4 max-w-lg m-auto"
               >
-                <div>
-                  <label
-                    htmlFor="streetAddress"
-                    className="block font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
-                  >
-                    Street Address
-                  </label>
-                  <input
-                    type="text"
-                    id="streetAddress"
-                    value={formData.streetAddress}
-                    placeholder="123 Reentry Way"
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        streetAddress: e.target.value,
-                      })
+                <div className="space-y-4 [&>div]:mb-0 [&_label]:text-[16px] [&_label]:tracking-[-0.02em] [&_label]:text-[#012322] [&_label]:font-medium [&_input]:p-3 [&_input]:rounded-lg [&_input]:border-gray-300 [&_input]:focus:border-gray-900 [&_button]:p-3 [&_button]:rounded-lg [&_button]:border-gray-300 [&_button]:focus:border-gray-900">
+                  <FullAddressForm
+                    addressValue={addressInput}
+                    cityValue={formData.city}
+                    stateValue={formData.state}
+                    onAddressChange={handleAddressChange}
+                    onCityChange={(value) =>
+                      setFormData({ ...formData, city: value })
                     }
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
+                    onStateChange={(value) =>
+                      setFormData({ ...formData, state: value })
+                    }
+                    disabled={isSubmitting}
+                    addressError={addressError}
+                    onFormValidChange={setIsFormValid}
+                    twoColumns={true}
                   />
                 </div>
 
-                <div className="w-full flex justify-center gap-4 mt-10 flex-col sm:flex-row ">
-                  <div className="flex flex-col flex-grow">
-                    <label
-                      htmlFor="city"
-                      className="block font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
-                    >
-                      City (required)
-                    </label>
-                    <input
-                      type="text"
-                      id="city"
-                      required
-                      placeholder="Anywhere"
-                      value={formData.city}
-                      onChange={(e) =>
-                        setFormData({ ...formData, city: e.target.value })
-                      }
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
-                    />
-                  </div>
-
-                  <div className="flex flex-col flex-grow">
-                    <label
-                      htmlFor="state"
-                      className="block font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
-                    >
-                      State (required)
-                    </label>
-                    <input
-                      type="text"
-                      id="state"
-                      required
-                      placeholder="NY"
-                      value={formData.state}
-                      onChange={(e) =>
-                        setFormData({ ...formData, state: e.target.value })
-                      }
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
-                    />
-                  </div>
-                </div>
-                <div className="w-11/12">
+                <div className="w-12/12">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={
+                      isSubmitting ||
+                      !isFormValid ||
+                      !formData.city ||
+                      !formData.state
+                    }
                     className="hover:bg-gray-950 text-white rounded-full py-2 w-full disabled:opacity-50 bg-[#003331]"
                   >
                     {isSubmitting ? (

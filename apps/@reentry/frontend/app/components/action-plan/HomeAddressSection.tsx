@@ -25,6 +25,7 @@ import { InfoTooltip } from "~@reentry/frontend/components/base/InfoTooltip";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
+  FullAddressForm,
   PrimaryButton,
   showErrorToast,
   showSuccessToast,
@@ -42,12 +43,6 @@ interface HomeAddressSectionProps {
     | undefined;
 }
 
-interface AddressFields {
-  streetAddress: string;
-  city: string;
-  state: string;
-}
-
 const HomeAddressSection = ({
   planId,
   onAddressUpdate,
@@ -59,19 +54,13 @@ const HomeAddressSection = ({
   const { track } = useAnalytics();
   const [isEditing, setIsEditing] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
-  const [addressFields, setAddressFields] = useState<AddressFields>({
-    streetAddress: "",
-    city: "",
-    state: "",
-  });
-  const [originalAddressFields, setOriginalAddressFields] =
-    useState<AddressFields>({
-      streetAddress: "",
-      city: "",
-      state: "",
-    });
+  const [addressInput, setAddressInput] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [addressError, setAddressError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const { data: clientInfo, isLoading: isLoadingInfo } = $api.useQuery(
     "get",
@@ -87,40 +76,13 @@ const HomeAddressSection = ({
   useEffect(() => {
     if (clientInfo?.home) {
       setCurrentAddress(clientInfo.home);
-
-      // Try to parse the address into components
-      const parts = clientInfo.home.split(",").map((part) => part.trim());
-      if (parts.length >= 2) {
-        // Assume last part is state, second to last is city
-        const state = parts[parts.length - 1];
-        const city = parts[parts.length - 2];
-        const streetAddress = parts.slice(0, -2).join(", ");
-
-        setAddressFields({
-          streetAddress,
-          city,
-          state,
-        });
-        setOriginalAddressFields({
-          streetAddress,
-          city,
-          state,
-        });
-      } else {
-        // If we can't parse, just put it all in street address
-        setAddressFields({
-          streetAddress: clientInfo.home,
-          city: "",
-          state: "",
-        });
-        setOriginalAddressFields({
-          streetAddress: clientInfo.home,
-          city: "",
-          state: "",
-        });
-      }
     }
   }, [clientInfo]);
+
+  const handleAddressChange = (value: string) => {
+    setAddressInput(value);
+    setAddressError(null);
+  };
 
   const updateAddressMutation = $api.useMutation(
     "patch",
@@ -129,18 +91,11 @@ const HomeAddressSection = ({
 
   // Check if the current form values differ from the original values
   const hasChanges = () => {
-    return (
-      addressFields.streetAddress !== originalAddressFields.streetAddress ||
-      addressFields.city !== originalAddressFields.city ||
-      addressFields.state !== originalAddressFields.state
-    );
+    return addressInput !== null;
   };
 
   const handleUpdate = async () => {
-    if (!addressFields.city.trim() || !addressFields.state.trim()) {
-      showErrorToast("City and state are required");
-      return;
-    }
+    // Validate that address was selected from autocomplete
 
     track("action_plan_client_home_address_updated", {
       justiceInvolvedPersonId: clientRecord?.pseudonymized_client_id,
@@ -149,13 +104,12 @@ const HomeAddressSection = ({
 
     setIsLoading(true);
     try {
-      // Format address for backend using AddressSubmission format
       const response = await updateAddressMutation.mutateAsync({
         params: { path: { id: planId } },
         body: {
-          street_address: addressFields.streetAddress || null,
-          city: addressFields.city,
-          state: addressFields.state,
+          street_address: addressInput || null,
+          city: city,
+          state: state,
         },
         headers: {
           Authorization: `Bearer ${getAccessToken()}`,
@@ -163,13 +117,9 @@ const HomeAddressSection = ({
         },
       });
 
-      // Format address for display
-      const formattedAddress = addressFields.streetAddress
-        ? `${addressFields.streetAddress}, ${addressFields.city}, ${addressFields.state}`
-        : `${addressFields.city}, ${addressFields.state}`;
-
-      setCurrentAddress(formattedAddress);
+      setCurrentAddress(`${addressInput}, ${city}, ${state}`);
       setIsEditing(false);
+      setAddressInput("");
       showSuccessToast(
         "Address updated successfully and regeneration started.",
       );
@@ -189,12 +139,10 @@ const HomeAddressSection = ({
   };
 
   const handleCancel = () => {
-    // Reset to original values
-    setAddressFields({
-      streetAddress: originalAddressFields.streetAddress,
-      city: originalAddressFields.city,
-      state: originalAddressFields.state,
-    });
+    setAddressInput("");
+    setCity("");
+    setState("");
+    setAddressError(null);
     setIsEditing(false);
   };
 
@@ -232,78 +180,18 @@ const HomeAddressSection = ({
               new resources near the new address. Regeneration will overwrite
               the existing plan and may take several minutes.
             </div>
-            <div>
-              <label
-                htmlFor="streetAddress"
-                className="block text-xs font-medium text-gray-700 mb-1"
-              >
-                Street Address
-              </label>
-              <input
-                type="text"
-                id="streetAddress"
-                value={addressFields.streetAddress}
-                onChange={(e) =>
-                  setAddressFields({
-                    ...addressFields,
-                    streetAddress: e.target.value,
-                  })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="123 Main St"
-                disabled={isLoading || isPolling}
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex-1">
-                <label
-                  htmlFor="city"
-                  className="block text-xs font-medium text-gray-700 mb-1"
-                >
-                  City (required)
-                </label>
-                <input
-                  type="text"
-                  id="city"
-                  value={addressFields.city}
-                  onChange={(e) =>
-                    setAddressFields({
-                      ...addressFields,
-                      city: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Seattle"
-                  disabled={isLoading || isPolling}
-                  required
-                />
-              </div>
-
-              <div className="flex-1">
-                <label
-                  htmlFor="state"
-                  className="block text-xs font-medium text-gray-700 mb-1"
-                >
-                  State (required)
-                </label>
-                <input
-                  type="text"
-                  id="state"
-                  value={addressFields.state}
-                  onChange={(e) =>
-                    setAddressFields({
-                      ...addressFields,
-                      state: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="WA"
-                  disabled={isLoading || isPolling}
-                  required
-                />
-              </div>
-            </div>
+            <FullAddressForm
+              addressValue={addressInput}
+              cityValue={city}
+              stateValue={state}
+              onAddressChange={handleAddressChange}
+              onCityChange={setCity}
+              onStateChange={setState}
+              disabled={isLoading || isPolling}
+              addressError={addressError}
+              onFormValidChange={setIsFormValid}
+              twoColumns={true}
+            />
 
             <div className="flex gap-2 justify-between">
               <button
@@ -317,7 +205,14 @@ const HomeAddressSection = ({
               <PrimaryButton
                 buttonText={isLoading ? "Saving..." : "Save"}
                 onClick={handleUpdate}
-                disabled={isLoading || isPolling || !hasChanges()}
+                disabled={
+                  isLoading ||
+                  isPolling ||
+                  !hasChanges() ||
+                  !isFormValid ||
+                  !city ||
+                  !state
+                }
                 className="!max-w-[150px]"
               />
             </div>

@@ -8,7 +8,7 @@ from io import BytesIO
 from typing import List, Optional
 
 import orjson
-from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, Response, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
@@ -61,6 +61,16 @@ from app.services.resources import (
     ResourceCategory,
     ResourceSubcategory,
     list_resources,
+)
+from app.utils.address_autocomplete import (
+    AutocompleteAddressResponse,
+    AutocompleteCityResponse,
+)
+from app.utils.address_autocomplete import (
+    autocomplete_address as autocomplete_address_util,
+)
+from app.utils.address_autocomplete import (
+    autocomplete_city as autocomplete_city_util,
 )
 from app.tasks.transcribe_audio_with_deepgram import deepgram_transcription_diarization
 
@@ -801,6 +811,44 @@ async def generate_pdf(request: PDFRequest):
         raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
 
 
+@router.get(
+    "/autocomplete-address",
+    summary="Autocomplete address suggestions",
+    description="Provides address autocomplete suggestions as user types, similar to Uber's address input",
+    response_model=AutocompleteAddressResponse,
+)
+async def autocomplete_address(
+    input: str = Query(..., min_length=2),
+) -> AutocompleteAddressResponse:
+    """
+    Autocomplete address suggestions as user types
+    Similar to Uber's address input
+    """
+    return await autocomplete_address_util(input)
+
+
+@router.get(
+    "/autocomplete-city",
+    summary="Autocomplete city suggestions",
+    description="Provides city autocomplete suggestions for US cities as user types, with optional state filtering",
+    response_model=AutocompleteCityResponse,
+)
+async def autocomplete_city(
+    input: str = Query(..., min_length=2),
+    state: Optional[str] = Query(
+        None,
+        description="Optional US state name or abbreviation (e.g., 'California' or 'CA')",
+    ),
+    address_suggestion_selected: Optional[bool] = Query(
+        None,
+        description="Optional boolean indicating if an address suggestion was selected",
+    ),
+) -> AutocompleteCityResponse:
+    """
+    Autocomplete city suggestions as user types
+    Filters for US cities only, with optional state filter
+    """
+    return await autocomplete_city_util(input, state, address_suggestion_selected)
 @router.post(
     "/transcribe",
     summary="Transcribe audio file",

@@ -19,6 +19,7 @@ export * from "./api";
 export * from "./auth/authMiddleware";
 export * from "./auth/globalAuthStore";
 export * from "./components/buttons/PrimaryButton";
+export { FullAddressForm } from "./components/FullAddressForm";
 export * from "./components/intake/ChatInterface/ChatbotInterface";
 export * from "./components/intake/ChatInterface/ChatHeader";
 export * from "./components/intake/ChatInterface/ChatMessageBubble";

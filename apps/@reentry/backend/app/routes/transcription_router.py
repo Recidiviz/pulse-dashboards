@@ -12,9 +12,9 @@ from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import get_session
 from app.crud.recording_session import get_recording_session_by_id
 from app.models.intake import ClientAddress, Intake, IntakeStatus
+from app.models.recording import RecordingStatus
 from app.services.recording_service import RecordingService
 from app.utils.permission_utils import check_access
-from app.models.recording import RecordingStatus
 
 logger = logging.getLogger(__name__)
 
