@@ -123,6 +123,118 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "ConditionalLowRiskOverride",
       zeroGrantsTooltip: null,
     },
+    usNeGoodTimeRestoration: {
+      callToAction: "",
+      caseNotesTitle: "Relevant Case Notes",
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        {
+          key: "PROGRAMMING",
+          text: "Has not accepted or participated in clinical programming recommendation ",
+        },
+        { key: "MR", text: "Has pending Misconduct Reports" },
+        {
+          key: "RESTORATION_DENIED",
+          text: "Has recently (within 90 days) had a time restoration request denied",
+        },
+        { key: "LTRH", text: "Not assigned to LTRH in past 90 days" },
+        { key: "CIRCUMSTANCES", text: "Has other exigent circumstances" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "Good Time Restoration",
+      dynamicEligibilityText:
+        " [client|clients] may be eligible for good time restoration",
+      eligibilityDateText: "Eligible for Restoration Since",
+      eligibleCriteriaCopy: [
+        {
+          key: "usNeHasLostRestorableGoodTime",
+          text: "Currently has {{good_time_lost_days_restorable}} lost restorable good time",
+        },
+        {
+          key: "housingUnitTypeIsSolitaryConfinement",
+          text: "Not in Restrictive Housing",
+        },
+        { key: "usNeNotInCustodyLevel1a", text: "Not in 1A Custody Level" },
+        {
+          key: "noHighestSeverityIncarcerationSanctionsWithin1Year",
+          text: "Have not had a Class 1 MR in the past year",
+        },
+        {
+          key: "incarceratedInStatePrisonAtLeast1Year",
+          text: "Has consistently been in NCDS jurisdiction for the past 12 months",
+        },
+        {
+          key: "usNeNoIdcMrsInPast6Months",
+          text: "Free of all IDC misconduct reports for the past 6 months\n",
+        },
+        {
+          key: "usNeLessThan3UdcMrsInPast6Months",
+          text: "No more than two UDC misconduct reports for the past 6 months",
+        },
+        {
+          key: "usNeOver4MonthsFromTrd",
+          text: "Over 4 months away from their TRD",
+        },
+        {
+          key: "usNeAtLeast2WeeksSinceLastGoodTimeRestoration",
+          text: "At least 2 weeks since they last received good time back",
+        },
+      ],
+      emptyTabCopy: [],
+      firestoreCollection: "US_NE-goodTimeRestorationReferrals",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 3,
+      ineligibleCriteriaCopy: [
+        {
+          key: "noHighestSeverityIncarcerationSanctionsWithin1Year",
+          text: " {{monthsOrDaysRemainingFromToday eligibleDate}} months before 1 Year without a Class 1 MR",
+        },
+        {
+          key: "usNeNoIdcMrsInPast6Months",
+          text: " {{monthsOrDaysRemainingFromToday eligibleDate}} months before 6 months without an IDC misconduct report",
+        },
+      ],
+      initialHeader: null,
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl: "TBD",
+      nonOmsCriteria: [
+        {
+          text: "Accepted and participated in clinical treatment and recommendations ",
+        },
+        {
+          text: "Has not had a good time restoration requested denied in the past 90 days",
+        },
+        { text: "Not assigned to LTRH in past 90 days" },
+      ],
+      nonOmsCriteriaHeader: null,
+      notifications: [],
+      omsCriteriaHeader: "Validated by data from NICaMS",
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: ["EligibilityDate", "SentenceDates", "CaseNotes"],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
+      snoozeCompanionOpportunityTypes: [],
+      stateCode: "US_NE",
+      strictlyIneligibleCriteriaCopy: [],
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading: "These clients may be eligible for good time restoration.",
+      submittedTabTitle: null,
+      supportsIneligible: false,
+      supportsSubmitted: true,
+      systemType: "INCARCERATION",
+      tabGroups: null,
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "goodTimeRestoration",
+      zeroGrantsTooltip: null,
+    },
     usNeOverrideModerateToLow: {
       callToAction:
         "Review clients who may be eligible for Low and complete an override request",

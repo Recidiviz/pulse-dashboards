@@ -281,10 +281,10 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "OTHER", text: "Other: Please specify a reason" },
       ],
       denialText: null,
-      deniedTabTitle: null,
+      deniedTabTitle: "",
       displayName: "Custody Level Reduction",
       dynamicEligibilityText:
-        "client[|s] may be eligible for custody level reduction",
+        "resident[|s] may be eligible for custody level reduction",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -303,6 +303,12 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Management level is currently determining true security level",
           tooltip:
             "True security level is determined by the higher level between management level and confinement level. This resident has a management level of {{managementLevel}}, above their confinement level of {{confinementLevel}}. A reduction to their management level could result in an overall reduction to their  true security level. ",
+        },
+        {
+          key: "usMiActualPlacementLevelLessThanCustodyLevel",
+          text: "Actual Security Level {{actualPlacementLevel}} on most recent assessment is lower than current Security Level",
+          tooltip:
+            "Most recent assessment was done on {{date mostRecentAssessmentDate}}",
         },
       ],
       emptyTabCopy: [],
@@ -338,11 +344,22 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents who may be newly eligible for a custody level reduction because they have not had a Class I or II misconduct in over 6 months. ",
-      submittedTabTitle: "Pending Re-screen",
+      submittedTabTitle: "Re-screen Pending",
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
-      tabGroups: null,
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Eligible for Re-screen Now",
+            "Almost Eligible for Re-screen",
+            "Re-screen Pending",
+            "Movement Pending",
+            "Marked Ineligible",
+          ],
+        },
+      ],
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "custodyLevelDowngrade",
