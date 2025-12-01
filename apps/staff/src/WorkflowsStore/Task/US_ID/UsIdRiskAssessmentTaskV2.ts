@@ -22,19 +22,8 @@ class UsIdRiskAssessmentTaskV2 extends UsIdTaskBase<"usIdRiskAssessment"> {
   vitalsMetricId = "timely_risk_assessment" as const;
   taskAction = "assessed";
 
-  get riskLevel(): string | undefined {
-    const { riskLevel } = this.details;
-    if (!riskLevel) return;
-    return riskLevel;
-  }
-
-  get additionalDetails() {
-    const { lastActionTaskText, riskLevel } = this;
-    if (!lastActionTaskText || !riskLevel) return super.additionalDetails;
-
-    return `${super.additionalDetails}
-    Risk Level: ${this.riskLevel}
-    `;
+  get additionalDetails(): string {
+    return `${super.additionalDetails}\nScore: ${this.person.supervisionLevel}`;
   }
 }
 

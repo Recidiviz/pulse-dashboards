@@ -24,7 +24,7 @@ import { fieldToDate, VitalsMetricId } from "~datatypes";
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { formatDate, formatDueDateFromToday } from "../../utils";
-import { JusticeInvolvedPerson } from "../types";
+import { Client } from "../Client";
 import {
   SnoozeInfo,
   SupervisionDetailsForTask,
@@ -41,7 +41,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
 {
   task: SupervisionTaskRecord<TaskType>;
 
-  person: JusticeInvolvedPerson;
+  person: Client;
 
   rootStore: RootStore;
 
@@ -55,7 +55,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
   constructor(
     rootStore: RootStore,
     task: SupervisionTaskRecord<TaskType>,
-    person: JusticeInvolvedPerson,
+    person: Client,
     updates?: SupervisionTaskUpdate[TaskType],
   ) {
     makeObservable(this, {

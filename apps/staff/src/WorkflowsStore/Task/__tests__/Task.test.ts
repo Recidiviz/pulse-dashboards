@@ -23,7 +23,6 @@ import tk from "timekeeper";
 import FirestoreStore, { SupervisionTaskUpdate } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
-import { JusticeInvolvedPerson } from "../../types";
 import { homeVisitTaskRecord, supervisionTaskClientRecord } from "../fixtures";
 import { SupervisionTask, SupervisionTaskType } from "../types";
 import UsIdHomeVisitTask from "../US_ID/UsIdHomeVisitTask";
@@ -33,7 +32,7 @@ vi.mock("firebase/firestore");
 
 let rootStore: RootStore;
 let task: SupervisionTask<SupervisionTaskType>;
-let mockPerson: JusticeInvolvedPerson;
+let mockPerson: Client;
 let mockUpdates: SupervisionTaskUpdate[SupervisionTaskType] | undefined;
 
 const testDate = "2023-05-18";

@@ -31,13 +31,13 @@ import { TaskValidationError } from "../../errors";
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { TENANT_CONFIGS } from "../../tenants";
+import { Client } from "../Client";
 import {
   CollectionDocumentSubscription,
   DocumentSubscription,
   ValidateFunction,
 } from "../subscriptions";
 import { SupervisionTaskUpdateSubscription } from "../subscriptions/SupervisionTaskUpdateSubscription";
-import { JusticeInvolvedPerson } from "../types";
 import {
   SupervisionNeed,
   SupervisionTask,
@@ -50,14 +50,14 @@ import {
  * Implements functionality shared by all Tasks, most notably the `Hydratable` interface.
  */
 export abstract class TasksBase<
-  PersonType extends JusticeInvolvedPerson,
+  PersonType extends Client,
   TaskRecord extends DocumentData,
   UpdateRecord extends SupervisionTaskUpdate,
 > implements SupervisionTaskInterface
 {
   rootStore: RootStore;
 
-  person: PersonType;
+  person: Client;
 
   tasksConfiguration: WorkflowsTasksConfig;
 

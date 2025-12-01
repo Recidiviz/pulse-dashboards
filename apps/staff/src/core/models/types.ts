@@ -37,7 +37,6 @@ import {
 import { Leaves } from "../../utils/typeUtils";
 import {
   Client,
-  JusticeInvolvedPerson,
   StaffFilterFunction,
   SupervisionTask,
 } from "../../WorkflowsStore";
@@ -135,7 +134,7 @@ export type WorkflowsTasksConfig = {
       constructor: new (
         rootStore: RootStore,
         task: SupervisionTaskRecord<K>,
-        person: JusticeInvolvedPerson,
+        person: Client,
         updates?: SupervisionTaskUpdate[K],
       ) => Task<K>;
       snoozeForOptionsInDays?: Array<ValidSnoozeForDays>;

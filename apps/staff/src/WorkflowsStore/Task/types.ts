@@ -28,7 +28,6 @@ import { RootStore } from "../../RootStore";
 import { SpecificTenantConfigs } from "../../tenants";
 import { Expect, Extends } from "../../utils/typeUtils";
 import { Client } from "../Client";
-import { JusticeInvolvedPerson } from "../types";
 import { TasksBase } from "./TasksBase";
 
 export type SupervisionTasksCaseType = "GENERAL" | "SEX_OFFENSE";
@@ -244,7 +243,7 @@ export type SupervisionTask<
   snoozeInfo?: SnoozeInfo;
   dueDateFromToday: string;
   rootStore: RootStore;
-  person: JusticeInvolvedPerson;
+  person: Client;
   displayName: string;
   dueDateDisplayLong: string;
   dueDateDisplayShort: string;

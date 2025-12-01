@@ -16,11 +16,11 @@
 // =============================================================================
 
 import { RootStore } from "../../../RootStore";
-import { JusticeInvolvedPerson } from "../../types";
+import { Client } from "../../Client";
 import { SupervisionTaskRecord } from "../types";
 import UsIdRiskAssessmentTask from "../US_ID/UsIdRiskAssessmentTask";
 
-const mockPerson = {} as JusticeInvolvedPerson;
+const mockPerson = {} as Client;
 describe("UsIdRiskAssessmentTask", () => {
   const mockRootStore = {} as RootStore;
   let mockTaskRecord: SupervisionTaskRecord<"assessment">;
