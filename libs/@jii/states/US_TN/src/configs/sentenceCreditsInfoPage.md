@@ -110,6 +110,10 @@ Most people can earn credits if they meet the following requirements:
 
 - A **Class A** disciplinary conviction can take away credits you already earned. The amount of time you can lose ranges from 9 to 15 months, depending on how many disciplinary infractions you have gotten in the past, and if past ones were Class A, B, or C.
   - People serving sentences which started before March 1, 1986 may also lose credits for Class B and Class C disciplinaries.
+- You could see a credit removal of more than 15 months (450 days) entered in one month if:
+  - You had this same disciplinary within the past 36 months. In that case, TDOC can remove more than the normal 15-month limit.
+  - More than one disciplinary was entered for you at the same time.
+
 - You also do **not** earn behavior/program credits for any month with a disciplinary conviction (more than a verbal warning) or if you are in max custody or punitive segregation.
 - Lost credits are **not** restored unless the disciplinary action is overturned on appeal.
 
@@ -118,3 +122,6 @@ Most people can earn credits if they meet the following requirements:
 - The app shows credit removals **in the month when they are entered into the computer**, not when the disciplinary actually happened.
 - If you get a Class A ticket that takes away sentence credits, it first has to go through a review process. TDOC then enters the loss of credits into the computer. This usually takes 3 or more months from the time of your disciplinary hearing.
 - So, if you see a credit removal, it may be from a disciplinary that happened a few months ago.
+
+## Where can I go if I have questions?
+This page answers some frequently asked questions about sentence credits. If you have more questions, ask your Counselor. If your Counselor can't answer your question, they will reach out to Records at your facility. From there, Records may be able to answer the question, or Records will reach out to the Sentence Management group at Central Office.

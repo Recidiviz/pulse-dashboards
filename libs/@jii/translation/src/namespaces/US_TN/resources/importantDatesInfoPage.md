@@ -33,3 +33,6 @@ This could be for one of a few reasons:
 - **Recent arrival at TDOC**: If you recently arrived at TDOC, Sentence Management may still be entering and calculating your sentence dates. This typically happens within 60 days after TDOC receives your sentencing paperwork from the County, but delays in the County sending that paperwork can extend the time.
 - **Life sentence**: If you are serving a life sentence without the possibility of parole, you will not see either date. Note that it can still be valuable to track sentence credits if your sentence is commuted to a term of years.
 - **Issue processing one of your sentences**: Ask your Counselor to check if this is the case for you. If you have multiple sentences, even one having an issue will prevent your release dates from calculating. This can happen if the County Court that sentenced you made a mistake on your sentencing paperwork. Your Counselor will be able to reach out to Records, or you can write to your County Court.
+
+## Where can I go if I have questions?
+This page answers some frequently asked questions about sentence dates. If you have more questions, ask your Counselor. If your Counselor can't answer your question, they will reach out to Records at your facility. From there, Records may be able to answer the question, or Records will reach out to the Sentence Management group at Central Office.
