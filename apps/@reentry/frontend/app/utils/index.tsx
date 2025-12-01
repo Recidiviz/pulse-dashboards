@@ -16,26 +16,35 @@
 // =============================================================================
 
 export const generateKey = (pre: string) => {
-	return `${pre}_${new Date().getTime()}`;
+  return `${pre}_${new Date().getTime()}`;
 };
 
 export const formatDateMMDDYYYY = (dateInput) => {
-	if (!dateInput) return "";
+  if (!dateInput) return "";
 
-	const date = new Date(dateInput);
-	if (Number.isNaN(date.getTime())) return "";
+  const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) return "";
 
-	const year = date.getUTCFullYear();
-	const month = date.getUTCMonth() + 1; // getUTCMonth() is 0-indexed
-	const day = date.getUTCDate();
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth() + 1; // getUTCMonth() is 0-indexed
+  const day = date.getUTCDate();
 
-	// Format as MM/DD/YYYY
-	return `${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}/${year}`;
+  // Format as MM/DD/YYYY
+  return `${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}/${year}`;
 };
 
 export const formatDuration = (milliseconds: number): string => {
-	const totalSeconds = Math.floor(milliseconds / 1000);
-	const minutes = Math.floor(totalSeconds / 60);
-	const remainingSeconds = totalSeconds % 60;
-	return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = totalSeconds % 60;
+
+  if (minutes === 0) {
+    return `${remainingSeconds} ${remainingSeconds === 1 ? "sec" : "secs"}`;
+  }
+
+  if (remainingSeconds === 0) {
+    return `${minutes} ${minutes === 1 ? "min" : "mins"}`;
+  }
+
+  return `${minutes} ${minutes === 1 ? "min" : "mins"} ${remainingSeconds} ${remainingSeconds === 1 ? "sec" : "secs"}`;
 };
