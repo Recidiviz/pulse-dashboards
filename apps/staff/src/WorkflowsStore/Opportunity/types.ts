@@ -300,7 +300,10 @@ export type OpportunityTab =
   | "Eligible for Re-screen Now"
   | "Almost Eligible for Re-screen"
   | "Re-screen Pending"
-  | "Movement Pending";
+  | "Movement Pending"
+  
+  // For US_ID CRC
+  | "Medical-Ineligible";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"

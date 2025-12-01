@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityTabGroups } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
-export class UsIdFacilitiesConfiguration extends ApiOpportunityConfiguration {
+export class UsIdCRCConfiguration extends ApiOpportunityConfiguration {
   get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {
     const snoozeLengthOverrides = {
       DENIED: undefined,
@@ -38,12 +37,5 @@ export class UsIdFacilitiesConfiguration extends ApiOpportunityConfiguration {
 
   get excludeIndefiniteSnoozesFromTableView() {
     return false;
-  }
-
-  get tabGroups(): OpportunityTabGroups {
-    return {
-      ...this.configurationObject.tabGroups,
-      "ELIGIBILITY STATUS": super.defaultEligibilityStatusTabs(),
-    };
   }
 }

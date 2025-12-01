@@ -66,6 +66,9 @@ export abstract class UsIdCRCOpportunityBase<
       else return "Gender Unavailable" as OpportunityTab;
     }
 
+    if (this.denied && this.denial?.reasons.includes("MEDICAL"))
+      return "Medical-Ineligible";
+
     return super.tabTitle();
   }
 }

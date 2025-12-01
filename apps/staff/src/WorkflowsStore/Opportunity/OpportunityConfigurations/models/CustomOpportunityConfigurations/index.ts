@@ -26,8 +26,8 @@ import { UsAzTransferToAdministrativeSupervisionConfiguration } from "./UsAz/UsA
 import { UsIaEarlyDischargeConfiguration } from "./UsIa/UsIaEarlyDischargeConfiguration";
 import { UsIaSupervisionLevelDowngradeConfiguration } from "./UsIa/UsIaSupervisionLevelDischargeConfiguration";
 import { LSUConfiguration } from "./UsId/LSUConfiguration";
+import { UsIdCRCConfiguration } from "./UsId/UsIdCRCConfiguration";
 import { UsIdEarnedDischargeConfiguration } from "./UsId/UsIdEarnedDischargeConfiguration";
-import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
 import { UsMiCustodyLevelDowngradeConfiguration } from "./UsMi/UsMiCustodyLevelDowngradeConfiguration";
@@ -62,9 +62,9 @@ const customOpportunityConfigurations: Partial<
   // Idaho
   earnedDischarge: UsIdEarnedDischargeConfiguration,
   LSU: LSUConfiguration,
-  usIdCRCResidentWorker: UsIdFacilitiesConfiguration,
-  usIdCRCWorkRelease: UsIdFacilitiesConfiguration,
-  usIdExpandedCRC: UsIdFacilitiesConfiguration,
+  usIdCRCResidentWorker: UsIdCRCConfiguration,
+  usIdCRCWorkRelease: UsIdCRCConfiguration,
+  usIdExpandedCRC: UsIdCRCConfiguration,
 
   // Maine
   usMeSCCP: UsMeSCCPConfiguration,
