@@ -1292,6 +1292,10 @@ export const NdPopulationFilterOptions: PopulationFilters = {
 
 export const NyPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.FACILITY]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.FACILITY],
+    useDynamicOptions: true,
+  },
 };
 
 export const PaPopulationFilterOptions: PopulationFilters = {

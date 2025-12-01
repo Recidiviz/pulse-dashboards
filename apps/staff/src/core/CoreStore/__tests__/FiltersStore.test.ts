@@ -22,6 +22,7 @@ import UserStore from "../../../RootStore/UserStore";
 import {
   defaultPopulationFilterValues,
   IdPopulationFilterOptions,
+  NyPopulationFilterOptions,
 } from "../../utils/filterOptions";
 import CoreStore from "..";
 
@@ -149,18 +150,41 @@ describe("FiltersStore", () => {
     });
   });
 
-  describe("dynamicFilterOptions", () => {
+  describe("dynamicFilterOptions with useDynamicOptions config set to true", () => {
     it("sets filterOptions with the dynamicFilterOptions from the current metric", () => {
+      // @ts-expect-error
+      vi.mocked(TenantStore).mockImplementation(() => ({
+        currentTenantId: "US_NY",
+      }));
+      coreStore = new CoreStore(new RootStore());
       coreStore.metricsStore.current.dynamicFilterOptions["facility"] = [
         { label: "Option 1", value: "OPTION_1" },
         { label: "Option 2", value: "OPTION_2" },
       ];
-      const expected = IdPopulationFilterOptions;
+      const expected = NyPopulationFilterOptions;
       expected.facility.options = [
         { label: "All", value: "ALL" },
         ...coreStore.metricsStore.current.dynamicFilterOptions["facility"],
       ];
       expect(coreStore.filtersStore.filterOptions).toEqual(expected);
+    });
+  });
+
+  describe("dynamicFilterOptions with useDynamicOptions config set to false", () => {
+    it("uses the default filterOptions from the current metric", () => {
+      // ID does not have any dynamic filter options enabled
+      // @ts-expect-error
+      vi.mocked(TenantStore).mockImplementation(() => ({
+        currentTenantId: "US_ID",
+      }));
+      coreStore = new CoreStore(new RootStore());
+      coreStore.metricsStore.current.dynamicFilterOptions["facility"] = [
+        { label: "Option 1", value: "OPTION_1" },
+        { label: "Option 2", value: "OPTION_2" },
+      ];
+      expect(coreStore.filtersStore.filterOptions).toEqual(
+        IdPopulationFilterOptions,
+      );
     });
   });
 });

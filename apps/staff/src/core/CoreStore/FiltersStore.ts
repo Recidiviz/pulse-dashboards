@@ -218,10 +218,12 @@ export default class FiltersStore {
     return metric.hydrationState.status === "hydrated"
       ? Object.entries(metric.dynamicFilterOptions).reduce(
           (acc, [filterType, dynamicOptions]) => {
-            acc[filterType as FilterType].options = [
-              { label: "All", value: "ALL" },
-              ...dynamicOptions,
-            ];
+            if (acc[filterType as FilterType].useDynamicOptions) {
+              acc[filterType as FilterType].options = [
+                { label: "All", value: "ALL" },
+                ...dynamicOptions,
+              ];
+            }
             return acc;
           },
           staticFilterOptions,

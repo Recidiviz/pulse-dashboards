@@ -49,6 +49,7 @@ export type PopulationFilter = {
   defaultOption: FilterOption;
   defaultValue: string;
   locationNameMap?: Record<string, string>;
+  useDynamicOptions?: boolean;
 };
 
 export type Filters = {
