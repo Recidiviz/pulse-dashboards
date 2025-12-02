@@ -31,6 +31,7 @@ import InsightsOpportunityPage from "../InsightsOpportunityPage";
 import { InsightsRoute } from "../InsightsRoute";
 import InsightsStaffPageV2 from "../InsightsStaffPage/InsightsStaffPageV2";
 import { InsightsSupervisionHome } from "../InsightsSupervisionHome";
+import InsightsSupervisorOpportunityPage from "../InsightsSupervisorOpportunityPage";
 import InsightsSupervisorPageV2 from "../InsightsSupervisorPage/InsightsSupervisorPageV2";
 import InsightsSupervisorsListPage from "../InsightsSupervisorsListPage";
 import ModelHydrator from "../ModelHydrator";
@@ -96,6 +97,12 @@ const PageInsights: React.FC = observer(function PageInsights() {
                     routeName: "supervisionOpportunityForm",
                   })}
                   element={<InsightsOpportunityFormPage />}
+                />
+                <Route
+                  path={insightsRoute({
+                    routeName: "supervisionSupervisorOpportunity",
+                  })}
+                  element={<InsightsSupervisorOpportunityPage />}
                 />
               </Route>
               <Route

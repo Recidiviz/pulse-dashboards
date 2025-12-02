@@ -36,6 +36,7 @@ import { formatSupervisionEndDatePhrase } from "../../core/WorkflowsJusticeInvol
 import OpportunitiesFilterStore from "../../FilterStore/OpportunitiesFilterStore";
 import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
+import { SupervisionSupervisorOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorOpportunityPresenter";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
@@ -84,7 +85,9 @@ export class OpportunityPersonListPresenter
     public readonly config: OpportunityConfiguration,
     featureVariants: FeatureVariantRecord,
     public readonly opportunityType: OpportunityType,
-    private readonly supervisionPresenter?: SupervisionOpportunityPresenter,
+    private readonly supervisionPresenter?:
+      | SupervisionOpportunityPresenter
+      | SupervisionSupervisorOpportunityPresenter,
   ) {
     this.isSupervisorHomepage = !!supervisionPresenter;
     this.filters = this.opportunitiesFilterStore.filters;
@@ -106,9 +109,7 @@ export class OpportunityPersonListPresenter
 
     this.showZeroGrantsPill = !!(
       featureVariants.zeroGrantsFlag &&
-      this.supervisionPresenter?.officerRecord?.zeroGrantOpportunities?.includes(
-        opportunityType,
-      )
+      this.officerRecord?.zeroGrantOpportunities?.includes(opportunityType)
     );
 
     // only update the list of opportunities to navigate through when necessary,
@@ -153,8 +154,9 @@ export class OpportunityPersonListPresenter
       INSTANCE_DETAILS: opportunities.some((opp) => !!opp.instanceDetails),
       PERSON_DISPLAY_ID: true,
       ASSIGNED_STAFF_NAME:
-        !this.isSupervisorHomepage &&
-        opportunities.some((opp) => !!opp.person.assignedStaffId),
+        (this.isSupervisorHomepage && !!this.supervisorInfo) ||
+        (!this.isSupervisorHomepage &&
+          opportunities.some((opp) => !!opp.person.assignedStaffId)),
       // TODO(#7921): More gracefully handle these special cases
       STATUS: ![
         "usAzTransferToAdministrativeSupervision",
@@ -198,7 +200,7 @@ export class OpportunityPersonListPresenter
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         this.tenantStore.currentTenantId === "US_MI" &&
         this.opportunityType === "usMiCustodyLevelDowngrade",
-        
+
       LAST_VIEWED: true,
       ALMOST_ELIGIBLE_STATUS: opportunities.some(
         (opp: Opportunity) =>
@@ -340,6 +342,9 @@ export class OpportunityPersonListPresenter
   }
 
   private get defaultTab() {
+    if (this.supervisorInfo) {
+      return this.config.supervisorReviewTabTitle;
+    }
     return this.displayTabs[0];
   }
 
@@ -424,9 +429,42 @@ export class OpportunityPersonListPresenter
     return allOppsForTypeByTab;
   }
 
+  /**
+   * Returns the supervision officer record from the supervision presenter if one
+   * exists.
+   *
+   * Returns undefined otherwise (i.e. if there is no presenter or the presenter
+   * does not have an officer record).
+   */
+  get officerRecord() {
+    if (
+      this.supervisionPresenter &&
+      "officerRecord" in this.supervisionPresenter
+    ) {
+      return this.supervisionPresenter.officerRecord;
+    }
+    return undefined;
+  }
+
+  /**
+   * Returns the supervision supervisor record from the supervision presenter if one
+   * exists.
+   *
+   * Returns undefined otherwise (i.e. if there is no presenter or the presenter
+   * does not have an supervisor record).
+   */
+  get supervisorInfo() {
+    if (
+      this.supervisionPresenter &&
+      "supervisorInfo" in this.supervisionPresenter
+    )
+      return this.supervisionPresenter.supervisorInfo;
+    else return undefined;
+  }
+
   get label() {
-    if (this.supervisionPresenter?.officerRecord) {
-      return `${this.supervisionPresenter.officerRecord.displayName}, ${this.config.label}`;
+    if (this.officerRecord) {
+      return `${this.officerRecord.displayName}, ${this.config.label}`;
     }
     return this.config.label;
   }
@@ -662,12 +700,15 @@ export class OpportunityPersonListPresenter
   }
 
   urlForOppConfig(config: OpportunityConfiguration) {
-    const officerPseudoId =
-      // @ts-expect-error accessing private store
-      this.supervisionPresenter?.supervisionStore.officerPseudoId;
-    if (officerPseudoId) {
+    if (this.officerRecord) {
       return insightsUrl("supervisionOpportunity", {
-        officerPseudoId,
+        officerPseudoId: this.officerRecord.pseudonymizedId,
+        opportunityTypeUrl: config.urlSection,
+      });
+    }
+    if (this.supervisorInfo) {
+      return insightsUrl("supervisionSupervisorOpportunity", {
+        supervisorPseudoId: this.supervisorInfo.pseudonymizedId,
         opportunityTypeUrl: config.urlSection,
       });
     }

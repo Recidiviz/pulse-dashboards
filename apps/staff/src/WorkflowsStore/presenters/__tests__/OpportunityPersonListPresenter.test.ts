@@ -21,6 +21,7 @@ import { mockOpportunity } from "../../../core/__tests__/testUtils";
 import OpportunitiesFilterStore from "../../../FilterStore/OpportunitiesFilterStore";
 import FirestoreStore from "../../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../../InsightsStore/presenters/SupervisionOpportunityPresenter";
+import { SupervisionSupervisorOpportunityPresenter } from "../../../InsightsStore/presenters/SupervisionSupervisorOpportunityPresenter";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../../RootStore/types";
@@ -83,7 +84,9 @@ function getPresenter({
   opportunitiesFilterStore = mockFilterStore,
 }: {
   config?: OpportunityConfiguration;
-  supervisionPresenter?: SupervisionOpportunityPresenter;
+  supervisionPresenter?:
+    | SupervisionOpportunityPresenter
+    | SupervisionSupervisorOpportunityPresenter;
   workflowsStore?: WorkflowsStore;
   tenantStore?: TenantStore;
   opportunityType?: typeof mockOpportunity.type;
@@ -244,7 +247,7 @@ describe("multiple tab groups, no supervision presenter", () => {
   });
 });
 
-describe("in insights/with supervision presenter", () => {
+describe("in insights/with officer opportunity presenter", () => {
   // supervision presenter with two opportunities
   const supervisionOpportunityPresenter = {
     opportunitiesByType: {
@@ -254,14 +257,12 @@ describe("in insights/with supervision presenter", () => {
       ],
     },
     labels: { supervisionJiiLabel: "test title" },
-    supervisionStore: {
-      officerPseudoId: "testofficer1",
-    },
     opportunityConfigurationStore: {
       apiOpportunityConfigurations: {
         [mockOpportunity.type]: mockOpportunity.config,
       },
     },
+    officerRecord: { pseudonymizedId: "testofficer1" },
   } as any as SupervisionOpportunityPresenter;
 
   beforeEach(() => {
@@ -311,6 +312,74 @@ describe("in insights/with supervision presenter", () => {
 
   test("doesn't show the officer name column", () => {
     expect(presenter.enabledColumnIds["ASSIGNED_STAFF_NAME"]).toBeFalse();
+  });
+});
+
+describe("in insights/with supervisor opportunity presenter", () => {
+  // supervision presenter with two opportunities
+  const supervisionSupervisorOpportunityPresenter = {
+    opportunitiesByType: {
+      [mockOpportunity.type]: [
+        mockOpportunity,
+        { ...mockOpportunity, tabTitle: () => "Marked Ineligible" },
+      ],
+    },
+    labels: { supervisionJiiLabel: "test title" },
+    opportunityConfigurationStore: {
+      apiOpportunityConfigurations: {
+        [mockOpportunity.type]: mockOpportunity.config,
+      },
+    },
+    supervisorInfo: { pseudonymizedId: "testsupervisor1" },
+  } as any as SupervisionSupervisorOpportunityPresenter;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    presenter = getPresenter({
+      supervisionPresenter: supervisionSupervisorOpportunityPresenter,
+    });
+  });
+
+  test("gets opportunities from supervision presenter", () => {
+    const workflowsSpy = vi.spyOn(
+      mockWorkflowsStore,
+      "allOpportunitiesByType",
+      "get",
+    );
+    expect(presenter.oppsFromOpportunitiesByTab).toContainAllKeys([
+      "Eligible Now",
+      "Marked Ineligible",
+    ]);
+    expect(workflowsSpy).not.toHaveBeenCalled();
+  });
+
+  test("gets JII title from supervision presenter", () => {
+    expect(presenter.justiceInvolvedPersonTitle).toEqual("test title");
+  });
+
+  test("gets current opportunity type from supervision presenter", () => {
+    expect(presenter.opportunityType).toEqual(mockOpportunity.type);
+  });
+
+  test("gets opportunity configurations from supervision presenter", () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    expect(Object.keys(presenter.opportunityConfigs!)).toEqual([
+      mockOpportunity.type,
+    ]);
+  });
+
+  test("gets opportunity types from supervision presenter", () => {
+    expect(presenter.opportunityTypes).toEqual([mockOpportunity.type]);
+  });
+
+  test("gets URL for other opportunity type for insights", () => {
+    expect(presenter.urlForOppConfig(mockOpportunity.config)).toEqual(
+      `/insights/supervision/supervisor/testsupervisor1/opportunity/${mockOpportunity.config.urlSection}`,
+    );
+  });
+
+  test("shows the officer name column", () => {
+    expect(presenter.enabledColumnIds["ASSIGNED_STAFF_NAME"]).toBeTrue();
   });
 });
 

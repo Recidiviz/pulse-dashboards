@@ -340,6 +340,7 @@ export const INSIGHTS_PATHS: Record<InsightsPage, string> = {
   supervisionOnboarding: `/${DASHBOARD_VIEWS.insights}/supervision/onboarding`,
   supervisionSupervisorsList: `/${DASHBOARD_VIEWS.insights}/supervision/supervisors-list`,
   supervisionSupervisor: `/${DASHBOARD_VIEWS.insights}/supervision/supervisor/:supervisorPseudoId`,
+  supervisionSupervisorOpportunity: `/${DASHBOARD_VIEWS.insights}/supervision/supervisor/:supervisorPseudoId/opportunity/:opportunityTypeUrl`,
   supervisionStaff: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId`,
   supervisionStaffMetric: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/outcome/:metricId`,
   supervisionClientDetail: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/outcome/:metricId/client/:clientPseudoId/:outcomeDate`,
@@ -354,6 +355,7 @@ export const INSIGHTS_PAGES = {
   supervisionOnboarding: "supervisionOnboarding",
   supervisionSupervisor: "supervisionSupervisor",
   supervisionSupervisorsList: "supervisionSupervisorsList",
+  supervisionSupervisorOpportunity: "supervisionSupervisorOpportunity",
   supervisionStaff: "supervisionStaff",
   supervisionStaffMetric: "supervisionStaffMetric",
   supervisionClientDetail: "supervisionClientDetail",
@@ -412,6 +414,10 @@ export function insightsUrl(
     clientPseudoId: string;
     opportunityPseudoId: string;
   },
+): string;
+export function insightsUrl(
+  routeName: "supervisionSupervisorOpportunity",
+  params: { supervisorPseudoId: string; opportunityTypeUrl: string },
 ): string;
 
 export function insightsUrl(

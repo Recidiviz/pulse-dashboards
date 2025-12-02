@@ -67,6 +67,7 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
+import { SupervisionSupervisorOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorOpportunityPresenter";
 import {
   formatDurationFromOptionalDays,
   formatWorkflowsDate,
@@ -244,7 +245,9 @@ type OpportunityTableColumnDef = {
 
 type OpportunityPersonListProps = {
   opportunityType: OpportunityType;
-  supervisionPresenter?: SupervisionOpportunityPresenter;
+  supervisionPresenter?:
+    | SupervisionOpportunityPresenter
+    | SupervisionSupervisorOpportunityPresenter;
 };
 
 type OpportunityCaseloadComponentProps = {

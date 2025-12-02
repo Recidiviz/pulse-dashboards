@@ -63,6 +63,8 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       | "hydrator"
       | "hydrationState"
       | "initializeOpportunityDetail"
+      | "populateCaseload"
+      | "expectCaseloadPopulated"
     >(
       this,
       {
@@ -73,6 +75,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         hydrate: true,
         hydrator: true,
         populateCaseload: true,
+        expectCaseloadPopulated: true,
         hydrationState: true,
         initializeOpportunityDetail: true,
         opportunitiesDetails: true,
@@ -274,7 +277,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
    * Asserts that officers have been populated.
    * @throws An error if officers are not populated.
    */
-  private expectOfficersPopulated() {
+  protected expectOfficersPopulated() {
     if (
       !this.supervisionStore.officersBySupervisorPseudoId.has(
         this.supervisorPseudoId,

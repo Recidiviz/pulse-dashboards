@@ -53,6 +53,7 @@ describe("getRelativePath", () => {
     supervisionOnboarding: `/supervision/onboarding`,
     supervisionSupervisorsList: `/supervision/supervisors-list`,
     supervisionSupervisor: `/supervision/supervisor/:supervisorPseudoId`,
+    supervisionSupervisorOpportunity: `/supervision/supervisor/:supervisorPseudoId/opportunity/:opportunityTypeUrl`,
     supervisionStaff: `/supervision/staff/:officerPseudoId`,
     supervisionStaffMetric: `/supervision/staff/:officerPseudoId/outcome/:metricId`,
     supervisionClientDetail: `/supervision/staff/:officerPseudoId/outcome/:metricId/client/:clientPseudoId/:outcomeDate`,
