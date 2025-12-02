@@ -318,10 +318,17 @@ export function opportunitiesByTab(
   tabGroup?: OpportunityTabGroup,
 ): Partial<Record<OpportunityType, Record<OpportunityTab, Opportunity[]>>> {
   return mapValues(allOpportunitiesByType, (opps) => {
-    return groupBy(opps, (opp) =>
-      opp.tabTitle((tabGroup || Object.keys(opp.config.tabGroups)[0]) as any),
-    ) as Record<OpportunityTab, Opportunity[]>;
+    return opportunitiesByTabForType(opps, tabGroup);
   });
+}
+
+export function opportunitiesByTabForType(
+  opportunities?: Opportunity<JusticeInvolvedPerson>[] | undefined,
+  tabGroup?: OpportunityTabGroup,
+): Record<OpportunityTab, Opportunity[]> {
+  return groupBy(opportunities, (opp) =>
+    opp.tabTitle((tabGroup || Object.keys(opp.config.tabGroups)[0]) as any),
+  ) as Record<OpportunityTab, Opportunity[]>;
 }
 
 /**

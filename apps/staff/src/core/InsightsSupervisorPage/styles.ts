@@ -23,7 +23,7 @@ import { palette } from "~design-system";
 
 const WRAPPER_HEIGHT = rem(402);
 const WRAPPER_WIDTH = rem(315);
-const BORDER_RADIUS = rem(4);
+export const BORDER_RADIUS = rem(4);
 
 export const CardWrapper = styled.div`
   max-width: ${WRAPPER_WIDTH};

@@ -18,10 +18,11 @@
 import { add, parseISO, sub } from "date-fns";
 import timekeeper from "timekeeper";
 
-import { StaffRecord } from "~datatypes";
+import { OpportunityType, StaffRecord } from "~datatypes";
 
 import { StaffFilter } from "../../core/models/types";
 import { CombinedUserRecord } from "../../FirestoreStore/types";
+import { Opportunity, OpportunityTabGroups } from "../Opportunity";
 import { JusticeInvolvedPerson } from "../types";
 import {
   filterByUserDistrict,
@@ -29,6 +30,8 @@ import {
   getPersonDaysToRelease,
   getPersonReleaseDate,
   getSnoozeUntilDate,
+  opportunitiesByTab,
+  opportunitiesByTabForType,
   snoozeUntilDateInTheFuture,
   staffNameComparator,
   usCaFilterByRoleSubtype,
@@ -498,5 +501,76 @@ describe("getPersonDaysToRelease", () => {
       expirationDate: testDate,
     } as any as JusticeInvolvedPerson;
     expect(getPersonDaysToRelease(client)).toEqual(Infinity);
+  });
+});
+
+describe("opportunity tab functions", () => {
+  const mockTabGroups: OpportunityTabGroups = {
+    "ELIGIBILITY STATUS": ["Eligible Now", "Almost Eligible", "Snoozed"],
+  };
+  const mockConfig = {
+    tabGroups: mockTabGroups,
+  };
+
+  const mockTypeA = "mockUsXxOpp" as OpportunityType;
+  const mockTypeB = "mockUsXxOppTwo" as OpportunityType;
+
+  const aOpps = [
+    {
+      type: mockTypeA,
+      config: mockConfig,
+      tabTitle: () => "Eligible Now",
+    },
+    {
+      type: mockTypeA,
+      config: mockConfig,
+      tabTitle: () => "Snoozed",
+    },
+    {
+      type: mockTypeA,
+      config: mockConfig,
+      tabTitle: () => "Almost Eligible",
+    },
+  ] as Opportunity[];
+
+  const bOpps = [
+    {
+      type: mockTypeB,
+      config: mockConfig,
+      tabTitle: () => "Snoozed",
+    },
+    {
+      type: mockTypeB,
+      config: mockConfig,
+      tabTitle: () => "Eligible Now",
+    },
+    {
+      type: mockTypeB,
+      config: mockConfig,
+      tabTitle: () => "Eligible Now",
+    },
+  ] as Opportunity[];
+  test("opportunitiesByTabForType organizes by tab", () => {
+    const expectedOppsByTab = {
+      "Eligible Now": [bOpps[1], bOpps[2]],
+      Snoozed: [bOpps[0]],
+    };
+    expect(opportunitiesByTabForType(bOpps)).toEqual(expectedOppsByTab);
+  });
+
+  test("opportunitiesByTab organizes by type and tab", () => {
+    const mockOppsByType = { [mockTypeA]: aOpps, [mockTypeB]: bOpps };
+    const expectedOppsByTab = {
+      [mockTypeA]: {
+        "Eligible Now": [aOpps[0]],
+        Snoozed: [aOpps[1]],
+        "Almost Eligible": [aOpps[2]],
+      },
+      [mockTypeB]: {
+        "Eligible Now": [bOpps[1], bOpps[2]],
+        Snoozed: [bOpps[0]],
+      },
+    };
+    expect(opportunitiesByTab(mockOppsByType)).toEqual(expectedOppsByTab);
   });
 });

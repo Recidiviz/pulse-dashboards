@@ -29,7 +29,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import InsightsPill from "../InsightsPill";
 
-const ViewAllLabel = styled.div<{ $isMobile: boolean }>`
+export const ViewAllLabel = styled.div<{ $isMobile: boolean }>`
   ${({ $isMobile }) => ($isMobile ? typography.Sans16 : typography.Sans18)}
   color: ${palette.signal.links};
   display: flex;
@@ -149,6 +149,23 @@ type WorkflowsHomepageSummaryProps = ZeroGrantsSettings & {
   people: readonly JusticeInvolvedPerson[];
 };
 
+export const ViewAll = ({ isMobile }: { isMobile: boolean }) => {
+  return (
+    <ViewAllLabel $isMobile={isMobile}>
+      View all{" "}
+      <ViewAllArrow>
+        <Icon
+          className="ViewAllLabel__icon"
+          kind={IconSVG.Arrow}
+          fill={palette.signal.links}
+          height={16}
+          width={16}
+        />
+      </ViewAllArrow>
+    </ViewAllLabel>
+  );
+};
+
 export const WorkflowsHomepageSummary = observer(
   function WorkflowsHomepageSummary({
     url,
@@ -194,18 +211,7 @@ export const WorkflowsHomepageSummary = observer(
               return null;
             })}
           </ReviewStatusWrapper>
-          <ViewAllLabel $isMobile={isMobile}>
-            View all{" "}
-            <ViewAllArrow>
-              <Icon
-                className="ViewAllLabel__icon"
-                kind={IconSVG.Arrow}
-                fill={palette.signal.links}
-                height={16}
-                width={16}
-              />
-            </ViewAllArrow>
-          </ViewAllLabel>
+          <ViewAll isMobile={isMobile} />
         </HomepageHeaderWrapper>
 
         <HomepageInfoWrapper
