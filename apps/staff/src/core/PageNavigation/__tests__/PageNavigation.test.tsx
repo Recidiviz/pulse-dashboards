@@ -81,8 +81,9 @@ describe("CoreLayout tests", () => {
       workflowsStore: {
         homepage: "home",
       },
-      psiStore: {
+      sentencingStore: {
         staffPseudoId: "staff-pseudo-id",
+        isSupervisor: false,
       },
       analyticsStore: {
         trackMethodologyLinkClicked: vi.fn(),

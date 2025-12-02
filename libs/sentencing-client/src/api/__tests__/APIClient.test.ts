@@ -18,7 +18,7 @@
 import { createTRPCClient } from "@trpc/client";
 import { beforeEach, expect, Mock, vi } from "vitest";
 
-import { createMockPSIStore } from "../../utils/test";
+import { createMockSentencingStore } from "../../utils/test";
 import { APIClient, tRPCClient } from "../APIClient";
 import { CaseDetailsFixture, StaffInfoFixture } from "../offlineFixtures";
 
@@ -27,7 +27,7 @@ vi.mock("@trpc/client", () => ({
   httpBatchLink: vi.fn(),
 }));
 
-const psiStore = createMockPSIStore();
+const sentencingStore = createMockSentencingStore();
 let mockTRPCClient: tRPCClient;
 let apiClient: APIClient;
 const caseId = Object.keys(CaseDetailsFixture)[0];
@@ -79,23 +79,23 @@ beforeEach(() => {
     },
   };
   (createTRPCClient as Mock).mockReturnValue(mockTRPCClient);
-  apiClient = new APIClient(psiStore);
+  apiClient = new APIClient(sentencingStore);
 });
 
-test("client is initialized after instantiation of the PSIStore and APIClient", () => {
+test("client is initialized after instantiation of the SentencingStore and APIClient", () => {
   expect(apiClient.client).not.toBeUndefined();
 });
 
 test("client should not be initialized if there is no baseUrl", () => {
-  const psiStore = createMockPSIStore({ hideApiUrl: true });
-  const apiClient = new APIClient(psiStore);
+  const sentencingStore = createMockSentencingStore({ hideApiUrl: true });
+  const apiClient = new APIClient(sentencingStore);
 
   expect(apiClient.client).toBeUndefined();
 });
 
 test("should throw an error if tRPC client is undefined", async () => {
-  const psiStore = createMockPSIStore();
-  const apiClient = new APIClient(psiStore);
+  const sentencingStore = createMockSentencingStore();
+  const apiClient = new APIClient(sentencingStore);
 
   await expect(apiClient.getStaffInfo()).rejects.toEqual({
     message: "No tRPC client initialized",
@@ -103,8 +103,8 @@ test("should throw an error if tRPC client is undefined", async () => {
 });
 
 test("should throw an error if staffPseudoId is undefined", async () => {
-  const psiStore = createMockPSIStore({ userPseudoIdOverride: null });
-  const apiClient = new APIClient(psiStore);
+  const sentencingStore = createMockSentencingStore({ userPseudoIdOverride: null });
+  const apiClient = new APIClient(sentencingStore);
   await apiClient.initTRPCClient();
 
   await expect(apiClient.getStaffInfo()).rejects.toEqual({

@@ -105,7 +105,7 @@ export interface RootStore {
   };
 }
 
-export class PSIStore {
+export class SentencingStore {
   staffStore: StaffStore;
 
   supervisorStore: SupervisorStore;

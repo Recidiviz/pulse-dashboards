@@ -22,14 +22,14 @@ import moment from "moment";
 import { MemoryRouter } from "react-router-dom";
 
 import { StaffInfoFixture } from "../../../api/offlineFixtures";
-import { PSIStore } from "../../../datastores/PSIStore";
+import { SentencingStore } from "../../../datastores/SentencingStore";
 import { StaffPresenter } from "../../../presenters/StaffPresenter";
-import { createMockPSIStore } from "../../../utils/test";
+import { createMockSentencingStore } from "../../../utils/test";
 import { CaseListTable } from "../CaseListTable";
 import { ACTIVE_STATUS, ARCHIVED_STATUS, CANCELLED_STATUS } from "../constants";
 import { CaseStatusToDisplay } from "../types";
 
-let psiStore: PSIStore;
+let sentencingStore: SentencingStore;
 let presenter: StaffPresenter;
 const analytics = {
   trackIndividualCaseClicked: () => null,
@@ -38,11 +38,11 @@ const analytics = {
 };
 
 beforeEach(() => {
-  psiStore = createMockPSIStore();
-  presenter = new StaffPresenter(psiStore.staffStore);
+  sentencingStore = createMockSentencingStore();
+  presenter = new StaffPresenter(sentencingStore.staffStore);
 
-  vi.spyOn(psiStore.staffStore, "loadStaffInfo");
-  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.staffStore, "loadStaffInfo");
+  vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
 });
@@ -138,7 +138,7 @@ test("does not show archived cases", async () => {
       <CaseListTable
         excludedAttributeKeys={[]}
         caseTableData={data}
-        staffPseudoId={psiStore.staffPseudoId!}
+        staffPseudoId={sentencingStore.staffPseudoId!}
         analytics={analytics}
       />
     </MemoryRouter>,
@@ -175,7 +175,7 @@ test("shows archived case when filter is checked", async () => {
       <CaseListTable
         excludedAttributeKeys={[]}
         caseTableData={data}
-        staffPseudoId={psiStore.staffPseudoId!}
+        staffPseudoId={sentencingStore.staffPseudoId!}
         analytics={analytics}
       />
     </MemoryRouter>,
@@ -233,7 +233,7 @@ test("show/hide cases when 'Not yet started' filter is checked/unchecked", async
       <CaseListTable
         excludedAttributeKeys={[]}
         caseTableData={data}
-        staffPseudoId={psiStore.staffPseudoId!}
+        staffPseudoId={sentencingStore.staffPseudoId!}
         analytics={analytics}
       />
     </MemoryRouter>,
@@ -281,7 +281,7 @@ test("show/hide cases when 'In Progress' filter is checked/unchecked", async () 
       <CaseListTable
         excludedAttributeKeys={[]}
         caseTableData={data}
-        staffPseudoId={psiStore.staffPseudoId!}
+        staffPseudoId={sentencingStore.staffPseudoId!}
         analytics={analytics}
       />
     </MemoryRouter>,
@@ -329,7 +329,7 @@ test("show/hide cases when 'Complete' filter is checked/unchecked", async () => 
       <CaseListTable
         excludedAttributeKeys={[]}
         caseTableData={data}
-        staffPseudoId={psiStore.staffPseudoId!}
+        staffPseudoId={sentencingStore.staffPseudoId!}
         analytics={analytics}
       />
     </MemoryRouter>,

@@ -17,23 +17,23 @@
 
 import { createContext, useContext } from "react";
 
-import { PSIStore } from "../../datastores/PSIStore";
+import { SentencingStore } from "../../datastores/SentencingStore";
 
-const PSIStoreContext = createContext<PSIStore | null>(null);
+const SentencingStoreContext = createContext<SentencingStore | null>(null);
 
 export const StoreProvider: React.FC<{
-  store: PSIStore;
+  store: SentencingStore;
   children: React.ReactNode;
 }> = ({ store, children }) => {
   return (
-    <PSIStoreContext.Provider value={store}>
+    <SentencingStoreContext.Provider value={store}>
       {children}
-    </PSIStoreContext.Provider>
+    </SentencingStoreContext.Provider>
   );
 };
 
 export const useStore = () => {
-  const context = useContext(PSIStoreContext);
+  const context = useContext(SentencingStoreContext);
   if (!context) {
     throw new Error("useRootStore must be used within a StoreProvider");
   }

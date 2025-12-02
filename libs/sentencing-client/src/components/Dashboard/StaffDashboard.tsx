@@ -20,7 +20,7 @@ import { useState } from "react";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { PSIStore } from "../../datastores/PSIStore";
+import { SentencingStore } from "../../datastores/SentencingStore";
 import { StaffPresenter } from "../../presenters/StaffPresenter";
 import CloseIcon from "../assets/close-icon.svg?react";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
@@ -104,8 +104,8 @@ const ManagedComponent = observer(function StaffDashboard({
   );
 });
 
-function usePresenter({ psiStore }: { psiStore: PSIStore }) {
-  const { staffStore } = psiStore;
+function usePresenter({ sentencingStore }: { sentencingStore: SentencingStore }) {
+  const { staffStore } = sentencingStore;
 
   return new StaffPresenter(staffStore);
 }

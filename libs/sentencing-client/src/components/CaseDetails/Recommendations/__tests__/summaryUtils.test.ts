@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Case } from "../../../../api";
-import { createMockPSIStore } from "../../../../utils/test";
+import { createMockSentencingStore } from "../../../../utils/test";
 import { deduplicateAndPluralize } from "../../../../utils/utils";
 import { OTHER_OPTION } from "../../Form/constants";
 import { RecommendationType } from "../../types";
@@ -209,8 +209,8 @@ describe("formatNeedsList", () => {
  * Based on the following template ([link to template](https://docs.google.com/document/d/1-cSzLhJoH_pnSn599ikDTj9blx7UYHWauYLUItSsPy0))
  */
 describe("generateRecommendationSummary for US_ID", () => {
-  const psiStore = createMockPSIStore();
-  const geoConfig = psiStore.geoConfig;
+  const sentencingStore = createMockSentencingStore();
+  const geoConfig = sentencingStore.geoConfig;
 
   // No recommendation
   test("generates summary for None recommendation type", () => {
@@ -1290,8 +1290,8 @@ describe("generateRecommendationSummary for US_ID", () => {
  */
 
 describe("generateRecommendationSummary for US_ND", () => {
-  const psiStore = createMockPSIStore({ stateCodeOverride: "US_ND" });
-  const geoConfig = psiStore.geoConfig;
+  const sentencingStore = createMockSentencingStore({ stateCodeOverride: "US_ND" });
+  const geoConfig = sentencingStore.geoConfig;
 
   // No recommendation
   test("generates summary for None recommendation type", () => {

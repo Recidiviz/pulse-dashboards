@@ -23,15 +23,15 @@ import { ErrorMessage } from "../Error";
 import { useStore } from "../StoreProvider/StoreProvider";
 
 export const Dashboard = observer(function Dashboard() {
-  const psiStore = useStore();
+  const sentencingStore = useStore();
 
-  if (!psiStore || !psiStore.staffPseudoId) return null;
+  if (!sentencingStore || !sentencingStore.staffPseudoId) return null;
 
   const staffPseudoIdParam = {
-    staffPseudoId: psiStore.staffPseudoId,
+    staffPseudoId: sentencingStore.staffPseudoId,
   };
 
-  if (psiStore.isSupervisor) {
+  if (sentencingStore.isSupervisor) {
     return (
       <Navigate
         replace
@@ -40,7 +40,7 @@ export const Dashboard = observer(function Dashboard() {
     );
   }
 
-  if (!psiStore.isSupervisor) {
+  if (!sentencingStore.isSupervisor) {
     return (
       <Navigate replace to={psiUrl("staffDashboard", staffPseudoIdParam)} />
     );

@@ -16,17 +16,17 @@
 // =============================================================================
 
 import { SupervisorInfoFixture } from "../../api/offlineFixtures";
-import { PSIStore } from "../../datastores/PSIStore";
+import { SentencingStore } from "../../datastores/SentencingStore";
 import { SupervisorStore } from "../../datastores/SupervisorStore";
-import { createMockPSIStore } from "../../utils/test";
+import { createMockSentencingStore } from "../../utils/test";
 import { SupervisorPresenter } from "../SupervisorPresenter";
 
-let psiStore: PSIStore;
+let sentencingStore: SentencingStore;
 let presenter: SupervisorPresenter;
 
 beforeEach(() => {
-  psiStore = createMockPSIStore();
-  presenter = new SupervisorPresenter(psiStore.supervisorStore);
+  sentencingStore = createMockSentencingStore();
+  presenter = new SupervisorPresenter(sentencingStore.supervisorStore);
 });
 
 afterEach(() => {
@@ -34,8 +34,8 @@ afterEach(() => {
 });
 
 test("hydration states", async () => {
-  vi.spyOn(psiStore.supervisorStore, "loadSupervisorInfo");
-  vi.spyOn(psiStore.apiClient, "getSupervisorInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.supervisorStore, "loadSupervisorInfo");
+  vi.spyOn(sentencingStore.apiClient, "getSupervisorInfo").mockResolvedValue(
     SupervisorInfoFixture,
   );
 
@@ -46,8 +46,8 @@ test("hydration states", async () => {
 
   await hydrationPromise;
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-  expect(psiStore.supervisorStore.loadSupervisorInfo).toHaveBeenCalled();
-  expect(psiStore.supervisorStore.supervisorInfo).toBeDefined();
+  expect(sentencingStore.supervisorStore.loadSupervisorInfo).toHaveBeenCalled();
+  expect(sentencingStore.supervisorStore.supervisorInfo).toBeDefined();
 });
 
 test("hydration error", async () => {
@@ -63,18 +63,18 @@ test("hydration error", async () => {
 });
 
 test("no redundant hydration while in progress", async () => {
-  vi.spyOn(psiStore.supervisorStore, "loadSupervisorInfo");
+  vi.spyOn(sentencingStore.supervisorStore, "loadSupervisorInfo");
 
   const firstHydrationCall = presenter.hydrate();
   const secondHydrationCall = presenter.hydrate();
 
   await Promise.all([firstHydrationCall, secondHydrationCall]);
-  expect(psiStore.supervisorStore.loadSupervisorInfo).toHaveBeenCalledTimes(1);
+  expect(sentencingStore.supervisorStore.loadSupervisorInfo).toHaveBeenCalledTimes(1);
 });
 
 test("no hydration if already hydrated", async () => {
-  vi.spyOn(psiStore.supervisorStore, "loadSupervisorInfo");
-  vi.spyOn(psiStore.apiClient, "getSupervisorInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.supervisorStore, "loadSupervisorInfo");
+  vi.spyOn(sentencingStore.apiClient, "getSupervisorInfo").mockResolvedValue(
     SupervisorInfoFixture,
   );
 
@@ -82,5 +82,5 @@ test("no hydration if already hydrated", async () => {
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });
   presenter.hydrate();
 
-  expect(psiStore.supervisorStore.loadSupervisorInfo).toHaveBeenCalledTimes(1);
+  expect(sentencingStore.supervisorStore.loadSupervisorInfo).toHaveBeenCalledTimes(1);
 });

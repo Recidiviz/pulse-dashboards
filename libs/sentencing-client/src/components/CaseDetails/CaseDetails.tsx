@@ -20,7 +20,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { PSIStore } from "../../datastores/PSIStore";
+import { SentencingStore } from "../../datastores/SentencingStore";
 import { CaseDetailsPresenter } from "../../presenters/CaseDetailsPresenter";
 import { psiUrl } from "../../utils/routing";
 import { deduplicateAndPluralize } from "../../utils/utils";
@@ -266,9 +266,9 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
 });
 
 export const CaseDetails: React.FC<{
-  psiStore: PSIStore;
-}> = observer(function CaseDetails({ psiStore }) {
-  const { caseStore } = psiStore;
+  sentencingStore: SentencingStore;
+}> = observer(function CaseDetails({ sentencingStore }) {
+  const { caseStore } = sentencingStore;
   const params = useParams();
 
   if (!params["caseId"]) {
@@ -279,7 +279,7 @@ export const CaseDetails: React.FC<{
 
   return (
     <PageHydrator hydratable={presenter}>
-      <StoreProvider store={psiStore}>
+      <StoreProvider store={sentencingStore}>
         <CaseDetailsWithPresenter presenter={presenter} />
       </StoreProvider>
     </PageHydrator>

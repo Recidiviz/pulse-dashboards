@@ -24,7 +24,7 @@ import superjson from "superjson";
 import type { AppRouter } from "~@sentencing/trpc-types";
 
 import { FormAttributes } from "../components/CaseDetails/types";
-import { PSIStore } from "../datastores/PSIStore";
+import { SentencingStore } from "../datastores/SentencingStore";
 
 export type tRPCClient = TRPCClient<AppRouter>;
 
@@ -55,9 +55,9 @@ export type Opportunities = Awaited<
 export class APIClient {
   client?: tRPCClient;
 
-  constructor(public readonly psiStore: PSIStore) {
+  constructor(public readonly sentencingStore: SentencingStore) {
     when(
-      () => !!this.psiStore.rootStore.userStore.getToken,
+      () => !!this.sentencingStore.rootStore.userStore.getToken,
       async () => {
         const client = await this.initTRPCClient();
         runInAction(() => {
@@ -79,7 +79,7 @@ export class APIClient {
     if (!this.baseUrl) return;
     if (this.client) return this.client;
 
-    const rootStore = this.psiStore.rootStore;
+    const rootStore = this.sentencingStore.rootStore;
 
     return createTRPCClient<AppRouter>({
       links: [
@@ -105,11 +105,11 @@ export class APIClient {
   async getStaffInfo() {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
-    if (!this.psiStore.staffPseudoId)
+    if (!this.sentencingStore.staffPseudoId)
       return Promise.reject({ message: "No staff pseudo id found" });
 
     const fetchedData = await this.trpcClient.staff.getStaff.query({
-      pseudonymizedId: this.psiStore.staffPseudoId,
+      pseudonymizedId: this.sentencingStore.staffPseudoId,
     });
     return fetchedData;
   }
@@ -117,11 +117,11 @@ export class APIClient {
   async getSupervisorInfo() {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
-    if (!this.psiStore.staffPseudoId)
+    if (!this.sentencingStore.staffPseudoId)
       return Promise.reject({ message: "No staff pseudo id found" });
 
     const fetchedData = await this.trpcClient.supervisor.getSupervisor.query({
-      pseudonymizedId: this.psiStore.staffPseudoId,
+      pseudonymizedId: this.sentencingStore.staffPseudoId,
     });
     return fetchedData;
   }

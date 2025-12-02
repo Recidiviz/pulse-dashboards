@@ -23,12 +23,12 @@ import {
   CaseDetailsFixture,
   StaffInfoFixture,
 } from "../../../api/offlineFixtures";
-import { PSIStore } from "../../../datastores/PSIStore";
+import { SentencingStore } from "../../../datastores/SentencingStore";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
-import { createMockPSIStore } from "../../../utils/test";
+import { createMockSentencingStore } from "../../../utils/test";
 import { CaseDetails } from "../CaseDetails";
 
-let psiStore: PSIStore;
+let sentencingStore: SentencingStore;
 let presenter: CaseDetailsPresenter;
 const mockCase = Object.values(CaseDetailsFixture)[0];
 const caseId = mockCase.id;
@@ -37,15 +37,15 @@ const clientExternalId = mockCase.client!.externalId;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  psiStore = createMockPSIStore();
-  presenter = new CaseDetailsPresenter(psiStore.caseStore, caseId);
+  sentencingStore = createMockSentencingStore();
+  presenter = new CaseDetailsPresenter(sentencingStore.caseStore, caseId);
 
-  vi.spyOn(psiStore.staffStore, "loadStaffInfo");
-  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.staffStore, "loadStaffInfo");
+  vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
-  vi.spyOn(psiStore.caseStore, "loadCaseDetails");
-  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(mockCase);
+  vi.spyOn(sentencingStore.caseStore, "loadCaseDetails");
+  vi.spyOn(sentencingStore.apiClient, "getCaseDetails").mockResolvedValue(mockCase);
 });
 
 afterEach(() => {
@@ -56,12 +56,12 @@ test("loads onboarding screen when user first accesses the case", async () => {
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
     >
       <Routes>
         <Route
           path="/dashboard/:staffPseudoId/case/:caseId"
-          element={<CaseDetails psiStore={psiStore} />}
+          element={<CaseDetails sentencingStore={sentencingStore} />}
         />
       </Routes>
     </MemoryRouter>,
@@ -81,22 +81,22 @@ test("loads onboarding screen when user first accesses the case", async () => {
 
 test("display case details page", async () => {
   await presenter.hydrate();
-  vi.spyOn(psiStore.caseStore, "caseDetailsById", "get").mockReturnValue({
-    ...psiStore.caseStore.caseDetailsById,
+  vi.spyOn(sentencingStore.caseStore, "caseDetailsById", "get").mockReturnValue({
+    ...sentencingStore.caseStore.caseDetailsById,
     [caseId]: {
-      ...psiStore.caseStore.caseDetailsById[caseId],
+      ...sentencingStore.caseStore.caseDetailsById[caseId],
       currentOnboardingTopic: "Done",
     },
   });
 
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
     >
       <Routes>
         <Route
           path="/dashboard/:staffPseudoId/case/:caseId"
-          element={<CaseDetails psiStore={psiStore} />}
+          element={<CaseDetails sentencingStore={sentencingStore} />}
         />
       </Routes>
     </MemoryRouter>,
@@ -125,22 +125,22 @@ test("display case details page", async () => {
 
 test("no recommendations are selected by default", async () => {
   await presenter.hydrate();
-  vi.spyOn(psiStore.caseStore, "caseDetailsById", "get").mockReturnValue({
-    ...psiStore.caseStore.caseDetailsById,
+  vi.spyOn(sentencingStore.caseStore, "caseDetailsById", "get").mockReturnValue({
+    ...sentencingStore.caseStore.caseDetailsById,
     [caseId]: {
-      ...psiStore.caseStore.caseDetailsById[caseId],
+      ...sentencingStore.caseStore.caseDetailsById[caseId],
       currentOnboardingTopic: "Done",
     },
   });
 
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
     >
       <Routes>
         <Route
           path="/dashboard/:staffPseudoId/case/:caseId"
-          element={<CaseDetails psiStore={psiStore} />}
+          element={<CaseDetails sentencingStore={sentencingStore} />}
         />
       </Routes>
     </MemoryRouter>,

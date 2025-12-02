@@ -37,7 +37,7 @@ import { FormAttributes } from "../components/CaseDetails/types";
 import { filterExcludedAttributes } from "../geoConfigs/utils";
 import { titleCase } from "../utils/utils";
 import { ERROR_TOAST_DURATION } from "./constants";
-import { PSIStore } from "./PSIStore";
+import { SentencingStore } from "./SentencingStore";
 import { CaseAttributes } from "./types";
 
 export class CaseStore {
@@ -55,7 +55,7 @@ export class CaseStore {
 
   activeCaseId?: string;
 
-  constructor(public readonly psiStore: PSIStore) {
+  constructor(public readonly sentencingStore: SentencingStore) {
     makeAutoObservable(this);
     this.caseDetailsById = {};
     this.communityOpportunities = [];
@@ -67,7 +67,7 @@ export class CaseStore {
   }
 
   get stateCode() {
-    return this.psiStore.stateCode;
+    return this.sentencingStore.stateCode;
   }
 
   get offensesByName() {
@@ -80,7 +80,7 @@ export class CaseStore {
     if (currentCase.client?.fullName) {
       currentCase.client.fullName = titleCase(currentCase.client?.fullName);
     }
-    const config = this.psiStore.geoConfig;
+    const config = this.sentencingStore.geoConfig;
 
     const caseAttributes: CaseAttributes = {
       ...currentCase,
@@ -145,7 +145,7 @@ export class CaseStore {
     caseId: string,
   ): FlowMethod<APIClient["getCaseDetails"], void> {
     try {
-      const caseDetails = yield this.psiStore.apiClient.getCaseDetails(caseId);
+      const caseDetails = yield this.sentencingStore.apiClient.getCaseDetails(caseId);
       this.caseDetailsById = {
         ...this.caseDetailsById,
         [caseId]: caseDetails,
@@ -155,7 +155,7 @@ export class CaseStore {
         extra: {
           message: `loadCaseDetails error: ${error}`,
           caseId,
-          staffId: this.psiStore.staffPseudoId,
+          staffId: this.sentencingStore.staffPseudoId,
         },
       });
       toast(
@@ -171,14 +171,14 @@ export class CaseStore {
   *updateCaseDetails(caseId: string, updates?: FormAttributes) {
     try {
       if (!updates) return;
-      yield this.psiStore.apiClient.updateCaseDetails(caseId, updates);
+      yield this.sentencingStore.apiClient.updateCaseDetails(caseId, updates);
     } catch (error) {
       captureException(new Error("Error while updating case details"), {
         extra: {
           message: `updateCaseDetails error: ${error}`,
           payload: updates,
           caseId,
-          staffId: this.psiStore.staffPseudoId,
+          staffId: this.sentencingStore.staffPseudoId,
         },
       });
       toast(
@@ -194,14 +194,14 @@ export class CaseStore {
   *loadCommunityOpportunities() {
     try {
       this.communityOpportunities =
-        yield this.psiStore.apiClient.getCommunityOpportunities(isDemoMode());
+        yield this.sentencingStore.apiClient.getCommunityOpportunities(isDemoMode());
     } catch (error) {
       captureException(
         new Error("Error while loading community opportunities"),
         {
           extra: {
             message: `loadCommunityOpportunities error: ${error}`,
-            staffId: this.psiStore.staffPseudoId,
+            staffId: this.sentencingStore.staffPseudoId,
           },
         },
       );
@@ -217,7 +217,7 @@ export class CaseStore {
 
   *loadOffenses() {
     try {
-      const offenses: Offenses = yield this.psiStore.apiClient.getOffenses();
+      const offenses: Offenses = yield this.sentencingStore.apiClient.getOffenses();
       // Sorted by frequency with alphabetical sorting applied to items that have the same frequency
       this.offenses = offenses
         .slice()
@@ -227,7 +227,7 @@ export class CaseStore {
       captureException(new Error("Error while loading offenses"), {
         extra: {
           message: `loadOffenses error: ${error}`,
-          staffId: this.psiStore.staffPseudoId,
+          staffId: this.sentencingStore.staffPseudoId,
         },
       });
       toast(
@@ -242,13 +242,13 @@ export class CaseStore {
 
   *loadCounties() {
     try {
-      const counties: Counties = yield this.psiStore.apiClient.getCounties();
+      const counties: Counties = yield this.sentencingStore.apiClient.getCounties();
       this.counties = counties;
     } catch (error) {
       captureException(new Error("Error while loading counties"), {
         extra: {
           message: `loadCounties error: ${error}`,
-          staffId: this.psiStore.staffPseudoId,
+          staffId: this.sentencingStore.staffPseudoId,
         },
       });
       toast(
@@ -269,7 +269,7 @@ export class CaseStore {
     isViolentOffense?: boolean | null,
   ) {
     try {
-      this.insight = yield this.psiStore.apiClient.getInsight(
+      this.insight = yield this.sentencingStore.apiClient.getInsight(
         offense,
         gender,
         lsirScore,
@@ -286,7 +286,7 @@ export class CaseStore {
             gender,
             lsirScore,
           },
-          staffId: this.psiStore.staffPseudoId,
+          staffId: this.sentencingStore.staffPseudoId,
         },
       });
       toast(

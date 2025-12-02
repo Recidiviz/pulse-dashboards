@@ -21,22 +21,22 @@ import {
   CaseDetailsFixture,
   StaffInfoFixture,
 } from "../../api/offlineFixtures";
-import { createMockPSIStore } from "../../utils/test";
+import { createMockSentencingStore } from "../../utils/test";
 
-const psiStore = createMockPSIStore();
-const { caseStore } = psiStore;
+const sentencingStore = createMockSentencingStore();
+const { caseStore } = sentencingStore;
 
 const initializeCaseStore = async () => {
   const caseId = Object.keys(CaseDetailsFixture)[0];
 
-  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
-  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(
+  vi.spyOn(sentencingStore.apiClient, "getCaseDetails").mockResolvedValue(
     CaseDetailsFixture[caseId],
   );
 
-  await flowResult(psiStore.staffStore.loadStaffInfo());
+  await flowResult(sentencingStore.staffStore.loadStaffInfo());
   await flowResult(caseStore.loadCaseDetails(caseId));
 
   caseStore.activeCaseId = caseId;
@@ -44,7 +44,7 @@ const initializeCaseStore = async () => {
 
 test("loads case details", async () => {
   const caseId = Object.keys(CaseDetailsFixture)[0];
-  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(
+  vi.spyOn(sentencingStore.apiClient, "getCaseDetails").mockResolvedValue(
     CaseDetailsFixture[caseId],
   );
 
@@ -58,7 +58,7 @@ test("update case details", async () => {
   const caseId = Object.keys(CaseDetailsFixture)[0];
   const updates = { lsirScore: 22 };
   const apiClientUpdateCaseDetailsFn = vi
-    .spyOn(psiStore.apiClient, "updateCaseDetails")
+    .spyOn(sentencingStore.apiClient, "updateCaseDetails")
     .mockResolvedValue();
 
   await flowResult(caseStore.updateCaseDetails(caseId, { lsirScore: 22 }));
@@ -72,27 +72,27 @@ test("caseAttributes filters based on state-specific exclusions list", async () 
   const stateCode1 = "US_ND";
   const stateCode2 = "US_ID";
 
-  const psiStore = createMockPSIStore();
-  const { caseStore } = psiStore;
+  const sentencingStore = createMockSentencingStore();
+  const { caseStore } = sentencingStore;
 
-  psiStore.rootStore.userStore.stateCode = stateCode1;
+  sentencingStore.rootStore.userStore.stateCode = stateCode1;
 
   // Case Attributes should not have any properties in the US_ND exclusion list
   expect(caseStore.stateCode).toBe(stateCode1);
   expect(
-    psiStore.geoConfig.excludedAttributeKeys.some((key) =>
+    sentencingStore.geoConfig.excludedAttributeKeys.some((key) =>
       Object.keys(caseStore.caseAttributes).includes(key),
     ),
   ).toBe(false);
 
-  psiStore.rootStore.userStore.stateCode = stateCode2;
+  sentencingStore.rootStore.userStore.stateCode = stateCode2;
 
   await initializeCaseStore();
 
   // Case Attributes should not have any properties in the US_ID exclusion list
   expect(caseStore.stateCode).toBe(stateCode2);
   expect(
-    psiStore.geoConfig.excludedAttributeKeys.some((key) =>
+    sentencingStore.geoConfig.excludedAttributeKeys.some((key) =>
       Object.keys(caseStore.caseAttributes).includes(key),
     ),
   ).toBe(false);

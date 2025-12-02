@@ -20,7 +20,7 @@ import * as Sentry from "@sentry/react";
 import { computed, configure, makeObservable, onReactionError } from "mobx";
 
 import { isTestEnv } from "~client-env-utils";
-import { PSIStore } from "~sentencing-client";
+import { SentencingStore } from "~sentencing-client";
 import {
   demoAuthConfig,
   devAuthConfig,
@@ -115,7 +115,7 @@ export class RootStore {
 
   insightsStore: InsightsStore;
 
-  psiStore: PSIStore;
+  sentencingStore: SentencingStore;
 
   constructor() {
     makeObservable(this, {
@@ -163,7 +163,7 @@ export class RootStore {
 
     this.insightsStore = new InsightsStore(this);
 
-    this.psiStore = new PSIStore(this);
+    this.sentencingStore = new SentencingStore(this);
   }
 
   get currentTenantId(): TenantId | undefined {

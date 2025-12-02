@@ -19,18 +19,18 @@ import { fireEvent, render } from "@testing-library/react";
 import { configure } from "mobx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
-import { createMockPSIStore } from "../../../../src/utils/test";
+import { createMockSentencingStore } from "../../../../src/utils/test";
 import { formatPossessiveName } from "../../../../src/utils/utils";
 import {
   CaseDetailsFixture,
   StaffInfoFixture,
 } from "../../../api/offlineFixtures";
-import { PSIStore } from "../../../datastores/PSIStore";
+import { SentencingStore } from "../../../datastores/SentencingStore";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
 import { CaseDetails } from "../CaseDetails";
 import { PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT } from "../Recommendations/constants";
 
-let psiStore: PSIStore;
+let sentencingStore: SentencingStore;
 let presenter: CaseDetailsPresenter;
 const mockCase = Object.values(CaseDetailsFixture)[0];
 const caseId = mockCase.id;
@@ -58,22 +58,22 @@ const ERROR_MESSAGE_STRING = "Please enter a number between 0 and 54.";
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  psiStore = createMockPSIStore();
-  presenter = new CaseDetailsPresenter(psiStore.caseStore, caseId);
+  sentencingStore = createMockSentencingStore();
+  presenter = new CaseDetailsPresenter(sentencingStore.caseStore, caseId);
 
-  vi.spyOn(psiStore, "activeFeatureVariants", "get").mockReturnValue({
+  vi.spyOn(sentencingStore, "activeFeatureVariants", "get").mockReturnValue({
     protectiveFactors: {},
   });
-  vi.spyOn(psiStore.staffStore, "loadStaffInfo");
-  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.staffStore, "loadStaffInfo");
+  vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
-  vi.spyOn(psiStore.caseStore, "loadCaseDetails");
-  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(
+  vi.spyOn(sentencingStore.caseStore, "loadCaseDetails");
+  vi.spyOn(sentencingStore.apiClient, "getCaseDetails").mockResolvedValue(
     CaseDetailsFixture[caseId],
   );
-  vi.spyOn(psiStore.caseStore, "caseDetailsById", "get").mockReturnValue({
-    ...psiStore.caseStore.caseDetailsById,
+  vi.spyOn(sentencingStore.caseStore, "caseDetailsById", "get").mockReturnValue({
+    ...sentencingStore.caseStore.caseDetailsById,
     [caseId]: {
       ...mockCase,
       currentOnboardingTopic: "Done",
@@ -89,12 +89,12 @@ test("clicking edit case details button opens the edit case details modal", asyn
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
     >
       <Routes>
         <Route
           path="/dashboard/:staffPseudoId/case/:caseId"
-          element={<CaseDetails psiStore={psiStore} />}
+          element={<CaseDetails sentencingStore={sentencingStore} />}
         />
       </Routes>
     </MemoryRouter>,
@@ -122,12 +122,12 @@ test("shows all of the non-nested fields", async () => {
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
     >
       <Routes>
         <Route
           path="/dashboard/:staffPseudoId/case/:caseId"
-          element={<CaseDetails psiStore={psiStore} />}
+          element={<CaseDetails sentencingStore={sentencingStore} />}
         />
       </Routes>
     </MemoryRouter>,
@@ -176,12 +176,12 @@ test("shows ASAM level of care recommendation only when 'Mild', 'Moderate', or '
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
     >
       <Routes>
         <Route
           path="/dashboard/:staffPseudoId/case/:caseId"
-          element={<CaseDetails psiStore={psiStore} />}
+          element={<CaseDetails sentencingStore={sentencingStore} />}
         />
       </Routes>
     </MemoryRouter>,
@@ -229,12 +229,12 @@ test("shows/hides Other need text field when 'Other' option is selected/deselect
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
     >
       <Routes>
         <Route
           path="/dashboard/:staffPseudoId/case/:caseId"
-          element={<CaseDetails psiStore={psiStore} />}
+          element={<CaseDetails sentencingStore={sentencingStore} />}
         />
       </Routes>
     </MemoryRouter>,
@@ -265,12 +265,12 @@ test("shows/hides Other protective factor text field when 'Other' option is sele
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
     >
       <Routes>
         <Route
           path="/dashboard/:staffPseudoId/case/:caseId"
-          element={<CaseDetails psiStore={psiStore} />}
+          element={<CaseDetails sentencingStore={sentencingStore} />}
         />
       </Routes>
     </MemoryRouter>,
@@ -301,12 +301,12 @@ test("shows supervision/incarceration nested fields when 'No' is selected for pr
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
     >
       <Routes>
         <Route
           path="/dashboard/:staffPseudoId/case/:caseId"
-          element={<CaseDetails psiStore={psiStore} />}
+          element={<CaseDetails sentencingStore={sentencingStore} />}
         />
       </Routes>
     </MemoryRouter>,
@@ -363,12 +363,12 @@ test("error message displays when invalid lsir score is given and saving is disa
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
     >
       <Routes>
         <Route
           path="/dashboard/:staffPseudoId/case/:caseId"
-          element={<CaseDetails psiStore={psiStore} />}
+          element={<CaseDetails sentencingStore={sentencingStore} />}
         />
       </Routes>
     </MemoryRouter>,

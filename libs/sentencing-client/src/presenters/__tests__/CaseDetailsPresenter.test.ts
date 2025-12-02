@@ -21,23 +21,23 @@ import {
   StaffInfoFixture,
 } from "../../api/offlineFixtures";
 import { CaseStore } from "../../datastores/CaseStore";
-import { PSIStore } from "../../datastores/PSIStore";
-import { createMockPSIStore } from "../../utils/test";
+import { SentencingStore } from "../../datastores/SentencingStore";
+import { createMockSentencingStore } from "../../utils/test";
 import { CaseDetailsPresenter } from "../CaseDetailsPresenter";
 
 const caseId = Object.keys(CaseDetailsFixture)[0];
-let psiStore: PSIStore;
+let sentencingStore: SentencingStore;
 let presenter: CaseDetailsPresenter;
 
 beforeEach(() => {
-  psiStore = createMockPSIStore();
-  presenter = new CaseDetailsPresenter(psiStore.caseStore, caseId);
+  sentencingStore = createMockSentencingStore();
+  presenter = new CaseDetailsPresenter(sentencingStore.caseStore, caseId);
 
-  vi.spyOn(psiStore.staffStore, "loadStaffInfo");
-  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(
+  vi.spyOn(sentencingStore.staffStore, "loadStaffInfo");
+  vi.spyOn(sentencingStore.apiClient, "getCaseDetails").mockResolvedValue(
     CaseDetailsFixture[caseId],
   );
-  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
 });
@@ -47,7 +47,7 @@ afterEach(() => {
 });
 
 test("hydration states", async () => {
-  vi.spyOn(psiStore.caseStore, "loadCaseDetails");
+  vi.spyOn(sentencingStore.caseStore, "loadCaseDetails");
   expect(presenter.hydrationState).toEqual({ status: "needs hydration" });
 
   const hydrationPromise = presenter.hydrate();
@@ -56,8 +56,8 @@ test("hydration states", async () => {
   await hydrationPromise;
 
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-  expect(psiStore.caseStore.loadCaseDetails).toHaveBeenCalled();
-  expect(psiStore.caseStore.caseDetailsById[caseId]).toBeDefined();
+  expect(sentencingStore.caseStore.loadCaseDetails).toHaveBeenCalled();
+  expect(sentencingStore.caseStore.caseDetailsById[caseId]).toBeDefined();
 });
 
 test("hydration error", async () => {
@@ -71,23 +71,23 @@ test("hydration error", async () => {
 });
 
 test("no redundant hydration while in progress", async () => {
-  vi.spyOn(psiStore.caseStore, "loadCaseDetails");
+  vi.spyOn(sentencingStore.caseStore, "loadCaseDetails");
 
   const firstHydrationCall = presenter.hydrate();
   const secondHydrationCall = presenter.hydrate();
 
   await Promise.all([firstHydrationCall, secondHydrationCall]);
-  expect(psiStore.caseStore.loadCaseDetails).toHaveBeenCalledTimes(1);
+  expect(sentencingStore.caseStore.loadCaseDetails).toHaveBeenCalledTimes(1);
 });
 
 test("no hydration if already hydrated", async () => {
-  vi.spyOn(psiStore.caseStore, "loadCaseDetails");
+  vi.spyOn(sentencingStore.caseStore, "loadCaseDetails");
 
   await presenter.hydrate();
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });
   presenter.hydrate();
 
-  expect(psiStore.caseStore.loadCaseDetails).toHaveBeenCalledTimes(1);
+  expect(sentencingStore.caseStore.loadCaseDetails).toHaveBeenCalledTimes(1);
 });
 
 test("activeEligibleCommunityOpportunities filters out inactive opportunities", async () => {
@@ -155,7 +155,7 @@ test("activeEligibleCommunityOpportunities filters out inactive opportunities", 
       source: "internal",
     },
   ] satisfies Opportunities;
-  psiStore.caseStore.communityOpportunities = communityOpportunities;
+  sentencingStore.caseStore.communityOpportunities = communityOpportunities;
 
   await presenter.hydrate();
 

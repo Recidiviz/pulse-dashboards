@@ -49,15 +49,15 @@ export class StaffPresenter implements Hydratable {
   }
 
   get stateCode() {
-    return this.staffStore.psiStore.stateCode;
+    return this.staffStore.sentencingStore.stateCode;
   }
 
   get geoConfig() {
-    return this.staffStore.psiStore.geoConfig;
+    return this.staffStore.sentencingStore.geoConfig;
   }
 
   get staffPseudoId() {
-    return this.staffStore.psiStore.staffPseudoId;
+    return this.staffStore.sentencingStore.staffPseudoId;
   }
 
   get staffInfo() {
@@ -78,13 +78,13 @@ export class StaffPresenter implements Hydratable {
 
   async setIsFirstLogin() {
     if (!this.staffPseudoId) return;
-    return this.staffStore.psiStore.apiClient.setIsFirstLogin(
+    return this.staffStore.sentencingStore.apiClient.setIsFirstLogin(
       this.staffPseudoId,
     );
   }
 
   trackDashboardPageViewed(): void {
-    this.staffStore.psiStore.analyticsStore.trackDashboardPageViewed({
+    this.staffStore.sentencingStore.analyticsStore.trackDashboardPageViewed({
       viewedBy: this.staffPseudoId,
     });
   }
@@ -92,7 +92,7 @@ export class StaffPresenter implements Hydratable {
   trackRecommendationStatusFilterChanged(
     filters: RecommendationStatusFilter[],
   ): void {
-    this.staffStore.psiStore.analyticsStore.trackRecommendationStatusFilterChanged(
+    this.staffStore.sentencingStore.analyticsStore.trackRecommendationStatusFilterChanged(
       {
         viewedBy: this.staffPseudoId,
         filters,
@@ -104,7 +104,7 @@ export class StaffPresenter implements Hydratable {
     caseId: string,
     recommendationStatus: CaseListTableCase["status"],
   ): void {
-    this.staffStore.psiStore.analyticsStore.trackIndividualCaseClicked({
+    this.staffStore.sentencingStore.analyticsStore.trackIndividualCaseClicked({
       viewedBy: this.staffPseudoId,
       status: recommendationStatus,
       caseId,
@@ -115,7 +115,7 @@ export class StaffPresenter implements Hydratable {
     sortDirection: false | SortDirection,
     columnName?: string,
   ): void {
-    this.staffStore.psiStore.analyticsStore.trackDashboardSortOrderChanged({
+    this.staffStore.sentencingStore.analyticsStore.trackDashboardSortOrderChanged({
       viewedBy: this.staffPseudoId,
       order: sortDirection,
       columnName,

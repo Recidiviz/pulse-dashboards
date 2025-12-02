@@ -25,7 +25,7 @@ import { observer } from "mobx-react-lite";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { PSIStore } from "../../datastores/PSIStore";
+import { SentencingStore } from "../../datastores/SentencingStore";
 import { SupervisorPresenter } from "../../presenters/SupervisorPresenter";
 import { formatPercentage } from "../../utils/utils";
 import SortIcon from "../assets/sort-icon.svg?react";
@@ -146,8 +146,8 @@ const ManagedComponent = observer(function SupervisorDashboard({
   );
 });
 
-function usePresenter({ psiStore }: { psiStore: PSIStore }) {
-  const { supervisorStore } = psiStore;
+function usePresenter({ sentencingStore }: { sentencingStore: SentencingStore }) {
+  const { supervisorStore } = sentencingStore;
 
   return new SupervisorPresenter(supervisorStore);
 }

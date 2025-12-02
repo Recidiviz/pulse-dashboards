@@ -499,7 +499,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
       currentTenantId,
       userStore,
       tenantStore,
-      psiStore,
+      sentencingStore,
       workflowsStore: { homepage },
     } = useRootStore();
     const userAllowedNavigation = userStore?.userAllowedNavigation;
@@ -535,10 +535,10 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         enabledPSI &&
         userStore.userPseudoId &&
         !userStore.isRecidivizUser &&
-        !!psiStore.staffPseudoId) ||
+        !!sentencingStore.staffPseudoId) ||
       (isDevOrStagingOrOfflineEnv && enabledPSI);
 
-    const isPsiSupervisor = isPsiStaff && psiStore.isSupervisor;
+    const isPsiSupervisor = isPsiStaff && sentencingStore.isSupervisor;
 
     const quickLinks = (
       <>
@@ -557,11 +557,11 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <InsightsLink enabled={enabledInsights} />
         <PSISupervisorLink
           enabled={isPsiSupervisor}
-          staffPseudoId={psiStore.staffPseudoId}
+          staffPseudoId={sentencingStore.staffPseudoId}
         />
         <PSIStaffLink
           enabled={isPsiStaff}
-          staffPseudoId={psiStore.staffPseudoId}
+          staffPseudoId={sentencingStore.staffPseudoId}
         />
         <LogoutLink enabled={!isOfflineMode()} />
       </>

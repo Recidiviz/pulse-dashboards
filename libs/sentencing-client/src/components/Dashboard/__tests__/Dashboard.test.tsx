@@ -24,20 +24,20 @@ import {
   StaffInfoFixture,
   SupervisorInfoFixture,
 } from "../../../api/offlineFixtures";
-import { PSIStore } from "../../../datastores/PSIStore";
+import { SentencingStore } from "../../../datastores/SentencingStore";
 import { StaffPresenter } from "../../../presenters/StaffPresenter";
 import { SupervisorPresenter } from "../../../presenters/SupervisorPresenter";
-import { createMockPSIStore } from "../../../utils/test";
+import { createMockSentencingStore } from "../../../utils/test";
 import { StoreProvider } from "../../StoreProvider/StoreProvider";
 import { StaffDashboard } from "../StaffDashboard";
 import { SupervisorDashboard } from "../SupervisorDashboard";
 
-let psiStore: PSIStore;
+let sentencingStore: SentencingStore;
 let presenter: StaffPresenter;
 
 beforeEach(() => {
-  psiStore = createMockPSIStore();
-  presenter = new StaffPresenter(psiStore.staffStore);
+  sentencingStore = createMockSentencingStore();
+  presenter = new StaffPresenter(sentencingStore.staffStore);
 });
 
 afterEach(() => {
@@ -45,17 +45,17 @@ afterEach(() => {
 });
 
 test("welcome message shows on first login", async () => {
-  vi.spyOn(psiStore.staffStore, "loadStaffInfo");
-  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.staffStore, "loadStaffInfo");
+  vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
 
   const screen = render(
-    <StoreProvider store={psiStore}>
+    <StoreProvider store={sentencingStore}>
       <MemoryRouter
-        initialEntries={[`/psi/dashboard/${psiStore.staffPseudoId}`]}
+        initialEntries={[`/psi/dashboard/${sentencingStore.staffPseudoId}`]}
       >
-        <StaffDashboard psiStore={psiStore} />
+        <StaffDashboard sentencingStore={sentencingStore} />
       </MemoryRouter>
     </StoreProvider>,
   );
@@ -68,24 +68,24 @@ test("welcome message shows on first login", async () => {
 });
 
 test("welcome message no longer shows after user closes it", async () => {
-  vi.spyOn(psiStore.staffStore, "loadStaffInfo");
-  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.staffStore, "loadStaffInfo");
+  vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
 
-  if (psiStore.staffStore.staffInfo) {
-    psiStore.staffStore.staffInfo = {
-      ...psiStore.staffStore.staffInfo,
+  if (sentencingStore.staffStore.staffInfo) {
+    sentencingStore.staffStore.staffInfo = {
+      ...sentencingStore.staffStore.staffInfo,
       hasLoggedIn: true,
     };
   }
 
   const screen = render(
-    <StoreProvider store={psiStore}>
+    <StoreProvider store={sentencingStore}>
       <MemoryRouter
-        initialEntries={[`/psi/dashboard/staff/${psiStore.staffPseudoId}`]}
+        initialEntries={[`/psi/dashboard/staff/${sentencingStore.staffPseudoId}`]}
       >
-        <StaffDashboard psiStore={psiStore} />
+        <StaffDashboard sentencingStore={sentencingStore} />
       </MemoryRouter>
     </StoreProvider>,
   );
@@ -98,8 +98,8 @@ test("welcome message no longer shows after user closes it", async () => {
 });
 
 test("shows cases default sorted by last name", async () => {
-  vi.spyOn(psiStore.staffStore, "loadStaffInfo");
-  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.staffStore, "loadStaffInfo");
+  vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
 
@@ -109,11 +109,11 @@ test("shows cases default sorted by last name", async () => {
   if (!data) return;
 
   const screen = render(
-    <StoreProvider store={psiStore}>
+    <StoreProvider store={sentencingStore}>
       <MemoryRouter
-        initialEntries={[`/psi/dashboard/staff/${psiStore.staffPseudoId}`]}
+        initialEntries={[`/psi/dashboard/staff/${sentencingStore.staffPseudoId}`]}
       >
-        <StaffDashboard psiStore={psiStore} />
+        <StaffDashboard sentencingStore={sentencingStore} />
       </MemoryRouter>
     </StoreProvider>,
   );
@@ -142,20 +142,20 @@ test("shows cases default sorted by last name", async () => {
 
 test("SupervisorDashboard displays PSI Team Dashboard header and performance highlights", async () => {
   // Mock the API to return fixture data for supervisor info
-  vi.spyOn(psiStore.apiClient, "getSupervisorInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.apiClient, "getSupervisorInfo").mockResolvedValue(
     SupervisorInfoFixture,
   );
 
   // Create and hydrate the supervisor presenter
-  const supervisorPresenter = new SupervisorPresenter(psiStore.supervisorStore);
+  const supervisorPresenter = new SupervisorPresenter(sentencingStore.supervisorStore);
   await supervisorPresenter.hydrate();
 
   const screen = render(
-    <StoreProvider store={psiStore}>
+    <StoreProvider store={sentencingStore}>
       <MemoryRouter
-        initialEntries={[`/psi/dashboard/supervisor/${psiStore.staffPseudoId}`]}
+        initialEntries={[`/psi/dashboard/supervisor/${sentencingStore.staffPseudoId}`]}
       >
-        <SupervisorDashboard psiStore={psiStore} />
+        <SupervisorDashboard sentencingStore={sentencingStore} />
       </MemoryRouter>
     </StoreProvider>,
   );

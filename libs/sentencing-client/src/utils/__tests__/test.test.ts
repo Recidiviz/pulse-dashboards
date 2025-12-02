@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createMockPSIStore, createMockRootStore } from "../test";
+import { createMockRootStore, createMockSentencingStore } from "../test";
 
 const overrideId = "123";
 const defaultUserPseudoId = "TestID-123";
@@ -28,12 +28,12 @@ test("mockRootStore has expected properties", () => {
   expect(createMockRootStore().userStore.getToken).toBeDefined();
 });
 
-test("mockPSIStore has expected properties", () => {
-  const mockPSIStore = createMockPSIStore();
-  expect(mockPSIStore.rootStore).toBeDefined();
-  expect(mockPSIStore.staffStore).toBeDefined();
-  expect(mockPSIStore.caseStore).toBeDefined();
-  expect(mockPSIStore.apiClient).toBeDefined();
+test("mockSentencingStore has expected properties", () => {
+  const mockSentencingStore = createMockSentencingStore();
+  expect(mockSentencingStore.rootStore).toBeDefined();
+  expect(mockSentencingStore.staffStore).toBeDefined();
+  expect(mockSentencingStore.caseStore).toBeDefined();
+  expect(mockSentencingStore.apiClient).toBeDefined();
 });
 
 test("mockRootStore uses default userPseudoId when no override is provided", () => {
@@ -52,15 +52,15 @@ test("mockRootStore overrides userPseudoId to `undefined` when null is passed in
   expect(createMockRootStore(null).userStore.userPseudoId).toBeUndefined();
 });
 
-test("mock psiStore references default userPseudoId", () => {
-  expect(createMockPSIStore().rootStore.userStore.userPseudoId).toBe(
+test("mock sentencingStore references default userPseudoId", () => {
+  expect(createMockSentencingStore().rootStore.userStore.userPseudoId).toBe(
     defaultUserPseudoId,
   );
 });
 
-test("mock psiStore references overridden userPseudoId", () => {
+test("mock sentencingStore references overridden userPseudoId", () => {
   expect(
-    createMockPSIStore({ userPseudoIdOverride: overrideId }).rootStore.userStore
+    createMockSentencingStore({ userPseudoIdOverride: overrideId }).rootStore.userStore
       .userPseudoId,
   ).toBe(overrideId);
 });

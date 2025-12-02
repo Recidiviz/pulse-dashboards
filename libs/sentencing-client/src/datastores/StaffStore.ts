@@ -22,7 +22,7 @@ import toast from "react-hot-toast";
 
 import { palette } from "~design-system";
 import { FlowMethod } from "~hydration-utils";
-import { PSIStore } from "~sentencing-client";
+import { SentencingStore } from "~sentencing-client";
 
 import { APIClient, Staff, StaffCase } from "../api/APIClient";
 import { ERROR_TOAST_DURATION } from "./constants";
@@ -36,24 +36,24 @@ export class StaffStore {
 
   caseBriefsById?: CaseBriefsById;
 
-  constructor(public readonly psiStore: PSIStore) {
+  constructor(public readonly sentencingStore: SentencingStore) {
     makeAutoObservable(this);
   }
 
   get isSupervisor(): boolean {
-    return this.psiStore.isSupervisor;
+    return this.sentencingStore.isSupervisor;
   }
 
   /** This is a MobX flow method and should be called with mobx.flowResult */
   *loadStaffInfo(): FlowMethod<APIClient["getStaffInfo"], void> {
     try {
-      this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
+      this.staffInfo = yield this.sentencingStore.apiClient.getStaffInfo();
       this.caseBriefsById = keyBy(this.staffInfo.cases, "id");
     } catch (error) {
       captureException(new Error("Error while loading staff info"), {
         extra: {
           message: `loadStaffInfo error: ${error}`,
-          staffId: this.psiStore.staffPseudoId,
+          staffId: this.sentencingStore.staffPseudoId,
         },
       });
       toast(

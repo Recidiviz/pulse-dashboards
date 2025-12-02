@@ -45,11 +45,11 @@ export class SupervisorPresenter implements Hydratable {
   }
 
   get stateCode() {
-    return this.supervisorStore.psiStore.stateCode;
+    return this.supervisorStore.sentencingStore.stateCode;
   }
 
   get staffPseudoId() {
-    return this.supervisorStore.psiStore.staffPseudoId;
+    return this.supervisorStore.sentencingStore.staffPseudoId;
   }
 
   get supervisorInfo() {
@@ -69,7 +69,7 @@ export class SupervisorPresenter implements Hydratable {
   }
 
   trackDashboardPageViewed(): void {
-    this.supervisorStore.psiStore.analyticsStore.trackDashboardPageViewed({
+    this.supervisorStore.sentencingStore.analyticsStore.trackDashboardPageViewed({
       viewedBy: this.staffPseudoId,
     });
   }

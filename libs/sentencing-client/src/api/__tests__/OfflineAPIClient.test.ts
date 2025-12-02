@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createMockPSIStore } from "../../utils/test";
+import { createMockSentencingStore } from "../../utils/test";
 import { OfflineAPIClient } from "../OfflineAPIClient";
 import { CaseDetailsFixture, StaffInfoFixture } from "../offlineFixtures";
 
-const psiStore = createMockPSIStore();
-const offlineAPIClient = new OfflineAPIClient(psiStore);
+const sentencingStore = createMockSentencingStore();
+const offlineAPIClient = new OfflineAPIClient(sentencingStore);
 
 test("getStaffInfo returns fixture data", async () => {
   const data = await offlineAPIClient.getStaffInfo();

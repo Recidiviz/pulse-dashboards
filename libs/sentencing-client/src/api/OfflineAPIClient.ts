@@ -16,13 +16,13 @@
 // =============================================================================
 
 import { FormAttributes } from "../components/CaseDetails/types";
-import { PSIStore } from "../datastores/PSIStore";
+import { SentencingStore } from "../datastores/SentencingStore";
 import { Case, Opportunities, Staff, Supervisor } from "./APIClient";
 
 export class OfflineAPIClient {
   private editableInfo: Map<string, unknown> = new Map();
 
-  constructor(public readonly psiStore: PSIStore) {}
+  constructor(public readonly sentencingStore: SentencingStore) {}
 
   async getStaffInfo(): Promise<Staff> {
     const { StaffInfoFixture } = await import(

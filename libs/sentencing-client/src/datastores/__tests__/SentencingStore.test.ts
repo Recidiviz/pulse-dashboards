@@ -15,22 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createMockPSIStore } from "../../utils/test";
+import { createMockSentencingStore } from "../../utils/test";
 
-const psiStore = createMockPSIStore();
+const sentencingStore = createMockSentencingStore();
 
-test("StaffStore is initialized when psiStore is instantiated", () => {
-  expect(psiStore.staffStore).toBeDefined();
+test("StaffStore is initialized when sentencingStore is instantiated", () => {
+  expect(sentencingStore.staffStore).toBeDefined();
 });
 
-test("SupervisorStore is initialized when psiStore is instantiated", () => {
-  expect(psiStore.staffStore).toBeDefined();
+test("SupervisorStore is initialized when sentencingStore is instantiated", () => {
+  expect(sentencingStore.staffStore).toBeDefined();
 });
 
-test("CaseStore is initialized when psiStore is instantiated", () => {
-  expect(psiStore.caseStore).toBeDefined();
+test("CaseStore is initialized when sentencingStore is instantiated", () => {
+  expect(sentencingStore.caseStore).toBeDefined();
 });
 
-test("apiClient is initialized when psiStore is instantiated", () => {
-  expect(psiStore.apiClient).toBeDefined();
+test("apiClient is initialized when sentencingStore is instantiated", () => {
+  expect(sentencingStore.apiClient).toBeDefined();
 });

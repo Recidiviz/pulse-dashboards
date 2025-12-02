@@ -69,7 +69,7 @@ const PagePSI: React.FC = function PagePSI() {
   });
 
   // TODO(#5636) Eliminate PartiallyTypedRootStore
-  const { psiStore } = useRootStore() as PartiallyTypedRootStore;
+  const { sentencingStore } = useRootStore() as PartiallyTypedRootStore;
   const { isMobile } = useIsMobile(true);
 
   return (
@@ -81,7 +81,7 @@ const PagePSI: React.FC = function PagePSI() {
         </ErrorPage>
       }
     >
-      <StoreProvider store={psiStore}>
+      <StoreProvider store={sentencingStore}>
         <Wrapper>
           <NavigationLayout />
           <Main isMobile={isMobile}>
@@ -91,7 +91,7 @@ const PagePSI: React.FC = function PagePSI() {
                 element={
                   <Navigate
                     to={psiUrl("dashboard", {
-                      staffPseudoId: psiStore.staffPseudoId,
+                      staffPseudoId: sentencingStore.staffPseudoId,
                     })}
                     replace
                   />
@@ -103,15 +103,15 @@ const PagePSI: React.FC = function PagePSI() {
               />
               <Route
                 path={psiRoute({ routeName: "staffDashboard" })}
-                element={<StaffDashboard psiStore={psiStore} />}
+                element={<StaffDashboard sentencingStore={sentencingStore}/>}
               />
               <Route
                 path={psiRoute({ routeName: "supervisorDashboard" })}
-                element={<SupervisorDashboard psiStore={psiStore} />}
+                element={<SupervisorDashboard sentencingStore={sentencingStore} />}
               />
               <Route
                 path={psiRoute({ routeName: "caseDetails" })}
-                element={<CaseDetails psiStore={psiStore} />}
+                element={<CaseDetails sentencingStore={sentencingStore} />}
               />
               <Route path="*" element={<NotFound />} />
             </Routes>

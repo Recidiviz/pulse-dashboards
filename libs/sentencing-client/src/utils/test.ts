@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PSIStore, RootStore } from "../datastores/PSIStore";
+import { RootStore, SentencingStore } from "../datastores/SentencingStore";
 import {
   CreateOrUpdateRecommendationTrackingMetadata,
   IndividualCaseClickedWithStatusMetadata,
@@ -95,7 +95,7 @@ export const createMockRootStore = (
   return mockRootStore;
 };
 
-export const createMockPSIStore = (options?: {
+export const createMockSentencingStore = (options?: {
   userPseudoIdOverride?: string | null;
   hideApiUrl?: boolean;
   stateCodeOverride?: StateCode;
@@ -108,6 +108,6 @@ export const createMockPSIStore = (options?: {
     options?.userPseudoIdOverride,
     options?.stateCodeOverride,
   );
-  const psiStore = new PSIStore(mockRootStore);
-  return psiStore;
+  const sentencingStore = new SentencingStore(mockRootStore);
+  return sentencingStore;
 };

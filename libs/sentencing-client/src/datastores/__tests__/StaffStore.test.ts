@@ -18,13 +18,13 @@
 import { flowResult } from "mobx";
 
 import { StaffInfoFixture } from "../../api/offlineFixtures";
-import { createMockPSIStore } from "../../utils/test";
+import { createMockSentencingStore } from "../../utils/test";
 
-const psiStore = createMockPSIStore();
-const { staffStore } = psiStore;
+const sentencingStore = createMockSentencingStore();
+const { staffStore } = sentencingStore;
 
 test("loads staff info", async () => {
-  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
 

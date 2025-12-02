@@ -18,13 +18,13 @@
 import { flowResult } from "mobx";
 
 import { SupervisorInfoFixture } from "../../api/offlineFixtures";
-import { createMockPSIStore } from "../../utils/test";
+import { createMockSentencingStore } from "../../utils/test";
 
-const psiStore = createMockPSIStore();
-const { supervisorStore } = psiStore;
+const sentencingStore = createMockSentencingStore();
+const { supervisorStore } = sentencingStore;
 
 test("loads supervisor info", async () => {
-  vi.spyOn(psiStore.apiClient, "getSupervisorInfo").mockResolvedValue(
+  vi.spyOn(sentencingStore.apiClient, "getSupervisorInfo").mockResolvedValue(
     SupervisorInfoFixture,
   );
 
