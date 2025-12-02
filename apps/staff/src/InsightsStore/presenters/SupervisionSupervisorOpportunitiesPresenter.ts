@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { ascending, descending } from "d3-array";
+import { isEmpty } from "lodash";
 import { flowResult, makeObservable } from "mobx";
 import simplur from "simplur";
 
@@ -31,7 +32,10 @@ import { PartialRecord } from "../../utils/typeUtils";
 import { Opportunity } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
-import { isEligible } from "../../WorkflowsStore/utils";
+import {
+  isEligible,
+  opportunitiesByTabForType,
+} from "../../WorkflowsStore/utils";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
@@ -127,6 +131,27 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       : [];
   }
 
+  get isReviewCardEnabled(): boolean {
+    return !!this.supervisionStore.insightsStore.rootStore.userStore
+      .activeFeatureVariants.supervisorHomepageReviewCard;
+  }
+
+  /**
+   * Filters down the list of opportunity information to just those opportunities
+   * with outstanding supervisor review requests.
+   *
+   * This field is used to generate the supervisor review cards in the
+   * Opportunities Module.
+   */
+  get opportunitiesDetailsForSupervisorReview(): OpportunityInfo[] | undefined {
+    if (!this.isReviewCardEnabled) {
+      return [];
+    }
+    return this.opportunitiesDetails?.filter(
+      (oppInfo) => !isEmpty(oppInfo.supervisorReviewCounts),
+    );
+  }
+
   get labels() {
     return this.supervisionStore.labels;
   }
@@ -194,13 +219,39 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
               acc.get(opportunityType) ??
               this.initializeOpportunityDetail(opportunityType);
 
+            const {
+              countByFunction,
+              supportsSupervisorReview,
+              supervisorReviewTabTitle,
+            } =
+              this.opportunityConfigurationStore.opportunities[opportunityType];
+
             // Use a custom counting function defined for this opportunity when one exists.
             // Otherwise, only count eligible opportunities.
-            const { countByFunction } =
-              this.opportunityConfigurationStore.opportunities[opportunityType];
             const clientCountForOfficer = countByFunction
               ? countByFunction(opportunities)
               : opportunities.filter((opp) => opp && isEligible(opp)).length;
+
+            const oppsByTabForOfficer =
+              opportunitiesByTabForType(opportunities);
+
+            // If we need to surface status counts for supervisor review,
+            // handle adding the current officer's counts to the supervisor
+            // totals.
+            if (
+              this.isReviewCardEnabled &&
+              supportsSupervisorReview &&
+              oppsByTabForOfficer[supervisorReviewTabTitle]?.length
+            ) {
+              const reviewOpps = oppsByTabForOfficer[supervisorReviewTabTitle];
+              reviewOpps.forEach((opp) => {
+                const statusLabel = opp.eligibilityStatusLabel();
+                if (statusLabel) {
+                  oppDetail.supervisorReviewCounts[statusLabel] =
+                    oppDetail.supervisorReviewCounts[statusLabel] + 1 || 1;
+                }
+              });
+            }
 
             if (clientCountForOfficer > 0) {
               oppDetail.officersWithEligibleClients.push({
@@ -251,7 +302,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
   protected initializeOpportunityDetail(
     opportunityType: OpportunityType,
   ): RawOpportunityInfo {
-    const { homepagePosition, priority, label, zeroGrantsTooltip } =
+    const { homepagePosition, priority, label, zeroGrantsTooltip, urlSection } =
       this.opportunityConfigurationStore.opportunities[opportunityType];
     return {
       priority,
@@ -261,6 +312,8 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       homepagePosition,
       opportunityType,
       zeroGrantsTooltip,
+      supervisorReviewCounts: {},
+      urlSection,
     };
   }
 

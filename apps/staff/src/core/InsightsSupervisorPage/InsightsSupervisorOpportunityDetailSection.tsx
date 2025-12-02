@@ -27,6 +27,7 @@ import ModelHydrator from "../ModelHydrator";
 import { Wrapper } from "./InsightsBreadcrumbs";
 import { EmptyCard } from "./InsightsStaffCardV2";
 import { InsightsSupervisorOpportunityDetailCard } from "./InsightsSupervisorOpportunityDetailCard";
+import { InsightsSupervisorOpportunityReviewCard } from "./InsightsSupervisorOpportunityReviewCard";
 
 const usePresenter = () => {
   const {
@@ -57,7 +58,13 @@ const usePresenter = () => {
 const ManagedComponent: React.FC<{
   presenter: SupervisionSupervisorOpportunitiesPresenter;
 }> = observer(function OpportunityDetails({ presenter }) {
-  const { opportunitiesDetails, isWorkflowsEnabled, labels } = presenter;
+  const {
+    opportunitiesDetails,
+    opportunitiesDetailsForSupervisorReview,
+    isWorkflowsEnabled,
+    labels,
+    supervisorPseudoId,
+  } = presenter;
 
   return (
     <>
@@ -69,6 +76,14 @@ const ManagedComponent: React.FC<{
           <Wrapper>
             <Body>
               <ModelHydrator hydratable={presenter}>
+                {!!opportunitiesDetailsForSupervisorReview?.length &&
+                  opportunitiesDetailsForSupervisorReview?.map((oppInfo) => (
+                    <InsightsSupervisorOpportunityReviewCard
+                      opportunityInfo={oppInfo}
+                      supervisorPseudoId={supervisorPseudoId}
+                      key={oppInfo.label}
+                    />
+                  ))}
                 {opportunitiesDetails && opportunitiesDetails.length > 0 ? (
                   <Grid>
                     {opportunitiesDetails.map((opportunityDetail) => (

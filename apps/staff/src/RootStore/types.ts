@@ -135,6 +135,7 @@ export type FeatureVariant =
   | "reportIncorrectRosters"
   | "operationsDrilldown"
   | "insightsStaffUsage"
+  | "supervisorHomepageReviewCard"
   // SENTENCING
   | "offenseOverrideControls"
   | "protectiveFactors"
@@ -217,6 +218,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usPaUnclearEligibility: {},
   usIdTasksV2: {},
   SARBuilder: {},
+  supervisorHomepageReviewCard: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

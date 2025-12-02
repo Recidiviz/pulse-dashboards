@@ -19,6 +19,7 @@ import { OpportunityType } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
+import { OpportunityTab } from "../../../WorkflowsStore";
 import { JusticeInvolvedPersonBase } from "../../../WorkflowsStore/JusticeInvolvedPersonBase";
 import { MOCK_OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore/Opportunity/__fixtures__";
 import { OpportunityBase } from "../../../WorkflowsStore/Opportunity/OpportunityBase";
@@ -43,6 +44,10 @@ export class MockOpportunity {
 
   get hydrationState() {
     return { status: "hydrated" } as HydrationState;
+  }
+
+  tabTitle(): OpportunityTab {
+    return "Eligible Now";
   }
 }
 

@@ -40,4 +40,6 @@ export type OpportunityInfo = {
   clientsEligibleCount: number;
   opportunityType: OpportunityType;
   zeroGrantsTooltip?: string;
+  supervisorReviewCounts: Record<string, number>;
+  urlSection: string;
 };
