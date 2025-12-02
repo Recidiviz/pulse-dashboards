@@ -30,16 +30,31 @@ import {
   makeValidateUserPayload,
 } from "../../helpers/middleware";
 import { getRecidivizUserProfile } from "../../helpers/recidivizUsers";
+import { checkAdminPanelPermissions } from "../../helpers/staffUsers";
 import { verifyToken } from "./middleware";
 
 const app = express();
 
 app.use(makeRateLimiter());
 app.use(verifyToken);
-const auth0TokenPayloadSchema = z.object({
-  userId: z.string(),
-  stateCode: z.string().toUpperCase(),
-});
+const auth0TokenPayloadSchema = z.discriminatedUnion("userType", [
+  // Recidiviz user
+  z.object({
+    userType: z.literal("RECIDIVIZ"),
+    email: z.string(),
+  }),
+  // Orijin users
+  z.object({
+    userType: z.literal("ORIJIN"),
+    userId: z.string(),
+    stateCode: z.string().toUpperCase(),
+  }),
+  // State employee
+  z.object({
+    userType: z.literal("STATE"),
+    email: z.string(),
+  }),
+]);
 type Auth0UserPayload = z.infer<typeof auth0TokenPayloadSchema>;
 app.use(makeValidateUserPayload(auth0TokenPayloadSchema));
 
@@ -54,32 +69,42 @@ app.get(
   ) => {
     try {
       const { userData } = response.locals;
-      if (userData.stateCode === "RECIDIVIZ") {
+      if (userData.userType === "RECIDIVIZ") {
         // assumed to be a valid user email, though this will throw if it isn't
-        const userProfile = await getRecidivizUserProfile(userData.userId);
+        const userProfile = await getRecidivizUserProfile(userData.email);
         response.json({ userProfile });
         return;
       }
 
-      const userProfile = await checkResidentsRoster(
-        userData.stateCode,
-        userData.userId,
-      );
-      if (userProfile) {
-        response.json({ userProfile });
-        return;
+      if (userData.userType === "ORIJIN") {
+        const userProfile = await checkResidentsRoster(
+          userData.stateCode,
+          userData.userId,
+        );
+        if (userProfile) {
+          response.json({ userProfile });
+          return;
+        }
+
+        // fallback: if not a real user, check if they're a demo user
+        const demoUserProfile = await checkDemoResidentsRoster(
+          userData.stateCode,
+          userData.userId,
+        );
+        if (demoUserProfile) {
+          response.json({
+            userProfile: demoUserProfile,
+          });
+          return;
+        }
       }
 
-      // fallback: if not a real user, check if they're a demo user
-      const demoUserProfile = await checkDemoResidentsRoster(
-        userData.stateCode,
-        userData.userId,
-      );
-      if (demoUserProfile) {
-        response.json({
-          userProfile: demoUserProfile,
-        });
-        return;
+      if (userData.userType === "STATE") {
+        const userProfile = await checkAdminPanelPermissions(userData.email);
+        if (userProfile) {
+          response.json({ userProfile });
+          return;
+        }
       }
 
       response.status(404).json({ error: "User not found" });

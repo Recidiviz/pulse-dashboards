@@ -25,6 +25,16 @@ const { createPrivateKey } = require("crypto");
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
+  const emailAddress = event.user.email?.toLowerCase();
+
+  if (
+    event.user.app_metatata?.doNotSyncProfile ||
+    emailAddress?.endsWith("@recidiviz-test.org")
+  ) {
+    // Do not sync profile for test users or users flagged manually
+    return;
+  }
+
   const alg = "RS256";
   const privateKey = createPrivateKey(
     // have to correct the way newlines are stored in secret strings
@@ -34,22 +44,24 @@ exports.onExecutePostLogin = async (event, api) => {
     ),
   );
 
+  let userType;
   let stateCode;
   let userId;
+  let email;
 
-  const email = event.user.email?.toLowerCase();
-  if (email?.endsWith("@recidiviz.org")) {
-    stateCode = "RECIDIVIZ";
-    userId = email;
+  if (emailAddress?.endsWith("@recidiviz.org")) {
+    userType = "RECIDIVIZ";
+    email = emailAddress;
   } else if (
     // these are internal Orijin staff
-    email?.endsWith("@orijin.works") ||
+    emailAddress?.endsWith("@orijin.works") ||
     // these are Orijin users, but may be staff in testing/impersonation scenarios
-    email?.endsWith("@learner.orijin.works")
+    emailAddress?.endsWith("@learner.orijin.works")
   ) {
     // This metadata comes from the Orijin SAML mappings. To view this configuration
     // you must go to the Auth0 dashboard and select:
     // Auth0 -> Authentication -> Enterprise -> SAML -> connection -> Mappings
+    userType = "ORIJIN";
     stateCode = event.user.state_code;
     userId = event.user.external_id;
     // Orijin users do not have access to the emails associated with their accounts
@@ -57,38 +69,36 @@ exports.onExecutePostLogin = async (event, api) => {
     if (!event.user.app_metadata.skipEmailVerification) {
       api.user.setAppMetadata("skipEmailVerification", true);
     }
+  } else {
+    // is a state-user. Just pass their email
+    userType = "STATE";
+    email = emailAddress;
   }
 
   // magic account for testing the unknown user login flow
-  if (email === event.secrets.MA_UNKNOWN_USER_TEST_EMAIL) {
+  if (emailAddress === event.secrets.MA_UNKNOWN_USER_TEST_EMAIL) {
     stateCode = "US_MA";
+    userType = "ORIJIN";
     userId = "invalid-id-that-does-not-exist";
   }
 
-  if (stateCode && userId) {
-    const jwt = await new SignJWT({ stateCode, userId })
-      .setProtectedHeader({ alg })
-      .setIssuedAt()
-      .setExpirationTime("1m")
-      .sign(privateKey);
-    const response = await fetch(event.secrets.USER_PROFILE_API_URL, {
-      headers: { Authorization: `Bearer ${jwt}` },
-    });
-    if (response.ok) {
-      for (const [k, v] of Object.entries(
-        (await response.json()).userProfile,
-      )) {
-        api.user.setAppMetadata(k, v);
-      }
-    } else {
-      // the (state code: US_XX) part is important, the application may look for that string
-      // to determine which state the user in question arrived from when handling this error
-      api.access.deny(
-        `Unrecognized user: not found in roster (state code: ${stateCode})`,
-      );
+  const jwt = await new SignJWT({ userType, stateCode, userId, email })
+    .setProtectedHeader({ alg })
+    .setIssuedAt()
+    .setExpirationTime("1m")
+    .sign(privateKey);
+  const response = await fetch(event.secrets.USER_PROFILE_API_URL, {
+    headers: { Authorization: `Bearer ${jwt}` },
+  });
+  if (response.ok) {
+    for (const [k, v] of Object.entries((await response.json()).userProfile)) {
+      api.user.setAppMetadata(k, v);
     }
+  } else {
+    // the (state code: US_XX) part is important, the application may look for that string
+    // to determine which state the user in question arrived from when handling this error
+    api.access.deny(
+      `Unrecognized user: not found in roster (state code: ${stateCode})`,
+    );
   }
-  // there are use cases for users who don't pass through this flow
-  // (e.g. users manually provisioned in the Auth0 console) which is why
-  // we shouldn't update any app metadata by default
 };
