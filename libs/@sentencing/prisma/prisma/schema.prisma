@@ -380,10 +380,9 @@ model Offense {
   frequency         Int                @default(0)
   mandatoryMinimums MandatoryMinimum[]
 
-  Case                  Case[]
-  Charge                Charge[]
-  insightOffenses       Insight[] @relation("InsightOffenses")
-  insightRollupOffenses Insight[] @relation("InsightRollupOffenses")
+  Case            Case[]
+  Charge          Charge[]
+  insightOffenses Insight[] @relation("InsightOffenses")
 }
 
 model MandatoryMinimum {
@@ -489,8 +488,7 @@ model Insight {
   rollupGender                     Gender?
   rollupAssessmentScoreBucketStart Int?
   rollupAssessmentScoreBucketEnd   Int?
-  rollupOffense                    Offense?           @relation(name: "InsightRollupOffenses", fields: [rollupOffenseId], references: [id])
-  rollupOffenseId                  String?
+  rollupOffenseName                String?
   rollupNcicCategory               String?
   rollupCombinedOffenseCategory    String?
   rollupViolentOffense             Boolean?

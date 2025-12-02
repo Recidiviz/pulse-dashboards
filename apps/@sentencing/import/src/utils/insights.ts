@@ -99,20 +99,7 @@ export async function transformAndLoadInsightData(
         insightData.recidivism_rollup.assessment_score_bucket_start,
       rollupAssessmentScoreBucketEnd:
         insightData.recidivism_rollup.assessment_score_bucket_end,
-      // Create the offense if it doesn't already exist in the db
-      rollupOffense: {
-        connectOrCreate: insightData.recidivism_rollup.most_severe_description
-          ? {
-              where: {
-                name: insightData.recidivism_rollup.most_severe_description,
-              },
-              create: {
-                stateCode: insightData.state_code,
-                name: insightData.recidivism_rollup.most_severe_description,
-              },
-            }
-          : undefined,
-      },
+      rollupOffenseName: insightData.recidivism_rollup.most_severe_description,
       rollupNcicCategory:
         insightData.recidivism_rollup.most_severe_ncic_category_uniform,
       rollupCombinedOffenseCategory:

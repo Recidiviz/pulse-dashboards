@@ -81,10 +81,10 @@ describe("case router", () => {
           insight: expect.objectContaining({
             ..._.omit(fakeInsight, [
               "stateCode",
-              "rollupOffense",
+              "rollupOffenseName",
               "rollupStateCode",
             ]),
-            rollupOffenseDescription: `${fakeInsight.rollupOffense} offenses`,
+            rollupOffenseDescription: `${fakeInsight.rollupOffenseName} offenses`,
             rollupRecidivismSeries: expect.arrayContaining(
               fakeRecidivismSeries.map((series) =>
                 expect.objectContaining({

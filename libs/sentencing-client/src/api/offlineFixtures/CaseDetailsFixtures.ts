@@ -87,7 +87,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
       rollupGender: null,
       rollupAssessmentScoreBucketStart: null,
       rollupAssessmentScoreBucketEnd: null,
-      rollupOffense: "Burglary",
+      rollupOffenseName: "Burglary",
       rollupRecidivismNumRecords: 100,
       rollupOffenseDescription: "Males, LSI-R = 20-30, Felony offenses",
       rollupRecidivismSeries: [

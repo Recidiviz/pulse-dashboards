@@ -230,7 +230,7 @@ export const fakeInsight = {
   offense: fakeOffense.name,
   rollupStateCode: StateCode.US_ID,
   rollupGender: FAKE_CLIENT_GENDER,
-  rollupOffense: fakeOffense.name,
+  rollupOffenseName: fakeOffense.name,
   rollupRecidivismNumRecords: faker.number.int({ max: 100 }),
   rollupRecidivismSeries: fakeRecidivismSeries,
   dispositionNumRecords: faker.number.int({ max: 100 }),
@@ -243,12 +243,6 @@ export const fakeInsightPrismaInput = {
     connect: {
       stateCode: fakeOffense.stateCode,
       name: fakeInsight.offense,
-    },
-  },
-  rollupOffense: {
-    connect: {
-      stateCode: fakeInsight.stateCode,
-      name: fakeInsight.rollupOffense,
     },
   },
   rollupRecidivismSeries: {

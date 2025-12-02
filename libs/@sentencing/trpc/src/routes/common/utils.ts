@@ -91,16 +91,16 @@ function formatStateCode(stateCode: StateCode) {
 
 function formatRollupOffenseDescription(insight: Insight) {
   const {
-    rollupOffense,
+    rollupOffenseName,
     rollupNcicCategory,
     rollupCombinedOffenseCategory,
     rollupViolentOffense,
     rollupStateCode,
   } = insight;
 
-  if (rollupOffense) {
+  if (rollupOffenseName) {
     // Levels 1 + 2
-    return `${rollupOffense.name} offenses`;
+    return `${rollupOffenseName} offenses`;
   } else if (rollupNcicCategory) {
     // Levels 3 + 4
     // If it doesn't have offense in the name, add it
@@ -281,7 +281,7 @@ async function getInsightsWithReverseLookup(
           rollupGender: null,
           rollupAssessmentScoreBucketStart: null,
           rollupAssessmentScoreBucketEnd: null,
-          rollupOffense: null,
+          rollupOffenseName: null,
           rollupNcicCategory: null,
           rollupCombinedOffenseCategory: null,
           rollupViolentOffense: null,
@@ -355,7 +355,7 @@ export async function getInsight(
     ]),
     offense: insightToReturn.offense.name,
     offenseCategory: insightToReturn.offense.category,
-    rollupOffense: insightToReturn.rollupOffense?.name,
+    rollupOffenseName: insightToReturn.rollupOffenseName,
     rollupOffenseDescription: formatRollupOffenseDescription(insightToReturn),
   };
 }

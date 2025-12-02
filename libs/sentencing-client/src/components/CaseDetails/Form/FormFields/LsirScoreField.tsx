@@ -58,7 +58,7 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
     !form.hasError &&
     inputValue !== "" &&
     insight &&
-    insight.rollupOffense !== insight.offense;
+    insight.rollupOffenseName !== insight.offense;
 
   const rollupContent = !geoConfig.hideRecidivismRatesChart && (
     <>

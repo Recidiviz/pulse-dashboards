@@ -83,7 +83,7 @@ describe("offense router", () => {
           rollupGender: null,
           rollupAssessmentScoreBucketStart: null,
           rollupAssessmentScoreBucketEnd: null,
-          rollupOffenseId: undefined,
+          rollupOffenseName: undefined,
           rollupNcicCategory: null,
           rollupCombinedOffenseCategory: "Sex offense, Drug offense",
           rollupViolentOffense: null,

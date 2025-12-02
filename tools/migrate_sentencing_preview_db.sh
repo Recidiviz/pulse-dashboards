@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source ../../../tools/load_env_files.sh --env_preview env_preview_sentencing_server
+# Only load env files when running locally (not in CI)
+# In GitHub Actions, the DATABASE_URL variables are set as environment variables by the workflow
+if [ "${GITHUB_ACTIONS:-false}" != "true" ]; then
+  source ../../../tools/load_env_files.sh --env_preview env_preview_sentencing_server
 
-set -a
-[ -f .env.preview ] && source .env.preview
-set +a
+  set -a
+  [ -f .env.preview ] && source .env.preview
+  set +a
+fi
 
 gcloud run jobs deploy ss-migrate-preview-db-$VERSION \
   --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server-preview:$VERSION \

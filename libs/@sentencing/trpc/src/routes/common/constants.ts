@@ -32,11 +32,6 @@ export const INSIGHT_INCLUDES_AND_OMITS = {
         category: true,
       },
     },
-    rollupOffense: {
-      select: {
-        name: true,
-      },
-    },
     rollupRecidivismSeries: {
       select: {
         recommendationType: true,
@@ -60,7 +55,6 @@ export const INSIGHT_INCLUDES_AND_OMITS = {
   omit: {
     id: true,
     offenseId: true,
-    rollupOffenseId: true,
   } satisfies Prisma.InsightOmit,
 };
 
