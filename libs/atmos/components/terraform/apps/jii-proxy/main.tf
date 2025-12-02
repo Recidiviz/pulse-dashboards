@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
-module "cloud-run" {
+module "cloud_run" {
   source = "../../vendor/cloud-run"
 
   service_name = "jii-proxy-server"
@@ -36,6 +36,11 @@ module "cloud-run" {
 
   members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
   ingress = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
+}
+
+moved {
+  from = module.cloud-run
+  to   = module.cloud_run
 }
 
 resource "google_project_service" "compute" {
@@ -71,11 +76,11 @@ resource "google_compute_region_network_endpoint_group" "serverless_neg" {
   region                = var.location
   project               = var.project_id
   cloud_run {
-    service = module.cloud-run.service_name
+    service = module.cloud_run.service_name
   }
 }
 
-module "load-balancer" {
+module "load_balancer" {
   source = "../../vendor/lb-http"
 
   name    = "jii-proxy-lb"
@@ -102,4 +107,9 @@ module "load-balancer" {
   ssl                             = true
   ssl_certificates                = [google_compute_ssl_certificate.edovo_ssl.id]
   managed_ssl_certificate_domains = var.managed_certificate_domains
+}
+
+moved {
+  from = module.load-balancer
+  to   = module.load_balancer
 }

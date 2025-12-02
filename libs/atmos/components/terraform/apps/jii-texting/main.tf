@@ -2,8 +2,8 @@ data "sops_file" "env" {
   source_file = "../../env-secrets/secrets/jii_texting_server.enc.yaml"
 }
 
+
 locals {
-  is_production        = var.project_id == "recidiviz-dashboard-production"
   env_secrets          = yamldecode(data.sops_file.env.raw)
   shared_server_env    = local.env_secrets["env_jii_texting_server"]
   shared_processor_env = local.env_secrets["env_jii_texting_processor_job"]
@@ -57,6 +57,7 @@ locals {
   ])
 }
 
+
 module "database" {
   source = "../../vendor/cloud-sql-instance"
 
@@ -80,7 +81,8 @@ module "database" {
   }
 }
 
-module "cloud-run" {
+
+module "cloud_run" {
   source = "../../vendor/cloud-run"
 
   service_name           = var.server_name
@@ -116,8 +118,13 @@ module "cloud-run" {
   members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
 }
 
+moved {
+  from = module.cloud-run
+  to   = module.cloud_run
+}
+
 # Configure a job that will migrate the database schema
-module "migrate-db-job" {
+module "migrate_db_job" {
   source                        = "../../vendor/cloud-run-job-exec"
   exec                          = true
   name                          = var.migrate_db_name
@@ -143,9 +150,14 @@ module "migrate-db-job" {
   }]
 }
 
+
 # Configure a Google Workflow that is executed when a message is published to
-# the jii_texting_export_success_topic
-module "handle-jii-texting-export-wf" {
+
+moved {
+  from = module.migrate-db-job
+  to   = module.migrate_db_job
+} # the jii_texting_export_success_topic
+module "handle_jii_texting_export_wf" {
   count                 = var.demo_mode ? 0 : 1
   project_id            = var.project_id
   region                = var.location
@@ -170,12 +182,19 @@ module "handle-jii-texting-export-wf" {
     PROJECT_ID            = var.project_id
     ARCHIVE_BUCKET_ID     = var.archive_bucket_name
     ETL_BUCKET_ID         = var.etl_bucket_name
-    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
+    CLOUD_RUN_SERVICE_URL = module.cloud_run.service_uri
   }
 }
 
+
+
+moved {
+  from = module.handle-jii-texting-export-wf
+  to   = module.handle_jii_texting_export_wf
+}
+
 # Configure a Cloud Run job that will process the JII eligible for texts on a given day
-module "process-jii-cloud-run-job" {
+module "process_jii_cloud_run_job" {
   source                        = "../../vendor/cloud-run-job-exec"
   name                          = var.processor_job_name
   image                         = local.processor_job_image
@@ -185,11 +204,17 @@ module "process-jii-cloud-run-job" {
   cloud_run_deletion_protection = false
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
   limits                        = { memory = "1Gi", cpu = "1" }
-  timeout                       =  "3600s"
+  timeout                       = "3600s"
 }
 
+moved {
+  from = module.process-jii-cloud-run-job
+  to   = module.process_jii_cloud_run_job
+}
+
+
 # Configure a Cloud Run job that will import the data into our CloudSQL DB
-module "import-job" {
+module "import_job" {
   task_count                    = var.demo_mode ? 0 : 1
   source                        = "../../vendor/cloud-run-job-exec"
   name                          = local.import_job_name
@@ -204,9 +229,14 @@ module "import-job" {
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
 }
 
+moved {
+  from = module.import-job
+  to   = module.import_job
+}
+
 # Configure a Google Workflow that executes the main processing of JII texts,
 # which will be executed by the handle-jii-texting-gcs-upload-wf
-module "process-jii-to-text-wf" {
+module "process_jii_to_text_wf" {
   count                 = var.demo_mode ? 0 : 1
   project_id            = var.project_id
   region                = var.location
@@ -216,9 +246,14 @@ module "process-jii-to-text-wf" {
 
   workflow_source = file("${path.module}/workflows/process-jii-to-text.workflows.yaml")
   env_vars = {
-    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
+    CLOUD_RUN_SERVICE_URL = module.cloud_run.service_uri
     BUCKET_ID             = var.etl_bucket_name
-    IMPORT_JOB_NAME       = module.import-job.id
-    PROCESS_JOB_NAME      = module.process-jii-cloud-run-job.id
+    IMPORT_JOB_NAME       = module.import_job.id
+    PROCESS_JOB_NAME      = module.process_jii_cloud_run_job.id
   }
+}
+
+moved {
+  from = module.process-jii-to-text-wf
+  to   = module.process_jii_to_text_wf
 }

@@ -63,9 +63,9 @@ components:
         database_secondary_zone: us-central1-b
         artifact_registry_repo: '{{ (atmos.Component "apps/jii-texting" "recidiviz-dashboard-staging--jii-texting").vars.artifact_registry_repo }}'
         # The 'name' output uses the name of the first bucket, so ensure that the ETL bucket is the first one in the list
-        etl_bucket_name: !terraform.output gcs-buckets {{ .stack }} name
-        # The 'names_list' output uses the same order as the the list of names, so ensure that the archive bucket is second
-        archive_bucket_name: !terraform.output gcs-buckets {{ .stack }} names_list[1]
+        etl_bucket_name: !terraform.state gcs-buckets {{ .stack }} name
+        # The 'names_list' output uses the same order as the list of names, so ensure that the archive bucket is second
+        archive_bucket_name: !terraform.state gcs-buckets {{ .stack }} names_list[1]
         data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
         processor_job_env_secret_id: env_prod_jii_texting_processor_job
         server_env_secret_id: env_prod_jii_texting_server
@@ -92,12 +92,12 @@ components:
           - WelcomeMessageSeries
         service_account_email: "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
         postgresql:
-          host: !terraform.output cloud-sql-proxy recidiviz-dashboard-production--shared-infra cloud_sql_proxy_ip
+          host: !terraform.state cloud-sql-proxy recidiviz-dashboard-production--shared-infra cloud_sql_proxy_ip
           # For more info on quoting YQ expressions see:
-          # https://atmos.tools/core-concepts/stacks/yaml-functions/terraform.output/#using-yq-expressions-to-provide-a-default-value
-          port: !terraform.output cloud-sql-proxy recidiviz-dashboard-production--shared-infra ".ports[""jii-texting""]"
-          username: !terraform.output apps/jii-texting database_user_name
-          password: !terraform.output apps/jii-texting database_user_password
+          # https://atmos.tools/core-concepts/stacks/yaml-functions/terraform.state/#using-yq-expressions-to-provide-a-default-value
+          port: !terraform.state cloud-sql-proxy recidiviz-dashboard-production--shared-infra ".ports[""jii-texting""]"
+          username: !store gsm-prod apps/jii-texting database_credentials | query ".username"
+          password: !store gsm-prod apps/jii-texting database_credentials | query ".password"
           databases:
             - us_id
             - us_tx

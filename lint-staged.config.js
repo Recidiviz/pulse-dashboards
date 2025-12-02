@@ -30,6 +30,13 @@ const formatCommand = (files) => {
 const lintCommand =
   "yarn eslint --flag v10_config_lookup_from_file --max-warnings 0 --no-warn-ignored --fix";
 
+const terraformFormatCommand = (files) => {
+  // terraform fmt only works on directories or individual files
+  // Get the list of files and format them
+  const escaped = files.map(escapeParens).map(quote);
+  return `terraform fmt ${escaped.join(" ")}`;
+};
+
 module.exports = {
   // for linting and typechecking refer to (or create) per-project config file;
   "**/*.{ts,tsx,mts}": [
@@ -44,4 +51,5 @@ module.exports = {
   "**/project.json": [
     (files) => `nx affected -t projectTags --files=${files.join(",")}`,
   ],
+  "libs/atmos/**/*.tf": [terraformFormatCommand],
 };

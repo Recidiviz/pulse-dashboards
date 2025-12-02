@@ -18,5 +18,5 @@
 
 output "external_ip" {
   description = "The external IPv4 assigned to the load balancer"
-  value       = module.load-balancer.external_ip
+  value       = module.load_balancer.external_ip
 }

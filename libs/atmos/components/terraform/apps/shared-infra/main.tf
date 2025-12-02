@@ -27,7 +27,7 @@ resource "google_project_iam_member" "storageobjectuser" {
   member  = google_service_account.workflows.member
 }
 
-module "archive-files-wf" {
+module "archive_files_wf" {
   project_id            = var.project_id
   region                = var.location
   source                = "../../vendor/google-workflows-workflow"
@@ -35,4 +35,9 @@ module "archive-files-wf" {
   workflow_name         = "archive-files"
   workflow_source       = file("${path.module}/workflows/archive-files.workflows.yaml")
   workflow_description  = "Archives files from GCS bucket into an archive bucket with folders for each date"
+}
+
+moved {
+  from = module.archive-files-wf
+  to   = module.archive_files_wf
 }

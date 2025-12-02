@@ -30,8 +30,8 @@ resource "google_project_iam_member" "workflowsinvoker" {
   role    = "roles/workflows.invoker"
   member  = "serviceAccount:${google_service_account.default.email}"
 
-  // Only create this resource if the import job is configured
-  count = var.configure_import ? 1 : 0
+  # Only create this resource if the import job is configured
+  count = local.can_configure_import ? 1 : 0
 }
 
 # Grant Eventarc eventReceiver so the service account can receive events
@@ -40,8 +40,8 @@ resource "google_project_iam_member" "eventarceventreceiver" {
   role    = "roles/eventarc.eventReceiver"
   member  = "serviceAccount:${google_service_account.default.email}"
 
-  // Only create this resource if the import job is configured
-  count = var.configure_import ? 1 : 0
+  # Only create this resource if the import job is configured
+  count = local.can_configure_import ? 1 : 0
 }
 
 # Grant Iam service account user so the service account can orchestrate the internal cloud run service accounts
@@ -98,14 +98,14 @@ resource "google_project_iam_member" "gcsbucketobjectcreator" {
   role    = "roles/storage.objectCreator"
   member  = "serviceAccount:${google_service_account.default.email}"
 
-  // Only create this resource if the import job is configured
-  count = var.configure_import ? 1 : 0
+  # Only create this resource if the import job is configured
+  count = local.can_configure_import ? 1 : 0
 }
 
 resource "google_pubsub_topic" "meetings_export_success_topic" {
   name    = "meetings_export_success"
   project = var.project_id
 
-  // Only create this resource if the import job is configured
-  count = var.configure_import ? 1 : 0
+  # Only create this resource if the import job is configured
+  count = local.can_configure_import ? 1 : 0
 }

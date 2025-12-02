@@ -19,7 +19,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 6.26.0"  # RECIDIVIZ MODIFICATION
+      version = ">= 6.26.0" # RECIDIVIZ MODIFICATION
     }
 
     random = {

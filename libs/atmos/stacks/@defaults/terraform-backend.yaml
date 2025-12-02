@@ -7,11 +7,13 @@ terraform:
   backend:
     gcs:
       bucket: "{{ .settings.context.project_id }}-tf-state"
+
   # This provides the default configuration for our Terraform providers
   # https://atmos.tools/core-concepts/components/terraform/providers
   providers:
     google:
       project: "{{ .settings.context.project_id }}"
+      required_version: < 7.0.0
 
   # This YAML stanza configures the Atmos hook which will store outputs after running apply
   # https://atmos.tools/core-concepts/stacks/hooks/#supported-lifecycle-events

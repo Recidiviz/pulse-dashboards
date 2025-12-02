@@ -21,7 +21,7 @@ resource "google_service_account" "eventarc" {
   account_id   = "jii-texting-eventarc-sa"
   display_name = "Eventarc Service Account"
 
-  // Don't create this resource for demo resourcing
+  # Don't create this resource for demo resourcing
   count = var.demo_mode ? 0 : 1
 }
 
@@ -68,7 +68,7 @@ resource "google_service_account" "workflows" {
   account_id   = "jii-texting-workflows-sa"
   display_name = "Google Workflows Service Account"
 
-  // Don't create this resource for demo resourcing
+  # Don't create this resource for demo resourcing
   count = var.demo_mode ? 0 : 1
 }
 
@@ -93,23 +93,33 @@ resource "google_pubsub_topic" "jii_texting_export_success_topic" {
   name    = "jii_texting_export_success"
   project = var.project_id
 
-  // Don't create this resource for demo resourcing
+  # Don't create this resource for demo resourcing
   count = var.demo_mode ? 0 : 1
 }
 
 # Grant Pub/Sub role to Airflow service account in data platform project
-resource "google_project_iam_member" "airflow-pubsub-publisher" {
+resource "google_project_iam_member" "airflow_pubsub_publisher" {
   project = var.project_id
   role    = "roles/pubsub.publisher"
   member  = "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
 }
 
+moved {
+  from = google_project_iam_member.airflow-pubsub-publisher
+  to   = google_project_iam_member.airflow_pubsub_publisher
+}
+
 # Grant Workflow Invoker role to Google Workflows service account to allow it to execute Workflows
-resource "google_project_iam_member" "workflow-executor" {
+resource "google_project_iam_member" "workflow_executor" {
   project = var.project_id
   role    = "roles/workflows.admin"
   member  = google_service_account.workflows[0].member
   count   = length(google_service_account.eventarc) > 0 ? 1 : 0
+}
+
+moved {
+  from = google_project_iam_member.workflow-executor
+  to   = google_project_iam_member.workflow_executor
 }
 
 # Grant cloud run job executor so the Workflows service account can execute Cloud Run jobs with env variable overrides
@@ -121,31 +131,46 @@ resource "google_project_iam_member" "cloudrunjobexecutor" {
 }
 
 # Grant the Workflows service account access to view cloud run job status
-resource "google_project_iam_member" "cloud-run-viewer" {
+resource "google_project_iam_member" "cloud_run_viewer" {
   project = var.project_id
   role    = "roles/run.viewer"
   member  = google_service_account.workflows[0].member
   count   = length(google_service_account.eventarc) > 0 ? 1 : 0
 }
 
+moved {
+  from = google_project_iam_member.cloud-run-viewer
+  to   = google_project_iam_member.cloud_run_viewer
+}
+
 # Grant Cloud Run job SA permission to run with overrides
-resource "google_project_iam_member" "job-with-overrides" {
+resource "google_project_iam_member" "job_with_overrides" {
   project = var.project_id
   role    = "roles/run.jobsExecutorWithOverrides"
   member  = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
 }
 
+moved {
+  from = google_project_iam_member.job-with-overrides
+  to   = google_project_iam_member.job_with_overrides
+}
+
 # Grant Cloud Run job SA permission to run with overrides
-resource "google_project_iam_member" "secret-accessor" {
+resource "google_project_iam_member" "secret_accessor" {
   project = var.project_id
   role    = "roles/secretmanager.secretAccessor"
   member  = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
 }
 
+moved {
+  from = google_project_iam_member.secret-accessor
+  to   = google_project_iam_member.secret_accessor
+}
+
 # Allow unauthenticated (public) access to the Cloud Run service, e.g. for Twilio to make requests to the webhook
 resource "google_cloud_run_service_iam_binding" "default" {
-  location = module.cloud-run.location
-  service  = module.cloud-run.service_name
+  location = module.cloud_run.location
+  service  = module.cloud_run.service_name
   role     = "roles/run.invoker"
   members = [
     "allUsers"

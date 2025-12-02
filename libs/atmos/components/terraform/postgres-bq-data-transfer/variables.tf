@@ -20,12 +20,13 @@ variable "service_account_email" {
 
 variable "postgresql" {
   type = object({
-    host: string
-    port: number
-    username: string
-    password: string
-    databases: set(string)
+    host : string
+    port : number
+    username : string
+    password : string
+    databases : set(string)
   })
+  description = "Config object for database connection string components"
 }
 
 variable "tables" {

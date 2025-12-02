@@ -5,7 +5,7 @@ data "sops_file" "secrets" {
 locals {
   secrets = flatten([
     for k, v in yamldecode(data.sops_file.secrets.raw) : {
-      yaml_key = nonsensitive(k)
+      yaml_key   = nonsensitive(k)
       yaml_value = v
     }
   ])
@@ -17,8 +17,8 @@ locals {
 
   # Create a flattened mapping of accessors to secrets to use in for_each
   secret_accessors = flatten([
-    for i, member in var.accessors: [
-      for secret_id, _ in local.secret_names: {
+    for i, member in var.accessors : [
+      for secret_id, _ in local.secret_names : {
         member_id = member
         secret_id = secret_id
       }
@@ -58,10 +58,10 @@ resource "google_secret_manager_secret_version" "secrets_version" {
 }
 
 resource "google_secret_manager_secret_iam_member" "secret_accessor" {
-  for_each  = tomap({
-                for accessor in local.secret_accessors: 
-                  "${accessor.member_id}.${accessor.secret_id}" => accessor
-              })
+  for_each = tomap({
+    for accessor in local.secret_accessors :
+    "${accessor.member_id}.${accessor.secret_id}" => accessor
+  })
   secret_id = google_secret_manager_secret.secrets[each.value.secret_id].name
   role      = "roles/secretmanager.secretAccessor"
   member    = each.value.member_id

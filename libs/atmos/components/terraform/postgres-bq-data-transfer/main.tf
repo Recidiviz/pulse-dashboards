@@ -16,8 +16,8 @@ resource "google_bigquery_dataset_iam_member" "regional_transfer_dataset_access"
   project    = var.project_id
   dataset_id = google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
   # https://cloud.google.com/bigquery/docs/use-service-accounts#required_permissions
-  role       = "roles/bigquery.admin"
-  member     = "serviceAccount:${var.service_account_email}"
+  role   = "roles/bigquery.admin"
+  member = "serviceAccount:${var.service_account_email}"
 }
 
 resource "google_bigquery_dataset_iam_member" "transfer_dataset_access" {
@@ -26,8 +26,8 @@ resource "google_bigquery_dataset_iam_member" "transfer_dataset_access" {
   project    = var.project_id
   dataset_id = google_bigquery_dataset.transfer_dataset[each.key].dataset_id
   # https://cloud.google.com/bigquery/docs/use-service-accounts#required_permissions
-  role       = "roles/bigquery.admin"
-  member     = "serviceAccount:${var.service_account_email}"
+  role   = "roles/bigquery.admin"
+  member = "serviceAccount:${var.service_account_email}"
 }
 
 resource "google_bigquery_dataset" "regional_transfer_dataset" {
@@ -99,14 +99,14 @@ resource "google_bigquery_data_transfer_config" "transfer_config" {
   for_each = var.postgresql.databases
 
   service_account_name   = var.service_account_email
-  display_name = "${var.dataset_name}_${each.key}_bigquery"
-  location     = "US"
-  schedule = "every day 9:30"
-  destination_dataset_id= google_bigquery_dataset.transfer_dataset[each.key].dataset_id
-  data_source_id="cross_region_copy"
-  params={
-      "overwrite_destination_table": "true",
-      "source_project_id": var.project_id,
-      "source_dataset_id":  google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
+  display_name           = "${var.dataset_name}_${each.key}_bigquery"
+  location               = "US"
+  schedule               = "every day 9:30"
+  destination_dataset_id = google_bigquery_dataset.transfer_dataset[each.key].dataset_id
+  data_source_id         = "cross_region_copy"
+  params = {
+    "overwrite_destination_table" : "true",
+    "source_project_id" : var.project_id,
+    "source_dataset_id" : google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
   }
 }

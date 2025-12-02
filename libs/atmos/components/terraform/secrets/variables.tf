@@ -1,39 +1,35 @@
-variable "project_id" {
-  type = string
-  description = "Project to provision the secrets to"
-}
 
 variable "sops_file" {
-  type = string
+  type        = string
   description = "Path to SOPS file, relative to this component, to use for secrets"
 }
 
 variable "location" {
-  type = string
+  type        = string
   description = "Default location to store the secret"
 }
 
 variable "deletion_policy" {
-  type = string
-  default = "DELETE"
+  type        = string
+  default     = "DELETE"
   description = "Default deletion policy"
 }
 
 
 variable "replication_overrides" {
-  type = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
   description = "Map of secret names to replication overrides for the secret (can set to auto or a different location)"
 }
 
 variable "deletion_policy_overrides" {
-  type = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
   description = "Map of secret names to deletion policy overrides for the secret"
 }
 
 variable "accessors" {
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
   description = "List of accounts (e.g. service accounts) that should have Secret Accessor permission for the secret"
 }

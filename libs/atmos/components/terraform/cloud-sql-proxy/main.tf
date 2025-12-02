@@ -3,6 +3,7 @@ locals {
   cluster_name = "cloud-sql-proxy"
 }
 terraform {
+  required_version = "1.11.4"
   required_providers {
     google = {
       source  = "hashicorp/google"

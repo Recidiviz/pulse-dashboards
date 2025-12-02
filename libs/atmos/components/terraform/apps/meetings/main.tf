@@ -3,8 +3,7 @@ data "sops_file" "env" {
 }
 
 locals {
-  is_production = var.project_id == "recidiviz-dashboard-production"
-  env_secrets   = yamldecode(data.sops_file.env.raw)
+  env_secrets = yamldecode(data.sops_file.env.raw)
 
   shared_server_env = local.env_secrets["env_meetings_server"]
   server_env        = local.env_secrets[var.server_env_key]
@@ -12,7 +11,8 @@ locals {
   migrate_db_env = local.env_secrets[var.migrate_db_env_key]
 
   shared_data_import_env = local.env_secrets["env_meetings_data_import"]
-  data_import_env        = var.configure_import ? local.env_secrets[var.data_import_env_key] : {}
+  can_configure_import   = var.configure_import && var.data_import_env_key != null
+  data_import_env        = local.can_configure_import ? local.env_secrets[var.data_import_env_key] : {}
 
   server_image_name = "meetings-server"
 
@@ -115,7 +115,7 @@ module "server" {
 }
 
 # Configure a job that will migrate the database schema
-module "migrate-db-job" {
+module "migrate_db_job" {
   source                        = "../../vendor/cloud-run-job-exec"
   exec                          = true
   name                          = var.migrate_db_name
@@ -142,13 +142,17 @@ module "migrate-db-job" {
   }]
 }
 
+moved {
+  from = module.migrate-db-job
+  to   = module.migrate_db_job
+}
 # Configure a job that will import data
 # We don't execute it on deploy - it will be run when the workflow is triggered
-module "import-job" {
+module "import_job" {
   source = "../../vendor/cloud-run-job-exec"
 
   # Don't create an import job for demo
-  count = var.configure_import ? 1 : 0
+  count = local.can_configure_import ? 1 : 0
 
   exec                          = false
   name                          = local.import_job_name
@@ -175,6 +179,11 @@ module "import-job" {
   }]
 }
 
+
+moved {
+  from = module.import-job
+  to   = module.import_job
+}
 module "audio_gcs_bucket" {
   source = "../../vendor/submodules/cloud-storage-bucket"
 
@@ -191,8 +200,8 @@ module "audio_gcs_bucket" {
     (local.etl_bucket_name) = "serviceAccount:${google_service_account.default.email}"
   }
   cors = [{
-    origin = ["http://localhost:19000/"]
-    method = ["PUT"]
+    origin          = ["http://localhost:19000/"]
+    method          = ["PUT"]
     response_header = ["Content-Type"]
   }]
 }
@@ -201,7 +210,7 @@ module "gcs_bucket" {
   source = "../../vendor/submodules/cloud-storage-bucket"
 
   # Don't create a bucket for demo
-  count = var.configure_import ? 1 : 0
+  count = local.can_configure_import ? 1 : 0
 
   project_id = var.project_id
   location   = var.location
@@ -234,11 +243,11 @@ module "gcs_bucket" {
 }
 
 # Configure a Google Workflow that is executed when a pubsub notification
-module "handle-meetings-gcs-upload" {
+module "handle_meetings_gcs_upload" {
   source = "../../vendor/google-workflows-workflow"
 
   # Don't create a workflow for demo
-  count = var.configure_import ? 1 : 0
+  count = local.can_configure_import ? 1 : 0
 
   project_id            = var.project_id
   region                = var.location
@@ -260,13 +269,18 @@ module "handle-meetings-gcs-upload" {
   workflow_source = file("${path.module}/workflows/handle-meetings-gcs-upload.workflows.yaml")
   env_vars = {
     PROJECT_ID        = var.project_id
-    JOB_NAME          = module.import-job[0].id
+    JOB_NAME          = module.import_job[0].id
     ARCHIVE_BUCKET_ID = module.gcs_bucket[0].names[local.archive_bucket_name]
     ETL_BUCKET_ID     = module.gcs_bucket[0].names[local.etl_bucket_name]
   }
 }
 
-resource "google_cloud_tasks_queue" "audio-stitching-task-queue" {
+moved {
+  from = module.handle-meetings-gcs-upload
+  to   = module.handle_meetings_gcs_upload
+}
+
+resource "google_cloud_tasks_queue" "audio_stitching_task_queue" {
   name     = "audio-stitching-task-queue"
   project  = var.project_id
   location = var.location
@@ -280,13 +294,18 @@ resource "google_cloud_tasks_queue" "audio-stitching-task-queue" {
   }
 }
 
-resource "google_cloud_tasks_queue" "transcription-task-queue" {
+moved {
+  from = google_cloud_tasks_queue.audio-stitching-task-queue
+  to   = google_cloud_tasks_queue.audio_stitching_task_queue
+}
+
+resource "google_cloud_tasks_queue" "transcription_task_queue" {
   name     = "transcription-task-queue"
   project  = var.project_id
   location = var.location
 
   rate_limits {
-    // This is the max number of concurrent requests that Deepgram allows
+    # This is the max number of concurrent requests that Deepgram allows
     max_concurrent_dispatches = 100
   }
 
@@ -297,4 +316,9 @@ resource "google_cloud_tasks_queue" "transcription-task-queue" {
   stackdriver_logging_config {
     sampling_ratio = 1.0
   }
+}
+
+moved {
+  from = google_cloud_tasks_queue.transcription-task-queue
+  to   = google_cloud_tasks_queue.transcription_task_queue
 }

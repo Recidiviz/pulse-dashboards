@@ -3,21 +3,6 @@ variable "project_id" {
   description = "The project that we are deploying the app to"
 }
 
-variable "project_number" {
-  type        = string
-  description = "The project number for the project we are deploying to"
-}
-
-variable "data_platform_project_number" {
-  type        = string
-  description = "The data platform project number for the equivalent project/env we are deploying to"
-}
-
-variable "data_platform_project_id" {
-  type        = string
-  description = "The data platform project id for the equivalent project/env we are deploying to"
-}
-
 variable "location" {
   type        = string
   description = "The GCP location (us-east1, us-central1, etc) that we are deploying the service to"
@@ -32,11 +17,6 @@ variable "server_name" {
 variable "artifact_registry_repo" {
   type        = string
   description = "Artifact Registry repository to use for Case Notes"
-}
-
-variable "artifact_registry_project_id" {
-  type        = string
-  description = "The project id the Artifact Registry repository is in"
 }
 
 variable "server_container_version" {

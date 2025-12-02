@@ -89,12 +89,6 @@ variable "migrate_db_name" {
   default     = "sentencing-migrate-db"
 }
 
-variable "import-job-name" {
-  type        = string
-  description = "The name of the SQL instance"
-  default     = "sentencing-data-import"
-}
-
 variable "configure_import" {
   type        = bool
   description = "Whether to include the import-related resources"
