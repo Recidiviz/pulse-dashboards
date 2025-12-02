@@ -24,16 +24,11 @@ import {
   createSocket,
 } from "~@reentry/frontend-shared";
 
-import { REENTRY_BACKEND_PATH } from "../../constants";
+import {
+  REENTRY_BACKEND_PATH,
+  REENTRY_DEV_BACKEND_PATH,
+} from "../../constants";
 import { Image } from "../Image";
-
-// client SDKs want a fully qualified URL, not just an absolute path. A proxy will handle this
-const REENTRY_BACKEND_URL = `${window.location.origin}${REENTRY_BACKEND_PATH}`;
-
-const socket = createSocket(REENTRY_BACKEND_URL);
-const $api = createApiClient(REENTRY_BACKEND_URL);
-
-const applicationContext = { socket, $api, Image };
 
 /**
  * Provides the application context required by the shared CPA components
@@ -41,8 +36,16 @@ const applicationContext = { socket, $api, Image };
 export const IntakeIntegrationProvider: FC<{ children: ReactNode }> = memo(
   function IntakeIntegrationProvider({ children }) {
     const {
-      userStore: { segmentClient },
+      userStore: { segmentClient, hasPermission },
     } = useRootStore();
+
+    // client SDKs want a fully qualified URL, not just an absolute path. A proxy will handle this.
+    const REENTRY_BACKEND_URL = `${window.location.origin}${hasPermission("live_data") ? REENTRY_BACKEND_PATH : REENTRY_DEV_BACKEND_PATH}`;
+    
+    const socket = createSocket(REENTRY_BACKEND_URL);
+    const $api = createApiClient(REENTRY_BACKEND_URL);
+
+    const applicationContext = { socket, $api, Image };
 
     return (
       <ApplicationContextProvider

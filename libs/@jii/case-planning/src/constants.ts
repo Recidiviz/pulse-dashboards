@@ -19,3 +19,4 @@
  * needs to match reverse proxy config, see /apps/jii-proxy-server.
  */
 export const REENTRY_BACKEND_PATH = "/case-plan-api";
+export const REENTRY_DEV_BACKEND_PATH = "/case-plan-dev-api";

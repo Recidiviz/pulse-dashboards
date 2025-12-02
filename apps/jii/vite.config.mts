@@ -23,7 +23,7 @@ import { defineConfig } from "vite";
 // ignoring the nx rules here since this is just tooling,
 // and we don't want to import the entire library here anyway
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { REENTRY_BACKEND_PATH } from "../../libs/@jii/case-planning/src/constants";
+import { REENTRY_BACKEND_PATH, REENTRY_DEV_BACKEND_PATH } from "../../libs/@jii/case-planning/src/constants";
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -44,6 +44,24 @@ export default defineConfig(() => ({
         configure(proxy) {
           // not all environments need this necessarily, but use it if configured
           const proxyOrigin = process.env["CASE_PLANNING_PROXY_ORIGIN"];
+          if (!proxyOrigin) return;
+
+          proxy.on("proxyReqWs", (req) => {
+            // this overrides CORS restrictions for development
+            req.setHeader("Origin", proxyOrigin);
+          });
+        },
+      },
+      [REENTRY_DEV_BACKEND_PATH]: {
+        target: process.env["CASE_PLANNING_DEV_PROXY_TARGET"],
+        ws: true,
+        changeOrigin: true,
+        rewrite: (path) => {
+          return path.replace(REENTRY_DEV_BACKEND_PATH, "");
+        },
+        configure(proxy) {
+          // not all environments need this necessarily, but use it if configured
+          const proxyOrigin = process.env["CASE_PLANNING_DEV_PROXY_ORIGIN"];
           if (!proxyOrigin) return;
 
           proxy.on("proxyReqWs", (req) => {

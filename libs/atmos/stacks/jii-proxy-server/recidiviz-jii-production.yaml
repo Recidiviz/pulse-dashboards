@@ -22,4 +22,5 @@ components:
         env_vars:
           OPPORTUNITIES_APP_URL: "https://recidiviz-jii-production.web.app"
           CASE_PLANNING_BACKEND_URL: "https://backend-api-prod-773019812766.us-central1.run.app"
+          CASE_PLANNING_DEV_BACKEND_URL: "https://backend-api-dev-773019812766.us-central1.run.app"
         managed_certificate_domains: [opportunities.app]

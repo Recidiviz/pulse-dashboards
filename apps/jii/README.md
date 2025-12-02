@@ -5,6 +5,7 @@ This is the frontend for the Opportunities webapp for justice impacted individua
 ## Development
 
 This app serves as the main entry point for the Opportunities development environment. Therefore running `nx dev jii` will start the dev servers for both the frontend and the Firebase Functions backend in `apps/jii-functions`. (Run `nx dev-spa jii` to run the frontend Vite server on its own).
+- Be sure to run `gcloud auth login` and `firebase login --reauth` BEFORE starting the app
 
 By default we develop this app against staging data (from Firestore). If you need to develop against fixture data instead, you can run this app in Offline Mode with `nx offline jii`. In Offline Mode the app does not communicate with Firebase Functions or Firestore.
 
