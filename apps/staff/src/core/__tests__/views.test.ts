@@ -54,6 +54,7 @@ describe("getRelativePath", () => {
     supervisionSupervisorsList: `/supervision/supervisors-list`,
     supervisionSupervisor: `/supervision/supervisor/:supervisorPseudoId`,
     supervisionSupervisorOpportunity: `/supervision/supervisor/:supervisorPseudoId/opportunity/:opportunityTypeUrl`,
+    supervisionSupervisorOpportunityForm: `/supervision/supervisor/:supervisorPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId/:opportunityPseudoId`,
     supervisionStaff: `/supervision/staff/:officerPseudoId`,
     supervisionStaffMetric: `/supervision/staff/:officerPseudoId/outcome/:metricId`,
     supervisionClientDetail: `/supervision/staff/:officerPseudoId/outcome/:metricId/client/:clientPseudoId/:outcomeDate`,

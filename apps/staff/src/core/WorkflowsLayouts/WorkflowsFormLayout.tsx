@@ -172,7 +172,7 @@ const HydratedWorkflowsFormLayout = observer(
     const { currentView, setCurrentView } = useOpportunitySidePanel();
     const navigate = useNavigate();
     const { pathname } = useLocation();
-    const { officerPseudoId } = useParams();
+    const { officerPseudoId, supervisorPseudoId } = useParams();
 
     const { selectedOpportunity, selectedPerson, workflowsMethodologyUrl } =
       presenter;
@@ -193,6 +193,13 @@ const HydratedWorkflowsFormLayout = observer(
           navigate(
             insightsUrl("supervisionOpportunity", {
               officerPseudoId: officerPseudoId,
+              opportunityTypeUrl: urlSection,
+            }),
+          );
+        } else if (isInsights && urlSection && supervisorPseudoId) {
+          navigate(
+            insightsUrl("supervisionSupervisorOpportunity", {
+              supervisorPseudoId: supervisorPseudoId,
               opportunityTypeUrl: urlSection,
             }),
           );

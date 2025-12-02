@@ -15,4 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { default } from "./InsightsOpportunityFormPage";
+export { default as InsightsOfficerOpportunityFormPage } from "./InsightsOfficerOpportunityFormPage";
+export { default as InsightsSupervisorOpportunityFormPage } from "./InsightsSupervisorOpportunityFormPage";

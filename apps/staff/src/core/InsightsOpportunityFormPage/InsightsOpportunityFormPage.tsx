@@ -17,68 +17,34 @@
 
 import { observer } from "mobx-react-lite";
 
-import { withPresenterManager } from "~hydration-utils";
-
 import NotFound from "../../components/NotFound";
-import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
-import ModelHydrator from "../ModelHydrator";
+import { SupervisionSupervisorOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorOpportunityPresenter";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 
-const ManagedComponent = observer(function InsightsOpportunityFormPage({
-  presenter,
-}: {
-  presenter: SupervisionOpportunityPresenter;
-}) {
-  const { opportunityType, client } = presenter;
+/**
+ * Form UI component for the insights opportunity pages (accessible from supervisor
+ * or officer routes)
+ */
+export const InsightsOpportunityFormPage = observer(
+  function InsightsOpportunityFormPage({
+    presenter,
+  }: {
+    presenter:
+      | SupervisionOpportunityPresenter
+      | SupervisionSupervisorOpportunityPresenter;
+  }) {
+    const { opportunityType, client } = presenter;
 
-  // If the presenter is hydrated and we're on an opportunity page, this stuff should
-  // never be missing in practice.
-  if (!opportunityType || !client) return <NotFound />;
+    // If the presenter is hydrated and we're on an opportunity page, this stuff should
+    // never be missing in practice.
+    if (!opportunityType || !client) return <NotFound />;
 
-  return (
-    <WorkflowsFormLayout
-      selectedPerson={client}
-      selectedOpportunityType={opportunityType}
-    />
-  );
-});
-
-function usePresenter() {
-  const {
-    insightsStore: { supervisionStore },
-    workflowsRootStore: {
-      justiceInvolvedPersonsStore,
-      opportunityConfigurationStore,
-    },
-  } = useRootStore();
-
-  const officerPseudoId = supervisionStore?.officerPseudoId;
-  const oppTypeUrl = supervisionStore?.opportunityTypeUrl;
-  const clientPseudoId = supervisionStore?.clientPseudoId;
-
-  if (!officerPseudoId) return null;
-  if (!oppTypeUrl) return null;
-  if (!clientPseudoId) return null;
-  if (!justiceInvolvedPersonsStore) return null;
-
-  const opportunityType =
-    opportunityConfigurationStore.getOpportunityTypeFromUrl(oppTypeUrl);
-
-  return new SupervisionOpportunityPresenter(
-    supervisionStore,
-    justiceInvolvedPersonsStore,
-    opportunityConfigurationStore,
-    officerPseudoId,
-    opportunityType,
-  );
-}
-
-const InsightsOpportunityFormPage = withPresenterManager({
-  usePresenter,
-  ManagedComponent,
-  managerIsObserver: true,
-  HydratorComponent: ModelHydrator,
-});
-
-export default InsightsOpportunityFormPage;
+    return (
+      <WorkflowsFormLayout
+        selectedPerson={client}
+        selectedOpportunityType={opportunityType}
+      />
+    );
+  },
+);

@@ -74,10 +74,9 @@ const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
 
   const pathParts = pathname.split("/");
 
-  const isFormView = matchPath(
-    INSIGHTS_PATHS.supervisionOpportunityForm,
-    pathname,
-  );
+  const isFormView =
+    matchPath(INSIGHTS_PATHS.supervisionOpportunityForm, pathname) ||
+    matchPath(INSIGHTS_PATHS.supervisionSupervisorOpportunityForm, pathname);
   // For the auto-fill form page, we want to have a full screen experience for the
   // interactive form. The layout includes a back navigation button, so the user can
   // navigate away without access to the nav layout.

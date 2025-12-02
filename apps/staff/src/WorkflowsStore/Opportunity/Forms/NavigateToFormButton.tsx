@@ -54,7 +54,7 @@ export function NavigateToFormButton({
   ...props
 }: React.PropsWithChildren<NavigateToFormButtonProps>): JSX.Element {
   const { pathname } = useLocation();
-  const { officerPseudoId } = useParams();
+  const { officerPseudoId, supervisorPseudoId } = useParams();
   const { buttonFill } = useStatusColors(opportunity);
 
   const handleOnClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -81,7 +81,12 @@ export function NavigateToFormButton({
 
   if (opportunity.config.skipFormPreview) return button;
 
-  const linkToForm = getLinkToForm(pathname, opportunity, officerPseudoId);
+  const linkToForm = getLinkToForm(
+    pathname,
+    opportunity,
+    officerPseudoId,
+    supervisorPseudoId,
+  );
 
   return (
     <Link

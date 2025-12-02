@@ -26,7 +26,10 @@ import { InsightsActionStrategyModalProvider } from "../InsightsActionStrategyMo
 import InsightsMetricPage from "../InsightsMetricPage";
 import InsightsNavLayout from "../InsightsNavLayout";
 import InsightsOnboardingPage from "../InsightsOnboardingPage";
-import InsightsOpportunityFormPage from "../InsightsOpportunityFormPage";
+import {
+  InsightsOfficerOpportunityFormPage,
+  InsightsSupervisorOpportunityFormPage,
+} from "../InsightsOpportunityFormPage";
 import InsightsOpportunityPage from "../InsightsOpportunityPage";
 import { InsightsRoute } from "../InsightsRoute";
 import InsightsStaffPageV2 from "../InsightsStaffPage/InsightsStaffPageV2";
@@ -96,13 +99,20 @@ const PageInsights: React.FC = observer(function PageInsights() {
                   path={insightsRoute({
                     routeName: "supervisionOpportunityForm",
                   })}
-                  element={<InsightsOpportunityFormPage />}
+                  element={<InsightsOfficerOpportunityFormPage />}
                 />
                 <Route
                   path={insightsRoute({
                     routeName: "supervisionSupervisorOpportunity",
                   })}
                   element={<InsightsSupervisorOpportunityPage />}
+                />
+
+                <Route
+                  path={insightsRoute({
+                    routeName: "supervisionSupervisorOpportunityForm",
+                  })}
+                  element={<InsightsSupervisorOpportunityFormPage />}
                 />
               </Route>
               <Route

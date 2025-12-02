@@ -135,6 +135,16 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
     }, [] as JusticeInvolvedPerson[]);
   }
 
+  get clientPseudoId() {
+    return this.supervisionStore.clientPseudoId;
+  }
+
+  get client(): JusticeInvolvedPerson | undefined {
+    return this.clients?.find(
+      (client) => client.pseudonymizedId === this.clientPseudoId,
+    );
+  }
+
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
     return this.supervisionStore.supervisorInfo(this.supervisorPseudoId);
   }

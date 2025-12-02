@@ -345,25 +345,33 @@ export function getLinkToForm(
   pathname: string,
   opportunity: Opportunity,
   officerPseudoId: string | undefined,
+  supervisorPseudoId: string | undefined,
 ): string {
   const isInsights = pathname.startsWith(INSIGHTS_PATHS.supervision);
   const { urlSection } = opportunity.config;
   const justiceInvolvedPersonId = opportunity.person.pseudonymizedId;
   const opportunityPseudoId = opportunity.selectId;
-  const linkToForm =
-    isInsights && officerPseudoId
-      ? insightsUrl("supervisionOpportunityForm", {
-          officerPseudoId,
-          opportunityTypeUrl: urlSection,
-          clientPseudoId: justiceInvolvedPersonId,
-          opportunityPseudoId,
-        })
-      : workflowsUrl("opportunityAction", {
-          urlSection,
-          justiceInvolvedPersonId,
-          opportunityPseudoId,
-        });
-  return linkToForm;
+  const useInsightsOfficerUrl = isInsights && officerPseudoId;
+  const useInsightsSupervisorUrl = isInsights && supervisorPseudoId;
+  if (useInsightsOfficerUrl)
+    return insightsUrl("supervisionOpportunityForm", {
+      officerPseudoId,
+      opportunityTypeUrl: urlSection,
+      clientPseudoId: justiceInvolvedPersonId,
+      opportunityPseudoId,
+    });
+  if (useInsightsSupervisorUrl)
+    return insightsUrl("supervisionSupervisorOpportunityForm", {
+      supervisorPseudoId,
+      opportunityTypeUrl: urlSection,
+      clientPseudoId: justiceInvolvedPersonId,
+      opportunityPseudoId,
+    });
+  return workflowsUrl("opportunityAction", {
+    urlSection,
+    justiceInvolvedPersonId,
+    opportunityPseudoId,
+  });
 }
 export { fieldToDate };
 
