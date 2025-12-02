@@ -25,6 +25,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import config from "~@meetings/app/auth0-config";
 
 import AppErrorBoundary from "./components/AppErrorBoundary";
+import { RecordingProvider } from "./context/RecordingContext";
 import AppNavigator from "./navigation/AppNavigator";
 
 Sentry.init({
@@ -46,9 +47,14 @@ BigInt.prototype.toJSON = function () {
 const App = () => {
   return (
     <GestureHandlerRootView>
-      <Auth0Provider domain={config.domain} clientId={config.clientId}>
+      <Auth0Provider
+        domain={config.domain as string}
+        clientId={config.clientId as string}
+      >
         <AppErrorBoundary>
-          <AppNavigator />
+          <RecordingProvider>
+            <AppNavigator />
+          </RecordingProvider>
         </AppErrorBoundary>
       </Auth0Provider>
     </GestureHandlerRootView>

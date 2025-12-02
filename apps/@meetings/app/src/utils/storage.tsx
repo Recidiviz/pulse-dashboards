@@ -17,6 +17,8 @@
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { RecordingStatus } from "../common/types";
+
 export const saveItem = async (key: string, value: string) => {
   await AsyncStorage.setItem(key, value);
 };
@@ -27,4 +29,28 @@ export const getItem = async (key: string) => {
 
 export const removeItem = async (key: string) => {
   await AsyncStorage.removeItem(key);
+};
+
+// --- Helpers for recording state persistence ---
+export const setRecordingState = async (state: RecordingStatus) => {
+  await saveItem("recordingState", state);
+};
+
+export const getRecordingState = async (): Promise<RecordingStatus> => {
+  const saved = await getItem("recordingState");
+  return (saved as RecordingStatus) || "idle";
+};
+
+// --- Helpers for recording URI persistence ---
+export const saveRecordingUri = async (uri: string) => {
+  await saveItem("recordingUri", uri);
+};
+
+export const getRecordingUri = async (): Promise<string | null> => {
+  const saved = await getItem("recordingUri");
+  return saved || null;
+};
+
+export const removeRecordingUri = async () => {
+  await removeItem("recordingUri");
 };

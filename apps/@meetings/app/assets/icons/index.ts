@@ -43,6 +43,7 @@ import Notes from "./notes.png";
 import Pause from "./pause.png";
 import Play from "./play.png";
 import Plus from "./plus.png";
+import Processing from "./processing.png";
 import Record from "./record.png";
 import Reset from "./reset.png";
 import Resources from "./resources.png";
@@ -81,6 +82,7 @@ const Icons = {
   Filter,
   LeftIcon,
   Lock,
+  Processing,
   Brand,
   Share,
   Clock,

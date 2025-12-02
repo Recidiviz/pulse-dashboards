@@ -24,3 +24,12 @@ export type Client = Awaited<
   lastMeeting: string;
   fullName: string;
 };
+
+export type RecordingStatus =
+  | "idle"
+  | "recording"
+  | "paused"
+  | "uploading"
+  | "stopping"
+  | "discarding"
+  | "ending";

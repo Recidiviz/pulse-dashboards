@@ -17,14 +17,8 @@
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {
-  AudioModule,
-  RecordingPresets,
-  setAudioModeAsync,
-  useAudioRecorder,
-  useAudioRecorderState,
-} from "expo-audio";
-import React, { useEffect, useState } from "react";
+import * as FileSystem from "expo-file-system/legacy";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -32,13 +26,14 @@ import {
   Modal,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 
 import Icons from "../../assets/icons";
 import MeetingSheet from "../components/MeetingSheet";
+import RecordingControls from "../components/RecordingControls";
 import SubHeader from "../components/SubHeader";
+import { useRecording } from "../context/RecordingContext";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { humanReadableTitleCase } from "../utils/format";
@@ -60,46 +55,31 @@ const NewMeetingScreen = () => {
     personId: BigInt(route.params.client.personId),
   };
   const { meetingId } = route.params;
-  const MAX_RECORDING_SECONDS = 90 * 60;
 
-  const [status, setStatus] = useState<
-    | "idle"
-    | "recording"
-    | "paused"
-    | "uploading"
-    | "stopping"
-    | "discarding"
-    | "ending"
-  >("idle");
   const [note, setNote] = useState("");
 
-  const audioRecorder = useAudioRecorder(RecordingPresets["HIGH_QUALITY"]);
-  const recorderState = useAudioRecorderState(audioRecorder);
+  const {
+    status,
+    setStatus,
+    recorderState,
+    startRecording,
+    stopRecording,
+    stopAndUploadRecording,
+    togglePauseResume: contextTogglePauseResume,
+    initializeRecording,
+    cleanupRecording,
+  } = useRecording();
 
+  const prevRecorderStateRef = useRef(recorderState.isRecording);
   useEffect(() => {
     (async () => {
-      const status = await AudioModule.requestRecordingPermissionsAsync();
-      if (!status.granted) {
-        Alert.alert("Permission to access microphone was denied");
-      }
-
-      await setAudioModeAsync({
-        playsInSilentMode: true,
-        allowsRecording: true,
-        shouldPlayInBackground: true,
-      });
-    })();
-    (async () => {
+      await initializeRecording();
       const saved = await getItem("note");
       setNote(saved);
+      requestNotificationPermissions();
     })();
-    requestNotificationPermissions();
-  }, []);
-
-  useEffect(() => {
-    handleAutoStopRecording();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recorderState.isRecording]);
+  }, []);
 
   const navigateToClientProfile = () => {
     navigation.reset({
@@ -123,7 +103,6 @@ const NewMeetingScreen = () => {
   const endMeetingMutation = trpc.v1.meeting.endMeeting.useMutation({
     onSuccess: () => {
       console.log("Meeting successfully ended and processing started");
-      navigateToClientProfile();
     },
     onError: (err) => {
       console.error("[endMeeting] Failed:", err);
@@ -142,7 +121,6 @@ const NewMeetingScreen = () => {
   const discardMeetingMutation = trpc.v1.meeting.discardMeeting.useMutation({
     onSuccess: () => {
       console.log("Meeting discarded successfully");
-      navigateToClientProfile();
     },
     onError: (err) => {
       console.error("[discardMeeting] Failed:", err);
@@ -155,106 +133,118 @@ const NewMeetingScreen = () => {
     { enabled: false },
   );
 
-  const uploadSegmentToGCS = async (uri: string) => {
-    const { data } = await refetch(); // data is the signed URL
-    if (!data) return;
+  const uploadSegmentToGCS = useCallback(
+    async (uri: string) => {
+      const fileInfo = await FileSystem.getInfoAsync(uri);
+      if (!fileInfo.exists) {
+        console.warn("File does not exist:", uri);
+        return;
+      }
 
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    await fetch(data, {
-      method: "PUT",
-      body: blob,
-      headers: { "Content-Type": "audio/m4a" },
-    });
-  };
+      const { data: signedUrl } = await refetch();
+      if (!signedUrl) return;
 
-  const startRecording = async () => {
-    await audioRecorder.prepareToRecordAsync();
-    audioRecorder.record({ forDuration: MAX_RECORDING_SECONDS });
-    setStatus("recording");
-  };
-  const stopRecording = () => setStatus("stopping");
+      try {
+        await FileSystem.uploadAsync(signedUrl, uri, {
+          httpMethod: "PUT",
+          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+          headers: { "Content-Type": "audio/m4a" },
+        });
+      } catch (error) {
+        console.error("Upload failed:", error);
+        throw error;
+      }
+    },
+    [refetch],
+  );
 
-  const stopAndUploadRecording = async () => {
-    try {
-      await audioRecorder.stop();
-      const uri = audioRecorder.uri;
-      if (uri) await uploadSegmentToGCS(uri);
-      await updateNotesMutation.mutateAsync({
-        clientId: client.personId,
-        meetingId,
-        notes: note,
-      });
-    } catch (err) {
-      console.error("[UploadRecordingFailed] error:", err);
-      Alert.alert("Upload Recording Failed");
-    } finally {
-      setStatus("paused");
-    }
-  };
+  const handleTogglePauseResume = async () => {
+    await contextTogglePauseResume(uploadSegmentToGCS);
 
-  const togglePauseResume = async () => {
-    if (status === "uploading") return;
-
-    if (status === "paused") {
-      startRecording();
-    } else if (status === "recording") {
-      setStatus("uploading");
-      // We shouldn't need to `await` here because we don't need the recording to have been uploaded
-      // until the meeting is ended.
-      stopAndUploadRecording();
+    // Update notes after pausing
+    if (status === "recording") {
+      try {
+        await updateNotesMutation.mutateAsync({
+          clientId: client.personId,
+          meetingId,
+          notes: note,
+        });
+      } catch (err) {
+        console.error("Failed to update notes:", err);
+      }
     }
   };
 
   const handleFinishAndSave = async () => {
     setStatus("ending");
+
     try {
       if (recorderState.isRecording) {
-        // Here we do want to make sure the recording is uploaded, otherwise we get a race condition
-        // where the upload might not have finished before we start stitching, which happens when
-        // we call endMeeting.
-        await stopAndUploadRecording();
+        await stopAndUploadRecording(uploadSegmentToGCS);
       }
+
       await removeItem("note");
+
       await endMeetingMutation.mutateAsync({
         clientId: client.personId,
         meetingId,
         notes: note,
       });
+
+      await cleanupRecording();
+      navigateToClientProfile();
     } catch (err) {
-      console.error("[handleFinishAndSave] error:", err);
+      console.error("Failed to end meeting:", err);
       Alert.alert("Error", "Failed to end meeting. Please try again.");
-      setStatus("paused");
+      setStatus("idle");
     }
   };
 
   const handleContinue = () => setStatus("recording");
   const handleDiscard = () => setStatus("discarding");
+
   const handleFinalDiscard = async () => {
-    await audioRecorder.stop();
+    await cleanupRecording();
+
     await discardMeetingMutation.mutateAsync({
       clientId: client.personId,
       meetingId,
     });
-    setStatus("idle");
+
+    navigateToClientProfile();
   };
 
-  const handleAutoStopRecording = async () => {
-    if (status === "recording" && !recorderState.isRecording) {
-      setStatus("uploading");
-      stopAndUploadRecording();
-      sendNotification(
-        "Recording Paused",
-        "90 minute-at-a-time recording limit reached. Pausing Recording",
-      );
+  const handleAutoStopRecording = useCallback(async () => {
+    setStatus("uploading");
+    await stopAndUploadRecording(uploadSegmentToGCS);
+    setStatus("paused");
+
+    sendNotification(
+      "Recording Paused",
+      "90 minute-at-a-time recording limit reached. Pausing Recording",
+    );
+  }, [setStatus, stopAndUploadRecording, uploadSegmentToGCS]);
+
+  // Auto-stop recording when limit is reached
+  useEffect(() => {
+    //introduced to keep track of previous recorder state to prevent initial triggering of the handleAutoStopRecording function
+    const prevIsRecording = prevRecorderStateRef.current;
+    if (
+      status === "recording" &&
+      prevIsRecording &&
+      !recorderState.isRecording
+    ) {
+      handleAutoStopRecording();
     }
-  };
+
+    prevRecorderStateRef.current = recorderState.isRecording;
+  }, [status, recorderState.isRecording, handleAutoStopRecording]);
 
   if (status === "ending") {
     return (
-      <View className="flex-1 flex-row items-center justify-center bg-white">
+      <View className="flex-row flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="small" color="text-primary" />
-        <Text className="p-4 text-lg font-medium text-primary">
+        <Text className="p-4 font-medium text-primary text-lg">
           Meeting ending...
         </Text>
       </View>
@@ -262,19 +252,19 @@ const NewMeetingScreen = () => {
   }
 
   const RecordingIntro = (
-    <View className="flex-1 items-center justify-center">
+    <View className="flex-1 justify-center items-center">
       <View
-        className="mb-6 size-16 items-center justify-center border border-gray-200 bg-gray-100"
+        className="justify-center items-center bg-gray-100 mb-6 border border-gray-200 size-16"
         style={{ borderRadius: 17 }}
       >
         <Image source={Icons.Microphone} className="size-8" />
       </View>
 
-      <Text className="mb-2 text-center text-2xl font-bold leading-8 tracking-[-0.014rem] text-primary">
+      <Text className="mb-2 font-bold text-primary text-2xl text-center leading-8 tracking-[-0.014rem]">
         Meeting Recording
       </Text>
 
-      <Text className="px-4 text-center text-sm font-normal leading-5 tracking-[-0.02em] text-gray-500">
+      <Text className="px-4 font-normal text-gray-500 text-sm text-center leading-5 tracking-[-0.02em]">
         This meeting will be recorded and transcribed for note-taking. Be sure
         to confirm that everyone present is aware and has agreed to recording.
       </Text>
@@ -283,9 +273,9 @@ const NewMeetingScreen = () => {
 
   const RecordingNotes = (
     <View className="mt-6">
-      <View className="mb-2 flex-row items-center">
+      <View className="flex-row items-center mb-2">
         <Image source={Icons.Notes} className="mr-2 size-5" />
-        <Text className="text-lg font-semibold text-primary">Notepad</Text>
+        <Text className="font-semibold text-primary text-lg">Notepad</Text>
       </View>
 
       <TextInput
@@ -301,64 +291,6 @@ const NewMeetingScreen = () => {
       />
     </View>
   );
-  const isUploading = status === "uploading";
-  const buttonBgClass = isUploading ? "bg-gray-300" : "bg-[#B42D2D]";
-  const buttonTextClass = isUploading ? "text-gray-700" : "text-white";
-  let pauseResumeBgColor = "#4D5255";
-  if (isUploading) {
-    pauseResumeBgColor = "#D1D5DB";
-  } else if (status === "paused") {
-    pauseResumeBgColor = "#006C67";
-  }
-
-  const RecordingControls =
-    status === "idle" ? (
-      <TouchableOpacity
-        className="flex-row items-center justify-center rounded-full bg-[#006C67] py-5"
-        onPress={startRecording}
-      >
-        <Image source={Icons.Play} className="mr-2 size-4" />
-        <Text className="font-semibold text-white">Start Recording</Text>
-      </TouchableOpacity>
-    ) : (
-      <>
-        {status === "recording" && (
-          <View className="flex-row items-center justify-center pb-2">
-            <Image source={Icons.Record} className="size-4" />
-            <Text className="px-2 text-black">Recording in progress</Text>
-          </View>
-        )}
-        <View className="flex-row items-center justify-center">
-          <TouchableOpacity
-            className={`w-[120px] flex-row items-center justify-center rounded-full px-8 py-3 ${buttonBgClass}`}
-            onPress={stopRecording}
-            disabled={isUploading}
-          >
-            <Image source={Icons.Stop} className="mr-2 size-6" />
-            <Text className={`font-semibold ${buttonTextClass}`}>Stop</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="ml-3 w-[120px] flex-row items-center justify-center rounded-full px-8 py-3"
-            onPress={togglePauseResume}
-            disabled={isUploading}
-            style={{ backgroundColor: pauseResumeBgColor }}
-          >
-            {isUploading ? (
-              <ActivityIndicator size="small" color="white" className="mr-2" />
-            ) : (
-              <Image
-                source={status === "paused" ? Icons.Play : Icons.Pause}
-                className="mr-2 size-6"
-              />
-            )}
-            <Text className={`font-semibold ${buttonTextClass}`}>
-              {status === "paused" ? "Resume" : "Pause"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </>
-    );
 
   const isMeetingActive = status !== "idle" || recorderState.isRecording;
   return (
@@ -370,23 +302,25 @@ const NewMeetingScreen = () => {
       />
 
       <View className="flex-1 px-6">
-        {/* {RecordingNotes} */}
         {isMeetingActive ? RecordingNotes : RecordingIntro}
       </View>
 
-      <View className="rounded-t-2xl bg-gray-100 px-6 py-12">
-        <Text className="text-center text-base font-semibold text-primary">
+      <View className="bg-gray-100 px-6 py-12 rounded-t-2xl">
+        <Text className="font-semibold text-primary text-base text-center">
           {client.fullName}
         </Text>
-        <Text className="mb-4 text-center text-sm text-gray-600">
+        <Text className="mb-4 text-gray-600 text-sm text-center">
           ID: {client.displayPersonExternalId} •{" "}
           {humanReadableTitleCase(client.supervision)}
         </Text>
-
-        {RecordingControls}
+        <RecordingControls
+          status={status}
+          onStart={startRecording}
+          onStop={stopRecording}
+          onPauseResume={handleTogglePauseResume}
+        />
       </View>
 
-      {/* Modal Bottom Sheet */}
       <Modal
         visible={["stopping", "discarding"].includes(status)}
         animationType="slide"
