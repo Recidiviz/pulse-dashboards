@@ -44,7 +44,11 @@ beforeEach(() => {
     "US_MA",
     residentsConfigByState.US_MA,
   );
-  presenter = new ResidentsSearchPresenter(residentsStore, rootStore.uiStore);
+  presenter = new ResidentsSearchPresenter(
+    residentsStore,
+    rootStore.uiStore,
+    rootStore.userStore,
+  );
 });
 
 afterEach(() => {
@@ -82,6 +86,10 @@ describe("hydration", () => {
         {
           "label": "Demo Facility",
           "value": "DEMO FACILITY",
+        },
+        {
+          "label": "Demo Facility 2",
+          "value": "DEMO FACILITY 2",
         },
       ]
     `);

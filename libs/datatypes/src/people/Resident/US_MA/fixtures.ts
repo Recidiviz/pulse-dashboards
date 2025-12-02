@@ -42,7 +42,7 @@ export const rawUsMaResidents: Array<
     gender: "MALE",
     personName: fullNameFactory("male").build(),
     pseudonymizedId: `anon${resId.toLowerCase()}`,
-    facilityId: "DEMO FACILITY",
+    facilityId: `DEMO FACILITY${i < 2 ? "" : " 2"}`,
     metadata: rawUsMaResidentMetadataFixtures[i],
     recordId: `us_ma_${resId}`,
     allEligibleOpportunities: [],

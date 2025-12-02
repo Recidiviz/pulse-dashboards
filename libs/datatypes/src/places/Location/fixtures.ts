@@ -102,6 +102,13 @@ export const locationRecordFixtures: Array<LocationRecord> = [
     id: "DEMO FACILITY",
     name: "Demo Facility",
   },
+  {
+    stateCode: "US_MA",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "DEMO FACILITY 2",
+    name: "Demo Facility 2",
+  },
 
   //
   // Maine

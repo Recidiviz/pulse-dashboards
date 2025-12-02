@@ -85,16 +85,12 @@ describe("hydration", () => {
     expect(presenter.selectOptions.map((o) => o.label)).toMatchInlineSnapshot(`
       [
         "Laurence Baumbach (RES001)",
-        "Marty Fahey (RES004)",
         "Dan Krajcik (RES002)",
-        "Israel Willms (RES003)",
       ]
       `);
     expect(presenter.selectOptions.map((o) => o.value)).toEqual([
       usMaResidents[0],
-      usMaResidents[3],
       usMaResidents[1],
-      usMaResidents[2],
     ]);
 
     expect(residentsStore.populateResidents).toHaveBeenCalledWith(

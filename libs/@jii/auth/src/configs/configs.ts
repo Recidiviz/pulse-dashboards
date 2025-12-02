@@ -103,7 +103,7 @@ export const authorizedUserProfileSchema = z
     pseudonymizedId: residentUserProfileSchema.shape.pseudonymizedId.optional(),
     permissions: residentUserProfileSchema.shape.permissions.optional(),
     allowedStates: z.array(z.string()).optional(),
-    district: z.string().optional(),
+    district: z.string().nullable().optional(),
   })
   .refine(
     (d) => {

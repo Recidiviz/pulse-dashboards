@@ -53,6 +53,7 @@ export type ResidentsConfig = {
   eligibility?: EligibilityModuleConfig;
   egt?: EarnedGoodTimeConfig;
   translation: TranslationConfig;
+  limitDistrictSearchOptions?: boolean;
 };
 
 export type EligibilityModuleConfig = {

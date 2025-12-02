@@ -17,7 +17,7 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { ResidentsStore, UiStore } from "~@jii/data";
+import { ResidentsStore, UiStore, UserStore } from "~@jii/data";
 import {
   Hydratable,
   HydratesFromSource,
@@ -32,6 +32,7 @@ export class ResidentsSearchPresenter implements Hydratable {
   constructor(
     private residentsStore: ResidentsStore,
     private uiStore: UiStore,
+    private userStore: UserStore,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
@@ -64,7 +65,15 @@ export class ResidentsSearchPresenter implements Hydratable {
   }
 
   get residentFilterOptions(): Array<SelectOption> {
-    return this.facilities.map((facility) => ({
+    let { facilities } = this;
+    const { district } = this.userStore;
+    const { limitDistrictSearchOptions } = this.residentsStore.config;
+
+    if (limitDistrictSearchOptions && district) {
+      facilities = facilities.filter((f) => f.id === district);
+    }
+
+    return facilities.map((facility) => ({
       value: facility.id,
       label: facility.name,
     }));
@@ -75,6 +84,10 @@ export class ResidentsSearchPresenter implements Hydratable {
    * away from the page (passing a default only affects which option is selected when the component mounts)
    */
   get residentFilterDefaultOption() {
+    if (this.residentFilterOptions.length === 1) {
+      return this.residentFilterOptions[0];
+    }
+
     const {
       selectedFacilityIdFilterOptionValue: selectedResidentsFilterOptionValue,
     } = this.uiStore;

@@ -129,6 +129,13 @@ export class UserStore {
     return [];
   }
 
+  get district(): string | undefined {
+    if (isAuthorizedState(this.authState)) {
+      return this.authState.userProfile.district || undefined;
+    }
+    return undefined;
+  }
+
   getUserProperty(key: UserPropertyKey) {
     return localStorage.getItem(key);
   }

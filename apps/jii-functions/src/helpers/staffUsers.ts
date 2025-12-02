@@ -26,6 +26,7 @@ import { secrets } from "./secrets";
 type AdminPanelUserResponse = {
   stateCode: string;
   district: string;
+  allowedApps: Record<"jii" | "staff", boolean>;
 };
 
 export async function checkAdminPanelPermissions(
@@ -33,12 +34,10 @@ export async function checkAdminPanelPermissions(
 ): Promise<AuthorizedUserProfile | undefined> {
   // Load service account credentials from Secrets Manager
   const credentials = JSON.parse(
-    // TODO: Add this value to the secrets file
     await secrets.getLatestValue("JII_FUNCTIONS_SERVICE_ACCOUNT_CREDENTIAL"),
   );
 
   const auth = new GoogleAuth({ credentials });
-  // TODO: Add this value to the secrets file
   const client = await auth.getIdTokenClient(
     await secrets.getLatestValue(
       "JII_FUNCTIONS_SERVICE_ACCOUNT_TARGET_AUDIENCE",
@@ -56,12 +55,16 @@ export async function checkAdminPanelPermissions(
     retry: true,
   });
 
-  const { stateCode, district } = response.data;
+  const { stateCode, district, allowedApps } = response.data;
+
+  if (!allowedApps?.jii) {
+    // User does not have access to the JII app
+    return undefined;
+  }
 
   return {
     stateCode,
     district,
-    allowedStates: [stateCode],
     permissions: ["live_data", "enhanced"],
   };
 }

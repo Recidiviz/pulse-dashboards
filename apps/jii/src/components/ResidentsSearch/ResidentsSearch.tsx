@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Header34, spacing, typography } from "@recidiviz/design-system";
+import {
+  Body16,
+  Header34,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC, useId } from "react";
@@ -37,9 +42,10 @@ const FilterLabel = styled.label`
 `;
 
 function usePresenter() {
-  const { uiStore } = useRootStore();
+  const { uiStore, userStore } = useRootStore();
   const { residentsStore } = useResidentsContext();
-  return new ResidentsSearchPresenter(residentsStore, uiStore);
+
+  return new ResidentsSearchPresenter(residentsStore, uiStore, userStore);
 }
 
 const ManagedComponent: FC<{ presenter: ResidentsSearchPresenter }> = observer(
@@ -50,16 +56,22 @@ const ManagedComponent: FC<{ presenter: ResidentsSearchPresenter }> = observer(
       <div>
         <Header34 as="h1">Look up a resident</Header34>
 
-        <FilterLabel id={filterLabelId}>
-          Select a location to filter by:
-          <Selector
-            labelId={filterLabelId}
-            options={presenter.residentFilterOptions}
-            onChange={(v) => presenter.setResidentsFilter(v)}
-            placeholder=""
-            defaultValue={presenter.residentFilterDefaultOption}
-          />
-        </FilterLabel>
+        {presenter.residentFilterOptions.length > 1 ? (
+          <FilterLabel id={filterLabelId}>
+            Select a location to filter by:
+            <Selector
+              labelId={filterLabelId}
+              options={presenter.residentFilterOptions}
+              onChange={(v) => presenter.setResidentsFilter(v)}
+              placeholder=""
+              defaultValue={presenter.residentFilterDefaultOption}
+            />
+          </FilterLabel>
+        ) : (
+          <Body16 as="p">
+            Showing residents in {presenter.residentFilterDefaultOption?.value}
+          </Body16>
+        )}
 
         {presenter.residentFilterDefaultOption?.value && (
           <ResidentSelector

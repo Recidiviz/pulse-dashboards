@@ -24,4 +24,5 @@ export const usTnResidentsConfig: ResidentsConfig = {
   translation: {
     additionalLanguages: [],
   },
+  limitDistrictSearchOptions: true,
 };
