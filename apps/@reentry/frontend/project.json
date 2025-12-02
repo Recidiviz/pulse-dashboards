@@ -54,7 +54,8 @@
         "dev_gcp": {},
         "staging": {},
         "demo": {},
-        "production": {}
+        "production": {},
+        "cherry-pick": {}
       },
       "defaultConfiguration": "dev"
     },
@@ -78,6 +79,9 @@
           "command": "cp apps/@reentry/frontend/.env.demo dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
         },
         "production": {
+          "command": "cp apps/@reentry/frontend/.env.production dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
+        },
+        "cherry-pick": {
           "command": "cp apps/@reentry/frontend/.env.production dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
         }
       },
