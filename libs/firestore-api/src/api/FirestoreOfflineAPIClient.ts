@@ -20,10 +20,6 @@ import { allResidents, locationRecordFixtures } from "~datatypes";
 import { FirestoreAPI } from "./interface";
 
 export class FirestoreOfflineAPIClient implements FirestoreAPI {
-  async authenticate(): Promise<void> {
-    return;
-  }
-
   async residents(stateCode: string) {
     return allResidents.filter((r) => r.stateCode === stateCode);
   }

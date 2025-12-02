@@ -28,8 +28,7 @@
   },
 ] */
 
-import { FirebaseApp, initializeApp } from "firebase/app";
-import { getAuth, signInWithCustomToken } from "firebase/auth";
+import { FirebaseApp } from "firebase/app";
 import {
   collection,
   doc,
@@ -56,18 +55,13 @@ import { collectionNameFromConfig } from "../utils/collectionNames";
 import { FilterParams, FirestoreAPI } from "./interface";
 
 export class FirestoreAPIClient implements FirestoreAPI {
-  private app: FirebaseApp;
-
   private db: Firestore;
 
   constructor(
-    projectId: string,
-    apiKey: string,
+    private app: FirebaseApp,
     private isDemoMode: () => boolean,
     private proxyHost?: string,
   ) {
-    this.app = initializeApp({ projectId, apiKey });
-
     this.db = initializeFirestore(this.app, {
       ...(proxyHost
         ? {
@@ -79,18 +73,6 @@ export class FirestoreAPIClient implements FirestoreAPI {
           }
         : {}),
     });
-  }
-
-  async authenticate(firebaseToken: string) {
-    const auth = getAuth(this.app);
-    if (this.proxyHost) {
-      // there seems to be no documented API for changing this config,
-      // but editing it directly works! Only making the overrides necessary
-      // to support custom token logins, not every possible API call
-      auth.config.apiHost = `${this.proxyHost}/gcp-identitytoolkit`;
-      auth.config.tokenApiHost = `${this.proxyHost}/gcp-securetoken`;
-    }
-    await signInWithCustomToken(auth, firebaseToken);
   }
 
   private parseFirestoreDocument<Schema extends z.ZodTypeAny>(

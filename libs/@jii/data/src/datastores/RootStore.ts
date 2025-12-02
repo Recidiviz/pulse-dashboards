@@ -25,6 +25,8 @@ import { ApiClient } from "../apis/data/ApiClient";
 import { DataAPI } from "../apis/data/interface";
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
 import { StateCode } from "../configs/types";
+import { proxyHost } from "../utils/proxy";
+import { FirebaseStore } from "./FirebaseStore";
 import { LoginConfigStore } from "./LoginConfigStore";
 import { ResidentsStore } from "./ResidentsStore";
 import { TranslationStore } from "./TranslationStore";
@@ -53,6 +55,8 @@ export class RootStore {
 
   translationStore: TranslationStore;
 
+  firebaseStore: FirebaseStore;
+
   constructor() {
     makeObservable(this, {
       populateResidentsStore: true,
@@ -60,6 +64,12 @@ export class RootStore {
     });
 
     this.translationStore = new TranslationStore(this);
+
+    this.firebaseStore = new FirebaseStore(
+      import.meta.env["VITE_FIRESTORE_PROJECT"],
+      import.meta.env["VITE_FIRESTORE_API_KEY"],
+      proxyHost(),
+    );
 
     this.userStore = new UserStore(this.translationStore);
 
@@ -90,6 +100,9 @@ export class RootStore {
         },
         get config() {
           return store.residentsStore?.config;
+        },
+        get firebaseStore() {
+          return store.firebaseStore;
         },
       };
 

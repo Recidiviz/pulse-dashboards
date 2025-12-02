@@ -26,6 +26,7 @@ import {
   ResidentsConfig,
   StateCode,
 } from "../../configs/types";
+import { FirebaseStore } from "../../datastores/FirebaseStore";
 import { proxyHost } from "../../utils/proxy";
 import { AuthManager } from "../auth/AuthManager";
 import { DataAPI } from "./interface";
@@ -39,13 +40,13 @@ export class ApiClient implements DataAPI {
     private externals: {
       authManager: AuthManager;
       config?: ResidentsConfig;
+      firebaseStore: FirebaseStore;
     },
   ) {
     makeObservable<this, "isAuthenticated">(this, { isAuthenticated: true });
 
     this.firestoreClient = new FirestoreAPIClient(
-      import.meta.env["VITE_FIRESTORE_PROJECT"],
-      import.meta.env["VITE_FIRESTORE_API_KEY"],
+      this.externals.firebaseStore.app,
       () => this.externals.authManager.isDemoUser,
       proxyHost(),
     );
@@ -56,7 +57,7 @@ export class ApiClient implements DataAPI {
       // otherwise this would result in an error being thrown
       const firebaseToken = await this.externals.authManager.getFirebaseToken();
 
-      await this.firestoreClient.authenticate(firebaseToken);
+      await this.externals.firebaseStore.authenticate(firebaseToken);
       updateValue(true);
     }, false);
   }

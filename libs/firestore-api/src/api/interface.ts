@@ -25,8 +25,6 @@ import { FirestoreCollectionKey } from "../types";
 export type FilterParams = Parameters<typeof where>;
 
 export interface FirestoreAPI {
-  authenticate(firebaseToken: string): Promise<void>;
-
   residents(
     stateCode: string,
     filters?: Array<FilterParams>,

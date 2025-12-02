@@ -16,12 +16,14 @@
 // =============================================================================
 
 import { waitFor } from "@testing-library/react";
+import { FirebaseApp } from "firebase/app";
 import { z } from "zod";
 
 import { usAzResidents, usMeSccpFixtures } from "~datatypes";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
+import { FirebaseStore } from "../../datastores/FirebaseStore";
 import { proxyHost } from "../../utils/proxy";
 import type { AuthManager } from "../auth/AuthManager";
 import { ApiClient } from "./ApiClient";
@@ -31,28 +33,31 @@ vi.mock("../../utils/proxy");
 
 let client: ApiClient;
 const getFirebaseTokenMock = vi.fn();
+const authenticateMock = vi.fn();
+const mockFirebaseApp = {} as FirebaseApp;
+const mockFirebaseStore = {
+  app: mockFirebaseApp,
+  authenticate: authenticateMock,
+} as unknown as FirebaseStore;
 
-const projectIdMock = "test-project-id";
-const apiKeyMock = "test-api-key";
 const stateCodeMock = "US_AZ";
 
 beforeEach(() => {
   getFirebaseTokenMock.mockResolvedValue("test-firebase-token");
-  vi.stubEnv("VITE_FIRESTORE_PROJECT", projectIdMock);
-  vi.stubEnv("VITE_FIRESTORE_API_KEY", apiKeyMock);
 
   client = new ApiClient({
     authManager: {
       getFirebaseToken: getFirebaseTokenMock,
+      isDemoUser: false,
     } as unknown as AuthManager,
     config: residentsConfigByState.US_AZ,
+    firebaseStore: mockFirebaseStore,
   });
 });
 
 test("firestore client", () => {
   expect(FirestoreAPIClient).toHaveBeenCalledExactlyOnceWith(
-    projectIdMock,
-    apiKeyMock,
+    mockFirebaseApp,
     expect.any(Function),
     undefined,
   );
@@ -63,9 +68,7 @@ test("authenticate", async () => {
 
   await waitFor(() => expect(client.isAuthenticated).toBeTrue());
 
-  expect(FirestoreAPIClient.prototype.authenticate).toHaveBeenCalledWith(
-    "test-firebase-token",
-  );
+  expect(authenticateMock).toHaveBeenCalledWith("test-firebase-token");
 });
 
 describe("after authentication", () => {
@@ -191,13 +194,14 @@ test("with proxy option", () => {
   client = new ApiClient({
     authManager: {
       getFirebaseToken: getFirebaseTokenMock,
+      isDemoUser: false,
     } as unknown as AuthManager,
     config: residentsConfigByState.US_AZ,
+    firebaseStore: mockFirebaseStore,
   });
 
   expect(FirestoreAPIClient).toHaveBeenLastCalledWith(
-    projectIdMock,
-    apiKeyMock,
+    mockFirebaseApp,
     expect.any(Function),
     "foo.bar",
   );

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { Auth, getAuth, signInWithCustomToken } from "firebase/auth";
+import { Auth, getAuth } from "firebase/auth";
 import {
   collection,
   CollectionReference,
@@ -78,21 +78,19 @@ beforeEach(() => {
   vi.mocked(query).mockReturnValue(queryMock as unknown as Query);
   vi.mocked(doc).mockReturnValue(docMock as unknown as DocumentReference);
 
-  client = new FirestoreAPIClient("project-xx", "api-xx", demoModeStub);
+  client = new FirestoreAPIClient(
+    appMock as unknown as FirebaseApp,
+    demoModeStub,
+  );
 });
 
 test("initialize", () => {
-  expect(initializeApp).toHaveBeenCalledExactlyOnceWith({
-    projectId: "project-xx",
-    apiKey: "api-xx",
-  });
   expect(initializeFirestore).toHaveBeenCalledExactlyOnceWith(appMock, {});
 });
 
 test("initialize with proxy", () => {
   client = new FirestoreAPIClient(
-    "project-xx",
-    "api-xx",
+    appMock as unknown as FirebaseApp,
     demoModeStub,
     "foo.bar",
   );
@@ -100,15 +98,6 @@ test("initialize with proxy", () => {
     host: "foo.bar/firestore",
     experimentalForceLongPolling: true,
   });
-});
-
-test("authenticate", async () => {
-  client.authenticate("token-xx");
-  expect(getAuth).toHaveBeenCalledExactlyOnceWith(appMock);
-  expect(signInWithCustomToken).toHaveBeenCalledExactlyOnceWith(
-    authMock,
-    "token-xx",
-  );
 });
 
 describe("residents", () => {
