@@ -20,7 +20,7 @@
 import { groupBy } from "lodash";
 
 import { SystemId } from "~datatypes";
-import { psiRootPath } from "~sentencing-client";
+import { psiRootPath, sarRootPath } from "~sentencing-client";
 
 import { MetricId } from "./models/types";
 
@@ -38,6 +38,7 @@ export const DASHBOARD_VIEWS = {
   workflows: "workflows",
   insights: "insights",
   psi: psiRootPath,
+  sar: sarRootPath,
   revocations: "revocations", // lantern
 } as const;
 export type DashboardViewRootPath = (typeof DASHBOARD_VIEWS)[DashboardView];

@@ -16,6 +16,7 @@
 // =============================================================================
 
 export const psiRootPath = "psi";
+export const sarRootPath = "sar";
 
 export const PSI_PATHS: Record<PSIPage, string> = {
   psi: `/${psiRootPath}`,
@@ -25,7 +26,15 @@ export const PSI_PATHS: Record<PSIPage, string> = {
   supervisorDashboard: `/${psiRootPath}/dashboard/supervisor/:staffPseudoId`,
 };
 
+export const SAR_PATHS: Record<SARPage, string> = {
+  sar: `/${sarRootPath}`,
+  dashboard: `/${sarRootPath}/dashboard`,
+  staffDashboard: `/${sarRootPath}/dashboard/staff/:staffPseudoId`,
+  sarDetails: `/${sarRootPath}/dashboard/staff/:staffPseudoId/sar/:sarId`,
+};
+
 export type PSIPage = keyof typeof PSI_PAGES;
+export type SARPage = keyof typeof SAR_PAGES;
 
 export const PSI_PAGES = {
   psi: psiRootPath,
@@ -35,9 +44,21 @@ export const PSI_PAGES = {
   caseDetails: "caseDetails",
 } as const;
 
+export const SAR_PAGES = {
+  sar: sarRootPath,
+  dashboard: "dashboard",
+  staffDashboard: "staffDashboard",
+  sarDetails: "sarDetails",
+} as const;
+
 /** @returns the relative route template string for a PSI page */
 export const psiRoute = ({ routeName }: { routeName: PSIPage }): string => {
   return PSI_PATHS[routeName].replace(PSI_PATHS.psi, "");
+};
+
+/** @returns the relative route template string for a SAR page */
+export const sarRoute = ({ routeName }: { routeName: SARPage }): string => {
+  return SAR_PATHS[routeName].replace(SAR_PATHS.sar, "");
 };
 
 export type PSIRouteParams = {
@@ -45,13 +66,30 @@ export type PSIRouteParams = {
   caseId?: string;
 };
 
-export const psiUrl = (routeName: PSIPage, params: PSIRouteParams): string => {
+export type SARRouteParams = {
+  staffPseudoId: string;
+  sarId?: string;
+};
+
+function buildUrl<T extends string>(
+  paths: Record<T, string>,
+  routeName: T,
+  params?: Record<string, string>,
+): string {
   if (params) {
-    let path = PSI_PATHS[routeName];
+    let path = paths[routeName];
     Object.entries(params).forEach(([key, value]) => {
       path = path.replace(`:${key}`, value);
     });
     return path;
   }
-  return PSI_PATHS[routeName];
+  return paths[routeName];
+}
+
+export const psiUrl = (routeName: PSIPage, params: PSIRouteParams): string => {
+  return buildUrl(PSI_PATHS, routeName, params);
+};
+
+export const sarUrl = (routeName: SARPage, params: SARRouteParams): string => {
+  return buildUrl(SAR_PATHS, routeName, params);
 };

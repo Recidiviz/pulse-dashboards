@@ -23,7 +23,7 @@ import React from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { palette } from "~design-system";
-import { PSI_PATHS } from "~sentencing-client";
+import { PSI_PATHS, SAR_PATHS } from "~sentencing-client";
 
 import IE11Banner from "../components/IE11Banner";
 import NotFound from "../components/NotFound";
@@ -45,6 +45,7 @@ import { NavigationLayout } from "./NavigationLayout";
 import PageInsights from "./PageInsights";
 import PageMethodology from "./PageMethodology";
 import PagePSI from "./PagePSI";
+import PageSAR from "./PageSAR";
 import PageSystem from "./PageSystem";
 import PageVitals from "./PageVitals";
 import PageWorkflows from "./PageWorkflows";
@@ -69,11 +70,13 @@ const DashboardLayout: React.FC = () => {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const currentView = pathname.split("/")[1];
+
   // TODO(#5636) Eliminate PartiallyTypedRootStore
   const {
     currentTenantId,
     userStore: { userAllowedNavigation },
   } = useRootStore() as PartiallyTypedRootStore;
+
   const dashboardAllowedPaths = [
     ...getPathsFromNavigation(userAllowedNavigation),
     "/profile",
@@ -84,7 +87,7 @@ const DashboardLayout: React.FC = () => {
     !(
       DASHBOARD_TENANTS.includes(currentTenantId) &&
       ALL_DASHBOARD_VIEWS.includes(currentView) &&
-      dashboardAllowedPaths.includes(getPathWithoutParams(pathname))
+      dashboardAllowedPaths.includes(getPathWithoutParams(pathname)) 
     )
   ) {
     return <NotFound />;
@@ -136,6 +139,7 @@ const DashboardLayout: React.FC = () => {
                 element={<PageWorkflows />}
               />
               <Route path={`${PSI_PATHS.psi}/*`} element={<PagePSI />} />
+              <Route path={`${SAR_PATHS.sar}/*`} element={<PageSAR />} />
               {/* TODO(#4601): Remove redirect after confirming no longer in use */}
               <Route
                 path="/id-methodology/:dashboard"
