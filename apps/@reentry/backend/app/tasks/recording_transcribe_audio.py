@@ -200,7 +200,7 @@ async def _transcribe_audio_with_deepgram(
             # Generate a signed URL that expires in 5 minutes
             signed_url = await recording_service.generate_signed_url(
                 file_path=recording_session.gcs_final_file_path,
-                expiration_minutes=5,
+                expiration_minutes=12,
             )
 
         task_logger.info("Signed URL generated for Deepgram")
