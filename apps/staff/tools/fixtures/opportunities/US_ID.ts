@@ -427,7 +427,13 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Eligible Now", "Almost Eligible", "Marked Ineligible"],
+          tabs: [
+            "Eligible Now",
+            "Almost Eligible",
+            "Marked Ineligible",
+            "Pending",
+            "Medical-Ineligible",
+          ],
         },
         {
           key: "GENDER",
@@ -603,7 +609,13 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Eligible Now", "Almost Eligible", "Marked Ineligible"],
+          tabs: [
+            "Eligible Now",
+            "Almost Eligible",
+            "Pending",
+            "Medical-Ineligible",
+            "Marked Ineligible",
+          ],
         },
         {
           key: "GENDER",
@@ -820,7 +832,12 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Eligible Now", "Almost Eligible", "Marked Ineligible"],
+          tabs: [
+            "Eligible Now",
+            "Almost Eligible",
+            "Pending",
+            "Marked Ineligible",
+          ],
         },
         {
           key: "GENDER",

@@ -113,7 +113,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "Supervision clients may be eligible for Annual Report Status if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Jul 1, 2025. Review clients who may be eligible below.",
-      submittedTabTitle: null,
+      submittedTabTitle: "Submitted for Review",
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
@@ -234,7 +234,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "Supervision clients may be eligible for Early Release from Supervision if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Jul 1, 2025. Review clients who may be eligible below.",
-      submittedTabTitle: null,
+      submittedTabTitle: "Submitted for Review",
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
