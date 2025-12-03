@@ -42,8 +42,6 @@ experiments/headless_evaluations
 
 data/caddy/*
 
-cassette/*
-
 *.pkl
 
 experiments/evaluation/results/*

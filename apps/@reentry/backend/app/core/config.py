@@ -47,14 +47,11 @@ class Settings(BaseSettings):
 
     REDIS_URL: str = "redis://localhost:6379"
 
-    FABRK_API_URL: str = "https://api.fabrk.ai"
-    FABRK_BEARER_TOKEN: str
     # External resources API configuration
     EXTERNAL_RESOURCES_API_URL: str
     RESOURCES_API_KEY: str
 
     ALLOW_EXPERIMENTS: bool = False
-    VCR_CLIENT_INTAKE: bool = False
 
     #### Authentication Middleware Configuration ####
     ENABLE_AUTH_MIDDLEWARE: bool = True

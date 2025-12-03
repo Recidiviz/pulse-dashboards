@@ -12,7 +12,6 @@ REDIS_URL=redis://<REDIS_HOST>:<REDIS_PORT>
 # Environment
 # ----------------------------------------------- #
 # RECIDIVIZ_ALLOW_EXPERIMENTS=false
-# RECIDIVIZ_VCR_CLIENT_INTAKE=false
 
 # ----------------------------------------------- #
 # Google Cloud Configuration
