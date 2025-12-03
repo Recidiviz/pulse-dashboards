@@ -1431,7 +1431,9 @@ exports[`schema for 'US_ME' 'RES999' 1`] = `
 exports[`schema for 'US_NE' 'RES001' 1`] = `
 {
   "admissionDate": 2020-06-16T00:00:00.000Z,
-  "allEligibleOpportunities": [],
+  "allEligibleOpportunities": [
+    "usNeGoodTimeRestoration",
+  ],
   "custodyLevel": "MINIMUM",
   "displayId": "RES001",
   "facilityId": "DEMOFACILITY",

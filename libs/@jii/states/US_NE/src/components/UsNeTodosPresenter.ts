@@ -1,0 +1,69 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { OpportunityData } from "~@jii/data";
+import { ResidentRecord } from "~datatypes";
+
+export class UsNeTodosPresenter {
+  constructor(
+    private readonly resident: ResidentRecord,
+    private readonly opportunities: OpportunityData[],
+  ) {}
+
+  get metadata() {
+    const { metadata } = this.resident;
+
+    if (metadata.stateCode !== "US_NE") {
+      throw new Error(
+        `Unexpected state code for UsNeTodosPresenter ${metadata.stateCode}`,
+      );
+    }
+
+    return metadata;
+  }
+
+  /**
+   * Determines if the resident should see the reentry checklist.
+   * Only show if the resident is not serving a life sentence or a sentence for more than 75 years.
+   */
+  get shouldShowReentryChecklist(): boolean {
+    const years = this.metadata.maximumSentenceYears;
+    if (years === null) {
+      return false;
+    }
+    return years <= 75;
+  }
+
+  get shouldShowGoodTimeRestoration(): boolean {
+    const goodTimeOpportunity = this.opportunities.find(
+      (opp) => opp.opportunityId === "usNeGoodTimeRestoration",
+    );
+
+    if (!goodTimeOpportunity) {
+      return false;
+    }
+
+    const { opportunityRecord } = goodTimeOpportunity;
+    return opportunityRecord.isEligible || opportunityRecord.isAlmostEligible;
+  }
+
+  get shouldShowTodos(): boolean {
+    return (
+      this.shouldShowReentryChecklist || this.shouldShowGoodTimeRestoration
+    );
+  }
+}

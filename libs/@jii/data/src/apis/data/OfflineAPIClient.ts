@@ -22,6 +22,7 @@ import {
   outputFixture,
   usMeSccpFixtures,
   usMeWorkReleaseFixtures,
+  usNeGoodTimeRestorationFixtures,
 } from "~datatypes";
 import { FirestoreAPI, FirestoreOfflineAPIClient } from "~firestore-api";
 
@@ -136,6 +137,17 @@ export class OfflineAPIClient implements DataAPI {
             externalId: residentExternalId,
           }),
         );
+        break;
+      }
+      case "usNeGoodTimeRestoration": {
+        fixture = Object.values(usNeGoodTimeRestorationFixtures)
+          .map(outputFixture)
+          .find((f) =>
+            isMatch(f, {
+              stateCode: stateCode,
+              externalId: residentExternalId,
+            }),
+          );
         break;
       }
       default:

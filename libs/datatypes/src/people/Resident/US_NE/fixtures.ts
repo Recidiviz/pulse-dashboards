@@ -139,7 +139,7 @@ export const rawUsNeResidents: Array<RawResidentRecord> = [
     pseudonymizedId: "anonres001",
     facilityId: "DEMOFACILITY",
     facilityUnitId: null,
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: ["usNeGoodTimeRestoration"],
     unitId: null,
     stateCode: "US_NE",
     metadata,

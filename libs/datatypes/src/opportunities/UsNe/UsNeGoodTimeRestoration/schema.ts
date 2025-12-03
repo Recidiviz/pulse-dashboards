@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,18 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ZodTypeAny } from "zod";
+import { z } from "zod";
 
-import {
-  usMeSCCPSchema,
-  usMeWorkReleaseSchema,
-  usNeGoodTimeRestorationSchema,
-} from "~datatypes";
+import { ParsedRecord } from "../../../utils/types";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
-import { IncarcerationOpportunityId } from "./types";
+export const usNeGoodTimeRestorationSchema = opportunitySchemaBase.extend({
+  metadata: z
+    .object({ isEligibleForMoreThan30Days: z.boolean() })
+    .passthrough(),
+});
 
-export const residentOpportunitySchemas = {
-  usMeSCCP: usMeSCCPSchema,
-  usMeWorkRelease: usMeWorkReleaseSchema,
-  usNeGoodTimeRestoration: usNeGoodTimeRestorationSchema,
-} satisfies Record<IncarcerationOpportunityId, ZodTypeAny>;
+export type UsNeGoodTimeRestorationRecord = ParsedRecord<
+  typeof usNeGoodTimeRestorationSchema
+>;

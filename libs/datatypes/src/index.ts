@@ -51,6 +51,11 @@ export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReview/sc
 export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReview/fixtures";
 export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReview/schema";
 
+// UsNe Exports: Includes fixtures and schema related to US-NE opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsNe/UsNeGoodTimeRestoration/fixtures";
+export * from "./opportunities/UsNe/UsNeGoodTimeRestoration/schema";
+
 // UsPa Exports: Includes fixtures and schema related to US-PA opportunities
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsPa/UsPaSpecialCircumstancesSupervision/fixtures";

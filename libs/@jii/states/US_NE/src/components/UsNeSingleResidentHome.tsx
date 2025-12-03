@@ -21,6 +21,7 @@ import UsNeCardGroup from "./UsNeCardGroup";
 import { useUsNeContext } from "./usNeContext";
 import UsNeGoodTimeAdjustments from "./UsNeGoodTimeAdjustments";
 import UsNeHomeHeader from "./UsNeHomeHeader";
+import { UsNeTodos } from "./UsNeTodos";
 
 const UsNeSingleResidentHome = () => {
   const { copy } = useUsNeContext();
@@ -28,6 +29,7 @@ const UsNeSingleResidentHome = () => {
   return (
     <>
       <UsNeHomeHeader />
+      <UsNeTodos />
       <UsNeCardGroup copy={copy.home.dates} />
       <UsNeCardGroup copy={copy.home.goodTimeBalances} />
       <UsNeGoodTimeAdjustments />

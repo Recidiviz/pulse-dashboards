@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,18 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ZodTypeAny } from "zod";
-
+import { makeRecordFixture } from "../../../utils/zod";
+import { FixtureMapping } from "../../utils/types";
 import {
-  usMeSCCPSchema,
-  usMeWorkReleaseSchema,
+  UsNeGoodTimeRestorationRecord,
   usNeGoodTimeRestorationSchema,
-} from "~datatypes";
+} from "./schema";
 
-import { IncarcerationOpportunityId } from "./types";
-
-export const residentOpportunitySchemas = {
-  usMeSCCP: usMeSCCPSchema,
-  usMeWorkRelease: usMeWorkReleaseSchema,
-  usNeGoodTimeRestoration: usNeGoodTimeRestorationSchema,
-} satisfies Record<IncarcerationOpportunityId, ZodTypeAny>;
+export const usNeGoodTimeRestorationFixtures = {
+  fullyEligible: makeRecordFixture(usNeGoodTimeRestorationSchema, {
+    stateCode: "US_NE",
+    externalId: "RES001",
+    isEligible: true,
+    isAlmostEligible: false,
+    eligibleCriteria: {},
+    ineligibleCriteria: {},
+    metadata: { isEligibleForMoreThan30Days: false },
+  }),
+} satisfies FixtureMapping<UsNeGoodTimeRestorationRecord>;
