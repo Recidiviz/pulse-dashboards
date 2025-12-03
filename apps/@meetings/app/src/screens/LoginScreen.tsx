@@ -16,7 +16,7 @@
 // =============================================================================
 
 import BottomSheet from "@gorhom/bottom-sheet";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
@@ -29,18 +29,15 @@ import { useAuth0 } from "react-native-auth0";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
-import LearnMoreSheet from "../components/LearnMoreSheet";
+import { LearnMoreModal, LearnMoreSheet } from "../components/LearnMore";
 import PrimaryButton from "../components/PrimaryButton";
 
 const OFFLINE_MODE = process.env["EXPO_PUBLIC_OFFLINE_MODE"] === "true";
 
-const LoginScreen = ({
-  onSkipAuth,
-}: {
-  onSkipAuth?: () => void;
-}) => {
+const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
   const { authorize } = useAuth0();
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const [learnMoreModalVisible, setLearnMoreModalVisible] = useState(false);
 
   const handleContinue = async () => {
     const audience = process.env["EXPO_PUBLIC_AUTH0_AUDIENCE"];
@@ -53,7 +50,17 @@ const LoginScreen = ({
     }
   };
 
-  const openSheet = () => bottomSheetRef.current?.expand();
+  const openSheet = () => {
+    switch (Platform.OS) {
+      case "web":
+        setLearnMoreModalVisible(true);
+        break;
+      case "ios":
+      case "android":
+        bottomSheetRef.current?.expand();
+        break;
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1">
@@ -61,13 +68,13 @@ const LoginScreen = ({
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         className="flex-1 items-center justify-center px-2"
       >
-        <View className="w-full items-center rounded-3xl bg-white py-12">
+        <View className="w-full max-w-[500px] items-center rounded-3xl bg-white py-12">
           <Image
             source={Icons.Logo}
             className="mb-8 size-16"
             resizeMode="contain"
           />
-          <Text className="text-primary mb-8 text-center text-[32px] font-bold">
+          <Text className="mb-8 text-center text-[32px] font-bold text-primary">
             Sign In to Recidiviz
           </Text>
 
@@ -96,6 +103,10 @@ const LoginScreen = ({
         </TouchableOpacity>
       </View>
 
+      <LearnMoreModal
+        visible={learnMoreModalVisible}
+        onClose={() => setLearnMoreModalVisible(false)}
+      />
       <LearnMoreSheet ref={bottomSheetRef} />
     </SafeAreaView>
   );
