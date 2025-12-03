@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { parseISO } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
 import { extractHeadingIds } from "~@jii/translation";
@@ -82,7 +83,7 @@ export class UsAzImportantDatesPresenter {
 
     // Sort by earliest date first
     const sortedEntries = entries.sort((a, b) => {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
+      return parseISO(a.date).getTime() - parseISO(b.date).getTime();
     });
 
     // Add highlighting and upcoming logic
@@ -91,7 +92,7 @@ export class UsAzImportantDatesPresenter {
     thirtyOneDaysFromNow.setDate(today.getDate() + 31);
 
     return sortedEntries.map((entry) => {
-      const entryDate = new Date(entry.date);
+      const entryDate = parseISO(entry.date);
       const result: DateEntry = {
         ...entry,
         isUpcoming: entryDate >= today && entryDate <= thirtyOneDaysFromNow,

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isSameDay } from "date-fns";
+import { isSameDay, parseISO } from "date-fns";
 
 import { CardHeading, CardValue, GoLink } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
@@ -52,7 +52,7 @@ export const DateInfoCard = ({
 }: DateInfoCardProps) => {
   const { t } = useUsAzTranslations();
 
-  const dateObj = new Date(date);
+  const dateObj = parseISO(date);
   const today = new Date();
   const isPastDate = dateObj < today;
   const isToday = isSameDay(dateObj, today);
