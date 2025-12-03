@@ -1,8 +1,6 @@
 import asyncio
 import json
-import os
 import queue
-import tempfile
 import time
 from functools import partial
 
@@ -196,69 +194,59 @@ async def _transcribe_audio_with_deepgram(
         raise ValueError("DEEPGRAM_API_KEY not configured")
 
     try:
-        task_logger.info("Downloading audio from GCS")
+        task_logger.info("Generating signed URL for audio file in GCS")
 
         async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:
-            audio_data = await recording_service.storage.download(
-                bucket=recording_service.bucket_name,
-                object_name=recording_session.gcs_final_file_path,
+            # Generate a signed URL that expires in 5 minutes
+            signed_url = await recording_service.generate_signed_url(
+                file_path=recording_session.gcs_final_file_path,
+                expiration_minutes=5,
             )
 
-        task_logger.info("Audio downloaded", size_bytes=len(audio_data))
+        task_logger.info("Signed URL generated for Deepgram")
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_file:
-            temp_file.write(audio_data)
-            temp_file_path = temp_file.name
+        await execution.log_progress(
+            session,
+            50,
+            "Signed URL generated, sending to Deepgram",
+        )
 
-        task_logger.info("Created temporary file for Deepgram")
+        task_logger.info("Calling Deepgram transcription service with signed URL")
+        deepgram_result = await deepgram_transcription_diarization(
+            session_id=session_id,
+            audio_url=signed_url,
+        )
 
-        try:
-            await execution.log_progress(
-                session,
-                50,
-                "Audio downloaded, sending to Deepgram",
-            )
+        task_logger.info("Deepgram transcription completed")
 
-            task_logger.info("Calling Deepgram transcription service")
-            deepgram_result = await deepgram_transcription_diarization(
-                temp_file_path, session_id
-            )
+        task_logger.info("Saving raw Deepgram response to GCS")
+        await _save_to_gcs(
+            settings.GCS_BUCKET_NAME,
+            f"transcriptions/{recording_session.id}_deepgram_raw.json",
+            deepgram_result,
+        )
+        task_logger.info("Raw Deepgram response saved to GCS")
 
-            task_logger.info("Deepgram transcription completed")
+        await execution.log_progress(
+            session,
+            65,
+            "Deepgram transcription completed",
+        )
 
-            task_logger.info("Saving raw Deepgram response to GCS")
-            await _save_to_gcs(
-                settings.GCS_BUCKET_NAME,
-                f"transcriptions/{recording_session.id}_deepgram_raw.json",
-                deepgram_result,
-            )
-            task_logger.info("Raw Deepgram response saved to GCS")
+        class DeepgramResponse:
+            def __init__(self, data):
+                self.data = data
+                self.results = data.get("results", {}).get("channels", [])
 
-            await execution.log_progress(
-                session,
-                65,
-                "Deepgram transcription completed",
-            )
+            @classmethod
+            def to_json(cls, obj):
+                return json.dumps(obj.data)
 
-            class DeepgramResponse:
-                def __init__(self, data):
-                    self.data = data
-                    self.results = data.get("results", {}).get("channels", [])
+        response = DeepgramResponse(deepgram_result)
 
-                @classmethod
-                def to_json(cls, obj):
-                    return json.dumps(obj.data)
+        task_logger.info("Deepgram response processed successfully")
 
-            response = DeepgramResponse(deepgram_result)
-
-            task_logger.info("Deepgram response processed successfully")
-
-            return response
-
-        finally:
-            if os.path.exists(temp_file_path):
-                os.unlink(temp_file_path)
-                task_logger.info("Cleaned up temporary file")
+        return response
 
     except Exception as e:
         task_logger.error("Deepgram transcription failed", error=str(e))

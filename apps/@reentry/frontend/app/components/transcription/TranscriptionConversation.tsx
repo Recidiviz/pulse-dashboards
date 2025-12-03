@@ -149,10 +149,6 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
                     {getRoleIcon(turn.role)}
                     <span>{getRoleLabel(turn.role)}</span>
                   </div>
-
-                  <div className="px-2 py-1 bg-gray-100 rounded text-xs text-gray-600 font-medium">
-                    Turn {index + 1}
-                  </div>
                 </div>
 
                 <div className="flex items-center gap-4 text-xs text-[#2a5469]/70 font-['Public_Sans']">

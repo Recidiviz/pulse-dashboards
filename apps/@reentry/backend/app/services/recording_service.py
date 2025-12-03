@@ -32,10 +32,6 @@ from typing import List
 import aiohttp
 from gcloud.aio.auth import Token
 from gcloud.aio.storage import Blob, Storage
-from moviepy import (  # TODO: investigate to not keep both moviepy or pyav
-    AudioFileClip,
-    concatenate_audioclips,
-)
 
 from app.core.config import settings
 from app.services.audio_converter import (
@@ -64,35 +60,57 @@ def _concatenate_webm_files(file_paths: List[str], output_path: str) -> str:
     if not file_paths:
         raise ValueError("No file paths provided for concatenation")
 
-    logger.info(f"Concatenating {len(file_paths)} WebM files using MoviePy")
+    logger.info(f"Concatenating {len(file_paths)} WebM files using ffmpeg")
 
-    clips = []
+    # Filter out non-existent files
+    valid_files = []
+    for i, file_path in enumerate(file_paths):
+        if not os.path.exists(file_path):
+            logger.warning(f"File does not exist, skipping: {file_path}")
+            continue
+        logger.debug(f"Adding file {i+1}/{len(file_paths)}: {file_path}")
+        valid_files.append(file_path)
+
+    if not valid_files:
+        raise ValueError("No valid audio files found for concatenation")
+
+    # Create a temporary concat list file for ffmpeg
+    concat_list_path = None
     try:
-        for i, file_path in enumerate(file_paths):
-            if not os.path.exists(file_path):
-                logger.warning(f"File does not exist, skipping: {file_path}")
-                continue
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".txt", delete=False
+        ) as concat_file:
+            concat_list_path = concat_file.name
+            for file_path in valid_files:
+                # Escape single quotes in file paths for ffmpeg concat demuxer
+                escaped_path = file_path.replace("'", "'\\''")
+                concat_file.write(f"file '{escaped_path}'\n")
 
-            logger.debug(f"Loading audio clip {i+1}/{len(file_paths)}: {file_path}")
-            clip = AudioFileClip(file_path)
-            clips.append(clip)
+        logger.info("Concatenating audio files with ffmpeg...")
 
-        if not clips:
-            raise ValueError("No valid audio files found for concatenation")
-
-        logger.info("Concatenating audio clips...")
-        combined_audio = concatenate_audioclips(clips)
-
-        logger.info(f"Writing concatenated audio to: {output_path}")
-
-        combined_audio.write_audiofile(
+        # Use ffmpeg concat demuxer to concatenate files
+        ffmpeg_args = [
+            "-y",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            concat_list_path,
+            "-c:a",
+            "libopus",
+            "-b:a",
+            DEFAULT_BITRATE,
+            "-ar",
+            "48000",
+            "-vn",
             output_path,
-            codec="libopus",  # WebM audio codec
-            fps=48000,  # without this it attemps a default of 44100 which itself doesn't support for libopus.
-        )
+        ]
+
+        call_ffmpeg(ffmpeg_args)
 
         logger.info(
-            f"Successfully concatenated {len(clips)} audio files to {output_path}"
+            f"Successfully concatenated {len(valid_files)} audio files to {output_path}"
         )
         return output_path
 
@@ -100,19 +118,12 @@ def _concatenate_webm_files(file_paths: List[str], output_path: str) -> str:
         logger.error(f"Failed to concatenate WebM files: {e}")
         raise
     finally:
-        # Close all clips to free memory
-        for clip in clips:
+        # Clean up the temporary concat list file
+        if concat_list_path and os.path.exists(concat_list_path):
             try:
-                clip.close()
-            except Exception as close_error:
-                logger.warning(f"Failed to close audio clip: {close_error}")
-
-        # Close combined audio if it exists
-        try:
-            if "combined_audio" in locals():
-                combined_audio.close()
-        except Exception as close_error:
-            logger.warning(f"Failed to close combined audio: {close_error}")
+                os.unlink(concat_list_path)
+            except Exception as cleanup_error:
+                logger.warning(f"Failed to cleanup concat list file: {cleanup_error}")
 
 
 def extract_chunk_index(file_path: str) -> int:
@@ -190,19 +201,8 @@ def group_chunks_by_start(file_paths: List[str]) -> List[List[str]]:
     return groups
 
 
-def group_chunks_by_start_timestamp(
-    file_paths: List[str], max_chunks_per_group: int = 100
-) -> List[List[str]]:
-    """Group chunks by _start markers, ordered by timestamp.
-
-    Groups are split when:
-    1. A new _start marker is encountered
-    2. The current group reaches max_chunks_per_group size
-
-    Args:
-        file_paths: List of file paths to group
-        max_chunks_per_group: Maximum number of chunks per group (default: 100)
-    """
+def group_chunks_by_start_timestamp(file_paths: List[str]) -> List[List[str]]:
+    """Group chunks by _start markers, ordered by timestamp."""
     if not file_paths:
         return []
 
@@ -215,22 +215,13 @@ def group_chunks_by_start_timestamp(
         filename = file_path.split("/")[-1]
 
         if "_start" in filename:
-            # Save current group if it exists
             if current_group:
                 groups.append(current_group)
-            # Start a new group with the _start marker
             current_group = [file_path]
         else:
-            # Check if adding this file would exceed max_chunks_per_group
-            if len(current_group) >= max_chunks_per_group:
-                # Save current group and start a new one
-                groups.append(current_group)
-                current_group = [file_path]
-            else:
-                # Add to current group (or start first group if empty)
+            if current_group:
                 current_group.append(file_path)
 
-    # Don't forget the last group
     if current_group:
         groups.append(current_group)
 
@@ -486,154 +477,180 @@ class RecordingService:
 
         logger.info(f"Found {len(chunk_files)} chunk files for session {session_id}")
 
-        sorted_files = sorted(chunk_files, key=extract_timestamp_from_filename)
-
-        # Split into recording sessions based on _start markers
-        sessions = []
-        current_session = []
-
-        for file_path in sorted_files:
-            filename = file_path.split("/")[-1]
-            if "_start" in filename and current_session:
-                # New recording session started
-                sessions.append(current_session)
-                current_session = [file_path]
-            else:
-                current_session.append(file_path)
-
-        if current_session:
-            sessions.append(current_session)
-
-        logger.info(f"Found {len(sessions)} recording sessions for {session_id}")
+        groups = group_chunks_by_start_timestamp(chunk_files)
+        logger.info(f"Found {len(groups)} groups for session {session_id}")
 
         uploaded_groups = []
-        loop = asyncio.get_event_loop()
 
-        for session_idx, session_chunks in enumerate(sessions):
-            logger.info(
-                f"Processing session {session_idx} with {len(session_chunks)} chunks"
-            )
+        processed_group_idx = 0
+        for group_index, group_chunks in enumerate(groups):
+            try:
+                logger.info(
+                    f"Processing group {group_index} with {len(group_chunks)} chunks"
+                )
+                logger.debug(
+                    f"Group {group_index} chunk objects: {group_chunks} (session {session_id})"
+                )
 
-            # Extract EBML header for THIS session
-            first_chunk_data = await self.download_single_chunk(session_chunks[0])
+                # Process chunks in streaming fashion to avoid loading all into memory
+                loop = asyncio.get_event_loop()
+                temp_concat_path = None
+                temp_reencode_path = None
+                temp_file = None
+                chunk_count_in_subgroup = 0
 
-            if not first_chunk_data.startswith(EBML_MAGIC):
-                logger.error(f"Session {session_idx} first chunk missing EBML header")
-                continue
-
-            cluster_index = first_chunk_data.find(CLUSTER_MAGIC)
-            if cluster_index <= 0:
-                logger.error(f"Session {session_idx} first chunk missing Cluster")
-                continue
-
-            ebml_header = first_chunk_data[:cluster_index]
-            logger.info(
-                f"Extracted EBML header ({len(ebml_header)} bytes) for session {session_idx}"
-            )
-
-            # Split this session into groups of 100 chunks
-            session_groups = []
-            for i in range(0, len(session_chunks), 100):
-                session_groups.append(session_chunks[i : i + 100])
-
-            logger.info(f"Session {session_idx}: created {len(session_groups)} groups")
-
-            for group_idx, group_chunks in enumerate(session_groups):
                 try:
-                    logger.info(
-                        f"Processing session {session_idx}, group {group_idx} with {len(group_chunks)} chunks"
-                    )
+                    # Create initial temp files for first subgroup
+                    with tempfile.NamedTemporaryFile(
+                        suffix=".webm", delete=False
+                    ) as temp_concat:
+                        temp_concat_path = temp_concat.name
 
-                    # Download chunks for this group
-                    downloaded: List[tuple[str, bytes]] = []
-                    for path in group_chunks:
+                    with tempfile.NamedTemporaryFile(
+                        suffix=".webm", delete=False
+                    ) as temp_reencode:
+                        temp_reencode_path = temp_reencode.name
+
+                    # Open temp file for writing
+                    temp_file = open(temp_concat_path, "wb")
+
+                    for i, path in enumerate(group_chunks):
+                        # Download chunk
                         data = await self.download_single_chunk(path)
-                        downloaded.append((path, data))
+                        fname = path.split("/")[-1]
+                        is_first_in_group = i == 0
+                        is_start_chunk = "_start" in fname
 
-                    temp_concat_path = None
-                    temp_reencode_path = None
-                    try:
-                        with tempfile.NamedTemporaryFile(
-                            suffix=".webm", delete=False
-                        ) as temp_concat:
-                            temp_concat_path = temp_concat.name
-
-                        with tempfile.NamedTemporaryFile(
-                            suffix=".webm", delete=False
-                        ) as temp_reencode:
-                            temp_reencode_path = temp_reencode.name
-
-                        # Concatenate with session-specific EBML header
-                        with open(temp_concat_path, "wb") as out_f:
-                            # Write EBML header from this session
-                            out_f.write(ebml_header)
-
-                            # Write cluster data from all chunks
-                            for j, (p, d) in enumerate(downloaded):
-                                fname = p.split("/")[-1]
-
-                                if d.startswith(EBML_MAGIC):
-                                    # Strip EBML header, keep only clusters
-                                    ci = d.find(CLUSTER_MAGIC)
-                                    if ci > 0:
-                                        d = d[ci:]
-                                    else:
-                                        logger.warning(
-                                            f"Skipping chunk without Cluster: {fname}"
-                                        )
-                                        continue
-
-                                out_f.write(d)
-
-                        await loop.run_in_executor(
-                            self._audio_executor,
-                            self._encode_audio_data,
-                            temp_concat_path,
-                            temp_reencode_path,
+                        # Check if this non-start chunk begins a new subgroup (has EBML header)
+                        is_subgroup_boundary = (
+                            not is_first_in_group
+                            and not is_start_chunk
+                            and data.startswith(EBML_MAGIC)
                         )
 
-                        with open(temp_reencode_path, "rb") as f:
-                            re_data = f.read()
+                        if is_subgroup_boundary:
+                            # Close current temp file and process the subgroup
+                            temp_file.close()
 
-                        # Use global index for output naming
-                        global_group_idx = len(uploaded_groups)
-                        out_path = f"recordings/{session_id}/groups/group_{global_group_idx}.webm"
-                        await self.storage.upload(
-                            bucket=self.bucket_name,
-                            object_name=out_path,
-                            file_data=re_data,
-                            content_type="audio/webm",
-                        )
-                        uploaded_groups.append(out_path)
-                        logger.info(
-                            f"Uploaded session {session_idx} group {group_idx} "
-                            f"(global index {global_group_idx}) to {out_path}"
-                        )
-
-                    finally:
-                        try:
-                            if temp_concat_path and os.path.exists(temp_concat_path):
-                                os.unlink(temp_concat_path)
-                            if temp_reencode_path and os.path.exists(
-                                temp_reencode_path
-                            ):
-                                os.unlink(temp_reencode_path)
-                        except Exception as cleanup_error:
-                            logger.warning(
-                                f"Failed to cleanup temp files: {cleanup_error}"
+                            # Encode and upload current subgroup
+                            await loop.run_in_executor(
+                                self._audio_executor,
+                                self._encode_audio_data,
+                                temp_concat_path,
+                                temp_reencode_path,
                             )
 
-                except Exception as e:
-                    logger.error(
-                        f"Failed to process session {session_idx} group {group_idx}: {e}"
-                    )
-                    raise
+                            with open(temp_reencode_path, "rb") as f:
+                                re_data = f.read()
 
-        logger.info(f"Successfully processed {len(uploaded_groups)} total groups")
+                            out_path = f"recordings/{session_id}/groups/group_{processed_group_idx}.webm"
+                            await self.storage.upload(
+                                bucket=self.bucket_name,
+                                object_name=out_path,
+                                file_data=re_data,
+                                content_type="audio/webm",
+                            )
+                            uploaded_groups.append(out_path)
+                            logger.info(
+                                f"Uploaded subgroup with {chunk_count_in_subgroup} chunks "
+                                f"(group index {processed_group_idx}) to {out_path}"
+                            )
+                            processed_group_idx += 1
+
+                            # Clean up and create new temp files for next subgroup
+                            if os.path.exists(temp_concat_path):
+                                os.unlink(temp_concat_path)
+                            if os.path.exists(temp_reencode_path):
+                                os.unlink(temp_reencode_path)
+
+                            with tempfile.NamedTemporaryFile(
+                                suffix=".webm", delete=False
+                            ) as temp_concat:
+                                temp_concat_path = temp_concat.name
+
+                            with tempfile.NamedTemporaryFile(
+                                suffix=".webm", delete=False
+                            ) as temp_reencode:
+                                temp_reencode_path = temp_reencode.name
+
+                            # Open new temp file for writing
+                            temp_file = open(temp_concat_path, "wb")
+                            chunk_count_in_subgroup = 0
+
+                        # Process and write chunk data
+                        is_start = (
+                            is_first_in_group or is_start_chunk or is_subgroup_boundary
+                        )
+                        if not is_start and data.startswith(EBML_MAGIC):
+                            # Strip unexpected EBML header from non-start chunk
+                            ci = data.find(CLUSTER_MAGIC)
+                            if ci > 0:
+                                data = data[ci:]
+                            else:
+                                logger.warning(
+                                    f"Skipping non-start EBML chunk without Cluster: {fname}"
+                                )
+                                continue
+
+                        temp_file.write(data)
+                        chunk_count_in_subgroup += 1
+
+                    # Close and process final subgroup
+                    temp_file.close()
+
+                    await loop.run_in_executor(
+                        self._audio_executor,
+                        self._encode_audio_data,
+                        temp_concat_path,
+                        temp_reencode_path,
+                    )
+
+                    with open(temp_reencode_path, "rb") as f:
+                        re_data = f.read()
+
+                    out_path = f"recordings/{session_id}/groups/group_{processed_group_idx}.webm"
+                    await self.storage.upload(
+                        bucket=self.bucket_name,
+                        object_name=out_path,
+                        file_data=re_data,
+                        content_type="audio/webm",
+                    )
+                    uploaded_groups.append(out_path)
+                    logger.info(
+                        f"Uploaded final subgroup with {chunk_count_in_subgroup} chunks "
+                        f"(group index {processed_group_idx}) to {out_path}"
+                    )
+                    processed_group_idx += 1
+
+                finally:
+                    # Close temp file if still open
+                    if temp_file:
+                        try:
+                            temp_file.close()
+                        except Exception as close_error:
+                            logger.warning(f"Failed to close temp file: {close_error}")
+
+                    # Clean up temp files
+                    try:
+                        if temp_concat_path and os.path.exists(temp_concat_path):
+                            os.unlink(temp_concat_path)
+                        if temp_reencode_path and os.path.exists(temp_reencode_path):
+                            os.unlink(temp_reencode_path)
+                    except Exception as cleanup_error:
+                        logger.warning(f"Failed to cleanup temp files: {cleanup_error}")
+
+            except Exception as e:
+                logger.error(f"Failed to process group {group_index}: {e}")
+                # Continue with other groups
+                raise
+
+        logger.info(
+            f"Successfully processed {len(uploaded_groups)} out of {len(groups)} groups"
+        )
         return uploaded_groups
 
     async def generate_signed_url(
-        self, file_path: str, expiration_hours: int = 24
+        self, file_path: str, expiration_minutes: int = 5
     ) -> str:
         try:
             await self.storage.download(
@@ -662,7 +679,7 @@ class RecordingService:
         bucket = self.storage.get_bucket(self.bucket_name)
         blob = Blob(bucket=bucket, name=file_path, metadata=metadata)
 
-        expiration_seconds = expiration_hours * 3600  # Convert hours to seconds
+        expiration_seconds = expiration_minutes * 60  # Convert minutes to seconds
         signed_url = await blob.get_signed_url(
             expiration=expiration_seconds,
             http_method="GET",
@@ -742,7 +759,7 @@ class RecordingService:
             ) as temp_output:
                 temp_output_path = temp_output.name
 
-            logger.info("Running MoviePy concatenation in thread executor")
+            logger.info("Running ffmpeg concatenation in thread executor")
             loop = asyncio.get_event_loop()
             final_output_path = await loop.run_in_executor(
                 self._audio_executor,

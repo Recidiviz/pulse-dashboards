@@ -1,8 +1,8 @@
 import os
 import uuid
 from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock, patch
 
-import aiohttp
 import pytest
 
 from app.services.recording_service import (
@@ -13,7 +13,39 @@ from app.services.recording_service import (
 )
 
 TEST_AUDIO_DATA_ROOT = Path(__file__).parent.parent / "data" / "audio"
-GCP_BUCKET = os.getenv("RECIDIVIZ_GCS_BUCKET_NAME")
+GCP_BUCKET = os.getenv("RECIDIVIZ_GCS_BUCKET_NAME", "test-bucket")
+
+
+@pytest.fixture
+def mock_storage():
+    """Mock GCP Storage operations to prevent real API calls."""
+    with patch("app.services.recording_service.Storage") as mock_storage_class:
+        mock_storage_instance = MagicMock()
+
+        # Mock async methods
+        mock_storage_instance.list_objects = AsyncMock(return_value={"items": []})
+        mock_storage_instance.upload = AsyncMock(return_value=None)
+        mock_storage_instance.download = AsyncMock(return_value=b"test data")
+        mock_storage_instance.delete = AsyncMock(return_value=None)
+        mock_storage_instance.download_metadata = AsyncMock(return_value={})
+        mock_storage_instance.get_bucket = MagicMock()
+
+        mock_storage_class.return_value = mock_storage_instance
+        yield mock_storage_instance
+
+
+@pytest.fixture
+def mock_token():
+    """Mock GCP Token to prevent real authentication."""
+    with patch("app.services.recording_service.Token") as mock_token_class:
+        mock_token_instance = MagicMock()
+        mock_token_instance.service_data = {
+            "client_email": "test@test.iam.gserviceaccount.com",
+            "project_id": "test-project",
+            "type": "service_account",
+        }
+        mock_token_class.return_value = mock_token_instance
+        yield mock_token_instance
 
 
 async def upload_file_to_gcs(bucket_name: str, file_path: str, file_data: bytes):
@@ -54,63 +86,78 @@ async def delete_file_from_gcs(bucket_name: str, file_path: str):
 
 
 @pytest.mark.asyncio
-@pytest.mark.integration
-async def test_upload_file(bucket_name: str = GCP_BUCKET):
+async def test_upload_file(mock_storage, mock_token):
+    bucket_name = GCP_BUCKET
     test_data = b"This is a test file content for GCS upload"
     file_name = f"test-files/{uuid.uuid4()}.txt"
-    file_uploaded = False
 
-    try:
-        await upload_file_to_gcs(bucket_name, file_name, test_data)
-        file_uploaded = True
-        print(f"Uploaded file: {file_name}")
+    # Configure mock to return uploaded data when downloading
+    mock_storage.download.return_value = test_data
 
-        downloaded_data = await download_file_from_gcs(bucket_name, file_name)
-        assert downloaded_data == test_data
-        print(f"Downloaded and verified file: {file_name}")
+    await upload_file_to_gcs(bucket_name, file_name, test_data)
+    print(f"Uploaded file: {file_name}")
 
-    finally:
-        if file_uploaded:
-            try:
-                await delete_file_from_gcs(bucket_name, file_name)
-                print(f"Deleted file: {file_name}")
-            except Exception as cleanup_error:
-                print(f"Warning: Failed to delete file {file_name}: {cleanup_error}")
+    # Verify upload was called
+    mock_storage.upload.assert_called_once()
+    upload_call = mock_storage.upload.call_args
+    assert upload_call.kwargs["bucket"] == bucket_name
+    assert upload_call.kwargs["object_name"] == file_name
+    assert upload_call.kwargs["file_data"] == test_data
+
+    downloaded_data = await download_file_from_gcs(bucket_name, file_name)
+    assert downloaded_data == test_data
+    print(f"Downloaded and verified file: {file_name}")
+
+    await delete_file_from_gcs(bucket_name, file_name)
+    print(f"Deleted file: {file_name}")
+
+    # Verify delete was called
+    assert mock_storage.delete.called
 
 
 @pytest.mark.asyncio
-@pytest.mark.integration
-async def test_generate_signed_url(bucket_name: str = GCP_BUCKET):
+async def test_generate_signed_url(mock_storage, mock_token):
+    bucket_name = GCP_BUCKET
     test_data = b"This is a test file for signed URL"
     file_name = f"test-files/{uuid.uuid4()}.txt"
 
-    service = RecordingService(bucket_name)
-    file_uploaded = False
+    # Configure mocks
+    mock_storage.download.return_value = test_data
+    mock_storage.download_metadata.return_value = {
+        "name": file_name,
+        "contentType": "text/plain",
+    }
 
-    try:
-        await upload_file_to_gcs(bucket_name, file_name, test_data)
-        file_uploaded = True
-        print(f"Uploaded file: {file_name}")
+    # Mock the Blob's get_signed_url method
+    mock_blob = MagicMock()
+    mock_blob.get_signed_url = AsyncMock(
+        return_value=f"https://storage.googleapis.com/{bucket_name}/{file_name}?signature=test"
+    )
 
-        signed_url = await service.generate_signed_url(file_name, expiration_hours=1)
-        print(f"Generated signed URL: {signed_url}")
-        assert signed_url.startswith("https://")
+    mock_bucket = MagicMock()
+    mock_storage.get_bucket.return_value = mock_bucket
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(signed_url) as response:
-                downloaded_data = await response.read()
-                assert downloaded_data == test_data
-                print("Successfully downloaded file via signed URL")
+    with patch("app.services.recording_service.Blob", return_value=mock_blob):
+        service = RecordingService(bucket_name)
 
-    finally:
-        if file_uploaded:
-            try:
-                await delete_file_from_gcs(bucket_name, file_name)
-                print(f"Deleted file: {file_name}")
-            except Exception as cleanup_error:
-                print(f"Warning: Failed to delete file {file_name}: {cleanup_error}")
+        try:
+            await upload_file_to_gcs(bucket_name, file_name, test_data)
+            print(f"Uploaded file: {file_name}")
 
-        await service.close()
+            signed_url = await service.generate_signed_url(
+                file_name, expiration_minutes=5
+            )
+            print(f"Generated signed URL: {signed_url}")
+            assert signed_url.startswith("https://")
+
+            # Verify the signed URL was generated
+            mock_blob.get_signed_url.assert_called_once()
+
+            await delete_file_from_gcs(bucket_name, file_name)
+            print(f"Deleted file: {file_name}")
+
+        finally:
+            await service.close()
 
 
 def test_extract_chunk_index():
@@ -180,8 +227,8 @@ def test_group_chunks_by_start():
 
 
 @pytest.mark.asyncio
-@pytest.mark.integration
-async def test_process_and_upload_groups(bucket_name: str = GCP_BUCKET):
+async def test_process_and_upload_groups(mock_storage, mock_token):
+    bucket_name = GCP_BUCKET
     test_session_id = f"test-{uuid.uuid4()}"
     print(f"Using test session ID: {test_session_id}")
 
@@ -192,18 +239,39 @@ async def test_process_and_upload_groups(bucket_name: str = GCP_BUCKET):
 
     print(f"Found {len(sample_files)} sample files: {sample_files}")
 
+    # Mock the list_chunk_files to return our sample files
+    chunk_paths = [
+        f"recordings/{test_session_id}/chunks/{filename}" for filename in sample_files
+    ]
+
+    # Store chunk data for mocking downloads
+    chunk_data_map = {}
+    for filename in sample_files:
+        file_path = os.path.join(test_data_dir, filename)
+        with open(file_path, "rb") as f:
+            chunk_data = f.read()
+        chunk_data_map[f"recordings/{test_session_id}/chunks/{filename}"] = chunk_data
+
+    # Configure mock to return the actual chunk data when downloading
+    async def mock_download(bucket, object_name):
+        return chunk_data_map.get(object_name, b"")
+
+    mock_storage.download.side_effect = mock_download
+
+    # Mock list_objects to return chunk files
+    mock_storage.list_objects.return_value = {
+        "items": [{"name": path} for path in chunk_paths]
+    }
+
     service = RecordingService(bucket_name)
 
     try:
         print("Uploading sample chunk files to GCS...")
         for filename in sample_files:
-            file_path = os.path.join(test_data_dir, filename)
-
-            with open(file_path, "rb") as f:
-                chunk_data = f.read()
-
             chunk_path = f"recordings/{test_session_id}/chunks/{filename}"
-            await upload_file_to_gcs(bucket_name, chunk_path, chunk_data)
+            await upload_file_to_gcs(
+                bucket_name, chunk_path, chunk_data_map[chunk_path]
+            )
             print(f"Uploaded {filename} to {chunk_path}")
 
         print("Processing and uploading groups...")
@@ -219,33 +287,6 @@ async def test_process_and_upload_groups(bucket_name: str = GCP_BUCKET):
 
         print("Test completed successfully!")
         print(f"Files uploaded to session: {test_session_id}")
-
-        print("Cleaning up uploaded files...")
-
-        # Delete chunk files
-        for filename in sample_files:
-            chunk_path = f"recordings/{test_session_id}/chunks/{filename}"
-            try:
-                await service.storage.delete(
-                    bucket=bucket_name,
-                    object_name=chunk_path,
-                )
-                print(f"Deleted chunk: {chunk_path}")
-            except Exception as e:
-                print(f"Failed to delete chunk {chunk_path}: {e}")
-
-        # Delete group files
-        for group_file in group_files:
-            try:
-                await service.storage.delete(
-                    bucket=bucket_name,
-                    object_name=group_file,
-                )
-                print(f"Deleted group: {group_file}")
-            except Exception as e:
-                print(f"Failed to delete group {group_file}: {e}")
-
-        print("Files cleaned up successfully!")
 
     finally:
         await service.close()
@@ -297,9 +338,9 @@ def test_concatenate_webm_files():
 
 
 @pytest.mark.asyncio
-@pytest.mark.integration
-async def test_process_chunks_to_final_audio(bucket_name: str = GCP_BUCKET):
-    """Upload sample audio chunks and test the creation of the final audio file.."""
+async def test_process_chunks_to_final_audio(mock_storage, mock_token):
+    """Upload sample audio chunks and test the creation of the final audio file."""
+    bucket_name = GCP_BUCKET
     test_session_id = f"test-{uuid.uuid4()}"
     print(f"Using test session ID: {test_session_id}")
 
@@ -309,18 +350,66 @@ async def test_process_chunks_to_final_audio(bucket_name: str = GCP_BUCKET):
 
     print(f"Found {len(sample_files)} chunk files: {sample_files}")
 
+    # Mock the list_chunk_files to return our sample files
+    chunk_paths = [
+        f"recordings/{test_session_id}/chunks/{filename}" for filename in sample_files
+    ]
+
+    # Store chunk data for mocking downloads
+    chunk_data_map = {}
+    for filename in sample_files:
+        file_path = os.path.join(test_data_dir, filename)
+        with open(file_path, "rb") as f:
+            chunk_data = f.read()
+        chunk_data_map[f"recordings/{test_session_id}/chunks/{filename}"] = chunk_data
+
+    # Track uploaded group and final files
+    uploaded_files = {}
+
+    # Configure mock to return data when downloading
+    async def mock_download(bucket, object_name, headers=None):
+        # Return chunk data or uploaded group/final data
+        return uploaded_files.get(
+            object_name, chunk_data_map.get(object_name, b"test final audio data")
+        )
+
+    mock_storage.download.side_effect = mock_download
+
+    # Mock upload to store data
+    async def mock_upload(bucket, object_name, file_data, content_type):
+        uploaded_files[object_name] = file_data
+
+    mock_storage.upload.side_effect = mock_upload
+
+    # Mock list_objects to return appropriate files based on prefix
+    def mock_list_objects_sync(bucket, params=None):
+        prefix = params.get("prefix", "") if params else ""
+
+        if "/chunks/" in prefix:
+            # Return chunk files
+            return {"items": [{"name": path} for path in chunk_paths]}
+        elif "/groups/" in prefix:
+            # Return group files that were uploaded
+            group_files = [k for k in uploaded_files.keys() if "/groups/" in k]
+            return {"items": [{"name": path} for path in group_files]}
+        else:
+            # Return all files for the session
+            all_files = list(chunk_paths) + list(uploaded_files.keys())
+            return {"items": [{"name": path} for path in all_files]}
+
+    mock_storage.list_objects.side_effect = (
+        lambda bucket, params=None: mock_list_objects_sync(bucket, params)
+    )
+
     service = RecordingService(bucket_name)
 
     try:
         print("Uploading sample chunk files to GCS...")
         for filename in sample_files:
-            file_path = os.path.join(test_data_dir, filename)
-
-            with open(file_path, "rb") as f:
-                chunk_data = f.read()
-
             chunk_path = f"recordings/{test_session_id}/chunks/{filename}"
-            await upload_file_to_gcs(bucket_name, chunk_path, chunk_data)
+            await upload_file_to_gcs(
+                bucket_name, chunk_path, chunk_data_map[chunk_path]
+            )
             print(f"Uploaded {filename} to {chunk_path}")
 
         print("Processing chunks to final audio...")
@@ -345,36 +434,6 @@ async def test_process_chunks_to_final_audio(bucket_name: str = GCP_BUCKET):
 
         print("Test completed successfully!")
         print(f"Final audio uploaded to: {final_audio_path}")
-
-        print("Cleaning up all files in session directory...")
-
-        # List all files in the session directory
-        session_prefix = f"recordings/{test_session_id}/"
-        try:
-            objects = await service.storage.list_objects(
-                bucket=bucket_name, params={"prefix": session_prefix}
-            )
-
-            files_to_delete = []
-            for obj in objects.get("items", []):
-                files_to_delete.append(obj["name"])
-
-            print(f"Found {len(files_to_delete)} files to delete in session directory")
-
-            for file_path in files_to_delete:
-                try:
-                    await service.storage.delete(
-                        bucket=bucket_name,
-                        object_name=file_path,
-                    )
-                    print(f"Deleted: {file_path}")
-                except Exception as e:
-                    print(f"Failed to delete {file_path}: {e}")
-
-            print("Files cleaned up successfully!")
-
-        except Exception as e:
-            print(f"Failed to list or delete session files: {e}")
 
     finally:
         await service.close()

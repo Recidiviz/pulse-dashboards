@@ -376,6 +376,52 @@ async def finalize_recording(
     return FinalizeRecordingResponse(execution_id=str(execution.id))
 
 
+@router.post(
+    "/sessions/{session_id}/retry-processing",
+    response_model=FinalizeRecordingResponse,
+    summary="Retry processing a recording",
+    description="Reschedule the process_recording_task for a session in case it failed",
+    tags=["Recording Sessions"],
+)
+async def retry_process_recording(
+    session_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+) -> FinalizeRecordingResponse:
+    recording_session = await get_recording_session_by_id(session, session_id)
+    if not recording_session:
+        raise HTTPException(status_code=404, detail="Recording session not found")
+
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
+        pseudonymized_staff_id=pseudonymized_id,
+    )
+
+    # Schedule the processing task
+    execution = await schedule_task(
+        session,
+        table_name="recording_session",
+        table_entity_id=session_id,
+        task_func=process_recording_task,
+        task_kwargs={
+            "recording_session_id": session_id,
+        },
+    )
+
+    # Update recording session with new execution and set status to PROCESSING
+    recording_session.execution_id = execution.id
+    recording_session.status = RecordingStatus.PROCESSING
+    session.add(recording_session)
+    await session.commit()
+    await session.refresh(recording_session)
+
+    logger.info(
+        f"Rescheduled processing task for recording session {session_id} with execution {execution.id}"
+    )
+
+    return FinalizeRecordingResponse(execution_id=str(execution.id))
+
+
 @router.get(
     "/sessions/{session_id}/signed-url",
     response_model=SignedUrlResponse,

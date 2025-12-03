@@ -16,29 +16,92 @@
 // =============================================================================
 
 import type React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
+import { $api } from "~@reentry/frontend/api";
 import TranscriptionConversation from "~@reentry/frontend/components/transcription/TranscriptionConversation";
 import { useRecordingSessionStatus } from "~@reentry/frontend/hooks/useRecordingSessionStatus";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { showSuccessToast } from "~@reentry/frontend-shared";
 
 const StatusMessage = ({
   title,
   message,
+  sessionId,
 }: {
   title: string;
   message: string;
-}) => (
-  <div className="self-stretch flex-1 flex flex-col justify-center items-center gap-5">
-    <div className="w-full max-w-[400px] flex flex-col items-center gap-2">
-      <div className="text-[#002321] text-lg font-bold leading-snug">
-        {title}
-      </div>
-      <div className="text-center text-[#2a5469]/90 text-sm font-medium leading-[16.8px]">
-        {message}
+  sessionId?: string;
+}) => {
+  const [showDebugButton, setShowDebugButton] = useState(false);
+  const { getAccessToken } = useAuth();
+
+  const { mutateAsync: retryProcessingMutation, isPending: isRetrying } =
+    $api.useMutation("post", "/recordings/sessions/{session_id}/retry-processing");
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "D") {
+        setShowDebugButton((prev) => !prev);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  const handleRetryProcessing = async () => {
+    if (!sessionId) return;
+
+    try {
+      console.log("Starting retry processing for session:", sessionId);
+
+      await retryProcessingMutation({
+        params: {
+          path: {
+            session_id: sessionId,
+          },
+        },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("Retry processing initiated");
+      showSuccessToast("Processing retry initiated successfully");
+      setShowDebugButton(false);
+    } catch (error) {
+      console.error("Error retrying processing:", error);
+    }
+  };
+
+  return (
+    <div className="self-stretch flex-1 flex flex-col justify-center items-center gap-5">
+      <div className="w-full max-w-[400px] flex flex-col items-center gap-2">
+        <div className="text-[#002321] text-lg font-bold leading-snug">
+          {title}
+        </div>
+        <div className="text-center text-[#2a5469]/90 text-sm font-medium leading-[16.8px]">
+          {message}
+        </div>
+        {showDebugButton && title === "In Progress" && sessionId && (
+          <button
+            type="button"
+            onClick={handleRetryProcessing}
+            disabled={isRetrying}
+            className="mt-4 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isRetrying ? "Retrying..." : "Retry Processing"}
+          </button>
+        )}
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const TranscriptionSection: React.FC<{
   sessionDataId: string | null;
@@ -65,6 +128,7 @@ const TranscriptionSection: React.FC<{
       <StatusMessage
         title="In Progress"
         message="Your transcript is being processed. Please wait while we finish the transcription."
+        sessionId={sessionDataId}
       />
     );
   }
