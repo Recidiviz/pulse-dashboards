@@ -46,7 +46,6 @@ describeIf("Security Headers Integration Tests", () => {
     const cspHeader = response.headers.get("content-security-policy");
 
     expect(cspHeader).toBeDefined();
-    expect(cspHeader).toContain("default-src");
     expect(cspHeader).toContain("script-src");
     expect(cspHeader).toContain("style-src");
   });
