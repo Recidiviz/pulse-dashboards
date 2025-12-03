@@ -124,6 +124,7 @@ const EmailButtonText = styled.span`
 const RouteDescriptionText = styled(Sans24)`
   color: ${palette.pine4};
   margin-right: auto;
+  white-space: nowrap;
 `;
 
 const RouteInfo = styled(Sans14)`

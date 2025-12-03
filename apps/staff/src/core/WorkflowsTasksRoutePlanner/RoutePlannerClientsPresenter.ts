@@ -95,6 +95,8 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   }
 
   hydrate() {
+    if (!isHydrated(this.workflowsStore)) this.workflowsStore.hydrate();
+
     this.workflowsStore.caseloadPersons.forEach((person) => {
       if (
         person instanceof Client &&

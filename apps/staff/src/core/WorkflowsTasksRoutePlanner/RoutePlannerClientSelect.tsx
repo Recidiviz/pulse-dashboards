@@ -32,13 +32,13 @@ import { RoutePlannerPlacePicker } from "./RoutePlannerPlacePicker";
 import { RoutePlannerPresenter } from "./RoutePlannerPresenter";
 
 const RoutePlannerSelectContainer = styled.div`
-  padding-top: ${rem(spacing.lg)};
   height: 100%;
   display: flex;
   flex-direction: column;
 `;
 
 const ScrollableWrapper = styled.div`
+  padding-top: ${rem(spacing.lg)};
   height: 100%;
   min-height: 30vh;
   overflow-y: auto;

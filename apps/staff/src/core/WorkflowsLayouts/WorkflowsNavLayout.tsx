@@ -55,8 +55,8 @@ const Main = styled.main<{
   ${({ isMobile }) =>
     isMobile
       ? `
-      padding-bottom: ${rem(spacing.md)};
-      height: calc(100% - ${rem(spacing.md + NAV_BAR_HEIGHT)});
+      padding-bottom: ${rem(spacing.lg)};
+      height: calc(100% - ${rem(spacing.lg + NAV_BAR_HEIGHT)});
   `
       : `padding-bottom: ${rem(spacing.md * 5)};
   height: calc(100% - ${rem(spacing.md * 5 + spacing.xl)});`}

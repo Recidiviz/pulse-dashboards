@@ -253,6 +253,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIaSupervisionLevelDowngrade: {},
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         usIdTasksV2: undefined,
+        tasksRoutePlanner: { activeTenants: ["US_TX"] },
       }
     : {
         ...allFeatureVariants,
