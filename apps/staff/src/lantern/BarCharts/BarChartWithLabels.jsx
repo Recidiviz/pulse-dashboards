@@ -18,7 +18,6 @@
 import "chartjs-plugin-datalabels";
 
 import PropTypes from "prop-types";
-import React from "react";
 import { Bar } from "react-chartjs-2";
 
 import { COLORS } from "../../assets/scripts/constants/colors";
@@ -42,12 +41,12 @@ const getDefaultLegendOptions = (labelColors) => {
 function BarChartWithLabels({
   id,
   data,
-  labelColors,
+  labelColors = [],
   xAxisLabel,
   yAxisLabel,
   numerators,
   denominators,
-  legendOptions,
+  legendOptions = null,
 }) {
   return (
     <Bar
@@ -106,11 +105,6 @@ function BarChartWithLabels({
     />
   );
 }
-
-BarChartWithLabels.defaultProps = {
-  labelColors: [],
-  legendOptions: null,
-};
 
 BarChartWithLabels.propTypes = {
   id: PropTypes.string.isRequired,

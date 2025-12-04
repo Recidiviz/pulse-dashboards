@@ -36,10 +36,6 @@ function WarningIcon({ tooltipText, className = "" }) {
   );
 }
 
-WarningIcon.defaultProps = {
-  className: "",
-};
-
 WarningIcon.propTypes = {
   tooltipText: PropTypes.string.isRequired,
   className: PropTypes.string,

@@ -19,7 +19,6 @@ import "./RevocationsByDimension.scss";
 
 import cn from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
 
 import DataSignificanceWarningIcon from "../DataSignificanceWarningIcon";
 import ExportMenu from "../ExportMenu";
@@ -27,16 +26,16 @@ import ExportMenu from "../ExportMenu";
 function RevocationsByDimensionComponent({
   chartTitle,
   chartId,
-  className,
+  className = null,
   datasets,
   labels,
   metricTitle,
   timeDescription,
   chart,
-  showWarning,
-  modeSwitcher,
-  classModifier,
-  dataExportLabel,
+  showWarning = false,
+  modeSwitcher = null,
+  classModifier = "",
+  dataExportLabel = null,
 }) {
   return (
     <div className="RevocationsByDimension">
@@ -65,14 +64,6 @@ function RevocationsByDimensionComponent({
     </div>
   );
 }
-
-RevocationsByDimensionComponent.defaultProps = {
-  showWarning: false,
-  modeSwitcher: null,
-  className: null,
-  classModifier: "",
-  dataExportLabel: null,
-};
 
 RevocationsByDimensionComponent.propTypes = {
   className: PropTypes.string,

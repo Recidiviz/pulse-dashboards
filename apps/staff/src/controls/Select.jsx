@@ -17,7 +17,7 @@
 
 import cn from "classnames";
 import PropTypes from "prop-types";
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import ReactSelect from "react-select";
 
 import { optionPropType } from "./propTypes";
@@ -28,14 +28,10 @@ const Select = forwardRef((props, ref) => (
     ref={ref}
     styles={styles}
     {...props}
-    className={cn("Select", props.className)}
+    className={cn("Select", props.className ?? "")}
     classNamePrefix="Select"
   />
 ));
-
-Select.defaultProps = {
-  className: "",
-};
 
 Select.propTypes = {
   className: PropTypes.string,

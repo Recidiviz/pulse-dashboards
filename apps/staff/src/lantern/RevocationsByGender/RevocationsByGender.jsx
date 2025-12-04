@@ -17,7 +17,6 @@
 
 import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
-import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { US_PA } from "../../RootStore/TenantStore/lanternTenants";
@@ -31,7 +30,10 @@ import createGenerateChartData from "./createGenerateChartData";
 const DEFAULT_MODE = "MALE";
 
 const RevocationsByGender = observer(
-  function RevocationsByGender({ containerHeight, timeDescription }, ref) {
+  function RevocationsByGender(
+    { containerHeight = null, timeDescription },
+    ref,
+  ) {
     const { currentTenantId } = useRootStore();
     const { revocationsChartStore } = useDataStore();
     const CHART_TITLE = translate("revocationsByGenderChartTitle");
@@ -70,8 +72,6 @@ const RevocationsByGender = observer(
   },
   { forwardRef: true },
 );
-
-RevocationsByGender.defaultProps = { containerHeight: null };
 
 RevocationsByGender.propTypes = {
   containerHeight: PropTypes.number,

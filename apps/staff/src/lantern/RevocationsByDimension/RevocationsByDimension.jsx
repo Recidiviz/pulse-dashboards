@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import ErrorMessage from "../../components/ErrorMessage";
 import LoadingChart from "../LoadingChart";
@@ -30,18 +30,18 @@ const RevocationsByDimension = observer(
   function RevocationsByDimension(
     {
       chartId,
-      className,
+      className = null,
       dataStore,
-      containerHeight,
+      containerHeight = null,
       renderChart,
       generateChartData,
       metricTitle,
       chartTitle,
       timeDescription,
-      modes,
-      defaultMode,
-      dataExportLabel,
-      includeWarning,
+      modes = [],
+      defaultMode = null,
+      dataExportLabel = null,
+      includeWarning = true,
     },
     ref,
   ) {
@@ -105,15 +105,6 @@ const RevocationsByDimension = observer(
   },
   { forwardRef: true },
 );
-
-RevocationsByDimension.defaultProps = {
-  modes: [],
-  className: null,
-  defaultMode: null,
-  dataExportLabel: null,
-  includeWarning: true,
-  containerHeight: null,
-};
 
 RevocationsByDimension.propTypes = {
   className: PropTypes.string,

@@ -16,7 +16,6 @@
 // =============================================================================
 
 import PropTypes from "prop-types";
-import React from "react";
 
 import MultiSelect from "../../controls/MultiSelect";
 import Select from "../../controls/Select";
@@ -27,7 +26,7 @@ function DistrictFilterDropdown({
   options,
   isLoading,
   onValueChange,
-  defaultValue,
+  defaultValue = null,
 }) {
   if (restrictedValues.length === 1) {
     const singleValue = {
@@ -80,10 +79,6 @@ const SelectOption = {
       value: PropTypes.string.isRequired,
     }),
   ),
-};
-
-DistrictFilterDropdown.defaultProps = {
-  defaultValue: null,
 };
 
 DistrictFilterDropdown.propTypes = {

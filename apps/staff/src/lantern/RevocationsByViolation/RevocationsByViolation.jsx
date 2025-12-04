@@ -17,7 +17,6 @@
 
 import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
-import React from "react";
 
 import { COLORS } from "../../assets/scripts/constants/colors";
 import { translate } from "../../utils/i18nSettings";
@@ -28,7 +27,10 @@ import { VIOLATION_TYPE } from "../utils/constants";
 import createGenerateChartData from "./createGenerateChartData";
 
 const RevocationsByViolation = observer(
-  function RevocationsByViolation({ containerHeight, timeDescription }, ref) {
+  function RevocationsByViolation(
+    { containerHeight = null, timeDescription },
+    ref,
+  ) {
     const { filtersStore, dataStore } = useLanternStore();
     const { revocationsChartStore } = dataStore;
     const CHART_TITLE = "Relative frequency of violation types";
@@ -88,8 +90,6 @@ const RevocationsByViolation = observer(
   },
   { forwardRef: true },
 );
-
-RevocationsByViolation.defaultProps = { containerHeight: null };
 
 RevocationsByViolation.propTypes = {
   containerHeight: PropTypes.number,

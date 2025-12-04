@@ -58,6 +58,7 @@ function CoreMultiSelect({
   onChange,
   className = "",
   id,
+  isChanged = false,
   ...props
 }) {
   const ref = useRef();
@@ -137,7 +138,7 @@ function CoreMultiSelect({
         kind="link"
         aria-label={`Select ${id}`}
         className={cn("CoreMultiSelect__control", {
-          "CoreMultiSelect__control--changed": props.isChanged,
+          "CoreMultiSelect__control--changed": isChanged,
         })}
         // Override the tabIndex in DropdownToggle since this is in a Toolbar
         tabIndex={-1}
@@ -188,10 +189,6 @@ function CoreMultiSelect({
   );
 }
 
-CoreMultiSelect.defaultProps = {
-  className: "",
-  isChanged: false,
-};
 CoreMultiSelect.propTypes = {
   defaultValue: PropTypes.arrayOf(optionPropType).isRequired,
   value: PropTypes.arrayOf(optionPropType).isRequired,

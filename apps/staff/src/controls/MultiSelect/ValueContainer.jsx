@@ -22,7 +22,12 @@ import { components } from "react-select";
 import { optionPropType } from "../propTypes";
 import { formatSelectOptionValue, VALUE_CHARACTER_LIMIT } from "../utils";
 
-function ValueContainer({ allOptions, summingOption, children, ...props }) {
+function ValueContainer({
+  allOptions,
+  summingOption = null,
+  children,
+  ...props
+}) {
   const { selectProps, getValue } = props;
   const selectedOptions = getValue();
   const selectInput = React.Children.map(children, (child) => {
@@ -52,7 +57,6 @@ function ValueContainer({ allOptions, summingOption, children, ...props }) {
     </components.ValueContainer>
   );
 }
-ValueContainer.defaultProps = { summingOption: null };
 
 ValueContainer.propTypes = {
   allOptions: PropTypes.arrayOf(optionPropType).isRequired,

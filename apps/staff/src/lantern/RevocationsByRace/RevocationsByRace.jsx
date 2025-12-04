@@ -17,7 +17,6 @@
 
 import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
-import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { US_PA } from "../../RootStore/TenantStore/lanternTenants";
@@ -30,7 +29,7 @@ import createGenerateChartData from "./createGenerateChartData";
 const DEFAULT_MODE = "WHITE";
 
 const RevocationsByRace = observer(
-  function RevocationsByRace({ containerHeight, timeDescription }, ref) {
+  function RevocationsByRace({ containerHeight = null, timeDescription }, ref) {
     const { revocationsChartStore } = useDataStore();
     const { currentTenantId } = useRootStore();
     const CHART_TITLE = translate("revocationsByRaceChartTitle");
@@ -71,8 +70,6 @@ const RevocationsByRace = observer(
   },
   { forwardRef: true },
 );
-
-RevocationsByRace.defaultProps = { containerHeight: null };
 
 RevocationsByRace.propTypes = {
   containerHeight: PropTypes.number,

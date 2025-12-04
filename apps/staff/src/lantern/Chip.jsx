@@ -19,9 +19,14 @@ import "./Chip.scss";
 
 import cn from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
 
-function Chip({ label, onClick, onDelete, isSelected, isSmall }) {
+function Chip({
+  label,
+  onClick = () => undefined,
+  onDelete = null,
+  isSelected = false,
+  isSmall = false,
+}) {
   return (
     <div
       className={cn("Chip", {
@@ -44,13 +49,6 @@ function Chip({ label, onClick, onDelete, isSelected, isSmall }) {
     </div>
   );
 }
-
-Chip.defaultProps = {
-  onClick: () => undefined,
-  onDelete: null,
-  isSelected: false,
-  isSmall: false,
-};
 
 Chip.propTypes = {
   label: PropTypes.string.isRequired,

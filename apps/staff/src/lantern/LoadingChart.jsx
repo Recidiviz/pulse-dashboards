@@ -16,11 +16,10 @@
 // =============================================================================
 
 import PropTypes from "prop-types";
-import React from "react";
 
 import Loading from "./Loading";
 
-function LoadingChart({ containerHeight }) {
+function LoadingChart({ containerHeight = null }) {
   const loadingContainerStyles =
     containerHeight > 0
       ? {
@@ -37,8 +36,6 @@ function LoadingChart({ containerHeight }) {
     </div>
   );
 }
-
-LoadingChart.defaultProps = { containerHeight: null };
 
 LoadingChart.propTypes = {
   containerHeight: PropTypes.number,

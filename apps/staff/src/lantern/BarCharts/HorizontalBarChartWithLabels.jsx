@@ -30,8 +30,8 @@ function HorizontalBarChartWithLabels({
   data,
   numerators,
   denominators,
-  includeWarning,
-  stacked,
+  includeWarning = true,
+  stacked = false,
 }) {
   const includePercentageInTooltip = stacked;
 
@@ -155,11 +155,6 @@ HorizontalBarChartWithLabels.propTypes = {
   ).isRequired,
   includeWarning: PropTypes.bool,
   stacked: PropTypes.bool,
-};
-
-HorizontalBarChartWithLabels.defaultProps = {
-  includeWarning: true,
-  stacked: false,
 };
 
 export default React.memo(HorizontalBarChartWithLabels);

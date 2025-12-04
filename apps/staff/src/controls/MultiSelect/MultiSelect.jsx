@@ -19,7 +19,7 @@ import "./MultiSelect.scss";
 
 import cn from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import ReactSelect from "react-select";
 
 import { optionPropType } from "../propTypes";
@@ -29,11 +29,12 @@ import Option from "./Option";
 import ValueContainer from "./ValueContainer";
 
 function MultiSelect({
-  summingOption,
+  summingOption = null,
   options,
   value,
   onChange,
-  className,
+  className = "",
+  defaultValue = null,
   ...props
 }) {
   const ref = useRef();
@@ -108,16 +109,12 @@ function MultiSelect({
       value={value}
       isSearchable
       isMulti
+      defaultValue={defaultValue}
       {...props}
     />
   );
 }
 
-MultiSelect.defaultProps = {
-  className: "",
-  defaultValue: null,
-  summingOption: null,
-};
 MultiSelect.propTypes = {
   defaultValue: PropTypes.arrayOf(optionPropType),
   value: PropTypes.arrayOf(optionPropType).isRequired,

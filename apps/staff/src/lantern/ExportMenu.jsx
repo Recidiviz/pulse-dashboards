@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 
 import {
@@ -28,6 +28,7 @@ import {
 import { useLanternStore } from "./LanternStoreProvider";
 
 // ExportMenu used by Lantern charts only
+
 function ExportMenu({
   chartId,
   timeWindowDescription,
@@ -35,9 +36,9 @@ function ExportMenu({
   shouldExport = true,
   regularElement = false,
   fixLabelsInColumns = false,
-  datasets,
-  labels,
-  dataExportLabel,
+  datasets = null,
+  labels = null,
+  dataExportLabel = null,
 }) {
   const { filtersStore, methodology, userStore } = useLanternStore();
   const { getTokenSilently } = userStore;
@@ -172,15 +173,6 @@ function ExportMenu({
     </span>
   );
 }
-
-ExportMenu.defaultProps = {
-  regularElement: false,
-  shouldExport: true,
-  datasets: null,
-  labels: null,
-  fixLabelsInColumns: false,
-  dataExportLabel: null,
-};
 
 ExportMenu.propTypes = {
   chartId: PropTypes.string.isRequired,

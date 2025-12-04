@@ -19,9 +19,8 @@ import "./FilterField.scss";
 
 import cn from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
 
-function FilterField({ label, children, className }) {
+function FilterField({ label, children, className = null }) {
   return (
     <div className={cn("FilterField", className)}>
       <h4 className={cn("FilterField__label")}>{label}</h4>
@@ -29,10 +28,6 @@ function FilterField({ label, children, className }) {
     </div>
   );
 }
-
-FilterField.defaultProps = {
-  className: null,
-};
 
 FilterField.propTypes = {
   label: PropTypes.string.isRequired,

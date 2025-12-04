@@ -16,7 +16,6 @@
 // =============================================================================
 
 import PropTypes from "prop-types";
-import React from "react";
 import { Bar } from "react-chartjs-2";
 
 import { COLORS } from "../assets/scripts/constants/colors";
@@ -33,8 +32,8 @@ function PercentRevokedChart({
   denominators,
   xAxisLabel,
   yAxisLabel,
-  includeWarning,
-  hideRateLine,
+  includeWarning = true,
+  hideRateLine = false,
 }) {
   return (
     <Bar
@@ -121,11 +120,6 @@ PercentRevokedChart.propTypes = {
   averageRate: PropTypes.number.isRequired,
   includeWarning: PropTypes.bool,
   hideRateLine: PropTypes.bool,
-};
-
-PercentRevokedChart.defaultProps = {
-  includeWarning: true,
-  hideRateLine: false,
 };
 
 export default PercentRevokedChart;

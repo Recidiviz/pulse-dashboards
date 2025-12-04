@@ -17,7 +17,6 @@
 
 import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
-import React from "react";
 
 import flags from "../../flags";
 import { translate } from "../../utils/i18nSettings";
@@ -30,7 +29,10 @@ import createGenerateChartData from "./createGenerateChartData";
 const DEFAULT_MODE = "counts";
 
 const RevocationsByDistrict = observer(
-  function RevocationsByDistrict({ containerHeight, timeDescription }, ref) {
+  function RevocationsByDistrict(
+    { containerHeight = null, timeDescription },
+    ref,
+  ) {
     const dataStore = useDataStore();
     const { revocationsChartStore } = dataStore;
     const { districtChartData, currentDistricts } = revocationsChartStore;
@@ -98,8 +100,6 @@ const RevocationsByDistrict = observer(
   },
   { forwardRef: true },
 );
-
-RevocationsByDistrict.defaultProps = { containerHeight: null };
 
 RevocationsByDistrict.propTypes = {
   containerHeight: PropTypes.number,

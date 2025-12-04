@@ -18,7 +18,6 @@
 import "./Sortable.scss";
 
 import PropTypes from "prop-types";
-import React from "react";
 
 function SortableIcon({ order = null }) {
   switch (order) {
@@ -37,10 +36,6 @@ SortableIcon.propTypes = {
   order: orderPropType,
 };
 
-SortableIcon.defaultProps = {
-  order: null,
-};
-
 function Sortable({ children, order = null, onClick }) {
   return (
     <button className="Sortable" type="button" onClick={onClick}>
@@ -50,10 +45,6 @@ function Sortable({ children, order = null, onClick }) {
     </button>
   );
 }
-
-Sortable.defaultProps = {
-  order: null,
-};
 
 Sortable.propTypes = {
   children: PropTypes.node.isRequired,

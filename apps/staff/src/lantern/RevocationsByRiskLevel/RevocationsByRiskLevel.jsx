@@ -17,7 +17,6 @@
 
 import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
-import React from "react";
 
 import flags from "../../flags";
 import { translate } from "../../utils/i18nSettings";
@@ -30,7 +29,10 @@ import createGenerateChartData from "./createGenerateChartData";
 const DEFAULT_MODE = "rates";
 
 const RevocationsByRiskLevel = observer(
-  function RevocationsByRiskLevel({ containerHeight, timeDescription }, ref) {
+  function RevocationsByRiskLevel(
+    { containerHeight = null, timeDescription },
+    ref,
+  ) {
     const dataStore = useDataStore();
     const { revocationsChartStore } = dataStore;
     const CHART_TITLE = translate("revocationsByRiskLevelChartTitle");
@@ -66,8 +68,6 @@ const RevocationsByRiskLevel = observer(
   },
   { forwardRef: true },
 );
-
-RevocationsByRiskLevel.defaultProps = { containerHeight: null };
 
 RevocationsByRiskLevel.propTypes = {
   containerHeight: PropTypes.number,

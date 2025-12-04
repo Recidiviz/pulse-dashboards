@@ -17,7 +17,6 @@
 
 import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
-import React from "react";
 
 import flags from "../../flags";
 import { translate } from "../../utils/i18nSettings";
@@ -31,7 +30,10 @@ const MAX_OFFICERS_COUNT = 50;
 const DEFAULT_MODE = "counts";
 
 const RevocationsByOfficer = observer(
-  function RevocationsByOfficer({ containerHeight, timeDescription }, ref) {
+  function RevocationsByOfficer(
+    { containerHeight = null, timeDescription },
+    ref,
+  ) {
     const dataStore = useDataStore();
     const { revocationsChartStore } = dataStore;
     const CHART_TITLE = `${translate("revocationsByOfficerChartTitle")}`;
@@ -106,8 +108,6 @@ const RevocationsByOfficer = observer(
   },
   { forwardRef: true },
 );
-
-RevocationsByOfficer.defaultProps = { containerHeight: null };
 
 RevocationsByOfficer.propTypes = {
   containerHeight: PropTypes.number,
