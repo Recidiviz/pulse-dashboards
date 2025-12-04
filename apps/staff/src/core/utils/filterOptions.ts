@@ -184,7 +184,9 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.AGE_GROUP),
     options: [
       { label: "All", value: "ALL" },
-      { label: "<25", longLabel: "<25 years old", value: "<25" },
+      { label: "<18", longLabel: "<18 years old", value: "<18" },
+      { label: "18-20", longLabel: "18-20 years old", value: "18-20" },
+      { label: "21-24", longLabel: "21-24 years old", value: "21-24" },
       { label: "25-29", longLabel: "25-29 years old", value: "25-29" },
       { label: "30-34", longLabel: "30-34 years old", value: "30-34" },
       { label: "35-39", longLabel: "35-39 years old", value: "35-39" },
@@ -192,7 +194,8 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       { label: "45-49", longLabel: "45-49 years old", value: "45-49" },
       { label: "50-54", longLabel: "50-54 years old", value: "50-54" },
       { label: "55-59", longLabel: "55-59 years old", value: "55-59" },
-      { label: "60+", longLabel: "60+ years old", value: "60+" },
+      { label: "60-64", longLabel: "60-64 years old", value: "60-64" },
+      { label: "65+", longLabel: "65+ years old", value: "65+" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -1294,6 +1297,14 @@ export const NyPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
   [FILTER_TYPES.FACILITY]: {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.FACILITY],
+    useDynamicOptions: true,
+  },
+  [FILTER_TYPES.RACE]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.RACE],
+    useDynamicOptions: true,
+  },
+  [FILTER_TYPES.GENDER]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.GENDER],
     useDynamicOptions: true,
   },
 };

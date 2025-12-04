@@ -558,16 +558,46 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
 
 export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
-    // PRISON
+  // PRISON
   prisonPopulationOverTime: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
-    ]
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+    ],
   },
   prisonFacilityPopulation: {
     enabledFilters: [
       FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+    ],
+  },
+  prisonPopulationByAgeGroup: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+    ],
+  },
+  prisonPopulationByGender: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+    ],
+  },
+  prisonPopulationByRace: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
     ],
   },
 };

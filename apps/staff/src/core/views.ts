@@ -117,6 +117,8 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
     "prisonPopulationOverTime",
     "prisonFacilityPopulation",
     "prisonPopulationByRace",
+    "prisonPopulationByGender",
+    "prisonPopulationByAgeGroup",
     "prisonPopulationPersonLevel",
   ],
   [PATHWAYS_PAGES.prisonToSupervision]: [
@@ -170,6 +172,8 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<MetricId, PathwaysSection> =
     prisonPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
     prisonFacilityPopulation: PATHWAYS_SECTIONS.countByLocation,
     prisonPopulationByRace: PATHWAYS_SECTIONS.countByRace,
+    prisonPopulationByGender: PATHWAYS_SECTIONS.countByGender,
+    prisonPopulationByAgeGroup: PATHWAYS_SECTIONS.countByAgeGroup,
     prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
     projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.projectedCountOverTime,
     projectedSupervisionPopulationOverTime:

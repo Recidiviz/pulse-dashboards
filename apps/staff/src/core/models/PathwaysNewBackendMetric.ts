@@ -41,6 +41,7 @@ import {
   FilterType,
   PopulationFilterValues,
 } from "../types/filters";
+import { dynamicFilterOptionMapToFilterType} from "../types/filters";
 import { isAbortException } from "../utils/exceptions";
 import {
   getMetricIdsForPage,
@@ -53,15 +54,16 @@ import {
   HydratablePathwaysMetric,
   MetricId,
   MetricRecord,
+  NewBackendMetricMetadata,
   NewBackendRecord,
   PathwaysMetricRecords,
-  SimulationCompartment,
-} from "./types";
+  SimulationCompartment} from "./types";
 import {
   formatDateString,
   getTimePeriodRawValue,
   validateDynamicFilterOptions,
 } from "./utils";
+
 
 export type BaseNewMetricConstructorOptions = {
   id: MetricId;
@@ -297,13 +299,22 @@ export default abstract class PathwaysNewBackendMetric<
           this.lastUpdated = formatDateString(
             fetchedData.metadata?.lastUpdated,
           );
-          if (fetchedData.metadata?.facilityIdNameMap) {
-            const facility = JSON.parse(fetchedData.metadata.facilityIdNameMap);
-            if (!validateDynamicFilterOptions(facility))
-              throw new Error(
-                `Invalid dynamic filter option for ${this.id}: facility`,
-              );
-            this.dynamicFilterOptions.facility = facility;
+          if (fetchedData.metadata) {
+            (Object.entries(fetchedData.metadata) as [keyof NewBackendMetricMetadata, string][]).forEach(
+              ([metadataKey, value]) => {
+                if (metadataKey === "lastUpdated") return;
+                const filterType =
+                  dynamicFilterOptionMapToFilterType[metadataKey]
+                if (filterType && value) {
+                  const idNameMap = JSON.parse(value);
+                  if (!validateDynamicFilterOptions(idNameMap))
+                    throw new Error(
+                      `Invalid dynamic filter option for ${this.id}: ${filterType}`,
+                    );
+                  this.dynamicFilterOptions[filterType] = idNameMap;
+                }
+              },
+            );
           }
           this.hydrationState = { status: "hydrated" };
         });

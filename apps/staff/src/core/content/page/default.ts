@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,6 +39,8 @@ const content: PageCopy = {
       countOverTime: "Prison population over time",
       countByLocation: "Prison population by facility",
       countByRace: "Prison population by race",
+      countByGender: "Prison population by gender",
+      countByAgeGroup: "Prison population by age group",
       personLevelDetail: "List of people in prison",
     },
     methodology: "Includes individuals who are admitted to state facilities.",

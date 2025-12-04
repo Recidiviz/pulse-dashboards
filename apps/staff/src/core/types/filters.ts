@@ -60,3 +60,18 @@ export type Filters = {
 export type EnabledFiltersByMetric = {
   [key in MetricId]: Filters;
 };
+
+export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionMetadata = {
+  facilityIdNameMap: "facility",
+  raceIdNameMap: "race",
+  genderIdNameMap: "gender",
+};
+
+export type DynamicFilterOptionIdNameMap = 
+  | "facilityIdNameMap"
+  | "raceIdNameMap"
+  | "genderIdNameMap"
+;
+export type DynamicFilterOptionMetadata = {
+  [key in DynamicFilterOptionIdNameMap]: FilterType;
+};

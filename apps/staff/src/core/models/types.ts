@@ -48,6 +48,7 @@ import {
 import { MetricCopy, PageCopy } from "../content/types";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
+import { DynamicFilterOptionMetadata } from "../types/filters";
 import { Navigation } from "../types/navigation";
 import { WorkflowsPathSection } from "../views";
 import { ClientDetailComponentName } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
@@ -283,12 +284,13 @@ export type MetricRecord =
   | PersonLevelDataRecord
   | UsTnCompliantReportingWorkflowsImpactRecord;
 
+export type NewBackendMetricMetadata = {
+  lastUpdated: string;
+} & Partial<DynamicFilterOptionMetadata>;
+
 export type NewBackendRecord<RecordType extends MetricRecord> = {
   data: RecordType[];
-  metadata: {
-    lastUpdated: string;
-    facilityIdNameMap?: string;
-  };
+  metadata: NewBackendMetricMetadata;
 };
 
 export type UsTnCompliantReportingWorkflowsImpactRecord = {
@@ -471,6 +473,8 @@ export type MetricId =
   | "prisonPopulationOverTime"
   | "prisonFacilityPopulation"
   | "prisonPopulationByRace"
+  | "prisonPopulationByAgeGroup"
+  | "prisonPopulationByGender"
   | "projectedPrisonPopulationOverTime"
   | "prisonPopulationPersonLevel"
   | "prisonToSupervisionPopulationOverTime"

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,6 +35,16 @@ const content: MetricCopy = {
     title: "Prison population by race",
     methodology:
       "The chart describes the number of people from each race as of the date specified in the chart title. ",
+  },
+  prisonPopulationByGender: {
+    title: "Prison population by gender",
+    methodology:
+      "The chart describes the number of people from each gender as of the date specified in the chart title. ",
+  },
+  prisonPopulationByAgeGroup: {
+    title: "Prison population by age group",
+    methodology:
+      "The chart describes the number of people from each age group as of the date specified in the chart title. ",
   },
   prisonPopulationOverTime: {
     title: "Prison population over time",

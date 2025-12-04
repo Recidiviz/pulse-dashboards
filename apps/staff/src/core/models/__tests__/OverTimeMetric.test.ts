@@ -40,6 +40,10 @@ describe("OverTimeMetric", () => {
     { label: "Option 1", value: "OPTION_1" },
     { label: "Option 2", value: "OPTION_2" },
   ];
+  const genderOptions = [
+    { label: "Male", value: "MALE" },
+    { label: "Non-binary", value: "NON_BINARY" },
+  ];
 
   beforeEach(() => {
     vi.mocked(callNewMetricsApi).mockResolvedValue({
@@ -75,6 +79,7 @@ describe("OverTimeMetric", () => {
       metadata: {
         lastUpdated: "2022-05-01",
         facilityIdNameMap: JSON.stringify(facilityOptions),
+        genderIdNameMap: JSON.stringify(genderOptions),
       },
     });
 
@@ -364,7 +369,11 @@ describe("OverTimeMetric", () => {
   });
 
   it("parses facilityIdNameMap from metadata", () => {
-    expect(metric.dynamicFilterOptions).toEqual({ facility: facilityOptions });
+    expect(metric.dynamicFilterOptions.facility).toEqual(facilityOptions);
+  });
+
+  it("parses genderIdNameMap from metadata", () => {
+    expect(metric.dynamicFilterOptions.gender).toEqual(genderOptions);
   });
 
   it("does not set dynamic filter option if invalid", async () => {
@@ -394,6 +403,7 @@ describe("OverTimeMetric", () => {
       metadata: {
         lastUpdated: "2022-05-01",
         facilityIdNameMap: JSON.stringify([]),
+        genderIdNameMap: JSON.stringify([]),
       },
     });
 
