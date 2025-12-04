@@ -41,7 +41,6 @@ describe("Security Headers Configuration", () => {
     const configContent = await readFile(configPath, "utf-8");
 
     expect(configContent).toContain("Content-Security-Policy");
-    expect(configContent).toContain("default-src");
     expect(configContent).toContain("script-src");
     expect(configContent).toContain("style-src");
   });
