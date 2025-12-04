@@ -74,7 +74,7 @@ const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
             className="mb-8 size-16"
             resizeMode="contain"
           />
-          <Text className="mb-8 text-center text-[32px] font-bold text-primary">
+          <Text className="mb-8 text-center font-libre-baskerville text-[32px] font-bold text-primary">
             Sign In to Recidiviz
           </Text>
 
@@ -83,7 +83,7 @@ const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
           {/* Skip Auth Link for Offline Mode */}
           {OFFLINE_MODE && (
             <TouchableOpacity onPress={handleSkipAuth} className="mt-4">
-              <Text className="text-center text-sm font-medium text-blue-600">
+              <Text className="text-center font-inter text-sm font-medium text-blue-600">
                 Skip Authentication (Offline Mode)
               </Text>
             </TouchableOpacity>
@@ -93,11 +93,11 @@ const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
 
       {/* Footer: restricted notice */}
       <View className="mb-6 flex-row items-center justify-center">
-        <Text className="text-sm text-gray-400">
+        <Text className="font-inter text-sm text-gray-400">
           Restricted to authorized users
         </Text>
         <TouchableOpacity onPress={openSheet}>
-          <Text className="ml-1 text-sm font-medium text-[#4D5255]">
+          <Text className="ml-1 font-inter text-sm font-medium text-[#4D5255]">
             Learn more
           </Text>
         </TouchableOpacity>

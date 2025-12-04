@@ -80,17 +80,17 @@ const MeetingInProgressBar = ({
       className={`flex-row items-center justify-between rounded-xl bg-[#F4F5F5] p-3 ${className}`}
     >
       <View>
-        <Text className="font-[inter] font-medium text-[13px] text-gray-700">
+        <Text className="font-inter text-[13px] font-medium text-gray-700">
           Meeting in progress
         </Text>
-        <Text className="mt-1 text-[12px] text-gray-600">
+        <Text className="mt-1 font-inter text-[12px] text-gray-600">
           {formatDuration(durationMs)}
         </Text>
       </View>
 
       <View className="flex-row items-center space-x-2">
         <TouchableOpacity
-          className="px-3 py-2 rounded-full"
+          className="rounded-full px-3 py-2"
           onPress={onPauseResume}
           style={{
             backgroundColor: isPaused ? "#006C67" : "#4D5255",
@@ -102,14 +102,14 @@ const MeetingInProgressBar = ({
               className="mr-1.5 size-4"
               style={{ tintColor: "white", resizeMode: "contain" }}
             />
-            <Text className="font-semibold text-[13px] text-white">
+            <Text className="font-inter text-[13px] font-semibold text-white">
               {isPaused ? "Resume" : "Pause"}
             </Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="bg-[#B91C1C] ml-2 p-2 rounded-full"
+          className="ml-2 rounded-full bg-[#B91C1C] p-2"
           onPress={onStop}
         >
           <Image

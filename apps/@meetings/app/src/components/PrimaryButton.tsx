@@ -38,7 +38,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
       }`}
     >
       <Text
-        className={`text-center font-semibold ${
+        className={`text-center font-inter font-semibold ${
           disabled ? "text-gray-600" : "text-white"
         }`}
       >

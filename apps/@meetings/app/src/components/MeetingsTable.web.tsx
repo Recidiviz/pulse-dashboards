@@ -53,7 +53,7 @@ type MeetingNavProp = NativeStackNavigationProp<RootStackParamList, "Meeting">;
 
 const Topic = ({ topic }: { topic: string }) => {
   return (
-    <Text className="rounded bg-[#E6EAEB] px-1.5 py-0.5 text-xs font-semibold">
+    <Text className="rounded bg-[#E6EAEB] px-1.5 py-0.5 font-inter text-xs font-semibold">
       {topic}
     </Text>
   );
@@ -89,8 +89,8 @@ const MeetingRow = ({ meeting, client }: MeetingRowProps) => {
         >
           {meeting.content || (
             // TODO: adding note under discussion with design team
-            <TouchableOpacity className="rounded-full px-2.5 py-1.5 text-[#006C67] hover:bg-[#4D5255] hover:text-white">
-              <Text>+ Add note</Text>
+            <TouchableOpacity className="rounded-full px-2.5 py-1.5 font-inter text-[#006C67] hover:bg-[#4D5255] hover:text-white">
+              <Text className="font-inter">+ Add note</Text>
             </TouchableOpacity>
           )}
         </Text>

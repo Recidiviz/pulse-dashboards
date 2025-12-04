@@ -39,12 +39,12 @@ const StartButton: React.FC<{ onPress: () => void; disabled: boolean }> = ({
   disabled,
 }) => (
   <TouchableOpacity
-    className="flex-row justify-center items-center bg-[#006C67] py-5 rounded-full"
+    className="flex-row items-center justify-center rounded-full bg-[#006C67] py-5"
     onPress={onPress}
     disabled={disabled}
   >
     <Image source={Icons.Play} className="mr-2 size-4" />
-    <Text className="font-semibold text-white">Start Recording</Text>
+    <Text className="font-inter font-semibold text-white">Start Recording</Text>
   </TouchableOpacity>
 );
 
@@ -62,7 +62,7 @@ const StopButton: React.FC<{ onPress: () => void; disabled: boolean }> = ({
       disabled={disabled}
     >
       <Image source={Icons.Stop} className="mr-2 size-6" />
-      <Text className={`font-semibold ${textClass}`}>Stop</Text>
+      <Text className={`font-inter font-semibold ${textClass}`}>Stop</Text>
     </TouchableOpacity>
   );
 };
@@ -82,7 +82,7 @@ const PauseResumeButton: React.FC<{
 
   return (
     <TouchableOpacity
-      className="flex-row justify-center items-center ml-3 px-8 py-3 rounded-full w-[120px]"
+      className="ml-3 w-[120px] flex-row items-center justify-center rounded-full px-8 py-3"
       onPress={onPress}
       disabled={disabled}
       style={{ backgroundColor: bgColor }}
@@ -95,7 +95,7 @@ const PauseResumeButton: React.FC<{
           className="mr-2 size-6"
         />
       )}
-      <Text className={`font-semibold ${textClass}`}>
+      <Text className={`font-inter font-semibold ${textClass}`}>
         {status === "paused" ? "Resume" : "Pause"}
       </Text>
     </TouchableOpacity>
@@ -117,13 +117,15 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   return (
     <>
       {status === "recording" && (
-        <View className="flex-row justify-center items-center pb-2">
+        <View className="flex-row items-center justify-center pb-2">
           <Image source={Icons.Record} className="size-4" />
-          <Text className="px-2 text-black">Recording in progress</Text>
+          <Text className="px-2 font-inter text-black">
+            Recording in progress
+          </Text>
         </View>
       )}
 
-      <View className="flex-row justify-center items-center">
+      <View className="flex-row items-center justify-center">
         <StopButton onPress={onStop} disabled={isUploading} />
         <PauseResumeButton
           status={

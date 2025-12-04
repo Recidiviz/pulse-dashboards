@@ -80,7 +80,7 @@ const MeetingSheet: React.FC<MeetingSheetProps> = ({
       className={`mb-3 w-72 items-center self-center rounded-full py-4 ${secondaryBgClass}`}
       onPress={secondaryButton.onPress}
     >
-      <Text className={`font-semibold ${secondaryTextClass}`}>
+      <Text className={`font-inter font-semibold ${secondaryTextClass}`}>
         {secondaryButton.label}
       </Text>
     </TouchableOpacity>
@@ -93,7 +93,7 @@ const MeetingSheet: React.FC<MeetingSheetProps> = ({
       )}`}
       onPress={tertiaryButton.onPress}
     >
-      <Text className="font-semibold text-[#B42D2D]">
+      <Text className="font-inter font-semibold text-[#B42D2D]">
         {tertiaryButton.label}
       </Text>
     </TouchableOpacity>
@@ -101,17 +101,19 @@ const MeetingSheet: React.FC<MeetingSheetProps> = ({
 
   return (
     <View className="rounded-t-3xl bg-white p-6 shadow-lg">
-      <Text className="text-primary mb-4 px-4 text-center text-lg font-bold">
+      <Text className="mb-4 px-4 text-center font-inter text-lg font-bold text-primary">
         {title}
       </Text>
-      <Text className="mb-6 w-80 self-center px-4 text-center text-sm text-gray-500">
+      <Text className="mb-6 w-80 self-center px-4 text-center font-inter text-sm text-gray-500">
         {description}
       </Text>
       <TouchableOpacity
         className={`mb-3 w-72 items-center self-center rounded-full py-4 ${primaryBgClass}`}
         onPress={primaryButton.onPress}
       >
-        <Text className={`font-semibold ${primaryTextClass} text-center`}>
+        <Text
+          className={`font-inter font-semibold ${primaryTextClass} text-center`}
+        >
           {primaryButton.label}
         </Text>
       </TouchableOpacity>

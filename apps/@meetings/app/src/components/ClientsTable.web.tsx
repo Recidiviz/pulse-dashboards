@@ -71,7 +71,7 @@ const ClientsTable = ({ clients }: ClientsProps) => {
                   className="size-11 items-center justify-center overflow-hidden rounded-full"
                   imageClassName="!size-11"
                 >
-                  <Text className="font-['Public_Sans'] text-base font-semibold text-white">
+                  <Text className="font-inter text-base font-medium text-white">
                     {getClientInitials(client.fullName)}
                   </Text>
                 </ImageBackground>
@@ -85,7 +85,9 @@ const ClientsTable = ({ clients }: ClientsProps) => {
             <TableCell>
               <Text className="font-inter text-base text-[#355362D9]">
                 Last meeting{" "}
-                <Text className="font-bold">{client.lastMeeting}</Text>
+                <Text className="font-inter font-bold">
+                  {client.lastMeeting}
+                </Text>
               </Text>
             </TableCell>
             <TableCell>

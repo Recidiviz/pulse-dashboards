@@ -40,7 +40,7 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
     <View className="z-50 self-start">
       <View className="flex-row items-center justify-between">
         {label && (
-          <Text className="text-sm text-[#355362D9] md:text-base">
+          <Text className="font-inter text-sm text-[#355362D9] md:text-base">
             {label}:
           </Text>
         )}
@@ -50,7 +50,7 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
           onPress={() => setOpen((p) => !p)}
         >
           <Text
-            className="px-1 text-sm text-[#004D48] md:text-base md:font-medium"
+            className="px-1 font-inter text-sm text-[#004D48] md:text-base md:font-medium"
             numberOfLines={1}
           >
             {selected}
@@ -80,7 +80,7 @@ const Dropdown = ({ options, label, onSelect }: DropdownProps) => {
                 className="group rounded p-2.5 hover:bg-[#F4F5F5]"
                 onPress={() => handleSelect(opt)}
               >
-                <Text className="text-sm font-medium text-[#355362D9] group-hover:text-[#004D48]">
+                <Text className="font-inter text-sm font-medium text-[#355362D9] group-hover:text-[#004D48]">
                   {opt}
                 </Text>
               </TouchableOpacity>

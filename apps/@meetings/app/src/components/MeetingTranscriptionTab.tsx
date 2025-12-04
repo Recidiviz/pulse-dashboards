@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { useState } from "react";
-import { Image,Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import SearchBar from "./SearchBar";
@@ -26,20 +26,20 @@ type Props = {
     confidence: number | null;
     summary: string | null;
     utterances: {
-        confidence: number;
-        startTimeMs: number;
-        text: string;
-        speaker: string;
-        endTimeMs: number;
+      confidence: number;
+      startTimeMs: number;
+      text: string;
+      speaker: string;
+      endTimeMs: number;
     }[];
-  } 
+  };
 };
 
 const formatSpeakerStartTime = (startTimeMs: number) => {
   const totalSeconds = startTimeMs / 1000;
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = Math.floor(totalSeconds % 60);
-  const formattedSeconds = String(seconds).padStart(2, '0');
+  const formattedSeconds = String(seconds).padStart(2, "0");
 
   return `${minutes}:${formattedSeconds}`;
 };
@@ -58,10 +58,10 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
           />
         </View>
         <View className="flex flex-col gap-[14px]">
-          <Text className="font-libre-baskerville text-center text-[28px] font-bold leading-[32px] text-[#35536280]">
+          <Text className="text-center font-libre-baskerville text-[28px] font-bold leading-[32px] text-[#35536280]">
             Transcript unavailable
           </Text>
-          <Text className="text-center text-sm font-normal text-gray-500 font-inter">
+          <Text className="text-center font-inter text-sm font-normal text-gray-500">
             Transcript unavailable in this state due to legal restrictions.
           </Text>
         </View>
@@ -69,8 +69,10 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
     );
   }
 
-  const filteredTranscriptions = transcription.utterances
-    .filter((u) => u.text.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+  const filteredTranscriptions =
+    transcription.utterances.filter((u) =>
+      u.text.toLowerCase().includes(searchQuery.toLowerCase()),
+    ) || [];
 
   return (
     <View className="flex flex-col gap-3">
@@ -85,14 +87,20 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
       {filteredTranscriptions.map((u) => (
         <View key={u.startTimeMs} className="flex flex-col gap-1">
           <View className="flex flex-row gap-2">
-            <Text className="text-sm font-normal text-[#355362D9] font-inter">{formatSpeakerStartTime(u.startTimeMs)}</Text>
-            <Text className="text-sm font-semibold text-[#355362D9] font-inter">{u.speaker}</Text>
+            <Text className="font-inter text-sm font-normal text-[#355362D9]">
+              {formatSpeakerStartTime(u.startTimeMs)}
+            </Text>
+            <Text className="font-inter text-sm font-semibold text-[#355362D9]">
+              {u.speaker}
+            </Text>
           </View>
-          <Text className="text-primary text-sm font-normal font-inter">{u.text}</Text>
+          <Text className="font-inter text-sm font-normal text-primary">
+            {u.text}
+          </Text>
         </View>
       ))}
     </View>
   );
-}
+};
 
 export default MeetingsTranscriptionTab;

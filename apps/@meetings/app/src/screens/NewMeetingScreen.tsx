@@ -242,9 +242,9 @@ const NewMeetingScreen = () => {
 
   if (status === "ending") {
     return (
-      <View className="flex-row flex-1 justify-center items-center bg-white">
+      <View className="flex-1 flex-row items-center justify-center bg-white">
         <ActivityIndicator size="small" color="text-primary" />
-        <Text className="p-4 font-medium text-primary text-lg">
+        <Text className="p-4 font-inter text-lg font-medium text-primary">
           Meeting ending...
         </Text>
       </View>
@@ -252,19 +252,19 @@ const NewMeetingScreen = () => {
   }
 
   const RecordingIntro = (
-    <View className="flex-1 justify-center items-center">
+    <View className="flex-1 items-center justify-center">
       <View
-        className="justify-center items-center bg-gray-100 mb-6 border border-gray-200 size-16"
+        className="mb-6 size-16 items-center justify-center border border-gray-200 bg-gray-100"
         style={{ borderRadius: 17 }}
       >
         <Image source={Icons.Microphone} className="size-8" />
       </View>
 
-      <Text className="mb-2 font-bold text-primary text-2xl text-center leading-8 tracking-[-0.014rem]">
+      <Text className="mb-2 text-center font-inter text-2xl font-bold leading-8 tracking-[-0.014rem] text-primary">
         Meeting Recording
       </Text>
 
-      <Text className="px-4 font-normal text-gray-500 text-sm text-center leading-5 tracking-[-0.02em]">
+      <Text className="px-4 text-center font-inter text-sm font-normal leading-5 tracking-[-0.02em] text-gray-500">
         This meeting will be recorded and transcribed for note-taking. Be sure
         to confirm that everyone present is aware and has agreed to recording.
       </Text>
@@ -273,9 +273,11 @@ const NewMeetingScreen = () => {
 
   const RecordingNotes = (
     <View className="mt-6">
-      <View className="flex-row items-center mb-2">
+      <View className="mb-2 flex-row items-center">
         <Image source={Icons.Notes} className="mr-2 size-5" />
-        <Text className="font-semibold text-primary text-lg">Notepad</Text>
+        <Text className="font-inter text-lg font-semibold text-primary">
+          Notepad
+        </Text>
       </View>
 
       <TextInput
@@ -305,11 +307,11 @@ const NewMeetingScreen = () => {
         {isMeetingActive ? RecordingNotes : RecordingIntro}
       </View>
 
-      <View className="bg-gray-100 px-6 py-12 rounded-t-2xl">
-        <Text className="font-semibold text-primary text-base text-center">
+      <View className="rounded-t-2xl bg-gray-100 px-6 py-12">
+        <Text className="text-center font-inter text-base font-semibold text-primary">
           {client.fullName}
         </Text>
-        <Text className="mb-4 text-gray-600 text-sm text-center">
+        <Text className="mb-4 text-center font-inter text-sm text-gray-600">
           ID: {client.displayPersonExternalId} •{" "}
           {humanReadableTitleCase(client.supervision)}
         </Text>

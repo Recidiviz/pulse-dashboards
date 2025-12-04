@@ -49,7 +49,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       </TouchableOpacity>
 
       <TextInput
-        className="mx-2 h-10 flex-1 font-[inter] text-sm text-black outline-none"
+        className="mx-2 h-10 flex-1 font-inter text-sm text-black outline-none"
         placeholder={placeholder}
         placeholderTextColor="#999"
         value={value}
@@ -61,7 +61,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
       {value?.length > 0 && (
         <TouchableOpacity onPress={() => onChange("")}>
           <View className="size-4 items-center justify-center rounded-full bg-[#9AA9B1]">
-            <Text className="text-[8px] font-extrabold text-white">✕</Text>
+            <Text className="font-inter text-[8px] font-extrabold text-white">
+              ✕
+            </Text>
           </View>
         </TouchableOpacity>
       )}

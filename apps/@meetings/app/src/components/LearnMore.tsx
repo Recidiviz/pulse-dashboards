@@ -81,14 +81,16 @@ export const LearnMoreSheet = ({ ref }: LearnMoreSheetProps) => {
       handleIndicatorStyle={{ backgroundColor: "#35536280" }}
     >
       <BottomSheetScrollView className="px-5">
-        <Text className="mb-4 text-base leading-6 text-gray-700">
+        <Text className="mb-4 font-inter text-base leading-6 text-gray-700">
           {content}
         </Text>
         <TouchableOpacity
           className="mb-6 mt-4 rounded-full border border-gray-300 bg-white py-4"
           onPress={handleClose}
         >
-          <Text className="text-center font-semibold text-gray-700">Close</Text>
+          <Text className="text-center font-inter font-semibold text-gray-700">
+            Close
+          </Text>
         </TouchableOpacity>
       </BottomSheetScrollView>
     </BottomSheet>

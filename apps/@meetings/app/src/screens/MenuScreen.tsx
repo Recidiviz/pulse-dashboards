@@ -47,7 +47,9 @@ const MenuTextItem = ({
 
   return (
     <TouchableOpacity onPress={onPress} className="py-4">
-      <Text className={`text-base font-medium ${colorClasses[color]}`}>
+      <Text
+        className={`font-inter text-base font-medium ${colorClasses[color]}`}
+      >
         {title}
       </Text>
     </TouchableOpacity>
@@ -73,7 +75,9 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
         <TouchableOpacity onPress={onClose}>
           <Image source={Icons.Cross} className="!size-6" />
         </TouchableOpacity>
-        <Text className="text-base font-semibold text-primary">Navigation</Text>
+        <Text className="font-inter text-base font-semibold text-primary">
+          Navigation
+        </Text>
         <TouchableOpacity onPress={() => console.log("Bell pressed")}>
           <Image source={Icons.Bell} className="!size-6" />
         </TouchableOpacity>
@@ -85,19 +89,21 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
             source={Icons.BgAvatar}
             className="mr-3 size-12 items-center justify-center overflow-hidden rounded-full"
           >
-            <Text className="text-white">SS</Text>
+            <Text className="font-inter text-white">SS</Text>
           </ImageBackground>
           <View>
-            <Text className="text-base font-semibold text-primary">
+            <Text className="font-inter text-base font-semibold text-primary">
               Sam Smith
             </Text>
-            <Text className="text-sm text-[#355362D9]">user@example.com</Text>
+            <Text className="font-inter text-sm text-[#355362D9]">
+              user@example.com
+            </Text>
           </View>
         </View>
       </View>
 
       <ScrollView className="flex-1 p-4">
-        <Text className="text-xs text-gray-500">Global</Text>
+        <Text className="font-inter text-xs text-gray-500">Global</Text>
         <MobileMenuItem
           icon={Icons.Home}
           title="Home"
@@ -120,7 +126,7 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
           onPress={() => handleMenuPress("Messages")}
         />
 
-        <Text className="mt-[15px] text-xs text-gray-500">Tools</Text>
+        <Text className="mt-[15px] font-inter text-xs text-gray-500">Tools</Text>
         <MobileMenuItem
           icon={Icons.Schedule}
           title="Schedule"

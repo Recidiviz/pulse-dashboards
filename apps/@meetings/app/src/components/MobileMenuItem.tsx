@@ -50,10 +50,10 @@ const MobileMenuItem = ({
           className="mr-3 !size-6"
           style={{ resizeMode: "contain" }}
         />
-        <Text className="text-base font-medium">{title}</Text>
+        <Text className="font-inter text-base font-medium">{title}</Text>
         {badge ? (
           <View className="ml-2 h-[14] w-4 justify-center rounded-full bg-gray-600">
-            <Text className="text-center text-xs font-medium text-white">
+            <Text className="text-center font-inter text-xs font-medium text-white">
               {badge}
             </Text>
           </View>

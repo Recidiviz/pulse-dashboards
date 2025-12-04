@@ -70,10 +70,10 @@ const MeetingsCardsList = ({ meetings, client, onPress }: MeetingCardProps) => {
             navigation.navigate("Meeting", { meeting, client });
           }
         }}
-        className="bg-white shadow-sm mb-3 p-4 rounded-2xl"
+        className="mb-3 rounded-2xl bg-white p-4 shadow-sm"
       >
-        <View className="flex-row justify-between items-center">
-          <Text className="font-inter font-semibold text-primary text-base">
+        <View className="flex-row items-center justify-between">
+          <Text className="font-inter text-base font-semibold text-primary">
             {meeting.date}
           </Text>
           <Image
@@ -83,11 +83,11 @@ const MeetingsCardsList = ({ meetings, client, onPress }: MeetingCardProps) => {
           />
         </View>
 
-        <Text className="mr-1 font-medium text-primary text-xs">
+        <Text className="mr-1 font-inter text-xs font-medium text-primary">
           {meeting.time} • {meeting.duration || "In progress..."}
         </Text>
         {isProcessingMeeting ? (
-          <View className="bg-[#C1E3D83B] mt-4 p-4 rounded-xl">
+          <View className="mt-4 rounded-xl bg-[#C1E3D83B] p-4">
             <View className="flex-row items-start">
               <Image
                 source={Icons.Processing}
@@ -96,10 +96,10 @@ const MeetingsCardsList = ({ meetings, client, onPress }: MeetingCardProps) => {
               />
 
               <View className="flex-1">
-                <Text className="font-[inter] font-semibold text-primary text-base">
+                <Text className="font-inter text-base font-semibold text-primary">
                   Recording is being processed...
                 </Text>
-                <Text className="font-medium text-gray-700 text-sm">
+                <Text className="font-inter text-sm font-medium text-gray-700">
                   The notes and transcript will become available in a few
                   minutes
                 </Text>
@@ -119,7 +119,7 @@ const MeetingsCardsList = ({ meetings, client, onPress }: MeetingCardProps) => {
         {/* <View className="my-2 border-gray-200 border-b" />
        <View className="mt-3">
         <Text
-          className="text-gray-700 text-sm leading-5"
+          className="text-gray-700 text-sm font-inter leading-5"
           numberOfLines={isExpanded ? undefined : 2}
         >
           {meeting.content}
@@ -128,7 +128,7 @@ const MeetingsCardsList = ({ meetings, client, onPress }: MeetingCardProps) => {
           onPress={() => setIsExpanded(!isExpanded)}
           className="flex-row items-center mt-1"
         >
-          <Text className="mr-1 font-medium text-primary text-xs">
+          <Text className="mr-1 font-medium font-inter text-primary text-xs">
             {isExpanded ? "Less" : "More"}
           </Text>
           <Image

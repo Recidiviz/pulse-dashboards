@@ -63,7 +63,7 @@ const ClientsCardsList = ({ clients, recordingState }: ClientsProps) => {
         return (
           <TouchableOpacity
             key={client.personId}
-            className="px-2.5 py-3.5 border-gray-300 border-b"
+            className="border-b border-gray-300 px-2.5 py-3.5"
             onPress={() =>
               navigation.navigate("Profile", {
                 client: {
@@ -75,31 +75,31 @@ const ClientsCardsList = ({ clients, recordingState }: ClientsProps) => {
               })
             }
           >
-            <View className="flex-row flex-1 items-center">
+            <View className="flex-1 flex-row items-center">
               <ImageBackground
                 source={Icons.BgAvatar}
-                className="justify-center items-center mr-3 rounded-full size-11 overflow-hidden"
+                className="mr-3 size-11 items-center justify-center overflow-hidden rounded-full"
                 imageClassName="!size-11"
               >
-                <Text className="font-[inter] font-semibold text-white text-sm">
+                <Text className="font-inter text-sm font-semibold text-white">
                   {getClientInitials(client.fullName)}
                 </Text>
               </ImageBackground>
 
               <View className="flex-1">
-                <View className="flex-row justify-between items-center">
-                  <Text className="mr-1.5 font-[inter] font-semibold text-gray-900 text-base">
+                <View className="flex-row items-center justify-between">
+                  <Text className="mr-1.5 font-inter text-base font-semibold text-gray-900">
                     {client.fullName}
                   </Text>
                   <Image source={Icons.ArrowRight} className="!size-3.5" />
                 </View>
 
-                <View className="flex-row justify-between items-center gap-1.5 mt-0.5">
-                  <Text className="text-gray-600 text-xs">
+                <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
+                  <Text className="font-inter text-xs text-gray-600">
                     ID: {client.displayPersonExternalId} •{" "}
                     {humanReadableTitleCase(client.supervision)}
                   </Text>
-                  <Text className="text-gray-600 text-xs">
+                  <Text className="font-inter text-xs text-gray-600">
                     Last meeting {client.lastMeeting}
                   </Text>
                 </View>
@@ -113,7 +113,7 @@ const ClientsCardsList = ({ clients, recordingState }: ClientsProps) => {
                 endTime={null}
                 onPauseResume={handleGoToMeetingScreen}
                 onStop={handleGoToMeetingScreen}
-                className="bg-white mt-2"
+                className="mt-2 bg-white"
               />
             )}
           </TouchableOpacity>

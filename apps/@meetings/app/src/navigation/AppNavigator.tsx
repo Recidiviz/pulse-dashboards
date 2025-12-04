@@ -19,7 +19,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
-import React from "react";
+import { useFonts } from "expo-font";
+import React, { useEffect } from "react";
 import { useAuth0 } from "react-native-auth0";
 import superjson from "superjson";
 
@@ -70,6 +71,17 @@ const AppNavigator = () => {
       ],
     }),
   );
+
+  const [, fontsLoadingError] = useFonts({
+    Inter: require("./../../assets/fonts/Inter.ttf"),
+    "LibreBaskerville-Bold": require("./../../assets/fonts/LibreBaskerville-Bold.ttf"),
+  });
+
+  useEffect(() => {
+    if (fontsLoadingError) {
+      console.error("Error loading fonts: ", fontsLoadingError);
+    }
+  }, [fontsLoadingError]);
 
   const handleSkipAuth = () => {
     // Update both ref (for TRPC headers) and state (to trigger re-render)

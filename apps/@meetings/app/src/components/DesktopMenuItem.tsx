@@ -35,7 +35,7 @@ const DesktopMenuItem = ({
       onPress={onPress}
     >
       <Text
-        className={`px-1 text-sm font-medium ${isActive ? "text-primary" : "text-[#355362D9]"}`}
+        className={`px-1 font-inter text-sm font-medium ${isActive ? "text-primary" : "text-[#355362D9]"}`}
       >
         {title}
       </Text>

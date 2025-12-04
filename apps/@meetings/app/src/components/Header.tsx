@@ -116,7 +116,7 @@ const Header: React.FC<HeaderProps> = ({
                 className="size-8 items-center justify-center overflow-hidden rounded-full"
                 imageClassName="!size-8"
               >
-                <Text className="text-base text-white">SS</Text>
+                <Text className="font-inter text-base text-white">SS</Text>
               </ImageBackground>
               <Image
                 source={profileDropdownOpen ? Icons.ArrowUp : Icons.ArrowDown}
@@ -131,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({
                       handleDropdownMenuPress(() => console.log("Settings"))
                     }
                   >
-                    <Text className="whitespace-nowrap text-sm text-gray-700">
+                    <Text className="whitespace-nowrap font-inter text-sm text-gray-700">
                       Settings
                     </Text>
                   </TouchableOpacity>
@@ -142,14 +142,14 @@ const Header: React.FC<HeaderProps> = ({
                       )
                     }
                   >
-                    <Text className="whitespace-nowrap text-sm text-gray-700">
+                    <Text className="whitespace-nowrap font-inter text-sm text-gray-700">
                       Contact Support
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleDropdownMenuPress(onLogout)}
                   >
-                    <Text className="whitespace-nowrap text-sm text-[#B42D2D]">
+                    <Text className="whitespace-nowrap font-inter text-sm text-[#B42D2D]">
                       Log Out
                     </Text>
                   </TouchableOpacity>

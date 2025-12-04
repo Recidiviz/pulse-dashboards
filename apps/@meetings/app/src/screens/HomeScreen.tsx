@@ -25,7 +25,7 @@ const HomeScreen: React.FC = () => {
     <View className="flex-1">
       <Header />
       <View className="flex-1 items-center justify-center">
-        <Text className="text-xl font-semibold">Home Screen</Text>
+        <Text className="font-inter text-xl font-semibold">Home Screen</Text>
       </View>
     </View>
   );

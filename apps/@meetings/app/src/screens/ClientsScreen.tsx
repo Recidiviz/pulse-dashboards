@@ -91,8 +91,10 @@ const ClientsScreen = () => {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <Text className="text-gray-700 text-base">Loading clients...</Text>
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text className="font-inter text-base text-gray-700">
+          Loading clients...
+        </Text>
       </View>
     );
   }
@@ -103,21 +105,21 @@ const ClientsScreen = () => {
     <View className="flex-1">
       <Header />
       <ScrollView className="flex-1" contentContainerClassName="grow">
-        <View className="flex-1 mx-auto w-full max-w-[960px]">
+        <View className="mx-auto w-full max-w-[960px] flex-1">
           <View
             className={
               "rounded-b-[24px] bg-white p-4 sm:flex-row sm:justify-between sm:gap-x-4 md:bg-[initial]"
             }
           >
             <View>
-              <Text className="font-inter font-semibold text-black text-3xl">
+              <Text className="font-libre-baskerville text-3xl font-semibold text-black">
                 Clients
               </Text>
-              <Text className="my-2 font-inter font-normal text-[#707070] text-sm">
+              <Text className="my-2 font-inter text-sm font-normal text-[#707070]">
                 All clients on your caseload are displayed below
               </Text>
             </View>
-            <View className="flex-row justify-end items-center mt-3 grow">
+            <View className="mt-3 grow flex-row items-center justify-end">
               <View className="w-full sm:max-w-[300px]">
                 <SearchBar
                   value={search}
@@ -137,8 +139,8 @@ const ClientsScreen = () => {
             </TouchableOpacity> */}
             </View>
           </View>
-          <View className="z-10 flex-row justify-between items-center my-4 px-4">
-            <Text className="text-[#707070] text-sm">
+          <View className="z-10 my-4 flex-row items-center justify-between px-4">
+            <Text className="font-inter text-sm text-[#707070]">
               {filteredClients.length} client
               {filteredClients.length > 1 ? "s" : ""}
             </Text>
@@ -148,23 +150,23 @@ const ClientsScreen = () => {
               onSelect={setSortBy}
             />
           </View>
-          <View className="p-4 pt-0 grow basis-0">
+          <View className="grow basis-0 p-4 pt-0">
             {filteredClients.length === 0 ? (
-              <View className="justify-center items-center py-16">
-                <View className="justify-center items-center bg-[#2B696908] mb-6 p-3 border-2 border-gray-200 rounded-3xl">
+              <View className="items-center justify-center py-16">
+                <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
                   <Image source={Icons.Lock} className="!size-14" />
                 </View>
-                <Text className="mb-2 font-LibreBaskerville font-extrabold text-[#9CA3AF] text-3xl text-center leading-[32px] tracking-[-0.5px]">
+                <Text className="mb-2 text-center font-libre-baskerville text-3xl font-extrabold leading-[32px] tracking-[-0.5px] text-[#9CA3AF]">
                   No clients found
                 </Text>
-                <Text className="mb-6 font-inter font-normal text-[#9CA3AF] text-sm text-center leading-5 tracking-[-0.28px]">
+                <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
                   Try adjusting your search or use different keywords.
                 </Text>
                 <TouchableOpacity
                   onPress={() => setSearch("")}
-                  className="px-6 py-3 border border-gray-300 rounded-full"
+                  className="rounded-full border border-gray-300 px-6 py-3"
                 >
-                  <Text className="font-inter font-medium text-[16px] text-gray-700">
+                  <Text className="font-inter text-[16px] font-medium text-gray-700">
                     Clear search
                   </Text>
                 </TouchableOpacity>

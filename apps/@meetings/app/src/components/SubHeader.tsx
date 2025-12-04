@@ -46,7 +46,7 @@ const SubHeader: React.FC<SubHeaderProps> = ({
           <Image source={Icons.ArrowLeft} className="size-6" />
         </TouchableOpacity>
         {showHeading && (
-          <Text className="text-primary text-base font-semibold">
+          <Text className="font-inter text-base font-semibold text-primary">
             {headingTxt}
           </Text>
         )}
@@ -62,7 +62,7 @@ const SubHeader: React.FC<SubHeaderProps> = ({
           if (showRightBtn) {
             return (
               <TouchableOpacity onPress={onPressBtn}>
-                <Text className="text-base font-semibold text-[#B42D2D]">
+                <Text className="font-inter text-base font-semibold text-[#B42D2D]">
                   Discard
                 </Text>
               </TouchableOpacity>

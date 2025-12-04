@@ -245,8 +245,10 @@ const ProfileScreen = () => {
   };
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <Text className="text-gray-700 text-base">Loading meetings...</Text>
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text className="font-inter text-base text-gray-700">
+          Loading meetings...
+        </Text>
       </View>
     );
   }
@@ -258,21 +260,21 @@ const ProfileScreen = () => {
   const renderMeetingsContent = () => {
     if (processedMeetings.length === 0) {
       return (
-        <View className="justify-center items-center py-16">
-          <View className="justify-center items-center bg-[#2B696908] mb-6 p-3 border-2 border-gray-200 rounded-3xl">
+        <View className="items-center justify-center py-16">
+          <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
             <Image source={Icons.Calendar} className="!size-14" />
           </View>
-          <Text className="mb-2 font-libre-baskerville font-extrabold text-[28px] text-primary text-center leading-[32px] tracking-[-0.5px]">
+          <Text className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
             No meetings yet
           </Text>
-          <Text className="mb-6 font-inter font-normal text-[#9CA3AF] text-sm text-center leading-5 tracking-[-0.28px]">
+          <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
             Create a new meeting when you’re ready.
           </Text>
           <TouchableOpacity
             onPress={handleCreateMeeting}
-            className="bg-[#006C67] px-6 py-3 rounded-full"
+            className="rounded-full bg-[#006C67] px-6 py-3"
           >
-            <Text className="font-inter font-medium text-[16px] text-white">
+            <Text className="font-inter text-[16px] font-medium text-white">
               + Meeting
             </Text>
           </TouchableOpacity>
@@ -281,21 +283,21 @@ const ProfileScreen = () => {
     }
     if (filteredMeetings.length === 0) {
       return (
-        <View className="justify-center items-center py-16">
-          <View className="justify-center items-center bg-[#2B696908] mb-6 p-3 border-2 border-gray-200 rounded-3xl">
+        <View className="items-center justify-center py-16">
+          <View className="mb-6 items-center justify-center rounded-3xl border-2 border-gray-200 bg-[#2B696908] p-3">
             <Image source={Icons.Lock} className="!size-14" />
           </View>
-          <Text className="mb-2 font-libre-baskerville font-extrabold text-[28px] text-primary text-center leading-[32px] tracking-[-0.5px]">
+          <Text className="mb-2 text-center font-libre-baskerville text-[28px] font-extrabold leading-[32px] tracking-[-0.5px] text-primary">
             No meetings match your search
           </Text>
-          <Text className="mb-6 font-inter font-normal text-[#9CA3AF] text-sm text-center leading-5 tracking-[-0.28px]">
+          <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
             Try adjusting your search or use different keywords.
           </Text>
           <TouchableOpacity
             onPress={() => setSearchQuery("")}
-            className="px-6 py-3 border border-gray-300 rounded-full"
+            className="rounded-full border border-gray-300 px-6 py-3"
           >
-            <Text className="font-inter font-medium text-[16px] text-gray-700">
+            <Text className="font-inter text-[16px] font-medium text-gray-700">
               Clear search
             </Text>
           </TouchableOpacity>
@@ -352,7 +354,7 @@ const ProfileScreen = () => {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1">
-      <View className="hidden md:block z-10">
+      <View className="z-10 hidden md:block">
         <Header />
       </View>
 
@@ -371,7 +373,7 @@ const ProfileScreen = () => {
         }
       >
         <View className="px-4">
-          <View className="flex-row justify-between items-center">
+          <View className="flex-row items-center justify-between">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image
                 source={Icons.ArrowLeft}
@@ -397,11 +399,11 @@ const ProfileScreen = () => {
 
           {!isCollapsed && (
             <View className="pt-8">
-              <Text className="mb-1 font-bold text-[28px] text-primary leading-[32px] tracking-[-0.56px]">
+              <Text className="mb-1 font-inter text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
                 {client.fullName}
               </Text>
 
-              <Text className="text-[14px] text-primary leading-[16px] tracking-[-0.28px]">
+              <Text className="font-inter text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
                 ID: {client.displayPersonExternalId} •{" "}
                 {humanReadableTitleCase(client.supervision)}
               </Text>
@@ -413,45 +415,51 @@ const ProfileScreen = () => {
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
-        className="md:!pt-0 grow"
+        className="grow md:!pt-0"
         contentContainerClassName="px-4 md:pt-10"
         style={{ paddingTop: mobileContentPadding }}
       >
-        <View className="hidden xl:left-10 xl:absolute md:flex items-start mx-auto mb-4 w-full max-w-[960px] xl:max-w-none">
+        <View className="mx-auto mb-4 hidden w-full max-w-[960px] items-start md:flex xl:absolute xl:left-10 xl:max-w-none">
           <TouchableOpacity
             className="flex-row items-center gap-2"
             onPress={navigation.goBack}
           >
             <Image source={Icons.ArrowLeft} className="!size-3" />
-            <Text className="font-medium text-[#355362D9] text-sm">Back</Text>
+            <Text className="font-inter text-sm font-medium text-[#355362D9]">
+              Back
+            </Text>
           </TouchableOpacity>
         </View>
 
-        <View className="flex-1 mx-auto w-full max-w-[960px]">
-          <Text className="hidden md:block font-libre-baskerville font-bold text-[28px] text-primary md:text-[32px] leading-[32px] tracking-[-0.56px]">
+        <View className="mx-auto w-full max-w-[960px] flex-1">
+          <Text className="hidden font-libre-baskerville text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary md:block md:text-[32px]">
             {client.fullName}
           </Text>
 
-          <Text className="hidden md:block mt-1 text-[14px] text-primary md:text-base leading-[16px] tracking-[-0.28px]">
+          <Text className="mt-1 hidden font-inter text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">
             ID: {client.displayPersonExternalId} • {client.supervision}
           </Text>
 
-          <View className="flex-row justify-between items-center py-2">
-            <Text className="font-semibold text-primary text-xl">
+          <View className="flex-row items-center justify-between py-2">
+            <Text className="font-inter text-xl font-semibold text-primary">
               Meetings{" "}
-              <Text className="text-gray-400">({filteredMeetings.length})</Text>
+              <Text className="font-inter text-gray-400">
+                ({filteredMeetings.length})
+              </Text>
             </Text>
 
             {recordingState === "idle" && (
               <TouchableOpacity
-                className="flex-row justify-center items-center bg-[#006C67] px-4 py-2 rounded-full w-[100px]"
+                className="w-[100px] flex-row items-center justify-center rounded-full bg-[#006C67] px-4 py-2"
                 onPress={handleCreateMeeting}
                 disabled={isCreating}
               >
                 {isCreating ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (
-                  <Text className="font-medium text-white">+ Meeting</Text>
+                  <Text className="font-inter font-medium text-white">
+                    + Meeting
+                  </Text>
                 )}
               </TouchableOpacity>
             )}
@@ -466,8 +474,8 @@ const ProfileScreen = () => {
           />
         </View>
 
-        <View className="md:flex-row md:items-center gap-2 py-2">
-          <Text className="text-[#355362D9] text-sm md:text-base">
+        <View className="gap-2 py-2 md:flex-row md:items-center">
+          <Text className="font-inter text-sm text-[#355362D9] md:text-base">
             Filter by meeting topics:
           </Text>
 
@@ -485,7 +493,7 @@ const ProfileScreen = () => {
                   onPress={() => toggleFilter(filter)}
                 >
                   <Text
-                    className={`text-sm font-medium ${
+                    className={`font-inter text-sm font-medium ${
                       isActive ? "text-primary" : "text-gray-700"
                     }`}
                   >
@@ -501,14 +509,14 @@ const ProfileScreen = () => {
 
             {activeFilters.length > 0 && (
               <TouchableOpacity
-                className="group flex-row items-center gap-1 hover:bg-[#4D5255] px-4 py-1 rounded-full"
+                className="group flex-row items-center gap-1 rounded-full px-4 py-1 hover:bg-[#4D5255]"
                 onPress={() => setActiveFilters([])}
               >
                 <Image
                   source={Icons.Reset}
-                  className="group-hover:invert !size-3"
+                  className="!size-3 group-hover:invert"
                 />
-                <Text className="text-[#252C32] group-hover:text-white text-sm">
+                <Text className="font-inter text-sm text-[#252C32] group-hover:text-white">
                   Reset
                 </Text>
               </TouchableOpacity>
@@ -516,8 +524,8 @@ const ProfileScreen = () => {
           </View>
         </View>
 
-        <View className="flex-row justify-between items-center">
-          <Text className="text-primary text-sm">
+        <View className="flex-row items-center justify-between">
+          <Text className="font-inter text-sm text-primary">
             {filteredMeetings.length} meeting
             {filteredMeetings.length > 1 ? "s" : ""}
           </Text>
@@ -529,7 +537,7 @@ const ProfileScreen = () => {
           />
         </View>
 
-        <View className="pb-8 grow basis-0">{renderMeetingsContent()}</View>
+        <View className="grow basis-0 pb-8">{renderMeetingsContent()}</View>
       </ScrollView>
     </SafeAreaView>
   );
