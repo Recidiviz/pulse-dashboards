@@ -301,8 +301,8 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
     {
       header: "Appointment Status",
       id: "appointmentStatus",
-      accessorFn: ({ futureScheduledContacts, details }) => {
-        if (!("scheduledContactDates" in details)) {
+      accessorFn: ({ futureScheduledContacts, scheduledContactDates }) => {
+        if (!scheduledContactDates) {
           return "–";
         }
 

@@ -32,7 +32,7 @@ class UsTxHomeContactEdgeCaseTask extends Task<"usTxHomeContactEdgeCase"> {
   }
 
   get scheduledContactDates() {
-    if (!this.details.scheduledContactDates) return;
+    if (!this.details.scheduledContactDates) return [];
     return toDateList(this.details.scheduledContactDates);
   }
 }
