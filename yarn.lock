@@ -45705,14 +45705,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.1.0":
-  version: 19.1.0
-  resolution: "react-dom@npm:19.1.0"
+"react-dom@npm:^19.2.1":
+  version: 19.2.1
+  resolution: "react-dom@npm:19.2.1"
   dependencies:
-    scheduler: "npm:^0.26.0"
+    scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.1.0
-  checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
+    react: ^19.2.1
+  checksum: 10c0/e56b6b3d72314df580ca800b70a69a21c6372703c8f45d9b5451ca6519faefb2496d76ffa9c5adb94136d2bbf2fd303d0dfc208a2cd77ede3132877471af9470
   languageName: node
   linkType: hard
 
@@ -46687,6 +46687,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react@npm:^19.2.1":
+  version: 19.2.1
+  resolution: "react@npm:19.2.1"
+  checksum: 10c0/2b5eaf407abb3db84090434c20d6c5a8e447ab7abcd8fe9eaf1ddc299babcf31284ee9db7ea5671d21c85ac5298bd632fa1a7da1ed78d5b368a537f5e1cd5d62
+  languageName: node
+  linkType: hard
+
 "reactstrap@npm:^8.9.0":
   version: 8.9.0
   resolution: "reactstrap@npm:8.9.0"
@@ -47242,7 +47249,7 @@ __metadata:
     prop-types: "npm:^15.7.2"
     qs: "npm:^6.9.7"
     query-string: "npm:^7.0.1"
-    react: "npm:19.1.0"
+    react: "npm:^19.2.1"
     react-accessible-accordion: "npm:^4.0.0"
     react-anchor-navigation: "npm:^0.2.7"
     react-aspect-ratio: "npm:^1.1.6"
@@ -47251,7 +47258,7 @@ __metadata:
     react-chartjs-2: "npm:^2.7.6"
     react-data-table-component: "npm:^7.6.2"
     react-datepicker: "npm:^8.8.0"
-    react-dom: "npm:19.1.0"
+    react-dom: "npm:^19.2.1"
     react-google-recaptcha: "npm:^3.1.0"
     react-helmet: "npm:^6.1.0"
     react-hot-toast: "npm:^2.4.1"
@@ -49168,6 +49175,13 @@ __metadata:
   version: 0.26.0
   resolution: "scheduler@npm:0.26.0"
   checksum: 10c0/5b8d5bfddaae3513410eda54f2268e98a376a429931921a81b5c3a2873aab7ca4d775a8caac5498f8cbc7d0daeab947cf923dbd8e215d61671f9f4e392d34356
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.27.0":
+  version: 0.27.0
+  resolution: "scheduler@npm:0.27.0"
+  checksum: 10c0/4f03048cb05a3c8fddc45813052251eca00688f413a3cee236d984a161da28db28ba71bd11e7a3dd02f7af84ab28d39fb311431d3b3772fed557945beb00c452
   languageName: node
   linkType: hard
 
