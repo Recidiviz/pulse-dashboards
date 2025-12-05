@@ -31,11 +31,6 @@ components:
         migrate_db_env_key: env_prod_sentencing_migrate_db
         data_import_env_key: env_prod_sentencing_data_import
         private_network: projects/recidiviz-dashboard-production/global/networks/default
-    hooks:
-      store-outputs:
-        outputs:
-          service_account_email: .service_account_email
-          database_credentials: .database_credentials
 
     postgres-bq-data-transfer:
       vars:
@@ -55,8 +50,8 @@ components:
           # For more info on quoting YQ expressions see:
           # https://atmos.tools/core-concepts/stacks/yaml-functions/terraform.output/#using-yq-expressions-to-provide-a-default-value
           port: !terraform.state cloud-sql-proxy recidiviz-dashboard-production--shared-infra ".ports[""sentencing-db""]"
-          username: !store gsm-prod apps/sentencing database_credentials | query ".username"
-          password: !store gsm-prod apps/sentencing database_credentials | query ".password"
+          username: !terraform.state apps/sentencing "database_credentials.username"
+          password: !terraform.state apps/sentencing "database_credentials.password"
           databases:
             - us_id
             - us_nd

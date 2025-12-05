@@ -72,7 +72,3 @@ components:
         server_env_secret_id: env_staging_jii_texting_server
         import_job_env_secret_id: env_staging_jii_texting_import_job
         migrate_db_env_secret_id: env_staging_jii_texting_migrate_db
-      hooks:
-        store-outputs:
-          outputs:
-            database_credentials: .database_credentials

@@ -71,10 +71,6 @@ components:
         server_env_secret_id: env_prod_jii_texting_server
         migrate_db_env_secret_id: env_prod_jii_texting_migrate_db
         import_job_env_secret_id: env_prod_jii_texting_import_job
-      hooks:
-        store-outputs:
-          outputs:
-            database_credentials: .database_credentials
 
     postgres-bq-data-transfer:
       vars:
@@ -96,8 +92,8 @@ components:
           # For more info on quoting YQ expressions see:
           # https://atmos.tools/core-concepts/stacks/yaml-functions/terraform.state/#using-yq-expressions-to-provide-a-default-value
           port: !terraform.state cloud-sql-proxy recidiviz-dashboard-production--shared-infra ".ports[""jii-texting""]"
-          username: !store gsm-prod apps/jii-texting database_credentials | query ".username"
-          password: !store gsm-prod apps/jii-texting database_credentials | query ".password"
+          username: !terraform.state apps/jii-texting database_credentials.username
+          password: !terraform.state apps/jii-texting database_credentials.password
           databases:
             - us_id
             - us_tx
