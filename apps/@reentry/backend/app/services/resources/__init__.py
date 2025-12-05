@@ -19,11 +19,33 @@ class ResourceOrigin(str, Enum):
     LOADER = "LOADER"
 
 
+# Uses the travel modes that the Google APIs need.
 class TravelMode(str, Enum):
     DRIVING = "DRIVE"
     WALKING = "WALK"
     BICYCLING = "BICYCLE"
     TRANSIT = "TRANSIT"
+
+    @classmethod
+    def _missing_(cls, value):
+        """Handle legacy travel mode values by normalizing to uppercase and mapping old names."""
+        if not value:
+            raise ValueError("Travel mode value cannot be empty or None")
+        if isinstance(value, str):
+            value = value.upper()
+            mapping = {
+                # Legacy values
+                "DRIVING": cls.DRIVING,
+                "WALKING": cls.WALKING,
+                "BICYCLING": cls.BICYCLING,
+                # Makes case insensitive matching work
+                "DRIVE": cls.DRIVING,
+                "WALK": cls.WALKING,
+                "BICYCLE": cls.BICYCLING,
+                "TRANSIT": cls.TRANSIT,
+            }
+            if value in mapping:
+                return mapping.get(value)
 
 
 class ResourceCategory(str, Enum):
@@ -221,7 +243,7 @@ class GetResourcesRequest(BaseModel):
     )
     travel_mode: TravelMode | None = Field(
         default=None,
-        description="Preferred travel mode (driving, walking, bicycling, transit)",
+        description="Preferred travel mode (DRIVE, WALK, BICYCLE, TRANSIT)",
     )
 
     exclude_names: Optional[list[str]] = Field(

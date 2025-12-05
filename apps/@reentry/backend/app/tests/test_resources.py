@@ -9,12 +9,87 @@ from app.services.resources import (
     ResourceCategory,
     ResourceFailureReason,
     ResourceSubcategory,
+    TravelMode,
     list_resources,
 )
 from app.services.resources.api import ApiSearchResult, Location
 from app.utils.disallowed_resources import DISALLOWED_RESOURCE_NAMES
 
 CHICAGO = "Chicago, IL"
+
+
+def test_travel_mode_legacy_values():
+    """Test that TravelMode enum handles legacy travel mode values and case normalization."""
+    # Test legacy values (old format)
+    assert TravelMode("DRIVING") == TravelMode.DRIVING
+    assert TravelMode("WALKING") == TravelMode.WALKING
+    assert TravelMode("BICYCLING") == TravelMode.BICYCLING
+    assert TravelMode("TRANSIT") == TravelMode.TRANSIT
+
+    # Test new values (API format)
+    assert TravelMode("DRIVE") == TravelMode.DRIVING
+    assert TravelMode("WALK") == TravelMode.WALKING
+    assert TravelMode("BICYCLE") == TravelMode.BICYCLING
+
+    # Test case insensitivity
+    assert TravelMode("driving") == TravelMode.DRIVING
+    assert TravelMode("walking") == TravelMode.WALKING
+    assert TravelMode("bicycling") == TravelMode.BICYCLING
+    assert TravelMode("transit") == TravelMode.TRANSIT
+    assert TravelMode("drive") == TravelMode.DRIVING
+    assert TravelMode("walk") == TravelMode.WALKING
+    assert TravelMode("bicycle") == TravelMode.BICYCLING
+
+    # Test that enum values are correct (Google API format)
+    assert TravelMode.DRIVING.value == "DRIVE"
+    assert TravelMode.WALKING.value == "WALK"
+    assert TravelMode.BICYCLING.value == "BICYCLE"
+    assert TravelMode.TRANSIT.value == "TRANSIT"
+
+    with pytest.raises(ValueError):
+        TravelMode("")
+
+    with pytest.raises(ValueError):
+        TravelMode("wrong")
+
+
+def test_get_resources_request_with_legacy_travel_mode():
+    """Test that GetResourcesRequest accepts legacy travel mode values."""
+    request = GetResourcesRequest(
+        category=ResourceCategory.BASIC_NEEDS,
+        subcategory=ResourceSubcategory.HOUSING,
+        address="123 Main St, Anytown, USA",
+        travel_mode="DRIVING",  # Legacy format
+    )
+    assert request.travel_mode == TravelMode.DRIVING
+    assert request.travel_mode.value == "DRIVE"
+
+    # Test with new API value
+    request = GetResourcesRequest(
+        category=ResourceCategory.BASIC_NEEDS,
+        subcategory=ResourceSubcategory.HOUSING,
+        address="123 Main St, Anytown, USA",
+        travel_mode="DRIVE",
+    )
+    assert request.travel_mode == TravelMode.DRIVING
+
+    # Test with lowercase
+    request = GetResourcesRequest(
+        category=ResourceCategory.BASIC_NEEDS,
+        subcategory=ResourceSubcategory.HOUSING,
+        address="123 Main St, Anytown, USA",
+        travel_mode="walking",
+    )
+    assert request.travel_mode == TravelMode.WALKING
+    assert request.travel_mode.value == "WALK"
+
+    with pytest.raises(ValueError):
+        GetResourcesRequest(
+            category=ResourceCategory.BASIC_NEEDS,
+            subcategory=ResourceSubcategory.HOUSING,
+            address="123 Main St, Anytown, USA",
+            travel_mode="FLYING",  # Invalid value
+        )
 
 
 def test_build_GetResourcesRequest__invalid_address():
