@@ -28,7 +28,6 @@ export const PSI_PATHS: Record<PSIPage, string> = {
 
 export const SAR_PATHS: Record<SARPage, string> = {
   sar: `/${sarRootPath}`,
-  dashboard: `/${sarRootPath}/dashboard`,
   staffDashboard: `/${sarRootPath}/dashboard/staff/:staffPseudoId`,
   sarDetails: `/${sarRootPath}/dashboard/staff/:staffPseudoId/sar/:sarId`,
 };
@@ -46,7 +45,6 @@ export const PSI_PAGES = {
 
 export const SAR_PAGES = {
   sar: sarRootPath,
-  dashboard: "dashboard",
   staffDashboard: "staffDashboard",
   sarDetails: "sarDetails",
 } as const;

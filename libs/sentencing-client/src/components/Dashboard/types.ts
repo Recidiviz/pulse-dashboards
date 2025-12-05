@@ -17,7 +17,7 @@
 
 import { SortDirection } from "@tanstack/react-table";
 
-import { Staff, StaffCase, StaffCases, Supervisor } from "../../api";
+import { Staff, StaffCase, StaffCases, StaffSAR, StaffSARs, Supervisor } from "../../api";
 import { GeoConfig } from "../../geoConfigs/types";
 import { MutableCaseAttributes } from "../CaseDetails/types";
 import { ARCHIVED_STATUS, CANCELLED_STATUS } from "./constants";
@@ -43,9 +43,9 @@ export type StaffDashboardProps = {
   ) => void;
 };
 
-export type CaseListTableCases = StaffCases;
+export type CaseListTableCases = StaffCases | StaffSARs;
 
-export type CaseListTableCase = StaffCase;
+export type CaseListTableCase = StaffCase | StaffSAR;
 
 export enum CaseStatusToDisplay {
   NotYetStarted = "Not yet started",

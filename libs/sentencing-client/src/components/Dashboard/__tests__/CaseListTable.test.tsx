@@ -28,6 +28,7 @@ import { createMockSentencingStore } from "../../../utils/test";
 import { CaseListTable } from "../CaseListTable";
 import { ACTIVE_STATUS, ARCHIVED_STATUS, CANCELLED_STATUS } from "../constants";
 import { CaseStatusToDisplay } from "../types";
+import { PSI_DASHBOARD_COLUMNS } from "../utils/dashboardColumns";
 
 let sentencingStore: SentencingStore;
 let presenter: StaffPresenter;
@@ -59,6 +60,8 @@ test("shows status filter with default filters checked", async () => {
         caseTableData={[]}
         staffPseudoId=""
         analytics={analytics}
+        columns={PSI_DASHBOARD_COLUMNS}
+        title="Test"
       />
     </MemoryRouter>,
   );
@@ -108,7 +111,7 @@ test("shows status filter with default filters checked", async () => {
   expect(complete.checked).toBeTrue();
 });
 
-test("displays no cases message when none are provided", async () => {
+test("renders case table with proper columns", async () => {
   const screen = render(
     <MemoryRouter>
       <CaseListTable
@@ -116,6 +119,8 @@ test("displays no cases message when none are provided", async () => {
         caseTableData={[]}
         staffPseudoId=""
         analytics={analytics}
+        columns={PSI_DASHBOARD_COLUMNS}
+        title="Test"
       />
     </MemoryRouter>,
   );
@@ -140,6 +145,8 @@ test("does not show archived cases", async () => {
         caseTableData={data}
         staffPseudoId={sentencingStore.staffPseudoId!}
         analytics={analytics}
+        columns={PSI_DASHBOARD_COLUMNS}
+        title="Test"
       />
     </MemoryRouter>,
   );
@@ -177,6 +184,8 @@ test("shows archived case when filter is checked", async () => {
         caseTableData={data}
         staffPseudoId={sentencingStore.staffPseudoId!}
         analytics={analytics}
+        columns={PSI_DASHBOARD_COLUMNS}
+        title="Test"
       />
     </MemoryRouter>,
   );
@@ -235,6 +244,8 @@ test("show/hide cases when 'Not yet started' filter is checked/unchecked", async
         caseTableData={data}
         staffPseudoId={sentencingStore.staffPseudoId!}
         analytics={analytics}
+        columns={PSI_DASHBOARD_COLUMNS}
+        title="Test"
       />
     </MemoryRouter>,
   );
@@ -283,6 +294,8 @@ test("show/hide cases when 'In Progress' filter is checked/unchecked", async () 
         caseTableData={data}
         staffPseudoId={sentencingStore.staffPseudoId!}
         analytics={analytics}
+        columns={PSI_DASHBOARD_COLUMNS}
+        title="Test"
       />
     </MemoryRouter>,
   );
@@ -331,6 +344,8 @@ test("show/hide cases when 'Complete' filter is checked/unchecked", async () => 
         caseTableData={data}
         staffPseudoId={sentencingStore.staffPseudoId!}
         analytics={analytics}
+        columns={PSI_DASHBOARD_COLUMNS}
+        title="Test"
       />
     </MemoryRouter>,
   );

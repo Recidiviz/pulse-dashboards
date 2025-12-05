@@ -22,22 +22,20 @@ import { withPresenterManager } from "~hydration-utils";
 
 import { SentencingStore } from "../../datastores/SentencingStore";
 import { StaffPresenter } from "../../presenters/StaffPresenter";
-import CloseIcon from "../assets/close-icon.svg?react";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { CaseListTable } from "./CaseListTable";
 import * as Styled from "./Dashboard.styles";
+import { SAR_DASHBOARD_COLUMNS } from "./utils/dashboardColumns";
 
-const ManagedComponent = observer(function StaffDashboard({
+const ManagedComponent = observer(function SARStaffDashboard({
   presenter,
 }: {
   presenter: StaffPresenter;
 }) {
   const {
-    staffInfo,
     staffPseudoId,
-    caseTableData,
+    sarTableData,
     geoConfig,
-    setIsFirstLogin,
     trackDashboardPageViewed,
     trackIndividualCaseClicked,
     trackRecommendationStatusFilterChanged,
@@ -45,53 +43,24 @@ const ManagedComponent = observer(function StaffDashboard({
   } = presenter;
 
   const [initialPageLoad, setInitialPageLoad] = useState(true);
-  const [showWelcomeMessage, setShowWelcomeMessage] = useState(
-    !staffInfo?.hasLoggedIn,
-  );
 
-  if (!staffPseudoId || !caseTableData) return null;
+  if (!staffPseudoId || !sarTableData) return null;
 
   if (initialPageLoad) {
     trackDashboardPageViewed();
     setInitialPageLoad(false);
   }
 
-  const handleFirstLogin = () => {
-    if (!staffInfo?.hasLoggedIn) {
-      setIsFirstLogin();
-      setShowWelcomeMessage(false);
-    }
-  };
 
   return (
     <Styled.PageContainer>
-      {/* Welcome Message */}
-      {showWelcomeMessage && (
-        <Styled.WelcomeMessage>
-          <Styled.TitleDescriptionWrapper>
-            <Styled.WelcomeTitle>
-              Welcome to your case dashboard!
-            </Styled.WelcomeTitle>
-
-            <Styled.WelcomeDescription>
-              Generate informed case recommendations based on historical
-              outcomes customized for each case. Find and suggest customized
-              treatment and diversion opportunities for clients that will aid in
-              their healing and set them up for success in the community.
-            </Styled.WelcomeDescription>
-          </Styled.TitleDescriptionWrapper>
-
-          <Styled.CloseButton onClick={handleFirstLogin}>
-            <CloseIcon />
-          </Styled.CloseButton>
-        </Styled.WelcomeMessage>
-      )}
-
-      {/* List of Cases */}
       <Styled.Cases>
         <CaseListTable
-          caseTableData={caseTableData}
+          columns={SAR_DASHBOARD_COLUMNS}
+          caseTableData={sarTableData}
           staffPseudoId={staffPseudoId}
+          isSAR={true}
+          title={"Sentencing Assessment Report Dashboard"}
           excludedAttributeKeys={geoConfig.excludedAttributeKeys}
           analytics={{
             trackIndividualCaseClicked,
@@ -106,11 +75,10 @@ const ManagedComponent = observer(function StaffDashboard({
 
 function usePresenter({ sentencingStore }: { sentencingStore: SentencingStore }) {
   const { staffStore } = sentencingStore;
-
   return new StaffPresenter(staffStore);
 }
 
-export const StaffDashboard = withPresenterManager({
+export const SARStaffDashboard = withPresenterManager({
   usePresenter,
   ManagedComponent,
   managerIsObserver: true,

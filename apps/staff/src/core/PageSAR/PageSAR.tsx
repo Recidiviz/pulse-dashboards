@@ -21,19 +21,24 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import { sarRoute, sarUrl, StoreProvider } from "~sentencing-client";
+import { sarRoute, SARStaffDashboard, sarUrl, StoreProvider } from "~sentencing-client";
 
 import NotFound from "../../components/NotFound";
 import {
   PartiallyTypedRootStore,
   useRootStore,
 } from "../../components/StoreProvider";
-import { NavigationLayout } from "../NavigationLayout";
+import { StaffDashboardPageLayout } from "../StaffDashboardPageLayout";
+
 
 
 const PageSAR: React.FC = function PageSAR() {
   // TODO(#5636) Eliminate PartiallyTypedRootStore
   const { sentencingStore } = useRootStore() as PartiallyTypedRootStore;
+  const STAFF_DASHBOARD_URL = sarUrl(
+    "staffDashboard",
+    { staffPseudoId: sentencingStore.staffPseudoId } 
+  );
   return (
     <ErrorBoundary
       fallback={
@@ -44,35 +49,25 @@ const PageSAR: React.FC = function PageSAR() {
       }
     >
       <StoreProvider store={sentencingStore}>
-          <NavigationLayout />
-            <Routes>
-              <Route
-                index
-                element={
-                  <Navigate
-                    to={sarUrl("dashboard", {
-                      staffPseudoId: sentencingStore.staffPseudoId,
-                    })}
-                    replace
-                  />
-                }
-              />
-              {/* SAR Routes */}
-              <Route
-                path={sarRoute({ routeName: "dashboard" })}
-                element={<div>SAR Dashboard - Coming Soon</div>}
-              />
-              <Route
-                path={sarRoute({ routeName: "staffDashboard" })}
-                element={<div>SAR Staff Dashboard - Coming Soon</div>}
-              />
-              <Route
-                path={sarRoute({ routeName: "sarDetails" })}
-                element={<div>SAR Details - Coming Soon</div>}
-              />
+        <StaffDashboardPageLayout>
+          <Routes>
+           <Route
+              index
+              element={<Navigate replace to={STAFF_DASHBOARD_URL} />}
+            />
+            {/* SAR Routes */}
+            <Route
+              path={sarRoute({ routeName: "staffDashboard" })}
+              element={<SARStaffDashboard sentencingStore={sentencingStore} />}
+            />
+            <Route
+              path={sarRoute({ routeName: "sarDetails" })}
+              element={<div>SAR Details - Coming Soon</div>}
+            />
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </StaffDashboardPageLayout>
       </StoreProvider>
     </ErrorBoundary>
   );

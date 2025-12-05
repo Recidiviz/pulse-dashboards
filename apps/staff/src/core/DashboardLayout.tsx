@@ -102,6 +102,7 @@ const DashboardLayout: React.FC = () => {
             Workflows: currentView === DASHBOARD_VIEWS.workflows,
             Insights: currentView === DASHBOARD_VIEWS.insights,
             PSI: currentView === DASHBOARD_VIEWS.psi,
+            SAR: currentView === DASHBOARD_VIEWS.sar,
           })}
         >
           {currentView === DASHBOARD_VIEWS.operations && !isMobile ? (

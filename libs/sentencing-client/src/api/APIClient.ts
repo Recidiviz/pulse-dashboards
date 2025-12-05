@@ -36,6 +36,10 @@ export type StaffCases = Staff["cases"];
 
 export type StaffCase = StaffCases[number];
 
+export type StaffSARs = Staff["sentencingAssessmentReports"];
+
+export type StaffSAR = StaffSARs[number];
+
 export type Case = Awaited<ReturnType<APIClient["getCaseDetails"]>>;
 
 export type CaseInsight = NonNullable<Case["insight"]>;

@@ -16,54 +16,45 @@
 // =============================================================================
 
 import {
-  CellContext,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  Row,
-  SortDirection,
-  useReactTable,
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    getSortedRowModel,
+    SortDirection,
+    useReactTable,
 } from "@tanstack/react-table";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { filterExcludedAttributes } from "../../geoConfigs/utils";
-import { psiUrl } from "../../utils/routing";
-import { sortFullNameByLastNameDescending } from "../../utils/sorting";
-import { displayReportType } from "../../utils/utils";
+import { psiUrl, sarUrl } from "../../utils/routing";
 import SortIcon from "../assets/sort-icon.svg?react";
-import { REPORT_TYPE_KEY } from "../CaseDetails/constants";
-import { stripFreeTextHelper, UNKNOWN_OPTION } from "../CaseDetails/Form/constants";
-import { ReportType } from "../constants";
 import {
-  ACTIVE_STATUS,
-  ARCHIVED_STATUS,
-  CANCELLED_STATUS,
-  CLIENT_FULL_NAME_KEY,
-  CLIENT_KEY,
-  DUE_DATE_KEY,
-  FULL_NAME_KEY,
-  ID_KEY,
-  OFFENSE_KEY,
-  STATUS_KEY,
+    ACTIVE_STATUS,
+    ARCHIVED_STATUS,
+    CANCELLED_STATUS,
+    CLIENT_KEY,
+    FULL_NAME_KEY,
 } from "./constants";
 import * as Styled from "./Dashboard.styles";
 import { useDetectOutsideClick } from "./hooks";
 import {
-  AttributeKey,
-  CaseListTableCase,
-  CaseListTableCases,
-  CaseStatus,
-  CaseStatusToDisplay,
-  RecommendationStatusFilter,
+    AttributeKey,
+    CaseListTableCase,
+    CaseListTableCases,
+    CaseStatusToDisplay,
+    RecommendationStatusFilter,
 } from "./types";
 import { isBeforeDueDateWithExtraDayOffset } from "./utils";
 
 type CaseListTableProps = {
   caseTableData: CaseListTableCases;
   staffPseudoId: string;
+  columns: ColumnDef<CaseListTableCase>[];
   excludedAttributeKeys: AttributeKey[];
+  title: string;
+  isSAR?: boolean;
   analytics: {
     trackIndividualCaseClicked: (
       clientName: string,
@@ -81,128 +72,6 @@ type CaseListTableProps = {
 
 type StatusFilter = RecommendationStatusFilter | typeof ACTIVE_STATUS;
 
-const columns = [
-  {
-    header: "Name",
-    accessorKey: CLIENT_FULL_NAME_KEY,
-    sortingFn: (rowA: Row<CaseListTableCase>, rowB: Row<CaseListTableCase>) =>
-      sortFullNameByLastNameDescending(
-        rowA.original.client?.fullName,
-        rowB.original.client?.fullName,
-      ),
-    cell: (name: CellContext<CaseListTableCase, string>) => {
-      const clientName = name.getValue() ?? "No name found";
-      return (
-        <div style={{ textTransform: "capitalize" }}>
-          {clientName.toLocaleLowerCase()}
-        </div>
-      );
-    },
-  },
-  {
-    header: "ID",
-    accessorKey: ID_KEY,
-    enableSorting: false,
-  },
-  {
-    header: "Due Date",
-    accessorKey: DUE_DATE_KEY,
-    cell: (dueDate: CellContext<CaseListTableCase, Date>) =>
-      dueDate.getValue() === null
-        ? UNKNOWN_OPTION
-        : moment(dueDate.getValue()).utc().format("MM/DD/YYYY"),
-  },
-  {
-    header: "Report Type",
-    accessorKey: REPORT_TYPE_KEY,
-    cell: (
-      reportType: CellContext<CaseListTableCase, keyof typeof ReportType>,
-    ) => {
-      const value = reportType.getValue();
-      return displayReportType(value);
-    },
-  },
-  {
-    header: "Offense",
-    accessorKey: OFFENSE_KEY,
-    cell: (
-      offense: CellContext<CaseListTableCase, CaseListTableCase["offense"]>,
-    ) => {
-      const displayValue = stripFreeTextHelper(offense.getValue()) ?? "None Yet";
-      return (
-        <Styled.Offense isNotSpecified={displayValue === "None Yet"}>
-          {displayValue}
-        </Styled.Offense>
-      );
-    },
-  },
-  {
-    header: "Recommendation Status",
-    accessorKey: STATUS_KEY,
-    cell: (
-      status: CellContext<CaseListTableCase, CaseListTableCase["status"]>,
-    ) => {
-      const statusValue = status.getValue();
-      const isCancelledStatus = status.cell.row.original.isCancelled;
-      const statusOrArchived = isBeforeDueDateWithExtraDayOffset(
-        status.cell.row.original.dueDate,
-      )
-        ? CaseStatusToDisplay[statusValue]
-        : ARCHIVED_STATUS;
-      const statusToDisplay = isCancelledStatus
-        ? CANCELLED_STATUS
-        : statusOrArchived;
-
-      return (
-        <Styled.StatusChip status={statusToDisplay}>
-          {statusToDisplay}
-        </Styled.StatusChip>
-      );
-    },
-    sortingFn: (a: Row<CaseListTableCase>, b: Row<CaseListTableCase>) => {
-      const dueDateStringA = String(a.original[DUE_DATE_KEY]);
-      const dueDateStringB = String(b.original[DUE_DATE_KEY]);
-      const dueDateA = moment.utc(dueDateStringA);
-      const dueDateB = moment.utc(dueDateStringB);
-
-      const statusOrder = {
-        InProgress: 0,
-        NotYetStarted: 1,
-        Complete: 2,
-      };
-
-      const isArchivedA =
-        !a.original[DUE_DATE_KEY] || moment.utc().isAfter(dueDateA);
-      const isArchivedB =
-        !b.original[DUE_DATE_KEY] || moment.utc().isAfter(dueDateB);
-
-      // If both are archived, return 0
-      if (isArchivedA && isArchivedB) {
-        return 0;
-      }
-
-      // If A is archived and B is not, put A at the bottom of the list
-      if (isArchivedA) {
-        return 1;
-      }
-
-      // If B is archived and A is not, put B at the bottom of the list
-      if (isArchivedB) {
-        return -1;
-      }
-
-      // Sort by status
-      const caseStatusA = a.original[STATUS_KEY] as CaseStatus;
-      const caseStatusB = b.original[STATUS_KEY] as CaseStatus;
-      const statusComparison =
-        caseStatusA &&
-        caseStatusB &&
-        statusOrder[caseStatusA] - statusOrder[caseStatusB];
-
-      return statusComparison ?? 0;
-    },
-  },
-];
 
 const getUpdatedStatusFilters = (
   status: StatusFilter,
@@ -241,7 +110,10 @@ export const CaseListTable = ({
   caseTableData,
   staffPseudoId,
   analytics,
+  columns,
   excludedAttributeKeys,
+  title,
+  isSAR = false,
 }: CaseListTableProps) => {
   const {
     trackIndividualCaseClicked,
@@ -313,7 +185,8 @@ export const CaseListTable = ({
             CaseStatusToDisplay[datapoint.status],
           );
 
-          if (datapoint.isCancelled) {
+          // isCancelled only exists on PSI Cases (StaffCase), not SARs (StaffSAR)
+          if ("isCancelled" in datapoint && datapoint.isCancelled) {
             // Include the case if it is cancelled and the CANCELLED_STATUS filter is active
             return includesCancelled;
           }
@@ -348,10 +221,10 @@ export const CaseListTable = ({
     <Styled.CaseListContainer>
       <Styled.Header>
         <Styled.TitleWrapper>
-          <Styled.TableTitle>My Cases</Styled.TableTitle>
+          <Styled.TableTitle>{title}</Styled.TableTitle>
         </Styled.TitleWrapper>
         <Styled.DropdownContainer ref={dropdownRef}>
-          <Styled.DropdownTitle>Recommendation Status</Styled.DropdownTitle>
+          <Styled.DropdownTitle>Status</Styled.DropdownTitle>
           <Styled.DropdownButton
             onClick={() => setShowFilterDropdown((prev) => !prev)}
             isOpen={showFilterDropdown}
@@ -435,12 +308,22 @@ export const CaseListTable = ({
                         cell.row.original.id,
                         cell.row.original.status,
                       );
-                      navigate(
-                        psiUrl("caseDetails", {
-                          staffPseudoId,
-                          caseId: cell.row.original.id,
-                        }),
-                      );
+
+                      if (isSAR) {
+                        navigate(
+                          sarUrl("sarDetails", {
+                            staffPseudoId,
+                            sarId: cell.row.original.id,
+                          }),
+                        );
+                      } else {
+                        navigate(
+                          psiUrl("caseDetails", {
+                            staffPseudoId,
+                            caseId: cell.row.original.id,
+                          }),
+                        );
+                      }
                     }
                   }}
                 >

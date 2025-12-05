@@ -68,6 +68,10 @@ export class StaffPresenter implements Hydratable {
     return !this.staffInfo ? undefined : this.staffInfo.cases;
   }
 
+  get sarTableData() {
+    return !this.staffInfo ? undefined : this.staffInfo.sentencingAssessmentReports;
+  }
+
   get hydrationState(): HydrationState {
     return this.hydrator.hydrationState;
   }

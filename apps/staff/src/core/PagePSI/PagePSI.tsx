@@ -15,21 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ErrorPage, spacing, typography } from "@recidiviz/design-system";
+import { ErrorPage } from "@recidiviz/design-system";
 import { ErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import styled from "styled-components";
 
-import { palette } from "~design-system";
 import {
   CaseDetails,
   Dashboard,
   psiRoute,
+  PSIStaffDashboard,
   psiUrl,
-  StaffDashboard,
   StoreProvider,
   SupervisorDashboard,
 } from "~sentencing-client";
@@ -39,29 +36,7 @@ import {
   PartiallyTypedRootStore,
   useRootStore,
 } from "../../components/StoreProvider";
-import useIsMobile from "../../hooks/useIsMobile";
-import { NavigationLayout } from "../NavigationLayout";
-
-const Wrapper = styled.div`
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: ${palette.marble1};
-  ${typography.Sans14};
-`;
-
-const Main = styled.main<{
-  isMobile: boolean;
-  hasPadding?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  flex: auto;
-  padding: ${({ isMobile }) =>
-    isMobile ? `${rem(spacing.lg)} ${rem(spacing.md)}` : `${rem(spacing.lg)}`};
-  ${({ hasPadding }) => !hasPadding && `padding: 0 !important;`}
-`;
+import { StaffDashboardPageLayout } from "../StaffDashboardPageLayout";
 
 const PagePSI: React.FC = function PagePSI() {
   window.scrollTo({
@@ -70,7 +45,6 @@ const PagePSI: React.FC = function PagePSI() {
 
   // TODO(#5636) Eliminate PartiallyTypedRootStore
   const { sentencingStore } = useRootStore() as PartiallyTypedRootStore;
-  const { isMobile } = useIsMobile(true);
 
   return (
     <ErrorBoundary
@@ -82,41 +56,38 @@ const PagePSI: React.FC = function PagePSI() {
       }
     >
       <StoreProvider store={sentencingStore}>
-        <Wrapper>
-          <NavigationLayout />
-          <Main isMobile={isMobile}>
-            <Routes>
-              <Route
-                index
-                element={
-                  <Navigate
-                    to={psiUrl("dashboard", {
-                      staffPseudoId: sentencingStore.staffPseudoId,
-                    })}
-                    replace
-                  />
-                }
-              />
-              <Route
-                path={psiRoute({ routeName: "dashboard" })}
-                element={<Dashboard />}
-              />
-              <Route
-                path={psiRoute({ routeName: "staffDashboard" })}
-                element={<StaffDashboard sentencingStore={sentencingStore}/>}
-              />
-              <Route
-                path={psiRoute({ routeName: "supervisorDashboard" })}
-                element={<SupervisorDashboard sentencingStore={sentencingStore} />}
-              />
-              <Route
-                path={psiRoute({ routeName: "caseDetails" })}
-                element={<CaseDetails sentencingStore={sentencingStore} />}
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Main>
-        </Wrapper>
+        <StaffDashboardPageLayout>
+          <Routes>
+            <Route
+              index
+              element={
+                <Navigate
+                  to={psiUrl("dashboard", {
+                    staffPseudoId: sentencingStore.staffPseudoId,
+                  })}
+                  replace
+                />
+              }
+            />
+            <Route
+              path={psiRoute({ routeName: "dashboard" })}
+              element={<Dashboard />}
+            />
+            <Route
+              path={psiRoute({ routeName: "staffDashboard" })}
+              element={<PSIStaffDashboard sentencingStore={sentencingStore} />}
+            />
+            <Route
+              path={psiRoute({ routeName: "supervisorDashboard" })}
+              element={<SupervisorDashboard sentencingStore={sentencingStore} />}
+            />
+            <Route
+              path={psiRoute({ routeName: "caseDetails" })}
+              element={<CaseDetails sentencingStore={sentencingStore} />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </StaffDashboardPageLayout>
       </StoreProvider>
     </ErrorBoundary>
   );

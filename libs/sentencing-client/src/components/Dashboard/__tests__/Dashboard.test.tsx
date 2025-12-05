@@ -29,7 +29,7 @@ import { StaffPresenter } from "../../../presenters/StaffPresenter";
 import { SupervisorPresenter } from "../../../presenters/SupervisorPresenter";
 import { createMockSentencingStore } from "../../../utils/test";
 import { StoreProvider } from "../../StoreProvider/StoreProvider";
-import { StaffDashboard } from "../StaffDashboard";
+import { PSIStaffDashboard } from "../PSIStaffDashboard";
 import { SupervisorDashboard } from "../SupervisorDashboard";
 
 let sentencingStore: SentencingStore;
@@ -55,7 +55,7 @@ test("welcome message shows on first login", async () => {
       <MemoryRouter
         initialEntries={[`/psi/dashboard/${sentencingStore.staffPseudoId}`]}
       >
-        <StaffDashboard sentencingStore={sentencingStore} />
+        <PSIStaffDashboard sentencingStore={sentencingStore} />
       </MemoryRouter>
     </StoreProvider>,
   );
@@ -85,7 +85,7 @@ test("welcome message no longer shows after user closes it", async () => {
       <MemoryRouter
         initialEntries={[`/psi/dashboard/staff/${sentencingStore.staffPseudoId}`]}
       >
-        <StaffDashboard sentencingStore={sentencingStore} />
+        <PSIStaffDashboard sentencingStore={sentencingStore} />
       </MemoryRouter>
     </StoreProvider>,
   );
@@ -113,7 +113,7 @@ test("shows cases default sorted by last name", async () => {
       <MemoryRouter
         initialEntries={[`/psi/dashboard/staff/${sentencingStore.staffPseudoId}`]}
       >
-        <StaffDashboard sentencingStore={sentencingStore} />
+        <PSIStaffDashboard sentencingStore={sentencingStore} />
       </MemoryRouter>
     </StoreProvider>,
   );
