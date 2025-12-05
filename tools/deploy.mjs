@@ -46,11 +46,9 @@ try {
   await $`gcloud auth login --update-adc`;
 }
 
-if (
-  (await $`firebase login:list`).stdout
-    .trim()
-    .includes("No authorized accounts")
-) {
+try {
+  await $`firebase projects:list > /dev/null`;
+} catch {
   await $`firebase login --reauth`;
 }
 
