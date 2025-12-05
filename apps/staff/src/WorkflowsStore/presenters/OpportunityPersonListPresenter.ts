@@ -164,7 +164,12 @@ export class OpportunityPersonListPresenter
         "usAzReleaseToDTP",
       ].includes(this.opportunityType),
       // TODO(#7921): More gracefully handle these special cases
-      ELIGIBILITY_DATE: opportunities.some((opp) => !!opp.eligibilityDate),
+      ELIGIBILITY_DATE:
+        opportunities.some((opp) => !!opp.eligibilityDate) &&
+        !(
+          ["usMeEarlyTermination", "usMeSCCP"].includes(this.opportunityType) &&
+          opportunities.every((opp) => opp.almostEligible)
+        ),
       RELEASE_DATE:
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         ![
