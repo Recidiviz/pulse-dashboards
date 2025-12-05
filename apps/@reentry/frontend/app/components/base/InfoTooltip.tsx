@@ -52,7 +52,7 @@ export function InfoTooltip({
       <Tooltip
         id={id}
         place={position}
-        className="bg-gray-800 text-white text-[10px] italic rounded-md px-2 py-1 z-[9999]"
+        className="bg-gray-800 text-white text-[10px] italic rounded-md px-2 py-1 z-[10000]"
       />
     </>
   );

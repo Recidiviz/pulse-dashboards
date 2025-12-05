@@ -35,7 +35,10 @@ const StepTwo: React.FC<StepTwoProps> = ({ onGoBack, onStartIntake }) => {
 
   return (
     <div className={styles["noteContainer"]}>
-      <div ref={cardRef} className={styles["noteCard"]}>
+      <div
+        ref={cardRef as React.LegacyRef<HTMLDivElement>}
+        className={styles["noteCard"]}
+      >
         <h1 className={styles["noteTwoTitle"]}>Before You Start</h1>
         <div className={styles["noteTwoBody"]}>
           <div className={styles["section"]}>

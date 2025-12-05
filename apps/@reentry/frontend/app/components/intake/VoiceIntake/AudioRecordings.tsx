@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Typography } from "@mui/material";
+//import { useRouter } from "next/navigation";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
@@ -23,15 +23,20 @@ import { useState } from "react";
 import { $api } from "~@reentry/frontend/api";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
-import { PrimaryButton } from "~@reentry/frontend-shared";
+import {
+  PrimaryButton,
+  showErrorToast,
+  showSuccessToast,
+} from "~@reentry/frontend-shared";
 
 interface AudioRecordingsProps {
   clientPseudoId: string;
+  onIntakeUpdate: () => void;
 }
 
 const AudioRecordings: React.FC<AudioRecordingsProps> = ({
   clientPseudoId,
+  onIntakeUpdate,
 }) => {
   const { getAccessToken } = useAuth();
   const { trackClientIntakeManuallyEnabled } = useAnalytics();
@@ -43,7 +48,7 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
     data: sessions,
     isLoading,
     error,
-    refetch,
+    //refetch,
   } = $api.useQuery("get", "/recordings/sessions/clients/{client_pseudo_id}", {
     params: { path: { client_pseudo_id: clientPseudoId } },
     headers: {
@@ -64,7 +69,7 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
     });
     setIsCreating(true);
     try {
-      const newSession = await createSession({
+      await createSession({
         body: { client_pseudo_id: clientPseudoId },
         headers: {
           Authorization: `Bearer ${getAccessToken()}`,
@@ -73,14 +78,16 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
       });
       showSuccessToast("Recording session created successfully");
 
-      // Navigate to the new session page
-      if (newSession?.id) {
-        router.push(
-          `/clients/audio-recording/${clientPseudoId}/${newSession.id}`,
-        );
-      } else {
-        refetch(); // Fallback: refresh the sessions list
-      }
+      onIntakeUpdate();
+
+      // // Navigate to the new session page
+      // if (newSession?.id) {
+      //   router.push(
+      //     `/clients/audio-recording/${clientPseudoId}/${newSession.id}`,
+      //   );
+      // } else {
+      //   refetch(); // Fallback: refresh the sessions list
+      // }
     } catch (error) {
       console.error("Error creating recording session:", error);
       showErrorToast("Failed to create recording session");
@@ -96,18 +103,8 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="mb-4">
-          <Typography
-            variant="h6"
-            className="text-[#003331] text-base font-semibold"
-          >
-            Loading Audio Recordings...
-          </Typography>
-        </div>
-        <div className="flex justify-center items-center h-20">
-          <div className="w-8 h-8 border-4 border-t-[#006B66] border-[#e0f2f1] rounded-full animate-spin" />
-        </div>
+      <div className="w-full h-full flex align-middle items-center p-4 text-xs">
+        Loading Audio Recordings...
       </div>
     );
   }
@@ -115,18 +112,8 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
   // Error state
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="mb-4">
-          <Typography
-            variant="h6"
-            className="text-[#003331] text-base font-semibold"
-          >
-            Audio Recording
-          </Typography>
-        </div>
-        <div className="text-red-500 text-center py-4">
-          Error loading recording sessions
-        </div>
+      <div className="w-full h-full flex align-middle items-center p-4 text-xs">
+        Error loading recording sessions
       </div>
     );
   }
@@ -146,27 +133,31 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
   const shouldShowNewSessionButton = !sessions || sessions.length === 0;
 
   return (
-    <div className="w-full h-full py-6 px-16 flex align-middle items-center">
+    <>
       {shouldShowNewSessionButton && (
-        <PrimaryButton
-          buttonText={
-            isCreating ? "Creating..." : "Begin live intake Assessment"
-          }
-          className="px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full max-w-sm m-auto"
-          onClick={handleCreateSession}
-          disabled={isCreating}
-        />
+        <div className="w-full h-full flex align-middle items-center">
+          <button
+            disabled={isCreating}
+            type={"button"}
+            onClick={handleCreateSession}
+            className="w-full px-4 py-2 text-left hover:bg-[rgba(43,84,105,0.10)] text-cyan-900/80 text-xs md:text-sm font-medium leading-4 font-['Public_Sans']"
+          >
+            {isCreating ? "Creating..." : "Begin live intake Assessment"}
+          </button>
+        </div>
       )}
 
       {/*Only one session available for recording at a time. so taking the earliest session.*/}
       {processedSessions && processedSessions.length > 0 && (
-        <PrimaryButton
-          buttonText={"Go to the assessment"}
-          className="px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full max-w-sm m-auto"
-          onClick={() => handleSessionClick(processedSessions[0].id)}
-        />
+        <div className="w-full h-full flex ">
+          <PrimaryButton
+            buttonText={"Record now"}
+            className=" text-white text-xs md:text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full max-w-sm "
+            onClick={() => handleSessionClick(processedSessions[0].id)}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

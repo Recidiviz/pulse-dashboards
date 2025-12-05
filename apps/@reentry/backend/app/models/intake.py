@@ -115,6 +115,9 @@ class Intake(BaseModel, table=True):
         ),
         description="Current status of the intake",
     )
+    completed_at: Optional[datetime] = Field(
+        default=None, nullable=True, description="Timestamp when intake was completed"
+    )
     current_section: Optional[str] = Field(
         default=None, nullable=True, description="Current section being processed"
     )
@@ -213,6 +216,7 @@ class Intake(BaseModel, table=True):
 
         # If specifically completed, also schedule assessment creation
         if self.status == IntakeStatus.COMPLETED:
+            self.completed_at = datetime.now()
             logger.info(f"Scheduling assessment for intake {self.id}")
             await self.schedule_assessment(session)
 

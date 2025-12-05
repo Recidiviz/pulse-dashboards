@@ -36,7 +36,7 @@
 import { ChevronRight, MessageSquare } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import Sidebar from "~@reentry/frontend/(protected)/clients/intake/[id]/Sidebar";
+import Sidebar from "~@reentry/frontend/(protected)/clients/intake/[id]/chat-history/Sidebar";
 import {
   ClientIntakeSection,
   ClientRecord,

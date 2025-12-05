@@ -24,25 +24,27 @@ import {
 } from "@mui/icons-material";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 
 import { $api } from "~@reentry/frontend/api";
 import CustomPagination from "~@reentry/frontend/components/base/CustomPagination";
+import {InfoTooltip} from "~@reentry/frontend/components/base/InfoTooltip";
 import { IconInput } from "~@reentry/frontend/components/base/SortingInput";
-import ActionButton from "~@reentry/frontend/components/clients/ActionButton";
 import AddClientModal, {
   type AddClientFormData,
 } from "~@reentry/frontend/components/clients/AddClientModal";
+import {ClipboardIcon} from "~@reentry/frontend/components/icons/ClipboardIcon";
 import { ClientsTableV2 } from "~@reentry/frontend/components/IntakeChatV2/ClientsTableV2/ClientsTableV2";
-import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useClientStatusPolling } from "~@reentry/frontend/hooks/useClientStatusPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
+import { showSuccessToast } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
+
 
 type ClientResponse = components["schemas"]["ClientResponse"];
 
@@ -69,9 +71,7 @@ const customStyles = {
       fontWeight: "500",
       fontSize: "14px",
       color: "#2b5469",
-      backgroundColor: "#fff",
       borderBottomColor: "#2b5469/30",
-      borderBottomWidth: "1.5px",
       opacity: 1,
       display: "flex",
       alignItems: "center",
@@ -104,72 +104,28 @@ const formatName = (row: ClientResponse) => {
   return `${row.client.full_name.given_names} ${row.client.full_name.surname}`;
 };
 
-const formatFrontendStatus = (status: string) => {
-  const statusMap: Record<string, string> = {
-    new: "New",
-    intake_enabled: "Intake Enabled",
-    intake_in_progress: "Intake In Progress",
-    processing: "Processing",
-    intake_complete: "Intake Complete",
-    error: "Error, please retry processing",
-    unknown: "Unknown",
-  };
-  return statusMap[status] || "Unknown";
-};
 
 const ClientsPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { track } = useAnalytics();
-  const rowsPerPage = 10;
+  const [rowsPerPage, setRowsPerPage] = useState(50);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [activeSearchTerm, setActiveSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [sortBy, setSortBy] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
-  const [activeRowId, setActiveRowId] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState("last_assessment_date");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [activeRowId, ] = useState<string | null>(null);
   const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false);
   const [isAddingClient, setIsAddingClient] = useState(false);
-  const [isDeletingClient, setIsDeletingClient] = useState(false);
-
-  // Ref to detect clicks outside dropdowm
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // useEffect to close the dropdown
-  useEffect(() => {
-    if (!openDropdownId) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const clickedToggleButton = (event.target as HTMLElement).closest(
-        "[data-dropdown-toggle]",
-      );
-
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        !clickedToggleButton
-      ) {
-        setOpenDropdownId(null);
-        setActiveRowId(null);
-      }
-    };
-    if (openDropdownId) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    // Cleanup
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [openDropdownId]);
 
   const uniqueIntakeStatusOptions = [
     ["New", "new"],
-    ["Intake Enabled", "intake_enabled"],
-    ["Intake In Progress", "intake_in_progress"],
+    ["Assessment Enabled", "intake_enabled"],
+    ["Assessment In Progress", "intake_in_progress"],
     ["Processing", "processing"],
-    ["Intake Complete", "intake_complete"],
+    ["Assessment Complete", "intake_complete"],
     ["Error", "error"],
   ];
 
@@ -179,17 +135,6 @@ const ClientsPage = () => {
     const params = new URLSearchParams(searchParams);
     params.set("page", "1");
     router.push(`?${params.toString()}`);
-  };
-
-  const handleToggleDropdown = (id: string) => {
-    setOpenDropdownId((prev) => {
-      if (prev !== id) {
-        setActiveRowId(id.replace("dropdown-", ""));
-      } else {
-        setActiveRowId(null);
-      }
-      return prev === id ? null : id;
-    });
   };
 
   const handleSearchKeyDown = (e) => {
@@ -258,8 +203,9 @@ const ClientsPage = () => {
 
   const handleSort = (column, sortDirection) => {
     const columnMapping = {
-      NAME: "name",
+      Name: "name",
       STATUS: "status",
+      "Last Assessment Date": "last_assessment_date",
     };
 
     const apiSortBy = columnMapping[column.name];
@@ -276,6 +222,20 @@ const ClientsPage = () => {
       month: "short",
       day: "numeric",
     });
+  };
+
+  const getIntakeCompletedDate = (intake) => {
+    if (!intake) return "-";
+
+    if (intake.completed_at) {
+        return formatDate(intake.completed_at);
+    }
+
+    if (intake.status === "completed") {
+        return formatDate(intake.updated_at);
+    }
+
+    return "-";
   };
 
   // Client Status Polling
@@ -345,11 +305,9 @@ const ClientsPage = () => {
     );
   }
 
-  const buildColumns = (
-    statusLoading?: boolean,
-  ): TableColumn<ClientResponse>[] => [
+  const buildColumns = (): TableColumn<ClientResponse>[] => [
     {
-      name: "NAME",
+      name: "Name",
       cell: (row: ClientResponse) => (
         <div className="flex items-center gap-3 pointer-events-none">
           <div className="w-10 h-10 bg-white rounded-full text-center font-bold text-[14px] flex justify-center items-center text-white bg-[url('/images/profile.png')] hidden md:flex">
@@ -367,52 +325,58 @@ const ClientsPage = () => {
       name: "DOC ID",
       selector: (row: ClientResponse) => row.client?.external_client_id || "",
       cell: (row: ClientResponse) => (
-        <span className="text-[#002321] text-sm pointer-events-none">
-          {row.client?.external_client_id || "-"}
-        </span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[#002321] text-sm pointer-events-none">
+              {row.client?.external_client_id || "-"}
+            </span>
+              <button
+                  onClick={() => {
+                      showSuccessToast(`DOC ID copied to clipboard`);
+                      navigator.clipboard.writeText(
+                          row.client?.external_client_id as string,
+                      );
+                  }}
+                  className="p-1 rounded hover:bg-gray-100 transition"
+              >
+                  <ClipboardIcon/>
+              </button>
+          </div>
       ),
       sortable: false,
     },
     {
-      name: "INTAKE DATE",
-      selector: (row: ClientResponse) => row.intake?.created_at || "",
-      cell: (row: ClientResponse & { intake_date?: string }) => (
-        <span className="text-[#002321] text-sm pointer-events-none">
-          {formatDate(row.intake_date)}
-        </span>
+      name: (
+          <div className="flex items-center gap-1">
+              <span  className={"text-[12px] md:text-[14px]"}>Number of Assessments</span>
+              <InfoTooltip
+                  text="The total number of assessments associated with the client, including enabled, in progress, and completed assessments"
+                  position="top"
+                  className={"w-3 h-3"}
+              />
+          </div>
       ),
-      sortable: false,
-    },
-    {
-      name: "STATUS",
+      selector: (row: ClientResponse) => (row.intake ? 1 : 0),
       cell: (row: ClientResponse) => (
-        <div className="flex gap-2 items-center pointer-events-none">
-          <span className="text-[#002321] text-sm font-medium">
-            {statusLoading ? (
-              <Loading type="mini" message="" />
-            ) : (
-              formatFrontendStatus(row.frontend_status)
-            )}
+          <span className="text-[#002321] text-sm pointer-events-none">
+              { row.intake? "1": "0" }
           </span>
-        </div>
+        ),
+        sortable: true,
+    },
+    {
+      name: (
+          <div className="flex flex-col leading-tight w-full text-[12px] md:text-[14px]">
+              <span>Last Assessment</span>
+              <span>Completed</span>
+          </div>
+      ),
+      selector: (row: ClientResponse) => row.intake?.completed_at || "",
+      cell: (row: ClientResponse) => (
+          <span className="text-[#002321] text-sm pointer-events-none">
+              {getIntakeCompletedDate(row.intake)}
+          </span>
       ),
       sortable: true,
-    },
-    {
-      name: "",
-      cell: (row: ClientResponse) => (
-        <ActionButton
-          dropdownRef={dropdownRef}
-          client={row}
-          isOpen={openDropdownId === `dropdown-${row.client_pseudo_id}`}
-          onToggle={() =>
-            handleToggleDropdown(`dropdown-${row.client_pseudo_id}`)
-          }
-          onRefetch={refetch}
-          setIsDeletingClient={setIsDeletingClient}
-        />
-      ),
-      width: "50px",
     },
   ];
 
@@ -465,11 +429,15 @@ const ClientsPage = () => {
             },
           ]}
           pagination
+          paginationPerPage={rowsPerPage}
+          paginationTotalRows={data?.total || 0}
+          paginationServer
           paginationComponent={() => (
             <CustomPagination
               currentPage={page}
               totalRows={data?.total || 0}
               rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={setRowsPerPage}
             />
           )}
           onRowClicked={(row) => {
@@ -490,16 +458,13 @@ const ClientsPage = () => {
       <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] flex-grow">
         <div className="w-full flex-col justify-start items-start gap-8 flex sm:w-[100%] xl:w-[80%] 2xl:w-[60%]">
           <div className="self-stretch flex-col justify-start items-start gap-2 flex">
-            <div className="self-stretch text-[#003331] text-[34px] font-normal font-['Libre Baskerville'] leading-[40.80px]  ">
-              Clients
-            </div>
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6">
-              <div className="text-[#2b5469]/70 text-lg font-medium leading-snug">
-                All clients on your caseload are displayed below.
+              <div className="text-black font-['Public_Sans'] text-2xl font-medium leading-[120%] tracking-[-0.48px]">
+                  All Clients ({data?.total || 0})
               </div>
               <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
                 <IconInput
-                  placeholder="Search by name..."
+                  placeholder="Search by name"
                   startIcon={
                     <button
                       type="button"
@@ -594,13 +559,6 @@ const ClientsPage = () => {
         onSubmit={handleAddClient}
         isLoading={isAddingClient}
       />
-      {isDeletingClient && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <Loading message="Deleting client..." />
-          </div>
-        </div>
-      )}
     </>
   );
 };

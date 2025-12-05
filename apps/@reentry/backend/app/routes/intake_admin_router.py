@@ -1,5 +1,6 @@
 import logging
 import urllib
+from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
@@ -61,6 +62,7 @@ class IntakeWithSectionsResponse(ORMResponse):
     token: str
     internal_access: bool | None = None
     address: ClientAddressResponse | None
+    completed_at: Optional[datetime]
 
 
 class TokenAccessResponse(BaseModel):
@@ -109,6 +111,7 @@ async def prepare_intake_response(
         id=intake.id,
         created_at=intake.created_at,
         updated_at=intake.updated_at,
+        completed_at=intake.completed_at,
         client_pseudo_id=intake.client_pseudo_id,
         status=intake.status.value,
         current_section=intake.current_section,

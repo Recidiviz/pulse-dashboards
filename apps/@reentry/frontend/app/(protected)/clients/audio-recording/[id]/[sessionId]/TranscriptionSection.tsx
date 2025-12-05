@@ -126,8 +126,8 @@ const TranscriptionSection: React.FC<{
   if (sessionStatus === "processing") {
     return (
       <StatusMessage
-        title="In Progress"
-        message="Your transcript is being processed. Please wait while we finish the transcription."
+        title="Processing"
+        message="Your transcript is being processed. This may take a while. Please check back later."
         sessionId={sessionDataId}
       />
     );
@@ -155,7 +155,7 @@ const TranscriptionSection: React.FC<{
     return (
       <StatusMessage
         title="Assessment In Progress"
-        message="Your transcript will appear here once you've completed the assessment. Start recording using the bar below to start the live assessment."
+        message="Your transcript will appear here once you've completed the assessment."
       />
     );
   }

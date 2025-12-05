@@ -15,28 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-
-const BackButton = ({ onClick, href, buttonText }: { onClick?: () => void, href: string, buttonText: string  }) => {
-  const router = useRouter();
-
+export function ChevronDownFilled({ className }: { className?: string }) {
   return (
-    <button
-      type="button"
-      onClick={onClick || (() => router.push(href))}
-      className="flex flex-row text-[rgba(43,84,105,0.70)] font-public-sans text-[14px] font-medium leading-[1.2] tracking-[-0.14px]"
+    <svg
+      width="8"
+      height="4"
+      viewBox="0 0 8 4"
+      fill="none"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <Image
-        src="/images/ic_previous.svg"
-        alt="previous row"
-        width={15}
-        height={15}
-        priority
-      />
-      {buttonText}
-    </button>
+      <path d="M8 4L4 0L0 4H8Z" fill="white" />
+    </svg>
   );
-};
-
-export default BackButton;
+}

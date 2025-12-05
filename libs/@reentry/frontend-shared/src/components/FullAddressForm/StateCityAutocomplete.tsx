@@ -50,7 +50,7 @@ export const StateCityAutocomplete = ({
   disabled = false,
   statePlaceholder = "Select state...",
   cityPlaceholder = "Start typing a city...",
-  stateLabel = "State",
+  stateLabel = "State (required)",
   onStateValidationChange,
   onCityValidationChange,
   twoColumns = false,

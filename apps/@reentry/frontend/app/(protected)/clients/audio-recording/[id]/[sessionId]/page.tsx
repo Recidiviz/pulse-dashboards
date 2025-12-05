@@ -165,7 +165,7 @@ const AudioRecordingPage: React.FC = () => {
     <>
       <PageView />
       <QueueProvider>
-        <NavRecordingPage safeNavigate={safeNavigate} />
+        <NavRecordingPage client_pseudo_id={clientData?.pseudonymized_client_id} safeNavigate={safeNavigate}/>
         <div className="min-h-[calc(100vh-65px)] self-stretch px-4 md:p-10 bg-[#f9fafa] flex flex-col items-start gap-5">
           <UserSummary
             clientData={clientData}

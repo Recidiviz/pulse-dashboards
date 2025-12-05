@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from enum import StrEnum
 from typing import Optional
 from uuid import UUID
@@ -48,6 +48,7 @@ class IntakeResponse(ORMResponse):
     current_section: str | None = None
     token: str | None = None
     internal_access: Optional[bool] = None
+    completed_at: datetime | None = None
 
 
 class PlanResponse(ORMResponse):

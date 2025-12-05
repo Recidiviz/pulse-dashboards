@@ -160,6 +160,7 @@ class PlanGenerationResponseGet(PlanGenerationResponse):
 
 class PlanResponseGet(PlanResponse):
     latest_generation: PlanGenerationResponseGet | None
+    is_create_execution_finished: Optional[bool] = None
 
 
 class PlanAssetResponse(ORMResponse):
@@ -246,6 +247,7 @@ async def router_get_plan_by_client_pseudo_id(
     return PlanResponseGet.model_validate(
         {
             "latest_generation": latest_generation,
+            "is_create_execution_finished": plan.is_create_execution_finished,
             **plan.model_dump(),
         }
     )

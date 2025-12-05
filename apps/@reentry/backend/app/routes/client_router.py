@@ -12,6 +12,8 @@ from app.core.config import settings
 from app.core.db import AsyncSession, get_session
 from app.crud.assessment import get_assessments_by_client_pseudo_id
 from app.crud.client import (
+    compute_frontend_status,
+    compute_processing_status_by_intake_id,
     get_client_status_updates,
     get_paginated_client_list,
     get_processing_status,
@@ -19,6 +21,7 @@ from app.crud.client import (
 from app.crud.client import (
     reset_client_data as crud_reset_client_data,
 )
+from app.crud.intake import get_intake_by_id
 from app.crud.plan import create_plan, get_plan_by_client_pseudo_id, retry_plan_creation
 from app.models.execution import Execution, ExecutionStatus
 from app.models.intake import Intake
@@ -57,6 +60,11 @@ class ClientStatusResponse(BaseModel):
 
 class ProcessingStatusRequest(BaseModel):
     staff_pseudo_id: str
+
+
+class ProcessingStatusResponse(BaseModel):
+    processing_status: str
+    frontend_status: str
 
 
 # Client list
@@ -101,6 +109,28 @@ async def get_client_status_updates_route(
 ):
     # Get status updates for in-progress clients
     return await get_client_status_updates(session, pseudonymized_id)
+
+
+@router.get(
+    "/{intake_id}/intake-general-resources-status",
+    response_model=ProcessingStatusResponse,
+    summary="Get Intake General Resources Processing Status",
+    description="Retrieve the processing status for a specific intake by its ID.",
+)
+async def get_intake_status_for_client(
+    intake_id: str,
+    session: AsyncSession = Depends(get_session),
+):
+    intake = await get_intake_by_id(session, intake_id)
+    if not intake:
+        raise HTTPException(status_code=404, detail="Intake not found")
+    intake_processing_status = await compute_processing_status_by_intake_id(
+        session, intake_id
+    )
+    frontend_status = compute_frontend_status(intake.status, intake_processing_status)
+    return ProcessingStatusResponse(
+        processing_status=intake_processing_status, frontend_status=frontend_status
+    )
 
 
 @router.get(

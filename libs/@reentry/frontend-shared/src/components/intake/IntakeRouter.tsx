@@ -131,10 +131,7 @@ export function IntakeRouter() {
           />
         )}
         {displaySurvey && !surveySubmitted && (
-          <>
-            <ChatHeader />
-            <IntakeSurvey setSurveySubmitted={setSurveySubmitted} />
-          </>
+          <IntakeSurvey setSurveySubmitted={setSurveySubmitted} />
         )}
         {isFromUtah && isPreIntake ? (
           <PreIntakeVideo onStartIntake={handleStartConversation} />

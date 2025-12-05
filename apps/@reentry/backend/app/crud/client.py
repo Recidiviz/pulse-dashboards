@@ -1,10 +1,12 @@
 import logging
 from datetime import UTC, datetime, timedelta, timezone
+from typing import Optional
 
 import sqlalchemy
 from sqlmodel import select
 
 from app.core.db import AsyncSession
+from app.crud.intake import get_intake_by_id
 from app.crud.utils import apply_search_filter, paginate, sort_clients_by_name
 from app.models.assessment import Assessment
 from app.models.intake import (
@@ -418,6 +420,59 @@ async def compute_priority_order(
     others = [client for client, _ in others]
 
     return others + active + new
+
+
+async def compute_processing_status_by_intake_id(session, intake_id: str):
+    # 1. Fetch intake
+    intake = await get_intake_by_id(session, intake_id)
+    if not intake:
+        return None
+
+    client_pseudo_id = intake.client_pseudo_id
+
+    # 2. Fetch plan + execution
+    plan_with_exec = await session.exec(
+        select(Plan, Execution)
+        .where(Plan.client_pseudo_id == client_pseudo_id)
+        .outerjoin(Execution, Plan.create_execution_id == Execution.id)
+    )
+    plan_row = plan_with_exec.first()
+
+    plan: Optional[Plan] = None
+    if plan_row:
+        plan, exec_data = plan_row
+        plan.create_execution = exec_data
+
+    # 3. Fetch assessments + executions
+    assessments_with_execs = await session.exec(
+        select(Assessment, Execution)
+        .where(Assessment.client_pseudo_id == client_pseudo_id)
+        .outerjoin(Execution, Assessment.execution_id == Execution.id)
+    )
+
+    assessments = []
+    for a, e in assessments_with_execs:
+        a.execution = e
+        assessments.append(a)
+
+    # 4. Fetch generations for this plan
+    generations = []
+    if plan:
+        generations_with_execs = await session.exec(
+            select(PlanGeneration, Execution)
+            .where(PlanGeneration.plan_id == plan.id)
+            .outerjoin(Execution, PlanGeneration.execution_id == Execution.id)
+        )
+        for generation, execution in generations_with_execs:
+            generation.execution = execution
+            generations.append(generation)
+
+    return compute_processing_status(
+        assessments=assessments,
+        plans=plan,
+        intake=intake,
+        plan_generations=generations,
+    )
 
 
 async def build_response_for_clients(

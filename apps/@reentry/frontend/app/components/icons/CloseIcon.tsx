@@ -15,36 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type React from "react";
+import React from "react";
 
-interface ButtonProps {
+interface RemoveAssessmentIconProps {
   className?: string;
-  buttonText?: string | React.ReactNode;
   onClick?: () => void;
-  disabled?: boolean;
 }
 
-export const PrimaryButton: React.FC<ButtonProps> = ({
+export function RemoveAssessmentIcon({
   className = "",
-  buttonText,
   onClick,
-  disabled = false,
-}) => {
+}: RemoveAssessmentIconProps) {
   return (
     <button
-      type={"button"}
+      type="button"
       onClick={onClick}
-      disabled={disabled}
-      className={`h-8 px-4 py-2 rounded-[32px] border border-[#345262]/20 justify-center items-center gap-2 inline-flex
-    	transition-colors duration-300 text-[13px] font-medium leading-none
-    	${
-        disabled
-          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-          : "hover:bg-gray-500 hover:text-white text-[#345262]/90"
-      }
-    	${className}`}
+      className={`flex items-center justify-center w-6 h-6 rounded-full hover:bg-gray-200 active:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-400 ${className}`}
     >
-      {buttonText}
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M13.7 0.3C13.3 -0.1 12.7 -0.1 12.3 0.3L7 5.6L1.7 0.3C1.3 -0.1 0.7 -0.1 0.3 0.3C-0.1 0.7 -0.1 1.3 0.3 1.7L5.6 7L0.3 12.3C-0.1 12.7 -0.1 13.3 0.3 13.7C0.5 13.9 0.7 14 1 14C1.3 14 1.5 13.9 1.7 13.7L7 8.4L12.3 13.7C12.5 13.9 12.8 14 13 14C13.2 14 13.5 13.9 13.7 13.7C14.1 13.3 14.1 12.7 13.7 12.3L8.4 7L13.7 1.7C14.1 1.3 14.1 0.7 13.7 0.3Z"
+          fill="#004D48"
+        />
+      </svg>
     </button>
   );
-};
+}

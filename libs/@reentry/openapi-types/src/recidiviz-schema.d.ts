@@ -1138,6 +1138,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/clients/{intake_id}/intake-general-resources-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Intake General Resources Processing Status
+         * @description Retrieve the processing status for a specific intake by its ID.
+         */
+        get: operations["get_intake_status_for_client_clients__intake_id__intake_general_resources_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/clients/{client_pseudo_id}": {
         parameters: {
             query?: never;
@@ -2323,6 +2343,8 @@ export interface components {
             token?: string | null;
             /** Internal Access */
             internal_access?: boolean | null;
+            /** Completed At */
+            completed_at?: string | null;
         };
         /** IntakeSectionResponse */
         IntakeSectionResponse: {
@@ -2432,6 +2454,8 @@ export interface components {
             /** Internal Access */
             internal_access?: boolean | null;
             address: components["schemas"]["ClientAddressResponse"] | null;
+            /** Completed At */
+            completed_at: string | null;
         };
         /** InternalAccessUpdate */
         InternalAccessUpdate: {
@@ -2838,6 +2862,8 @@ export interface components {
             /** Edited Manually */
             edited_manually: boolean;
             latest_generation: components["schemas"]["PlanGenerationResponseGet"] | null;
+            /** Is Create Execution Finished */
+            is_create_execution_finished?: boolean | null;
             /** @description Gets the client record data for this plan.
              *     Renamed from 'oms' to better reflect its content and source. */
             readonly client_record: components["schemas"]["ClientRecordResponse"] | null;
@@ -2851,6 +2877,13 @@ export interface components {
         ProcessingStatusRequest: {
             /** Staff Pseudo Id */
             staff_pseudo_id: string;
+        };
+        /** ProcessingStatusResponse */
+        ProcessingStatusResponse: {
+            /** Processing Status */
+            processing_status: string;
+            /** Frontend Status */
+            frontend_status: string;
         };
         /** RecordingSessionResponse */
         RecordingSessionResponse: {
@@ -5550,6 +5583,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ClientStatusResponse"];
+                };
+            };
+        };
+    };
+    get_intake_status_for_client_clients__intake_id__intake_general_resources_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProcessingStatusResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

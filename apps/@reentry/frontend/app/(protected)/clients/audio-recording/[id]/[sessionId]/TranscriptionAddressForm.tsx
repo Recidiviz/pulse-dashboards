@@ -128,9 +128,9 @@ const TranscriptionAddressForm = ({
               </div>
               <div>
                 <p>
-                  If the individual cannot provide an exact address: please make
+                  If the individual cannot provide an exact address, please make
                   a best guess at the city and state. This address can be
-                  updated later
+                  updated later.
                 </p>
               </div>
             </div>

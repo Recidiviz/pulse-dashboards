@@ -20,8 +20,8 @@
 import { ChevronRight, MessageSquare } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import Chatbubble from "~@reentry/frontend/(protected)/clients/intake/[id]/Chatbubble";
-import Sidebar from "~@reentry/frontend/(protected)/clients/intake/[id]/Sidebar";
+import Chatbubble from "~@reentry/frontend/(protected)/clients/intake/[id]/chat-history/Chatbubble";
+import Sidebar from "~@reentry/frontend/(protected)/clients/intake/[id]/chat-history/Sidebar";
 import { StatusPill } from "~@reentry/frontend/components/base/StatusPill";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import type { components } from "~@reentry/openapi-types";

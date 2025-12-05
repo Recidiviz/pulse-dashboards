@@ -15,28 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-
-const BackButton = ({ onClick, href, buttonText }: { onClick?: () => void, href: string, buttonText: string  }) => {
-  const router = useRouter();
-
+export function ArrowRight({ className }: { className?: string }) {
   return (
-    <button
-      type="button"
-      onClick={onClick || (() => router.push(href))}
-      className="flex flex-row text-[rgba(43,84,105,0.70)] font-public-sans text-[14px] font-medium leading-[1.2] tracking-[-0.14px]"
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
     >
-      <Image
-        src="/images/ic_previous.svg"
-        alt="previous row"
-        width={15}
-        height={15}
-        priority
+      <path
+        d="M7.5 2.25L11.25 6M11.25 6L7.5 9.75M11.25 6H0.75"
+        stroke="white"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      {buttonText}
-    </button>
+    </svg>
   );
-};
-
-export default BackButton;
+}
