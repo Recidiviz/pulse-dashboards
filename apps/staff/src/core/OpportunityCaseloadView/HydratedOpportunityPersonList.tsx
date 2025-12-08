@@ -227,6 +227,7 @@ export type OpportunityTableColumnId =
   | "US_MI_UNIT_ID"
   | "US_MI_ERD"
   | "US_MI_CUSTODY_LEVEL"
+  | "US_MI_NEXT_SCC_DATE"
   | "SNOOZE_ENDS_IN"
   | "SUBMITTED_FOR"
   | "CTA_BUTTON"
@@ -625,6 +626,24 @@ const TableView = observer(function TableView({
       accessorFn: ({ person }: Opportunity) => {
         if (person instanceof Resident && person.stateCode === "US_MI") {
           return person.displayCustodyLevel;
+        }
+      },
+    },
+    {
+      header: "SCC Due Date",
+      id: "US_MI_NEXT_SCC_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => {
+        if (
+          [
+            "usMiSecurityClassificationCommitteeReview",
+            "usMiAddInPersonSecurityClassificationCommitteeReview",
+            "usMiWardenInPersonSecurityClassificationCommitteeReview",
+          ].includes(opp.type) &&
+          opp.record
+        ) {
+          return formatWorkflowsDate(opp.record.metadata.nextSccDate);
         }
       },
     },

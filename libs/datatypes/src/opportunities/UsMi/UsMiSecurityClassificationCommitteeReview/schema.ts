@@ -88,6 +88,7 @@ export const usMiSecurityClassificationCommitteeReviewSchema =
       jsonRecentNonbondableOffenses: z
         .array(jsonRecentNonbondableOffenseSchema)
         .default([]),
+      nextSccDate: dateStringSchema.optional(),
     }),
     isOverdue: z.boolean(),
   });

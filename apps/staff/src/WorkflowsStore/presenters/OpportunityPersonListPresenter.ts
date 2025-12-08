@@ -205,6 +205,14 @@ export class OpportunityPersonListPresenter
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         this.tenantStore.currentTenantId === "US_MI" &&
         this.opportunityType === "usMiCustodyLevelDowngrade",
+      US_MI_NEXT_SCC_DATE:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI" &&
+        [
+          "usMiSecurityClassificationCommitteeReview",
+          "usMiAddInPersonSecurityClassificationCommitteeReview",
+          "usMiWardenInPersonSecurityClassificationCommitteeReview",
+        ].includes(this.opportunityType),
 
       LAST_VIEWED: true,
       ALMOST_ELIGIBLE_STATUS: opportunities.some(

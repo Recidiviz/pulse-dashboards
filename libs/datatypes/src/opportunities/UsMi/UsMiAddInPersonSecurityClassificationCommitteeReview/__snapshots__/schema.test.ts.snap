@@ -53,6 +53,7 @@ exports[`schema for almostEligible1 1`] = `
     ],
     "lessThan24MonthsFromErd": false,
     "neededProgramming": "105",
+    "nextSccDate": 2021-12-18T00:00:00.000Z,
   },
   "stateCode": "US_MI",
 }
@@ -111,6 +112,7 @@ exports[`schema for almostEligible2 1`] = `
     ],
     "lessThan24MonthsFromErd": false,
     "neededProgramming": "105",
+    "nextSccDate": 2021-12-18T00:00:00.000Z,
   },
   "stateCode": "US_MI",
 }
@@ -203,6 +205,7 @@ exports[`schema for fullyEligible1 1`] = `
       },
     ],
     "neededProgramming": "101",
+    "nextSccDate": 2021-12-21T00:00:00.000Z,
   },
   "stateCode": "US_MI",
 }
@@ -265,6 +268,7 @@ exports[`schema for fullyEligible2 1`] = `
     ],
     "lessThan24MonthsFromErd": true,
     "neededProgramming": "101",
+    "nextSccDate": 2021-12-18T00:00:00.000Z,
   },
   "stateCode": "US_MI",
 }
