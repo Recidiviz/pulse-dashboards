@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as Sentry from "@sentry/react";
 import { z } from "zod";
 
 export function nullishAsUndefined<T extends z.ZodTypeAny>(schema: T) {
@@ -27,9 +26,6 @@ export function nullishAsUndefined<T extends z.ZodTypeAny>(schema: T) {
 export const getReadableSupervisionLocation = (
   location: string | undefined | null,
 ): string => {
-  if (!location) {
-    Sentry.captureException("Missing supervision location when parsing schema");
-  }
   return !location ||
     [
       "NOT_APPLICABLE",
