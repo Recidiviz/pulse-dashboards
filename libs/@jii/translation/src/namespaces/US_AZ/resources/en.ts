@@ -39,7 +39,7 @@ export default {
   distanceFromTodayFuture:
     "({{date, formatDateRangeFromToday(delimiter: ' and ')}} from today)",
   upcomingDateCopy:
-    "Your date is coming up soon - stay on track to ensure that your date doesn't change. ",
+    "Your date is coming up soon! Stay on track to make sure that your date doesn't change.",
   onboarding: {
     heading: "Tool disclaimer",
     body: onboardingInfoPage,

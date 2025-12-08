@@ -96,8 +96,7 @@ export const DateInfoCard = ({
         {slateCopyContent}
       </StyledSlateCopy>
       <DateInfoContent>
-        {isUpcoming && t(($) => $.upcomingDateCopy)}
-        {info}
+        {isUpcoming ? t(($) => $.upcomingDateCopy) : info}
       </DateInfoContent>
       <LearnMoreLinkWrapper>
         <GoLink

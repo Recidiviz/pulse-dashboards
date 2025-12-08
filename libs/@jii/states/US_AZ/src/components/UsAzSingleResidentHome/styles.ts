@@ -72,5 +72,5 @@ export const LearnMoreLinkWrapper = styled.div`
 `;
 
 export const StyledSlateCopy = styled(SlateCopy)<{ $isPastDate?: boolean }>`
-  ${({ $isPastDate }) => $isPastDate && `color: ${palette.signal.error};`}
+  ${({ $isPastDate }) => $isPastDate && `color: ${palette.data.gold2};`}
 `;
