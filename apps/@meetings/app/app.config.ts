@@ -137,12 +137,12 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       [
         "expo-font",
         {
-          "fonts": [
+          fonts: [
             "./assets/fonts/LibreBaskerville-Bold.ttf",
-            "./assets/fonts/Inter.ttf"
+            "./assets/fonts/Inter.ttf",
           ],
-        }
-      ]
+        },
+      ],
     ],
     extra: {
       eas: {
@@ -155,6 +155,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     runtimeVersion: {
       policy: "appVersion",
+    },
+    experiments: {
+      // https://expo.dev/changelog/mitigating-critical-security-vulnerability-in-react-server-components#react-versions-in-a-monorepo
+      autolinkingModuleResolution: true,
     },
   };
 };

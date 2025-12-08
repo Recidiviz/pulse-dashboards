@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "^7.6.3",
     "@sentry/react-native": "~7.2.0",
     "@trpc/server": "^11.4.3",
+    "babel-preset-expo": "~54.0.0",
     "enhanced-resolve": "*",
     "expo": "^54.0.0",
     "expo-audio": "~1.0.14",

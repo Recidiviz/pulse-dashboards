@@ -359,7 +359,6 @@
     "argparse": "^2.0.1",
     "babel-jest": "^30.0.2",
     "babel-plugin-styled-components": "^2.1.4",
-    "babel-preset-expo": "~12.0.0",
     "chalk": "^5.6.0",
     "coveralls": "^3.1.0",
     "devtools": "^7.27.0",
@@ -449,7 +448,8 @@
     "html2canvas": "https://github.com/ohaibbq/html2canvas.git#commit=555f194698ef453c488be3804d5c1f30b83f4353",
     "react-native-css-interop": "0.1.22",
     "tar-fs": "^2.1.4",
-    "langsmith": "0.3.60"
+    "langsmith": "0.3.60",
+    "react-server-dom-webpack": "19.1.2"
   },
   "scripts": {
     "postinstall": "husky",
