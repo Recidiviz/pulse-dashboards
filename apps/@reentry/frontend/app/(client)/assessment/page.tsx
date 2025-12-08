@@ -23,7 +23,7 @@ import IntakeChatV2 from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV
 import { IntakeAuthProvider } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import {
-  ConfirmBirthdatePage,
+  AssessmentLoginPage,
   IntakeRouter,
   IntakeSocketProvider,
 } from "~@reentry/frontend-shared";
@@ -64,8 +64,8 @@ export default function Intake() {
   if (!authorized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <ConfirmBirthdatePage
-          mode={"nonPseudoId"}
+        <AssessmentLoginPage
+          mode={"stateDocId"}
           onConfirmation={() => window.location.reload()}
         />
       </div>

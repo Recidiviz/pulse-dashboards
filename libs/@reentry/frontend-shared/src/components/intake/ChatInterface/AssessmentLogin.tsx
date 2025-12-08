@@ -20,28 +20,36 @@
 import type React from "react";
 import { useState } from "react";
 
+import {
+  ASSESSMENT_LOGIN_STATES,
+  type AssessmentLoginStateCode,
+} from "../../../constants";
 import { useApplicationContext } from "../../../contexts/ApplicationContext";
+import { getUserFacingErrorMessage } from "../../../utils/errors";
 import { showSuccessToast } from "../../../utils/toast";
+import { Dropdown } from "../../inputs";
 
-interface ConfirmBirthdatePageProps {
+interface AssessmentLoginPageProps {
   token?: string | null;
-  mode: "dob" | "pseudoDob" | "nonPseudoId";
+  mode: "dob" | "pseudoDob" | "nonPseudoId" | "stateDocId";
   pseudonymized_id?: string | null;
   onConfirmation: () => void;
 }
 
-export function ConfirmBirthdatePage({
+export function AssessmentLoginPage({
   token,
   mode,
   pseudonymized_id,
   onConfirmation,
-}: ConfirmBirthdatePageProps) {
+}: AssessmentLoginPageProps) {
   const { $api, Image, analytics } = useApplicationContext();
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [stateCode, setStateCode] = useState<AssessmentLoginStateCode | "">("");
+  const [docId, setDocId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   //const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
@@ -61,6 +69,11 @@ export function ConfirmBirthdatePage({
     "/intake/internal/verify/non-pseudo-id",
   );
 
+  const { mutateAsync: verifyStateDocIdMutation } = $api.useMutation(
+    "post",
+    "/intake/internal/verify/state-doc-id",
+  );
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !isLoading) {
       handleContinue();
@@ -68,6 +81,17 @@ export function ConfirmBirthdatePage({
   };
 
   const handleContinue = async () => {
+    if (mode === "stateDocId") {
+      if (!stateCode) {
+        setError("Please select your state");
+        return;
+      }
+      if (!docId.trim()) {
+        setError("Please enter your DOC ID");
+        return;
+      }
+    }
+
     if (mode === "nonPseudoId") {
       /* pending to define if recaptcha is needed */
       // if (!recaptchaToken) {
@@ -92,36 +116,38 @@ export function ConfirmBirthdatePage({
       }
     }
 
-    if (!day || !month || !year) {
+    if (mode !== "stateDocId" && (!day || !month || !year)) {
       setError("Please enter your complete date of birth");
       return;
     }
 
-    if (
-      !/^\d{1,2}$/.test(day) ||
-      Number.parseInt(day) < 1 ||
-      Number.parseInt(day) > 31
-    ) {
-      setError("Please enter a valid day (1-31)");
-      return;
-    }
+    if (mode !== "stateDocId") {
+      if (
+        !/^\d{1,2}$/.test(day) ||
+        Number.parseInt(day) < 1 ||
+        Number.parseInt(day) > 31
+      ) {
+        setError("Please enter a valid day (1-31)");
+        return;
+      }
 
-    if (
-      !/^\d{1,2}$/.test(month) ||
-      Number.parseInt(month) < 1 ||
-      Number.parseInt(month) > 12
-    ) {
-      setError("Please enter a valid month (1-12)");
-      return;
-    }
+      if (
+        !/^\d{1,2}$/.test(month) ||
+        Number.parseInt(month) < 1 ||
+        Number.parseInt(month) > 12
+      ) {
+        setError("Please enter a valid month (1-12)");
+        return;
+      }
 
-    if (
-      !/^\d{4}$/.test(year) ||
-      Number.parseInt(year) < 1900 ||
-      Number.parseInt(year) > new Date().getFullYear()
-    ) {
-      setError("Please enter a valid year");
-      return;
+      if (
+        !/^\d{4}$/.test(year) ||
+        Number.parseInt(year) < 1900 ||
+        Number.parseInt(year) > new Date().getFullYear()
+      ) {
+        setError("Please enter a valid year");
+        return;
+      }
     }
 
     setIsLoading(true);
@@ -160,6 +186,13 @@ export function ConfirmBirthdatePage({
             //recaptchaToken: recaptchaToken,
           },
         });
+      } else if (mode === "stateDocId" && stateCode) {
+        response = await verifyStateDocIdMutation({
+          body: {
+            doc_id: docId.trim(),
+            state_code: stateCode,
+          },
+        });
       } else {
         setError("Missing authentication information. Please try again.");
         return;
@@ -180,11 +213,8 @@ export function ConfirmBirthdatePage({
         return;
       }
     } catch (err: unknown) {
-      console.error("Error verifying DOB:", err);
-      // @ts-expect-error ported from old codebase
-      setError(err.detail);
-      // @ts-expect-error ported from old codebase
-      setError(err.detail || "Verification failed. Please try again.");
+      console.error("Error verifying:", err);
+      setError(getUserFacingErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -209,26 +239,29 @@ export function ConfirmBirthdatePage({
             Welcome!
           </h1>
           <p className="font-[Public Sans, sans-serif] text-[18px] font-semibold tracking-[-0.02em] text-[#2B5469B2] mb-8">
-            {/* eslint-disable-next-line no-nested-ternary */}
-            {mode === "pseudoDob"
-              ? "Before you proceed, please confirm your name and birthdate."
-              : mode === "nonPseudoId"
-                ? "Before you proceed, Please confirm your full name and birthdate."
-                : "Before you proceed, please confirm your birthdate."}
+            {
+              {
+                pseudoDob:
+                  "Before you proceed, please confirm your name and birthdate.",
+                nonPseudoId:
+                  "Before you proceed, Please confirm your full name and birthdate.",
+                stateDocId:
+                  "Before you proceed, please select your state and enter your DOC ID.",
+                dob: "Before you proceed, please confirm your birthdate.",
+              }[mode]
+            }
           </p>
-          <div className="text-start">
-            {error && (
-              <div className="text-red-700 text-sm font-medium p-1 rounded space-y-1">
-                {error
-                  .split(".")
-                  .filter((sentence) => sentence.trim() !== "")
-                  .map((sentence, index) => (
-                    // eslint-disable-next-line react/no-array-index-key
-                    <p key={index}>{sentence.trim()}.</p>
-                  ))}
-              </div>
-            )}
-          </div>
+          {error && (
+            <div className="text-red-700 text-sm font-medium p-1 rounded space-y-1 w-11/12 mx-auto mb-4">
+              {error
+                .split(".")
+                .filter((sentence) => sentence.trim() !== "")
+                .map((sentence, index) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <p key={index}>{sentence.trim()}.</p>
+                ))}
+            </div>
+          )}
 
           {/* Name fields - only show if pseudonymized_id is provided */}
           {mode === "pseudoDob" && pseudonymized_id && (
@@ -296,80 +329,123 @@ export function ConfirmBirthdatePage({
             </div>
           )}
 
-          <div className="flex space-x-3 mb-6 justify-start">
-            <div className="w-1/6">
-              <label
-                htmlFor="month-input"
-                className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
-              >
-                Month
-              </label>
-              <input
-                id="month-input"
-                type="text"
-                placeholder="MM"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
-                value={month}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (
-                    /^\d{0,2}$/.test(value) &&
-                    (value === "" || Number.parseInt(value) <= 12)
-                  ) {
-                    setMonth(value);
+          {/* State and DOC ID fields - only show if mode is stateDocId */}
+          {mode === "stateDocId" && (
+            <div className="mb-6 w-11/12 mx-auto">
+              <div className="mb-4">
+                <label
+                  htmlFor="state-select"
+                  className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
+                >
+                  State
+                </label>
+                <Dropdown
+                  value={stateCode}
+                  onChange={(value) =>
+                    setStateCode(value as AssessmentLoginStateCode)
                   }
-                }}
-                disabled={isLoading}
-                maxLength={2}
-                pattern="[0-9]*"
-              />
+                  options={ASSESSMENT_LOGIN_STATES}
+                  placeholder="Select state"
+                  disabled={isLoading}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="doc-id-input"
+                  className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
+                >
+                  DOC ID
+                </label>
+                <input
+                  id="doc-id-input"
+                  type="text"
+                  placeholder="Enter DOC ID"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start placeholder:text-gray-500"
+                  value={docId}
+                  onChange={(e) => setDocId(e.target.value)}
+                  disabled={isLoading}
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
             </div>
-            <div className="w-1/6">
-              <label
-                htmlFor="day-input"
-                className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
-              >
-                Day
-              </label>
-              <input
-                id="day-input"
-                type="text"
-                placeholder="DD"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
-                value={day}
-                onChange={(e) => setDay(e.target.value)}
-                disabled={isLoading}
-                maxLength={2}
-                pattern="[0-9]*"
-                onKeyDown={handleKeyDown}
-              />
+          )}
+
+          {mode !== "stateDocId" && (
+            <div className="flex space-x-3 mb-6 justify-start">
+              <div className="w-1/6">
+                <label
+                  htmlFor="month-input"
+                  className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
+                >
+                  Month
+                </label>
+                <input
+                  id="month-input"
+                  type="text"
+                  placeholder="MM"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
+                  value={month}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (
+                      /^\d{0,2}$/.test(value) &&
+                      (value === "" || Number.parseInt(value) <= 12)
+                    ) {
+                      setMonth(value);
+                    }
+                  }}
+                  disabled={isLoading}
+                  maxLength={2}
+                  pattern="[0-9]*"
+                />
+              </div>
+              <div className="w-1/6">
+                <label
+                  htmlFor="day-input"
+                  className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
+                >
+                  Day
+                </label>
+                <input
+                  id="day-input"
+                  type="text"
+                  placeholder="DD"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
+                  value={day}
+                  onChange={(e) => setDay(e.target.value)}
+                  disabled={isLoading}
+                  maxLength={2}
+                  pattern="[0-9]*"
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
+              <div className="w-2/4">
+                <label
+                  htmlFor="year-input"
+                  className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
+                >
+                  Year
+                </label>
+                <input
+                  id="year-input"
+                  type="text"
+                  placeholder="YYYY"
+                  className="w-11/12 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
+                  value={year}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d{0,4}$/.test(value)) {
+                      setYear(value);
+                    }
+                  }}
+                  disabled={isLoading}
+                  maxLength={4}
+                  pattern="[0-9]*"
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
             </div>
-            <div className="w-2/4">
-              <label
-                htmlFor="year-input"
-                className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
-              >
-                Year
-              </label>
-              <input
-                id="year-input"
-                type="text"
-                placeholder="YYYY"
-                className="w-11/12 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
-                value={year}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d{0,4}$/.test(value)) {
-                    setYear(value);
-                  }
-                }}
-                disabled={isLoading}
-                maxLength={4}
-                pattern="[0-9]*"
-                onKeyDown={handleKeyDown}
-              />
-            </div>
-          </div>
+          )}
 
           {/* pending to define if recaptcha is needed */}
           {/*{mode === "nonPseudoId" && (*/}
@@ -378,7 +454,7 @@ export function ConfirmBirthdatePage({
           {/*	</div>*/}
           {/*)}*/}
 
-          <div className="w-11/12">
+          <div className="w-11/12 mx-auto">
             <button
               type="button"
               onClick={handleContinue}

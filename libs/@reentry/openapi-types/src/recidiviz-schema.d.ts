@@ -1014,6 +1014,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/intake/internal/verify/state-doc-id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify DOC ID and state code
+         * @description Validates client's DOC ID and state code against BigQuery records and issues JWT token
+         */
+        post: operations["verify_state_doc_id_intake_internal_verify_state_doc_id_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/intake/admin/{client_pseudo_id}": {
         parameters: {
             query?: never;
@@ -2242,7 +2262,7 @@ export interface components {
              * @default 100
              */
             distance_miles: number;
-            /** @description Preferred travel mode (driving, walking, bicycling, transit) */
+            /** @description Preferred travel mode (DRIVE, WALK, BICYCLE, TRANSIT) */
             travel_mode?: components["schemas"]["TravelMode"] | null;
             /**
              * Exclude Names
@@ -3305,6 +3325,13 @@ export interface components {
              * Format: date
              */
             date_of_birth: string;
+        };
+        /** VerifyStateDocId */
+        VerifyStateDocId: {
+            /** Doc Id */
+            doc_id: string;
+            /** State Code */
+            state_code: string;
         };
         /** PlanResponse */
         app__routes__plan_router__PlanResponse: {
@@ -5346,6 +5373,39 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["VerifyNonPseudoId"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerifyDOBResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_state_doc_id_intake_internal_verify_state_doc_id_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyStateDocId"];
             };
         };
         responses: {

@@ -181,7 +181,50 @@ async def validate_non_pseudo_id(
     )
 
     if not record:
-        return ValidationResult.error_result("No match for the provided name and date of birth. Please try again.")
+        return ValidationResult.error_result(
+            "No match for the provided name and date of birth. Please try again."
+        )
+
+    client_pseudo_id = record.pseudonymized_client_id
+
+    # Check if an intake record exists
+    intake_record = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
+    if not intake_record:
+        logger.error(
+            f"Intake record not found for client pseudo ID: {client_pseudo_id}"
+        )
+        return ValidationResult.error_result(
+            "Intake not enabled. Please contact your case worker for assistance."
+        )
+
+    if not intake_record.internal_access:
+        logger.error(f"Intake not enabled for client pseudo ID: {client_pseudo_id}")
+        return ValidationResult.error_result(
+            "Internal access is not enabled. Please contact your case worker for assistance."
+        )
+
+    token_data = create_client_response(client_pseudo_id, record.full_name)
+    return ValidationResult.success_result(token_data, client_pseudo_id)
+
+
+async def validate_state_doc_id(
+    request: Request,
+    doc_id: str,
+    state_code: str,
+    session: AsyncSession,
+) -> ValidationResult:
+    """
+    Validate client existing in the bigquery database using DOC ID and state code.
+    """
+    record = Queries.get_client_by_doc_id_and_state(
+        doc_id=doc_id,
+        state_code=state_code,
+    )
+
+    if not record:
+        return ValidationResult.error_result(
+            "No match for the provided DOC ID and state. Please try again."
+        )
 
     client_pseudo_id = record.pseudonymized_client_id
 

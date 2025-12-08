@@ -6,7 +6,11 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.intake.auth_client_user import validate_non_pseudo_id, validate_pseudo_dob
+from app.auth.intake.auth_client_user import (
+    validate_non_pseudo_id,
+    validate_pseudo_dob,
+    validate_state_doc_id,
+)
 from app.core.db import get_session
 
 logger = logging.getLogger(__name__)
@@ -14,7 +18,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-class VerifyDOBResponse(BaseModel):
+class VerifyClientResponse(BaseModel):
     status: bool
     access_token: Optional[str] = None
     token_type: str = "bearer"
@@ -34,9 +38,14 @@ class VerifyNonPseudoId(BaseModel):
     recaptchaToken: Optional[str] = None
 
 
+class VerifyStateDocId(BaseModel):
+    doc_id: str
+    state_code: str
+
+
 @router.post(
     "/{pseudonymized_id}",
-    response_model=VerifyDOBResponse,
+    response_model=VerifyClientResponse,
     summary="Verify date of birth with pseudonymized ID and last name",
     description="Validates client's DOB and last name against pseudonymized ID records and issues JWT token",
     tags=["Intake assessment"],
@@ -62,12 +71,12 @@ async def verify_pseudo_date_of_birth(
         if not result.success:
             raise HTTPException(status_code=400, detail=result.error_message)
 
-        return VerifyDOBResponse(
+        return VerifyClientResponse(
             status=True,
             access_token=result.token_data["token"],
             token_type="bearer",
             message="Verification successful",
-            client_pseudo_id=result.client_pseudo_id
+            client_pseudo_id=result.client_pseudo_id,
         )
     except HTTPException:
         raise
@@ -78,7 +87,7 @@ async def verify_pseudo_date_of_birth(
 
 @router.post(
     "/verify/non-pseudo-id",
-    response_model=VerifyDOBResponse,
+    response_model=VerifyClientResponse,
     summary="Verify date of birth,first name and last name",
     description="Validates client's data  against BigQuery records and issues JWT token",
     tags=["Intake assessment"],
@@ -119,15 +128,63 @@ async def verify_non_pseudonymized_id(
 
         logger.info(f"Verification successful for {result}")
 
-        return VerifyDOBResponse(
+        return VerifyClientResponse(
             status=True,
             access_token=result.token_data["token"],
             token_type="bearer",
             message="Verification successful",
-            client_pseudo_id=result.client_pseudo_id
+            client_pseudo_id=result.client_pseudo_id,
         )
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error verifying non-pseudonymized ID: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post(
+    "/verify/state-doc-id",
+    response_model=VerifyClientResponse,
+    summary="Verify DOC ID and state code",
+    description="Validates client's DOC ID and state code against BigQuery records and issues JWT token",
+    tags=["Intake assessment"],
+)
+async def verify_state_doc_id(
+    request: Request,
+    data: VerifyStateDocId,
+    session: AsyncSession = Depends(get_session),
+):
+    try:
+        result = await validate_state_doc_id(
+            request=request,
+            doc_id=data.doc_id,
+            state_code=data.state_code,
+            session=session,
+        )
+
+        if not result.success:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "message": result.error_message,
+                    "user_facing": result.user_facing,
+                },
+            )
+
+        logger.info(f"Verification successful for {result}")
+
+        return VerifyClientResponse(
+            status=True,
+            access_token=result.token_data["token"],
+            token_type="bearer",
+            message="Verification successful",
+            client_pseudo_id=result.client_pseudo_id,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error verifying state DOC ID: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail={"message": str(e), "user_facing": False},
+        )

@@ -20,7 +20,7 @@
 import { useEffect, useState } from "react";
 
 import {
-  ConfirmBirthdatePage,
+  AssessmentLoginPage,
   IntakeRouter,
   IntakeSocketProvider,
 } from "~@reentry/frontend-shared";
@@ -58,7 +58,7 @@ export default function Intake({
   if (!authorized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <ConfirmBirthdatePage
+        <AssessmentLoginPage
           pseudonymized_id={pseudonymized_id}
           mode={"pseudoDob"}
           onConfirmation={() => window.location.reload()}

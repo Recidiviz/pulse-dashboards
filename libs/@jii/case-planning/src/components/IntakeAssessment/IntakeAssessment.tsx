@@ -23,7 +23,7 @@ import { TAILWIND_WRAPPER_CLASS } from "~@jii/common-ui";
 import { useRootStore } from "~@jii/data";
 import { PAGE_LAYOUT_HEADER_GAP } from "~@jii/layout";
 import {
-  ConfirmBirthdatePage,
+  AssessmentLoginPage,
   IntakeRouter,
   IntakeSocketProvider,
   QueryProvider,
@@ -49,7 +49,7 @@ const ManagedComponent: FC<{ presenter: IntakeAssessmentPresenter }> = observer(
                 <IntakeRouter />
               </IntakeSocketProvider>
             ) : (
-              <ConfirmBirthdatePage
+              <AssessmentLoginPage
                 mode="nonPseudoId"
                 onConfirmation={presenter.updateAuthToken}
               />

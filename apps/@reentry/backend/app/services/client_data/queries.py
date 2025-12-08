@@ -167,6 +167,91 @@ class Queries:
             return None
 
     @staticmethod
+    def get_client_by_doc_id_and_state(
+        doc_id: str,
+        state_code: str,
+    ) -> Optional[ClientDataRecord]:
+        """
+        Get a client record by DOC ID (external_id) and state code.
+        Uses Redis caching to improve performance.
+        Returns the ClientDataRecord or None if not found.
+
+        Args:
+            doc_id: The document ID (external_id) of the client
+            state_code: The state code (e.g., US_UT, US_ID)
+        """
+        if not doc_id or not state_code:
+            return None
+
+        doc_id = str(doc_id).strip()
+        state_code = str(state_code).strip().upper()
+
+        # Translate US_ID to US_IX for BigQuery lookup (Idaho uses US_IX internally)
+        bq_state_code = "US_IX" if state_code == "US_ID" else state_code
+
+        logger.info(
+            f"Looking for client with DOC ID: {doc_id} and state: {state_code} (BQ: {bq_state_code})"
+        )
+
+        # Check for cached results first
+        cache_key = f"client_by_doc_state:{doc_id}:{state_code}"
+        client_record = get_client_from_cache(cache_key)
+
+        if client_record:
+            return client_record
+
+        # Fetch client from BigQuery
+        logger.info(
+            f"Fetching client with DOC ID {doc_id} and state {bq_state_code} from BigQuery"
+        )
+
+        escaped_doc_id = doc_id.replace("'", "''")
+        escaped_state_code = bq_state_code.replace("'", "''")
+
+        query = f"""
+        SELECT
+        external_id,
+        pseudonymized_id,
+        full_name,
+        birthdate,
+        state_code,
+        FROM
+        `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
+        WHERE
+            external_id = '{escaped_doc_id}'
+            AND state_code = '{escaped_state_code}'
+        LIMIT 1
+        """
+
+        try:
+            client = get_bigquery_client()
+            query_job = client.query(query)
+            results = query_job.result()
+
+            client_record = None
+            for row in results:
+                client_record = process_client_row(row)
+                if client_record:
+                    cache_client_record(cache_key, client_record)
+                    break
+
+            if client_record:
+                logger.info(
+                    f"Successfully fetched client with DOC ID {doc_id} and state {state_code}"
+                )
+                return client_record
+            else:
+                logger.info(
+                    f"No client found with DOC ID {doc_id} and state {state_code}"
+                )
+                return None
+        except Exception as e:
+            logger.error(
+                f"Error fetching client with DOC ID {doc_id} and state {state_code}: {str(e)}"
+            )
+            return None
+
+    @staticmethod
     def get_client_by_names_and_dob(
         first_name: str,
         last_name: str,

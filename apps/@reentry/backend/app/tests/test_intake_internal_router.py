@@ -6,7 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.routes.intake_internal_router import (
     VerifyNonPseudoId,
+    VerifyStateDocId,
     verify_non_pseudonymized_id,
+    verify_state_doc_id,
 )
 
 
@@ -294,3 +296,68 @@ async def test_validate_non_pseudo_id_validation_failure(
 
     assert exc_info.value.status_code == 400
     assert "Validation failed" in str(exc_info.value.detail)
+
+
+@pytest.fixture
+def valid_state_doc_id_data():
+    return {
+        "doc_id": "12345",
+        "state_code": "US_ID",
+    }
+
+
+@patch("app.routes.intake_internal_router.validate_state_doc_id")
+async def test_verify_state_doc_id_success(
+    mock_validate, mock_session, mock_request, valid_state_doc_id_data
+):
+    # Mock validation result
+    mock_result = MagicMock()
+    mock_result.success = True
+    mock_result.token_data = {"token": "jwt_token"}
+    mock_result.client_pseudo_id = "client-pseudo-id-01"
+    mock_validate.return_value = mock_result
+
+    result = await verify_state_doc_id(
+        mock_request, VerifyStateDocId(**valid_state_doc_id_data), mock_session
+    )
+
+    assert result.status is True
+    assert result.access_token == "jwt_token"
+    assert result.client_pseudo_id == "client-pseudo-id-01"
+    assert result.message == "Verification successful"
+
+
+@patch("app.routes.intake_internal_router.validate_state_doc_id")
+async def test_verify_state_doc_id_validation_failure(
+    mock_validate, mock_session, mock_request, valid_state_doc_id_data
+):
+    # Mock validation failure
+    mock_result = MagicMock()
+    mock_result.success = False
+    mock_result.error_message = "No match for the provided DOC ID and state."
+    mock_result.user_facing = True
+    mock_validate.return_value = mock_result
+
+    with pytest.raises(HTTPException) as exc_info:
+        await verify_state_doc_id(
+            mock_request, VerifyStateDocId(**valid_state_doc_id_data), mock_session
+        )
+
+    assert exc_info.value.status_code == 400
+    assert "No match for the provided DOC ID and state" in str(exc_info.value.detail)
+
+
+@patch("app.routes.intake_internal_router.validate_state_doc_id")
+async def test_verify_state_doc_id_internal_error(
+    mock_validate, mock_session, mock_request, valid_state_doc_id_data
+):
+    # Mock an exception being raised
+    mock_validate.side_effect = Exception("Database connection error")
+
+    with pytest.raises(HTTPException) as exc_info:
+        await verify_state_doc_id(
+            mock_request, VerifyStateDocId(**valid_state_doc_id_data), mock_session
+        )
+
+    assert exc_info.value.status_code == 500
+    assert exc_info.value.detail["user_facing"] is False

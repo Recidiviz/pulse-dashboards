@@ -107,6 +107,7 @@ class ValidationResult:
     error_message: Optional[str] = None
     token_data: Optional[Dict[str, Any]] = None
     client_pseudo_id: Optional[str] = None
+    user_facing: bool = True
 
     @property
     def success(self) -> bool:
@@ -114,9 +115,13 @@ class ValidationResult:
         return self.error_message is None
 
     @classmethod
-    def success_result(cls, token_data: Dict[str, Any], client_pseudo_id: str) -> "ValidationResult":
+    def success_result(
+        cls, token_data: Dict[str, Any], client_pseudo_id: str
+    ) -> "ValidationResult":
         return cls(token_data=token_data, client_pseudo_id=client_pseudo_id)
 
     @classmethod
-    def error_result(cls, error_message: str) -> "ValidationResult":
-        return cls(error_message=error_message)
+    def error_result(
+        cls, error_message: str, user_facing: bool = True
+    ) -> "ValidationResult":
+        return cls(error_message=error_message, user_facing=user_facing)
