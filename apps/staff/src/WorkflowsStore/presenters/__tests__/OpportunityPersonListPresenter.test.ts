@@ -46,7 +46,9 @@ const firestoreStore = {
 } as any as FirestoreStore;
 
 const tenantStore = {} as any as TenantStore;
-const mockFilterStore = {} as any as OpportunitiesFilterStore;
+const mockFilterStore = {
+  orderedOpportunitiesForCategory: () => [],
+} as any as OpportunitiesFilterStore;
 
 const mockOpportunities = {
   [mockOpportunity.type]: [

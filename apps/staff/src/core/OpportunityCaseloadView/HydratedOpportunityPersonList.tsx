@@ -72,7 +72,7 @@ import {
   formatDurationFromOptionalDays,
   formatWorkflowsDate,
   formatWorkflowsDateString,
-} from "../../utils/formatStrings";
+} from "../../utils";
 import {
   Client,
   JusticeInvolvedPerson,
@@ -81,11 +81,18 @@ import {
   OpportunityTabGroup,
 } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
-import { UsAzReleaseToTransitionProgramOpportunityBase } from "../../WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTransitionProgramOpportunityBase";
+import { UsAzReleaseToTransitionProgramOpportunityBase } from "../../WorkflowsStore/Opportunity/UsAz";
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { CaseloadSelect } from "../CaseloadSelect";
+import {
+  CaseloadTable,
+  CaseloadTableManualSorting,
+  PersonNameCell,
+  ReleaseDateCell,
+  SupervisingOfficerNameCell,
+} from "../CaseloadTable";
 import InsightsPill from "../InsightsPill";
 import { UsAzMarkSubmittedButton } from "../OpportunityDenial/UsAz/UsAzMenuButton";
 import PersonId from "../PersonId";
@@ -95,7 +102,6 @@ import { EligibilityStatusPill } from "../WorkflowsJusticeInvolvedPersonProfile/
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { TaskFilterDropdown } from "../WorkflowsTasks/TaskFilterDropdown";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
-import { CaseloadTable, CaseloadTableManualSorting } from "./CaseloadTable";
 import { LinkedOpportunityCallout } from "./LinkedOpportunityCallout";
 import OpportunityNotifications from "./OpportunityNotifications";
 import { OpportunityPreviewPanel } from "./OpportunityPreviewPanel";
@@ -255,7 +261,7 @@ type OpportunityCaseloadComponentProps = {
   presenter: OpportunityPersonListPresenter;
 };
 
-export function PersonIdCell({ row }: { row: Row<Opportunity> }) {
+function PersonIdCell({ row }: { row: Row<Opportunity> }) {
   const opportunity = row.original;
   const { person } = opportunity;
   return (
@@ -289,13 +295,8 @@ function EligibilityDateCell({ row }: { row: Row<Opportunity> }) {
   );
 }
 
-export function OfficerNameCell({ row }: { row: Row<Opportunity> }) {
-  return row.original.person.assignedStaffId ? (
-    <WorkflowsOfficerName officerId={row.original.person.assignedStaffId} />
-  ) : (
-    // for type safety, but we should not show this column for anyone without an officer
-    "—"
-  );
+function OfficerNameCell({ row }: { row: Row<Opportunity> }) {
+  return <SupervisingOfficerNameCell person={row.original.person} />;
 }
 
 export function FormButtonCell({ row }: { row: Row<Opportunity> }) {
@@ -469,6 +470,15 @@ const MultiTableView = observer(function MultiTableView({
   );
 });
 
+const PersonNameWrapper = ({ row }: { row: Row<Opportunity> }) => {
+  const { person } = row.original;
+  return <PersonNameCell person={person} />;
+};
+
+const ReleaseDateWrapper = ({ row }: { row: Row<Opportunity> }) => {
+  return <ReleaseDateCell person={row.original.person} />;
+};
+
 const TableView = observer(function TableView({
   presenter,
 }: OpportunityCaseloadComponentProps) {
@@ -484,13 +494,7 @@ const TableView = observer(function TableView({
         opp.person.record.personName.surname ?? opp.person.displayName,
       enableSorting: true,
       sortingFn: "text",
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        const { person } = row.original;
-        if (person.stateCode === "US_TX") {
-          return person.displayPreferredNameLastFirst;
-        }
-        return person.displayPreferredName;
-      },
+      cell: PersonNameWrapper,
     },
     {
       // TODO(#7453): Update this heading if other opportunities use instanceDetails
@@ -527,16 +531,7 @@ const TableView = observer(function TableView({
           return person.releaseDate;
         }
       },
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        const { person } = row.original;
-        if (!(person instanceof Resident)) {
-          return "—";
-        }
-        if (person.onLifeSentence) {
-          return "Serving a life sentence";
-        }
-        return `${formatWorkflowsDate(person.releaseDate)}`;
-      },
+      cell: ReleaseDateWrapper,
     },
     {
       header: "Earliest Possible Release Date",

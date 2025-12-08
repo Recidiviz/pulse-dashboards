@@ -47,6 +47,12 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
     return this.record.unitId ?? undefined;
   }
 
+  get combinedFacilityUnitId(): string | undefined {
+    return (
+      [this.facilityId, this.unitId].filter(Boolean).join(" / ") || "Unknown"
+    );
+  }
+
   get custodyLevel(): string | undefined {
     return this.record.custodyLevel ?? undefined;
   }

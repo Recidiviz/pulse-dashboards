@@ -186,72 +186,82 @@ const VitalsSummaryTable: React.FC = () => {
     <div className="VitalsSummaryTable">
       <table {...getTableProps()} className="VitalsSummaryTable__table">
         <thead className="VitalsSummaryTable__table-head">
-          {headerGroups.map((headerGroup) => (
-            <tr
-              {...headerGroup.getHeaderGroupProps()}
-              className="VitalsSummaryTable__row"
-            >
-              {headerGroup.headers.map((column) => (
-                <th
-                  id={column.id}
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
-                >
-                  {column.canSort ? (
-                    <div
-                      className={`VitalsSummaryTable__sortable-header VitalsSummaryTable__sortable-header--${column.id}`}
-                    >
-                      {column.render("Header")}
-                      <div className="VitalsSummaryTable__sort">
+          {headerGroups.map((headerGroup) => {
+            const { key: groupKey, ...restProps } =
+              headerGroup.getHeaderGroupProps();
+            return (
+              <tr
+                key={groupKey}
+                {...restProps}
+                className="VitalsSummaryTable__row"
+              >
+                {headerGroup.headers.map((column) => {
+                  const { key: headerKey, ...restProps } =
+                    column.getHeaderProps(column.getSortByToggleProps());
+                  return (
+                    <th id={column.id} key={headerKey} {...restProps}>
+                      {column.canSort ? (
                         <div
-                          className={cx(
-                            "VitalsSummaryTable__sort__button VitalsSummaryTable__sort__button--up",
-                            {
-                              "VitalsSummaryTable__sort__button--active":
-                                column.isSorted && column.isSortedDesc,
-                            },
-                          )}
-                        />
-                        <div
-                          className={cx(
-                            "VitalsSummaryTable__sort__button VitalsSummaryTable__sort__button--down",
-                            {
-                              "VitalsSummaryTable__sort__button--active":
-                                column.isSorted && !column.isSortedDesc,
-                            },
-                          )}
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="VitalsSummaryTable__header">
-                      {column.render("Header")}
-                    </div>
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
+                          className={`VitalsSummaryTable__sortable-header VitalsSummaryTable__sortable-header--${column.id}`}
+                        >
+                          {column.render("Header")}
+                          <div className="VitalsSummaryTable__sort">
+                            <div
+                              className={cx(
+                                "VitalsSummaryTable__sort__button VitalsSummaryTable__sort__button--up",
+                                {
+                                  "VitalsSummaryTable__sort__button--active":
+                                    column.isSorted && column.isSortedDesc,
+                                },
+                              )}
+                            />
+                            <div
+                              className={cx(
+                                "VitalsSummaryTable__sort__button VitalsSummaryTable__sort__button--down",
+                                {
+                                  "VitalsSummaryTable__sort__button--active":
+                                    column.isSorted && !column.isSortedDesc,
+                                },
+                              )}
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="VitalsSummaryTable__header">
+                          {column.render("Header")}
+                        </div>
+                      )}
+                    </th>
+                  );
+                })}
+              </tr>
+            );
+          })}
         </thead>
 
         <tbody {...getTableBodyProps()}>
           {rows.map((row) => {
             prepareRow(row);
+            const { key: rowKey, ...restProps } = row.getRowProps();
 
             return (
               <tr
-                {...row.getRowProps()}
+                key={rowKey}
+                {...restProps}
                 className="VitalsSummaryTable__row VitalsSummaryTable__row--value"
               >
                 {row.cells.map((cell) => {
                   const { column } = cell;
+                  const { key: cellKey, ...restProps } = cell.getCellProps();
                   return (
                     <td
+                      key={cellKey}
                       className={cx(`VitalsSummaryTable__cell--${column.id}`, {
                         "fs-exclude":
                           column.id === "entity" &&
                           entityType === ENTITY_TYPES.PO,
                       })}
-                      {...cell.getCellProps()}
+                      {...restProps}
                     >
                       {cell.render("Cell")}
                     </td>

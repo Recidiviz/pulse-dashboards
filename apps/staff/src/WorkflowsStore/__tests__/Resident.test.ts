@@ -116,3 +116,22 @@ test("searchIdValues", () => {
   createTestUnit();
   expect(testResident.searchIdValues).toEqual(["OFFICER1", "FACILITY1"]);
 });
+
+describe("combined facility/unit id", () => {
+  it("returns facility and unit combined", () => {
+    createTestUnit();
+    expect(testResident.combinedFacilityUnitId).toEqual("FACILITY1 / UNIT1");
+  });
+
+  it("returns just the facility if no unit specified", () => {
+    record["unitId"] = undefined;
+    createTestUnit();
+    expect(testResident.combinedFacilityUnitId).toEqual("FACILITY1");
+  });
+
+  it("returns just the unit if no facility specified", () => {
+    record["facilityId"] = undefined;
+    createTestUnit();
+    expect(testResident.combinedFacilityUnitId).toEqual("UNIT1");
+  });
+});

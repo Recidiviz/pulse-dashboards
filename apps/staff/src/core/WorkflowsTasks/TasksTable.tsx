@@ -15,81 +15,53 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, TooltipTrigger } from "@recidiviz/design-system";
+import { TooltipTrigger } from "@recidiviz/design-system";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import pluralize from "pluralize";
-import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { Icon, palette } from "~design-system";
 
-import useIsMobile from "../../hooks/useIsMobile";
 import {
   formatDueDateFromToday,
   formatWorkflowsDate,
   formatWorkflowsDateWithoutYear,
   toTitleCase,
-} from "../../utils/formatStrings";
+} from "../../utils";
 import { Client, SupervisionTask } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
-import { CaseloadTable } from "../OpportunityCaseloadView/CaseloadTable";
+import {
+  CaseloadTable,
+  PersonIdCell,
+  PersonNameCell,
+  SupervisingOfficerNameCell,
+} from "../CaseloadTable";
 import {
   EmptyStateText,
   EmptyStateWrapper,
   MaxWidthFlexWrapper,
 } from "../OpportunityCaseloadView/HydratedOpportunityPersonList";
-import PersonId from "../PersonId";
 import { InfoButton } from "../WorkflowsJusticeInvolvedPersonProfile/InfoButton";
-import WorkflowsOfficerName from "../WorkflowsOfficerName";
-import { WorkflowsStatusPill } from "../WorkflowsStatusPill/WorkflowsStatusPill";
 import { TaskFrequency } from "./TaskFrequency";
-
-const PersonNameElement = styled.div.attrs({
-  className: "fs-exclude",
-})<{ $isMobile: boolean }>`
-  display: flex;
-  flex-direction: ${({ $isMobile }) => ($isMobile ? "column" : "row")};
-  align-items: ${({ $isMobile }) => ($isMobile ? "flex-start" : "center")};
-  text-wrap: nowrap;
-  gap: ${({ $isMobile }) => rem($isMobile ? spacing.xs : spacing.sm)};
-`;
 
 const StyledInfoButton = styled.span`
   color: ${palette.slate60};
 `;
 
-function PersonNameCell({ row }: { row: Row<SupervisionTask> }) {
-  const { isMobile } = useIsMobile(true);
+function PersonNameCellWrapper({ row }: { row: Row<SupervisionTask> }) {
   const { person } = row.original;
-  const displayName =
-    person.stateCode === "US_TX"
-      ? person.displayPreferredNameLastFirst
-      : person.displayPreferredName;
-  return (
-    <PersonNameElement $isMobile={isMobile}>
-      {displayName} <WorkflowsStatusPill person={person} />
-    </PersonNameElement>
-  );
+  return <PersonNameCell person={person} />;
 }
 
 function OfficerNameCell({ row }: { row: Row<SupervisionTask> }) {
-  return row.original.person.assignedStaffId ? (
-    <WorkflowsOfficerName officerId={row.original.person.assignedStaffId} />
-  ) : (
-    // for type safety, but we should not show this column for anyone without an officer
-    "—"
-  );
+  return <SupervisingOfficerNameCell person={row.original.person} />;
 }
 
-function PersonIdCell({ row }: { row: Row<SupervisionTask> }) {
+function PersonIdCellWrapper({ row }: { row: Row<SupervisionTask> }) {
   const { person } = row.original;
-  return (
-    <PersonId personId={person.displayId} pseudoId={person.pseudonymizedId}>
-      {person.displayId}
-    </PersonId>
-  );
+  return <PersonIdCell person={person} />;
 }
 
 // Supports links to policy documents in the Case Type cell for special programs in Texas.
@@ -210,7 +182,7 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       accessorFn: (task: SupervisionTask) => task.person.displayName,
       enableSorting: true,
       sortingFn: "text",
-      cell: PersonNameCell,
+      cell: PersonNameCellWrapper,
     },
     {
       header: presenter.displayIdHeader,
@@ -218,7 +190,7 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       accessorKey: "person.displayId",
       enableSorting: true,
       sortingFn: "alphanumeric",
-      cell: PersonIdCell,
+      cell: PersonIdCellWrapper,
     },
     {
       header: "Task",
