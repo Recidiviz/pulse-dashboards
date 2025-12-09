@@ -90,7 +90,7 @@ const mapIntakeToTimeline = (intakeData) => {
     timeline.push(assignedStep);
 
     if (intakeData.status === 'completed') {
-        const completedAt = new Date(intakeData?.completed_at );
+        const completedAt = new Date(intakeData?.completed_at + 'Z' );
 
         const completedStep = {
             time: formatTime(completedAt),

@@ -237,7 +237,7 @@ class Intake(BaseModel, table=True):
 
         # If specifically completed, also schedule assessment creation
         if self.status == IntakeStatus.COMPLETED:
-            self.completed_at = datetime.now()
+            self.completed_at = datetime.utcnow()
             logger.info(f"Scheduling assessment for intake {self.id}")
             await self.schedule_assessment(session)
 
