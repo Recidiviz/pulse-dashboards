@@ -22,6 +22,7 @@ import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   dateStringSchema,
   dateStringSchemaWithoutTimeShift,
+  toDateList,
 } from "../dateStringSchema";
 
 vi.mock("~client-env-utils");
@@ -68,6 +69,41 @@ test("fails on non-ISO date format", () => {
       "success": false,
     }
   `);
+});
+
+describe("toDateList", () => {
+  test("single entry", () => {
+    expect(toDateList("2024-03-20")).toEqual([new Date(2024, 2, 20)]);
+  });
+
+  test("multiple entries, no whitespace", () => {
+    expect(toDateList("2024-03-20,2024-04-21")).toEqual([
+      new Date(2024, 2, 20),
+      new Date(2024, 3, 21),
+    ]);
+  });
+
+  test("multiple entries, whitespace", () => {
+    expect(toDateList("2024-03-20, 2024-04-21")).toEqual([
+      new Date(2024, 2, 20),
+      new Date(2024, 3, 21),
+    ]);
+  });
+
+  test("invalid date", () => {
+    expect(() =>
+      toDateList("2024-03-20,4/21/2024"),
+    ).toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "code": "invalid_string",
+          "message": "Invalid ISO date string",
+          "validation": "datetime",
+          "path": []
+        }
+      ]]
+    `);
+  });
 });
 
 describe.each(["demo", "offline"] as const)("in %s mode", (mode) => {
