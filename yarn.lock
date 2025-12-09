@@ -9349,6 +9349,7 @@ __metadata:
     nativewind: "npm:^4.2.1"
     picocolors: "npm:*"
     react: "npm:19.1.0"
+    react-dom: "npm:19.1.0"
     react-native: "npm:0.81.5"
     react-native-auth0: "npm:^5.1.0"
     react-native-error-boundary: "npm:^2.0.0"
@@ -45402,6 +45403,17 @@ __metadata:
   dependencies:
     es6-symbol: "npm:^3"
   checksum: 10c0/7b7924681059d60ea06dca38fd7ec066cc32625bdbf9795d21d9c8c667601997d5061e87d9738dad7fc8ff6e17cf08ebeb9fc4c470f17fc78b9229e3d38f7938
+  languageName: node
+  linkType: hard
+
+"react-dom@npm:19.1.0":
+  version: 19.1.0
+  resolution: "react-dom@npm:19.1.0"
+  dependencies:
+    scheduler: "npm:^0.26.0"
+  peerDependencies:
+    react: ^19.1.0
+  checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
   languageName: node
   linkType: hard
 

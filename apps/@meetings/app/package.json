@@ -36,6 +36,7 @@
     "nativewind": "^4.2.1",
     "picocolors": "*",
     "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-auth0": "^5.1.0",
     "react-native-error-boundary": "^2.0.0",
