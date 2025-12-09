@@ -70,7 +70,7 @@ const AnalyticsContext = createContext<AnalyticsContextProps | null>(null);
 // Disable analytics in any environment outside of staging and production
 // However, there is a source set up for development, so you can comment out the
 // shouldSkipWriteToSegment call in the track(), etc methods to emit events in dev
-const isAnalyticsDisabled = !["staging", "production"].includes(
+const isAnalyticsDisabled = !["staging", "prod"].includes(
   process.env["NEXT_PUBLIC_ENVIRONMENT"] || "development",
 );
 
