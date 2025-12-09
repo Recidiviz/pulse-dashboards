@@ -22,6 +22,7 @@ export const profileMilestoneTypes = [
   "MONTHS_WITH_CURRENT_EMPLOYER",
   "US_UT_EMPLOYED_6_MONTHS",
   "US_MI_2_MONTHS_SUBSTANCE_FREE",
+  "US_MI_SUPERVISION_ACHIEVEMENT_RECOGNITION",
 ] as const;
 
 export const congratulationsMilestoneTypes = [
