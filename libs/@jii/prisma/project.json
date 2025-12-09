@@ -1,0 +1,115 @@
+{
+  "name": "@jii/prisma",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@jii/prisma/src",
+  "projectType": "library",
+  "tags": ["scope:server"],
+  "targets": {
+    "prisma-generate": {
+      "inputs": ["{projectRoot}/prisma/schema.prisma"],
+      "executor": "@nx-tools/nx-prisma:generate",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-format": {
+      "executor": "@nx-tools/nx-prisma:format",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-migrate": {
+      "dependsOn": ["docker"],
+      "executor": "@nx-tools/nx-prisma:migrate",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-pull": {
+      "executor": "@nx-tools/nx-prisma:pull",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-push": {
+      "executor": "@nx-tools/nx-prisma:push",
+      "dependsOn": ["docker"],
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-deploy": {
+      "executor": "@nx-tools/nx-prisma:deploy",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-status": {
+      "executor": "@nx-tools/nx-prisma:status",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-studio": {
+      "executor": "@nx-tools/nx-prisma:studio",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-reset": {
+      "executor": "@nx-tools/nx-prisma:reset",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-resolve": {
+      "executor": "@nx-tools/nx-prisma:resolve",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+
+    "prisma-validate": {
+      "executor": "@nx-tools/nx-prisma:validate",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "docker": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {
+          "command": "docker compose up --wait"
+        },
+        "ci": {
+          "command": "echo 'No docker for CI'"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["prisma-generate"],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "dependsOn": ["prisma-generate"],
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/@jii/prisma"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

@@ -19,4 +19,5 @@ components:
         location: us-central1
         deletion_policy: DELETE
         accessors: ["serviceAccount:937048170521-compute@developer.gserviceaccount.com"]
+    apps/jii: {}
 
