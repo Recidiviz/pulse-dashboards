@@ -16,20 +16,20 @@
 // =============================================================================
 
 import { ascending, descending } from "d3-array";
-import { isEmpty } from "lodash";
+import { isEmpty, transform } from "lodash";
 import { flowResult, makeObservable } from "mobx";
 import simplur from "simplur";
 
 import {
-  OpportunityInfo,
+  OpportunityCardInfo,
   OpportunityType,
   SupervisionOfficer,
-  SupervisionOfficerWithOpportunityDetails,
+  SupervisionOfficerWithOpportunityCardDetails,
 } from "~datatypes";
 import { HydratesFromSource, isHydrated } from "~hydration-utils";
 
 import { PartialRecord } from "../../utils/typeUtils";
-import { Opportunity } from "../../WorkflowsStore";
+import { Opportunity, OpportunityTab } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import {
@@ -85,6 +85,9 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         opportunitiesDetails: true,
         populateOpportunityConfigurationStore: true,
         expectOpportunityConfigurationStorePopulated: true,
+        shouldSplitByTab: true,
+        opportunityDetailsByTab: true,
+        opportunitiesDetailsForCardGrid: true,
       },
       { autoBind: true },
     );
@@ -119,7 +122,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
    * Provides details about supervision supervisor opportunities.
    * @returns An array of `OpportunityInfo` or `undefined` if workflows are not enabled or data is not available.
    */
-  get opportunitiesDetails(): OpportunityInfo[] | undefined {
+  get opportunitiesDetails(): OpportunityCardInfo[] | undefined {
     if (!this.isWorkflowsEnabled) return;
 
     const { allOfficers } = this;
@@ -129,6 +132,58 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
           this.processOfficersAndOpportunities(allOfficers),
         )
       : [];
+  }
+
+  /**
+   * For a given opportunity card, split the aggregated card information up by tab and
+   * return the list of card info objects for each tab.
+   */
+  opportunityDetailsByTab(oppInfo: OpportunityCardInfo): OpportunityCardInfo[] {
+    const {
+      label: oppLabel,
+      officersWithRelevantClients,
+      opportunityType,
+      urlSection,
+      priority,
+      zeroGrantsTooltip,
+    } = oppInfo;
+
+    const relevantTabTitles = this.cardTabTitlesForType(opportunityType);
+
+    const cardInfoByTab = officersWithRelevantClients.reduce((acc, officer) => {
+      const { countsByTab } = officer;
+      if (!countsByTab) return acc;
+
+      // Loop through the relevant officers and aggregate card information by tab
+      // title.
+      Object.entries(countsByTab)
+        .filter(([tabTitle, _]) =>
+          relevantTabTitles.includes(tabTitle as OpportunityTab),
+        )
+        .forEach(([tabTitle, officerClientCount]) => {
+          const cardInfoForTab: OpportunityCardInfo = acc.get(tabTitle) ?? {
+            label: `${oppLabel}: ${tabTitle}`,
+            opportunityType,
+            urlSection,
+            relevantClientsCount: 0,
+            priority,
+            zeroGrantsTooltip,
+            officersWithRelevantClients: [],
+          };
+
+          cardInfoForTab.officersWithRelevantClients.push({
+            ...officer,
+            clientsCount: officerClientCount,
+            clientsCountWithLabel: simplur`${officerClientCount} ${this.labels.supervisionJiiLabel}[|s]`,
+          });
+          cardInfoForTab.relevantClientsCount += officerClientCount;
+
+          acc.set(tabTitle, cardInfoForTab);
+        });
+
+      return acc;
+    }, new Map<string, OpportunityCardInfo>());
+    return Array.from(cardInfoByTab.values());
   }
 
   get isReviewCardEnabled(): boolean {
@@ -143,12 +198,27 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
    * This field is used to generate the supervisor review cards in the
    * Opportunities Module.
    */
-  get opportunitiesDetailsForSupervisorReview(): OpportunityInfo[] | undefined {
+  get opportunitiesDetailsForSupervisorReview():
+    | OpportunityCardInfo[]
+    | undefined {
     if (!this.isReviewCardEnabled) {
       return [];
     }
     return this.opportunitiesDetails?.filter(
       (oppInfo) => !isEmpty(oppInfo.supervisorReviewCounts),
+    );
+  }
+
+  /**
+   * Returns the array of card info objects to be rendered in the opportunities module.
+   * Handles splitting up an opportunity card into individual tab cards when relevant.
+   */
+  get opportunitiesDetailsForCardGrid(): OpportunityCardInfo[] {
+    if (!this.opportunitiesDetails) return [];
+    return this.opportunitiesDetails.flatMap((oppDetail) =>
+      this.shouldSplitByTab(oppDetail.opportunityType)
+        ? this.opportunityDetailsByTab(oppDetail)
+        : oppDetail,
     );
   }
 
@@ -246,20 +316,33 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
               const reviewOpps = oppsByTabForOfficer[supervisorReviewTabTitle];
               reviewOpps.forEach((opp) => {
                 const statusLabel = opp.eligibilityStatusLabel();
-                if (statusLabel) {
+                if (statusLabel && oppDetail.supervisorReviewCounts) {
                   oppDetail.supervisorReviewCounts[statusLabel] =
                     oppDetail.supervisorReviewCounts[statusLabel] + 1 || 1;
                 }
               });
             }
 
+            // If we need to surface opportunity counts by tab
+            // handle adding the current officer's counts to this opportunity's
+            // totals
+            const countsByTabForOfficer = this.shouldSplitByTab(opportunityType)
+              ? transform(
+                  oppsByTabForOfficer,
+                  (oppCountsByTab, opps, tab) =>
+                    (oppCountsByTab[tab] = opps.length),
+                  {} as Record<string, number>,
+                )
+              : undefined;
+
             if (clientCountForOfficer > 0) {
-              oppDetail.officersWithEligibleClients.push({
+              oppDetail.officersWithRelevantClients.push({
                 ...officer,
-                clientsEligibleCount: clientCountForOfficer,
-                clientsEligibleCountWithLabel: simplur`${clientCountForOfficer} ${this.labels.supervisionJiiLabel}[|s]`,
+                clientsCount: clientCountForOfficer,
+                clientsCountWithLabel: simplur`${clientCountForOfficer} ${this.labels.supervisionJiiLabel}[|s]`,
+                countsByTab: countsByTabForOfficer,
               });
-              oppDetail.clientsEligibleCount += clientCountForOfficer;
+              oppDetail.relevantClientsCount += clientCountForOfficer;
 
               acc.set(opportunityType, oppDetail);
             }
@@ -272,23 +355,35 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     );
   }
 
+  shouldSplitByTab(oppType: OpportunityType): boolean {
+    return !isEmpty(this.cardTabTitlesForType(oppType));
+  }
+
+  cardTabTitlesForType(oppType: OpportunityType): OpportunityTab[] {
+    if (oppType === "usIaEarlyDischarge") {
+      return ["Eligible Now", "Ready for Discharge", "Revisions Requests"];
+    }
+
+    return [];
+  }
+
   /**
    * Builds the opportunities details array from raw opportunity info.
    *
    * @param {RawOpportunityInfoByOpportunityType} rawOpportunityInfoMap
-   * @returns {OpportunityInfo[]}
+   * @returns {OpportunityCardInfo[]}
    */
   protected buildOpportunitiesDetails(
     rawOpportunityInfoMap: RawOpportunityInfoByOpportunityType,
-  ): OpportunityInfo[] {
+  ): OpportunityCardInfo[] {
     return Array.from(rawOpportunityInfoMap.values())
       .toSorted(
         SupervisionSupervisorOpportunitiesPresenter.sortOpportunitiesDetails,
       )
-      .map(({ officersWithEligibleClients, homepagePosition, ...rest }) => ({
+      .map(({ officersWithRelevantClients, homepagePosition, ...rest }) => ({
         ...rest,
-        officersWithEligibleClients: officersWithEligibleClients.toSorted(
-          SupervisionSupervisorOpportunitiesPresenter.sortSupervisionOfficerWithOpportunityDetails,
+        officersWithRelevantClients: officersWithRelevantClients.toSorted(
+          SupervisionSupervisorOpportunitiesPresenter.sortSupervisionOfficerWithOpportunityCardDetails,
         ),
       }));
   }
@@ -307,8 +402,8 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     return {
       priority,
       label,
-      officersWithEligibleClients: [],
-      clientsEligibleCount: 0,
+      officersWithRelevantClients: [],
+      relevantClientsCount: 0,
       homepagePosition,
       opportunityType,
       zeroGrantsTooltip,
@@ -362,8 +457,8 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       return ascending(a.homepagePosition, b.homepagePosition);
 
     // Highest clients eligible count
-    if (a.clientsEligibleCount !== b.clientsEligibleCount)
-      return descending(a.clientsEligibleCount, b.clientsEligibleCount);
+    if (a.relevantClientsCount !== b.relevantClientsCount)
+      return descending(a.relevantClientsCount, b.relevantClientsCount);
 
     // Compare by label finally
     return a.label.localeCompare(b.label);
@@ -372,21 +467,18 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
   /**
    * Static method to sort supervision officers with opportunity details by clients eligible count and name.
    *
-   * @param {SupervisionOfficerWithOpportunityDetails} a - The first officer to compare.
-   * @param {SupervisionOfficerWithOpportunityDetails} b - The second officer to compare.
+   * @param {SupervisionOfficerWithOpportunityCardDetails} a - The first officer to compare.
+   * @param {SupervisionOfficerWithOpportunityCardDetails} b - The second officer to compare.
    * @returns The comparison result as a number.
    */
-  static sortSupervisionOfficerWithOpportunityDetails(
-    a: SupervisionOfficerWithOpportunityDetails,
-    b: SupervisionOfficerWithOpportunityDetails,
+  static sortSupervisionOfficerWithOpportunityCardDetails(
+    a: SupervisionOfficerWithOpportunityCardDetails,
+    b: SupervisionOfficerWithOpportunityCardDetails,
   ) {
-    const clientsEligibleCompare = descending(
-      a.clientsEligibleCount,
-      b.clientsEligibleCount,
-    );
+    const clientsCompare = descending(a.clientsCount, b.clientsCount);
     // name
-    return clientsEligibleCompare !== 0
-      ? clientsEligibleCompare
+    return clientsCompare !== 0
+      ? clientsCompare
       : a.displayName.localeCompare(b.displayName);
   }
 }

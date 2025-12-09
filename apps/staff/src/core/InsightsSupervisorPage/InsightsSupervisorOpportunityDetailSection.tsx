@@ -59,7 +59,7 @@ const ManagedComponent: React.FC<{
   presenter: SupervisionSupervisorOpportunitiesPresenter;
 }> = observer(function OpportunityDetails({ presenter }) {
   const {
-    opportunitiesDetails,
+    opportunitiesDetailsForCardGrid,
     opportunitiesDetailsForSupervisorReview,
     isWorkflowsEnabled,
     labels,
@@ -84,13 +84,13 @@ const ManagedComponent: React.FC<{
                       key={oppInfo.label}
                     />
                   ))}
-                {opportunitiesDetails && opportunitiesDetails.length > 0 ? (
+                {opportunitiesDetailsForCardGrid.length > 0 ? (
                   <Grid>
-                    {opportunitiesDetails.map((opportunityDetail) => (
+                    {opportunitiesDetailsForCardGrid.map((cardDetails) => (
                       <InsightsSupervisorOpportunityDetailCard
-                        opportunityInfo={opportunityDetail}
+                        cardInfo={cardDetails}
                         labels={labels}
-                        key={opportunityDetail.label}
+                        key={cardDetails.label}
                       />
                     ))}
                   </Grid>

@@ -21,7 +21,7 @@ import {
   InsightsConfig,
   MetricBenchmark,
   MetricConfig,
-  OpportunityInfo,
+  OpportunityCardInfo,
   OpportunityType,
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
@@ -116,7 +116,7 @@ export type ByMetricAndCategory2DMap<V> = Map<string, Map<string, V>>;
 /**
  * Type for object to hold data before transforming it into `OpportunityInfo`
  */
-export type RawOpportunityInfo = OpportunityInfo & {
+export type RawOpportunityInfo = OpportunityCardInfo & {
   homepagePosition: number;
 };
 export type RawOpportunityInfoByOpportunityType = Map<

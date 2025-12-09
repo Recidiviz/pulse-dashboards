@@ -21,16 +21,18 @@ import { configure } from "mobx";
 
 import {
   InsightsConfigFixture,
+  OpportunityCardInfo,
   OpportunityType,
   supervisionOfficerFixture,
   supervisionOfficerSupervisorsFixture,
-  SupervisionOfficerWithOpportunityDetails,
+  SupervisionOfficerWithOpportunityCardDetails,
 } from "~datatypes";
 import { isHydrated } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
 import UserStore from "../../../RootStore/UserStore";
+import { OpportunityTab } from "../../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import {
   MOCK_OPPORTUNITY_CONFIGS,
@@ -44,7 +46,10 @@ import { OpportunityConfigurationStore } from "../../../WorkflowsStore/Opportuni
 import { opportunityConstructors } from "../../../WorkflowsStore/Opportunity/opportunityConstructors";
 import { mockFirestoreStoreClientsForOfficerId } from "../../../WorkflowsStore/subscriptions/__tests__/testUtils";
 import { InsightsStore } from "../../InsightsStore";
-import { getMockOpportunityConstructor } from "../../mixins/__mocks__/MockOpportunity";
+import {
+  getMockOpportunityConstructor,
+  MockOpportunity,
+} from "../../mixins/__mocks__/MockOpportunity";
 import { CLIENTS_OFFICERS } from "../../models/offlineFixtures/ClientFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionSupervisorOpportunitiesPresenter } from "../SupervisionSupervisorOpportunitiesPresenter";
@@ -245,9 +250,9 @@ describe("Opportunity details methods", () => {
         (externalId, count) => {
           const officerCount = opportunitiesDetails
             ?.find((oppDetail) => oppDetail.label === OPP_TYPE_1_LABEL)
-            ?.officersWithEligibleClients?.find(
+            ?.officersWithRelevantClients?.find(
               (o) => o.externalId === externalId,
-            )?.clientsEligibleCount;
+            )?.clientsCount;
           expect(officerCount).toBe(count);
         },
       );
@@ -264,9 +269,9 @@ describe("Opportunity details methods", () => {
         (externalId, count) => {
           const officerCount = opportunitiesDetails
             ?.find((oppDetail) => oppDetail.label === OPP_TYPE_2_LABEL)
-            ?.officersWithEligibleClients?.find(
+            ?.officersWithRelevantClients?.find(
               (o) => o.externalId === externalId,
-            )?.clientsEligibleCount;
+            )?.clientsCount;
           expect(officerCount).toBe(count);
         },
       );
@@ -287,47 +292,132 @@ describe("Opportunity details methods", () => {
         (opportunityLabel, count) => {
           const opportunityDetailCount = opportunitiesDetails?.find(
             (oppDetail) => oppDetail.label === opportunityLabel,
-          )?.clientsEligibleCount;
+          )?.relevantClientsCount;
           expect(opportunityDetailCount).toBe(count);
         },
       );
     });
 
+    describe("Method: opportunityDetailsByTab", () => {
+      let testOpportunityDetailsByTab: OpportunityCardInfo[];
+      let testSourceOppInfo: OpportunityCardInfo;
+      const expectedTabTitles: OpportunityTab[] = [
+        "Eligible Now",
+        "Almost Eligible",
+      ];
+      beforeEach(async () => {
+        vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(true);
+        vi.spyOn(presenter, "shouldSplitByTab").mockReturnValue(true);
+        vi.spyOn(presenter, "cardTabTitlesForType").mockReturnValue(
+          expectedTabTitles,
+        );
+
+        // Give us exactly one mock opp with "Almost Eligible" tab title, instead of
+        // default "Eligible Now".
+        vi.spyOn(MockOpportunity.prototype, "tabTitle").mockReturnValueOnce(
+          "Almost Eligible",
+        );
+
+        await presenter.hydrate();
+        opportunitiesDetails = presenter.opportunitiesDetails;
+        testSourceOppInfo = opportunitiesDetails?.[0] as OpportunityCardInfo;
+        testOpportunityDetailsByTab =
+          presenter.opportunityDetailsByTab(testSourceOppInfo);
+      });
+
+      test("opportunityDetailsByTab is defined", () => {
+        expect(testOpportunityDetailsByTab).toBeDefined();
+        expect(testOpportunityDetailsByTab).toHaveLength(
+          expectedTabTitles.length,
+        );
+      });
+
+      test("tab card label combines source opp name with tab title", () => {
+        testOpportunityDetailsByTab.forEach((cardInfo) => {
+          const expectedOppName = testSourceOppInfo.label;
+          expect(cardInfo.label).toBeOneOf([
+            `${expectedOppName}: ${expectedTabTitles[0]}`,
+            `${expectedOppName}: ${expectedTabTitles[1]}`,
+          ]);
+        });
+      });
+
+      test("tab card urlSection remains the same as the source opp card", () => {
+        testOpportunityDetailsByTab.forEach((cardInfo) => {
+          const expectedOppUrlSection = testSourceOppInfo.urlSection;
+          expect(cardInfo.urlSection).toEqual(expectedOppUrlSection);
+        });
+      });
+
+      test("tab card client count is the sum of each officer's client count", () => {
+        testOpportunityDetailsByTab.forEach((cardInfo) => {
+          // card relevant clients count sums the officer relevant clients?
+          const expectedRelevantClientsCount = sum(
+            cardInfo.officersWithRelevantClients.map(
+              (officer) => officer.clientsCount,
+            ),
+          );
+          expect(cardInfo.relevantClientsCount).toEqual(
+            expectedRelevantClientsCount,
+          );
+        });
+      });
+
+      test("tab card client counts match mocked opportunity tab titles", () => {
+        const testClientCounts = testOpportunityDetailsByTab.map(
+          (card) => card.relevantClientsCount,
+        );
+
+        // We mocked one "Almost Eligible" tab title and the rest are "Eligible Now"
+        expect(testClientCounts).toEqual([1, 19]);
+      });
+    });
+
     describe("Method: sortOpportunitiesDetails", () => {
       it("should correctly sort RawOpportunityInfo objects", () => {
+        const partialOppInfo = {
+          officersWithRelevantClients: [],
+          opportunityType: "LSU",
+          urlSection: "",
+        } satisfies Partial<RawOpportunityInfo>;
         // TODO: Convert this into actual fixtures.
-        const expectedArray = [
+        const expectedArray: RawOpportunityInfo[] = [
           {
             priority: "HIGH",
             homepagePosition: 1,
-            clientsEligibleCount: 10,
+            relevantClientsCount: 10,
             label: "Opportunity A",
+            ...partialOppInfo,
           },
           {
             priority: "HIGH",
             homepagePosition: 3,
-            clientsEligibleCount: 15,
+            relevantClientsCount: 15,
             label: "Opportunity C",
+            ...partialOppInfo,
           },
           {
             priority: "NORMAL",
             homepagePosition: 1,
-            clientsEligibleCount: 20,
+            relevantClientsCount: 20,
             label: "Opportunity D",
+            ...partialOppInfo,
           },
           {
             priority: "NORMAL",
             homepagePosition: 2,
-            clientsEligibleCount: 10,
+            relevantClientsCount: 10,
             label: "Opportunity E",
+            ...partialOppInfo,
           },
           {
             priority: "NORMAL",
             homepagePosition: 2,
-            clientsEligibleCount: 5,
+            relevantClientsCount: 5,
             label: "Opportunity B",
+            ...partialOppInfo,
           },
-        ] as unknown as RawOpportunityInfo[];
+        ];
 
         const shuffledAndSortedArray = shuffle(expectedArray).sort(
           SupervisionSupervisorOpportunitiesPresenter.sortOpportunitiesDetails,
@@ -365,28 +455,28 @@ describe("Opportunity details methods", () => {
         const expectedArray = [
           {
             displayName: "Officer B",
-            clientsEligibleCount: 20,
+            clientsCount: 20,
           },
           {
             displayName: "Officer E",
-            clientsEligibleCount: 20,
+            clientsCount: 20,
           },
           {
             displayName: "Officer A",
-            clientsEligibleCount: 15,
+            clientsCount: 15,
           },
           {
             displayName: "Officer C",
-            clientsEligibleCount: 15,
+            clientsCount: 15,
           },
           {
             displayName: "Officer D",
-            clientsEligibleCount: 10,
+            clientsCount: 10,
           },
-        ] as SupervisionOfficerWithOpportunityDetails[];
+        ] as SupervisionOfficerWithOpportunityCardDetails[];
 
         const shuffledAndSortedArray = shuffle(expectedArray).toSorted(
-          SupervisionSupervisorOpportunitiesPresenter.sortSupervisionOfficerWithOpportunityDetails,
+          SupervisionSupervisorOpportunitiesPresenter.sortSupervisionOfficerWithOpportunityCardDetails,
         );
 
         expect(shuffledAndSortedArray).toStrictEqual(expectedArray);
@@ -395,12 +485,12 @@ describe("Opportunity details methods", () => {
       it("should have officersWithEligibleClients correctly sorted in the opportunityDetails object", () => {
         expect(opportunitiesDetails).not.toBeFalsy();
         for (const opportunityDetail of opportunitiesDetails || []) {
-          const { officersWithEligibleClients } = opportunityDetail;
+          const { officersWithRelevantClients } = opportunityDetail;
           expect(
-            officersWithEligibleClients.toSorted(
-              SupervisionSupervisorOpportunitiesPresenter.sortSupervisionOfficerWithOpportunityDetails,
+            officersWithRelevantClients.toSorted(
+              SupervisionSupervisorOpportunitiesPresenter.sortSupervisionOfficerWithOpportunityCardDetails,
             ),
-          ).toStrictEqual(officersWithEligibleClients);
+          ).toStrictEqual(officersWithRelevantClients);
         }
       });
     });

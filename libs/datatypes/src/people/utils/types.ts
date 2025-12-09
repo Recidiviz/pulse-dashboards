@@ -28,18 +28,27 @@ export type StaffRecord =
   | IncarcerationStaffRecord["output"]
   | SupervisionStaffRecord["output"];
 
-export type SupervisionOfficerWithOpportunityDetails = SupervisionOfficer & {
-  clientsEligibleCount: number;
-  clientsEligibleCountWithLabel: string;
-};
+export type SupervisionOfficerWithOpportunityCardDetails =
+  SupervisionOfficer & {
+    clientsCount: number;
+    clientsCountWithLabel: string;
+    /**
+     * Only relevant when we want to split up an opportunity into one card per tab
+     */
+    countsByTab?: Record<string, number>;
+  };
 
-export type OpportunityInfo = {
+/**
+ * Opportunity information used when rendering info cards in the Opportunities Module
+ * of the Supervisor Homepage.
+ */
+export type OpportunityCardInfo = {
   label: string;
   priority: "NORMAL" | "HIGH";
-  officersWithEligibleClients: SupervisionOfficerWithOpportunityDetails[];
-  clientsEligibleCount: number;
+  officersWithRelevantClients: SupervisionOfficerWithOpportunityCardDetails[];
+  relevantClientsCount: number;
   opportunityType: OpportunityType;
   zeroGrantsTooltip?: string;
-  supervisorReviewCounts: Record<string, number>;
+  supervisorReviewCounts?: Record<string, number>;
   urlSection: string;
 };

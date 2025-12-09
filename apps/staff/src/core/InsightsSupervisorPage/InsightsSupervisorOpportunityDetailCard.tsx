@@ -18,7 +18,7 @@
 import React from "react";
 import simplur from "simplur";
 
-import { OpportunityInfo } from "~datatypes";
+import { OpportunityCardInfo } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
@@ -36,7 +36,7 @@ import {
 } from "./styles";
 
 type InsightsSupervisorOpportunityDetailCardProps = {
-  opportunityInfo: OpportunityInfo;
+  cardInfo: OpportunityCardInfo;
   labels: ConfigLabels;
 };
 
@@ -44,11 +44,11 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
   InsightsSupervisorOpportunityDetailCardProps
 > = ({
   labels,
-  opportunityInfo: {
+  cardInfo: {
     label,
     priority,
-    clientsEligibleCount,
-    officersWithEligibleClients,
+    relevantClientsCount,
+    officersWithRelevantClients,
     opportunityType,
     zeroGrantsTooltip,
   },
@@ -60,7 +60,7 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
       <CardHeader>
         <CardHeaderText>
           <CardTitle>{label}</CardTitle>
-          <CardSubtitle>{simplur`${clientsEligibleCount} ${labels.supervisionJiiLabel} opportunities`}</CardSubtitle>
+          <CardSubtitle>{simplur`${relevantClientsCount} ${labels.supervisionJiiLabel} opportunities`}</CardSubtitle>
         </CardHeaderText>
         {priority === "HIGH" ? (
           <InsightsTooltip contents={`High Priority`} maxWidth={310}>
@@ -75,7 +75,7 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
         ) : undefined}
       </CardHeader>
       <SupervisorDetailCardList>
-        {officersWithEligibleClients.map((officer) => {
+        {officersWithRelevantClients.map((officer) => {
           const showZeroGrantsPill =
             zeroGrantsFlag &&
             officer.zeroGrantOpportunities?.includes(opportunityType);
@@ -83,7 +83,7 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
             <InsightsSupervisorDetailCardListItem
               officerName={officer.displayName}
               officerPseudoId={officer.pseudonymizedId}
-              officerValue={officer.clientsEligibleCountWithLabel}
+              officerValue={officer.clientsCountWithLabel}
               showPill={!!showZeroGrantsPill}
               key={officer.pseudonymizedId}
             >

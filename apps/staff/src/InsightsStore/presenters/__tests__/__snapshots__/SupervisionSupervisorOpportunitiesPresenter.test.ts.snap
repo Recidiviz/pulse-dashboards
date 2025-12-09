@@ -3,13 +3,13 @@
 exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method: opportunityDetails > opportunityDetails is defined 1`] = `
 [
   {
-    "clientsEligibleCount": 20,
     "label": "Mock Opportunity",
-    "officersWithEligibleClients": [
+    "officersWithRelevantClients": [
       {
         "avgDailyPopulation": 54,
-        "clientsEligibleCount": 6,
-        "clientsEligibleCountWithLabel": "6 clients",
+        "clientsCount": 6,
+        "clientsCountWithLabel": "6 clients",
+        "countsByTab": undefined,
         "displayName": "Walter Harris",
         "district": "Unit 1",
         "email": "officer1@recidiviz.org",
@@ -32,8 +32,9 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
       },
       {
         "avgDailyPopulation": 12,
-        "clientsEligibleCount": 5,
-        "clientsEligibleCountWithLabel": "5 clients",
+        "clientsCount": 5,
+        "clientsCountWithLabel": "5 clients",
+        "countsByTab": undefined,
         "displayName": "Jack Hernandez",
         "district": "Unit 1",
         "email": null,
@@ -51,8 +52,9 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
       },
       {
         "avgDailyPopulation": null,
-        "clientsEligibleCount": 5,
-        "clientsEligibleCountWithLabel": "5 clients",
+        "clientsCount": 5,
+        "clientsCountWithLabel": "5 clients",
+        "countsByTab": undefined,
         "displayName": "John Harris",
         "district": "Unit 3",
         "email": "officer6@recidiviz.org",
@@ -69,8 +71,9 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
       },
       {
         "avgDailyPopulation": 32,
-        "clientsEligibleCount": 4,
-        "clientsEligibleCountWithLabel": "4 clients",
+        "clientsCount": 4,
+        "clientsCountWithLabel": "4 clients",
+        "countsByTab": undefined,
         "displayName": "Jason Nelson",
         "district": "Unit 1",
         "email": "officer3@recidiviz.org",
@@ -89,18 +92,19 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
     ],
     "opportunityType": "mockUsXxOpp",
     "priority": "HIGH",
+    "relevantClientsCount": 20,
     "supervisorReviewCounts": {},
     "urlSection": "mockOpportunity",
     "zeroGrantsTooltip": undefined,
   },
   {
-    "clientsEligibleCount": 19,
     "label": "Mock Opportunity Two",
-    "officersWithEligibleClients": [
+    "officersWithRelevantClients": [
       {
         "avgDailyPopulation": 12,
-        "clientsEligibleCount": 5,
-        "clientsEligibleCountWithLabel": "5 clients",
+        "clientsCount": 5,
+        "clientsCountWithLabel": "5 clients",
+        "countsByTab": undefined,
         "displayName": "Jack Hernandez",
         "district": "Unit 1",
         "email": null,
@@ -118,8 +122,9 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
       },
       {
         "avgDailyPopulation": 32,
-        "clientsEligibleCount": 5,
-        "clientsEligibleCountWithLabel": "5 clients",
+        "clientsCount": 5,
+        "clientsCountWithLabel": "5 clients",
+        "countsByTab": undefined,
         "displayName": "Jason Nelson",
         "district": "Unit 1",
         "email": "officer3@recidiviz.org",
@@ -137,8 +142,9 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
       },
       {
         "avgDailyPopulation": 54,
-        "clientsEligibleCount": 5,
-        "clientsEligibleCountWithLabel": "5 clients",
+        "clientsCount": 5,
+        "clientsCountWithLabel": "5 clients",
+        "countsByTab": undefined,
         "displayName": "Walter Harris",
         "district": "Unit 1",
         "email": "officer1@recidiviz.org",
@@ -161,8 +167,9 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
       },
       {
         "avgDailyPopulation": null,
-        "clientsEligibleCount": 4,
-        "clientsEligibleCountWithLabel": "4 clients",
+        "clientsCount": 4,
+        "clientsCountWithLabel": "4 clients",
+        "countsByTab": undefined,
         "displayName": "John Harris",
         "district": "Unit 3",
         "email": "officer6@recidiviz.org",
@@ -180,6 +187,7 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
     ],
     "opportunityType": "mockUsXxTwoOpp",
     "priority": "NORMAL",
+    "relevantClientsCount": 19,
     "supervisorReviewCounts": {},
     "urlSection": "mockOpportunity",
     "zeroGrantsTooltip": undefined,

@@ -21,7 +21,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { OpportunityInfo } from "~datatypes";
+import { OpportunityCardInfo } from "~datatypes";
 import { palette } from "~design-system";
 
 import useIsMobile from "../../hooks/useIsMobile";
@@ -98,7 +98,7 @@ const StatusCount = styled(Sans24)`
 `;
 
 type InsightsSupervisorOpportunityReviewCardProps = {
-  opportunityInfo: OpportunityInfo;
+  opportunityInfo: OpportunityCardInfo;
   supervisorPseudoId: string;
 };
 
@@ -115,6 +115,8 @@ export const InsightsSupervisorOpportunityReviewCard: React.FC<
   supervisorPseudoId,
 }) => {
   const { isMobile } = useIsMobile(true);
+
+  if (!supervisorReviewCounts) return null;
 
   const reviewLabel = `${label} requires supervisor review`;
 
