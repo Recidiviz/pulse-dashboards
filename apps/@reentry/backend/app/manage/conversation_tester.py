@@ -12,9 +12,9 @@ from pathlib import Path
 
 from langchain_core.messages import AIMessage
 
-from app.core.data_config.intakesections.constants import INTAKE_SECTIONS_MAPPING
-from app.models.intake import IntakeMessage, IntakeMessageRole, IntakeSection
-from app.tests.test_intake_conversation_graph import make_client_sections
+from app.core.config import create_model_from_config
+from app.core.data_config.assessment_configs.loader import AssessmentFileLoader
+from app.models.intake import IntakeMessage, IntakeMessageRole
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.schemas import ClientContext, ServerEvent
 
@@ -27,9 +27,18 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(name)s - %(mes
 class MockDatabaseManager:
     """Mock database manager that doesn't save anything to database."""
 
-    def __init__(self, sections):
+    def __init__(self, sections, assessment_config):
         self.current_section_index = 0
-        self.sections = [section["title"] for section in sections]
+        self.sections = [section.title for section in sections]
+        self.assessment_config = assessment_config
+
+    async def get_conversation_config(self, config_id: str):
+        """Return the mock assessment config."""
+        return self.assessment_config
+
+    async def get_section_titles(self, client_pseudo_id: str) -> list[str]:
+        """Return list of section titles."""
+        return self.sections
 
     async def store_message(
         self, client_pseudo_id: str, content: str, from_role: str
@@ -39,11 +48,10 @@ class MockDatabaseManager:
             f"💾 [Mock DB] ENTERING store_message from {from_role}: {content[:50]}{'...' if len(content) > 50 else ''}"
         )
         message = IntakeMessage(
-            id=str(uuid.uuid4()),
+            id=uuid.uuid4(),
             content=content,
             from_role=IntakeMessageRole(from_role),
-            client_pseudo_id=client_pseudo_id,
-            intake_id=str(uuid.uuid4()),
+            intake_id=uuid.uuid4(),
         )
         print(
             f"✅ [Mock DB] EXITING store_message, returning message with id: {message.id}"
@@ -53,11 +61,10 @@ class MockDatabaseManager:
     async def get_latest_message(self, client_pseudo_id: str) -> IntakeMessage:
         """Mock get latest message."""
         return IntakeMessage(
-            id=str(uuid.uuid4()),
+            id=uuid.uuid4(),
             content="Mock message",
             from_role=IntakeMessageRole.CASEWORKER,
-            client_pseudo_id=client_pseudo_id,
-            intake_id=str(uuid.uuid4()),
+            intake_id=uuid.uuid4(),
         )
 
     async def complete_section(self) -> str:
@@ -76,7 +83,7 @@ class MockDatabaseManager:
         """Mock update intake status."""
         print(f"📊 [Mock DB] Updated client {client_pseudo_id} status to {status}")
 
-    async def all_messages_by_time(self) -> list:
+    async def all_messages_by_time(self, client_pseudo_id: str) -> list:
         """Mock get all messages - returns empty list for new conversation."""
         return []
 
@@ -84,8 +91,13 @@ class MockDatabaseManager:
 class MockIntake:
     """Mock intake object."""
 
-    def __init__(self, sections):
-        self.current_section = sections[0]["title"]
+    def __init__(self, sections, assessment_config):
+        self.current_section = sections[0].title
+        self.assessment_config_id = "mock-config-id"  # Placeholder ID
+        self.assessment_config = assessment_config
+        self.client_intake_sections = (
+            None  # Use sections from assessment config instead
+        )
 
 
 async def mock_wait_for_user_response(
@@ -134,10 +146,13 @@ async def mock_send_message(client_pseudo_id: str, event: ServerEvent) -> str:
 
 
 @cli.command()
-async def test_conversation(type):
+async def test_conversation(file_name: str):
     """
     Test the conversation graph from command line.
     This allows experimenting with the conversation flow without database or full app.
+
+    Args:
+        file_name: Name of the YAML config file (e.g., "UT-CCCI-v0.yaml")
     """
     print("🚀 Starting conversation graph test...")
     print("💡 Instructions:")
@@ -146,23 +161,47 @@ async def test_conversation(type):
     print("   - Empty responses will be rejected")
     print("=" * 60)
 
+    # Load assessment config
+    try:
+        yaml_content = AssessmentFileLoader.read_file_content(file_name)
+        assessment_config = AssessmentFileLoader.validate_yaml_content(yaml_content)
+        if assessment_config.intake.intake_type != "conversation":
+            raise ValueError("this config needs to be for intake conversation")
+
+        if not assessment_config.intake.sections:
+            print(f"❌ Error: No sections found in config file: {file_name}")
+            return
+
+        sections = assessment_config.intake.sections
+        print(f"✅ Loaded {len(sections)} sections from {file_name}")
+
+    except FileNotFoundError:
+        print(f"❌ Error: Config file not found: {file_name}")
+        config_dir = (
+            Path(__file__).parent.parent / "core" / "data_config" / "assessment_configs"
+        )
+        print(f"Check available files in: {config_dir}")
+        return
+    except Exception as e:
+        print(f"❌ Error loading config file: {e}")
+        return
+
     # Create mock objects
     mock_client = ClientContext(client_pseudo_id="test-client-123", client_name="Bob")
 
-    # Create sections
-    sections = [
-        IntakeSection(title=section["title"], description=section["description"])
-        for section in INTAKE_SECTIONS_MAPPING[type]
-    ]
-
-    mock_db_manager = MockDatabaseManager(sections)
-    mock_intake = MockIntake(sections)
-
-    client_sections = make_client_sections(mock_intake, sections)
+    mock_db_manager = MockDatabaseManager(sections, assessment_config)
+    mock_intake = MockIntake(sections, assessment_config)
 
     print(f"📚 Available sections ({len(sections)}):")
     for i, section in enumerate(sections, 1):
         print(f"   {i}. {section.title}")
+
+    # Get the model from assessment config
+    model = create_model_from_config(
+        assessment_config.intake.chat_model.provider,
+        assessment_config.intake.chat_model.name,
+        assessment_config.intake.chat_model.version,
+    )
 
     # Initialize conversation graph
     conversation_graph = IntakeConversationGraph(
@@ -170,10 +209,11 @@ async def test_conversation(type):
         db_manager=mock_db_manager,
         wait_for_user_response=mock_wait_for_user_response,
         send_message=mock_send_message,
+        model=model,
     )
 
     # Initialize the graph
-    await conversation_graph.initialize(mock_intake, client_sections)
+    await conversation_graph.initialize(mock_intake)
 
     print("✅ Conversation graph initialized!")
     print(f"📋 Starting with section: {mock_intake.current_section}")
@@ -256,4 +296,4 @@ async def save_conversation_to_file(final_state: dict, client_name: str):
 
 
 if __name__ == "__main__":
-    asyncio.run(test_conversation())
+    asyncio.run(test_conversation("UT-CCCI-v0.yaml"))

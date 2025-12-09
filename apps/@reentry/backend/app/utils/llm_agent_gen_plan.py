@@ -1,20 +1,18 @@
 import asyncio
-from textwrap import dedent
 from typing import Literal
 
 import structlog
-from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.messages import AIMessage
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.pregel import RetryPolicy
 from langgraph.types import Send
 from pydantic import ValidationError
 
-from app.core.config import gen_model as model
-from app.core.config import tracer
+from app.core.config import create_model_from_config, tracer
+from app.core.data_config.output_configs.output_config import ActionPlanConfigFile
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
     GetResourcesRequest,
-    Resource,
     ResourceFailureReason,
     list_resources,
 )
@@ -33,39 +31,11 @@ from app.utils.action_plan_types import (
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
 from app.utils.regex import extract_uuids_from_links
 
+from .llm_agent_gen_plan_prompts import ActionPlanPrompts
 from .llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
 from .llm_tools import convert_to_markdown
 
 logger = structlog.get_logger(__name__)
-
-### Prompts
-system_message = """
-You are a case manager, tasked with generating an action plan for a client, combining decision tree best practices, client data, assessment results, and available resources into a structured output.
-
-- The action plan should be clearly understandable to the client and written in plain language without jargon. The primary focus must be on what the client needs to know and do.
-- The action plan and all sections MUST be addressed as written by the case manager to the client.
-- Do not refer the client by "the client" or as a third person. Use "you" and "your" instead.
-- The action plan should clearly delineate which steps need to be taken, and when, by the client, and which should be taken by the case manager.
-- Recommended steps should be actionable (less "Get treatment", more "Register with XYZ treatment center's 3-month outpatient treatment program").
-- When available, assessment scores should be used to prioritize and focus the action plan on high-risk areas identified through formal assessment tools.
-- Please ensure all enumerated items are formatted as proper bullet or numbered lists throughout the entire action plan
-- The plan generator should take care to:
-    - Generate the report in a kind, supportive, down-to-earth (not false friendly), but objective tone.
-    - Ignore factors which may suggest race (e.g., name or express mentions of racial or ethnic background), sex, or age except as relevant to needs or action plan (e.g., immigration status, or need for men's vs. women's vs. youth shelter, etc.).
-    - Not quote source materials verbatim, or mention judgments or subjective statements, except in the notes, which are to be quoted verbatim and are only visible to the case manager.
-    - Not to recommend local resources except as provided through the resource pipeline.
-    - If questions arise during the action plan generation, please note them in the `notes` fields of the appropriate section that the case manager can address.
-- The action plan will be separated into the following sections:
-    - Immediate needs: Which issues should be addressed urgently to create the stability necessary for success.
-    - [Plans by section]: Each section should be specific to an area of needs or risks (e.g., housing, employment, etc.).
-      A section should not cross over with another section.
-      It should contain a paragraph describing the area of needs or risk, how to help in this area, and an action plan/timeline.
-      If assessment data is available, sections with higher risk scores should receive more detailed attention.
-    - Milestones: Milestones the case manager and client can check in on together to know whether it's working / they're on the right track.
-    - Timeline: An enumeration week-by-week, then month-by-month after 2mo, of each of the steps the individual and their case manager should take along the path of the action plan.
-    - Quick summary of circumstances: A brief summary of the client's circumstances (based on intake summary and assessment results).
-    - Overview: A brief summary of the action plan, including the section title and a quick description of each section (Do not mention immediate needs).
-"""
 
 
 ### Graph state
@@ -86,62 +56,6 @@ def call_generate_sections(state: ExtendedMessagesState) -> Literal["section"]:
         )
         for section in state["sections_to_generate"]
     ]
-
-
-def format_resources_for_display(resources: list[Resource]) -> str:
-    formatted_output = ""
-
-    for i, resource in enumerate(resources, 1):
-        formatted_output += f"\n{i}. {resource.name} (ID: {resource.id})\n"
-        formatted_output += (
-            "   " + "=" * (len(resource.name) + len(resource.id) + 6) + "\n"
-        )
-
-        formatted_output += f"   Category: {resource.category.value}"
-        if resource.subcategory:
-            formatted_output += f" > {resource.subcategory.value}"
-        formatted_output += "\n"
-
-        if resource.description:
-            formatted_output += f"   Description: {resource.description}\n"
-
-        # Contact Information
-        contact_info = []
-        if resource.phone:
-            contact_info.append(f"Phone: {resource.phone}")
-        if resource.email:
-            contact_info.append(f"Email: {resource.email}")
-        if resource.website:
-            contact_info.append(f"Website: {resource.website}")
-        if contact_info:
-            formatted_output += "   Contact:\n"
-            for info in contact_info:
-                formatted_output += f"   - {info}\n"
-
-        if resource.address:
-            formatted_output += f"   Location: {resource.address}\n"
-
-        # Ratings and Status (if available)
-        ratings_info = []
-        if resource.rating:
-            ratings_info.append(
-                f"Rating: {resource.rating}/5 ({resource.ratingCount} reviews)"
-            )
-        if resource.operationalStatus:
-            ratings_info.append(f"Status: {resource.operationalStatus}")
-        if resource.price_level:
-            ratings_info.append(f"Price Level: {resource.price_level}")
-        if ratings_info:
-            formatted_output += "   Additional Information:\n"
-            for info in ratings_info:
-                formatted_output += f"   - {info}\n"
-
-        if resource.tags:
-            formatted_output += f"   Tags: {', '.join(resource.tags)}\n"
-
-        formatted_output += "\n"
-
-    return formatted_output
 
 
 async def fetch_resources_with_retry(
@@ -193,11 +107,17 @@ async def fetch_resources_with_retry(
 
 
 async def call_generate_section(
-    config: dict, state: ExtendedMessagesState, client_address: str
+    config: dict,
+    state: ExtendedMessagesState,
+    client_address: str,
+    prompts: ActionPlanPrompts,
+    model,
 ):
     # This function is shared with LLMAgentEdit
     section = state["section_to_generate"]
     logger.debug("Generating section", section=section)
+    if not section:
+        raise ValueError("Error generating section")
     resources = []
     for association in state["resources_associations"].associations:
         if association.section_title == section:
@@ -271,109 +191,12 @@ async def call_generate_section(
                             error=str(error),
                         )
 
-    message = HumanMessage(
-        content=dedent(f"""
-        Let's focus on the section: {section}.
-        Here are the resources available for this section:
-        {format_resources_for_display(resources)}
-
-        1. Elaborate on the client's situation and what could be useful for them, and always refer to the client as "you".
-        2. Review assessment data if available. If assessment scores indicate this is a high-risk area, address those specific risks in your plan.
-        3. Check if there are any resources or providers to connect with. Always reference a resource using markdown link [name of the resource](#resource ID).
-        4. Recall decision tree recommendations about this subject.
-        5. Does the section include an urgent need (finding immediate housing, getting a health screening, etc.)?
-        6. If so, establish a timeline with short-term and long-term tasks. Immediate needs go into short-term.
-        7. Does the section include a need that is not that urgent?
-            If so, establish a timeline with tasks that lead up to the best-case outcome.
-        8. For timeline title (short-term/long-term), use the date format 1-3 weeks, 3-6 months or such.
-        Here is an example of a timeline:
-        ```markdown
-        # Short-Term Addiction Treatment (1-3 months)
-        1. Enroll in Intensive Outpatient Treatment (Weeks 1-2)
-            - Contact addiction treatment providers like Recovery Café or Therapeutic Health Services
-            - Commit to an intensive outpatient program to address your substance use
-            - **Goal**: By the end of week 2, you should be enrolled with a treatment provider and have a plan for practicing what you learn.
-        2. Mental Health and Recovery Support (Months 1-3)
-            - Schedule regular sessions with a youth counselor or therapist at Youth Eastside Services
-            - Attend support groups for young adults in recovery, as recommended by Officer Kindra
-            - **Goal**: By three months from now, you've attended at least five sessions with a youth counselor, and have a stable support network.
-        ```
-        8. Goals must be concrete and measurable.
-        For example, instead of "Goal: By month 4, maintain consistent engagement with mental health support and expand your support network.", write "Goal: By month 4, be ready to review recent work from your mental health routine, how expanding your social circles has gone, and any guidance advised by your counselor."
-        9. Guidance must first refer the client to their current one, and provide guidance if they don't have one.
-        For example, instead of "Contact City General Hospital to arrange a comprehensive health check-up and review your current medications.", write "Contact your doctor to arrange a comprehensive check-up and review your current medications. If you don't have a primary care physician and aren't sure how to find one, ask your insurance provider or reach out to City General Hospital for help". This should be the same for all guidance (lawyer, therapist, etc.)
-        10. Do not use the ```markdown tag or such, it's only for the example, the content you'll generate is already in markdown.
-        """)
-    )
-
     if resources:
-        content = dedent(f"""
-        Let's focus on the section: {section}.
-        Here are the resources available for this section:
-        {format_resources_for_display(resources)}
-
-        1. Elaborate on the client's situation and what could be useful for them, and always refer to the client as "you".
-        2. Review assessment data if available. If assessment scores indicate this is a high-risk area, address those specific risks in your plan.
-        3. Check if there are any resources or providers to connect with. Always reference a resource using markdown link [name of the resource](#resource ID).
-        4. Recall decision tree recommendations about this subject.
-        5. Does the section include an urgent need (finding immediate housing, getting a health screening, etc.)?
-        6. If so, establish a timeline with short-term and long-term tasks. Immediate needs go into short-term.
-        7. Does the section include a need that is not that urgent?
-            If so, establish a timeline with tasks that lead up to the best-case outcome.
-        8. For timeline title (short-term/long-term), use the date format 1-3 weeks, 3-6 months or such.
-        Here is an example of a timeline:
-        ```markdown
-        # Short-Term Addiction Treatment (1-3 months)
-        1. Enroll in Intensive Outpatient Treatment (Weeks 1-2)
-            - Contact addiction treatment providers like Recovery Café or Therapeutic Health Services
-            - Commit to an intensive outpatient program to address your substance use
-            - **Goal**: By the end of week 2, you should be enrolled with a treatment provider and have a plan for practicing what you learn.
-        2. Mental Health and Recovery Support (Months 1-3)
-            - Schedule regular sessions with a youth counselor or therapist at Youth Eastside Services
-            - Attend support groups for young adults in recovery, as recommended by Officer Kindra
-            - **Goal**: By three months from now, you've attended at least five sessions with a youth counselor, and have a stable support network.
-        ```
-        9. Goals must be concrete and measurable.
-        For example, instead of "Goal: By month 4, maintain consistent engagement with mental health support and expand your support network.", write "Goal: By month 4, be ready to review recent work from your mental health routine, how expanding your social circles has gone, and any guidance advised by your counselor."
-        10. Guidance must first refer the client to their current one, and provide guidance if they don't have one.
-        For example, instead of "Contact City General Hospital to arrange a comprehensive health check-up and review your current medications.", write "Contact your doctor to arrange a comprehensive check-up and review your current medications. If you don't have a primary care physician and aren't sure how to find one, ask your insurance provider or reach out to City General Hospital for help". This should be the same for all guidance (lawyer, therapist, etc.)
-        11. Do not use the ```markdown tag or such, it's only for the example, the content you'll generate is already in markdown.
-        """)
+        message = prompts.get_section_generation_prompt_with_resources(
+            section, resources
+        )
     else:
-        content = dedent(f"""
-        Let's focus on the section: {section}.
-        Note: No specific resources are currently available for this section, so focus on general guidance and self-directed actions.
-
-        1. Elaborate on the client's situation and what could be useful for them, and always refer to the client as "you".
-        2. Review assessment data if available. If assessment scores indicate this is a high-risk area, address those specific risks in your plan.
-        3. Provide general guidance on how to find appropriate services or providers in their area (e.g., "Contact your insurance provider for covered services" or "Search for local community centers").
-        4. Recall decision tree recommendations about this subject.
-        5. Does the section include an urgent need (finding immediate housing, getting a health screening, etc.)?
-        6. If so, establish a timeline with short-term and long-term tasks. Immediate needs go into short-term.
-        7. Does the section include a need that is not that urgent?
-            If so, establish a timeline with tasks that lead up to the best-case outcome.
-        8. For timeline title (short-term/long-term), use the date format 1-3 weeks, 3-6 months or such.
-        Here is an example of a timeline:
-        ```markdown
-        # Short-Term Addiction Treatment (1-3 months)
-        1. Research and Contact Treatment Options (Weeks 1-2)
-            - Research local addiction treatment providers in your area through your insurance provider or online directories
-            - Contact at least 3 different treatment centers to compare programs and availability
-            - **Goal**: By the end of week 2, you should have contacted multiple providers and selected an appropriate treatment program.
-        2. Mental Health and Recovery Support (Months 1-3)
-            - Contact your current therapist or ask your primary care doctor for mental health referrals
-            - Look for local support groups through community centers, hospitals, or online platforms
-            - **Goal**: By three months from now, you've attended at least five therapy sessions and have connected with a support group that meets regularly.
-        ```
-        9. Goals must be concrete and measurable.
-        For example, instead of "Goal: By month 4, maintain consistent engagement with mental health support and expand your support network.", write "Goal: By month 4, be ready to review recent work from your mental health routine, how expanding your social circles has gone, and any guidance advised by your counselor."
-        10. Guidance must first refer the client to their current one, and provide guidance if they don't have one.
-        For example, instead of "Contact City General Hospital to arrange a comprehensive health check-up and review your current medications.", write "Contact your doctor to arrange a comprehensive check-up and review your current medications. If you don't have a primary care physician and aren't sure how to find one, ask your insurance provider or reach out to City General Hospital for help". This should be the same for all guidance (lawyer, therapist, etc.)
-        11. Do not use the ```markdown tag or such, it's only for the example, the content you'll generate is already in markdown.
-        12. Since no specific resources are available, focus on actionable steps the client can take independently or general ways to find appropriate services.
-        """)
-
-    message = HumanMessage(content=content)
+        message = prompts.get_section_generation_prompt_without_resources(section)
 
     result_messages = []
     messages = state["messages"] + [message]
@@ -392,16 +215,7 @@ async def call_generate_section(
 
     # Get annotations and notes
     logger.debug("Getting annotations and notes for the section", section=section)
-    prompt = HumanMessage(
-        content=dedent(f"""Find relevant annotations and notes for this section. This content is for the case manager only and does not need to be addressed to the client
-        Section title: {section}
-        Section content: {temp_response.content}
-
-        For the notes, provide information about what you should be prepared to talk with the client.
-        For example, if the recommandations within the section may incur new costs for the client or are expensive, which may be difficult depending on their financial situation, you should be prepared. If it's the case, write a little note to discuss options that are covered by their insurance or available for free in the community, or ways to defer this care until after they've become more financially stable.
-        It could be about money, time, or any other constraint that could be a barrier to the recommandations.
-        """)
-    )
+    prompt = prompts.get_section_annotations_prompt(section, temp_response.content)
     annotations = (
         await model.with_structured_output(ActionPlanSectionPartial)
         .with_retry(
@@ -412,14 +226,7 @@ async def call_generate_section(
     )
 
     logger.debug("Refinining the content of the section", section=section)
-    prompt = HumanMessage(
-        content=f"Perfect, now let's refine the content of the section '{section}'."
-        "1. Have a introduction of the section addressed to the client, summarizing what can be done"
-        "2. Copy back the timeline you generated in the previous step, refine it if the timeline seems too long or too short"
-        "3. Ensure the timeline is actionable."
-        "4. The content must be markdown, and no title, except for the short/long term plan."
-        "5. Use ## for the short/long term plan."
-    )
+    prompt = prompts.get_section_refinement_prompt(section)
     final_response = await model.with_retry(
         stop_after_attempt=DEFAULT_MAX_RETRIES,
         retry_if_exception_type=ERRORS_TO_RETRY_ON,
@@ -467,11 +274,31 @@ class LLMAgentGenerate:
         client_address,
         previous_sections: list[str] | None,
         thread_id,
+        action_plan_config: ActionPlanConfigFile | None = None,
     ):
         self.client_data = client_data
         self.decision_tree_statements = decision_tree_statements
         self.client_address = client_address
         self.previous_sections = previous_sections
+
+        # Require config
+        if not action_plan_config:
+            raise ValueError(
+                "action_plan_config is required - cannot generate plan without configuration"
+            )
+
+        # Initialize prompts with config
+        self.prompts = ActionPlanPrompts(action_plan_config.prompts)
+
+        # Extract structure flags from config
+        self.include_timeline = action_plan_config.structure.timeline
+        self.include_milestones = action_plan_config.structure.milestones
+
+        self.model = create_model_from_config(
+            action_plan_config.model.provider,
+            action_plan_config.model.name,
+            action_plan_config.model.version,
+        )
 
         self.config = {
             "configurable": {"thread_id": thread_id},
@@ -487,21 +314,15 @@ class LLMAgentGenerate:
 
             if not self.previous_sections:
                 # first original generation
-                message = HumanMessage(
-                    content="Before generating the action plan, let's first identify the area of needs/risk that we should focus on."
-                    "Please provide some context about the client's situation and what could be useful for him/her."
-                    "Do not generate the action plan yet."
-                )
+                message = self.prompts.get_reflexion_prompt_initial()
             else:
                 # It's a forced-generation, but let's try to keep the same section
-                message = HumanMessage(
-                    content="Before generating the action plan, let's first identify the area of needs/risk that we should focus on."
-                    f"You previously identified these areas: {', '.join(self.previous_sections)}."
-                    "Please provide some context about the client's situation and what could be useful for him/her."
-                    "Do not generate the action plan yet."
+                message = self.prompts.get_reflexion_prompt_with_previous_sections(
+                    self.previous_sections
                 )
             state["messages"].append(message)
-            response = await model.with_retry(
+
+            response = await self.model.with_retry(
                 stop_after_attempt=DEFAULT_MAX_RETRIES,
                 retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(state["messages"], self.config)
@@ -512,13 +333,7 @@ class LLMAgentGenerate:
         async def call_area_of_needs(state: ExtendedMessagesState):
             logger.debug("Generating area of needs")
 
-            message = HumanMessage(
-                content="Compile a list of areas of needs/risk that the client is facing."
-                "We'll call them section."
-                "Combine the propositions that are semantically close to each other, and provide a clear title."
-                "Avoid title like 'X and Y'."
-                "An area of needs/risk should be a short title without description."
-            )
+            message = self.prompts.get_area_of_needs_prompt()
 
             state["messages"].append(message)
 
@@ -529,7 +344,7 @@ class LLMAgentGenerate:
                 logger.debug("Re-using previous generated section")
             else:
                 response = (
-                    await model.with_structured_output(AreaOfRiskNeeds)
+                    await self.model.with_structured_output(AreaOfRiskNeeds)
                     .with_retry(
                         stop_after_attempt=DEFAULT_MAX_RETRIES,
                         retry_if_exception_type=ERRORS_TO_RETRY_ON,
@@ -546,16 +361,10 @@ class LLMAgentGenerate:
         async def call_resources_options(state: ExtendedMessagesState):
             logger.debug("Identifying resource options")
 
-            message = HumanMessage(
-                content=dedent("""
-                1. For each area of needs/risk, choose the most relevant resources types to query in the resource pipeline.
-                2. The same resource type cannot be used for multiple sections.
-                3. If assessment data is available, prioritize resources for areas with higher risk scores or identified problems.
-                """)
-            )
+            message = self.prompts.get_resources_options_prompt()
             state["messages"].append(message)
             associations = (
-                await model.with_structured_output(ActionPlanResourcesAssociations)
+                await self.model.with_structured_output(ActionPlanResourcesAssociations)
                 .with_retry(
                     stop_after_attempt=DEFAULT_MAX_RETRIES,
                     retry_if_exception_type=ERRORS_TO_RETRY_ON,
@@ -569,47 +378,28 @@ class LLMAgentGenerate:
 
         async def call_generate_section_node(state: ExtendedMessagesState):
             return await call_generate_section(
-                config=self.config, state=state, client_address=self.client_address
+                config=self.config,
+                state=state,
+                client_address=self.client_address,
+                prompts=self.prompts,
+                model=self.model,
             )
 
         async def call_generate_timeline(state: MessagesState):
             logger.debug("Generating timeline")
             messages = state["messages"]
-            message = HumanMessage(
-                content=dedent("""
-                Generate a timeline by compiling all tasks and keypoints identified for the action plan.
-                1. Enumerate them week-by-week for the first two months, and then month-by-month thereafter.
-                2. Ensure the timeline aligns with any urgent tasks that were identified in the previous sections.
-                3. Prioritize the urgent needs first.
-                4. Balance the non-urgent client tasks over a reasonable timeframes
-                (e.g., if month 3 will have a lot of tasks related to applying for school,
-                and finding part-time work can wait until month 4, delay it so they client isn't overwhelmed)
-                5. Do not create unnecessary actions, it is OK if the timeline is not full.
-                6. Take account of previous action success or failure.
-                For example, instead of writing:
-                ```markdown
-                Week 1, Transportation: Explore public transit options by contacting X to learn about bus and train routes connecting your home and workplace.
-                Week 2, Transportation: Continue exploring public transit options and finalize your understanding of routes and schedules.
-                Week 3, Transportation: Evaluate carpool or ride-sharing options by reaching out to colleagues or local ride-sharing services.
-                ```
-                You should emphase on possible failure or success and ask the client to circle back to you:
-                ```markdown
-                Week 1, Transportation: Explore public transit options by contacting X to learn about bus and train routes connecting your home and workplace.
-                Week 2, Transportation: Continue exploring public transit options. If none seem to be a good option for your home/work locations without significant burden, start evaluating carpool or ride-sharing options by reaching out to colleagues or local ride-sharing services.
-                Week 3, Transportation: Continue exploring ride-share options if needed. If you haven't been able to find any viable transportation options between transit, ride-share, or carpool by the end of three weeks please reach out to me for help with a list of what you've investigated so far and what you found.
-                ```
-                """)
-            )
-            response = await model.with_retry(
+            message = self.prompts.get_timeline_generation_prompt()
+
+            response = await self.model.with_retry(
                 stop_after_attempt=DEFAULT_MAX_RETRIES,
                 retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(messages + [message], self.config)
             messages.append(response)
 
-            format_message = HumanMessage("Please format your message")
+            format_message = self.prompts.get_timeline_format_prompt()
 
             timeline = (
-                await model.with_structured_output(ActionPlanTimelines)
+                await self.model.with_structured_output(ActionPlanTimelines)
                 .with_retry(
                     stop_after_attempt=DEFAULT_MAX_RETRIES,
                     retry_if_exception_type=ERRORS_TO_RETRY_ON,
@@ -623,22 +413,9 @@ class LLMAgentGenerate:
         async def call_generate_milestones(state: MessagesState):
             logger.debug("Generating milestones")
             messages = state["messages"]
-            message = HumanMessage(
-                content=dedent("""
-                What are the key milestones that the client should aim for each section of the action plan?
-                1. A milestone is a checkpoint for the you and the client can check to see if they're on-track.
-                2. This should be the most important of the goals or outcomes from the sections up above. E.g., it should be less small tactical milestones (e.g., having applied for something) and more large milestone outcomes the you case manager and the client can be aiming for (e.g., getting the driver's license, completing a course, etc.).
-                3. Phrasing must be backward-looking, and gives something concrete to you to check if the client is still on track.
-                For example, instead of "Successfully establish a consistent and reliable method of commuting to and from work, whether through public transit, carpooling, or ride-sharing", write "By the end of Week 8, you should have a reliable commute pattern that's been tested over several weeks—whether through transit, carpooling, ride-sharing, or another approach. This will significantly reduce the risk of interruptions to your employment"
-                Such phrasing reinforce why this is important, and why the client should feed good about achieving it.
-                4. Do not mention "This milestone", just "this" is enough to refer to the milestone.
-                5. Do not write an introduction or conclusion, just the milestones.
-                6. You can have one or more milestones per section.
-                7. Organize the milestones in the same order as the sections, giving a title to each group of milestones.
-                """)
-            )
+            message = self.prompts.get_milestones_generation_prompt()
             messages.append(message)
-            intermediate_response = await model.with_retry(
+            intermediate_response = await self.model.with_retry(
                 stop_after_attempt=DEFAULT_MAX_RETRIES,
                 retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(messages, self.config)
@@ -648,13 +425,8 @@ class LLMAgentGenerate:
             # we have no value to save the intermediate here
             # we just save the message after refinement
 
-            intermediate_message = HumanMessage(
-                content=(
-                    "Ensure the order of the milestones is logical and that they build on each other."
-                    "Group the milestones per section of the action plan."
-                )
-            )
-            response = await model.with_retry(
+            intermediate_message = self.prompts.get_milestones_refinement_prompt()
+            response = await self.model.with_retry(
                 stop_after_attempt=DEFAULT_MAX_RETRIES,
                 retry_if_exception_type=ERRORS_TO_RETRY_ON
                 + (ValidationError,),  # need the comma to make it a tuple
@@ -663,12 +435,10 @@ class LLMAgentGenerate:
             )
             messages.append(response)
 
-            format_message = HumanMessage(
-                "Please format the last message into milestones"
-            )
+            format_message = self.prompts.get_milestones_format_prompt()
 
             milestones = (
-                await model.with_structured_output(ActionPlanMilestones)
+                await self.model.with_structured_output(ActionPlanMilestones)
                 .with_retry(
                     stop_after_attempt=DEFAULT_MAX_RETRIES,
                     retry_if_exception_type=ERRORS_TO_RETRY_ON,
@@ -682,14 +452,10 @@ class LLMAgentGenerate:
         async def call_generate_action_plan(state: ExtendedMessagesState):
             logger.debug("Generating action plan")
 
-            message = HumanMessage(
-                content="Now you can generate the action plan by combining all your research."
-                "Do not use the resources in this step."
-                "Always refer to the client as 'you'."
-            )
+            message = self.prompts.get_action_plan_generation_prompt()
             state["messages"].append(message)
             response = (
-                await model.with_structured_output(ActionPlanPartial)
+                await self.model.with_structured_output(ActionPlanPartial)
                 .with_retry(
                     stop_after_attempt=DEFAULT_MAX_RETRIES,
                     retry_if_exception_type=ERRORS_TO_RETRY_ON,
@@ -709,8 +475,13 @@ class LLMAgentGenerate:
         workflow.add_node("area_of_needs", call_area_of_needs)
         workflow.add_node("resources", call_resources_options)
         workflow.add_node("section", call_generate_section_node)
-        workflow.add_node("timeline", call_generate_timeline)
-        workflow.add_node("milestones", call_generate_milestones)
+
+        # Conditionally add timeline and milestones nodes
+        if self.include_timeline:
+            workflow.add_node("timeline", call_generate_timeline)
+        if self.include_milestones:
+            workflow.add_node("milestones", call_generate_milestones)
+
         workflow.add_node("assemble", call_generate_action_plan, retry=RetryPolicy())
 
         # Links
@@ -718,9 +489,23 @@ class LLMAgentGenerate:
         workflow.add_edge("reflexion", "area_of_needs")
         workflow.add_edge("area_of_needs", "resources")
         workflow.add_conditional_edges("resources", call_generate_sections)
-        workflow.add_edge("section", "timeline")
-        workflow.add_edge("timeline", "milestones")
-        workflow.add_edge("milestones", "assemble")
+
+        # Conditionally connect section -> timeline -> milestones -> assemble
+        # based on which features are enabled
+        if self.include_timeline and self.include_milestones:
+            workflow.add_edge("section", "timeline")
+            workflow.add_edge("timeline", "milestones")
+            workflow.add_edge("milestones", "assemble")
+        elif self.include_timeline and not self.include_milestones:
+            workflow.add_edge("section", "timeline")
+            workflow.add_edge("timeline", "assemble")
+        elif not self.include_timeline and self.include_milestones:
+            workflow.add_edge("section", "milestones")
+            workflow.add_edge("milestones", "assemble")
+        else:
+            # Neither timeline nor milestones enabled
+            workflow.add_edge("section", "assemble")
+
         workflow.add_edge("assemble", END)
 
         self.graph = workflow.compile()
@@ -728,20 +513,14 @@ class LLMAgentGenerate:
 
     async def generate(self):
         # Use the Runnable
-        user_prompt = dedent(f"""
-        ---
-        Client Data: {self.client_data}
-        Address: {self.client_address}
-        ---
-        """)
-
-        if self.decision_tree_statements:
-            user_prompt += f"Decision Tree Recommendations: ```{self.decision_tree_statements}```\n\n---\n\n"
+        user_prompt = self.prompts.get_initial_user_prompt(
+            self.client_data, self.client_address, self.decision_tree_statements
+        )
 
         events = self.graph.astream(
             {
                 "messages": [
-                    ("user", system_message),
+                    ("user", self.prompts.get_system_message()),
                     ("user", user_prompt),
                 ],
                 "sections_to_generate": [],
@@ -800,10 +579,20 @@ class LLMAgentGenerate:
             sections_generated=len(generated_sections),
             final_resources=len(final_resources),
         )
+
+        # Conditionally include timeline and milestones based on config
         plan = ActionPlan(
             immediate_needs=final_state["plan"].immediate_needs,
-            milestones=final_state["generated_milestones"].milestones,
-            timeline=final_state["generated_timeline"].timelines,
+            milestones=(
+                final_state["generated_milestones"].milestones
+                if self.include_milestones and final_state.get("generated_milestones")
+                else []
+            ),
+            timeline=(
+                final_state["generated_timeline"].timelines
+                if self.include_timeline and final_state.get("generated_timeline")
+                else []
+            ),
             quick_summary_circumstances=final_state["plan"].quick_summary_circumstances,
             overview=final_state["plan"].overview,
             sections=generated_sections,
@@ -879,17 +668,3 @@ if __name__ == "__main__":
     - Are there alternative transportation options available?
     - Facilitate connections with coworkers or local carpool programs
     - Develop an Action Plan addressing transportation barriers"""
-
-    async def main():
-        agent = LLMAgentGenerate(
-            client_data=client_data,
-            decision_tree_statements=decision_tree_statements,
-            thread_id=12345,
-        )
-        action_plan = await agent.generate()
-
-        import json
-
-        print(json.dumps(action_plan.model_dump()))
-
-    asyncio.run(main())

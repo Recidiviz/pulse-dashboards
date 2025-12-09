@@ -5,7 +5,6 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.intake.auth_client_user import validate_dob
 from app.core.db import get_session
@@ -26,8 +25,10 @@ from app.routes.shared_models import (
     SurveySubmission,
 )
 from app.services.client_data.queries import Queries
+from app.utils.assessment_config_utils import enrich_sections_with_status
+from app.utils.config_loader import ConfigLoader
 
-from .base import ClientIntakeSectionResponse, ORMResponse
+from .base import ORMResponse
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +70,7 @@ class IntakeResponse(ORMResponse):
 
 
 class IntakeWithSectionsResponse(IntakeResponse):
-    client_intake_sections: List[ClientIntakeSectionResponse]
+    intake_sections: List[IntakeSectionResponse]
 
 
 class IntakeWithSectionsAndMessagesResponse(IntakeWithSectionsResponse):
@@ -89,7 +90,7 @@ class IntakeWithSectionsAndMessagesResponse(IntakeWithSectionsResponse):
 async def verify_date_of_birth(
     request: Request,
     data: VerifyDOBRequest,
-    session: AsyncSession = Depends(get_session),
+    session=Depends(get_session),
 ):
     try:
         redis_client = request.app.state.redis_client
@@ -106,7 +107,7 @@ async def verify_date_of_birth(
             access_token=result.token_data["token"],
             token_type="bearer",
             message="Date of birth verified successfully",
-            client_pseudo_id=result.client_pseudo_id
+            client_pseudo_id=result.client_pseudo_id,
         )
     except HTTPException:
         raise
@@ -123,7 +124,7 @@ async def verify_date_of_birth(
     response_model=IntakeWithSectionsAndMessagesResponse,
 )
 async def get_client_intake(
-    request: Request, token_from_url: str, session: AsyncSession = Depends(get_session)
+    request: Request, token_from_url: str, session=Depends(get_session)
 ):
     client_pseudo_id: str = request.state.client.get("sub")
     login_timestamp = request.state.client.get("login_timestamp")
@@ -188,34 +189,45 @@ async def get_client_intake(
         print(f"🔍 CLIENT API: Returning intake data for {intake.id}")
         print(f"   Number of client sections: {len(intake.client_intake_sections)}")
 
-        client_sections_response = []
-        for section in intake.client_intake_sections:
-            # Use the model method to get the correct section data
-            section_data = section.get_effective_section_data()
-
-            print(f"   📝 Section: {section_data['title']}")
-            print(
-                f"      Source: {section_data['source']} (revision: {section_data['revision_id']})"
-            )
-            print(f"      Description: {section_data['description'][:50]}...")
-
-            client_sections_response.append(
-                ClientIntakeSectionResponse(
-                    **section.model_dump(),
-                    intake_section=IntakeSectionResponse(
-                        id=section_data["id"],
-                        created_at=section_data["created_at"],
-                        updated_at=section_data["updated_at"],
-                        title=section_data["title"],
-                        description=section_data["description"],
-                    ),
+        # Support both legacy and new paths for section data
+        if intake.client_intake_sections:
+            # LEGACY PATH: Use ClientIntakeSection records
+            logger.info("Using sections from client_intake_sections (legacy path)")
+            sections_data = [
+                IntakeSectionResponse(
+                    **section.get_effective_section_data(),
+                    status=section.completion_status,
                 )
+                for section in intake.client_intake_sections
+            ]
+        else:
+            # NEW PATH: Load from assessment config
+            logger.info("Using sections from assessment config (new path)")
+            assessment_config = await ConfigLoader.load_assessment_config(
+                intake.assessment_config_id, session
             )
+            if assessment_config.intake.intake_type != "conversation":
+                raise HTTPException(
+                    status_code=401,
+                    detail="This intake is not a conversation type",
+                )
+
+            sections_data = (
+                assessment_config.intake.sections
+                if assessment_config.intake.sections
+                else []
+            )
+
+            # Enrich sections with computed status
+            sections_data = enrich_sections_with_status(
+                sections_data, intake.current_section
+            )
+
         return IntakeWithSectionsAndMessagesResponse(
             **intake.model_dump(by_alias=True, exclude_none=True),
             has_survey=intake.has_survey,
             has_address=intake.has_address,
-            client_intake_sections=client_sections_response,
+            intake_sections=sections_data,
             current_section_messages=[],
             client_state=client_response.state_code,
             client_name=client_response.full_name.formatted_full_name(),
@@ -230,7 +242,7 @@ async def get_client_intake(
         )
 
 
-class AdressSubmissionResponse(BaseModel):
+class AddressSubmissionResponse(BaseModel):
     intake_completed: bool
 
 
@@ -239,12 +251,12 @@ class AdressSubmissionResponse(BaseModel):
     summary="Submit client address for intake",
     description="Submit or update address information for the authenticated client's intake",
     tags=["Intake assessment"],
-    response_model=AdressSubmissionResponse,
+    response_model=AddressSubmissionResponse,
 )
 async def submit_address(
     request: Request,
     address_data: AddressSubmission,
-    session: AsyncSession = Depends(get_session),
+    session=Depends(get_session),
 ):
     from sqlalchemy.orm import selectinload
     from sqlmodel import select
@@ -305,7 +317,7 @@ async def submit_address(
 async def submit_survey(
     request: Request,
     survey_data: SurveySubmission,
-    session: AsyncSession = Depends(get_session),
+    session=Depends(get_session),
 ):
     from sqlalchemy.orm import selectinload
     from sqlmodel import select
@@ -385,7 +397,7 @@ class CompleteExternalChatResponse(BaseModel):
 async def complete_external_chat(
     request: Request,
     data: CompleteExternalChatRequest,
-    session: AsyncSession = Depends(get_session),
+    session=Depends(get_session),
 ):
     if not getattr(request.state, "client", None):
         from app.auth.intake.utils import decode_jwt_token

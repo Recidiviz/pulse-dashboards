@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
+from app.core.data_config.assessment_configs.assessment_config import ModelConfig
 from app.utils.llm_agent_qa import LLMAgentQA
 
 logger = logging.getLogger(__name__)
@@ -151,9 +152,11 @@ class TranscriptionProcessor:
         self,
         transcription: Union[DeepgramTranscriptionInput, GCPTranscriptionInput],
         diarization_service: str,
+        model_config: ModelConfig,
     ):
         self.transcription = transcription
         self.diarization_service = diarization_service.lower()
+        self.model_config = model_config
 
         if self.diarization_service not in ["deepgram", "gcp"]:
             raise ValueError("diarization_service must be 'deepgram' or 'gcp'")
@@ -390,7 +393,7 @@ class TranscriptionProcessor:
         Always return "caseworker" or "client" as the role strings, not actual names.
         Ignore other participants who are not in these primary roles."""
 
-        agent = LLMAgentQA(system_prompt, "transcription_processor")
+        agent = LLMAgentQA(system_prompt, "transcription_processor", self.model_config)
         formatted_messages = self._format_conversation_for_llm(conversation)
         speakers_clarification = await agent.call(
             formatted_messages, SpeakersClarification
@@ -416,7 +419,7 @@ class TranscriptionProcessor:
         the client based on speaking patterns, language used, and conversational roles.
         Return "caseworker" or "client" as role strings, not actual names."""
 
-        agent = LLMAgentQA(system_prompt, "transcription_processor")
+        agent = LLMAgentQA(system_prompt, "transcription_processor", self.model_config)
 
         sample_conversation = (
             conversation[:10] if len(conversation) > 10 else conversation

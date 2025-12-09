@@ -1,0 +1,93 @@
+{
+  "client_id": "eval_client_004",
+  "messages": [
+    {
+      "id": "msg-301",
+      "role": "assistant",
+      "content": "Good morning, Alicia. Thank you for meeting with me. I know there's a lot going on in your life right now. What's most important to you as we plan your next steps?",
+      "createdAt": "2025-01-25T11:00:00Z"
+    },
+    {
+      "id": "msg-302",
+      "role": "user",
+      "content": "My kids. That's all that matters to me. I need to get them back. My daughter is 8 and my son is 5. They're with my ex-husband right now and he got full custody when I was incarcerated. I haven't seen them in eight months except for one supervised visit.",
+      "createdAt": "2025-01-25T11:02:00Z"
+    },
+    {
+      "id": "msg-303",
+      "role": "assistant",
+      "content": "I can hear how important your children are to you. What are the custody arrangements now, and what would you like them to be?",
+      "createdAt": "2025-01-25T11:03:00Z"
+    },
+    {
+      "id": "msg-304",
+      "role": "user",
+      "content": "Right now my ex has full custody and I only get supervised visits once a month. He's not a bad father but he's also not making it easy for me. I want joint custody eventually, but right now I just want regular visitation so my kids know I'm their mom. The court said I need stable housing and employment first.",
+      "createdAt": "2025-01-25T11:05:30Z"
+    },
+    {
+      "id": "msg-305",
+      "role": "assistant",
+      "content": "Those are reasonable goals. Let's talk about your housing situation. Where are you living now?",
+      "createdAt": "2025-01-25T11:06:00Z"
+    },
+    {
+      "id": "msg-306",
+      "role": "user",
+      "content": "I'm in a women's transitional housing program in Tacoma. It's a shared apartment with two other women. I can stay there for up to a year while I get on my feet. It's clean and safe, but I can't have my kids stay overnight yet until I have my own place. That's one of the requirements for unsupervised visitation.",
+      "createdAt": "2025-01-25T11:08:00Z"
+    },
+    {
+      "id": "msg-307",
+      "role": "assistant",
+      "content": "That makes sense. What about employment? Are you working now?",
+      "createdAt": "2025-01-25T11:09:00Z"
+    },
+    {
+      "id": "msg-308",
+      "role": "user",
+      "content": "I just started a job as a medical assistant at a clinic two weeks ago. I have my certification from before I got arrested. It's full-time, Monday through Friday, 8 to 5. The pay is decent, $22 an hour. I'm grateful to have it - a lot of places wouldn't hire me with my record.",
+      "createdAt": "2025-01-25T11:11:00Z"
+    },
+    {
+      "id": "msg-309",
+      "role": "assistant",
+      "content": "That's wonderful. Having your certification and employment in healthcare is a real strength. Do you have legal representation for the custody matter?",
+      "createdAt": "2025-01-25T11:12:00Z"
+    },
+    {
+      "id": "msg-310",
+      "role": "user",
+      "content": "No, I can't afford a lawyer. I've been trying to figure out the court stuff on my own but it's confusing. I know I need to file a motion to modify custody but I don't know how to do that or what evidence I need. I'm scared I'll mess it up.",
+      "createdAt": "2025-01-25T11:14:00Z"
+    },
+    {
+      "id": "msg-311",
+      "role": "assistant",
+      "content": "Legal help for custody cases is definitely something we can connect you with. How is your relationship with your ex-husband? Is there any possibility of working this out together?",
+      "createdAt": "2025-01-25T11:15:00Z"
+    },
+    {
+      "id": "msg-312",
+      "role": "user",
+      "content": "It's tense. He's angry about everything that happened, and I understand that. I hurt my kids by getting arrested and being gone. But he also uses the kids to punish me. He cancels visits sometimes or makes it hard to communicate with them. I don't want to fight with him - I want us to co-parent - but I don't know how to make that happen.",
+      "createdAt": "2025-01-25T11:17:30Z"
+    },
+    {
+      "id": "msg-313",
+      "role": "assistant",
+      "content": "Co-parenting after conflict is challenging but possible with the right support. How are you doing emotionally with all of this?",
+      "createdAt": "2025-01-25T11:18:00Z"
+    },
+    {
+      "id": "msg-314",
+      "role": "user",
+      "content": "Honestly? It's hard. I cry a lot thinking about missing so much of their lives. I'm seeing a therapist through the transitional housing program which helps. I also go to a support group for mothers who are trying to reconnect with their kids. No substance abuse issues for me - my charges were related to theft.",
+      "createdAt": "2025-01-25T11:20:00Z"
+    }
+  ],
+  "summary": "### Personal Background\nAlicia is a 35-year-old mother of two children (daughter age 8, son age 5) who was incarcerated for theft-related charges. She is a certified medical assistant and has recently secured full-time employment in healthcare. Alicia is highly motivated to rebuild her relationship with her children and regain custody rights. She is currently in a women's transitional housing program and receiving mental health support.\n\n### Needs and Risks Overview\n- **Family/Custody:** Lost custody during incarceration; ex-husband has full custody; currently limited to monthly supervised visits; wants to progress to unsupervised visitation and eventually joint custody\n- **Legal:** Needs assistance with family court system; cannot afford attorney; needs to file custody modification motion; lacks understanding of legal process\n- **Housing:** In transitional housing program (up to 1 year); shared apartment; stable and safe but cannot accommodate children for overnight visits; needs independent housing for custody progress\n- **Employment:** Recently employed as medical assistant ($22/hr, full-time); has professional certification; stable job with healthcare benefits\n- **Mental Health:** Experiencing emotional distress related to separation from children; actively engaged in therapy and support group for mothers; no substance abuse issues\n- **Co-parenting:** Difficult relationship with ex-husband; experiences barriers to communication and visitation; wants collaborative co-parenting relationship\n\n### Priority Needs\n- **Legal Assistance:** Immediate need for family law legal aid to navigate custody modification process\n- **Family Reunification Services:** Support for rebuilding relationship with children and establishing parenting skills\n- **Housing:** Secure independent housing suitable for children (requirement for unsupervised visitation)\n- **Co-parenting Support:** Mediation or co-parenting counseling to improve relationship with ex-husband",
+  "address": "The inn enhanced shelter, Tacoma, Washington",
+  "assessment_summary": "### Risk Assessment Summary\n\n**Overall Risk Level:** Low-Moderate\n\n**Family Reunification (Critical Priority):**\n- Separated from children (ages 8 and 5) for 8 months\n- Currently only monthly supervised visits\n- Strong motivation to rebuild relationship\n- Ex-husband creates barriers to visitation and communication\n- Risk: Prolonged separation damages parent-child bond; potential for permanent custody loss if progress not made\n\n**Legal (High Priority):**\n- Needs to navigate complex family court system\n- Cannot afford legal representation\n- Must file custody modification motion but lacks knowledge\n- Risk: Failure to properly advocate in court could result in continued limited custody rights\n\n**Housing (High Priority):**\n- Current transitional housing does not allow overnight child visits\n- Needs independent housing to progress to unsupervised visitation\n- Housing is time-limited (1-year program)\n- Risk: Inability to secure appropriate housing blocks custody progress\n\n**Employment (Strength):**\n- Secured healthcare employment quickly after release\n- Professional certification (medical assistant)\n- Stable full-time job with good wages\n- Demonstrates responsibility and capability\n\n**Mental Health (Moderate Priority - Being Addressed):**\n- Emotional distress from child separation\n- Currently in therapy (protective factor)\n- Participates in support group (protective factor)\n- No substance abuse issues\n- Risk: Untreated grief/trauma could impact reunification efforts\n\n**Co-parenting Relationship (High Priority):**\n- High conflict with ex-husband\n- Communication barriers\n- Ex-husband's cooperation needed for successful reunification\n- Risk: Continued conflict impacts children and custody outcomes",
+  "decision_tree_statements": "For the decision tree \"family_reunification\", the recommendations are:\n- Connect with family reunification services and parenting classes\n- Establish regular, consistent visitation schedule\n- Document all efforts to maintain relationship with children\n- Work toward unsupervised visitation by meeting housing requirement\n- Engage children's therapist if needed to support transition\n\nFor the decision tree \"legal_assistance\", the recommendations are:\n- Immediate referral to legal aid for family law matters\n- Assistance with filing custody modification motion\n- Prepare evidence of stability (employment, housing, treatment compliance)\n- Consider requesting court-appointed attorney if income-eligible\n- Attend all court dates and comply with all orders\n\nFor the decision tree \"housing_stability\", the recommendations are:\n- Work with transitional housing case manager on independent housing plan\n- Apply for housing assistance programs\n- Prioritize housing options that accommodate children\n- Save for security deposit and first month's rent from employment income\n- Timeline: Secure housing within 6-9 months to maintain custody momentum\n\nFor the decision tree \"co_parenting_support\", the recommendations are:\n- Request court-ordered co-parenting mediation\n- Participate in co-parenting education classes\n- Use structured communication tools (apps like OurFamilyWizard)\n- Focus on children's best interests in all interactions\n- Consider parenting coordinator if high conflict continues"
+}

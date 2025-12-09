@@ -1,0 +1,19 @@
+metadata:
+  state_code: US_AZ
+  code: default
+  version: 0
+  display_name: Arizona Intake
+  description: Intake assessment for clients in Utah
+
+intake:
+  intake_type: transcription
+  scoring: oras_pit
+  scoring_model:
+    provider: openai
+    name: gpt-4o-mini
+    version: "2024-07-18"
+
+outputs:
+  codes:
+    - intake_summary_default
+    - plan_default

@@ -5,7 +5,6 @@ from typing import Callable, List, Optional, Tuple
 import redis.asyncio as redis
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.security import HTTPBearer
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
@@ -20,6 +19,7 @@ from app.auth.intake.verification_attempts import (
     get_attempts_remaining,
     record_failed_attempt,
 )
+from app.core.db import AsyncSession
 from app.crud.intake import get_intake_by_client_pseudo_id, get_intake_by_token
 from app.services.client_data.queries import Queries
 

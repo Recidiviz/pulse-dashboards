@@ -1,0 +1,32 @@
+metadata:
+  state_code: US_IX
+  code: FACR
+  version: 0
+  type: assessment
+  display_name: "Test FACR"
+  description: "Test description"
+
+intake:
+  intake_type: conversation
+  scoring: oras_pit
+  scoring_model:
+    provider: openai
+    name: gpt-4o-mini
+    version: "2024-07-18"
+  chat_model:
+    provider: openai
+    name: gpt-4o
+    version: "2024-11-20"
+  prompts:
+    role: "test"
+    tone: "test"
+    opening_remarks: "test"
+    system_message: "test"
+  sections:
+    - title: Housing
+      description: "Test housing section"
+      required_information: "Test info"
+
+outputs:
+  codes:
+    - intake_summary_facr

@@ -99,21 +99,22 @@ I'm here to guide you, advocate for you, and ensure you have the tools and resou
 {{ render_section(section) -}}
 {%- endfor %}
 
+{% if plan.milestones %}
 
-{#
 # Milestones
 {% for milestone in plan.milestones %}
 ## {{ milestone.title }} ({{ milestone.date }})
 {{ milestone.markdown_content }}
 {{- render_notes(milestone.notes) -}}
 {% endfor %}
-#}
+{%- endif %}
 
-{#
+{% if plan.timeline %}
+
 # Timeline
 {% for timeline in plan.timeline %}
 ## {{ timeline.date }}
 {{ timeline.markdown_content }}
 {{- render_notes(timeline.notes) -}}
 {% endfor %}
-#}
+{%- endif %}

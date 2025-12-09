@@ -45,7 +45,7 @@ export interface IntakeSocketContextType {
   connectionStatus: "connected" | "connecting" | "disconnected" | "error";
   waitingForAIInput: boolean;
   currentSection: string | null;
-  allSections: components["schemas"]["ClientIntakeSectionResponse"][];
+  allSections: components["schemas"]["IntakeSectionResponse"][];
   clientPseudoId?: string | null | undefined;
   intakeStatus: components["schemas"]["IntakeStatus"] | undefined;
   isLoading: boolean;
@@ -202,7 +202,7 @@ const intakeReducer = (
           action.content.current_section_messages.at(-1)?.from_role ===
             "client",
         isLoading: false,
-        allSections: action.content.client_intake_sections,
+        allSections: action.content.intake_sections,
         currentSection: action.content.current_section || null,
         intakeStatus: action.content.status,
         client_name: action.content.client_name || null,
@@ -270,17 +270,17 @@ const intakeReducer = (
         currentSection: action.content.section,
         allSections: state.allSections.map((section) => {
           // Mark previous section as completed
-          if (section.intake_section.title === state.currentSection) {
+          if (section.title === state.currentSection) {
             return {
               ...section,
-              completion_status: "completed",
+              status: "completed",
             };
           }
           // Mark new section as in progress
-          if (section.intake_section.title === action.content.section) {
+          if (section.title === action.content.section) {
             return {
               ...section,
-              completion_status: "in_progress",
+              status: "in_progress",
               is_active: true,
             };
           }

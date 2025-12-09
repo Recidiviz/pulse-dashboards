@@ -13,7 +13,10 @@ from taskiq import TaskiqDepends
 from taskiq.depends.progress_tracker import ProgressTracker
 
 from app.core.db import AsyncSession, get_session
-from app.crud.intake import get_collected_address_for_client
+from app.crud.intake import (
+    get_collected_address_for_client,
+    get_intake_by_client_pseudo_id,
+)
 from app.crud.plan_decision_tree import (
     PlanDecisionTree,
     get_plan_decision_tree_by_plan_id,
@@ -31,6 +34,7 @@ from app.utils.action_plan_types import (
     ActionPlanSection,
     ActionPlanTimelines,
 )
+from app.utils.config_loader import ConfigLoader
 from app.utils.llm_agent_edit_plan import LLMAgentEdit
 from app.utils.llm_agent_gen_plan import LLMAgentGenerate
 
@@ -196,6 +200,7 @@ async def _regenerate_action_plan(
     latest_plan_generation: PlanGeneration,
     session: AsyncSession,
     task_logger: structlog.BoundLogger,
+    action_plan_config,
 ):
     logger.debug(
         "Previous action plan found",
@@ -291,6 +296,7 @@ async def _regenerate_action_plan(
         client_address=client_address.as_formatted_string(),
         current_timeline=current_timeline,
         current_milestones=current_milestones,
+        action_plan_config=action_plan_config,
     )
     action_plan = await agent.generate(
         extra_instructions=instructions,
@@ -306,6 +312,7 @@ async def _generate_new_action_plan(
     previous_sections: list[str] | None,
     session: AsyncSession,
     task_logger: structlog.BoundLogger,
+    action_plan_config,
 ):
     await execution.log_progress(
         session, 10, "Fetching decision trees", logger=task_logger
@@ -349,20 +356,23 @@ async def _generate_new_action_plan(
         entry = f"""
         For the decision tree "{pdt.decision_tree.name}", the recommandations are:
         """
-        for statement in pdt.run_statements:
-            entry += f"- {statement}\n"
+        if pdt.run_statements:
+            for statement in pdt.run_statements:
+                entry += f"- {statement}\n"
         decision_tree_statements.append(entry)
     decision_tree_statements = "\n\n".join(decision_tree_statements)
 
     await execution.log_progress(
         session, 60, "Generating action plan", logger=task_logger
     )
+
     agent = LLMAgentGenerate(
         client_data=client_data,
         decision_tree_statements=decision_tree_statements,
         previous_sections=previous_sections,
         client_address=client_address.as_formatted_string(),
         thread_id=gen.plan_id,
+        action_plan_config=action_plan_config,
     )
 
     action_plan = await agent.generate()
@@ -405,6 +415,39 @@ async def generate_action_plan(
         session, 5, "Generating action plan", logger=task_logger
     )
 
+    # Load action plan config from assessment
+    intake = await get_intake_by_client_pseudo_id(
+        session, client_pseudo_id=gen.plan.client_pseudo_id
+    )
+    if not intake:
+        raise ValueError(
+            f"Cannot generate action plan: no intake found for client {gen.plan.client_pseudo_id}"
+        )
+
+    if not intake.assessment_config_id:
+        raise ValueError(
+            f"Cannot generate action plan: intake for client {gen.plan.client_pseudo_id} has no assessment_config_id"
+        )
+
+    action_plan_config = await ConfigLoader.load_plan_config(
+        intake.assessment_config_id, session
+    )
+
+    if not action_plan_config:
+        task_logger.error(
+            "No action plan config found for assessment",
+            assessment_config_id=intake.assessment_config_id,
+        )
+        raise ValueError(
+            f"Cannot generate action plan: no action plan config found for assessment_config_id={intake.assessment_config_id}. "
+            f"This assessment config only supports intake summary generation."
+        )
+
+    task_logger.debug(
+        "Loaded action plan config",
+        config_code=action_plan_config.metadata.code,
+    )
+
     # Check if there is a previous plan generated
     latest_plan_generation = await _get_latest_plan_generation(session, gen)
 
@@ -415,6 +458,7 @@ async def generate_action_plan(
             latest_plan_generation=latest_plan_generation,
             session=session,
             task_logger=task_logger,
+            action_plan_config=action_plan_config,
         )
         if not action_plan:
             return
@@ -438,6 +482,7 @@ async def generate_action_plan(
             previous_sections=previous_sections,
             session=session,
             task_logger=task_logger,
+            action_plan_config=action_plan_config,
         )
 
     await execution.log_progress(session, 90, "Saving action plan", logger=task_logger)

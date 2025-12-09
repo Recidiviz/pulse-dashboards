@@ -11,29 +11,34 @@ from uuid import UUID
 
 from sqlalchemy.orm import Mapped
 
-from app.crud.intake_section import get_intake_sections_with_revisions
-from app.models.execution import Execution
-from app.models.intake_sections import (
-    ClientIntakeSection,
-    CompletionStatus,
-    IntakeSection,
+from app.crud.clientintakesections import (
+    get_all_client_sections_ordered,
+    get_current_client_section_by_title,
+    mark_section_completed,
+    mark_section_in_progress,
 )
+from app.models.assessment_config import AssessmentConfig
+from app.models.execution import Execution
+from app.models.intake_sections import ClientIntakeSection
 from app.routes.shared_models import IntakeMessageRole
-from app.utils.assessment_runner import get_assessments_type
+from app.utils.assessment_config_utils import (
+    get_first_section_from_config,
+    get_next_section_from_config,
+)
 
 if TYPE_CHECKING:
     from app.models.assessment import Assessment
+    from app.models.recording import RecordingSession
 
 import jwt
 from sqlalchemy import Column, and_
 from sqlalchemy import Enum as SAEnum
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import JSON, Field, Relationship, select
 
 from app.core.config import settings
-from app.models.base import BaseModel
+from app.core.db import AsyncSession
+from app.models.base import BaseModel, IntakeType
 from app.services.client_data.queries import Queries
-from app.utils.intake.utils import get_intake_name_by_state
 
 # Special section title for completed intakes
 # Not stored in DB, only used for UI organization of closing messages
@@ -52,12 +57,6 @@ class IntakeStatus(StrEnum):
     IN_PROGRESS = "in_progress"
     ERROR = "error"
     COMPLETED = "completed"
-
-
-class IntakeType(StrEnum):
-    TRANSCRIPTION = "transcription"
-    CONVERSATION = "conversation"
-    EXTERNAL = "external"
 
 
 class QuestionsConfusing(StrEnum):
@@ -79,8 +78,8 @@ class Intake(BaseModel, table=True):
     Represents the overall assessment process for a client.
     """
 
-    __tablename__ = "intake"
-
+    # General fields
+    client_pseudo_id: Optional[str]
     intake_type: Optional[IntakeType] = Field(
         default=None,
         sa_column=Column(
@@ -93,13 +92,6 @@ class Intake(BaseModel, table=True):
             nullable=True,
         ),
         description="Type of intake assessment",
-    )
-    client_pseudo_id: Optional[str]
-    client_id: Optional[str] = None
-    internal_access: bool = Field(
-        default=True,
-        nullable=True,
-        description="Enable for internal access",
     )
     status: IntakeStatus = Field(
         default=IntakeStatus.CREATED.value,
@@ -115,6 +107,13 @@ class Intake(BaseModel, table=True):
         ),
         description="Current status of the intake",
     )
+    assessment_config_id: UUID = Field(
+        foreign_key="assessmentconfig.id",
+        index=True,
+        nullable=True,
+        ondelete="SET NULL",
+        description="Reference to the assessment configuration used for this intake",
+    )
     completed_at: Optional[datetime] = Field(
         default=None, nullable=True, description="Timestamp when intake was completed"
     )
@@ -128,22 +127,12 @@ class Intake(BaseModel, table=True):
     )
 
     # Relationships
-    client_intake_sections: Mapped[List["ClientIntakeSection"]] = Relationship(
-        back_populates="intake",
+    assessment_config: Mapped[Optional["AssessmentConfig"]] = Relationship(
         sa_relationship_kwargs={
-            "order_by": "ClientIntakeSection.order",
             "lazy": "selectin",
-            "cascade": "all, delete-orphan",
         },
     )
-    intake_token: Mapped[Optional["IntakeToken"]] = Relationship(
-        back_populates="intake",
-        sa_relationship_kwargs={
-            "cascade": "all, delete-orphan",
-            "lazy": "selectin",
-            "uselist": False,
-        },
-    )
+    # The scoring results for this completed intake
     assessments: Mapped[List["Assessment"]] = Relationship(
         back_populates="intake",
         sa_relationship_kwargs={
@@ -159,6 +148,25 @@ class Intake(BaseModel, table=True):
         },
     )
 
+    # Conversation intake specific fields
+    current_section: Optional[str] = Field(
+        default=None, nullable=True, description="Current section being processed"
+    )
+    # Enable intake access by Name + DOB
+    internal_access: bool = Field(
+        default=True,
+        nullable=True,
+        description="Enable for internal access",
+    )
+    # For shareable token authentication
+    intake_token: Mapped[Optional["IntakeToken"]] = Relationship(
+        back_populates="intake",
+        sa_relationship_kwargs={
+            "cascade": "all, delete-orphan",
+            "lazy": "selectin",
+            "uselist": False,
+        },
+    )
     survey: Mapped[Optional["IntakeSurvey"]] = Relationship(
         back_populates="intake",
         sa_relationship_kwargs={
@@ -167,7 +175,7 @@ class Intake(BaseModel, table=True):
         },
     )
 
-    # One-to-one relationship with RecordingSession
+    # Transcription specific fields
     recording_session: Mapped[Optional["RecordingSession"]] = Relationship(
         back_populates="intake",
         sa_relationship_kwargs={
@@ -177,11 +185,24 @@ class Intake(BaseModel, table=True):
         },
     )
 
-    @property
-    def has_survey(self) -> bool:
-        """Check if client has filled out the intake survey."""
-        return self.survey is not None
+    # External
+    # Store external chat messages for external intakes
+    external_chat_messages: list[dict] | None = Field(
+        sa_type=JSON, nullable=True, default=None
+    )
 
+    # Deprecated
+    client_id: Optional[str] = None
+    client_intake_sections: Mapped[List["ClientIntakeSection"]] = Relationship(
+        back_populates="intake",
+        sa_relationship_kwargs={
+            "order_by": "ClientIntakeSection.order",
+            "lazy": "selectin",
+            "cascade": "all, delete-orphan",
+        },
+    )
+
+    # -------------------------- Shared Methods ----------------------------------
     @property
     def has_address(self) -> bool:
         """Check if client has provided address information."""
@@ -225,225 +246,6 @@ class Intake(BaseModel, table=True):
         await session.refresh(self)
         return self
 
-    def _handle_transcription_status(self):
-        """
-        Handle logic specific to transcription-type intakes when status is updated.
-        """
-        if self.status == IntakeStatus.COMPLETED.value and (
-            not self.recording_session
-            or not self.recording_session.transcription_approved
-        ):
-            raise ValueError(
-                f"Transcription intake {self.id} cannot be marked as completed without transcription approved"
-            )
-
-    async def _handle_conversation_status(self, session):
-        """
-        Handle logic specific to conversation-type intakes when status is updated.
-        """
-
-        # If new status is in_progress, check if the sections are populated and otherwise populate them
-        if self.status == IntakeStatus.IN_PROGRESS.value:
-            # First check if intake sections already exist for this intake
-            await self._initialize_conversation_sections(session)
-
-            # Set the first section as in progress and set current_section
-            if self.client_intake_sections:
-                # Get the first section by order
-                statement = (
-                    select(ClientIntakeSection)
-                    .where(ClientIntakeSection.intake_id == self.id)
-                    .order_by(ClientIntakeSection.order)
-                    .limit(1)
-                )
-                result = await session.exec(statement)
-                first_section = result.first()
-
-                if first_section:
-                    # Set the first section as in progress
-                    first_section.completion_status = CompletionStatus.IN_PROGRESS.value
-                    session.add(first_section)
-
-                    # Set the current section to the first section's title
-                    self.current_section = first_section.section_title
-                    session.add(self)
-
-        # For statuses that represent the end of the intake process, set current_section to COMPLETION_SECTION
-        if self.status in [
-            IntakeStatus.COMPLETED.value,
-            IntakeStatus.ERROR.value,
-        ]:
-            logger.info(
-                f"Intake {self.id} marked as {self.status}, setting current_section to {COMPLETION_SECTION}"
-            )
-            # Set the current section to "Completion" for closing remarks
-            self.current_section = COMPLETION_SECTION
-
-    async def _initialize_conversation_sections(self, session):
-        """
-        Populate intake sections for a conversation-type intake if they don't already exist.
-        """
-
-        # First check if intake sections already exist for this intake
-        statement = select(ClientIntakeSection).where(
-            ClientIntakeSection.intake_id == self.id
-        )
-        result = await session.exec(statement)
-        existing_sections = result.all()
-
-        if existing_sections:
-            return
-
-        logger.info(f"Populating sections for intake {self.id}")
-
-        # Get client data to determine assessment type based on state
-        client_record = Queries.get_client_by_pseudonymized_id_unsafe(
-            self.client_pseudo_id
-        )
-        intake_name = get_intake_name_by_state(client_record.state_code)
-        logger.info(
-            f"Client state: {client_record.state_code}, Intake name: {intake_name}"
-        )
-        print(f"Client state: {client_record.state_code}, Intake name: {intake_name}")
-
-        # Get enabled IntakeSection records for this assessment type, ordered by the order field
-        section_records = await get_intake_sections_with_revisions(
-            session, intake_name, True, True
-        )
-
-        if not section_records:
-            raise ValueError(f"No sections found for intake name {intake_name}")
-
-        # Create client intake sections for each section in the correct order
-        print(
-            f"🔄 Creating {len(section_records)} ClientIntakeSection records for intake {self.id}"
-        )
-        for i, section in enumerate(section_records):
-            # Get the current revision for this section
-            current_revision = section.current_revision
-
-            print(f"  📝 Section: {section.title}")
-            print(f"     Section ID: {section.id}")
-            print(f"     Section description (direct): {section.description[:50]}...")
-            print(f"     Section current_revision_id: {section.current_revision_id}")
-
-            if current_revision:
-                print(f"     ✅ Current revision found: {current_revision.id}")
-                print(
-                    f"     ✅ Revision description: {current_revision.description[:50]}..."
-                )
-                print(
-                    f"     ✅ Will link ClientIntakeSection to revision: {current_revision.id}"
-                )
-            else:
-                print("     ❌ NO CURRENT REVISION FOUND!")
-
-            client_section = ClientIntakeSection(
-                intake_id=self.id,
-                intake_section_id=section.id,
-                intake_section_revision_id=current_revision.id
-                if current_revision
-                else None,
-                is_active=True,
-                order=i,
-                completion_status=CompletionStatus.NOT_STARTED.value,
-            )
-            session.add(client_section)
-            print(
-                f"     ➕ Created ClientIntakeSection with revision_id: {client_section.intake_section_revision_id}"
-            )
-
-        session.add(self)
-        await session.commit()
-        await session.refresh(self)
-
-    async def next_section(self, session: AsyncSession):
-        """
-        Move to the next section in the intake process.
-        Marks current section as completed and advances to the next section.
-        If all sections are completed, marks the intake as completed.
-
-        Args:
-            session: Database session
-
-        Returns:
-            self (updated intake object)
-
-        Raises:
-            ValueError: If there is no current section to advance from
-        """
-        if not self.current_section:
-            raise ValueError(f"Intake {self.id}: No current section to advance from")
-
-        # Find the current client intake section
-        statement = (
-            select(ClientIntakeSection)
-            .join(IntakeSection)
-            .where(
-                ClientIntakeSection.intake_id == self.id,
-                IntakeSection.title == self.current_section,
-            )
-        )
-        result = await session.exec(statement)
-        current_section = result.first()
-
-        if not current_section:
-            raise ValueError(
-                f"Intake {self.id}: Could not find section {self.current_section}"
-            )
-
-        # Mark current section as completed
-        current_section.completion_status = CompletionStatus.COMPLETED
-        session.add(current_section)
-
-        # Find all sections ordered by the order field
-        from sqlalchemy.orm import selectinload
-
-        statement = (
-            select(ClientIntakeSection)
-            .join(IntakeSection)
-            .where(ClientIntakeSection.intake_id == self.id)
-            .order_by(ClientIntakeSection.order)
-            .options(
-                selectinload(ClientIntakeSection.intake_section).selectinload(
-                    IntakeSection.revisions
-                ),
-                selectinload(ClientIntakeSection.intake_section_revision),
-            )
-        )
-        result = await session.exec(statement)
-        all_sections = result.all()
-
-        # Find the next section with a higher order value
-        next_section = None
-        for section in all_sections:
-            if section.order > current_section.order:
-                next_section = section
-                break
-
-        # Check if there's a next section to process
-        if next_section:
-            # Mark the next section as in progress
-            next_section.completion_status = CompletionStatus.IN_PROGRESS
-            session.add(next_section)
-
-            # Update the current section to the next one
-            self.current_section = next_section.section_title
-            self.status = IntakeStatus.IN_PROGRESS
-        else:
-            # All sections are completed
-            # Instead of setting to None, set to COMPLETION_SECTION
-            # The update_status method will handle this, but we set it here too for clarity
-
-            self.current_section = COMPLETION_SECTION
-
-        # Save changes
-        session.add(self)
-        await session.commit()
-        await session.refresh(self)
-
-        return self
-
     async def schedule_assessment(self, session) -> Execution | None:
         """
         Schedule the creation of an assessment for this intake.
@@ -454,7 +256,7 @@ class Intake(BaseModel, table=True):
 
         # Only create assessment if intake is completed
         # Check both string value and enum value to be safe
-        if self.status != IntakeStatus.COMPLETED.value and self.status != "completed":
+        if self.status != IntakeStatus.COMPLETED.value:
             logger.warning(
                 f"Cannot create assessment for intake {self.id} with status {self.status}"
             )
@@ -473,20 +275,18 @@ class Intake(BaseModel, table=True):
             logger.info(f"Assessment already exists for client {self.client_pseudo_id}")
             return existing_assessment.id
 
-        # Create and schedule the assessment
-        logger.info(f"Creating new assessment for client {self.client_pseudo_id}")
-        client_record = Queries.get_client_by_pseudonymized_id_unsafe(
-            self.client_pseudo_id
+        from app.utils.config_loader import ConfigLoader
+
+        assessment_config = await ConfigLoader.load_assessment_config(
+            self.assessment_config_id, session
         )
-        # todo: getting assessments type as array, since we probably will have more than one type in the near future
-        assessments_types = get_assessments_type(client_record.state_code)
-        logger.info(f"Assessments type determined: {assessments_types}")
-        logger.info(f"Using assessment type: {assessments_types[0]}")
+        assessment_type = assessment_config.intake.scoring
+        logger.info(f"Assessments type determined: {assessment_type}")
 
         assessment = Assessment(
             client_pseudo_id=self.client_pseudo_id,
             intake_id=self.id,
-            assessment_type=assessments_types[0],  # Using by default the first type
+            assessment_type=assessment_type,
         )
         assessment = await create_assessment(session, assessment)
         execution = await assessment.schedule_execution(session)
@@ -494,8 +294,142 @@ class Intake(BaseModel, table=True):
 
         return execution
 
+    # -------------------------- Conversation Methods ----------------------------------
+    @property
+    def has_survey(self) -> bool:
+        """Check if client has filled out the intake survey."""
+        return self.survey is not None
+
+    async def _handle_conversation_status(self, session):
+        """
+        Handle logic specific to conversation-type intakes when status is updated.
+        """
+
+        # If new status is in_progress, initialize and set first section
+        if self.status == IntakeStatus.IN_PROGRESS.value:
+            try:
+                from app.utils.config_loader import ConfigLoader
+
+                conversation_config = await ConfigLoader.load_conversation_config(
+                    self.assessment_config_id, session
+                )
+                first_section = get_first_section_from_config(conversation_config)
+                if first_section:
+                    self.current_section = first_section["title"]
+                    session.add(self)
+                    logger.info(
+                        f"Set first section from config: {self.current_section}"
+                    )
+            except Exception as e:
+                logger.error(f"Failed to load assessment config: {e}")
+                raise
+
+        # For statuses that represent the end of the intake process, set current_section to COMPLETION_SECTION
+        if self.status in [
+            IntakeStatus.COMPLETED.value,
+            IntakeStatus.ERROR.value,
+        ]:
+            logger.info(
+                f"Intake {self.id} marked as {self.status}, setting current_section to {COMPLETION_SECTION}"
+            )
+            # Set the current section to "Completion" for closing remarks
+            self.current_section = COMPLETION_SECTION
+
+    async def next_section(self, session: AsyncSession):
+        """
+        Move to the next section in the intake process.
+        Marks current section as completed and advances to the next section.
+        If all sections are completed, marks the intake as completed.
+
+        LEGACY: If ClientIntakeSections, use them.
+        NEW: Else use assessment_config directly.
+
+        Args:
+            session: Database session
+
+        Returns:
+            self (updated intake object)
+
+        Raises:
+            ValueError: If there is no current section to advance from
+        """
+        if not self.current_section:
+            raise ValueError(f"Intake {self.id}: No current section to advance from")
+
+        # LEGACY: Use ClientIntakeSection table
+        if self.client_intake_sections:
+            await self._next_section_legacy(session)
+
+        else:
+            try:
+                from app.utils.config_loader import ConfigLoader
+
+                assessment_config = await ConfigLoader.load_conversation_config(
+                    self.assessment_config_id, session
+                )
+                next_section = get_next_section_from_config(
+                    assessment_config, self.current_section
+                )
+
+                if next_section:
+                    # Update to next section
+                    self.current_section = next_section["title"]
+                    self.status = IntakeStatus.IN_PROGRESS
+                    logger.info(
+                        f"Advanced to next section from config: {self.current_section}"
+                    )
+                else:
+                    # All sections completed
+                    self.current_section = COMPLETION_SECTION
+                    logger.info("All sections completed (config-based)")
+
+            except Exception as e:
+                logger.error(f"Failed to get next section from config: {e}")
+                raise
+
+        # Save changes
+        session.add(self)
+        await session.commit()
+        await session.refresh(self)
+
+        return self
+
+    async def _next_section_legacy(self, session):
+        # Find current section
+        current_section = await get_current_client_section_by_title(
+            session, self.id, self.current_section
+        )
+
+        if not current_section:
+            raise ValueError(
+                f"Intake {self.id}: Could not find section {self.current_section}"
+            )
+
+        # Mark current section as completed
+        await mark_section_completed(session, current_section)
+
+        # Get all sections ordered
+        all_sections = await get_all_client_sections_ordered(session, self.id)
+
+        # Find next section
+        next_section = None
+        for section in all_sections:
+            if section.order > current_section.order:
+                next_section = section
+                break
+
+        if next_section:
+            # Mark next section as in progress
+            await mark_section_in_progress(session, next_section)
+            # Update current section
+            self.current_section = next_section.section_title
+            self.status = IntakeStatus.IN_PROGRESS
+        else:
+            # All sections completed
+            self.current_section = COMPLETION_SECTION
+
     async def get_current_section_messages(
-        self, session: AsyncSession, current_session_time: datetime = None
+        self, session: AsyncSession, current_session_time: datetime | None = None
     ) -> tuple[List["IntakeMessage"], bool]:
         """
         Get messages for current section AND check if user has accepted terms.
@@ -549,7 +483,21 @@ class Intake(BaseModel, table=True):
 
         return current_messages, has_accepted_terms
 
+    # -------------------------- Transcription Methods ----------------------------------
+    def _handle_transcription_status(self):
+        """
+        Handle logic specific to transcription-type intakes when status is updated.
+        """
+        if self.status == IntakeStatus.COMPLETED.value and (
+            not self.recording_session
+            or not self.recording_session.transcription_approved
+        ):
+            raise ValueError(
+                f"Transcription intake {self.id} cannot be marked as completed without transcription approved"
+            )
 
+
+# ------------------------------ Intake Message ------------------------------------------
 class IntakeMessage(BaseModel, table=True):
     """
     Model for intake assessment messages.
@@ -574,6 +522,7 @@ class IntakeMessage(BaseModel, table=True):
     section: str = Field(default=None, nullable=True)
 
 
+# ------------------------------ Intake Token ------------------------------------------
 class IntakeToken(BaseModel, table=True):
     """
     Auth tokens related to intakes.
@@ -685,6 +634,7 @@ class IntakeToken(BaseModel, table=True):
         return {"jwt_token": jwt_token, "refresh_token": refresh_token}
 
 
+# ------------------------------ Client Address ------------------------------------------
 class ClientAddress(BaseModel, table=True):
     """
     Model for client addresses collected during intake.
@@ -704,6 +654,7 @@ class ClientAddress(BaseModel, table=True):
         return f"{self.street_address}, {self.city}, {self.state}".strip()
 
 
+# ------------------------------ Intake Survey ------------------------------------------
 class IntakeSurvey(BaseModel, table=True):
     """
     Model for survey filled out after intake completion.

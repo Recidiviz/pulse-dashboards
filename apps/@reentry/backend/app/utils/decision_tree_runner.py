@@ -121,12 +121,18 @@ class DecisionTreeRunnerResult(BaseModel):
 
 
 class DecisionTreeRunner:
-    def __init__(self, task_id=UUID | None):
+    def __init__(self, action_plan_config, task_id=UUID | None):
+        if not action_plan_config:
+            raise ValueError(
+                "action_plan_config is required - cannot run decision tree without configuration"
+            )
+
         self.decision_trees = {}
         self.client_messages = ""
         self.client_summary = ""
         self.client_assessment_summary = ""
         self.task_id = task_id
+        self.model = action_plan_config.small_model
 
     def set_client_messages(self, messages):
         self.client_messages = messages
@@ -176,9 +182,11 @@ class DecisionTreeRunner:
         """
         Find the decision trees that applies to the client's situation
         """
+
         agent = LLMAgentQA(
             system_prompt=DT_SELECTION_SYSTEM_PROMPT,
             thread_id=self.task_id.hex,
+            model_config=self.model,
         )
 
         data = {
@@ -215,9 +223,11 @@ class DecisionTreeRunner:
             "client_assessment_summary": self.client_assessment_summary,
         }
         system_prompt = DT_EXECUTION_SYSTEM_PROMPT.format(**data)
+
         agent = LLMAgentQA(
             system_prompt=system_prompt,
             thread_id=self.task_id.hex,
+            model_config=self.model,
         )
 
         node_key = prev_node_key = None

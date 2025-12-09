@@ -1,11 +1,13 @@
-import json
 from pathlib import Path
-from typing import List, Literal
+from typing import Literal
 from uuid import UUID
 
 import structlog
 from pydantic import BaseModel, Field
 
+from app.core.data_config.assessment_configs.assessment_config import (
+    AssessmentConfigFile,
+)
 from app.utils.llm_agent_qa import LLMAgentQA
 from app.utils.mermaid import (
     MermaidGraph,
@@ -95,13 +97,18 @@ class AssessmentRunner:
         self,
         decision_tree: MermaidGraph,
         client_info: list[dict] | str,
-        assessment_type: str | None = None,
+        assessment_config: AssessmentConfigFile,
         task_id=UUID | None,
     ):
+        if not assessment_config:
+            raise ValueError(
+                "assessment_config is required - cannot run assessment without configuration"
+            )
+
         self.task_id = task_id
         self.assessment_tree: MermaidGraph = decision_tree
         self.formatted_client_info = client_info
-        self.assessment_type = assessment_type
+        self.assessment_config = assessment_config
 
     async def run_decision_tree(self) -> AssessmentRunnerResult:
         """
@@ -119,7 +126,7 @@ class AssessmentRunner:
         if not self.formatted_client_info:
             raise ValueError("Client info not loaded")
 
-        tree_gen = self.assessment_tree.traverse(self.assessment_type)
+        tree_gen = self.assessment_tree.traverse(self.assessment_config.intake.scoring)
         step = next(tree_gen)
 
         node_key = None
@@ -132,9 +139,11 @@ class AssessmentRunner:
             "formatted_client_info": self.formatted_client_info,
         }
         system_prompt = DT_ASSESSMENT_SYSTEM_PROMPT.format(**data)
+
         self.agent = LLMAgentQA(
             system_prompt=system_prompt,
             thread_id=self.task_id,
+            model_config=self.assessment_config.intake.scoring_model,
         )
 
         while step is not None:
@@ -262,76 +271,3 @@ class AssessmentRunner:
                 )
             ],
         )
-
-
-def get_assessments_type(state_code: str) -> List:
-    """
-    Get all assessment types for a given state code from JSON configuration file.
-
-    Args:
-        state_code (str): State code (e.g., "US_ID", "US_AZ")
-
-    Returns:
-        List[AssessmentType]: List of assessment types for the state,
-                             or [LSIR] as default if not found
-    """
-    from app.models.assessment import AssessmentType
-
-    # Default assessment type if not found or error
-    default_assessment_types = [AssessmentType.LSIR]
-
-    try:
-        with open(
-            f"{PROJECT_ROOT}/app/core/config/config_by_state.json",
-            "r",
-            encoding="utf-8",
-        ) as file:
-            data = json.load(file)
-
-        state_info = data.get(state_code)
-
-        if state_info and isinstance(state_info, dict):
-            assessment_types_list = state_info.get("assessment_types", [])
-
-            if assessment_types_list and len(assessment_types_list) > 0:
-                valid_assessments = []
-
-                for assessment_str in assessment_types_list:
-                    try:
-                        valid_assessments.append(AssessmentType(assessment_str))
-
-                    except ValueError:
-                        logger.info(
-                            f"Invalid assessment type '{assessment_str}' for state {state_code}"
-                        )
-                        continue
-
-                # Return valid assessments if any found, otherwise return default
-                return (
-                    valid_assessments if valid_assessments else default_assessment_types
-                )
-            else:
-                logger.info(f"No assessment_types found for state {state_code}")
-                logger.info(
-                    f"Returning default assessment types: {default_assessment_types}"
-                )
-                return default_assessment_types
-        else:
-            logger.info(f"State {state_code} not found in configuration file")
-            logger.info(
-                f"Returning default assessment types: {default_assessment_types}"
-            )
-            return default_assessment_types
-
-    except FileNotFoundError:
-        logger.info("Configuration file 'config_by_state.json' not found")
-        logger.info(f"Returning default assessment types: {default_assessment_types}")
-        return default_assessment_types
-    except json.JSONDecodeError as e:
-        logger.info(f"Error parsing JSON file: {e}")
-        logger.info(f"Returning default assessment types: {default_assessment_types}")
-        return default_assessment_types
-    except Exception as e:
-        logger.info(f"Unexpected error: {e}")
-        logger.info(f"Returning default assessment types: {default_assessment_types}")
-        return default_assessment_types

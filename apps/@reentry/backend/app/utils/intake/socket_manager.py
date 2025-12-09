@@ -13,7 +13,7 @@ from typing import Dict, Optional
 import socketio
 
 from app.auth.intake.auth_client_user import verify_client_token
-from app.core.config import settings
+from app.core.config import create_model_from_config, settings
 from app.models.intake import (
     COMPLETION_SECTION,
     Intake,
@@ -278,17 +278,30 @@ class SocketIOManager:
             client_name=formatted_name,
         )
 
+        # Get the assessment config to extract the model configuration
+        assessment_config = await self.db_manager.get_conversation_config(
+            intake.assessment_config_id
+        )
+
+        # Get the model from assessment config
+        model = create_model_from_config(
+            assessment_config.chat_model.provider,
+            assessment_config.chat_model.name,
+            assessment_config.chat_model.version,
+        )
+
         # Create conversation graph with the intake from database
         graph = IntakeConversationGraph(
             session=client_context,
             db_manager=self.db_manager,
             wait_for_user_response=self.wait_for_user_response,
             send_message=self.send_event_client_pseudo_id,
+            model=model,
         )
 
         # Pass the client sections (which have revision data) instead of extracted sections
         # Initialize it asynchronously
-        await graph.initialize(intake, intake.client_intake_sections)
+        await graph.initialize(intake)
 
         # Store the graph for future reference
         self.conversation_graphs[client_pseudo_id] = graph

@@ -1,6 +1,9 @@
 from typing import Optional
 
 from langchain.callbacks.tracers import LangChainTracer
+from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langsmith import Client
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -44,6 +47,7 @@ class Settings(BaseSettings):
     EVAL_MODEL_VERSION: str = "2024-11-20"
     # https://platform.openai.com/docs/models
     # https://docs.anthropic.com/en/docs/about-claude/models
+    GOOGLE_GENAI_API_KEY: str | None = None
 
     REDIS_URL: str = "redis://localhost:6379"
 
@@ -108,6 +112,44 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
+
+def create_model_from_config(provider: str, name: str, version: str | None):
+    """
+    Create a LangChain model instance from configuration parameters.
+
+    Args:
+        provider: Model provider ('openai', 'anthropic', or 'google')
+        name: Model name (e.g., 'gpt-4', 'claude-3-5-sonnet', 'gemini-2.0-flash')
+        version: Model version (e.g., '2024-11-20', '20241022', 'exp-0205')
+
+    Returns:
+        ChatOpenAI, ChatAnthropic, or ChatGoogleGenerativeAI instance
+    """
+    if provider == "openai":
+        if not settings.OPENAI_API_KEY:
+            raise ValueError("OPENAI_API_KEY must be set to use OpenAI models")
+        model_name = f"{name}-{version}" if version else name
+        return ChatOpenAI(api_key=settings.OPENAI_API_KEY, model=model_name)
+    elif provider == "anthropic":
+        if not settings.ANTHROPIC_API_KEY:
+            raise ValueError("ANTHROPIC_API_KEY must be set to use Anthropic models")
+        model_name = f"{name}-{version}" if version else name
+        return ChatAnthropic(
+            anthropic_api_key=settings.ANTHROPIC_API_KEY, model_name=model_name
+        )
+    elif provider == "google":
+        if not settings.GOOGLE_GENAI_API_KEY:
+            raise ValueError(
+                "GOOGLE_GENAI_API_KEY must be set to use Google Gemini models"
+            )
+        model_name = f"{name}-{version}" if version else name
+        return ChatGoogleGenerativeAI(
+            google_api_key=settings.GOOGLE_GENAI_API_KEY, model=model_name
+        )
+    else:
+        raise ValueError(f"Unknown model provider: {provider}")
+
+
 if (
     settings.LANGCHAIN_API_KEY is None
     or settings.LANGCHAIN_API_KEY is None
@@ -125,54 +167,6 @@ else:
         client=langsmith_client, project_name=settings.LANGCHAIN_PROJECT
     )
 
-
-if settings.OPENAI_API_KEY is None and (
-    settings.DT_MODEL_PROVIDER == "openai" or settings.GEN_MODEL_PROVIDER == "openai"
-):
-    raise ValueError("OPENAI_API_KEY must be set in order to use OpenAI models")
-if settings.ANTHROPIC_API_KEY is None and (
-    settings.DT_MODEL_PROVIDER == "anthropic"
-    or settings.GEN_MODEL_PROVIDER == "anthropic"
-):
-    raise ValueError("ANTHROPIC_API_KEY must be set in order to use Anthropic models")
-
-if settings.DT_MODEL_PROVIDER == "openai":
-    from langchain_openai import ChatOpenAI
-
-    model_name = settings.DT_MODEL_NAME
-    if settings.DT_MODEL_VERSION:
-        model_name += f"-{settings.DT_MODEL_VERSION}"
-    dt_model = ChatOpenAI(openai_api_key=settings.OPENAI_API_KEY, model=model_name)
-elif settings.DT_MODEL_PROVIDER == "anthropic":
-    from langchain_anthropic import ChatAnthropic
-
-    model_name = settings.DT_MODEL_NAME
-    if settings.DT_MODEL_VERSION:
-        model_name += f"-{settings.DT_MODEL_VERSION}"
-    dt_model = ChatAnthropic(
-        anthropic_api_key=settings.ANTHROPIC_API_KEY, model_name=model_name
-    )
-else:
-    raise ValueError(f"Unknown model provider: {settings.DT_MODEL_PROVIDER}")
-
-if settings.GEN_MODEL_PROVIDER == "openai":
-    from langchain_openai import ChatOpenAI
-
-    model_name = settings.GEN_MODEL_NAME
-    if settings.GEN_MODEL_VERSION:
-        model_name += f"-{settings.GEN_MODEL_VERSION}"
-    gen_model = ChatOpenAI(
-        openai_api_key=settings.OPENAI_API_KEY, model_name=model_name
-    )
-elif settings.GEN_MODEL_PROVIDER == "anthropic":
-    from langchain_anthropic import ChatAnthropic
-
-    model_name = settings.GEN_MODEL_NAME
-    if settings.GEN_MODEL_VERSION:
-        model_name += f"-{settings.GEN_MODEL_VERSION}"
-    gen_model = ChatAnthropic(
-        anthropic_api_key=settings.ANTHROPIC_API_KEY, model_name=model_name
-    )
 
 if settings.DIARIZATION_SERVICE == "deepgram" and settings.DEEPGRAM_API_KEY is None:
     raise ValueError("missing deepgram api key")

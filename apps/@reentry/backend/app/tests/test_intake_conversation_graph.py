@@ -1,9 +1,8 @@
-from unittest.mock import AsyncMock, MagicMock
-from uuid import uuid4
+from unittest.mock import AsyncMock, MagicMock, Mock
 
 import pytest
 
-from app.models.intake import Intake, IntakeStatus
+from app.models.intake import IntakeStatus
 from app.models.intake_sections import ClientIntakeSection
 from app.tests.test_fixtures.intake_sections import (
     create_test_sections,
@@ -34,14 +33,24 @@ def mock_send_message():
 
 
 @pytest.fixture
-def intake():
-    return Intake(
-        id=uuid4(),
-        client_pseudo_id="test-client-id",
-        status=IntakeStatus.IN_PROGRESS,
-        current_section="Education / Employment",
-        internal_access=True,
+async def intake(async_session, seed_configs, mock_clientdata_service):
+    """Create an intake with assessment_config_id."""
+    from app.crud.intake import create_intake
+    from app.models.base import IntakeType
+
+    # Use a real client from mock service
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
+    intake.current_section = "Education / Employment"
+    async_session.add(intake)
+    await async_session.commit()
+    await async_session.refresh(intake)
+    return intake
 
 
 @pytest.fixture
@@ -73,19 +82,31 @@ def make_client_sections(intake, sections):
 
 
 @pytest.fixture
+def mock_model():
+    """Create a mock model for testing."""
+    return Mock()
+
+
+@pytest.fixture
 def graph(
-    client_context, mock_db_manager, mock_wait_for_user_response, mock_send_message
+    client_context,
+    mock_db_manager,
+    mock_wait_for_user_response,
+    mock_send_message,
+    mock_model,
 ):
     return IntakeConversationGraph(
         session=client_context,
         db_manager=mock_db_manager,
         wait_for_user_response=mock_wait_for_user_response,
         send_message=mock_send_message,
+        model=mock_model,
     )
 
 
 class TestIntakeConversationGraph:
-    def test_initialization(self, graph):
+    @pytest.mark.asyncio
+    async def test_initialization(self, graph):
         """Test that the graph can be created."""
         assert graph.session.client_pseudo_id == "test-client-id"
         assert graph.session.client_name == "Test Client"
@@ -93,17 +114,21 @@ class TestIntakeConversationGraph:
         assert graph.graph is None
 
     @pytest.mark.asyncio
-    async def test_initialize_with_intake(self, graph, intake, sections):
-        """Test initializing the graph with an intake record and sections."""
+    async def test_initialize_with_intake(self, graph, intake, seed_configs):
+        """Test initializing the graph with an intake record."""
         # Mock the database call
         graph.db_manager.get_messages = AsyncMock(return_value=[])
+        graph.db_manager.get_conversation_config = AsyncMock(
+            return_value=seed_configs["assessment_files_by_state"]["US_UT"].intake
+        )
 
-        client_sections = make_client_sections(intake, sections)
-        await graph.initialize(intake, client_sections)
+        # Sections are now loaded from assessment config inside initialize()
+        await graph.initialize(intake)
         assert graph.workflow is not None
         assert graph.graph is not None
         assert graph.section_data is not None
-        assert graph.section_data["Education / Employment"] is not None
+        # Check that sections were loaded from config
+        assert len(graph.section_data) > 0
         assert graph.initial_state is not None
 
     @pytest.mark.asyncio

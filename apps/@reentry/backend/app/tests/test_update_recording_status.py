@@ -4,8 +4,10 @@ import pytest
 import structlog
 
 from app.core.db import AsyncSession
+from app.crud.intake import create_intake
 from app.manage.update_recording_status import _update_recording_status
-from app.models.intake import Intake
+from app.models.base import IntakeType
+from app.models.intake import IntakeStatus
 from app.models.recording import RecordingSession, RecordingStatus
 
 logger = structlog.getLogger(__name__)
@@ -27,18 +29,22 @@ async def test_update_recording_invalid_session_id(async_session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_update_recording_invalid_state(async_session: AsyncSession):
-    client_id = "test_client"
-    logger.info(f"Testing invalid status update for client: {client_id}")
+async def test_update_recording_invalid_state(
+    async_session: AsyncSession, mock_clientdata_service, seed_configs
+):
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
-    test_intake = Intake(client_pseudo_id=client_id)
-    async_session.add(test_intake)
-    await async_session.commit()
-    await async_session.refresh(test_intake)
+    test_intake = await create_intake(
+        session=async_session,
+        client_pseudo_id=client_pseudo_id,
+        status=IntakeStatus.IN_PROGRESS,
+        intake_type=IntakeType.TRANSCRIPTION,
+    )
+
     logger.info(f"Created test intake with ID: {test_intake.id}")
 
     recording_session = RecordingSession(
-        client_pseudo_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         intake_id=test_intake.id,
         status=RecordingStatus.CREATED,
     )
@@ -63,21 +69,23 @@ async def test_update_recording_invalid_state(async_session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_update_recording_state_successful(async_session: AsyncSession):
-    client_id = "test_client"
-    logger.info(f"Testing successful status update for client: {client_id}")
+async def test_update_recording_state_successful(
+    async_session: AsyncSession, mock_clientdata_service, seed_configs
+):
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
-    test_intake = Intake(client_pseudo_id=client_id)
-    async_session.add(test_intake)
-    await async_session.commit()
-    await async_session.refresh(test_intake)
-    logger.info(f"Created test intake with ID: {test_intake.id}")
+    test_intake = await create_intake(
+        session=async_session,
+        client_pseudo_id=client_pseudo_id,
+        status=IntakeStatus.IN_PROGRESS,
+        intake_type=IntakeType.TRANSCRIPTION,
+    )
 
     first_state = RecordingStatus.CREATED
     second_state = RecordingStatus.COMPLETED
 
     recording_session = RecordingSession(
-        client_pseudo_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         intake_id=test_intake.id,
         status=first_state,
     )

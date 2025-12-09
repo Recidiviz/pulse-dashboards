@@ -1,5 +1,5 @@
 """
-Database models for intake assessment system.
+DEPRECATED -- Database models for intake assessment system -- Needs to be kept for conversations from before the configIO work
 """
 
 import logging

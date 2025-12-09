@@ -8,6 +8,7 @@ from google.cloud import bigquery
 
 from app.core.config import settings
 from app.services.client_data.types import ClientDataRecord, FullNameModel
+from app.utils.state_code import normalize_state_code
 
 # Cache expiration time (5 minutes)
 CACHE_TTL = 300  # seconds
@@ -143,7 +144,7 @@ def process_client_row(row) -> Optional[ClientDataRecord]:
             pseudonymized_client_id=row.pseudonymized_id,
             full_name=full_name,
             birthdate=row.birthdate,
-            state_code=row.state_code,
+            state_code=normalize_state_code(row.state_code),
         )
         return client_record
     except Exception as e:

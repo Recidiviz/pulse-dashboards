@@ -2,12 +2,12 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import AsyncSession
+from app.crud.intake import create_intake
 from app.models.intake import (
     COMPLETION_SECTION,
     ClientAddress,
-    ClientIntakeSection,
     Intake,
     IntakeMessage,
     IntakeMessageRole,
@@ -16,10 +16,6 @@ from app.models.intake import (
 )
 from app.models.intake_sections import CompletionStatus
 from app.tests.test_fixtures.client_examples import create_test_client
-from app.tests.test_fixtures.intake_sections import (
-    create_test_section,
-    create_test_sections,
-)
 
 
 @pytest.mark.asyncio
@@ -28,6 +24,7 @@ async def test_get_client_intake(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test retrieving client intake data."""
 
@@ -36,18 +33,14 @@ async def test_get_client_intake(
 
     print(f"Test setup: client_pseudo_id={client_pseudo_id}, token={token_value}")
 
-    section1, section2 = create_test_sections(2)
-    async_session.add_all([section1, section2])
-    await async_session.commit()
-    await async_session.refresh(section1)
-    await async_session.refresh(section2)
-
-    # Step 2: Create Intake record
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        current_section="Test Section 1",
+    # Create Intake record using create_intake
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
+    intake.current_section = "Test Section 1"
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -62,26 +55,9 @@ async def test_get_client_intake(
     async_session.add(token)
     await async_session.commit()
 
-    client_section1 = ClientIntakeSection(
-        intake_id=intake.id,
-        intake_section_id=section1.id,
-        is_active=True,
-        order=0,
-        completion_status=CompletionStatus.IN_PROGRESS,
-        intake_section_revision_id=None,
-    )
-    client_section2 = ClientIntakeSection(
-        intake_id=intake.id,
-        intake_section_id=section2.id,
-        is_active=False,
-        order=1,
-        completion_status=CompletionStatus.NOT_STARTED,
-        intake_section_revision_id=None,
-    )
-    async_session.add_all([client_section1, client_section2])
-    await async_session.commit()
+    # Note: ClientIntakeSections are no longer used - intake sections come from assessment_config
 
-    # Step 5: Create messages for the current section
+    # Create messages for the current section
     message1 = IntakeMessage(
         intake_id=intake.id,
         from_role=IntakeMessageRole.CASEWORKER,
@@ -124,7 +100,123 @@ async def test_get_client_intake(
 
     assert data["client_name"] == "John Doe"  # This should match what's in the fixture
 
-    assert len(data["client_intake_sections"]) == 2
+    # Sections now come from assessment_config, not ClientIntakeSection
+    assert len(data["intake_sections"]) >= 1  # Config has sections defined
+
+    assert len(data["current_section_messages"]) == 0
+
+
+@pytest.mark.asyncio
+async def test_get_client_intake_legacy_with_client_intake_sections(
+    client: AsyncClient,
+    async_session: AsyncSession,
+    assert_response,
+    mock_clientdata_service,
+    seed_configs,
+):
+    """Test that legacy intakes with ClientIntakeSection records still work."""
+    from unittest.mock import patch
+
+    from app.models.intake import IntakeMessage, IntakeMessageRole, IntakeToken
+    from app.models.intake_sections import ClientIntakeSection, IntakeSection
+
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    token_value = "legacy-token-value"
+
+    # Create intake with assessment_config_id
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
+    )
+    intake.current_section = "Legacy Section"
+    async_session.add(intake)
+    await async_session.commit()
+    await async_session.refresh(intake)
+
+    # Create token
+    token = IntakeToken(
+        token=token_value,
+        intake_id=intake.id,
+    )
+    async_session.add(token)
+    await async_session.commit()
+
+    # Create legacy IntakeSection and ClientIntakeSection
+    section1 = IntakeSection(
+        title="Legacy Section",
+        description="A legacy section",
+        required_information="Legacy info",
+        order=0,
+    )
+    section2 = IntakeSection(
+        title="Another Legacy Section",
+        description="Another legacy section",
+        required_information="More legacy info",
+        order=1,
+    )
+    async_session.add_all([section1, section2])
+    await async_session.commit()
+    await async_session.refresh(section1)
+    await async_session.refresh(section2)
+
+    client_section1 = ClientIntakeSection(
+        intake_id=intake.id,
+        intake_section_id=section1.id,
+        is_active=True,
+        order=0,
+        completion_status=CompletionStatus.IN_PROGRESS,
+    )
+    client_section2 = ClientIntakeSection(
+        intake_id=intake.id,
+        intake_section_id=section2.id,
+        is_active=True,
+        order=1,
+        completion_status=CompletionStatus.NOT_STARTED,
+    )
+    async_session.add_all([client_section1, client_section2])
+    await async_session.commit()
+
+    # Refresh intake to load the client_intake_sections relationship
+    await async_session.refresh(intake)
+
+    # Create messages for the current section
+    message1 = IntakeMessage(
+        intake_id=intake.id,
+        from_role=IntakeMessageRole.CASEWORKER,
+        content="Legacy message 1",
+        section="Legacy Section",
+    )
+    async_session.add(message1)
+    await async_session.commit()
+
+    # Mock JWT verification
+    with patch(
+        "app.auth.intake.auth_client_user.decode_jwt_token"
+    ) as mock_verify_token:
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
+
+        response = await client.get(
+            f"/intake/client/{token_value}",
+            headers={"Authorization": "Bearer test-token"},
+        )
+
+    assert_response(response, 200)
+    data = response.json()
+
+    assert data["id"] == str(intake.id)
+    assert data["client_pseudo_id"] == client_pseudo_id
+    assert data["status"] == IntakeStatus.IN_PROGRESS.value
+    assert data["current_section"] == "Legacy Section"
+
+    # Should return sections from ClientIntakeSection (legacy path)
+    assert len(data["intake_sections"]) == 2
+    assert data["intake_sections"][0]["title"] == "Legacy Section"
+    assert data["intake_sections"][1]["title"] == "Another Legacy Section"
 
     assert len(data["current_section_messages"]) == 0
 
@@ -160,6 +252,7 @@ async def test_get_client_intake_token_mismatch(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test retrieving intake with incorrect token returns 401."""
     # Create a client with valid intake but mismatched token
@@ -167,24 +260,20 @@ async def test_get_client_intake_token_mismatch(
     correct_token = "correct-token-value"
     incorrect_token = "incorrect-token-value"
 
-    # Step 1: Create test sections
-    section = create_test_section("Test Section")
-    async_session.add(section)
-    await async_session.commit()
-    await async_session.refresh(section)
-
-    # Step 2: Create Intake record
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        current_section="Test Section",
-        internal_access=False,
+    # Create Intake record
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
+    intake.current_section = "Test Section"
+    intake.internal_access = False
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
 
-    # Step 3: Create token associated with the intake
+    # Create token associated with the intake
     from app.models.intake import IntakeToken
 
     token_entry, _ = IntakeToken.generate_token(intake.id)
@@ -194,16 +283,7 @@ async def test_get_client_intake_token_mismatch(
     async_session.add(token_entry)
     await async_session.commit()
 
-    # Step 4: Create test client section
-    client_section = ClientIntakeSection(
-        intake_id=intake.id,
-        intake_section_id=section.id,
-        is_active=True,
-        order=0,
-        completion_status=CompletionStatus.IN_PROGRESS,
-    )
-    async_session.add(client_section)
-    await async_session.commit()
+    # Note: ClientIntakeSections are no longer used - sections come from assessment_config
 
     # Make request with incorrect token
     with patch(
@@ -244,25 +324,22 @@ async def test_check_token_not_in_response(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test that the token is not returned in the intake response."""
     client_pseudo_id = mock_clientdata_service["clients"][
-        1
+        0
     ].pseudonymized_client_id  # Use client ID that exists in mock_client_data fixture
     token_value = "test-token-secret-value"
 
-    # Create section
-    section = create_test_section("Test Section")
-    async_session.add(section)
-    await async_session.commit()
-    await async_session.refresh(section)
-
     # Create intake
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        current_section="Test Section",
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
+    intake.current_section = "Test Section"
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -275,16 +352,7 @@ async def test_check_token_not_in_response(
     async_session.add(token_entry)
     await async_session.commit()
 
-    # Create client section
-    client_section = ClientIntakeSection(
-        intake_id=intake.id,
-        intake_section_id=section.id,
-        is_active=True,
-        order=0,
-        completion_status=CompletionStatus.IN_PROGRESS,
-    )
-    async_session.add(client_section)
-    await async_session.commit()
+    # Sections now come from assessment_config, not ClientIntakeSection
 
     # We'll use our standardized client examples instead of hardcoding
 
@@ -293,6 +361,7 @@ async def test_check_token_not_in_response(
         "app.routes.intake_client_router.Queries.get_client_by_pseudonymized_id_unsafe"
     ) as mock_get_client:
         client_record = create_test_client()
+        client_record.state_code = "UX_UT"
         # Update the client ID to match the test
         client_record.external_client_id = client_pseudo_id
         mock_get_client.return_value = client_record
@@ -329,23 +398,16 @@ async def test_get_client_intake_completed(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test that accessing a completed intake returns the data normally."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
-    # Create two sections as before
-    section1, section2 = create_test_sections(2)
-    async_session.add_all([section1, section2])
-    await async_session.commit()
-    await async_session.refresh(section1)
-    await async_session.refresh(section2)
-
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.COMPLETED,
-        current_section="Test Section 1",
+    intake = await create_intake(
+        async_session, client_pseudo_id, IntakeType.CONVERSATION, IntakeStatus.COMPLETED
     )
+    intake.current_section = "Test Section 1"
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -393,37 +455,25 @@ async def test_get_client_intake_with_internal_access(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test retrieving client intake data with internal access."""
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
-    section1 = create_test_section("Test Section 1")
-    async_session.add(section1)
-    await async_session.commit()
-    await async_session.refresh(section1)
-
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        current_section="Test Section 1",
-        internal_access=True,
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
+    intake.current_section = "Test Section 1"
+    intake.internal_access = True
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
 
-    await async_session.commit()
-
-    client_section = ClientIntakeSection(
-        intake_id=intake.id,
-        intake_section_id=section1.id,
-        is_active=True,
-        order=0,
-        completion_status=CompletionStatus.IN_PROGRESS,
-    )
-    async_session.add(client_section)
-    await async_session.commit()
+    # Sections now come from assessment_config, not ClientIntakeSection
 
     # Create a test message
     message = IntakeMessage(
@@ -467,23 +517,20 @@ async def test_submit_address_new(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test submitting a new address for client intake."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
-    # Create test section
-    section = create_test_section("Address Section")
-    async_session.add(section)
-    await async_session.commit()
-    await async_session.refresh(section)
-
     # Create intake
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        current_section="Address Section",
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
+    intake.current_section = "Address Section"
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -545,26 +592,18 @@ async def test_submit_address_optional_street(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test submitting address without street address (optional field)."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
-    # Create test section
-    section = create_test_section("Address Section")
-    async_session.add(section)
-    await async_session.commit()
-    await async_session.refresh(section)
-
-    # Create intake
-    intake = Intake(
+    intake = await create_intake(
+        session=async_session,
         client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
-        current_section="Address Section",
+        intake_type=IntakeType.CONVERSATION,
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Create token
     from app.models.intake import IntakeToken
@@ -618,26 +657,16 @@ async def test_submit_address_validation_error_missing_city(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test submitting address with missing required city field."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
-    # Create test section
-    section = create_test_section("Address Section")
-    async_session.add(section)
-    await async_session.commit()
-    await async_session.refresh(section)
-
-    # Create intake
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        current_section="Address Section",
+    # Create a test intake
+    intake = await create_intake(
+        async_session, client_pseudo_id, IntakeType.CONVERSATION, IntakeStatus.COMPLETED
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Create token
     from app.models.intake import IntakeToken
@@ -676,26 +705,16 @@ async def test_submit_address_validation_error_missing_state(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test submitting address with missing required state field."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
-    # Create test section
-    section = create_test_section("Address Section")
-    async_session.add(section)
-    await async_session.commit()
-    await async_session.refresh(section)
-
-    # Create intake
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        current_section="Address Section",
+    # Create a test intake
+    intake = await create_intake(
+        async_session, client_pseudo_id, IntakeType.CONVERSATION, IntakeStatus.COMPLETED
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Create token
     from app.models.intake import IntakeToken
@@ -820,25 +839,24 @@ async def test_submit_address_completes_intake_when_in_completion_section(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test that submitting address completes intake when current section is completion section."""
     from unittest.mock import patch
 
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
-    # Create test section
-    section = create_test_section("Test Section")
-    async_session.add(section)
-    await async_session.commit()
-    await async_session.refresh(section)
+    # Create a test intake
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
-    # Create intake in IN_PROGRESS status with completion section as current
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        current_section=COMPLETION_SECTION,  # This is the key condition
+    # Create a test intake
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
+    intake.current_section = COMPLETION_SECTION  # Set to completion section so address submission completes intake
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -880,6 +898,8 @@ async def test_submit_address_completes_intake_when_in_completion_section(
 
         assert_response(response, 200)
         data = response.json()
+        print(f"Response data: {data}")
+        print(f"Intake current_section: {intake.current_section}")
         assert data["intake_completed"] is True
 
         # Verify intake status changed to COMPLETED
@@ -896,26 +916,21 @@ async def test_submit_address_does_not_complete_intake_when_not_in_completion_se
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test that submitting address does not complete intake when not in completion section."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
+    # Create a test intake
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
-    # Create test section
-    section = create_test_section("Regular Section")
-    async_session.add(section)
-    await async_session.commit()
-    await async_session.refresh(section)
-
-    # Create intake in IN_PROGRESS status with regular section (not completion)
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        current_section="Regular Section",  # Not completion section
+    # Create a test intake
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Create token
     from app.models.intake import IntakeToken
@@ -963,28 +978,20 @@ async def test_submit_address_does_not_complete_intake_when_already_completed(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test that submitting address for already completed intake doesn't trigger additional completion."""
     from unittest.mock import patch
 
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
-    # Create test section
-    section = create_test_section("Test Section")
-    async_session.add(section)
-    await async_session.commit()
-    await async_session.refresh(section)
+    # Create a test intake
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
-    # Create intake already in COMPLETED status
-    intake = Intake(
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.COMPLETED,  # Already completed
-        current_section=COMPLETION_SECTION,
+    # Create a test intake
+    intake = await create_intake(
+        async_session, client_pseudo_id, IntakeType.CONVERSATION, IntakeStatus.COMPLETED
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Create existing address
     existing_address = ClientAddress(
@@ -1045,6 +1052,7 @@ async def test_start_assessment_action_plan_creates_intake_and_schedules(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Endpoint should create intake with external chat messages and schedule assessment."""
 

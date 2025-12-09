@@ -4,14 +4,13 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.intake.auth_client_user import (
     validate_non_pseudo_id,
     validate_pseudo_dob,
     validate_state_doc_id,
 )
-from app.core.db import get_session
+from app.core.db import AsyncSession, get_session
 
 logger = logging.getLogger(__name__)
 

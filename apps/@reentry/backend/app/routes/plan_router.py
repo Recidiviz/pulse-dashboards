@@ -17,7 +17,11 @@ from weasyprint import CSS, HTML
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
-from app.crud.intake import get_collected_address_for_client, update_client_address
+from app.crud.intake import (
+    get_collected_address_for_client,
+    get_intake_by_client_pseudo_id,
+    update_client_address,
+)
 from app.crud.plan import (
     create_plan,
     delete_plan_by_id,
@@ -62,6 +66,7 @@ from app.services.resources import (
     ResourceSubcategory,
     list_resources,
 )
+from app.tasks.transcribe_audio_with_deepgram import deepgram_transcription_diarization
 from app.utils.address_autocomplete import (
     AutocompleteAddressResponse,
     AutocompleteCityResponse,
@@ -72,7 +77,6 @@ from app.utils.address_autocomplete import (
 from app.utils.address_autocomplete import (
     autocomplete_city as autocomplete_city_util,
 )
-from app.tasks.transcribe_audio_with_deepgram import deepgram_transcription_diarization
 
 from ..utils.PrometheusBackgroundThreadManager import (
     llm_plan_creation_total_counter,
@@ -205,6 +209,9 @@ async def router_create_plan(
     )
     if not record:
         raise HTTPException(status_code=404, detail="Client not found")
+    intake = await get_intake_by_client_pseudo_id(session, request.client_pseudo_id)
+    if not intake:
+        raise HTTPException(status_code=404, detail="Intake not found")
 
     # if a plan already exists for the client, return it
     plan_obj = await get_plan_by_client_pseudo_id(session, request.client_pseudo_id)
@@ -338,6 +345,28 @@ async def router_generate_plan(
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
+
+    # Check if this assessment config supports action plan generation
+    from app.crud.intake import get_intake_by_client_pseudo_id
+    from app.utils.config_loader import ConfigLoader
+
+    intake = await get_intake_by_client_pseudo_id(
+        session, client_pseudo_id=plan.client_pseudo_id
+    )
+    if not intake:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No intake found for client {plan.client_pseudo_id}",
+        )
+
+    plan_config = await ConfigLoader.load_plan_config(
+        intake.assessment_config_id, session
+    )
+    if not plan_config:
+        raise HTTPException(
+            status_code=400,
+            detail="This assessment config does not support action plan generation. It only supports intake summary generation.",
+        )
 
     # if a regeneration is requested, check if the action plan was edited manually
     if request.prompt and plan.edited_manually:
@@ -851,6 +880,8 @@ async def autocomplete_city(
     Filters for US cities only, with optional state filter
     """
     return await autocomplete_city_util(input, state, address_suggestion_selected)
+
+
 @router.post(
     "/transcribe",
     summary="Transcribe audio file",

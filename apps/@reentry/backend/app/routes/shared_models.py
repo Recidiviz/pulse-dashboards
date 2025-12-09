@@ -5,7 +5,7 @@ from uuid import UUID
 
 from pydantic import computed_field
 
-from app.models.base import BaseModel
+from app.models.base import BaseModel, IntakeType
 from app.routes.execution_router import ExecutionResponse
 from app.services.client_data.types import FullNameModel
 
@@ -31,6 +31,7 @@ class ProcessingStatus(StrEnum):
 class IntakeMessageResponse(ORMResponse):
     content: str
     from_role: IntakeMessageRole
+    section: str | None = None
 
 
 class ClientRecordResponse(BaseModel):
@@ -41,14 +42,23 @@ class ClientRecordResponse(BaseModel):
     state_code: str
 
 
+class ClientAddressResponse(BaseModel):
+    street_address: Optional[str]
+    city: str
+    state: str
+
+
 # Forward declarations for cross-dependent types
 class IntakeResponse(ORMResponse):
     client_pseudo_id: str
     status: str
-    current_section: str | None = None
     token: str | None = None
     internal_access: Optional[bool] = None
     completed_at: datetime | None = None
+    address: ClientAddressResponse | None = None
+    intake_type: IntakeType
+    has_address: bool = False
+    has_survey: bool = False
 
 
 class PlanResponse(ORMResponse):

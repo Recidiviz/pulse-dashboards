@@ -9,8 +9,10 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
 from langgraph.types import Command
 
-from app.core.config import dt_model as model
 from app.core.config import tracer
+from app.core.data_config.assessment_configs.assessment_config import (
+    IntakeConfigConversation,
+)
 from app.crud.intake import WELCOME_BACK_TEST_STRING
 from app.models.intake import (
     COMPLETION_SECTION,
@@ -61,7 +63,13 @@ class IntakeConversationGraph:
             [str, IntakeMessage], Coroutine[Any, Any, str]
         ],
         send_message: Callable[[str, ServerEvent], Coroutine[Any, Any, str]],
+        model,
     ) -> None:
+        if not model:
+            raise ValueError(
+                "model is required - cannot use IntakeConversationGraph without explicit model configuration"
+            )
+
         self.memory = MemorySaver()
         self.model = model
         self.session = session
@@ -79,21 +87,50 @@ class IntakeConversationGraph:
         # These will be initialized in initialize()
         self.workflow = None
         self.graph = None
+        self.assessment_config: IntakeConfigConversation
 
-    async def initialize(self, intake: Intake, client_sections: list) -> None:
-        """Initialize the conversation graph asynchronously."""
-        self.initial_state: ConversationState = await self.compute_initial_state(intake)
-        self.workflow = StateGraph(
-            state_schema=ConversationState,
-            config_schema=ConfigSchema,
-        )
-        self._build_graph()
-        self.graph = self.workflow.compile(checkpointer=self.memory)
-        # Convert client sections to effective section data for lookup
-        self.section_data = {}
-        for client_section in client_sections:
-            section_data = client_section.get_effective_section_data()
-            self.section_data[section_data["title"]] = section_data
+    async def initialize(self, intake: Intake) -> None:
+        """Initialize the conversation graph."""
+        try:
+            self.assessment_config = await self.db_manager.get_conversation_config(
+                intake.assessment_config_id
+            )
+            print(self.assessment_config, intake.assessment_config_id)
+
+            self.section_data = {}
+            if intake.client_intake_sections:
+                # Fall back to client sections if they exist (backwards compatibility)
+                logger.info(
+                    "Using sections from client_intake_sections (backwards compatibility)"
+                )
+                for client_section in intake.client_intake_sections:
+                    section_data = client_section.get_effective_section_data()
+                    self.section_data[section_data["title"]] = section_data
+            elif self.assessment_config.sections:
+                # Use sections from assessment config
+                logger.info("Using sections from assessment config")
+                for section in self.assessment_config.sections:
+                    self.section_data[section.title] = {
+                        "title": section.title,
+                        "description": section.description,
+                        "required_information": section.required_information,
+                        "source": "assessment_config",
+                    }
+
+            self.initial_state: ConversationState = await self.compute_initial_state(
+                intake
+            )
+            self.workflow = StateGraph(
+                state_schema=ConversationState,
+                config_schema=ConfigSchema,
+            )
+            self._build_graph()
+            self.graph = self.workflow.compile(checkpointer=self.memory)
+        except Exception as e:
+            logger.error(
+                f"Failed to load conversation config {intake.assessment_config_id}: {e}"
+            )
+            raise
 
     def _build_graph(self) -> None:
         if not self.workflow:
@@ -138,11 +175,11 @@ class IntakeConversationGraph:
 
         try:
             if output_type is not None:
-                response = await model.with_structured_output(output_type).ainvoke(
+                response = await self.model.with_structured_output(output_type).ainvoke(
                     messages, self.config
                 )
             else:
-                response = await model.ainvoke(messages, self.config)
+                response = await self.model.ainvoke(messages, self.config)
 
             end_time = datetime.now()
             duration = (end_time - start_time).total_seconds()
@@ -199,7 +236,9 @@ class IntakeConversationGraph:
         sections_titles = await self.db_manager.get_section_titles(
             client_data.client_pseudo_id
         )
-        opening_prompt = generate_opening_remarks_prompt(client_data, sections_titles)
+        opening_prompt = generate_opening_remarks_prompt(
+            client_data, sections_titles, self.assessment_config
+        )
 
         state["messages"].append(opening_prompt)
         try:
@@ -263,6 +302,7 @@ class IntakeConversationGraph:
             prompt_template = generate_question_prompt(
                 section_data["title"],
                 required_info,
+                self.assessment_config,
             )
 
             response = await self.call_model(
@@ -600,7 +640,7 @@ class IntakeConversationGraph:
         messages: list[IntakeMessage] = await self.db_manager.all_messages_by_time(
             self.session.client_pseudo_id
         )
-        system_message = get_system_message_prompt()
+        system_message = get_system_message_prompt(self.assessment_config)
 
         # Format messages as LangChain message objects
         formatted_messages = [

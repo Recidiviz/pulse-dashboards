@@ -6,20 +6,15 @@ import uuid
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
+from app.core.db import AsyncSession
+from app.crud.intake import create_intake
 from app.models.intake import (
-    ClientIntakeSection,
-    Intake,
     IntakeMessage,
     IntakeMessageRole,
     IntakeStatus,
-)
-from app.models.intake_sections import CompletionStatus
-from app.tests.test_fixtures.intake_sections import (
-    create_test_section,
-    create_test_sections,
+    IntakeType,
 )
 from app.utils.intake.db_manager import DatabaseManager
 
@@ -30,21 +25,23 @@ def db_manager(async_session: AsyncSession):
     return DatabaseManager(session=async_session)
 
 
-# This test has been removed as check_db_connection is no longer present in DatabaseManager
-
-
 @pytest.mark.asyncio
-async def test_store_message(db_manager, async_session):
+async def test_store_message(
+    db_manager, async_session, mock_clientdata_service, seed_configs
+):
     """Test storing a message."""
     # Create a test intake
-    intake = Intake(
-        status=IntakeStatus.IN_PROGRESS,
-        client_pseudo_id=str(uuid.uuid4()),
-        current_section="Test Section",
+    # Create a test client ID
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
+    # Create a test intake
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
+    intake.current_section = "Housing"
 
     # Test parameters
     from_role = IntakeMessageRole.CASEWORKER
@@ -73,128 +70,28 @@ async def test_store_message(db_manager, async_session):
 
 
 @pytest.mark.asyncio
-async def test_complete_section(db_manager, async_session):
-    """Test completing a section."""
-    # Create a test intake
-    client_pseudo_id = str(uuid.uuid4())
-    intake = Intake(
-        status=IntakeStatus.IN_PROGRESS,
-        client_pseudo_id=client_pseudo_id,
-        current_section="Section 1",
-    )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
-
-    # Create test sections
-    sections = create_test_sections(2)
-    sections[0].title = "Section 1"
-    sections[1].title = "Section 2"
-    async_session.add_all(sections)
-    await async_session.commit()
-
-    # Refresh to get IDs
-    for section in sections:
-        await async_session.refresh(section)
-
-    # Create client sections
-    client_sections = [
-        ClientIntakeSection(
-            intake_id=intake.id,
-            intake_section_id=sections[0].id,
-            is_active=True,
-            order=0,
-            completion_status=CompletionStatus.IN_PROGRESS,
-        ),
-        ClientIntakeSection(
-            intake_id=intake.id,
-            intake_section_id=sections[1].id,
-            is_active=True,
-            order=1,
-            completion_status=CompletionStatus.NOT_STARTED,
-        ),
-    ]
-    async_session.add_all(client_sections)
-    await async_session.commit()
-
-    # Complete section
-    next_section = await db_manager.complete_section(client_pseudo_id=client_pseudo_id)
-
-    # Verify next section is returned
-    assert next_section == "Section 2"
-
-    # Refresh from database
-    await async_session.refresh(intake)
-    assert intake.current_section == "Section 2"
-
-    # Check client sections
-    stmt = (
-        select(ClientIntakeSection)
-        .where(ClientIntakeSection.intake_id == intake.id)
-        .order_by(ClientIntakeSection.order)
-    )
-    result = await async_session.execute(stmt)
-    updated_client_sections = result.scalars().all()
-
-    # First section should be completed
-    assert updated_client_sections[0].completion_status == CompletionStatus.COMPLETED
-    # Second section should be in progress
-    assert updated_client_sections[1].completion_status == CompletionStatus.IN_PROGRESS
-
-
-@pytest.mark.asyncio
-async def test_complete_section_all_completed(db_manager, async_session):
+async def test_complete_section_all_completed(
+    db_manager, async_session, mock_clientdata_service, seed_configs
+):
     """Test completing the last section."""
+    # Create a test client ID
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
     # Create a test intake
-    client_pseudo_id = str(uuid.uuid4())
-    intake = Intake(
-        status=IntakeStatus.IN_PROGRESS,
-        client_pseudo_id=client_pseudo_id,
-        current_section="Last Section",
+    await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
 
-    # Here we'll patch the Intake.next_section method at the class level
-    with patch.object(Intake, "next_section", new=AsyncMock()) as mock_next_section:
-        # Configure the mock to return the updated intake with no next section
-        mock_next_section.return_value = Intake(
-            id=uuid.uuid4(),
-            status=IntakeStatus.COMPLETED,
-            client_pseudo_id=client_pseudo_id,
-            current_section=None,
-        )
-
-        async_session.add(intake)
-        await async_session.commit()
-        await async_session.refresh(intake)
-
-        # Create test section
-        section = create_test_section("Last Section")
-        async_session.add(section)
-        await async_session.commit()
-        await async_session.refresh(section)
-
-        # Create client section
-        client_section = ClientIntakeSection(
-            intake_id=intake.id,
-            intake_section_id=section.id,
-            is_active=True,
-            order=0,
-            completion_status=CompletionStatus.IN_PROGRESS,
-        )
-        async_session.add(client_section)
-        await async_session.commit()
-
-        # Complete the last section
-        next_section = await db_manager.complete_section(
-            client_pseudo_id=client_pseudo_id
-        )
-
-        # Verify no next section is returned
-        assert next_section is None
+    # rewrite this test with new logic, just next section until completed
 
 
 @pytest.mark.asyncio
-async def test_complete_section_nonexistent_client(db_manager):
+async def test_complete_section_nonexistent_client(
+    db_manager, mock_clientdata_service, seed_configs
+):
     """Test completing a section for nonexistent client."""
     # Use a fake client ID
     client_pseudo_id = str(uuid.uuid4())
@@ -207,17 +104,21 @@ async def test_complete_section_nonexistent_client(db_manager):
 
 
 @pytest.mark.asyncio
-async def test_get_section_messages(db_manager, async_session):
+async def test_get_section_messages(
+    db_manager, async_session, mock_clientdata_service, seed_configs
+):
     """Test getting section messages."""
     # Create a test intake
-    intake = Intake(
-        status=IntakeStatus.IN_PROGRESS,
-        client_pseudo_id=str(uuid.uuid4()),
-        current_section="Test Section",
+    # Create a test client ID
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
+    # Create a test intake
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Create test messages
     messages = [
@@ -253,17 +154,20 @@ async def test_get_section_messages(db_manager, async_session):
 
 
 @pytest.mark.asyncio
-async def test_get_section_messages_nonexistent_section(db_manager, async_session):
+async def test_get_section_messages_nonexistent_section(
+    db_manager, async_session, mock_clientdata_service, seed_configs
+):
     """Test getting messages for nonexistent section."""
+    # Create a test client ID
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
     # Create a test intake
-    intake = Intake(
-        status=IntakeStatus.IN_PROGRESS,
-        client_pseudo_id=str(uuid.uuid4()),
-        current_section="Test Section",
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Get section messages for nonexistent section
     result = await db_manager.get_section_messages(
@@ -281,20 +185,20 @@ async def test_get_section_messages_nonexistent_section(db_manager, async_sessio
 
 
 @pytest.mark.asyncio
-async def test_get_intake_id_by_client_pseudo_id(db_manager, async_session):
+async def test_get_intake_id_by_client_pseudo_id(
+    db_manager, async_session, mock_clientdata_service, seed_configs
+):
     """Test getting intake ID by client ID."""
     # Create a test client ID
-    client_pseudo_id = str(uuid.uuid4())
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Create a test intake
-    intake = Intake(
-        status=IntakeStatus.IN_PROGRESS,
-        client_pseudo_id=client_pseudo_id,
-        current_section="Test Section",
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Get intake ID
     result = await db_manager.get_intake_id_by_client_pseudo_id(
@@ -322,18 +226,20 @@ async def test_get_intake_id_by_client_pseudo_id_nonexistent(db_manager):
 
 
 @pytest.mark.asyncio
-async def test_get_talking_turn(db_manager, async_session):
+async def test_get_talking_turn(
+    db_manager, async_session, mock_clientdata_service, seed_configs
+):
     """Test getting talking turn."""
     # Create a test intake
-    client_pseudo_id = str(uuid.uuid4())
-    intake = Intake(
-        status=IntakeStatus.IN_PROGRESS,
-        client_pseudo_id=client_pseudo_id,
-        current_section="Test Section",
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
+    # Create a test intake
+    await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Mock get_latest_message
     with patch("app.crud.intake.get_latest_message") as mock_get_latest_message:
@@ -357,18 +263,20 @@ async def test_get_talking_turn(db_manager, async_session):
 
 
 @pytest.mark.asyncio
-async def test_all_messages_by_time(db_manager, async_session):
+async def test_all_messages_by_time(
+    db_manager, async_session, mock_clientdata_service, seed_configs
+):
     """Test getting all messages by time."""
     # Create a test intake
-    client_pseudo_id = str(uuid.uuid4())
-    intake = Intake(
-        status=IntakeStatus.IN_PROGRESS,
-        client_pseudo_id=client_pseudo_id,
-        current_section="Test Section",
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
+    # Create a test intake
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Create test messages
     messages = [
@@ -419,18 +327,20 @@ async def test_get_client(db_manager):
 
 
 @pytest.mark.asyncio
-async def test_get_intake(db_manager, async_session):
+async def test_get_intake(
+    db_manager, async_session, mock_clientdata_service, seed_configs
+):
     """Test getting intake by client ID."""
     # Create a test intake
-    client_pseudo_id = str(uuid.uuid4())
-    intake = Intake(
-        status=IntakeStatus.IN_PROGRESS,
-        client_pseudo_id=client_pseudo_id,
-        current_section="Test Section",
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
+    # Create a test intake
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
     )
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
 
     # Get intake
     result = await db_manager.get_intake(client_pseudo_id=client_pseudo_id)

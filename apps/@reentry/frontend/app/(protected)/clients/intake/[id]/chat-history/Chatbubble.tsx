@@ -26,7 +26,7 @@ import { ChatMessageBubble } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
 
 type IntakeMessage = components["schemas"]["IntakeMessageResponse"];
-type ClientIntakeSection = components["schemas"]["ClientIntakeSectionResponse"];
+type IntakeSection = components["schemas"]["IntakeSectionResponse"];
 type ClientRecord = components["schemas"]["ClientRecordResponse"];
 
 const SectionChatInterface = ({
@@ -35,7 +35,7 @@ const SectionChatInterface = ({
   isActive,
   client,
 }: {
-  section: ClientIntakeSection;
+  section: IntakeSection;
   intakeId: string;
   isActive: boolean;
   client: ClientRecord;
@@ -45,9 +45,8 @@ const SectionChatInterface = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const accessToken = useAuth().getAccessToken();
 
-  const shouldFetchMessages =
-    isActive && section.completion_status !== "not_started";
-  const encodedSectionTitle = encodeURIComponent(section.intake_section.title);
+  const shouldFetchMessages = isActive && section.status !== "not_started";
+  const encodedSectionTitle = encodeURIComponent(section.title);
   const clientFullName = client?.full_name
     ? `${client.full_name.given_names} ${client.full_name.surname}`.trim()
     : "";
@@ -109,7 +108,7 @@ const SectionChatInterface = ({
     }
 
     // Rule 2: If intake is completed, remove "welcome back" if it's the last message
-    if (isWelcomeBackMessage && section.completion_status === "completed") {
+    if (isWelcomeBackMessage && section.status === "completed") {
       return false;
     }
 
@@ -119,7 +118,7 @@ const SectionChatInterface = ({
   if (!isActive) return null;
 
   const renderContent = () => {
-    if (section.completion_status === "not_started") {
+    if (section.status === "not_started") {
       return (
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center text-gray-500">

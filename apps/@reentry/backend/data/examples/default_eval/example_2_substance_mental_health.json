@@ -1,0 +1,81 @@
+{
+  "client_id": "eval_client_002",
+  "messages": [
+    {
+      "id": "msg-101",
+      "role": "assistant",
+      "content": "Hello Sarah, thank you for meeting with me today. I'm here to help you plan your next steps. How are you feeling today?",
+      "createdAt": "2025-01-20T14:00:00Z"
+    },
+    {
+      "id": "msg-102",
+      "role": "user",
+      "content": "I'm okay, a bit nervous honestly. This is a lot to figure out. I'm just trying to take it one day at a time like they taught me in the treatment program.",
+      "createdAt": "2025-01-20T14:01:00Z"
+    },
+    {
+      "id": "msg-103",
+      "role": "assistant",
+      "content": "That's a great approach. I understand you completed a substance use treatment program. Can you tell me about your recovery and what kind of support you have right now?",
+      "createdAt": "2025-01-20T14:02:00Z"
+    },
+    {
+      "id": "msg-104",
+      "role": "user",
+      "content": "Yeah, I finished the 90-day program last month. I was using meth pretty heavily for about three years before I got arrested. I've been clean for five months now. I go to NA meetings three times a week and I have a sponsor. It's been hard but I'm committed.",
+      "createdAt": "2025-01-20T14:04:00Z"
+    },
+    {
+      "id": "msg-105",
+      "role": "assistant",
+      "content": "That's really impressive progress. Five months is significant. How about your mental health? Are you working with a therapist or counselor?",
+      "createdAt": "2025-01-20T14:05:00Z"
+    },
+    {
+      "id": "msg-106",
+      "role": "user",
+      "content": "I've been diagnosed with depression and anxiety. I was seeing a therapist while I was in the program but I haven't found anyone on the outside yet. I'm on medication for it though, that helps some. I really need to find someone because I know my depression is a trigger for me to use.",
+      "createdAt": "2025-01-20T14:07:00Z"
+    },
+    {
+      "id": "msg-107",
+      "role": "assistant",
+      "content": "It's good that you recognize that connection. Continuing mental health treatment will be important. Let's talk about your living situation. Where are you staying now?",
+      "createdAt": "2025-01-20T14:08:00Z"
+    },
+    {
+      "id": "msg-108",
+      "role": "user",
+      "content": "I'm in a sober living house in Ballard. It's good, everyone there is in recovery. I share a room with one other woman. I can stay there as long as I need to, as long as I pay rent and stay clean. It's $800 a month.",
+      "createdAt": "2025-01-20T14:09:30Z"
+    },
+    {
+      "id": "msg-109",
+      "role": "assistant",
+      "content": "That sounds like a supportive environment. Are you currently employed or looking for work?",
+      "createdAt": "2025-01-20T14:10:00Z"
+    },
+    {
+      "id": "msg-110",
+      "role": "user",
+      "content": "I'm working part-time at a coffee shop, about 20 hours a week. I worked in retail and restaurants before. I need more hours though to pay rent and save up. My boss knows about my situation and she's been really supportive.",
+      "createdAt": "2025-01-20T14:11:30Z"
+    },
+    {
+      "id": "msg-111",
+      "role": "assistant",
+      "content": "It's wonderful that you have an understanding employer. What about family or other support systems?",
+      "createdAt": "2025-01-20T14:12:00Z"
+    },
+    {
+      "id": "msg-112",
+      "role": "user",
+      "content": "My relationship with my family is complicated. My parents are supportive but I hurt them a lot when I was using. I have a younger brother who I'm close with. My dad helps me with money sometimes when I'm short. I don't have kids thankfully - I couldn't have handled that responsibility when I was using.",
+      "createdAt": "2025-01-20T14:14:00Z"
+    }
+  ],
+  "summary": "### Personal Background\nSarah is a 34-year-old woman on probation for drug-related charges. She has completed a 90-day substance use treatment program and has been clean from methamphetamine for five months. She is committed to her recovery, attending NA meetings three times weekly and working with a sponsor. Sarah has a high school education and prior work experience in retail and food service.\n\n### Needs and Risks Overview\n- **Substance Use:** Five months clean from methamphetamine; completed 90-day treatment program; active in NA; high risk for relapse without continued support\n- **Mental Health:** Diagnosed with depression and anxiety; currently on medication; needs to establish outpatient therapy; recognizes mental health as relapse trigger\n- **Housing:** Currently in sober living environment ($800/month); supportive and recovery-focused; stable as long as employed\n- **Employment:** Part-time work (20 hours/week) at coffee shop; needs additional hours/income to sustain housing and basic needs; has supportive employer\n- **Family:** Repairing relationships with parents; close relationship with brother; receives some financial support from father\n- **Health:** Managing depression and anxiety with medication; physically healthy\n- **Financial:** Limited income from part-time work; occasional family support; minimal savings\n\n### Priority Needs\n- **Mental Health Treatment:** Immediate need to establish outpatient therapy to address depression and anxiety\n- **Substance Use Support:** Continue recovery support and NA participation; develop relapse prevention plan\n- **Employment:** Increase work hours or find full-time employment to achieve financial stability\n- **Financial Stability:** Develop budget and savings plan to maintain sober living housing",
+  "address": "Seattle Sober Living, Seattle, Washington",
+  "assessment_summary": "### Risk Assessment Summary\n\n**Overall Risk Level:** Moderate-High\n\n**Substance Use (Critical Priority):**\n- Five months clean from methamphetamine (significant progress)\n- Completed treatment program\n- Active in NA with sponsor (protective factor)\n- History of 3 years heavy use\n- Risk: High relapse risk without continued support and mental health treatment\n\n**Mental Health (High Priority):**\n- Diagnosed depression and anxiety\n- Currently on medication but no outpatient therapist\n- Client identifies mental health as relapse trigger\n- Risk: Untreated mental health issues increase relapse risk significantly\n\n**Employment/Financial (Moderate Priority):**\n- Part-time employment (20 hrs/week) insufficient for expenses\n- Needs $800/month for housing plus living expenses\n- Some family financial support\n- Risk: Financial stress could trigger relapse; housing instability\n\n**Housing (Strength with Contingency):**\n- Sober living environment (protective factor)\n- Supportive recovery-focused community\n- Contingent on maintaining sobriety and paying rent\n- Risk: Loss of housing if employment/sobriety not maintained\n\n**Social Support (Mixed):**\n- Strong recovery community through sober living and NA\n- Supportive employer\n- Repairing family relationships\n- Risk: Past relationships damaged by addiction",
+  "decision_tree_statements": "For the decision tree \"substance_abuse_treatment\", the recommendations are:\n- Continue participation in 12-step programs (NA)\n- Maintain regular contact with sponsor\n- Develop detailed relapse prevention plan\n- Consider intensive outpatient program (IOP) if available\n- Identify and avoid high-risk people, places, and situations\n\nFor the decision tree \"mental_health_services\", the recommendations are:\n- Immediate referral to outpatient mental health services\n- Prioritize providers with dual diagnosis expertise (substance use + mental health)\n- Ensure medication management is coordinated with therapy\n- Develop coping strategies for depression and anxiety\n- Create safety plan for mental health crises\n\nFor the decision tree \"employment_financial\", the recommendations are:\n- Explore full-time employment opportunities in food service/retail\n- Consider job training programs to increase earning potential\n- Connect with financial literacy resources\n- Develop budget that accounts for sober living expenses and recovery costs"
+}

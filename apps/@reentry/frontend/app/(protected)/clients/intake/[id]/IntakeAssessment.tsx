@@ -60,7 +60,6 @@ export default function IntakeAssessment({
     );
 
     if (intakeLoading) { return "Loading intake data..."; }
-
     return (
         <div className={`flex flex-1 flex-col justify-center gap-2.5 max-w-7xl w-full self-stretch bg-white p-6 md:p-9 rounded-[5px] border border-solid border-[#2b5469]/20`}>
             <div className="w-full  flex flex-col gap-4">

@@ -2,8 +2,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi import HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import AsyncSession
 from app.routes.intake_internal_router import (
     VerifyNonPseudoId,
     VerifyStateDocId,

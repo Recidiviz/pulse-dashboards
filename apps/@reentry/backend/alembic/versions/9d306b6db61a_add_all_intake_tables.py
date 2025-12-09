@@ -74,4 +74,8 @@ def downgrade() -> None:
     op.drop_table('clientintakesection')
     op.drop_table('intakesection')
     op.drop_table('intake')
+    # Drop enum types
+    op.execute('DROP TYPE IF EXISTS intake_message_role_enum')
+    op.execute('DROP TYPE IF EXISTS completion_status_enum')
+    op.execute('DROP TYPE IF EXISTS intake_status_enum')
     # ### end Alembic commands ###

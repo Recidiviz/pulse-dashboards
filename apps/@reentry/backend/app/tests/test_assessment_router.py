@@ -2,10 +2,11 @@ import uuid
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import AsyncSession
+from app.crud.intake import create_intake
 from app.models.assessment import Assessment
-from app.models.intake import Intake
+from app.models.base import IntakeType
 
 
 @pytest.mark.asyncio
@@ -14,16 +15,18 @@ async def test_get_assessment_by_id(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test retrieving an assessment by ID."""
     # Create test data
     client_pseudo_id = mock_clientdata_service[
         "client_pseudo_id"
     ]  # Using mock client ID from fixture
-    intake = Intake(client_pseudo_id=client_pseudo_id)
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
+    intake = await create_intake(
+        session=async_session,
+        client_pseudo_id=client_pseudo_id,
+        intake_type=IntakeType.CONVERSATION,
+    )
 
     assessment = Assessment(
         client_pseudo_id=client_pseudo_id,
@@ -70,16 +73,18 @@ async def test_get_client_assessments(
     async_session: AsyncSession,
     assert_response,
     mock_clientdata_service,
+    seed_configs,
 ):
     """Test retrieving all assessments for a client."""
     # Create test data with multiple assessments for a client
     client_pseudo_id = mock_clientdata_service[
         "client_pseudo_id"
     ]  # Using mock client ID from fixture
-    intake = Intake(client_pseudo_id=client_pseudo_id)
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
+    intake = await create_intake(
+        session=async_session,
+        client_pseudo_id=client_pseudo_id,
+        intake_type=IntakeType.CONVERSATION,
+    )
 
     # Create two assessments for the same client
     assessment1 = Assessment(

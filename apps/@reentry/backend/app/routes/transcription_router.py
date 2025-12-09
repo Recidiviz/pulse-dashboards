@@ -6,10 +6,9 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel, model_validator
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.auth_core import get_pseudonymized_id
-from app.core.db import get_session
+from app.core.db import AsyncSession, get_session
 from app.crud.recording_session import get_recording_session_by_id
 from app.models.intake import ClientAddress, Intake, IntakeStatus
 from app.models.recording import RecordingStatus

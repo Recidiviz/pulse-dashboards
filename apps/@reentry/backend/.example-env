@@ -54,20 +54,6 @@ PGADMIN_DEFAULT_PASSWORD=admin
 RECIDIVIZ_OPENAI_API_KEY=open-ai-apikey
 RECIDIVIZ_ANTHROPIC_API_KEY=
 
-# Optional, if you want to override the default models
-
-# RECIDIVIZ_DT_MODEL_PROVIDER=openai
-# RECIDIVIZ_DT_MODEL_NAME=gpt-4o-mini
-# RECIDIVIZ_DT_MODEL_VERSION=""
-
-# RECIDIVIZ_GEN_MODEL_PROVIDER=openai
-# RECIDIVIZ_GEN_MODEL_NAME=gpt-4o
-# RECIDIVIZ_GEN_MODEL_VERSION=""
-
-# RECIDIVIZ_EVAL_MODEL_PROVIDER=openai
-# RECIDIVIZ_EVAL_MODEL_NAME=gpt-4o
-# RECIDIVIZ_EVAL_MODEL_VERSION=""
-
 # ----------------------------------------------- #
 # LLM traces
 # ----------------------------------------------- #

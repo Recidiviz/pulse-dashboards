@@ -25,7 +25,7 @@ from app.crud.recording_session import (
     get_recording_sessions_by_client_pseudo_id,
     update_status,
 )
-from app.models.intake import IntakeType
+from app.models.base import IntakeType
 from app.models.recording import RecordingChunk, RecordingSession, RecordingStatus
 from app.routes.recording_session_models import (
     CreateRecordingSessionRequest,

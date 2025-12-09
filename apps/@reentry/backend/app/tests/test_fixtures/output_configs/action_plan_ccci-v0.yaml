@@ -1,0 +1,43 @@
+metadata:
+  code: action_plan_ccci
+  output_type: action_plan
+  version: 0
+  display_name: "CCCI Action Plan"
+
+model:
+  provider: openai
+  name: gpt-4o
+  version: "2024-11-20"
+
+small_model:
+  provider: openai
+  name: gpt-4o-mini
+  version: "2024-07-18"
+
+prompts:
+  system: "test"
+  data_template: "test"
+  section_generation_with_resources: "test"
+  section_generation_without_resources: "test"
+  section_annotations: "test"
+  section_refinement: "test"
+  reflexion_initial: "test"
+  reflexion_with_previous_sections: "test"
+  area_of_needs: "test"
+  resources_options: "test"
+  timeline_generation: "test"
+  timeline_format: "test"
+  milestones_generation: "test"
+  milestones_refinement: "test"
+  milestones_format: "test"
+  action_plan_generation: "test"
+  # Edit-specific prompts
+  edit_section_selection: "test"
+  edit_section_change: "test"
+  edit_timeline: "test"
+  edit_milestones: "test"
+  edit_action_plan_generation: "test"
+
+structure:
+  timeline: false
+  milestones: false

@@ -20,7 +20,7 @@ from app.crud.plan_decision_tree import get_plan_decision_tree_by_plan_id
 from app.crud.plan_generation import PlanGeneration, create_plan_generation
 from app.utils.intake_summary_runner import generate_summary
 
-from ..models.intake import IntakeType
+from ..models.base import IntakeType
 from ..utils.transcription.transcription_messages import (
     get_transcription_messages_from_gcp,
 )
@@ -127,7 +127,6 @@ async def fetch_assets(
     # Fetch assessments related to this intake
     task_logger.info("Fetching assessments for intake")
     assessments = await get_assessments_by_intake_id(session, intake_id=intake.id)
-    task_logger.info(f"Assessments query result: {assessments}")
 
     # If no assessments found by intake_id, try by client_pseudo_id as fallback
     if not assessments:
@@ -180,8 +179,14 @@ async def fetch_assets(
     existing_summary_asset = await get_asset_by_filename(session, plan.id, "summary.md")
     if not existing_summary_asset or not existing_summary_asset.file_blob:
         task_logger.info("Generating new summary")
+        from app.utils.config_loader import ConfigLoader
+
+        assessment_config = await ConfigLoader.load_summary_config(
+            intake.assessment_config_id, session
+        )
+
         summary, assessment = await generate_summary(
-            formatted_messages, assessments or []
+            formatted_messages, assessments or [], assessment_config
         )
         task_logger.debug("Generated summary", summary=summary)
     else:
@@ -290,7 +295,6 @@ async def plan_create(
     progress: ProgressTracker[int],
     session: AsyncSession,
     task_logger: structlog.BoundLogger,
-    include_decision_tree: bool = True,
 ):
     task_logger.info("Create the initial plan")
     await execution.log_progress(session, 1, "Fetching plan", logger=task_logger)
@@ -305,16 +309,36 @@ async def plan_create(
     await execution.log_progress(session, 10, "Fetching assets", logger=task_logger)
     await fetch_assets(session=session, plan=plan, task_logger=task_logger)
 
-    # select decision trees
-    if include_decision_tree:
-        await execution.log_progress(
-            session, 20, "Selecting decision trees", logger=task_logger
+    # Check if plan config exists - if not, we only do assessment (no action plan generation)
+    from app.utils.config_loader import ConfigLoader
+
+    intake = await get_intake_by_client_pseudo_id(
+        session, client_pseudo_id=plan.client_pseudo_id
+    )
+    if not intake:
+        raise ValueError(
+            f"No intake found for client_pseudo_id {plan.client_pseudo_id}"
         )
-        await select_decision_trees(
-            session=session,
-            plan=plan,
-            task_logger=task_logger,
+
+    plan_config = await ConfigLoader.load_plan_config(
+        intake.assessment_config_id, session
+    )
+
+    if not plan_config:
+        task_logger.info(
+            "No plan config found for assessment - skipping decision trees and plan generation"
         )
+        task_logger.info("Assessment-only workflow completed!")
+        return
+
+    await execution.log_progress(
+        session, 20, "Selecting decision trees", logger=task_logger
+    )
+    await select_decision_trees(
+        session=session,
+        plan=plan,
+        task_logger=task_logger,
+    )
 
     # execute all selected decision trees
     plan_decision_trees = await get_plan_decision_tree_by_plan_id(

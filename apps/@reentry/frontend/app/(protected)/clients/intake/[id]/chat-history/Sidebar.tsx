@@ -19,13 +19,13 @@ import type { FC } from "react";
 
 import type { components } from "~@reentry/openapi-types";
 
-type ClientIntakeSection = components["schemas"]["ClientIntakeSectionResponse"];
+type IntakeSection = components["schemas"]["IntakeSectionResponse"];
 
 interface SidebarProps {
   onClose: () => void;
   onSectionSelect: (sectionId: string) => void;
-  intakeData: ClientIntakeSection[];
-  activeSectionId?: string | null;
+  intakeSections: IntakeSection[];
+  activeSection?: string | null;
 }
 
 type StepStatus = "completed" | "in_progress" | "not_started";
@@ -35,7 +35,6 @@ interface StepIndicatorProps {
   hasNext: boolean;
   text: string;
   description: string;
-  sectionId: string;
   isClickable: boolean;
   isActive: boolean;
   onClick?: () => void;
@@ -44,8 +43,8 @@ interface StepIndicatorProps {
 const Sidebar: FC<SidebarProps> = ({
   onClose,
   onSectionSelect,
-  intakeData,
-  activeSectionId,
+  intakeSections,
+  activeSection,
 }) => {
   const StepIndicator: FC<StepIndicatorProps> = ({
     status,
@@ -187,32 +186,25 @@ const Sidebar: FC<SidebarProps> = ({
       </div>
 
       <div className="p-2">
-        {intakeData.map((section, index) => {
-          const status: StepStatus =
-            // eslint-disable-next-line no-nested-ternary
-            section.completion_status === "completed"
-              ? "completed"
-              : section.completion_status === "in_progress"
-                ? "in_progress"
-                : "not_started";
+        {intakeSections.map((section, index) => {
+          const status: StepStatus = section.status;
 
-          const hasNext = index < intakeData.length - 1;
+          const hasNext = index < intakeSections.length - 1;
           const isClickable =
             status === "completed" || status === "in_progress";
-          const isActive = section.id === activeSectionId;
+          const isActive = section.title === activeSection;
 
           return (
             <StepIndicator
-              key={section.id}
-              sectionId={section.id}
+              key={section.title}
               status={status}
               hasNext={hasNext}
-              text={section.intake_section.title}
-              description={section.intake_section.description}
+              text={section.title}
+              description={section.description}
               isClickable={isClickable}
               isActive={isActive}
               onClick={() => {
-                if (isClickable) onSectionSelect(section.id);
+                if (isClickable) onSectionSelect(section.title);
               }}
             />
           );

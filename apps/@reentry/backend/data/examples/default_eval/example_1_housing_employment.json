@@ -1,0 +1,69 @@
+{
+  "client_id": "eval_client_001",
+  "messages": [
+    {
+      "id": "msg-001",
+      "role": "assistant",
+      "content": "Hi Marcus, I'm here to help you through the reentry process. Can you start by telling me a bit about your current living situation?",
+      "createdAt": "2025-01-15T10:00:00Z"
+    },
+    {
+      "id": "msg-002",
+      "role": "user",
+      "content": "Hey. I'm staying at my mom's place right now, been there for two weeks since I got out. It's a small apartment, just one bedroom, so I'm on the couch. She's been great but it's cramped with her and my little sister there too.",
+      "createdAt": "2025-01-15T10:01:30Z"
+    },
+    {
+      "id": "msg-003",
+      "role": "assistant",
+      "content": "I appreciate you sharing that. It sounds like you have family support, which is valuable. How long do you think you can stay there, and are you looking for your own place?",
+      "createdAt": "2025-01-15T10:02:00Z"
+    },
+    {
+      "id": "msg-004",
+      "role": "user",
+      "content": "Yeah, I need my own place soon. My mom says I can stay a few months but I don't want to burden her. Problem is I don't have income right now and most places won't rent to me with my record.",
+      "createdAt": "2025-01-15T10:03:15Z"
+    },
+    {
+      "id": "msg-005",
+      "role": "assistant",
+      "content": "That's a common challenge, and we'll work on that together. Let's talk about employment. What kind of work have you done before, and what are you interested in doing now?",
+      "createdAt": "2025-01-15T10:04:00Z"
+    },
+    {
+      "id": "msg-006",
+      "role": "user",
+      "content": "I worked construction before, mostly framing and drywall. I was pretty good at it. I'd like to get back into that if I can. I got my high school diploma while I was inside, so that's something.",
+      "createdAt": "2025-01-15T10:05:30Z"
+    },
+    {
+      "id": "msg-007",
+      "role": "assistant",
+      "content": "That's great that you completed your diploma. Construction skills are in demand. Do you have reliable transportation to get to job sites?",
+      "createdAt": "2025-01-15T10:06:00Z"
+    },
+    {
+      "id": "msg-008",
+      "role": "user",
+      "content": "Not really. I don't have a car and my license got suspended. My mom can drop me off sometimes but she works too. I been using the bus when I can.",
+      "createdAt": "2025-01-15T10:07:15Z"
+    },
+    {
+      "id": "msg-009",
+      "role": "assistant",
+      "content": "Transportation is something we can address. Let's talk about your health. Any physical or mental health concerns we should be aware of?",
+      "createdAt": "2025-01-15T10:08:00Z"
+    },
+    {
+      "id": "msg-010",
+      "role": "user",
+      "content": "I'm healthy, no major issues. Sometimes I get anxious about finding work and getting my life together, but nothing I can't handle.",
+      "createdAt": "2025-01-15T10:09:00Z"
+    }
+  ],
+  "summary": "### Personal Background\nMarcus is a 26-year-old man recently released from a two-year sentence for theft. He is motivated to rebuild his life and has family support from his mother and younger sister. While incarcerated, he earned his high school diploma, demonstrating commitment to self-improvement.\n\n### Needs and Risks Overview\n- **Housing:** Currently temporarily housed with mother in a one-bedroom apartment (on couch); needs independent housing within a few months\n- **Employment:** Experienced in construction (framing, drywall); currently unemployed; highly motivated to work\n- **Education:** Recently completed high school diploma while incarcerated; no immediate educational needs\n- **Transportation:** No vehicle; suspended driver's license; relies on public transit and occasional family help\n- **Health:** Physically healthy; reports mild anxiety related to reentry stress\n- **Financial:** No current income; no savings; will need assistance with housing deposits and work supplies\n- **Family:** Supportive relationship with mother and sister; no children\n\n### Priority Needs\n- **Employment:** Immediate need for stable employment in construction or related field\n- **Housing:** Secure stable, independent housing within 2-3 months\n- **Transportation:** Address license suspension and develop reliable transportation plan\n- **Financial:** Build initial savings and access emergency assistance for housing costs",
+  "address": "Seattle, Washington",
+  "assessment_summary": "### Risk Assessment Summary\n\n**Overall Risk Level:** Low-Moderate\n\n**Employment/Financial (High Priority):**\n- Currently unemployed with no income\n- Has work history and skills in construction trades\n- Motivated to work but faces barriers (transportation, background)\n- Risk: Financial instability could lead to housing loss and recidivism\n\n**Housing (High Priority):**\n- Temporary housing situation with 2-3 month timeline\n- Family support present but limited space\n- No current rental history or deposits available\n- Risk: Homelessness if stable housing not secured soon\n\n**Transportation (Moderate Priority):**\n- Suspended license limits employment options\n- Currently relies on family and public transit\n- Risk: Transportation barriers may prevent employment stability\n\n**Social Support (Strength):**\n- Strong family support from mother\n- Positive relationship with sister\n- No negative peer associations reported",
+  "decision_tree_statements": "For the decision tree \"housing_stability\", the recommendations are:\n- Connect with transitional housing programs that accept individuals with criminal records\n- Provide information on rental assistance programs and security deposit support\n- Explore sober living or supportive housing options if needed\n\nFor the decision tree \"employment_readiness\", the recommendations are:\n- Refer to construction job training and placement programs\n- Connect with employers who hire individuals with criminal records\n- Provide resume building and interview preparation support\n- Address transportation barriers before job placement\n\nFor the decision tree \"transportation_access\", the recommendations are:\n- Investigate driver's license reinstatement process and requirements\n- Provide information on discounted public transit passes\n- Connect with ride-sharing or carpool programs for work commutes"
+}

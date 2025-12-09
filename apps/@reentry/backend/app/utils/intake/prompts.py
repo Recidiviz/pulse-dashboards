@@ -1,84 +1,48 @@
 from typing import List, Optional
 
-from langchain_core.messages import SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel, Field
 
+from app.core.data_config.assessment_configs.assessment_config import (
+    IntakeConfigConversation,
+)
 from app.utils.intake.schemas import ClientContext
 
-ROLE = """
-Role: You are a social worker conducting a structured intake assessment with a new client who is currently in a prison facility and preparing for their release.
-"""
 
-TONE = """
-Tone: Warm, trauma-informed, and professional. Use plain language that is understandable at a 4th-grade reading level.
-"""
-
-
-def get_system_message_prompt() -> SystemMessage:
-    return SystemMessage("""Guidelines for all your responses:
-
-    1. TONE:
-    - Be warm, empathetic, and trauma-informed while maintaining professionalism
-    - If client seems disengaged or gives minimal answers, show patience and understanding
-    - Acknowledge their feelings and validate their experiences
-    - Use phrases like "I understand," "That makes sense," "Thank you for sharing"
-    - Stay objective but show genuine care for their situation
-
-    2. RESPONSE STRUCTURE:
-    - Start with a brief, warm acknowledgment that shows you heard them
-    - Follow with a logically connected question
-    - For minimal responses: acknowledge briefly, then ask ONE follow-up
-    - For emotional responses: validate their feelings first, then transition gently
-
-    3. QUESTION APPROACH:
-    - If missing areas are specified, prioritize those
-    - NEVER repeat the same topic/question - check what you've already covered
-    - If client gives short answers, ask for ONE specific detail, not the whole topic again
-    - Keep focus on assessment but show you care about their wellbeing
-
-    4. CLIENT ADAPTATION:
-    - If client seems overwhelmed: slow down, be more supportive
-    - If client is brief: accept their level of sharing, don't push repeatedly
-    - If client shares something difficult: acknowledge it with empathy
-    - If client seems confused: clarify gently, consider if they need different support
-
-    5. FORMAT:
-    - Combine acknowledgment and question naturally
-    - Single, flowing response that feels conversational
-    - Aim for responses that make them feel heard and respected
-
-    6. NAVIGATION RULES:
-    - If the client asks to go back to a previous section, politely decline: "We can't go back to previous sections, but if you'd like to add anything about that topic, feel free to share it now!"
-    - Then continue with the current section's questions
-    - Do NOT allow jumping between sections
-    """)
+def get_system_message_prompt(
+    assessment_config: IntakeConfigConversation,
+) -> SystemMessage:
+    # Use system_message from assessment config if available
+    return SystemMessage(assessment_config.prompts.system_message)
 
 
 def generate_opening_remarks_prompt(
-    client_data: ClientContext, sections: List[str]
-) -> SystemMessage:
+    client_data: ClientContext,
+    sections: List[str],
+    assessment_config: IntakeConfigConversation,
+) -> HumanMessage:
     """Generate a structured AI-assisted prompt for the first message to the client, using their details and dynamic sections."""
     client_name = client_data.client_name if client_data else "User"
 
+    role = assessment_config.prompts.role
+    tone = assessment_config.prompts.tone
+
+    opening_remarks = assessment_config.prompts.opening_remarks
+
     system_message = f"""
-    {ROLE}
+    {role}
 
     Client's name: {client_name}
 
     List of titles of the different sections that will covered, each on a new line:
     {"\n".join(sections)}
 
-    Your Task:
-    - Generate a warm and professional welcome message for the client
-    - You do not need to ask a question in this message, just provide a welcome message.
-    - Start with a greeting: "Hi {client_name}, thanks for joining."
-    - Briefly explain the purpose of the conversation.
-    - Clearly list the key areas that will be covered in the intake.
+    {opening_remarks}
 
-    {TONE}
+    {tone}
     """
 
-    return SystemMessage(system_message)
+    return HumanMessage(system_message)
 
 
 class IsSectionComplete(BaseModel):
@@ -105,9 +69,14 @@ class IsSectionComplete(BaseModel):
 def generate_question_prompt(
     current_section_title: str,
     current_section_required_information: str,
+    assessment_config: IntakeConfigConversation,
 ) -> SystemMessage:
+    # Extract role and tone from assessment config if available
+    role = assessment_config.prompts.role
+    tone = assessment_config.prompts.tone
+
     initial_system_context = f"""
-{ROLE}
+{role}
 
 Section: {current_section_title}
 
@@ -132,7 +101,7 @@ Instructions:
 
 6. Never reference real world people or places.
 
-{TONE}
+{tone}
 """
 
     return SystemMessage(initial_system_context)

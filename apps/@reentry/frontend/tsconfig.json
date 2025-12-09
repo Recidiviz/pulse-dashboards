@@ -2,7 +2,12 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES6",
-    "lib": ["dom", "dom.iterable", "esnext", "ES2018"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "ES2018"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -29,8 +34,11 @@
     "../../../dist/apps/@reentry/frontend/types/**/*.ts",
     "../../../dist/apps/@reentry/frontend/.next/types/**/*.ts",
     "../../../libs/jii-assessment/src/components/intake/EndChatModal.tsx",
-    "../../../libs/jii-assessment/src/components/modals/BaseModal.tsx"
+    "../../../libs/jii-assessment/src/components/modals/BaseModal.tsx",
+    "../dist/apps/@reentry/frontend/.next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules"
+  ],
   "noUncheckedIndexedAccess": true
 }

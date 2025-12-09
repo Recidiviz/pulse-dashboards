@@ -169,9 +169,9 @@ export const Sidebar: FC<SidebarProps> = ({ onClose }) => {
       <div className="overflow-y-auto p-2">
         {allSections?.map((section, index) => {
           let status: StepStatus = "not_started";
-          if (section.completion_status === "completed") {
+          if (section.status === "completed") {
             status = "completed";
-          } else if (section.completion_status === "in_progress") {
+          } else if (section.status === "in_progress") {
             status = "in_progress";
           }
 
@@ -179,11 +179,11 @@ export const Sidebar: FC<SidebarProps> = ({ onClose }) => {
 
           return (
             <StepIndicator
-              key={section.intake_section.title}
+              key={section.title}
               status={status}
               hasNext={hasNext}
-              text={section.intake_section.title}
-              description={section.intake_section.description}
+              text={section.title}
+              description={section.description}
             />
           );
         })}

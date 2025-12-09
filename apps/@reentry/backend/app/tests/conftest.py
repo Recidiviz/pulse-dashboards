@@ -2,9 +2,13 @@ import os
 from pathlib import Path
 from unittest.mock import MagicMock
 
+from app.utils.string_utils import normalize_code
+
 # Set environment variable BEFORE any imports that might use settings
 os.environ["RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE"] = "false"
 os.environ["RECIDIVIZ_LANGCHAIN_TRACING_V2"] = "false"
+# Use fakeredis for tests to avoid connecting to real Redis
+os.environ["RECIDIVIZ_REDIS_URL"] = "redis://fakeredis:6379"
 
 import pytest
 import pytest_asyncio
@@ -14,7 +18,6 @@ from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.db import engine
-from app.manage.intake import seed_sections_selective
 from app.utils import permission_utils
 from main import app as fastapi_app
 
@@ -235,11 +238,6 @@ async def seed_decision_trees(async_session):
         await import_decision_tree_db(session=async_session, filepath=filepath)
 
 
-@pytest_asyncio.fixture(scope="function")
-async def seed_intake_sections(async_session):
-    await seed_sections_selective(async_session)
-
-
 @pytest.fixture(scope="session", autouse=True)
 def mock_bigquery():
     """Mock BigQuery client globally for all tests"""
@@ -263,20 +261,29 @@ def mock_bigquery():
 def mock_client_data():
     """Mock data for client service"""
     from app.tests.test_fixtures.client_examples import (
+        create_alice_williams,
         create_case_manager,
         create_jane_smith,
         create_john_doe,
+        create_robert_johnson,
     )
 
     # Get standardized client and staff records
     client1 = create_john_doe()
     client2 = create_jane_smith()
+    client3 = create_robert_johnson()
+    client4 = create_alice_williams()
     staff = create_case_manager()
 
     return {
-        "clients": [client1, client2],
+        "clients": [client1, client2, client3, client4],
         "staff": staff,
-        "clients_by_pseudo_id": {"client-001ps": client1, "client-002ps": client2},
+        "clients_by_pseudo_id": {
+            "client-001ps": client1,
+            "client-002ps": client2,
+            "client-003ps": client3,
+            "client-004ps": client4,
+        },
         "client_pseudo_id": "client-001ps",
     }
 
@@ -336,3 +343,171 @@ def mock_clientdata_service(monkeypatch, mock_client_data):
     )
 
     return mock_client_data
+
+
+@pytest_asyncio.fixture
+async def mock_intake(async_session: AsyncSession, mock_client_data, seed_configs):
+    """Create a completed intake for the default test client with an assessment config"""
+    from app.models.intake import Intake, IntakeStatus
+
+    # Get the assessment config for US_UT CCCI (which includes both summary and plan configs)
+    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+
+    intake = Intake(
+        client_pseudo_id=mock_client_data["client_pseudo_id"],
+        status=IntakeStatus.COMPLETED,
+        assessment_config_id=assessment_config_id,
+    )
+    async_session.add(intake)
+    await async_session.commit()
+    await async_session.refresh(intake)
+
+    return intake
+
+
+@pytest_asyncio.fixture
+async def mock_intake_summary_only(
+    async_session: AsyncSession, mock_client_data, seed_configs
+):
+    """Create a completed intake with assessment config that has only intake summary (no action plan config)"""
+    from app.models.base import IntakeType
+    from app.models.intake import Intake, IntakeStatus
+
+    # Get the assessment config for US_IX FACR (which has only intake summary, no action plan config)
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
+
+    intake = Intake(
+        client_pseudo_id=mock_client_data["client_pseudo_id"],
+        status=IntakeStatus.COMPLETED,
+        assessment_config_id=assessment_config_id,
+        intake_type=IntakeType.TRANSCRIPTION,  # Set intake type to match config
+    )
+    async_session.add(intake)
+    await async_session.commit()
+    await async_session.refresh(intake)
+
+    return intake
+
+
+@pytest_asyncio.fixture
+async def seed_configs(async_session: AsyncSession):
+    """Load test fixture configs and save them to the test database.
+
+    Tests do not run alembic migrations - they start with empty tables. This fixture
+    populates the assessmentconfig and outputconfig tables with test data.
+
+    IMPORTANT: Deactivates any existing active configs for the same (state_code, code)
+    before marking new configs as active. This ensures only one active config per state.
+
+    Returns a dict with mappings:
+    - assessments: dict[(state_code, code, version)] -> UUID
+    - outputs: dict[(code, version)] -> UUID
+    - assessments_by_state: dict[state_code] -> AssessmentConfig (for convenience in tests)
+    - assessment_files: dict[(state_code, code, version)] -> AssessmentConfigFile (validated)
+    - assessment_files_by_state: dict[state_code] -> AssessmentConfigFile (validated, for convenience in tests)
+    """
+    from pathlib import Path
+
+    from sqlmodel import select
+
+    from app.core.data_config.assessment_configs.loader import AssessmentFileLoader
+    from app.core.data_config.output_configs.loader import OutputFileLoader
+    from app.models.assessment_config import AssessmentConfig
+    from app.models.output_config import OutputConfig
+
+    fixtures_dir = Path(__file__).parent / "test_fixtures"
+    assessment_fixtures_dir = fixtures_dir / "assessment_configs"
+    output_fixtures_dir = fixtures_dir / "output_configs"
+
+    assessments = {}
+    assessments_by_state = {}
+    assessment_files = {}
+    assessment_files_by_state = {}
+    outputs = {}
+
+    # Load and save all output configs first (assessments reference them)
+    for yaml_file in output_fixtures_dir.glob("*.yaml"):
+        yaml_content = yaml_file.read_text()
+        # Validate using OutputFileLoader
+        validated = OutputFileLoader.validate_yaml_content(yaml_content)
+
+        # Create database model
+        output_config = OutputConfig(
+            output_type=validated.metadata.output_type,
+            code=normalize_code(validated.metadata.code),
+            version=validated.metadata.version,
+            display_name=validated.metadata.display_name,
+            description=validated.metadata.description
+            if hasattr(validated.metadata, "description")
+            else None,
+            config_yaml=yaml_content,
+            is_active=True,
+        )
+        async_session.add(output_config)
+        await async_session.commit()
+        await async_session.refresh(output_config)
+
+        # Store mapping
+        key = (validated.metadata.code, validated.metadata.version)
+        outputs[key] = output_config.id
+
+    # Load and save all assessment configs
+    for yaml_file in assessment_fixtures_dir.glob("*.yaml"):
+        yaml_content = yaml_file.read_text()
+
+        # Validate using AssessmentFileLoader
+        validated = AssessmentFileLoader.validate_yaml_content(yaml_content)
+
+        # IMPORTANT: Deactivate any existing active configs for this (state_code, code)
+        # This ensures only one active config per state
+        existing_query = select(AssessmentConfig).where(
+            AssessmentConfig.state_code == validated.metadata.state_code,
+            AssessmentConfig.code == validated.metadata.code,
+            AssessmentConfig.is_active,
+        )
+        result = await async_session.exec(existing_query)
+        existing_active = result.all()
+
+        for existing_config in existing_active:
+            existing_config.is_active = False
+            async_session.add(existing_config)
+
+        if existing_active:
+            await async_session.commit()
+
+        # Create database model (marked as active)
+        assessment_config = AssessmentConfig(
+            state_code=validated.metadata.state_code,
+            code=validated.metadata.code,
+            version=validated.metadata.version,
+            display_name=validated.metadata.display_name,
+            description=validated.metadata.description
+            if hasattr(validated.metadata, "description")
+            else None,
+            config_yaml=yaml_content,
+            is_active=True,
+        )
+        async_session.add(assessment_config)
+        await async_session.commit()
+        await async_session.refresh(assessment_config)
+
+        # Store mapping
+        key = (
+            validated.metadata.state_code,
+            validated.metadata.code,
+            validated.metadata.version,
+        )
+        assessments[key] = assessment_config.id
+        assessment_files[key] = validated
+
+        # Also store by state code for convenience (one config per state for test fixtures)
+        assessments_by_state[validated.metadata.state_code] = assessment_config
+        assessment_files_by_state[validated.metadata.state_code] = validated
+
+    return {
+        "assessments": assessments,
+        "outputs": outputs,
+        "assessments_by_state": assessments_by_state,
+        "assessment_files": assessment_files,
+        "assessment_files_by_state": assessment_files_by_state,
+    }

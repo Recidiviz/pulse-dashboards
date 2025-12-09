@@ -87,7 +87,7 @@ const DashboardLayout: React.FC = () => {
     !(
       DASHBOARD_TENANTS.includes(currentTenantId) &&
       ALL_DASHBOARD_VIEWS.includes(currentView) &&
-      dashboardAllowedPaths.includes(getPathWithoutParams(pathname)) 
+      dashboardAllowedPaths.includes(getPathWithoutParams(pathname))
     )
   ) {
     return <NotFound />;

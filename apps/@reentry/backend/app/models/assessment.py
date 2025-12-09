@@ -1,4 +1,3 @@
-from enum import StrEnum
 from typing import Optional
 from uuid import UUID
 
@@ -16,12 +15,6 @@ from .execution import Execution, ExecutionStatus
 from .intake import Intake
 
 logger = structlog.get_logger(__name__)
-
-
-class AssessmentType(StrEnum):
-    LSIR = "lsir"
-    ORAS_PIT = "oras_pit"
-    ORAS_RT = "oras_rt"
 
 
 class Assessment(BaseModel, table=True):

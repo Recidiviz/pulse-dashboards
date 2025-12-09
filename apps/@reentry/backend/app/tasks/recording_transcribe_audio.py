@@ -13,6 +13,7 @@ from app.models.recording import RecordingSession
 from app.services.recording_service import RecordingService
 from app.tasks.scheduler import Execution
 from app.tasks.transcribe_audio_with_deepgram import deepgram_transcription_diarization
+from app.utils.config_loader import ConfigLoader
 from app.utils.transcription.post_processing import (
     DeepgramTranscriptionInput,
     GCPTranscriptionInput,
@@ -75,6 +76,9 @@ async def transcribe_audio(
     await execution.log_progress(
         session, 40, "Starting audio transcription.", logger=task_logger
     )
+    config = await ConfigLoader.load_assessment_config(
+        recording_session.intake.assessment_config_id, session
+    )
 
     try:
         TRANSCRIPTION_SERVICES = {
@@ -114,6 +118,7 @@ async def transcribe_audio(
         processor = TranscriptionProcessor(
             transcription=transcription_input,
             diarization_service=settings.DIARIZATION_SERVICE,
+            model_config=config.intake.scoring_model,
         )
         transcription_result = await processor.convert_transcript_to_conversation()
         await execution.log_progress(

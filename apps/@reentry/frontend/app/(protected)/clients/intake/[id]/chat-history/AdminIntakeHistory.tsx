@@ -28,7 +28,7 @@ import type { components } from "~@reentry/openapi-types";
 
 type ClientRecord = components["schemas"]["ClientRecordResponse"];
 type Intake = components["schemas"]["IntakeWithSectionsResponse"];
-type ClientIntakeSection = components["schemas"]["ClientIntakeSectionResponse"];
+type IntakeSection = components["schemas"]["IntakeSectionResponse"];
 
 const AdminIntakeHistory = ({
   clientRecord,
@@ -37,22 +37,23 @@ const AdminIntakeHistory = ({
   clientRecord: ClientRecord;
   intake: Intake;
 }) => {
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const { trackClientIntakeChatHistoryViewed } = useAnalytics();
-  const [currentSectionId, setCurrentSectionId] = useState<string | null>(null);
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [containerHeight, setContainerHeight] = useState<number | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (intake?.client_intake_sections?.length && !currentSectionId) {
-      const defaultSectionId = intake.client_intake_sections[0].id;
+    if (intake?.intake_sections?.length && !activeSection) {
+      const activeSection = intake.intake_sections[0].title;
+      setActiveSection(activeSection);
       trackClientIntakeChatHistoryViewed({
         justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,
-        section: defaultSectionId,
+        section: activeSection,
       });
-      setCurrentSectionId(defaultSectionId);
     }
-  }, [intake, currentSectionId]);
+  }, [intake, activeSection]);
 
   useEffect(() => {
     if (sidebarRef.current && sidebarOpen) {
@@ -82,9 +83,9 @@ const AdminIntakeHistory = ({
     }
 
     return;
-  }, [sidebarOpen, intake?.client_intake_sections]);
+  }, [sidebarOpen, intake?.intake_sections]);
 
-  const sections: ClientIntakeSection[] = intake.client_intake_sections || [];
+  const sections: IntakeSection[] = intake.intake_sections || [];
 
   return (
     <div
@@ -96,15 +97,15 @@ const AdminIntakeHistory = ({
         <div className="flex-none" ref={sidebarRef}>
           <Sidebar
             onClose={() => setSidebarOpen(!sidebarOpen)}
-            activeSectionId={currentSectionId}
-            onSectionSelect={(sectionId) => {
+            activeSection={activeSection}
+            onSectionSelect={(sectionTitle) => {
               trackClientIntakeChatHistoryViewed({
                 justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,
-                section: sectionId,
+                section: sectionTitle,
               });
-              setCurrentSectionId(sectionId);
+              setActiveSection(sectionTitle);
             }}
-            intakeData={sections}
+            intakeSections={sections}
           />
         </div>
       ) : (
@@ -122,15 +123,15 @@ const AdminIntakeHistory = ({
 
       {/* Chat Panel */}
       <div className="pl-4 flex-col flex-1 min-h-0 transition-all duration-300">
-        {currentSectionId ? (
+        {activeSection ? (
           sections
-            .filter((section) => section.id === currentSectionId)
+            .filter((section) => section.title === activeSection)
             .map((section) => (
-              <div key={section.id} className="flex flex-col h-full min-h-0">
+              <div key={section.title} className="flex flex-col h-full min-h-0">
                 <div className="flex items-center pb-4 border-b flex-shrink-0">
                   <h2 className="text-lg font-medium">
-                    {section.intake_section.title}
-                    <StatusPill status={section.completion_status} />
+                    {section.title}
+                    <StatusPill status={section.status} />
                   </h2>
                 </div>
                 <div className="flex-1 min-h-0 overflow-hidden">

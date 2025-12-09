@@ -51,24 +51,15 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       currentSection,
     },
   } = useSocket();
+  const totalSections = allSections?.length ?? 0;
+  const completedSections =
+    allSections?.filter((section) => section.status === "completed").length ??
+    0;
 
-  const completedSections = allSections?.filter(
-    (section) => section.completion_status === "completed",
-  ).length;
-  const totalSections = allSections?.length;
   const progressText = `${completedSections}/${totalSections}`;
 
   const progressPercentage =
     totalSections > 0 ? (completedSections / totalSections) * 100 : 0;
-
-  const currentSectionIndex = allSections?.findIndex(
-    (section) => section.completion_status === "in_progress",
-  );
-
-  const currentSectionTitle =
-    currentSectionIndex !== -1
-      ? allSections?.[currentSectionIndex].intake_section.title
-      : allSections?.[0]?.intake_section.title || "Intake";
 
   return (
     <>
@@ -198,7 +189,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                   }}
                   className="leading-[120%] tracking-[-0.01em] text-[#000000]"
                 >
-                  {currentSectionTitle}
+                  {currentSection}
                 </Typography>
               </div>
             </div>

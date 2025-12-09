@@ -21,14 +21,16 @@ import inquirer from "inquirer";
 
 // Jobs
 const JOBS = {
-  "force-db": {
-    name: "force-db", // same as the entrypoint file eg "entrypoints/entrypoint.force-db.sh"
-    description: "Empty and recreate the database",
+  "force-reset-db": {
+    name: "force-reset-db",
+    description:
+      "Force reset DB by dropping all tables/types, running migrations, and seeding",
     environments: ["demo", "dev"], // environments where this job is applicable
   },
-  seed: {
-    name: "seed",
-    description: "Seed database with initial data",
+  "reset-db": {
+    name: "reset-db",
+    description:
+      "Reset database by downgrading to base then upgrading to head and seeding",
     environments: ["demo"], // environments where this job is applicable
   },
   requeue: {

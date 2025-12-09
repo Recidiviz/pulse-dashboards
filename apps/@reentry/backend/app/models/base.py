@@ -1,7 +1,22 @@
 from datetime import datetime
+from enum import StrEnum
 from uuid import UUID, uuid4
 
 from sqlmodel import Field, SQLModel
+
+
+class AssessmentType(StrEnum):
+    """Shared enum to avoid circular imports between assessment and intake modules."""
+
+    LSIR = "lsir"
+    ORAS_PIT = "oras_pit"
+    ORAS_RT = "oras_rt"
+
+
+class IntakeType(StrEnum):  # Todo manually keep up to date with AssessmentModels
+    TRANSCRIPTION = "transcription"
+    CONVERSATION = "conversation"
+    EXTERNAL = "external"
 
 
 class BaseModel(SQLModel):

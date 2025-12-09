@@ -16,10 +16,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import AsyncSession
 from app.crud.client import get_processing_status
+from app.crud.intake import create_intake
 from app.models.assessment import Assessment
+from app.models.base import IntakeType
 from app.models.intake import Intake, IntakeStatus
 from app.models.models import Execution, Plan, PlanGeneration
 from app.models.recording import RecordingSession
@@ -121,7 +123,10 @@ def get_execution_status(scenario: str) -> Optional[str]:
 
 
 async def setup_test_scenario(
-    async_session: AsyncSession, test_case: TestCase, client_pseudo_id: str
+    async_session: AsyncSession,
+    test_case: TestCase,
+    client_pseudo_id: str,
+    seed_configs: dict,
 ) -> tuple[
     Intake,
     Optional[Assessment],
@@ -138,7 +143,12 @@ async def setup_test_scenario(
     3. Handle scenario (missing_entity, missing_execution, or create with execution)
     """
     # Always create completed intake
-    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.TRANSCRIPTION,
+        IntakeStatus.COMPLETED,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -365,6 +375,7 @@ async def test_processing_status_detection(
     mock_clientdata_service,
     async_session: AsyncSession,
     test_case: TestCase,
+    seed_configs,
 ):
     """Test that compute_processing_status correctly identifies all scenarios."""
     from unittest.mock import patch
@@ -373,7 +384,7 @@ async def test_processing_status_detection(
     staff_id = "staff-123"
 
     # Set up test scenario
-    await setup_test_scenario(async_session, test_case, client_pseudo_id)
+    await setup_test_scenario(async_session, test_case, client_pseudo_id, seed_configs)
 
     # Mock staff-client relationship
     class StubStaffClient:
@@ -403,12 +414,13 @@ async def test_retry_processing_succeeds(
     client: AsyncClient,
     async_session: AsyncSession,
     test_case: TestCase,
+    seed_configs,
 ):
     """Test that retry_processing successfully retries for NEEDS_RETRY scenarios."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Set up test scenario
-    await setup_test_scenario(async_session, test_case, client_pseudo_id)
+    await setup_test_scenario(async_session, test_case, client_pseudo_id, seed_configs)
 
     # Mock all task types
     mock_task_result = MagicMock()
@@ -447,12 +459,13 @@ async def test_retry_processing_rejects_healthy(
     client: AsyncClient,
     async_session: AsyncSession,
     test_case: TestCase,
+    seed_configs,
 ):
     """Test that retry_processing returns 400 error for healthy scenarios."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Set up test scenario
-    await setup_test_scenario(async_session, test_case, client_pseudo_id)
+    await setup_test_scenario(async_session, test_case, client_pseudo_id, seed_configs)
 
     # Call retry_processing - should return error
     response = await client.post(f"/clients/{client_pseudo_id}/retry-processing")
@@ -484,6 +497,7 @@ async def test_retry_processing_race_condition(
     client: AsyncClient,
     async_session: AsyncSession,
     test_case: TestCase,
+    seed_configs,
 ):
     """Test that retry_processing handles race condition when called twice in quick succession."""
     import asyncio
@@ -491,7 +505,7 @@ async def test_retry_processing_race_condition(
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Set up test scenario that needs retry
-    await setup_test_scenario(async_session, test_case, client_pseudo_id)
+    await setup_test_scenario(async_session, test_case, client_pseudo_id, seed_configs)
 
     # Mock all task types
     mock_task_result = MagicMock()

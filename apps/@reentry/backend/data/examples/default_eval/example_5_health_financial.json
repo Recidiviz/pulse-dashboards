@@ -1,0 +1,93 @@
+{
+  "client_id": "eval_client_005",
+  "messages": [
+    {
+      "id": "msg-401",
+      "role": "assistant",
+      "content": "Hello James, it's good to meet you. I understand you were recently released. How have things been going these first few weeks?",
+      "createdAt": "2025-01-28T13:00:00Z"
+    },
+    {
+      "id": "msg-402",
+      "role": "user",
+      "content": "It's been rough, to be honest. I'm trying to figure everything out but there's a lot. My main worry right now is my health. I have diabetes and high blood pressure, and I ran out of my medications last week.",
+      "createdAt": "2025-01-28T13:01:45Z"
+    },
+    {
+      "id": "msg-403",
+      "role": "assistant",
+      "content": "I'm glad you brought that up right away - your health is very important. Have you been able to see a doctor or get to a clinic?",
+      "createdAt": "2025-01-28T13:02:00Z"
+    },
+    {
+      "id": "msg-404",
+      "role": "user",
+      "content": "Not yet. I don't have insurance right now and I can't afford to pay out of pocket. I had Medicaid before I was incarcerated but I think it lapsed. I need to get my prescriptions refilled - the diabetes medication is expensive. I'm worried about what happens if I don't take it.",
+      "createdAt": "2025-01-28T13:04:00Z"
+    },
+    {
+      "id": "msg-405",
+      "role": "assistant",
+      "content": "Managing diabetes without medication can be dangerous. We need to address this quickly. Let's also talk about your financial situation. Are you working right now?",
+      "createdAt": "2025-01-28T13:05:00Z"
+    },
+    {
+      "id": "msg-406",
+      "role": "user",
+      "content": "No, I'm not working yet. I've applied to about ten places but no callbacks so far. Before I was arrested I worked in restaurants doing prep cook work. I'm 48 now and it's been three years since I worked. I'm also dealing with some chronic back pain from an old injury which makes it hard to stand for long periods.",
+      "createdAt": "2025-01-28T13:07:00Z"
+    },
+    {
+      "id": "msg-407",
+      "role": "assistant",
+      "content": "The back pain sounds like another health concern we should address. How are you managing financially right now without work?",
+      "createdAt": "2025-01-28T13:08:00Z"
+    },
+    {
+      "id": "msg-408",
+      "role": "user",
+      "content": "I'm barely making it. I'm staying in a shelter downtown. I get food from the food bank. I have about $40 to my name. I applied for food stamps but that takes time. I don't know how I'm going to get through the next month honestly.",
+      "createdAt": "2025-01-28T13:10:00Z"
+    },
+    {
+      "id": "msg-409",
+      "role": "assistant",
+      "content": "It sounds like you're dealing with multiple urgent needs at once. The shelter you're at - is it a safe place? Can you stay there for a while?",
+      "createdAt": "2025-01-28T13:11:00Z"
+    },
+    {
+      "id": "msg-410",
+      "role": "user",
+      "content": "It's okay, better than being on the street. It's a men's shelter and they have beds for about 100 people. It's loud and crowded but the staff are decent. I can stay up to 90 days but then I need to find something else. A lot of guys there use drugs and that makes me nervous - I'm trying to stay away from that life.",
+      "createdAt": "2025-01-28T13:13:00Z"
+    },
+    {
+      "id": "msg-411",
+      "role": "assistant",
+      "content": "It's good that you're aware of those influences and staying focused. Do you have any family or friends who can provide support?",
+      "createdAt": "2025-01-28T13:14:00Z"
+    },
+    {
+      "id": "msg-412",
+      "role": "user",
+      "content": "Not really. My ex-wife and I haven't spoken in years. My kids are grown and we're not close - that's mostly my fault. I have a brother in Portland but we don't talk much. I burned a lot of bridges over the years.",
+      "createdAt": "2025-01-28T13:15:30Z"
+    },
+    {
+      "id": "msg-413",
+      "role": "assistant",
+      "content": "Rebuilding those relationships takes time. For now, let's focus on getting you stable. Besides the diabetes and high blood pressure, are there any other health concerns?",
+      "createdAt": "2025-01-28T13:16:00Z"
+    },
+    {
+      "id": "msg-414",
+      "role": "user",
+      "content": "I think I might be depressed. I feel hopeless a lot of the time. I have trouble sleeping, partly because of the shelter noise but also just worrying about everything. I've never talked to anyone about mental health before.",
+      "createdAt": "2025-01-28T13:17:45Z"
+    }
+  ],
+  "summary": "### Personal Background\nJames is a 48-year-old man recently released after a three-year incarceration. He has previous work experience as a prep cook in restaurants but faces significant health and financial barriers to stability. He has strained or nonexistent relationships with his adult children and ex-wife. James is currently homeless and staying in an emergency shelter with limited resources.\n\n### Needs and Risks Overview\n- **Health:** Diabetes (requires medication); high blood pressure (requires medication); chronic back pain from old injury; currently without medications for one week; no health insurance; symptoms of depression; sleep disturbances\n- **Financial:** Zero income; approximately $40 in assets; applied for food stamps (pending); relying on food bank and shelter; no savings or resources\n- **Housing:** Currently in emergency men's shelter (90-day limit); crowded environment with drug use present; no long-term housing plan\n- **Employment:** Unemployed; has applied to jobs without success; three-year gap in employment; previous experience as prep cook; physical limitations (back pain) may limit job options\n- **Healthcare Access:** No health insurance; believes Medicaid lapsed; unable to afford medications or doctor visits; urgent need for diabetes management\n- **Mental Health:** Possible depression (hopelessness, sleep disturbances); never received mental health treatment; high stress from multiple crises\n- **Social Support:** Minimal family support; adult children estranged; ex-wife no contact; distant relationship with brother; acknowledges responsibility for damaged relationships\n\n### Priority Needs\n- **Immediate Healthcare:** Urgent need to restore health insurance and access medications for diabetes and hypertension\n- **Financial Assistance:** Apply for all available benefits (SNAP, Medicaid, emergency cash assistance); address immediate survival needs\n- **Housing:** Transition from emergency shelter to more stable housing within 90 days\n- **Employment:** Find work that accommodates health limitations; address employment barriers\n- **Mental Health:** Assessment and treatment for possible depression",
+  "address": "Downtown Emergency Shelter, 515 3rd Ave, Seattle, Washington",
+  "assessment_summary": "### Risk Assessment Summary\n\n**Overall Risk Level:** High\n\n**Health/Medical (Critical Priority):**\n- Diabetes without medication for one week (medical emergency)\n- Uncontrolled high blood pressure\n- Chronic pain condition limiting physical capacity\n- No health insurance or access to care\n- Risk: Diabetic emergency, stroke, heart attack, or other acute medical crisis; disability; death\n\n**Financial (Critical Priority):**\n- No income source\n- Minimal assets ($40)\n- Unable to meet basic needs without assistance\n- Risk: Continued poverty, inability to secure housing or healthcare, recidivism due to financial desperation\n\n**Housing (High Priority):**\n- Emergency shelter with 90-day limit\n- Exposed to drug use environment\n- No stable housing options identified\n- Risk: Homelessness after shelter stay; health deterioration; exposure to criminogenic influences\n\n**Mental Health (High Priority):**\n- Symptoms consistent with depression (hopelessness, sleep disturbance)\n- Multiple stressors and crisis situations\n- No history of mental health treatment\n- Risk: Suicide ideation, inability to engage in services, health neglect\n\n**Employment (High Priority):**\n- Three-year employment gap\n- Physical limitations reduce job options\n- Multiple barriers to employment (health, housing, background)\n- Age discrimination possible (48 years old)\n- Risk: Prolonged unemployment, financial instability, recidivism\n\n**Social Support (High Priority):**\n- No active family support\n- Isolated and alone\n- Estranged from children\n- Risk: Lack of support network increases all other risks; no safety net in crisis",
+  "decision_tree_statements": "For the decision tree \"healthcare_access\", the recommendations are:\n- URGENT: Connect with emergency medical services for diabetes medication (community health center, free clinic)\n- Immediate Medicaid reinstatement or application\n- Establish primary care provider for ongoing chronic disease management\n- Address chronic pain with appropriate medical evaluation and treatment plan\n- Connect with prescription assistance programs\n- Schedule follow-up appointments to monitor diabetes control\n\nFor the decision tree \"financial_stability\", the recommendations are:\n- Expedite SNAP (food stamps) application\n- Apply for emergency cash assistance\n- Complete Medicaid application immediately\n- Connect with emergency financial assistance programs\n- Work with benefits specialist to maximize available supports\n- Once employed, establish budget and financial management plan\n\nFor the decision tree \"housing_emergency\", the recommendations are:\n- Begin housing search immediately (do not wait for 90-day limit)\n- Apply for transitional housing programs\n- Connect with supportive housing options for individuals with health conditions\n- Explore subsidized housing (Section 8, public housing)\n- Work with shelter case manager on housing plan\n- Timeline: Secure transitional housing within 60 days\n\nFor the decision tree \"employment_barriers\", the recommendations are:\n- Identify jobs that accommodate physical limitations\n- Consider job training for less physical work (cashier, customer service)\n- Connect with re-entry employment programs\n- Address healthcare and housing needs first to enable job search\n- Utilize resume services to address employment gap\n- Consider part-time work initially\n\nFor the decision tree \"mental_health_services\", the recommendations are:\n- Depression screening and assessment\n- Connect with mental health services (counseling/therapy)\n- Consider medication evaluation if appropriate\n- Address through shelter mental health services if available\n- Crisis plan if suicidal thoughts emerge"
+}

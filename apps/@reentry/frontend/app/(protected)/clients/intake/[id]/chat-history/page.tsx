@@ -124,8 +124,8 @@ const IntakeManagementPage = () => {
                                 clientData?.external_client_id &&
                                 intakeData &&
                                 intakeData.id &&
-                                intakeData.client_intake_sections &&
-                                intakeData.client_intake_sections.length > 0 &&
+                                intakeData.intake_sections &&
+                                intakeData.intake_sections.length > 0 &&
                                 intakeData.status !== "created" ? (
                                     <AdminIntakeHistory
                                         clientRecord={clientData}

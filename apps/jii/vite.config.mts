@@ -23,7 +23,10 @@ import { defineConfig } from "vite";
 // ignoring the nx rules here since this is just tooling,
 // and we don't want to import the entire library here anyway
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { REENTRY_BACKEND_PATH, REENTRY_DEV_BACKEND_PATH } from "../../libs/@jii/case-planning/src/constants";
+import {
+  REENTRY_BACKEND_PATH,
+  REENTRY_DEV_BACKEND_PATH,
+} from "../../libs/@jii/case-planning/src/constants";
 
 export default defineConfig(() => ({
   root: __dirname,

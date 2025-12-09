@@ -18,6 +18,8 @@ import app.models.plan_decision_tree  # noqa
 import app.models.assessment_tree  # noqa
 import app.models.execution  # noqa
 import app.models.assessment  # noqa
+import app.models.assessment_config  # noqa
+import app.models.output_config  # noqa
 import app.models.intake  # noqa
 import app.models.recording  # noqa
 
@@ -39,6 +41,8 @@ print(f"db_url: {db_url}")
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
+# TODO: look into https://alembic.sqlalchemy.org/en/latest/naming.html
 
 
 def run_migrations_offline():

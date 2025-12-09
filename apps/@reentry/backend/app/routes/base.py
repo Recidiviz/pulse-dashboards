@@ -20,14 +20,13 @@ class DeletionResponse(BaseModel):
     status: DeletionStatus
 
 
-class IntakeSectionResponse(ORMResponse):
+class IntakeSectionStatus(StrEnum):
+    COMPLETED = "completed"
+    IN_PROGRESS = "in_progress"
+    NOT_STARTED = "not_started"
+
+
+class IntakeSectionResponse(BaseModel):
     title: str
     description: str
-
-
-class ClientIntakeSectionResponse(ORMResponse):
-    intake_section_id: UUID
-    is_active: bool
-    completion_status: str
-    notes: str | None = None
-    intake_section: IntakeSectionResponse
+    status: IntakeSectionStatus

@@ -1,67 +1,63 @@
-from unittest.mock import patch
-
 import pytest
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import AsyncSession
+from app.crud.intake import create_intake
 from app.models.assessment import Assessment
-from app.models.intake import Intake, IntakeStatus
+from app.models.base import IntakeType
+from app.models.intake import IntakeStatus
 from app.models.models import Execution, Plan
-
-# NOTE: The client view is now automatically created by the async_session fixture
-# so we don't need to create it separately in each test
 
 
 @pytest.mark.asyncio
 async def test_list_clients_empty(
-    mock_clientdata_service,
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    monkeypatch,
 ):
     """Test the /clients endpoint returns an empty page when there are no clients."""
-    # No data in the database, so we should get an empty page
+    # Mock the client data service to return empty list
+    from app.services.client_data.queries import Queries
 
-    # Use the "no-clients-id" value that's already configured in mock_clientdata_service fixture to return no clients
+    def mock_get_clients_by_pseudonymized_staff_id(pseudonymized_staff_id: str):
+        return []
 
-    # Create a direct client_router implementation to bypass async issues
-    # This is a short-circuit to avoid async issues in tests
-    with patch(
-        "app.routes.client_router.get_paginated_client_list"
-    ) as mock_get_clients:
-        # Return direct value for the router function
-        mock_get_clients.return_value = {
-            "items": [],
-            "total": 0,
-            "page": 1,
-            "size": 20,
-            "pages": 0,
-        }
+    monkeypatch.setattr(
+        Queries,
+        "get_clients_by_pseudonymized_staff_id",
+        mock_get_clients_by_pseudonymized_staff_id,
+    )
 
-        # Call the endpoint - auth headers already set in client fixture
-        response = await client.get("/clients/")
+    response = await client.get("/clients/")
 
-        # Verify response
-        assert_response(response, 200)
-        data = response.json()
+    # Verify response
+    assert_response(response, 200)
+    data = response.json()
 
-        # Verify content
-        assert data["total"] == 0
-        assert data["page"] == 1
-        assert data["items"] == []
+    # Verify content
+    assert data["total"] == 0
+    assert data["page"] == 1
+    assert data["items"] == []
 
 
 @pytest.mark.asyncio
-async def test_list_clients_with_intake(
+async def test_list_clients(
     mock_clientdata_service,
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    seed_configs,
 ):
-    """Test the /clients endpoint returns clients with intakes."""
+    """Test the /clients endpoint returns all clients."""
     # Create test data - use client ID from our mock data
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS)
+    intake = await create_intake(
+        async_session,
+        client_pseudo_id,
+        IntakeType.CONVERSATION,
+        IntakeStatus.IN_PROGRESS,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -76,7 +72,7 @@ async def test_list_clients_with_intake(
 
     # Verify content
 
-    assert data["total"] == 2
+    assert data["total"] == 4  # Now have 4 clients in mock
     assert data["page"] == 1
     # Find the client with our intake
     client_item = next(
@@ -103,19 +99,22 @@ async def test_list_clients_with_plan(
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    seed_configs,
 ):
-    """Test the /clients endpoint returns clients with plans."""
+    """Test the /clients endpoint returns clients with assessments."""
     # Create test data - client with a plan
     client_pseudo_id = mock_clientdata_service[
         "client_pseudo_id"
     ]  # Use the ID from mock_clientdata_service
 
-    # First create completed intake (required by the view)
-    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
+    # First create completed intake
+    intake = await create_intake(
+        async_session, client_pseudo_id, IntakeType.CONVERSATION, IntakeStatus.COMPLETED
+    )
     async_session.add(intake)
     await async_session.commit()
 
-    # Create completed assessment (required by the view)
+    # Create completed assessment
     assessment_execution = Execution(status="completed")
     async_session.add(assessment_execution)
     await async_session.commit()
@@ -131,11 +130,6 @@ async def test_list_clients_with_plan(
     async_session.add(execution)
     await async_session.commit()
     await async_session.refresh(execution)
-
-    plan = Plan(client_pseudo_id=client_pseudo_id, create_execution_id=execution.id)
-    async_session.add(plan)
-    await async_session.commit()
-    await async_session.refresh(plan)
 
     # Call the endpoint - auth headers already set in client fixture
     response = await client.get("/clients/")
@@ -159,8 +153,6 @@ async def test_list_clients_with_plan(
     )
     assert client_item is not None
 
-    # In the test environment with mock_clientdata_service,
-    # we may not get all the expected data, just check that client exists
     assert "client" in client_item
     assert client_item["client"] is not None
 
@@ -171,6 +163,7 @@ async def test_list_clients_with_intake_and_plan(
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    seed_configs,
 ):
     """Test the /clients endpoint returns clients with both intakes and plans."""
     # Create test data
@@ -179,7 +172,9 @@ async def test_list_clients_with_intake_and_plan(
     ]  # Use the ID from mock_clientdata_service
 
     # Create intake
-    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
+    intake = await create_intake(
+        async_session, client_pseudo_id, IntakeType.CONVERSATION, IntakeStatus.COMPLETED
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -233,6 +228,7 @@ async def test_list_clients_with_assessments(
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    seed_configs,
 ):
     """Test the /clients endpoint returns clients with assessments."""
     # Create test data - client with assessments
@@ -241,7 +237,9 @@ async def test_list_clients_with_assessments(
     ]  # Use the ID from mock_clientdata_service
 
     # First create completed intake (required by the view)
-    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
+    intake = await create_intake(
+        async_session, client_pseudo_id, IntakeType.CONVERSATION, IntakeStatus.COMPLETED
+    )
     async_session.add(intake)
     await async_session.commit()
 
@@ -266,7 +264,7 @@ async def test_list_clients_with_assessments(
     data = response.json()
 
     # Verify content - we have multiple clients from mock_clientdata_service
-    assert data["total"] > 0
+    assert data["total"] == 4
     assert data["page"] == 1
 
     # Find the client with our assessment
@@ -280,54 +278,6 @@ async def test_list_clients_with_assessments(
     )
     assert client_item is not None
     assert client_item["plans"] is None
-    # assessments field was removed from ClientResponse model
-    # With mock_clientdata_service, we have different client fields
-    assert "client" in client_item
-    assert client_item["client"] is not None
-
-
-@pytest.mark.asyncio
-async def test_list_clients_pagination(
-    mock_clientdata_service,
-    client: AsyncClient,
-    async_session: AsyncSession,
-    assert_response,
-):
-    """Test the /clients endpoint supports pagination."""
-    # For this test, we'll use a valid client ID from our mock
-    client_pseudo_id = mock_clientdata_service[
-        "client_pseudo_id"
-    ]  # Use the ID from mock_clientdata_service
-
-    # Add 5 intakes with the same client ID (normally this wouldn't happen in production)
-    # but for testing pagination it's fine
-    for i in range(5):
-        intake = Intake(
-            client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS
-        )
-        async_session.add(intake)
-
-    await async_session.commit()
-
-    # Test first page with size=2
-    response = await client.get("/clients/?page=1&size=2")
-    assert_response(response, 200)
-    data = response.json()
-
-    # Due to how the mock is set up, expect at least one client
-    assert data["total"] > 0
-    assert data["page"] == 1
-    assert data["size"] == 2
-    # Verify that our created client is included
-    client_item = next(
-        (
-            item
-            for item in data["items"]
-            if item["client_pseudo_id"] == client_pseudo_id
-        ),
-        None,
-    )
-    assert client_item is not None
     # With mock_clientdata_service, we have different client fields
     assert "client" in client_item
     assert client_item["client"] is not None
@@ -339,19 +289,21 @@ async def test_list_clients_filter_by_status(
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    seed_configs,
 ):
     # Add multiple clients with various statuses
     target_status = IntakeStatus.IN_PROGRESS
     other_status = IntakeStatus.COMPLETED
-    client_pseudo_ids = ["client-a", "client-b", "client-c"]
+    client_pseudo_ids = ["client-001ps", "client-002ps", "client-003ps"]
     for i, cid in enumerate(client_pseudo_ids):
         status = target_status if i % 2 == 0 else other_status
-        intake = Intake(client_pseudo_id=cid, status=status)
+        intake = await create_intake(
+            async_session, cid, IntakeType.CONVERSATION, status
+        )
         async_session.add(intake)
     await async_session.commit()
 
-    # Call with filter
-    response = await client.get(f"/clients/?status={target_status.value}")
+    response = await client.get(f"/clients/?status_filter={target_status.value}")
     assert_response(response, 200)
     data = response.json()
 
@@ -367,13 +319,17 @@ async def test_list_clients_sort_by_status(
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    seed_configs,
 ):
     """Test the /clients endpoint supports pagination."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     for _ in range(5):
-        intake = Intake(
-            client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS
+        intake = await create_intake(
+            session=async_session,
+            client_pseudo_id=client_pseudo_id,
+            intake_type=IntakeType.CONVERSATION,
+            status=IntakeStatus.IN_PROGRESS,
         )
         async_session.add(intake)
     await async_session.commit()
@@ -385,7 +341,7 @@ async def test_list_clients_sort_by_status(
     assert data["total"] > 0
     assert data["page"] == 1
     assert data["size"] == 2
-    assert len(data["items"]) <= 2
+    assert len(data["items"]) == 2
     assert any(
         item["client"]["pseudonymized_client_id"] == client_pseudo_id
         for item in data["items"]
@@ -398,14 +354,18 @@ async def test_list_clients_pagination_edge_cases(
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    seed_configs,
 ):
     """Test pagination edge cases including invalid page numbers and boundary conditions."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Create some test data
     for i in range(3):
-        intake = Intake(
-            client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS
+        intake = await create_intake(
+            session=async_session,
+            client_pseudo_id=client_pseudo_id,
+            intake_type=IntakeType.CONVERSATION,
+            status=IntakeStatus.IN_PROGRESS,
         )
         async_session.add(intake)
     await async_session.commit()
@@ -446,14 +406,18 @@ async def test_list_clients_pagination_metadata(
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    seed_configs,
 ):
     """Test that pagination metadata is correctly calculated."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Create exactly 5 test records
     for i in range(5):
-        intake = Intake(
-            client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS
+        intake = await create_intake(
+            session=async_session,
+            client_pseudo_id=client_pseudo_id,
+            intake_type=IntakeType.CONVERSATION,
+            status=IntakeStatus.IN_PROGRESS,
         )
         async_session.add(intake)
     await async_session.commit()
@@ -494,10 +458,11 @@ async def test_list_clients_pagination_with_filters(
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    seed_configs,
 ):
     """Test that pagination works correctly with status filters."""
     # Create test data with different statuses
-    client_pseudo_ids = ["client-a", "client-b", "client-c", "client-d"]
+    client_pseudo_ids = ["client-001ps", "client-002ps", "client-003ps", "client-004ps"]
     statuses = [
         IntakeStatus.IN_PROGRESS,
         IntakeStatus.COMPLETED,
@@ -506,7 +471,9 @@ async def test_list_clients_pagination_with_filters(
     ]
 
     for client_pseudo_id, status in zip(client_pseudo_ids, statuses):
-        intake = Intake(client_pseudo_id=client_pseudo_id, status=status)
+        intake = await create_intake(
+            async_session, client_pseudo_id, IntakeType.CONVERSATION, status
+        )
         async_session.add(intake)
     await async_session.commit()
 
@@ -543,7 +510,7 @@ async def test_list_clients_pagination_empty_results(
     data = response.json()
 
     # Verify empty pagination response structure
-    assert data["total"] >= 0  # May have mock data, so >= 0
+    assert data["total"] == 0
     assert data["page"] == 1
     assert data["size"] == 10
     assert data["pages"] >= 0

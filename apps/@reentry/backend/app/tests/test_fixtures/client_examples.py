@@ -24,7 +24,7 @@ def create_john_doe():
             given_names="John", middle_names="", surname="Doe", name_suffix=""
         ),
         birthdate=date(1985, 1, 1),
-        state_code="US_ID",
+        state_code="US_IX",
     )
 
 
@@ -57,9 +57,22 @@ def create_robert_johnson():
     )
 
 
+def create_alice_williams():
+    """Return a standard Alice Williams client example."""
+    return ClientDataRecord(
+        external_client_id="client-004ex",
+        pseudonymized_client_id="client-004ps",
+        full_name=FullNameModel(
+            given_names="Alice", middle_names="", surname="Williams", name_suffix=""
+        ),
+        birthdate=date(1988, 3, 20),
+        state_code="US_IX",
+    )
+
+
 def create_test_client():
     """Return a generic test client."""
-    states_codes = ["US_ID", "US_AZ", "US_UT"]
+    states_codes = ["US_IX", "US_AZ", "US_UT"]
 
     return ClientDataRecord(
         external_client_id="client-001ex",
@@ -85,7 +98,7 @@ def create_case_manager():
             given_names="Case", middle_names="", surname="Manager", name_suffix=""
         ),
         external_client_ids=["client-001ex", "client-002ex"],
-        state_code="US_ID",
+        state_code="US_IX",
     )
 
 

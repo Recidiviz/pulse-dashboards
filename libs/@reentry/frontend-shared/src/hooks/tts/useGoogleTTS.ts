@@ -34,7 +34,10 @@ export const useGoogleTTS = () => {
     }
 
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error("Request timeout")), REQUEST_TIMEOUT_MS);
+      setTimeout(
+        () => reject(new Error("Request timeout")),
+        REQUEST_TIMEOUT_MS,
+      );
     });
 
     const response = await Promise.race([

@@ -37,15 +37,16 @@ cli = AsyncTyper()
 import app.manage.import_decision_tree  # noqa
 import app.manage.parse_decision_tree  # noqa
 import app.manage.seed_db  # noqa
+import app.manage.force_reset_db  # noqa
 
 import app.manage.evaluate.evaluate_generation  # noqa
+import app.manage.evaluate.evaluate_summary  # noqa
 import app.manage.evaluate.headless_conversation_eval  # noqa
 import app.manage.api_create_plan  # noqa
 import app.manage.create_plan  # noqa
 import app.manage.import_assessment_tree  # noqa
 import app.manage.create_assessment  # noqa
 import app.manage.intake  # noqa
-import app.manage.seed_workflow  # noqa
 import app.manage.generate_client_data  # noqa
 import app.manage.conversation_tester  # noqa
 import app.manage.process_recording  # noqa
@@ -53,3 +54,5 @@ import app.manage.requeue_pending_executions  # noqa
 import app.manage.retry_plan_gens  # noqa
 import app.manage.migrate_external_to_pseudonymized  # noqa
 import app.manage.update_recording_status  # noqa
+import app.manage.generate_assessment_migration  # noqa
+import app.manage.generate_output_migration  # noqa

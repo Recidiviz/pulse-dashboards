@@ -1,16 +1,14 @@
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
 from pydantic import BaseModel
 
 from app.core.db import AsyncSession, get_session
-from app.crud.plan import get_plan_by_id
 from app.crud.plan_decision_tree import (
     create_plan_decision_tree,
     delete_plan_decision_tree_by_id,
-    get_plan_decision_tree_by_id,
     get_plan_decision_tree_by_plan_id,
 )
 from app.models.plan_decision_tree import PlanDecisionTree
@@ -107,87 +105,3 @@ async def router_delete_all_decision_trees(
         await delete_plan_decision_tree_by_id(session, decision_tree.id)
 
     return DeletionResponse(status=DeletionStatus.SUCCESS)
-
-
-@router.get(
-    "/plans/{id}/decisiontrees/{plan_decision_tree_id}",
-    response_model=PlanDecisionTreeExtendedResponse,
-    summary="Get Decision Tree",
-    description="Retrieve a specific decision tree by its ID for the specified plan ID.",
-)
-async def router_get_decision_tree(
-    id: uuid.UUID,
-    plan_decision_tree_id: uuid.UUID,
-    session: AsyncSession = Depends(get_session),
-):
-    plan_decision_tree = await get_plan_decision_tree_by_id(
-        session,
-        plan_decision_tree_id,
-        with_decision_tree=True,
-    )
-    if not plan_decision_tree or plan_decision_tree.plan_id != id:
-        raise HTTPException(status_code=404, detail="Decision tree not found")
-    return plan_decision_tree
-
-
-@router.delete(
-    "/plans/{id}/decisiontrees/{plan_decision_tree_id}",
-    response_model=DeletionResponse,
-    summary="Delete Decision Tree",
-    description=(
-        "Delete a specific decision tree by its ID for the specified plan ID."
-    ),
-)
-async def router_delete_decision_tree(
-    id: uuid.UUID,
-    plan_decision_tree_id: uuid.UUID,
-    session: AsyncSession = Depends(get_session),
-):
-    plan_decision_tree = await get_plan_decision_tree_by_id(
-        session, plan_decision_tree_id
-    )
-    if not plan_decision_tree or plan_decision_tree.plan_id != id:
-        raise HTTPException(status_code=404, detail="Decision tree not found")
-    was_removed = await delete_plan_decision_tree_by_id(session, plan_decision_tree_id)
-    status = DeletionStatus.SUCCESS if was_removed else DeletionStatus.FAILED
-    return DeletionResponse(status=status)
-
-
-@router.post(
-    "/plans/{id}/decisiontrees/{plan_decision_tree_id}/run",
-    response_model=PlanDecisionTreeExtendedResponse,
-    summary="Run a decision tree",
-    description="Run a decision tree against the input for the specified plan ID.",
-)
-async def router_execute_decision_tree(
-    id: uuid.UUID,
-    plan_decision_tree_id: uuid.UUID,
-    session: AsyncSession = Depends(get_session),
-):
-    plan_decision_tree = await get_plan_decision_tree_by_id(
-        session,
-        plan_decision_tree_id,
-        with_decision_tree=True,
-    )
-    if not plan_decision_tree or plan_decision_tree.plan_id != id:
-        raise HTTPException(status_code=404, detail="Decision tree not found")
-
-    await plan_decision_tree.schedule_execution(session)
-    return plan_decision_tree
-
-
-@router.post(
-    "/plans/{id}/decisiontrees/populate",
-    response_model=ExecutionResponse,
-    summary="Suggest Decision Tree",
-    description="Search which decision tree applies to the plan and populate them.",
-)
-async def router_suggest_decision_tree(
-    id: uuid.UUID,
-    session: AsyncSession = Depends(get_session),
-):
-    plan = await get_plan_by_id(session, id)
-    if not plan:
-        raise HTTPException(status_code=404, detail="Plan not found")
-
-    return await plan.schedule_plan_decision_tree_select(session)

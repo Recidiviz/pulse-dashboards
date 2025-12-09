@@ -52,6 +52,8 @@ dependencies = [
     "imageio-ffmpeg>=0.4.8",
     "google-cloud-speech>=2.33.0",
     "weasyprint>=66.0",
+    "langchain-google-genai>=2.1.12",
+    "langchain-google-vertexai>=2.1.2",
     "google-cloud-texttospeech>=2.33.0",
     "deepgram-sdk>=5.3.0",
 ]

@@ -208,7 +208,9 @@ def _traverse_count_node(node_value: str):
         raise ValueError("Wrong scoring pattern")
 
 
-def _get_oras_score(case_result: str, possible_answers: list[str]) -> int:
+def _get_oras_score(
+    case_result: str, possible_answers: list[str]
+) -> int | Literal["miss"]:
     if case_result == "unclear":
         return "miss"
     if case_result not in [answer.casefold() for answer in possible_answers]:
@@ -221,14 +223,14 @@ def _get_oras_score(case_result: str, possible_answers: list[str]) -> int:
 def _traverse_handle_typed_question_result(
     result, possible_answers, question_type, assessment_type
 ) -> int | Literal["miss"]:
-    from app.models.assessment import AssessmentType
+    from app.models.base import AssessmentType
 
     case_result = result.casefold()
     if case_result not in possible_answers and assessment_type == AssessmentType.LSIR:
         raise ValueError(f"Unhandled answer {result}")
 
     COUNT_YES_NO = {"yes": 1, "no": 0}
-    COUNT_SCORE_BOX = {"0": 1, "1": 0, "2": -2, "3": -3}
+    COUNT_SCORE_BOX = {"0": 1, "1": 0, "2": -2, "3": -3, "4": "miss"}
     DEFAULT = "miss"
 
     match question_type:
@@ -278,7 +280,7 @@ class MermaidGraph:
     def get_children_nodes(self, key):
         return [dest for src, dest in self.links if src == key]
 
-    def traverse(self, assessment_type: str = None):
+    def traverse(self, assessment_type: str = "dt"):
         start_node_key = self.get_start_node_key()
         self.current_node_key = start_node_key
         self.next_nodes_keys = []
@@ -432,7 +434,7 @@ def dumb_walk(dt: MermaidGraph):
     """
     Execute the given decision tree answering the first option all the time
     """
-    dt_gen = dt.traverse()
+    dt_gen = dt.traverse(assessment_type="lsir")
     step = next(dt_gen)
 
     node_key = None

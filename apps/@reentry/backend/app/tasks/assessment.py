@@ -29,6 +29,63 @@ from .scheduler import Execution, execution_context
 logger = structlog.get_logger(__name__)
 
 
+async def run_assessment_trees(
+    assessment_trees: list[AssessmentTree],
+    formatted_client_messages: str,
+    assessment_config,
+    task_logger: structlog.BoundLogger,
+):
+    """
+    Run assessment trees and return results.
+
+    This function is extracted to be reusable for both the assessment task
+    and evaluation/testing purposes.
+
+    Args:
+        assessment_trees: List of AssessmentTree objects to run
+        formatted_client_messages: Formatted conversation string
+        assessment_config: Assessment configuration object
+        task_logger: Logger instance
+
+    Returns:
+        Tuple of (step_results, score_results, misses_results, revisions)
+    """
+    step_results = {}
+    score_results = {}
+    misses_results = {}
+    revisions = []
+
+    for tree in assessment_trees:
+        tree: AssessmentTree = tree
+        revision = tree.revisions[-1]
+        revisions.append(revision)
+        if not isinstance(revision, AssessmentTreeRevision):
+            # This should never happen, if the ORM works and we always create a revision.
+            # I mostly check for later type hints
+            logger.error("Assessment tree has an invalid latest revision", tree)
+            logger.error("revision:", revision)
+            raise RuntimeError("Could not load tree revision")
+        try:
+            graph = MermaidParser.parse(
+                revision.mermaid_content, revision.additional_structured_data
+            )
+            runner = AssessmentRunner(
+                graph,
+                formatted_client_messages,
+                assessment_config,
+                tree.assessment_type,
+            )
+            result = await runner.run_decision_tree()
+            step_results[tree.name] = [step.model_dump() for step in result.steps]
+            score_results[tree.name] = result.final_score
+            misses_results[tree.name] = result.misses
+        except ValueError as e:
+            ## TODO log this to sentry
+            task_logger.debug(f"{tree.name} got an incorrect LLM response {e}")
+
+    return step_results, score_results, misses_results, revisions
+
+
 @broker.task
 async def assessment_task(
     execution_id: UUID,
@@ -81,23 +138,48 @@ async def assessment(
 
     # Only proceed with trees that need intake data if an intake is present
     task_logger.debug("Checking for intake availability")
-    has_intake = intake is not None
+
+    # Load assessment config from intake
+    assessment_config = None
+    if intake:
+        if not intake.assessment_config_id:
+            raise ValueError(
+                f"Cannot run assessment: intake for client {assessment.client_pseudo_id} has no assessment_config_id"
+            )
+
+        from app.utils.config_loader import ConfigLoader
+
+        try:
+            assessment_config = await ConfigLoader.load_assessment_config(
+                intake.assessment_config_id, session
+            )
+            task_logger.debug(
+                "Loaded assessment config",
+                config_code=assessment_config.metadata.code,
+            )
+        except Exception as e:
+            task_logger.error(
+                "Failed to load assessment config",
+                assessment_config_id=intake.assessment_config_id,
+                error=str(e),
+            )
+            raise ValueError(
+                f"Cannot run assessment: failed to load config for assessment_config_id={intake.assessment_config_id}: {e}"
+            )
+    else:
+        raise ValueError(
+            f"Cannot run assessment: no intake found for client {assessment.client_pseudo_id}"
+        )
 
     # Determine assessment_type based on client's state if not already set
     if not assessment.assessment_type:
-        task_logger.debug("Assessment type not set, determining from client state")
-        from app.services.client_data.queries import Queries
-        from app.utils.assessment_runner import get_assessments_type
+        logger.warning("starting an assessment without a type")
 
-        client_record = Queries.get_client_by_pseudonymized_id_unsafe(
-            assessment.client_pseudo_id
+        assessment_config = await ConfigLoader.load_assessment_config(
+            assessment.intake.assessment_config_id, session
         )
-        assessments_types = get_assessments_type(client_record.state_code)
-        assessment_type = assessments_types[0] if assessments_types else "lsir"
-
-        task_logger.debug(f"Client state: {client_record.state_code}")
-        task_logger.debug(f"Determined assessment type: {assessment_type}")
-
+        assessment_type = assessment_config.intake.scoring
+        logger.info(f"Assessments type determined: {assessment_type}")
         # Update the assessment record with the determined type
         assessment.assessment_type = assessment_type
         session.add(assessment)
@@ -117,11 +199,11 @@ async def assessment(
     )
     task_logger.debug(f"Found {len(assessment_trees)} assessment trees")
 
-    if has_intake:
+    if assessment.intake:
+        intake = assessment.intake
         task_logger.debug(
             f"Using intake for assessment: id {intake.id} intake type {intake.intake_type}"
         )
-
         # Get all messages for this specific intake
         if intake.intake_type == IntakeType.CONVERSATION.value:
             messages = await get_intake_messages(session, intake_id=intake.id)
@@ -166,13 +248,19 @@ async def assessment(
 
     # Format messages for the assessment runner
     formatted_client_messages_list = []
-    if intake and intake.intake_type == IntakeType.CONVERSATION.value:
+    if (
+        assessment.intake
+        and assessment.intake.intake_type == IntakeType.CONVERSATION.value
+    ):
         for message in messages:
             role = "client" if message.from_role == "client" else "case manager"
             content = message.content
             line = f"{role}: {content}"
             formatted_client_messages_list.append(line)
-    elif intake and intake.intake_type == IntakeType.TRANSCRIPTION.value:
+    elif (
+        assessment.intake
+        and assessment.intake.intake_type == IntakeType.TRANSCRIPTION.value
+    ):
         try:
             formatted_client_messages_list = [
                 f"{'client' if message['role'] == 'client' else 'case manager'}: {message['content']}"
@@ -192,35 +280,9 @@ async def assessment(
 
     formatted_client_messages = "\n".join(formatted_client_messages_list)
 
-    step_results = {}
-    score_results = {}
-    misses_results = {}
-    revisions = []
-    # create
-    for tree in assessment_trees:
-        tree: AssessmentTree = tree
-        revision = tree.revisions[-1]
-        revisions.append(revision)
-        if not isinstance(revision, AssessmentTreeRevision):
-            # This should never happen, if the ORM works and we always create a revision.
-            # I mostly check for later type hints
-            logger.error("Assessment tree has an invalid latest revision", tree)
-            logger.error("revision:", revision)
-            raise RuntimeError("Couln not load tree revision")
-        try:
-            graph = MermaidParser.parse(
-                revision.mermaid_content, revision.additional_structured_data
-            )
-            runner = AssessmentRunner(
-                graph, formatted_client_messages, tree.assessment_type
-            )
-            result = await runner.run_decision_tree()
-            step_results[tree.name] = [step.model_dump() for step in result.steps]
-            score_results[tree.name] = result.final_score
-            misses_results[tree.name] = result.misses
-        except ValueError as e:
-            ## TODO log this to sentry
-            task_logger.debug(f"{tree.name} got an incorrect LLM response {e}")
+    step_results, score_results, misses_results, revisions = await run_assessment_trees(
+        assessment_trees, formatted_client_messages, assessment_config, task_logger
+    )
 
     if len(list(step_results.values())) == 0:
         await assessment.update_status(session, ExecutionStatus.FAILED)

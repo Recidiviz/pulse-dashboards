@@ -18,5 +18,4 @@
 import { components } from "~@reentry/openapi-types";
 
 export type ClientRecord = components["schemas"]["ClientRecordResponse"];
-export type ClientIntakeSection =
-  components["schemas"]["ClientIntakeSectionResponse"];
+export type IntakeSection = components["schemas"]["IntakeSectionResponse"]

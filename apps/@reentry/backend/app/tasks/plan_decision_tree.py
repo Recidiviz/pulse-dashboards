@@ -54,6 +54,42 @@ async def get_plan_asset(
 async def get_decision_runner_with_data(
     session: AsyncSession, plan: Plan, execution_id: UUID
 ) -> DecisionTreeRunner:
+    # Load action plan config from intake
+    from app.crud.intake import get_intake_by_client_pseudo_id
+    from app.utils.config_loader import ConfigLoader
+
+    # TODO phase 2 : link plan to intake and planconfig to plan so we can load the config from plan without relying on one plan per client
+    intake = await get_intake_by_client_pseudo_id(
+        session, client_pseudo_id=plan.client_pseudo_id
+    )
+    if not intake:
+        raise ValueError(
+            f"Cannot run decision tree: no intake found for client {plan.client_pseudo_id}"
+        )
+
+    if not intake.assessment_config_id:
+        raise ValueError(
+            f"Cannot run decision tree: intake for client {plan.client_pseudo_id} has no assessment_config_id"
+        )
+
+    try:
+        action_plan_config = await ConfigLoader.load_plan_config(
+            intake.assessment_config_id, session
+        )
+        logger.debug(
+            "Loaded action plan config for decision tree",
+            config_code=action_plan_config.metadata.code,
+        )
+    except Exception as e:
+        logger.error(
+            "Failed to load action plan config",
+            assessment_config_id=intake.assessment_config_id,
+            error=str(e),
+        )
+        raise ValueError(
+            f"Cannot run decision tree: failed to load config for assessment_config_id={intake.assessment_config_id}: {e}"
+        )
+
     # load all assets
     asset_messages = await get_plan_asset(session, plan.id, "messages.json")
     asset_summary = await get_plan_asset(session, plan.id, "summary.md")
@@ -62,7 +98,9 @@ async def get_decision_runner_with_data(
     )
 
     # instanciate the decision tree runner
-    runner = DecisionTreeRunner(task_id=execution_id)
+    runner = DecisionTreeRunner(
+        action_plan_config=action_plan_config, task_id=execution_id
+    )
     if asset_messages:
         runner.set_client_messages(asset_messages.data_as_json())
     if asset_summary:
@@ -119,7 +157,6 @@ async def plan_decision_tree_select(
     decision_trees = await get_decision_trees(
         session,
         include_revisions=True,
-        # filter_enabled=True,
     )
     task_logger.debug(f"Found {len(decision_trees)} decision trees")
 

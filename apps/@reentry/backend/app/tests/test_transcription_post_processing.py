@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
+from app.core.data_config.assessment_configs.assessment_config import ModelConfig
 from app.utils.transcription.post_processing import (
     ConversationTurn,
     DeepgramTranscriptionInput,
@@ -11,6 +12,8 @@ from app.utils.transcription.post_processing import (
     SpeakersClarification,
     TranscriptionProcessor,
 )
+
+llm_config = ModelConfig(provider="openai", name="test-model")
 
 
 class TestTranscriptionProcessor:
@@ -31,12 +34,14 @@ class TestTranscriptionProcessor:
         return GCPTranscriptionInput(**data)
 
     def test_init_valid_deepgram_service(self, deepgram_sample_from_file):
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
         assert processor.diarization_service == "deepgram"
         assert processor.transcription == deepgram_sample_from_file
 
     def test_init_valid_gcp_service(self, gcp_sample_from_file):
-        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp")
+        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp", llm_config)
         assert processor.diarization_service == "gcp"
         assert processor.transcription == gcp_sample_from_file
 
@@ -44,10 +49,14 @@ class TestTranscriptionProcessor:
         with pytest.raises(
             ValueError, match="diarization_service must be 'deepgram' or 'gcp'"
         ):
-            TranscriptionProcessor(deepgram_sample_from_file, "invalid_service")
+            TranscriptionProcessor(
+                deepgram_sample_from_file, "invalid_service", llm_config
+            )
 
     def test_extract_deepgram_data(self, deepgram_sample_from_file):
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
         words, confidence, language = processor._extract_deepgram_data(
             deepgram_sample_from_file
         )
@@ -59,7 +68,7 @@ class TestTranscriptionProcessor:
         assert words[0].speaker == 0
 
     def test_extract_gcp_data(self, gcp_sample_from_file):
-        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp")
+        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp", llm_config)
         words, confidence, language = processor._extract_gcp_data(gcp_sample_from_file)
 
         assert len(words) > 0
@@ -69,7 +78,9 @@ class TestTranscriptionProcessor:
         assert words[0].speakerTag == 1
 
     def test_group_deepgram_words_by_speaker(self, deepgram_sample_from_file):
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
         words = deepgram_sample_from_file.results.channels[0].alternatives[0].words
         grouped = processor._group_deepgram_words_by_speaker(words)
 
@@ -79,25 +90,31 @@ class TestTranscriptionProcessor:
         assert "Good" in grouped[0]["words"]
 
     def test_convert_to_milliseconds(self, deepgram_sample_from_file):
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
 
         assert processor._convert_to_milliseconds("0.500s") == 500
         assert processor._convert_to_milliseconds("2.750s") == 2750
         assert processor._convert_to_milliseconds("10s") == 10000
 
     def test_convert_to_milliseconds_invalid_format(self, deepgram_sample_from_file):
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
         with pytest.raises(ValueError, match="Invalid time format"):
             processor._convert_to_milliseconds("invalid")
 
     @pytest.mark.asyncio
     async def test_calculate_gcp_duration(self, gcp_sample_from_file):
-        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp")
+        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp", llm_config)
         duration = await processor._calculate_gcp_duration("1.000s", "3.500s")
         assert duration == "2.5s"
 
     def test_calculate_speaker_stats(self, deepgram_sample_from_file):
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
 
         conversation = [
             ConversationTurn(
@@ -148,7 +165,9 @@ class TestTranscriptionProcessor:
         assert stats["client"].duration == "1.0s"  # 1 second total
 
     def test_format_conversation_for_llm(self, deepgram_sample_from_file):
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
 
         conversation = [
             ConversationTurn(
@@ -193,7 +212,9 @@ class TestTranscriptionProcessor:
         )
         mock_llm_agent.return_value = mock_agent
 
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
         result = await processor.convert_transcript_to_conversation()
 
         assert result.metadata.diarizationService == "deepgram"
@@ -217,7 +238,7 @@ class TestTranscriptionProcessor:
         )
         mock_llm_agent.return_value = mock_agent
 
-        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp")
+        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp", llm_config)
         result = await processor.convert_transcript_to_conversation()
 
         assert result.metadata.diarizationService == "gcp"
@@ -230,7 +251,9 @@ class TestTranscriptionProcessor:
 
     @pytest.mark.asyncio
     async def test_create_conversation_turns_deepgram(self, deepgram_sample_from_file):
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
         words = deepgram_sample_from_file.results.channels[0].alternatives[0].words
 
         turns = await processor._create_deepgram_conversation_turns(words)
@@ -243,7 +266,7 @@ class TestTranscriptionProcessor:
 
     @pytest.mark.asyncio
     async def test_create_conversation_turns_gcp(self, gcp_sample_from_file):
-        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp")
+        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp", llm_config)
         words = gcp_sample_from_file.results[0].alternatives[0].words
 
         turns = await processor._create_gcp_conversation_turns(words)
@@ -258,7 +281,9 @@ class TestTranscriptionProcessor:
     async def test_convert_transcript_to_conversation_invalid_service(
         self, deepgram_sample_from_file
     ):
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
         processor.diarization_service = "invalid"
 
         with pytest.raises(ValueError, match="Failed to process transcription"):
@@ -277,7 +302,9 @@ class TestTranscriptionProcessor:
         mock_llm_agent.return_value = mock_agent
 
         # Process transcription
-        processor = TranscriptionProcessor(deepgram_sample_from_file, "deepgram")
+        processor = TranscriptionProcessor(
+            deepgram_sample_from_file, "deepgram", llm_config
+        )
         result = await processor.convert_transcript_to_conversation()
 
         # Save to JSON file
@@ -304,7 +331,7 @@ class TestTranscriptionProcessor:
         mock_llm_agent.return_value = mock_agent
 
         # Process transcription
-        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp")
+        processor = TranscriptionProcessor(gcp_sample_from_file, "gcp", llm_config)
         result = await processor.convert_transcript_to_conversation()
 
         # Save to JSON file

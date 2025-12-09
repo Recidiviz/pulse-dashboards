@@ -1,0 +1,31 @@
+metadata:
+  state_code: US_TEST
+  code: test_no_output
+  version: 0
+  metadata_type: assessment
+  display_name: "Test No Output"
+
+intake:
+  intake_type: conversation
+  scoring: oras_pit
+  scoring_model:
+    provider: openai
+    name: gpt-4o-mini
+    version: "2024-07-18"
+  chat_model:
+    provider: openai
+    name: gpt-4o
+    version: "2024-11-20"
+  prompts:
+    role: "test"
+    tone: "test"
+    opening_remarks: "test"
+    system_message: "test"
+  sections:
+    - title: Housing
+      description: "Test housing section"
+      required_information: "Test info"
+
+outputs:
+  codes:
+    - nonexistent_summary

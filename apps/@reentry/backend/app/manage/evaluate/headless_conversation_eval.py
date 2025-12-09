@@ -14,11 +14,8 @@ from typing import Any, Dict, List
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 
-from app.core.config import settings
-from app.core.data_config.intakesections.constants import (
-    INTAKE_SECTIONS_MAPPING,
-    SUPPORTED_INTAKE_NAMES,
-)
+from app.core.config import create_model_from_config, settings
+from app.core.data_config.assessment_configs.loader import AssessmentFileLoader
 from app.models.intake import IntakeMessage, IntakeMessageRole
 from app.utils.intake.conversation_graph import IntakeConversationGraph
 from app.utils.intake.schemas import ClientContext, ServerEvent
@@ -56,12 +53,12 @@ class ConversationEvaluator:
 
         # Get section requirements for completed sections
         completed_section_requirements = []
-        for section_data in self.sections:
-            if section_data["title"] in completed_sections:
+        for section in self.sections:
+            if section.title in completed_sections:
                 completed_section_requirements.append(
                     {
-                        "title": section_data["title"],
-                        "requirements": section_data["description"],
+                        "title": section.title,
+                        "requirements": section.description,
                     }
                 )
 
@@ -313,11 +310,20 @@ Instructions:
 class HeadlessDatabaseManager:
     """Mock database manager for headless evaluation."""
 
-    def __init__(self, client_pseudo_id: str, sections):
+    def __init__(self, client_pseudo_id: str, sections, assessment_config):
         self.client_pseudo_id = client_pseudo_id
         self.current_section_index = 0
-        self.sections = [section["title"] for section in sections]
+        self.sections = [section.title for section in sections]
         self.messages: List[IntakeMessage] = []
+        self.assessment_config = assessment_config
+
+    async def get_conversation_config(self, config_id: str):
+        """Return the mock assessment config."""
+        return self.assessment_config.intake
+
+    async def get_section_titles(self, client_pseudo_id: str) -> list[str]:
+        """Return list of section titles."""
+        return self.sections
 
     async def store_message(
         self, client_pseudo_id: str, content: str, from_role: str
@@ -372,27 +378,17 @@ class HeadlessDatabaseManager:
 class HeadlessIntake:
     """Mock intake object for headless evaluation."""
 
-    def __init__(self, sections):
-        self.current_section = sections[0]["title"]
-
-
-class HeadlessClientIntakeSection:
-    def __init__(self, title, description, required_information):
-        self.title = title
-        self.description = description
-        self.required_information = required_information
-
-    def get_effective_section_data(self):
-        return {
-            "title": self.title,
-            "description": self.description,
-            "required_information": self.required_information,
-            "source": "eval",
-        }
+    def __init__(self, sections, assessment_config):
+        self.current_section = sections[0].title
+        self.assessment_config_id = "mock-config-id"  # Placeholder ID
+        self.assessment_config = assessment_config
+        self.client_intake_sections = (
+            None  # Use sections from assessment config instead
+        )
 
 
 async def run_client_conversation(
-    client: HeadlessIntakeClient, sections
+    client: HeadlessIntakeClient, sections, assessment_config
 ) -> Dict[str, Any]:
     """Run a complete conversation for a single client."""
     logger.info(
@@ -400,8 +396,10 @@ async def run_client_conversation(
     )
 
     # Create components
-    mock_db_manager = HeadlessDatabaseManager(client.client_pseudo_id, sections)
-    mock_intake = HeadlessIntake(sections)
+    mock_intake = HeadlessIntake(sections, assessment_config)
+    mock_db_manager = HeadlessDatabaseManager(
+        client.client_pseudo_id, sections, assessment_config
+    )
 
     async def headless_wait_for_user_response(
         client_pseudo_id: str, message: IntakeMessage
@@ -424,30 +422,29 @@ async def run_client_conversation(
 
         return "sent"
 
-    # Create sections
-    modelled_sections = [
-        HeadlessClientIntakeSection(
-            title=section["title"],
-            description=section["description"],
-            required_information=section["required_information"],
-        )
-        for section in sections
-    ]
-
     # Initialize conversation graph
     client_context = ClientContext(
         client_pseudo_id=client.client_pseudo_id, client_name=client.client_name
     )
+
+    # Get the model from assessment config
+    model = create_model_from_config(
+        assessment_config.intake.chat_model.provider,
+        assessment_config.intake.chat_model.name,
+        assessment_config.intake.chat_model.version,
+    )
+
     conversation_graph = IntakeConversationGraph(
         session=client_context,
         db_manager=mock_db_manager,
         wait_for_user_response=headless_wait_for_user_response,
         send_message=headless_send_message,
+        model=model,
     )
 
     try:
         # Initialize and run the assessment
-        await conversation_graph.initialize(mock_intake, modelled_sections)
+        await conversation_graph.initialize(mock_intake)
         final_state = await conversation_graph.run_assessment()
 
         # Compile results
@@ -495,16 +492,46 @@ SAMPLE_PERSONAS = [
 
 
 @cli.command()
-async def headless_conversation_eval(type: str):
+async def headless_conversation_eval(file_name: str):
     """
     Run headless conversation evaluation with multiple simulated clients.
+
+    Args:
+        file_name: Name of the YAML config file (e.g., "UT-CCCI-v0.yaml")
     """
-    logger.info("Starting headless conversation evaluation...")
+    logger.info(f"Starting headless conversation evaluation with config: {file_name}")
 
-    if type not in SUPPORTED_INTAKE_NAMES:
-        print('!! the supported intake types are "ID-FACR", "UT-CCCI"')
+    try:
+        # Load assessment config using the loader
+        yaml_content = AssessmentFileLoader.read_file_content(file_name)
+        assessment_config = AssessmentFileLoader.validate_yaml_content(yaml_content)
+        if assessment_config.intake.intake_type != "conversation":
+            raise ValueError("this config needs to be for intake conversation")
 
-    sections = INTAKE_SECTIONS_MAPPING[type]
+        # Use sections directly from the config
+        if not assessment_config.intake.sections:
+            logger.error(f"No sections found in config file: {file_name}")
+            print(f"❌ Error: No sections found in config file: {file_name}")
+            return
+
+        sections = assessment_config.intake.sections
+        logger.info(f"Loaded {len(sections)} sections from {file_name}")
+
+    except FileNotFoundError as e:
+        logger.error(f"Config file not found: {e}")
+        print(f"❌ Error: Config file not found: {file_name}")
+        config_dir = (
+            Path(__file__).parent.parent.parent
+            / "core"
+            / "data_config"
+            / "assessment_configs"
+        )
+        print(f"Check available files in: {config_dir}")
+        return
+    except Exception as e:
+        logger.error(f"Error loading config file: {e}")
+        print(f"❌ Error loading config file: {e}")
+        return
 
     # Create clients with personas
     clients = []
@@ -521,7 +548,10 @@ async def headless_conversation_eval(type: str):
 
     # Run conversations concurrently
     start_time = datetime.now()
-    tasks = [run_client_conversation(client, sections) for client in clients]
+    tasks = [
+        run_client_conversation(client, sections, assessment_config)
+        for client in clients
+    ]
     results = await asyncio.gather(*tasks, return_exceptions=True)
     end_time = datetime.now()
 
@@ -671,7 +701,3 @@ async def headless_conversation_eval(type: str):
 
     print(f"\n💾 Results saved to: {results_file}")
     print("=" * 60)
-
-
-if __name__ == "__main__":
-    asyncio.run(headless_conversation_eval("oras"))

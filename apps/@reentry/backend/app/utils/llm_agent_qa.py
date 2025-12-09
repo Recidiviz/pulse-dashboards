@@ -3,8 +3,8 @@ from langchain_core.runnables.config import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 
-from app.core.config import dt_model as model
 from app.core.config import tracer
+from app.core.data_config.assessment_configs.assessment_config import ModelConfig
 from app.utils.llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
 
 
@@ -24,7 +24,16 @@ class LLMAgentQA:
     initial_call = True
     result_class = None
 
-    def __init__(self, system_prompt, thread_id):
+    def __init__(self, system_prompt, thread_id, model_config: ModelConfig):
+        # Create model from action_plan_config.small_model
+        from app.core.config import create_model_from_config
+
+        model = create_model_from_config(
+            model_config.provider,
+            model_config.name,
+            model_config.version,
+        )
+
         self.config: RunnableConfig = {
             "configurable": {"thread_id": thread_id},
             "callbacks": [],

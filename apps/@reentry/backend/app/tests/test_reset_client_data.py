@@ -2,9 +2,9 @@
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
+from app.core.db import AsyncSession
 from app.models.intake import Intake, IntakeMessage
 
 

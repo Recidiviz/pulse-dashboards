@@ -7,8 +7,8 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
 from pydantic import BaseModel, Field
 
-from app.core.config import gen_model as model
-from app.core.config import tracer
+from app.core.config import create_model_from_config, tracer
+from app.core.data_config.output_configs.output_config import ActionPlanConfigFile
 from app.services.resources import Resource
 from app.utils.action_plan_types import (
     ActionPlan,
@@ -23,7 +23,8 @@ from app.utils.action_plan_types import (
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
 from app.utils.regex import extract_uuids_from_links
 
-from .llm_agent_gen_plan import call_generate_section
+from .llm_agent_edit_plan_prompts import ActionPlanEditPrompts
+from .llm_agent_gen_plan import ActionPlanPrompts, call_generate_section
 from .llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
 from .llm_tools import convert_to_markdown
 
@@ -88,6 +89,7 @@ class LLMAgentEdit:
         client_address: str,
         current_timeline: ActionPlanTimelines | None = None,
         current_milestones: ActionPlanMilestones | None = None,
+        action_plan_config: ActionPlanConfigFile | None = None,
     ):
         self.config = {
             "configurable": {"thread_id": thread_id},
@@ -103,21 +105,35 @@ class LLMAgentEdit:
         self.current_milestones = current_milestones
         self.client_address = client_address
 
+        # Require config
+        if not action_plan_config:
+            raise ValueError(
+                "action_plan_config is required - cannot edit plan without configuration"
+            )
+
+        # Initialize prompts with config
+        self.gen_prompts = ActionPlanPrompts(action_plan_config.prompts)
+        self.edit_prompts = ActionPlanEditPrompts(action_plan_config.prompts)
+
+        # Extract structure flags from config
+        self.include_timeline = action_plan_config.structure.timeline
+        self.include_milestones = action_plan_config.structure.milestones
+
+        # Initialize model from config
+        self.model = create_model_from_config(
+            action_plan_config.model.provider,
+            action_plan_config.model.name,
+            action_plan_config.model.version,
+        )
+
         async def call_select_starting_node(state: ExtendedMessagesState):
             logger.debug("Selecting starting node")
             sections = state["current_sections"]
             sections_titles = ", ".join([s.title for s in sections])
-            message = HumanMessage(
-                content=f"Here are the previous sections titles: {sections_titles}."
-                "To accomplish the user's intructions, go though this list, for each section recall its content and decide how the user instruction applies."
-                "You can add a new section, remove a section, or change the title and/or content of a section."
-                "To merge two sections, use the add action for the new section and the remove action for the old sections."
-                "If no action is needed for a section, just skip the section."
-                "Only remove a section if explicitely asked, otherwise modify its content"
-            )
+            message = self.edit_prompts.get_section_selection_prompt(sections_titles)
             logger.debug(message.content)
             response = (
-                await model.with_structured_output(RegenerationAction)
+                await self.model.with_structured_output(RegenerationAction)
                 .with_retry(
                     stop_after_attempt=DEFAULT_MAX_RETRIES,
                     retry_if_exception_type=ERRORS_TO_RETRY_ON,
@@ -173,17 +189,11 @@ class LLMAgentEdit:
                 if previous_section and previous_section.markdown_content
                 else ""
             )
-            prompt = HumanMessage(
-                content=dedent(f"""
-                Perfect, now let's edit the section '{section}' according to the new instructions:
-                {self.extra_instructions}.
-                Apply the part of the instructions that are relevant to this section.
-                Do not change the structure of the content unless asked to do so.
-                Here is the markdown content of the current section: ```{clean_markdown_content}```
-                """)
+            prompt = self.edit_prompts.get_section_change_prompt(
+                section, self.extra_instructions, clean_markdown_content
             )
 
-            response = await model.with_retry(
+            response = await self.model.with_retry(
                 stop_after_attempt=DEFAULT_MAX_RETRIES,
                 retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(messages + [prompt], self.config)
@@ -216,25 +226,25 @@ class LLMAgentEdit:
             }
 
         async def _call_generate_section(state: ExtendedMessagesState):
-            return await call_generate_section(self.config, state, self.client_address)
+            return await call_generate_section(
+                self.config, state, self.client_address, self.gen_prompts, self.model
+            )
 
         async def call_generate_timeline(state: ExtendedMessagesState):
             logger.debug("Generating timeline")
             messages = state["messages"]
             messages.append(
-                HumanMessage(
-                    content=f"Edit the timeline according to the new instructions: {self.extra_instructions}."
-                    "Do not change the content structure unless asked to do so."
-                )
+                self.edit_prompts.get_timeline_edit_prompt(self.extra_instructions)
             )
-            response = await model.with_retry(
+
+            response = await self.model.with_retry(
                 stop_after_attempt=DEFAULT_MAX_RETRIES,
                 retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(messages, self.config)
             messages.append(response)
 
             timeline = (
-                await model.with_structured_output(ActionPlanTimelines)
+                await self.model.with_structured_output(ActionPlanTimelines)
                 .with_retry(
                     stop_after_attempt=DEFAULT_MAX_RETRIES,
                     retry_if_exception_type=ERRORS_TO_RETRY_ON,
@@ -251,19 +261,17 @@ class LLMAgentEdit:
             logger.debug("Generating milestones")
             messages = state["messages"]
             messages.append(
-                HumanMessage(
-                    content=f"Edit the milestones according to the new instructions: {self.extra_instructions}."
-                    "Do not change the content structure unless asked to do so."
-                )
+                self.edit_prompts.get_milestones_edit_prompt(self.extra_instructions)
             )
-            response = await model.with_retry(
+
+            response = await self.model.with_retry(
                 stop_after_attempt=DEFAULT_MAX_RETRIES,
                 retry_if_exception_type=ERRORS_TO_RETRY_ON,
             ).ainvoke(messages, self.config)
             messages.append(response)
 
             milestones = (
-                await model.with_structured_output(ActionPlanMilestones)
+                await self.model.with_structured_output(ActionPlanMilestones)
                 .with_retry(
                     stop_after_attempt=DEFAULT_MAX_RETRIES,
                     retry_if_exception_type=ERRORS_TO_RETRY_ON,
@@ -279,14 +287,10 @@ class LLMAgentEdit:
         async def call_generate_action_plan(state: ExtendedMessagesState):
             logger.debug("Generating action plan")
 
-            message = HumanMessage(
-                content="Now you can generate the action plan by combining all your research."
-                "Do not use the resources in this step."
-                "Always refer to the client as 'you'."
-            )
+            message = self.edit_prompts.get_action_plan_generation_prompt()
             state["messages"].append(message)
             response = (
-                await model.with_structured_output(ActionPlanPartial)
+                await self.model.with_structured_output(ActionPlanPartial)
                 .with_retry(
                     stop_after_attempt=DEFAULT_MAX_RETRIES,
                     retry_if_exception_type=ERRORS_TO_RETRY_ON,
@@ -307,18 +311,37 @@ class LLMAgentEdit:
         workflow.add_node("section-change", call_generate_section_change)
         workflow.add_node("assemble", call_generate_action_plan)
         workflow.add_node("select_starting_node", call_select_starting_node)
-        workflow.add_node("timeline", call_generate_timeline)
-        workflow.add_node("milestones", call_generate_milestones)
+
+        # Conditionally add timeline and milestones nodes
+        if self.include_timeline:
+            workflow.add_node("timeline", call_generate_timeline)
+        if self.include_milestones:
+            workflow.add_node("milestones", call_generate_milestones)
 
         # Links
-        workflow.add_edge("section", "timeline")
-        workflow.add_edge("section-change", "timeline")
-        workflow.add_edge("timeline", "milestones")
-        workflow.add_edge("milestones", "assemble")
-        workflow.add_edge("assemble", END)
-
         workflow.add_edge(START, "select_starting_node")
         workflow.add_conditional_edges("select_starting_node", call_generate_sections)
+
+        # Determine the target after section nodes based on enabled features
+        if self.include_timeline and self.include_milestones:
+            workflow.add_edge("section", "timeline")
+            workflow.add_edge("section-change", "timeline")
+            workflow.add_edge("timeline", "milestones")
+            workflow.add_edge("milestones", "assemble")
+        elif self.include_timeline and not self.include_milestones:
+            workflow.add_edge("section", "timeline")
+            workflow.add_edge("section-change", "timeline")
+            workflow.add_edge("timeline", "assemble")
+        elif not self.include_timeline and self.include_milestones:
+            workflow.add_edge("section", "milestones")
+            workflow.add_edge("section-change", "milestones")
+            workflow.add_edge("milestones", "assemble")
+        else:
+            # Neither timeline nor milestones enabled
+            workflow.add_edge("section", "assemble")
+            workflow.add_edge("section-change", "assemble")
+
+        workflow.add_edge("assemble", END)
 
         self.graph = workflow.compile()
 
@@ -392,10 +415,19 @@ class LLMAgentEdit:
         # Append any remaining new sections at the end
         generated_sections.extend(sections_by_title.values())
 
+        # Conditionally include timeline and milestones based on config flags
         self.plan = ActionPlan(
             immediate_needs=final_state["plan"].immediate_needs,
-            milestones=final_state["generated_milestones"].milestones,
-            timeline=final_state["generated_timeline"].timelines,
+            milestones=(
+                final_state["generated_milestones"].milestones
+                if self.include_milestones and final_state.get("generated_milestones")
+                else []
+            ),
+            timeline=(
+                final_state["generated_timeline"].timelines
+                if self.include_timeline and final_state.get("generated_timeline")
+                else []
+            ),
             quick_summary_circumstances=final_state["plan"].quick_summary_circumstances,
             overview=final_state["plan"].overview,
             sections=generated_sections,
@@ -411,137 +443,3 @@ class LLMAgentEdit:
             structured_action_plan=self.plan,
             suggested_resources=self.suggested_resources,
         )
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    from .messages import messages
-
-    current_sections = [
-        ActionPlanSection.model_validate(
-            {
-                "annotations": [
-                    {
-                        "source": "Client intake summary",
-                        "source_location": "### Needs and Risks Overview",
-                        "source_text_extract": "### Needs and Risks Overview",
-                    },
-                    {
-                        "source": "Client intake summary",
-                        "source_location": "### Priority Needs",
-                        "source_text_extract": "### Priority Needs",
-                    },
-                ],
-                "notes": "No transportation resources found. Consider local public transportation and carpooling options.",
-                "title": "Transportation Issues",
-                "markdown_content": "### Transportation Issues\n\n**Situation**: Allistor is currently facing transportation challenges due to a suspended driver's license, which affects his ability to commute to work and engage in daily activities. This situation has increased his dependency on his wife for transportation, adding further stress to family dynamics.\n\n**Useful Solutions**:\n- Exploring alternative transportation methods that can provide reliable and convenient options for commuting to work and other necessary places.\n- Considering public transportation options, carpooling with coworkers, or using ride-sharing services to maintain his work commitments and daily routines.\n- Ensuring that transportation solutions do not add further financial strain or inconvenience to his family.\n\n### Tasks to Address Transportation Needs\n\n1. **Research Public Transportation Options**: \n   - Look into local bus routes and schedules that connect Allistor's home to his workplace. Consider purchasing a transit pass if feasible.\n\n2. **Explore Carpooling Opportunities**: \n   - Discuss with coworkers the possibility of carpooling to and from work. This could reduce dependency on family and provide a consistent commuting option.\n\n3. **Consider Ride-Sharing Services**:\n   - Evaluate the cost and feasibility of using ride-sharing services like Uber or Lyft for essential travel, particularly for commuting to work.\n\n4. **Investigate Local Transportation Assistance Programs**:\n   - Reach out to local community centers or organizations that might offer transportation assistance programs for individuals facing temporary transportation challenges.\n\n5. **Develop a Long-term Transportation Plan**:\n   - Work with your case manager to develop a sustainable transportation plan that includes reviewing the status of your driver's license and exploring options for reinstatement if applicable. \n\nBy following these tasks, you can find manageable and practical solutions to your transportation issues, reducing stress and maintaining your professional commitments.",
-            }
-        ),
-        ActionPlanSection.model_validate(
-            {
-                "annotations": [
-                    {
-                        "source": "Client intake summary",
-                        "source_location": "Priority Needs",
-                        "source_text_extract": "Legal Support: Ongoing legal defense to manage charges related to the traffic incident.",
-                    },
-                    {
-                        "source": "Client intake messages",
-                        "source_location": "c71642ee-1758-43aa-9cd9-e19f0812ca90",
-                        "source_text_extract": "No, I'm not a criminal. Honestly, it's a complete miscarriage of justice that we're evendoing this, I told the judge my attorneys were planning to appeal.",
-                    },
-                    {
-                        "source": "Client intake messages",
-                        "source_location": "bc6a1667-d723-4497-9797-616f5ab3de69",
-                        "source_text_extract": "Look just to be clear, I was on prescription meds - which I had a prescription for! - at the time of the accident. My doctor gave them to me for my headaches, and I was disoriented by a headache when I started driving down the highway to begin with.",
-                    },
-                ],
-                "title": "Legal Support",
-                "markdown_content": "### Legal Support\n\n**Situation**: Allistor is currently navigating a legal challenge stemming from a traffic accident where he was under the influence of prescribed medication. This has not only led to financial strain due to legal fees but also added significant stress to his life. Ensuring adequate legal support is crucial for managing this situation effectively and working towards a resolution.\n\n**Useful Solutions**:\n- Connecting with legal aid services that can offer advice, representation, or resources to help manage the ongoing legal case.\n- Exploring financial assistance options to alleviate the burden of legal fees.\n- Regularly consulting with legal professionals to stay informed about the case's progress and make informed decisions.\n\n### Tasks to Address Legal Support Needs\n\n1. **Contact Legal Aid Services**:\n   - Reach out to [City Legal Assistance](#RESOURCE-1) at 800-700-8801 or visit them at 100 Justice St, Cityville for support and guidance.\n   - Alternatively, contact [Northside Legal Clinic](#RESOURCE-2) at 800-700-8802, located at 200 Court Rd, Northside.\n\n2. **Schedule a Consultation with Your Attorney**:\n   - Arrange regular meetings with your current attorney to discuss case updates and any concerns you might have.\n\n3. **Explore Financial Assistance for Legal Fees**:\n   - Investigate if there are any programs available that assist with covering legal fees, especially those offered by local organizations or community groups.\n\n4. **Gather and Organize Legal Documents**:\n   - Compile all relevant legal documents, prescriptions, and medical records that might support your case. This will be useful for your legal team to have a comprehensive view of your situation.\n\n5. **Stay Informed and Engaged**:\n   - Actively participate in the legal process by asking questions and ensuring you understand each step of the proceedings. This will help you make informed decisions.\n\nBy following these tasks, you can ensure that you have the necessary legal support and resources to navigate your current challenges effectively.",
-            }
-        ),
-        ActionPlanSection.model_validate(
-            {
-                "annotations": [
-                    {
-                        "source": "Client intake summary",
-                        "source_location": "### Needs and Risks Overview",
-                        "source_text_extract": "Physical health concerns with headaches and high blood pressure.",
-                    },
-                    {
-                        "source": "Client intake summary",
-                        "source_location": "### Priority Needs",
-                        "source_text_extract": "Managing stress levels related to work and home life.",
-                    },
-                    {
-                        "source": "Client intake summary",
-                        "source_location": "### Longer-term Needs",
-                        "source_text_extract": "Monitoring and managing high blood pressure and effects of medication.",
-                    },
-                ],
-                "notes": "No mental health resources were found. Consider recommending local community centers or hospitals for counseling or mental health support groups.",
-                "title": "Health and Stress Management",
-                "markdown_content": "### Health and Stress Management\n\n**Situation**: Allistor is experiencing health challenges, including chronic headaches and high blood pressure, which are compounded by the stress from his legal issues. Managing these health concerns is crucial to maintaining his overall well-being and ensuring he can effectively handle the demands of his personal and professional life.\n\n**Useful Solutions**:\n- Seeking regular medical check-ups to monitor and manage his health conditions, particularly his blood pressure and headaches.\n- Exploring stress management techniques or counseling services to help cope with the psychological strain of his current situation.\n- Engaging in activities that promote physical and mental well-being.\n\n### Tasks to Address Health and Stress Management Needs\n\n1. **Schedule Regular Medical Check-ups**:\n   - Visit [City General Hospital](#RESOURCE-3) by calling 800-600-7701 or visiting 100 Main St, Cityville for comprehensive medical care.\n   - Alternatively, for more immediate needs, consider [Downtown Urgent Care](#RESOURCE-4) at 50 Broad St, Cityville, phone: 800-600-7702.\n\n2. **Consult a Healthcare Provider about Medications**:\n   - Discuss your prescribed medications with your healthcare provider to ensure they are managed effectively alongside your lifestyle and stress levels.\n\n3. **Incorporate Stress Management Techniques**:\n   - Explore activities such as meditation, yoga, or deep-breathing exercises that can be practiced at home or through local classes.\n\n4. **Seek Counseling or Support Groups**:\n   - Although specific mental health resources were not identified, consider reaching out to local community centers or hospitals for recommendations on counseling services or support groups.\n\n5. **Engage in Regular Physical Activity**:\n   - Find time to engage in light physical activities, such as walking or participating in community sports, which can help reduce stress and improve health.\n\nBy focusing on these tasks, you can better manage your health and stress, ultimately contributing to a more balanced and resilient approach to life's challenges.",
-            }
-        ),
-        ActionPlanSection.model_validate(
-            {
-                "annotations": [
-                    {
-                        "source": "Client intake summary",
-                        "source_location": "Priority Needs",
-                        "source_text_extract": "License suspension impacts ability to commute to work.",
-                    },
-                    {
-                        "source": "Client intake messages",
-                        "source_location": "c9d46ab5-36d1-4fd8-a25e-a8fe728a4593",
-                        "source_text_extract": "my license is now suspended and I don't have a way to get to work anymore",
-                    },
-                    {
-                        "source": "Decision Tree Recommendations",
-                        "source_location": "employment_mobility",
-                        "source_text_extract": "Facilitate connections with coworkers or local carpool programs",
-                    },
-                ],
-                "notes": "No specific transportation resources were found for alternative commuting methods. Consider local community boards for carpool opportunities.",
-                "title": "Family and Emotional Well-being",
-                "markdown_content": "### Family and Emotional Well-being\n\n**Situation**: Allistor is married with four children, and the ongoing legal challenges are causing emotional strain within the family. His wife is currently supporting him by managing transportation needs, which adds to the family's stress. Ensuring emotional well-being and family support is critical during this challenging time.\n\n**Useful Solutions**:\n- Strengthening family relationships through open communication and shared activities.\n- Seeking family counseling or support services to navigate the emotional impacts of the legal situation.\n- Exploring childcare support options to provide relief and stability for the children.\n\n### Tasks to Address Family and Emotional Well-being Needs\n\n1. **Enhance Family Communication**:\n   - Set aside regular family meetings to discuss everyone's feelings and concerns, ensuring that each family member feels heard and supported.\n\n2. **Schedule Family Activities**:\n   - Plan activities that the whole family can enjoy together, such as a weekly game night or outdoor outings, to strengthen bonds and provide positive experiences.\n\n3. **Explore Family Counseling Options**:\n   - Although specific mental health resources were not identified, consider reaching out to local community centers or family services for recommendations on family counseling.\n\n4. **Consider Childcare Support**:\n   - Look into local childcare options or programs that can provide temporary relief for your wife and ensure that your children have a stable environment.\n\n5. **Create a Support Network**:\n   - Connect with friends, extended family, or community groups who can offer additional emotional or practical support during this time.\n\nBy focusing on these tasks, you can foster a supportive and resilient family environment, helping everyone cope with the current challenges more effectively.",
-            }
-        ),
-    ]
-
-    async def main():
-        agent = LLMAgentEdit(messages, current_sections, thread_id=12345)
-
-        instructions = "remove the section about transportation issues"
-        print(f"Applying the instructions: {instructions}")
-        action_plan = await agent.generate(extra_instructions=instructions)
-        print(action_plan.action_plan)
-
-        instructions = "replace the City General Hospital with Downtown Urgent Care"
-        print(f"Applying the instructions: {instructions}")
-        action_plan = await agent.generate(extra_instructions=instructions)
-        print(action_plan.action_plan)
-
-        instructions = "Split the mental health section into health section and mental health section. In the healt section, add taks to help the client understand the side effects of his medication"
-        print(f"Applying the instructions: {instructions}")
-        action_plan = await agent.generate(extra_instructions=instructions)
-        print(action_plan.action_plan)
-
-        instructions = "elaborate the timeline to include weekly check-ins with the client, and all the points listed in the sections"
-        print(f"Applying the instructions: {instructions}")
-        action_plan = await agent.generate(extra_instructions=instructions)
-        print(action_plan.action_plan)
-
-        instructions = "Remove the Youth Financial Support resource, replace it with some other resource"
-        print(f"Applying the instructions: {instructions}")
-        action_plan = await agent.generate(extra_instructions=instructions)
-        print(action_plan.action_plan)
-
-        instructions = "Add the section about transportation issues"
-        print(f"Applying the instructions: {instructions}")
-        action_plan = await agent.generate(extra_instructions=instructions)
-        print(action_plan.action_plan)
-
-    asyncio.run(main())

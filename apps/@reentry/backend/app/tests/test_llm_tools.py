@@ -86,3 +86,137 @@ def test_convert_to_markdown_replaces_quotes():
 
     assert "'Intake Summary'" in result
     assert "'Tree Recommendations'" in result
+
+
+def test_convert_to_markdown_includes_milestones_and_timeline_when_present():
+    """Test that milestones and timeline sections are rendered when arrays have content."""
+    structure_plan = {
+        "immediate_needs": {
+            "annotations": [],
+            "notes": None,
+            "title": "Immediate Needs",
+            "markdown_content": "Test content",
+        },
+        "quick_summary_circumstances": "test summary",
+        "overview": "test overview",
+        "sections_order": ["Housing"],
+        "sections": [
+            {
+                "annotations": [],
+                "notes": None,
+                "title": "Housing",
+                "markdown_content": "Housing content",
+                "resources": [],
+            },
+        ],
+        "milestones": [
+            {
+                "date": "Week 4",
+                "title": "First Milestone",
+                "markdown_content": "Milestone content here",
+                "notes": None,
+            },
+        ],
+        "timeline": [
+            {
+                "date": "Week 1",
+                "markdown_content": "Week 1 tasks",
+                "notes": None,
+            },
+        ],
+    }
+    plan = ActionPlan(**structure_plan)
+    result = convert_to_markdown(plan)
+
+    # Verify milestones section is present
+    assert "# Milestones" in result
+    assert "## First Milestone (Week 4)" in result
+    assert "Milestone content here" in result
+
+    # Verify timeline section is present
+    assert "# Timeline" in result
+    assert "## Week 1" in result
+    assert "Week 1 tasks" in result
+
+
+def test_convert_to_markdown_excludes_milestones_and_timeline_when_empty():
+    """Test that milestones and timeline sections are not rendered when arrays are empty."""
+    structure_plan = {
+        "immediate_needs": {
+            "annotations": [],
+            "notes": None,
+            "title": "Immediate Needs",
+            "markdown_content": "Test content",
+        },
+        "quick_summary_circumstances": "test summary",
+        "overview": "test overview",
+        "sections_order": ["Housing"],
+        "sections": [
+            {
+                "annotations": [],
+                "notes": None,
+                "title": "Housing",
+                "markdown_content": "Housing content",
+                "resources": [],
+            },
+        ],
+        "milestones": [],  # Empty array
+        "timeline": [],  # Empty array
+    }
+    plan = ActionPlan(**structure_plan)
+    result = convert_to_markdown(plan)
+
+    # Verify milestones section is NOT present
+    assert "# Milestones" not in result
+
+    # Verify timeline section is NOT present
+    assert "# Timeline" not in result
+
+    # But sections should still be present
+    assert "# Housing" in result
+    assert "Housing content" in result
+
+
+def test_convert_to_markdown_excludes_timeline_when_empty():
+    """Test that milestones and timeline sections are not rendered when arrays are empty."""
+    structure_plan = {
+        "immediate_needs": {
+            "annotations": [],
+            "notes": None,
+            "title": "Immediate Needs",
+            "markdown_content": "Test content",
+        },
+        "quick_summary_circumstances": "test summary",
+        "overview": "test overview",
+        "sections_order": ["Housing"],
+        "sections": [
+            {
+                "annotations": [],
+                "notes": None,
+                "title": "Housing",
+                "markdown_content": "Housing content",
+                "resources": [],
+            },
+        ],
+        "milestones": [
+            {
+                "date": "Week 4",
+                "title": "First Milestone",
+                "markdown_content": "Milestone content here",
+                "notes": None,
+            },
+        ],  # Empty array
+        "timeline": [],  # Empty array
+    }
+    plan = ActionPlan(**structure_plan)
+    result = convert_to_markdown(plan)
+
+    # Verify milestones section is NOT present
+    assert "# Milestones" in result
+
+    # Verify timeline section is NOT present
+    assert "# Timeline" not in result
+
+    # But sections should still be present
+    assert "# Housing" in result
+    assert "Housing content" in result

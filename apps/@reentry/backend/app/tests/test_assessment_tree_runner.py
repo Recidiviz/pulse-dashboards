@@ -45,10 +45,10 @@ client_info = "Hi, I'm so happy to be here today !"
 
 
 @pytest.mark.asyncio
-async def test_simple_run():
+async def test_simple_run(seed_configs):
     graph = MermaidParser.parse(ASSESSMENT_TREE_FULL, structued_tree_data_full)
-
-    runner = AssessmentRunner(graph, client_info)
+    config = seed_configs["assessment_files_by_state"]["US_AZ"]
+    runner = AssessmentRunner(graph, client_info, assessment_config=config)
 
     # Mock LLMAgentQA to return "yes" for the question "Is the person happy?"
     mock_answer = AssessmentAnswer(
@@ -75,12 +75,12 @@ async def test_simple_run():
 
 
 @pytest.mark.asyncio
-async def test_simple_run_question_type():
+async def test_simple_run_question_type(seed_configs):
     graph = MermaidParser.parse(
         ASSESSMENT_TREE_SHORTHANDS, structued_tree_data_shorthand
     )
-
-    runner = AssessmentRunner(graph, client_info, assessment_type="lsir")
+    config = seed_configs["assessment_files_by_state"]["US_AZ"]
+    runner = AssessmentRunner(graph, client_info, assessment_config=config)
 
     # Mock LLMAgentQA to return "yes" for first question and "unclear" for second
     mock_answer_yes = AssessmentAnswer(

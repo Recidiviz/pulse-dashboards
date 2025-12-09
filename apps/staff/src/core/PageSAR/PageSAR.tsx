@@ -31,13 +31,12 @@ import {
 import { StaffDashboardPageLayout } from "../StaffDashboardPageLayout";
 
 
-
 const PageSAR: React.FC = function PageSAR() {
   // TODO(#5636) Eliminate PartiallyTypedRootStore
   const { sentencingStore } = useRootStore() as PartiallyTypedRootStore;
   const STAFF_DASHBOARD_URL = sarUrl(
     "staffDashboard",
-    { staffPseudoId: sentencingStore.staffPseudoId } 
+    { staffPseudoId: sentencingStore.staffPseudoId }
   );
   return (
     <ErrorBoundary

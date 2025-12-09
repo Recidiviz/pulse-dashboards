@@ -41,6 +41,8 @@ experiments/headless_evaluations
 .env-prod
 
 data/caddy/*
+data/results/*
+data/*serviceaccount*.json
 
 *.pkl
 

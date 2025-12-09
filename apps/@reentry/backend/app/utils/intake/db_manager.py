@@ -10,9 +10,11 @@ from uuid import UUID
 
 from sqlmodel import and_, select
 
+from app.core.data_config.assessment_configs.assessment_config import (
+    IntakeConfigConversation,
+)
 from app.core.db import get_session_async_manager
 from app.crud.intake import (
-    get_current_section_title,
     get_intake_by_client_pseudo_id,
     get_latest_message,
     get_latest_not_welcome_message,
@@ -59,6 +61,25 @@ class DatabaseManager:
         else:
             # Return the regular session manager
             return get_session_async_manager()
+
+    async def get_conversation_config(
+        self, assessment_config_id: UUID
+    ) -> IntakeConfigConversation:
+        """
+        Load assessment config by ID.
+
+        Args:
+            assessment_config_id: UUID of the assessment config to load
+
+        Returns:
+            AssessmentConfig object
+        """
+        from app.utils.config_loader import ConfigLoader
+
+        async with await self._get_session() as session:
+            return await ConfigLoader.load_conversation_config(
+                assessment_config_id, session
+            )
 
     async def get_latest_message(
         self, client_pseudo_id: str
@@ -111,22 +132,11 @@ class DatabaseManager:
                     session, client_pseudo_id
                 )
 
-                if not intake:
+                if not intake or not intake.current_section:
                     return None
                 # Allow saving messages for all statuses, including COMPLETED and ERROR
                 # This ensures closing remarks and error messages can be saved
                 current_section = intake.current_section
-                if not current_section:
-                    # For completed intakes or when current_section is None, we use a string value
-                    # Either get the last active section or use a default value
-                    try:
-                        current_section = await get_current_section_title(
-                            session, intake.id
-                        )
-                    except Exception as e:
-                        # Re-raise the error after logging
-                        logger.error(f"Error getting current section title: {e}")
-                        raise
 
                 message = IntakeMessage(
                     intake_id=intake.id,
@@ -406,14 +416,49 @@ class DatabaseManager:
             return False
 
     async def get_section_titles(self, client_pseudo_id: str) -> list[str]:
+        """
+        Get section titles for an intake.
+
+        LEGACY: Load from client_intake_sections table, if they exist
+        NEW: If intake has assessment_config_id, load from YAML config.
+
+        """
         try:
             async with await self._get_session() as session:
                 intake: Intake | None = await get_intake_by_client_pseudo_id(
                     session, client_pseudo_id
                 )
-                if intake:
-                    return [cis.section_title for cis in intake.client_intake_sections]
-                else:
+                if not intake:
                     raise ValueError("Intake not found")
+
+                if intake.client_intake_sections:
+                    # LEGACY: Get sections from client_intake_sections
+                    logger.info(
+                        "Getting section titles from client_intake_sections (legacy)"
+                    )
+                    return [cis.section_title for cis in intake.client_intake_sections]
+                # NEW: Get sections from assessment config
+                if intake.assessment_config_id:
+                    try:
+                        from app.utils.assessment_config_utils import (
+                            get_all_section_titles_from_config,
+                        )
+
+                        conversation_config = await self.get_conversation_config(
+                            intake.assessment_config_id
+                        )
+                        titles = get_all_section_titles_from_config(conversation_config)
+                        logger.info(
+                            f"Getting {len(titles)} section titles from assessment config"
+                        )
+                        return titles
+                    except Exception as e:
+                        logger.error(
+                            f"Failed to load sections from assessment config: {e}"
+                        )
+                        raise
+
         except Exception as e:
             raise e
+        # just for types
+        return []

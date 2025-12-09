@@ -1,0 +1,93 @@
+{
+  "client_id": "eval_client_003",
+  "messages": [
+    {
+      "id": "msg-201",
+      "role": "assistant",
+      "content": "Hi Devon, thanks for coming in today. I'd like to learn about your goals and what you need help with. Where would you like to start?",
+      "createdAt": "2025-01-22T09:00:00Z"
+    },
+    {
+      "id": "msg-202",
+      "role": "user",
+      "content": "Hey. I guess I want to talk about school. I dropped out in 10th grade and I know I need my GED to get anywhere. I'm 22 now and I should have done this a long time ago.",
+      "createdAt": "2025-01-22T09:01:15Z"
+    },
+    {
+      "id": "msg-203",
+      "role": "assistant",
+      "content": "It's great that you're ready to work on your GED. That's an important step. Have you looked into any programs or taken any practice tests?",
+      "createdAt": "2025-01-22T09:02:00Z"
+    },
+    {
+      "id": "msg-204",
+      "role": "user",
+      "content": "Not yet. I'm not even sure where to start. Math is hard for me, always has been. Reading is okay but I'm slow. I'm worried I might not pass.",
+      "createdAt": "2025-01-22T09:03:30Z"
+    },
+    {
+      "id": "msg-205",
+      "role": "assistant",
+      "content": "There are programs that offer tutoring and preparation classes. We can find one that works for you. What about work - are you currently employed?",
+      "createdAt": "2025-01-22T09:04:00Z"
+    },
+    {
+      "id": "msg-206",
+      "role": "user",
+      "content": "Yeah, I work at a warehouse doing picking and packing. It's full-time, pays okay, but there's no room to move up without a GED or some training. My shifts are 2pm to 10pm most days.",
+      "createdAt": "2025-01-22T09:05:45Z"
+    },
+    {
+      "id": "msg-207",
+      "role": "assistant",
+      "content": "So you'd need GED classes in the morning or on weekends. How do you get to work? Do you have reliable transportation?",
+      "createdAt": "2025-01-22T09:06:00Z"
+    },
+    {
+      "id": "msg-208",
+      "role": "user",
+      "content": "That's actually my biggest problem right now. I take the bus but it takes me an hour and a half each way because I have to transfer twice. If I miss one connection I'm late to work. I've been written up twice already. I don't have a car and I don't know how to drive.",
+      "createdAt": "2025-01-22T09:08:00Z"
+    },
+    {
+      "id": "msg-209",
+      "role": "assistant",
+      "content": "Transportation issues can really impact work and school. Have you ever considered learning to drive or getting a license?",
+      "createdAt": "2025-01-22T09:09:00Z"
+    },
+    {
+      "id": "msg-210",
+      "role": "user",
+      "content": "I'd like to but I don't have anyone to teach me and those driving schools are expensive. Plus I'd need to save for a car eventually. It feels like too much.",
+      "createdAt": "2025-01-22T09:10:30Z"
+    },
+    {
+      "id": "msg-211",
+      "role": "assistant",
+      "content": "Let's talk about your living situation. Where are you staying right now?",
+      "createdAt": "2025-01-22T09:11:00Z"
+    },
+    {
+      "id": "msg-212",
+      "role": "user",
+      "content": "I live with my aunt and my two cousins. I pay her $400 a month for a room. It's fine, we get along. She's been really patient with me. My parents aren't in the picture.",
+      "createdAt": "2025-01-22T09:12:15Z"
+    },
+    {
+      "id": "msg-213",
+      "role": "assistant",
+      "content": "It's good that you have that support. Are you healthy? Any medical issues we should know about?",
+      "createdAt": "2025-01-22T09:13:00Z"
+    },
+    {
+      "id": "msg-214",
+      "role": "user",
+      "content": "I'm healthy. I don't really go to the doctor unless something's wrong. I should probably get a checkup though, it's been years.",
+      "createdAt": "2025-01-22T09:14:00Z"
+    }
+  ],
+  "summary": "### Personal Background\nDevon is a 22-year-old on probation who dropped out of school in 10th grade. He is motivated to earn his GED and advance his career but faces educational and transportation barriers. He is employed full-time at a warehouse and lives with his aunt and cousins in a stable housing arrangement. Devon does not have parents in his life but has supportive extended family.\n\n### Needs and Risks Overview\n- **Education:** Did not complete high school (dropped out in 10th grade); needs GED to advance career; struggles with math; slow reader; lacks confidence in academic abilities\n- **Employment:** Currently employed full-time at warehouse (2pm-10pm shifts); stable job but limited advancement without education; has received attendance warnings due to transportation issues\n- **Transportation:** Relies on public transit with 1.5-hour commute each way requiring two transfers; no driver's license; never learned to drive; transportation unreliability threatening job stability\n- **Housing:** Stable housing with aunt ($400/month rent); positive family support\n- **Financial:** Employed with steady income; able to pay rent; concerned about costs of education and driver training\n- **Health:** Self-reports as healthy; has not had medical checkup in years\n- **Family:** Parents not involved; close relationship with aunt; no children\n\n### Priority Needs\n- **Education:** Enroll in GED preparation program that accommodates work schedule\n- **Transportation:** Develop reliable transportation solution to maintain employment; explore driver's education options\n- **Career Development:** Long-term goal of career advancement once GED is obtained",
+  "address": "Renton, Washington",
+  "assessment_summary": "### Risk Assessment Summary\n\n**Overall Risk Level:** Low-Moderate\n\n**Transportation (High Priority):**\n- 1.5-hour commute each way via two bus transfers\n- Transportation unreliability causing work attendance issues (2 write-ups)\n- No driver's license; never learned to drive\n- Risk: Job loss due to continued transportation problems\n\n**Education (High Priority):**\n- High school dropout (10th grade)\n- Motivated to obtain GED\n- Struggles with math; slow reading pace\n- Needs morning/weekend classes due to afternoon work schedule\n- Risk: Educational barriers limit long-term career advancement and economic stability\n\n**Employment (Moderate Priority - At Risk):**\n- Currently employed full-time (positive)\n- Job stability threatened by transportation issues\n- Limited advancement opportunities without GED\n- Risk: Potential job loss could cascade into housing and financial instability\n\n**Financial (Low-Moderate Priority):**\n- Steady employment income\n- Able to afford rent and basic expenses\n- Concerned about education and driving school costs\n- Risk: Additional expenses may cause financial strain\n\n**Housing (Strength):**\n- Stable housing with supportive aunt\n- Affordable rent ($400/month)\n- Positive family relationships\n\n**Health (Low Priority):**\n- Self-reports good health\n- Has not had recent medical care\n- Risk: Undetected health issues due to lack of preventive care",
+  "decision_tree_statements": "For the decision tree \"education_completion\", the recommendations are:\n- Enroll in GED preparation program with tutoring support\n- Prioritize programs with flexible scheduling (morning or weekend classes)\n- Connect with programs offering learning disability assessment if needed\n- Provide encouragement and support for academic confidence\n- Set realistic timeline for GED completion (6-12 months)\n\nFor the decision tree \"transportation_access\", the recommendations are:\n- Immediate: Explore alternative bus routes or rideshare options to reduce commute time\n- Short-term: Connect with subsidized driver's education programs\n- Long-term: Develop plan for driver's license and eventual vehicle access\n- Provide information on employer transportation assistance if available\n- Investigate carpool matching services with other warehouse employees\n\nFor the decision tree \"employment_stability\", the recommendations are:\n- Work with employer to address attendance concerns and explain transportation efforts\n- Once GED is obtained, explore warehouse supervisor or skilled position training\n- Consider vocational training programs that align with interests and local job market"
+}

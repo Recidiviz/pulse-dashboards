@@ -194,6 +194,7 @@ async def check_section_in_use(
 ) -> ClientIntakeSection | None: ...
 
 
+# TODO use this to remove unused sections
 @statement_or_result(first_only=True)
 async def check_section_in_use(
     session: AsyncSession, section_id: UUID, *, query_only: bool = False

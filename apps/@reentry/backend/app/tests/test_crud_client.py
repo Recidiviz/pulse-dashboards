@@ -7,6 +7,8 @@ import sqlalchemy
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.crud.client import get_paginated_client_list, get_processing_status
+from app.crud.intake import create_intake
+from app.models.base import IntakeType
 from app.routes.shared_models import ProcessingStatus
 
 
@@ -148,64 +150,6 @@ def mock_clientdata():
     return [client1, client2]
 
 
-# TODO: Test is currently failing due to temporary logic that matches caseworkers to clients
-# @pytest.mark.asyncio
-# async def test_get_paginated_client_list_with_pseudonymized_id(
-#     async_session: AsyncSession, mock_clientdata, create_client_view
-# ):
-#     """Test getting client list with a pseudonymized staff ID."""
-#     # Create test data in the database
-#     client_pseudo_id = "client-001"
-#     intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS)
-#     async_session.add(intake)
-#     await async_session.commit()
-
-#     # Setup our mocks
-#     pseudonymized_staff_id = "test-pseudonymized-id"
-
-#     # Mock get_clients_by_pseudonymized_staff_id to return our test data
-#     with patch(
-#         "app.services.client_data.queries.get_clients_by_pseudonymized_staff_id"
-#     ) as mock_get_clients:
-#         mock_get_clients.return_value = mock_clientdata
-
-#         # Mock get_clients_by_external_ids to return a dict of our clients
-#         with patch(
-#             "app.services.client_data.queries.get_clients_by_external_ids"
-#         ) as mock_get_by_ids:
-#             client_map = {
-#                 client.external_client_id: client for client in mock_clientdata
-#             }
-#             mock_get_by_ids.return_value = client_map
-
-#             # Call the function with a pseudonymized staff ID
-#             result = await get_paginated_client_list(
-#                 session=async_session,
-#                 page=1,
-#                 page_size=20,
-#                 pseudonymized_staff_id=pseudonymized_staff_id,
-#             )
-
-#             # Assert results
-#             assert result["total"] == 1  # should match the number of clients with same state_code as the caseworker
-#             assert len(result["items"]) == 1
-#             assert result["page"] == 1
-
-#             # Assert client info is correct
-#             client_pseudo_ids = {item["client_pseudo_id"] for item in result["items"]}
-#             assert "client-001" in client_pseudo_ids
-#             # assert "client-002" in client_pseudo_ids
-
-#             # Verify the intake was associated with the client
-#             for item in result["items"]:
-#                 if item["client_pseudo_id"] == "client-001":
-#                     assert item["intake"] is not None
-#                     assert item["intake"]["status"] == "in_progress"
-
-#             # Verify mock was called correctly
-#             mock_get_clients.assert_called_once_with(pseudonymized_staff_id)
-
-
 @pytest.mark.asyncio
 async def test_get_paginated_client_list_without_pseudonymized_id(
     async_session: AsyncSession, create_client_view
@@ -266,16 +210,23 @@ async def test_get_processing_status_not_started(async_session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_get_processing_status_completed(async_session: AsyncSession):
+async def test_get_processing_status_completed(
+    async_session: AsyncSession, seed_configs, mock_clientdata_service
+):
     """get_processing_status returns COMPLETED when plan is done"""
     from app.models.assessment import Assessment
-    from app.models.intake import Intake, IntakeStatus
+    from app.models.intake import IntakeStatus
     from app.models.models import Execution, Plan
 
-    client_pseudo_id = "completed-client"
+    client_pseudo_id = "client-001ps"
     staff_id = "staff-2"
 
-    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
+    intake = await create_intake(
+        session=async_session,
+        client_pseudo_id=client_pseudo_id,
+        status=IntakeStatus.COMPLETED,
+        intake_type=IntakeType.CONVERSATION,
+    )
     async_session.add(intake)
     await async_session.commit()
 
@@ -310,18 +261,23 @@ async def test_get_processing_status_completed(async_session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_get_processing_status_needs_retry(async_session: AsyncSession):
+async def test_get_processing_status_needs_retry(
+    async_session: AsyncSession, seed_configs, mock_clientdata_service
+):
     """get_processing_status returns NEEDS_RETRY when plan has failed after assessment"""
     from app.models.assessment import Assessment
-    from app.models.intake import Intake, IntakeStatus
+    from app.models.intake import IntakeStatus
     from app.models.models import Execution, Plan
 
-    client_pseudo_id = "retry-client"
+    client_pseudo_id = "client-002ps"
     staff_id = "staff-3"
 
-    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
-    async_session.add(intake)
-    await async_session.commit()
+    await create_intake(
+        session=async_session,
+        client_pseudo_id=client_pseudo_id,
+        status=IntakeStatus.COMPLETED,
+        intake_type=IntakeType.CONVERSATION,
+    )
 
     exec_assess = Execution(status="completed")
     async_session.add(exec_assess)

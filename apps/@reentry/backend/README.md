@@ -132,34 +132,35 @@ Other flags:
 - `--no-cov`: Disables coverage reporting for faster test execution
 - `--log-cli-level=DEBUG`: Control log verbosity (DEBUG, INFO, WARNING, ERROR)
 
-## Cli tool
+## Command Line Testing and Evaluation
 
-### Generate an action plan
+For detailed instructions on manual testing, evaluation, and all CLI tools including:
+- Action plan generation
+- Interactive conversation testing
+- Automated conversation evaluation with AI clients
+- Summary generation testing
+- Action plan quality evaluation with LangSmith
 
-```bash
-uv run python -m app.manage create-plan 108734 --force
-```
+See the [Evaluation README](./app/manage/evaluate/README.md).
 
-This will create an action plan for the given `client_id`, corresponding to a BigQuery external identifier, synchronously.
-You need to have an intake in db for that client.
-You can then see the result in `experiments/structured_action_plan/Allistor_Jones_it1_*`:
 
-- `_plan.json` contains the generated plan in structured format
-- `_plan.md` contains the generated plan rendered in markdown
-- `_gen_data.json`: contains the data used to generate the plan (everything)
+This evaluates conversation quality including tone, repetition, section coverage, and flow. Results are saved to `experiments/headless_evaluations/`.
 
-### Simulate Intake Conversation
+#### Summary Generation Testing
 
-Run the conversation in cli
+Test intake summary generation with fake conversation and assessment data:
 
 ```bash
-uv run -m app.manage test-conversation
+# With default data (recommended for quick testing)
+uv run python -m app.manage evaluate-summary summary-default-v0.yaml
+
+# With custom conversation and assessment JSON files
+uv run python -m app.manage evaluate-summary summary-CCCI-v0.yaml \
+  --conversation-file path/to/conversation.json \
+  --assessment-file path/to/assessment.json
 ```
 
-Run a few conversations in parallel with basic ai bots and evaluate results
-```bash
-uv run -m app.manage headless-conversation-eval
-```
+This generates both an assessment summary and client summary using the specified output config.
 
 ## Updating OpenAPI schema
 

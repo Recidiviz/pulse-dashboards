@@ -1,6 +1,6 @@
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import AsyncSession
 from app.models.models import Plan, PlanAsset, PlanGeneration
 
 

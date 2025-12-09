@@ -55,6 +55,7 @@ from app.services.client_data.utils import (
     process_client_row,
     redis_client,
 )
+from app.utils.state_code import normalize_state_code
 
 
 class Queries:
@@ -558,7 +559,7 @@ class Queries:
                     email=first_row.email,
                     full_name=full_name,
                     external_client_ids=all_client_external_ids,
-                    state_code=first_row.state_code,
+                    state_code=normalize_state_code(first_row.state_code),
                 )
             except Exception as e:
                 logger.error(

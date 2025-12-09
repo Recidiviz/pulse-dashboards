@@ -52,6 +52,7 @@ def mock_db_manager():
     manager.get_client = AsyncMock()
     manager.get_talking_turn = AsyncMock()
     manager.get_section_messages = AsyncMock()
+    manager.get_conversation_config = AsyncMock()
     return manager
 
 
@@ -253,16 +254,38 @@ async def test_init_and_run_graph(
     intake, client = mock_intake_and_client
     sid = "test_sid"
 
+    # Mock assessment config with chat_model
+    mock_assessment_config = Mock()
+    mock_assessment_config.intake.chat_model.provider = "openai"
+    mock_assessment_config.intake.chat_model.name = "gpt-4"
+    mock_assessment_config.intake.chat_model.version = "2024-11-20"
+
+    socket_manager.db_manager.get_conversation_config.return_value = (
+        mock_assessment_config
+    )
+
     # Mock IntakeConversationGraph
     mock_graph = AsyncMock(spec=IntakeConversationGraph)
-    with patch(
-        "app.utils.intake.socket_manager.IntakeConversationGraph",
-        return_value=mock_graph,
+    with (
+        patch(
+            "app.utils.intake.socket_manager.IntakeConversationGraph",
+            return_value=mock_graph,
+        ),
+        patch(
+            "app.utils.intake.socket_manager.create_model_from_config"
+        ) as mock_create,
     ):
+        mock_create.return_value = Mock()  # Mock model
+
         await socket_manager._init_and_run_graph(intake, client, sid)
 
+        # Verify assessment config was fetched
+        socket_manager.db_manager.get_conversation_config.assert_called_once_with(
+            intake.assessment_config_id
+        )
+
         # Verify client_context was created correctly
-        mock_graph.initialize.assert_called_once_with(intake, [])
+        mock_graph.initialize.assert_called_once_with(intake)
         mock_graph.run_assessment.assert_called_once()
 
         # Verify graph was stored
@@ -388,63 +411,6 @@ async def test_handle_client_response_completed_intake(
 
         # Message should not be stored for completed intake
         mock_db_manager.store_message.assert_not_called()
-
-
-@pytest.mark.asyncio
-async def test_handle_client_response_reinitialize_graph(
-    socket_manager,
-    mock_client_connection_manager,
-    mock_db_manager,
-    mock_intake_and_client,
-):
-    """Test handling client response that reinitializes the graph."""
-    # Skip this test for now, as it seems to be inconsistent with the implementation
-    # We would need to better understand the new handle_client_response implementation
-    # to fix this test properly
-    pytest.skip("Skipping test due to implementation changes")
-
-    # Original test code below
-    # sid = "test_sid"
-    # client_pseudo_id = "test_client"
-    # data = "Test response"
-
-    # # Setup to get correct client ID
-    # mock_client_connection_manager.get_client_pseudo_id_by_sid.return_value = client_pseudo_id
-
-    # # Set up to indicate it's client's turn
-    # mock_db_manager.get_talking_turn.return_value = IntakeMessageRole.CLIENT
-
-    # # Set up intake and client
-    # intake, client = mock_intake_and_client
-    # intake.status = IntakeStatus.IN_PROGRESS
-    # mock_db_manager.get_intake.return_value = intake
-    # mock_db_manager.get_client.return_value = client
-
-    # # Mock message creation
-    # msg = IntakeMessage(
-    #     id=UUID("00000000-0000-0000-0000-000000000000"),
-    #     from_role=IntakeMessageRole.CLIENT,
-    #     content=data,
-    #     section="Test Section"
-    # )
-    # mock_db_manager.store_message.return_value = msg
-
-    # # Mock socketio emit
-    # socket_manager.sio.emit = AsyncMock()
-
-    # # Mock _init_and_run_graph to avoid creating actual graph
-    # with patch.object(socket_manager, "_init_and_run_graph", AsyncMock()) as mock_init:
-    #     await socket_manager.handle_client_response(sid, data)
-
-    #     # Verify message was stored
-    #     mock_db_manager.store_message.assert_called_with(
-    #         from_role=IntakeMessageRole.CLIENT,
-    #         content="Test response",
-    #         client_pseudo_id=client_pseudo_id,
-    #     )
-
-    #     # Verify graph was reinitialized
-    #     mock_init.assert_called_once()
 
 
 @pytest.mark.asyncio

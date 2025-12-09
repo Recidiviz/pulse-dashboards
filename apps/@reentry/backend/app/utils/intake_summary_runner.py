@@ -3,6 +3,9 @@ from typing import List, Tuple
 
 from pydantic import BaseModel
 
+from app.core.data_config.output_configs.output_config import (
+    IntakeSummaryConfigFile,
+)
 from app.models.assessment import Assessment
 from app.utils.llm_agent_qa import LLMAgentQA
 
@@ -42,7 +45,9 @@ def format_assessments_list(assessments: List[Assessment]) -> str:
 
 
 async def generate_summary(
-    formatted_messages: str, assessments: List[Assessment]
+    formatted_messages: str,
+    assessments: List[Assessment],
+    output_config: IntakeSummaryConfigFile,
 ) -> Tuple[str, str]:
     """
     Generate a summary from intake messages.
@@ -50,49 +55,36 @@ async def generate_summary(
     Args:
         formatted_messages: A string containing formatted intake messages
         assessments: A list of Assessment objects
+        output_config: Output configuration (required)
 
     Returns:
         A formatted summary string
     """
 
+    # Require config
+    if not output_config:
+        raise ValueError(
+            "output_config is required - cannot generate summary without configuration"
+        )
+
     # Format assessments for inclusion in the prompt
     formatted_assessments = assessments if assessments else ""
 
-    INTAKE_SUMMARY_SYSTEM_PROMPT = "You are tasked with assisting a parole officer summarize the information they have about a client. Answer prompts to the best of you ability, remember the client will not see your assessment, only the parole officer. Be clear, precise and concise. Be professional but no need to be friendly."
-    ASSESSMENT_PROMPT = (
-        "Reformulate this assessment information :\n"
-        "{Assessments}\n\n"
-        "Format your response with the heading '# Assessment Details' followed by the reformulated information. Any other section should be a smaller title like '## Assessment section'"
-    )
-    SUMMARY_PROMPT = (
-        "The following is a conversation between an assistant and a client. "
-        "Conversation:\n{Conversation}\n\n"
-        "----end of conversation----\n"
-        "Here is the risk assessment for this client:\n{assessment}\n\n"
-        "Generate a detailed summary of the client's background, needs, risks, and priorities. "
-        "Do not mention the assessment or any scores.\n\n"
-        "Use valid **Markdown formatting** so the result displays with headings, bold text, and bulleted lists.\n\n"
-        "Format the summary in the following way:\n\n"
-        "# Personal Background\n"
-        "Write a short paragraph summarizing the client's background.\n\n"
-        "# Needs and Risks Overview\n"
-        "For each relevant category (e.g., Employment, Education, Financial, Housing, etc.), include one or two sentences using Markdown bullet points. "
-        "Start each with a bolded label using `**Category:**` format, and include only the categories that apply.\n\n"
-        "# Priority Needs\n"
-        "Use a bulleted list of immediate needs.\n\n"
-        "# Longer-term Needs\n"
-        "Use a bulleted list of long-term needs.\n\n"
-        "# Final Thoughts\n"
-        "Write a short concluding paragraph summarizing the client’s situation, key supports, and outlook.\n"
-    )
+    INTAKE_SUMMARY_SYSTEM_PROMPT = output_config.prompts.system
+
+    ASSESSMENT_PROMPT = output_config.prompts.assessment_summarize_template
+
+    SUMMARY_PROMPT = output_config.prompts.template
 
     system_prompt = INTAKE_SUMMARY_SYSTEM_PROMPT.format(
         Conversation=formatted_messages, Assessments=formatted_assessments
     )
+
     agent = LLMAgentQA(
         system_prompt=system_prompt,
         # random thread_id for now
         thread_id=random.randint(0, 100000),
+        model_config=output_config.model,
     )
 
     assessment_prompt = ASSESSMENT_PROMPT.format(Assessments=formatted_assessments)

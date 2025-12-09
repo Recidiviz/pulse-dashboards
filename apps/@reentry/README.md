@@ -146,43 +146,9 @@ yarn vitest (for unit-tests)
 yarn vitest --watch=false --config vitest.integration.config.mts integration-tests/sentry.integration.test.ts (for integration-tests)
 ```
 
-## Cli tool
+## Command Line Testing and Evaluation
 
-### Generate an action plan
-
-```bash
-uv run python -m app.manage create-plan 108734 --force
-```
-
-This will create an action plan for the given `client_pseudo_id`, corresponding to a BigQuery pseudonymized identifier, synchronously.
-You need to have an intake in db for that client.
-You can then see the result in `experiments/structured_action_plan/Allistor_Jones_it1_*`:
-
-- `_plan.json` contains the generated plan in structured format
-- `_plan.md` contains the generated plan rendered in markdown
-- `_gen_data.json`: contains the data used to generate the plan (everything)
-
-### Create test intake with conversation data
-
-```bash
-uv run -m app.manage create-test-intake-command CLIENT_PSEUDO_ID
-```
-
-This creates a test intake with example conversation data for testing assessment functionality. Use `--force` to replace an existing intake for the client. The intake includes comprehensive conversation data following ID_FACR sections and a fake address.
-
-### Simulate Intake Conversation
-
-Run the conversation in cli
-
-```bash
-uv run -m app.manage test-conversation
-```
-
-Run a few conversations in parallel with basic ai bots and evaluate results
-
-```bash
-uv run -m app.manage headless-conversation-eval
-```
+For detailed instructions on manual testing, evaluation, and CLI tools for action plans, intake conversations, and summary generation, see the [Evaluation README](backend/app/manage/evaluate/README.md).
 
 ## Updating OpenAPI schema
 

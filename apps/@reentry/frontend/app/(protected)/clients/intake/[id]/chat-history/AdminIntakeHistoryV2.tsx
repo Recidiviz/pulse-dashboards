@@ -38,13 +38,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import Sidebar from "~@reentry/frontend/(protected)/clients/intake/[id]/chat-history/Sidebar";
 import {
-  ClientIntakeSection,
   ClientRecord,
+  IntakeSection,
 } from "~@reentry/frontend/(protected)/clients/intake/[id]/types";
 import { StatusPill } from "~@reentry/frontend/components/base/StatusPill";
 import { ChatMessageBubble } from "~@reentry/frontend/components/IntakeChatV2/Chat/ChatMessageBubble";
 import type { Message as ChatMessage } from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
 import { trpc } from "~@reentry/frontend/trpc";
+import { components } from "~@reentry/openapi-types";
 
 import styles from "./AdminIntakeHistoryV2.module.css";
 
@@ -57,7 +58,7 @@ const AdminIntakeHistoryV2 = ({
   clientPseudoId,
   clientRecord,
 }: AdminIntakeHistoryV2Props) => {
-  const [currentSectionId, setCurrentSectionId] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -69,31 +70,19 @@ const AdminIntakeHistoryV2 = ({
 
   const sections = intakeHistory?.sections || [];
 
-  const intakeDataForSidebar: ClientIntakeSection[] = sections.map(
-    (section) => ({
-      id: section.id,
-      created_at: "",
-      updated_at: "",
-      intake_section_id: section.id,
-      is_active: section.completion_status !== "completed",
-      completion_status: section.completion_status,
-      notes: null,
-      intake_section: {
-        id: section.id,
-        created_at: "",
-        updated_at: "",
-        title: section.title,
-        description: section.description,
-      },
-    }),
-  );
+  const intakeSectionsForSidebar: IntakeSection[] = sections.map((section) => ({
+    status:
+      section.completion_status as components["schemas"]["IntakeSectionStatus"],
+    title: section.title,
+    description: section.description,
+  }));
 
   // Auto-select first section on load
   useEffect(() => {
-    if (sections.length && !currentSectionId) {
-      setCurrentSectionId(sections[0].id);
+    if (sections.length && !activeSection) {
+      setActiveSection(sections[0].id);
     }
-  }, [sections, currentSectionId]);
+  }, [sections, activeSection]);
 
   // Chat container height adjustment (should not exceed sidebar height and handle browser resizing)
   useEffect(() => {
@@ -166,9 +155,9 @@ const AdminIntakeHistoryV2 = ({
         <div className={styles["sidebar"]} ref={sidebarRef}>
           <Sidebar
             onClose={() => setSidebarOpen(!sidebarOpen)}
-            activeSectionId={currentSectionId}
-            onSectionSelect={(id) => setCurrentSectionId(id)}
-            intakeData={intakeDataForSidebar}
+            activeSection={activeSection}
+            onSectionSelect={(id) => setActiveSection(id)}
+            intakeSections={intakeSectionsForSidebar}
           />
         </div>
       ) : (
@@ -185,9 +174,9 @@ const AdminIntakeHistoryV2 = ({
       )}
 
       <div className={styles["chatContainer"]} ref={chatContainerRef}>
-        {currentSectionId ? (
+        {activeSection ? (
           sections
-            .filter((section) => section.id === currentSectionId)
+            .filter((section) => section.id === activeSection)
             .map((section) => {
               const sectionMessages = messagesBySection[section.title] || [];
               return (

@@ -6,13 +6,15 @@ Re-enqueue pending executions
 This command fetches all plans from a given date, deletes them and enqueues them again.
 """
 
-import structlog
 from datetime import datetime
-from app.crud.plan import delete_plan_by_id, create_plan
-from app.models.models import Plan, PlanType
-from app.core.db import get_session_async_manager
-from sqlmodel import select
+
+import structlog
 from sqlalchemy.orm import make_transient
+from sqlmodel import select
+
+from app.core.db import get_session_async_manager
+from app.crud.plan import create_plan, delete_plan_by_id
+from app.models.models import Plan, PlanType
 
 from .base import cli
 
@@ -20,6 +22,7 @@ logger = structlog.get_logger(__name__)
 
 # 7/31
 START_DATE = datetime(2025, 7, 31)
+
 
 @cli.command()
 async def retry_plan_gens_date():
@@ -53,15 +56,15 @@ async def retry_plan_gens_date():
         logger.info("Retry process completed", total_plans=len(plans))
 
 
-
 @cli.command()
 async def retry_plan_gens():
     """
     Fetch all plans created after the start date, delete them, and enqueue new processing.
     """
     async with get_session_async_manager() as session:
-
-        plans = await session.exec(select(Plan).where(Plan.create_execution_id.is_(None)))
+        plans = await session.exec(
+            select(Plan).where(Plan.create_execution_id.is_(None))
+        )
 
         for plan in plans:
             logger.info("Processing plan", plan_id=plan.id, client_id=plan.client_id)

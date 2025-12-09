@@ -1,8 +1,8 @@
 import uuid
 
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import AsyncSession
 from app.models.assessment import Assessment
 from app.models.execution import Execution, ExecutionStatus
 from app.utils.intake_summary_runner import format_assessments_list

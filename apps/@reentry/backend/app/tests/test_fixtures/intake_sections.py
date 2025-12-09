@@ -1,11 +1,12 @@
 """
-Provides standardized intake section examples for use in tests.
+Deprecating : replaced by assessment configs
+Provides standardized intake section examples for use in tests - Legacy only
 """
 
 from typing import List
 from uuid import uuid4
 
-from app.models.intake import ClientIntakeSection, IntakeSection
+from app.models.intake_sections import ClientIntakeSection, IntakeSection
 
 
 def create_test_section(title: str = "Test Section", order: int = 0) -> IntakeSection:
@@ -18,6 +19,7 @@ def create_test_section(title: str = "Test Section", order: int = 0) -> IntakeSe
         intake_name="id-facr",
         order=order,
         enabled=True,
+        current_revision_id=None,
     )
 
 

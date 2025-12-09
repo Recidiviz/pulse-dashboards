@@ -1,8 +1,8 @@
-import logging
 from datetime import UTC, datetime, timedelta, timezone
 from typing import Optional
 
 import sqlalchemy
+import structlog
 from sqlmodel import select
 
 from app.core.db import AsyncSession
@@ -24,7 +24,7 @@ from app.routes.shared_models import ProcessingStatus
 from app.services.client_data.queries import Queries
 from app.services.client_data.types import ClientDataRecord
 
-logger = logging.getLogger(__name__)
+logger = structlog.getLogger(__name__)
 
 # Timeout thresholds for stuck executions
 PENDING_TIMEOUT_HOURS = 3
@@ -102,13 +102,8 @@ def compute_processing_status(
 ) -> ProcessingStatus:
     """Compute aggregated processing status from assessments, plans, and intake"""
 
-    logger.debug(
-        "compute_processing_status called - plan create_status: %s",
-        plans.create_status if plans else None,
-    )
-
     # If no intake or intake not completed, processing hasn't started
-    if not intake or intake.status != "completed":
+    if not intake:
         logger.debug("Returning NOT_STARTED - intake not completed")
         return ProcessingStatus.NOT_STARTED
 
@@ -116,7 +111,7 @@ def compute_processing_status(
     if intake.recording_session:
         if intake.recording_session.execution:
             if is_execution_stuck(intake.recording_session.execution):
-                logger.debug(
+                logger.info(
                     "Recording execution %s is stuck",
                     intake.recording_session.execution.id,
                 )
@@ -133,6 +128,10 @@ def compute_processing_status(
                 "Recording session %s has error status", intake.recording_session.id
             )
             return ProcessingStatus.NEEDS_RETRY
+    # If no intake or intake not completed, processing hasn't started
+    if not intake or intake.status != "completed":
+        logger.debug("Returning NOT_STARTED - intake not completed")
+        return ProcessingStatus.NOT_STARTED
 
     # Check for stuck executions in assessments
     if assessments:

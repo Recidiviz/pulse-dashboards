@@ -18,9 +18,10 @@ from app.models.intake import (
 )
 from app.models.intake_sections import (
     ClientIntakeSection,
-    CompletionStatus,
 )
 from app.routes.shared_models import AddressSubmission
+from app.services.client_data.queries import Queries
+from app.utils.config_loader import ConfigLoader
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +57,7 @@ async def get_intake_by_client_pseudo_id(
     stmt = (
         select(Intake)
         .options(
+            joinedload(Intake.client_intake_sections),
             joinedload(Intake.client_intake_sections).joinedload(
                 ClientIntakeSection.intake_section
             ),
@@ -84,19 +86,19 @@ async def get_intake_by_client_pseudo_id(
 
 @overload
 async def get_intake_by_id(
-    session: AsyncSession, intake_id: str, *, query_only: Literal[True]
+    session: AsyncSession, intake_id: UUID, *, query_only: Literal[True]
 ) -> SelectOfScalar[Intake]: ...
 
 
 @overload
 async def get_intake_by_id(
-    session: AsyncSession, intake_id: str, *, query_only: Literal[False] = False
+    session: AsyncSession, intake_id: UUID, *, query_only: Literal[False] = False
 ) -> Intake | None: ...
 
 
 @statement_or_result(first_only=True)
 async def get_intake_by_id(
-    session: AsyncSession, intake_id: str, *, query_only: bool = False
+    session: AsyncSession, intake_id: UUID, *, query_only: bool = False
 ) -> SelectOfScalar[Intake] | Intake | None:
     return (
         select(Intake)
@@ -107,50 +109,6 @@ async def get_intake_by_id(
         )
         .where(Intake.id == intake_id)
     )
-
-
-@statement_or_result(first_only=False)
-async def get_current_section_title(session: AsyncSession, intake_id: UUID) -> str:
-    """
-    Get the title (string) of the first in_progress section of the ClientIntakeSections or the last section title
-    """
-
-    # First try to find an in-progress section
-    in_progress_query = (
-        select(ClientIntakeSection)
-        .options(joinedload(ClientIntakeSection.intake_section))
-        .where(
-            ClientIntakeSection.intake_id == intake_id,
-            ClientIntakeSection.completion_status == CompletionStatus.IN_PROGRESS.value,
-        )
-        .order_by(ClientIntakeSection.order)
-    )
-
-    result = await session.exec(in_progress_query)
-    in_progress_section = result.first()
-
-    if in_progress_section:
-        # Return the title as a string, not the entire object
-        return in_progress_section.intake_section.title
-
-    # If no in-progress section found, get the last section by order
-    last_section_query = (
-        select(ClientIntakeSection)
-        .options(joinedload(ClientIntakeSection.intake_section))
-        .where(ClientIntakeSection.intake_id == intake_id)
-        .order_by(ClientIntakeSection.order.desc())
-        .limit(1)
-    )
-
-    result = await session.exec(last_section_query)
-    last_section = result.first()
-
-    if last_section:
-        # Return the title as a string, not the entire object
-        return last_section.intake_section.title
-
-    # If no sections at all, return a default
-    return "Closing"
 
 
 @overload
@@ -271,14 +229,37 @@ async def get_latest_message(
 
 
 async def create_intake(
-    session: AsyncSession, client_pseudo_id: str, intake_type: IntakeType
+    session: AsyncSession,
+    client_pseudo_id: str,
+    intake_type: IntakeType,
+    status: IntakeStatus = None,
 ) -> Intake:
-    """Create a new intake record."""
+    """Create a new intake record with assessment_config_id."""
+
+    # Get client state from BigQuery
+    client_record = Queries.get_client_by_pseudonymized_id_unsafe(client_pseudo_id)
+
+    if not client_record:
+        raise ValueError(
+            f"No client record found for client_pseudo_id: {client_pseudo_id}"
+        )
+
+    # Get active assessment config for state
+    assessment_config = await ConfigLoader.get_active_assessment_config_by_state(
+        client_record.state_code, session
+    )
+
+    if not assessment_config:
+        raise ValueError(
+            f"No active assessment config found for state {client_record.state_code}"
+        )
+
     intake = Intake(
         client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.CREATED.value,
+        status=status if status else IntakeStatus.CREATED,
         internal_access=True,
         intake_type=intake_type.value,
+        assessment_config_id=assessment_config.id,
     )
     session.add(intake)
     await session.commit()

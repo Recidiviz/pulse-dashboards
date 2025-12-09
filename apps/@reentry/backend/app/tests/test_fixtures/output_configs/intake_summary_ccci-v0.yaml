@@ -1,0 +1,15 @@
+metadata:
+  code: intake_summary_ccci
+  output_type: intake_summary
+  version: 0
+  display_name: "CCCI Intake Summary"
+
+model:
+  provider: openai
+  name: gpt-4o
+  version: "2024-11-20"
+
+prompts:
+  system: "test"
+  assessment_summarize_template: "test"
+  template: "test"

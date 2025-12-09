@@ -106,7 +106,7 @@ const mapIntakeToTimeline = (intakeData) => {
 
 export default function IntakeArtifacts({clientData, intakeData}: IntakeArtifactsProps) {
     const router = useRouter();
-    const intakedBotStarted = clientData?.state_code !== "US_AZ" &&  intakeData && intakeData?.client_intake_sections?.length > 0;
+    const intakedBotStarted = clientData?.state_code !== "US_AZ" &&  intakeData && (intakeData?.intake_sections?.length ?? 0) > 0;
     const timelineData = mapIntakeToTimeline(intakeData);
 
     const {

@@ -1,0 +1,34 @@
+metadata:
+  state_code: US_UT
+  code: CCCI
+  version: 0
+  metadata_type: assessment
+  display_name: "Test CCCI v0"
+  description: "Test description"
+
+intake:
+  intake_type: conversation
+  scoring: lsir
+  scoring_model:
+    provider: openai
+    name: gpt-4o-mini
+    version: "2024-07-18"
+  chat_model:
+    provider: openai
+    name: gpt-4o
+    version: "2024-11-20"
+  prompts:
+    role: "test"
+    tone: "test"
+    opening_remarks: "test"
+    system_message: "test"
+
+  sections:
+    - title: Employment
+      description: "Test employment section"
+      required_information: "Test info"
+
+outputs:
+  codes:
+    - intake_summary_ccci
+    - action_plan_ccci

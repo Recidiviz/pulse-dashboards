@@ -196,7 +196,7 @@ async def retry_processing(
     # This ensures only one concurrent retry operation proceeds at a time per client
     intake = await acquire_intake_lock(session, client_pseudo_id)
 
-    if not intake or intake.status != "completed":
+    if not intake:
         raise HTTPException(status_code=400, detail="No retryable operations found")
 
     # Check for failed or stuck recording/transcription
@@ -290,6 +290,8 @@ async def retry_processing(
             ExecutionStatus.IN_PROGRESS,
         ]:
             raise HTTPException(status_code=400, detail="No retryable operations found")
+    if not intake or intake.status != "completed":
+        raise HTTPException(status_code=400, detail="No retryable operations found")
 
     try:
         from app.models.assessment import Assessment
@@ -467,6 +469,7 @@ async def retry_processing(
                     # Copy parameters from stuck/failed generation for retry
                     prompt = latest_gen.prompt
                     resource_to_add_content = latest_gen.resource_to_add_content
+                    print(latest_gen)
                     resource_to_remove_id = latest_gen.resource_to_remove_id
 
                     # Create new generation with same parameters (keep old one for audit trail)
@@ -475,6 +478,7 @@ async def retry_processing(
                         prompt=prompt,
                         resource_to_add_content=resource_to_add_content,
                         resource_to_remove_id=resource_to_remove_id,
+                        force_generation=latest_gen.force_generation,
                     )
                     session.add(new_gen)
                     await session.flush()  # Get the ID without committing
