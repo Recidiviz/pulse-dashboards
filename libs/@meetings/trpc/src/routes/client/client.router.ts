@@ -17,6 +17,7 @@
 
 import { TRPCError } from "@trpc/server";
 
+import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
@@ -29,13 +30,26 @@ export const clientRouter = router({
     .input(createMeetingInputSchema)
     .mutation(
       async ({ input: { clientId, startTime }, ctx: { prisma, user } }) => {
+        if (
+          env.NODE_ENV === "production" &&
+          user.pseudonymizedId === "RECIDIVIZ"
+        ) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Recidiviz users may not create meetings in production",
+          });
+        }
+        const staffPseudoId =
+          user.pseudonymizedId === "RECIDIVIZ" ? null : user.pseudonymizedId;
         const meeting = await prisma.meeting.create({
           data: {
-            staff: {
-              connect: {
-                pseudonymizedId: user.pseudonymizedId,
+            ...(staffPseudoId && {
+              staff: {
+                connect: {
+                  pseudonymizedId: staffPseudoId,
+                },
               },
-            },
+            }),
             client: {
               connect: {
                 personId: clientId,
@@ -65,30 +79,31 @@ export const clientRouter = router({
   getMeetings: auth0Procedure
     .input(getMeetingsInputSchema)
     .query(async ({ input: { clientId }, ctx: { prisma, user } }) => {
-      if (user.pseudonymizedId !== "RECIDIVIZ") {
-        const clientBelongsToStaff = await prisma.client.findFirst({
-          where: {
-            personId: clientId,
-            staff: {
-              some: {
-                staff: {
-                  pseudonymizedId: user.pseudonymizedId,
-                },
+      const staffWhereClause = (
+        user.pseudonymizedId === "RECIDIVIZ"
+          ? {
+              staffId: null,
+            }
+          : {
+              staff: {
+                pseudonymizedId: user.pseudonymizedId,
               },
-            },
-          },
-        });
+            }
+      ) satisfies Prisma.MeetingWhereInput;
 
-        if (!clientBelongsToStaff) {
-          throw new TRPCError({
-            message: "Client not found",
-            code: "NOT_FOUND",
-          });
-        }
-      }
       return await prisma.meeting.findMany({
         where: {
           clientId,
+          OR: [
+            // Users should only be able to see in-progress meetings if they were with that user,
+            // but all staff can see completed/processing meetings.
+            staffWhereClause,
+            {
+              postMeetingProcessingStatus: {
+                not: PostMeetingProcessingStatus.NOT_STARTED,
+              },
+            },
+          ],
         },
         select: {
           id: true,

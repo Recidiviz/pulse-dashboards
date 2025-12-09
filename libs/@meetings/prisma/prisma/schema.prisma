@@ -162,8 +162,10 @@ model Meeting {
   client   Client @relation(fields: [clientId], references: [personId])
   clientId BigInt
 
-  staff   Staff  @relation(fields: [staffId], references: [staffId])
-  staffId BigInt
+  // Recidiviz users don't appear in the staff table and should still be able to create meetings, so
+  // make this relation optional.
+  staff   Staff?  @relation(fields: [staffId], references: [staffId])
+  staffId BigInt?
 }
 
 enum TranscriptionProvider {

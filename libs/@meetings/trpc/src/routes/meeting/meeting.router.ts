@@ -34,140 +34,122 @@ import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 export const meetingRouter = router({
   getDetails: auth0Procedure
     .input(getDetailInputSchema)
-    .query(
-      async ({ input: { clientId, meetingId }, ctx: { prisma, user } }) => {
-        try {
-          const meeting = await prisma.meeting.findUniqueOrThrow({
-            where: {
-              id: meetingId,
-              clientId: clientId,
-              staff: {
-                pseudonymizedId: user.pseudonymizedId,
+    .query(async ({ input: { clientId, meetingId }, ctx: { prisma } }) => {
+      try {
+        const meeting = await prisma.meeting.findUniqueOrThrow({
+          where: {
+            id: meetingId,
+            clientId: clientId,
+          },
+          select: {
+            id: true,
+            startTime: true,
+            endTime: true,
+            notes: true,
+            postMeetingProcessingStatus: true,
+            transcriptions: {
+              orderBy: {
+                confidence: "desc",
               },
-            },
-            select: {
-              id: true,
-              startTime: true,
-              endTime: true,
-              notes: true,
-              postMeetingProcessingStatus: true,
-              transcriptions: {
-                orderBy: {
-                  confidence: "desc",
-                },
-                take: 1,
-                select: {
-                  confidence: true,
-                  summary: true,
-                  utterances: {
-                    orderBy: {
-                      startTimeMs: "asc",
-                    },
-                    select: {
-                      confidence: true,
-                      text: true,
-                      speaker: true,
-                      startTimeMs: true,
-                      endTimeMs: true,
-                    },
+              take: 1,
+              select: {
+                confidence: true,
+                summary: true,
+                utterances: {
+                  orderBy: {
+                    startTimeMs: "asc",
+                  },
+                  select: {
+                    confidence: true,
+                    text: true,
+                    speaker: true,
+                    startTimeMs: true,
+                    endTimeMs: true,
                   },
                 },
               },
             },
-          });
-
-          return {
-            ..._.omit(meeting, ["transcriptions"]),
-            transcription: meeting.transcriptions[0],
-          };
-        } catch (e) {
-          if (
-            e instanceof Prisma.PrismaClientKnownRequestError &&
-            e.code === "P2025"
-          ) {
-            throw new TRPCError({
-              code: "NOT_FOUND",
-              message: "Meeting with that id was not found",
-              cause: e,
-            });
-          }
-
-          throw e;
-        }
-      },
-    ),
-  getSignedUrlForRecording: auth0Procedure
-    .input(getSignedUrlForRecordingInputSchema)
-    .query(
-      async ({ input: { clientId, meetingId }, ctx: { prisma, user } }) => {
-        const meeting = await prisma.meeting.findUnique({
-          where: {
-            id: meetingId,
-            clientId: clientId,
-            staff: {
-              pseudonymizedId: user.pseudonymizedId,
-            },
           },
         });
 
-        if (!meeting) {
+        return {
+          ..._.omit(meeting, ["transcriptions"]),
+          transcription: meeting.transcriptions[0],
+        };
+      } catch (e) {
+        if (
+          e instanceof Prisma.PrismaClientKnownRequestError &&
+          e.code === "P2025"
+        ) {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Meeting with that id was not found",
+            cause: e,
           });
         }
 
-        return await getSignedUrlForNewRecording(
-          meeting.recordingsGCSBucket,
-          meeting.recordingsFolderPath,
-        );
-      },
-    ),
+        throw e;
+      }
+    }),
+  getSignedUrlForRecording: auth0Procedure
+    .input(getSignedUrlForRecordingInputSchema)
+    .query(async ({ input: { clientId, meetingId }, ctx: { prisma } }) => {
+      const meeting = await prisma.meeting.findUnique({
+        where: {
+          id: meetingId,
+          clientId: clientId,
+        },
+      });
+
+      if (!meeting) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Meeting with that id was not found",
+        });
+      }
+
+      return await getSignedUrlForNewRecording(
+        meeting.recordingsGCSBucket,
+        meeting.recordingsFolderPath,
+      );
+    }),
   discardMeeting: auth0Procedure
     .input(discardMeetingInputSchema)
-    .mutation(
-      async ({ input: { clientId, meetingId }, ctx: { prisma, user } }) => {
-        try {
-          await prisma.meeting.delete({
-            where: {
-              id: meetingId,
-              clientId: clientId,
-              staff: {
-                pseudonymizedId: user.pseudonymizedId,
-              },
-            },
+    .mutation(async ({ input: { clientId, meetingId }, ctx: { prisma } }) => {
+      try {
+        await prisma.meeting.delete({
+          where: {
+            id: meetingId,
+            clientId: clientId,
+          },
+        });
+      } catch (e) {
+        if (
+          e instanceof Prisma.PrismaClientKnownRequestError &&
+          e.code === "P2025"
+        ) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Meeting with that id was not found",
+            cause: e,
           });
-        } catch (e) {
-          if (
-            e instanceof Prisma.PrismaClientKnownRequestError &&
-            e.code === "P2025"
-          ) {
-            throw new TRPCError({
-              code: "NOT_FOUND",
-              message: "Meeting with that id was not found",
-              cause: e,
-            });
-          }
-
-          throw e;
         }
-      },
-    ),
+
+        throw e;
+      }
+    }),
   endMeeting: auth0Procedure
     .input(endMeetingInputSchema)
     .mutation(
       async ({
         input: { clientId, meetingId, notes },
-        ctx: { prisma, user, stateCode },
+        ctx: { prisma, stateCode },
       }) => {
         try {
           await prisma.meeting.update({
             where: {
               id: meetingId,
               clientId: clientId,
-              staff: {
-                pseudonymizedId: user.pseudonymizedId,
-              },
             },
             data: {
               endTime: new Date(),
@@ -199,9 +181,6 @@ export const meetingRouter = router({
             where: {
               id: meetingId,
               clientId: clientId,
-              staff: {
-                pseudonymizedId: user.pseudonymizedId,
-              },
             },
             data: {
               postMeetingProcessingStatus:
@@ -214,18 +193,12 @@ export const meetingRouter = router({
   updateNotes: auth0Procedure
     .input(updateNotesInputSchema)
     .mutation(
-      async ({
-        input: { clientId, meetingId, notes },
-        ctx: { prisma, user },
-      }) => {
+      async ({ input: { clientId, meetingId, notes }, ctx: { prisma } }) => {
         try {
           await prisma.meeting.update({
             where: {
               id: meetingId,
               clientId: clientId,
-              staff: {
-                pseudonymizedId: user.pseudonymizedId,
-              },
             },
             data: {
               notes: notes,
