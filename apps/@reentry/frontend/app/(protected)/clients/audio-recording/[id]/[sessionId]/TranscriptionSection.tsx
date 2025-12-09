@@ -142,6 +142,15 @@ const TranscriptionSection: React.FC<{
     );
   }
 
+  if (sessionStatus === "paused") {
+    return (
+      <StatusMessage
+        title="Recording Paused"
+        message="Your transcript will appear here once you've completed the assessment. Resume recording using the bar below to continue."
+      />
+    );
+  }
+
   if (recordingStatus === "created") {
     return (
       <StatusMessage
