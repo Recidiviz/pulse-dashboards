@@ -20,9 +20,17 @@ module.exports = {
   resolver: require.resolve("./jest.resolver.js"),
   preset: "jest-expo",
   moduleFileExtensions: ["ts", "js", "html", "tsx", "jsx"],
-  setupFilesAfterEnv: ["<rootDir>/src/test-setup.ts"],
+  testMatch: [
+    "<rootDir>/src/tests/**/*.test.ts",
+    "<rootDir>/src/tests/**/*.test.tsx",
+    "<rootDir>/src/tests/**/*.spec.ts",
+    "<rootDir>/src/tests/**/*.spec.tsx",
+  ],
+  setupFilesAfterEnv: ["<rootDir>/src/tests/setup/test-setup.ts"],
   moduleNameMapper: {
     "\\.svg$": "@nx/expo/plugins/jest/svg-mock",
+    // Fixes https://stackoverflow.com/questions/57749271/fbbatchedbridgeconfig-is-not-set-when-running-jest-tests
+    "^react-native$": "<rootDir>/node_modules/react-native",
   },
   transform: {
     "\\.[jt]sx?$": [
@@ -35,4 +43,5 @@ module.exports = {
       require.resolve("jest-expo/src/preset/assetFileTransformer.js"),
   },
   coverageDirectory: "../../../coverage/apps/@meetings/app",
+  testTimeout: 10000,
 };

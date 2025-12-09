@@ -60,6 +60,8 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
   const { clearSession } = useAuth0();
   const navigation = useNavigation();
 
+  const { user } = useAuth0();
+
   const handleMenuPress = (screen: string) => {
     navigation.navigate(screen as never);
     onClose();
@@ -93,10 +95,10 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
           </ImageBackground>
           <View>
             <Text className="font-inter text-base font-semibold text-primary">
-              Sam Smith
+              {user?.name || "User name not found"}
             </Text>
             <Text className="font-inter text-sm text-[#355362D9]">
-              user@example.com
+              {user?.email || "User email not found"}
             </Text>
           </View>
         </View>
@@ -126,7 +128,7 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
           onPress={() => handleMenuPress("Messages")}
         />
 
-        <Text className="mt-[15px] font-inter text-xs text-gray-500">Tools</Text>
+        <Text className="mt-[15px] font-inter text-gray-500 text-xs">Tools</Text>
         <MobileMenuItem
           icon={Icons.Schedule}
           title="Schedule"

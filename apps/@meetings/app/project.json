@@ -9,7 +9,8 @@
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'No tests yet'"
+        "command": "jest",
+        "cwd": "{projectRoot}"
       }
     },
     "load-env-file-gcp": {

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
   Image,
@@ -35,7 +35,7 @@ import { RootStackParamList } from "../navigation/DrawerNavigator";
 import MenuScreen from "../screens/MenuScreen";
 import DesktopMenuItem from "./DesktopMenuItem";
 
-type HeaderNavProp = StackNavigationProp<RootStackParamList>;
+type HeaderNavProp = NativeStackNavigationProp<RootStackParamList>;
 type HeaderRouteProp = RouteProp<RootStackParamList>;
 
 interface HeaderProps {
