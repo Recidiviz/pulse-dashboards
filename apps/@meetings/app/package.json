@@ -39,6 +39,7 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-auth0": "^5.1.0",
+    "react-native-css-interop": "0.1.22",
     "react-native-error-boundary": "^2.0.0",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-reanimated": "~4.1.1",
@@ -63,8 +64,5 @@
     "metro-config": "^0.83.3",
     "metro-resolver": "^0.83.3",
     "react-test-renderer": "19.1.0"
-  },
-  "resolutions": {
-    "react-native-css-interop": "0.1.22"
   }
 }
