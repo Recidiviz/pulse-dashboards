@@ -66,6 +66,7 @@ export const sarRouter = router({
             select: {
               fullName: true,
               gender: true, // Returned for display but not editable (state data)
+              raceOrEthnicity: true, // Returned for display but not editable (state data)
               ssn: true,
               externalId: true,
               birthDate: true, // Returned for display but not editable (state data)

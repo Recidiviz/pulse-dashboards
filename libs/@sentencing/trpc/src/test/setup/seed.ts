@@ -103,6 +103,7 @@ export const fakeClient = {
   fullName: faker.person.fullName(),
   stateCode: StateCode.US_ID,
   gender: FAKE_CLIENT_GENDER,
+  raceOrEthnicity: null,
   isCountyLocked: false,
   birthDate: faker.date.birthdate(),
 } satisfies ClientCreateInput;
@@ -223,6 +224,7 @@ export const fakeSARClient = {
   fullName: faker.person.fullName(),
   stateCode: StateCode.US_ID,
   gender: Gender.MALE,
+  raceOrEthnicity: "WHITE",
   isCountyLocked: false,
   birthDate: faker.date.birthdate(),
   ssn: faker.string.numeric(9),

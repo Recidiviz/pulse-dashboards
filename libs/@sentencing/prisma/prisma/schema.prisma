@@ -100,9 +100,10 @@ model Client {
   stateCode       StateCode
   fullName        String
 
-  gender    Gender
-  birthDate DateTime
-  cases     Case[]
+  gender          Gender
+  birthDate       DateTime
+  raceOrEthnicity String?
+  cases           Case[]
   sentencingAssessmentReports SentencingAssessmentReport[]
 
   // County and District fields must be mutually exclusive (this is currently enforced via SQL)

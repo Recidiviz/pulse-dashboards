@@ -89,6 +89,7 @@ describe("SAR router", () => {
             ..._.pick(fakeSARClient, [
               "fullName",
               "gender",
+              "raceOrEthnicity",
               "ssn",
               "externalId",
               "birthDate",
@@ -390,7 +391,7 @@ describe("SAR router", () => {
           attributes: {
             // Provide completely wrong type - string instead of object
             // @ts-expect-error Testing wrong type / invalid input
-            metadata: "this is not valid metadata" 
+            metadata: "this is not valid metadata",
           },
         });
         // If we get here, test should fail
