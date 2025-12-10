@@ -16,12 +16,11 @@
 // =============================================================================
 
 import { useRouter } from "next/navigation";
-import React from "react";
 
-import {$api} from "~@reentry/frontend/api";
-import {ArrowRight} from "~@reentry/frontend/components/icons/ArrowRight";
-import Timeline, {TimelineItem} from "~@reentry/frontend/components/intake/TimelineIndicator";
-import {useAuth} from "~@reentry/frontend/lib/auth/authContext";
+import { $api } from "~@reentry/frontend/api";
+import { ArrowRight } from "~@reentry/frontend/components/icons/ArrowRight";
+import Timeline, { TimelineItem } from "~@reentry/frontend/components/intake/TimelineIndicator";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { PrimaryButton } from "~@reentry/frontend-shared";
 import { components } from "~@reentry/openapi-types";
 
@@ -91,10 +90,16 @@ const mapIntakeToTimeline = (intakeData) => {
 
     if (intakeData.status === 'completed') {
         const completedAt = new Date(intakeData?.completed_at + 'Z' );
+        // We use updated_at as fallback in case completed_at is missing
+        const fallbackUpdatedAt = new Date(intakeData?.updated_at + "Z");
+
+        const completionTimestamp = intakeData?.completed_at
+            ? completedAt
+            : fallbackUpdatedAt;
 
         const completedStep = {
-            time: formatTime(completedAt),
-            description: `Completed ${formatTime(completedAt)} on ${formatDate(completedAt)}`,
+            time: formatTime(completionTimestamp),
+            description: `Completed ${formatTime(completionTimestamp)} on ${formatDate(completionTimestamp)}`,
             isCurrent: true,
             isCompleted: true,
         };
