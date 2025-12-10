@@ -274,10 +274,6 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "BED SPACE",
           text: "There is a lack of bed space at the appropriate security level.",
         },
-        {
-          key: "RESIDENT PREFERENCE",
-          text: "Resident prefers not to transfer to a different facility or housing unit.",
-        },
         { key: "OTHER", text: "Other: Please specify a reason" },
       ],
       denialText: null,

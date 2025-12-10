@@ -46,7 +46,7 @@ export const mockApiOpportunityConfigurationResponse = {
       displayName: "Limited Supervision Unit",
       dynamicEligibilityText:
         "client[|s] may be eligible for the Limited Supervision Unit",
-      eligibilityDateText: null,
+      eligibilityDateText: "Date Surfaced",
       eligibleCriteriaCopy: [],
       emptyTabCopy: [],
       firestoreCollection: "US_ID-LSUReferrals",

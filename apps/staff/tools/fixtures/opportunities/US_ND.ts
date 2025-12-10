@@ -327,13 +327,58 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_ND",
-      strictlyIneligibleCriteriaCopy: [],
+      strictlyIneligibleCriteriaCopy: [
+        {
+          key: "CUSTODY_LEVEL_IS_MINIMUM",
+          text: "Not classified as minimum custody",
+        },
+        {
+          key: "INCARCERATED_AT_LEAST_30_DAYS_IN_SAME_FACILITY",
+          text: "Needs {{daysUntil thirtyDaysInSameFacilityDate}} more days in current facility",
+        },
+        {
+          key: "INCARCERATED_AT_LEAST_90_DAYS",
+          text: "Needs {{daysUntil eligibleDate}} more days in custody",
+        },
+        {
+          key: "NOT_INCARCERATION_WITHIN_3_MONTHS_OF_FULL_TERM_COMPLETION_DATE",
+          text: "Less than 3 months away from release or parole review date",
+        },
+        {
+          key: "US_ND_HAS_FACILITY_RESTRICTIONS",
+          text: "The resident has alerts preventing them from being transferred to ATP",
+        },
+        {
+          key: "US_ND_INCARCERATION_WITHIN_1_YEAR_OF_FTCD_OR_PRD_OR_CPP_RELEASE",
+          text: "More than 12 months until release or parole review date.",
+        },
+        {
+          key: "US_ND_NOT_ENROLLED_IN_RELEVANT_PROGRAM",
+          text: "Currently enrolled in a core program",
+        },
+        {
+          key: "US_ND_NOT_SERVING_INELIGIBLE_OFFENSE_FOR_ATP_WORK_RELEASE",
+          text: "Ineligible offense(s)",
+        },
+        {
+          key: "US_ND_NOT_WITHIN_1_MONTH_OF_PAROLE_START_DATE",
+          text: "Less than 1 month until parole start date",
+        },
+        {
+          key: "US_ND_NO_DETAINERS_OR_WARRANTS",
+          text: "Has a felony warrant or detainer",
+        },
+        {
+          key: "US_ND_WORK_RELEASE_COMMITTEE_REQUIREMENTS",
+          text: "The resident is not compliant with the Work Release Committee conditions",
+        },
+      ],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
         "This tool helps case managers identify residents who are eligible for a referral to ATP (including FTP or MTP), which provides residential transitional services and a stable foundation for residents as they prepare for release into the community. Case managers should complete a Minimum Housing Referral assessment in Elite for every eligible resident.",
       submittedTabTitle: "Referral Submitted",
-      supportsIneligible: false,
+      supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: null,
@@ -448,13 +493,42 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_ND",
-      strictlyIneligibleCriteriaCopy: [],
+      strictlyIneligibleCriteriaCopy: [
+        {
+          key: "CUSTODY_LEVEL_IS_MINIMUM",
+          text: "Not classified as minimum custody",
+        },
+        {
+          key: "INCARCERATION_WITHIN_42_MONTHS_OF_FULL_TERM_COMPLETION_DATE",
+          text: "More than 43 months away from release",
+        },
+        {
+          key: "NOT_INCARCERATION_WITHIN_3_MONTHS_OF_FULL_TERM_COMPLETION_DATE",
+          text: "Less than 3 months away from release or parole review date",
+        },
+        {
+          key: "US_ND_NOT_ENROLLED_IN_RELEVANT_PROGRAM",
+          text: "Currently enrolled in a core program",
+        },
+        {
+          key: "US_ND_NOT_IN_AN_ORIENTATION_UNIT",
+          text: "Currently in the first or second week of orientation",
+        },
+        {
+          key: "US_ND_NOT_IN_MINIMUM_SECURITY_FACILITY",
+          text: "Already in a minimum-security unit",
+        },
+        {
+          key: "US_ND_NO_DETAINERS_OR_FELONY_WARRANTS",
+          text: "Has a felony warrant or detainer",
+        },
+      ],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
         "This tool helps case managers identify residents who are eligible for transfer to a minimum security unit (MRCC or JRMU). Case managers should complete a Minimum Housing Referral assessment in Elite for every eligible resident.",
       submittedTabTitle: "Referral Submitted",
-      supportsIneligible: false,
+      supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: null,

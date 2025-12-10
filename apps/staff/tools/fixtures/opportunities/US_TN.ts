@@ -314,17 +314,12 @@ export const mockApiOpportunityConfigurationResponse = {
       displayName: "Compliant Reporting - 2025 Policy",
       dynamicEligibilityText:
         "client[|s] may be eligible for Compliant Reporting",
-      eligibilityDateText: null,
+      eligibilityDateText: "Date Surfaced",
       eligibleCriteriaCopy: [
         {
           key: "onMinimumSupervisionAtLeastSixMonths",
           text: "On Low supervision level for 6+ months",
           tooltip: "",
-        },
-        {
-          key: "onIntakeFor60Days",
-          text: "On intake for 60+ days",
-          tooltip: "Clients must be on intake for 60 days",
         },
         {
           key: "usTnAssessedRiskLowCompliantOnStrongR2AfterIntakeSupervisionLevel",
