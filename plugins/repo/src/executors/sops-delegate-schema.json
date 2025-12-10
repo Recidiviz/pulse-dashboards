@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "properties": {
+    "prefixedTarget": {
+      "type": "string",
+      "description": "The requires-sops-env: prefixed target name to delegate to"
+    }
+  },
+  "required": ["prefixedTarget"],
+  "additionalProperties": false
+}

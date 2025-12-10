@@ -20,13 +20,17 @@ import {
   CreateNodesResult,
   CreateNodesV2,
 } from "@nx/devkit";
+import { CreateNodesContextV2 } from "nx/src/project-graph/plugins/public-api";
 import { dirname } from "path";
+
+import { createUnwrappedSopsEnvTargets } from "./executors/sops-env";
 
 /**
  * Defines the custom default tasks to be registered for a given project
  */
 async function createNodesInternal(
   projectFilePath: string,
+  context: CreateNodesContextV2,
 ): Promise<CreateNodesResult> {
   const projectRoot = dirname(projectFilePath);
 
@@ -38,6 +42,7 @@ async function createNodesInternal(
             executor: "~repo:projectTags",
             cache: true,
           },
+          ...createUnwrappedSopsEnvTargets(projectFilePath, context),
         },
       },
     },
@@ -50,7 +55,7 @@ export const createNodesV2: CreateNodesV2 = [
   "**/project.json",
   async (configFiles, options, context) => {
     return await createNodesFromFiles(
-      (configFile) => createNodesInternal(configFile),
+      (configFile) => createNodesInternal(configFile, context),
       configFiles,
       options,
       context,

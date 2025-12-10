@@ -71,7 +71,8 @@
       }
     },
     {
-      "plugin": "~repo"
+      "plugin": "~repo",
+      "options": {}
     }
   ],
   "generators": {

@@ -4,6 +4,11 @@
       "implementation": "./src/executors/projectTags",
       "schema": "./src/executors/schema.json",
       "description": "projectTags executor"
+    },
+    "sopsDelegateExecutor": {
+      "implementation": "./src/executors/sops-delegate-executor",
+      "schema": "./src/executors/sops-delegate-schema.json",
+      "description": "Load SOPS environment variables and delegate to prefixed target"
     }
   }
 }
