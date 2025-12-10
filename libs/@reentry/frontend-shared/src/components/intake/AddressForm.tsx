@@ -23,12 +23,6 @@ import { useState } from "react";
 import { useApplicationContext } from "../../contexts/ApplicationContext";
 import FullAddressForm from "../FullAddressForm";
 
-interface AddressFormData {
-  streetAddress?: string;
-  city: string;
-  state: string;
-}
-
 interface AddressFormProps {
   onError: (error: string) => void;
   setDisplaySurvey: (display: boolean) => void;
@@ -36,13 +30,10 @@ interface AddressFormProps {
 
 const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
   const { $api, analytics } = useApplicationContext();
-  const [formData, setFormData] = useState<AddressFormData>({
-    streetAddress: "",
-    city: "",
-    state: "",
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addressInput, setAddressInput] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
   const [addressError, setAddressError] = useState<string | null>(null);
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -85,8 +76,8 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
       const response = await submitAddressMutation({
         body: {
           street_address: addressInput,
-          city: formData.city,
-          state: formData.state,
+          city: city,
+          state: state,
         },
         headers: {
           Authorization: `Bearer ${getIntakeToken()}`,
@@ -154,15 +145,11 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
                 <div className="space-y-4 [&>div]:mb-0 [&_label]:text-[16px] [&_label]:tracking-[-0.02em] [&_label]:text-[#012322] [&_label]:font-medium [&_input]:p-3 [&_input]:rounded-lg [&_input]:border-gray-300 [&_input]:focus:border-gray-900 [&_button]:p-3 [&_button]:rounded-lg [&_button]:border-gray-300 [&_button]:focus:border-gray-900">
                   <FullAddressForm
                     addressValue={addressInput}
-                    cityValue={formData.city}
-                    stateValue={formData.state}
+                    cityValue={city}
+                    stateValue={state}
                     onAddressChange={handleAddressChange}
-                    onCityChange={(value) =>
-                      setFormData({ ...formData, city: value })
-                    }
-                    onStateChange={(value) =>
-                      setFormData({ ...formData, state: value })
-                    }
+                    onCityChange={setCity}
+                    onStateChange={setState}
                     disabled={isSubmitting}
                     addressError={addressError}
                     onFormValidChange={setIsFormValid}
@@ -173,12 +160,7 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
                 <div className="w-12/12">
                   <button
                     type="submit"
-                    disabled={
-                      isSubmitting ||
-                      !isFormValid ||
-                      !formData.city ||
-                      !formData.state
-                    }
+                    disabled={isSubmitting || !isFormValid || !city || !state}
                     className="hover:bg-gray-950 text-white rounded-full py-2 w-full disabled:opacity-50 bg-[#003331]"
                   >
                     {isSubmitting ? (

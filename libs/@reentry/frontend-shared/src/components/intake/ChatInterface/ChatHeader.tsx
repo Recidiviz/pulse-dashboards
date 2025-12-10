@@ -65,7 +65,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     <>
       {/* Main header */}
       <Box
-        className="h-16 sm:h-20 md:h-20 border-b md:border-slate-400/40 lg:border-slate-200/40 bg-white flex items-center justify-between px-4 sm:px-8 py-12"
+        className="h-16 sm:h-20 md:h-20 border-b md:border-slate-400/40 lg:border-slate-200/40 bg-white flex items-center justify-between px-4 sm:px-8 py-3 sm:py-4"
         sx={{
           maxWidth: "100%",
           overflow: "hidden",

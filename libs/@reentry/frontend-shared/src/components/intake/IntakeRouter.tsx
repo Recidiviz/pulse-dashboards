@@ -111,14 +111,14 @@ export function IntakeRouter() {
   const shouldRenderHeader = !isConversationInProgress;
 
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col h-full min-h-0 bg-slate-50">
       {shouldRenderHeader && (
-        <div className="relative max-w-full overflow-x-hidden">
+        <div className="relative max-w-full overflow-x-hidden flex-shrink-0">
           <ChatHeader />
         </div>
       )}
 
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 overflow-auto">
         {((isCompleted && surveySubmitted) || (isCompleted && has_survey)) && (
           <IntakeCompleted />
         )}

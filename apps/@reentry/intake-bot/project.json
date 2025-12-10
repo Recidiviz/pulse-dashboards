@@ -1,0 +1,23 @@
+{
+  "name": "@reentry/intake-bot",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@reentry/intake-bot",
+  "projectType": "application",
+  "tags": ["reentry", "scope:intake-bot"],
+  "targets": {
+    "puppets": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx index.tsx puppets.txt",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "puppets-no-llm": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx index.tsx puppets.txt --no-llm",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

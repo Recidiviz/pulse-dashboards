@@ -100,7 +100,6 @@ const TranscriptionAddressForm = ({
       setIsSubmitting(false);
     }
   };
-
   return (
     <div className="flex flex-1 items-center justify-center px-6 py-[2vh] font-public">
       <div className="w-full max-w-3xl ">

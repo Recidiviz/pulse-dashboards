@@ -233,7 +233,7 @@ export function AssessmentLoginPage({
         />
       </div>
 
-      <div className="flex-grow flex items-center justify-center">
+      <div className="flex-grow flex items-start justify-center pt-4 sm:pt-8 md:items-center">
         <div className="max-w-md text-center w-10/12">
           <h1 className="self-stretch text-[#003331] text-[34px] font-normal font-['Libre Baskerville'] leading-[40.80px] mb-1">
             Welcome!

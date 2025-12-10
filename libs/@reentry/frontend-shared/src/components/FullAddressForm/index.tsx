@@ -122,7 +122,6 @@ export const FullAddressForm = ({
     const { streetAddress, parsedCity, parsedState } = parseAddressSuggestion(
       suggestion.description,
     );
-
     onAddressChange(streetAddress);
     // Update state first, then city after a small delay to ensure state is set
     onStateChange(parsedState);

@@ -112,3 +112,4 @@ web-build/
 cache/
 android/
 ios/
+logs/*

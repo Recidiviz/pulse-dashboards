@@ -157,6 +157,8 @@ exclude_paths = [
     "/intake/internal",
     "/intake/client/start-assessment-action-plan",
     "/transcribe",
+    "/autocomplete-city",
+    "/autocomplete-address",
 ]
 
 auth0_config = get_auth0_config()

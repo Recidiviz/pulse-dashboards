@@ -19,7 +19,12 @@ import type { Middleware } from "openapi-fetch";
 
 import { globalAuthStore } from "./globalAuthStore";
 
-const PUBLIC_ENDPOINTS = ["/intake/client", "/intake/internal"];
+const PUBLIC_ENDPOINTS = [
+  "/intake/client",
+  "/intake/internal",
+  "/autocomplete-city",
+  "/autocomplete-address",
+];
 
 const isPublicEndpoint = (url: string): boolean => {
   return PUBLIC_ENDPOINTS.some((endpoint) => url.includes(endpoint));
@@ -57,7 +62,6 @@ export const authMiddleware: Middleware = {
         const newRequest = request.clone();
         newRequest.headers.set("X-Token-Refreshed", "true");
         const token = await globalAuthStore.getTokenFromAuth0Cache();
-
         if (token) {
           newRequest.headers.set("Authorization", `Bearer ${token}`);
           // eslint-disable-next-line no-console
