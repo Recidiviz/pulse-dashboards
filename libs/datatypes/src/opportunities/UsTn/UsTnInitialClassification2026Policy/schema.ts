@@ -58,7 +58,6 @@ export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
         q4Score: z.coerce.number().nullable(),
         q5Score: z.coerce.number().nullable(),
         q6Score: z.coerce.number().nullable(),
-        q7Score: z.coerce.number().nullable(),
         sentenceEffectiveDate: dateStringSchema,
         sentenceExpirationDate: dateStringSchema,
         sentenceFullExpirationDate: dateStringSchema,
