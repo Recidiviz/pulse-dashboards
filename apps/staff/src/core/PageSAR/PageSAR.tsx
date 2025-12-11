@@ -21,7 +21,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import { sarRoute, SARStaffDashboard, sarUrl, StoreProvider } from "~sentencing-client";
+import { SARDetails, sarRoute, SARStaffDashboard, sarUrl, StoreProvider } from "~sentencing-client";
 
 import NotFound from "../../components/NotFound";
 import {
@@ -61,7 +61,7 @@ const PageSAR: React.FC = function PageSAR() {
             />
             <Route
               path={sarRoute({ routeName: "sarDetails" })}
-              element={<div>SAR Details - Coming Soon</div>}
+              element={<SARDetails sentencingStore={sentencingStore} />}
             />
 
             <Route path="*" element={<NotFound />} />

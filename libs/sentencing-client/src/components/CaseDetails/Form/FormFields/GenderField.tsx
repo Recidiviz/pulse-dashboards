@@ -33,8 +33,8 @@ const genderOptions = Object.values(GenderToDisplayName).filter(
 );
 
 function GenderField({ isRequired }: FormFieldProps) {
-  const { caseStore, geoConfig } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore, geoConfig } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
   const omsSystem = geoConfig.omsSystem;
   const options = genderOptions.map((selection) => ({
     label: selection,

@@ -29,8 +29,8 @@ import { CUSTOM_DUE_DATE_KEY } from "../../constants";
 import { form } from "../FormStore";
 import { FormFieldProps } from "../types";
 function CustomDueDateField({ isRequired }: FormFieldProps) {
-  const { caseStore } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
 
   // The backend and data imports use UTC-midnight for date-only values.
   // To display the same calendar day in the local DatePicker we

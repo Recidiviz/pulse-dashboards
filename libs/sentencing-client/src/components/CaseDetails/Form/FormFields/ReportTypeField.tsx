@@ -30,8 +30,8 @@ import { parseReportTypeValue } from "../utils";
 const reportTypeOptions = Object.values(ReportType);
 
 function ReportTypeField({ isRequired }: FormFieldProps) {
-  const { caseStore, geoConfig } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore, geoConfig } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
   const omsSystem = geoConfig.omsSystem;
   const options = reportTypeOptions.map((selection) => ({
     label: selection,

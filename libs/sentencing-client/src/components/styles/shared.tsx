@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components/CaseDetails";
-export * from "./components/Dashboard";
-export * from "./components/Dashboard/PSIStaffDashboard";
-export * from "./components/Dashboard/SARStaffDashboard";
-export * from "./components/Dashboard/SupervisorDashboard";
-export * from "./components/SARDetails";
-export * from "./components/StoreProvider/StoreProvider";
-export * from "./datastores/SentencingStore";
-export * from "./datastores/types";
-export * from "./utils/routing";
+import styled from "styled-components";
+
+import { palette } from "~design-system";
+
+export const BackLink = styled.div<{ leftMargin?: number }>`
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  margin-bottom: 16px;
+  margin-left: ${({ leftMargin }) => leftMargin ?? -7}px;
+  color: ${palette.slate85};
+  position: relative;
+  cursor: pointer;
+
+  &::before {
+    content: "";
+    position: absolute;
+    border: solid ${palette.slate85};
+    border-width: 0 1px 1px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(135deg);
+    left: 10px;
+  }
+
+  &:hover {
+    color: ${palette.pine2};
+
+    &::before {
+      border-color: ${palette.pine2};
+    }
+  }
+`;

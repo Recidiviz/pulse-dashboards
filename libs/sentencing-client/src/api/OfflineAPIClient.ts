@@ -17,7 +17,7 @@
 
 import { FormAttributes } from "../components/CaseDetails/types";
 import { SentencingStore } from "../datastores/SentencingStore";
-import { Case, Opportunities, Staff, Supervisor } from "./APIClient";
+import { Case, Opportunities, SAR, Staff, Supervisor } from "./APIClient";
 
 export class OfflineAPIClient {
   private editableInfo: Map<string, unknown> = new Map();
@@ -77,5 +77,12 @@ export class OfflineAPIClient {
 
   async getInsight(): Promise<string[]> {
     return [];
+  }
+
+  async getSARDetails(sarId: string): Promise<SAR> {
+    const { SARDetailsFixture } = await import(
+      "./offlineFixtures/SARDetailsFixtures"
+    );
+    return SARDetailsFixture?.[sarId] ?? SARDetailsFixture["default"];
   }
 }

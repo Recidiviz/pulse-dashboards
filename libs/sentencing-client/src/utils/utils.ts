@@ -169,6 +169,19 @@ export const capitalizeName = (name: string) =>
   name.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 
 /**
+ * Splits a full name into firstName and lastName.
+ * Takes the first word as firstName and the last word as lastName,
+ * capitalizing both.
+ */
+export const splitFullName = (fullName?: string | null): { firstName: string; lastName: string } => {
+  const nameParts = fullName?.trim().split(/\s+/) || [];
+  return {
+    firstName: capitalizeName(nameParts[0] || ""),
+    lastName: capitalizeName(nameParts[nameParts.length - 1] || ""),
+  };
+};
+
+/**
  * Rounds a percentage rate to a whole number.
  * If the percentage is greater than 0 and less than 1, returns "< 1%".
  */

@@ -32,7 +32,7 @@ import {
   OpportunitiesIdentifier,
   SelectedRecommendation,
 } from "../components/CaseDetails/types";
-import { CaseStore } from "../datastores/CaseStore";
+import { PSIStore } from "../datastores/PSIStore";
 import {
   CreateOrUpdateRecommendation,
   OnboardingNextOrBack,
@@ -45,7 +45,7 @@ export class CaseDetailsPresenter implements Hydratable {
   recommendedOpportunities: OpportunitiesIdentifier;
 
   constructor(
-    public readonly caseStore: CaseStore,
+    public readonly PSIStore: PSIStore,
     public caseId: string,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -53,29 +53,29 @@ export class CaseDetailsPresenter implements Hydratable {
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
-          if (this.caseStore.sentencingStore.staffStore.staffInfo === undefined)
+          if (this.PSIStore.sentencingStore.staffStore.staffInfo === undefined)
             throw new Error("Failed to load staff details");
         },
         () => {
-          if (this.caseStore.caseDetailsById[this.caseId] === undefined)
+          if (this.PSIStore.caseDetailsById[this.caseId] === undefined)
             throw new Error("Failed to load case details");
         },
       ],
       populate: async () => {
-        if (!this.caseStore.sentencingStore.staffStore.staffInfo) {
-          await flowResult(this.caseStore.sentencingStore.staffStore.loadStaffInfo());
+        if (!this.PSIStore.sentencingStore.staffStore.staffInfo) {
+          await flowResult(this.PSIStore.sentencingStore.staffStore.loadStaffInfo());
         }
-        await flowResult(this.caseStore.loadOffenses());
-        await flowResult(this.caseStore.loadCounties());
-        await flowResult(this.caseStore.loadCaseDetails(this.caseId));
-        await flowResult(this.caseStore.loadCommunityOpportunities());
+        await flowResult(this.PSIStore.loadOffenses());
+        await flowResult(this.PSIStore.loadCounties());
+        await flowResult(this.PSIStore.loadCaseDetails(this.caseId));
+        await flowResult(this.PSIStore.loadCommunityOpportunities());
       },
     });
 
     when(
       () => isHydrated(this),
       () => {
-        this.caseStore.setActiveCaseId(this.caseId);
+        this.PSIStore.setActiveCaseId(this.caseId);
         this.recommendedOpportunities =
           this.caseAttributes?.recommendedOpportunities ?? [];
       },
@@ -83,19 +83,19 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   get stateCode() {
-    return this.caseStore.sentencingStore.stateCode;
+    return this.PSIStore.sentencingStore.stateCode;
   }
 
   get geoConfig() {
-    return this.caseStore.sentencingStore.geoConfig;
+    return this.PSIStore.sentencingStore.geoConfig;
   }
 
   get staffPseudoId() {
-    return this.caseStore.sentencingStore.staffPseudoId;
+    return this.PSIStore.sentencingStore.staffPseudoId;
   }
 
   get caseAttributes() {
-    return this.caseStore.caseAttributes;
+    return this.PSIStore.caseAttributes;
   }
 
   get caseEligibilityAttributes() {
@@ -151,11 +151,11 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   get insight() {
-    return this.caseStore.insight;
+    return this.PSIStore.insight;
   }
 
   get activeEligibleCommunityOpportunities(): Opportunities {
-    return this.caseStore.communityOpportunities.filter(
+    return this.PSIStore.communityOpportunities.filter(
       (opportunity) =>
         opportunity.active &&
         filterEligibleOpportunities(
@@ -177,9 +177,9 @@ export class CaseDetailsPresenter implements Hydratable {
   async updateAttributes(attributes?: MutableCaseAttributes) {
     if (!attributes) return;
 
-    await flowResult(this.caseStore.updateCaseDetails(this.caseId, attributes));
-    await flowResult(this.caseStore.loadCaseDetails(this.caseId));
-    await flowResult(this.caseStore.sentencingStore.staffStore.loadStaffInfo());
+    await flowResult(this.PSIStore.updateCaseDetails(this.caseId, attributes));
+    await flowResult(this.PSIStore.loadCaseDetails(this.caseId));
+    await flowResult(this.PSIStore.sentencingStore.staffStore.loadStaffInfo());
   }
 
   async updateRecommendation(recommendation: SelectedRecommendation) {
@@ -219,7 +219,7 @@ export class CaseDetailsPresenter implements Hydratable {
 
   // TODO(#33262) - Refactor tracking functions
   trackCaseDetailsPageViewed() {
-    this.caseStore.sentencingStore.analyticsStore.trackCaseDetailsPageViewed({
+    this.PSIStore.sentencingStore.analyticsStore.trackCaseDetailsPageViewed({
       viewedBy: this.staffPseudoId,
       caseId: this.caseId,
     });
@@ -229,7 +229,7 @@ export class CaseDetailsPresenter implements Hydratable {
     onboardingTopic: Case["currentOnboardingTopic"],
     buttonClicked: OnboardingNextOrBack,
   ) {
-    this.caseStore.sentencingStore.analyticsStore.trackOnboardingPageViewed({
+    this.PSIStore.sentencingStore.analyticsStore.trackOnboardingPageViewed({
       viewedBy: this.staffPseudoId,
       onboardingTopic,
       buttonClicked,
@@ -238,14 +238,14 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   trackEditCaseDetailsClicked() {
-    this.caseStore.sentencingStore.analyticsStore.trackEditCaseDetailsClicked({
+    this.PSIStore.sentencingStore.analyticsStore.trackEditCaseDetailsClicked({
       viewedBy: this.staffPseudoId,
       caseId: this.caseId,
     });
   }
 
   trackOpportunityModalOpened(opportunityNameProviderName: string) {
-    this.caseStore.sentencingStore.analyticsStore.trackOpportunityModalOpened({
+    this.PSIStore.sentencingStore.analyticsStore.trackOpportunityModalOpened({
       viewedBy: this.staffPseudoId,
       opportunityNameProviderName,
       caseId: this.caseId,
@@ -256,7 +256,7 @@ export class CaseDetailsPresenter implements Hydratable {
     opportunityNameProviderName: string,
     origin: OpportunityViewOrigin,
   ) {
-    this.caseStore.sentencingStore.analyticsStore.trackAddOpportunityToRecommendationClicked(
+    this.PSIStore.sentencingStore.analyticsStore.trackAddOpportunityToRecommendationClicked(
       {
         viewedBy: this.staffPseudoId,
         opportunityNameProviderName,
@@ -270,7 +270,7 @@ export class CaseDetailsPresenter implements Hydratable {
     opportunityNameProviderName: string,
     origin: OpportunityViewOrigin,
   ) {
-    this.caseStore.sentencingStore.analyticsStore.trackRemoveOpportunityFromRecommendationClicked(
+    this.PSIStore.sentencingStore.analyticsStore.trackRemoveOpportunityFromRecommendationClicked(
       {
         viewedBy: this.staffPseudoId,
         opportunityNameProviderName,
@@ -281,7 +281,7 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   trackRecommendedDispositionChanged(selectedRecommendation: string) {
-    this.caseStore.sentencingStore.analyticsStore.trackRecommendedDispositionChanged({
+    this.PSIStore.sentencingStore.analyticsStore.trackRecommendedDispositionChanged({
       viewedBy: this.staffPseudoId,
       selectedRecommendation,
       caseId: this.caseId,
@@ -289,7 +289,7 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   trackCreateOrUpdateRecommendationClicked(type: CreateOrUpdateRecommendation) {
-    this.caseStore.sentencingStore.analyticsStore.trackCreateOrUpdateRecommendationClicked(
+    this.PSIStore.sentencingStore.analyticsStore.trackCreateOrUpdateRecommendationClicked(
       {
         viewedBy: this.staffPseudoId,
         type,
@@ -299,21 +299,21 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   trackCopySummaryToClipboardClicked() {
-    this.caseStore.sentencingStore.analyticsStore.trackCopySummaryToClipboardClicked({
+    this.PSIStore.sentencingStore.analyticsStore.trackCopySummaryToClipboardClicked({
       viewedBy: this.staffPseudoId,
       caseId: this.caseId,
     });
   }
 
   trackDownloadReportClicked() {
-    this.caseStore.sentencingStore.analyticsStore.trackDownloadReportClicked({
+    this.PSIStore.sentencingStore.analyticsStore.trackDownloadReportClicked({
       viewedBy: this.staffPseudoId,
       caseId: this.caseId,
     });
   }
 
   trackCaseStatusCompleteClicked() {
-    this.caseStore.sentencingStore.analyticsStore.trackCaseStatusCompleteClicked({
+    this.PSIStore.sentencingStore.analyticsStore.trackCaseStatusCompleteClicked({
       viewedBy: this.staffPseudoId,
       caseId: this.caseId,
     });

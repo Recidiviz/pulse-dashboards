@@ -27,8 +27,12 @@ test("SupervisorStore is initialized when sentencingStore is instantiated", () =
   expect(sentencingStore.staffStore).toBeDefined();
 });
 
-test("CaseStore is initialized when sentencingStore is instantiated", () => {
-  expect(sentencingStore.caseStore).toBeDefined();
+test("PSIStore is initialized when sentencingStore is instantiated", () => {
+  expect(sentencingStore.PSIStore).toBeDefined();
+});
+
+test("SARStore is initialized when sentencingStore is instantiated", () => {
+  expect(sentencingStore.SARStore).toBeDefined();
 });
 
 test("apiClient is initialized when sentencingStore is instantiated", () => {

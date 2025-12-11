@@ -30,8 +30,8 @@ import { parsePleaValue } from "../utils";
 const pleaOptions = [...Object.values(pleas), NOT_SURE_YET_OPTION];
 
 function PleaStatusField({ isRequired }: FormFieldProps) {
-  const { caseStore } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
 
   const { inputValue, setInputValue } = useFormField({
     initialInputValue: parsePleaValue(caseAttributes?.plea),

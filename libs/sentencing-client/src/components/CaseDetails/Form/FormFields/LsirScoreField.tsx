@@ -34,21 +34,21 @@ import { useFormField } from "../useFormFields";
 import { isValidLsirScore } from "../utils";
 
 function LsirScoreField({ isRequired }: FormFieldProps) {
-  const { caseStore, geoConfig } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore, geoConfig } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
   const omsSystem = geoConfig.omsSystem;
-  const insight = caseStore.insight;
+  const insight = PSIStore.insight;
   const prevLsirScore =
     caseAttributes?.lsirScore === null ? "" : String(caseAttributes?.lsirScore);
 
   const currentOffense =
-    form.updates[OFFENSE_KEY] ?? caseStore.caseAttributes?.offense;
+    form.updates[OFFENSE_KEY] ?? PSIStore.caseAttributes?.offense;
   const isCurrentOffenseViolentDefault =
     currentOffense !== undefined &&
-    caseStore.offensesByName[currentOffense]?.isViolentOffense;
+    PSIStore.offensesByName[currentOffense]?.isViolentOffense;
   const isCurrentOffenseSexualDefault =
     currentOffense !== undefined &&
-    caseStore.offensesByName[currentOffense]?.isSexOffense;
+    PSIStore.offensesByName[currentOffense]?.isSexOffense;
 
   const { inputValue, setInputValue } = useFormField({
     initialInputValue: prevLsirScore,
@@ -62,13 +62,13 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
 
   const rollupContent = !geoConfig.hideRecidivismRatesChart && (
     <>
-      {caseStore.insightLoading && (
+      {PSIStore.insightLoading && (
         <Styled.RollupLoading>
           <MiniLoader dark /> Gathering historical records...
         </Styled.RollupLoading>
       )}
 
-      {showRollup && !caseStore.insightLoading && (
+      {showRollup && !PSIStore.insightLoading && (
         <Styled.RollupOffenseCategory>
           <Styled.InputLabel>Recidivism Cohort</Styled.InputLabel>
           <span>{insight.rollupOffenseDescription}</span>
@@ -107,8 +107,8 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
         ? caseAttributes?.isCurrentOffenseSexual
         : isCurrentOffenseSexualDefault);
 
-    caseStore.getInsight(
-      form.updates[OFFENSE_KEY] ?? caseStore.caseAttributes.offense,
+    PSIStore.getInsight(
+      form.updates[OFFENSE_KEY] ?? PSIStore.caseAttributes.offense,
       form.hasError ? undefined : Number(e.target.value.trim()),
       isCurrentOffenseSexual,
       isCurrentOffenseViolent,
@@ -123,9 +123,9 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
 
   /** Fetch insights on previously saved values */
   useEffect(() => {
-    if (!caseStore.insightLoading) {
-      caseStore.getInsight(
-        caseStore.caseAttributes.offense,
+    if (!PSIStore.insightLoading) {
+      PSIStore.getInsight(
+        PSIStore.caseAttributes.offense,
         caseAttributes?.lsirScore ?? undefined,
         caseAttributes?.isCurrentOffenseSexual ?? isCurrentOffenseSexualDefault,
         caseAttributes?.isCurrentOffenseViolent ??

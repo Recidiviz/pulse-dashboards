@@ -36,6 +36,8 @@ import { SelectOption } from "./Form/types";
 import { RecommendationSummary } from "./Recommendations/report/Report.styles";
 import { FormAttributes, ProfileStrength } from "./types";
 
+export { BackLink } from "../styles/shared";
+
 const RECOMMENDATION_PANEL_HEIGHT_OFFSET = 244;
 const OPPORTUNITY_TABLE_HEIGHT = 525;
 const RECOMMENDATION_PANEL_WIDTH = 504;
@@ -71,32 +73,6 @@ export const Body = styled.div`
   overflow-y: auto;
   overscroll-behavior: auto;
   position: relative;
-`;
-
-export const BackLink = styled.div<{ leftMargin?: number }>`
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  padding: 0 24px;
-  margin-bottom: 16px;
-  margin-left: ${({ leftMargin }) => leftMargin ?? -7}px;
-  color: ${palette.slate85};
-  position: relative;
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    border: solid ${palette.slate85};
-    border-width: 0 1px 1px 0;
-    display: inline-block;
-    padding: 3px;
-    transform: rotate(135deg);
-    left: 10px;
-  }
 `;
 
 export const ModuleContainer = styled.div`

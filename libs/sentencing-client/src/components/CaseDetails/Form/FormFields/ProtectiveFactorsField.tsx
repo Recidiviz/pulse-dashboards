@@ -40,8 +40,8 @@ const protectiveFactorsOptions = [
 ];
 
 function ProtectiveFactorsField({ isRequired }: FormFieldProps) {
-  const { caseStore } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
   const firstName = caseAttributes.client?.firstName;
   const {
     multiInputValues,

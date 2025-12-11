@@ -44,7 +44,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   isCreatingRecommendation,
   setIsCreatingRecommendation,
 }) => {
-  const { caseStore, activeFeatureVariants } = useStore();
+  const { PSIStore, activeFeatureVariants } = useStore();
   const { trackCreateOrUpdateRecommendationClicked } = analytics;
 
   const optionsBase = geoConfig.recommendation.baseOptionsTemplate ?? [];
@@ -63,7 +63,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   const hasMandatoryMinimumFVEnabled = Boolean(
     activeFeatureVariants["mandatoryMinimum"],
   );
-  const currentOffense = caseStore.caseAttributes.offense;
+  const currentOffense = PSIStore.caseAttributes.offense;
   const {
     mandatoryMinimums,
     mandatoryMinimumAutoSelectionRecommendation,
@@ -71,7 +71,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   } = currentOffense
     ? getMandatoryMinimumsData(
         optionsBase,
-        caseStore.offensesByName[currentOffense]?.mandatoryMinimums,
+        PSIStore.offensesByName[currentOffense]?.mandatoryMinimums,
       )
     : {};
 

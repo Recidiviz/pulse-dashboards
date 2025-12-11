@@ -32,8 +32,8 @@ const asamLevelOfCareRecommendationOptions = Object.values(
 ).map((option) => ({ label: option, value: option }));
 
 function ASAMCareRecommendationField({ isRequired }: FormFieldProps) {
-  const { caseStore } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
   const prevASAMCareRecommendationValue = parseAsamCareRecommendationValue(
     caseAttributes.asamCareRecommendation,
   );

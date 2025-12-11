@@ -67,26 +67,26 @@ export const customFilter = (option: SelectOption, inputValue: string) => {
 };
 
 function OffenseField({ isRequired }: FormFieldProps) {
-  const { caseStore, activeFeatureVariants, geoConfig } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore, activeFeatureVariants, geoConfig } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
 
   const currentOffense =
-    form.updates[OFFENSE_KEY] ?? caseStore.caseAttributes.offense;
+    form.updates[OFFENSE_KEY] ?? PSIStore.caseAttributes.offense;
   const isCurrentOffenseViolentDefault =
     currentOffense !== undefined &&
-    caseStore.offensesByName[currentOffense]?.isViolentOffense;
+    PSIStore.offensesByName[currentOffense]?.isViolentOffense;
   const isCurrentOffenseSexualDefault =
     currentOffense !== undefined &&
-    caseStore.offensesByName[currentOffense]?.isSexOffense;
+    PSIStore.offensesByName[currentOffense]?.isSexOffense;
 
   // Mandatory Minimums
   const hasMandatoryMinimum =
     currentOffense !== undefined &&
-    caseStore.offensesByName[currentOffense]?.mandatoryMinimums?.length > 0;
+    PSIStore.offensesByName[currentOffense]?.mandatoryMinimums?.length > 0;
   const { mandatoryMinimumsSentenceTypes } = currentOffense
     ? getMandatoryMinimumsData(
         geoConfig.recommendation.baseOptionsTemplate,
-        caseStore.offensesByName[currentOffense]?.mandatoryMinimums,
+        PSIStore.offensesByName[currentOffense]?.mandatoryMinimums,
       )
     : {};
 
@@ -104,7 +104,7 @@ function OffenseField({ isRequired }: FormFieldProps) {
       caseAttributes?.isCurrentOffenseSexual ?? isCurrentOffenseSexualDefault,
   });
 
-  const options = Object.keys(caseStore.offensesByName).map(
+  const options = Object.keys(PSIStore.offensesByName).map(
     (selection: string) => ({
       label: stripFreeTextHelper(selection),
       value: selection,
@@ -121,10 +121,10 @@ function OffenseField({ isRequired }: FormFieldProps) {
 
     const isUpdatedOffenseViolentDefault =
       updatedOffense !== undefined &&
-      caseStore.offensesByName[updatedOffense]?.isViolentOffense;
+      PSIStore.offensesByName[updatedOffense]?.isViolentOffense;
     const isUpdatedOffenseSexualDefault =
       updatedOffense !== undefined &&
-      caseStore.offensesByName[updatedOffense]?.isSexOffense;
+      PSIStore.offensesByName[updatedOffense]?.isSexOffense;
 
     setIsViolentSexOffense({
       isViolentOffense: isUpdatedOffenseViolentDefault,
@@ -134,10 +134,10 @@ function OffenseField({ isRequired }: FormFieldProps) {
     form.updateForm(SEX_OFFENSE_KEY, isUpdatedOffenseSexualDefault);
 
     /** Fetches insights when offense changes to display rollup text under the LSI-R score field  */
-    caseStore.getInsight(
+    PSIStore.getInsight(
       String(option.value),
       form.updates[LSIR_SCORE_KEY] ??
-        caseStore.caseAttributes?.lsirScore ??
+        PSIStore.caseAttributes?.lsirScore ??
         undefined,
       isUpdatedOffenseSexualDefault,
       isUpdatedOffenseViolentDefault,
@@ -167,10 +167,10 @@ function OffenseField({ isRequired }: FormFieldProps) {
     }
 
     /** Fetches insights when violent/sex offense changes to display rollup text under the LSI-R score field  */
-    caseStore.getInsight(
+    PSIStore.getInsight(
       selectValue?.value ? String(selectValue?.value) : undefined,
       form.updates[LSIR_SCORE_KEY] ??
-        caseStore.caseAttributes.lsirScore ??
+        PSIStore.caseAttributes.lsirScore ??
         undefined,
       sexOffenseValue,
       violentOffenseValue,
@@ -180,7 +180,7 @@ function OffenseField({ isRequired }: FormFieldProps) {
   const CustomOption = action((props: OptionProps<SelectOption>) => {
     const frequencyLabel =
       props.data.label &&
-      caseStore.offensesByName[props.data.label]?.frequency.toLocaleString();
+      PSIStore.offensesByName[props.data.label]?.frequency.toLocaleString();
 
     return (
       <components.Option {...props}>
@@ -212,10 +212,10 @@ function OffenseField({ isRequired }: FormFieldProps) {
 
   /** Fetch insights on previously saved values */
   useEffect(() => {
-    if (!caseStore.insightLoading) {
-      caseStore.getInsight(
+    if (!PSIStore.insightLoading) {
+      PSIStore.getInsight(
         caseAttributes?.offense,
-        caseStore.caseAttributes?.lsirScore ?? undefined,
+        PSIStore.caseAttributes?.lsirScore ?? undefined,
         isViolentSexOffense.isSexOffense,
         isViolentSexOffense.isViolentOffense,
       );

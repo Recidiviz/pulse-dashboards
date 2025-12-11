@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { createTRPCClient, httpBatchLink, type TRPCClient } from "@trpc/client";
-import _ from "lodash";
 import { runInAction, when } from "mobx";
 import moment from "moment";
 import superjson from "superjson";
@@ -25,6 +24,7 @@ import type { AppRouter } from "~@sentencing/trpc-types";
 
 import { FormAttributes } from "../components/CaseDetails/types";
 import { SentencingStore } from "../datastores/SentencingStore";
+import { splitFullName } from "../utils/utils";
 
 export type tRPCClient = TRPCClient<AppRouter>;
 
@@ -45,6 +45,8 @@ export type Case = Awaited<ReturnType<APIClient["getCaseDetails"]>>;
 export type CaseInsight = NonNullable<Case["insight"]>;
 
 export type Insight = Awaited<ReturnType<APIClient["getInsight"]>>;
+
+export type SAR = Awaited<ReturnType<APIClient["getSARDetails"]>>;
 
 export type Offenses = Awaited<ReturnType<APIClient["getOffenses"]>>;
 
@@ -147,12 +149,36 @@ export class APIClient {
       id: caseId,
     });
 
-    const fullNameSplit = fetchedData.client?.fullName?.trim().split(/\s+/);
+    const { firstName, lastName } = splitFullName(fetchedData.client?.fullName);
     const updatedClient = fetchedData.client
       ? {
           ...fetchedData.client,
-          firstName: _.capitalize(fullNameSplit?.[0]),
-          lastName: _.capitalize(fullNameSplit?.[fullNameSplit.length - 1]),
+          firstName,
+          lastName,
+        }
+      : undefined;
+
+    return {
+      ...fetchedData,
+      age: moment().utc().diff(fetchedData.client?.birthDate, "years"),
+      client: updatedClient,
+    };
+  }
+
+  async getSARDetails(sarId: string) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+
+    const fetchedData = await this.trpcClient.sar.getSAR.query({
+      id: sarId,
+    });
+
+    const { firstName, lastName } = splitFullName(fetchedData.client?.fullName);
+    const updatedClient = fetchedData.client
+      ? {
+          ...fetchedData.client,
+          firstName,
+          lastName,
         }
       : undefined;
 

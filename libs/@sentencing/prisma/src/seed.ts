@@ -35,7 +35,7 @@ import {
   Prisma,
   ReportType,
   StateCode,
-  SubstanceUseDiagnosis
+  SubstanceUseDiagnosis,
 } from "./client/client";
 interface Auth0TokenResponse {
   access_token: string;
@@ -262,8 +262,10 @@ async function addSARClientsAndReports(
       },
     });
 
-    // Add 1-3 charges per SAR with only imported fields: offense name, felony class, cause number
-    const numCharges = faker.number.int({ min: 1, max: 3 });
+    // Add 6-10 charges per SAR with only imported fields: offense name, felony class, cause number
+    const numCharges = faker.number.int({ min: 6, max: 10 });
+    // To avoid duplicate offenses in a single SAR, shuffle and slice offenses
+    const shuffledOffenses = faker.helpers.shuffle(offenses);
     for (let j = 0; j < numCharges; j++) {
       await prisma.charge.create({
         data: {
@@ -271,7 +273,7 @@ async function addSARClientsAndReports(
             connect: { id: sar.id },
           },
           offense: {
-            connect: { name: faker.helpers.arrayElement(offenses).name },
+            connect: { name: shuffledOffenses[j].name },
           },
           // Only imported fields - the rest will be filled in by users
           causeNum: `${faker.string.numeric(2)}-CR-${faker.string.numeric(5)}`,
@@ -492,6 +494,7 @@ async function main() {
 
   console.log("Removing existing data...");
   await prisma.case.deleteMany({});
+  await prisma.sentencingAssessmentReport.deleteMany({});
   await prisma.opportunity.deleteMany({});
   await prisma.staff.deleteMany({});
   await prisma.client.deleteMany({});

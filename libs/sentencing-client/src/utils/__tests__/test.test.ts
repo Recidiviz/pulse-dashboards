@@ -32,7 +32,7 @@ test("mockSentencingStore has expected properties", () => {
   const mockSentencingStore = createMockSentencingStore();
   expect(mockSentencingStore.rootStore).toBeDefined();
   expect(mockSentencingStore.staffStore).toBeDefined();
-  expect(mockSentencingStore.caseStore).toBeDefined();
+  expect(mockSentencingStore.PSIStore).toBeDefined();
   expect(mockSentencingStore.apiClient).toBeDefined();
 });
 

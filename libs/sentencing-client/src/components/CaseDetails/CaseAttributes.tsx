@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 
-import { CaseStore } from "../../datastores/CaseStore";
+import { PSIStore } from "../../datastores/PSIStore";
 import { filterExcludedAttributes } from "../../geoConfigs/utils";
 import { displayReportType, titleCase } from "../../utils/utils";
 import { useStore } from "../StoreProvider/StoreProvider";
@@ -36,7 +36,7 @@ import { stripFreeTextHelper } from "./Form/constants";
 import { AttributeLabelValue } from "./types";
 
 type CaseAttributesProps = {
-  caseAttributes: CaseStore["caseAttributes"];
+  caseAttributes: PSIStore["caseAttributes"];
   openEditCaseDetailsModal: () => void;
 };
 

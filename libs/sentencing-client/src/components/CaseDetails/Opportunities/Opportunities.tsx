@@ -30,8 +30,8 @@ import toast from "react-hot-toast";
 
 import { isDemoMode } from "~client-env-utils";
 
-import { CaseStore } from "../../../../src/datastores/CaseStore";
 import { Opportunities as OpportunitiesType } from "../../../api";
+import { PSIStore } from "../../../datastores/PSIStore";
 import { OpportunityViewOrigin } from "../../../datastores/types";
 import { GeoConfig } from "../../../geoConfigs/types";
 import { formatListWithAnd, formatPossessiveName } from "../../../utils/utils";
@@ -84,7 +84,7 @@ type OpportunitiesProps = {
   selectedRecommendation: SelectedRecommendation;
   communityOpportunities: OpportunitiesType;
   recommendedOpportunities: OpportunitiesIdentifier;
-  caseAttributes: CaseStore["caseAttributes"];
+  caseAttributes: PSIStore["caseAttributes"];
   geoConfig: GeoConfig;
   updateRecommendedOpportunities: (
     opportunity: OpportunitiesIdentifier[number],

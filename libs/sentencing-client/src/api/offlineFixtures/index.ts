@@ -16,5 +16,6 @@
 // =============================================================================
 
 export * from "./CaseDetailsFixtures";
+export * from "./SARDetailsFixtures";
 export * from "./StaffInfoFixtures";
 export * from "./SupervisorInfoFixtures";

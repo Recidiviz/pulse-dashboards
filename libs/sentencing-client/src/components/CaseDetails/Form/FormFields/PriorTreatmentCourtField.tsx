@@ -28,8 +28,8 @@ import { useFormField } from "../useFormFields";
 import { parseBooleanValue } from "../utils";
 
 function PriorTreatmentCourtField({ isRequired }: FormFieldProps) {
-  const { caseStore } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
 
   const { inputValue, setInputValue } = useFormField({
     initialInputValue: parseBooleanValue(

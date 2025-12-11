@@ -59,7 +59,7 @@ const ERROR_MESSAGE_STRING = "Please enter a number between 0 and 54.";
 beforeEach(() => {
   configure({ safeDescriptors: false });
   sentencingStore = createMockSentencingStore();
-  presenter = new CaseDetailsPresenter(sentencingStore.caseStore, caseId);
+  presenter = new CaseDetailsPresenter(sentencingStore.PSIStore, caseId);
 
   vi.spyOn(sentencingStore, "activeFeatureVariants", "get").mockReturnValue({
     protectiveFactors: {},
@@ -68,12 +68,12 @@ beforeEach(() => {
   vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
-  vi.spyOn(sentencingStore.caseStore, "loadCaseDetails");
+  vi.spyOn(sentencingStore.PSIStore, "loadCaseDetails");
   vi.spyOn(sentencingStore.apiClient, "getCaseDetails").mockResolvedValue(
     CaseDetailsFixture[caseId],
   );
-  vi.spyOn(sentencingStore.caseStore, "caseDetailsById", "get").mockReturnValue({
-    ...sentencingStore.caseStore.caseDetailsById,
+  vi.spyOn(sentencingStore.PSIStore, "caseDetailsById", "get").mockReturnValue({
+    ...sentencingStore.PSIStore.caseDetailsById,
     [caseId]: {
       ...mockCase,
       currentOnboardingTopic: "Done",

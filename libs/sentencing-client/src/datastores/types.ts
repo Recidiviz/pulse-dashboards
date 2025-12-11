@@ -17,7 +17,7 @@
 
 import { SortDirection } from "@tanstack/react-table";
 
-import { Case, Client } from "../api";
+import { Case, Client, SAR } from "../api";
 import {
   CaseListTableCase,
   RecommendationStatusFilter,
@@ -89,6 +89,13 @@ export type OpportunityWithOriginTrackingMetadata = {
 export type CaseAttributes = Partial<Case> & {
   clientGender?: Client["gender"];
 };
+
+
+export type SARAttributes = Partial<SAR> & {
+  clientGender?: Client["gender"];
+};
+
+export type Charge = SAR["charges"][number];
 
 // Feature variants exclusive to this app
 export type FeatureVariant =

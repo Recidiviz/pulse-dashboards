@@ -41,8 +41,8 @@ const needsToBeAddressedOptions = [
 ];
 
 function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
-  const { caseStore } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
   const formattedFirstName = formatPossessiveName(
     caseAttributes.client?.firstName,
   );

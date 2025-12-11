@@ -40,7 +40,7 @@ import { ERROR_TOAST_DURATION } from "./constants";
 import { SentencingStore } from "./SentencingStore";
 import { CaseAttributes } from "./types";
 
-export class CaseStore {
+export class PSIStore {
   caseDetailsById: { [id: string]: Case };
 
   communityOpportunities: Opportunities;

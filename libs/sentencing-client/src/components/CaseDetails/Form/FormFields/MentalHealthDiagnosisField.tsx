@@ -35,8 +35,8 @@ import { useFormField } from "../useFormFields";
 import { parseMentalHealthDiagnosesValue } from "../utils";
 
 function MentalHealthDiagnosisField({ isRequired }: FormFieldProps) {
-  const { caseStore } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
   const options = Object.values(mentalHealthDiagnoses).map((diagnosis) => ({
     label: diagnosis,
     value: diagnosis,

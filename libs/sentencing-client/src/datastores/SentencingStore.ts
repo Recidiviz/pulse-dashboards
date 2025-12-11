@@ -25,8 +25,9 @@ import { APIClient } from "../api/APIClient";
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
 import { GEO_CONFIG } from "../geoConfigs/geoConfigs";
 import { GeoConfig, StateCode } from "../geoConfigs/types";
-import { CaseStore } from "./CaseStore";
 import { ROUTE_PERMISSIONS } from "./constants";
+import { PSIStore } from "./PSIStore";
+import { SARStore } from "./SARStore";
 import { StaffStore } from "./StaffStore";
 import { SupervisorStore } from "./SupervisorStore";
 import {
@@ -110,7 +111,9 @@ export class SentencingStore {
 
   supervisorStore: SupervisorStore;
 
-  caseStore: CaseStore;
+  PSIStore: PSIStore;
+
+  SARStore: SARStore;
 
   apiClient: APIClient | OfflineAPIClient;
 
@@ -123,7 +126,8 @@ export class SentencingStore {
       : new APIClient(this);
     this.staffStore = new StaffStore(this);
     this.supervisorStore = new SupervisorStore(this);
-    this.caseStore = new CaseStore(this);
+    this.PSIStore = new PSIStore(this);
+    this.SARStore = new SARStore(this);
     this.analyticsStore = this.rootStore.analyticsStore;
   }
 

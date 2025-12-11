@@ -38,13 +38,13 @@ const clientExternalId = mockCase.client!.externalId;
 beforeEach(() => {
   configure({ safeDescriptors: false });
   sentencingStore = createMockSentencingStore();
-  presenter = new CaseDetailsPresenter(sentencingStore.caseStore, caseId);
+  presenter = new CaseDetailsPresenter(sentencingStore.PSIStore, caseId);
 
   vi.spyOn(sentencingStore.staffStore, "loadStaffInfo");
   vi.spyOn(sentencingStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
   );
-  vi.spyOn(sentencingStore.caseStore, "loadCaseDetails");
+  vi.spyOn(sentencingStore.PSIStore, "loadCaseDetails");
   vi.spyOn(sentencingStore.apiClient, "getCaseDetails").mockResolvedValue(mockCase);
 });
 
@@ -81,10 +81,10 @@ test("loads onboarding screen when user first accesses the case", async () => {
 
 test("display case details page", async () => {
   await presenter.hydrate();
-  vi.spyOn(sentencingStore.caseStore, "caseDetailsById", "get").mockReturnValue({
-    ...sentencingStore.caseStore.caseDetailsById,
+  vi.spyOn(sentencingStore.PSIStore, "caseDetailsById", "get").mockReturnValue({
+    ...sentencingStore.PSIStore.caseDetailsById,
     [caseId]: {
-      ...sentencingStore.caseStore.caseDetailsById[caseId],
+      ...sentencingStore.PSIStore.caseDetailsById[caseId],
       currentOnboardingTopic: "Done",
     },
   });
@@ -125,10 +125,10 @@ test("display case details page", async () => {
 
 test("no recommendations are selected by default", async () => {
   await presenter.hydrate();
-  vi.spyOn(sentencingStore.caseStore, "caseDetailsById", "get").mockReturnValue({
-    ...sentencingStore.caseStore.caseDetailsById,
+  vi.spyOn(sentencingStore.PSIStore, "caseDetailsById", "get").mockReturnValue({
+    ...sentencingStore.PSIStore.caseDetailsById,
     [caseId]: {
-      ...sentencingStore.caseStore.caseDetailsById[caseId],
+      ...sentencingStore.PSIStore.caseDetailsById[caseId],
       currentOnboardingTopic: "Done",
     },
   });

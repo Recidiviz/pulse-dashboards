@@ -268,14 +268,14 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
 export const CaseDetails: React.FC<{
   sentencingStore: SentencingStore;
 }> = observer(function CaseDetails({ sentencingStore }) {
-  const { caseStore } = sentencingStore;
+  const { PSIStore } = sentencingStore;
   const params = useParams();
 
   if (!params["caseId"]) {
     return <Styled.PageContainer>No case ID found.</Styled.PageContainer>;
   }
 
-  const presenter = new CaseDetailsPresenter(caseStore, params["caseId"]);
+  const presenter = new CaseDetailsPresenter(PSIStore, params["caseId"]);
 
   return (
     <PageHydrator hydratable={presenter}>

@@ -28,10 +28,10 @@ import { useFormField } from "../useFormFields";
 import { getFilteredCountyOptions } from "../utils";
 
 function CountyOfSentencingField({ isRequired }: FormFieldProps) {
-  const { caseStore, geoConfig } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore, geoConfig } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
   const omsSystem = geoConfig.omsSystem;
-  const countiesOptions = caseStore.counties;
+  const countiesOptions = PSIStore.counties;
   const countyOfResidence = titleCase(caseAttributes?.client?.county);
   const options = getFilteredCountyOptions(countiesOptions, {
     county: caseAttributes.client?.county,

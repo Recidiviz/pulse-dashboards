@@ -31,8 +31,8 @@ function PriorIncarcerationOrSupervisionField({
   nestedFields,
   isRequired,
 }: FormFieldProps) {
-  const { caseStore } = useStore();
-  const caseAttributes = caseStore.caseAttributes;
+  const { PSIStore } = useStore();
+  const caseAttributes = PSIStore.caseAttributes;
 
   const { inputValue, setInputValue } = useFormField({
     initialInputValue: parseBooleanValue(

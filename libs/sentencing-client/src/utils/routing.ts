@@ -29,7 +29,7 @@ export const PSI_PATHS: Record<PSIPage, string> = {
 export const SAR_PATHS: Record<SARPage, string> = {
   sar: `/${sarRootPath}`,
   staffDashboard: `/${sarRootPath}/dashboard/staff/:staffPseudoId`,
-  sarDetails: `/${sarRootPath}/dashboard/staff/:staffPseudoId/sar/:sarId`,
+  sarDetails: `/${sarRootPath}/dashboard/staff/:staffPseudoId/report/:sarId`,
 };
 
 export type PSIPage = keyof typeof PSI_PAGES;
