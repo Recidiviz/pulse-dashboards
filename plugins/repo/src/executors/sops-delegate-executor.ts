@@ -15,13 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ExecutorContext, logger } from "@nx/devkit";
+import { ExecutorContext, logger, runExecutor } from "@nx/devkit";
 import { execSync } from "child_process";
 
+import { SOPS_ENV_PREFIX } from "./sops-env";
 import { decryptSopsFile, getSopsPathsForTask } from "./utils";
 
 export interface DelegateExecutorOptions {
   prefixedTarget: string; // The requires-sops-env: prefixed target name
+}
+
+async function delegateToTarget(
+  project: string,
+  target: string,
+  configuration: string,
+  overrides: { [k: string]: unknown },
+  context: ExecutorContext,
+): Promise<boolean> {
+  let success = true;
+  for await (const s of await runExecutor(
+    {
+      project,
+      target,
+      configuration,
+    },
+    { ...overrides },
+    context,
+  )) {
+    success = success && s.success;
+  }
+  return success;
 }
 
 /**
@@ -33,7 +56,7 @@ export interface DelegateExecutorOptions {
  * 3. Loads variables into process.env (inherited by child process)
  * 4. Runs the prefixed target as a child process
  */
-export default async function runExecutor(
+export default async function runSopsDelegateExecutor(
   options: DelegateExecutorOptions,
   context: ExecutorContext,
 ): Promise<{ success: boolean }> {
@@ -47,6 +70,7 @@ export default async function runExecutor(
   const projectConfig = context.projectsConfigurations?.projects[projectName];
   const projectRoot = projectConfig?.root;
   const configurationName = context.configurationName || "development";
+  const { prefixedTarget, ...argsToForward } = options;
 
   // Skip if explicitly disabled
   if (process.env["NX_SKIP_SOPS"] === "true") {
@@ -66,24 +90,14 @@ export default async function runExecutor(
   const sourceProjectRoot = projectRoot;
 
   if (!sourceProjectRoot) {
-    logger.verbose(
+    logger.error(
       `No project root found for ${sourceProjectName}, skipping SOPS loading`,
     );
-    // Still run the target even if no SOPS files
-    try {
-      const command = `nx ${options.prefixedTarget} ${projectName} --configuration ${configurationName}`;
-      execSync(command, { stdio: "inherit" });
-      return { success: true };
-    } catch {
-      return { success: false };
-    }
+    return { success: false };
   }
 
   // Extract unprefixed target name for SOPS file lookup
-  const unprefixedTarget = options.prefixedTarget.replace(
-    "requires-sops-env:",
-    "",
-  );
+  const unprefixedTarget = options.prefixedTarget.replace(SOPS_ENV_PREFIX, "");
 
   // Get SOPS files in priority order (mirroring Nx's env file behavior)
   const sopsFilePaths = getSopsPathsForTask(
@@ -98,9 +112,15 @@ export default async function runExecutor(
     );
     // Still run the target even if no SOPS files
     try {
-      const command = `nx ${options.prefixedTarget} ${projectName} --configuration ${configurationName}`;
-      execSync(command, { stdio: "inherit" });
-      return { success: true };
+      const success = await delegateToTarget(
+        projectName,
+        prefixedTarget,
+        configurationName,
+        argsToForward,
+        context,
+      );
+
+      return { success };
     } catch {
       return { success: false };
     }
@@ -132,10 +152,15 @@ export default async function runExecutor(
 
   // Run the prefixed target with inherited environment
   try {
-    const command = `nx ${options.prefixedTarget} ${projectName} --configuration ${configurationName}`;
-    logger.verbose(`Running: ${command}`);
-    execSync(command, { stdio: "inherit" });
-    return { success: true };
+    const success = await delegateToTarget(
+      projectName,
+      prefixedTarget,
+      configurationName,
+      argsToForward,
+      context,
+    );
+
+    return { success };
   } catch (error) {
     logger.error(`Failed to run delegate target!`);
     logger.error(error);

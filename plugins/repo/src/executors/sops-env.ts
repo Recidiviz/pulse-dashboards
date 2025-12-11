@@ -20,6 +20,8 @@ import { existsSync, readFileSync } from "fs";
 import { CreateNodesContextV2 } from "nx/src/project-graph/plugins/public-api";
 import { dirname, join } from "path";
 
+export const SOPS_ENV_PREFIX = "requires-sops-env:";
+
 // Detect targets with 'requires-sops-env:' prefix and return un-prefixed inferred delegate targets
 export const createUnwrappedSopsEnvTargets = (
   projectFile: string,
@@ -49,9 +51,9 @@ export const createUnwrappedSopsEnvTargets = (
   for (const [targetName, targetConfig] of Object.entries(
     projectJson.targets,
   )) {
-    if (targetName.startsWith("requires-sops-env:")) {
+    if (targetName.startsWith(SOPS_ENV_PREFIX)) {
       // Extract the unprefixed name
-      const unprefixedName = targetName.replace("requires-sops-env:", "");
+      const unprefixedName = targetName.replace(SOPS_ENV_PREFIX, "");
 
       // Type assertion for targetConfig
       const config = targetConfig as TargetConfiguration;

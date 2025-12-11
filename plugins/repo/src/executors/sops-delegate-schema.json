@@ -8,5 +8,5 @@
     }
   },
   "required": ["prefixedTarget"],
-  "additionalProperties": false
+  "additionalProperties": true
 }
