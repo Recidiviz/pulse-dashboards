@@ -103,7 +103,9 @@ test("should throw an error if tRPC client is undefined", async () => {
 });
 
 test("should throw an error if staffPseudoId is undefined", async () => {
-  const sentencingStore = createMockSentencingStore({ userPseudoIdOverride: null });
+  const sentencingStore = createMockSentencingStore({
+    userPseudoIdOverride: null,
+  });
   const apiClient = new APIClient(sentencingStore);
   await apiClient.initTRPCClient();
 

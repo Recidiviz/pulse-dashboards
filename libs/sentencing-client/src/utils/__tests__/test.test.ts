@@ -60,7 +60,7 @@ test("mock sentencingStore references default userPseudoId", () => {
 
 test("mock sentencingStore references overridden userPseudoId", () => {
   expect(
-    createMockSentencingStore({ userPseudoIdOverride: overrideId }).rootStore.userStore
-      .userPseudoId,
+    createMockSentencingStore({ userPseudoIdOverride: overrideId }).rootStore
+      .userStore.userPseudoId,
   ).toBe(overrideId);
 });

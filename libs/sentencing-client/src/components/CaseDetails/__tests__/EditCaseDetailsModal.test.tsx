@@ -89,7 +89,9 @@ test("clicking edit case details button opens the edit case details modal", asyn
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[
+        `/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`,
+      ]}
     >
       <Routes>
         <Route
@@ -122,7 +124,9 @@ test("shows all of the non-nested fields", async () => {
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[
+        `/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`,
+      ]}
     >
       <Routes>
         <Route
@@ -176,7 +180,9 @@ test("shows ASAM level of care recommendation only when 'Mild', 'Moderate', or '
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[
+        `/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`,
+      ]}
     >
       <Routes>
         <Route
@@ -229,7 +235,9 @@ test("shows/hides Other need text field when 'Other' option is selected/deselect
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[
+        `/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`,
+      ]}
     >
       <Routes>
         <Route
@@ -265,7 +273,9 @@ test("shows/hides Other protective factor text field when 'Other' option is sele
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[
+        `/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`,
+      ]}
     >
       <Routes>
         <Route
@@ -301,7 +311,9 @@ test("shows supervision/incarceration nested fields when 'No' is selected for pr
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[
+        `/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`,
+      ]}
     >
       <Routes>
         <Route
@@ -363,7 +375,9 @@ test("error message displays when invalid lsir score is given and saving is disa
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[
+        `/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`,
+      ]}
     >
       <Routes>
         <Route

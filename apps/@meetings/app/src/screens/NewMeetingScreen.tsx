@@ -17,11 +17,8 @@
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import * as FileSystem from "expo-file-system/legacy";
-import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Image,
   Modal,
   Text,
@@ -33,15 +30,10 @@ import Icons from "../../assets/icons";
 import MeetingSheet from "../components/MeetingSheet";
 import RecordingControls from "../components/RecordingControls";
 import SubHeader from "../components/SubHeader";
-import { useRecording } from "../context/RecordingContext";
+import { useMeetingRecording } from "../hooks/useMeetingRecording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
-import { trpc } from "../trpc/client";
 import { humanReadableTitleCase } from "../utils/format";
-import {
-  requestNotificationPermissions,
-  sendNotification,
-} from "../utils/notifications";
-import { getItem, removeItem, saveItem } from "../utils/storage";
+import { saveItem } from "../utils/storage";
 
 type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Profile">;
 type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
@@ -55,31 +47,6 @@ const NewMeetingScreen = () => {
     personId: BigInt(route.params.client.personId),
   };
   const { meetingId } = route.params;
-
-  const [note, setNote] = useState("");
-
-  const {
-    status,
-    setStatus,
-    recorderState,
-    startRecording,
-    stopRecording,
-    stopAndUploadRecording,
-    togglePauseResume: contextTogglePauseResume,
-    initializeRecording,
-    cleanupRecording,
-  } = useRecording();
-
-  const prevRecorderStateRef = useRef(recorderState.isRecording);
-  useEffect(() => {
-    (async () => {
-      await initializeRecording();
-      const saved = await getItem("note");
-      setNote(saved);
-      requestNotificationPermissions();
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const navigateToClientProfile = () => {
     navigation.reset({
@@ -100,145 +67,24 @@ const NewMeetingScreen = () => {
       ],
     });
   };
-  const endMeetingMutation = trpc.v1.meeting.endMeeting.useMutation({
-    onSuccess: () => {
-      console.log("Meeting successfully ended and processing started");
-    },
-    onError: (err) => {
-      console.error("[endMeeting] Failed:", err);
-    },
-  });
 
-  const updateNotesMutation = trpc.v1.meeting.updateNotes.useMutation({
-    onSuccess: () => {
-      console.log("Notes updated successfully on server");
-    },
-    onError: (err) => {
-      console.error("[updateNotes] Failed:", err);
-    },
-  });
-
-  const discardMeetingMutation = trpc.v1.meeting.discardMeeting.useMutation({
-    onSuccess: () => {
-      console.log("Meeting discarded successfully");
-    },
-    onError: (err) => {
-      console.error("[discardMeeting] Failed:", err);
-      Alert.alert("Error", "Failed to discard meeting. Please try again.");
-    },
-  });
-
-  const { refetch } = trpc.v1.meeting.getSignedUrlForRecording.useQuery(
-    { clientId: client.personId, meetingId: meetingId ?? "" },
-    { enabled: false },
-  );
-
-  const uploadSegmentToGCS = useCallback(
-    async (uri: string) => {
-      const fileInfo = await FileSystem.getInfoAsync(uri);
-      if (!fileInfo.exists) {
-        console.warn("File does not exist:", uri);
-        return;
-      }
-
-      const { data: signedUrl } = await refetch();
-      if (!signedUrl) return;
-
-      try {
-        await FileSystem.uploadAsync(signedUrl, uri, {
-          httpMethod: "PUT",
-          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-          headers: { "Content-Type": "audio/m4a" },
-        });
-      } catch (error) {
-        console.error("Upload failed:", error);
-        throw error;
-      }
-    },
-    [refetch],
-  );
-
-  const handleTogglePauseResume = async () => {
-    await contextTogglePauseResume(uploadSegmentToGCS);
-
-    // Update notes after pausing
-    if (status === "recording") {
-      try {
-        await updateNotesMutation.mutateAsync({
-          clientId: client.personId,
-          meetingId,
-          notes: note,
-        });
-      } catch (err) {
-        console.error("Failed to update notes:", err);
-      }
-    }
-  };
-
-  const handleFinishAndSave = async () => {
-    setStatus("ending");
-
-    try {
-      if (recorderState.isRecording) {
-        await stopAndUploadRecording(uploadSegmentToGCS);
-      }
-
-      await removeItem("note");
-
-      await endMeetingMutation.mutateAsync({
-        clientId: client.personId,
-        meetingId,
-        notes: note,
-      });
-
-      await cleanupRecording();
-      navigateToClientProfile();
-    } catch (err) {
-      console.error("Failed to end meeting:", err);
-      Alert.alert("Error", "Failed to end meeting. Please try again.");
-      setStatus("idle");
-    }
-  };
-
-  const handleContinue = () => setStatus("recording");
-  const handleDiscard = () => setStatus("discarding");
-
-  const handleFinalDiscard = async () => {
-    await cleanupRecording();
-
-    await discardMeetingMutation.mutateAsync({
-      clientId: client.personId,
+  const { status, note, setNote, recorderState, actions } = useMeetingRecording(
+    {
+      client,
       meetingId,
-    });
+      onComplete: navigateToClientProfile,
+    },
+  );
 
-    navigateToClientProfile();
-  };
-
-  const handleAutoStopRecording = useCallback(async () => {
-    setStatus("uploading");
-    await stopAndUploadRecording(uploadSegmentToGCS);
-    setStatus("paused");
-
-    sendNotification(
-      "Recording Paused",
-      "90 minute-at-a-time recording limit reached. Pausing Recording",
-    );
-  }, [setStatus, stopAndUploadRecording, uploadSegmentToGCS]);
-
-  // Auto-stop recording when limit is reached
-  useEffect(() => {
-    //introduced to keep track of previous recorder state to prevent initial triggering of the handleAutoStopRecording function
-    const prevIsRecording = prevRecorderStateRef.current;
-    if (
-      status === "recording" &&
-      prevIsRecording &&
-      !recorderState.isRecording
-    ) {
-      handleAutoStopRecording();
-    }
-
-    prevRecorderStateRef.current = recorderState.isRecording;
-  }, [status, recorderState.isRecording, handleAutoStopRecording]);
+  const {
+    startRecording,
+    handleTogglePauseResume,
+    stopRecording,
+    handleFinishAndSave,
+    handleDiscard,
+    handleFinalDiscard,
+    handleContinue,
+  } = actions;
 
   if (status === "ending") {
     return (

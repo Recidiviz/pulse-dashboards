@@ -119,10 +119,12 @@ export class StaffPresenter implements Hydratable {
     sortDirection: false | SortDirection,
     columnName?: string,
   ): void {
-    this.staffStore.sentencingStore.analyticsStore.trackDashboardSortOrderChanged({
-      viewedBy: this.staffPseudoId,
-      order: sortDirection,
-      columnName,
-    });
+    this.staffStore.sentencingStore.analyticsStore.trackDashboardSortOrderChanged(
+      {
+        viewedBy: this.staffPseudoId,
+        order: sortDirection,
+        columnName,
+      },
+    );
   }
 }

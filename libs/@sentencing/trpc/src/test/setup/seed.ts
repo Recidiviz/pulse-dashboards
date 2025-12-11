@@ -30,7 +30,7 @@ import {
   ProtectiveFactor,
   ReportType,
   StateCode,
-  SubstanceUseDiagnosis
+  SubstanceUseDiagnosis,
 } from "~@sentencing/prisma/client";
 import {
   CaseCreateInput,

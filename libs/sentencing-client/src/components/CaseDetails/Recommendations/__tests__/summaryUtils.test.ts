@@ -1290,7 +1290,9 @@ describe("generateRecommendationSummary for US_ID", () => {
  */
 
 describe("generateRecommendationSummary for US_ND", () => {
-  const sentencingStore = createMockSentencingStore({ stateCodeOverride: "US_ND" });
+  const sentencingStore = createMockSentencingStore({
+    stateCodeOverride: "US_ND",
+  });
   const geoConfig = sentencingStore.geoConfig;
 
   // No recommendation

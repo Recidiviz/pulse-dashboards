@@ -41,7 +41,7 @@ export const IntakeIntegrationProvider: FC<{ children: ReactNode }> = memo(
 
     // client SDKs want a fully qualified URL, not just an absolute path. A proxy will handle this.
     const REENTRY_BACKEND_URL = `${window.location.origin}${hasPermission("live_data") ? REENTRY_BACKEND_PATH : REENTRY_DEV_BACKEND_PATH}`;
-    
+
     const socket = createSocket(REENTRY_BACKEND_URL);
     const $api = createApiClient(REENTRY_BACKEND_URL);
 

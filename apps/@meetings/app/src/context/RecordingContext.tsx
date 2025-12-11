@@ -228,9 +228,6 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
    * Fully resets app state and removes the file.
    */
   const cleanupRecording = async () => {
-    if (recorderState.isRecording) {
-      await audioRecorder.stop();
-    }
     await removeRecordingUri();
     await setStatus("idle");
   };

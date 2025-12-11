@@ -79,7 +79,9 @@ const PagePSI: React.FC = function PagePSI() {
             />
             <Route
               path={psiRoute({ routeName: "supervisorDashboard" })}
-              element={<SupervisorDashboard sentencingStore={sentencingStore} />}
+              element={
+                <SupervisorDashboard sentencingStore={sentencingStore} />
+              }
             />
             <Route
               path={psiRoute({ routeName: "caseDetails" })}

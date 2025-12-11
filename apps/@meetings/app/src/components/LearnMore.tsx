@@ -41,7 +41,13 @@ type LearnMoreModalProps = {
 
 export const LearnMoreModal = ({ visible, onClose }: LearnMoreModalProps) => {
   return (
-    <Modal visible={visible} transparent animationType="fade" onClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onClose={onClose}
+      containerClassName="max-w-[620px] p-6"
+    >
       <View className="mb-5 flex-row items-center justify-between">
         <Text className="font-inter text-xl font-semibold text-primary">
           {title}

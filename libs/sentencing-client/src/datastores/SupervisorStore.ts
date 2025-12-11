@@ -36,7 +36,8 @@ export class SupervisorStore {
   /** This is a MobX flow method and should be called with mobx.flowResult */
   *loadSupervisorInfo(): FlowMethod<APIClient["getSupervisorInfo"], void> {
     try {
-      this.supervisorInfo = yield this.sentencingStore.apiClient.getSupervisorInfo();
+      this.supervisorInfo =
+        yield this.sentencingStore.apiClient.getSupervisorInfo();
     } catch (error) {
       captureException(new Error("Error while loading supervisor info"), {
         extra: {

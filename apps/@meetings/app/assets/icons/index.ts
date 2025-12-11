@@ -39,8 +39,10 @@ import Logo from "./logo.png";
 import Mail from "./mail.png";
 import Menu from "./menu.png";
 import Microphone from "./microphone.png";
+import Minimize from "./minimize.png";
 import Notes from "./notes.png";
 import Pause from "./pause.png";
+import PauseBlack from "./pause-black.png";
 import Play from "./play.png";
 import Plus from "./plus.png";
 import Processing from "./processing.png";
@@ -50,11 +52,14 @@ import Resources from "./resources.png";
 import Schedule from "./schedule.png";
 import Search from "./search.png";
 import Share from "./share.png";
+import Sparkles from "./sparkles.png";
 import Stop from "./stop.png";
 import Trends from "./trends.png";
 
 const Icons = {
   Search,
+  Sparkles,
+  PauseBlack,
   Home,
   Trends,
   Clients,
@@ -91,6 +96,7 @@ const Icons = {
   Reset,
   CrossRound,
   ArrowUpGreen,
+  Minimize,
 };
 
 export default Icons;

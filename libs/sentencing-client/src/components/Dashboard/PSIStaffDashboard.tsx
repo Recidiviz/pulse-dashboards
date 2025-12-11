@@ -107,7 +107,11 @@ const ManagedComponent = observer(function PSIStaffDashboard({
   );
 });
 
-function usePresenter({ sentencingStore }: { sentencingStore: SentencingStore }) {
+function usePresenter({
+  sentencingStore,
+}: {
+  sentencingStore: SentencingStore;
+}) {
   const { staffStore } = sentencingStore;
 
   return new StaffPresenter(staffStore);

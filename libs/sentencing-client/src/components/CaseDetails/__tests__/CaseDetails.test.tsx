@@ -45,7 +45,9 @@ beforeEach(() => {
     StaffInfoFixture,
   );
   vi.spyOn(sentencingStore.PSIStore, "loadCaseDetails");
-  vi.spyOn(sentencingStore.apiClient, "getCaseDetails").mockResolvedValue(mockCase);
+  vi.spyOn(sentencingStore.apiClient, "getCaseDetails").mockResolvedValue(
+    mockCase,
+  );
 });
 
 afterEach(() => {
@@ -56,7 +58,9 @@ test("loads onboarding screen when user first accesses the case", async () => {
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[
+        `/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`,
+      ]}
     >
       <Routes>
         <Route
@@ -91,7 +95,9 @@ test("display case details page", async () => {
 
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[
+        `/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`,
+      ]}
     >
       <Routes>
         <Route
@@ -135,7 +141,9 @@ test("no recommendations are selected by default", async () => {
 
   const screen = render(
     <MemoryRouter
-      initialEntries={[`/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`]}
+      initialEntries={[
+        `/dashboard/${sentencingStore.staffPseudoId}/case/${caseId}`,
+      ]}
     >
       <Routes>
         <Route

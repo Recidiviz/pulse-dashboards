@@ -69,8 +69,10 @@ export class SupervisorPresenter implements Hydratable {
   }
 
   trackDashboardPageViewed(): void {
-    this.supervisorStore.sentencingStore.analyticsStore.trackDashboardPageViewed({
-      viewedBy: this.staffPseudoId,
-    });
+    this.supervisorStore.sentencingStore.analyticsStore.trackDashboardPageViewed(
+      {
+        viewedBy: this.staffPseudoId,
+      },
+    );
   }
 }

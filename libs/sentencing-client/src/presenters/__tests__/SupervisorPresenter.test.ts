@@ -69,7 +69,9 @@ test("no redundant hydration while in progress", async () => {
   const secondHydrationCall = presenter.hydrate();
 
   await Promise.all([firstHydrationCall, secondHydrationCall]);
-  expect(sentencingStore.supervisorStore.loadSupervisorInfo).toHaveBeenCalledTimes(1);
+  expect(
+    sentencingStore.supervisorStore.loadSupervisorInfo,
+  ).toHaveBeenCalledTimes(1);
 });
 
 test("no hydration if already hydrated", async () => {
@@ -82,5 +84,7 @@ test("no hydration if already hydrated", async () => {
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });
   presenter.hydrate();
 
-  expect(sentencingStore.supervisorStore.loadSupervisorInfo).toHaveBeenCalledTimes(1);
+  expect(
+    sentencingStore.supervisorStore.loadSupervisorInfo,
+  ).toHaveBeenCalledTimes(1);
 });

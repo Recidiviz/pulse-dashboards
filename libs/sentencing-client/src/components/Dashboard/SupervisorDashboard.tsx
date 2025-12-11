@@ -146,7 +146,11 @@ const ManagedComponent = observer(function SupervisorDashboard({
   );
 });
 
-function usePresenter({ sentencingStore }: { sentencingStore: SentencingStore }) {
+function usePresenter({
+  sentencingStore,
+}: {
+  sentencingStore: SentencingStore;
+}) {
   const { supervisorStore } = sentencingStore;
 
   return new SupervisorPresenter(supervisorStore);

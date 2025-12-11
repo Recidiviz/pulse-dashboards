@@ -21,7 +21,7 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
-import { formatDuration } from "../utils/format";
+import { formatDurationCompact } from "../utils/format";
 import {
   Table,
   TableBody,
@@ -72,7 +72,9 @@ const MeetingRow = ({ meeting, client }: MeetingRowProps) => {
       <TableCell>{meeting.date}</TableCell>
       <TableCell>{meeting.time}</TableCell>
       <TableCell>
-        {meeting.duration ? formatDuration(meeting.duration) : "In progress..."}
+        {meeting.duration
+          ? formatDurationCompact(meeting.duration)
+          : "In progress..."}
       </TableCell>
       <TableCell>
         <View className="w-[150px] flex-row flex-wrap gap-1">

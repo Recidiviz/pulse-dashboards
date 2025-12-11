@@ -83,7 +83,9 @@ test("welcome message no longer shows after user closes it", async () => {
   const screen = render(
     <StoreProvider store={sentencingStore}>
       <MemoryRouter
-        initialEntries={[`/psi/dashboard/staff/${sentencingStore.staffPseudoId}`]}
+        initialEntries={[
+          `/psi/dashboard/staff/${sentencingStore.staffPseudoId}`,
+        ]}
       >
         <PSIStaffDashboard sentencingStore={sentencingStore} />
       </MemoryRouter>
@@ -111,7 +113,9 @@ test("shows cases default sorted by last name", async () => {
   const screen = render(
     <StoreProvider store={sentencingStore}>
       <MemoryRouter
-        initialEntries={[`/psi/dashboard/staff/${sentencingStore.staffPseudoId}`]}
+        initialEntries={[
+          `/psi/dashboard/staff/${sentencingStore.staffPseudoId}`,
+        ]}
       >
         <PSIStaffDashboard sentencingStore={sentencingStore} />
       </MemoryRouter>
@@ -147,13 +151,17 @@ test("SupervisorDashboard displays PSI Team Dashboard header and performance hig
   );
 
   // Create and hydrate the supervisor presenter
-  const supervisorPresenter = new SupervisorPresenter(sentencingStore.supervisorStore);
+  const supervisorPresenter = new SupervisorPresenter(
+    sentencingStore.supervisorStore,
+  );
   await supervisorPresenter.hydrate();
 
   const screen = render(
     <StoreProvider store={sentencingStore}>
       <MemoryRouter
-        initialEntries={[`/psi/dashboard/supervisor/${sentencingStore.staffPseudoId}`]}
+        initialEntries={[
+          `/psi/dashboard/supervisor/${sentencingStore.staffPseudoId}`,
+        ]}
       >
         <SupervisorDashboard sentencingStore={sentencingStore} />
       </MemoryRouter>

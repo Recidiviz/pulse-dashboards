@@ -145,7 +145,8 @@ export class PSIStore {
     caseId: string,
   ): FlowMethod<APIClient["getCaseDetails"], void> {
     try {
-      const caseDetails = yield this.sentencingStore.apiClient.getCaseDetails(caseId);
+      const caseDetails =
+        yield this.sentencingStore.apiClient.getCaseDetails(caseId);
       this.caseDetailsById = {
         ...this.caseDetailsById,
         [caseId]: caseDetails,
@@ -194,7 +195,9 @@ export class PSIStore {
   *loadCommunityOpportunities() {
     try {
       this.communityOpportunities =
-        yield this.sentencingStore.apiClient.getCommunityOpportunities(isDemoMode());
+        yield this.sentencingStore.apiClient.getCommunityOpportunities(
+          isDemoMode(),
+        );
     } catch (error) {
       captureException(
         new Error("Error while loading community opportunities"),
@@ -217,7 +220,8 @@ export class PSIStore {
 
   *loadOffenses() {
     try {
-      const offenses: Offenses = yield this.sentencingStore.apiClient.getOffenses();
+      const offenses: Offenses =
+        yield this.sentencingStore.apiClient.getOffenses();
       // Sorted by frequency with alphabetical sorting applied to items that have the same frequency
       this.offenses = offenses
         .slice()
@@ -242,7 +246,8 @@ export class PSIStore {
 
   *loadCounties() {
     try {
-      const counties: Counties = yield this.sentencingStore.apiClient.getCounties();
+      const counties: Counties =
+        yield this.sentencingStore.apiClient.getCounties();
       this.counties = counties;
     } catch (error) {
       captureException(new Error("Error while loading counties"), {

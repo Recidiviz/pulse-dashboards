@@ -78,7 +78,7 @@ const ClientsCardsList = ({ clients, recordingState }: ClientsProps) => {
             <View className="flex-1 flex-row items-center">
               <ImageBackground
                 source={Icons.BgAvatar}
-                className="mr-3 size-11 items-center justify-center overflow-hidden rounded-full"
+                className="mr-3 !size-11 items-center justify-center overflow-hidden rounded-full"
                 imageClassName="!size-11"
               >
                 <Text className="font-inter text-sm font-semibold text-white">

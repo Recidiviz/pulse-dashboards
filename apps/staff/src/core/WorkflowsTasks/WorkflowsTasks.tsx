@@ -65,7 +65,6 @@ const WorkflowsTasks = observer(function WorkflowsTasks() {
     </TasksBodyContainer>
   );
 
-
   return (
     <WorkflowsNavLayout limitedWidth={isUsIdLegacyTasksEnabled}>
       <CaseloadSelectWrapper>
@@ -76,7 +75,11 @@ const WorkflowsTasks = observer(function WorkflowsTasks() {
         empty={empty}
         hydrated={
           // TODO(#10615): Remove WorkflowsTasksBody when UsIdTasksV2 is fully rolled out.
-          isUsIdLegacyTasksEnabled ? <WorkflowsTasksBody /> : <WorkflowsTasksBodyV2 />
+          isUsIdLegacyTasksEnabled ? (
+            <WorkflowsTasksBody />
+          ) : (
+            <WorkflowsTasksBodyV2 />
+          )
         }
       />
     </WorkflowsNavLayout>

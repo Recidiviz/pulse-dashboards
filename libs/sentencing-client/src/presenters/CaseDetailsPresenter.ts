@@ -63,7 +63,9 @@ export class CaseDetailsPresenter implements Hydratable {
       ],
       populate: async () => {
         if (!this.PSIStore.sentencingStore.staffStore.staffInfo) {
-          await flowResult(this.PSIStore.sentencingStore.staffStore.loadStaffInfo());
+          await flowResult(
+            this.PSIStore.sentencingStore.staffStore.loadStaffInfo(),
+          );
         }
         await flowResult(this.PSIStore.loadOffenses());
         await flowResult(this.PSIStore.loadCounties());
@@ -281,11 +283,13 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   trackRecommendedDispositionChanged(selectedRecommendation: string) {
-    this.PSIStore.sentencingStore.analyticsStore.trackRecommendedDispositionChanged({
-      viewedBy: this.staffPseudoId,
-      selectedRecommendation,
-      caseId: this.caseId,
-    });
+    this.PSIStore.sentencingStore.analyticsStore.trackRecommendedDispositionChanged(
+      {
+        viewedBy: this.staffPseudoId,
+        selectedRecommendation,
+        caseId: this.caseId,
+      },
+    );
   }
 
   trackCreateOrUpdateRecommendationClicked(type: CreateOrUpdateRecommendation) {
@@ -299,10 +303,12 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   trackCopySummaryToClipboardClicked() {
-    this.PSIStore.sentencingStore.analyticsStore.trackCopySummaryToClipboardClicked({
-      viewedBy: this.staffPseudoId,
-      caseId: this.caseId,
-    });
+    this.PSIStore.sentencingStore.analyticsStore.trackCopySummaryToClipboardClicked(
+      {
+        viewedBy: this.staffPseudoId,
+        caseId: this.caseId,
+      },
+    );
   }
 
   trackDownloadReportClicked() {
@@ -313,9 +319,11 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   trackCaseStatusCompleteClicked() {
-    this.PSIStore.sentencingStore.analyticsStore.trackCaseStatusCompleteClicked({
-      viewedBy: this.staffPseudoId,
-      caseId: this.caseId,
-    });
+    this.PSIStore.sentencingStore.analyticsStore.trackCaseStatusCompleteClicked(
+      {
+        viewedBy: this.staffPseudoId,
+        caseId: this.caseId,
+      },
+    );
   }
 }

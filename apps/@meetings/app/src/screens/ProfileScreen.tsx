@@ -17,7 +17,7 @@
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -40,6 +40,7 @@ import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import MeetingsCardsList from "../components/MeetingsCardsList";
 import MeetingsTable from "../components/MeetingsTable.web";
+import NewMeetingModal from "../components/NewMeetingModal";
 import SearchBar from "../components/SearchBar";
 import { useRecording } from "../context/RecordingContext";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
@@ -75,8 +76,8 @@ const ProfileScreen = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [mobileHeaderHeight, setMobileHeaderHeight] = useState(0);
+  const [webMeetingId, setWebMeetingId] = useState<string | null>(null);
   const { status: recordingState } = useRecording();
-  const scrollY = useRef(0);
   // const [sortBy, setSortBy] = useState<MeetingsSort>(MeetingsSort.NEWEST_FIRST);
 
   const {
@@ -95,13 +96,8 @@ const ProfileScreen = () => {
     const currentOffset = event.nativeEvent.contentOffset.y;
 
     // Only collapse when scrolling down past 50px
-    if (currentOffset > 50 && currentOffset > scrollY.current) {
-      setIsCollapsed(true);
-    } else if (currentOffset < 30) {
-      setIsCollapsed(false);
-    }
-
-    scrollY.current = currentOffset;
+    if (currentOffset > 50) setIsCollapsed(true);
+    else setIsCollapsed(false);
   };
 
   useEffect(() => {
@@ -227,15 +223,23 @@ const ProfileScreen = () => {
         startTime,
       });
 
-      navigation.navigate("NewMeeting", {
-        client: {
-          personId: client.personId.toString(),
-          fullName: client.fullName,
-          displayPersonExternalId: client.displayPersonExternalId,
-          supervision: client.supervision,
-        },
-        meetingId,
-      });
+      switch (Platform.OS) {
+        case "web":
+          setWebMeetingId(meetingId);
+          break;
+        case "ios":
+        case "android":
+          navigation.navigate("NewMeeting", {
+            client: {
+              personId: client.personId.toString(),
+              fullName: client.fullName,
+              displayPersonExternalId: client.displayPersonExternalId,
+              supervision: client.supervision,
+            },
+            meetingId,
+          });
+          break;
+      }
     } catch (err) {
       console.error("[createMeeting] Failed:", err);
       Alert.alert("Error", "Failed to create meeting. Please try again.");
@@ -353,7 +357,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1">
+    <SafeAreaView edges={["top"]} className="flex-1 grow">
       <View className="z-10 hidden md:block">
         <Header />
       </View>
@@ -372,76 +376,73 @@ const ProfileScreen = () => {
           )
         }
       >
-        <View className="px-4">
-          <View className="flex-row items-center justify-between">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+        <View className="flex-row items-center justify-between">
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={Icons.ArrowLeft}
+              className="!size-6"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+
+          {isCollapsed && recordingState === "idle" && (
+            <TouchableOpacity
+              className="px-2"
+              onPress={handleCreateMeeting}
+              disabled={isCreating}
+            >
               <Image
-                source={Icons.ArrowLeft}
+                source={Icons.Plus}
                 className="!size-6"
                 resizeMode="contain"
               />
             </TouchableOpacity>
-
-            {isCollapsed && recordingState === "idle" && (
-              <TouchableOpacity
-                className="px-2"
-                onPress={handleCreateMeeting}
-                disabled={isCreating}
-              >
-                <Image
-                  source={Icons.Plus}
-                  className="size-6"
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
-            )}
-          </View>
-
-          {!isCollapsed && (
-            <View className="pt-8">
-              <Text className="mb-1 font-inter text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
-                {client.fullName}
-              </Text>
-
-              <Text className="font-inter text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
-                ID: {client.displayPersonExternalId} •{" "}
-                {humanReadableTitleCase(client.supervision)}
-              </Text>
-            </View>
           )}
         </View>
+
+        {!isCollapsed && (
+          <View className="pt-8">
+            <Text className="mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
+              {client.fullName}
+            </Text>
+
+            <Text className="text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
+              ID: {client.displayPersonExternalId} •{" "}
+              {humanReadableTitleCase(client.supervision)}
+            </Text>
+          </View>
+        )}
       </View>
 
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
         className="grow md:!pt-0"
-        contentContainerClassName="px-4 md:pt-10"
+        contentContainerClassName="flex-grow px-4 md:pt-10"
         style={{ paddingTop: mobileContentPadding }}
       >
         <View className="mx-auto mb-4 hidden w-full max-w-[960px] items-start md:flex xl:absolute xl:left-10 xl:max-w-none">
+          {/* TODO: back button under discussion with design team */}
           <TouchableOpacity
             className="flex-row items-center gap-2"
             onPress={navigation.goBack}
           >
             <Image source={Icons.ArrowLeft} className="!size-3" />
-            <Text className="font-inter text-sm font-medium text-[#355362D9]">
-              Back
-            </Text>
+            <Text className="text-sm font-medium text-[#355362D9]">Back</Text>
           </TouchableOpacity>
         </View>
 
-        <View className="mx-auto w-full max-w-[960px] flex-1">
+        <View className="mx-auto w-full max-w-[960px]">
           <Text className="hidden font-libre-baskerville text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary md:block md:text-[32px]">
             {client.fullName}
           </Text>
 
-          <Text className="mt-1 hidden font-inter text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">
+          <Text className="mt-1 hidden text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">
             ID: {client.displayPersonExternalId} • {client.supervision}
           </Text>
 
-          <View className="flex-row items-center justify-between py-2">
-            <Text className="font-inter text-xl font-semibold text-primary">
+          <View className="my-4 flex-row items-center justify-between">
+            <Text className="text-xl font-semibold text-primary md:text-2xl">
               Meetings{" "}
               <Text className="font-inter text-gray-400">
                 ({filteredMeetings.length})
@@ -464,80 +465,88 @@ const ProfileScreen = () => {
               </TouchableOpacity>
             )}
           </View>
-        </View>
 
-        <View className="w-full">
-          <SearchBar
-            placeholder={"Enter keyword or phrase"}
-            value={searchQuery}
-            onChange={setSearchQuery}
-          />
-        </View>
-
-        <View className="gap-2 py-2 md:flex-row md:items-center">
-          <Text className="font-inter text-sm text-[#355362D9] md:text-base">
-            Filter by meeting topics:
-          </Text>
-
-          <View className="flex-row flex-wrap gap-2">
-            {filterOptions.map((filter) => {
-              const isActive = activeFilters.includes(filter);
-              return (
-                <TouchableOpacity
-                  key={filter}
-                  className={`flex-row items-center gap-2 rounded-[5px] border px-3 py-1 ${
-                    isActive
-                      ? "border-[#00665F] bg-[#C1E3D83B]"
-                      : "border-gray-300 bg-white"
-                  }`}
-                  onPress={() => toggleFilter(filter)}
-                >
-                  <Text
-                    className={`font-inter text-sm font-medium ${
-                      isActive ? "text-primary" : "text-gray-700"
-                    }`}
-                  >
-                    {filter}
-                  </Text>
-
-                  {isActive && (
-                    <Image source={Icons.CrossRound} className="!size-4" />
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-
-            {activeFilters.length > 0 && (
-              <TouchableOpacity
-                className="group flex-row items-center gap-1 rounded-full px-4 py-1 hover:bg-[#4D5255]"
-                onPress={() => setActiveFilters([])}
-              >
-                <Image
-                  source={Icons.Reset}
-                  className="!size-3 group-hover:invert"
-                />
-                <Text className="font-inter text-sm text-[#252C32] group-hover:text-white">
-                  Reset
-                </Text>
-              </TouchableOpacity>
-            )}
+          <View className="w-full">
+            <SearchBar
+              placeholder={"Enter keyword or phrase"}
+              value={searchQuery}
+              onChange={setSearchQuery}
+            />
           </View>
+
+          <View className="gap-2 py-2 md:flex-row md:items-center">
+            <Text className="text-sm text-[#355362D9] md:text-base">
+              Filter by meeting topics:
+            </Text>
+
+            <View className="flex-row flex-wrap gap-2">
+              {/* TODO: filters are under discussion with design team */}
+              {filterOptions.map((filter) => {
+                const isActive = activeFilters.includes(filter);
+                return (
+                  <TouchableOpacity
+                    key={filter}
+                    className={`flex-row items-center gap-2 rounded-[5px] border px-3 py-1 ${
+                      isActive
+                        ? "border-[#00665F] bg-[#C1E3D83B]"
+                        : "border-gray-300 bg-white"
+                    }`}
+                    onPress={() => toggleFilter(filter)}
+                  >
+                    <Text
+                      className={`text-sm font-medium ${
+                        isActive ? "text-primary" : "text-gray-700"
+                      }`}
+                    >
+                      {filter}
+                    </Text>
+
+                    {isActive && (
+                      <Image source={Icons.CrossRound} className="!size-4" />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+
+              {activeFilters.length > 0 && (
+                <TouchableOpacity
+                  className="group flex-row items-center gap-1 rounded-full px-4 py-1 hover:bg-[#4D5255]"
+                  onPress={() => setActiveFilters([])}
+                >
+                  <Image
+                    source={Icons.Reset}
+                    className="!size-3 group-hover:invert"
+                  />
+                  <Text className="text-sm text-[#252C32] group-hover:text-white">
+                    Reset
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+
+          <View className="z-10 my-4 flex-row items-center justify-between">
+            <Text className="font-inter text-sm text-[#9AA6AC]">
+              {filteredMeetings.length} meeting
+              {filteredMeetings.length > 1 ? "s" : ""}
+            </Text>
+
+            <Dropdown
+              label="Sort by"
+              options={Object.values(MeetingsSort)}
+              onSelect={(value) => setSortBy(value as MeetingsSort)}
+            />
+          </View>
+
+          <View className="grow basis-0 pb-8">{renderMeetingsContent()}</View>
+
+          {webMeetingId && (
+            <NewMeetingModal
+              onClose={() => setWebMeetingId(null)}
+              meetingId={webMeetingId}
+            />
+          )}
         </View>
-
-        <View className="flex-row items-center justify-between">
-          <Text className="font-inter text-sm text-primary">
-            {filteredMeetings.length} meeting
-            {filteredMeetings.length > 1 ? "s" : ""}
-          </Text>
-
-          <Dropdown
-            label="Sort by"
-            options={Object.values(MeetingsSort)}
-            onSelect={(value) => setSortBy(value as MeetingsSort)}
-          />
-        </View>
-
-        <View className="grow basis-0 pb-8">{renderMeetingsContent()}</View>
       </ScrollView>
     </SafeAreaView>
   );

@@ -91,7 +91,7 @@ const MeetingsCardsList = ({ meetings, client, onPress }: MeetingCardProps) => {
             <View className="flex-row items-start">
               <Image
                 source={Icons.Processing}
-                className="mr-2 size-8"
+                className="mr-2 !size-8"
                 style={{ resizeMode: "contain" }}
               />
 
