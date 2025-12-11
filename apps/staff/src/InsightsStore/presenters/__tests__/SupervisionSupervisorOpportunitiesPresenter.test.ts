@@ -369,7 +369,7 @@ describe("Opportunity details methods", () => {
         );
 
         // We mocked one "Almost Eligible" tab title and the rest are "Eligible Now"
-        expect(testClientCounts).toEqual([1, 19]);
+        expect(testClientCounts).toEqual([19, 1]);
       });
     });
 

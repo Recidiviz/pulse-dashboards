@@ -161,7 +161,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
           relevantTabTitles.includes(tabTitle as OpportunityTab),
         )
         .forEach(([tabTitle, officerClientCount]) => {
-          const cardInfoForTab: OpportunityCardInfo = acc.get(tabTitle) ?? {
+          const cardInfoForTab: RawOpportunityInfo = acc.get(tabTitle) ?? {
             label: `${oppLabel}: ${tabTitle}`,
             opportunityType,
             urlSection,
@@ -169,6 +169,9 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
             priority,
             zeroGrantsTooltip,
             officersWithRelevantClients: [],
+            homepagePosition:
+              this.opportunityConfigurationStore.opportunities[opportunityType]
+                .homepagePosition,
           };
 
           cardInfoForTab.officersWithRelevantClients.push({
@@ -177,13 +180,18 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
             clientsCountWithLabel: simplur`${officerClientCount} ${this.labels.supervisionJiiLabel}[|s]`,
           });
           cardInfoForTab.relevantClientsCount += officerClientCount;
-
+          cardInfoForTab.officersWithRelevantClients.sort(
+            SupervisionSupervisorOpportunitiesPresenter.sortSupervisionOfficerWithOpportunityCardDetails,
+          );
           acc.set(tabTitle, cardInfoForTab);
         });
 
       return acc;
-    }, new Map<string, OpportunityCardInfo>());
-    return Array.from(cardInfoByTab.values());
+    }, new Map<string, RawOpportunityInfo>());
+
+    return Array.from(cardInfoByTab.values()).toSorted(
+      SupervisionSupervisorOpportunitiesPresenter.sortOpportunitiesDetails,
+    );
   }
 
   get isReviewCardEnabled(): boolean {
