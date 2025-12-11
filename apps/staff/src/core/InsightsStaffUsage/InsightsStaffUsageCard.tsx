@@ -134,6 +134,7 @@ const ManagedComponent: React.FC<{
     <InsightsPageSection
       sectionTitle="Login Activity"
       sectionDescription={`View the last log-in date for each ${presenter.labels.supervisionOfficerLabel}. Any ${presenter.labels.supervisionOfficerLabel} inactive for over ${presenter.insightsNumDaysWithoutLogin} days will be flagged, so you can take action to ensure continued usage and support.`}
+      customWidth={501}
     >
       <ModelHydrator hydratable={presenter}>
         <InsightsUsageCard presenter={presenter} />

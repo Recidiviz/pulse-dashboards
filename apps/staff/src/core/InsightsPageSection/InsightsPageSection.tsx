@@ -35,19 +35,21 @@ const Title = styled(Subtitle)`
   margin-top: 0;
 `;
 
-const SectionWrapper = styled.div`
+const SectionWrapper = styled.div<{ customWidth?: number }>`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.lg)};
   padding: 0;
+  ${({ customWidth }) =>
+    customWidth ? `max-width: ${rem(customWidth)};` : ``};
   margin-bottom: 40px;
 `;
 
 const Description = styled.div`
-  max-width: ${rem(700)};
   ${typography.Sans14};
   color: ${palette.slate85};
   margin-top: ${rem(spacing.sm)};
+  max-width: ${rem(700)};
 `;
 
 type InsightsPageSectionProps = {
@@ -55,6 +57,7 @@ type InsightsPageSectionProps = {
   sectionDescription?: ReactNode | string;
   methodologyLink?: string;
   methodologyLinkCta?: string;
+  customWidth?: number;
   children?: ReactNode;
 };
 
@@ -63,12 +66,13 @@ const InsightsPageSection: React.FC<InsightsPageSectionProps> = ({
   sectionDescription,
   methodologyLinkCta,
   methodologyLink,
+  customWidth,
   children,
 }) => {
   const { isLaptop } = useIsMobile(true);
 
   return (
-    <SectionWrapper>
+    <SectionWrapper customWidth={customWidth}>
       <Wrapper isLaptop={isLaptop}>
         <Header>
           <Title>{sectionTitle}</Title>
