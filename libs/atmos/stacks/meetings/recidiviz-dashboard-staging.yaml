@@ -34,3 +34,6 @@ components:
         server_env_key: env_staging_meetings_server
         migrate_db_env_key: env_staging_meetings_migrate_db
         data_import_env_key: env_staging_meetings_data_import
+        meetings_bucket_cors_origins:
+          - "http://localhost:19000/"
+          - "https://recidiviz-meetings-stagi-21e7a.web.app/"

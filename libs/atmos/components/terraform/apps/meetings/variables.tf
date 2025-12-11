@@ -119,3 +119,8 @@ variable "import_container_version" {
   description = "The version tag of the image that will deployed for the import job"
   default     = "latest"
 }
+
+variable "meetings_bucket_cors_origins" {
+  type        = list(string)
+  description = "The list of allowed CORS origins for the meetings audio bucket"
+}

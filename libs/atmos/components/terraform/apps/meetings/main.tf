@@ -204,7 +204,7 @@ module "audio_gcs_bucket" {
     (local.etl_bucket_name) = "serviceAccount:${google_service_account.default.email}"
   }
   cors = [{
-    origin          = ["http://localhost:19000/"]
+    origin          = var.meetings_bucket_cors_origins
     method          = ["PUT"]
     response_header = ["Content-Type"]
   }]
