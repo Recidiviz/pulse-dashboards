@@ -20,19 +20,13 @@ import React, { useState } from "react";
 import { Modal } from "react-native";
 
 import ClientsScreen from "../screens/ClientsScreen";
-import HomeScreen from "../screens/HomeScreen";
 import MeetingScreen from "../screens/MeetingScreen";
 import MenuScreen from "../screens/MenuScreen";
 import NewMeetingScreen from "../screens/NewMeetingScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 
 export type RootStackParamList = {
-  Home: undefined;
-  // Trends: undefined;
   Clients: undefined;
-  // Messages: undefined;
-  // Schedule: undefined;
-  // Resources: undefined;
   Profile: {
     client: {
       personId: string;
@@ -75,12 +69,7 @@ export default function DrawerNavigator() {
   return (
     <>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        {/* <Stack.Screen name="Trends" component={HomeScreen} /> */}
         <Stack.Screen name="Clients" component={ClientsScreen} />
-        {/* <Stack.Screen name="Messages" component={HomeScreen} />
-        <Stack.Screen name="Schedule" component={HomeScreen} />
-        <Stack.Screen name="Resources" component={HomeScreen} /> */}
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="NewMeeting" component={NewMeetingScreen} />
         <Stack.Screen name="Meeting" component={MeetingScreen} />

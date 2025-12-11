@@ -87,7 +87,10 @@ const Header: React.FC<HeaderProps> = ({
       </View>
 
       <View className="hidden h-16 flex-row items-center justify-between bg-white px-4 md:flex lg:px-10">
-        <TouchableOpacity onPress={() => navigate("Home")}>
+        <TouchableOpacity
+          testID="logo-button"
+          onPress={() => navigate("Clients")}
+        >
           <Image
             source={Icons.Brand}
             className="!h-6 !w-24"
@@ -96,11 +99,6 @@ const Header: React.FC<HeaderProps> = ({
         </TouchableOpacity>
 
         <View className="h-full flex-row items-center gap-x-6">
-          <DesktopMenuItem
-            title="Home"
-            isActive={route.name === "Home"}
-            onPress={() => navigate("Home")}
-          />
           <DesktopMenuItem
             title="Clients"
             isActive={route.name === "Clients"}
@@ -162,7 +160,7 @@ const Header: React.FC<HeaderProps> = ({
 
       <Modal
         visible={drawerOpen}
-        animationType="slide"
+        animationType="fade"
         onRequestClose={() => setDrawerOpen(false)}
       >
         <MenuScreen onClose={() => setDrawerOpen(false)} />

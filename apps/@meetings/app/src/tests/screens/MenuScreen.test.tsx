@@ -77,6 +77,24 @@ describe("MenuScreen", () => {
     });
   });
 
+  describe("navigation", () => {
+    it("navigates to Clients and closes menu when Clients is pressed", () => {
+      // Reset mocks for this test
+      mockUseAuth0.mockReturnValue({
+        clearSession: mockClearSession,
+        user: null,
+      });
+
+      const { getByTestId } = render(<MenuScreen onClose={mockOnClose} />);
+
+      const clientsMenuItem = getByTestId("menu-item-Clients");
+      fireEvent.press(clientsMenuItem);
+
+      expect(mockNavigate).toHaveBeenCalledWith("Clients");
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("user data display", () => {
     it("displays user name and email when user data is available", () => {
       const userData = {

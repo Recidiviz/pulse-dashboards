@@ -73,11 +73,11 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
-      <View className="flex-row items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
+      <View className="flex-row justify-between items-center bg-white px-4 py-3 border-gray-200 border-b">
         <TouchableOpacity onPress={onClose}>
           <Image source={Icons.Cross} className="!size-6" />
         </TouchableOpacity>
-        <Text className="font-inter text-base font-semibold text-primary">
+        <Text className="font-inter font-semibold text-primary text-base">
           Navigation
         </Text>
         <TouchableOpacity onPress={() => console.log("Bell pressed")}>
@@ -85,19 +85,19 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
         </TouchableOpacity>
       </View>
 
-      <View className="w-full px-4">
-        <View className="m-[15px] h-[78px] w-full flex-row items-center self-center rounded-[15px] bg-[#C1E3D83B] p-4">
+      <View className="px-4 w-full">
+        <View className="flex-row items-center self-center bg-[#C1E3D83B] m-[15px] p-4 rounded-[15px] w-full h-[78px]">
           <ImageBackground
             source={Icons.BgAvatar}
-            className="mr-3 size-12 items-center justify-center overflow-hidden rounded-full"
+            className="justify-center items-center mr-3 rounded-full size-12 overflow-hidden"
           >
             <Text className="font-inter text-white">SS</Text>
           </ImageBackground>
           <View>
-            <Text className="font-inter text-base font-semibold text-primary">
+            <Text className="font-inter font-semibold text-primary text-base">
               {user?.name || "User name not found"}
             </Text>
-            <Text className="font-inter text-sm text-[#355362D9]">
+            <Text className="font-inter text-[#355362D9] text-sm">
               {user?.email || "User email not found"}
             </Text>
           </View>
@@ -105,40 +105,12 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
       </View>
 
       <ScrollView className="flex-1 p-4">
-        <Text className="font-inter text-xs text-gray-500">Global</Text>
-        <MobileMenuItem
-          icon={Icons.Home}
-          title="Home"
-          onPress={() => handleMenuPress("Home")}
-        />
-        {/* <MobileMenuItem
-          icon={Icons.Trends}
-          title="Trends"
-          onPress={() => handleMenuPress("Trends")}
-        /> */}
+        <Text className="font-inter text-gray-500 text-xs">Global</Text>
         <MobileMenuItem
           icon={Icons.Clients}
           title="Clients"
           onPress={() => handleMenuPress("Clients")}
         />
-        {/* <MobileMenuItem
-          icon={Icons.Chat}
-          title="Messages"
-          badge={1}
-          onPress={() => handleMenuPress("Messages")}
-        />
-
-        <Text className="mt-[15px] font-inter text-gray-500 text-xs">Tools</Text>
-        <MobileMenuItem
-          icon={Icons.Schedule}
-          title="Schedule"
-          onPress={() => handleMenuPress("Schedule")}
-        />
-        <MobileMenuItem
-          icon={Icons.Resources}
-          title="Resources"
-          onPress={() => handleMenuPress("Resources")}
-        /> */}
       </ScrollView>
 
       <View className="bg-gray-200 px-4 py-[26px]">
