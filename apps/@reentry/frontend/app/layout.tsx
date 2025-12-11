@@ -23,6 +23,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 
+import { AuthUserCapabilitiesProvider } from "~@reentry/frontend/contexts/AuthUserCapabilitiesContext";
 import { AuthProvider } from "~@reentry/frontend/lib/auth/authContext";
 import { TrpcReactQueryProvider } from "~@reentry/frontend/trpc/TrpcReactQueryProvider";
 import { QueryProvider } from "~@reentry/frontend-shared";
@@ -70,18 +71,22 @@ export default function RootLayout({
         <QueryProvider>
           <AppRouterCacheProvider>
             <AuthProvider>
-              <AnalyticsProvider
-                writeKey={process.env["NEXT_PUBLIC_SEGMENT_WRITE_KEY"]}
-              >
-                <TrpcReactQueryProvider>
-                  <IntakeIntegrationProvider>
-                    {children}
-                  </IntakeIntegrationProvider>
-                  {process.env["NEXT_PUBLIC_GA_ID"] && (
-                    <GoogleAnalytics gaId={process.env["NEXT_PUBLIC_GA_ID"]} />
-                  )}
-                </TrpcReactQueryProvider>
-              </AnalyticsProvider>
+              <AuthUserCapabilitiesProvider>
+                <AnalyticsProvider
+                  writeKey={process.env["NEXT_PUBLIC_SEGMENT_WRITE_KEY"]}
+                >
+                  <TrpcReactQueryProvider>
+                    <IntakeIntegrationProvider>
+                      {children}
+                    </IntakeIntegrationProvider>
+                    {process.env["NEXT_PUBLIC_GA_ID"] && (
+                      <GoogleAnalytics
+                        gaId={process.env["NEXT_PUBLIC_GA_ID"]}
+                      />
+                    )}
+                  </TrpcReactQueryProvider>
+                </AnalyticsProvider>
+              </AuthUserCapabilitiesProvider>
             </AuthProvider>
             <ToastContainer />
           </AppRouterCacheProvider>

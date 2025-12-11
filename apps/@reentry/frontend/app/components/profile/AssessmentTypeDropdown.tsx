@@ -17,10 +17,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { ChevronDownFilled } from "~@reentry/frontend/components/icons/ChevronDownFilled";
 import EnableIntakeBot from "~@reentry/frontend/components/intake/enableIntakeBot";
 import AudioRecordings from "~@reentry/frontend/components/intake/VoiceIntake/AudioRecordings";
-import { PrimaryButton } from "~@reentry/frontend-shared";
 import { components } from "~@reentry/openapi-types";
 
 interface AssessmentTypeDropdownProps {
@@ -60,6 +60,7 @@ export default function AssessmentTypeDropdown({
         }
         className="py-4 px-6 md:px-5 md:py-2 text-white  md:!text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full max-w-[9rem] md:max-w-sm  m-auto"
         onClick={() => setOpen(!open)}
+        ignoreCapabilities={true}
       ></PrimaryButton>
 
       {/* Dropdown Menu */}

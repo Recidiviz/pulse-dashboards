@@ -35,6 +35,7 @@ class CaseWorkerDataRecord(BaseModel):
     full_name: FullNameModel
     external_client_ids: list[str]
     state_code: str
+    locations: Optional[list[str]] = None
 
 
 class ClientDataRecord(BaseModel):
@@ -43,3 +44,4 @@ class ClientDataRecord(BaseModel):
     full_name: FullNameModel
     birthdate: date
     state_code: str
+    location: Optional[list[str]] = None

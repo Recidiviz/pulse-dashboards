@@ -18,8 +18,9 @@
 import SignalWifiConnectedNoInternet4Icon from "@mui/icons-material/SignalWifiConnectedNoInternet4";
 import { useCallback, useEffect, useState } from "react";
 
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import StatusIndicators from "~@reentry/frontend/components/recording/StatusIndicators";
-import { BaseModal, PrimaryButton } from "~@reentry/frontend-shared";
+import { BaseModal } from "~@reentry/frontend-shared";
 
 interface EndAssessmentModalProps {
   isOpen: boolean;

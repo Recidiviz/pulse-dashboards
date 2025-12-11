@@ -25,6 +25,7 @@ import {
   Typography,
 } from "@mui/material";
 
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import BatteryLevel from "~@reentry/frontend/components/recording/BatteryLevel";
 import StatusIndicators from "~@reentry/frontend/components/recording/StatusIndicators";
 import type {
@@ -33,7 +34,6 @@ import type {
   UIRecordingStatus,
 } from "~@reentry/frontend/types/recording";
 import { formatDuration } from "~@reentry/frontend/utils";
-import { PrimaryButton } from "~@reentry/frontend-shared";
 
 interface RecordingControlsProps {
   recordingStatus: UIRecordingStatus;

@@ -24,6 +24,7 @@ import { useState } from "react";
 import IntakeAssessment from "~@reentry/frontend/(protected)/clients/intake/[id]/IntakeAssessment";
 import { $api } from "~@reentry/frontend/api";
 import BackButton from "~@reentry/frontend/components/base/BackButton";
+import {PrimaryButton} from "~@reentry/frontend/components/buttons/PrimaryButton";
 import ClientMetadata from "~@reentry/frontend/components/clients/ClientMetadata";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { PageView } from "~@reentry/frontend/components/PageView";
@@ -100,37 +101,57 @@ const ClientProfilePage = () => {
                     <div className={"flex w-full max-w-7xl  justify-end gap-2"}>
                         {isFeatureEnabled("INTAKE_RESET") && intakeData &&
                             intakeData?.status !== "created" && (
-                                    <button
-                                        type="button"
-                                        className="inline-flex items-center px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case"
-                                        role="menuitem"
-                                        onClick={() => handleResetClient(
+                                <PrimaryButton
+                                    buttonText={
+                                        isResettingInProgress ? (
+                                            <div className="flex items-center gap-2">
+                                                Resetting...
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                Reset Client
+                                            </div>
+                                        )
+                                    }
+                                    className={`h-8 flex items-center gap-2 px-5 py-2 rounded-md text-white text-sm ${isResettingInProgress ? "bg-gray-400" : "bg-[#006B66] hover:bg-[#005c59]"}`}
+                                    onClick={() =>
+                                        handleResetClient(
                                             clientData?.pseudonymized_client_id,
-                                            () => location.reload(),
-                                        )}
-                                        disabled={isResettingInProgress}
-                                    >
-                                        {isResettingInProgress? "Resetting..." : "Reset Client"}
-                                    </button>
+                                            () => location.reload()
+                                        )
+                                    }
+                                    disabled={isResettingInProgress}
+                                    ignoreCapabilities={true}
+                                />
                             )
                         }
                         {isFeatureEnabled("CLIENT_DELETION") &&
                              (
-                                    <button
-                                        type="button"
-                                        className="inline-flex items-center px-5 py-2 text-white text-sm font-medium rounded-md bg-red-600 hover:bg-red-700 normal-case"
-                                        role="menuitem"
-                                        onClick={() => handleDeleteClient(
-                                            clientData.full_name.given_names,
-                                            clientData.full_name.surname,
-                                            clientData.birthdate,
-                                            () => router.push("/clients/"),
-                                            setIsDeletingClient
-                                        )}
-                                        disabled={isDeletingInProgress}
-                                    >
-                                        {isDeletingInProgress ? "Deleting..." : "Delete Client"}
-                                    </button>
+                                 <PrimaryButton
+                                     buttonText={
+                                         isDeletingInProgress ? (
+                                             <div className="flex items-center gap-2">
+                                                 Deleting...
+                                             </div>
+                                         ) : (
+                                             <div className="flex items-center gap-2">
+                                                 Delete Client
+                                             </div>
+                                         )
+                                     }
+                                     className={`h-8  flex items-center gap-2 px-5 py-2 rounded-md text-white text-sm ${isDeletingInProgress ? "bg-gray-400" : "bg-red-600 hover:bg-red-700"}`}
+                                     onClick={() =>
+                                         handleDeleteClient(
+                                             clientData.full_name.given_names,
+                                             clientData.full_name.surname,
+                                             clientData.birthdate,
+                                             () => router.push("/clients/"),
+                                             setIsDeletingClient
+                                         )
+                                     }
+                                     disabled={isDeletingInProgress}
+                                     ignoreCapabilities={true}
+                                 />
                             )
                         }
                     </div>

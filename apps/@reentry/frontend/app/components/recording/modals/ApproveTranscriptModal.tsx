@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { BaseModal, PrimaryButton } from "~@reentry/frontend-shared";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { BaseModal } from "~@reentry/frontend-shared";
 
 interface ApproveTranscriptModalProps {
   open: boolean;

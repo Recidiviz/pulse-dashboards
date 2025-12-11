@@ -53,6 +53,7 @@ def generate_schema_files():
         {"name": "email", "type": "STRING", "mode": "REQUIRED"},
         {"name": "birthdate", "type": "DATE", "mode": "REQUIRED"},
         {"name": "client_ids", "type": "STRING", "mode": "REPEATED"},
+        {"name": "locations", "type": "STRING", "mode": "REPEATED"},
     ]
 
     # Supervision Officer schema (same as case manager)
@@ -71,6 +72,7 @@ def generate_schema_files():
             "description": "JSON string containing given_names, middle_names, surname, name_suffix",
         },
         {"name": "birthdate", "type": "DATE", "mode": "REQUIRED"},
+        {"name": "location", "type": "STRING", "mode": "REPEATED"},
     ]
 
     # Write schema files
@@ -90,6 +92,20 @@ def generate_schema_files():
         CLIENTS_DATA_DIR / "supervision_officer_schema.json",
         CLIENTS_DATA_DIR / "client_schema.json",
     )
+
+
+LOCATIONS = ["USCF", "ORANGE_STREET_CCC", "ISCI", "DISTRICT_4_BOISE", "ICIO"]
+
+
+def random_locations():
+    # between 1 and all locations for staff
+    k = random.randint(1, len(LOCATIONS))
+    return random.sample(LOCATIONS, k)
+
+
+def random_location():
+    # single or None for clients
+    return random.choice(LOCATIONS)
 
 
 @cli.command()
@@ -287,6 +303,7 @@ def generate_client_data(
                         minimum_age=25, maximum_age=65
                     ).strftime("%Y-%m-%d"),
                     "client_ids": [f"CLIENT-{j + 1:03d}" for j in range(10)],
+                    "locations": ["USCF", "ORANGE_STREET_CCC", "ISCI"],
                 }
             )
         else:
@@ -326,6 +343,7 @@ def generate_client_data(
                         minimum_age=25, maximum_age=65
                     ).strftime("%Y-%m-%d"),
                     "client_ids": [],
+                    "locations": random_locations(),
                 }
             )
 
@@ -373,6 +391,7 @@ def generate_client_data(
                     minimum_age=25, maximum_age=65
                 ).strftime("%Y-%m-%d"),
                 "client_ids": [],
+                "locations": random_locations(),
             }
         )
 
@@ -428,6 +447,7 @@ def generate_client_data(
                 else fake.date_of_birth(minimum_age=18, maximum_age=65).strftime(
                     "%Y-%m-%d"
                 ),
+                "location": [random_location()],
             }
         )
 

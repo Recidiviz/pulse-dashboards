@@ -1,6 +1,6 @@
 """Tests for client CRUD operations with pseudonymized IDs."""
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 import sqlalchemy
@@ -192,6 +192,143 @@ async def test_get_paginated_client_list_with_unknown_id(
 
         # Verify mock was called correctly
         mock_get_clients.assert_called_once_with("unknown-id")
+
+
+# Zero-caseload user but no locations → no facility clients
+@pytest.mark.asyncio
+async def test_zero_caseload_user_without_locations(async_session):
+    """If zero-caseload but staff has no locations → empty."""
+    with (
+        patch(
+            "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+        ) as mock_get_clients,
+        patch(
+            "app.services.client_data.queries.Queries.get_caseworker_by_pseudonymized_id"
+        ) as mock_caseworker,
+    ):
+        mock_get_clients.return_value = []  # No caseload clients
+        mock_caseworker.return_value = MagicMock(locations=[])
+
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff123",
+            is_zero_caseload_user=True,
+        )
+
+        assert result["total"] == 0
+        assert result["items"] == []
+        assert result["pages"] == 0
+
+
+# Zero-caseload user with locations but no facility clients returned
+@pytest.mark.asyncio
+async def test_zero_caseload_user_with_locations_but_no_facility_clients(async_session):
+    """Staff has facilities but BigQuery returns no facility-level clients."""
+    with (
+        patch(
+            "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+        ) as mock_get_clients,
+        patch(
+            "app.services.client_data.queries.Queries.get_caseworker_by_pseudonymized_id"
+        ) as mock_caseworker,
+        patch(
+            "app.services.client_data.queries.Queries.get_clients_by_facility_access"
+        ) as mock_get_facility_clients,
+    ):
+        mock_get_clients.return_value = []  # No caseload clients
+        mock_caseworker.return_value = MagicMock(locations=["FAC1", "FAC2"])
+        mock_get_facility_clients.return_value = []  # No facility clients found
+
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff123",
+            is_zero_caseload_user=True,
+        )
+
+        assert result["total"] == 0
+        assert result["items"] == []
+        assert result["pages"] == 0
+
+        mock_get_facility_clients.assert_called_once_with(
+            "staff123",
+            ["FAC1", "FAC2"],
+        )
+
+
+@pytest.mark.asyncio
+async def test_merge_caseload_and_facility_clients(async_session):
+    """Test merging caseload + facility clients with deduplication."""
+
+    # Fake client objects with required attribute pseudonymized_client_id
+    caseload_client_1 = MagicMock(pseudonymized_client_id="C1")
+    caseload_client_2 = MagicMock(pseudonymized_client_id="C2")
+
+    facility_client_1 = MagicMock(
+        pseudonymized_client_id="C2"
+    )  # duplicate → should be removed
+    facility_client_2 = MagicMock(pseudonymized_client_id="C3")
+
+    with (
+        patch(
+            "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+        ) as mock_get_clients,
+        patch(
+            "app.services.client_data.queries.Queries.get_caseworker_by_pseudonymized_id"
+        ) as mock_caseworker,
+        patch(
+            "app.services.client_data.queries.Queries.get_clients_by_facility_access"
+        ) as mock_facility_clients,
+        patch(
+            "app.crud.client.compute_priority_order",
+            return_value=[caseload_client_1, caseload_client_2, facility_client_2],
+        ),
+        patch("app.crud.client.build_response_for_clients") as mock_build_response,
+    ):
+        # Mock caseload clients
+        mock_get_clients.return_value = [caseload_client_1, caseload_client_2]
+
+        # Mock staff has locations
+        mock_caseworker.return_value = MagicMock(locations=["LOC1"])
+
+        # Mock facility clients (with 1 duplicate)
+        mock_facility_clients.return_value = [facility_client_1, facility_client_2]
+
+        # Expected merged + deduped result
+        expected_unique = [caseload_client_1, caseload_client_2, facility_client_2]
+
+        # Mock build response
+        mock_build_response.return_value = {
+            "items": expected_unique,
+            "total": 3,
+            "page": 1,
+            "pages": 1,
+        }
+
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff123",
+            is_zero_caseload_user=True,
+        )
+
+        # Assertions
+        assert result["total"] == 3
+        assert len(result["items"]) == 3
+
+        # ensure dedupe happened (C2 appears once)
+        returned_ids = [c.pseudonymized_client_id for c in result["items"]]
+        assert returned_ids.count("C2") == 1
+
+        # ensure the three unique clients are present
+        assert set(returned_ids) == {"C1", "C2", "C3"}
+
+        mock_get_clients.assert_called_once()
+        mock_facility_clients.assert_called_once_with("staff123", ["LOC1"])
 
 
 @pytest.mark.asyncio

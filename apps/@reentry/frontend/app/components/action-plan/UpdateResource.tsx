@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrimaryButton } from "~@reentry/frontend-shared";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 
 const updateResource = ({
   onUpdate,
@@ -31,18 +31,20 @@ const updateResource = ({
         <span className="font-bold">{candidateResource.name}</span>?
       </p>
       <div className="flex space-x-3">
-        <button
-          type={"button"}
+        <PrimaryButton
+          buttonText={"Yes"}
           onClick={onUpdate}
           className={`self-stretch h-8  justify-center items-center gap-2 inline-flex rounded-[32px]
           text-[13px] font-medium leading-none px-4 py-2 bg-blue-500 text-white text-sm rounded
           "hover:bg-blue-600"
           `}
           disabled={candidateResource.id === selectedResource.id}
-        >
-          Yes
-        </button>
-        <PrimaryButton buttonText="No" onClick={onCancel} />
+        />
+        <PrimaryButton
+          buttonText="No"
+          onClick={onCancel}
+          ignoreCapabilities={true}
+        />
       </div>
     </div>
   );

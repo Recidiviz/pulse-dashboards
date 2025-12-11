@@ -19,17 +19,14 @@ import { Grid, Paper } from "@mui/material";
 import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import AudioRecordings from "~@reentry/frontend/components/intake/VoiceIntake/AudioRecordings";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { trpc } from "~@reentry/frontend/trpc";
-import {
-  PrimaryButton,
-  showErrorToast,
-  showSuccessToast,
-} from "~@reentry/frontend-shared";
+import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
 
 interface ClientSummaryCardProps {

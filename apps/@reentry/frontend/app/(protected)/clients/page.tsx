@@ -31,6 +31,7 @@ import { $api } from "~@reentry/frontend/api";
 import CustomPagination from "~@reentry/frontend/components/base/CustomPagination";
 import {InfoTooltip} from "~@reentry/frontend/components/base/InfoTooltip";
 import { IconInput } from "~@reentry/frontend/components/base/SortingInput";
+import {PrimaryButton} from "~@reentry/frontend/components/buttons/PrimaryButton";
 import AddClientModal, {
   type AddClientFormData,
 } from "~@reentry/frontend/components/clients/AddClientModal";
@@ -38,6 +39,7 @@ import {ClipboardIcon} from "~@reentry/frontend/components/icons/ClipboardIcon";
 import { ClientsTableV2 } from "~@reentry/frontend/components/IntakeChatV2/ClientsTableV2/ClientsTableV2";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
+import {useAuthUserCapabilities} from "~@reentry/frontend/contexts/AuthUserCapabilitiesContext";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useClientStatusPolling } from "~@reentry/frontend/hooks/useClientStatusPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
@@ -119,6 +121,7 @@ const ClientsPage = () => {
   const [activeRowId, ] = useState<string | null>(null);
   const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false);
   const [isAddingClient, setIsAddingClient] = useState(false);
+  const { isZeroCaseloadUser } = useAuthUserCapabilities();
 
   const uniqueIntakeStatusOptions = [
     ["New", "new"],
@@ -156,6 +159,7 @@ const ClientsPage = () => {
         query: {
           page: page,
           size: rowsPerPage,
+          is_zero_caseload_user: isZeroCaseloadUser,
           ...(activeSearchTerm && { search: activeSearchTerm }),
           ...(statusFilter && { status_filter: statusFilter }),
           ...(sortBy && { sort_by: sortBy }),
@@ -458,9 +462,12 @@ const ClientsPage = () => {
       <div className="w-full p-6 md:p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] flex-grow">
         <div className="w-full flex-col justify-start items-start gap-8 flex sm:w-[100%] xl:w-[80%] 2xl:w-[60%]">
           <div className="self-stretch flex-col justify-start items-start gap-2 flex">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6">
-              <div className="text-black font-['Public_Sans'] text-2xl font-medium leading-[120%] tracking-[-0.48px]">
+              <div className="text-black font-['Public_Sans'] text-2xl font-medium leading-[120%] tracking-[-0.48px] ">
                   All Clients ({data?.total || 0})
+              </div>
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6">
+              <div className="text-[#2b5469]/70 text-lg font-medium leading-snug">
+                  {!isZeroCaseloadUser? "All clients on your caseload are displayed below.": "All clients in your assigned facilities are displayed below."}
               </div>
               <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
                 <IconInput
@@ -518,13 +525,12 @@ const ClientsPage = () => {
                   />
                 </div>
                 {isFeatureEnabled("CLIENT_ADDITION") && (
-                  <button
-                    type="button"
+                  <PrimaryButton
+                      buttonText={"Add Client"}
                     onClick={() => setIsAddClientModalOpen(true)}
                     className="px-4 py-2 bg-[#003331] text-white text-sm font-medium rounded-full hover:bg-gray-950 transition-colors whitespace-nowrap"
-                  >
-                    Add Client
-                  </button>
+                      ignoreCapabilities={true}
+                  />
                 )}
               </div>
             </div>

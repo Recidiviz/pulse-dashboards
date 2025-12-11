@@ -18,10 +18,10 @@
 import { useRouter } from "next/navigation";
 
 import { $api } from "~@reentry/frontend/api";
+import {PrimaryButton} from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { ArrowRight } from "~@reentry/frontend/components/icons/ArrowRight";
 import Timeline, { TimelineItem } from "~@reentry/frontend/components/intake/TimelineIndicator";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { PrimaryButton } from "~@reentry/frontend-shared";
 import { components } from "~@reentry/openapi-types";
 
 interface IntakeArtifactsProps {
@@ -53,6 +53,7 @@ const TranscriptSection = ({ isDisabled, buttonText, onClick }) => (
             }
             className="h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white"
             onClick={onClick}
+            ignoreCapabilities={true}
         />
     </div>
 );
@@ -210,6 +211,7 @@ export default function IntakeArtifacts({clientData, intakeData}: IntakeArtifact
                         }
                         className="h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white"
                         onClick={() => router.push(`/intake-summary/${clientData?.pseudonymized_client_id}`)}
+                        ignoreCapabilities={true}
                     />
                 </div>
 
@@ -227,6 +229,7 @@ export default function IntakeArtifacts({clientData, intakeData}: IntakeArtifact
                         }
                         className="h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white"
                         onClick={() => router.push(`/action-plan/${clientData?.pseudonymized_client_id}`)}
+                        ignoreCapabilities={true}
                     />
                 </div>
             </div>

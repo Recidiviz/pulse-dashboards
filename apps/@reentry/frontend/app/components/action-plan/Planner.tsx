@@ -23,17 +23,14 @@ import { useReactToPrint } from "react-to-print";
 import { $api } from "~@reentry/frontend/api";
 import LastPrompt from "~@reentry/frontend/components/action-plan/LastPrompt";
 import ActionPlanViewer from "~@reentry/frontend/components/ActionPlanViewer";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
   extractCompleteCSS,
   generatePDF,
 } from "~@reentry/frontend/utils/pdfGenerator";
-import {
-  PrimaryButton,
-  showErrorToast,
-  showSuccessToast,
-} from "~@reentry/frontend-shared";
+import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 interface PlannerProps {
   markDownText: string;
@@ -263,16 +260,22 @@ const Planner = ({
                   onClick={() =>
                     router.push(`/intake-summary/${clientPseudoId}`)
                   }
+                  ignoreCapabilities={true}
                 />
                 <PrimaryButton
                   buttonText="Edit"
                   onClick={() => setUpdate(!update)}
                 />
-                <PrimaryButton buttonText="Print" onClick={reactToPrintFn} />
+                <PrimaryButton
+                  buttonText="Print"
+                  onClick={reactToPrintFn}
+                  ignoreCapabilities={true}
+                />
                 <PrimaryButton
                   buttonText={isDownloading ? "Downloading..." : "Download"}
                   onClick={handleDownload}
                   disabled={isDownloading}
+                  ignoreCapabilities={true}
                 />
               </>
             )}

@@ -21,13 +21,10 @@ import type React from "react";
 import { useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import {
-  PrimaryButton,
-  showErrorToast,
-  showSuccessToast,
-} from "~@reentry/frontend-shared";
+import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 interface AudioRecordingsProps {
   clientPseudoId: string;

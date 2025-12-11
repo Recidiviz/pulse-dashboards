@@ -19,7 +19,8 @@ import SignalWifiConnectedNoInternet4Icon from "@mui/icons-material/SignalWifiCo
 import { Tooltip } from "@mui/material";
 import { useState } from "react";
 
-import { BaseModal, PrimaryButton } from "~@reentry/frontend-shared";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { BaseModal } from "~@reentry/frontend-shared";
 
 interface LiveAssessmentModalProps {
   isOpen: boolean;

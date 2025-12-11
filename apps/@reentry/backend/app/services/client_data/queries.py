@@ -31,7 +31,7 @@ import random
 import time
 import uuid
 from datetime import date
-from typing import Optional
+from typing import List, Optional
 
 from google.cloud import bigquery
 
@@ -133,6 +133,7 @@ class Queries:
         full_name,
         birthdate,
         state_code,
+        location
         FROM
         `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
         WHERE
@@ -216,6 +217,7 @@ class Queries:
         full_name,
         birthdate,
         state_code,
+        location
         FROM
         `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
         WHERE
@@ -251,6 +253,92 @@ class Queries:
                 f"Error fetching client with DOC ID {doc_id} and state {state_code}: {str(e)}"
             )
             return None
+
+    @staticmethod
+    def get_clients_by_facility_access(
+        pseudonymized_staff_id: str, locations: List[str]
+    ) -> List[ClientDataRecord]:
+        """
+        Get all clients accessible to a staff member based on facility/location access.
+
+        Args:
+            pseudonymized_staff_id: Staff pseudonymized ID used for access control.
+            locations: List of location codes (facilities) the staff can access.
+        """
+
+        if not pseudonymized_staff_id or not locations:
+            return []
+
+        pseudonymized_staff_id = pseudonymized_staff_id.strip()
+
+        # Cache lookup
+        cache_key = (
+            f"clients_by_facility:{pseudonymized_staff_id}:{','.join(locations)}"
+        )
+        cached = get_client_from_cache(cache_key)
+        if cached:
+            return cached
+
+        logger.info(
+            f"Fetching clients for staff '{pseudonymized_staff_id}' with access to {locations}"
+        )
+
+        try:
+            client = get_bigquery_client()
+
+            query = f"""
+            SELECT
+                external_id,
+                pseudonymized_id,
+                full_name,
+                birthdate,
+                state_code,
+                location
+            FROM
+                `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
+            WHERE
+                ARRAY_LENGTH(
+                    ARRAY(
+                        SELECT loc
+                        FROM UNNEST(location) AS loc
+                        WHERE loc IN UNNEST(@allowed_locations)
+                    )
+                ) > 0
+            """
+
+            job_config = bigquery.QueryJobConfig(
+                query_parameters=[
+                    bigquery.ArrayQueryParameter(
+                        "allowed_locations", "STRING", locations
+                    )
+                ]
+            )
+
+            query_job = client.query(query, job_config=job_config)
+            results = query_job.result()
+
+            #  Process results
+            client_records: List[ClientDataRecord] = []
+
+            for row in results:
+                record = process_client_row(row)
+                if record:
+                    client_records.append(record)
+
+            # Cache results
+            cache_client_record(cache_key, client_records)
+
+            logger.info(
+                f"Found {len(client_records)} clients accessible to staff {pseudonymized_staff_id}"
+            )
+
+            return client_records
+
+        except Exception as e:
+            logger.error(
+                f"Error fetching clients for staff {pseudonymized_staff_id}: {str(e)}"
+            )
+            return []
 
     @staticmethod
     def get_client_by_names_and_dob(
@@ -303,6 +391,7 @@ class Queries:
         full_name,
         birthdate,
         state_code,
+        location
         FROM
         `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
         WHERE
@@ -379,6 +468,7 @@ class Queries:
         client.full_name,
         client.birthdate,
         client.state_code,
+        client.location
         FROM (
         SELECT
             external_id,
@@ -428,6 +518,9 @@ class Queries:
                         capitalized_data = format_name_capitalization(full_name_data)
                         full_name = FullNameModel(**capitalized_data)
 
+                        # Ensure locations is always a list
+                        location = row.location if row.location else []
+
                         clients.append(
                             ClientDataRecord(
                                 external_client_id=row.external_id,
@@ -435,6 +528,7 @@ class Queries:
                                 full_name=full_name,
                                 birthdate=row.birthdate,
                                 state_code=row.state_code,
+                                location=location,
                             )
                         )
                 except Exception as e:
@@ -496,7 +590,8 @@ class Queries:
         email,
         full_name,
         client_ids,
-        state_code
+        state_code,
+        locations
         FROM (
         SELECT
             external_id,
@@ -504,7 +599,8 @@ class Queries:
             email,
             full_name,
             client_ids,
-            state_code
+            state_code,
+            locations
         FROM
             `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CASE_MANAGER_TABLE}`
         UNION ALL
@@ -514,7 +610,8 @@ class Queries:
             email,
             full_name,
             client_ids,
-            state_code
+            state_code,
+            locations
         FROM
             `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_SUPERVISION_OFFICER_TABLE}`)
         WHERE
@@ -541,10 +638,14 @@ class Queries:
             # Create the CaseWorkerDataRecord with either row's data,
             # but concatenate the client_external_ids from all rows
             all_client_external_ids = []
+            all_locations = []
             for r in rows:
                 if r.client_ids:
                     all_client_external_ids.extend(r.client_ids)
 
+                # Merge repeated locations
+                if r.locations:
+                    all_locations.extend(r.locations)
             first_row = rows[0]
 
             try:
@@ -560,6 +661,7 @@ class Queries:
                     full_name=full_name,
                     external_client_ids=all_client_external_ids,
                     state_code=normalize_state_code(first_row.state_code),
+                    locations=all_locations,
                 )
             except Exception as e:
                 logger.error(
@@ -694,9 +796,9 @@ class Queries:
 
             query = f"""
             INSERT INTO `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
-            (external_id, pseudonymized_id, staff_id, full_name, birthdate, state_code)
+            (external_id, pseudonymized_id, staff_id, full_name, birthdate, state_code, location)
             VALUES
-            (@external_id, @pseudonymized_id, @staff_id, @full_name, @birthdate, @state_code)
+            (@external_id, @pseudonymized_id, @staff_id, @full_name, @birthdate, @state_code, @location)
             """
 
             job_config = bigquery.QueryJobConfig(
@@ -711,6 +813,7 @@ class Queries:
                     ),
                     bigquery.ScalarQueryParameter("birthdate", "DATE", birthdate),
                     bigquery.ScalarQueryParameter("state_code", "STRING", state_code),
+                    bigquery.ArrayQueryParameter("location", "STRING", []),
                 ]
             )
 

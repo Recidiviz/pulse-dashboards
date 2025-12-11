@@ -17,7 +17,8 @@
 
 import { useMemo } from "react";
 
-import { BaseModal, PrimaryButton } from "~@reentry/frontend-shared";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { BaseModal } from "~@reentry/frontend-shared";
 
 interface RemoveAssessmentModalProps {
   isOpen: boolean;

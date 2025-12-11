@@ -139,12 +139,23 @@ def process_client_row(row) -> Optional[ClientDataRecord]:
         capitalized_data = format_name_capitalization(full_name_data)
         full_name = FullNameModel(**capitalized_data)
 
+        if not hasattr(row, "location"):
+            id_type = getattr(
+                row, "external_id", getattr(row, "pseudonymized_id", "unknown")
+            )
+            logger.info(
+                f"Client {id_type} row does not have a location attribute: {row}"
+            )
+
+        location = row.location if hasattr(row, "location") else []
+
         client_record = ClientDataRecord(
             external_client_id=row.external_id,
             pseudonymized_client_id=row.pseudonymized_id,
             full_name=full_name,
             birthdate=row.birthdate,
             state_code=normalize_state_code(row.state_code),
+            location=location,
         )
         return client_record
     except Exception as e:

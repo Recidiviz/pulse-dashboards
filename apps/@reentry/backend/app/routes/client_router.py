@@ -82,6 +82,7 @@ async def router_list_clients(
     sort_order: str = "asc",  # "asc" or "desc"
     search: str | None = None,  # Search by client name
     status_filter: str | None = None,  # Filter by status
+    is_zero_caseload_user: bool = False,
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
     # Get paginated list of clients, filtered by staff ID if available
@@ -94,6 +95,7 @@ async def router_list_clients(
         sort_order,
         search,
         status_filter,
+        is_zero_caseload_user,
     )
 
 

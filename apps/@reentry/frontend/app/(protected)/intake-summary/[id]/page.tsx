@@ -24,6 +24,7 @@ import { useReactToPrint } from "react-to-print";
 
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
+import {PrimaryButton} from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
@@ -33,7 +34,6 @@ import {
   generatePDF,
 } from "~@reentry/frontend/utils/pdfGenerator";
 import {
-  PrimaryButton,
   showErrorToast,
   showSuccessToast,
 } from "~@reentry/frontend-shared";
@@ -226,12 +226,14 @@ const IntakeSummaryPage = () => {
                   onClick={() => {
                     router.push(`/action-plan/${id}`);
                   }}
+                  ignoreCapabilities={true}
                 />
-                <PrimaryButton buttonText="Print" onClick={reactToPrintFn} />
+                <PrimaryButton buttonText="Print" onClick={reactToPrintFn} ignoreCapabilities={true} />
                 <PrimaryButton
                   buttonText={isDownloading ? "Downloading..." : "Download"}
                   onClick={handleDownload}
                   disabled={isDownloading}
+                  ignoreCapabilities={true}
                 />
               </div>
               <div className="w-full h-full justify-start items-start inline-flex">

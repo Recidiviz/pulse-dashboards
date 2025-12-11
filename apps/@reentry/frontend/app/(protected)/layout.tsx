@@ -19,6 +19,7 @@
 import { usePathname } from "next/navigation";
 
 import Navbar from "~@reentry/frontend/components/Navbar/Navbar";
+import ReadOnlyIndicatorBanner from "~@reentry/frontend/components/ReadOnlyIndicatorBanner";
 import { ProtectedRoute } from "~@reentry/frontend/lib/auth/routeGuards";
 
 export default function ProtectedLayout({ children }) {
@@ -40,6 +41,7 @@ export default function ProtectedLayout({ children }) {
   return (
     <>
       <main className="flex flex-col h-full">
+        <ReadOnlyIndicatorBanner />
         <Navbar />
         <ProtectedRoute>{children}</ProtectedRoute>
       </main>

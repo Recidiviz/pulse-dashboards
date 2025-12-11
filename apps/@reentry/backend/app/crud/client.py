@@ -280,6 +280,7 @@ async def get_paginated_client_list(
     sort_order: str = "asc",
     search: str | None = None,
     status_filter: str | None = None,
+    is_zero_caseload_user: bool = False,
 ):
     """
     Returns a paginated list of clients with their intake, plans, and assessments,
@@ -288,25 +289,63 @@ async def get_paginated_client_list(
 
     If staff_id is provided, only returns clients assigned to that staff member.
     """
-    # Step 1: Get all clients from BigQuery for this staff member
+    # 1. No staff ID, empty response
     if not pseudonymized_staff_id:
         return empty_paginated_response(page, page_size)
 
-    bq_clients = Queries.get_clients_by_pseudonymized_staff_id(pseudonymized_staff_id)
-    if not bq_clients:
-        return empty_paginated_response(page, page_size)
+    # 2. Fetch caseload clients from BigQuery
+    caseload_clients = Queries.get_clients_by_pseudonymized_staff_id(
+        pseudonymized_staff_id
+    )
 
-    bq_clients = apply_search_filter(bq_clients, search) if search else bq_clients
+    if not caseload_clients:
+        caseload_clients = []
 
+    # 3. Zero-caseload logic
+    facility_clients = []
+
+    if is_zero_caseload_user:
+        caseworker = Queries.get_caseworker_by_pseudonymized_id(pseudonymized_staff_id)
+        staff_locations = (
+            caseworker.locations if caseworker and caseworker.locations else []
+        )
+        logger.debug(
+            f"Staff locations for zero-caseload user {pseudonymized_staff_id}: {staff_locations}"
+        )
+
+        # Query all clients where location IN staff_locations
+        if staff_locations:
+            facility_clients = Queries.get_clients_by_facility_access(
+                pseudonymized_staff_id, staff_locations
+            )
+            logger.debug(
+                f"{len(facility_clients)} facility clients found for zero-caseload user {pseudonymized_staff_id}"
+            )
+
+    # Merge caseload + facility clients
+    combined_clients = caseload_clients + facility_clients
+
+    # 4. De-duplicate by pseudonymized_client_id
+    unique_clients = {}
+    for client in combined_clients:
+        unique_clients[client.pseudonymized_client_id] = client
+
+    clients = list(unique_clients.values())
+
+    # 5. Apply search filter
+    if search:
+        clients = apply_search_filter(clients, search)
+
+    # 6. Sorting
     if sort_by == "name":
-        sorted_clients = sort_clients_by_name(bq_clients, sort_order)
+        sorted_clients = sort_clients_by_name(clients, sort_order)
         return await build_response_for_clients(
             sorted_clients, session, page, page_size
         )
 
     if status_filter or sort_by == "status":
         # TODO change this so we use the database status index.
-        sorted_clients = await compute_priority_order(bq_clients, session)
+        sorted_clients = await compute_priority_order(clients, session)
         full_response = await build_response_for_clients(
             sorted_clients, session, 1, len(sorted_clients)
         )
@@ -354,7 +393,8 @@ async def get_paginated_client_list(
             ),
         }
 
-    sorted_clients = await compute_priority_order(bq_clients, session)
+    # 8. Default ordering
+    sorted_clients = await compute_priority_order(clients, session)
     return await build_response_for_clients(sorted_clients, session, page, page_size)
 
 

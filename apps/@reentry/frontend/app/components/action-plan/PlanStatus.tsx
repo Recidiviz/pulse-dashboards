@@ -17,7 +17,7 @@
 
 import Image from "next/image";
 
-import { PrimaryButton } from "~@reentry/frontend-shared";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 
 const PlanStatus = () => {
   return (
