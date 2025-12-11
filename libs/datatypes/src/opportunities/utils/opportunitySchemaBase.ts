@@ -38,6 +38,15 @@ export const opportunitySchemaBase = z.object({
   ineligibleCriteria: baseCriteriaSchema,
   // TODO(#7854): Remove optional() once all opportunity records have an eligible date
   eligibleDate: dateStringSchema.nullable().optional(),
+  /**
+   * The date when the opportunity first became almost eligible.
+   * Only available for LSU and usTnCompliantReporting2025Policy opportunities
+   * as of 12/8/2025.
+   *
+   * Do NOT use as a general almost eligible date for all opportunity types
+   * -- use case-by-case basis only.
+   */
+  almostEligibleDate: dateStringSchema.nullable().optional(),
   caseNotes: z.record(z.array(caseNoteSchema)).default({}),
   // Identifier to support sentence-level opportunities, that is multiple instances of a
   // given opportunity for a given person

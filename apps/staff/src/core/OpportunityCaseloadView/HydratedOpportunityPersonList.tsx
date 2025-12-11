@@ -40,7 +40,12 @@ import {
   spacing,
   TooltipTrigger,
 } from "@recidiviz/design-system";
-import { ColumnDef, Row, SortingState } from "@tanstack/react-table";
+import {
+  CellContext,
+  ColumnDef,
+  Row,
+  SortingState,
+} from "@tanstack/react-table";
 import { differenceInDays, startOfToday } from "date-fns";
 import { orderBy } from "lodash";
 import { observer } from "mobx-react-lite";
@@ -226,6 +231,7 @@ export type OpportunityTableColumnId =
   | "ASSIGNED_STAFF_NAME"
   | "STATUS"
   | "ELIGIBILITY_DATE"
+  | "ALMOST_ELIGIBILITY_DATE"
   | "RELEASE_DATE"
   | "SUPERVISION_EXPIRATION_DATE"
   | "US_ID_EPRD"
@@ -279,8 +285,10 @@ const KeepTogether = styled.span`
   white-space: nowrap;
 `;
 
-function EligibilityDateCell({ row }: { row: Row<Opportunity> }) {
-  const { eligibilityDate } = row.original;
+function EligibilityDateCell({
+  getValue,
+}: CellContext<Opportunity<JusticeInvolvedPerson>, unknown>) {
+  const eligibilityDate = getValue<Date | undefined>();
   if (!eligibilityDate) return "-";
   if (eligibilityDate > startOfToday())
     return formatWorkflowsDate(eligibilityDate);
@@ -518,6 +526,14 @@ const TableView = observer(function TableView({
       enableSorting: true,
       sortingFn: "datetime",
       accessorFn: (opp: Opportunity) => opp.eligibilityDate,
+      cell: EligibilityDateCell,
+    },
+    {
+      header: presenter.almostEligibilityDateHeader,
+      id: "ALMOST_ELIGIBILITY_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => opp.almostEligibilityDate,
       cell: EligibilityDateCell,
     },
     {

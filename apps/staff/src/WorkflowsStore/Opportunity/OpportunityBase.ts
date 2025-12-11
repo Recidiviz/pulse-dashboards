@@ -945,6 +945,10 @@ export class OpportunityBase<
     return this.record?.eligibleDate ?? undefined;
   }
 
+  get almostEligibilityDate(): Date | undefined {
+    return this.record?.almostEligibleDate ?? undefined;
+  }
+
   /**
    * Returns the manual max snooze length in days based on the given reasons and their
    * configured max snooze lengths.

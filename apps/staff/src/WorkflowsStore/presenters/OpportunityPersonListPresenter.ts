@@ -143,6 +143,17 @@ export class OpportunityPersonListPresenter
     this.tableViewSelectPresenter.showListView = showListView;
   }
 
+  private get showAlmostEligibilityDateColumn(): boolean {
+    const enabledOpportunityTypes: OpportunityType[] = [
+      "LSU", "usTnCompliantReporting2025Policy"
+    ];
+    const hasAlmostEligibleColumnEnabled = enabledOpportunityTypes.includes(this.opportunityType);  
+    const showAlmostEligibleDateColumn = this.peopleInActiveTab.some(
+      (opp) => opp.almostEligible && !!opp.almostEligibilityDate,
+    );
+    return hasAlmostEligibleColumnEnabled && showAlmostEligibleDateColumn;
+  }
+
   /**
    * Return a map from column IDs of the opportunity table view to whether or not
    * the column should currently be visible.
@@ -165,11 +176,13 @@ export class OpportunityPersonListPresenter
       ].includes(this.opportunityType),
       // TODO(#7921): More gracefully handle these special cases
       ELIGIBILITY_DATE:
+        !this.showAlmostEligibilityDateColumn &&
         opportunities.some((opp) => !!opp.eligibilityDate) &&
         !(
           ["usMeEarlyTermination", "usMeSCCP"].includes(this.opportunityType) &&
           opportunities.every((opp) => opp.almostEligible)
         ),
+      ALMOST_ELIGIBILITY_DATE: this.showAlmostEligibilityDateColumn,
       RELEASE_DATE:
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         ![
@@ -500,6 +513,11 @@ export class OpportunityPersonListPresenter
       this.config.eligibilityDateTextForTab(this.activeTab) ??
       "Eligibility Date"
     );
+  }
+
+  get almostEligibilityDateHeader() {
+    // Header text for the "eligibility date" column in table view
+    return "Date Surfaced";
   }
 
   get releaseDateHeader() {

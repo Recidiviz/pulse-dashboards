@@ -77,6 +77,7 @@ export const mockOpportunity: Opportunity<Client> = {
   setOtherReasonText: async () => undefined,
   type: "pastFTRD",
   eligibilityDate: undefined,
+  almostEligibilityDate: undefined,
   isSnoozed: false,
   trackListViewed: () => undefined,
   trackPreviewed: () => undefined,

@@ -150,6 +150,7 @@ export interface Opportunity<
   lastViewed: UpdateLog | undefined;
   setLastViewed: () => void;
   setCompletedIfEligible: () => void;
+  almostEligibilityDate: Date | undefined;
   eligibilityDate: Date | undefined;
   readonly supportsExternalRequest: boolean;
   externalRequestData?: ExternalRequestUpdate<any>;
@@ -301,7 +302,7 @@ export type OpportunityTab =
   | "Almost Eligible for Re-screen"
   | "Re-screen Pending"
   | "Movement Pending"
-  
+
   // For US_ID CRC
   | "Medical-Ineligible";
 

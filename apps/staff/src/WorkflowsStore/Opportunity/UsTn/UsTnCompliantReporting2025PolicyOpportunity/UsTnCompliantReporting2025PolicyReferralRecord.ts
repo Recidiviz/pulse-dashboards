@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
+import { dateStringSchema, nullishAsUndefined, opportunitySchemaBase } from "~datatypes";
 
 import { stringToIntSchema } from "../../schemaHelpers";
 
@@ -52,7 +52,7 @@ export const usTnCompliantReporting2025PolicySchema =
       .object({
         tabName: z.string().optional(),
         convictionCounties: z.array(z.string()),
-        eligibleDate: dateStringSchema,
+        eligibleDate: nullishAsUndefined(dateStringSchema),
       })
       .passthrough(),
   });
