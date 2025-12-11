@@ -118,7 +118,9 @@ export function DispositionDonutChart({
                       content: (
                         <TooltipContent
                           headerText={`${label} (${convertDecimalToPercentage(dp.data.percentage)}%)`}
-                          content={<>{`${numberOfRecords} offenses`}</>}
+                          content={
+                            <>{`${Math.round(numberOfRecords * dp.data.percentage)} ${Math.round(numberOfRecords * dp.data.percentage) === 1 ? "record" : "records"}`}</>
+                          }
                           styleOverrides={{
                             color: "#575656",
                             fontSize: 12,
