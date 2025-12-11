@@ -25,6 +25,7 @@ import { Icon, IconSVG } from "~design-system";
 import { palette } from "~design-system";
 
 import type { FormViewerContextData } from "../../FormViewer";
+import { RadioButton } from "../common/ScoredAssessmentQuestion";
 
 const EDIT_BACKGROUND = iconToDataURI(
   <Icon kind={IconSVG.Edit} color={palette.slate60} />,
@@ -42,38 +43,6 @@ export const Input = styled.input`
   padding: 1px 3px;
   margin-bottom: 0;
 `;
-
-export const RadioButton = styled.input.attrs({
-  type: "radio",
-})`
-  display: inline-block;
-  vertical-align: top;
-  margin-right: 0.5em;
-`;
-
-const LeaderContainer = styled.div`
-  overflow: hidden;
-  flex-grow: 1;
-
-  &:after {
-    float: left;
-    width: 0;
-    white-space: nowrap;
-    content: "${".".repeat(200)}";
-  }
-  span {
-    background: white;
-    padding-right: 0.2em;
-  }
-`;
-
-export const TextWithLeader: React.FC<{ children?: React.ReactNode }> = ({
-  children,
-}) => (
-  <LeaderContainer>
-    <span>{children}</span>
-  </LeaderContainer>
-);
 
 export const FormContainer = styled.form<FormViewerContextData>`
   // Hide placeholders and blue background while downloading

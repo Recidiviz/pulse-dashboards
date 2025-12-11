@@ -15,26 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
-export type AssessmentQuestionSpec = {
-  title: string;
-  canBeNone: boolean;
-  options: {
-    text: string;
-    score: number;
-  }[];
-};
+import {
+  AssessmentQuestionSpec,
+  TupleWithArity,
+} from "../common/ScoredAssessmentQuestion";
 
 // I'm not sure that this is the best way to do it, but the goal is to get the
 // question numbers into typeland so keys like q3Score can check
+
 export const assessmentQuestionNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
 export type AssessmentQuestionNumber =
   (typeof assessmentQuestionNumbers)[number];
-
-type TupleWithArity<OutType, InTuple> = {
-  [K in keyof InTuple]: OutType;
-};
 
 export const assessmentQuestions: TupleWithArity<
   AssessmentQuestionSpec,
@@ -65,7 +57,6 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "ASSAULT OCCUR WITHIN LAST SIX MONTHS",
-    canBeNone: false,
     options: [
       { text: "No", score: 0 },
       { text: "Yes", score: 3 },
@@ -73,7 +64,6 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "SEVERITY OF CURRENT OFFENSE (Rate Most Serious)",
-    canBeNone: false,
     options: [
       { text: "Low", score: 0 },
       { text: "Moderate", score: 1 },
@@ -93,7 +83,6 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "ESCAPE HISTORY (WITHIN LAST 5 YEARS OF INCARCERATION)",
-    canBeNone: false,
     options: [
       {
         text: "No escapes or attempts",
@@ -119,7 +108,6 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "DISCIPLINARY REPORTS – GUILTY",
-    canBeNone: false,
     options: [
       { text: "None in Last 18 Months", score: -4 },
       { text: "None in Last 12 Months", score: -2 },

@@ -15,40 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
-import styled from "styled-components";
+export type AssessmentQuestionSpec = {
+  title: string;
+  canBeNone?: boolean;
+  options: {
+    text: string;
+    score: number;
+  }[];
+};
 
-import { UsTnInitialClassification2026DraftData } from "~datatypes";
-
-import DOCXFormTextArea from "../../DOCXFormTextArea";
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 0.6rem;
-`;
-
-const TextboxHeader = styled.div`
-  font-size: ${rem(8)};
-`;
-
-const TextAreaContainer = styled.div`
-  min-height: 3.5rem;
-`;
-
-export function TextboxWithHeader({
-  header,
-  name,
-}: {
-  header: string;
-  name: Extract<keyof UsTnInitialClassification2026DraftData, string>;
-}) {
-  return (
-    <Container>
-      <TextboxHeader>{header}</TextboxHeader>
-      <TextAreaContainer>
-        <DOCXFormTextArea<UsTnInitialClassification2026DraftData> name={name} />
-      </TextAreaContainer>
-    </Container>
-  );
-}
+export type TupleWithArity<OutType, InTuple> = {
+  [K in keyof InTuple]: OutType;
+};

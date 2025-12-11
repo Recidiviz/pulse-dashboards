@@ -72,3 +72,14 @@ export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
 export type UsTnInitialClassification2026ReferralRecord = ParsedRecord<
   typeof usTnInitialClassification2026Schema
 >;
+
+export type UsTnInitialClassification2026DraftData =
+  UsTnInitialClassification2026ReferralRecord["output"]["formInformation"] & {
+    q1Convictions: string;
+    q2Offenses: string;
+    q3Disciplinaries: string;
+    q4Disciplinaries: string;
+    q5Disciplinaries: string;
+    q5aDisciplinaries: string;
+    q5bDisciplinaries: string;
+  };

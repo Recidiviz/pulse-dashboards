@@ -20,8 +20,11 @@ import React from "react";
 import styled from "styled-components";
 
 import { rangeString } from "../../../../utils";
-import AssessmentItem, { SubItem } from "./AssessmentItem";
-import { TextWithLeader } from "./styles";
+import {
+  AssessmentItem,
+  SubItem,
+  TextWithLeader,
+} from "../common/ScoredAssessmentQuestion";
 
 const OptionScore = styled.div`
   flex-grow: 0;

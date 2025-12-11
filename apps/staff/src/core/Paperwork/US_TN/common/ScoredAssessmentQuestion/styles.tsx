@@ -15,40 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
 import styled from "styled-components";
 
-import { UsTnInitialClassification2026DraftData } from "~datatypes";
-
-import DOCXFormTextArea from "../../DOCXFormTextArea";
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 0.6rem;
+export const RadioButton = styled.input.attrs({
+  type: "radio",
+})`
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 0.5em;
 `;
 
-const TextboxHeader = styled.div`
-  font-size: ${rem(8)};
+const LeaderContainer = styled.div`
+  overflow: hidden;
+  flex-grow: 1;
+
+  &:after {
+    float: left;
+    width: 0;
+    white-space: nowrap;
+    content: "${".".repeat(200)}";
+  }
+  span {
+    background: white;
+    padding-right: 0.2em;
+  }
 `;
 
-const TextAreaContainer = styled.div`
-  min-height: 3.5rem;
-`;
-
-export function TextboxWithHeader({
-  header,
-  name,
-}: {
-  header: string;
-  name: Extract<keyof UsTnInitialClassification2026DraftData, string>;
-}) {
-  return (
-    <Container>
-      <TextboxHeader>{header}</TextboxHeader>
-      <TextAreaContainer>
-        <DOCXFormTextArea<UsTnInitialClassification2026DraftData> name={name} />
-      </TextAreaContainer>
-    </Container>
-  );
-}
+export const TextWithLeader: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => (
+  <LeaderContainer>
+    <span>{children}</span>
+  </LeaderContainer>
+);

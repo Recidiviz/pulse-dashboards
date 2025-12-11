@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { UsTnInitialClassification2026DraftData } from "~datatypes";
+
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { UsTnInitialClassification2026Opportunity } from "../UsTn";
 import { FormBase } from "./FormBase";
 
 export class UsTnInitialClassification2026Form extends FormBase<
-  // TODO: Add real draft data typing
-  Record<string, string>,
+  UsTnInitialClassification2026DraftData,
   UsTnInitialClassification2026Opportunity
 > {
   navigateToFormText = "Auto-fill paperwork";
@@ -31,6 +32,12 @@ export class UsTnInitialClassification2026Form extends FormBase<
   }
 
   prefilledDataTransformer() {
-    return {};
+    const {
+      opportunity: {
+        record: { formInformation },
+      },
+    } = this;
+
+    return formInformation;
   }
 }

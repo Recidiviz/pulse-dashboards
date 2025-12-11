@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-const Item = styled.div`
+export const Item = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -73,7 +73,7 @@ type AssessmentItemProps = {
   children?: React.ReactNode;
 };
 
-const AssessmentItem: React.FC<AssessmentItemProps> = ({
+export const AssessmentItem: React.FC<AssessmentItemProps> = ({
   title,
   score,
   scoreText,
@@ -92,5 +92,3 @@ const AssessmentItem: React.FC<AssessmentItemProps> = ({
     </ScoreContainer>
   </Item>
 );
-
-export default AssessmentItem;

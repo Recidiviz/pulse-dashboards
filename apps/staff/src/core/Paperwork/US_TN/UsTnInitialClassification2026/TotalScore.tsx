@@ -54,6 +54,11 @@ export function TotalScore({ score }: { score: number }) {
           months OR homicide disciplinary while incarcerated
         </div>
       </div>
+      <div>
+        <Bold>
+          Date of Final Approval and Entry in OMS/Recidiviz Tool: __________
+        </Bold>
+      </div>
     </Container>
   );
 }

@@ -25,13 +25,15 @@ import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Oppor
 import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
+import {
+  AssessmentQuestionSpec,
+  ScoredAssessmentQuestion,
+} from "../common/ScoredAssessmentQuestion";
 import SealPng from "../common/Seal.png";
-import AssessmentQuestion from "./AssessmentQuestion";
 import {
   AssessmentQuestionNumber,
   assessmentQuestionNumbers,
   assessmentQuestions,
-  AssessmentQuestionSpec,
 } from "./assessmentQuestions";
 import AssessmentScore from "./AssessmentScore";
 import CoverSheet from "./CoverSheet";
@@ -108,7 +110,7 @@ const ClassificationCustodyAssessment: React.FC = () => {
           <HeaderFields />
           <div>
             {scheduleA.map(([q, i]) => (
-              <AssessmentQuestion
+              <ScoredAssessmentQuestion
                 questionSpec={q}
                 questionNumber={i}
                 key={i}
@@ -132,7 +134,7 @@ const ClassificationCustodyAssessment: React.FC = () => {
         <FormContainer {...formViewerContext}>
           <div>
             {scheduleB.map(([q, i]) => (
-              <AssessmentQuestion
+              <ScoredAssessmentQuestion
                 questionSpec={q}
                 questionNumber={i}
                 key={i}

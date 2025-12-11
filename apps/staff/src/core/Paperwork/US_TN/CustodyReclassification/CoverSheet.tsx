@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
 import styled from "styled-components";
 
+import { UsTnSharedReclassificationDraftData } from "../../../../WorkflowsStore";
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
+import DOCXFormTextArea from "../../DOCXFormTextArea";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormInput from "./FormInput";
 import FormRadioButton from "./FormRadioButton";
-import FormTextarea from "./FormTextarea";
 import { Label } from "./styles";
 
 const Container = styled.div`
@@ -60,6 +60,8 @@ const SigBlock = styled.div`
   margin-right: 2em;
   margin-bottom: 1em;
 `;
+
+const FormTextarea = DOCXFormTextArea<UsTnSharedReclassificationDraftData>;
 
 const CoverSheet: React.FC = () => {
   const { formData, derivedData } =

@@ -24,11 +24,13 @@ import { Opportunity } from "../../../../WorkflowsStore";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { PrintablePage } from "../../styles";
-import { MultichoiceScore } from "./MultichoiceScore";
+import {
+  Item,
+  ScoredAssessmentQuestion,
+} from "../common/ScoredAssessmentQuestion";
+import { assessmentQuestions } from "./assessmentQuestions";
 import { BoldWeight, FormFont } from "./styles";
-import { TextboxWithHeader } from "./TextboxWithHeader";
 import { TotalScore } from "./TotalScore";
-import { YesNoQuestion } from "./YesNoQuestion";
 
 const FormPage = styled.div`
   ${FormFont}
@@ -39,6 +41,14 @@ const FormPage = styled.div`
   color: black;
   background-color: white;
   padding: 3rem 4.25rem;
+
+  & textarea {
+    min-height: 3.5rem;
+  }
+
+  ${Item} {
+    margin: 0.5rem 0;
+  }
 `;
 
 const Header = styled.h1`
@@ -49,67 +59,6 @@ const Header = styled.h1`
   width: 100%;
   letter-spacing: -0.01rem;
 `;
-
-const QUESTIONS = [
-  {
-    title: "PRIOR VIOLENT FELONY CONVICTIONS",
-    choices: [
-      {
-        label: "Violent Felony Conviction in Last 2 Years",
-        value: 4,
-      },
-      {
-        label: "Violent Felony Conviction in Last 3-5 Years",
-        value: 2,
-      },
-    ],
-  },
-  {
-    title: "SEVERITY OF CURRENT OFFENSE (Rate Most Serious)",
-    choices: [
-      { label: "Low", value: 10 },
-      { label: "Moderate", value: 11 },
-      { label: "High", value: 13 },
-      { label: "Highest", value: 15 },
-    ],
-  },
-  {
-    title: "NONVIOLENT CLASS B OR C DISCIPLINARY REPORTS SINCE RECEPTION",
-    choices: [
-      { label: "Yes", value: 6 },
-      { label: "No", value: -1 },
-    ],
-  },
-  {
-    title: "NONVIOLENT CLASS A DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
-    choices: [
-      { label: "Yes", value: 20 },
-      { label: "No", value: -1 },
-    ],
-  },
-  {
-    title: "VIOLENT CLASS A OR B DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
-    choices: [
-      { label: "Yes", value: 30 },
-      { label: "No", value: -1 },
-    ],
-  },
-  {
-    title: "AGE",
-    choices: [
-      { label: "21 or Younger", value: 11 },
-      { label: "22 - 25", value: 8 },
-      { label: "26 - 30", value: 2 },
-      { label: "31 - 35", value: -1 },
-      { label: "36 - 40", value: -2 },
-      { label: "41 - 45", value: -4 },
-      { label: "Older than 45", value: -6 },
-    ],
-  },
-] satisfies Array<{
-  title: string;
-  choices: Array<{ label: string; value: number }>;
-}>;
 
 export const FormUsTnInitialClassification2026 = observer(
   function FormUsTnInitialClassification2026({
@@ -131,34 +80,81 @@ export const FormUsTnInitialClassification2026 = observer(
           <PrintablePage landscape>
             <FormPage>
               <Header>TENNESSEE CLASSIFICATION INSTRUMENT: DIAGNOSTIC</Header>
-              <MultichoiceScore questionNumber={1} {...QUESTIONS[0]}>
-                <TextboxWithHeader header={"List convictions:"} />
-              </MultichoiceScore>
-              <MultichoiceScore questionNumber={2} {...QUESTIONS[1]}>
-                <TextboxWithHeader header={"List offenses:"} />
-              </MultichoiceScore>
-              <MultichoiceScore questionNumber={3} {...QUESTIONS[2]}>
-                <TextboxWithHeader header={"List disciplinaries:"} />
-              </MultichoiceScore>
+              <ScoredAssessmentQuestion
+                questionSpec={assessmentQuestions[0]}
+                questionNumber={1}
+              />
+              <ScoredAssessmentQuestion
+                questionSpec={assessmentQuestions[1]}
+                questionNumber={2}
+              />
+              <ScoredAssessmentQuestion
+                questionSpec={assessmentQuestions[2]}
+                questionNumber={3}
+              />
+              {/* Note: I'm leaving this commented-out code just for this   */}
+              {/*       commit so I can move over the supporting components */}
+              {/*       in the next commit or two. */}
+              {/*<MultichoiceScore questionNumber={1} {...QUESTIONS[0]}>*/}
+              {/*  <TextboxWithHeader*/}
+              {/*    header={"List convictions:"}*/}
+              {/*    name={"q1Convictions"}*/}
+              {/*  />*/}
+              {/*</MultichoiceScore>*/}
+              {/*<MultichoiceScore questionNumber={2} {...QUESTIONS[1]}>*/}
+              {/*  <TextboxWithHeader*/}
+              {/*    header={"List offenses:"}*/}
+              {/*    name={"q2Offenses"}*/}
+              {/*  />*/}
+              {/*</MultichoiceScore>*/}
+              {/*<MultichoiceScore questionNumber={3} {...QUESTIONS[2]}>*/}
+              {/*  <TextboxWithHeader*/}
+              {/*    header={"List disciplinaries:"}*/}
+              {/*    name={"q3Disciplinaries"}*/}
+              {/*  />*/}
+              {/*</MultichoiceScore>*/}
             </FormPage>
           </PrintablePage>
           <PrintablePage landscape>
             <FormPage>
-              <MultichoiceScore questionNumber={4} {...QUESTIONS[3]}>
-                <TextboxWithHeader header={"List disciplinaries:"} />
-              </MultichoiceScore>
-              <MultichoiceScore questionNumber={5} {...QUESTIONS[4]}>
-                <TextboxWithHeader header={"List disciplinaries:"} />
-                <YesNoQuestion question="3+ Violent Class A or B disciplinaries in Previous Six Months" />
-                <TextboxWithHeader header={"List disciplinaries:"} />
-                <YesNoQuestion question="Homicide Disciplinary" />
-                <TextboxWithHeader header={"List disciplinaries:"} />
-              </MultichoiceScore>
+              <ScoredAssessmentQuestion
+                questionSpec={assessmentQuestions[3]}
+                questionNumber={4}
+              />
+              <ScoredAssessmentQuestion
+                questionSpec={assessmentQuestions[4]}
+                questionNumber={5}
+              />
+              {/*<MultichoiceScore questionNumber={4} {...QUESTIONS[3]}>*/}
+              {/*  <TextboxWithHeader*/}
+              {/*    header={"List disciplinaries:"}*/}
+              {/*    name={"q4Disciplinaries"}*/}
+              {/*  />*/}
+              {/*</MultichoiceScore>*/}
+              {/*<MultichoiceScore questionNumber={5} {...QUESTIONS[4]}>*/}
+              {/*  <TextboxWithHeader*/}
+              {/*    header={"List disciplinaries:"}*/}
+              {/*    name={"q5Disciplinaries"}*/}
+              {/*  />*/}
+              {/*  <YesNoQuestion question="3+ Violent Class A or B disciplinaries in Previous Six Months" />*/}
+              {/*  <TextboxWithHeader*/}
+              {/*    header={"List disciplinaries:"}*/}
+              {/*    name={"q5aDisciplinaries"}*/}
+              {/*  />*/}
+              {/*  <YesNoQuestion question="Homicide Disciplinary" />*/}
+              {/*  <TextboxWithHeader*/}
+              {/*    header={"List disciplinaries:"}*/}
+              {/*    name={"q5bDisciplinaries"}*/}
+              {/*  />*/}
+              {/*</MultichoiceScore>*/}
             </FormPage>
           </PrintablePage>
           <PrintablePage landscape>
             <FormPage>
-              <MultichoiceScore questionNumber={6} {...QUESTIONS[5]} />
+              <ScoredAssessmentQuestion
+                questionSpec={assessmentQuestions[5]}
+                questionNumber={6}
+              />
               <TotalScore score={17} />
             </FormPage>
           </PrintablePage>
