@@ -1,12 +1,6 @@
 variable "project_id" {
   type        = string
-  description = "The project that we are deploying the app to"
-}
-
-variable "destination_project_id" {
-  type        = string
   description = "The project where BigQuery datasets should be created"
-  default     = null
 }
 
 variable "location" {
@@ -38,4 +32,28 @@ variable "postgresql" {
 variable "tables" {
   type        = list(string)
   description = "The tables to be used in the transfer; assumed that all listed tables exist in each database"
+}
+
+variable "destination_project_id" {
+  type        = string
+  description = "Optional destination project ID for cross-project BigQuery dataset copy. When set, creates an additional transfer that copies from this project's US datasets to the destination project."
+  default     = null
+}
+
+variable "destination_service_account_email" {
+  type        = string
+  description = "Service account email to use for cross-project transfers in the destination project. Required when destination_project_id is set. The source service account will be granted read access to source datasets."
+  default     = null
+}
+
+variable "transfer_start_time" {
+  type        = string
+  description = "Start time for the initial PostgreSQL->BigQuery transfer in HH:MM format (e.g., '09:00')"
+  default     = "09:00"
+}
+
+variable "transfer_delay_minutes" {
+  type        = number
+  description = "Minutes to wait between each subsequent transfer stage"
+  default     = 30
 }

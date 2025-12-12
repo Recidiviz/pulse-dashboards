@@ -75,8 +75,10 @@ components:
 
     postgres-bq-data-transfer:
       vars:
+        location: "{{ .settings.context.location }}"
         dataset_name: jii_texting_dashboards_db
         destination_project_id: recidiviz-staging
+        destination_service_account_email: "{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com"
         tables:
           - Person
           - MessageSeries

@@ -6,8 +6,8 @@ settings:
     location: us-central1
 
 # The variables set here are automatically provided to all components used in this stack.
-# vars:
-#  project_id: "{{ .settings.context.project_id }}"
+vars:
+  project_id: "{{ .settings.context.project_id }}"
 
 import:
   - ../@defaults/terraform-backend
@@ -16,7 +16,6 @@ components:
   terraform:
     env-secrets:
       vars:
-        project_id: "{{ .settings.context.project_id }}"
         location: "{{ .settings.context.location }}"
       metadata:
         component: env-secrets
@@ -24,7 +23,14 @@ components:
         depends_on:
           sops_file:
             file: libs/atmos/components/terraform/env-secrets/env-secrets.enc.yaml
+
+    cloud-sql-proxy:
+      vars:
+        region: "{{ .settings.context.location }}"
+        sql_instance_connections:
+          sentencing-db: 5432
+          jii-texting: 5433
+
     apps/shared-infra:
       vars:
-        project_id: "{{ .settings.context.project_id }}"
         location: "{{ .settings.context.location }}"

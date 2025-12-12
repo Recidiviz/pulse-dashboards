@@ -25,7 +25,6 @@ resource "google_project_iam_member" "job_user" {
 resource "google_bigquery_dataset_iam_member" "regional_transfer_dataset_access" {
   for_each = var.postgresql.databases
 
-  project    = var.destination_project_id != null ? var.destination_project_id : var.project_id
   dataset_id = google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
   # https://cloud.google.com/bigquery/docs/use-service-accounts#required_permissions
   role   = "roles/bigquery.admin"
@@ -45,7 +44,6 @@ resource "google_bigquery_dataset_iam_member" "regional_dts_agent_access" {
 resource "google_bigquery_dataset_iam_member" "transfer_dataset_access" {
   for_each = var.postgresql.databases
 
-  project    = var.destination_project_id != null ? var.destination_project_id : var.project_id
   dataset_id = google_bigquery_dataset.transfer_dataset[each.key].dataset_id
   # https://cloud.google.com/bigquery/docs/use-service-accounts#required_permissions
   role   = "roles/bigquery.admin"
@@ -84,6 +82,25 @@ resource "random_id" "attachment" {
   byte_length = 4
 }
 
+locals {
+  # Parse the start time (HH:MM format)
+  start_hour   = tonumber(split(":", var.transfer_start_time)[0])
+  start_minute = tonumber(split(":", var.transfer_start_time)[1])
+
+  # Calculate second transfer time (regional -> US)
+  second_transfer_total_minutes = local.start_hour * 60 + local.start_minute + var.transfer_delay_minutes
+  second_transfer_hour          = floor(local.second_transfer_total_minutes / 60) % 24
+  second_transfer_minute        = local.second_transfer_total_minutes % 60
+  second_transfer_time          = format("%02d:%02d", local.second_transfer_hour, local.second_transfer_minute)
+
+  # Calculate third transfer time (cross-project)
+  third_transfer_total_minutes = local.start_hour * 60 + local.start_minute + (2 * var.transfer_delay_minutes)
+  third_transfer_hour          = floor(local.third_transfer_total_minutes / 60) % 24
+  third_transfer_minute        = local.third_transfer_total_minutes % 60
+  third_transfer_time          = format("%02d:%02d", local.third_transfer_hour, local.third_transfer_minute)
+}
+
+# Network attachment allows BigQuery Data Transfer Service to access resources in this project
 resource "google_compute_network_attachment" "transfer_attachment" {
   connection_preference = "ACCEPT_MANUAL"
   name                  = "postgres-bq-data-transfer-attachment-${random_id.attachment.hex}"
@@ -115,9 +132,8 @@ resource "google_bigquery_data_transfer_config" "postgres_transfer_config" {
   # This has to be a specific value for the connector to work
   # See https://github.com/hashicorp/terraform-provider-google/issues/19018
   data_source_id         = "postgresql"
-  schedule               = "every day 9:00"
+  schedule               = "every day ${var.transfer_start_time}"
   destination_dataset_id = google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
-  project                = var.project_id
   service_account_name   = var.service_account_email
   depends_on             = [google_project_service.bigquery_data_transfer_service]
 
@@ -143,12 +159,52 @@ resource "google_bigquery_data_transfer_config" "transfer_config" {
   service_account_name   = var.service_account_email
   display_name           = "${var.dataset_name}_${each.key}_bigquery"
   location               = "US"
-  schedule               = "every day 9:30"
+  schedule               = "every day ${local.second_transfer_time}"
   destination_dataset_id = google_bigquery_dataset.transfer_dataset[each.key].dataset_id
   data_source_id         = "cross_region_copy"
   params = {
     "overwrite_destination_table" : "true",
     "source_project_id" : var.project_id,
     "source_dataset_id" : google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
+  }
+}
+
+# Cross-project transfer resources (only created when destination_project_id is set)
+resource "google_bigquery_dataset" "destination_transfer_dataset" {
+  for_each = var.destination_project_id != null ? var.postgresql.databases : []
+
+  provider = google.destination
+
+  dataset_id  = "${var.dataset_name}_${each.key}"
+  description = "A copy of the sentencing database for state code ${each.key} (cross-project transfer from ${var.project_id})"
+  location    = "US"
+}
+
+# Grant destination service account read access to source datasets
+# Using bigquery.dataEditor because cross_region_copy requires bigquery.datasets.get
+# which is not included in bigquery.dataViewer
+resource "google_bigquery_dataset_iam_member" "source_dataset_access" {
+  for_each = var.destination_project_id != null ? var.postgresql.databases : []
+
+  dataset_id = google_bigquery_dataset.transfer_dataset[each.key].dataset_id
+  role       = "roles/bigquery.dataEditor"
+  member     = "serviceAccount:${var.destination_service_account_email}"
+}
+
+resource "google_bigquery_data_transfer_config" "cross_project_transfer_config" {
+  for_each = var.destination_project_id != null ? var.postgresql.databases : []
+
+  provider = google.destination
+
+  service_account_name   = var.destination_service_account_email
+  display_name           = "${var.dataset_name}_${each.key}_cross_project"
+  location               = "US"
+  schedule               = "every day ${local.third_transfer_time}"
+  destination_dataset_id = google_bigquery_dataset.destination_transfer_dataset[each.key].dataset_id
+  data_source_id         = "cross_region_copy"
+  params = {
+    "overwrite_destination_table" : "true",
+    "source_project_id" : var.project_id,
+    "source_dataset_id" : google_bigquery_dataset.transfer_dataset[each.key].dataset_id
   }
 }
