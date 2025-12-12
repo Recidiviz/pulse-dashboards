@@ -61,8 +61,8 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   isAddingPerson = false;
 
   private TASK_TYPE_COPY: PartialRecord<SupervisionTaskType, string> = {
-    usTxHomeContactScheduled: "Scheduled",
-    usTxHomeContactUnscheduled: "Unscheduled",
+    usTxHomeContactScheduled: "Scheduled Home Contact",
+    usTxHomeContactUnscheduled: "Unscheduled Home Contact",
     usTxHomeContactEdgeCase: "Residence Validation",
   };
   private SHORT_SUPERVISION_LEVEL_COPY: Record<string, string> = {
