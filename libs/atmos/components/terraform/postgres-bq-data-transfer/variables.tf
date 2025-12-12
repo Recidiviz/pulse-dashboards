@@ -3,6 +3,12 @@ variable "project_id" {
   description = "The project that we are deploying the app to"
 }
 
+variable "destination_project_id" {
+  type        = string
+  description = "The project where BigQuery datasets should be created"
+  default     = null
+}
+
 variable "location" {
   type        = string
   description = "The GCP location (us-east1, us-central1, etc) that we are deploying the service to"

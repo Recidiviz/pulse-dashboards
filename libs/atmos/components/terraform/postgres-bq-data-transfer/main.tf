@@ -4,7 +4,7 @@ data "google_project" "project" {
 }
 
 resource "google_project_iam_member" "permissions" {
-  project = var.project_id
+  project = var.destination_project_id != null ? var.destination_project_id : var.project_id
   role    = "roles/iam.serviceAccountTokenCreator"
   member  = "serviceAccount:${var.service_account_email}"
 }
@@ -17,7 +17,7 @@ resource "google_service_account_iam_member" "dts_token_creator" {
 }
 
 resource "google_project_iam_member" "job_user" {
-  project = var.project_id
+  project = var.destination_project_id != null ? var.destination_project_id : var.project_id
   role    = "roles/bigquery.jobUser"
   member  = "serviceAccount:${var.service_account_email}"
 }
@@ -25,7 +25,7 @@ resource "google_project_iam_member" "job_user" {
 resource "google_bigquery_dataset_iam_member" "regional_transfer_dataset_access" {
   for_each = var.postgresql.databases
 
-  project    = var.project_id
+  project    = var.destination_project_id != null ? var.destination_project_id : var.project_id
   dataset_id = google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
   # https://cloud.google.com/bigquery/docs/use-service-accounts#required_permissions
   role   = "roles/bigquery.admin"
@@ -45,7 +45,7 @@ resource "google_bigquery_dataset_iam_member" "regional_dts_agent_access" {
 resource "google_bigquery_dataset_iam_member" "transfer_dataset_access" {
   for_each = var.postgresql.databases
 
-  project    = var.project_id
+  project    = var.destination_project_id != null ? var.destination_project_id : var.project_id
   dataset_id = google_bigquery_dataset.transfer_dataset[each.key].dataset_id
   # https://cloud.google.com/bigquery/docs/use-service-accounts#required_permissions
   role   = "roles/bigquery.admin"
@@ -65,6 +65,7 @@ resource "google_bigquery_dataset_iam_member" "transfer_dts_agent_access" {
 resource "google_bigquery_dataset" "regional_transfer_dataset" {
   for_each = var.postgresql.databases
 
+  project     = var.destination_project_id != null ? var.destination_project_id : var.project_id
   dataset_id  = "${var.dataset_name}_${each.key}_regional"
   description = "A regional copy of the sentencing database for state code ${each.key}"
   location    = var.location
@@ -73,6 +74,7 @@ resource "google_bigquery_dataset" "regional_transfer_dataset" {
 resource "google_bigquery_dataset" "transfer_dataset" {
   for_each = var.postgresql.databases
 
+  project     = var.destination_project_id != null ? var.destination_project_id : var.project_id
   dataset_id  = "${var.dataset_name}_${each.key}"
   description = "A copy of the sentencing database for state code ${each.key}"
   location    = "US"

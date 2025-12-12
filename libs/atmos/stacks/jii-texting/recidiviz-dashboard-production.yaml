@@ -22,21 +22,21 @@ components:
     gcs-buckets:
       vars:
         prefix: "{{ .vars.project_id }}"
-        names: 
+        names:
           - jii-texting-etl-data
           - jii-texting-etl-data-archive
         log_bucket: "{{ .vars.project_id }}-gcs-object-logs"
-        versioning: 
+        versioning:
           jii-texting-etl-data: true
           jii-texting-etl-data-archive: true
         storage_class: STANDARD
         lifecycle_rules:
-          - action: 
+          - action:
               type: Delete
             condition:
               num_newer_versions: 3
         set_admin_roles: true
-        bucket_admins: 
+        bucket_admins:
           jii-texting-etl-data: "serviceAccount:{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com,serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
           jii-texting-etl-data-archive: "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
         set_viewer_roles: true
@@ -75,6 +75,7 @@ components:
     postgres-bq-data-transfer:
       vars:
         dataset_name: jii_texting_dashboards_db
+        destination_project_id: recidiviz-123
         tables:
           - Person
           - MessageSeries
@@ -83,7 +84,7 @@ components:
           - _GroupToPerson
           - ContactReminderMessageAttempt
           - ContactReminderMessageSeries
-          - Contact 
+          - Contact
           - WelcomeMessageAttempt
           - WelcomeMessageSeries
         service_account_email: "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
