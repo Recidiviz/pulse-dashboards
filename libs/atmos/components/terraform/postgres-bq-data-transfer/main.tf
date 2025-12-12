@@ -1,7 +1,19 @@
+# Data source to get project number
+data "google_project" "project" {
+  project_id = var.project_id
+}
+
 resource "google_project_iam_member" "permissions" {
   project = var.project_id
   role    = "roles/iam.serviceAccountTokenCreator"
   member  = "serviceAccount:${var.service_account_email}"
+}
+
+# Grant DTS service agent permission to impersonate the compute service account
+resource "google_service_account_iam_member" "dts_token_creator" {
+  service_account_id = "projects/${var.project_id}/serviceAccounts/${var.service_account_email}"
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "job_user" {
@@ -20,6 +32,16 @@ resource "google_bigquery_dataset_iam_member" "regional_transfer_dataset_access"
   member = "serviceAccount:${var.service_account_email}"
 }
 
+# Grant DTS service agent access to regional datasets to create tables
+resource "google_bigquery_dataset_iam_member" "regional_dts_agent_access" {
+  for_each = var.postgresql.databases
+
+  project    = var.project_id
+  dataset_id = google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
+  role       = "roles/bigquery.dataEditor"
+  member     = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com"
+}
+
 resource "google_bigquery_dataset_iam_member" "transfer_dataset_access" {
   for_each = var.postgresql.databases
 
@@ -28,6 +50,16 @@ resource "google_bigquery_dataset_iam_member" "transfer_dataset_access" {
   # https://cloud.google.com/bigquery/docs/use-service-accounts#required_permissions
   role   = "roles/bigquery.admin"
   member = "serviceAccount:${var.service_account_email}"
+}
+
+# Grant DTS service agent access to transfer datasets
+resource "google_bigquery_dataset_iam_member" "transfer_dts_agent_access" {
+  for_each = var.postgresql.databases
+
+  project    = var.project_id
+  dataset_id = google_bigquery_dataset.transfer_dataset[each.key].dataset_id
+  role       = "roles/bigquery.dataEditor"
+  member     = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com"
 }
 
 resource "google_bigquery_dataset" "regional_transfer_dataset" {
@@ -66,6 +98,13 @@ resource "google_compute_network_attachment" "transfer_attachment" {
   }
 }
 
+resource "google_project_service" "bigquery_data_transfer_service" {
+  project = var.project_id
+  service = "bigquerydatatransfer.googleapis.com"
+
+  disable_on_destroy = false
+}
+
 resource "google_bigquery_data_transfer_config" "postgres_transfer_config" {
   for_each = var.postgresql.databases
 
@@ -78,6 +117,7 @@ resource "google_bigquery_data_transfer_config" "postgres_transfer_config" {
   destination_dataset_id = google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
   project                = var.project_id
   service_account_name   = var.service_account_email
+  depends_on             = [google_project_service.bigquery_data_transfer_service]
 
   params = {
     "connector.database"                = each.key

@@ -88,7 +88,7 @@ variable "service_account_create" {
 
 # Added as RECIDIVIZ MODIFICATION
 variable "env_vars" {
-  type = map(string)
+  type        = map(string)
   description = "Environment variables (cleartext)"
   default     = {}
 }

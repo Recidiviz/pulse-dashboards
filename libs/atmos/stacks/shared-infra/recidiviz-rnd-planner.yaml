@@ -1,0 +1,31 @@
+# Infrastructure configuration for components for recidiviz-rnd-planner
+settings:
+  context:
+    project_id: recidiviz-rnd-planner
+    product: shared-infra
+    location: us-central1
+
+# The variables set here are automatically provided to all components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+
+import:
+  - ../@defaults/terraform-backend
+
+components:
+  terraform:
+    cloud-sql-proxy:
+      vars:
+        region: "{{ .settings.context.location }}"
+        sql_instance_connections:
+          recidiviz-prod: 5432
+          recidiviz-staging: 5433
+      hooks:
+        store-outputs:
+          outputs:
+            ip: .cloud_sql_proxy_ip
+            ports: .ports
+
+    apps/shared-infra:
+      vars:
+        location: "{{ .settings.context.location }}"

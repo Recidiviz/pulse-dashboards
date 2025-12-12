@@ -1,0 +1,56 @@
+# Infrastructure configuration for the legacy reentry app in recidiviz-rnd-planner
+settings:
+  context:
+    project_id: recidiviz-rnd-planner
+    project_number: 773019812766
+    data_platform_project_id: recidiviz-123
+    product: reentry
+    location: us-central1
+
+# The variables set here are automatically provided to any components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+  location: "{{ .settings.context.location }}"
+
+import:
+  - ../@defaults/terraform-backend
+
+components:
+  terraform:
+    postgres-bq-data-transfer:
+      vars:
+        dataset_name: reentry_db
+        tables:
+          - intake
+          - plan
+          - planasset
+          - plangeneration
+          - assessment
+        service_account_email: "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+        postgresql:
+          host: !terraform.state cloud-sql-proxy recidiviz-rnd-planner--shared-infra cloud_sql_proxy_ip
+          port: !terraform.state cloud-sql-proxy recidiviz-rnd-planner--shared-infra ".ports[""recidiviz-prod""]"
+          username: !store.get rnd-planner-direct RECIDIVIZ_POSTGRES_USERNAME
+          password: !store.get rnd-planner-direct RECIDIVIZ_POSTGRES_PASSWORD_PROD
+          databases:
+            - recidiviz
+
+    postgres-bq-data-transfer-staging:
+      vars:
+        dataset_name: reentry_staging_db
+        tables:
+          - intake
+          - plan
+          - planasset
+          - plangeneration
+          - assessment
+        service_account_email: "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+        postgresql:
+          host: !terraform.state cloud-sql-proxy recidiviz-rnd-planner--shared-infra cloud_sql_proxy_ip
+          port: !terraform.state cloud-sql-proxy recidiviz-rnd-planner--shared-infra ".ports[""recidiviz-staging""]"
+          username: !store.get rnd-planner-direct RECIDIVIZ_POSTGRES_USERNAME
+          password: !store.get rnd-planner-direct RECIDIVIZ_POSTGRES_PASSWORD_STAGING
+          databases:
+            - recidiviz
+      metadata:
+        component: postgres-bq-data-transfer

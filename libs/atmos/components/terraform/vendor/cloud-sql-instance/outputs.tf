@@ -16,7 +16,7 @@
 # =============================================================================
 
 output "cloudsql_instance_id" {
-  value = data.google_secret_manager_secret_version.cloudsql_instance_id.secret_data
+  value     = data.google_secret_manager_secret_version.cloudsql_instance_id.secret_data
   sensitive = true
 }
 
@@ -29,7 +29,7 @@ output "default_database_name" {
 }
 
 output "database_user_name" {
-  value = google_sql_user.postgres.name
+  value     = google_sql_user.postgres.name
   sensitive = true
 }
 
@@ -39,7 +39,7 @@ output "database_user_password" {
 }
 
 output "instance_name" {
-  value = google_sql_database_instance.data.name
+  value     = google_sql_database_instance.data.name
   sensitive = true
 }
 
@@ -48,11 +48,11 @@ output "region" {
 }
 
 output "readonly_database_user_name" {
-  value = var.has_readonly_user ? data.google_secret_manager_secret_version.db_readonly_user[0].secret_data : null
+  value     = var.has_readonly_user ? data.google_secret_manager_secret_version.db_readonly_user[0].secret_data : null
   sensitive = true
 }
 
 output "readonly_database_password" {
-  value = var.has_readonly_user ? data.google_secret_manager_secret_version.db_readonly_password[0].secret_data : null
+  value     = var.has_readonly_user ? data.google_secret_manager_secret_version.db_readonly_password[0].secret_data : null
   sensitive = true
 }

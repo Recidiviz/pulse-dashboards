@@ -32,3 +32,4 @@ settings:
       recidiviz-dashboard-staging: gsm-staging
       recidiviz-dashboard-production: gsm-prod
       recidiviz-jii-staging: jii-staging
+      recidiviz-rnd-planner: rnd-planner

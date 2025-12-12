@@ -56,6 +56,22 @@ stores:
       locations:
         - us-central1
 
+  rnd-planner:
+    type: google-secret-manager
+    options:
+      project_id: recidiviz-rnd-planner
+      prefix: atmos_
+      locations:
+        - us-central1
+
+  rnd-planner-direct:
+    type: google-secret-manager
+    options:
+      project_id: recidiviz-rnd-planner
+      # No prefix for direct access
+      locations:
+        - us-central1
+
 logs:
   file: /dev/stdout
   level: Info
