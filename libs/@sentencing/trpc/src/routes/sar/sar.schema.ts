@@ -75,6 +75,7 @@ export const updateSarSchema = z.object({
     ssn: z.string().nullable().optional(),
     status: CaseStatusEnum.optional(),
     address: z.string().nullable().optional(),
+    defendantDeclinedToParticipate: z.boolean().optional(),
     needsToBeAddressed: z.array(NeedsToBeAddressedEnum).optional(),
     otherNeedToBeAddressed: z.string().nullable().optional(),
     mitigatingFactors: z.array(mitigatingFactorEnum).optional(),

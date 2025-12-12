@@ -31,6 +31,7 @@ export type UpsertSARInput = Pick<
   Prisma.SentencingAssessmentReportUpdateInput,
   | "status"
   | "address"
+  | "defendantDeclinedToParticipate"
   | "needsToBeAddressed"
   | "otherNeedToBeAddressed"
   | "mitigatingFactors"

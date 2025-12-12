@@ -50,6 +50,7 @@ describe("SAR router", () => {
           dateDueToCourt: fakeSAR.dateDueToCourt,
           division: fakeSAR.division,
           address: fakeSAR.address,
+          defendantDeclinedToParticipate: false,
           needsToBeAddressed: fakeSAR.needsToBeAddressed,
           otherNeedToBeAddressed: fakeSAR.otherNeedToBeAddressed,
           mitigatingFactors: fakeSAR.mitigatingFactors,
@@ -123,6 +124,7 @@ describe("SAR router", () => {
           address: "456 Oak Street",
           defendantStatement: "Updated defendant statement",
           status: CaseStatus.Complete,
+          defendantDeclinedToParticipate: true,
         },
       });
 
@@ -135,6 +137,7 @@ describe("SAR router", () => {
         address: "456 Oak Street",
         defendantStatement: "Updated defendant statement",
         status: CaseStatus.Complete,
+        defendantDeclinedToParticipate: true,
       });
     });
 

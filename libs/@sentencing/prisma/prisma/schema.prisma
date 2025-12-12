@@ -590,6 +590,7 @@ model SentencingAssessmentReport {
   dateDueToCourt      DateTime? // Deadline for the report
   division            Division?
   address             String?
+  defendantDeclinedToParticipate Boolean @default(false)
 
   // Needs and factors
   needsToBeAddressed NeedToBeAddressed[]
