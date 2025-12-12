@@ -15,37 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import styled from "styled-components";
+export enum SARSection {
+  CASE_INFORMATION = "Case Information",
+  NEEDS_AND_MITIGATION = "Needs and Mitigation",
+  DEFENDANTS_VERSION = "Defendant's Version",
+  VICTIM_IMPACT = "Victim Impact",
+  OFFENDER_ASSESSMENT = "Offender Assessment",
+  RECOMMENDATION = "Recommendation",
+  SUMMARY = "Summary",
+}
 
-import { palette } from "~design-system";
+export const SAR_REPORT_SECTIONS = [
+  SARSection.CASE_INFORMATION,
+  SARSection.NEEDS_AND_MITIGATION,
+  SARSection.DEFENDANTS_VERSION,
+  SARSection.VICTIM_IMPACT,
+  SARSection.OFFENDER_ASSESSMENT,
+  SARSection.RECOMMENDATION,
+  SARSection.SUMMARY,
+] as const;
 
-export const PageContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: ${palette.marble1};
-`;
-
-export const ContentLayout = styled.div`
-  flex: 1;
-  display: flex;
-  gap: 24px;
-  padding: 24px;
-  overflow: hidden;
-  background: ${palette.marble3};
-`;
-
-export const MainContent = styled.div`
-  display: flex;
-  width: 43rem;
-  padding: 2rem;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.5rem;
-  background: ${palette.white};
-  border-radius: 0.625rem;
-  border: 1px solid ${palette.slate10};
-  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
-  overflow-y: auto;
-`;
+export type SARSectionName = (typeof SAR_REPORT_SECTIONS)[number];

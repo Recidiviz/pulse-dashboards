@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { SentencingStore } from "../../datastores/SentencingStore";
@@ -24,8 +24,10 @@ import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { sarUrl } from "../../utils/routing";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
+import { SARSection, SARSectionName } from "./constants";
 import * as Styled from "./SARDetails.styles";
 import { SARHeader } from "./SARHeader";
+import { SARSideNavigation } from "./SARSideNavigation";
 
 const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
   presenter,
@@ -33,6 +35,10 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
   presenter: SARDetailsPresenter;
 }) {
   const navigate = useNavigate();
+  const [currentSection, setCurrentSection] = useState<SARSectionName>(
+    SARSection.CASE_INFORMATION,
+  );
+
   const { staffPseudoId, SARAttributes, formattedGender, offenseNames } =
     presenter;
 
@@ -55,10 +61,18 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
         offenseNames={offenseNames}
       />
 
-      <Styled.Body>
-        {/* Form builder content will go here */}
-        <div>SAR Form Builder - Coming Soon</div>
-      </Styled.Body>
+      <Styled.ContentLayout>
+        <SARSideNavigation
+          currentSection={currentSection}
+          onSectionChange={setCurrentSection}
+        />
+
+        <Styled.MainContent>
+          <h2>{currentSection}</h2>
+          {/* Form builder content will go here based on currentSection */}
+          <p>Content for {currentSection} goes here...</p>
+        </Styled.MainContent>
+      </Styled.ContentLayout>
     </Styled.PageContainer>
   );
 });

@@ -15,5 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export type { SARSectionName } from "./constants";
+export { SAR_REPORT_SECTIONS, SARSection } from "./constants";
 export { SARDetails } from "./SARDetails";
 export { SARHeader } from "./SARHeader";
+export { SARSideNavigation } from "./SARSideNavigation";
