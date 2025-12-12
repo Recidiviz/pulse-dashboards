@@ -18,6 +18,7 @@
 import ArrowDown from "./arrow-down.png";
 import ArrowLeft from "./arrow-left.png";
 import ArrowRight from "./arrow-right.png";
+import ArrowRightGray from "./arrow-right-gray.png";
 import ArrowUp from "./arrow-up.png";
 import ArrowUpGreen from "./arrow-up-green.png";
 import Bell from "./bell.png";
@@ -27,8 +28,10 @@ import Calendar from "./calendar.png";
 import Chat from "./chat.png";
 import Clients from "./clients.png";
 import Clock from "./clock.png";
+import Copy from "./copy.png";
 import Cross from "./cross.png";
 import CrossRound from "./cross-round.png";
+import Edit from "./edit.png";
 import Filter from "./filter.png";
 import Home from "./home.png";
 import LeftIcon from "./left-icon.png";
@@ -69,6 +72,7 @@ const Icons = {
   Resources,
   ArrowDown,
   ArrowRight,
+  ArrowRightGray,
   Bell,
   Cross,
   Menu,
@@ -93,6 +97,8 @@ const Icons = {
   Clock,
   LockBig,
   LockSmall,
+  Copy,
+  Edit,
   Reset,
   CrossRound,
   ArrowUpGreen,

@@ -50,3 +50,10 @@ export const formatDurationNumeric = (ms: number) => {
 
 export const humanReadableTitleCase = (str: string): string =>
   startCase(str.toLowerCase());
+
+export const formatDraftCaseNoteMeetingDate = (date: Date) => {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+  }).format(date);
+};

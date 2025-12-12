@@ -15,8 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import BottomSheet, {
+  TouchableOpacity as BottomSheetTouchableOpacity,
+} from "@gorhom/bottom-sheet";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   Alert,
   Image,
@@ -37,9 +41,11 @@ import {
 } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
+import DraftCaseNoteSheet from "../components/DraftCaseNoteSheet";
 import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
+import { useSnackbar } from "../components/Snackbar";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { humanReadableTitleCase } from "../utils/format";
@@ -111,31 +117,50 @@ const MeetingScreen = () => {
   });
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Notes);
   const scrollY = useSharedValue(0);
+  const draftCaseNoteSheetRef = useRef<BottomSheet>(null);
+  const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
+
+  const handleDraftCaseNoteOpen = useCallback(() => {
+    draftCaseNoteSheetRef.current?.snapToIndex(1);
+  }, []);
+
+  const handleCopyNotes = () => {
+    Clipboard.setString(meetingDetails?.notes || "");
+    showSnackbar("Case note copied to clipboard");
+  };
 
   // values are taken from figma for each state of header
   const headerStyle = useAnimatedStyle(() => ({
     height: interpolate(
       scrollY.value,
       [0, 50, 100, 101],
-      [insets.top + 182, insets.top + 116, insets.top + 64, insets.top + 140],
+      [insets.top + 268, insets.top + 200, insets.top + 164, insets.top + 108],
       "clamp",
     ),
-  }));
-
-  const bottomDateStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 10], [1, 0], "clamp"),
   }));
 
   const topDateStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY.value, [0, 10], [0, 1], "clamp"),
   }));
 
+  const bottomDateStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY.value, [0, 10], [1, 0], "clamp"),
+    height: interpolate(scrollY.value, [0, 10], [45, 0], "clamp"),
+    marginBottom: interpolate(scrollY.value, [0, 10], [16, 0], "clamp"),
+  }));
+
   const userNameStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY.value, [50, 60], [1, 0], "clamp"),
+    height: interpolate(scrollY.value, [50, 60], [20, 0], "clamp"),
+    marginBottom: interpolate(scrollY.value, [50, 60], [16, 0], "clamp"),
+  }));
+
+  const draftCaseNoteBlockStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY.value, [100, 101], [1, 0], "clamp"),
   }));
 
   // values are taken from figma for each state of header
@@ -143,10 +168,10 @@ const MeetingScreen = () => {
   // that is why initial value of header height and padding top are different
   // also padding includes space between header and tabs - 8px
   const bottomViewStyles = useAnimatedStyle(() => ({
-    paddingTop: interpolate(
+    marginTop: interpolate(
       scrollY.value,
-      [0, 50, 100, 101],
-      [202, 136, 84, 152],
+      [0, 101],
+      [-insets.top + 20, -insets.top],
       "clamp",
     ),
   }));
@@ -159,7 +184,6 @@ const MeetingScreen = () => {
   const topTabsStyle = useAnimatedStyle(() => ({
     height: interpolate(scrollY.value, [100, 101], [0, 44], "clamp"),
     opacity: interpolate(scrollY.value, [100, 101], [0, 1], "clamp"),
-    marginTop: interpolate(scrollY.value, [100, 101], [0, 16], "clamp"),
   }));
 
   const onShare = async () => {
@@ -201,8 +225,8 @@ const MeetingScreen = () => {
   return (
     <SafeAreaView className="flex-1">
       <Animated.View
-        className="absolute inset-x-0 top-0 z-50 flex flex-col rounded-b-[24px] bg-white px-4"
-        style={[{ paddingTop: insets.top }, headerStyle]}
+        className="fixed flex flex-col rounded-b-[24px] bg-white p-4"
+        style={[{ top: -insets.top, paddingTop: insets.top }, headerStyle]}
       >
         <View className="flex h-16 flex-row items-center justify-between">
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -234,7 +258,7 @@ const MeetingScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <View className="flex flex-col gap-4">
+        <View className="flex flex-col">
           <Animated.View style={[topTabsStyle]}>
             <MeetingTabs
               activeTab={activeTab}
@@ -274,10 +298,58 @@ const MeetingScreen = () => {
               </Text>
             </View>
           </Animated.View>
+
+          <Animated.View
+            className="w-full flex-1"
+            style={[draftCaseNoteBlockStyle]}
+          >
+            <View className="flex min-h-full w-full flex-col gap-1.5 rounded-xl bg-[#F4F5F5] px-[14px] py-3">
+              <View className="flex flex-row items-center justify-between">
+                <View className="flex flex-row items-center gap-1">
+                  <Text className="font-inter text-xs font-semibold text-[#355362D9]">
+                    Draft case note
+                  </Text>
+                  <Image
+                    source={Icons.ArrowRightGray}
+                    className="size-2"
+                    resizeMode="contain"
+                  />
+                </View>
+                <TouchableOpacity
+                  onPress={handleCopyNotes}
+                  disabled={isSnackbarShowing}
+                >
+                  <Image
+                    source={Icons.Copy}
+                    className="size-4"
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <BottomSheetTouchableOpacity
+                onPress={handleDraftCaseNoteOpen}
+                className="size-full flex-1"
+              >
+                <Text
+                  numberOfLines={4}
+                  ellipsizeMode="tail"
+                  className="font-inter text-sm font-normal text-primary"
+                >
+                  {meetingDetails?.notes
+                    ? meetingDetails.notes
+                    : "Type your notes here..."}
+                </Text>
+              </BottomSheetTouchableOpacity>
+            </View>
+          </Animated.View>
         </View>
       </Animated.View>
 
-      <Animated.View className="flex flex-col gap-4" style={[bottomViewStyles]}>
+      <Animated.View
+        className="flex flex-1 flex-col gap-4"
+        style={[bottomViewStyles]}
+      >
         <Animated.View className="px-4" style={[bottomTabsStyle]}>
           <MeetingTabs
             activeTab={activeTab}
@@ -301,6 +373,13 @@ const MeetingScreen = () => {
           )}
         </Animated.ScrollView>
       </Animated.View>
+
+      <DraftCaseNoteSheet
+        notes={meetingDetails?.notes || ""}
+        clientName={client.fullName}
+        meetingDate={meetingDetails?.startTime}
+        ref={draftCaseNoteSheetRef}
+      />
     </SafeAreaView>
   );
 };
