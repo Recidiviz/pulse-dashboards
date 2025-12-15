@@ -216,7 +216,11 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: [{ field: "releaseDate" }],
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [],
+      denialReasons: [
+        { key: "ERROR", text: "Error: Annual Reclass Not Due" },
+        { key: "MAX", text: "Is on Maximum Custody" },
+        { key: "OTHER", text: "Please specify a reason" },
+      ],
       denialText: null,
       deniedTabTitle: null,
       displayName: "[2026 Pilot] Annual Reclassification",
@@ -314,7 +318,7 @@ export const mockApiOpportunityConfigurationResponse = {
       displayName: "Compliant Reporting - 2025 Policy",
       dynamicEligibilityText:
         "client[|s] may be eligible for Compliant Reporting",
-      eligibilityDateText: "Date Surfaced",
+      eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
           key: "onMinimumSupervisionAtLeastSixMonths",
@@ -583,12 +587,12 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [{ key: "Other", text: "Please specify a reason" }],
+      denialReasons: [{ key: "OTHER", text: "Please specify a reason" }],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "[2026 Pilot] Custody Level Downgrade",
+      displayName: "[2026 Pilot] Special Reclassification - Downgrade",
       dynamicEligibilityText:
-        " resident[|s] may be eligible for a custody level downgrade [2026 Pilot]",
+        "resident[|s] may be eligible for a Special Downgrade [2026 Pilot]",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -638,7 +642,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "\n[2026 Pilot] This alert helps staff identify residents who may be at a higher custody level than recommended and directs staff to complete & submit new classification paperwork based on the resident's latest CAF score.",
+        "[2026 Pilot] This alert helps staff identify residents who may be at a higher custody level than recommended and directs staff to complete & submit new classification paperwork based on the resident's latest CAF score.",
       submittedTabTitle: null,
       supportsIneligible: true,
       supportsSubmitted: false,
@@ -807,9 +811,9 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "[2026 Pilot] Initial Classification",
+      displayName: "[2026 Pilot] Diagnostic Classification",
       dynamicEligibilityText:
-        " resident[|s] may need an Initial Classification [2026 Pilot]",
+        " resident[|s] may need an Diagnostic Classification [2026 Pilot]",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -826,7 +830,7 @@ export const mockApiOpportunityConfigurationResponse = {
       homepagePosition: 10,
       ineligibleCriteriaCopy: [],
       initialHeader:
-        "Complete and submit new classification paperwork for eligible residents.",
+        "Complete and submit diagnostic classification paperwork for eligible residents.",
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://example.com",
@@ -854,7 +858,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This tool helps staff identify residents who have not had an Initial Classification since their latest start in TDOC custody.",
+        "This tool helps staff identify residents who have not had an Diagnostic Classification since their latest start in TDOC custody.",
       submittedTabTitle: null,
       supportsIneligible: true,
       supportsSubmitted: true,
@@ -874,9 +878,10 @@ export const mockApiOpportunityConfigurationResponse = {
       denialReasons: [{ key: "OTHER", text: "Please specify a reason" }],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "[2026 Pilot] Special Custody Level Upgrade",
+      displayName:
+        "[2026 Pilot] Special Reclassification - Upgrade Due to New CAF Scoring",
       dynamicEligibilityText:
-        "resident[|s] may need their custody level[|s] reviewed [2026 Pilot]",
+        "resident[|s] may need custody level reviewed under new CAF [2026 Pilot]",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -927,7 +932,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "[2026 Pilot] This alert helps staff identify residents who may be at a lower custody level than recommended and directs staff to complete & submit new classification paperwork based on the resident's latest CAF score.",
+        "[2026 Pilot] This alert helps staff identify residents for whom the new CAF suggests a higher custody level than what the resident currently has. Residents who need upgrades due to a new disciplinary infraction, for example, will not be surfaced under this option.\n\nUse of this alert will phase out over time, as all residents are classified under the new CAF",
       submittedTabTitle: null,
       supportsIneligible: true,
       supportsSubmitted: true,

@@ -329,47 +329,51 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_ND",
       strictlyIneligibleCriteriaCopy: [
         {
-          key: "CUSTODY_LEVEL_IS_MINIMUM",
+          key: "custodyLevelIsMinimum",
           text: "Not classified as minimum custody",
         },
         {
-          key: "INCARCERATED_AT_LEAST_30_DAYS_IN_SAME_FACILITY",
+          key: "incarceratedAtLeast30DaysInSameFacility",
           text: "Needs {{daysUntil thirtyDaysInSameFacilityDate}} more days in current facility",
         },
         {
-          key: "INCARCERATED_AT_LEAST_90_DAYS",
+          key: "incarceratedAtLeast90Days",
           text: "Needs {{daysUntil eligibleDate}} more days in custody",
         },
         {
-          key: "NOT_INCARCERATION_WITHIN_3_MONTHS_OF_FULL_TERM_COMPLETION_DATE",
+          key: "notIncarcerationWithin3MonthsOfFullTermCompletionDate",
           text: "Less than 3 months away from release or parole review date",
         },
         {
-          key: "US_ND_HAS_FACILITY_RESTRICTIONS",
+          key: "usNdHasFacilityRestrictions",
           text: "The resident has alerts preventing them from being transferred to ATP",
         },
         {
-          key: "US_ND_INCARCERATION_WITHIN_1_YEAR_OF_FTCD_OR_PRD_OR_CPP_RELEASE",
+          key: "usNdIncarcerationWithin1YearOfFtcdOrPrdOrCppRelease",
           text: "More than 12 months until release or parole review date.",
         },
         {
-          key: "US_ND_NOT_ENROLLED_IN_RELEVANT_PROGRAM",
+          key: "usNdNotEnrolledInRelevantProgram",
           text: "Currently enrolled in a core program",
         },
         {
-          key: "US_ND_NOT_SERVING_INELIGIBLE_OFFENSE_FOR_ATP_WORK_RELEASE",
+          key: "usNdNotServingIneligibleOffenseForAtpWorkRelease",
           text: "Ineligible offense(s)",
         },
         {
-          key: "US_ND_NOT_WITHIN_1_MONTH_OF_PAROLE_START_DATE",
+          key: "notWithin1MonthOfParoleStartDate",
           text: "Less than 1 month until parole start date",
         },
         {
-          key: "US_ND_NO_DETAINERS_OR_WARRANTS",
+          key: "usNdNotWithin1MonthOfParoleStartDate",
+          text: "Less than 1 month until parole start date",
+        },
+        {
+          key: "usNdNoDetainersOrWarrants",
           text: "Has a felony warrant or detainer",
         },
         {
-          key: "US_ND_WORK_RELEASE_COMMITTEE_REQUIREMENTS",
+          key: "usNdWorkReleaseCommitteeRequirements",
           text: "The resident is not compliant with the Work Release Committee conditions",
         },
       ],
@@ -495,31 +499,31 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_ND",
       strictlyIneligibleCriteriaCopy: [
         {
-          key: "CUSTODY_LEVEL_IS_MINIMUM",
+          key: "custodyLevelIsMinimum",
           text: "Not classified as minimum custody",
         },
         {
-          key: "INCARCERATION_WITHIN_42_MONTHS_OF_FULL_TERM_COMPLETION_DATE",
+          key: "incarcerationWithin42MonthsOfFullTermCompletionDate",
           text: "More than 43 months away from release",
         },
         {
-          key: "NOT_INCARCERATION_WITHIN_3_MONTHS_OF_FULL_TERM_COMPLETION_DATE",
+          key: "notIncarcerationWithin3MonthsOfFullTermCompletionDate",
           text: "Less than 3 months away from release or parole review date",
         },
         {
-          key: "US_ND_NOT_ENROLLED_IN_RELEVANT_PROGRAM",
+          key: "usNdNotEnrolledInRelevantProgram",
           text: "Currently enrolled in a core program",
         },
         {
-          key: "US_ND_NOT_IN_AN_ORIENTATION_UNIT",
+          key: "usNdNotInAnOrientationUnit",
           text: "Currently in the first or second week of orientation",
         },
         {
-          key: "US_ND_NOT_IN_MINIMUM_SECURITY_FACILITY",
+          key: "usNdNotInMinimumSecurityFacility",
           text: "Already in a minimum-security unit",
         },
         {
-          key: "US_ND_NO_DETAINERS_OR_FELONY_WARRANTS",
+          key: "usNdNoDetainersOrFelonyWarrants",
           text: "Has a felony warrant or detainer",
         },
       ],

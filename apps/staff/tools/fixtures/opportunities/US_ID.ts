@@ -46,7 +46,7 @@ export const mockApiOpportunityConfigurationResponse = {
       displayName: "Limited Supervision Unit",
       dynamicEligibilityText:
         "client[|s] may be eligible for the Limited Supervision Unit",
-      eligibilityDateText: "Date Surfaced",
+      eligibilityDateText: null,
       eligibleCriteriaCopy: [],
       emptyTabCopy: [],
       firestoreCollection: "US_ID-LSUReferrals",
@@ -931,6 +931,153 @@ export const mockApiOpportunityConfigurationResponse = {
       tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for supervision downgrade",
       urlSection: "supervisionLevelMismatch",
+      zeroGrantsTooltip: null,
+    },
+    usIdTransferToCRCLikeBedICIO: {
+      callToAction:
+        "Review residents who may be eligible for a CRC-like bed and start their paperwork in ATLAS.",
+      caseNotesTitle: null,
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        {
+          key: "PENDING",
+          text: "There are pending felony charges or felony investigations in which the resident is a suspect",
+        },
+        {
+          key: "BEHAVIOR",
+          text: "Resident has had poor institutional behavior",
+        },
+        { key: "ESCAPE_ABSCONSION", text: "Prior escape or absconsion" },
+        { key: "SEX_OFFENSE", text: "Prior sex-related charge" },
+        { key: "VICTIMS", text: "Victim in the area" },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "CRC-like beds at ICIO",
+      dynamicEligibilityText: "resident[|s] may be eligible for a CRC-like bed",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        { key: "custodyLevelIsMinimum", text: "Currently on Minimum custody" },
+        {
+          key: "notServingForViolentOffense",
+          text: "Not serving for a violent offense",
+        },
+        {
+          key: "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years",
+          text: "No escape attempts in the last 10 years",
+          tooltip:
+            "No escape, eluding police, or absconsion offense(s) in the last 10 years",
+        },
+        {
+          key: "usIdNotDetainersForXcrcAndCrc",
+          text: "No active felony detainers or holds",
+          tooltip: "Cannot have any felony detainers or holds",
+        },
+        {
+          key: "usIdIncarcerationWithin18MonthsOfFtcdOrTpd",
+          text: "Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months",
+          tooltip:
+            "The resident must fulfill one of the following three conditions: 1. Tentative Parole Date (TPD) within seven (18) months OR Full Term Release Date (FTRD) within seven (18) months 2. Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years 3. Life sentence AND Tentative Parole Date (TPD) within 1 year",
+        },
+        {
+          key: "usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd",
+          text: "Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years",
+          tooltip:
+            "The resident must fulfill one of the following three conditions: 1. Tentative Parole Date (TPD) within seven (18) months OR Full Term Release Date (FTRD) within seven (18) months 2. Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years 3. Life sentence AND Tentative Parole Date (TPD) within 1 year",
+        },
+        {
+          key: "usIdIncarcerationWithin1YearOfTpdAndLifeSentence",
+          text: "Life sentence AND Tentative Parole Date (TPD) within 1 year",
+          tooltip:
+            "The resident must fulfill one of the following three conditions: 1. Tentative Parole Date (TPD) within seven (18) months OR Full Term Release Date (FTRD) within seven (18) months 2. Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years 3. Life sentence AND Tentative Parole Date (TPD) within 1 year",
+        },
+        {
+          key: "incarcerationWithin18MonthsOfFtcdOrTpd",
+          text: "Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months",
+          tooltip:
+            "The resident must fulfill one of the following three conditions: 1. Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months 2. Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years 3. Life sentence AND Tentative Parole Date (TPD) within 1 year",
+        },
+        {
+          key: "incarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd",
+          text: "Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years",
+          tooltip:
+            "The resident must fulfill one of the following three conditions: 1. Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months 2. Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years 3. Life sentence AND Tentative Parole Date (TPD) within 1 year",
+        },
+        {
+          key: "incarcerationWithin1YearOfTpdAndLifeSentence",
+          text: "Life sentence AND Tentative Parole Date (TPD) within 1 year",
+          tooltip:
+            "The resident must fulfill one of the following three conditions: 1. Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months 2. Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years 3. Life sentence AND Tentative Parole Date (TPD) within 1 year",
+        },
+        {
+          key: "usIdNotServingARiderSentence",
+          text: "Not serving for a rider sentence",
+        },
+        {
+          key: "usIdIncarcerationNotWithin6MonthsOfUpcomingEprd",
+          text: "Resident has an upcoming EPRD of {{date earliestPossibleReleaseDate}} which is more than 6 months away",
+        },
+        {
+          key: "usIdInIcioOrHasD1OrD2ReleaseNote",
+          text: "Currently in ICIO or has a D1 or D2 release note.",
+        },
+      ],
+      emptyTabCopy: [],
+      firestoreCollection: "US_ID-transferToCRCLikeBedICIOReferrals",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 8,
+      ineligibleCriteriaCopy: [
+        {
+          key: "notServingForViolentOffense",
+          text: "Serving for a violent offense",
+        },
+        {
+          key: "usIdNotDeniedForCrc",
+          text: "Has a CRC Termer Denied case note",
+        },
+        { key: "custodyLevelIsMinimum", text: "Not in Minimum custody." },
+      ],
+      initialHeader: null,
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl:
+        " https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
+      nonOmsCriteria: [
+        { text: "Check other sex offense history" },
+        { text: "No victims in the area" },
+      ],
+      nonOmsCriteriaHeader: null,
+      notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: [
+        "Incarceration",
+        "UsIdPastTwoYearsAlert",
+        "UsIdParoleDates",
+        "CaseNotes",
+      ],
+      snooze: { defaultSnoozeDays: 60, maxSnoozeDays: 180 },
+      snoozeCompanionOpportunityTypes: [],
+      stateCode: "US_ID",
+      strictlyIneligibleCriteriaCopy: [],
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading:
+        "\nThis alert helps staff identify people who may be eligible for transfer to a CRC-like bed in Idaho Correctional\nInstitutional - Orofino (ICIO). Review eligible residents and request a transfer in Atlas.",
+      submittedTabTitle: null,
+      supportsIneligible: false,
+      supportsSubmitted: true,
+      systemType: "INCARCERATION",
+      tabGroups: null,
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "transferToCRCLikeBedICIO",
       zeroGrantsTooltip: null,
     },
   },
