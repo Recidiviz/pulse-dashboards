@@ -1,0 +1,17 @@
+{
+  "name": "@jii/server",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@jii/server/src",
+  "projectType": "application",
+  "tags": ["scope:server"],
+  "targets": {
+    "dev": {
+      "dependsOn": ["^prisma-generate"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node --watch src/main.ts"
+      }
+    }
+  }
+}

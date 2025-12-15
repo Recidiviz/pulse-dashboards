@@ -1,0 +1,29 @@
+{
+  "name": "@jii/trpc",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@jii/trpc/src",
+  "projectType": "library",
+  "tags": ["scope:server"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "dependsOn": [{ "projects": ["@jii/prisma"], "target": "prisma-deploy" }],
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/@jii/trpc"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

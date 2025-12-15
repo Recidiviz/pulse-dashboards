@@ -35,6 +35,12 @@
     },
     "build": {
       "executor": "@nx/vite:build",
+      "dependsOn": [
+        {
+          "projects": ["@jii/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
       "cache": true,
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/jii",

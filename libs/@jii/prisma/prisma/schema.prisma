@@ -11,6 +11,6 @@ datasource db {
 
 // can be used to store random bits of user activity or preferences
 model UserProperties {
-    id                String   @id
-    hasSeenOnboarding Boolean?
+    id                String    @id
+    hasSeenOnboarding DateTime?
 }

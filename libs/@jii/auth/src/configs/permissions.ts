@@ -17,6 +17,21 @@
 
 import { z } from "zod";
 
+/**
+ * See {@link Permission} for documentation of the permissions enumerated here
+ */
 export const permissionSchema = z.enum(["enhanced", "live_data", "translator"]);
 
+/**
+ * Permissions that may be assigned to users of the JII app.
+ * - enhanced: grants user access to the resident search page. This was the first permission
+ * defined in this app and its name is a legacy of not yet knowing what its scope would be
+ * - live_data: without this permission, user can only access fixture/demo data
+ * - translator: user can access translation features (preview languages before they are enabled,
+ * activate Translator Mode to view translation string keys, etc)
+ *
+ * State-level access permissions are based on the `AuthorizedUserProfile`'s `stateCode` and `allowedStates`.
+ * There is an implicit permission for all users that if they have an external ID,
+ * they can access any data associated with that ID (i.e., their own data).
+ */
 export type Permission = z.infer<typeof permissionSchema>;

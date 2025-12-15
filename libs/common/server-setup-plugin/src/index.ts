@@ -26,11 +26,12 @@ import {
 } from "@trpc/server/adapters/fastify";
 import Fastify from "fastify";
 import fastifyAuth0Verify from "fastify-auth0-verify";
+import firebaseAdmin from "firebase-admin";
 
 import type { BuildServerOptions } from "~server-setup-plugin/types";
 
 /**
- * Returns a Fastify server with tRPC, Sentry, and Auth0 set up.
+ * Returns a Fastify server with tRPC, Sentry, and the auth middleware of your choice set up (Auth0, Firebase or JWT)
  *
  * In order for Sentry integration to work, you must initialize Sentry before starting the server.
  */
@@ -91,6 +92,17 @@ export function buildCommonServer<TRouter extends AnyRouter>(
       // Create a namespace so that the verification function doesn't collide with the Auth0 one
       namespace: "regular",
     });
+  }
+
+  if (options.firebaseAuthOptions) {
+    // avoid duplicate app instances when hot reloading etc
+    const firebaseApp =
+      firebaseAdmin.apps[0] ??
+      firebaseAdmin.initializeApp({
+        projectId: options.firebaseAuthOptions.projectId,
+      });
+
+    server.decorate("firebaseAuth", firebaseAdmin.auth(firebaseApp));
   }
 
   server.register(cors, {

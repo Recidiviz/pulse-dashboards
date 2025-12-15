@@ -1,0 +1,16 @@
+{
+  "name": "@jii/trpc-types",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@jii/trpc-types/src",
+  "projectType": "library",
+  "tags": ["scope:universal", "type:util"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p ./tsconfig.lib.json",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

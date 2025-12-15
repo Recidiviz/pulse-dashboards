@@ -75,6 +75,8 @@ async function deleteDataFromCollection(
       stateCode.toUpperCase(),
       stateCode.toLowerCase(),
     ]);
+  // @ts-expect-error typescript seems to be getting confused by multiple versions of the library existing,
+  // but we expect this to be fine
   const collectionCount = (await collectionQuery.count().get()).data().count;
   if (collectionCount > 0) {
     return checkAndDeleteDataFromCollection(

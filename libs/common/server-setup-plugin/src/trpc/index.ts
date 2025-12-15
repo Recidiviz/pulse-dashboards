@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { trpcMiddleware } from "@sentry/node";
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 import { VerifierAsync } from "fast-jwt";
 
@@ -85,4 +85,15 @@ export function procedurePlugin() {
       attachRpcInput: true,
     }),
   );
+}
+
+export async function verifyFirebaseIdToken(opts: CreateFastifyContextOptions) {
+  const { req } = opts;
+
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  if (!token) {
+    throw new TRPCError({ code: "BAD_REQUEST" });
+  }
+
+  return req.server.firebaseAuth.verifyIdToken(token);
 }

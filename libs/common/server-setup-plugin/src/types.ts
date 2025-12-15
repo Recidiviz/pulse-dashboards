@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { JWT as BaseJWT } from "@fastify/jwt";
+import type { FastifyJWTOptions, JWT as BaseJWT } from "@fastify/jwt";
 import type { AnyRouter } from "@trpc/server";
 import type { FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
 import type { Algorithm } from "fast-jwt";
+import type { Auth } from "firebase-admin/auth";
 
 declare module "@fastify/jwt" {
   interface JWT {
@@ -31,6 +32,10 @@ declare module "fastify" {
   interface FastifyRequest {
     regularJwtVerify: FastifyRequest["jwtVerify"];
   }
+
+  interface FastifyInstance {
+    firebaseAuth: Auth;
+  }
 }
 
 type Auth0Config = {
@@ -39,13 +44,14 @@ type Auth0Config = {
 };
 
 type JwtConfig = {
-  key: string;
+  key: FastifyJWTOptions["secret"];
   algorithm?: Algorithm;
   expiresIn?: string;
-  cookie?: {
-    cookieName: string;
-    signed: boolean;
-  };
+  cookie?: FastifyJWTOptions["cookie"];
+};
+
+type FirebaseAuthConfig = {
+  projectId: string;
 };
 
 export type BuildServerOptions<TRouter extends AnyRouter> = {
@@ -57,4 +63,5 @@ export type BuildServerOptions<TRouter extends AnyRouter> = {
   trpcPrefix?: string;
   auth0Options?: Auth0Config;
   jwtOptions?: JwtConfig;
+  firebaseAuthOptions?: FirebaseAuthConfig;
 };

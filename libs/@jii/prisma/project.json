@@ -39,6 +39,7 @@
       }
     },
     "prisma-deploy": {
+      "dependsOn": ["docker"],
       "executor": "@nx-tools/nx-prisma:deploy",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
@@ -83,6 +84,19 @@
       "configurations": {
         "dev": {
           "command": "docker compose up --wait"
+        },
+        "ci": {
+          "command": "echo 'No docker for CI'"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "docker:stop": {
+      "executor": "nx:run-commands",
+      "options": { "cwd": "{projectRoot}" },
+      "configurations": {
+        "dev": {
+          "command": "docker compose down"
         },
         "ci": {
           "command": "echo 'No docker for CI'"
