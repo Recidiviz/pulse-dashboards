@@ -5,6 +5,7 @@ from sqlalchemy.orm import selectinload
 from sqlmodel import select
 from taskiq import TaskiqDepends
 
+from app.core.config import settings
 from app.core.db import AsyncSession, get_session
 from app.models.intake import Intake, IntakeStatus
 from app.models.recording import RecordingStatus
@@ -62,7 +63,28 @@ async def process_recording(
         task_logger=task_logger,
     )
 
-    # It's finished !
+    # For Deepgram async mode, transcription is initiated but not completed
+    # The webhook will handle completion, so we mark as TRANSCRIBING
+    if settings.DIARIZATION_SERVICE == "deepgram" and settings.DEEPGRAM_CALLBACK:
+        session.add(recording_session)
+        await session.commit()
+
+        await execution.log_progress(
+            session,
+            60,
+            "Transcription initiated, waiting for completion via webhook",
+            logger=task_logger,
+        )
+
+        task_logger.info(
+            "Recording processing paused, waiting for Deepgram webhook callback",
+            recording_session_id=recording_session_id.hex,
+            deepgram_request_id=recording_session.deepgram_request_id,
+        )
+        # Don't complete here - webhook will handle completion
+        return
+
+    # For synchronous transcription services (GCP or Deepgram without callback), complete immediately
     recording_session.status = RecordingStatus.COMPLETED
     session.add(recording_session)
     await session.commit()

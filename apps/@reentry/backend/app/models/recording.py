@@ -78,6 +78,12 @@ class RecordingSession(BaseModel, table=True):
         description="Flag indicating if transcription has been approved",
     )
 
+    deepgram_request_id: Optional[str] = Field(
+        default=None,
+        nullable=True,
+        description="Deepgram async transcription request ID for callback tracking",
+    )
+
     # Relationship back to Intake
     intake: Mapped[Intake] = Relationship(
         back_populates="recording_session",

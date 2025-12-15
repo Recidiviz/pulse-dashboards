@@ -41,6 +41,7 @@ const StatusMessage = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      console.log("Key pressed:", e.key);
       if (e.ctrlKey && e.shiftKey && e.key === "D") {
         setShowDebugButton((prev) => !prev);
       }
@@ -78,7 +79,6 @@ const StatusMessage = ({
       console.error("Error retrying processing:", error);
     }
   };
-
   return (
     <div className="self-stretch flex-1 flex flex-col justify-center items-center gap-5">
       <div className="w-full max-w-[400px] flex flex-col items-center gap-2">
@@ -88,7 +88,7 @@ const StatusMessage = ({
         <div className="text-center text-[#2a5469]/90 text-sm font-medium leading-[16.8px]">
           {message}
         </div>
-        {showDebugButton && title === "In Progress" && sessionId && (
+        {showDebugButton && title === "Processing" && sessionId && (
           <button
             type="button"
             onClick={handleRetryProcessing}

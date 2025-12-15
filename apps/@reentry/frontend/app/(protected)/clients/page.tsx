@@ -131,21 +131,7 @@ const ClientsPage = () => {
     ["Assessment Complete", "intake_complete"],
     ["Error", "error"],
   ];
-
-  const executeSearch = () => {
-    setActiveSearchTerm(searchTerm);
-    // Reset to page 1 when searching
-    const params = new URLSearchParams(searchParams);
-    params.set("page", "1");
-    router.push(`?${params.toString()}`);
-  };
-
-  const handleSearchKeyDown = (e) => {
-    if (e.key === "Enter") {
-      executeSearch();
-    }
-  };
-
+  
   const auth = useAuth();
 
   // Get page from URL query parameters, default to 1
@@ -172,6 +158,17 @@ const ClientsPage = () => {
       },
     },
   );
+
+  const executeSearch = () => {
+    setActiveSearchTerm(searchTerm);
+    refetch();
+  };
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter") {
+      executeSearch();
+    }
+  };
 
   const { mutateAsync: addClientMutation } = $api.useMutation(
     "post",

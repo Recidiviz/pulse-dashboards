@@ -14,7 +14,8 @@ async def deepgram_transcription_diarization(
     session_id: str = "",
     audio_url: str | None = None,
     diarize: bool = True,
-) -> dict:
+    callback_url: str | None = None,
+) -> dict | str:
     """
     Transcribe audio using Deepgram API (SDK v5.0.0+).
 
@@ -23,9 +24,11 @@ async def deepgram_transcription_diarization(
         session_id: Optional session identifier for logging
         audio_url: URL to audio file for URL-based transcription (optional)
         diarize: Whether to enable speaker diarization
+        callback_url: Optional callback URL for async transcription (returns request_id)
 
     Returns:
-        dict: A JSON-serializable dictionary containing the transcription results
+        dict: A JSON-serializable dictionary containing the transcription results (sync mode)
+        str: Request ID if callback_url is provided (async mode)
     """
     # Create httpx client with longer timeout (1200 seconds = 20 minutes for 2-hour audio)
     httpx_client = httpx.Client(timeout=1200.0)
@@ -53,35 +56,64 @@ async def deepgram_transcription_diarization(
     # Use URL-based transcription if audio_url is provided, otherwise use file upload
     if audio_url:
         try:
-            logger.info(f"{session_id}: Using signed URL for Deepgram transcription")
+            if callback_url:
+                logger.info(
+                    f"{session_id}: Using async Deepgram transcription with callback URL"
+                )
+            else:
+                logger.info(
+                    f"{session_id}: Using signed URL for Deepgram transcription"
+                )
 
             start_time = time.time()
 
             # For v5.0.0+, use client.listen.v1.media.transcribe_url()
-            response = client.listen.v1.media.transcribe_url(
-                url=audio_url,
-                model="nova-3",
-                diarize=diarize,
-                punctuate=diarize,
-                smart_format=True,
-            )
+            transcribe_options = {
+                "url": audio_url,
+                "model": "nova-3",
+                "diarize": diarize,
+                "punctuate": diarize,
+                "smart_format": True,
+            }
+
+            # Add callback URL if provided for async transcription
+            if callback_url:
+                transcribe_options["callback"] = callback_url
+
+            response = client.listen.v1.media.transcribe_url(**transcribe_options)
 
             end_time = time.time()
             transcription_duration = end_time - start_time
-            logger.info(
-                f"{session_id}: Deepgram transcription API call took {transcription_duration:.2f} seconds."
-            )
 
-            logger.info(f"{session_id}: Deepgram transcription completed successfully")
+            # If callback is used, response contains request_id, not full transcription
+            if callback_url:
+                request_id = getattr(response, "request_id", None) or str(response)
+                logger.info(
+                    f"{session_id}: Deepgram async transcription initiated. "
+                    f"Request ID: {request_id}. Took {transcription_duration:.2f} seconds."
+                )
+                httpx_client.close()
+                return request_id
+            else:
+                # Synchronous mode - full transcription returned
+                logger.info(
+                    f"{session_id}: Deepgram transcription API call took {transcription_duration:.2f} seconds."
+                )
 
-            # Convert to dict for JSON serialization
-            result = convert_to_dict(response)
+                logger.info(
+                    f"{session_id}: Deepgram transcription completed successfully"
+                )
 
-            logger.debug(f"{session_id}: Deepgram API response type: {type(result)}")
+                # Convert to dict for JSON serialization
+                result = convert_to_dict(response)
 
-            httpx_client.close()
+                logger.debug(
+                    f"{session_id}: Deepgram API response type: {type(result)}"
+                )
 
-            return result
+                httpx_client.close()
+
+                return result
 
         except Exception as e:
             logger.error(f"{session_id}: Deepgram transcription error: {str(e)}")

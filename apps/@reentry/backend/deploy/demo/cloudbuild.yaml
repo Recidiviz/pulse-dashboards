@@ -78,6 +78,8 @@ steps:
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840,
         RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
         CHECKFINALCHARACTERHERE=todo:pending-to-fix
+        BASE_URL=https://backend-api-demo-773019812766.us-central1.run.app
+        DEEPGRAM_CALLBACK=True
 
   # Deploy Worker service
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"

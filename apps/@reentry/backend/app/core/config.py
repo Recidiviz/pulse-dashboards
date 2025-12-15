@@ -93,8 +93,14 @@ class Settings(BaseSettings):
     # Deepgram api key
     DEEPGRAM_API_KEY: str
 
+    # Deepgram callback configuration - set to True to use callback URLs for async transcription
+    DEEPGRAM_CALLBACK: bool = True
+
     # Transcription service provider, deepgram or gcp
     DIARIZATION_SERVICE: str = "deepgram"
+
+    # Base URL for the application (used for webhook callbacks)
+    BASE_URL: str = "http://localhost:8000"
 
     # Google Cloud Service account email.
     # In demo-staging-prod this value is populated as an env variable.

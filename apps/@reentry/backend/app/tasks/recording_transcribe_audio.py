@@ -14,8 +14,8 @@ from app.services.recording_service import RecordingService
 from app.tasks.scheduler import Execution
 from app.tasks.transcribe_audio_with_deepgram import deepgram_transcription_diarization
 from app.utils.config_loader import ConfigLoader
+from app.utils.transcription.deepgram_utils import process_deepgram_transcription
 from app.utils.transcription.post_processing import (
-    DeepgramTranscriptionInput,
     GCPTranscriptionInput,
     TranscriptionProcessor,
 )
@@ -72,7 +72,10 @@ async def transcribe_audio(
 ) -> None:
     """
     Transcribes the audio from a recording session.
+    For Deepgram in production: initiates async transcription and returns immediately.
+    For Deepgram locally or GCP: waits for full transcription result and processes it.
     """
+
     await execution.log_progress(
         session, 40, "Starting audio transcription.", logger=task_logger
     )
@@ -87,12 +90,40 @@ async def transcribe_audio(
         }
 
         transcribe_func = TRANSCRIPTION_SERVICES[settings.DIARIZATION_SERVICE]
+
         if settings.DIARIZATION_SERVICE == "deepgram":
-            response = await transcribe_func(
+            result = await transcribe_func(
                 execution, session, recording_session, task_logger
             )
-        else:
-            response = await transcribe_func(execution, session, recording_session)
+
+            # Check if result is a request_id (async mode) or full transcription (sync mode)
+            if isinstance(result, str):
+                # Async mode - request_id returned, webhook will handle processing
+                task_logger.info(
+                    "Deepgram transcription initiated, will complete via webhook",
+                    request_id=result,
+                )
+                return
+            else:
+                # Sync mode - full transcription result returned, process it now
+                task_logger.info("Processing Deepgram transcription result")
+                await process_deepgram_transcription(
+                    recording_session=recording_session,
+                    transcription_result=result,
+                    session=session,
+                    task_logger=task_logger,
+                )
+                await execution.log_progress(
+                    session, 90, "Post-processing completed", logger=task_logger
+                )
+                task_logger.info(
+                    "Transcription completed successfully",
+                    session_id=recording_session.id,
+                )
+                return
+
+        # GCP - synchronous mode
+        response = await transcribe_func(execution, session, recording_session)
 
         if not response.results:
             raise ValueError("No transcription results found")
@@ -110,10 +141,7 @@ async def transcribe_audio(
         )
 
         # Post-process transcription
-        if settings.DIARIZATION_SERVICE == "deepgram":
-            transcription_input = DeepgramTranscriptionInput(**response_dict)
-        else:
-            transcription_input = GCPTranscriptionInput(**response_dict)
+        transcription_input = GCPTranscriptionInput(**response_dict)
 
         processor = TranscriptionProcessor(
             transcription=transcription_input,
@@ -184,9 +212,25 @@ async def _transcribe_audio_with_deepgram(
     session: AsyncSession,
     recording_session: RecordingSession,
     task_logger: structlog.BoundLogger,
-):
+) -> str | dict:
+    """
+    Transcribe audio with Deepgram.
+
+    In production (non-local): Initiates async transcription with callback and returns request_id.
+    In local environment: Performs synchronous transcription and returns full result.
+
+    Returns:
+        str: Deepgram request_id for async transcription (production)
+        dict: Full transcription result for sync transcription (local)
+    """
+
     session_id = str(recording_session.id)
-    task_logger.info("Starting Deepgram transcription")
+    needs_callback_url = settings.DEEPGRAM_CALLBACK
+
+    if needs_callback_url:
+        task_logger.info("Initiating async Deepgram transcription (production mode)")
+    else:
+        task_logger.info("Starting synchronous Deepgram transcription (local mode)")
 
     await execution.log_progress(
         session,
@@ -202,10 +246,11 @@ async def _transcribe_audio_with_deepgram(
         task_logger.info("Generating signed URL for audio file in GCS")
 
         async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:
-            # Generate a signed URL that expires in 5 minutes
+            # Generate signed URL with appropriate expiration time
+            expiration_minutes = 12 if not needs_callback_url else 60
             signed_url = await recording_service.generate_signed_url(
                 file_path=recording_session.gcs_final_file_path,
-                expiration_minutes=12,
+                expiration_minutes=expiration_minutes,
             )
 
         task_logger.info("Signed URL generated for Deepgram")
@@ -216,42 +261,57 @@ async def _transcribe_audio_with_deepgram(
             "Signed URL generated, sending to Deepgram",
         )
 
-        task_logger.info("Calling Deepgram transcription service with signed URL")
+        # Determine whether to use callback URL (async) or not (sync)
+        callback_url = None
+        if needs_callback_url:
+            callback_url = f"{settings.BASE_URL}/webhooks/deepgram/transcription"
+            task_logger.info(
+                "Using callback URL for async processing", callback_url=callback_url
+            )
+
+        task_logger.info("Calling Deepgram transcription service")
         deepgram_result = await deepgram_transcription_diarization(
             session_id=session_id,
             audio_url=signed_url,
+            callback_url=callback_url,
         )
 
-        task_logger.info("Deepgram transcription completed")
+        if needs_callback_url:
+            # Async mode - we got a request_id
+            request_id = deepgram_result
+            task_logger.info(
+                "Deepgram async transcription initiated", request_id=request_id
+            )
 
-        task_logger.info("Saving raw Deepgram response to GCS")
-        await _save_to_gcs(
-            settings.GCS_BUCKET_NAME,
-            f"transcriptions/{recording_session.id}_deepgram_raw.json",
-            deepgram_result,
-        )
-        task_logger.info("Raw Deepgram response saved to GCS")
+            # Store the request_id in the recording session
+            recording_session.deepgram_request_id = request_id
+            session.add(recording_session)
+            await session.commit()
 
-        await execution.log_progress(
-            session,
-            65,
-            "Deepgram transcription completed",
-        )
+            await execution.log_progress(
+                session,
+                55,
+                "Deepgram transcription initiated, waiting for callback",
+            )
 
-        class DeepgramResponse:
-            def __init__(self, data):
-                self.data = data
-                self.results = data.get("results", {}).get("channels", [])
+            task_logger.info(
+                "Request ID stored, transcription will be processed via webhook",
+                request_id=request_id,
+            )
 
-            @classmethod
-            def to_json(cls, obj):
-                return json.dumps(obj.data)
+            return request_id
+        else:
+            # Synchronous mode - we got the full transcription result
+            task_logger.info("Deepgram transcription completed")
 
-        response = DeepgramResponse(deepgram_result)
+            await execution.log_progress(
+                session,
+                65,
+                "Deepgram transcription completed",
+            )
 
-        task_logger.info("Deepgram response processed successfully")
-
-        return response
+            task_logger.info("Deepgram response processed successfully")
+            return deepgram_result
 
     except Exception as e:
         task_logger.error("Deepgram transcription failed", error=str(e))
@@ -259,14 +319,7 @@ async def _transcribe_audio_with_deepgram(
 
 
 async def _save_to_gcs(bucket_name: str, object_name: str, data: dict) -> None:
-    service = RecordingService(bucket_name)
-    try:
-        await service.ensure_bucket_exists()
-        await service.storage.upload(
-            bucket=bucket_name,
-            object_name=object_name,
-            file_data=json.dumps(data, indent=2, ensure_ascii=False),
-            content_type="application/json",
-        )
-    finally:
-        await service.close()
+    """Wrapper for the GCS save utility function."""
+    from app.utils.transcription.deepgram_utils import save_to_gcs
+
+    await save_to_gcs(bucket_name, object_name, data)

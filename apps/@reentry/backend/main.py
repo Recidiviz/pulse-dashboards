@@ -40,6 +40,7 @@ from app.routes import (
     recording_session_router,
     resources_router,
     transcription_router,
+    webhook_router,
 )
 from app.tasks.base import broker
 from app.utils.intake.socket_manager import intake_setup_background_tasks, socket_app
@@ -157,6 +158,7 @@ exclude_paths = [
     "/intake/internal",
     "/intake/client/start-assessment-action-plan",
     "/transcribe",
+    "/webhooks/deepgram/transcription",
     "/autocomplete-city",
     "/autocomplete-address",
 ]
@@ -199,6 +201,7 @@ app.include_router(intake_admin_router.router, prefix="/intake/admin")
 app.include_router(client_router.router, prefix="/clients")
 app.include_router(recording_session_router.router, prefix="/recordings")
 app.include_router(transcription_router.router, prefix="/transcriptions")
+app.include_router(webhook_router.router, prefix="/webhooks")
 
 
 # Health check
