@@ -16,10 +16,29 @@
 // =============================================================================
 
 import { OpportunityProfileModuleName } from "../../../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
+import { DenialInputSettings } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMiCustodyLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
   get sidebarComponents(): OpportunityProfileModuleName[] {
     return ["UsMiLastAssessment", "Incarceration"];
+  }
+  get denialInputSettings(): Record<string, DenialInputSettings> {
+    return {
+      PROGRAMMING: {
+        required: true,
+        heading: "Programming details:",
+        placeholder:
+          "Please specify what programming is pending and when the programming is expected to be completed",
+        inputType: "text",
+      },
+      ACCOMMODATION: {
+        required: true,
+        heading: "Accommodation details:",
+        placeholder:
+          "Please specify the required accommodations that are unavailable at other facilities or housing units",
+        inputType: "text",
+      },
+    };
   }
 }
