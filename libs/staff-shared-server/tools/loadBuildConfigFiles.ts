@@ -43,3 +43,20 @@ await Promise.all(
     },
   ),
 );
+
+console.log("Copying encrypted config files...");
+
+const projectRoot = path.join(__dirname, "..");
+const encryptedConfigFiles = await fs.readdir(projectRoot);
+const encYamlFiles = encryptedConfigFiles.filter(
+  (file) => file.startsWith("gae-") && file.endsWith(".enc.yaml"),
+);
+
+await Promise.all(
+  encYamlFiles.map(async (filename) => {
+    await fs.copyFile(
+      path.join(projectRoot, filename),
+      path.join(deployConfigsDir, filename),
+    );
+  }),
+);
