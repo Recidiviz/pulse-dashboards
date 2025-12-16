@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ExecutorContext, logger, runExecutor } from "@nx/devkit";
+import { ExecutorContext, logger, targetToTargetString } from "@nx/devkit";
 import { execSync } from "child_process";
 
 import { SOPS_ENV_PREFIX } from "./sops-env";
@@ -25,26 +25,34 @@ export interface DelegateExecutorOptions {
   prefixedTarget: string; // The requires-sops-env: prefixed target name
 }
 
-async function delegateToTarget(
+function delegateToTarget(
   project: string,
   target: string,
   configuration: string,
   overrides: { [k: string]: unknown },
-  context: ExecutorContext,
-): Promise<boolean> {
-  let success = true;
-  for await (const s of await runExecutor(
-    {
+): boolean {
+  try {
+    // Build the target string
+    const targetString = targetToTargetString({
       project,
       target,
       configuration,
-    },
-    { ...overrides },
-    context,
-  )) {
-    success = success && s.success;
+    });
+
+    // Build override arguments
+    const overrideArgs = Object.entries(overrides)
+      .map(([key, value]) => `--${key}=${JSON.stringify(value)}`)
+      .join(" ");
+
+    const command = `nx run ${targetString}${overrideArgs ? " " + overrideArgs : ""}`;
+    logger.verbose(`Running: ${command}`);
+    execSync(command, { stdio: "inherit" });
+    return true;
+  } catch (error) {
+    logger.error(`Failed to run target ${target} for project ${project}:`);
+    logger.error(error);
+    return false;
   }
-  return success;
 }
 
 /**
@@ -77,8 +85,12 @@ export default async function runSopsDelegateExecutor(
     logger.verbose("SOPS decryption skipped (NX_SKIP_SOPS=true)");
     // Still run the target even if SOPS is skipped
     try {
-      const command = `nx ${options.prefixedTarget} ${projectName} --configuration ${configurationName}`;
-      execSync(command, { stdio: "inherit" });
+      delegateToTarget(
+        projectName,
+        options.prefixedTarget,
+        configurationName,
+        argsToForward,
+      );
       return { success: true };
     } catch {
       return { success: false };
@@ -112,12 +124,11 @@ export default async function runSopsDelegateExecutor(
     );
     // Still run the target even if no SOPS files
     try {
-      const success = await delegateToTarget(
+      const success = delegateToTarget(
         projectName,
         prefixedTarget,
         configurationName,
         argsToForward,
-        context,
       );
 
       return { success };
@@ -152,12 +163,11 @@ export default async function runSopsDelegateExecutor(
 
   // Run the prefixed target with inherited environment
   try {
-    const success = await delegateToTarget(
+    const success = delegateToTarget(
       projectName,
       prefixedTarget,
       configurationName,
       argsToForward,
-      context,
     );
 
     return { success };
