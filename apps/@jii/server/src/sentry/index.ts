@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,26 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@jii/trpc";
-import { buildCommonServer } from "~server-setup-plugin";
+import { init, prismaIntegration } from "@sentry/node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
-export function buildServer() {
-  // this is not the current project, it is the backend shared with staff app for auth and Firestore
-  const firebaseBackendProject = process.env["FIREBASE_BACKEND_PROJECT"];
-
-  if (!firebaseBackendProject) {
-    throw new Error("Missing required Firebase configuration");
-  }
-
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    // the extra path segment lets us namespace the server in the frontend proxy config
-    trpcPrefix: "/api/trpc",
-    firebaseAuthOptions: {
-      projectId: firebaseBackendProject,
-    },
-  });
-
-  return server;
-}
+init({
+  // same project as jii-functions, we expect this will eventually replace that
+  dsn: "https://9854b2227e71fa6bd5191e28c0e14320@o432474.ingest.us.sentry.io/4509159316979712",
+  environment: process.env["SENTRY_ENV"],
+  tracesSampleRate: 0,
+  profilesSampleRate: 0,
+  integrations: [nodeProfilingIntegration(), prismaIntegration()],
+  maxValueLength: 5000,
+});

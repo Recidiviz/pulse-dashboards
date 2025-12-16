@@ -99,3 +99,8 @@ variable "enable_private_path_for_google_cloud_services" {
   type    = string
   default = false
 }
+
+variable "encryption_key_id" {
+  type    = string
+  default = null
+}

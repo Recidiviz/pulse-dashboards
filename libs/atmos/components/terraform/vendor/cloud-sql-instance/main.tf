@@ -69,6 +69,7 @@ resource "google_sql_database_instance" "data" {
   database_version    = var.database_version
   region              = var.region
   deletion_protection = true
+  encryption_key_name = var.encryption_key_id
 
   settings {
     disk_autoresize   = true

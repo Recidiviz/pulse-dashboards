@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,26 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@jii/trpc";
-import { buildCommonServer } from "~server-setup-plugin";
+const { sentryEsbuildPlugin } = require("@sentry/esbuild-plugin");
 
-export function buildServer() {
-  // this is not the current project, it is the backend shared with staff app for auth and Firestore
-  const firebaseBackendProject = process.env["FIREBASE_BACKEND_PROJECT"];
+const plugins = [];
 
-  if (!firebaseBackendProject) {
-    throw new Error("Missing required Firebase configuration");
-  }
-
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    // the extra path segment lets us namespace the server in the frontend proxy config
-    trpcPrefix: "/api/trpc",
-    firebaseAuthOptions: {
-      projectId: firebaseBackendProject,
-    },
-  });
-
-  return server;
+if (process.env.SENTRY_ENV !== "development") {
+  // Sentry sourcemap plugin must be last
+  plugins.push(
+    sentryEsbuildPlugin({
+      org: "recidiviz-inc",
+      project: "jii-backend",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      sourcemaps: {
+        assets: ["**/*.js", "**/*.js.map"],
+      },
+    }),
+  );
 }
+
+module.exports = {
+  plugins,
+};
