@@ -94,7 +94,7 @@ class Settings(BaseSettings):
     DEEPGRAM_API_KEY: str
 
     # Deepgram callback configuration - set to True to use callback URLs for async transcription
-    DEEPGRAM_CALLBACK: bool = True
+    DEEPGRAM_CALLBACK: bool = False
 
     # Transcription service provider, deepgram or gcp
     DIARIZATION_SERVICE: str = "deepgram"
