@@ -19,7 +19,7 @@ import Base64 from "crypto-js/enc-base64";
 import SHA256 from "crypto-js/sha256";
 import { GoogleAuth } from "google-auth-library";
 
-import { AuthorizedUserProfile } from "~@jii/auth";
+import { AuthorizedUserProfile, Permission } from "~@jii/auth";
 
 import { secrets } from "./secrets";
 
@@ -27,6 +27,7 @@ type AdminPanelUserResponse = {
   stateCode: string;
   district: string;
   allowedApps: Record<"jii" | "staff", boolean>;
+  emailAddress: string;
 };
 
 export async function checkAdminPanelPermissions(
@@ -55,16 +56,25 @@ export async function checkAdminPanelPermissions(
     retry: true,
   });
 
-  const { stateCode, district, allowedApps } = response.data;
+  const { stateCode, district, allowedApps, emailAddress } = response.data;
 
   if (!allowedApps?.jii) {
     // User does not have access to the JII app
     return undefined;
   }
 
+  const permissions: Permission[] = ["enhanced"];
+
+  if (
+    // Do not show live data to test users in ID
+    !(stateCode === "US_ID" && emailAddress.endsWith("@recidiviz-test.org"))
+  ) {
+    permissions.push("live_data");
+  }
+
   return {
     stateCode,
     district,
-    permissions: ["live_data", "enhanced"],
+    permissions,
   };
 }
