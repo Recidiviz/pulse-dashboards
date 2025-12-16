@@ -80,6 +80,7 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       formInformation.q1Notes.listPriorViolentTdocConvictions60Months;
 
     return {
+      ...formInformation,
       q1Selection,
       q2Selection,
       q3Selection,
@@ -88,7 +89,6 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       q6Selection,
       q1aNotes,
       q1bNotes,
-      ...formInformation,
     };
   }
 
@@ -127,8 +127,19 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       q6Selection,
     );
 
+    const totalScore = Math.min(
+      40,
+      q1Score + q2Score + q3Score + q4Score + q5Score + q6Score,
+    );
+
     return {
-      totalScore: q1Score + q2Score + q3Score + q4Score + q5Score + q6Score,
+      q1Score,
+      q2Score,
+      q3Score,
+      q4Score,
+      q5Score,
+      q6Score,
+      totalScore,
     };
   }
 }

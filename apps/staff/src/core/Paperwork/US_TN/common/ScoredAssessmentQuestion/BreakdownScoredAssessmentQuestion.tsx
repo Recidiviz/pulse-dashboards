@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler } from "react";
 import styled from "styled-components";
 
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
@@ -43,29 +43,15 @@ const BreakdownTable = styled.table`
   }
 `;
 
-type ScoreDict = Partial<Record<BreakdownAssessmentQuestionPeriod, number>>;
-
 export function BreakdownScoredAssessmentQuestion({
   questionNumber,
   questionSpec,
   disabled,
-  setScore,
 }: {
   questionSpec: BreakdownAssessmentQuestionSpec;
   questionNumber: number;
   disabled?: boolean;
-  setScore: (score: number) => void;
 }) {
-  const [scoreDict, setScoreDict] = useState<ScoreDict>(
-    Object.fromEntries(questionSpec.sections.map((s) => [s.period, 0])),
-  );
-
-  const updateScoreDict = (update: ScoreDict) => {
-    const newScoreDict = { ...scoreDict, ...update };
-    setScoreDict((existing) => ({ ...existing, ...update }));
-    setScore(Object.values(newScoreDict).reduce((a, b) => a + b));
-  };
-
   return (
     <SubItem>
       <BreakdownTable>
@@ -76,7 +62,6 @@ export function BreakdownScoredAssessmentQuestion({
                 key={section.period}
                 section={section}
                 questionNumber={questionNumber}
-                updateScoreDict={updateScoreDict}
                 disabled={disabled}
               />
             );
@@ -90,12 +75,10 @@ export function BreakdownScoredAssessmentQuestion({
 const BreakdownRow = observer(function BreakdownRow({
   section: { period, scores },
   questionNumber,
-  updateScoreDict,
   disabled,
 }: {
   section: BreakdownAssessmentQuestionSpec["sections"][number];
   questionNumber: number;
-  updateScoreDict: (scoreDict: ScoreDict) => void;
   disabled?: boolean;
 }) {
   const selectionKey = `q${questionNumber}Selection_${period.replace("-", "_")}`;
@@ -104,7 +87,6 @@ const BreakdownRow = observer(function BreakdownRow({
   const onChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     const value = parseInt(event.target.value, 10);
     opportunityForm.updateDraftData(selectionKey, value);
-    updateScoreDict({ [period]: scores[value] });
   };
 
   return (

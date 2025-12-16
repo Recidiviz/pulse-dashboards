@@ -45,8 +45,7 @@ exports[`schema for ineligible 1`] = `
     "q1Score": 2,
     "q2Notes": "a third offense, a fourth offense",
     "q2Score": 10,
-    "q3Notes": "ABC on 1/8/2023
-XYZ on 2/11/2022",
+    "q3Notes": "ABC on 1/8/2023, XYZ on 2/11/2022",
     "q3Score": -3,
     "q4Notes": "DEF on 1/8/2023",
     "q4Score": 2,

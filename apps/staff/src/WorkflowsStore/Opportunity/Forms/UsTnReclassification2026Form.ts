@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnAnnualReclassification2026DraftData } from "~datatypes";
+import {
+  formatMultiplePeriodReports,
+  UsTnReclassification2026DraftData,
+} from "~datatypes";
 
 import {
   getBreakdownSectionQuestionIndex,
@@ -29,7 +32,7 @@ import { UsTnAnnualReclassification2026Opportunity } from "../UsTn";
 import { FormBase } from "./FormBase";
 
 export class UsTnReclassification2026Form extends FormBase<
-  UsTnAnnualReclassification2026DraftData,
+  UsTnReclassification2026DraftData,
   UsTnAnnualReclassification2026Opportunity
 > {
   navigateToFormText = "Auto-fill paperwork";
@@ -107,7 +110,7 @@ export class UsTnReclassification2026Form extends FormBase<
 
     const q7Selection = getSingleSectionQuestionIndex(
       assessmentQuestions[6],
-      formInformation.q6Score,
+      formInformation.q7Score,
     );
 
     const q1aNotes =
@@ -116,7 +119,20 @@ export class UsTnReclassification2026Form extends FormBase<
     const q1bNotes =
       formInformation.q1Notes.listPriorViolentTdocConvictions60Months;
 
+    const q3NotesFormatted = formatMultiplePeriodReports(
+      formInformation.q3Notes,
+    );
+
+    const q4NotesFormatted = formatMultiplePeriodReports(
+      formInformation.q4Notes,
+    );
+
+    const q5NotesFormatted = formatMultiplePeriodReports(
+      formInformation.q5Notes,
+    );
+
     return {
+      ...formInformation,
       q1Selection,
       q2Selection,
       q3Selection_0_6,
@@ -132,7 +148,9 @@ export class UsTnReclassification2026Form extends FormBase<
       q7Selection,
       q1aNotes,
       q1bNotes,
-      ...formInformation,
+      q3NotesFormatted,
+      q4NotesFormatted,
+      q5NotesFormatted,
     };
   }
 
@@ -210,9 +228,20 @@ export class UsTnReclassification2026Form extends FormBase<
       q7Selection,
     );
 
+    const totalScore = Math.min(
+      40,
+      q1Score + q2Score + q3Score + q4Score + q5Score + q6Score + q7Score,
+    );
+
     return {
-      totalScore:
-        q1Score + q2Score + q3Score + q4Score + q5Score + q6Score + q7Score,
+      q1Score,
+      q2Score,
+      q3Score,
+      q4Score,
+      q5Score,
+      q6Score,
+      q7Score,
+      totalScore,
     };
   }
 }

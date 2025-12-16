@@ -15,17 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
-
+import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { AssessmentItem, SubItem } from "./AssessmentItem";
 import { BreakdownScoredAssessmentQuestion } from "./BreakdownScoredAssessmentQuestion";
 import { SingleScoredAssessmentQuestion } from "./SingleScoredAssessmentQuestion";
 import { AssessmentQuestionProps } from "./types";
 
 export function ScoredAssessmentQuestion(props: AssessmentQuestionProps) {
-  const [score, setScore] = useState<number>(0);
   const { questionNumber, questionSpec, supportingText, disabled, children } =
     props;
+
+  // @ts-expect-error The opportunities using these components have the derivedData field
+  const derivedData = useOpportunityFormContext().derivedData;
+
+  const score = derivedData?.[`q${questionNumber}Score`] ?? 0;
 
   return (
     <AssessmentItem
@@ -39,14 +42,12 @@ export function ScoredAssessmentQuestion(props: AssessmentQuestionProps) {
           questionSpec={questionSpec}
           questionNumber={questionNumber}
           disabled={disabled}
-          setScore={setScore}
         />
       ) : (
         <BreakdownScoredAssessmentQuestion
           questionSpec={questionSpec}
           questionNumber={questionNumber}
           disabled={disabled}
-          setScore={setScore}
         />
       )}
       <SubItem>{disabled || !children ? <br /> : children}</SubItem>

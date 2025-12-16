@@ -38,8 +38,8 @@ import {
   usMiSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
   usPaSpecialCircumstancesSupervisionSchema,
-  usTnAnnualReclassification2026Schema,
   usTnInitialClassification2026Schema,
+  usTnReclassification2026Schema,
 } from "~datatypes";
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
@@ -207,7 +207,9 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usTnExpiration: usTnExpirationSchema,
   usTnInitialClassification: usTnInitialClassificationSchema,
   usTnInitialClassification2026Policy: usTnInitialClassification2026Schema,
-  usTnAnnualReclassification2026Policy: usTnAnnualReclassification2026Schema,
+  usTnAnnualReclassification2026Policy: usTnReclassification2026Schema,
+  usTnCustodyLevelDowngrade2026Policy: usTnReclassification2026Schema,
+  usTnSpecialCustodyLevelUpgrade2026Policy: usTnReclassification2026Schema,
   usTnSuspensionOfDirectSupervision: usTnSuspensionOfDirectSupervisionSchema,
 
   // US_UT

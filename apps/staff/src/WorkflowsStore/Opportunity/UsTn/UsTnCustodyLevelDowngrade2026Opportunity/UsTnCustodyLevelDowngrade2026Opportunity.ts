@@ -18,8 +18,8 @@
 import { DocumentData } from "firebase/firestore";
 
 import {
-  UsTnAnnualReclassification2026ReferralRecord,
-  usTnAnnualReclassification2026Schema,
+  UsTnReclassification2026ReferralRecord,
+  usTnReclassification2026Schema,
 } from "~datatypes";
 
 import { Client } from "../../../Client";
@@ -28,14 +28,14 @@ import { OpportunityBase } from "../../OpportunityBase";
 
 export class UsTnCustodyLevelDowngrade2026Opportunity extends OpportunityBase<
   Client,
-  UsTnAnnualReclassification2026ReferralRecord["output"]
+  UsTnReclassification2026ReferralRecord["output"]
 > {
   constructor(client: Client, record: DocumentData) {
     super(
       client,
       "usTnCustodyLevelDowngrade2026Policy",
       client.rootStore,
-      usTnAnnualReclassification2026Schema.parse(record),
+      usTnReclassification2026Schema.parse(record),
     );
 
     this.form = new UsTnReclassification2026Form(this, client.rootStore);

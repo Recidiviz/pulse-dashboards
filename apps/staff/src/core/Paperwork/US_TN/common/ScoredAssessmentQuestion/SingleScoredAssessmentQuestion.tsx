@@ -61,12 +61,10 @@ export const SingleScoredAssessmentQuestion = observer(
     questionSpec,
     questionNumber,
     disabled,
-    setScore,
   }: {
     questionSpec: SingleSectionAssessmentQuestionSpec;
     questionNumber: number;
     disabled?: boolean;
-    setScore: (score: number) => void;
   }) {
     const selectionKey = `q${questionNumber}Selection`;
     const opportunityForm = useOpportunityFormContext();
@@ -77,10 +75,6 @@ export const SingleScoredAssessmentQuestion = observer(
         parseInt(event.target.value),
       );
     };
-
-    if (selection !== undefined) {
-      setScore(selection === -1 ? 0 : questionSpec.options[selection].score);
-    }
 
     return (
       <>

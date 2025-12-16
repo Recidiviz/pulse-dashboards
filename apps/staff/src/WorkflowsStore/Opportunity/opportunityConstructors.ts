@@ -87,7 +87,8 @@ import {
   UsTnCompliantReporting2025PolicyOpportunity,
   UsTnInitialClassification2026Opportunity,
 } from "./UsTn";
-import { UsTnCustodyLevelDowngrade2026Opportunity } from "./UsTn/UsTnCustodyLevelDowngrade2026Opportunity/usTnCustodyLevelDowngrade2026Opportunity";
+import { UsTnCustodyLevelDowngrade2026Opportunity } from "./UsTn/UsTnCustodyLevelDowngrade2026Opportunity/UsTnCustodyLevelDowngrade2026Opportunity";
+import { UsTnCustodyLevelUpgrade2026Opportunity } from "./UsTn/UsTnCustodyLevelUpdrade2026Opportunity/UsTnCustodyLevelDowngrade2026Opportunity";
 import { UsTxAnnualReportStatusOpportunity } from "./UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
 import { UsTxEarlyReleaseFromSupervisionOpportunity } from "./UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
 import { UsUtEarlyTerminationOpportunity } from "./UsUt";
@@ -180,6 +181,8 @@ export const opportunityConstructors = {
   usTnExpiration: UsTnExpirationOpportunity,
   usTnCustodyLevelDowngrade: UsTnCustodyLevelDowngradeOpportunity,
   usTnCustodyLevelDowngrade2026Policy: UsTnCustodyLevelDowngrade2026Opportunity,
+  usTnSpecialCustodyLevelUpgrade2026Policy:
+    UsTnCustodyLevelUpgrade2026Opportunity,
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
   usTnSuspensionOfDirectSupervision:
     UsTnSuspensionOfDirectSupervisionOpportunity,

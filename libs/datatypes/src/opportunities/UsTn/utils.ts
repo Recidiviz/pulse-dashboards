@@ -71,13 +71,31 @@ export const q2Notes = z
     return notes?.join(", ") ?? "";
   });
 
-const formatIncidentReportPeriod = (period: UsTnIncidentPeriodReport) => {
+const formatIncidentReportPeriod = (
+  period: UsTnIncidentPeriodReport,
+  padding = "",
+) => {
   return period.incidents
     .map((i) => {
-      return `${i.incidentTypeCode} on ${i.incidentDate.toLocaleDateString()}`;
+      return `${padding}${i.incidentTypeCode} on ${i.incidentDate.toLocaleDateString()}`;
+    })
+    .join(", ");
+};
+
+export function formatMultiplePeriodReports(
+  periods: UsTnIncidentPeriodReport[],
+): string {
+  const all_formatted = periods
+    .map((p) => {
+      const header = `Disciplinaries in last ${p.incidentTimePeriod}:\n`;
+      const formatted = header + formatIncidentReportPeriod(p, "  ");
+      console.log({ formatted });
+      return formatted;
     })
     .join("\n");
-};
+  console.log({ all_formatted });
+  return all_formatted;
+}
 
 const formatSinglePeriodReport = (
   notes: UsTnIncidentPeriodReport[] | undefined,

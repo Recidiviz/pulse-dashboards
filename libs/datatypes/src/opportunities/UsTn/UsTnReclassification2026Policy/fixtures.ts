@@ -18,12 +18,12 @@
 import { makeRecordFixture } from "../../../utils/zod";
 import { FixtureMapping } from "../../utils/types";
 import {
-  UsTnAnnualReclassification2026ReferralRecord,
-  usTnAnnualReclassification2026Schema,
+  UsTnReclassification2026ReferralRecord,
+  usTnReclassification2026Schema,
 } from "./schema";
 
-export const usTnAnnualReclassification2026PolicyFixtures = {
-  fullyEligible: makeRecordFixture(usTnAnnualReclassification2026Schema, {
+export const usTnReclassification2026PolicyFixtures = {
+  fullyEligible: makeRecordFixture(usTnReclassification2026Schema, {
     stateCode: "US_TN",
     externalId: "RES003",
     isEligible: true,
@@ -74,7 +74,7 @@ export const usTnAnnualReclassification2026PolicyFixtures = {
       ],
     },
   }),
-  ineligible: makeRecordFixture(usTnAnnualReclassification2026Schema, {
+  ineligible: makeRecordFixture(usTnReclassification2026Schema, {
     stateCode: "US_TN",
     externalId: "RES003",
     isEligible: false,
@@ -169,4 +169,4 @@ export const usTnAnnualReclassification2026PolicyFixtures = {
       ],
     },
   }),
-} satisfies FixtureMapping<UsTnAnnualReclassification2026ReferralRecord>;
+} satisfies FixtureMapping<UsTnReclassification2026ReferralRecord>;

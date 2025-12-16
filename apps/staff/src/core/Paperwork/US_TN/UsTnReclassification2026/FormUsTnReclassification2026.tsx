@@ -114,7 +114,7 @@ export const FormUsTnReclassification2026 = observer(
               >
                 <TextboxWithHeader
                   header={"List disciplinaries:"}
-                  name={"q3Notes"}
+                  name={"q3NotesFormatted"}
                 />
               </ScoredAssessmentQuestion>
             </ClassificationFormPage>
@@ -127,7 +127,7 @@ export const FormUsTnReclassification2026 = observer(
               >
                 <TextboxWithHeader
                   header={"List disciplinaries:"}
-                  name={"q4Notes"}
+                  name={"q4NotesFormatted"}
                 />
               </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
@@ -136,7 +136,7 @@ export const FormUsTnReclassification2026 = observer(
               >
                 <TextboxWithHeader
                   header={"List disciplinaries:"}
-                  name={"q5Notes"}
+                  name={"q5NotesFormatted"}
                 />
               </ScoredAssessmentQuestion>
             </ClassificationFormPage>

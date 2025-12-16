@@ -26,14 +26,14 @@ import { Client } from "../../../Client";
 import { UsTnReclassification2026Form } from "../../Forms/UsTnReclassification2026Form";
 import { OpportunityBase } from "../../OpportunityBase";
 
-export class UsTnAnnualReclassification2026Opportunity extends OpportunityBase<
+export class UsTnCustodyLevelUpgrade2026Opportunity extends OpportunityBase<
   Client,
   UsTnReclassification2026ReferralRecord["output"]
 > {
   constructor(client: Client, record: DocumentData) {
     super(
       client,
-      "usTnAnnualReclassification2026Policy",
+      "usTnSpecialCustodyLevelUpgrade2026Policy",
       client.rootStore,
       usTnReclassification2026Schema.parse(record),
     );

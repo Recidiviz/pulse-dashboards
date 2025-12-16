@@ -15,17 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usTnAnnualReclassification2026PolicyFixtures } from "./fixtures";
-import { usTnAnnualReclassification2026Schema } from "./schema";
+import { usTnReclassification2026PolicyFixtures } from "./fixtures";
+import { usTnReclassification2026Schema } from "./schema";
 
 test.each(
-  Object.keys(usTnAnnualReclassification2026PolicyFixtures) as Array<
-    keyof typeof usTnAnnualReclassification2026PolicyFixtures
+  Object.keys(usTnReclassification2026PolicyFixtures) as Array<
+    keyof typeof usTnReclassification2026PolicyFixtures
   >,
 )("schema for %s", (key) => {
   expect(
-    usTnAnnualReclassification2026Schema.parse(
-      usTnAnnualReclassification2026PolicyFixtures[key].input,
+    usTnReclassification2026Schema.parse(
+      usTnReclassification2026PolicyFixtures[key].input,
     ),
   ).toMatchSnapshot();
 });

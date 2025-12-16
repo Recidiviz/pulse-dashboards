@@ -21,33 +21,31 @@ import { ParsedRecord } from "../../../utils/types";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import { multiIncidentPeriodReportSchema, q1Notes, q2Notes } from "../utils";
 
-export const usTnAnnualReclassification2026Schema =
-  opportunitySchemaBase.extend({
-    formInformation: z
-      .object({
-        q1Score: z.coerce.number().nullable(),
-        q2Score: z.coerce.number().nullable(),
-        q3Score: z.coerce.number().nullable(),
-        q4Score: z.coerce.number().nullable(),
-        q5Score: z.coerce.number().nullable(),
-        q6Score: z.coerce.number().nullable(),
-        q7Score: z.coerce.number().nullable(),
-        q1Notes,
-        q2Notes,
-        // TODO: parse all periods, not just the first, once the form can accept them
-        q3Notes: multiIncidentPeriodReportSchema,
-        q4Notes: multiIncidentPeriodReportSchema,
-        q5Notes: multiIncidentPeriodReportSchema,
-      })
-      .passthrough(),
-  });
+export const usTnReclassification2026Schema = opportunitySchemaBase.extend({
+  formInformation: z
+    .object({
+      q1Score: z.coerce.number().nullable(),
+      q2Score: z.coerce.number().nullable(),
+      q3Score: z.coerce.number().nullable(),
+      q4Score: z.coerce.number().nullable(),
+      q5Score: z.coerce.number().nullable(),
+      q6Score: z.coerce.number().nullable(),
+      q7Score: z.coerce.number().nullable(),
+      q1Notes,
+      q2Notes,
+      q3Notes: multiIncidentPeriodReportSchema,
+      q4Notes: multiIncidentPeriodReportSchema,
+      q5Notes: multiIncidentPeriodReportSchema,
+    })
+    .passthrough(),
+});
 
-export type UsTnAnnualReclassification2026ReferralRecord = ParsedRecord<
-  typeof usTnAnnualReclassification2026Schema
+export type UsTnReclassification2026ReferralRecord = ParsedRecord<
+  typeof usTnReclassification2026Schema
 >;
 
-export type UsTnAnnualReclassification2026DraftData =
-  UsTnAnnualReclassification2026ReferralRecord["output"]["formInformation"] & {
+export type UsTnReclassification2026DraftData =
+  UsTnReclassification2026ReferralRecord["output"]["formInformation"] & {
     q1Selection: number;
     q2Selection: number;
     q3Selection_0_6: number;
@@ -63,4 +61,7 @@ export type UsTnAnnualReclassification2026DraftData =
     q7Selection: number;
     q1aNotes: string;
     q1bNotes: string;
+    q3NotesFormatted: string;
+    q4NotesFormatted: string;
+    q5NotesFormatted: string;
   };
