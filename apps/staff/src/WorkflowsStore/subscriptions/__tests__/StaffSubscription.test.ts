@@ -62,10 +62,11 @@ describe("StaffSubscription tests", () => {
           },
         },
         tenantStore: {
-          workflowsStaffFilterFn: (user: CombinedUserRecord) => ({
-            filterField: "district",
-            filterValues: ["TEST_DISTRICT"],
-          }),
+          getWorkflowsStaffFilterFnForSystem:
+            () => (user: CombinedUserRecord) => ({
+              filterField: "district",
+              filterValues: ["TEST_DISTRICT"],
+            }),
         },
         firestoreStore: {
           db: vi.fn(),
@@ -83,6 +84,7 @@ describe("StaffSubscription tests", () => {
           key: "incarcerationStaff",
         },
         incarcerationStaffRecordSchema,
+        "INCARCERATION",
       );
 
       sub.subscribe();
@@ -99,6 +101,7 @@ describe("StaffSubscription tests", () => {
           key: "supervisionStaff",
         },
         supervisionStaffRecordSchema,
+        "SUPERVISION",
       );
 
       sub.subscribe();
@@ -123,10 +126,11 @@ describe("StaffSubscription tests", () => {
           },
         },
         tenantStore: {
-          workflowsStaffFilterFn: (user: CombinedUserRecord) => ({
-            filterField: "district",
-            filterValues: ["TEST_DISTRICT"],
-          }),
+          getWorkflowsStaffFilterFnForSystem:
+            () => (user: CombinedUserRecord) => ({
+              filterField: "district",
+              filterValues: ["TEST_DISTRICT"],
+            }),
         },
         firestoreStore: {
           collection: collectionMock,
@@ -141,6 +145,7 @@ describe("StaffSubscription tests", () => {
           key: "supervisionStaff",
         },
         supervisionStaffRecordSchema,
+        "SUPERVISION",
       );
     });
 
@@ -158,7 +163,8 @@ describe("StaffSubscription tests", () => {
     test("datasource filters by district when a filter is defined", () => {
       runInAction(() => {
         // @ts-ignore
-        rootStoreMock.tenantStore.workflowsStaffFilterFn = filterByUserDistrict;
+        rootStoreMock.tenantStore.getWorkflowsStaffFilterFnForSystem = () =>
+          filterByUserDistrict;
       });
 
       sub.subscribe();
@@ -171,9 +177,9 @@ describe("StaffSubscription tests", () => {
     test("dataSource omits district filter when it's undefined", () => {
       runInAction(() => {
         // @ts-ignore
-        rootStoreMock.tenantStore.workflowsStaffFilterFn = (
-          user: CombinedUserRecord,
-        ) => undefined;
+        rootStoreMock.tenantStore.getWorkflowsStaffFilterFnForSystem =
+          () => (user: CombinedUserRecord) =>
+            undefined;
       });
 
       sub.subscribe();
@@ -192,12 +198,11 @@ describe("StaffSubscription tests", () => {
         // @ts-ignore
         rootStoreMock.currentTenantId = "US_TN";
         // @ts-ignore
-        rootStoreMock.tenantStore.workflowsStaffFilterFn = (
-          user: CombinedUserRecord,
-        ) => ({
-          filterField: "district",
-          filterValues: ["TEST2", "TEST3"],
-        });
+        rootStoreMock.tenantStore.getWorkflowsStaffFilterFnForSystem =
+          () => (user: CombinedUserRecord) => ({
+            filterField: "district",
+            filterValues: ["TEST2", "TEST3"],
+          });
       });
 
       expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
@@ -214,12 +219,11 @@ describe("StaffSubscription tests", () => {
         // @ts-ignore
         rootStoreMock.currentTenantId = "US_TN";
         // @ts-ignore
-        rootStoreMock.tenantStore.workflowsStaffFilterFn = (
-          user: CombinedUserRecord,
-        ) => ({
-          filterField: "district",
-          filterValues: ["DISTRICT1", "DISTRICT2"],
-        });
+        rootStoreMock.tenantStore.getWorkflowsStaffFilterFnForSystem =
+          () => (user: CombinedUserRecord) => ({
+            filterField: "district",
+            filterValues: ["DISTRICT1", "DISTRICT2"],
+          });
       });
 
       expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
@@ -245,12 +249,11 @@ describe("StaffSubscription tests", () => {
         // @ts-ignore
         rootStoreMock.currentTenantId = "US_TN";
         // @ts-ignore
-        rootStoreMock.tenantStore.workflowsStaffFilterFn = (
-          user: CombinedUserRecord,
-        ) => ({
-          filterField: "district",
-          filterValues: ["DISTRICT1", "DISTRICT2"],
-        });
+        rootStoreMock.tenantStore.getWorkflowsStaffFilterFnForSystem =
+          () => (user: CombinedUserRecord) => ({
+            filterField: "district",
+            filterValues: ["DISTRICT1", "DISTRICT2"],
+          });
         // @ts-ignore
         rootStoreMock.userStore.activeFeatureVariants = {
           workflowsSupervisorSearch: {},

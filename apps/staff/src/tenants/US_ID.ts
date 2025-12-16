@@ -41,7 +41,6 @@ const US_ID_CONFIG = {
   DOCName: "IDOC",
   availableStateCodes: [pathways.US_ID],
   enableUserRestrictions: false,
-  workflowsStaffFilterFn: filterByUserDistrict,
   workflowsMethodologyUrl:
     "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
   workflowsTasksConfig: {
@@ -159,6 +158,8 @@ const US_ID_CONFIG = {
           restrictedToFeatureVariant: "usIdCaseManagerSearch",
         },
       ],
+      //TODO(#10991) Confirm this filter should be used for facilities
+      staffFilterFn: filterByUserDistrict,
     },
     SUPERVISION: {
       search: [
@@ -174,6 +175,7 @@ const US_ID_CONFIG = {
           searchTitle: "supervision officer",
         },
       ],
+      staffFilterFn: filterByUserDistrict,
     },
   },
   navigation: {

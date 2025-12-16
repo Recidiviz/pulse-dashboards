@@ -31,6 +31,7 @@ export class StaffSubscription<
     private rootStore: RootStore,
     private collectionKey: FirestoreCollectionKey,
     parser: z.ZodType<RecordType, any, any>,
+    private systemId?: "SUPERVISION" | "INCARCERATION",
   ) {
     super(parser.parse);
   }
@@ -45,10 +46,10 @@ export class StaffSubscription<
     const compositeConstraint = [];
 
     if (user) {
-      const staffFilter = this.rootStore.tenantStore.workflowsStaffFilterFn(
-        user,
-        activeFeatureVariants,
-      );
+      const staffFilter =
+        this.rootStore.tenantStore.getWorkflowsStaffFilterFnForSystem(
+          this.systemId,
+        )(user, activeFeatureVariants);
       if (staffFilter) {
         const staffFilterConstraint = where(
           staffFilter.filterField,

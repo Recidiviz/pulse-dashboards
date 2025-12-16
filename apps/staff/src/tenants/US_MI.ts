@@ -26,7 +26,6 @@ const US_MI_CONFIG = {
   domain: "michigan.gov",
   availableStateCodes: [dashboard.US_MI],
   enableUserRestrictions: false,
-  workflowsStaffFilterFn: usMiFilterByUserDistrict,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsMethodologyUrl:
     "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
@@ -39,6 +38,7 @@ const US_MI_CONFIG = {
           searchTitle: "agent",
         },
       ],
+      staffFilterFn: usMiFilterByUserDistrict,
     },
     INCARCERATION: {
       search: [

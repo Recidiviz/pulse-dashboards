@@ -91,7 +91,7 @@ function getTenantIdFromQuery(): TenantId | undefined {
   }
 }
 
-const defaultStaffFilterFunction: StaffFilterFunction = (
+const defaultSupervisionStaffFilterFunction: StaffFilterFunction = (
   user: CombinedUserRecord,
 ) => {
   return user.updates?.overrideDistrictIds
@@ -292,17 +292,29 @@ export default class TenantStore {
   }
 
   /**
-   * Returns the function used to filter which staff members a user can search for. If the tenant
-   * config does not specify one, returns a function which allows all staff to search for anyone
-   * unless they have override districts set, in which case they can only search within the
-   * override districts.
+   * Returns the function used to filter which staff members a user can search for in a specific system.
+   * First checks for a per-system filter in workflowsSystemConfigs, then falls back to the default filter function.
    */
-  get workflowsStaffFilterFn(): StaffFilterFunction {
-    if (!this.currentTenantId) return defaultStaffFilterFunction;
+  getWorkflowsStaffFilterFnForSystem(
+    systemId: SystemId | undefined,
+  ): StaffFilterFunction {
+    if (!this.currentTenantId) return () => undefined;
 
+    const config = this.tenantConfigs[this.currentTenantId];
+    // Get the per-system config if a specific system is requested, or return undefined for "ALL" systems
+    const systemConfig =
+      systemId && systemId !== "ALL"
+        ? config?.workflowsSystemConfigs?.[systemId]
+        : undefined;
+
+    /*  Return the per-system staff filter function if it exists,
+        otherwise return the default supervision staff filter function for SUPERVISION system,
+        or undefined for INCARCERATION */
     return (
-      this.tenantConfigs[this.currentTenantId]?.workflowsStaffFilterFn ??
-      defaultStaffFilterFunction
+      systemConfig?.staffFilterFn ??
+      (systemId === "SUPERVISION"
+        ? defaultSupervisionStaffFilterFunction
+        : () => undefined)
     );
   }
 

@@ -243,7 +243,18 @@ beforeEach(() => {
   rootStore = new RootStore();
   mockAuthedUser();
   workflowsStore = rootStore.workflowsStore;
-  stateConfigs.US_XX.workflowsStaffFilterFn = filterByUserDistrict;
+  stateConfigs.US_XX.workflowsSystemConfigs = {
+    ...stateConfigs.US_XX.workflowsSystemConfigs,
+    SUPERVISION: {
+      staffFilterFn: filterByUserDistrict,
+      search: [
+        {
+          searchType: "OFFICER",
+          searchField: ["officerId"],
+        },
+      ],
+    },
+  };
 
   runInAction(() => {
     workflowsStore.updateActiveSystem("SUPERVISION");
@@ -677,7 +688,7 @@ test("districtsFilteredBy reflects user data", async () => {
   ]);
 });
 
-test("tenants without workflowsStaffFilterFn search all districts", async () => {
+test("tenants without staffFilterFn search all districts", async () => {
   runInAction(() => {
     rootStore.tenantStore.currentTenantId = "US_YY" as any;
   });
@@ -698,7 +709,7 @@ test("setting overrideDistrictIds in UserUpdates overrides user district", async
   expect(workflowsStore.districtsFilteredBy).toStrictEqual(["D1", "D77"]);
 });
 
-test("setting overrideDistrictIds in UserUpdates overrides undefined workflowsStaffFilterFn", async () => {
+test("setting overrideDistrictIds in UserUpdates overrides undefined staffFilterFn", async () => {
   runInAction(() => {
     rootStore.tenantStore.currentTenantId = "US_XX" as any;
   });

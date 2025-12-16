@@ -33,7 +33,6 @@ const US_CA_CONFIG = {
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsMethodologyUrl:
     "https://drive.google.com/file/d/1qIXF7G6CY_pVbNTNTyHvYJF1lAIgiy1n/view?usp=sharing",
-  workflowsStaffFilterFn: usCaFilterByRoleSubtype,
   workflowsSystemConfigs: {
     SUPERVISION: {
       search: [
@@ -43,6 +42,7 @@ const US_CA_CONFIG = {
           searchTitle: "agent",
         },
       ],
+      staffFilterFn: usCaFilterByRoleSubtype,
     },
   },
   navigation: {

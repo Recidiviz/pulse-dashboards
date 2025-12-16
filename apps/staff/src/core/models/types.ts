@@ -98,7 +98,6 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   workflowsOpportunityFilterConfig?: WorkflowsOpportunityFilterConfig;
   workflowsMethodologyUrl?: string;
   milestoneTypes?: MilestoneType[];
-  workflowsStaffFilterFn?: StaffFilterFunction;
   releaseDateCopyOverride?: string;
   supervisionEndCopyOverride?: string;
   incarcerationStaffTitleOverride?: string;
@@ -182,6 +181,7 @@ export type SearchConfig<R, T extends TenantConfigId> = {
 
 export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
   search: SearchConfig<R, T>[];
+  staffFilterFn?: StaffFilterFunction;
 };
 
 export type AnyWorkflowsSystemConfig =

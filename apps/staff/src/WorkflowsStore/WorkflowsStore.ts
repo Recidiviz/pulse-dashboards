@@ -160,6 +160,7 @@ export class WorkflowsStore implements Hydratable {
         key: "supervisionStaff",
       },
       supervisionStaffRecordSchema,
+      "SUPERVISION",
     );
     this.incarcerationStaffSubscription = new StaffSubscription(
       rootStore,
@@ -167,6 +168,7 @@ export class WorkflowsStore implements Hydratable {
         key: "incarcerationStaff",
       },
       incarcerationStaffRecordSchema,
+      "INCARCERATION",
     );
     this.clientsSubscription = new CaseloadSubscription<ClientRecord>(
       this,
@@ -533,10 +535,9 @@ export class WorkflowsStore implements Hydratable {
     if (!this.user) return undefined;
 
     const { filterField, filterValues } =
-      this.rootStore.tenantStore.workflowsStaffFilterFn(
-        this.user,
-        this.rootStore.userStore.activeFeatureVariants,
-      ) ?? {};
+      this.rootStore.tenantStore.getWorkflowsStaffFilterFnForSystem(
+        this.activeSystem,
+      )(this.user, this.rootStore.userStore.activeFeatureVariants) ?? {};
     if (filterField === "district") {
       return filterValues;
     }
@@ -862,14 +863,15 @@ export class WorkflowsStore implements Hydratable {
     if (!systemConfig) return fallback;
 
     // TODO(#7136) - filter down search configs depending on restricted role
-    const enabledSearchConfigs = systemConfig.search.filter((search) => {
-      return !(
-        search.restrictedToFeatureVariant &&
-        !this.rootStore.userStore.activeFeatureVariants[
-          search.restrictedToFeatureVariant
-        ]
-      );
-    });
+    const enabledSearchConfigs =
+      systemConfig.search?.filter((search) => {
+        return !(
+          search.restrictedToFeatureVariant &&
+          !this.rootStore.userStore.activeFeatureVariants[
+            search.restrictedToFeatureVariant
+          ]
+        );
+      }) ?? [];
 
     return {
       ...systemConfig,

@@ -35,7 +35,6 @@ const US_TN_CONFIG = {
   supervisionEndCopyOverride: "Expiration",
   availableStateCodes: [pathways.US_TN],
   enableUserRestrictions: false,
-  workflowsStaffFilterFn: filterByUserDistrict,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsMethodologyUrl:
     "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view?usp=sharing",
@@ -48,6 +47,8 @@ const US_TN_CONFIG = {
           searchTitle: "unit",
         },
       ],
+      //TODO(#10991) Confirm this filter should be used for facilities
+      staffFilterFn: filterByUserDistrict,
     },
     SUPERVISION: {
       search: [
@@ -57,6 +58,7 @@ const US_TN_CONFIG = {
           searchTitle: "supervision officer",
         },
       ],
+      staffFilterFn: filterByUserDistrict,
     },
   },
   insightsLanternState: true,
