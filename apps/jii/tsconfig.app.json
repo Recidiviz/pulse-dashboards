@@ -26,7 +26,7 @@
     "src/setupTestsGlobal.ts"
   ],
   "include": [
-    "../../libs/@jii/**/*.d.ts",
+    "../../libs/@jii/translation/**/*.d.ts",
     "src/**/*.js",
     "src/**/*.jsx",
     "src/**/*.ts",
