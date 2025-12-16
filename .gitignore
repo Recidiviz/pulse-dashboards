@@ -32,6 +32,7 @@ coverage/
 
 # Secrets
 gae*.yaml
+!gae*.enc.yaml
 src/assets/scripts/metrics/*.json
 recidiviz-production-*.json
 recidiviz-dev-*.json

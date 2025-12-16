@@ -43,23 +43,3 @@ await Promise.all(
     },
   ),
 );
-
-console.log("Updating GAE yaml files...");
-
-const appEngineSecretsToFiles = {
-  env_gae_staging: "gae-staging.yaml",
-  env_gae_staging_demo: "gae-staging-demo.yaml",
-  env_gae_production: "gae-production.yaml",
-};
-
-await Promise.all(
-  Object.entries(appEngineSecretsToFiles).map(async ([secret, filename]) => {
-    const fileContents = await getSecret(secret);
-
-    if (!fileContents) {
-      throw new Error(`unexpected empty config secret: ${secret}`);
-    }
-
-    await fs.writeFile(path.join(deployConfigsDir, filename), fileContents);
-  }),
-);
