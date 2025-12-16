@@ -21,6 +21,7 @@ import { stateCodeFromCurrentUrl } from "~@jii/data";
 import { UsAzRouter } from "~@jii/US_AZ";
 import { UsIdRouter } from "~@jii/US_ID";
 import { UsMaRouter } from "~@jii/US_MA";
+import { UsNcRouter } from "~@jii/US_NC";
 import { UsNeRouter } from "~@jii/US_NE";
 import { UsTnRouter } from "~@jii/US_TN";
 import { UsUtRouter } from "~@jii/US_UT";
@@ -37,6 +38,8 @@ export function StateSpecificRouter() {
       return <UsIdRouter />;
     case "US_MA":
       return <UsMaRouter />;
+    case "US_NC":
+      return <UsNcRouter />;
     case "US_NE":
       return <UsNeRouter />;
     case "US_TN":

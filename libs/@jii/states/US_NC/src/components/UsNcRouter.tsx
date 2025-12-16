@@ -15,32 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OfflineAuthHandler } from "./OfflineAuthHandler";
+import { Route, Routes } from "react-router-dom";
 
-let handler: OfflineAuthHandler;
+import { NotFound } from "~@jii/common-ui";
 
-beforeEach(() => {
-  handler = new OfflineAuthHandler();
-});
+import { UsNcSingleResidentHome } from "./UsNcSingleResidentHome";
 
-test("mock user profile in offline mode", () => {
-  expect(handler.userProfile).toMatchInlineSnapshot(`
-    {
-      "allowedStates": [
-        "US_AZ",
-        "US_ID",
-        "US_MA",
-        "US_NC",
-        "US_NE",
-        "US_TN",
-        "US_UT",
-      ],
-      "permissions": [
-        "enhanced",
-        "live_data",
-        "translator",
-      ],
-      "stateCode": "RECIDIVIZ",
-    }
-  `);
-});
+export function UsNcRouter() {
+  return (
+    <Routes>
+      <Route index element={<UsNcSingleResidentHome />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}

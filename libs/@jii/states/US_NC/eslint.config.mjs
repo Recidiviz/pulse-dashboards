@@ -15,32 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OfflineAuthHandler } from "./OfflineAuthHandler";
+// @ts-check
 
-let handler: OfflineAuthHandler;
+import tseslint from "typescript-eslint";
 
-beforeEach(() => {
-  handler = new OfflineAuthHandler();
-});
+import baseConfig, {
+  jiiRestrictedImports,
+  reactConfig,
+} from "../../../../eslint.config.mjs";
 
-test("mock user profile in offline mode", () => {
-  expect(handler.userProfile).toMatchInlineSnapshot(`
-    {
-      "allowedStates": [
-        "US_AZ",
-        "US_ID",
-        "US_MA",
-        "US_NC",
-        "US_NE",
-        "US_TN",
-        "US_UT",
-      ],
-      "permissions": [
-        "enhanced",
-        "live_data",
-        "translator",
-      ],
-      "stateCode": "RECIDIVIZ",
-    }
-  `);
+export default tseslint.config(baseConfig, reactConfig, {
+  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [...jiiRestrictedImports],
+      },
+    ],
+  },
 });

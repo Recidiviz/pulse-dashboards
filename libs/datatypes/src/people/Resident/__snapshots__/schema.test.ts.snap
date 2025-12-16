@@ -1428,6 +1428,54 @@ exports[`schema for 'US_ME' 'RES999' 1`] = `
 }
 `;
 
+exports[`schema for 'US_NC' 'RES001' 1`] = `
+{
+  "admissionDate": 2020-09-10T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES001",
+  "facilityId": "NC_DEMO_FACILITY",
+  "facilityUnitId": null,
+  "gender": "MALE",
+  "metadata": {},
+  "personExternalId": "RES001",
+  "personName": {
+    "givenNames": "Albert",
+    "middleNames": "Ross",
+    "surname": "Garry",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres001",
+  "recordId": "us_nc_RES001",
+  "stateCode": "US_NC",
+  "unitId": null,
+}
+`;
+
+exports[`schema for 'US_NC' 'RES002' 1`] = `
+{
+  "admissionDate": 2019-06-16T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES002",
+  "facilityId": "NC_DEMO_FACILITY",
+  "facilityUnitId": null,
+  "gender": "FEMALE",
+  "metadata": {},
+  "personExternalId": "RES002",
+  "personName": {
+    "givenNames": "Sabrina",
+    "middleNames": "Alysa",
+    "surname": "Johnston",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres002",
+  "recordId": "us_nc_RES002",
+  "stateCode": "US_NC",
+  "unitId": null,
+}
+`;
+
 exports[`schema for 'US_NE' 'RES001' 1`] = `
 {
   "admissionDate": 2020-06-16T00:00:00.000Z,

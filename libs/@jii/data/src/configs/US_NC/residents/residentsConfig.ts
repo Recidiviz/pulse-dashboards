@@ -15,32 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OfflineAuthHandler } from "./OfflineAuthHandler";
+import { home } from "../../defaults";
+import { ResidentsConfig } from "../../types";
 
-let handler: OfflineAuthHandler;
-
-beforeEach(() => {
-  handler = new OfflineAuthHandler();
-});
-
-test("mock user profile in offline mode", () => {
-  expect(handler.userProfile).toMatchInlineSnapshot(`
-    {
-      "allowedStates": [
-        "US_AZ",
-        "US_ID",
-        "US_MA",
-        "US_NC",
-        "US_NE",
-        "US_TN",
-        "US_UT",
-      ],
-      "permissions": [
-        "enhanced",
-        "live_data",
-        "translator",
-      ],
-      "stateCode": "RECIDIVIZ",
-    }
-  `);
-});
+export const usNcResidentsConfig: ResidentsConfig = {
+  home,
+  translation: {
+    additionalLanguages: [],
+  },
+};

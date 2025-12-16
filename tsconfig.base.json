@@ -35,6 +35,7 @@
       "~@jii/US_ID": ["libs/@jii/states/US_ID/src/index.ts"],
       "~@jii/US_MA": ["libs/@jii/states/US_MA/src/index.ts"],
       "~@jii/US_ME": ["libs/@jii/states/US_ME/src/index.ts"],
+      "~@jii/US_NC": ["libs/@jii/states/US_NC/src/index.ts"],
       "~@jii/US_NE": ["libs/@jii/states/US_NE/src/index.ts"],
       "~@jii/US_TN": ["libs/@jii/states/US_TN/src/index.ts"],
       "~@jii/US_UT": ["libs/@jii/states/US_UT/src/index.ts"],

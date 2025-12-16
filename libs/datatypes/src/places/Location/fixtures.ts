@@ -160,6 +160,18 @@ export const locationRecordFixtures: Array<LocationRecord> = [
   },
 
   //
+  // North Carolina
+  //
+
+  {
+    stateCode: "US_NC",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "NC_DEMO_FACILITY",
+    name: "Facility 1",
+  },
+
+  //
   // Nebraska
   //
 

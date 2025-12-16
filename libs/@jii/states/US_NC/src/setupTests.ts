@@ -15,32 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OfflineAuthHandler } from "./OfflineAuthHandler";
+import "@testing-library/jest-dom";
+import "jest-styled-components";
 
-let handler: OfflineAuthHandler;
+import { toHaveNoViolations } from "jest-axe";
+import jestExtendedMatchers from "jest-extended";
 
-beforeEach(() => {
-  handler = new OfflineAuthHandler();
-});
+expect.extend(jestExtendedMatchers);
 
-test("mock user profile in offline mode", () => {
-  expect(handler.userProfile).toMatchInlineSnapshot(`
-    {
-      "allowedStates": [
-        "US_AZ",
-        "US_ID",
-        "US_MA",
-        "US_NC",
-        "US_NE",
-        "US_TN",
-        "US_UT",
-      ],
-      "permissions": [
-        "enhanced",
-        "live_data",
-        "translator",
-      ],
-      "stateCode": "RECIDIVIZ",
-    }
-  `);
-});
+expect.extend(toHaveNoViolations);
