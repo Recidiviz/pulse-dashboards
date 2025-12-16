@@ -27,8 +27,9 @@ resource "google_bigquery_dataset_iam_member" "regional_transfer_dataset_access"
 
   dataset_id = google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
   # https://cloud.google.com/bigquery/docs/use-service-accounts#required_permissions
-  role   = "roles/bigquery.admin"
-  member = "serviceAccount:${var.service_account_email}"
+  role       = "roles/bigquery.admin"
+  member     = "serviceAccount:${var.service_account_email}"
+  depends_on = [google_bigquery_dataset.regional_transfer_dataset]
 }
 
 # Grant DTS service agent access to regional datasets to create tables
@@ -39,6 +40,7 @@ resource "google_bigquery_dataset_iam_member" "regional_dts_agent_access" {
   dataset_id = google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
   role       = "roles/bigquery.dataEditor"
   member     = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com"
+  depends_on = [google_bigquery_dataset.regional_transfer_dataset]
 }
 
 resource "google_bigquery_dataset_iam_member" "transfer_dataset_access" {
@@ -46,8 +48,10 @@ resource "google_bigquery_dataset_iam_member" "transfer_dataset_access" {
 
   dataset_id = google_bigquery_dataset.transfer_dataset[each.key].dataset_id
   # https://cloud.google.com/bigquery/docs/use-service-accounts#required_permissions
-  role   = "roles/bigquery.admin"
-  member = "serviceAccount:${var.service_account_email}"
+  role       = "roles/bigquery.admin"
+  member     = "serviceAccount:${var.service_account_email}"
+  depends_on = [google_bigquery_dataset.transfer_dataset]
+
 }
 
 # Grant DTS service agent access to transfer datasets
@@ -58,23 +62,33 @@ resource "google_bigquery_dataset_iam_member" "transfer_dts_agent_access" {
   dataset_id = google_bigquery_dataset.transfer_dataset[each.key].dataset_id
   role       = "roles/bigquery.dataEditor"
   member     = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com"
+  depends_on = [google_bigquery_dataset.transfer_dataset]
 }
 
 resource "google_bigquery_dataset" "regional_transfer_dataset" {
   for_each = var.postgresql.databases
 
-  project     = var.destination_project_id != null ? var.destination_project_id : var.project_id
   dataset_id  = "${var.dataset_name}_${each.key}_regional"
-  description = "A regional copy of the sentencing database for state code ${each.key}"
+  description = "A regional copy of the database for state code ${each.key}"
   location    = var.location
 }
 
 resource "google_bigquery_dataset" "transfer_dataset" {
   for_each = var.postgresql.databases
 
-  project     = var.destination_project_id != null ? var.destination_project_id : var.project_id
   dataset_id  = "${var.dataset_name}_${each.key}"
-  description = "A copy of the sentencing database for state code ${each.key}"
+  description = "A copy of the database for state code ${each.key}"
+  location    = "US"
+}
+
+# Cross-project transfer resources (only created when destination_project_id is set)
+resource "google_bigquery_dataset" "destination_transfer_dataset" {
+  for_each = var.destination_project_id != null ? var.postgresql.databases : []
+
+  provider = google.destination
+
+  dataset_id  = "${var.dataset_name}_${local.dataset_suffix[each.key]}"
+  description = "A copy of the database for state code ${each.key} (cross-project transfer from ${var.project_id})"
   location    = "US"
 }
 
@@ -98,6 +112,15 @@ locals {
   third_transfer_hour          = floor(local.third_transfer_total_minutes / 60) % 24
   third_transfer_minute        = local.third_transfer_total_minutes % 60
   third_transfer_time          = format("%02d:%02d", local.third_transfer_hour, local.third_transfer_minute)
+
+  # Transform database names for BigQuery dataset naming in data platform projects
+  # In recidiviz-staging and recidiviz-123, Idaho should use state_code US_IX
+  # TODO(Recidiviz/recidiviz-data#16661): Remove this transformation once the platform migrates back to US_ID
+  is_data_platform_destination = var.destination_project_id == "recidiviz-staging" || var.destination_project_id == "recidiviz-123"
+  dataset_suffix = {
+    for db in var.postgresql.databases :
+    db => (db == "us_id" && local.is_data_platform_destination) ? "us_ix" : db
+  }
 }
 
 # Network attachment allows BigQuery Data Transfer Service to access resources in this project
@@ -169,16 +192,6 @@ resource "google_bigquery_data_transfer_config" "transfer_config" {
   }
 }
 
-# Cross-project transfer resources (only created when destination_project_id is set)
-resource "google_bigquery_dataset" "destination_transfer_dataset" {
-  for_each = var.destination_project_id != null ? var.postgresql.databases : []
-
-  provider = google.destination
-
-  dataset_id  = "${var.dataset_name}_${each.key}"
-  description = "A copy of the sentencing database for state code ${each.key} (cross-project transfer from ${var.project_id})"
-  location    = "US"
-}
 
 # Grant destination service account read access to source datasets
 # Using bigquery.dataEditor because cross_region_copy requires bigquery.datasets.get
@@ -189,6 +202,7 @@ resource "google_bigquery_dataset_iam_member" "source_dataset_access" {
   dataset_id = google_bigquery_dataset.transfer_dataset[each.key].dataset_id
   role       = "roles/bigquery.dataEditor"
   member     = "serviceAccount:${var.destination_service_account_email}"
+  depends_on = [google_bigquery_dataset.transfer_dataset]
 }
 
 resource "google_bigquery_data_transfer_config" "cross_project_transfer_config" {
