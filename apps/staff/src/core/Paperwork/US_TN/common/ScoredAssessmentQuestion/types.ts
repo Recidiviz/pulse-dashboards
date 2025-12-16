@@ -29,11 +29,18 @@ export type SingleSectionAssessmentQuestionSpec = {
   options: AssessmentOption[];
 };
 
+export type BreakdownAssessmentQuestionPeriod =
+  | "0-6"
+  | "6-12"
+  | "12-18"
+  | "18-36"
+  | "36-60";
+
 export type BreakdownAssessmentQuestionSpec = {
   title: string;
   type: "BREAKDOWN";
   sections: {
-    period: "0-6" | "6-12" | "12-18" | "18-36" | "36-60";
+    period: BreakdownAssessmentQuestionPeriod;
     scores: [number, number, number, number];
   }[];
 };

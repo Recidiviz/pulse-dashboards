@@ -67,6 +67,7 @@ export * from "./opportunities/UsTn/UsTnAnnualReclassification2026Policy/fixture
 export * from "./opportunities/UsTn/UsTnAnnualReclassification2026Policy/schema";
 export * from "./opportunities/UsTn/UsTnInitialClassification2026Policy/fixtures";
 export * from "./opportunities/UsTn/UsTnInitialClassification2026Policy/schema";
+export * from "./opportunities/UsTn/utils";
 
 // Utilities Exports: Common utilities for opportunities
 // -----------------------------------------------------------------------------

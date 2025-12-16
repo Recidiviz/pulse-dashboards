@@ -20,11 +20,22 @@ exports[`schema for fullyEligible 1`] = `
     "q1Score": 2,
     "q2Notes": "a third offense",
     "q2Score": 10,
-    "q3Notes": "ABC on 1/8/2023",
+    "q3Notes": [
+      {
+        "incidentTimePeriod": "0-60Months",
+        "incidents": [
+          {
+            "incidentDate": 2023-01-08T00:00:00.000Z,
+            "incidentTypeCode": "ABC",
+          },
+        ],
+        "numIncidents": 1,
+      },
+    ],
     "q3Score": -3,
-    "q4Notes": "",
+    "q4Notes": [],
     "q4Score": 2,
-    "q5Notes": "",
+    "q5Notes": [],
     "q5Score": -1,
     "q6Score": 0,
     "q7Score": 1,
@@ -50,12 +61,62 @@ exports[`schema for ineligible 1`] = `
     "q1Score": 2,
     "q2Notes": "a third offense, a fourth offense",
     "q2Score": 10,
-    "q3Notes": "ABC on 1/8/2023
-XYZ on 2/11/2022",
+    "q3Notes": [
+      {
+        "incidentTimePeriod": "0-6Months",
+        "incidents": [
+          {
+            "incidentDate": 2023-01-08T00:00:00.000Z,
+            "incidentTypeCode": "ABC",
+          },
+          {
+            "incidentDate": 2022-02-11T00:00:00.000Z,
+            "incidentTypeCode": "XYZ",
+          },
+        ],
+        "numIncidents": 2,
+      },
+      {
+        "incidentTimePeriod": "24-48Months",
+        "incidents": [
+          {
+            "incidentDate": 2021-01-08T00:00:00.000Z,
+            "incidentTypeCode": "RFV",
+          },
+          {
+            "incidentDate": 2020-02-11T00:00:00.000Z,
+            "incidentTypeCode": "IKM",
+          },
+        ],
+        "numIncidents": 2,
+      },
+    ],
     "q3Score": -3,
-    "q4Notes": "DEF on 1/8/2023",
+    "q4Notes": [
+      {
+        "incidentTimePeriod": "6-12Months",
+        "incidents": [
+          {
+            "incidentDate": 2023-01-08T00:00:00.000Z,
+            "incidentTypeCode": "DEF",
+          },
+        ],
+        "numIncidents": 1,
+      },
+    ],
     "q4Score": 2,
-    "q5Notes": "HIJ on 1/8/2023",
+    "q5Notes": [
+      {
+        "incidentTimePeriod": "12-24Months",
+        "incidents": [
+          {
+            "incidentDate": 2023-01-08T00:00:00.000Z,
+            "incidentTypeCode": "HIJ",
+          },
+        ],
+        "numIncidents": 1,
+      },
+    ],
     "q5Score": -1,
     "q6Score": 0,
     "q7Score": 1,

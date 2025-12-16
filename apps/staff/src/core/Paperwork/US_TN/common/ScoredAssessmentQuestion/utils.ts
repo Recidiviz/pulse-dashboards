@@ -15,28 +15,50 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AssessmentQuestionSpec } from "./types";
+import { z } from "zod";
 
-export function getQuestionIndex(
-  question: AssessmentQuestionSpec,
+import { multiIncidentPeriodReportSchema } from "~datatypes";
+
+import {
+  BreakdownAssessmentQuestionSpec,
+  SingleSectionAssessmentQuestionSpec,
+} from "./types";
+
+export function getSingleSectionQuestionIndex(
+  question: SingleSectionAssessmentQuestionSpec,
   score: number | null,
 ): number {
   if (score === null) return -1;
 
-  // TODO: support MULTI
-  if (question.type !== "SINGLE") return 0;
-
   return question.options.findIndex((option) => option.score === score) ?? -1;
 }
 
-export function getQuestionScore(
-  question: AssessmentQuestionSpec,
+export function getBreakdownSectionQuestionIndex(
+  section: BreakdownAssessmentQuestionSpec["sections"][number],
+  reports: z.output<typeof multiIncidentPeriodReportSchema>,
+): number {
+  const { period } = section;
+  const report = reports.find(
+    (r) => r.incidentTimePeriod === `${period} months`,
+  );
+
+  return Math.min(report?.numIncidents ?? 0, 3);
+}
+
+export function getSingleSectionQuestionScore(
+  question: SingleSectionAssessmentQuestionSpec,
   selection: number | undefined,
 ): number {
   if (selection === undefined || selection === -1) return 0;
 
-  // TODO: support MULTI
-  if (question.type !== "SINGLE") return 0;
-
   return question.options[selection]?.score ?? 0;
+}
+
+export function getBreakdownSectionScore(
+  section: BreakdownAssessmentQuestionSpec["sections"][number],
+  selection: number | undefined,
+): number {
+  if (selection === undefined || selection === -1) return 0;
+
+  return section.scores[selection] ?? 0;
 }

@@ -19,7 +19,7 @@ import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
-import { q1Notes, q2Notes, singleIncidentPeriodReportSchema } from "../utils";
+import { multiIncidentPeriodReportSchema, q1Notes, q2Notes } from "../utils";
 
 export const usTnAnnualReclassification2026Schema =
   opportunitySchemaBase.extend({
@@ -35,9 +35,9 @@ export const usTnAnnualReclassification2026Schema =
         q1Notes,
         q2Notes,
         // TODO: parse all periods, not just the first, once the form can accept them
-        q3Notes: singleIncidentPeriodReportSchema,
-        q4Notes: singleIncidentPeriodReportSchema,
-        q5Notes: singleIncidentPeriodReportSchema,
+        q3Notes: multiIncidentPeriodReportSchema,
+        q4Notes: multiIncidentPeriodReportSchema,
+        q5Notes: multiIncidentPeriodReportSchema,
       })
       .passthrough(),
   });
@@ -50,9 +50,15 @@ export type UsTnAnnualReclassification2026DraftData =
   UsTnAnnualReclassification2026ReferralRecord["output"]["formInformation"] & {
     q1Selection: number;
     q2Selection: number;
-    q3Selection: number;
-    q4Selection: number;
-    q5Selection: number;
+    q3Selection_0_6: number;
+    q3Selection_6_12: number;
+    q4Selection_0_6: number;
+    q4Selection_6_12: number;
+    q5Selection_0_6: number;
+    q5Selection_6_12: number;
+    q5Selection_12_18: number;
+    q5Selection_18_36: number;
+    q5Selection_36_60: number;
     q6Selection: number;
     q7Selection: number;
     q1aNotes: string;

@@ -91,3 +91,8 @@ export const singleIncidentPeriodReportSchema = z
   .array(UsTnIncidentPeriodReportSchema)
   .optional()
   .transform(formatSinglePeriodReport);
+
+export const multiIncidentPeriodReportSchema = z
+  .array(UsTnIncidentPeriodReportSchema)
+  .optional()
+  .default([]);

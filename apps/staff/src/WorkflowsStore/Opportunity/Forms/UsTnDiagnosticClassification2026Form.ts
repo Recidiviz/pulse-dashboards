@@ -18,8 +18,8 @@
 import { UsTnInitialClassification2026DraftData } from "~datatypes";
 
 import {
-  getQuestionIndex,
-  getQuestionScore,
+  getSingleSectionQuestionIndex,
+  getSingleSectionQuestionScore,
 } from "../../../core/Paperwork/US_TN/common/ScoredAssessmentQuestion";
 import { assessmentQuestions } from "../../../core/Paperwork/US_TN/UsTnDiangosticClassification2026/assessmentQuestions";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
@@ -43,32 +43,32 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       },
     } = this;
 
-    const q1Selection = getQuestionIndex(
+    const q1Selection = getSingleSectionQuestionIndex(
       assessmentQuestions[0],
       formInformation.q1Score,
     );
 
-    const q2Selection = getQuestionIndex(
+    const q2Selection = getSingleSectionQuestionIndex(
       assessmentQuestions[1],
       formInformation.q2Score,
     );
 
-    const q3Selection = getQuestionIndex(
+    const q3Selection = getSingleSectionQuestionIndex(
       assessmentQuestions[2],
       formInformation.q3Score,
     );
 
-    const q4Selection = getQuestionIndex(
+    const q4Selection = getSingleSectionQuestionIndex(
       assessmentQuestions[3],
       formInformation.q4Score,
     );
 
-    const q5Selection = getQuestionIndex(
+    const q5Selection = getSingleSectionQuestionIndex(
       assessmentQuestions[4],
       formInformation.q5Score,
     );
 
-    const q6Selection = getQuestionIndex(
+    const q6Selection = getSingleSectionQuestionIndex(
       assessmentQuestions[5],
       formInformation.q6Score,
     );
@@ -102,12 +102,30 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       q6Selection,
     } = this.formData;
 
-    const q1Score = getQuestionScore(assessmentQuestions[0], q1Selection);
-    const q2Score = getQuestionScore(assessmentQuestions[1], q2Selection);
-    const q3Score = getQuestionScore(assessmentQuestions[2], q3Selection);
-    const q4Score = getQuestionScore(assessmentQuestions[3], q4Selection);
-    const q5Score = getQuestionScore(assessmentQuestions[4], q5Selection);
-    const q6Score = getQuestionScore(assessmentQuestions[5], q6Selection);
+    const q1Score = getSingleSectionQuestionScore(
+      assessmentQuestions[0],
+      q1Selection,
+    );
+    const q2Score = getSingleSectionQuestionScore(
+      assessmentQuestions[1],
+      q2Selection,
+    );
+    const q3Score = getSingleSectionQuestionScore(
+      assessmentQuestions[2],
+      q3Selection,
+    );
+    const q4Score = getSingleSectionQuestionScore(
+      assessmentQuestions[3],
+      q4Selection,
+    );
+    const q5Score = getSingleSectionQuestionScore(
+      assessmentQuestions[4],
+      q5Selection,
+    );
+    const q6Score = getSingleSectionQuestionScore(
+      assessmentQuestions[5],
+      q6Selection,
+    );
 
     return {
       totalScore: q1Score + q2Score + q3Score + q4Score + q5Score + q6Score,

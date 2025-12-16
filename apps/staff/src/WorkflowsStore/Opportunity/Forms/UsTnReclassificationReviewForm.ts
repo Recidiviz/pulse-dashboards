@@ -172,9 +172,8 @@ export class UsTnReclassificationReviewForm extends FormBase<
         }
         const question = assessmentQuestions[q - 1];
 
-        // This form only contains single-section questions. This check is to refine the question type.
-        if (question.type !== "SINGLE") return;
-        const { canBeNone, options } = question;
+        //@ts-expect-error canBeNone is an option property. This will set it to false when it does not exist
+        const { canBeNone = false, options } = question;
 
         if (canBeNone && score === 0) {
           out[`q${q}Selection`] = -1;

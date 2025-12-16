@@ -25,10 +25,7 @@ export const assessmentQuestionNumbers = [1, 2, 3, 4, 5, 6] as const;
 export type AssessmentQuestionNumber =
   (typeof assessmentQuestionNumbers)[number];
 
-export const assessmentQuestions: TupleWithArity<
-  AssessmentQuestionSpec,
-  typeof assessmentQuestionNumbers
-> = [
+export const assessmentQuestions = [
   {
     title: "PRIOR VIOLENT FELONY CONVICTIONS",
     type: "SINGLE",
@@ -91,4 +88,7 @@ export const assessmentQuestions: TupleWithArity<
       { text: "Older than 45", score: -6 },
     ],
   },
-];
+] satisfies TupleWithArity<
+  AssessmentQuestionSpec,
+  typeof assessmentQuestionNumbers
+>;

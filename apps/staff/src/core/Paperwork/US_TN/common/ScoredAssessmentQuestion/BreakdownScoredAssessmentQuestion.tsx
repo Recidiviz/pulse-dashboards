@@ -16,10 +16,16 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { ChangeEventHandler, useState } from "react";
 import styled from "styled-components";
 
+import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { SubItem } from "./AssessmentItem";
-import { BreakdownAssessmentQuestionSpec } from "./types";
+import { RadioButton } from "./styles";
+import {
+  BreakdownAssessmentQuestionPeriod,
+  BreakdownAssessmentQuestionSpec,
+} from "./types";
 
 const BreakdownTable = styled.table`
   width: 100%;
@@ -28,39 +34,161 @@ const BreakdownTable = styled.table`
   & th,
   td {
     border: black solid 1px;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+
+    & label {
+      margin-bottom: 0;
+    }
   }
 `;
 
-export const BreakdownScoredAssessmentQuestion = observer(
-  function BreakdownScoredAssessmentQuestion({
-    questionNumber,
-    questionSpec,
-    disabled,
-    setScore,
-  }: {
-    questionSpec: BreakdownAssessmentQuestionSpec;
-    questionNumber: number;
-    disabled?: boolean;
-    setScore: (score: number) => void;
-  }) {
-    return (
-      <SubItem>
-        <BreakdownTable>
-          <tbody>
-            {questionSpec.sections.map(({ period, scores }) => {
-              return (
-                <tr>
-                  <th scope="row">PREVIOUS {period} MONTHS</th>
-                  <td>None: {scores[0]}</td>
-                  <td>One: {scores[1]}</td>
-                  <td>Two: {scores[2]}</td>
-                  <td>Three or more: {scores[3]}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </BreakdownTable>
-      </SubItem>
-    );
-  },
-);
+type ScoreDict = Partial<Record<BreakdownAssessmentQuestionPeriod, number>>;
+
+export function BreakdownScoredAssessmentQuestion({
+  questionNumber,
+  questionSpec,
+  disabled,
+  setScore,
+}: {
+  questionSpec: BreakdownAssessmentQuestionSpec;
+  questionNumber: number;
+  disabled?: boolean;
+  setScore: (score: number) => void;
+}) {
+  const [scoreDict, setScoreDict] = useState<ScoreDict>(
+    Object.fromEntries(questionSpec.sections.map((s) => [s.period, 0])),
+  );
+
+  const updateScoreDict = (update: ScoreDict) => {
+    const newScoreDict = { ...scoreDict, ...update };
+    setScoreDict((existing) => ({ ...existing, ...update }));
+    setScore(Object.values(newScoreDict).reduce((a, b) => a + b));
+  };
+
+  return (
+    <SubItem>
+      <BreakdownTable>
+        <tbody>
+          {questionSpec.sections.map((section) => {
+            return (
+              <BreakdownRow
+                key={section.period}
+                section={section}
+                questionNumber={questionNumber}
+                updateScoreDict={updateScoreDict}
+                disabled={disabled}
+              />
+            );
+          })}
+        </tbody>
+      </BreakdownTable>
+    </SubItem>
+  );
+}
+
+const BreakdownRow = observer(function BreakdownRow({
+  section: { period, scores },
+  questionNumber,
+  updateScoreDict,
+  disabled,
+}: {
+  section: BreakdownAssessmentQuestionSpec["sections"][number];
+  questionNumber: number;
+  updateScoreDict: (scoreDict: ScoreDict) => void;
+  disabled?: boolean;
+}) {
+  const selectionKey = `q${questionNumber}Selection_${period.replace("-", "_")}`;
+  const opportunityForm = useOpportunityFormContext();
+  const selection = opportunityForm.formData[selectionKey];
+  const onChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const value = parseInt(event.target.value, 10);
+    opportunityForm.updateDraftData(selectionKey, value);
+    updateScoreDict({ [period]: scores[value] });
+  };
+
+  return (
+    <tr>
+      <th scope="row">PREVIOUS {period} MONTHS</th>
+      <BreakdownOption
+        text="None"
+        value={0}
+        period={period}
+        questionNumber={questionNumber}
+        score={scores[0]}
+        selection={selection}
+        disabled={disabled}
+        onChange={onChange}
+      />
+      <BreakdownOption
+        text="One"
+        value={1}
+        period={period}
+        questionNumber={questionNumber}
+        score={scores[1]}
+        selection={selection}
+        disabled={disabled}
+        onChange={onChange}
+      />
+      <BreakdownOption
+        text="Two"
+        value={2}
+        period={period}
+        questionNumber={questionNumber}
+        score={scores[2]}
+        selection={selection}
+        disabled={disabled}
+        onChange={onChange}
+      />
+      <BreakdownOption
+        text="Three or more"
+        value={3}
+        period={period}
+        questionNumber={questionNumber}
+        score={scores[3]}
+        selection={selection}
+        disabled={disabled}
+        onChange={onChange}
+      />
+    </tr>
+  );
+});
+
+function BreakdownOption({
+  text,
+  value,
+  period,
+  questionNumber,
+  selection,
+  score,
+  disabled,
+  onChange,
+}: {
+  text: string;
+  value: number;
+  period: BreakdownAssessmentQuestionPeriod;
+  questionNumber: number;
+  selection: number;
+  score: number;
+  disabled?: boolean;
+  onChange: ChangeEventHandler;
+}) {
+  const group = `BreakdownOption-${questionNumber}-${period}`;
+  const id = `${group}-${text}`;
+  return (
+    <td>
+      {disabled ? null : (
+        <RadioButton
+          value={value}
+          checked={selection === value}
+          onChange={onChange}
+          id={id}
+          radioGroup={group}
+        />
+      )}
+      <label htmlFor={id}>
+        {text}: {score}
+      </label>
+    </td>
+  );
+}
