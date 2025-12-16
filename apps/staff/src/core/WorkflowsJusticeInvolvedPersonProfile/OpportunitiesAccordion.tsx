@@ -128,12 +128,14 @@ export const AccordionSection = observer(function AccordionSection({
   hideActionButtons = false,
   shouldTrackOpportunityPreviewed = true,
   onDenialButtonClick = () => null,
+  showIneligibleFormButtons = false,
 }: {
   opportunity: Opportunity;
   formLinkButton?: boolean;
   hideActionButtons?: boolean;
   shouldTrackOpportunityPreviewed?: boolean;
   onDenialButtonClick?: () => void;
+  showIneligibleFormButtons?: boolean;
 }) {
   const colors = useStatusColors(opportunity);
 
@@ -156,7 +158,8 @@ export const AccordionSection = observer(function AccordionSection({
                 // If the opportunity is determined to be ineligible by our system (not marked ineligible/denied),
                 // we hide the action buttons
                 hideActionButtons={
-                  hideActionButtons || opportunity.isIneligible
+                  hideActionButtons ||
+                  (opportunity.isIneligible && !showIneligibleFormButtons)
                 }
                 shouldTrackOpportunityPreviewed={
                   shouldTrackOpportunityPreviewed
@@ -176,6 +179,7 @@ type OpportunitiesAccordionProps = {
   hideEmpty?: boolean;
   formLinkButton?: boolean;
   showIneligibleOpportunityTypes?: boolean;
+  showIneligibleFormButtons?: boolean;
 };
 
 export const ManagedComponent = observer(function OpportunitiesAccordion({
@@ -186,6 +190,7 @@ export const ManagedComponent = observer(function OpportunitiesAccordion({
     opportunitiesToDisplayInAccordion,
     selectedOpportunityOnFullProfile,
     updateSelectedOpportunityOnFullProfile,
+    showIneligibleFormButtons,
   },
 }: {
   presenter: OpportunitiesAccordionPresenter<JusticeInvolvedPerson>;
@@ -219,6 +224,7 @@ export const ManagedComponent = observer(function OpportunitiesAccordion({
                 updateSelectedOpportunityOnFullProfile(opportunity);
                 setCurrentView("MARK_INELIGIBLE");
               }}
+              showIneligibleFormButtons={showIneligibleFormButtons}
             />
           );
         })}
@@ -240,6 +246,7 @@ function usePresenter({
   hideEmpty = false,
   formLinkButton = false,
   showIneligibleOpportunityTypes = false,
+  showIneligibleFormButtons = false,
 }: OpportunitiesAccordionProps) {
   const { workflowsStore } = useRootStore();
   if (!workflowsStore) return null;
@@ -251,6 +258,7 @@ function usePresenter({
     hideEmpty,
     formLinkButton,
     showIneligibleOpportunityTypes && !!ineligibleOpportunityTypesOnFullProfile,
+    showIneligibleFormButtons,
   );
 }
 

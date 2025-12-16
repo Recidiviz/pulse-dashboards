@@ -334,9 +334,11 @@ export const FullProfile = observer(
     const {
       workflowsStore: { selectedPerson: person },
       userStore,
+      currentTenantId,
     } = useRootStore();
     const { isTablet, isMobile } = useIsMobile(true);
-    const { caseNoteSearch } = useFeatureVariants();
+    const { caseNoteSearch, usTn2026ClassificationPolicyPilot } =
+      useFeatureVariants();
 
     usePersonTracking(person, () => {
       person?.trackProfileViewed();
@@ -441,6 +443,10 @@ export const FullProfile = observer(
                 person={person}
                 formLinkButton
                 showIneligibleOpportunityTypes
+                showIneligibleFormButtons={
+                  !!usTn2026ClassificationPolicyPilot &&
+                  currentTenantId === "US_TN"
+                }
               />
             </div>
           </Content>

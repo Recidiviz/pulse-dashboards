@@ -59,6 +59,8 @@ export const AllCaseloadsPreviewModal = observer(
             <ItemHeader>Opportunities</ItemHeader>
             <OpportunitiesAccordion
               showIneligibleOpportunityTypes
+              showIneligibleFormButtons
+              formLinkButton
               person={selectedResident}
             />
             <ItemHeader>Resident Details</ItemHeader>

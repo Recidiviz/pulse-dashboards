@@ -58,6 +58,7 @@ export class OpportunitiesAccordionPresenter<
      * Whether to show ineligible opportunities in the accordion.
      */
     public showIneligibleOpportunities = false,
+    public showIneligibleFormButtons = false,
   ) {
     reaction(
       () => workflowsStore.opportunityTypes,

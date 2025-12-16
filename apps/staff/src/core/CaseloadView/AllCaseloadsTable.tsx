@@ -75,7 +75,6 @@ const columns = [
   {
     header: "Facility/Unit",
     id: "facilityUnit",
-    // Sort by surname if available, full displayed name if not
     accessorFn: (person) => person.combinedFacilityUnitId,
     enableSorting: true,
     sortingFn: "alphanumeric",
