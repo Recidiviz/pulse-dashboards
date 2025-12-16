@@ -21,43 +21,21 @@ import React from "react";
 import styled from "styled-components";
 
 import { Opportunity } from "../../../../WorkflowsStore";
-import { UsTnInitialClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnInitialClassification2026Form";
+import { UsTnDiagnosticClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
 import {
-  Item,
-  LeftColumn,
-  ScoredAssessmentQuestion,
-  SubItem,
-} from "../common/ScoredAssessmentQuestion";
+  BoldWeight,
+  ClassificationFormPage,
+  FormFont,
+  TextAreaContainer,
+  TextboxWithHeader,
+  TotalScore,
+} from "../common/Classification2026";
+import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import { assessmentQuestions } from "./assessmentQuestions";
-import { BoldWeight, FormFont } from "./styles";
-import { TextAreaContainer, TextboxWithHeader } from "./TextboxWithHeader";
-import { TotalScore } from "./TotalScore";
-
-const FormPage = styled.div`
-  ${FormFont}
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  font-size: ${rem(10)};
-  color: black;
-  background-color: white;
-  padding: 3rem 4.25rem;
-
-  ${LeftColumn} {
-    width: 100%;
-  }
-
-  ${Item} {
-    margin: 0.5rem 0;
-    ${SubItem} {
-      margin-left: 0.5rem;
-    }
-  }
-`;
 
 const DoubleNotes = styled.div`
   display: flex;
@@ -78,15 +56,15 @@ const Header = styled.h1`
   letter-spacing: -0.01rem;
 `;
 
-export const FormUsTnInitialClassification2026 = observer(
-  function FormUsTnInitialClassification2026({
+export const FormUsTnReclassification2026 = observer(
+  function FormUsTnReclassification2026({
     opportunity,
   }: {
     opportunity: Opportunity;
   }) {
     const formRef = React.useRef<HTMLDivElement>(null);
     const { derivedData } =
-      useOpportunityFormContext() as UsTnInitialClassification2026Form;
+      useOpportunityFormContext() as UsTnDiagnosticClassification2026Form;
 
     return (
       <FormContainer
@@ -98,8 +76,10 @@ export const FormUsTnInitialClassification2026 = observer(
       >
         <FormViewer formRef={formRef}>
           <PrintablePage landscape stretchable>
-            <FormPage>
-              <Header>TENNESSEE CLASSIFICATION INSTRUMENT: DIAGNOSTIC</Header>
+            <ClassificationFormPage>
+              <Header>
+                TENNESSEE CLASSIFICATION INSTRUMENT: RECLASSIFICATION
+              </Header>
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[0]}
                 questionNumber={1}
@@ -137,10 +117,10 @@ export const FormUsTnInitialClassification2026 = observer(
                   name={"q3Notes"}
                 />
               </ScoredAssessmentQuestion>
-            </FormPage>
+            </ClassificationFormPage>
           </PrintablePage>
           <PrintablePage landscape stretchable>
-            <FormPage>
+            <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[3]}
                 questionNumber={4}
@@ -159,16 +139,20 @@ export const FormUsTnInitialClassification2026 = observer(
                   name={"q5Notes"}
                 />
               </ScoredAssessmentQuestion>
-            </FormPage>
+            </ClassificationFormPage>
           </PrintablePage>
           <PrintablePage landscape>
-            <FormPage>
+            <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[5]}
                 questionNumber={6}
               />
+              <ScoredAssessmentQuestion
+                questionSpec={assessmentQuestions[6]}
+                questionNumber={7}
+              />
               <TotalScore score={derivedData.totalScore} />
-            </FormPage>
+            </ClassificationFormPage>
           </PrintablePage>
         </FormViewer>
       </FormContainer>

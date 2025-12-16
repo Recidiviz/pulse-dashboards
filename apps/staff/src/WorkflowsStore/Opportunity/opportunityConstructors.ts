@@ -82,6 +82,7 @@ import {
   UsTnSuspensionOfDirectSupervisionOpportunity,
 } from "./UsTn";
 import {
+  UsTnAnnualReclassification2026Opportunity,
   UsTnAnnualReclassificationReviewOpportunity,
   UsTnCompliantReporting2025PolicyOpportunity,
   UsTnInitialClassification2026Opportunity,
@@ -169,6 +170,8 @@ export const opportunityConstructors = {
 
   // US_TN
   usTnAnnualReclassification: UsTnAnnualReclassificationReviewOpportunity,
+  usTnAnnualReclassification2026Policy:
+    UsTnAnnualReclassification2026Opportunity,
   usTnInitialClassification: UsTnInitialClassificationOpportunity,
   usTnInitialClassification2026Policy: UsTnInitialClassification2026Opportunity,
   compliantReporting: CompliantReportingOpportunity,

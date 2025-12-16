@@ -15,8 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./AssessmentItem";
-export * from "./ScoredAssessmentQuestion";
-export * from "./styles";
-export * from "./types";
-export * from "./utils";
+export * from "./UsTnAnnualReclassification2026Opportunity";

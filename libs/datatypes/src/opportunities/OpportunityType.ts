@@ -92,6 +92,7 @@ export const constructedOpportunityTypes = [
   "usTnAnnualReclassification",
   "usTnInitialClassification",
   "usTnSuspensionOfDirectSupervision",
+  "usTnAnnualReclassification2026Policy",
   "usTnInitialClassification2026Policy",
 
   // US_TX

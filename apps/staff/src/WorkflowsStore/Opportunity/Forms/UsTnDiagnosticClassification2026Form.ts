@@ -17,38 +17,23 @@
 
 import { UsTnInitialClassification2026DraftData } from "~datatypes";
 
-import { AssessmentQuestionSpec } from "../../../core/Paperwork/US_TN/common/ScoredAssessmentQuestion";
-import { assessmentQuestions } from "../../../core/Paperwork/US_TN/UsTnInitialClassification2026/assessmentQuestions";
+import {
+  getQuestionIndex,
+  getQuestionScore,
+} from "../../../core/Paperwork/US_TN/common/ScoredAssessmentQuestion";
+import { assessmentQuestions } from "../../../core/Paperwork/US_TN/UsTnDiangosticClassification2026/assessmentQuestions";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { UsTnInitialClassification2026Opportunity } from "../UsTn";
 import { FormBase } from "./FormBase";
 
-function getQuestionIndex(
-  question: AssessmentQuestionSpec,
-  score: number | null,
-): number {
-  if (!score) return -1;
-
-  return question.options.findIndex((option) => option.score === score) ?? -1;
-}
-
-function getQuestionScore(
-  question: AssessmentQuestionSpec,
-  selection: number | undefined,
-): number {
-  if (selection === undefined || selection === -1) return 0;
-
-  return question.options[selection]?.score ?? 0;
-}
-
-export class UsTnInitialClassification2026Form extends FormBase<
+export class UsTnDiagnosticClassification2026Form extends FormBase<
   UsTnInitialClassification2026DraftData,
   UsTnInitialClassification2026Opportunity
 > {
   navigateToFormText = "Auto-fill paperwork";
 
   get formContents(): OpportunityFormComponentName {
-    return "FormUsTnInitialClassification2026";
+    return "FormUsTnDiagnosticClassification2026";
   }
 
   prefilledDataTransformer() {

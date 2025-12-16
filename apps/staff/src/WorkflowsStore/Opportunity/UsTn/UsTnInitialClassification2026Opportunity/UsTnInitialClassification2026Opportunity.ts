@@ -23,7 +23,7 @@ import {
 } from "~datatypes";
 
 import { Client } from "../../../Client";
-import { UsTnInitialClassification2026Form } from "../../Forms/UsTnInitialClassification2026Form";
+import { UsTnDiagnosticClassification2026Form } from "../../Forms/UsTnDiagnosticClassification2026Form";
 import { OpportunityBase } from "../../OpportunityBase";
 
 export class UsTnInitialClassification2026Opportunity extends OpportunityBase<
@@ -38,6 +38,9 @@ export class UsTnInitialClassification2026Opportunity extends OpportunityBase<
       usTnInitialClassification2026Schema.parse(record),
     );
 
-    this.form = new UsTnInitialClassification2026Form(this, client.rootStore);
+    this.form = new UsTnDiagnosticClassification2026Form(
+      this,
+      client.rootStore,
+    );
   }
 }

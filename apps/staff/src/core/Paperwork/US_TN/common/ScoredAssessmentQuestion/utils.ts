@@ -15,8 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./AssessmentItem";
-export * from "./ScoredAssessmentQuestion";
-export * from "./styles";
-export * from "./types";
-export * from "./utils";
+import { AssessmentQuestionSpec } from "./types";
+
+export function getQuestionIndex(
+  question: AssessmentQuestionSpec,
+  score: number | null,
+): number {
+  if (score === null) return -1;
+
+  // TODO: support MULTI
+  if (question.type !== "SINGLE") return 0;
+
+  return question.options.findIndex((option) => option.score === score) ?? -1;
+}
+
+export function getQuestionScore(
+  question: AssessmentQuestionSpec,
+  selection: number | undefined,
+): number {
+  if (selection === undefined || selection === -1) return 0;
+
+  // TODO: support MULTI
+  if (question.type !== "SINGLE") return 0;
+
+  return question.options[selection]?.score ?? 0;
+}

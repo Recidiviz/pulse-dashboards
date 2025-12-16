@@ -15,8 +15,40 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./AssessmentItem";
-export * from "./ScoredAssessmentQuestion";
-export * from "./styles";
-export * from "./types";
-export * from "./utils";
+import { rem } from "polished";
+import styled from "styled-components";
+
+import { UsTnInitialClassification2026DraftData } from "~datatypes";
+
+import DOCXFormTextArea from "../../../DOCXFormTextArea";
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const TextboxHeader = styled.div`
+  font-size: ${rem(8)};
+`;
+
+export const TextAreaContainer = styled.div`
+  min-height: 3.5rem;
+`;
+
+export function TextboxWithHeader({
+  header,
+  name,
+}: {
+  header: string;
+  name: Extract<keyof UsTnInitialClassification2026DraftData, string>;
+}) {
+  return (
+    <Container>
+      <TextboxHeader>{header}</TextboxHeader>
+      <TextAreaContainer>
+        <DOCXFormTextArea<UsTnInitialClassification2026DraftData> name={name} />
+      </TextAreaContainer>
+    </Container>
+  );
+}

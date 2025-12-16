@@ -35,6 +35,7 @@ export const assessmentQuestions: TupleWithArity<
   {
     title:
       "HISTORY OF INSTITUTIONAL VIOLENCE (Jail or Prison, Rate Most Serious)",
+    type: "SINGLE",
     canBeNone: true,
     options: [
       {
@@ -57,6 +58,7 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "ASSAULT OCCUR WITHIN LAST SIX MONTHS",
+    type: "SINGLE",
     options: [
       { text: "No", score: 0 },
       { text: "Yes", score: 3 },
@@ -64,6 +66,7 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "SEVERITY OF CURRENT OFFENSE (Rate Most Serious)",
+    type: "SINGLE",
     options: [
       { text: "Low", score: 0 },
       { text: "Moderate", score: 1 },
@@ -73,6 +76,7 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "PRIOR ASSAULTIVE OFFENSE HISTORY (Rate Most Serious)",
+    type: "SINGLE",
     canBeNone: false, // could arguably be true, but we have no way to disambiguate a 0 score
     options: [
       { text: "Low", score: 0 },
@@ -83,6 +87,7 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "ESCAPE HISTORY (WITHIN LAST 5 YEARS OF INCARCERATION)",
+    type: "SINGLE",
     options: [
       {
         text: "No escapes or attempts",
@@ -108,6 +113,7 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "DISCIPLINARY REPORTS – GUILTY",
+    type: "SINGLE",
     options: [
       { text: "None in Last 18 Months", score: -4 },
       { text: "None in Last 12 Months", score: -2 },
@@ -119,6 +125,7 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "MOST SEVERE DISCIPLINARY RECEIVED (last 18 months)",
+    type: "SINGLE",
     canBeNone: true,
     options: [
       { text: "Class C", score: 2 },
@@ -128,6 +135,7 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "DETAINER / NOTIFICATION / CHARGE PENDING",
+    type: "SINGLE",
     canBeNone: true,
     options: [
       { text: "Misdemeanor", score: 3 },
@@ -136,6 +144,7 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "PRIOR FELONY CONVICTIONS",
+    type: "SINGLE",
     canBeNone: true,
     options: [
       { text: "One", score: 2 },

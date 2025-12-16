@@ -170,7 +170,12 @@ export class UsTnReclassificationReviewForm extends FormBase<
           out.q1Selection = recentWeapon ? 1 : 3;
           return;
         }
-        const { canBeNone, options } = assessmentQuestions[q - 1];
+        const question = assessmentQuestions[q - 1];
+
+        // This form only contains single-section questions. This check is to refine the question type.
+        if (question.type !== "SINGLE") return;
+        const { canBeNone, options } = question;
+
         if (canBeNone && score === 0) {
           out[`q${q}Selection`] = -1;
         } else {
@@ -273,6 +278,9 @@ export class UsTnReclassificationReviewForm extends FormBase<
     let seenABlank = false;
     for (let i = 0; i < assessmentQuestions.length; i += 1) {
       const question = assessmentQuestions[i];
+      // There are only single-option questions in this form. This refines the typing
+      if (question.type !== "SINGLE") continue;
+
       const qNum = (i + 1) as AssessmentQuestionNumber;
 
       const selection = formData[`q${qNum}Selection`];

@@ -15,8 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./AssessmentItem";
-export * from "./ScoredAssessmentQuestion";
-export * from "./styles";
-export * from "./types";
-export * from "./utils";
+import { rem } from "polished";
+import styled, { css } from "styled-components";
+
+import { Item, LeftColumn, SubItem } from "../ScoredAssessmentQuestion";
+
+export const FormFont = css`
+  font-family: "Arial", sans-serif;
+`;
+
+export const BoldWeight = css`
+  font-weight: 600;
+`;
+
+export const ClassificationFormPage = styled.div`
+  ${FormFont}
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  font-size: ${rem(10)};
+  color: black;
+  background-color: white;
+  padding: 3rem 4.25rem;
+
+  ${LeftColumn} {
+    width: 100%;
+  }
+
+  ${Item} {
+    margin: 0.5rem 0;
+    ${SubItem} {
+      margin-left: 0.5rem;
+    }
+  }
+`;

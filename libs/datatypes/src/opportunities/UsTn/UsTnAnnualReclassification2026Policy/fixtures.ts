@@ -18,19 +18,23 @@
 import { makeRecordFixture } from "../../../utils/zod";
 import { FixtureMapping } from "../../utils/types";
 import {
-  UsTnInitialClassification2026ReferralRecord,
-  usTnInitialClassification2026Schema,
+  UsTnAnnualReclassification2026ReferralRecord,
+  usTnAnnualReclassification2026Schema,
 } from "./schema";
 
-export const usTnInitialClassification2026PolicyFixtures = {
-  fullyEligible: makeRecordFixture(usTnInitialClassification2026Schema, {
+export const usTnAnnualReclassification2026PolicyFixtures = {
+  fullyEligible: makeRecordFixture(usTnAnnualReclassification2026Schema, {
     stateCode: "US_TN",
     externalId: "RES003",
     isEligible: true,
     isAlmostEligible: false,
     eligibleCriteria: {
       custodyLevelIsNotMax: null,
-      notHasInitialClassificationInStatePrisonCustody: null,
+      usTnAtLeast12MonthsSinceLatestAssessment: {
+        initialAssessmentDate: "2024-12-28",
+        AnnualReclassificationDate: "2025-01-01",
+        AnnualReclassificationDecisionDate: "2025-01-01",
+      },
     },
     ineligibleCriteria: {},
     formInformation: {
@@ -40,6 +44,7 @@ export const usTnInitialClassification2026PolicyFixtures = {
       q4Score: 2,
       q5Score: -1,
       q6Score: 0,
+      q7Score: 1,
       q1Notes: {
         listPriorNonTdocConvictions60Months: [
           {
@@ -69,7 +74,7 @@ export const usTnInitialClassification2026PolicyFixtures = {
       ],
     },
   }),
-  ineligible: makeRecordFixture(usTnInitialClassification2026Schema, {
+  ineligible: makeRecordFixture(usTnAnnualReclassification2026Schema, {
     stateCode: "US_TN",
     externalId: "RES003",
     isEligible: false,
@@ -79,10 +84,10 @@ export const usTnInitialClassification2026PolicyFixtures = {
       custodyLevelIsNotMax: {
         custodyLevel: "Maximum",
       },
-      notHasInitialClassificationInStatePrisonCustody: {
+      usTnAtLeast12MonthsSinceLatestAssessment: {
         initialAssessmentDate: "2024-12-28",
-        initialClassificationDate: "2025-01-01",
-        initialClassificationDecisionDate: "2025-01-01",
+        AnnualReclassificationDate: "2025-01-01",
+        AnnualReclassificationDecisionDate: "2025-01-01",
       },
     },
     formInformation: {
@@ -92,6 +97,7 @@ export const usTnInitialClassification2026PolicyFixtures = {
       q4Score: 2,
       q5Score: -1,
       q6Score: 0,
+      q7Score: 1,
       q1Notes: {
         listPriorNonTdocConvictions60Months: [
           {
@@ -110,7 +116,7 @@ export const usTnInitialClassification2026PolicyFixtures = {
       q3Notes: [
         {
           numIncidents: 2,
-          incidentTimePeriod: "0-60Months",
+          incidentTimePeriod: "0-6Months",
           incidents: [
             {
               incidentDate: "2023-01-08",
@@ -122,11 +128,25 @@ export const usTnInitialClassification2026PolicyFixtures = {
             },
           ],
         },
+        {
+          numIncidents: 2,
+          incidentTimePeriod: "24-48Months",
+          incidents: [
+            {
+              incidentDate: "2021-01-08",
+              incidentTypeCode: "RFV",
+            },
+            {
+              incidentDate: "2020-02-11",
+              incidentTypeCode: "IKM",
+            },
+          ],
+        },
       ],
       q4Notes: [
         {
           numIncidents: 1,
-          incidentTimePeriod: "0-60Months",
+          incidentTimePeriod: "6-12Months",
           incidents: [
             {
               incidentDate: "2023-01-08",
@@ -138,7 +158,7 @@ export const usTnInitialClassification2026PolicyFixtures = {
       q5Notes: [
         {
           numIncidents: 1,
-          incidentTimePeriod: "0-60Months",
+          incidentTimePeriod: "12-24Months",
           incidents: [
             {
               incidentDate: "2023-01-08",
@@ -149,4 +169,4 @@ export const usTnInitialClassification2026PolicyFixtures = {
       ],
     },
   }),
-} satisfies FixtureMapping<UsTnInitialClassification2026ReferralRecord>;
+} satisfies FixtureMapping<UsTnAnnualReclassification2026ReferralRecord>;

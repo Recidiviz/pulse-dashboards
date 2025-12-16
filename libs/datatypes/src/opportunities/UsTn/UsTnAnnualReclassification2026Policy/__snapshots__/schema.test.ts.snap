@@ -5,7 +5,11 @@ exports[`schema for fullyEligible 1`] = `
   "caseNotes": {},
   "eligibleCriteria": {
     "custodyLevelIsNotMax": null,
-    "notHasInitialClassificationInStatePrisonCustody": null,
+    "usTnAtLeast12MonthsSinceLatestAssessment": {
+      "AnnualReclassificationDate": "2025-01-01",
+      "AnnualReclassificationDecisionDate": "2025-01-01",
+      "initialAssessmentDate": "2024-12-28",
+    },
   },
   "externalId": "RES003",
   "formInformation": {
@@ -23,6 +27,7 @@ exports[`schema for fullyEligible 1`] = `
     "q5Notes": "",
     "q5Score": -1,
     "q6Score": 0,
+    "q7Score": 1,
   },
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
@@ -53,15 +58,16 @@ XYZ on 2/11/2022",
     "q5Notes": "HIJ on 1/8/2023",
     "q5Score": -1,
     "q6Score": 0,
+    "q7Score": 1,
   },
   "ineligibleCriteria": {
     "custodyLevelIsNotMax": {
       "custodyLevel": "Maximum",
     },
-    "notHasInitialClassificationInStatePrisonCustody": {
+    "usTnAtLeast12MonthsSinceLatestAssessment": {
+      "AnnualReclassificationDate": "2025-01-01",
+      "AnnualReclassificationDecisionDate": "2025-01-01",
       "initialAssessmentDate": "2024-12-28",
-      "initialClassificationDate": "2025-01-01",
-      "initialClassificationDecisionDate": "2025-01-01",
     },
   },
   "isAlmostEligible": false,

@@ -15,12 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { css } from "styled-components";
-
-export const FormFont = css`
-  font-family: "Arial", sans-serif;
-`;
-
-export const BoldWeight = css`
-  font-weight: 600;
-`;
+export * from "./styles";
+export * from "./TextboxWithHeader";
+export * from "./TotalScore";
+export * from "./YesNoQuestion";

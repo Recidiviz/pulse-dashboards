@@ -38,6 +38,7 @@ import {
   usMiSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
   usPaSpecialCircumstancesSupervisionSchema,
+  usTnAnnualReclassification2026Schema,
   usTnInitialClassification2026Schema,
 } from "~datatypes";
 
@@ -206,6 +207,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usTnExpiration: usTnExpirationSchema,
   usTnInitialClassification: usTnInitialClassificationSchema,
   usTnInitialClassification2026Policy: usTnInitialClassification2026Schema,
+  usTnAnnualReclassification2026Policy: usTnAnnualReclassification2026Schema,
   usTnSuspensionOfDirectSupervision: usTnSuspensionOfDirectSupervisionSchema,
 
   // US_UT
@@ -357,6 +359,9 @@ async function testCollection(opportunityType: SchemaKey, stateCode?: string) {
           console.warn("*******************************************");
           console.warn(
             "Being unable to find ZodObject._parse is often a sign of circular imports.",
+          );
+          console.warn(
+            "This can come from importing ~datatypes from within ~datatypes.",
           );
           process.exitCode = 1;
           process.exit();

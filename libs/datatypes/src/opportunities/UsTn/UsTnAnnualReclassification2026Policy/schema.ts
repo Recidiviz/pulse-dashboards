@@ -21,24 +21,8 @@ import { ParsedRecord } from "../../../utils/types";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import { q1Notes, q2Notes, singleIncidentPeriodReportSchema } from "../utils";
 
-export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
-  {
-    eligibleCriteria: z
-      .object({
-        custodyLevelIsNotMax: z.null(),
-        notHasInitialClassificationInStatePrisonCustody: z.null(),
-      })
-      .partial()
-      .passthrough(),
-    ineligibleCriteria: z
-      .object({
-        custodyLevelIsNotMax: z.object({}).passthrough(),
-        notHasInitialClassificationInStatePrisonCustody: z
-          .object({})
-          .passthrough(),
-      })
-      .partial()
-      .passthrough(),
+export const usTnAnnualReclassification2026Schema =
+  opportunitySchemaBase.extend({
     formInformation: z
       .object({
         q1Score: z.coerce.number().nullable(),
@@ -47,28 +31,30 @@ export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
         q4Score: z.coerce.number().nullable(),
         q5Score: z.coerce.number().nullable(),
         q6Score: z.coerce.number().nullable(),
+        q7Score: z.coerce.number().nullable(),
         q1Notes,
         q2Notes,
+        // TODO: parse all periods, not just the first, once the form can accept them
         q3Notes: singleIncidentPeriodReportSchema,
         q4Notes: singleIncidentPeriodReportSchema,
         q5Notes: singleIncidentPeriodReportSchema,
       })
       .passthrough(),
-  },
-);
+  });
 
-export type UsTnInitialClassification2026ReferralRecord = ParsedRecord<
-  typeof usTnInitialClassification2026Schema
+export type UsTnAnnualReclassification2026ReferralRecord = ParsedRecord<
+  typeof usTnAnnualReclassification2026Schema
 >;
 
-export type UsTnInitialClassification2026DraftData =
-  UsTnInitialClassification2026ReferralRecord["output"]["formInformation"] & {
+export type UsTnAnnualReclassification2026DraftData =
+  UsTnAnnualReclassification2026ReferralRecord["output"]["formInformation"] & {
     q1Selection: number;
     q2Selection: number;
     q3Selection: number;
     q4Selection: number;
     q5Selection: number;
     q6Selection: number;
+    q7Selection: number;
     q1aNotes: string;
     q1bNotes: string;
   };

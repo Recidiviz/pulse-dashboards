@@ -15,107 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import React, { ChangeEventHandler } from "react";
-import styled from "styled-components";
+import { useState } from "react";
 
-import { useOpportunityFormContext } from "../../../OpportunityFormContext";
-import { AssessmentQuestionNumber } from "../../CustodyReclassification/assessmentQuestions";
 import { AssessmentItem, SubItem } from "./AssessmentItem";
-import { RadioButton, TextWithLeader } from "./styles";
-import { AssessmentQuestionSpec } from "./types";
+import { BreakdownScoredAssessmentQuestion } from "./BreakdownScoredAssessmentQuestion";
+import { SingleScoredAssessmentQuestion } from "./SingleScoredAssessmentQuestion";
+import { AssessmentQuestionProps } from "./types";
 
-const OptionScore = styled.div`
-  flex-grow: 0;
-  width: 2rem;
-  text-align: right;
-`;
+export function ScoredAssessmentQuestion(props: AssessmentQuestionProps) {
+  const [score, setScore] = useState<number>(0);
+  const { questionNumber, questionSpec, supportingText, disabled, children } =
+    props;
 
-type OptionProps = {
-  option: AssessmentQuestionSpec["options"][number];
-  i: number;
-  selection: number;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  disabled?: boolean;
-};
-
-const Option: React.FC<OptionProps> = ({
-  option: { text, score },
-  i,
-  selection,
-  onChange,
-  disabled,
-}) => {
   return (
-    <SubItem as="label">
-      {disabled ? null : (
-        <RadioButton value={i} checked={i === selection} onChange={onChange} />
+    <AssessmentItem
+      title={`${questionNumber}. ${questionSpec.title}`}
+      score={disabled ? undefined : score}
+      scoreText="SCORE"
+      supportingText={supportingText}
+    >
+      {questionSpec.type === "SINGLE" ? (
+        <SingleScoredAssessmentQuestion
+          questionSpec={questionSpec}
+          questionNumber={questionNumber}
+          disabled={disabled}
+          setScore={setScore}
+        />
+      ) : (
+        <BreakdownScoredAssessmentQuestion
+          questionSpec={questionSpec}
+          questionNumber={questionNumber}
+          disabled={disabled}
+          setScore={setScore}
+        />
       )}
-      <TextWithLeader>{text}</TextWithLeader>
-      <OptionScore>{score}</OptionScore>
-    </SubItem>
+      <SubItem>{disabled || !children ? <br /> : children}</SubItem>
+    </AssessmentItem>
   );
-};
-
-type AssessmentQuestionProps = {
-  questionSpec: AssessmentQuestionSpec;
-  questionNumber: AssessmentQuestionNumber;
-  disabled?: boolean;
-  supportingText?: string;
-  children?: React.ReactNode;
-};
-
-export const ScoredAssessmentQuestion: React.FC<AssessmentQuestionProps> =
-  observer(function ScoredAssessmentQuestion({
-    questionSpec,
-    questionNumber,
-    disabled,
-    supportingText,
-    children,
-  }) {
-    const selectionKey = `q${questionNumber}Selection`;
-    const opportunityForm = useOpportunityFormContext();
-    const selection = opportunityForm.formData[selectionKey];
-    const onChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-      opportunityForm.updateDraftData(
-        selectionKey,
-        parseInt(event.target.value),
-      );
-    };
-
-    let score;
-    if (selection !== undefined) {
-      score = selection === -1 ? 0 : questionSpec.options[selection].score;
-    }
-
-    return (
-      <AssessmentItem
-        title={`${questionNumber}. ${questionSpec.title}`}
-        score={disabled ? undefined : score}
-        scoreText="SCORE"
-        supportingText={supportingText}
-      >
-        {questionSpec.canBeNone ? (
-          <Option
-            option={{ text: "None", score: 0 }}
-            i={-1}
-            key="None"
-            selection={selection}
-            onChange={onChange}
-            disabled={disabled}
-          />
-        ) : null}
-        {questionSpec.options.map((o, i) => (
-          <Option
-            option={o}
-            i={i}
-            key={o.text}
-            selection={selection}
-            onChange={onChange}
-            disabled={disabled}
-          />
-        ))}
-        <SubItem>{disabled || !children ? <br /> : children}</SubItem>
-      </AssessmentItem>
-    );
-  });
+}

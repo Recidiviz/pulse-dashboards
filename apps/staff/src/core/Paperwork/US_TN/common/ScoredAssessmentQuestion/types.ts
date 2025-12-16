@@ -15,15 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type AssessmentQuestionSpec = {
+import React from "react";
+
+export type AssessmentOption = {
+  text: string;
+  score: number;
+};
+
+export type SingleSectionAssessmentQuestionSpec = {
   title: string;
+  type: "SINGLE";
   canBeNone?: boolean;
-  options: {
-    text: string;
-    score: number;
+  options: AssessmentOption[];
+};
+
+export type BreakdownAssessmentQuestionSpec = {
+  title: string;
+  type: "BREAKDOWN";
+  sections: {
+    period: "0-6" | "6-12" | "12-18" | "18-36" | "36-60";
+    scores: [number, number, number, number];
   }[];
 };
 
+export type AssessmentQuestionSpec =
+  | SingleSectionAssessmentQuestionSpec
+  | BreakdownAssessmentQuestionSpec;
+
 export type TupleWithArity<OutType, InTuple> = {
   [K in keyof InTuple]: OutType;
+};
+
+export type AssessmentQuestionProps<Spec = AssessmentQuestionSpec> = {
+  questionSpec: Spec;
+  questionNumber: number;
+  disabled?: boolean;
+  supportingText?: string;
+  children?: React.ReactNode;
 };

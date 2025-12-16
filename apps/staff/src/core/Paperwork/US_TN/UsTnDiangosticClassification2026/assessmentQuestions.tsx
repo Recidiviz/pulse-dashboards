@@ -31,6 +31,7 @@ export const assessmentQuestions: TupleWithArity<
 > = [
   {
     title: "PRIOR VIOLENT FELONY CONVICTIONS",
+    type: "SINGLE",
     canBeNone: true,
     options: [
       {
@@ -44,7 +45,8 @@ export const assessmentQuestions: TupleWithArity<
     ],
   },
   {
-    title: "SEVERITY OF CURRENT OFFENSE (Rate Most Serious)",
+    title: "SEVERITY OF CURRENT OFFENSE (Rate most serious)",
+    type: "SINGLE",
     options: [
       { text: "Low", score: 10 },
       { text: "Moderate", score: 11 },
@@ -54,20 +56,23 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "NONVIOLENT CLASS B OR C DISCIPLINARY REPORTS SINCE RECEPTION",
+    type: "SINGLE",
     options: [
       { text: "Yes", score: 6 },
       { text: "No", score: -1 },
     ],
   },
   {
-    title: "NONVIOLENT CLASS A DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
+    title: "NONVIOLENT CLASS A DISCIPLINARY REPORTS",
+    type: "SINGLE",
     options: [
       { text: "Yes", score: 20 },
       { text: "No", score: -1 },
     ],
   },
   {
-    title: "VIOLENT CLASS A OR B DISCIPLINARY REPORTS (CHECK ALL THAT APPLY)",
+    title: "VIOLENT CLASS A OR B DISCIPLINARY REPORTS",
+    type: "SINGLE",
     options: [
       { text: "Yes", score: 30 },
       { text: "No", score: -1 },
@@ -75,6 +80,7 @@ export const assessmentQuestions: TupleWithArity<
   },
   {
     title: "AGE",
+    type: "SINGLE",
     options: [
       { text: "21 or Younger", score: 11 },
       { text: "22 - 25", score: 8 },
