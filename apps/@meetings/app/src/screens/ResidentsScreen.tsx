@@ -18,7 +18,7 @@
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 
-import { Client } from "~@meetings/app/common/types";
+import { Resident } from "~@meetings/app/common/types";
 
 import Header from "../components/Header";
 import Loading from "../components/Loading";
@@ -27,63 +27,88 @@ import PersonsHeaderContent from "../components/PersonsHeaderContent";
 import PersonsPlaceholder from "../components/PersonsPlaceholder";
 import PersonsTable from "../components/PersonsTable.web";
 import { useRecording } from "../context/RecordingContext";
-import { trpc } from "../trpc/client";
+import { SortOption, sortUsers } from "../utils/sort";
 
-const sortClientsByOption = (data: Client[], option: string): Client[] => {
-  const sorted = [...data];
-  if (option.includes("Name")) {
-    return sorted.sort((a, b) => a.fullName.localeCompare(b.fullName));
-  }
-  return sorted.sort(
-    (a, b) =>
-      Number(a.displayPersonExternalId) - Number(b.displayPersonExternalId),
-  );
+const mock = {
+  data: [
+    {
+      activeMeetingId: "1",
+      personId: BigInt(1000),
+      displayPersonExternalId: "1000",
+      givenNames: "Peter",
+      surname: "Parker",
+      facilityName: "facility 1",
+    },
+    {
+      activeMeetingId: "3",
+      personId: BigInt(1001),
+      displayPersonExternalId: "1001",
+      givenNames: "Jin",
+      surname: "Kazama",
+      facilityName: "facility 2",
+    },
+    {
+      activeMeetingId: "5",
+      personId: BigInt(1002),
+      displayPersonExternalId: "1002",
+      givenNames: "Lara",
+      surname: "Croft",
+      facilityName: "facility 3",
+    },
+    {
+      activeMeetingId: "7",
+      personId: BigInt(1003),
+      displayPersonExternalId: "1003",
+      givenNames: "Sylvanas",
+      surname: "Windrunner",
+      facilityName: "facility 4",
+    },
+  ],
+  isLoading: false,
+  error: null,
+  refetch: () => null,
 };
 
-const ClientsScreen = () => {
+const ResidentsScreen = () => {
   const { status: recordingState } = useRecording();
 
-  const {
-    data: rawClients,
-    isLoading,
-    error,
-    refetch,
-  } = trpc.v1.staff.getClients.useQuery();
+  // TODO: for test purposes, after backend is ready replace getClients with getResidents call
+  const { data: rawResidents, isLoading, error, refetch } = mock;
 
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("Name (A-Z)");
+  const [sortBy, setSortBy] = useState(SortOption.Name as string);
 
-  const clients: Client[] = React.useMemo(() => {
-    if (!rawClients) return [];
-    return rawClients.map((c) => ({
-      ...c,
-      fullName: `${c.givenNames} ${c.surname}`,
-      primaryMetadata: c.supervisionType,
+  const residents: Resident[] = React.useMemo(() => {
+    if (!rawResidents) return [];
+    return rawResidents.map((r) => ({
+      ...r,
+      fullName: `${r.givenNames} ${r.surname}`,
+      primaryMetadata: r.facilityName,
       lastMeeting: "5d ago", // TODO: remove hardcode
     }));
-  }, [rawClients]);
+  }, [rawResidents]);
 
   // filtering and sorting clients
-  const filteredClients = React.useMemo(() => {
-    let results = clients;
+  const filteredResidents = React.useMemo(() => {
+    let results = residents;
     if (search) {
       results = results.filter((e) =>
         e.fullName.toLowerCase().includes(search.toLowerCase()),
       );
     }
 
-    results = sortClientsByOption(results, sortBy);
+    results = sortUsers(results, sortBy as SortOption);
     return results.sort(
       (a, b) => Number(!!b.activeMeetingId) - Number(!!a.activeMeetingId),
     );
-  }, [clients, search, sortBy]);
+  }, [residents, search, sortBy]);
 
   useEffect(() => {
     refetch();
   }, [recordingState, refetch]);
 
   if (isLoading) {
-    return <Loading message="Loading clients..." />;
+    return <Loading message="Loading residents..." />;
   }
 
   if (error) throw error;
@@ -94,24 +119,24 @@ const ClientsScreen = () => {
       <ScrollView className="flex-1" contentContainerClassName="grow">
         <View className="mx-auto w-full max-w-[960px] flex-1">
           <PersonsHeaderContent
-            keyword="Client"
-            description="All clients on your caseload are displayed below"
-            personsCount={filteredClients.length}
+            keyword="Resident"
+            description="All residents are displayed below"
+            personsCount={filteredResidents.length}
             searchQuery={search}
             setSearchQuery={setSearch}
             setSortBy={setSortBy}
           />
-          <View className="flex grow basis-0 flex-col p-4 pt-0">
-            {filteredClients.length === 0 ? (
+          <View className="flex grow basis-0 p-4 pt-0">
+            {filteredResidents.length === 0 ? (
               <PersonsPlaceholder
-                message="No clients found"
+                message="No residents found"
                 onClearSearch={() => setSearch("")}
               />
             ) : (
               Platform.select({
                 native: (
                   <PersonsCardsList
-                    persons={filteredClients}
+                    persons={filteredResidents}
                     recordingState={recordingState}
                   />
                 ),
@@ -119,12 +144,12 @@ const ClientsScreen = () => {
                   <View className="pb-4">
                     <View className="md:hidden">
                       <PersonsCardsList
-                        persons={filteredClients}
+                        persons={filteredResidents}
                         recordingState={recordingState}
                       />
                     </View>
                     <View className="hidden md:block">
-                      <PersonsTable persons={filteredClients} />
+                      <PersonsTable persons={filteredResidents} />
                     </View>
                   </View>
                 ),
@@ -137,4 +162,4 @@ const ClientsScreen = () => {
   );
 };
 
-export default ClientsScreen;
+export default ResidentsScreen;

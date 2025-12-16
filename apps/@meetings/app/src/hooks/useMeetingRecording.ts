@@ -29,15 +29,15 @@ import {
 } from "../utils/notifications";
 import { getItem, removeItem } from "../utils/storage";
 
-interface Client {
+interface Person {
   personId: bigint;
   fullName: string;
   displayPersonExternalId: string;
-  supervision: string;
+  primaryMetadata: string;
 }
 
 interface UseMeetingRecordingParams {
-  client: Client;
+  person: Person;
   meetingId: string;
   onComplete: () => void;
 }
@@ -60,7 +60,7 @@ interface UseMeetingRecordingReturn {
 }
 
 export const useMeetingRecording = ({
-  client,
+  person,
   meetingId,
   onComplete,
 }: UseMeetingRecordingParams): UseMeetingRecordingReturn => {
@@ -121,7 +121,7 @@ export const useMeetingRecording = ({
   });
 
   const { refetch } = trpc.v1.meeting.getSignedUrlForRecording.useQuery(
-    { clientId: client.personId, meetingId: meetingId ?? "" },
+    { clientId: person.personId, meetingId: meetingId ?? "" },
     { enabled: false },
   );
 
@@ -179,7 +179,7 @@ export const useMeetingRecording = ({
     if (status === "recording") {
       try {
         await updateNotesMutation.mutateAsync({
-          clientId: client.personId,
+          clientId: person.personId,
           meetingId,
           notes: note,
         });
@@ -200,7 +200,7 @@ export const useMeetingRecording = ({
       await removeItem("note");
 
       await endMeetingMutation.mutateAsync({
-        clientId: client.personId,
+        clientId: person.personId,
         meetingId,
         notes: note,
       });
@@ -224,7 +224,7 @@ export const useMeetingRecording = ({
     await cleanupRecording();
 
     await discardMeetingMutation.mutateAsync({
-      clientId: client.personId,
+      clientId: person.personId,
       meetingId,
     });
 

@@ -40,11 +40,11 @@ type Meeting = {
   content: string;
 };
 
-type Client = {
+type Person = {
   personId: string;
   fullName: string;
   displayPersonExternalId: string;
-  supervision: string;
+  primaryMetadata: string;
 };
 
 const TOPICS = ["New Job", "Motivation", "Partner", "Address"];
@@ -61,10 +61,10 @@ const Topic = ({ topic }: { topic: string }) => {
 
 type MeetingRowProps = {
   meeting: Meeting;
-  client: Client;
+  person: Person;
 };
 
-const MeetingRow = ({ meeting, client }: MeetingRowProps) => {
+const MeetingRow = ({ meeting, person }: MeetingRowProps) => {
   const navigation = useNavigation<MeetingNavProp>();
 
   return (
@@ -100,7 +100,7 @@ const MeetingRow = ({ meeting, client }: MeetingRowProps) => {
       <TableCell>
         <TouchableOpacity
           className="invisible size-5 items-center justify-center group-hover:visible"
-          onPress={() => navigation.navigate("Meeting", { meeting, client })}
+          onPress={() => navigation.navigate("Meeting", { meeting, person })}
         >
           <Image source={Icons.ArrowRight} className="!size-full" />
         </TouchableOpacity>
@@ -111,10 +111,10 @@ const MeetingRow = ({ meeting, client }: MeetingRowProps) => {
 
 type MeetingsTableProps = {
   meetings: Meeting[];
-  client: Client;
+  person: Person;
 };
 
-const MeetingsTable = ({ meetings, client }: MeetingsTableProps) => {
+const MeetingsTable = ({ meetings, person }: MeetingsTableProps) => {
   return (
     <Table>
       <TableHead>
@@ -132,7 +132,7 @@ const MeetingsTable = ({ meetings, client }: MeetingsTableProps) => {
           <MeetingRow
             key={`${meeting.id}-${index}`}
             meeting={meeting}
-            client={client}
+            person={person}
           />
         ))}
       </TableBody>

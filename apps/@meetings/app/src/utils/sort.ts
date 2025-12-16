@@ -15,36 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { AppRouter } from "~@meetings/trpc-types";
+import { Client, Resident } from "../common/types";
 
-export type Client = Awaited<
-  ReturnType<AppRouter["v1"]["staff"]["getClients"]>
->[0] & {
-  primaryMetadata: string;
-  lastMeeting: string;
-  fullName: string;
-};
-
-//fake type, waiting for backend implementation
-export type Resident = {
-  activeMeetingId: string;
-  personId: bigint;
-  displayPersonExternalId: string;
-  givenNames: string;
-  surname: string;
-  lastMeeting: string;
-  fullName: string;
-  facilityName: string;
-  primaryMetadata: string;
+export enum SortOption {
+  Name = "Name (A-Z)",
+  Id = "ID"
 }
 
-export type Person = Client | Resident;
-
-export type RecordingStatus =
-  | "idle"
-  | "recording"
-  | "paused"
-  | "uploading"
-  | "stopping"
-  | "discarding"
-  | "ending";
+export const sortUsers = <T extends Client | Resident>(users: T[], option: SortOption) => {
+  const sortedUsers = [...users];
+  if (option === SortOption.Name) {
+    return sortedUsers.sort((a, b) => a.fullName.localeCompare(b.fullName));
+  }
+  if (option === SortOption.Id) {
+    return sortedUsers.sort(
+      (a, b) =>
+        Number(a.displayPersonExternalId) - Number(b.displayPersonExternalId),
+    );
+  }
+  return sortedUsers;
+}

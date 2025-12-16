@@ -26,51 +26,51 @@ import {
   View,
 } from "react-native";
 
-import { Client } from "~@meetings/app/common/types";
+import { Person } from "~@meetings/app/common/types";
 
 import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { getClientInitials, humanReadableTitleCase } from "../utils/format";
 import MeetingInProgressBar from "./MeetingInProgressBar";
 
-type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients">;
+type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients" | "Residents">;
 
-interface ClientsProps {
-  clients: Client[];
+interface Props {
+  persons: Person[];
   recordingState: string;
 }
 
-const ClientsCardsList = ({ clients, recordingState }: ClientsProps) => {
+const PersonsCardsList = ({ persons, recordingState }: Props) => {
   const navigation = useNavigation<ProfileNavProp>();
 
   return (
     <View className="flex flex-col">
-      {clients.map((client) => {
-        const hasActiveMeeting = !!client.activeMeetingId;
+      {persons.map((person) => {
+        const hasActiveMeeting = !!person.activeMeetingId;
 
         const handleGoToMeetingScreen = () => {
           navigation.navigate("NewMeeting", {
-            client: {
-              personId: client.personId.toString(),
-              fullName: client.fullName,
-              displayPersonExternalId: client.displayPersonExternalId,
-              supervision: client.supervision,
+            person: {
+              personId: person.personId.toString(),
+              fullName: person.fullName,
+              displayPersonExternalId: person.displayPersonExternalId,
+              primaryMetadata: person.primaryMetadata,
             },
-            meetingId: client.activeMeetingId,
+            meetingId: person.activeMeetingId,
           });
         };
 
         return (
           <TouchableOpacity
-            key={client.personId}
+            key={person.personId}
             className="border-b border-gray-300 px-2.5 py-3.5"
             onPress={() =>
               navigation.navigate("Profile", {
-                client: {
-                  personId: client.personId.toString(),
-                  fullName: client.fullName,
-                  displayPersonExternalId: client.displayPersonExternalId,
-                  supervision: client.supervision,
+                person: {
+                  personId: person.personId.toString(),
+                  fullName: person.fullName,
+                  displayPersonExternalId: person.displayPersonExternalId,
+                  primaryMetadata: person.primaryMetadata,
                 },
               })
             }
@@ -82,25 +82,25 @@ const ClientsCardsList = ({ clients, recordingState }: ClientsProps) => {
                 imageClassName="!size-11"
               >
                 <Text className="font-inter text-sm font-semibold text-white">
-                  {getClientInitials(client.fullName)}
+                  {getClientInitials(person.fullName)}
                 </Text>
               </ImageBackground>
 
               <View className="flex-1">
                 <View className="flex-row items-center justify-between">
                   <Text className="mr-1.5 font-inter text-base font-semibold text-gray-900">
-                    {client.fullName}
+                    {person.fullName}
                   </Text>
                   <Image source={Icons.ArrowRight} className="!size-3.5" />
                 </View>
 
                 <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
                   <Text className="font-inter text-xs text-gray-600">
-                    ID: {client.displayPersonExternalId} •{" "}
-                    {humanReadableTitleCase(client.supervision)}
+                    ID: {person.displayPersonExternalId} •{" "}
+                    {humanReadableTitleCase(person.primaryMetadata)}
                   </Text>
                   <Text className="font-inter text-xs text-gray-600">
-                    Last meeting {client.lastMeeting}
+                    Last meeting {person.lastMeeting}
                   </Text>
                 </View>
               </View>
@@ -123,4 +123,4 @@ const ClientsCardsList = ({ clients, recordingState }: ClientsProps) => {
   );
 };
 
-export default ClientsCardsList;
+export default PersonsCardsList;

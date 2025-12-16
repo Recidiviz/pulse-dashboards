@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import {
   Image,
@@ -26,7 +26,7 @@ import {
   View,
 } from "react-native";
 
-import { Client } from "~@meetings/app/common/types";
+import { Person } from "~@meetings/app/common/types";
 
 import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
@@ -41,13 +41,13 @@ import {
   TableRow,
 } from "./Table.web";
 
-type ProfileNavProp = StackNavigationProp<RootStackParamList, "Clients">;
+type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients" | "Residents">;
 
-interface ClientsProps {
-  clients: Client[];
+interface PersonsProps {
+  persons: Person[];
 }
 
-const ClientsTable = ({ clients }: ClientsProps) => {
+const PersonsTable = ({ persons }: PersonsProps) => {
   const navigation = useNavigation<ProfileNavProp>();
 
   return (
@@ -62,8 +62,8 @@ const ClientsTable = ({ clients }: ClientsProps) => {
         </TableHeadRow>
       </TableHead>
       <TableBody>
-        {clients.map((client) => (
-          <TableRow key={client.personId}>
+        {persons.map((person) => (
+          <TableRow key={person.personId}>
             <TableCell>
               <View className="flex h-full flex-row items-center gap-3">
                 <ImageBackground
@@ -72,22 +72,22 @@ const ClientsTable = ({ clients }: ClientsProps) => {
                   imageClassName="!size-11"
                 >
                   <Text className="font-inter text-base font-medium text-white">
-                    {getClientInitials(client.fullName)}
+                    {getClientInitials(person.fullName)}
                   </Text>
                 </ImageBackground>
                 <Text className="font-inter text-base font-medium text-primary">
-                  {client.fullName}
+                  {person.fullName}
                 </Text>
               </View>
             </TableCell>
-            <TableCell>{client.displayPersonExternalId}</TableCell>
-            <TableCell>{client.supervision}</TableCell>
+            <TableCell>{person.displayPersonExternalId}</TableCell>
+            <TableCell>
+              {person.primaryMetadata}
+            </TableCell>
             <TableCell>
               <Text className="font-inter text-base text-[#355362D9]">
                 Last meeting{" "}
-                <Text className="font-inter font-bold">
-                  {client.lastMeeting}
-                </Text>
+                <Text className="font-inter font-bold">{person.lastMeeting}</Text>
               </Text>
             </TableCell>
             <TableCell>
@@ -95,11 +95,11 @@ const ClientsTable = ({ clients }: ClientsProps) => {
                 className="invisible size-5 items-center justify-center group-hover:visible"
                 onPress={() =>
                   navigation.navigate("Profile", {
-                    client: {
-                      personId: client.personId.toString(),
-                      fullName: client.fullName,
-                      displayPersonExternalId: client.displayPersonExternalId,
-                      supervision: client.supervision,
+                    person: {
+                      personId: person.personId.toString(),
+                      fullName: person.fullName,
+                      displayPersonExternalId: person.displayPersonExternalId,
+                      primaryMetadata: person.primaryMetadata,
                     },
                   })
                 }
@@ -141,4 +141,4 @@ const ClientsTable = ({ clients }: ClientsProps) => {
   );
 };
 
-export default ClientsTable;
+export default PersonsTable;

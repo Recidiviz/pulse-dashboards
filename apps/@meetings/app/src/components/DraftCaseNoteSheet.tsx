@@ -29,7 +29,7 @@ type Props = {
   notes: string;
   clientName: string;
   meetingDate?: Date;
-  ref: RefObject<BottomSheet>;
+  ref: RefObject<BottomSheet | null>;
 }
 
 const DraftCaseNoteSheet = (({ notes, clientName, meetingDate, ref }: Props) => {

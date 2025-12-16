@@ -62,10 +62,10 @@ enum MeetingsSort {
 const ProfileScreen = () => {
   const navigation = useNavigation<NewMeetingNavProp>();
   const route = useRoute<NewMeetingRouteProp>();
-  const client = {
-    ...route.params.client,
+  const person = {
+    ...route.params.person,
     // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.client.personId),
+    personId: BigInt(route.params.person.personId),
   };
 
   const insets = useSafeAreaInsets();
@@ -86,9 +86,9 @@ const ProfileScreen = () => {
     error,
     refetch,
   } = trpc.v1.client.getMeetings.useQuery(
-    { clientId: client.personId },
+    { clientId: person.personId },
     {
-      enabled: !!client?.personId,
+      enabled: !!person?.personId,
     },
   );
 
@@ -219,7 +219,7 @@ const ProfileScreen = () => {
       setIsCreating(true);
       const startTime = new Date();
       const { id: meetingId } = await createMeetingMutation.mutateAsync({
-        clientId: client.personId,
+        clientId: person.personId,
         startTime,
       });
 
@@ -230,11 +230,11 @@ const ProfileScreen = () => {
         case "ios":
         case "android":
           navigation.navigate("NewMeeting", {
-            client: {
-              personId: client.personId.toString(),
-              fullName: client.fullName,
-              displayPersonExternalId: client.displayPersonExternalId,
-              supervision: client.supervision,
+            person: {
+              personId: person.personId.toString(),
+              fullName: person.fullName,
+              displayPersonExternalId: person.displayPersonExternalId,
+              primaryMetadata: person.primaryMetadata,
             },
             meetingId,
           });
@@ -312,14 +312,14 @@ const ProfileScreen = () => {
       native: (
         <MeetingsCardsList
           meetings={filteredMeetings}
-          client={route.params.client}
+          person={route.params.person}
           onPress={(id) => {
             navigation.navigate("NewMeeting", {
-              client: {
-                personId: client.personId.toString(),
-                fullName: client.fullName,
-                displayPersonExternalId: client.displayPersonExternalId,
-                supervision: client.supervision,
+              person: {
+                personId: person.personId.toString(),
+                fullName: person.fullName,
+                displayPersonExternalId: person.displayPersonExternalId,
+                primaryMetadata: person.primaryMetadata,
               },
               meetingId: id,
             });
@@ -331,14 +331,14 @@ const ProfileScreen = () => {
           <View className="md:hidden">
             <MeetingsCardsList
               meetings={filteredMeetings}
-              client={route.params.client}
+              person={route.params.person}
               onPress={(id) => {
                 navigation.navigate("NewMeeting", {
-                  client: {
-                    personId: client.personId.toString(),
-                    fullName: client.fullName,
-                    displayPersonExternalId: client.displayPersonExternalId,
-                    supervision: client.supervision,
+                  person: {
+                    personId: person.personId.toString(),
+                    fullName: person.fullName,
+                    displayPersonExternalId: person.displayPersonExternalId,
+                    primaryMetadata: person.primaryMetadata,
                   },
                   meetingId: id,
                 });
@@ -348,7 +348,7 @@ const ProfileScreen = () => {
           <View className="hidden md:block">
             <MeetingsTable
               meetings={filteredMeetings}
-              client={route.params.client}
+              person={route.params.person}
             />
           </View>
         </View>
@@ -403,12 +403,12 @@ const ProfileScreen = () => {
         {!isCollapsed && (
           <View className="pt-8">
             <Text className="mb-1 text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary">
-              {client.fullName}
+              {person.fullName}
             </Text>
 
             <Text className="text-[14px] leading-[16px] tracking-[-0.28px] text-primary">
-              ID: {client.displayPersonExternalId} •{" "}
-              {humanReadableTitleCase(client.supervision)}
+              ID: {person.displayPersonExternalId} •{" "}
+              {humanReadableTitleCase(person.primaryMetadata)}
             </Text>
           </View>
         )}
@@ -434,11 +434,11 @@ const ProfileScreen = () => {
 
         <View className="mx-auto w-full max-w-[960px]">
           <Text className="hidden font-libre-baskerville text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary md:block md:text-[32px]">
-            {client.fullName}
+            {person.fullName}
           </Text>
 
-          <Text className="mt-1 hidden text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">
-            ID: {client.displayPersonExternalId} • {client.supervision}
+          <Text className="mt-1 hidden font-inter text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">
+            ID: {person.displayPersonExternalId} • {person.primaryMetadata}
           </Text>
 
           <View className="my-4 flex-row items-center justify-between">

@@ -15,36 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { AppRouter } from "~@meetings/trpc-types";
+import { Text, View } from "react-native";
 
-export type Client = Awaited<
-  ReturnType<AppRouter["v1"]["staff"]["getClients"]>
->[0] & {
-  primaryMetadata: string;
-  lastMeeting: string;
-  fullName: string;
+type Props = {
+  message: string;
 };
 
-//fake type, waiting for backend implementation
-export type Resident = {
-  activeMeetingId: string;
-  personId: bigint;
-  displayPersonExternalId: string;
-  givenNames: string;
-  surname: string;
-  lastMeeting: string;
-  fullName: string;
-  facilityName: string;
-  primaryMetadata: string;
-}
+const Loading = ({ message }: Props) => {
+  return (
+    <View className="flex-1 items-center justify-center bg-white">
+      <Text className="font-inter text-base text-gray-700">{message}</Text>
+    </View>
+  );
+};
 
-export type Person = Client | Resident;
-
-export type RecordingStatus =
-  | "idle"
-  | "recording"
-  | "paused"
-  | "uploading"
-  | "stopping"
-  | "discarding"
-  | "ending";
+export default Loading;

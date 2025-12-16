@@ -104,6 +104,11 @@ const Header: React.FC<HeaderProps> = ({
             isActive={route.name === "Clients"}
             onPress={() => navigate("Clients")}
           />
+          <DesktopMenuItem
+            title="Residents"
+            isActive={route.name === "Residents"}
+            onPress={() => navigate("Residents")}
+          />
           <View className="relative">
             <TouchableOpacity
               className="flex-row items-center gap-x-1"

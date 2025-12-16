@@ -111,6 +111,29 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
           title="Clients"
           onPress={() => handleMenuPress("Clients")}
         />
+        <MobileMenuItem
+          icon={Icons.Clients}
+          title="Residents"
+          onPress={() => handleMenuPress("Residents")}
+        />
+        {/* <MobileMenuItem
+          icon={Icons.Chat}
+          title="Messages"
+          badge={1}
+          onPress={() => handleMenuPress("Messages")}
+        />
+
+        <Text className="mt-[15px] font-inter text-xs text-gray-500">Tools</Text>
+        <MobileMenuItem
+          icon={Icons.Schedule}
+          title="Schedule"
+          onPress={() => handleMenuPress("Schedule")}
+        />
+        <MobileMenuItem
+          icon={Icons.Resources}
+          title="Resources"
+          onPress={() => handleMenuPress("Resources")}
+        /> */}
       </ScrollView>
 
       <View className="bg-gray-200 px-4 py-[26px]">

@@ -41,10 +41,10 @@ type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
 const NewMeetingScreen = () => {
   const navigation = useNavigation<ProfileNavProp>();
   const route = useRoute<NewMeetingRouteProp>();
-  const client = {
-    ...route.params.client,
+  const person = {
+    ...route.params.person,
     // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.client.personId),
+    personId: BigInt(route.params.person.personId),
   };
   const { meetingId } = route.params;
 
@@ -56,11 +56,11 @@ const NewMeetingScreen = () => {
         {
           name: "Profile",
           params: {
-            client: {
-              personId: client.personId.toString(),
-              fullName: client.fullName,
-              displayPersonExternalId: client.displayPersonExternalId,
-              supervision: client.supervision,
+            person: {
+              personId: person.personId.toString(),
+              fullName: person.fullName,
+              displayPersonExternalId: person.displayPersonExternalId,
+              primaryMetadata: person.primaryMetadata,
             },
           },
         },
@@ -70,7 +70,7 @@ const NewMeetingScreen = () => {
 
   const { status, note, setNote, recorderState, actions } = useMeetingRecording(
     {
-      client,
+      person,
       meetingId,
       onComplete: navigateToClientProfile,
     },
@@ -155,11 +155,11 @@ const NewMeetingScreen = () => {
 
       <View className="rounded-t-2xl bg-gray-100 px-6 py-12">
         <Text className="text-center font-inter text-base font-semibold text-primary">
-          {client.fullName}
+          {person.fullName}
         </Text>
         <Text className="mb-4 text-center font-inter text-sm text-gray-600">
-          ID: {client.displayPersonExternalId} •{" "}
-          {humanReadableTitleCase(client.supervision)}
+          ID: {person.displayPersonExternalId} •{" "}
+          {humanReadableTitleCase(person.primaryMetadata)}
         </Text>
         <RecordingControls
           status={status}
@@ -178,7 +178,7 @@ const NewMeetingScreen = () => {
           {status === "discarding" && (
             <MeetingSheet
               title="Discard meeting?"
-              description={`You're about to discard the meeting with ${client.fullName}. Notes and transcript will not be saved.`}
+              description={`You're about to discard the meeting with ${person.fullName}. Notes and transcript will not be saved.`}
               primaryButton={{
                 label: "Discard",
                 onPress: handleFinalDiscard,
@@ -195,7 +195,7 @@ const NewMeetingScreen = () => {
           {status === "stopping" && (
             <MeetingSheet
               title="End this meeting?"
-              description={`You're about to finish the meeting with ${client.fullName} and save the notes for processing.`}
+              description={`You're about to finish the meeting with ${person.fullName} and save the notes for processing.`}
               primaryButton={{
                 label: "Finish & Save",
                 onPress: handleFinishAndSave,

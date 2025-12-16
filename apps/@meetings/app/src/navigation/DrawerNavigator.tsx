@@ -24,32 +24,37 @@ import MeetingScreen from "../screens/MeetingScreen";
 import MenuScreen from "../screens/MenuScreen";
 import NewMeetingScreen from "../screens/NewMeetingScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import ResidentsScreen from "../screens/ResidentsScreen";
 
 export type RootStackParamList = {
   Clients: undefined;
+  Residents: undefined;
+  // Messages: undefined;
+  // Schedule: undefined;
+  // Resources: undefined;
   Profile: {
-    client: {
+    person: {
       personId: string;
       fullName: string;
       displayPersonExternalId: string;
-      supervision: string;
+      primaryMetadata: string;
     };
   };
   NewMeeting: {
-    client: {
+    person: {
       personId: string;
       fullName: string;
       displayPersonExternalId: string;
-      supervision: string;
+      primaryMetadata: string;
     };
     meetingId: string;
   };
   Meeting: {
-    client: {
+    person: {
       personId: string;
       fullName: string;
       displayPersonExternalId: string;
-      supervision: string;
+      primaryMetadata: string;
     };
     meeting: {
       id: string;
@@ -70,6 +75,10 @@ export default function DrawerNavigator() {
     <>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Clients" component={ClientsScreen} />
+        <Stack.Screen name="Residents" component={ResidentsScreen} />
+        {/* <Stack.Screen name="Messages" component={HomeScreen} />
+        <Stack.Screen name="Schedule" component={HomeScreen} />
+        <Stack.Screen name="Resources" component={HomeScreen} /> */}
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="NewMeeting" component={NewMeetingScreen} />
         <Stack.Screen name="Meeting" component={MeetingScreen} />

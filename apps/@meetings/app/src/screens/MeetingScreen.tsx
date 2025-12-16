@@ -105,15 +105,15 @@ const MeetingScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute<MeetingRouteProp>();
-  const client = {
-    ...route.params.client,
+  const person = {
+    ...route.params.person,
     // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.client.personId),
+    personId: BigInt(route.params.person.personId),
   };
   const { meeting } = route.params;
   const { data: meetingDetails } = trpc.v1.meeting.getDetails.useQuery({
     meetingId: meeting.id,
-    clientId: client.personId,
+    clientId: person.personId,
   });
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Notes);
   const scrollY = useSharedValue(0);
@@ -153,7 +153,7 @@ const MeetingScreen = () => {
     marginBottom: interpolate(scrollY.value, [0, 10], [16, 0], "clamp"),
   }));
 
-  const userNameStyle = useAnimatedStyle(() => ({
+  const personNameStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY.value, [50, 60], [1, 0], "clamp"),
     height: interpolate(scrollY.value, [50, 60], [20, 0], "clamp"),
     marginBottom: interpolate(scrollY.value, [50, 60], [16, 0], "clamp"),
@@ -245,7 +245,7 @@ const MeetingScreen = () => {
               {meetingDate}
             </Text>
             <Text className="font-inter text-sm font-normal leading-[16px] text-gray-500">
-              {client.fullName}
+              {person.fullName}
             </Text>
           </Animated.View>
 
@@ -269,14 +269,14 @@ const MeetingScreen = () => {
 
           <Animated.View
             className="flex flex-row flex-wrap items-baseline gap-x-2 gap-y-1"
-            style={[userNameStyle]}
+            style={[personNameStyle]}
           >
             <Text className="font-inter text-base font-semibold leading-[20px] text-primary">
-              {client.fullName}
+              {person.fullName}
             </Text>
             <Text className="font-inter text-sm font-normal leading-[16px] text-gray-500">
-              ID: {client.displayPersonExternalId} •{" "}
-              {humanReadableTitleCase(client.supervision)}
+              ID: {person.displayPersonExternalId} •{" "}
+              {humanReadableTitleCase(person.primaryMetadata)}
             </Text>
           </Animated.View>
           <Animated.View
@@ -376,7 +376,7 @@ const MeetingScreen = () => {
 
       <DraftCaseNoteSheet
         notes={meetingDetails?.notes || ""}
-        clientName={client.fullName}
+        clientName={person.fullName}
         meetingDate={meetingDetails?.startTime}
         ref={draftCaseNoteSheetRef}
       />

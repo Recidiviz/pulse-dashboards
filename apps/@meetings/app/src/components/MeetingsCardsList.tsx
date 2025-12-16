@@ -38,16 +38,16 @@ type MeetingCardProps = {
     start: Date;
     end: Date | null;
   }[];
-  client: {
+  person: {
     personId: string;
     fullName: string;
     displayPersonExternalId: string;
-    supervision: string;
+    primaryMetadata: string;
   };
   onPress: (id: string) => void;
 };
 
-const MeetingsCardsList = ({ meetings, client, onPress }: MeetingCardProps) => {
+const MeetingsCardsList = ({ meetings, person, onPress }: MeetingCardProps) => {
   const navigation = useNavigation<MeetingNavProp>();
   // const [isExpanded, setIsExpanded] = useState(false);
 
@@ -67,7 +67,7 @@ const MeetingsCardsList = ({ meetings, client, onPress }: MeetingCardProps) => {
           if (meeting.status === "NOT_STARTED" && onPress) {
             onPress(meeting.id);
           } else {
-            navigation.navigate("Meeting", { meeting, client });
+            navigation.navigate("Meeting", { meeting, person });
           }
         }}
         className="mb-3 rounded-2xl bg-white p-4 shadow-sm"
