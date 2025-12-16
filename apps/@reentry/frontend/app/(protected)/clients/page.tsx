@@ -121,7 +121,7 @@ const ClientsPage = () => {
   const [activeRowId, ] = useState<string | null>(null);
   const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false);
   const [isAddingClient, setIsAddingClient] = useState(false);
-  const { isZeroCaseloadUser } = useAuthUserCapabilities();
+  const { isZeroCaseloadUser, cpaClientLocations } = useAuthUserCapabilities();
 
   const uniqueIntakeStatusOptions = [
     ["New", "new"],
@@ -146,6 +146,7 @@ const ClientsPage = () => {
           page: page,
           size: rowsPerPage,
           is_zero_caseload_user: isZeroCaseloadUser,
+          cpa_client_locations: cpaClientLocations,
           ...(activeSearchTerm && { search: activeSearchTerm }),
           ...(statusFilter && { status_filter: statusFilter }),
           ...(sortBy && { sort_by: sortBy }),

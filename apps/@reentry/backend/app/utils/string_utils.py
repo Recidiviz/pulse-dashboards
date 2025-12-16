@@ -46,3 +46,18 @@ def escape_sql_string(content: str) -> str:
         "it''s a test"
     """
     return content.replace("'", "''")
+
+
+def normalize_locations(locations: list[str]) -> list[str]:
+    """
+    Normalize a list of location codes.
+
+    This function applies normalization to each location code in the list
+    using the `normalize_code` function.
+
+    Example:
+        >>> normalize_locations(["ORANGE_STREET_CCC", "DISTRICT_4_-_BOISE"])
+        [' ORANGE STREET CCC', 'DISTRICT 4 - BOISE']
+    """
+    locations = [loc.strip().replace("_", " ") for loc in locations]
+    return list(set(locations))

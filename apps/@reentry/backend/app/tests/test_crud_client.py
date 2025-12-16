@@ -253,10 +253,10 @@ async def test_zero_caseload_user_with_locations_but_no_facility_clients(async_s
         assert result["items"] == []
         assert result["pages"] == 0
 
-        mock_get_facility_clients.assert_called_once_with(
-            "staff123",
-            ["FAC1", "FAC2"],
-        )
+        called_staff_id, called_locations = mock_get_facility_clients.call_args.args
+
+        assert called_staff_id == "staff123"
+        assert set(called_locations) == {"FAC1", "FAC2"}
 
 
 @pytest.mark.asyncio

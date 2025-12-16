@@ -94,7 +94,7 @@ def generate_schema_files():
     )
 
 
-LOCATIONS = ["USCF", "ORANGE_STREET_CCC", "ISCI", "DISTRICT_4_BOISE", "ICIO"]
+LOCATIONS = ["USCF", "ORANGE STREET CCC", "ISCI", "DISTRICT 4 BOISE", "ICIO"]
 
 
 def random_locations():

@@ -1,7 +1,7 @@
 import logging
 from datetime import date, datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi_pagination import Page
 from pydantic import BaseModel
 from sqlalchemy.exc import DBAPIError
@@ -83,6 +83,7 @@ async def router_list_clients(
     search: str | None = None,  # Search by client name
     status_filter: str | None = None,  # Filter by status
     is_zero_caseload_user: bool = False,
+    cpa_client_locations: list[str] | None = Query(default=[]),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
     # Get paginated list of clients, filtered by staff ID if available
@@ -96,6 +97,7 @@ async def router_list_clients(
         search,
         status_filter,
         is_zero_caseload_user,
+        cpa_client_locations,
     )
 
 

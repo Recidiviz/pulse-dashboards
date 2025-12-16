@@ -24,11 +24,13 @@ import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 export interface AuthUserCapabilities {
   isZeroCaseloadUser: boolean;
   isReadOnlyUser: boolean;
+  cpaClientLocations: string[];
 }
 
 const AuthUserCapabilitiesContext = createContext<AuthUserCapabilities>({
   isZeroCaseloadUser: false,
   isReadOnlyUser: false,
+  cpaClientLocations: [],
 });
 
 export const AuthUserCapabilitiesProvider = ({
@@ -42,9 +44,16 @@ export const AuthUserCapabilitiesProvider = ({
   const capabilities = useMemo<AuthUserCapabilities>(() => {
     // @ts-expect-error: featureVariants may not be defined in userAppMetadata
     const features = userAppMetadata?.featureVariants || {};
+
+    // Extract all keys starting with CPA_LOCATION_
+    const cpaClientLocations = Object.keys(features)
+      .filter((key) => key.startsWith("CPA_LOCATION_"))
+      .map((key) => key.replace("CPA_LOCATION_", ""));
+
     return {
       isZeroCaseloadUser: Boolean(features.zeroCaseloadUser),
       isReadOnlyUser: Boolean(features.readOnly),
+      cpaClientLocations: cpaClientLocations,
     };
   }, [userAppMetadata]);
 

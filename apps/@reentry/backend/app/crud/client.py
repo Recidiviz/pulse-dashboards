@@ -23,6 +23,7 @@ from app.models.recording import RecordingChunk, RecordingSession
 from app.routes.shared_models import ProcessingStatus
 from app.services.client_data.queries import Queries
 from app.services.client_data.types import ClientDataRecord
+from app.utils.string_utils import normalize_locations
 
 logger = structlog.getLogger(__name__)
 
@@ -281,6 +282,7 @@ async def get_paginated_client_list(
     search: str | None = None,
     status_filter: str | None = None,
     is_zero_caseload_user: bool = False,
+    cpa_client_locations: list[str] | None = None,
 ):
     """
     Returns a paginated list of clients with their intake, plans, and assessments,
@@ -311,6 +313,17 @@ async def get_paginated_client_list(
         )
         logger.debug(
             f"Staff locations for zero-caseload user {pseudonymized_staff_id}: {staff_locations}"
+        )
+        logger.debug(
+            f"CPA client locations for zero-caseload user {pseudonymized_staff_id}: {cpa_client_locations}"
+        )
+        # join with CPA client locations if provided and then normalize and replace spaces
+        cpa_client_locations = cpa_client_locations or []
+        staff_locations = staff_locations + cpa_client_locations
+        staff_locations = normalize_locations(staff_locations)
+
+        logger.debug(
+            f"After intersecting with CPA client locations, staff locations for zero-caseload user {pseudonymized_staff_id}: {staff_locations}"
         )
 
         # Query all clients where location IN staff_locations
