@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -26,7 +25,7 @@ export const Item = styled.div`
   align-items: center;
 `;
 
-const LeftColumn = styled.div`
+export const LeftColumn = styled.div`
   width: 27rem;
 `;
 

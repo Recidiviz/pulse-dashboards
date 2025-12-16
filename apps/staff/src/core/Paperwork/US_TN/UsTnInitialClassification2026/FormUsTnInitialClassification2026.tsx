@@ -21,15 +21,20 @@ import React from "react";
 import styled from "styled-components";
 
 import { Opportunity } from "../../../../WorkflowsStore";
+import { UsTnInitialClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnInitialClassification2026Form";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
 import {
   Item,
+  LeftColumn,
   ScoredAssessmentQuestion,
+  SubItem,
 } from "../common/ScoredAssessmentQuestion";
 import { assessmentQuestions } from "./assessmentQuestions";
 import { BoldWeight, FormFont } from "./styles";
+import { TextAreaContainer, TextboxWithHeader } from "./TextboxWithHeader";
 import { TotalScore } from "./TotalScore";
 
 const FormPage = styled.div`
@@ -42,12 +47,25 @@ const FormPage = styled.div`
   background-color: white;
   padding: 3rem 4.25rem;
 
-  & textarea {
-    min-height: 3.5rem;
+  ${LeftColumn} {
+    width: 100%;
   }
 
   ${Item} {
     margin: 0.5rem 0;
+    ${SubItem} {
+      margin-left: 0.5rem;
+    }
+  }
+`;
+
+const DoubleNotes = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  ${TextAreaContainer} {
+    min-height: unset;
   }
 `;
 
@@ -67,6 +85,8 @@ export const FormUsTnInitialClassification2026 = observer(
     opportunity: Opportunity;
   }) {
     const formRef = React.useRef<HTMLDivElement>(null);
+    const { derivedData } =
+      useOpportunityFormContext() as UsTnInitialClassification2026Form;
 
     return (
       <FormContainer
@@ -77,76 +97,68 @@ export const FormUsTnInitialClassification2026 = observer(
         downloadButtonLabel="Download as .DOCX"
       >
         <FormViewer formRef={formRef}>
-          <PrintablePage landscape>
+          <PrintablePage landscape stretchable>
             <FormPage>
               <Header>TENNESSEE CLASSIFICATION INSTRUMENT: DIAGNOSTIC</Header>
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[0]}
                 questionNumber={1}
-              />
+              >
+                <DoubleNotes>
+                  <TextboxWithHeader
+                    header={
+                      "List prior violent felony convictions (TDOC) in Last 60 Months (imposed date, charge):"
+                    }
+                    name={"q1aNotes"}
+                  />
+                  <TextboxWithHeader
+                    header={
+                      "List prior ISC or Diversion convictions in  the Last 60 Months - Please confirm if they are violent felony convictions (imposed date, charge):"
+                    }
+                    name={"q1bNotes"}
+                  />
+                </DoubleNotes>
+              </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[1]}
                 questionNumber={2}
-              />
+              >
+                <TextboxWithHeader
+                  header={"List current offenses:"}
+                  name={"q2Notes"}
+                />
+              </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[2]}
                 questionNumber={3}
-              />
-              {/* Note: I'm leaving this commented-out code just for this   */}
-              {/*       commit so I can move over the supporting components */}
-              {/*       in the next commit or two. */}
-              {/*<MultichoiceScore questionNumber={1} {...QUESTIONS[0]}>*/}
-              {/*  <TextboxWithHeader*/}
-              {/*    header={"List convictions:"}*/}
-              {/*    name={"q1Convictions"}*/}
-              {/*  />*/}
-              {/*</MultichoiceScore>*/}
-              {/*<MultichoiceScore questionNumber={2} {...QUESTIONS[1]}>*/}
-              {/*  <TextboxWithHeader*/}
-              {/*    header={"List offenses:"}*/}
-              {/*    name={"q2Offenses"}*/}
-              {/*  />*/}
-              {/*</MultichoiceScore>*/}
-              {/*<MultichoiceScore questionNumber={3} {...QUESTIONS[2]}>*/}
-              {/*  <TextboxWithHeader*/}
-              {/*    header={"List disciplinaries:"}*/}
-              {/*    name={"q3Disciplinaries"}*/}
-              {/*  />*/}
-              {/*</MultichoiceScore>*/}
+              >
+                <TextboxWithHeader
+                  header={"List disciplinaries:"}
+                  name={"q3Notes"}
+                />
+              </ScoredAssessmentQuestion>
             </FormPage>
           </PrintablePage>
-          <PrintablePage landscape>
+          <PrintablePage landscape stretchable>
             <FormPage>
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[3]}
                 questionNumber={4}
-              />
+              >
+                <TextboxWithHeader
+                  header={"List disciplinaries:"}
+                  name={"q4Notes"}
+                />
+              </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[4]}
                 questionNumber={5}
-              />
-              {/*<MultichoiceScore questionNumber={4} {...QUESTIONS[3]}>*/}
-              {/*  <TextboxWithHeader*/}
-              {/*    header={"List disciplinaries:"}*/}
-              {/*    name={"q4Disciplinaries"}*/}
-              {/*  />*/}
-              {/*</MultichoiceScore>*/}
-              {/*<MultichoiceScore questionNumber={5} {...QUESTIONS[4]}>*/}
-              {/*  <TextboxWithHeader*/}
-              {/*    header={"List disciplinaries:"}*/}
-              {/*    name={"q5Disciplinaries"}*/}
-              {/*  />*/}
-              {/*  <YesNoQuestion question="3+ Violent Class A or B disciplinaries in Previous Six Months" />*/}
-              {/*  <TextboxWithHeader*/}
-              {/*    header={"List disciplinaries:"}*/}
-              {/*    name={"q5aDisciplinaries"}*/}
-              {/*  />*/}
-              {/*  <YesNoQuestion question="Homicide Disciplinary" />*/}
-              {/*  <TextboxWithHeader*/}
-              {/*    header={"List disciplinaries:"}*/}
-              {/*    name={"q5bDisciplinaries"}*/}
-              {/*  />*/}
-              {/*</MultichoiceScore>*/}
+              >
+                <TextboxWithHeader
+                  header={"List disciplinaries:"}
+                  name={"q5Notes"}
+                />
+              </ScoredAssessmentQuestion>
             </FormPage>
           </PrintablePage>
           <PrintablePage landscape>
@@ -155,7 +167,7 @@ export const FormUsTnInitialClassification2026 = observer(
                 questionSpec={assessmentQuestions[5]}
                 questionNumber={6}
               />
-              <TotalScore score={17} />
+              <TotalScore score={derivedData.totalScore} />
             </FormPage>
           </PrintablePage>
         </FormViewer>

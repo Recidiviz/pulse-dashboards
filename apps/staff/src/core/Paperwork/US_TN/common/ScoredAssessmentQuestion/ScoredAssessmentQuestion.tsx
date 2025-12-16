@@ -15,13 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
 import { observer } from "mobx-react-lite";
 import React, { ChangeEventHandler } from "react";
 import styled from "styled-components";
 
-import { UsTnSharedReclassificationDraftData } from "../../../../../WorkflowsStore";
-import DOCXFormTextArea from "../../../DOCXFormTextArea";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { AssessmentQuestionNumber } from "../../CustodyReclassification/assessmentQuestions";
 import { AssessmentItem, SubItem } from "./AssessmentItem";
@@ -65,6 +62,7 @@ type AssessmentQuestionProps = {
   questionNumber: AssessmentQuestionNumber;
   disabled?: boolean;
   supportingText?: string;
+  children?: React.ReactNode;
 };
 
 export const ScoredAssessmentQuestion: React.FC<AssessmentQuestionProps> =
@@ -73,6 +71,7 @@ export const ScoredAssessmentQuestion: React.FC<AssessmentQuestionProps> =
     questionNumber,
     disabled,
     supportingText,
+    children,
   }) {
     const selectionKey = `q${questionNumber}Selection`;
     const opportunityForm = useOpportunityFormContext();
@@ -116,17 +115,7 @@ export const ScoredAssessmentQuestion: React.FC<AssessmentQuestionProps> =
             disabled={disabled}
           />
         ))}
-        <SubItem>
-          {disabled ? (
-            <br />
-          ) : (
-            <DOCXFormTextArea<UsTnSharedReclassificationDraftData>
-              name={`q${questionNumber}Note`}
-              placeholder="Add Note"
-              style={{ width: "100%", fontStyle: "italic" }}
-            />
-          )}
-        </SubItem>
+        <SubItem>{disabled || !children ? <br /> : children}</SubItem>
       </AssessmentItem>
     );
   });

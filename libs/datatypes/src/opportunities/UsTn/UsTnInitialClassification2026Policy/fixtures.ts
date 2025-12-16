@@ -51,7 +51,33 @@ export const usTnInitialClassification2026PolicyFixtures = {
       q4Score: 2,
       q5Score: -1,
       q6Score: 0,
-      q7Score: 1,
+      q1Notes: {
+        listPriorNonTdocConvictions60Months: [
+          {
+            description: "some offense",
+            imposedDate: "2022-12-01",
+          },
+        ],
+        listPriorViolentTdocConvictions60Months: [
+          {
+            description: "some other offense",
+            imposedDate: "2021-08-22",
+          },
+        ],
+      },
+      q2Notes: ["a third offense"],
+      q3Notes: [
+        {
+          numIncidents: 1,
+          incidentTimePeriod: "0-60Months",
+          incidents: [
+            {
+              incidentDate: "2023-01-08",
+              incidentTypeCode: "ABC",
+            },
+          ],
+        },
+      ],
       sentenceEffectiveDate: "2024-12-01",
       sentenceExpirationDate: "2028-12-01",
       sentenceFullExpirationDate: "2029-12-01",
@@ -94,7 +120,61 @@ export const usTnInitialClassification2026PolicyFixtures = {
       q4Score: 2,
       q5Score: -1,
       q6Score: 0,
-      q7Score: 1,
+      q1Notes: {
+        listPriorNonTdocConvictions60Months: [
+          {
+            description: "some offense",
+            imposedDate: "2022-12-01",
+          },
+        ],
+        listPriorViolentTdocConvictions60Months: [
+          {
+            description: "some other offense",
+            imposedDate: "2021-08-22",
+          },
+        ],
+      },
+      q2Notes: ["a third offense", "a fourth offense"],
+      q3Notes: [
+        {
+          numIncidents: 2,
+          incidentTimePeriod: "0-60Months",
+          incidents: [
+            {
+              incidentDate: "2023-01-08",
+              incidentTypeCode: "ABC",
+            },
+            {
+              incidentDate: "2022-02-11",
+              incidentTypeCode: "XYZ",
+            },
+          ],
+        },
+      ],
+      q4Notes: [
+        {
+          numIncidents: 1,
+          incidentTimePeriod: "0-60Months",
+          incidents: [
+            {
+              incidentDate: "2023-01-08",
+              incidentTypeCode: "DEF",
+            },
+          ],
+        },
+      ],
+      q5Notes: [
+        {
+          numIncidents: 1,
+          incidentTimePeriod: "0-60Months",
+          incidents: [
+            {
+              incidentDate: "2023-01-08",
+              incidentTypeCode: "HIJ",
+            },
+          ],
+        },
+      ],
       sentenceEffectiveDate: "2024-12-01",
       sentenceExpirationDate: "2028-12-01",
       sentenceFullExpirationDate: "2029-12-01",

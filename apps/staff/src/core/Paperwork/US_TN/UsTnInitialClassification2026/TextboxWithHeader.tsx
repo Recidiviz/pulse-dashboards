@@ -25,14 +25,14 @@ import DOCXFormTextArea from "../../DOCXFormTextArea";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 0.6rem;
+  width: 100%;
 `;
 
 const TextboxHeader = styled.div`
   font-size: ${rem(8)};
 `;
 
-const TextAreaContainer = styled.div`
+export const TextAreaContainer = styled.div`
   min-height: 3.5rem;
 `;
 

@@ -31,14 +31,15 @@ export const assessmentQuestions: TupleWithArity<
 > = [
   {
     title: "PRIOR VIOLENT FELONY CONVICTIONS",
+    canBeNone: true,
     options: [
       {
-        text: "Violent Felony Conviction in Last 2 Years",
+        text: "Violent Felony Conviction in Last 24 Months",
         score: 4,
       },
       {
-        text: "Violent Felony Conviction in Last 3-5 Years",
-        score: 2,
+        text: "Violent Felony Conviction 24-60 Months Ago",
+        score: 3,
       },
     ],
   },

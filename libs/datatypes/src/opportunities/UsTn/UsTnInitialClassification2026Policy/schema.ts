@@ -21,6 +21,90 @@ import { ParsedRecord } from "../../../utils/types";
 import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
+const UsTnIncidentSchema = z.object({
+  incidentDate: dateStringSchema,
+  incidentTypeCode: z.string(),
+});
+
+const UsTnIncidentPeriodReportSchema = z.object({
+  numIncidents: z.number(),
+  incidentTimePeriod: z.string(),
+  incidents: z.array(UsTnIncidentSchema),
+});
+type UsTnIncidentPeriodReport = z.output<typeof UsTnIncidentPeriodReportSchema>;
+
+const UsTnConviction = z.object({
+  description: z.string(),
+  imposedDate: dateStringSchema,
+});
+
+function formatConvictions(
+  convictions: z.output<typeof UsTnConviction>[] | null,
+): string {
+  if (convictions === null) return "";
+
+  return convictions
+    .map((c) => `${c.description} on ${c.imposedDate.toLocaleDateString()}`)
+    .join("/n");
+}
+
+const q1Notes = z
+  .object({
+    listPriorNonTdocConvictions60Months: z
+      .array(UsTnConviction)
+      .nullable()
+      .default([])
+      .transform(formatConvictions),
+    listPriorViolentTdocConvictions60Months: z
+      .array(UsTnConviction)
+      .nullable()
+      .default([])
+      .transform(formatConvictions),
+  })
+  .optional()
+  .default({
+    listPriorNonTdocConvictions60Months: [],
+    listPriorViolentTdocConvictions60Months: [],
+  });
+
+const q2Notes = z
+  .array(z.string())
+  .optional()
+  .transform((notes) => {
+    return notes?.join(", ") ?? "";
+  });
+
+const formatIncidentReportPeriod = (period: UsTnIncidentPeriodReport) => {
+  return period.incidents
+    .map((i) => {
+      return `${i.incidentTypeCode} on ${i.incidentDate.toLocaleDateString()}`;
+    })
+    .join("\n");
+};
+
+const formatSinglePeriodReport = (
+  notes: UsTnIncidentPeriodReport[] | undefined,
+) => {
+  if (!notes || notes.length === 0) return "";
+
+  return formatIncidentReportPeriod(notes[0]);
+};
+
+const q3Notes = z
+  .array(UsTnIncidentPeriodReportSchema)
+  .optional()
+  .transform(formatSinglePeriodReport);
+
+const q4Notes = z
+  .array(UsTnIncidentPeriodReportSchema)
+  .optional()
+  .transform(formatSinglePeriodReport);
+
+const q5Notes = z
+  .array(UsTnIncidentPeriodReportSchema)
+  .optional()
+  .transform(formatSinglePeriodReport);
+
 export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
   {
     eligibleCriteria: z
@@ -58,6 +142,11 @@ export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
         q4Score: z.coerce.number().nullable(),
         q5Score: z.coerce.number().nullable(),
         q6Score: z.coerce.number().nullable(),
+        q1Notes,
+        q2Notes,
+        q3Notes,
+        q4Notes,
+        q5Notes,
         sentenceEffectiveDate: dateStringSchema,
         sentenceExpirationDate: dateStringSchema,
         sentenceFullExpirationDate: dateStringSchema,
@@ -75,11 +164,12 @@ export type UsTnInitialClassification2026ReferralRecord = ParsedRecord<
 
 export type UsTnInitialClassification2026DraftData =
   UsTnInitialClassification2026ReferralRecord["output"]["formInformation"] & {
-    q1Convictions: string;
-    q2Offenses: string;
-    q3Disciplinaries: string;
-    q4Disciplinaries: string;
-    q5Disciplinaries: string;
-    q5aDisciplinaries: string;
-    q5bDisciplinaries: string;
+    q1Selection: number;
+    q2Selection: number;
+    q3Selection: number;
+    q4Selection: number;
+    q5Selection: number;
+    q6Selection: number;
+    q1aNotes: string;
+    q1bNotes: string;
   };

@@ -21,7 +21,9 @@ import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 import styled from "styled-components";
 
+import { UsTnSharedReclassificationDraftData } from "../../../../WorkflowsStore";
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
+import DOCXFormTextArea from "../../DOCXFormTextArea";
 import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
@@ -115,7 +117,13 @@ const ClassificationCustodyAssessment: React.FC = () => {
                 questionNumber={i}
                 key={i}
                 supportingText={handleSupportingText(i)}
-              />
+              >
+                <DOCXFormTextArea<UsTnSharedReclassificationDraftData>
+                  name={`q${i}Note`}
+                  placeholder="Add Note"
+                  style={{ width: "100%", fontStyle: "italic" }}
+                />
+              </ScoredAssessmentQuestion>
             ))}
           </div>
           <AssessmentScore
@@ -140,7 +148,13 @@ const ClassificationCustodyAssessment: React.FC = () => {
                 key={i}
                 disabled={scheduleBSkipped}
                 supportingText={handleSupportingText(i)}
-              />
+              >
+                <DOCXFormTextArea<UsTnSharedReclassificationDraftData>
+                  name={`q${i}Note`}
+                  placeholder="Add Note"
+                  style={{ width: "100%", fontStyle: "italic" }}
+                />
+              </ScoredAssessmentQuestion>
             ))}
           </div>
           <AssessmentScore
