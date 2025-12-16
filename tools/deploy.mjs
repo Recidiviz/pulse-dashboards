@@ -325,18 +325,18 @@ if (deployBackend) {
     try {
       switch (deployEnv) {
         case "production":
-          await $`./gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-production.enc.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
+          await $`./tools/gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-production.enc.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
             process.stdout,
           );
           publishReleaseNotes = true;
           break;
         case "demo":
-          await $`./gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-staging-demo.enc.yaml --project recidiviz-dashboard-staging`.pipe(
+          await $`./tools/gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-staging-demo.enc.yaml --project recidiviz-dashboard-staging`.pipe(
             process.stdout,
           );
           break;
         default:
-          await $`./gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-staging.enc.yaml --project recidiviz-dashboard-staging`.pipe(
+          await $`./tools/gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-staging.enc.yaml --project recidiviz-dashboard-staging`.pipe(
             process.stdout,
           );
           break;
