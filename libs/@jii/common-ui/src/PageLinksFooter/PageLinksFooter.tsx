@@ -26,7 +26,7 @@ import { Icon } from "~design-system";
 import { palette } from "~design-system";
 
 import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
-import { ButtonLink } from "../ButtonLink/ButtonLink";
+import { ButtonLink } from "../Buttons/ButtonLink";
 
 const Footer = styled(FullBleedContainer).attrs({ as: "footer" })`
   background: ${palette.marble3};

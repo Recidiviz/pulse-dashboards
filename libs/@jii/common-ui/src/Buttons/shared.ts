@@ -15,31 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
+import { css } from "styled-components";
 
 import { palette } from "~design-system";
 
-/**
- * It's a React Router Link but it looks like a button
- */
-export const ButtonLink = styled(Link)`
-  // many of these styles are borrowed from the design system, which does not export them
-  align-items: center;
-  background-color: transparent;
-  border-radius: ${rem(21)};
-  border: 1px solid ${palette.signal.links};
-  color: ${palette.signal.links};
-  display: inline-flex;
-  gap: 1em;
+// Custom styles applied on top of design-system defaults
+export const jiiButtonStyles = css`
   justify-content: space-between;
+  align-items: center;
+  gap: 1em;
+
   min-height: ${rem(42)};
   padding: ${rem(10)} ${rem(18)};
-  text-decoration: none;
-  transition-duration: ${animation.defaultDurationMs}ms;
-  transition-property: color, background-color, border-color;
+  border-radius: ${rem(21)};
+
+  border: 1px solid ${palette.signal.links};
 
   &:hover,
   &:focus {

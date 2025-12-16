@@ -15,22 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
-import { LinkProps } from "react-router-dom";
+import { animation } from "@recidiviz/design-system";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
-import { Icon } from "~design-system";
+import { palette } from "~design-system";
 
-import { ButtonLink } from "./ButtonLink";
+import { jiiButtonStyles } from "./shared";
 
 /**
- * Wrapper around a ReactRouter Link element that styles it like a button
- * and appends an arrow icon
+ * It's a React Router Link but it looks like a button
  */
-export const GoButton: FC<LinkProps> = ({ children, ...props }) => {
-  return (
-    <ButtonLink {...props}>
-      <span>{children}</span>
-      <Icon kind="Arrow" size={16} />
-    </ButtonLink>
-  );
-};
+export const ButtonLink = styled(Link)`
+  // styles borrowed from the design system Button, which does not export them
+  align-items: center;
+  background-color: transparent;
+  color: ${palette.signal.links};
+  display: inline-flex;
+  text-decoration: none;
+  transition-duration: ${animation.defaultDurationMs}ms;
+  transition-property: color, background-color, border-color;
+
+  ${jiiButtonStyles}
+`;

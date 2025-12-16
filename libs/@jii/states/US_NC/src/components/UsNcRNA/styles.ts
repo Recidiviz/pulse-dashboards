@@ -15,13 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Redirect, usePageTitle } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
+import { typography } from "@recidiviz/design-system";
+import { rem } from "polished";
+import styled from "styled-components";
 
-export function UsNcSingleResidentHome() {
-  usePageTitle("Home");
+import { palette, spacing } from "~design-system";
 
-  return (
-    <Redirect to={State.Resident.$.UsNcRNA.Landing.buildRelativePath({})} />
-  );
-}
+export const RNAHeading = styled.h1`
+  ${typography.Sans24};
+
+  font-size: ${rem(34)};
+`;
+
+export const RNADescription = styled.div`
+  color: ${palette.slate85};
+  line-height: 1.7;
+
+  margin-top: ${rem(spacing.lg)};
+  &:not(:last-child) {
+    margin-bottom: ${rem(spacing.lg)};
+  }
+`;

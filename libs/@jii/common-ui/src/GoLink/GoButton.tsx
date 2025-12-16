@@ -15,13 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Redirect, usePageTitle } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
+import { FC } from "react";
+import { LinkProps } from "react-router-dom";
 
-export function UsNcSingleResidentHome() {
-  usePageTitle("Home");
+import { Icon } from "~design-system";
 
+import { ButtonLink } from "../Buttons/ButtonLink";
+
+/**
+ * Wrapper around a ReactRouter Link element that styles it like a button
+ * and appends an arrow icon
+ */
+export const GoButton: FC<LinkProps> = ({ children, ...props }) => {
   return (
-    <Redirect to={State.Resident.$.UsNcRNA.Landing.buildRelativePath({})} />
+    <ButtonLink {...props}>
+      <span>{children}</span>
+      <Icon kind="Arrow" size={16} />
+    </ButtonLink>
   );
-}
+};

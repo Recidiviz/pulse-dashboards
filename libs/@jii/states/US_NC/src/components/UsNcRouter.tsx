@@ -18,13 +18,18 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
+import { UsNcRNA } from "~@jii/paths";
 
+import { UsNcRNAFormPage } from "./UsNcRNA/UsNcRNAFormPage";
+import { UsNcRNALanding } from "./UsNcRNA/UsNcRNALanding";
 import { UsNcSingleResidentHome } from "./UsNcSingleResidentHome";
 
 export function UsNcRouter() {
   return (
     <Routes>
       <Route index element={<UsNcSingleResidentHome />} />
+      <Route path={UsNcRNA.Landing.path} element={<UsNcRNALanding />} />
+      <Route path={UsNcRNA.FormPage.path} element={<UsNcRNAFormPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

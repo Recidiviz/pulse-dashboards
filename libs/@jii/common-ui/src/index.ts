@@ -17,10 +17,10 @@
 
 export * from "./ActivityList";
 export * from "./BackLink/BackLink";
+export * from "./BackLink/GoBackButton";
 export * from "./BaseLayout/BaseLayout";
-export * from "./ButtonLink/ButtonLink";
-export * from "./ButtonLink/GoButton";
-export * from "./ButtonLink/GoLink";
+export * from "./Buttons/ButtonLink";
+export * from "./Buttons/JIIButton";
 export * from "./Card";
 export * from "./Chip";
 export * from "./constants";
@@ -28,6 +28,8 @@ export * from "./CopyWrapper/CopyWrapper";
 export * from "./CopyWrapper/ShadowDOM";
 export * from "./CopyWrapper/SlateCopy";
 export * from "./CopyWrapper/withCopyWrapperOverrides";
+export * from "./GoLink/GoButton";
+export * from "./GoLink/GoLink";
 export * from "./Header/constants";
 export * from "./Header/HeaderBarContainer";
 export * from "./HistoryBackButton";

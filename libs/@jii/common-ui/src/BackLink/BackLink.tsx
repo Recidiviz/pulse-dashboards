@@ -20,24 +20,21 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
-import { ButtonLink, SimpleLinkProps } from "~@jii/common-ui";
-import { Icon } from "~design-system";
+import { SimpleLinkProps } from "~@jii/common-ui";
+
+import { GoBackButton } from "./GoBackButton";
 
 const Wrapper = styled.div`
   margin-bottom: ${rem(spacing.xxl)};
 `;
 
 /**
- * Wrapper around a ReactRouter Link element that styles it like a button
- * and prepends a left-pointing arrow icon
+ * A link styled as a button with a margin below (to be used at the top of a page)
  */
 export const BackLink: FC<SimpleLinkProps> = ({ children, to }) => {
   return (
     <Wrapper>
-      <ButtonLink to={to}>
-        <Icon kind="Arrow" size={16} rotate={180} />
-        <span>{children}</span>
-      </ButtonLink>
+      <GoBackButton to={to}>{children}</GoBackButton>
     </Wrapper>
   );
 };

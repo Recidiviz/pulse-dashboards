@@ -15,13 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Redirect, usePageTitle } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
+import styled from "styled-components";
 
-export function UsNcSingleResidentHome() {
-  usePageTitle("Home");
+import { Button } from "~design-system";
 
-  return (
-    <Redirect to={State.Resident.$.UsNcRNA.Landing.buildRelativePath({})} />
-  );
-}
+import { jiiButtonStyles } from "./shared";
+
+/**
+ * A <button> styled consistently with ButtonLink.
+ * Should only be used with kind="primary" or "secondary".
+ */
+export const JIIButton = styled(Button)`
+  font: inherit;
+  min-width: unset;
+
+  ${jiiButtonStyles}
+`;

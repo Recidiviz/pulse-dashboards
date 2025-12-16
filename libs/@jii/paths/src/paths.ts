@@ -64,6 +64,15 @@ export const UsAzMoreInformation = route(
   },
 );
 
+export const UsNcRNA = route(
+  "rna",
+  {},
+  {
+    Landing: route(""),
+    FormPage: route("1"),
+  },
+);
+
 export const State = route(":stateSlug", types(ReturnToPathFragment), {
   Resident: route(
     ":personPseudoId",
@@ -72,6 +81,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       EGT,
       UsTnMoreInformation,
       UsAzMoreInformation,
+      UsNcRNA,
     },
   ),
   Search: route("search"),
