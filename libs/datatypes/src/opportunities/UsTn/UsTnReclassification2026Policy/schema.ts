@@ -21,6 +21,12 @@ import { ParsedRecord } from "../../../utils/types";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import { multiIncidentPeriodReportSchema, q1Notes, q2Notes } from "../utils";
 
+const q6Notes = z
+  .object({
+    age: z.number(),
+  })
+  .optional();
+
 export const usTnReclassification2026Schema = opportunitySchemaBase.extend({
   formInformation: z
     .object({
@@ -36,6 +42,7 @@ export const usTnReclassification2026Schema = opportunitySchemaBase.extend({
       q3Notes: multiIncidentPeriodReportSchema,
       q4Notes: multiIncidentPeriodReportSchema,
       q5Notes: multiIncidentPeriodReportSchema,
+      q6Notes,
     })
     .passthrough(),
 });

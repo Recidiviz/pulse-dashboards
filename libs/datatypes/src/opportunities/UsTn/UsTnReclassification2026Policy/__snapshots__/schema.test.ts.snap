@@ -37,6 +37,9 @@ exports[`schema for fullyEligible 1`] = `
     "q4Score": 2,
     "q5Notes": [],
     "q5Score": -1,
+    "q6Notes": {
+      "age": 37,
+    },
     "q6Score": 0,
     "q7Score": 1,
   },
@@ -118,6 +121,9 @@ exports[`schema for ineligible 1`] = `
       },
     ],
     "q5Score": -1,
+    "q6Notes": {
+      "age": 26,
+    },
     "q6Score": 0,
     "q7Score": 1,
   },

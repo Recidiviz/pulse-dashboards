@@ -72,6 +72,9 @@ export const usTnReclassification2026PolicyFixtures = {
           ],
         },
       ],
+      q6Notes: {
+        age: 37,
+      },
     },
   }),
   ineligible: makeRecordFixture(usTnReclassification2026Schema, {
@@ -167,6 +170,9 @@ export const usTnReclassification2026PolicyFixtures = {
           ],
         },
       ],
+      q6Notes: {
+        age: 26,
+      },
     },
   }),
 } satisfies FixtureMapping<UsTnReclassification2026ReferralRecord>;

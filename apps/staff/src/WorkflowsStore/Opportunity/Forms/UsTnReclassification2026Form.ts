@@ -103,10 +103,16 @@ export class UsTnReclassification2026Form extends FormBase<
       formInformation.q5Notes,
     );
 
-    const q6Selection = getSingleSectionQuestionIndex(
+    let q6Selection = getSingleSectionQuestionIndex(
       assessmentQuestions[5],
       formInformation.q6Score,
     );
+
+    // There are two options with a score of 0
+    // Check the person's age to determine which they are
+    if (q6Selection === 3 && (formInformation.q6Notes?.age ?? 0) > 30) {
+      q6Selection++;
+    }
 
     const q7Selection = getSingleSectionQuestionIndex(
       assessmentQuestions[6],
