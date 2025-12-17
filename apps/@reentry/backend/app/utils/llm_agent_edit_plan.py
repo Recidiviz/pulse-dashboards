@@ -33,6 +33,8 @@ logger = structlog.get_logger(__name__)
 ### Graph state
 class ExtendedMessagesState(CommonMessagesState):
     current_sections: list[ActionPlanSection] = []
+    include_timeline: bool = False
+    include_milestones: bool = False
 
 
 class SectionAction(BaseModel):
@@ -59,9 +61,17 @@ class RegenerationAction(BaseModel):
 
 def call_generate_sections(
     state: ExtendedMessagesState,
-) -> Literal["section", "section-change", "timeline"]:
+) -> (
+    Literal["section", "section-change", "assemble", "timeline", "milestones"]
+    | list[Send]
+):
     if not state["sections_to_generate"]:
-        return "timeline"
+        if state["include_timeline"]:
+            return "timeline"
+        elif state["include_milestones"]:
+            return "milestones"
+        else:
+            return "assemble"
     return [
         Send(
             "section" if section["action"] == "add" else "section-change",
@@ -381,6 +391,8 @@ class LLMAgentEdit:
                 "generated_timeline": self.current_timeline,
                 "generated_milestones": self.current_milestones,
                 "suggested_resources": self.suggested_resources,
+                "include_timeline": self.include_timeline,
+                "include_milestones": self.include_milestones,
             },
             self.config,
             stream_mode="values",
