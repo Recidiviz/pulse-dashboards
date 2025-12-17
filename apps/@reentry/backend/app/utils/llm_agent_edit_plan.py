@@ -21,7 +21,6 @@ from app.utils.action_plan_types import (
     CommonMessagesState,
 )
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
-from app.utils.regex import extract_uuids_from_links
 
 from .llm_agent_edit_plan_prompts import ActionPlanEditPrompts
 from .llm_agent_gen_plan import ActionPlanPrompts, call_generate_section
@@ -203,13 +202,13 @@ class LLMAgentEdit:
                 logger.warning(f"No previous annotations found for section: {section}")
                 previous_section = ActionPlanSectionPartial(annotations=[])
 
-            resource_ids = extract_uuids_from_links(response.content)
-            resources = []
-            for resource_id in resource_ids:
-                for resource in self.suggested_resources:
-                    if resource.id == resource_id:
-                        resources.append(resource)
-                        break
+            # The new resource from 'resource_to_add' gets added to self.suggested_resources
+            # in self.generate before calling the graph.
+            resources = [
+                resource
+                for resource in self.suggested_resources
+                if resource.id in response.content
+            ]
 
             # Save the section
             action_plan_section = ActionPlanSection(

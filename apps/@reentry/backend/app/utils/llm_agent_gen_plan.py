@@ -29,7 +29,6 @@ from app.utils.action_plan_types import (
     CommonMessagesState,
 )
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
-from app.utils.regex import extract_uuids_from_links
 
 from .llm_agent_gen_plan_prompts import ActionPlanPrompts
 from .llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
@@ -233,13 +232,9 @@ async def call_generate_section(
     ).ainvoke(messages + [temp_response] + [prompt], config)
     result_messages.append(final_response)
 
-    resource_ids = extract_uuids_from_links(final_response.content)
-    suggested_resources = []
-    for resource_id in resource_ids:
-        for resource in resources:
-            if resource.id == resource_id:
-                suggested_resources.append(resource)
-                break
+    suggested_resources = [
+        resource for resource in resources if resource.id in final_response.content
+    ]
 
     # Save the section
     action_plan_section = ActionPlanSection(
