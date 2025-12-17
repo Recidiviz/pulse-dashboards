@@ -12,14 +12,11 @@ fi
 ENCRYPTED="$1"
 shift || true
 
-# Create secure temporary workspace
-WORKDIR="$(mktemp -d)"
-DECRYPTED_NAME="$(basename "$ENCRYPTED")"
-DECRYPTED="$WORKDIR/${DECRYPTED_NAME%.enc.yaml}.yaml"
+DECRYPTED="${ENCRYPTED%.enc.yaml}.yaml"
 
 # Ensure cleanup even if interrupted
 cleanup() {
-  rm -rf "$WORKDIR"
+  rm -f "$DECRYPTED"
 }
 trap cleanup EXIT INT TERM HUP
 
