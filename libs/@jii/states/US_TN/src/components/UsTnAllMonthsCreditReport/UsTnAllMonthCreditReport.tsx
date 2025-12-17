@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { rem } from "polished";
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
@@ -27,9 +27,11 @@ import {
   ActivityRowDivider,
   HistoryBackButton,
   HomepageSectionHeading,
+  SlateCopy,
 } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { useUsTnTranslations } from "~@jii/translation";
 import { spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -48,7 +50,6 @@ const StyledList = styled(ActivityList)`
 const StyledRow = styled(ActivityRow)`
   margin-bottom: ${rem(spacing.md)};
   margin-top: ${rem(spacing.md)};
-  }
 `;
 
 const Year = styled.div`
@@ -56,11 +57,17 @@ const Year = styled.div`
   font-size: 1.25rem;
 `;
 
+const Underlined = styled.div`
+  text-decoration: underline;
+`;
+
 function ManagedComponent({
   presenter,
 }: {
   presenter: UsTnAllMonthCreditReportPresenter;
 }) {
+  const { t } = useUsTnTranslations();
+
   const { groupedReportsByYear, orderedYears } = presenter;
 
   const { stateSlug, personPseudoId } = useTypedParams(
@@ -70,7 +77,8 @@ function ManagedComponent({
   return (
     <section>
       <HistoryBackButton />
-      <Heading>Monthly Sentence Credits</Heading>
+      <Heading>{t(($) => $.monthlySentenceCredits.heading)}</Heading>
+      <SlateCopy>{t(($) => $.monthlySentenceCredits.rowsClickable)}</SlateCopy>
       {orderedYears.map((year) => (
         <StyledList key={year}>
           <StyledRow>
@@ -90,8 +98,10 @@ function ManagedComponent({
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 <StyledRow>
-                  <div>{report.formattedMonth}</div>
-                  <div>{prefixNumberWithSign(report.totalCredits)} days</div>
+                  <Underlined>{report.formattedMonth}</Underlined>
+                  <Underlined>
+                    {prefixNumberWithSign(report.totalCredits)} days
+                  </Underlined>
                 </StyledRow>
               </Link>
             </Fragment>

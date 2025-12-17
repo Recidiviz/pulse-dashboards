@@ -44,4 +44,9 @@ export default {
     heading: "About the App",
     body: aboutInfoPage,
   },
+  monthlySentenceCredits: {
+    heading: "Monthly Sentence Credits",
+    rowsClickable:
+      "Tap on each row to look at a breakdown of credits earned that month.",
+  },
 };
