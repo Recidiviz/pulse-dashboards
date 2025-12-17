@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, HomepageSectionHeading } from "~@jii/common-ui";
+import { HomepageSectionHeading } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
+import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
-import { useUsNeContext } from "./usNeContext";
+import { useUsNeContext } from "../usNeContext";
+import { TodoCard } from "./TodoCard";
 import { UsNeTodosPresenter } from "./UsNeTodosPresenter";
 
 function ManagedComponent({ presenter }: { presenter: UsNeTodosPresenter }) {
@@ -29,18 +31,29 @@ function ManagedComponent({ presenter }: { presenter: UsNeTodosPresenter }) {
     },
   } = useUsNeContext();
 
-  if (!presenter.shouldShowTodos) {
+  const {
+    goodTimeRestorationStatus,
+    shouldShowReentryChecklist,
+    shouldShowTodos,
+  } = presenter;
+
+  if (!shouldShowTodos) {
     return null;
   }
 
   return (
     <section>
       <HomepageSectionHeading>{copy.sectionTitle}</HomepageSectionHeading>
-      {presenter.shouldShowGoodTimeRestoration && (
-        <Card>Good Time Restoration placeholder</Card>
+      {goodTimeRestorationStatus && (
+        <TodoCard
+          {...copy.goodTimeRestoration[goodTimeRestorationStatus]}
+          linkTarget={State.Resident.$.EGT.Definition.buildRelativePath({
+            pageSlug: "gbmd",
+          })}
+        />
       )}
-      {presenter.shouldShowReentryChecklist && (
-        <Card>Reentry Checklist placeholder</Card>
+      {shouldShowReentryChecklist && (
+        <TodoCard {...copy.reentryChecklist} linkTarget="#" />
       )}
     </section>
   );

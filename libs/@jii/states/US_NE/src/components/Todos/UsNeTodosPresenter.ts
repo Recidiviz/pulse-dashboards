@@ -16,7 +16,9 @@
 // =============================================================================
 
 import { OpportunityData } from "~@jii/data";
-import { ResidentRecord } from "~datatypes";
+import { ResidentRecord, UsNeGoodTimeRestorationRecord } from "~datatypes";
+
+import { UsNeCopy } from "../../configs/copy";
 
 export class UsNeTodosPresenter {
   constructor(
@@ -48,22 +50,44 @@ export class UsNeTodosPresenter {
     return years <= 75;
   }
 
-  get shouldShowGoodTimeRestoration(): boolean {
+  /**
+   * Which Good Time Restoration todo should be shown? Null if none should be shown.
+   */
+  get goodTimeRestorationStatus():
+    | keyof UsNeCopy["home"]["todos"]["goodTimeRestoration"]
+    | null {
+    type GoodTimeOpportunity = OpportunityData & {
+      opportunityRecord: UsNeGoodTimeRestorationRecord["output"];
+    };
+
     const goodTimeOpportunity = this.opportunities.find(
-      (opp) => opp.opportunityId === "usNeGoodTimeRestoration",
+      // This type guard only asserts what OpportunityData guarantees (that opportunityRecord's
+      // type matches the opportunityId) but TypeScript is unable to deduce on its own.
+      (opp): opp is GoodTimeOpportunity =>
+        opp.opportunityId === "usNeGoodTimeRestoration",
     );
 
     if (!goodTimeOpportunity) {
-      return false;
+      return null;
     }
 
-    const { opportunityRecord } = goodTimeOpportunity;
-    return opportunityRecord.isEligible || opportunityRecord.isAlmostEligible;
+    const {
+      isEligible,
+      isAlmostEligible,
+      metadata: { isEligibleForMoreThan30Days },
+    } = goodTimeOpportunity.opportunityRecord;
+
+    if (isEligibleForMoreThan30Days) {
+      return "eligibleForMoreThan30Days";
+    } else if (isEligible) {
+      return "eligible";
+    } else if (isAlmostEligible) {
+      return "almostEligible";
+    }
+    return null;
   }
 
   get shouldShowTodos(): boolean {
-    return (
-      this.shouldShowReentryChecklist || this.shouldShowGoodTimeRestoration
-    );
+    return this.shouldShowReentryChecklist || !!this.goodTimeRestorationStatus;
   }
 }
