@@ -46,6 +46,16 @@
       },
       "defaultConfiguration": "dev"
     },
+    "prisma": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn prisma"
+        ],
+        "forwardAllArgs": true,
+        "cwd": "{projectRoot}"
+      }
+    },
     "prisma-generate": {
       "inputs": ["{projectRoot}/prisma/schema.prisma"],
       "executor": "@nx-tools/nx-prisma:generate",

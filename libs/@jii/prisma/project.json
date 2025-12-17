@@ -18,6 +18,16 @@
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
+    "prisma": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn prisma"
+        ],
+        "forwardAllArgs": true,
+        "cwd": "{projectRoot}"
+      }
+    },
     "prisma-migrate": {
       "dependsOn": ["docker"],
       "executor": "@nx-tools/nx-prisma:migrate",
