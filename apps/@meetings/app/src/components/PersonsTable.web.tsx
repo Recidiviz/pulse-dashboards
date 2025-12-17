@@ -45,9 +45,10 @@ type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients" | 
 
 interface PersonsProps {
   persons: Person[];
+  type: "clients" | "residents";
 }
 
-const PersonsTable = ({ persons }: PersonsProps) => {
+const PersonsTable = ({ persons, type }: PersonsProps) => {
   const navigation = useNavigation<ProfileNavProp>();
 
   return (
@@ -56,7 +57,7 @@ const PersonsTable = ({ persons }: PersonsProps) => {
         <TableHeadRow>
           <TableHeadCell>NAME</TableHeadCell>
           <TableHeadCell>ID</TableHeadCell>
-          <TableHeadCell>STATUS</TableHeadCell>
+          <TableHeadCell>{type === "clients" ? "SUPERVISION" : "FACILITY"}</TableHeadCell>
           <TableHeadCell>LAST MEETING</TableHeadCell>
           <TableHeadCell></TableHeadCell>
         </TableHeadRow>

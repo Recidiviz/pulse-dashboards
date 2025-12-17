@@ -149,7 +149,7 @@ const ResidentsScreen = () => {
                       />
                     </View>
                     <View className="hidden md:block">
-                      <PersonsTable persons={filteredResidents} />
+                      <PersonsTable persons={filteredResidents} type="residents" />
                     </View>
                   </View>
                 ),

@@ -124,7 +124,7 @@ const ClientsScreen = () => {
                       />
                     </View>
                     <View className="hidden md:block">
-                      <PersonsTable persons={filteredClients} />
+                      <PersonsTable persons={filteredClients} type="clients" />
                     </View>
                   </View>
                 ),
