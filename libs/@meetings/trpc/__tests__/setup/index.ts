@@ -33,6 +33,7 @@ import { mock } from "vitest-mock-extended";
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
+import * as meetingsTasks from "~@meetings/tasks";
 import { Auth0User, createContext } from "~@meetings/trpc/context";
 import { AppRouter, appRouter } from "~@meetings/trpc/router";
 import { fakeStaff, seed } from "~@meetings/trpc/test/setup/seed";
@@ -53,18 +54,19 @@ const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
 
-vi.mock("~@meetings/tasks", () => {
-  const originalModule = vi.importActual("~@meetings/tasks");
-
-  return {
-    ...originalModule,
-    getSignedUrlForNewRecording: vi.fn(
-      (bucketName: string, folderName: string) => {
-        return `storage.googleapis.com/${bucketName}/${folderName}/1.m4a`;
-      },
-    ),
-  };
-});
+vi.spyOn(meetingsTasks, "getSignedUrlForNewRecording").mockImplementation(
+  (
+    bucketName: string,
+    folderName: string,
+    fileExtension: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    contentType: string,
+  ) => {
+    return Promise.resolve(
+      `storage.googleapis.com/${bucketName}/${folderName}/1.${fileExtension}`,
+    );
+  },
+);
 
 export const mockCloudTasksClient = mock<CloudTasksClient>({
   queuePath: vi.fn((project: string, location: string, queue: string) => {

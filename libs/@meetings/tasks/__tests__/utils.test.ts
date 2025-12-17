@@ -25,6 +25,12 @@ import { Transcript } from "assemblyai";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import {
+  MOBILE_AUDIO_FILE_EXTENSION,
+  MOBILE_GCS_CONTENT_TYPE,
+  WEB_AUDIO_FILE_EXTENSION,
+  WEB_GCS_CONTENT_TYPE,
+} from "~@meetings/tasks/constants";
+import {
   GCS_API_ENDPOINT,
   mockAssemblyAI,
   mockDeepgram,
@@ -52,15 +58,31 @@ describe("utils", () => {
       vi.useRealTimers();
     });
 
-    test("Should return url for new recording", async () => {
+    test("Should return url for new recording with m4a format", async () => {
       const url = await getSignedUrlForNewRecording(
         AUDIO_RECORDINGS_BUCKET_NAME,
         "signed-url-test-folder",
+        MOBILE_AUDIO_FILE_EXTENSION,
+        MOBILE_GCS_CONTENT_TYPE,
       );
 
       // 1760832000 = seconds since epoch for Oct 19, 2025
       expect(url).toEqual(
         `${GCS_API_ENDPOINT}/test-audio-recordings/signed-url-test-folder/1760832000.m4a`,
+      );
+    });
+
+    test("Should return url for new recording with webm format", async () => {
+      const url = await getSignedUrlForNewRecording(
+        AUDIO_RECORDINGS_BUCKET_NAME,
+        "signed-url-test-folder-web",
+        WEB_AUDIO_FILE_EXTENSION,
+        WEB_GCS_CONTENT_TYPE,
+      );
+
+      // 1760832000 = seconds since epoch for Oct 19, 2025
+      expect(url).toEqual(
+        `${GCS_API_ENDPOINT}/test-audio-recordings/signed-url-test-folder-web/1760832000.webm`,
       );
     });
   });
@@ -330,15 +352,31 @@ describe("utils", () => {
         vi.useRealTimers();
       });
 
-      test("Should return local endpoint URL in offline mode", async () => {
+      test("Should return local endpoint URL in offline mode with m4a", async () => {
         const url = await getSignedUrlForNewRecording(
           AUDIO_RECORDINGS_BUCKET_NAME,
           "test-meeting-id",
+          MOBILE_AUDIO_FILE_EXTENSION,
+          MOBILE_GCS_CONTENT_TYPE,
         );
 
         // 1760832000 = seconds since epoch for Oct 19, 2025
         expect(url).toEqual(
           "http://localhost:3002/upload-audio/test-meeting-id/1760832000.m4a",
+        );
+      });
+
+      test("Should return local endpoint URL in offline mode with webm", async () => {
+        const url = await getSignedUrlForNewRecording(
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          "test-meeting-id-web",
+          WEB_AUDIO_FILE_EXTENSION,
+          WEB_GCS_CONTENT_TYPE,
+        );
+
+        // 1760832000 = seconds since epoch for Oct 19, 2025
+        expect(url).toEqual(
+          "http://localhost:3002/upload-audio/test-meeting-id-web/1760832000.webm",
         );
       });
     });

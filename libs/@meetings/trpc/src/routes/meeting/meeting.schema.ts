@@ -25,6 +25,7 @@ export const getDetailInputSchema = z.object({
 export const getSignedUrlForRecordingInputSchema = z.object({
   clientId: z.bigint(),
   meetingId: z.string(),
+  platform: z.enum(["web", "ios", "android"]).optional(),
 });
 
 export const discardMeetingInputSchema = z.object({

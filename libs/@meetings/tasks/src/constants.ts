@@ -15,5 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const AUDIO_FILE_EXTENSION = "m4a";
-export const GCS_CONTENT_TYPE = "audio/m4a";
+// Audio format constants for mobile (iOS/Android)
+export const MOBILE_AUDIO_FILE_EXTENSION = "m4a";
+export const MOBILE_GCS_CONTENT_TYPE = "audio/m4a";
+
+// Audio format constants for web
+export const WEB_AUDIO_FILE_EXTENSION = "webm";
+export const WEB_GCS_CONTENT_TYPE = "audio/webm";

@@ -109,7 +109,14 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
   // Add content type parser for audio files - don't parse, just flag as handled
   app.addContentTypeParser(
-    ["audio/m4a", "audio/x-m4a", "audio/mp4", "audio/*"],
+    [
+      "audio/m4a",
+      "audio/x-m4a",
+      "audio/mp4",
+      "audio/webm",
+      "audio/webm;codecs=opus",
+      "audio/*",
+    ],
     (req, payload, done) => {
       // Don't parse the body, just indicate we're handling this content type
       // The raw stream will be available via req.raw
@@ -267,8 +274,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
             "Audio stitching completed successfully; queuing transcription failed.",
           );
       }
-
-
 
       reply.code(200).send("Audio stitching completed successfully");
     },

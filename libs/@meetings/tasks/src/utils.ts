@@ -26,8 +26,10 @@ import ffmpeg from "fluent-ffmpeg";
 import path from "path";
 
 import {
-  AUDIO_FILE_EXTENSION,
-  GCS_CONTENT_TYPE,
+  MOBILE_AUDIO_FILE_EXTENSION,
+  MOBILE_GCS_CONTENT_TYPE,
+  WEB_AUDIO_FILE_EXTENSION,
+  WEB_GCS_CONTENT_TYPE,
 } from "~@meetings/tasks/constants";
 
 if (!ffmpegPath) {
@@ -43,6 +45,8 @@ function isOffline() {
 export async function getSignedUrlForNewRecording(
   bucketName: string,
   folderName: string,
+  fileExtension: string,
+  contentType: string,
 ) {
   // Make the file name the time since epoch so that files are naturally ordered
   const secondsSinceEpoch = Math.round(Date.now() / 1000);
@@ -52,20 +56,20 @@ export async function getSignedUrlForNewRecording(
     const host = process.env["HOST"] ?? "localhost";
     const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3002;
     const serverUrl = `http://${host}:${port}`;
-    return `${serverUrl}/upload-audio/${folderName}/${secondsSinceEpoch}.${AUDIO_FILE_EXTENSION}`;
+    return `${serverUrl}/upload-audio/${folderName}/${secondsSinceEpoch}.${fileExtension}`;
   }
 
   const storage = new Storage();
   const bucket = storage.bucket(bucketName);
 
-  const fileName = `${folderName}/${secondsSinceEpoch}.${AUDIO_FILE_EXTENSION}`;
+  const fileName = `${folderName}/${secondsSinceEpoch}.${fileExtension}`;
   const file = bucket.file(fileName);
 
   const [url] = await file.getSignedUrl({
     version: "v4",
     action: "write",
     expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-    contentType: GCS_CONTENT_TYPE,
+    contentType,
   });
 
   return url;
@@ -86,9 +90,14 @@ function downloadFilesOffline(
     return null;
   }
 
+  // Support both m4a and webm files
   const files = fs
     .readdirSync(meetingDir)
-    .filter((file) => file.endsWith(`.${AUDIO_FILE_EXTENSION}`));
+    .filter(
+      (file) =>
+        file.endsWith(`.${MOBILE_AUDIO_FILE_EXTENSION}`) ||
+        file.endsWith(`.${WEB_AUDIO_FILE_EXTENSION}`),
+    );
 
   if (files.length === 0) {
     return null;
@@ -96,8 +105,9 @@ function downloadFilesOffline(
 
   // Sort files by timestamp to ensure correct order
   files.sort((a, b) => {
-    const timeA = parseInt(path.basename(a, `.${AUDIO_FILE_EXTENSION}`));
-    const timeB = parseInt(path.basename(b, `.${AUDIO_FILE_EXTENSION}`));
+    // Extract timestamp from filename (before the extension)
+    const timeA = parseInt(path.parse(a).name);
+    const timeB = parseInt(path.parse(b).name);
     return timeA - timeB;
   });
 
@@ -175,10 +185,21 @@ export async function stitchAudio(bucketName: string, folderName: string) {
 
   fs.writeFileSync(fileListPath, fileListContent);
 
-  const tempOutputPath = path.join(
-    os.tmpdir(),
-    `final.${AUDIO_FILE_EXTENSION}`,
-  );
+  // Detect the file extension from the first file
+  let detectedExtension = MOBILE_AUDIO_FILE_EXTENSION;
+  let detectedContentType = MOBILE_GCS_CONTENT_TYPE;
+  if (tempFilePaths.length > 0) {
+    const firstFileExt = path.extname(tempFilePaths[0]).substring(1);
+    if (firstFileExt === WEB_AUDIO_FILE_EXTENSION) {
+      detectedExtension = WEB_AUDIO_FILE_EXTENSION;
+      detectedContentType = WEB_GCS_CONTENT_TYPE;
+    } else if (firstFileExt === MOBILE_AUDIO_FILE_EXTENSION) {
+      detectedExtension = MOBILE_AUDIO_FILE_EXTENSION;
+      detectedContentType = MOBILE_GCS_CONTENT_TYPE;
+    }
+  }
+
+  const tempOutputPath = path.join(os.tmpdir(), `final.${detectedExtension}`);
 
   // Use FFmpeg to concatenate the audio files into a single one
   await new Promise((resolve, reject) => {
@@ -191,7 +212,7 @@ export async function stitchAudio(bucketName: string, folderName: string) {
       .on("error", reject);
   });
 
-  const outputFileName = `${folderName}/final.${AUDIO_FILE_EXTENSION}`;
+  const outputFileName = `${folderName}/final.${detectedExtension}`;
 
   if (isOffline()) {
     // In offline mode, save final file to local storage
@@ -199,7 +220,7 @@ export async function stitchAudio(bucketName: string, folderName: string) {
       process.env["OFFLINE_STORAGE_DIR"] ||
       path.join(os.tmpdir(), "meetings-offline");
     const meetingDir = path.join(localStorageDir, folderName);
-    const finalPath = path.join(meetingDir, `final.${AUDIO_FILE_EXTENSION}`);
+    const finalPath = path.join(meetingDir, `final.${detectedExtension}`);
     fs.copyFileSync(tempOutputPath, finalPath);
   } else {
     // Upload the final stitched file back to the bucket
@@ -207,7 +228,7 @@ export async function stitchAudio(bucketName: string, folderName: string) {
     const bucket = storage.bucket(bucketName);
     await bucket.upload(tempOutputPath, {
       destination: outputFileName,
-      metadata: { contentType: GCS_CONTENT_TYPE },
+      metadata: { contentType: detectedContentType },
       resumable: false,
     });
   }
@@ -224,16 +245,24 @@ export async function transcribeAudioWithAssemblyAI(
 
   if (isOffline()) {
     // In offline mode, use local file path
-    // Extract meeting ID from the path (format: {meetingId}/final.m4a)
+    // Extract meeting ID from the path (format: {meetingId}/final.{extension})
     const meetingId = path.dirname(finalRecordingFilePath);
     const localStorageDir =
       process.env["OFFLINE_STORAGE_DIR"] ||
       path.join(os.tmpdir(), "meetings-offline");
-    const localFilePath = path.join(
-      localStorageDir,
-      meetingId,
-      `final.${AUDIO_FILE_EXTENSION}`,
+    const meetingDir = path.join(localStorageDir, meetingId);
+
+    // Look for final file with either extension
+    let localFilePath = path.join(
+      meetingDir,
+      `final.${MOBILE_AUDIO_FILE_EXTENSION}`,
     );
+    if (!fs.existsSync(localFilePath)) {
+      localFilePath = path.join(
+        meetingDir,
+        `final.${WEB_AUDIO_FILE_EXTENSION}`,
+      );
+    }
 
     // AssemblyAI accepts local file paths directly
     audioUrl = localFilePath;

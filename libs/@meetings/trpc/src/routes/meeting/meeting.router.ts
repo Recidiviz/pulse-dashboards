@@ -20,7 +20,13 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
-import { getSignedUrlForNewRecording } from "~@meetings/tasks";
+import {
+  getSignedUrlForNewRecording,
+  MOBILE_AUDIO_FILE_EXTENSION,
+  MOBILE_GCS_CONTENT_TYPE,
+  WEB_AUDIO_FILE_EXTENSION,
+  WEB_GCS_CONTENT_TYPE,
+} from "~@meetings/tasks";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   discardMeetingInputSchema,
@@ -93,26 +99,43 @@ export const meetingRouter = router({
     }),
   getSignedUrlForRecording: auth0Procedure
     .input(getSignedUrlForRecordingInputSchema)
-    .query(async ({ input: { clientId, meetingId }, ctx: { prisma } }) => {
-      const meeting = await prisma.meeting.findUnique({
-        where: {
-          id: meetingId,
-          clientId: clientId,
-        },
-      });
-
-      if (!meeting) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Meeting with that id was not found",
+    .query(
+      async ({ input: { clientId, meetingId, platform }, ctx: { prisma } }) => {
+        const meeting = await prisma.meeting.findUnique({
+          where: {
+            id: meetingId,
+            clientId: clientId,
+          },
         });
-      }
 
-      return await getSignedUrlForNewRecording(
-        meeting.recordingsGCSBucket,
-        meeting.recordingsFolderPath,
-      );
-    }),
+        if (!meeting) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Meeting with that id was not found",
+          });
+        }
+
+        // Determine file extension and content type based on platform
+        let fileExtension: string;
+        let contentType: string;
+
+        if (platform === "web") {
+          fileExtension = WEB_AUDIO_FILE_EXTENSION;
+          contentType = WEB_GCS_CONTENT_TYPE;
+        } else {
+          // Default to mobile format for iOS, Android, or if platform not specified
+          fileExtension = MOBILE_AUDIO_FILE_EXTENSION;
+          contentType = MOBILE_GCS_CONTENT_TYPE;
+        }
+
+        return await getSignedUrlForNewRecording(
+          meeting.recordingsGCSBucket,
+          meeting.recordingsFolderPath,
+          fileExtension,
+          contentType,
+        );
+      },
+    ),
   discardMeeting: auth0Procedure
     .input(discardMeetingInputSchema)
     .mutation(async ({ input: { clientId, meetingId }, ctx: { prisma } }) => {

@@ -121,7 +121,11 @@ export const useMeetingRecording = ({
   });
 
   const { refetch } = trpc.v1.meeting.getSignedUrlForRecording.useQuery(
-    { clientId: person.personId, meetingId: meetingId ?? "" },
+    {
+      clientId: person.personId,
+      meetingId: meetingId ?? "",
+      platform: Platform.OS as "web" | "ios" | "android",
+    },
     { enabled: false },
   );
 
@@ -148,6 +152,9 @@ export const useMeetingRecording = ({
       const { data: signedUrl } = await refetch();
       if (!signedUrl) return;
 
+      // Use webm for web, m4a for mobile
+      const contentType = Platform.OS === "web" ? "audio/webm" : "audio/m4a";
+
       try {
         if (Platform.OS === "web") {
           const response = await fetch(uri);
@@ -155,13 +162,13 @@ export const useMeetingRecording = ({
           await fetch(signedUrl, {
             method: "PUT",
             body: blob,
-            headers: { "Content-Type": "audio/m4a" },
+            headers: { "Content-Type": contentType },
           });
         } else {
           await FileSystem.uploadAsync(signedUrl, uri, {
             httpMethod: "PUT",
             uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-            headers: { "Content-Type": "audio/m4a" },
+            headers: { "Content-Type": contentType },
           });
         }
       } catch (error) {
