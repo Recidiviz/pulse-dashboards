@@ -296,14 +296,19 @@ export const useRecording = ({
       if (noSleepRef.current && !noSleepRef.current.isEnabled) {
         await noSleepRef.current.enable();
         console.log("NoSleep enabled successfully on mobile/tablet device");
+      } else if (noSleepRef.current?.isEnabled) {
+        console.log("NoSleep already enabled - skipping");
       }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       console.error("Error enabling NoSleep:", errorMessage);
-      showErrorToast(
-        `Could not keep screen awake: ${errorMessage}${batteryLevel !== null ? ` (Battery: ${batteryLevel}%)` : ""}`,
-      );
+      // Only show error toast if this is the initial attempt (not already enabled)
+      if (!noSleepRef.current?.isEnabled) {
+        showErrorToast(
+          `Could not keep screen awake: ${errorMessage}${batteryLevel !== null ? ` (Battery: ${batteryLevel}%)` : ""}`,
+        );
+      }
     }
   }, [isMobileOrTablet, batteryLevel]);
 
@@ -512,6 +517,25 @@ export const useRecording = ({
       status: "STARTED",
     });
 
+    // Enable NoSleep early (synchronously) to ensure it's called within user gesture
+    // This is critical for mobile Chrome browsers where NoSleep must be enabled
+    // before any async operations to maintain the user gesture chain
+    if (
+      isMobileOrTablet() &&
+      noSleepRef.current &&
+      !noSleepRef.current.isEnabled
+    ) {
+      try {
+        noSleepRef.current.enable();
+        console.log("NoSleep enabled early (within user gesture)");
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        console.warn("Early NoSleep enable failed:", errorMessage);
+        // Don't return - continue with recording even if NoSleep fails
+      }
+    }
+
     try {
       validateRecordingCapabilities(
         selectedMicrophone,
@@ -552,6 +576,7 @@ export const useRecording = ({
       await updateRecordingStatus("recording");
 
       // Request wake lock to keep screen awake on mobile/tablet
+      // This is called again in case the early enable failed or to handle battery checks
       await requestWakeLock();
 
       showSuccessToast("Recording started");
@@ -582,6 +607,7 @@ export const useRecording = ({
     handleDataAvailable,
     handleRecordingError,
     requestWakeLock,
+    isMobileOrTablet,
   ]);
 
   const resumeRecording = useCallback(async () => {
@@ -593,6 +619,25 @@ export const useRecording = ({
       justiceInvolvedPersonId: clientPseudoId,
       status: "RESUMED",
     });
+
+    // Enable NoSleep early (synchronously) to ensure it's called within user gesture
+    // This is critical for mobile Chrome browsers where NoSleep must be enabled
+    // before any async operations to maintain the user gesture chain
+    if (
+      isMobileOrTablet() &&
+      noSleepRef.current &&
+      !noSleepRef.current.isEnabled
+    ) {
+      try {
+        noSleepRef.current.enable();
+        console.log("NoSleep enabled early (within user gesture)");
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        console.warn("Early NoSleep enable failed:", errorMessage);
+        // Don't return - continue with recording even if NoSleep fails
+      }
+    }
 
     try {
       // Since we stop the stream during pause, we always need to create a new MediaRecorder
@@ -636,6 +681,7 @@ export const useRecording = ({
       await updateRecordingStatus("recording");
 
       // Request wake lock to keep screen awake on mobile/tablet
+      // This is called again in case the early enable failed or to handle battery checks
       await requestWakeLock();
 
       showSuccessToast("Recording resumed");
@@ -666,6 +712,7 @@ export const useRecording = ({
     handleDataAvailable,
     handleRecordingError,
     requestWakeLock,
+    isMobileOrTablet,
   ]);
 
   const stopRecording = useCallback(async () => {
