@@ -1,0 +1,10 @@
+{
+  "overrides": [
+    {
+      "files": "libs/@reentry/openapi-types/src/recidiviz-schema.d.ts",
+      "options": {
+        "tabWidth": 4
+      }
+    }
+  ]
+}

@@ -1429,6 +1429,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/webhooks/deepgram/transcription": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Deepgram Transcription Webhook
+         * @description Webhook endpoint for receiving transcription results from Deepgram.
+         *     This is called by Deepgram when async transcription completes.
+         */
+        post: operations["deepgram_transcription_webhook_webhooks_deepgram_transcription_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1853,7 +1874,9 @@ export interface components {
             /** Client Pseudo Id */
             client_pseudo_id: string;
             intake?: components["schemas"]["IntakeResponse"] | null;
-            plans?: components["schemas"]["app__routes__shared_models__PlanResponse"] | null;
+            plans?:
+                | components["schemas"]["app__routes__shared_models__PlanResponse"]
+                | null;
             processing_status: components["schemas"]["ProcessingStatus"];
             client?: components["schemas"]["ClientRecordResponse"] | null;
             /** Frontend Status */
@@ -2125,7 +2148,12 @@ export interface components {
          * ExecutionStatus
          * @enum {string}
          */
-        ExecutionStatus: "not_started" | "pending" | "in_progress" | "completed" | "failed";
+        ExecutionStatus:
+            | "not_started"
+            | "pending"
+            | "in_progress"
+            | "completed"
+            | "failed";
         /** FinalizeRecordingRequest */
         FinalizeRecordingRequest: {
             /** Total Chunks */
@@ -2206,7 +2234,9 @@ export interface components {
         GetResourcesResponse: {
             /** Resources */
             resources: components["schemas"]["Resource"][];
-            failure_reason?: components["schemas"]["ResourceFailureReason"] | null;
+            failure_reason?:
+                | components["schemas"]["ResourceFailureReason"]
+                | null;
             /** Error Message */
             error_message?: string | null;
         };
@@ -2414,7 +2444,9 @@ export interface components {
             /** Current Section */
             current_section?: string | null;
             /** Intake Sections */
-            intake_sections?: components["schemas"]["IntakeSectionResponse"][] | null;
+            intake_sections?:
+                | components["schemas"]["IntakeSectionResponse"][]
+                | null;
         };
         /** InternalAccessUpdate */
         InternalAccessUpdate: {
@@ -2617,7 +2649,9 @@ export interface components {
              * Format: uuid
              */
             plan_id: string;
-            decision_tree?: components["schemas"]["DecisionTreeResponse"] | null;
+            decision_tree?:
+                | components["schemas"]["DecisionTreeResponse"]
+                | null;
             execution: components["schemas"]["ExecutionResponse"] | null;
             /** Annotations */
             annotations: components["schemas"]["Annotation"][] | null;
@@ -2665,7 +2699,9 @@ export interface components {
              * Format: uuid
              */
             plan_id: string;
-            decision_tree?: components["schemas"]["DecisionTreeResponse"] | null;
+            decision_tree?:
+                | components["schemas"]["DecisionTreeResponse"]
+                | null;
             execution: components["schemas"]["ExecutionResponse"] | null;
         };
         /** PlanGenerationEditRequest */
@@ -2785,14 +2821,18 @@ export interface components {
             client_pseudo_id: string;
             /** Create Execution Id */
             create_execution_id?: string | null;
-            create_execution?: components["schemas"]["ExecutionResponse"] | null;
+            create_execution?:
+                | components["schemas"]["ExecutionResponse"]
+                | null;
             /** Create Status */
             create_status: string;
             /** Edited Manually */
             edited_manually: boolean;
             /** @description Gets the client record data for this plan.
              *     Renamed from 'oms' to better reflect its content and source. */
-            readonly client_record: components["schemas"]["ClientRecordResponse"] | null;
+            readonly client_record:
+                | components["schemas"]["ClientRecordResponse"]
+                | null;
         };
         /** PlanResponseGet */
         PlanResponseGet: {
@@ -2815,23 +2855,34 @@ export interface components {
             client_pseudo_id: string;
             /** Create Execution Id */
             create_execution_id?: string | null;
-            create_execution?: components["schemas"]["ExecutionResponse"] | null;
+            create_execution?:
+                | components["schemas"]["ExecutionResponse"]
+                | null;
             /** Create Status */
             create_status: string;
             /** Edited Manually */
             edited_manually: boolean;
-            latest_generation: components["schemas"]["PlanGenerationResponseGet"] | null;
+            latest_generation:
+                | components["schemas"]["PlanGenerationResponseGet"]
+                | null;
             /** Is Create Execution Finished */
             is_create_execution_finished?: boolean | null;
             /** @description Gets the client record data for this plan.
              *     Renamed from 'oms' to better reflect its content and source. */
-            readonly client_record: components["schemas"]["ClientRecordResponse"] | null;
+            readonly client_record:
+                | components["schemas"]["ClientRecordResponse"]
+                | null;
         };
         /**
          * ProcessingStatus
          * @enum {string}
          */
-        ProcessingStatus: "not_started" | "in_progress" | "completed" | "failed" | "needs_retry";
+        ProcessingStatus:
+            | "not_started"
+            | "in_progress"
+            | "completed"
+            | "failed"
+            | "needs_retry";
         /** ProcessingStatusRequest */
         ProcessingStatusRequest: {
             /** Staff Pseudo Id */
@@ -2928,7 +2979,13 @@ export interface components {
          * RecordingStatus
          * @enum {string}
          */
-        RecordingStatus: "created" | "recording" | "paused" | "processing" | "error" | "completed";
+        RecordingStatus:
+            | "created"
+            | "recording"
+            | "paused"
+            | "processing"
+            | "error"
+            | "completed";
         /** RemoveClientRequest */
         RemoveClientRequest: {
             /** First Name */
@@ -3011,7 +3068,18 @@ export interface components {
          * @description Resource categories
          * @enum {string}
          */
-        ResourceCategory: "Basic Needs" | "Employment and Career Support" | "Education" | "Behavioral Health Services" | "Medical and Health Services" | "Legal and Financial Assistance" | "Family and Community Support" | "Transportation" | "Specialized Services" | "Community and Social Reintegration" | "Unknown";
+        ResourceCategory:
+            | "Basic Needs"
+            | "Employment and Career Support"
+            | "Education"
+            | "Behavioral Health Services"
+            | "Medical and Health Services"
+            | "Legal and Financial Assistance"
+            | "Family and Community Support"
+            | "Transportation"
+            | "Specialized Services"
+            | "Community and Social Reintegration"
+            | "Unknown";
         /**
          * ResourceFailureReason
          * @enum {string}
@@ -3022,7 +3090,43 @@ export interface components {
          * @description Resource subcategories
          * @enum {string}
          */
-        ResourceSubcategory: "Housing" | "Food Assistance" | "Clothing" | "Job Training Programs" | "Job Placement Services" | "Resume and Interview Support" | "Certification and Licensing Assistance" | "High School Equivalency Programs" | "Post-Secondary Education" | "Literacy Programs" | "Digital Literacy" | "Mental Health Counseling" | "Substance Abuse Treatment" | "Trauma-Informed Care" | "Primary Care" | "Specialized Care" | "Addiction Medicine" | "HIV/AIDS and Hepatitis C Services" | "Identification Services" | "Legal Aid" | "Financial Literacy Programs" | "Emergency Financial Assistance" | "Family Reunification Services" | "Mentorship Programs" | "Faith-Based Support" | "Reentry Support Groups" | "Public Transit Access" | "Driver's License Assistance" | "Transportation Services" | "Domestic Violence Support" | "Sex Offender-Specific Programs" | "Youth-Specific Resources" | "Culturally Specific Programs" | "Volunteer Opportunities" | "Recreation" | "Civic Engagement";
+        ResourceSubcategory:
+            | "Housing"
+            | "Food Assistance"
+            | "Clothing"
+            | "Job Training Programs"
+            | "Job Placement Services"
+            | "Resume and Interview Support"
+            | "Certification and Licensing Assistance"
+            | "High School Equivalency Programs"
+            | "Post-Secondary Education"
+            | "Literacy Programs"
+            | "Digital Literacy"
+            | "Mental Health Counseling"
+            | "Substance Abuse Treatment"
+            | "Trauma-Informed Care"
+            | "Primary Care"
+            | "Specialized Care"
+            | "Addiction Medicine"
+            | "HIV/AIDS and Hepatitis C Services"
+            | "Identification Services"
+            | "Legal Aid"
+            | "Financial Literacy Programs"
+            | "Emergency Financial Assistance"
+            | "Family Reunification Services"
+            | "Mentorship Programs"
+            | "Faith-Based Support"
+            | "Reentry Support Groups"
+            | "Public Transit Access"
+            | "Driver's License Assistance"
+            | "Transportation Services"
+            | "Domestic Violence Support"
+            | "Sex Offender-Specific Programs"
+            | "Youth-Specific Resources"
+            | "Culturally Specific Programs"
+            | "Volunteer Opportunities"
+            | "Recreation"
+            | "Civic Engagement";
         /** SetNotificationRequest */
         SetNotificationRequest: {
             /** Notify */
@@ -3309,14 +3413,18 @@ export interface components {
             client_pseudo_id: string;
             /** Create Execution Id */
             create_execution_id?: string | null;
-            create_execution?: components["schemas"]["ExecutionResponse"] | null;
+            create_execution?:
+                | components["schemas"]["ExecutionResponse"]
+                | null;
             /** Create Status */
             create_status: string;
             /** Edited Manually */
             edited_manually: boolean;
             /** @description Gets the client record data for this plan.
              *     Renamed from 'oms' to better reflect its content and source. */
-            readonly client_record: components["schemas"]["ClientRecordResponse"] | null;
+            readonly client_record:
+                | components["schemas"]["ClientRecordResponse"]
+                | null;
         };
         /** PlanResponse */
         app__routes__shared_models__PlanResponse: {
@@ -3339,7 +3447,9 @@ export interface components {
             client_pseudo_id: string;
             /** Create Execution Id */
             create_execution_id?: string | null;
-            create_execution?: components["schemas"]["ExecutionResponse"] | null;
+            create_execution?:
+                | components["schemas"]["ExecutionResponse"]
+                | null;
             /** Create Status */
             create_status: string;
             /** Edited Manually */
@@ -3839,8 +3949,12 @@ export interface operations {
     get_plan_resources_plans__id__resources_get: {
         parameters: {
             query?: {
-                filter_category?: components["schemas"]["ResourceCategory"] | null;
-                filter_subcategory?: components["schemas"]["ResourceSubcategory"] | null;
+                filter_category?:
+                    | components["schemas"]["ResourceCategory"]
+                    | null;
+                filter_subcategory?:
+                    | components["schemas"]["ResourceSubcategory"]
+                    | null;
             };
             header?: never;
             path: {
@@ -5305,7 +5419,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["IntakeWithSectionsResponse"] | components["schemas"]["IntakeResponse"];
+                    "application/json":
+                        | components["schemas"]["IntakeWithSectionsResponse"]
+                        | components["schemas"]["IntakeResponse"];
                 };
             };
             /** @description Validation Error */
@@ -5429,6 +5545,7 @@ export interface operations {
                 search?: string | null;
                 status_filter?: string | null;
                 is_zero_caseload_user?: boolean;
+                cpa_client_locations?: string[] | null;
             };
             header?: never;
             path?: never;
@@ -5589,7 +5706,9 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        [key: string]: components["schemas"]["ProcessingStatus"];
+                        [
+                            key: string
+                        ]: components["schemas"]["ProcessingStatus"];
                     };
                 };
             };
@@ -6056,6 +6175,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deepgram_transcription_webhook_webhooks_deepgram_transcription_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
         };
