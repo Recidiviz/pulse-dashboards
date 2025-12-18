@@ -308,6 +308,15 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
             <div>{task.additionalDetails}</div>
           </TaskTimelineText>
 
+          {task.supplementaryContacts.map((contact) => (
+            <>
+              <TaskTimelineDonut lineBelow filled />
+              <TaskTimelineText>
+                <div>{contact}</div>
+              </TaskTimelineText>
+            </>
+          ))}
+
           {task.futureScheduledContacts &&
             task.futureScheduledContacts.length > 0 && (
               <>

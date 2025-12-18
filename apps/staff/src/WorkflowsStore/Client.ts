@@ -247,6 +247,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       if (!this._caseType) return "Unknown";
       return capitalize(this._caseType.replaceAll("_", " "));
     }
+    if (this.stateCode === "US_MO") {
+      if (!this._caseType) return "Unknown";
+      return capitalize(this._caseType.replaceAll("_", " "));
+    }
 
     // This is the enum we use for case type internally
     return this._caseType ?? "Unknown";

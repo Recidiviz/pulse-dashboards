@@ -37,17 +37,75 @@ const US_MO_CONFIG = {
     tasks: {
       usMoEmploymentVerification: {
         constructor: UsMoEmploymentVerificationTask,
-        snoozeForOptionsInDays: [7, 30, 90],
+        snoozeForOptionsInDays: [7, 30],
       },
       usMoPositiveHomeVisit: {
         constructor: UsMoPositiveHomeVisitTask,
-        snoozeForOptionsInDays: [7, 30, 90],
+        snoozeForOptionsInDays: [7, 30],
       },
       usMoInPersonContact: {
         constructor: UsMoInPersonContactTask,
-        snoozeForOptionsInDays: [7, 30, 90],
+        snoozeForOptionsInDays: [7, 30],
       },
     },
+    categories: ["DUE_THIS_MONTH", "DUE_NEXT_MONTH", "OVERDUE", "ALL_TASKS"],
+    filters: [
+      {
+        title: "Task Type",
+        field: "type",
+        type: "task",
+        options: [
+          {
+            value: "usMoEmploymentVerification",
+            label: "Employment Verification",
+          },
+          {
+            value: "usMoPositiveHomeVisit",
+            label: "Positive Home Visit",
+          },
+          {
+            value: "usMoInPersonContact",
+            label: "In-Person Contact",
+          },
+        ],
+      },
+      {
+        title: "Supervision Level",
+        field: "supervisionLevel",
+        type: "person",
+        options: [
+          {
+            value: "Low",
+          },
+          {
+            value: "Moderate",
+          },
+          {
+            value: "High",
+          },
+        ],
+      },
+      {
+        title: "Case Type",
+        field: "caseType",
+        type: "person",
+        options: [
+          {
+            value: "General",
+          },
+          {
+            value: "Domestic violence",
+          },
+          {
+            value: "Serious mental illness or disability",
+            shortLabel: "Mental illness/disability",
+          },
+          {
+            value: "Sex offense",
+          },
+        ],
+      },
+    ],
   },
   workflowsSystemConfigs: {
     SUPERVISION: {

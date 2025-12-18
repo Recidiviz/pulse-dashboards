@@ -62,6 +62,13 @@ type UsMoTaskDetails = {
   lastContactDate: string | null;
 };
 
+type UsMoHomeVisitTaskDetails = UsMoTaskDetails & {
+  supplementaryContacts: {
+    contactTypes: string;
+    contactDate: string;
+  }[];
+};
+
 type UsNeAssessmentDetails = {
   assessmentDueDate: string | null;
   mostRecentAssessmentDate: string | null;
@@ -205,7 +212,7 @@ export type SupervisionDetailsForTask = {
   usIdFaceToFaceContact: UsIdTaskBaseDetails;
   employment: UsIdEmploymentDetails;
   usIdEmploymentVerification: UsIdTaskBaseDetails;
-  usMoPositiveHomeVisit: UsMoTaskDetails;
+  usMoPositiveHomeVisit: UsMoHomeVisitTaskDetails;
   usMoEmploymentVerification: UsMoTaskDetails;
   usMoInPersonContact: UsMoTaskDetails;
   usNeOrasAssessment: UsNeAssessmentDetails;
@@ -254,6 +261,8 @@ export type SupervisionTask<
   scheduledContactDates: Date[] | undefined;
   futureScheduledContacts: Date[] | undefined;
   hasFutureScheduledContact: boolean | undefined;
+
+  supplementaryContacts: string[];
 
   additionalDetails?: string;
   vitalsMetricId?: VitalsMetricId;

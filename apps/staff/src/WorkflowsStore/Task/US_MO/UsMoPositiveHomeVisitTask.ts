@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { sortBy } from "lodash";
+
 import { fieldToDate } from "~datatypes";
 
 import { formatWorkflowsDate, toTitleCase } from "../../../utils";
@@ -22,6 +24,14 @@ import { Task } from "../Task";
 
 class UsMoPositiveHomeVisitTask extends Task<"usMoPositiveHomeVisit"> {
   displayName = "Positive Home Visit";
+
+  get supplementaryContacts() {
+    const contacts = sortBy(this.details.supplementaryContacts, "contactDate");
+    return contacts.map(
+      (contact) =>
+        `Home visit (${contact.contactTypes}) on ${formatWorkflowsDate(fieldToDate(contact.contactDate))}`,
+    );
+  }
 
   get additionalDetails() {
     const { lastContactDate } = this.details;
