@@ -2,6 +2,10 @@
 
 Sentence Reduction Credits are a reward for good behavior and for successfully completing programming. Depending on your sentence, Sentence Credits may reduce your Release Eligibility Date or Expiration Date. In most cases, 1 credit = 1 day off the date.
 
+## What about pretrial jail credits?
+
+Pretrial jail credits are earned for time spent in jail before sentencing. If you earned jail credits, those credits should have already been accounted for in your Full Expiration Date, Expiration Date, and Release Eligibility Date. The app doesn't show your number of pretrial jail credits separately
+
 ## When are credits posted?
 
 Most credits from last month should appear in this app by the 13th. Credits update here with a 1-3 day delay after TDOC staff entry.
