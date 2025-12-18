@@ -21,7 +21,6 @@ import sentenceCreditsInfoPage from "./sentenceCreditsInfoPage.md?raw";
 
 export const usTnCopy = {
   monthlyCreditReportSummary: {
-    sectionHeader: "Recent monthly reports",
     creditCategories: {
       behavior: "Behavior Credits",
       program: "Program Credits",

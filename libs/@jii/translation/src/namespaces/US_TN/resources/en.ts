@@ -46,7 +46,14 @@ export default {
   },
   monthlySentenceCredits: {
     heading: "Monthly Sentence Credits",
+    creditCorrectionInfo:
+      "Per TDOC policy, sentence reduction credits can only be challenged through TDOC admin procedures within one year.",
     rowsClickable:
       "Tap on each row to look at a breakdown of credits earned that month.",
+  },
+  monthlyCreditReportSummary: {
+    sectionHeader: "Recent monthly reports",
+    maxReductionNote:
+      "All credits you earn will show here, even if your sentence does not allow credits to reduce your dates.",
   },
 };

@@ -27,13 +27,14 @@ import {
   CardValue,
   GoButton,
   HomepageSectionHeading,
+  SlateCopy,
 } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { useUsTnTranslations } from "~@jii/translation";
 import { Icon, palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
-import { usTnCopy } from "../../../configs/copy";
 import { prefixNumberWithSign } from "../../../utils";
 import {
   useUsTnSingleResidentDataContext,
@@ -87,7 +88,11 @@ const ManagedComponent = observer(function UsTnMonthlyReports({
 }: {
   presenter: UsTnMonthlyReportsPresenter;
 }) {
-  const { sectionHeader } = usTnCopy.monthlyCreditReportSummary;
+  const { t } = useUsTnTranslations();
+  const sectionHeader = t(($) => $.monthlyCreditReportSummary.sectionHeader);
+  const maxReductionNote = t(
+    ($) => $.monthlyCreditReportSummary.maxReductionNote,
+  );
 
   const { mostRecentReports } = presenter;
 
@@ -95,6 +100,7 @@ const ManagedComponent = observer(function UsTnMonthlyReports({
   return (
     <section>
       <HomepageSectionHeading>{sectionHeader}</HomepageSectionHeading>
+      <SlateCopy options={{ forceBlock: true }}>{maxReductionNote}</SlateCopy>
       <MonthlyReportSummaryGridWrapper>
         {mostRecentReports.map((report) => (
           <MonthlyReportSummary report={report} key={report.monthSlug} />

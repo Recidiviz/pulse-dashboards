@@ -78,7 +78,12 @@ function ManagedComponent({
     <section>
       <HistoryBackButton />
       <Heading>{t(($) => $.monthlySentenceCredits.heading)}</Heading>
-      <SlateCopy>{t(($) => $.monthlySentenceCredits.rowsClickable)}</SlateCopy>
+      <SlateCopy options={{ forceBlock: true }}>
+        {t(($) => $.monthlySentenceCredits.creditCorrectionInfo)}
+      </SlateCopy>
+      <SlateCopy options={{ forceBlock: true }}>
+        {t(($) => $.monthlySentenceCredits.rowsClickable)}
+      </SlateCopy>
       {orderedYears.map((year) => (
         <StyledList key={year}>
           <StyledRow>
