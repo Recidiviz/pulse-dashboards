@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { toTitleCase } from "@artsy/to-title-case";
 import simplur from "simplur";
 
 import { fieldToDate } from "~datatypes";
 
-import { formatDate } from "../../../utils";
+import { formatDate, toTitleCase } from "../../../utils";
 import { Task } from "../Task";
 import { UsIdAgnosticTaskType } from "../types";
 
@@ -41,7 +40,7 @@ abstract class UsIdTaskBase<T extends UsIdAgnosticTaskType> extends Task<T> {
   get frequency() {
     const { contactCadence } = this.details;
     if (!contactCadence) return "";
-    return toTitleCase(contactCadence);
+    return toTitleCase(contactCadence.toLowerCase());
   }
 
   get additionalDetails(): string {
