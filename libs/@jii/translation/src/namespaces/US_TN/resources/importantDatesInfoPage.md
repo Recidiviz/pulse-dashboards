@@ -26,6 +26,10 @@ Full Expiration (FXP) is the very last possible day you could be held in prison 
 
 For example, if a person started a 10-year sentence on January 1, 2020, their FXP would be January 1, 2030.
 
+## Where are my pretrial jail credits counted?
+
+The "total reduction" number that you may see under "Full Expiration Date" does not include pretrial jail credits. Instead, if you received jail credits, they have already been accounted for in your Full Expiration Date, Expiration Date, and Release Eligibility Date.
+
 ## The app says I don’t have an EXP or RED – why not?
 
 This could be for one of a few reasons:
