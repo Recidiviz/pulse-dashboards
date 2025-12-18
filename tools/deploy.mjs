@@ -1037,7 +1037,7 @@ const deployer = (await $`gcloud config get-value account`).stdout.trim();
 
 const polarisChannelId = "C026UPMAX4G";
 const polarisEngChannelId = "C04LC0VH78B";
-const reentryChannelId = "C084GD6MMM0";
+const reentryChannelId = "C0A432T3QUB";
 
 let slackChannel = null;
 let slackMessage = null;
