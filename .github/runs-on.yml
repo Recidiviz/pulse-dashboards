@@ -10,6 +10,8 @@ runners:
     ssh: false
     # Use capacity-optimized strategy to select spot instances with less chance of preemption
     spot: capacity-optimized
+    # Use large disk
+    volume: 80gb
 
   x64:
     image: ubuntu24-stepsecurity-x64
@@ -19,6 +21,8 @@ runners:
     ssh: false
     # Use capacity-optimized strategy to select spot instances with less chance of preemption
     spot: capacity-optimized
+    # Use large disk
+    volume: 80gb
 
 images:
   ubuntu24-stepsecurity-x64:
