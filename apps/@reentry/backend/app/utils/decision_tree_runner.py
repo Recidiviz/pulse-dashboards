@@ -48,7 +48,6 @@ DT_SELECTION_SYSTEM_PROMPT = (
 DT_SELECTION_PROMPT = (
     "# Client intake\n{client_messages}\n\n"
     "# Client intake summary\n{client_summary}\n\n"
-    "# Client risk summary\n{client_assessment_summary}\n\n"
     "# Available decision trees\n{decision_trees}\n\n"
     "\n\n"
     "You search for the applicable decisions trees based on the client's situation. "
