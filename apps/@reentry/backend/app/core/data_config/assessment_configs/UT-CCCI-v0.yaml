@@ -136,12 +136,12 @@ intake:
 
   scoring_model:
     provider: openai
-    name: gpt-4o-mini
-    version: "2024-07-18"
+    name: o4-mini
+    version: "2025-04-16"
   chat_model:
     provider: openai
-    name: gpt-4o
-    version: "2024-11-20"
+    name: o4-mini
+    version: "2025-04-16"
 
 outputs:
   codes:

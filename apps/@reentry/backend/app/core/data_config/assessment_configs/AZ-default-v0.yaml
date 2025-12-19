@@ -10,8 +10,8 @@ intake:
   scoring: oras_pit
   scoring_model:
     provider: openai
-    name: gpt-4o-mini
-    version: "2024-07-18"
+    name: o4-mini
+    version: "2025-04-16"
 
 outputs:
   codes:
