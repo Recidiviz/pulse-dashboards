@@ -24,12 +24,14 @@ import React, { useEffect } from "react";
 import { useAuth0 } from "react-native-auth0";
 import superjson from "superjson";
 
+import AppUpdateModal from "../components/AppUpdateModal";
 import LoginScreen from "../screens/LoginScreen";
-import { trpc } from "../trpc/client";
+import { publicTrpc, trpc } from "../trpc/client";
 import DrawerNavigator from "./DrawerNavigator";
 
 const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
+const publicQueryClient = new QueryClient();
 
 const trpcUrl =
   process.env["EXPO_PUBLIC_SERVER_URL"] ?? "http://localhost:3002";
@@ -72,6 +74,21 @@ const AppNavigator = () => {
     }),
   );
 
+  // Public tRPC client for unauthenticated endpoints
+  const [publicTrpcClient] = React.useState(() =>
+    publicTrpc.createClient({
+      links: [
+        httpBatchLink({
+          url: trpcUrl,
+          headers: () => ({
+            statecode: "US_NE",
+          }),
+          transformer: superjson,
+        }),
+      ],
+    }),
+  );
+
   const [, fontsLoadingError] = useFonts({
     Inter: require("./../../assets/fonts/Inter.ttf"),
     "LibreBaskerville-Bold": require("./../../assets/fonts/LibreBaskerville-Bold.ttf"),
@@ -95,23 +112,31 @@ const AppNavigator = () => {
   const loggedIn = (user !== undefined && user !== null) || skipAuth;
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {!loggedIn ? (
-              <Stack.Screen name="Login">
-                {(props) => (
-                  <LoginScreen {...props} onSkipAuth={handleSkipAuth} />
+    <publicTrpc.Provider
+      client={publicTrpcClient}
+      queryClient={publicQueryClient}
+    >
+      <QueryClientProvider client={publicQueryClient}>
+        <AppUpdateModal />
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <NavigationContainer>
+              <Stack.Navigator screenOptions={{ headerShown: false }}>
+                {!loggedIn ? (
+                  <Stack.Screen name="Login">
+                    {(props) => (
+                      <LoginScreen {...props} onSkipAuth={handleSkipAuth} />
+                    )}
+                  </Stack.Screen>
+                ) : (
+                  <Stack.Screen name="Main" component={DrawerNavigator} />
                 )}
-              </Stack.Screen>
-            ) : (
-              <Stack.Screen name="Main" component={DrawerNavigator} />
-            )}
-          </Stack.Navigator>
-        </NavigationContainer>
+              </Stack.Navigator>
+            </NavigationContainer>
+          </QueryClientProvider>
+        </trpc.Provider>
       </QueryClientProvider>
-    </trpc.Provider>
+    </publicTrpc.Provider>
   );
 };
 

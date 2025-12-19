@@ -19,4 +19,8 @@ import { createTRPCReact } from "@trpc/react-query";
 
 import type { AppRouter } from "~@meetings/trpc-types";
 
+// Authenticated tRPC client - requires user to be logged in
 export const trpc = createTRPCReact<AppRouter>();
+
+// Public tRPC client - for unauthenticated endpoints (e.g., version check)
+export const publicTrpc = createTRPCReact<AppRouter>();

@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { auth0Procedure, router } from "~@meetings/trpc/init";
+import { baseProcedure, router } from "~@meetings/trpc/init";
 import { checkAppVersionInputSchema } from "~@meetings/trpc/routes/metadata/metadata.schema";
 
 export const metadataRouter = router({
-  checkAppVersion: auth0Procedure
+  checkAppVersion: baseProcedure
     .input(checkAppVersionInputSchema)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars -- we'll check versions eventually
     .query(async ({ input }) => {
