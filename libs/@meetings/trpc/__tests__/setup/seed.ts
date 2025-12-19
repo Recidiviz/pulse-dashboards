@@ -28,12 +28,12 @@ import env from "~@meetings/trpc/env";
 export const intakeId = "intake-1";
 export const clientPseudoId1 = "client-pid-1";
 export const clientPseudoId2 = "client-pid-2";
+export const clientPseudoId3 = "client-pid-3";
 
 export const fakeStaff = [
   {
     staffId: BigInt(1),
     stableStaffExternalId: "staff-ext-1",
-    stableStaffExternalIdType: "staff-ext-type-1",
     pseudonymizedId: "staff-pid-1",
     givenNames: faker.person.firstName(),
     middleNames: faker.person.firstName(),
@@ -44,7 +44,6 @@ export const fakeStaff = [
   {
     staffId: BigInt(2),
     stableStaffExternalId: "staff-ext-2",
-    stableStaffExternalIdType: "staff-ext-type-1",
     pseudonymizedId: "staff-pid-2",
     givenNames: faker.person.firstName(),
     middleNames: faker.person.firstName(),
@@ -66,13 +65,13 @@ export const fakeClients = [
     middleNames: faker.person.firstName(),
     surname: faker.person.lastName(),
     suffix: faker.person.suffix(),
-    birthDate: faker.date.birthdate(),
     staff: {
       create: {
         staffId: fakeStaff[0].staffId,
       },
     },
     supervisionType: "PAROLE",
+    isActive: true,
   },
   {
     stateCode: StateCode.US_NE,
@@ -85,13 +84,32 @@ export const fakeClients = [
     middleNames: faker.person.firstName(),
     surname: faker.person.lastName(),
     suffix: faker.person.suffix(),
-    birthDate: faker.date.birthdate(),
     staff: {
       create: {
         staffId: fakeStaff[1].staffId,
       },
     },
     supervisionType: "PAROLE",
+    isActive: true,
+  },
+  {
+    stateCode: StateCode.US_NE,
+    personId: BigInt(3),
+    stablePersonExternalId: "client-ext-3",
+    stablePersonExternalIdType: "client-ext-type-1",
+    displayPersonExternalId: "client-display-ext-3",
+    pseudonymizedId: clientPseudoId3,
+    givenNames: faker.person.firstName(),
+    middleNames: faker.person.firstName(),
+    surname: faker.person.lastName(),
+    suffix: faker.person.suffix(),
+    staff: {
+      create: {
+        staffId: fakeStaff[0].staffId,
+      },
+    },
+    supervisionType: "PAROLE",
+    isActive: false,
   },
 ] satisfies Prisma.ClientCreateInput[];
 

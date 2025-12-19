@@ -41,7 +41,6 @@ describe("import client data", () => {
       data: {
         staffId: 2,
         stableStaffExternalId: "staff-ext-2",
-        stableStaffExternalIdType: fakeStaff.stableStaffExternalIdType,
         pseudonymizedId: "staff-pid-2",
         givenNames: faker.person.firstName(),
         middleNames: faker.person.firstName(),
@@ -67,10 +66,7 @@ describe("import client data", () => {
           surname: fakeClient.surname,
           name_suffix: fakeClient.suffix,
         }),
-        birthdate: fakeClient.birthDate,
-        lastKnownResidence: fakeClient.lastKnownResidence,
-        // staff ids are strings in the import file
-        assigned_staff_ids: [newStaff.staffId.toString()],
+        officer_id: newStaff.stableStaffExternalId,
         supervision_type: "PAROLE",
       },
       // new client
@@ -88,10 +84,8 @@ describe("import client data", () => {
           surname: faker.person.lastName(),
           name_suffix: faker.person.suffix(),
         }),
-        birthdate: faker.date.birthdate(),
         current_address: faker.location.streetAddress(),
-        // staff ids are strings in the import file
-        assigned_staff_ids: [fakeStaff.staffId.toString()],
+        officer_id: fakeStaff.stableStaffExternalId,
         supervision_type: "GENERAL",
       },
     ]);
@@ -120,6 +114,7 @@ describe("import client data", () => {
         pseudonymizedId: fakeClient.pseudonymizedId,
         displayPersonExternalId: fakeClient.displayPersonExternalId,
         givenNames: "New Name",
+        isActive: true,
         // Should have added the new staff assignment and removed the old one
         staff: [
           {
@@ -133,6 +128,7 @@ describe("import client data", () => {
         stablePersonExternalIdType: "client-ext-type-1",
         pseudonymizedId: "new-client-pid",
         displayPersonExternalId: "new-client-display-ext-id",
+        isActive: true,
         staff: [
           {
             staffId: fakeStaff.staffId,
@@ -141,5 +137,70 @@ describe("import client data", () => {
         supervisionType: "GENERAL",
       }),
     ]);
+  });
+
+  test("should mark clients not in import as inactive", async () => {
+    // Create an additional client that won't be in the import
+    const inactiveClient = await testPrismaClient.client.create({
+      data: {
+        personId: BigInt(999),
+        stablePersonExternalId: "client-ext-999",
+        stablePersonExternalIdType: "client-ext-type-1",
+        pseudonymizedId: "client-pid-999",
+        displayPersonExternalId: "client-display-ext-999",
+        stateCode: StateCode.US_NE,
+        givenNames: faker.person.firstName(),
+        middleNames: faker.person.firstName(),
+        surname: faker.person.lastName(),
+        suffix: faker.person.suffix(),
+        supervisionType: "PAROLE",
+        isActive: true,
+      },
+    });
+
+    // Import data that only includes the original fakeClient
+    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+      {
+        state_code: StateCode.US_NE,
+        person_id: "100",
+        stable_person_external_id: fakeClient.stablePersonExternalId,
+        stable_person_external_id_type: fakeClient.stablePersonExternalIdType,
+        display_person_external_id: fakeClient.displayPersonExternalId,
+        pseudonymized_id: fakeClient.pseudonymizedId,
+        full_name: JSON.stringify({
+          given_names: fakeClient.givenNames,
+          middle_names: fakeClient.middleNames,
+          surname: fakeClient.surname,
+          name_suffix: fakeClient.suffix,
+        }),
+        officer_id: fakeStaff.stableStaffExternalId,
+        supervision_type: "PAROLE",
+      },
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
+
+    // Check that the inactive client is now marked as inactive
+    const updatedInactiveClient = await testPrismaClient.client.findUnique({
+      where: { personId: inactiveClient.personId },
+    });
+
+    expect(updatedInactiveClient).toMatchObject({
+      personId: BigInt(999),
+      isActive: false,
+    });
+
+    // Check that the client in the import is still active
+    const activeClient = await testPrismaClient.client.findFirst({
+      where: {
+        stablePersonExternalId: fakeClient.stablePersonExternalId,
+        stablePersonExternalIdType: fakeClient.stablePersonExternalIdType,
+      },
+    });
+
+    expect(activeClient).toMatchObject({
+      stablePersonExternalId: fakeClient.stablePersonExternalId,
+      isActive: true,
+    });
   });
 });

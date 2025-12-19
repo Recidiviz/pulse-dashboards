@@ -45,10 +45,16 @@ export const staffRouter = router({
 
     let clients;
     if (user.pseudonymizedId === "RECIDIVIZ") {
-      clients = prisma.client.findMany({ select: querySelect });
+      clients = prisma.client.findMany({
+        select: querySelect,
+        where: {
+          isActive: true,
+        },
+      });
     } else {
       clients = prisma.client.findMany({
         where: {
+          isActive: true,
           staff: {
             some: {
               staff: {

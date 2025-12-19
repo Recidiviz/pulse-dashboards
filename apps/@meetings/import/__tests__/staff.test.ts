@@ -37,22 +37,6 @@ describe("import staff data", () => {
   });
 
   test("should upsert existing staff and insert new ones", async () => {
-    const newClient = await testPrismaClient.client.create({
-      data: {
-        personId: 2,
-        stablePersonExternalId: "client-ext-2",
-        stablePersonExternalIdType: fakeClient.stablePersonExternalIdType,
-        pseudonymizedId: "staff-pid-2",
-        displayPersonExternalId: "client-dpe-2",
-        givenNames: faker.person.firstName(),
-        middleNames: faker.person.firstName(),
-        surname: faker.person.lastName(),
-        stateCode: StateCode.US_NE,
-        birthDate: faker.date.birthdate(),
-        supervisionType: "PAROLE",
-      },
-    });
-
     dataProviderSingleton.setData(TEST_STAFF_FILE_NAME, [
       // Existing staff with a new staff id but existing external id + type
       {
@@ -60,7 +44,6 @@ describe("import staff data", () => {
         // staff_id is a string in the import file
         staff_id: "100",
         stable_staff_external_id: fakeStaff.stableStaffExternalId,
-        stable_staff_external_id_type: fakeStaff.stableStaffExternalIdType,
         pseudonymized_id: fakeStaff.pseudonymizedId,
         full_name: JSON.stringify({
           given_names: "New Name",
@@ -69,8 +52,6 @@ describe("import staff data", () => {
           name_suffix: fakeClient.suffix,
         }),
         email: fakeStaff.email,
-        // client_person_ids are strings in the import file
-        client_person_ids: [newClient.personId.toString()],
       },
       // New staff
       {
@@ -78,7 +59,6 @@ describe("import staff data", () => {
         // staff_id is a string in the import file
         staff_id: "2",
         stable_staff_external_id: "staff-ext-2",
-        stable_staff_external_id_type: fakeStaff.stableStaffExternalIdType,
         pseudonymized_id: "new-staff-pid-2",
         full_name: JSON.stringify({
           given_names: faker.person.firstName(),
@@ -87,8 +67,6 @@ describe("import staff data", () => {
           name_suffix: fakeClient.suffix,
         }),
         email: undefined, // Email is optional
-        // client_person_ids are strings in the import file
-        client_person_ids: [fakeClient.personId.toString()],
       },
     ]);
 
@@ -109,28 +87,79 @@ describe("import staff data", () => {
     expect(dbStaff).toEqual([
       expect.objectContaining({
         staffId: BigInt(100),
-        stableStaffExternalId: fakeStaff.stableStaffExternalId,
-        stableStaffExternalIdType: fakeStaff.stableStaffExternalIdType,
         pseudonymizedId: fakeStaff.pseudonymizedId,
         givenNames: "New Name",
-        // Should have added the new client assignment and removed the old one
+        isActive: true,
         clients: [
+          // should still have the relation to the client
           {
-            clientId: newClient.personId,
+            clientId: fakeClient.personId,
           },
         ],
       }),
       expect.objectContaining({
         staffId: BigInt(2),
         stableStaffExternalId: "staff-ext-2",
-        stableStaffExternalIdType: "staff-ext-type-1",
         pseudonymizedId: "new-staff-pid-2",
-        clients: [
-          {
-            clientId: fakeClient.personId,
-          },
-        ],
+        isActive: true,
+        clients: [],
       }),
     ]);
+  });
+
+  test("should mark staff not in import as inactive", async () => {
+    // Create an additional staff member that won't be in the import
+    const inactiveStaff = await testPrismaClient.staff.create({
+      data: {
+        staffId: BigInt(999),
+        stableStaffExternalId: "staff-ext-999",
+        pseudonymizedId: "staff-pid-999",
+        stateCode: StateCode.US_NE,
+        givenNames: faker.person.firstName(),
+        middleNames: faker.person.firstName(),
+        surname: faker.person.lastName(),
+        email: faker.internet.email(),
+        isActive: true,
+      },
+    });
+
+    // Import data that only includes the original fakeStaff
+    dataProviderSingleton.setData(TEST_STAFF_FILE_NAME, [
+      {
+        state_code: StateCode.US_NE,
+        staff_id: "100",
+        stable_staff_external_id: fakeStaff.stableStaffExternalId,
+        pseudonymized_id: fakeStaff.pseudonymizedId,
+        full_name: JSON.stringify({
+          given_names: fakeStaff.givenNames,
+          middle_names: fakeStaff.middleNames,
+          surname: fakeStaff.surname,
+          name_suffix: "",
+        }),
+        email: fakeStaff.email,
+      },
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [STAFF_FILE_NAME]);
+
+    // Check that the inactive staff is now marked as inactive
+    const updatedInactiveStaff = await testPrismaClient.staff.findUnique({
+      where: { staffId: inactiveStaff.staffId },
+    });
+
+    expect(updatedInactiveStaff).toMatchObject({
+      staffId: BigInt(999),
+      isActive: false,
+    });
+
+    // Check that the staff in the import is still active
+    const activeStaff = await testPrismaClient.staff.findUnique({
+      where: { stableStaffExternalId: fakeStaff.stableStaffExternalId },
+    });
+
+    expect(activeStaff).toMatchObject({
+      stableStaffExternalId: fakeStaff.stableStaffExternalId,
+      isActive: true,
+    });
   });
 });

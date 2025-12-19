@@ -25,7 +25,6 @@ export const clientPseudoId = "client-pid-1";
 export const fakeStaff = {
   staffId: BigInt(1),
   stableStaffExternalId: "staff-ext-1",
-  stableStaffExternalIdType: "staff-ext-type-1",
   pseudonymizedId: "staff-pid-1",
   givenNames: faker.person.firstName(),
   middleNames: faker.person.firstName(),
@@ -45,7 +44,6 @@ export const fakeClient = {
   middleNames: faker.person.firstName(),
   surname: faker.person.lastName(),
   suffix: faker.person.suffix(),
-  birthDate: faker.date.birthdate(),
   staff: {
     create: {
       staffId: fakeStaff.staffId,

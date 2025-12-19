@@ -40,6 +40,15 @@ describe("staff router", () => {
         },
       ]);
     });
+
+    test("getClients returns only active clients", async () => {
+      const result = await testTRPCClient.v1.staff.getClients.query();
+      // Should not include fakeClients[2] which has isActive: false
+      expect(result).toHaveLength(1);
+      expect(
+        result.every((client) => client.personId !== fakeClients[2].personId),
+      ).toBe(true);
+    });
   });
 
   describe("recidiviz user with pseudo ID set", () => {
@@ -65,6 +74,15 @@ describe("staff router", () => {
           supervisionType: fakeClients[0].supervisionType,
         },
       ]);
+    });
+
+    test("getClients returns only active clients", async () => {
+      const result = await testTRPCClient.v1.staff.getClients.query();
+      // Should not include fakeClients[2] which has isActive: false
+      expect(result).toHaveLength(1);
+      expect(
+        result.every((client) => client.personId !== fakeClients[2].personId),
+      ).toBe(true);
     });
   });
 
@@ -98,6 +116,16 @@ describe("staff router", () => {
           supervisionType: fakeClients[1].supervisionType,
         },
       ]);
+    });
+
+    test("getClients returns only active clients", async () => {
+      const result = await testTRPCClient.v1.staff.getClients.query();
+      // Should only include active clients (fakeClients[0] and fakeClients[1])
+      // and not fakeClients[2] which has isActive: false
+      expect(result).toHaveLength(2);
+      expect(
+        result.every((client) => client.personId !== fakeClients[2].personId),
+      ).toBe(true);
     });
   });
 });

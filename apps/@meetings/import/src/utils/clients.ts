@@ -30,6 +30,11 @@ export async function transformAndLoadClientData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof clientImportSchema>>,
 ) {
+  // Mark all clients as inactive initially
+  await prismaClient.client.updateMany({
+    data: { isActive: false },
+  });
+
   const existingStablePersonExternalIdsAndTypes = new Set(
     (
       await prismaClient.client.findMany({
@@ -44,14 +49,18 @@ export async function transformAndLoadClientData(
     ),
   );
 
-  const existingStaffIds = new Set(
+  const existingStaffExternalIdsToStaffIds = new Map(
     (
       await prismaClient.staff.findMany({
         select: {
           staffId: true,
+          stableStaffExternalId: true,
         },
       })
-    ).map(({ staffId }) => staffId),
+    ).map(({ staffId, stableStaffExternalId }) => [
+      stableStaffExternalId,
+      staffId,
+    ]),
   );
 
   const newClientsToCreate: ClientCreateInput[] = [];
@@ -59,18 +68,15 @@ export async function transformAndLoadClientData(
   const clientToStaff = [];
 
   for await (const clientData of data) {
-    const importedStaffIds = new Set(
-      clientData.assigned_staff_ids.filter((staffId) =>
-        existingStaffIds.has(staffId),
-      ),
+    const officerStaffId = existingStaffExternalIdsToStaffIds.get(
+      clientData.officer_id,
     );
-
-    clientToStaff.push(
-      ...Array.from(importedStaffIds).map((staffId) => ({
+    if (officerStaffId) {
+      clientToStaff.push({
         clientId: clientData.person_id,
-        staffId,
-      })),
-    );
+        staffId: officerStaffId,
+      });
+    }
 
     const newClient = {
       personId: clientData.person_id,
@@ -83,8 +89,8 @@ export async function transformAndLoadClientData(
       middleNames: clientData.full_name.middle_names,
       surname: clientData.full_name.surname,
       suffix: clientData.full_name.name_suffix,
-      birthDate: clientData.birthdate,
       supervisionType: clientData.supervision_type,
+      isActive: true,
     } satisfies ClientCreateInput & BulkUpdateEntry;
 
     if (

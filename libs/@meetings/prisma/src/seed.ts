@@ -47,7 +47,6 @@ async function main() {
     data: {
       staffId: 1,
       stableStaffExternalId: `staff-ext-1`,
-      stableStaffExternalIdType: "staff-ext-type-1",
       pseudonymizedId: `staff-pid-1`,
       givenNames: faker.person.firstName(),
       middleNames: faker.person.firstName(),
@@ -72,7 +71,6 @@ async function main() {
       middleNames: faker.person.firstName(),
       surname: faker.person.lastName(),
       suffix: faker.person.suffix(),
-      birthDate: faker.date.birthdate(),
       staff: {
         create: {
           staff: {

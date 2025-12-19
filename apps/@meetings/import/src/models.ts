@@ -47,9 +47,7 @@ export const clientImportSchema = z.object({
   pseudonymized_id: z.string(),
   display_person_external_id: z.string(),
   full_name: nameSchema,
-  birthdate: z.coerce.date(),
-  // Need to coerce into a bigint because our metric exports use strings for these
-  assigned_staff_ids: z.array(z.coerce.bigint()),
+  officer_id: z.string(),
   supervision_type: z.string(),
 });
 
@@ -58,10 +56,7 @@ export const staffImportSchema = z.object({
   // Need to coerce into a bigint because our metric exports use strings for these
   staff_id: z.coerce.bigint(),
   stable_staff_external_id: z.string(),
-  stable_staff_external_id_type: z.string(),
   pseudonymized_id: z.string(),
   full_name: nameSchema,
   email: z.string().optional(),
-  // Need to coerce into a bigint because our metric exports use strings for these
-  client_person_ids: z.array(z.coerce.bigint()),
 });

@@ -74,10 +74,9 @@ model Staff {
   // - stableStaffExternalIdType: The type of the stable external identifier, such as "employee_id" or "contractor_id".
   // - pseudonymizedId: A unique identifier that is used to anonymize the staff member's identity in the system. It is a hashing of the stableStaffExternalId
 
-  staffId                   BigInt @id
-  stableStaffExternalId     String
-  stableStaffExternalIdType String
-  pseudonymizedId           String @unique
+  staffId               BigInt @id
+  stableStaffExternalId String @unique
+  pseudonymizedId       String @unique
 
   givenNames  String
   middleNames String?
@@ -88,23 +87,23 @@ model Staff {
   clients  ClientsToStaff[]
   meetings Meeting[]
 
-  @@unique([stableStaffExternalId, stableStaffExternalIdType])
+  // Whether or not the staff appeared in the most recent export. Needed to ensure we don't delete
+  // meetings when staff are removed.
+  isActive Boolean @default(true)
 }
 
 model Client {
   stateCode StateCode
 
-  // Explanation of ids:
-  // - personId: Unique identifier for the client in the system. This is not necessarily stable over time.
-  // - stablePersonExternalId: A stable identifier that is an external identifier for the client, such as a social security number or a unique client ID.
-  // - stablePersonExternalIdType: The type of the stable external identifier, such as "ssn" or "client_id".
-  // - pseudonymizedId: A unique identifier that is used to anonymize the client's identity in the system. It is a hashing of the stablePersonExternalId.
-  // - displayPersonExternalId: An identifier that staff are used to using to refer to the client, which may be different from the stablePersonExternalId. This is used for display purposes in the UI.
-
+  // Unique identifier for the client in the system. This is not necessarily stable over time.
   personId                   BigInt @id
+  // A mostly-stable identifier that is an external identifier for the client. In rare circumstances, this can change within a stablePersonExternalIdType, but we can consider it to be "stable enough".
   stablePersonExternalId     String
+  // The type of the stable external identifier. Typically there will be only one per state at any given time, but there can be multiple if, for example, the state is doing an OMS migration
   stablePersonExternalIdType String
-  pseudonymizedId            String @unique
+  // An identifier that is used to anonymize the client's identity in the system. It is a hashing of the stablePersonExternalId and thus is unique within a stablePersonExternalIdType.
+  pseudonymizedId            String
+  // An identifier that staff are used to using to refer to the client, which may be different from the stablePersonExternalId. This is used for display purposes in the UI.
   displayPersonExternalId    String
 
   givenNames  String
@@ -112,15 +111,17 @@ model Client {
   surname     String
   suffix      String?
 
-  birthDate          DateTime @db.Date
-  lastKnownResidence String?
-
   supervisionType String
 
   staff    ClientsToStaff[]
   meetings Meeting[]
 
+  // Whether or not the client appeared in the most recent export. Needed to ensure we don't delete
+  // meetings when clients are removed.
+  isActive Boolean @default(true)
+
   @@unique([stablePersonExternalId, stablePersonExternalIdType])
+  @@unique([pseudonymizedId, stablePersonExternalIdType])
 }
 
 model ClientsToStaff {

@@ -30,48 +30,28 @@ export async function transformAndLoadStaffData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof staffImportSchema>>,
 ) {
-  const existingStableStaffExternalIdsAndTypes = new Set(
+  // Mark all staff as inactive initially
+  await prismaClient.staff.updateMany({
+    data: { isActive: false },
+  });
+
+  const existingStableStaffExternalIds = new Set(
     (
       await prismaClient.staff.findMany({
         select: {
           stableStaffExternalId: true,
-          stableStaffExternalIdType: true,
         },
       })
-    ).map(
-      ({ stableStaffExternalId, stableStaffExternalIdType }) =>
-        `${stableStaffExternalId}+${stableStaffExternalIdType}`,
-    ),
-  );
-
-  const existingClientIds = new Set(
-    (
-      await prismaClient.client.findMany({
-        select: { personId: true },
-      })
-    ).map(({ personId }) => personId),
+    ).map(({ stableStaffExternalId }) => stableStaffExternalId),
   );
 
   const newStaffToCreate: StaffCreateInput[] = [];
   const existingStaffToUpdate: BulkUpdateEntries = [];
-  const clientToStaff = [];
 
   for await (const staffData of data) {
-    const importedClientIds = new Set(
-      staffData.client_person_ids.filter((id) => existingClientIds.has(id)),
-    );
-
-    clientToStaff.push(
-      ...Array.from(importedClientIds).map((clientId) => ({
-        clientId,
-        staffId: staffData.staff_id,
-      })),
-    );
-
     const newStaff = {
       staffId: staffData.staff_id,
       stableStaffExternalId: staffData.stable_staff_external_id,
-      stableStaffExternalIdType: staffData.stable_staff_external_id_type,
       pseudonymizedId: staffData.pseudonymized_id,
       stateCode: staffData.state_code,
       givenNames: staffData.full_name.given_names,
@@ -79,12 +59,11 @@ export async function transformAndLoadStaffData(
       surname: staffData.full_name.surname,
       suffix: staffData.full_name.name_suffix,
       email: staffData.email ?? null,
+      isActive: true,
     } satisfies StaffCreateInput & BulkUpdateEntry;
 
     if (
-      existingStableStaffExternalIdsAndTypes.has(
-        `${staffData.stable_staff_external_id}+${staffData.stable_staff_external_id_type}`,
-      )
+      existingStableStaffExternalIds.has(staffData.stable_staff_external_id)
     ) {
       existingStaffToUpdate.push(newStaff);
     } else {
@@ -95,29 +74,11 @@ export async function transformAndLoadStaffData(
   await bulkUpdate(
     prismaClient,
     "Staff",
-    ["stableStaffExternalId", "stableStaffExternalIdType"],
+    ["stableStaffExternalId"],
     existingStaffToUpdate,
   );
 
   await prismaClient.staff.createMany({
     data: newStaffToCreate,
-  });
-
-  // Add all of the new connections
-  await prismaClient.clientsToStaff.createMany({
-    data: clientToStaff,
-    skipDuplicates: true,
-  });
-
-  // Delete all of old connections between clients and staff
-  await prismaClient.clientsToStaff.deleteMany({
-    where: {
-      NOT: {
-        OR: clientToStaff.map((c) => ({
-          clientId: c.clientId,
-          staffId: c.staffId,
-        })),
-      },
-    },
   });
 }
