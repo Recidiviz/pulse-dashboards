@@ -207,8 +207,8 @@ describe("client router", () => {
       });
 
       test("Blocks recidiviz users from creating meetings in production", async () => {
-        const originalNodeEnv = env.NODE_ENV;
-        env.NODE_ENV = "production";
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "production";
 
         try {
           const startTime = faker.date.future();
@@ -222,7 +222,7 @@ describe("client router", () => {
             "Recidiviz users may not create meetings in production",
           );
         } finally {
-          env.NODE_ENV = originalNodeEnv;
+          env.DEPLOY_ENV = originalDeployEnv;
         }
       });
     });

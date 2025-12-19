@@ -31,7 +31,7 @@ export const clientRouter = router({
     .mutation(
       async ({ input: { clientId, startTime }, ctx: { prisma, user } }) => {
         if (
-          env.NODE_ENV === "production" &&
+          env.DEPLOY_ENV === "production" &&
           user.pseudonymizedId === "RECIDIVIZ"
         ) {
           throw new TRPCError({

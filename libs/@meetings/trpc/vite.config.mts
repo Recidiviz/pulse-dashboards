@@ -77,6 +77,7 @@ export default defineConfig(() => ({
         process.env["STITCHING_TASK_REQUEST_URL"] ??
         "https://test-server.app/stitch-audio",
       NODE_ENV: process.env["NODE_ENV"] ?? "production",
+      DEPLOY_ENV: process.env["DEPLOY_ENV"] ?? "test",
     },
   },
 }));
