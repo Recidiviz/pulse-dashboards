@@ -12,11 +12,44 @@ exports.onExecutePostUserRegistration = async (event, api) => {
 
   const { user } = event;
 
+  // Normalize the values of feature variants to booleans so that Segment will correctly
+  // capture values that are an empty object or have an activeDate condition
+  const appMetadataForTracking = {
+    ...user.app_metadata,
+    featureVariants: Object.fromEntries(
+      Object.entries(user.app_metadata["featureVariants"] ?? {}).map(
+        ([featureVariant, variantInfo]) => {
+          // For external users, values should in practice be false or an object
+          // But, just to be safe, handle values of true, false, null
+          if (variantInfo === true) {
+            return [featureVariant, true];
+          }
+          if (Boolean(variantInfo) === false) {
+            return [featureVariant, false];
+          }
+
+          // At this point we expect the feature variant value to be an object,
+          // which is equivalent to true if it's empty (i.e. the feature variant isn't
+          // gated by an active date) or the active date has already passed
+          const { activeDate } = variantInfo;
+          if (
+            activeDate === undefined ||
+            new Date(activeDate).getTime() < Date.now()
+          ) {
+            return [featureVariant, true];
+          } else {
+            return [featureVariant, false];
+          }
+        },
+      ),
+    ),
+  };
+
   analytics.track({
     userId: user.user_id,
-    event: "Success Signup",
+    event: "Success Login",
     properties: {
-      ...user.app_metadata,
+      ...appMetadataForTracking,
       email: user.email,
       email_verified: user.email_verified,
       last_ip: event?.request?.ip,

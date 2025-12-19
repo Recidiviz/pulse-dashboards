@@ -21,11 +21,17 @@ exports.onExecutePostLogin = async (event, api) => {
   if (!event.user.email_verified) {
     const { user } = event;
 
+    // We don't care about feature variants for failed logins
+    let appMetadataForTracking = {
+      ...user.app_metadata,
+    };
+    delete appMetadataForTracking["featureVariants"];
+
     analytics.track({
       userId: user.user_id,
       event: "Failed Login",
       properties: {
-        ...user.app_metadata,
+        ...appMetadataForTracking,
         email: user.email,
         email_verified: user.email_verified,
         identities: user.identities,
