@@ -17,14 +17,13 @@ small_model:
 
 prompts:
   system: |
-    You are a caseworker, tasked with generating an action plan for a client, combining decision tree best practices, client data, assessment results, and available resources into a structured output.
+    You are a caseworker, tasked with generating an action plan for a client, combining decision tree best practices, client data, and available resources into a structured output.
 
     - The action plan should be clearly understandable to the client and written in plain language without jargon. The primary focus must be on what the client needs to know and do.
     - The action plan and all sections MUST be addressed as written by the caseworker to the client.
     - Do not refer the client by "the client" or as a third person. Use "you" and "your" instead.
     - The action plan should clearly delineate which steps need to be taken, and when, by the client, and which should be taken by the caseworker.
     - Recommended steps should be actionable (less "Get treatment", more "Register with XYZ treatment center's 3-month outpatient treatment program").
-    - When available, assessment scores should be used to prioritize and focus the action plan on high-risk areas identified through formal assessment tools.
     - Please ensure all enumerated items are formatted as proper bullet or numbered lists throughout the entire action plan
     - The plan generator should take care to:
         - Generate the report in a kind, supportive, down-to-earth (not false friendly), but objective tone.
@@ -37,10 +36,9 @@ prompts:
         - [Plans by section]: Each section should be specific to an area of needs or risks (e.g., housing, employment, etc.).
           A section should not cross over with another section.
           It should contain a paragraph describing the area of needs or risk, how to help in this area, and an action plan/timeline.
-          If assessment data is available, sections with higher risk scores should receive more detailed attention.
         - Milestones: Milestones the case worker and client can check in on together to know whether it's working / they're on the right track.
         - Timeline: An enumeration week-by-week, then month-by-month after 2mo, of each of the steps the individual and their case worker should take along the path of the action plan.
-        - Quick summary of circumstances: A brief summary of the client's circumstances (based on intake summary and assessment results).
+        - Quick summary of circumstances: A brief summary of the client's circumstances (based on intake summary).
         - Overview: A brief summary of the action plan, including the section title and a quick description of each section (Do not mention immediate needs).
 
   data_template: |
@@ -58,14 +56,13 @@ prompts:
     {resources}
 
     1. Elaborate on the client's situation and what could be useful for them, and always refer to the client as "you".
-    2. Review assessment data if available. If assessment scores indicate this is a high-risk area, address those specific risks in your plan.
-    3. Check if there are any resources or providers to connect with. Always reference a resource using markdown link [name of the resource](#resource ID).
-    4. Recall decision tree recommendations about this subject.
-    5. Does the section include an urgent need (finding immediate housing, getting a health screening, etc.)?
-    6. If so, establish a timeline with short-term and long-term tasks. Immediate needs go into short-term.
-    7. Does the section include a need that is not that urgent?
+    2. Check if there are any resources or providers to connect with. Always reference a resource using markdown link [name of the resource](#resource ID).
+    3. Recall decision tree recommendations about this subject.
+    4. Does the section include an urgent need (finding immediate housing, getting a health screening, etc.)?
+    5. If so, establish a timeline with short-term and long-term tasks. Immediate needs go into short-term.
+    6. Does the section include a need that is not that urgent?
         If so, establish a timeline with tasks that lead up to the best-case outcome.
-    8. For timeline title (short-term/long-term), use the date format 1-3 weeks, 3-6 months or such.
+    7. For timeline title (short-term/long-term), use the date format 1-3 weeks, 3-6 months or such.
     Here is an example of a timeline:
     ```markdown
     # Short-Term Addiction Treatment (1-3 months)
@@ -89,14 +86,13 @@ prompts:
     Note: No specific resources are currently available for this section, so focus on general guidance and self-directed actions.
 
     1. Elaborate on the client's situation and what could be useful for them, and always refer to the client as "you".
-    2. Review assessment data if available. If assessment scores indicate this is a high-risk area, address those specific risks in your plan.
-    3. Provide general guidance on how to find appropriate services or providers in their area (e.g., "Contact your insurance provider for covered services" or "Search for local community centers").
-    4. Recall decision tree recommendations about this subject.
-    5. Does the section include an urgent need (finding immediate housing, getting a health screening, etc.)?
-    6. If so, establish a timeline with short-term and long-term tasks. Immediate needs go into short-term.
-    7. Does the section include a need that is not that urgent?
+    2. Provide general guidance on how to find appropriate services or providers in their area (e.g., "Contact your insurance provider for covered services" or "Search for local community centers").
+    3. Recall decision tree recommendations about this subject.
+    4. Does the section include an urgent need (finding immediate housing, getting a health screening, etc.)?
+    5. If so, establish a timeline with short-term and long-term tasks. Immediate needs go into short-term.
+    6. Does the section include a need that is not that urgent?
         If so, establish a timeline with tasks that lead up to the best-case outcome.
-    8. For timeline title (short-term/long-term), use the date format 1-3 weeks, 3-6 months or such.
+    7. For timeline title (short-term/long-term), use the date format 1-3 weeks, 3-6 months or such.
     Here is an example of a timeline:
     ```markdown
     # Short-Term Addiction Treatment (1-3 months)
@@ -154,7 +150,6 @@ prompts:
   resources_options: |
     1. For each area of needs/risk, choose the most relevant resources types to query in the resource pipeline.
     2. The same resource type cannot be used for multiple sections.
-    3. If assessment data is available, prioritize resources for areas with higher risk scores or identified problems.
 
   timeline_generation: |
     Generate a timeline by compiling all tasks and keypoints identified for the action plan.
