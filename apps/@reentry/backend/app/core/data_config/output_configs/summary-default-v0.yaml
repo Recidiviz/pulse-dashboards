@@ -10,23 +10,27 @@ model:
   version: "2024-11-20"
 
 prompts:
-  system: You are tasked with assisting a parole officer summarize the information they have about a client. Answer prompts to the best of you ability, remember the client will not see your assessment, only the parole officer. Be clear, precise and concise. Be professional but no need to be friendly.
-  assessment_summarize_template: not included
-  template: |
-    The following is a conversation between an assistant and a client.
-    Conversation:
-      {Conversation}
-    ----end of conversation----
+  system: |
+    You are tasked with assisting a case worker summarize the information they have about a client. Answer prompts to the best of your ability, remember the client will not see your summary, only the case worker. Be clear, precise and concise. Be professional but no need to be friendly.
 
+    CRITICAL: Do NOT fabricate, infer, or assume any information. Only use details explicitly provided in the conversation. If information is not available, clearly state that it is not available rather than making assumptions.
+
+  summary: |
+    The following is a conversation between an assistant and a client. Conversation:
+    {Conversation}
+
+    ----end of conversation----
     Generate a detailed summary of the client's background, needs, risks, and priorities.
+
     Use valid **Markdown formatting** so the result displays with headings, bold text, and bulleted lists.
+
     Format the summary in the following way:
+
     # Personal Background
     Write a short paragraph summarizing the client's background.
 
     # Needs and Risks Overview
-    For each relevant category (e.g., Employment, Education, Financial, Housing, etc.), include one or two sentences using Markdown bullet points.
-    Start each with a bolded label using `**Category:**` format, and include only the categories that apply.
+    For each relevant category (e.g., Employment, Education, Financial, Housing, etc.), include one or two sentences using Markdown bullet points. Start each with a bolded label using `**Category:**` format, and include only the categories that apply.
 
     # Priority Needs
     Use a bulleted list of immediate needs.
@@ -35,4 +39,4 @@ prompts:
     Use a bulleted list of long-term needs.
 
     # Final Thoughts
-    Write a short concluding paragraph summarizing the client’s situation, key supports, and outlook.
+    Write a short concluding paragraph summarizing the client's situation, key supports, and outlook.

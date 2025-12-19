@@ -93,9 +93,6 @@ async def get_decision_runner_with_data(
     # load all assets
     asset_messages = await get_plan_asset(session, plan.id, "messages.json")
     asset_summary = await get_plan_asset(session, plan.id, "summary.md")
-    asset_assessment_summary = await get_plan_asset(
-        session, plan.id, "assessment_summary.md"
-    )
 
     # instanciate the decision tree runner
     runner = DecisionTreeRunner(
@@ -105,8 +102,6 @@ async def get_decision_runner_with_data(
         runner.set_client_messages(asset_messages.data_as_json())
     if asset_summary:
         runner.set_client_summary(asset_summary.data_as_text())
-    if asset_assessment_summary:
-        runner.set_client_assessment_summary(asset_assessment_summary.data_as_text())
     if not any([asset_messages, asset_summary]):
         raise ValueError("No assets found for plan (messages.json or summary.md)")
 
