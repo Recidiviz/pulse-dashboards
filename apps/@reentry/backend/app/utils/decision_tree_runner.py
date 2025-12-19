@@ -76,7 +76,6 @@ DT_EXECUTION_SYSTEM_PROMPT = (
     "You'll look back on the client situation and formalize an answer to our questions. "
     "# Client intake\n{client_messages}\n\n"
     "# Client intake summary\n{client_summary}\n\n"
-    "# Client risk summary\n{client_assessment_summary}\n\n"
 )
 DT_EXECUTION_PROMPT = (
     "Based on the client's situation, {question}?\n"
