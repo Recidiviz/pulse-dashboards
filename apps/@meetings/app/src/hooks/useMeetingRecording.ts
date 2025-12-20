@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useIsFocused } from "@react-navigation/native";
 import { useAudioRecorderState } from "expo-audio";
 import * as FileSystem from "expo-file-system/legacy";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -39,19 +40,26 @@ interface Person {
 interface UseMeetingRecordingParams {
   person: Person;
   meetingId: string;
-  onComplete: () => void;
+  onComplete?: () => void;
+  getNotes?: () => string | Promise<string>;
 }
 
 interface UseMeetingRecordingReturn {
   status: RecordingStatus;
+  setStatus: (status: RecordingStatus) => void;
   note: string;
   setNote: (note: string) => void;
   recorderState: ReturnType<typeof useAudioRecorderState>;
   totalDurationMs: number;
   actions: {
+    initializeRecording: () => Promise<void>;
     startRecording: () => Promise<void>;
     handleTogglePauseResume: () => Promise<void>;
     stopRecording: () => void;
+    stopAndUploadRecording: (
+      uploadFn: (uri: string) => Promise<void>,
+    ) => Promise<void>;
+    uploadSegmentToGCS: (uri: string) => Promise<void>;
     handleFinishAndSave: () => Promise<void>;
     handleDiscard: () => void;
     handleFinalDiscard: () => Promise<void>;
@@ -63,34 +71,27 @@ export const useMeetingRecording = ({
   person,
   meetingId,
   onComplete,
+  getNotes,
 }: UseMeetingRecordingParams): UseMeetingRecordingReturn => {
   const [note, setNote] = useState("");
   const [totalDurationMs, setTotalDurationMs] = useState(0);
   const [accumulatedDurationMs, setAccumulatedDurationMs] = useState(0);
 
+  const isFocused = useIsFocused();
+
   const {
     status,
     setStatus,
-    audioRecorder,
     recorderState,
+    initializeRecording,
     startRecording,
     stopRecording,
     stopAndUploadRecording,
     togglePauseResume: contextTogglePauseResume,
-    initializeRecording,
     cleanupRecording,
   } = useRecording();
 
   const prevRecorderStateRef = useRef(recorderState.isRecording);
-  useEffect(() => {
-    (async () => {
-      await initializeRecording();
-      const saved = await getItem("note");
-      setNote(saved);
-      requestNotificationPermissions();
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const endMeetingMutation = trpc.v1.meeting.endMeeting.useMutation({
     onSuccess: () => {
@@ -179,24 +180,40 @@ export const useMeetingRecording = ({
     [refetch, accumulatedDurationMs, recorderState.durationMillis],
   );
 
-  const handleTogglePauseResume = async () => {
+  const resolveNotes = useCallback(async (): Promise<string> => {
+    if (getNotes) {
+      return getNotes();
+    }
+    return (await getItem("note")) ?? "";
+  }, [getNotes]);
+
+  const handleTogglePauseResume = useCallback(async () => {
     await contextTogglePauseResume(uploadSegmentToGCS);
 
     // Update notes after pausing
     if (status === "recording") {
       try {
+        const notes = await resolveNotes();
         await updateNotesMutation.mutateAsync({
           clientId: person.personId,
           meetingId,
-          notes: note,
+          notes,
         });
       } catch (err) {
         console.error("Failed to update notes:", err);
       }
     }
-  };
+  }, [
+    contextTogglePauseResume,
+    uploadSegmentToGCS,
+    status,
+    resolveNotes,
+    updateNotesMutation,
+    person.personId,
+    meetingId,
+  ]);
 
-  const handleFinishAndSave = async () => {
+  const handleFinishAndSave = useCallback(async () => {
     setStatus("ending");
 
     try {
@@ -204,30 +221,39 @@ export const useMeetingRecording = ({
         await stopAndUploadRecording(uploadSegmentToGCS);
       }
 
+      const notes = await resolveNotes();
       await removeItem("note");
 
       await endMeetingMutation.mutateAsync({
         clientId: person.personId,
         meetingId,
-        notes: note,
+        notes,
       });
 
       await cleanupRecording();
-      onComplete();
+      onComplete?.();
     } catch (err) {
       console.error("Failed to end meeting:", err);
       Alert.alert("Error", "Failed to end meeting. Please try again.");
       setStatus("idle");
     }
-  };
+  }, [
+    setStatus,
+    recorderState.isRecording,
+    stopAndUploadRecording,
+    uploadSegmentToGCS,
+    resolveNotes,
+    endMeetingMutation,
+    person.personId,
+    meetingId,
+    cleanupRecording,
+    onComplete,
+  ]);
 
   const handleContinue = () => setStatus("recording");
   const handleDiscard = () => setStatus("discarding");
 
-  const handleFinalDiscard = async () => {
-    if (recorderState.isRecording) {
-      await audioRecorder.stop();
-    }
+  const handleFinalDiscard = useCallback(async () => {
     await cleanupRecording();
 
     await discardMeetingMutation.mutateAsync({
@@ -235,8 +261,14 @@ export const useMeetingRecording = ({
       meetingId,
     });
 
-    onComplete();
-  };
+    onComplete?.();
+  }, [
+    cleanupRecording,
+    discardMeetingMutation,
+    person.personId,
+    meetingId,
+    onComplete,
+  ]);
 
   const handleAutoStopRecording = useCallback(async () => {
     setStatus("uploading");
@@ -251,8 +283,10 @@ export const useMeetingRecording = ({
 
   // Auto-stop recording when limit is reached
   useEffect(() => {
+    if (!isFocused) return;
     //introduced to keep track of previous recorder state to prevent initial triggering of the handleAutoStopRecording function
     const prevIsRecording = prevRecorderStateRef.current;
+
     if (
       status === "recording" &&
       prevIsRecording &&
@@ -262,7 +296,10 @@ export const useMeetingRecording = ({
     }
 
     prevRecorderStateRef.current = recorderState.isRecording;
-  }, [status, recorderState.isRecording, handleAutoStopRecording]);
+
+    // handleAutoStop causes infinite loop if not disabled
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, recorderState.isRecording]);
 
   useEffect(() => {
     if (status === "recording") {
@@ -270,16 +307,31 @@ export const useMeetingRecording = ({
     }
   }, [status, recorderState.durationMillis, accumulatedDurationMs]);
 
+  useEffect(() => {
+    (async () => {
+      await initializeRecording();
+      const saved = await getItem("note");
+      setNote(saved);
+      requestNotificationPermissions();
+    })();
+    // initializeRecording and requestNotificationPermissions are only needed to be called once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return {
     status,
+    setStatus,
     note,
     setNote,
     recorderState,
     totalDurationMs,
     actions: {
+      initializeRecording,
       startRecording,
       handleTogglePauseResume,
       stopRecording,
+      stopAndUploadRecording,
+      uploadSegmentToGCS,
       handleFinishAndSave,
       handleDiscard,
       handleFinalDiscard,

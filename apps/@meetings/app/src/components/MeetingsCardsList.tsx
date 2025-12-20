@@ -54,11 +54,6 @@ const MeetingsCardsList = ({ meetings, person, onPress }: MeetingCardProps) => {
   return meetings.map((meeting, index) => {
     const isProcessingMeeting = meeting.status !== "NOT_STARTED";
 
-    const goToNewMeeting = () => {
-      if (onPress) {
-        onPress(meeting.id);
-      }
-    };
     return (
       <TouchableOpacity
         key={`${meeting.id}-${index}`}
@@ -70,10 +65,10 @@ const MeetingsCardsList = ({ meetings, person, onPress }: MeetingCardProps) => {
             navigation.navigate("Meeting", { meeting, person });
           }
         }}
-        className="mb-3 rounded-2xl bg-white p-4 shadow-sm"
+        className="bg-white shadow-sm mb-3 p-4 rounded-2xl"
       >
-        <View className="flex-row items-center justify-between">
-          <Text className="font-inter text-base font-semibold text-primary">
+        <View className="flex-row justify-between items-center">
+          <Text className="font-inter font-semibold text-primary text-base">
             {meeting.date}
           </Text>
           <Image
@@ -83,11 +78,11 @@ const MeetingsCardsList = ({ meetings, person, onPress }: MeetingCardProps) => {
           />
         </View>
 
-        <Text className="mr-1 font-inter text-xs font-medium text-primary">
+        <Text className="mr-1 font-inter font-medium text-primary text-xs">
           {meeting.time} • {meeting.duration || "In progress..."}
         </Text>
         {isProcessingMeeting ? (
-          <View className="mt-4 rounded-xl bg-[#C1E3D83B] p-4">
+          <View className="bg-[#C1E3D83B] mt-4 p-4 rounded-xl">
             <View className="flex-row items-start">
               <Image
                 source={Icons.Processing}
@@ -96,10 +91,10 @@ const MeetingsCardsList = ({ meetings, person, onPress }: MeetingCardProps) => {
               />
 
               <View className="flex-1">
-                <Text className="font-inter text-base font-semibold text-primary">
+                <Text className="font-inter font-semibold text-primary text-base">
                   Recording is being processed...
                 </Text>
-                <Text className="font-inter text-sm font-medium text-gray-700">
+                <Text className="font-inter font-medium text-gray-700 text-sm">
                   The notes and transcript will become available in a few
                   minutes
                 </Text>
@@ -111,15 +106,15 @@ const MeetingsCardsList = ({ meetings, person, onPress }: MeetingCardProps) => {
             recordingState={meeting.recordingState}
             startTime={meeting.start}
             endTime={meeting.end}
-            onPauseResume={goToNewMeeting}
-            onStop={goToNewMeeting}
+            person={person}
+            meetingId={meeting.id}
             className="mt-2"
           />
         )}
         {/* <View className="my-2 border-gray-200 border-b" />
        <View className="mt-3">
         <Text
-          className="text-gray-700 text-sm font-inter leading-5"
+          className="font-inter text-gray-700 text-sm leading-5"
           numberOfLines={isExpanded ? undefined : 2}
         >
           {meeting.content}
@@ -128,7 +123,7 @@ const MeetingsCardsList = ({ meetings, person, onPress }: MeetingCardProps) => {
           onPress={() => setIsExpanded(!isExpanded)}
           className="flex-row items-center mt-1"
         >
-          <Text className="mr-1 font-medium font-inter text-primary text-xs">
+          <Text className="mr-1 font-inter font-medium text-primary text-xs">
             {isExpanded ? "Less" : "More"}
           </Text>
           <Image

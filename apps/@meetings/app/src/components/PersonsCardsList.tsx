@@ -33,7 +33,10 @@ import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { getClientInitials, humanReadableTitleCase } from "../utils/format";
 import MeetingInProgressBar from "./MeetingInProgressBar";
 
-type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients" | "Residents">;
+type ProfileNavProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "Clients" | "Residents"
+>;
 
 interface Props {
   persons: Person[];
@@ -47,23 +50,10 @@ const PersonsCardsList = ({ persons, recordingState }: Props) => {
     <View className="flex flex-col">
       {persons.map((person) => {
         const hasActiveMeeting = !!person.activeMeetingId;
-
-        const handleGoToMeetingScreen = () => {
-          navigation.navigate("NewMeeting", {
-            person: {
-              personId: person.personId.toString(),
-              fullName: person.fullName,
-              displayPersonExternalId: person.displayPersonExternalId,
-              primaryMetadata: person.primaryMetadata,
-            },
-            meetingId: person.activeMeetingId,
-          });
-        };
-
         return (
           <TouchableOpacity
             key={person.personId}
-            className="border-b border-gray-300 px-2.5 py-3.5"
+            className="px-2.5 py-3.5 border-gray-300 border-b"
             onPress={() =>
               navigation.navigate("Profile", {
                 person: {
@@ -75,31 +65,31 @@ const PersonsCardsList = ({ persons, recordingState }: Props) => {
               })
             }
           >
-            <View className="flex-1 flex-row items-center">
+            <View className="flex-row flex-1 items-center">
               <ImageBackground
                 source={Icons.BgAvatar}
-                className="mr-3 !size-11 items-center justify-center overflow-hidden rounded-full"
+                className="justify-center items-center mr-3 rounded-full !size-11 overflow-hidden"
                 imageClassName="!size-11"
               >
-                <Text className="font-inter text-sm font-semibold text-white">
+                <Text className="font-inter font-semibold text-white text-sm">
                   {getClientInitials(person.fullName)}
                 </Text>
               </ImageBackground>
 
               <View className="flex-1">
-                <View className="flex-row items-center justify-between">
-                  <Text className="mr-1.5 font-inter text-base font-semibold text-gray-900">
+                <View className="flex-row justify-between items-center">
+                  <Text className="mr-1.5 font-inter font-semibold text-gray-900 text-base">
                     {person.fullName}
                   </Text>
                   <Image source={Icons.ArrowRight} className="!size-3.5" />
                 </View>
 
-                <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
-                  <Text className="font-inter text-xs text-gray-600">
+                <View className="flex-row justify-between items-center gap-1.5 mt-0.5">
+                  <Text className="font-inter text-gray-600 text-xs">
                     ID: {person.displayPersonExternalId} •{" "}
                     {humanReadableTitleCase(person.primaryMetadata)}
                   </Text>
-                  <Text className="font-inter text-xs text-gray-600">
+                  <Text className="font-inter text-gray-600 text-xs">
                     Last meeting {person.lastMeeting}
                   </Text>
                 </View>
@@ -111,9 +101,14 @@ const PersonsCardsList = ({ persons, recordingState }: Props) => {
                 recordingState={recordingState || "recording"}
                 startTime={new Date()} // TODO: Replace with API value
                 endTime={null}
-                onPauseResume={handleGoToMeetingScreen}
-                onStop={handleGoToMeetingScreen}
-                className="mt-2 bg-white"
+                person={{
+                  personId: person.personId.toString(),
+                  fullName: person.fullName,
+                  displayPersonExternalId: person.displayPersonExternalId,
+                  primaryMetadata: person.primaryMetadata,
+                }}
+                meetingId={person.activeMeetingId}
+                className="bg-white mt-2"
               />
             )}
           </TouchableOpacity>
