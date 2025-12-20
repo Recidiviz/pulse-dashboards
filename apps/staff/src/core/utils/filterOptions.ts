@@ -753,6 +753,8 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "Low", value: "8LO" },
       { label: "Moderate", value: "8MO" },
       { label: "Unknown", value: "UNKNOWN" },
+      { label: "8LC", value: "8LC" },
+      { label: "Residential Program", value: "RESIDENTIAL_PROGRAM" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
