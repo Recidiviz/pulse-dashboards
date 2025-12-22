@@ -63,11 +63,19 @@ export const LSUFormFields: WebFormFieldProps[] = [
     name: "specialConditionsCompletedDates",
     label: "Special Conditions Completed Date(s)",
   },
-  { name: "pendingSpecialConditions", label: "Pending Special Conditions" },
+  {
+    name: "pendingSpecialConditions",
+    label: "Pending Special Conditions",
+    textarea: true,
+  },
   {
     name: "currentClientGoals",
     label: "Current Client Goal(s)",
     textarea: true,
   },
-  { name: "clientSummary", label: "Client Summary/Other Information" },
+  {
+    name: "clientSummary",
+    label: "Client Summary/Other Information",
+    textarea: true,
+  },
 ];
