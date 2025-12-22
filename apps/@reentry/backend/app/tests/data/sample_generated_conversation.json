@@ -1,0 +1,144 @@
+{
+    "client_pseudo_id": "eval-client-1-0e549907",
+    "client_name": "Jordan Smith",
+    "completed_sections": [
+        "Education",
+        "Financial",
+        "Family and Marital Relationships",
+        "Accommodation",
+        "Leisure and Recreation",
+        "Companions",
+        "Alcohol and Drug Use",
+        "Completion"
+    ],
+    "conversation_history": [
+        {
+        "question": "Jordan, thanks for sharing so far. To start, are you currently working a job right now?",
+        "answer": "Um\u2026 no. Ain\u2019t got nothin\u2019 yet.",
+        "section": "Employment"
+        },
+        {
+        "question": "Thank you for sharing you aren\u2019t working right now. Are you planning to look for work when you get out?",
+        "answer": "Uh\u2026 yeah, I gotta. Not sure where to start though. Maybe temp work or somethin\u2019.",
+        "section": "Employment"
+        },
+        {
+        "question": "I understand it feels tricky to know where to start\u2014before you came into the facility, did you have a job, and if so what kind of work was it?",
+        "answer": "Um\u2026 yeah. I stocked shelves at Walmart before. Then flipped burgers at Mickey D\u2019s. That\u2019s bout it.",
+        "section": "Employment"
+        },
+        {
+        "question": "That makes sense. What kind of work are you hoping to do after you get out?",
+        "answer": "Um\u2026 maybe warehouse stuff again. Or drivin\u2019 for Uber if I can. Something easy.",
+        "section": "Employment"
+        },
+        {
+        "question": "Thanks for sharing those ideas. How many hours per week are you hoping to work after your release?",
+        "answer": "Um\u2026 I\u2019d like around 30-40 hours if I can. Depends what I find.",
+        "section": "Employment"
+        },
+        {
+        "question": "Thanks for sharing that. Do you plan to return to your old job at Walmart or McDonald\u2019s after you get out?",
+        "answer": "Dunno yet\u2026 maybe Walmart if they take me. Or McD\u2019s. We\u2019ll see.",
+        "section": "Employment"
+        },
+        {
+        "question": "Thanks for sharing about work. Now, are you planning to go to school after you get out?",
+        "answer": "Uh\u2026 school ain\u2019t really my thing. Maybe a CDL course down the road, but I ain\u2019t sure.",
+        "section": "Education"
+        },
+        {
+        "question": "Thanks for sharing how you feel about school. What\u2019s the highest grade you finished in school, or do you have a GED?",
+        "answer": "Uh\u2026 I think I got to 10th grade. Didn\u2019t finish. No GED.",
+        "section": "Education"
+        },
+        {
+        "question": "You mentioned maybe a CDL course\u2014do you plan to enroll in that or any other training program after you get out?",
+        "answer": "Maybe. Depends if I can get money and time. Don\u2019t know yet.",
+        "section": "Education"
+        },
+        {
+        "question": "I understand it can be tough to plan for money and time\u2014after your release, do you plan to apply for any financial help like food stamps or unemployment benefits?",
+        "answer": "Uh\u2026 I\u2019ll prob try for food stamps. Unemploy\u2026 maybe, not sure yet.",
+        "section": "Financial"
+        },
+        {
+        "question": "Thank you for sharing that. Do you have any specific money goals after you get out, like saving up or paying off fines?",
+        "answer": "Uh\u2026 I wanna save a bit. Pay fines off first. Not much else.",
+        "section": "Financial"
+        },
+        {
+        "question": "Thank you for sharing about your money goals. Do you have a partner or spouse, or someone you\u2019re in a long-term relationship with right now?",
+        "answer": "Uh\u2026 nope.",
+        "section": "Family and Marital Relationships"
+        },
+        {
+        "question": "Do you feel like you have a strong, positive relationship with your parents?",
+        "answer": "Uh\u2026 not really. It\u2019s kinda rough. We don\u2019t talk much.",
+        "section": "Family and Marital Relationships"
+        },
+        {
+        "question": "I appreciate your honesty. Do you have strong, positive relationships with any other family members, like siblings or grandparents?",
+        "answer": "Uh\u2026 just my grandma. We talk sometimes. She\u2019s the only one I can count on.",
+        "section": "Family and Marital Relationships"
+        },
+        {
+        "question": "Do you have a place to stay right after you get out of prison?",
+        "answer": "Uh\u2026 not really. Maybe crash with a buddy, but ain\u2019t solid.",
+        "section": "Accommodation"
+        },
+        {
+        "question": "Thanks for sharing that. Do you have a plan for where you\u2019ll live long-term after you get out, and is it the same place you lived before or the place you might stay right after release?",
+        "answer": "Uh\u2026 no real plan. Gonna have to find somethin\u2019 else. Ain\u2019t the buddy\u2019s couch forever. Maybe try my grandma\u2019s, but not sure.",
+        "section": "Accommodation"
+        },
+        {
+        "question": "Thank you for sharing so far. What are your goals related to housing after you get out? For example, what kind of place would feel safe and stable for you?",
+        "answer": "Uh\u2026 I wanna a spot that\u2019s clean, safe. My own lil\u2019 apartment or my grandma\u2019s house if she\u2019s cool with it. Close to my kids. No sketchy stuff goin\u2019 on.",
+        "section": "Accommodation"
+        },
+        {
+        "question": "Before you came to this facility, what did you like to do in your free time?",
+        "answer": "Uh\u2026 I used to shoot hoops, watch TV, play video games. Hang with my boys, drink a beer.",
+        "section": "Leisure and Recreation"
+        },
+        {
+        "question": "I appreciate you sharing your past hobbies. While you\u2019re here in the facility, are there any activities or hobbies you enjoy doing now?",
+        "answer": "Uh\u2026 I mess with cards, watch movies. Sometimes doodle. Sometimes play checkers. Not much else.",
+        "section": "Leisure and Recreation"
+        },
+        {
+        "question": "After you get out, are there any hobbies or activities you\u2019d like to start or get back into?",
+        "answer": "Uh\u2026 wanna hoop again, shoot some hoops. Maybe fish with my boy. Get back into gaming. Try cooking more.",
+        "section": "Leisure and Recreation"
+        },
+        {
+        "question": "I understand wanting to get back to your hobbies\u2014do you have any close friends or companions you plan to spend time with after release?",
+        "answer": "Uh\u2026 I got Mike, we did time together. My brother too. Maybe see a couple old guys from the neighborhood. Not sure who\u2019ll be around.",
+        "section": "Companions"
+        },
+        {
+        "question": "Thanks for sharing about Mike and your brother. How do you imagine your social life will look after you get out\u2014what kinds of activities or time together do you hope for?",
+        "answer": "Uh\u2026 prob shoot hoops with Mike an bro. Maybe game nights, fish trips. Chill, keep busy, avoid bullshit.",
+        "section": "Companions"
+        },
+        {
+        "question": "Thank you for talking about your social plans. Do you think you will need any help or support with alcohol or drug use after your release?",
+        "answer": "Yeah\u2026 I\u2019ll need help. Can\u2019t do it alone. Gotta hit some AA/NA meetings, maybe a sponsor.",
+        "section": "Alcohol and Drug Use"
+        },
+        {
+        "question": "I appreciate you sharing that you\u2019ll need help. What kind of support do you think would help you most after release, like counseling, support groups, medical help, or something else?",
+        "answer": "Uh\u2026 group meetings, AA/NA.  \nCounselor check-ins, maybe meds if I\u2019m jittery.",
+        "section": "Alcohol and Drug Use"
+        },
+        {
+        "question": "Thank you for sharing what support you\u2019d like. Have you ever received treatment or support for alcohol or drug use before, like going to AA/NA meetings, talking with a counselor, or taking any medications?",
+        "answer": "Yeah\u2026 did a 90-day program before. Went to NA, met with counselor. Tried meds for cravings.",
+        "section": "Alcohol and Drug Use"
+        }
+    ],
+    "status": "completed",
+    "error": null,
+    "final_section": "Completion"
+}

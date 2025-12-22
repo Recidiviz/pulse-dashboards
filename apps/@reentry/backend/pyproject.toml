@@ -41,6 +41,7 @@ dependencies = [
     "pyjwt>=2.10.1",
     "cryptography>=40.0.2",
     "google-cloud-bigquery>=3.31.0",
+    "cloud-sql-python-connector[asyncpg]>=1.13.0",
     "av>=10.0.0",
     "structlog-gcp>=0.4.0",
     "faker>=37.1.0",

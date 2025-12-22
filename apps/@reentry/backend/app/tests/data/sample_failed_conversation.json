@@ -1,0 +1,32 @@
+{
+    "client_pseudo_id": "eval-client-error-test",
+    "client_name": "Alex Johnson",
+    "completed_sections": [
+        "Employment"
+    ],
+    "conversation_history": [
+        {
+            "question": "Alex, thanks for being here. To start, are you currently working a job right now?",
+            "answer": "No, I'm not working at the moment.",
+            "section": "Employment"
+        },
+        {
+            "question": "Thank you for sharing. Are you planning to look for work when you get out?",
+            "answer": "Yeah, definitely. I need to get back on my feet.",
+            "section": "Employment"
+        },
+        {
+            "question": "That's good to hear. Before you came into the facility, did you have a job?",
+            "answer": "Yeah, I worked construction for about 5 years.",
+            "section": "Employment"
+        },
+        {
+            "question": "Thanks for sharing. What kind of work are you hoping to do after release?",
+            "answer": "Probably go back to construction if I can. Maybe carpentry.",
+            "section": "Employment"
+        }
+    ],
+    "status": "failed",
+    "error": "API timeout error: OpenAI service unavailable after 3 retry attempts",
+    "final_section": "Employment"
+}
