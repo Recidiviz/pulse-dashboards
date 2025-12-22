@@ -357,7 +357,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usTnNoArrestsInPast6Months",
-          text: "Negative arrest check on {{date record.metadata.latestNegativeArrestCheck.contactDate}}",
+          text: "No positive arrest checks (ARRP) in past 6 months. {{#if record.metadata.latestNegativeArrestCheck.contactDate}}\nNegative arrest check on {{date record.metadata.latestNegativeArrestCheck.contactDate}}\n{{else}}\nNo recent ARRNs found\n{{/if}}",
           tooltip: "Client has had no arrests in the past 6 months",
         },
         {

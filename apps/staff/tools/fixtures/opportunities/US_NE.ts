@@ -152,7 +152,7 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "usNeHasLostRestorableGoodTime",
-          text: "Currently has {{good_time_lost_days_restorable}} lost restorable good time",
+          text: "Currently has {{goodTimeLostDaysRestorable}} days lost restorable good time",
         },
         {
           key: "housingUnitTypeIsSolitaryConfinement",

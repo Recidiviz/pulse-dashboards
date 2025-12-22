@@ -134,6 +134,12 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzIsUsCitizenOrLegalPermanentResident",
           text: "Does not meet citizenship / legal permanent resident requirements",
         },
+        {
+          key: "usAzNoActiveFelonyDetainers",
+          text: "Has an active detainer or warrant",
+          tooltip:
+            "This requirement may be met at any time if the detainer or warrant is resolved.",
+        },
       ],
       initialHeader: null,
       isAlert: false,
@@ -381,6 +387,12 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzIsUsCitizenOrLegalPermanentResident",
           text: "Does not meet citizenship / legal permanent resident requirements",
+        },
+        {
+          key: "usAzNoActiveFelonyDetainers",
+          text: "Has an active detainer or warrant",
+          tooltip:
+            "This requirement may be met at any time if the detainer or warrant is resolved.",
         },
       ],
       initialHeader: null,
