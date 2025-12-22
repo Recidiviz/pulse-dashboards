@@ -42,7 +42,7 @@ import styles from "./markdown.module.css";
 
 const IntakeSummaryPage = () => {
   const { id } = useParams();
-  const { getAccessToken } = useAuth();
+  const { getAccessToken, refreshToken } = useAuth();
   const { track } = useAnalytics();
   const { isPolling, progress, startPolling } = useExecutionPolling({
     interval: 4000,
@@ -80,7 +80,7 @@ const IntakeSummaryPage = () => {
       },
     },
     headers: {
-      Authorization: `Bearer ${useAuth().getAccessToken()}`,
+      Authorization: `Bearer ${getAccessToken()}`,
       "Content-Type": "application/json",
     },
   });
@@ -99,7 +99,7 @@ const IntakeSummaryPage = () => {
         },
       },
       headers: {
-        Authorization: `Bearer ${useAuth().getAccessToken()}`,
+        Authorization: `Bearer ${getAccessToken()}`,
         "Content-Type": "application/json",
       },
       enabled: !!dataPlan?.id,
@@ -153,13 +153,8 @@ const IntakeSummaryPage = () => {
   const handleDownload = async (): Promise<void> => {
     track("intake_summary_downloaded", { justiceInvolvedPersonId: id });
     setIsDownloading(true);
-    const accessToken = getAccessToken();
     const element = document.getElementById("contentToDownload");
     if (!element) {
-      setIsDownloading(false);
-      return;
-    }
-    if (!accessToken) {
       setIsDownloading(false);
       return;
     }
@@ -185,6 +180,15 @@ const IntakeSummaryPage = () => {
       options: {} as Record<string, never>,
     };
     const fileName = `${clientFullName}_intake_summary.pdf`;
+    let accessToken = getAccessToken();
+    if (!accessToken) {
+      await refreshToken();
+      accessToken = getAccessToken();
+    }
+    if (!accessToken) {
+      setIsDownloading(false);
+      return;
+    }
     await generatePDF(
       intakeSummaryData,
       fileName,

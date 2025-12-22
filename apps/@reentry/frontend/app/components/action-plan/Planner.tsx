@@ -54,7 +54,7 @@ const Planner = ({
   showRegenerationNotify,
 }: PlannerProps) => {
   const { track } = useAnalytics();
-  const { getAccessToken } = useAuth();
+  const { getAccessToken, refreshToken } = useAuth();
   const [markDownPlan, setMarkdownPlan] = useState<string>(markDownText);
   const [update, setUpdate] = useState(false);
   const [internalMarkdown, setInternalMarkdown] = useState<string>("");
@@ -165,16 +165,13 @@ const Planner = ({
       planId: planId,
     });
     setIsDownloading(true);
-    const accessToken = getAccessToken();
+    
     const element = document.getElementById("contentToDownload");
     if (!element) {
       setIsDownloading(false);
       return;
     }
-    if (!accessToken) {
-      setIsDownloading(false);
-      return;
-    }
+    
     convertButtonsToSpansPreserveText(element);
     const extractedCSSResult = extractCompleteCSS(element, {
       includeChildren: true,
@@ -196,6 +193,15 @@ const Planner = ({
       css: [pdfCSS],
       options: {} as Record<string, never>,
     };
+    let accessToken = getAccessToken();
+    if (!accessToken) {
+      await refreshToken();
+      accessToken = getAccessToken();
+    }
+    if (!accessToken) {
+      setIsDownloading(false);
+      return;
+    }
     const fileName = `${clientFullName}_action_plan.pdf`;
     await generatePDF(
       actionPlan,
