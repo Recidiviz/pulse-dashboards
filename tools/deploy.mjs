@@ -84,7 +84,14 @@ let deployingLatestMain = true;
 // Determine which environment to deploy
 const { deployEnv } = await inquirer.prompt({
   type: "list",
-  choices: ["staging", "preview", "demo", "reentry-dev", "production"],
+  choices: [
+    "staging",
+    "preview",
+    "demo",
+    "reentry-dev",
+    "reentry-pilot",
+    "production",
+  ],
   name: "deployEnv",
   message: "Which environment are you deploying?",
   default: "staging",
@@ -299,7 +306,8 @@ if (
   (deployEnv === "staging" ||
     (deployEnv === "production" && isCpDeploy) ||
     deployEnv === "demo" ||
-    deployEnv === "reentry-dev") &&
+    deployEnv === "reentry-dev" ||
+    deployEnv === "reentry-pilot") &&
   (deploySentencing ||
     deployJiiTexting ||
     deployCaseNotes ||
@@ -742,7 +750,8 @@ if (
   (deployEnv === "staging" ||
     deployEnv === "production" ||
     deployEnv === "demo" ||
-    deployEnv === "reentry-dev")
+    deployEnv === "reentry-dev" ||
+    deployEnv === "reentry-pilot")
 ) {
   let retryDeploy = false;
 
@@ -765,6 +774,10 @@ if (
         );
       } else if (deployEnv === "reentry-dev") {
         await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/dev/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "reentry-pilot") {
+        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/pilot/cloudbuild.yaml --substitutions=COMMIT_SHA=${currentRevision}`.pipe(
           process.stdout,
         );
       }
@@ -868,7 +881,8 @@ if (
   (deployEnv === "staging" ||
     deployEnv === "production" ||
     deployEnv === "demo" ||
-    deployEnv === "reentry-dev")
+    deployEnv === "reentry-dev" ||
+    deployEnv === "reentry-pilot")
 ) {
   let retryDeploy = false;
 
@@ -895,9 +909,13 @@ if (
           process.stdout,
         );
       } else if (deployEnv === "reentry-dev") {
-        // have to use dev_gcp instead of (dev) reentry-dev because in project.json dev is already taken for local dev
+        // have to use dev_gcp instead of dev or reentry-dev because in project.json dev is already taken for local dev
         // apps/@reentry/frontend/project.json
         await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration dev_gcp`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "reentry-pilot") {
+        await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration pilot`.pipe(
           process.stdout,
         );
       }
@@ -1090,7 +1108,9 @@ if (deployEnv === "staging" && successfullyDeployed.length > 0) {
   slackMessage = message;
 } else if (
   successfullyDeployed.length > 0 &&
-  ((deployEnv === "demo" && reentryDeployed) || deployEnv === "reentry-dev")
+  ((deployEnv === "demo" && reentryDeployed) ||
+    deployEnv === "reentry-dev" ||
+    deployEnv === "reentry-pilot")
 ) {
   slackChannel = reentryChannelId;
 

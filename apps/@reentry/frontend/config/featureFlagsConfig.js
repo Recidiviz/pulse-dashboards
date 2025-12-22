@@ -24,10 +24,10 @@
  *
  */
 const FEATURE_FLAGS_CONFIG = {
-  ENABLE_SOURCE_MAPS: "development,dev,demo,staging",
-  CLIENT_ADDITION: "development,dev,demo",
-  CLIENT_DELETION: "development,dev,demo",
-  INTAKE_RESET: "development,dev,demo,staging",
+  ENABLE_SOURCE_MAPS: "development,dev,demo,pilot,staging",
+  CLIENT_ADDITION: "development,dev,demo,pilot",
+  CLIENT_DELETION: "development,dev,demo,pilot",
+  INTAKE_RESET: "development,dev,demo,pilot,staging",
   REGENERATE_WITH_PROMPT: "",
   TEST_FEATURE_DEV: "dev",
   TEST_FEATURE_DEV_STAGING: "dev,staging",

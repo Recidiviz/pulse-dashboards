@@ -25,7 +25,7 @@ const JOBS = {
     name: "force-reset-db",
     description:
       "Force reset DB by dropping all tables/types, running migrations, and seeding",
-    environments: ["demo", "dev"], // environments where this job is applicable
+    environments: ["demo", "dev", "pilot"], // environments where this job is applicable
   },
   "reset-db": {
     name: "reset-db",

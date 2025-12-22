@@ -66,6 +66,16 @@ handle_options() {
 
         shift
         ;;
+      --env_pilot)
+        if ! has_argument $@; then
+          echo "File not specified." >&2
+          exit 1
+        fi
+
+        env_pilot_file=$(extract_argument $@)
+
+        shift
+        ;;
       --env_demo)
         if ! has_argument $@; then
           echo "File not specified." >&2
@@ -106,6 +116,7 @@ env_prod_file=null
 env_test_file=null
 env_dev_gcp_file=null
 env_demo_file=null
+env_pilot_file=null
 env_preview_file=null
 
 handle_options "$@"
@@ -116,7 +127,7 @@ echo "Downloading env files..."
 # If running on GitHub Actions for a pull_request, do not download secrets
 if is_github_actions_pr; then
   echo "GitHub Actions pull_request detected; skipping secret download and creating placeholder env files."
-  touch .env .env.staging .env.production .env.test .env.dev_gcp .env.preview .env.demo
+  touch .env .env.staging .env.production .env.test .env.dev_gcp .env.preview .env.demo .env.pilot
   exit 0
 fi
 
@@ -156,6 +167,11 @@ fi
 if [ "$env_dev_gcp_file" != null ]; then
     env_dev_gcp=$(gcloud secrets versions access latest --secret=$env_dev_gcp_file --project recidiviz-dashboard-staging)
     echo "${env_dev_gcp}" > .env.dev_gcp
+fi
+
+if [ "$env_pilot_file" != null ]; then
+    env_pilot=$(gcloud secrets versions access latest --secret=$env_pilot_file --project recidiviz-dashboard-staging)
+    echo "${env_pilot}" > .env.pilot
 fi
 
 if [ "$env_demo_file" != null ]; then

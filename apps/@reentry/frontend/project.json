@@ -8,7 +8,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../../tools/load_env_files.sh --env env_reentry_frontend --env_dev_gcp env_dev_gcp_reentry_frontend --env_demo env_demo_reentry_frontend --env_staging env_staging_reentry_frontend --env_prod env_prod_reentry_frontend",
+        "command": "../../../tools/load_env_files.sh --env env_reentry_frontend --env_dev_gcp env_dev_gcp_reentry_frontend --env_pilot env_pilot_reentry_frontend --env_demo env_demo_reentry_frontend --env_staging env_staging_reentry_frontend --env_prod env_prod_reentry_frontend",
         "cwd": "{projectRoot}"
       }
     },
@@ -54,6 +54,7 @@
         "dev_gcp": {},
         "staging": {},
         "demo": {},
+        "pilot": {},
         "production": {},
         "cherry-pick": {}
       },
@@ -78,6 +79,9 @@
         "demo": {
           "command": "cp apps/@reentry/frontend/.env.demo dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
         },
+        "pilot": {
+          "command": "cp apps/@reentry/frontend/.env.pilot dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
+        },
         "production": {
           "command": "cp apps/@reentry/frontend/.env.production dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
         },
@@ -88,6 +92,7 @@
       "defaultConfiguration": "dev"
     },
     "container": {
+      "_note": "dev_gcp and pilot skip this step and build the container directly in the deploy step using docker commands for more control over build flags",
       "executor": "@nx-tools/nx-container:build",
       "dependsOn": ["copy-correct-env"],
       "cwd": "{projectRoot}",
@@ -166,6 +171,16 @@
             "docker push gcr.io/recidiviz-rnd-planner/frontend-dev:$COMMIT_SHA",
             "gcloud run deploy frontend-dev --image gcr.io/recidiviz-rnd-planner/frontend-dev:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner",
             "gcloud -q run services update-traffic frontend-dev --project recidiviz-rnd-planner --region us-central1 --to-latest"
+          ]
+        },
+        "pilot": {
+          "dependsOn": ["copy-correct-env"],
+          "cwd": "{workspaceRoot}",
+          "commands": [
+            "docker build --platform linux/amd64 --provenance=false -t gcr.io/recidiviz-rnd-planner/frontend-pilot:$COMMIT_SHA -f apps/@reentry/frontend/Dockerfile.gcp .",
+            "docker push gcr.io/recidiviz-rnd-planner/frontend-pilot:$COMMIT_SHA",
+            "gcloud run deploy frontend-pilot --image gcr.io/recidiviz-rnd-planner/frontend-pilot:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner",
+            "gcloud -q run services update-traffic frontend-pilot --project recidiviz-rnd-planner --region us-central1 --to-latest"
           ]
         }
       },
