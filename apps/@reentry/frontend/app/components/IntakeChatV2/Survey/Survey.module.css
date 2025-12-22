@@ -173,6 +173,15 @@
   box-shadow: 0 0 0 2px var(--teal-4-a15);
 }
 
+.textareaError {
+  border-color: var(--color-red-1);
+}
+
+.textareaError:focus {
+  border-color: var(--color-red-1);
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.15);
+}
+
 .textareaLarge {
   width: 100%;
   min-height: 100px;
@@ -247,6 +256,17 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.errorMessage {
+  margin-top: 0.5rem;
+  font-size: 14px;
+  color: var(--color-red-1);
+  line-height: 1.5;
+}
+
+.errorMessageIndented {
+  margin-left: 1.75rem;
 }
 
 @media (max-width: 768px) {

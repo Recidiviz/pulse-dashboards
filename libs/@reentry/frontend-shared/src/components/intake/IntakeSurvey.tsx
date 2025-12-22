@@ -17,6 +17,8 @@
 
 import React, { useState } from "react";
 
+import { showErrorToast } from "~@reentry/frontend-shared";
+
 import { useApplicationContext } from "../../contexts/ApplicationContext";
 import { useSocket } from "../../websockets/IntakeSocketContext";
 
@@ -38,6 +40,13 @@ const IntakeSurvey = ({
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({
+    difficulty: "",
+    confusing: "",
+    method: "",
+    methodOther: "",
+    feedback: "",
+  });
 
   const { mutateAsync: submitIntakeSurvey } = $api.useMutation(
     "post",
@@ -52,9 +61,29 @@ const IntakeSurvey = ({
     return "";
   };
 
+  const getDifficultyButtonClasses = (num: number) => {
+    if (formData.difficulty === num) {
+      return "bg-[#00665f] text-white scale-110 shadow-md";
+    }
+    if (errors.difficulty) {
+      return "bg-red-100 text-gray-700 hover:bg-red-200 border-2 border-red-500";
+    }
+    return "bg-gray-200 text-gray-700 hover:bg-gray-300";
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Clear previous errors
+    setErrors({
+      difficulty: "",
+      confusing: "",
+      method: "",
+      methodOther: "",
+      feedback: "",
+    });
+
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response: any = await submitIntakeSurvey({
@@ -73,9 +102,20 @@ const IntakeSurvey = ({
         setIntakeComplete();
         setSurveySubmitted(true);
       }
-    } catch {
+    } catch (error) {
       // eslint-disable-next-line no-console
-      console.log("Failed to submit address. Please try again.");
+      console.log("Failed to submit survey:", error);
+      showErrorToast("Failed to submit survey. Please try again.");
+
+      // Set generic error message for fields that are empty
+      const newErrors = {
+        difficulty: !formData.difficulty ? "Please select a difficulty rating" : "",
+        confusing: !formData.confusing ? "Please select an option" : "",
+        method: !formData.method ? "Please select a preferred method" : "",
+        methodOther: formData.method === "other" && !formData.methodOther ? "Please describe your preferred method" : "",
+        feedback: "",
+      };
+      setErrors(newErrors);
     } finally {
       setIsSubmitting(false);
     }
@@ -116,16 +156,15 @@ const IntakeSurvey = ({
                     onClick={() =>
                       setFormData({ ...formData, difficulty: num })
                     }
-                    className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold transition-all ${
-                      formData.difficulty === num
-                        ? "bg-[#00665f] text-white scale-110 shadow-md"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold transition-all ${getDifficultyButtonClasses(num)}`}
                   >
                     {num}
                   </button>
                 ))}
               </div>
+              {errors.difficulty && (
+                <p className="text-red-600 text-sm mt-2">{errors.difficulty}</p>
+              )}
             </div>
 
             {/* Question 2: Confusing Questions */}
@@ -135,7 +174,7 @@ const IntakeSurvey = ({
                 2. Were any of the questions confusing or hard to understand?
               </label>
 
-              <div className="space-y-3">
+              <div className={`space-y-3 ${errors.confusing ? "border-2 border-red-500 rounded-lg p-3" : ""}`}>
                 {[
                   { value: "no", label: "No" },
                   { value: "some", label: "Yes, some of them were confusing" },
@@ -167,6 +206,9 @@ const IntakeSurvey = ({
                   </label>
                 ))}
               </div>
+              {errors.confusing && (
+                <p className="text-red-600 text-sm mt-2">{errors.confusing}</p>
+              )}
             </div>
 
             {/* Question 3: Preferred Method */}
@@ -176,7 +218,7 @@ const IntakeSurvey = ({
                 3. If you had to do intake again, how would you prefer to do it?
               </label>
 
-              <div className="space-y-3">
+              <div className={`space-y-3 ${errors.method ? "border-2 border-red-500 rounded-lg p-3" : ""}`}>
                 {[
                   {
                     value: "chatbot",
@@ -221,22 +263,36 @@ const IntakeSurvey = ({
 
                     {option.value === "other" &&
                       formData.method === "other" && (
-                        <textarea
-                          value={formData.methodOther}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              methodOther: e.target.value,
-                            })
-                          }
-                          placeholder="How would you prefer to do the intake?"
-                          rows={3}
-                          className="w-full mt-2 ml-7 px-4 py-3 border border-gray-300 rounded-lg focus:border-[#00665f] focus:ring-2 focus:ring-[#00665f]/20 outline-none resize-none"
-                        />
+                        <div>
+                          <textarea
+                            value={formData.methodOther}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                methodOther: e.target.value,
+                              })
+                            }
+                            placeholder="How would you prefer to do the intake?"
+                            rows={3}
+                            className={`w-full mt-2 ml-7 px-4 py-3 border rounded-lg focus:ring-2 outline-none resize-none ${
+                              errors.methodOther
+                                ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                                : "border-gray-300 focus:border-[#00665f] focus:ring-[#00665f]/20"
+                            }`}
+                          />
+                          {errors.methodOther && (
+                            <p className="text-red-600 text-sm mt-1 ml-7">
+                              {errors.methodOther}
+                            </p>
+                          )}
+                        </div>
                       )}
                   </div>
                 ))}
               </div>
+              {errors.method && (
+                <p className="text-red-600 text-sm mt-2">{errors.method}</p>
+              )}
             </div>
 
             {/* Question 4: Additional Feedback */}

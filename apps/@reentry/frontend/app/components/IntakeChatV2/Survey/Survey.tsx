@@ -42,10 +42,20 @@ const Survey: React.FC<SurveyProps> = ({ onSurveySubmitted }) => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{
+    difficulty?: string;
+    confusing?: string;
+    method?: string;
+    methodOther?: string;
+    feedback?: string;
+  }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return;
+
+    // Clear previous errors
+    setErrors({});
 
     setIsSubmitting(true);
     try {
@@ -73,6 +83,24 @@ const Survey: React.FC<SurveyProps> = ({ onSurveySubmitted }) => {
     } catch (error) {
       console.error("Failed to submit survey:", error);
       showErrorToast("Failed to submit survey. Please try again.");
+
+      // Validate and show errors for missing required fields
+      const newErrors: typeof errors = {};
+
+      if (!formData.difficulty) {
+        newErrors.difficulty = "Please select a difficulty rating";
+      }
+      if (!formData.confusing) {
+        newErrors.confusing = "Please select an option";
+      }
+      if (!formData.method) {
+        newErrors.method = "Please select your preferred method";
+      }
+      if (formData.method === "other" && !formData.methodOther.trim()) {
+        newErrors.methodOther = "Please describe your preferred method";
+      }
+
+      setErrors(newErrors);
     } finally {
       setIsSubmitting(false);
     }
@@ -106,9 +134,10 @@ const Survey: React.FC<SurveyProps> = ({ onSurveySubmitted }) => {
                     <button
                       key={num}
                       type="button"
-                      onClick={() =>
-                        setFormData({ ...formData, difficulty: num })
-                      }
+                      onClick={() => {
+                        setFormData({ ...formData, difficulty: num });
+                        setErrors({ ...errors, difficulty: undefined });
+                      }}
                       className={`${styles["difficultyButton"]} ${
                         formData.difficulty === num
                           ? styles["difficultyButtonSelected"]
@@ -120,6 +149,11 @@ const Survey: React.FC<SurveyProps> = ({ onSurveySubmitted }) => {
                   ))}
                 </div>
               </div>
+              {errors.difficulty && (
+                <div className={styles["errorMessage"]}>
+                  {errors.difficulty}
+                </div>
+              )}
             </div>
 
             {/* Question 2: Confusing Questions */}
@@ -143,18 +177,24 @@ const Survey: React.FC<SurveyProps> = ({ onSurveySubmitted }) => {
                       name="confusing"
                       value={option.value}
                       checked={formData.confusing === option.value}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           confusing: e.target.value,
-                        })
-                      }
+                        });
+                        setErrors({ ...errors, confusing: undefined });
+                      }}
                       className={styles["radioInput"]}
                     />
                     <span className={styles["radioText"]}>{option.label}</span>
                   </label>
                 ))}
               </div>
+              {errors.confusing && (
+                <div className={styles["errorMessage"]}>
+                  {errors.confusing}
+                </div>
+              )}
             </div>
 
             {/* Question 3: Preferred Method */}
@@ -189,7 +229,7 @@ const Survey: React.FC<SurveyProps> = ({ onSurveySubmitted }) => {
                         name="method"
                         value={option.value}
                         checked={formData.method === option.value}
-                        onChange={(e) =>
+                        onChange={(e) => {
                           setFormData({
                             ...formData,
                             method: e.target.value,
@@ -197,8 +237,9 @@ const Survey: React.FC<SurveyProps> = ({ onSurveySubmitted }) => {
                               e.target.value !== "other"
                                 ? ""
                                 : formData.methodOther,
-                          })
-                        }
+                          });
+                          setErrors({ ...errors, method: undefined });
+                        }}
                         className={styles["radioInput"]}
                       />
                       <span className={styles["radioText"]}>
@@ -208,22 +249,37 @@ const Survey: React.FC<SurveyProps> = ({ onSurveySubmitted }) => {
 
                     {option.value === "other" &&
                       formData.method === "other" && (
-                        <textarea
-                          value={formData.methodOther}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              methodOther: e.target.value,
-                            })
-                          }
-                          placeholder="How would you prefer to do the intake?"
-                          rows={3}
-                          className={styles["textarea"]}
-                        />
+                        <>
+                          <textarea
+                            value={formData.methodOther}
+                            onChange={(e) => {
+                              setFormData({
+                                ...formData,
+                                methodOther: e.target.value,
+                              });
+                              setErrors({ ...errors, methodOther: undefined });
+                            }}
+                            placeholder="How would you prefer to do the intake?"
+                            rows={3}
+                            className={`${styles["textarea"]} ${
+                              errors.methodOther ? styles["textareaError"] : ""
+                            }`}
+                          />
+                          {errors.methodOther && (
+                            <div
+                              className={`${styles["errorMessage"]} ${styles["errorMessageIndented"]}`}
+                            >
+                              {errors.methodOther}
+                            </div>
+                          )}
+                        </>
                       )}
                   </div>
                 ))}
               </div>
+              {errors.method && (
+                <div className={styles["errorMessage"]}>{errors.method}</div>
+              )}
             </div>
 
             {/* Question 4: Additional Feedback */}
