@@ -150,6 +150,7 @@ const TranscriptionAddressForm = ({
                     addressError={addressError}
                     onFormValidChange={setIsFormValid}
                     twoColumns={true}
+                    getAccessToken={getAccessToken}
                   />
                 </div>
 

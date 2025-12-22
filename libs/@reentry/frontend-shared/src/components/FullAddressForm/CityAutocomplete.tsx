@@ -44,6 +44,8 @@ interface CityAutocompleteProps {
   onFocusChange?: (isFocused: boolean) => void;
   onAutoSelectChange?: (isAutoSelecting: boolean) => void;
   addressSuggestionSelected: string | null;
+  getAccessToken: () => string | undefined | null;
+  useIntakeClientApi?: boolean;
 }
 
 export const CityAutocomplete = ({
@@ -59,6 +61,8 @@ export const CityAutocomplete = ({
   onFocusChange,
   onAutoSelectChange,
   addressSuggestionSelected = null,
+  getAccessToken,
+  useIntakeClientApi = false,
 }: CityAutocompleteProps) => {
   const { $api } = useApplicationContext();
   const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
@@ -161,7 +165,9 @@ export const CityAutocomplete = ({
     refetch,
   } = $api.useQuery(
     "get",
-    "/autocomplete-city",
+    useIntakeClientApi
+      ? "/intake/services/autocomplete-city"
+      : "/autocomplete-city",
     {
       params: {
         query: {
@@ -176,6 +182,7 @@ export const CityAutocomplete = ({
       },
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${getAccessToken()}`,
       },
     },
     {

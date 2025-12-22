@@ -453,26 +453,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/transcribe": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Transcribe audio file
-         * @description Transcribes an uploaded audio file and returns the conversation
-         */
-        post: operations["transcribe_audio_route_transcribe_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/plans/{id}/decisiontrees": {
         parameters: {
             query?: never;
@@ -770,46 +750,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/google/text-to-speech": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Convert text to speech using Google
-         * @description Converts text to speech using Google Cloud Text-to-Speech API and returns base64-encoded audio
-         */
-        post: operations["convert_text_to_speech_google_text_to_speech_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/google/speech-to-text": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Convert speech to text using Google
-         * @description Transcribes base64-encoded audio using Google Cloud Speech-to-Text API
-         */
-        post: operations["convert_speech_to_text_google_speech_to_text_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/intake/client/verify-dob": {
         parameters: {
             query?: never;
@@ -904,6 +844,86 @@ export interface paths {
          * @description Schedules an assessment using provided chat messages.
          */
         post: operations["complete_external_chat_intake_client_start_assessment_action_plan_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/services/autocomplete-address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Autocomplete address suggestions
+         * @description Provides address autocomplete suggestions as user types, similar to Uber's address input
+         */
+        get: operations["autocomplete_address_intake_services_autocomplete_address_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/services/autocomplete-city": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Autocomplete city suggestions
+         * @description Provides city autocomplete suggestions for US cities as user types, with optional state filtering
+         */
+        get: operations["autocomplete_city_intake_services_autocomplete_city_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/services/transcribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Transcribe audio file
+         * @description Transcribes an uploaded audio file and returns the conversation
+         */
+        post: operations["transcribe_audio_route_intake_services_transcribe_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/services/text-to-speech": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Convert text to speech using Google
+         * @description Converts text to speech using Google Cloud Text-to-Speech API and returns base64-encoded audio
+         */
+        post: operations["convert_text_to_speech_intake_services_text_to_speech_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1744,8 +1764,8 @@ export interface components {
              */
             file: string;
         };
-        /** Body_transcribe_audio_route_transcribe_post */
-        Body_transcribe_audio_route_transcribe_post: {
+        /** Body_transcribe_audio_route_intake_services_transcribe_post */
+        Body_transcribe_audio_route_intake_services_transcribe_post: {
             /**
              * File
              * Format: binary
@@ -2240,11 +2260,6 @@ export interface components {
             /** Error Message */
             error_message?: string | null;
         };
-        /**
-         * GoogleSTTAudioEncoding
-         * @enum {string}
-         */
-        GoogleSTTAudioEncoding: "OGG_OPUS" | "WEBM_OPUS" | "MP3";
         /**
          * GoogleTTSAudioEncoding
          * @enum {string}
@@ -3145,37 +3160,6 @@ export interface components {
             turns: number;
             /** Duration */
             duration: string;
-        };
-        /** SpeechToTextRequest */
-        SpeechToTextRequest: {
-            /**
-             * Audio Content
-             * @description Base64-encoded audio content
-             */
-            audio_content: string;
-            /**
-             * Language Code
-             * @description Language code (e.g., 'en-US')
-             * @default en-US
-             */
-            language_code: string;
-            /** @description Audio encoding format */
-            encoding: components["schemas"]["GoogleSTTAudioEncoding"];
-            /**
-             * Sample Rate Hertz
-             * @description Sample rate in Hz
-             */
-            sample_rate_hertz: number;
-            /**
-             * Audio Channel Count
-             * @description Number of audio channels
-             */
-            audio_channel_count: number;
-        };
-        /** SpeechToTextResponse */
-        SpeechToTextResponse: {
-            /** Transcribed Text */
-            transcribed_text: string;
         };
         /** SurveySubmission */
         SurveySubmission: {
@@ -4250,39 +4234,6 @@ export interface operations {
             };
         };
     };
-    transcribe_audio_route_transcribe_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["Body_transcribe_audio_route_transcribe_post"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     router_list_decision_trees_plans__id__decisiontrees_get: {
         parameters: {
             query?: {
@@ -5041,72 +4992,6 @@ export interface operations {
             };
         };
     };
-    convert_text_to_speech_google_text_to_speech_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TextToSpeechRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TextToSpeechResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    convert_speech_to_text_google_speech_to_text_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SpeechToTextRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SpeechToTextResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     verify_date_of_birth_intake_client_verify_dob_post: {
         parameters: {
             query?: never;
@@ -5257,6 +5142,138 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CompleteExternalChatResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    autocomplete_address_intake_services_autocomplete_address_get: {
+        parameters: {
+            query: {
+                input: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutocompleteAddressResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    autocomplete_city_intake_services_autocomplete_city_get: {
+        parameters: {
+            query: {
+                input: string;
+                /** @description Optional US state name or abbreviation (e.g., 'California' or 'CA') */
+                state?: string | null;
+                /** @description Optional boolean indicating if an address suggestion was selected */
+                address_suggestion_selected?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutocompleteCityResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    transcribe_audio_route_intake_services_transcribe_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_transcribe_audio_route_intake_services_transcribe_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    convert_text_to_speech_intake_services_text_to_speech_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TextToSpeechRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TextToSpeechResponse"];
                 };
             };
             /** @description Validation Error */

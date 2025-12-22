@@ -154,6 +154,8 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
                     addressError={addressError}
                     onFormValidChange={setIsFormValid}
                     twoColumns={true}
+                    getAccessToken={getIntakeToken}
+                    useIntakeClientApi={true}
                   />
                 </div>
 

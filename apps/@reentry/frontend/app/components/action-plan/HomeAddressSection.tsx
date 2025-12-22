@@ -191,6 +191,7 @@ const HomeAddressSection = ({
               addressError={addressError}
               onFormValidChange={setIsFormValid}
               twoColumns={true}
+              getAccessToken={getAccessToken}
             />
 
             <div className="flex gap-2 justify-between">

@@ -29,40 +29,53 @@ async def test_transcribe_audio_success(client: AsyncClient):
 
     # Mock Deepgram API to avoid real API calls
     mock_response = {
-        "results": {
-            "channels": [
-                {
-                    "alternatives": [
-                        {"transcript": "This is a successful test transcription"}
-                    ]
-                }
-            ]
-        }
+        "results": {"channels": [{"alternatives": [{"transcript": "Testing."}]}]}
     }
 
     with patch(
-        "app.routes.plan_router.deepgram_transcription_diarization",
-        new_callable=AsyncMock,
-    ) as mock_transcribe:
-        mock_transcribe.return_value = mock_response
+        "app.auth.intake.auth_client_user.decode_jwt_token"
+    ) as mock_verify_token:
+        mock_verify_token.return_value = {
+            "sub": "test-client-id",
+            "token_type": "client",
+        }
 
-        response = await client.post("/transcribe", files=files)
+        with patch(
+            "app.routes.intake_services_router.deepgram_transcription_diarization",
+            new_callable=AsyncMock,
+        ) as mock_transcribe:
+            mock_transcribe.return_value = mock_response
 
-        assert response.status_code == 200
-        result = response.json()
-        assert "transcription" in result
-        # The test audio file contains "testing" or similar
-        assert isinstance(result["transcription"], str)
-        assert len(result["transcription"]) > 0
-        assert result["transcription"] == "This is a successful test transcription"
-        # Verify the mock was called
-        mock_transcribe.assert_called_once()
+            response = await client.post(
+                "/intake/services/transcribe",
+                files=files,
+                headers={"Authorization": "Bearer test-token"},
+            )
+
+            assert response.status_code == 200
+            result = response.json()
+            assert "transcription" in result
+            # The test audio file contains "testing" or similar
+            assert isinstance(result["transcription"], str)
+            assert len(result["transcription"]) > 0
+            assert result["transcription"] == "Testing."
 
 
 @pytest.mark.asyncio
 async def test_transcribe_audio_no_file(client: AsyncClient):
     """Test transcription endpoint without providing a file"""
-    response = await client.post("/transcribe")
+    with patch(
+        "app.auth.intake.auth_client_user.decode_jwt_token"
+    ) as mock_verify_token:
+        mock_verify_token.return_value = {
+            "sub": "test-client-id",
+            "token_type": "client",
+        }
+
+        response = await client.post(
+            "/intake/services/transcribe",
+            headers={"Authorization": "Bearer test-token"},
+        )
 
     assert response.status_code == 422  # Unprocessable Entity
     assert "field required" in response.text.lower()
@@ -75,18 +88,29 @@ async def test_transcribe_audio_empty_file(client: AsyncClient):
     files = {"file": ("empty.webm", BytesIO(b""), "audio/webm")}
 
     with patch(
-        "app.routes.plan_router.deepgram_transcription_diarization",
-        new_callable=AsyncMock,
-    ) as mock_transcribe:
-        # Mock the deepgram API to return an error or empty result
-        mock_transcribe.side_effect = Exception("Invalid audio content")
+        "app.auth.intake.auth_client_user.decode_jwt_token"
+    ) as mock_verify_token:
+        mock_verify_token.return_value = {
+            "sub": "test-client-id",
+            "token_type": "client",
+        }
 
-        response = await client.post("/transcribe", files=files)
+        with patch(
+            "app.routes.intake_services_router.deepgram_transcription_diarization",
+            new_callable=AsyncMock,
+        ) as mock_transcribe:
+            # Mock the deepgram API to return an error or empty result
+            mock_transcribe.side_effect = Exception("Invalid audio content")
 
-        assert response.status_code == 500
-        result = response.json()
-        assert "detail" in result
-        assert "Invalid audio content" in result["detail"]
+            response = await client.post(
+                "/intake/services/transcribe",
+                files=files,
+                headers={"Authorization": "Bearer test-token"},
+            )
+
+            assert response.status_code == 500
+            result = response.json()
+            assert "detail" in result
 
 
 @pytest.mark.asyncio
@@ -103,17 +127,29 @@ async def test_transcribe_audio_deepgram_error(client: AsyncClient):
     files = {"file": ("test-audio.webm", BytesIO(audio_content), "audio/webm")}
 
     with patch(
-        "app.routes.plan_router.deepgram_transcription_diarization",
-        new_callable=AsyncMock,
-    ) as mock_transcribe:
-        mock_transcribe.side_effect = Exception("Deepgram API error")
+        "app.auth.intake.auth_client_user.decode_jwt_token"
+    ) as mock_verify_token:
+        mock_verify_token.return_value = {
+            "sub": "test-client-id",
+            "token_type": "client",
+        }
 
-        response = await client.post("/transcribe", files=files)
+        with patch(
+            "app.routes.intake_services_router.deepgram_transcription_diarization",
+            new_callable=AsyncMock,
+        ) as mock_transcribe:
+            mock_transcribe.side_effect = Exception("Deepgram API error")
 
-        assert response.status_code == 500
-        result = response.json()
-        assert "detail" in result
-        assert "Deepgram API error" in result["detail"]
+            response = await client.post(
+                "/intake/services/transcribe",
+                files=files,
+                headers={"Authorization": "Bearer test-token"},
+            )
+
+            assert response.status_code == 500
+            result = response.json()
+            assert "detail" in result
+            assert "Deepgram API error" in str(result["detail"])
 
 
 @pytest.mark.asyncio
@@ -131,33 +167,37 @@ async def test_transcribe_audio_mocked_success(client: AsyncClient):
 
     # Mock Deepgram response
     mock_response = {
-        "results": {
-            "channels": [
-                {
-                    "alternatives": [
-                        {"transcript": "This is a test transcription from Deepgram"}
-                    ]
-                }
-            ]
-        }
+        "results": {"channels": [{"alternatives": [{"transcript": "Testing."}]}]}
     }
 
     with patch(
-        "app.routes.plan_router.deepgram_transcription_diarization",
-        new_callable=AsyncMock,
-    ) as mock_transcribe:
-        mock_transcribe.return_value = mock_response
+        "app.auth.intake.auth_client_user.decode_jwt_token"
+    ) as mock_verify_token:
+        mock_verify_token.return_value = {
+            "sub": "test-client-id",
+            "token_type": "client",
+        }
 
-        response = await client.post("/transcribe", files=files)
+        with patch(
+            "app.routes.intake_services_router.deepgram_transcription_diarization",
+            new_callable=AsyncMock,
+        ) as mock_transcribe:
+            mock_transcribe.return_value = mock_response
 
-        assert response.status_code == 200
-        result = response.json()
-        assert "transcription" in result
-        assert result["transcription"] == "This is a test transcription from Deepgram"
-        # Verify the mock was called with correct parameters
-        mock_transcribe.assert_called_once()
-        call_args = mock_transcribe.call_args
-        assert call_args[1]["diarize"] is False
+            response = await client.post(
+                "/intake/services/transcribe",
+                files=files,
+                headers={"Authorization": "Bearer test-token"},
+            )
+
+            assert response.status_code == 200
+            result = response.json()
+            assert "transcription" in result
+            assert result["transcription"] == "Testing."
+            # Verify the mock was called with correct parameters
+            mock_transcribe.assert_called_once()
+            call_args = mock_transcribe.call_args
+            assert call_args[1]["diarize"] is False
 
 
 @pytest.mark.asyncio
@@ -177,18 +217,30 @@ async def test_transcribe_audio_missing_transcript_in_response(client: AsyncClie
     mock_response = {"results": {"channels": []}}
 
     with patch(
-        "app.routes.plan_router.deepgram_transcription_diarization",
-        new_callable=AsyncMock,
-    ) as mock_transcribe:
-        mock_transcribe.return_value = mock_response
+        "app.auth.intake.auth_client_user.decode_jwt_token"
+    ) as mock_verify_token:
+        mock_verify_token.return_value = {
+            "sub": "test-client-id",
+            "token_type": "client",
+        }
 
-        response = await client.post("/transcribe", files=files)
+        with patch(
+            "app.routes.intake_services_router.deepgram_transcription_diarization",
+            new_callable=AsyncMock,
+        ) as mock_transcribe:
+            mock_transcribe.return_value = mock_response
 
-        assert response.status_code == 200
-        result = response.json()
-        assert "transcription" in result
-        # Should return None or empty when transcript is missing
-        assert result["transcription"] is None or result["transcription"] == ""
+            response = await client.post(
+                "/intake/services/transcribe",
+                files=files,
+                headers={"Authorization": "Bearer test-token"},
+            )
+
+            assert response.status_code == 200
+            result = response.json()
+            assert "transcription" in result
+            # Should return empty string when transcript is missing (initialized as "")
+            assert result["transcription"] == ""
 
 
 @pytest.mark.asyncio
@@ -209,22 +261,30 @@ async def test_transcribe_audio_different_file_type(client: AsyncClient):
 
     # Mock Deepgram to handle different file type
     mock_response = {
-        "results": {
-            "channels": [
-                {"alternatives": [{"transcript": "MP3 transcription successful"}]}
-            ]
-        }
+        "results": {"channels": [{"alternatives": [{"transcript": "Hello."}]}]}
     }
 
     with patch(
-        "app.routes.plan_router.deepgram_transcription_diarization",
-        new_callable=AsyncMock,
-    ) as mock_transcribe:
-        mock_transcribe.return_value = mock_response
+        "app.auth.intake.auth_client_user.decode_jwt_token"
+    ) as mock_verify_token:
+        mock_verify_token.return_value = {
+            "sub": "test-client-id",
+            "token_type": "client",
+        }
 
-        response = await client.post("/transcribe", files=files)
+        with patch(
+            "app.routes.intake_services_router.deepgram_transcription_diarization",
+            new_callable=AsyncMock,
+        ) as mock_transcribe:
+            mock_transcribe.return_value = mock_response
 
-        assert response.status_code == 200
-        result = response.json()
-        assert "transcription" in result
-        assert result["transcription"] == "MP3 transcription successful"
+            response = await client.post(
+                "/intake/services/transcribe",
+                files=files,
+                headers={"Authorization": "Bearer test-token"},
+            )
+
+            assert response.status_code == 200
+            result = response.json()
+            assert "transcription" in result
+            assert result["transcription"] == "Hello."

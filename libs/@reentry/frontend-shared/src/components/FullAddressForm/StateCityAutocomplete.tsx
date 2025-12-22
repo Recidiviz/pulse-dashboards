@@ -39,6 +39,8 @@ interface StateCityAutocompleteProps {
   setActiveDropdown?: (dropdown: "address" | "state" | "city" | null) => void;
   onCityAutoSelectChange?: (isAutoSelecting: boolean) => void;
   addressSuggestionSelected?: string | null;
+  getAccessToken: () => string | undefined | null;
+  useIntakeClientApi?: boolean;
 }
 
 export const StateCityAutocomplete = ({
@@ -58,6 +60,8 @@ export const StateCityAutocomplete = ({
   setActiveDropdown,
   onCityAutoSelectChange,
   addressSuggestionSelected = null,
+  getAccessToken,
+  useIntakeClientApi = false,
 }: StateCityAutocompleteProps) => {
   const [previousState, setPreviousState] = useState(stateValue);
   const previousCityRef = useRef(cityValue);
@@ -137,6 +141,8 @@ export const StateCityAutocomplete = ({
         }
         onAutoSelectChange={onCityAutoSelectChange}
         addressSuggestionSelected={addressSuggestionSelected}
+        getAccessToken={getAccessToken}
+        useIntakeClientApi={useIntakeClientApi}
       />
     </div>
   );

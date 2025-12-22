@@ -38,6 +38,8 @@ interface AddressAutocompleteProps {
   placeholder?: string;
   isActive?: boolean;
   onFocusChange?: (isFocused: boolean) => void;
+  getAccessToken: () => string | undefined | null;
+  useIntakeClientApi?: boolean;
 }
 
 export const AddressAutocomplete = ({
@@ -49,6 +51,8 @@ export const AddressAutocomplete = ({
   placeholder = "Start typing an address...",
   isActive = true,
   onFocusChange,
+  getAccessToken,
+  useIntakeClientApi = false,
 }: AddressAutocompleteProps) => {
   const { $api } = useApplicationContext();
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
@@ -94,7 +98,9 @@ export const AddressAutocomplete = ({
     isLoading,
   } = $api.useQuery(
     "get",
-    "/autocomplete-address",
+    useIntakeClientApi
+      ? "/intake/services/autocomplete-address"
+      : "/autocomplete-address",
     {
       params: {
         query: {
@@ -103,6 +109,7 @@ export const AddressAutocomplete = ({
       },
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${getAccessToken()}`,
       },
     },
     {

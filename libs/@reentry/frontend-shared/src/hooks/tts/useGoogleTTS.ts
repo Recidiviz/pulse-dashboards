@@ -17,6 +17,8 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { useApplicationContext } from "../../contexts/ApplicationContext";
 import { base64ToBlob } from "../../utils/encoding";
 
@@ -24,9 +26,17 @@ const REQUEST_TIMEOUT_MS = 15000;
 
 export const useGoogleTTS = () => {
   const { $api } = useApplicationContext();
+  const [storedToken, setStoredToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = sessionStorage.getItem("intake_token");
+      setStoredToken(token);
+    }
+  }, []);
 
   const { mutateAsync: textToSpeechMutation, isPending: isGenerating } =
-    $api.useMutation("post", "/google/text-to-speech");
+    $api.useMutation("post", "/intake/services/text-to-speech");
 
   const fetchAudio = async (text: string): Promise<Blob> => {
     if (!text.trim()) {
@@ -48,6 +58,11 @@ export const useGoogleTTS = () => {
           voice_name: "en-US-Standard-C",
           encoding: "MP3",
         },
+        headers: storedToken
+          ? {
+              Authorization: `Bearer ${storedToken}`,
+            }
+          : undefined,
       }),
       timeoutPromise,
     ]);

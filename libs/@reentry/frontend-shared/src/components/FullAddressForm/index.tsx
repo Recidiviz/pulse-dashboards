@@ -33,6 +33,7 @@ interface FullAddressFormProps {
   onAddressChange: (value: string) => void;
   onCityChange: (value: string) => void;
   onStateChange: (value: string) => void;
+  getAccessToken: () => string | undefined | null;
   onStateValidationChange?: (isValid: boolean) => void;
   onCityValidationChange?: (isValid: boolean) => void;
   onFormValidChange?: (isValid: boolean) => void;
@@ -43,6 +44,7 @@ interface FullAddressFormProps {
   stateLabel?: string;
   addressError?: string | null;
   twoColumns?: boolean;
+  useIntakeClientApi?: boolean;
 }
 
 export const FullAddressForm = ({
@@ -61,7 +63,9 @@ export const FullAddressForm = ({
   statePlaceholder,
   stateLabel,
   addressError,
+  getAccessToken,
   twoColumns = true,
+  useIntakeClientApi = false,
 }: FullAddressFormProps) => {
   const [activeDropdown, setActiveDropdown] = useState<
     "address" | "state" | "city" | null
@@ -151,6 +155,8 @@ export const FullAddressForm = ({
             setActiveDropdown(null);
           }
         }}
+        getAccessToken={getAccessToken}
+        useIntakeClientApi={useIntakeClientApi}
       />
 
       <StateCityAutocomplete
@@ -169,6 +175,8 @@ export const FullAddressForm = ({
         setActiveDropdown={setActiveDropdown}
         onCityAutoSelectChange={setIsValidatingCity}
         addressSuggestionSelected={addressSuggestionSelected}
+        getAccessToken={getAccessToken}
+        useIntakeClientApi={useIntakeClientApi}
       />
 
       {!isFormValid() && (stateValue || cityValue) && !isValidatingCity && (

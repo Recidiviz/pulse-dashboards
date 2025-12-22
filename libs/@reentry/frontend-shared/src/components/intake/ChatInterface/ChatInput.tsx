@@ -54,6 +54,7 @@ const ChatInput = ({ clientPseudoId }: { clientPseudoId?: string | null }) => {
   const waveSurferRef = useRef<WaveSurfer | null>(null);
   const recordPluginRef = useRef<RecordPlugin | null>(null);
   const bip = new Audio("/audios/recording-start.mp3");
+  const [storedToken, setStoredToken] = useState<string | null>(null);
   const {
     intakeContext: {
       connectionStatus,
@@ -63,6 +64,13 @@ const ChatInput = ({ clientPseudoId }: { clientPseudoId?: string | null }) => {
     },
     intakeDispatchContext: { sendMessage },
   } = useSocket();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = sessionStorage.getItem("intake_token");
+      setStoredToken(token);
+    }
+  }, []);
 
   const onSend = async () => {
     if (!inputValue.trim() || isSending) return;
@@ -200,11 +208,18 @@ const ChatInput = ({ clientPseudoId }: { clientPseudoId?: string | null }) => {
     try {
       const formData = new FormData();
       formData.append("file", audioBlob);
-      const response = await fetch(`${getBaseUrl()}/transcribe`, {
-        method: "POST",
-        body: formData,
-        headers: {},
-      });
+      const response = await fetch(
+        `${getBaseUrl()}/intake/services/transcribe`,
+        {
+          method: "POST",
+          body: formData,
+          headers: storedToken
+            ? {
+                Authorization: `Bearer ${storedToken}`,
+              }
+            : {},
+        },
+      );
       if (!response.ok) {
         throw new Error("Failed to submit audio");
       }
@@ -229,7 +244,7 @@ const ChatInput = ({ clientPseudoId }: { clientPseudoId?: string | null }) => {
     setIsRecording(false);
     setAudioBlob(null);
     setRecordingStatus("inactive");
-  }, [audioBlob, inputValue, clientPseudoId, analytics]);
+  }, [audioBlob, inputValue, clientPseudoId, analytics, storedToken]);
 
   // Handle audio blob submission
   useEffect(() => {

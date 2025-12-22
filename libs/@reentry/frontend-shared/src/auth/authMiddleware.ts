@@ -22,8 +22,7 @@ import { globalAuthStore } from "./globalAuthStore";
 const PUBLIC_ENDPOINTS = [
   "/intake/client",
   "/intake/internal",
-  "/autocomplete-city",
-  "/autocomplete-address",
+  "/intake/services",
 ];
 
 const isPublicEndpoint = (url: string): boolean => {
