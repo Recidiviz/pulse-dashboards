@@ -209,16 +209,9 @@ export const caseRouter = router({
                     }
                   : undefined,
               },
-              district: attributes.clientCounty
-                ? { disconnect: true }
-                : undefined,
             },
           },
         };
-
-        if (attributes.county) {
-          updateData.district = { disconnect: true };
-        }
 
         await prisma.case.update({
           where: {

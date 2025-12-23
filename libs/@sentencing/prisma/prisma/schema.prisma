@@ -106,9 +106,9 @@ model Client {
   cases           Case[]
   sentencingAssessmentReports SentencingAssessmentReport[]
 
-  // County and District fields must be mutually exclusive (this is currently enforced via SQL)
-  // If a county is ever set, it will always include the district, and must be the single source of truth for both fields
-  // A district is only ever set when it is ingested and does not include a county
+  // County represents the client's county of residence/sentencing
+  // District represents the client's supervision district
+  // Both can be set simultaneously (e.g., US_ID has both fields populated)
   county     County?   @relation(fields: [countyId], references: [id])
   countyId   String?
   district   District? @relation(fields: [districtId], references: [id])
@@ -413,9 +413,9 @@ model Case {
   client   Client? @relation(fields: [clientId], references: [externalId])
   clientId String?
 
-  // County and District fields must be mutually exclusive (this is currently enforced via SQL)
-  // If a county is ever set, it will always include the district, and must be the single source of truth for both fields
-  // A district is only ever set when it is ingested and does not include a county
+  // County represents the case's county of sentencing
+  // District represents the case's supervision district
+  // Both can be set simultaneously (e.g., US_ID has both fields populated)
   county     County?   @relation(fields: [countyId], references: [id])
   countyId   String?
   district   District? @relation(fields: [districtId], references: [id])

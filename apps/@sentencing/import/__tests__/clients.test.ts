@@ -98,7 +98,7 @@ describe("import client data", () => {
     ]);
   });
 
-  test("should null district if county is provided", async () => {
+  test("should keep both county and district when both are provided", async () => {
     dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
       // existing client
       {
@@ -132,7 +132,7 @@ describe("import client data", () => {
       expect.objectContaining({
         externalId: fakeClient.externalId,
         county: expect.objectContaining({ name: "my fake county" }),
-        district: null,
+        district: expect.objectContaining({ name: "my fake district" }),
       }),
     ]);
   });
