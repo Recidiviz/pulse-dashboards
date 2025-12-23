@@ -51,10 +51,9 @@ type StaffDashboardPageLayoutProps = {
   hasPadding?: boolean;
 };
 
-export const StaffDashboardPageLayout: React.FC<StaffDashboardPageLayoutProps> = ({
-  children,
-  hasPadding,
-}) => {
+export const StaffDashboardPageLayout: React.FC<
+  StaffDashboardPageLayoutProps
+> = ({ children, hasPadding }) => {
   const { isMobile } = useIsMobile(true);
 
   return (

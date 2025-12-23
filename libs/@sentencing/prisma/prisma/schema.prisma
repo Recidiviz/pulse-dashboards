@@ -660,6 +660,7 @@ model Charge {
   causeNum     String?
   moCode      String?
   judgeName   String?
+  county      String?
   division    Division?
 
   // Attorneys
@@ -667,7 +668,7 @@ model Charge {
   defenseAttorney     String?
 
   // Plea information
-  pleaAgreement Plea?
+  pleaAgreement String?
   pleaDate      DateTime?
   sentencingDate DateTime?
 }

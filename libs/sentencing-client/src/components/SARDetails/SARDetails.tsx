@@ -22,7 +22,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { SentencingStore } from "../../datastores/SentencingStore";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { sarUrl } from "../../utils/routing";
+import { CaseInformation } from "../CaseInformation/CaseInformation";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { TopProgressBar } from "../shared/TopProgressBar";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 import { SARSection, SARSectionName } from "./constants";
 import * as Styled from "./SARDetails.styles";
@@ -54,6 +56,8 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
 
   return (
     <Styled.PageContainer>
+      <TopProgressBar percentage={presenter.overallProgress} />
+
       <SARHeader
         SARAttributes={SARAttributes}
         onBackToDashboard={handleBackToDashboard}
@@ -68,9 +72,16 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
         />
 
         <Styled.MainContent>
-          <h2>{currentSection}</h2>
-          {/* Form builder content will go here based on currentSection */}
-          <p>Content for {currentSection} goes here...</p>
+          {currentSection === SARSection.CASE_INFORMATION && (
+            <CaseInformation presenter={presenter} />
+          )}
+
+          {currentSection !== SARSection.CASE_INFORMATION && (
+            <>
+              <h2>{currentSection}</h2>
+              <p>Content for {currentSection} goes here...</p>
+            </>
+          )}
         </Styled.MainContent>
       </Styled.ContentLayout>
     </Styled.PageContainer>

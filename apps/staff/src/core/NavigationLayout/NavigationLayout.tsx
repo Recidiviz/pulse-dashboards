@@ -55,8 +55,8 @@ export const NAV_BAR_HEIGHT = 64;
 
 const Wrapper = styled.div``;
 
-const Banner = styled.div`
-  height: ${rem(NAV_BAR_HEIGHT)};
+const Banner = styled.div<{ topOffset?: number }>`
+  height: ${({ topOffset }) => rem(NAV_BAR_HEIGHT + (topOffset || 0))};
 `;
 
 const NavContainer = styled.div<{
@@ -64,6 +64,7 @@ const NavContainer = styled.div<{
   alignBottom?: boolean;
   backgroundColor?: string;
   hasBorder?: boolean;
+  topOffset?: number;
 }>`
   padding: 0 ${rem(spacing.md)};
   display: flex;
@@ -73,7 +74,7 @@ const NavContainer = styled.div<{
   justify-content: space-between;
   background: ${({ backgroundColor }) => backgroundColor ?? palette.marble1};
   z-index: ${zindex.tooltip - 1};
-  ${({ isFixed }) => isFixed && `position: fixed;`}
+  ${({ isFixed, topOffset }) => isFixed && `position: fixed; top: ${topOffset || 0}px;`}
   ${({ alignBottom }) =>
     alignBottom
       ? `bottom: 0;
@@ -480,6 +481,7 @@ type NavigationLayoutProps = {
   externalMethodologyUrl?: string;
   isNaked?: boolean;
   children?: React.ReactNode;
+  topOffset?: number;
 };
 
 export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
@@ -489,6 +491,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     children,
     isFixed = true,
     isNaked = false,
+    topOffset = 0,
   }) {
     const { pathname } = useLocation();
     const { isMobile } = useIsMobile(true);
@@ -574,6 +577,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           isFixed={isFixed}
           backgroundColor={backgroundColor}
           hasBorder={!isNaked}
+          topOffset={topOffset}
         >
           <Menubar ariaLabel="Main Navigation">
             <MainLogo
@@ -629,7 +633,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
             )}
           </Menubar>
         </NavContainer>
-        {!isMobile && isFixed && <Banner />}
+        {!isMobile && isFixed && <Banner topOffset={topOffset} />}
       </Wrapper>
     );
   },

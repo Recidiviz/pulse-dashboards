@@ -34,6 +34,9 @@ export enum ProfileStrength {
   Low = "Low",
 }
 
+export type MutableSARAttributes =
+  inferRouterInputs<AppRouter>["sar"]["updateSAR"]["attributes"];
+
 export type MutableCaseAttributes =
   inferRouterInputs<AppRouter>["case"]["updateCase"]["attributes"];
 

@@ -24,17 +24,22 @@ import { customPalette } from "../styles/palette";
 
 export { BackLink } from "../styles/shared";
 
+export const NAV_BAR_HEIGHT = 64;
+
 export const SARHeaderContainer = styled.div`
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  position: fixed;
+  top: 1rem;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding-top: 6rem;
+  padding-left: 2rem;
+  padding-bottom: 2.2rem;
+  z-index: 100;
   background-color: ${palette.white};
   border-bottom: 1px solid ${palette.slate20};
-  padding: 0 20px;
-  min-height: 9.625rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 `;
 
 export const HeaderContent = styled.div`

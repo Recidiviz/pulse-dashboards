@@ -58,9 +58,12 @@ export class OfflineAPIClient {
   }
 
   updateCaseDetails(caseId: string, updates: FormAttributes) {
+    // Get existing info or start a new object
+    const info = this.editableInfo.get(caseId) ?? {};
     Object.entries(updates).forEach(([key, value]) => {
-      this.editableInfo.set(caseId, { key, value });
+      (info as Record<string, unknown>)[key] = value;
     });
+    this.editableInfo.set(caseId, info);
   }
 
   async getCommunityOpportunities(): Promise<Opportunities> {
@@ -84,5 +87,14 @@ export class OfflineAPIClient {
       "./offlineFixtures/SARDetailsFixtures"
     );
     return SARDetailsFixture?.[sarId] ?? SARDetailsFixture["default"];
+  }
+
+  updateSARDetails(sarID: string, updates: FormAttributes) {
+    // Get existing info or start a new object
+    const info = this.editableInfo.get(sarID) ?? {};
+    Object.entries(updates).forEach(([key, value]) => {
+      (info as Record<string, unknown>)[key] = value;
+    });
+    this.editableInfo.set(sarID, info);
   }
 }

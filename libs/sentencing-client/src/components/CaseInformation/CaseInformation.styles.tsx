@@ -19,37 +19,53 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-export const PageContainer = styled.div`
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: ${palette.marble1};
-`;
-
-export const ContentLayout = styled.div`
-  flex: 1;
-  display: flex;
-  gap: 24px;
-  padding-left: 7rem;
-  padding-top: 1.5rem;
-  padding-bottom: 2rem;
-  margin-top: 10.5rem; /* Add space for fixed header (1rem progress bar + ~9.5rem header) */
-  background: ${palette.marble3};
-  z-index: 0;
-  position: sticky;
-`;
-
-export const MainContent = styled.div`
+export const Container = styled.div`
   display: flex;
   width: 50rem;
+  padding: 2rem 0;
   flex-direction: column;
   align-items: flex-start;
   gap: 1.5rem;
-  background: ${palette.white};
-  border-radius: 0.625rem;
-  border: 1px solid ${palette.slate10};
-  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
-  left: 25rem;
-  position: sticky;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.00875rem;
+  font-family: "Public Sans";
+`;
+
+export const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: stretch;
+`;
+
+export const Checkbox = styled.input`
+  width: 1rem;
+  height: 1rem;
+  accent-color: ${palette.pine4};
+`;
+
+export const CheckboxLabel = styled.span`
+  font-size: 0.875rem;
+  padding-left: 2.5rem;
+`;
+
+export const ClientInfoRow = styled.div`
+  display: flex;
+  gap: 0.375rem;
+  align-self: stretch;
+  font-size: 0.75 rem;
+`;
+
+export const ClientInfoColumn = styled.div`
+  flex: 1;
+  display: flex;
+  padding-left: 2.5rem;
+  flex-direction: column;
+`;
+
+export const SubsectionTitle = styled.div`
+  color: ${palette.pine1};
+  padding-bottom: 1rem;
+  font-size: 1rem;
 `;

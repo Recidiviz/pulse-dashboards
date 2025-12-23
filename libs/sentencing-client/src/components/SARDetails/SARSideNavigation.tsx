@@ -48,45 +48,50 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
     const isLastSection = currentIndex === totalSections - 1;
 
     return (
-      <Styled.SideNavigationContainer>
-        <Styled.NavigationList>
-          {SAR_REPORT_SECTIONS.map((section) => {
-            const isActive = section === currentSection;
-            return (
-              <Styled.NavigationItem
-                key={section}
-                isActive={isActive}
-                onClick={() => onSectionChange(section)}
-                aria-current={isActive ? "page" : undefined}
-              >
-                {section}
-                {isActive && (
-                  <Styled.Arrow>
-                    <ArrowIcon />
-                  </Styled.Arrow>
-                )}
-              </Styled.NavigationItem>
-            );
-          })}
-        </Styled.NavigationList>
+      <Styled.SideContainer>
+        <Styled.SideNavigationContainer>
+          <Styled.NavigationList>
+            {SAR_REPORT_SECTIONS.map((section) => {
+              const isActive = section === currentSection;
+              return (
+                <Styled.NavigationItem
+                  key={section}
+                  isActive={isActive}
+                  onClick={() => onSectionChange(section)}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  {section}
+                  {isActive && (
+                    <Styled.Arrow>
+                      <ArrowIcon />
+                    </Styled.Arrow>
+                  )}
+                </Styled.NavigationItem>
+              );
+            })}
+          </Styled.NavigationList>
 
-        <Styled.ButtonContainer>
-          <Styled.NavButton
-            variant="secondary"
-            onClick={handlePrevious}
-            disabled={isFirstSection}
-          >
-            Previous
-          </Styled.NavButton>
-          <Styled.NavButton
-            variant="primary"
-            onClick={handleNext}
-            disabled={isLastSection}
-          >
-            Next
-          </Styled.NavButton>
-        </Styled.ButtonContainer>
-      </Styled.SideNavigationContainer>
+          <Styled.ButtonContainer>
+            <Styled.NavButton
+              variant="secondary"
+              onClick={handlePrevious}
+              disabled={isFirstSection}
+            >
+              Previous
+            </Styled.NavButton>
+            <Styled.NavButton
+              variant="primary"
+              onClick={handleNext}
+              disabled={isLastSection}
+            >
+              Next
+            </Styled.NavButton>
+          </Styled.ButtonContainer>
+        </Styled.SideNavigationContainer>
+        <Styled.AutosaveMessage>
+          Exit any time, your progress is auto-saved.
+        </Styled.AutosaveMessage>
+      </Styled.SideContainer>
     );
   },
 );

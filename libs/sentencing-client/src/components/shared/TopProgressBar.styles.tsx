@@ -17,39 +17,19 @@
 
 import styled from "styled-components";
 
-import { palette } from "~design-system";
-
-export const PageContainer = styled.div`
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: ${palette.marble1};
+export const ProgressContainer = styled.div`
+  position: fixed;
+  top: 0rem;
+  left: 0;
+  right: 0;
+  height: 1rem;
+  background: rgb(234, 238, 240); /* Opaque version of slate10 over white */
+  z-index: 9999;
 `;
 
-export const ContentLayout = styled.div`
-  flex: 1;
-  display: flex;
-  gap: 24px;
-  padding-left: 7rem;
-  padding-top: 1.5rem;
-  padding-bottom: 2rem;
-  margin-top: 10.5rem; /* Add space for fixed header (1rem progress bar + ~9.5rem header) */
-  background: ${palette.marble3};
-  z-index: 0;
-  position: sticky;
-`;
-
-export const MainContent = styled.div`
-  display: flex;
-  width: 50rem;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.5rem;
-  background: ${palette.white};
-  border-radius: 0.625rem;
-  border: 1px solid ${palette.slate10};
-  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
-  left: 25rem;
-  position: sticky;
+export const ProgressFill = styled.div<{ percentage: number }>`
+  height: 1rem;
+  background: #00c49d;
+  width: ${(props) => props.percentage}%;
+  transition: width 0.3s ease;
 `;

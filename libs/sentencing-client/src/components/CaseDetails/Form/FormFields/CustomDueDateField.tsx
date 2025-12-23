@@ -17,17 +17,16 @@
 
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
-import DatePicker, { ReactDatePickerCustomHeaderProps } from "react-datepicker";
 
-import CalendarIcon from "../../../../components/assets/calendar-icon.svg?react";
-import Arrow from "../../../../components/assets/left-arrow-carot-icon.svg?react";
-import DownArrow from "../../../../components/assets/sort-down-icon.svg?react";
-import UpArrow from "../../../../components/assets/sort-up-icon.svg?react";
+import { Icon, IconSVG } from "~design-system";
+
+import { SharedDatePicker } from "../../../shared/SharedDatePicker";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import { CUSTOM_DUE_DATE_KEY } from "../../constants";
 import { form } from "../FormStore";
 import { FormFieldProps } from "../types";
+
 function CustomDueDateField({ isRequired }: FormFieldProps) {
   const { PSIStore } = useStore();
   const caseAttributes = PSIStore.caseAttributes;
@@ -75,99 +74,35 @@ function CustomDueDateField({ isRequired }: FormFieldProps) {
       form.updateForm(CUSTOM_DUE_DATE_KEY, caseAttributes.dueDate);
     }
   }
+
   return (
     <>
       <Styled.InputLabel>
         Due {isRequired && <span>Required*</span>}
       </Styled.InputLabel>
       <div style={{ display: "flex", flexDirection: "row", width: "100%" }}>
-        <Styled.DatePickerWrapper>
-          <DatePicker
-            shouldCloseOnSelect={false}
-            showPopperArrow={false}
-            renderCustomHeader={DatePickerHeader}
-            showIcon
-            popperClassName="rcd-cal"
-            popperPlacement="bottom-start"
-            icon={<CalendarIcon />}
-            selected={pickerDate}
-            onChange={(date: Date | null) => updateCustomDueDate(date)}
-          />
-        </Styled.DatePickerWrapper>
-        <div>
-          {pickerDate !== caseAttributes.dueDate && (
-            <Styled.CalendarResetButton
-              type="button"
-              onClick={() => updateCustomDueDate(caseAttributes.dueDate)}
-            >
-              Reset
-            </Styled.CalendarResetButton>
-          )}
-        </div>
+        <SharedDatePicker
+          selected={pickerDate}
+          onChange={(date: Date | null) => updateCustomDueDate(date)}
+          showIcon
+          icon={<Icon kind={IconSVG["Calendar"]} />}
+          placeholder="Select date"
+          resetButton={
+            pickerDate !== caseAttributes.dueDate && (
+              <div>
+                <Styled.CalendarResetButton
+                  type="button"
+                  onClick={() => updateCustomDueDate(caseAttributes.dueDate)}
+                >
+                  Reset
+                </Styled.CalendarResetButton>
+              </div>
+            )
+          }
+        />
       </div>
     </>
   );
 }
 
 export default observer(CustomDueDateField);
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-const DatePickerHeader = ({
-  date,
-  changeYear,
-  changeMonth,
-  decreaseMonth,
-  increaseMonth,
-  prevMonthButtonDisabled,
-  nextMonthButtonDisabled,
-}: ReactDatePickerCustomHeaderProps) => (
-  <Styled.CalendarHeader>
-    <Styled.CalendarMonthIconButton
-      onClick={decreaseMonth}
-      aria-label="Previous month"
-    >
-      <Arrow aria-hidden="true" />
-    </Styled.CalendarMonthIconButton>
-    <Styled.CalendarCenter>
-      <span>
-        {MONTHS[date.getMonth()]} {date.getFullYear()}
-      </span>
-
-      <Styled.CalendarYearStack>
-        <Styled.CalendarYearIconButton
-          onClick={() => changeYear(date.getFullYear() + 1)}
-          aria-label="Next year"
-        >
-          <UpArrow aria-hidden="true" />
-        </Styled.CalendarYearIconButton>
-
-        <Styled.CalendarYearIconButton
-          onClick={() => changeYear(date.getFullYear() - 1)}
-          aria-label="Previous year"
-        >
-          <DownArrow aria-hidden="true" />
-        </Styled.CalendarYearIconButton>
-      </Styled.CalendarYearStack>
-    </Styled.CalendarCenter>
-
-    <Styled.CalendarMonthIconButton
-      onClick={increaseMonth}
-      aria-label="Next month"
-    >
-      <Arrow aria-hidden="true" style={{ transform: "scaleX(-1)" }} />
-    </Styled.CalendarMonthIconButton>
-  </Styled.CalendarHeader>
-);

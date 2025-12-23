@@ -15,29 +15,55 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ErrorPage } from "@recidiviz/design-system";
+import { ErrorPage, typography } from "@recidiviz/design-system";
 import { ErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import styled from "styled-components";
 
-import { SARDetails, sarRoute, SARStaffDashboard, sarUrl, StoreProvider } from "~sentencing-client";
+import { palette } from "~design-system";
+import {
+  SARDetails,
+  sarRoute,
+  SARStaffDashboard,
+  sarUrl,
+  StoreProvider,
+} from "~sentencing-client";
 
 import NotFound from "../../components/NotFound";
 import {
   PartiallyTypedRootStore,
   useRootStore,
 } from "../../components/StoreProvider";
-import { StaffDashboardPageLayout } from "../StaffDashboardPageLayout";
+import useIsMobile from "../../hooks/useIsMobile";
+import { NavigationLayout } from "../NavigationLayout";
 
+const Wrapper = styled.div`
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: ${palette.marble1};
+  ${typography.Sans14};
+`;
+
+const Main = styled.main<{
+  isMobile: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  flex: auto;
+  padding: 0 !important;
+`;
 
 const PageSAR: React.FC = function PageSAR() {
   // TODO(#5636) Eliminate PartiallyTypedRootStore
   const { sentencingStore } = useRootStore() as PartiallyTypedRootStore;
-  const STAFF_DASHBOARD_URL = sarUrl(
-    "staffDashboard",
-    { staffPseudoId: sentencingStore.staffPseudoId }
-  );
+  const { isMobile } = useIsMobile(true);
+  const STAFF_DASHBOARD_URL = sarUrl("staffDashboard", {
+    staffPseudoId: sentencingStore.staffPseudoId,
+  });
   return (
     <ErrorBoundary
       fallback={
@@ -48,25 +74,28 @@ const PageSAR: React.FC = function PageSAR() {
       }
     >
       <StoreProvider store={sentencingStore}>
-        <StaffDashboardPageLayout>
-          <Routes>
-           <Route
-              index
-              element={<Navigate replace to={STAFF_DASHBOARD_URL} />}
-            />
-            {/* SAR Routes */}
-            <Route
-              path={sarRoute({ routeName: "staffDashboard" })}
-              element={<SARStaffDashboard sentencingStore={sentencingStore} />}
-            />
-            <Route
-              path={sarRoute({ routeName: "sarDetails" })}
-              element={<SARDetails sentencingStore={sentencingStore} />}
-            />
+        <Wrapper>
+          <NavigationLayout topOffset={15} />
+          <Main isMobile={isMobile}>
+            <Routes>
+              <Route
+                index
+                element={<Navigate replace to={STAFF_DASHBOARD_URL} />}
+              />
+              {/* SAR Routes */}
+              <Route
+                path={sarRoute({ routeName: "staffDashboard" })}
+                element={<SARStaffDashboard sentencingStore={sentencingStore} />}
+              />
+              <Route
+                path={sarRoute({ routeName: "sarDetails" })}
+                element={<SARDetails sentencingStore={sentencingStore} />}
+              />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </StaffDashboardPageLayout>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Main>
+        </Wrapper>
       </StoreProvider>
     </ErrorBoundary>
   );

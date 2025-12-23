@@ -53,6 +53,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
         causeNum: null,
         moCode: null,
         judgeName: null,
+        county: null,
       },
     ],
     drugHistories: [],

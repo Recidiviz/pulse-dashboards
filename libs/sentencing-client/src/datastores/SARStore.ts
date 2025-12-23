@@ -23,6 +23,7 @@ import { palette } from "~design-system";
 import { FlowMethod } from "~hydration-utils";
 
 import { APIClient, SAR } from "../api/APIClient";
+import { MutableSARAttributes } from "../components/CaseDetails/types";
 import { titleCase } from "../utils/utils";
 import { ERROR_TOAST_DURATION } from "./constants";
 import { SentencingStore } from "./SentencingStore";
@@ -66,10 +67,31 @@ export class SARStore {
     this.activeSARId = sarId;
   }
 
+  *updateSARDetails(SARId: string, updates?: MutableSARAttributes) {
+    try {
+      if (!updates) return;
+      yield this.sentencingStore.apiClient.updateSARDetails(SARId, updates);
+    } catch (error) {
+      captureException(new Error("Error while updating SAR details"), {
+        extra: {
+          message: `updateSARDetails error: ${error}`,
+          payload: updates,
+          SARId,
+          staffId: this.sentencingStore.staffPseudoId,
+        },
+      });
+      toast(
+        "Something went wrong updating the SAR details. Please try again or contact us for support.",
+        {
+          duration: ERROR_TOAST_DURATION,
+          style: { backgroundColor: palette.signal.error },
+        },
+      );
+    }
+  }
+
   /** This is a MobX flow method and should be called with mobx.flowResult */
-  *loadSARDetails(
-    id: string,
-  ): FlowMethod<APIClient["getSARDetails"], void> {
+  *loadSARDetails(id: string): FlowMethod<APIClient["getSARDetails"], void> {
     try {
       const SARDetails = yield this.sentencingStore.apiClient.getSARDetails(id);
       this.SARDetailsById = {

@@ -231,6 +231,13 @@ async function addSARClientsAndReports(
         stateCode: StateCode.US_MO,
         gender,
         birthDate: faker.date.birthdate(),
+        raceOrEthnicity: faker.helpers.arrayElement([
+          "White",
+          "Black",
+          "Hispanic",
+          "Asian",
+          "Native American",
+        ]),
       },
       select: { externalId: true },
     });
@@ -262,7 +269,7 @@ async function addSARClientsAndReports(
       },
     });
 
-    // Add 6-10 charges per SAR with only imported fields: offense name, felony class, cause number
+    // Add 6-10 charges per SAR with only imported fields: offense name, felony class, cause number, judge name, division, county, moCode
     const numCharges = faker.number.int({ min: 6, max: 10 });
     // To avoid duplicate offenses in a single SAR, shuffle and slice offenses
     const shuffledOffenses = faker.helpers.shuffle(offenses);
@@ -278,6 +285,10 @@ async function addSARClientsAndReports(
           // Only imported fields - the rest will be filled in by users
           causeNum: `${faker.string.numeric(2)}-CR-${faker.string.numeric(5)}`,
           felonyClass: faker.helpers.enumValue(FelonyClass),
+          judgeName: faker.person.fullName(),
+          division: faker.helpers.enumValue(Division),
+          county: faker.location.county(),
+          moCode: `${faker.string.numeric(3)}${faker.string.numeric(3)}`,
         },
       });
     }

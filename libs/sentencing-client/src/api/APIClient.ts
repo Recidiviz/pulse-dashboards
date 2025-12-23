@@ -22,7 +22,10 @@ import superjson from "superjson";
 
 import type { AppRouter } from "~@sentencing/trpc-types";
 
-import { FormAttributes } from "../components/CaseDetails/types";
+import {
+  FormAttributes,
+  MutableSARAttributes,
+} from "../components/CaseDetails/types";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { splitFullName } from "../utils/utils";
 
@@ -195,6 +198,19 @@ export class APIClient {
 
     return await this.trpcClient.case.updateCase.mutate({
       id: caseId,
+      attributes,
+    });
+  }
+
+  async updateSARDetails(
+    SARId: string,
+    attributes: Partial<MutableSARAttributes>,
+  ) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+
+    return await this.trpcClient.sar.updateSAR.mutate({
+      id: SARId,
       attributes,
     });
   }

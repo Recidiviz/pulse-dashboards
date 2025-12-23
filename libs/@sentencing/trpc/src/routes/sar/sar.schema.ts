@@ -28,7 +28,6 @@ import {
 import {
   CaseStatusEnum,
   NeedsToBeAddressedEnum,
-  PleaEnum,
 } from "~@sentencing/trpc/routes/common/constants";
 import {
   GetSARInput,
@@ -69,7 +68,7 @@ export const sarMetadataSchema = z.object({
   lastUpdated: z.string().datetime().optional(),
   version: z.literal("1.0").optional(),
 });
-export const updateSarSchema = z.object({
+export const updateSARSchema = z.object({
   id: z.string(),
   attributes: z.object({
     ssn: z.string().nullable().optional(),
@@ -86,7 +85,7 @@ export const updateSarSchema = z.object({
           id: z.string(),
           prosecutingAttorney: z.string().nullable().optional(),
           defenseAttorney: z.string().nullable().optional(),
-          pleaAgreement: PleaEnum.nullable().optional(),
+          pleaAgreement: z.string().nullable().optional(),
           pleaDate: z.date().nullable().optional(),
           sentencingDate: z.date().nullable().optional(),
         }),

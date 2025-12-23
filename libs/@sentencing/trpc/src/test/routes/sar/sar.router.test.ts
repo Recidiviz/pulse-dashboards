@@ -25,7 +25,6 @@ import {
   LevelOfEducation,
   MethodOfUse,
   NeedToBeAddressed,
-  Plea,
   ProtectiveFactor,
   SectionStatus,
   SubstanceType,
@@ -116,9 +115,9 @@ describe("SAR router", () => {
     });
   });
 
-  describe("updateSar", () => {
+  describe("updateSAR", () => {
     test("should update basic SAR fields", async () => {
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           address: "456 Oak Street",
@@ -142,7 +141,7 @@ describe("SAR router", () => {
     });
 
     test("should update array fields", async () => {
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           needsToBeAddressed: [
@@ -168,7 +167,7 @@ describe("SAR router", () => {
     });
 
     test("should clear nullable fields when set to null", async () => {
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           defendantStatement: null,
@@ -186,7 +185,7 @@ describe("SAR router", () => {
     });
 
     test("should update client fields", async () => {
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           ssn: "123456789",
@@ -234,7 +233,7 @@ describe("SAR router", () => {
       const sentencingDate = new Date("2024-02-20");
 
       // Now update them with attorney/plea information
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           charges: [
@@ -242,7 +241,7 @@ describe("SAR router", () => {
               id: charge1.id,
               prosecutingAttorney: "Prosecutor Smith",
               defenseAttorney: "Defense Jones",
-              pleaAgreement: Plea.Guilty,
+              pleaAgreement: "Guilty",
               pleaDate,
               sentencingDate,
             },
@@ -250,7 +249,7 @@ describe("SAR router", () => {
               id: charge2.id,
               prosecutingAttorney: "Prosecutor Brown",
               defenseAttorney: "Defense White",
-              pleaAgreement: Plea.NotGuilty,
+              pleaAgreement: "Not Guilty",
               pleaDate: null,
               sentencingDate: null,
             },
@@ -269,7 +268,7 @@ describe("SAR router", () => {
         id: charge1.id,
         prosecutingAttorney: "Prosecutor Smith",
         defenseAttorney: "Defense Jones",
-        pleaAgreement: Plea.Guilty,
+        pleaAgreement: "Guilty",
         pleaDate,
         sentencingDate,
       });
@@ -277,14 +276,14 @@ describe("SAR router", () => {
         id: charge2.id,
         prosecutingAttorney: "Prosecutor Brown",
         defenseAttorney: "Defense White",
-        pleaAgreement: Plea.NotGuilty,
+        pleaAgreement: "Not Guilty",
         pleaDate: null,
         sentencingDate: null,
       });
     });
 
     test("should update drug histories by replacing all existing histories", async () => {
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           drugHistories: [
@@ -333,7 +332,7 @@ describe("SAR router", () => {
       });
 
       // Then clear them
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           drugHistories: [],
@@ -372,7 +371,7 @@ describe("SAR router", () => {
         version: "1.0" as const,
       };
 
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           metadata,
@@ -389,7 +388,7 @@ describe("SAR router", () => {
 
     test("should validate metadata structure and reject invalid statuses", async () => {
       try {
-        await testTRPCClient.sar.updateSar.mutate({
+        await testTRPCClient.sar.updateSAR.mutate({
           id: fakeSAR.id,
           attributes: {
             // Provide completely wrong type - string instead of object
@@ -407,7 +406,7 @@ describe("SAR router", () => {
 
     test("should allow undefined metadata (no update)", async () => {
       // Set metadata first
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           metadata: {
@@ -423,7 +422,7 @@ describe("SAR router", () => {
       });
 
       // Now update without metadata field - should not change it
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           address: "New Address",
@@ -453,13 +452,13 @@ describe("SAR router", () => {
         },
       });
 
-      await testTRPCClient.sar.updateSar.mutate({
+      await testTRPCClient.sar.updateSAR.mutate({
         id: fakeSAR.id,
         attributes: {
           address: "789 Maple Ave",
           levelOfEducation: LevelOfEducation.BachelorsDegree,
           needsToBeAddressed: [NeedToBeAddressed.Education],
-          charges: [{ id: charge.id, pleaAgreement: Plea.NotGuilty }],
+          charges: [{ id: charge.id, pleaAgreement: "Not Guilty" }],
           drugHistories: [{ substance: SubstanceType.Cocaine }],
           metadata: {
             sections: {
@@ -498,13 +497,13 @@ describe("SAR router", () => {
         },
       });
       expect(updatedSAR?.charges).toHaveLength(1);
-      expect(updatedSAR?.charges[0].pleaAgreement).toBe(Plea.NotGuilty);
+      expect(updatedSAR?.charges[0].pleaAgreement).toBe("Not Guilty");
       expect(updatedSAR?.drugHistories).toHaveLength(1);
     });
 
     test("should throw error if SAR does not exist", async () => {
       await expect(() =>
-        testTRPCClient.sar.updateSar.mutate({
+        testTRPCClient.sar.updateSAR.mutate({
           id: "not-a-real-id",
           attributes: {
             address: "123 Test St",

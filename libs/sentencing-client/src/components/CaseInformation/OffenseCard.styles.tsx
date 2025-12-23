@@ -19,37 +19,51 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-export const PageContainer = styled.div`
-  width: 100%;
-  min-height: 100vh;
+export const CardContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  background-color: ${palette.marble1};
-`;
-
-export const ContentLayout = styled.div`
-  flex: 1;
-  display: flex;
-  gap: 24px;
-  padding-left: 7rem;
-  padding-top: 1.5rem;
-  padding-bottom: 2rem;
-  margin-top: 10.5rem; /* Add space for fixed header (1rem progress bar + ~9.5rem header) */
-  background: ${palette.marble3};
-  z-index: 0;
-  position: sticky;
-`;
-
-export const MainContent = styled.div`
-  display: flex;
-  width: 50rem;
   flex-direction: column;
   align-items: flex-start;
+  align-self: stretch;
   gap: 1.5rem;
-  background: ${palette.white};
-  border-radius: 0.625rem;
-  border: 1px solid ${palette.slate10};
-  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
-  left: 25rem;
-  position: sticky;
+`;
+
+export const Divider = styled.div`
+  width: 100%;
+  height: 0.0625rem;
+  background: ${palette.slate20};
+`;
+
+export const Card = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  align-self: stretch;
+  padding-left: 2.5rem;
+  padding-right: 2rem;
+`;
+
+export const SubsectionTitle = styled.div`
+  color: ${palette.pine1};
+  padding-bottom: 1rem;
+  font-size: 1rem;
+  padding-left: 2.5rem;
+`;
+
+export const ColumnSection = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  width: 50%;
+  align-self: stretch;
+  flex-direction: column;
+  color: ${palette.slate85};
+`;
+
+export const SectionHeader = styled.h3`
+  color: ${palette.pine1};
+  font-family: "Public Sans";
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%; /* 1.2rem */
+  letter-spacing: -0.01rem;
 `;

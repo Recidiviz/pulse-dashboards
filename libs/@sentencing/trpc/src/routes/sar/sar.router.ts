@@ -22,7 +22,7 @@ import { Prisma } from "~@sentencing/prisma/client";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
   getSARInputSchema,
-  updateSarSchema,
+  updateSARSchema,
 } from "~@sentencing/trpc/routes/sar/sar.schema";
 
 export const sarRouter = router({
@@ -91,8 +91,8 @@ export const sarRouter = router({
         })),
       };
     }),
-  updateSar: baseProcedure
-    .input(updateSarSchema)
+  updateSAR: baseProcedure
+    .input(updateSARSchema)
     .mutation(async ({ input: { id, attributes }, ctx: { prisma } }) => {
       try {
         const {
@@ -141,7 +141,6 @@ export const sarRouter = router({
             update: clientUpdateFields,
           };
         }
-
         // Handle charges - upsert by ID to preserve imported charges
         if (charges !== undefined && charges !== null) {
           updateData.charges = {

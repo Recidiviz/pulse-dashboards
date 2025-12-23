@@ -19,15 +19,32 @@ import styled from "styled-components";
 
 import { palette, typography } from "~design-system";
 
-export const SideNavigationContainer = styled.div`
-  position: sticky;
-  top: 0;
-  width: 15.5rem;
-  height: fit-content;
-  max-height: 100vh;
+export const SideContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  gap: 1.5rem;
+  position: fixed;
+`;
+
+export const AutosaveMessage = styled.div`
+  color: ${palette.slate70};
+  text-align: center;
+  font-family: "Public Sans";
+  font-size: 0.85rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.0075rem;
+  position: sticky;
+  top: 1rem; /* Account for progress bar height */
+`;
+
+export const SideNavigationContainer = styled.div`
+  position: sticky;
+  top: 1rem; /* Account for progress bar height */
+  width: 15.5rem;
+  height: fit-content;
+  max-height: calc(100vh - 1rem); /* Subtract progress bar height */
   gap: 1rem;
   background: ${palette.white};
   border: 1px solid ${palette.slate10};

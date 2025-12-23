@@ -90,12 +90,21 @@ export type CaseAttributes = Partial<Case> & {
   clientGender?: Client["gender"];
 };
 
-
 export type SARAttributes = Partial<SAR> & {
   clientGender?: Client["gender"];
 };
 
 export type Charge = SAR["charges"][number];
+
+/**
+ * Form-specific Charge type that allows date fields to be strings
+ * (from date inputs) in addition to Date objects
+ */
+export type FormCharge = Omit<Charge, "pleaDate" | "sentencingDate"> & {
+  pleaDate: string | Date | null;
+  sentencingDate: string | Date | null;
+  [key: string]: string | Date | null | undefined;
+};
 
 // Feature variants exclusive to this app
 export type FeatureVariant =
