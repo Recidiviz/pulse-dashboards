@@ -26,7 +26,6 @@ import {
   MethodOfUse,
   NeedToBeAddressed,
   ProtectiveFactor,
-  SectionStatus,
   SubstanceType,
 } from "~@sentencing/prisma/client";
 import { testPrismaClient, testTRPCClient } from "~@sentencing/trpc/test/setup";
@@ -349,25 +348,20 @@ describe("SAR router", () => {
     test("should update metadata field with typed structure", async () => {
       const metadata = {
         sections: {
-          caseInformation: {
-            status: SectionStatus.Complete,
-            missingRequiredFields: [],
-          },
-          needsAndMitigation: {
-            status: SectionStatus.Skipped,
+          keyConsiderations: {
+            areasOfNeed: { skipped: false },
+            mitigatingFactors: { skipped: true },
           },
           defendantVersion: {
-            status: SectionStatus.Incomplete,
+            skipped: false,
           },
           victimImpactStatement: {
-            status: SectionStatus.Complete,
+            skipped: false,
           },
-          offenderAssessment: {
-            status: SectionStatus.Incomplete,
-            missingFields: ["criminalHistorySummary", "levelOfEducation"],
+          recommendation: {
+            skipped: false,
           },
         },
-        lastUpdated: new Date().toISOString(),
         version: "1.0" as const,
       };
 
@@ -411,11 +405,13 @@ describe("SAR router", () => {
         attributes: {
           metadata: {
             sections: {
-              caseInformation: { status: SectionStatus.Complete },
-              needsAndMitigation: { status: SectionStatus.Complete },
-              defendantVersion: { status: SectionStatus.Complete },
-              victimImpactStatement: { status: SectionStatus.Complete },
-              offenderAssessment: { status: SectionStatus.Complete },
+              keyConsiderations: {
+                areasOfNeed: { skipped: false },
+                mitigatingFactors: { skipped: false },
+              },
+              defendantVersion: { skipped: false },
+              victimImpactStatement: { skipped: false },
+              recommendation: { skipped: false },
             },
           },
         },
@@ -462,11 +458,13 @@ describe("SAR router", () => {
           drugHistories: [{ substance: SubstanceType.Cocaine }],
           metadata: {
             sections: {
-              caseInformation: { status: SectionStatus.Complete },
-              needsAndMitigation: { status: SectionStatus.Complete },
-              defendantVersion: { status: SectionStatus.Complete },
-              victimImpactStatement: { status: SectionStatus.Complete },
-              offenderAssessment: { status: SectionStatus.Complete },
+              keyConsiderations: {
+                areasOfNeed: { skipped: false },
+                mitigatingFactors: { skipped: false },
+              },
+              defendantVersion: { skipped: false },
+              victimImpactStatement: { skipped: false },
+              recommendation: { skipped: false },
             },
           },
         },
@@ -489,11 +487,13 @@ describe("SAR router", () => {
       });
       expect(updatedSAR?.metadata).toMatchObject({
         sections: {
-          caseInformation: { status: SectionStatus.Complete },
-          needsAndMitigation: { status: SectionStatus.Complete },
-          defendantVersion: { status: SectionStatus.Complete },
-          victimImpactStatement: { status: SectionStatus.Complete },
-          offenderAssessment: { status: SectionStatus.Complete },
+          keyConsiderations: {
+            areasOfNeed: { skipped: false },
+            mitigatingFactors: { skipped: false },
+          },
+          defendantVersion: { skipped: false },
+          victimImpactStatement: { skipped: false },
+          recommendation: { skipped: false },
         },
       });
       expect(updatedSAR?.charges).toHaveLength(1);

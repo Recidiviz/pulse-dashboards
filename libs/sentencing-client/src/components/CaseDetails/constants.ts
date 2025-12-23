@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Case, Client } from "../../api";
+import { Client } from "../../api";
 
 export const PDF_PAGE_WIDTH = 950;
 
@@ -113,53 +113,7 @@ export type ClientGender = "clientGender";
 export const CLIENT_COUNTY_KEY = "clientCounty";
 export const CLIENT_DISTRICT_KEY = "clientDistrict";
 
-export const NeedsToBeAddressed: Record<
-  Case["needsToBeAddressed"][number],
-  string
-> = {
-  AngerManagement: "Anger Management",
-  CaseManagement: "Case Management",
-  ClothingAndToiletries: "Clothing and Toiletries",
-  DomesticViolenceIssues: "Domestic Violence Issues",
-  Education: "Education",
-  FamilyServices: "Family Services",
-  FinancialAssistance: "Financial Assistance",
-  FoodInsecurity: "Food Insecurity",
-  GeneralReEntrySupport: "General Re-entry Support",
-  Healthcare: "Healthcare",
-  HousingOpportunities: "Housing Opportunities",
-  JobTrainingOrOpportunities: "Job Training or Opportunities",
-  MentalHealth: "Mental Health",
-  SubstanceUse: "Substance Use",
-  Transportation: "Transportation",
-  Other: "Other",
-};
-
-export const ProtectiveFactors: Record<
-  Case["protectiveFactors"][number],
-  string
-> = {
-  NoPriorCriminalConvictions: "No prior criminal convictions",
-  NoHistoryOfViolentBehavior: "No history of violent behavior",
-  NoSubstanceAbuseIssues: "No substance abuse issues",
-  NoDiagnosisOfAMentalIllness: "No diagnosis of a mental illness",
-  HistoryOfSuccessUnderSupervision: "History of success under supervision",
-  LengthyPeriodsOfSobrietyAfterCompletingTreatment:
-    "Lengthy periods of sobriety after completing treatment",
-  StableHousing: "Stable housing",
-  SteadyEmployment: "Steady employment",
-  FinancialStability: "Financial stability",
-  HighSchoolDiplomaOrHigherEducation: "High school diploma or higher education",
-  StrongSocialSupportNetwork: "Strong social support network",
-  CloseFamilyTies: "Close family ties",
-  ActivelyParticipatingInTreatmentPrograms:
-    "Actively participating in treatment programs",
-  EnrolledInEducationalOrVocationalTraining:
-    "Enrolled in educational or vocational training",
-  ActiveInvolvementInCommunityActivities:
-    "Active involvement in community activities",
-  Other: "Other",
-};
+export { NeedsToBeAddressed, ProtectiveFactors } from "../constants";
 
 export const GenderToDisplayName: Record<Client["gender"], string> = {
   MALE: "Male",

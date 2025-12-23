@@ -121,7 +121,7 @@ export const sarRouter = router({
         // Even though our structure IS valid JSON, TypeScript doesn't automatically know
         // that `SARMetadata` is compatible with `InputJsonValue`.
         // The cast tells TypeScript: "This specific structure is valid JSON that Prisma can store."
-        // The Zod schema (`sarMetadataSchema`) still validates the structure at runtime.
+        // The Zod schema (`SARMetadataSchema`) still validates the structure at runtime.
         if (attributes.metadata !== undefined) {
           updateData.metadata = attributes.metadata as Prisma.InputJsonValue;
         }

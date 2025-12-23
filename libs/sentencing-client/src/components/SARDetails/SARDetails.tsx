@@ -23,6 +23,7 @@ import { SentencingStore } from "../../datastores/SentencingStore";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { sarUrl } from "../../utils/routing";
 import { CaseInformation } from "../CaseInformation/CaseInformation";
+import { KeyConsiderations } from "../KeyConsiderations";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { TopProgressBar } from "../shared/TopProgressBar";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
@@ -69,6 +70,7 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
         <SARSideNavigation
           currentSection={currentSection}
           onSectionChange={setCurrentSection}
+          presenter={presenter}
         />
 
         <Styled.MainContent>
@@ -76,12 +78,17 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
             <CaseInformation presenter={presenter} />
           )}
 
-          {currentSection !== SARSection.CASE_INFORMATION && (
-            <>
-              <h2>{currentSection}</h2>
-              <p>Content for {currentSection} goes here...</p>
-            </>
+          {currentSection === SARSection.KEY_CONSIDERATIONS && (
+            <KeyConsiderations presenter={presenter} />
           )}
+
+          {currentSection !== SARSection.CASE_INFORMATION &&
+            currentSection !== SARSection.KEY_CONSIDERATIONS && (
+              <>
+                <h2>{currentSection}</h2>
+                <p>Content for {currentSection} goes here...</p>
+              </>
+            )}
         </Styled.MainContent>
       </Styled.ContentLayout>
     </Styled.PageContainer>

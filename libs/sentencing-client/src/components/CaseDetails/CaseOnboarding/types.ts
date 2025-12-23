@@ -32,7 +32,7 @@ export type CaseOnboardingProps = {
   lastTopic?: Case["currentOnboardingTopic"];
   saveAttributes: (
     attributes?: MutableCaseAttributes,
-    options?: { showToast: boolean },
+    options?: { showToast?: boolean },
   ) => void;
   navigateToDashboard: () => void;
   analytics: {

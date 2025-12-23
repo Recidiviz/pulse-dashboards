@@ -42,7 +42,7 @@ export const AutosaveMessage = styled.div`
 export const SideNavigationContainer = styled.div`
   position: sticky;
   top: 1rem; /* Account for progress bar height */
-  width: 15.5rem;
+  width: 16 rem;
   height: fit-content;
   max-height: calc(100vh - 1rem); /* Subtract progress bar height */
   gap: 1rem;
@@ -51,23 +51,24 @@ export const SideNavigationContainer = styled.div`
   border-radius: 0.625rem;
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
   overflow: hidden;
+
 `;
 
 export const NavigationList = styled.nav`
-  flex: 1;
-  padding: 16px 0;
-  overflow-y: auto;
+  padding: 2rem 1.5rem 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  flex-direction: column;
+  gap: 1rem
 `;
 
 export const NavigationItem = styled.button<{ isActive: boolean }>`
   width: 100%;
-  padding: 12px 24px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items:left;
   background: transparent;
   border: none;
-  cursor: pointer;
   transition: all 0.2s ease;
   font-family: "Public Sans";
   font-size: 1.125rem;
@@ -90,6 +91,21 @@ export const Arrow = styled.span`
   margin-left: 8px;
   display: flex;
   align-items: center;
+`;
+
+export const StatusIconWrapper = styled.span`
+  margin-right: 8px;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  min-width: 16px;
+  height: 16px;
+
+  /* Only take up space when there's content */
+  &:empty {
+    margin-right: 0;
+    min-width: 0;
+  }
 `;
 
 export const ButtonContainer = styled.div`

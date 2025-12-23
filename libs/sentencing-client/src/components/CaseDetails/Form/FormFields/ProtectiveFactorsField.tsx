@@ -16,8 +16,9 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { ChangeEvent } from "react";
 
+import { NOT_SURE_YET_OPTION, OTHER_OPTION } from "../../../constants";
+import { MultiSelectRadioInput } from "../../../shared/MultiSelectRadioInput";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import {
@@ -26,9 +27,6 @@ import {
   ProtectiveFactors,
 } from "../../constants";
 import { PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT } from "../../Recommendations/constants";
-import { NOT_SURE_YET_OPTION, OTHER_OPTION } from "../constants";
-import { MultiSelectRadioInput } from "../Elements/MultiSelectRadioInput";
-import { TextArea } from "../Elements/TextArea";
 import { form } from "../FormStore";
 import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
@@ -54,10 +52,6 @@ function ProtectiveFactorsField({ isRequired }: FormFieldProps) {
     ),
     initialOtherInputValue: caseAttributes.otherProtectiveFactor ?? "",
   });
-
-  const showOtherTextField = multiInputValues?.includes(
-    ProtectiveFactors[OTHER_OPTION],
-  );
 
   const updateSelections = (option: string | null) => {
     if (option === null) return;
@@ -96,9 +90,9 @@ function ProtectiveFactorsField({ isRequired }: FormFieldProps) {
     form.updateForm(PROTECTIVE_FACTORS_KEY, updatedValue);
   };
 
-  const updateOtherTextArea = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setOtherInputValue(e.target.value);
-    form.updateForm(OTHER_PROTECTIVE_FACTORS_KEY, e.target.value, isRequired);
+  const updateOtherTextArea = (value: string) => {
+    setOtherInputValue(value);
+    form.updateForm(OTHER_PROTECTIVE_FACTORS_KEY, value, isRequired);
   };
 
   return (
@@ -113,16 +107,11 @@ function ProtectiveFactorsField({ isRequired }: FormFieldProps) {
         options={protectiveFactorsOptions}
         selections={multiInputValues ?? []}
         updateSelections={updateSelections}
+        helperText={`Select up to ${PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT} that apply for ${firstName ?? "the defendant"}.`}
+        otherValue={otherInputValue}
+        onOtherChange={updateOtherTextArea}
+        otherPlaceholder="Please specify other protective factor"
       />
-
-      {showOtherTextField && (
-        <TextArea
-          id="protective-factors-other"
-          placeholder="Please specify other protective factor"
-          value={otherInputValue}
-          onChange={updateOtherTextArea}
-        />
-      )}
     </>
   );
 }

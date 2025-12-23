@@ -22,7 +22,6 @@ import {
   LevelOfEducation,
   MethodOfUse,
   ProtectiveFactor,
-  SectionStatus,
   SubstanceType,
 } from "~@sentencing/prisma/client";
 import {
@@ -42,30 +41,17 @@ export const educationLevelEnum = z.nativeEnum(LevelOfEducation);
 export const substanceEnum = z.nativeEnum(SubstanceType);
 export const frequencyOfUseEnum = z.nativeEnum(FrequencyOfUse);
 export const methodOfUseEnum = z.nativeEnum(MethodOfUse);
-export const sectionStatusEnum = z.nativeEnum(SectionStatus);
 
-export const sarMetadataSchema = z.object({
+export const SARMetadataSchema = z.object({
   sections: z.object({
-    caseInformation: z.object({
-      status: z.enum([SectionStatus.Incomplete, SectionStatus.Complete]),
-      missingRequiredFields: z.array(z.string()).optional(),
+    keyConsiderations: z.object({
+      areasOfNeed: z.object({ skipped: z.boolean() }),
+      mitigatingFactors: z.object({ skipped: z.boolean() }),
     }),
-    needsAndMitigation: z.object({
-      status: sectionStatusEnum,
-      missingFields: z.array(z.string()).optional(),
-    }),
-    defendantVersion: z.object({
-      status: sectionStatusEnum,
-    }),
-    victimImpactStatement: z.object({
-      status: sectionStatusEnum,
-    }),
-    offenderAssessment: z.object({
-      status: z.enum([SectionStatus.Incomplete, SectionStatus.Complete]),
-      missingFields: z.array(z.string()).optional(),
-    }),
+    defendantVersion: z.object({ skipped: z.boolean() }),
+    victimImpactStatement: z.object({ skipped: z.boolean() }),
+    recommendation: z.object({ skipped: z.boolean() }),
   }),
-  lastUpdated: z.string().datetime().optional(),
   version: z.literal("1.0").optional(),
 });
 export const updateSARSchema = z.object({
@@ -121,6 +107,6 @@ export const updateSARSchema = z.object({
     responsivityAndBarriersSummary: z.string().nullable().optional(),
     communityStrategyRecommendation: z.string().nullable().optional(),
     institutionalStrategyRecommendation: z.string().nullable().optional(),
-    metadata: sarMetadataSchema.optional(),
+    metadata: SARMetadataSchema.optional(),
   }) satisfies z.ZodType<UpsertSARInput>,
 });

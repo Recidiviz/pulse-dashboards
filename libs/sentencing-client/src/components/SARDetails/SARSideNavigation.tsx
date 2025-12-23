@@ -18,19 +18,23 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { ArrowIcon } from "./ArrowIcon";
 import { SAR_REPORT_SECTIONS, SARSectionName } from "./constants";
 import * as Styled from "./SARSideNavigation.styles";
+import { StatusIndicator } from "./StatusIndicator";
 
 type SARSideNavigationProps = {
   currentSection: SARSectionName;
   onSectionChange: (section: SARSectionName) => void;
+  presenter: SARDetailsPresenter;
 };
 
 export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
-  function SARSideNavigation({ currentSection, onSectionChange }) {
+  function SARSideNavigation({ currentSection, onSectionChange, presenter }) {
     const currentIndex = SAR_REPORT_SECTIONS.indexOf(currentSection);
     const totalSections = SAR_REPORT_SECTIONS.length;
+    const sectionStatuses = presenter.sectionStatuses;
 
     const handlePrevious = () => {
       if (currentIndex > 0) {
@@ -53,6 +57,7 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
           <Styled.NavigationList>
             {SAR_REPORT_SECTIONS.map((section) => {
               const isActive = section === currentSection;
+              const status = sectionStatuses[section];
               return (
                 <Styled.NavigationItem
                   key={section}
@@ -60,6 +65,9 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
                   onClick={() => onSectionChange(section)}
                   aria-current={isActive ? "page" : undefined}
                 >
+                  <Styled.StatusIconWrapper>
+                    <StatusIndicator status={status} />
+                  </Styled.StatusIconWrapper>
                   {section}
                   {isActive && (
                     <Styled.Arrow>

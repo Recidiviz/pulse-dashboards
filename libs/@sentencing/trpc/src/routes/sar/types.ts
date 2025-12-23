@@ -18,9 +18,9 @@
 import { z } from "zod";
 
 import type { Prisma } from "~@sentencing/prisma/client";
-import { sarMetadataSchema } from "~@sentencing/trpc/routes/sar/sar.schema";
+import { SARMetadataSchema } from "~@sentencing/trpc/routes/sar/sar.schema";
 
-export type SARMetadata = z.infer<typeof sarMetadataSchema>;
+export type SARMetadata = z.infer<typeof SARMetadataSchema>;
 
 export type GetSARInput = Pick<
   Prisma.SentencingAssessmentReportWhereUniqueInput,

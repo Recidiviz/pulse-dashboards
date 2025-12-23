@@ -16,9 +16,10 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { ChangeEvent } from "react";
 
 import { formatPossessiveName } from "../../../../utils/utils";
+import { NOT_SURE_YET_OPTION, OTHER_OPTION } from "../../../constants";
+import { MultiSelectRadioInput } from "../../../shared/MultiSelectRadioInput";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import {
@@ -27,9 +28,6 @@ import {
   OTHER_NEED_TO_BE_ADDRESSED_KEY,
 } from "../../constants";
 import { PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT } from "../../Recommendations/constants";
-import { NOT_SURE_YET_OPTION, OTHER_OPTION } from "../constants";
-import { MultiSelectRadioInput } from "../Elements/MultiSelectRadioInput";
-import { TextArea } from "../Elements/TextArea";
 import { form } from "../FormStore";
 import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
@@ -57,10 +55,6 @@ function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
     ),
     initialOtherInputValue: caseAttributes.otherNeedToBeAddressed ?? "",
   });
-
-  const showOtherTextField = multiInputValues?.includes(
-    NeedsToBeAddressed[OTHER_OPTION],
-  );
 
   const updateSelections = (option: string | null) => {
     if (option === null) return;
@@ -99,9 +93,9 @@ function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
     form.updateForm(NEEDS_TO_BE_ADDRESSED_KEY, updatedValue);
   };
 
-  const updateOtherTextArea = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setOtherInputValue(e.target.value);
-    form.updateForm(OTHER_NEED_TO_BE_ADDRESSED_KEY, e.target.value, isRequired);
+  const updateOtherTextArea = (value: string) => {
+    setOtherInputValue(value);
+    form.updateForm(OTHER_NEED_TO_BE_ADDRESSED_KEY, value, isRequired);
   };
 
   return (
@@ -116,16 +110,11 @@ function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
         options={needsToBeAddressedOptions}
         selections={multiInputValues ?? []}
         updateSelections={updateSelections}
+        helperText={`Select up to ${PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT} that apply for ${caseAttributes.client?.firstName ?? "the defendant"}.`}
+        otherValue={otherInputValue}
+        onOtherChange={updateOtherTextArea}
+        otherPlaceholder="Please specify other need"
       />
-
-      {showOtherTextField && (
-        <TextArea
-          id="needs-other"
-          placeholder="Please specify other need"
-          value={otherInputValue}
-          onChange={updateOtherTextArea}
-        />
-      )}
     </>
   );
 }
