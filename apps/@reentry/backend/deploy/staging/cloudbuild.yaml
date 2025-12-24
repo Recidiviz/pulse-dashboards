@@ -41,7 +41,7 @@ steps:
       - "recidiviz-rnd-planner:us-central1:recidiviz-staging"
       - "--service-account"
       - "reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com"
-      - "--set-secrets=RECIDIVIZ_LANGCHAIN_API_KEY=RECIDIVIZ_LANGCHAIN_API_KEY_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_LANGCHAIN_API_KEY=RECIDIVIZ_LANGCHAIN_API_KEY:latest"
       - "--set-secrets=RECIDIVIZ_OPENAI_API_KEY=RECIDIVIZ_OPENAI_API_KEY_STAGING:latest"
       - "--set-secrets=RECIDIVIZ_POSTGRES_PASSWORD=RECIDIVIZ_POSTGRES_PASSWORD_STAGING:latest"
       - "--set-secrets=RECIDIVIZ_RESOURCES_API_KEY=RECIDIVIZ_RESOURCES_API_KEY_STAGING:latest"
@@ -66,9 +66,9 @@ steps:
         RECIDIVIZ_POSTGRES_SERVER=/cloudsql/recidiviz-rnd-planner:us-central1:recidiviz-staging,
         RECIDIVIZ_POSTGRES_PORT=5432,
         RECIDIVIZ_POSTGRES_DB=recidiviz,
-        RECIDIVIZ_LANGCHAIN_TRACING_V2=false,
+        RECIDIVIZ_LANGCHAIN_TRACING_V2=true,
         RECIDIVIZ_LANGCHAIN_ENDPOINT=https://api.smith.langchain.com,
-        RECIDIVIZ_LANGCHAIN_PROJECT=dev-recidiviz,
+        RECIDIVIZ_LANGCHAIN_PROJECT=staging-recidiviz,
         RECIDIVIZ_EXTERNAL_RESOURCES_API_URL=https://resource-api-prod-773019812766.us-central1.run.app,
         RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE=true,
         RECIDIVIZ_AUTH0_AUDIENCE=https://api-dev.recidiviz.org,
@@ -107,7 +107,7 @@ steps:
       - "--no-cpu-throttling"
       - "--service-account"
       - "reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com"
-      - "--set-secrets=RECIDIVIZ_LANGCHAIN_API_KEY=RECIDIVIZ_LANGCHAIN_API_KEY_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_LANGCHAIN_API_KEY=RECIDIVIZ_LANGCHAIN_API_KEY:latest"
       - "--set-secrets=RECIDIVIZ_OPENAI_API_KEY=RECIDIVIZ_OPENAI_API_KEY_STAGING:latest"
       - "--set-secrets=RECIDIVIZ_POSTGRES_PASSWORD=RECIDIVIZ_POSTGRES_PASSWORD_STAGING:latest"
       - "--set-secrets=RECIDIVIZ_AUTH0_CLIENT_ID=RECIDIVIZ_AUTH0_CLIENT_ID_STAGING:latest"
@@ -125,9 +125,9 @@ steps:
         RECIDIVIZ_POSTGRES_SERVER=/cloudsql/recidiviz-rnd-planner:us-central1:recidiviz-staging,
         RECIDIVIZ_POSTGRES_PORT=5432,
         RECIDIVIZ_POSTGRES_DB=recidiviz,
-        RECIDIVIZ_LANGCHAIN_TRACING_V2=false,
+        RECIDIVIZ_LANGCHAIN_TRACING_V2=true,
         RECIDIVIZ_LANGCHAIN_ENDPOINT=https://api.smith.langchain.com,
-        RECIDIVIZ_LANGCHAIN_PROJECT=dev-recidiviz,
+        RECIDIVIZ_LANGCHAIN_PROJECT=staging-recidiviz,
         RECIDIVIZ_EXTERNAL_RESOURCES_API_URL=https://resource-api-prod-773019812766.us-central1.run.app,
         RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE=true,
         RECIDIVIZ_AUTH0_AUDIENCE=https://api-dev.recidiviz.org,

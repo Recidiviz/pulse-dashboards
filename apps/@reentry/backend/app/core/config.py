@@ -159,7 +159,6 @@ def create_model_from_config(provider: str, name: str, version: str | None):
 
 if (
     settings.LANGCHAIN_API_KEY is None
-    or settings.LANGCHAIN_API_KEY is None
     or settings.LANGCHAIN_ENDPOINT is None
     or settings.LANGCHAIN_PROJECT is None
     or not settings.LANGCHAIN_TRACING_V2

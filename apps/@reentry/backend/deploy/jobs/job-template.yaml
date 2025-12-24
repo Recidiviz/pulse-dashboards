@@ -68,7 +68,7 @@ spec:
                 - name: RECIDIVIZ_LANGCHAIN_API_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: RECIDIVIZ_LANGCHAIN_API_KEY_${ENVIRONMENT_UPPER}
+                      name: RECIDIVIZ_LANGCHAIN_API_KEY
                       key: "latest"
                 - name: RECIDIVIZ_OPENAI_API_KEY
                   valueFrom:
