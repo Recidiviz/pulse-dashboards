@@ -177,7 +177,7 @@ const IntakeSummaryPage = () => {
     const intakeSummaryData = {
       html: element.innerHTML,
       css: [pdfCSS],
-      options: {} as Record<string, never>,
+      options: {} as Record<string, unknown>,
     };
     const fileName = `${clientFullName}_intake_summary.pdf`;
     let accessToken = getAccessToken();

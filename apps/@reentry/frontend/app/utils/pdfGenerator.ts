@@ -191,7 +191,7 @@ export function extractCompleteCSS(
  * Downloads the generated PDF file and triggers success/error callbacks.
  */
 export async function generatePDF(
-  printData: { html: string; css: string[]; options: Record<string, never> },
+  printData: { html: string; css: string[]; options: Record<string, unknown> },
   fileName: string,
   accessToken :string,
   onSuccess: () => void,

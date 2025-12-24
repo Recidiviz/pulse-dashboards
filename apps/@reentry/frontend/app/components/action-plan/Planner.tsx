@@ -165,13 +165,13 @@ const Planner = ({
       planId: planId,
     });
     setIsDownloading(true);
-    
+
     const element = document.getElementById("contentToDownload");
     if (!element) {
       setIsDownloading(false);
       return;
     }
-    
+
     convertButtonsToSpansPreserveText(element);
     const extractedCSSResult = extractCompleteCSS(element, {
       includeChildren: true,
@@ -191,7 +191,7 @@ const Planner = ({
     const actionPlan = {
       html: element.innerHTML,
       css: [pdfCSS],
-      options: {} as Record<string, never>,
+      options: {} as Record<string, unknown>,
     };
     let accessToken = getAccessToken();
     if (!accessToken) {
