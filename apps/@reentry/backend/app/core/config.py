@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 
 from langchain.callbacks.tracers import LangChainTracer
@@ -10,7 +11,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=Path(__file__).parent.parent.parent / ".env",
         env_prefix="RECIDIVIZ_",
         extra="ignore",
     )
