@@ -42,6 +42,12 @@ import { SearchType, TaskFilterValue } from "../../core/models/types";
 import { MilestonesTab } from "../../core/WorkflowsMilestones/MilestonesCaseloadView";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { DeclineReason } from "../../FirestoreStore";
+import {
+  extractUTMParams,
+  getStoredUTMParams,
+  storeUTMParams,
+  type UTMParams,
+} from "../../utils/utmParams";
 import { OpportunityStatus, OpportunityTab } from "../../WorkflowsStore";
 import {
   SupervisionNeedType,
@@ -274,6 +280,8 @@ export default class AnalyticsStore {
 
   sessionId = uuidv4();
 
+  utmParams: UTMParams = {};
+
   constructor({
     rootStore,
     isTestMode,
@@ -290,6 +298,18 @@ export default class AnalyticsStore {
       },
       { disable: isTestMode },
     );
+
+    // Extract UTM parameters from current URL (if present)
+    const urlParams = extractUTMParams();
+
+    // If URL has UTM params, use them and store them (for Auth0 redirect flow)
+    if (Object.keys(urlParams).length > 0) {
+      this.utmParams = urlParams;
+      storeUTMParams(urlParams);
+    } else {
+      // Otherwise, fall back to sessionStorage (for post-Auth0 callback)
+      this.utmParams = getStoredUTMParams();
+    }
   }
 
   get shouldLogAnalyticsEvent(): boolean {
@@ -314,7 +334,10 @@ export default class AnalyticsStore {
 
   identify(userId: string): void {
     const { isImpersonating } = this.rootStore;
-    const traits = { sessionId: this.sessionId };
+    const traits = {
+      sessionId: this.sessionId,
+      ...this.utmParams,
+    };
 
     const log = `${
       isImpersonating ? "[Impersonation]" : ""
@@ -351,14 +374,23 @@ export default class AnalyticsStore {
   page(pagePath: string) {
     const { isImpersonating } = this.rootStore;
 
+    const properties = {
+      ...this.utmParams,
+    };
+
     const log = `${
       isImpersonating ? "[Impersonation]" : ""
-    }[Analytics] Tracking pageview: ${pagePath}`;
+    }[Analytics] Tracking pageview: ${pagePath}${
+      Object.keys(properties).length > 0
+        ? `, with properties: ${JSON.stringify(properties)}`
+        : ""
+    }`;
 
     // eslint-disable-next-line
     if (this.shouldLogAnalyticsEvent) console.log(log);
     if (this.shouldSkipWriteToSegment) return;
-    this.segment.page(pagePath);
+
+    this.segment.page(pagePath, properties);
   }
 
   trackInsightsSupervisorsListPageViewed(

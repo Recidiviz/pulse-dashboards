@@ -265,7 +265,7 @@ describe("AnalyticsStore", () => {
     it("does call analytics for pageview", () => {
       const page = vi.spyOn(analyticsStore.segment, "page");
       analyticsStore.page("/foo");
-      expect(page).toHaveBeenCalledWith("/foo");
+      expect(page).toHaveBeenCalledWith("/foo", {});
     });
   });
 
@@ -294,7 +294,7 @@ describe("AnalyticsStore", () => {
     it("does call analytics for pageview", () => {
       const page = vi.spyOn(analyticsStore.segment, "page");
       analyticsStore.page("/foo");
-      expect(page).toHaveBeenCalledWith("/foo");
+      expect(page).toHaveBeenCalledWith("/foo", {});
     });
   });
 });
