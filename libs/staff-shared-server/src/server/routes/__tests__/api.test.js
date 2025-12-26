@@ -20,6 +20,7 @@ import { GoogleAuth } from "google-auth-library";
 import { clearCache } from "../../core/cacheManager";
 import { fetchAndFilterNewRevocationFile } from "../../core/fetchAndFilterNewRevocationFile";
 import { fetchMetrics } from "../../core/fetchMetrics";
+import { downloadUserData } from "../../core/userDataDownload";
 import {
   createSubsetFilters,
   createUserRestrictionsFilters,
@@ -33,6 +34,7 @@ import {
   refreshCache,
   responder,
   sanitizeUserHash,
+  userDataDownload,
 } from "../api";
 
 const mockMetricFiles = {
@@ -74,6 +76,8 @@ vi.mock("../../filters/filterHelpers");
 vi.mock("../../utils/cacheKeys");
 
 vi.mock("google-auth-library");
+
+vi.mock("../../core/userDataDownload");
 
 beforeEach(() => {
   // Reduce noise in the test
@@ -385,6 +389,57 @@ describe("API GET tests", () => {
     });
     it("sanitizes bad hashes", () => {
       expect(sanitizeUserHash("/someHash/=")).toBe("_someHash/=");
+    });
+  });
+
+  describe("userDataDownload", () => {
+    beforeEach(async () => {
+      vi.resetModules();
+    });
+    const stateCode = "US_TX";
+    const appMetadata = {
+      state_code: stateCode,
+    };
+
+    const request = {
+      user: {
+        [`${process.env.METADATA_NAMESPACE}app_metadata`]: appMetadata,
+      },
+      params: { stateCode: stateCode },
+      query: { filename: "test_file.csv" },
+    };
+
+    it("userDataDownload successfully responds with data", async () => {
+      const fakeBuffer = Buffer.from([1, 2, 3, 4, 5]);
+      vi.mocked(downloadUserData).mockResolvedValue(fakeBuffer);
+      const send = vi.fn();
+      const status = vi.fn();
+      const set = vi.fn();
+      const res = { send, status, set };
+
+      await userDataDownload(request, res);
+
+      expect(res.send).toHaveBeenCalledWith(fakeBuffer);
+    });
+
+    it("userDataDownload responds with an error", async () => {
+      const error = new Error("Error");
+      error.status = 500;
+      const send = vi.fn();
+      const status = vi.fn().mockImplementation(() => {
+        return { send };
+      });
+      const set = vi.fn();
+      const res = { send, status, set };
+
+      vi.mocked(downloadUserData).mockRejectedValue(error);
+
+      await userDataDownload(request, res);
+
+      expect(res.send).toHaveBeenCalledWith({
+        status: error.status,
+        errors: [error.message],
+      });
     });
   });
 });

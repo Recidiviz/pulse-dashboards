@@ -95,6 +95,6 @@ export const newRevocationsParamValidations = [
     ),
 ];
 
-export const workflowsTemplatesParamValidations = [
+export const filenameNotEmptyValidation = [
   query("filename").notEmpty(),
 ];

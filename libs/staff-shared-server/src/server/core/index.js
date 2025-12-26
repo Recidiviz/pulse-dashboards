@@ -33,3 +33,4 @@ export { fetchMetricsFromGCS } from "./fetchMetricsFromGCS";
 export { fetchMetricsFromLocal } from "./fetchMetricsFromLocal";
 export { fetchOfflineUser } from "./fetchOfflineUser";
 export { refreshRedisCache } from "./refreshRedisCache";
+export { downloadUserData } from "./userDataDownload";

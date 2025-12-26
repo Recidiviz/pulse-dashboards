@@ -38,6 +38,7 @@ import {
   fetchOfflineUser,
   refreshRedisCache,
 } from "../core";
+import { downloadUserData } from "../core/userDataDownload";
 import {
   createSubsetFilters,
   createUserRestrictionsFilters,
@@ -142,6 +143,30 @@ export function workflowsTemplates(req, res, next) {
       next(error);
     }
   });
+}
+
+export async function userDataDownload(req, res) {
+  const { stateCode } = req.params;
+  const { filename } = req.query;
+
+  const appMetadata = getAppMetadata(req);
+
+  const allowed =
+    appMetadata.state_code === "recidiviz" ||
+    isOfflineMode() ||
+    appMetadata.state_code === "US_TX";
+
+  if (!allowed) {
+    respondWithForbidden(res);
+    return;
+  }
+
+  try {
+    const downloadedUserData = await downloadUserData(stateCode, filename);
+    res.send(downloadedUserData);
+  } catch (e) {
+    responder(res)(e);
+  }
 }
 
 export function newRevocations(req, res) {

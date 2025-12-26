@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { downloadZipFile } from "../core/Paperwork/utils";
 import UserStore from "../RootStore/UserStore";
 import {fetchHelper} from "./utils";
 
 
-export async function fetchWorkflowsTemplates(
+export async function downloadTexasUserData(
   stateCode: string,
-  templateName: string,
   getTokenSilently: UserStore["getTokenSilently"],
-): Promise<ArrayBuffer> {
-  const url = `${import.meta.env.VITE_API_URL}/api/${stateCode}/workflows/templates?filename=${templateName}`;
+) {
+  const fileName = "us_tx_eligible_clients_for_user_download.csv";
+  const url = `${import.meta.env.VITE_API_URL}/api/US_${stateCode}/workflows/dataDownload?filename=${fileName}`;
 
-  return fetchHelper(
+  const dataDownload = await fetchHelper(
     getTokenSilently,
     url,
-    "Fetching Workflows Template from API failed.\nStatus:"
-  )
+    "Fetching Workflows Data Download from API failed.\nStatus:",
+  );
+
+  downloadZipFile("TDCJ Parole ARS ERS Eligible Clients.zip", [
+    {
+      filename: "TDCJ Parole ARS ERS Eligible Clients.csv",
+      fileContents: dataDownload,
+    },
+  ]);
 }

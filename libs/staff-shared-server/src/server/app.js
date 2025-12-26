@@ -34,8 +34,8 @@ import {
 } from "../shared-configs/authConfigs";
 import * as api from "./routes/api";
 import {
+  filenameNotEmptyValidation,
   newRevocationsParamValidations,
-  workflowsTemplatesParamValidations,
 } from "./routes/paramsValidation";
 import { validateStateCode } from "./utils/validateStateCode";
 import { getFirebaseToken } from "./workflows/firebaseToken";
@@ -206,8 +206,13 @@ app.post("/api/generateFileLink", upload.single("zip"), api.generateFileLink);
 app.get("/file/:name", api.upload);
 app.get(
   `${stateApiBaseRoute}workflows/templates`,
-  workflowsTemplatesParamValidations,
+  filenameNotEmptyValidation,
   api.workflowsTemplates,
+);
+app.get(
+  `${stateApiBaseRoute}workflows/dataDownload`,
+  filenameNotEmptyValidation,
+  api.userDataDownload,
 );
 
 // An App Engine-specific API for handling warmup requests on new instance initialization

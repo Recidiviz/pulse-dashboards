@@ -140,7 +140,6 @@ const SupervisorsList = observer(function SupervisorsList({
       </div>
     ),
   );
-
   return (
     <Wrapper isLaptop={isLaptop} isTablet={isTablet}>
       <Title isMobile={isMobile}>{pageTitle}</Title>

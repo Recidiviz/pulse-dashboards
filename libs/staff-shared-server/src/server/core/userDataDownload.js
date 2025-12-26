@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import UserStore from "../RootStore/UserStore";
-import {fetchHelper} from "./utils";
+import * as objectStorage from "./objectStorage";
 
+const userDataDownloadBucketName = process.env.USER_DATA_DOWNLOAD_BUCKET;
 
-export async function fetchWorkflowsTemplates(
-  stateCode: string,
-  templateName: string,
-  getTokenSilently: UserStore["getTokenSilently"],
-): Promise<ArrayBuffer> {
-  const url = `${import.meta.env.VITE_API_URL}/api/${stateCode}/workflows/templates?filename=${templateName}`;
+export async function downloadUserData(stateCode, fileName) {
+  try {
+    const downloadResponse = await objectStorage.downloadFile(
+      userDataDownloadBucketName,
+      stateCode,
+      fileName,
+    );
 
-  return fetchHelper(
-    getTokenSilently,
-    url,
-    "Fetching Workflows Template from API failed.\nStatus:"
-  )
+    // Need to index 0 into downloadResponse to get the contents of the file
+    // https://googleapis.dev/nodejs/storage/latest/global.html#DownloadResponse
+    return downloadResponse[0];
+  } catch (error) {
+    console.error(`${stateCode} - ${fileName}`, error);
+    return Promise.reject(error);
+  }
 }
