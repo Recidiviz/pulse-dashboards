@@ -35,9 +35,9 @@ export const KeyConsiderations: React.FC<KeyConsiderationsProps> = observer(
       otherNeedToBeAddressed,
       mitigatingFactors,
       otherMitigatingFactor,
-    } = presenter.sarData ?? {};
+    } = presenter.SARData ?? {};
 
-    const firstName = presenter.sarData?.client?.firstName ?? "the defendant";
+    const firstName = presenter.SARData?.client?.firstName ?? "the defendant";
 
     // Options from shared constants - display values for UI
     const needsOptions = Object.values(NeedsToBeAddressed);

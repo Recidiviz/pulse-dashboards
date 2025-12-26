@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { debounce } from "lodash";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 
 import { FormCharge } from "../../datastores/types";
+import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
 import { SAR_AUTOSAVE_DELAY } from "../SARDetails/constants";
 import { EditableChargeField } from "./constants";
 import { FormField } from "./FormField";
@@ -46,14 +46,12 @@ interface OffenseCardProps {
 
 export const OffenseCard: React.FC<OffenseCardProps> = observer(
   function OffenseCard({ charge, onUpdate, showTitle }) {
-    // Create stable debounced save function
-    const debouncedSaveRef = useRef(
-      debounce(
-        (chargeId: string, fieldId: EditableChargeField, value: string) => {
-          onUpdate(chargeId, fieldId, value);
-        },
-        SAR_AUTOSAVE_DELAY,
-      ),
+    // Create debounced save function
+    const debouncedSave = useDebouncedCallback(
+      (chargeId: string, fieldId: EditableChargeField, value: string) => {
+        onUpdate(chargeId, fieldId, value);
+      },
+      SAR_AUTOSAVE_DELAY,
     );
 
     const handleFieldChange = (fieldId: EditableChargeField, value: string) => {
@@ -61,9 +59,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
       charge[fieldId] = value;
 
       // Trigger debounced save
-      if (debouncedSaveRef.current) {
-        debouncedSaveRef.current(charge.id, fieldId, value);
-      }
+      debouncedSave(charge.id, fieldId, value);
     };
 
     // Format judge name and division
@@ -71,14 +67,6 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
       charge.judgeName && charge.division
         ? `${charge.judgeName} / ${charge.division}`
         : charge.judgeName || charge.division || null;
-
-    // Cleanup on unmount - flush pending saves
-    useEffect(() => {
-      const debouncedFn = debouncedSaveRef.current;
-      return () => {
-        debouncedFn?.flush();
-      };
-    }, []);
 
     return (
       <Styled.CardContainer>

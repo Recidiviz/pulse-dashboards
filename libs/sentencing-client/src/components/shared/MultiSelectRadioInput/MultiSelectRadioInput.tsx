@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { debounce } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
+import { useDebouncedCallback } from "../../../hooks/useDebouncedCallback";
 import CheckIcon from "../../assets/green-check-icon.svg?react";
 import { NeedsIcons } from "../../CaseDetails/components/NeedsIcons/NeedsIcons";
 import { NOT_SURE_YET_OPTION, OTHER_OPTION } from "../../constants";
@@ -69,26 +69,16 @@ export function MultiSelectRadioInput({
     setLocalOtherValue(otherValue ?? "");
   }, [otherValue]);
 
-  // Create stable debounced save function for "Other" text input
-  const debouncedSaveRef = useRef(
-    debounce((value: string) => {
-      if (onOtherChange) {
-        onOtherChange(value);
-      }
-    }, SAR_AUTOSAVE_DELAY),
-  );
-
-  // Cleanup on unmount - flush pending saves
-  useEffect(() => {
-    const debouncedFn = debouncedSaveRef.current;
-    return () => {
-      debouncedFn?.flush();
-    };
-  }, []);
+  // Create debounced save function for "Other" text input
+  const debouncedSave = useDebouncedCallback((value: string) => {
+    if (onOtherChange) {
+      onOtherChange(value);
+    }
+  }, SAR_AUTOSAVE_DELAY);
 
   const handleOtherTextChange = (value: string) => {
     setLocalOtherValue(value);
-    debouncedSaveRef.current(value);
+    debouncedSave(value);
   };
 
   return (

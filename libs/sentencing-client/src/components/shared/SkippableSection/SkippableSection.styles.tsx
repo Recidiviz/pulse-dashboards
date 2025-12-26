@@ -17,54 +17,32 @@
 
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+// Re-export shared skip-related styles
+export {
+  HeaderContainer,
+  SkipCheckbox,
+  SkipContainer,
+  SkipLabel,
+  Title,
+} from "../styles/SkipStyles";
 
-export const Container = styled.div`
+export const Wrapper = styled.div`
   display: flex;
-  width: 50rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  align-self: stretch;
+  position: relative;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+`;
+
+export const ContentContainer = styled.div<{ skipped?: boolean }>`
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 1.5rem;
-  font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.00875rem;
-  font-family: "Public Sans";
-`;
-
-export const CheckboxContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   align-self: stretch;
-`;
-
-export const Checkbox = styled.input`
-  width: 1rem;
-  height: 1rem;
-  accent-color: ${palette.pine4};
-`;
-
-export const CheckboxLabel = styled.span`
-  font-size: 0.875rem;
-  padding-left: 2.5rem;
-`;
-
-export const ClientInfoRow = styled.div`
-  display: flex;
-  gap: 0.375rem;
-  align-self: stretch;
-  font-size: 0.75 rem;
-`;
-
-export const ClientInfoColumn = styled.div`
-  flex: 1;
-  display: flex;
-  padding-left: 2.5rem;
-  flex-direction: column;
-`;
-
-export const SubsectionTitle = styled.div`
-  color: ${palette.pine1};
-  padding-bottom: 1rem;
-  font-size: 1rem;
+  opacity: ${({ skipped }) => (skipped ? 0.5 : 1)};
+  pointer-events: ${({ skipped }) => (skipped ? "none" : "auto")};
 `;

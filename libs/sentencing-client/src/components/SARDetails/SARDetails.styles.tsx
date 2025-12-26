@@ -42,14 +42,15 @@ export const ContentLayout = styled.div`
 
 export const MainContent = styled.div`
   display: flex;
-  width: 50rem;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 1.5rem;
+  width: 50rem;
+  height: fit-content;
   background: ${palette.white};
   border-radius: 0.625rem;
   border: 1px solid ${palette.slate10};
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
   left: 25rem;
   position: sticky;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 `;

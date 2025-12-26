@@ -22,41 +22,14 @@ import { palette } from "~design-system";
 
 import { customPalette } from "../../styles/palette";
 
-export const HeaderContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
-  margin-bottom: 12px;
-  width: 100%;
-`;
-
-export const Title = styled.h3`
-  ${typography.Sans16}
-  color: ${palette.pine1};
-  font-weight: 600;
-  width: 85%;
-  margin: 0;
-`;
-
-export const SkipContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-export const SkipCheckbox = styled.input`
-  width: 1rem;
-  height: 1rem;
-  accent-color: ${palette.pine4};
-  cursor: pointer;
-`;
-
-export const SkipLabel = styled.label`
-  ${typography.Sans14}
-  color: ${palette.slate85};
-  cursor: pointer;
-  padding-top: 0.35rem;
-`;
+// Re-export shared skip-related styles
+export {
+  HeaderContainer,
+  SkipCheckbox,
+  SkipContainer,
+  SkipLabel,
+  Title,
+} from "../styles/SkipStyles";
 
 export const HelperText = styled.div`
   ${typography.Sans14}

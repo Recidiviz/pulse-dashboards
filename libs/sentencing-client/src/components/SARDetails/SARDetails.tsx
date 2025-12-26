@@ -25,7 +25,9 @@ import { sarUrl } from "../../utils/routing";
 import { CaseInformation } from "../CaseInformation/CaseInformation";
 import { KeyConsiderations } from "../KeyConsiderations";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { Recommendation } from "../Recommendation";
 import { TopProgressBar } from "../shared/TopProgressBar";
+import { SkippableTextSection } from "../SkippableTextSection";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 import { SARSection, SARSectionName } from "./constants";
 import * as Styled from "./SARDetails.styles";
@@ -74,21 +76,43 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
         />
 
         <Styled.MainContent>
-          {currentSection === SARSection.CASE_INFORMATION && (
-            <CaseInformation presenter={presenter} />
-          )}
-
-          {currentSection === SARSection.KEY_CONSIDERATIONS && (
-            <KeyConsiderations presenter={presenter} />
-          )}
-
-          {currentSection !== SARSection.CASE_INFORMATION &&
-            currentSection !== SARSection.KEY_CONSIDERATIONS && (
+          {(() => {
+            if (currentSection === SARSection.CASE_INFORMATION) {
+              return <CaseInformation presenter={presenter} />;
+            }
+            if (currentSection === SARSection.KEY_CONSIDERATIONS) {
+              return <KeyConsiderations presenter={presenter} />;
+            }
+            if (currentSection === SARSection.DEFENDANTS_VERSION) {
+              return (
+                <SkippableTextSection
+                  presenter={presenter}
+                  title="Enter Defendant's Version"
+                  fieldName="defendantStatement"
+                  placeholder="Please add the details of the Defendant's version"
+                />
+              );
+            }
+            if (currentSection === SARSection.VICTIM_IMPACT) {
+              return (
+                <SkippableTextSection
+                  presenter={presenter}
+                  title="Enter Victim Impact Statement"
+                  fieldName="victimImpactStatement"
+                  placeholder="Please add the Victim Impact here"
+                />
+              );
+            }
+            if (currentSection === SARSection.RECOMMENDATION) {
+              return <Recommendation presenter={presenter} />;
+            }
+            return (
               <>
                 <h2>{currentSection}</h2>
                 <p>Content for {currentSection} goes here...</p>
               </>
-            )}
+            );
+          })()}
         </Styled.MainContent>
       </Styled.ContentLayout>
     </Styled.PageContainer>

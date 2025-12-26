@@ -43,14 +43,17 @@ type SARMetadataSections = {
     areasOfNeed: { skipped: boolean };
     mitigatingFactors: { skipped: boolean };
   };
-  defendantVersion: {
+  defendantStatement: {
     skipped: boolean;
+    edited?: boolean;
   };
   victimImpactStatement: {
     skipped: boolean;
+    edited?: boolean;
   };
   recommendation: {
     skipped: boolean;
+    edited?: boolean;
   };
 };
 
@@ -62,7 +65,7 @@ type SARMetadata = {
 export class SARDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
 
-  sarData?: SAR;
+  SARData?: SAR;
 
   constructor(
     public readonly sentencingStore: SentencingStore,
@@ -76,7 +79,7 @@ export class SARDetailsPresenter implements Hydratable {
             throw new Error("Failed to load staff details");
         },
         () => {
-          if (this.sarData === undefined)
+          if (this.SARData === undefined)
             throw new Error("Failed to load SAR details");
         },
       ],
@@ -87,7 +90,7 @@ export class SARDetailsPresenter implements Hydratable {
         const data = await flowResult(
           this.sentencingStore.apiClient.getSARDetails(this.sarId),
         );
-        this.sarData = data;
+        this.SARData = data;
       },
     });
   }
@@ -105,45 +108,57 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   get SARAttributes() {
-    if (!this.sarData) return {};
+    if (!this.SARData) return {};
 
     return {
-      client: this.sarData.client,
-      externalId: this.sarData.client?.externalId,
-      age: this.sarData.age,
-      charges: this.sarData.charges,
-      dueDate: this.sarData.dueDate,
+      client: this.SARData.client,
+      externalId: this.SARData.client?.externalId,
+      age: this.SARData.age,
+      charges: this.SARData.charges,
+      dueDate: this.SARData.dueDate,
     };
   }
 
   /** Formatted gender for display */
   get formattedGender(): string | undefined {
-    const gender = this.sarData?.client?.gender;
+    const gender = this.SARData?.client?.gender;
     return gender ? GenderToDisplayName[gender] : undefined;
   }
 
   /** Extract offense names from charges */
   get offenseNames(): string[] {
-    if (!this.sarData?.charges || !Array.isArray(this.sarData.charges)) {
+    if (!this.SARData?.charges || !Array.isArray(this.SARData.charges)) {
       return [];
     }
-    return this.sarData.charges.map((charge) => charge.offense).filter(Boolean);
+    return this.SARData.charges.map((charge) => charge.offense).filter(Boolean);
   }
 
   /** Get charges array - sorted by ID for consistent ordering */
   get charges(): FormCharge[] {
-    if (!this.sarData?.charges) return [];
-    return [...this.sarData.charges].sort((a, b) => a.id.localeCompare(b.id));
+    if (!this.SARData?.charges) return [];
+    return [...this.SARData.charges].sort((a, b) => a.id.localeCompare(b.id));
   }
 
   /** Get client attributes for Case Information section */
   get clientAttributes() {
-    return this.sarData?.client;
+    return this.SARData?.client;
   }
 
   /** Check if defendant declined to participate */
   get defendantDeclinedToParticipate(): boolean {
-    return this.sarData?.defendantDeclinedToParticipate ?? false;
+    return this.SARData?.defendantDeclinedToParticipate ?? false;
+  }
+
+  /**
+   * Helper method to check if a text field is complete
+   * A field is complete if it has content OR the section is skipped
+   */
+  private isTextFieldComplete(
+    fieldValue: string | null | undefined,
+    isSkipped: boolean,
+  ): number {
+    const hasContent = fieldValue && fieldValue.trim() !== "";
+    return hasContent || isSkipped ? 1 : 0;
   }
 
   /**
@@ -178,26 +193,56 @@ export class SARDetailsPresenter implements Hydratable {
       if (fieldId === "needsToBeAddressed") {
         // Count as complete if field has values OR is skipped
         const hasValues =
-          this.sarData?.needsToBeAddressed &&
-          this.sarData.needsToBeAddressed.length > 0;
+          this.SARData?.needsToBeAddressed &&
+          this.SARData.needsToBeAddressed.length > 0;
         if (hasValues || this.needsSkipped) {
           keyConsiderationsCompletedFields++;
         }
       } else if (fieldId === "mitigatingFactors") {
         // Count as complete if field has values OR is skipped
         const hasValues =
-          this.sarData?.mitigatingFactors &&
-          this.sarData.mitigatingFactors.length > 0;
+          this.SARData?.mitigatingFactors &&
+          this.SARData.mitigatingFactors.length > 0;
         if (hasValues || this.factorsSkipped) {
           keyConsiderationsCompletedFields++;
         }
       }
     });
 
-    // Total progress across both sections
-    const totalFields = caseInfoTotalFields + keyConsiderationsTotalFields;
+    // Defendant's Version section
+    const defendantVersionCompleted = this.isTextFieldComplete(
+      this.SARData?.defendantStatement,
+      this.defendantStatementSkipped,
+    );
+
+    // Victim Impact section
+    const victimImpactCompleted = this.isTextFieldComplete(
+      this.SARData?.victimImpactStatement,
+      this.victimImpactStatementSkipped,
+    );
+
+    // Recommendation section (2 fields: community and institutional)
+    // Count both fields OR if section is skipped, count both as complete
+    const recommendationCompleted = this.recommendationSkipped
+      ? 2
+      : this.isTextFieldComplete(
+          this.SARData?.communityStrategyRecommendation,
+          false,
+        ) +
+        this.isTextFieldComplete(
+          this.SARData?.institutionalStrategyRecommendation,
+          false,
+        );
+
+    // Total progress across all sections
+    const totalFields =
+      caseInfoTotalFields + keyConsiderationsTotalFields + 4; // +2 for defendant/victim, +2 for recommendation fields
     const completedFields =
-      caseInfoCompletedFields + keyConsiderationsCompletedFields;
+      caseInfoCompletedFields +
+      keyConsiderationsCompletedFields +
+      defendantVersionCompleted +
+      victimImpactCompleted +
+      recommendationCompleted;
 
     return (completedFields / totalFields) * 100;
   }
@@ -215,12 +260,12 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update defendant declined to participate */
   async updateDefendantDeclined(value: boolean): Promise<void> {
-    if (!this.sarData) return;
+    if (!this.SARData) return;
 
     // Update local state immediately
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.defendantDeclinedToParticipate = value;
+      if (this.SARData) {
+        this.SARData.defendantDeclinedToParticipate = value;
       }
     });
 
@@ -230,14 +275,14 @@ export class SARDetailsPresenter implements Hydratable {
       status: this.calculatedStatus,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
-      this.sarData.id,
+      this.SARData.id,
       updates,
     );
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.status = this.calculatedStatus;
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
       }
     });
   }
@@ -248,10 +293,10 @@ export class SARDetailsPresenter implements Hydratable {
     fieldId: K,
     value: string,
   ): Promise<void> {
-    if (!this.sarData?.charges) return;
+    if (!this.SARData?.charges) return;
 
     // Find the charge in the source data (not the getter)
-    const charge = this.sarData.charges.find((c) => c.id === chargeId) as
+    const charge = this.SARData.charges.find((c) => c.id === chargeId) as
       | FormCharge
       | undefined;
     if (!charge) return;
@@ -267,7 +312,7 @@ export class SARDetailsPresenter implements Hydratable {
     // Persist to backend with updated status
     try {
       const updates: Partial<MutableSARAttributes> = {
-        charges: this.sarData.charges.map((c) => ({
+        charges: this.SARData.charges.map((c) => ({
           id: c.id,
           prosecutingAttorney: c.prosecutingAttorney ?? null,
           defenseAttorney: c.defenseAttorney ?? null,
@@ -280,14 +325,14 @@ export class SARDetailsPresenter implements Hydratable {
         status: this.calculatedStatus,
       };
       await this.sentencingStore.apiClient.updateSARDetails(
-        this.sarData.id,
+        this.SARData.id,
         updates,
       );
 
       // Update local status after successful save
       runInAction(() => {
-        if (this.sarData) {
-          this.sarData.status = this.calculatedStatus;
+        if (this.SARData) {
+          this.SARData.status = this.calculatedStatus;
         }
       });
     } catch (error) {
@@ -302,12 +347,12 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Update needs to be addressed */
   async updateNeedsToBeAddressed(values: string[]): Promise<void> {
-    if (!this.sarData) return;
+    if (!this.SARData) return;
 
     // Update local state immediately
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.needsToBeAddressed = values as SAR["needsToBeAddressed"];
+      if (this.SARData) {
+        this.SARData.needsToBeAddressed = values as SAR["needsToBeAddressed"];
       }
     });
 
@@ -317,25 +362,25 @@ export class SARDetailsPresenter implements Hydratable {
       status: this.calculatedStatus,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
-      this.sarData.id,
+      this.SARData.id,
       updates,
     );
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.status = this.calculatedStatus;
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
       }
     });
   }
 
   /** Update other need to be addressed */
   async updateOtherNeedToBeAddressed(value: string): Promise<void> {
-    if (!this.sarData) return;
+    if (!this.SARData) return;
 
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.otherNeedToBeAddressed = value;
+      if (this.SARData) {
+        this.SARData.otherNeedToBeAddressed = value;
       }
     });
 
@@ -344,25 +389,25 @@ export class SARDetailsPresenter implements Hydratable {
       status: this.calculatedStatus,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
-      this.sarData.id,
+      this.SARData.id,
       updates,
     );
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.status = this.calculatedStatus;
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
       }
     });
   }
 
   /** Update mitigating factors */
   async updateMitigatingFactors(values: string[]): Promise<void> {
-    if (!this.sarData) return;
+    if (!this.SARData) return;
 
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.mitigatingFactors = values as SAR["mitigatingFactors"];
+      if (this.SARData) {
+        this.SARData.mitigatingFactors = values as SAR["mitigatingFactors"];
       }
     });
 
@@ -371,25 +416,25 @@ export class SARDetailsPresenter implements Hydratable {
       status: this.calculatedStatus,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
-      this.sarData.id,
+      this.SARData.id,
       updates,
     );
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.status = this.calculatedStatus;
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
       }
     });
   }
 
   /** Update other mitigating factor */
   async updateOtherMitigatingFactor(value: string): Promise<void> {
-    if (!this.sarData) return;
+    if (!this.SARData) return;
 
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.otherMitigatingFactor = value;
+      if (this.SARData) {
+        this.SARData.otherMitigatingFactor = value;
       }
     });
 
@@ -398,14 +443,140 @@ export class SARDetailsPresenter implements Hydratable {
       status: this.calculatedStatus,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
-      this.sarData.id,
+      this.SARData.id,
       updates,
     );
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.status = this.calculatedStatus;
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
+      }
+    });
+  }
+
+  /**
+   * Generic helper to update a string field in SAR data
+   * Handles local state update, API call, and status recalculation
+   */
+  private async updateStringField(
+    fieldName: "victimImpactStatement" | "defendantStatement" |
+              "communityStrategyRecommendation" | "institutionalStrategyRecommendation",
+    value: string
+  ): Promise<void> {
+    if (!this.SARData) return;
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData[fieldName] = value;
+      }
+    });
+
+    const updates: Partial<MutableSARAttributes> = {
+      [fieldName]: value,
+      metadata: this.metadata as SARMetadata,
+      status: this.calculatedStatus,
+    };
+
+    await this.sentencingStore.apiClient.updateSARDetails(
+      this.SARData.id,
+      updates,
+    );
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
+      }
+    });
+  }
+
+  /** Update victim impact statement */
+  async updateVictimImpactStatement(value: string): Promise<void> {
+    return this.updateStringField("victimImpactStatement", value);
+  }
+
+  /** Update defendant statement */
+  async updateDefendantStatement(value: string): Promise<void> {
+    return this.updateStringField("defendantStatement", value);
+  }
+
+  /** Update community strategy recommendation */
+  async updateCommunityStrategyRecommendation(value: string): Promise<void> {
+    return this.updateStringField("communityStrategyRecommendation", value);
+  }
+
+  /** Update institutional strategy recommendation */
+  async updateInstitutionalStrategyRecommendation(value: string): Promise<void> {
+    return this.updateStringField("institutionalStrategyRecommendation", value);
+  }
+
+  /**
+   * Mark a field as edited in local state immediately (synchronous)
+   * This updates the UI instantly when user is typing
+   * Called by SkippableTextArea on every keystroke (before debounce)
+   * Guards against duplicate work - returns early if already marked
+   */
+  markFieldAsEditedLocally(section: string): void {
+    if (!this.SARData) return;
+
+    const currentMetadata = this.metadata ?? {};
+    const currentSections = currentMetadata.sections;
+
+    // Only update if not already marked as edited (guard against duplicate work)
+    const sectionData = currentSections?.[section as keyof SARMetadataSections];
+    if (
+      sectionData &&
+      typeof sectionData === "object" &&
+      "edited" in sectionData &&
+      sectionData.edited
+    ) {
+      return; // Already marked as edited - no work needed
+    }
+
+    const updatedMetadata: SARMetadata = {
+      ...currentMetadata,
+      version: "1.0",
+      sections: {
+        keyConsiderations:
+          currentSections?.keyConsiderations ?? {
+            areasOfNeed: { skipped: false },
+            mitigatingFactors: { skipped: false },
+          },
+        defendantStatement:
+          section === "defendantStatement"
+            ? {
+                skipped: currentSections?.defendantStatement?.skipped ?? false,
+                edited: true,
+              }
+            : currentSections?.defendantStatement ?? {
+                skipped: false,
+              },
+        victimImpactStatement:
+          section === "victimImpactStatement"
+            ? {
+                skipped:
+                  currentSections?.victimImpactStatement?.skipped ?? false,
+                edited: true,
+              }
+            : currentSections?.victimImpactStatement ?? {
+                skipped: false,
+              },
+        recommendation:
+          section === "recommendation"
+            ? {
+                skipped: currentSections?.recommendation?.skipped ?? false,
+                edited: true,
+              }
+            : currentSections?.recommendation ?? {
+                skipped: false,
+              },
+      },
+    };
+
+    // Update local state immediately (synchronous for instant UI feedback)
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.metadata = updatedMetadata;
       }
     });
   }
@@ -416,11 +587,10 @@ export class SARDetailsPresenter implements Hydratable {
     skipped: boolean,
     subSection?: string | undefined,
   ): Promise<void> {
-    if (!this.sarData) return;
+    if (!this.SARData) return;
 
     // Update metadata with proper structure
-    const currentMetadata =
-      (this.sarData.metadata as Partial<SARMetadata> | null) ?? {};
+    const currentMetadata = this.metadata ?? {};
     const currentSections = currentMetadata.sections;
 
     const updatedMetadata: SARMetadata = {
@@ -442,62 +612,84 @@ export class SARDetailsPresenter implements Hydratable {
                   skipped: false,
                 },
         },
-        defendantVersion: currentSections?.defendantVersion ?? {
-          skipped: false,
-        },
-        victimImpactStatement: currentSections?.victimImpactStatement ?? {
-          skipped: false,
-        },
-        recommendation: currentSections?.recommendation ?? {
-          skipped: false,
-        },
+        defendantStatement:
+          section === "defendantStatement"
+            ? {
+                skipped,
+                edited: currentSections?.defendantStatement?.edited,
+              }
+            : currentSections?.defendantStatement ?? {
+                skipped: false,
+              },
+        victimImpactStatement:
+          section === "victimImpactStatement"
+            ? {
+                skipped,
+                edited: currentSections?.victimImpactStatement?.edited,
+              }
+            : currentSections?.victimImpactStatement ?? {
+                skipped: false,
+              },
+        recommendation:
+          section === "recommendation"
+            ? {
+                skipped,
+                edited: currentSections?.recommendation?.edited,
+              }
+            : currentSections?.recommendation ?? {
+                skipped: false,
+              },
       },
     };
 
     // Update local state immediately for instant UI feedback
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.metadata = updatedMetadata;
+      if (this.SARData) {
+        this.SARData.metadata = updatedMetadata;
       }
     });
 
     // Persist to backend with updated status
-    await this.sentencingStore.apiClient.updateSARDetails(this.sarData.id, {
+    await this.sentencingStore.apiClient.updateSARDetails(this.SARData.id, {
       metadata: updatedMetadata,
       status: this.calculatedStatus,
     } as Partial<MutableSARAttributes>);
 
     // Update local status after successful save
     runInAction(() => {
-      if (this.sarData) {
-        this.sarData.status = this.calculatedStatus;
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
       }
     });
   }
 
   // Computed properties for skip state
   get needsSkipped(): boolean {
-    const metadata = this.sarData?.metadata as
-      | Partial<SARMetadata>
-      | null
-      | undefined;
     return (
-      metadata?.["sections"]?.["keyConsiderations"]?.["areasOfNeed"]?.[
+      this.metadata?.["sections"]?.["keyConsiderations"]?.["areasOfNeed"]?.[
         "skipped"
       ] === true
     );
   }
 
   get factorsSkipped(): boolean {
-    const metadata = this.sarData?.metadata as
-      | Partial<SARMetadata>
-      | null
-      | undefined;
     return (
-      metadata?.["sections"]?.["keyConsiderations"]?.["mitigatingFactors"]?.[
+      this.metadata?.["sections"]?.["keyConsiderations"]?.["mitigatingFactors"]?.[
         "skipped"
       ] === true
     );
+  }
+
+  get victimImpactStatementSkipped(): boolean {
+    return this.isSectionSkipped("victimImpactStatement");
+  }
+
+  get defendantStatementSkipped(): boolean {
+    return this.isSectionSkipped("defendantStatement");
+  }
+
+  get recommendationSkipped(): boolean {
+    return this.isSectionSkipped("recommendation");
   }
 
   /** Get section statuses for navigation indicators */
@@ -505,8 +697,74 @@ export class SARDetailsPresenter implements Hydratable {
     return {
       [SARSection.CASE_INFORMATION]: this.getCaseInfoStatus(),
       [SARSection.KEY_CONSIDERATIONS]: this.getKeyConsiderationsStatus(),
+      [SARSection.DEFENDANTS_VERSION]: this.getTextFieldStatus(
+        "defendantStatement",
+      ),
+      [SARSection.VICTIM_IMPACT]: this.getTextFieldStatus(
+        "victimImpactStatement",
+      ),
+      [SARSection.RECOMMENDATION]: this.getRecommendationStatus(),
       // Future sections will be added here
     };
+  }
+
+  /** Private getter for metadata with proper typing */
+  private get metadata(): Partial<SARMetadata> | null | undefined {
+    return this.SARData?.metadata as Partial<SARMetadata> | null | undefined;
+  }
+
+  /** Helper: Check if a section/subsection is skipped */
+  private isSectionSkipped(
+    section: string,
+    subSection?: string,
+  ): boolean {
+    const metadata = this.metadata;
+
+    if (!metadata?.sections) return false;
+
+    // Handle keyConsiderations specially since it has a nested structure
+    if (section === "keyConsiderations" && subSection) {
+      const keyConsiderations = metadata.sections.keyConsiderations;
+      if (subSection === "areasOfNeed") {
+        return keyConsiderations?.areasOfNeed?.skipped === true;
+      }
+      if (subSection === "mitigatingFactors") {
+        return keyConsiderations?.mitigatingFactors?.skipped === true;
+      }
+      return false;
+    }
+
+    // For top-level sections (defendantStatement, victimImpactStatement, recommendation)
+    const sectionData = metadata.sections[section as keyof SARMetadataSections];
+    if (sectionData && typeof sectionData === "object" && "skipped" in sectionData) {
+      return sectionData.skipped === true;
+    }
+
+    return false;
+  }
+
+  /** Helper: Get status for a simple text field section */
+  private getTextFieldStatus(
+    fieldName: "victimImpactStatement" | "defendantStatement",
+  ): SectionStatus {
+    const fieldValue = this.SARData?.[fieldName];
+    const hasContent = fieldValue ? fieldValue.trim() !== "" : false;
+    const isSkipped = this.isSectionSkipped(fieldName);
+    const isEdited =
+      this.metadata?.["sections"]?.[fieldName]?.["edited"] === true;
+
+    // If has content OR is skipped, complete
+    if (hasContent || isSkipped) {
+      return "complete";
+    }
+
+    // If empty but has been edited (user visited and left empty), show incomplete
+    if (!hasContent && !isSkipped && isEdited) {
+      return "incomplete";
+    }
+
+    // If never visited (empty, not skipped, not edited), show nothing
+    return "empty";
   }
 
   /** Get Case Information section status */
@@ -534,31 +792,67 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Get Key Considerations section status */
   private getKeyConsiderationsStatus(): SectionStatus {
-    const needsValues = this.sarData?.needsToBeAddressed;
-    const mitigatingValues = this.sarData?.mitigatingFactors;
+    const needsValues = this.SARData?.needsToBeAddressed;
+    const mitigatingValues = this.SARData?.mitigatingFactors;
 
     const hasNeeds = needsValues && needsValues.length > 0;
     const hasFactors = mitigatingValues && mitigatingValues.length > 0;
 
+    const needsSkipped = this.isSectionSkipped(
+      "keyConsiderations",
+      "areasOfNeed",
+    );
+    const factorsSkipped = this.isSectionSkipped(
+      "keyConsiderations",
+      "mitigatingFactors",
+    );
+
     // If both fields are empty and not skipped, show nothing (empty)
-    if (
-      !hasNeeds &&
-      !hasFactors &&
-      !this.needsSkipped &&
-      !this.factorsSkipped
-    ) {
+    if (!hasNeeds && !hasFactors && !needsSkipped && !factorsSkipped) {
       return "empty";
     }
 
     // If both fields are filled OR both are skipped, complete (no icon)
-    const needsComplete = hasNeeds || this.needsSkipped;
-    const factorsComplete = hasFactors || this.factorsSkipped;
+    const needsComplete = hasNeeds || needsSkipped;
+    const factorsComplete = hasFactors || factorsSkipped;
 
     if (needsComplete && factorsComplete) {
       return "complete";
     }
 
     // If only one field is filled/skipped, incomplete (show warning)
+    return "incomplete";
+  }
+
+  /** Get Recommendation section status */
+  private getRecommendationStatus(): SectionStatus {
+    const hasCommunity =
+      this.SARData?.communityStrategyRecommendation &&
+      this.SARData.communityStrategyRecommendation.trim() !== "";
+    const hasInstitutional =
+      this.SARData?.institutionalStrategyRecommendation &&
+      this.SARData.institutionalStrategyRecommendation.trim() !== "";
+
+    const isSkipped = this.isSectionSkipped("recommendation");
+    const isEdited =
+      this.metadata?.["sections"]?.["recommendation"]?.["edited"] === true;
+
+    // If both fields are filled OR is skipped, complete
+    if ((hasCommunity && hasInstitutional) || isSkipped) {
+      return "complete";
+    }
+
+    // If both fields are empty and not skipped but has been edited, show incomplete
+    if (!hasCommunity && !hasInstitutional && !isSkipped && isEdited) {
+      return "incomplete";
+    }
+
+    // If both fields are empty and never visited, show nothing
+    if (!hasCommunity && !hasInstitutional && !isSkipped && !isEdited) {
+      return "empty";
+    }
+
+    // If only one field is filled, incomplete (show warning)
     return "incomplete";
   }
 }

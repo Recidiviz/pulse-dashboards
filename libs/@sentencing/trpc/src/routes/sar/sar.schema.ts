@@ -48,9 +48,18 @@ export const SARMetadataSchema = z.object({
       areasOfNeed: z.object({ skipped: z.boolean() }),
       mitigatingFactors: z.object({ skipped: z.boolean() }),
     }),
-    defendantVersion: z.object({ skipped: z.boolean() }),
-    victimImpactStatement: z.object({ skipped: z.boolean() }),
-    recommendation: z.object({ skipped: z.boolean() }),
+    defendantStatement: z.object({
+      skipped: z.boolean(),
+      edited: z.boolean().optional(),
+    }),
+    victimImpactStatement: z.object({
+      skipped: z.boolean(),
+      edited: z.boolean().optional(),
+    }),
+    recommendation: z.object({
+      skipped: z.boolean(),
+      edited: z.boolean().optional(),
+    }),
   }),
   version: z.literal("1.0").optional(),
 });

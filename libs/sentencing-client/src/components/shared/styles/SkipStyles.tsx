@@ -15,56 +15,47 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { typography } from "@recidiviz/design-system";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-export const Container = styled.div`
+export const HeaderContainer = styled.div`
   display: flex;
-  width: 50rem;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.5rem;
+  flex-direction: row;
+  gap: 12px;
+  margin-bottom: 12px;
+  width: 100%;
+`;
+
+export const Title = styled.h3`
+  color: ${palette.pine1};
+  font-family: "Public Sans";
+  font-size: 1.125rem;
+  font-style: normal;
   font-weight: 500;
   line-height: 120%;
-  letter-spacing: -0.00875rem;
-  font-family: "Public Sans";
+  letter-spacing: -0.0225rem;
+  width: 90%;
+  margin: 0;
 `;
 
-export const CheckboxContainer = styled.div`
+export const SkipContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  align-self: stretch;
+  gap: 8px;
 `;
 
-export const Checkbox = styled.input`
+export const SkipCheckbox = styled.input`
   width: 1rem;
   height: 1rem;
   accent-color: ${palette.pine4};
+  cursor: pointer;
 `;
 
-export const CheckboxLabel = styled.span`
-  font-size: 0.875rem;
-  padding-left: 2.5rem;
-`;
-
-export const ClientInfoRow = styled.div`
-  display: flex;
-  gap: 0.375rem;
-  align-self: stretch;
-  font-size: 0.75 rem;
-`;
-
-export const ClientInfoColumn = styled.div`
-  flex: 1;
-  display: flex;
-  padding-left: 2.5rem;
-  flex-direction: column;
-`;
-
-export const SubsectionTitle = styled.div`
-  color: ${palette.pine1};
-  padding-bottom: 1rem;
-  font-size: 1rem;
+export const SkipLabel = styled.label`
+  ${typography.Sans14}
+  color: ${palette.slate85};
+  cursor: pointer;
+  padding-top: 0.35rem;
 `;

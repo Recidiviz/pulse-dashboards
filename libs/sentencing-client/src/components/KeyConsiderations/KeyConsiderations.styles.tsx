@@ -23,12 +23,12 @@ import { palette } from "~design-system";
 export const Container = styled.div`
   display: flex;
   width: 50rem;
-  padding: 2rem 0;
   flex-direction: column;
   align-items: flex-start;
   gap: 1.5rem;
   font-family: "Public Sans";
-  padding: 2rem 1.5rem 2rem 1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 `;
 
 export const InfoContainer = styled.div`

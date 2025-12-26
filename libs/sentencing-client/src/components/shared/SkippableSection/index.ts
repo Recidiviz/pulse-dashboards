@@ -15,27 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export enum SARSection {
-  CASE_INFORMATION = "Case Information",
-  KEY_CONSIDERATIONS = "Key Considerations",
-  DEFENDANTS_VERSION = "Defendant's Version",
-  VICTIM_IMPACT = "Victim Impact",
-  OFFENDER_ASSESSMENT = "Offender Assessment",
-  RECOMMENDATION = "Recommendation",
-  SUMMARY = "Summary",
-}
-
-export const SAR_REPORT_SECTIONS = [
-  SARSection.CASE_INFORMATION,
-  SARSection.KEY_CONSIDERATIONS,
-  SARSection.DEFENDANTS_VERSION,
-  SARSection.VICTIM_IMPACT,
-  SARSection.OFFENDER_ASSESSMENT,
-  SARSection.RECOMMENDATION,
-  SARSection.SUMMARY,
-] as const;
-
-export type SARSectionName = (typeof SAR_REPORT_SECTIONS)[number];
-
-// Autosave delay for all SAR form fields
-export const SAR_AUTOSAVE_DELAY = 500; // 500ms
+export { SkippableSection } from "./SkippableSection";

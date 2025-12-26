@@ -15,56 +15,52 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { typography } from "@recidiviz/design-system";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
 
 export const Container = styled.div`
   display: flex;
-  width: 50rem;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1.5rem;
-  font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.00875rem;
-  font-family: "Public Sans";
-`;
-
-export const CheckboxContainer = styled.div`
-  display: flex;
-  align-items: center;
   gap: 0.5rem;
   align-self: stretch;
 `;
 
-export const Checkbox = styled.input`
-  width: 1rem;
-  height: 1rem;
-  accent-color: ${palette.pine4};
-`;
-
-export const CheckboxLabel = styled.span`
-  font-size: 0.875rem;
-  padding-left: 2.5rem;
-`;
-
-export const ClientInfoRow = styled.div`
-  display: flex;
-  gap: 0.375rem;
-  align-self: stretch;
-  font-size: 0.75 rem;
-`;
-
-export const ClientInfoColumn = styled.div`
-  flex: 1;
-  display: flex;
-  padding-left: 2.5rem;
-  flex-direction: column;
-`;
-
-export const SubsectionTitle = styled.div`
+export const Label = styled.label`
   color: ${palette.pine1};
-  padding-bottom: 1rem;
+  font-family: "Public Sans";
   font-size: 1rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.01rem;
+`;
+
+export const StyledTextArea = styled.textarea<{ height: string }>`
+  ${typography.Sans14}
+  display: flex;
+  height: ${({ height }) => height};
+  padding: 1rem;
+  align-items: flex-start;
+  gap: 0.5rem;
+  align-self: stretch;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 102, 95, 0.4);
+  background: rgba(43, 105, 105, 0.03);
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: ${palette.pine4};
+  }
+
+  &::placeholder {
+    color: ${palette.slate40};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 `;

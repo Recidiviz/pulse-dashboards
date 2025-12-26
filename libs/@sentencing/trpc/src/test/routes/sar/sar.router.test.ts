@@ -352,7 +352,7 @@ describe("SAR router", () => {
             areasOfNeed: { skipped: false },
             mitigatingFactors: { skipped: true },
           },
-          defendantVersion: {
+          defendantStatement: {
             skipped: false,
           },
           victimImpactStatement: {
@@ -409,7 +409,7 @@ describe("SAR router", () => {
                 areasOfNeed: { skipped: false },
                 mitigatingFactors: { skipped: false },
               },
-              defendantVersion: { skipped: false },
+              defendantStatement: { skipped: false },
               victimImpactStatement: { skipped: false },
               recommendation: { skipped: false },
             },
@@ -462,7 +462,7 @@ describe("SAR router", () => {
                 areasOfNeed: { skipped: false },
                 mitigatingFactors: { skipped: false },
               },
-              defendantVersion: { skipped: false },
+              defendantStatement: { skipped: false },
               victimImpactStatement: { skipped: false },
               recommendation: { skipped: false },
             },
@@ -491,7 +491,7 @@ describe("SAR router", () => {
             areasOfNeed: { skipped: false },
             mitigatingFactors: { skipped: false },
           },
-          defendantVersion: { skipped: false },
+          defendantStatement: { skipped: false },
           victimImpactStatement: { skipped: false },
           recommendation: { skipped: false },
         },
