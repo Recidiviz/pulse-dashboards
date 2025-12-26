@@ -19,14 +19,14 @@ import { Card, usePageTitle } from "~@jii/common-ui";
 
 import { NavigationButtons } from "./NavigationButtons";
 import { RNADescription, RNAHeading } from "./styles";
+import {
+  fullRNASpec,
+  rnaQuestionCopy,
+  RNASectionCopy,
+  rnaSectionCopy,
+} from "./usNcRNAFormSpec";
 
-function UsNcRNASectionInfo({
-  heading,
-  description,
-}: {
-  heading: string;
-  description?: string;
-}) {
+function UsNcRNASectionInfo({ heading, description }: RNASectionCopy) {
   return (
     <Card>
       <RNAHeading>{heading}</RNAHeading>
@@ -43,10 +43,15 @@ export function UsNcRNAFormPage() {
 
   return (
     <>
-      <UsNcRNASectionInfo
-        heading={"Section 1: Work and Money"}
-        description={"Select the answer that best shows what is true for you."}
-      />
+      <UsNcRNASectionInfo {...rnaSectionCopy[fullRNASpec[0].id]} />;
+      {fullRNASpec[0].questions.map((questionId) => {
+        <UsNcRNASectionInfo
+          heading={"Question placeholder"}
+          description={rnaQuestionCopy[questionId].question}
+        />;
+
+        return null;
+      })}
       <NavigationButtons showPrevious={false} />
       <NavigationButtons />
       <NavigationButtons showSubmit={true} />
