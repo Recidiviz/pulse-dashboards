@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { rem } from "polished";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { GoBackButton, JIIButton } from "~@jii/common-ui";
@@ -33,20 +34,29 @@ const PreviousPageButton = styled(GoBackButton)`
 `;
 
 export function NavigationButtons({
-  showPrevious = true,
-  showSubmit = false,
+  currentPageNum,
+  showSubmit,
 }: {
-  showPrevious?: boolean;
-  showSubmit?: boolean;
+  currentPageNum: number;
+  showSubmit: boolean;
 }) {
+  const navigate = useNavigate();
+
+  const previousPageLink =
+    "../" +
+    State.Resident.$.UsNcRNA.FormPage.buildRelativePath({
+      pageNum: currentPageNum - 1,
+    });
+  const nextPageLink =
+    "../" +
+    State.Resident.$.UsNcRNA.FormPage.buildRelativePath({
+      pageNum: currentPageNum + 1,
+    });
+
   return (
     <RNAPageFooter>
-      {showPrevious && (
-        <PreviousPageButton
-          to={State.Resident.UsNcRNA.$.FormPage.buildRelativePath({})}
-        >
-          Previous
-        </PreviousPageButton>
+      {currentPageNum > 1 && (
+        <PreviousPageButton to={previousPageLink}>Previous</PreviousPageButton>
       )}
 
       {showSubmit ? (
@@ -55,7 +65,12 @@ export function NavigationButtons({
           <Icon kind="Arrow" size={16} />
         </JIIButton>
       ) : (
-        <JIIButton kind={"secondary"}>
+        <JIIButton
+          kind={"secondary"}
+          onClick={() => {
+            navigate(nextPageLink);
+          }}
+        >
           <span>Next</span>
           <Icon kind="Arrow" size={16} />
         </JIIButton>

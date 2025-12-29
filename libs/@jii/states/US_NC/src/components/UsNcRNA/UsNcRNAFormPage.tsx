@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, usePageTitle } from "~@jii/common-ui";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
+
+import { Card, NotFound, usePageTitle } from "~@jii/common-ui";
+import { State } from "~@jii/paths";
 
 import { NavigationButtons } from "./NavigationButtons";
 import { RNADescription, RNAHeading } from "./styles";
@@ -41,20 +44,32 @@ function UsNcRNASectionInfo({ heading, description }: RNASectionCopy) {
 export function UsNcRNAFormPage() {
   usePageTitle("Self-Report");
 
+  // Grab the page number from the URL and check that it's valid
+  // (Users should not encounter invalid pages in practice as they can't edit the URL)
+  const { pageNum } = useTypedParams(State.Resident.UsNcRNA.FormPage);
+  const pageIndex = pageNum - 1;
+  if (
+    !Number.isInteger(pageIndex) ||
+    pageIndex < 0 ||
+    pageIndex >= fullRNASpec.length
+  ) {
+    return <NotFound />;
+  }
+
+  const { id, questions } = fullRNASpec[pageIndex];
+  const showSubmit = pageIndex === fullRNASpec.length - 1;
+
   return (
     <>
-      <UsNcRNASectionInfo {...rnaSectionCopy[fullRNASpec[0].id]} />;
-      {fullRNASpec[0].questions.map((questionId) => {
+      <UsNcRNASectionInfo {...rnaSectionCopy[id]} />;
+      {questions.map((questionId) => (
+        // TODO: replace with handler for different question types
         <UsNcRNASectionInfo
           heading={"Question placeholder"}
           description={rnaQuestionCopy[questionId].question}
-        />;
-
-        return null;
-      })}
-      <NavigationButtons showPrevious={false} />
-      <NavigationButtons />
-      <NavigationButtons showSubmit={true} />
+        />
+      ))}
+      <NavigationButtons currentPageNum={pageNum} showSubmit={showSubmit} />
     </>
   );
 }

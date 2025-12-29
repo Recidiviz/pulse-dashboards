@@ -94,4 +94,16 @@ export const fullRNASpec: RNAPageSpec[] = [
       "workSchoolMakeBetter",
     ],
   },
+  {
+    id: "sectionWorkSchool",
+    questions: [],
+  },
+  {
+    id: "sectionWorkSchool",
+    questions: ["workSchoolSkills", "workSchoolSatisfied"],
+  },
+  {
+    id: "sectionWorkSchool",
+    questions: ["workSchoolMakeBetter"],
+  },
 ];

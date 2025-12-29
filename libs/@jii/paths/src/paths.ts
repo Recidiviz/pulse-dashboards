@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { route, string, types } from "react-router-typesafe-routes/dom";
+import { number, route, string, types } from "react-router-typesafe-routes/dom";
 
 export const EmailVerification = route("verify");
 
@@ -69,7 +69,9 @@ export const UsNcRNA = route(
   {},
   {
     Landing: route(""),
-    FormPage: route("1"),
+    FormPage: route("page/:pageNum", {
+      params: { pageNum: number().defined() },
+    }),
   },
 );
 

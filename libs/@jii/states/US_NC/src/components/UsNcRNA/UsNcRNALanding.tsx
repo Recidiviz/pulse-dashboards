@@ -39,7 +39,11 @@ export function UsNcRNALanding() {
         be most helpful to you. These questions should take around 15 minutes to
         finish.
       </RNADescription>
-      <GoButton to={State.Resident.UsNcRNA.$.FormPage.buildRelativePath({})}>
+      <GoButton
+        to={State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
+          pageNum: 1,
+        })}
+      >
         Start
       </GoButton>
     </Card>
