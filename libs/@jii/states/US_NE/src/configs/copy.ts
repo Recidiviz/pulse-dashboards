@@ -86,11 +86,14 @@ export type UsNeCopy = {
 
 export const usNeCopy: UsNeCopy = {
   lastUpdated:
-    "This information was last updated on {{formatFullDate goodTimeLastModifiedDate}}",
+    "This information is current as of {{formatFullDate goodTimeLastModifiedDate}}",
   home: {
     pageTitle: "Learn More About Your Sentence",
     headerFields: [
-      { label: "Open Detainers:", value: "{{metadata.numHoldsAndDetainers}}" },
+      {
+        label: "Open Detainers/Holds:",
+        value: "{{metadata.numHoldsAndDetainers}}",
+      },
       { label: "Open Notifiers:", value: "{{metadata.numNotifiers}}" },
       {
         label: "Dead Time:",
@@ -106,7 +109,7 @@ export const usNeCopy: UsNeCopy = {
       },
       {
         label: "Good Time Law:",
-        value: "LB{{metadata.goodTimeLawNumber}}",
+        value: "LB {{metadata.goodTimeLawNumber}}",
       },
     ],
     todos: {
@@ -150,53 +153,52 @@ export const usNeCopy: UsNeCopy = {
           id: "trd",
           label: "Tentative Release Date (TRD)",
           value: "{{formatFullDateOptional value 'No TRD date'}}",
-          summary: dedent`Your Tentative Release Date (TRD) is the estimated end of sentence.
-        This date is updated upon changes to your sentence.
-
-        Tentative Release Date is sometimes referred to as a “jam date.”`,
+          summary: dedent`Your Tentative Release Date (TRD) is the estimated date you will be released from incarceration.
+          This date can be changed as a result of a disciplinary action, a change in good time, a parole revocation,
+          or a change in the law or the interpretation of the law.`,
           metadataField: "tentativeReleaseDate",
         },
         {
           id: "ped",
           label: "Parole Eligibility Date (PED)",
           value: "{{formatFullDateOptional value 'No PE date'}}",
-          summary: dedent`The Parole Eligibility Date (PED) only exists for individuals who may be eligible for parole.
-          The Nebraska Board of Parole sets Parole Hearing Dates based on the outcomes of reviews.
-          At the hearing, the Nebraska Board of Parole will make a decision on whether to grant parole.`,
+          summary: dedent`The Parole Eligibility Date (PED) is the date you are first eligible for parole.`,
           metadataField: "paroleEligibilityDate",
         },
         {
           id: "mmtd",
           label: "Mandatory Minimum Term Date (MMTD)",
           value: "{{formatFullDateOptional value 'No MMTD date'}}",
-          summary: `The Mandatory Minimum Term Date (MMTD) is the date when the required minimum part of your sentence ends. The mandatory minimum term is set by the law based on your sentence.`,
+          summary: dedent`Your Mandatory Minimum Term Date (MMTD) is the date when the
+          required minimum part of your sentence ends.
+          The mandatory minimum term is set by the law based on your total combined sentence.`,
           metadataField: "mandatoryMinimumDate",
         },
       ],
     },
     goodTimeBalances: {
-      sectionTitle: "Balances to Keep Track Of",
+      sectionTitle: "Credits",
       moreInfoLink: "Learn more",
       cards: [
         {
           id: "gbmd",
-          label: "Good Time Balance/Mandatory Discharge Days (GB/MD)",
+          label: "Good Time Balance/Mandatory Discharge (GB/MD)",
           value: `{{pluralize 'Day' metadata.goodTimeBalanceDays}}`,
-          summary: dedent`These days are applied to your tentative release date upon intake.
-          This is a type of good time that can be removed for Misconduct Reports (MRs).
-
-          This type of credit is called GB/MD or Good Time Balance / Mandatory Discharge.`,
+          summary: dedent`A person sentenced to prison immediately gets this time up front.
+          This is a type of good time that can be removed for Misconduct Reports (MRs).`,
           metadataField: "goodTimeBalanceDays",
         },
         {
           id: "lgtr",
           label: "Lost Good Time (Restorable)",
           value: "{{pluralize 'Day' value}}",
-          summary: dedent`This good time has been removed due to misconduct reports (MRs).
+          summary: dedent`{{#if value}}
+          This good time has been removed due to misconduct reports (MRs).
           You may apply to have these days restored after some time without misconduct reports.
           Ask your case manager for specific details on when you are eligible to ask for time back.
-
-          This is already applied to your Tentative Release Date (TRD).`,
+          {{else}}
+          You do not have any lost good time days that are restorable.
+          {{/if}}`,
           metadataField: "goodTimeLostDaysRestorable",
           definitionSlug: "gbmd",
         },
@@ -216,19 +218,25 @@ export const usNeCopy: UsNeCopy = {
         },
         {
           id: "lb191",
-          label: "LB 191 Credits",
+          label: "LB 191 Earned Time Credits",
           value: `{{pluralize 'Day' value}}`,
-          summary: dedent`After {{#if metadata.mandatoryMinimumDate}}your Mandatory Minimum Term Date{{else}}12 months{{/if}},
-          you can earn an extra 3 days off your max sentence each month for good conduct.
-          These days are applied to your TRD when they are accrued.`,
+          summary: dedent`{{#if (equals metadata.goodTimeLawNumber '191')}}
+          After the first 12 months, you may earn an extra 3 days off your max sentence each month for good conduct.
+          These days are applied to your Tentative Release Date (TRD) when they are earned.
+          {{else}}
+          You were sentenced under LB {{metadata.goodTimeLawNumber}}, not LB 191.
+          For more information, submit your questions to the records office personnel in your facility on an Inmate Interview Request (IIR).
+          {{/if}}`,
           metadataField: "lb191Credits",
+          // Note: there is custom logic in UsNeCardGroup to hide the Learn More link if the resident is not sentenced under LB 191
         },
         {
           id: "jailCredits",
           label: "Jail Credits",
           value: `{{pluralize 'Day' value}}`,
-          summary: dedent`Jail credits are the amount of time you served in jail before sentencing.
-          These days are applied to your Tentative Release Date (TRD) upon intake.`,
+          summary: dedent`Jail credits are the amount of days the court determined you spent in jail
+          for the criminal charge which led to your prison sentence.
+          These days are subtracted from your total combined sentence.`,
           metadataField: "jailTimeDays",
         },
       ],
@@ -427,19 +435,19 @@ export const usNeCopy: UsNeCopy = {
   },
   infoPages: {
     mmtd: {
-      heading: "Mandatory Minimum Term Date",
+      heading: "Mandatory Minimum Term Date (MMTD)",
       body: mmtdDefinition,
     },
     ped: {
-      heading: "Parole Eligibility Date",
+      heading: "Parole Eligibility Date (PED)",
       body: pedDefinition,
     },
     trd: {
-      heading: "Tentative Release Date",
+      heading: "Tentative Release Date (TRD)",
       body: trdDefinition,
     },
     gbmd: {
-      heading: "Good Time Balance/Mandatory Discharge Days (GB/MD)",
+      heading: "Good Time Balance/Mandatory Discharge (GB/MD)",
       body: gbmdDefinition,
     },
     lb191: {

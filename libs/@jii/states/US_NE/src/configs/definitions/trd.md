@@ -1,12 +1,12 @@
-Your Tentative Release Date (TRD) is the estimated end of sentence. This date is updated upon changes to your sentence or when good time is added or lost. Tentative Release Date is sometimes referred to as a “jam date.”
+Your Tentative Release Date (TRD) is the estimated date you will be released from incarceration. This date can be changed as a result of a disciplinary action, a change in good time, a parole revocation, or a change in the law or the interpretation of the law.
 
-LB 50 did not affect Tentative Release Dates. It moved parole eligibility dates for some individuals. Those changes have already been reflected in those individuals’ dates.
+If your parole eligibility date or tentative release date is changed, you will be given written notice of the new tentative release date or parole eligibility date.
 
 <PolicyCallout text="For more information, research
 
 - **Nebraska Revised Statute 28-105**
 - **Nebraska Revised Statute 83-1,107**
-- **Nebraska Revised Statute 83-1,107, subsection 2(a) and (b)**
 
   in the Law Library.
-  Alternatively, ask your case manager or send an IRR to records." />
+
+  Alternatively, submit your questions to the records office personnel in your facility on an Inmate Interview Request (IIR)." />

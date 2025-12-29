@@ -1,6 +1,6 @@
-The Mandatory Minimum Term Date (MMTD) is the date when the required minimum part of your sentence ends. The mandatory minimum term is set by the law based on your sentence.
+Your Mandatory Minimum Term Date (MMTD) is the date when the required minimum part of your sentence ends. The mandatory minimum term is set by the law based on your total combined sentence.
 
-This is the earliest time when you can start earning LB 191 earned time credits. If your sentence has a mandatory minimum, you must serve all of that time before LB 191 credits can shorten your sentence.
+If your sentence has a mandatory minimum, you must serve all of that time before good time is applied or earned.
 
 <PolicyCallout text="For more information, research
 
@@ -8,4 +8,5 @@ This is the earliest time when you can start earning LB 191 earned time credits.
 - **Nebraska Revised Statute 83-1,107**
 
 in the Law Library.
-Alternatively, ask your case manager or send an IRR to records." />
+
+Alternatively, submit your questions to the records office personnel in your facility on an Inmate Interview Request (IIR)." />

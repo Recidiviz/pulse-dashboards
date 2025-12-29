@@ -44,6 +44,11 @@ const UsNeCardGroup: React.FC<{ copy: UsNeCardGroupCopy }> = ({ copy }) => {
     }) => {
       const value = metadata[metadataField];
       if (value === null) return null;
+
+      // hide More Info link for LB 191 card if resident is not sentenced under LB 191
+      const showMoreInfoLink =
+        id !== "lb191" || metadata.goodTimeLawNumber === "191";
+
       return (
         <Card key={id}>
           <CardDateInfo
@@ -54,13 +59,15 @@ const UsNeCardGroup: React.FC<{ copy: UsNeCardGroupCopy }> = ({ copy }) => {
           <SlateCopy options={{ forceBlock: true }}>
             {hydrateTemplate(summary, { ...resident, value })}
           </SlateCopy>
-          <GoLink
-            to={State.Resident.$.EGT.Definition.buildRelativePath({
-              pageSlug: definitionSlug ?? id,
-            })}
-          >
-            {copy.moreInfoLink}
-          </GoLink>
+          {showMoreInfoLink && (
+            <GoLink
+              to={State.Resident.$.EGT.Definition.buildRelativePath({
+                pageSlug: definitionSlug ?? id,
+              })}
+            >
+              {copy.moreInfoLink}
+            </GoLink>
+          )}
         </Card>
       );
     },
