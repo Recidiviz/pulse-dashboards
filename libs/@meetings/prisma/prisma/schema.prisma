@@ -133,6 +133,37 @@ model ClientsToStaff {
   @@id([staffId, clientId])
 }
 
+model Resident {
+  stateCode StateCode
+
+  // Unique identifier for the resident in the system. This is not necessarily stable over time.
+  personId                   BigInt @id
+  // A mostly-stable identifier that is an external identifier for the resident. In rare circumstances, this can change within a stablePersonExternalIdType, but we can consider it to be "stable enough".
+  stablePersonExternalId     String
+  // The type of the stable external identifier. Typically there will be only one per state at any given time, but there can be multiple if, for example, the state is doing an OMS migration
+  stablePersonExternalIdType String
+  // An identifier that is used to anonymize the resident's identity in the system. It is a hashing of the stablePersonExternalId and thus is unique within a stablePersonExternalIdType.
+  pseudonymizedId            String
+  // An identifier that staff are used to using to refer to the resident, which may be different from the stablePersonExternalId. This is used for display purposes in the UI.
+  displayPersonExternalId    String
+
+  givenNames  String
+  middleNames String?
+  surname     String
+  suffix      String?
+
+  facilityId String
+
+  meetings Meeting[]
+
+  // Whether or not the resident appeared in the most recent export. Needed to ensure we don't delete
+  // meetings when residents are removed.
+  isActive Boolean @default(true)
+
+  @@unique([stablePersonExternalId, stablePersonExternalIdType])
+  @@unique([pseudonymizedId, stablePersonExternalIdType])
+}
+
 enum PostMeetingProcessingStatus {
   NOT_STARTED
   STITCHING_QUEUED
@@ -160,8 +191,13 @@ model Meeting {
 
   transcriptions Transcription[]
 
-  client   Client @relation(fields: [clientId], references: [personId])
-  clientId BigInt
+  // Meetings must occur with either a Client or Resident, but since we don't have a way to specify
+  // oneof, make these relations optional
+  client   Client? @relation(fields: [clientId], references: [personId])
+  clientId BigInt?
+
+  resident   Resident? @relation(fields: [residentId], references: [personId])
+  residentId BigInt?
 
   // Recidiviz users don't appear in the staff table and should still be able to create meetings, so
   // make this relation optional.
