@@ -60,7 +60,7 @@ describe("import client data", () => {
         stable_person_external_id_type: fakeClient.stablePersonExternalIdType,
         display_person_external_id: fakeClient.displayPersonExternalId,
         pseudonymized_id: fakeClient.pseudonymizedId,
-        full_name: JSON.stringify({
+        person_name: JSON.stringify({
           given_names: "New Name",
           middle_names: fakeClient.middleNames,
           surname: fakeClient.surname,
@@ -78,7 +78,7 @@ describe("import client data", () => {
         stable_person_external_id_type: fakeClient.stablePersonExternalIdType,
         display_person_external_id: "new-client-display-ext-id",
         pseudonymized_id: "new-client-pid",
-        full_name: JSON.stringify({
+        person_name: JSON.stringify({
           given_names: faker.person.firstName(),
           middle_names: faker.person.firstName(),
           surname: faker.person.lastName(),
@@ -167,7 +167,7 @@ describe("import client data", () => {
         stable_person_external_id_type: fakeClient.stablePersonExternalIdType,
         display_person_external_id: fakeClient.displayPersonExternalId,
         pseudonymized_id: fakeClient.pseudonymizedId,
-        full_name: JSON.stringify({
+        person_name: JSON.stringify({
           given_names: fakeClient.givenNames,
           middle_names: fakeClient.middleNames,
           surname: fakeClient.surname,
