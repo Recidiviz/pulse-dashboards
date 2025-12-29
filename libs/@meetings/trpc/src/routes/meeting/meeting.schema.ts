@@ -36,11 +36,17 @@ export const discardMeetingInputSchema = z.object({
 export const endMeetingInputSchema = z.object({
   clientId: z.bigint(),
   meetingId: z.string(),
-  notes: z.string().max(100000),
+  userNotepadNotes: z.string().max(100000),
+  actionItems: z.string().max(100000).optional(),
+  criticalUpdates: z.string().max(100000).optional(),
+  meetingSummary: z.string().max(100000).optional(),
 });
 
 export const updateNotesInputSchema = z.object({
   clientId: z.bigint(),
   meetingId: z.string(),
-  notes: z.string().max(100000),
+  userNotepadNotes: z.string().max(100000),
+  actionItems: z.string().max(100000).optional(),
+  criticalUpdates: z.string().max(100000).optional(),
+  meetingSummary: z.string().max(100000).optional(),
 });

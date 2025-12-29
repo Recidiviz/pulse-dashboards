@@ -51,7 +51,10 @@ export const meetingRouter = router({
             id: true,
             startTime: true,
             endTime: true,
-            notes: true,
+            userNotepadNotes: true,
+            actionItems: true,
+            criticalUpdates: true,
+            meetingSummary: true,
             postMeetingProcessingStatus: true,
             transcriptions: {
               orderBy: {
@@ -165,7 +168,7 @@ export const meetingRouter = router({
     .input(endMeetingInputSchema)
     .mutation(
       async ({
-        input: { clientId, meetingId, notes },
+        input: { clientId, meetingId, userNotepadNotes, actionItems, criticalUpdates, meetingSummary },
         ctx: { prisma, stateCode },
       }) => {
         try {
@@ -176,7 +179,10 @@ export const meetingRouter = router({
             },
             data: {
               endTime: new Date(),
-              notes,
+              userNotepadNotes,
+              actionItems,
+              criticalUpdates,
+              meetingSummary,
             },
           });
         } catch (e) {
@@ -216,7 +222,7 @@ export const meetingRouter = router({
   updateNotes: auth0Procedure
     .input(updateNotesInputSchema)
     .mutation(
-      async ({ input: { clientId, meetingId, notes }, ctx: { prisma } }) => {
+      async ({ input: { clientId, meetingId, userNotepadNotes, actionItems, criticalUpdates, meetingSummary }, ctx: { prisma } }) => {
         try {
           await prisma.meeting.update({
             where: {
@@ -224,7 +230,10 @@ export const meetingRouter = router({
               clientId: clientId,
             },
             data: {
-              notes: notes,
+              userNotepadNotes,
+              actionItems,
+              criticalUpdates,
+              meetingSummary,
             },
           });
         } catch (e) {

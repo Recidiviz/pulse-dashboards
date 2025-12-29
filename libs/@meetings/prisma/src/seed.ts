@@ -100,6 +100,10 @@ async function main() {
         staffId: seededStaff.staffId,
         recordingsGCSBucket: "test-audio-bucket",
         recordingsFolderPath: `meeting-${createdClient.personId}`,
+        userNotepadNotes: faker.lorem.paragraph(),
+        actionItems: faker.lorem.sentences(3),
+        criticalUpdates: faker.lorem.sentences(2),
+        meetingSummary: faker.lorem.paragraph(),
         postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
         transcriptions: {
           create: [

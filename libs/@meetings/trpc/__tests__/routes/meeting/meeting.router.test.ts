@@ -53,7 +53,10 @@ describe("meeting router", () => {
         startTime: fakeMeeting.startTime,
         endTime: null,
         postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
-        notes: "Sample meeting notes.",
+        userNotepadNotes: "Sample meeting notes.",
+        actionItems: "1. Follow up on employment status\n2. Schedule next check-in\n3. Review case file",
+        criticalUpdates: "Client reported new job opportunity. Upcoming court date next week.",
+        meetingSummary: "Productive meeting discussing client progress and upcoming milestones.",
         transcription: {
           confidence: 0.95,
           summary: "This is a sample summary of the meeting.",
@@ -138,7 +141,7 @@ describe("meeting router", () => {
         testTRPCClient.v1.meeting.updateNotes.mutate({
           clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
-          notes: "These are some notes",
+          userNotepadNotes: "These are some notes",
         }),
       ).rejects.toMatchObject({
         message: "Meeting with that id was not found",
@@ -150,7 +153,7 @@ describe("meeting router", () => {
       await testTRPCClient.v1.meeting.updateNotes.mutate({
         clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
-        notes: "These are some notes",
+        userNotepadNotes: "These are some notes",
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
@@ -159,7 +162,31 @@ describe("meeting router", () => {
 
       expect(updatedMeeting).toEqual(
         expect.objectContaining({
-          notes: "These are some notes",
+          userNotepadNotes: "These are some notes",
+        }),
+      );
+    });
+
+    test("Should update all fields including actionItems, criticalUpdates, and meetingSummary", async () => {
+      await testTRPCClient.v1.meeting.updateNotes.mutate({
+        clientId: fakeClients[0].personId,
+        meetingId: fakeMeeting.id,
+        userNotepadNotes: "Updated notes",
+        actionItems: "1. New action item\n2. Another action",
+        criticalUpdates: "Critical update information",
+        meetingSummary: "Updated summary of the meeting",
+      });
+
+      const updatedMeeting = await testPrismaClient.meeting.findUnique({
+        where: { id: fakeMeeting.id },
+      });
+
+      expect(updatedMeeting).toEqual(
+        expect.objectContaining({
+          userNotepadNotes: "Updated notes",
+          actionItems: "1. New action item\n2. Another action",
+          criticalUpdates: "Critical update information",
+          meetingSummary: "Updated summary of the meeting",
         }),
       );
     });
@@ -182,7 +209,7 @@ describe("meeting router", () => {
         testTRPCClient.v1.meeting.endMeeting.mutate({
           clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
-          notes: "These are some notes",
+          userNotepadNotes: "These are some notes",
         }),
       ).rejects.toMatchObject({
         message: "Meeting with that id was not found",
@@ -196,7 +223,7 @@ describe("meeting router", () => {
       await testTRPCClient.v1.meeting.endMeeting.mutate({
         clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
-        notes: "These are some notes",
+        userNotepadNotes: "These are some notes",
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
@@ -207,7 +234,7 @@ describe("meeting router", () => {
       expect(updatedMeeting).toEqual(
         expect.objectContaining({
           endTime: FAKE_DATE,
-          notes: "These are some notes",
+          userNotepadNotes: "These are some notes",
           postMeetingProcessingStatus:
             PostMeetingProcessingStatus.STITCHING_ERROR,
         }),
@@ -221,7 +248,7 @@ describe("meeting router", () => {
       await testTRPCClient.v1.meeting.endMeeting.mutate({
         clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
-        notes: "These are some notes",
+        userNotepadNotes: "These are some notes",
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
@@ -232,7 +259,7 @@ describe("meeting router", () => {
       expect(updatedMeeting).toEqual(
         expect.objectContaining({
           endTime: FAKE_DATE,
-          notes: "These are some notes",
+          userNotepadNotes: "These are some notes",
           postMeetingProcessingStatus:
             PostMeetingProcessingStatus.STITCHING_QUEUED,
         }),
