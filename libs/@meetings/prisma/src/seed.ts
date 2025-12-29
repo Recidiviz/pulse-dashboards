@@ -23,6 +23,7 @@ import { Transcript } from "assemblyai";
 
 import {
   Client,
+  PostMeetingProcessingStatus,
   Prisma,
   PrismaClient,
   StateCode,
@@ -88,14 +89,18 @@ async function main() {
 
   // Seed a meeting for every client
   for (const createdClient of createdClients) {
+    const meetingStart = faker.date.past();
+    const meetingEnd = faker.date.soon({ refDate: meetingStart });
     await prisma.meeting.create({
       data: {
         id: `meeting-${createdClient.personId}`,
-        startTime: faker.date.future(),
+        startTime: meetingStart,
+        endTime: meetingEnd,
         clientId: createdClient.personId,
         staffId: seededStaff.staffId,
         recordingsGCSBucket: "test-audio-bucket",
         recordingsFolderPath: `meeting-${createdClient.personId}`,
+        postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
         transcriptions: {
           create: [
             {
