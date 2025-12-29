@@ -24,6 +24,7 @@ import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { sarUrl } from "../../utils/routing";
 import { CaseInformation } from "../CaseInformation/CaseInformation";
 import { KeyConsiderations } from "../KeyConsiderations";
+import { OffenderAssessment } from "../OffenderAssessment";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { Recommendation } from "../Recommendation";
 import { TopProgressBar } from "../shared/TopProgressBar";
@@ -43,6 +44,9 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
   const [currentSection, setCurrentSection] = useState<SARSectionName>(
     SARSection.CASE_INFORMATION,
   );
+  const [currentSubsection, setCurrentSubsection] = useState<
+    string | undefined
+  >();
 
   const { staffPseudoId, SARAttributes, formattedGender, offenseNames } =
     presenter;
@@ -72,48 +76,57 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
         <SARSideNavigation
           currentSection={currentSection}
           onSectionChange={setCurrentSection}
+          currentSubsection={currentSubsection}
+          onSubsectionChange={setCurrentSubsection}
           presenter={presenter}
         />
 
-        <Styled.MainContent>
-          {(() => {
-            if (currentSection === SARSection.CASE_INFORMATION) {
-              return <CaseInformation presenter={presenter} />;
-            }
-            if (currentSection === SARSection.KEY_CONSIDERATIONS) {
-              return <KeyConsiderations presenter={presenter} />;
-            }
-            if (currentSection === SARSection.DEFENDANTS_VERSION) {
+        {currentSection === SARSection.OFFENDER_ASSESSMENT ? (
+          <OffenderAssessment
+            presenter={presenter}
+            currentSubsection={currentSubsection}
+          />
+        ) : (
+          <Styled.MainContent>
+            {(() => {
+              if (currentSection === SARSection.CASE_INFORMATION) {
+                return <CaseInformation presenter={presenter} />;
+              }
+              if (currentSection === SARSection.KEY_CONSIDERATIONS) {
+                return <KeyConsiderations presenter={presenter} />;
+              }
+              if (currentSection === SARSection.DEFENDANTS_VERSION) {
+                return (
+                  <SkippableTextSection
+                    presenter={presenter}
+                    title="Enter Defendant's Version"
+                    fieldName="defendantStatement"
+                    placeholder="Please add the details of the Defendant's version"
+                  />
+                );
+              }
+              if (currentSection === SARSection.VICTIM_IMPACT) {
+                return (
+                  <SkippableTextSection
+                    presenter={presenter}
+                    title="Enter Victim Impact Statement"
+                    fieldName="victimImpactStatement"
+                    placeholder="Please add the Victim Impact here"
+                  />
+                );
+              }
+              if (currentSection === SARSection.RECOMMENDATION) {
+                return <Recommendation presenter={presenter} />;
+              }
               return (
-                <SkippableTextSection
-                  presenter={presenter}
-                  title="Enter Defendant's Version"
-                  fieldName="defendantStatement"
-                  placeholder="Please add the details of the Defendant's version"
-                />
+                <>
+                  <h2>{currentSection}</h2>
+                  <p>Content for {currentSection} goes here...</p>
+                </>
               );
-            }
-            if (currentSection === SARSection.VICTIM_IMPACT) {
-              return (
-                <SkippableTextSection
-                  presenter={presenter}
-                  title="Enter Victim Impact Statement"
-                  fieldName="victimImpactStatement"
-                  placeholder="Please add the Victim Impact here"
-                />
-              );
-            }
-            if (currentSection === SARSection.RECOMMENDATION) {
-              return <Recommendation presenter={presenter} />;
-            }
-            return (
-              <>
-                <h2>{currentSection}</h2>
-                <p>Content for {currentSection} goes here...</p>
-              </>
-            );
-          })()}
-        </Styled.MainContent>
+            })()}
+          </Styled.MainContent>
+        )}
       </Styled.ContentLayout>
     </Styled.PageContainer>
   );

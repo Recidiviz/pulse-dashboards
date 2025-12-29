@@ -278,6 +278,7 @@ export const fakeSAR = {
   familySocialSupportLevel: 2,
   peerAssociatesLevel: 3,
   criminalBehaviorLevel: 4,
+  responsivityLevel: null,
   defendantStatement: faker.lorem.paragraph(),
   victimImpactStatement: faker.lorem.paragraph(),
   criminalHistorySummary: faker.lorem.paragraph(),

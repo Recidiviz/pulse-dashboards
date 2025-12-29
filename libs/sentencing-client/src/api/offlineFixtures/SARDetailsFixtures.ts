@@ -36,6 +36,9 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
       birthDate,
       raceOrEthnicity: "White",
       ssn: null,
+      motherName: null,
+      fatherName: null,
+      guardianName: null,
     },
     age,
     charges: [
@@ -87,6 +90,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     familySocialSupportLevel: 0,
     peerAssociatesLevel: 0,
     criminalBehaviorLevel: 0,
+    responsivityLevel: 0,
 
     // Narrative fields
     defendantStatement: null,

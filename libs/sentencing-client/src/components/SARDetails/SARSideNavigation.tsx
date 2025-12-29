@@ -20,18 +20,31 @@ import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { ArrowIcon } from "./ArrowIcon";
-import { SAR_REPORT_SECTIONS, SARSectionName } from "./constants";
+import {
+  OFFENDER_ASSESSMENT_SUBSECTIONS,
+  SAR_REPORT_SECTIONS,
+  SARSection,
+  SARSectionName,
+} from "./constants";
 import * as Styled from "./SARSideNavigation.styles";
 import { StatusIndicator } from "./StatusIndicator";
 
 type SARSideNavigationProps = {
   currentSection: SARSectionName;
   onSectionChange: (section: SARSectionName) => void;
+  currentSubsection?: string;
+  onSubsectionChange?: (subsection: string | undefined) => void;
   presenter: SARDetailsPresenter;
 };
 
 export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
-  function SARSideNavigation({ currentSection, onSectionChange, presenter }) {
+  function SARSideNavigation({
+    currentSection,
+    onSectionChange,
+    currentSubsection,
+    onSubsectionChange,
+    presenter,
+  }) {
     const currentIndex = SAR_REPORT_SECTIONS.indexOf(currentSection);
     const totalSections = SAR_REPORT_SECTIONS.length;
     const sectionStatuses = presenter.sectionStatuses;
@@ -58,23 +71,41 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
             {SAR_REPORT_SECTIONS.map((section) => {
               const isActive = section === currentSection;
               const status = sectionStatuses[section];
+              const showSubsections =
+                isActive && section === SARSection.OFFENDER_ASSESSMENT;
+
               return (
-                <Styled.NavigationItem
-                  key={section}
-                  isActive={isActive}
-                  onClick={() => onSectionChange(section)}
-                  aria-current={isActive ? "page" : undefined}
-                >
-                  <Styled.StatusIconWrapper>
-                    <StatusIndicator status={status} />
-                  </Styled.StatusIconWrapper>
-                  {section}
-                  {isActive && (
-                    <Styled.Arrow>
-                      <ArrowIcon />
-                    </Styled.Arrow>
+                <React.Fragment key={section}>
+                  <Styled.NavigationItem
+                    isActive={isActive}
+                    onClick={() => onSectionChange(section)}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    <Styled.StatusIconWrapper>
+                      <StatusIndicator status={status} />
+                    </Styled.StatusIconWrapper>
+                    {section}
+                    {isActive && (
+                      <Styled.Arrow>
+                        <ArrowIcon />
+                      </Styled.Arrow>
+                    )}
+                  </Styled.NavigationItem>
+
+                  {showSubsections && (
+                    <Styled.SubNavigationList>
+                      {OFFENDER_ASSESSMENT_SUBSECTIONS.map((subsection) => (
+                        <Styled.SubNavigationItem
+                          key={subsection}
+                          isActive={currentSubsection === subsection}
+                          onClick={() => onSubsectionChange?.(subsection)}
+                        >
+                          {subsection}
+                        </Styled.SubNavigationItem>
+                      ))}
+                    </Styled.SubNavigationList>
                   )}
-                </Styled.NavigationItem>
+                </React.Fragment>
               );
             })}
           </Styled.NavigationList>

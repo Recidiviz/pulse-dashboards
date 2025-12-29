@@ -70,6 +70,9 @@ export const sarRouter = router({
               ssn: true,
               externalId: true,
               birthDate: true, // Returned for display but not editable (state data)
+              motherName: true,
+              fatherName: true,
+              guardianName: true,
             },
           },
         },

@@ -122,6 +122,12 @@ IconSVG["DownChevron"] = () => (
   </FillSVG>
 );
 
+IconSVG["ChevronDown"] = () => (
+  <StrokeSVG viewBox="0 0 24 24">
+    <polyline points="6 9 12 15 18 9" />
+  </StrokeSVG>
+);
+
 IconSVG["Envelope"] = () => (
   <StrokeSVG viewBox="0 0 12 10">
     <path d="M11.5 5.5v4a1 1 0 01-1 1h-9a1 1 0 01-1-1v-4" />

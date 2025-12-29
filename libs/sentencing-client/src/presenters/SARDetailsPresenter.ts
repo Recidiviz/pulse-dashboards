@@ -234,15 +234,47 @@ export class SARDetailsPresenter implements Hydratable {
           false,
         );
 
+    // Offender Assessment section (8 summary fields + 6 form fields)
+    const offenderAssessmentSummaries = [
+      this.SARData?.criminalHistorySummary,
+      this.SARData?.employmentSummary,
+      this.SARData?.familyAndSocialSupportSummary,
+      this.SARData?.housingSummary,
+      this.SARData?.drugHistorySummary,
+      this.SARData?.peerAssociatesSummary,
+      this.SARData?.criminalAttitudesSummary,
+      this.SARData?.responsivityAndBarriersSummary,
+    ];
+    const offenderAssessmentSummariesCompleted = offenderAssessmentSummaries.filter(
+      (summary) => summary && summary.trim() !== "",
+    ).length;
+
+    // Offender Assessment form fields (6 fields)
+    const offenderAssessmentFormFields = [
+      this.SARData?.levelOfEducation,
+      this.SARData?.employerAtOffense,
+      this.SARData?.currentEmployer,
+      this.SARData?.client?.fatherName,
+      this.SARData?.client?.motherName,
+      this.SARData?.client?.guardianName,
+    ];
+    const offenderAssessmentFormCompleted = offenderAssessmentFormFields.filter(
+      (field) => field && field.toString().trim() !== "",
+    ).length;
+
+    const offenderAssessmentCompleted =
+      offenderAssessmentSummariesCompleted + offenderAssessmentFormCompleted;
+
     // Total progress across all sections
     const totalFields =
-      caseInfoTotalFields + keyConsiderationsTotalFields + 4; // +2 for defendant/victim, +2 for recommendation fields
+      caseInfoTotalFields + keyConsiderationsTotalFields + 4 + 2 + 14; // +2 for defendant/victim, +2 for recommendation fields, +14 for offender assessment (8 summaries + 6 form fields)
     const completedFields =
       caseInfoCompletedFields +
       keyConsiderationsCompletedFields +
       defendantVersionCompleted +
       victimImpactCompleted +
-      recommendationCompleted;
+      recommendationCompleted +
+      offenderAssessmentCompleted;
 
     return (completedFields / totalFields) * 100;
   }
@@ -461,7 +493,11 @@ export class SARDetailsPresenter implements Hydratable {
    */
   private async updateStringField(
     fieldName: "victimImpactStatement" | "defendantStatement" |
-              "communityStrategyRecommendation" | "institutionalStrategyRecommendation",
+              "communityStrategyRecommendation" | "institutionalStrategyRecommendation" |
+              "criminalHistorySummary" | "employmentSummary" |
+              "familyAndSocialSupportSummary" | "housingSummary" | "homePlan" |
+              "drugHistorySummary" | "peerAssociatesSummary" | "criminalAttitudesSummary" |
+              "responsivityAndBarriersSummary" | "employerAtOffense" | "currentEmployer",
     value: string
   ): Promise<void> {
     if (!this.SARData) return;
@@ -508,6 +544,171 @@ export class SARDetailsPresenter implements Hydratable {
   /** Update institutional strategy recommendation */
   async updateInstitutionalStrategyRecommendation(value: string): Promise<void> {
     return this.updateStringField("institutionalStrategyRecommendation", value);
+  }
+
+  /** Update criminal history summary */
+  async updateCriminalHistorySummary(value: string): Promise<void> {
+    return this.updateStringField("criminalHistorySummary", value);
+  }
+
+  /** Update employment summary */
+  async updateEmploymentSummary(value: string): Promise<void> {
+    return this.updateStringField("employmentSummary", value);
+  }
+
+  /** Update family and social support summary */
+  async updateFamilyAndSocialSupportSummary(value: string): Promise<void> {
+    return this.updateStringField("familyAndSocialSupportSummary", value);
+  }
+
+  /** Update housing summary */
+  async updateHousingSummary(value: string): Promise<void> {
+    return this.updateStringField("housingSummary", value);
+  }
+
+  /** Update home plan */
+  async updateHomePlan(value: string): Promise<void> {
+    return this.updateStringField("homePlan", value);
+  }
+
+  /** Update peer associates summary */
+  async updatePeerAssociatesSummary(value: string): Promise<void> {
+    return this.updateStringField("peerAssociatesSummary", value);
+  }
+
+  /** Update criminal attitudes summary */
+  async updateCriminalAttitudesSummary(value: string): Promise<void> {
+    return this.updateStringField("criminalAttitudesSummary", value);
+  }
+
+  /** Update responsivity and barriers summary */
+  async updateResponsivityAndBarriersSummary(value: string): Promise<void> {
+    return this.updateStringField("responsivityAndBarriersSummary", value);
+  }
+
+  /** Update drug history summary */
+  async updateDrugHistorySummary(value: string): Promise<void> {
+    return this.updateStringField("drugHistorySummary", value);
+  }
+
+  /** Update employer at offense */
+  async updateEmployerAtOffense(value: string): Promise<void> {
+    return this.updateStringField("employerAtOffense", value);
+  }
+
+  /** Update current employer */
+  async updateCurrentEmployer(value: string): Promise<void> {
+    return this.updateStringField("currentEmployer", value);
+  }
+
+  /** Update level of education */
+  async updateLevelOfEducation(
+    value: SAR["levelOfEducation"],
+  ): Promise<void> {
+    if (!this.SARData) return;
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.levelOfEducation = value;
+      }
+    });
+
+    const updates: Partial<MutableSARAttributes> = {
+      levelOfEducation: value ?? undefined,
+      status: this.calculatedStatus,
+    };
+
+    await this.sentencingStore.apiClient.updateSARDetails(
+      this.SARData.id,
+      updates,
+    );
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
+      }
+    });
+  }
+
+  /** Update father name */
+  async updateFatherName(value: string): Promise<void> {
+    if (!this.SARData) return;
+
+    runInAction(() => {
+      if (this.SARData?.client) {
+        this.SARData.client.fatherName = value;
+      }
+    });
+
+    const updates: Partial<MutableSARAttributes> = {
+      fatherName: value,
+      status: this.calculatedStatus,
+    };
+
+    await this.sentencingStore.apiClient.updateSARDetails(
+      this.SARData.id,
+      updates,
+    );
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
+      }
+    });
+  }
+
+  /** Update mother name */
+  async updateMotherName(value: string): Promise<void> {
+    if (!this.SARData) return;
+
+    runInAction(() => {
+      if (this.SARData?.client) {
+        this.SARData.client.motherName = value;
+      }
+    });
+
+    const updates: Partial<MutableSARAttributes> = {
+      motherName: value,
+      status: this.calculatedStatus,
+    };
+
+    await this.sentencingStore.apiClient.updateSARDetails(
+      this.SARData.id,
+      updates,
+    );
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
+      }
+    });
+  }
+
+  /** Update guardian name */
+  async updateGuardianName(value: string): Promise<void> {
+    if (!this.SARData) return;
+
+    runInAction(() => {
+      if (this.SARData?.client) {
+        this.SARData.client.guardianName = value;
+      }
+    });
+
+    const updates: Partial<MutableSARAttributes> = {
+      guardianName: value,
+      status: this.calculatedStatus,
+    };
+
+    await this.sentencingStore.apiClient.updateSARDetails(
+      this.SARData.id,
+      updates,
+    );
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.status = this.calculatedStatus;
+      }
+    });
   }
 
   /**
@@ -703,6 +904,7 @@ export class SARDetailsPresenter implements Hydratable {
       [SARSection.VICTIM_IMPACT]: this.getTextFieldStatus(
         "victimImpactStatement",
       ),
+      [SARSection.OFFENDER_ASSESSMENT]: this.getOffenderAssessmentStatus(),
       [SARSection.RECOMMENDATION]: this.getRecommendationStatus(),
       // Future sections will be added here
     };
@@ -854,5 +1056,25 @@ export class SARDetailsPresenter implements Hydratable {
 
     // If only one field is filled, incomplete (show warning)
     return "incomplete";
+  }
+
+  /** Get Offender Assessment section status */
+  private getOffenderAssessmentStatus(): SectionStatus {
+    const summaries = [
+      this.SARData?.criminalHistorySummary,
+      this.SARData?.employmentSummary,
+      this.SARData?.familyAndSocialSupportSummary,
+      this.SARData?.housingSummary,
+      this.SARData?.drugHistorySummary,
+      this.SARData?.peerAssociatesSummary,
+      this.SARData?.criminalAttitudesSummary,
+      this.SARData?.responsivityAndBarriersSummary,
+    ];
+
+    const filledCount = summaries.filter((s) => s && s.trim() !== "").length;
+
+    if (filledCount === summaries.length) return "complete";
+    if (filledCount > 0) return "incomplete";
+    return "empty";
   }
 }

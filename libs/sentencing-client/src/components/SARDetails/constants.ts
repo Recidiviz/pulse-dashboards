@@ -37,5 +37,27 @@ export const SAR_REPORT_SECTIONS = [
 
 export type SARSectionName = (typeof SAR_REPORT_SECTIONS)[number];
 
+export enum OffenderAssessmentSubsection {
+  CRIMINAL_HISTORY = "Criminal History",
+  EDUCATION_EMPLOYMENT = "Education, Employment",
+  FAMILY_SOCIAL_SUPPORT = "Family and Social Support",
+  NEIGHBORHOOD_PROBLEMS = "Neighborhood Problems",
+  SUBSTANCE_USE = "Substance Use",
+  PEER_ASSOCIATIONS = "Peer Associations",
+  CRIMINAL_ATTITUDES = "Criminal Attitudes",
+  RESPONSIVITY_BARRIERS = "Responsivity Issues",
+}
+
+export const OFFENDER_ASSESSMENT_SUBSECTIONS = [
+  OffenderAssessmentSubsection.CRIMINAL_HISTORY,
+  OffenderAssessmentSubsection.EDUCATION_EMPLOYMENT,
+  OffenderAssessmentSubsection.FAMILY_SOCIAL_SUPPORT,
+  OffenderAssessmentSubsection.NEIGHBORHOOD_PROBLEMS,
+  OffenderAssessmentSubsection.SUBSTANCE_USE,
+  OffenderAssessmentSubsection.PEER_ASSOCIATIONS,
+  OffenderAssessmentSubsection.CRIMINAL_ATTITUDES,
+  OffenderAssessmentSubsection.RESPONSIVITY_BARRIERS,
+] as const;
+
 // Autosave delay for all SAR form fields
 export const SAR_AUTOSAVE_DELAY = 500; // 500ms

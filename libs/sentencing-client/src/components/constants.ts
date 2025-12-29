@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Case } from "../api";
+import { Case, SAR } from "../api";
 
 export const ReportType = {
   FullPSI: "Full PSI",
@@ -73,4 +73,20 @@ export const ProtectiveFactors: Record<
   ActiveInvolvementInCommunityActivities:
     "Active involvement in community activities",
   Other: "Other",
+};
+
+export const LevelOfEducationLabels: Record<
+  NonNullable<SAR["levelOfEducation"]>,
+  string
+> = {
+  NoFormalSchooling: "No Formal Schooling",
+  ElementarySchool: "Elementary School",
+  MiddleSchool: "Middle School",
+  SomeHighSchool: "Some High School",
+  HighSchoolDiplomaOrGED: "High School Diploma or GED",
+  SomeCollege: "Some College",
+  AssociateDegree: "Associate's Degree",
+  BachelorsDegree: "Bachelor's Degree",
+  MastersDegree: "Master's Degree",
+  DoctorateDegree: "Doctorate Degree",
 };

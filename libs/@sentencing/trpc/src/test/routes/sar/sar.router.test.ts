@@ -83,6 +83,7 @@ describe("SAR router", () => {
             fakeSAR.communityStrategyRecommendation,
           institutionalStrategyRecommendation:
             fakeSAR.institutionalStrategyRecommendation,
+          responsivityLevel: fakeSAR.responsivityLevel,
           metadata: null,
           client: {
             ..._.pick(fakeSARClient, [
@@ -92,6 +93,9 @@ describe("SAR router", () => {
               "ssn",
               "externalId",
               "birthDate",
+              "motherName",
+              "fatherName",
+              "guardianName",
             ]),
           },
           charges: [],

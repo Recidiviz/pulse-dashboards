@@ -51,7 +51,6 @@ export const SideNavigationContainer = styled.div`
   border-radius: 0.625rem;
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
   overflow: hidden;
-
 `;
 
 export const NavigationList = styled.nav`
@@ -60,13 +59,13 @@ export const NavigationList = styled.nav`
   align-items: center;
   align-self: stretch;
   flex-direction: column;
-  gap: 1rem
+  gap: 1rem;
 `;
 
 export const NavigationItem = styled.button<{ isActive: boolean }>`
   width: 100%;
   display: flex;
-  align-items:left;
+  align-items: left;
   background: transparent;
   border: none;
   transition: all 0.2s ease;
@@ -150,5 +149,26 @@ export const NavButton = styled.button<{ variant: "primary" | "secondary" }>`
 
   &:focus {
     outline: none;
+  }
+`;
+
+export const SubNavigationList = styled.ul`
+  display: flex;
+  padding-left: 0.75rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  align-self: stretch;
+`;
+
+export const SubNavigationItem = styled.li<{ isActive: boolean }>`
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  color: ${palette.slate60};
+  cursor: pointer;
+
+  &:hover {
+    color: ${palette.pine3};
   }
 `;

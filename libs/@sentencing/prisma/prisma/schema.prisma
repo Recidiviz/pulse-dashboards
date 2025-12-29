@@ -607,6 +607,7 @@ model SentencingAssessmentReport {
   familySocialSupportLevel  Int?
   peerAssociatesLevel       Int?
   criminalBehaviorLevel     Int?
+  responsivityLevel         Int?
 
   // Free text sections
   defendantStatement            String?
