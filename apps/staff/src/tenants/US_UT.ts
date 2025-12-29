@@ -25,7 +25,7 @@ const US_UT_CONFIG = {
   domain: "utah.gov",
   availableStateCodes: [dashboard.US_UT],
   enableUserRestrictions: false,
-  workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsMethodologyUrl:
     "https://docs.google.com/document/d/e/2PACX-1vR3uKKRbdWXDRUz8v1km5oZNNeYuB3yUmWsZLut8RlPCAQqjUi4Cle3fXeivhYKYm8By--6nNRWFIUO/pub",
   workflowsSystemConfigs: {
@@ -38,10 +38,19 @@ const US_UT_CONFIG = {
         },
       ],
     },
+    INCARCERATION: {
+      search: [
+        {
+          searchType: "INCARCERATION_OFFICER",
+          searchField: ["officerId"],
+          searchTitle: "case manager",
+        },
+      ],
+    },
   },
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
-    workflows: ["home", "clients"],
+    workflows: ["home", "clients", "residents"],
   },
 } satisfies TenantConfig<"US_UT">;
 
