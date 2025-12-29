@@ -23,7 +23,7 @@ import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
 import { FullWidthBanner } from "~@jii/layout";
 import { palette } from "~design-system";
 
-import { useUsNeContext } from "./usNeContext";
+import { useUsNeContext } from "./../usNeContext";
 
 const HeaderFieldsContainer = styled.div`
   display: flex;

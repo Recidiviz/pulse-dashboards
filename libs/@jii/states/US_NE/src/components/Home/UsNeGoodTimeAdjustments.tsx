@@ -21,7 +21,7 @@ import { Card, HomepageSectionHeading } from "~@jii/common-ui";
 import { hydrateTemplate } from "~@jii/data";
 import { OpenTable } from "~@jii/earned-good-time";
 
-import { useUsNeContext } from "./usNeContext";
+import { useUsNeContext } from "./../usNeContext";
 
 const UsNeGoodTimeAdjustments = () => {
   const { copy, metadata } = useUsNeContext();

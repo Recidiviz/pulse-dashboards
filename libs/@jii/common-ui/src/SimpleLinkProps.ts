@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { MouseEvent } from "react";
+
 /**
  * Simplified version of props for React Router Link
  */
 export type SimpleLinkProps = {
   children: string;
   to: string;
+  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
 };
 
 /**

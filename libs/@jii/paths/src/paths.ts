@@ -73,6 +73,8 @@ export const UsNcRNA = route(
   },
 );
 
+export const UsNeReentryChecklist = route("reentry-checklist");
+
 export const State = route(":stateSlug", types(ReturnToPathFragment), {
   Resident: route(
     ":personPseudoId",
@@ -82,6 +84,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       UsTnMoreInformation,
       UsAzMoreInformation,
       UsNcRNA,
+      UsNeReentryChecklist,
     },
   ),
   Search: route("search"),

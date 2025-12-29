@@ -31,10 +31,10 @@ const Wrapper = styled.div`
 /**
  * A link styled as a button with a margin below (to be used at the top of a page)
  */
-export const BackLink: FC<SimpleLinkProps> = ({ children, to }) => {
+export const BackLink: FC<SimpleLinkProps> = (props) => {
   return (
     <Wrapper>
-      <GoBackButton to={to}>{children}</GoBackButton>
+      <GoBackButton {...props} />
     </Wrapper>
   );
 };

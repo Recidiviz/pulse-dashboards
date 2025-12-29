@@ -53,7 +53,12 @@ function ManagedComponent({ presenter }: { presenter: UsNeTodosPresenter }) {
         />
       )}
       {shouldShowReentryChecklist && (
-        <TodoCard {...copy.reentryChecklist} linkTarget="#" />
+        <TodoCard
+          {...copy.reentryChecklist}
+          linkTarget={State.Resident.$.UsNeReentryChecklist.buildRelativePath(
+            {},
+          )}
+        />
       )}
     </section>
   );

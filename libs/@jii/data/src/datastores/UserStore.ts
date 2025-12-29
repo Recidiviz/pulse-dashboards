@@ -34,6 +34,7 @@ import { TranslationStore } from "./TranslationStore";
 export const USER_PROPERTY_KEYS = z.enum([
   "egtOnboardingSeen",
   "azOnboardingSeen",
+  "usNeReentryChecklistState",
 ]);
 type UserPropertyKey = z.infer<typeof USER_PROPERTY_KEYS>;
 

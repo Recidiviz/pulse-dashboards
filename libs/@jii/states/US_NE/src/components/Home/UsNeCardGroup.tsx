@@ -25,8 +25,8 @@ import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
 import { CardDateInfo } from "~@jii/earned-good-time";
 import { State } from "~@jii/paths";
 
-import { UsNeCardGroupCopy } from "../configs/copy";
-import { useUsNeContext } from "./usNeContext";
+import { UsNeCardGroupCopy } from "../../configs/copy";
+import { useUsNeContext } from "./../usNeContext";
 
 const UsNeCardGroup: React.FC<{ copy: UsNeCardGroupCopy }> = ({ copy }) => {
   const { resident } = useSingleResidentContext();
