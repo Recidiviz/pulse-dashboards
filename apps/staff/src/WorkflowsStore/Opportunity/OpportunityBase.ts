@@ -71,6 +71,7 @@ import {
   FormVariant,
   Opportunity,
   OpportunityBannerInfo,
+  OpportunityNotificationsByPage,
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityTab,
@@ -80,9 +81,12 @@ import {
 import { buildOpportunityCompareFunction } from "./utils/compareUtils";
 import {
   hydrateReq,
+  hydrateStr,
   hydrateUntypedCriteria,
+  HydrationContext,
   UntypedCriteriaFormatters,
 } from "./utils/criteriaUtils";
+import { createNotificationId } from "./utils/notificationUtils";
 
 export function updateOpportunityEligibility(
   opportunity: Opportunity,
@@ -221,6 +225,64 @@ export class OpportunityBase<
   get config() {
     return this.rootStore.workflowsRootStore.opportunityConfigurationStore
       .opportunities[this.type];
+  }
+
+  /**
+   * Returns a list of undismissed notifications for each page, checking dismissal per page, then group by page
+   * @returns A list of notifications for each page, checking dismissal per page, then group by page.
+   * @returns undefined if there are no notifications or the opportunity is not eligible
+   * @example
+   * {
+   *   profile: [notification1, notification2],
+   *   supervisionSupervisor: [notification3]
+   * }
+   */
+  get notificationsByPage() {
+    if (!this.config.notifications || !this.isEligible || this.denied) return;
+
+    const { dismissedOpportunityNotificationIds } =
+      this.rootStore.workflowsStore;
+    // Use Set for O(1) lookup instead of O(n) array includes
+    const dismissedIdsSet = new Set(dismissedOpportunityNotificationIds);
+
+
+    // Create list of notifications for each page, checking dismissal per page, then group by page
+    const notificationsByPage: OpportunityNotificationsByPage = {};
+
+    /**
+     * Context is needed to hydrate the notification body and title.
+     */
+    const context: HydrationContext = {
+      criteria: {},
+      formatters: this.criteriaFormatters ?? {},
+      opportunity: this,
+    };
+
+    this.config.notifications.forEach((n) => {
+      n.pages.forEach((page) => {
+        const id = createNotificationId(n.id, this, page);
+        // if the notification is dismissed or the page is caseload, skip adding it to the list of notifications for the page
+        if (dismissedIdsSet.has(id) || page === "caseload") return;
+        // if the page is not in the notificationsByPage object, create an empty array for the page
+        notificationsByPage[page] ??= [];
+
+        // add the new notification to the list of notifications for the page
+        notificationsByPage[page]?.push({
+          ...n,
+          id,
+          body: hydrateStr(n.body, context),
+          title: n.title ? hydrateStr(n.title, context) : undefined,
+          cta: n.cta ? hydrateStr(n.cta, context) : undefined,
+          link: this.person.profileUrl,
+        });
+
+      });
+    });
+
+    // if there are any notifications, return the notificationsByPage object, otherwise return undefined
+    return Object.keys(notificationsByPage).length > 0
+      ? notificationsByPage
+      : undefined;
   }
 
   get supportsDenial(): boolean {
@@ -416,17 +478,17 @@ export class OpportunityBase<
   get bannerInfo(): OpportunityBannerInfo | undefined {
     return this.previewBannerText
       ? {
-          previewBannerText: this.previewBannerText,
-          link: this.person.profileUrl,
-          linkText: `See ${toTitleCase(this.rootStore.workflowsStore.justiceInvolvedPersonTitle)} Profile`,
-          onLinkClick: () =>
-            this.rootStore.analyticsStore.trackNavigateToPersonProfileLinkClicked(
-              {
-                justiceInvolvedPersonId: this.person.pseudonymizedId,
-                opportunityType: this.type,
-              },
-            ),
-        }
+        previewBannerText: this.previewBannerText,
+        link: this.person.profileUrl,
+        linkText: `See ${toTitleCase(this.rootStore.workflowsStore.justiceInvolvedPersonTitle)} Profile`,
+        onLinkClick: () =>
+          this.rootStore.analyticsStore.trackNavigateToPersonProfileLinkClicked(
+            {
+              justiceInvolvedPersonId: this.person.pseudonymizedId,
+              opportunityType: this.type,
+            },
+          ),
+      }
       : undefined;
   }
 
@@ -877,9 +939,9 @@ export class OpportunityBase<
       record.ineligibleCriteria,
       isIneligible
         ? pickBy(
-            ineligibleCriteriaCopy,
-            (_, key) => !(key in strictlyIneligibleCriteriaCopy),
-          )
+          ineligibleCriteriaCopy,
+          (_, key) => !(key in strictlyIneligibleCriteriaCopy),
+        )
         : ineligibleCriteriaCopy,
       this,
       this.criteriaFormatters,
@@ -933,6 +995,10 @@ export class OpportunityBase<
     return !this.record.isEligible && !this.almostEligible;
   }
 
+  get isEligible(): boolean {
+    return this.record.isEligible;
+  }
+
   get denied(): boolean {
     return !!this.denial;
   }
@@ -976,10 +1042,10 @@ export class OpportunityBase<
       const calculatedMaxSnoozeDays =
         selectedReasons.length > 0
           ? Math.max(
-              ...selectedMaxSnoozeDays.filter(
-                (maxSnooze) => maxSnooze !== undefined,
-              ),
-            )
+            ...selectedMaxSnoozeDays.filter(
+              (maxSnooze) => maxSnooze !== undefined,
+            ),
+          )
           : this.config.snooze?.maxSnoozeDays;
 
       // Cap the max snooze length to the person's release date.
@@ -1045,10 +1111,10 @@ export class OpportunityBase<
     const actionMetadata: OpportunityApprovalActionsMetadata["action"] =
       officerAction.type === "DENIAL"
         ? {
-            type: officerAction.type,
-            actionPlan: officerAction.actionPlan,
-            requestedDenialReasons: officerAction.denialReasons,
-          }
+          type: officerAction.type,
+          actionPlan: officerAction.actionPlan,
+          requestedDenialReasons: officerAction.denialReasons,
+        }
         : { type: officerAction.type, additionalNotes: officerAction.notes };
 
     const originalStatus = this.reviewStatus;

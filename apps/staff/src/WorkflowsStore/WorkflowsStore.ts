@@ -324,12 +324,20 @@ export class WorkflowsStore implements Hydratable {
     }
   }
 
-  private get dismissedOpportunityNotificationIds() {
+  get dismissedOpportunityNotificationIds() {
     return this.user?.updates?.dismissedOpportunityNotificationIds ?? [];
   }
 
   /**
-   * Returns the relevant, undismissed notifications for the given opportunity type.
+   * Returns a list of active global notifications for the given opportunity type, filtering out dismissed notifications.
+   * These only appear on the caseload page and are not specific to a single opportunity.
+   * Thet do not use handlebars to render the notification body and title.
+   * @param opportunityType - The opportunity type to get the active notifications for
+   * @returns A list of active global notifications for the given opportunity type
+   * @example
+   * activeNotificationsForOpportunityType("LSU") => [notification1, notification2]
+   * activeNotificationsForOpportunityType("earnedDischarge") => [notification3]
+   * activeNotificationsForOpportunityType(undefined) => undefined
    */
   activeNotificationsForOpportunityType(
     opportunityType: OpportunityType | undefined,
@@ -338,8 +346,13 @@ export class WorkflowsStore implements Hydratable {
 
     const { notifications } =
       this.opportunityConfigurationStore.opportunities[opportunityType];
+
     const dismissedIds = this.dismissedOpportunityNotificationIds;
-    return notifications?.filter(({ id }) => !dismissedIds.includes(id));
+
+    const globalNotifications = notifications?.filter(({ pages }) =>
+      pages.includes("caseload"),
+    );
+    return globalNotifications?.filter(({ id }) => !dismissedIds.includes(id));
   }
 
   /**

@@ -1270,6 +1270,100 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
   });
 });
 
+describe("activeNotificationsForOpportunityType", () => {
+  beforeEach(async () => {
+    vi.spyOn(workflowsStore, "activeSystem", "get").mockReturnValue(
+      "SUPERVISION",
+    );
+    await waitForHydration({ ...mockOfficer });
+
+    setOpportunities({
+      LSU: {
+        ...mockBaseOpportunityConfig,
+        notifications: [
+          {
+            id: "1",
+            type: "alert",
+            pages: ["caseload", "profile"],
+            title: "LSU Notification",
+            body: "LSU Notification Body",
+          },
+          {
+            id: "2",
+            type: "info",
+            pages: ["profile"],
+            title: "LSU Profile Notification",
+            body: "LSU Profile Notification Body",
+          },
+        ],
+      },
+      earnedDischarge: {
+        ...mockBaseOpportunityConfig,
+        notifications: [
+          {
+            id: "1",
+            type: "info",
+            pages: ["caseload"],
+            title: "Earned Discharge Notification",
+            body: "Earned Discharge Notification Body",
+          },
+        ],
+      },
+    });
+
+    workflowsStore.opportunityConfigurationStore.mockHydrated();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
+  describe("when opportunity has caseload notifications", () => {
+    test("has only notifications with caseload in it", () => {
+      const result =
+        workflowsStore.activeNotificationsForOpportunityType("LSU");
+      const hasOnlyNotificationsThatIncludeCaseloadPage = result?.every(
+        (notification) => notification.pages.includes("caseload"),
+      );
+      expect(hasOnlyNotificationsThatIncludeCaseloadPage).toBe(true);
+    });
+
+    test("returns the appropriate list of notifications", () => {
+      const lsuResult =
+        workflowsStore.activeNotificationsForOpportunityType("LSU");
+      const earnedDischargeResult =
+        workflowsStore.activeNotificationsForOpportunityType("earnedDischarge");
+
+      expect(lsuResult).toHaveLength(1);
+      expect(lsuResult?.[0].id).toBe("1");
+      expect(earnedDischargeResult).toHaveLength(1);
+      expect(earnedDischargeResult?.[0].id).toBe("1");
+    });
+
+    test("dismissed notifications are filtered out", () => {
+      const initialResult =
+        workflowsStore.activeNotificationsForOpportunityType("LSU");
+      const notificationId = initialResult?.[0].id;
+
+      vi.spyOn(
+        workflowsStore,
+        "dismissedOpportunityNotificationIds",
+        "get",
+      ).mockReturnValue([notificationId ?? ""]);
+
+      const result =
+        workflowsStore.activeNotificationsForOpportunityType("LSU");
+      expect(result).toHaveLength(0);
+    });
+  });
+
+  test("should return undefined when opportunityType is undefined", () => {
+    expect(
+      workflowsStore.activeNotificationsForOpportunityType(undefined),
+    ).toBeUndefined();
+  });
+});
+
 describe("getMilestonesClientsByStatus", () => {
   const messageStatuses: Partial<TextMessageStatus>[] = [
     "IN_PROGRESS",

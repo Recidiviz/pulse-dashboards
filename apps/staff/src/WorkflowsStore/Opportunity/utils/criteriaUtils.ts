@@ -140,7 +140,7 @@ export type UntypedCriteriaFormatters = Record<
   (criteria: Reason & { record: any }) => string
 >;
 
-type HydrationContext = {
+export type HydrationContext = {
   criteria: Reason;
   formatters: UntypedCriteriaFormatters;
   opportunity: Opportunity;

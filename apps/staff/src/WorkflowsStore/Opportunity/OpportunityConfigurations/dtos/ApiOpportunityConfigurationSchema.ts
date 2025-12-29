@@ -80,6 +80,10 @@ export const apiOpportunityConfigurationSchema = z.object({
     .array(
       z.object({
         id: z.string(),
+        type: z.enum(["info", "alert"]).default("info"),
+        pages: z
+          .array(z.enum(["caseload", "profile", "supervisionSupervisor"]))
+          .default(["caseload"]),
         title: z.string().optional(),
         body: z.string(),
         cta: z.string().optional(),

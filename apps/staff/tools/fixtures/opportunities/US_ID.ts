@@ -72,7 +72,22 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
-      notifications: [],
+      notifications: [
+        {
+          id: "1",
+          type: "alert",
+          pages: ["caseload", "profile", "supervisionSupervisor"],
+          body: "{{opportunity.person.displayName}} may be eligible for the Limited Supervision Unit",
+          title: "Eligible for LSU",
+        },
+        {
+          id: "2",
+          type: "alert",
+          pages: ["caseload"],
+          body: "There has been a recent policy change that affects the Limited Supervision Unit opportunity.",
+          title: "Policy change affects LSU",
+        }
+      ],
       omsCriteriaHeader: "Validated by data from Atlas",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
@@ -96,6 +111,15 @@ export const mockApiOpportunityConfigurationResponse = {
       zeroGrantsTooltip: null,
     },
     earnedDischarge: {
+      notifications: [
+        {
+          id: "3",
+          type: "alert",
+          pages: ["profile", "supervisionSupervisor"],
+          body: "{{opportunity.person.displayName}} has been eligible for Earned Discharge for {{daysToYearsMonthsPast (daysPast opportunity.eligibilityDate)}}",
+          title: "Eligible for Earned Discharge",
+        },
+      ],
       callToAction:
         "Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.",
       caseNotesTitle: null,
@@ -189,7 +213,6 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
-      notifications: [],
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",

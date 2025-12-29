@@ -24,7 +24,10 @@ import { MockInstance } from "vitest";
 import { OpportunityRecordBase, OpportunityType } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
-import { mockOpportunity } from "../../../core/__tests__/testUtils";
+import {
+  mockOpportunity,
+  mockOpportunityConfigs,
+} from "../../../core/__tests__/testUtils";
 import {
   CombinedUserRecord,
   OfficerAction,
@@ -57,7 +60,8 @@ import {
   SUBMITTED_UPDATE,
   VIEWED_UPDATE,
 } from "../testUtils";
-import { Opportunity } from "../types";
+import { Opportunity, OpportunityNotification } from "../types";
+import { createNotificationId } from "../utils/notificationUtils";
 
 vi.mock("../../subscriptions");
 vi.mock("firebase/firestore");
@@ -1580,5 +1584,86 @@ describe("markActionHistoryStale", () => {
     expect(
       root.firestoreStore.updateOpportunityActionHistory,
     ).toHaveBeenCalledWith(opp, [expectedAction]);
+  });
+});
+
+describe("OpportunityBase notifications", () => {
+  afterEach(() => {
+    vi.resetModules();
+    vi.resetAllMocks();
+  });
+
+  it("should return undefined when there are no notifications", () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      ...(mockOpportunityConfigs["LSU"] as OpportunityConfiguration),
+      notifications: [],
+    } as OpportunityConfiguration);
+
+    expect(opp.notificationsByPage).toBeUndefined();
+  });
+
+  it("should return notifications for the opportunity type", () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue(
+      mockOpportunityConfigs["LSU"] as OpportunityConfiguration,
+    );
+
+    const baseAlert = {
+      body: "BETTY RUBBLE may be eligible for the Limited Supervision Unit",
+      cta: undefined,
+      link: "/workflows/clients/p001",
+      pages: ["caseload", "profile", "supervisionSupervisor"],
+      title: "Eligible for LSU",
+      type: "alert",
+    };
+
+    expect(opp.notificationsByPage).toStrictEqual({
+      profile: [
+        { ...baseAlert, id: createNotificationId("1", opp, "profile") },
+      ],
+      supervisionSupervisor: [
+        {
+          ...baseAlert,
+          id: createNotificationId("1", opp, "supervisionSupervisor"),
+        },
+      ],
+    });
+  });
+
+  it("should NOT return any notifications for the caseload page", () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue(
+      mockOpportunityConfigs["LSU"] as OpportunityConfiguration,
+    );
+
+    const notificationsByPage = opp.notificationsByPage ?? {};
+
+    expect(notificationsByPage).not.toBeEmptyObject();
+    const pages = Object.keys(notificationsByPage);
+    // Expect the pages to be "profile" and "supervisionSupervisor"
+    expect(pages).toStrictEqual(["profile", "supervisionSupervisor"]);
+  });
+
+  it("should not return dismissed notifications", () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue(
+      mockOpportunityConfigs["LSU"] as OpportunityConfiguration,
+    );
+    vi.spyOn(
+      opp.rootStore.workflowsStore,
+      "dismissedOpportunityNotificationIds",
+      "get",
+    ).mockReturnValue([createNotificationId("1", opp, "profile")]);
+
+    // Flatten the notifications by page into a single array
+    const notifications: OpportunityNotification[] = Object.values(
+      opp.notificationsByPage ?? {},
+    ).flat();
+
+    // Expect the list of notifications to not be empty
+    expect(notifications).not.toHaveLength(0);
+    // Check if the dismissed notification is in the list of notifications
+    const hasDismissedNotification = notifications.some(
+      ({ id }) => id === createNotificationId("1", opp, "profile"),
+    );
+    // Expect the dismissed notification to not be in the list of notifications
+    expect(hasDismissedNotification).toBeFalse();
   });
 });

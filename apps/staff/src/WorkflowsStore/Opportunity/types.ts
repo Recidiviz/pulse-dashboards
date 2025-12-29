@@ -39,7 +39,10 @@ import {
 import { PartialRecord } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
-import { OpportunityConfiguration } from "./OpportunityConfigurations";
+import {
+  IApiOpportunityConfiguration,
+  OpportunityConfiguration,
+} from "./OpportunityConfigurations";
 import { SnoozeConfiguration } from "./OpportunityConfigurations/modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import { opportunityConstructors } from "./opportunityConstructors";
 
@@ -89,12 +92,8 @@ export type OpportunityCaseNote = {
   eventDate?: Date;
 };
 
-export type OpportunityNotification = {
-  id: string;
-  title?: string;
-  body: string;
-  cta?: string; // if the CTA is omitted, an "x" button will be shown instead.
-};
+export type OpportunityNotification =
+  IApiOpportunityConfiguration["notifications"][number] & { link?: string };
 
 export type WithCaseNotes = {
   caseNotes: Record<string, OpportunityCaseNote[]>;
@@ -103,6 +102,19 @@ export type WithCaseNotes = {
 export type FormVariant = "deferred";
 
 export type ActedOnTextAddition = PartialRecord<OpportunityStatus, string>;
+
+/**
+ * Pages that have notifications that are not specific to a single opportunity.
+ * Therefore, the notification handlebars cannot be hydrated with the opportunity context.
+ */
+type GlobalOpportunityNotificationPage = "caseload";
+/**
+ * A map of notifications by page, excluding the global notification pages.
+ */
+export type OpportunityNotificationsByPage = PartialRecord<
+  Exclude<OpportunityNotification["pages"][number], GlobalOpportunityNotificationPage>,
+  OpportunityNotification[]
+>;
 
 /**
  * An Opportunity is associated with a single client.
@@ -215,6 +227,7 @@ export interface Opportunity<
   showRevertLinkFallback: boolean;
   caseNoteHeaders: string[];
   generateCaseNoteText?: string;
+  notificationsByPage: OpportunityNotificationsByPage | undefined;
   eligibilityStatusLabel: (includeReasons?: boolean) => string | null;
   maxManualSnoozeDays(denialReasons: string[]): number | undefined;
   defaultManualSnoozeDays(denialReasons: string[]): number | undefined;

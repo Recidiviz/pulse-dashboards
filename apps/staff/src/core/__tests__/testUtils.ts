@@ -43,6 +43,7 @@ export const mockOpportunityConfigs = Object.fromEntries(
 ) as Record<OpportunityType, OpportunityConfiguration>;
 
 export const mockOpportunity: Opportunity<Client> = {
+  notificationsByPage: undefined,
   record: {},
   almostEligible: false,
   isIneligible: false,
@@ -156,6 +157,7 @@ export const mockOpportunity: Opportunity<Client> = {
     zeroGrantsTooltip:
       "Officer has not granted this opportunity in the past 12 months",
     caseNoteHeaders: [],
+    notifications: [],
     enableProgressiveLoading: false,
     progressiveLoadingBatchSize: 50,
     caseNotesTitle: "Additional Information",
