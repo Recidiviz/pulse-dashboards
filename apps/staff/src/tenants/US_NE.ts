@@ -119,8 +119,8 @@ const US_NE_CONFIG = {
         type: "person",
         options: [
           { value: "General" },
-          { value: "Sex Offense" },
-          { value: "Domestic Violence" },
+          { value: "Sex offense" },
+          { value: "Domestic violence" },
         ],
       },
     ],

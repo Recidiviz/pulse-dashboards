@@ -96,14 +96,14 @@ const US_MO_CONFIG = {
             value: "General",
           },
           {
-            value: "Domestic violence",
+            value: "Domestic Violence",
           },
           {
-            value: "Serious mental illness or disability",
+            value: "Serious Mental Illness Or Disability",
             shortLabel: "Mental illness/disability",
           },
           {
-            value: "Sex offense",
+            value: "Sex Offense",
           },
         ],
       },
