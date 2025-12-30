@@ -41,20 +41,6 @@ jest.mock("@react-navigation/native", () => ({
   useRoute: jest.fn(),
 }));
 
-// Mock MenuScreen
-jest.mock("../../screens/MenuScreen", () => {
-  const { View, Text } = require("react-native");
-  return function MenuScreen({ onClose }: { onClose: () => void }) {
-    return (
-      <View testID="menu-screen">
-        <Text testID="menu-screen-close" onPress={onClose}>
-          Close Menu
-        </Text>
-      </View>
-    );
-  };
-});
-
 // Mock Icons
 jest.mock("../../../assets/icons", () => ({
   Menu: { uri: "menu-icon" },

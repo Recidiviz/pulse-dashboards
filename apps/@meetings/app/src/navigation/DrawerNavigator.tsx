@@ -15,13 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useState } from "react";
-import { Modal } from "react-native";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import React from "react";
 
+import DrawerContent from "../components/DrawerContent";
 import ClientsScreen from "../screens/ClientsScreen";
 import MeetingScreen from "../screens/MeetingScreen";
-import MenuScreen from "../screens/MenuScreen";
 import NewMeetingScreen from "../screens/NewMeetingScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ResidentsScreen from "../screens/ResidentsScreen";
@@ -66,31 +65,23 @@ export type RootStackParamList = {
   };
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Drawer = createDrawerNavigator<RootStackParamList>();
 
 export default function DrawerNavigator() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
   return (
-    <>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Clients" component={ClientsScreen} />
-        <Stack.Screen name="Residents" component={ResidentsScreen} />
-        {/* <Stack.Screen name="Messages" component={HomeScreen} />
-        <Stack.Screen name="Schedule" component={HomeScreen} />
-        <Stack.Screen name="Resources" component={HomeScreen} /> */}
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="NewMeeting" component={NewMeetingScreen} />
-        <Stack.Screen name="Meeting" component={MeetingScreen} />
-      </Stack.Navigator>
-
-      <Modal
-        visible={drawerOpen}
-        animationType="slide"
-        onRequestClose={() => setDrawerOpen(false)}
-      >
-        <MenuScreen onClose={() => setDrawerOpen(false)} />
-      </Modal>
-    </>
+    <Drawer.Navigator 
+      screenOptions={{ 
+        headerShown: false, 
+        drawerType: "front", 
+        drawerStyle: { width: "100%" }, 
+      }} 
+      drawerContent={(props) => <DrawerContent {...props} />}
+    >
+      <Drawer.Screen name="Clients" component={ClientsScreen} />
+      <Drawer.Screen name="Residents" component={ResidentsScreen} />
+      <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="NewMeeting" component={NewMeetingScreen} />
+      <Drawer.Screen name="Meeting" component={MeetingScreen} />
+    </Drawer.Navigator>
   );
-}
+};

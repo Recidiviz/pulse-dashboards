@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useFonts } from "expo-font";
@@ -29,7 +29,7 @@ import LoginScreen from "../screens/LoginScreen";
 import { publicTrpc, trpc } from "../trpc/client";
 import DrawerNavigator from "./DrawerNavigator";
 
-const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 const queryClient = new QueryClient();
 const publicQueryClient = new QueryClient();
 
@@ -118,17 +118,17 @@ const AppNavigator = () => {
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
             <NavigationContainer>
-              <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Drawer.Navigator screenOptions={{ headerShown: false }}>
                 {!loggedIn ? (
-                  <Stack.Screen name="Login">
+                  <Drawer.Screen name="Login">
                     {(props) => (
                       <LoginScreen {...props} onSkipAuth={handleSkipAuth} />
                     )}
-                  </Stack.Screen>
+                  </Drawer.Screen>
                 ) : (
-                  <Stack.Screen name="Main" component={DrawerNavigator} />
+                  <Drawer.Screen name="Main" component={DrawerNavigator} />
                 )}
-              </Stack.Navigator>
+              </Drawer.Navigator>
             </NavigationContainer>
           </QueryClientProvider>
         </trpc.Provider>

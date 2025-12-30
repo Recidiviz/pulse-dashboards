@@ -15,13 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { DrawerActions, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
   Image,
   ImageBackground,
-  Modal,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -32,7 +31,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
-import MenuScreen from "../screens/MenuScreen";
 import DesktopMenuItem from "./DesktopMenuItem";
 
 type HeaderNavProp = NativeStackNavigationProp<RootStackParamList>;
@@ -47,9 +45,8 @@ const Header: React.FC<HeaderProps> = ({
   showBell = true,
   showDrawer = true,
 }) => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const { navigate } = useNavigation<HeaderNavProp>();
+  const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
   const { clearSession } = useAuth0();
 
@@ -66,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({
     <SafeAreaView edges={["top"]} className="z-10 bg-white">
       <View className="flex-row items-center justify-between px-4 py-3 md:hidden">
         {showDrawer && (
-          <TouchableOpacity onPress={() => setDrawerOpen(true)}>
+          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             <Image
               source={Icons.Menu}
               className="!size-6"
@@ -89,7 +86,7 @@ const Header: React.FC<HeaderProps> = ({
       <View className="hidden h-16 flex-row items-center justify-between bg-white px-4 md:flex lg:px-10">
         <TouchableOpacity
           testID="logo-button"
-          onPress={() => navigate("Clients")}
+          onPress={() => navigation.navigate("Clients")}
         >
           <Image
             source={Icons.Brand}
@@ -102,12 +99,12 @@ const Header: React.FC<HeaderProps> = ({
           <DesktopMenuItem
             title="Clients"
             isActive={route.name === "Clients"}
-            onPress={() => navigate("Clients")}
+            onPress={() => navigation.navigate("Clients")}
           />
           <DesktopMenuItem
             title="Residents"
             isActive={route.name === "Residents"}
-            onPress={() => navigate("Residents")}
+            onPress={() => navigation.navigate("Residents")}
           />
           <View className="relative">
             <TouchableOpacity
@@ -162,14 +159,6 @@ const Header: React.FC<HeaderProps> = ({
           </View>
         </View>
       </View>
-
-      <Modal
-        visible={drawerOpen}
-        animationType="fade"
-        onRequestClose={() => setDrawerOpen(false)}
-      >
-        <MenuScreen onClose={() => setDrawerOpen(false)} />
-      </Modal>
     </SafeAreaView>
   );
 };

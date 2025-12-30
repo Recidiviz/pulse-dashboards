@@ -15,56 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation } from "@react-navigation/native";
+import { DrawerContentComponentProps, DrawerContentScrollView } from "@react-navigation/drawer";
 import React from "react";
-import {
-  Image,
-  ImageBackground,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ImageBackground, Text,TouchableOpacity, View } from "react-native";
 import { useAuth0 } from "react-native-auth0";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
 import MobileMenuItem from "../components/MobileMenuItem";
+import MobileMenuTextItem from "./MobileMenuTextItem";
 
-const MenuTextItem = ({
-  title,
-  onPress,
-  color = "default",
-}: {
-  title: string;
-  onPress?: () => void;
-  color?: "default" | "danger";
-}) => {
-  const colorClasses: Record<"default" | "danger", string> = {
-    default: "text-gray-600",
-    danger: "text-[#B42D2D]",
-  };
-
-  return (
-    <TouchableOpacity onPress={onPress} className="py-4">
-      <Text
-        className={`font-inter text-base font-medium ${colorClasses[color]}`}
-      >
-        {title}
-      </Text>
-    </TouchableOpacity>
-  );
-};
-
-const MenuScreen = ({ onClose }: { onClose: () => void }) => {
-  const { clearSession } = useAuth0();
-  const navigation = useNavigation();
-
-  const { user } = useAuth0();
+const DrawerContent = (props: DrawerContentComponentProps) => {
+  const insets = useSafeAreaInsets();
+  const { user, clearSession } = useAuth0();
+  const { navigation } = props;
 
   const handleMenuPress = (screen: string) => {
     navigation.navigate(screen as never);
-    onClose();
+    navigation.closeDrawer();
   };
 
   const onLogout = async () => {
@@ -72,12 +40,12 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
-      <View className="flex-row justify-between items-center bg-white px-4 py-3 border-gray-200 border-b">
-        <TouchableOpacity onPress={onClose}>
+    <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1, paddingBottom: 0, paddingStart: 0, paddingEnd: 0 }}>
+      <View className="flex-row justify-between items-center bg-white px-4 pb-4">
+        <TouchableOpacity onPress={() => navigation.closeDrawer()}>
           <Image source={Icons.Cross} className="!size-6" />
         </TouchableOpacity>
-        <Text className="font-inter font-semibold text-primary text-base">
+        <Text className="font-inter font-semibold text-primary text-lg leading-[22px]">
           Navigation
         </Text>
         <TouchableOpacity onPress={() => console.log("Bell pressed")}>
@@ -85,7 +53,7 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
         </TouchableOpacity>
       </View>
 
-      <View className="px-4 w-full">
+      <View className="w-full px-2">
         <View className="flex-row items-center self-center bg-[#C1E3D83B] m-[15px] p-4 rounded-[15px] w-full h-[78px]">
           <ImageBackground
             source={Icons.BgAvatar}
@@ -104,8 +72,7 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
         </View>
       </View>
 
-      <ScrollView className="flex-1 p-4">
-        <Text className="font-inter text-gray-500 text-xs">Global</Text>
+      <View className="flex-1 px-4">
         <MobileMenuItem
           icon={Icons.Clients}
           title="Clients"
@@ -116,33 +83,15 @@ const MenuScreen = ({ onClose }: { onClose: () => void }) => {
           title="Residents"
           onPress={() => handleMenuPress("Residents")}
         />
-        {/* <MobileMenuItem
-          icon={Icons.Chat}
-          title="Messages"
-          badge={1}
-          onPress={() => handleMenuPress("Messages")}
-        />
-
-        <Text className="mt-[15px] font-inter text-xs text-gray-500">Tools</Text>
-        <MobileMenuItem
-          icon={Icons.Schedule}
-          title="Schedule"
-          onPress={() => handleMenuPress("Schedule")}
-        />
-        <MobileMenuItem
-          icon={Icons.Resources}
-          title="Resources"
-          onPress={() => handleMenuPress("Resources")}
-        /> */}
-      </ScrollView>
-
-      <View className="bg-gray-200 px-4 py-[26px]">
-        <MenuTextItem title="Settings" />
-        <MenuTextItem title="Contact Support" />
-        <MenuTextItem title="Log Out" onPress={onLogout} color="danger" />
       </View>
-    </SafeAreaView>
-  );
-};
 
-export default MenuScreen;
+      <View className="bg-gray-100 px-4 flex flex-col gap-1.5" style={{ paddingBottom: insets.bottom || 16, paddingTop: 16 }}>
+        <MobileMenuTextItem title="Settings" />
+        <MobileMenuTextItem title="Contact Support" />
+        <MobileMenuTextItem title="Log Out" onPress={onLogout} color="danger" />
+      </View>
+    </DrawerContentScrollView>
+  );
+}
+
+export default DrawerContent;

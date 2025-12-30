@@ -44,13 +44,13 @@ const MobileMenuItem = ({
       className="flex-row items-center justify-between py-4"
       onPress={onPress}
     >
-      <View className="flex-row items-center">
+      <View className="flex-row items-center gap-3">
         <Image
           source={icon}
-          className="mr-3 !size-6"
+          className="!size-[26px]"
           style={{ resizeMode: "contain" }}
         />
-        <Text className="font-inter text-base font-medium">{title}</Text>
+        <Text className="font-inter font-medium text-lg leading-[22px]">{title}</Text>
         {badge ? (
           <View className="ml-2 h-[14] w-4 justify-center rounded-full bg-gray-600">
             <Text className="text-center font-inter text-xs font-medium text-white">

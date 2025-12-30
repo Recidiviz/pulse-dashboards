@@ -13832,6 +13832,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-navigation/drawer@npm:^7.7.10":
+  version: 7.7.10
+  resolution: "@react-navigation/drawer@npm:7.7.10"
+  dependencies:
+    "@react-navigation/elements": "npm:^2.9.3"
+    color: "npm:^4.2.3"
+    react-native-drawer-layout: "npm:^4.2.1"
+    use-latest-callback: "npm:^0.2.4"
+  peerDependencies:
+    "@react-navigation/native": ^7.1.26
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-gesture-handler: ">= 2.0.0"
+    react-native-reanimated: ">= 2.0.0"
+    react-native-safe-area-context: ">= 4.0.0"
+    react-native-screens: ">= 4.0.0"
+  checksum: 10c0/5da6055d318d7552eac97fd1ea7c657c673df29230532e0f27a42c4496ceaa461bcb359c3fc16c28b2ebc8680629c2a46a533870712f8d7d1db7f7007fad13c5
+  languageName: node
+  linkType: hard
+
 "@react-navigation/elements@npm:^2.8.2":
   version: 2.8.2
   resolution: "@react-navigation/elements@npm:2.8.2"
@@ -13849,6 +13869,26 @@ __metadata:
     "@react-native-masked-view/masked-view":
       optional: true
   checksum: 10c0/0e5282f92f2946fd635c2a1c9b444d6d158663ad57669cb87e372587d2313df90cd092737305f999e6223aace75cb7829ef709b1198a8a6bc22aa40821a792e6
+  languageName: node
+  linkType: hard
+
+"@react-navigation/elements@npm:^2.9.3":
+  version: 2.9.3
+  resolution: "@react-navigation/elements@npm:2.9.3"
+  dependencies:
+    color: "npm:^4.2.3"
+    use-latest-callback: "npm:^0.2.4"
+    use-sync-external-store: "npm:^1.5.0"
+  peerDependencies:
+    "@react-native-masked-view/masked-view": ">= 0.2.0"
+    "@react-navigation/native": ^7.1.26
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-safe-area-context: ">= 4.0.0"
+  peerDependenciesMeta:
+    "@react-native-masked-view/masked-view":
+      optional: true
+  checksum: 10c0/50c30366507ca420e65b1a232edca8d64fbac1420d90d0a9aa16ec84d8c63719b9c626a24095943fd63283b4116c0ec888f6ccc6cb2317a4cba4d1b1c2c5021a
   languageName: node
   linkType: hard
 
@@ -45827,13 +45867,13 @@ __metadata:
   linkType: hard
 
 "react-dom@npm:^19.2.1":
-  version: 19.2.1
-  resolution: "react-dom@npm:19.2.1"
+  version: 19.2.3
+  resolution: "react-dom@npm:19.2.3"
   dependencies:
     scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.2.1
-  checksum: 10c0/e56b6b3d72314df580ca800b70a69a21c6372703c8f45d9b5451ca6519faefb2496d76ffa9c5adb94136d2bbf2fd303d0dfc208a2cd77ede3132877471af9470
+    react: ^19.2.3
+  checksum: 10c0/dc43f7ede06f46f3acc16ee83107c925530de9b91d1d0b3824583814746ff4c498ea64fd65cd83aba363205268adff52e2827c582634ae7b15069deaeabc4892
   languageName: node
   linkType: hard
 
@@ -46120,6 +46160,21 @@ __metadata:
     react-native-svg:
       optional: true
   checksum: 10c0/c3be3a785216ce430d32a78f52c76387b4fc38b53b9d66d4cf5e3973f1fe35c801f8f299e6b8c129be9c979ccd3274a35dccf4f8054f46cca3288a3ca77c7a4c
+  languageName: node
+  linkType: hard
+
+"react-native-drawer-layout@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "react-native-drawer-layout@npm:4.2.1"
+  dependencies:
+    color: "npm:^4.2.3"
+    use-latest-callback: "npm:^0.2.4"
+  peerDependencies:
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-gesture-handler: ">= 2.0.0"
+    react-native-reanimated: ">= 2.0.0"
+  checksum: 10c0/156960cf9947db0628e4ae5f4ba39c85c4fd75825326090eb9a3051aec94bd0b429e6f90e5983e3da64fe124ef41887e344cf08e5f40a27a2d6a81e0ebeec3b2
   languageName: node
   linkType: hard
 
@@ -46794,9 +46849,9 @@ __metadata:
   linkType: hard
 
 "react@npm:^19.2.1":
-  version: 19.2.1
-  resolution: "react@npm:19.2.1"
-  checksum: 10c0/2b5eaf407abb3db84090434c20d6c5a8e447ab7abcd8fe9eaf1ddc299babcf31284ee9db7ea5671d21c85ac5298bd632fa1a7da1ed78d5b368a537f5e1cd5d62
+  version: 19.2.3
+  resolution: "react@npm:19.2.3"
+  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
   languageName: node
   linkType: hard
 
@@ -47096,6 +47151,7 @@ __metadata:
     "@prisma/adapter-pg": "npm:6.16.1"
     "@prisma/client": "npm:6.16.1"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
+    "@react-navigation/drawer": "npm:^7.7.10"
     "@react-navigation/native": "npm:^7.1.17"
     "@recidiviz/auth": "npm:^1.2.0"
     "@recidiviz/design-system": "npm:^5.11.0"
