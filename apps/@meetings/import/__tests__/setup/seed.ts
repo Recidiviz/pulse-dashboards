@@ -19,6 +19,7 @@ import { faker } from "@faker-js/faker";
 
 import {
   ClientCreateInput,
+  ResidentCreateInput,
   StaffCreateInput,
 } from "~@meetings/import/test/setup/types";
 import { PrismaClient, StateCode } from "~@meetings/prisma/client";
@@ -53,9 +54,24 @@ export const fakeClient = {
   supervisionType: "PAROLE",
 } satisfies ClientCreateInput;
 
+export const fakeResident = {
+  stateCode: StateCode.US_NE,
+  personId: BigInt(2),
+  stablePersonExternalId: "resident-ext-1",
+  stablePersonExternalIdType: "resident-ext-type-1",
+  pseudonymizedId: "resident-pid-1",
+  displayPersonExternalId: "resident-display-ext-1",
+  givenNames: faker.person.firstName(),
+  middleNames: faker.person.firstName(),
+  surname: faker.person.lastName(),
+  suffix: faker.person.suffix(),
+  facilityId: "facility-1",
+} satisfies ResidentCreateInput;
+
 export async function seed(prismaClient: PrismaClient) {
   // Seed Data
 
   await prismaClient.staff.create({ data: fakeStaff });
   await prismaClient.client.create({ data: fakeClient });
+  await prismaClient.resident.create({ data: fakeResident });
 }

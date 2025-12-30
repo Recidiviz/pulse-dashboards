@@ -17,20 +17,28 @@
 
 import {
   clientImportSchema,
+  residentImportSchema,
   staffImportSchema,
 } from "~@meetings/import/models";
 import { transformAndLoadClientData } from "~@meetings/import/utils/clients";
+import { transformAndLoadResidentData } from "~@meetings/import/utils/residents";
 import { transformAndLoadStaffData } from "~@meetings/import/utils/staff";
 
-// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/meetings/client.py
+// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/meetings/clients.py
 export const CLIENTS_FILE_NAME = "clients.json";
-// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/meetings/officer.py
+// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/meetings/residents.py
+export const RESIDENTS_FILE_NAME = "residents.json";
+// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/meetings/staff.py
 export const STAFF_FILE_NAME = "staff.json";
 
 export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
   [CLIENTS_FILE_NAME]: {
     schema: clientImportSchema,
     loaderFn: transformAndLoadClientData,
+  },
+  [RESIDENTS_FILE_NAME]: {
+    schema: residentImportSchema,
+    loaderFn: transformAndLoadResidentData,
   },
   [STAFF_FILE_NAME]: {
     schema: staffImportSchema,

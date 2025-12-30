@@ -17,6 +17,7 @@
 
 import {
   CLIENTS_FILE_NAME,
+  RESIDENTS_FILE_NAME,
   STAFF_FILE_NAME,
 } from "~@meetings/import/constants";
 
@@ -24,3 +25,4 @@ export const TEST_BUCKET = "test-bucket";
 export const TEST_STATE_CODE = "US_NE";
 export const TEST_STAFF_FILE_NAME = `${TEST_STATE_CODE}/${STAFF_FILE_NAME}`;
 export const TEST_CLIENTS_FILE_NAME = `${TEST_STATE_CODE}/${CLIENTS_FILE_NAME}`;
+export const TEST_RESIDENTS_FILE_NAME = `${TEST_STATE_CODE}/${RESIDENTS_FILE_NAME}`;

@@ -51,6 +51,18 @@ export const clientImportSchema = z.object({
   supervision_type: z.string(),
 });
 
+export const residentImportSchema = z.object({
+  state_code: stateCode,
+  // Need to coerce into a bigint because our metric exports use strings for these
+  person_id: z.coerce.bigint(),
+  stable_person_external_id: z.string(),
+  stable_person_external_id_type: z.string(),
+  pseudonymized_id: z.string(),
+  display_person_external_id: z.string(),
+  full_name: nameSchema,
+  facility_id: z.string(),
+});
+
 export const staffImportSchema = z.object({
   state_code: stateCode,
   // Need to coerce into a bigint because our metric exports use strings for these

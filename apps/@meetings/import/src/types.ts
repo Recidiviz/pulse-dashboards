@@ -20,3 +20,5 @@ import type { Prisma } from "~@meetings/prisma/client";
 export type StaffCreateInput = Prisma.StaffCreateInput;
 export type ClientCreateInput = Prisma.ClientCreateManyInput;
 export type ClientUpdateInput = Prisma.ClientUpdateManyMutationInput;
+export type ResidentCreateInput = Prisma.ResidentCreateManyInput;
+export type ResidentUpdateInput = Prisma.ResidentUpdateManyMutationInput;
