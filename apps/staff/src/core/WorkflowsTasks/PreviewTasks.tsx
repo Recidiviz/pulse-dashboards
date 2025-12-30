@@ -233,7 +233,7 @@ const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
   if (!task.isSnoozed || !task.snoozeInfo) return null;
   const { snoozedBy, snoozedUntil, snoozedOn } = task.snoozeInfo;
 
-  const snoozeText = `This task will be hidden until ${formatWorkflowsDate(snoozedUntil)}. Marked as hidden by ${snoozedBy} on ${formatWorkflowsDate(formatDateString(snoozedOn))}.`;
+  const snoozeText = `This task is hidden until ${formatWorkflowsDate(snoozedUntil)}. Marked as hidden by ${snoozedBy} on ${formatWorkflowsDate(formatDateString(snoozedOn))}.`;
   return (
     <SnoozedTaskInfoBox>
       <SnoozedTaskIcon>

@@ -355,6 +355,9 @@ export const FullProfile = observer(
       ? "Additional information"
       : "Progress toward success";
 
+    // Suppress unimplemented sections for MO clients
+    const isMoClient = person instanceof Client && person.stateCode === "US_MO";
+
     const queryClient = new QueryClient();
 
     const trpcClient = trpc.createClient({
@@ -431,24 +434,28 @@ export const FullProfile = observer(
                   />
                 </div>
               )}
-              <div>
-                <SectionHeading>{sidebarHeadingText}</SectionHeading>
-                <Divider />
-                <AdditionalDetails person={person} />
-              </div>
+              {isMoClient ? null : (
+                <div>
+                  <SectionHeading>{sidebarHeadingText}</SectionHeading>
+                  <Divider />
+                  <AdditionalDetails person={person} />
+                </div>
+              )}
             </ProfileDetailsWrapper>
-            <div>
-              <SectionHeading>Opportunities</SectionHeading>
-              <OpportunitiesAccordion
-                person={person}
-                formLinkButton
-                showIneligibleOpportunityTypes
-                showIneligibleFormButtons={
-                  !!usTn2026ClassificationPolicyPilot &&
-                  currentTenantId === "US_TN"
-                }
-              />
-            </div>
+            {isMoClient ? null : (
+              <div>
+                <SectionHeading>Opportunities</SectionHeading>
+                <OpportunitiesAccordion
+                  person={person}
+                  formLinkButton
+                  showIneligibleOpportunityTypes
+                  showIneligibleFormButtons={
+                    !!usTn2026ClassificationPolicyPilot &&
+                    currentTenantId === "US_TN"
+                  }
+                />
+              </div>
+            )}
           </Content>
         </Wrapper>
       </WorkflowsNavLayout>

@@ -37,7 +37,7 @@ class UsMoPositiveHomeVisitTask extends Task<"usMoPositiveHomeVisit"> {
     const { lastContactDate } = this.details;
     return lastContactDate
       ? `Last positive home visit on ${formatWorkflowsDate(fieldToDate(lastContactDate))}`
-      : "No previous positive home visit on record";
+      : "No previous positive home visit recorded during the current supervision level and/or case type.";
   }
 
   get frequency() {

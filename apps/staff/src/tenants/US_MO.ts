@@ -48,7 +48,9 @@ const US_MO_CONFIG = {
         snoozeForOptionsInDays: [7, 30],
       },
     },
-    categories: ["DUE_THIS_MONTH", "DUE_NEXT_MONTH", "OVERDUE", "ALL_TASKS"],
+    pageDescriptionMarkdown:
+      "The clients below might have upcoming contact requirements.",
+    categories: ["DUE_THIS_MONTH", "DUE_NEXT_MONTH", "OVERDUE"],
     filters: [
       {
         title: "Task Type",

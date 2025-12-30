@@ -18,7 +18,7 @@
 import { subYears } from "date-fns";
 import dedent from "dedent";
 import { deleteField, FieldValue, serverTimestamp } from "firebase/firestore";
-import { capitalize, mapValues, toUpper } from "lodash";
+import { capitalize, lowerCase, mapValues, startCase, toUpper } from "lodash";
 import { action, makeObservable, override } from "mobx";
 import { format as formatPhone, uglify } from "phone-fns";
 import { toast } from "react-hot-toast";
@@ -249,7 +249,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     }
     if (this.stateCode === "US_MO") {
       if (!this._caseType) return "Unknown";
-      return capitalize(this._caseType.replaceAll("_", " "));
+      return startCase(lowerCase(this._caseType));
     }
 
     // This is the enum we use for case type internally

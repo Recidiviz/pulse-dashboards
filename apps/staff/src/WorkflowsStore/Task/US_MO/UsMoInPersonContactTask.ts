@@ -27,7 +27,7 @@ class UsMoInPersonContactTask extends Task<"usMoInPersonContact"> {
     const { lastContactDate } = this.details;
     return lastContactDate
       ? `Last in-person contact on ${formatWorkflowsDate(fieldToDate(lastContactDate))}`
-      : "No previous in-person contact on record";
+      : "No previous in-person contact recorded during the current supervision level and/or case type.";
   }
 
   get frequency() {

@@ -27,7 +27,7 @@ class UsMoEmploymentVerificationTask extends Task<"usMoEmploymentVerification"> 
     const { lastContactDate } = this.details;
     return lastContactDate
       ? `Last employment verification on ${formatWorkflowsDate(fieldToDate(lastContactDate))}`
-      : "No previous employment verification on record";
+      : "No previous employment verification recorded during the current supervision level and/or case type.";
   }
 
   get frequency() {
