@@ -55,6 +55,43 @@ describe("auth", () => {
     );
   });
 
+  test("missing stateCode in header", async () => {
+    await initFastifyAndSetUser(
+      {
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "US_NE",
+          pseudonymizedId: fakeStaff[0].pseudonymizedId,
+        },
+      },
+      { omitStateCode: true },
+    );
+
+    // Authenticated endpoint should fail without stateCode (treated as unauthorized)
+    await expect(
+      testTRPCClient.v1.staff.getClients.query(),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCClientError: UNAUTHORIZED]`,
+    );
+  });
+
+  test("invalid stateCode header format throws error", async () => {
+    await initFastifyAndSetUser(
+      {
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "US_NE",
+          pseudonymizedId: fakeStaff[0].pseudonymizedId,
+        },
+      },
+      { stateCode: "INVALID_STATE" },
+    );
+
+    // Any endpoint should fail with invalid stateCode format
+    await expect(
+      testTRPCClient.v1.staff.getClients.query(),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCClientError: Unsupported state code provided in request headers: INVALID_STATE]`,
+    );
+  });
   test("missing pseudonymizedId", async () => {
     await initFastifyAndSetUser({
       "https://dashboard.recidiviz.org/app_metadata": {
@@ -144,5 +181,30 @@ describe("skip auth", () => {
     } finally {
       env.NODE_ENV = originalNodeEnv;
     }
+  });
+});
+
+describe("public routes without stateCode", () => {
+  test("public routes work without stateCode header", async () => {
+    await initFastifyAndSetUser(undefined, { omitStateCode: true });
+
+    // Public endpoint should work without stateCode
+    const result = await testTRPCClient.v1.metadata.checkAppVersion.query({
+      appVersion: "1.0.0",
+    });
+    expect(result).toEqual({ requiresUpgrade: false });
+  });
+
+  test("public routes work without authentication", async () => {
+    await initFastifyAndSetUser(undefined, {
+      omitStateCode: true,
+      omitAuth: true,
+    });
+
+    // Public endpoint should work without auth
+    const result = await testTRPCClient.v1.metadata.checkAppVersion.query({
+      appVersion: "1.0.0",
+    });
+    expect(result).toEqual({ requiresUpgrade: false });
   });
 });

@@ -28,6 +28,6 @@ export type Context = {
   res: FastifyReply;
   isAuth0Authorized: boolean;
   user?: AuthUser;
-  prisma: PrismaClient;
-  stateCode: StateCode;
+  prisma?: PrismaClient;
+  stateCode?: StateCode;
 };

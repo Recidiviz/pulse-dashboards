@@ -83,7 +83,12 @@ vi.mock("@google-cloud/tasks", () => ({
 
 export async function initFastifyAndSetUser(
   user?: Auth0User,
-  options?: { skipAuth?: boolean },
+  options?: {
+    skipAuth?: boolean;
+    omitAuth?: boolean;
+    stateCode?: string;
+    omitStateCode?: boolean;
+  },
 ) {
   if (testServer) {
     await testServer.close();
@@ -129,14 +134,20 @@ export async function initFastifyAndSetUser(
       httpBatchLink({
         url: `http://${testHost}:${testPort}`,
         headers() {
-          const headers: Record<string, string> = {
-            StateCode: "US_NE",
-          };
+          const headers: Record<string, string> = {};
 
-          if (options?.skipAuth) {
-            headers["X-Skip-Auth"] = "true";
-          } else {
-            headers["Authorization"] = "Bearer test-token";
+          // Add stateCode header unless explicitly omitted
+          if (!options?.omitStateCode) {
+            headers["StateCode"] = options?.stateCode ?? "US_NE";
+          }
+
+          // Add auth header unless explicitly omitted
+          if (!options?.omitAuth) {
+            if (options?.skipAuth) {
+              headers["X-Skip-Auth"] = "true";
+            } else {
+              headers["Authorization"] = "Bearer test-token";
+            }
           }
 
           return headers;

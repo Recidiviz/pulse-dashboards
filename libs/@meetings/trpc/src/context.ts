@@ -22,7 +22,7 @@ import { TRPCError } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
-import { StateCode } from "~@meetings/prisma/client";
+import { PrismaClient, StateCode } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
 import { AuthUser, Context } from "~@meetings/trpc/types";
 import { verifyAuth0Token } from "~server-setup-plugin";
@@ -101,8 +101,20 @@ export async function createContext(
     stateCode = req.headers[STATE_CODE_HEADER_KEY];
   }
 
+  // Early return for requests without stateCode (public routes)
+  if (!stateCode) {
+    return {
+      req,
+      res,
+      isAuth0Authorized: false,
+      user: undefined,
+      prisma: undefined,
+      stateCode: undefined,
+    };
+  }
+
+  // Validate stateCode format
   if (
-    !stateCode ||
     typeof stateCode !== "string" ||
     !Object.values(StateCode).includes(stateCode as StateCode)
   ) {
@@ -123,8 +135,8 @@ export async function createContext(
     });
   }
 
+  // Perform authentication
   let formattedUser: AuthUser | undefined;
-
   if (shouldSkipAuth) {
     // In dev mode with skip auth, create a mock user
     console.log("Skipping Auth0 verification in dev mode - using mock user");
@@ -139,7 +151,8 @@ export async function createContext(
 
   console.log(`formattedUser: ${JSON.stringify(formattedUser)}`);
 
-  let prismaClient;
+  // Connect to database
+  let prismaClient: PrismaClient;
   try {
     prismaClient = getPrismaClientForStateCode(stateCode);
   } catch (e) {

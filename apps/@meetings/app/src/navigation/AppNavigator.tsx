@@ -80,9 +80,6 @@ const AppNavigator = () => {
       links: [
         httpBatchLink({
           url: trpcUrl,
-          headers: () => ({
-            statecode: "US_NE",
-          }),
           transformer: superjson,
         }),
       ],

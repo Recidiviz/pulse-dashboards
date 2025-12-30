@@ -38,10 +38,21 @@ export const auth0Procedure = baseProcedure.use(async (opts) => {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
+  // We should never realistically hit this conditional because if there's no state code we set
+  // isAuth0Authorized to false, but this gives us a guarantee for types.
+  if (!ctx.stateCode || !ctx.prisma) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: "State code is required for authenticated requests",
+    });
+  }
+
   return opts.next({
     ctx: {
       user: ctx.user,
       isAuth0Authorized: ctx.isAuth0Authorized,
+      stateCode: ctx.stateCode,
+      prisma: ctx.prisma,
     },
   });
 });
