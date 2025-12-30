@@ -20,6 +20,7 @@ components:
         sql_instance_connections:
           sentencing-db: 5432
           jii-texting: 5433
+          meetings: 5444
 
     apps/shared-infra:
       vars:
