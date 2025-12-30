@@ -29,6 +29,9 @@ export const intakeId = "intake-1";
 export const clientPseudoId1 = "client-pid-1";
 export const clientPseudoId2 = "client-pid-2";
 export const clientPseudoId3 = "client-pid-3";
+export const residentPseudoId1 = "resident-pid-1";
+export const residentPseudoId2 = "resident-pid-2";
+export const residentPseudoId3 = "resident-pid-3";
 
 export const fakeStaff = [
   {
@@ -113,6 +116,51 @@ export const fakeClients = [
   },
 ] satisfies Prisma.ClientCreateInput[];
 
+export const fakeResidents = [
+  {
+    stateCode: StateCode.US_NE,
+    personId: BigInt(101),
+    stablePersonExternalId: "resident-ext-1",
+    stablePersonExternalIdType: "resident-ext-type-1",
+    displayPersonExternalId: "resident-display-ext-1",
+    pseudonymizedId: residentPseudoId1,
+    givenNames: faker.person.firstName(),
+    middleNames: faker.person.firstName(),
+    surname: faker.person.lastName(),
+    suffix: faker.person.suffix(),
+    facilityId: "facility-1",
+    isActive: true,
+  },
+  {
+    stateCode: StateCode.US_NE,
+    personId: BigInt(102),
+    stablePersonExternalId: "resident-ext-2",
+    stablePersonExternalIdType: "resident-ext-type-1",
+    displayPersonExternalId: "resident-display-ext-2",
+    pseudonymizedId: residentPseudoId2,
+    givenNames: faker.person.firstName(),
+    middleNames: faker.person.firstName(),
+    surname: faker.person.lastName(),
+    suffix: faker.person.suffix(),
+    facilityId: "facility-1",
+    isActive: true,
+  },
+  {
+    stateCode: StateCode.US_NE,
+    personId: BigInt(103),
+    stablePersonExternalId: "resident-ext-3",
+    stablePersonExternalIdType: "resident-ext-type-1",
+    displayPersonExternalId: "resident-display-ext-3",
+    pseudonymizedId: residentPseudoId3,
+    givenNames: faker.person.firstName(),
+    middleNames: faker.person.firstName(),
+    surname: faker.person.lastName(),
+    suffix: faker.person.suffix(),
+    facilityId: "facility-2",
+    isActive: false,
+  },
+] satisfies Prisma.ResidentCreateInput[];
+
 export const fakeMeeting = {
   id: "meeting-1",
   staff: {
@@ -129,9 +177,12 @@ export const fakeMeeting = {
   recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
   recordingsFolderPath: "meeting-1",
   userNotepadNotes: "Sample meeting notes.",
-  actionItems: "1. Follow up on employment status\n2. Schedule next check-in\n3. Review case file",
-  criticalUpdates: "Client reported new job opportunity. Upcoming court date next week.",
-  meetingSummary: "Productive meeting discussing client progress and upcoming milestones.",
+  actionItems:
+    "1. Follow up on employment status\n2. Schedule next check-in\n3. Review case file",
+  criticalUpdates:
+    "Client reported new job opportunity. Upcoming court date next week.",
+  meetingSummary:
+    "Productive meeting discussing client progress and upcoming milestones.",
   transcriptions: {
     create: [
       {
@@ -189,6 +240,47 @@ export const fakeMeeting = {
   },
 } satisfies Prisma.MeetingCreateInput;
 
+export const fakeResidentMeeting = {
+  id: "resident-meeting-1",
+  staff: {
+    connect: {
+      staffId: fakeStaff[0].staffId,
+    },
+  },
+  resident: {
+    connect: {
+      personId: fakeResidents[0].personId,
+    },
+  },
+  startTime: new Date(),
+  recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
+  recordingsFolderPath: "resident-meeting-1",
+  userNotepadNotes: "Sample resident meeting notes.",
+  transcriptions: {
+    create: [
+      {
+        provider: TranscriptionProvider.ASSEMBLYAI,
+        transcriptObject: {},
+        confidence: 0.95,
+        summary: "This is a sample summary of the resident meeting.",
+        utterances: {
+          createMany: {
+            data: [
+              {
+                text: "Hello, this is a sample resident utterance.",
+                speaker: "Speaker A",
+                startTimeMs: 0,
+                endTimeMs: 3000,
+                confidence: 0.98,
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+} satisfies Prisma.MeetingCreateInput;
+
 export async function seed(prismaClient: PrismaClient) {
   // Seed Data
   await prismaClient.staff.createMany({
@@ -205,7 +297,15 @@ export async function seed(prismaClient: PrismaClient) {
     ),
   );
 
+  await prismaClient.resident.createMany({
+    data: fakeResidents,
+  });
+
   await prismaClient.meeting.create({
     data: fakeMeeting,
+  });
+
+  await prismaClient.meeting.create({
+    data: fakeResidentMeeting,
   });
 }
