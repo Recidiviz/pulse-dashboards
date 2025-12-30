@@ -26,7 +26,7 @@ export class UsNeTodosPresenter {
     private readonly opportunities: OpportunityData[],
   ) {}
 
-  get metadata() {
+  get residentMetadata() {
     const { metadata } = this.resident;
 
     if (metadata.stateCode !== "US_NE") {
@@ -43,7 +43,7 @@ export class UsNeTodosPresenter {
    * Only show if the resident is not serving a life sentence or a sentence for more than 75 years.
    */
   get shouldShowReentryChecklist(): boolean {
-    const years = this.metadata.maximumSentenceYears;
+    const years = this.residentMetadata.maximumSentenceYears;
     if (years === null) {
       return false;
     }
@@ -59,6 +59,10 @@ export class UsNeTodosPresenter {
     type GoodTimeOpportunity = OpportunityData & {
       opportunityRecord: UsNeGoodTimeRestorationRecord["output"];
     };
+
+    if (this.residentMetadata.isInGoodTimeRestorationAlertPilot !== true) {
+      return null;
+    }
 
     const goodTimeOpportunity = this.opportunities.find(
       // This type guard only asserts what OpportunityData guarantees (that opportunityRecord's
