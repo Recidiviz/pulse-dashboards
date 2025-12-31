@@ -124,7 +124,7 @@ Most people can earn credits if they meet the following requirements:
 ## I see a credit removal this month, but I didn’t have a disciplinary. Why?
 
 - The app shows credit removals **in the month when they are entered into the computer**, not when the disciplinary actually happened.
-- If you get a Class A ticket that takes away sentence credits, it first has to go through a review process. TDOC then enters the loss of credits into the computer. This usually takes 3 or more months from the time of your disciplinary hearing.
+- If you get a Class A disciplinary that takes away sentence credits, it first has to go through a review process. TDOC then enters the loss of credits into the computer. This usually takes 3 or more months from the time of your disciplinary hearing.
 - So, if you see a credit removal, it may be from a disciplinary that happened a few months ago.
 
 ## Where can I go if I have questions?
