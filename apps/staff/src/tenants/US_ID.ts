@@ -24,13 +24,13 @@ import {
   PATHWAYS_SECTIONS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import UsIdAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdAssessmentTask";
 import UsIdContactTask from "../WorkflowsStore/Task/US_ID/UsIdContactTask";
 import UsIdEmploymentVerificationTask from "../WorkflowsStore/Task/US_ID/UsIdEmploymentVerificationTask";
 import UsIdEmploymentVerificationTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdEmploymentVerificationTaskV2";
 import UsIdFaceToFaceContactTask from "../WorkflowsStore/Task/US_ID/UsIdFaceToFaceContactTask";
 import UsIdHomeVisitTask from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTask";
 import UsIdHomeVisitTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTaskV2";
+import UsIdLsirAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdLsirAssessmentTask";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdRiskAssessmentTask";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
@@ -62,8 +62,8 @@ const US_ID_CONFIG = {
         constructor: UsIdEmploymentVerificationTaskV2,
         snoozeForOptionsInDays: [7, 30, 90],
       },
-      usIdAssessment: {
-        constructor: UsIdAssessmentTask,
+      usIdLsirAssessment: {
+        constructor: UsIdLsirAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
@@ -126,7 +126,7 @@ const US_ID_CONFIG = {
             label: "Home Visit",
           },
           {
-            value: "usIdAssessment",
+            value: "usIdLsirAssessment",
             label: "Risk Assessment",
             shortLabel: "Assessment",
           },

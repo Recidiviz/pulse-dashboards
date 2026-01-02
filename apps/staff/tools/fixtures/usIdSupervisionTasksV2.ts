@@ -67,7 +67,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
-        type: "usIdAssessment",
+        type: "usIdLsirAssessment",
         dueDate: relativeFixtureDate({ days: 365 }),
         details: {
           contactCadence: "1 EVERY 365",
@@ -99,7 +99,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
-        type: "usIdAssessment",
+        type: "usIdLsirAssessment",
         dueDate: relativeFixtureDate({ days: 365 }),
         details: {
           contactCadence: "1 EVERY 365",

@@ -20,7 +20,7 @@ import { fieldToDate } from "~datatypes";
 import { formatDate } from "../../../utils";
 import UsIdTaskBase from "./UsIdTaskBase";
 
-class UsIdAssessmentTask extends UsIdTaskBase<"usIdAssessment"> {
+class UsIdLsirAssessmentTask extends UsIdTaskBase<"usIdLsirAssessment"> {
   displayName = "Assessment";
   vitalsMetricId = "timely_risk_assessment" as const;
   taskAction = "assessment";
@@ -36,4 +36,4 @@ class UsIdAssessmentTask extends UsIdTaskBase<"usIdAssessment"> {
   }
 }
 
-export default UsIdAssessmentTask;
+export default UsIdLsirAssessmentTask;

@@ -132,7 +132,7 @@ export type UsIdTaskBaseDetails = {
   lastContactDate: string | null;
 };
 
-type UsIdAssessmentV2Details = UsIdTaskBaseDetails & {
+type UsIdLsirAssessmentDetails = UsIdTaskBaseDetails & {
   lastAssessmentDate: string | null;
 };
 
@@ -154,7 +154,7 @@ export const SUPERVISION_TASK_TYPES = [
   "usIdHomeVisit",
   // TODO(#10615): Remove 'assessment' v1 (keep v2, usIdRiskAssessment) task type when UsIdTasksV2 is fully rolled out.
   "assessment",
-  "usIdAssessment",
+  "usIdLsirAssessment",
   // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
   "contact",
   "usIdFaceToFaceContact",
@@ -206,7 +206,7 @@ export type SupervisionDetailsForTask = {
   // TODO(#10615): Remove 'assessment' v1 (keep v2, usIdRiskAssessment) task type when UsIdTasksV2 is fully rolled out.
   assessment: UsIdAssessmentDetails;
   // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
-  usIdAssessment: UsIdAssessmentV2Details;
+  usIdLsirAssessment: UsIdLsirAssessmentDetails;
   contact: UsIdContactDetails;
   // TODO(#10615): Remove 'employment' v1 (keep v2, usIdEmploymentVerification) task type when UsIdTasksV2 is fully rolled out.
   usIdFaceToFaceContact: UsIdTaskBaseDetails;
@@ -297,7 +297,7 @@ export type UsIdAgnosticTaskType =
   | "usIdFaceToFaceContact"
   | "usIdHomeVisit"
   | "usIdEmploymentVerification"
-  | "usIdAssessment";
+  | "usIdLsirAssessment";
 
 type TasksStateCode = {
   [K in keyof SpecificTenantConfigs]: SpecificTenantConfigs[K] extends {
