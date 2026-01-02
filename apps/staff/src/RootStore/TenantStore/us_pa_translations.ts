@@ -32,7 +32,7 @@ export default {
   revocationsByOfficerChartTitle: "Recommitments by agent",
   revocationsByRiskLevelChartTitle: "Recommitments by risk level",
   revocationsByGenderChartTitle: "Recommitments by sex",
-  revocationsByRaceChartTitle: "Recommitments by race/ethnicity",
+  revocationsByRaceChartTitle: "Recommitments by race",
   caseTableTitle: "Recommitted individuals",
   revocationsOverTimeChartId: "recommitmentsOverTime",
   revocationsMatrixChartId: "recommitmentsMatrix",
@@ -76,7 +76,6 @@ of that column.`,
   raceLabelMap: {
     WHITE: "White",
     BLACK: "Black",
-    HISPANIC: "Hispanic",
     OTHER: "Other",
   },
   violationTypes: [

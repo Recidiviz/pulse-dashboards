@@ -107,10 +107,6 @@ describe("generateDatasets", () => {
         },
         {
           data: ["80", "70", "60", "50", "40", "30"],
-          label: "Hispanic",
-        },
-        {
-          data: ["70", "60", "50", "40", "30", "20"],
           label: "Other",
         },
       ];

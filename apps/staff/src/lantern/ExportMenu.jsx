@@ -18,7 +18,8 @@
 import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
-import { Dropdown, Modal } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
+import { createPortal } from "react-dom";
 
 import {
   downloadChartAsData,
@@ -134,42 +135,46 @@ function ExportMenu({
         </Dropdown.Menu>
       </Dropdown>
 
-      <Modal
-        centered
-        show={isModalOpened}
-        tabIndex="-1"
-        role="dialog"
-        onHide={hideModal}
-        scrollable
-      >
-        <Modal.Header>
-          <h5 className="modal-title">About this chart</h5>
-          <button
-            type="button"
-            className="close"
-            onClick={hideModal}
-            aria-label="Close"
+      {isModalOpened &&
+        createPortal(
+          <div
+            className="modal show d-block"
+            tabIndex="-1"
+            role="dialog"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
           >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </Modal.Header>
-        <div className="modal-overflow">
-          <Modal.Body>
-            {additionalInfo.length > 0 ? (
-              <ul>
-                {additionalInfo.map((info) => (
-                  <div key={info.id}>
-                    <h6>{info.title}</h6>
-                    <p>{info.methodology}</p>
-                  </div>
-                ))}
-              </ul>
-            ) : (
-              <p>There is no additional information for this chart.</p>
-            )}
-          </Modal.Body>
-        </div>
-      </Modal>
+            <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">About this chart</h5>
+                  <button
+                    type="button"
+                    className="close"
+                    onClick={hideModal}
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  {additionalInfo.length > 0 ? (
+                    <ul>
+                      {additionalInfo.map((info) => (
+                        <div key={info.id}>
+                          <h6>{info.title}</h6>
+                          <p>{info.methodology}</p>
+                        </div>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>There is no additional information for this chart.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </span>
   );
 }
