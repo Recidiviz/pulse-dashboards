@@ -77,6 +77,13 @@ export const useMeetingRecording = ({
   const [totalDurationMs, setTotalDurationMs] = useState(0);
   const [accumulatedDurationMs, setAccumulatedDurationMs] = useState(0);
 
+  useEffect(() => {
+    getItem("durationMs").then((duration) => {
+      setAccumulatedDurationMs(Number(duration) || 0);
+      setTotalDurationMs(Number(duration) || 0);
+    })
+  }, [])
+
   const isFocused = useIsFocused();
 
   const {

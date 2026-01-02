@@ -28,9 +28,12 @@ import { Alert } from "react-native";
 
 import { RecordingStatus } from "../common/types";
 import {
+  getItem,
   getRecordingState,
   getRecordingUri,
+  removeItem,
   removeRecordingUri,
+  saveItem,
   saveRecordingUri,
   setRecordingState,
 } from "../utils/storage";
@@ -220,6 +223,9 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
       await setStatus("uploading");
       await stopAndUploadRecording(uploadFn);
       await setStatus("paused");
+      const prevDurationMsItem = await getItem("durationMs");
+      const prevDurationMs = Number(prevDurationMsItem || 0);
+      await saveItem("durationMs", (prevDurationMs + recorderState.durationMillis).toString());
     }
   };
 
@@ -229,6 +235,7 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
    */
   const cleanupRecording = async () => {
     await removeRecordingUri();
+    await removeItem("durationMs");
     await setStatus("idle");
   };
 

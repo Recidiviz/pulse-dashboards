@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
@@ -54,7 +54,6 @@ const MeetingInProgressBar = ({
   meetingId,
   className = "",
 }: MeetingInProgressBarProps) => {
-  const [durationMs, setDurationMs] = useState(0);
   const isPaused = recordingState === "paused";
 
   const normalizedPerson = {
@@ -62,7 +61,7 @@ const MeetingInProgressBar = ({
     personId: BigInt(person.personId),
   };
 
-  const { actions } = useMeetingRecording({
+  const { actions, totalDurationMs } = useMeetingRecording({
     person: normalizedPerson,
     meetingId,
   });
@@ -76,31 +75,6 @@ const MeetingInProgressBar = ({
     handleContinue,
   } = actions;
 
-  useEffect(() => {
-    // Calculate initial time
-    const start = new Date(startTime).getTime();
-    const end = endTime ? new Date(endTime).getTime() : Date.now();
-    const initialDiff = end - start;
-    setDurationMs(initialDiff);
-
-    // If paused, don't run interval
-    if (recordingState === "paused") {
-      return;
-    }
-
-    // Only run interval when recording
-    if (recordingState === "recording") {
-      const interval = setInterval(() => {
-        const diffMs = Date.now() - start;
-        setDurationMs(diffMs);
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-
-    return;
-  }, [recordingState, startTime, endTime]);
-
   return (
     <View
       className={`flex-row items-center justify-between rounded-xl bg-[#F4F5F5] p-3 ${className}`}
@@ -110,7 +84,7 @@ const MeetingInProgressBar = ({
           Meeting in progress
         </Text>
         <Text className="mt-1 font-inter text-[12px] text-gray-600">
-          {formatDuration(durationMs)}
+          {formatDuration(totalDurationMs)}
         </Text>
       </View>
 
