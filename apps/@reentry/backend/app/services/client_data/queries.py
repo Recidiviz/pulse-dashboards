@@ -196,7 +196,7 @@ class Queries:
         )
 
         # Check for cached results first
-        cache_key = f"client_by_doc_state:{doc_id}:{state_code}"
+        cache_key = f"client_by_doc_state:{doc_id}:{bq_state_code}"
         client_record = get_client_from_cache(cache_key)
 
         if client_record:
@@ -240,17 +240,17 @@ class Queries:
 
             if client_record:
                 logger.info(
-                    f"Successfully fetched client with DOC ID {doc_id} and state {state_code}"
+                    f"Successfully fetched client with DOC ID {doc_id} and state {bq_state_code}"
                 )
                 return client_record
             else:
                 logger.info(
-                    f"No client found with DOC ID {doc_id} and state {state_code}"
+                    f"No client found with DOC ID {doc_id} and state {bq_state_code}"
                 )
                 return None
         except Exception as e:
             logger.error(
-                f"Error fetching client with DOC ID {doc_id} and state {state_code}: {str(e)}"
+                f"Error fetching client with DOC ID {doc_id} and state {bq_state_code}: {str(e)}"
             )
             return None
 
@@ -755,8 +755,11 @@ class Queries:
                 f"Could not find staff member with pseudonymized_id: {staff_pseudonymized_id}"
             )
 
+        # Translate US_ID to US_IX for BigQuery lookup (Idaho uses US_IX internally)
+        bq_state_code = "US_IX" if state_code == "US_ID" else state_code
+
         logger.info(
-            f"Adding client: {given_names} {surname}, DOB: {birthdate}, State: {state_code}, Staff ID: {staff_id}"
+            f"Adding client: {given_names} {surname}, DOB: {birthdate}, State: {bq_state_code}, Staff ID: {staff_id}"
         )
         lock_key = "lock:add_client"
         lock = redis_client.lock(lock_key, timeout=30, blocking_timeout=10)
@@ -812,7 +815,9 @@ class Queries:
                         "full_name", "STRING", full_name_json
                     ),
                     bigquery.ScalarQueryParameter("birthdate", "DATE", birthdate),
-                    bigquery.ScalarQueryParameter("state_code", "STRING", state_code),
+                    bigquery.ScalarQueryParameter(
+                        "state_code", "STRING", bq_state_code
+                    ),
                     bigquery.ArrayQueryParameter("location", "STRING", []),
                 ]
             )
@@ -843,7 +848,7 @@ class Queries:
                 pseudonymized_client_id=pseudonymized_id,
                 full_name=FullNameModel(**full_name_dict),
                 birthdate=birthdate,
-                state_code=state_code,
+                state_code=bq_state_code,
             )
 
         except ClientAlreadyExistsError:
