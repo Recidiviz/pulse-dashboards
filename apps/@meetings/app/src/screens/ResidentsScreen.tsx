@@ -15,24 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
+import { SafeAreaView,useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Resident } from "~@meetings/app/common/types";
 
 import Header from "../components/Header";
 import Loading from "../components/Loading";
-import PersonsCardsList from "../components/PersonsCardsList";
 import PersonsHeaderContent from "../components/PersonsHeaderContent";
-import PersonsPlaceholder from "../components/PersonsPlaceholder";
+import PersonsMobileList from "../components/PersonsMobileList";
 import PersonsTable from "../components/PersonsTable.web";
 import { useRecording } from "../context/RecordingContext";
+import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { SortOption, sortUsers } from "../utils/sort";
 
 const mock = {
   data: [
     {
-      activeMeetingId: "1",
+      activeMeetingId: "",
       personId: BigInt(1000),
       displayPersonExternalId: "1000",
       givenNames: "Peter",
@@ -40,7 +43,7 @@ const mock = {
       facilityName: "facility 1",
     },
     {
-      activeMeetingId: "3",
+      activeMeetingId: "",
       personId: BigInt(1001),
       displayPersonExternalId: "1001",
       givenNames: "Jin",
@@ -48,7 +51,7 @@ const mock = {
       facilityName: "facility 2",
     },
     {
-      activeMeetingId: "5",
+      activeMeetingId: "",
       personId: BigInt(1002),
       displayPersonExternalId: "1002",
       givenNames: "Lara",
@@ -69,7 +72,11 @@ const mock = {
   refetch: () => null,
 };
 
+type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Residents">;
+
 const ResidentsScreen = () => {
+  const insets = useSafeAreaInsets();
+  const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();
 
   // TODO: for test purposes, after backend is ready replace getClients with getResidents call
@@ -88,7 +95,7 @@ const ResidentsScreen = () => {
     }));
   }, [rawResidents]);
 
-  // filtering and sorting clients
+  // filtering and sorting residents
   const filteredResidents = React.useMemo(() => {
     let results = residents;
     if (search) {
@@ -114,51 +121,51 @@ const ResidentsScreen = () => {
   if (error) throw error;
 
   return (
-    <View className="flex-1">
-      <Header />
-      <ScrollView className="flex-1" contentContainerClassName="grow">
-        <View className="mx-auto w-full max-w-[960px] flex-1">
-          <PersonsHeaderContent
-            keyword="Resident"
-            description="All residents are displayed below"
-            personsCount={filteredResidents.length}
-            searchQuery={search}
-            setSearchQuery={setSearch}
-            setSortBy={setSortBy}
-          />
-          <View className="flex grow basis-0 p-4 pt-0">
-            {filteredResidents.length === 0 ? (
-              <PersonsPlaceholder
-                message="No residents found"
-                onClearSearch={() => setSearch("")}
+    <SafeAreaView className="flex-1">
+      <View className="flex-1" style={{ marginTop: -insets.top }}>
+        <Header />
+        {Platform.select({
+          native: (
+            <PersonsMobileList 
+              persons={filteredResidents}
+              recordingState={recordingState}
+              navigation={navigation}
+              searchQuery={search}
+              setSearchQuery={setSearch}
+              setSortBy={setSortBy}
+              keyword="Resident"
+            />
+          ),
+          web: (
+            <View className="flex-1 pb-4">
+              <PersonsMobileList 
+                persons={filteredResidents}
+                recordingState={recordingState}
+                navigation={navigation}
+                searchQuery={search}
+                setSearchQuery={setSearch}
+                setSortBy={setSortBy}
+                keyword="Resident"
+                className="md:hidden"
               />
-            ) : (
-              Platform.select({
-                native: (
-                  <PersonsCardsList
-                    persons={filteredResidents}
-                    recordingState={recordingState}
+              <ScrollView className="hidden md:block flex-1">
+                <View className="flex-1 mx-auto w-full max-w-[960px]">
+                  <PersonsHeaderContent
+                    keyword="Resident"
+                    description="All residents are displayed below"
+                    personsCount={filteredResidents.length}
+                    searchQuery={search}
+                    setSearchQuery={setSearch}
+                    setSortBy={setSortBy}
                   />
-                ),
-                web: (
-                  <View className="pb-4">
-                    <View className="md:hidden">
-                      <PersonsCardsList
-                        persons={filteredResidents}
-                        recordingState={recordingState}
-                      />
-                    </View>
-                    <View className="hidden md:block">
-                      <PersonsTable persons={filteredResidents} type="residents" />
-                    </View>
-                  </View>
-                ),
-              })
-            )}
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+                  <PersonsTable persons={filteredResidents} type="residents" />
+                </View>
+              </ScrollView>
+            </View>
+          ),
+        })}
+      </View>
+    </SafeAreaView>
   );
 };
 

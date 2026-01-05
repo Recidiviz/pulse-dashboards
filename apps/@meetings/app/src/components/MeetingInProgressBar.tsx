@@ -99,7 +99,7 @@ const MeetingInProgressBar = ({
           <View className="flex-row items-center">
             <Image
               source={isPaused ? Icons.Play : Icons.Pause}
-              className="mr-1.5 size-4"
+              className="mr-1.5 !size-4"
               style={{ tintColor: "white", resizeMode: "contain" }}
             />
             <Text className="font-inter font-semibold text-[13px] text-white">
@@ -114,7 +114,7 @@ const MeetingInProgressBar = ({
         >
           <Image
             source={Icons.Stop}
-            className="size-4"
+            className="!size-4"
             style={{ tintColor: "white", resizeMode: "contain" }}
           />
         </TouchableOpacity>

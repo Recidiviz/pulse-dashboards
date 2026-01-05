@@ -15,19 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 import { Client } from "~@meetings/app/common/types";
 
 import Header from "../components/Header";
 import Loading from "../components/Loading";
-import PersonsCardsList from "../components/PersonsCardsList";
 import PersonsHeaderContent from "../components/PersonsHeaderContent";
-import PersonsPlaceholder from "../components/PersonsPlaceholder";
+import PersonsMobileList from "../components/PersonsMobileList";
 import PersonsTable from "../components/PersonsTable.web";
 import { useRecording } from "../context/RecordingContext";
+import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
+
+type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients">;
 
 const sortClientsByOption = (data: Client[], option: string): Client[] => {
   const sorted = [...data];
@@ -41,6 +49,8 @@ const sortClientsByOption = (data: Client[], option: string): Client[] => {
 };
 
 const ClientsScreen = () => {
+  const insets = useSafeAreaInsets();
+  const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();
 
   const {
@@ -89,51 +99,51 @@ const ClientsScreen = () => {
   if (error) throw error;
 
   return (
-    <View className="flex-1">
-      <Header />
-      <ScrollView className="flex-1" contentContainerClassName="grow">
-        <View className="mx-auto w-full max-w-[960px] flex-1">
-          <PersonsHeaderContent
-            keyword="Client"
-            description="All clients on your caseload are displayed below"
-            personsCount={filteredClients.length}
-            searchQuery={search}
-            setSearchQuery={setSearch}
-            setSortBy={setSortBy}
-          />
-          <View className="flex grow basis-0 flex-col p-4 pt-0">
-            {filteredClients.length === 0 ? (
-              <PersonsPlaceholder
-                message="No clients found"
-                onClearSearch={() => setSearch("")}
+    <SafeAreaView className="flex-1">
+      <View className="flex-1" style={{ marginTop: -insets.top }}>
+        <Header />
+        {Platform.select({
+          native: (
+            <PersonsMobileList 
+              persons={filteredClients}
+              recordingState={recordingState}
+              navigation={navigation}
+              searchQuery={search}
+              setSearchQuery={setSearch}
+              setSortBy={setSortBy}
+              keyword="Client"
+            />
+          ),
+          web: (
+            <View className="flex-1 pb-4">
+              <PersonsMobileList 
+                persons={filteredClients}
+                recordingState={recordingState}
+                navigation={navigation}
+                searchQuery={search}
+                setSearchQuery={setSearch}
+                setSortBy={setSortBy}
+                keyword="Client"
+                className="md:hidden"
               />
-            ) : (
-              Platform.select({
-                native: (
-                  <PersonsCardsList
-                    persons={filteredClients}
-                    recordingState={recordingState}
+              <ScrollView className="hidden flex-1 md:block">
+                <View className="mx-auto w-full max-w-[960px] flex-1">
+                  <PersonsHeaderContent
+                    keyword="Client"
+                    description="All clients on your caseload are displayed below"
+                    personsCount={filteredClients.length}
+                    searchQuery={search}
+                    setSearchQuery={setSearch}
+                    setSortBy={setSortBy}
                   />
-                ),
-                web: (
-                  <View className="pb-4">
-                    <View className="md:hidden">
-                      <PersonsCardsList
-                        persons={filteredClients}
-                        recordingState={recordingState}
-                      />
-                    </View>
-                    <View className="hidden md:block">
-                      <PersonsTable persons={filteredClients} type="clients" />
-                    </View>
-                  </View>
-                ),
-              })
-            )}
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+                  <PersonsTable persons={filteredClients} type="clients" />
+                </View>
+              </ScrollView>
+            </View>
+          ),
+        })}
+      </View>
+    </SafeAreaView>
   );
 };
 
