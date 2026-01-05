@@ -57,3 +57,52 @@ export const formatDraftCaseNoteMeetingDate = (date: Date) => {
     day: "numeric",
   }).format(date);
 };
+
+export const formatMeetingStartDate = (date: Date) => {
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+};
+
+export const formatMeetingDuration = ({
+  startDate,
+  endDate,
+}: {
+  startDate: Date | null;
+  endDate: Date | null;
+}) => {
+  if (!startDate) {
+    return { time: null, duration: null };
+  }
+
+  const startTimeFormatted = startDate.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const endTimeFormatted = endDate
+    ? endDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "";
+  const timeFormatted = endTimeFormatted
+    ? `${startTimeFormatted} - ${endTimeFormatted}`
+    : startTimeFormatted;
+
+  if (!endDate) {
+    return { time: timeFormatted, duration: null };
+  }
+
+  const startTime = startDate.getTime();
+  const endTime = endDate.getTime();
+  const differenceInMilliseconds = endTime - startTime;
+  const differenceInSeconds = Math.floor(differenceInMilliseconds / 1000);
+  const duration =
+    differenceInSeconds < 60
+      ? `${differenceInSeconds} sec`
+      : `${Math.floor(differenceInSeconds / 60)} min`;
+
+  return { time: timeFormatted, duration };
+};

@@ -25,6 +25,10 @@ export type Client = Awaited<
   fullName: string;
 };
 
+export type MeetingDetails = Awaited<
+  ReturnType<AppRouter["v1"]["meeting"]["getDetails"]>
+>;
+
 //fake type, waiting for backend implementation
 export type Resident = {
   activeMeetingId: string;
@@ -36,7 +40,7 @@ export type Resident = {
   fullName: string;
   facilityName: string;
   primaryMetadata: string;
-}
+};
 
 export type Person = Client | Resident;
 

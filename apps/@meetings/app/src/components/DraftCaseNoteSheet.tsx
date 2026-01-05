@@ -15,9 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import BottomSheet, { BottomSheetBackdrop, BottomSheetFooter, BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetFooter,
+  BottomSheetTextInput,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { RefObject, useEffect,useMemo, useState } from "react";
+import { RefObject, useEffect, useMemo, useState } from "react";
 import { Image, Keyboard, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -30,15 +35,15 @@ type Props = {
   clientName: string;
   meetingDate?: Date;
   ref: RefObject<BottomSheet | null>;
-}
+};
 
-const DraftCaseNoteSheet = (({ notes, clientName, meetingDate, ref }: Props) => {
+const DraftCaseNoteSheet = ({ notes, clientName, meetingDate, ref }: Props) => {
   const { bottom: bottomSafeArea } = useSafeAreaInsets();
   const [text, onChangeText] = useState(notes);
   const snapPoints = useMemo(() => ["70%", "90%"], []);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
-  
+
   // 88px is height of button plus paddings from figma
   const FOOTER_HEIGHT = bottomSafeArea + 88;
 
@@ -54,12 +59,12 @@ const DraftCaseNoteSheet = (({ notes, clientName, meetingDate, ref }: Props) => 
     if (ref.current) {
       ref.current.close();
     }
-  }
+  };
 
   const handleCopyNotes = () => {
     Clipboard.setString(text);
     showSnackbar("Notes copied to clipboard");
-  }
+  };
 
   // this use effect is used to remove footer while keyboard is active
   useEffect(() => {
@@ -91,58 +96,82 @@ const DraftCaseNoteSheet = (({ notes, clientName, meetingDate, ref }: Props) => 
       enablePanDownToClose
       handleIndicatorStyle={{ backgroundColor: "#00000099" }}
       containerStyle={{ flex: 1 }}
-      backdropComponent={props => (
+      backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}
           disappearsOnIndex={-1}
           appearsOnIndex={1}
-          pressBehavior="close"   
+          pressBehavior="close"
           opacity={0.5}
         />
       )}
-      footerComponent={(props) => isKeyboardVisible 
-        ? null 
-        : (<BottomSheetFooter {...props} bottomInset={bottomSafeArea}>
-            <View className="self-end p-4 gap-4 w-full flex flex-row items-start bg-white">
-            <TouchableOpacity onPress={handleClose} className="border border-[#35536233] rounded-[32px] py-[17px] flex items-center justify-center flex-1">
-              <Text className="text-primary font-inter font-semibold text-lg leading-[22px]">CANCEL</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleSave} className="bg-[#00665F] rounded-[32px] py-[17px] flex items-center justify-center flex-1">
-              <Text className="text-white font-inter font-semibold text-lg leading-[22px]">SAVE CHANGES</Text>
-            </TouchableOpacity>
+      footerComponent={(props) =>
+        isKeyboardVisible ? null : (
+          <BottomSheetFooter {...props} bottomInset={bottomSafeArea}>
+            <View className="flex w-full flex-row items-start gap-4 self-end bg-white p-4">
+              <TouchableOpacity
+                onPress={handleClose}
+                className="flex flex-1 items-center justify-center rounded-[32px] border border-[#35536233] py-[17px]"
+              >
+                <Text className="font-inter text-lg font-semibold leading-[22px] text-primary">
+                  CANCEL
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSave}
+                className="flex flex-1 items-center justify-center rounded-[32px] bg-[#00665F] py-[17px]"
+              >
+                <Text className="font-inter text-lg font-semibold leading-[22px] text-white">
+                  SAVE CHANGES
+                </Text>
+              </TouchableOpacity>
             </View>
-          </BottomSheetFooter>)
+          </BottomSheetFooter>
+        )
       }
     >
-      <BottomSheetView className="flex-1 flex flex-col max-h-full">
-        <View className="flex flex-row justify-between items-center border-b border-[#EDF1F1] p-4">
+      <BottomSheetView className="flex max-h-full flex-1 flex-col">
+        <View className="flex flex-row items-center justify-between border-b border-[#EDF1F1] p-4">
           <TouchableOpacity onPress={handleClose}>
             <Image
               source={Icons.ArrowLeft}
-              className="size-6"
+              className="!size-6"
               resizeMode="contain"
             />
-            
           </TouchableOpacity>
           <View className="flex flex-col items-center">
-            <Text className="text-lg leading-[22px] font-semibold font-inter">Edit draft case note</Text>
-            <Text className="text-gray-500 text-sm leading-[16px] font-inter">
-              {clientName} • Meeting {meetingDate ? formatDraftCaseNoteMeetingDate(meetingDate): ""}
+            <Text className="font-inter text-lg font-semibold leading-[22px]">
+              Edit draft case note
+            </Text>
+            <Text className="font-inter text-sm leading-[16px] text-gray-500">
+              {clientName} • Meeting{" "}
+              {meetingDate ? formatDraftCaseNoteMeetingDate(meetingDate) : ""}
             </Text>
           </View>
-          <TouchableOpacity onPress={handleCopyNotes} disabled={isSnackbarShowing}>
+          <TouchableOpacity
+            onPress={handleCopyNotes}
+            disabled={isSnackbarShowing}
+          >
             <Image
               source={Icons.Copy}
-              className="size-6"
+              className="!size-6"
               resizeMode="contain"
             />
           </TouchableOpacity>
         </View>
-        <BottomSheetTextInput className="p-4 flex-1 min-h-[200px]" multiline value={text} onChangeText={onChangeText} textAlignVertical="top" />
-        {!isKeyboardVisible && <View className="w-full" style={{ height: FOOTER_HEIGHT }} />}
+        <BottomSheetTextInput
+          className="min-h-[200px] flex-1 p-4"
+          multiline
+          value={text}
+          onChangeText={onChangeText}
+          textAlignVertical="top"
+        />
+        {!isKeyboardVisible && (
+          <View className="w-full" style={{ height: FOOTER_HEIGHT }} />
+        )}
       </BottomSheetView>
     </BottomSheet>
-  )
-});
+  );
+};
 
 export default DraftCaseNoteSheet;

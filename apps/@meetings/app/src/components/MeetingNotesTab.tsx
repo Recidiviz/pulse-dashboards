@@ -22,12 +22,11 @@ type Props = {
 };
 
 const MeetingsNotesTab = ({ notes }: Props) => {
-
   return (
-    <Text className="text-base leading-[22px] font-inter text-center">
+    <Text className="text-left font-inter text-base leading-[22px]">
       {notes ?? "No notes taken for this meeting."}
-    </Text>     
+    </Text>
   );
-}
+};
 
 export default MeetingsNotesTab;

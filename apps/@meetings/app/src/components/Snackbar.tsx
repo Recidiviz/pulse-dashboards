@@ -94,16 +94,18 @@ export const SnackbarProvider = ({ children }: Props) => {
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
+    position: "absolute",
+    left: 64,
+    right: 64,
+    top: 128,
+    zIndex: 50,
   }));
 
   return (
     <SnackbarContext.Provider value={{ showSnackbar, isShowing }}>
       {children}
       {isVisible && (
-        <Animated.View
-          style={animatedStyle}
-          className="absolute inset-x-16 top-32 z-50"
-        >
+        <Animated.View style={animatedStyle}>
           <View className="rounded-xl bg-[#1D2424] px-9 py-4 shadow-lg">
             <Text className="text-center font-inter text-sm font-semibold leading-[16px] text-white">
               {message}

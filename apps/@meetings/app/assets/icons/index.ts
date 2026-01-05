@@ -48,6 +48,7 @@ import Pause from "./pause.png";
 import PauseBlack from "./pause-black.png";
 import Play from "./play.png";
 import Plus from "./plus.png";
+import Printer from "./printer.png";
 import Processing from "./processing.png";
 import Record from "./record.png";
 import Reset from "./reset.png";
@@ -103,6 +104,7 @@ const Icons = {
   CrossRound,
   ArrowUpGreen,
   Minimize,
+  Printer,
 };
 
 export default Icons;

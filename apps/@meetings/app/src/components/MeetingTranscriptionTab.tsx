@@ -53,7 +53,7 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
         <View className="flex w-fit items-center justify-center rounded-2xl border-2 border-[#2B696908] bg-[#2B696908] p-[14px]">
           <Image
             source={Icons.LockBig}
-            className="size-10"
+            className="!size-10"
             resizeMode="contain"
           />
         </View>

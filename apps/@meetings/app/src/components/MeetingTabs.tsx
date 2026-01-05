@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Image,Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 
@@ -28,9 +28,13 @@ type Props = {
   activeTab: Tab;
   setActiveTab: (tab: Tab) => void;
   isTranscriptionUnavailable?: boolean;
-}
+};
 
-const MeetingTabs = ({ activeTab, setActiveTab, isTranscriptionUnavailable }: Props) => {
+const MeetingTabs = ({
+  activeTab,
+  setActiveTab,
+  isTranscriptionUnavailable,
+}: Props) => {
   return (
     <View className="flex w-full flex-row rounded-full bg-[#E6EAEB] p-1">
       {Object.values(Tab).map((tab) => (
@@ -41,14 +45,14 @@ const MeetingTabs = ({ activeTab, setActiveTab, isTranscriptionUnavailable }: Pr
         >
           <View className="flex flex-row items-center justify-center gap-1">
             <Text
-              className={`text-sm font-medium leading-[16px] font-inter ${tab === activeTab ? "text-primary" : "text-[#9AA6AC]"}`}
+              className={`font-inter text-sm font-medium leading-[16px] ${tab === activeTab ? "text-primary" : "text-[#9AA6AC]"}`}
             >
               {tab}
             </Text>
             {tab === Tab.Transcription && isTranscriptionUnavailable && (
               <Image
                 source={Icons.LockSmall}
-                className="size-3"
+                className="!size-3"
                 resizeMode="contain"
               />
             )}
@@ -57,6 +61,6 @@ const MeetingTabs = ({ activeTab, setActiveTab, isTranscriptionUnavailable }: Pr
       ))}
     </View>
   );
-}
+};
 
 export default MeetingTabs;
