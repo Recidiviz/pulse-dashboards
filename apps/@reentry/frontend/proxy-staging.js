@@ -52,6 +52,12 @@ app.use(
     target: PROXY_TARGET,
     changeOrigin: true,
     secure: true,
+    ws: true,
+    on: {
+      proxyReqWs: (proxyReq) => {
+        proxyReq.setHeader("Origin", "https://plan-staging.recidiviz.org");
+      },
+    },
   }),
 );
 

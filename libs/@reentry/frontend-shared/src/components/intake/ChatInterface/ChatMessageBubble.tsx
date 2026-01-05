@@ -27,6 +27,7 @@ interface MessageBubbleProps {
   name?: string;
   isTyping?: boolean;
   clientPseudoId?: string | null;
+  disableTTS?: boolean;
 }
 
 const TypingDots: React.FC = () => (
@@ -94,6 +95,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
   name,
   isTyping = false,
   clientPseudoId,
+  disableTTS = false
 }) => {
   // Return nothing if no message and not typing
   if (!message && !isTyping) {
@@ -106,6 +108,8 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
   }
 
   const isUser = message?.from_role === "client";
+  // Disable TTS button for staff members viewing chat history
+  const showTTSButton = !disableTTS && !isTyping && message?.content
 
   return (
     <div
@@ -156,7 +160,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
             </div>
 
             {/* TTS Button */}
-            {!isTyping && message?.content && (
+            {showTTSButton && (
               <TTSButton
                 text={message.content}
                 clientPseudoId={clientPseudoId}

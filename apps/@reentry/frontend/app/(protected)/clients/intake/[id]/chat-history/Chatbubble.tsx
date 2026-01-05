@@ -153,6 +153,7 @@ const SectionChatInterface = ({
                   key={message.id}
                   message={message}
                   name={clientFullName}
+                  disableTTS
                 />
               ))
             )}
