@@ -57,10 +57,6 @@ export class UsTnCompliantReporting2025PolicyOpportunity extends OpportunityBase
     if (this.almostEligible) return this.record.metadata.tabName;
   }
 
-  get eligibilityDate(): Date | undefined {
-    return super.eligibilityDate ?? this.record?.metadata.eligibleDate;
-  }
-
   get denialReasons() {
     let keys: string[];
     if (this.record?.metadata.taskName === "MINIMUM (LOW)") {
