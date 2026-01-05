@@ -17,6 +17,7 @@
 
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
@@ -26,6 +27,9 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
+  TableFooterCell,
+  TableFooterRow,
   TableHead,
   TableHeadCell,
   TableHeadRow,
@@ -46,6 +50,8 @@ type Person = {
   displayPersonExternalId: string;
   primaryMetadata: string;
 };
+
+const PAGE_SIZE = 7;
 
 const TOPICS = ["New Job", "Motivation", "Partner", "Address"];
 
@@ -115,6 +121,8 @@ type MeetingsTableProps = {
 };
 
 const MeetingsTable = ({ meetings, person }: MeetingsTableProps) => {
+  const [page, setPage] = React.useState(1);
+
   return (
     <Table>
       <TableHead>
@@ -128,41 +136,51 @@ const MeetingsTable = ({ meetings, person }: MeetingsTableProps) => {
         </TableHeadRow>
       </TableHead>
       <TableBody>
-        {meetings.map((meeting, index) => (
-          <MeetingRow
-            key={`${meeting.id}-${index}`}
-            meeting={meeting}
-            person={person}
-          />
-        ))}
+        {meetings
+          .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+          .map((meeting, index) => (
+            <MeetingRow
+              key={`${meeting.id}-${index}`}
+              meeting={meeting}
+              person={person}
+            />
+          ))}
       </TableBody>
-      {/*
-      // TODO: Add footer and pagination
-      <TableFooter>
-        <TableFooterRow>
-          <TableFooterCell colSpan={6}>
-            <View className="flex flex-row items-center justify-center gap-2 py-2">
-              <TouchableOpacity>
-                <Image
-                  source={Icons.ArrowLeft}
-                  className="!size-3"
-                  style={{ resizeMode: "contain" }}
-                />
-              </TouchableOpacity>
-              <Text className="font-inter text-sm font-medium text-[#355362D9]">
-                Showing 1-7 of 112
-              </Text>
-              <TouchableOpacity>
-                <Image
-                  source={Icons.ArrowRight}
-                  className="!size-3"
-                  style={{ resizeMode: "contain" }}
-                />
-              </TouchableOpacity>
-            </View>
-          </TableFooterCell>
-        </TableFooterRow>
-      </TableFooter> */}
+      {meetings.length > PAGE_SIZE && (
+        <TableFooter>
+          <TableFooterRow>
+            <TableFooterCell colSpan={5}>
+              <View className="flex flex-row items-center justify-center gap-2 py-2">
+                <TouchableOpacity
+                  onPress={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  <Image
+                    source={Icons.ArrowLeft}
+                    className="!size-3"
+                    style={{ resizeMode: "contain" }}
+                  />
+                </TouchableOpacity>
+                <Text className="font-inter text-sm font-medium text-[#355362D9]">
+                  Showing {(page - 1) * PAGE_SIZE + 1}-
+                  {Math.min(page * PAGE_SIZE, meetings.length)} of{" "}
+                  {meetings.length}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setPage((p) => p + 1)}
+                  disabled={page * PAGE_SIZE >= meetings.length}
+                >
+                  <Image
+                    source={Icons.ArrowRight}
+                    className="!size-3"
+                    style={{ resizeMode: "contain" }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </TableFooterCell>
+          </TableFooterRow>
+        </TableFooter>
+      )}
     </Table>
   );
 };

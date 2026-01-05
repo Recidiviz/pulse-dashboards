@@ -35,13 +35,21 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
+  TableFooterCell,
+  TableFooterRow,
   TableHead,
   TableHeadCell,
   TableHeadRow,
   TableRow,
 } from "./Table.web";
 
-type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients" | "Residents">;
+const PAGE_SIZE = 7;
+
+type ProfileNavProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "Clients" | "Residents"
+>;
 
 interface PersonsProps {
   persons: Person[];
@@ -49,6 +57,7 @@ interface PersonsProps {
 }
 
 const PersonsTable = ({ persons, type }: PersonsProps) => {
+  const [page, setPage] = React.useState(1);
   const navigation = useNavigation<ProfileNavProp>();
 
   return (
@@ -57,87 +66,99 @@ const PersonsTable = ({ persons, type }: PersonsProps) => {
         <TableHeadRow>
           <TableHeadCell>NAME</TableHeadCell>
           <TableHeadCell>ID</TableHeadCell>
-          <TableHeadCell>{type === "clients" ? "SUPERVISION" : "FACILITY"}</TableHeadCell>
+          <TableHeadCell>
+            {type === "clients" ? "SUPERVISION" : "FACILITY"}
+          </TableHeadCell>
           <TableHeadCell>LAST MEETING</TableHeadCell>
           <TableHeadCell></TableHeadCell>
         </TableHeadRow>
       </TableHead>
       <TableBody>
-        {persons.map((person) => (
-          <TableRow key={person.personId}>
-            <TableCell>
-              <View className="flex h-full flex-row items-center gap-3">
-                <ImageBackground
-                  source={Icons.BgAvatar}
-                  className="size-11 items-center justify-center overflow-hidden rounded-full"
-                  imageClassName="!size-11"
-                >
-                  <Text className="font-inter text-base font-medium text-white">
-                    {getClientInitials(person.fullName)}
+        {persons
+          .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+          .map((person) => (
+            <TableRow key={person.personId}>
+              <TableCell>
+                <View className="flex h-full flex-row items-center gap-3">
+                  <ImageBackground
+                    source={Icons.BgAvatar}
+                    className="size-11 items-center justify-center overflow-hidden rounded-full"
+                    imageClassName="!size-11"
+                  >
+                    <Text className="font-inter text-base font-medium text-white">
+                      {getClientInitials(person.fullName)}
+                    </Text>
+                  </ImageBackground>
+                  <Text className="font-inter text-base font-medium text-primary">
+                    {person.fullName}
                   </Text>
-                </ImageBackground>
-                <Text className="font-inter text-base font-medium text-primary">
-                  {person.fullName}
+                </View>
+              </TableCell>
+              <TableCell>{person.displayPersonExternalId}</TableCell>
+              <TableCell>{person.primaryMetadata}</TableCell>
+              <TableCell>
+                <Text className="font-inter text-base text-[#355362D9]">
+                  Last meeting{" "}
+                  <Text className="font-inter font-bold">
+                    {person.lastMeeting}
+                  </Text>
                 </Text>
-              </View>
-            </TableCell>
-            <TableCell>{person.displayPersonExternalId}</TableCell>
-            <TableCell>
-              {person.primaryMetadata}
-            </TableCell>
-            <TableCell>
-              <Text className="font-inter text-base text-[#355362D9]">
-                Last meeting{" "}
-                <Text className="font-inter font-bold">{person.lastMeeting}</Text>
-              </Text>
-            </TableCell>
-            <TableCell>
-              <TouchableOpacity
-                className="invisible size-5 items-center justify-center group-hover:visible"
-                onPress={() =>
-                  navigation.navigate("Profile", {
-                    person: {
-                      personId: person.personId.toString(),
-                      fullName: person.fullName,
-                      displayPersonExternalId: person.displayPersonExternalId,
-                      primaryMetadata: person.primaryMetadata,
-                    },
-                  })
-                }
-              >
-                <Image source={Icons.ArrowRight} className="!size-full" />
-              </TouchableOpacity>
-            </TableCell>
-          </TableRow>
-        ))}
+              </TableCell>
+              <TableCell>
+                <TouchableOpacity
+                  className="invisible size-5 items-center justify-center group-hover:visible"
+                  onPress={() =>
+                    navigation.navigate("Profile", {
+                      person: {
+                        personId: person.personId.toString(),
+                        fullName: person.fullName,
+                        displayPersonExternalId: person.displayPersonExternalId,
+                        primaryMetadata: person.primaryMetadata,
+                      },
+                    })
+                  }
+                >
+                  <Image source={Icons.ArrowRight} className="!size-full" />
+                </TouchableOpacity>
+              </TableCell>
+            </TableRow>
+          ))}
       </TableBody>
-      {/*
-      // TODO: Add footer and pagination
-      <TableFooter>
-        <TableFooterRow>
-          <TableFooterCell colSpan={5}>
-            <View className="flex flex-row items-center justify-center gap-2 py-2">
-              <TouchableOpacity>
-                <Image
-                  source={Icons.ArrowLeft}
-                  className="!size-3"
-                  style={{ resizeMode: "contain" }}
-                />
-              </TouchableOpacity>
-              <Text className="font-inter text-sm font-medium text-[#355362D9]">
-                Showing 1-7 of 112
-              </Text>
-              <TouchableOpacity>
-                <Image
-                  source={Icons.ArrowRight}
-                  className="!size-3"
-                  style={{ resizeMode: "contain" }}
-                />
-              </TouchableOpacity>
-            </View>
-          </TableFooterCell>
-        </TableFooterRow>
-      </TableFooter> */}
+      {persons.length > PAGE_SIZE && (
+        <TableFooter>
+          <TableFooterRow>
+            <TableFooterCell colSpan={5}>
+              <View className="flex flex-row items-center justify-center gap-2 py-2">
+                <TouchableOpacity
+                  onPress={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  <Image
+                    source={Icons.ArrowLeft}
+                    className="!size-3"
+                    style={{ resizeMode: "contain" }}
+                  />
+                </TouchableOpacity>
+                <Text className="font-inter text-sm font-medium text-[#355362D9]">
+                  Showing {(page - 1) * PAGE_SIZE + 1}-
+                  {Math.min(page * PAGE_SIZE, persons.length)} of{" "}
+                  {persons.length}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setPage((p) => p + 1)}
+                  disabled={page * PAGE_SIZE >= persons.length}
+                >
+                  <Image
+                    source={Icons.ArrowRight}
+                    className="!size-3"
+                    style={{ resizeMode: "contain" }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </TableFooterCell>
+          </TableFooterRow>
+        </TableFooter>
+      )}
     </Table>
   );
 };
