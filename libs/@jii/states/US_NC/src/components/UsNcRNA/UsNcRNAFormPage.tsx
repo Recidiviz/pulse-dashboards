@@ -21,6 +21,7 @@ import { Card, NotFound, usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 
 import { NavigationButtons } from "./NavigationButtons";
+import { ProgressHeader } from "./ProgressBar";
 import { RNADescription, RNAHeading } from "./styles";
 import {
   fullRNASpec,
@@ -61,7 +62,12 @@ export function UsNcRNAFormPage() {
 
   return (
     <>
-      <UsNcRNASectionInfo {...rnaSectionCopy[id]} />;
+      <ProgressHeader
+        section={pageNum}
+        totalSections={fullRNASpec.length}
+        percentDone={22}
+      />
+      <UsNcRNASectionInfo {...rnaSectionCopy[id]} />
       {questions.map((questionId) => (
         // TODO: replace with handler for different question types
         <UsNcRNASectionInfo

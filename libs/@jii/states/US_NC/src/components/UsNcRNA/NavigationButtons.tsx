@@ -25,6 +25,7 @@ import { Icon, spacing } from "~design-system";
 
 const RNAPageFooter = styled.div`
   margin-top: ${rem(spacing.md)};
+  margin-bottom: ${rem(spacing.xl)};
   display: flex;
   justify-content: flex-end;
 `;

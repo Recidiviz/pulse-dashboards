@@ -19,7 +19,7 @@ import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { ReactNode } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import {
   HEADER_ANIMATION_OPTIONS,
@@ -31,20 +31,24 @@ import {
 import { useRootStore } from "~@jii/data";
 import { palette } from "~design-system";
 
+export const stickyHeaderStyles = css`
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: -${rem(spacing.xl)};
+  position: sticky;
+  transition: top ${HEADER_ANIMATION_OPTIONS};
+`;
+
 const Container = styled.div<{ $hideHeader: boolean }>`
   ${typography.Sans14}
 
   background: ${palette.marble3};
   color: ${palette.slate85};
   text-align: center;
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  margin-top: -${rem(spacing.xl)};
-  position: sticky;
+  ${stickyHeaderStyles}
   top: ${({ $hideHeader }: { $hideHeader: boolean }) =>
     $hideHeader ? `-${rem(HIDDEN_HEADER_OFFSET)}` : rem(HEADER_HEIGHT)};
   z-index: ${STICKY_HEADER_ZINDEX - 1};
-  transition: top ${HEADER_ANIMATION_OPTIONS};
 
   ${PageContainer} {
     padding-bottom: ${rem(spacing.md)};
