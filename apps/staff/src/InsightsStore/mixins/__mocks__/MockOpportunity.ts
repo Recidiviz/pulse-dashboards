@@ -38,6 +38,43 @@ export class MockOpportunity {
     return MOCK_OPPORTUNITY_CONFIGS[this.type];
   }
 
+  get notificationsByPage() {
+    return {
+      profile: [
+        {
+          id: "1",
+          type: "alert",
+          pages: ["profile", "supervisionSupervisor"],
+          body: "Mock alert body",
+          title: "Mock alert title",
+        },
+        {
+          id: "2",
+          type: "alert",
+          pages: ["profile"],
+          body: "body of mock",
+          title: "Mock banana two",
+        },
+        {
+          id: "3",
+          type: "info",
+          pages: ["supervisionSupervisor"],
+          body: "body of mock",
+          title: "Mock banana three",
+        },
+      ],
+      supervisionSupervisor: [
+        {
+          id: "1",
+          type: "alert",
+          pages: ["profile", "supervisionSupervisor"],
+          body: "Mock alert body",
+          title: "Mock alert title",
+        },
+      ],
+    }
+  }
+
   hydrate() {
     return;
   }

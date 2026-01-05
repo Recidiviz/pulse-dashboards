@@ -30,7 +30,8 @@ import {
   VitalsMetricForOfficer,
 } from "~datatypes";
 
-import { SupervisionTask } from "../../WorkflowsStore";
+import { PartialRecord } from "../../utils/typeUtils";
+import { OpportunityNotification, SupervisionTask } from "../../WorkflowsStore";
 
 /**
  * This type represents the combined officer and corresponding outcomes data, where all
@@ -146,3 +147,11 @@ export type OfficerVitalsMetricDetail = VitalsMetricForOfficer & {
   bodyDisplayName: string;
   tasks: SupervisionTask[];
 };
+
+export type NotificationsByType = PartialRecord<
+OpportunityType,
+{
+  notifications: OpportunityNotification[];
+  seeMoreLink: string;
+}
+>

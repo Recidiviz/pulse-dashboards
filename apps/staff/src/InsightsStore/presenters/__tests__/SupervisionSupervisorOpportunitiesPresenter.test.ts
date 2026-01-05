@@ -449,6 +449,74 @@ describe("Opportunity details methods", () => {
       });
     });
 
+    describe("Method: alertOpportunitiesNotificationsByOpportunityType", () => {
+      describe("when notification banner is disabled", () => {
+        it("returns undefined", () => {
+          vi.spyOn(
+            presenter,
+            "isNotificationBannerEnabled",
+            "get",
+          ).mockReturnValue(false);
+
+          expect(
+            presenter.alertOpportunitiesNotificationsByOpportunityType,
+          ).toBeUndefined();
+        });
+      });
+
+      describe("when notification banner is enabled", () => {
+        beforeEach(() => {
+          vi.spyOn(
+            presenter,
+            "isNotificationBannerEnabled",
+            "get",
+          ).mockReturnValue(true);
+          vi.spyOn(presenter, "supervisorInfo", "get").mockReturnValue(
+            testSupervisor,
+          );
+        });
+
+        it("returns notifications grouped by opportunity type with correct structure", () => {
+          const result =
+            presenter.alertOpportunitiesNotificationsByOpportunityType;
+
+          expect(Object.keys(result ?? {})).toEqual([
+            "mockUsXxOpp",
+            "mockUsXxTwoOpp",
+          ]);
+
+          Object.values(result ?? {}).forEach((alertData) => {
+            expect(alertData).toHaveProperty("notifications");
+            expect(alertData).toHaveProperty("seeMoreLink");
+          });
+        });
+
+        it("filters to only supervisionSupervisor alert notifications", () => {
+          const notifications = Object.values(
+            presenter.alertOpportunitiesNotificationsByOpportunityType ?? {},
+          ).flatMap((a) => a.notifications);
+
+          expect(notifications.length).toBeGreaterThan(0);
+          notifications.forEach((n) => {
+            expect(n.type).toBe("alert");
+            expect(n.pages).toContain("supervisionSupervisor");
+          });
+        });
+
+        it("generates correct seeMoreLink URLs", () => {
+          const result =
+            presenter.alertOpportunitiesNotificationsByOpportunityType;
+
+          expect(result?.[OPP_TYPE_1]?.seeMoreLink).toBe(
+            "/insights/supervision/supervisor/hashed-agonzalez123/opportunity/mockUsXxOpp",
+          );
+          expect(result?.[OPP_TYPE_2]?.seeMoreLink).toBe(
+            "/insights/supervision/supervisor/hashed-agonzalez123/opportunity/mockUsXxTwoOpp",
+          );
+        });
+      });
+    });
+
     describe("Method: sortSupervisionOfficerWithOpportunityDetails", () => {
       it("should correctly sort SupervisionOfficerWithOpportunityDetails objects", () => {
         // TODO: Convert this into actual fixtures.

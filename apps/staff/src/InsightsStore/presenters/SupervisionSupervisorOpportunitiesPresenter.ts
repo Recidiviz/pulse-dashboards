@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { ascending, descending } from "d3-array";
-import { isEmpty, transform } from "lodash";
+import { isArray, isEmpty, mapValues, mergeWith, transform } from "lodash";
 import { flowResult, makeObservable } from "mobx";
 import simplur from "simplur";
 
@@ -24,12 +24,17 @@ import {
   OpportunityCardInfo,
   OpportunityType,
   SupervisionOfficer,
+  SupervisionOfficerSupervisor,
   SupervisionOfficerWithOpportunityCardDetails,
 } from "~datatypes";
 import { HydratesFromSource, isHydrated } from "~hydration-utils";
 
+import { insightsUrl } from "../../core/views";
 import { PartialRecord } from "../../utils/typeUtils";
-import { Opportunity, OpportunityTab } from "../../WorkflowsStore";
+import {
+  Opportunity,
+  OpportunityTab,
+} from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import {
@@ -40,6 +45,7 @@ import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPer
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import {
+  NotificationsByType,
   RawOpportunityInfo,
   RawOpportunityInfoByOpportunityType,
 } from "./types";
@@ -88,6 +94,9 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         shouldSplitByTab: true,
         opportunityDetailsByTab: true,
         opportunitiesDetailsForCardGrid: true,
+        alertOpportunitiesNotificationsByOpportunityType: true,
+        isNotificationBannerEnabled: true,
+        supervisorInfo: true,
       },
       { autoBind: true },
     );
@@ -112,6 +121,66 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         ),
       ],
     });
+  }
+
+  /**
+   * Provides information about the currently selected supervisor.
+   * @returns The supervisor record, or `undefined` if not yet fetched.
+   */
+  get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
+    return this.supervisionStore.supervisorInfo(this.supervisorPseudoId);
+  }
+
+  get isNotificationBannerEnabled() {
+    const { insightsSupervisorOpportunityNotifications } =
+      this.supervisionStore.insightsStore.rootStore.workflowsStore
+        .featureVariants;
+    return !!insightsSupervisorOpportunityNotifications;
+  }
+
+  /**
+   * Returns a map of opportunity types to their active notifications.
+   * @returns A map of opportunity types to their notifications.
+   */
+  get alertOpportunitiesNotificationsByOpportunityType(): NotificationsByType | undefined {
+    const { allOfficers, isNotificationBannerEnabled } = this;
+
+    if (!isNotificationBannerEnabled) return undefined;
+
+    const notificationsByTypeResult: NotificationsByType = {};
+
+    return allOfficers.reduce((acc, { externalId }) => {
+      const notificationsByType = mapValues(
+        this.opportunitiesByTypeForOfficer(externalId),
+        (opportunities, opportunityType: OpportunityType) => {
+          // Aggregate all alert-type notifications for the supervisionSupervisor page
+          const notifications = opportunities
+            .flatMap(
+              (opportunity) =>
+                opportunity.notificationsByPage?.supervisionSupervisor ?? [],
+            )
+            .filter((notification) => notification.type === "alert");
+
+          if (notifications.length === 0) return undefined;
+
+          // Build the URL for "See More" link
+          const seeMoreLink = insightsUrl("supervisionSupervisorOpportunity", {
+            supervisorPseudoId: this.supervisorPseudoId,
+            opportunityTypeUrl: opportunityType,
+          });
+
+          return {
+            notifications,
+            seeMoreLink,
+          };
+        },
+      );
+
+      return mergeWith(acc, notificationsByType, (srcValue, otherValue) => {
+        if (isArray(srcValue) && isArray(otherValue))
+          return srcValue.concat(otherValue);
+      });
+    }, notificationsByTypeResult);
   }
 
   // ==============================
