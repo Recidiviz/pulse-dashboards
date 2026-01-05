@@ -76,6 +76,7 @@ const signal = {
   highlight: rgb(37, 184, 148),
   notification: rgb(35, 124, 175),
   error: rgb(164, 57, 57),
+  warning: rgb(180, 45, 45),
   tooltip: rgb(8, 34, 73),
   selected: rgb(55, 151, 205),
 };
