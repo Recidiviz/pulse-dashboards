@@ -21,6 +21,7 @@ import { makeAutoObservable, reaction, when } from "mobx";
 import { SystemId } from "~datatypes";
 
 import {
+  locationIdsBySearchType,
   Searchable,
   SearchableGroup,
   SearchType,
@@ -216,26 +217,26 @@ export class SearchStore {
       case "FACILITY":
       case "FACILITY_UNIT":
       case "US_ID_CRC_FACILITY": {
+        const idType = locationIdsBySearchType[this.searchType];
         return [
           {
             groupLabel: "All Facilities", // This is generic, but the groupLabel isn't shown with just one group
             searchables: this.workflowsStore.availableLocations
-              .filter((location) => ["facilityId", "crcFacilityId", "facilityUnitId"].includes(location.idType))
+              .filter((l) => idType === l.idType)
               .map((location) => new Location(location)),
           },
         ];
       }
-      case "DISTRICT":
-         {
-          return [
-            {
-              groupLabel: "All Districts",
-              searchables: this.workflowsStore.availableLocations
-                .filter((location) => location.idType === "districtId")
-                .map((location) => new Location(location)),
-            },
-          ];
-        }
+      case "DISTRICT": {
+        return [
+          {
+            groupLabel: "All Districts",
+            searchables: this.workflowsStore.availableLocations
+              .filter((location) => location.idType === "districtId")
+              .map((location) => new Location(location)),
+          },
+        ];
+      }
       case "INCARCERATION_OFFICER":
       case "OFFICER": {
         if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
@@ -297,22 +298,28 @@ export class SearchStore {
       }
       case "ALL": {
         const { availableLocations, availableOfficers } = this.workflowsStore;
-      
+
         const districts = availableLocations
           .filter((location) => location.idType === "districtId")
           .map((district) => new Location(district));
-      
+
         const facilities = availableLocations
-          .filter((location) => ["facilityId", "crcFacilityId", "facilityUnitId"].includes(location.idType))
+          .filter((location) =>
+            ["facilityId", "crcFacilityId", "facilityUnitId"].includes(
+              location.idType,
+            ),
+          )
           .map((facility) => new Location(facility));
-      
-        const officers = availableOfficers.map((officer) => new Officer(officer));
-      
+
+        const officers = availableOfficers.map(
+          (officer) => new Officer(officer),
+        );
+
         return [
           { groupLabel: "All Districts", searchables: districts },
           { groupLabel: "All Facilities", searchables: facilities },
           { groupLabel: "All Officers", searchables: officers },
-        ].filter(group => group.searchables.length);
+        ].filter((group) => group.searchables.length);
       }
       case undefined:
         return [];
