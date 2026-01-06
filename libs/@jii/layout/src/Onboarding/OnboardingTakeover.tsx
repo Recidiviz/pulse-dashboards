@@ -20,6 +20,16 @@ import { FC, ReactNode } from "react";
 
 import { Redirect } from "~@jii/common-ui";
 import { useResidentsContext } from "~@jii/data";
+import { isOfflineMode } from "~client-env-utils";
+
+/**
+ * Magic handle for bypassing the onboarding behavior. Mainly useful in e2e test scenarios
+ */
+function isOnboardingDisabled(): boolean {
+  return (
+    isOfflineMode() && localStorage.getItem("disableOnboarding") === "true"
+  );
+}
 
 export const OnboardingTakeover: FC<{
   children: ReactNode;
@@ -27,7 +37,8 @@ export const OnboardingTakeover: FC<{
 }> = observer(function OnboardingTakeover({ children, onboardingUrl }) {
   const { userProperties } = useResidentsContext();
 
-  const hasSeenOnboarding = userProperties?.hasSeenOnboarding;
+  const hasSeenOnboarding =
+    isOnboardingDisabled() || userProperties?.hasSeenOnboarding;
 
   if (!hasSeenOnboarding) {
     return <Redirect to={onboardingUrl} />;

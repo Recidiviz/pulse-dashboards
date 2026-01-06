@@ -52,6 +52,10 @@ const Menu = styled.div`
   text-align: right;
   z-index: ${STICKY_HEADER_ZINDEX};
 
+  hr {
+    width: 100%;
+  }
+
   a,
   button {
     align-items: center;
@@ -163,10 +167,12 @@ const ManagedComponent: FC<{ presenter: NavMenuPresenter }> = observer(
       toggleActiveLanguage,
       personDisplayId,
       personName,
+      offlineUserOptions,
+      setOfflineUser,
     } = presenter;
 
     // don't show a useless empty menu
-    if (!showLogout && links.length === 0) return null;
+    if (!showLogout && links.length === 0 && !offlineUserOptions) return null;
 
     return (
       <>
@@ -215,6 +221,22 @@ const ManagedComponent: FC<{ presenter: NavMenuPresenter }> = observer(
               <Button kind="link" onClick={() => logOut()}>
                 Log out
               </Button>
+            )}
+            {offlineUserOptions && (
+              <>
+                <hr />
+                <div>Offline user:</div>
+                {offlineUserOptions.map(({ id, active }) => (
+                  <Button
+                    key={id}
+                    className={active ? "active" : undefined}
+                    kind="link"
+                    onClick={() => setOfflineUser(id)}
+                  >
+                    {id}
+                  </Button>
+                ))}
+              </>
             )}
           </Menu>
         )}

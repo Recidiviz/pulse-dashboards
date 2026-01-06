@@ -40,31 +40,47 @@ test.describe("without onboarding", () => {
   });
 });
 
-test.describe("with onboarding", () => {
+test.describe("onboarding", () => {
   // clear local storage so that onboarding is not skipped
   test.use({ storageState: { cookies: [], origins: [] } });
 
-  test.beforeEach(async ({ page }) => {
+  test("takeover", async ({ page }) => {
     await expect(
       page.getByRole("heading", { name: "Track your Earned Good Time" }),
     ).toBeVisible();
-  });
 
-  test("user is redirected", async ({ page }) => {
     await page.getByRole("link", { name: "See your earned time" }).click();
 
     await expect(
       page.getByRole("heading", { name: "Important dates" }),
     ).toBeVisible();
+
+    // don't encounter onboarding a second time
+    await page.goto(HOMEPAGE_URL);
+    await expect(
+      page.getByRole("heading", { name: "Important dates" }),
+    ).toBeVisible();
   });
 
-  test("accessibility", async ({ page }) => {
-    expect((await accessibilityScan(page)).violations).toEqual([]);
-  });
+  test.describe("page", () => {
+    test.beforeEach(async ({ page }) => {
+      // for consistency these tests go directly to the onboarding page
+      // rather than relying on the takeover behavior, which is stateful and may have
+      // already been dismissed
+      await page.goto(`${HOMEPAGE_URL}/intro`);
+      await expect(
+        page.getByRole("heading", { name: "Track your Earned Good Time" }),
+      ).toBeVisible();
+    });
 
-  test("page title", async ({ page }) => {
-    expect(await page.title()).toBe(
-      "Track your Earned Good Time – Opportunities",
-    );
+    test("accessibility", async ({ page }) => {
+      expect((await accessibilityScan(page)).violations).toEqual([]);
+    });
+
+    test("page title", async ({ page }) => {
+      expect(await page.title()).toBe(
+        "Track your Earned Good Time – Opportunities",
+      );
+    });
   });
 });

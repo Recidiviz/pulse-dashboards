@@ -19,11 +19,19 @@ import { appRouter, createContext } from "~@jii/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
 
 export function buildServer() {
-  // this is not the current project, it is the backend shared with staff app for auth and Firestore
-  const firebaseBackendProject = process.env["FIREBASE_BACKEND_PROJECT"];
+  let firebaseAuthOptions;
 
-  if (!firebaseBackendProject) {
-    throw new Error("Missing required Firebase configuration");
+  if (process.env["IS_OFFLINE"] !== "true") {
+    // this is not the current project, it is the backend shared with staff app for auth and Firestore
+    const firebaseBackendProject = process.env["FIREBASE_BACKEND_PROJECT"];
+
+    if (!firebaseBackendProject) {
+      throw new Error("Missing required Firebase configuration");
+    }
+
+    firebaseAuthOptions = {
+      projectId: firebaseBackendProject,
+    };
   }
 
   const server = buildCommonServer({
@@ -31,9 +39,7 @@ export function buildServer() {
     createContext,
     // the extra path segment lets us namespace the server in the frontend proxy config
     trpcPrefix: "/api/trpc",
-    firebaseAuthOptions: {
-      projectId: firebaseBackendProject,
-    },
+    firebaseAuthOptions,
   });
 
   return server;

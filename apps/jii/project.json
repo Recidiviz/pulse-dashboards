@@ -112,9 +112,19 @@
     },
     "offline": {
       "executor": "nx:run-commands",
+      "dependsOn": [{ "projects": ["@jii/server"], "target": "offline" }],
       "options": {
-        "commands": ["vite dev", "cd ../../ && nx dev @jii/server -c offline"],
+        "commands": ["vite dev"],
         "cwd": "{projectRoot}"
+      }
+    },
+    "offline-e2e": {
+      "executor": "nx:run-commands",
+      "dependsOn": [{ "projects": ["@jii/server"], "target": "offline-e2e" }],
+      "options": {
+        "commands": ["vite dev"],
+        "cwd": "{projectRoot}",
+        "envFile": "{projectRoot}/.env.offline"
       }
     },
     "test": {

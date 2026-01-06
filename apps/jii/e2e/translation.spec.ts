@@ -17,8 +17,6 @@
 
 import { expect, test } from "@playwright/test";
 
-import { permissionSchema } from "~@jii/auth";
-
 import { clearAllLoaders } from "./utils";
 
 // we can't really import configs etc directly into this Node environment
@@ -80,17 +78,9 @@ import { clearAllLoaders } from "./utils";
       // have to initiate navigation somewhere before we can start interacting with the page
       await page.goto("/");
 
-      const editedPermissions = JSON.stringify(
-        permissionSchema.options.filter((p) => p !== "translator"),
-      );
-
-      await page.evaluate((editedPermissions) => {
-        window.localStorage.setItem(
-          // magic value that overrides the offline mode user permissions
-          "offlinePermissionsOverride",
-          editedPermissions,
-        );
-      }, editedPermissions);
+      // use menu to switch offline user profile
+      await page.getByRole("button", { name: "Menu" }).click();
+      await page.getByRole("button", { name: "nonTranslator" }).click();
 
       await page.goto(`${residentUrl}?locale=es`);
       await clearAllLoaders(page);

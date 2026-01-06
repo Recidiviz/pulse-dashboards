@@ -29,7 +29,7 @@ import { OfflineAuthHandler } from "./OfflineAuthHandler";
 import { AuthHandler, AuthState, isAuthorizedState } from "./types";
 
 export class AuthManager implements Hydratable {
-  private readonly handler: AuthHandler;
+  readonly handler: AuthHandler;
 
   constructor(translationStore: TranslationStore) {
     makeAutoObservable<this, "handler">(this, {

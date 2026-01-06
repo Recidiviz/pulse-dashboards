@@ -19,10 +19,7 @@ import { observer } from "mobx-react-lite";
 
 import { CopyWrapper, GoButton } from "~@jii/common-ui";
 import { usePageTitle } from "~@jii/common-ui";
-import {
-  ScreenFillingWrapper,
-  useTrackOnboardingSeenOnMount,
-} from "~@jii/layout";
+import { ScreenFillingWrapper, useTrackOnboardingSeen } from "~@jii/layout";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
@@ -31,7 +28,8 @@ export const Onboarding = observer(function Onboarding() {
   const { t } = useUsMaTranslations();
 
   usePageTitle(t(($) => $.onboarding.heading));
-  useTrackOnboardingSeenOnMount();
+
+  const trackOnboarding = useTrackOnboardingSeen();
 
   return (
     <ScreenFillingWrapper
@@ -40,7 +38,9 @@ export const Onboarding = observer(function Onboarding() {
           <CopyWrapper>
             {`# ${t(($) => $.onboarding.heading)}\n\n${t(($) => $.onboarding.body)}`}
           </CopyWrapper>
-          <GoButton to="../">{t(($) => $.onboarding.continueLink)}</GoButton>
+          <GoButton onClick={() => trackOnboarding()} to="../">
+            {t(($) => $.onboarding.continueLink)}
+          </GoButton>
         </>
       }
       bottom={<Disclaimer />}

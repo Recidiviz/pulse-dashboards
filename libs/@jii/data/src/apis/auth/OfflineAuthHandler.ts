@@ -15,51 +15,77 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { makeAutoObservable } from "mobx";
 import { z } from "zod";
 
-import { Permission, permissionSchema } from "~@jii/auth";
+import { AuthorizedUserProfile, permissionSchema } from "~@jii/auth";
 import { HydrationState } from "~hydration-utils";
 
 import { stateCodes } from "../../configs/stateConstants";
 import { AuthHandler } from "./types";
 
-const permissionsArraySchema = z.array(permissionSchema);
+const offlineUserIds = z.enum(["default", "nonTranslator"]);
+export type OfflineUserId = z.infer<typeof offlineUserIds>;
+
+const OFFLINE_USER_ID_KEY = "offline-user-id";
+
+/**
+ * Mapping of all available user personas available in offline mode.
+ * Useful for exercising various access controls in testing, etc
+ */
+export const offlineUsers: Record<OfflineUserId, AuthorizedUserProfile> = {
+  // this user's access should be totally unrestricted
+  default: {
+    stateCode: "OFFLINE",
+    allowedStates: [...stateCodes.options],
+    permissions: [...permissionSchema.options],
+  },
+  // this user has everything except translator permission
+  nonTranslator: {
+    stateCode: "OFFLINE",
+    allowedStates: [...stateCodes.options],
+    permissions: permissionSchema.options.filter((p) => p !== "translator"),
+  },
+};
 
 export class OfflineAuthHandler implements AuthHandler {
+  constructor() {
+    makeAutoObservable(this);
+    this.updateActiveUserId();
+  }
+
   get userProfile(): AuthHandler["userProfile"] {
-    let permissionsOverride: Array<Permission> | undefined;
-    try {
-      const storedValue = localStorage.getItem("offlinePermissionsOverride");
-      if (storedValue) {
-        permissionsOverride = permissionsArraySchema.parse(
-          JSON.parse(storedValue),
-        );
-
-        // eslint-disable-next-line no-console
-        console.log(
-          "Offline mode: reading permissions from localStorage.offlinePermissionsOverride",
-        );
-      }
-    } catch {
-      console.warn(
-        "localStorage.offlinePermissionsOverride contained an invalid value; using default permissions.",
-      );
-    }
-
-    return {
-      stateCode: "RECIDIVIZ",
-      allowedStates: [...stateCodes.options],
-      permissions: permissionsOverride ?? [...permissionSchema.options],
-    };
+    return this.activeUser.profile;
   }
 
   async getFirebaseToken() {
     // don't bother with JWT encoding in offline mode, backend will handle this
     return JSON.stringify({
       ...this.userProfile,
-      sub: "offline-user",
+      sub: `offline-user-${this.activeUserId}`,
       app: "jii",
     });
+  }
+
+  private activeUserId: OfflineUserId = "default";
+
+  private updateActiveUserId() {
+    try {
+      this.activeUserId = offlineUserIds.parse(
+        sessionStorage.getItem(OFFLINE_USER_ID_KEY),
+      );
+    } catch {
+      this.activeUserId = "default";
+    }
+  }
+
+  get activeUser(): { id: OfflineUserId; profile: AuthorizedUserProfile } {
+    return { id: this.activeUserId, profile: offlineUsers[this.activeUserId] };
+  }
+
+  setActiveUser(id: OfflineUserId) {
+    sessionStorage.setItem(OFFLINE_USER_ID_KEY, id);
+    this.updateActiveUserId();
   }
 
   // everything below this line is a stub because the functionality doesn't really apply to offline mode

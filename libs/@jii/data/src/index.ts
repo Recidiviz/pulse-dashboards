@@ -16,6 +16,7 @@
 // =============================================================================
 
 export * from "./apis/auth/AuthManager";
+export * from "./apis/auth/OfflineAuthHandler";
 export * from "./apis/auth/types";
 export * from "./apis/data/interface";
 export * from "./apis/Sentry/initializeSentry";

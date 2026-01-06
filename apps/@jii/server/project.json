@@ -6,24 +6,30 @@
   "tags": ["scope:server"],
   "targets": {
     "dev": {
-      "dependsOn": [
-        "^prisma-generate",
-        {
-          "projects": ["@jii/prisma"],
-          "target": "prisma-deploy",
-          "params": "forward"
-        }
-      ],
+      "dependsOn": ["^prisma-generate", "^prisma-deploy"],
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
         "command": "vite-node --watch src/main.ts"
-      },
-      "configurations": {
-        "offline": {},
-        "live": {}
-      },
-      "defaultConfiguration": "live"
+      }
+    },
+    "offline": {
+      "continuous": true,
+      "dependsOn": ["^prisma-generate", "^prisma-deploy-offline"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node --watch src/main.ts"
+      }
+    },
+    "offline-e2e": {
+      "continuous": true,
+      "dependsOn": ["^prisma-generate", "^prepare-test-db"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node --watch src/main.ts"
+      }
     },
     "create-base-package-json": {
       "executor": "nx:run-commands",

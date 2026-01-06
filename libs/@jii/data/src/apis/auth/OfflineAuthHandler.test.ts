@@ -40,7 +40,7 @@ test("mock user profile in offline mode", () => {
         "live_data",
         "translator",
       ],
-      "stateCode": "RECIDIVIZ",
+      "stateCode": "OFFLINE",
     }
   `);
 });

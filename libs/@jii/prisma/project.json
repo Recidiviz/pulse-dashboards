@@ -55,8 +55,8 @@
         "schema": "{projectRoot}/prisma/schema.prisma"
       },
       "configurations": {
-        "live": {},
-        "offline": {}
+        "offline": {},
+        "test": {}
       }
     },
     "prisma-status": {
@@ -69,12 +69,21 @@
       "executor": "@nx-tools/nx-prisma:studio",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
+      },
+      "configurations": {
+        "offline": {},
+        "test": {}
       }
     },
     "prisma-reset": {
+      "dependsOn": ["docker"],
       "executor": "@nx-tools/nx-prisma:reset",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
+      },
+      "configurations": {
+        "offline": {},
+        "test": {}
       }
     },
     "prisma-resolve": {
@@ -84,6 +93,22 @@
       }
     },
 
+    "prepare-offline-db": {
+      "dependsOn": ["docker"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prisma migrate deploy",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "prepare-test-db": {
+      "dependsOn": ["docker"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prisma migrate reset --force",
+        "cwd": "{projectRoot}"
+      }
+    },
     "prisma-validate": {
       "executor": "@nx-tools/nx-prisma:validate",
       "options": {

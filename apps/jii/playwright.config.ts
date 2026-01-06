@@ -17,7 +17,7 @@
 
 import { nxE2EPreset } from "@nx/playwright/preset";
 import { defineConfig } from "@playwright/test";
-import { formatISO } from "date-fns";
+import { join } from "path";
 
 const baseURL = "http://localhost:4200/";
 
@@ -56,9 +56,8 @@ export default defineConfig({
             {
               origin: baseURL,
               localStorage: [
-                // mark MA onboarding as seen by default. override as needed in tests
-                { name: "egtOnboardingSeen", value: formatISO(Date.now()) },
-                { name: "azOnboardingSeen", value: formatISO(Date.now()) },
+                // helps with consistent homepage behavior, can be disabled per test as needed
+                { name: "disableOnboarding", value: "true" },
               ],
             },
           ],
@@ -68,9 +67,10 @@ export default defineConfig({
   ],
   webServer: {
     // TUI hijacks the process and stops Playwright from starting up
-    command: "NX_TUI=false nx offline jii",
+    command: "NX_TUI=false nx offline-e2e jii",
+    cwd: join(__dirname, "../../"),
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
   },
   // overriding the default to keep platform out of the filename
   // (otherwise dev and CI expect different snapshot files).

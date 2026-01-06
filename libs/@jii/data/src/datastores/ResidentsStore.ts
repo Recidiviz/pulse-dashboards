@@ -21,7 +21,7 @@ import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
 import { makeAutoObservable, runInAction, set } from "mobx";
 
-import type { JiiAppRouterInputs, JiiAppRouterOutputs } from "~@jii/trpc-types";
+import type { JiiAppRouterOutputs } from "~@jii/trpc-types";
 import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
@@ -255,13 +255,27 @@ export class ResidentsStore {
     return;
   }
 
-  async setUserProperties(
-    newProperties: JiiAppRouterInputs["user"]["setProperties"],
-  ) {
-    const updatedProperties =
-      await this.apiClient.trpc.user.setProperties.mutate(newProperties);
-    runInAction(() => {
-      this.userProperties = omit(updatedProperties, "id");
-    });
+  async setUserOnboardingSeen() {
+    const seenTime = new Date();
+    // set optimistically
+    if (this.userProperties) {
+      this.userProperties.hasSeenOnboarding = seenTime;
+    } else {
+      this.userProperties = { hasSeenOnboarding: seenTime };
+    }
+
+    try {
+      const updatedProperties =
+        await this.apiClient.trpc.user.setProperties.mutate({
+          hasSeenOnboarding: seenTime,
+        });
+      // refresh properties again after server response
+      runInAction(() => {
+        this.userProperties = omit(updatedProperties, "id");
+      });
+    } catch {
+      // it's OK for this to fail silently, it should be logged elsewhere.
+      // only effect to user is that they'll see onboarding again next time
+    }
   }
 }

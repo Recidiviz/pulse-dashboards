@@ -18,5 +18,5 @@
 export * from "./constants";
 export * from "./FullWidthBanner";
 export * from "./Onboarding/OnboardingTakeover";
-export * from "./Onboarding/useTrackOnboardingSeenOnMount";
+export * from "./Onboarding/useTrackOnboardingSeen";
 export * from "./ScreenFillingWrapper/ScreenFillingWrapper";

@@ -15,26 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useEffect, useEffectEvent } from "react";
-
 import { useResidentsContext } from "~@jii/data";
 
-export function useTrackOnboardingSeenOnMount() {
+export function useTrackOnboardingSeen() {
   const { userProperties, residentsStore } = useResidentsContext();
 
-  // this doesn't need to be reactive, we only want to run it once when the component mounts
-  const trackOnboardingSeen = useEffectEvent(() => {
+  return () => {
     if (!userProperties?.hasSeenOnboarding) {
-      residentsStore.setUserProperties({ hasSeenOnboarding: new Date() });
+      residentsStore.setUserOnboardingSeen();
     }
-  });
-
-  useEffect(
-    () => {
-      trackOnboardingSeen();
-    },
-    // we only want this to run once when the component mounts
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  };
 }

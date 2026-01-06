@@ -17,6 +17,7 @@
 
 import { formatISO } from "date-fns";
 import { flowResult } from "mobx";
+import tk from "timekeeper";
 
 import {
   outputFixture,
@@ -326,23 +327,32 @@ describe("user-generated properties", () => {
     });
   });
 
-  test("update", async () => {
-    mutateUserPropertiesMock.mockResolvedValue({
-      id: "abc123",
-      hasSeenOnboarding: testTimestamp,
-    });
-    await store.setUserProperties({
-      hasSeenOnboarding: testTimestamp,
-    });
+  test("track onboarding", async () => {
+    tk.withFreeze(testTimestamp, async () => {
+      mutateUserPropertiesMock.mockResolvedValue({
+        id: "abc123",
+        hasSeenOnboarding: testTimestamp,
+      });
+      const updatePromise = store.setUserOnboardingSeen();
+      // optimistic update
+      expect(store.userProperties).toMatchInlineSnapshot(`
+        {
+          "hasSeenOnboarding": 2025-12-09T12:30:00.000Z,
+        }
+      `);
 
-    expect(mutateUserPropertiesMock).toHaveBeenCalledWith({
-      hasSeenOnboarding: testTimestamp,
-    });
+      await updatePromise;
 
-    expect(store.userProperties).toMatchInlineSnapshot(`
-      {
-        "hasSeenOnboarding": 2025-12-09T12:30:00.000Z,
-      }
-    `);
+      expect(mutateUserPropertiesMock).toHaveBeenCalledWith({
+        hasSeenOnboarding: testTimestamp,
+      });
+      // value should still be the same
+      expect(store.userProperties).toMatchInlineSnapshot(`
+        {
+          "hasSeenOnboarding": 2025-12-09T12:30:00.000Z,
+        }
+      `);
+    });
+    expect.hasAssertions();
   });
 });

@@ -34,7 +34,7 @@ declare module "fastify" {
   }
 
   interface FastifyInstance {
-    firebaseAuth: Auth;
+    firebaseAuth: Auth | undefined;
   }
 }
 

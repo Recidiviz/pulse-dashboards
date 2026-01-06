@@ -18,7 +18,14 @@
 import { makeAutoObservable } from "mobx";
 
 import { SimpleNavLinkProps } from "~@jii/common-ui";
-import { RootStore, windowIsIframe } from "~@jii/data";
+import {
+  OfflineAuthHandler,
+  OfflineUserId,
+  offlineUsers,
+  RootStore,
+  windowIsIframe,
+} from "~@jii/data";
+import { isOfflineMode } from "~client-env-utils";
 import { ResidentRecord } from "~datatypes";
 
 export type MenuLinks = Array<SimpleNavLinkProps>;
@@ -80,5 +87,30 @@ export class NavMenuPresenter {
     } else {
       this.rootStore.translationStore.i18n.changeLanguage("es");
     }
+  }
+
+  private get offlineAuthHandler() {
+    const handler = this.rootStore.userStore.authManager.handler;
+    if (!isOfflineMode() || !(handler instanceof OfflineAuthHandler)) {
+      return;
+    }
+    return handler;
+  }
+
+  get offlineUserOptions() {
+    const { offlineAuthHandler } = this;
+    if (!offlineAuthHandler) {
+      return;
+    }
+
+    return Object.keys(offlineUsers).map((id) => ({
+      // key type gets lost when mapping over an object
+      id: id as OfflineUserId,
+      active: id === offlineAuthHandler.activeUser.id,
+    }));
+  }
+
+  setOfflineUser(id: OfflineUserId) {
+    this.offlineAuthHandler?.setActiveUser(id);
   }
 }

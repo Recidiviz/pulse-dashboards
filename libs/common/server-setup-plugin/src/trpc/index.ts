@@ -100,5 +100,10 @@ export async function verifyFirebaseIdToken(opts: CreateFastifyContextOptions) {
     return JSON.parse(token);
   }
 
+  // this should only be missing in offline mode
+  if (!req.server.firebaseAuth) {
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+  }
+
   return req.server.firebaseAuth.verifyIdToken(token);
 }

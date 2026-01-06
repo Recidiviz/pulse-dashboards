@@ -18,17 +18,15 @@
 import { observer } from "mobx-react-lite";
 
 import { CopyWrapper, GoButton, usePageTitle } from "~@jii/common-ui";
-import {
-  ScreenFillingWrapper,
-  useTrackOnboardingSeenOnMount,
-} from "~@jii/layout";
+import { ScreenFillingWrapper, useTrackOnboardingSeen } from "~@jii/layout";
 import { useUsAzTranslations } from "~@jii/translation";
 
 export const Onboarding = observer(function Onboarding() {
   const { t } = useUsAzTranslations();
 
   usePageTitle(t(($) => $.onboarding.heading));
-  useTrackOnboardingSeenOnMount();
+
+  const trackOnboarding = useTrackOnboardingSeen();
 
   return (
     <ScreenFillingWrapper
@@ -37,7 +35,9 @@ export const Onboarding = observer(function Onboarding() {
           <CopyWrapper>
             {`# ${t(($) => $.onboarding.heading)}\n\n${t(($) => $.onboarding.body)}`}
           </CopyWrapper>
-          <GoButton to="../">{t(($) => $.onboarding.continueLink)}</GoButton>
+          <GoButton onClick={() => trackOnboarding()} to="../">
+            {t(($) => $.onboarding.continueLink)}
+          </GoButton>
         </>
       }
       bottom={null}
