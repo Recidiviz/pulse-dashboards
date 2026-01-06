@@ -15,13 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { addMonths } from "date-fns";
+import timekeeper from "timekeeper";
 
 import { testTranslation } from "../../utils/testTranslation";
 
 describe("formatDistanceFromTodayFormatter", () => {
+  beforeEach(() => {
+    timekeeper.freeze(new Date("2025-10-30"));
+  });
+
+  afterEach(() => {
+    timekeeper.reset();
+  });
+
   it("should format distance in English", async () => {
-    const futureDate = addMonths(new Date(), 2);
+    const futureDate = new Date("2025-12-30");
 
     const result = await testTranslation(
       "{{testDate, formatDistanceFromToday}}",
@@ -45,7 +53,7 @@ describe("formatDistanceFromTodayFormatter", () => {
   });
 
   it("should format distance in Spanish with Spanish locale", async () => {
-    const futureDate = addMonths(new Date(), 2);
+    const futureDate = new Date("2025-12-30");
 
     const result = await testTranslation(
       "{{testDate, formatDistanceFromToday}}",
