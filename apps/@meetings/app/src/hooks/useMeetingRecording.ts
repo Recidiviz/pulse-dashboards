@@ -81,8 +81,8 @@ export const useMeetingRecording = ({
     getItem("durationMs").then((duration) => {
       setAccumulatedDurationMs(Number(duration) || 0);
       setTotalDurationMs(Number(duration) || 0);
-    })
-  }, [])
+    });
+  }, []);
 
   const isFocused = useIsFocused();
 
@@ -130,7 +130,6 @@ export const useMeetingRecording = ({
 
   const { refetch } = trpc.v1.meeting.getSignedUrlForRecording.useQuery(
     {
-      clientId: person.personId,
       meetingId: meetingId ?? "",
       platform: Platform.OS as "web" | "ios" | "android",
     },
@@ -202,9 +201,8 @@ export const useMeetingRecording = ({
       try {
         const notes = await resolveNotes();
         await updateNotesMutation.mutateAsync({
-          clientId: person.personId,
           meetingId,
-          notes,
+          userNotepadNotes: notes,
         });
       } catch (err) {
         console.error("Failed to update notes:", err);
@@ -216,7 +214,6 @@ export const useMeetingRecording = ({
     status,
     resolveNotes,
     updateNotesMutation,
-    person.personId,
     meetingId,
   ]);
 
@@ -232,9 +229,8 @@ export const useMeetingRecording = ({
       await removeItem("note");
 
       await endMeetingMutation.mutateAsync({
-        clientId: person.personId,
         meetingId,
-        notes,
+        userNotepadNotes: notes,
       });
 
       await cleanupRecording();
@@ -251,7 +247,6 @@ export const useMeetingRecording = ({
     uploadSegmentToGCS,
     resolveNotes,
     endMeetingMutation,
-    person.personId,
     meetingId,
     cleanupRecording,
     onComplete,
@@ -264,18 +259,11 @@ export const useMeetingRecording = ({
     await cleanupRecording();
 
     await discardMeetingMutation.mutateAsync({
-      clientId: person.personId,
       meetingId,
     });
 
     onComplete?.();
-  }, [
-    cleanupRecording,
-    discardMeetingMutation,
-    person.personId,
-    meetingId,
-    onComplete,
-  ]);
+  }, [cleanupRecording, discardMeetingMutation, meetingId, onComplete]);
 
   const handleAutoStopRecording = useCallback(async () => {
     setStatus("uploading");

@@ -18,23 +18,19 @@
 import { z } from "zod";
 
 export const getDetailInputSchema = z.object({
-  clientId: z.bigint(),
   meetingId: z.string(),
 });
 
 export const getSignedUrlForRecordingInputSchema = z.object({
-  clientId: z.bigint(),
   meetingId: z.string(),
   platform: z.enum(["web", "ios", "android"]).optional(),
 });
 
 export const discardMeetingInputSchema = z.object({
-  clientId: z.bigint(),
   meetingId: z.string(),
 });
 
 export const endMeetingInputSchema = z.object({
-  clientId: z.bigint(),
   meetingId: z.string(),
   userNotepadNotes: z.string().max(100000),
   actionItems: z.string().max(100000).optional(),
@@ -43,7 +39,6 @@ export const endMeetingInputSchema = z.object({
 });
 
 export const updateNotesInputSchema = z.object({
-  clientId: z.bigint(),
   meetingId: z.string(),
   userNotepadNotes: z.string().max(100000),
   actionItems: z.string().max(100000).optional(),

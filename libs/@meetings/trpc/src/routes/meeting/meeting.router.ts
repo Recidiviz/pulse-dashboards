@@ -40,13 +40,10 @@ import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 export const meetingRouter = router({
   getDetails: auth0Procedure
     .input(getDetailInputSchema)
-    .query(async ({ input: { clientId, meetingId }, ctx: { prisma } }) => {
+    .query(async ({ input: { meetingId }, ctx: { prisma } }) => {
       try {
         const meeting = await prisma.meeting.findUniqueOrThrow({
-          where: {
-            id: meetingId,
-            clientId: clientId,
-          },
+          where: { id: meetingId },
           select: {
             id: true,
             startTime: true,
@@ -102,52 +99,44 @@ export const meetingRouter = router({
     }),
   getSignedUrlForRecording: auth0Procedure
     .input(getSignedUrlForRecordingInputSchema)
-    .query(
-      async ({ input: { clientId, meetingId, platform }, ctx: { prisma } }) => {
-        const meeting = await prisma.meeting.findUnique({
-          where: {
-            id: meetingId,
-            clientId: clientId,
-          },
+    .query(async ({ input: { meetingId, platform }, ctx: { prisma } }) => {
+      const meeting = await prisma.meeting.findUnique({
+        where: { id: meetingId },
+      });
+
+      if (!meeting) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Meeting with that id was not found",
         });
+      }
 
-        if (!meeting) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Meeting with that id was not found",
-          });
-        }
+      // Determine file extension and content type based on platform
+      let fileExtension: string;
+      let contentType: string;
 
-        // Determine file extension and content type based on platform
-        let fileExtension: string;
-        let contentType: string;
+      if (platform === "web") {
+        fileExtension = WEB_AUDIO_FILE_EXTENSION;
+        contentType = WEB_GCS_CONTENT_TYPE;
+      } else {
+        // Default to mobile format for iOS, Android, or if platform not specified
+        fileExtension = MOBILE_AUDIO_FILE_EXTENSION;
+        contentType = MOBILE_GCS_CONTENT_TYPE;
+      }
 
-        if (platform === "web") {
-          fileExtension = WEB_AUDIO_FILE_EXTENSION;
-          contentType = WEB_GCS_CONTENT_TYPE;
-        } else {
-          // Default to mobile format for iOS, Android, or if platform not specified
-          fileExtension = MOBILE_AUDIO_FILE_EXTENSION;
-          contentType = MOBILE_GCS_CONTENT_TYPE;
-        }
-
-        return await getSignedUrlForNewRecording(
-          meeting.recordingsGCSBucket,
-          meeting.recordingsFolderPath,
-          fileExtension,
-          contentType,
-        );
-      },
-    ),
+      return await getSignedUrlForNewRecording(
+        meeting.recordingsGCSBucket,
+        meeting.recordingsFolderPath,
+        fileExtension,
+        contentType,
+      );
+    }),
   discardMeeting: auth0Procedure
     .input(discardMeetingInputSchema)
-    .mutation(async ({ input: { clientId, meetingId }, ctx: { prisma } }) => {
+    .mutation(async ({ input: { meetingId }, ctx: { prisma } }) => {
       try {
         await prisma.meeting.delete({
-          where: {
-            id: meetingId,
-            clientId: clientId,
-          },
+          where: { id: meetingId },
         });
       } catch (e) {
         if (
@@ -168,15 +157,18 @@ export const meetingRouter = router({
     .input(endMeetingInputSchema)
     .mutation(
       async ({
-        input: { clientId, meetingId, userNotepadNotes, actionItems, criticalUpdates, meetingSummary },
+        input: {
+          meetingId,
+          userNotepadNotes,
+          actionItems,
+          criticalUpdates,
+          meetingSummary,
+        },
         ctx: { prisma, stateCode },
       }) => {
         try {
           await prisma.meeting.update({
-            where: {
-              id: meetingId,
-              clientId: clientId,
-            },
+            where: { id: meetingId },
             data: {
               endTime: new Date(),
               userNotepadNotes,
@@ -207,10 +199,7 @@ export const meetingRouter = router({
           captureException(e);
 
           await prisma.meeting.update({
-            where: {
-              id: meetingId,
-              clientId: clientId,
-            },
+            where: { id: meetingId },
             data: {
               postMeetingProcessingStatus:
                 PostMeetingProcessingStatus.STITCHING_ERROR,
@@ -222,13 +211,19 @@ export const meetingRouter = router({
   updateNotes: auth0Procedure
     .input(updateNotesInputSchema)
     .mutation(
-      async ({ input: { clientId, meetingId, userNotepadNotes, actionItems, criticalUpdates, meetingSummary }, ctx: { prisma } }) => {
+      async ({
+        input: {
+          meetingId,
+          userNotepadNotes,
+          actionItems,
+          criticalUpdates,
+          meetingSummary,
+        },
+        ctx: { prisma },
+      }) => {
         try {
           await prisma.meeting.update({
-            where: {
-              id: meetingId,
-              clientId: clientId,
-            },
+            where: { id: meetingId },
             data: {
               userNotepadNotes,
               actionItems,

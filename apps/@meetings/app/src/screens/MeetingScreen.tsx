@@ -28,15 +28,9 @@ type MeetingRouteProp = RouteProp<RootStackParamList, "Meeting">;
 
 const MeetingScreen = () => {
   const route = useRoute<MeetingRouteProp>();
-  const person = {
-    ...route.params.person,
-    // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.person.personId),
-  };
   const { meeting } = route.params;
   const { data: meetingDetails } = trpc.v1.meeting.getDetails.useQuery({
     meetingId: meeting.id,
-    clientId: person.personId,
   });
 
   return (

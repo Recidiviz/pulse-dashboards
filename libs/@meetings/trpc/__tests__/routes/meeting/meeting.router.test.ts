@@ -24,7 +24,7 @@ import {
   testPrismaClient,
   testTRPCClient,
 } from "~@meetings/trpc/test/setup";
-import { fakeClients, fakeMeeting } from "~@meetings/trpc/test/setup/seed";
+import { fakeMeeting } from "~@meetings/trpc/test/setup/seed";
 
 const FAKE_DATE = new Date("2025-10-19");
 
@@ -33,7 +33,6 @@ describe("meeting router", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.getDetails.query({
-          clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
         }),
       ).rejects.toMatchObject({
@@ -44,7 +43,6 @@ describe("meeting router", () => {
 
     test("Should return meeting details if it exists", async () => {
       const result = await testTRPCClient.v1.meeting.getDetails.query({
-        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
       });
 
@@ -54,9 +52,12 @@ describe("meeting router", () => {
         endTime: null,
         postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
         userNotepadNotes: "Sample meeting notes.",
-        actionItems: "1. Follow up on employment status\n2. Schedule next check-in\n3. Review case file",
-        criticalUpdates: "Client reported new job opportunity. Upcoming court date next week.",
-        meetingSummary: "Productive meeting discussing client progress and upcoming milestones.",
+        actionItems:
+          "1. Follow up on employment status\n2. Schedule next check-in\n3. Review case file",
+        criticalUpdates:
+          "Client reported new job opportunity. Upcoming court date next week.",
+        meetingSummary:
+          "Productive meeting discussing client progress and upcoming milestones.",
         transcription: {
           confidence: 0.95,
           summary: "This is a sample summary of the meeting.",
@@ -86,7 +87,6 @@ describe("meeting router", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.getSignedUrlForRecording.query({
-          clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
         }),
       ).rejects.toMatchObject({
@@ -98,7 +98,6 @@ describe("meeting router", () => {
     test("Returns a signed URL for the meeting recording", async () => {
       const result =
         await testTRPCClient.v1.meeting.getSignedUrlForRecording.query({
-          clientId: fakeClients[0].personId,
           meetingId: fakeMeeting.id,
         });
 
@@ -112,7 +111,6 @@ describe("meeting router", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.discardMeeting.mutate({
-          clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
         }),
       ).rejects.toMatchObject({
@@ -123,7 +121,6 @@ describe("meeting router", () => {
 
     test("Should delete meeting if it exists", async () => {
       await testTRPCClient.v1.meeting.discardMeeting.mutate({
-        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
       });
 
@@ -139,7 +136,6 @@ describe("meeting router", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.updateNotes.mutate({
-          clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
           userNotepadNotes: "These are some notes",
         }),
@@ -151,7 +147,6 @@ describe("meeting router", () => {
 
     test("Should update notes if meeting exists", async () => {
       await testTRPCClient.v1.meeting.updateNotes.mutate({
-        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
         userNotepadNotes: "These are some notes",
       });
@@ -169,7 +164,6 @@ describe("meeting router", () => {
 
     test("Should update all fields including actionItems, criticalUpdates, and meetingSummary", async () => {
       await testTRPCClient.v1.meeting.updateNotes.mutate({
-        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
         userNotepadNotes: "Updated notes",
         actionItems: "1. New action item\n2. Another action",
@@ -207,7 +201,6 @@ describe("meeting router", () => {
     test("Should throw error if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.endMeeting.mutate({
-          clientId: fakeClients[0].personId,
           meetingId: "non-existent-meeting-id",
           userNotepadNotes: "These are some notes",
         }),
@@ -221,7 +214,6 @@ describe("meeting router", () => {
       mockCloudTasksClient.createTask.mockRejectedValueOnce(new Error());
 
       await testTRPCClient.v1.meeting.endMeeting.mutate({
-        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
         userNotepadNotes: "These are some notes",
       });
@@ -246,7 +238,6 @@ describe("meeting router", () => {
 
     test("Should set meeting end time and queue stitching", async () => {
       await testTRPCClient.v1.meeting.endMeeting.mutate({
-        clientId: fakeClients[0].personId,
         meetingId: fakeMeeting.id,
         userNotepadNotes: "These are some notes",
       });
