@@ -47,7 +47,7 @@ describe("import resident data", () => {
         stable_person_external_id_type: fakeResident.stablePersonExternalIdType,
         display_person_external_id: fakeResident.displayPersonExternalId,
         pseudonymized_id: fakeResident.pseudonymizedId,
-        full_name: JSON.stringify({
+        person_name: JSON.stringify({
           given_names: "New Name",
           middle_names: fakeResident.middleNames,
           surname: fakeResident.surname,
@@ -64,7 +64,7 @@ describe("import resident data", () => {
         stable_person_external_id_type: fakeResident.stablePersonExternalIdType,
         display_person_external_id: "new-resident-display-ext-id",
         pseudonymized_id: "new-resident-pid",
-        full_name: JSON.stringify({
+        person_name: JSON.stringify({
           given_names: faker.person.firstName(),
           middle_names: faker.person.firstName(),
           surname: faker.person.lastName(),
@@ -133,7 +133,7 @@ describe("import resident data", () => {
         stable_person_external_id_type: fakeResident.stablePersonExternalIdType,
         display_person_external_id: fakeResident.displayPersonExternalId,
         pseudonymized_id: fakeResident.pseudonymizedId,
-        full_name: JSON.stringify({
+        person_name: JSON.stringify({
           given_names: fakeResident.givenNames,
           middle_names: fakeResident.middleNames,
           surname: fakeResident.surname,

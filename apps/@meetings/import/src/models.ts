@@ -59,7 +59,7 @@ export const residentImportSchema = z.object({
   stable_person_external_id_type: z.string(),
   pseudonymized_id: z.string(),
   display_person_external_id: z.string(),
-  full_name: nameSchema,
+  person_name: nameSchema,
   facility_id: z.string(),
 });
 
