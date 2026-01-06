@@ -17,6 +17,7 @@
 
 export * from "./apis/auth/AuthManager";
 export * from "./apis/auth/types";
+export * from "./apis/data/interface";
 export * from "./apis/Sentry/initializeSentry";
 export * from "./components/StoreProvider/StoreProvider";
 export * from "./components/StoreProvider/useRootStore";

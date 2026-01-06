@@ -95,5 +95,10 @@ export async function verifyFirebaseIdToken(opts: CreateFastifyContextOptions) {
     throw new TRPCError({ code: "BAD_REQUEST" });
   }
 
+  // offline mode only runs locally so we don't bother with JWT encoding
+  if (process.env["IS_OFFLINE"] === "true") {
+    return JSON.parse(token);
+  }
+
   return req.server.firebaseAuth.verifyIdToken(token);
 }

@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { TRPCClient } from "@trpc/client";
 import assertNever from "assert-never";
 import isMatch from "lodash/isMatch";
 
+import type { JiiAppRouter } from "~@jii/trpc-types";
 import {
   outputFixture,
   usMeSccpFixtures,
@@ -31,14 +33,21 @@ import {
   OpportunityRecord,
   StateCode,
 } from "../../configs/types";
+import { AuthManager } from "../auth/AuthManager";
 import { DataAPI } from "./interface";
+import { createTrpcClientForApi } from "./trpcMixin";
 
 export class OfflineAPIClient implements DataAPI {
   private firestoreClient: FirestoreAPI;
 
-  // have to accept an argument for compatibility, but we don't need it for anything
-  constructor(externals: unknown) {
+  isAuthenticated = true;
+
+  readonly trpc: TRPCClient<JiiAppRouter>;
+
+  constructor(private externals: { authManager: AuthManager }) {
     this.firestoreClient = new FirestoreOfflineAPIClient();
+
+    this.trpc = createTrpcClientForApi(this);
   }
 
   /**
@@ -165,5 +174,11 @@ export class OfflineAPIClient implements DataAPI {
 
   async locations(stateCode: StateCode) {
     return this.firestoreClient.locations(stateCode);
+  }
+
+  getApiToken() {
+    // we don't communicate with Firebase in offline mode, but the auth manager
+    // will give us a valid dummy token that will work offline
+    return this.externals.authManager.getFirebaseToken();
   }
 }

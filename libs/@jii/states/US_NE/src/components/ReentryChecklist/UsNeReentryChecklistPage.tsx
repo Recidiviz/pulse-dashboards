@@ -24,7 +24,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
 import { BackLink, SlateCopy, usePageTitle } from "~@jii/common-ui";
-import { useRootStore, useSingleResidentContext } from "~@jii/data";
+import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { Button, spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
@@ -112,11 +112,10 @@ const ManagedComponent = observer(function ManagedComponent({
 
 function usePresenter() {
   const { resident } = useSingleResidentContext();
-  const { userStore } = useRootStore();
   const {
     copy: { reentryChecklist: copy },
   } = useUsNeContext();
-  return new UsNeReentryChecklistPresenter(resident, userStore, copy);
+  return new UsNeReentryChecklistPresenter(resident, copy);
 }
 
 const UsNeReentryChecklistPage = withPresenterManager({

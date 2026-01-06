@@ -17,11 +17,16 @@
 
 import { createContext } from "react";
 
-import { ResidentsStore } from "~@jii/data";
 import { useRequiredContext } from "~utils";
+
+import type {
+  ResidentsStore,
+  StateUserProperties,
+} from "../datastores/ResidentsStore";
 
 export type ResidentsContext = {
   residentsStore: ResidentsStore;
+  userProperties: StateUserProperties;
 };
 
 const context = createContext<ResidentsContext | undefined>(undefined);

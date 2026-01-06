@@ -32,9 +32,9 @@ import { ResidentsHydratorPresenter } from "./ResidentsHydratorPresenter";
 const ManagedComponent: FC<{
   presenter: ResidentsHydratorPresenter;
 }> = observer(function ResidentsHydrator({ presenter }) {
-  const { residentsStore } = presenter;
+  const { residentsStore, userProperties } = presenter;
   return (
-    <ResidentsContextProvider value={{ residentsStore }}>
+    <ResidentsContextProvider value={{ residentsStore, userProperties }}>
       <Outlet />
     </ResidentsContextProvider>
   );

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { getAuth, signInWithCustomToken } from "firebase/auth";
+import { getAuth, getIdToken, signInWithCustomToken } from "firebase/auth";
 
 export class FirebaseStore {
   app: FirebaseApp;
@@ -43,5 +43,16 @@ export class FirebaseStore {
       auth.config.tokenApiHost = `${this.proxyHost}/gcp-securetoken`;
     }
     await signInWithCustomToken(auth, firebaseToken);
+  }
+
+  /**
+   * ID Tokens are the auth tokens you include with API requests that use Firebase Auth.
+   * This method requests a fresh one for use with an API call
+   */
+  async getIdToken() {
+    const { currentUser } = this.auth;
+    if (!currentUser)
+      throw new Error("Cannot get API token before authenticating");
+    return getIdToken(currentUser);
   }
 }

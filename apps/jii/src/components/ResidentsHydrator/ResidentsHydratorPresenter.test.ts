@@ -24,17 +24,25 @@ import { ResidentsHydratorPresenter } from "./ResidentsHydratorPresenter";
 let store: RootStore;
 let presenter: ResidentsHydratorPresenter;
 
+const queryUserPropertiesMock = vi.fn();
+
 beforeEach(() => {
   configure({ safeDescriptors: false });
   store = new RootStore();
+
+  // unlike firestore methods, this is not automocked in tests so we have to stub it
+  vi.spyOn(store.apiClient, "trpc", "get").mockReturnValue({
+    // @ts-expect-error minimal stub
+    user: {
+      getProperties: { query: queryUserPropertiesMock },
+    },
+  });
+  presenter = new ResidentsHydratorPresenter(store, "US_NE");
+  queryUserPropertiesMock.mockResolvedValue(null);
 });
 
 afterEach(() => {
   configure({ safeDescriptors: true });
-});
-
-beforeEach(() => {
-  presenter = new ResidentsHydratorPresenter(store, "US_NE");
 });
 
 test("hydrate", async () => {
@@ -49,8 +57,10 @@ test("hydrate", async () => {
 
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });
   expect(store.populateResidentsStore).toHaveBeenCalled();
+  expect(queryUserPropertiesMock).toHaveBeenCalled();
 
   expect(store.residentsStore).toBeDefined();
+  expect(store.residentsStore?.userProperties).toBeDefined();
 });
 
 test("hydration error", async () => {
@@ -74,6 +84,7 @@ test("no redundant hydration while in progress", async () => {
 
   await Promise.all([h1, h2]);
   expect(store.populateResidentsStore).toHaveBeenCalledTimes(1);
+  expect(queryUserPropertiesMock).toHaveBeenCalledTimes(1);
 });
 
 test("don't hydrate if already hydrated", async () => {
@@ -84,4 +95,5 @@ test("don't hydrate if already hydrated", async () => {
   presenter.hydrate();
 
   expect(store.populateResidentsStore).toHaveBeenCalledTimes(1);
+  expect(queryUserPropertiesMock).toHaveBeenCalledTimes(1);
 });

@@ -32,7 +32,7 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
 
   userStore = new UserStore(
-    // stubbing this as it just gets passed through to something we aren't using here
+    // stubbing these as it just gets passed through to something we aren't using here
     {} as TranslationStore,
   );
   vi.spyOn(userStore, "hasPermission").mockReturnValue(false);

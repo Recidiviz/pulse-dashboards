@@ -20,6 +20,16 @@ services:
       - 6509:5432
     volumes:
       - postgres_data:/var/lib/postgresql/test-data/
+  offline-db:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=jii-offline
+    ports:
+      - 6510:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/offline-data/
 
 volumes:
   postgres_data:

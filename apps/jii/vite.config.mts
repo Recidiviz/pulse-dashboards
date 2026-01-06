@@ -27,6 +27,8 @@ import {
   REENTRY_BACKEND_PATH,
   REENTRY_DEV_BACKEND_PATH,
 } from "../../libs/@jii/case-planning/src/constants";
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { JII_BACKEND_PATH } from "../../libs/@jii/data/src/apis/data/constants";
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -35,8 +37,12 @@ export default defineConfig(() => ({
   server: {
     port: 4200,
     host: "localhost",
-    // result here should be equivalent to that in apps/jii-reverse-proxy
     proxy: {
+      [JII_BACKEND_PATH]: {
+        target: process.env["JII_BACKEND_PROXY_TARGET"],
+        // to match Firebase Hosting proxy behavior, we don't rewrite this path as we do with others
+      },
+      // result here should be equivalent to that in apps/jii-reverse-proxy
       [REENTRY_BACKEND_PATH]: {
         target: process.env["CASE_PLANNING_PROXY_TARGET"],
         ws: true,

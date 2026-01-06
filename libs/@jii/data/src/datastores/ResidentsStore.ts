@@ -15,9 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
+import { parseISO } from "date-fns";
 import keyBy from "lodash/keyBy";
-import { makeAutoObservable, set } from "mobx";
+import omit from "lodash/omit";
+import { makeAutoObservable, runInAction, set } from "mobx";
 
+import type { JiiAppRouterInputs, JiiAppRouterOutputs } from "~@jii/trpc-types";
 import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
@@ -36,6 +40,12 @@ type OpportunityRecordMapping = {
   [O in IncarcerationOpportunityId]?: OpportunityRecord<O>;
 };
 
+export type StateUserProperties = JiiAppRouterOutputs["user"]["getProperties"];
+
+// these are legacy keys from when properties were kept in local storage.
+// we still support them but only to incrementally migrate them to the backend
+type UserPropertyKey = "egtOnboardingSeen" | "azOnboardingSeen";
+
 export class ResidentsStore {
   /**
    * Holds all resident records that have been fetched
@@ -51,6 +61,8 @@ export class ResidentsStore {
   > = new Map();
 
   locations: Array<LocationRecord> = [];
+
+  userProperties?: StateUserProperties;
 
   constructor(
     private readonly rootStore: RootStore,
@@ -190,5 +202,66 @@ export class ResidentsStore {
         opportunityMap,
       );
     }
+  }
+
+  async populateUserProperties() {
+    if (this.userProperties !== undefined) return;
+
+    // state code is implicit in every query, so we don't need to specify it here
+    let properties = await this.apiClient.trpc.user.getProperties.query();
+    if (!properties?.hasSeenOnboarding) {
+      const localStorageProperties =
+        this.getAndMigrateOldLocalStorageProperties();
+      if (localStorageProperties) {
+        properties = { ...properties, ...localStorageProperties };
+      }
+    }
+
+    runInAction(() => {
+      this.userProperties = properties;
+    });
+  }
+
+  // incrementally migrating old data from local storage as we encounter it
+  private getAndMigrateOldLocalStorageProperties() {
+    let onboardingFlag: string | null = null;
+    let localProperty: UserPropertyKey | undefined;
+
+    if (this.stateCode === "US_AZ") {
+      localProperty = "azOnboardingSeen";
+    } else if (this.stateCode === "US_MA") {
+      localProperty = "egtOnboardingSeen";
+    }
+
+    if (localProperty) {
+      onboardingFlag = localStorage.getItem(localProperty);
+
+      if (onboardingFlag) {
+        const hasSeenOnboarding = parseISO(onboardingFlag);
+
+        // we're not awaiting this because it doesn't need to block UI
+        this.apiClient.trpc.user.setProperties
+          .mutate({ hasSeenOnboarding })
+          .then(() => {
+            localStorage.removeItem(localProperty);
+          })
+          .catch((e) => {
+            captureException(e);
+          });
+
+        return { hasSeenOnboarding };
+      }
+    }
+    return;
+  }
+
+  async setUserProperties(
+    newProperties: JiiAppRouterInputs["user"]["setProperties"],
+  ) {
+    const updatedProperties =
+      await this.apiClient.trpc.user.setProperties.mutate(newProperties);
+    runInAction(() => {
+      this.userProperties = omit(updatedProperties, "id");
+    });
   }
 }

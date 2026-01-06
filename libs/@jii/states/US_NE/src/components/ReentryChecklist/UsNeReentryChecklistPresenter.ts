@@ -19,7 +19,6 @@ import { addDays, addMonths, addYears, isBefore, min } from "date-fns";
 import { makeAutoObservable } from "mobx";
 import { z } from "zod";
 
-import { UserStore } from "~@jii/data";
 import { dateStringSchema, ResidentRecord } from "~datatypes";
 
 import { UsNeCopy } from "../../configs/copy";
@@ -41,7 +40,6 @@ export class UsNeReentryChecklistPresenter {
 
   constructor(
     private readonly resident: ResidentRecord,
-    private readonly userStore: UserStore,
     private readonly copy: UsNeCopy["reentryChecklist"],
   ) {
     makeAutoObservable(this);
@@ -159,7 +157,7 @@ export class UsNeReentryChecklistPresenter {
    * Loads saved data from localStorage once
    */
   private loadSavedData(): void {
-    const saved = this.userStore.getUserProperty(this.storageKey);
+    const saved = localStorage.getItem(this.storageKey);
     if (!saved) {
       return;
     }
@@ -190,7 +188,7 @@ export class UsNeReentryChecklistPresenter {
       residentId: this.residentId,
     };
 
-    this.userStore.setUserProperty(this.storageKey, JSON.stringify(dataToSave));
+    localStorage.setItem(this.storageKey, JSON.stringify(dataToSave));
     this.loadSavedData();
   }
 }

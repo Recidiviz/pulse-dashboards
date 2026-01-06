@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { formatISO } from "date-fns";
 import { flowResult } from "mobx";
 
 import {
@@ -26,14 +27,31 @@ import {
 import { FilterParams } from "~firestore-api";
 
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
+import { createTrpcClientForApi } from "../apis/data/trpcMixin";
 import { residentsConfigByState } from "../configs/residentsConfig";
 import { ResidentsStore } from "./ResidentsStore";
 import { RootStore } from "./RootStore";
 
+vi.mock("../apis/data/trpcMixin");
+
 let store: ResidentsStore;
+
+const queryUserPropertiesMock = vi.fn();
+const mutateUserPropertiesMock = vi.fn();
 
 beforeEach(() => {
   vi.restoreAllMocks();
+
+  vi.mocked(createTrpcClientForApi).mockReturnValue(
+    // @ts-expect-error minimal stub
+    {
+      user: {
+        getProperties: { query: queryUserPropertiesMock },
+        setProperties: { mutate: mutateUserPropertiesMock },
+      },
+    },
+  );
+
   store = new ResidentsStore(
     new RootStore(),
     "US_AZ",
@@ -216,5 +234,115 @@ describe.skip("populate resident eligibility", () => {
     expect(
       OfflineAPIClient.prototype.residentEligibility,
     ).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("user-generated properties", () => {
+  const testTimestamp = new Date(2025, 11, 9, 12, 30, 0);
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  test("populate", async () => {
+    queryUserPropertiesMock.mockResolvedValue({
+      hasSeenOnboarding: testTimestamp,
+    });
+
+    await store.populateUserProperties();
+    expect(queryUserPropertiesMock).toHaveBeenCalledWith();
+
+    expect(store.userProperties).toMatchInlineSnapshot(`
+      {
+        "hasSeenOnboarding": 2025-12-09T12:30:00.000Z,
+      }
+    `);
+  });
+
+  test("already populated", async () => {
+    store.userProperties = { hasSeenOnboarding: testTimestamp };
+
+    await store.populateUserProperties();
+    expect(queryUserPropertiesMock).not.toHaveBeenCalled();
+    expect(store.userProperties).toMatchInlineSnapshot(`
+      {
+        "hasSeenOnboarding": 2025-12-09T12:30:00.000Z,
+      }
+    `);
+  });
+
+  test("user has no properties yet", async () => {
+    queryUserPropertiesMock.mockResolvedValue(null);
+
+    await store.populateUserProperties();
+    expect(queryUserPropertiesMock).toHaveBeenCalledWith();
+    expect(store.userProperties).toBeNull();
+  });
+
+  test("migrate AZ from local storage", async () => {
+    store = new ResidentsStore(
+      new RootStore(),
+      "US_AZ",
+      residentsConfigByState.US_AZ,
+    );
+
+    localStorage.setItem("azOnboardingSeen", formatISO(testTimestamp));
+    queryUserPropertiesMock.mockResolvedValue(null);
+    mutateUserPropertiesMock.mockResolvedValue(null);
+
+    await store.populateUserProperties();
+
+    expect(store.userProperties).toMatchInlineSnapshot(`
+      {
+        "hasSeenOnboarding": 2025-12-09T12:30:00.000Z,
+      }
+    `);
+
+    expect(mutateUserPropertiesMock).toHaveBeenCalledWith({
+      hasSeenOnboarding: testTimestamp,
+    });
+  });
+
+  test("migrate MA from local storage", async () => {
+    store = new ResidentsStore(
+      new RootStore(),
+      "US_MA",
+      residentsConfigByState.US_MA,
+    );
+    localStorage.setItem("egtOnboardingSeen", formatISO(testTimestamp));
+    queryUserPropertiesMock.mockResolvedValue(null);
+    mutateUserPropertiesMock.mockResolvedValue(null);
+
+    await store.populateUserProperties();
+
+    expect(store.userProperties).toMatchInlineSnapshot(`
+      {
+        "hasSeenOnboarding": 2025-12-09T12:30:00.000Z,
+      }
+    `);
+
+    expect(mutateUserPropertiesMock).toHaveBeenCalledWith({
+      hasSeenOnboarding: testTimestamp,
+    });
+  });
+
+  test("update", async () => {
+    mutateUserPropertiesMock.mockResolvedValue({
+      id: "abc123",
+      hasSeenOnboarding: testTimestamp,
+    });
+    await store.setUserProperties({
+      hasSeenOnboarding: testTimestamp,
+    });
+
+    expect(mutateUserPropertiesMock).toHaveBeenCalledWith({
+      hasSeenOnboarding: testTimestamp,
+    });
+
+    expect(store.userProperties).toMatchInlineSnapshot(`
+      {
+        "hasSeenOnboarding": 2025-12-09T12:30:00.000Z,
+      }
+    `);
   });
 });

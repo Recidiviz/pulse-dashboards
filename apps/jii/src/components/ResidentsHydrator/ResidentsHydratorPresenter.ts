@@ -32,8 +32,13 @@ export class ResidentsHydratorPresenter implements Hydratable {
     makeAutoObservable(this, {}, { autoBind: true });
 
     this.hydrator = new HydratesFromSource({
-      expectPopulated: [this.expectStorePopulated],
-      populate: this.populateStore,
+      expectPopulated: [
+        this.expectStorePopulated,
+        this.expectUserPropertiesPopulated,
+      ],
+      populate: async () => {
+        await Promise.all([this.populateStoreAndUserProperties()]);
+      },
     });
   }
 
@@ -47,8 +52,9 @@ export class ResidentsHydratorPresenter implements Hydratable {
     return this.hydrator.hydrate();
   }
 
-  private async populateStore() {
+  private async populateStoreAndUserProperties() {
     await flowResult(this.rootStore.populateResidentsStore(this.stateCode));
+    await this.rootStore.residentsStore?.populateUserProperties();
   }
 
   private expectStorePopulated() {
@@ -59,6 +65,11 @@ export class ResidentsHydratorPresenter implements Hydratable {
     }
   }
 
+  private expectUserPropertiesPopulated() {
+    if (this.rootStore.residentsStore?.userProperties === undefined)
+      throw new Error("failed to populate user properties");
+  }
+
   get residentsStore() {
     const { residentsStore } = this.rootStore;
     // in practice we generally expect hydration to succeed before getting here
@@ -66,5 +77,14 @@ export class ResidentsHydratorPresenter implements Hydratable {
       throw new Error("missing expected residentsStore");
     }
     return residentsStore;
+  }
+
+  get userProperties() {
+    const userProperties = this.residentsStore.userProperties;
+
+    if (userProperties === undefined) {
+      throw new Error("Missing expected userProperties");
+    }
+    return userProperties;
   }
 }

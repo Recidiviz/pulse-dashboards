@@ -53,6 +53,10 @@
       "executor": "@nx-tools/nx-prisma:deploy",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
+      },
+      "configurations": {
+        "live": {},
+        "offline": {}
       }
     },
     "prisma-status": {

@@ -20,6 +20,12 @@
           }
         },
         {
+          "source": "/api/**",
+          "run": {
+            "serviceId": "jii-server"
+          }
+        },
+        {
           "source": "**",
           "destination": "/index.html"
         }
@@ -61,6 +67,12 @@
           "function": {
             "functionId": "edovoToken",
             "region": "us-central1"
+          }
+        },
+        {
+          "source": "/api/**",
+          "run": {
+            "serviceId": "jii-server-demo"
           }
         },
         {

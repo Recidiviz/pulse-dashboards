@@ -53,11 +53,16 @@ export class OfflineAuthHandler implements AuthHandler {
     };
   }
 
-  // everything below this line is a stub because the functionality doesn't really apply to offline mode
-
   async getFirebaseToken() {
-    return "offline";
+    // don't bother with JWT encoding in offline mode, backend will handle this
+    return JSON.stringify({
+      ...this.userProfile,
+      sub: "offline-user",
+      app: "jii",
+    });
   }
+
+  // everything below this line is a stub because the functionality doesn't really apply to offline mode
 
   hydrate() {
     return;

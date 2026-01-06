@@ -15,22 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
-import { OnboardingTakeover } from "~@jii/layout";
-import { State } from "~@jii/paths";
-
-import { UsAzSingleResidentHome } from "../components/UsAzSingleResidentHome";
-
-export function PageUsAzResidentHome() {
-  usePageTitle("Home");
-
-  return (
-    <OnboardingTakeover
-      onboardingUrl={State.Resident.$.UsAzMoreInformation.Intro.buildRelativePath(
-        {},
-      )}
-    >
-      <UsAzSingleResidentHome />
-    </OnboardingTakeover>
-  );
-}
+export const JII_BACKEND_PATH = "/api";

@@ -15,22 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC, ReactNode } from "react";
+import { useEffect, useEffectEvent } from "react";
 
-import { Redirect } from "~@jii/common-ui";
-import { useRootStore } from "~@jii/data";
-import { State } from "~@jii/paths";
+import { useResidentsContext } from "~@jii/data";
 
-export const OnboardingTakeover: FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const { userStore } = useRootStore();
+export function useTrackOnboardingSeenOnMount() {
+  const { userProperties, residentsStore } = useResidentsContext();
 
-  const hasSeenOnboarding = !!userStore.getUserProperty("egtOnboardingSeen");
+  // this doesn't need to be reactive, we only want to run it once when the component mounts
+  const trackOnboardingSeen = useEffectEvent(() => {
+    if (!userProperties?.hasSeenOnboarding) {
+      residentsStore.setUserProperties({ hasSeenOnboarding: new Date() });
+    }
+  });
 
-  if (!hasSeenOnboarding) {
-    return <Redirect to={State.Resident.EGT.$.Intro.buildRelativePath({})} />;
-  }
-
-  return children;
-};
+  useEffect(
+    () => {
+      trackOnboardingSeen();
+    },
+    // we only want this to run once when the component mounts
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+}

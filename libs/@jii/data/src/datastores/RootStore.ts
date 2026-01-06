@@ -73,9 +73,9 @@ export class RootStore {
 
     this.userStore = new UserStore(this.translationStore);
 
-    this.uiStore = new UiStore();
-
     this.apiClient = this.createApiClient();
+
+    this.uiStore = new UiStore();
 
     this.loginConfigStore = new LoginConfigStore(this);
   }
@@ -87,17 +87,24 @@ export class RootStore {
    * the previous instance might have held.
    */
   private createApiClient(): DataAPI {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const store = this;
+
+    // these are getters rather than static properties so that the API client
+    // can can observe changes to these values rather than getting a one-time snapshot
+    const commonExternals = {
+      get authManager() {
+        return store.userStore.authManager;
+      },
+    };
+
     if (isOfflineMode() || isTestEnv()) {
-      return new OfflineAPIClient(this);
+      return new OfflineAPIClient({ authManager: this.userStore.authManager });
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-this-alias
-      const store = this;
       const externals = {
+        ...commonExternals,
         // these are getters rather than static properties so that the API client
         // can can observe changes to these values rather than getting a one-time snapshot
-        get authManager() {
-          return store.userStore.authManager;
-        },
         get config() {
           return store.residentsStore?.config;
         },

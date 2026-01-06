@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { TRPCClient } from "@trpc/client";
+
+import type { JiiAppRouter } from "~@jii/trpc-types";
 import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 
@@ -73,4 +76,7 @@ export interface DataAPI {
    * Fetches all location records (facilities, etc) for the specified state
    */
   locations(stateCode: StateCode): Promise<Array<LocationRecord>>;
+  isAuthenticated: boolean;
+  getApiToken(): Promise<string>;
+  readonly trpc: TRPCClient<JiiAppRouter>;
 }

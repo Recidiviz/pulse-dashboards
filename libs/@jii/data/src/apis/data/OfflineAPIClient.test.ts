@@ -26,7 +26,8 @@ let api: OfflineAPIClient;
 const stateCodeMock = "US_AZ";
 
 beforeEach(() => {
-  api = new OfflineAPIClient(new RootStore());
+  const authManager = new RootStore().userStore.authManager;
+  api = new OfflineAPIClient({ authManager });
 });
 
 test("residents should reflect state code", async () => {

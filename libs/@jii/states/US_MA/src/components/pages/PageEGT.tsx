@@ -15,12 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OnboardingTakeover } from "~@jii/layout";
+import { State } from "~@jii/paths";
+
 import { Homepage } from "../Homepage/Homepage";
-import { OnboardingTakeover } from "../Onboarding/OnboardingTakeover";
 
 export const PageEGT = () => {
   return (
-    <OnboardingTakeover>
+    <OnboardingTakeover
+      onboardingUrl={State.Resident.EGT.$.Intro.buildRelativePath({})}
+    >
       <Homepage />
     </OnboardingTakeover>
   );

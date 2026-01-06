@@ -21,7 +21,7 @@ import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 
 import { SegmentClient } from "../apis/Segment/SegmentClient";
 import { TranslationStore } from "./TranslationStore";
-import { USER_PROPERTY_KEYS, UserStore } from "./UserStore";
+import { UserStore } from "./UserStore";
 
 vi.mock("~client-env-utils");
 
@@ -35,7 +35,7 @@ beforeEach(() => {
   vi.mocked(isTestEnv).mockReturnValue(false);
 
   store = new UserStore(
-    // stubbing this because it just gets passed through to something we aren't using here
+    // stubbing these because it just gets passed through to something we aren't using here
     {} as TranslationStore,
   );
 
@@ -222,12 +222,4 @@ test("allowed states", () => {
   expect(store.allowedStates).toEqual(
     expect.arrayContaining(["US_NE", "US_MA", "US_ID"]),
   );
-});
-
-test.each(USER_PROPERTY_KEYS.options)("user properties: %s", (key) => {
-  const value = "foo";
-
-  expect(store.getUserProperty(key)).toBeNull();
-  store.setUserProperty(key, value);
-  expect(store.getUserProperty(key)).toBe(value);
 });

@@ -25,7 +25,12 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["nx dev jii-functions", "nx dev-spa jii"]
+        "commands": [
+          "nx dev jii-functions",
+          "nx dev-spa jii",
+          "nx dev @jii/server"
+        ],
+        "cwd": "{workspaceRoot}"
       },
       "configurations": {
         "live": {},
@@ -108,7 +113,7 @@
     "offline": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["vite dev"],
+        "commands": ["vite dev", "cd ../../ && nx dev @jii/server -c offline"],
         "cwd": "{projectRoot}"
       }
     },

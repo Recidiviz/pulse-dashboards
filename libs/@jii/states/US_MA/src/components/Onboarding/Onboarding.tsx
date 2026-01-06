@@ -15,30 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatISO } from "date-fns";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
 
 import { CopyWrapper, GoButton } from "~@jii/common-ui";
 import { usePageTitle } from "~@jii/common-ui";
-import { useRootStore, UserStore } from "~@jii/data";
-import { ScreenFillingWrapper } from "~@jii/layout";
+import {
+  ScreenFillingWrapper,
+  useTrackOnboardingSeenOnMount,
+} from "~@jii/layout";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
 
-function trackOnboardingSeen(userStore: UserStore) {
-  if (!userStore.getUserProperty("egtOnboardingSeen")) {
-    userStore.setUserProperty("egtOnboardingSeen", formatISO(Date.now()));
-  }
-}
-
 export const Onboarding = observer(function Onboarding() {
-  const { userStore } = useRootStore();
   const { t } = useUsMaTranslations();
 
   usePageTitle(t(($) => $.onboarding.heading));
-  useEffect(() => trackOnboardingSeen(userStore), [userStore]);
+  useTrackOnboardingSeenOnMount();
 
   return (
     <ScreenFillingWrapper

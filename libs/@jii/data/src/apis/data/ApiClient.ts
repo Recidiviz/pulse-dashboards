@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { TRPCClient } from "@trpc/client";
 import { makeObservable, when } from "mobx";
 import { ILazyObservable, lazyObservable } from "mobx-utils";
 
+import type { JiiAppRouter } from "~@jii/trpc-types";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentOpportunitySchemas } from "../../configs/residentsOpportunitySchemas";
@@ -30,9 +32,12 @@ import { FirebaseStore } from "../../datastores/FirebaseStore";
 import { proxyHost } from "../../utils/proxy";
 import { AuthManager } from "../auth/AuthManager";
 import { DataAPI } from "./interface";
+import { createTrpcClientForApi } from "./trpcMixin";
 
 export class ApiClient implements DataAPI {
   private firestoreClient: FirestoreAPIClient;
+
+  readonly trpc: TRPCClient<JiiAppRouter>;
 
   private authentication: ILazyObservable<boolean>;
 
@@ -51,6 +56,8 @@ export class ApiClient implements DataAPI {
       proxyHost(),
     );
 
+    this.trpc = createTrpcClientForApi(this);
+
     // this function will only run the first time auth is checked
     this.authentication = lazyObservable(async (updateValue) => {
       // note that we are assuming the auth flow is already complete by the time this is called,
@@ -60,6 +67,10 @@ export class ApiClient implements DataAPI {
       await this.externals.firebaseStore.authenticate(firebaseToken);
       updateValue(true);
     }, false);
+  }
+
+  getApiToken(): Promise<string> {
+    return this.externals.firebaseStore.getIdToken();
   }
 
   get isAuthenticated() {

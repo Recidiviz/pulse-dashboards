@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,26 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC, ReactNode } from "react";
+/// <reference types='vitest' />
+import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
+import { defineConfig } from "vite";
 
-import { Redirect } from "~@jii/common-ui";
-import { useRootStore } from "~@jii/data";
-import { State } from "~@jii/paths";
+export default defineConfig(() => ({
+  root: __dirname,
+  cacheDir: "../../../node_modules/.vite/apps/@jii/server",
 
-export const OnboardingTakeover: FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const { userStore } = useRootStore();
-
-  const hasSeenOnboarding = !!userStore.getUserProperty("azOnboardingSeen");
-
-  if (!hasSeenOnboarding) {
-    return (
-      <Redirect
-        to={State.Resident.$.UsAzMoreInformation.Intro.buildRelativePath({})}
-      />
-    );
-  }
-
-  return children;
-};
+  plugins: [nxViteTsPaths()],
+}));

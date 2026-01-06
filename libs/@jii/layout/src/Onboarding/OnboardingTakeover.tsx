@@ -15,22 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
-import { OnboardingTakeover } from "~@jii/layout";
-import { State } from "~@jii/paths";
+import { observer } from "mobx-react-lite";
+import { FC, ReactNode } from "react";
 
-import { UsAzSingleResidentHome } from "../components/UsAzSingleResidentHome";
+import { Redirect } from "~@jii/common-ui";
+import { useResidentsContext } from "~@jii/data";
 
-export function PageUsAzResidentHome() {
-  usePageTitle("Home");
+export const OnboardingTakeover: FC<{
+  children: ReactNode;
+  onboardingUrl: string;
+}> = observer(function OnboardingTakeover({ children, onboardingUrl }) {
+  const { userProperties } = useResidentsContext();
 
-  return (
-    <OnboardingTakeover
-      onboardingUrl={State.Resident.$.UsAzMoreInformation.Intro.buildRelativePath(
-        {},
-      )}
-    >
-      <UsAzSingleResidentHome />
-    </OnboardingTakeover>
-  );
-}
+  const hasSeenOnboarding = userProperties?.hasSeenOnboarding;
+
+  if (!hasSeenOnboarding) {
+    return <Redirect to={onboardingUrl} />;
+  }
+
+  return children;
+});
