@@ -9439,7 +9439,7 @@ __metadata:
     enhanced-resolve: "npm:*"
     eslint-plugin-tailwindcss: "npm:^3.18.2"
     expo: "npm:^54.0.0"
-    expo-audio: "npm:~1.0.14"
+    expo-audio: "npm:~1.0.15"
     expo-build-properties: "npm:~1.0.9"
     expo-dev-client: "npm:~6.0.18"
     expo-font: "npm:~14.0.9"
@@ -29567,15 +29567,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-audio@npm:~1.0.14":
-  version: 1.0.14
-  resolution: "expo-audio@npm:1.0.14"
+"expo-audio@npm:~1.0.15":
+  version: 1.0.16
+  resolution: "expo-audio@npm:1.0.16"
   peerDependencies:
     expo: "*"
     expo-asset: "*"
     react: "*"
     react-native: "*"
-  checksum: 10c0/699a9419ec0abbf54d7dd69007f644e63adb8e84e8b18e7a31f315972fa0e85e470536ab7c835b1c5b35c584d26768c60879023eb075303910f22d731a417c6c
+  checksum: 10c0/17345d9562d6ac207bf00e65a9256b34560014549d577f8b4477a3d4e0d3791412cfa925ec34fcab9f542dda79e79e8d9886056437acca19a929590484893847
   languageName: node
   linkType: hard
 
@@ -47289,7 +47289,7 @@ __metadata:
     eslint-plugin-yml: "npm:^1.16.0"
     execa: "npm:^9.6.0"
     expo: "npm:^54.0.0"
-    expo-audio: "npm:~1.0.14"
+    expo-audio: "npm:~1.0.15"
     expo-doctor: "npm:^1.17.7"
     expo-notifications: "npm:~0.32.12"
     expo-permissions: "npm:^14.4.0"
