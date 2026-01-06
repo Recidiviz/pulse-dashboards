@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { GoogleAuth } from "google-auth-library";
+import csvExport from "jsonexport/dist";
 
+import { mergeUserDataWithClientUpdates } from "../../../server/utils/mergeUserDataWithClientUpdates";
+import { fetchClientUpdatesV2 } from "../../../server/workflows/fetchClientUpdatesV2";
 import { clearCache } from "../../core/cacheManager";
 import { fetchAndFilterNewRevocationFile } from "../../core/fetchAndFilterNewRevocationFile";
 import { fetchMetrics } from "../../core/fetchMetrics";
@@ -78,6 +81,12 @@ vi.mock("../../utils/cacheKeys");
 vi.mock("google-auth-library");
 
 vi.mock("../../core/userDataDownload");
+
+vi.mock("jsonexport/dist");
+
+vi.mock("../../../server/workflows/fetchClientUpdatesV2");
+
+vi.mock("../../../server/utils/mergeUserDataWithClientUpdates");
 
 beforeEach(() => {
   // Reduce noise in the test
@@ -406,12 +415,45 @@ describe("API GET tests", () => {
         [`${process.env.METADATA_NAMESPACE}app_metadata`]: appMetadata,
       },
       params: { stateCode: stateCode },
-      query: { filename: "test_file.csv" },
+      query: { filename: "test_file.json" },
     };
 
     it("userDataDownload successfully responds with data", async () => {
-      const fakeBuffer = Buffer.from([1, 2, 3, 4, 5]);
+      const fakeUserData = {
+        state_code: "US_TX",
+        external_id: "fakeExternalId",
+        opportunity_type: "fakeOpp",
+      };
+      const fakeBuffer = Buffer.from(JSON.stringify(fakeUserData));
       vi.mocked(downloadUserData).mockResolvedValue(fakeBuffer);
+
+      const fakeCientUpdatesV2 = {
+        fakeExternalId: { fakeOpp: { denial: false, submitted: false } },
+      };
+      vi.mocked(fetchClientUpdatesV2).mockResolvedValue(fakeCientUpdatesV2);
+
+      const fakeMergedUserData = [
+        {
+          transfer_type: "fakeOpp",
+          region: "fakeRegion",
+          office_name: "fakeOffice",
+          client_name: "fakeClient",
+          sid_number: "fakeExternalId",
+          officer_name: "fakeOfficer",
+          officer_id: "fakeOfficerId",
+          unit_supervisor_name: "fakeSupervisor",
+          denial: "false",
+          submitted: "false",
+        },
+      ];
+      vi.mocked(mergeUserDataWithClientUpdates).mockReturnValue(
+        fakeMergedUserData,
+      );
+
+      const fakeCSV =
+        "fakeOpp, fakeRegion,	fakeOffice,	fakeClient, fakeExternalId , fakeOfficer, fakeOfficerId, fakeSupervisor, false, false";
+      vi.mocked(csvExport).mockResolvedValue(fakeCSV);
+
       const send = vi.fn();
       const status = vi.fn();
       const set = vi.fn();
@@ -419,7 +461,7 @@ describe("API GET tests", () => {
 
       await userDataDownload(request, res);
 
-      expect(res.send).toHaveBeenCalledWith(fakeBuffer);
+      expect(res.send).toHaveBeenCalledWith(fakeCSV);
     });
 
     it("userDataDownload responds with an error", async () => {

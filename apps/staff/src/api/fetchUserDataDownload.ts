@@ -17,14 +17,15 @@
 
 import { downloadZipFile } from "../core/Paperwork/utils";
 import UserStore from "../RootStore/UserStore";
-import {fetchHelper} from "./utils";
-
+import { fetchHelper } from "./utils";
 
 export async function downloadTexasUserData(
   stateCode: string,
   getTokenSilently: UserStore["getTokenSilently"],
 ) {
-  const fileName = "us_tx_eligible_clients_for_user_download.csv";
+  // This file contains data (all clients eligible for ars and ers opportunities) that users (region level directors)
+  // are downloading from our application (this supervisor list page)
+  const fileName = "us_tx_eligible_clients_for_user_download.json";
   const url = `${import.meta.env.VITE_API_URL}/api/US_${stateCode}/workflows/dataDownload?filename=${fileName}`;
 
   const dataDownload = await fetchHelper(

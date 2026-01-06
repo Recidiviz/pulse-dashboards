@@ -25,6 +25,7 @@ import escape from "escape-html";
 import { validationResult } from "express-validator";
 import fs from "fs";
 import { GoogleAuth } from "google-auth-library";
+import csvExport from "jsonexport/dist";
 import snakeCase from "lodash/snakeCase";
 import path from "path";
 import sanitizeFilename from "sanitize-filename";
@@ -48,6 +49,8 @@ import { formatKeysToSnakeCase } from "../utils";
 import { getCacheKey } from "../utils/cacheKeys";
 import { getAppMetadata } from "../utils/getAppMetadata";
 import { isOfflineMode } from "../utils/isOfflineMode";
+import { mergeUserDataWithClientUpdates } from "../utils/mergeUserDataWithClientUpdates";
+import { fetchClientUpdatesV2 } from "../workflows/fetchClientUpdatesV2";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -163,7 +166,28 @@ export async function userDataDownload(req, res) {
 
   try {
     const downloadedUserData = await downloadUserData(stateCode, filename);
-    res.send(downloadedUserData);
+    const buf = Buffer.from(downloadedUserData);
+
+    const jsonSplitString = buf.toString("utf-8").trim().split("\n");
+    const jsonArray = jsonSplitString.map((line) => {
+      return JSON.parse(line.trim());
+    });
+
+    let headers = Object.keys(jsonArray[0]);
+
+    const clientUpdatesV2 = await fetchClientUpdatesV2(stateCode.toLowerCase());
+    const mergedUserData = mergeUserDataWithClientUpdates(
+      jsonArray,
+      clientUpdatesV2,
+    );
+
+    headers.push("denial", "submitted");
+    // Remove state_code column
+    headers = headers.filter((header) => header != "state_code");
+
+    const csv = await csvExport(mergedUserData, { headers: headers });
+
+    res.send(csv);
   } catch (e) {
     responder(res)(e);
   }
