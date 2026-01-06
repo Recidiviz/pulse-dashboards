@@ -187,7 +187,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["load-env-files"],
       "options": {
-        "command": "gcloud run jobs deploy m-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/meetings/meetings-server-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_NE=$DATABASE_URL_US_NE-$VERSION",
+        "command": "gcloud run jobs deploy m-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/meetings/meetings-server-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ME=$DATABASE_URL_US_ME-$VERSION,DATABASE_URL_US_NC=$DATABASE_URL_US_NC-$VERSION,DATABASE_URL_US_NE=$DATABASE_URL_US_NE-$VERSION",
         "args": [
           "--project recidiviz-dashboard-staging",
           "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
@@ -211,6 +211,8 @@
           "SENTRY_DSN": "$SENTRY_DSN",
           "SENTRY_ENV": "$SENTRY_ENV",
           "IMPORT_BUCKET_ID": "$IMPORT_BUCKET_ID",
+          "DATABASE_URL_US_ME": "$DATABASE_URL_US_ME-$VERSION",
+          "DATABASE_URL_US_NC": "$DATABASE_URL_US_NC-$VERSION",
           "DATABASE_URL_US_NE": "$DATABASE_URL_US_NE-$VERSION"
         },
         "serviceAccount": "meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com"
