@@ -18,8 +18,39 @@
 import _ from "lodash";
 
 import { auth0Procedure, router } from "~@meetings/trpc/init";
+import {
+  createMeetingForPerson,
+  getMeetingsForPerson,
+} from "~@meetings/trpc/routes/meeting.helpers";
+import {
+  createMeetingInputSchema,
+  getMeetingsInputSchema,
+} from "~@meetings/trpc/routes/resident/resident.schema";
 
 export const residentRouter = router({
+  createMeeting: auth0Procedure
+    .input(createMeetingInputSchema)
+    .mutation(
+      async ({ input: { residentId, startTime }, ctx: { prisma, user } }) => {
+        return createMeetingForPerson({
+          prisma,
+          user,
+          personId: residentId,
+          startTime,
+          personType: "resident",
+        });
+      },
+    ),
+  getMeetings: auth0Procedure
+    .input(getMeetingsInputSchema)
+    .query(async ({ input: { residentId }, ctx: { prisma, user } }) => {
+      return getMeetingsForPerson({
+        prisma,
+        user,
+        personId: residentId,
+        personType: "resident",
+      });
+    }),
   list: auth0Procedure.query(async ({ ctx: { prisma } }) => {
     const residents = await prisma.resident.findMany({
       select: {
