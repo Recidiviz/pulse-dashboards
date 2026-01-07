@@ -35,29 +35,73 @@ export const rnaQuestionCopy = {
   workSchoolMakeBetter: {
     question: "I try to make my job or school situation better.",
   },
+  alcoholDrugsDaysOfUse: {
+    question:
+      "In a typical week how many days a week did you drink alcohol or use drugs?",
+  },
+  childhoodSkippingSchool: {
+    question: "Skipping School",
+  },
+  friendsClose: {
+    question: "How many of those friends would you consider “close friends”?",
+  },
 } satisfies Record<string, RNAQuestionCopy>;
 
 export type RNASectionCopy = {
   heading: string;
   description?: string;
 };
-type RNAQuestionCopy = {
+export type RNAQuestionCopy = {
   question: string;
   placeholderText?: string;
 };
 
 // Internal identifiers for individual RNA elements
 type RNASectionId = keyof typeof rnaSectionCopy;
-type RNAQuestionId = keyof typeof rnaQuestionCopy;
+export type RNAQuestionId = keyof typeof rnaQuestionCopy;
 
 export const isRNAQuestionId = (s: string): s is RNAQuestionId =>
   Object.keys(rnaQuestionCopy).includes(s);
 
+// Copy that depends on the format of the RNA question and is consistent for all
+// questions of the same format, such as answer choices
+
+export const rnaRadioAnswerCopy = {
+  FREQUENCY: {
+    NEVER: "Never true",
+    RARELY: "Rarely true",
+    SOMETIMES: "Sometimes true",
+    USUALLY: "Usually true",
+    ALWAYS: "Always true",
+  },
+  DAYS_PER_WEEK: {
+    ZERO: "0 days",
+    ONE_TO_TWO: "1-2 days",
+    THREE_TO_FIVE: "3-5 days",
+    SIX_TO_SEVEN: "6-7 days",
+  },
+  YES_NO: {
+    YES: "Yes",
+    NO: "No",
+  },
+  RATIO: {
+    NONE: "None",
+    SOME: "Some",
+    MOST: "Most",
+    ALL: "All",
+  },
+} as const satisfies Record<string, Record<string, string>>;
+
 // Configuration: everything besides copy that determines how a specific question is displayed
 
-type RNAQuestionFormat = "FREQUENCY";
+export type RNARadioQuestionFormat = keyof typeof rnaRadioAnswerCopy;
+type RNAQuestionFormat =
+  | RNARadioQuestionFormat
+  | "ALCOHOL_DRUGS"
+  | "NUMERIC"
+  | "LIFE_AREA";
 
-type RNAQuestionConfig = {
+export type RNAQuestionConfig = {
   questionNumber: number;
   format: RNAQuestionFormat;
 };
@@ -74,6 +118,18 @@ export const rnaQuestionConfig: Record<RNAQuestionId, RNAQuestionConfig> = {
   workSchoolMakeBetter: {
     questionNumber: 3,
     format: "FREQUENCY",
+  },
+  alcoholDrugsDaysOfUse: {
+    questionNumber: 13,
+    format: "DAYS_PER_WEEK",
+  },
+  childhoodSkippingSchool: {
+    questionNumber: 20,
+    format: "YES_NO",
+  },
+  friendsClose: {
+    questionNumber: 63,
+    format: "RATIO",
   },
 };
 
@@ -92,13 +148,9 @@ export const fullRNASpec: RNAPageSpec[] = [
       "workSchoolSatisfied",
       "workSchoolSkills",
       "workSchoolMakeBetter",
-      "workSchoolMakeBetter",
-      "workSchoolMakeBetter",
-      "workSchoolMakeBetter",
-      "workSchoolMakeBetter",
-      "workSchoolMakeBetter",
-      "workSchoolMakeBetter",
-      "workSchoolMakeBetter",
+      "alcoholDrugsDaysOfUse",
+      "childhoodSkippingSchool",
+      "friendsClose",
     ],
   },
   {

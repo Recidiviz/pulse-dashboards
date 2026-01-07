@@ -25,10 +25,12 @@ import { ProgressHeader } from "./ProgressBar";
 import { RNADescription, RNAHeading } from "./styles";
 import {
   fullRNASpec,
+  rnaQuestionConfig,
   rnaQuestionCopy,
   RNASectionCopy,
   rnaSectionCopy,
 } from "./usNcRNAFormSpec";
+import { UsNcRNAQuestion } from "./UsNcRNAQuestion";
 
 function UsNcRNASectionInfo({ heading, description }: RNASectionCopy) {
   return (
@@ -68,14 +70,17 @@ export function UsNcRNAFormPage() {
         percentDone={22}
       />
       <UsNcRNASectionInfo {...rnaSectionCopy[id]} />
-      {questions.map((questionId) => (
-        // TODO: replace with handler for different question types
-        <UsNcRNASectionInfo
-          heading={"Question placeholder"}
-          description={rnaQuestionCopy[questionId].question}
-        />
-      ))}
-      <NavigationButtons currentPageNum={pageNum} showSubmit={showSubmit} />
+      <form>
+        {questions.map((questionId) => (
+          <UsNcRNAQuestion
+            key={questionId}
+            id={questionId}
+            {...rnaQuestionCopy[questionId]}
+            {...rnaQuestionConfig[questionId]}
+          />
+        ))}
+        <NavigationButtons currentPageNum={pageNum} showSubmit={showSubmit} />
+      </form>
     </>
   );
 }
