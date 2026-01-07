@@ -20,7 +20,6 @@ import React from "react";
 
 import { formatWorkflowsDate } from "../../../utils";
 import { WithCaseNotes } from "../../../WorkflowsStore";
-import { UsAzAcisInformation } from "../ResidentDetailSidebarComponents/US_AZ/UsAzAcisInformation";
 import {
   CaseNoteDate,
   CaseNoteTitle,
@@ -41,11 +40,6 @@ export function CaseNotes({
   if (!caseNotes) {
     return null;
   }
-
-  // TODO: Remove this override once the CaseNotes component is swapped for
-  // UsAzAcisInformation for AZ opportunities in the admin panel.
-  if (opportunity.person?.stateCode === "US_AZ")
-    return <UsAzAcisInformation opportunity={opportunity} />;
 
   const { caseNotesTitle } = opportunity;
 
