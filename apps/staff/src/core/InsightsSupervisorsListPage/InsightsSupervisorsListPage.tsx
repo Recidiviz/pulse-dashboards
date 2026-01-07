@@ -23,7 +23,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { Button, Icon, IconSVG, palette } from "~design-system";
 import { PersonInitialsAvatar } from "~ui";
 
 import {
@@ -84,6 +84,53 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const DownloadUserDataButton = styled(Button)`
+  border: solid;
+  border-color: ${palette.slate40};
+  border-radius: 0.2rem;
+
+  background-color: ${palette.white};
+  color: ${palette.text.primary};
+
+  .DownloadArrow {
+    opacity: 0;
+  }
+
+  &:hover .DownloadArrow,
+  &:focus-visible .DownloadArrow {
+    opacity: 1;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background-color: ${palette.slate10};
+  }
+
+  ,
+  &:active,
+  &[aria-expanded="true"] {
+    background-color: ${palette.slate05};
+  }
+
+  &:disabled {
+    background-color: ${palette.slate05};
+    color: ${palette.slate80};
+  }
+
+  ${({ waiting }) =>
+    waiting &&
+    `
+      cursor: wait !important;
+      * {
+        cursor: wait !important;
+      }
+    `}
+`;
+
 const SupervisorsList = observer(function SupervisorsList({
   presenter,
 }: {
@@ -140,9 +187,38 @@ const SupervisorsList = observer(function SupervisorsList({
       </div>
     ),
   );
+
+  const { tenantStore } = useRootStore();
+
   return (
     <Wrapper isLaptop={isLaptop} isTablet={isTablet}>
       <Title isMobile={isMobile}>{pageTitle}</Title>
+      {tenantStore.stateCode === "TX" && (
+        <>
+          <div style={{ color: palette.slate, marginBottom: "0.5rem" }}>
+            Download Eligible Clients
+          </div>
+          <DownloadUserDataButton
+            onClick={presenter.downloadUserDataButtonOnClick}
+            waiting={presenter.isDownloadingUserData}
+          >
+            <Icon
+              kind={IconSVG.ZipFile}
+              fill={palette.slate50}
+              height={18}
+              style={{ padding: 2 }}
+            />
+            TDCJ Parole ARS ERS Eligible Clients.zip
+            <Icon
+              kind={IconSVG.DownloadArrow}
+              fill={"#004d48"}
+              height={18}
+              style={{ padding: 2 }}
+              className="DownloadArrow"
+            />
+          </DownloadUserDataButton>
+        </>
+      )}
       {districtViz}
     </Wrapper>
   );
@@ -153,12 +229,16 @@ const InsightsSupervisorsListPage = observer(
     const { insightsLeadershipPageAllDistricts } = useFeatureVariants();
     const {
       insightsStore: { supervisionStore },
+      tenantStore,
+      userStore,
     } = useRootStore();
 
     if (!supervisionStore) return null;
 
     const presenter = new SupervisionOfficerSupervisorsPresenter(
       supervisionStore,
+      tenantStore,
+      userStore,
       insightsLeadershipPageAllDistricts,
     );
 

@@ -24,13 +24,18 @@ import { flowResult, makeAutoObservable } from "mobx";
 import { SupervisionOfficerSupervisor } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
+import { downloadTexasUserData } from "../../api/fetchUserDataDownload";
+import TenantStore from "../../RootStore/TenantStore";
 import { FeatureVariantValue } from "../../RootStore/types";
+import UserStore from "../../RootStore/UserStore";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { ConfigLabels } from "./types";
 
 export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
   constructor(
     private supervisionStore: InsightsSupervisionStore,
+    private tenantStore: TenantStore,
+    private userStore: UserStore,
     private insightsLeadershipPageAllDistricts?: FeatureVariantValue,
   ) {
     makeAutoObservable(this);
@@ -48,7 +53,6 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
         ),
     });
   }
-
   private hydrator: HydratesFromSource;
 
   get hydrationState() {
@@ -58,6 +62,9 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
   hydrate(): Promise<void> {
     return this.hydrator.hydrate();
   }
+
+  // Prevent trying to download user data while we're waiting for the previous request to download data to finish
+  isDownloadingUserData = false;
 
   get allSupervisors() {
     const launchedDistricts =
@@ -145,6 +152,27 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
   get pageTitle(): string {
     return `Select a ${this.labels.supervisionSupervisorLabel} to view their overview`;
   }
+
+  downloadUserDataButtonOnClick = async () => {
+    if (this.isDownloadingUserData) return;
+
+    const stateCode = this.tenantStore.stateCode;
+    const staffId =
+      this.userStore.userPseudoId ??
+      this.tenantStore.rootStore.workflowsStore.currentUserEmail;
+    this.supervisionStore.insightsStore.rootStore.analyticsStore.trackUserDataDownloadButtonClicked(
+      {
+        staffId: staffId,
+        stateCode: stateCode,
+      },
+    );
+
+    const getTokenSilently = this.userStore.getTokenSilently;
+
+    this.isDownloadingUserData = true;
+    await downloadTexasUserData(stateCode, getTokenSilently);
+    this.isDownloadingUserData = false;
+  };
 
   trackViewed(): void {
     const { userPseudoId } =

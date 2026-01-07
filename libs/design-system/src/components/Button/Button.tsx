@@ -34,6 +34,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       icon,
       iconSize = 16,
       type = "button",
+      waiting = false,
       ...attributes
     },
     ref,
@@ -50,6 +51,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         type={type}
         {...attributes}
         ref={ref}
+        waiting={waiting}
       >
         {icon ? <Icon kind={icon} size={iconSize} /> : children}
       </Component>

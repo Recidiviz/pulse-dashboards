@@ -24,23 +24,61 @@ import {
 } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
+import TenantStore from "../../../RootStore/TenantStore";
+import UserStore from "../../../RootStore/UserStore";
+import { TenantConfigs } from "../../../tenants";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficerSupervisorsPresenter } from "../SupervisionOfficerSupervisorsPresenter";
 
-let store: InsightsSupervisionStore;
+let insightsSupervisionStore: InsightsSupervisionStore;
+let tenantStore: TenantStore;
+let userStore: UserStore;
 let presenter: SupervisionOfficerSupervisorsPresenter;
+const mockTenantConfigs = {
+  US_RESTRICTED: {
+    enableUserRestrictions: true,
+  },
+  US_UNRESTRICTED: {
+    enableUserRestrictions: false,
+  },
+  US_TASKS: {
+    workflowsTasksConfig: {
+      tasks: {
+        task1: {},
+        task4: {},
+        task2: {},
+      },
+    },
+  },
+} as any as TenantConfigs;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  store = new InsightsSupervisionStore(
-    new InsightsStore(new RootStore()),
+  const rootStore = new RootStore();
+  insightsSupervisionStore = new InsightsSupervisionStore(
+    new InsightsStore(rootStore),
     InsightsConfigFixture,
   );
-  vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
 
-  presenter = new SupervisionOfficerSupervisorsPresenter(store);
+  tenantStore = new TenantStore({
+    rootStore: rootStore,
+    tenantConfigs: mockTenantConfigs,
+  });
+  userStore = new UserStore({});
+
+  vi.spyOn(
+    insightsSupervisionStore,
+    "userCanAccessAllSupervisors",
+    "get",
+  ).mockReturnValue(true);
+
+  presenter = new SupervisionOfficerSupervisorsPresenter(
+    insightsSupervisionStore,
+    tenantStore,
+    userStore,
+  );
 });
 
 afterEach(() => {
@@ -84,7 +122,7 @@ test("supervisors by district when workflows variant not set", async () => {
 
 test("supervisors by district when workflows variant is set", async () => {
   vi.spyOn(
-    store.insightsStore.rootStore.userStore,
+    insightsSupervisionStore.insightsStore.rootStore.userStore,
     "activeFeatureVariants",
     "get",
   ).mockReturnValue({ supervisorHomepageWorkflows: {} });
@@ -209,12 +247,16 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
 
   beforeEach(() => {
     vi.spyOn(
-      store.insightsStore.rootStore.tenantStore,
+      insightsSupervisionStore.insightsStore.rootStore.tenantStore,
       "insightsLaunchedDistricts",
       "get",
     ).mockReturnValue(launchedDistricts);
 
-    vi.spyOn(store, "supervisionOfficerSupervisors", "get").mockReturnValue(
+    vi.spyOn(
+      insightsSupervisionStore,
+      "supervisionOfficerSupervisors",
+      "get",
+    ).mockReturnValue(
       supervisionOfficerSupervisorsFixture.concat(
         {
           supervisionLocationForListPage: launchedDistricts[0],
@@ -247,14 +289,16 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
     );
 
     presenter = new SupervisionOfficerSupervisorsPresenter(
-      store,
+      insightsSupervisionStore,
+      tenantStore,
+      userStore,
       mockInsightsLeadershipPageAllDistricts,
     );
   });
 
   it("only show supervisors from launched districts", async () => {
     vi.spyOn(
-      store.insightsStore.rootStore.userStore,
+      insightsSupervisionStore.insightsStore.rootStore.userStore,
       "activeFeatureVariants",
       "get",
     ).mockReturnValue({ supervisorHomepageWorkflows: {} });

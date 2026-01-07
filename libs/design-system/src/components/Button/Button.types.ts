@@ -41,4 +41,6 @@ export interface ButtonProps
   onClick?: MouseEventHandler<HTMLButtonElement>;
   icon?: keyof typeof IconSVG;
   iconSize?: number;
+
+  waiting?: boolean;
 }

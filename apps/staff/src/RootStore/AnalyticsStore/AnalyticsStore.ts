@@ -274,6 +274,11 @@ type RoutePlannerSelectedClientsMetadata = {
 export type RoutePlannerRouteMetadata = RoutePlannerStartingAddressMetadata &
   RoutePlannerSelectedClientsMetadata;
 
+type UserDataDownloadButtonClickedMetadata = {
+  staffId: string;
+  stateCode: string;
+};
+
 export default class AnalyticsStore {
   rootStore;
   segment;
@@ -472,6 +477,12 @@ export default class AnalyticsStore {
       "frontend.outliers_roster_change_request_form_submitted",
       metadata,
     );
+  }
+
+  trackUserDataDownloadButtonClicked(
+    metadata: UserDataDownloadButtonClickedMetadata,
+  ) {
+    this.track("frontend.user_data_download_button_clicked", metadata);
   }
 
   trackReferralFormViewed(metadata: OpportunityTrackingMetadata): void {

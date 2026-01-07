@@ -24,7 +24,7 @@ export async function downloadTexasUserData(
   getTokenSilently: UserStore["getTokenSilently"],
 ) {
   // This file contains data (all clients eligible for ars and ers opportunities) that users (region level directors)
-  // are downloading from our application (this supervisor list page)
+  // are downloading from our application (the supervisor list page)
   const fileName = "us_tx_eligible_clients_for_user_download.json";
   const url = `${import.meta.env.VITE_API_URL}/api/US_${stateCode}/workflows/dataDownload?filename=${fileName}`;
 
