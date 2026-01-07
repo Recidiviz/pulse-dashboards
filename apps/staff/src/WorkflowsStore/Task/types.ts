@@ -164,6 +164,7 @@ export const SUPERVISION_TASK_TYPES = [
   "usMoEmploymentVerification",
   "usMoPositiveHomeVisit",
   "usMoInPersonContact",
+  "usMoPositiveContactWithSignificantOther",
   "usNeOrasAssessment",
   "usNeStableAssessment",
   "usNePersonalContact",
@@ -215,6 +216,7 @@ export type SupervisionDetailsForTask = {
   usMoPositiveHomeVisit: UsMoHomeVisitTaskDetails;
   usMoEmploymentVerification: UsMoTaskDetails;
   usMoInPersonContact: UsMoTaskDetails;
+  usMoPositiveContactWithSignificantOther: UsMoTaskDetails;
   usNeOrasAssessment: UsNeAssessmentDetails;
   usNeStableAssessment: UsNeAssessmentDetails;
   usNePersonalContact: UsNeContactDetails;

@@ -21,6 +21,7 @@ import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import UsMoEmploymentVerificationTask from "../WorkflowsStore/Task/US_MO/UsMoEmploymentVerificationTask";
 import UsMoInPersonContactTask from "../WorkflowsStore/Task/US_MO/UsMoInPersonContactTask";
+import UsMoPositiveContactWithSignificantOtherTask from "../WorkflowsStore/Task/US_MO/UsMoPositiveContactWithSignificantOtherTask";
 import UsMoPositiveHomeVisitTask from "../WorkflowsStore/Task/US_MO/UsMoPositiveHomeVisitTask";
 
 const US_MO_CONFIG = {
@@ -45,6 +46,10 @@ const US_MO_CONFIG = {
       },
       usMoInPersonContact: {
         constructor: UsMoInPersonContactTask,
+        snoozeForOptionsInDays: [7, 30],
+      },
+      usMoPositiveContactWithSignificantOther: {
+        constructor: UsMoPositiveContactWithSignificantOtherTask,
         snoozeForOptionsInDays: [7, 30],
       },
     },
