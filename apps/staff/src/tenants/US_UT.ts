@@ -45,6 +45,16 @@ const US_UT_CONFIG = {
           searchField: ["officerId"],
           searchTitle: "case manager",
         },
+        {
+          searchType: "FACILITY",
+          searchField: ["facilityId"],
+          searchTitle: "facility",
+        },
+        {
+          searchType: "FACILITY_UNIT",
+          searchField: ["facilityUnitId"],
+          searchTitle: "unit",
+        },
       ],
     },
   },
