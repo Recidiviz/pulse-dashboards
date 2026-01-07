@@ -46,7 +46,7 @@ dependencies = [
     "av>=10.0.0",
     "structlog-gcp>=0.4.0",
     "faker>=37.1.0",
-    "sentry-sdk[fastapi]>=2.32.0",
+    "sentry-sdk[fastapi]>=2.35.0",
     "gcloud-aio-storage>=9.5.0",
     "gcloud-aio-auth>=5.4.2",
     "aiofiles>=24.1.0",
@@ -58,6 +58,7 @@ dependencies = [
     "langchain-google-vertexai>=2.1.2",
     "google-cloud-texttospeech>=2.33.0",
     "deepgram-sdk>=5.3.0",
+    "structlog-sentry>=2.2.1",
 ]
 
 [tool.ruff]

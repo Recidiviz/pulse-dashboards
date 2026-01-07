@@ -1,12 +1,9 @@
 import importlib
 import logging
-import sys
 from contextlib import asynccontextmanager
 
 import redis.asyncio as redis
-import sentry_sdk
 import structlog
-import structlog_gcp
 import taskiq_fastapi
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,6 +22,8 @@ import app.models.recording  # noqa
 from app.auth.auth_core import get_auth0_config, setup_auth
 from app.auth.intake.auth_client_user import setup_client_auth
 from app.core.config import settings
+from app.core.logging_config import setup_logging
+from app.core.sentry_config import setup_sentry
 from app.routes import (
     assessment_router,
     assessment_tree_router,
@@ -110,28 +109,8 @@ async def lifespan(app: FastAPI):
             await metrics_manager.stop()
 
 
-def setup_logging() -> None:
-    processors = None
-    if not sys.stderr.isatty():
-        processors = structlog_gcp.build_processors(service="action-plan-generator")
-    structlog.configure(
-        processors=processors,
-        wrapper_class=structlog.make_filtering_bound_logger(logging.DEBUG),
-        context_class=dict,
-        logger_factory=structlog.PrintLoggerFactory(),
-        cache_logger_on_first_use=False,
-    )
-
-
 setup_logging()
-
-# Initialize Sentry
-if settings.SENTRY_DSN:
-    sentry_sdk.init(
-        dsn=settings.SENTRY_DSN,
-        environment=settings.ENV_NAME,
-        profiles_sample_rate=0,
-    )
+setup_sentry()
 
 app = FastAPI(root_path="/api", lifespan=lifespan)
 ALLOWED_ORIGINS = settings.ALLOWED_ORIGINS.split(",")

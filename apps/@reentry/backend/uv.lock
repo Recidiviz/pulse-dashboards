@@ -2688,6 +2688,7 @@ dependencies = [
     { name = "sqlmodel" },
     { name = "structlog" },
     { name = "structlog-gcp" },
+    { name = "structlog-sentry" },
     { name = "taskiq", extra = ["reload"] },
     { name = "taskiq-fastapi" },
     { name = "taskiq-redis" },
@@ -2751,11 +2752,12 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "python-socketio", specifier = ">=5.12.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
-    { name = "sentry-sdk", extras = ["fastapi"], specifier = ">=2.32.0" },
+    { name = "sentry-sdk", extras = ["fastapi"], specifier = ">=2.35.0" },
     { name = "sqlalchemy", specifier = ">=2.0.35" },
     { name = "sqlmodel", specifier = ">=0.0.22" },
     { name = "structlog", specifier = ">=24.4.0" },
     { name = "structlog-gcp", specifier = ">=0.4.0" },
+    { name = "structlog-sentry", specifier = ">=2.2.1" },
     { name = "taskiq", extras = ["reload"], specifier = ">=0.11.7" },
     { name = "taskiq-fastapi", specifier = ">=0.3.2" },
     { name = "taskiq-redis", specifier = ">=1.0.2" },
@@ -2928,15 +2930,15 @@ wheels = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.32.0"
+version = "2.48.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/10/59/eb90c45cb836cf8bec973bba10230ddad1c55e2b2e9ffa9d7d7368948358/sentry_sdk-2.32.0.tar.gz", hash = "sha256:9016c75d9316b0f6921ac14c8cd4fb938f26002430ac5be9945ab280f78bec6b", size = 334932, upload-time = "2025-06-27T08:10:02.89Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/40/f0/0e9dc590513d5e742d7799e2038df3a05167cba084c6ca4f3cdd75b55164/sentry_sdk-2.48.0.tar.gz", hash = "sha256:5213190977ff7fdff8a58b722fb807f8d5524a80488626ebeda1b5676c0c1473", size = 384828, upload-time = "2025-12-16T14:55:41.722Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/01/a1/fc4856bd02d2097324fb7ce05b3021fb850f864b83ca765f6e37e92ff8ca/sentry_sdk-2.32.0-py2.py3-none-any.whl", hash = "sha256:6cf51521b099562d7ce3606da928c473643abe99b00ce4cb5626ea735f4ec345", size = 356122, upload-time = "2025-06-27T08:10:01.424Z" },
+    { url = "https://files.pythonhosted.org/packages/4d/19/8d77f9992e5cbfcaa9133c3bf63b4fbbb051248802e1e803fed5c552fbb2/sentry_sdk-2.48.0-py2.py3-none-any.whl", hash = "sha256:6b12ac256769d41825d9b7518444e57fa35b5642df4c7c5e322af4d2c8721172", size = 414555, upload-time = "2025-12-16T14:55:40.152Z" },
 ]
 
 [package.optional-dependencies]
@@ -3107,6 +3109,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/dd/62/a89e2b4744f47c7cc0f3ec4ae74cf58b5374c57fa03fd3fdfcb246d09896/structlog_gcp-0.4.0.tar.gz", hash = "sha256:025703bafd6849b566025f119b605fab4ae04c0c3934ab3b67868463f1af1a19", size = 116161, upload-time = "2025-04-13T15:09:05.295Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/09/bb/990a7b22a775af5d3f760f4c3cec5460393faaac72d6dc57159cf4ae1289/structlog_gcp-0.4.0-py3-none-any.whl", hash = "sha256:54ef3053be52eb3e06540f69edb78f68104fa801b8ed094c729f187c6577721f", size = 9680, upload-time = "2025-04-13T15:09:03.528Z" },
+]
+
+[[package]]
+name = "structlog-sentry"
+version = "2.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "sentry-sdk" },
+    { name = "structlog" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a9/c8/a6d66c4a691a47c9c572ab84640012bb70c8c4f710763bd544236d98f278/structlog_sentry-2.2.1.tar.gz", hash = "sha256:78cf8751c7712e361d9d5e82fcde6c3f692a67e3e67068ccdd46448014636138", size = 6855, upload-time = "2024-11-12T14:31:51.695Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e3/ba/1b1226db704c16426d59e1fcbeaf5138dbc5a50d424aab92b453d33add47/structlog_sentry-2.2.1-py3-none-any.whl", hash = "sha256:868c82348bc18b7d51ef8f878c57e82835c1758dba38f7589fa02a267096a95d", size = 11218, upload-time = "2024-11-12T14:31:50.594Z" },
 ]
 
 [[package]]
