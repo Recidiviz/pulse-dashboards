@@ -111,13 +111,12 @@ export class WorkflowsFormLayoutPresenter implements Hydratable {
       await awaitHydration(this.selectedPerson.opportunityManager);
     }
 
-    // for ineligible case: create opp from record (only used for usTnExpiration opportunity)
+    // for ineligible case: create opp from record
     if (
       !isEligibleOrAlmostEligible(
         this.selectedPerson,
         this.selectedOpportunityType,
-      ) &&
-      this.workflowsStore.featureVariants.usTnTEPENotesForAll
+      )
     ) {
       const record = await getRecordForIneligible(
         this.selectedPerson,
@@ -135,7 +134,7 @@ export class WorkflowsFormLayoutPresenter implements Hydratable {
           this.selectedOpportunityType,
         );
         this.ineligibleOpportunity = opp;
-        await this.ineligibleOpportunity.hydrate();
+        this.ineligibleOpportunity.hydrate();
       } else {
         throw new Error(
           "WorkflowsFormLayoutPresenter: selectedPerson has no record.",
