@@ -44,7 +44,9 @@ export class UserStore {
 
     this.authManager = new AuthManager(translationStore);
 
-    this.segmentClient = new SegmentClient(new SegmentExternals(this));
+    this.segmentClient = new SegmentClient(
+      new SegmentExternals(this, translationStore),
+    );
   }
 
   private get authState() {
@@ -131,8 +133,14 @@ export class UserStore {
 }
 
 class SegmentExternals implements SegmentClientExternals {
-  constructor(private userStore: UserStore) {}
+  constructor(
+    private userStore: UserStore,
+    private translationStore: TranslationStore,
+  ) {}
   get isRecidivizUser() {
     return this.userStore.isRecidivizUser;
+  }
+  get currentLanguage() {
+    return this.translationStore.currentLanguage;
   }
 }

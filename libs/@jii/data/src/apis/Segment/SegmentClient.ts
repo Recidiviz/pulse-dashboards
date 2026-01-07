@@ -28,6 +28,7 @@ import { stateCodeFromCurrentUrl } from "../../utils/stateCodeFromCurrentUrl";
 
 export type SegmentClientExternals = {
   isRecidivizUser: boolean;
+  currentLanguage: string;
 };
 
 /**
@@ -91,19 +92,25 @@ export class SegmentClient implements IntakeAnalytics {
     };
   }
 
+  private get trackingContextOverrides() {
+    return { locale: this.externals.currentLanguage };
+  }
+
   identify(userId: string): void {
     const traits = { ...this.defaultTrackingProperties };
 
     if (this.isDisabled) {
       if (this.isSilent) return;
       return console.log(
-        `[Analytics] Identifying user: ${userId}, with traits: ${JSON.stringify(
+        `[Analytics] Identifying user: ${userId}, with traits ${JSON.stringify(
           traits,
-        )}`,
+        )} and context overrides ${JSON.stringify(this.trackingContextOverrides)}`,
       );
     }
 
-    this.segment.identify(userId, traits);
+    this.segment.identify(userId, traits, {
+      context: this.trackingContextOverrides,
+    });
   }
 
   track(
@@ -115,13 +122,15 @@ export class SegmentClient implements IntakeAnalytics {
     if (this.isDisabled) {
       if (this.isSilent) return;
       return console.log(
-        `[Analytics] Tracking event name: ${eventName}, with properties: ${JSON.stringify(
+        `[Analytics] Tracking event name: ${eventName}, with properties ${JSON.stringify(
           fullProperties,
-        )}`,
+        )} and context overrides ${JSON.stringify(this.trackingContextOverrides)}`,
       );
     }
 
-    this.segment.track(eventName, fullProperties);
+    this.segment.track(eventName, fullProperties, {
+      context: this.trackingContextOverrides,
+    });
   }
 
   page() {
@@ -129,12 +138,12 @@ export class SegmentClient implements IntakeAnalytics {
     if (this.isDisabled) {
       if (this.isSilent) return;
       return console.log(
-        `[Analytics] Tracking pageview: ${window.location.href}, with properties: ${JSON.stringify(
+        `[Analytics] Tracking pageview: ${window.location.href}, with properties ${JSON.stringify(
           properties,
-        )}`,
+        )} and context overrides ${JSON.stringify(this.trackingContextOverrides)}`,
       );
     }
-    this.segment.page(properties);
+    this.segment.page(properties, { context: this.trackingContextOverrides });
   }
 
   // the event names seen here are the same as used in CPA.

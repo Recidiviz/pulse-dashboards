@@ -33,6 +33,7 @@ let consoleSpy: MockInstance<{
 
 const defaultExternals = {
   isRecidivizUser: false,
+  currentLanguage: "en-US",
 };
 
 function getAnalyticsStoreWithEnv(
@@ -93,7 +94,7 @@ describe("When no write key is configured", () => {
     expect(identifyMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Identifying user: test-id, with traits: {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false}",
+        "[Analytics] Identifying user: test-id, with traits {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false} and context overrides {"locale":"en-US"}",
       ]
     `);
   });
@@ -105,7 +106,7 @@ describe("When no write key is configured", () => {
     expect(trackMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Tracking event name: frontend_event_type, with properties: {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false,"foo":"bar"}",
+        "[Analytics] Tracking event name: frontend_event_type, with properties {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false,"foo":"bar"} and context overrides {"locale":"en-US"}",
       ]
     `);
   });
@@ -115,7 +116,7 @@ describe("When no write key is configured", () => {
     expect(pageMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Tracking pageview: http://localhost:3000/, with properties: {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false}",
+        "[Analytics] Tracking pageview: http://localhost:3000/, with properties {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false} and context overrides {"locale":"en-US"}",
       ]
     `);
   });
@@ -146,6 +147,11 @@ describe("Staging mode", () => {
           "sessionId": "mock-uuid",
           "stateCode": "US_AZ",
         },
+        {
+          "context": {
+            "locale": "en-US",
+          },
+        },
       ]
     `);
     expect(consoleSpy).not.toHaveBeenCalled();
@@ -165,6 +171,11 @@ describe("Staging mode", () => {
           "sessionId": "mock-uuid",
           "stateCode": "US_AZ",
         },
+        {
+          "context": {
+            "locale": "en-US",
+          },
+        },
       ]
     `);
     expect(consoleSpy).not.toHaveBeenCalled();
@@ -172,7 +183,20 @@ describe("Staging mode", () => {
 
   it("does call analytics for pageview", () => {
     client.page();
-    expect(pageMock).toHaveBeenCalled();
+    expect(pageMock.mock.lastCall).toMatchInlineSnapshot(`
+      [
+        {
+          "isRecidivizUser": false,
+          "sessionId": "mock-uuid",
+          "stateCode": "US_AZ",
+        },
+        {
+          "context": {
+            "locale": "en-US",
+          },
+        },
+      ]
+    `);
     expect(consoleSpy).not.toHaveBeenCalled();
   });
 });
@@ -203,6 +227,11 @@ describe("Production environment", () => {
           "sessionId": "mock-uuid",
           "stateCode": "US_AZ",
         },
+        {
+          "context": {
+            "locale": "en-US",
+          },
+        },
       ]
     `);
     expect(consoleSpy).not.toHaveBeenCalled();
@@ -222,6 +251,11 @@ describe("Production environment", () => {
           "sessionId": "mock-uuid",
           "stateCode": "US_AZ",
         },
+        {
+          "context": {
+            "locale": "en-US",
+          },
+        },
       ]
     `);
     expect(consoleSpy).not.toHaveBeenCalled();
@@ -236,9 +270,55 @@ describe("Production environment", () => {
           "sessionId": "mock-uuid",
           "stateCode": "US_AZ",
         },
+        {
+          "context": {
+            "locale": "en-US",
+          },
+        },
       ]
     `);
     expect(consoleSpy).not.toHaveBeenCalled();
+  });
+
+  describe("with alternate language set", () => {
+    beforeEach(() => {
+      client = getAnalyticsStoreWithEnv("production", "test-key", {
+        currentLanguage: "es",
+      });
+    });
+
+    test("identify reflects locale", () => {
+      client.identify("test-id");
+      expect(identifyMock.mock.lastCall?.[2]).toMatchInlineSnapshot(`
+        {
+          "context": {
+            "locale": "es",
+          },
+        }
+      `);
+    });
+
+    test("track reflects locale", () => {
+      client.track("frontend_test_event");
+      expect(trackMock.mock.lastCall?.[2]).toMatchInlineSnapshot(`
+        {
+          "context": {
+            "locale": "es",
+          },
+        }
+      `);
+    });
+
+    test("pageview reflects locale", () => {
+      client.page();
+      expect(pageMock.mock.lastCall?.[1]).toMatchInlineSnapshot(`
+        {
+          "context": {
+            "locale": "es",
+          },
+        }
+      `);
+    });
   });
 });
 
@@ -273,6 +353,11 @@ describe("Recidiviz user in staging", () => {
           "sessionId": "mock-uuid",
           "stateCode": "US_AZ",
         },
+        {
+          "context": {
+            "locale": "en-US",
+          },
+        },
       ]
     `);
     expect(consoleSpy).not.toHaveBeenCalled();
@@ -286,6 +371,11 @@ describe("Recidiviz user in staging", () => {
           "isRecidivizUser": true,
           "sessionId": "mock-uuid",
           "stateCode": "US_AZ",
+        },
+        {
+          "context": {
+            "locale": "en-US",
+          },
         },
       ]
     `);
@@ -315,7 +405,7 @@ describe("Recidiviz user in production", () => {
     expect(identifyMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Identifying user: test-id, with traits: {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":true}",
+        "[Analytics] Identifying user: test-id, with traits {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":true} and context overrides {"locale":"en-US"}",
       ]
     `);
   });
@@ -327,7 +417,7 @@ describe("Recidiviz user in production", () => {
     expect(trackMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Tracking event name: frontend_prod_event, with properties: {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":true,"foo":"bar"}",
+        "[Analytics] Tracking event name: frontend_prod_event, with properties {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":true,"foo":"bar"} and context overrides {"locale":"en-US"}",
       ]
     `);
   });
