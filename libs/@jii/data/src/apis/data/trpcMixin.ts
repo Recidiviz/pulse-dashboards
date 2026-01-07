@@ -20,10 +20,14 @@ import { when } from "mobx";
 import superjson from "superjson";
 
 import type { JiiAppRouter } from "~@jii/trpc-types";
+import { isDemoMode } from "~client-env-utils";
 
 import { stateCodeFromCurrentUrl } from "../../utils/stateCodeFromCurrentUrl";
 import { JII_BACKEND_PATH } from "./constants";
 import { DataAPI } from "./interface";
+
+// this will be used as a request header key, which is why it's styled like this
+const UseDemoData = `${isDemoMode()}`;
 
 export function createTrpcClientForApi(apiClient: DataAPI) {
   return createTRPCClient<JiiAppRouter>({
@@ -37,6 +41,7 @@ export function createTrpcClientForApi(apiClient: DataAPI) {
           return {
             Authorization,
             StateCode: stateCodeFromCurrentUrl(),
+            UseDemoData,
           };
         },
         // Required to get Date objects to serialize correctly.

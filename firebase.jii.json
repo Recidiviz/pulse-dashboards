@@ -72,7 +72,7 @@
         {
           "source": "/api/**",
           "run": {
-            "serviceId": "jii-server-demo"
+            "serviceId": "jii-server"
           }
         },
         {

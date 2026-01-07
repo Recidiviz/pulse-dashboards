@@ -105,5 +105,12 @@ export async function verifyFirebaseIdToken(opts: CreateFastifyContextOptions) {
     throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
   }
 
-  return req.server.firebaseAuth.verifyIdToken(token);
+  try {
+    return req.server.firebaseAuth.verifyIdToken(token);
+  } catch {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Invalid token provided",
+    });
+  }
 }

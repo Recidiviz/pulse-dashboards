@@ -14,13 +14,14 @@ locals {
 
   secrets = yamldecode(data.sops_file.secrets.raw)
 
+  additional_database_names = flatten([for state_code in var.enabled_states : [state_code, "${state_code}_demo"]])
+
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  db_urls = nonsensitive({ for state_code in var.additional_database_names :
+  db_urls = nonsensitive({ for dbname in local.additional_database_names :
     # The values are sensitive so we want to omit them from the plans
-    upper("DATABASE_URL_${state_code}") => sensitive("postgresql://${local.secrets.jii_db_user}:${local.secrets.jii_db_password}@localhost/${state_code}?host=/cloudsql/${var.project_id}:us-central1:${var.sql_instance_name}")
+    upper("DATABASE_URL_${dbname}") => sensitive("postgresql://${local.secrets.jii_db_user}:${local.secrets.jii_db_password}@localhost/${dbname}?host=/cloudsql/${var.project_id}:us-central1:${var.sql_instance_name}")
   })
-
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
@@ -58,7 +59,7 @@ module "database" {
   zone                                          = "us-central1-f"
   secondary_zone                                = var.database_secondary_zone
   tier                                          = "db-custom-1-3840"
-  additional_databases                          = var.additional_database_names
+  additional_databases                          = local.additional_database_names
   private_network                               = var.private_network
   enable_private_path_for_google_cloud_services = var.private_network != null ? true : false
   encryption_key_id                             = google_kms_crypto_key.cloud_sql_key.id

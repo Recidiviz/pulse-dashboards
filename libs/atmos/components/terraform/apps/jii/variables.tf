@@ -27,9 +27,9 @@ variable "database_secondary_zone" {
   default     = null
 }
 
-variable "additional_database_names" {
+variable "enabled_states" {
   type        = list(string)
-  description = "Databases to create on the SQL instance (e.g. one for each state)"
+  description = "Each will have its own live and demo DB on the SQL instance"
   default     = ["us_az", "us_id", "us_ma", "us_ne", "us_tn"]
 }
 

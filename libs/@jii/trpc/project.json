@@ -16,7 +16,7 @@
       }
     },
     "test": {
-      "dependsOn": [{ "projects": ["@jii/prisma"], "target": "prisma-deploy" }],
+      "dependsOn": ["^prepare-test-db"],
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/libs/@jii/trpc"],
       "cache": true,

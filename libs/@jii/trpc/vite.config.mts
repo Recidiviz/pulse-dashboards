@@ -23,10 +23,6 @@ export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/libs/@jii/trpc",
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(["*.md"])],
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
   test: {
     mockReset: true,
     unstubEnvs: true,
@@ -46,7 +42,7 @@ export default defineConfig(() => ({
     // vs code test runner also requires the docker service from @jii/prisma to be running
     env: {
       DATABASE_URL:
-        "postgresql://postgres:postgres@localhost:6508/jii?schema=public",
+        "postgresql://postgres:postgres@localhost:6509/jii-test?schema=public",
     },
   },
 }));
