@@ -29,7 +29,7 @@ const US_NE_CONFIG = {
   domain: "corrections.nebraska.gov",
   availableStateCodes: [dashboard.US_NE],
   enableUserRestrictions: false,
-  workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsMethodologyUrl:
     "https://drive.google.com/file/d/1PuZnoNTddYoKVA0CSpRDoNvCIBWJxg_I/view",
   workflowsTasksConfig: {
@@ -135,12 +135,25 @@ const US_NE_CONFIG = {
         },
       ],
     },
+    INCARCERATION: {
+      search: [
+        {
+          searchType: "FACILITY",
+          searchField: ["facilityId"],
+          searchTitle: "facility",
+        },
+      ],
+    },
   },
   navigation: {
-    workflows: ["home", "clients", "tasks"],
+    workflows: ["home", "clients", "residents", "tasks"],
   },
   supervisionEndCopyOverride: "Tentative Release Date",
   supervisionDisplayIdCopy: "NDCS ID",
+  releaseDateCopyOverride: "Tentative Release Date",
+  custodyLevelCopy: {
+    INTERNAL_UNKNOWN: "UNKNOWN CUSTODY LEVEL",
+  },
 } satisfies TenantConfig<"US_NE">;
 
 export default US_NE_CONFIG;

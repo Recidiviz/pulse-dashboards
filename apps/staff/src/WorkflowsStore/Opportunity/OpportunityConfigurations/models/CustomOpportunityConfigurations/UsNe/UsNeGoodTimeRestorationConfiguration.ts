@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./Incarceration";
-export * from "./ResidentHousing";
-export * from "./US_MO";
-export * from "./US_NE";
-export * from "./US_TN";
+import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
+
+export class UsNeGoodTimeRestorationConfiguration extends ApiOpportunityConfiguration {
+  get indefiniteSnoozeSectionSubheading(): string {
+    return "";
+  }
+
+  get maxSnoozeDaysByDenialReason() {
+    return {
+      ...super.maxSnoozeDaysByDenialReason,
+      COURT_ORDER: undefined,
+    };
+  }
+
+  get sidebarComponents() {
+    return [...super.sidebarComponents, "UsNeGoodTimeLedger"];
+  }
+}

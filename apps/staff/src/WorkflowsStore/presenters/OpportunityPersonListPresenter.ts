@@ -145,9 +145,12 @@ export class OpportunityPersonListPresenter
 
   private get showAlmostEligibilityDateColumn(): boolean {
     const enabledOpportunityTypes: OpportunityType[] = [
-      "LSU", "usTnCompliantReporting2025Policy"
+      "LSU",
+      "usTnCompliantReporting2025Policy",
     ];
-    const hasAlmostEligibleColumnEnabled = enabledOpportunityTypes.includes(this.opportunityType);  
+    const hasAlmostEligibleColumnEnabled = enabledOpportunityTypes.includes(
+      this.opportunityType,
+    );
     const showAlmostEligibleDateColumn = this.peopleInActiveTab.some(
       (opp) => opp.almostEligible && !!opp.almostEligibilityDate,
     );
@@ -207,6 +210,11 @@ export class OpportunityPersonListPresenter
       US_NE_PEDD_DATE:
         this.workflowsStore.activeSystem === "SUPERVISION" &&
         this.tenantStore.currentTenantId === "US_NE",
+      UNIT_ID: this.opportunityType === "usNeGoodTimeRestoration",
+      US_NE_ELIGIBLE_RESTORATION_AMT:
+        this.opportunityType === "usNeGoodTimeRestoration",
+      US_NE_TOTAL_LOST_RESTORABLE_GT:
+        this.opportunityType === "usNeGoodTimeRestoration",
       US_MI_UNIT_ID:
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         this.tenantStore.currentTenantId === "US_MI",

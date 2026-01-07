@@ -36,6 +36,7 @@ import { UsMiMinimumTelephoneReportingConfiguration } from "./UsMi/UsMiMinimumTe
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguration";
 import { UsNdTransferToMinFacility } from "./UsNd/UsNdTransferToMinFacility";
+import { UsNeGoodTimeRestorationConfiguration } from "./UsNe/UsNeGoodTimeRestorationConfiguration";
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
 import { UsPaSupervisionConfiguration } from "./UsPa/UsPaSupervisionBaseConfiguration";
 import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfiguration";
@@ -88,6 +89,9 @@ const customOpportunityConfigurations: Partial<
   // North Dakota
   // This is a non-constructed opportunity that is being customized
   ["usNdTransferToMinFacility" as OpportunityType]: UsNdTransferToMinFacility,
+
+  // Nebraska
+  usNeGoodTimeRestoration: UsNeGoodTimeRestorationConfiguration,
 
   // Oregon
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,

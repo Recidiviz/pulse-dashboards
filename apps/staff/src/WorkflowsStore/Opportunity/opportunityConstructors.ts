@@ -73,7 +73,10 @@ import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./UsMo/U
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
 import { UsMoWorkReleaseOpportunity } from "./UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseOpportunity";
-import { UsNeSupervisionDowngradeOpportunity } from "./UsNe";
+import {
+  UsNeGoodTimeRestorationOpportunity,
+  UsNeSupervisionDowngradeOpportunity,
+} from "./UsNe";
 import { UsOrEarnedDischargeSentenceOpportunity } from "./UsOr/UsOrEarnedDischargeSentenceOpportunity";
 import { UsPaAdminSupervisionOpportunity } from "./UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
 import {
@@ -157,6 +160,7 @@ export const opportunityConstructors = {
   // US_NE
   usNeConditionalLowRiskOverride: UsNeSupervisionDowngradeOpportunity,
   usNeOverrideModerateToLow: UsNeSupervisionDowngradeOpportunity,
+  usNeGoodTimeRestoration: UsNeGoodTimeRestorationOpportunity,
 
   // US_ND
   earlyTermination: UsNdEarlyTerminationOpportunity,

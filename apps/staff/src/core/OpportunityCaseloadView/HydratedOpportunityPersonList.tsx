@@ -236,6 +236,9 @@ export type OpportunityTableColumnId =
   | "SUPERVISION_EXPIRATION_DATE"
   | "US_ID_EPRD"
   | "US_NE_PEDD_DATE"
+  | "UNIT_ID"
+  | "US_NE_ELIGIBLE_RESTORATION_AMT"
+  | "US_NE_TOTAL_LOST_RESTORABLE_GT"
   | "US_MI_UNIT_ID"
   | "US_MI_ERD"
   | "US_MI_CUSTODY_LEVEL"
@@ -521,6 +524,17 @@ const TableView = observer(function TableView({
       cell: PersonIdCell,
     },
     {
+      header: "Unit",
+      id: "UNIT_ID",
+      enableSorting: true,
+      sortingFn: "alphanumeric",
+      accessorFn: ({ person }: Opportunity) => {
+        if (person instanceof Resident) {
+          return person.unitId;
+        }
+      },
+    },
+    {
       header: presenter.eligibilityDateHeader,
       id: "ELIGIBILITY_DATE",
       enableSorting: true,
@@ -587,6 +601,33 @@ const TableView = observer(function TableView({
           return formatWorkflowsDate(person.metadata.paroleEarnedDischargeDate);
         }
         return "-";
+      },
+    },
+    {
+      header: "Eligible Restoration Amount",
+      id: "US_NE_ELIGIBLE_RESTORATION_AMT",
+      enableSorting: true,
+      sortingFn: "alphanumeric",
+      accessorFn: (opp: Opportunity) => {
+        if (opp.type === "usNeGoodTimeRestoration" && opp.record) {
+          return opp.record.metadata.isEligibleForMoreThan30Days
+            ? ">30 days"
+            : "30 days";
+        }
+      },
+    },
+    {
+      header: "Total Lost Restorable Good Time",
+      id: "US_NE_TOTAL_LOST_RESTORABLE_GT",
+      enableSorting: true,
+      sortingFn: "alphanumeric",
+      accessorFn: ({ person }: Opportunity) => {
+        if (
+          person instanceof Resident &&
+          person.metadata.stateCode === "US_NE"
+        ) {
+          return person.metadata.goodTimeLostDaysRestorable;
+        }
       },
     },
     {

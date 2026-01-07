@@ -70,6 +70,7 @@ import { UsIdParoleDates } from "./ResidentDetailSidebarComponents/US_ID/UsIdPar
 import { UsIdPastTwoYearsAlert } from "./ResidentDetailSidebarComponents/US_ID/UsIdPastTwoYearsAlert";
 import { UsMiRestrictiveHousing } from "./ResidentDetailSidebarComponents/US_MI/UsMiRestrictiveHousingDetails";
 import { UsMoSolitary } from "./ResidentDetailSidebarComponents/US_MO/UsMoSolitary";
+import { UsNeGoodTimeLedger } from "./ResidentDetailSidebarComponents/US_NE/UsNeGoodTimeLedger";
 import { Divider } from "./styles";
 import { OpportunitySidebarProfileProps } from "./types";
 
@@ -126,6 +127,7 @@ export const ResidentDetailSidebarComponents = {
   UsIdPastTwoYearsAlert,
   UsIdParoleDates,
   UsAzDates,
+  UsNeGoodTimeLedger,
 };
 
 type ResidentDetailComponentName = keyof typeof ResidentDetailSidebarComponents;

@@ -71,6 +71,7 @@ export const constructedOpportunityTypes = [
   // US_NE
   "usNeConditionalLowRiskOverride",
   "usNeOverrideModerateToLow",
+  "usNeGoodTimeRestoration",
 
   // US_ND
   "earlyTermination",
