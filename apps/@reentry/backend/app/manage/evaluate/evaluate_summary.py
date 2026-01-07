@@ -7,6 +7,7 @@ using pre-defined conversation history and assessment data from JSON files or de
 
 import json
 import logging
+import structlog
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -18,7 +19,7 @@ from ..base import cli
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(name)s - %(message)s")
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 # Default conversation messages

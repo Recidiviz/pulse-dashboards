@@ -2,7 +2,7 @@
 CRUD operations for recording sessions.
 """
 
-import logging
+import structlog
 from typing import Literal, overload
 from uuid import UUID
 
@@ -13,7 +13,7 @@ from app.core.db import AsyncSession
 from app.crud.utils import statement_or_result
 from app.models.recording import RecordingSession, RecordingStatus
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 async def create_recording_session(

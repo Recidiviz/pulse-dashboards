@@ -5,14 +5,14 @@ This module provides section tracking WITHOUT ClientIntakeSection dependency,
 using the conversation config YAML directly.
 """
 
-import logging
+import structlog
 from typing import Optional
 
 from app.core.data_config.assessment_configs.assessment_config import (
     IntakeConfigConversation,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def get_first_section_from_config(

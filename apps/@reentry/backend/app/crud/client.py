@@ -25,7 +25,7 @@ from app.services.client_data.queries import Queries
 from app.services.client_data.types import ClientDataRecord
 from app.utils.string_utils import normalize_locations
 
-logger = structlog.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Timeout thresholds for stuck executions
 PENDING_TIMEOUT_HOURS = 3

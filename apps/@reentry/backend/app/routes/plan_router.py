@@ -1,4 +1,4 @@
-import logging
+import structlog
 import uuid
 from datetime import datetime
 from io import BytesIO
@@ -81,7 +81,7 @@ from ..utils.PrometheusBackgroundThreadManager import (
 from .execution_router import ExecutionResponse
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class ClientAddressUpdate(BaseModel):

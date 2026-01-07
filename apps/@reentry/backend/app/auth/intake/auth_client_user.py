@@ -1,4 +1,5 @@
 import logging
+import structlog
 from datetime import date
 from typing import Callable, List, Optional, Tuple
 
@@ -23,7 +24,7 @@ from app.core.db import AsyncSession
 from app.crud.intake import get_intake_by_client_pseudo_id, get_intake_by_token
 from app.services.client_data.queries import Queries
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 security = HTTPBearer()
 
 

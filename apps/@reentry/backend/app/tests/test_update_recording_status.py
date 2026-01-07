@@ -10,7 +10,7 @@ from app.models.base import IntakeType
 from app.models.intake import IntakeStatus
 from app.models.recording import RecordingSession, RecordingStatus
 
-logger = structlog.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 @pytest.mark.asyncio

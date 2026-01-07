@@ -1,5 +1,5 @@
 import asyncio
-import logging
+import structlog
 import os
 from typing import List, Literal, Optional, Tuple, cast, get_args
 from uuid import UUID
@@ -27,7 +27,7 @@ from .types import (
     IntakeSectionStatus,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 load_dotenv()
 Environment = Literal["local", "dev", "demo", "staging", "prod"]
 

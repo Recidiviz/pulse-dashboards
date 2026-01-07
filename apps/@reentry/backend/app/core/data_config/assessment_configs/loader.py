@@ -4,7 +4,7 @@ File loader for assessment YAML configuration files.
 Flow: YAML File → read_file_content → validate_yaml_content → AssessmentConfigFile
 """
 
-import logging
+import structlog
 from pathlib import Path
 
 import yaml
@@ -13,7 +13,7 @@ from app.core.data_config.assessment_configs.assessment_config import (
     AssessmentConfigFile,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class AssessmentFileLoader:

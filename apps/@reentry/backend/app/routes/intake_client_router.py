@@ -1,4 +1,4 @@
-import logging
+import structlog
 from datetime import date, datetime
 from typing import List, Optional
 
@@ -30,7 +30,7 @@ from app.utils.config_loader import ConfigLoader
 
 from .base import ORMResponse
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 router = APIRouter()
 security = HTTPBearer()

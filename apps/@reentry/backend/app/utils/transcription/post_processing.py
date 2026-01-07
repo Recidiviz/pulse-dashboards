@@ -1,4 +1,4 @@
-import logging
+import structlog
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Union
 
@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from app.core.data_config.assessment_configs.assessment_config import ModelConfig
 from app.utils.llm_agent_qa import LLMAgentQA
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 ### DEEPGRAM INPUT DATA MODELS ###

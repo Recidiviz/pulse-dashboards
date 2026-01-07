@@ -13,6 +13,7 @@ Example:
 
 import argparse
 import logging
+import structlog
 import os
 import re
 import subprocess
@@ -24,7 +25,7 @@ from typing import List
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Matroska/WebM signatures
 EBML_MAGIC = b"\x1a\x45\xdf\xa3"

@@ -4,7 +4,7 @@ CRUD operations for ClientIntakeSection management.
 This module extracts all ClientIntakeSection queries from models/intake.py.
 """
 
-import logging
+import structlog
 from typing import List, Optional
 from uuid import UUID
 
@@ -18,7 +18,7 @@ from app.models.intake_sections import (
     IntakeSection,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 async def get_current_client_section_by_title(

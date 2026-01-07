@@ -1,4 +1,4 @@
-import logging
+import structlog
 import time
 
 import httpx
@@ -6,7 +6,7 @@ from deepgram import DeepgramClient
 
 from app.core.config import settings
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 async def deepgram_transcription_diarization(

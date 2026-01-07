@@ -2,7 +2,7 @@
 Client connection manager for tracking and enforcing one connection per client.
 """
 
-import logging
+import structlog
 import traceback
 from typing import Optional
 
@@ -12,7 +12,7 @@ import socketio
 from app.utils.intake.redis_keys import RedisKeys
 from app.utils.intake.schemas import ForceDisconnectEvent
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class ClientConnectionManager:

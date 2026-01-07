@@ -5,7 +5,7 @@ Is responsible for routing and saving user messages
 """
 
 import asyncio
-import logging
+import structlog
 import traceback
 from time import time
 from typing import Dict, Optional
@@ -38,7 +38,7 @@ from app.utils.intake.schemas import (
     ServerEvent,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Initialize managers
 mgr = socketio.AsyncRedisManager(f"{settings.REDIS_URL}", channel="intake_channel")

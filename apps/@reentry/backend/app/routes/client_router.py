@@ -1,4 +1,4 @@
-import logging
+import structlog
 from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -41,7 +41,7 @@ from app.services.client_data.queries import Queries
 from app.utils.feature_flags import is_feature_enabled
 from app.utils.permission_utils import check_access
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 

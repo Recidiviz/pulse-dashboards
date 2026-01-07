@@ -1,4 +1,4 @@
-import logging
+import structlog
 import traceback
 from datetime import datetime
 from typing import Any, Callable, Coroutine, Dict, Literal, Optional
@@ -45,7 +45,7 @@ from app.utils.intake.utils import (
     log_error,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class IntakeConversationGraph:

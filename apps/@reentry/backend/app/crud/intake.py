@@ -1,4 +1,4 @@
-import logging
+import structlog
 from typing import Literal, Optional, Tuple, overload
 from uuid import UUID
 
@@ -23,7 +23,7 @@ from app.routes.shared_models import AddressSubmission
 from app.services.client_data.queries import Queries
 from app.utils.config_loader import ConfigLoader
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 @overload

@@ -1,4 +1,4 @@
-import logging
+import structlog
 from datetime import date
 from typing import Optional
 
@@ -12,7 +12,7 @@ from app.auth.intake.auth_client_user import (
 )
 from app.core.db import AsyncSession, get_session
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 router = APIRouter()
 

@@ -4,7 +4,7 @@ File loader for converting output YAML configuration files into database records
 Flow: YAML File → OutputConfigFile (validation) → OutputConfig (database)
 """
 
-import logging
+import structlog
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
@@ -18,7 +18,7 @@ from app.core.data_config.output_configs.output_config import (
 )
 from app.utils.string_utils import normalize_code
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 @dataclass

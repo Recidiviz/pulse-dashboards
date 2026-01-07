@@ -3,7 +3,7 @@ Recording session router for managing audio recording sessions.
 """
 
 import base64
-import logging
+import structlog
 from typing import List
 from uuid import UUID
 
@@ -43,7 +43,7 @@ from app.tasks.recording import process_recording_task
 from app.tasks.scheduler import schedule_task
 from app.utils.permission_utils import check_access
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 router = APIRouter()
 

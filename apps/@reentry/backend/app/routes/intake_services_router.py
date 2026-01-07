@@ -1,5 +1,5 @@
 import base64
-import logging
+import structlog
 import os
 import shutil
 import tempfile
@@ -26,7 +26,7 @@ from app.utils.address_autocomplete import (
     autocomplete_city as autocomplete_city_util,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 router = APIRouter()
 

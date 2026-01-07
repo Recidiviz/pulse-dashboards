@@ -3,7 +3,7 @@ Manages persistent conversation data in the database.
 This manager is focused solely on database operations and data persistence.
 """
 
-import logging
+import structlog
 import traceback
 from typing import Dict, List, Literal, Optional
 from uuid import UUID
@@ -22,7 +22,7 @@ from app.crud.intake import (
 from app.models.intake import Intake, IntakeMessage, IntakeMessageRole, IntakeStatus
 from app.services.client_data.queries import ClientDataRecord
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class DatabaseManager:

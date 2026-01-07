@@ -1,4 +1,4 @@
-import logging
+import structlog
 from enum import Enum
 from typing import List, Optional, Set, TypeAlias
 
@@ -9,7 +9,7 @@ from app.utils.disallowed_resources import (
     DISALLOWED_RESOURCE_NAMES,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class ResourceOrigin(str, Enum):

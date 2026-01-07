@@ -48,7 +48,7 @@ from app.utils.PrometheusBackgroundThreadManager import (
     PrometheusBackgroundThreadManager,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Setup metrics
 metrics_manager = None

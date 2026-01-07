@@ -1,11 +1,11 @@
-import logging
+import structlog
 from pathlib import Path
 
 import google.auth.exceptions
 from google.auth import default
 from google.oauth2 import service_account
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Default service account file path (relative to this file)
 DEFAULT_CREDENTIALS_RELATIVE_PATH = "../../../.secrets/gcp-service-account.json"

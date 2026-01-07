@@ -2,7 +2,7 @@
 Database models for intake assessment system.
 """
 
-import logging
+import structlog
 import secrets
 from datetime import datetime, timedelta
 from enum import StrEnum
@@ -44,7 +44,7 @@ from app.services.client_data.queries import Queries
 # Not stored in DB, only used for UI organization of closing messages
 COMPLETION_SECTION = "Completion"
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class IntakeStatus(StrEnum):

@@ -1,4 +1,4 @@
-import logging
+import structlog
 from typing import List, Optional
 
 import httpx
@@ -6,7 +6,7 @@ from google.auth import default
 from google.auth.transport.requests import Request as GoogleAuthRequest
 from pydantic import BaseModel
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Initialize Google Cloud credentials using Application Default Credentials
 # Set up ADC by running: gcloud auth application-default login

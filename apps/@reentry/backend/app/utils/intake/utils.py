@@ -2,7 +2,7 @@
 Consolidated utility functions for intake assessment system.
 """
 
-import logging
+import structlog
 import traceback
 from pathlib import Path
 
@@ -10,17 +10,13 @@ from app.utils.intake.schemas import (
     ErrorInfo,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Constants
 MAX_UNCLEAR_RESPONSES = 2
 
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-
-
-# Configure logging
-logger = logging.getLogger(__name__)
 
 
 def log_error(error_info: ErrorInfo, exc_info=None) -> None:

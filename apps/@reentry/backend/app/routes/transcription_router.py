@@ -1,5 +1,5 @@
 import json
-import logging
+import structlog
 from typing import Dict, List, Optional
 from uuid import UUID
 
@@ -15,7 +15,7 @@ from app.models.recording import RecordingStatus
 from app.services.recording_service import RecordingService
 from app.utils.permission_utils import check_access
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 router = APIRouter()
 security = HTTPBearer()

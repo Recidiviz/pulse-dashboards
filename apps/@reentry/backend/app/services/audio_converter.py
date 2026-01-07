@@ -1,4 +1,4 @@
-import logging
+import structlog
 import os
 import re
 import subprocess
@@ -22,7 +22,7 @@ DEFAULT_SAMPLE_RATE = "48000"
 DEFAULT_BITRATE = "128k"
 DEFAULT_CHANNELS = "2"
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class AudioConversionError(Exception):

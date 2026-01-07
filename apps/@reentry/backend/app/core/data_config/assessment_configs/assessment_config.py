@@ -1,4 +1,5 @@
 import logging
+import structlog
 from enum import Enum
 from typing import Literal, Optional, Union
 
@@ -6,7 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.models.base import AssessmentType
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class MetadataType(str, Enum):

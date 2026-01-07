@@ -22,7 +22,7 @@ The combined group_x files is put into the final.
 """
 
 import asyncio
-import logging
+import structlog
 import os
 import re
 import tempfile
@@ -41,7 +41,7 @@ from app.services.audio_converter import (
     call_ffmpeg,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Matroska/WebM signatures
 # EBML_MAGIC (0x1A45DFA3) is the EBML Header element ID which typically appears at the

@@ -1,4 +1,4 @@
-import logging
+import structlog
 from pathlib import Path
 
 import google.api_core.exceptions
@@ -7,7 +7,7 @@ from google.cloud import texttospeech
 
 from app.services.google.auth import get_credentials
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 MAX_TEXT_LENGTH = 5000
 

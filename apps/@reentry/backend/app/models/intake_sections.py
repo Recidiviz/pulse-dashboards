@@ -2,7 +2,7 @@
 DEPRECATED -- Database models for intake assessment system -- Needs to be kept for conversations from before the configIO work
 """
 
-import logging
+import structlog
 from datetime import datetime
 from enum import StrEnum
 from typing import TYPE_CHECKING, List, Optional
@@ -19,7 +19,7 @@ from sqlmodel import Field, Relationship
 
 from app.models.base import BaseModel
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class CompletionStatus(StrEnum):

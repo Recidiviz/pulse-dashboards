@@ -5,6 +5,7 @@ This allows testing the conversation flow without manual input by simulating cli
 
 import json
 import logging
+import structlog
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -34,7 +35,7 @@ from ..types import (
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(name)s - %(message)s")
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class SectionCoverageDetail(BaseModel):
