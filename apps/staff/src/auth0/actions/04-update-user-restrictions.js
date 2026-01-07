@@ -31,7 +31,9 @@ exports.onExecutePostLogin = async (event, api) => {
     credentials,
   });
 
-  const { app_metadata, email } = event.user;
+  const { app_metadata, email, emailaddress } = event.user;
+  const userEmail = email ?? emailaddress;
+
   let stateCode = app_metadata.state_code?.toLowerCase();
 
   /** Set LANTERN state code to CSG */
@@ -40,9 +42,10 @@ exports.onExecutePostLogin = async (event, api) => {
     api.user.setAppMetadata("state_code", stateCode);
   }
   const authorizedDomains = ["recidiviz.org", "csg.org", "recidiviz-test.org"]; // add authorized domains here
-  const emailSplit = email?.split("@") || [];
+  const emailSplit = userEmail?.split("@") || [];
   const userDomain =
-    (email?.length ?? 0) > 1 && emailSplit[emailSplit.length - 1].toLowerCase();
+    (userEmail?.length ?? 0) > 1 &&
+    emailSplit[emailSplit.length - 1].toLowerCase();
 
   const DENY_MESSAGE =
     "There was a problem authorizing your account. Please contact feedback@recidiviz.org.";
@@ -87,7 +90,7 @@ exports.onExecutePostLogin = async (event, api) => {
       const recidivizAuthBucketName = event.secrets.RECIDIVIZ_AUTH_BUCKET_NAME;
       const jsonFile = await storage
         .bucket(recidivizAuthBucketName)
-        .file(`${email}.json`)
+        .file(`${userEmail}.json`)
         .download();
 
       const contents = JSON.parse(jsonFile);
@@ -119,7 +122,7 @@ exports.onExecutePostLogin = async (event, api) => {
     const client = await auth.getIdTokenClient(event.secrets.TARGET_AUDIENCE);
 
     // some ID accounts come up with an onmicrosoft domain. This patches the email for the request
-    const request_email = event.user.email?.replace(
+    const request_email = userEmail?.replace(
       "iddoc.onmicrosoft.com",
       "idoc.idaho.gov",
     );
@@ -186,7 +189,7 @@ exports.onExecutePostLogin = async (event, api) => {
       event: "Failed Login",
       properties: {
         ...appMetadataForTracking,
-        email: user.email,
+        email: userEmail,
         email_verified: user.email_verified,
         identities: user.identities,
         last_ip: event.request.ip,
