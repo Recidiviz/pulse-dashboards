@@ -22,6 +22,7 @@ import { US_IA_CLIENTS } from "./clients/usIaClients";
 import { US_ID_CLIENTS } from "./clients/usIdClients";
 import { US_ME_CLIENTS } from "./clients/usMeClients";
 import { US_MI_CLIENTS } from "./clients/usMiClients";
+import { US_NC_CLIENTS } from "./clients/usNcClients";
 import { US_ND_CLIENTS } from "./clients/usNdClients";
 import { US_NE_CLIENTS } from "./clients/usNeClients";
 import { US_OR_CLIENTS } from "./clients/usOrClients";
@@ -39,6 +40,7 @@ const data: ClientFixture[] = [
   ...US_ID_CLIENTS,
   ...US_ME_CLIENTS,
   ...US_MI_CLIENTS,
+  ...US_NC_CLIENTS,
   ...US_ND_CLIENTS,
   ...US_NE_CLIENTS,
   ...US_OR_CLIENTS,

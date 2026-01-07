@@ -20,6 +20,7 @@ import {
   rawUsAzResidents,
   rawUsIdResidents,
   rawUsMaResidents,
+  rawUsNcResidents,
   rawUsNeResidents,
   rawUsTnResidents,
 } from "~datatypes";
@@ -43,6 +44,7 @@ const data: Array<ResidentFixture | RawResidentRecord> = [
   ...usMiResidents,
   ...usMoResidents,
   ...usNdResidents,
+  ...rawUsNcResidents,
   ...rawUsNeResidents,
   ...rawUsTnResidents,
 ];

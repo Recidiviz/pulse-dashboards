@@ -81,6 +81,19 @@ exports[`supervision staff schema for 'US_MI' 'OFFICER8' 1`] = `
 }
 `;
 
+exports[`supervision staff schema for 'US_NC' 'NCOFFICER1' 1`] = `
+{
+  "email": null,
+  "givenNames": "Nathalie",
+  "id": "NCOFFICER1",
+  "pseudonymizedId": "NCOFFICER1",
+  "recordType": "supervisionStaff",
+  "stateCode": "US_NC",
+  "supervisorExternalId": null,
+  "surname": "Giles",
+}
+`;
+
 exports[`supervision staff schema for 'US_ND' 'OFFICER3' 1`] = `
 {
   "district": "DISTRICT 1",

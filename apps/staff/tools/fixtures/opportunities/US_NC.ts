@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,29 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const stateCodes = {
-  US_AZ: "US_AZ",
-  US_AR: "US_AR",
-  US_CA: "US_CA",
-  US_IA: "US_IA",
-  US_ID: "US_ID",
-  US_ME: "US_ME",
-  US_MI: "US_MI",
-  US_MO: "US_MO",
-  US_NC: "US_NC",
-  US_ND: "US_ND",
-  US_NY: "US_NY",
-  US_NE: "US_NE",
-  US_OR: "US_OR",
-  US_PA: "US_PA",
-  US_TN: "US_TN",
-  US_TX: "US_TX",
-  US_UT: "US_UT",
-};
+import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
 
-export const csgStateCodes = [
-  stateCodes.US_MO,
-  stateCodes.US_PA,
-  stateCodes.US_MI,
-  stateCodes.US_TN,
-];
+export const mockApiOpportunityConfigurationResponse = {
+  enabledConfigs: {},
+} as const satisfies ApiOpportunityConfigurationResponse;
