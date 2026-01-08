@@ -137,7 +137,7 @@ export type FeatureVariant =
   | "insightsStaffUsage"
   | "supervisorHomepageReviewCard"
   | "insightsSupervisorOpportunityNotifications"
-  
+
   // SENTENCING
   | "offenseOverrideControls"
   | "protectiveFactors"
@@ -230,10 +230,11 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         insightsOnboarding: {},
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
         supervisionUnrestrictedSearch: {},
+        supervisorHomepageReviewCard: { activeTenants: ["US_IA"] },
         supervisorHomepageWorkflows: {},
         supervisorHomepageVitals: { activeTenants: ["US_ID", "US_ND"] },
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND"] },
-        insightsStaffUsage: { activeTenants: ["US_ID", "US_UT"] },
+        insightsStaffUsage: { activeTenants: ["US_ID", "US_UT", "US_IA"] },
         usAzFacilitySearch: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},
