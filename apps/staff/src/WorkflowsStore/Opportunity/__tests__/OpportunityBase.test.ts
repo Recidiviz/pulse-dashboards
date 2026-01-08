@@ -1611,7 +1611,7 @@ describe("OpportunityBase notifications", () => {
       body: "BETTY RUBBLE may be eligible for the Limited Supervision Unit",
       cta: undefined,
       link: "/workflows/clients/p001",
-      pages: ["caseload", "profile", "supervisionSupervisor"],
+      pages: ["profile", "supervisionSupervisor"],
       title: "Eligible for LSU",
       type: "alert",
     };

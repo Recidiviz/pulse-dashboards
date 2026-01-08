@@ -38,6 +38,7 @@ import { Spacer } from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination
 import { InsightsBreadcrumbs } from "./InsightsBreadcrumbs";
 import { InsightsOutcomesModule } from "./InsightsOutcomesModule";
 import { InsightsSupervisorOpportunityDetailSection } from "./InsightsSupervisorOpportunityDetailSection";
+import { InsightsSupervisorOpportunityNotificationsSection } from "./InsightsSupervisorOpportunityNotificationsSection";
 import { InsightsSupervisorVitals } from "./InsightsSupervisorVitals";
 
 const OfficersTooltipHeading = styled.div`
@@ -181,6 +182,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         />
       }
     >
+      <InsightsSupervisorOpportunityNotificationsSection />
       {isUsageLoginActivityModuleDisplayed({
         loginModulePosition: "TOP",
       }) && <InsightsManagedUsageCard />}

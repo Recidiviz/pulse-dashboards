@@ -123,6 +123,10 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     });
   }
 
+  get supervisorIsCurrentUser(): boolean {
+    return this.supervisionStore.supervisorIsCurrentUser;
+  }
+
   /**
    * Provides information about the currently selected supervisor.
    * @returns The supervisor record, or `undefined` if not yet fetched.
@@ -135,7 +139,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     const { insightsSupervisorOpportunityNotifications } =
       this.supervisionStore.insightsStore.rootStore.workflowsStore
         .featureVariants;
-    return !!insightsSupervisorOpportunityNotifications;
+    return !!insightsSupervisorOpportunityNotifications && this.isWorkflowsEnabled;
   }
 
   /**

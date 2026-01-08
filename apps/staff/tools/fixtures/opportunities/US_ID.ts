@@ -76,7 +76,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           id: "1",
           type: "alert",
-          pages: ["caseload", "profile", "supervisionSupervisor"],
+          pages: ["profile", "supervisionSupervisor"],
           body: "{{opportunity.person.displayName}} may be eligible for the Limited Supervision Unit",
           title: "Eligible for LSU",
         },
