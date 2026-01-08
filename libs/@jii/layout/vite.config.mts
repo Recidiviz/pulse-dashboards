@@ -15,14 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: "../../../node_modules/.vite/libs/@jii/common-ui",
+  cacheDir: "../../../node_modules/.vite/libs/@jii/layout",
   plugins: [
     react({
       babel: {
@@ -30,7 +29,6 @@ export default defineConfig(() => ({
       },
     }),
     nxViteTsPaths(),
-    nxCopyAssetsPlugin(["*.md"]),
   ],
   test: {
     mockReset: true,
@@ -38,15 +36,14 @@ export default defineConfig(() => ({
     unstubGlobals: true,
     globalSetup: ["src/setupTestsGlobal.ts"],
     setupFiles: ["src/setupTests.ts"],
-    name: "@jii/common-ui",
+    name: "@jii/layout",
     globals: true,
     environment: "jsdom",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
     coverage: {
-      reportsDirectory: "../../../coverage/libs/@jii/common-ui",
+      reportsDirectory: "../../../coverage/libs/@jii/layout",
       provider: "v8" as const,
     },
-    passWithNoTests: true,
   },
 }));

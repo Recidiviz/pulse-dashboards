@@ -15,14 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
-import { usMaEgtConfig } from "./egtConfig";
-
-export const usMaResidentsConfig: ResidentsConfig = {
-  home,
-  egt: usMaEgtConfig,
-  translation: {
-    additionalLanguages: ["es"],
-  },
+export const setup = () => {
+  // prevents silly timezone issues when testing dates
+  process.env.TZ = "UTC";
 };

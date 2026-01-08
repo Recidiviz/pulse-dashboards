@@ -34,7 +34,6 @@ export * from "./Header/constants";
 export * from "./Header/HeaderBarContainer";
 export * from "./HistoryBackButton";
 export * from "./HomepageSectionHeading";
-export * from "./InfoPage/InfoPage";
 export * from "./NotFound/NotFound";
 export * from "./PageLinksFooter/PageLinksFooter";
 export * from "./Redirect/Redirect";

@@ -25,6 +25,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { styles } from "~@jii/common-ui";
+import { useCommonTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
 const Wrapper = styled.section`
@@ -41,6 +42,8 @@ const Wrapper = styled.section`
 
 export const TableOfContents: FC<{ body: string }> = observer(
   function TableOfContents({ body }) {
+    const { t } = useCommonTranslations();
+
     // this should work, based on inspection of the library output,
     // but it's not typesafe, so we handle errors invisibly here
     // (better for UX if this just fails to render rather than displaying an error)
@@ -56,7 +59,7 @@ export const TableOfContents: FC<{ body: string }> = observer(
 
       return (
         <Wrapper>
-          <h2>On this page</h2>
+          <h2>{t(($) => $.infoPage.tocHeading)}</h2>
           <ol>
             {entries.map((heading) => (
               <li key={heading.props.id}>

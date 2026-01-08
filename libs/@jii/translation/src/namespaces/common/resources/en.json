@@ -8,7 +8,10 @@
   },
   "errorPage": {
     "heading": "Something went wrong",
-    "message": "An error occurred that prevented this page from loading. Please try\n        reloading the page, or [return to your homepage](/)."
+    "message": "An error occurred that prevented this page from loading. Please try reloading the page, or [return to your homepage](/)."
   },
-  "skipLink": "Skip to main content"
+  "skipLink": "Skip to main content",
+  "infoPage": {
+    "tocHeading": "On this page"
+  }
 }

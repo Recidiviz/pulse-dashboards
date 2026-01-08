@@ -10,5 +10,8 @@
     "heading": "[common]errorPage.heading",
     "message": "[common]errorPage.message"
   },
-  "skipLink": "[common]skipLink"
+  "skipLink": "[common]skipLink",
+  "infoPage": {
+    "tocHeading": "[common]infoPage.tocHeading"
+  }
 }

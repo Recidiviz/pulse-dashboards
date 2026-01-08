@@ -1,7 +1,7 @@
 {
   "tags": {
     "rts": "RTS",
-    "maxRelease": "MAX"
+    "maxRelease": "MÁX"
   },
   "lastUpdated": "Esta información se actualizó por última vez en {{lastUpdatedDate, formatFullDate}}. Se actualiza una vez al mes.",
   "creditRatings": {
@@ -11,23 +11,23 @@
     "none": "Desconocido"
   },
   "home": {
-    "pageTitle": "Descripción general del tiempo ganado",
+    "pageTitle": "Descripción general de tiempo ganado",
     "dates": {
       "sectionTitle": "Fechas importantes",
       "rts": {
-        "label": "Fecha de lanzamiento a supervisión",
-        "value": "{{rtsDate, formatFullDate(fallbackText: 'No RTS date')}}",
-        "summary": "La fecha RTS es una supervisión de lanzamiento a libertad condicional sin la necesidad de un\n          audiencia de libertad condicional, según los créditos de finalización obtenidos a través de la programación\n          y educación de conformidad con M.G.L.C.127, §129d.",
-        "moreInfoLink": "Obtenga más información sobre RTS"
+        "label": "Fecha de liberación bajo supervisión (fecha RTS, Release to Supervision)",
+        "value": "{{rtsDate, formatFullDate(fallbackText: 'Sin fecha RTS')}}",
+        "summary": "La fecha RTS es una liberación a supervisión sin necesidad de una audiencia de libertad condicional, basada en los créditos por finalización obtenidos a través de la programación y la educación, conforme a M.G.L. c. 127, §129D.",
+        "moreInfoLink": "Obtenga más información sobre la fecha RTS"
       },
       "maxRelease": {
-        "label": "Fecha máxima de liberación / envoltura",
-        "value": "{{adjustedMaxReleaseDate, formatFullDate(fallbackText: 'No MAX date')}}",
-        "summary_one": "Has ganado {{count, number}} día de su fecha máxima de lanzamiento / envoltura.",
-        "summary_other": "Has ganado {{count, number}} días libres de su fecha máxima de lanzamiento / envoltura.",
+        "label": "Fecha máxima de liberación (MÁX)",
+        "value": "{{adjustedMaxReleaseDate, formatFullDate(fallbackText: 'Sin fecha MÁX')}}",
+        "summary_one": "Has ganado {{count, number}} días menos en su fecha máxima de liberación.",
+        "summary_other": "Has ganado {{count, number}} días menos en su fecha máxima de liberación.",
         "breakdown": {
           "original": {
-            "label": "Fecha original MAX",
+            "label": "Fecha original MÁX",
             "value": "{{ originalMaxReleaseDate, formatFullDate}}"
           },
           "change": {
@@ -36,23 +36,23 @@
             "value_other": "-{{count, number}} días"
           },
           "adjusted": {
-            "label": "Fecha de MAX ajustada",
+            "label": "Fecha de MÁX ajustada",
             "value": "{{ adjustedMaxReleaseDate, formatFullDate}}"
           }
         }
       },
       "parole": {
-        "label": "Fecha de elegibilidad de libertad condicional",
+        "label": "Fecha de elegibilidad de liberación condicional\n (fecha PE, Parole Eligibility)",
         "tag": "PE",
-        "summary": "Las preguntas sobre el cálculo de las fechas de elegibilidad de libertad condicional deben dirigirse al oficial de libertad condicional institucional."
+        "summary": "Las preguntas sobre el cálculo de las fechas de liberación condicional deben dirigirse al oficial de libertad condicional institucional (IPO, Institutional Parole Officer)."
       }
     },
     "creditHistory": {
       "heading": "Tiempo que has ganado recientemente",
       "legend": {
-        "EARNEDGoodTime": "Ganado buen tiempo",
-        "BOOST": "Impulso",
-        "COMPLETION": "Créditos de finalización"
+        "EARNEDGoodTime": "Reducción de pena por buen comportamiento (EGT, Earned Good Time)",
+        "BOOST": "Tiempo adicional",
+        "COMPLETION": "Créditos por finalización"
       },
       "creditLabel_one": "{{count, number}} día",
       "creditLabel_other": "{{count, number}} días",
@@ -62,44 +62,44 @@
     "monthlyReport": {
       "sectionTitle": "Informes mensuales recientes",
       "individualReportLink": "Ver {{reportDate, datetime(month: 'long')}} Informe",
-      "egtLabel": "Ganado buen tiempo",
-      "boostsLabel": "Impulso",
-      "completionLabel": "Créditos de finalización",
+      "egtLabel": "Reducción de pena por buen comportamiento (EGT, Earned Good Time)",
+      "boostsLabel": "Tiempo adicional",
+      "completionLabel": "Créditos por finalización",
       "creditsValue_one": "{{count, number}} día",
       "creditsValue_other": "{{count, number}} días"
     },
     "totalTimeEarned": {
       "sectionTitle": "Tiempo total que has ganado",
-      "egtBoostsLabel": "Ganado bien + aumenta",
-      "completionLabel": "Créditos de finalización",
+      "egtBoostsLabel": "Reducción de pena por buen comportamiento (EGT) + Tiempo Adicional",
+      "completionLabel": "Créditos por finalización",
       "creditsValue_one": "{{count, number}} día",
       "creditsValue_other": "{{count, number}} días",
       "learnMoreLink": "Obtenga más información sobre el tiempo ganado"
     },
     "emptyState": {
-      "heading": "No ha realizado ningún programa o trabajo que le dé un buen momento.",
-      "body": "Cuando comience a hacer programas o a trabajar, podrá ver más información en esta aplicación, que incluye:\n\n-Fechas importantes, como su fecha de lanzamiento a Supervisión y fecha máxima de lanzamiento (si las tiene)\n- ¿Cuánto tiempo ganado ganas cada mes?\n- Aumentos y créditos de finalización que gane para los programas de acabado\n- Cómo su tiempo ganado afecta sus fechas importantes",
+      "heading": "No has realizado ningún programa o trabajo que le dé una reducción de pena por buen comportamiento (EGT).",
+      "body": "Cuando comience a hacer programas o a trabajar, podrá ver más información en esta aplicación, que incluye:\n\n- Fechas importantes, como su fecha de liberación bajo supervisión y fecha máxima de liberación (si las tiene)\n- ¿Cuánta reducción de pena por buen comportamiento ganas cada mes?\n- Tiempo adicional y créditos por finalización que gane por completar programas\n- Como la reducción de pena por buen comportamiento afecta tus fechas importantes",
       "moreInfoLink": "Obtenga más información sobre el tiempo ganado"
     }
   },
   "infoPages": {
     "rts": {
-      "heading": "Fecha de lanzamiento a supervisión",
-      "body": "La Fecha de la Lanzamiento a la Supervisión (RTS) es la fecha que ha sido determinada por las deducciones del plazo máximo de la sentencia de un prisionero por las deducciones de buena conducta bajo la Sección 129C, la subsección (a) de la Sección 129D y una deducción adicional para cualquier Crédito de finalización del programa obtenido bajo la subsección (c) de la Sección 129D; Sin embargo, siempre que dicha fecha no sea anterior a la fecha que se ha determinado al reducir el término máximo impuesto de un prisionero en un 35%.\n\nLa fecha de RTS es un lanzamiento para la supervisión de libertad condicional sin la necesidad de una audiencia de libertad condicional, basada en los créditos de finalización obtenidos a través de la programación y la educación de conformidad con M.G.L.C.127, §129d. La fecha de RTS se crea de conformidad con M.G.L.C.127, §130b según la adjudicación de 30 días de créditos de finalización. La fecha de RTS se basa en la fecha máxima menos EGT, hora del campamento, tiempo de aumento y créditos de finalización. La fecha de RTS no puede reducirse en más del 35% por el número total de deducciones de la oración. Tenga en cuenta que solo la mitad de este 35% o 17.5% puede ser créditos de finalización."
+      "heading": "Fecha de liberación bajo supervisión",
+      "body": "La fecha de liberación bajo supervisión (fecha RTS, Release to Supervision) es la fecha que se ha determinado mediante deducciones del plazo máximo de la sentencia de un preso por deducciones por buena conducta según la sección 129C, el inciso (a) de la sección 129D, y una deducción adicional por cualquier crédito de finalización de programa obtenido según el inciso (c) de la sección 129D; sin embargo, dicha fecha no será anterior a la fecha que se ha determinado reduciendo el plazo máximo de sentencia impuesto a un preso en un 35 %.\n\nEn la fecha RTS se otorga la libertad bajo supervisión sin necesidad de una audiencia de libertad condicional, en función de los créditos obtenidos mediante programas y educación, de conformidad con M.G.L.c.127, §129D. La fecha RTS se establece de conformidad con M.G.L.c.127, §130B al otorgarse 30 días de créditos por finalización del programa. La fecha RTS se basa en la fecha máxima menos la EGT, el tiempo en campamentos, el tiempo adicional y los créditos por finalización del programa. La fecha RTS no puede reducirse en más del 35 % por el número total de deducciones de la sentencia. Cabe destacar que solo la mitad de este 35 %, es decir, el 17.5 %, puede corresponder a créditos por finalización del programa."
     },
     "credits": {
-      "heading": "Ganó el buen tiempo, aumentos y créditos de finalización",
-      "body": "## ganó el buen tiempo (EGT)\n\nGanado buen tiempo (EGT) son créditos contra oraciones otorgadas de conformidad con M.G.L.C.127, §129d. Las personas encarceladas pueden recibir hasta 7.5 días de buen tiempo ganado por programa y hasta que no superen los 15 días por mes. El tiempo total ganado no puede exceder el 35% de la oración original de un individuo. Las oraciones de la Cámara de Corrección pueden otorgarse hasta 10 días por mes.\n\n<PolicyCallout text=\"para leer la política de buen tiempo ganada por completo, vaya a la biblioteca de leyes y busque **103 CMR 411.00: deducción de la política de oraciones.**\" />\n\n## aumenta\n\nEl tiempo de impulso se gana bien en el monto de diez (10) días otorgados a un recluso, de conformidad con M.G.L.C.127, §129d, al completar exitosamente una actividad seis (6) meses o más de duración, incluida la demostración de competencia en el tema, que ha sido aprobado por el Comisionado.\n\n## Créditos de finalización\n\nLos créditos de finalización son créditos de que el Comisionado puede otorgar hasta 80 días de créditos de finalización a una persona encarcelada que sirve a una sentencia estatal de Massachusetts para completar exitosamente un programa o actividad, según lo designado por el Comisionado, que se otorgará en el mes durante el cual se alcanza el programa o actividad designada; siempre que en ningún caso el número agregado de créditos de finalización otorgados a un individuo exceda un máximo de 17.5% del plazo máximo impuesto de tal individuo de prisión.\n\n## Elegibilidad para deducciones\n\nCada recluso estatal puede recibir una deducción de su sentencia de acuerdo con 103 CMR 411.00 a menos que la ley bajo la cual se cometiera un recluso específicamente prohíbe la adjudicación de deducciones. Se puede otorgar a un recluso que sirva a una cadena perpetua, tales deducciones, excepto que tales deducciones no entrarán en vigencia en el cálculo de la sentencia a menos que la sentencia se conmuta o revise de otra manera a un plazo de años."
+      "heading": "Reducción de pena por buen comportamiento, Tiempo adicional, y Créditos por finalización",
+      "body": "## Reducción de pena por buen comportamiento (EGT, Earned Good Time)\n\nLa reducción de pena por buen comportamiento (EGT, Earned Good Time) se otorga conforme al Capítulo 127, Sección 129D de las Leyes Generales de Massachusetts (M.G.L.c.127, §129D). Las personas privadas de libertad pueden recibir hasta 7.5 días de reducción de pena por buen comportamiento por programa y hasta un máximo de 15 días por mes. El total de reducción de pena no puede exceder el 35 % de la condena original de la persona. Las condenas en centros penitenciarios pueden recibir hasta 10 días de reducción de pena por mes.\n\n<PolicyCallout text=\"Para leer la política de reducción de pena por buen comportamiento completa, vaya a la biblioteca de leyes y busque **103 CMR 411.00: Deducción de la pena.**\" />\n\n## Tiempo adicional\n\nEl tiempo adicional es tiempo de reducción de pena por buen comportamiento ganado por un monto de diez (10) días otorgados a un individuo encarcelado, de conformidad con M.G.L.c.127, §129D, al completar con éxito una actividad de seis (6) meses o más de duración, incluyendo la demostración de competencia en la materia, que haya sido aprobada por el comisionado.\n\n## Créditos por finalización\n\nLos créditos por finalización son créditos que el comisionado puede otorgar, hasta 80 días de créditos de finalización, a una persona encarcelada que cumple una sentencia estatal de Massachusetts por la finalización exitosa de un programa o actividad, según lo designe el comisionado, para ser otorgados en el mes durante el cual se logre la finalización exitosa del programa o actividad designado; siempre que, sin embargo, en ningún caso el número total de créditos por finalización otorgados a una persona exceda un máximo del 17.5 % del plazo máximo de prisión impuesto a dicha persona.\n\n## Elegibilidad para las deducciones\n\nTodo recluso estatal podrá recibir una reducción de su condena de conformidad con el artículo 411.00 del título 103 del Reglamento de la Corte Suprema de California (103 CMR 411.00), a menos que la ley bajo la cual se encuentra recluido prohíba específicamente la concesión de reducciones. Un recluso que cumple cadena perpetua podrá recibir dichas reducciones, si bien estas no se aplicarán al cálculo de la condena a menos que esta sea conmutada o modificada a una pena de prisión."
     }
   },
-  "homeLink": "Volver a casa",
+  "homeLink": "Volver al inicio",
   "topLinkText": "Volver arriba",
   "definitionsLinksHeading": "Otras definiciones",
   "individualMonthlyReport": {
     "pageTitle": "Informe mensual",
     "browserPageTitle": "{{reportStartDate, formatMonthYear}} Informe",
     "credits": {
-      "sectionTitle": "Participación de tiempo y programa ganado en {{reportStartDate, datetime(month: long)}}",
+      "sectionTitle": "Tiempo ganado y participación en programas en {{reportStartDate, datetime(month: long)}}",
       "table": {
         "columnHeaders": {
           "program": "Programa"
@@ -109,29 +109,29 @@
         },
         "valueCell": "{{value, number}}"
       },
-      "egtLabel": "Ganado buen tiempo",
-      "boostsLabel": "Impulso",
-      "completionLabel": "Créditos de finalización",
+      "egtLabel": "Reducción de pena por buen comportamiento",
+      "boostsLabel": "Tiempo adicional",
+      "completionLabel": "Créditos por finalización",
       "creditsValue_one": "{{count, number}} día",
       "creditsValue_other": "{{count, number}} días"
     },
     "achievements": {
       "heading": "Logros",
       "maxEarnedTime": {
-        "heading": "Ganado buen tiempo",
-        "body": "Ganaste el máximo posible bien ganado este mes"
+        "heading": "Reducción de pena por buen comportamiento",
+        "body": "Ganaste la reducción de pena por buen comportamiento máxima posible este mes."
       }
     },
     "selectOptionLabel": "{{reportStartDate, formatMonthYear}}"
   },
-  "disclaimer": "## Descargo de responsabilidad\n\nLa información proporcionada sobre esta solicitud es solo para fines generales y complementarios y no está destinada a ser sustituida por el registro oficial de esta información. Mientras que el Departamento de Corrección de Massachusetts (DOC) (en asociación con Rididiviz), se esfuerza por garantizar la precisión de este contenido, no hay garantía de integridad o oportunidad, y DOC no es responsable de errores, omisiones, retrasos o interrupciones en dicha información.\n\nLos usuarios siempre deben confiar en los registros oficiales que el personal DOC le proporciona directamente.  Dichos registros oficiales incluyen, pero no se limitan, a una deducción de la oración (DFS) informe de acuerdo con 103 CMR 411 Deducción de la oración que también establece el proceso y los marcos de tiempo requeridos para disputar esta información.",
+  "disclaimer": "## Descargo de responsabilidad\n\nLa información brindada en esta solicitud es solo para fines generales y complementarios, y no pretende sustituir el registro oficial de esta información. Si bien el Departamento Correccional de Massachusetts (DOC) (en colaboración con Recidiviz) se esfuerza por garantizar la exactitud de este contenido, no hay garantía de su integridad ni de su actualidad, y el DOC no se hace responsable de los errores, omisiones, retrasos o interrupciones en dicha información. \n\nLos usuarios deben basarse siempre en los registros oficiales que el personal del DOC les brinda directamente. Dichos registros oficiales incluyen, pero no se limitan a, un Informe de deducción de la pena (DFS) de conformidad con 103 CMR 411 Deducción de la pena, que también establece el proceso y los plazos necesarios para impugnar esta información.  \n",
   "unknownUser": {
     "heading": "Error de inicio de sesion",
-    "body": "Es posible que esté viendo esta página por una de estas razones:\n\n**Llegada reciente** — Si entraste en una instalación MADOC hace menos de un mes (ya sea por un nuevo cargo o una violación), **Su información puede no estar en el portal todavía**. Las cuentas de tabletas para esta aplicación se actualizan el 12 del próximo mes.\n\n**Sentencia federal o interestatal** — Si fue sentenciado en una jurisdicción que no sea Massachusetts, pero actualmente se encuentra en un centro de corrección MA de acuerdo con el compacto federal e interestatal, **Su caso no está incluido en este portal**. En cambio, la autoridad estatal o federal de envío calcula el buen tiempo que le proporcionará esta información de acuerdo con sus políticas y procedimientos.\n\nSi estas razones no se aplican a usted, puede enviar un boleto tocando (?) En la esquina inferior izquierda de la pantalla."
+    "body": "Es posible que esté viendo esta página por una de estas razones:\n\n**Llegada reciente** — Si entraste en una instalación MADOC hace menos de un mes (ya sea por un nuevo cargo o una violación), **Su información puede no estar en el portal todavía**. Las cuentas de tabletas para esta aplicación se actualizan el 12 del próximo mes.\n\n**Sentencia federal o interestatal** — Si fue sentenciado en una jurisdicción que no sea Massachusetts, pero actualmente se encuentra en un centro de corrección MA de acuerdo con el compacto federal e interestatal, **Su caso no está incluido en este portal**. En cambio, la autoridad estatal o federal de envío calcula la reducción de pena por buen comportamiento (EGT, Earned Good Time) que le proporcionará esta información de acuerdo con sus políticas y procedimientos.\n\nSi estas razones no se aplican a usted, puede enviar una pregunta en la esquina inferior izquierda de la pantalla."
   },
   "onboarding": {
-    "heading": "Rastree su buen momento ganado",
-    "body": "Esta aplicación lo ayuda a rastrear el tiempo que ha ganado de los programas y el trabajo. También muestra cómo su tiempo ganado cambia fechas importantes, como su fecha máxima de lanzamiento y fechas de lanzamiento a supervisión (si las tiene).\n\nLa información se actualiza una vez al mes. Solo verá información después de comenzar a ganar tiempo.",
-    "continueLink": "Mira tu tiempo ganado"
+    "heading": "Rastree su reducción de pena por buen comportamiento (EGT, Earned Good Time)",
+    "body": "Esta aplicación te ayuda a seguir el tiempo que has ganado por programas y trabajo. También te muestra cómo esa reducción de pena cambia tus fechas importantes, como tu fecha máxima de liberación y tu fecha de liberación bajo supervisión (RTS), si las tienes.\n\nLa información se actualiza una vez al mes. Solo verás información después de empezar a ganar tiempo.",
+    "continueLink": "Mira su tiempo ganado"
   }
 }

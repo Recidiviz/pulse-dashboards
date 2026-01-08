@@ -15,18 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export default {
-  nav: {
-    homeLink: "Home",
-  },
-  unknownUser: {
-    heading: "Login failed",
-    body: "There was a problem authorizing your account: we don't have any data that matches your ID.",
-  },
-  errorPage: {
-    heading: "Something went wrong",
-    message: `An error occurred that prevented this page from loading. Please try
-        reloading the page, or [return to your homepage](/).`,
-  },
-  skipLink: "Skip to main content",
-};
+import "@testing-library/jest-dom";
+import "jest-styled-components";
+
+import { toHaveNoViolations } from "jest-axe";
+import jestExtendedMatchers from "jest-extended";
+
+expect.extend(jestExtendedMatchers);
+
+expect.extend(toHaveNoViolations);

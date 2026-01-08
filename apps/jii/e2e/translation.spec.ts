@@ -26,7 +26,7 @@ import { clearAllLoaders } from "./utils";
   {
     state: "US_MA",
     slug: "mass",
-    expectSpanishEnabled: false,
+    expectSpanishEnabled: true,
   },
   {
     state: "US_TN",

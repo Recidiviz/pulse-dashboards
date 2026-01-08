@@ -17,8 +17,8 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { BackLink, InfoPage, PageLinksFooter } from "~@jii/common-ui";
-import { ScreenFillingWrapper } from "~@jii/layout";
+import { BackLink, PageLinksFooter } from "~@jii/common-ui";
+import { InfoPage, ScreenFillingWrapper } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 

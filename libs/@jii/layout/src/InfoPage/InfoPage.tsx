@@ -19,8 +19,8 @@ import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
 import { FC } from "react";
 
 import { CopyProps, CopyWrapper } from "~@jii/common-ui";
+import { usePageTitle } from "~@jii/common-ui";
 
-import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { TableOfContents } from "./TableOfContents";
 
 /**

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { InfoPage } from "~@jii/common-ui";
+import { InfoPage } from "~@jii/layout";
 import { useUsMaTranslations } from "~@jii/translation";
 
 export function UsMaUnknownUserError() {

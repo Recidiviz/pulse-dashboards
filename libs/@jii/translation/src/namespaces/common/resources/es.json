@@ -1,1 +1,17 @@
-{}
+{
+  "nav": {
+    "homeLink": "Inicio"
+  },
+  "unknownUser": {
+    "heading": "Error al iniciar sesión",
+    "body": "Hubo un problema al autorizar su cuenta: no tenemos datos que coincidan con su identificación."
+  },
+  "errorPage": {
+    "heading": "Algo salió mal",
+    "message": "Ocurrió un error que impidió cargar esta página. Por favor, intente volver a cargarla o [regrese a la página de inicio](/)."
+  },
+  "skipLink": "Saltar al contenido principal",
+  "infoPage": {
+    "tocHeading": "En esta página"
+  }
+}
