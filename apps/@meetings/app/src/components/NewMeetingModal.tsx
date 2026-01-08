@@ -35,15 +35,15 @@ type NewMeetingModalProps = {
 
 const NewMeetingModal = ({ meetingId, onClose }: NewMeetingModalProps) => {
   const route = useRoute<NewMeetingRouteProp>();
-  const client = {
-    ...route.params.client,
+  const person = {
+    ...route.params.person,
     // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.client.personId),
+    personId: BigInt(route.params.person.personId),
   };
 
   const { status, note, setNote, recorderState, totalDurationMs, actions } =
     useMeetingRecording({
-      client,
+      person,
       meetingId,
       onComplete: onClose,
     });
@@ -104,10 +104,10 @@ const NewMeetingIntro = ({ onClose, startRecording }: NewMeetingIntroProps) => {
             New Meeting
           </Text>
           <Text className="font-inter text-base font-medium text-primary">
-            {route.params.client.fullName}{" "}
+            {route.params.person.fullName}{" "}
             <Text className="text-base font-normal text-[#355362D9]">
-              {route.params.client.supervision} • ID:{" "}
-              {route.params.client.personId}
+              {route.params.person.primaryMetadata} • ID:{" "}
+              {route.params.person.personId}
             </Text>
           </Text>
         </View>
@@ -233,10 +233,10 @@ const NewMeetingProgress = ({
               New Meeting
             </Text>
             <Text className="font-inter text-base font-medium text-primary">
-              {route.params.client.fullName}{" "}
+              {route.params.person.fullName}{" "}
               <Text className="text-base font-normal text-[#355362D9]">
-                {route.params.client.supervision} • ID:{" "}
-                {route.params.client.personId}
+                {route.params.person.primaryMetadata} • ID:{" "}
+                {route.params.person.personId}
               </Text>
             </Text>
           </View>
@@ -413,7 +413,7 @@ const NewMeetingProgress = ({
           </Text>
           <Text className="mb-5 w-[350px] font-inter text-[#355362D9]">
             You’re about to finish the meeting with{" "}
-            <Text className="font-bold">{route.params.client.fullName}</Text>{" "}
+            <Text className="font-bold">{route.params.person.fullName}</Text>{" "}
             and save the notes for processing.
           </Text>
           <View className="flex-row gap-2">
@@ -449,7 +449,7 @@ const NewMeetingProgress = ({
           </Text>
           <Text className="mb-5 w-[350px] font-inter text-[#355362D9]">
             You’re about to discard the meeting with{" "}
-            <Text className="font-bold">{route.params.client.fullName}.</Text>{" "}
+            <Text className="font-bold">{route.params.person.fullName}.</Text>{" "}
             Notes and transcript won't be saved.
           </Text>
           <View className="flex-row gap-2">

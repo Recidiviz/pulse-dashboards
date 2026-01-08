@@ -53,7 +53,7 @@ export const SnackbarProvider = ({ children }: Props) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isShowing, setIsShowing] = useState(false);
   const opacity = useSharedValue(0);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const hideSnackbar = useCallback(() => {
     opacity.value = withTiming(0, { duration: 300 });

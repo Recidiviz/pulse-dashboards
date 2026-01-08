@@ -7,18 +7,7 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "strict": true,
-    "declaration": true,
-    "composite": true
+    "strict": true
   },
-  "files": [],
-  "include": ["nativewind-env.d.ts"],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ]
+  "include": ["nativewind-env.d.ts", "src/**/*", "**/*.ts", "**/*.tsx"]
 }

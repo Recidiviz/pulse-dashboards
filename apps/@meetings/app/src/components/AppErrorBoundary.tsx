@@ -78,7 +78,6 @@ const AppErrorBoundary: React.FC<AppErrorBoundaryProps> = ({ children }) => {
     );
   }
   return (
-    // @ts-expect-error Third-party type issue
     <ErrorBoundary
       onError={(error) => Sentry.captureException(error)}
       FallbackComponent={MyErrorFallback}

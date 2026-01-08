@@ -189,7 +189,9 @@ const MeetingDesktop = ({ meetingDetails }: Props) => {
           </View>
 
           <View className="gap-3 px-10 py-6">
-            <DraftCaseNote notes={meetingDetails?.notes || undefined} />
+            <DraftCaseNote
+              notes={meetingDetails?.userNotepadNotes || undefined}
+            />
           </View>
         </View>
 
@@ -219,7 +221,7 @@ const MeetingDesktop = ({ meetingDetails }: Props) => {
 
           <View className="mx-auto w-full max-w-[960px] flex-1">
             {activeTab === Tab.Notes && (
-              <MeetingNotesTab notes={meetingDetails?.notes} />
+              <MeetingNotesTab notes={meetingDetails?.userNotepadNotes} />
             )}
             {activeTab === Tab.Transcription && (
               <MeetingTranscriptionTab

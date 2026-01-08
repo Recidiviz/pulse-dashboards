@@ -31,8 +31,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Icons from "../../assets/icons";
 import { LearnMoreModal, LearnMoreSheet } from "../components/LearnMore";
 import PrimaryButton from "../components/PrimaryButton";
-
-const OFFLINE_MODE = process.env["EXPO_PUBLIC_OFFLINE_MODE"] === "true";
+import env from "../env";
 
 const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
   const { authorize } = useAuth0();
@@ -40,8 +39,7 @@ const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
   const [learnMoreModalVisible, setLearnMoreModalVisible] = useState(false);
 
   const handleContinue = async () => {
-    const audience = process.env["EXPO_PUBLIC_AUTH0_AUDIENCE"];
-    await authorize({ audience });
+    await authorize({ audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE });
   };
 
   const handleSkipAuth = () => {
@@ -81,7 +79,7 @@ const LoginScreen = ({ onSkipAuth }: { onSkipAuth?: () => void }) => {
           <PrimaryButton label="Continue" onPress={handleContinue} />
 
           {/* Skip Auth Link for Offline Mode */}
-          {OFFLINE_MODE && (
+          {env.EXPO_PUBLIC_OFFLINE_MODE && (
             <TouchableOpacity onPress={handleSkipAuth} className="mt-4">
               <Text className="text-center font-inter text-sm font-medium text-blue-600">
                 Skip Authentication (Offline Mode)

@@ -2,11 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
-    "types": ["node"],
-    "composite": true,
-    "noEmit": false
+    "types": ["node"]
   },
-  "files": ["../../../node_modules/@nx/expo/typings/svg.d.ts"],
+  "files": [
+    "../../../node_modules/@nx/expo/typings/svg.d.ts",
+    "images.d.ts"
+  ],
   "exclude": [
     "**/*.test.ts",
     "**/*.spec.ts",
@@ -28,6 +29,7 @@
     "**/*.js",
     "**/*.jsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
   ]
 }

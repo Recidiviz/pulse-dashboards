@@ -6,10 +6,12 @@
     "moduleResolution": "node10",
     "jsx": "react-jsx",
     "types": ["jest", "node"],
-    "composite": true,
     "noEmit": false
   },
-  "files": ["src/tests/setup/test-setup.ts"],
+  "files": [
+    "src/tests/setup/test-setup.ts",
+    "images.d.ts"
+  ],
   "include": [
     "jest.config.ts",
     "src/tests/**/*.test.ts",
@@ -25,6 +27,7 @@
     "src/tests/**/*.tsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "jest.resolver.js"
+    "jest.resolver.js",
+    "nativewind-env.d.ts"
   ]
 }

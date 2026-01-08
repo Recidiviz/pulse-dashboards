@@ -25,6 +25,7 @@ import { useAuth0 } from "react-native-auth0";
 import superjson from "superjson";
 
 import AppUpdateModal from "../components/AppUpdateModal";
+import env from "../env";
 import LoginScreen from "../screens/LoginScreen";
 import { publicTrpc, trpc } from "../trpc/client";
 import DrawerNavigator from "./DrawerNavigator";
@@ -33,8 +34,7 @@ const Drawer = createDrawerNavigator();
 const queryClient = new QueryClient();
 const publicQueryClient = new QueryClient();
 
-const trpcUrl =
-  process.env["EXPO_PUBLIC_SERVER_URL"] ?? "http://localhost:3002";
+const trpcUrl = env.EXPO_PUBLIC_SERVER_URL;
 
 const AppNavigator = () => {
   const { user, isLoading, getCredentials } = useAuth0();
@@ -58,7 +58,7 @@ const AppNavigator = () => {
               };
             }
 
-            const audience = process.env["EXPO_PUBLIC_AUTH0_AUDIENCE"];
+            const audience = env.EXPO_PUBLIC_AUTH0_AUDIENCE;
             const creds = await getCredentials(undefined, undefined, {
               audience,
             });

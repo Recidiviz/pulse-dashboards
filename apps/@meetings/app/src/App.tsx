@@ -27,10 +27,11 @@ import config from "~@meetings/app/auth0-config";
 import AppErrorBoundary from "./components/AppErrorBoundary";
 import { SnackbarProvider } from "./components/Snackbar";
 import { RecordingProvider } from "./context/RecordingContext";
+import env from "./env";
 import AppNavigator from "./navigation/AppNavigator";
 
 Sentry.init({
-  dsn: process.env["EXPO_PUBLIC_SENTRY_DSN"],
+  dsn: env.EXPO_PUBLIC_SENTRY_DSN,
   tracesSampleRate: 0,
   profilesSampleRate: 0,
   // Adds more context data to events (IP address, cookies, user, etc.)

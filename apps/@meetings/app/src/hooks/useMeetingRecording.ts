@@ -186,7 +186,7 @@ export const useMeetingRecording = ({
     [refetch, accumulatedDurationMs, recorderState.durationMillis],
   );
 
-  const resolveNotes = useCallback(async (): Promise<string> => {
+  const resolveUserNotepadNotes = useCallback(async (): Promise<string> => {
     if (getNotes) {
       return getNotes();
     }
@@ -199,10 +199,10 @@ export const useMeetingRecording = ({
     // Update notes after pausing
     if (status === "recording") {
       try {
-        const notes = await resolveNotes();
+        const userNotepadNotes = await resolveUserNotepadNotes();
         await updateNotesMutation.mutateAsync({
           meetingId,
-          userNotepadNotes: notes,
+          userNotepadNotes,
         });
       } catch (err) {
         console.error("Failed to update notes:", err);
@@ -212,7 +212,7 @@ export const useMeetingRecording = ({
     contextTogglePauseResume,
     uploadSegmentToGCS,
     status,
-    resolveNotes,
+    resolveUserNotepadNotes,
     updateNotesMutation,
     meetingId,
   ]);
@@ -225,12 +225,12 @@ export const useMeetingRecording = ({
         await stopAndUploadRecording(uploadSegmentToGCS);
       }
 
-      const notes = await resolveNotes();
+      const userNotepadNotes = await resolveUserNotepadNotes();
       await removeItem("note");
 
       await endMeetingMutation.mutateAsync({
         meetingId,
-        userNotepadNotes: notes,
+        userNotepadNotes,
       });
 
       await cleanupRecording();
@@ -245,7 +245,7 @@ export const useMeetingRecording = ({
     recorderState.isRecording,
     stopAndUploadRecording,
     uploadSegmentToGCS,
-    resolveNotes,
+    resolveUserNotepadNotes,
     endMeetingMutation,
     meetingId,
     cleanupRecording,

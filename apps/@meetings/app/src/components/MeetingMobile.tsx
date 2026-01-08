@@ -81,7 +81,7 @@ const MeetingMobile = ({ meetingDetails }: Props) => {
   }, []);
 
   const handleCopyNotes = () => {
-    Clipboard.setString(meetingDetails?.notes || "");
+    Clipboard.setString(meetingDetails?.userNotepadNotes || "");
     showSnackbar("Case note copied to clipboard");
   };
 
@@ -140,11 +140,11 @@ const MeetingMobile = ({ meetingDetails }: Props) => {
   }));
 
   const onShare = async () => {
-    if (!meetingDetails?.notes) return;
+    if (!meetingDetails?.userNotepadNotes) return;
 
     try {
       const result = await Share.share({
-        message: meetingDetails.notes,
+        message: meetingDetails.userNotepadNotes,
       });
 
       if (result.action === Share.sharedAction) {
@@ -289,8 +289,8 @@ const MeetingMobile = ({ meetingDetails }: Props) => {
                   ellipsizeMode="tail"
                   className="font-inter text-sm font-normal text-primary"
                 >
-                  {meetingDetails?.notes
-                    ? meetingDetails.notes
+                  {meetingDetails?.userNotepadNotes
+                    ? meetingDetails.userNotepadNotes
                     : "Type your notes here..."}
                 </Text>
               </BottomSheetTouchableOpacity>
@@ -319,7 +319,7 @@ const MeetingMobile = ({ meetingDetails }: Props) => {
         >
           <View className="mx-auto w-full max-w-[960px] flex-1">
             {activeTab === Tab.Notes && (
-              <MeetingNotesTab notes={meetingDetails?.notes} />
+              <MeetingNotesTab notes={meetingDetails?.userNotepadNotes} />
             )}
             {activeTab === Tab.Transcription && (
               <MeetingTranscriptionTab
@@ -331,7 +331,7 @@ const MeetingMobile = ({ meetingDetails }: Props) => {
       </Animated.View>
 
       <DraftCaseNoteSheet
-        notes={meetingDetails?.notes || ""}
+        notes={meetingDetails?.userNotepadNotes || ""}
         clientName={person.fullName}
         meetingDate={meetingDetails?.startTime}
         ref={draftCaseNoteSheetRef}
