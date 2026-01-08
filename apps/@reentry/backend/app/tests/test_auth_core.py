@@ -1,5 +1,4 @@
 import json
-import logging
 import time
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -210,8 +209,8 @@ def test_validate_token_key_not_found(
 
 
 @patch("app.auth.auth_core.get_jwks_cache")
-@patch("app.auth.auth_core.logging", wraps=logging)
-def test_validate_token_expired(mock_logging, mock_get_jwks_cache, mock_expired_token):
+@patch("app.auth.auth_core.logger")
+def test_validate_token_expired(mock_logger, mock_get_jwks_cache, mock_expired_token):
     # Create auth0_config that matches the test token algorithm (HS256), simplifies the test.
     auth0_config = Auth0Config(
         algorithms=["HS256"],
@@ -501,13 +500,13 @@ async def test_get_pseudonymized_id_missing(
         assert exec_info.value.detail == "Pseudonymized ID not found in user profile"
 
 
-@patch("app.auth.auth_core.logging", wraps=logging)
-def test_null_token_logs_not_enough_segments_error(mock_logging, auth0_config):
+@patch("app.auth.auth_core.logger")
+def test_null_token_logs_not_enough_segments_error(mock_logger, auth0_config):
     with pytest.raises(HTTPException) as excinfo:
         validate_token("null", auth0_config)
 
-    assert mock_logging.exception.call_count >= 1
-    calls = [str(call) for call in mock_logging.exception.call_args_list]
+    assert mock_logger.exception.call_count >= 1
+    calls = [str(call) for call in mock_logger.exception.call_args_list]
     assert any(
         "Unexpected error validating token: Not enough segments" in call
         for call in calls

@@ -7,10 +7,18 @@ from structlog_sentry import SentryProcessor
 
 
 def setup_stdlib_logging() -> None:
-    logging.basicConfig(
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level=logging.INFO,
-    )
+    if not sys.stderr.isatty():
+        # In GCP: Just output the JSON message without extra formatting
+        logging.basicConfig(
+            format="%(message)s",
+            level=logging.INFO,
+        )
+    else:
+        # In local dev: Keep the readable format for console output
+        logging.basicConfig(
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            level=logging.INFO,
+        )
 
 
 def setup_structlog() -> None:
@@ -20,11 +28,11 @@ def setup_structlog() -> None:
         structlog.stdlib.add_log_level,
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
         SentryProcessor(
             level=logging.INFO,
             event_level=logging.ERROR,
         ),
+        structlog.processors.format_exc_info,
     ]
 
     if not sys.stderr.isatty():

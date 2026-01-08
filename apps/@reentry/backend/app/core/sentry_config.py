@@ -16,9 +16,7 @@ def setup_sentry() -> None:
             integrations=[
                 LoggingIntegration(
                     level=logging.INFO,
-                    event_level=logging.ERROR,  # Send ERROR+ as events (causes duplicates with structlog)
-                    # TODO: Migrate all logging.getLogger() to structlog.get_logger() and set event_level=None
-                    # See PR: https://github.com/Recidiviz/pulse-dashboards/pull/11198
+                    event_level=None,  # Don't send events via LoggingIntegration (structlog-sentry handles this)
                 ),
             ],
         )
