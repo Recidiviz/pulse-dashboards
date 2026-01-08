@@ -23,23 +23,45 @@ import MeetingDesktop from "../components/MeetingDesktop";
 import MeetingMobile from "../components/MeetingMobile";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
+import { deserializeClient } from "../utils/format";
 
-type MeetingRouteProp = RouteProp<RootStackParamList, "Meeting">;
+type MeetingRouteProp = RouteProp<
+  RootStackParamList,
+  "ClientMeeting" | "ResidentMeeting"
+>;
 
-const MeetingScreen = () => {
+type Props = {
+  personType: "client" | "resident";
+};
+
+const MeetingScreen = ({ personType }: Props) => {
   const route = useRoute<MeetingRouteProp>();
-  const { meeting } = route.params;
-  const { data: meetingDetails } = trpc.v1.meeting.getDetails.useQuery({
-    meetingId: meeting.id,
-  });
+  const { data: meetingDetails } = trpc.v1.meeting.getDetails.useQuery(
+    { meetingId: route.params?.meetingId || "" },
+    { enabled: !!route.params?.meetingId },
+  );
+  const { data: person } = trpc.v1.staff.getClient.useQuery(
+    { personId: BigInt(route.params?.personId || 0) },
+    { enabled: !!route.params?.personId },
+  );
+
+  if (!person) return null;
 
   return (
     <SafeAreaView className="flex-1 grow bg-white">
       <View className="flex-1 grow md:hidden">
-        <MeetingMobile meetingDetails={meetingDetails} />
+        <MeetingMobile
+          meetingDetails={meetingDetails}
+          person={deserializeClient(person)}
+          personType={personType}
+        />
       </View>
       <View className="hidden flex-1 grow md:flex">
-        <MeetingDesktop meetingDetails={meetingDetails} />
+        <MeetingDesktop
+          meetingDetails={meetingDetails}
+          person={deserializeClient(person)}
+          personType={personType}
+        />
       </View>
     </SafeAreaView>
   );

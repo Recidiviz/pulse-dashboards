@@ -15,15 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Link } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
-import {
-  Image,
-  ImageBackground,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ImageBackground, Text, View } from "react-native";
 
 import { Person } from "~@meetings/app/common/types";
 
@@ -32,73 +27,76 @@ import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { getClientInitials, humanReadableTitleCase } from "../utils/format";
 import MeetingInProgressBar from "./MeetingInProgressBar";
 
-type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients" | "Residents">;
+type ProfileNavProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "Clients" | "Residents"
+>;
 
 interface ItemProps {
   person: Person;
   recordingState: string;
   navigation: ProfileNavProp;
+  type: "clients" | "residents";
 }
 
-const PersonCardItem = ({ person, recordingState, navigation }: ItemProps) => {
+const PersonCardItem = ({
+  person,
+  recordingState,
+  navigation,
+  type,
+}: ItemProps) => {
   const hasActiveMeeting = !!person.activeMeetingId;
   const height = hasActiveMeeting ? 136 : 56;
-  
+
   return (
-    <TouchableOpacity
+    <Link
       key={person.personId}
-      className="border-b border-gray-300 px-2.5 py-3.5"
       style={{ height }}
-      onPress={() =>
-        navigation.navigate("Profile", {
-          person: {
-            personId: person.personId.toString(),
-            fullName: person.fullName,
-            displayPersonExternalId: person.displayPersonExternalId,
-            primaryMetadata: person.primaryMetadata,
-          },
-        })
-      }
+      className="border-b border-gray-300 px-2.5 py-3.5"
+      screen={type === "clients" ? "ClientProfile" : "ResidentProfile"}
+      params={{ personId: person.personId.toString() }}
     >
-      <View className="flex-1 flex-row items-center">
-        <ImageBackground
-          source={Icons.BgAvatar}
-          className="mr-3 !size-11 items-center justify-center overflow-hidden rounded-full"
-          imageClassName="!size-11"
-        >
-          <Text className="font-inter text-sm font-semibold text-white">
-            {getClientInitials(person.fullName)}
-          </Text>
-        </ImageBackground>
-        <View className="flex-1">
-          <View className="flex-row items-center justify-between">
-            <Text className="mr-1.5 font-inter text-base font-semibold text-gray-900">
-              {person.fullName}
+      <View className="w-full">
+        <View className="flex-1 flex-row items-center">
+          <ImageBackground
+            source={Icons.BgAvatar}
+            className="mr-3 !size-11 items-center justify-center overflow-hidden rounded-full"
+            imageClassName="!size-11"
+          >
+            <Text className="font-inter text-sm font-semibold text-white">
+              {getClientInitials(person.fullName)}
             </Text>
-            <Image source={Icons.ArrowRight} className="!size-3.5" />
-          </View>
-          <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
-            <Text className="font-inter text-xs text-gray-600">
-              ID: {person.displayPersonExternalId} •{" "}
-              {humanReadableTitleCase(person.primaryMetadata)}
-            </Text>
-            <Text className="font-inter text-xs text-gray-600">
-              Last meeting {person.lastMeeting}
-            </Text>
+          </ImageBackground>
+          <View className="flex-1">
+            <View className="flex-row items-center justify-between">
+              <Text className="mr-1.5 font-inter text-base font-semibold text-gray-900">
+                {person.fullName}
+              </Text>
+              <Image source={Icons.ArrowRight} className="!size-3.5" />
+            </View>
+            <View className="mt-0.5 flex-row items-center justify-between gap-1.5">
+              <Text className="font-inter text-xs text-gray-600">
+                ID: {person.displayPersonExternalId} •{" "}
+                {humanReadableTitleCase(person.primaryMetadata)}
+              </Text>
+              <Text className="font-inter text-xs text-gray-600">
+                Last meeting {person.lastMeeting}
+              </Text>
+            </View>
           </View>
         </View>
+        {hasActiveMeeting && (
+          <MeetingInProgressBar
+            recordingState={recordingState || "recording"}
+            startTime={new Date()} // TODO: Replace with API value
+            endTime={null}
+            person={{ ...person, personId: person.personId }}
+            meetingId={person.activeMeetingId}
+            className="mt-2 bg-white"
+          />
+        )}
       </View>
-      {hasActiveMeeting && (
-        <MeetingInProgressBar
-          recordingState={recordingState || "recording"}
-          startTime={new Date()} // TODO: Replace with API value
-          endTime={null}
-          person={{ ...person, personId: person.personId.toString() }}
-          meetingId={person.activeMeetingId}
-          className="mt-2 bg-white"
-        />
-      )}
-    </TouchableOpacity>
+    </Link>
   );
 };
 

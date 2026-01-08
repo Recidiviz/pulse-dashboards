@@ -15,9 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DrawerContentComponentProps, DrawerContentScrollView } from "@react-navigation/drawer";
+import {
+  DrawerContentComponentProps,
+  DrawerContentScrollView,
+} from "@react-navigation/drawer";
 import React from "react";
-import { Image, ImageBackground, Text,TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useAuth0 } from "react-native-auth0";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -30,22 +39,25 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
   const { user, clearSession } = useAuth0();
   const { navigation } = props;
 
-  const handleMenuPress = (screen: string) => {
-    navigation.navigate(screen as never);
-    navigation.closeDrawer();
-  };
-
   const onLogout = async () => {
     await clearSession();
   };
 
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1, paddingBottom: 0, paddingStart: 0, paddingEnd: 0 }}>
-      <View className="flex-row justify-between items-center bg-white px-4 pb-4">
+    <DrawerContentScrollView
+      {...props}
+      contentContainerStyle={{
+        flex: 1,
+        paddingBottom: 0,
+        paddingStart: 0,
+        paddingEnd: 0,
+      }}
+    >
+      <View className="flex-row items-center justify-between bg-white px-4 pb-4">
         <TouchableOpacity onPress={() => navigation.closeDrawer()}>
           <Image source={Icons.Cross} className="!size-6" />
         </TouchableOpacity>
-        <Text className="font-inter font-semibold text-primary text-lg leading-[22px]">
+        <Text className="font-inter text-lg font-semibold leading-[22px] text-primary">
           Navigation
         </Text>
         <TouchableOpacity onPress={() => console.log("Bell pressed")}>
@@ -54,18 +66,18 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
       </View>
 
       <View className="w-full px-2">
-        <View className="flex-row items-center self-center bg-[#C1E3D83B] m-[15px] p-4 rounded-[15px] w-full h-[78px]">
+        <View className="m-[15px] h-[78px] w-full flex-row items-center self-center rounded-[15px] bg-[#C1E3D83B] p-4">
           <ImageBackground
             source={Icons.BgAvatar}
-            className="justify-center items-center mr-3 rounded-full size-12 overflow-hidden"
+            className="mr-3 size-12 items-center justify-center overflow-hidden rounded-full"
           >
             <Text className="font-inter text-white">SS</Text>
           </ImageBackground>
           <View>
-            <Text className="font-inter font-semibold text-primary text-base">
+            <Text className="font-inter text-base font-semibold text-primary">
               {user?.name || "User name not found"}
             </Text>
-            <Text className="font-inter text-[#355362D9] text-sm">
+            <Text className="font-inter text-sm text-[#355362D9]">
               {user?.email || "User email not found"}
             </Text>
           </View>
@@ -76,22 +88,27 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
         <MobileMenuItem
           icon={Icons.Clients}
           title="Clients"
-          onPress={() => handleMenuPress("Clients")}
+          screen="Clients"
+          onPress={navigation.closeDrawer}
         />
         <MobileMenuItem
           icon={Icons.Clients}
           title="Residents"
-          onPress={() => handleMenuPress("Residents")}
+          screen="Residents"
+          onPress={navigation.closeDrawer}
         />
       </View>
 
-      <View className="bg-gray-100 px-4 flex flex-col gap-1.5" style={{ paddingBottom: insets.bottom || 16, paddingTop: 16 }}>
+      <View
+        className="flex flex-col gap-1.5 bg-gray-100 px-4"
+        style={{ paddingBottom: insets.bottom || 16, paddingTop: 16 }}
+      >
         <MobileMenuTextItem title="Settings" />
         <MobileMenuTextItem title="Contact Support" />
         <MobileMenuTextItem title="Log Out" onPress={onLogout} color="danger" />
       </View>
     </DrawerContentScrollView>
   );
-}
+};
 
 export default DrawerContent;

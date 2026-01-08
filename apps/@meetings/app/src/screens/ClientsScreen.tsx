@@ -34,6 +34,7 @@ import PersonsTable from "../components/PersonsTable.web";
 import { useRecording } from "../context/RecordingContext";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
+import { deserializeClient } from "../utils/format";
 
 type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients">;
 
@@ -65,12 +66,7 @@ const ClientsScreen = () => {
 
   const clients: Client[] = React.useMemo(() => {
     if (!rawClients) return [];
-    return rawClients.map((c) => ({
-      ...c,
-      fullName: `${c.givenNames} ${c.surname}`,
-      primaryMetadata: c.supervisionType,
-      lastMeeting: "5d ago", // TODO: remove hardcode
-    }));
+    return rawClients.map(deserializeClient);
   }, [rawClients]);
 
   // filtering and sorting clients

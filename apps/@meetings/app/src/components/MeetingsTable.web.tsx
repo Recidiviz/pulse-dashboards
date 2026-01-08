@@ -15,13 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Link } from "@react-navigation/native";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { Person } from "../common/types";
 import { formatDurationCompact } from "../utils/format";
 import {
   Table,
@@ -44,18 +43,9 @@ type Meeting = {
   content: string;
 };
 
-type Person = {
-  personId: string;
-  fullName: string;
-  displayPersonExternalId: string;
-  primaryMetadata: string;
-};
-
 const PAGE_SIZE = 7;
 
 const TOPICS = ["New Job", "Motivation", "Partner", "Address"];
-
-type MeetingNavProp = NativeStackNavigationProp<RootStackParamList, "Meeting">;
 
 const Topic = ({ topic }: { topic: string }) => {
   return (
@@ -68,11 +58,10 @@ const Topic = ({ topic }: { topic: string }) => {
 type MeetingRowProps = {
   meeting: Meeting;
   person: Person;
+  personType: "client" | "resident";
 };
 
-const MeetingRow = ({ meeting, person }: MeetingRowProps) => {
-  const navigation = useNavigation<MeetingNavProp>();
-
+const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
   return (
     <TableRow>
       <TableCell>{meeting.date}</TableCell>
@@ -104,12 +93,16 @@ const MeetingRow = ({ meeting, person }: MeetingRowProps) => {
         </Text>
       </TableCell>
       <TableCell>
-        <TouchableOpacity
+        <Link
+          screen={personType === "client" ? "ClientMeeting" : "ResidentMeeting"}
+          params={{
+            meetingId: meeting.id,
+            personId: person.personId.toString(),
+          }}
           className="invisible size-5 items-center justify-center group-hover:visible"
-          onPress={() => navigation.navigate("Meeting", { meeting, person })}
         >
           <Image source={Icons.ArrowRight} className="!size-full" />
-        </TouchableOpacity>
+        </Link>
       </TableCell>
     </TableRow>
   );
@@ -118,9 +111,14 @@ const MeetingRow = ({ meeting, person }: MeetingRowProps) => {
 type MeetingsTableProps = {
   meetings: Meeting[];
   person: Person;
+  personType: "client" | "resident";
 };
 
-const MeetingsTable = ({ meetings, person }: MeetingsTableProps) => {
+const MeetingsTable = ({
+  meetings,
+  person,
+  personType,
+}: MeetingsTableProps) => {
   const [page, setPage] = React.useState(1);
 
   return (
@@ -143,6 +141,7 @@ const MeetingsTable = ({ meetings, person }: MeetingsTableProps) => {
               key={`${meeting.id}-${index}`}
               meeting={meeting}
               person={person}
+              personType={personType}
             />
           ))}
       </TableBody>

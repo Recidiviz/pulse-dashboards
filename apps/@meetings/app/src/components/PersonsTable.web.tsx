@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Link } from "@react-navigation/native";
 import React from "react";
 import {
   Image,
@@ -29,7 +28,6 @@ import {
 import { Person } from "~@meetings/app/common/types";
 
 import Icons from "../../assets/icons";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { getClientInitials } from "../utils/format";
 import {
   Table,
@@ -46,11 +44,6 @@ import {
 
 const PAGE_SIZE = 7;
 
-type ProfileNavProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "Clients" | "Residents"
->;
-
 interface PersonsProps {
   persons: Person[];
   type: "clients" | "residents";
@@ -58,7 +51,6 @@ interface PersonsProps {
 
 const PersonsTable = ({ persons, type }: PersonsProps) => {
   const [page, setPage] = React.useState(1);
-  const navigation = useNavigation<ProfileNavProp>();
 
   return (
     <Table>
@@ -105,21 +97,15 @@ const PersonsTable = ({ persons, type }: PersonsProps) => {
                 </Text>
               </TableCell>
               <TableCell>
-                <TouchableOpacity
+                <Link
                   className="invisible size-5 items-center justify-center group-hover:visible"
-                  onPress={() =>
-                    navigation.navigate("Profile", {
-                      person: {
-                        personId: person.personId.toString(),
-                        fullName: person.fullName,
-                        displayPersonExternalId: person.displayPersonExternalId,
-                        primaryMetadata: person.primaryMetadata,
-                      },
-                    })
+                  screen={
+                    type === "clients" ? "ClientProfile" : "ResidentProfile"
                   }
+                  params={{ personId: person.personId.toString() }}
                 >
                   <Image source={Icons.ArrowRight} className="!size-full" />
-                </TouchableOpacity>
+                </Link>
               </TableCell>
             </TableRow>
           ))}

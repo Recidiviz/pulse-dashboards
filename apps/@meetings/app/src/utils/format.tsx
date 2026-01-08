@@ -17,7 +17,7 @@
 
 import { startCase } from "lodash";
 
-import { Client } from "../common/types";
+import { Client, RawClient } from "../common/types";
 
 export const getClientInitials = (name: Client["fullName"]) => {
   const parts = name.trim().split(" ");
@@ -56,6 +56,15 @@ export const formatDraftCaseNoteMeetingDate = (date: Date) => {
     month: "short",
     day: "numeric",
   }).format(date);
+};
+
+export const deserializeClient = (rawClient: RawClient): Client => {
+  return {
+    ...rawClient,
+    fullName: `${rawClient.givenNames} ${rawClient.surname}`,
+    primaryMetadata: rawClient.supervisionType,
+    lastMeeting: "5d ago", // TODO: remove hardcode
+  };
 };
 
 export const formatMeetingStartDate = (date: Date) => {

@@ -19,7 +19,10 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
-import { SafeAreaView,useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 import { Resident } from "~@meetings/app/common/types";
 
@@ -60,7 +63,7 @@ const mock = {
     },
     {
       activeMeetingId: "7",
-      personId: BigInt(1003),
+      personId: BigInt(7),
       displayPersonExternalId: "1003",
       givenNames: "Sylvanas",
       surname: "Windrunner",
@@ -72,7 +75,10 @@ const mock = {
   refetch: () => null,
 };
 
-type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Residents">;
+type ProfileNavProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "Residents"
+>;
 
 const ResidentsScreen = () => {
   const insets = useSafeAreaInsets();
@@ -126,7 +132,7 @@ const ResidentsScreen = () => {
         <Header />
         {Platform.select({
           native: (
-            <PersonsMobileList 
+            <PersonsMobileList
               persons={filteredResidents}
               recordingState={recordingState}
               navigation={navigation}
@@ -138,7 +144,7 @@ const ResidentsScreen = () => {
           ),
           web: (
             <View className="flex-1 pb-4">
-              <PersonsMobileList 
+              <PersonsMobileList
                 persons={filteredResidents}
                 recordingState={recordingState}
                 navigation={navigation}
@@ -148,8 +154,8 @@ const ResidentsScreen = () => {
                 keyword="Resident"
                 className="md:hidden"
               />
-              <ScrollView className="hidden md:block flex-1">
-                <View className="flex-1 mx-auto w-full max-w-[960px]">
+              <ScrollView className="hidden flex-1 md:block">
+                <View className="mx-auto w-full max-w-[960px] flex-1">
                   <PersonsHeaderContent
                     keyword="Resident"
                     description="All residents are displayed below"

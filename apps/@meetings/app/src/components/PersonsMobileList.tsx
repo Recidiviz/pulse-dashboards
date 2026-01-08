@@ -25,7 +25,10 @@ import PersonCardItem from "./PersonCardItem";
 import PersonsHeaderContent from "./PersonsHeaderContent";
 import PersonsPlaceholder from "./PersonsPlaceholder";
 
-type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Clients" | "Residents">;
+type ProfileNavProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "Clients" | "Residents"
+>;
 
 type Props = {
   persons: Person[];
@@ -38,12 +41,23 @@ type Props = {
   className?: string;
 };
 
-const PersonsMobileList = ({ persons, recordingState, navigation, searchQuery, setSearchQuery, setSortBy, keyword, className }: Props) => {
+const PersonsMobileList = ({
+  persons,
+  recordingState,
+  navigation,
+  searchQuery,
+  setSearchQuery,
+  setSortBy,
+  keyword,
+  className,
+}: Props) => {
   const insets = useSafeAreaInsets();
-  const emptyListPlaceholderMessage = keyword === "Client" ? "No clients found" : "No residents found";
-  const headerDescription = keyword === "Client"
-    ? "All clients on your caseload are displayed below"
-    : "All residents are displayed below";
+  const emptyListPlaceholderMessage =
+    keyword === "Client" ? "No clients found" : "No residents found";
+  const headerDescription =
+    keyword === "Client"
+      ? "All clients on your caseload are displayed below"
+      : "All residents are displayed below";
 
   return (
     <VirtualizedList
@@ -57,6 +71,7 @@ const PersonsMobileList = ({ persons, recordingState, navigation, searchQuery, s
           person={item}
           recordingState={recordingState}
           navigation={navigation}
+          type={keyword.toLowerCase() as "clients" | "residents"}
         />
       )}
       initialNumToRender={10}

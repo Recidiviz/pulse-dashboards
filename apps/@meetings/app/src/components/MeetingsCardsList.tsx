@@ -15,16 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Link } from "@react-navigation/native";
 import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 import Icons from "../../assets/icons";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { Person } from "../common/types";
 import MeetingInProgressBar from "./MeetingInProgressBar";
-
-type MeetingNavProp = NativeStackNavigationProp<RootStackParamList, "Meeting">;
 
 type MeetingCardProps = {
   meetings: {
@@ -38,80 +35,94 @@ type MeetingCardProps = {
     start: Date;
     end: Date | null;
   }[];
-  person: {
-    personId: string;
-    fullName: string;
-    displayPersonExternalId: string;
-    primaryMetadata: string;
-  };
-  onPress: (id: string) => void;
+  person: Person;
+  personType: "client" | "resident";
 };
 
-const MeetingsCardsList = ({ meetings, person, onPress }: MeetingCardProps) => {
-  const navigation = useNavigation<MeetingNavProp>();
-  // const [isExpanded, setIsExpanded] = useState(false);
-
+const MeetingsCardsList = ({
+  meetings,
+  person,
+  personType,
+}: MeetingCardProps) => {
   return meetings.map((meeting, index) => {
     const isProcessingMeeting = meeting.status !== "NOT_STARTED";
 
-    return (
-      <TouchableOpacity
-        key={`${meeting.id}-${index}`}
-        activeOpacity={0.9}
-        onPress={() => {
-          if (meeting.status === "NOT_STARTED" && onPress) {
-            onPress(meeting.id);
-          } else {
-            navigation.navigate("Meeting", { meeting, person });
+    const linkProps =
+      meeting.status === "NOT_STARTED"
+        ? {
+            screen:
+              personType === "client"
+                ? "ClientNewMeeting"
+                : "ResidentNewMeeting",
+            params: {
+              personId: person.personId,
+              fullName: person.fullName,
+              displayPersonExternalId: person.displayPersonExternalId,
+              primaryMetadata: person.primaryMetadata,
+              meetingId: meeting.id,
+            },
           }
-        }}
-        className="bg-white shadow-sm mb-3 p-4 rounded-2xl"
+        : {
+            screen:
+              personType === "client" ? "ClientMeeting" : "ResidentMeeting",
+            params: {
+              meetingId: meeting.id,
+              personId: person.personId.toString(),
+            },
+          };
+
+    return (
+      <Link
+        key={`${meeting.id}-${index}`}
+        className="mb-3 rounded-2xl bg-white p-4 shadow-sm"
+        {...linkProps}
       >
-        <View className="flex-row justify-between items-center">
-          <Text className="font-inter font-semibold text-primary text-base">
-            {meeting.date}
+        <View className="w-full">
+          <View className="flex-row items-center justify-between">
+            <Text className="font-inter text-base font-semibold text-primary">
+              {meeting.date}
+            </Text>
+            <Image
+              source={Icons.ArrowRight}
+              className="ml-2 !size-3.5"
+              style={{ resizeMode: "contain" }}
+            />
+          </View>
+
+          <Text className="mr-1 font-inter text-xs font-medium text-primary">
+            {meeting.time} • {meeting.duration || "In progress..."}
           </Text>
-          <Image
-            source={Icons.ArrowRight}
-            className="ml-2 !size-3.5"
-            style={{ resizeMode: "contain" }}
-          />
-        </View>
+          {isProcessingMeeting ? (
+            <View className="mt-4 rounded-xl bg-[#C1E3D83B] p-4">
+              <View className="flex-row items-start">
+                <Image
+                  source={Icons.Processing}
+                  className="mr-2 !size-8"
+                  style={{ resizeMode: "contain" }}
+                />
 
-        <Text className="mr-1 font-inter font-medium text-primary text-xs">
-          {meeting.time} • {meeting.duration || "In progress..."}
-        </Text>
-        {isProcessingMeeting ? (
-          <View className="bg-[#C1E3D83B] mt-4 p-4 rounded-xl">
-            <View className="flex-row items-start">
-              <Image
-                source={Icons.Processing}
-                className="mr-2 !size-8"
-                style={{ resizeMode: "contain" }}
-              />
-
-              <View className="flex-1">
-                <Text className="font-inter font-semibold text-primary text-base">
-                  Recording is being processed...
-                </Text>
-                <Text className="font-inter font-medium text-gray-700 text-sm">
-                  The notes and transcript will become available in a few
-                  minutes
-                </Text>
+                <View className="flex-1">
+                  <Text className="font-inter text-base font-semibold text-primary">
+                    Recording is being processed...
+                  </Text>
+                  <Text className="font-inter text-sm font-medium text-gray-700">
+                    The notes and transcript will become available in a few
+                    minutes
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-        ) : (
-          <MeetingInProgressBar
-            recordingState={meeting.recordingState}
-            startTime={meeting.start}
-            endTime={meeting.end}
-            person={person}
-            meetingId={meeting.id}
-            className="mt-2"
-          />
-        )}
-        {/* <View className="my-2 border-gray-200 border-b" />
+          ) : (
+            <MeetingInProgressBar
+              recordingState={meeting.recordingState}
+              startTime={meeting.start}
+              endTime={meeting.end}
+              person={person}
+              meetingId={meeting.id}
+              className="mt-2"
+            />
+          )}
+          {/* <View className="my-2 border-gray-200 border-b" />
        <View className="mt-3">
         <Text
           className="font-inter text-gray-700 text-sm leading-5"
@@ -133,7 +144,8 @@ const MeetingsCardsList = ({ meetings, person, onPress }: MeetingCardProps) => {
           />
         </TouchableOpacity>
       </View> */}
-      </TouchableOpacity>
+        </View>
+      </Link>
     );
   });
 };

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import _ from "lodash";
+import { z } from "zod";
 
 import { Prisma } from "~@meetings/prisma/client/client";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
@@ -72,4 +73,57 @@ export const staffRouter = router({
       activeMeetingId: client.meetings[0]?.id ?? null,
     }));
   }),
+
+  getClient: auth0Procedure
+    .input(z.object({ personId: z.bigint() }))
+    .query(async ({ input: { personId }, ctx: { prisma, user } }) => {
+      const querySelect = {
+        givenNames: true,
+        surname: true,
+        displayPersonExternalId: true,
+        personId: true,
+        supervisionType: true,
+        meetings: {
+          select: { id: true },
+          where: {
+            endTime: null,
+          },
+          orderBy: {
+            startTime: "desc",
+          },
+          take: 1,
+        },
+      } satisfies Prisma.ClientSelect;
+
+      let client;
+      if (user.pseudonymizedId === "RECIDIVIZ") {
+        client = await prisma.client.findUnique({
+          where: { personId },
+          select: querySelect,
+        });
+      } else {
+        client = await prisma.client.findFirst({
+          where: {
+            personId,
+            staff: {
+              some: {
+                staff: {
+                  pseudonymizedId: user.pseudonymizedId,
+                },
+              },
+            },
+          },
+          select: querySelect,
+        });
+      }
+
+      if (!client) {
+        throw new Error("Client not found or access denied");
+      }
+
+      return {
+        ..._.omit(client, ["meetings"]),
+        activeMeetingId: client.meetings[0]?.id ?? null,
+      };
+    }),
 });

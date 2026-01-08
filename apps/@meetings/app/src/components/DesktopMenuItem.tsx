@@ -15,31 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Link } from "@react-navigation/native";
+import { Text } from "react-native";
 
 type DesktopMenuItemProps = {
-  title: string;
   isActive: boolean;
-  onPress?: () => void;
+  screen: string;
+  children: string;
 };
 
 const DesktopMenuItem = ({
-  title,
   isActive,
-  onPress,
+  screen,
+  children,
 }: DesktopMenuItemProps) => {
   return (
-    <TouchableOpacity
-      className={`h-full flex-row items-center justify-between border-y-4 border-b-transparent ${isActive ? "border-[#006C67]" : "border-transparent"}`}
-      onPress={onPress}
+    <Link
+      className={`flex h-full flex-row items-center justify-between border-y-4 border-b-transparent ${isActive ? "border-[#006C67]" : "border-transparent"}`}
+      screen={screen}
+      params={{}}
     >
       <Text
         className={`px-1 font-inter text-sm font-medium ${isActive ? "text-primary" : "text-[#355362D9]"}`}
       >
-        {title}
+        {children}
       </Text>
-    </TouchableOpacity>
+    </Link>
   );
 };
 

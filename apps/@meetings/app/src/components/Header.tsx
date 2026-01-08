@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DrawerActions, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  DrawerActions,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
@@ -63,7 +68,9 @@ const Header: React.FC<HeaderProps> = ({
     <SafeAreaView edges={["top"]} className="z-10 bg-white">
       <View className="flex-row items-center justify-between px-4 py-3 md:hidden">
         {showDrawer && (
-          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+          <TouchableOpacity
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+          >
             <Image
               source={Icons.Menu}
               className="!size-6"
@@ -96,16 +103,15 @@ const Header: React.FC<HeaderProps> = ({
         </TouchableOpacity>
 
         <View className="h-full flex-row items-center gap-x-6">
+          <DesktopMenuItem isActive={route.name === "Clients"} screen="Clients">
+            Clients
+          </DesktopMenuItem>
           <DesktopMenuItem
-            title="Clients"
-            isActive={route.name === "Clients"}
-            onPress={() => navigation.navigate("Clients")}
-          />
-          <DesktopMenuItem
-            title="Residents"
             isActive={route.name === "Residents"}
-            onPress={() => navigation.navigate("Residents")}
-          />
+            screen="Residents"
+          >
+            Residents
+          </DesktopMenuItem>
           <View className="relative">
             <TouchableOpacity
               className="flex-row items-center gap-x-1"

@@ -35,16 +35,28 @@ import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { humanReadableTitleCase } from "../utils/format";
 import { saveItem } from "../utils/storage";
 
-type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, "Profile">;
-type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
+type ProfileNavProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "Clients" | "Residents"
+>;
+type NewMeetingRouteProp = RouteProp<
+  RootStackParamList,
+  "ClientNewMeeting" | "ResidentNewMeeting"
+>;
 
-const NewMeetingScreen = () => {
+type Props = {
+  personType: "client" | "resident";
+};
+
+const NewMeetingScreen = ({ personType }: Props) => {
   const navigation = useNavigation<ProfileNavProp>();
   const route = useRoute<NewMeetingRouteProp>();
   const person = {
-    ...route.params.person,
+    fullName: route.params.fullName,
+    displayPersonExternalId: route.params.displayPersonExternalId,
+    primaryMetadata: route.params.primaryMetadata,
     // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.person.personId),
+    personId: BigInt(route.params.personId),
   };
   const { meetingId } = route.params;
 
@@ -52,16 +64,14 @@ const NewMeetingScreen = () => {
     navigation.reset({
       index: 1,
       routes: [
-        { name: "Clients" },
+        { name: personType === "client" ? "Clients" : "Residents" },
         {
-          name: "Profile",
+          name: personType === "client" ? "ClientProfile" : "ResidentProfile",
           params: {
-            person: {
-              personId: person.personId.toString(),
-              fullName: person.fullName,
-              displayPersonExternalId: person.displayPersonExternalId,
-              primaryMetadata: person.primaryMetadata,
-            },
+            personId: person.personId.toString(),
+            fullName: person.fullName,
+            displayPersonExternalId: person.displayPersonExternalId,
+            primaryMetadata: person.primaryMetadata,
           },
         },
       ],

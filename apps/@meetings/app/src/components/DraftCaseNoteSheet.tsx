@@ -23,7 +23,15 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { RefObject, useEffect, useMemo, useState } from "react";
-import { Image, Keyboard, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Keyboard,
+  Platform,
+  Text,
+  TextInput as RNTextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
@@ -87,6 +95,8 @@ const DraftCaseNoteSheet = ({ notes, clientName, meetingDate, ref }: Props) => {
       keyboardDidHideListener.remove();
     };
   }, []);
+
+  const TextInput = Platform.OS === "web" ? RNTextInput : BottomSheetTextInput;
 
   return (
     <BottomSheet
@@ -159,7 +169,7 @@ const DraftCaseNoteSheet = ({ notes, clientName, meetingDate, ref }: Props) => {
             />
           </TouchableOpacity>
         </View>
-        <BottomSheetTextInput
+        <TextInput
           className="min-h-[200px] flex-1 p-4"
           multiline
           value={text}

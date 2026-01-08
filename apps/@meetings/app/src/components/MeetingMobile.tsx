@@ -19,7 +19,7 @@ import BottomSheet, {
   TouchableOpacity as BottomSheetTouchableOpacity,
 } from "@gorhom/bottom-sheet";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { Link } from "@react-navigation/native";
 import React, { useCallback, useRef, useState } from "react";
 import {
   Alert,
@@ -38,39 +38,30 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
-import { MeetingDetails } from "../common/types";
+import { MeetingDetails, Person } from "../common/types";
 import DraftCaseNoteSheet from "../components/DraftCaseNoteSheet";
 import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
 import { useSnackbar } from "../components/Snackbar";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
   humanReadableTitleCase,
 } from "../utils/format";
 
-type MeetingRouteProp = RouteProp<RootStackParamList, "Meeting">;
-
 type Props = {
   meetingDetails?: MeetingDetails;
+  person: Person;
+  personType: "client" | "resident";
 };
 
-const MeetingMobile = ({ meetingDetails }: Props) => {
+const MeetingMobile = ({ meetingDetails, person, personType }: Props) => {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
-  const route = useRoute<MeetingRouteProp>();
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Notes);
   const scrollY = useSharedValue(0);
   const draftCaseNoteSheetRef = useRef<BottomSheet>(null);
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
-
-  const person = {
-    ...route.params.person,
-    // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.person.personId),
-  };
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
@@ -182,13 +173,18 @@ const MeetingMobile = ({ meetingDetails }: Props) => {
         style={[{ top: -insets.top, paddingTop: insets.top }, headerStyle]}
       >
         <View className="flex h-16 flex-row items-center justify-between">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Link
+            screen={
+              personType === "client" ? "ClientProfile" : "ResidentProfile"
+            }
+            params={{ personId: person.personId.toString() }}
+          >
             <Image
               source={Icons.ArrowLeft}
               className="!size-6"
               resizeMode="contain"
             />
-          </TouchableOpacity>
+          </Link>
 
           <Animated.View
             className="flex flex-col items-center gap-0.5"

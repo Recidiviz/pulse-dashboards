@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  Link,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -36,6 +41,7 @@ import {
 } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
+import { Person } from "../common/types";
 import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import MeetingsCardsList from "../components/MeetingsCardsList";
@@ -45,13 +51,16 @@ import SearchBar from "../components/SearchBar";
 import { useRecording } from "../context/RecordingContext";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
-import { humanReadableTitleCase } from "../utils/format";
+import { deserializeClient, humanReadableTitleCase } from "../utils/format";
 
-type NewMeetingNavProp = NativeStackNavigationProp<
+type ProfileNavProp = NativeStackNavigationProp<
   RootStackParamList,
-  "NewMeeting"
+  "ClientProfile" | "ResidentProfile"
 >;
-type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
+type ProfileRouteProp = RouteProp<
+  RootStackParamList,
+  "ClientProfile" | "ResidentProfile"
+>;
 
 enum MeetingsSort {
   NEWEST_FIRST = "Date (Latest first)",
@@ -59,15 +68,31 @@ enum MeetingsSort {
   DURATION = "Duration",
 }
 
-const ProfileScreen = () => {
-  const navigation = useNavigation<NewMeetingNavProp>();
-  const route = useRoute<NewMeetingRouteProp>();
-  const person = {
-    ...route.params.person,
-    // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.person.personId),
-  };
+type Props = {
+  personType: "client" | "resident";
+};
 
+const ProfileScreenContainer = ({ personType }: Props) => {
+  const route = useRoute<ProfileRouteProp>();
+  const { data: person } = trpc.v1.staff.getClient.useQuery(
+    { personId: BigInt(route.params?.personId || 0) },
+    { enabled: !!route.params?.personId },
+  );
+
+  if (!person) return null;
+
+  return (
+    <ProfileScreen person={deserializeClient(person)} personType={personType} />
+  );
+};
+
+type ProfileScreenProps = {
+  person: Person;
+  personType: "client" | "resident";
+};
+
+const ProfileScreen = ({ person, personType }: ProfileScreenProps) => {
+  const navigation = useNavigation<ProfileNavProp>();
   const insets = useSafeAreaInsets();
 
   const [isCreating, setIsCreating] = useState(false);
@@ -229,15 +254,16 @@ const ProfileScreen = () => {
           break;
         case "ios":
         case "android":
-          navigation.navigate("NewMeeting", {
-            person: {
+          navigation.navigate(
+            personType === "client" ? "ClientNewMeeting" : "ResidentNewMeeting",
+            {
               personId: person.personId.toString(),
               fullName: person.fullName,
               displayPersonExternalId: person.displayPersonExternalId,
               primaryMetadata: person.primaryMetadata,
+              meetingId,
             },
-            meetingId,
-          });
+          );
           break;
       }
     } catch (err) {
@@ -312,18 +338,8 @@ const ProfileScreen = () => {
       native: (
         <MeetingsCardsList
           meetings={filteredMeetings}
-          person={route.params.person}
-          onPress={(id) => {
-            navigation.navigate("NewMeeting", {
-              person: {
-                personId: person.personId.toString(),
-                fullName: person.fullName,
-                displayPersonExternalId: person.displayPersonExternalId,
-                primaryMetadata: person.primaryMetadata,
-              },
-              meetingId: id,
-            });
-          }}
+          person={person}
+          personType={personType}
         />
       ),
       web: (
@@ -331,24 +347,15 @@ const ProfileScreen = () => {
           <View className="md:hidden">
             <MeetingsCardsList
               meetings={filteredMeetings}
-              person={route.params.person}
-              onPress={(id) => {
-                navigation.navigate("NewMeeting", {
-                  person: {
-                    personId: person.personId.toString(),
-                    fullName: person.fullName,
-                    displayPersonExternalId: person.displayPersonExternalId,
-                    primaryMetadata: person.primaryMetadata,
-                  },
-                  meetingId: id,
-                });
-              }}
+              person={person}
+              personType={personType}
             />
           </View>
           <View className="hidden md:block">
             <MeetingsTable
               meetings={filteredMeetings}
-              person={route.params.person}
+              person={person}
+              personType={personType}
             />
           </View>
         </View>
@@ -377,13 +384,13 @@ const ProfileScreen = () => {
         }
       >
         <View className="flex-row items-center justify-between">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Link screen="Clients" params={{}}>
             <Image
               source={Icons.ArrowLeft}
               className="!size-6"
               resizeMode="contain"
             />
-          </TouchableOpacity>
+          </Link>
 
           {isCollapsed && recordingState === "idle" && (
             <TouchableOpacity
@@ -423,13 +430,14 @@ const ProfileScreen = () => {
       >
         <View className="mx-auto mb-4 hidden w-full max-w-[960px] items-start md:flex xl:absolute xl:left-10 xl:max-w-none">
           {/* TODO: back button under discussion with design team */}
-          <TouchableOpacity
-            className="flex-row items-center gap-2"
-            onPress={navigation.goBack}
+          <Link
+            className="flex flex-row items-center gap-2"
+            screen={personType === "client" ? "Clients" : "Residents"}
+            params={{}}
           >
             <Image source={Icons.ArrowLeft} className="!size-3" />
             <Text className="text-sm font-medium text-[#355362D9]">Back</Text>
-          </TouchableOpacity>
+          </Link>
         </View>
 
         <View className="mx-auto w-full max-w-[960px]">
@@ -552,4 +560,4 @@ const ProfileScreen = () => {
   );
 };
 
-export default ProfileScreen;
+export default ProfileScreenContainer;

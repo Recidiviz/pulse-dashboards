@@ -31,37 +31,33 @@ export type RootStackParamList = {
   // Messages: undefined;
   // Schedule: undefined;
   // Resources: undefined;
-  Profile: {
-    person: {
-      personId: string;
-      fullName: string;
-      displayPersonExternalId: string;
-      primaryMetadata: string;
-    };
+  ClientProfile: {
+    personId: string;
   };
-  NewMeeting: {
-    person: {
-      personId: string;
-      fullName: string;
-      displayPersonExternalId: string;
-      primaryMetadata: string;
-    };
+  ResidentProfile: {
+    personId: string;
+  };
+  ClientNewMeeting: {
+    personId: string;
+    fullName: string;
+    displayPersonExternalId: string;
+    primaryMetadata: string;
     meetingId: string;
   };
-  Meeting: {
-    person: {
-      personId: string;
-      fullName: string;
-      displayPersonExternalId: string;
-      primaryMetadata: string;
-    };
-    meeting: {
-      id: string;
-      date: string;
-      time: string;
-      duration: string | null;
-      content: string;
-    };
+  ResidentNewMeeting: {
+    personId: string;
+    fullName: string;
+    displayPersonExternalId: string;
+    primaryMetadata: string;
+    meetingId: string;
+  };
+  ClientMeeting: {
+    personId: string;
+    meetingId: string;
+  };
+  ResidentMeeting: {
+    personId: string;
+    meetingId: string;
   };
 };
 
@@ -69,19 +65,41 @@ const Drawer = createDrawerNavigator<RootStackParamList>();
 
 export default function DrawerNavigator() {
   return (
-    <Drawer.Navigator 
-      screenOptions={{ 
-        headerShown: false, 
-        drawerType: "front", 
-        drawerStyle: { width: "100%" }, 
-      }} 
+    <Drawer.Navigator
+      screenOptions={{
+        headerShown: false,
+        drawerType: "front",
+        drawerStyle: { width: "100%" },
+      }}
       drawerContent={(props) => <DrawerContent {...props} />}
+      backBehavior="fullHistory"
     >
       <Drawer.Screen name="Clients" component={ClientsScreen} />
       <Drawer.Screen name="Residents" component={ResidentsScreen} />
-      <Drawer.Screen name="Profile" component={ProfileScreen} />
-      <Drawer.Screen name="NewMeeting" component={NewMeetingScreen} />
-      <Drawer.Screen name="Meeting" component={MeetingScreen} />
+      <Drawer.Screen
+        name="ClientProfile"
+        component={() => <ProfileScreen personType="client" />}
+      />
+      <Drawer.Screen
+        name="ResidentProfile"
+        component={() => <ProfileScreen personType="resident" />}
+      />
+      <Drawer.Screen
+        name="ClientNewMeeting"
+        component={() => <NewMeetingScreen personType="client" />}
+      />
+      <Drawer.Screen
+        name="ResidentNewMeeting"
+        component={() => <NewMeetingScreen personType="resident" />}
+      />
+      <Drawer.Screen
+        name="ClientMeeting"
+        component={() => <MeetingScreen personType="client" />}
+      />
+      <Drawer.Screen
+        name="ResidentMeeting"
+        component={() => <MeetingScreen personType="resident" />}
+      />
     </Drawer.Navigator>
   );
-};
+}

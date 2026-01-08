@@ -15,14 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Link } from "@react-navigation/native";
 import React from "react";
-import {
-  Image,
-  ImageSourcePropType,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ImageSourcePropType, Text, View } from "react-native";
 
 import Icons from "../../assets/icons";
 
@@ -30,6 +25,7 @@ type MobileMenuItemProps = {
   icon: ImageSourcePropType;
   title: string;
   badge?: number;
+  screen: string;
   onPress?: () => void;
 };
 
@@ -37,34 +33,36 @@ const MobileMenuItem = ({
   icon,
   title,
   badge,
+  screen,
   onPress,
 }: MobileMenuItemProps) => {
   return (
-    <TouchableOpacity
-      className="flex-row items-center justify-between py-4"
-      onPress={onPress}
-    >
-      <View className="flex-row items-center gap-3">
+    <Link className="py-4" screen={screen} onPress={onPress} params={{}}>
+      <View className="w-full flex-row items-center justify-between">
+        <View className="flex-row items-center gap-3">
+          <Image
+            source={icon}
+            className="!size-[26px]"
+            style={{ resizeMode: "contain" }}
+          />
+          <Text className="font-inter text-base font-medium color-black">
+            {title}
+          </Text>
+          {badge ? (
+            <View className="ml-2 h-[14] w-4 justify-center rounded-full bg-gray-600">
+              <Text className="text-center font-inter text-xs font-medium text-white">
+                {badge}
+              </Text>
+            </View>
+          ) : null}
+        </View>
         <Image
-          source={icon}
-          className="!size-[26px]"
-          style={{ resizeMode: "contain" }}
+          source={Icons.ArrowRight}
+          className="!size-3.5"
+          style={{ resizeMode: "contain", tintColor: "#000000" }}
         />
-        <Text className="font-inter font-medium text-lg leading-[22px]">{title}</Text>
-        {badge ? (
-          <View className="ml-2 h-[14] w-4 justify-center rounded-full bg-gray-600">
-            <Text className="text-center font-inter text-xs font-medium text-white">
-              {badge}
-            </Text>
-          </View>
-        ) : null}
       </View>
-      <Image
-        source={Icons.ArrowRight}
-        className="!size-3.5"
-        style={{ resizeMode: "contain", tintColor: "#000000" }}
-      />
-    </TouchableOpacity>
+    </Link>
   );
 };
 

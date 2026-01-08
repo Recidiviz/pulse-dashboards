@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { fireEvent, render } from "@testing-library/react-native";
-import React from "react";
 
 import Header from "../../components/Header";
 
@@ -36,10 +39,15 @@ const mockRoute = {
   params: undefined,
 };
 
-jest.mock("@react-navigation/native", () => ({
-  useNavigation: jest.fn(),
-  useRoute: jest.fn(),
-}));
+jest.mock("@react-navigation/native", () => {
+  const originalModule = jest.requireActual("@react-navigation/native");
+
+  return {
+    ...originalModule,
+    useNavigation: jest.fn(),
+    useRoute: jest.fn(),
+  };
+});
 
 // Mock Icons
 jest.mock("../../../assets/icons", () => ({
@@ -62,7 +70,11 @@ describe("Header", () => {
 
   describe("navigation changes", () => {
     it("navigates to Clients when logo is pressed (changed from Home)", () => {
-      const { getByTestId } = render(<Header />);
+      const { getByTestId } = render(
+        <NavigationContainer>
+          <Header />
+        </NavigationContainer>,
+      );
 
       const logoButton = getByTestId("logo-button");
       fireEvent.press(logoButton);

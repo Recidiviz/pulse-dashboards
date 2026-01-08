@@ -20,27 +20,53 @@ import { useEffect, useState } from "react";
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
-import { RecordingStatus } from "../common/types";
+import { Person, RecordingStatus } from "../common/types";
 import { useMeetingRecording } from "../hooks/useMeetingRecording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
-import { formatDurationNumeric } from "../utils/format";
+import { trpc } from "../trpc/client";
+import { deserializeClient, formatDurationNumeric } from "../utils/format";
 import Modal from "./Modal";
 
-type NewMeetingRouteProp = RouteProp<RootStackParamList, "NewMeeting">;
+type NewMeetingRouteProp = RouteProp<
+  RootStackParamList,
+  "ClientNewMeeting" | "ResidentNewMeeting"
+>;
 
-type NewMeetingModalProps = {
+type NewMeetingModalContainerProps = {
   meetingId: string;
   onClose: () => void;
 };
 
-const NewMeetingModal = ({ meetingId, onClose }: NewMeetingModalProps) => {
+const NewMeetingModalContainer = ({
+  meetingId,
+  onClose,
+}: NewMeetingModalContainerProps) => {
   const route = useRoute<NewMeetingRouteProp>();
-  const person = {
-    ...route.params.person,
-    // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.person.personId),
-  };
 
+  const { data: person } = trpc.v1.staff.getClient.useQuery({
+    personId: BigInt(route.params.personId),
+  });
+
+  if (!person) return null;
+
+  return (
+    <NewMeetingModal
+      meetingId={meetingId}
+      onClose={onClose}
+      person={deserializeClient(person)}
+    />
+  );
+};
+
+type NewMeetingModalProps = NewMeetingModalContainerProps & {
+  person: Person;
+};
+
+const NewMeetingModal = ({
+  meetingId,
+  onClose,
+  person,
+}: NewMeetingModalProps) => {
   const { status, note, setNote, recorderState, totalDurationMs, actions } =
     useMeetingRecording({
       person,
@@ -69,6 +95,7 @@ const NewMeetingModal = ({ meetingId, onClose }: NewMeetingModalProps) => {
     >
       {isMeetingActive ? (
         <NewMeetingProgress
+          person={person}
           status={status}
           note={note}
           setNote={setNote}
@@ -82,20 +109,27 @@ const NewMeetingModal = ({ meetingId, onClose }: NewMeetingModalProps) => {
           onClose={onClose}
         />
       ) : (
-        <NewMeetingIntro onClose={onClose} startRecording={startRecording} />
+        <NewMeetingIntro
+          person={person}
+          onClose={onClose}
+          startRecording={startRecording}
+        />
       )}
     </Modal>
   );
 };
 
 type NewMeetingIntroProps = {
+  person: Person;
   onClose: () => void;
   startRecording: () => Promise<void>;
 };
 
-const NewMeetingIntro = ({ onClose, startRecording }: NewMeetingIntroProps) => {
-  const route = useRoute<NewMeetingRouteProp>();
-
+const NewMeetingIntro = ({
+  person,
+  onClose,
+  startRecording,
+}: NewMeetingIntroProps) => {
   return (
     <View className="h-full grow py-5 md:h-auto">
       <View className="w-full flex-row items-center justify-between border-b border-[#EDF1F1] px-8 pb-3">
@@ -104,10 +138,9 @@ const NewMeetingIntro = ({ onClose, startRecording }: NewMeetingIntroProps) => {
             New Meeting
           </Text>
           <Text className="font-inter text-base font-medium text-primary">
-            {route.params.person.fullName}{" "}
+            {person.fullName}{" "}
             <Text className="text-base font-normal text-[#355362D9]">
-              {route.params.person.primaryMetadata} • ID:{" "}
-              {route.params.person.personId}
+              {person.primaryMetadata} • ID: {person.personId}
             </Text>
           </Text>
         </View>
@@ -155,6 +188,7 @@ const NewMeetingIntro = ({ onClose, startRecording }: NewMeetingIntroProps) => {
 };
 
 type NewMeetingProgressProps = {
+  person: Person;
   status: RecordingStatus;
   note: string;
   totalDurationMs: number;
@@ -169,6 +203,7 @@ type NewMeetingProgressProps = {
 };
 
 const NewMeetingProgress = ({
+  person,
   status,
   note,
   totalDurationMs,
@@ -181,7 +216,6 @@ const NewMeetingProgress = ({
   handleFinalDiscard,
   onClose,
 }: NewMeetingProgressProps) => {
-  const route = useRoute<NewMeetingRouteProp>();
   // TODO: live transcript will be added in next releases
   // const [showLiveTranscript, setShowLiveTranscript] = useState(false);
   // const [isScrollToBottomButtonVisible, setIsScrollToBottomButtonVisible] =
@@ -233,10 +267,9 @@ const NewMeetingProgress = ({
               New Meeting
             </Text>
             <Text className="font-inter text-base font-medium text-primary">
-              {route.params.person.fullName}{" "}
+              {person.fullName}{" "}
               <Text className="text-base font-normal text-[#355362D9]">
-                {route.params.person.primaryMetadata} • ID:{" "}
-                {route.params.person.personId}
+                {person.primaryMetadata} • ID: {person.personId}
               </Text>
             </Text>
           </View>
@@ -413,8 +446,8 @@ const NewMeetingProgress = ({
           </Text>
           <Text className="mb-5 w-[350px] font-inter text-[#355362D9]">
             You’re about to finish the meeting with{" "}
-            <Text className="font-bold">{route.params.person.fullName}</Text>{" "}
-            and save the notes for processing.
+            <Text className="font-bold">{person.fullName}</Text> and save the
+            notes for processing.
           </Text>
           <View className="flex-row gap-2">
             <TouchableOpacity
@@ -449,8 +482,8 @@ const NewMeetingProgress = ({
           </Text>
           <Text className="mb-5 w-[350px] font-inter text-[#355362D9]">
             You’re about to discard the meeting with{" "}
-            <Text className="font-bold">{route.params.person.fullName}.</Text>{" "}
-            Notes and transcript won't be saved.
+            <Text className="font-bold">{person.fullName}.</Text> Notes and
+            transcript won't be saved.
           </Text>
           <View className="flex-row gap-2">
             <TouchableOpacity
@@ -479,4 +512,4 @@ const NewMeetingProgress = ({
   );
 };
 
-export default NewMeetingModal;
+export default NewMeetingModalContainer;

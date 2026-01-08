@@ -16,7 +16,11 @@
 // =============================================================================
 
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  LinkingOptions,
+  NavigationContainer,
+  NavigatorScreenParams,
+} from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useFonts } from "expo-font";
@@ -28,13 +32,39 @@ import AppUpdateModal from "../components/AppUpdateModal";
 import env from "../env";
 import LoginScreen from "../screens/LoginScreen";
 import { publicTrpc, trpc } from "../trpc/client";
-import DrawerNavigator from "./DrawerNavigator";
+import DrawerNavigator, { RootStackParamList } from "./DrawerNavigator";
 
 const Drawer = createDrawerNavigator();
 const queryClient = new QueryClient();
 const publicQueryClient = new QueryClient();
 
 const trpcUrl = env.EXPO_PUBLIC_SERVER_URL;
+
+type AppStackParamList = {
+  Login: undefined;
+  Main: NavigatorScreenParams<RootStackParamList>;
+};
+
+const linking: LinkingOptions<AppStackParamList> = {
+  prefixes: [],
+  config: {
+    screens: {
+      Login: "login",
+      Main: {
+        screens: {
+          Clients: "clients",
+          Residents: "residents",
+          ClientProfile: "clients/:personId",
+          ResidentProfile: "residents/:personId",
+          ClientNewMeeting: "clients/:personId/new-meeting",
+          ResidentNewMeeting: "residents/:personId/new-meeting",
+          ClientMeeting: "clients/:personId/meetings/:meetingId",
+          ResidentMeeting: "residents/:personId/meetings/:meetingId",
+        },
+      },
+    },
+  },
+};
 
 const AppNavigator = () => {
   const { user, isLoading, getCredentials } = useAuth0();
@@ -117,7 +147,7 @@ const AppNavigator = () => {
         <AppUpdateModal />
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
-            <NavigationContainer>
+            <NavigationContainer linking={linking}>
               <Drawer.Navigator screenOptions={{ headerShown: false }}>
                 {!loggedIn ? (
                   <Drawer.Screen name="Login">

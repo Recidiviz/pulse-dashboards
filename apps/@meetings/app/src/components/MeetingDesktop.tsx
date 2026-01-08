@@ -16,7 +16,7 @@
 // =============================================================================
 
 import Clipboard from "@react-native-clipboard/clipboard";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { Link } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   Image,
@@ -29,12 +29,11 @@ import {
 } from "react-native";
 
 import Icons from "../../assets/icons";
-import { MeetingDetails } from "../common/types";
+import { MeetingDetails, Person } from "../common/types";
 import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
 import { useSnackbar } from "../components/Snackbar";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
@@ -110,22 +109,14 @@ const DraftCaseNote = ({ notes }: { notes?: string }) => {
   );
 };
 
-type MeetingRouteProp = RouteProp<RootStackParamList, "Meeting">;
-
 type Props = {
   meetingDetails?: MeetingDetails;
+  person: Person;
+  personType: "client" | "resident";
 };
 
-const MeetingDesktop = ({ meetingDetails }: Props) => {
-  const navigation = useNavigation();
-  const route = useRoute<MeetingRouteProp>();
+const MeetingDesktop = ({ meetingDetails, person, personType }: Props) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Notes);
-
-  const person = {
-    ...route.params.person,
-    // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.person.personId),
-  };
 
   const meetingDate = meetingDetails?.startTime
     ? formatMeetingStartDate(meetingDetails.startTime)
@@ -140,13 +131,16 @@ const MeetingDesktop = ({ meetingDetails }: Props) => {
       <Header />
       <View className="flex-row border-t border-[#35536226]">
         <View className="border-r border-[#35536226] pt-8">
-          <TouchableOpacity
-            className="mx-10 flex-row items-center gap-2"
-            onPress={navigation.goBack}
+          <Link
+            className="mx-10 flex flex-row items-center gap-2"
+            screen={
+              personType === "client" ? "ClientProfile" : "ResidentProfile"
+            }
+            params={{ personId: person.personId.toString() }}
           >
             <Image source={Icons.ArrowLeft} className="!size-3" />
             <Text className="text-sm font-medium text-[#355362D9]">Back</Text>
-          </TouchableOpacity>
+          </Link>
 
           <View className="flex-row items-center gap-3 border-b border-[#35536226] px-10 py-6">
             <ImageBackground

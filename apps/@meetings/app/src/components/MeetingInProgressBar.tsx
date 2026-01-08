@@ -19,6 +19,7 @@ import React from "react";
 import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
+import { Person } from "../common/types";
 import { useMeetingRecording } from "../hooks/useMeetingRecording";
 import MeetingSheet from "./MeetingSheet";
 
@@ -26,12 +27,7 @@ type MeetingInProgressBarProps = {
   recordingState: string;
   startTime: Date;
   endTime: Date | null;
-  person: {
-    personId: string;
-    fullName: string;
-    displayPersonExternalId: string;
-    primaryMetadata: string;
-  };
+  person: Person;
   meetingId: string;
   className?: string;
 };
@@ -80,7 +76,7 @@ const MeetingInProgressBar = ({
       className={`flex-row items-center justify-between rounded-xl bg-[#F4F5F5] p-3 ${className}`}
     >
       <View>
-        <Text className="font-inter font-medium text-[13px] text-gray-700">
+        <Text className="font-inter text-[13px] font-medium text-gray-700">
           Meeting in progress
         </Text>
         <Text className="mt-1 font-inter text-[12px] text-gray-600">
@@ -90,7 +86,7 @@ const MeetingInProgressBar = ({
 
       <View className="flex-row items-center space-x-2">
         <TouchableOpacity
-          className="px-3 py-2 rounded-full"
+          className="rounded-full px-3 py-2"
           onPress={handleTogglePauseResume}
           style={{
             backgroundColor: isPaused ? "#006C67" : "#4D5255",
@@ -102,14 +98,14 @@ const MeetingInProgressBar = ({
               className="mr-1.5 !size-4"
               style={{ tintColor: "white", resizeMode: "contain" }}
             />
-            <Text className="font-inter font-semibold text-[13px] text-white">
+            <Text className="font-inter text-[13px] font-semibold text-white">
               {isPaused ? "Resume" : "Pause"}
             </Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="bg-[#B91C1C] ml-2 p-2 rounded-full"
+          className="ml-2 rounded-full bg-[#B91C1C] p-2"
           onPress={stopRecording}
         >
           <Image
