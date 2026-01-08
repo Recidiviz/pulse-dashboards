@@ -210,7 +210,8 @@ const sentencingAssistantDisplayName = "Sentencing Assistant Backend Services";
 const jiiTextingDisplayName = "JII Texting Backend Services";
 const caseNotesDisplayName = "Case Notes Server";
 const opportunitiesFrontendDisplayName = "Opportunities Frontend";
-const opportunitiesBackendDisplayName = "Opportunities Backend";
+const opportunitiesCloudFunctionsDisplayName = "Opportunities Cloud Functions";
+const opportunitiesBackendDisplayName = "Opportunities Backend Services";
 const reentryBackendV0DisplayName = "Reentry Backend Services (v0)";
 const reentryBackendV1DisplayName = "Reentry Backend Services (v1)";
 const reentryFrontendDisplayName = "Reentry Frontend";
@@ -226,6 +227,7 @@ const deployServicesChoices = [
   { name: jiiTextingDisplayName, checked: inStagingOrProd },
   { name: caseNotesDisplayName, checked: true },
   { name: opportunitiesFrontendDisplayName, checked: true },
+  { name: opportunitiesCloudFunctionsDisplayName, checked: inStagingOrProd },
   { name: opportunitiesBackendDisplayName, checked: inStagingOrProd },
   { name: reentryBackendV0DisplayName, checked: false },
   { name: reentryBackendV1DisplayName, checked: false },
@@ -272,6 +274,9 @@ const deployDemoFixtures = deployServicesPrompt.deployServices.includes(
 const deployOppsFrontend = deployServicesPrompt.deployServices.includes(
   opportunitiesFrontendDisplayName,
 );
+const deployOppsFunctions = deployServicesPrompt.deployServices.includes(
+  opportunitiesCloudFunctionsDisplayName,
+);
 const deployOppsBackend = deployServicesPrompt.deployServices.includes(
   opportunitiesBackendDisplayName,
 );
@@ -312,6 +317,7 @@ if (
     deployJiiTexting ||
     deployCaseNotes ||
     deployReentryServer ||
+    deployOppsBackend ||
     deployMeetingAssistant)
 ) {
   try {
@@ -636,18 +642,69 @@ if (
 }
 
 if (
-  // there is no demo backend for Opportunities, it shares the staging backend
-  deployOppsBackend &&
+  deployOppsFunctions &&
+  // there are no demo Opportunities cloud functions, staging functions serve both
   (deployEnv === "staging" || deployEnv === "production")
 ) {
   let retryDeploy = false;
 
   do {
     // Deploy the app
-    console.log(`Deploying ${opportunitiesBackendDisplayName}...`);
+    console.log(`Deploying ${opportunitiesCloudFunctionsDisplayName}...`);
 
     try {
       await $`nx deploy jii-functions --configuration ${deployEnv}`.pipe(
+        process.stdout,
+      );
+
+      retryDeploy = false;
+      successfullyDeployed.push(opportunitiesCloudFunctionsDisplayName);
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `${opportunitiesCloudFunctionsDisplayName} deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
+}
+
+if (
+  deployOppsBackend &&
+  (deployEnv === "staging" || deployEnv === "production")
+) {
+  let retryDeploy = false;
+  do {
+    // Deploy the app
+    console.log(`Deploying ${opportunitiesBackendDisplayName}...`);
+
+    // for staging or CP deploys we need to build a new docker image
+    // (for normal prod deploys we should be using the image built for the previous staging deploy)
+    try {
+      let projects;
+      let configuration;
+      if (deployEnv === "staging") {
+        // this looks a little redundant now but it's consistent with other backends
+        // and we may have more projects eventually
+        projects = ["@jii/server"];
+        configuration = "staging";
+      } else if (deployEnv === "production" && isCpDeploy) {
+        projects = ["@jii/server"];
+        configuration = "cherry-pick";
+      }
+
+      if (projects) {
+        await $`COMMIT_SHA=${currentRevision} nx run-many -t container -p ${projects} -c ${configuration}`.pipe(
+          process.stdout,
+        );
+      }
+
+      // Deploy the server infrastructure changes for the applicable environment
+      await $`yarn atmos:apply apps/jii -s recidiviz-jii-${deployEnv}--jii -- -auto-approve \
+            -var server_container_version=${currentRevision} \
+            -var migrate_db_container_version=${currentRevision}`.pipe(
         process.stdout,
       );
 
