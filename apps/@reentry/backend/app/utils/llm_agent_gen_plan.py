@@ -8,7 +8,7 @@ from langgraph.pregel import RetryPolicy
 from langgraph.types import Send
 from pydantic import ValidationError
 
-from app.core.config import create_model_from_config, tracer
+from app.core.config import create_model_from_config
 from app.core.data_config.output_configs.output_config import ActionPlanConfigFile
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
@@ -29,6 +29,7 @@ from app.utils.action_plan_types import (
     CommonMessagesState,
 )
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
+from app.utils.langsmith_utils import build_langsmith_config
 
 from .llm_agent_gen_plan_prompts import ActionPlanPrompts
 from .llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
@@ -43,10 +44,10 @@ class ExtendedMessagesState(CommonMessagesState):
 
 
 ### Transition functions
-def call_generate_sections(state: ExtendedMessagesState) -> Literal["section"]:
+def call_generate_sections(state: ExtendedMessagesState) -> Literal["gen_section"]:
     return [
         Send(
-            "section",
+            "gen_section",
             {
                 "messages": state["messages"],
                 "section_to_generate": section,
@@ -270,6 +271,7 @@ class LLMAgentGenerate:
         previous_sections: list[str] | None,
         thread_id,
         action_plan_config: ActionPlanConfigFile | None = None,
+        client_pseudo_id: str | None = None,
     ):
         self.client_data = client_data
         self.decision_tree_statements = decision_tree_statements
@@ -295,13 +297,27 @@ class LLMAgentGenerate:
             action_plan_config.model.version,
         )
 
-        self.config = {
-            "configurable": {"thread_id": thread_id},
-            "callbacks": [self.custom_metrics_callback],
-            "recursion_limit": 50,
-        }
-        if tracer:
-            self.config["callbacks"].append(tracer)
+        # Store for error handling context
+        self.client_pseudo_id = client_pseudo_id
+
+        # Create semantic thread_id for LangSmith legibility
+        thread_id_str = str(thread_id) if thread_id else "unknown"
+        client_id_suffix = f"-{client_pseudo_id[:8]}" if client_pseudo_id else ""
+        semantic_thread_id = f"plan-gen-{thread_id_str}{client_id_suffix}"
+
+        self.run_name = "ActionPlan-Generate"
+
+        # Build config with LangSmith metadata and tags
+        self.config = build_langsmith_config(
+            thread_id=semantic_thread_id,
+            run_name=self.run_name,
+            callbacks=[self.custom_metrics_callback],
+            client_pseudo_id=client_pseudo_id,
+            plan_id=str(thread_id) if thread_id else None,
+            workflow_type="plan_generation",
+            model_provider=action_plan_config.model.provider,
+            model_name=action_plan_config.model.name,
+        )
 
         ### llm calls
         async def call_reflexion(state: ExtendedMessagesState):
@@ -463,45 +479,47 @@ class LLMAgentGenerate:
             return state
 
         ### Graph definition
-        # Define a new graph
+        # Define a new graph with semantic node names for LangSmith legibility
         workflow = StateGraph(ExtendedMessagesState)
         # Create a new plan
-        workflow.add_node("reflexion", call_reflexion)
-        workflow.add_node("area_of_needs", call_area_of_needs)
-        workflow.add_node("resources", call_resources_options)
-        workflow.add_node("section", call_generate_section_node)
+        workflow.add_node("gen_reflexion", call_reflexion)
+        workflow.add_node("gen_area_of_needs", call_area_of_needs)
+        workflow.add_node("gen_resources", call_resources_options)
+        workflow.add_node("gen_section", call_generate_section_node)
 
         # Conditionally add timeline and milestones nodes
         if self.include_timeline:
-            workflow.add_node("timeline", call_generate_timeline)
+            workflow.add_node("gen_timeline", call_generate_timeline)
         if self.include_milestones:
-            workflow.add_node("milestones", call_generate_milestones)
+            workflow.add_node("gen_milestones", call_generate_milestones)
 
-        workflow.add_node("assemble", call_generate_action_plan, retry=RetryPolicy())
+        workflow.add_node(
+            "gen_assemble", call_generate_action_plan, retry=RetryPolicy()
+        )
 
         # Links
-        workflow.add_edge(START, "reflexion")
-        workflow.add_edge("reflexion", "area_of_needs")
-        workflow.add_edge("area_of_needs", "resources")
-        workflow.add_conditional_edges("resources", call_generate_sections)
+        workflow.add_edge(START, "gen_reflexion")
+        workflow.add_edge("gen_reflexion", "gen_area_of_needs")
+        workflow.add_edge("gen_area_of_needs", "gen_resources")
+        workflow.add_conditional_edges("gen_resources", call_generate_sections)
 
         # Conditionally connect section -> timeline -> milestones -> assemble
         # based on which features are enabled
         if self.include_timeline and self.include_milestones:
-            workflow.add_edge("section", "timeline")
-            workflow.add_edge("timeline", "milestones")
-            workflow.add_edge("milestones", "assemble")
+            workflow.add_edge("gen_section", "gen_timeline")
+            workflow.add_edge("gen_timeline", "gen_milestones")
+            workflow.add_edge("gen_milestones", "gen_assemble")
         elif self.include_timeline and not self.include_milestones:
-            workflow.add_edge("section", "timeline")
-            workflow.add_edge("timeline", "assemble")
+            workflow.add_edge("gen_section", "gen_timeline")
+            workflow.add_edge("gen_timeline", "gen_assemble")
         elif not self.include_timeline and self.include_milestones:
-            workflow.add_edge("section", "milestones")
-            workflow.add_edge("milestones", "assemble")
+            workflow.add_edge("gen_section", "gen_milestones")
+            workflow.add_edge("gen_milestones", "gen_assemble")
         else:
             # Neither timeline nor milestones enabled
-            workflow.add_edge("section", "assemble")
+            workflow.add_edge("gen_section", "gen_assemble")
 
-        workflow.add_edge("assemble", END)
+        workflow.add_edge("gen_assemble", END)
 
         self.graph = workflow.compile()
         print(self.graph.get_graph().draw_mermaid())
@@ -511,6 +529,12 @@ class LLMAgentGenerate:
         user_prompt = self.prompts.get_initial_user_prompt(
             self.client_data, self.client_address, self.decision_tree_statements
         )
+
+        # Include run_name in config for LangSmith trace legibility
+        invoke_config = {
+            **self.config,
+            "run_name": self.run_name,
+        }
 
         events = self.graph.astream(
             {
@@ -524,7 +548,7 @@ class LLMAgentGenerate:
                 "generated_timeline": None,
                 "generated_milestones": None,
             },
-            self.config,
+            invoke_config,
             stream_mode="values",
         )
 

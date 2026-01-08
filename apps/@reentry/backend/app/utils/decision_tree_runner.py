@@ -1,11 +1,16 @@
+from typing import Any, Literal
 from uuid import UUID
 
 import structlog
+from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
+from typing_extensions import TypedDict
 
 from app.models.decision_tree import DecisionTree
+from app.utils.langsmith_utils import build_langsmith_config
 from app.utils.llm_agent_qa import LLMAgentQA
 from app.utils.mermaid import (
+    MermaidGraph,
     MermaidGraphTraversalEnd,
     MermaidGraphTraversalQuestion,
     MermaidGraphTraversalStatement,
@@ -52,7 +57,8 @@ DT_SELECTION_PROMPT = (
     "\n\n"
     "You search for the applicable decisions trees based on the client's situation. "
     "For each decision tree, ask yourself if the client's situation corresponds to the decision tree. "
-    "For each applicable decision tree, you must provide the source of the decision tree and the text extract that corresponds to the client's situation. "
+    "For each applicable decision tree, you must provide the source of the decision tree "
+    "and the text extract that corresponds to the client's situation. "
     "Add as many annotations as needed."
     "Use `source` to indicate which document you used (e.g. Client intake, etc.). "
     "Use `source_location` to indicate in a consise way where in the document you found the information (Question X);"
@@ -81,15 +87,13 @@ DT_EXECUTION_PROMPT = (
     "Based on the client's situation, {question}?\n"
     "You MUST choose EXACTLY one of these possible answers: {possible_answers}\n"
     "Do NOT use any other words or phrases for your answer. Choose the most appropriate option from the list above.\n"
-    "If you cannot determine a clear answer from the available information, choose the most reasonable option based on what you know.\n"
+    "If you cannot determine a clear answer from the available information, "
+    "choose the most reasonable option based on what you know.\n"
     "Describe the answer by adding annotations.\n"
     "Use `source` to indicate which document you used (e.g. Client intake, etc.). "
     "Use `source_location` to indicate in a consise way where in the document you found the information (Question X);"
     "Use `source_text_extract` to give an extract/citation that corresponds to the client's situation. "
 )
-
-# set_debug(True)
-# set_verbose(True)
 
 
 # =============================================================================
@@ -118,6 +122,219 @@ class DecisionTreeRunnerResult(BaseModel):
     )
 
 
+# =============================================================================
+# LangGraph State for Decision Tree Traversal
+# =============================================================================
+
+
+class DecisionTreeTraversalState(TypedDict):
+    """State for the decision tree traversal LangGraph workflow."""
+
+    tree_name: str
+    tree: MermaidGraph | None
+    generator: Any  # The tree traversal generator
+    current_step: Any  # Current MermaidGraphTraversal* object
+    current_step_type: str  # Type of current step for routing
+    steps: list[DecisionTreeRunnerStep]
+    statements: list[str]
+    agent: LLMAgentQA | None
+    is_complete: bool
+    # Context data needed for agent creation
+    client_messages: str
+    client_summary: str
+    client_assessment_summary: str
+    system_prompt: str
+    last_annotations: list[Annotation] | None
+
+
+# =============================================================================
+# LangGraph Node Handlers (class-based approach)
+# =============================================================================
+
+
+class DecisionTreeTraversalNodes:
+    """
+    Encapsulates all LangGraph node handlers for decision tree traversal.
+    """
+
+    def __init__(self, runner: "DecisionTreeRunner"):
+        """
+        Initialize with a reference to the parent DecisionTreeRunner.
+
+        Args:
+            runner: The DecisionTreeRunner instance that owns this handler.
+        """
+        self.runner = runner
+
+    async def dt_initialize(
+        self, state: DecisionTreeTraversalState
+    ) -> DecisionTreeTraversalState:
+        """Initialize the decision tree traversal - start the generator and get first step."""
+        tree = self.runner.decision_trees[state["tree_name"]]
+        generator = tree.traverse()
+        first_step = next(generator)
+
+        # Determine step type for routing
+        step_type = self._get_step_type(first_step)
+
+        # Create agent for this traversal
+        task_id_short = (
+            self.runner.task_id.hex[:8] if self.runner.task_id else "unknown"
+        )
+        dt_name_short = (
+            state["tree_name"][:20].replace(" ", "_")
+            if state["tree_name"]
+            else "unknown"
+        )
+        semantic_thread_id = f"dt-exec-{dt_name_short}-{task_id_short}"
+
+        agent = LLMAgentQA(
+            system_prompt=state["system_prompt"],
+            thread_id=semantic_thread_id,
+            model_config=self.runner.model,
+            run_name=f"DecisionTree-Execute-{state['tree_name']}",
+            workflow_type="decision_tree_execution",
+        )
+
+        return {
+            **state,
+            "tree": tree,
+            "generator": generator,
+            "current_step": first_step,
+            "current_step_type": step_type,
+            "agent": agent,
+        }
+
+    async def dt_evaluate(
+        self, state: DecisionTreeTraversalState
+    ) -> DecisionTreeTraversalState:
+        """Evaluate the current step and record it in results."""
+        step = state["current_step"]
+        node_type = step.__class__.__name__.replace("MermaidGraphTraversal", "").lower()
+
+        step_logger = logger.bind(
+            node_key=step.node_key,
+            node_type=node_type,
+        )
+        step_logger.info("Processing step", step=step)
+
+        # Create step result
+        step_result = DecisionTreeRunnerStep(
+            node_key=step.node_key,
+            node_value=step.node_value,
+            node_type=node_type,
+            annotations=state.get("last_annotations"),
+        )
+
+        # Clear last_annotations after using them
+        new_steps = state["steps"] + [step_result]
+
+        return {
+            **state,
+            "steps": new_steps,
+            "last_annotations": None,
+        }
+
+    async def dt_ask_question(
+        self, state: DecisionTreeTraversalState
+    ) -> DecisionTreeTraversalState:
+        """Ask LLM to answer a decision tree question."""
+        step: MermaidGraphTraversalQuestion = state["current_step"]
+        agent: LLMAgentQA = state["agent"]
+        generator = state["generator"]
+
+        step_logger = logger.bind(node_key=step.node_key)
+        step_logger.info("Question step", question=step.question)
+
+        # Ask LLM for answer
+        llm_result = await self.runner.ask_decision_tree_question_llm(
+            step.question, step.answers, agent
+        )
+
+        # Send answer back to generator to advance
+        next_step = generator.send(llm_result.answer)
+
+        # Determine next step type for routing
+        next_step_type = self._get_step_type(next_step)
+
+        return {
+            **state,
+            "generator": generator,
+            "current_step": next_step,
+            "current_step_type": next_step_type,
+            "last_annotations": llm_result.annotations,
+        }
+
+    async def dt_record_statement(
+        self, state: DecisionTreeTraversalState
+    ) -> DecisionTreeTraversalState:
+        """Record a statement and advance to next step."""
+        step: MermaidGraphTraversalStatement = state["current_step"]
+        generator = state["generator"]
+        statements = state["statements"]
+
+        # Record statement if present
+        if step.node_value:
+            statements = statements + [step.node_value]
+
+        # Advance to next step
+        next_step = next(generator)
+        next_step_type = self._get_step_type(next_step)
+
+        return {
+            **state,
+            "generator": generator,
+            "current_step": next_step,
+            "current_step_type": next_step_type,
+            "statements": statements,
+        }
+
+    async def dt_complete(
+        self, state: DecisionTreeTraversalState
+    ) -> DecisionTreeTraversalState:
+        """Mark traversal as complete."""
+        step_logger = logger.bind(node_key=state["current_step"].node_key)
+        step_logger.info(
+            "End of decision tree execution",
+            steps=len(state["steps"]),
+            statements=len(state["statements"]),
+        )
+
+        return {
+            **state,
+            "is_complete": True,
+        }
+
+    def route_by_step_type(
+        self, state: DecisionTreeTraversalState
+    ) -> Literal["dt_ask_question", "dt_record_statement", "dt_complete"]:
+        """Route to appropriate handler based on step type."""
+        step_type = state["current_step_type"]
+        if step_type == "end":
+            return "dt_complete"
+        elif step_type == "question":
+            return "dt_ask_question"
+        else:
+            return "dt_record_statement"
+
+    def _get_step_type(self, step) -> str:
+        """Determine the type of a traversal step for routing."""
+        if isinstance(step, MermaidGraphTraversalEnd):
+            return "end"
+        elif isinstance(step, MermaidGraphTraversalQuestion):
+            return "question"
+        elif isinstance(step, MermaidGraphTraversalStatement):
+            return "statement"
+        else:
+            # For any other type (start, answer, count), treat as statement
+            return "other"
+
+
+# =============================================================================
+# Decision Tree Runner
+# =============================================================================
+
+
 class DecisionTreeRunner:
     def __init__(self, action_plan_config, task_id=UUID | None):
         if not action_plan_config:
@@ -131,6 +348,45 @@ class DecisionTreeRunner:
         self.client_assessment_summary = ""
         self.task_id = task_id
         self.model = action_plan_config.small_model
+
+        # Initialize the node handlers
+        self.traversal_nodes = DecisionTreeTraversalNodes(self)
+
+        # Build the LangGraph workflow for tree traversal
+        self._build_traversal_graph()
+
+    def _build_traversal_graph(self):
+        """Build LangGraph workflow for decision tree traversal with named nodes."""
+        # Build the graph with semantic node names for LangSmith visibility
+        workflow = StateGraph(DecisionTreeTraversalState)
+
+        # Add nodes with descriptive names that appear in LangSmith
+        workflow.add_node("dt_initialize", self.traversal_nodes.dt_initialize)
+        workflow.add_node("dt_evaluate", self.traversal_nodes.dt_evaluate)
+        workflow.add_node("dt_ask_question", self.traversal_nodes.dt_ask_question)
+        workflow.add_node(
+            "dt_record_statement", self.traversal_nodes.dt_record_statement
+        )
+        workflow.add_node("dt_complete", self.traversal_nodes.dt_complete)
+
+        # Define edges
+        workflow.add_edge(START, "dt_initialize")
+        workflow.add_edge("dt_initialize", "dt_evaluate")
+        workflow.add_conditional_edges(
+            "dt_evaluate",
+            self.traversal_nodes.route_by_step_type,
+            {
+                "dt_ask_question": "dt_ask_question",
+                "dt_record_statement": "dt_record_statement",
+                "dt_complete": "dt_complete",
+            },
+        )
+        # After processing, go back to evaluate for next step
+        workflow.add_edge("dt_ask_question", "dt_evaluate")
+        workflow.add_edge("dt_record_statement", "dt_evaluate")
+        workflow.add_edge("dt_complete", END)
+
+        self.traversal_graph = workflow.compile()
 
     def set_client_messages(self, messages):
         self.client_messages = messages
@@ -180,11 +436,16 @@ class DecisionTreeRunner:
         """
         Find the decision trees that applies to the client's situation
         """
+        # Create semantic thread_id for LangSmith legibility
+        task_id_short = self.task_id.hex[:8] if self.task_id else "unknown"
+        semantic_thread_id = f"dt-selection-{task_id_short}"
 
         agent = LLMAgentQA(
             system_prompt=DT_SELECTION_SYSTEM_PROMPT,
-            thread_id=self.task_id.hex,
+            thread_id=semantic_thread_id,
             model_config=self.model,
+            run_name="DecisionTree-Selection",
+            workflow_type="decision_tree_selection",
         )
 
         data = {
@@ -202,19 +463,13 @@ class DecisionTreeRunner:
         self, decision_tree_name: str
     ) -> DecisionTreeRunnerResult:
         """
-        Execute the given decision tree based on the client's situation.
+        Execute the given decision tree using LangGraph workflow.
 
-        This method traverses the decision tree graph, evaluating each node,
-        and determining the flow based on client information and determined answers.
-
-        At each step, it determines whether the step is a question, statement,
-        answer, or the end of the traversal, and processes accordingly.
+        This method uses a LangGraph workflow for full visibility in LangSmith,
+        with named nodes for each step type (initialize, evaluate, ask_question,
+        record_statement, complete).
         """
-        dt = self.decision_trees[decision_tree_name]
-        dt_gen = dt.traverse()
-        step = next(dt_gen)
-
-        result = DecisionTreeRunnerResult()
+        # Prepare system prompt
         data = {
             "client_messages": self.client_messages,
             "client_summary": self.client_summary,
@@ -222,71 +477,47 @@ class DecisionTreeRunner:
         }
         system_prompt = DT_EXECUTION_SYSTEM_PROMPT.format(**data)
 
-        agent = LLMAgentQA(
-            system_prompt=system_prompt,
-            thread_id=self.task_id.hex,
-            model_config=self.model,
+        # Initial state for the LangGraph workflow
+        initial_state: DecisionTreeTraversalState = {
+            "tree_name": decision_tree_name,
+            "tree": None,
+            "generator": None,
+            "current_step": None,
+            "current_step_type": "",
+            "steps": [],
+            "statements": [],
+            "agent": None,
+            "is_complete": False,
+            "client_messages": self.client_messages,
+            "client_summary": self.client_summary,
+            "client_assessment_summary": self.client_assessment_summary,
+            "system_prompt": system_prompt,
+            "last_annotations": None,
+        }
+
+        # Build config for LangSmith tracing
+        task_id_short = self.task_id.hex[:8] if self.task_id else "unknown"
+        dt_name_short = (
+            decision_tree_name[:20].replace(" ", "_")
+            if decision_tree_name
+            else "unknown"
         )
 
-        node_key = prev_node_key = None
+        config = build_langsmith_config(
+            thread_id=f"dt-traversal-{dt_name_short}-{task_id_short}",
+            run_name=f"DecisionTree-Traversal-{decision_tree_name}",
+            workflow_type="decision_tree_traversal",
+            recursion_limit=100,  # Higher limit for complex trees
+            decision_tree_name=decision_tree_name,
+        )
 
-        while step is not None:
-            # get informations
-            node_type = step.__class__.__name__.replace(
-                "MermaidGraphTraversal", ""
-            ).lower()
-            prev_node_key, node_key = node_key, step.node_key
-            step_logger = logger.bind(
-                node_key=node_key,
-                node_type=node_type,
-                prev_node_key=prev_node_key,
-            )
+        # Execute the LangGraph workflow
+        final_state = await self.traversal_graph.ainvoke(initial_state, config)
 
-            # prepare the result
-            step_logger.info("Processing step", step=step)
-            step_result = DecisionTreeRunnerStep(
-                node_key=node_key,
-                node_value=step.node_value,
-                node_type=node_type,
-            )
-            result.steps.append(step_result)
-
-            if isinstance(step, MermaidGraphTraversalEnd):
-                step_logger.info(
-                    "End of decision tree execution",
-                    steps=len(result.steps),
-                    statements=len(result.statements),
-                )
-                break
-
-            elif isinstance(step, MermaidGraphTraversalQuestion):
-                step_logger.info("Question step", question=step.question)
-
-                llm_result = await self.ask_decision_tree_question_llm(
-                    step.question, step.answers, agent
-                )
-
-                # send back the answer to the decision tree
-                # in order to take the right path
-                step = dt_gen.send(llm_result.answer)
-
-                # add the LLM annotations of the current answer
-                # to the current step result
-                step_result.annotations = llm_result.annotations
-
-            elif isinstance(step, MermaidGraphTraversalStatement):
-                # extract the annotations and add it to the current step result
-                tstep: MermaidGraphTraversalStatement = step
-                if tstep.node_value:
-                    result.statements.append(tstep.node_value)
-
-                step = next(dt_gen)
-
-            else:
-                # for any other node, just go to the next step
-                step = next(dt_gen)
-
-        return result
+        return DecisionTreeRunnerResult(
+            steps=final_state["steps"],
+            statements=final_state["statements"],
+        )
 
     async def ask_decision_tree_question_llm(
         self, question: str, possible_answers: list[str], agent: LLMAgentQA

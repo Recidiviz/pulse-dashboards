@@ -290,6 +290,7 @@ async def _regenerate_action_plan(
         current_timeline=current_timeline,
         current_milestones=current_milestones,
         action_plan_config=action_plan_config,
+        client_pseudo_id=client_pseudo_id,
     )
     action_plan = await agent.generate(
         extra_instructions=instructions,
@@ -366,6 +367,7 @@ async def _generate_new_action_plan(
         client_address=client_address.as_formatted_string(),
         thread_id=gen.plan_id,
         action_plan_config=action_plan_config,
+        client_pseudo_id=client_pseudo_id,
     )
 
     action_plan = await agent.generate()

@@ -393,7 +393,13 @@ class TranscriptionProcessor:
         Always return "caseworker" or "client" as the role strings, not actual names.
         Ignore other participants who are not in these primary roles."""
 
-        agent = LLMAgentQA(system_prompt, "transcription_processor", self.model_config)
+        agent = LLMAgentQA(
+            system_prompt,
+            thread_id="transcription-multi-speaker",
+            model_config=self.model_config,
+            run_name="Transcription-MultiSpeaker-Identification",
+            workflow_type="transcription_processing",
+        )
         formatted_messages = self._format_conversation_for_llm(conversation)
         speakers_clarification = await agent.call(
             formatted_messages, SpeakersClarification
@@ -419,7 +425,13 @@ class TranscriptionProcessor:
         the client based on speaking patterns, language used, and conversational roles.
         Return "caseworker" or "client" as role strings, not actual names."""
 
-        agent = LLMAgentQA(system_prompt, "transcription_processor", self.model_config)
+        agent = LLMAgentQA(
+            system_prompt,
+            thread_id="transcription-two-speaker",
+            model_config=self.model_config,
+            run_name="Transcription-TwoSpeaker-Identification",
+            workflow_type="transcription_processing",
+        )
 
         sample_conversation = (
             conversation[:10] if len(conversation) > 10 else conversation

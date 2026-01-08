@@ -7,7 +7,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
 from pydantic import BaseModel, Field
 
-from app.core.config import create_model_from_config, tracer
+from app.core.config import create_model_from_config
 from app.core.data_config.output_configs.output_config import ActionPlanConfigFile
 from app.services.resources import Resource
 from app.utils.action_plan_types import (
@@ -21,6 +21,7 @@ from app.utils.action_plan_types import (
     CommonMessagesState,
 )
 from app.utils.CustomMetricsCallbackHandler import CustomMetricsCallbackHandler
+from app.utils.langsmith_utils import build_langsmith_config
 
 from .llm_agent_edit_plan_prompts import ActionPlanEditPrompts
 from .llm_agent_gen_plan import ActionPlanPrompts, call_generate_section
@@ -62,19 +63,25 @@ class RegenerationAction(BaseModel):
 def call_generate_sections(
     state: ExtendedMessagesState,
 ) -> (
-    Literal["section", "section-change", "assemble", "timeline", "milestones"]
+    Literal[
+        "edit_section",
+        "edit_section_change",
+        "edit_assemble",
+        "edit_timeline",
+        "edit_milestones",
+    ]
     | list[Send]
 ):
     if not state["sections_to_generate"]:
         if state["include_timeline"]:
-            return "timeline"
+            return "edit_timeline"
         elif state["include_milestones"]:
-            return "milestones"
+            return "edit_milestones"
         else:
-            return "assemble"
+            return "edit_assemble"
     return [
         Send(
-            "section" if section["action"] == "add" else "section-change",
+            "edit_section" if section["action"] == "add" else "edit_section_change",
             {
                 "messages": state["messages"],
                 "section_to_generate": section["title"],
@@ -99,13 +106,29 @@ class LLMAgentEdit:
         current_timeline: ActionPlanTimelines | None = None,
         current_milestones: ActionPlanMilestones | None = None,
         action_plan_config: ActionPlanConfigFile | None = None,
+        client_pseudo_id: str | None = None,
     ):
-        self.config = {
-            "configurable": {"thread_id": thread_id},
-            "callbacks": [self.custom_metrics_callback],
-        }
-        if tracer:
-            self.config["callbacks"].append(tracer)
+        # Store for error handling context
+        self.client_pseudo_id = client_pseudo_id
+
+        # Create semantic thread_id for LangSmith legibility
+        thread_id_str = str(thread_id) if thread_id else "unknown"
+        client_id_suffix = f"-{client_pseudo_id[:8]}" if client_pseudo_id else ""
+        semantic_thread_id = f"plan-edit-{thread_id_str}{client_id_suffix}"
+
+        self.run_name = "ActionPlan-Edit"
+
+        # Build config with LangSmith metadata and tags
+        self.config = build_langsmith_config(
+            thread_id=semantic_thread_id,
+            run_name=self.run_name,
+            callbacks=[self.custom_metrics_callback],
+            client_pseudo_id=client_pseudo_id,
+            plan_id=str(thread_id) if thread_id else None,
+            workflow_type="plan_edit",
+            model_provider=action_plan_config.model.provider,
+            model_name=action_plan_config.model.name,
+        )
         self.messages = messages
         self.current_sections = current_sections[:]
         self.previous_sections = current_sections[:]
@@ -312,45 +335,47 @@ class LLMAgentEdit:
             return state
 
         ### Graph definition
-        # Define a new graph
+        # Define a new graph with semantic node names for LangSmith legibility
         workflow = StateGraph(ExtendedMessagesState)
 
         # Create a new plan
-        workflow.add_node("section", _call_generate_section)
-        workflow.add_node("section-change", call_generate_section_change)
-        workflow.add_node("assemble", call_generate_action_plan)
-        workflow.add_node("select_starting_node", call_select_starting_node)
+        workflow.add_node("edit_section", _call_generate_section)
+        workflow.add_node("edit_section_change", call_generate_section_change)
+        workflow.add_node("edit_assemble", call_generate_action_plan)
+        workflow.add_node("edit_select_starting_node", call_select_starting_node)
 
         # Conditionally add timeline and milestones nodes
         if self.include_timeline:
-            workflow.add_node("timeline", call_generate_timeline)
+            workflow.add_node("edit_timeline", call_generate_timeline)
         if self.include_milestones:
-            workflow.add_node("milestones", call_generate_milestones)
+            workflow.add_node("edit_milestones", call_generate_milestones)
 
         # Links
-        workflow.add_edge(START, "select_starting_node")
-        workflow.add_conditional_edges("select_starting_node", call_generate_sections)
+        workflow.add_edge(START, "edit_select_starting_node")
+        workflow.add_conditional_edges(
+            "edit_select_starting_node", call_generate_sections
+        )
 
         # Determine the target after section nodes based on enabled features
         if self.include_timeline and self.include_milestones:
-            workflow.add_edge("section", "timeline")
-            workflow.add_edge("section-change", "timeline")
-            workflow.add_edge("timeline", "milestones")
-            workflow.add_edge("milestones", "assemble")
+            workflow.add_edge("edit_section", "edit_timeline")
+            workflow.add_edge("edit_section_change", "edit_timeline")
+            workflow.add_edge("edit_timeline", "edit_milestones")
+            workflow.add_edge("edit_milestones", "edit_assemble")
         elif self.include_timeline and not self.include_milestones:
-            workflow.add_edge("section", "timeline")
-            workflow.add_edge("section-change", "timeline")
-            workflow.add_edge("timeline", "assemble")
+            workflow.add_edge("edit_section", "edit_timeline")
+            workflow.add_edge("edit_section_change", "edit_timeline")
+            workflow.add_edge("edit_timeline", "edit_assemble")
         elif not self.include_timeline and self.include_milestones:
-            workflow.add_edge("section", "milestones")
-            workflow.add_edge("section-change", "milestones")
-            workflow.add_edge("milestones", "assemble")
+            workflow.add_edge("edit_section", "edit_milestones")
+            workflow.add_edge("edit_section_change", "edit_milestones")
+            workflow.add_edge("edit_milestones", "edit_assemble")
         else:
             # Neither timeline nor milestones enabled
-            workflow.add_edge("section", "assemble")
-            workflow.add_edge("section-change", "assemble")
+            workflow.add_edge("edit_section", "edit_assemble")
+            workflow.add_edge("edit_section_change", "edit_assemble")
 
-        workflow.add_edge("assemble", END)
+        workflow.add_edge("edit_assemble", END)
 
         self.graph = workflow.compile()
 
@@ -381,6 +406,12 @@ class LLMAgentEdit:
                 resource_to_remove_id=resource_to_remove_id,
             )
 
+        # Include run_name in config for LangSmith trace legibility
+        invoke_config = {
+            **self.config,
+            "run_name": self.run_name,
+        }
+
         events = self.graph.astream(
             {
                 "messages": self.messages,
@@ -394,7 +425,7 @@ class LLMAgentEdit:
                 "include_timeline": self.include_timeline,
                 "include_milestones": self.include_milestones,
             },
-            self.config,
+            invoke_config,
             stream_mode="values",
         )
 

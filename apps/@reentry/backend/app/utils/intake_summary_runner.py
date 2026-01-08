@@ -1,4 +1,4 @@
-import random
+import uuid
 from typing import List, Tuple
 
 from pydantic import BaseModel
@@ -48,6 +48,7 @@ async def generate_summary(
     formatted_messages: str,
     assessments: List[Assessment],
     output_config: IntakeSummaryConfigFile,
+    client_pseudo_id: str | None = None,
 ) -> Tuple[str, str]:
     """
     Generate a summary from intake messages.
@@ -56,6 +57,7 @@ async def generate_summary(
         formatted_messages: A string containing formatted intake messages
         assessments: A list of Assessment objects
         output_config: Output configuration (required)
+        client_pseudo_id: Optional client pseudo ID for LangSmith trace legibility
 
     Returns:
         A formatted summary string
@@ -80,11 +82,18 @@ async def generate_summary(
         Conversation=formatted_messages, Assessments=formatted_assessments
     )
 
+    # Create semantic thread_id for LangSmith legibility
+    unique_id = uuid.uuid4().hex[:8]
+    client_id_suffix = f"-{client_pseudo_id[:8]}" if client_pseudo_id else ""
+    semantic_thread_id = f"intake-summary-{unique_id}{client_id_suffix}"
+
     agent = LLMAgentQA(
         system_prompt=system_prompt,
-        # random thread_id for now
-        thread_id=random.randint(0, 100000),
+        thread_id=semantic_thread_id,
         model_config=output_config.model,
+        run_name="Intake-Summary-Generation",
+        workflow_type="intake_summary",
+        client_pseudo_id=client_pseudo_id,
     )
 
     assessment_prompt = ASSESSMENT_PROMPT.format(Assessments=formatted_assessments)

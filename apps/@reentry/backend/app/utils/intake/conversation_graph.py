@@ -44,6 +44,7 @@ from app.utils.intake.schemas import (
 from app.utils.intake.utils import (
     log_error,
 )
+from app.utils.langsmith_utils import create_langsmith_metadata, create_langsmith_tags
 
 logger = structlog.get_logger(__name__)
 
@@ -77,9 +78,27 @@ class IntakeConversationGraph:
         self.send_message = send_message
         self.log_error = log_error
         self.wait_for_user_response = wait_for_user_response
+
+        # Create semantic thread_id for LangSmith legibility
+        client_id_short = (
+            session.client_pseudo_id[:8] if session.client_pseudo_id else "unknown"
+        )
+        semantic_thread_id = f"intake-conv-{client_id_short}"
+
+        self.run_name = "Intake-Conversation"
+
+        # Build config with LangSmith metadata and tags
         self.config = {
-            "configurable": {"thread_id": session.client_pseudo_id},
+            "configurable": {"thread_id": semantic_thread_id},
             "callbacks": [self.custom_metrics_callback],
+            "run_name": self.run_name,
+            "metadata": create_langsmith_metadata(
+                client_pseudo_id=session.client_pseudo_id,
+                workflow_type="intake_conversation",
+            ),
+            "tags": create_langsmith_tags(
+                workflow_type="intake_conversation",
+            ),
         }
         if tracer:
             self.config["callbacks"].append(tracer)
@@ -136,34 +155,34 @@ class IntakeConversationGraph:
         if not self.workflow:
             raise RuntimeError("Intake State Graph is not initialized")
         """Constructs the conversation workflow with evaluation nodes."""
-        # Define nodes for each conversation state
-        self.workflow.add_node("chat_introduction", self._opening_remarks)
-        self.workflow.add_node("ask_question", self._ask_section_question)
-        self.workflow.add_node("section_complete", self._complete_section)
+        # Define nodes for each conversation state with semantic names for LangSmith legibility
+        self.workflow.add_node("intake_chat_introduction", self._opening_remarks)
+        self.workflow.add_node("intake_ask_question", self._ask_section_question)
+        self.workflow.add_node("intake_section_complete", self._complete_section)
         self.workflow.add_node(
-            "check_if_client_needs_help", self._check_if_client_needs_help
+            "intake_check_client_needs_help", self._check_if_client_needs_help
         )
-        self.workflow.add_node("closing_chat", self._closing_remarks)
+        self.workflow.add_node("intake_closing_chat", self._closing_remarks)
         self.workflow.add_node(
-            "resume_conversation_user", self._resume_conversation_user
+            "intake_resume_conversation", self._resume_conversation_user
         )
 
         # Set conditional entry point based on conversation state
         self.workflow.set_conditional_entry_point(self._get_entry_point)
         # Set condition for internal intake
-        self.workflow.add_edge("resume_conversation_user", "ask_question")
+        self.workflow.add_edge("intake_resume_conversation", "intake_ask_question")
 
         # Define edges between nodes
-        self.workflow.add_edge("chat_introduction", "ask_question")
+        self.workflow.add_edge("intake_chat_introduction", "intake_ask_question")
 
         self.workflow.add_conditional_edges(
-            "section_complete",
-            lambda state: "closing_chat"
+            "intake_section_complete",
+            lambda state: "intake_closing_chat"
             if state["current_section"] == COMPLETION_SECTION
             or state["current_section"] is None
-            else "ask_question",
+            else "intake_ask_question",
         )
-        self.workflow.add_edge("closing_chat", END)
+        self.workflow.add_edge("intake_closing_chat", END)
 
     async def call_model(
         self, messages: list[AnyMessage], output_type: Optional[Any] = None
@@ -195,9 +214,9 @@ class IntakeConversationGraph:
     async def _get_entry_point(
         self, state: ConversationState
     ) -> Literal[
-        "resume_conversation_user",
-        "chat_introduction",
-        "check_if_client_needs_help",
+        "intake_resume_conversation",
+        "intake_chat_introduction",
+        "intake_check_client_needs_help",
     ]:
         """
         Determine the entry point for the conversation based on the current state.
@@ -210,8 +229,8 @@ class IntakeConversationGraph:
 
         # New conversation (just the system message)
         if num_messages <= 1:
-            print("Starting with chat_introduction - new conversation")
-            return "chat_introduction"
+            print("Starting with intake_chat_introduction - new conversation")
+            return "intake_chat_introduction"
 
         # Check the last message to determine what to do next
         last_message = state["messages"][-1]
@@ -220,13 +239,13 @@ class IntakeConversationGraph:
         # In this case, we should resume to let them see the last AI message again
         if isinstance(last_message, AIMessage):
             print("Last message was from AI - resuming conversation for user to answer")
-            return "resume_conversation_user"
+            return "intake_resume_conversation"
         else:
             # If the last message was from the user, we need to generate a new question
             print(
                 "Last message was from user - checking is section is finished and maybe ask a new question"
             )
-            return "check_if_client_needs_help"
+            return "intake_check_client_needs_help"
 
     async def _opening_remarks(self, state: ConversationState) -> ConversationState:
         logger.info("🔵 ENTERING NODE: _opening_remarks")
@@ -314,7 +333,7 @@ class IntakeConversationGraph:
             print(f"DEBUG: Reasoning: {response.section_complete_reasoning}")
 
             if response.section_complete or not response.section_next_question:
-                return Command(goto="section_complete")
+                return Command(goto="intake_section_complete")
 
             state["messages"].append(AIMessage(response.section_next_question))
             message = await self.db_manager.store_message(
@@ -337,7 +356,7 @@ class IntakeConversationGraph:
 
             state["messages"].append(HumanMessage(client_response))
 
-            return Command(update=state, goto="check_if_client_needs_help")
+            return Command(update=state, goto="intake_check_client_needs_help")
 
         except Exception as e:
             traceback.print_exc()
@@ -554,9 +573,9 @@ class IntakeConversationGraph:
 
         # If the client needs help, redirect to the closing remarks node.
         if response.needs_help:
-            return Command(goto="closing_chat")
+            return Command(goto="intake_closing_chat")
 
-        return Command(goto="ask_question")
+        return Command(goto="intake_ask_question")
 
     async def save_and_send_AI_message(self, content: str):
         message = await self.db_manager.store_message(
@@ -669,13 +688,29 @@ class IntakeConversationGraph:
             if self.graph is None:
                 raise RuntimeError("Failed to initialize conversation graph")
 
+            # Create semantic identifiers for LangSmith legibility
+            client_id_short = (
+                self.session.client_pseudo_id[:8]
+                if self.session.client_pseudo_id
+                else "unknown"
+            )
+
             # Set up the proper config with the required thread_id for the checkpointer
             invoke_config = {
                 "recursion_limit": 300,
+                "run_name": self.run_name,
+                "metadata": create_langsmith_metadata(
+                    client_pseudo_id=self.session.client_pseudo_id,
+                    workflow_type="intake_conversation",
+                    current_section=self.initial_state.get("current_section"),
+                ),
+                "tags": create_langsmith_tags(
+                    workflow_type="intake_conversation",
+                ),
                 "configurable": {
-                    "thread_id": f"intake_{self.session.client_pseudo_id}",
+                    "thread_id": f"intake-assessment-{client_id_short}",
                     "checkpoint_ns": "intake_conversation",
-                    "checkpoint_id": f"client_{self.session.client_pseudo_id}",
+                    "checkpoint_id": f"client-{client_id_short}",
                 },
             }
 

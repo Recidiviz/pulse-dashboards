@@ -186,7 +186,10 @@ async def fetch_assets(
         )
 
         summary, assessment = await generate_summary(
-            formatted_messages, assessments or [], assessment_config
+            formatted_messages,
+            assessments or [],
+            assessment_config,
+            client_pseudo_id=plan.client_pseudo_id,
         )
         task_logger.debug("Generated summary", summary=summary)
     else:
