@@ -18,7 +18,7 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { Icon, IconSVG, palette } from "~design-system";
@@ -107,9 +107,11 @@ interface InsightsNotificationSupervisorOpportunityBannerProps {
 export const InsightsNotificationSupervisorOpportunityBanner: React.FC<
   InsightsNotificationSupervisorOpportunityBannerProps
 > = ({ title, seeMoreLink, notifications, seeMoreLinkText }) => {
+  const location = useLocation();
   if (notifications.length === 0) {
     return null;
   }
+
 
   const maxDisplayed = 5;
   const displayedNotifications = notifications.slice(0, maxDisplayed);
@@ -122,7 +124,10 @@ export const InsightsNotificationSupervisorOpportunityBanner: React.FC<
       <NotificationList>
         {displayedNotifications.map(({ body, link: personLink, id }) => (
           <NotificationItem key={id}>
-            <NotificationLink to={personLink ?? ""}>
+            <NotificationLink
+              to={personLink ?? ""}
+              state={{ previousPage: location.pathname }}
+            >
               <Icon
                 kind={IconSVG.Warning}
                 fill={palette.signal.warning}
@@ -144,7 +149,12 @@ export const InsightsNotificationSupervisorOpportunityBanner: React.FC<
         ))}
       </NotificationList>
       {remainingCount > 0 && (
-        <SeeMoreLink to={seeMoreLink}>{seeMoreLinkText}</SeeMoreLink>
+        <SeeMoreLink
+          to={seeMoreLink}
+          state={{ previousPage: location.pathname }}
+        >
+          {seeMoreLinkText}
+        </SeeMoreLink>
       )}
     </AlertBanner>
   );
