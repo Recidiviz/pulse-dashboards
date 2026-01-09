@@ -240,7 +240,7 @@ async def router_get_decision_tree_revision(
     summary="Add a new revision to a decision tree",
     description="This endpoint allows adding a new revision to an existing decision tree by its ID. "
     "The revision includes mermaid content and optional notes.",
-    tags=["Decision Tree"],
+    tags=["Decision Trees"],
 )
 async def router_add_decision_tree_revision(
     data: DecisionTreeRevisionCreate,

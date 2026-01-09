@@ -21,6 +21,10 @@ class SummaryMetadata(OutputMetadata):
     output_type: Literal["intake_summary"]
 
 
+class ExternalApiConfig(BaseModel):
+    resources_pipeline_enabled: bool
+
+
 class PromptsConfig(BaseModel):
     system: str
 
@@ -147,3 +151,4 @@ class ActionPlanConfigFile(BaseModel):
     structure: StructureConfig
     model: ModelConfig
     small_model: ModelConfig
+    external_api: ExternalApiConfig

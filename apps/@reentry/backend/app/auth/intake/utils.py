@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Any, Dict, Optional, Tuple, Union
@@ -7,6 +8,8 @@ from fastapi import HTTPException
 
 from app.core.config import settings
 from app.services.client_data.types import ClientDataRecord, FullNameModel
+
+logger = logging.getLogger(__name__)
 
 
 def create_access_token(
@@ -24,7 +27,7 @@ def create_access_token(
     }
 
     token = jwt.encode(
-        payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
+        payload, key=settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
     )
 
     return token
@@ -47,7 +50,8 @@ def decode_jwt_token(token: str) -> Dict[str, Any]:
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.PyJWTError:
+    except jwt.PyJWTError as e:
+        logger.error(e)
         raise HTTPException(status_code=401, detail="Invalid token")
 
 

@@ -39,8 +39,8 @@ type UIRecordingStatus =
   | "error"
   | "processing";
 
-const ChatInput = ({ clientPseudoId }: { clientPseudoId?: string | null }) => {
-  const { analytics } = useApplicationContext();
+const ChatInput = ({ clientPseudoId, alreadyHasMessages }: { clientPseudoId?: string | null, alreadyHasMessages?: boolean }) => {
+  const { analytics } = useApplicationContext()
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -62,6 +62,7 @@ const ChatInput = ({ clientPseudoId }: { clientPseudoId?: string | null }) => {
       intakeStatus,
       currentSection,
     },
+    
     intakeDispatchContext: { sendMessage },
   } = useSocket();
 
@@ -102,10 +103,11 @@ const ChatInput = ({ clientPseudoId }: { clientPseudoId?: string | null }) => {
   };
 
   const isInputDisabled =
-    intakeStatus !== "in_progress" ||
+    (intakeStatus !== "in_progress"  && intakeStatus !== "created") ||
     waitingForAIInput ||
     connectionStatus !== "connected" ||
-    currentSection === "Completion";
+    currentSection === "Completion" ||
+    !alreadyHasMessages;
 
   useEffect(() => {
     if (!waitingForAIInput && !isInputDisabled) {

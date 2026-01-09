@@ -7,7 +7,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.db import get_session
 from app.crud.assessment import (
     get_assessment_by_id,
-    get_assessments_by_client_pseudo_id,
+    get_assessments_by_intake_id,
 )
 from app.routes.shared_models import AssessmentResponse
 
@@ -19,7 +19,7 @@ router = APIRouter()
     response_model=AssessmentResponse,
     summary="Get assessment by ID",
     description="Returns a specific assessment by its ID",
-    tags=["Assessments"],
+    tags=["Risk scoring results"],
 )
 async def get_assessment(
     assessment_id: UUID, session: AsyncSession = Depends(get_session)
@@ -33,16 +33,16 @@ async def get_assessment(
 
 
 @router.get(
-    "/clients/{client_pseudo_id}",
+    "/intakes/{intake_id}",
     response_model=List[AssessmentResponse],
-    summary="Get assessments by client ID",
-    description="Returns all assessments associated with a client ID",
-    tags=["Assessments"],
+    summary="Get assessments by intake ID",
+    description="Returns all assessments associated with an intake ID",
+    tags=["Risk scoring results"],
 )
-async def get_client_assessments(
-    client_pseudo_id: str, session: AsyncSession = Depends(get_session)
+async def get_intake_assessments(
+    intake_id: UUID, session: AsyncSession = Depends(get_session)
 ):
-    assessments = await get_assessments_by_client_pseudo_id(session, client_pseudo_id)
+    assessments = await get_assessments_by_intake_id(session, intake_id)
 
     if not assessments:
         return []

@@ -26,13 +26,14 @@ export default function ProtectedLayout({ children }) {
   const pathname = usePathname();
 
   // Exclude specific routes from the layout (not using the Navbar)
-  const routesWithoutLayout = ["/clients/audio-recording"];
+  const routesWithoutLayout = ["/audio-recording/"];
   const shouldHideLayout = routesWithoutLayout.some((route) =>
-    pathname.startsWith(route),
+    pathname.includes(route)
   );
+
   if (shouldHideLayout) {
     return (
-      <main className="flex flex-col h-full">
+      <main className="flex flex-col min-h-full">
         <ProtectedRoute>{children}</ProtectedRoute>
       </main>
     );
@@ -40,7 +41,7 @@ export default function ProtectedLayout({ children }) {
 
   return (
     <>
-      <main className="flex flex-col h-full">
+      <main className="flex flex-col min-h-full">
         <ReadOnlyIndicatorBanner />
         <Navbar />
         <ProtectedRoute>{children}</ProtectedRoute>

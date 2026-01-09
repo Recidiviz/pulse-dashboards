@@ -20,6 +20,7 @@ import { Tooltip } from "@mui/material";
 import { useState } from "react";
 
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { BaseModal } from "~@reentry/frontend-shared";
 
 interface LiveAssessmentModalProps {
@@ -37,14 +38,28 @@ export default function LiveAssessmentModal({
   isOnline,
   isPaused,
 }: LiveAssessmentModalProps) {
+
+  const { state} = useAuth();
+  const clientName = state?.user?.name;
   const [fullName, setFullName] = useState("");
+  const [showError, setShowError] = useState(false);
+
+  const isNameMatch = fullName.trim().toLowerCase() === clientName?.toLowerCase();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (fullName.trim()) {
+    if (fullName.trim() && isNameMatch) {
       onConfirm();
       setFullName("");
+      setShowError(false);
+    } else if (fullName.trim() && !isNameMatch) {
+      setShowError(true);
     }
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFullName(e.target.value);
+    setShowError(false);
   };
 
   const getTooltipTitle = () => {
@@ -70,7 +85,7 @@ export default function LiveAssessmentModal({
           a record of the discussion and help facilitate case management.
         </p>
         <p>
-          Enter your full name to confirm all parties were provided the above
+          Enter your full name ({clientName}) to confirm all parties were provided the above
           notice and have consented to the recording:
         </p>
       </div>
@@ -86,11 +101,18 @@ export default function LiveAssessmentModal({
           id="fullName"
           type="text"
           value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="John Doe"
+          onChange={handleNameChange}
+          placeholder={clientName}
           required
-          className="px-4 py-3 rounded-lg outline outline-1 outline-[#345262]/30 text-[#2a5469]/90 text-[13px] sm:text-[13px] placeholder:text-[#2a5469]/50 font-medium font-['Public_Sans'] w-full"
+          className={`px-4 py-3 rounded-lg outline outline-1 ${
+            showError ? "outline-red-500" : "outline-[#345262]/30"
+          } text-[#2a5469]/90 text-[13px] sm:text-[13px] placeholder:text-[#2a5469]/50 font-medium font-['Public_Sans'] w-full`}
         />
+        {showError && (
+          <p className="text-red-600 text-xs font-medium mt-1">
+            The name you entered does not match "{clientName}". Please enter the correct name to continue.
+          </p>
+        )}
         <div className="flex flex-col sm:flex-row gap-3 mt-3">
           <PrimaryButton buttonText="Cancel" onClick={onClose} />
           <Tooltip title={getTooltipTitle()}>

@@ -133,7 +133,6 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
   // Block navigation when recording is active
   useEffect(() => {
     const isRecordingActive = recording.uiStatus === "recording";
-    console.log(isRecordingActive);
     blockNavigationRef.current = isRecordingActive;
 
     if (isRecordingActive) {

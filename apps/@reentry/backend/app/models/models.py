@@ -8,6 +8,9 @@ from pydantic import computed_field
 from sqlalchemy.orm import Mapped
 from sqlmodel import JSON, Field, Relationship
 
+from app.models.intake import Intake
+
+from ..utils.config_loader import ConfigLoader
 from .base import BaseModel
 from .execution import Execution, ExecutionStatus
 from .plan_decision_tree import PlanDecisionTree
@@ -33,8 +36,14 @@ class PlanType(StrEnum):
 class Plan(BaseModel, table=True):
     client_pseudo_id: Optional[str]
     client_id: Optional[str] = None
-    type: str = Field(
-        default=PlanType.LIVE, sa_column_kwargs={"server_default": PlanType.LIVE.value}
+    # Relationship to intake
+    intake_id: UUID | None = Field(
+        foreign_key="intake.id",
+        nullable=True,
+        default=None,
+    )
+    intake: Mapped[Optional[Intake]] = Relationship(
+        back_populates="plan", sa_relationship_kwargs={"lazy": "selectin"}
     )
     result_gen_id: Optional[int] = None
     assets: Mapped[List["PlanAsset"]] = Relationship(
@@ -71,6 +80,12 @@ class Plan(BaseModel, table=True):
     @property
     def is_create_execution_finished(self) -> bool:
         return self.create_status in ("completed", "failed")
+
+    async def get_action_plan_config(self, session):
+        action_plan_config = await ConfigLoader.load_plan_config(
+            self.intake.assessment_config_id, session
+        )
+        return action_plan_config
 
     async def schedule_initial_creation(self, session) -> Execution:
         """

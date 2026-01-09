@@ -41,466 +41,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/plans": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Plans
-         * @description Retrieve a paginated list of plans.
-         */
-        get: operations["router_list_plans_plans_get"];
-        put?: never;
-        /**
-         * Create Plan
-         * @description Create a new plan with the provided client ID.
-         */
-        post: operations["router_create_plan_plans_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/by_client/{client_pseudo_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Plan by Client ID
-         * @description Retrieve a specific plan by its client ID, including the latest completed generation result if available.
-         */
-        get: operations["router_get_plan_by_client_pseudo_id_plans_by_client__client_pseudo_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Plan
-         * @description Retrieve a specific plan by its ID, including the latest completed generation result if available.
-         */
-        get: operations["router_get_plan_plans__id__get"];
-        put?: never;
-        post?: never;
-        /**
-         * Delete Plan
-         * @description Delete a specific plan by its ID, along with all associated generations and assets.
-         */
-        delete: operations["router_delete_plan_plans__id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/generate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Generate Plan
-         * @description Initiate the generation of a new plan for the specified plan ID. The generation process will be handled in the background.
-         */
-        post: operations["router_generate_plan_plans__id__generate_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/edit": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Generate the plan manually
-         * @description Create a new generation for the specified plan ID when the markdown is edited manually.
-         */
-        post: operations["router_generate_plan_manually_plans__id__edit_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/gens/{gen_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Generation
-         * @description Retrieve a specific generation by its ID for the specified plan ID.
-         */
-        get: operations["router_get_generation_plans__id__gens__gen_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/assets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Assets
-         * @description Retrieve a paginated list of assets associated with the specified plan ID.
-         */
-        get: operations["router_list_assets_plans__id__assets_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/assets/upload": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Upload Asset
-         * @description Upload a new asset for the specified plan ID. The file is read and stored as a blob in the database.
-         */
-        post: operations["router_upload_asset_plans__id__assets_upload_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/assets/by_filename/{filename}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Asset
-         * @description Retrieve a specific asset by its name for the specified plan ID.
-         */
-        get: operations["router_get_asset_by_filename_plans__id__assets_by_filename__filename__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/assets/{asset_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Asset
-         * @description Retrieve a specific asset by its ID for the specified plan ID.
-         */
-        get: operations["router_get_asset_plans__id__assets__asset_id__get"];
-        put?: never;
-        post?: never;
-        /**
-         * Delete Asset
-         * @description Delete a specific asset by its ID for the specified plan ID.
-         */
-        delete: operations["router_delete_asset_plans__id__assets__asset_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/assets/{asset_id}/download": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Download Asset
-         * @description Download a specific asset by its ID for the specified plan ID. The file is streamed as a response.
-         */
-        get: operations["router_download_asset_plans__id__assets__asset_id__download_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/resources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get plan resources
-         * @description Get resources currently associated with this plan
-         */
-        get: operations["get_plan_resources_plans__id__resources_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/search-resources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Search for resources using client info
-         * @description Search for resources based on the client's information from their plan generation data
-         */
-        post: operations["search_resources_plans__id__search_resources_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/suggested-resources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get suggested resources
-         * @description Get resources that were stored during plan generation
-         */
-        get: operations["get_suggested_resources_plans__id__suggested_resources_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/client-info": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get client's home address.
-         * @description Returns the client's home address from intake (or last update from UI).
-         */
-        get: operations["get_client_info_plans__id__client_info_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/client-info/address": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Update Client Home Address
-         * @description Update the client's home address in their plan. This is for admin use to update the address used for resource recommendations. It will trigger a new generation.
-         */
-        patch: operations["update_client_address_and_regenerate_plan_plans__id__client_info_address_patch"];
-        trace?: never;
-    };
-    "/plans/{id}/set-notify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Set Generation Notification
-         * @description Set the regeneration notification flag for the latest completed generation of the specified plan.
-         */
-        post: operations["router_set_generation_notify_plans__id__set_notify_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/generate-pdf": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Generate Pdf
-         * @description Generate PDF from HTML using WeasyPrint
-         */
-        post: operations["generate_pdf_generate_pdf_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/autocomplete-address": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Autocomplete address suggestions
-         * @description Provides address autocomplete suggestions as user types, similar to Uber's address input
-         */
-        get: operations["autocomplete_address_autocomplete_address_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/autocomplete-city": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Autocomplete city suggestions
-         * @description Provides city autocomplete suggestions for US cities as user types, with optional state filtering
-         */
-        get: operations["autocomplete_city_autocomplete_city_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/plans/{id}/decisiontrees": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Decision Trees
-         * @description Retrieve a paginated list of decision trees associated with the specified plan ID.
-         */
-        get: operations["router_list_decision_trees_plans__id__decisiontrees_get"];
-        put?: never;
-        /**
-         * Add Decision Tree
-         * @description Add a new decision tree to the specified plan ID.
-         */
-        post: operations["router_add_decision_tree_plans__id__decisiontrees_post"];
-        /**
-         * Delete All Decision Trees
-         * @description Delete all decision trees associated with the specified plan ID.
-         */
-        delete: operations["router_delete_all_decision_trees_plans__id__decisiontrees_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Search for resources
-         * @description Search for resources based on the resource types needed and others criterias
-         */
-        post: operations["get_resources_resources_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/decision-trees": {
         parameters: {
             query?: never;
@@ -693,6 +233,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/assessment-configs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List available assessment configurations
+         * @description Returns all active assessment configurations for a given state
+         */
+        get: operations["list_assessment_configs_assessment_configs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assessment-configs/outputs/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get assessment configuration output by intake ID
+         * @description Returns the assessment configuration associated with a specific intake ID
+         */
+        get: operations["get_assessment_config_by_intake_id_assessment_configs_outputs__plan_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/assessments/{assessment_id}": {
         parameters: {
             query?: never;
@@ -713,7 +293,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/assessments/clients/{client_pseudo_id}": {
+    "/assessments/intakes/{intake_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -721,10 +301,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get assessments by client ID
-         * @description Returns all assessments associated with a client ID
+         * Get assessments by intake ID
+         * @description Returns all assessments associated with an intake ID
          */
-        get: operations["get_client_assessments_assessments_clients__client_pseudo_id__get"];
+        get: operations["get_intake_assessments_assessments_intakes__intake_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -744,106 +324,6 @@ export interface paths {
         get: operations["router_get_execution_executions__execution_id__get"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/client/verify-dob": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify date of birth and issue JWT token
-         * @description Validates the client's date of birth against records and issues JWT token
-         */
-        post: operations["verify_date_of_birth_intake_client_verify_dob_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/client/{token_from_url}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Fetch intake, client sections, and messages for the current section
-         * @description Returns the intake record, associated client sections, current section messages, and client data
-         */
-        get: operations["get_client_intake_intake_client__token_from_url__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/client/address": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Submit client address for intake
-         * @description Submit or update address information for the authenticated client's intake
-         */
-        post: operations["submit_address_intake_client_address_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/client/survey": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Submit client survey for intake
-         * @description Submit survey information for the authenticated client's intake
-         */
-        post: operations["submit_survey_intake_client_survey_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/client/start-assessment-action-plan": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Trigger assessment + plan generation from external chat
-         * @description Schedules an assessment using provided chat messages.
-         */
-        post: operations["complete_external_chat_intake_client_start_assessment_action_plan_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -930,150 +410,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/intake/internal/{pseudonymized_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify date of birth with pseudonymized ID and last name
-         * @description Validates client's DOB and last name against pseudonymized ID records and issues JWT token
-         */
-        post: operations["verify_pseudo_date_of_birth_intake_internal__pseudonymized_id__post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/internal/verify/non-pseudo-id": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify date of birth,first name and last name
-         * @description Validates client's data  against BigQuery records and issues JWT token
-         */
-        post: operations["verify_non_pseudonymized_id_intake_internal_verify_non_pseudo_id_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/internal/verify/state-doc-id": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify DOC ID and state code
-         * @description Validates client's DOC ID and state code against BigQuery records and issues JWT token
-         */
-        post: operations["verify_state_doc_id_intake_internal_verify_state_doc_id_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/admin/{client_pseudo_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Fetch intake converstaion
-         * @description Returns the intake record, with conversation data if available
-         */
-        get: operations["get_client_intake_intake_admin__client_pseudo_id__get"];
-        put?: never;
-        /**
-         * Start the intake process for a client
-         * @description Creates or updates the intake record for the given client ID and returns complete intake data
-         */
-        post: operations["start_intake_process_intake_admin__client_pseudo_id__post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/admin/{intake_id}/{section_title}/messages": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Fetch intake messages for the given section
-         * @description Returns the intake messages for the given section
-         */
-        get: operations["get_intake_section_messages_route_intake_admin__intake_id___section_title__messages_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/admin/{client_pseudo_id}/internal-access": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Update internal access field
-         * @description Sets internal_access (true/false) for the intake
-         */
-        patch: operations["set_internal_access_intake_admin__client_pseudo_id__internal_access_patch"];
-        trace?: never;
-    };
-    "/intake/admin/{client_pseudo_id}/token_access": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Generate a client access token
-         * @description Generates a new access token for a client's intake
-         */
-        post: operations["generate_client_token_intake_admin__client_pseudo_id__token_access_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/clients/": {
         parameters: {
             query?: never;
@@ -1094,7 +430,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/clients/status": {
+    "/clients/{client_pseudo_id}/latest_address": {
         parameters: {
             query?: never;
             header?: never;
@@ -1102,30 +438,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Client Status Updates
-         * @description Retrieve status updates for clients that are currently in progress processing. Returns only clients with in_progress status to minimize database load.
+         * Get Client latest known address
+         * @description Retrieve the latest address submission for a client
          */
-        get: operations["get_client_status_updates_route_clients_status_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/clients/{intake_id}/intake-general-resources-status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Intake General Resources Processing Status
-         * @description Retrieve the processing status for a specific intake by its ID.
-         */
-        get: operations["get_intake_status_for_client_clients__intake_id__intake_general_resources_status_get"];
+        get: operations["get_client_latest_address_clients__client_pseudo_id__latest_address_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1143,7 +459,7 @@ export interface paths {
         };
         /**
          * Get Client Record
-         * @description Retrieve an Client record by its pseudonimyzed id (client_pseudo_id)
+         * @description Retrieve a Client record by its pseudonimyzed id (client_pseudo_id)
          */
         get: operations["get_client_record_clients__client_pseudo_id__get"];
         put?: never;
@@ -1154,40 +470,20 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/clients/{client_pseudo_id}/retry-processing": {
+    "/clients/{client_pseudo_id}/intakes": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
         /**
-         * Retry Processing
-         * @description Intelligently retry processing for a client based on current state. Determines whether to retry assessments, plan generation, or both. Handles failed and stuck executions.
+         * Get Client Intake History
+         * @description Retrieve all intakes for a client, ordered by creation date (newest first)
          */
-        post: operations["retry_processing_clients__client_pseudo_id__retry_processing_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/clients/processing-status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
+        get: operations["get_client_intakes_clients__client_pseudo_id__intakes_get"];
         put?: never;
-        /**
-         * Get Intake Processing Status
-         * @description Retrieve intake processing status for all clients belonging to the provided staff pseudonymized id.
-         */
-        post: operations["get_processing_status_route_clients_processing_status_post"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1254,7 +550,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/recordings/sessions/clients/{client_pseudo_id}": {
+    "/intake/admin/{intake_id}/processing-status": {
         parameters: {
             query?: never;
             header?: never;
@@ -1262,10 +558,178 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get recording sessions for client
-         * @description Retrieve all recording sessions associated with a specific client
+         * Get Intake General Resources Processing Status
+         * @description Retrieve the processing status for a specific intake by its ID.
          */
-        get: operations["get_client_recording_sessions_recordings_sessions_clients__client_pseudo_id__get"];
+        get: operations["get_processing_status_for_intake_intake_admin__intake_id__processing_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/admin/{intake_id}/address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Intake Address
+         * @description Retrieve the address collected during a specific intake.
+         */
+        get: operations["get_intake_address_intake_admin__intake_id__address_get"];
+        put?: never;
+        /**
+         * Submit client address for intake
+         * @description Submit or update address information for the authenticated client's intake
+         */
+        post: operations["submit_address_intake_admin__intake_id__address_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/admin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a new intake
+         * @description Creates a new intake record for a client with specified assessment config
+         */
+        post: operations["create_new_intake_intake_admin_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/admin/{intake_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch intake conversation
+         * @description Returns the intake record, with conversation data if available
+         */
+        get: operations["get_client_intake_intake_admin__intake_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete an intake
+         * @description Deletes an intake record by its ID
+         */
+        delete: operations["delete_new_intake_intake_admin__intake_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/admin/{intake_id}/{section_title}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch intake messages for the given section
+         * @description Returns the intake messages for the given section
+         */
+        get: operations["get_intake_section_messages_route_intake_admin__intake_id___section_title__messages_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/admin/{intake_id}/internal-access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update internal access field
+         * @description Sets internal_access (true/false) for a specific intake
+         */
+        patch: operations["set_internal_access_intake_admin__intake_id__internal_access_patch"];
+        trace?: never;
+    };
+    "/intake/admin/{intake_id}/token-access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate a client access token
+         * @description Generates a new access token for a client's intake
+         */
+        post: operations["generate_client_token_intake_admin__intake_id__token_access_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/admin/{intake_id}/retry-processing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Retry Processing for Intake
+         * @description Intelligently retry processing for an intake based on current state. Determines whether to retry assessments, plan generation, or both. Handles failed and stuck executions.
+         */
+        post: operations["retry_intake_processing_intake_admin__intake_id__retry_processing_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/recordings/by_intake/{intake_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get recording sessions for an intake
+         * @description Retrieve all recording sessions associated with an intake
+         */
+        get: operations["get_client_recording_sessions_recordings_by_intake__intake_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1409,7 +873,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/transcriptions/{client_pseudo_id}/complete-intake-transcription": {
+    "/transcription/{intake_id}/complete-intake-transcription": {
         parameters: {
             query?: never;
             header?: never;
@@ -1422,14 +886,14 @@ export interface paths {
          * Submit Client address or transcription approval for intake transcription
          * @description Submit the client's address or transcription approval to complete the intake process.
          */
-        post: operations["complete_intake_transcription_transcriptions__client_pseudo_id__complete_intake_transcription_post"];
+        post: operations["complete_intake_transcription_transcription__intake_id__complete_intake_transcription_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/transcriptions/{recording_session_id}/transcription": {
+    "/transcription/{recording_session_id}/transcription": {
         parameters: {
             query?: never;
             header?: never;
@@ -1440,7 +904,107 @@ export interface paths {
          * Get Client Interview Transcription
          * @description Retrieve the interview transcription for a client recording session.
          */
-        get: operations["get_client_transcription_transcriptions__recording_session_id__transcription_get"];
+        get: operations["get_client_transcription_transcription__recording_session_id__transcription_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/external/client/verify/dob+urltoken": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify date of birth and issue JWT token
+         * @description Validates the client's date of birth against records and issues JWT token
+         */
+        post: operations["verify_date_of_birth_external_client_verify_dob_urltoken_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/external/client/verify/dob+fullname": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify date of birth, first name and last name
+         * @description Validates client's data  against BigQuery records and issues JWT token
+         */
+        post: operations["verify_dob_fullname_external_client_verify_dob_fullname_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/external/client/verify/state+docid": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify DOC ID and state code
+         * @description Validates client's DOC ID and state code against BigQuery records and issues JWT token
+         */
+        post: operations["verify_state_doc_id_external_client_verify_state_docid_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autocomplete/address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Autocomplete address suggestions
+         * @description Provides address autocomplete suggestions as user types, similar to Uber's address input
+         */
+        get: operations["autocomplete_address_autocomplete_address_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autocomplete/city": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Autocomplete city suggestions
+         * @description Provides city autocomplete suggestions for US cities as user types, with optional state filtering
+         */
+        get: operations["autocomplete_city_autocomplete_city_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1464,6 +1028,586 @@ export interface paths {
          *     This is called by Deepgram when async transcription completes.
          */
         post: operations["deepgram_transcription_webhook_webhooks_deepgram_transcription_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/intake-config/conversation-states": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get state codes with active conversation intake assessments
+         * @description Returns all state codes that have active AssessmentConfigs with conversation intake type
+         */
+        get: operations["get_conversation_state_codes_public_intake_config_conversation_states_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/external/client/by-token/{token_from_url}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Token auth - Fetch intake, client sections, and messages for the current section
+         * @description Returns the intake record, associated client sections, current section messages, and client data
+         */
+        get: operations["get_client_intake_with_token_external_client_by_token__token_from_url__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/external/client/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Internal auth - Fetch intake, client sections, and messages for the current section from login time
+         * @description Returns the intake record, associated client sections, current section messages, and client data
+         */
+        get: operations["get_client_intake_external_client__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/external/client/{intake_id}/address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit client address for intake
+         * @description Submit or update address information for the authenticated client's intake
+         */
+        post: operations["submit_address_external_client__intake_id__address_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/external/client/{intake_id}/survey": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit client survey for intake
+         * @description Submit survey information for the authenticated client's intake
+         */
+        post: operations["submit_survey_external_client__intake_id__survey_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/external/client/transcribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Transcribe audio file
+         * @description Transcribes an uploaded audio file and returns the conversation
+         */
+        post: operations["transcribe_audio_route_external_client_transcribe_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Plans
+         * @description Retrieve a paginated list of plans.
+         */
+        get: operations["router_list_plans_plans_get"];
+        put?: never;
+        /**
+         * Create Plan
+         * @description Create a new plan with the provided intake ID.
+         */
+        post: operations["router_create_plan_plans_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/by-intake/{intake_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Plan by Intake ID
+         * @description Retrieve a specific plan by its intake ID, including the latestcompleted generation result if available.
+         */
+        get: operations["router_get_plan_by_intake_id_plans_by_intake__intake_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Plan
+         * @description Retrieve a specific plan by its ID, including the latest completed generation result if available.
+         */
+        get: operations["router_get_plan_plans__id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Plan
+         * @description Delete a specific plan by its ID, along with all associated generations and assets.
+         */
+        delete: operations["router_delete_plan_plans__id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate Plan
+         * @description Initiate the generation of a new plan for the specified plan ID. The generation process will be handled in the background.
+         */
+        post: operations["router_generate_plan_plans__id__generate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/edit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate the plan manually
+         * @description Create a new generation for the specified plan ID when the markdown is edited manually.
+         */
+        post: operations["router_generate_plan_manually_plans__id__edit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/gens/{gen_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Generation
+         * @description Retrieve a specific generation by its ID for the specified plan ID.
+         */
+        get: operations["router_get_generation_plans__id__gens__gen_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/assets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Assets
+         * @description Retrieve a paginated list of assets associated with the specified plan ID.
+         */
+        get: operations["router_list_assets_plans__id__assets_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/assets/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Asset
+         * @description Upload a new asset for the specified plan ID. The file is read and stored as a blob in the database.
+         */
+        post: operations["router_upload_asset_plans__id__assets_upload_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/assets/by-filename/{filename}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Asset
+         * @description Retrieve a specific asset by its name for the specified plan ID.
+         */
+        get: operations["router_get_asset_by_filename_plans__id__assets_by_filename__filename__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/assets/{asset_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Asset
+         * @description Retrieve a specific asset by its ID for the specified plan ID.
+         */
+        get: operations["router_get_asset_plans__id__assets__asset_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Asset
+         * @description Delete a specific asset by its ID for the specified plan ID.
+         */
+        delete: operations["router_delete_asset_plans__id__assets__asset_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/assets/{asset_id}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download Asset
+         * @description Download a specific asset by its ID for the specified plan ID. The file is streamed as a response.
+         */
+        get: operations["router_download_asset_plans__id__assets__asset_id__download_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get plan resources
+         * @description Get resources currently associated with this plan
+         */
+        get: operations["get_plan_resources_plans__id__resources_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/search-resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Search for resources using client info
+         * @description Search for resources based on the client's information from their plan generation data
+         */
+        post: operations["search_resources_plans__id__search_resources_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/suggested-resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get suggested resources
+         * @description Get resources that were stored during plan generation
+         */
+        get: operations["get_suggested_resources_plans__id__suggested_resources_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/set-notify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set Generation Notification
+         * @description Set the regeneration notification flag for the latest completed generation of the specified plan.
+         */
+        post: operations["router_set_generation_notify_plans__id__set_notify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/generate-pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate Pdf
+         * @description Generate PDF from HTML using WeasyPrint
+         */
+        post: operations["generate_pdf_generate_pdf_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Client Home Address
+         * @description Update the client's home address in their plan. This is for admin use to update the address used for resource recommendations. It will trigger a new generation.
+         */
+        patch: operations["update_intake_address_and_regenerate_plan_plans__id__address_patch"];
+        trace?: never;
+    };
+    "/plan/{plan_id}/address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * get the address for this plan
+         * @description Submit or update address information for the authenticated client's intake
+         */
+        get: operations["get_address_plan__plan_id__address_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autocomplete-address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Autocomplete address suggestions
+         * @description Provides address autocomplete suggestions as user types, similar to Uber's address input
+         */
+        get: operations["autocomplete_address_autocomplete_address_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autocomplete-city": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Autocomplete city suggestions
+         * @description Provides city autocomplete suggestions for US cities as user types, with optional state filtering
+         */
+        get: operations["autocomplete_city_autocomplete_city_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/decisiontrees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Decision Trees
+         * @description Retrieve a paginated list of decision trees associated with the specified plan ID.
+         */
+        get: operations["router_list_decision_trees_plans__id__decisiontrees_get"];
+        put?: never;
+        /**
+         * Add Decision Tree
+         * @description Add a new decision tree to the specified plan ID.
+         */
+        post: operations["router_add_decision_tree_plans__id__decisiontrees_post"];
+        /**
+         * Delete All Decision Trees
+         * @description Delete all decision trees associated with the specified plan ID.
+         */
+        delete: operations["router_delete_all_decision_trees_plans__id__decisiontrees_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Search for resources
+         * @description Search for resources based on the resource types needed and others criterias
+         */
+        post: operations["get_resources_resources_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1575,6 +1719,72 @@ export interface components {
              * @description The text extract of the annotation
              */
             source_text_extract: string;
+        };
+        /**
+         * AssessmentConfigOutput
+         * @description Response model for assessment configuration with outputs flag
+         */
+        AssessmentConfigOutput: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Code */
+            code: string;
+            /** Version */
+            version: number;
+            /** Display Name */
+            display_name: string;
+            /** Description */
+            description?: string | null;
+            /** State Code */
+            state_code: string;
+            /** Outputs Action Plan Activated */
+            outputs_action_plan_activated: boolean;
+            /** Outputs Summary Activated */
+            outputs_summary_activated: boolean;
+        };
+        /**
+         * AssessmentConfigResponse
+         * @description Response model for assessment configuration listing
+         */
+        AssessmentConfigResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Code */
+            code: string;
+            /** Version */
+            version: number;
+            /** Display Name */
+            display_name: string;
+            /** Description */
+            description?: string | null;
+            /** State Code */
+            state_code: string;
         };
         /** AssessmentResponse */
         AssessmentResponse: {
@@ -1764,6 +1974,14 @@ export interface components {
              */
             file: string;
         };
+        /** Body_transcribe_audio_route_external_client_transcribe_post */
+        Body_transcribe_audio_route_external_client_transcribe_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
+        };
         /** Body_transcribe_audio_route_intake_services_transcribe_post */
         Body_transcribe_audio_route_intake_services_transcribe_post: {
             /**
@@ -1771,15 +1989,6 @@ export interface components {
              * Format: binary
              */
             file: string;
-        };
-        /** ChatMessageInput */
-        ChatMessageInput: {
-            /** Role */
-            role: string;
-            /** Content */
-            content: string;
-            /** Section */
-            section?: string | null;
         };
         /** CitySuggestion */
         CitySuggestion: {
@@ -1818,25 +2027,6 @@ export interface components {
             /** State */
             state: string;
         };
-        /** ClientInfoResponse */
-        ClientInfoResponse: {
-            /** Home */
-            home?: string | null;
-            /** Work */
-            work?: string | null;
-            /** School */
-            school?: string | null;
-            /** Probation Office */
-            probation_office?: string | null;
-            /** Can Drive */
-            can_drive?: boolean | null;
-            /** Can Walk */
-            can_walk?: boolean | null;
-            /** Can Bike */
-            can_bike?: boolean | null;
-            /** Transit Pass */
-            transit_pass?: boolean | null;
-        };
         /** ClientRecordResponse */
         ClientRecordResponse: {
             /**
@@ -1866,6 +2056,7 @@ export interface components {
             birthdate: string;
             /** State Code */
             state_code: string;
+            address?: components["schemas"]["ClientAddressResponse"] | null;
         };
         /** ClientResetResponse */
         ClientResetResponse: {
@@ -1893,41 +2084,17 @@ export interface components {
             updated_at?: string;
             /** Client Pseudo Id */
             client_pseudo_id: string;
-            intake?: components["schemas"]["IntakeResponse"] | null;
-            plans?:
-                | components["schemas"]["app__routes__shared_models__PlanResponse"]
-                | null;
-            processing_status: components["schemas"]["ProcessingStatus"];
             client?: components["schemas"]["ClientRecordResponse"] | null;
-            /** Frontend Status */
-            readonly frontend_status: string;
+            /** Last Completed Date */
+            last_completed_date: string | null;
+            /** Intake Count */
+            intake_count: number;
         };
-        /** ClientStatusResponse */
-        ClientStatusResponse: {
-            /** In Progress */
-            in_progress: components["schemas"]["ClientStatusUpdate"][];
-        };
-        /** ClientStatusUpdate */
-        ClientStatusUpdate: {
-            /** Client Pseudo Id */
-            client_pseudo_id: string;
-            processing_status: components["schemas"]["ProcessingStatus"];
-        };
-        /** CompleteExternalChatRequest */
-        CompleteExternalChatRequest: {
-            /** Messages */
-            messages: components["schemas"]["ChatMessageInput"][];
-            address: components["schemas"]["AddressSubmission"];
-        };
-        /** CompleteExternalChatResponse */
-        CompleteExternalChatResponse: {
-            /** Intake Id */
-            intake_id: string;
-            /** Status */
-            status: string;
-            /** Message */
-            message: string;
-        };
+        /**
+         * ClientSort
+         * @enum {string}
+         */
+        ClientSort: "name" | "last_assessment_date" | "intake_count";
         /** CompleteIntakeTranscriptionResponse */
         CompleteIntakeTranscriptionResponse: {
             /** Intake Completed */
@@ -1952,6 +2119,11 @@ export interface components {
             /** Approved */
             approved?: boolean | null;
         };
+        /** ConversationStateCodesResponse */
+        ConversationStateCodesResponse: {
+            /** State Codes */
+            state_codes: string[];
+        };
         /** ConversationTurnResponse */
         ConversationTurnResponse: {
             /** Id */
@@ -1971,10 +2143,35 @@ export interface components {
             /** Duration */
             duration: string;
         };
-        /** CreateRecordingSessionRequest */
-        CreateRecordingSessionRequest: {
+        /** CreateIntakeRequest */
+        CreateIntakeRequest: {
             /** Client Pseudo Id */
             client_pseudo_id: string;
+            /**
+             * Assessment Config Id
+             * Format: uuid
+             */
+            assessment_config_id: string;
+        };
+        /** CreateIntakeResponse */
+        CreateIntakeResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Status */
+            status: string;
+            /** Assessment Config Code */
+            assessment_config_code: string;
+        };
+        /** CreateRecordingSessionRequest */
+        CreateRecordingSessionRequest: {
+            /**
+             * Intake Id
+             * Format: uuid
+             */
+            intake_id: string;
         };
         /** DecisionTreeCreate */
         DecisionTreeCreate: {
@@ -2275,6 +2472,37 @@ export interface components {
          * @enum {string}
          */
         InputType: "intake_conversation" | "conversation_summary";
+        /**
+         * IntakeHistoryResponse
+         * @description Response model for intake history listing
+         */
+        IntakeHistoryResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            status: components["schemas"]["IntakeStatus"];
+            intake_type: components["schemas"]["IntakeType"];
+            /** Assessment Config Code */
+            assessment_config_code?: string | null;
+            /** Assessment Config Display Name */
+            assessment_config_display_name?: string | null;
+            /** Assessment Config Outputs Action Plan Activated */
+            assessment_config_outputs_action_plan_activated?: boolean | null;
+            /** Completed At */
+            completed_at?: string | null;
+        };
         /** IntakeMessageResponse */
         IntakeMessageResponse: {
             /**
@@ -2304,46 +2532,6 @@ export interface components {
          * @enum {string}
          */
         IntakeMessageRole: "client" | "caseworker" | "system";
-        /** IntakeResponse */
-        IntakeResponse: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            /** Client Pseudo Id */
-            client_pseudo_id: string;
-            /** Status */
-            status: string;
-            /** Token */
-            token?: string | null;
-            /** Internal Access */
-            internal_access?: boolean | null;
-            /** Completed At */
-            completed_at?: string | null;
-            address?: components["schemas"]["ClientAddressResponse"] | null;
-            intake_type: components["schemas"]["IntakeType"];
-            /**
-             * Has Address
-             * @default false
-             */
-            has_address: boolean;
-            /**
-             * Has Survey
-             * @default false
-             */
-            has_survey: boolean;
-        };
         /** IntakeSectionResponse */
         IntakeSectionResponse: {
             /** Title */
@@ -2446,16 +2634,10 @@ export interface components {
             completed_at?: string | null;
             address?: components["schemas"]["ClientAddressResponse"] | null;
             intake_type: components["schemas"]["IntakeType"];
-            /**
-             * Has Address
-             * @default false
-             */
-            has_address: boolean;
-            /**
-             * Has Survey
-             * @default false
-             */
-            has_survey: boolean;
+            /** Has Address */
+            has_address?: boolean | null;
+            /** Has Survey */
+            has_survey?: boolean | null;
             /** Current Section */
             current_section?: string | null;
             /** Intake Sections */
@@ -2594,7 +2776,7 @@ export interface components {
         /** Page[PlanResponse] */
         Page_PlanResponse_: {
             /** Items */
-            items: components["schemas"]["app__routes__plan_router__PlanResponse"][];
+            items: components["schemas"]["PlanResponse"][];
             /** Total */
             total: number | null;
             /** Page */
@@ -2810,10 +2992,49 @@ export interface components {
             /** Client Pseudo Id */
             client_pseudo_id: string;
             /**
+             * Intake Id
+             * Format: uuid
+             */
+            intake_id: string;
+            /**
              * No Initial Generation
              * @default false
              */
             no_initial_generation: boolean | null;
+        };
+        /** PlanResponse */
+        PlanResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Client Pseudo Id */
+            client_pseudo_id: string;
+            /** Create Execution Id */
+            create_execution_id?: string | null;
+            create_execution?:
+                | components["schemas"]["ExecutionResponse"]
+                | null;
+            /** Create Status */
+            create_status: string;
+            /** Edited Manually */
+            edited_manually: boolean;
+            /** @description Gets the client record data for this plan.
+             *     Renamed from 'oms' to better reflect its content and source. */
+            readonly client_record:
+                | components["schemas"]["ClientRecordResponse"]
+                | null;
         };
         /** PlanResponseCreate */
         PlanResponseCreate: {
@@ -2882,29 +3103,31 @@ export interface components {
                 | null;
             /** Is Create Execution Finished */
             is_create_execution_finished?: boolean | null;
+            /** Resources Pipeline Enabled */
+            resources_pipeline_enabled?: boolean | null;
             /** @description Gets the client record data for this plan.
              *     Renamed from 'oms' to better reflect its content and source. */
             readonly client_record:
                 | components["schemas"]["ClientRecordResponse"]
                 | null;
         };
-        /**
-         * ProcessingStatus
-         * @enum {string}
-         */
-        ProcessingStatus:
-            | "not_started"
-            | "in_progress"
-            | "completed"
-            | "failed"
-            | "needs_retry";
-        /** ProcessingStatusRequest */
-        ProcessingStatusRequest: {
-            /** Staff Pseudo Id */
-            staff_pseudo_id: string;
-        };
         /** ProcessingStatusResponse */
         ProcessingStatusResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id?: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at?: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at?: string;
             /** Processing Status */
             processing_status: string;
             /** Frontend Status */
@@ -3319,34 +3542,8 @@ export interface components {
             /** Client Pseudo Id */
             client_pseudo_id: string;
         };
-        /** VerifyDOBRequest */
-        VerifyDOBRequest: {
-            /** Token From Url */
-            token_from_url: string;
-            /**
-             * Date Of Birth
-             * Format: date
-             */
-            date_of_birth: string;
-        };
-        /** VerifyDOBResponse */
-        VerifyDOBResponse: {
-            /** Status */
-            status: boolean;
-            /** Access Token */
-            access_token?: string | null;
-            /**
-             * Token Type
-             * @default bearer
-             */
-            token_type: string;
-            /** Message */
-            message?: string | null;
-            /** Client Pseudo Id */
-            client_pseudo_id: string;
-        };
-        /** VerifyNonPseudoId */
-        VerifyNonPseudoId: {
+        /** VerifyDobFullnameRequest */
+        VerifyDobFullnameRequest: {
             /** First Name */
             first_name: string;
             /** Last Name */
@@ -3359,85 +3556,22 @@ export interface components {
             /** Recaptchatoken */
             recaptchaToken?: string | null;
         };
-        /** VerifyPseudoDOBRequest */
-        VerifyPseudoDOBRequest: {
-            /** Last Name */
-            last_name: string;
+        /** VerifyDobUrlTokenRequest */
+        VerifyDobUrlTokenRequest: {
+            /** Token From Url */
+            token_from_url: string;
             /**
              * Date Of Birth
              * Format: date
              */
             date_of_birth: string;
         };
-        /** VerifyStateDocId */
-        VerifyStateDocId: {
+        /** VerifyStateDocIdRequest */
+        VerifyStateDocIdRequest: {
             /** Doc Id */
             doc_id: string;
             /** State Code */
             state_code: string;
-        };
-        /** PlanResponse */
-        app__routes__plan_router__PlanResponse: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            /** Client Pseudo Id */
-            client_pseudo_id: string;
-            /** Create Execution Id */
-            create_execution_id?: string | null;
-            create_execution?:
-                | components["schemas"]["ExecutionResponse"]
-                | null;
-            /** Create Status */
-            create_status: string;
-            /** Edited Manually */
-            edited_manually: boolean;
-            /** @description Gets the client record data for this plan.
-             *     Renamed from 'oms' to better reflect its content and source. */
-            readonly client_record:
-                | components["schemas"]["ClientRecordResponse"]
-                | null;
-        };
-        /** PlanResponse */
-        app__routes__shared_models__PlanResponse: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            /** Client Pseudo Id */
-            client_pseudo_id: string;
-            /** Create Execution Id */
-            create_execution_id?: string | null;
-            create_execution?:
-                | components["schemas"]["ExecutionResponse"]
-                | null;
-            /** Create Status */
-            create_status: string;
-            /** Edited Manually */
-            edited_manually: boolean;
         };
     };
     responses: never;
@@ -3464,907 +3598,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
-                };
-            };
-        };
-    };
-    router_list_plans_plans_get: {
-        parameters: {
-            query?: {
-                /** @description Page number */
-                page?: number;
-                /** @description Page size */
-                size?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_PlanResponse_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_create_plan_plans_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PlanRequestCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanResponseCreate"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_get_plan_by_client_pseudo_id_plans_by_client__client_pseudo_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                client_pseudo_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanResponseGet"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_get_plan_plans__id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanResponseGet"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_delete_plan_plans__id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeletionResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_generate_plan_plans__id__generate_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PlanGenerationRequestCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanGenerationResponseCreate"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_generate_plan_manually_plans__id__edit_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PlanGenerationEditRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanGenerationResponseGet"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_get_generation_plans__id__gens__gen_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                gen_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanGenerationResponseGet"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_list_assets_plans__id__assets_get: {
-        parameters: {
-            query?: {
-                /** @description Page number */
-                page?: number;
-                /** @description Page size */
-                size?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_PlanAssetResponse_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_upload_asset_plans__id__assets_upload_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["Body_router_upload_asset_plans__id__assets_upload_post"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanAssetResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_get_asset_by_filename_plans__id__assets_by_filename__filename__get: {
-        parameters: {
-            query?: {
-                include_data?: boolean | null;
-            };
-            header?: never;
-            path: {
-                id: string;
-                filename: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanAssetResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_get_asset_plans__id__assets__asset_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-                asset_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanAssetResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_delete_asset_plans__id__assets__asset_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-                asset_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeletionResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_download_asset_plans__id__assets__asset_id__download_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-                asset_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_plan_resources_plans__id__resources_get: {
-        parameters: {
-            query?: {
-                filter_category?:
-                    | components["schemas"]["ResourceCategory"]
-                    | null;
-                filter_subcategory?:
-                    | components["schemas"]["ResourceSubcategory"]
-                    | null;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Resource"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    search_resources_plans__id__search_resources_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GetPlanResourcesRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetResourcesResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_suggested_resources_plans__id__suggested_resources_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Resource"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_client_info_plans__id__client_info_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ClientInfoResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    update_client_address_and_regenerate_plan_plans__id__client_info_address_patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AddressSubmission"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanGenerationResponseCreate"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_set_generation_notify_plans__id__set_notify_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SetNotificationRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    generate_pdf_generate_pdf_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PDFRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    autocomplete_address_autocomplete_address_get: {
-        parameters: {
-            query: {
-                input: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AutocompleteAddressResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    autocomplete_city_autocomplete_city_get: {
-        parameters: {
-            query: {
-                input: string;
-                /** @description Optional US state name or abbreviation (e.g., 'California' or 'CA') */
-                state?: string | null;
-                /** @description Optional boolean indicating if an address suggestion was selected */
-                address_suggestion_selected?: boolean | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AutocompleteCityResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_list_decision_trees_plans__id__decisiontrees_get: {
-        parameters: {
-            query?: {
-                /** @description Page number */
-                page?: number;
-                /** @description Page size */
-                size?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_PlanDecisionTreeResponse_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_add_decision_tree_plans__id__decisiontrees_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PlanDecisionTreeRequestCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanDecisionTreeExtendedResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_delete_all_decision_trees_plans__id__decisiontrees_delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeletionResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_resources_resources_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GetResourcesRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetResourcesResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -4899,6 +4132,69 @@ export interface operations {
             };
         };
     };
+    list_assessment_configs_assessment_configs_get: {
+        parameters: {
+            query: {
+                /** @description State code (e.g., 'US_UT') */
+                state_code: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentConfigResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_assessment_config_by_intake_id_assessment_configs_outputs__plan_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentConfigOutput"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_assessment_assessments__assessment_id__get: {
         parameters: {
             query?: never;
@@ -4930,12 +4226,12 @@ export interface operations {
             };
         };
     };
-    get_client_assessments_assessments_clients__client_pseudo_id__get: {
+    get_intake_assessments_assessments_intakes__intake_id__get: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                client_pseudo_id: string;
+                intake_id: string;
             };
             cookie?: never;
         };
@@ -4979,169 +4275,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ExecutionResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    verify_date_of_birth_intake_client_verify_dob_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VerifyDOBRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VerifyDOBResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_client_intake_intake_client__token_from_url__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                token_from_url: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["IntakeWithSectionsAndMessagesResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    submit_address_intake_client_address_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AddressSubmission"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AddressSubmissionResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    submit_survey_intake_client_survey_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SurveySubmission"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    complete_external_chat_intake_client_start_assessment_action_plan_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CompleteExternalChatRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompleteExternalChatResponse"];
                 };
             };
             /** @description Validation Error */
@@ -5287,269 +4420,6 @@ export interface operations {
             };
         };
     };
-    verify_pseudo_date_of_birth_intake_internal__pseudonymized_id__post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                pseudonymized_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VerifyPseudoDOBRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VerifyClientResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    verify_non_pseudonymized_id_intake_internal_verify_non_pseudo_id_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VerifyNonPseudoId"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VerifyClientResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    verify_state_doc_id_intake_internal_verify_state_doc_id_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VerifyStateDocId"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VerifyClientResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_client_intake_intake_admin__client_pseudo_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                client_pseudo_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["IntakeWithSectionsResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    start_intake_process_intake_admin__client_pseudo_id__post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                client_pseudo_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json":
-                        | components["schemas"]["IntakeWithSectionsResponse"]
-                        | components["schemas"]["IntakeResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_intake_section_messages_route_intake_admin__intake_id___section_title__messages_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                intake_id: string;
-                section_title: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["IntakeMessageResponse"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    set_internal_access_intake_admin__client_pseudo_id__internal_access_patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                client_pseudo_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["InternalAccessUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    generate_client_token_intake_admin__client_pseudo_id__token_access_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                client_pseudo_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenAccessResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     router_list_clients_clients__get: {
         parameters: {
             query?: {
@@ -5557,7 +4427,7 @@ export interface operations {
                 page?: number;
                 /** @description Page size */
                 size?: number;
-                sort_by?: string | null;
+                sort_by?: components["schemas"]["ClientSort"] | null;
                 sort_order?: string;
                 search?: string | null;
                 status_filter?: string | null;
@@ -5590,32 +4460,12 @@ export interface operations {
             };
         };
     };
-    get_client_status_updates_route_clients_status_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ClientStatusResponse"];
-                };
-            };
-        };
-    };
-    get_intake_status_for_client_clients__intake_id__intake_general_resources_status_get: {
+    get_client_latest_address_clients__client_pseudo_id__latest_address_get: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                intake_id: string;
+                client_pseudo_id: string;
             };
             cookie?: never;
         };
@@ -5627,7 +4477,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ProcessingStatusResponse"];
+                    "application/json": components["schemas"]["ClientAddressResponse"];
                 };
             };
             /** @description Validation Error */
@@ -5672,7 +4522,7 @@ export interface operations {
             };
         };
     };
-    retry_processing_clients__client_pseudo_id__retry_processing_post: {
+    get_client_intakes_clients__client_pseudo_id__intakes_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -5689,44 +4539,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ExecutionResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_processing_status_route_clients_processing_status_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ProcessingStatusRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [
-                            key: string
-                        ]: components["schemas"]["ProcessingStatus"];
-                    };
+                    "application/json": components["schemas"]["IntakeHistoryResponse"][];
                 };
             };
             /** @description Validation Error */
@@ -5837,12 +4650,12 @@ export interface operations {
             };
         };
     };
-    get_client_recording_sessions_recordings_sessions_clients__client_pseudo_id__get: {
+    get_processing_status_for_intake_intake_admin__intake_id__processing_status_get: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                client_pseudo_id: string;
+                intake_id: string;
             };
             cookie?: never;
         };
@@ -5854,7 +4667,330 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RecordingSessionResponse"][];
+                    "application/json": components["schemas"]["ProcessingStatusResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_intake_address_intake_admin__intake_id__address_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientAddressResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_address_intake_admin__intake_id__address_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddressSubmission"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientAddressResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_new_intake_intake_admin_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateIntakeRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateIntakeResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_client_intake_intake_admin__intake_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeWithSectionsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_new_intake_intake_admin__intake_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_intake_section_messages_route_intake_admin__intake_id___section_title__messages_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+                section_title: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeMessageResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_internal_access_intake_admin__intake_id__internal_access_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InternalAccessUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_client_token_intake_admin__intake_id__token_access_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenAccessResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_intake_processing_intake_admin__intake_id__retry_processing_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExecutionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_client_recording_sessions_recordings_by_intake__intake_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json":
+                        | components["schemas"]["RecordingSessionResponse"]
+                        | null;
                 };
             };
             /** @description Validation Error */
@@ -6130,12 +5266,12 @@ export interface operations {
             };
         };
     };
-    complete_intake_transcription_transcriptions__client_pseudo_id__complete_intake_transcription_post: {
+    complete_intake_transcription_transcription__intake_id__complete_intake_transcription_post: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                client_pseudo_id: string;
+                intake_id: string;
             };
             cookie?: never;
         };
@@ -6165,7 +5301,7 @@ export interface operations {
             };
         };
     };
-    get_client_transcription_transcriptions__recording_session_id__transcription_get: {
+    get_client_transcription_transcription__recording_session_id__transcription_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -6196,6 +5332,171 @@ export interface operations {
             };
         };
     };
+    verify_date_of_birth_external_client_verify_dob_urltoken_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyDobUrlTokenRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerifyClientResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_dob_fullname_external_client_verify_dob_fullname_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyDobFullnameRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerifyClientResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_state_doc_id_external_client_verify_state_docid_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyStateDocIdRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerifyClientResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    autocomplete_address_autocomplete_address_get: {
+        parameters: {
+            query: {
+                input: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutocompleteAddressResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    autocomplete_city_autocomplete_city_get: {
+        parameters: {
+            query: {
+                input: string;
+                /** @description Optional US state name or abbreviation (e.g., 'California' or 'CA') */
+                state?: string | null;
+                /** @description Optional boolean indicating if an address suggestion was selected */
+                address_suggestion_selected?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutocompleteCityResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     deepgram_transcription_webhook_webhooks_deepgram_transcription_post: {
         parameters: {
             query?: never;
@@ -6212,6 +5513,1081 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    get_conversation_state_codes_public_intake_config_conversation_states_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationStateCodesResponse"];
+                };
+            };
+        };
+    };
+    get_client_intake_with_token_external_client_by_token__token_from_url__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token_from_url: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeWithSectionsAndMessagesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_client_intake_external_client__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeWithSectionsAndMessagesResponse"];
+                };
+            };
+        };
+    };
+    submit_address_external_client__intake_id__address_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddressSubmission"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AddressSubmissionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_survey_external_client__intake_id__survey_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SurveySubmission"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    transcribe_audio_route_external_client_transcribe_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_transcribe_audio_route_external_client_transcribe_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_list_plans_plans_get: {
+        parameters: {
+            query?: {
+                /** @description Page number */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_PlanResponse_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_create_plan_plans_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanRequestCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanResponseCreate"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_get_plan_by_intake_id_plans_by_intake__intake_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanResponseGet"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_get_plan_plans__id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanResponseGet"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_delete_plan_plans__id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_generate_plan_plans__id__generate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanGenerationRequestCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanGenerationResponseCreate"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_generate_plan_manually_plans__id__edit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanGenerationEditRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanGenerationResponseGet"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_get_generation_plans__id__gens__gen_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                gen_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanGenerationResponseGet"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_list_assets_plans__id__assets_get: {
+        parameters: {
+            query?: {
+                /** @description Page number */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_PlanAssetResponse_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_upload_asset_plans__id__assets_upload_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_router_upload_asset_plans__id__assets_upload_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanAssetResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_get_asset_by_filename_plans__id__assets_by_filename__filename__get: {
+        parameters: {
+            query?: {
+                include_data?: boolean | null;
+            };
+            header?: never;
+            path: {
+                id: string;
+                filename: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanAssetResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_get_asset_plans__id__assets__asset_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanAssetResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_delete_asset_plans__id__assets__asset_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_download_asset_plans__id__assets__asset_id__download_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_plan_resources_plans__id__resources_get: {
+        parameters: {
+            query?: {
+                filter_category?:
+                    | components["schemas"]["ResourceCategory"]
+                    | null;
+                filter_subcategory?:
+                    | components["schemas"]["ResourceSubcategory"]
+                    | null;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Resource"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_resources_plans__id__search_resources_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetPlanResourcesRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetResourcesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_suggested_resources_plans__id__suggested_resources_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Resource"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_set_generation_notify_plans__id__set_notify_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetNotificationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_pdf_generate_pdf_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PDFRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_intake_address_and_regenerate_plan_plans__id__address_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddressSubmission"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanGenerationResponseCreate"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_address_plan__plan_id__address_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientAddressResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    autocomplete_address_autocomplete_address_get: {
+        parameters: {
+            query: {
+                input: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutocompleteAddressResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    autocomplete_city_autocomplete_city_get: {
+        parameters: {
+            query: {
+                input: string;
+                /** @description Optional US state name or abbreviation (e.g., 'California' or 'CA') */
+                state?: string | null;
+                /** @description Optional boolean indicating if an address suggestion was selected */
+                address_suggestion_selected?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutocompleteCityResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_list_decision_trees_plans__id__decisiontrees_get: {
+        parameters: {
+            query?: {
+                /** @description Page number */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_PlanDecisionTreeResponse_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_add_decision_tree_plans__id__decisiontrees_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanDecisionTreeRequestCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanDecisionTreeExtendedResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    router_delete_all_decision_trees_plans__id__decisiontrees_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_resources_resources_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetResourcesRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetResourcesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

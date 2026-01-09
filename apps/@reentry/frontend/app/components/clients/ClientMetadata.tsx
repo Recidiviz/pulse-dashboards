@@ -17,24 +17,36 @@
 
 import React from "react";
 
+import { $api } from "~@reentry/frontend/api";
 import { ClipboardIcon } from "~@reentry/frontend/components/icons/ClipboardIcon";
-import { formatAddress, formatDateMMDDYYYY } from "~@reentry/frontend/utils";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { formatDateMMDDYYYY } from "~@reentry/frontend/utils";
+import { formatAddress } from "~@reentry/frontend/utils/addressUtils";
 import { getStateName } from "~@reentry/frontend/utils/states";
 import { showSuccessToast } from "~@reentry/frontend-shared";
 import { components } from "~@reentry/openapi-types";
 
 interface ClientMetadataProps {
   clientData: components["schemas"]["ClientRecordResponse"] | null | undefined;
-  intakeAddress:
-    | components["schemas"]["ClientAddressResponse"]
-    | null
-    | undefined;
 }
 
-export default function ClientMetadata({
-  clientData,
-  intakeAddress,
-}: ClientMetadataProps) {
+export default function ClientMetadata({ clientData }: ClientMetadataProps) {
+  const { data: lastAddress } = $api.useQuery(
+    "get",
+    "/clients/{client_pseudo_id}/latest_address",
+    {
+      params: {
+        path: {
+          client_pseudo_id: clientData?.pseudonymized_client_id as string,
+        },
+      },
+      headers: {
+        Authorization: `Bearer ${useAuth().getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
   return (
     <div className="flex flex-wrap max-w-7xl w-full bg-[#f9fafa] p-2 md:p-6 rounded border-b border-[#2b5469]/20 gap-4 md:gap-0 ">
       <div className="flex items-center gap-4 sm:w-auto md:!w-[40%]">
@@ -72,17 +84,17 @@ export default function ClientMetadata({
       </div>
 
       {/* Column 3 */}
-      <div className="flex gap-6 basis-full sm:basis-auto !w-[30%]">
+      <div className="flex gap-[0.5rem] basis-full sm:basis-auto !w-[30%]">
         <div className="flex flex-col gap-2 w-[85px]">
-          <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">
+          <span className="flex items-center h-[-webkit-fill-available] text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">
             Full Name
           </span>
           <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">
             Birth Date
           </span>
         </div>
-        <div className="flex flex-col gap-2">
-          <span className="text-[#012322] font-['Public_Sans'] text-sm font-medium leading-[120%] tracking-[-0.14px]">
+        <div className="flex flex-col gap-2 ">
+          <span className="flex items-center  h-[-webkit-fill-available] text-[#012322] font-['Public_Sans'] text-sm font-medium leading-[120%] tracking-[-0.14px]">
             {clientData?.full_name?.given_names}{" "}
             {clientData?.full_name?.surname}
           </span>
@@ -93,9 +105,9 @@ export default function ClientMetadata({
       </div>
 
       {/* Column 4*/}
-      <div className="flex gap-6 basis-full sm:basis-auto !w-[30%]">
+      <div className="flex gap-[0.5rem] basis-full sm:basis-auto !w-[30%]">
         <div className="flex flex-col gap-2 w-[85px] ">
-          <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">
+          <span className="flex  items-center h-[-webkit-fill-available] text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">
             Address
           </span>
           <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">
@@ -103,8 +115,8 @@ export default function ClientMetadata({
           </span>
         </div>
         <div className="flex flex-col gap-2 ">
-          <span className="text-[#012322] font-['Public_Sans'] text-sm font-medium leading-[120%] tracking-[-0.14px]">
-            {formatAddress(intakeAddress) || "—"}
+          <span className="flex items-center h-[-webkit-fill-available] text-[#012322] font-['Public_Sans'] text-sm font-medium leading-[120%] tracking-[-0.14px]">
+            {formatAddress(lastAddress) || "—"}
           </span>
           <span className="text-[#012322] font-['Public_Sans'] text-sm font-medium leading-[120%] tracking-[-0.14px]">
             {getStateName(clientData?.state_code)}

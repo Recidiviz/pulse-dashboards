@@ -1,12 +1,14 @@
-from datetime import UTC, datetime, timedelta, timezone
-from typing import Optional
+from enum import StrEnum
+from typing import Literal
 
 import sqlalchemy
 import structlog
 from sqlmodel import select
 
 from app.core.db import AsyncSession
-from app.crud.intake import get_intake_by_id
+from app.crud.intake import (
+    get_latest_completed_intake_by_client_pseudo_id,
+)
 from app.crud.utils import apply_search_filter, paginate, sort_clients_by_name
 from app.models.assessment import Assessment
 from app.models.intake import (
@@ -23,35 +25,27 @@ from app.models.recording import RecordingChunk, RecordingSession
 from app.routes.shared_models import ProcessingStatus
 from app.services.client_data.queries import Queries
 from app.services.client_data.types import ClientDataRecord
+from app.utils.processing_status_utils import compute_processing_status
 from app.utils.string_utils import normalize_locations
 
 logger = structlog.get_logger(__name__)
 
-# Timeout thresholds for stuck executions
-PENDING_TIMEOUT_HOURS = 3
-IN_PROGRESS_TIMEOUT_MINUTES = 30
+
+class ClientStatusFilter(StrEnum):
+    """All possible client status filter values."""
+
+    NEW = "new"
+    INTAKE_ENABLED = "intake_enabled"
+    INTAKE_IN_PROGRESS = "intake_in_progress"
+    PROCESSING = "processing"
+    INTAKE_COMPLETE = "intake_complete"
+    ERROR = "error"
 
 
-def is_execution_stuck(execution: Execution) -> bool:
-    """
-    Check if an execution is stuck based on its status and how long it's been running.
-
-    Returns True if:
-    - Execution is PENDING for more than PENDING_TIMEOUT_HOURS (3 hours)
-    - Execution is IN_PROGRESS for more than IN_PROGRESS_TIMEOUT_MINUTES (30 minutes)
-    """
-    if not execution or not execution.updated_at:
-        return False
-
-    now = datetime.now(UTC).replace(tzinfo=None)
-    time_elapsed = now - execution.updated_at
-
-    if execution.status == "pending":
-        return time_elapsed > timedelta(hours=PENDING_TIMEOUT_HOURS)
-    elif execution.status == "in_progress":
-        return time_elapsed > timedelta(minutes=IN_PROGRESS_TIMEOUT_MINUTES)
-
-    return False
+class ClientSort(StrEnum):
+    NAME = "name"
+    LAST_ASSESSMENT_DATE = "last_assessment_date"
+    INTAKE_COUNT = "intake_count"
 
 
 def compute_frontend_status(
@@ -85,209 +79,25 @@ def compute_frontend_status(
     return "unknown"
 
 
-def get_status_priority(status: str) -> int:
-    priority_map = {
-        "new": 0,
-        "intake_enabled": 1,
-        "intake_in_progress": 2,
-        "processing": 3,
-        "intake_complete": 4,
-        "error": 5,
-        "unknown": -1,
-    }
-    return priority_map.get(status, -1)
-
-
-def compute_processing_status(
-    assessments, plans, intake, plan_generations=None
-) -> ProcessingStatus:
-    """Compute aggregated processing status from assessments, plans, and intake"""
-
-    # If no intake or intake not completed, processing hasn't started
-    if not intake:
-        logger.debug("Returning NOT_STARTED - intake not completed")
-        return ProcessingStatus.NOT_STARTED
-
-    # Check for stuck or failed executions in recording/transcription (for transcription-based intakes)
-    if intake.recording_session:
-        if intake.recording_session.execution:
-            if is_execution_stuck(intake.recording_session.execution):
-                logger.info(
-                    "Recording execution %s is stuck",
-                    intake.recording_session.execution.id,
-                )
-                return ProcessingStatus.NEEDS_RETRY
-            if intake.recording_session.execution.status == "failed":
-                logger.debug(
-                    "Recording execution %s failed",
-                    intake.recording_session.execution.id,
-                )
-                return ProcessingStatus.NEEDS_RETRY
-        # Also check recording status itself
-        if intake.recording_session.status == "error":
-            logger.debug(
-                "Recording session %s has error status", intake.recording_session.id
-            )
-            return ProcessingStatus.NEEDS_RETRY
-    # If no intake or intake not completed, processing hasn't started
-    if not intake or intake.status != "completed":
-        logger.debug("Returning NOT_STARTED - intake not completed")
-        return ProcessingStatus.NOT_STARTED
-
-    # Check for stuck executions in assessments
-    if assessments:
-        for assessment in assessments:
-            if assessment.execution and is_execution_stuck(assessment.execution):
-                logger.debug(
-                    "Assessment execution %s is stuck", assessment.execution.id
-                )
-                return ProcessingStatus.NEEDS_RETRY
-
-    # Check for stuck executions in plan
-    if plans and plans.create_execution and is_execution_stuck(plans.create_execution):
-        logger.debug("Plan execution %s is stuck", plans.create_execution.id)
-        return ProcessingStatus.NEEDS_RETRY
-
-    # Check for stuck or failed executions in plan generations
-    if plan_generations:
-        sorted_generations = sorted(
-            plan_generations,
-            key=lambda x: x.created_at or datetime.min.replace(tzinfo=timezone.utc),
-            reverse=True,
-        )
-        latest_generation = sorted_generations[0] if sorted_generations else None
-        if latest_generation and latest_generation.execution:
-            if is_execution_stuck(latest_generation.execution):
-                logger.debug(
-                    "Plan generation execution %s is stuck",
-                    latest_generation.execution.id,
-                )
-                return ProcessingStatus.NEEDS_RETRY
-            if latest_generation.execution.status == "failed":
-                logger.debug(
-                    "Plan generation execution %s failed",
-                    latest_generation.execution.id,
-                )
-                return ProcessingStatus.NEEDS_RETRY
-
-    # Check for any in-progress work FIRST (before checking if plan is completed)
-    plan_in_progress = plans and plans.create_status in ["in_progress", "pending"]
-
-    assessments_in_progress = assessments and any(
-        a.status in ["in_progress", "pending"] for a in assessments
-    )
-
-    # Check if recording is in progress (not stuck, not failed)
-    recording_in_progress = False
-    if intake.recording_session and intake.recording_session.execution:
-        exec_status = intake.recording_session.execution.status
-        if exec_status in ["in_progress", "pending"]:
-            # Only consider in progress if not stuck
-            if not is_execution_stuck(intake.recording_session.execution):
-                recording_in_progress = True
-
-    # Check if the LATEST plan generation is in progress (not all generations)
-    generations_in_progress = False
-    if plan_generations:
-        logger.debug("Checking %d plan generations", len(plan_generations))
-
-        # Sort generations by created_at to get the latest one
-        sorted_generations = sorted(
-            plan_generations,
-            key=lambda x: x.created_at or datetime.min.replace(tzinfo=timezone.utc),
-            reverse=True,
-        )
-        latest_generation = sorted_generations[0] if sorted_generations else None
-
-        if latest_generation:
-            execution = latest_generation.execution
-            execution_status = execution.status if execution else None
-            logger.debug(
-                "Latest generation %s execution status: %s",
-                latest_generation.id,
-                execution_status,
-            )
-
-            generations_in_progress = (
-                execution_status in ["in_progress", "pending"]
-                if execution_status
-                else False
-            )
-
-        logger.debug("Latest generation in progress: %s", generations_in_progress)
-
-    # Return IN_PROGRESS if anything is actively running (highest priority)
-    if plan_in_progress or generations_in_progress:
-        logger.debug(
-            "Returning IN_PROGRESS - plan_in_progress: %s, generations_in_progress: %s",
-            plan_in_progress,
-            generations_in_progress,
-        )
-        return ProcessingStatus.IN_PROGRESS
-    elif assessments_in_progress:
-        logger.debug("Returning IN_PROGRESS - assessments in progress")
-        return ProcessingStatus.IN_PROGRESS
-    elif recording_in_progress:
-        logger.debug("Returning IN_PROGRESS - recording in progress")
-        return ProcessingStatus.IN_PROGRESS
-
-    # If plan creation is completed and nothing is in progress, overall status is completed
-    if plans and plans.create_status == "completed":
-        logger.debug(
-            "Returning COMPLETED - plan create_status is completed and nothing in progress"
-        )
-        return ProcessingStatus.COMPLETED
-
-    # Check if we have completed assessments
-    has_completed_assessments = assessments and any(
-        a.status == "completed" for a in assessments
-    )
-
-    # Check if we have any failed assessments
-    has_failed_assessments = assessments and any(
-        a.status == "failed" for a in assessments
-    )
-
-    # If plan failed and we have completed assessments, needs retry
-    if has_completed_assessments and plans and plans.create_status == "failed":
-        return ProcessingStatus.NEEDS_RETRY
-
-    # If all assessments failed, needs retry
-    if assessments and all(a.status == "failed" for a in assessments):
-        return ProcessingStatus.NEEDS_RETRY
-
-    # If any assessments failed (but not all), needs retry
-    # This handles the case where some assessments completed but others failed
-    if has_failed_assessments:
-        return ProcessingStatus.NEEDS_RETRY
-
-    # If we have completed assessments but no plan, needs retry (plan should have been created)
-    if has_completed_assessments and not plans:
-        return ProcessingStatus.NEEDS_RETRY
-
-    # Intake completed but no processing has started yet - processing should have started automatically, so this needs retry
-    return ProcessingStatus.NEEDS_RETRY
-
-
-# Fetch client data for current staff (case manager or supervision officer)
-# Get a list of clients with their progress status (intake, assessment, plan)
-# Order by process stage to show clients with active intake first
 async def get_paginated_client_list(
     session: AsyncSession,
     page: int = 1,
     page_size: int = 20,
     pseudonymized_staff_id: str | None = None,
-    sort_by: str | None = None,
+    sort_by: ClientSort | None = ClientSort.LAST_ASSESSMENT_DATE,
     sort_order: str = "asc",
     search: str | None = None,
-    status_filter: str | None = None,
+    status_filter: ClientStatusFilter | None = None,
     is_zero_caseload_user: bool = False,
     cpa_client_locations: list[str] | None = None,
 ):
     """
-    Returns a paginated list of clients with their intake, plans, and assessments,
-    ordered by process stage with active intake clients shown first.
-    This ensures clients with active intake are prioritized over new clients.
+    Returns a paginated list of clients with status filtering and sorting.
+    We use different optimization strategies to balance performance and convenience:
+    - DEFAULT: No filter - SQL query with aggregates, includes all BQ clients
+    - simple_filter: Simple status filters (intake_enabled, intake_in_progress) - SQL query
+    - new_client_filter: Special case for clients without intakes
+    - complex_filter: Complex status filters (processing, intake_complete, error) - Python computation
 
     If staff_id is provided, only returns clients assigned to that staff member.
     """
@@ -299,7 +109,6 @@ async def get_paginated_client_list(
     caseload_clients = Queries.get_clients_by_pseudonymized_staff_id(
         pseudonymized_staff_id
     )
-
     if not caseload_clients:
         caseload_clients = []
 
@@ -349,66 +158,56 @@ async def get_paginated_client_list(
     if search:
         clients = apply_search_filter(clients, search)
 
-    # 6. Sorting
-    if sort_by == "name":
-        sorted_clients = sort_clients_by_name(clients, sort_order)
-        return await build_response_for_clients(
-            sorted_clients, session, page, page_size
+    # Return early if no clients remain after search filtering
+    if not clients:
+        return empty_paginated_response(page, page_size)
+
+    bq_client_ids = [c.pseudonymized_client_id for c in clients]
+
+    # Simple status filters - SQL with sorting
+    if status_filter in [
+        None,
+        ClientStatusFilter.INTAKE_ENABLED,
+        ClientStatusFilter.INTAKE_IN_PROGRESS,
+    ]:
+        return await handle_simple_status_filter(
+            session,
+            clients,
+            bq_client_ids,
+            status_filter,
+            sort_by,
+            sort_order,
+            page,
+            page_size,
         )
 
-    if status_filter or sort_by == "status":
-        # TODO change this so we use the database status index.
-        sorted_clients = await compute_priority_order(clients, session)
-        full_response = await build_response_for_clients(
-            sorted_clients, session, 1, len(sorted_clients)
+    # "new" status - special case
+    if status_filter == ClientStatusFilter.NEW:
+        return await handle_new_client_filter(
+            session, clients, bq_client_ids, sort_by, sort_order, page, page_size
         )
 
-        # filtering still require information about intake and plan
-        # that for now, we don't do database filtering.
-        filtered_or_sorted_items = []
-        if status_filter:
-            for item in full_response["items"]:
-                intake_status = item["intake"]["status"] if item["intake"] else None
-                frontend_status = compute_frontend_status(
-                    intake_status, item["processing_status"]
-                )
-                if frontend_status == status_filter:
-                    filtered_or_sorted_items.append(item)
-        elif sort_by == "status":
-            filtered_or_sorted_items = [
-                c
-                for c in sorted(
-                    full_response["items"],
-                    key=lambda c: get_status_priority(
-                        compute_frontend_status(
-                            c.get("intake", {}).get("status")
-                            if c.get("intake")
-                            else None,
-                            c.get("processing_status"),
-                        ).lower()
-                    ),
-                    reverse=(sort_order == "desc"),
-                )
-            ]
 
-        start = (page - 1) * page_size
-        end = start + page_size
+    # Complex filters - requires full status computation
+    # status_filter must be one of: PROCESSING, INTAKE_COMPLETE, ERROR
+    if status_filter in [
+        ClientStatusFilter.PROCESSING,
+        ClientStatusFilter.INTAKE_COMPLETE,
+        ClientStatusFilter.ERROR,
+    ]:
+        return await handle_complex_status_filter(
+            session,
+            clients,
+            bq_client_ids,
+            status_filter,
+            sort_by,
+            sort_order,
+            page,
+            page_size,
+        )
 
-        return {
-            "items": filtered_or_sorted_items[start:end],
-            "total": len(filtered_or_sorted_items),
-            "page": page,
-            "size": page_size,
-            "pages": (
-                (len(filtered_or_sorted_items) + page_size - 1) // page_size
-                if filtered_or_sorted_items
-                else 0
-            ),
-        }
-
-    # 8. Default ordering
-    sorted_clients = await compute_priority_order(clients, session)
-    return await build_response_for_clients(sorted_clients, session, page, page_size)
+    # Invalid status filter
+    return empty_paginated_response(page, page_size)
 
 
 def empty_paginated_response(page: int, size: int):
@@ -421,110 +220,451 @@ def empty_paginated_response(page: int, size: int):
     }
 
 
-async def compute_priority_order(
-    clients: list[ClientDataRecord], session: AsyncSession
-) -> list[ClientDataRecord]:
-    if not clients:
-        return []
-
-    placeholders = ", ".join(
-        [f"'{client.pseudonymized_client_id}'" for client in clients]
+async def count_intakes_for_client(session: AsyncSession, client_pseudo_id: str) -> int:
+    """Count the total number of intakes for a given client."""
+    result = await session.exec(
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
     )
+    intakes = result.all()
+    return len(intakes)
+
+
+async def handle_simple_status_filter(
+    session: AsyncSession,
+    bq_clients: list[ClientDataRecord],
+    bq_client_ids: list[str],
+    status_filter: Literal[
+        ClientStatusFilter.INTAKE_ENABLED, ClientStatusFilter.INTAKE_IN_PROGRESS
+    ]
+    | None,
+    sort_by: ClientSort | None,
+    sort_order: str,
+    page: int,
+    page_size: int,
+):
+    """
+    Handle intake_enabled and intake_in_progress filters, or no filter.
+    Query intake table directly with aggregates and sorting in SQL.
+
+    When status_filter is None, includes all BQ clients (even those without intakes).
+    When status_filter is set, only includes clients with matching intake status.
+    """
+    intake_status = None
+    if status_filter:
+        # Map frontend status to intake.status
+        intake_status_map = {
+            ClientStatusFilter.INTAKE_ENABLED: "created",
+            ClientStatusFilter.INTAKE_IN_PROGRESS: "in_progress",
+        }
+        intake_status = intake_status_map[status_filter]
+
+    placeholders = ", ".join([f"'{cid}'" for cid in bq_client_ids])
+
+    # Build ORDER BY clause
+    order_clause = ""
+    if sort_by == ClientSort.NAME:
+        # Will sort in-memory with BQ data
+        order_clause = ""
+    elif sort_by == ClientSort.INTAKE_COUNT:
+        order_clause = f"ORDER BY intake_count {sort_order.upper()}"
+    elif sort_by == ClientSort.LAST_ASSESSMENT_DATE:
+        order_clause = f"ORDER BY last_completed_date {sort_order.upper()} NULLS LAST"
+
+    # SQL query with aggregates
     stmt = sqlalchemy.text(
         f"""
-        SELECT DISTINCT client_pseudo_id, MIN(process_stage_order) as min_order
-        FROM client_view
+        SELECT
+            client_pseudo_id,
+            COUNT(*) as intake_count,
+            MAX(completed_at) as last_completed_date
+        FROM intake
         WHERE client_pseudo_id IN ({placeholders})
+          {f"AND status = '{intake_status}'"if intake_status else ''}
         GROUP BY client_pseudo_id
-        ORDER BY min_order ASC
+        {order_clause}
     """
     )
 
     result = await session.exec(stmt)
-    ordered = [(row[0], row[1]) for row in result]
+    query_results = [
+        {
+            "client_pseudo_id": row[0],
+            "intake_count": row[1],
+            "last_completed_date": row[2],
+        }
+        for row in result
+    ]
 
-    # Create mappings for efficient lookups
-    id_to_order = {cid: order for cid, order in ordered}
-    ordered_ids = set(cid for cid, order in ordered)
+    # Create lookup for BQ data
+    client_lookup = {c.pseudonymized_client_id: c for c in bq_clients}
+    data_lookup = {r["client_pseudo_id"]: r for r in query_results}
 
-    # Sort clients into categories in one pass
-    active = []
-    others = []
-    new = []
+    # Clients from query results
+    clients_with_intakes_ids = set(r["client_pseudo_id"] for r in query_results)
 
-    for client in clients:
-        client_pseudo_id = client.pseudonymized_client_id
-        if client_pseudo_id in ordered_ids:
-            order = id_to_order[client_pseudo_id]
-            if order <= 30:
-                active.append((client, order))
-            else:
-                others.append((client, order))
+    # If no status filter, include all BQ clients (even those without intakes)
+    if not status_filter:
+        # Find clients that don't have any intakes
+        clients_without_intakes = [
+            c
+            for c in bq_clients
+            if c.pseudonymized_client_id not in clients_with_intakes_ids
+        ]
+        # Add them to data_lookup with zero counts
+        for client in clients_without_intakes:
+            data_lookup[client.pseudonymized_client_id] = {
+                "client_pseudo_id": client.pseudonymized_client_id,
+                "intake_count": 0,
+                "last_completed_date": None,
+            }
+
+    filtered_clients = None
+    # If sorting by name, do in-memory
+    if sort_by == ClientSort.NAME:
+        # Include clients with intakes
+        filtered_clients = [
+            client_lookup[r["client_pseudo_id"]]
+            for r in query_results
+            if r["client_pseudo_id"] in client_lookup
+        ]
+        # If no status filter, also include clients without intakes
+        if not status_filter:
+            filtered_clients.extend(clients_without_intakes)
+
+        sorted_clients_ids = [
+            c.pseudonymized_client_id
+            for c in sort_clients_by_name(filtered_clients, sort_order)
+        ]
+    else:
+        # Already sorted by SQL (clients with intakes)
+        sorted_clients_ids = [r["client_pseudo_id"] for r in query_results]
+        # If no status filter, append clients without intakes at the end
+        if not status_filter:
+            sorted_clients_ids.extend(
+                [c.pseudonymized_client_id for c in clients_without_intakes]
+            )
+
+    # Paginate
+    paginated_clients = paginate(sorted_clients_ids, page, page_size)
+
+    # Build response
+    items = []
+    for client in paginated_clients:
+        data = data_lookup[client]
+        items.append(
+            {
+                "client_pseudo_id": client,
+                "client": client_lookup[client],
+                "intake_count": data["intake_count"],
+                "last_completed_date": data["last_completed_date"],
+            }
+        )
+    total = len(sorted_clients_ids)
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "size": page_size,
+        "pages": (total + page_size - 1) // page_size if total else 0,
+    }
+
+
+async def handle_new_client_filter(
+    session: AsyncSession,
+    bq_clients: list[ClientDataRecord],
+    bq_client_ids: list[str],
+    sort_by: ClientSort | None,
+    sort_order: str,
+    page: int,
+    page_size: int,
+):
+    """
+    Handle "new" status - clients with no intake in the database.
+    This is the expected state for newly created clients.
+    """
+    placeholders = ", ".join([f"'{cid}'" for cid in bq_client_ids])
+
+    # Find clients that have intakes
+    stmt = sqlalchemy.text(
+        f"""
+        SELECT DISTINCT client_pseudo_id
+        FROM intake
+        WHERE client_pseudo_id IN ({placeholders})
+    """
+    )
+    result = await session.exec(stmt)
+    existing_ids = set(row[0] for row in result)
+
+    # Filter to only new clients (not in intake table)
+    new_clients = [
+        c for c in bq_clients if c.pseudonymized_client_id not in existing_ids
+    ]
+
+    # Sort - for new clients, only name sort makes sense
+    # (intake_count=0, last_completed_date=None for all)
+    if sort_by == ClientSort.NAME:
+        sorted_clients = sort_clients_by_name(new_clients, sort_order)
+    else:
+        # For other sorts, default to name ascending
+        sorted_clients = sort_clients_by_name(new_clients, "asc")
+
+    # Paginate
+    paginated_clients = paginate(sorted_clients, page, page_size)
+
+    # Build response - all new clients have no intake data
+    items = []
+    for client in paginated_clients:
+        items.append(
+            {
+                "client_pseudo_id": client.pseudonymized_client_id,
+                "client": client,
+                "intake_count": 0,
+                "last_completed_date": None,
+            }
+        )
+
+    return {
+        "items": items,
+        "total": len(sorted_clients),
+        "page": page,
+        "size": page_size,
+        "pages": (len(sorted_clients) + page_size - 1) // page_size
+        if sorted_clients
+        else 0,
+    }
+
+
+async def handle_complex_status_filter(
+    session: AsyncSession,
+    bq_clients: list[ClientDataRecord],
+    bq_client_ids: list[str],
+    status_filter: Literal[
+        ClientStatusFilter.PROCESSING,
+        ClientStatusFilter.INTAKE_COMPLETE,
+        ClientStatusFilter.ERROR,
+    ],
+    sort_by: ClientSort | None,
+    sort_order: str,
+    page: int,
+    page_size: int,
+):
+    """
+    Handle complex status filters that require full processing_status computation.
+
+    Filters intakes by processing status ("processing", "intake_complete", "error").
+    Returns clients that have at least one intake matching the filter, with only
+    matching intakes counted in intake_count and last_completed_date.
+
+    For "error" filter: includes both completed intakes with error processing status
+    AND intakes with status="error".
+    """
+
+    from datetime import datetime
+
+    # Fetch all related data efficiently for completed intakes
+
+    # Get all intakes (to determine latest per client for status computation)
+    all_intakes = (
+        await session.exec(
+            select(Intake).where(Intake.client_pseudo_id.in_(bq_client_ids))
+        )
+    ).all()
+
+    # Keep latest intake per client for status display
+    intakes_by_client = {}
+    for intake in all_intakes:
+        if intake.client_pseudo_id not in intakes_by_client:
+            intakes_by_client[intake.client_pseudo_id] = intake
         else:
-            new.append(client)
+            existing = intakes_by_client[intake.client_pseudo_id]
+            if intake.created_at > existing.created_at:
+                intakes_by_client[intake.client_pseudo_id] = intake
 
-    # Sort active and others by their order values
-    active.sort(key=lambda x: x[1])
-    others.sort(key=lambda x: x[1])
+    # Get completed intakes and their IDs for querying related entities
+    completed_intakes = [i for i in all_intakes if i.status == "completed"]
+    completed_intake_ids = [i.id for i in completed_intakes]
 
-    # Extract just the client objects
-    active = [client for client, _ in active]
-    others = [client for client, _ in others]
+    # Map completed intakes to clients
+    completed_intakes_by_client = {}
+    for intake in completed_intakes:
+        if intake.client_pseudo_id not in completed_intakes_by_client:
+            completed_intakes_by_client[intake.client_pseudo_id] = []
+        completed_intakes_by_client[intake.client_pseudo_id].append(intake)
 
-    return others + active + new
+    # Get error status intakes (for error filter)
+    error_intakes = [i for i in all_intakes if i.status == "error"]
 
+    # Map error intakes to clients
+    error_intakes_by_client = {}
+    for intake in error_intakes:
+        if intake.client_pseudo_id not in error_intakes_by_client:
+            error_intakes_by_client[intake.client_pseudo_id] = []
+        error_intakes_by_client[intake.client_pseudo_id].append(intake)
 
-async def compute_processing_status_by_intake_id(session, intake_id: str):
-    # 1. Fetch intake
-    intake = await get_intake_by_id(session, intake_id)
-    if not intake:
-        return None
+    # Get plans with executions for completed intakes
+    plans_by_intake = {}
+    if completed_intake_ids:
+        plans_query = (
+            select(Plan, Execution)
+            .where(Plan.intake_id.in_(completed_intake_ids))
+            .outerjoin(Execution, Plan.create_execution_id == Execution.id)
+        )
+        plans_with_executions = (await session.exec(plans_query)).all()
+        for plan, execution in plans_with_executions:
+            plan.create_execution = execution
+            plans_by_intake[plan.intake_id] = plan
+    else:
+        plans_with_executions = []
 
-    client_pseudo_id = intake.client_pseudo_id
+    # Get assessments with executions for completed intakes
+    assessments_by_intake = {}
+    if completed_intake_ids:
+        assessments_query = (
+            select(Assessment, Execution)
+            .where(Assessment.intake_id.in_(completed_intake_ids))
+            .outerjoin(Execution, Assessment.execution_id == Execution.id)
+        )
+        assessments_with_executions = (await session.exec(assessments_query)).all()
+        for assessment, execution in assessments_with_executions:
+            assessment.execution = execution
+            if assessment.intake_id not in assessments_by_intake:
+                assessments_by_intake[assessment.intake_id] = []
+            assessments_by_intake[assessment.intake_id].append(assessment)
+    else:
+        assessments_with_executions = []
 
-    # 2. Fetch plan + execution
-    plan_with_exec = await session.exec(
-        select(Plan, Execution)
-        .where(Plan.client_pseudo_id == client_pseudo_id)
-        .outerjoin(Execution, Plan.create_execution_id == Execution.id)
-    )
-    plan_row = plan_with_exec.first()
+    # Get recordings with executions for completed intakes
+    recordings_by_intake = {}
+    if completed_intake_ids:
+        from app.models.recording import RecordingSession
 
-    plan: Optional[Plan] = None
-    if plan_row:
-        plan, exec_data = plan_row
-        plan.create_execution = exec_data
+        recordings_query = (
+            select(RecordingSession, Execution)
+            .where(RecordingSession.intake_id.in_(completed_intake_ids))
+            .outerjoin(Execution, RecordingSession.execution_id == Execution.id)
+        )
+        recordings_with_executions = (await session.exec(recordings_query)).all()
+        for recording, execution in recordings_with_executions:
+            recording.execution = execution
+            recordings_by_intake[recording.intake_id] = recording
+    else:
+        recordings_with_executions = []
 
-    # 3. Fetch assessments + executions
-    assessments_with_execs = await session.exec(
-        select(Assessment, Execution)
-        .where(Assessment.client_pseudo_id == client_pseudo_id)
-        .outerjoin(Execution, Assessment.execution_id == Execution.id)
-    )
-
-    assessments = []
-    for a, e in assessments_with_execs:
-        a.execution = e
-        assessments.append(a)
-
-    # 4. Fetch generations for this plan
-    generations = []
-    if plan:
-        generations_with_execs = await session.exec(
+    # Get plan generations with executions
+    plan_ids = [plan.id for plan, _ in plans_with_executions]
+    generations_by_plan = {}
+    if plan_ids:
+        generations_query = (
             select(PlanGeneration, Execution)
-            .where(PlanGeneration.plan_id == plan.id)
+            .where(PlanGeneration.plan_id.in_(plan_ids))
             .outerjoin(Execution, PlanGeneration.execution_id == Execution.id)
         )
-        for generation, execution in generations_with_execs:
+        generations_with_executions = (await session.exec(generations_query)).all()
+        for generation, execution in generations_with_executions:
             generation.execution = execution
-            generations.append(generation)
+            if generation.plan_id not in generations_by_plan:
+                generations_by_plan[generation.plan_id] = []
+            generations_by_plan[generation.plan_id].append(generation)
 
-    return compute_processing_status(
-        assessments=assessments,
-        plans=plan,
-        intake=intake,
-        plan_generations=generations,
-    )
+    # Filter intakes by processing status
+    # Build a mapping of clients with matching intakes
+    clients_with_matching_intakes = {}
+
+    for client in bq_clients:
+        cid = client.pseudonymized_client_id
+
+        # Get all completed intakes for this client
+        client_completed_intakes = completed_intakes_by_client.get(cid, [])
+
+        # Track intakes that match the filter
+        matching_intakes = []
+
+        # Process completed intakes
+        for intake in client_completed_intakes:
+            # Get related entities by intake_id
+            plan = plans_by_intake.get(intake.id)
+            assessments = assessments_by_intake.get(intake.id, [])
+
+            generations = []
+            if plan and plan.id in generations_by_plan:
+                generations = generations_by_plan[plan.id]
+
+            # Compute processing status for this intake
+            processing_status = compute_processing_status(
+                assessments, plan, intake, generations
+            )
+
+            # Compute frontend status for this intake
+            frontend_status = compute_frontend_status(intake.status, processing_status)
+
+            # Check if this intake matches the filter
+            if frontend_status == status_filter:
+                matching_intakes.append(intake)
+
+        # For error filter, also include intakes with status="error"
+        if status_filter == ClientStatusFilter.ERROR:
+            client_error_intakes = error_intakes_by_client.get(cid, [])
+            matching_intakes.extend(client_error_intakes)
+
+        # Only include clients that have at least one matching intake
+        if matching_intakes:
+            clients_with_matching_intakes[cid] = {
+                "client": client,
+                "matching_intake_count": len(matching_intakes),
+                "last_completed_date": max(
+                    (i.completed_at for i in matching_intakes if i.completed_at),
+                    default=None,
+                ),
+            }
+
+    # Build filtered clients list
+    filtered_clients = list(clients_with_matching_intakes.values())
+
+    # Sort in-memory
+    if sort_by == ClientSort.NAME:
+        filtered_clients.sort(
+            key=lambda c: (
+                f"{c['client'].full_name.given_names} {c['client'].full_name.surname}".lower()
+                if c["client"].full_name
+                else ""
+            ),
+            reverse=(sort_order == "desc"),
+        )
+    elif sort_by == ClientSort.INTAKE_COUNT:
+        filtered_clients.sort(
+            key=lambda c: c["matching_intake_count"], reverse=(sort_order == "desc")
+        )
+    elif sort_by == ClientSort.LAST_ASSESSMENT_DATE:
+        # Use naive datetime for comparison (database stores naive datetimes)
+        filtered_clients.sort(
+            key=lambda c: c["last_completed_date"] or datetime.min,
+            reverse=(sort_order == "desc"),
+        )
+
+    # Paginate
+    paginated = paginate(filtered_clients, page, page_size)
+
+    # Build response
+    items = []
+    for enriched in paginated:
+        items.append(
+            {
+                "client_pseudo_id": enriched["client"].pseudonymized_client_id,
+                "client": enriched["client"],
+                "intake_count": enriched["matching_intake_count"],
+                "last_completed_date": enriched["last_completed_date"],
+            }
+        )
+
+    return {
+        "items": items,
+        "total": len(filtered_clients),
+        "page": page,
+        "size": page_size,
+        "pages": (len(filtered_clients) + page_size - 1) // page_size
+        if filtered_clients
+        else 0,
+    }
 
 
 async def build_response_for_clients(
@@ -534,67 +674,25 @@ async def build_response_for_clients(
     page_size: int,
 ) -> dict:
     paged_clients = paginate(clients, page, page_size)
-    paged_ids = [c.pseudonymized_client_id for c in paged_clients]
-
-    intakes = (
-        await session.exec(select(Intake).where(Intake.client_pseudo_id.in_(paged_ids)))
-    ).all()
-    intakes_by_client = {i.client_pseudo_id: i for i in intakes}
-
-    plans_with_execs = (
-        await session.exec(
-            select(Plan, Execution)
-            .where(Plan.client_pseudo_id.in_(paged_ids))
-            .outerjoin(Execution, Plan.create_execution_id == Execution.id)
-        )
-    ).all()
-    plans_by_client = {}
-    for plan, execution in plans_with_execs:
-        plan.create_execution = execution
-        plans_by_client[plan.client_pseudo_id] = plan
-
-    assessments_with_execs = (
-        await session.exec(
-            select(Assessment, Execution)
-            .where(Assessment.client_pseudo_id.in_(paged_ids))
-            .outerjoin(Execution, Assessment.execution_id == Execution.id)
-        )
-    ).all()
-    assessments_by_client = {}
-    for a, e in assessments_with_execs:
-        a.execution = e
-        assessments_by_client.setdefault(a.client_pseudo_id, []).append(a)
-
-    plan_ids = [p.id for p in plans_by_client.values()]
-    generations_with_execs = []
-    if plan_ids:
-        generations_with_execs = (
-            await session.exec(
-                select(PlanGeneration, Execution)
-                .where(PlanGeneration.plan_id.in_(plan_ids))
-                .outerjoin(Execution, PlanGeneration.execution_id == Execution.id)
-            )
-        ).all()
-    generations_by_plan = {}
-    for g, e in generations_with_execs:
-        g.execution = e
-        generations_by_plan.setdefault(g.plan_id, []).append(g)
 
     items = []
     for client in paged_clients:
-        intake = intakes_by_client.get(client.pseudonymized_client_id)
-        plan = plans_by_client.get(client.pseudonymized_client_id)
-        assessments = assessments_by_client.get(client.pseudonymized_client_id, [])
-        generations = generations_by_plan.get(plan.id) if plan else []
-        status = compute_processing_status(assessments, plan, intake, generations)
+        latest_intake = await get_latest_completed_intake_by_client_pseudo_id(
+            session, client.pseudonymized_client_id
+        )
+        intake_count = await count_intakes_for_client(
+            session, client.pseudonymized_client_id
+        )
+        last_completed_date = None
+        if latest_intake:
+            last_completed_date = latest_intake.completed_at or latest_intake.updated_at
 
         items.append(
             {
                 "client_pseudo_id": client.pseudonymized_client_id,
                 "client": client,
-                "processing_status": status,
-                "intake": intake.model_dump() if intake else None,
-                "plans": plan.model_dump() if plan else None,
+                "intake_count": intake_count,
+                "last_completed_date": last_completed_date,
             }
         )
 
@@ -604,161 +702,6 @@ async def build_response_for_clients(
         "page": page,
         "size": page_size,
         "pages": (len(clients) + page_size - 1) // page_size if clients else 0,
-    }
-
-
-async def get_client_status_updates(
-    session: AsyncSession,
-    pseudonymized_staff_id: str | None = None,
-):
-    """
-    Returns a lightweight status update for clients that are currently in progress.
-    Only includes client_pseudo_id and processing_status to minimize database load.
-    """
-    # Step 1: Get all clients from BigQuery for this staff member
-    if pseudonymized_staff_id:
-        bq_clients = Queries.get_clients_by_pseudonymized_staff_id(
-            pseudonymized_staff_id
-        )
-
-        if not bq_clients:
-            return {"in_progress": []}
-
-        # Get the external_ids of clients assigned to this staff
-        bq_client_pseudo_ids = [client.pseudonymized_client_id for client in bq_clients]
-    else:
-        return {"in_progress": []}
-
-    # Step 2: Get only clients that have completed intake (processing-eligible)
-    if bq_client_pseudo_ids:
-        placeholders = ", ".join([f"'{id}'" for id in bq_client_pseudo_ids])
-        intake_stmt = sqlalchemy.text(
-            f"""
-            SELECT client_pseudo_id
-            FROM intake
-            WHERE client_pseudo_id IN ({placeholders}) AND status = 'completed'
-        """
-        )
-
-        result = await session.exec(intake_stmt)
-        clients_with_completed_intake = [row[0] for row in result]
-    else:
-        clients_with_completed_intake = []
-
-    if not clients_with_completed_intake:
-        return {"in_progress": []}
-
-    # Step 3: Get minimal data needed for status computation
-    # Get intakes
-    intakes_query = select(Intake).where(
-        Intake.client_pseudo_id.in_(clients_with_completed_intake)
-    )
-    intakes = (await session.exec(intakes_query)).all()
-    intakes_by_client = {intake.client_pseudo_id: intake for intake in intakes}
-
-    # Get plans and their executions
-    plans_query = (
-        select(Plan, Execution)
-        .where(Plan.client_pseudo_id.in_(clients_with_completed_intake))
-        .outerjoin(Execution, Plan.create_execution_id == Execution.id)
-    )
-    plans_with_executions = (await session.exec(plans_query)).all()
-    plans_by_client = {}
-    for plan, execution in plans_with_executions:
-        plan.create_execution = execution
-        if plan.client_pseudo_id not in plans_by_client:
-            plans_by_client[plan.client_pseudo_id] = plan
-
-    # Get plan generations and their executions
-    plan_ids = [plan.id for plan, _ in plans_with_executions]
-    if plan_ids:
-        generations_query = (
-            select(PlanGeneration, Execution)
-            .where(PlanGeneration.plan_id.in_(plan_ids))
-            .outerjoin(Execution, PlanGeneration.execution_id == Execution.id)
-        )
-        generations_with_executions = (await session.exec(generations_query)).all()
-        generations_by_plan = {}
-        for generation, execution in generations_with_executions:
-            generation.execution = execution
-            if generation.plan_id not in generations_by_plan:
-                generations_by_plan[generation.plan_id] = []
-            generations_by_plan[generation.plan_id].append(generation)
-    else:
-        generations_by_plan = {}
-
-    # Get assessments and their executions
-    assessments_query = (
-        select(Assessment, Execution)
-        .where(Assessment.client_pseudo_id.in_(clients_with_completed_intake))
-        .outerjoin(Execution, Assessment.execution_id == Execution.id)
-    )
-    assessments_with_executions = (await session.exec(assessments_query)).all()
-    assessments_by_client = {}
-    for assessment, execution in assessments_with_executions:
-        assessment.execution = execution
-        if assessment.client_pseudo_id not in assessments_by_client:
-            assessments_by_client[assessment.client_pseudo_id] = []
-        assessments_by_client[assessment.client_pseudo_id].append(assessment)
-
-    # Step 4: Compute status for each client and return only in-progress ones
-    in_progress_clients = []
-    for client_pseudo_id in clients_with_completed_intake:
-        intake = intakes_by_client.get(client_pseudo_id)
-        plan = plans_by_client.get(client_pseudo_id)
-        assessments = assessments_by_client.get(client_pseudo_id, [])
-
-        # Get plan generations for this client's plan
-        client_generations = []
-        if plan and plan.id in generations_by_plan:
-            client_generations = generations_by_plan[plan.id]
-
-        # Compute processing status using SQLModel objects directly
-        processing_status = compute_processing_status(
-            assessments,
-            plan,
-            intake,
-            client_generations,
-        )
-
-        # Only include clients that are currently in progress
-        if processing_status == ProcessingStatus.IN_PROGRESS:
-            in_progress_clients.append(
-                {
-                    "client_pseudo_id": client_pseudo_id,
-                    "processing_status": processing_status,
-                }
-            )
-
-    return {"in_progress": in_progress_clients}
-
-
-async def get_processing_status(
-    session: AsyncSession,
-    staff_pseudo_id: str | None,
-) -> dict[str, ProcessingStatus]:
-    """Return a map of client_pseudo_id -> ProcessingStatus for the given staff member."""
-
-    if not staff_pseudo_id:
-        return {}
-
-    try:
-        staff_clients = (
-            Queries.get_clients_by_pseudonymized_staff_id(staff_pseudo_id) or []
-        )
-    except Exception:
-        return {}
-
-    if not staff_clients:
-        return {}
-
-    response = await build_response_for_clients(
-        staff_clients, session, 1, len(staff_clients)
-    )
-
-    return {
-        item["client_pseudo_id"]: item["processing_status"]
-        for item in response.get("items", [])
     }
 
 
@@ -829,10 +772,15 @@ async def reset_client_data(session: AsyncSession, client_pseudo_id: str) -> int
             await session.delete(survey)
             total_deleted += 1
 
-    for intake in intakes_list:
-        await session.delete(intake)
+    # Delete assessments before intakes (assessments reference intake_id)
+    assessments = await session.exec(
+        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
+    )
+    for assessment in assessments.all():
+        await session.delete(assessment)
         total_deleted += 1
 
+    # Delete plans and their children before intakes (plans reference intake_id)
     plans_list = (
         await session.exec(
             select(Plan).where(Plan.client_pseudo_id == client_pseudo_id)
@@ -865,11 +813,9 @@ async def reset_client_data(session: AsyncSession, client_pseudo_id: str) -> int
         await session.delete(plan)
         total_deleted += 1
 
-    assessments = await session.exec(
-        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
-    )
-    for assessment in assessments.all():
-        await session.delete(assessment)
+    # Delete intakes last (after all tables that reference them)
+    for intake in intakes_list:
+        await session.delete(intake)
         total_deleted += 1
 
     return total_deleted

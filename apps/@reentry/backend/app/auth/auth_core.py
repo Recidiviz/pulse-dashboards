@@ -284,11 +284,11 @@ class Auth0Middleware(BaseHTTPMiddleware):
     """
 
     def __init__(
-        self, app: FastAPI, auth0_config: Auth0Config, exclude_paths: List[str] = None
+        self, app: FastAPI, auth0_config: Auth0Config, exclude_paths: List[str]
     ):
         super().__init__(app)
         self.auth0_config = auth0_config
-        self.exclude_paths = exclude_paths or ["/docs", "/redoc", "/openapi.json"]
+        self.exclude_paths = exclude_paths
         self.jwks_cache = get_jwks_cache(auth0_config)
 
     async def dispatch(self, request: Request, call_next: Callable):
@@ -330,8 +330,8 @@ class Auth0Middleware(BaseHTTPMiddleware):
 
 def setup_auth(
     app: FastAPI,
-    auth0_config: Auth0Config = None,
-    exclude_paths: List[str] = None,
+    auth0_config: Auth0Config | None,
+    exclude_paths: List[str],
     use_middleware: bool = False,
 ):
     """Setup the Auth0 middleware authentication for the FastAPI application."""

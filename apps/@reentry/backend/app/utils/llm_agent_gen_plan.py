@@ -40,7 +40,7 @@ logger = structlog.get_logger(__name__)
 
 ### Graph state
 class ExtendedMessagesState(CommonMessagesState):
-    resources_associations: ActionPlanResourcesAssociations | None
+    resources_associations: ActionPlanResourcesAssociations | None = None
 
 
 ### Transition functions
@@ -51,7 +51,9 @@ def call_generate_sections(state: ExtendedMessagesState) -> Literal["gen_section
             {
                 "messages": state["messages"],
                 "section_to_generate": section,
-                "resources_associations": state["resources_associations"],
+                "resources_associations": state["resources_associations"]
+                if state.get("resources_associations")
+                else None,
             },
         )
         for section in state["sections_to_generate"]
@@ -119,65 +121,31 @@ async def call_generate_section(
     if not section:
         raise ValueError("Error generating section")
     resources = []
-    for association in state["resources_associations"].associations:
-        if association.section_title == section:
-            # First, handle all specified subcategories
-            for subcategory in association.subcategories:
-                # Find the parent category for this subcategory
-                parent_category = None
-                for category, subcategories in CATEGORY_SUBCATEGORY_MAP.items():
-                    if subcategory in subcategories:
-                        parent_category = category
-                        break
-                if not parent_category:
-                    logger.warning(
-                        "No parent category found for subcategory",
-                        subcategory=subcategory,
-                    )
-                    continue
+    if state.get("resources_associations"):
+        for association in state["resources_associations"].associations:
+            if association.section_title == section:
+                # First, handle all specified subcategories
+                for subcategory in association.subcategories:
+                    # Find the parent category for this subcategory
+                    parent_category = None
+                    for category, subcategories in CATEGORY_SUBCATEGORY_MAP.items():
+                        if subcategory in subcategories:
+                            parent_category = category
+                            break
+                    if not parent_category:
+                        logger.warning(
+                            "No parent category found for subcategory",
+                            subcategory=subcategory,
+                        )
+                        continue
 
-                request = GetResourcesRequest(
-                    category=parent_category,
-                    subcategory=subcategory,
-                    address=client_address,
-                    limit=2,
-                    exclude_names=None,
-                    exclude_ids=None,
-                )
-                try:
-                    fetched_resources = await fetch_resources_with_retry(
-                        request, max_retries=2
-                    )
-                    resources.extend(fetched_resources)
-                except Exception as error:
-                    logger.error(
-                        "Failed to fetch resources for subcategory",
+                    request = GetResourcesRequest(
                         category=parent_category,
                         subcategory=subcategory,
-                        error=str(error),
-                    )
-            # Then handle categories that don't have specific subcategories listed
-            for category in association.categories:
-                # Check if this category already had subcategories handled
-                subcategories_handled = False
-                for subcategory in association.subcategories:
-                    if any(
-                        subcategory in subcat_list
-                        for cat, subcat_list in CATEGORY_SUBCATEGORY_MAP.items()
-                        if cat == category
-                    ):
-                        subcategories_handled = True
-                        break
-
-                # If no subcategories were handled for this category, get all resources for the category
-                if not subcategories_handled:
-                    request = GetResourcesRequest(
-                        category=category,
-                        subcategory=None,
                         address=client_address,
+                        limit=2,
                         exclude_names=None,
                         exclude_ids=None,
-                        limit=2,
                     )
                     try:
                         fetched_resources = await fetch_resources_with_retry(
@@ -186,10 +154,45 @@ async def call_generate_section(
                         resources.extend(fetched_resources)
                     except Exception as error:
                         logger.error(
-                            "Failed to fetch resources for category",
-                            category=category,
+                            "Failed to fetch resources for subcategory",
+                            category=parent_category,
+                            subcategory=subcategory,
                             error=str(error),
                         )
+                # Then handle categories that don't have specific subcategories listed
+                for category in association.categories:
+                    # Check if this category already had subcategories handled
+                    subcategories_handled = False
+                    for subcategory in association.subcategories:
+                        if any(
+                            subcategory in subcat_list
+                            for cat, subcat_list in CATEGORY_SUBCATEGORY_MAP.items()
+                            if cat == category
+                        ):
+                            subcategories_handled = True
+                            break
+
+                    # If no subcategories were handled for this category, get all resources for the category
+                    if not subcategories_handled:
+                        request = GetResourcesRequest(
+                            category=category,
+                            subcategory=None,
+                            address=client_address,
+                            exclude_names=None,
+                            exclude_ids=None,
+                            limit=2,
+                        )
+                        try:
+                            fetched_resources = await fetch_resources_with_retry(
+                                request, max_retries=2
+                            )
+                            resources.extend(fetched_resources)
+                        except Exception as error:
+                            logger.error(
+                                "Failed to fetch resources for category",
+                                category=category,
+                                error=str(error),
+                            )
 
     if resources:
         message = prompts.get_section_generation_prompt_with_resources(
@@ -290,6 +293,9 @@ class LLMAgentGenerate:
         # Extract structure flags from config
         self.include_timeline = action_plan_config.structure.timeline
         self.include_milestones = action_plan_config.structure.milestones
+        self.include_resources = (
+            action_plan_config.external_api.resources_pipeline_enabled
+        )
 
         self.model = create_model_from_config(
             action_plan_config.model.provider,
@@ -484,7 +490,10 @@ class LLMAgentGenerate:
         # Create a new plan
         workflow.add_node("gen_reflexion", call_reflexion)
         workflow.add_node("gen_area_of_needs", call_area_of_needs)
-        workflow.add_node("gen_resources", call_resources_options)
+
+        if self.include_resources:
+            workflow.add_node("gen_resources", call_resources_options)
+
         workflow.add_node("gen_section", call_generate_section_node)
 
         # Conditionally add timeline and milestones nodes
@@ -499,9 +508,12 @@ class LLMAgentGenerate:
 
         # Links
         workflow.add_edge(START, "gen_reflexion")
-        workflow.add_edge("gen_reflexion", "gen_area_of_needs")
-        workflow.add_edge("gen_area_of_needs", "gen_resources")
-        workflow.add_conditional_edges("gen_resources", call_generate_sections)
+
+        if self.include_resources:
+            workflow.add_edge("gen_area_of_needs", "gen_resources")
+            workflow.add_conditional_edges("gen_resources", call_generate_sections)
+        else:
+            workflow.add_conditional_edges("gen_area_of_needs", call_generate_sections)
 
         # Conditionally connect section -> timeline -> milestones -> assemble
         # based on which features are enabled

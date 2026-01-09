@@ -1,32 +1,50 @@
 import urllib
-from typing import List, Optional, Union
+from datetime import datetime, timezone
+from typing import List, Optional
 from uuid import UUID
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.exc import DBAPIError
+from sqlmodel import select
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
+from app.crud.address import get_collected_address_for_intake
+from app.crud.assessment import get_assessments_by_intake_id
+from app.crud.assessment_config import get_assessment_config_by_id
+from app.crud.client import compute_frontend_status
+from app.crud.execution import delete_execution_by_id
 from app.crud.intake import (
     create_intake,
-    get_intake_by_client_pseudo_id,
+    get_active_intake_by_client_pseudo_id,
     get_intake_by_id,
     get_intake_section_messages,
     get_or_create_token,
-    update_internal_access_by_client_pseudo_id,
+    update_internal_access_by_intake_id,
 )
-from app.models.base import IntakeType
-from app.models.intake import Intake
+from app.crud.plan import create_plan, get_plan_by_intake_id, retry_plan_creation
+from app.models.base import IntakeStatus, IntakeType
+from app.models.execution import Execution, ExecutionStatus
+from app.models.intake import ClientAddress, Intake
+from app.models.models import Plan
+from app.models.recording import RecordingSession
+from app.routes.execution_router import ExecutionResponse
 from app.routes.shared_models import (
+    AddressSubmission,
     ClientAddressResponse,
     IntakeMessageResponse,
     IntakeResponse,
+    ProcessingStatusResponse,
 )
 from app.services.client_data.queries import Queries
 from app.utils.assessment_config_utils import enrich_sections_with_status
 from app.utils.config_loader import ConfigLoader
+from app.utils.execution_utils import is_execution_stuck
+from app.utils.lock_utils import acquire_intake_lock
 from app.utils.permission_utils import check_access
+from app.utils.processing_status_utils import compute_processing_status_by_intake_id
 
 from .base import (
     IntakeSectionResponse,
@@ -45,10 +63,6 @@ class Message(ORMResponse):
     createdAt: Optional[str]
 
 
-class SummaryResponse(ORMResponse):
-    summary: str
-
-
 class IntakeWithSectionsResponse(IntakeResponse):
     current_section: str | None = None
     intake_sections: List[IntakeSectionResponse] | None = None
@@ -63,26 +77,23 @@ class InternalAccessUpdate(BaseModel):
     internal_access: bool
 
 
+class CreateIntakeRequest(BaseModel):
+    client_pseudo_id: str
+    assessment_config_id: UUID
+
+
+class CreateIntakeResponse(BaseModel):
+    id: UUID
+    status: str
+    assessment_config_code: str
+
+
 async def prepare_intake_response(
     intake: Intake,
     session: AsyncSession,
     pseudonymized_staff_id: str | None,
     token: Optional[str] = None,
 ) -> IntakeWithSectionsResponse | IntakeResponse:
-    client_record = (
-        Queries.get_client_data_by_pseudonymized_id(
-            pseudonymized_client_id=intake.client_pseudo_id,
-            pseudonymized_staff_id=pseudonymized_staff_id,
-        )
-        if pseudonymized_staff_id
-        else None
-    )
-    if not client_record:
-        raise HTTPException(
-            status_code=404,
-            detail=f"client record not found for client ID: {intake.client_pseudo_id}",
-        )
-
     if intake.intake_type == IntakeType.CONVERSATION:
         conversation_config = await ConfigLoader.load_conversation_config(
             intake.assessment_config_id, session
@@ -116,13 +127,6 @@ async def prepare_intake_response(
             intake_sections=formatted_sections,
             token=token or "",
             internal_access=intake.internal_access,
-            address=ClientAddressResponse(
-                street_address=intake.address.street_address,
-                city=intake.address.city,
-                state=intake.address.state,
-            )
-            if intake.address
-            else None,
         )
     else:
         return IntakeResponse(
@@ -134,78 +138,237 @@ async def prepare_intake_response(
             client_pseudo_id=intake.client_pseudo_id,
             status=intake.status.value,
             token=token or "",
-            address=ClientAddressResponse(
-                street_address=intake.address.street_address,
-                city=intake.address.city,
-                state=intake.address.state,
-            )
-            if intake.address
-            else None,
         )
 
 
-@router.post(
-    "/{client_pseudo_id}",
-    summary="Start the intake process for a client",
-    description="Creates or updates the intake record for the given client ID and returns complete intake data",
-    tags=["Intake assessment"],
-    response_model=Union[IntakeWithSectionsResponse, IntakeResponse],
+@router.get(
+    "/{intake_id}/processing-status",
+    response_model=ProcessingStatusResponse,
+    summary="Get Intake General Resources Processing Status",
+    description="Retrieve the processing status for a specific intake by its ID.",
+    tags=["Intake assessment - Admin"],
 )
-async def start_intake_process(
-    client_pseudo_id: str,
+async def get_processing_status_for_intake(
+    intake_id: str,
+    session: AsyncSession = Depends(get_session),
+):
+    intake = await get_intake_by_id(session, intake_id)
+    if not intake:
+        raise HTTPException(status_code=404, detail="Intake not found")
+    intake_processing_status = await compute_processing_status_by_intake_id(
+        session, intake_id
+    )
+    frontend_status = compute_frontend_status(intake.status, intake_processing_status)
+    return ProcessingStatusResponse(
+        processing_status=intake_processing_status, frontend_status=frontend_status
+    )
+
+
+@router.get(
+    "/{intake_id}/address",
+    response_model=ClientAddressResponse,
+    summary="Get Intake Address",
+    description="Retrieve the address collected during a specific intake.",
+    tags=["Intake assessment - Admin"],
+)
+async def get_intake_address(
+    intake_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
-    check_access(client_pseudo_id, pseudonymized_id)
+    """
+    Get the address associated with an intake.
+
+    Returns the client's address if it was collected during the intake,
+    otherwise returns 404.
+    """
+    # First verify the intake exists and check access
+    intake = await get_intake_by_id(session, intake_id)
+    if not intake:
+        raise HTTPException(status_code=404, detail="Intake not found")
+
+    check_access(intake.client_pseudo_id, pseudonymized_id)
+
+    # Get the address for this intake
+    address = await get_collected_address_for_intake(session, intake_id)
+
+    if not address:
+        raise HTTPException(status_code=404, detail="No address found for this intake")
+
+    return ClientAddressResponse(
+        street_address=address.street_address,
+        city=address.city,
+        state=address.state,
+    )
+
+
+@router.post(
+    "",
+    summary="Create a new intake",
+    description="Creates a new intake record for a client with specified assessment config",
+    tags=["Intake assessment - Admin"],
+    response_model=CreateIntakeResponse,
+    status_code=201,
+)
+async def create_new_intake(
+    request: CreateIntakeRequest,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+):
+    """
+    Create a new intake for a client.
+
+    Validations:
+    - Checks if client has an existing CREATED or IN_PROGRESS intake (returns 409 Conflict if yes)
+    - Verifies assessment_config_id exists and is active
+    - Verifies assessment_config matches client's state
+    """
     try:
-        intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
-        if not intake:
-            intake = await create_intake(
-                session, client_pseudo_id, IntakeType.CONVERSATION
+        check_access(request.client_pseudo_id, pseudonymized_id)
+
+        # 1. Check if client has an existing IN_PROGRESS or CREATED intake
+        existing_intake = await get_active_intake_by_client_pseudo_id(
+            session, request.client_pseudo_id
+        )
+
+        if existing_intake:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Client already has an active {existing_intake.status.value} intake (ID: {existing_intake.id})",
             )
-        if not intake:
-            raise HTTPException(status_code=404, detail="Failed to retrieve intake")
 
-        intake = await get_intake_by_id(session, intake.id)
+        # 2. Verify assessment_config_id exists
+        assessment_config = await get_assessment_config_by_id(
+            session, request.assessment_config_id
+        )
 
-        return await prepare_intake_response(
-            intake=intake,
-            session=session,
-            token=None,  # No token generated here
+        if not assessment_config:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Assessment config with ID {request.assessment_config_id} not found",
+            )
+
+        if not assessment_config.is_active:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Assessment config {assessment_config.code} is not active",
+            )
+
+        # 3. Verify client's state matches config's state
+        client_record = Queries.get_client_data_by_pseudonymized_id(
+            pseudonymized_client_id=request.client_pseudo_id,
             pseudonymized_staff_id=pseudonymized_id,
+        )
+
+        if not client_record:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Client record not found for client_pseudo_id: {request.client_pseudo_id}",
+            )
+
+        if client_record.state_code != assessment_config.state_code:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Assessment config state ({assessment_config.state_code}) does not match client state ({client_record.state_code})",
+            )
+
+        # 4. Load the full config to get intake_type
+        full_config = await ConfigLoader.load_assessment_config(
+            request.assessment_config_id, session
+        )
+
+        if not full_config:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to load assessment configuration",
+            )
+
+        # 5. Create the intake
+        intake = await create_intake(
+            session=session,
+            client_pseudo_id=request.client_pseudo_id,
+            assessment_config_id=request.assessment_config_id,
+            status=IntakeStatus.CREATED,
+        )
+
+        return CreateIntakeResponse(
+            id=intake.id,
+            status=intake.status.value,
+            assessment_config_code=assessment_config.code,
         )
 
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"{e}<>><<>")
+        logger.error(f"Error creating intake: {e}")
+        await session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete(
+    "/{intake_id}",
+    summary="Delete an intake",
+    description="Deletes an intake record by its ID",
+    tags=["Intake assessment - Admin"],
+)
+async def delete_new_intake(
+    intake_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+):
+    """
+    Delete an intake by its ID.
+    """
+    intake = await get_intake_by_id(session, intake_id)
+
+    if not intake:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Intake record not found for intake ID: {intake_id}",
+        )
+
+    check_access(intake.client_pseudo_id, pseudonymized_id)
+
+    if intake.status != IntakeStatus.CREATED:
+        raise HTTPException(
+            status_code=400,
+            detail="Only intakes with status 'CREATED' can be deleted",
+        )
+
+    try:
+        await session.delete(intake)
+        await session.commit()
+        return {"detail": "Intake deleted successfully"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting intake: {e}")
         await session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get(
-    "/{client_pseudo_id}",
-    summary="Fetch intake converstaion",
+    "/{intake_id}",
+    summary="Fetch intake conversation",
     description="Returns the intake record, with conversation data if available",
-    tags=["Intake assessment"],
+    tags=["Intake assessment - Admin"],
     response_model=IntakeWithSectionsResponse,
 )
 async def get_client_intake(
-    client_pseudo_id: str,
+    intake_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
-    check_access(client_pseudo_id, pseudonymized_id)
-
-    intake: Intake | None = await get_intake_by_client_pseudo_id(
-        session, client_pseudo_id
-    )
+    intake: Intake | None = await get_intake_by_id(session, intake_id)
 
     if not intake:
         raise HTTPException(
             status_code=404,
-            detail=f"Intake record not found for client ID: {client_pseudo_id}",
+            detail=f"Intake record not found for intake ID: {intake_id}",
         )
+
+    check_access(intake.client_pseudo_id, pseudonymized_id)
 
     try:
         token = (
@@ -233,7 +396,7 @@ async def get_client_intake(
     "/{intake_id}/{section_title}/messages",
     summary="Fetch intake messages for the given section",
     description="Returns the intake messages for the given section",
-    tags=["Intake assessment"],
+    tags=["Intake assessment - Admin"],
     response_model=List[IntakeMessageResponse],
 )
 async def get_intake_section_messages_route(
@@ -273,59 +436,62 @@ async def get_intake_section_messages_route(
 
 
 @router.patch(
-    "/{client_pseudo_id}/internal-access",
+    "/{intake_id}/internal-access",
     summary="Update internal access field",
-    description="Sets internal_access (true/false) for the intake",
-    tags=["Intake assessment"],
+    description="Sets internal_access (true/false) for a specific intake",
+    tags=["Intake assessment - Admin"],
     response_model=str,
 )
 async def set_internal_access(
-    client_pseudo_id: str,
+    intake_id: UUID,
     body: InternalAccessUpdate,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
-    check_access(client_pseudo_id, pseudonymized_id)
-
-    intake = await update_internal_access_by_client_pseudo_id(
-        session=session,
-        client_pseudo_id=client_pseudo_id,
-        internal_access=body.internal_access,
-    )
+    intake = await get_intake_by_id(session, intake_id)
 
     if not intake:
         raise HTTPException(
             status_code=404,
-            detail=f"Intake record not found for client ID: {client_pseudo_id}",
+            detail=f"Intake with ID {intake_id} not found",
         )
+
+    check_access(intake.client_pseudo_id, pseudonymized_id)
+
+    intake = await update_internal_access_by_intake_id(
+        session=session,
+        intake_id=intake_id,
+        internal_access=body.internal_access,
+    )
 
     return "success"
 
 
 @router.post(
-    "/{client_pseudo_id}/token_access",
+    "/{intake_id}/token-access",
     summary="Generate a client access token",
     description="Generates a new access token for a client's intake",
-    tags=["Intake assessment"],
+    tags=["Intake assessment - Admin"],
     response_model=TokenAccessResponse,
 )
 async def generate_client_token(
-    client_pseudo_id: str,
+    intake_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
-    check_access(client_pseudo_id, pseudonymized_id)
     try:
-        intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
+        intake = await get_intake_by_id(session, intake_id)
 
         if not intake:
             raise HTTPException(status_code=404, detail="Intake not found")
+
+        check_access(intake.client_pseudo_id, pseudonymized_id)
 
         # Generate a new token
         token_entry, raw_token = await get_or_create_token(session, intake.id)
 
         return TokenAccessResponse(
-            client_pseudo_id=client_pseudo_id,
+            client_pseudo_id=intake.client_pseudo_id,
             token=raw_token,
         )
 
@@ -335,3 +501,374 @@ async def generate_client_token(
         logger.error(f"Error generating token: {e}")
         await session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post(
+    "/{intake_id}/address",
+    summary="Submit client address for intake",
+    description="Submit or update address information for the authenticated client's intake",
+    tags=["Intake assessment - Admin"],
+    response_model=ClientAddressResponse,
+)
+async def submit_address(
+    intake_id: UUID,
+    address_data: AddressSubmission,
+    session=Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+):
+    intake = await get_intake_by_id(session, intake_id)
+
+    if not intake:
+        raise HTTPException(status_code=404, detail="Intake not found")
+
+    check_access(intake.client_pseudo_id, pseudonymized_id)
+    # Create or update address
+    if intake.address:
+        # Update existing address
+        intake.address.city = address_data.city
+        intake.address.state = address_data.state
+        intake.address.street_address = address_data.street_address
+        session.add(intake.address)
+    else:
+        # Create new address
+        new_address = ClientAddress(
+            intake_id=intake.id,
+            city=address_data.city,
+            state=address_data.state,
+            street_address=address_data.street_address,
+        )
+        session.add(new_address)
+        session.commit()
+        session.refresh(intake)
+    return intake.address
+
+
+@router.post(
+    "/{intake_id}/retry-processing",
+    response_model=ExecutionResponse,
+    summary="Retry Processing for Intake",
+    description="Intelligently retry processing for an intake based on current state. Determines whether to retry assessments, plan generation, or both. Handles failed and stuck executions.",
+    tags=["Intake Processing - Admin"],
+)
+async def retry_intake_processing(
+    intake_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+):
+    """
+    Retry processing for a specific intake.
+
+    This endpoint:
+    1. Checks for failed or stuck recording/transcription
+    2. Retries failed or stuck assessments
+    3. Retries failed or stuck plan creation
+    4. Retries failed or stuck plan generations
+
+    Returns the execution object for the operation that was retried.
+    """
+    # Get and lock the intake
+    intake = await acquire_intake_lock(session, intake_id)
+
+    if not intake:
+        raise HTTPException(status_code=404, detail="Intake not found")
+
+    # Verify access
+    check_access(intake.client_pseudo_id, pseudonymized_id)
+
+    # Check for failed or stuck recording/transcription
+    recording = None
+    if intake.recording_session:
+        try:
+            stmt = (
+                select(RecordingSession)
+                .where(RecordingSession.intake_id == intake.id)
+                .with_for_update(nowait=True)
+            )
+            result = await session.execute(stmt)
+            recording = result.scalar_one_or_none()
+        except DBAPIError as e:
+            if "LockNotAvailableError" in str(e) or "could not obtain lock" in str(e):
+                raise HTTPException(
+                    status_code=409,
+                    detail="A retry operation is already in progress for this intake",
+                )
+            raise
+
+    if recording:
+        should_retry_recording = False
+        retry_reason = None
+
+        # Check if recording execution is stuck or failed
+        if recording.execution:
+            if recording.execution.status == "failed":
+                should_retry_recording = True
+                retry_reason = f"failed (status={recording.execution.status})"
+            elif is_execution_stuck(recording.execution):
+                should_retry_recording = True
+                retry_reason = f"stuck (status={recording.execution.status}, updated_at={recording.execution.updated_at})"
+
+        # Check if recording status is error
+        if recording.status == "error":
+            should_retry_recording = True
+            if not retry_reason:
+                retry_reason = "recording status=error"
+
+        if should_retry_recording:
+            # Delete the failed/stuck recording execution first
+            execution_id = recording.execution_id
+            if execution_id:
+                logger.info(
+                    f"Retrying execution for intake {intake_id}, "
+                    f"deleted execution {execution_id} (type=recording_session, reason={retry_reason})"
+                )
+                recording.execution = None
+                recording.execution_id = None
+                session.add(recording)
+                await delete_execution_by_id(session, execution_id)
+            else:
+                logger.info(
+                    f"Retrying execution for intake {intake_id}, "
+                    f"no execution to delete (type=recording_session, reason={retry_reason})"
+                )
+
+            # Schedule new recording processing
+            from app.tasks.recording import process_recording_task
+
+            new_execution = Execution(
+                status="pending",
+                table_name="recording_session",
+                table_entity_id=recording.id,
+            )
+            session.add(new_execution)
+            await session.flush()  # Get the ID without committing
+
+            # Dispatch task
+            task = await process_recording_task.kiq(
+                execution_id=new_execution.id,
+                recording_session_id=recording.id,
+            )
+            new_execution.task_id = str(task.task_id)
+            recording.execution_id = new_execution.id
+            recording.status = "processing"
+            session.add(new_execution)
+            session.add(recording)
+
+            # Single commit at the end
+            await session.commit()
+            await session.refresh(new_execution)
+
+            return new_execution
+
+        if recording.execution and recording.execution.status in [
+            ExecutionStatus.PENDING,
+            ExecutionStatus.IN_PROGRESS,
+        ]:
+            raise HTTPException(status_code=400, detail="No retryable operations found")
+
+    if not intake or intake.status != "completed":
+        raise HTTPException(
+            status_code=400,
+            detail="Intake must be completed before retrying processing",
+        )
+
+    # Lock assessments to prevent concurrent modifications
+    try:
+        from app.models.assessment import Assessment
+
+        stmt = (
+            select(Assessment)
+            .where(Assessment.intake_id == intake.id)
+            .with_for_update(nowait=True)
+        )
+        await session.execute(stmt)
+    except DBAPIError as e:
+        if "could not obtain lock" in str(e) or "LockNotAvailableError" in str(e):
+            raise HTTPException(
+                status_code=409,
+                detail=f"A retry operation is already in progress for intake {intake_id}",
+            )
+        raise
+
+    # Get current assessments
+    assessments = await get_assessments_by_intake_id(session, intake.id)
+
+    # Check for failed or stuck assessments that need to be retried
+    if assessments:
+        for assessment in assessments:
+            # Check if assessment failed or is stuck
+            if assessment.status == "failed":
+                retry_reason = f"failed (status={assessment.status})"
+                execution_id = assessment.execution_id
+                logger.info(
+                    f"Retrying execution for intake {intake_id}, "
+                    f"deleted execution {execution_id} (type=assessment, reason={retry_reason})"
+                )
+
+                # Delete the failed/stuck assessment first
+                await session.delete(assessment)
+
+                # Then delete the execution
+                if execution_id:
+                    await delete_execution_by_id(session, execution_id)
+
+                # Schedule new assessment
+                execution = await intake.schedule_assessment(session)
+
+                # Single commit at the end
+                await session.commit()
+                await session.refresh(intake)
+                return execution
+            elif assessment.execution and is_execution_stuck(assessment.execution):
+                execution_id = assessment.execution_id
+                retry_reason = f"stuck (status={assessment.execution.status}, updated_at={assessment.execution.updated_at})"
+                logger.info(
+                    f"Retrying execution for intake {intake_id}, "
+                    f"deleted execution {execution_id} (type=assessment, reason={retry_reason})"
+                )
+
+                # Delete the failed/stuck assessment first (due to foreign key constraint)
+                await session.delete(assessment)
+
+                # Then delete the execution
+                if execution_id:
+                    await delete_execution_by_id(session, execution_id)
+
+                # Schedule new assessment
+                execution = await intake.schedule_assessment(session)
+
+                # Single commit at the end
+                await session.commit()
+                await session.refresh(intake)
+                return execution
+
+    # Check if we should retry assessments (no assessments exist)
+    if not assessments:
+        logger.info(
+            f"Retrying execution for intake {intake_id}, "
+            f"no execution to delete (type=assessment, reason=missing assessment)"
+        )
+        # Use intake.schedule_assessment to start assessment
+        execution = await intake.schedule_assessment(session)
+
+        # Single commit at the end
+        await session.commit()
+        await session.refresh(intake)
+        return execution
+
+    if any(a.status in ["pending", "in_progress"] for a in assessments):
+        raise HTTPException(status_code=400, detail="No retryable operations found")
+
+    plan = await get_plan_by_intake_id(session, intake.id)
+
+    # Check for stuck or failed plan
+    if (
+        not plan
+        or not plan.create_execution
+        or plan.create_status == "failed"
+        or plan.create_execution.status == "failed"
+        or is_execution_stuck(plan.create_execution)
+    ):
+        if not plan:
+            logger.info(
+                f"Retrying execution for intake {intake_id}, "
+                f"no execution to delete (type=plan, reason=missing plan)"
+            )
+            # Create new plan (only if we have completed assessments and no plan)
+            plan_obj = Plan(
+                client_pseudo_id=intake.client_pseudo_id, intake_id=intake.id
+            )
+            plan = await create_plan(session, plan_obj)
+            execution = await plan.schedule_initial_creation(session)
+
+            # Single commit at the end
+            await session.commit()
+            await session.refresh(plan)
+            return execution
+        elif not plan.create_execution:
+            logger.info(
+                f"Retrying execution for intake {intake_id}, "
+                f"no execution to delete (type=plan, reason=missing execution)"
+            )
+            execution = await plan.schedule_initial_creation(session)
+
+            # Single commit at the end
+            await session.commit()
+            await session.refresh(plan)
+            return execution
+        else:
+            # Retry failed/stuck plan creation
+            execution_id = plan.create_execution_id
+            if (
+                plan.create_status == "failed"
+                or plan.create_execution.status == "failed"
+            ):
+                retry_reason = f"failed (status={plan.create_execution.status})"
+            else:
+                retry_reason = f"stuck (status={plan.create_execution.status}, updated_at={plan.create_execution.updated_at})"
+
+            logger.info(
+                f"Retrying execution for intake {intake_id}, "
+                f"deleted execution {execution_id} (type=plan, reason={retry_reason})"
+            )
+            execution = await retry_plan_creation(session, plan)
+
+            # Single commit at the end
+            await session.commit()
+            await session.refresh(plan)
+            return execution
+
+    # Check for stuck or failed plan generations
+    if plan and plan.create_status == "completed":
+        from app.crud.plan_generation import get_gen_by_plan_id_with_executions
+        from app.models.models import PlanGeneration
+
+        generations = await get_gen_by_plan_id_with_executions(session, plan.id)
+        if generations:
+            # Get the latest generation by created_at
+            sorted_gens = sorted(
+                generations,
+                key=lambda x: x.created_at or datetime.min.replace(tzinfo=timezone.utc),
+                reverse=True,
+            )
+            latest_gen = sorted_gens[0] if sorted_gens else None
+
+            if latest_gen and latest_gen.execution:
+                if latest_gen.execution.status == "failed" or is_execution_stuck(
+                    latest_gen.execution
+                ):
+                    execution_id = latest_gen.execution_id
+                    if latest_gen.execution.status == "failed":
+                        retry_reason = f"failed (status={latest_gen.execution.status})"
+                    else:
+                        retry_reason = f"stuck (status={latest_gen.execution.status}, updated_at={latest_gen.execution.updated_at})"
+
+                    logger.info(
+                        f"Retrying execution for intake {intake_id}, "
+                        f"deleted execution {execution_id} (type=plan_generation, reason={retry_reason})"
+                    )
+
+                    # Copy parameters from stuck/failed generation for retry
+                    prompt = latest_gen.prompt
+                    resource_to_add_content = latest_gen.resource_to_add_content
+                    resource_to_remove_id = latest_gen.resource_to_remove_id
+
+                    # Create new generation with same parameters (keep old one for audit trail)
+                    new_gen = PlanGeneration(
+                        plan_id=plan.id,
+                        prompt=prompt,
+                        resource_to_add_content=resource_to_add_content,
+                        resource_to_remove_id=resource_to_remove_id,
+                        force_generation=latest_gen.force_generation,
+                    )
+                    session.add(new_gen)
+                    await session.flush()  # Get the ID without committing
+
+                    # Schedule the new generation
+                    execution = await new_gen.schedule_execution(session)
+
+                    # Single commit at the end
+                    await session.commit()
+                    return execution
+
+    # Fallback: no current executions found
+    raise HTTPException(status_code=400, detail="No retryable operations found")

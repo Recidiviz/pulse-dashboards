@@ -16,37 +16,37 @@
 // =============================================================================
 
 import { ArrowRight } from "lucide-react";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import WarningCircleIcon from "~@reentry/frontend/components/icons/WarningCircleIcon";
 import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { components } from "~@reentry/openapi-types";
 
 interface RetryProcessingProps {
-  clientData: components["schemas"]["ClientRecordResponse"];
+  intakeId: string;
 }
 
-const RetryProcessing: React.FC<RetryProcessingProps> = ({ clientData }) => {
+const RetryProcessing: React.FC<RetryProcessingProps> = ({ intakeId }) => {
   const { getAccessToken } = useAuth();
-  const { startPolling, isPolling } = useExecutionPolling({ interval: 2000 });
+  const { startPolling, isPolling, isCompleted } = useExecutionPolling({
+    interval: 2000,
+  });
+  const router = useRouter();
 
   // Mutation for retry processing
   const { mutateAsync: retryProcessingMutation, isPending: isRetrying } =
-    $api.useMutation("post", "/clients/{client_pseudo_id}/retry-processing");
+    $api.useMutation("post", "/intake/admin/{intake_id}/retry-processing");
 
   const handleRetryProcessing = async () => {
     try {
-      console.log(
-        "Starting retry processing for client:",
-        clientData?.pseudonymized_client_id,
-      );
+      console.log("Starting retry processing for intake:", intakeId);
 
       const response = await retryProcessingMutation({
         params: {
           path: {
-            client_pseudo_id: clientData?.pseudonymized_client_id,
+            intake_id: intakeId,
           },
         },
         headers: {
@@ -68,6 +68,12 @@ const RetryProcessing: React.FC<RetryProcessingProps> = ({ clientData }) => {
     }
   };
 
+  useEffect(() => {
+    if (isCompleted) {
+      router.refresh();
+    }
+  }, [isCompleted]);
+
   return (
     <div className="flex pl-5 pr-4 py-3 bg-[#FFF3E1] border-l-4 border-[#C78F38] flex-col justify-center items-start gap-4 overflow-hidden mb-2">
       <div className="flex flex-col justify-start items-start gap-2">
@@ -86,14 +92,22 @@ const RetryProcessing: React.FC<RetryProcessingProps> = ({ clientData }) => {
               type="button"
               onClick={handleRetryProcessing}
               disabled={isRetrying}
-              className="flex items-center gap-1  hover:text-cyan-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed "
+              className=" inline-flex items-center gap-2 px-4 py-2 rounded-full
+                      border border-[#006B66]/30
+                      bg-[#006B66]/5
+                      text-[#006c67]
+                      text-sm font-medium
+                      transition-all
+                      hover:bg-[#006c67]/15
+                      hover:border-[#006c67]/50
+                      focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006c67]/40
+                      disabled:opacity-50 disabled:cursor-not-allowed
+                    "
             >
-              <div className="flex flex-row items-center">
-                <span className="font-['Public_Sans'] text-sm font-medium leading-[120%] tracking-[-0.14px]">
-                  Please retry processing.
-                </span>
-                <ArrowRight className="w-4 h-4 ml-2 mt-[2px]" />
-              </div>
+              <span className="leading-[120%] tracking-[-0.14px]">
+                retry processing
+              </span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           )}
         </div>

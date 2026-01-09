@@ -25,14 +25,17 @@ from app.core.config import settings
 from app.core.logging_config import setup_logging
 from app.core.sentry_config import setup_sentry
 from app.routes import (
+    assessment_config_router,
     assessment_router,
     assessment_tree_router,
+    autocomplete_router,
     client_router,
     decision_tree_router,
     execution_router,
     intake_admin_router,
+    intake_auth_router,
     intake_client_router,
-    intake_internal_router,
+    intake_config_public_router,
     intake_services_router,
     plan_decision_tree_router,
     plan_router,
@@ -133,11 +136,12 @@ exclude_paths = [
     "/health",
     "/login",
     "/metrics",
-    "/intake/client",
-    "/intake/services",
-    "/intake/internal",
-    "/intake/client/start-assessment-action-plan",
+    "/external/",
+    "/public/",
+    "/autocomplete-city",
+    "/autocomplete-address",
     "/webhooks/deepgram/transcription",
+    "/intake/services",
 ]
 
 auth0_config = get_auth0_config()
@@ -152,11 +156,7 @@ setup_auth(
 # Setup client authentication middleware
 setup_client_auth(
     app,
-    include_paths=[
-        "/intake/client",
-        "/api/intake/client",
-        "/intake/services",
-    ],
+    include_paths=["/external", "/intake/services"],
 )
 
 # Mount Socket.IO application
@@ -168,21 +168,34 @@ Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 taskiq_fastapi.init(broker, "main:app")
 
 # Include routers
+# Internal routers with prefixes - require authentication
+app.include_router(decision_tree_router.router, prefix="/decision-trees")
+app.include_router(assessment_tree_router.router, prefix="/assessment-trees")
+app.include_router(assessment_config_router.router, prefix="/assessment-configs")
+app.include_router(assessment_router.router, prefix="/assessments")
+app.include_router(execution_router.router, prefix="/executions")
+app.include_router(intake_services_router.router, prefix="/intake/services")
+app.include_router(client_router.router, prefix="/clients")
+app.include_router(intake_admin_router.router, prefix="/intake/admin")
+app.include_router(recording_session_router.router, prefix="/recordings")
+app.include_router(transcription_router.router, prefix="/transcription")
+
+# External routers -- no auth required
+app.include_router(intake_auth_router.router, prefix="/external/client/verify")
+app.include_router(autocomplete_router.router, prefix="/autocomplete")
+app.include_router(webhook_router.router, prefix="/webhooks")
+
+# Public routers -- no auth required
+app.include_router(intake_config_public_router.router, prefix="/public/intake-config")
+
+# Authenticated client endpoints
+app.include_router(intake_client_router.router, prefix="/external/client")
+
+
+# Internal routers fallthoughs - require authentication
 app.include_router(plan_router.router)
 app.include_router(plan_decision_tree_router.router)
 app.include_router(resources_router.router)
-app.include_router(decision_tree_router.router, prefix="/decision-trees")
-app.include_router(assessment_tree_router.router, prefix="/assessment-trees")
-app.include_router(assessment_router.router, prefix="/assessments")
-app.include_router(execution_router.router, prefix="/executions")
-app.include_router(intake_client_router.router, prefix="/intake/client")
-app.include_router(intake_services_router.router, prefix="/intake/services")
-app.include_router(intake_internal_router.router, prefix="/intake/internal")
-app.include_router(intake_admin_router.router, prefix="/intake/admin")
-app.include_router(client_router.router, prefix="/clients")
-app.include_router(recording_session_router.router, prefix="/recordings")
-app.include_router(transcription_router.router, prefix="/transcriptions")
-app.include_router(webhook_router.router, prefix="/webhooks")
 
 
 # Health check

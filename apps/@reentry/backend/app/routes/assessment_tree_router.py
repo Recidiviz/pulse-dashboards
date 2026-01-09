@@ -92,7 +92,7 @@ class AssessmentTreeUpdate(BaseModel):
     response_model=Page[AssessmentTreeResponse],
     summary="Retrieve a list of assessment trees",
     description="This endpoint retrieves a paginated list of all assessment trees.",
-    tags=["Assessment Trees"],
+    tags=["Risk scoring Trees"],
 )
 async def router_get_assessment_trees_list(
     session: AsyncSession = Depends(get_session),
@@ -106,7 +106,7 @@ async def router_get_assessment_trees_list(
     response_model=AssessmentTreeWithRevisionsResponse,
     summary="Retrieve an assessment tree",
     description="This endpoint retrieves an assessment tree by its ID, including all its revisions.",
-    tags=["Assessment Trees"],
+    tags=["Risk scoring Trees"],
 )
 async def router_get_assessment_tree(
     assessment_tree_id: uuid.UUID,
@@ -125,7 +125,7 @@ async def router_get_assessment_tree(
     summary="Create a new assessment tree",
     description="This endpoint allows the creation of a new assessment tree. "
     "The assessment tree must have a unique name.",
-    tags=["Assessment Trees"],
+    tags=["Risk scoring Trees"],
 )
 async def router_add_assessment_tree(
     data: AssessmentTreeCreate,
@@ -149,7 +149,7 @@ async def router_add_assessment_tree(
     response_model=AssessmentTreeWithRevisionsResponse,
     summary="Update an assessment tree",
     description="This endpoint updates an assessment tree by its ID with the given data.",
-    tags=["Assessment Trees"],
+    tags=["Risk scoring Trees"],
 )
 async def router_update_assessment_tree(
     assessment_tree_id: uuid.UUID,
@@ -179,7 +179,7 @@ async def router_update_assessment_tree(
     response_model=None,
     summary="Delete an assessment tree",
     description="Deletes an assessment tree by its ID.",
-    tags=["Assessment Trees"],
+    tags=["Risk scoring Trees"],
     status_code=204,
 )
 async def router_delete_assessment_tree(
@@ -198,7 +198,7 @@ async def router_delete_assessment_tree(
     response_model=Page[AssessmentTreeRevision],
     summary="Get assessment tree revisions",
     description="Retrieve a paginated list of revisions for a specific assessment tree by its ID.",
-    tags=["Assessment Trees"],
+    tags=["Risk scoring Trees"],
 )
 async def router_get_assessment_tree_revisions(
     assessment_tree_id: uuid.UUID,
@@ -215,7 +215,7 @@ async def router_get_assessment_tree_revisions(
     response_model=AssessmentTreeRevisionResponse,
     summary="Retrieve a specific assessment tree revision",
     description="This endpoint retrieves a specific revision of an assessment tree by its ID and revision ID.",
-    tags=["Assessment Trees"],
+    tags=["Risk scoring Trees"],
 )
 async def router_get_assessment_tree_revision(
     assessment_tree_id: uuid.UUID,
@@ -241,7 +241,7 @@ async def router_get_assessment_tree_revision(
     summary="Add a new revision to an assessment tree",
     description="This endpoint allows adding a new revision to an existing assessment tree by its ID. "
     "The revision includes mermaid content and optional data.",
-    tags=["Assessment Trees"],
+    tags=["Risk scoring Trees"],
 )
 async def router_add_assessment_tree_revision(
     data: AssessmentTreeRevisionCreate,

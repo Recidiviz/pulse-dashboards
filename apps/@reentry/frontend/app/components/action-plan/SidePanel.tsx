@@ -87,17 +87,20 @@ const SidePanel = ({
         {isExpanded && (
           <>
             {/*<PlanStatus />*/}
-            <Resources
-              selectedResource={selectedResource}
-              candidateResource={candidateResource}
-              relatedResourcesLoading={relatedResourcesLoading}
-              planResources={planResources}
-              handleSelectResource={handleSelectResource}
-              relatedResources={relatedResources}
-              handleOpenResourceSection={handleOpenResourceSection}
-              openResourceSection={openResourceSection}
-              clientRecord={clientRecord}
-            />
+            {dataDetailPlan?.resources_pipeline_enabled && (
+              <Resources
+                selectedResource={selectedResource}
+                candidateResource={candidateResource}
+                relatedResourcesLoading={relatedResourcesLoading}
+                planResources={planResources}
+                handleSelectResource={handleSelectResource}
+                relatedResources={relatedResources}
+                handleOpenResourceSection={handleOpenResourceSection}
+                openResourceSection={openResourceSection}
+                clientRecord={clientRecord}
+              />
+            )}
+
             {isFeatureEnabled("REGENERATE_WITH_PROMPT") && (
               <RegeneratePlan
                 planId={planId}

@@ -57,6 +57,7 @@ export interface IntakeSocketContextType {
   has_address: boolean;
   has_survey: boolean;
   disconnectReason?: string | null;
+  intakeId?: string | null;
 }
 
 interface IntakeSocketDispatchContextType {
@@ -132,6 +133,7 @@ type InitializeIntakeMetaAction = {
     has_accepted_terms?: boolean;
     has_address?: boolean;
     has_survey?: boolean;
+    id: string;
   };
 };
 
@@ -210,6 +212,7 @@ const intakeReducer = (
         has_accepted_terms: action.content.has_accepted_terms || false,
         has_address: action.content.has_address || false,
         has_survey: action.content.has_survey || false,
+        intakeId: action.content.id,
       };
     }
     case "receiveAIMessage": {
@@ -234,11 +237,25 @@ const intakeReducer = (
           connectionStatus: "connected",
         };
       }
-
+      // If there is no currentSection -if intake has not started- set the curent section and update sections statuses
+      // Based on the messages's section
       return {
         ...state,
         messages: [...state.messages, action.content],
         waitingForAIInput: false,
+        currentSection: state.currentSection || action.content.section || null,
+        allSections: state.currentSection
+          ? state.allSections
+          : state.allSections.map((section) => {
+              // Mark new section as in progress
+              if (section.title === action.content.section) {
+                return {
+                  ...section,
+                  status: "in_progress",
+                };
+              }
+              return section;
+            }),
         connectionStatus: "connected",
       };
     }
@@ -281,7 +298,6 @@ const intakeReducer = (
             return {
               ...section,
               status: "in_progress",
-              is_active: true,
             };
           }
           return section;
@@ -301,6 +317,7 @@ const intakeReducer = (
         has_address: action.content.has_address || false,
         has_survey: action.content.has_survey || false,
         isLoading: false,
+        intakeId: action.content.id,
       };
     }
     case "setConversationStarted": {
@@ -332,13 +349,12 @@ const intakeReducer = (
 
 interface IntakeSocketProviderProps {
   children: ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  token_from_url: any;
+  tokenFromUrl?: string | undefined | null;
 }
 
 export function IntakeSocketProvider({
   children,
-  token_from_url,
+  tokenFromUrl,
 }: IntakeSocketProviderProps) {
   const initialIntakeContext: IntakeSocketContextType = {
     messages: [],
@@ -366,7 +382,6 @@ export function IntakeSocketProvider({
 
   const [storedToken, setStoredToken] = useState<string | null>(null);
   const conversationStarted = intakeContext.conversationStarted;
-  const [isSocketReady, setIsSocketReady] = useState(false);
   const setConversationStarted = (val: boolean) => {
     if (typeof window !== "undefined") {
       sessionStorage.setItem("conversationStarted", val ? "true" : "false");
@@ -418,7 +433,6 @@ export function IntakeSocketProvider({
           if (content.accepted) {
             console.log("ConnectionAck accepted=true");
             dispatch({ type: "connected" });
-            setIsSocketReady(true);
           } else {
             console.log("ConnectionAck accepted=false");
             dispatch({ type: "disconnect" });
@@ -503,14 +517,13 @@ export function IntakeSocketProvider({
     socket,
   ]);
 
-  const { data: intakeData, error: apiError } = $api.useQuery(
+  const { data: intakeDataToken, error: apiErrorToken } = $api.useQuery(
     "get",
-    "/intake/client/{token_from_url}",
+    "/external/client/by-token/{token_from_url}",
     {
-      enabled: storedToken && isSocketReady,
       params: {
         path: {
-          token_from_url: token_from_url,
+          token_from_url: tokenFromUrl as string,
         },
       },
       headers: storedToken
@@ -519,13 +532,37 @@ export function IntakeSocketProvider({
           }
         : undefined,
     },
+    { enabled: !!storedToken && !!tokenFromUrl },
   );
 
+  const { data: intakeData, error: apiError } = $api.useQuery(
+    "get",
+    "/external/client/",
+    {
+      headers: storedToken
+        ? {
+            Authorization: `Bearer ${storedToken}`,
+          }
+        : undefined,
+    },
+    { enabled: !!storedToken && !tokenFromUrl },
+  );
+  const logOut = useCallback(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("intake_token");
+      setStoredToken(null);
+    }
+  }, []);
+
   useEffect(() => {
-    if (!apiError) return;
+    if (!apiError && !apiErrorToken) return;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if ((apiError?.detail as any) === "Unauthorized") {
+    if ((apiError as any)?.detail === "Unauthorized") {
+      logOut();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((apiErrorToken as any)?.detail === "Unauthorized") {
       logOut();
     }
     // Update error state
@@ -542,15 +579,18 @@ export function IntakeSocketProvider({
       console.log("API error detected, disconnecting socket");
       socket.disconnect();
     }
-  }, [apiError, socket]);
+  }, [apiError, apiErrorToken, socket, storedToken, logOut]);
 
   // Process intake data when it changes
   useEffect(() => {
     // Don't process if there's an API error or no data
-    if (apiError || !intakeData || socket.connected) return;
+    const actualIntakeData = intakeData ? intakeData : intakeDataToken;
+    if (apiErrorToken || apiError || !actualIntakeData || socket.connected)
+      return;
 
     const canConnect =
-      intakeData.status === "in_progress" || intakeData.status === "created";
+      actualIntakeData.status === "in_progress" ||
+      actualIntakeData.status === "created";
 
     //  Intake is not connectable
     if (!canConnect) {
@@ -570,47 +610,59 @@ export function IntakeSocketProvider({
       socket.disconnect();
       return;
     }
-
-    if (!socket.connected && conversationStarted) {
+    if (!socket.connected && conversationStarted && storedToken) {
       // Only connect if we're not already connected or connecting
-      console.log(`Intake status is ${intakeData.status}, connecting socket`);
+      console.log(
+        `Intake status is ${actualIntakeData.status}, connecting socket`,
+      );
       // Update to connecting state before actually connecting
       dispatch({ type: "connecting" });
-      socket.auth = { auth_token: storedToken, token_from_url };
+      socket.auth = { auth_token: storedToken, token_from_url: tokenFromUrl };
       socket.connect();
     }
   }, [
     storedToken,
     intakeData,
+    intakeDataToken,
     apiError,
-    token_from_url,
+    apiErrorToken,
+    tokenFromUrl,
     conversationStarted,
     socket,
   ]);
 
   useEffect(() => {
-    if (!intakeData || apiError) return;
+    const actualIntakeData = intakeData ? intakeData : intakeDataToken;
+
+    if (!actualIntakeData || apiError || apiErrorToken) return;
 
     if (!conversationStarted) {
       dispatch({
         type: "initializeIntakeMeta",
         content: {
-          status: intakeData.status,
-          client_name: intakeData.client_name,
-          current_section_messages: intakeData.current_section_messages,
-          client_state: intakeData.client_state,
-          has_accepted_terms: intakeData.has_accepted_terms,
-          has_address: intakeData.has_address,
-          has_survey: intakeData.has_survey,
+          status: actualIntakeData.status,
+          client_name: actualIntakeData.client_name,
+          current_section_messages: actualIntakeData.current_section_messages,
+          client_state: actualIntakeData.client_state,
+          has_accepted_terms: actualIntakeData.has_accepted_terms,
+          has_address: actualIntakeData.has_address,
+          has_survey: actualIntakeData.has_survey,
+          id: actualIntakeData.id,
         },
       });
     } else {
       dispatch({
         type: "apiIntakeData",
-        content: intakeData,
+        content: actualIntakeData,
       });
     }
-  }, [intakeData, apiError, conversationStarted]);
+  }, [
+    intakeData,
+    intakeDataToken,
+    apiErrorToken,
+    apiError,
+    conversationStarted,
+  ]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -704,14 +756,11 @@ export function IntakeSocketProvider({
       }
     }, 300);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storedToken, intakeContext.connectionStatus, dispatch]);
-
-  const logOut = () => {
-    if (typeof window !== "undefined") {
-      sessionStorage.removeItem("intake_token");
-      setStoredToken(null);
-    }
-  };
+  }, [
+    storedToken,
+    intakeContext.connectionStatus,
+    intakeContext.disconnectReason,
+  ]);
 
   const handleClickDisconnect = () => {
     logOut();

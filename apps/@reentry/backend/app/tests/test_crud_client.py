@@ -6,10 +6,19 @@ import pytest
 import sqlalchemy
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.crud.client import get_paginated_client_list, get_processing_status
-from app.crud.intake import create_intake
-from app.models.base import IntakeType
+from app.crud.client import (
+    compute_frontend_status,
+    count_intakes_for_client,
+    get_paginated_client_list,
+    reset_client_data,
+)
+from app.models.base import IntakeStatus
+from app.models.intake import Intake
 from app.routes.shared_models import ProcessingStatus
+from app.utils.processing_status_utils import (
+    compute_processing_status,
+    compute_processing_status_by_intake_id,
+)
 
 
 class StubStaffClient:
@@ -282,10 +291,6 @@ async def test_merge_caseload_and_facility_clients(async_session):
         patch(
             "app.services.client_data.queries.Queries.get_clients_by_facility_access"
         ) as mock_facility_clients,
-        patch(
-            "app.crud.client.compute_priority_order",
-            return_value=[caseload_client_1, caseload_client_2, facility_client_2],
-        ),
         patch("app.crud.client.build_response_for_clients") as mock_build_response,
     ):
         # Mock caseload clients
@@ -321,7 +326,7 @@ async def test_merge_caseload_and_facility_clients(async_session):
         assert len(result["items"]) == 3
 
         # ensure dedupe happened (C2 appears once)
-        returned_ids = [c.pseudonymized_client_id for c in result["items"]]
+        returned_ids = [c["client_pseudo_id"] for c in result["items"]]
         assert returned_ids.count("C2") == 1
 
         # ensure the three unique clients are present
@@ -332,115 +337,680 @@ async def test_merge_caseload_and_facility_clients(async_session):
 
 
 @pytest.mark.asyncio
-async def test_get_processing_status_not_started(async_session: AsyncSession):
-    """get_processing_status returns NOT_STARTED for a client with no intake"""
-    client_pseudo_id = "no-intake-client"
-    staff_id = "staff-1"
-
-    with patch(
-        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
-    ) as mock_get_clients:
-        mock_get_clients.return_value = [StubStaffClient(client_pseudo_id)]
-
-        result = await get_processing_status(async_session, staff_id)
-    assert result == {client_pseudo_id: ProcessingStatus.NOT_STARTED}
+async def test_compute_processing_status_not_started(async_session: AsyncSession):
+    """compute_processing_status returns NOT_STARTED when no intake exists"""
+    result = compute_processing_status(
+        assessments=None, plans=None, intake=None, plan_generations=None
+    )
+    assert result == ProcessingStatus.NOT_STARTED
 
 
 @pytest.mark.asyncio
-async def test_get_processing_status_completed(
-    async_session: AsyncSession, seed_configs, mock_clientdata_service
+async def test_compute_processing_status_completed(
+    async_session: AsyncSession, mock_intake
 ):
-    """get_processing_status returns COMPLETED when plan is done"""
+    """compute_processing_status returns COMPLETED when plan is done"""
     from app.models.assessment import Assessment
-    from app.models.intake import IntakeStatus
     from app.models.models import Execution, Plan
 
     client_pseudo_id = "client-001ps"
-    staff_id = "staff-2"
 
-    intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.COMPLETED,
-        intake_type=IntakeType.CONVERSATION,
-    )
-    async_session.add(intake)
+    # Setup completed intake
+    mock_intake.client_pseudo_id = client_pseudo_id
+    mock_intake.status = IntakeStatus.COMPLETED
     await async_session.commit()
+    await async_session.refresh(mock_intake)
 
+    # Create completed assessment
     exec_assess = Execution(status="completed")
     async_session.add(exec_assess)
     await async_session.commit()
 
     assessment = Assessment(
-        client_pseudo_id=client_pseudo_id, execution_id=exec_assess.id
+        client_pseudo_id=client_pseudo_id,
+        execution_id=exec_assess.id,
+        status="completed",
     )
     async_session.add(assessment)
     await async_session.commit()
 
+    # Create completed plan
     exec_plan = Execution(status="completed")
     async_session.add(exec_plan)
     await async_session.commit()
     await async_session.refresh(exec_plan)
 
-    plan = Plan(client_pseudo_id=client_pseudo_id, create_execution_id=exec_plan.id)
+    plan = Plan(
+        client_pseudo_id=client_pseudo_id,
+        create_execution_id=exec_plan.id,
+        create_status="completed",
+        intake_id=mock_intake.id,
+    )
     async_session.add(plan)
     await async_session.commit()
+    await async_session.refresh(plan)
 
-    with (
-        patch(
-            "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
-        ) as mock_get_clients,
-    ):
-        mock_get_clients.return_value = [StubStaffClient(client_pseudo_id)]
+    # Load execution into plan
+    plan.create_execution = exec_plan
 
-        result = await get_processing_status(async_session, staff_id)
-    assert result[client_pseudo_id] == ProcessingStatus.COMPLETED
+    result = compute_processing_status(
+        assessments=[assessment], plans=plan, intake=mock_intake, plan_generations=None
+    )
+    assert result == ProcessingStatus.COMPLETED
 
 
 @pytest.mark.asyncio
-async def test_get_processing_status_needs_retry(
-    async_session: AsyncSession, seed_configs, mock_clientdata_service
+async def test_compute_processing_status_needs_retry(
+    async_session: AsyncSession, mock_intake
 ):
-    """get_processing_status returns NEEDS_RETRY when plan has failed after assessment"""
+    """compute_processing_status returns NEEDS_RETRY when plan has failed after assessment"""
     from app.models.assessment import Assessment
-    from app.models.intake import IntakeStatus
     from app.models.models import Execution, Plan
 
     client_pseudo_id = "client-002ps"
-    staff_id = "staff-3"
 
-    await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.COMPLETED,
-        intake_type=IntakeType.CONVERSATION,
-    )
+    # Setup completed intake
+    mock_intake.client_pseudo_id = client_pseudo_id
+    mock_intake.status = IntakeStatus.COMPLETED
+    await async_session.commit()
+    await async_session.refresh(mock_intake)
 
+    # Create completed assessment
     exec_assess = Execution(status="completed")
     async_session.add(exec_assess)
     await async_session.commit()
 
     assessment = Assessment(
-        client_pseudo_id=client_pseudo_id, execution_id=exec_assess.id
+        client_pseudo_id=client_pseudo_id,
+        execution_id=exec_assess.id,
+        status="completed",
     )
     async_session.add(assessment)
     await async_session.commit()
 
+    # Create failed plan
     exec_plan = Execution(status="failed")
     async_session.add(exec_plan)
     await async_session.commit()
     await async_session.refresh(exec_plan)
 
-    plan = Plan(client_pseudo_id=client_pseudo_id, create_execution_id=exec_plan.id)
+    plan = Plan(
+        client_pseudo_id=client_pseudo_id,
+        create_execution_id=exec_plan.id,
+        create_status="failed",
+        intake_id=mock_intake.id,
+    )
+    async_session.add(plan)
+    await async_session.commit()
+    await async_session.refresh(plan)
+
+    # Load execution into plan
+    plan.create_execution = exec_plan
+
+    result = compute_processing_status(
+        assessments=[assessment], plans=plan, intake=mock_intake, plan_generations=None
+    )
+    assert result == ProcessingStatus.NEEDS_RETRY
+
+
+@pytest.mark.asyncio
+async def test_compute_processing_status_by_intake_id(
+    async_session: AsyncSession, mock_intake
+):
+    """Test compute_processing_status_by_intake_id fetches data and computes status"""
+    from app.models.assessment import Assessment
+    from app.models.models import Execution, Plan
+
+    client_pseudo_id = "client-003ps"
+
+    # Setup completed intake
+    mock_intake.client_pseudo_id = client_pseudo_id
+    mock_intake.status = IntakeStatus.COMPLETED
+    await async_session.commit()
+    await async_session.refresh(mock_intake)
+
+    # Create completed assessment
+    exec_assess = Execution(status="completed")
+    async_session.add(exec_assess)
+    await async_session.commit()
+
+    assessment = Assessment(
+        client_pseudo_id=client_pseudo_id,
+        execution_id=exec_assess.id,
+        status="completed",
+    )
+    async_session.add(assessment)
+    await async_session.commit()
+
+    # Create completed plan
+    exec_plan = Execution(status="completed")
+    async_session.add(exec_plan)
+    await async_session.commit()
+
+    plan = Plan(
+        client_pseudo_id=client_pseudo_id,
+        create_execution_id=exec_plan.id,
+        create_status="completed",
+        intake_id=mock_intake.id,
+    )
     async_session.add(plan)
     await async_session.commit()
 
-    with (
-        patch(
-            "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
-        ) as mock_get_clients,
-    ):
-        mock_get_clients.return_value = [StubStaffClient(client_pseudo_id)]
+    # Test the by_intake_id function
+    result = await compute_processing_status_by_intake_id(
+        async_session, str(mock_intake.id)
+    )
+    assert result == ProcessingStatus.COMPLETED
 
-        result = await get_processing_status(async_session, staff_id)
-    assert result[client_pseudo_id] == ProcessingStatus.NEEDS_RETRY
+
+@pytest.mark.asyncio
+async def test_compute_frontend_status():
+    """Test compute_frontend_status returns correct frontend status strings"""
+    # No intake
+    assert compute_frontend_status(None, ProcessingStatus.NOT_STARTED) == "new"
+
+    # Created intake
+    assert (
+        compute_frontend_status("created", ProcessingStatus.NOT_STARTED)
+        == "intake_enabled"
+    )
+
+    # In progress intake
+    assert (
+        compute_frontend_status("in_progress", ProcessingStatus.NOT_STARTED)
+        == "intake_in_progress"
+    )
+
+    # Completed intake with processing in progress
+    assert (
+        compute_frontend_status("completed", ProcessingStatus.IN_PROGRESS)
+        == "processing"
+    )
+
+    # Completed intake with processing completed
+    assert (
+        compute_frontend_status("completed", ProcessingStatus.COMPLETED)
+        == "intake_complete"
+    )
+
+    # Completed intake with processing needing retry
+    assert compute_frontend_status("completed", ProcessingStatus.NEEDS_RETRY) == "error"
+
+    # Error intake
+    assert compute_frontend_status("error", ProcessingStatus.NOT_STARTED) == "error"
+
+
+@pytest.mark.asyncio
+async def test_count_intakes_for_client(async_session: AsyncSession):
+    """Test counting intakes for a client"""
+    client_pseudo_id = "client-004"
+
+    # Create test intakes
+    intake1 = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.CREATED)
+    intake2 = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
+    intake3 = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS)
+
+    async_session.add_all([intake1, intake2, intake3])
+    await async_session.commit()
+
+    count = await count_intakes_for_client(async_session, client_pseudo_id)
+    assert count == 3
+
+
+@pytest.mark.asyncio
+async def test_count_intakes_for_client_zero(async_session: AsyncSession):
+    """Test counting intakes returns 0 when none exist"""
+    count = await count_intakes_for_client(async_session, "nonexistent-client")
+    assert count == 0
+
+
+@pytest.mark.asyncio
+async def test_reset_client_data(async_session: AsyncSession, seed_configs):
+    """Test reset_client_data deletes all client data"""
+    from app.models.assessment import Assessment
+    from app.models.models import Plan
+
+    client_pseudo_id = "client-005"
+    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+
+    # Create intake with proper config
+    intake = Intake(
+        client_pseudo_id=client_pseudo_id,
+        status=IntakeStatus.COMPLETED,
+        assessment_config_id=assessment_config_id,
+    )
+    async_session.add(intake)
+    await async_session.commit()
+    await async_session.refresh(intake)
+
+    # Create assessment
+    assessment = Assessment(client_pseudo_id=client_pseudo_id, intake_id=intake.id)
+    async_session.add(assessment)
+    await async_session.commit()
+
+    # Create plan
+    plan = Plan(client_pseudo_id=client_pseudo_id, intake_id=intake.id)
+    async_session.add(plan)
+    await async_session.commit()
+
+    # Reset client data
+    total_deleted = await reset_client_data(async_session, client_pseudo_id)
+
+    assert total_deleted >= 3  # At least intake, assessment, plan
+
+    # Verify everything is deleted
+    remaining_intakes = await count_intakes_for_client(async_session, client_pseudo_id)
+    assert remaining_intakes == 0
+
+
+# ===== Tests for new filtering and sorting functionality =====
+
+
+@pytest.mark.asyncio
+async def test_get_paginated_client_list_filter_new(
+    async_session: AsyncSession, create_client_view, mock_clientdata
+):
+    """Test filtering for 'new' clients (no intake exists)"""
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        mock_get_clients.return_value = mock_clientdata
+
+        # Don't create any intakes - all clients should be "new"
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            status_filter="new",
+        )
+
+        # Should return all clients as "new"
+        assert result["total"] == 2
+        assert len(result["items"]) == 2
+        # All should have intake_count=0 and last_completed_date=None
+        for item in result["items"]:
+            assert item["intake_count"] == 0
+            assert item["last_completed_date"] is None
+
+
+@pytest.mark.asyncio
+async def test_get_paginated_client_list_filter_new_excludes_with_intake(
+    async_session: AsyncSession, create_client_view, mock_clientdata
+):
+    """Test 'new' filter excludes clients with intakes"""
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        mock_get_clients.return_value = mock_clientdata
+
+        # Create intake for first client
+        intake = Intake(
+            client_pseudo_id=mock_clientdata[0].pseudonymized_client_id,
+            status=IntakeStatus.CREATED,
+        )
+        async_session.add(intake)
+        await async_session.commit()
+
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            status_filter="new",
+        )
+
+        # Should only return the second client (without intake)
+        assert result["total"] == 1
+        assert len(result["items"]) == 1
+        assert (
+            result["items"][0]["client_pseudo_id"]
+            == mock_clientdata[1].pseudonymized_client_id
+        )
+
+
+@pytest.mark.asyncio
+async def test_get_paginated_client_list_filter_intake_enabled(
+    async_session: AsyncSession, create_client_view, mock_clientdata
+):
+    """Test filtering for 'intake_enabled' status (intake.status = 'created')"""
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        mock_get_clients.return_value = mock_clientdata
+
+        # Create intakes with different statuses
+        intake1 = Intake(
+            client_pseudo_id=mock_clientdata[0].pseudonymized_client_id,
+            status=IntakeStatus.CREATED,  # This should match
+        )
+        intake2 = Intake(
+            client_pseudo_id=mock_clientdata[1].pseudonymized_client_id,
+            status=IntakeStatus.IN_PROGRESS,  # This should not match
+        )
+        async_session.add_all([intake1, intake2])
+        await async_session.commit()
+
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            status_filter="intake_enabled",
+        )
+
+        # Should only return client with 'created' status
+        assert result["total"] == 1
+        assert len(result["items"]) == 1
+        assert (
+            result["items"][0]["client_pseudo_id"]
+            == mock_clientdata[0].pseudonymized_client_id
+        )
+        assert result["items"][0]["intake_count"] == 1
+
+
+@pytest.mark.asyncio
+async def test_get_paginated_client_list_filter_intake_in_progress(
+    async_session: AsyncSession, create_client_view, mock_clientdata
+):
+    """Test filtering for 'intake_in_progress' status"""
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        mock_get_clients.return_value = mock_clientdata
+
+        # Create intakes with different statuses
+        intake1 = Intake(
+            client_pseudo_id=mock_clientdata[0].pseudonymized_client_id,
+            status=IntakeStatus.IN_PROGRESS,  # This should match
+        )
+        intake2 = Intake(
+            client_pseudo_id=mock_clientdata[1].pseudonymized_client_id,
+            status=IntakeStatus.COMPLETED,  # This should not match
+        )
+        async_session.add_all([intake1, intake2])
+        await async_session.commit()
+
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            status_filter="intake_in_progress",
+        )
+
+        # Should only return client with 'in_progress' status
+        assert result["total"] == 1
+        assert len(result["items"]) == 1
+        assert (
+            result["items"][0]["client_pseudo_id"]
+            == mock_clientdata[0].pseudonymized_client_id
+        )
+
+
+@pytest.mark.asyncio
+async def test_get_paginated_client_list_sort_by_intake_count(
+    async_session: AsyncSession, create_client_view, mock_clientdata
+):
+    """Test sorting by intake_count"""
+    from app.crud.client import ClientSort
+
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        mock_get_clients.return_value = mock_clientdata
+
+        # Create multiple intakes for first client (both CREATED to match filter)
+        intake1 = Intake(
+            client_pseudo_id=mock_clientdata[0].pseudonymized_client_id,
+            status=IntakeStatus.CREATED,
+        )
+        intake2 = Intake(
+            client_pseudo_id=mock_clientdata[0].pseudonymized_client_id,
+            status=IntakeStatus.CREATED,
+        )
+        intake3 = Intake(
+            client_pseudo_id=mock_clientdata[1].pseudonymized_client_id,
+            status=IntakeStatus.CREATED,
+        )
+        async_session.add_all([intake1, intake2, intake3])
+        await async_session.commit()
+
+        # Test ascending order
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            sort_by=ClientSort.INTAKE_COUNT,
+            sort_order="asc",
+            status_filter="intake_enabled",
+        )
+
+        # Should be sorted by intake_count ascending
+        # Note: intake_count reflects only intakes matching the filter (status='created')
+        assert len(result["items"]) == 2
+        assert result["items"][0]["intake_count"] == 1  # Second client
+        assert result["items"][1]["intake_count"] == 2  # First client
+
+        # Test descending order
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            sort_by=ClientSort.INTAKE_COUNT,
+            sort_order="desc",
+            status_filter="intake_enabled",
+        )
+
+        assert len(result["items"]) == 2
+        assert result["items"][0]["intake_count"] == 2  # First client
+        assert result["items"][1]["intake_count"] == 1  # Second client
+
+
+@pytest.mark.asyncio
+async def test_get_paginated_client_list_sort_by_last_assessment_date(
+    async_session: AsyncSession, create_client_view, mock_clientdata
+):
+    """Test sorting by last_assessment_date (last_completed_date)"""
+    from datetime import datetime
+
+    from app.crud.client import ClientSort
+
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        mock_get_clients.return_value = mock_clientdata
+
+        # Create intakes with different completion dates (naive datetimes)
+        older_date = datetime(2024, 1, 1)
+        newer_date = datetime(2024, 6, 1)
+
+        intake1 = Intake(
+            client_pseudo_id=mock_clientdata[0].pseudonymized_client_id,
+            status=IntakeStatus.CREATED,
+            completed_at=older_date,
+        )
+        intake2 = Intake(
+            client_pseudo_id=mock_clientdata[1].pseudonymized_client_id,
+            status=IntakeStatus.CREATED,
+            completed_at=newer_date,
+        )
+        async_session.add_all([intake1, intake2])
+        await async_session.commit()
+
+        # Test ascending order (oldest first)
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            sort_by=ClientSort.LAST_ASSESSMENT_DATE,
+            sort_order="asc",
+            status_filter="intake_enabled",
+        )
+
+        assert len(result["items"]) == 2
+        assert result["items"][0]["last_completed_date"] == older_date
+        assert result["items"][1]["last_completed_date"] == newer_date
+
+        # Test descending order (newest first)
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            sort_by=ClientSort.LAST_ASSESSMENT_DATE,
+            sort_order="desc",
+            status_filter="intake_enabled",
+        )
+
+        assert len(result["items"]) == 2
+        assert result["items"][0]["last_completed_date"] == newer_date
+        assert result["items"][1]["last_completed_date"] == older_date
+
+
+@pytest.mark.asyncio
+async def test_get_paginated_client_list_filter_intake_complete(
+    async_session: AsyncSession, create_client_view, mock_clientdata, seed_configs
+):
+    """Test filtering for 'intake_complete' status (complex filter - Tier 3)"""
+    from app.models.assessment import Assessment
+    from app.models.models import Execution, Plan
+
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        mock_get_clients.return_value = mock_clientdata
+
+        client_pseudo_id = mock_clientdata[0].pseudonymized_client_id
+        assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+
+        # Create completed intake
+        intake = Intake(
+            client_pseudo_id=client_pseudo_id,
+            status=IntakeStatus.COMPLETED,
+            assessment_config_id=assessment_config_id,
+        )
+        async_session.add(intake)
+        await async_session.commit()
+        await async_session.refresh(intake)
+
+        # Create completed assessment
+        exec_assess = Execution(status="completed")
+        async_session.add(exec_assess)
+        await async_session.commit()
+
+        assessment = Assessment(
+            client_pseudo_id=client_pseudo_id,
+            execution_id=exec_assess.id,
+            status="completed",
+            intake_id=intake.id,
+        )
+        async_session.add(assessment)
+        await async_session.commit()
+
+        # Create completed plan
+        exec_plan = Execution(status="completed")
+        async_session.add(exec_plan)
+        await async_session.commit()
+
+        plan = Plan(
+            client_pseudo_id=client_pseudo_id,
+            create_execution_id=exec_plan.id,
+            create_status="completed",
+            intake_id=intake.id,
+        )
+        async_session.add(plan)
+        await async_session.commit()
+
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            status_filter="intake_complete",
+        )
+
+        # Should return the client with completed processing
+        assert result["total"] == 1
+        assert len(result["items"]) == 1
+        assert result["items"][0]["client_pseudo_id"] == client_pseudo_id
+
+
+@pytest.mark.asyncio
+async def test_get_paginated_client_list_pagination(
+    async_session: AsyncSession, create_client_view, mock_clientdata
+):
+    """Test pagination works correctly with filters and sorting"""
+
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        # Create 5 mock clients
+        from app.services.client_data.types import ClientDataRecord, FullNameModel
+
+        clients = []
+        for i in range(5):
+            clients.append(
+                ClientDataRecord(
+                    external_client_id=f"ext-{i}",
+                    pseudonymized_client_id=f"client-{i}",
+                    full_name=FullNameModel(
+                        given_names=f"Client{i}", surname=f"Test{i}"
+                    ),
+                    birthdate="1990-01-01",
+                    state_code="US_UT",
+                )
+            )
+        mock_get_clients.return_value = clients
+
+        # Create intakes for all clients
+        for client in clients:
+            intake = Intake(
+                client_pseudo_id=client.pseudonymized_client_id,
+                status=IntakeStatus.CREATED,
+            )
+            async_session.add(intake)
+        await async_session.commit()
+
+        # Test page 1 with page_size=2
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=2,
+            pseudonymized_staff_id="staff-123",
+            status_filter="intake_enabled",
+        )
+
+        assert result["total"] == 5
+        assert len(result["items"]) == 2
+        assert result["pages"] == 3
+        assert result["page"] == 1
+
+        # Test page 2
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=2,
+            page_size=2,
+            pseudonymized_staff_id="staff-123",
+            status_filter="intake_enabled",
+        )
+
+        assert result["total"] == 5
+        assert len(result["items"]) == 2
+        assert result["page"] == 2
+
+        # Test page 3 (last page, only 1 item)
+        result = await get_paginated_client_list(
+            session=async_session,
+            page=3,
+            page_size=2,
+            pseudonymized_staff_id="staff-123",
+            status_filter="intake_enabled",
+        )
+
+        assert result["total"] == 5
+        assert len(result["items"]) == 1
+        assert result["page"] == 3

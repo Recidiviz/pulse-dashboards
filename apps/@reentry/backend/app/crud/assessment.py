@@ -41,40 +41,20 @@ async def get_assessment_by_id(
 
 
 @overload
-async def get_assessments_by_client_pseudo_id(
-    session: AsyncSession, client_pseudo_id: str, *, query_only: Literal[True]
-) -> SelectOfScalar[Assessment]: ...
-
-
-@overload
-async def get_assessments_by_client_pseudo_id(
-    session: AsyncSession, client_pseudo_id: str, *, query_only: Literal[False] = False
-) -> list[Assessment]: ...
-
-
-@statement_or_result(first_only=False)
-async def get_assessments_by_client_pseudo_id(
-    session: AsyncSession, client_pseudo_id: str, *, query_only: bool = False
-) -> SelectOfScalar[Assessment] | list[Assessment]:
-    query = select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
-    return query
-
-
-@overload
 async def get_assessments_by_intake_id(
-    session: AsyncSession, intake_id: UUID, *, query_only: Literal[True]
+    session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[True]
 ) -> SelectOfScalar[Assessment]: ...
 
 
 @overload
 async def get_assessments_by_intake_id(
-    session: AsyncSession, intake_id: UUID, *, query_only: Literal[False] = False
+    session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[False] = False
 ) -> list[Assessment]: ...
 
 
 @statement_or_result(first_only=False)
 async def get_assessments_by_intake_id(
-    session: AsyncSession, intake_id: UUID, *, query_only: bool = False
+    session: AsyncSession, intake_id: UUID | str, *, query_only: bool = False
 ) -> SelectOfScalar[Assessment] | list[Assessment]:
     query = select(Assessment).where(Assessment.intake_id == intake_id)
     return query

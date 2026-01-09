@@ -49,8 +49,8 @@ export default function Intake({ params }: { params: { token: string } }) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <AssessmentLoginPage
-          token={token}
-          mode="dob"
+          urlToken={token}
+          mode="dob+token"
           onConfirmation={() => window.location.reload()}
         />
       </div>
@@ -59,7 +59,7 @@ export default function Intake({ params }: { params: { token: string } }) {
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
-      <IntakeSocketProvider token_from_url={token}>
+      <IntakeSocketProvider>
         <IntakeRouter />
       </IntakeSocketProvider>
     </div>

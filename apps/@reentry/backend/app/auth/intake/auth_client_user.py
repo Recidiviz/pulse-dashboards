@@ -21,7 +21,7 @@ from app.auth.intake.verification_attempts import (
     record_failed_attempt,
 )
 from app.core.db import AsyncSession
-from app.crud.intake import get_intake_by_client_pseudo_id, get_intake_by_token
+from app.crud.intake import get_intake_by_token, get_latest_active_conversation_intake
 from app.services.client_data.queries import Queries
 
 logger = structlog.get_logger(__name__)
@@ -84,7 +84,7 @@ async def record_validation_failure(
         return ValidationResult.error_result("Verification failed. Please try again.")
 
 
-async def validate_dob(
+async def validate_dob_urltoken(
     request: Request,
     token_from_url: str,
     date_of_birth: date,
@@ -117,55 +117,7 @@ async def validate_dob(
     return ValidationResult.success_result(token_data, intake.client_pseudo_id)
 
 
-async def validate_pseudo_dob(
-    request: Request,
-    pseudonymized_id: str,
-    last_name: str,
-    date_of_birth: date,
-    session: AsyncSession,
-    redis_client: redis.Redis,
-) -> ValidationResult:
-    """
-    Validate client by pseudonymized ID, last name, and date of birth.
-    """
-    rate_limit_key = f"pseudo:{pseudonymized_id}"
-
-    # Early rate limit check
-    should_continue, error_message, is_attempt_error = await handle_rate_limiting(
-        redis_client, pseudonymized_id
-    )
-    if not should_continue:
-        return ValidationResult.error_result(error_message)
-
-    # Look up client by pseudonymized_id
-    record = Queries.get_client_by_pseudonymized_id_unsafe(pseudonymized_id)
-    if not record:
-        return ValidationResult.error_result("Verification failed. Please try again.")
-
-    is_valid, _ = validate_credentials_and_dob(
-        record, date_of_birth, last_name, validate_name=True
-    )
-
-    if not is_valid:
-        return await record_validation_failure(request, redis_client, rate_limit_key)
-
-    client_pseudo_id = record.pseudonymized_client_id
-
-    # Check if an intake record exists
-    intake_record = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
-    if not intake_record or not intake_record.internal_access:
-        logger.error(
-            f"Intake record not found for client pseudo ID: {client_pseudo_id}"
-        )
-        return ValidationResult.error_result(
-            "Login failed. Please contact your case worker for assistance."
-        )
-
-    token_data = create_client_response(client_pseudo_id, record.full_name)
-    return ValidationResult.success_result(token_data, client_pseudo_id)
-
-
-async def validate_non_pseudo_id(
+async def validate_dob_fullname(
     request: Request,
     first_name: str,
     last_name: str,
@@ -189,7 +141,9 @@ async def validate_non_pseudo_id(
     client_pseudo_id = record.pseudonymized_client_id
 
     # Check if an intake record exists
-    intake_record = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
+    intake_record = await get_latest_active_conversation_intake(
+        session, client_pseudo_id
+    )
     if not intake_record:
         logger.error(
             f"Intake record not found for client pseudo ID: {client_pseudo_id}"
@@ -208,7 +162,7 @@ async def validate_non_pseudo_id(
     return ValidationResult.success_result(token_data, client_pseudo_id)
 
 
-async def validate_state_doc_id(
+async def validate_state_docid(
     request: Request,
     doc_id: str,
     state_code: str,
@@ -230,7 +184,9 @@ async def validate_state_doc_id(
     client_pseudo_id = record.pseudonymized_client_id
 
     # Check if an intake record exists
-    intake_record = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
+    intake_record = await get_latest_active_conversation_intake(
+        session, client_pseudo_id
+    )
     if not intake_record:
         logger.error(
             f"Intake record not found for client pseudo ID: {client_pseudo_id}"
@@ -261,40 +217,42 @@ class ClientAuthMiddleware(BaseHTTPMiddleware):
         include_paths: List[str] = [],
     ):
         super().__init__(app)
-        self.include_paths = include_paths
         self.app = app
+        self.include_paths = include_paths
 
     async def dispatch(self, request: Request, call_next: Callable):
         if not any(request.url.path.startswith(path) for path in self.include_paths):
             return await call_next(request)
 
-        if request.url.path.endswith("/verify-dob"):
+        if request.url.path.startswith("/external/client/verify"):
             return await call_next(request)
 
         if request.method == "OPTIONS":
             return await call_next(request)
 
-        auth_header = request.headers.get("Authorization")
-        if not auth_header or not auth_header.startswith("Bearer "):
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"detail": "Authorization header is expected"},
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+        if request.url.path.startswith("/external/client"):
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return JSONResponse(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    content={"detail": "Authorization header is expected"},
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
 
-        token = auth_header.split(" ")[1]
+            token = auth_header.split(" ")[1]
 
-        try:
-            payload = decode_jwt_token(token)
-            request.state.client = payload
+            try:
+                payload = decode_jwt_token(token)
+                request.state.client = payload
 
-            return await call_next(request)
-        except HTTPException as e:
-            return JSONResponse(
-                status_code=e.status_code,
-                content={"detail": e.detail},
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+                return await call_next(request)
+            except HTTPException as e:
+                return JSONResponse(
+                    status_code=e.status_code,
+                    content={"detail": e.detail},
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+        return await call_next(request)
 
 
 def setup_client_auth(
@@ -308,6 +266,7 @@ def setup_client_auth(
     logger.info(f"Client auth middleware enabled for paths: {include_paths}")
 
 
+# Used to authenticate the socket connection
 async def verify_client_token(token: str) -> Tuple[bool, Optional[str], Optional[str]]:
     """
     Verify a client JWT token and extract the client_pseudo_id.

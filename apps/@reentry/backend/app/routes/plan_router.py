@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime
 from io import BytesIO
 from typing import List, Optional
+from uuid import UUID
 
 import orjson
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile
@@ -14,16 +15,13 @@ from weasyprint import CSS, HTML
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
-from app.crud.intake import (
-    get_collected_address_for_client,
-    get_intake_by_client_pseudo_id,
-    update_client_address,
-)
+from app.crud.address import update_intake_address
+from app.crud.intake import get_intake_by_id
 from app.crud.plan import (
     create_plan,
     delete_plan_by_id,
-    get_plan_by_client_pseudo_id,
     get_plan_by_id,
+    get_plan_by_intake_id,
     get_plans,
     update_plan_field,
 )
@@ -51,7 +49,11 @@ from app.routes.base import (
     DeletionStatus,
     ORMResponse,
 )
-from app.routes.shared_models import AddressSubmission, ClientRecordResponse
+from app.routes.shared_models import (
+    AddressSubmission,
+    ClientAddressResponse,
+    ClientRecordResponse,
+)
 from app.routes.shared_models import PlanResponse as BasePlanResponse
 from app.services.client_data.queries import Queries
 from app.services.resources import (
@@ -63,14 +65,13 @@ from app.services.resources import (
     ResourceSubcategory,
     list_resources,
 )
+from app.utils.permission_utils import check_access
 from app.utils.address_autocomplete import (
     AutocompleteAddressResponse,
     AutocompleteCityResponse,
 )
 from app.utils.address_autocomplete import (
     autocomplete_address as autocomplete_address_util,
-)
-from app.utils.address_autocomplete import (
     autocomplete_city as autocomplete_city_util,
 )
 
@@ -84,29 +85,10 @@ router = APIRouter()
 logger = structlog.get_logger(__name__)
 
 
-class ClientAddressUpdate(BaseModel):
-    home: str
-
-
-# TODO: This now only returns the home field, this response
-# and the endpoint can be refactored.
-class ClientInfoResponse(BaseModel):
-    home: Optional[str] = None
-    work: Optional[str] = None
-    school: Optional[str] = None
-    probation_office: Optional[str] = None
-    can_drive: Optional[bool] = None
-    can_walk: Optional[bool] = None
-    can_bike: Optional[bool] = None
-    transit_pass: Optional[bool] = None
-
-
 class PlanRequestCreate(BaseModel):
     client_pseudo_id: str
+    intake_id: UUID
     no_initial_generation: Optional[bool] = False
-
-
-# Using shared model as base class
 
 
 class PlanResponse(BasePlanResponse, ORMResponse):
@@ -161,6 +143,7 @@ class PlanGenerationResponseGet(PlanGenerationResponse):
 class PlanResponseGet(PlanResponse):
     latest_generation: PlanGenerationResponseGet | None
     is_create_execution_finished: Optional[bool] = None
+    resources_pipeline_enabled: Optional[bool] = None
 
 
 class PlanAssetResponse(ORMResponse):
@@ -177,6 +160,7 @@ class PlanAssetResponse(ORMResponse):
     response_model=Page[PlanResponse],
     summary="List Plans",
     description="Retrieve a paginated list of plans.",
+    tags=["Plans"],
 )
 async def router_list_plans(
     session: AsyncSession = Depends(get_session),
@@ -189,7 +173,8 @@ async def router_list_plans(
     "/plans",
     response_model=PlanResponseCreate,
     summary="Create Plan",
-    description="Create a new plan with the provided client ID.",
+    description="Create a new plan with the provided intake ID.",
+    tags=["Plans"],
 )
 async def router_create_plan(
     request: PlanRequestCreate,
@@ -205,18 +190,21 @@ async def router_create_plan(
     )
     if not record:
         raise HTTPException(status_code=404, detail="Client not found")
-    intake = await get_intake_by_client_pseudo_id(session, request.client_pseudo_id)
+
+    # Validate that the intake exists
+    intake = await get_intake_by_id(session, request.intake_id)
     if not intake:
         raise HTTPException(status_code=404, detail="Intake not found")
 
     # if a plan already exists for the client, return it
-    plan_obj = await get_plan_by_client_pseudo_id(session, request.client_pseudo_id)
+    plan_obj = await get_plan_by_intake_id(session, request.intake_id)
     if plan_obj:
         return plan_obj.model_dump(by_alias=True)
 
-    # Create plan with only client_pseudo_id which will be used for client data retrieval
+    # Create plan with client_pseudo_id and intake_id
     plan_obj = Plan(
         client_pseudo_id=request.client_pseudo_id,
+        intake_id=request.intake_id,
     )
     plan = await create_plan(session, plan_obj)
     if not request.no_initial_generation:
@@ -225,19 +213,20 @@ async def router_create_plan(
 
 
 @router.get(
-    "/plans/by_client/{client_pseudo_id}",
+    "/plans/by-intake/{intake_id}",
     response_model=PlanResponseGet,
-    summary="Get Plan by Client ID",
+    summary="Get Plan by Intake ID",
     description=(
-        "Retrieve a specific plan by its client ID, including the latest "
+        "Retrieve a specific plan by its intake ID, including the latest"
         "completed generation result if available."
     ),
+    tags=["Plans"],
 )
-async def router_get_plan_by_client_pseudo_id(
-    client_pseudo_id: str,
+async def router_get_plan_by_intake_id(
+    intake_id: str,
     session: AsyncSession = Depends(get_session),
 ):
-    plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
+    plan = await get_plan_by_intake_id(session, intake_id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
@@ -264,6 +253,7 @@ async def router_get_plan_by_client_pseudo_id(
         "Retrieve a specific plan by its ID, including the latest "
         "completed generation result if available."
     ),
+    tags=["Plans"],
 )
 async def router_get_plan(
     id: uuid.UUID,
@@ -282,9 +272,17 @@ async def router_get_plan(
         latest_generation = gen.model_dump(by_alias=True)
         if gen.execution:
             latest_generation["execution"] = gen.execution.model_dump(by_alias=True)
+
+    # getting info from the config outputfile
+    action_plan_config = await plan.get_action_plan_config(session)
+    resources_pipeline_enabled = (
+        action_plan_config.external_api.resources_pipeline_enabled
+    )
+
     return PlanResponseGet.model_validate(
         {
             "latest_generation": latest_generation,
+            "resources_pipeline_enabled": resources_pipeline_enabled,
             **plan.model_dump(),
         }
     )
@@ -343,17 +341,15 @@ async def router_generate_plan(
         raise HTTPException(status_code=404, detail="Plan not found")
 
     # Check if this assessment config supports action plan generation
-    from app.crud.intake import get_intake_by_client_pseudo_id
     from app.utils.config_loader import ConfigLoader
 
-    intake = await get_intake_by_client_pseudo_id(
-        session, client_pseudo_id=plan.client_pseudo_id
-    )
-    if not intake:
+    if not plan.intake:
         raise HTTPException(
             status_code=404,
-            detail=f"No intake found for client {plan.client_pseudo_id}",
+            detail=f"Plan {plan.id} has no associated intake",
         )
+
+    intake = plan.intake
 
     plan_config = await ConfigLoader.load_plan_config(
         intake.assessment_config_id, session
@@ -436,6 +432,7 @@ async def router_generate_plan_manually(
     response_model=PlanGenerationResponseGet,
     summary="Get Generation",
     description=("Retrieve a specific generation by its ID for the specified plan ID."),
+    tags=["Plans"],
 )
 async def router_get_generation(
     gen_id: uuid.UUID,
@@ -459,6 +456,7 @@ async def router_get_generation(
     description=(
         "Retrieve a paginated list of assets associated with the specified plan ID."
     ),
+    tags=["Plans"],
 )
 async def router_list_assets(
     id: uuid.UUID,
@@ -493,10 +491,11 @@ async def router_upload_asset(
 
 
 @router.get(
-    "/plans/{id}/assets/by_filename/{filename}",
+    "/plans/{id}/assets/by-filename/{filename}",
     response_model=PlanAssetResponse,
     summary="Get Asset",
     description=("Retrieve a specific asset by its name for the specified plan ID."),
+    tags=["Plans"],
 )
 async def router_get_asset_by_filename(
     id: uuid.UUID,
@@ -520,6 +519,7 @@ async def router_get_asset_by_filename(
     response_model=PlanAssetResponse,
     summary="Get Asset",
     description=("Retrieve a specific asset by its ID for the specified plan ID."),
+    tags=["Plans"],
 )
 async def router_get_asset(
     id: uuid.UUID,
@@ -539,6 +539,7 @@ async def router_get_asset(
         "Download a specific asset by its ID for the specified plan ID. "
         "The file is streamed as a response."
     ),
+    tags=["Plans"],
 )
 async def router_download_asset(
     id: uuid.UUID,
@@ -562,6 +563,7 @@ async def router_download_asset(
     response_model=list[Resource],
     summary="Get plan resources",
     description="Get resources currently associated with this plan",
+    tags=["Plans"],
 )
 async def get_plan_resources(
     id: uuid.UUID,
@@ -618,15 +620,16 @@ async def search_resources(
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
-    client_pseudo_id = plan.client_pseudo_id
-    if not client_pseudo_id:
-        raise HTTPException(status_code=404, detail="Client pseudo ID not found")
+    if not plan.intake:
+        raise HTTPException(status_code=404, detail="Plan has no associated intake")
 
-    home_address = await get_collected_address_for_client(session, client_pseudo_id)
-    if not home_address:
+    # Get address from the specific intake linked to this plan
+    if not plan.intake.address:
         raise HTTPException(
             status_code=400, detail="Client address not available for this plan"
         )
+
+    home_address = plan.intake.address
     try:
         resource_request = GetResourcesRequest(
             category=request.category,
@@ -649,6 +652,7 @@ async def search_resources(
     response_model=list[Resource],
     summary="Get suggested resources",
     description="Get resources that were stored during plan generation",
+    tags=["Plans"],
 )
 async def get_suggested_resources(
     id: uuid.UUID,
@@ -687,70 +691,6 @@ async def router_delete_asset(
     was_removed = await delete_asset_by_id(session, asset_id)
     status = DeletionStatus.SUCCESS if was_removed else DeletionStatus.FAILED
     return DeletionResponse(status=status)
-
-
-@router.get(
-    "/plans/{id}/client-info",
-    response_model=ClientInfoResponse,
-    summary="Get client's home address.",
-    description="Returns the client's home address from intake (or last update from UI).",
-)
-async def get_client_info(
-    id: uuid.UUID,
-    session: AsyncSession = Depends(get_session),
-):
-    plan = await get_plan_by_id(session, id)
-    if plan is None:
-        raise HTTPException(status_code=404, detail="Plan not found")
-    if not plan.client_pseudo_id:
-        raise HTTPException(
-            status_code=404, detail="Could not identify client from plan."
-        )
-    address_obj = await get_collected_address_for_client(session, plan.client_pseudo_id)
-    return ClientInfoResponse(
-        home=address_obj.as_formatted_string() if address_obj else None
-    )
-
-
-@router.patch(
-    "/plans/{id}/client-info/address",
-    response_model=PlanGenerationResponseCreate,
-    summary="Update Client Home Address",
-    description=(
-        "Update the client's home address in their plan. This is for admin use "
-        "to update the address used for resource recommendations. It will trigger a new generation."
-    ),
-)
-async def update_client_address_and_regenerate_plan(
-    id: uuid.UUID,
-    address_data: AddressSubmission,
-    session: AsyncSession = Depends(get_session),
-):
-    """
-    This function updates the client address, which is accessed through the
-    client's intake.
-    It then generates a new plan based on the updated address.
-    """
-    plan = await get_plan_by_id(session, id)
-    if plan is None:
-        raise HTTPException(status_code=404, detail="Plan not found")
-
-    if not plan.client_pseudo_id:
-        raise HTTPException(
-            status_code=404, detail="Could not identify client from plan."
-        )
-
-    await update_client_address(
-        session, client_pseudo_id=plan.client_pseudo_id, address_data=address_data
-    )
-    llm_regenerations_total_counter.inc()
-    plan_gen = PlanGeneration(
-        plan_id=id,
-        force_generation=True,
-    )
-    gen = await create_plan_generation(session, plan_gen)
-    await gen.schedule_execution(session)
-    return gen
 
 
 class SetNotificationRequest(BaseModel):
@@ -836,6 +776,73 @@ async def generate_pdf(request: PDFRequest):
     except Exception as e:
         logger.exception(f"PDF generation failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
+
+
+@router.patch(
+    "/plans/{id}/address",
+    response_model=PlanGenerationResponseCreate,
+    summary="Update Client Home Address",
+    description=(
+        "Update the client's home address in their plan. This is for admin use "
+        "to update the address used for resource recommendations. It will trigger a new generation."
+    ),
+)
+async def update_intake_address_and_regenerate_plan(
+    id: uuid.UUID,
+    address_data: AddressSubmission,
+    session: AsyncSession = Depends(get_session),
+):
+    """
+    This function updates the client address, which is accessed through the
+    client's intake.
+    It then generates a new plan based on the updated address.
+    """
+    plan = await get_plan_by_id(session, id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+
+    if not plan.intake_id:
+        raise HTTPException(
+            status_code=404, detail="Could not identify client from plan."
+        )
+
+    await update_intake_address(
+        session, intake_id=plan.intake_id, address_data=address_data
+    )
+    llm_regenerations_total_counter.inc()
+    plan_gen = PlanGeneration(
+        plan_id=id,
+        force_generation=True,
+    )
+    gen = await create_plan_generation(session, plan_gen)
+    await gen.schedule_execution(session)
+    return gen
+
+
+@router.get(
+    "/plan/{plan_id}/address",
+    summary="get the address for this plan",
+    description="Submit or update address information for the authenticated client's intake",
+    tags=["Plans"],
+    response_model=ClientAddressResponse,
+)
+async def get_address(
+    plan_id: UUID,
+    session=Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+):
+    plan = await get_plan_by_id(session, plan_id)
+
+    if not plan:
+        raise HTTPException(status_code=404, detail="Intake not found")
+    check_access(plan.client_pseudo_id, pseudonymized_id)
+
+    intake = await get_intake_by_id(session, plan.intake_id)
+
+    if not intake:
+        raise HTTPException(status_code=404, detail="Intake not found")
+
+    return intake.address
 
 
 @router.get(

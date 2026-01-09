@@ -24,7 +24,7 @@ import {
 } from "@mui/icons-material";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 
 import { $api } from "~@reentry/frontend/api";
@@ -41,7 +41,6 @@ import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import {useAuthUserCapabilities} from "~@reentry/frontend/contexts/AuthUserCapabilitiesContext";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
-import { useClientStatusPolling } from "~@reentry/frontend/hooks/useClientStatusPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 import { showSuccessToast } from "~@reentry/frontend-shared";
@@ -116,9 +115,8 @@ const ClientsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeSearchTerm, setActiveSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [sortBy, setSortBy] = useState("last_assessment_date");
+  const [sortBy, setSortBy] = useState<components["schemas"]["ClientSort"]>("last_assessment_date");
   const [sortOrder, setSortOrder] = useState("desc");
-  const [activeRowId, ] = useState<string | null>(null);
   const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false);
   const [isAddingClient, setIsAddingClient] = useState(false);
   const { isZeroCaseloadUser, cpaClientLocations } = useAuthUserCapabilities();
@@ -148,9 +146,9 @@ const ClientsPage = () => {
           is_zero_caseload_user: isZeroCaseloadUser,
           cpa_client_locations: cpaClientLocations,
           ...(activeSearchTerm && { search: activeSearchTerm }),
-          ...(statusFilter && { status_filter: statusFilter }),
           ...(sortBy && { sort_by: sortBy }),
           ...(sortOrder && { sort_order: sortOrder }),
+          ...(statusFilter && { status_filter: statusFilter }),
         },
       },
       headers: {
@@ -205,12 +203,12 @@ const ClientsPage = () => {
 
   const handleSort = (column, sortDirection) => {
     const columnMapping = {
-      Name: "name",
-      STATUS: "status",
-      "Last Assessment Date": "last_assessment_date",
+      name: "name",
+      intake_count: "intake_count",
+      last_completed_date: "last_assessment_date",
     };
 
-    const apiSortBy = columnMapping[column.name];
+    const apiSortBy = columnMapping[column.id];
     if (apiSortBy) {
       setSortBy(apiSortBy);
       setSortOrder(sortDirection);
@@ -226,69 +224,57 @@ const ClientsPage = () => {
     });
   };
 
-  const getIntakeCompletedDate = (intake) => {
-    if (!intake) return "-";
 
-    if (intake.completed_at) {
-        return formatDate(intake.completed_at);
-    }
+  // TODO STATUS FILTER
+  // // Client Status Polling
+  // // State to track status updates from polling
+  // const [statusUpdates, setStatusUpdates] = useState<Map<string, string>>(
+  //   new Map(),
+  // );
 
-    if (intake.status === "completed") {
-        return formatDate(intake.updated_at);
-    }
+  // // Determine if any clients are in progress and need polling
+  // const hasInProgressClients = useMemo(() => {
+  //   if (!data?.items) return false;
+  //   return data.items.some(
+  //     (client) => client.processing_status === "in_progress",
+  //   );
+  // }, [data?.items]);
 
-    return "-";
-  };
+  // // Handle status updates from polling
+  // const handleStatusUpdate = useCallback(
+  //   (
+  //     inProgressClients: Array<{
+  //       client_pseudo_id: string;
+  //       processing_status: string;
+  //     }>,
+  //   ) => {
+  //     const newUpdates = new Map<string, string>();
 
-  // Client Status Polling
-  // State to track status updates from polling
-  const [statusUpdates, setStatusUpdates] = useState<Map<string, string>>(
-    new Map(),
-  );
+  //     // Update status for clients that are still in progress
+  //     for (const client of inProgressClients) {
+  //       newUpdates.set(client.client_pseudo_id, client.processing_status);
+  //     }
 
-  // Determine if any clients are in progress and need polling
-  const hasInProgressClients = useMemo(() => {
-    if (!data?.items) return false;
-    return data.items.some(
-      (client) => client.processing_status === "in_progress",
-    );
-  }, [data?.items]);
+  //     // Check if any previously in-progress clients are no longer in the list (completed)
+  //     for (const [clientPseudoId, status] of statusUpdates) {
+  //       if (status === "in_progress" && !newUpdates.has(clientPseudoId)) {
+  //         // Client was in progress but is no longer - it likely completed
+  //         // Trigger a full refetch to get updated data
+  //         refetch();
+  //       }
+  //     }
 
-  // Handle status updates from polling
-  const handleStatusUpdate = useCallback(
-    (
-      inProgressClients: Array<{
-        client_pseudo_id: string;
-        processing_status: string;
-      }>,
-    ) => {
-      const newUpdates = new Map<string, string>();
+  //     setStatusUpdates(newUpdates);
+  //   },
+  //   [statusUpdates, refetch],
+  // );
 
-      // Update status for clients that are still in progress
-      for (const client of inProgressClients) {
-        newUpdates.set(client.client_pseudo_id, client.processing_status);
-      }
-
-      // Check if any previously in-progress clients are no longer in the list (completed)
-      for (const [clientPseudoId, status] of statusUpdates) {
-        if (status === "in_progress" && !newUpdates.has(clientPseudoId)) {
-          // Client was in progress but is no longer - it likely completed
-          // Trigger a full refetch to get updated data
-          refetch();
-        }
-      }
-
-      setStatusUpdates(newUpdates);
-    },
-    [statusUpdates, refetch],
-  );
-
-  // Set up polling for status updates
-  useClientStatusPolling({
-    enabled: hasInProgressClients,
-    interval: 10000, // Poll every 10 seconds
-    onStatusUpdate: handleStatusUpdate,
-  });
+  // // Set up polling for status updates
+  // useClientStatusPolling({
+  //   enabled: hasInProgressClients,
+  //   interval: 10000, // Poll every 10 seconds
+  //   onStatusUpdate: handleStatusUpdate,
+  // });
 
   if (isLoading) {
     return (
@@ -309,6 +295,7 @@ const ClientsPage = () => {
 
   const buildColumns = (): TableColumn<ClientResponse>[] => [
     {
+      id: "name",
       name: "Name",
       cell: (row: ClientResponse) => (
         <div className="flex items-center gap-3 pointer-events-none">
@@ -324,6 +311,7 @@ const ClientsPage = () => {
       grow: 2,
     },
     {
+      id: "external_client_id",
       name: "DOC ID",
       selector: (row: ClientResponse) => row.client?.external_client_id || "",
       cell: (row: ClientResponse) => (
@@ -347,6 +335,7 @@ const ClientsPage = () => {
       sortable: false,
     },
     {
+      id: "intake_count",
       name: (
           <div className="flex items-center gap-1">
               <span  className={"text-[12px] md:text-[14px]"}>Number of Assessments</span>
@@ -357,25 +346,26 @@ const ClientsPage = () => {
               />
           </div>
       ),
-      selector: (row: ClientResponse) => (row.intake ? 1 : 0),
+      selector: (row: ClientResponse) => row.intake_count,
       cell: (row: ClientResponse) => (
           <span className="text-[#002321] text-sm pointer-events-none">
-              { row.intake? "1": "0" }
+              { row.intake_count }
           </span>
         ),
         sortable: true,
     },
     {
+      id: "last_completed_date",
       name: (
           <div className="flex flex-col leading-tight w-full text-[12px] md:text-[14px]">
               <span>Last Assessment</span>
               <span>Completed</span>
           </div>
       ),
-      selector: (row: ClientResponse) => row.intake?.completed_at || "",
+      selector: (row: ClientResponse) => row.last_completed_date || "",
       cell: (row: ClientResponse) => (
           <span className="text-[#002321] text-sm pointer-events-none">
-              {getIntakeCompletedDate(row.intake)}
+            {row.last_completed_date ? formatDate(row.last_completed_date) : "-"}
           </span>
       ),
       sortable: true,
@@ -401,7 +391,6 @@ const ClientsPage = () => {
           onSort={handleSort}
           SortIconComp={<SortIcon />}
           buildColumns={buildColumns}
-          activeRowId={activeRowId}
         />
       );
     }
@@ -413,23 +402,13 @@ const ClientsPage = () => {
           customStyles={customStyles}
           sortIcon={<SortIcon />}
           onSort={handleSort}
+          sortServer
           noHeader
           responsive
           highlightOnHover
           noDataComponent={
             <div className="text-gray-600 py-4 ">No clients found.</div>
           }
-          conditionalRowStyles={[
-            {
-              when: (row) => row.client_pseudo_id === activeRowId,
-              style: {
-                backgroundColor: "bg-gray-200",
-                "&:hover": {
-                  backgroundColor: "bg-gray-200",
-                },
-              },
-            },
-          ]}
           pagination
           paginationPerPage={rowsPerPage}
           paginationTotalRows={data?.total || 0}
@@ -443,7 +422,7 @@ const ClientsPage = () => {
             />
           )}
           onRowClicked={(row) => {
-            router.push(`/clients/intake/${row.client_pseudo_id}`);
+            router.push(`/client/${row.client_pseudo_id}`);
             track("clients_page_navigate_to_client_profile_link_clicked", {
               justiceInvolvedPersonId: row.client_pseudo_id,
             });
@@ -488,7 +467,6 @@ const ClientsPage = () => {
                   onKeyDown={handleSearchKeyDown}
                   className="h-10 text-sm border border-gray-300 rounded-md flex-1 min-w-[100px]"
                 />
-
                 <div className="relative flex-1 min-w-[100px]">
                   <FilterList
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"

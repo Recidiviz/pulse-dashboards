@@ -231,3 +231,6 @@ prompts:
 structure:
   timeline: false
   milestones: false
+
+external_api:
+  resources_pipeline_enabled: true

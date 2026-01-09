@@ -8,18 +8,16 @@ from sqlmodel.sql.expression import SelectOfScalar
 
 from app.core.db import AsyncSession
 from app.crud.utils import statement_or_result
+from app.models.base import IntakeStatus
 from app.models.intake import (
-    ClientAddress,
     Intake,
     IntakeMessage,
-    IntakeStatus,
     IntakeToken,
     IntakeType,
 )
 from app.models.intake_sections import (
     ClientIntakeSection,
 )
-from app.routes.shared_models import AddressSubmission
 from app.services.client_data.queries import Queries
 from app.utils.config_loader import ConfigLoader
 
@@ -27,7 +25,64 @@ logger = structlog.get_logger(__name__)
 
 
 @overload
-async def get_intake_by_client_pseudo_id(
+async def get_intake_by_id(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[True]
+) -> SelectOfScalar[Intake]: ...
+
+
+@overload
+async def get_intake_by_id(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[False] = False
+) -> Intake | None: ...
+
+
+@statement_or_result(first_only=True)
+async def get_intake_by_id(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: bool = False
+) -> SelectOfScalar[Intake] | Intake | None:
+    return (
+        select(Intake)
+        .options(
+            joinedload(Intake.client_intake_sections).joinedload(
+                ClientIntakeSection.intake_section
+            )
+        )
+        .where(Intake.id == intake_id)
+    )
+
+
+@overload
+async def get_intake_with_address_and_recording(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[True]
+) -> SelectOfScalar[Intake]: ...
+
+
+@overload
+async def get_intake_with_address_and_recording(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[False] = False
+) -> Intake | None: ...
+
+
+@statement_or_result(first_only=True)
+async def get_intake_with_address_and_recording(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: bool = False
+) -> SelectOfScalar[Intake] | Intake | None:
+    """
+    Get intake by ID with address and recording_session relationships eagerly loaded.
+    Used for transcription completion operations.
+    """
+    return (
+        select(Intake)
+        .where(Intake.id == intake_id)
+        .options(
+            selectinload(Intake.address),
+            selectinload(Intake.recording_session),
+        )
+    )
+
+
+@overload
+async def get_latest_active_conversation_intake(
     session: AsyncSession,
     client_pseudo_id: str,
     token: str | None = None,
@@ -37,7 +92,7 @@ async def get_intake_by_client_pseudo_id(
 
 
 @overload
-async def get_intake_by_client_pseudo_id(
+async def get_latest_active_conversation_intake(
     session: AsyncSession,
     client_pseudo_id: str,
     token: str | None = None,
@@ -47,13 +102,19 @@ async def get_intake_by_client_pseudo_id(
 
 
 @statement_or_result(first_only=True)
-async def get_intake_by_client_pseudo_id(
+async def get_latest_active_conversation_intake(
     session: AsyncSession,
     client_pseudo_id: str,
     token: str | None = None,
     *,
     query_only: bool = False,
 ) -> SelectOfScalar[Intake] | Intake | None:
+    """
+    Get the latest CREATED or IN_PROGRESS CONVERSATION intake for a client.
+    Orders by created_at DESC to get the most recent one.
+    Filters by IntakeType.CONVERSATION to ensure only conversation intakes are returned.
+    Supports multiple intakes per client by returning the latest active one.
+    """
     stmt = (
         select(Intake)
         .options(
@@ -66,48 +127,193 @@ async def get_intake_by_client_pseudo_id(
             ),
             selectinload(Intake.intake_token),
             selectinload(Intake.address),
+            selectinload(Intake.survey),
         )
-        .where(Intake.client_pseudo_id == client_pseudo_id)
-    )
-
-    result = await session.execute(
-        select(Intake.internal_access).where(
-            Intake.client_pseudo_id == client_pseudo_id
+        .where(
+            and_(
+                Intake.client_pseudo_id == client_pseudo_id,
+                Intake.status.in_([IntakeStatus.CREATED, IntakeStatus.IN_PROGRESS]),
+                Intake.intake_type == IntakeType.CONVERSATION.value,
+            )
         )
+        .order_by(Intake.created_at.desc())
     )
-    intake_row = result.first()
-    internal_access = intake_row.internal_access if intake_row else None
-
-    if token and not internal_access:
-        stmt = stmt.where(IntakeToken.token == token)
+    # TODO if re-enable token - check for token
 
     return stmt
 
 
 @overload
-async def get_intake_by_id(
-    session: AsyncSession, intake_id: UUID, *, query_only: Literal[True]
+async def get_latest_active_external_intake(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: Literal[True],
 ) -> SelectOfScalar[Intake]: ...
 
 
 @overload
-async def get_intake_by_id(
-    session: AsyncSession, intake_id: UUID, *, query_only: Literal[False] = False
+async def get_latest_active_external_intake(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: Literal[False] = False,
 ) -> Intake | None: ...
 
 
 @statement_or_result(first_only=True)
-async def get_intake_by_id(
-    session: AsyncSession, intake_id: UUID, *, query_only: bool = False
+async def get_latest_active_external_intake(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: bool = False,
 ) -> SelectOfScalar[Intake] | Intake | None:
+    """
+    Get the latest CREATED or IN_PROGRESS EXTERNAL intake for a client.
+    Orders by created_at DESC to get the most recent one.
+    Filters by IntakeType.EXTERNAL to ensure only external intakes are returned.
+    Supports multiple intakes per client.
+    """
     return (
         select(Intake)
         .options(
-            joinedload(Intake.client_intake_sections).joinedload(
-                ClientIntakeSection.intake_section
+            selectinload(Intake.address),
+        )
+        .where(
+            and_(
+                Intake.client_pseudo_id == client_pseudo_id,
+                Intake.status.in_([IntakeStatus.CREATED, IntakeStatus.IN_PROGRESS]),
+                Intake.intake_type == IntakeType.EXTERNAL.value,
             )
         )
-        .where(Intake.id == intake_id)
+        .order_by(Intake.created_at.desc())
+    )
+
+
+@overload
+async def get_active_intake_by_client_pseudo_id(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: Literal[True],
+) -> SelectOfScalar[Intake]: ...
+
+
+@overload
+async def get_active_intake_by_client_pseudo_id(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: Literal[False] = False,
+) -> Intake | None: ...
+
+
+@statement_or_result(first_only=True)
+async def get_active_intake_by_client_pseudo_id(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: bool = False,
+) -> SelectOfScalar[Intake] | Intake | None:
+    """
+    Get any CREATED or IN_PROGRESS intake for a client, regardless of intake type.
+    Returns the most recent one ordered by created_at DESC.
+    Used to check if a client has any active intake before creating a new one.
+    """
+    return (
+        select(Intake)
+        .where(
+            and_(
+                Intake.client_pseudo_id == client_pseudo_id,
+                Intake.status.in_([IntakeStatus.CREATED, IntakeStatus.IN_PROGRESS]),
+            )
+        )
+        .order_by(Intake.created_at.desc())
+    )
+
+
+@overload
+async def get_all_intakes_by_client_pseudo_id(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: Literal[True],
+) -> SelectOfScalar[Intake]: ...
+
+
+@overload
+async def get_all_intakes_by_client_pseudo_id(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: Literal[False] = False,
+) -> list[Intake]: ...
+
+
+@statement_or_result(first_only=False)
+async def get_all_intakes_by_client_pseudo_id(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: bool = False,
+) -> SelectOfScalar[Intake] | list[Intake]:
+    """
+    Get all intakes for a client, ordered by created_at DESC (newest first).
+    Returns all statuses, not just active ones.
+    Eagerly loads the assessment_config relationship for displaying config info.
+    """
+    return (
+        select(Intake)
+        .options(
+            selectinload(Intake.assessment_config),
+        )
+        .where(Intake.client_pseudo_id == client_pseudo_id)
+        .order_by(Intake.created_at.desc())
+    )
+
+
+@overload
+async def get_latest_completed_intake_by_client_pseudo_id(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: Literal[True],
+) -> SelectOfScalar[Intake]: ...
+
+
+@overload
+async def get_latest_completed_intake_by_client_pseudo_id(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: Literal[False] = False,
+) -> Intake | None: ...
+
+
+@statement_or_result(first_only=True)
+async def get_latest_completed_intake_by_client_pseudo_id(
+    session: AsyncSession,
+    client_pseudo_id: str,
+    *,
+    query_only: bool = False,
+) -> SelectOfScalar[Intake] | Intake | None:
+    """
+    Get the latest completed intake for a client.
+    Orders by created_at DESC to get the most recent one.
+    Eagerly loads the address relationship for accessing client address.
+    """
+    return (
+        select(Intake)
+        .options(
+            selectinload(Intake.address),
+        )
+        .where(
+            and_(
+                Intake.client_pseudo_id == client_pseudo_id,
+                Intake.status == IntakeStatus.COMPLETED,
+            )
+        )
+        .order_by(Intake.created_at.desc())
     )
 
 
@@ -231,8 +437,8 @@ async def get_latest_message(
 async def create_intake(
     session: AsyncSession,
     client_pseudo_id: str,
-    intake_type: IntakeType,
-    status: IntakeStatus = None,
+    assessment_config_id: UUID,
+    status: IntakeStatus | None = None,
 ) -> Intake:
     """Create a new intake record with assessment_config_id."""
 
@@ -245,21 +451,19 @@ async def create_intake(
         )
 
     # Get active assessment config for state
-    assessment_config = await ConfigLoader.get_active_assessment_config_by_state(
-        client_record.state_code, session
+    assessment_config = await ConfigLoader.load_assessment_config(
+        assessment_config_id, session
     )
 
     if not assessment_config:
-        raise ValueError(
-            f"No active assessment config found for state {client_record.state_code}"
-        )
+        raise ValueError("No active assessment config found")
 
     intake = Intake(
         client_pseudo_id=client_pseudo_id,
         status=status if status else IntakeStatus.CREATED,
         internal_access=True,
-        intake_type=intake_type.value,
-        assessment_config_id=assessment_config.id,
+        intake_type=assessment_config.intake.intake_type,
+        assessment_config_id=assessment_config_id,
     )
     session.add(intake)
     await session.commit()
@@ -312,6 +516,10 @@ async def update_internal_access_by_client_pseudo_id(
     client_pseudo_id: str,
     internal_access: bool,
 ) -> Intake | None:
+    """
+    DEPRECATED: Use update_internal_access_by_intake_id instead.
+    This function doesn't work correctly with multiple intakes per client.
+    """
     result = await session.execute(
         select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
     )
@@ -329,74 +537,21 @@ async def update_internal_access_by_client_pseudo_id(
     return intake
 
 
-# Address-related CRUD operations using intake.address relationship
-
-
-async def get_collected_address_for_intake(
-    session: AsyncSession, intake_id: UUID
-) -> Optional[ClientAddress]:
-    """Get collected address for an intake using the intake.address relationship"""
-    intake = await session.get(Intake, intake_id)
-    if not intake:
-        return None
-
-    # Load the address relationship if not already loaded
-    if intake.address is None:
-        await session.refresh(intake, ["address"])
-
-    return intake.address
-
-
-async def get_collected_address_for_client(
-    session: AsyncSession, client_pseudo_id: str
-) -> Optional[ClientAddress]:
-    """Get collected address for a client by client_pseudo_id using the intake.address relationship"""
-    # Get the intake with address relationship
-    statement = (
-        select(Intake)
-        .options(selectinload(Intake.address))
-        .where(Intake.client_pseudo_id == client_pseudo_id)
-    )
-    result = await session.exec(statement)
-    intake = result.first()
-
-    if not intake:
-        return None
-
-    return intake.address
-
-
-async def update_client_address(
+async def update_internal_access_by_intake_id(
     session: AsyncSession,
-    client_pseudo_id: str,
-    address_data: AddressSubmission,
-):
-    statement = (
-        select(Intake)
-        .options(selectinload(Intake.address))
-        .where(Intake.client_pseudo_id == client_pseudo_id)
-    )
-    result = await session.exec(statement)
-    intake = result.first()
+    intake_id: UUID,
+    internal_access: bool,
+) -> Intake | None:
+    """Update the internal_access field for a specific intake."""
+    intake = await get_intake_by_id(session, intake_id)
 
     if not intake:
         return None
 
-    if intake.address:
-        intake.address.city = address_data.city
-        intake.address.state = address_data.state
-        intake.address.street_address = address_data.street_address
-        session.add(intake.address)
-    else:
-        new_address = ClientAddress(
-            intake_id=intake.id,
-            city=address_data.city,
-            state=address_data.state,
-            street_address=address_data.street_address,
-        )
-        session.add(new_address)
+    intake.internal_access = internal_access
+    session.add(intake)
 
     await session.commit()
     await session.refresh(intake)
 
-    return intake.address
+    return intake

@@ -1,5 +1,3 @@
-
-
 // Recidiviz - a data platform for criminal justice reform
 // Copyright (C) 2025 Recidiviz, Inc.
 //
@@ -42,6 +40,7 @@ export function IntakeRouter() {
     has_accepted_terms,
     has_address,
     has_survey,
+    intakeId,
   } = intakeContext;
   const { startConversation } = intakeDispatchContext;
   const isFromUtah = intakeContext.client_state === "US_UT";
@@ -123,17 +122,22 @@ export function IntakeRouter() {
           <IntakeCompleted />
         )}
 
-        {needsAddress && !displaySurvey && (
+        {needsAddress && !displaySurvey && intakeId && (
           <AddressForm
             setDisplaySurvey={setDisplaySurvey}
             onError={(error) => {
               console.error("Address submission error:", error);
               // Could add toast notification here
+              // TODO : prevent displaying survey and handle error in place.
             }}
+            intakeId={intakeId}
           />
         )}
-        {displaySurvey && !surveySubmitted && (
-          <IntakeSurvey setSurveySubmitted={setSurveySubmitted} />
+        {displaySurvey && !surveySubmitted && intakeId && (
+          <IntakeSurvey
+            setSurveySubmitted={setSurveySubmitted}
+            intakeId={intakeId}
+          />
         )}
         {isFromUtah && isPreIntake ? (
           <PreIntakeVideo onStartIntake={handleStartConversation} />

@@ -4,7 +4,6 @@ import pytest
 import structlog
 
 from app.core.db import AsyncSession
-from app.crud.intake import create_intake
 from app.manage.update_recording_status import _update_recording_status
 from app.models.base import IntakeType
 from app.models.intake import IntakeStatus
@@ -30,17 +29,15 @@ async def test_update_recording_invalid_session_id(async_session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_update_recording_invalid_state(
-    async_session: AsyncSession, mock_clientdata_service, seed_configs
+    async_session: AsyncSession, mock_clientdata_service, mock_intake
 ):
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    test_intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        intake_type=IntakeType.TRANSCRIPTION,
-    )
-
+    # Always create completed intake
+    mock_intake.intake_type = IntakeType.TRANSCRIPTION
+    mock_intake.status = IntakeStatus.IN_PROGRESS
+    await async_session.commit()
+    await async_session.refresh(mock_intake)
+    test_intake = mock_intake
     logger.info(f"Created test intake with ID: {test_intake.id}")
 
     recording_session = RecordingSession(
@@ -70,16 +67,16 @@ async def test_update_recording_invalid_state(
 
 @pytest.mark.asyncio
 async def test_update_recording_state_successful(
-    async_session: AsyncSession, mock_clientdata_service, seed_configs
+    async_session: AsyncSession, mock_clientdata_service, mock_intake
 ):
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    test_intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        status=IntakeStatus.IN_PROGRESS,
-        intake_type=IntakeType.TRANSCRIPTION,
-    )
+    # Always create completed intake
+    mock_intake.intake_type = IntakeType.TRANSCRIPTION
+    mock_intake.status = IntakeStatus.IN_PROGRESS
+    await async_session.commit()
+    await async_session.refresh(mock_intake)
+    test_intake = mock_intake
+    logger.info(f"Created test intake with ID: {test_intake.id}")
 
     first_state = RecordingStatus.CREATED
     second_state = RecordingStatus.COMPLETED

@@ -150,7 +150,8 @@ def enrich_sections_with_status(sections: list, current_section: str | None) -> 
     Enrich intake sections with computed status based on current_section.
 
     Logic:
-    - If current_section is None or not found: all sections are "completed"
+    - If current_section is None: all sections are not started - initial
+    - If current_section is None or not found: all sections are "completed" -- error
     - If section index < current_section index: "completed"
     - If section index == current_section index: "in_progress"
     - If section index > current_section index: "not_started"
@@ -178,7 +179,10 @@ def enrich_sections_with_status(sections: list, current_section: str | None) -> 
     # Enrich each section with status
     enriched_sections = []
     for idx, section in enumerate(sections):
-        if current_index < 0:
+        if not current_section:
+            # Current section is None, not started
+            status = IntakeSectionStatus.NOT_STARTED
+        elif current_index < 0:
             # Current section not found, all completed
             status = IntakeSectionStatus.COMPLETED
         elif idx < current_index:

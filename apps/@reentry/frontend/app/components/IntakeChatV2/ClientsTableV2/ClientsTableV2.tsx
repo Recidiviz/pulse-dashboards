@@ -42,7 +42,6 @@ interface ClientsTableV2Props {
   ) => void;
   SortIconComp: React.ReactNode;
   buildColumns: (statusLoading?: boolean) => TableColumn<ClientResponse>[];
-  activeRowId: string | null;
 }
 
 // V2-only table that fetches statuses via tRPC and merges into items
@@ -55,7 +54,7 @@ export const ClientsTableV2: React.FC<ClientsTableV2Props> = ({
   onSort,
   SortIconComp,
   buildColumns,
-  activeRowId,
+  // activeRowId,
 }) => {
   const auth = useAuth();
   const stateCode = auth.userAppMetadata?.stateCode ?? "";
@@ -63,35 +62,34 @@ export const ClientsTableV2: React.FC<ClientsTableV2Props> = ({
   const enableGetClientsIntakeStatus = Boolean(stateCode && staffPseudoId);
   const router = useRouter();
 
-  const { data, isLoading } =
-    trpc.staff.getAllClientsIntakeStatusAndDate.useQuery(
-      {
-        staffPseudoId: staffPseudoId ?? "",
-      },
-      {
-        enabled: enableGetClientsIntakeStatus,
-        staleTime: 30000, // Cache for 30 seconds to prevent excessive refetching
-        refetchOnMount: false, // Don't refetch on mount if data is still fresh
-        refetchOnWindowFocus: false, // Don't refetch when window regains focus
-      },
-    );
+  const { isLoading } = trpc.staff.getAllClientsIntakeStatusAndDate.useQuery(
+    {
+      staffPseudoId: staffPseudoId ?? "",
+    },
+    {
+      enabled: enableGetClientsIntakeStatus,
+      staleTime: 30000, // Cache for 30 seconds to prevent excessive refetching
+      refetchOnMount: false, // Don't refetch on mount if data is still fresh
+      refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    },
+  );
 
-  const updatedItems = useMemo(() => {
-    return items.map((item) => {
-      if (!enableGetClientsIntakeStatus || !data) return item;
-      const pseudoId = item.client?.pseudonymized_client_id;
-      const statusOverride = pseudoId ? data[pseudoId]?.status : undefined;
-      const intakeDateOverride = pseudoId
-        ? data[pseudoId]?.intakeDate?.toISOString()
-        : undefined;
+  // const updatedItems = useMemo(() => {
+  //   return items.map((item) => {
+  //     if (!enableGetClientsIntakeStatus || !data) return item;
+  //     const pseudoId = item.client?.pseudonymized_client_id;
+  //     const statusOverride = pseudoId ? data[pseudoId]?.status : undefined;
+  //     const intakeDateOverride = pseudoId
+  //       ? data[pseudoId]?.intakeDate?.toISOString()
+  //       : undefined;
 
-      return {
-        ...item,
-        frontend_status: statusOverride || item.frontend_status,
-        intake_date: intakeDateOverride ?? item.intake?.updated_at,
-      };
-    });
-  }, [items, data, enableGetClientsIntakeStatus]);
+  //     return {
+  //       ...item,
+  //       frontend_status: statusOverride || item.frontend_status,
+  //       intake_date: intakeDateOverride ?? item.intake?.updated_at,
+  //     };
+  //   });
+  // }, [items, data, enableGetClientsIntakeStatus]);
 
   const columns = useMemo(
     () => buildColumns(isLoading),
@@ -101,7 +99,7 @@ export const ClientsTableV2: React.FC<ClientsTableV2Props> = ({
   return (
     <DataTable
       columns={columns}
-      data={updatedItems}
+      data={items}
       customStyles={customStyles}
       sortIcon={SortIconComp}
       onSort={onSort}
@@ -111,15 +109,6 @@ export const ClientsTableV2: React.FC<ClientsTableV2Props> = ({
       noDataComponent={
         <div className="text-gray-600 py-4 ">No clients found.</div>
       }
-      conditionalRowStyles={[
-        {
-          when: (row) => row.client_pseudo_id === activeRowId,
-          style: {
-            backgroundColor: "bg-gray-200",
-            "&:hover": { backgroundColor: "bg-gray-200" },
-          },
-        },
-      ]}
       pagination
       paginationComponent={() => (
         <CustomPagination

@@ -107,10 +107,14 @@ class IntakeConversationGraph:
         self.workflow = None
         self.graph = None
         self.assessment_config: IntakeConfigConversation
+        self.intake_id = None
 
     async def initialize(self, intake: Intake) -> None:
         """Initialize the conversation graph."""
         try:
+            # Store intake_id to pass to db_manager methods
+            self.intake_id = intake.id
+
             self.assessment_config = await self.db_manager.get_conversation_config(
                 intake.assessment_config_id
             )
@@ -252,9 +256,7 @@ class IntakeConversationGraph:
         if not self.db_manager:
             raise RuntimeError("database manager !")
         client_data = self.session
-        sections_titles = await self.db_manager.get_section_titles(
-            client_data.client_pseudo_id
-        )
+        sections_titles = await self.db_manager.get_section_titles(self.intake_id)
         opening_prompt = generate_opening_remarks_prompt(
             client_data, sections_titles, self.assessment_config
         )
@@ -267,9 +269,9 @@ class IntakeConversationGraph:
             ai_message_str = response if isinstance(response, str) else response.content
             state["messages"].append(AIMessage(ai_message_str))
             message = await self.db_manager.store_message(
-                client_pseudo_id=client_pseudo_id,
-                content=ai_message_str,
+                intake_id=self.intake_id,
                 from_role=IntakeMessageRole.CASEWORKER,
+                content=ai_message_str,
             )
             if not message:
                 raise ValueError(
@@ -337,9 +339,9 @@ class IntakeConversationGraph:
 
             state["messages"].append(AIMessage(response.section_next_question))
             message = await self.db_manager.store_message(
-                client_pseudo_id=client_pseudo_id,
-                content=response.section_next_question,
+                intake_id=self.intake_id,
                 from_role=IntakeMessageRole.CASEWORKER,
+                content=response.section_next_question,
             )
             if not message:
                 raise ValueError(
@@ -377,12 +379,12 @@ class IntakeConversationGraph:
 
         try:
             client_pseudo_id = self.session.client_pseudo_id
-            is_internal = await self.db_manager.is_internal_intake(client_pseudo_id)
+            is_internal = await self.db_manager.is_internal_intake(self.intake_id)
             welcome_message_text = f"Hi {self.session.client_name}, thanks for joining again! Let's continue our conversation."
 
             # Check if the last message from the database is already a welcome back message
             # SO we avoid adding multiple welcome messages during unstable connections
-            latest_message = await self.db_manager.get_latest_message(client_pseudo_id)
+            latest_message = await self.db_manager.get_latest_message(self.intake_id)
             is_last_message_welcome_back = (
                 latest_message
                 and latest_message.content
@@ -411,9 +413,9 @@ class IntakeConversationGraph:
                 # There is no welcome back message, so send it.
                 # store welcome back
                 stored_message = await self.db_manager.store_message(
-                    client_pseudo_id=client_pseudo_id,
-                    content=welcome_message_text,
+                    intake_id=self.intake_id,
                     from_role=IntakeMessageRole.CASEWORKER,
+                    content=welcome_message_text,
                 )
                 if not stored_message:
                     raise ValueError(
@@ -455,9 +457,9 @@ class IntakeConversationGraph:
                 if not is_last_message_welcome_back:
                     # if the welcome back message is not in store, store it
                     stored_message = await self.db_manager.store_message(
-                        client_pseudo_id=client_pseudo_id,
-                        content=welcome_message_text,
+                        intake_id=self.intake_id,
                         from_role=IntakeMessageRole.CASEWORKER,
+                        content=welcome_message_text,
                     )
                     logger.info(
                         "Reusing existing welcome back message to prevent duplicates"
@@ -474,7 +476,7 @@ class IntakeConversationGraph:
                     # latest message is a welcome back, and user doesn't havce message history, find the latest contentful AI message and await an answer to that message.
                     latest_message = (
                         await self.db_manager.get_latest_non_welcome_ai_message(
-                            client_pseudo_id
+                            self.intake_id
                         )
                     )
                     # Non-internal user: wait for the client's response
@@ -521,9 +523,9 @@ class IntakeConversationGraph:
 
         state["messages"].append(AIMessage(transition_message_text))
         message = await self.db_manager.store_message(
-            client_pseudo_id=self.session.client_pseudo_id,
-            content=transition_message_text,
+            intake_id=self.intake_id,
             from_role=IntakeMessageRole.CASEWORKER,
+            content=transition_message_text,
         )
         if not message:
             raise ValueError(
@@ -531,9 +533,7 @@ class IntakeConversationGraph:
             )
 
         # Complete section in database
-        new_section_title = await self.db_manager.complete_section(
-            client_pseudo_id=str(self.session.client_pseudo_id)
-        )
+        new_section_title = await self.db_manager.complete_section(self.intake_id)
         if new_section_title == "error":
             raise ValueError("Could not complete section")
 
@@ -579,9 +579,9 @@ class IntakeConversationGraph:
 
     async def save_and_send_AI_message(self, content: str):
         message = await self.db_manager.store_message(
+            intake_id=self.intake_id,
             from_role=IntakeMessageRole.CASEWORKER,
             content=content,
-            client_pseudo_id=self.session.client_pseudo_id,
         )
 
         if not message:
@@ -604,7 +604,7 @@ class IntakeConversationGraph:
                     "We apologize for the inconvenience."
                 )
                 await self.db_manager.update_intake_status(
-                    self.session.client_pseudo_id, IntakeStatus.ERROR
+                    self.intake_id, IntakeStatus.ERROR
                 )
                 await self.save_and_send_AI_message(closing_message)
             else:
@@ -627,7 +627,7 @@ class IntakeConversationGraph:
         except Exception as e:
             try:
                 await self.db_manager.update_intake_status(
-                    self.session.client_pseudo_id, IntakeStatus.ERROR
+                    self.intake_id, IntakeStatus.ERROR
                 )
             except Exception as e2:
                 error_info = {
@@ -657,7 +657,7 @@ class IntakeConversationGraph:
         """
         # Get all messages from the database
         messages: list[IntakeMessage] = await self.db_manager.all_messages_by_time(
-            self.session.client_pseudo_id
+            self.intake_id
         )
         system_message = get_system_message_prompt(self.assessment_config)
 

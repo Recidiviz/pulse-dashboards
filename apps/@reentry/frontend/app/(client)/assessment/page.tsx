@@ -31,12 +31,10 @@ import {
 export default function Intake() {
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
-  const [storedToken, setStoredToken] = useState<string | null>(null);
   useEffect(() => {
     const storedToken = sessionStorage.getItem("intake_token");
 
     if (storedToken) {
-      setStoredToken(storedToken);
       setAuthorized(true);
       setLoading(false);
     } else {
@@ -65,7 +63,7 @@ export default function Intake() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <AssessmentLoginPage
-          mode={"stateDocId"}
+          mode={"state+docid"}
           onConfirmation={() => window.location.reload()}
         />
       </div>
@@ -74,7 +72,7 @@ export default function Intake() {
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
-      <IntakeSocketProvider token_from_url={storedToken}>
+      <IntakeSocketProvider>
         <IntakeRouter />
       </IntakeSocketProvider>
     </div>

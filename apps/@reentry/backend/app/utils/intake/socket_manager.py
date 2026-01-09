@@ -162,7 +162,7 @@ class SocketIOManager:
                             if intake and intake.status != IntakeStatus.COMPLETED:
                                 if intake.status == IntakeStatus.CREATED:
                                     intake = await self.db_manager.update_intake_status(
-                                        client_pseudo_id, IntakeStatus.IN_PROGRESS
+                                        intake.id, IntakeStatus.IN_PROGRESS
                                     )
 
                                 await self.send_event_client_pseudo_id(
@@ -423,10 +423,16 @@ class SocketIOManager:
             # If there's a pending response waiting, fulfill it
             pending_response = self.pending_responses.get(client_pseudo_id)
             if pending_response and not pending_response.done():
+                # Get intake to get intake_id
+                intake = await self.db_manager.get_intake(client_pseudo_id)
+                if not intake:
+                    logger.warning(f"No intake found for client {client_pseudo_id}")
+                    return
+
                 message = await self.db_manager.store_message(
+                    intake_id=intake.id,
                     from_role=IntakeMessageRole.CLIENT,
                     content=content,
-                    client_pseudo_id=client_pseudo_id,
                 )
                 if not message:
                     logger.warning(
@@ -446,9 +452,13 @@ class SocketIOManager:
                 return serialized
 
             # If we're not expecting a response, check if it's the caseworker's turn to talk
+            # Get intake to check turn
+            intake_for_turn = await self.db_manager.get_intake(client_pseudo_id)
             if (
-                await self.db_manager.get_talking_turn(client_pseudo_id)
-            ) == IntakeMessageRole.CASEWORKER:
+                intake_for_turn
+                and (await self.db_manager.get_talking_turn(intake_for_turn.id))
+                == IntakeMessageRole.CASEWORKER
+            ):
                 logger.debug(
                     f"Ignoring message - it's the caseworker's turn for client {client_pseudo_id}"
                 )
@@ -476,9 +486,9 @@ class SocketIOManager:
                 return
 
             message = await self.db_manager.store_message(
+                intake_id=intake.id,
                 from_role=IntakeMessageRole.CLIENT,
                 content=content,
-                client_pseudo_id=client_pseudo_id,
             )
             if not message:
                 logger.warning(f"Error saving message for client {client_pseudo_id}")

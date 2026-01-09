@@ -37,8 +37,7 @@ export const PrimaryButton: React.FC<ButtonProps> = ({
   const { isReadOnlyUser } = useAuthUserCapabilities();
 
   // Capability-based restrictions (unless ignored)
-  const capabilityRestricted =
-    !ignoreCapabilities && isReadOnlyUser;
+  const capabilityRestricted = !ignoreCapabilities && isReadOnlyUser;
 
   // Final computed disabled state
   const isDisabled = disabled || capabilityRestricted;

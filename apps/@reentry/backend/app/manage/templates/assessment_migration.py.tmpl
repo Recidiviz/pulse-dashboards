@@ -52,14 +52,14 @@ def upgrade() -> None:
     op.execute("""
         UPDATE assessmentconfig
         SET is_active = false
-        WHERE code = '{normalized_code}' AND version != {version}
+        WHERE state_code = '{state_code}' AND code = '{normalized_code}' AND version != {version}
     """)
 
     # Activate the new version
     op.execute("""
         UPDATE assessmentconfig
         SET is_active = true
-        WHERE code = '{normalized_code}' AND version = {version}
+        WHERE state_code = '{state_code}' AND code = '{normalized_code}' AND version = {version}
     """)
 
 
@@ -67,17 +67,17 @@ def downgrade() -> None:
     # Delete the new version
     op.execute("""
         DELETE FROM assessmentconfig
-        WHERE code = '{normalized_code}' AND version = {version}
+        WHERE state_code = '{state_code}' AND code = '{normalized_code}' AND version = {version}
     """)
 
     # Reactivate the most recent previous version (if any exists)
     op.execute("""
         UPDATE assessmentconfig
         SET is_active = true
-        WHERE code = '{normalized_code}'
+        WHERE state_code = '{state_code}' AND code = '{normalized_code}'
         AND version = (
             SELECT MAX(version)
             FROM assessmentconfig
-            WHERE code = '{normalized_code}' AND version < {version}
+            WHERE state_code = '{state_code}' AND code = '{normalized_code}' AND version < {version}
         )
     """)

@@ -129,10 +129,10 @@ async def assessment(
         # Use the existing linked intake
         intake = assessment.intake
     else:
-        # Try to find an intake for this client
-        from app.crud.intake import get_intake_by_client_pseudo_id
+        # Try to find the latest active conversation intake for this client
+        from app.crud.intake import get_latest_active_conversation_intake
 
-        intake = await get_intake_by_client_pseudo_id(
+        intake = await get_latest_active_conversation_intake(
             session, client_pseudo_id=assessment.client_pseudo_id
         )
 

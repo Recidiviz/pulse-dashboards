@@ -2,7 +2,7 @@ from typing import Dict, Optional
 from uuid import UUID
 
 import structlog
-from sqlmodel import select
+from sqlmodel import func, select
 
 from app.core.data_config.assessment_configs.assessment_config import (
     AssessmentConfigFile,
@@ -158,43 +158,94 @@ class ConfigLoader:
         return assessment_config.intake
 
     @classmethod
-    async def get_active_assessment_config_by_state(
+    async def get_active_assessment_configs_by_state(
         cls, state_code: str, session: AsyncSession
-    ) -> Optional[AssessmentConfig]:
-        """Get the single active assessment config for a given state.
+    ) -> list[AssessmentConfig]:
+        """Get all active assessment configs for a given state.
 
-        Current assumption: One active config per state.
-        Future: Will need disambiguation when multiple configs per state exist.
+        Returns one active assessment config per code for the state, selecting the
+        latest version when multiple active configs exist for the same (state_code, code) pair.
 
         Args:
             state_code: State code (e.g., "US_UT")
             session: Database session
 
         Returns:
-            Active AssessmentConfig database model, or None if not found
-
-        Raises:
-            ValueError: If multiple active configs found for state (future-proofing)
+            List of active AssessmentConfig database models (empty list if none found).
+            One config per code, always the highest version number for each code.
         """
         state_code = normalize_state_code(state_code)
+
+        # Subquery to find the max version for each code in this state
+        max_version_subquery = (
+            select(
+                AssessmentConfig.code,
+                func.max(AssessmentConfig.version).label("max_version"),
+            )
+            .where(AssessmentConfig.state_code == state_code)
+            .where(AssessmentConfig.is_active)
+            .group_by(AssessmentConfig.code)
+            .subquery()
+        )
+
+        # Main query to get configs matching the max version for each code
         statement = (
             select(AssessmentConfig)
+            .join(
+                max_version_subquery,
+                (AssessmentConfig.code == max_version_subquery.c.code)
+                & (AssessmentConfig.version == max_version_subquery.c.max_version),
+            )
             .where(AssessmentConfig.state_code == state_code)
             .where(AssessmentConfig.is_active)
         )
+
         result = await session.exec(statement)
         configs = result.all()
 
         if len(configs) == 0:
-            logger.error(f"No active assessment config found for state {state_code}")
-            return None
-        elif len(configs) > 1:
-            raise ValueError(
-                f"Multiple active assessment configs found for state {state_code}. "
-                f"Explicit config selection required."
+            logger.debug(f"No active assessment configs found for state {state_code}")
+        else:
+            logger.debug(
+                f"Found {len(configs)} active assessment config(s) for state {state_code}"
             )
 
-        return configs[0]
+        return list(configs)
+
+    @classmethod
+    async def get_conversation_intake_state_codes(
+        cls, session: AsyncSession
+    ) -> list[str]:
+        """Get all state codes that have active AssessmentConfigs with conversation intake type.
+
+        Returns:
+            List of unique state codes (e.g., ["US_ID", "US_UT"]) that have at least one
+            active assessment config with intake.intake_type == "conversation"
+        """
+        # Get all active assessment configs
+        statement = select(AssessmentConfig).where(AssessmentConfig.is_active)
+        result = await session.exec(statement)
+        all_active_configs = result.all()
+
+        conversation_state_codes = set()
+
+        for config in all_active_configs:
+            try:
+                # Use load_assessment_config for caching
+                validated = await cls.load_assessment_config(config.id, session)
+                if isinstance(validated.intake, IntakeConfigConversation):
+                    conversation_state_codes.add(config.state_code)
+            except Exception as e:
+                logger.warning(
+                    f"Failed to validate config {config.id} ({config.state_code}/{config.code}): {e}"
+                )
+                continue
+
+        result_list = sorted(list(conversation_state_codes))
+        logger.debug(
+            f"Found {len(result_list)} state(s) with conversation intake: {result_list}"
+        )
+        return result_list
 
     @classmethod
     async def load_summary_config(

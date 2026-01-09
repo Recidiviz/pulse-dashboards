@@ -20,9 +20,12 @@ import type { Middleware } from "openapi-fetch";
 import { globalAuthStore } from "./globalAuthStore";
 
 const PUBLIC_ENDPOINTS = [
-  "/intake/client",
-  "/intake/internal",
+  "/client/verify",
+  "/client/",
+  "/autocomplete-city",
+  "/autocomplete-address",
   "/intake/services",
+  "/public/intake-config",
 ];
 
 const isPublicEndpoint = (url: string): boolean => {

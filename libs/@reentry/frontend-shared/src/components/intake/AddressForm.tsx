@@ -21,15 +21,22 @@ import type React from "react";
 import { useState } from "react";
 
 import { useApplicationContext } from "../../contexts/ApplicationContext";
+import { useClientAuthToken } from "../../hooks/useClientAuthToken";
 import FullAddressForm from "../FullAddressForm";
 
 interface AddressFormProps {
   onError: (error: string) => void;
   setDisplaySurvey: (display: boolean) => void;
+  intakeId: string;
 }
 
-const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
+const AddressForm = ({
+  onError,
+  setDisplaySurvey,
+  intakeId,
+}: AddressFormProps) => {
   const { $api, analytics } = useApplicationContext();
+  const { getClientAuthToken } = useClientAuthToken();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addressInput, setAddressInput] = useState("");
   const [city, setCity] = useState("");
@@ -39,7 +46,7 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
 
   const { mutateAsync: submitAddressMutation } = $api.useMutation(
     "post",
-    "/intake/client/address",
+    "/external/client/{intake_id}/address",
   );
 
   const getIntakeToken = () => {
@@ -74,13 +81,16 @@ const AddressForm = ({ onError, setDisplaySurvey }: AddressFormProps) => {
     setIsSubmitting(true);
     try {
       const response = await submitAddressMutation({
+        params: {
+          path: { intake_id: intakeId },
+        },
         body: {
           street_address: addressInput,
           city: city,
           state: state,
         },
         headers: {
-          Authorization: `Bearer ${getIntakeToken()}`,
+          Authorization: `Bearer ${getClientAuthToken()}`,
         },
       });
       if (response.intake_completed) {

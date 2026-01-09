@@ -17,8 +17,6 @@
 
 import { components } from "~@reentry/openapi-types";
 
-
-
 export const generateKey = (pre: string) => {
   return `${pre}_${new Date().getTime()}`;
 };
@@ -54,41 +52,41 @@ export const formatDuration = (milliseconds: number): string => {
 };
 
 export const formatAddress = (
-    address: components["schemas"]["AddressSubmission"] | null | undefined,
+  address: components["schemas"]["AddressSubmission"] | null | undefined,
 ): string | null => {
-    if (!address) return null;
-    const parts: string[] = [];
-    if (address.street_address?.trim()) parts.push(address.street_address.trim());
-    if (address.city?.trim()) parts.push(address.city.trim());
-    if (address.state?.trim()) parts.push(address.state.trim());
-    return parts.length > 0 ? parts.join(", ") : null;
+  if (!address) return null;
+  const parts: string[] = [];
+  if (address.street_address?.trim()) parts.push(address.street_address.trim());
+  if (address.city?.trim()) parts.push(address.city.trim());
+  if (address.state?.trim()) parts.push(address.state.trim());
+  return parts.length > 0 ? parts.join(", ") : null;
 };
 
 export const formatDateReadable = (dateInput: string | Date) => {
-    if (!dateInput) return "";
+  if (!dateInput) return "";
 
-    const date = new Date(dateInput);
-    if (Number.isNaN(date.getTime())) return "";
+  const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) return "";
 
-    return date.toLocaleString(undefined, {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-    });
+  return date.toLocaleString(undefined, {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 };
 
 export const formatDateReadableDate = (dateInput: string | Date) => {
-    if (!dateInput) return "";
+  if (!dateInput) return "";
 
-    const date = new Date(dateInput);
-    if (Number.isNaN(date.getTime())) return "";
+  const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) return "";
 
-    return date.toLocaleString(undefined, {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-    });
+  return date.toLocaleString(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 };

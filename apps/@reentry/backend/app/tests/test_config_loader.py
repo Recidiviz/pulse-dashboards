@@ -49,7 +49,7 @@ async def test_load_assessment_config(
 ):
     """Test loading and validating assessment config from database"""
     # Get UUID for UT-CCCI-v0
-    config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
 
     # Load the config
     loaded = await ConfigLoader.load_assessment_config(config_id, async_session)
@@ -57,7 +57,7 @@ async def test_load_assessment_config(
     # Verify it returns validated AssessmentConfigFile
     assert isinstance(loaded, AssessmentConfigFile)
     assert loaded.metadata.state_code == "US_UT"
-    assert loaded.metadata.code == "CCCI"
+    assert loaded.metadata.code == "CCCI"  # YAML contains uppercase code
     assert loaded.metadata.version == 0
     assert loaded.metadata.display_name == "Test CCCI v0"
     assert loaded.intake.intake_type == "conversation"
@@ -73,7 +73,7 @@ async def test_load_assessment_config_caching(
 ):
     """Test that assessment configs are cached after first load"""
     # Get UUID for UT-CCCI-v0
-    config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
 
     # First load - should query database
     loaded1 = await ConfigLoader.load_assessment_config(config_id, async_session)
@@ -94,9 +94,9 @@ async def test_load_assessment_config_multiple_versions(
 ):
     """Test loading multiple versions of the same assessment"""
     # Get UUIDs for different versions
-    config_id_v0 = seed_configs["assessments"][("US_UT", "CCCI", 0)]
-    config_id_v1 = seed_configs["assessments"][("US_UT", "CCCI", 1)]
-    config_id_v2 = seed_configs["assessments"][("US_UT", "CCCI", 2)]
+    config_id_v0 = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    config_id_v1 = seed_configs["assessments"][("US_UT", "ccci", 1)]
+    config_id_v2 = seed_configs["assessments"][("US_UT", "ccci", 2)]
 
     # Load each version
     loaded_v0 = await ConfigLoader.load_assessment_config(config_id_v0, async_session)
@@ -120,8 +120,8 @@ async def test_load_assessment_config_different_states(
 ):
     """Test loading configs from different states"""
     # Get UUIDs for different states
-    ut_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
-    ix_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
+    ut_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    ix_id = seed_configs["assessments"][("US_IX", "facr", 0)]
     az_id = seed_configs["assessments"][("US_AZ", "default", 0)]
 
     # Load each config
@@ -134,7 +134,7 @@ async def test_load_assessment_config_different_states(
     assert loaded_ix.metadata.state_code == "US_IX"
     assert loaded_az.metadata.state_code == "US_AZ"
 
-    # Verify codes
+    # Verify codes (YAML contains original case)
     assert loaded_ut.metadata.code == "CCCI"
     assert loaded_ix.metadata.code == "FACR"
     assert loaded_az.metadata.code == "default"
@@ -157,7 +157,7 @@ async def test_load_summary_config_by_assessment(
 ):
     """Test loading intake summary config via assessment"""
     # Get UUID for UT-CCCI-v0 (references intake_summary_ccci)
-    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
 
     # Load the summary config
     loaded = await ConfigLoader.load_summary_config(assessment_id, async_session)
@@ -177,7 +177,7 @@ async def test_load_plan_config_by_assessment(
 ):
     """Test loading action plan config via assessment"""
     # Get UUID for UT-CCCI-v0 (references action_plan_ccci)
-    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
 
     # Load the plan config
     loaded = await ConfigLoader.load_plan_config(assessment_id, async_session)
@@ -197,7 +197,7 @@ async def test_load_summary_config_caching(
 ):
     """Test that summary configs are cached after first load"""
     # Get UUID for UT-CCCI-v0
-    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
 
     # First load - should query database
     loaded1 = await ConfigLoader.load_summary_config(assessment_id, async_session)
@@ -218,8 +218,8 @@ async def test_load_summary_config_multiple_versions(
 ):
     """Test loading summary configs from different assessment versions"""
     # Get UUIDs for different assessment versions
-    assessment_id_v0 = seed_configs["assessments"][("US_UT", "CCCI", 0)]
-    assessment_id_v1 = seed_configs["assessments"][("US_UT", "CCCI", 1)]
+    assessment_id_v0 = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_id_v1 = seed_configs["assessments"][("US_UT", "ccci", 1)]
 
     # Load summary config for each version
     loaded_v0 = await ConfigLoader.load_summary_config(assessment_id_v0, async_session)
@@ -242,7 +242,7 @@ async def test_load_plan_config_caching(
 ):
     """Test that plan configs are cached after first load"""
     # Get UUID for UT-CCCI-v0 (references action_plan_ccci)
-    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
 
     # First load - should query database
     loaded1 = await ConfigLoader.load_plan_config(assessment_id, async_session)
@@ -269,7 +269,9 @@ async def test_list_assessment_configs(
     assert len(ut_configs) == 3
     assert all(isinstance(c, AssessmentConfig) for c in ut_configs)
     assert all(c.state_code == "US_UT" for c in ut_configs)
-    assert all(c.code == "CCCI" for c in ut_configs)
+    assert all(
+        c.code == "ccci" for c in ut_configs
+    )  # codes are normalized to lowercase
 
     # List configs for US_IX (should have FACR v0)
     ix_configs = await ConfigLoader.list_assessment_configs("US_IX", async_session)
@@ -277,7 +279,7 @@ async def test_list_assessment_configs(
     # Should return 1 config for US_IX
     assert len(ix_configs) == 1
     assert ix_configs[0].state_code == "US_IX"
-    assert ix_configs[0].code == "FACR"
+    assert ix_configs[0].code == "facr"  # codes are normalized to lowercase
 
     # List configs for US_AZ (should have default v0)
     az_configs = await ConfigLoader.list_assessment_configs("US_AZ", async_session)
@@ -285,7 +287,7 @@ async def test_list_assessment_configs(
     # Should return 1 config for US_AZ
     assert len(az_configs) == 1
     assert az_configs[0].state_code == "US_AZ"
-    assert az_configs[0].code == "default"
+    assert az_configs[0].code == "default"  # codes are normalized to lowercase
 
 
 @pytest.mark.asyncio
@@ -303,7 +305,7 @@ async def test_load_summary_config(
 ):
     """Test loading summary config for an assessment"""
     # Get UUID for UT-CCCI-v0 (references intake_summary_ccci)
-    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
 
     # Load summary config
     summary = await ConfigLoader.load_summary_config(assessment_id, async_session)
@@ -361,7 +363,7 @@ async def test_load_summary_config_with_version(
 ):
     """Test loading different versions of summary config"""
     # Get UUID for UT-CCCI-v1 (should reference intake_summary_ccci if it exists in fixture)
-    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 1)]
+    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 1)]
 
     # Load summary config
     summary = await ConfigLoader.load_summary_config(assessment_id, async_session)
@@ -371,77 +373,83 @@ async def test_load_summary_config_with_version(
 
 
 # =============================================================================
-# Tests for get_active_assessment_config_by_state() - Migration Support
+# Tests for get_active_assessment_configs_by_state() - Migration Support
 # =============================================================================
 
 
 @pytest.mark.asyncio
-async def test_get_active_assessment_config_by_state_success(
+async def test_get_active_assessment_configs_by_state_success(
     async_session: AsyncSession, seed_configs, clear_caches
 ):
-    """Test successfully getting active config by state code"""
-    # UT-CCCI configs should be active
-    config = await ConfigLoader.get_active_assessment_config_by_state(
+    """Test successfully getting all active configs by state code"""
+    # Get all active configs for US_UT
+    configs = await ConfigLoader.get_active_assessment_configs_by_state(
         "US_UT", async_session
     )
 
-    assert config is not None
-    assert isinstance(config, AssessmentConfig)
-    assert config.state_code == "US_UT"
-    assert config.code == "CCCI"
-    assert config.is_active is True
+    assert configs is not None
+    assert isinstance(configs, list)
+    assert len(configs) > 0
+    assert all(isinstance(c, AssessmentConfig) for c in configs)
+    assert all(c.state_code == "US_UT" for c in configs)
+    assert all(c.is_active is True for c in configs)
 
 
 @pytest.mark.asyncio
-async def test_get_active_assessment_config_by_state_multiple_states(
+async def test_get_active_assessment_configs_by_state_multiple_states(
     async_session: AsyncSession, seed_configs, clear_caches
 ):
     """Test getting active configs for different states"""
     # Test US_UT
-    ut_config = await ConfigLoader.get_active_assessment_config_by_state(
+    ut_configs = await ConfigLoader.get_active_assessment_configs_by_state(
         "US_UT", async_session
     )
-    assert ut_config is not None
-    assert ut_config.state_code == "US_UT"
+    assert ut_configs is not None
+    assert len(ut_configs) > 0
+    assert all(c.state_code == "US_UT" for c in ut_configs)
 
     # Test US_IX
-    ix_config = await ConfigLoader.get_active_assessment_config_by_state(
+    ix_configs = await ConfigLoader.get_active_assessment_configs_by_state(
         "US_IX", async_session
     )
-    assert ix_config is not None
-    assert ix_config.state_code == "US_IX"
+    assert ix_configs is not None
+    assert len(ix_configs) > 0
+    assert all(c.state_code == "US_IX" for c in ix_configs)
 
     # Test US_AZ
-    az_config = await ConfigLoader.get_active_assessment_config_by_state(
+    az_configs = await ConfigLoader.get_active_assessment_configs_by_state(
         "US_AZ", async_session
     )
-    assert az_config is not None
-    assert az_config.state_code == "US_AZ"
+    assert az_configs is not None
+    assert len(az_configs) > 0
+    assert all(c.state_code == "US_AZ" for c in az_configs)
 
 
 @pytest.mark.asyncio
-async def test_get_active_assessment_config_by_state_not_found(
+async def test_get_active_assessment_configs_by_state_not_found(
     async_session: AsyncSession, clear_caches
 ):
-    """Test that method returns None when no active config found for state"""
-    config = await ConfigLoader.get_active_assessment_config_by_state(
+    """Test that method returns empty list when no active configs found for state"""
+    configs = await ConfigLoader.get_active_assessment_configs_by_state(
         "US_CA", async_session
     )
 
-    assert config is None
+    assert configs is not None
+    assert isinstance(configs, list)
+    assert len(configs) == 0
 
 
 @pytest.mark.asyncio
-async def test_get_active_assessment_config_by_state_multiple_active_error(
+async def test_get_active_assessment_configs_by_state_multiple_configs(
     async_session: AsyncSession, clear_caches
 ):
-    """Test that method raises ValueError when multiple active configs found"""
+    """Test that method returns all active configs when multiple exist for a state"""
     # Load YAML from existing fixture files
     yaml_content = load_fixture_yaml(ASSESSMENT_FIXTURES_DIR / "UT-CCCI-v0.yaml")
 
     config1 = AssessmentConfig(
         state_code="US_CA",
-        code="CCCI",
+        code="ccci",
         version=0,
         display_name="Config 1",
         config_yaml=yaml_content,
@@ -449,7 +457,7 @@ async def test_get_active_assessment_config_by_state_multiple_active_error(
     )
     config2 = AssessmentConfig(
         state_code="US_CA",
-        code="FACR",
+        code="facr",
         version=0,
         display_name="Config 2",
         config_yaml=yaml_content,
@@ -459,55 +467,195 @@ async def test_get_active_assessment_config_by_state_multiple_active_error(
     async_session.add(config2)
     await async_session.commit()
 
-    # Should raise ValueError for multiple active configs
-    with pytest.raises(
-        ValueError, match="Multiple active assessment configs found for state US_CA"
-    ):
-        await ConfigLoader.get_active_assessment_config_by_state("US_CA", async_session)
+    # Should return all active configs
+    configs = await ConfigLoader.get_active_assessment_configs_by_state(
+        "US_CA", async_session
+    )
+    assert len(configs) == 2
+    assert all(c.state_code == "US_CA" for c in configs)
+    assert all(c.is_active is True for c in configs)
 
 
 @pytest.mark.asyncio
-async def test_database_has_one_active_config_per_state(
+async def test_get_active_assessment_configs_by_state_returns_latest_version(
     async_session: AsyncSession, clear_caches
 ):
-    """Test that the actual database (seeded by migrations) has exactly one active config per state.
+    """Test that method returns only the latest version when multiple active configs exist for same (state_code, code)"""
+    # Load YAML from existing fixture files
+    yaml_content = load_fixture_yaml(ASSESSMENT_FIXTURES_DIR / "UT-CCCI-v0.yaml")
 
-    This test does NOT seed any configs - it validates the real database state after migrations.
-    This is critical for the migration to work correctly - each state should have
-    exactly one active assessment config at any given time.
-    """
-    from collections import Counter
-
-    from sqlmodel import select
-
-    # Query all active configs from the actual database
-    result = await async_session.exec(
-        select(AssessmentConfig).where(AssessmentConfig.is_active)
+    # Create two active configs with same state_code and code but different versions
+    config_v1 = AssessmentConfig(
+        state_code="US_CA",
+        code="ccci",
+        version=1,
+        display_name="Config v1",
+        config_yaml=yaml_content,
+        is_active=True,
     )
-    active_configs = result.all()
+    config_v3 = AssessmentConfig(
+        state_code="US_CA",
+        code="ccci",
+        version=3,
+        display_name="Config v3",
+        config_yaml=yaml_content,
+        is_active=True,
+    )
+    async_session.add(config_v1)
+    async_session.add(config_v3)
+    await async_session.commit()
 
-    # Count active configs per state
-    states_count = Counter(config.state_code for config in active_configs)
-
-    # Verify each state has exactly one active config
-    for state, count in states_count.items():
-        assert count == 1, (
-            f"State {state} has {count} active configs, expected 1. "
-            f"This violates the constraint that each state should have exactly one active config. "
-            f"Check your migrations and config seeding logic."
-        )
-
-    # Note: We don't assert specific states exist here because the test DB might be empty initially.
-    # The important invariant is: IF a state has active configs, it should have exactly one.
+    # Should return only the latest version (v3)
+    configs = await ConfigLoader.get_active_assessment_configs_by_state(
+        "US_CA", async_session
+    )
+    assert len(configs) == 1
+    assert configs[0].state_code == "US_CA"
+    assert configs[0].code == "ccci"
+    assert configs[0].version == 3
 
 
 @pytest.mark.asyncio
-async def test_seed_configs_maintains_one_active_per_state(
+async def test_get_active_assessment_configs_by_state_returns_latest_per_code(
+    async_session: AsyncSession, clear_caches
+):
+    """Test that method returns latest version per code when state has multiple codes"""
+    # Load YAML from existing fixture files
+    yaml_content = load_fixture_yaml(ASSESSMENT_FIXTURES_DIR / "UT-CCCI-v0.yaml")
+
+    # Create multiple active configs for US_CA
+    # CCCI: v1 and v3 (should return v3)
+    # FACR: v0 and v2 (should return v2)
+    configs_to_add = [
+        AssessmentConfig(
+            state_code="US_CA",
+            code="ccci",
+            version=1,
+            display_name="CCCI v1",
+            config_yaml=yaml_content,
+            is_active=True,
+        ),
+        AssessmentConfig(
+            state_code="US_CA",
+            code="ccci",
+            version=3,
+            display_name="CCCI v3",
+            config_yaml=yaml_content,
+            is_active=True,
+        ),
+        AssessmentConfig(
+            state_code="US_CA",
+            code="facr",
+            version=0,
+            display_name="FACR v0",
+            config_yaml=yaml_content,
+            is_active=True,
+        ),
+        AssessmentConfig(
+            state_code="US_CA",
+            code="facr",
+            version=2,
+            display_name="FACR v2",
+            config_yaml=yaml_content,
+            is_active=True,
+        ),
+    ]
+    for config in configs_to_add:
+        async_session.add(config)
+    await async_session.commit()
+
+    # Should return latest version for each code
+    configs = await ConfigLoader.get_active_assessment_configs_by_state(
+        "US_CA", async_session
+    )
+    assert len(configs) == 2
+
+    # Sort by code for consistent assertions
+    configs_sorted = sorted(configs, key=lambda c: c.code)
+
+    # CCCI should be v3
+    assert configs_sorted[0].code == "ccci"
+    assert configs_sorted[0].version == 3
+
+    # FACR should be v2
+    assert configs_sorted[1].code == "facr"
+    assert configs_sorted[1].version == 2
+
+
+@pytest.mark.asyncio
+async def test_get_active_assessment_configs_by_state_different_states_no_interference(
+    async_session: AsyncSession, clear_caches
+):
+    """Test that same code in different states don't interfere with each other"""
+    # Load YAML from existing fixture files
+    yaml_content = load_fixture_yaml(ASSESSMENT_FIXTURES_DIR / "UT-CCCI-v0.yaml")
+
+    # Create active configs for US_CA and US_TX with same code but different versions
+    configs_to_add = [
+        # US_CA: CCCI v1 and v3 (should return v3)
+        AssessmentConfig(
+            state_code="US_CA",
+            code="ccci",
+            version=1,
+            display_name="CA CCCI v1",
+            config_yaml=yaml_content,
+            is_active=True,
+        ),
+        AssessmentConfig(
+            state_code="US_CA",
+            code="ccci",
+            version=3,
+            display_name="CA CCCI v3",
+            config_yaml=yaml_content,
+            is_active=True,
+        ),
+        # US_TX: CCCI v2 and v5 (should return v5)
+        AssessmentConfig(
+            state_code="US_TX",
+            code="ccci",
+            version=2,
+            display_name="TX CCCI v2",
+            config_yaml=yaml_content,
+            is_active=True,
+        ),
+        AssessmentConfig(
+            state_code="US_TX",
+            code="ccci",
+            version=5,
+            display_name="TX CCCI v5",
+            config_yaml=yaml_content,
+            is_active=True,
+        ),
+    ]
+    for config in configs_to_add:
+        async_session.add(config)
+    await async_session.commit()
+
+    # Check US_CA returns only v3
+    ca_configs = await ConfigLoader.get_active_assessment_configs_by_state(
+        "US_CA", async_session
+    )
+    assert len(ca_configs) == 1
+    assert ca_configs[0].state_code == "US_CA"
+    assert ca_configs[0].version == 3
+
+    # Check US_TX returns only v5
+    tx_configs = await ConfigLoader.get_active_assessment_configs_by_state(
+        "US_TX", async_session
+    )
+    assert len(tx_configs) == 1
+    assert tx_configs[0].state_code == "US_TX"
+    assert tx_configs[0].version == 5
+
+
+@pytest.mark.asyncio
+async def test_seed_configs_maintains_one_active_per_state_code_pair(
     async_session: AsyncSession, seed_configs, clear_caches
 ):
-    """Test that seed_configs fixture maintains the one-active-per-state constraint.
+    """Test that seed_configs fixture maintains the one-active-per-(state_code, code) constraint.
 
-    After seeding test configs, verify each state still has exactly one active config.
+    After seeding test configs, verify each (state_code, code) pair has exactly one active config.
+    States can have multiple active configs with different codes.
     """
     from collections import Counter
 
@@ -519,24 +667,36 @@ async def test_seed_configs_maintains_one_active_per_state(
     )
     active_configs = result.all()
 
-    # Count active configs per state
-    states_count = Counter(config.state_code for config in active_configs)
+    # Count active configs per (state_code, code) pair
+    state_code_pairs_count = Counter(
+        (config.state_code, config.code) for config in active_configs
+    )
 
-    # Verify each state has exactly one active config
-    for state, count in states_count.items():
+    # Verify each (state_code, code) pair has exactly one active config
+    for (state, code), count in state_code_pairs_count.items():
         assert count == 1, (
-            f"State {state} has {count} active configs after seeding, expected 1. "
-            f"The seed_configs fixture should deactivate existing configs before seeding."
+            f"State-code pair ({state}, {code}) has {count} active configs after seeding, expected 1. "
+            f"The seed_configs fixture should ensure only one version is active per (state_code, code) pair."
         )
 
-    # Verify we have configs for the expected test states
-    assert "US_UT" in states_count, "Expected US_UT to have an active config"
-    assert "US_IX" in states_count, "Expected US_IX to have an active config"
-    assert "US_AZ" in states_count, "Expected US_AZ to have an active config"
+    # Verify we have configs for the expected test state-code pairs (codes are normalized to lowercase)
+    active_pairs = set(state_code_pairs_count.keys())
+    assert (
+        "US_UT",
+        "ccci",
+    ) in active_pairs, "Expected US_UT/ccci to have an active config"
+    assert (
+        "US_IX",
+        "facr",
+    ) in active_pairs, "Expected US_IX/facr to have an active config"
+    assert (
+        "US_AZ",
+        "default",
+    ) in active_pairs, "Expected US_AZ/default to have an active config"
 
 
 @pytest.mark.asyncio
-async def test_get_active_assessment_config_by_state_ignores_inactive(
+async def test_get_active_assessment_configs_by_state_ignores_inactive(
     async_session: AsyncSession, clear_caches, seed_configs
 ):
     """Test that method only returns active configs"""
@@ -555,8 +715,10 @@ async def test_get_active_assessment_config_by_state_ignores_inactive(
     async_session.add(inactive_config)
     await async_session.commit()
 
-    # Should return None (no active configs)
-    config = await ConfigLoader.get_active_assessment_config_by_state(
+    # Should return empty list (no active configs)
+    configs = await ConfigLoader.get_active_assessment_configs_by_state(
         "TEST", async_session
     )
-    assert config is None
+    assert configs is not None
+    assert isinstance(configs, list)
+    assert len(configs) == 0

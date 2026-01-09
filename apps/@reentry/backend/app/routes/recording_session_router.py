@@ -4,7 +4,6 @@ Recording session router for managing audio recording sessions.
 
 import base64
 import structlog
-from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -14,15 +13,10 @@ from sqlmodel import select
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.config import settings
 from app.core.db import AsyncSession, get_session
-from app.crud.intake import (
-    create_intake,
-    get_intake_by_client_pseudo_id,
-    get_intake_by_id,
-)
+from app.crud.intake import get_intake_by_id, get_intake_with_address_and_recording
 from app.crud.recording_session import (
     create_recording_session,
     get_recording_session_by_id,
-    get_recording_sessions_by_client_pseudo_id,
     update_status,
 )
 from app.models.base import IntakeType
@@ -49,28 +43,26 @@ router = APIRouter()
 
 
 @router.get(
-    "/sessions/clients/{client_pseudo_id}",
-    response_model=List[RecordingSessionResponse],
-    summary="Get recording sessions for client",
-    description="Retrieve all recording sessions associated with a specific client",
+    "/by_intake/{intake_id}",
+    response_model=RecordingSessionResponse | None,
+    summary="Get recording sessions for an intake",
+    description="Retrieve all recording sessions associated with an intake",
     tags=["Recording Sessions"],
 )
 async def get_client_recording_sessions(
-    client_pseudo_id: str,
+    intake_id: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
-) -> List[RecordingSessionResponse]:
+) -> RecordingSessionResponse | None:
+    intake = await get_intake_with_address_and_recording(session, intake_id)
+    if not intake:
+        raise HTTPException(status_code=404, detail="Recording session not found")
     check_access(
-        client_pseudo_id=client_pseudo_id, pseudonymized_staff_id=pseudonymized_id
+        client_pseudo_id=intake.client_pseudo_id,
+        pseudonymized_staff_id=pseudonymized_id,
     )
-    recording_sessions = await get_recording_sessions_by_client_pseudo_id(
-        session, client_pseudo_id
-    )
-
-    logger.info(
-        f"Retrieved {len(recording_sessions)} recording sessions for client {client_pseudo_id}"
-    )
-    return recording_sessions
+    logger.info(f"Retrieved recording session for intake {intake_id}")
+    return intake.recording_session
 
 
 @router.post(
@@ -85,25 +77,21 @@ async def create_new_recording_session(
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ) -> RecordingSessionResponse:
+    intake = await get_intake_by_id(session, request.intake_id)
+
+    # Check if intake exists for the client, create if not
+    if not intake:
+        raise HTTPException(status_code=400, detail="Intake not found")
+
     check_access(
-        client_pseudo_id=request.client_pseudo_id,
+        client_pseudo_id=intake.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
     )
 
-    # Check if intake exists for the client, create if not
-    intake = await get_intake_by_client_pseudo_id(session, request.client_pseudo_id)
-    if not intake:
-        intake = await create_intake(
-            session, request.client_pseudo_id, IntakeType.TRANSCRIPTION
-        )
-    if not intake:
+    if intake.intake_type is not IntakeType.TRANSCRIPTION:
         raise HTTPException(
-            status_code=500, detail="Failed to retrieve or create intake"
+            status_code=422, detail="This intake can not receive a recording session"
         )
-
-    # Refresh intake to access relationships
-    intake = await get_intake_by_id(session, intake.id)
-
     if intake.recording_session is not None:
         raise HTTPException(
             status_code=400, detail="This intake already has a recording session"
@@ -111,7 +99,7 @@ async def create_new_recording_session(
 
     # Create the new recording session linked to the intake
     recording_session = RecordingSession(
-        client_pseudo_id=request.client_pseudo_id,
+        client_pseudo_id=intake.client_pseudo_id,
         status=RecordingStatus.CREATED,
         intake_id=intake.id,
     )
@@ -124,7 +112,7 @@ async def create_new_recording_session(
     await session.refresh(created_session)
 
     logger.info(
-        f"Recording session {created_session.id} created for client {request.client_pseudo_id}"
+        f"Recording session {created_session.id} created for intake_id {request.intake_id} client {intake.client_pseudo_id}"
     )
 
     return created_session

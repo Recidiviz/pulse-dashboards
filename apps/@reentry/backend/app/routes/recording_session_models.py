@@ -32,7 +32,7 @@ class RecordingSessionResponse(ORMResponse):
 
 
 class CreateRecordingSessionRequest(BaseModel):
-    client_pseudo_id: str
+    intake_id: UUID
 
 
 class UpdateRecordingSessionStatusRequest(BaseModel):

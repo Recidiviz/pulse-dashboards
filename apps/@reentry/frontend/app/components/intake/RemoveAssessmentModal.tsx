@@ -26,6 +26,7 @@ interface RemoveAssessmentModalProps {
   onConfirm: () => void;
   assessmentName?: string;
   userName?: string;
+  isDeletingInProgress: boolean;
 }
 
 export default function RemoveAssessmentModal({
@@ -34,6 +35,7 @@ export default function RemoveAssessmentModal({
   onConfirm,
   assessmentName,
   userName,
+  isDeletingInProgress,
 }: RemoveAssessmentModalProps) {
   const title = useMemo(() => {
     return `Remove ${assessmentName}`;
@@ -57,9 +59,13 @@ export default function RemoveAssessmentModal({
           <PrimaryButton buttonText="No, go back" onClick={onClose} />
 
           <PrimaryButton
-            buttonText={`Yes, remove assessment`}
+            //buttonText={`Yes, remove assessment`}
+            buttonText={
+              isDeletingInProgress ? "Removing..." : "Yes, remove assessment"
+            }
             className="flex-1 h-8 px-4 py-2 bg-[#013830] rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
             onClick={onConfirm}
+            disabled={isDeletingInProgress}
           />
         </div>
       </>

@@ -1,36 +1,25 @@
 import structlog
-from datetime import date, datetime, timezone
+from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi_pagination import Page
 from pydantic import BaseModel
-from sqlalchemy.exc import DBAPIError
-from sqlmodel import select
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.config import settings
 from app.core.db import AsyncSession, get_session
-from app.crud.assessment import get_assessments_by_client_pseudo_id
-from app.crud.client import (
-    compute_frontend_status,
-    compute_processing_status_by_intake_id,
-    get_client_status_updates,
-    get_paginated_client_list,
-    get_processing_status,
+from app.crud.address import get_latest_address_client_pseudo_id
+from app.crud.client import ClientSort, get_paginated_client_list
+from app.crud.client import reset_client_data as crud_reset_client_data
+from app.crud.intake import (
+    get_all_intakes_by_client_pseudo_id,
 )
-from app.crud.client import (
-    reset_client_data as crud_reset_client_data,
-)
-from app.crud.intake import get_intake_by_id
-from app.crud.plan import create_plan, get_plan_by_client_pseudo_id, retry_plan_creation
-from app.models.execution import Execution, ExecutionStatus
-from app.models.intake import Intake
-from app.models.models import Plan
-from app.models.recording import RecordingSession
 from app.routes.execution_router import ExecutionResponse
 from app.routes.shared_models import (
+    ClientAddressResponse,
     ClientRecordResponse,
     ClientResponse,
+    IntakeHistoryResponse,
     ProcessingStatus,
 )
 from app.services.client_data.exceptions import (
@@ -38,6 +27,7 @@ from app.services.client_data.exceptions import (
     ClientNotFoundError,
 )
 from app.services.client_data.queries import Queries
+from app.utils.config_loader import ConfigLoader
 from app.utils.feature_flags import is_feature_enabled
 from app.utils.permission_utils import check_access
 
@@ -58,27 +48,21 @@ class ClientStatusResponse(BaseModel):
     in_progress: list[ClientStatusUpdate]
 
 
-class ProcessingStatusRequest(BaseModel):
-    staff_pseudo_id: str
-
-
-class ProcessingStatusResponse(BaseModel):
-    processing_status: str
-    frontend_status: str
-
-
+# TODO SORT
+# TODO STATUS FILTER
 # Client list
 @router.get(
     "/",
     response_model=Page[ClientResponse],
     summary="List Clients",
     description="Retrieve a paginated list of clients. If a user is authenticated, only show clients assigned to them.",
+    tags=["Client Records"],
 )
 async def router_list_clients(
     session: AsyncSession = Depends(get_session),
     page: int = 1,
     size: int = 20,
-    sort_by: str | None = None,  # "name" or "status"
+    sort_by: None | ClientSort = None,
     sort_order: str = "asc",  # "asc" or "desc"
     search: str | None = None,  # Search by client name
     status_filter: str | None = None,  # Filter by status
@@ -101,52 +85,32 @@ async def router_list_clients(
     )
 
 
-@router.get(
-    "/status",
-    response_model=ClientStatusResponse,
-    summary="Get Client Status Updates",
-    description="Retrieve status updates for clients that are currently in progress processing. Returns only clients with in_progress status to minimize database load.",
-)
-async def get_client_status_updates_route(
-    session: AsyncSession = Depends(get_session),
-    pseudonymized_id: str = Depends(get_pseudonymized_id),
-):
-    # Get status updates for in-progress clients
-    return await get_client_status_updates(session, pseudonymized_id)
+# TODO STATUS FILTER maybe update - in any case test
+# @router.get(
+#     "/status",
+#     response_model=ClientStatusResponse,
+#     summary="Get Client Status Updates",
+#     description="Retrieve status updates for clients that are currently in progress processing. Returns only clients with in_progress status to minimize database load.",
+# )
+# async def get_client_status_updates_route(
+#     session: AsyncSession = Depends(get_session),
+#     pseudonymized_id: str = Depends(get_pseudonymized_id),
+# ):
+#     # Get status updates for in-progress clients
+#     return await get_client_status_updates(session, pseudonymized_id)
 
 
 @router.get(
-    "/{intake_id}/intake-general-resources-status",
-    response_model=ProcessingStatusResponse,
-    summary="Get Intake General Resources Processing Status",
-    description="Retrieve the processing status for a specific intake by its ID.",
-)
-async def get_intake_status_for_client(
-    intake_id: str,
-    session: AsyncSession = Depends(get_session),
-):
-    intake = await get_intake_by_id(session, intake_id)
-    if not intake:
-        raise HTTPException(status_code=404, detail="Intake not found")
-    intake_processing_status = await compute_processing_status_by_intake_id(
-        session, intake_id
-    )
-    frontend_status = compute_frontend_status(intake.status, intake_processing_status)
-    return ProcessingStatusResponse(
-        processing_status=intake_processing_status, frontend_status=frontend_status
-    )
-
-
-@router.get(
-    "/{client_pseudo_id}",
-    response_model=ClientRecordResponse,
-    summary="Get Client Record",
-    description="Retrieve an Client record by its pseudonimyzed id (client_pseudo_id)",
+    "/{client_pseudo_id}/latest_address",
+    response_model=ClientAddressResponse,
+    summary="Get Client latest known address",
+    description="Retrieve the latest address submission for a client",
     tags=["Client Records"],
 )
-async def get_client_record(
+async def get_client_latest_address(
     client_pseudo_id: str,
     request: Request,
+    session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
     # Get client data with staff verification
@@ -156,360 +120,92 @@ async def get_client_record(
     )
     if record is None:
         raise HTTPException(status_code=404, detail="Client Record not found")
+
+    # Get address from latest completed intake
+    latest_address = await get_latest_address_client_pseudo_id(
+        session, client_pseudo_id
+    )
+
+    if not latest_address:
+        return None
+
+    return latest_address
+
+
+@router.get(
+    "/{client_pseudo_id}",
+    response_model=ClientRecordResponse,
+    summary="Get Client Record",
+    description="Retrieve a Client record by its pseudonimyzed id (client_pseudo_id)",
+    tags=["Client Records"],
+)
+async def get_client_record(
+    client_pseudo_id: str,
+    request: Request,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+):
+    # Get client data with staff verification
+    record = Queries.get_client_data_by_pseudonymized_id(
+        pseudonymized_client_id=client_pseudo_id,
+        pseudonymized_staff_id=pseudonymized_id,
+    )
+    if record is None:
+        raise HTTPException(status_code=404, detail="Client Record not found")
+
     return record
 
 
-async def acquire_intake_lock(session: AsyncSession, client_pseudo_id: str):
-    try:
-        stmt = (
-            select(Intake)
-            .where(Intake.client_pseudo_id == client_pseudo_id)
-            .with_for_update(nowait=True)
-        )
-        result = await session.execute(stmt)
-        intake = result.scalar_one_or_none()
-        return intake
-    except DBAPIError as e:
-        # Handle LockNotAvailableError - another retry operation is in progress
-        if "LockNotAvailableError" in str(e) or "could not obtain lock" in str(e):
-            raise HTTPException(
-                status_code=409,
-                detail="A retry operation is already in progress for this client",
-            )
-        raise
-
-
-@router.post(
-    "/{client_pseudo_id}/retry-processing",
-    response_model=ExecutionResponse,
-    summary="Retry Processing",
-    description="Intelligently retry processing for a client based on current state. Determines whether to retry assessments, plan generation, or both. Handles failed and stuck executions.",
-    tags=["Client Processing"],
+@router.get(
+    "/{client_pseudo_id}/intakes",
+    response_model=list[IntakeHistoryResponse],
+    summary="Get Client Intake History",
+    description="Retrieve all intakes for a client, ordered by creation date (newest first)",
+    tags=["Client Records"],
 )
-async def retry_processing(
+async def get_client_intakes(
     client_pseudo_id: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
-    from app.crud.client import is_execution_stuck
-    from app.crud.execution import delete_execution_by_id
+    """
+    Get all intakes for a client.
 
+    Returns intake history with assessment config information to help case managers
+    understand which assessments were used for each intake.
+    """
     check_access(client_pseudo_id, pseudonymized_id)
 
-    # Acquire row-level lock on intake to prevent race conditions
-    # This ensures only one concurrent retry operation proceeds at a time per client
-    intake = await acquire_intake_lock(session, client_pseudo_id)
+    intakes = await get_all_intakes_by_client_pseudo_id(session, client_pseudo_id)
 
-    if not intake:
-        raise HTTPException(status_code=400, detail="No retryable operations found")
+    if not intakes:
+        return []
 
-    # Check for failed or stuck recording/transcription
-    # Also lock the recording session if it exists to prevent race conditions
-    recording = None
-    if intake.recording_session:
-        intake = await acquire_intake_lock(session, client_pseudo_id)
-        try:
-            stmt = (
-                select(RecordingSession)
-                .where(RecordingSession.intake_id == intake.id)
-                .with_for_update(nowait=True)
-            )
-            result = await session.execute(stmt)
-            recording = result.scalar_one_or_none()
-        except DBAPIError as e:
-            if "LockNotAvailableError" in str(e) or "could not obtain lock" in str(e):
-                raise HTTPException(
-                    status_code=409,
-                    detail="A retry operation is already in progress for this client",
-                )
-            raise
-
-    if recording:
-        should_retry_recording = False
-        retry_reason = None
-
-        # Check if recording execution is stuck or failed
-        if recording.execution:
-            if recording.execution.status == "failed":
-                should_retry_recording = True
-                retry_reason = f"failed (status={recording.execution.status})"
-            elif is_execution_stuck(recording.execution):
-                should_retry_recording = True
-                retry_reason = f"stuck (status={recording.execution.status}, updated_at={recording.execution.updated_at})"
-
-        # Check if recording status is error
-        if recording.status == "error":
-            should_retry_recording = True
-            if not retry_reason:
-                retry_reason = "recording status=error"
-
-        if should_retry_recording:
-            # Delete the failed/stuck recording execution first
-            execution_id = recording.execution_id
-            if execution_id:
-                logger.info(
-                    f"Retrying execution for client {client_pseudo_id}, "
-                    f"deleted execution {execution_id} (type=recording_session, reason={retry_reason})"
-                )
-                recording.execution = None
-                recording.execution_id = None
-                session.add(recording)
-                await delete_execution_by_id(session, execution_id)
-            else:
-                logger.info(
-                    f"Retrying execution for client {client_pseudo_id}, "
-                    f"no execution to delete (type=recording_session, reason={retry_reason})"
-                )
-
-            # Schedule new recording processing
-            from app.tasks.recording import process_recording_task
-
-            new_execution = Execution(
-                status="pending",
-                table_name="recording_session",
-                table_entity_id=recording.id,
-            )
-            session.add(new_execution)
-            await session.flush()  # Get the ID without committing
-
-            # Dispatch task
-            task = await process_recording_task.kiq(
-                execution_id=new_execution.id,
-                recording_session_id=recording.id,
-            )
-            new_execution.task_id = str(task.task_id)
-            recording.execution_id = new_execution.id
-            recording.status = "processing"
-            session.add(new_execution)
-            session.add(recording)
-
-            # Single commit at the end
-            await session.commit()
-            await session.refresh(new_execution)
-
-            return new_execution
-
-        if recording.execution and recording.execution.status in [
-            ExecutionStatus.PENDING,
-            ExecutionStatus.IN_PROGRESS,
-        ]:
-            raise HTTPException(status_code=400, detail="No retryable operations found")
-    if not intake or intake.status != "completed":
-        raise HTTPException(status_code=400, detail="No retryable operations found")
-
-    try:
-        from app.models.assessment import Assessment
-
-        stmt = (
-            select(Assessment)
-            .where(Assessment.client_pseudo_id == client_pseudo_id)
-            .with_for_update(nowait=True)
+    # Format response with assessment config info
+    response = []
+    for intake in intakes:
+        plan_config = await ConfigLoader.load_plan_config(
+            intake.assessment_config_id, session
         )
-        await session.execute(stmt)
-    except DBAPIError as e:
-        if "could not obtain lock" in str(e) or "LockNotAvailableError" in str(e):
-            raise HTTPException(
-                status_code=409,
-                detail=f"A retry operation is already in progress for client {client_pseudo_id}",
+        response.append(
+            IntakeHistoryResponse(
+                id=intake.id,
+                created_at=intake.created_at,
+                updated_at=intake.updated_at,
+                status=intake.status.value,
+                intake_type=intake.intake_type,
+                assessment_config_code=intake.assessment_config.code
+                if intake.assessment_config
+                else None,
+                assessment_config_display_name=intake.assessment_config.display_name
+                if intake.assessment_config
+                else None,
+                completed_at=intake.completed_at,
+                assessment_config_outputs_action_plan_activated=plan_config is not None,
             )
-        raise
-
-    # Get current assessments and plan
-    assessments = await get_assessments_by_client_pseudo_id(session, client_pseudo_id)
-
-    # Check for failed or stuck assessments that need to be retried
-    if assessments:
-        for assessment in assessments:
-            # Check if assessment failed or is stuck
-            if assessment.status == "failed":
-                retry_reason = f"failed (status={assessment.status})"
-                execution_id = assessment.execution_id
-                logger.info(
-                    f"Retrying execution for client {client_pseudo_id}, "
-                    f"deleted execution {execution_id} (type=assessment, reason={retry_reason})"
-                )
-
-                # Delete the failed/stuck assessment first (due to foreign key constraint)
-                await session.delete(assessment)
-
-                # Then delete the execution
-                if execution_id:
-                    await delete_execution_by_id(session, execution_id)
-
-                # Schedule new assessment
-                execution = await intake.schedule_assessment(session)
-
-                # Single commit at the end
-                await session.commit()
-                await session.refresh(intake)
-                return execution
-            elif assessment.execution and is_execution_stuck(assessment.execution):
-                execution_id = assessment.execution_id
-                retry_reason = f"stuck (status={assessment.execution.status}, updated_at={assessment.execution.updated_at})"
-                logger.info(
-                    f"Retrying execution for client {client_pseudo_id}, "
-                    f"deleted execution {execution_id} (type=assessment, reason={retry_reason})"
-                )
-
-                # Delete the failed/stuck assessment first (due to foreign key constraint)
-                await session.delete(assessment)
-
-                # Then delete the execution
-                if execution_id:
-                    await delete_execution_by_id(session, execution_id)
-
-                # Schedule new assessment
-                execution = await intake.schedule_assessment(session)
-
-                # Single commit at the end
-                await session.commit()
-                await session.refresh(intake)
-                return execution
-
-    # Check if we should retry assessments (no assessments exist)
-    if not assessments:
-        logger.info(
-            f"Retrying execution for client {client_pseudo_id}, "
-            f"no execution to delete (type=assessment, reason=missing assessment)"
         )
-        # Use intake.schedule_assessment to start assessment
-        execution = await intake.schedule_assessment(session)
 
-        # Single commit at the end
-        await session.commit()
-        await session.refresh(intake)
-        return execution
-
-    if any(a.status in ["pending", "in_progress"] for a in assessments):
-        raise HTTPException(status_code=400, detail="No retryable operations found")
-
-    plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
-
-    # Check for stuck or failed plan
-    if (
-        not plan
-        or not plan.create_execution
-        or plan.create_status == "failed"
-        or plan.create_execution.status == "failed"
-        or is_execution_stuck(plan.create_execution)
-    ):
-        if not plan:
-            logger.info(
-                f"Retrying execution for client {client_pseudo_id}, "
-                f"no execution to delete (type=plan, reason=missing plan)"
-            )
-            # Create new plan (only if we have completed assessments and no plan)
-            plan_obj = Plan(client_pseudo_id=client_pseudo_id)
-            plan = await create_plan(session, plan_obj)
-            execution = await plan.schedule_initial_creation(session)
-
-            # Single commit at the end
-            await session.commit()
-            await session.refresh(plan)
-            return execution
-        elif not plan.create_execution:
-            logger.info(
-                f"Retrying execution for client {client_pseudo_id}, "
-                f"no execution to delete (type=plan, reason=missing execution)"
-            )
-            execution = await plan.schedule_initial_creation(session)
-
-            # Single commit at the end
-            await session.commit()
-            await session.refresh(plan)
-            return execution
-        else:
-            # Retry failed/stuck plan creation
-            execution_id = plan.create_execution_id
-            if (
-                plan.create_status == "failed"
-                or plan.create_execution.status == "failed"
-            ):
-                retry_reason = f"failed (status={plan.create_execution.status})"
-            else:
-                retry_reason = f"stuck (status={plan.create_execution.status}, updated_at={plan.create_execution.updated_at})"
-
-            logger.info(
-                f"Retrying execution for client {client_pseudo_id}, "
-                f"deleted execution {execution_id} (type=plan, reason={retry_reason})"
-            )
-            execution = await retry_plan_creation(session, plan)
-
-            # Single commit at the end
-            await session.commit()
-            await session.refresh(plan)
-            return execution
-
-    # Check for stuck or failed plan generations
-    if plan and plan.create_status == "completed":
-        from app.crud.plan_generation import get_gen_by_plan_id_with_executions
-        from app.models.models import PlanGeneration
-
-        generations = await get_gen_by_plan_id_with_executions(session, plan.id)
-        if generations:
-            # Get the latest generation by created_at
-            sorted_gens = sorted(
-                generations,
-                key=lambda x: x.created_at or datetime.min.replace(tzinfo=timezone.utc),
-                reverse=True,
-            )
-            latest_gen = sorted_gens[0] if sorted_gens else None
-
-            if latest_gen and latest_gen.execution:
-                if latest_gen.execution.status == "failed" or is_execution_stuck(
-                    latest_gen.execution
-                ):
-                    execution_id = latest_gen.execution_id
-                    if latest_gen.execution.status == "failed":
-                        retry_reason = f"failed (status={latest_gen.execution.status})"
-                    else:
-                        retry_reason = f"stuck (status={latest_gen.execution.status}, updated_at={latest_gen.execution.updated_at})"
-
-                    logger.info(
-                        f"Retrying execution for client {client_pseudo_id}, "
-                        f"deleted execution {execution_id} (type=plan_generation, reason={retry_reason})"
-                    )
-
-                    # Copy parameters from stuck/failed generation for retry
-                    prompt = latest_gen.prompt
-                    resource_to_add_content = latest_gen.resource_to_add_content
-                    print(latest_gen)
-                    resource_to_remove_id = latest_gen.resource_to_remove_id
-
-                    # Create new generation with same parameters (keep old one for audit trail)
-                    new_gen = PlanGeneration(
-                        plan_id=plan.id,
-                        prompt=prompt,
-                        resource_to_add_content=resource_to_add_content,
-                        resource_to_remove_id=resource_to_remove_id,
-                        force_generation=latest_gen.force_generation,
-                    )
-                    session.add(new_gen)
-                    await session.flush()  # Get the ID without committing
-
-                    # Schedule the new generation
-                    execution = await new_gen.schedule_execution(session)
-
-                    # Single commit at the end
-                    await session.commit()
-                    return execution
-
-    # Fallback: no current executions found
-    raise HTTPException(status_code=400, detail="No retryable operations found")
-
-
-@router.post(
-    "/processing-status",
-    response_model=dict[str, ProcessingStatus],
-    summary="Get Intake Processing Status",
-    description="Retrieve intake processing status for all clients belonging to the provided staff pseudonymized id.",
-    tags=["Client Intake Processing Status"],
-)
-async def get_processing_status_route(
-    request: ProcessingStatusRequest,
-    session: AsyncSession = Depends(get_session),
-):
-    return await get_processing_status(session, request.staff_pseudo_id)
+    return response
 
 
 class ClientResetResponse(BaseModel):
@@ -522,6 +218,7 @@ class ClientResetResponse(BaseModel):
     response_model=ClientResetResponse,
     summary="Reset Client Data",
     description="Deletes all intake data for a client.",
+    tags=["Client Records"],
 )
 async def reset_client_data(
     client_pseudo_id: str,

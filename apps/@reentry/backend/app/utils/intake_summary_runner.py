@@ -1,17 +1,11 @@
 import uuid
 from typing import List, Tuple
 
-from pydantic import BaseModel
-
 from app.core.data_config.output_configs.output_config import (
     IntakeSummaryConfigFile,
 )
 from app.models.assessment import Assessment
 from app.utils.llm_agent_qa import LLMAgentQA
-
-
-class SummaryResponse(BaseModel):
-    summary: str
 
 
 def format_assessments_list(assessments: List[Assessment]) -> str:

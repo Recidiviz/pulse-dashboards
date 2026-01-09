@@ -35,7 +35,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
 
   const { data, error, isLoading } = $api.useQuery(
     "get",
-    "/transcriptions/{recording_session_id}/transcription",
+    "/transcription/{recording_session_id}/transcription",
     {
       params: {
         path: {
@@ -102,7 +102,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
     return (
       <Box p={4}>
         <Typography variant="h6" color="textSecondary">
-          No transcription available
+          Insufficient recording content to generate outputs
         </Typography>
       </Box>
     );

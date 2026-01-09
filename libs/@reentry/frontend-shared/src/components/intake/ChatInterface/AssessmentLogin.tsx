@@ -20,26 +20,23 @@
 import type React from "react";
 import { useState } from "react";
 
-import {
-  ASSESSMENT_LOGIN_STATES,
-  type AssessmentLoginStateCode,
-} from "../../../constants";
+import { getStateLabel } from "../../../constants/states";
 import { useApplicationContext } from "../../../contexts/ApplicationContext";
 import { getUserFacingErrorMessage } from "../../../utils/errors";
 import { showSuccessToast } from "../../../utils/toast";
 import { Dropdown } from "../../inputs";
 
+type AssessmentLoginMode = "dob+token" | "dob+fullname" | "state+docid";
+
 interface AssessmentLoginPageProps {
-  token?: string | null;
-  mode: "dob" | "pseudoDob" | "nonPseudoId" | "stateDocId";
-  pseudonymized_id?: string | null;
+  urlToken?: string | null;
+  mode: AssessmentLoginMode;
   onConfirmation: () => void;
 }
 
 export function AssessmentLoginPage({
-  token,
+  urlToken,
   mode,
-  pseudonymized_id,
   onConfirmation,
 }: AssessmentLoginPageProps) {
   const { $api, Image, analytics } = useApplicationContext();
@@ -48,30 +45,40 @@ export function AssessmentLoginPage({
   const [year, setYear] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [stateCode, setStateCode] = useState<AssessmentLoginStateCode | "">("");
+  const [stateCode, setStateCode] = useState<string>("");
   const [docId, setDocId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   //const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
-  const { mutateAsync: verifyDobMutation } = $api.useMutation(
-    "post",
-    "/intake/client/verify-dob",
+  // Fetch available state codes from the backend
+  const { data: stateCodesData, isLoading: isLoadingStates } = $api.useQuery(
+    "get",
+    "/public/intake-config/conversation-states",
+    {
+      refetchOnWindowFocus: false,
+    }
   );
 
-  const { mutateAsync: verifyPseudoDobMutation } = $api.useMutation(
+  const availableStates =
+    stateCodesData?.state_codes.map((code) => ({
+      value: code,
+      label: getStateLabel(code),
+    })) ?? [];
+
+  const { mutateAsync: verifyDobFullnameMutation } = $api.useMutation(
     "post",
-    "/intake/internal/{pseudonymized_id}",
+    "/external/client/verify/dob+fullname",
   );
 
-  const { mutateAsync: verifyNonPseudoIdMutation } = $api.useMutation(
+  const { mutateAsync: verifyDobUrlTokenMutation } = $api.useMutation(
     "post",
-    "/intake/internal/verify/non-pseudo-id",
+    "/external/client/verify/dob+urltoken",
   );
 
   const { mutateAsync: verifyStateDocIdMutation } = $api.useMutation(
     "post",
-    "/intake/internal/verify/state-doc-id",
+    "/external/client/verify/state+docid",
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -80,74 +87,80 @@ export function AssessmentLoginPage({
     }
   };
 
-  const handleContinue = async () => {
-    if (mode === "stateDocId") {
-      if (!stateCode) {
-        setError("Please select your state");
-        return;
-      }
-      if (!docId.trim()) {
-        setError("Please enter your DOC ID");
-        return;
-      }
+  const validateStateDocId = () => {
+    if (!stateCode) {
+      setError("Please select your state");
+      return;
     }
-
-    if (mode === "nonPseudoId") {
-      /* pending to define if recaptcha is needed */
-      // if (!recaptchaToken) {
-      // 	setError("Please complete the CAPTCHA.");
-      // 	return;
-      // }
-
-      if (!firstName.trim()) {
-        setError("Please enter your first name");
-        return;
-      }
-      if (!lastName.trim()) {
-        setError("Please enter your last name");
-        return;
-      }
+    if (!docId.trim()) {
+      setError("Please enter your DOC ID");
+      return;
     }
+  };
 
-    if (mode === "pseudoDob") {
-      if (!lastName.trim()) {
-        setError("Please enter your last name");
-        return;
-      }
-    }
-
-    if (mode !== "stateDocId" && (!day || !month || !year)) {
+  const validateDob = () => {
+    if (!day || !month || !year) {
       setError("Please enter your complete date of birth");
       return;
     }
+    if (
+      !/^\d{1,2}$/.test(day) ||
+      Number.parseInt(day) < 1 ||
+      Number.parseInt(day) > 31
+    ) {
+      setError("Please enter a valid day (1-31)");
+      return;
+    }
 
-    if (mode !== "stateDocId") {
-      if (
-        !/^\d{1,2}$/.test(day) ||
-        Number.parseInt(day) < 1 ||
-        Number.parseInt(day) > 31
-      ) {
-        setError("Please enter a valid day (1-31)");
-        return;
-      }
+    if (
+      !/^\d{1,2}$/.test(month) ||
+      Number.parseInt(month) < 1 ||
+      Number.parseInt(month) > 12
+    ) {
+      setError("Please enter a valid month (1-12)");
+      return;
+    }
 
-      if (
-        !/^\d{1,2}$/.test(month) ||
-        Number.parseInt(month) < 1 ||
-        Number.parseInt(month) > 12
-      ) {
-        setError("Please enter a valid month (1-12)");
-        return;
-      }
+    if (
+      !/^\d{4}$/.test(year) ||
+      Number.parseInt(year) < 1900 ||
+      Number.parseInt(year) > new Date().getFullYear()
+    ) {
+      setError("Please enter a valid year");
+      return;
+    }
+  };
 
-      if (
-        !/^\d{4}$/.test(year) ||
-        Number.parseInt(year) < 1900 ||
-        Number.parseInt(year) > new Date().getFullYear()
-      ) {
-        setError("Please enter a valid year");
-        return;
-      }
+  const validateFullname = () => {
+    if (!firstName.trim()) {
+      setError("Please enter your first name");
+      return;
+    }
+    if (!lastName.trim()) {
+      setError("Please enter your last name");
+      return;
+    }
+  };
+
+  const handleContinue = async () => {
+    /* pending to define if recaptcha is needed */
+    // if (!recaptchaToken) {
+    // 	setError("Please complete the CAPTCHA.");
+    // 	return;
+    // }
+    switch (mode) {
+      case "state+docid":
+        validateStateDocId();
+        break;
+      case "dob+fullname":
+        validateFullname();
+        validateDob();
+        break;
+      case "dob+token":
+        validateDob();
+        break;
+      default:
+        console.error("assessment mode error");
     }
 
     setIsLoading(true);
@@ -160,25 +173,17 @@ export function AssessmentLoginPage({
       const paddedDay = day.padStart(2, "0");
       const isoDateString = `${year}-${paddedMonth}-${paddedDay}`;
 
-      let response: Awaited<ReturnType<typeof verifyDobMutation>>;
+      let response: Awaited<ReturnType<typeof verifyDobFullnameMutation>>;
 
-      if (mode === "pseudoDob" && pseudonymized_id) {
-        response = await verifyPseudoDobMutation({
-          params: { path: { pseudonymized_id } },
+      if (mode === "dob+token" && urlToken) {
+        response = await verifyDobUrlTokenMutation({
           body: {
-            date_of_birth: isoDateString,
-            last_name: lastName.trim(),
-          },
-        });
-      } else if (mode === "dob" && token) {
-        response = await verifyDobMutation({
-          body: {
-            token_from_url: token,
+            token_from_url: urlToken,
             date_of_birth: isoDateString,
           },
         });
-      } else if (mode === "nonPseudoId") {
-        response = await verifyNonPseudoIdMutation({
+      } else if (mode === "dob+fullname") {
+        response = await verifyDobFullnameMutation({
           body: {
             first_name: firstName.trim(),
             last_name: lastName.trim(),
@@ -186,7 +191,7 @@ export function AssessmentLoginPage({
             //recaptchaToken: recaptchaToken,
           },
         });
-      } else if (mode === "stateDocId" && stateCode) {
+      } else if (mode === "state+docid") {
         response = await verifyStateDocIdMutation({
           body: {
             doc_id: docId.trim(),
@@ -241,13 +246,12 @@ export function AssessmentLoginPage({
           <p className="font-[Public Sans, sans-serif] text-[18px] font-semibold tracking-[-0.02em] text-[#2B5469B2] mb-8">
             {
               {
-                pseudoDob:
+                "dob+fullname":
                   "Before you proceed, please confirm your name and birthdate.",
-                nonPseudoId:
+                "dob+token":
                   "Before you proceed, Please confirm your full name and birthdate.",
-                stateDocId:
+                "state+docid":
                   "Before you proceed, please select your state and enter your DOC ID.",
-                dob: "Before you proceed, please confirm your birthdate.",
               }[mode]
             }
           </p>
@@ -263,32 +267,8 @@ export function AssessmentLoginPage({
             </div>
           )}
 
-          {/* Name fields - only show if pseudonymized_id is provided */}
-          {mode === "pseudoDob" && pseudonymized_id && (
-            <div className="flex space-x-3 mb-6 justify-start w-11/12">
-              <div className="w-full">
-                <label
-                  htmlFor="last-name-input"
-                  className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
-                >
-                  Last Name
-                </label>
-                <input
-                  id="last-name-input"
-                  type="text"
-                  placeholder="Last name"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  disabled={isLoading}
-                  onKeyDown={handleKeyDown}
-                />
-              </div>
-            </div>
-          )}
-
           {/* Name fields - only show if mode is nonPseudoId */}
-          {mode === "nonPseudoId" && (
+          {mode === "dob+fullname" && (
             <div className="flex space-x-3 mb-6 justify-start w-11/12 pr-4">
               <div className="w-full">
                 <label
@@ -330,7 +310,7 @@ export function AssessmentLoginPage({
           )}
 
           {/* State and DOC ID fields - only show if mode is stateDocId */}
-          {mode === "stateDocId" && (
+          {mode === "state+docid" && (
             <div className="mb-6 w-11/12 mx-auto">
               <div className="mb-4">
                 <label
@@ -341,12 +321,12 @@ export function AssessmentLoginPage({
                 </label>
                 <Dropdown
                   value={stateCode}
-                  onChange={(value) =>
-                    setStateCode(value as AssessmentLoginStateCode)
+                  onChange={(value) => setStateCode(value)}
+                  options={availableStates}
+                  placeholder={
+                    isLoadingStates ? "Loading states..." : "Select state"
                   }
-                  options={ASSESSMENT_LOGIN_STATES}
-                  placeholder="Select state"
-                  disabled={isLoading}
+                  disabled={isLoading || isLoadingStates}
                 />
               </div>
               <div>
@@ -370,7 +350,7 @@ export function AssessmentLoginPage({
             </div>
           )}
 
-          {mode !== "stateDocId" && (
+          {mode !== "state+docid" && (
             <div className="flex space-x-3 mb-6 justify-start">
               <div className="w-1/6">
                 <label

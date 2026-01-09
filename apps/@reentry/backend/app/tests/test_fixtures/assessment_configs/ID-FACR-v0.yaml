@@ -23,8 +23,8 @@ intake:
     opening_remarks: "test"
     system_message: "test"
   sections:
-    - title: Housing
-      description: "Test housing section"
+    - title: Employment
+      description: "Test employment section"
       required_information: "Test info"
 
 outputs:

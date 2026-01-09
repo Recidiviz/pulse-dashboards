@@ -3,43 +3,16 @@ from uuid import uuid4
 import pytest
 from httpx import AsyncClient
 
-from app.crud.intake import create_intake
+from app.models.base import IntakeType
 from app.models.intake import (
     ClientIntakeSection,
+    Intake,
     IntakeMessage,
     IntakeMessageRole,
     IntakeStatus,
-    IntakeType,
 )
 from app.models.intake_sections import CompletionStatus
-
-
-@pytest.mark.asyncio
-async def test_start_intake_process_success(
-    async_session, client: AsyncClient, mock_clientdata_service, seed_configs
-):
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    # Create intake using create_intake (new behavior)
-    intake = await create_intake(
-        async_session, client_pseudo_id, IntakeType.CONVERSATION
-    )
-    intake.current_section = "Education / Employment"
-    intake.internal_access = True
-    async_session.add(intake)
-    await async_session.commit()
-    await async_session.refresh(intake)
-
-    response = await client.post(f"/intake/admin/{client_pseudo_id}")
-
-    assert response.status_code == 200
-    data = response.json()
-
-    # Validate response structure
-    assert data["client_pseudo_id"] == client_pseudo_id
-    assert data["status"] == IntakeStatus.CREATED.value
-    assert "internal_access" in data
-    assert data["internal_access"] is True
+from app.utils.string_utils import normalize_code
 
 
 @pytest.mark.asyncio
@@ -47,25 +20,19 @@ async def test_get_client_intake_success(
     async_session,
     client: AsyncClient,
     mock_clientdata_service,
-    seed_configs,
+    mock_intake,
 ):
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    # Create intake using create_intake
-    intake = await create_intake(
-        async_session, client_pseudo_id, IntakeType.CONVERSATION
-    )
-    intake.current_section = "Education / Employment"
-    intake.status = IntakeStatus.IN_PROGRESS
-    intake.internal_access = True
-    async_session.add(intake)
+    mock_intake.current_section = "Education / Employment"
+    mock_intake.status = IntakeStatus.IN_PROGRESS
+    mock_intake.internal_access = True
+    async_session.add(mock_intake)
     await async_session.commit()
-    await async_session.refresh(intake)
+    await async_session.refresh(mock_intake)
 
     # Add message
     message = IntakeMessage(
         id=uuid4(),
-        intake_id=intake.id,
+        intake_id=mock_intake.id,
         section="Education / Employment",
         from_role=IntakeMessageRole.CASEWORKER,
         content="Test message",
@@ -73,121 +40,13 @@ async def test_get_client_intake_success(
     async_session.add(message)
     await async_session.commit()
 
-    response = await client.get(f"/intake/admin/{client_pseudo_id}")
+    response = await client.get(f"/intake/admin/{mock_intake.id}")
 
     assert response.status_code == 200
     data = response.json()
 
-    assert data["client_pseudo_id"] == client_pseudo_id
+    assert data["client_pseudo_id"] == mock_intake.client_pseudo_id
     assert data["status"] == IntakeStatus.IN_PROGRESS.value
-
-
-@pytest.mark.asyncio
-async def test_set_internal_access_success(
-    async_session, client: AsyncClient, mock_clientdata_service, seed_configs
-):
-    """Test successfully updating internal access field for an intake."""
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    # Create intake using create_intake
-    intake = await create_intake(
-        async_session, client_pseudo_id, IntakeType.CONVERSATION
-    )
-    intake.status = IntakeStatus.IN_PROGRESS
-    intake.internal_access = False
-    async_session.add(intake)
-    await async_session.commit()
-
-    # Test setting internal_access to True
-    response = await client.patch(
-        f"/intake/admin/{client_pseudo_id}/internal-access",
-        json={"internal_access": True},
-    )
-
-    # Verify response
-    assert response.status_code == 200
-    assert response.json() == "success"
-
-    await async_session.refresh(intake)
-    assert intake.internal_access is True
-
-    response = await client.patch(
-        f"/intake/admin/{client_pseudo_id}/internal-access",
-        json={"internal_access": False},
-    )
-
-    assert response.status_code == 200
-    assert response.json() == "success"
-
-    await async_session.refresh(intake)
-    assert intake.internal_access is False
-
-
-@pytest.mark.asyncio
-async def test_set_internal_access_not_found(
-    async_session, client: AsyncClient, mock_clientdata_service
-):
-    """Test 404 error when intake record doesn't exist."""
-    # Use a non-existent client that's not in our mock data
-    # mock_clientdata_service provides mocking for the client service
-    non_existent_client_pseudo_id = "client-999"
-
-    response = await client.patch(
-        f"/intake/admin/{non_existent_client_pseudo_id}/internal-access",
-        json={"internal_access": True},
-    )
-
-    assert response.status_code == 404
-    # Note: may return "Client not found" if client doesn't exist in BigQuery
-    assert "not found" in response.json()["detail"].lower()
-
-
-@pytest.mark.asyncio
-async def test_set_internal_access_unauthorized(
-    async_session, client: AsyncClient, mock_clientdata_service
-):
-    """Test unauthorized access without valid token."""
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    # Note: auth is already mocked in conftest, this test validates the endpoint exists
-    response = await client.patch(
-        f"/intake/admin/{client_pseudo_id}/internal-access",
-        json={"internal_access": True},
-    )
-
-    # Should fail because no intake exists
-    assert response.status_code == 404
-
-
-@pytest.mark.asyncio
-async def test_set_internal_access_invalid_payload(
-    async_session, client: AsyncClient, mock_clientdata_service, seed_configs
-):
-    """Test with invalid request payload."""
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    # Create intake using create_intake
-    intake = await create_intake(
-        async_session, client_pseudo_id, IntakeType.CONVERSATION
-    )
-    intake.status = IntakeStatus.IN_PROGRESS
-    intake.internal_access = False
-    async_session.add(intake)
-    await async_session.commit()
-
-    # Missing required field
-    response = await client.patch(
-        f"/intake/admin/{client_pseudo_id}/internal-access",
-        json={},
-    )
-    assert response.status_code == 422
-
-    # Invalid type
-    response = await client.patch(
-        f"/intake/admin/{client_pseudo_id}/internal-access",
-        json={"internal_access": "not_a_boolean"},
-    )
-    assert response.status_code == 422
 
 
 # =============================================================================
@@ -200,27 +59,28 @@ async def test_get_new_intake_sections_from_config(
     async_session,
     client: AsyncClient,
     mock_clientdata_service,
-    seed_configs,
+    mock_intake,
 ):
     """Test that admin GET endpoint returns sections from assessment_config for NEW intakes.
 
     NEW intakes (created after migration) have assessment_config_id but no ClientIntakeSections.
     Sections should be returned from the assessment config YAML.
     """
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Create NEW intake using create_intake (sets assessment_config_id, no ClientIntakeSections)
-    intake = await create_intake(
-        async_session, client_pseudo_id, IntakeType.CONVERSATION
-    )
-    await intake.update_status(async_session, IntakeStatus.IN_PROGRESS)
-    await async_session.refresh(intake)
+    mock_intake.status = IntakeStatus.CREATED
+    await async_session.commit()
+    await async_session.refresh(mock_intake)
+
+    #
+    await mock_intake.update_status(async_session, IntakeStatus.IN_PROGRESS)
+    await async_session.refresh(mock_intake)
 
     # Verify no ClientIntakeSections exist
-    assert len(intake.client_intake_sections) == 0
-    assert intake.assessment_config_id is not None
+    assert len(mock_intake.client_intake_sections) == 0
+    assert mock_intake.assessment_config_id is not None
 
-    response = await client.get(f"/intake/admin/{client_pseudo_id}")
+    response = await client.get(f"/intake/admin/{mock_intake.id}")
 
     assert response.status_code == 200
     data = response.json()
@@ -234,8 +94,8 @@ async def test_get_new_intake_sections_from_config(
     assert "title" in first_section
     assert "description" in first_section
 
-    # Mock client is US_IX, which uses Housing as first section
-    assert first_section["title"] == "Housing"
+    # Mock client is US_IX, which uses Employment as first section
+    assert first_section["title"] == "Employment"
 
 
 @pytest.mark.asyncio
@@ -243,7 +103,7 @@ async def test_get_legacy_intake_sections_from_db(
     async_session,
     client: AsyncClient,
     mock_clientdata_service,
-    seed_configs,
+    mock_intake,
 ):
     """Test that admin GET endpoint returns sections from ClientIntakeSections for LEGACY intakes.
 
@@ -252,17 +112,11 @@ async def test_get_legacy_intake_sections_from_db(
     """
     from app.tests.test_fixtures.intake_sections import create_test_sections
 
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-
-    # Create intake with assessment_config_id
-    intake = await create_intake(
-        async_session, client_pseudo_id, IntakeType.CONVERSATION
-    )
-    intake.status = IntakeStatus.IN_PROGRESS
-    intake.current_section = "Legacy Section 1"
-    async_session.add(intake)
+    mock_intake.status = IntakeStatus.IN_PROGRESS
+    mock_intake.current_section = "Legacy Section 1"
+    async_session.add(mock_intake)
     await async_session.commit()
-    await async_session.refresh(intake)
+    await async_session.refresh(mock_intake)
 
     # Create LEGACY ClientIntakeSections to simulate pre-migration intake
     legacy_sections = create_test_sections(2)
@@ -274,7 +128,7 @@ async def test_get_legacy_intake_sections_from_db(
     for i, section_model in enumerate(legacy_sections):
         await async_session.refresh(section_model)
         client_section = ClientIntakeSection(
-            intake_id=intake.id,
+            intake_id=mock_intake.id,
             intake_section_id=section_model.id,
             is_active=True,
             order=i,
@@ -285,12 +139,12 @@ async def test_get_legacy_intake_sections_from_db(
         async_session.add(client_section)
 
     await async_session.commit()
-    await async_session.refresh(intake)
+    await async_session.refresh(mock_intake)
 
     # Verify ClientIntakeSections exist
-    assert len(intake.client_intake_sections) == 2
+    assert len(mock_intake.client_intake_sections) == 2
 
-    response = await client.get(f"/intake/admin/{client_pseudo_id}")
+    response = await client.get(f"/intake/admin/{mock_intake.id}")
 
     assert response.status_code == 200
     data = response.json()
@@ -303,3 +157,267 @@ async def test_get_legacy_intake_sections_from_db(
     section_titles = [s["title"] for s in data["intake_sections"]]
     assert "Legacy Section 1" in section_titles
     assert "Legacy Section 2" in section_titles
+
+
+# =============================================================================
+# Tests for POST /intake/admin (Create Intake)
+# =============================================================================
+
+
+@pytest.mark.asyncio
+async def test_create_intake_success(
+    async_session, client: AsyncClient, mock_clientdata_service, seed_configs
+):
+    """Test successfully creating a new intake."""
+    # Default client is US_IX, so use a US_IX config
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+
+    response = await client.post(
+        "/intake/admin",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "assessment_config_id": str(assessment_config_id),
+        },
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+
+    assert "id" in data
+    assert data["status"] == "created"
+    assert data["assessment_config_code"] == "facr"
+
+    # Verify the intake was created in the database
+    from app.crud.intake import get_intake_by_id
+
+    intake = await get_intake_by_id(async_session, data["id"])
+    assert intake is not None
+    assert intake.client_pseudo_id == client_pseudo_id
+    assert intake.status == IntakeStatus.CREATED
+    assert intake.assessment_config_id == assessment_config_id
+
+
+@pytest.mark.asyncio
+async def test_create_intake_conflict_in_progress_conversation(
+    async_session, client: AsyncClient, mock_clientdata_service, seed_configs
+):
+    """Test 409 conflict when client already has an IN_PROGRESS conversation intake."""
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+
+    # Create an existing IN_PROGRESS conversation intake
+    existing_intake = Intake(
+        client_pseudo_id=client_pseudo_id,
+        status=IntakeStatus.IN_PROGRESS,
+        assessment_config_id=assessment_config_id,
+        intake_type=IntakeType.CONVERSATION,
+    )
+    async_session.add(existing_intake)
+    await async_session.commit()
+
+    # Try to create a new intake for the same client
+    response = await client.post(
+        "/intake/admin",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "assessment_config_id": str(assessment_config_id),
+        },
+    )
+
+    assert response.status_code == 409
+    assert "in_progress" in response.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_create_intake_conflict_with_created_intake(
+    async_session, client: AsyncClient, mock_clientdata_service, seed_configs
+):
+    """Test 409 conflict when client already has a CREATED intake."""
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+
+    # Create an existing CREATED intake
+    existing_intake = Intake(
+        client_pseudo_id=client_pseudo_id,
+        status=IntakeStatus.CREATED,
+        assessment_config_id=assessment_config_id,
+        intake_type=IntakeType.CONVERSATION,
+    )
+    async_session.add(existing_intake)
+    await async_session.commit()
+
+    # Try to create a new intake for the same client
+    response = await client.post(
+        "/intake/admin",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "assessment_config_id": str(assessment_config_id),
+        },
+    )
+
+    # Should fail because client already has an active (CREATED) intake
+    assert response.status_code == 409
+    assert "active" in response.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_create_intake_allows_multiple_completed(
+    async_session, client: AsyncClient, mock_clientdata_service, seed_configs
+):
+    """Test that multiple intakes are allowed when previous ones are COMPLETED."""
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+
+    # Create an existing COMPLETED intake
+    existing_intake = Intake(
+        client_pseudo_id=client_pseudo_id,
+        status=IntakeStatus.COMPLETED,
+        assessment_config_id=assessment_config_id,
+        intake_type=IntakeType.CONVERSATION,
+    )
+    async_session.add(existing_intake)
+    await async_session.commit()
+
+    # Should be able to create a new intake since the previous one is completed
+    response = await client.post(
+        "/intake/admin",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "assessment_config_id": str(assessment_config_id),
+        },
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["status"] == "created"
+
+
+@pytest.mark.asyncio
+async def test_create_intake_assessment_config_not_found(
+    async_session, client: AsyncClient, mock_clientdata_service
+):
+    """Test 404 when assessment_config_id doesn't exist."""
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    fake_config_id = uuid4()
+
+    response = await client.post(
+        "/intake/admin",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "assessment_config_id": str(fake_config_id),
+        },
+    )
+
+    assert response.status_code == 404
+    assert "not found" in response.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_create_intake_inactive_assessment_config(
+    async_session, client: AsyncClient, mock_clientdata_service, seed_configs
+):
+    """Test 400 when assessment config is not active."""
+    from app.models.assessment_config import AssessmentConfig
+
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
+    # Create an inactive assessment config for the client's state (US_IX)
+    inactive_config = AssessmentConfig(
+        state_code="US_IX",
+        code=normalize_code("INACTIVE"),
+        version=1,
+        display_name="Inactive Config",
+        config_yaml="metadata:\n  code: INACTIVE\n  version: 1",
+        is_active=False,
+    )
+    async_session.add(inactive_config)
+    await async_session.commit()
+    await async_session.refresh(inactive_config)
+
+    response = await client.post(
+        "/intake/admin",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "assessment_config_id": str(inactive_config.id),
+        },
+    )
+
+    assert response.status_code == 400
+    assert "not active" in response.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_create_intake_state_mismatch(
+    async_session, client: AsyncClient, mock_clientdata_service, seed_configs
+):
+    """Test 400 when client state doesn't match assessment config state."""
+    # client-002ps is US_AZ, try to use US_UT config (should fail)
+    client_pseudo_id = "client-002ps"  # This is a US_AZ client
+    # Use active version of UT config
+    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 2)]
+
+    response = await client.post(
+        "/intake/admin",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "assessment_config_id": str(assessment_config_id),
+        },
+    )
+
+    assert response.status_code == 400
+    assert "state" in response.json()["detail"].lower()
+
+
+# =============================================================================
+# Tests for PATCH /intake/admin/{intake_id}/internal-access (Updated Endpoint)
+# =============================================================================
+
+
+@pytest.mark.asyncio
+async def test_set_internal_access_by_intake_id_success(
+    async_session, client: AsyncClient, mock_clientdata_service, mock_intake
+):
+    """Test successfully updating internal access field using intake_id."""
+    mock_intake.status = IntakeStatus.IN_PROGRESS
+    mock_intake.internal_access = False
+    async_session.add(mock_intake)
+    await async_session.commit()
+
+    # Test setting internal_access to True using intake_id
+    response = await client.patch(
+        f"/intake/admin/{mock_intake.id}/internal-access",
+        json={"internal_access": True},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == "success"
+
+    await async_session.refresh(mock_intake)
+    assert mock_intake.internal_access is True
+
+    # Test setting it back to False
+    response = await client.patch(
+        f"/intake/admin/{mock_intake.id}/internal-access",
+        json={"internal_access": False},
+    )
+
+    assert response.status_code == 200
+    await async_session.refresh(mock_intake)
+    assert mock_intake.internal_access is False
+
+
+@pytest.mark.asyncio
+async def test_set_internal_access_by_intake_id_not_found(
+    async_session, client: AsyncClient, mock_clientdata_service
+):
+    """Test 404 when intake_id doesn't exist."""
+    fake_intake_id = uuid4()
+
+    response = await client.patch(
+        f"/intake/admin/{fake_intake_id}/internal-access",
+        json={"internal_access": True},
+    )
+
+    assert response.status_code == 404
+    assert "not found" in response.json()["detail"].lower()

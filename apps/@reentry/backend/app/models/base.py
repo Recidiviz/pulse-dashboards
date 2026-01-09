@@ -19,6 +19,18 @@ class IntakeType(StrEnum):  # Todo manually keep up to date with AssessmentModel
     EXTERNAL = "external"
 
 
+class IntakeStatus(StrEnum):
+    """
+    Status for intake assessment process.
+    Used for both database persistence and UI state representation.
+    """
+
+    CREATED = "created"
+    IN_PROGRESS = "in_progress"
+    ERROR = "error"
+    COMPLETED = "completed"
+
+
 class BaseModel(SQLModel):
     id: UUID = Field(
         default_factory=uuid4,

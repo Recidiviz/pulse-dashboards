@@ -1,0 +1,19 @@
+metadata:
+  state_code: US_TEST
+  code: TRAN
+  version: 0
+  type: assessment
+  display_name: "Test Transcription"
+  description: "Test transcription assessment"
+
+intake:
+  intake_type: transcription
+  scoring: oras_pit
+  scoring_model:
+    provider: openai
+    name: gpt-4o-mini
+    version: "2024-07-18"
+
+outputs:
+  codes:
+    - intake_summary

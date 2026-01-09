@@ -18,6 +18,7 @@ from app.crud.clientintakesections import (
     mark_section_in_progress,
 )
 from app.models.assessment_config import AssessmentConfig
+from app.models.base import IntakeStatus
 from app.models.execution import Execution
 from app.models.intake_sections import ClientIntakeSection
 from app.routes.shared_models import IntakeMessageRole
@@ -28,6 +29,7 @@ from app.utils.assessment_config_utils import (
 
 if TYPE_CHECKING:
     from app.models.assessment import Assessment
+    from app.models.models import Plan
     from app.models.recording import RecordingSession
 
 import jwt
@@ -45,18 +47,6 @@ from app.services.client_data.queries import Queries
 COMPLETION_SECTION = "Completion"
 
 logger = structlog.get_logger(__name__)
-
-
-class IntakeStatus(StrEnum):
-    """
-    Status for intake assessment process.
-    Used for both database persistence and UI state representation.
-    """
-
-    CREATED = "created"
-    IN_PROGRESS = "in_progress"
-    ERROR = "error"
-    COMPLETED = "completed"
 
 
 class QuestionsConfusing(StrEnum):
@@ -80,8 +70,7 @@ class Intake(BaseModel, table=True):
 
     # General fields
     client_pseudo_id: Optional[str]
-    intake_type: Optional[IntakeType] = Field(
-        default=None,
+    intake_type: IntakeType = Field(
         sa_column=Column(
             SAEnum(
                 IntakeType,
@@ -141,6 +130,14 @@ class Intake(BaseModel, table=True):
         },
     )
     address: Mapped[Optional["ClientAddress"]] = Relationship(
+        back_populates="intake",
+        sa_relationship_kwargs={
+            "cascade": "all, delete-orphan",
+            "lazy": "selectin",
+        },
+    )
+
+    plan: Mapped[Optional["Plan"]] = Relationship(
         back_populates="intake",
         sa_relationship_kwargs={
             "cascade": "all, delete-orphan",
@@ -262,18 +259,18 @@ class Intake(BaseModel, table=True):
             )
             return None
 
-        # Check if assessment already exists for this client_pseudo_id
+        # Check if assessment already exists for this intake
         from sqlmodel import select
 
-        statement = select(Assessment).where(
-            Assessment.client_pseudo_id == self.client_pseudo_id
-        )
+        statement = select(Assessment).where(Assessment.intake_id == self.id)
         result = await session.exec(statement)
         existing_assessment = result.first()
 
         if existing_assessment:
-            logger.info(f"Assessment already exists for client {self.client_pseudo_id}")
-            return existing_assessment.id
+            logger.info(f"Assessment already exists for intake {self.id}")
+            return (
+                existing_assessment.execution if existing_assessment.execution else None
+            )
 
         from app.utils.config_loader import ConfigLoader
 

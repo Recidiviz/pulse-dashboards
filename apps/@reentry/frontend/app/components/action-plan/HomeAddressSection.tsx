@@ -25,6 +25,7 @@ import { InfoTooltip } from "~@reentry/frontend/components/base/InfoTooltip";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { formatAddress } from "~@reentry/frontend/utils/addressUtils";
 import {
   FullAddressForm,
   showErrorToast,
@@ -62,11 +63,11 @@ const HomeAddressSection = ({
   const [isExpanded, setIsExpanded] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
 
-  const { data: clientInfo, isLoading: isLoadingInfo } = $api.useQuery(
+  const { data: address, isLoading: isLoadingAddress } = $api.useQuery(
     "get",
-    "/plans/{id}/client-info",
+    "/plan/{plan_id}/address",
     {
-      params: { path: { id: planId } },
+      params: { path: { plan_id: planId } },
       headers: {
         Authorization: `Bearer ${getAccessToken()}`,
       },
@@ -74,19 +75,19 @@ const HomeAddressSection = ({
   );
 
   useEffect(() => {
-    if (clientInfo?.home) {
-      setCurrentAddress(clientInfo.home);
+    if (address) {
+      setCurrentAddress(formatAddress(address));
     }
-  }, [clientInfo]);
+  }, [address]);
 
   const handleAddressChange = (value: string) => {
     setAddressInput(value);
     setAddressError(null);
   };
 
-  const updateAddressMutation = $api.useMutation(
+  const { mutateAsync: updateAddressMutation } = $api.useMutation(
     "patch",
-    "/plans/{id}/client-info/address",
+    "/plans/{id}/address",
   );
 
   // Check if the current form values differ from the original values
@@ -104,7 +105,7 @@ const HomeAddressSection = ({
 
     setIsLoading(true);
     try {
-      const response = await updateAddressMutation.mutateAsync({
+      const response = await updateAddressMutation({
         params: { path: { id: planId } },
         body: {
           street_address: addressInput || null,
@@ -171,7 +172,7 @@ const HomeAddressSection = ({
 
       {isExpanded &&
         // eslint-disable-next-line no-nested-ternary
-        (isLoadingInfo ? (
+        (isLoadingAddress ? (
           <div className="text-sm text-gray-500">Loading address...</div>
         ) : isEditing ? (
           <div className="w-full space-y-3">

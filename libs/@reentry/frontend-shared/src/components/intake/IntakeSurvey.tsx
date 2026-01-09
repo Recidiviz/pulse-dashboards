@@ -24,8 +24,10 @@ import { useSocket } from "../../websockets/IntakeSocketContext";
 
 const IntakeSurvey = ({
   setSurveySubmitted,
+  intakeId,
 }: {
   setSurveySubmitted: (submitted: boolean) => void;
+  intakeId: string;
 }) => {
   const { $api } = useApplicationContext();
   const { intakeDispatchContext } = useSocket();
@@ -50,7 +52,7 @@ const IntakeSurvey = ({
 
   const { mutateAsync: submitIntakeSurvey } = $api.useMutation(
     "post",
-    "/intake/client/survey",
+    "/external/client/{intake_id}/survey",
   );
 
   const getIntakeToken = () => {
@@ -87,6 +89,11 @@ const IntakeSurvey = ({
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response: any = await submitIntakeSurvey({
+        params: {
+          path: {
+            intake_id: intakeId,
+          },
+        },
         body: {
           difficulty_rating: formData.difficulty,
           questions_confusing: formData.confusing,

@@ -39,7 +39,7 @@ const ProfileDetail = ({
     <div className="self-stretch  md:h-[169px] p-2 md:p-8 border-b border-[#2b5469]/20 flex-col justify-start items-start gap-6 md:gap-8 flex">
       <div className="justify-start items-center gap-2 inline-flex">
         <BackButton
-          href={`/clients/intake/${clientRecord?.pseudonymized_client_id}`}
+          href={`/client/${clientRecord?.pseudonymized_client_id}`}
           buttonText={"Back"}
         />
       </div>

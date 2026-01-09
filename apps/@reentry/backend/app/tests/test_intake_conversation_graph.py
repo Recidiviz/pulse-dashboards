@@ -33,24 +33,19 @@ def mock_send_message():
 
 
 @pytest.fixture
-async def intake(async_session, seed_configs, mock_clientdata_service):
+async def intake(async_session, mock_intake):
     """Create an intake with assessment_config_id."""
-    from app.crud.intake import create_intake
     from app.models.base import IntakeType
 
     # Use a real client from mock service
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    intake = await create_intake(
-        async_session,
-        client_pseudo_id,
-        IntakeType.CONVERSATION,
-        IntakeStatus.IN_PROGRESS,
-    )
-    intake.current_section = "Education / Employment"
-    async_session.add(intake)
+    mock_intake.intake_type = IntakeType.CONVERSATION
+    mock_intake.status = IntakeStatus.IN_PROGRESS
+
+    mock_intake.current_section = "Education / Employment"
+    async_session.add(mock_intake)
     await async_session.commit()
-    await async_session.refresh(intake)
-    return intake
+    await async_session.refresh(mock_intake)
+    return mock_intake
 
 
 @pytest.fixture

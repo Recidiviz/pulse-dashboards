@@ -13,10 +13,6 @@ from taskiq import TaskiqDepends
 from taskiq.depends.progress_tracker import ProgressTracker
 
 from app.core.db import AsyncSession, get_session
-from app.crud.intake import (
-    get_collected_address_for_client,
-    get_intake_by_client_pseudo_id,
-)
 from app.crud.plan_decision_tree import (
     PlanDecisionTree,
     get_plan_decision_tree_by_plan_id,
@@ -271,15 +267,19 @@ async def _regenerate_action_plan(
             {"milestones": current_milestones}
         )
 
-    # Both the plan and client_pseudo_id are optional on the models,
+    # Both the plan and intake are optional on the models,
     # so we check existence for each.
     if not gen.plan:
         raise ValueError("Could not get client information for plan.")
-    if not (client_pseudo_id := gen.plan.client_pseudo_id):
-        raise ValueError("Could not get client information for plan.")
-    client_address = await get_collected_address_for_client(session, client_pseudo_id)
-    if not client_address:
+    if not gen.plan.intake:
+        raise ValueError("Plan has no associated intake.")
+
+    # Get address from the specific intake linked to this plan
+    if not gen.plan.intake.address:
         raise ValueError("Could not get client address for plan.")
+
+    client_address = gen.plan.intake.address
+    client_pseudo_id = gen.plan.client_pseudo_id
 
     agent = LLMAgentEdit(
         messages=messages,
@@ -332,15 +332,19 @@ async def _generate_new_action_plan(
     )
     client_data = await get_client_background_data(gen, session)
 
-    # Both the plan and client_pseudo_id are optional on the models,
+    # Both the plan and intake are optional on the models,
     # so we check existence for each.
     if not gen.plan:
         raise ValueError("Could not get client information for plan.")
-    if not (client_pseudo_id := gen.plan.client_pseudo_id):
-        raise ValueError("Could not get client information for plan.")
-    client_address = await get_collected_address_for_client(session, client_pseudo_id)
-    if not client_address:
+    if not gen.plan.intake:
+        raise ValueError("Plan has no associated intake.")
+
+    # Get address from the specific intake linked to this plan
+    if not gen.plan.intake.address:
         raise ValueError("Could not get client address for plan.")
+
+    client_address = gen.plan.intake.address
+    client_pseudo_id = gen.plan.client_pseudo_id
 
     await execution.log_progress(
         session, 40, "Preparing decision tree data", logger=task_logger
@@ -411,17 +415,16 @@ async def generate_action_plan(
     )
 
     # Load action plan config from assessment
-    intake = await get_intake_by_client_pseudo_id(
-        session, client_pseudo_id=gen.plan.client_pseudo_id
-    )
-    if not intake:
+    if not gen.plan.intake:
         raise ValueError(
-            f"Cannot generate action plan: no intake found for client {gen.plan.client_pseudo_id}"
+            f"Cannot generate action plan: plan {gen.plan.id} has no associated intake"
         )
+
+    intake = gen.plan.intake
 
     if not intake.assessment_config_id:
         raise ValueError(
-            f"Cannot generate action plan: intake for client {gen.plan.client_pseudo_id} has no assessment_config_id"
+            f"Cannot generate action plan: intake {intake.id} has no assessment_config_id"
         )
 
     action_plan_config = await ConfigLoader.load_plan_config(

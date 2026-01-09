@@ -36,22 +36,24 @@ async def get_plan_by_id(
 
 
 @overload
-async def get_plan_by_client_pseudo_id(
-    session: AsyncSession, client_pseudo_id: str, *, query_only: Literal[True]
+async def get_plan_by_intake_id(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[True]
 ) -> SelectOfScalar[Plan]: ...
 
 
 @overload
-async def get_plan_by_client_pseudo_id(
-    session: AsyncSession, client_pseudo_id: str, *, query_only: Literal[False] = False
+async def get_plan_by_intake_id(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: Literal[False] = False
 ) -> Plan | None: ...
 
 
 @statement_or_result(first_only=True)
-async def get_plan_by_client_pseudo_id(
-    session: AsyncSession, client_pseudo_id: str, *, query_only: bool = False
+async def get_plan_by_intake_id(
+    session: AsyncSession, intake_id: UUID | str, *, query_only: bool = False
 ) -> SelectOfScalar[Plan] | Plan | None:
-    return select(Plan).where(Plan.client_pseudo_id == client_pseudo_id)
+    if isinstance(intake_id, str):
+        intake_id = UUID(intake_id)
+    return select(Plan).where(Plan.intake_id == intake_id)
 
 
 @overload

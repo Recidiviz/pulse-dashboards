@@ -15,7 +15,7 @@ from app.core.data_config.assessment_configs.assessment_config import (
 )
 from app.core.db import get_session_async_manager
 from app.crud.intake import (
-    get_intake_by_client_pseudo_id,
+    get_latest_active_conversation_intake,
     get_latest_message,
     get_latest_not_welcome_message,
 )
@@ -81,18 +81,9 @@ class DatabaseManager:
                 assessment_config_id, session
             )
 
-    async def get_latest_message(
-        self, client_pseudo_id: str
-    ) -> Optional[IntakeMessage]:
+    async def get_latest_message(self, intake_id: UUID) -> Optional[IntakeMessage]:
         try:
-            # First get the intake ID using our existing method
-            intake_id = await self.get_intake_id_by_client_pseudo_id(client_pseudo_id)
-            if not intake_id:
-                logger.error(f"No intake found for client {client_pseudo_id}")
-                return None
-
             async with await self._get_session() as session:
-                # Properly await the get_latest_message coroutine
                 return await get_latest_message(session, intake_id)
 
         except Exception as e:
@@ -101,17 +92,10 @@ class DatabaseManager:
             return None
 
     async def get_latest_non_welcome_ai_message(
-        self, client_pseudo_id: str
+        self, intake_id: UUID
     ) -> Optional[IntakeMessage]:
         try:
-            # First get the intake ID using our existing method
-            intake_id = await self.get_intake_id_by_client_pseudo_id(client_pseudo_id)
-            if not intake_id:
-                logger.error(f"No intake found for client {client_pseudo_id}")
-                return None
-
             async with await self._get_session() as session:
-                # Properly await the get_latest_message coroutine
                 return await get_latest_not_welcome_message(session, intake_id)
 
         except Exception as e:
@@ -121,16 +105,17 @@ class DatabaseManager:
 
     async def store_message(
         self,
+        intake_id: UUID,
         from_role: IntakeMessageRole,
         content: str,
-        client_pseudo_id: str,
     ) -> Optional[IntakeMessage]:
         """Store a message in the database."""
         async with await self._get_session() as session:
             try:
-                intake: Intake | None = await get_intake_by_client_pseudo_id(
-                    session, client_pseudo_id
+                result = await session.execute(
+                    select(Intake).where(Intake.id == intake_id)
                 )
+                intake: Intake | None = result.scalar_one_or_none()
 
                 if not intake or not intake.current_section:
                     return None
@@ -155,18 +140,17 @@ class DatabaseManager:
                 logger.error(f"Error storing message: {e}")
                 return None
 
-    async def complete_section(
-        self, client_pseudo_id: str
-    ) -> str | None | Literal["error"]:
+    async def complete_section(self, intake_id: UUID) -> str | None | Literal["error"]:
         """
         Marks the current section as complete and goes to next section.
         Returns the next section title (or special title COMPLETE)
         """
         try:
             async with await self._get_session() as session:
-                intake: Intake | None = await get_intake_by_client_pseudo_id(
-                    session, client_pseudo_id
+                result = await session.execute(
+                    select(Intake).where(Intake.id == intake_id)
                 )
+                intake: Intake | None = result.scalar_one_or_none()
                 if not intake:
                     return "error"
                 intake = await intake.next_section(session)
@@ -213,25 +197,7 @@ class DatabaseManager:
             logger.error(f"Error getting section messages: {e}")
             return []
 
-    async def get_intake_id_by_client_pseudo_id(
-        self, client_pseudo_id: str
-    ) -> Optional[UUID]:
-        try:
-            async with await self._get_session() as session:
-                query = select(Intake.id).where(
-                    Intake.client_pseudo_id == str(client_pseudo_id)
-                )
-
-                result = await session.execute(query)
-                intake_id = result.scalar_one_or_none()
-
-                return intake_id
-
-        except Exception as e:
-            logger.error(f"Error retrieving intake for client {client_pseudo_id}: {e}")
-            return None
-
-    async def get_talking_turn(self, client_pseudo_id: str) -> IntakeMessageRole | None:
+    async def get_talking_turn(self, intake_id: UUID) -> IntakeMessageRole | None:
         """
         Determine whose turn it is to talk based on the last message.
         If the last message was from the client, it's the caseworker's turn.
@@ -239,16 +205,11 @@ class DatabaseManager:
         If there are no messages, default to caseworker to start the conversation.
 
         Args:
-            client_pseudo_id: Client identifier
+            intake_id: Intake ID
 
         Returns:
             IntakeMessageRole: The role that should speak next, or None if there's an error
         """
-        intake_id = await self.get_intake_id_by_client_pseudo_id(client_pseudo_id)
-        if not intake_id:
-            logger.error(f"No intake found for client {client_pseudo_id}")
-            return None
-
         try:
             from app.crud.intake import get_latest_message
 
@@ -264,29 +225,25 @@ class DatabaseManager:
                 else:
                     return IntakeMessageRole.CLIENT
         except Exception as e:
-            logger.error(
-                f"Error determining talking turn for client {client_pseudo_id}: {e}"
-            )
+            logger.error(f"Error determining talking turn for intake {intake_id}: {e}")
             return None
 
-    async def all_messages_by_time(self, client_pseudo_id: str) -> list[IntakeMessage]:
+    async def all_messages_by_time(self, intake_id: UUID) -> list[IntakeMessage]:
         """
-        Fetch all messages for a client, sorted with most recent last.
+        Fetch all messages for a specific intake, sorted with most recent last.
+
+        CRITICAL: Filters by intake_id to prevent history bleeding
+        between multiple intakes for the same client.
 
         Args:
-            client_pseudo_id (str): The client's identifier
+            intake_id (UUID): The specific intake ID to filter by
 
         Returns:
             List[IntakeMessage]: A list of IntakeMessage objects sorted by creation time
         """
         try:
-            intake_id = await self.get_intake_id_by_client_pseudo_id(client_pseudo_id)
-
-            if not intake_id:
-                logger.error(f"No intake found for client {client_pseudo_id}")
-                return []
-
             async with await self._get_session() as session:
+                # CRITICAL: Filter by intake_id (not just client) to prevent history bleeding
                 messages_stmt = (
                     select(IntakeMessage)
                     .where(IntakeMessage.intake_id == intake_id)
@@ -299,9 +256,7 @@ class DatabaseManager:
                 return messages
 
         except Exception as e:
-            logger.error(
-                f"Error fetching all messages for client {client_pseudo_id}: {e}"
-            )
+            logger.error(f"Error fetching all messages for intake {intake_id}: {e}")
             return []
 
     def get_client(self, client_pseudo_id: str) -> Optional[ClientDataRecord]:
@@ -329,17 +284,21 @@ class DatabaseManager:
         self, client_pseudo_id: str, token_from_url: Optional[str] = None
     ) -> Optional[Intake]:
         """
-        Retrieves the Intake model with associated sections for the given client ID.
+        Retrieves the latest CREATED or IN_PROGRESS conversation intake for the given client.
+
+        When multiple intakes exist for a client, this returns the most recent conversation intake
+        that is either CREATED or IN_PROGRESS, ordered by created_at DESC.
 
         Args:
             client_pseudo_id (str): The client's identifier
+            token_from_url (Optional[str]): Optional token for authentication
 
         Returns:
-            Optional[Intake]: The Intake model with associated resources or None if not found
+            Optional[Intake]: The latest active conversation intake or None if not found
         """
         try:
             async with await self._get_session() as session:
-                return await get_intake_by_client_pseudo_id(
+                return await get_latest_active_conversation_intake(
                     session, client_pseudo_id, token_from_url
                 )
 
@@ -348,28 +307,27 @@ class DatabaseManager:
             return None
 
     async def update_intake_status(
-        self, client_pseudo_id: str, status: IntakeStatus
+        self, intake_id: UUID, status: IntakeStatus
     ) -> Optional[Intake]:
         try:
             async with await self._get_session() as session:
-                intake: Intake | None = await get_intake_by_client_pseudo_id(
-                    session, client_pseudo_id
+                result = await session.execute(
+                    select(Intake).where(Intake.id == intake_id)
                 )
+                intake: Intake | None = result.scalar_one_or_none()
                 if not intake:
                     logger.error("Intake not found")
                     return None
                 return await intake.update_status(session, status)
 
         except Exception as e:
-            logger.error(f"Error retrieving intake for client {client_pseudo_id}: {e}")
+            logger.error(f"Error updating intake status for intake {intake_id}: {e}")
             return None
 
-    async def is_internal_intake(self, client_pseudo_id: str) -> bool:
+    async def is_internal_intake(self, intake_id: UUID) -> bool:
         try:
             async with await self._get_session() as session:
-                query = select(Intake.internal_access).where(
-                    Intake.client_pseudo_id == str(client_pseudo_id)
-                )
+                query = select(Intake.internal_access).where(Intake.id == intake_id)
 
                 result = await session.execute(query)
                 internal_access = result.scalar_one_or_none()
@@ -378,44 +336,48 @@ class DatabaseManager:
 
         except Exception as e:
             logger.error(
-                f"Error checking if intake is internal for client {client_pseudo_id}: {e}"
+                f"Error checking if intake is internal for intake {intake_id}: {e}"
             )
             traceback.print_exc()
             return False
 
-    async def has_address(self, client_pseudo_id: str) -> bool:
+    async def has_address(self, intake_id: UUID) -> bool:
         """Check if intake has collected address"""
         try:
             async with await self._get_session() as session:
-                # First get the intake
-                intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
+                result = await session.execute(
+                    select(Intake).where(Intake.id == intake_id)
+                )
+                intake = result.scalar_one_or_none()
                 if not intake:
                     return False
 
                 return intake.has_address is not None
 
         except Exception as e:
-            logger.error(f"Error checking address for client {client_pseudo_id}: {e}")
+            logger.error(f"Error checking address for intake {intake_id}: {e}")
             traceback.print_exc()
             return False
 
-    async def has_survey(self, client_pseudo_id: str) -> bool:
+    async def has_survey(self, intake_id: UUID) -> bool:
         """Check if intake has collected survey"""
         try:
             async with await self._get_session() as session:
-                # First get the intake
-                intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
+                result = await session.execute(
+                    select(Intake).where(Intake.id == intake_id)
+                )
+                intake = result.scalar_one_or_none()
                 if not intake:
                     return False
 
                 return intake.has_survey is not None
 
         except Exception as e:
-            logger.error(f"Error checking survey for client {client_pseudo_id}: {e}")
+            logger.error(f"Error checking survey for intake {intake_id}: {e}")
             traceback.print_exc()
             return False
 
-    async def get_section_titles(self, client_pseudo_id: str) -> list[str]:
+    async def get_section_titles(self, intake_id: UUID) -> list[str]:
         """
         Get section titles for an intake.
 
@@ -425,9 +387,10 @@ class DatabaseManager:
         """
         try:
             async with await self._get_session() as session:
-                intake: Intake | None = await get_intake_by_client_pseudo_id(
-                    session, client_pseudo_id
+                result = await session.execute(
+                    select(Intake).where(Intake.id == intake_id)
                 )
+                intake: Intake | None = result.scalar_one_or_none()
                 if not intake:
                     raise ValueError("Intake not found")
 

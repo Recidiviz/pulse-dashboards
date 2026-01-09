@@ -264,7 +264,9 @@ const Planner = ({
                   className={"!w-[180px] !text-[10px] md:!text-[13px] "}
                   buttonText="View Intake Summary"
                   onClick={() =>
-                    router.push(`/intake-summary/${clientPseudoId}`)
+                    router.push(
+                      `/client/${clientPseudoId}/intake-summary/${planId}`,
+                    )
                   }
                   ignoreCapabilities={true}
                 />

@@ -72,7 +72,7 @@ async def test_assessment_update_status_does_not_trigger_plan_when_not_completed
     mock_schedule_plan.assert_not_called()
 
 
-@patch("app.crud.plan.get_plan_by_client_pseudo_id")
+@patch("app.crud.plan.get_plan_by_intake_id")
 @patch("app.crud.plan.create_plan")
 async def test_schedule_plan_generation_creates_new_plan(
     mock_create_plan, mock_get_plan
@@ -80,10 +80,13 @@ async def test_schedule_plan_generation_creates_new_plan(
     """
     Test that schedule_plan_generation creates a new plan when none exists
     """
+    from uuid import uuid4
+
     # Setup
     session = AsyncMock()
     execution = Execution(status=ExecutionStatus.COMPLETED.value)
-    assessment = Assessment(client_pseudo_id="test_client")
+    intake_id = uuid4()
+    assessment = Assessment(client_pseudo_id="test_client", intake_id=intake_id)
     assessment.execution = execution
 
     # Configure mocks
@@ -95,12 +98,12 @@ async def test_schedule_plan_generation_creates_new_plan(
     await assessment.schedule_plan_generation(session)
 
     # Assert
-    mock_get_plan.assert_called_once_with(session, "test_client")
+    mock_get_plan.assert_called_once_with(session, intake_id)
     mock_create_plan.assert_called_once()
     mock_created_plan.schedule_initial_creation.assert_called_once_with(session)
 
 
-@patch("app.crud.plan.get_plan_by_client_pseudo_id")
+@patch("app.crud.plan.get_plan_by_intake_id")
 @patch("app.crud.plan.create_plan")
 async def test_schedule_plan_generation_uses_existing_plan(
     mock_create_plan, mock_get_plan
@@ -108,10 +111,13 @@ async def test_schedule_plan_generation_uses_existing_plan(
     """
     Test that schedule_plan_generation uses existing plan when one exists
     """
+    from uuid import uuid4
+
     # Setup
     session = AsyncMock()
     execution = Execution(status=ExecutionStatus.COMPLETED.value)
-    assessment = Assessment(client_pseudo_id="test_client")
+    intake_id = uuid4()
+    assessment = Assessment(client_pseudo_id="test_client", intake_id=intake_id)
     assessment.execution = execution
 
     # Configure mocks
@@ -123,6 +129,6 @@ async def test_schedule_plan_generation_uses_existing_plan(
     result = await assessment.schedule_plan_generation(session)
 
     # Assert
-    mock_get_plan.assert_called_once_with(session, "test_client")
+    mock_get_plan.assert_called_once_with(session, intake_id)
     mock_create_plan.assert_not_called()
     assert result == "existing-plan-id"

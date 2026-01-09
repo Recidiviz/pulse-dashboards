@@ -354,8 +354,8 @@ Instructions:
 class HeadlessDatabaseManager:
     """Mock database manager for headless evaluation."""
 
-    def __init__(self, client_pseudo_id: str, sections, assessment_config):
-        self.client_pseudo_id = client_pseudo_id
+    def __init__(self, intake_id: str, sections, assessment_config):
+        self.intake_id = intake_id
         self.current_section_index = 0
         self.sections = [section.title for section in sections]
         self.messages: List[IntakeMessage] = []
@@ -365,23 +365,20 @@ class HeadlessDatabaseManager:
         return self.assessment_config.intake
 
     async def store_message(
-        self, client_pseudo_id: str, content: str, from_role: str
+        self, intake_id: str, content: str, from_role: str
     ) -> IntakeMessage:
         """Store message in memory."""
         message = IntakeMessage(
             id=str(uuid.uuid4()),
             content=content,
             from_role=IntakeMessageRole(from_role),
-            client_pseudo_id=client_pseudo_id,
-            intake_id=str(uuid.uuid4()),
+            intake_id=intake_id,
         )
         self.messages.append(message)
-        logger.debug(
-            f"[{client_pseudo_id}] Stored {from_role} message: {content[:50]}..."
-        )
+        logger.debug(f"[{intake_id}] Stored {from_role} message: {content[:50]}...")
         return message
 
-    async def get_latest_message(self, client_pseudo_id: str) -> IntakeMessage:
+    async def get_latest_message(self, intake_id: str) -> IntakeMessage:
         """Get the latest message."""
         if self.messages:
             return self.messages[-1]
@@ -389,27 +386,26 @@ class HeadlessDatabaseManager:
             id=str(uuid.uuid4()),
             content="No messages yet",
             from_role=IntakeMessageRole.CASEWORKER,
-            client_pseudo_id=client_pseudo_id,
-            intake_id=str(uuid.uuid4()),
+            intake_id=intake_id,
         )
 
-    async def complete_section(self, client_pseudo_id: str) -> str:
+    async def complete_section(self, intake_id: str) -> str:
         """Complete current section and move to next."""
         self.current_section_index += 1
 
         if self.current_section_index >= len(self.sections):
-            logger.info(f"[{client_pseudo_id}] All sections completed")
+            logger.info(f"[{intake_id}] All sections completed")
             return "Completion"
 
         next_section = self.sections[self.current_section_index]
-        logger.info(f"[{client_pseudo_id}] Moving to section: {next_section}")
+        logger.info(f"[{intake_id}] Moving to section: {next_section}")
         return next_section
 
-    async def update_intake_status(self, client_pseudo_id: str, status: str) -> None:
+    async def update_intake_status(self, intake_id: str, status: str) -> None:
         """Update intake status."""
-        logger.info(f"[{client_pseudo_id}] Status updated to: {status}")
+        logger.info(f"[{intake_id}] Status updated to: {status}")
 
-    async def all_messages_by_time(self, client_pseudo_id: str) -> List[IntakeMessage]:
+    async def all_messages_by_time(self, intake_id: str) -> List[IntakeMessage]:
         """Get all messages."""
         return self.messages
 
@@ -420,7 +416,7 @@ class HeadlessDatabaseManager:
 class HeadlessIntake:
     """Mock intake object for headless evaluation."""
 
-    def __init__(self, sections, assessment_config):
+    def __init__(self, sections, assessment_config, intake_id):
         self.current_section = sections[0].title
         self.assessment_config_id = "mock-config-id"
         self.assessment_config = assessment_config

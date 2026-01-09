@@ -2,7 +2,6 @@ from pathlib import Path
 
 import structlog
 
-from app.models.models import PlanType
 from app.services.client_data.queries import Queries
 
 from .base import cli
@@ -11,24 +10,26 @@ logger = structlog.get_logger(__name__)
 
 
 async def _create_plan(
-    client_pseudo_id: str,
+    intake_id: str,
     force: bool = False,
     regen: bool = False,
     prompt: str | None = None,
     resource_remove_id: str | None = None,
     resource_add_id: str | None = None,
-    mark_eval: bool = False,
 ):
     """
     Use the tasks to create a new plan
     """
 
+    from uuid import UUID
+
     from app.core.db import get_session_async_manager
+    from app.crud.intake import get_intake_by_id
     from app.crud.plan import (
         Plan,
         create_plan,
         delete_plan_by_id,
-        get_plan_by_client_pseudo_id,
+        get_plan_by_intake_id,
     )
     from app.crud.plan_generation import (
         PlanGeneration,
@@ -36,7 +37,14 @@ async def _create_plan(
     )
 
     async with get_session_async_manager() as session:
-        plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
+        # Get the intake first
+        intake = await get_intake_by_id(session, UUID(intake_id))
+        if not intake:
+            logger.error("Intake not found", intake_id=intake_id)
+            return
+
+        client_pseudo_id = intake.client_pseudo_id
+        plan = await get_plan_by_intake_id(session, intake_id)
 
         if regen:
             # Regeneration checks
@@ -78,8 +86,7 @@ async def _create_plan(
             execution = await gen.schedule_execution(session)
         else:
             # Creation process
-            type = PlanType.EVALUATION if mark_eval else PlanType.LIVE
-            plan = Plan(client_pseudo_id=client_pseudo_id, type=type)
+            plan = Plan(client_pseudo_id=client_pseudo_id, intake_id=intake.id)
             plan = await create_plan(session, plan)
             execution = await plan.schedule_initial_creation(session)
 
@@ -96,7 +103,7 @@ async def _create_plan(
             return
 
         # Get the completed plan and latest generation
-        plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
+        plan = await get_plan_by_intake_id(session, intake_id)
         latest_generation = await plan.get_latest_generation(session)
         if not latest_generation:
             logger.error("No generation found", client_pseudo_id=client_pseudo_id)

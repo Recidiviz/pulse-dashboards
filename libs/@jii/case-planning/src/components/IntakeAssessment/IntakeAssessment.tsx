@@ -45,12 +45,12 @@ const ManagedComponent: FC<{ presenter: IntakeAssessmentPresenter }> = observer(
             }}
           >
             {presenter.isAuthorized ? (
-              <IntakeSocketProvider token_from_url={presenter.authToken}>
+              <IntakeSocketProvider>
                 <IntakeRouter />
               </IntakeSocketProvider>
             ) : (
               <AssessmentLoginPage
-                mode="nonPseudoId"
+                mode="dob+fullname"
                 onConfirmation={presenter.updateAuthToken}
               />
             )}

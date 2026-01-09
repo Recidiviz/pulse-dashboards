@@ -174,7 +174,7 @@ class Assessment(BaseModel, table=True):
         Schedule the creation of a plan based on this assessment.
         Only works when assessment status is COMPLETED.
         """
-        from app.crud.plan import create_plan, get_plan_by_client_pseudo_id
+        from app.crud.plan import create_plan, get_plan_by_intake_id
         from app.models.models import Plan
 
         # Only create plan if assessment is completed
@@ -184,10 +184,8 @@ class Assessment(BaseModel, table=True):
             )
             return None
 
-        # Check if plan already exists for this client_pseudo_id
-        existing_plan = await get_plan_by_client_pseudo_id(
-            session, self.client_pseudo_id
-        )
+        # Check if plan already exists for this intake
+        existing_plan = await get_plan_by_intake_id(session, self.intake_id)
 
         if existing_plan:
             logger.info(f"Plan already exists for client {self.client_pseudo_id}")
@@ -195,7 +193,7 @@ class Assessment(BaseModel, table=True):
 
         # Create and schedule the plan
         logger.info(f"Creating new plan for client {self.client_pseudo_id}")
-        plan = Plan(client_pseudo_id=self.client_pseudo_id)
+        plan = Plan(client_pseudo_id=self.client_pseudo_id, intake_id=self.intake_id)
         plan = await create_plan(session, plan)
         await plan.schedule_initial_creation(session)
 

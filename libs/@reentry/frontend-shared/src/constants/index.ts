@@ -15,7 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  ASSESSMENT_LOGIN_STATES,
-  type AssessmentLoginStateCode,
-} from "./states";
+export { getStateLabel, STATE_CODE_LABELS } from "./states";

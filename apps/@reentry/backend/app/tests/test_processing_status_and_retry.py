@@ -18,14 +18,13 @@ import pytest
 from httpx import AsyncClient
 
 from app.core.db import AsyncSession
-from app.crud.client import get_processing_status
-from app.crud.intake import create_intake
 from app.models.assessment import Assessment
 from app.models.base import IntakeType
-from app.models.intake import Intake, IntakeStatus
+from app.models.intake import Intake
 from app.models.models import Execution, Plan, PlanGeneration
 from app.models.recording import RecordingSession
 from app.routes.shared_models import ProcessingStatus
+from app.utils.processing_status_utils import compute_processing_status_by_intake_id
 
 
 class TestCase:
@@ -126,7 +125,7 @@ async def setup_test_scenario(
     async_session: AsyncSession,
     test_case: TestCase,
     client_pseudo_id: str,
-    seed_configs: dict,
+    mock_intake,
 ) -> tuple[
     Intake,
     Optional[Assessment],
@@ -143,15 +142,10 @@ async def setup_test_scenario(
     3. Handle scenario (missing_entity, missing_execution, or create with execution)
     """
     # Always create completed intake
-    intake = await create_intake(
-        async_session,
-        client_pseudo_id,
-        IntakeType.TRANSCRIPTION,
-        IntakeStatus.COMPLETED,
-    )
-    async_session.add(intake)
+    mock_intake.intake_type = IntakeType.TRANSCRIPTION
     await async_session.commit()
-    await async_session.refresh(intake)
+    await async_session.refresh(mock_intake)
+    intake = mock_intake
 
     assessment = None
     plan = None
@@ -225,7 +219,11 @@ async def setup_test_scenario(
             pass
         elif test_case.scenario == "missing_execution":
             # Create plan without execution
-            plan = Plan(client_pseudo_id=client_pseudo_id, create_execution_id=None)
+            plan = Plan(
+                client_pseudo_id=client_pseudo_id,
+                intake_id=intake.id,
+                create_execution_id=None,
+            )
             async_session.add(plan)
             await async_session.commit()
         else:
@@ -243,7 +241,9 @@ async def setup_test_scenario(
             await async_session.refresh(plan_exec)
 
             plan = Plan(
-                client_pseudo_id=client_pseudo_id, create_execution_id=plan_exec.id
+                client_pseudo_id=client_pseudo_id,
+                intake_id=intake.id,
+                create_execution_id=plan_exec.id,
             )
             async_session.add(plan)
             await async_session.commit()
@@ -269,6 +269,7 @@ async def setup_test_scenario(
             )
             async_session.add(recording)
             await async_session.commit()
+            await async_session.refresh(intake)
         else:
             # Create recording with execution
             recording_exec = Execution(
@@ -298,6 +299,7 @@ async def setup_test_scenario(
             recording_exec.table_entity_id = recording.id
             async_session.add(recording_exec)
             await async_session.commit()
+            await async_session.refresh(intake)
 
     # === PLAN GENERATION ===
     elif test_case.entity_type == "plan_generation":
@@ -321,6 +323,7 @@ async def setup_test_scenario(
 
         plan = Plan(
             client_pseudo_id=client_pseudo_id,
+            intake_id=intake.id,
             create_execution_id=plan_exec.id,
             create_status="completed",
         )
@@ -375,33 +378,22 @@ async def test_processing_status_detection(
     mock_clientdata_service,
     async_session: AsyncSession,
     test_case: TestCase,
-    seed_configs,
+    mock_intake,
 ):
-    """Test that compute_processing_status correctly identifies all scenarios."""
-    from unittest.mock import patch
-
+    """Test that compute_processing_status_by_intake_id correctly identifies all scenarios."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    staff_id = "staff-123"
 
     # Set up test scenario
-    await setup_test_scenario(async_session, test_case, client_pseudo_id, seed_configs)
+    await setup_test_scenario(async_session, test_case, client_pseudo_id, mock_intake)
 
-    # Mock staff-client relationship
-    class StubStaffClient:
-        def __init__(self, pseudo_id):
-            self.pseudonymized_client_id = pseudo_id
-
-    with patch(
-        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
-    ) as mock_get_clients:
-        mock_get_clients.return_value = [StubStaffClient(client_pseudo_id)]
-
-        # Check processing status
-        result = await get_processing_status(async_session, staff_id)
+    # Check processing status using the intake ID
+    result = await compute_processing_status_by_intake_id(
+        async_session, str(mock_intake.id)
+    )
 
     assert (
-        result[client_pseudo_id] == test_case.expected_status
-    ), f"Failed for {test_case.description}"
+        result == test_case.expected_status
+    ), f"Failed for {test_case.description}: expected {test_case.expected_status}, got {result}"
 
 
 @pytest.mark.parametrize(
@@ -414,13 +406,13 @@ async def test_retry_processing_succeeds(
     client: AsyncClient,
     async_session: AsyncSession,
     test_case: TestCase,
-    seed_configs,
+    mock_intake,
 ):
-    """Test that retry_processing successfully retries for NEEDS_RETRY scenarios."""
+    """Test that retry_intake_processing successfully retries for NEEDS_RETRY scenarios."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Set up test scenario
-    await setup_test_scenario(async_session, test_case, client_pseudo_id, seed_configs)
+    await setup_test_scenario(async_session, test_case, client_pseudo_id, mock_intake)
 
     # Mock all task types
     mock_task_result = MagicMock()
@@ -441,8 +433,8 @@ async def test_retry_processing_succeeds(
         mock_gen_task.kiq = mock_kiq
         mock_recording_task.kiq = mock_kiq
 
-        # Call retry_processing
-        response = await client.post(f"/clients/{client_pseudo_id}/retry-processing")
+        # Call retry_intake_processing using intake ID
+        response = await client.post(f"/intake/admin/{mock_intake.id}/retry-processing")
 
     assert response.status_code == 200, f"Should succeed for {test_case.description}"
     data = response.json()
@@ -459,16 +451,16 @@ async def test_retry_processing_rejects_healthy(
     client: AsyncClient,
     async_session: AsyncSession,
     test_case: TestCase,
-    seed_configs,
+    mock_intake,
 ):
-    """Test that retry_processing returns 400 error for healthy scenarios."""
+    """Test that retry_intake_processing returns 400 error for healthy scenarios."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Set up test scenario
-    await setup_test_scenario(async_session, test_case, client_pseudo_id, seed_configs)
+    await setup_test_scenario(async_session, test_case, client_pseudo_id, mock_intake)
 
-    # Call retry_processing - should return error
-    response = await client.post(f"/clients/{client_pseudo_id}/retry-processing")
+    # Call retry_intake_processing using intake ID - should return error
+    response = await client.post(f"/intake/admin/{mock_intake.id}/retry-processing")
 
     assert (
         response.status_code == 400
@@ -497,15 +489,15 @@ async def test_retry_processing_race_condition(
     client: AsyncClient,
     async_session: AsyncSession,
     test_case: TestCase,
-    seed_configs,
+    mock_intake,
 ):
-    """Test that retry_processing handles race condition when called twice in quick succession."""
+    """Test that retry_intake_processing handles race condition when called twice in quick succession."""
     import asyncio
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Set up test scenario that needs retry
-    await setup_test_scenario(async_session, test_case, client_pseudo_id, seed_configs)
+    await setup_test_scenario(async_session, test_case, client_pseudo_id, mock_intake)
 
     # Mock all task types
     mock_task_result = MagicMock()
@@ -528,10 +520,10 @@ async def test_retry_processing_race_condition(
         mock_gen_task.kiq = mock_kiq
         mock_recording_task.kiq = mock_kiq
 
-        # Call retry_processing twice concurrently
+        # Call retry_intake_processing twice concurrently using intake ID
         responses = await asyncio.gather(
-            client.post(f"/clients/{client_pseudo_id}/retry-processing"),
-            client.post(f"/clients/{client_pseudo_id}/retry-processing"),
+            client.post(f"/intake/admin/{mock_intake.id}/retry-processing"),
+            client.post(f"/intake/admin/{mock_intake.id}/retry-processing"),
             return_exceptions=True,
         )
     # Verify responses: at least one should succeed

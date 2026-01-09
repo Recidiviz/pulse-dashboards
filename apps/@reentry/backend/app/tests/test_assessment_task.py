@@ -16,7 +16,6 @@ import pytest
 import structlog
 
 from app.crud.assessment import get_assessment_by_id
-from app.crud.intake import create_intake
 from app.models.assessment import Assessment
 from app.models.assessment_tree import AssessmentTree, AssessmentTreeRevision, InputType
 from app.models.base import IntakeType
@@ -71,22 +70,15 @@ graph TD
 
 @pytest.mark.asyncio
 async def test_assessment_with_existing_type(
-    async_session,
-    seed_configs,
-    mock_clientdata_service,
+    async_session, mock_clientdata_service, mock_intake
 ):
     """Test assessment task when assessment already has a type"""
     # Create intake and assessment with type
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        intake_type=IntakeType.CONVERSATION,
-    )
 
     assessment = Assessment(
         client_pseudo_id=client_pseudo_id,
-        intake_id=intake.id,
+        intake_id=mock_intake.id,
         assessment_type="lsir",
     )
     async_session.add(assessment)
@@ -161,6 +153,7 @@ async def test_assessment_with_existing_type(
 @pytest.mark.asyncio
 async def test_assessment_without_type_determines_from_config(
     async_session,
+    mock_intake,
     seed_configs,
     mock_clientdata_service,
 ):
@@ -170,21 +163,17 @@ async def test_assessment_without_type_determines_from_config(
 
     # Create intake with assessment config
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        intake_type=IntakeType.CONVERSATION,
-    )
+
     # Set the assessment config ID
-    intake.assessment_config_id = config.id
-    async_session.add(intake)
+    mock_intake.assessment_config_id = config.id
+    async_session.add(mock_intake)
     await async_session.commit()
-    await async_session.refresh(intake)
+    await async_session.refresh(mock_intake)
 
     # Create assessment WITHOUT type
     assessment = Assessment(
         client_pseudo_id=client_pseudo_id,
-        intake_id=intake.id,
+        intake_id=mock_intake.id,
     )
     async_session.add(assessment)
     await async_session.commit()
@@ -247,20 +236,16 @@ async def test_assessment_without_type_determines_from_config(
 @pytest.mark.asyncio
 async def test_assessment_with_conversation_intake(
     async_session,
-    seed_configs,
+    mock_intake,
     mock_clientdata_service,
 ):
     """Test assessment with CONVERSATION intake type"""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        intake_type=IntakeType.CONVERSATION,
-    )
 
+    mock_intake.intake_type = IntakeType.CONVERSATION
     assessment = Assessment(
         client_pseudo_id=client_pseudo_id,
-        intake_id=intake.id,
+        intake_id=mock_intake.id,
         assessment_type="lsir",
     )
     async_session.add(assessment)
@@ -322,7 +307,7 @@ async def test_assessment_with_conversation_intake(
         )
 
         # Verify messages were fetched
-        mock_messages.assert_called_once_with(async_session, intake_id=intake.id)
+        mock_messages.assert_called_once_with(async_session, intake_id=mock_intake.id)
 
         # Verify runner was called with formatted messages
         assert mock_runner.called
@@ -332,36 +317,30 @@ async def test_assessment_with_conversation_intake(
 @pytest.mark.asyncio
 async def test_assessment_with_transcription_intake(
     async_session,
-    seed_configs,
+    mock_intake,
     mock_clientdata_service,
 ):
     """Test assessment with TRANSCRIPTION intake type"""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
-    # Create intake first
-    intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        intake_type=IntakeType.TRANSCRIPTION,
-    )
-
+    mock_intake.intake_type = IntakeType.TRANSCRIPTION
     # Create a recording session with intake_id
     from app.models.recording import RecordingSession
 
     recording = RecordingSession(
         client_pseudo_id=client_pseudo_id,
-        intake_id=intake.id,
+        intake_id=mock_intake.id,
     )
     async_session.add(recording)
     await async_session.commit()
     await async_session.refresh(recording)
 
     # Refresh intake to load the relationship
-    await async_session.refresh(intake)
+    await async_session.refresh(mock_intake)
 
     assessment = Assessment(
         client_pseudo_id=client_pseudo_id,
-        intake_id=intake.id,
+        intake_id=mock_intake.id,
         assessment_type="lsir",
     )
     async_session.add(assessment)
@@ -468,109 +447,17 @@ async def test_assessment_without_intake(
 
 
 @pytest.mark.asyncio
-async def test_assessment_with_no_messages_filters_intake_trees(
-    async_session,
-    seed_configs,
-    mock_clientdata_service,
-):
-    """Test that trees requiring intake are filtered out when no messages exist"""
-    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        intake_type=IntakeType.CONVERSATION,
-    )
-
-    assessment = Assessment(
-        client_pseudo_id=client_pseudo_id,
-        intake_id=intake.id,
-        assessment_type="lsir",
-    )
-    async_session.add(assessment)
-    await async_session.commit()
-    await async_session.refresh(assessment)
-
-    execution = Execution(
-        status=ExecutionStatus.IN_PROGRESS,
-        table_name="assessment",
-        table_entity_id=assessment.id,
-    )
-    async_session.add(execution)
-    await async_session.commit()
-    await async_session.refresh(execution)
-
-    # Create trees
-    await create_test_assessment_tree(
-        session=async_session,
-        name="Intake Required",
-        assessment_type="lsir",
-        mermaid_content=SIMPLE_MERMAID,
-        input_data=[InputType.INTAKE_CONVERSATION.value],
-    )
-
-    await create_test_assessment_tree(
-        session=async_session,
-        name="No Intake Required",
-        assessment_type="lsir",
-        mermaid_content=SIMPLE_MERMAID,
-        input_data=[],
-    )
-
-    with (
-        patch(
-            "app.crud.intake.get_intake_messages", new_callable=AsyncMock
-        ) as mock_messages,
-        patch(
-            "app.utils.assessment_runner.AssessmentRunner.run_decision_tree",
-            new_callable=AsyncMock,
-        ) as mock_runner,
-        patch(
-            "app.crud.assessment.update_assessment_with_tree_results",
-            new_callable=AsyncMock,
-        ) as mock_update,
-    ):
-        # Return no messages
-        mock_messages.return_value = []
-
-        mock_result = MagicMock()
-        mock_result.steps = [MagicMock(model_dump=lambda: {"node": "A"})]
-        mock_result.final_score = 1
-        mock_result.misses = 0
-        mock_runner.return_value = mock_result
-
-        progress = MagicMock()
-        task_logger = structlog.get_logger(__name__)
-
-        await assessment_task(
-            execution=execution,
-            assessment_id=assessment.id,
-            progress=progress,
-            session=async_session,
-            task_logger=task_logger,
-        )
-
-        # Verify only the tree without intake requirement was processed
-        assert mock_runner.call_count == 1
-        assert mock_update.called
-
-
-@pytest.mark.asyncio
 async def test_assessment_handles_llm_errors(
     async_session,
-    seed_configs,
+    mock_intake,
     mock_clientdata_service,
 ):
     """Test assessment handles ValueError from incorrect LLM responses"""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        intake_type=IntakeType.CONVERSATION,
-    )
 
     assessment = Assessment(
         client_pseudo_id=client_pseudo_id,
-        intake_id=intake.id,
+        intake_id=mock_intake.id,
         assessment_type="lsir",
     )
     async_session.add(assessment)
@@ -632,6 +519,7 @@ async def test_assessment_handles_llm_errors(
 async def test_assessment_fails_with_no_results(
     async_session,
     seed_configs,
+    mock_intake,
     mock_clientdata_service,
 ):
     """Test assessment status is set to FAILED when no results are produced"""
@@ -639,18 +527,13 @@ async def test_assessment_fails_with_no_results(
 
     # Get a test config and create intake (now required)
     config = seed_configs["assessments_by_state"]["US_AZ"]
-    intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        intake_type=IntakeType.CONVERSATION,
-    )
-    intake.assessment_config_id = config.id
-    async_session.add(intake)
+    mock_intake.assessment_config_id = config.id
+    async_session.add(mock_intake)
     await async_session.commit()
 
     assessment = Assessment(
         client_pseudo_id=client_pseudo_id,
-        intake_id=intake.id,
+        intake_id=mock_intake.id,
         assessment_type="lsir",
     )
     async_session.add(assessment)
@@ -706,20 +589,15 @@ async def test_assessment_fails_with_no_results(
 @pytest.mark.asyncio
 async def test_assessment_processes_multiple_trees(
     async_session,
-    seed_configs,
+    mock_intake,
     mock_clientdata_service,
 ):
     """Test assessment processes multiple assessment trees"""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        intake_type=IntakeType.CONVERSATION,
-    )
 
     assessment = Assessment(
         client_pseudo_id=client_pseudo_id,
-        intake_id=intake.id,
+        intake_id=mock_intake.id,
         assessment_type="lsir",
     )
     async_session.add(assessment)
@@ -800,6 +678,7 @@ async def test_assessment_processes_multiple_trees(
 async def test_assessment_disabled_trees_not_processed(
     async_session,
     seed_configs,
+    mock_intake,
     mock_clientdata_service,
 ):
     """Test that disabled assessment trees are not processed"""
@@ -807,18 +686,14 @@ async def test_assessment_disabled_trees_not_processed(
 
     # Get a test config and create intake (now required)
     config = seed_configs["assessments_by_state"]["US_AZ"]
-    intake = await create_intake(
-        session=async_session,
-        client_pseudo_id=client_pseudo_id,
-        intake_type=IntakeType.CONVERSATION,
-    )
-    intake.assessment_config_id = config.id
-    async_session.add(intake)
+
+    mock_intake.assessment_config_id = config.id
+    async_session.add(mock_intake)
     await async_session.commit()
 
     assessment = Assessment(
         client_pseudo_id=client_pseudo_id,
-        intake_id=intake.id,
+        intake_id=mock_intake.id,
         assessment_type="lsir",
     )
     async_session.add(assessment)

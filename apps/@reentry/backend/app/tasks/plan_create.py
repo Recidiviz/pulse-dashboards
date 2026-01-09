@@ -13,7 +13,7 @@ from taskiq.depends.progress_tracker import ProgressTracker
 
 from app.core.db import AsyncSession, get_session
 from app.crud.assessment import get_assessments_by_intake_id
-from app.crud.intake import get_intake_by_client_pseudo_id, get_intake_messages
+from app.crud.intake import get_intake_messages
 from app.crud.plan import Plan, get_plan_by_id
 from app.crud.plan_asset import PlanAsset, get_asset_by_filename
 from app.crud.plan_decision_tree import get_plan_decision_tree_by_plan_id
@@ -38,17 +38,12 @@ async def fetch_assets(
     plan: Plan,
     task_logger: structlog.BoundLogger,
 ):
-    task_logger.info("Fetching intake for client")
-    intake = await get_intake_by_client_pseudo_id(
-        session, client_pseudo_id=plan.client_pseudo_id
-    )
-    if not intake:
-        task_logger.error(
-            f"No intake found for client_pseudo_id {plan.client_pseudo_id}"
-        )
-        raise ValueError(
-            f"No intake found for client_pseudo_id {plan.client_pseudo_id}"
-        )
+    if not plan.intake:
+        task_logger.error(f"Plan {plan.id} has no associated intake")
+        raise ValueError(f"Plan {plan.id} has no associated intake")
+
+    task_logger.info("Fetching intake for plan")
+    intake = plan.intake
 
     task_logger.info(
         f"Fetching messages from database id {intake.id} intake type: {intake.intake_type}"
@@ -127,16 +122,6 @@ async def fetch_assets(
     # Fetch assessments related to this intake
     task_logger.info("Fetching assessments for intake")
     assessments = await get_assessments_by_intake_id(session, intake_id=intake.id)
-
-    # If no assessments found by intake_id, try by client_pseudo_id as fallback
-    if not assessments:
-        task_logger.info("No assessments found by intake_id, trying client_pseudo_id")
-        from app.crud.assessment import get_assessments_by_client_pseudo_id
-
-        assessments = await get_assessments_by_client_pseudo_id(
-            session, client_pseudo_id=plan.client_pseudo_id
-        )
-        task_logger.info(f"Assessments by client_pseudo_id query result: {assessments}")
 
     if assessments:
         task_logger.info(
@@ -315,13 +300,10 @@ async def plan_create(
     # Check if plan config exists - if not, we only do assessment (no action plan generation)
     from app.utils.config_loader import ConfigLoader
 
-    intake = await get_intake_by_client_pseudo_id(
-        session, client_pseudo_id=plan.client_pseudo_id
-    )
-    if not intake:
-        raise ValueError(
-            f"No intake found for client_pseudo_id {plan.client_pseudo_id}"
-        )
+    if not plan.intake:
+        raise ValueError(f"Plan {plan.id} has no associated intake")
+
+    intake = plan.intake
 
     plan_config = await ConfigLoader.load_plan_config(
         intake.assessment_config_id, session

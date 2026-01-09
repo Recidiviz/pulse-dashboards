@@ -9,8 +9,9 @@ from pydantic import BaseModel, model_validator
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
+from app.crud.intake import get_intake_with_address_and_recording
 from app.crud.recording_session import get_recording_session_by_id
-from app.models.intake import ClientAddress, Intake, IntakeStatus
+from app.models.intake import ClientAddress, IntakeStatus
 from app.models.recording import RecordingStatus
 from app.services.recording_service import RecordingService
 from app.utils.permission_utils import check_access
@@ -56,31 +57,19 @@ class CompleteIntakeTranscriptionResponse(BaseModel):
 
 
 @router.post(
-    "/{client_pseudo_id}/complete-intake-transcription",
+    "/{intake_id}/complete-intake-transcription",
     summary="Submit Client address or transcription approval for intake transcription",
     description="Submit the client's address or transcription approval to complete the intake process.",
     response_model=CompleteIntakeTranscriptionResponse,
-    tags=["transcription"],
+    tags=["Transcriptions"],
 )
 async def complete_intake_transcription(
     request: Request,
-    client_pseudo_id: str,
+    intake_id: str,
     data: CompleteIntakeTrascriptionSubmission,
     session: AsyncSession = Depends(get_session),
 ):
-    from sqlalchemy.orm import selectinload
-    from sqlmodel import select
-
-    statement = (
-        select(Intake)
-        .where(Intake.client_pseudo_id == client_pseudo_id)
-        .options(
-            selectinload(Intake.address),
-            selectinload(Intake.recording_session),
-        )
-    )
-    result = await session.exec(statement)
-    intake = result.first()
+    intake = await get_intake_with_address_and_recording(session, intake_id)
 
     if not intake:
         raise HTTPException(status_code=404, detail="Intake not found")
@@ -158,7 +147,7 @@ class TranscriptionOutputResponse(BaseModel):
     response_model=TranscriptionOutputResponse,
     summary="Get Client Interview Transcription",
     description="Retrieve the interview transcription for a client recording session.",
-    tags=["Client Records"],
+    tags=["Transcription"],
 )
 async def get_client_transcription(
     recording_session_id: UUID,

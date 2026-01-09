@@ -55,21 +55,18 @@ async def get_decision_runner_with_data(
     session: AsyncSession, plan: Plan, execution_id: UUID
 ) -> DecisionTreeRunner:
     # Load action plan config from intake
-    from app.crud.intake import get_intake_by_client_pseudo_id
     from app.utils.config_loader import ConfigLoader
 
-    # TODO phase 2 : link plan to intake and planconfig to plan so we can load the config from plan without relying on one plan per client
-    intake = await get_intake_by_client_pseudo_id(
-        session, client_pseudo_id=plan.client_pseudo_id
-    )
-    if not intake:
+    if not plan.intake:
         raise ValueError(
-            f"Cannot run decision tree: no intake found for client {plan.client_pseudo_id}"
+            f"Cannot run decision tree: plan {plan.id} has no associated intake"
         )
+
+    intake = plan.intake
 
     if not intake.assessment_config_id:
         raise ValueError(
-            f"Cannot run decision tree: intake for client {plan.client_pseudo_id} has no assessment_config_id"
+            f"Cannot run decision tree: intake {intake.id} has no assessment_config_id"
         )
 
     try:

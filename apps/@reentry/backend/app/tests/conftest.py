@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from unittest.mock import MagicMock
 
+from app.models.base import IntakeType
 from app.utils.string_utils import normalize_code
 
 # Set environment variable BEFORE any imports that might use settings
@@ -257,6 +258,25 @@ def mock_bigquery():
     return mock_client
 
 
+@pytest.fixture(scope="session", autouse=True)
+def mock_redis():
+    """Mock Redis client globally for all tests"""
+    from unittest.mock import patch
+
+    # Create a mock Redis client
+    mock_client = MagicMock()
+
+    # Set up common Redis methods to return None (cache miss)
+    mock_client.get.return_value = None
+    mock_client.setex.return_value = True
+    mock_client.delete.return_value = True
+    mock_client.exists.return_value = False
+
+    # Patch the redis_client at the module level where it's used
+    with patch("app.services.client_data.utils.redis_client", mock_client):
+        yield mock_client
+
+
 @pytest.fixture(scope="function")
 def mock_client_data():
     """Mock data for client service"""
@@ -351,12 +371,13 @@ async def mock_intake(async_session: AsyncSession, mock_client_data, seed_config
     from app.models.intake import Intake, IntakeStatus
 
     # Get the assessment config for US_UT CCCI (which includes both summary and plan configs)
-    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
 
     intake = Intake(
         client_pseudo_id=mock_client_data["client_pseudo_id"],
         status=IntakeStatus.COMPLETED,
         assessment_config_id=assessment_config_id,
+        intake_type=IntakeType.CONVERSATION,
     )
     async_session.add(intake)
     await async_session.commit()
@@ -374,7 +395,7 @@ async def mock_intake_summary_only(
     from app.models.intake import Intake, IntakeStatus
 
     # Get the assessment config for US_IX FACR (which has only intake summary, no action plan config)
-    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
 
     intake = Intake(
         client_pseudo_id=mock_client_data["client_pseudo_id"],
@@ -426,7 +447,8 @@ async def seed_configs(async_session: AsyncSession):
     outputs = {}
 
     # Load and save all output configs first (assessments reference them)
-    for yaml_file in output_fixtures_dir.glob("*.yaml"):
+    # Files are sorted by name to ensure consistent loading order
+    for yaml_file in sorted(output_fixtures_dir.glob("*.yaml")):
         yaml_content = yaml_file.read_text()
         # Validate using OutputFileLoader
         validated = OutputFileLoader.validate_yaml_content(yaml_content)
@@ -447,12 +469,13 @@ async def seed_configs(async_session: AsyncSession):
         await async_session.commit()
         await async_session.refresh(output_config)
 
-        # Store mapping
-        key = (validated.metadata.code, validated.metadata.version)
+        # Store mapping (use normalized code for consistent lookups)
+        key = (normalize_code(validated.metadata.code), validated.metadata.version)
         outputs[key] = output_config.id
 
-    # Load and save all assessment configs
-    for yaml_file in assessment_fixtures_dir.glob("*.yaml"):
+    # Load and save all assessment configs (sorted to ensure consistent order)
+    # Files are sorted by name, ensuring higher versions are loaded last and remain active
+    for yaml_file in sorted(assessment_fixtures_dir.glob("*.yaml")):
         yaml_content = yaml_file.read_text()
 
         # Validate using AssessmentFileLoader
@@ -462,7 +485,7 @@ async def seed_configs(async_session: AsyncSession):
         # This ensures only one active config per state
         existing_query = select(AssessmentConfig).where(
             AssessmentConfig.state_code == validated.metadata.state_code,
-            AssessmentConfig.code == validated.metadata.code,
+            AssessmentConfig.code == normalize_code(validated.metadata.code),
             AssessmentConfig.is_active,
         )
         result = await async_session.exec(existing_query)
@@ -478,7 +501,7 @@ async def seed_configs(async_session: AsyncSession):
         # Create database model (marked as active)
         assessment_config = AssessmentConfig(
             state_code=validated.metadata.state_code,
-            code=validated.metadata.code,
+            code=normalize_code(validated.metadata.code),
             version=validated.metadata.version,
             display_name=validated.metadata.display_name,
             description=validated.metadata.description
@@ -491,10 +514,10 @@ async def seed_configs(async_session: AsyncSession):
         await async_session.commit()
         await async_session.refresh(assessment_config)
 
-        # Store mapping
+        # Store mapping (use normalized code for consistent lookups)
         key = (
             validated.metadata.state_code,
-            validated.metadata.code,
+            normalize_code(validated.metadata.code),
             validated.metadata.version,
         )
         assessments[key] = assessment_config.id
