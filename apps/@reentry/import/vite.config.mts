@@ -25,6 +25,7 @@ export default defineConfig(() => ({
 
   plugins: [nxViteTsPaths()],
   test: {
+    passWithNoTests: true,
     name: "@reentry/import",
     setupFiles: ["__tests__/setup/index.ts"],
     globals: true,

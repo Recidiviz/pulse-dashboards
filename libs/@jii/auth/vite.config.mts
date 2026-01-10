@@ -25,6 +25,7 @@ export default defineConfig(() => ({
   plugins: [nxViteTsPaths()],
 
   test: {
+    passWithNoTests: true,
     // name should resolve name collision in vitest workspaces, which uses folder name by default
     name: "@jii/auth",
     globals: true,

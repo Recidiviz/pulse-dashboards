@@ -30,6 +30,7 @@ export default defineConfig(() => ({
   // },
 
   test: {
+    passWithNoTests: true,
     globals: true,
     environment: "node",
     setupFiles: ["src/setupTests.ts"],

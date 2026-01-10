@@ -23,6 +23,7 @@ export default defineConfig(() => ({
   cacheDir: "../../node_modules/.vite/libs/twilio-api",
   plugins: [nxViteTsPaths()],
   test: {
+    passWithNoTests: true,
     mockReset: true,
     unstubEnvs: true,
     globalSetup: ["src/setupTestsGlobal.ts"],

@@ -33,6 +33,7 @@ export default defineConfig(() => ({
     nxCopyAssetsPlugin(["*.md"]),
   ],
   test: {
+    passWithNoTests: true,
     mockReset: true,
     unstubEnvs: true,
     unstubGlobals: true,

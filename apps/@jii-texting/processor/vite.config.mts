@@ -23,6 +23,7 @@ export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/@jii-texting/processor",
   test: {
+    passWithNoTests: true,
     setupFiles: ["src/test/setup/index.ts", "src/setupTests.ts"],
     globals: true,
     cache: { dir: "../../node_modules/.vitest" },

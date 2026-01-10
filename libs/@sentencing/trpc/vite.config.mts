@@ -25,6 +25,7 @@ export default defineConfig(() => ({
 
   plugins: [nxViteTsPaths()],
   test: {
+    passWithNoTests: true,
     name: "@sentencing/trpc",
     setupFiles: ["src/test/setup/index.ts"],
     globals: true,

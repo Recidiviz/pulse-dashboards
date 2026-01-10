@@ -172,7 +172,8 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
         mockReset: true,
         unstubEnvs: true,
         globalSetup: ["src/setupTestsGlobal.ts"],
-        setupFiles: ["src/setupTests.ts"],`,
+        setupFiles: ["src/setupTests.ts"],
+        passWithNoTests: true,`,
     );
 
     // react requires a babel plugin

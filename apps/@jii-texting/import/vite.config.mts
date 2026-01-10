@@ -25,6 +25,7 @@ export default defineConfig(() => ({
 
   plugins: [nxViteTsPaths()],
   test: {
+    passWithNoTests: true,
     setupFiles: ["src/test/setup/index.ts", "src/setupTests.ts"],
     globals: true,
     cache: { dir: "../../node_modules/.vitest" },

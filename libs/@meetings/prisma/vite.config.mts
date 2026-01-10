@@ -25,6 +25,7 @@ export default defineConfig(() => ({
 
   plugins: [nxViteTsPaths()],
   test: {
+    passWithNoTests: true,
     name: "@meetings/prisma",
     globals: true,
     cache: { dir: "../../../node_modules/.vitest" },

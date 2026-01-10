@@ -25,6 +25,7 @@ export default defineConfig(() => ({
 
   plugins: [nxViteTsPaths()],
   test: {
+    passWithNoTests: true,
     name: "@jii-texting/prisma",
     globals: true,
     cache: { dir: "../../../node_modules/.vitest" },

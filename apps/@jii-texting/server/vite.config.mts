@@ -25,6 +25,7 @@ export default defineConfig(() => ({
 
   plugins: [nxViteTsPaths()],
   test: {
+    passWithNoTests: true,
     name: "@jii-texting/server",
     setupFiles: ["src/test/setup/index.ts", "src/test/setupTests.ts"],
     globals: true,

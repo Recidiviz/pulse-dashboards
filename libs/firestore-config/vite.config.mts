@@ -43,6 +43,7 @@ export default defineConfig(() => ({
   },
 
   test: {
+    passWithNoTests: true,
     mockReset: true,
     unstubEnvs: true,
     globalSetup: ["src/setupTestsGlobal.ts"],

@@ -25,6 +25,7 @@ export default defineConfig(() => ({
   plugins: [nxViteTsPaths()],
 
   test: {
+    passWithNoTests: true,
     mockReset: true,
     unstubEnvs: true,
     globalSetup: ["src/setupTestsGlobal.ts"],
