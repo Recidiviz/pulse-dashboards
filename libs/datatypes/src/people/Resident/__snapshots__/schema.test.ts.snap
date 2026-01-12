@@ -620,6 +620,54 @@ exports[`schema for 'US_AZ' 'RES026' 1`] = `
 }
 `;
 
+exports[`schema for 'US_CO' 'RES001' 1`] = `
+{
+  "admissionDate": 2020-09-10T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES001",
+  "facilityId": "CO_DEMO_FACILITY",
+  "facilityUnitId": null,
+  "gender": "MALE",
+  "metadata": {},
+  "personExternalId": "RES001",
+  "personName": {
+    "givenNames": "John",
+    "middleNames": "Michael",
+    "surname": "Smith",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres001",
+  "recordId": "us_co_RES001",
+  "stateCode": "US_CO",
+  "unitId": null,
+}
+`;
+
+exports[`schema for 'US_CO' 'RES002' 1`] = `
+{
+  "admissionDate": 2019-06-16T00:00:00.000Z,
+  "allEligibleOpportunities": [],
+  "custodyLevel": "MINIMUM",
+  "displayId": "RES002",
+  "facilityId": "CO_DEMO_FACILITY",
+  "facilityUnitId": null,
+  "gender": "FEMALE",
+  "metadata": {},
+  "personExternalId": "RES002",
+  "personName": {
+    "givenNames": "Jane",
+    "middleNames": "Marie",
+    "surname": "Johnson",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres002",
+  "recordId": "us_co_RES002",
+  "stateCode": "US_CO",
+  "unitId": null,
+}
+`;
+
 exports[`schema for 'US_ID' 'RES001' 1`] = `
 {
   "admissionDate": 2019-08-12T00:00:00.000Z,

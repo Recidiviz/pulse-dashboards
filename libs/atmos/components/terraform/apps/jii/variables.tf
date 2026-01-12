@@ -30,7 +30,7 @@ variable "database_secondary_zone" {
 variable "enabled_states" {
   type        = list(string)
   description = "Each will have its own live and demo DB on the SQL instance"
-  default     = ["us_az", "us_id", "us_ma", "us_ne", "us_tn"]
+  default     = ["us_az", "us_co", "us_id", "us_ma", "us_ne", "us_tn"]
 }
 
 variable "private_network" {

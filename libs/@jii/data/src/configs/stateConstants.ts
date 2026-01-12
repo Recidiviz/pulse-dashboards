@@ -25,6 +25,7 @@ import { StateCode, StateConfig } from "./types";
  */
 export const stateCodes = z.enum([
   "US_AZ",
+  "US_CO",
   "US_ID",
   "US_MA",
   "US_NC",
@@ -52,6 +53,7 @@ export const stateConfigs: StateConfigArray<typeof stateCodes.options> = [
     displayName: "Arizona",
     urlSlug: "arizona",
   },
+  { stateCode: "US_CO", displayName: "Colorado", urlSlug: "colorado" },
   { stateCode: "US_ID", displayName: "Idaho", urlSlug: "idaho" },
   {
     stateCode: "US_MA",

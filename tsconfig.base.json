@@ -32,6 +32,7 @@
       "~@jii-texting/utils": ["libs/@jii-texting/utils/src/index.ts"],
       "~@jii-texting/utils/*": ["libs/@jii-texting/utils/src/*"],
       "~@jii/US_AZ": ["libs/@jii/states/US_AZ/src/index.ts"],
+      "~@jii/US_CO": ["libs/@jii/states/US_CO/src/index.ts"],
       "~@jii/US_ID": ["libs/@jii/states/US_ID/src/index.ts"],
       "~@jii/US_MA": ["libs/@jii/states/US_MA/src/index.ts"],
       "~@jii/US_ME": ["libs/@jii/states/US_ME/src/index.ts"],

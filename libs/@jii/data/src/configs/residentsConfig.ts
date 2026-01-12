@@ -17,6 +17,7 @@
 
 import { ResidentsConfig, StateCode } from "./types";
 import { usAzResidentsConfig } from "./US_AZ/residents/residentsConfig";
+import { usCoResidentsConfig } from "./US_CO/residents/residentsConfig";
 import { usIdResidentsConfig } from "./US_ID/residents/config";
 import { usMaResidentsConfig } from "./US_MA/residents/config";
 import { usNcResidentsConfig } from "./US_NC/residents/residentsConfig";
@@ -28,6 +29,7 @@ import { usTnResidentsConfig } from "./US_TN/residents/residentsConfig";
  */
 export const residentsConfigByState: Record<StateCode, ResidentsConfig> = {
   US_AZ: usAzResidentsConfig,
+  US_CO: usCoResidentsConfig,
   US_ID: usIdResidentsConfig,
   US_MA: usMaResidentsConfig,
   US_NC: usNcResidentsConfig,

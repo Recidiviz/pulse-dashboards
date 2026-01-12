@@ -61,6 +61,17 @@ export const locationRecordFixtures: Array<LocationRecord> = [
   },
 
   //
+  // Colorado
+  //
+  {
+    stateCode: "US_CO",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "CO_DEMO_FACILITY",
+    name: "Colorado Demo Facility",
+  },
+
+  //
   // Idaho
   //
   {

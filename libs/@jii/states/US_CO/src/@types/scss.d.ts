@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,33 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OfflineAuthHandler } from "./OfflineAuthHandler";
-
-let handler: OfflineAuthHandler;
-
-beforeEach(() => {
-  handler = new OfflineAuthHandler();
-});
-
-test("mock user profile in offline mode", () => {
-  expect(handler.userProfile).toMatchInlineSnapshot(`
-    {
-      "allowedStates": [
-        "US_AZ",
-        "US_CO",
-        "US_ID",
-        "US_MA",
-        "US_NC",
-        "US_NE",
-        "US_TN",
-        "US_UT",
-      ],
-      "permissions": [
-        "enhanced",
-        "live_data",
-        "translator",
-      ],
-      "stateCode": "OFFLINE",
-    }
-  `);
-});
+declare module "*.scss";
