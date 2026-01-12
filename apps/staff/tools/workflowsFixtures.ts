@@ -32,6 +32,7 @@ import {
   usMiReclassificationRequestFixtures,
   usMiSecurityClassificationCommitteeReviewFixtures,
   usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
+  usNeGoodTimeRestorationFixtures,
   usPaSpecialCircumstancesSupervisionFixtures,
 } from "~datatypes";
 import {
@@ -171,6 +172,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
         usMiAddInPersonSecurityClassificationCommitteeReviewFixtures,
       usPaSpecialCircumstancesSupervisionReferrals:
         usPaSpecialCircumstancesSupervisionFixtures,
+      usNeGoodTimeRestorationReferrals: usNeGoodTimeRestorationFixtures,
     },
     (fixtures) => fixtureFromParsedRecords("externalId", fixtures),
   ),

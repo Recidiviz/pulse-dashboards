@@ -16,15 +16,12 @@
 // =============================================================================
 
 import { captureException } from "@sentry/react";
-import {
-  differenceInDays,
-  differenceInMonths,
-  parseISO,
-  startOfToday,
-} from "date-fns";
+import { differenceInDays, differenceInMonths, startOfToday } from "date-fns";
 import Handlebars from "handlebars";
 import { mapValues, snakeCase } from "lodash";
 import simplur from "simplur";
+
+import { dateStringSchema } from "~datatypes";
 
 import {
   formatDaysToYearsMonthsPast,
@@ -109,7 +106,9 @@ export function hydrateCriteria<
 }
 
 function dateify(d: Date | string) {
-  return d instanceof Date ? d : parseISO(d);
+  // We can't unconditionally use dateStringSchema here because we'd end up
+  // with a double shift in Demo/Offline modes
+  return d instanceof Date ? d : dateStringSchema.parse(d);
 }
 
 const formatterHelperFunctions: Record<string, (...raw: any) => any> = {

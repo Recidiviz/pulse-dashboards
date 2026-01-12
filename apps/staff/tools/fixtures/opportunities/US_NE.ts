@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: null,
       displayName: "Good Time Restoration",
       dynamicEligibilityText:
-        " [client|clients] may be eligible for good time restoration",
+        " [resident|residents] may be eligible for good time restoration",
       eligibilityDateText: "Eligible for Restoration Since",
       eligibleCriteriaCopy: [
         {
@@ -193,11 +193,11 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "noHighestSeverityIncarcerationSanctionsWithin1Year",
-          text: " {{monthsOrDaysRemainingFromToday eligibleDate}} months before 1 Year without a Class 1 MR",
+          text: "Needs 1 Year without a Class 1 MR (latest was  {{daysToYearsMonthsPast (daysPast latestEventDate)}} ago)",
         },
         {
           key: "usNeNoIdcMrsInPast6Months",
-          text: " {{monthsOrDaysRemainingFromToday eligibleDate}} months before 6 months without an IDC misconduct report",
+          text: "Needs 6 months without an IDC misconduct report (latest was {{daysToYearsMonthsPast (daysPast latestIncidentDate)}} ago)",
         },
       ],
       initialHeader: null,
@@ -218,14 +218,14 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from NICaMS",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["EligibilityDate", "Incarceration", "CaseNotes"],
+      sidebarComponents: ["EligibilityDate", "Incarceration"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_NE",
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
-      subheading: "These clients may be eligible for good time restoration.",
+      subheading: "These residents may be eligible for good time restoration.",
       submittedTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,
