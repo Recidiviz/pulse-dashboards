@@ -45,6 +45,10 @@ export RECIDIVIZ_OPENAI_API_KEY=your_openai_api_key
 uv run fastapi dev
 ```
 
+### Adding new packages
+- Add packages to the `dependencies` list at `apps/@reentry/backend/pyproject.toml`
+- `uv` is used for Python dependency management, so run `uv sync` to install the necessary packages
+
 ### Sentry Error Tracking Configuration
 
 Both the backend and frontend support Sentry error tracking. To enable it:

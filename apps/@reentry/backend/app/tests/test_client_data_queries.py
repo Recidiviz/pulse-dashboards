@@ -220,3 +220,62 @@ def test_get_clients_by_facility_access_no_matching_clients(
 
     assert result == []
     mock_cache_set.assert_called_once_with("clients_by_facility:staff123:A,B", [])
+
+
+@patch("app.services.client_data.queries.get_client_from_cache")
+@patch("app.services.client_data.queries.get_bigquery_client")
+def test_get_client_by_doc_id_and_state_success(mock_get_bigquery_client, mock_get_client_from_cache):
+    """Test successful client lookup by doc id and state."""
+    expected_state_code = "US_IX"
+    expected_external_id = "ext_id_1"
+
+    mock_query_job = MagicMock()
+    mock_get_bigquery_client.return_value.query.return_value = mock_query_job
+
+    # Mock BigQuery result
+    mock_rows = [
+        Row(
+            (
+                expected_external_id,
+                "abc123",
+                """{"given_names": "John", "surname": "Doe", "middle_names": "", "name_suffix": ""}""",
+                "2000-12-30",
+                expected_state_code,
+            ),
+            {
+                "external_id": 0,
+                "pseudonymized_id": 1,
+                "full_name": 2,
+                "birthdate": 3,
+                "state_code": 4,
+            },
+        )
+    ]
+
+    mock_query_job.result.return_value = mock_rows
+    mock_get_client_from_cache.return_value = None  # Cache miss
+
+    result = Queries.get_client_by_doc_id_and_state(expected_state_code, expected_external_id)
+
+    assert result is not None
+    assert result.external_client_id == expected_external_id
+    assert result.state_code == expected_state_code
+
+
+@patch("app.services.client_data.queries.get_client_from_cache")
+@patch("app.services.client_data.queries.get_bigquery_client")
+def test_get_client_by_doc_id_and_state_failure(mock_get_bigquery_client, mock_get_client_from_cache):
+    """Test successful client lookup by external_id and state."""
+    expected_state_code = "US_IX"
+    expected_external_id = "ext_id_1"
+
+    mock_query_job = MagicMock()
+    mock_get_bigquery_client.return_value.query.return_value = mock_query_job
+
+    # No matching results returned
+    mock_query_job.result.return_value = []
+    mock_get_client_from_cache.return_value = None  # Cache miss
+
+    result = Queries.get_client_by_doc_id_and_state(expected_state_code, expected_external_id)
+
+    assert result is None

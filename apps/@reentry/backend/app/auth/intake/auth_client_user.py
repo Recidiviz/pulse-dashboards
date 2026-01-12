@@ -1,14 +1,10 @@
 import logging
-import structlog
 from datetime import date
 from typing import Callable, List, Optional, Tuple
 
 import redis.asyncio as redis
-from fastapi import FastAPI, HTTPException, Request, status
-from fastapi.security import HTTPBearer
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import JSONResponse
-
+import sentry_sdk
+import structlog
 from app.auth.intake.utils import (
     ValidationResult,
     create_client_response,
@@ -23,6 +19,11 @@ from app.auth.intake.verification_attempts import (
 from app.core.db import AsyncSession
 from app.crud.intake import get_intake_by_token, get_latest_active_conversation_intake
 from app.services.client_data.queries import Queries
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.security import HTTPBearer
+from firebase_admin import auth
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import JSONResponse
 
 logger = structlog.get_logger(__name__)
 security = HTTPBearer()
@@ -179,6 +180,80 @@ async def validate_state_docid(
     if not record:
         return ValidationResult.error_result(
             "No match for the provided DOC ID and state. Please try again."
+        )
+
+    client_pseudo_id = record.pseudonymized_client_id
+
+    # Check if an intake record exists
+    intake_record = await get_latest_active_conversation_intake(
+        session, client_pseudo_id
+    )
+    if not intake_record:
+        logger.error(
+            f"Intake record not found for client pseudo ID: {client_pseudo_id}"
+        )
+        return ValidationResult.error_result(
+            "Intake not enabled. Please contact your case worker for assistance."
+        )
+
+    if not intake_record.internal_access:
+        logger.error(f"Intake not enabled for client pseudo ID: {client_pseudo_id}")
+        return ValidationResult.error_result(
+            "Internal access is not enabled. Please contact your case worker for assistance."
+        )
+
+    token_data = create_client_response(client_pseudo_id, record.full_name)
+    return ValidationResult.success_result(token_data, client_pseudo_id)
+
+
+async def verify_client_from_firebase_token(
+    request: Request, token_str: str, session: AsyncSession
+) -> ValidationResult:
+    """
+    Validate client using Firebase ID token from the JII app surfaced on Edovo tablets.
+    This is an alternative authentication method to DOB verification.
+    """
+    try:
+        logger.info("Validating token")
+        decoded_token = auth.verify_id_token(token_str)
+
+    except Exception as exc:
+        logger.error(f"Error verifying Firebase token: {exc}", exc_info=True)
+        sentry_sdk.capture_exception(
+            f"Could not verify Firebase token. Error: {str(exc)}"
+        )
+        return ValidationResult.error_result(
+            "Verification for user with Firebase token failed. Please contact your case worker for assistance."
+        )
+
+    state_code = decoded_token.get("stateCode")
+    external_id = decoded_token.get("externalId")
+
+    if not state_code:
+        error_msg = "Firebase token missing stateCode claim"
+        logger.warning(error_msg)
+        sentry_sdk.capture_exception(error_msg)
+        return ValidationResult.error_result(
+            "Missing required claim from Firebase token"
+        )
+
+    if not external_id:
+        error_msg = "Firebase token missing externalId claim"
+        logger.warning(error_msg)
+        sentry_sdk.capture_exception(error_msg)
+        return ValidationResult.error_result(
+            "Missing required claim from Firebase token"
+        )
+
+    record = Queries.get_client_by_doc_id_and_state(
+        state_code=state_code,
+        doc_id=external_id,
+    )
+
+    if not record:
+        sentry_sdk.capture_exception("Could not find a matching client")
+        return ValidationResult.error_result(
+            "Could not find a matching client. Please try again."
         )
 
     client_pseudo_id = record.pseudonymized_client_id

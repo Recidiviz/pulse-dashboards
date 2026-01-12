@@ -1,14 +1,13 @@
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from fastapi import HTTPException
-
 from app.routes.intake_auth_router import (
     VerifyDobFullnameRequest,
     VerifyStateDocIdRequest,
     verify_dob_fullname,
     verify_state_doc_id,
 )
+from fastapi import HTTPException
 
 
 @pytest.fixture
@@ -287,3 +286,67 @@ async def test_verify_dob_urltoken_internal_error(
 
     assert exc_info.value.status_code == 500
     assert "Internal server error" in str(exc_info.value.detail)
+
+
+# --------- Tests for verify_firebase_token ---------
+@pytest.fixture
+def valid_firebase_request_data():
+    return {
+        "firebase_token": "abcd1234",
+    }
+
+
+@patch("httpx.AsyncClient")
+@patch("app.routes.intake_auth_router.verify_client_from_firebase_token")
+async def test_validate_firebase_token_success(
+    mock_validate, mock_httpx, mock_session, mock_request, valid_firebase_request_data
+):
+    from app.routes.intake_auth_router import (
+        VerifyFirebaseTokenRequest,
+        verify_firebase_token,
+    )
+
+    # Mock validation result
+    mock_result = MagicMock()
+    mock_result.success = True
+    mock_result.token_data = {"token": "jwt_token"}
+    mock_result.client_pseudo_id = "client-pseudo-id-01"
+    mock_validate.return_value = mock_result
+
+    result = await verify_firebase_token(
+        mock_request,
+        VerifyFirebaseTokenRequest(**valid_firebase_request_data),
+        mock_session,
+    )
+
+    assert result.status is True
+    assert result.access_token == "jwt_token"
+    assert result.client_pseudo_id == "client-pseudo-id-01"
+    assert result.message == "Verification successful"
+
+
+@patch("httpx.AsyncClient")
+@patch("app.routes.intake_auth_router.verify_client_from_firebase_token")
+async def test_validate_firebase_token_failure(
+    mock_validate, mock_httpx, mock_session, mock_request, valid_firebase_request_data
+):
+    from app.routes.intake_auth_router import (
+        VerifyFirebaseTokenRequest,
+        verify_firebase_token,
+    )
+
+    # Mock validation failure
+    mock_result = MagicMock()
+    mock_result.success = False
+    mock_result.error_message = "Validation failed"
+    mock_validate.return_value = mock_result
+
+    with pytest.raises(HTTPException) as exc_info:
+        await verify_firebase_token(
+            mock_request,
+            VerifyFirebaseTokenRequest(**valid_firebase_request_data),
+            mock_session,
+        )
+
+    assert exc_info.value.status_code == 400
+    assert "Validation failed" in str(exc_info.value.detail)

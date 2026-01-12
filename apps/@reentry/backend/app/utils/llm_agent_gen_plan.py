@@ -4,8 +4,7 @@ from typing import Literal
 import structlog
 from langchain_core.messages import AIMessage
 from langgraph.graph import END, START, MessagesState, StateGraph
-from langgraph.pregel import RetryPolicy
-from langgraph.types import Send
+from langgraph.types import RetryPolicy, Send
 from pydantic import ValidationError
 
 from app.core.config import create_model_from_config

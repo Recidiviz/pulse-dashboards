@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 
 import redis
-from langchain.callbacks.base import BaseCallbackHandler
+from langchain_core.callbacks.base import BaseCallbackHandler
 
 from app.core.config import settings
 

@@ -973,6 +973,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/external/client/verify/firebase-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Firebase ID token from Edovo integration and issue JWT token
+         * @description Alternative auth method for JII users accessing the assessment via an Edovotablet. Validates the Firebase ID token, extracts the stateCode and externalId and looks up the client in BQ to issue the JWT token.
+         */
+        post: operations["verify_firebase_token_external_client_verify_firebase_token_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/autocomplete/address": {
         parameters: {
             query?: never;
@@ -3566,6 +3586,11 @@ export interface components {
              */
             date_of_birth: string;
         };
+        /** VerifyFirebaseTokenRequest */
+        VerifyFirebaseTokenRequest: {
+            /** Firebase Token */
+            firebase_token: string;
+        };
         /** VerifyStateDocIdRequest */
         VerifyStateDocIdRequest: {
             /** Doc Id */
@@ -5408,6 +5433,39 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["VerifyStateDocIdRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerifyClientResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_firebase_token_external_client_verify_firebase_token_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyFirebaseTokenRequest"];
             };
         };
         responses: {

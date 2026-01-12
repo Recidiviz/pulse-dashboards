@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
-from langchain.callbacks.tracers import LangChainTracer
+from langchain_core.tracers.langchain import LangChainTracer
 from langchain_anthropic import ChatAnthropic
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
@@ -109,6 +109,10 @@ class Settings(BaseSettings):
     # For local dev, it is set to empty here; the value will be provided
     # by the backend/.secrets/gcp-service-account.json.
     GCS_SERVICE_ACCOUNT_EMAIL: str = ""
+
+    # Firebase Admin Project ID
+    # Used for client authentication for clients logging in from the Edovo platform
+    FIREBASE_ADMIN_PROJECT_ID: str = "recidiviz-dashboard-staging"
 
     @property
     def DATABASE_URL(self):

@@ -1,16 +1,16 @@
-import structlog
 from datetime import date
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel
-
+import structlog
 from app.auth.intake.auth_client_user import (
     validate_dob_fullname,
     validate_dob_urltoken,
     validate_state_docid,
+    verify_client_from_firebase_token,
 )
 from app.core.db import AsyncSession, get_session
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel
 
 logger = structlog.get_logger(__name__)
 
@@ -180,6 +180,55 @@ async def verify_state_doc_id(
         raise
     except Exception as e:
         logger.error(f"Error verifying state DOC ID: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail={"message": str(e), "user_facing": False},
+        )
+
+
+# ----------- Firebase token -------------------
+class VerifyFirebaseTokenRequest(BaseModel):
+    firebase_token: str
+
+
+@router.post(
+    "/firebase-token",
+    response_model=VerifyClientResponse,
+    summary="Verify Firebase ID token from Edovo integration and issue JWT token",
+    description=(
+        "Alternative auth method for JII users accessing the assessment via an Edovo"
+        "tablet. Validates the Firebase ID token, extracts the stateCode and externalId "
+        "and looks up the client in BQ to issue the JWT token."
+    ),
+    tags=["Intake assessment"],
+)
+async def verify_firebase_token(
+    request: Request,
+    data: VerifyFirebaseTokenRequest,
+    session: AsyncSession = Depends(get_session),
+):
+    try:
+        result = await verify_client_from_firebase_token(
+            request, data.firebase_token, session
+        )
+
+        if not result.token_data or not result.success:
+            raise HTTPException(
+                status_code=400,
+                detail={"message": result.error_message, "user_facing": True},
+            )
+
+        return VerifyClientResponse(
+            status=True,
+            access_token=result.token_data["token"],
+            token_type="bearer",
+            message="Verification successful",
+            client_pseudo_id=result.client_pseudo_id,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error verifying Firebase token: {e}")
         raise HTTPException(
             status_code=500,
             detail={"message": str(e), "user_facing": False},
