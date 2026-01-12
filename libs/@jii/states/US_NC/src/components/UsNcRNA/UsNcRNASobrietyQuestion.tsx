@@ -15,74 +15,40 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
-import styled from "styled-components";
-
-import { Card } from "~@jii/common-ui";
-import { palette } from "~design-system";
+import { Card, Checkbox } from "~@jii/common-ui";
 
 import {
   MultipleAnswerGroup,
   MultipleAnswerOption,
   QuestionCopy,
 } from "./styles";
-import { rnaRadioAnswerCopy, RNARadioQuestionFormat } from "./usNcRNAFormSpec";
+import { rnaSobrietyAnswerCopy } from "./usNcRNAFormSpec";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
-const RadioButton = styled.input`
-  appearance: none;
-
-  height: ${rem(16)};
-  width: ${rem(16)};
-  padding: ${rem(2)} 0;
-
-  border-radius: 50%;
-  border: 2px solid ${palette.slate30};
-
-  transition: all 0.1s ease;
-
-  cursor: pointer;
-
-  &:hover {
-    border-color: ${palette.signal.links};
-  }
-
-  &:checked {
-    border: 4.5px solid ${palette.pine4};
-  }
-
-  &:focus {
-    outline: 2px solid ${palette.signal.links};
-    outline-offset: 2px;
-  }
-`;
-
-interface RNARadioQuestionProps extends RNAQuestionProps {
-  format: RNARadioQuestionFormat;
+interface RNASobrietyQuestionProps extends RNAQuestionProps {
+  format: "SOBRIETY";
 }
 
 /**
- * A question in the RNA form with radio buttons for answer choices.
+ * A question in the RNA form with checkboxes for answer choices.
+ * (Currently the only possible answer copy for this question format is about sobriety)
  */
-export const UsNcRNARadioQuestion = function ({
+export const UsNcRNASobrietyQuestion = function ({
   id,
   question,
   questionNumber,
-  format,
-}: RNARadioQuestionProps) {
-  const answerCopy = rnaRadioAnswerCopy[format];
-
+}: RNASobrietyQuestionProps) {
   return (
     <Card>
       <QuestionCopy>
         {questionNumber}. {question}
       </QuestionCopy>
       <MultipleAnswerGroup>
-        {Object.entries(answerCopy).map(([value, label]) => {
+        {Object.entries(rnaSobrietyAnswerCopy).map(([value, label]) => {
           const inputId = `${id}-${value}`;
           return (
             <MultipleAnswerOption key={`${value}${label}`}>
-              <RadioButton type="radio" id={inputId} name={id} value={value} />
+              <Checkbox $size={16} id={inputId} name={id} value={value} />
               <label htmlFor={inputId}>{label}</label>
             </MultipleAnswerOption>
           );

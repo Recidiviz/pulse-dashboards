@@ -39,6 +39,15 @@ export const rnaQuestionCopy = {
     question:
       "In a typical week how many days a week did you drink alcohol or use drugs?",
   },
+  alcoholDrugsMoreThan5Drinks: {
+    question:
+      "How many days in a typical week did you drink more than 5 drinks at one sitting?",
+    placeholderText: "Number of days",
+  },
+  alcoholDrugsTimeOfOffense: {
+    question:
+      "At the time of the offense for which I am currently incarcerated, I was (mark all that apply):",
+  },
   childhoodSkippingSchool: {
     question: "Skipping School",
   },
@@ -74,7 +83,7 @@ export const rnaRadioAnswerCopy = {
     USUALLY: "Usually true",
     ALWAYS: "Always true",
   },
-  DAYS_PER_WEEK: {
+  DAYS_PER_WEEK_RADIO: {
     ZERO: "0 days",
     ONE_TO_TWO: "1-2 days",
     THREE_TO_FIVE: "3-5 days",
@@ -92,13 +101,20 @@ export const rnaRadioAnswerCopy = {
   },
 } as const satisfies Record<string, Record<string, string>>;
 
+export const rnaSobrietyAnswerCopy = {
+  SOBER: "sober",
+  JUST_ALCOHOL: "under the influence of just alcohol",
+  JUST_DRUGS: "under the influence of just drugs",
+  BOTH: "under the influence of both alcohol and drugs",
+};
+
 // Configuration: everything besides copy that determines how a specific question is displayed
 
 export type RNARadioQuestionFormat = keyof typeof rnaRadioAnswerCopy;
 type RNAQuestionFormat =
   | RNARadioQuestionFormat
-  | "ALCOHOL_DRUGS"
-  | "NUMERIC"
+  | "SOBRIETY"
+  | "DAYS_PER_WEEK_ENTRY"
   | "LIFE_AREA";
 
 export type RNAQuestionConfig = {
@@ -121,7 +137,15 @@ export const rnaQuestionConfig: Record<RNAQuestionId, RNAQuestionConfig> = {
   },
   alcoholDrugsDaysOfUse: {
     questionNumber: 13,
-    format: "DAYS_PER_WEEK",
+    format: "DAYS_PER_WEEK_RADIO",
+  },
+  alcoholDrugsMoreThan5Drinks: {
+    questionNumber: 14,
+    format: "DAYS_PER_WEEK_ENTRY",
+  },
+  alcoholDrugsTimeOfOffense: {
+    questionNumber: 15,
+    format: "SOBRIETY",
   },
   childhoodSkippingSchool: {
     questionNumber: 20,
@@ -149,6 +173,8 @@ export const fullRNASpec: RNAPageSpec[] = [
       "workSchoolSkills",
       "workSchoolMakeBetter",
       "alcoholDrugsDaysOfUse",
+      "alcoholDrugsMoreThan5Drinks",
+      "alcoholDrugsTimeOfOffense",
       "childhoodSkippingSchool",
       "friendsClose",
     ],

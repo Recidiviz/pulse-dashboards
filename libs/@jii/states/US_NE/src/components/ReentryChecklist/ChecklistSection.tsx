@@ -21,6 +21,7 @@ import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components";
 
+import { Checkbox } from "~@jii/common-ui";
 import { Icon, palette } from "~design-system";
 
 const Container = styled.div<{ $isDisabled: boolean }>`
@@ -107,48 +108,6 @@ const Item = styled.label`
   }
 `;
 
-const Checkbox = styled.input.attrs({ type: "checkbox" })`
-  appearance: none;
-  width: ${rem(24)};
-  height: ${rem(24)};
-  border: 2px solid ${palette.slate30};
-  border-radius: ${rem(4)};
-  background-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  position: relative;
-
-  &:checked {
-    border-color: ${palette.signal.links};
-    background-color: ${palette.signal.links};
-  }
-
-  &:checked::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: ${rem(5)};
-    height: ${rem(9)};
-    border: solid ${palette.white};
-    border-width: 0 2px 2px 0;
-    transform: translate(-50%, -60%) rotate(45deg);
-  }
-
-  &:hover {
-    border-color: ${palette.signal.links};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${palette.signal.links};
-    outline-offset: 2px;
-  }
-`;
-
 const ItemText = styled(Markdown)`
   ${typography.Sans16};
   color: ${palette.slate90};
@@ -205,6 +164,7 @@ export function ChecklistSection({
           return (
             <Item key={item.id}>
               <Checkbox
+                $size={24}
                 checked={isChecked}
                 onChange={() => onToggleCheckbox(item.id)}
                 id={item.id}

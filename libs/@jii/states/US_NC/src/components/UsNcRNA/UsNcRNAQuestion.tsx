@@ -17,12 +17,14 @@
 
 import assertNever from "assert-never";
 
+import { UsNcRNADaysQuestion } from "./UsNcRNADaysQuestion";
 import {
   RNAQuestionConfig,
   RNAQuestionCopy,
   RNAQuestionId,
 } from "./usNcRNAFormSpec";
 import { UsNcRNARadioQuestion } from "./UsNcRNARadioQuestion";
+import { UsNcRNASobrietyQuestion } from "./UsNcRNASobrietyQuestion";
 
 export interface RNAQuestionProps extends RNAQuestionCopy, RNAQuestionConfig {
   id: RNAQuestionId;
@@ -35,14 +37,16 @@ export interface RNAQuestionProps extends RNAQuestionCopy, RNAQuestionConfig {
 export const UsNcRNAQuestion = function (props: RNAQuestionProps) {
   const { format, ...rest } = props;
   switch (format) {
-    case "DAYS_PER_WEEK":
+    case "DAYS_PER_WEEK_RADIO":
     case "FREQUENCY":
     case "RATIO":
     case "YES_NO":
       return <UsNcRNARadioQuestion format={format} {...rest} />;
-    case "ALCOHOL_DRUGS":
+    case "SOBRIETY":
+      return <UsNcRNASobrietyQuestion format={format} {...rest} />;
+    case "DAYS_PER_WEEK_ENTRY":
+      return <UsNcRNADaysQuestion format={format} {...rest} />;
     case "LIFE_AREA":
-    case "NUMERIC":
       return null;
     default:
       assertNever(format);

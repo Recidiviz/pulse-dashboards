@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { typography } from "@recidiviz/design-system";
+import { animation, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
@@ -34,5 +34,52 @@ export const RNADescription = styled.div`
   margin-top: ${rem(spacing.lg)};
   &:not(:last-child) {
     margin-bottom: ${rem(spacing.lg)};
+  }
+`;
+
+export const QuestionCopy = styled.div`
+  margin-bottom: ${rem(spacing.md)};
+`;
+
+// For radio button and checkbox answers
+export const MultipleAnswerGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.sm)};
+`;
+
+export const MultipleAnswerOption = styled.div`
+  ${typography.Sans14}
+  display: flex;
+  gap: ${rem(spacing.sm)};
+`;
+
+export const ShortTextEntry = styled.input`
+  appearance: none;
+
+  font-size: ${rem(14)};
+
+  height: ${rem(36)};
+  width: ${rem(345)};
+  padding: ${rem(spacing.sm)} ${rem(spacing.md)};
+  margin-right: ${rem(spacing.sm)};
+  border-radius: ${rem(4)};
+  border: 1px solid ${palette.slate30};
+
+  transition: all ${animation.defaultDurationMs}ms ease;
+
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    border: 2px solid ${palette.signal.links};
+  }
+
+  &:focus {
+    outline: unset;
+  }
+
+  &::placeholder {
+    color: ${palette.slate70};
   }
 `;

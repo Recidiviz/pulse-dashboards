@@ -22,6 +22,7 @@ export * from "./BaseLayout/BaseLayout";
 export * from "./Buttons/ButtonLink";
 export * from "./Buttons/JIIButton";
 export * from "./Card";
+export * from "./Checkbox";
 export * from "./Chip";
 export * from "./constants";
 export * from "./CopyWrapper/CopyWrapper";
