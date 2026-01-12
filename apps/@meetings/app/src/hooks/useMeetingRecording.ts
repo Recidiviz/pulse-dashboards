@@ -24,10 +24,7 @@ import { Alert, Platform } from "react-native";
 import { RecordingStatus } from "../common/types";
 import { useRecording } from "../context/RecordingContext";
 import { trpc } from "../trpc/client";
-import {
-  requestNotificationPermissions,
-  sendNotification,
-} from "../utils/notifications";
+import { sendNotification } from "../utils/notifications";
 import { getItem, removeItem } from "../utils/storage";
 
 interface Person {
@@ -73,7 +70,6 @@ export const useMeetingRecording = ({
   onComplete,
   getNotes,
 }: UseMeetingRecordingParams): UseMeetingRecordingReturn => {
-  const [note, setNote] = useState("");
   const [totalDurationMs, setTotalDurationMs] = useState(0);
   const [accumulatedDurationMs, setAccumulatedDurationMs] = useState(0);
 
@@ -90,6 +86,8 @@ export const useMeetingRecording = ({
     status,
     setStatus,
     recorderState,
+    note,
+    setNote,
     initializeRecording,
     startRecording,
     stopRecording,
@@ -301,17 +299,6 @@ export const useMeetingRecording = ({
       setTotalDurationMs(accumulatedDurationMs + recorderState.durationMillis);
     }
   }, [status, recorderState.durationMillis, accumulatedDurationMs]);
-
-  useEffect(() => {
-    (async () => {
-      await initializeRecording();
-      const saved = await getItem("note");
-      setNote(saved);
-      requestNotificationPermissions();
-    })();
-    // initializeRecording and requestNotificationPermissions are only needed to be called once on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return {
     status,

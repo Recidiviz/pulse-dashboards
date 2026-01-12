@@ -27,6 +27,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
 
 import { RecordingStatus } from "../common/types";
+import { requestNotificationPermissions } from "../utils/notifications";
 import {
   getItem,
   getRecordingState,
@@ -47,6 +48,9 @@ interface RecordingContextType {
 
   audioRecorder: ReturnType<typeof useAudioRecorder>;
   recorderState: ReturnType<typeof useAudioRecorderState>;
+
+  note: string;
+  setNote: (note: string) => void;
 
   startRecording: () => Promise<void>;
   stopRecording: () => void;
@@ -79,9 +83,22 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
    * This drives the active screen state.
    */
   const [runtimeStatus, setRuntimeStatus] = useState<RecordingStatus>("idle");
+  const [note, setNote] = useState<string>("");
 
   const audioRecorder = useAudioRecorder(RecordingPresets["HIGH_QUALITY"]);
   const recorderState = useAudioRecorderState(audioRecorder);
+
+  // Initialize recording + restore previous state on provider mount (once per app session)
+  useEffect(() => {
+    (async () => {
+      await initializeRecording();
+      const saved = await getItem("note");
+      if (saved) {
+        setNote(saved);
+      }
+      requestNotificationPermissions();
+    })();
+  }, []);
 
   /**
    * setStatus()
@@ -225,7 +242,10 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
       await setStatus("paused");
       const prevDurationMsItem = await getItem("durationMs");
       const prevDurationMs = Number(prevDurationMsItem || 0);
-      await saveItem("durationMs", (prevDurationMs + recorderState.durationMillis).toString());
+      await saveItem(
+        "durationMs",
+        (prevDurationMs + recorderState.durationMillis).toString(),
+      );
     }
   };
 
@@ -255,6 +275,8 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
         setStatus,
         audioRecorder,
         recorderState,
+        note,
+        setNote,
         startRecording,
         stopRecording,
         stopAndUploadRecording,
