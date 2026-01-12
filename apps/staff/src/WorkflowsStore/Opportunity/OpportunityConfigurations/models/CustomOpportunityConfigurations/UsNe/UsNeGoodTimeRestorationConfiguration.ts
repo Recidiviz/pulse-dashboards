@@ -29,6 +29,7 @@ export class UsNeGoodTimeRestorationConfiguration extends ApiOpportunityConfigur
     };
   }
 
+  // TODO(#11250): Update sidebar components in admin panel and delete this override
   get sidebarComponents() {
     return [...super.sidebarComponents, "UsNeGoodTimeLedger"];
   }

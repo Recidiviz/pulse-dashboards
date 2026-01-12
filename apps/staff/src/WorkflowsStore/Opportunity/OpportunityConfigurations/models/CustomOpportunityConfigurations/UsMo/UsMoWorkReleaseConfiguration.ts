@@ -41,6 +41,7 @@ export class UsMoWorkReleaseConfiguration extends ApiOpportunityConfiguration {
     };
   }
 
+  // TODO(#11250): Update sidebar components in admin panel and delete this override
   get sidebarComponents(): OpportunityProfileModuleName[] {
     return [
       "UsMoIncarceration",

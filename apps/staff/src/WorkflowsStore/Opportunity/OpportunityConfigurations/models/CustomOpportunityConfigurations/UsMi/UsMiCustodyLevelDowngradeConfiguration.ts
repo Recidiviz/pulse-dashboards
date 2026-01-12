@@ -15,14 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityProfileModuleName } from "../../../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { DenialInputSettings } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMiCustodyLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
-  get sidebarComponents(): OpportunityProfileModuleName[] {
-    return ["UsMiLastAssessment", "Incarceration"];
-  }
   get denialInputSettings(): Record<string, DenialInputSettings> {
     return {
       PROGRAMMING: {
