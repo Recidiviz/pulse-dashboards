@@ -9,37 +9,74 @@ main:
           - base64: ${base64.decode(event.data.message.data)}
           - message: ${json.decode(base64)}
     - init:
-        assign:
-          - state_code: ${message.state_code}
-          - cloud_run_service_url: ${sys.get_env("CLOUD_RUN_SERVICE_URL")}
-          - project_id: ${sys.get_env("PROJECT_ID")}
-          - current_date_str: ${text.substring(time.format(sys.now()), 0, 10)}
-          - dry_run: ${sys.get_env("PROJECT_ID") != "recidiviz-dashboard-production"}
-          - archive_bucket_id: ${sys.get_env("ARCHIVE_BUCKET_ID")}
-          - etl_bucket_id: ${sys.get_env("ETL_BUCKET_ID")}
+        steps:
+          - init_step:
+              assign:
+                - state_code: ${message.state_code}
+                - cloud_run_service_url: ${sys.get_env("CLOUD_RUN_SERVICE_URL")}
+                - project_id: ${sys.get_env("PROJECT_ID")}
+                # Convert the current time from UTC to CT
+                - current_date_ct: ${time.format(sys.now(), "America/Chicago")}
+                # Then extract the date substring from the time. This is used later to compare to latest_logic_execution.workflowExecutionTime
+                - current_date_str: ${text.substring(current_date_ct, 0, 10)}
+                - dry_run: ${sys.get_env("PROJECT_ID") != "recidiviz-dashboard-production"}
+                - archive_bucket_id: ${sys.get_env("ARCHIVE_BUCKET_ID")}
+                - etl_bucket_id: ${sys.get_env("ETL_BUCKET_ID")}
+          - init_log:
+              call: sys.log
+              args:
+                text: ${"state_code:" + " " + state_code + "\n" + "cloud_run_service_url:" + " "  + cloud_run_service_url + "\n" + "project_id:" + " "  + project_id + "\n" + "current_date_str:" + " "  + current_date_str + "\n" + "dry_run:" + " "  + dry_run + "\n" + "archive_bucket_id:" + " "  + archive_bucket_id + "\n" + "etl_bucket_id:" + " "  + etl_bucket_id}
+                severity: INFO
     - get_is_weekend:
-        call: http.get
-        args:
-          url: ${cloud_run_service_url + "/utils/is-weekend"}
-          auth:
-            type: OIDC
-        result: is_weekend_result
+        steps:
+          - is_weekend_result_step:
+              call: http.get
+              args:
+                url: ${cloud_run_service_url + "/utils/is-weekend"}
+                auth:
+                  type: OIDC
+              result: is_weekend_result
+          - is_weekend_result_log:
+              call: sys.log
+              args:
+                text: ${"is_weekend_result.body.isWeekend:" + " "  + is_weekend_result.body.isWeekend}
+                severity: INFO
     - get_latest_logic_execution:
-        call: http.get
-        args:
-          url: ${cloud_run_service_url + "/workflow-executions/latest/" + state_code}
-          auth:
-            type: OIDC
-        result: latest_logic_execution_result
+        steps:
+          - get_latest_logic_execution_step:
+              call: http.get
+              args:
+                url: ${cloud_run_service_url + "/workflow-executions/latest/" + state_code}
+                auth:
+                  type: OIDC
+              result: latest_logic_execution_result
+          - get_latest_logic_execution_log:
+              call: sys.log
+              args:
+                text: ${"latest_logic_execution_result:" + " "  + latest_logic_execution_result.body.workflowExecution.workflowExecutionTime}
+                severity: INFO
     - assign_latest_logic_execution:
-        assign:
-          - latest_logic_execution: ${latest_logic_execution_result.body.workflowExecution}
-          - is_weekend: ${is_weekend_result.body.isWeekend}
+        steps:
+          - assign_latest_logic_execution_step:
+              assign:
+                - workflowExecutionString: ${latest_logic_execution_result.body.workflowExecution}
+                # Convert date string to timestamp
+                - workflowExecutionDate: ${time.parse(workflowExecutionString.workflowExecutionTime)}
+                # Convert timestamp from UTC to CT. This is done to compare to current_date_str
+                - workflowExecutionDateCT: ${time.format(workflowExecutionDate, "America/Chicago")}
+                # Extract the date substring from the time
+                - latest_logic_execution: ${text.substring(workflowExecutionDateCT, 0, 10)}
+                - is_weekend: ${is_weekend_result.body.isWeekend}
+          - assign_latest_logic_execution_log:
+              call: sys.log
+              args:
+                text: ${"latest_logic_execution:" + " "  + latest_logic_execution + "\n" + "is_weekend:" + " "  + is_weekend}
+                severity: INFO
     - should_trigger_logic_execution:
         switch:
           - condition: ${is_weekend == true and state_code == "US_ID"}
             next: archive_etl_data
-          - condition: ${latest_logic_execution == null or text.substring(latest_logic_execution.workflowExecutionTime, 0, 10) != current_date_str}
+          - condition: ${latest_logic_execution == null or latest_logic_execution != current_date_str}
             next: run_logic
         next: skip_logic
     - skip_logic:
