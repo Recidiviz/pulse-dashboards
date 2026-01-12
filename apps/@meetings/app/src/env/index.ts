@@ -34,7 +34,16 @@ const envSchema = z.object({
   EXPO_PUBLIC_SERVER_URL: z.string().default("http://localhost:3002"),
 });
 
-const parsedEnv = envSchema.safeParse(process.env);
+const env = {
+  EXPO_PUBLIC_AUTH0_AUDIENCE: process.env["EXPO_PUBLIC_AUTH0_AUDIENCE"],
+  EXPO_PUBLIC_AUTH0_CLIENT_ID: process.env["EXPO_PUBLIC_AUTH0_CLIENT_ID"],
+  EXPO_PUBLIC_AUTH0_DOMAIN: process.env["EXPO_PUBLIC_AUTH0_DOMAIN"],
+  EXPO_PUBLIC_OFFLINE_MODE: process.env["EXPO_PUBLIC_OFFLINE_MODE"],
+  EXPO_PUBLIC_SENTRY_DSN: process.env["EXPO_PUBLIC_SENTRY_DSN"],
+  EXPO_PUBLIC_SERVER_URL: process.env["EXPO_PUBLIC_SERVER_URL"],
+};
+
+const parsedEnv = envSchema.safeParse(env);
 
 if (!parsedEnv.success) {
   console.error(
