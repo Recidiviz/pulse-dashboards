@@ -49,13 +49,14 @@ function formatAndVerifyUser(
 
   // Grab the fields we want from the metadata since there is more in there than just these
   const {
-    stateCode: userState,
+    stateCode: userStateLower,
     pseudonymizedId,
     allowedStates,
   } = user["https://dashboard.recidiviz.org/app_metadata"];
+  const userState = userStateLower.toUpperCase();
 
   // Check non-Recidiviz users first
-  if (userState !== "recidiviz") {
+  if (userState !== "RECIDIVIZ") {
     if (!Object.values(StateCode).includes(userState as StateCode)) {
       throw new TRPCError({
         code: "PRECONDITION_FAILED",
