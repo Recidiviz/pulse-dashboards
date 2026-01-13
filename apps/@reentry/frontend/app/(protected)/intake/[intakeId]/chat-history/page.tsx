@@ -73,7 +73,7 @@ const IntakeManagementPage = () => {
         { enabled: !!intakeData }
     );
 
-    if (clientLoading && !clientData) {
+    if ((clientLoading && !clientData) || !intakeData) {
         return (
             <div className="w-full max-w-6xl mx-auto p-6 flex justify-center items-center h-64">
                 <div className="w-8 h-8 border-4 border-t-[#006B66] border-[#e0f2f1] rounded-full animate-spin" />
