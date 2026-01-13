@@ -66,3 +66,5 @@ body:
           required: false
         - label: "Added the the appropriate Project: label (Workflows, Insights, JII, PSI, Vitals, Lantern, Spotlight)"
           required: false
+        - label: "Put any text or screenshots containing PII (go/pii) in a separate doc (such as go/github-pii), and not in this ticket itself"
+          required: false
