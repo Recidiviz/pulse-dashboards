@@ -1,6 +1,7 @@
 from typing import List
 from uuid import UUID
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -10,9 +11,11 @@ from app.crud.assessment import (
     get_assessments_by_intake_id,
 )
 from app.routes.shared_models import AssessmentResponse
+from app.crud.intake import get_intake_by_id
 
 router = APIRouter()
 
+logger = structlog.get_logger(__name__)
 
 @router.get(
     "/{assessment_id}",
@@ -42,6 +45,13 @@ async def get_assessment(
 async def get_intake_assessments(
     intake_id: UUID, session: AsyncSession = Depends(get_session)
 ):
+    
+    intake = await get_intake_by_id(session, intake_id)
+    if intake and intake.client_pseudo_id:
+        structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
+    else: 
+        logger.error(f"Couldn't find client_pseudo_id from the intake. intake_id: {intake_id}")
+    
     assessments = await get_assessments_by_intake_id(session, intake_id)
 
     if not assessments:

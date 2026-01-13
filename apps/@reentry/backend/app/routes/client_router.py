@@ -1,6 +1,6 @@
-import structlog
 from datetime import date
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi_pagination import Page
 from pydantic import BaseModel
@@ -113,6 +113,7 @@ async def get_client_latest_address(
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
+    structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
     # Get client data with staff verification
     record = Queries.get_client_data_by_pseudonymized_id(
         pseudonymized_client_id=client_pseudo_id,
@@ -145,6 +146,7 @@ async def get_client_record(
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
+    structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
     # Get client data with staff verification
     record = Queries.get_client_data_by_pseudonymized_id(
         pseudonymized_client_id=client_pseudo_id,
@@ -170,10 +172,10 @@ async def get_client_intakes(
 ):
     """
     Get all intakes for a client.
-
     Returns intake history with assessment config information to help case managers
     understand which assessments were used for each intake.
     """
+    structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
     check_access(client_pseudo_id, pseudonymized_id)
 
     intakes = await get_all_intakes_by_client_pseudo_id(session, client_pseudo_id)
@@ -225,6 +227,8 @@ async def reset_client_data(
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
+    structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
+
     if not is_feature_enabled("INTAKE_RESET"):
         raise HTTPException(
             status_code=403,
@@ -319,6 +323,10 @@ async def add_client_route(
             name_suffix=request.name_suffix,
         )
 
+        structlog.contextvars.bind_contextvars(
+            client_pseudo_id=result.pseudonymized_client_id
+        )
+
         logger.info(
             f"Successfully added client {result.external_client_id} (pseudonymized: {result.pseudonymized_client_id})"
         )
@@ -370,6 +378,8 @@ async def remove_client_route(
                 status_code=404,
                 detail=f"Client '{request.first_name} {request.last_name}' with DOB {request.date_of_birth} not found",
             )
+
+        structlog.contextvars.bind_contextvars(client_pseudo_id=pseudonymized_client_id)
 
         Queries.remove_client(pseudonymized_client_id, pseudonymized_id)
 

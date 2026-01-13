@@ -264,6 +264,12 @@ async def plan_create_task(
     session: AsyncSession = TaskiqDepends(get_session),
 ):
     async with execution_context(session, execution_id) as execution:
+        plan = await get_plan_by_id(session, plan_id=plan_id)
+        if not plan:
+            raise ValueError(f"Plan with id {plan_id} not found")
+
+        structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
+
         task_logger = logger.bind(
             execution_id=execution_id.hex,
             plan_id=plan_id.hex,

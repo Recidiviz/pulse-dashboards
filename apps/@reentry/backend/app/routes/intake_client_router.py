@@ -138,6 +138,7 @@ async def get_client_intake_with_token(
     request: Request, token_from_url: str, session=Depends(get_session)
 ):
     client_pseudo_id: str = request.state.client.get("sub")
+    structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
 
     (intake, assessment_config) = await get_intake_and_config(session, client_pseudo_id)
 
@@ -201,6 +202,7 @@ async def get_client_intake_with_token(
 )
 async def get_client_intake(request: Request, session=Depends(get_session)):
     client_pseudo_id: str = request.state.client.get("sub")
+    structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
 
     (intake, assessment_config) = await get_intake_and_config(session, client_pseudo_id)
 
@@ -292,6 +294,7 @@ async def submit_address(
 ):
     # Extract client_pseudo_id from JWT token (set by ClientAuthMiddleware)
     client_pseudo_id: str = request.state.client.get("sub")
+    structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
 
     # Get this intake with address relationship loaded
     intake = await validate_intake(session, intake_id, client_pseudo_id)
@@ -344,6 +347,7 @@ async def submit_survey(
 ):
     # Extract client_pseudo_id from JWT token (set by ClientAuthMiddleware)
     client_pseudo_id: str = request.state.client.get("sub")
+    structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
 
     intake = await validate_intake(session, intake_id, client_pseudo_id)
 

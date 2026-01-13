@@ -53,6 +53,8 @@ async def verify_date_of_birth(
         if not result.token_data or not result.success:
             raise HTTPException(status_code=400, detail=result.error_message)
 
+        structlog.contextvars.bind_contextvars(client_pseudo_id=result.client_pseudo_id)
+
         return VerifyClientResponse(
             status=True,
             access_token=result.token_data["token"],
@@ -116,6 +118,8 @@ async def verify_dob_fullname(
         if not result.success:
             raise HTTPException(status_code=400, detail=result.error_message)
 
+        structlog.contextvars.bind_contextvars(client_pseudo_id=result.client_pseudo_id)
+
         logger.info(f"Verification successful for {result}")
 
         return VerifyClientResponse(
@@ -166,6 +170,8 @@ async def verify_state_doc_id(
                     "user_facing": result.user_facing,
                 },
             )
+
+        structlog.contextvars.bind_contextvars(client_pseudo_id=result.client_pseudo_id)
 
         logger.info(f"Verification successful for {result}")
 

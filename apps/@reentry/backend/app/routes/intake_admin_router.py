@@ -155,6 +155,8 @@ async def get_processing_status_for_intake(
     intake = await get_intake_by_id(session, intake_id)
     if not intake:
         raise HTTPException(status_code=404, detail="Intake not found")
+
+    structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
     intake_processing_status = await compute_processing_status_by_intake_id(
         session, intake_id
     )
@@ -187,6 +189,7 @@ async def get_intake_address(
     if not intake:
         raise HTTPException(status_code=404, detail="Intake not found")
 
+    structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
     check_access(intake.client_pseudo_id, pseudonymized_id)
 
     # Get the address for this intake
@@ -223,6 +226,7 @@ async def create_new_intake(
     - Verifies assessment_config_id exists and is active
     - Verifies assessment_config matches client's state
     """
+    structlog.contextvars.bind_contextvars(client_pseudo_id=request.client_pseudo_id)
     try:
         check_access(request.client_pseudo_id, pseudonymized_id)
 
@@ -327,6 +331,7 @@ async def delete_new_intake(
             detail=f"Intake record not found for intake ID: {intake_id}",
         )
 
+    structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
     check_access(intake.client_pseudo_id, pseudonymized_id)
 
     if intake.status != IntakeStatus.CREATED:
@@ -368,6 +373,7 @@ async def get_client_intake(
             detail=f"Intake record not found for intake ID: {intake_id}",
         )
 
+    structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
     check_access(intake.client_pseudo_id, pseudonymized_id)
 
     try:
@@ -407,6 +413,12 @@ async def get_intake_section_messages_route(
 ):
     intake: Intake | None = await get_intake_by_id(session, intake_id)
     client_pseudo_id = intake.client_pseudo_id if intake else "not_a_client"
+
+    if intake and intake.client_pseudo_id:
+        structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
+    else:
+        logger.error(f"Couldn't find client_pseudo_id from the intake. intake_id: {intake_id}")
+
     check_access(client_pseudo_id, pseudonymized_id)
 
     try:
@@ -456,6 +468,7 @@ async def set_internal_access(
             detail=f"Intake with ID {intake_id} not found",
         )
 
+    structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
     check_access(intake.client_pseudo_id, pseudonymized_id)
 
     intake = await update_internal_access_by_intake_id(
@@ -485,6 +498,7 @@ async def generate_client_token(
         if not intake:
             raise HTTPException(status_code=404, detail="Intake not found")
 
+        structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
         check_access(intake.client_pseudo_id, pseudonymized_id)
 
         # Generate a new token
@@ -521,6 +535,7 @@ async def submit_address(
     if not intake:
         raise HTTPException(status_code=404, detail="Intake not found")
 
+    structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
     check_access(intake.client_pseudo_id, pseudonymized_id)
     # Create or update address
     if intake.address:
@@ -572,6 +587,7 @@ async def retry_intake_processing(
     if not intake:
         raise HTTPException(status_code=404, detail="Intake not found")
 
+    structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
     # Verify access
     check_access(intake.client_pseudo_id, pseudonymized_id)
 

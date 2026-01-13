@@ -70,6 +70,10 @@ async def deepgram_transcription_webhook(
                 detail=f"Recording session not found for request_id: {request_id}",
             )
 
+        structlog.contextvars.bind_contextvars(
+            client_pseudo_id=recording_session.client_pseudo_id
+        )
+
         task_logger = logger.bind(
             recording_session_id=recording_session.id.hex,
             request_id=request_id,

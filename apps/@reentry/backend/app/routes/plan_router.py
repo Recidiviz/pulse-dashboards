@@ -1,4 +1,3 @@
-import structlog
 import uuid
 from datetime import datetime
 from io import BytesIO
@@ -6,6 +5,7 @@ from typing import List, Optional
 from uuid import UUID
 
 import orjson
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi_pagination import Page
@@ -181,6 +181,8 @@ async def router_create_plan(
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
+    structlog.contextvars.bind_contextvars(client_pseudo_id=request.client_pseudo_id)
+
     # increment the total call counter
     llm_plan_creation_total_counter.inc()
 
@@ -230,6 +232,8 @@ async def router_get_plan_by_intake_id(
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
+    structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
+
     gen = await plan.get_latest_generation(session)
     latest_generation = None
     if gen:
@@ -262,6 +266,8 @@ async def router_get_plan(
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
+
+    structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
 
     gens = await get_gen_by_plan_id(session, id)
     gens = [gen for gen in gens if gen.status == PlanGenerationStatus.COMPLETED]
@@ -304,6 +310,8 @@ async def router_delete_plan(
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
+
+    structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
     was_removed = await delete_plan_by_id(session, id)
     status = DeletionStatus.SUCCESS if was_removed else DeletionStatus.FAILED
     return DeletionResponse(status=status)
@@ -339,6 +347,8 @@ async def router_generate_plan(
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
+
+    structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
 
     # Check if this assessment config supports action plan generation
     from app.utils.config_loader import ConfigLoader
@@ -401,6 +411,8 @@ async def router_generate_plan_manually(
     plan = await get_plan_by_id(session, id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
+
+    structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
 
     # TODO:it could change with resources change refactoing,
     # for now copying the latest get_data_json to not break if a change resource is needed

@@ -94,6 +94,16 @@ async def assessment_task(
     session: AsyncSession = TaskiqDepends(get_session),
 ):
     async with execution_context(session, execution_id) as execution:
+        assessment_record = await get_assessment_by_id(
+            session, assessment_id=assessment_id
+        )
+        if not assessment_record:
+            raise ValueError(f"Assessment with id {assessment_id} not found")
+
+        structlog.contextvars.bind_contextvars(
+            client_pseudo_id=assessment_record.client_pseudo_id
+        )
+
         task_logger = logger.bind(
             execution_id=execution_id.hex, assessment_id=assessment_id.hex
         )

@@ -113,6 +113,12 @@ async def plan_decision_tree_select_task(
     session: AsyncSession = TaskiqDepends(get_session),
 ):
     async with execution_context(session, execution_id) as execution:
+        plan = await get_plan_by_id(session, plan_id)
+        if not plan:
+            raise ValueError(f"Plan with id {plan_id} not found")
+
+        structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
+
         task_logger = logger.bind(execution_id=execution_id.hex, plan_id=plan_id.hex)
         await plan_decision_tree_select(
             execution=execution,
@@ -211,6 +217,18 @@ async def plan_decision_tree_run_task(
     session: AsyncSession = TaskiqDepends(get_session),
 ):
     async with execution_context(session, execution_id) as execution:
+        plan_decision_tree = await get_plan_decision_tree_by_id(
+            session, plan_decision_tree_id, with_plan=True
+        )
+        if not plan_decision_tree:
+            raise ValueError(
+                f"Plan decision tree with id {plan_decision_tree_id} not found"
+            )
+
+        structlog.contextvars.bind_contextvars(
+            client_pseudo_id=plan_decision_tree.plan.client_pseudo_id
+        )
+
         task_logger = logger.bind(
             execution_id=execution_id.hex,
             plan_decision_tree_id=plan_decision_tree_id.hex,

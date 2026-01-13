@@ -74,6 +74,8 @@ async def complete_intake_transcription(
     if not intake:
         raise HTTPException(status_code=404, detail="Intake not found")
 
+    structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
+
     if data.has_address():
         if intake.address:
             intake.address.city = data.city

@@ -7,6 +7,7 @@ from taskiq import TaskiqDepends
 
 from app.core.config import settings
 from app.core.db import AsyncSession, get_session
+from app.crud.recording_session import get_recording_session_by_id
 from app.models.intake import Intake, IntakeStatus
 from app.models.recording import RecordingStatus
 from app.tasks.recording_assemble_audio import assemble_audio
@@ -25,6 +26,16 @@ async def process_recording_task(
     session: AsyncSession = TaskiqDepends(get_session),
 ):
     async with execution_context(session, execution_id) as execution:
+        recording_session = await get_recording_session_by_id(
+            session, recording_session_id
+        )
+        if not recording_session:
+            raise ValueError(f"Recording session {recording_session_id} not found")
+
+        structlog.contextvars.bind_contextvars(
+            client_pseudo_id=recording_session.client_pseudo_id
+        )
+
         task_logger = logger.bind(
             execution_id=execution_id.hex,
             recording_session_id=recording_session_id.hex,
