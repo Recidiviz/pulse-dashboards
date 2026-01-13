@@ -32,6 +32,7 @@ import UsIdHomeVisitTask from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTask";
 import UsIdHomeVisitTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTaskV2";
 import UsIdLsirAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdLsirAssessmentTask";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdRiskAssessmentTask";
+import UsIdStableAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdStableAssessmentTask";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const US_ID_CONFIG = {
@@ -64,6 +65,10 @@ const US_ID_CONFIG = {
       },
       usIdLsirAssessment: {
         constructor: UsIdLsirAssessmentTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usIdStableAssessment: {
+        constructor: UsIdStableAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
@@ -129,6 +134,11 @@ const US_ID_CONFIG = {
             value: "usIdLsirAssessment",
             label: "Risk Assessment",
             shortLabel: "Assessment",
+          },
+          {
+            value: "usIdStableAssessment",
+            label: "STABLE Assessment",
+            shortLabel: "STABLE Assessment",
           },
           {
             value: "usIdEmploymentVerification",

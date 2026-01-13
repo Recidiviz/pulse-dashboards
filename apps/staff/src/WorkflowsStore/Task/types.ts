@@ -136,6 +136,10 @@ type UsIdLsirAssessmentDetails = UsIdTaskBaseDetails & {
   lastAssessmentDate: string | null;
 };
 
+type UsIdStableAssessmentDetails = UsIdTaskBaseDetails & {
+  lastAssessmentDate: string | null;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type CheckSupervisionTaskDetailsMappingType = Expect<
   Extends<
@@ -155,6 +159,7 @@ export const SUPERVISION_TASK_TYPES = [
   // TODO(#10615): Remove 'assessment' v1 (keep v2, usIdRiskAssessment) task type when UsIdTasksV2 is fully rolled out.
   "assessment",
   "usIdLsirAssessment",
+  "usIdStableAssessment",
   // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
   "contact",
   "usIdFaceToFaceContact",
@@ -208,6 +213,7 @@ export type SupervisionDetailsForTask = {
   assessment: UsIdAssessmentDetails;
   // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
   usIdLsirAssessment: UsIdLsirAssessmentDetails;
+  usIdStableAssessment: UsIdStableAssessmentDetails;
   contact: UsIdContactDetails;
   // TODO(#10615): Remove 'employment' v1 (keep v2, usIdEmploymentVerification) task type when UsIdTasksV2 is fully rolled out.
   usIdFaceToFaceContact: UsIdTaskBaseDetails;
@@ -299,7 +305,8 @@ export type UsIdAgnosticTaskType =
   | "usIdFaceToFaceContact"
   | "usIdHomeVisit"
   | "usIdEmploymentVerification"
-  | "usIdLsirAssessment";
+  | "usIdLsirAssessment"
+  | "usIdStableAssessment";
 
 type TasksStateCode = {
   [K in keyof SpecificTenantConfigs]: SpecificTenantConfigs[K] extends {
