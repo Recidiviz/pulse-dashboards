@@ -19,6 +19,7 @@ import { animation, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
+import { Card } from "~@jii/common-ui";
 import { palette, spacing } from "~design-system";
 
 export const RNAHeading = styled.h1`
@@ -37,9 +38,13 @@ export const RNADescription = styled.div`
   }
 `;
 
-export const QuestionCopy = styled.div`
-  margin-bottom: ${rem(spacing.md)};
+export const QuestionCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
 `;
+
+export const QuestionCopy = styled.div``;
 
 // For radio button and checkbox answers
 export const MultipleAnswerGroup = styled.div`
@@ -54,26 +59,24 @@ export const MultipleAnswerOption = styled.div`
   gap: ${rem(spacing.sm)};
 `;
 
-export const ShortTextEntry = styled.input`
+const textEntryStyles = `
   appearance: none;
 
   font-size: ${rem(14)};
 
-  height: ${rem(36)};
-  width: ${rem(345)};
   padding: ${rem(spacing.sm)} ${rem(spacing.md)};
-  margin-right: ${rem(spacing.sm)};
+
   border-radius: ${rem(4)};
-  border: 1px solid ${palette.slate30};
+  border: 2px solid ${palette.slate30};
 
   transition: all ${animation.defaultDurationMs}ms ease;
-
-  cursor: pointer;
-
+  
   &:hover,
   &:focus {
     border: 2px solid ${palette.signal.links};
   }
+
+  transition: all 0.2s ease;
 
   &:focus {
     outline: unset;
@@ -82,4 +85,18 @@ export const ShortTextEntry = styled.input`
   &::placeholder {
     color: ${palette.slate70};
   }
+`;
+
+export const ShortTextEntry = styled.input`
+  ${textEntryStyles}
+
+  height: ${rem(36)};
+  width: 60%;
+`;
+
+export const LongTextEntry = styled.textarea.attrs({ rows: 3 })`
+  ${textEntryStyles}
+
+  resize: none;
+  width: 100%;
 `;

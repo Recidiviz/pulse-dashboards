@@ -24,9 +24,9 @@ import styled from "styled-components";
 import {
   ActivityList,
   ActivityRow,
-  ActivityRowDivider,
   HistoryBackButton,
   HomepageSectionHeading,
+  RowDivider,
 } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
 import { EGT } from "~@jii/paths";
@@ -54,7 +54,7 @@ function CreditList({ creditEntries }: { creditEntries: [string, number][] }) {
       {creditEntries.map(([creditType, creditDays]) => {
         return (
           <React.Fragment key={`${creditType}-${creditDays}`}>
-            <ActivityRowDivider />
+            <RowDivider />
             <ActivityRow>
               <div>{creditType}</div>
               <div>{prefixNumberWithSign(creditDays)} days</div>

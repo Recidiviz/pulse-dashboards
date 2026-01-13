@@ -18,18 +18,18 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { Card } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
 import {
   MultipleAnswerGroup,
   MultipleAnswerOption,
+  QuestionCard,
   QuestionCopy,
 } from "./styles";
 import { rnaRadioAnswerCopy, RNARadioQuestionFormat } from "./usNcRNAFormSpec";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
-const RadioButton = styled.input`
+export const RadioButton = styled.input`
   appearance: none;
 
   height: ${rem(16)};
@@ -73,7 +73,7 @@ export const UsNcRNARadioQuestion = function ({
   const answerCopy = rnaRadioAnswerCopy[format];
 
   return (
-    <Card>
+    <QuestionCard>
       <QuestionCopy>
         {questionNumber}. {question}
       </QuestionCopy>
@@ -81,13 +81,13 @@ export const UsNcRNARadioQuestion = function ({
         {Object.entries(answerCopy).map(([value, label]) => {
           const inputId = `${id}-${value}`;
           return (
-            <MultipleAnswerOption key={`${value}${label}`}>
+            <MultipleAnswerOption key={value}>
               <RadioButton type="radio" id={inputId} name={id} value={value} />
               <label htmlFor={inputId}>{label}</label>
             </MultipleAnswerOption>
           );
         })}
       </MultipleAnswerGroup>
-    </Card>
+    </QuestionCard>
   );
 };

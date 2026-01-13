@@ -24,9 +24,9 @@ import styled from "styled-components";
 import {
   ActivityList,
   ActivityRow,
-  ActivityRowDivider,
   HistoryBackButton,
   HomepageSectionHeading,
+  RowDivider,
   SlateCopy,
 } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
@@ -92,7 +92,7 @@ function ManagedComponent({
           </StyledRow>
           {groupedReportsByYear[year].map((report) => (
             <Fragment key={report.monthSlug}>
-              <ActivityRowDivider />
+              <RowDivider />
 
               <Link
                 to={State.Resident.EGT.MonthlyReport.buildPath({

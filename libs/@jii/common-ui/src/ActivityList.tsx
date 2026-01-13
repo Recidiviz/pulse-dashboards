@@ -32,7 +32,7 @@ export const ActivityList = styled.div`
   margin: ${rem(spacing.md)} 0;
 `;
 
-export const ActivityRowDivider = styled.hr`
+export const RowDivider = styled.hr`
   border-top: 1px solid ${palette.slate10};
   margin: ${rem(spacing.xs)} ${rem(spacing.xxs)};
 

@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, Checkbox } from "~@jii/common-ui";
+import { Checkbox } from "~@jii/common-ui";
 
 import {
   MultipleAnswerGroup,
   MultipleAnswerOption,
+  QuestionCard,
   QuestionCopy,
 } from "./styles";
 import { rnaSobrietyAnswerCopy } from "./usNcRNAFormSpec";
@@ -39,7 +40,7 @@ export const UsNcRNASobrietyQuestion = function ({
   questionNumber,
 }: RNASobrietyQuestionProps) {
   return (
-    <Card>
+    <QuestionCard>
       <QuestionCopy>
         {questionNumber}. {question}
       </QuestionCopy>
@@ -54,6 +55,6 @@ export const UsNcRNASobrietyQuestion = function ({
           );
         })}
       </MultipleAnswerGroup>
-    </Card>
+    </QuestionCard>
   );
 };

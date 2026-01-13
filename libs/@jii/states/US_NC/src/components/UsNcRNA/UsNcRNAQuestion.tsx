@@ -23,6 +23,7 @@ import {
   RNAQuestionCopy,
   RNAQuestionId,
 } from "./usNcRNAFormSpec";
+import { UsNcRNALifeAreaQuestion } from "./UsNcRNALifeAreaQuestion";
 import { UsNcRNARadioQuestion } from "./UsNcRNARadioQuestion";
 import { UsNcRNASobrietyQuestion } from "./UsNcRNASobrietyQuestion";
 
@@ -47,7 +48,7 @@ export const UsNcRNAQuestion = function (props: RNAQuestionProps) {
     case "DAYS_PER_WEEK_ENTRY":
       return <UsNcRNADaysQuestion format={format} {...rest} />;
     case "LIFE_AREA":
-      return null;
+      return <UsNcRNALifeAreaQuestion format={format} {...rest} />;
     default:
       assertNever(format);
   }

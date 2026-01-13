@@ -23,6 +23,11 @@ export const rnaSectionCopy = {
     heading: "Section 1: Work and Money",
     description: "Select the answer that best shows what is true for you.",
   },
+  sectionLifeAreas: {
+    heading: "Section 10: Life Areas",
+    description:
+      "Below you will see life areas that may or may not be areas of concern to you. For each area you mark as a problem, please rate your interest in improving your situation and what you can do.",
+  },
 } satisfies Record<string, RNASectionCopy>;
 
 export const rnaQuestionCopy = {
@@ -53,6 +58,13 @@ export const rnaQuestionCopy = {
   },
   friendsClose: {
     question: "How many of those friends would you consider “close friends”?",
+  },
+  lifeAreaBehavior: {
+    question: "Is your behavior a problem for you?",
+  },
+  lifeAreaCustom: {
+    question: "Any other areas you'd like to improve?",
+    placeholderText: "Another life area",
   },
 } satisfies Record<string, RNAQuestionCopy>;
 
@@ -108,6 +120,15 @@ export const rnaSobrietyAnswerCopy = {
   BOTH: "under the influence of both alcohol and drugs",
 };
 
+export const rnaLifeAreasQuestionCopy = {
+  interestedInImproving:
+    "How much are you interested in improving? (1 = Not at all, 10 = Very)",
+  improvement: "What can you do to improve the situation? (optional)",
+  improvementPlaceholder:
+    "Ways you can improve the situation or obstacles that you may face while improving the situation",
+  improvementRatings: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+};
+
 // Configuration: everything besides copy that determines how a specific question is displayed
 
 export type RNARadioQuestionFormat = keyof typeof rnaRadioAnswerCopy;
@@ -155,6 +176,14 @@ export const rnaQuestionConfig: Record<RNAQuestionId, RNAQuestionConfig> = {
     questionNumber: 63,
     format: "RATIO",
   },
+  lifeAreaBehavior: {
+    questionNumber: 1,
+    format: "LIFE_AREA",
+  },
+  lifeAreaCustom: {
+    questionNumber: 10,
+    format: "LIFE_AREA",
+  },
 };
 
 // The RNA form is a sequence of pages. Each page has a section header and some questions.
@@ -180,8 +209,8 @@ export const fullRNASpec: RNAPageSpec[] = [
     ],
   },
   {
-    id: "sectionWorkSchool",
-    questions: [],
+    id: "sectionLifeAreas",
+    questions: ["lifeAreaBehavior", "lifeAreaCustom"],
   },
   {
     id: "sectionWorkSchool",

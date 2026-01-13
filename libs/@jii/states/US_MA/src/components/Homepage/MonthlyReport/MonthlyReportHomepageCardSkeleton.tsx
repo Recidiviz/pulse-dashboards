@@ -24,9 +24,9 @@ import styled from "styled-components";
 import {
   ActivityList,
   ActivityRow,
-  ActivityRowDivider,
   Card,
   HomepageSectionHeading,
+  RowDivider,
 } from "~@jii/common-ui";
 import { useUsMaTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
@@ -60,7 +60,7 @@ export const MonthlyReportHomepageCardSkeleton = observer(
                   <SkeletonLine style={{ width: "60%" }} />
                   <SkeletonLine style={{ width: "20%" }} />
                 </ActivityRow>
-                <ActivityRowDivider />
+                <RowDivider />
               </React.Fragment>
             ))}
           </ActivityList>

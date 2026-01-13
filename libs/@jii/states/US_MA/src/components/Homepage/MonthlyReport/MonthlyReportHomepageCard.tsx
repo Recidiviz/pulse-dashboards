@@ -24,11 +24,11 @@ import React from "react";
 import {
   ActivityList,
   ActivityRow,
-  ActivityRowDivider,
   Card,
   CopyWrapper,
   GoButton,
   HomepageSectionHeading,
+  RowDivider,
   SlateCopy,
 } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
@@ -80,7 +80,7 @@ const ManagedComponent: FC<{
                     {t(($) => $.creditRatings[activityRecord.rating ?? "none"])}
                   </SlateCopy>
                 </ActivityRow>
-                <ActivityRowDivider />
+                <RowDivider />
               </React.Fragment>
             );
           })}

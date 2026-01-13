@@ -21,11 +21,11 @@ import { FC } from "react";
 import {
   ActivityList,
   ActivityRow,
-  ActivityRowDivider,
   Card,
   Chip,
   GoButton,
   HomepageSectionHeading,
+  RowDivider,
 } from "~@jii/common-ui";
 import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
 import { CardDateInfo } from "~@jii/earned-good-time";
@@ -123,14 +123,14 @@ const ExpirationDateReduction = ({
               )}
             </div>
           </ActivityRow>
-          <ActivityRowDivider />
+          <RowDivider />
           <ActivityRow>
             <div>Total reduction</div>
             <div>
               <Chip color="green">{`-${expirationDateReduction}`}</Chip>
             </div>
           </ActivityRow>
-          <ActivityRowDivider />
+          <RowDivider />
           <ActivityRow>
             <div>Adjusted FXP date</div>
             <div>
@@ -140,7 +140,7 @@ const ExpirationDateReduction = ({
               )}
             </div>
           </ActivityRow>
-          <ActivityRowDivider />
+          <RowDivider />
         </ActivityList>
       </div>
     </>
