@@ -507,6 +507,7 @@ class LLMAgentGenerate:
 
         # Links
         workflow.add_edge(START, "gen_reflexion")
+        workflow.add_edge("gen_reflexion", "gen_area_of_needs")
 
         if self.include_resources:
             workflow.add_edge("gen_area_of_needs", "gen_resources")
