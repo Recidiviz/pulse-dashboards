@@ -36,7 +36,7 @@ const MeetingTabs = ({
   isTranscriptionUnavailable,
 }: Props) => {
   return (
-    <View className="flex w-full flex-row rounded-full bg-[#E6EAEB] p-1">
+    <View className="flex w-full flex-row rounded-full bg-[#E6EAEB] p-1 print:hidden">
       {Object.values(Tab).map((tab) => (
         <TouchableOpacity
           key={tab}

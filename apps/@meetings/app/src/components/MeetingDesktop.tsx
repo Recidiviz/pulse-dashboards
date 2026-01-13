@@ -22,6 +22,7 @@ import {
   Image,
   ImageBackground,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -129,7 +130,7 @@ const MeetingDesktop = ({ meetingDetails, person, personType }: Props) => {
   return (
     <View className="flex-1 grow">
       <Header />
-      <View className="flex-row border-t border-[#35536226]">
+      <View className="flex-1 grow flex-row border-t border-[#35536226]">
         <View className="border-r border-[#35536226] pt-8">
           <Link
             className="mx-10 flex flex-row items-center gap-2"
@@ -191,7 +192,7 @@ const MeetingDesktop = ({ meetingDetails, person, personType }: Props) => {
 
         <View className="flex-1 gap-4 px-14 pt-8">
           <View className="w-full flex-row items-center justify-between">
-            <View className="w-[300px]">
+            <View className="w-[300px] print:hidden">
               <MeetingTabs
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
@@ -199,8 +200,10 @@ const MeetingDesktop = ({ meetingDetails, person, personType }: Props) => {
               />
             </View>
             <View className="flex-row gap-3">
-              {/* TODO: the print feature will be implemented in another task: https://github.com/Recidiviz/pulse-dashboards/issues/11076 */}
-              <TouchableOpacity className="flex-row items-center gap-1.5 rounded-full border border-[#35536233] px-4 py-3">
+              <TouchableOpacity
+                onPress={window.print}
+                className="flex-row items-center gap-1.5 rounded-full border border-[#35536233] px-4 py-3"
+              >
                 <Image
                   source={Icons.Printer}
                   className="!size-4"
@@ -213,16 +216,18 @@ const MeetingDesktop = ({ meetingDetails, person, personType }: Props) => {
             </View>
           </View>
 
-          <View className="mx-auto w-full max-w-[960px] flex-1">
-            {activeTab === Tab.Notes && (
-              <MeetingNotesTab notes={meetingDetails?.userNotepadNotes} />
-            )}
-            {activeTab === Tab.Transcription && (
-              <MeetingTranscriptionTab
-                transcription={meetingDetails?.transcription}
-              />
-            )}
-          </View>
+          <ScrollView className="flex-1" contentContainerClassName="grow">
+            <View className="mx-auto w-full max-w-[960px] flex-1">
+              {activeTab === Tab.Notes && (
+                <MeetingNotesTab notes={meetingDetails?.userNotepadNotes} />
+              )}
+              {activeTab === Tab.Transcription && (
+                <MeetingTranscriptionTab
+                  transcription={meetingDetails?.transcription}
+                />
+              )}
+            </View>
+          </ScrollView>
         </View>
       </View>
     </View>

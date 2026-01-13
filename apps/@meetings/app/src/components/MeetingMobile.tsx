@@ -326,12 +326,14 @@ const MeetingMobile = ({ meetingDetails, person, personType }: Props) => {
         </Animated.ScrollView>
       </Animated.View>
 
-      <DraftCaseNoteSheet
-        notes={meetingDetails?.userNotepadNotes || ""}
-        clientName={person.fullName}
-        meetingDate={meetingDetails?.startTime}
-        ref={draftCaseNoteSheetRef}
-      />
+      <View className="absolute size-full print:hidden">
+        <DraftCaseNoteSheet
+          notes={meetingDetails?.userNotepadNotes || ""}
+          clientName={person.fullName}
+          meetingDate={meetingDetails?.startTime}
+          ref={draftCaseNoteSheetRef}
+        />
+      </View>
     </View>
   );
 };

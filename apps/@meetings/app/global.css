@@ -11,4 +11,12 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  @media print {
+    * {
+      overflow: visible !important;
+      height: auto !important;
+      max-height: none !important;
+    }
+  }
 }
