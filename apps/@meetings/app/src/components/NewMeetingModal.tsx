@@ -140,7 +140,7 @@ const NewMeetingIntro = ({
           <Text className="font-inter text-base font-medium text-primary">
             {person.fullName}{" "}
             <Text className="text-base font-normal text-[#355362D9]">
-              {person.primaryMetadata} • ID: {person.personId}
+              {person.primaryMetadata} • ID: {person.displayPersonExternalId}
             </Text>
           </Text>
         </View>
@@ -269,7 +269,7 @@ const NewMeetingProgress = ({
             <Text className="font-inter text-base font-medium text-primary">
               {person.fullName}{" "}
               <Text className="text-base font-normal text-[#355362D9]">
-                {person.primaryMetadata} • ID: {person.personId}
+                {person.primaryMetadata} • ID: {person.displayPersonExternalId}
               </Text>
             </Text>
           </View>
