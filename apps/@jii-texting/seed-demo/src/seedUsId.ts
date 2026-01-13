@@ -102,6 +102,7 @@ export async function seedUsId(prismaClient: PrismaClient) {
       phoneNumber: phoneNumber,
       officerId: faker.string.uuid(),
       poName: faker.person.fullName(),
+      poPhoneNumber: faker.phone.number(),
       district: `${validDistricts[randomIndex]}`,
     });
   }

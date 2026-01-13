@@ -49,7 +49,9 @@ export async function transformAndLoadPersonData(
       (id) => !foundGroupNames.has(id),
     );
     if (missingGroups.length) {
-      captureException(`Received unexpected group_ids in person.json file: ${missingGroups.join(",")}`)
+      captureException(
+        `Received unexpected group_ids in person.json file: ${missingGroups.join(",")}`,
+      );
       console.log(`Groups not found: ${missingGroups.join(", ")}`);
     }
 
@@ -80,6 +82,7 @@ export async function transformAndLoadPersonData(
       phoneNumber: personData.phone_number,
       officerId: personData.officer_id,
       poName: personData.po_name,
+      poPhoneNumber: personData.po_phone_number,
       district: personData.district,
     };
 
@@ -124,7 +127,9 @@ export async function transformAndLoadPersonData(
   }
 
   if (errors.length > 0) {
-    captureException("Encountered errors during person.json import. Check logs in the Cloud Run job")
+    captureException(
+      "Encountered errors during person.json import. Check logs in the Cloud Run job",
+    );
     throw errors.join("\n");
   }
 }

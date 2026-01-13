@@ -111,6 +111,7 @@ export const PERSON_SELECT_DATA_FOR_MESSAGE = {
   select: {
     givenName: true,
     poName: true,
+    poPhoneNumber: true,
     phoneNumber: true,
     district: true,
     stableExternalId: true,
@@ -130,6 +131,7 @@ export const CONTACT_SELECT_DATA_FOR_MESSAGE = {
     datetime: true,
     address: true,
     contactingPoName: true,
+    contactingPoPhoneNumber: true,
     reminderType: true,
   } satisfies Prisma.ContactSelectScalar & Prisma.ContactDefaultArgs,
 };

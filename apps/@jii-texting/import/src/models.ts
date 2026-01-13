@@ -37,6 +37,7 @@ export const personImportSchema = z.object({
   phone_number: z.string(),
   officer_id: z.string(),
   po_name: z.string(),
+  po_phone_number: z.string().nullable(),
   district: z.string(),
   group_ids: z.array(z.string()),
 });
@@ -48,6 +49,7 @@ export const contactImportSchema = z.object({
   contact_external_id: z.string(),
   contacting_officer_id: z.string(),
   contacting_po_name: z.string(),
+  contacting_po_phone_number: z.string().nullable(),
   contact_location_type: z.string(),
   contact_method: z.string(),
   reminder_type: z.string().nullable(),

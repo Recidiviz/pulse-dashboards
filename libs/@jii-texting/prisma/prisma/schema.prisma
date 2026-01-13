@@ -93,6 +93,7 @@ model Person {
   phoneNumber         String
   officerId           String
   poName              String
+  poPhoneNumber       String?
   district            String
   lastOptOutDate      DateTime? // will not be null if person has opted-out
   receivedWelcomeText Boolean   @default(false)
@@ -159,20 +160,22 @@ model Group {
 
   @@unique([groupName, topicId])
 }
+
 //TODO(#9875) Confirm contacts are unique on external_id
 model Contact {
-  externalId          String    @unique // external id
-  locationType        String
-  method              String
-  reminderType        String?
-  contactingOfficerId String
-  contactingPoName    String
-  address             String?
-  datetime            DateTime
-  updateDatetime      DateTime
-  personStableExternalId    String
-  person              Person    @relation(fields: [personStableExternalId], references: [stableExternalId])
-  messageSeries          ContactReminderMessageSeries[]
+  externalId              String                         @unique // external id
+  locationType            String
+  method                  String
+  reminderType            String?
+  contactingOfficerId     String
+  contactingPoName        String
+  contactingPoPhoneNumber String?
+  address                 String?
+  datetime                DateTime
+  updateDatetime          DateTime
+  personStableExternalId  String
+  person                  Person                         @relation(fields: [personStableExternalId], references: [stableExternalId])
+  messageSeries           ContactReminderMessageSeries[]
 }
 
 model WorkflowExecution {

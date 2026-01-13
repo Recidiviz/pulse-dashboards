@@ -38,6 +38,7 @@ export async function transformAndLoadContactData(
         externalId: contactData.contact_external_id,
         contactingOfficerId: contactData.contacting_officer_id,
         contactingPoName: contactData.contacting_po_name,
+        contactingPoPhoneNumber: contactData.contacting_po_phone_number,
         locationType: contactData.contact_location_type,
         method: contactData.contact_method,
         address: contactData.contact_address,
@@ -62,7 +63,9 @@ export async function transformAndLoadContactData(
       });
       processedContactIds.push(newContact.externalId);
     } catch (error) {
-      captureException(`Encountered error while inserting contact record: ${error}`)
+      captureException(
+        `Encountered error while inserting contact record: ${error}`,
+      );
       console.error("Failed to process contact record:", {
         contactId: contactData.contact_external_id,
         error: error instanceof Error ? error.message : String(error),
@@ -86,7 +89,9 @@ export async function transformAndLoadContactData(
         },
       });
     } catch (error) {
-      captureException(`Encountered error while setting contact record reminderType to null: ${error}`)
+      captureException(
+        `Encountered error while setting contact record reminderType to null: ${error}`,
+      );
       console.error("Failed to process contact record:", {
         contactId: noLongerEligibleContactId,
         error: error instanceof Error ? error.message : String(error),

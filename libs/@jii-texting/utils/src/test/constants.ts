@@ -94,6 +94,7 @@ export const fakePersonOne = {
   phoneNumber: faker.string.numeric({ length: 11 }),
   officerId: faker.string.uuid(),
   poName: "JOHN DOE",
+  poPhoneNumber: "9879879879",
   district: "District 1",
   receivedWelcomeText: false,
 };
@@ -110,6 +111,7 @@ export const fakePersonTwo = {
   phoneNumber: faker.string.numeric({ length: 11 }),
   officerId: faker.string.uuid(),
   poName: faker.person.fullName(),
+  poPhoneNumber: null,
   district: faker.location.county(),
 };
 
@@ -125,6 +127,7 @@ export const fakePersonThree = {
   phoneNumber: faker.string.numeric({ length: 11 }),
   officerId: faker.string.uuid(),
   poName: faker.person.fullName(),
+  poPhoneNumber: null,
   district: faker.location.county(),
 };
 //fake person that corresponds to fakeContactOne
@@ -140,6 +143,7 @@ export const fakeUsTxPersonOne = {
   phoneNumber: faker.string.numeric({ length: 11 }),
   officerId: faker.string.uuid(),
   poName: faker.person.fullName(),
+  poPhoneNumber: null,
   district: "District 1",
   receivedWelcomeText: false,
 };
@@ -155,6 +159,7 @@ export const fakeUsTxPersonTwo = {
   phoneNumber: faker.string.numeric({ length: 11 }),
   officerId: faker.string.uuid(),
   poName: faker.person.fullName(),
+  poPhoneNumber: null,
   district: faker.location.county(),
 };
 
@@ -170,6 +175,7 @@ export const fakeUsTxPersonThree = {
   phoneNumber: faker.string.numeric({ length: 11 }),
   officerId: faker.string.uuid(),
   poName: faker.person.fullName(),
+  poPhoneNumber: null,
   district: faker.location.county(),
 };
 export const fakeUsTxPersonFour = {
@@ -184,6 +190,7 @@ export const fakeUsTxPersonFour = {
   phoneNumber: faker.string.numeric({ length: 11 }),
   officerId: faker.string.uuid(),
   poName: faker.person.fullName(),
+  poPhoneNumber: null,
   district: faker.location.county(),
 };
 
@@ -192,6 +199,7 @@ export const fakeContactOne = {
   externalId: "contact-id-1",
   contactingOfficerId: faker.string.uuid(),
   contactingPoName: "JOHN DOE",
+  contactingPoPhoneNumber: null,
   locationType: "HOME",
   method: "IN_PERSON",
   address: "123 North Pole",
@@ -204,6 +212,7 @@ export const fakeContactTwo = {
   externalId: "contact-id-2",
   contactingOfficerId: faker.string.uuid(),
   contactingPoName: faker.person.fullName().toUpperCase(),
+  contactingPoPhoneNumber: "123123123",
   locationType: "OFFICE",
   method: "VIRTUAL",
   address: faker.location.streetAddress(),
@@ -216,6 +225,7 @@ export const fakeContactThree = {
   externalId: faker.string.uuid(),
   contactingOfficerId: faker.string.uuid(),
   contactingPoName: faker.person.fullName().toUpperCase(),
+  contactingPoPhoneNumber: null,
   locationType: "OFFICE",
   method: "IN_PERSON",
   address: faker.location.streetAddress(),

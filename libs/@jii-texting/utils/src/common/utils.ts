@@ -286,6 +286,7 @@ function getIdahoLSUMessageBody(
 function getWelcomeMessageBody({
   givenName,
   poName: assignedOfficerName,
+  poPhoneNumber,
 }: PersonDataForMessage) {
   let body = "";
 
@@ -298,7 +299,11 @@ function getWelcomeMessageBody({
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-  body += `Hi ${givenNameToUse}, we’re reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.\n\nIf you have questions, reach out to Officer ${assignedPoNameToUse}. Please note each appointment reminder will specify if you are meeting with your primary officer or another officer.`;
+  const poPhoneNumberAddendum = poPhoneNumber
+    ? ` at ${poPhoneNumber.trim()}`
+    : "";
+
+  body += `Hi ${givenNameToUse}, we’re reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.\n\nIf you have questions, reach out to Officer ${assignedPoNameToUse}${poPhoneNumberAddendum}. Please note each appointment reminder will specify if you are meeting with your primary officer or another officer.`;
 
   body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
 
@@ -322,14 +327,24 @@ function getTexasReminderMessageBody(
   const givenNameToUse =
     givenName.charAt(0).toUpperCase() + givenName.slice(1).toLowerCase();
 
-  const { method, locationType, address, datetime, contactingPoName } =
-    contactData;
+  const {
+    method,
+    locationType,
+    address,
+    datetime,
+    contactingPoName,
+    contactingPoPhoneNumber,
+  } = contactData;
 
   const officerToContact = contactingPoName
     .toLowerCase()
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+
+  const officerPhoneNumberAddendum = contactingPoPhoneNumber
+    ? ` at ${contactingPoPhoneNumber.trim()}`
+    : "";
 
   const locationStr = (function () {
     if (locationType === "HOME" && method === "IN_PERSON") {
@@ -362,7 +377,7 @@ function getTexasReminderMessageBody(
     timeZoneName: "short",
   }).format(datetime);
 
-  body += `Hi ${givenNameToUse}, this is a reminder that you have an upcoming ${locationType.toLowerCase()} contact tomorrow.\n\nDate: ${dateStr}\n\nTime: Approximately ${timeStr}\n\nLocation: ${locationStr}\n\nBe aware that the officer may ${contactDescription} within 2 hours before or after the time listed above.\n\nNeed to reschedule or have questions? Contact Officer ${officerToContact}`;
+  body += `Hi ${givenNameToUse}, this is a reminder that you have an upcoming ${locationType.toLowerCase()} contact tomorrow.\n\nDate: ${dateStr}\n\nTime: Approximately ${timeStr}\n\nLocation: ${locationStr}\n\nBe aware that the officer may ${contactDescription} within 2 hours before or after the time listed above.\n\nNeed to reschedule or have questions? Contact Officer ${officerToContact}${officerPhoneNumberAddendum}`;
 
   body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
 
@@ -982,6 +997,7 @@ export async function processIndividualJiiEligibilityTexts(
     phoneNumber: jii.phoneNumber,
     stableExternalId: jii.stableExternalId,
     poName: jii.poName,
+    poPhoneNumber: jii.poPhoneNumber,
     district: jii.district,
     pseudonymizedId: jii.pseudonymizedId,
   };
@@ -1139,6 +1155,7 @@ export async function processContact(
     address: contact.address,
     datetime: contact.datetime,
     contactingPoName: contact.contactingPoName,
+    contactingPoPhoneNumber: contact.contactingPoPhoneNumber,
     reminderType: contact.reminderType,
     method: contact.method,
   };
@@ -1343,6 +1360,7 @@ export async function processIndividualJiiContactReminders(
     phoneNumber: jii.phoneNumber,
     stableExternalId: jii.stableExternalId,
     poName: jii.poName,
+    poPhoneNumber: jii.poPhoneNumber,
     district: jii.district,
     pseudonymizedId: jii.pseudonymizedId,
   };

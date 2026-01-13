@@ -66,6 +66,7 @@ describe("handle_import", () => {
           phone_number: fakePersonOne.phoneNumber,
           officer_id: fakePersonOne.officerId,
           po_name: fakePersonOne.poName,
+          po_phone_number: fakePersonOne.poPhoneNumber,
           district: fakePersonOne.district,
           group_ids: [
             fakeFullyEligibleGroup.groupName,
@@ -87,6 +88,7 @@ describe("handle_import", () => {
           phone_number: "8888888888",
           officer_id: fakePersonOne.officerId,
           po_name: fakePersonOne.poName,
+          po_phone_number: fakePersonOne.poPhoneNumber,
           district: fakePersonOne.district,
           group_ids: [
             fakeFullyEligibleGroup.groupName,
@@ -163,6 +165,7 @@ describe("handle_import", () => {
           phone_number: fakePersonOne.phoneNumber,
           officer_id: fakePersonOne.officerId,
           po_name: fakePersonOne.poName,
+          po_phone_number: fakePersonOne.poPhoneNumber,
           district: fakePersonOne.district,
           // DIFFERENT GROUP
           group_ids: [fakeTrustedTesterGroup.groupName],
@@ -234,6 +237,7 @@ describe("handle_import", () => {
           phone_number: "8888888888",
           officer_id: fakePersonOne.officerId,
           po_name: fakePersonOne.poName,
+          po_phone_number: fakePersonOne.poPhoneNumber,
           district: fakePersonOne.district,
           group_ids: [
             fakeFullyEligibleGroup.groupName,

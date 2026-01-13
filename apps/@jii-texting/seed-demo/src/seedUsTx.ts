@@ -50,6 +50,7 @@ async function createPersonWithContact(
       phoneNumber: phoneNumber,
       officerId: faker.string.uuid(),
       poName: faker.person.fullName(),
+      poPhoneNumber: faker.phone.number(),
       district: "REGION 4",
       ...(createContact
         ? {
@@ -62,6 +63,7 @@ async function createPersonWithContact(
                   reminderType: "WITHIN_ONE_DAY",
                   contactingOfficerId: faker.string.uuid(),
                   contactingPoName: faker.person.fullName(),
+                  contactingPoPhoneNumber: faker.phone.number(),
                   address: faker.location.streetAddress(),
                   datetime: addDays(new Date(), 1),
                   updateDatetime: new Date(),

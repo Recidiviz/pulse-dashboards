@@ -47,6 +47,7 @@ async function main() {
       phoneNumber: faker.string.numeric({ length: 11 }),
       officerId: faker.string.uuid(),
       poName: faker.person.fullName(),
+      poPhoneNumber: faker.phone.number(),
       district: faker.location.county(),
       groups: group,
     });
