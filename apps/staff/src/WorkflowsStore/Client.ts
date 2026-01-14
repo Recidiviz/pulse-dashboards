@@ -18,7 +18,7 @@
 import { subYears } from "date-fns";
 import dedent from "dedent";
 import { deleteField, FieldValue, serverTimestamp } from "firebase/firestore";
-import { capitalize, lowerCase, mapValues, startCase, toUpper } from "lodash";
+import { capitalize, mapValues, toUpper } from "lodash";
 import { action, makeObservable, override } from "mobx";
 import { format as formatPhone, uglify } from "phone-fns";
 import { toast } from "react-hot-toast";
@@ -46,7 +46,10 @@ import {
 } from "../FirestoreStore/types";
 import type { RootStore } from "../RootStore";
 import { TENANT_CONFIGS } from "../tenants";
-import { formatTexasAddress } from "../utils/formatStrings";
+import {
+  formatTexasAddress,
+  humanReadableTitleCase,
+} from "../utils/formatStrings";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
 import { SupervisionTaskInterface, SupervisionTasks } from "./Task/types";
@@ -249,7 +252,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     }
     if (this.stateCode === "US_MO") {
       if (!this._caseType) return "Unknown";
-      return startCase(lowerCase(this._caseType));
+      if (this._caseType === "INTERNAL_UNKNOWN") {
+        return humanReadableTitleCase(this.caseTypeRawText ?? "Unknown")
+          .replace("Icts", "ICTS")
+          .replace("Jri", "JRI");
+      }
+      return humanReadableTitleCase(this._caseType);
     }
 
     // This is the enum we use for case type internally

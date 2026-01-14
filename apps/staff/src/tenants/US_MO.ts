@@ -104,11 +104,27 @@ const US_MO_CONFIG = {
             value: "Domestic Violence",
           },
           {
+            value: "ICTS Treatment Offender",
+          },
+          {
+            value: "JRI Treatment Pilot Offender",
+          },
+          {
+            value: "Parole Or Condition Release Less Than 12 Months",
+            shortLabel: "Parole/Release <12 Months",
+          },
+          {
             value: "Serious Mental Illness Or Disability",
-            shortLabel: "Mental illness/disability",
+            shortLabel: "Mental Illness/Disability",
           },
           {
             value: "Sex Offense",
+          },
+          {
+            value: "Specialty Court Offender",
+          },
+          {
+            value: "Treatment Court Offender",
           },
         ],
       },
