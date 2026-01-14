@@ -157,7 +157,7 @@ export async function userDataDownload(req, res) {
   const allowed =
     appMetadata.state_code === "recidiviz" ||
     isOfflineMode() ||
-    appMetadata.state_code === "US_TX";
+    appMetadata.state_code.toLowerCase() === "us_tx";
 
   if (!allowed) {
     respondWithForbidden(res);
