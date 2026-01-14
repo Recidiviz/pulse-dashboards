@@ -8,8 +8,7 @@ metadata:
 
 intake:
   intake_type: transcription
-  scoring: oras_pit
-  scoring_model:
+  transcription_post_processing_model:
     provider: openai
     name: gpt-4o-mini
     version: "2024-07-18"

@@ -146,7 +146,7 @@ async def transcribe_audio(
         processor = TranscriptionProcessor(
             transcription=transcription_input,
             diarization_service=settings.DIARIZATION_SERVICE,
-            model_config=config.intake.scoring_model,
+            model_config=config.intake.transcription_post_processing_model,
         )
         transcription_result = await processor.convert_transcript_to_conversation()
         await execution.log_progress(

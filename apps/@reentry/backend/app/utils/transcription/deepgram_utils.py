@@ -105,7 +105,7 @@ async def process_deepgram_transcription(
     processor = TranscriptionProcessor(
         transcription=transcription_input,
         diarization_service="deepgram",
-        model_config=assessment_config.intake.scoring_model,
+        model_config=assessment_config.intake.transcription_post_processing_model,
     )
     transcription_result_processed = (
         await processor.convert_transcript_to_conversation()

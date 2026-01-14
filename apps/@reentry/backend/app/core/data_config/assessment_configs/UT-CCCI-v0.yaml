@@ -7,7 +7,6 @@ metadata:
 
 intake:
   intake_type: conversation
-  scoring: lsir
   prompts:
     role: |
       Role: You are a social worker conducting a structured intake assessment with a new client who is currently in a prison facility and preparing for their release.
@@ -134,7 +133,7 @@ intake:
       required_information: |
         1. Will you require any support or resources related to alcohol or drug use after release
 
-  scoring_model:
+  transcription_post_processing_model:
     provider: openai
     name: o4-mini
     version: "2025-04-16"

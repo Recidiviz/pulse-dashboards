@@ -1,11 +1,8 @@
-import logging
-import structlog
 from enum import Enum
 from typing import Literal, Optional, Union
 
+import structlog
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-
-from app.models.base import AssessmentType
 
 logger = structlog.get_logger(__name__)
 
@@ -59,14 +56,12 @@ class IntakeConfig(BaseModel):
     intake_type: Literal[
         "transcription", "external"
     ]  # Todo manually keep up to date with IntakeType (cf IntakeModel)
-    scoring: AssessmentType
-    scoring_model: ModelConfig
+    transcription_post_processing_model: ModelConfig
 
 
 class IntakeConfigConversation(BaseModel):
     intake_type: Literal["conversation"]
-    scoring: AssessmentType
-    scoring_model: ModelConfig
+    transcription_post_processing_model: ModelConfig
     prompts: IntakeBotPromptsConfig
     sections: list[IntakeSectionConfig]
     chat_model: ModelConfig

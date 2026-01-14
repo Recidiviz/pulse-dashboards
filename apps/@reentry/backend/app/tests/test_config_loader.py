@@ -61,7 +61,9 @@ async def test_load_assessment_config(
     assert loaded.metadata.version == 0
     assert loaded.metadata.display_name == "Test CCCI v0"
     assert loaded.intake.intake_type == "conversation"
-    assert loaded.intake.scoring == "lsir"
+    assert loaded.intake.transcription_post_processing_model.provider == "openai"
+    assert loaded.intake.transcription_post_processing_model.name == "gpt-4o-mini"
+    assert loaded.intake.transcription_post_processing_model.version == "2024-07-18"
     assert len(loaded.intake.sections) == 1
     assert loaded.intake.sections[0].title == "Employment"
     assert loaded.outputs.codes == ["intake_summary_ccci", "action_plan_ccci"]

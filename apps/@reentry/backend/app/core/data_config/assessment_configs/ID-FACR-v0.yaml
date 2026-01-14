@@ -7,7 +7,6 @@ metadata:
 
 intake:
   intake_type: conversation
-  scoring: lsir
   prompts:
     role: |
       Role: You are a social worker conducting a structured intake assessment with a new client who is currently in a prison facility and preparing for their release.
@@ -188,7 +187,7 @@ intake:
                 ii. Have they ever participated in a substance abuse treatment program while incarcerated or prior to incarcerated?
                 iii. Is the client interested in starting or continuing treatment support after release?
                     1. If yes: What type of support do they feel would be most effective for them now (e.g., group meetings like AA/NA, individual counseling, medication-assisted treatment, residential treatment, or something else)?
-  scoring_model:
+  transcription_post_processing_model:
     provider: openai
     name: o4-mini
     version: "2025-04-16"
