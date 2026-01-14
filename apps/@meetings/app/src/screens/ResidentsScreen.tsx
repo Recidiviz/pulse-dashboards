@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,47 +33,9 @@ import PersonsMobileList from "../components/PersonsMobileList";
 import PersonsTable from "../components/PersonsTable.web";
 import { useRecording } from "../context/RecordingContext";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { trpc } from "../trpc/client";
+import { deserializeResident } from "../utils/format";
 import { SortOption, sortUsers } from "../utils/sort";
-
-const mock = {
-  data: [
-    {
-      activeMeetingId: "",
-      personId: BigInt(1000),
-      displayPersonExternalId: "1000",
-      givenNames: "Peter",
-      surname: "Parker",
-      facilityName: "facility 1",
-    },
-    {
-      activeMeetingId: "",
-      personId: BigInt(1001),
-      displayPersonExternalId: "1001",
-      givenNames: "Jin",
-      surname: "Kazama",
-      facilityName: "facility 2",
-    },
-    {
-      activeMeetingId: "",
-      personId: BigInt(1002),
-      displayPersonExternalId: "1002",
-      givenNames: "Lara",
-      surname: "Croft",
-      facilityName: "facility 3",
-    },
-    {
-      activeMeetingId: "7",
-      personId: BigInt(7),
-      displayPersonExternalId: "1003",
-      givenNames: "Sylvanas",
-      surname: "Windrunner",
-      facilityName: "facility 4",
-    },
-  ],
-  isLoading: false,
-  error: null,
-  refetch: () => null,
-};
 
 type ProfileNavProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -85,20 +47,19 @@ const ResidentsScreen = () => {
   const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();
 
-  // TODO: for test purposes, after backend is ready replace getClients with getResidents call
-  const { data: rawResidents, isLoading, error, refetch } = mock;
+  const {
+    data: rawResidents,
+    isLoading,
+    error,
+    refetch,
+  } = trpc.v1.resident.list.useQuery();
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState(SortOption.Name as string);
 
   const residents: Resident[] = React.useMemo(() => {
     if (!rawResidents) return [];
-    return rawResidents.map((r) => ({
-      ...r,
-      fullName: `${r.givenNames} ${r.surname}`,
-      primaryMetadata: r.facilityName,
-      lastMeeting: "5d ago", // TODO: remove hardcode
-    }));
+    return rawResidents.map(deserializeResident);
   }, [rawResidents]);
 
   // filtering and sorting residents

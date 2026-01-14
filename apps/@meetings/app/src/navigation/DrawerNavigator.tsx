@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,13 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import React from "react";
 
 import DrawerContent from "../components/DrawerContent";
+import ClientMeetingScreen from "../screens/ClientMeetingScreen";
+import ClientNewMeetingScreen from "../screens/ClientNewMeetingScreen";
+import ClientProfileScreen from "../screens/ClientProfileScreen";
 import ClientsScreen from "../screens/ClientsScreen";
-import MeetingScreen from "../screens/MeetingScreen";
-import NewMeetingScreen from "../screens/NewMeetingScreen";
-import ProfileScreen from "../screens/ProfileScreen";
+import ResidentMeetingScreen from "../screens/ResidentMeetingScreen";
+import ResidentNewMeetingScreen from "../screens/ResidentNewMeetingScreen";
+import ResidentProfileScreen from "../screens/ResidentProfileScreen";
 import ResidentsScreen from "../screens/ResidentsScreen";
 
 export type RootStackParamList = {
@@ -76,30 +79,18 @@ export default function DrawerNavigator() {
     >
       <Drawer.Screen name="Clients" component={ClientsScreen} />
       <Drawer.Screen name="Residents" component={ResidentsScreen} />
-      <Drawer.Screen
-        name="ClientProfile"
-        component={() => <ProfileScreen personType="client" />}
-      />
-      <Drawer.Screen
-        name="ResidentProfile"
-        component={() => <ProfileScreen personType="resident" />}
-      />
+      <Drawer.Screen name="ClientProfile" component={ClientProfileScreen} />
+      <Drawer.Screen name="ResidentProfile" component={ResidentProfileScreen} />
       <Drawer.Screen
         name="ClientNewMeeting"
-        component={() => <NewMeetingScreen personType="client" />}
+        component={ClientNewMeetingScreen}
       />
       <Drawer.Screen
         name="ResidentNewMeeting"
-        component={() => <NewMeetingScreen personType="resident" />}
+        component={ResidentNewMeetingScreen}
       />
-      <Drawer.Screen
-        name="ClientMeeting"
-        component={() => <MeetingScreen personType="client" />}
-      />
-      <Drawer.Screen
-        name="ResidentMeeting"
-        component={() => <MeetingScreen personType="resident" />}
-      />
+      <Drawer.Screen name="ClientMeeting" component={ClientMeetingScreen} />
+      <Drawer.Screen name="ResidentMeeting" component={ResidentMeetingScreen} />
     </Drawer.Navigator>
   );
 }

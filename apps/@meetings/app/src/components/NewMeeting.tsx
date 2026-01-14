@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import {
   ActivityIndicator,
   Image,
@@ -35,54 +34,30 @@ import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { humanReadableTitleCase } from "../utils/format";
 import { saveItem } from "../utils/storage";
 
-type ProfileNavProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "Clients" | "Residents"
->;
 type NewMeetingRouteProp = RouteProp<
   RootStackParamList,
   "ClientNewMeeting" | "ResidentNewMeeting"
 >;
 
 type Props = {
-  personType: "client" | "resident";
+  person: {
+    fullName: string;
+    displayPersonExternalId: string;
+    primaryMetadata: string;
+    personId: bigint;
+  };
+  navigateToPersonProfile: () => void;
 };
 
-const NewMeetingScreen = ({ personType }: Props) => {
-  const navigation = useNavigation<ProfileNavProp>();
+const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const route = useRoute<NewMeetingRouteProp>();
-  const person = {
-    fullName: route.params.fullName,
-    displayPersonExternalId: route.params.displayPersonExternalId,
-    primaryMetadata: route.params.primaryMetadata,
-    // Convert this back into a BigInt for TRPC calls
-    personId: BigInt(route.params.personId),
-  };
-  const { meetingId } = route.params;
-
-  const navigateToClientProfile = () => {
-    navigation.reset({
-      index: 1,
-      routes: [
-        { name: personType === "client" ? "Clients" : "Residents" },
-        {
-          name: personType === "client" ? "ClientProfile" : "ResidentProfile",
-          params: {
-            personId: person.personId.toString(),
-            fullName: person.fullName,
-            displayPersonExternalId: person.displayPersonExternalId,
-            primaryMetadata: person.primaryMetadata,
-          },
-        },
-      ],
-    });
-  };
+  const meetingId = route.params?.meetingId;
 
   const { status, note, setNote, recorderState, actions } = useMeetingRecording(
     {
       person,
       meetingId,
-      onComplete: navigateToClientProfile,
+      onComplete: navigateToPersonProfile,
     },
   );
 
@@ -229,4 +204,4 @@ const NewMeetingScreen = ({ personType }: Props) => {
   );
 };
 
-export default NewMeetingScreen;
+export default NewMeeting;

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ import {
   PostMeetingProcessingStatus,
   Prisma,
   PrismaClient,
+  Resident,
   StateCode,
 } from "~@meetings/prisma/client";
 
@@ -41,6 +42,7 @@ async function main() {
   await prisma.meeting.deleteMany({});
   await prisma.clientsToStaff.deleteMany({});
   await prisma.client.deleteMany({});
+  await prisma.resident.deleteMany({});
   await prisma.staff.deleteMany({});
 
   // Seed single staff
@@ -109,6 +111,72 @@ async function main() {
           create: [
             {
               id: `meeting-${createdClient.personId}`,
+              provider: faker.helpers.arrayElement(["ASSEMBLYAI", "DEEPGRAM"]),
+              transcriptObject: {} as Transcript,
+              confidence: faker.number.float(),
+              utterances: {
+                create: Array.from({ length: 5 }, (_, i) => ({
+                  confidence: faker.number.float(),
+                  endTimeMs: (i + 1) * 3000,
+                  speaker: faker.helpers.arrayElement([
+                    "Speaker A",
+                    "Speaker B",
+                  ]),
+                  startTimeMs: i * 3000,
+                  text: faker.lorem.sentence(),
+                })),
+              },
+              summary: faker.lorem.paragraph(),
+            },
+          ],
+        },
+      },
+    });
+  }
+
+  // Seed Residents
+  const numberOfResidents = 10;
+  const createdResidents: Resident[] = [];
+  for (let i = 0; i < numberOfResidents; i++) {
+    const residentData: Prisma.ResidentCreateInput = {
+      stateCode: StateCode.US_NE,
+      personId: i + 1,
+      stablePersonExternalId: `resident-ext-${i + 1}`,
+      stablePersonExternalIdType: "resident-ext-type-1",
+      displayPersonExternalId: `resident-display-ext-${i + 1}`,
+      pseudonymizedId: `resident-pid-${i + 1}`,
+      givenNames: faker.person.firstName(),
+      middleNames: faker.person.firstName(),
+      surname: faker.person.lastName(),
+      suffix: faker.person.suffix(),
+      facilityId: `facility-${i + 1}`,
+    };
+    const resident = await prisma.resident.create({ data: residentData });
+    createdResidents.push(resident);
+  }
+
+  // Seed a meeting for every resident
+  for (const createdResident of createdResidents) {
+    const meetingStart = faker.date.past();
+    const meetingEnd = faker.date.soon({ refDate: meetingStart });
+    await prisma.meeting.create({
+      data: {
+        id: `resident-meeting-${createdResident.personId}`,
+        startTime: meetingStart,
+        endTime: meetingEnd,
+        residentId: createdResident.personId,
+        staffId: seededStaff.staffId,
+        recordingsGCSBucket: "test-audio-bucket",
+        recordingsFolderPath: `resident-meeting-${createdResident.personId}`,
+        userNotepadNotes: faker.lorem.paragraph(),
+        actionItems: faker.lorem.sentences(3),
+        criticalUpdates: faker.lorem.sentences(2),
+        meetingSummary: faker.lorem.paragraph(),
+        postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
+        transcriptions: {
+          create: [
+            {
+              id: `resident-meeting-${createdResident.personId}`,
               provider: faker.helpers.arrayElement(["ASSEMBLYAI", "DEEPGRAM"]),
               transcriptObject: {} as Transcript,
               confidence: faker.number.float(),

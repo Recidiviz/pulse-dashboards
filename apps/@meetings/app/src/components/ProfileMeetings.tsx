@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,17 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Link,
-  RouteProp,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Link } from "@react-navigation/native";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -41,7 +34,7 @@ import {
 } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
-import { Person } from "../common/types";
+import { ClientMeetings, Person, ResidentMeetings } from "../common/types";
 import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import MeetingsCardsList from "../components/MeetingsCardsList";
@@ -49,18 +42,7 @@ import MeetingsTable from "../components/MeetingsTable.web";
 import NewMeetingModal from "../components/NewMeetingModal";
 import SearchBar from "../components/SearchBar";
 import { useRecording } from "../context/RecordingContext";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
-import { trpc } from "../trpc/client";
-import { deserializeClient, humanReadableTitleCase } from "../utils/format";
-
-type ProfileNavProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "ClientProfile" | "ResidentProfile"
->;
-type ProfileRouteProp = RouteProp<
-  RootStackParamList,
-  "ClientProfile" | "ResidentProfile"
->;
+import { humanReadableTitleCase } from "../utils/format";
 
 enum MeetingsSort {
   NEWEST_FIRST = "Date (Latest first)",
@@ -69,53 +51,39 @@ enum MeetingsSort {
 }
 
 type Props = {
-  personType: "client" | "resident";
-};
-
-const ProfileScreenContainer = ({ personType }: Props) => {
-  const route = useRoute<ProfileRouteProp>();
-  const { data: person } = trpc.v1.staff.getClient.useQuery(
-    { personId: BigInt(route.params?.personId || 0) },
-    { enabled: !!route.params?.personId },
-  );
-
-  if (!person) return null;
-
-  return (
-    <ProfileScreen person={deserializeClient(person)} personType={personType} />
-  );
-};
-
-type ProfileScreenProps = {
+  type: "client" | "resident";
   person: Person;
-  personType: "client" | "resident";
+  rawMeetings?: ClientMeetings | ResidentMeetings;
+  isLoading: boolean;
+  isMeetingCreating: boolean;
+  error: unknown;
+  refetch: () => void;
+  handleCreateMeeting: () => void;
+  webMeetingId: string | null;
+  setWebMeetingId: (id: string | null) => void;
 };
 
-const ProfileScreen = ({ person, personType }: ProfileScreenProps) => {
-  const navigation = useNavigation<ProfileNavProp>();
+const ProfileMeetings = ({
+  type,
+  person,
+  rawMeetings,
+  isLoading,
+  isMeetingCreating,
+  error,
+  refetch,
+  handleCreateMeeting,
+  webMeetingId,
+  setWebMeetingId,
+}: Props) => {
   const insets = useSafeAreaInsets();
 
-  const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Date (Latest first)");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [mobileHeaderHeight, setMobileHeaderHeight] = useState(0);
-  const [webMeetingId, setWebMeetingId] = useState<string | null>(null);
   const { status: recordingState } = useRecording();
   // const [sortBy, setSortBy] = useState<MeetingsSort>(MeetingsSort.NEWEST_FIRST);
-
-  const {
-    data: rawMeetings,
-    isLoading,
-    error,
-    refetch,
-  } = trpc.v1.client.getMeetings.useQuery(
-    { clientId: person.personId },
-    {
-      enabled: !!person?.personId,
-    },
-  );
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentOffset = event.nativeEvent.contentOffset.y;
@@ -238,41 +206,6 @@ const ProfileScreen = ({ person, personType }: ProfileScreenProps) => {
     return matchesSearch && matchesFilters;
   });
 
-  const createMeetingMutation = trpc.v1.client.createMeeting.useMutation();
-  const handleCreateMeeting = async () => {
-    try {
-      setIsCreating(true);
-      const startTime = new Date();
-      const { id: meetingId } = await createMeetingMutation.mutateAsync({
-        clientId: person.personId,
-        startTime,
-      });
-
-      switch (Platform.OS) {
-        case "web":
-          setWebMeetingId(meetingId);
-          break;
-        case "ios":
-        case "android":
-          navigation.navigate(
-            personType === "client" ? "ClientNewMeeting" : "ResidentNewMeeting",
-            {
-              personId: person.personId.toString(),
-              fullName: person.fullName,
-              displayPersonExternalId: person.displayPersonExternalId,
-              primaryMetadata: person.primaryMetadata,
-              meetingId,
-            },
-          );
-          break;
-      }
-    } catch (err) {
-      console.error("[createMeeting] Failed:", err);
-      Alert.alert("Error", "Failed to create meeting. Please try again.");
-    } finally {
-      setIsCreating(false);
-    }
-  };
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
@@ -339,7 +272,7 @@ const ProfileScreen = ({ person, personType }: ProfileScreenProps) => {
         <MeetingsCardsList
           meetings={filteredMeetings}
           person={person}
-          personType={personType}
+          personType={type}
         />
       ),
       web: (
@@ -348,14 +281,14 @@ const ProfileScreen = ({ person, personType }: ProfileScreenProps) => {
             <MeetingsCardsList
               meetings={filteredMeetings}
               person={person}
-              personType={personType}
+              personType={type}
             />
           </View>
           <View className="hidden md:block">
             <MeetingsTable
               meetings={filteredMeetings}
               person={person}
-              personType={personType}
+              personType={type}
             />
           </View>
         </View>
@@ -396,7 +329,7 @@ const ProfileScreen = ({ person, personType }: ProfileScreenProps) => {
             <TouchableOpacity
               className="px-2"
               onPress={handleCreateMeeting}
-              disabled={isCreating}
+              disabled={isMeetingCreating}
             >
               <Image
                 source={Icons.Plus}
@@ -432,7 +365,7 @@ const ProfileScreen = ({ person, personType }: ProfileScreenProps) => {
           {/* TODO: back button under discussion with design team */}
           <Link
             className="flex flex-row items-center gap-2"
-            screen={personType === "client" ? "Clients" : "Residents"}
+            screen={type === "client" ? "Clients" : "Residents"}
             params={{}}
           >
             <Image source={Icons.ArrowLeft} className="!size-3" />
@@ -461,9 +394,9 @@ const ProfileScreen = ({ person, personType }: ProfileScreenProps) => {
               <TouchableOpacity
                 className="w-[100px] flex-row items-center justify-center rounded-full bg-[#006C67] px-4 py-2"
                 onPress={handleCreateMeeting}
-                disabled={isCreating}
+                disabled={isMeetingCreating}
               >
-                {isCreating ? (
+                {isMeetingCreating ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (
                   <Text className="font-inter font-medium text-white">
@@ -550,6 +483,7 @@ const ProfileScreen = ({ person, personType }: ProfileScreenProps) => {
 
           {webMeetingId && (
             <NewMeetingModal
+              person={person}
               onClose={() => setWebMeetingId(null)}
               meetingId={webMeetingId}
             />
@@ -560,4 +494,4 @@ const ProfileScreen = ({ person, personType }: ProfileScreenProps) => {
   );
 };
 
-export default ProfileScreenContainer;
+export default ProfileMeetings;

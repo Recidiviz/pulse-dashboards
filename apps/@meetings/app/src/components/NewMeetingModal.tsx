@@ -15,46 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RouteProp, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import { Person, RecordingStatus } from "../common/types";
 import { useMeetingRecording } from "../hooks/useMeetingRecording";
-import { RootStackParamList } from "../navigation/DrawerNavigator";
-import { trpc } from "../trpc/client";
-import { deserializeClient, formatDurationNumeric } from "../utils/format";
+import { formatDurationNumeric } from "../utils/format";
 import Modal from "./Modal";
 
-type NewMeetingRouteProp = RouteProp<
-  RootStackParamList,
-  "ClientNewMeeting" | "ResidentNewMeeting"
->;
-
 type NewMeetingModalContainerProps = {
+  person: Person;
   meetingId: string;
   onClose: () => void;
 };
 
 const NewMeetingModalContainer = ({
+  person,
   meetingId,
   onClose,
 }: NewMeetingModalContainerProps) => {
-  const route = useRoute<NewMeetingRouteProp>();
-
-  const { data: person } = trpc.v1.staff.getClient.useQuery({
-    personId: BigInt(route.params.personId),
-  });
-
-  if (!person) return null;
-
   return (
-    <NewMeetingModal
-      meetingId={meetingId}
-      onClose={onClose}
-      person={deserializeClient(person)}
-    />
+    <NewMeetingModal meetingId={meetingId} onClose={onClose} person={person} />
   );
 };
 

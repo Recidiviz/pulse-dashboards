@@ -16,7 +16,9 @@
 // =============================================================================
 
 import _ from "lodash";
+import { z } from "zod";
 
+import { Prisma } from "~@meetings/prisma/client/client";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   createMeetingForPerson,
@@ -50,6 +52,41 @@ export const residentRouter = router({
         personId: residentId,
         personType: "resident",
       });
+    }),
+  get: auth0Procedure
+    .input(z.object({ personId: z.bigint() }))
+    .query(async ({ input: { personId }, ctx: { prisma } }) => {
+      const querySelect = {
+        givenNames: true,
+        surname: true,
+        displayPersonExternalId: true,
+        personId: true,
+        facilityId: true,
+        meetings: {
+          select: { id: true },
+          where: {
+            endTime: null,
+          },
+          orderBy: {
+            startTime: "desc",
+          },
+          take: 1,
+        },
+      } satisfies Prisma.ResidentSelect;
+
+      const resident = await prisma.resident.findUnique({
+        where: { personId },
+        select: querySelect,
+      });
+
+      if (!resident) {
+        throw new Error("Resident not found");
+      }
+
+      return {
+        ..._.omit(resident, ["meetings"]),
+        activeMeetingId: resident.meetings[0]?.id ?? null,
+      };
     }),
   list: auth0Procedure.query(async ({ ctx: { prisma } }) => {
     const residents = await prisma.resident.findMany({

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,22 +29,29 @@ export type Client = Awaited<
   fullName: string;
 };
 
+export type RawResident = Awaited<
+  ReturnType<AppRouter["v1"]["resident"]["get"]>
+>;
+
+export type Resident = Awaited<
+  ReturnType<AppRouter["v1"]["resident"]["get"]>
+> & {
+  primaryMetadata: string;
+  lastMeeting: string;
+  fullName: string;
+};
+
 export type MeetingDetails = Awaited<
   ReturnType<AppRouter["v1"]["meeting"]["getDetails"]>
 >;
 
-//fake type, waiting for backend implementation
-export type Resident = {
-  activeMeetingId: string;
-  personId: bigint;
-  displayPersonExternalId: string;
-  givenNames: string;
-  surname: string;
-  lastMeeting: string;
-  fullName: string;
-  facilityName: string;
-  primaryMetadata: string;
-};
+export type ClientMeetings = Awaited<
+  ReturnType<AppRouter["v1"]["client"]["getMeetings"]>
+>;
+
+export type ResidentMeetings = Awaited<
+  ReturnType<AppRouter["v1"]["resident"]["getMeetings"]>
+>;
 
 export type Person = Client | Resident;
 

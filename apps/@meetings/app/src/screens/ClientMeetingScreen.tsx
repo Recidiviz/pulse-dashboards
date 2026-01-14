@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,15 @@
 // =============================================================================
 
 import { RouteProp, useRoute } from "@react-navigation/native";
-import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-import MeetingDesktop from "../components/MeetingDesktop";
-import MeetingMobile from "../components/MeetingMobile";
+import Meeting from "../components/Meeting";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeClient } from "../utils/format";
 
-type MeetingRouteProp = RouteProp<
-  RootStackParamList,
-  "ClientMeeting" | "ResidentMeeting"
->;
+type MeetingRouteProp = RouteProp<RootStackParamList, "ClientMeeting">;
 
-type Props = {
-  personType: "client" | "resident";
-};
-
-const MeetingScreen = ({ personType }: Props) => {
+const ClientMeetingScreen = () => {
   const route = useRoute<MeetingRouteProp>();
   const { data: meetingDetails } = trpc.v1.meeting.getDetails.useQuery(
     { meetingId: route.params?.meetingId || "" },
@@ -48,23 +38,12 @@ const MeetingScreen = ({ personType }: Props) => {
   if (!person) return null;
 
   return (
-    <SafeAreaView className="flex-1 grow bg-white">
-      <View className="flex-1 grow md:hidden">
-        <MeetingMobile
-          meetingDetails={meetingDetails}
-          person={deserializeClient(person)}
-          personType={personType}
-        />
-      </View>
-      <View className="hidden flex-1 grow md:flex">
-        <MeetingDesktop
-          meetingDetails={meetingDetails}
-          person={deserializeClient(person)}
-          personType={personType}
-        />
-      </View>
-    </SafeAreaView>
+    <Meeting
+      meetingDetails={meetingDetails}
+      person={deserializeClient(person)}
+      personType="client"
+    />
   );
 };
 
-export default MeetingScreen;
+export default ClientMeetingScreen;

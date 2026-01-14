@@ -17,7 +17,7 @@
 
 import { startCase } from "lodash";
 
-import { Client, RawClient } from "../common/types";
+import { Client, RawClient, RawResident, Resident } from "../common/types";
 
 export const getClientInitials = (name: Client["fullName"]) => {
   const parts = name.trim().split(" ");
@@ -63,6 +63,15 @@ export const deserializeClient = (rawClient: RawClient): Client => {
     ...rawClient,
     fullName: `${rawClient.givenNames} ${rawClient.surname}`,
     primaryMetadata: rawClient.supervisionType,
+    lastMeeting: "5d ago", // TODO: remove hardcode
+  };
+};
+
+export const deserializeResident = (rawResident: RawResident): Resident => {
+  return {
+    ...rawResident,
+    fullName: `${rawResident.givenNames} ${rawResident.surname}`,
+    primaryMetadata: rawResident.facilityId,
     lastMeeting: "5d ago", // TODO: remove hardcode
   };
 };
