@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -231,9 +231,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "ClientProfileDetails",
         "CaseNotes",
       ],
-      snooze: {
-        autoSnoozeParams: { params: { days: 180 }, type: "snoozeDays" },
-      },
+      snooze: { defaultSnoozeDays: 180, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
       strictlyIneligibleCriteriaCopy: [],
@@ -331,7 +329,12 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from COMS & OMNI",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["Incarceration", "ResidentHousing"],
+      sidebarComponents: [
+        "UsMiLastAssessment",
+        "Incarceration",
+        "ResidentHousing",
+        "CaseNotes",
+      ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
@@ -356,7 +359,20 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
-      tabPrefaceCopy: [],
+      tabPrefaceCopy: [
+        {
+          tab: "Eligible for Re-screen Now",
+          text: "Residents who may be eligible for a re-screen and downgrade to a lower custody level because they have not had any recent misconducts",
+        },
+        {
+          tab: "Re-screen Pending",
+          text: "Residents who have been identified as eligible for a re-screen so they can be transferred to a lower custody level",
+        },
+        {
+          tab: "Movement Pending",
+          text: "Residents who have a lower Actual Security Level than their current custody level assignment",
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "custodyLevelDowngrade",
       zeroGrantsTooltip: null,
@@ -666,7 +682,11 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["ClientProfileDetails", "EligibilityDate"],
+      sidebarComponents: [
+        "ClientProfileDetails",
+        "EligibilityDate",
+        "ActionHistory",
+      ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
@@ -699,7 +719,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Overdue for Discharge",
+      displayName: "Full-Term Release",
       dynamicEligibilityText:
         "client[|s] [is|are] nearing or past their full-term release date",
       eligibilityDateText: null,

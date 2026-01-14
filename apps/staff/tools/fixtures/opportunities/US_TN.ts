@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -378,21 +378,14 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usTnFeeScheduleOrPermanentExemption",
-          text: " {{#if  (eq latestFeeContactDate null)}}\nHas permanent exemption {{currentExemptions}}\n\n{{else}}\n {{#if  (eq currentExemptions null)}}\nLatest FEEP on {{date latestFeeContactDate}}\n{{else}}\nLatest FEEP on {{date latestFeeContactDate}}, has permanent exemption {{currentExemptions}}\n{{/if}}\n{{/if}}\n\n\n\n\n",
+          text: " {{#if (eq latestFeeContactDate null)}}\nHas permanent exemption {{currentExemptions}}\n\n{{else}}\n {{#if (eq currentExemptions null)}}\nLatest FEEP on {{date latestFeeContactDate}}\n{{else}}\nLatest FEEP on {{date latestFeeContactDate}}, has permanent exemption {{currentExemptions}}\n{{/if}}\n{{/if}}\n\n\n\n\n",
           tooltip:
             "Clients who've had a FEEP code in the last 90 days are surfaced as eligible or have a permanent exemption",
         },
         {
-          key: "usTnNotOnCommunitySupervisionForLife",
-          text: "Not currently on supervision as convicted sex offender",
-          tooltip:
-            "Client isn't on Sex Offense Unit (SCU), doesn't have Community Supervision for Life, and doesn't have a sex offense listed in \"type of offense\". For reference, all current offenses are listed in client record.",
-        },
-        {
-          key: "usTnNotServingIneligibleCrOffensePolicyB",
-          text: "Not currently on supervision for domestic violence",
-          tooltip:
-            'Client doesn\'t have a DV offense listed in "type of offense". For reference, all current offenses are listed in client record. ',
+          key: "usTnNoIneligibleCrOffense2025Policy",
+          text: "No convictions for domestic violence or sex offenses",
+          tooltip: "",
         },
         {
           key: "usTnNotInDayReportingCenter",

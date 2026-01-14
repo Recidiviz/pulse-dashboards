@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ export const mockApiOpportunityConfigurationResponse = {
           pages: ["caseload"],
           body: "There has been a recent policy change that affects the Limited Supervision Unit opportunity.",
           title: "Policy change affects LSU",
-        }
+        },
       ],
       omsCriteriaHeader: "Validated by data from Atlas",
       overdueOpportunityCalloutCopy: null,
@@ -111,15 +111,6 @@ export const mockApiOpportunityConfigurationResponse = {
       zeroGrantsTooltip: null,
     },
     earnedDischarge: {
-      notifications: [
-        {
-          id: "3",
-          type: "alert",
-          pages: ["profile", "supervisionSupervisor"],
-          body: "{{opportunity.person.displayName}} has been eligible for Earned Discharge for {{daysToYearsMonthsPast (daysPast opportunity.eligibilityDate)}}",
-          title: "Eligible for Earned Discharge",
-        },
-      ],
       callToAction:
         "Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.",
       caseNotesTitle: null,
@@ -213,6 +204,15 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
+      notifications: [
+        {
+          id: "3",
+          type: "alert",
+          pages: ["profile", "supervisionSupervisor"],
+          body: "{{opportunity.person.displayName}} has been eligible for Earned Discharge for {{daysToYearsMonthsPast (daysPast opportunity.eligibilityDate)}}",
+          title: "Eligible for Earned Discharge",
+        },
+      ],
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",

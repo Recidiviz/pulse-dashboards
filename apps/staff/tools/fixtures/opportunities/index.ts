@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import * as US_ID from "./US_ID";
 import * as US_ME from "./US_ME";
 import * as US_MI from "./US_MI";
 import * as US_MO from "./US_MO";
+import * as US_NC from "./US_NC";
 import * as US_ND from "./US_ND";
 import * as US_NE from "./US_NE";
 import * as US_OR from "./US_OR";
@@ -37,6 +38,7 @@ const allConfigs = {
   ...US_IA.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_ME.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_MI.mockApiOpportunityConfigurationResponse.enabledConfigs,
+  ...US_NC.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_NE.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_PA.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_TX.mockApiOpportunityConfigurationResponse.enabledConfigs,

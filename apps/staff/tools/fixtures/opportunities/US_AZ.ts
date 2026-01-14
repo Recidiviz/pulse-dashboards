@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -189,7 +189,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Requirements validated by ACIS",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
+      sidebarComponents: ["UsAzDates", "UsAzAcisInformation", "Incarceration"],
       snooze: { defaultSnoozeDays: 15, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
@@ -443,7 +443,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Requirements validated by ACIS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
+      sidebarComponents: ["UsAzDates", "UsAzAcisInformation", "Incarceration"],
       snooze: { defaultSnoozeDays: 15, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
