@@ -263,7 +263,7 @@ export const usNeCopy: UsNeCopy = {
     },
   },
   reentryChecklist: {
-    pageTitle: "Roadmap to Re-entry",
+    pageTitle: "Roadmap to Reentry",
     subtitle:
       "Mark tasks as complete to keep your case manager updated on your progress",
     sections: [
@@ -359,7 +359,7 @@ export const usNeCopy: UsNeCopy = {
         id: "120-days",
         title: "Complete 120 Days Pre-Release",
         subtitle:
-          "Finalize your re-entry plan. Your Reentry Specialist can assist with these items at your 120-Day meeting.",
+          "Finalize your reentry plan. Your Reentry Specialist can assist with these items at your 120-Day meeting.",
         items: [
           {
             id: "social-security-card",
