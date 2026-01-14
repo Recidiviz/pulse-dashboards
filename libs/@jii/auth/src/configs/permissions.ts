@@ -20,7 +20,7 @@ import { z } from "zod";
 /**
  * See {@link Permission} for documentation of the permissions enumerated here
  */
-export const permissionSchema = z.enum(["enhanced", "live_data", "translator"]);
+export const permissionSchema = z.enum(["enhanced", "live_data", "translator", "global_write_sans_prod"]);
 
 /**
  * Permissions that may be assigned to users of the JII app.

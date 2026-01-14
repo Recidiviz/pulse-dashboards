@@ -18,7 +18,7 @@
 import { Storage } from "@google-cloud/storage";
 import { defineString } from "firebase-functions/params";
 
-import { AuthorizedUserProfile } from "~@jii/auth";
+import { AuthorizedUserProfile, Permission } from "~@jii/auth";
 
 const RECIDIVIZ_ALLOWED_STATES_PROJECT_ID = defineString(
   "RECIDIVIZ_ALLOWED_STATES_PROJECT_ID",
@@ -55,9 +55,15 @@ export async function getRecidivizUserProfile(
   if (!email.endsWith("@recidiviz.org"))
     throw new Error("Invalid email address");
 
+  const permissions: Permission[] = ["enhanced", "live_data", "translator"]
+
+  if (process.env["SENTRY_ENV"] !== "production") {
+    permissions.push("global_write_sans_prod")
+  }
+
   return {
     stateCode: "RECIDIVIZ",
     allowedStates: await getAllowedStates(email),
-    permissions: ["enhanced", "live_data", "translator"],
+    permissions: permissions,
   };
 }
