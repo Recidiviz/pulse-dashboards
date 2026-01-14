@@ -69,16 +69,24 @@ export async function transformAndLoadOpportunityData(
     };
 
     // Load data
-    const newCreatedOpportunity = await prismaClient.opportunity.upsert({
+    // Using findFirst + update/create instead of upsert because Prisma's
+    // generated types for unique constraints don't handle nullable fields well
+    const existingOpportunity = await prismaClient.opportunity.findFirst({
       where: {
-        opportunityName_providerName: {
-          opportunityName: newOpportunity.opportunityName,
-          providerName: newOpportunity.providerName,
-        },
+        opportunityName: newOpportunity.opportunityName,
+        providerName: newOpportunity.providerName,
+        district: newOpportunity.district ?? null,
       },
-      create: newOpportunity,
-      update: newOpportunity,
     });
+
+    const newCreatedOpportunity = existingOpportunity
+      ? await prismaClient.opportunity.update({
+          where: { id: existingOpportunity.id },
+          data: newOpportunity,
+        })
+      : await prismaClient.opportunity.create({
+          data: newOpportunity,
+        });
 
     newOpportunities.push(newCreatedOpportunity);
   }

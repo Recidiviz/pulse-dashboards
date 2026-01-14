@@ -174,6 +174,29 @@ export const caseRouter = router({
       }
 
       try {
+        // Look up opportunity IDs by their compound unique key (opportunityName, providerName, district).
+        // We do this because Prisma's generated TypeScript types for `set` operations don't work correctly
+        // when a compound unique constraint includes a nullable field (district). Using `id` instead
+        // of the compound key avoids the type issue while maintaining correct runtime behavior.
+        let opportunityIds: { id: string }[] | undefined;
+        if (attributes.recommendedOpportunities) {
+          const opportunities = await Promise.all(
+            attributes.recommendedOpportunities.map((opp) =>
+              prisma.opportunity.findFirst({
+                where: {
+                  opportunityName: opp.opportunityName,
+                  providerName: opp.providerName,
+                  district: opp.district,
+                },
+                select: { id: true },
+              }),
+            ),
+          );
+          opportunityIds = opportunities.filter(
+            (o): o is { id: string } => o !== null,
+          );
+        }
+
         const updateData: Prisma.CaseUpdateInput = {
           ..._.omit(attributes, ["district", "clientGender", "clientCounty"]),
           county: {
@@ -184,14 +207,9 @@ export const caseRouter = router({
               : undefined,
           },
           customDueDate: attributes.customDueDate,
-          recommendedOpportunities: {
-            set: attributes.recommendedOpportunities?.map((opportunity) => ({
-              opportunityName_providerName: {
-                opportunityName: opportunity.opportunityName,
-                providerName: opportunity.providerName,
-              },
-            })),
-          },
+          recommendedOpportunities: opportunityIds
+            ? { set: opportunityIds.map((o) => ({ id: o.id })) }
+            : undefined,
           offense: {
             connect: attributes.offense
               ? {

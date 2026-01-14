@@ -254,10 +254,11 @@ describe("case router", () => {
       // Set an opportunity provider name to unknown
       await testPrismaClient.opportunity.update({
         where: {
-          opportunityName_providerName: {
+          opportunityName_providerName_district: {
             opportunityName:
               fakeCase.recommendedOpportunities[0].opportunityName,
             providerName: fakeCase.recommendedOpportunities[0].providerName,
+            district: fakeCase.recommendedOpportunities[0].district,
           },
         },
         data: {
@@ -410,6 +411,7 @@ describe("case router", () => {
             {
               opportunityName: "opportunity-name",
               providerName: null,
+              district: fakeOpportunity.district,
               genericDescription: null,
             },
           ],

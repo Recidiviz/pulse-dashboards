@@ -110,6 +110,7 @@ export const fakeOpportunity = {
   entryOfGuiltyPleaCriterion: false,
   veteranStatusCriterion: false,
   genericDescription: null,
+  district: "District 1",
   lastUpdatedAt: faker.date.recent(),
 } satisfies OpportunityCreateInput;
 
@@ -127,6 +128,7 @@ export const fakeOpportunity2 = {
   entryOfGuiltyPleaCriterion: false,
   veteranStatusCriterion: false,
   genericDescription: null,
+  district: "District 1",
   lastUpdatedAt: faker.date.recent(),
 } satisfies OpportunityCreateInput;
 
@@ -171,11 +173,13 @@ export const fakeCase = {
     {
       opportunityName: fakeOpportunity.opportunityName,
       providerName: fakeOpportunity.providerName,
+      district: fakeOpportunity.district,
       genericDescription: null,
     },
     {
       opportunityName: fakeOpportunity2.opportunityName,
       providerName: fakeOpportunity2.providerName,
+      district: fakeOpportunity2.district,
       genericDescription: null,
     },
   ],
@@ -187,9 +191,10 @@ export const fakeCasePrismaInput = {
   ...fakeCase,
   recommendedOpportunities: {
     connect: fakeCase.recommendedOpportunities.map((opportunity) => ({
-      opportunityName_providerName: {
+      opportunityName_providerName_district: {
         opportunityName: opportunity.opportunityName,
         providerName: opportunity.providerName,
+        district: opportunity.district,
       },
     })),
   },

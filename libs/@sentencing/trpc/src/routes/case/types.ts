@@ -25,7 +25,7 @@ import type {
 export type GetCaseInput = Pick<Prisma.CaseWhereUniqueInput, "id">;
 
 export type OpportunityNameIdentifier =
-  Prisma.OpportunityOpportunityNameProviderNameCompoundUniqueInput["opportunityName"];
+  Prisma.OpportunityOpportunityNameProviderNameDistrictCompoundUniqueInput["opportunityName"];
 
 export type UpdateCaseInput = Pick<
   Prisma.CaseUpdateInput,
@@ -57,6 +57,8 @@ export type UpdateCaseInput = Pick<
 > & {
   recommendedOpportunities?: {
     opportunityName: OpportunityNameIdentifier;
+    providerName: string | null;
+    district: string | null;
   }[];
   county?: County["name"] | null;
   offense?: Offense["name"] | null;

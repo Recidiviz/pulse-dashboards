@@ -30,6 +30,7 @@ export const PRISMA_CASE_GET_ARGS = {
       select: {
         opportunityName: true,
         providerName: true,
+        district: true,
         genericDescription: true,
       },
     },

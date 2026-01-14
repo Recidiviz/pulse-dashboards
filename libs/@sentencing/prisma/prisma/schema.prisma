@@ -362,7 +362,7 @@ model Opportunity {
   cases Case[]
 
   // This is the best way to identify unique opportunities
-  @@unique([opportunityName, providerName])
+  @@unique([opportunityName, providerName, district])
 }
 
 model Offense {

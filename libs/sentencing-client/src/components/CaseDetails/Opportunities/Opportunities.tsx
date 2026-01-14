@@ -270,7 +270,12 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   const opportunityDisplayNameToOpportunityNameProviderName = mapValues(
     opportunitiesByNameProviderName,
     (opp) =>
-      pick(opp, ["opportunityName", "providerName", "genericDescription"]),
+      pick(opp, [
+        "opportunityName",
+        "providerName",
+        "district",
+        "genericDescription",
+      ]),
   );
 
   // TODO(Recidiviz/recidiviz-data#30954) - Refactor structure and move outside of component. This is placeholder for now to display the UI banner.
