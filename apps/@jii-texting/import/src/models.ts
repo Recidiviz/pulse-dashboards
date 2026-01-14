@@ -37,7 +37,7 @@ export const personImportSchema = z.object({
   phone_number: z.string(),
   officer_id: z.string(),
   po_name: z.string(),
-  po_phone_number: z.string().nullable(),
+  po_phone_number: z.string().optional(),
   district: z.string(),
   group_ids: z.array(z.string()),
 });
