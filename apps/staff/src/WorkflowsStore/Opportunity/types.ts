@@ -112,7 +112,10 @@ type GlobalOpportunityNotificationPage = "caseload";
  * A map of notifications by page, excluding the global notification pages.
  */
 export type OpportunityNotificationsByPage = PartialRecord<
-  Exclude<OpportunityNotification["pages"][number], GlobalOpportunityNotificationPage>,
+  Exclude<
+    OpportunityNotification["pages"][number],
+    GlobalOpportunityNotificationPage
+  >,
   OpportunityNotification[]
 >;
 
@@ -313,7 +316,7 @@ export type OpportunityTab =
   //For US_MI
   | "Eligible for Re-screen Now"
   | "Almost Eligible for Re-screen"
-  | "Re-screen Pending"
+  | "Needs Re-Screen"
   | "Movement Pending"
 
   // For US_ID CRC

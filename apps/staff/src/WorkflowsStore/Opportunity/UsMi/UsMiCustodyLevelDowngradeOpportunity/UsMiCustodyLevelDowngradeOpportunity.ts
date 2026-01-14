@@ -39,11 +39,11 @@ export class UsMiCustodyLevelDowngradeOpportunity extends OpportunityBase<
   }
 
   get submittedButtonText(): string {
-    return "Move to Re-screen Pending";
+    return "Move to Needs Re-Screen";
   }
 
   get undoSubmittedButtonText(): string {
-    return "Revert from Re-screen Pending";
+    return "Revert from Needs Re-Screen";
   }
   tabTitle(): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
