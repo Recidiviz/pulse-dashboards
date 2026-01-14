@@ -3,7 +3,7 @@
     "rts": "RTS",
     "maxRelease": "MAX"
   },
-  "lastUpdated": "This information was last updated on {{lastUpdatedDate, formatFullDate}}. It updates once per month.",
+  "lastUpdated": "This information was last updated on {{lastUpdatedDate, formatFullDate}}. It normally updates once per month. January had a second update because some Adjusted Max Dates did not reflect December’s EGT.",
   "creditRatings": {
     "S": "Satisfactory",
     "I": "Incomplete",

@@ -3,7 +3,7 @@
     "rts": "RTS",
     "maxRelease": "MÁX"
   },
-  "lastUpdated": "Esta información se actualizó por última vez en {{lastUpdatedDate, formatFullDate}}. Se actualiza una vez al mes.",
+  "lastUpdated": "Esta información se actualizó por última vez en {{lastUpdatedDate, formatFullDate}}. Normalmente se actualiza una vez al mes. En enero se realizó una segunda actualización porque algunas Fechas de MÁX ajustadas no reflejaban la EGT de diciembre.",
   "creditRatings": {
     "S": "Satisfactorio",
     "I": "Incompleto",
