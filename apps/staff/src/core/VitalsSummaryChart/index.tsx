@@ -81,7 +81,6 @@ const VitalsSummaryChart: React.FC = () => {
     const { data: pieceData } = pieces[0];
     const cx = column.middle;
     const cy = adjustedSize[1] - rScale(pieceData.monthlyAvg);
-    setHoveredId(pieceData.index);
     return <circle cx={cx} cy={cy} r={4} fill={styles.indigo} />;
   };
 
@@ -165,7 +164,6 @@ const VitalsSummaryChart: React.FC = () => {
           if (annotation.d.type === "or") {
             return goalTargetAnnotation(annotation);
           }
-          setHoveredId(null);
           return null;
         }}
         // eslint-disable-next-line react/no-unstable-nested-components
