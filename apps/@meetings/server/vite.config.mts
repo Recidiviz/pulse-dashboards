@@ -89,6 +89,12 @@ export default defineConfig(() => ({
       TRANSCRIPTION_TASK_REQUEST_URL:
         process.env["TRANSCRIPTION_TASK_REQUEST_URL"] ??
         "https://test-server.app/transcribe-audio",
+      NOTETAKING_TASK_QUEUE_NAME:
+        process.env["NOTETAKING_TASK_QUEUE_NAME"] ??
+        "notetaking-task-queue",
+      NOTETAKING_TASK_REQUEST_URL:
+        process.env["NOTETAKING_TASK_REQUEST_URL"] ??
+        "https://test-server.app/process-notetaking",
     },
   },
 }));

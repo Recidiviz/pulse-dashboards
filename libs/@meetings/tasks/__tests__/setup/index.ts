@@ -18,9 +18,11 @@
 import { request } from "node:http";
 
 import { DeepgramClient } from "@deepgram/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { File } from "@google-cloud/storage";
 import { AssemblyAI } from "assemblyai";
-import { GenericContainer } from "testcontainers";
+import OpenAI from "openai";
+import { GenericContainer, Wait } from "testcontainers";
 import { mock } from "vitest-mock-extended";
 
 export const testPort = process.env["PORT"]
@@ -34,18 +36,26 @@ const FAKE_GCS_PORT = 4443;
 // first outside of the test with:
 // docker pull fsouza/fake-gcs-server:1.52.3
 // docker pull testcontainers/ryuk:0.12.0
+
+// Start container with HTTP scheme (not HTTPS)
 const gcsContainer = await new GenericContainer("fsouza/fake-gcs-server:1.52.3")
-  .withEntrypoint([
-    "/bin/fake-gcs-server",
+  .withExposedPorts(FAKE_GCS_PORT)
+  .withCommand([
     "-scheme",
     "http",
-    "-public-host",
-    "localhost:4443",
+    "-port",
+    String(FAKE_GCS_PORT),
+    "-external-url",
+    "http://localhost:4443",
   ])
-  .withExposedPorts(FAKE_GCS_PORT)
+  .withStartupTimeout(120_000)
+  .withWaitStrategy(Wait.forListeningPorts())
   .start();
 
-export const GCS_API_ENDPOINT = `http://${gcsContainer.getHost()}:${gcsContainer.getMappedPort(FAKE_GCS_PORT)}`;
+const mappedPort = gcsContainer.getMappedPort(FAKE_GCS_PORT);
+const host = gcsContainer.getHost();
+
+export const GCS_API_ENDPOINT = `http://${host}:${mappedPort}`;
 
 const data = JSON.stringify({ externalUrl: GCS_API_ENDPOINT });
 
@@ -213,3 +223,59 @@ vi.mock("@deepgram/sdk", async (importOriginal) => {
     }),
   };
 });
+
+// Mock OpenAI client
+export const mockOpenAI = mock<OpenAI>({
+  baseURL: "https://us.api.openai.com/v1",
+  chat: {
+    completions: {
+      create: vi.fn().mockResolvedValue({
+        id: "mock-completion-id",
+        object: "chat.completion",
+        created: Date.now(),
+        model: "gpt-4o-mini",
+        choices: [
+          {
+            index: 0,
+            message: {
+              role: "assistant",
+              content: JSON.stringify({
+                actionItems: [],
+                criticalUpdates: [],
+                entities: [],
+              }),
+            },
+            finish_reason: "stop",
+          },
+        ],
+      }),
+    },
+  },
+});
+
+vi.mock("openai", () => ({
+  default: vi.fn().mockImplementation(() => {
+    return mockOpenAI;
+  }),
+}));
+
+// Mock Google Generative AI client
+export const mockGemini = mock<GoogleGenerativeAI>({
+  getGenerativeModel: vi.fn().mockReturnValue({
+    generateContent: vi.fn().mockResolvedValue({
+      response: {
+        text: vi.fn().mockReturnValue(
+          JSON.stringify({
+            verifications: [],
+          }),
+        ),
+      },
+    }),
+  }),
+});
+
+vi.mock("@google/generative-ai", () => ({
+  GoogleGenerativeAI: vi.fn().mockImplementation(() => {
+    return mockGemini;
+  }),
+}));

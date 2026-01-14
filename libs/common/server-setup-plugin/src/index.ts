@@ -27,8 +27,12 @@ import {
 import Fastify from "fastify";
 import fastifyAuth0Verify from "fastify-auth0-verify";
 import firebaseAdmin from "firebase-admin";
+import has from "lodash/has";
 
+import { ENV_TO_LOGGER } from "~server-setup-plugin/logger";
 import type { BuildServerOptions } from "~server-setup-plugin/types";
+
+export { createLogger, ENV_TO_LOGGER } from "~server-setup-plugin/logger";
 
 /**
  * Returns a Fastify server with tRPC, Sentry, and the auth middleware of your choice set up (Auth0, Firebase or JWT)
@@ -40,8 +44,15 @@ export function buildCommonServer<TRouter extends AnyRouter>(
 ) {
   const { appRouter, createContext, useWSS = false, trpcPrefix = "" } = options;
 
+  const env = process.env["NODE_ENV"] || "development";
+  let logger;
+  if (has(ENV_TO_LOGGER, env)) {
+    logger = ENV_TO_LOGGER[env as keyof typeof ENV_TO_LOGGER];
+  } else {
+    logger = true;
+  }
   const server = Fastify({
-    logger: true,
+    logger: logger,
   });
 
   setupFastifyErrorHandler(server);

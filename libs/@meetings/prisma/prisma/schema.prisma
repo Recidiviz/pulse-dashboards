@@ -172,6 +172,9 @@ enum PostMeetingProcessingStatus {
   TRANSCRIPTION_QUEUED
   TRANSCRIPTION_IN_PROGRESS
   TRANSCRIPTION_ERROR
+  NOTETAKING_QUEUED
+  NOTETAKING_IN_PROGRESS
+  NOTETAKING_ERROR
   COMPLETED
 }
 
@@ -188,6 +191,7 @@ model Meeting {
   postMeetingProcessingStatus PostMeetingProcessingStatus @default(NOT_STARTED)
 
   userNotepadNotes            String?
+  caseNote         String?
   actionItems      String?
   criticalUpdates  String?
   meetingSummary   String?

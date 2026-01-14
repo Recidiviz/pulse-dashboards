@@ -29,6 +29,12 @@ const envSchema = z.object({
   TRANSCRIPTION_TASK_REQUEST_URL: z
     .string()
     .min(1, "TRANSCRIPTION_TASK_REQUEST_URL is required"),
+  NOTETAKING_TASK_QUEUE_NAME: z
+    .string()
+    .min(1, "NOTETAKING_TASK_QUEUE_NAME is required"),
+  NOTETAKING_TASK_REQUEST_URL: z
+    .string()
+    .min(1, "NOTETAKING_TASK_REQUEST_URL is required"),
   ASSEMBLYAI_API_KEY: z.string().min(1, "ASSEMBLYAI_API_KEY is required"),
   DEEPGRAM_API_KEY: z.string().min(1, "DEEPGRAM_API_KEY is required"),
   NODE_ENV: z.string().min(1, "NODE_ENV is required"),

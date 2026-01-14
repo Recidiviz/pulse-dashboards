@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { TranscriptUtterance } from "assemblyai";
-import { describe, test, vi } from "vitest";
+import { describe, MockInstance, test, vi } from "vitest";
 
 import {
   PostMeetingProcessingStatus,
@@ -501,7 +501,8 @@ describe("tasks", () => {
               ]),
             }),
           ],
-          postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.NOTETAKING_QUEUED,
         }),
       );
 
@@ -582,7 +583,8 @@ describe("tasks", () => {
               ]),
             }),
           ],
-          postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.NOTETAKING_QUEUED,
         }),
       );
     });
@@ -967,6 +969,72 @@ describe("tasks", () => {
       );
     });
 
+    test("Should queue notetaking task when step is 'notetaking'", async () => {
+      const meetingForReprocess = await testPrismaClient.meeting.create({
+        data: {
+          ...fakeMeeting,
+          id: "reprocess-notetaking-meeting",
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.NOTETAKING_ERROR,
+        },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/reprocess-meeting",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: meetingForReprocess.id,
+          step: "notetaking",
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain(
+        "Notetaking processing task queued successfully",
+      );
+
+      const updatedMeeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: meetingForReprocess.id },
+      });
+
+      expect(updatedMeeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.NOTETAKING_QUEUED,
+      );
+    });
+
+    test("Should handle notetaking queueing failure", async () => {
+      mockCloudTasksClient.createTask.mockRejectedValueOnce(
+        new Error("Queue error"),
+      );
+
+      const meetingForReprocess = await testPrismaClient.meeting.create({
+        data: {
+          ...fakeMeeting,
+          id: "reprocess-notetaking-error-meeting",
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.NOTETAKING_ERROR,
+        },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/reprocess-meeting",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: meetingForReprocess.id,
+          step: "notetaking",
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain(
+        "Notetaking processing task queueing failed",
+      );
+    });
+
     describe("with step", () => {
       test("Should throw error if invalid step is provided", async () => {
         const response = await testServer.inject({
@@ -1036,6 +1104,174 @@ describe("tasks", () => {
           },
         },
       });
+    });
+  });
+
+  describe("/process-notetaking", () => {
+    let mockHandleLLMProcessing: MockInstance;
+
+    beforeEach(async () => {
+      if (!mockHandleLLMProcessing) {
+        mockHandleLLMProcessing = vi.spyOn(
+          await import("~@meetings/server/server/utils"),
+          "handleNotetakingProcessing",
+        );
+      }
+
+      mockHandleLLMProcessing.mockResolvedValue({
+        output: {
+          caseNote: "Test case note",
+          meetingMinutes: [],
+          actionItems: [],
+          statusUpdates: [],
+        },
+        agencyConfig: {} as never,
+        transcriptInput: {} as never,
+      });
+    });
+
+    describe("auth", () => {
+      test("Should return authorization error if token is not provided", async () => {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/process-notetaking",
+          body: {
+            stateCode: "US_NE",
+            meetingId: fakeMeeting.id,
+          },
+        });
+
+        expect(response.statusCode).toBe(401);
+        expect(JSON.parse(response.body)).toEqual(
+          expect.objectContaining({
+            error: "Unauthorized",
+            message: "No bearer token was provided",
+          }),
+        );
+      });
+    });
+
+    test("Should return 500 if meeting does not exist", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: "not-a-meeting",
+        },
+      });
+
+      expect(response.statusCode).toBe(500);
+      expect(JSON.parse(response.body)).toEqual(
+        expect.objectContaining({
+          error: "Internal Server Error",
+        }),
+      );
+    });
+
+    test("Should successfully process LLM and store results", async () => {
+      // First create a meeting with transcriptions
+      const meetingWithTranscript = await testPrismaClient.meeting.create({
+        data: {
+          ...fakeMeeting,
+          id: "llm-test-meeting",
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.NOTETAKING_QUEUED,
+          transcriptions: {
+            create: {
+              provider: TranscriptionProvider.ASSEMBLYAI,
+              transcriptObject: {} as PrismaJson.TranscriptType,
+              confidence: 0.95,
+              utterances: {
+                create: [
+                  {
+                    speaker: "A",
+                    text: "Hello, how are you?",
+                    startTimeMs: 0,
+                    endTimeMs: 1000,
+                    confidence: 0.95,
+                  },
+                ],
+              },
+            },
+          },
+        },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: meetingWithTranscript.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain(
+        "Notetaking process completed successfully",
+      );
+
+      const updatedMeeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: meetingWithTranscript.id },
+      });
+
+      expect(updatedMeeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.COMPLETED,
+      );
+    });
+
+    test("Should set error status if LLM processing fails", async () => {
+      mockHandleLLMProcessing.mockRejectedValueOnce(
+        new Error("LLM processing failed"),
+      );
+
+      const meetingWithTranscript = await testPrismaClient.meeting.create({
+        data: {
+          ...fakeMeeting,
+          id: "llm-error-meeting",
+          transcriptions: {
+            create: {
+              provider: TranscriptionProvider.ASSEMBLYAI,
+              transcriptObject: {} as PrismaJson.TranscriptType,
+              confidence: 0.95,
+              utterances: {
+                create: [
+                  {
+                    speaker: "A",
+                    text: "Test",
+                    startTimeMs: 0,
+                    endTimeMs: 1000,
+                    confidence: 0.95,
+                  },
+                ],
+              },
+            },
+          },
+        },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: meetingWithTranscript.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(500);
+
+      const updatedMeeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: meetingWithTranscript.id },
+      });
+
+      expect(updatedMeeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.NOTETAKING_ERROR,
+      );
     });
   });
 });

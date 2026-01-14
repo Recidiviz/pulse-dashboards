@@ -15,6 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "~@meetings/tasks/constants";
-export * from "~@meetings/tasks/llm";
-export * from "~@meetings/tasks/utils";
+/**
+ * Notetaker Pipeline - Module Exports
+ *
+ * Main entry point for the notetaker pipeline modules.
+ */
+
+// Core modules
+export * from "~@meetings/tasks/llm/agents";
+export * from "~@meetings/tasks/llm/guards";
+export * from "~@meetings/tasks/llm/orchestrator";
+export * from "~@meetings/tasks/llm/prompts";
+export * from "~@meetings/tasks/llm/schemas";
+
+// Re-export main classes for convenience
+export { SpecialistCore } from "~@meetings/tasks/llm/agents";
+export { ProductionPipeline } from "~@meetings/tasks/llm/orchestrator";

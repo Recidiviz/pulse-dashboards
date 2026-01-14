@@ -17,9 +17,46 @@
 
 import { z } from "zod";
 
+import {
+  ActionItemSchema,
+  CriticalUpdateSchema,
+  MinuteSectionSchema,
+} from "~@meetings/tasks";
+
 export const getDetailInputSchema = z.object({
   meetingId: z.string(),
 });
+
+// Output schema for parsed meeting details
+export const getDetailsOutputSchema = z.object({
+  id: z.string(),
+  startTime: z.date(),
+  endTime: z.date().nullable(),
+  caseNote: z.string().nullable(),
+  userNotepadNotes: z.string().nullable(),
+  actionItems: z.array(ActionItemSchema).nullable(),
+  criticalUpdates: z.array(CriticalUpdateSchema).nullable(),
+  meetingSummary: z.array(MinuteSectionSchema).nullable(),
+  postMeetingProcessingStatus: z.string(),
+  transcription: z
+    .object({
+      confidence: z.number().nullable(),
+      summary: z.string().nullable(),
+      utterances: z.array(
+        z.object({
+          confidence: z.number().nullable(),
+          text: z.string(),
+          speaker: z.string().nullable(),
+          startTimeMs: z.number(),
+          endTimeMs: z.number(),
+        }),
+      ),
+    })
+    .nullable()
+    .optional(),
+});
+
+export type GetDetailsOutput = z.infer<typeof getDetailsOutputSchema>;
 
 export const getSignedUrlForRecordingInputSchema = z.object({
   meetingId: z.string(),
@@ -32,7 +69,7 @@ export const discardMeetingInputSchema = z.object({
 
 export const endMeetingInputSchema = z.object({
   meetingId: z.string(),
-  userNotepadNotes: z.string().max(100000),
+  userNotepadNotes: z.string().max(100000).optional(),
   actionItems: z.string().max(100000).optional(),
   criticalUpdates: z.string().max(100000).optional(),
   meetingSummary: z.string().max(100000).optional(),
@@ -40,7 +77,7 @@ export const endMeetingInputSchema = z.object({
 
 export const updateNotesInputSchema = z.object({
   meetingId: z.string(),
-  userNotepadNotes: z.string().max(100000),
+  userNotepadNotes: z.string().max(100000).optional(),
   actionItems: z.string().max(100000).optional(),
   criticalUpdates: z.string().max(100000).optional(),
   meetingSummary: z.string().max(100000).optional(),

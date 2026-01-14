@@ -315,13 +315,28 @@ const MeetingMobile = ({ meetingDetails, person, personType }: Props) => {
         >
           <View className="mx-auto w-full max-w-[960px] flex-1">
             {activeTab === Tab.Notes && (
-              <MeetingNotesTab notes={meetingDetails?.userNotepadNotes} />
-            )}
-            {activeTab === Tab.Transcription && (
-              <MeetingTranscriptionTab
-                transcription={meetingDetails?.transcription}
+              <MeetingNotesTab
+                notes={meetingDetails?.userNotepadNotes}
+                actionItems={meetingDetails?.actionItems}
+                criticalUpdates={meetingDetails?.criticalUpdates}
+                meetingSummary={meetingDetails?.meetingSummary}
               />
             )}
+            {activeTab === Tab.Transcription &&
+              meetingDetails?.transcription && (
+                <MeetingTranscriptionTab
+                  transcription={{
+                    ...meetingDetails.transcription,
+                    utterances: meetingDetails.transcription.utterances.map(
+                      (u) => ({
+                        ...u,
+                        confidence: u.confidence ?? 0,
+                        speaker: u.speaker ?? "Unknown",
+                      }),
+                    ),
+                  }}
+                />
+              )}
           </View>
         </Animated.ScrollView>
       </Animated.View>

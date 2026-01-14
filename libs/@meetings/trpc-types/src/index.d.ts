@@ -20,3 +20,11 @@
 // intended use of TRPC to share from server to client
 // eslint-disable-next-line @nx/enforce-module-boundaries
 export type { AppRouter } from "~@meetings/trpc";
+
+// LLM schema types for notetaker pipeline
+// eslint-disable-next-line @nx/enforce-module-boundaries
+export type {
+  ActionItem,
+  CriticalUpdate,
+  MinuteSection,
+} from "~@meetings/tasks";

@@ -18,10 +18,14 @@
 import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
+import { z } from "zod";
 
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import {
+  ActionItemSchema,
+  CriticalUpdateSchema,
   getSignedUrlForNewRecording,
+  MinuteSectionSchema,
   MOBILE_AUDIO_FILE_EXTENSION,
   MOBILE_GCS_CONTENT_TYPE,
   WEB_AUDIO_FILE_EXTENSION,
@@ -32,6 +36,7 @@ import {
   discardMeetingInputSchema,
   endMeetingInputSchema,
   getDetailInputSchema,
+  getDetailsOutputSchema,
   getSignedUrlForRecordingInputSchema,
   updateNotesInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
@@ -40,6 +45,7 @@ import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 export const meetingRouter = router({
   getDetails: auth0Procedure
     .input(getDetailInputSchema)
+    .output(getDetailsOutputSchema)
     .query(async ({ input: { meetingId }, ctx: { prisma } }) => {
       try {
         const meeting = await prisma.meeting.findUniqueOrThrow({
@@ -48,6 +54,7 @@ export const meetingRouter = router({
             id: true,
             startTime: true,
             endTime: true,
+            caseNote: true,
             userNotepadNotes: true,
             actionItems: true,
             criticalUpdates: true,
@@ -78,9 +85,36 @@ export const meetingRouter = router({
           },
         });
 
+        // Parse JSON strings into typed objects
+        const parseJsonField = <T>(
+          fieldValue: string | null,
+          schema: z.ZodType<T>,
+        ): T | null => {
+          if (!fieldValue) return null;
+          try {
+            const parsed = JSON.parse(fieldValue);
+            return schema.parse(parsed);
+          } catch (error) {
+            console.error("Failed to parse JSON field:", error);
+            return null;
+          }
+        };
+
         return {
           ..._.omit(meeting, ["transcriptions"]),
-          transcription: meeting.transcriptions[0],
+          actionItems: parseJsonField(
+            meeting.actionItems,
+            ActionItemSchema.array(),
+          ) || [],
+          criticalUpdates: parseJsonField(
+            meeting.criticalUpdates,
+            CriticalUpdateSchema.array(),
+          ) || [],
+          meetingSummary: parseJsonField(
+            meeting.meetingSummary,
+            MinuteSectionSchema.array(),
+          ) || [],
+          transcription: meeting.transcriptions[0] || null,
         };
       } catch (e) {
         if (

@@ -177,17 +177,14 @@ export const fakeMeeting = {
   recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
   recordingsFolderPath: "meeting-1",
   userNotepadNotes: "Sample meeting notes.",
-  actionItems:
-    "1. Follow up on employment status\n2. Schedule next check-in\n3. Review case file",
-  criticalUpdates:
-    "Client reported new job opportunity. Upcoming court date next week.",
-  meetingSummary:
-    "Productive meeting discussing client progress and upcoming milestones.",
+  actionItems: JSON.stringify([]),
+  criticalUpdates: JSON.stringify([]),
+  meetingSummary: JSON.stringify([]),
   transcriptions: {
     create: [
       {
         provider: TranscriptionProvider.ASSEMBLYAI,
-        transcriptObject: {},
+        transcriptObject: {} as PrismaJson.TranscriptType,
         confidence: 0.95,
         summary: "This is a sample summary of the meeting.",
         utterances: {
@@ -213,7 +210,7 @@ export const fakeMeeting = {
       },
       {
         provider: TranscriptionProvider.DEEPGRAM,
-        transcriptObject: {},
+        transcriptObject: {} as PrismaJson.TranscriptType,
         confidence: 0.91,
         utterances: {
           createMany: {
@@ -260,7 +257,7 @@ export const fakeResidentMeeting = {
     create: [
       {
         provider: TranscriptionProvider.ASSEMBLYAI,
-        transcriptObject: {},
+        transcriptObject: {} as PrismaJson.TranscriptType,
         confidence: 0.95,
         summary: "This is a sample summary of the resident meeting.",
         utterances: {

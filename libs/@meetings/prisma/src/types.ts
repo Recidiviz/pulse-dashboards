@@ -15,15 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { SyncPrerecordedResponse } from "@deepgram/sdk";
 import type { Transcript } from "assemblyai";
 
+import type { Client, Resident } from "~@meetings/prisma/client";
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace PrismaJson {
     // Define a type for a user's profile information.
-    type TranscriptType = Transcript;
+    type TranscriptType = Transcript | SyncPrerecordedResponse;
   }
 }
 
 // This file must be a module, so we include an empty export.
 export {};
+
+export type Person = Client | Resident;

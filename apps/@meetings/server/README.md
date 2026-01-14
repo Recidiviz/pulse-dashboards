@@ -112,7 +112,7 @@ There is an internal API endpoint to reprocess meetings. This can be used to re-
 The endpoint is a POST request to `/reprocess-meeting` with the following body parameters:
 - `stateCode`: The state code of the meeting to reprocess (e.g. `US_CA` for California)
 - `meetingId`: The ID of the meeting to reprocess
-- `step` (optional): The specific post-meeting processing step to reprocess. Valid values are `stitching` and `transcription`. If not provided, the server will determine the appropriate step to reprocess based on the current status of the meeting.
+- `step` (optional): The specific post-meeting processing step to reprocess. Valid values are `stitching`, `transcription`, and `notetaking`. If not provided, the server will determine the appropriate step to reprocess based on the current status of the meeting.
 
 You will need to pass a Google Identity Token in the `Authorization` header of the request. The token must be for a service account that has permission to access the meetings server (`meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com` for the staging and demo servers, and `meetings@recidiviz-dashboard-production.iam.gserviceaccount.com` for the production server). 
 

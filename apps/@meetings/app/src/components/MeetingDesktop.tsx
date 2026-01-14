@@ -22,7 +22,6 @@ import {
   Image,
   ImageBackground,
   Pressable,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -184,9 +183,7 @@ const MeetingDesktop = ({ meetingDetails, person, personType }: Props) => {
           </View>
 
           <View className="gap-3 px-10 py-6">
-            <DraftCaseNote
-              notes={meetingDetails?.userNotepadNotes || undefined}
-            />
+            <DraftCaseNote notes={meetingDetails?.caseNote || undefined} />
           </View>
         </View>
 
@@ -216,18 +213,31 @@ const MeetingDesktop = ({ meetingDetails, person, personType }: Props) => {
             </View>
           </View>
 
-          <ScrollView className="flex-1" contentContainerClassName="grow">
-            <View className="mx-auto w-full max-w-[960px] flex-1">
-              {activeTab === Tab.Notes && (
-                <MeetingNotesTab notes={meetingDetails?.userNotepadNotes} />
-              )}
-              {activeTab === Tab.Transcription && (
+          <View className="mx-auto w-full max-w-[960px] flex-1">
+            {activeTab === Tab.Notes && (
+              <MeetingNotesTab
+                notes={meetingDetails?.userNotepadNotes}
+                actionItems={meetingDetails?.actionItems}
+                criticalUpdates={meetingDetails?.criticalUpdates}
+                meetingSummary={meetingDetails?.meetingSummary}
+              />
+            )}
+            {activeTab === Tab.Transcription &&
+              meetingDetails?.transcription && (
                 <MeetingTranscriptionTab
-                  transcription={meetingDetails?.transcription}
+                  transcription={{
+                    ...meetingDetails.transcription,
+                    utterances: meetingDetails.transcription.utterances.map(
+                      (u) => ({
+                        ...u,
+                        confidence: u.confidence ?? 0,
+                        speaker: u.speaker ?? "Unknown",
+                      }),
+                    ),
+                  }}
                 />
               )}
-            </View>
-          </ScrollView>
+          </View>
         </View>
       </View>
     </View>

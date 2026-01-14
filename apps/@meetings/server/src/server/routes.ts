@@ -39,7 +39,9 @@ import env from "~@meetings/server/env";
 import {
   getStepFromMeetingStatus,
   getStepFromUserSetStep,
+  handleNotetakingProcessing,
   handleTranscriptions,
+  queueNotetakingTask,
   queueTranscriptionTask,
 } from "~@meetings/server/server/utils";
 import { cleanupOfflineFiles, stitchAudio } from "~@meetings/tasks";
@@ -327,12 +329,26 @@ export function registerTaskRoutes(app: FastifyInstance) {
             id: meetingId,
           },
           data: {
-            postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.NOTETAKING_QUEUED,
             transcriptions: {
               create: transcriptions,
             },
           },
         });
+
+        // Queue LLM processing task
+        try {
+          await queueNotetakingTask(stateCode, meetingId, prisma);
+        } catch (e) {
+          // Capture the exception but don't fail the task, since transcription succeeded
+          captureException(e);
+          return reply
+            .code(200)
+            .send(
+              "Transcription completed successfully; queuing LLM processing failed.",
+            );
+        }
 
         // Clean up offline files after successful transcription
         await cleanupOfflineFiles(meetingId);
@@ -357,12 +373,81 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
   app.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
+    url: "/process-notetaking",
+    schema: {
+      body: z.object({
+        stateCode: z.nativeEnum(StateCode),
+        meetingId: z.string(),
+      }),
+    },
+    preHandler: [authenticateInternalRequestPreHandlerFn],
+    handler: async (req, reply) => {
+      const { stateCode, meetingId } = req.body;
+
+      const prisma = getPrismaClientForStateCode(stateCode);
+
+      // Try and find the meeting and fail fast if it doesn't exist
+      await prisma.meeting.findUniqueOrThrow({
+        where: {
+          id: meetingId,
+        },
+      });
+
+      try {
+        await prisma.meeting.update({
+          where: {
+            id: meetingId,
+          },
+          data: {
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.NOTETAKING_IN_PROGRESS,
+          },
+        });
+
+        // Run the LLM processing pipeline
+        const result = await handleNotetakingProcessing({ meetingId, prisma });
+
+        // Update status through drafting and verification stages
+        await prisma.meeting.update({
+          where: {
+            id: meetingId,
+          },
+          data: {
+            caseNote: result.output.caseNote,
+            actionItems: JSON.stringify(result.output.actionItems),
+            criticalUpdates: JSON.stringify(result.output.statusUpdates),
+            meetingSummary: JSON.stringify(result.output.meetingMinutes),
+            postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
+          },
+        });
+      } catch (e) {
+        // Set error status at the current stage
+        await prisma.meeting.update({
+          where: {
+            id: meetingId,
+          },
+          data: {
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.NOTETAKING_ERROR,
+          },
+        });
+
+        // Rethrow the error so the task fails and can be retried
+        throw e;
+      }
+
+      reply.code(200).send("Notetaking process completed successfully");
+    },
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
     url: "/reprocess-meeting",
     schema: {
       body: z.object({
         stateCode: z.nativeEnum(StateCode),
         meetingId: z.string(),
-        step: z.enum(["stitching", "transcription"]).optional(),
+        step: z.enum(["stitching", "transcription", "notetaking"]).optional(),
       }),
     },
     preHandler: [authenticateInternalRequestPreHandlerFn],
@@ -435,6 +520,20 @@ export function registerTaskRoutes(app: FastifyInstance) {
         }
 
         return reply.code(200).send("Transcription task queued successfully.");
+      } else if (stepToProcess === "NOTETAKING") {
+        try {
+          await queueNotetakingTask(stateCode, meetingId, prisma);
+        } catch (e) {
+          // Capture the exception
+          captureException(e);
+          return reply
+            .code(200)
+            .send("Notetaking processing task queueing failed.");
+        }
+
+        return reply
+          .code(200)
+          .send("Notetaking processing task queued successfully.");
       }
     },
   });

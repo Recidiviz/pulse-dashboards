@@ -201,15 +201,37 @@ export async function stitchAudio(bucketName: string, folderName: string) {
 
   const tempOutputPath = path.join(os.tmpdir(), `final.${detectedExtension}`);
 
+  console.log(
+    `Starting ffmpeg concatenation. Output will be: ${tempOutputPath}`,
+  );
+
   // Use FFmpeg to concatenate the audio files into a single one
   await new Promise((resolve, reject) => {
-    ffmpeg()
+    ffmpeg({ logger: console })
       .input(fileListPath)
       .inputOptions(["-f concat", "-safe 0"])
       .outputOptions("-c copy") // Directly copy the stream without re-encoding
       .save(tempOutputPath)
-      .on("end", resolve)
-      .on("error", reject);
+      .on("start", (commandLine) => {
+        console.log(`FFmpeg command: ${commandLine}`);
+      })
+      .on("progress", (progress) => {
+        console.log(`FFmpeg progress: ${JSON.stringify(progress)}`);
+      })
+      .on("stderr", (stderrLine) => {
+        console.log(`FFmpeg stderr: ${stderrLine}`);
+      })
+      .on("end", () => {
+        console.log("FFmpeg concatenation completed successfully");
+        resolve(undefined);
+      })
+      .on("error", (err, stdout, stderr) => {
+        console.error("FFmpeg error occurred:");
+        console.error(`Error object: ${err.message}`);
+        console.error(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+        reject(err);
+      });
   });
 
   const outputFileName = `${folderName}/final.${detectedExtension}`;

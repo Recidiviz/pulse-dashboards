@@ -298,11 +298,6 @@ resource "google_cloud_tasks_queue" "audio_stitching_task_queue" {
   }
 }
 
-moved {
-  from = google_cloud_tasks_queue.audio-stitching-task-queue
-  to   = google_cloud_tasks_queue.audio_stitching_task_queue
-}
-
 resource "google_cloud_tasks_queue" "transcription_task_queue" {
   name     = "transcription-task-queue"
   project  = var.project_id
@@ -322,7 +317,20 @@ resource "google_cloud_tasks_queue" "transcription_task_queue" {
   }
 }
 
-moved {
-  from = google_cloud_tasks_queue.transcription-task-queue
-  to   = google_cloud_tasks_queue.transcription_task_queue
+resource "google_cloud_tasks_queue" "notetaking_task_queue" {
+  name     = "notetaking-task-queue"
+  project  = var.project_id
+  location = var.location
+
+  rate_limits {
+    max_concurrent_dispatches = 100
+  }
+
+  retry_config {
+    max_attempts = 1
+  }
+
+  stackdriver_logging_config {
+    sampling_ratio = 1.0
+  }
 }
