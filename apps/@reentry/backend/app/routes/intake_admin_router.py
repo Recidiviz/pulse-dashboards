@@ -12,7 +12,6 @@ from sqlmodel import select
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
 from app.crud.address import get_collected_address_for_intake
-from app.crud.assessment import get_assessments_by_intake_id
 from app.crud.assessment_config import get_assessment_config_by_id
 from app.crud.client import compute_frontend_status
 from app.crud.execution import delete_execution_by_id
@@ -575,9 +574,8 @@ async def retry_intake_processing(
 
     This endpoint:
     1. Checks for failed or stuck recording/transcription
-    2. Retries failed or stuck assessments
-    3. Retries failed or stuck plan creation
-    4. Retries failed or stuck plan generations
+    2. Retries failed or stuck plan creation
+    3. Retries failed or stuck plan generations
 
     Returns the execution object for the operation that was retried.
     """
@@ -687,93 +685,6 @@ async def retry_intake_processing(
             detail="Intake must be completed before retrying processing",
         )
 
-    # Lock assessments to prevent concurrent modifications
-    try:
-        from app.models.assessment import Assessment
-
-        stmt = (
-            select(Assessment)
-            .where(Assessment.intake_id == intake.id)
-            .with_for_update(nowait=True)
-        )
-        await session.execute(stmt)
-    except DBAPIError as e:
-        if "could not obtain lock" in str(e) or "LockNotAvailableError" in str(e):
-            raise HTTPException(
-                status_code=409,
-                detail=f"A retry operation is already in progress for intake {intake_id}",
-            )
-        raise
-
-    # Get current assessments
-    assessments = await get_assessments_by_intake_id(session, intake.id)
-
-    # Check for failed or stuck assessments that need to be retried
-    if assessments:
-        for assessment in assessments:
-            # Check if assessment failed or is stuck
-            if assessment.status == "failed":
-                retry_reason = f"failed (status={assessment.status})"
-                execution_id = assessment.execution_id
-                logger.info(
-                    f"Retrying execution for intake {intake_id}, "
-                    f"deleted execution {execution_id} (type=assessment, reason={retry_reason})"
-                )
-
-                # Delete the failed/stuck assessment first
-                await session.delete(assessment)
-
-                # Then delete the execution
-                if execution_id:
-                    await delete_execution_by_id(session, execution_id)
-
-                # Schedule new assessment
-                execution = await intake.schedule_assessment(session)
-
-                # Single commit at the end
-                await session.commit()
-                await session.refresh(intake)
-                return execution
-            elif assessment.execution and is_execution_stuck(assessment.execution):
-                execution_id = assessment.execution_id
-                retry_reason = f"stuck (status={assessment.execution.status}, updated_at={assessment.execution.updated_at})"
-                logger.info(
-                    f"Retrying execution for intake {intake_id}, "
-                    f"deleted execution {execution_id} (type=assessment, reason={retry_reason})"
-                )
-
-                # Delete the failed/stuck assessment first (due to foreign key constraint)
-                await session.delete(assessment)
-
-                # Then delete the execution
-                if execution_id:
-                    await delete_execution_by_id(session, execution_id)
-
-                # Schedule new assessment
-                execution = await intake.schedule_assessment(session)
-
-                # Single commit at the end
-                await session.commit()
-                await session.refresh(intake)
-                return execution
-
-    # Check if we should retry assessments (no assessments exist)
-    if not assessments:
-        logger.info(
-            f"Retrying execution for intake {intake_id}, "
-            f"no execution to delete (type=assessment, reason=missing assessment)"
-        )
-        # Use intake.schedule_assessment to start assessment
-        execution = await intake.schedule_assessment(session)
-
-        # Single commit at the end
-        await session.commit()
-        await session.refresh(intake)
-        return execution
-
-    if any(a.status in ["pending", "in_progress"] for a in assessments):
-        raise HTTPException(status_code=400, detail="No retryable operations found")
-
     plan = await get_plan_by_intake_id(session, intake.id)
 
     # Check for stuck or failed plan
@@ -789,7 +700,7 @@ async def retry_intake_processing(
                 f"Retrying execution for intake {intake_id}, "
                 f"no execution to delete (type=plan, reason=missing plan)"
             )
-            # Create new plan (only if we have completed assessments and no plan)
+            # Create new plan
             plan_obj = Plan(
                 client_pseudo_id=intake.client_pseudo_id, intake_id=intake.id
             )

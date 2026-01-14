@@ -68,7 +68,6 @@ def get_task_mapping():
     Map table_name patterns to their corresponding task functions and parameter patterns.
     """
     from app.tasks.action_plan import generate_action_plan_task
-    from app.tasks.assessment import assessment_task
     from app.tasks.plan_create import plan_create_task
     from app.tasks.plan_decision_tree import (
         plan_decision_tree_run_task,
@@ -78,7 +77,6 @@ def get_task_mapping():
 
     return {
         "plan": {"task_func": plan_create_task, "param_key": "plan_id"},
-        "assessmenttrees": {"task_func": assessment_task, "param_key": "assessment_id"},
         "plandecisiontrees": {
             "task_func": plan_decision_tree_run_task,
             "param_key": "plan_decision_tree_id",
@@ -271,24 +269,6 @@ async def get_client_resources_detailed(session, client_pseudo_id: str) -> dict:
         resources["intake"] = {"exists": False}
         resources["messages"] = 0
 
-    # Check assessments using raw SQL to avoid relationship issues
-    try:
-        assessment_raw_stmt = text("""
-            SELECT assessment_type
-            FROM assessment
-            WHERE client_pseudo_id = :client_pseudo_id
-        """)
-        assessment_result = await session.execute(
-            assessment_raw_stmt, {"client_pseudo_id": client_pseudo_id}
-        )
-        assessment_rows = assessment_result.fetchall()
-        resources["assessments"] = [
-            {"type": row.assessment_type} for row in assessment_rows
-        ]
-    except Exception as e:
-        logger.warning(f"Failed to query assessments: {e}")
-        resources["assessments"] = []
-
     # Check plans using raw SQL to avoid relationship issues
     try:
         plan_raw_stmt = text("""
@@ -353,14 +333,6 @@ async def get_client_resources_detailed(session, client_pseudo_id: str) -> dict:
 
             SELECT e.status, e.table_name
             FROM execution e
-            JOIN assessment a ON e.table_entity_id = a.id
-            WHERE e.table_name = 'assessmenttrees'
-              AND a.client_pseudo_id = :client_pseudo_id
-
-            UNION ALL
-
-            SELECT e.status, e.table_name
-            FROM execution e
             JOIN plan p ON e.table_entity_id = p.id
             WHERE e.table_name = 'plan'
               AND p.client_pseudo_id = :client_pseudo_id
@@ -382,7 +354,6 @@ async def get_client_resources_detailed(session, client_pseudo_id: str) -> dict:
 
 async def get_client_pseudo_id_for_execution(session, execution: Execution) -> str:
     """Extract client_pseudo_id based on execution table_name and table_entity_id."""
-    from app.models.assessment import Assessment
     from app.models.intake import Intake
     from app.models.models import Plan, PlanGeneration
 
@@ -390,10 +361,6 @@ async def get_client_pseudo_id_for_execution(session, execution: Execution) -> s
         if execution.table_name == "intake":
             stmt = select(Intake.client_pseudo_id).where(
                 Intake.id == execution.table_entity_id
-            )
-        elif execution.table_name == "assessmenttrees":
-            stmt = select(Assessment.client_pseudo_id).where(
-                Assessment.id == execution.table_entity_id
             )
         elif execution.table_name == "plan":
             stmt = select(Plan.client_pseudo_id).where(
@@ -517,7 +484,6 @@ async def investigate_execution_failures():
                         resources = {
                             "intake": {"exists": False},
                             "messages": 0,
-                            "assessments": [],
                             "plans": [],
                             "recording": {"exists": False},
                             "other_executions": [],
@@ -576,12 +542,6 @@ async def investigate_execution_failures():
                                 details.append("     Recording: Not found")
                     else:
                         details.append("     No intake found")
-
-                    details.append(
-                        f"\n📊 ASSESSMENTS ({len(resources['assessments'])}):"
-                    )
-                    for i, assessment in enumerate(resources["assessments"]):
-                        details.append(f"     {i+1}. Type: {assessment['type']}")
 
                     details.append(f"\n📋 PLANS ({len(resources['plans'])}):")
                     for i, plan in enumerate(resources["plans"]):

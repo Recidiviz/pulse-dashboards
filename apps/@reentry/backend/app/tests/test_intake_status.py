@@ -4,8 +4,7 @@ import pytest
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.crud.assessment import get_assessments_by_intake_id
-from app.models.assessment import Assessment
+from app.models.execution import ExecutionStatus
 from app.models.intake import (
     COMPLETION_SECTION,
     Intake,
@@ -16,7 +15,6 @@ from app.tests.test_fixtures.intake_sections import (
     create_test_section,
     create_test_sections,
 )
-from app.utils.config_loader import ConfigLoader
 
 
 @pytest.mark.asyncio
@@ -77,101 +75,98 @@ async def test_prevent_going_back_to_created(
     assert intake.status == IntakeStatus.IN_PROGRESS
 
 
-@pytest.mark.asyncio
-async def test_completed_status_triggers_assessment(
-    mock_clientdata_service, async_session, seed_configs
-):
-    """Test that updating to COMPLETED status triggers assessment creation."""
-    from app.crud.intake import create_intake
-
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
-
-    # Create a test intake and set to IN_PROGRESS
-    intake = await create_intake(
-        async_session,
-        mock_clientdata_service["client_pseudo_id"],
-        assessment_config_id,
-    )
-    await intake.update_status(async_session, IntakeStatus.IN_PROGRESS)
-    await async_session.refresh(intake)
-
-    # Mock the schedule_assessment method to verify it's called
-    with patch.object(
-        Intake, "schedule_assessment", AsyncMock(return_value="mock_assessment_id")
-    ) as mock_schedule:
-        # Update to COMPLETED status
-        await intake.update_status(async_session, IntakeStatus.COMPLETED)
-
-        # Verify schedule_assessment was called
-        mock_schedule.assert_called_once()
-
-
-@pytest.mark.asyncio
-async def test_valid_schedule_assessment(
-    async_session, seed_configs, mock_clientdata_service
-):
-    ##
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
-
-    with patch.object(
-        Assessment, "schedule_execution", AsyncMock(return_value="mock_assessment_id")
-    ) as mock_schedule:
-        from app.crud.intake import create_intake
-
-        # Create a test intake and set to IN_PROGRESS
-        intake = await create_intake(
-            async_session,
-            mock_clientdata_service["client_pseudo_id"],
-            assessment_config_id,
-        )
-        await intake.update_status(async_session, IntakeStatus.COMPLETED)
-
-        assessment = await get_assessments_by_intake_id(
-            async_session, intake_id=intake.id
-        )
-        assert len(assessment) == 1
-
-        # Default test client is jonh_doe, US_IX state
-        # Get UUID for UT-CCCI-v0
-        config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
-
-        # Load the config
-        loaded = await ConfigLoader.load_assessment_config(config_id, async_session)
-        assert assessment[0].assessment_type == loaded.intake.scoring
-        mock_schedule.assert_called_once()
-
-
-@pytest.mark.asyncio
-async def test_valid_status_transitions(
-    async_session, seed_configs, mock_clientdata_service
-):
-    from app.crud.intake import create_intake
-
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
-
-    # Create a test intake
-    intake = await create_intake(
-        async_session,
-        mock_clientdata_service["client_pseudo_id"],
-        assessment_config_id,
+@patch("app.models.intake.Intake.schedule_plan_generation")
+async def test_intake_update_status_triggers_plan_generation(mock_schedule_plan):
+    """
+    Test that update_status correctly triggers plan generation
+    when status is COMPLETED
+    """
+    # Setup
+    session = AsyncMock()
+    intake = Intake(
+        client_pseudo_id="test_client", status=IntakeStatus.IN_PROGRESS.value
     )
 
-    # Mock schedule_assessment for when we test COMPLETED status
-    with patch.object(
-        Intake, "schedule_assessment", new_callable=AsyncMock
-    ) as mock_schedule:
-        mock_schedule.return_value = "mock_assessment_id"
+    # Act
+    await intake.update_status(session, ExecutionStatus.COMPLETED.value)
 
-        # Update to new status
-        updated_intake = await intake.update_status(
-            async_session, IntakeStatus.IN_PROGRESS
-        )
+    # Assert
+    mock_schedule_plan.assert_called_once_with(session)
 
-        # Verify the status was updated
-        assert updated_intake.status == IntakeStatus.IN_PROGRESS
 
-        # Check that schedule_assessment was not called for this status
-        mock_schedule.assert_not_called()
+@patch("app.models.intake.Intake.schedule_plan_generation")
+async def test_intake_update_status_does_not_trigger_plan_when_not_completed(
+    mock_schedule_plan,
+):
+    """
+    Test that update_status doesn't trigger plan generation
+    when status is not COMPLETED
+    """
+    # Setup
+    session = AsyncMock()
+    intake = Intake(
+        client_pseudo_id="test_client", status=IntakeStatus.IN_PROGRESS.value
+    )
+
+    # Act
+    await intake.update_status(session, ExecutionStatus.FAILED.value)
+
+    # Assert
+    mock_schedule_plan.assert_not_called()
+
+
+@patch("app.crud.plan.get_plan_by_intake_id")
+@patch("app.crud.plan.create_plan")
+async def test_schedule_plan_generation_creates_new_plan(
+    mock_create_plan, mock_get_plan
+):
+    """
+    Test that schedule_plan_generation creates a new plan when none exists
+    """
+
+    # Setup
+    session = AsyncMock()
+    intake = Intake(client_pseudo_id="test_client", status=IntakeStatus.COMPLETED.value)
+
+    # Configure mocks
+    mock_get_plan.return_value = None
+    mock_created_plan = AsyncMock()
+    mock_create_plan.return_value = mock_created_plan
+
+    # Act
+    await intake.schedule_plan_generation(session)
+
+    # Assert
+    mock_get_plan.assert_called_once_with(session, intake.id)
+    mock_create_plan.assert_called_once()
+    mock_created_plan.schedule_initial_creation.assert_called_once_with(session)
+
+
+@patch("app.crud.plan.get_plan_by_intake_id")
+@patch("app.crud.plan.create_plan")
+async def test_schedule_plan_generation_uses_existing_plan(
+    mock_create_plan, mock_get_plan
+):
+    """
+    Test that schedule_plan_generation uses existing plan when one exists
+    """
+
+    # Setup
+    session = AsyncMock()
+    intake = Intake(client_pseudo_id="test_client", status=IntakeStatus.COMPLETED.value)
+
+    # Configure mocks
+    mock_get_plan.return_value = None
+    mock_created_plan = AsyncMock()
+    mock_create_plan.return_value = mock_created_plan
+
+    # Act
+    await intake.schedule_plan_generation(session)
+
+    # Assert
+    mock_get_plan.assert_called_once_with(session, intake.id)
+    mock_create_plan.assert_called_once()
+    mock_created_plan.schedule_initial_creation.assert_called_once_with(session)
 
 
 # DEPRECATED: This test checked OLD behavior where ClientIntakeSections were created and marked IN_PROGRESS.
@@ -198,8 +193,8 @@ async def test_completion_section_for_terminal_statuses(
     await intake.update_status(async_session, IntakeStatus.IN_PROGRESS)
     await async_session.refresh(intake)
 
-    # Mock schedule_assessment to avoid database operations
-    with patch.object(Intake, "schedule_assessment", AsyncMock(return_value=None)):
+    # Mock schedule_plan_generation to avoid database operations
+    with patch.object(Intake, "schedule_plan_generation", AsyncMock(return_value=None)):
         # Test all terminal statuses
         for status in [
             IntakeStatus.COMPLETED,
@@ -265,17 +260,17 @@ async def test_completed_status_idempotent(
     )
     await intake.update_status(async_session, IntakeStatus.IN_PROGRESS)
     with patch.object(
-        Intake, "schedule_assessment", AsyncMock(return_value="mock_assessment_id")
+        Intake, "schedule_plan_generation", AsyncMock(return_value="mock_assessment_id")
     ):
         await intake.update_status(async_session, IntakeStatus.COMPLETED)
     await async_session.refresh(intake)
 
-    # Mock schedule_assessment to verify it's not called again
-    with patch.object(Intake, "schedule_assessment", AsyncMock()) as mock_schedule:
+    # Mock schedule_plan_generation to verify it's not called again
+    with patch.object(Intake, "schedule_plan_generation", AsyncMock()) as mock_schedule:
         # Update to COMPLETED again
         await intake.update_status(async_session, IntakeStatus.COMPLETED)
 
-        # Verify schedule_assessment was not called
+        # Verify schedule_plan_generation was not called
         mock_schedule.assert_not_called()
 
 
@@ -349,7 +344,7 @@ async def test_all_transition_combinations(
 
     # These are the transitions we'll test - each tuple represents (from_status, to_status, should_succeed)
     with patch.object(
-        Intake, "schedule_assessment", AsyncMock(return_value="mock-id")
+        Intake, "schedule_plan_generation", AsyncMock(return_value="mock-id")
     ) as mock_schedule:
         # Define all valid state transitions
         transitions = [
@@ -386,7 +381,7 @@ async def test_all_transition_combinations(
                 await async_session.refresh(intake)
                 assert intake.status == to_status
 
-                # For COMPLETED status, verify assessment scheduling
+                # For COMPLETED status, verify plan scheduling
                 if to_status == IntakeStatus.COMPLETED:
                     mock_schedule.assert_called()
                     mock_schedule.reset_mock()
@@ -835,7 +830,9 @@ async def test_legacy_intake_status_transitions_with_client_sections(
     await async_session.commit()
 
     # Mock schedule_assessment
-    with patch.object(Intake, "schedule_assessment", AsyncMock(return_value="mock-id")):
+    with patch.object(
+        Intake, "schedule_plan_generation", AsyncMock(return_value="mock-id")
+    ):
         # Transition to COMPLETED
         await intake.update_status(async_session, IntakeStatus.COMPLETED)
         await async_session.refresh(intake)

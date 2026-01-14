@@ -633,9 +633,9 @@ async def test_submit_address_completes_intake_when_in_completion_section(
     await async_session.commit()
     await async_session.refresh(mock_intake)
 
-    # Mock schedule_assessment to verify it gets called
+    # Mock schedule_plan_generation to verify it gets called
     with patch.object(
-        Intake, "schedule_assessment", AsyncMock(return_value="mock_assessment_id")
+        Intake, "schedule_plan_generation", AsyncMock(return_value="mock_assessment_id")
     ) as mock_schedule:
         with patch(
             "app.auth.intake.auth_client_user.decode_jwt_token"
@@ -668,7 +668,7 @@ async def test_submit_address_completes_intake_when_in_completion_section(
         await async_session.refresh(mock_intake)
         assert mock_intake.status == IntakeStatus.COMPLETED
 
-        # Verify schedule_assessment was called
+        # Verify schedule_plan_generation was called
         mock_schedule.assert_called_once()
 
 

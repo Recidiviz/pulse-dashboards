@@ -10,7 +10,6 @@ from sqlmodel import select
 
 from app.core.db import AsyncSession
 from app.crud.intake import get_intake_by_id
-from app.models.assessment import Assessment
 from app.models.execution import Execution
 from app.models.models import Plan, PlanGeneration
 from app.routes.shared_models import ProcessingStatus
@@ -19,20 +18,16 @@ from app.utils.execution_utils import is_execution_stuck
 logger = structlog.getLogger(__name__)
 
 
-def compute_processing_status(
-    assessments, plans, intake, plan_generations=None
-) -> ProcessingStatus:
+def compute_processing_status(plans, intake, plan_generations=None) -> ProcessingStatus:
     """
-    Compute aggregated processing status from assessments, plans, and intake.
+    Compute aggregated processing status from  plans and intake.
 
     This function determines the overall processing status by examining:
     - Recording/transcription status (for transcription-based intakes)
-    - Assessment execution status
     - Plan creation status
     - Plan generation status
 
     Args:
-        assessments: List of Assessment objects
         plans: Plan object (or None)
         intake: Intake object (or None)
         plan_generations: Optional list of PlanGeneration objects
@@ -72,15 +67,6 @@ def compute_processing_status(
         logger.debug("Returning NOT_STARTED - intake not completed")
         return ProcessingStatus.NOT_STARTED
 
-    # Check for stuck executions in assessments
-    if assessments:
-        for assessment in assessments:
-            if assessment.execution and is_execution_stuck(assessment.execution):
-                logger.debug(
-                    "Assessment execution %s is stuck", assessment.execution.id
-                )
-                return ProcessingStatus.NEEDS_RETRY
-
     # Check for stuck executions in plan
     if plans and plans.create_execution and is_execution_stuck(plans.create_execution):
         logger.debug("Plan execution %s is stuck", plans.create_execution.id)
@@ -110,10 +96,6 @@ def compute_processing_status(
 
     # Check for any in-progress work FIRST (before checking if plan is completed)
     plan_in_progress = plans and plans.create_status in ["in_progress", "pending"]
-
-    assessments_in_progress = assessments and any(
-        a.status in ["in_progress", "pending"] for a in assessments
-    )
 
     # Check if recording is in progress (not stuck, not failed)
     recording_in_progress = False
@@ -162,9 +144,6 @@ def compute_processing_status(
             generations_in_progress,
         )
         return ProcessingStatus.IN_PROGRESS
-    elif assessments_in_progress:
-        logger.debug("Returning IN_PROGRESS - assessments in progress")
-        return ProcessingStatus.IN_PROGRESS
     elif recording_in_progress:
         logger.debug("Returning IN_PROGRESS - recording in progress")
         return ProcessingStatus.IN_PROGRESS
@@ -176,31 +155,8 @@ def compute_processing_status(
         )
         return ProcessingStatus.COMPLETED
 
-    # Check if we have completed assessments
-    has_completed_assessments = assessments and any(
-        a.status == "completed" for a in assessments
-    )
-
-    # Check if we have any failed assessments
-    has_failed_assessments = assessments and any(
-        a.status == "failed" for a in assessments
-    )
-
-    # If plan failed and we have completed assessments, needs retry
-    if has_completed_assessments and plans and plans.create_status == "failed":
-        return ProcessingStatus.NEEDS_RETRY
-
-    # If all assessments failed, needs retry
-    if assessments and all(a.status == "failed" for a in assessments):
-        return ProcessingStatus.NEEDS_RETRY
-
-    # If any assessments failed (but not all), needs retry
-    # This handles the case where some assessments completed but others failed
-    if has_failed_assessments:
-        return ProcessingStatus.NEEDS_RETRY
-
-    # If we have completed assessments but no plan, needs retry (plan should have been created)
-    if has_completed_assessments and not plans:
+    # If plan failed, needs retry
+    if plans and plans.create_status == "failed":
         return ProcessingStatus.NEEDS_RETRY
 
     # Intake completed but no processing has started yet - processing should have started automatically, so this needs retry
@@ -213,7 +169,7 @@ async def compute_processing_status_by_intake_id(
     """
     Compute processing status for a specific intake by its ID.
 
-    This function fetches all related data (intake, plan, assessments, generations)
+    This function fetches all related data (intake, plan, generations)
     and delegates to compute_processing_status for the actual status computation.
 
     Args:
@@ -241,18 +197,6 @@ async def compute_processing_status_by_intake_id(
         plan, exec_data = plan_row
         plan.create_execution = exec_data
 
-    # 3. Fetch assessments + executions
-    assessments_with_execs = await session.exec(
-        select(Assessment, Execution)
-        .where(Assessment.intake_id == intake_id)
-        .outerjoin(Execution, Assessment.execution_id == Execution.id)
-    )
-
-    assessments = []
-    for a, e in assessments_with_execs:
-        a.execution = e
-        assessments.append(a)
-
     # 4. Fetch generations for this plan
     generations = []
     if plan:
@@ -266,7 +210,6 @@ async def compute_processing_status_by_intake_id(
             generations.append(generation)
 
     return compute_processing_status(
-        assessments=assessments,
         plans=plan,
         intake=intake,
         plan_generations=generations,

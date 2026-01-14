@@ -100,7 +100,7 @@ async def process_recording(
     session.add(recording_session)
     await session.commit()
 
-    # Start the assessment if an address were already provided
+    # Start the action plan if an address were already provided
     try:
         # finding the intake with address
         statement = (

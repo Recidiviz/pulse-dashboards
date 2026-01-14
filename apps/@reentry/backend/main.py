@@ -22,8 +22,6 @@ from app.core.logging_config import setup_logging
 from app.core.sentry_config import setup_sentry
 from app.routes import (
     assessment_config_router,
-    assessment_router,
-    assessment_tree_router,
     autocomplete_router,
     client_router,
     decision_tree_router,
@@ -177,9 +175,7 @@ firebase_app = firebase_admin.initialize_app(
 # Include routers
 # Internal routers with prefixes - require authentication
 app.include_router(decision_tree_router.router, prefix="/decision-trees")
-app.include_router(assessment_tree_router.router, prefix="/assessment-trees")
 app.include_router(assessment_config_router.router, prefix="/assessment-configs")
-app.include_router(assessment_router.router, prefix="/assessments")
 app.include_router(execution_router.router, prefix="/executions")
 app.include_router(intake_services_router.router, prefix="/intake/services")
 app.include_router(client_router.router, prefix="/clients")
@@ -220,7 +216,6 @@ tasks = [
     "app.tasks.plan_decision_tree",
     "app.tasks.plan_create",
     "app.tasks.action_plan",
-    "app.tasks.assessment",
 ]
 for task in tasks:
     importlib.import_module(task)

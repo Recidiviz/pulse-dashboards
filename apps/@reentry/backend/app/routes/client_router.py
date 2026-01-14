@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -102,7 +103,7 @@ async def router_list_clients(
 
 @router.get(
     "/{client_pseudo_id}/latest_address",
-    response_model=ClientAddressResponse,
+    response_model=Optional[ClientAddressResponse],
     summary="Get Client latest known address",
     description="Retrieve the latest address submission for a client",
     tags=["Client Records"],

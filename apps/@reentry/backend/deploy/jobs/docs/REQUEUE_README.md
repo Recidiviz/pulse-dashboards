@@ -12,7 +12,6 @@ This Google Cloud Run job re-enqueues pending executions that are not currently 
 ## Supported Task Types
 
 - `plan` → Plan creation tasks
-- `assessmenttrees` → Assessment execution tasks
 - `plandecisiontrees` → Plan decision tree execution tasks
 - `plan:decisiontrees-populate` → Plan decision tree selection tasks
 - `plan:generate` → Action plan generation tasks

@@ -339,9 +339,7 @@ async def test_merge_caseload_and_facility_clients(async_session):
 @pytest.mark.asyncio
 async def test_compute_processing_status_not_started(async_session: AsyncSession):
     """compute_processing_status returns NOT_STARTED when no intake exists"""
-    result = compute_processing_status(
-        assessments=None, plans=None, intake=None, plan_generations=None
-    )
+    result = compute_processing_status(plans=None, intake=None, plan_generations=None)
     assert result == ProcessingStatus.NOT_STARTED
 
 
@@ -350,7 +348,6 @@ async def test_compute_processing_status_completed(
     async_session: AsyncSession, mock_intake
 ):
     """compute_processing_status returns COMPLETED when plan is done"""
-    from app.models.assessment import Assessment
     from app.models.models import Execution, Plan
 
     client_pseudo_id = "client-001ps"
@@ -364,14 +361,6 @@ async def test_compute_processing_status_completed(
     # Create completed assessment
     exec_assess = Execution(status="completed")
     async_session.add(exec_assess)
-    await async_session.commit()
-
-    assessment = Assessment(
-        client_pseudo_id=client_pseudo_id,
-        execution_id=exec_assess.id,
-        status="completed",
-    )
-    async_session.add(assessment)
     await async_session.commit()
 
     # Create completed plan
@@ -394,7 +383,7 @@ async def test_compute_processing_status_completed(
     plan.create_execution = exec_plan
 
     result = compute_processing_status(
-        assessments=[assessment], plans=plan, intake=mock_intake, plan_generations=None
+        plans=plan, intake=mock_intake, plan_generations=None
     )
     assert result == ProcessingStatus.COMPLETED
 
@@ -404,7 +393,6 @@ async def test_compute_processing_status_needs_retry(
     async_session: AsyncSession, mock_intake
 ):
     """compute_processing_status returns NEEDS_RETRY when plan has failed after assessment"""
-    from app.models.assessment import Assessment
     from app.models.models import Execution, Plan
 
     client_pseudo_id = "client-002ps"
@@ -418,14 +406,6 @@ async def test_compute_processing_status_needs_retry(
     # Create completed assessment
     exec_assess = Execution(status="completed")
     async_session.add(exec_assess)
-    await async_session.commit()
-
-    assessment = Assessment(
-        client_pseudo_id=client_pseudo_id,
-        execution_id=exec_assess.id,
-        status="completed",
-    )
-    async_session.add(assessment)
     await async_session.commit()
 
     # Create failed plan
@@ -448,7 +428,7 @@ async def test_compute_processing_status_needs_retry(
     plan.create_execution = exec_plan
 
     result = compute_processing_status(
-        assessments=[assessment], plans=plan, intake=mock_intake, plan_generations=None
+        plans=plan, intake=mock_intake, plan_generations=None
     )
     assert result == ProcessingStatus.NEEDS_RETRY
 
@@ -458,7 +438,6 @@ async def test_compute_processing_status_by_intake_id(
     async_session: AsyncSession, mock_intake
 ):
     """Test compute_processing_status_by_intake_id fetches data and computes status"""
-    from app.models.assessment import Assessment
     from app.models.models import Execution, Plan
 
     client_pseudo_id = "client-003ps"
@@ -472,14 +451,6 @@ async def test_compute_processing_status_by_intake_id(
     # Create completed assessment
     exec_assess = Execution(status="completed")
     async_session.add(exec_assess)
-    await async_session.commit()
-
-    assessment = Assessment(
-        client_pseudo_id=client_pseudo_id,
-        execution_id=exec_assess.id,
-        status="completed",
-    )
-    async_session.add(assessment)
     await async_session.commit()
 
     # Create completed plan
@@ -567,7 +538,6 @@ async def test_count_intakes_for_client_zero(async_session: AsyncSession):
 @pytest.mark.asyncio
 async def test_reset_client_data(async_session: AsyncSession, seed_configs):
     """Test reset_client_data deletes all client data"""
-    from app.models.assessment import Assessment
     from app.models.models import Plan
 
     client_pseudo_id = "client-005"
@@ -583,11 +553,6 @@ async def test_reset_client_data(async_session: AsyncSession, seed_configs):
     await async_session.commit()
     await async_session.refresh(intake)
 
-    # Create assessment
-    assessment = Assessment(client_pseudo_id=client_pseudo_id, intake_id=intake.id)
-    async_session.add(assessment)
-    await async_session.commit()
-
     # Create plan
     plan = Plan(client_pseudo_id=client_pseudo_id, intake_id=intake.id)
     async_session.add(plan)
@@ -596,7 +561,7 @@ async def test_reset_client_data(async_session: AsyncSession, seed_configs):
     # Reset client data
     total_deleted = await reset_client_data(async_session, client_pseudo_id)
 
-    assert total_deleted >= 3  # At least intake, assessment, plan
+    assert total_deleted >= 2  # At least intake, assessment, plan
 
     # Verify everything is deleted
     remaining_intakes = await count_intakes_for_client(async_session, client_pseudo_id)

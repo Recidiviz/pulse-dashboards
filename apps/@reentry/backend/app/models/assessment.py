@@ -2,7 +2,7 @@ from typing import Optional
 from uuid import UUID
 
 import structlog
-from pydantic import ConfigDict, computed_field, field_serializer
+from pydantic import computed_field
 from sqlalchemy.orm import Mapped
 from sqlmodel import JSON, Field, Relationship
 
@@ -18,6 +18,11 @@ logger = structlog.get_logger(__name__)
 
 
 class Assessment(BaseModel, table=True):
+    """
+    UPDATED: January-13-2026 Assessment model still exist in the database to backward compatibility
+    but new intake does not create new assessments anymore.
+    """
+
     assessment_type: Optional[str] = Field(default=None, nullable=True)
     client_pseudo_id: Optional[str]
     client_id: Optional[str] = None
@@ -75,59 +80,12 @@ class Assessment(BaseModel, table=True):
         return self.execution
 
     #
-    # Note: It seems SQLModel does not return Pydantic related model for list[]
-    # Issue encountered: Expected DecisionTreeRunnerStep but received dict with value
-    # {'node_key': 'A', 'node_v...t', 'annotations': None} - serialized value may not be as expected
-    #
-
-    @field_serializer("runs_steps")
-    def ensure_run_steps_type(self, value):
-        if (
-            value
-            and isinstance(value, dict)
-            and not isinstance(list(value.values())[0], AssessmentRunnerStep)
-        ):
-            return {
-                key: [AssessmentRunnerStep.model_validate(step) for step in val]
-                for (key, val) in value.items()
-            }
-        return value
-
-    model_config = ConfigDict(extra="allow", from_attributes=True)
-
-    #
     # Execution
     #
 
     @property
     def is_execution_finished(self) -> bool:
         return self.status in ("completed", "failed")
-
-    async def schedule_execution(self, session) -> Execution:
-        """
-        Schedule the execution of the assessment generation.
-        """
-        from app.tasks.assessment import assessment_task
-        from app.tasks.scheduler import schedule_task
-
-        # prevent execution to be scheduled twice
-        if self.execution:
-            return self.execution
-
-        task_kwargs = {"assessment_id": self.id}
-        execution = await schedule_task(
-            session,
-            table_name="assessmenttrees",
-            table_entity_id=self.id,
-            task_func=assessment_task,
-            task_kwargs=task_kwargs,
-        )
-
-        self.execution = execution
-        self.execution_id = execution.id
-        session.add(self)
-        await session.commit()
-        return execution
 
     def to_str(self):
         if not self.is_execution_finished or not self.scores:
@@ -138,63 +96,3 @@ class Assessment(BaseModel, table=True):
                 misses = self.misses_counts.get(area, 0) if self.misses_counts else 0
                 res += f"\n{area}: {score} ({misses} unanswered questions)"
             return res
-
-    async def update_status(self, session, status: ExecutionStatus):
-        """
-        Update the assessment status and trigger appropriate side effects.
-
-        If status is changed to 'completed', automatically schedules plan generation.
-        """
-        if not self.execution:
-            logger.warning(
-                f"Assessment {self.id} has no execution, cannot update status"
-            )
-            return self
-
-        # Update the execution status
-        self.execution.status = status
-        session.add(self.execution)
-
-        # If status is completed, schedule plan generation
-        if status == ExecutionStatus.COMPLETED.value:
-            logger.info(
-                f"Assessment {self.id} marked as completed, scheduling plan generation"
-            )
-            await self.schedule_plan_generation(session)
-
-        # Save changes
-        session.add(self)
-        await session.commit()
-        await session.refresh(self)
-
-        return self
-
-    async def schedule_plan_generation(self, session) -> UUID:
-        """
-        Schedule the creation of a plan based on this assessment.
-        Only works when assessment status is COMPLETED.
-        """
-        from app.crud.plan import create_plan, get_plan_by_intake_id
-        from app.models.models import Plan
-
-        # Only create plan if assessment is completed
-        if self.status != ExecutionStatus.COMPLETED.value:
-            logger.warning(
-                f"Cannot create plan for assessment {self.id} with status {self.status}"
-            )
-            return None
-
-        # Check if plan already exists for this intake
-        existing_plan = await get_plan_by_intake_id(session, self.intake_id)
-
-        if existing_plan:
-            logger.info(f"Plan already exists for client {self.client_pseudo_id}")
-            return existing_plan.id
-
-        # Create and schedule the plan
-        logger.info(f"Creating new plan for client {self.client_pseudo_id}")
-        plan = Plan(client_pseudo_id=self.client_pseudo_id, intake_id=self.intake_id)
-        plan = await create_plan(session, plan)
-        await plan.schedule_initial_creation(session)
-
-        return plan.id

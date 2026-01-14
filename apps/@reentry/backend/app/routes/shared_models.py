@@ -73,13 +73,6 @@ class PlanResponse(ORMResponse):
     edited_manually: bool
 
 
-class AssessmentResponse(ORMResponse):
-    client_pseudo_id: str
-    intake_id: UUID | None = None
-    scores: dict | None = None
-    status: str
-
-
 class ClientResponse(BaseModel):
     client_pseudo_id: str
     client: ClientRecordResponse | None = None

@@ -76,12 +76,6 @@ class Settings(BaseSettings):
     BQ_SUPERVISION_OFFICER_TABLE: str = "supervision_officer_dev"
     BQ_CLIENT_TABLE: str = "client_dev"
 
-    # ASSESSMENT SETTINGS
-    DEFAULT_ASSESSMENT_TYPE: str = "oras_rt"
-    CLIENT_PSID_ASSESSMENT_TASK: Optional[str] = (
-        None  # Client pseudo ID for force-assessment-from-env job. See deploy/jobs/docs/FORCE_ASSESSMENT_FROM_ENV_README.md
-    )
-
     # reCAPTCHA settings
     RECAPTCHA_SECRET_KEY: str = "your_recaptcha_secret_key"
 

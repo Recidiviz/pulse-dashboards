@@ -1,4 +1,0 @@
-Q1:
-  question: "Age at Time of Assessment"
-  type: "score_box"
-  possible_answers: ["24+", "18-23"]

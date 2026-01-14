@@ -1,7 +1,7 @@
-import structlog
 from typing import Literal, Optional, Tuple, overload
 from uuid import UUID
 
+import structlog
 from sqlalchemy.orm import joinedload, selectinload
 from sqlmodel import and_, not_, select
 from sqlmodel.sql.expression import SelectOfScalar

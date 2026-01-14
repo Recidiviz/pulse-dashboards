@@ -46,7 +46,7 @@ metadata:
 
 intake:
   intake_type: str             # Type of intake ("transcription", "conversation" or"external" cf apps/@reentry/backend/app/models/intake.py), not enforced yet
-  scoring: str                 # Assessment scoring type: "lsir", "oras_pit", or "oras_rt" (from AssessmentType enum in app/models/assessment.py)
+  scoring: str                 # Assessment scoring type: "lsir", "oras_pit", or "oras_rt" (Updated Jan-8-2026:all assessment code related removed from the workflow )
   scoring_model:               # LLM model configuration for scoring
     provider: str              # Model provider: 'openai', 'anthropic', or 'google'
     name: str                  # Model name (e.g., 'gpt-4o', 'claude-3-5-sonnet', 'gemini-2.0-flash')

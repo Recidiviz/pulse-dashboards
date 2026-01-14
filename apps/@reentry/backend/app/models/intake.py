@@ -2,13 +2,13 @@
 Database models for intake assessment system.
 """
 
-import structlog
 import secrets
 from datetime import datetime, timedelta
 from enum import StrEnum
 from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from uuid import UUID
 
+import structlog
 from sqlalchemy.orm import Mapped
 
 from app.crud.clientintakesections import (
@@ -19,7 +19,7 @@ from app.crud.clientintakesections import (
 )
 from app.models.assessment_config import AssessmentConfig
 from app.models.base import IntakeStatus
-from app.models.execution import Execution
+from app.models.execution import ExecutionStatus
 from app.models.intake_sections import ClientIntakeSection
 from app.routes.shared_models import IntakeMessageRole
 from app.utils.assessment_config_utils import (
@@ -232,64 +232,46 @@ class Intake(BaseModel, table=True):
         if self.intake_type == IntakeType.TRANSCRIPTION.value:
             self._handle_transcription_status()
 
-        # If specifically completed, also schedule assessment creation
+        # If specifically completed, also schedule action plan creation
         if self.status == IntakeStatus.COMPLETED:
             self.completed_at = datetime.utcnow()
-            logger.info(f"Scheduling assessment for intake {self.id}")
-            await self.schedule_assessment(session)
+            logger.info(f"Scheduling action plan for intake {self.id}")
+            await self.schedule_plan_generation(session)
 
         session.add(self)
         await session.commit()
         await session.refresh(self)
         return self
 
-    async def schedule_assessment(self, session) -> Execution | None:
+    async def schedule_plan_generation(self, session) -> UUID:
         """
-        Schedule the creation of an assessment for this intake.
+        Schedule the creation of a plan based on this intake.
         Only works when intake status is COMPLETED.
         """
-        from app.crud.assessment import create_assessment
-        from app.models.assessment import Assessment
+        from app.crud.plan import create_plan, get_plan_by_intake_id
+        from app.models.models import Plan
 
-        # Only create assessment if intake is completed
-        # Check both string value and enum value to be safe
-        if self.status != IntakeStatus.COMPLETED.value:
+        # Only create plan if intake is completed
+        if self.status != ExecutionStatus.COMPLETED.value:
             logger.warning(
-                f"Cannot create assessment for intake {self.id} with status {self.status}"
+                f"Cannot create plan for intake {self.id} with status {self.status}"
             )
             return None
 
-        # Check if assessment already exists for this intake
-        from sqlmodel import select
+        # Check if plan already exists for this intake
+        existing_plan = await get_plan_by_intake_id(session, self.id)
 
-        statement = select(Assessment).where(Assessment.intake_id == self.id)
-        result = await session.exec(statement)
-        existing_assessment = result.first()
+        if existing_plan:
+            logger.info(f"Plan already exists for client {self.client_pseudo_id}")
+            return existing_plan.id
 
-        if existing_assessment:
-            logger.info(f"Assessment already exists for intake {self.id}")
-            return (
-                existing_assessment.execution if existing_assessment.execution else None
-            )
+        # Create and schedule the plan
+        logger.info(f"Creating new plan for client {self.client_pseudo_id}")
+        plan = Plan(client_pseudo_id=self.client_pseudo_id, intake_id=self.id)
+        plan = await create_plan(session, plan)
+        await plan.schedule_initial_creation(session)
 
-        from app.utils.config_loader import ConfigLoader
-
-        assessment_config = await ConfigLoader.load_assessment_config(
-            self.assessment_config_id, session
-        )
-        assessment_type = assessment_config.intake.scoring
-        logger.info(f"Assessments type determined: {assessment_type}")
-
-        assessment = Assessment(
-            client_pseudo_id=self.client_pseudo_id,
-            intake_id=self.id,
-            assessment_type=assessment_type,
-        )
-        assessment = await create_assessment(session, assessment)
-        execution = await assessment.schedule_execution(session)
-        await session.refresh(assessment)
-
-        return execution
+        return plan.id
 
     # -------------------------- Conversation Methods ----------------------------------
     @property

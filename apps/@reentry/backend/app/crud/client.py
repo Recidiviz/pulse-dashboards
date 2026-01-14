@@ -10,7 +10,6 @@ from app.crud.intake import (
     get_latest_completed_intake_by_client_pseudo_id,
 )
 from app.crud.utils import apply_search_filter, paginate, sort_clients_by_name
-from app.models.assessment import Assessment
 from app.models.intake import (
     ClientAddress,
     Intake,
@@ -186,7 +185,6 @@ async def get_paginated_client_list(
         return await handle_new_client_filter(
             session, clients, bq_client_ids, sort_by, sort_order, page, page_size
         )
-
 
     # Complex filters - requires full status computation
     # status_filter must be one of: PROCESSING, INTAKE_COMPLETE, ERROR
@@ -516,23 +514,6 @@ async def handle_complex_status_filter(
     else:
         plans_with_executions = []
 
-    # Get assessments with executions for completed intakes
-    assessments_by_intake = {}
-    if completed_intake_ids:
-        assessments_query = (
-            select(Assessment, Execution)
-            .where(Assessment.intake_id.in_(completed_intake_ids))
-            .outerjoin(Execution, Assessment.execution_id == Execution.id)
-        )
-        assessments_with_executions = (await session.exec(assessments_query)).all()
-        for assessment, execution in assessments_with_executions:
-            assessment.execution = execution
-            if assessment.intake_id not in assessments_by_intake:
-                assessments_by_intake[assessment.intake_id] = []
-            assessments_by_intake[assessment.intake_id].append(assessment)
-    else:
-        assessments_with_executions = []
-
     # Get recordings with executions for completed intakes
     recordings_by_intake = {}
     if completed_intake_ids:
@@ -583,16 +564,13 @@ async def handle_complex_status_filter(
         for intake in client_completed_intakes:
             # Get related entities by intake_id
             plan = plans_by_intake.get(intake.id)
-            assessments = assessments_by_intake.get(intake.id, [])
 
             generations = []
             if plan and plan.id in generations_by_plan:
                 generations = generations_by_plan[plan.id]
 
             # Compute processing status for this intake
-            processing_status = compute_processing_status(
-                assessments, plan, intake, generations
-            )
+            processing_status = compute_processing_status(plan, intake, generations)
 
             # Compute frontend status for this intake
             frontend_status = compute_frontend_status(intake.status, processing_status)
@@ -771,14 +749,6 @@ async def reset_client_data(session: AsyncSession, client_pseudo_id: str) -> int
         for survey in surveys.all():
             await session.delete(survey)
             total_deleted += 1
-
-    # Delete assessments before intakes (assessments reference intake_id)
-    assessments = await session.exec(
-        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
-    )
-    for assessment in assessments.all():
-        await session.delete(assessment)
-        total_deleted += 1
 
     # Delete plans and their children before intakes (plans reference intake_id)
     plans_list = (

@@ -1,8 +1,8 @@
 """
-Evaluate summary generation using fake conversation and assessment data.
+Evaluate summary generation using fake conversation data.
 
 This command allows testing the summary generation pipeline without running a full conversation,
-using pre-defined conversation history and assessment data from JSON files or default values.
+using pre-defined conversation history  data from JSON files or default values.
 """
 
 import json
@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from app.core.data_config.output_configs.loader import OutputFileLoader
-from app.models.assessment import Assessment
 from app.utils.intake_summary_runner import generate_summary
 
 from ..base import cli
@@ -50,21 +49,6 @@ DEFAULT_CONVERSATION = [
     },
 ]
 
-# Default assessment data
-DEFAULT_ASSESSMENT = {
-    "id": "fake-assessment-id",
-    "client_pseudo_id": "fake-client",
-    "assessment_type": "oras_pit",
-    "scores": {
-        "Criminal History": 8,
-        "Education/Employment": 6,
-        "Family/Social Support": 5,
-        "Substance Abuse": 7,
-    },
-    "runs_steps": {},
-    "misses_counts": {},
-}
-
 
 def format_conversation_from_messages(messages: List[Dict[str, Any]]) -> str:
     """
@@ -95,42 +79,17 @@ def format_conversation_from_messages(messages: List[Dict[str, Any]]) -> str:
     return formatted_output
 
 
-def create_assessment_from_dict(assessment_data: Dict[str, Any]) -> Assessment:
-    """
-    Create an Assessment object from dictionary data.
-
-    Args:
-        assessment_data: Dictionary containing assessment information
-
-    Returns:
-        Assessment object
-    """
-    # Create a basic Assessment object with the provided data
-    assessment = Assessment(
-        id=assessment_data.get("id"),
-        client_pseudo_id=assessment_data.get("client_pseudo_id", "fake-client"),
-        assessment_type=assessment_data.get("assessment_type"),
-        scores=assessment_data.get("scores"),
-        runs_steps=assessment_data.get("runs_steps"),
-        misses_counts=assessment_data.get("misses_counts"),
-    )
-
-    return assessment
-
-
 @cli.command()
 async def evaluate_summary(
     output_config_name: str,
     conversation_file: Optional[str] = None,
-    assessment_file: Optional[str] = None,
 ):
     """
-    Evaluate summary generation with fake conversation and assessment data.
+    Evaluate summary generation with fake conversation data.
 
     Args:
         output_config_name: Name of the output config YAML file (e.g., "summary-default-v0.yaml")
         conversation_file: Optional path to JSON file with conversation messages (uses default if not provided)
-        assessment_file: Optional path to JSON file with assessment data (uses default if not provided)
     """
     logger.info("Starting summary evaluation")
     logger.info(f"Output config: {output_config_name}")
@@ -154,20 +113,6 @@ async def evaluate_summary(
                 f"Using default conversation with {len(conversation_messages)} messages"
             )
 
-        # Load assessment from file or use default
-        if assessment_file:
-            assessment_path = Path(assessment_file)
-            if not assessment_path.exists():
-                print(f"❌ Error: Assessment file not found: {assessment_file}")
-                return
-
-            with open(assessment_path, "r") as f:
-                assessment_data = json.load(f)
-            logger.info("Loaded assessment data from file")
-        else:
-            assessment_data = DEFAULT_ASSESSMENT
-            logger.info("Using default assessment data")
-
         # Load output config using the loader
         yaml_content = OutputFileLoader.read_file_content(output_config_name)
         output_config = OutputFileLoader.validate_yaml_content(yaml_content)
@@ -181,30 +126,14 @@ async def evaluate_summary(
             conversation_messages
         )
 
-        # Create assessment objects
-        # Support both single assessment dict or list of assessments
-        if isinstance(assessment_data, list):
-            assessments = [create_assessment_from_dict(a) for a in assessment_data]
-        else:
-            assessments = [create_assessment_from_dict(assessment_data)]
-
-        logger.info(f"Created {len(assessments)} assessment objects")
-
         # Generate summary
         print("\n" + "=" * 60)
         print("📝 GENERATING SUMMARY")
         print("=" * 60)
 
-        summary, assessment_summary = await generate_summary(
-            formatted_conversation, assessments, output_config
-        )
+        summary = await generate_summary(formatted_conversation, output_config)
 
         # Print results
-        print("\n" + "=" * 60)
-        print("📊 ASSESSMENT SUMMARY")
-        print("=" * 60)
-        print(assessment_summary)
-
         print("\n" + "=" * 60)
         print("📄 CLIENT SUMMARY")
         print("=" * 60)

@@ -12,7 +12,6 @@ from taskiq import TaskiqDepends
 from taskiq.depends.progress_tracker import ProgressTracker
 
 from app.core.db import AsyncSession, get_session
-from app.crud.assessment import get_assessments_by_intake_id
 from app.crud.intake import get_intake_messages
 from app.crud.plan import Plan, get_plan_by_id
 from app.crud.plan_asset import PlanAsset, get_asset_by_filename
@@ -119,47 +118,6 @@ async def fetch_assets(
 
     task_logger.info("Generating summary from intake messages")
 
-    # Fetch assessments related to this intake
-    task_logger.info("Fetching assessments for intake")
-    assessments = await get_assessments_by_intake_id(session, intake_id=intake.id)
-
-    if assessments:
-        task_logger.info(
-            f"Found {len(assessments)} assessment(s) for intake {intake.id}"
-        )
-
-        # Check if assessments.json already exists
-        existing_assessments_asset = await get_asset_by_filename(
-            session, plan.id, "assessments.json"
-        )
-        if not existing_assessments_asset or not existing_assessments_asset.file_blob:
-            # Convert assessment data to JSON for storage
-            assessments_json = []
-            for assessment in assessments:
-                assessment_data = {
-                    "id": str(assessment.id),
-                    "client_pseudo_id": assessment.client_pseudo_id,
-                    "scores": assessment.scores,
-                    "runs_steps": assessment.runs_steps,
-                    "misses_counts": assessment.misses_counts,
-                    "status": assessment.status,
-                }
-                assessments_json.append(assessment_data)
-
-            # Store assessments as a plan asset
-            asset_assessments_json = PlanAsset(
-                plan_id=plan.id,
-                filename="assessments.json",
-                file_blob=json.dumps(assessments_json).encode("utf8"),
-                mimetype="application/json",
-            )
-            session.add(asset_assessments_json)
-            task_logger.info("Created assessments.json asset")
-        else:
-            task_logger.info("Reusing existing assessments.json asset")
-    else:
-        task_logger.info(f"No assessments found for intake {intake.id}")
-
     # Check if summary already exists before generating
     existing_summary_asset = await get_asset_by_filename(session, plan.id, "summary.md")
     if not existing_summary_asset or not existing_summary_asset.file_blob:
@@ -170,9 +128,8 @@ async def fetch_assets(
             intake.assessment_config_id, session
         )
 
-        summary, assessment = await generate_summary(
+        summary = await generate_summary(
             formatted_messages,
-            assessments or [],
             assessment_config,
             client_pseudo_id=plan.client_pseudo_id,
         )
@@ -180,7 +137,6 @@ async def fetch_assets(
     else:
         task_logger.info("Reusing existing summary.md asset, skipping generation")
         summary = None  # Don't create new summary assets
-        assessment = None
 
     # Check if messages.json already exists
     if messages_json:
@@ -209,15 +165,6 @@ async def fetch_assets(
         session.add(asset_summary_json)
         task_logger.info("Created summary.md asset")
 
-        if assessment:
-            asset_assessment_summary_md = PlanAsset(
-                plan_id=plan.id,
-                filename="assessment_summary.md",
-                file_blob=assessment.encode("utf8"),
-                mimetype="text/markdown",
-            )
-            session.add(asset_assessment_summary_md)
-            task_logger.info("Created assessment_summary.md asset")
     else:
         task_logger.info("Skipped creating summary assets (reusing existing)")
 
@@ -303,7 +250,6 @@ async def plan_create(
     await execution.log_progress(session, 10, "Fetching assets", logger=task_logger)
     await fetch_assets(session=session, plan=plan, task_logger=task_logger)
 
-    # Check if plan config exists - if not, we only do assessment (no action plan generation)
     from app.utils.config_loader import ConfigLoader
 
     if not plan.intake:

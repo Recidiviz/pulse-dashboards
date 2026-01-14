@@ -2,7 +2,7 @@
 Clean, systematic tests for processing status detection and retry functionality.
 
 Test matrix:
-- Entities: assessment, plan, recording, plan_generation
+- Entities: plan, recording, plan_generation
 - Scenarios: stuck_pending, stuck_in_progress, failed, healthy_pending, healthy_in_progress, missing_entity, missing_execution
 
 Rules:
@@ -18,7 +18,6 @@ import pytest
 from httpx import AsyncClient
 
 from app.core.db import AsyncSession
-from app.models.assessment import Assessment
 from app.models.base import IntakeType
 from app.models.intake import Intake
 from app.models.models import Execution, Plan, PlanGeneration
@@ -32,7 +31,7 @@ class TestCase:
 
     def __init__(
         self,
-        entity_type: Literal["assessment", "plan", "recording", "plan_generation"],
+        entity_type: Literal["plan", "recording", "plan_generation"],
         scenario: Literal[
             "stuck_pending",
             "stuck_in_progress",
@@ -94,7 +93,7 @@ class TestCase:
 # Generate all test cases
 TEST_CASES = [
     TestCase(entity, scenario)
-    for entity in ["assessment", "plan", "recording", "plan_generation"]
+    for entity in ["plan", "recording", "plan_generation"]
     for scenario in [
         "stuck_pending",
         "stuck_in_progress",
@@ -128,7 +127,6 @@ async def setup_test_scenario(
     mock_intake,
 ) -> tuple[
     Intake,
-    Optional[Assessment],
     Optional[Plan],
     Optional[RecordingSession],
     Optional[PlanGeneration],
@@ -147,7 +145,6 @@ async def setup_test_scenario(
     await async_session.refresh(mock_intake)
     intake = mock_intake
 
-    assessment = None
     plan = None
     recording = None
     plan_generation = None
@@ -157,63 +154,8 @@ async def setup_test_scenario(
     ).replace(tzinfo=None)
     execution_status = get_execution_status(test_case.scenario)
 
-    # === ASSESSMENT ===
-    if test_case.entity_type == "assessment":
-        if test_case.scenario == "missing_entity":
-            # Don't create assessment at all
-            pass
-        elif test_case.scenario == "missing_execution":
-            # Create assessment without execution
-            assessment = Assessment(
-                client_pseudo_id=client_pseudo_id,
-                intake_id=intake.id,
-                execution_id=None,
-            )
-            async_session.add(assessment)
-            await async_session.commit()
-        else:
-            # Create assessment with execution
-            execution = Execution(
-                status=execution_status,
-                created_at=time_ago,
-                updated_at=time_ago,
-                task_id=f"test-task-{test_case.id}",
-                table_name="assessment",
-                table_entity_id=None,
-            )
-            async_session.add(execution)
-            await async_session.commit()
-            await async_session.refresh(execution)
-
-            assessment = Assessment(
-                client_pseudo_id=client_pseudo_id,
-                execution_id=execution.id,
-                intake_id=intake.id,
-            )
-            async_session.add(assessment)
-            await async_session.commit()
-            await async_session.refresh(assessment)
-
-            execution.table_entity_id = assessment.id
-            async_session.add(execution)
-            await async_session.commit()
-
     # === PLAN ===
-    elif test_case.entity_type == "plan":
-        # Create prerequisite: completed assessment
-        assess_exec = Execution(status="completed")
-        async_session.add(assess_exec)
-        await async_session.commit()
-
-        assessment = Assessment(
-            client_pseudo_id=client_pseudo_id,
-            execution_id=assess_exec.id,
-            intake_id=intake.id,
-            status="completed",
-        )
-        async_session.add(assessment)
-        await async_session.commit()
-
+    if test_case.entity_type == "plan":
         if test_case.scenario == "missing_entity":
             # Don't create plan at all
             pass
@@ -303,20 +245,6 @@ async def setup_test_scenario(
 
     # === PLAN GENERATION ===
     elif test_case.entity_type == "plan_generation":
-        # Create prerequisites: completed assessment and completed plan
-        assess_exec = Execution(status="completed")
-        async_session.add(assess_exec)
-        await async_session.commit()
-
-        assessment = Assessment(
-            client_pseudo_id=client_pseudo_id,
-            execution_id=assess_exec.id,
-            intake_id=intake.id,
-            status="completed",
-        )
-        async_session.add(assessment)
-        await async_session.commit()
-
         plan_exec = Execution(status="completed")
         async_session.add(plan_exec)
         await async_session.commit()
@@ -370,7 +298,7 @@ async def setup_test_scenario(
             async_session.add(gen_exec)
             await async_session.commit()
 
-    return intake, assessment, plan, recording, plan_generation
+    return intake, plan, recording, plan_generation
 
 
 @pytest.mark.parametrize("test_case", TEST_CASES, ids=[tc.id for tc in TEST_CASES])
@@ -423,12 +351,10 @@ async def test_retry_processing_succeeds(
         return mock_task_result
 
     with (
-        patch("app.tasks.assessment.assessment_task") as mock_assessment_task,
         patch("app.tasks.plan_create.plan_create_task") as mock_plan_task,
         patch("app.tasks.action_plan.generate_action_plan_task") as mock_gen_task,
         patch("app.tasks.recording.process_recording_task") as mock_recording_task,
     ):
-        mock_assessment_task.kiq = mock_kiq
         mock_plan_task.kiq = mock_kiq
         mock_gen_task.kiq = mock_kiq
         mock_recording_task.kiq = mock_kiq
@@ -477,12 +403,11 @@ async def test_retry_processing_rejects_healthy(
 @pytest.mark.parametrize(
     "test_case",
     [
-        TestCase("assessment", "stuck_pending"),
         TestCase("plan", "failed"),
         TestCase("recording", "stuck_in_progress"),
         TestCase("plan_generation", "failed"),
     ],
-    ids=["assessment", "plan", "recording", "plan_generation"],
+    ids=["plan", "recording", "plan_generation"],
 )
 async def test_retry_processing_race_condition(
     mock_clientdata_service,
@@ -510,12 +435,10 @@ async def test_retry_processing_race_condition(
         return mock_task_result
 
     with (
-        patch("app.tasks.assessment.assessment_task") as mock_assessment_task,
         patch("app.tasks.plan_create.plan_create_task") as mock_plan_task,
         patch("app.tasks.action_plan.generate_action_plan_task") as mock_gen_task,
         patch("app.tasks.recording.process_recording_task") as mock_recording_task,
     ):
-        mock_assessment_task.kiq = mock_kiq
         mock_plan_task.kiq = mock_kiq
         mock_gen_task.kiq = mock_kiq
         mock_recording_task.kiq = mock_kiq
