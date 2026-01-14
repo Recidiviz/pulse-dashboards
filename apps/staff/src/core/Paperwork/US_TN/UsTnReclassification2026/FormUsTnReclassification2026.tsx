@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import { Opportunity } from "../../../../WorkflowsStore";
@@ -34,6 +34,7 @@ import {
   TextboxWithHeader,
   TotalScore,
 } from "../common/Classification2026";
+import { PostDownloadModal } from "../common/Classification2026/NextStepsModal";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import { assessmentQuestions } from "./assessmentQuestions";
 
@@ -63,6 +64,8 @@ export const FormUsTnReclassification2026 = observer(
     opportunity: Opportunity;
   }) {
     const formRef = React.useRef<HTMLDivElement>(null);
+    const [postDownloadModalIsOpen, setPostDownloadModalIsOpen] =
+      useState<boolean>(false);
     const { derivedData } =
       useOpportunityFormContext() as UsTnDiagnosticClassification2026Form;
 
@@ -70,7 +73,10 @@ export const FormUsTnReclassification2026 = observer(
       <FormContainer
         heading="RCAF"
         agencyName="TDOC"
-        onClickDownload={async () => alert("Download clicked")}
+        onClickDownload={async () => {
+          alert("Download clicked");
+          setPostDownloadModalIsOpen(true);
+        }}
         opportunity={opportunity}
         downloadButtonLabel="Download as .DOCX"
       >
@@ -155,6 +161,10 @@ export const FormUsTnReclassification2026 = observer(
             </ClassificationFormPage>
           </PrintablePage>
         </FormViewer>
+        <PostDownloadModal
+          isOpen={postDownloadModalIsOpen}
+          onClose={() => setPostDownloadModalIsOpen(false)}
+        />
       </FormContainer>
     );
   },
