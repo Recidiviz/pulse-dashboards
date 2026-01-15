@@ -91,7 +91,7 @@ const ClientProfilePage = () => {
         );
     }
 
-    const has_data = intakeList?.find(i => i.status !== "created")
+    const has_data = intakeList && intakeList.length > 0
 
     return (
         <>
@@ -100,8 +100,7 @@ const ClientProfilePage = () => {
                 <div className="flex w-full justify-between items-center mt-2 max-w-[100rem]">
                     <BackButton href={`/clients/`} buttonText={"Home"} />
                     <div className={"flex w-full max-w-7xl  justify-end gap-2"}>
-                        {isFeatureEnabled("INTAKE_RESET") && intakeList &&
-                          has_data && (
+                        {isFeatureEnabled("INTAKE_RESET") && has_data && (
                               <PrimaryButton
                                   buttonText={
                                   isResettingInProgress ? (
