@@ -145,6 +145,7 @@ export type FeatureVariant =
   | "editCountyFields"
   | "mandatoryMinimum"
   | "snoozeCompanions"
+  | "splitParoleProbationOutcomes"
   | "SARBuilder";
 
 export type FeatureVariantValue = {
@@ -222,6 +223,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usPaUnclearEligibility: {},
   usIdTasksV2: {},
   SARBuilder: {},
+  splitParoleProbationOutcomes: {},
   supervisorHomepageReviewCard: {},
   insightsSupervisorOpportunityNotifications: {},
 };
@@ -276,6 +278,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],
         },
+        splitParoleProbationOutcomes: { activeTenants: ["US_MI"] },
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         SARBuilder: { activeTenants: ["US_MO"] },
