@@ -55,10 +55,12 @@ export async function getRecidivizUserProfile(
   if (!email.endsWith("@recidiviz.org"))
     throw new Error("Invalid email address");
 
-  const permissions: Permission[] = ["enhanced", "live_data", "translator"]
+  const permissions: Permission[] = ["enhanced", "live_data", "translator"];
 
-  if (process.env["SENTRY_ENV"] !== "production") {
-    permissions.push("global_write_sans_prod")
+  if (
+    ["development", "staging", "demo"].includes(process.env["SENTRY_ENV"] ?? "")
+  ) {
+    permissions.push("global_write");
   }
 
   return {
