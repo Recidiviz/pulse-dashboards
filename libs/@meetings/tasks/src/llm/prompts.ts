@@ -16,7 +16,8 @@
 // =============================================================================
 
 import dedent from "dedent";
-import { template, TemplateExecutor } from "lodash";
+import type { TemplateExecutor } from "lodash";
+import { template } from "lodash-es";
 
 /**
  * Prompt Templates

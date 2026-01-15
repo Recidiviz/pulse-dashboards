@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { omit } from "lodash";
+import { omit } from "lodash-es";
 
 import {
   UsMeEarlyTerminationReferralRecordRaw,

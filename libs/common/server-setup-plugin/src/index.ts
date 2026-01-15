@@ -27,7 +27,7 @@ import {
 import Fastify from "fastify";
 import fastifyAuth0Verify from "fastify-auth0-verify";
 import firebaseAdmin from "firebase-admin";
-import has from "lodash/has";
+import { has } from "lodash-es";
 
 import { ENV_TO_LOGGER } from "~server-setup-plugin/logger";
 import type { BuildServerOptions } from "~server-setup-plugin/types";

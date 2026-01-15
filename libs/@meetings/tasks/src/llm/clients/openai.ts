@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { omit } from "lodash";
+import { omit } from "lodash-es";
 import OpenAI from "openai";
 import { ChatCompletionMessageParam } from "openai/src/resources/chat/completions/completions";
 import { ResponseFormatJSONSchema } from "openai/src/resources/shared";

@@ -25,7 +25,7 @@ import {
   setDoc,
   writeBatch,
 } from "firebase/firestore";
-import { omit } from "lodash";
+import { omit } from "lodash-es";
 import tk from "timekeeper";
 import { expect, Mock } from "vitest";
 
