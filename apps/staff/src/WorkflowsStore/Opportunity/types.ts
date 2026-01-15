@@ -314,8 +314,8 @@ export type OpportunityTab =
   | "Eligibility Unclear"
 
   //For US_MI
-  | "Eligible for Re-screen Now"
-  | "Almost Eligible for Re-screen"
+  | "Eligible for Review"
+  | "Almost Eligible for Review"
   | "Needs Re-Screen"
   | "Movement Pending"
 

@@ -351,8 +351,8 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "ELIGIBILITY STATUS",
           tabs: [
-            "Eligible for Re-screen Now",
-            "Almost Eligible for Re-screen",
+            "Eligible for Review",
+            "Almost Eligible for Review",
             "Needs Re-Screen",
             "Movement Pending",
             "Marked Ineligible",
