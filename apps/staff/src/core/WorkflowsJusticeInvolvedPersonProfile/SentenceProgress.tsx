@@ -103,11 +103,14 @@ const TimelineToday = styled.circle`
   r: ${rem(4.5)};
 `;
 
-function formatSentenceLength(startDate: Date, expirationDate: Date): string {
+export function formatSentenceLength(
+  startDate: Date,
+  expirationDate: Date,
+): string {
   return formatDateRange(startDate, expirationDate);
 }
 
-function formatTimeToGo(expirationDate: Date): string {
+export function formatTimeToGo(expirationDate: Date): string {
   const today = startOfDay(new Date());
   const lastDay = startOfDay(expirationDate);
 
@@ -121,7 +124,26 @@ type TimelineLabels = {
   end: string;
 };
 
-const OfficerAssignmentDisplay = ({ officerId }: { officerId?: string }) => {
+export const LifeSentenceDisplay = ({
+  admissionDate,
+}: {
+  admissionDate?: Date;
+}) => {
+  return (
+    <Sans14>
+      Serving a life sentence since{" "}
+      <LifeSentenceAdmissionDate>
+        {formatWorkflowsDate(admissionDate)}
+      </LifeSentenceAdmissionDate>
+    </Sans14>
+  );
+};
+
+export const OfficerAssignmentDisplay = ({
+  officerId,
+}: {
+  officerId?: string;
+}) => {
   if (!officerId) {
     return null;
   }
@@ -290,12 +312,7 @@ export function IncarcerationProgress({
       <VizHeader>
         <div>
           <Title>Incarceration</Title>
-          <Sans14>
-            Serving a life sentence since{" "}
-            <LifeSentenceAdmissionDate>
-              {formatWorkflowsDate(admissionDate)}
-            </LifeSentenceAdmissionDate>
-          </Sans14>
+          <LifeSentenceDisplay admissionDate={admissionDate} />
         </div>
         <OfficerAssignmentDisplay officerId={officerId} />
       </VizHeader>

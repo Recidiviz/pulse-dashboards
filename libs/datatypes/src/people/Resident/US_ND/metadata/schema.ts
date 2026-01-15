@@ -22,5 +22,6 @@ import { nullishAsUndefined } from "../../../../utils/zod";
 export const usNdResidentMetadataSchema = z.object({
   stateCode: z.literal("US_ND"),
   paroleReviewDate: z.string(),
+  EIGHTYFIVEPercentDate: nullishAsUndefined(z.string()),
   paroleDate: nullishAsUndefined(z.string()),
 });

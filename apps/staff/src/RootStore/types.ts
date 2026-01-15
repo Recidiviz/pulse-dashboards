@@ -76,6 +76,7 @@ export type FeatureVariant =
   | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
   | "ineligibleOpportunityTypesOnFullProfile"
+  | "sentenceProgressV2"
 
   //// Arizona
   | "usAzFacilitySearch"
@@ -226,6 +227,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   splitParoleProbationOutcomes: {},
   supervisorHomepageReviewCard: {},
   insightsSupervisorOpportunityNotifications: {},
+  sentenceProgressV2: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -282,6 +284,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         SARBuilder: { activeTenants: ["US_MO"] },
+        sentenceProgressV2: { activeTenants: ["US_ND"] },
       };
 
 export type LanternMethodologyByTenant = {
