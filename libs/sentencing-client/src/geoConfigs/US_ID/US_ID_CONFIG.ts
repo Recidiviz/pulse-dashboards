@@ -52,4 +52,5 @@ export const US_ID_CONFIG: GeoConfig = {
   orgName: "IDOC",
   infoPageLink: "https://www.recidiviz.org/sentencing/idaho",
   convertDistrictToDistrictCodeFn: convertDistrictToDistrictCode,
+  showLsirScoreHelperText: true,
 };

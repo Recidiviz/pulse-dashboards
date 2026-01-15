@@ -151,7 +151,7 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
         errorMessage="Please enter a number between 0 and 54."
       />
 
-      {!caseAttributes.isLsirScoreLocked && (
+      {!caseAttributes.isLsirScoreLocked && geoConfig.showLsirScoreHelperText && (
         <Styled.InputDescription>
           If this is a File Review or if the LSI-R has not yet been scored,
           enter the most recent risk score for this individual.

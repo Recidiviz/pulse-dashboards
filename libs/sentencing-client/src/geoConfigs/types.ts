@@ -58,4 +58,5 @@ export type GeoConfig = {
   hideRecommendationOptionsStats?: boolean;
   hideRecidivismRatesChart?: boolean;
   showFactorsAndNeeds?: boolean;
+  showLsirScoreHelperText?: boolean;
 };
