@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../init";
-import { stateRouter } from "./routes/state/router";
-import { userRouter } from "./routes/user/router";
+import { TRPCError } from "@trpc/server";
 
-export const appRouter = router({
-  user: userRouter,
-  state: stateRouter,
-});
+import { baseProcedure } from "../../../init";
 
-// clients will need the router's type definition only
-export type AppRouter = typeof appRouter;
+/*
+ * Creates a procedure that is restricted to a specific state.
+ * We've already checked that the user is allowed to access ctx.stateCode
+ * in validateAuthPayload().
+ */
+export const restrictedProcedureForState = (expectedStateCode: string) =>
+  baseProcedure.use(async ({ ctx, next }) => {
+    if (ctx.stateCode !== expectedStateCode) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `This endpoint is for ${expectedStateCode} but request was made for ${ctx.stateCode}`,
+      });
+    }
+
+    return next({ ctx });
+  });

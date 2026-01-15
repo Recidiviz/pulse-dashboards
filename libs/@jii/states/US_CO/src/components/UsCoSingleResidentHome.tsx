@@ -17,8 +17,15 @@
 
 import { usePageTitle } from "~@jii/common-ui";
 
+import { UsCoProgramsList } from "./UsCoProgramsList";
+
 export function UsCoSingleResidentHome() {
   usePageTitle("Home");
 
-  return <div>Hello, Colorado!</div>;
+  return (
+    <div>
+      <h1>Home</h1>
+      <UsCoProgramsList />
+    </div>
+  );
 }

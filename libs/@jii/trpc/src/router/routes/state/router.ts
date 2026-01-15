@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../init";
-import { stateRouter } from "./routes/state/router";
-import { userRouter } from "./routes/user/router";
+import { router } from "../../../init";
+import { usCoRouter } from "./US_CO/router";
 
-export const appRouter = router({
-  user: userRouter,
-  state: stateRouter,
+export const stateRouter = router({
+  usCo: usCoRouter,
 });
-
-// clients will need the router's type definition only
-export type AppRouter = typeof appRouter;
