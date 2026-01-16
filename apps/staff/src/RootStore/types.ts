@@ -263,13 +263,11 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIaFinesAndFees: {},
         usIaSupervisionLevelDowngrade: {},
         hideDenialRevert: { activeTenants: ["US_AZ"] },
-        usIdTasksV2: undefined,
+        usIdTasksV2: {},
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
       }
     : {
         ...allFeatureVariants,
-        // Undefined so that Recidiviz users see both FVs in staging
-        usIdTasksV2: undefined,
         usOrEarnedDischargeSentence: undefined,
         usMeCaseNoteSnooze: isDemoMode() ? undefined : {},
         outcomesModule: {
