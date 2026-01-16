@@ -17,7 +17,9 @@
 
 import { router } from "../../../init";
 import { usCoRouter } from "./US_CO/router";
+import { usNeRouter } from "./US_NE/router";
 
 export const stateRouter = router({
   usCo: usCoRouter,
+  usNe: usNeRouter,
 });

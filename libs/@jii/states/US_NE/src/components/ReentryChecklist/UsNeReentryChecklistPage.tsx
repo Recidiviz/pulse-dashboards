@@ -18,16 +18,24 @@
 import { Header34 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
 import { BackLink, SlateCopy, usePageTitle } from "~@jii/common-ui";
-import { useSingleResidentContext } from "~@jii/data";
+import {
+  hydrateTemplate,
+  useRootStore,
+  useSingleResidentContext,
+} from "~@jii/data";
 import { State } from "~@jii/paths";
 import { Button, spacing } from "~design-system";
-import { withPresenterManager } from "~hydration-utils";
+import {
+  Hydratable,
+  HydratorWithErrorLogging,
+  withPresenterManager,
+} from "~hydration-utils";
 
 import { useUsNeContext } from "../usNeContext";
 import { ChecklistProgressBar } from "./ChecklistProgressBar";
@@ -92,12 +100,20 @@ const ManagedComponent = observer(function ManagedComponent({
         />
       ))}
 
+      {presenter.writeError && (
+        <SlateCopy>
+          {hydrateTemplate(copy.writeErrorMessage, {
+            writeError: presenter.writeError,
+          })}
+        </SlateCopy>
+      )}
+
       <SaveButtonContainer>
         <Button
           onClick={() => presenter.saveState()}
-          disabled={!presenter.isDirty}
+          disabled={!presenter.isDirty || presenter.isSaving}
         >
-          Save
+          {presenter.isSaving ? "Saving..." : "Save"}
         </Button>
       </SaveButtonContainer>
 
@@ -110,18 +126,38 @@ const ManagedComponent = observer(function ManagedComponent({
   );
 });
 
+const FallbackComponent = ({ error }: { error: Error }) => {
+  return <div>Error loading reentry checklist: {error.message}</div>;
+};
+
+const ChecklistHydrator: FC<{
+  children: ReactNode;
+  hydratable: Hydratable;
+}> = ({ children, hydratable }) => {
+  return (
+    <HydratorWithErrorLogging
+      hydratable={hydratable}
+      fallback={FallbackComponent}
+    >
+      {children}
+    </HydratorWithErrorLogging>
+  );
+};
+
 function usePresenter() {
   const { resident } = useSingleResidentContext();
   const {
     copy: { reentryChecklist: copy },
   } = useUsNeContext();
-  return new UsNeReentryChecklistPresenter(resident, copy);
+  const { apiClient } = useRootStore();
+  return new UsNeReentryChecklistPresenter(resident, copy, apiClient);
 }
 
 const UsNeReentryChecklistPage = withPresenterManager({
   ManagedComponent,
   usePresenter,
   managerIsObserver: true,
+  HydratorComponent: ChecklistHydrator,
 });
 
 export default UsNeReentryChecklistPage;

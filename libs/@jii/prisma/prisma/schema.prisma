@@ -14,3 +14,13 @@ model UserProperties {
     id                String    @id
     hasSeenOnboarding DateTime?
 }
+
+// US_NE reentry checklist questions
+model usNeReentryChecklistQuestion {
+    pseudonymizedId String
+    questionId      String
+    value           Boolean
+    updatedAt       DateTime @updatedAt
+
+    @@id([pseudonymizedId, questionId])
+}

@@ -15,36 +15,53 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react";
+import { TRPCClientError } from "@trpc/client";
 import { addDays, addMonths, addYears, isBefore, min } from "date-fns";
-import { makeAutoObservable } from "mobx";
-import { z } from "zod";
+import { flowResult, makeAutoObservable } from "mobx";
 
-import { dateStringSchema, ResidentRecord } from "~datatypes";
+import { DataAPI } from "~@jii/data";
+import type { JiiAppRouterOutputs } from "~@jii/trpc-types";
+import { ResidentRecord } from "~datatypes";
+import {
+  Hydratable,
+  HydratesFromSource,
+  HydrationState,
+} from "~hydration-utils";
 
 import { UsNeCopy } from "../../configs/copy";
 
-export type ChecklistState = Record<string, boolean>;
+type ReentryChecklistData =
+  JiiAppRouterOutputs["state"]["usNe"]["getReentryChecklist"];
+export type ChecklistState = ReentryChecklistData["questions"];
 
-const savedChecklistDataSchema = z.object({
-  state: z.record(z.boolean()),
-  timestamp: dateStringSchema,
-  residentId: z.string(),
-});
-
-export type SavedChecklistData = z.infer<typeof savedChecklistDataSchema>;
-
-export class UsNeReentryChecklistPresenter {
-  private savedState: ChecklistState = {};
+export class UsNeReentryChecklistPresenter implements Hydratable {
+  private savedState?: ChecklistState;
   private liveState: ChecklistState = {};
   lastSaved?: Date;
+  isSaving = false;
+  private hydrator: HydratesFromSource;
+  writeError?: string;
 
   constructor(
     private readonly resident: ResidentRecord,
     private readonly copy: UsNeCopy["reentryChecklist"],
+    private readonly apiClient: DataAPI,
   ) {
-    makeAutoObservable(this);
-    // Load saved data once during initialization
-    this.loadSavedData();
+    makeAutoObservable(this, {}, { autoBind: true });
+
+    this.hydrator = new HydratesFromSource({
+      expectPopulated: [this.expectChecklistDataPopulated],
+      populate: flowResult(this.loadSavedData),
+    });
+  }
+
+  get hydrationState(): HydrationState {
+    return this.hydrator.hydrationState;
+  }
+
+  hydrate(): Promise<void> {
+    return this.hydrator.hydrate();
   }
 
   /**
@@ -59,7 +76,9 @@ export class UsNeReentryChecklistPresenter {
   get isDirty(): boolean {
     // Compare live state to saved state for displayed items only
     for (const key of this.displayedItemKeys) {
-      if ((this.liveState[key] ?? false) !== (this.savedState[key] ?? false)) {
+      if (
+        (this.liveState[key] ?? false) !== (this.savedState?.[key] ?? false)
+      ) {
         return true;
       }
     }
@@ -149,46 +168,56 @@ export class UsNeReentryChecklistPresenter {
     };
   }
 
-  private get storageKey() {
-    return "usNeReentryChecklistState" as const;
+  /**
+   * Loads saved data from the database once
+   */
+  private *loadSavedData() {
+    const data: ReentryChecklistData =
+      yield this.apiClient.trpc.state.usNe.getReentryChecklist.query({
+        pseudonymizedId: this.residentId,
+      });
+
+    this.savedState = data.questions;
+    this.liveState = data.questions;
+    this.lastSaved = data.lastUpdated;
   }
 
   /**
-   * Loads saved data from localStorage once
+   * Validates that checklist data has been populated
    */
-  private loadSavedData(): void {
-    const saved = localStorage.getItem(this.storageKey);
-    if (!saved) {
-      return;
+  private expectChecklistDataPopulated() {
+    if (this.savedState === undefined) {
+      throw new Error("Failed to populate checklist data");
     }
+  }
+
+  /**
+   * Saves the current live state of the checklist to the database
+   */
+  *saveState() {
+    this.isSaving = true;
+    this.writeError = undefined;
 
     try {
-      const parsed = JSON.parse(saved);
-      const validated = savedChecklistDataSchema.parse(parsed);
+      const data: ReentryChecklistData =
+        yield this.apiClient.trpc.state.usNe.updateReentryChecklist.mutate({
+          pseudonymizedId: this.residentId,
+          questions: this.liveState,
+        });
 
-      // Only use data if it matches the current resident
-      if (validated.residentId === this.residentId) {
-        this.savedState = validated.state;
-        this.liveState = validated.state;
-        this.lastSaved = validated.timestamp;
+      this.savedState = data.questions;
+      this.liveState = data.questions;
+      this.lastSaved = data.lastUpdated;
+      this.isSaving = false;
+    } catch (e) {
+      // Attempted writes by staff or Recidiviz users on prod aren't bugs,
+      // so don't log them to Sentry
+      if (!(e instanceof TRPCClientError) || e.data.code !== "FORBIDDEN") {
+        Sentry.captureException(e);
       }
-    } catch {
-      // JSON parse error or Zod validation failed - ignore and start fresh
+      this.writeError =
+        e instanceof Error ? e.message : "An unknown error occurred";
+      this.isSaving = false;
     }
-  }
-
-  /**
-   * Saves the current live state of the checklist to localStorage
-   */
-  async saveState(): Promise<void> {
-    const timestamp = new Date();
-    const dataToSave: z.input<typeof savedChecklistDataSchema> = {
-      state: this.liveState,
-      timestamp: timestamp.toISOString(),
-      residentId: this.residentId,
-    };
-
-    localStorage.setItem(this.storageKey, JSON.stringify(dataToSave));
-    this.loadSavedData();
   }
 }

@@ -71,6 +71,7 @@ export type UsNeCopy = {
   reentryChecklist: {
     pageTitle: string;
     subtitle: string;
+    writeErrorMessage: string;
     sections: {
       id: string;
       title: string;
@@ -266,6 +267,7 @@ export const usNeCopy: UsNeCopy = {
     pageTitle: "Roadmap to Reentry",
     subtitle:
       "Mark tasks as complete to keep your case manager updated on your progress",
+    writeErrorMessage: "We couldn't save your progress: {{error}}",
     sections: [
       {
         id: "early",
