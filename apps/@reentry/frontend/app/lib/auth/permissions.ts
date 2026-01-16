@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,33 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { User } from "@auth0/auth0-spa-js";
-import type { AuthStore } from "@recidiviz/auth";
+import type { UserAppMetadata } from "./types";
 
-export interface AuthState {
-  isAuthorized: boolean;
-  isLoading: boolean;
-  user?: User;
-  emailVerified?: boolean;
-  error?: Error | null;
-  accessToken?: string | null;
+export function hasCPAPermission(
+  userAppMetadata: UserAppMetadata | undefined,
+): boolean {
+  return userAppMetadata?.routes?.cpa === true;
 }
-
-export interface AuthContextType {
-  authStore: AuthStore | null;
-  state: AuthState;
-  login: (options?: unknown) => Promise<void>;
-  logout: () => Promise<void>;
-  getAccessToken: () => string | null | undefined;
-  refreshToken: () => Promise<void>;
-  userAppMetadata?: UserAppMetadata;
-}
-
-export type UserAppMetadata = {
-  stateCode: string;
-  pseudonymizedId?: string;
-  userHash: string;
-  routes?: {
-    cpa?: boolean;
-  };
-};

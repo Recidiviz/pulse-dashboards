@@ -18,11 +18,16 @@
 "use client";
 import { usePathname } from "next/navigation";
 
+import AccessDeniedState from "~@reentry/frontend/components/auth/AccessDeniedState";
+import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
 import Navbar from "~@reentry/frontend/components/Navbar/Navbar";
 import ReadOnlyIndicatorBanner from "~@reentry/frontend/components/ReadOnlyIndicatorBanner";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { hasCPAPermission } from "~@reentry/frontend/lib/auth/permissions";
 import { ProtectedRoute } from "~@reentry/frontend/lib/auth/routeGuards";
 
 export default function ProtectedLayout({ children }) {
+  const auth = useAuth();
   const pathname = usePathname();
 
   // Exclude specific routes from the layout (not using the Navbar)
@@ -30,6 +35,14 @@ export default function ProtectedLayout({ children }) {
   const shouldHideLayout = routesWithoutLayout.some((route) =>
     pathname.includes(route)
   );
+
+  if (auth.state.isLoading) {
+    return <LoadingState />;
+  }
+
+  if (!hasCPAPermission(auth.userAppMetadata)) {
+    return <AccessDeniedState />;
+  }
 
   if (shouldHideLayout) {
     return (

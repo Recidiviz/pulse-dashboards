@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,33 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { User } from "@auth0/auth0-spa-js";
-import type { AuthStore } from "@recidiviz/auth";
+"use client";
 
-export interface AuthState {
-  isAuthorized: boolean;
-  isLoading: boolean;
-  user?: User;
-  emailVerified?: boolean;
-  error?: Error | null;
-  accessToken?: string | null;
-}
-
-export interface AuthContextType {
-  authStore: AuthStore | null;
-  state: AuthState;
-  login: (options?: unknown) => Promise<void>;
-  logout: () => Promise<void>;
-  getAccessToken: () => string | null | undefined;
-  refreshToken: () => Promise<void>;
-  userAppMetadata?: UserAppMetadata;
-}
-
-export type UserAppMetadata = {
-  stateCode: string;
-  pseudonymizedId?: string;
-  userHash: string;
-  routes?: {
-    cpa?: boolean;
-  };
+const AccessDeniedState = () => {
+  return (
+    <div className="flex flex-col justify-center items-center h-screen">
+      <div className="bg-white p-6 rounded shadow-md max-w-md w-full text-center">
+        <h1 className="text-2xl font-bold mb-4"> Access Denied</h1>
+        <p className="mb-6">
+          Oops! You don't have access to this page. Contact{" "}
+          <a
+            href="mailto:feedback@recidiviz.org"
+            className="text-blue-500 hover:underline"
+          >
+            feedback@recidiviz.org
+          </a>{" "}
+          if you believe you should have permission.
+        </p>
+      </div>
+    </div>
+  );
 };
+
+export default AccessDeniedState;
