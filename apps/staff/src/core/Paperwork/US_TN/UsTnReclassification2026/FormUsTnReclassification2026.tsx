@@ -20,12 +20,15 @@ import { rem } from "polished";
 import React, { useState } from "react";
 import styled from "styled-components";
 
+import { useRootStore } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnDiagnosticClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
+import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
+import { downloadZipFile } from "../../utils";
 import {
   BoldWeight,
   ClassificationFormPage,
@@ -68,15 +71,36 @@ export const FormUsTnReclassification2026 = observer(
       useState<boolean>(false);
     const { derivedData } =
       useOpportunityFormContext() as UsTnDiagnosticClassification2026Form;
+    const { getTokenSilently } = useRootStore();
+    const resident = opportunity.person;
+
+    const onClickDownload = async () => {
+      const fileInputs: FileGeneratorArgs[] = [
+        ["classification_next_steps_2026", "Classification Next Steps"],
+      ].map(([filename, outputName]) => {
+        return [
+          `${resident.displayName} - ${outputName}.docx`,
+          resident.stateCode,
+          `${filename}.docx`,
+          {}, // No form contents yet
+        ];
+      });
+
+      const documents = await renderMultipleDocx(fileInputs, getTokenSilently);
+
+      downloadZipFile(
+        `${resident.displayName} - Classification Packet 2026.zip`,
+        documents,
+      );
+
+      setPostDownloadModalIsOpen(true);
+    };
 
     return (
       <FormContainer
         heading="RCAF"
         agencyName="TDOC"
-        onClickDownload={async () => {
-          alert("Download clicked");
-          setPostDownloadModalIsOpen(true);
-        }}
+        onClickDownload={() => onClickDownload()}
         opportunity={opportunity}
         downloadButtonLabel="Download as .DOCX"
       >
