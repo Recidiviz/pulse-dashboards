@@ -27,7 +27,7 @@ import { TableColumns } from "../types/charts";
 export const defaultTableColumnsWidths = {
   name: 180,
   id: 100,
-  gender: 100,
+  sex: 100,
   age: 80,
   facility: 100,
   admissionReason: 200,
@@ -50,10 +50,10 @@ export const DefaultTableColumns: TableColumns = {
       width: defaultTableColumnsWidths.id,
     },
     {
-      Header: "Gender",
-      accessor: "gender",
+      Header: "Sex",
+      accessor: "sex",
       useFilterLabels: true,
-      width: defaultTableColumnsWidths.gender,
+      width: defaultTableColumnsWidths.sex,
     },
     {
       Header: "Age",
@@ -95,10 +95,10 @@ export const DefaultTableColumns: TableColumns = {
       width: defaultTableColumnsWidths.id,
     },
     {
-      Header: "Gender",
-      accessor: "gender",
+      Header: "Sex",
+      accessor: "sex",
       useFilterLabels: true,
-      width: defaultTableColumnsWidths.gender,
+      width: defaultTableColumnsWidths.sex,
     },
     {
       Header: "Age",

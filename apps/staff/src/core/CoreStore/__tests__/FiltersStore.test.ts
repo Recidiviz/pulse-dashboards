@@ -72,9 +72,9 @@ describe("FiltersStore", () => {
     it("updates the filter values", () => {
       const expected = {
         ...defaultPopulationFilterValues,
-        gender: ["FEMALE"],
+        sex: ["FEMALE"],
       };
-      coreStore.filtersStore.setFilters({ gender: ["FEMALE"] });
+      coreStore.filtersStore.setFilters({ sex: ["FEMALE"] });
       expect(coreStore.filtersStore.filters).toEqual(expected);
     });
 
@@ -106,7 +106,7 @@ describe("FiltersStore", () => {
     it("returns the correct description when admissionReason is enabled", () => {
       coreStore.metricsStore.current.filters.enabledFilters = [
         "timePeriod",
-        "gender",
+        "sex",
         "admissionReason",
       ];
       coreStore.filtersStore.setFilters({
@@ -114,14 +114,14 @@ describe("FiltersStore", () => {
         admissionReason: ["NEW_ADMISSION"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period: 6 months;\nGender: All;\nAdmission Reason: New court commitment\n",
+        "Time Period: 6 months;\nSex: All;\nAdmission Reason: New court commitment\n",
       );
     });
 
     it("returns the correct description when supervisionType is enabled", () => {
       coreStore.metricsStore.current.filters.enabledFilters = [
         "timePeriod",
-        "gender",
+        "sex",
         "supervisionType",
       ];
       coreStore.filtersStore.setFilters({
@@ -129,14 +129,14 @@ describe("FiltersStore", () => {
         supervisionType: ["PAROLE"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period: 1 year;\nGender: All;\nSupervision Type: Parole/Dual\n",
+        "Time Period: 1 year;\nSex: All;\nSupervision Type: Parole/Dual\n",
       );
     });
 
     it("returns the correct description when more multiple options of one filter are selected", () => {
       coreStore.metricsStore.current.filters.enabledFilters = [
         "timePeriod",
-        "gender",
+        "sex",
         "facility",
       ];
       coreStore.filtersStore.setFilters({
@@ -145,7 +145,7 @@ describe("FiltersStore", () => {
       });
 
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period: 1 year;\nGender: All;\nFacility: CAPP, ISCC\n",
+        "Time Period: 1 year;\nSex: All;\nFacility: CAPP, ISCC\n",
       );
     });
   });

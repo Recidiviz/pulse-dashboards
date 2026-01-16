@@ -37,7 +37,7 @@ beforeEach(() => {
   vi.mocked(callMetricsApi).mockResolvedValue({
     prison_population_projection_time_series: [
       {
-        gender: "MALE",
+        sex: "MALE",
         legal_status: "ALL",
         month: "5",
         simulation_tag: "HISTORICAL",
@@ -48,7 +48,7 @@ beforeEach(() => {
         year: "2016",
       },
       {
-        gender: "ALL",
+        sex: "ALL",
         legal_status: "ALL",
         month: "1",
         simulation_tag: "HISTORICAL",
@@ -59,7 +59,7 @@ beforeEach(() => {
         year: "2016",
       },
       {
-        gender: "ALL",
+        sex: "ALL",
         legal_status: "ALL",
         month: "12",
         simulation_tag: "HISTORICAL",
@@ -86,7 +86,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
       sourceFilename: "prison_population_projection_time_series",
       dataTransformer: createProjectionTimeSeries,
       filters: {
-        enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
+        enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.SEX],
       },
       rootStore: mockCoreStore,
     });
@@ -106,7 +106,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
 
   it("has a transformed records property", () => {
     expect(metric.records).toContainEqual({
-      gender: "ALL",
+      sex: "ALL",
       legalStatus: "ALL",
       month: 1,
       simulationTag: "HISTORICAL",
@@ -137,7 +137,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
       sourceFilename: "prison_population_projection_time_series",
       dataTransformer: createProjectionTimeSeries,
       filters: {
-        enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
+        enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.SEX],
       },
       rootStore: mockCoreStore,
     });
@@ -157,7 +157,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
         sourceFilename: "prison_population_projection_time_series",
         dataTransformer: createProjectionTimeSeries,
         filters: {
-          enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
+          enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.SEX],
         },
         rootStore: mockCoreStore,
       });
@@ -171,7 +171,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
           month: 1,
           compartment: undefined,
           legalStatus: "ALL",
-          gender: "ALL",
+          sex: "ALL",
           simulationTag: "HISTORICAL",
           totalPopulation: 7641,
           totalPopulationMax: 7641,
@@ -182,7 +182,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
           month: 12,
           compartment: undefined,
           legalStatus: "ALL",
-          gender: "ALL",
+          sex: "ALL",
           simulationTag: "HISTORICAL",
           totalPopulation: 7641,
           totalPopulationMax: 7641,
@@ -194,13 +194,13 @@ describe("PopulationProjectionOverTimeMetric", () => {
     it("updates when the filters change", () => {
       runInAction(() => {
         if (metric.rootStore) {
-          metric.rootStore.filtersStore.setFilters({ gender: ["MALE"] });
+          metric.rootStore.filtersStore.setFilters({ sex: ["MALE"] });
         }
 
         expect(metric.dataSeries).toEqual([
           {
             compartment: undefined,
-            gender: "MALE",
+            sex: "MALE",
             legalStatus: "ALL",
             month: 5,
             simulationTag: "HISTORICAL",

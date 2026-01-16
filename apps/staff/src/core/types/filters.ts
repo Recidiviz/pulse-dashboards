@@ -16,16 +16,16 @@
 // =============================================================================
 
 import type FiltersStore from "../CoreStore/FiltersStore";
-import { AgeGroup, Gender, MetricId } from "../models/types";
+import { AgeGroup, MetricId, Sex } from "../models/types";
 import { FILTER_TYPES } from "../utils/constants";
 
 export type EnabledFilter = keyof PopulationFilters;
 export type EnabledFilters = EnabledFilter[];
 export type FilterType = (typeof FILTER_TYPES)[keyof typeof FILTER_TYPES];
 export type PopulationFilterValues = Record<
-  Exclude<FilterType, "gender" | "ageGroup">,
+  Exclude<FilterType, "sex" | "ageGroup">,
   string[]
-> & { ageGroup: AgeGroup[]; gender: Gender[] };
+> & { ageGroup: AgeGroup[]; sex: Sex[] };
 export type PopulationFilterLabels = Record<FilterType, string>;
 
 export type SetPopulationFilters = (
@@ -64,14 +64,14 @@ export type EnabledFiltersByMetric = {
 export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionMetadata = {
   facilityIdNameMap: "facility",
   raceIdNameMap: "race",
-  genderIdNameMap: "gender",
+  // TODO - update this for NY
+  sexIdNameMap: "sex",
 };
 
-export type DynamicFilterOptionIdNameMap = 
+export type DynamicFilterOptionIdNameMap =
   | "facilityIdNameMap"
   | "raceIdNameMap"
-  | "genderIdNameMap"
-;
+  | "sexIdNameMap";
 export type DynamicFilterOptionMetadata = {
   [key in DynamicFilterOptionIdNameMap]: FilterType;
 };

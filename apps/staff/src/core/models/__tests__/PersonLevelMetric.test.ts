@@ -48,7 +48,7 @@ describe("PersonLevelMetric", () => {
           stateId: "1",
           fullName: "Barney Rubble",
           admissionReason: "NEW_ADMISSION",
-          gender: "MALE",
+          sex: "MALE",
           ageGroup: "<25",
           age: "18, 20",
           facility: "Bedrock, School of Rock",
@@ -58,7 +58,7 @@ describe("PersonLevelMetric", () => {
           stateId: "2",
           fullName: "Fred Flinstone",
           admissionReason: "REVOCATION",
-          gender: "MALE",
+          sex: "MALE",
           ageGroup: "<25",
           age: "18",
           facility: "School of Rock",
@@ -68,7 +68,7 @@ describe("PersonLevelMetric", () => {
           stateId: "3",
           fullName: "Betty",
           admissionReason: "REVOCATION",
-          gender: "MALE",
+          sex: "MALE",
           ageGroup: "<25",
           age: "18",
           facility: "School of Rock",
@@ -78,7 +78,7 @@ describe("PersonLevelMetric", () => {
           stateId: "4",
           fullName: "Wilma Flinstone",
           admissionReason: "NEW_ADMISSION",
-          gender: "FEMALE",
+          sex: "FEMALE",
           ageGroup: "<25",
           age: "18",
           facility: "Bedrock",
@@ -100,7 +100,7 @@ describe("PersonLevelMetric", () => {
       filters: {
         enabledFilters: [
           FILTER_TYPES.TIME_PERIOD,
-          FILTER_TYPES.GENDER,
+          FILTER_TYPES.SEX,
           FILTER_TYPES.LEGAL_STATUS,
           FILTER_TYPES.AGE_GROUP,
           FILTER_TYPES.FACILITY,
@@ -148,7 +148,7 @@ describe("PersonLevelMetric", () => {
   it("calls the backend again when filters change", () => {
     runInAction(() => {
       metric.rootStore?.filtersStore.setFilters({
-        gender: ["MALE"],
+        sex: ["MALE"],
         facility: ["Bedrock"],
       });
     });
@@ -156,7 +156,7 @@ describe("PersonLevelMetric", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
         `pathways/${mockTenantId}/PrisonPopulationPersonLevel?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[facility]=Bedrock`,
+          `&filters[sex]=MALE&filters[facility]=Bedrock`,
       ),
       RootStore.getTokenSilently,
       expect.any(AbortSignal),
@@ -179,10 +179,10 @@ describe("PersonLevelMetric", () => {
         width: defaultTableColumnsWidths.id,
       },
       {
-        Header: "Gender",
-        accessor: "gender",
+        Header: "Sex",
+        accessor: "sex",
         useFilterLabels: true,
-        width: defaultTableColumnsWidths.gender,
+        width: defaultTableColumnsWidths.sex,
       },
       {
         Header: "Age",
@@ -222,7 +222,7 @@ describe("PersonLevelMetric", () => {
               Age: "18, 20",
               "DOC ID": "1",
               Facility: "Bedrock, School of Rock",
-              Gender: "Male",
+              Sex: "Male",
               Race: "Hispanic",
             },
             {
@@ -230,7 +230,7 @@ describe("PersonLevelMetric", () => {
               Age: "18",
               "DOC ID": "2",
               Facility: "School of Rock",
-              Gender: "Male",
+              Sex: "Male",
               Race: "Hispanic",
             },
             {
@@ -238,7 +238,7 @@ describe("PersonLevelMetric", () => {
               Age: "18",
               "DOC ID": "3",
               Facility: "School of Rock",
-              Gender: "Male",
+              Sex: "Male",
               Race: "Hispanic",
             },
             {
@@ -246,7 +246,7 @@ describe("PersonLevelMetric", () => {
               Age: "18",
               "DOC ID": "4",
               Facility: "Bedrock",
-              Gender: "Female",
+              Sex: "Female",
               Race: "Hispanic",
             },
           ],

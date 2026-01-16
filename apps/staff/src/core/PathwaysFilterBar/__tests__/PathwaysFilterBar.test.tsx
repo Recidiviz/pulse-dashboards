@@ -50,18 +50,18 @@ test("selecting from menu sets the filters", async () => {
       <PathwaysFilterBar
         filterOptions={filterOptions.US_ID}
         handleDownload={vi.fn()}
-        enabledFilters={["timePeriod", "gender"]}
+        enabledFilters={["timePeriod", "sex"]}
       />
     </Router>,
   );
   fireEvent.click(screen.getByLabelText("Select timePeriod"));
   fireEvent.click(await screen.findByText("1 year"));
-  fireEvent.click(screen.getByLabelText("Select gender"));
+  fireEvent.click(screen.getByLabelText("Select sex"));
   fireEvent.click(await screen.findByText("Female"));
 
   expect(mockSetFilters).toHaveBeenCalledTimes(2);
   // first call is the time period select event
   expect(mockSetFilters.mock.calls[0]).toEqual([{ timePeriod: ["12"] }]);
-  // second call is the gender select event
-  expect(mockSetFilters.mock.calls[1]).toEqual([{ gender: ["FEMALE"] }]);
+  // second call is the sex select event
+  expect(mockSetFilters.mock.calls[1]).toEqual([{ sex: ["FEMALE"] }]);
 });

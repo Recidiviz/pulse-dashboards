@@ -49,7 +49,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
   metric,
 }) => {
   const { filtersStore } = useCoreStore();
-  const { gender, legalStatus } = filtersStore.filters;
+  const { sex, legalStatus } = filtersStore.filters;
   if (data.length < 1) {
     return null;
   }
@@ -113,7 +113,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
     {
       type: "y",
       value:
-        isEqual(gender, ["ALL"]) &&
+        isEqual(sex, ["ALL"]) &&
         isEqual(legalStatus, ["ALL"]) &&
         compartment === "INCARCERATION"
           ? TOTAL_INCARCERATED_LIMIT

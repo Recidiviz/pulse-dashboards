@@ -28,13 +28,13 @@ import {
 } from "../types/filters";
 import {
   AgeGroup,
-  Gender,
   LengthOfStay,
   LengthOfStayRawValue,
   MetricRecord,
   NewBackendRecord,
   PopulationProjectionTimeSeriesRecord,
   RawMetricData,
+  Sex,
   SimulationCompartment,
   SnapshotDataRecord,
   SupervisionPopulationSnapshotRecord,
@@ -44,7 +44,7 @@ import {
 } from "./types";
 
 const sharedDimensionDefaults = {
-  gender: "ALL" as Gender,
+  sex: "ALL" as Sex,
   ageGroup: "ALL" as AgeGroup,
 };
 
@@ -119,7 +119,7 @@ export function createProjectionTimeSeries(
       month: Number(record.month),
       compartment: record.compartment as SimulationCompartment,
       legalStatus: record.legal_status,
-      gender: record.gender as Gender,
+      sex: record.sex as Sex,
       simulationTag: record.simulation_tag,
       totalPopulation: Number(record.total_population),
       totalPopulationMax: Number(record.total_population_max),
@@ -138,7 +138,7 @@ export function createSupervisionPopulationSnapshot(
         count: parseInt(record.event_count) || parseInt(record.person_count),
         lastUpdated: formatDateString(record.last_updated),
         supervisionType: record.supervision_type as SupervisionType,
-        gender: record.gender as Gender,
+        sex: record.sex as Sex,
         ageGroup: record.age_group as AgeGroup,
         district: record.district ? record.district.toUpperCase() : "Unknown",
         mostSevereViolation: record.most_severe_violation,

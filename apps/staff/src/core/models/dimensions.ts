@@ -21,14 +21,14 @@ import { DIMENSION_TYPES } from "../utils/constants";
 export const dimensionsByMetricType = {
   // PRISON
   prison_population_projection_time_series: [
-    DIMENSION_TYPES.GENDER,
+    DIMENSION_TYPES.SEX,
     DIMENSION_TYPES.LEGAL_STATUS,
   ],
   // SUPERVISION
-  supervision_population_projection_time_series: [DIMENSION_TYPES.GENDER],
+  supervision_population_projection_time_series: [DIMENSION_TYPES.SEX],
   // SUPERVISION TO PRISON
   supervision_to_prison_population_snapshot_by_officer: [
-    DIMENSION_TYPES.GENDER,
+    DIMENSION_TYPES.SEX,
     DIMENSION_TYPES.SUPERVISION_TYPE,
     DIMENSION_TYPES.DISTRICT,
     DIMENSION_TYPES.AGE_GROUP,
@@ -37,7 +37,7 @@ export const dimensionsByMetricType = {
     DIMENSION_TYPES.OFFICER_NAME,
   ],
   supervision_to_prison_population_snapshot_by_dimension: [
-    DIMENSION_TYPES.GENDER,
+    DIMENSION_TYPES.SEX,
     DIMENSION_TYPES.SUPERVISION_TYPE,
     DIMENSION_TYPES.DISTRICT,
     DIMENSION_TYPES.AGE_GROUP,

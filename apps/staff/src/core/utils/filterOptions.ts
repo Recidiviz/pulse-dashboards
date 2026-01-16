@@ -29,7 +29,7 @@ import {
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { PathwaysTenants } from "../../RootStore/types";
-import { AgeGroup, Gender } from "../models/types";
+import { AgeGroup, Sex } from "../models/types";
 import {
   FilterOption,
   PopulationFilterLabels,
@@ -141,11 +141,11 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
-  [FILTER_TYPES.GENDER]: {
-    type: FILTER_TYPES.GENDER,
-    title: "Gender",
+  [FILTER_TYPES.SEX]: {
+    type: FILTER_TYPES.SEX,
+    title: "Sex",
     isSingleSelect: true,
-    setFilters: setFilters(FILTER_TYPES.GENDER),
+    setFilters: setFilters(FILTER_TYPES.SEX),
     options: [
       { label: "All", value: "ALL" },
       { label: "Female", value: "FEMALE" },
@@ -432,11 +432,11 @@ export const IdPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
-  [FILTER_TYPES.GENDER]: {
-    type: FILTER_TYPES.GENDER,
-    title: "Gender",
+  [FILTER_TYPES.SEX]: {
+    type: FILTER_TYPES.SEX,
+    title: "Sex",
     isSingleSelect: true,
-    setFilters: setFilters(FILTER_TYPES.GENDER),
+    setFilters: setFilters(FILTER_TYPES.SEX),
     options: [
       { label: "All", value: "ALL" },
       { label: "Female", value: "FEMALE" },
@@ -1305,8 +1305,8 @@ export const NyPopulationFilterOptions: PopulationFilters = {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.RACE],
     useDynamicOptions: true,
   },
-  [FILTER_TYPES.GENDER]: {
-    ...DefaultPopulationFilterOptions[FILTER_TYPES.GENDER],
+  [FILTER_TYPES.SEX]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.SEX],
     useDynamicOptions: true,
   },
 };
@@ -1533,9 +1533,9 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   [FILTER_TYPES.TIME_PERIOD]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.TIME_PERIOD].defaultValue,
   ],
-  [FILTER_TYPES.GENDER]: [
-    DefaultPopulationFilterOptions[FILTER_TYPES.GENDER].defaultValue,
-  ] as Gender[],
+  [FILTER_TYPES.SEX]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.SEX].defaultValue,
+  ] as Sex[],
   [FILTER_TYPES.LEGAL_STATUS]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.LEGAL_STATUS].defaultValue,
   ],

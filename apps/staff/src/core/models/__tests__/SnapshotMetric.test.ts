@@ -69,7 +69,7 @@ describe("SnapshotMetric", () => {
       filters: {
         enabledFilters: [
           FILTER_TYPES.TIME_PERIOD,
-          FILTER_TYPES.GENDER,
+          FILTER_TYPES.SEX,
           FILTER_TYPES.JUDICIAL_DISTRICT,
           FILTER_TYPES.AGE_GROUP,
         ],
@@ -117,7 +117,7 @@ describe("SnapshotMetric", () => {
   it("calls the backend again when filters change", async () => {
     runInAction(() => {
       metric.rootStore?.filtersStore.setFilters({
-        gender: ["MALE"],
+        sex: ["MALE"],
         ageGroup: ["25-29", "30-34"],
       });
     });
@@ -127,7 +127,7 @@ describe("SnapshotMetric", () => {
     expect(fetchMock.mock.calls[1][0]).toEqual(
       encodeURI(
         `${BASE_URL}?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[age_group]=25-29&filters[age_group]=30-34` +
+          `&filters[sex]=MALE&filters[age_group]=25-29&filters[age_group]=30-34` +
           `&group=judicial_district`,
       ),
     );
@@ -136,7 +136,7 @@ describe("SnapshotMetric", () => {
   it("does not filter on the group by value", async () => {
     runInAction(() => {
       metric.rootStore?.filtersStore.setFilters({
-        gender: ["MALE"],
+        sex: ["MALE"],
         judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
       });
     });
@@ -145,7 +145,7 @@ describe("SnapshotMetric", () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     expect(fetchMock.mock.calls[1][0]).toEqual(
       encodeURI(
-        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=MALE&group=judicial_district`,
+        `${BASE_URL}?filters[time_period]=months_0_6&filters[sex]=MALE&group=judicial_district`,
       ),
     );
   });
@@ -216,14 +216,14 @@ describe("SnapshotMetric", () => {
     // Trigger the slow request
     runInAction(() => {
       metric.rootStore?.filtersStore.setFilters({
-        gender: ["MALE"],
+        sex: ["MALE"],
       });
     });
 
     // Trigger the fast request
     runInAction(() => {
       metric.rootStore?.filtersStore.setFilters({
-        gender: ["FEMALE"],
+        sex: ["FEMALE"],
       });
     });
 
@@ -231,12 +231,12 @@ describe("SnapshotMetric", () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     expect(fetchMock.mock.calls[0][0]).toEqual(
       encodeURI(
-        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=MALE&group=judicial_district`,
+        `${BASE_URL}?filters[time_period]=months_0_6&filters[sex]=MALE&group=judicial_district`,
       ),
     );
     expect(fetchMock.mock.calls[1][0]).toEqual(
       encodeURI(
-        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=FEMALE&group=judicial_district`,
+        `${BASE_URL}?filters[time_period]=months_0_6&filters[sex]=FEMALE&group=judicial_district`,
       ),
     );
     expect(isAbortException(fetchMock.mock.results[0].value)).toBe(true);

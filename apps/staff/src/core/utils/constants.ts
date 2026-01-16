@@ -27,7 +27,7 @@ export const METRIC_MODES = {
 
 export const FILTER_TYPES = {
   TIME_PERIOD: "timePeriod",
-  GENDER: "gender",
+  SEX: "sex",
   LEGAL_STATUS: "legalStatus",
   ADMISSION_REASON: "admissionReason",
   SUPERVISION_TYPE: "supervisionType",
@@ -52,7 +52,7 @@ export const filtersOrder = [
   FILTER_TYPES.TIME_PERIOD,
   FILTER_TYPES.FACILITY,
   FILTER_TYPES.DISTRICT,
-  FILTER_TYPES.GENDER,
+  FILTER_TYPES.SEX,
   FILTER_TYPES.LEGAL_STATUS,
   FILTER_TYPES.ADMISSION_REASON,
   FILTER_TYPES.JUDICIAL_DISTRICT,

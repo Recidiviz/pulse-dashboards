@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ const content: StateSpecificPageCopy = {
     sections: {
       countOverTime: "Admissions from liberty to incarceration over time",
       countByLocation: "Admissions from liberty to incarceration by district",
-      countByGender: "Admissions from liberty to incarceration by gender",
+      countBySex: "Admissions from liberty to incarceration by sex",
       countByAgeGroup: "Admissions from liberty to incarceration by age",
       countByRace: "Admissions from liberty to incarceration by race",
       countByPriorLengthOfIncarceration:

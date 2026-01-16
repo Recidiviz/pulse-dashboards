@@ -220,7 +220,7 @@ export const locationIdsBySearchType = {
 
 export type LocationSearchType = keyof typeof locationIdsBySearchType;
 
-export type Gender = "ALL" | "FEMALE" | "MALE";
+export type Sex = "ALL" | "FEMALE" | "MALE";
 export type AgeGroup =
   | "ALL"
   | "<24"
@@ -314,14 +314,14 @@ export type PopulationProjectionTimeSeriesRecord = {
   month: number;
   compartment: SimulationCompartment;
   legalStatus: string;
-  gender: Gender;
+  sex: Sex;
   simulationTag: string;
 };
 
 export type PrisonPopulationSnapshotRecord = {
   count: number;
   lastUpdated: Date;
-  gender: Gender;
+  sex: Sex;
   ageGroup: AgeGroup;
   admissionReason: string;
   facility: string;
@@ -334,7 +334,7 @@ export type PrisonPopulationPersonLevelRecord = {
   lastUpdated: Date;
   stateId: string;
   fullName: string;
-  gender: Gender;
+  sex: Sex;
   ageGroup: AgeGroup;
   age: string;
   admissionReason: string;
@@ -346,7 +346,7 @@ export type PrisonPopulationPersonLevelRecord = {
 export type SupervisionPopulationSnapshotRecord = {
   count: number;
   lastUpdated: Date;
-  gender: Gender;
+  sex: Sex;
   ageGroup: AgeGroup;
   supervisionType: SupervisionType;
   district: string;
@@ -363,7 +363,7 @@ export type SupervisionPopulationSnapshotRecord = {
 export type LibertyPopulationSnapshotRecord = {
   count: number;
   lastUpdated: Date;
-  gender: Gender;
+  sex: Sex;
   ageGroup: AgeGroup;
   judicialDistrict: string;
   race: string;
@@ -466,7 +466,7 @@ export type PathwaysMetricRecords =
 export type MetricId =
   | "libertyToPrisonPopulationOverTime"
   | "libertyToPrisonPopulationByDistrict"
-  | "libertyToPrisonPopulationByGender"
+  | "libertyToPrisonPopulationBySex"
   | "libertyToPrisonPopulationByRace"
   | "libertyToPrisonPopulationByAgeGroup"
   | "libertyToPrisonPopulationByPriorLengthOfIncarceration"
@@ -474,7 +474,7 @@ export type MetricId =
   | "prisonFacilityPopulation"
   | "prisonPopulationByRace"
   | "prisonPopulationByAgeGroup"
-  | "prisonPopulationByGender"
+  | "prisonPopulationBySex"
   | "projectedPrisonPopulationOverTime"
   | "prisonPopulationPersonLevel"
   | "prisonToSupervisionPopulationOverTime"
@@ -493,12 +493,12 @@ export type MetricId =
   | "supervisionToPrisonPopulationByNumberOfViolations"
   | "supervisionToPrisonPopulationByLengthOfStay"
   | "supervisionToPrisonPopulationBySupervisionLevel"
-  | "supervisionToPrisonPopulationByGender"
+  | "supervisionToPrisonPopulationBySex"
   | "supervisionToPrisonPopulationByRace"
   | "supervisionToPrisonPopulationByOfficer"
   | "supervisionToLibertyOverTime"
   | "supervisionToLibertyPopulationByLengthOfStay"
   | "supervisionToLibertyPopulationByLocation"
-  | "supervisionToLibertyPopulationByGender"
+  | "supervisionToLibertyPopulationBySex"
   | "supervisionToLibertyPopulationByAgeGroup"
   | "supervisionToLibertyPopulationByRace";

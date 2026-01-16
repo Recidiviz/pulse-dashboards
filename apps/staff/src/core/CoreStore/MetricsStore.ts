@@ -67,8 +67,7 @@ export default class MetricsStore {
             this.libertyToPrisonPopulationByDistrict,
           [PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration]:
             this.libertyToPrisonPopulationByPriorLengthOfIncarceration,
-          [PATHWAYS_SECTIONS.countByGender]:
-            this.libertyToPrisonPopulationByGender,
+          [PATHWAYS_SECTIONS.countBySex]: this.libertyToPrisonPopulationBySex,
           [PATHWAYS_SECTIONS.countByAgeGroup]:
             this.libertyToPrisonPopulationByAgeGroup,
           [PATHWAYS_SECTIONS.countByRace]: this.libertyToPrisonPopulationByRace,
@@ -80,7 +79,7 @@ export default class MetricsStore {
           [PATHWAYS_SECTIONS.countByLocation]: this.prisonFacilityPopulation,
           [PATHWAYS_SECTIONS.countByRace]: this.prisonPopulationByRace,
           [PATHWAYS_SECTIONS.countByAgeGroup]: this.prisonPopulationByAgeGroup,
-          [PATHWAYS_SECTIONS.countByGender]: this.prisonPopulationByGender,
+          [PATHWAYS_SECTIONS.countBySex]: this.prisonPopulationBySex,
           [PATHWAYS_SECTIONS.personLevelDetail]:
             this.prisonPopulationPersonLevel,
         },
@@ -120,8 +119,8 @@ export default class MetricsStore {
             this.supervisionToPrisonPopulationBySupervisionLevel,
           [PATHWAYS_SECTIONS.countByRace]:
             this.supervisionToPrisonPopulationByRace,
-          [PATHWAYS_SECTIONS.countByGender]:
-            this.supervisionToPrisonPopulationByGender,
+          [PATHWAYS_SECTIONS.countBySex]:
+            this.supervisionToPrisonPopulationBySex,
           [PATHWAYS_SECTIONS.countByOfficer]:
             this.supervisionToPrisonPopulationByOfficer,
         },
@@ -131,8 +130,8 @@ export default class MetricsStore {
             this.supervisionToLibertyPopulationByLengthOfStay,
           [PATHWAYS_SECTIONS.countByLocation]:
             this.supervisionToLibertyPopulationByLocation,
-          [PATHWAYS_SECTIONS.countByGender]:
-            this.supervisionToLibertyPopulationByGender,
+          [PATHWAYS_SECTIONS.countBySex]:
+            this.supervisionToLibertyPopulationBySex,
           [PATHWAYS_SECTIONS.countByAgeGroup]:
             this.supervisionToLibertyPopulationByAgeGroup,
           [PATHWAYS_SECTIONS.countByRace]:
@@ -191,12 +190,12 @@ export default class MetricsStore {
     });
   }
 
-  get libertyToPrisonPopulationByGender(): SnapshotMetric {
+  get libertyToPrisonPopulationBySex(): SnapshotMetric {
     return new SnapshotMetric({
-      id: "libertyToPrisonPopulationByGender",
+      id: "libertyToPrisonPopulationBySex",
       endpoint: "LibertyToPrisonTransitionsCount",
       rootStore: this.rootStore,
-      accessor: "gender",
+      accessor: "sex",
       enableMetricModeToggle: true,
     });
   }
@@ -269,12 +268,12 @@ export default class MetricsStore {
     });
   }
 
-  get prisonPopulationByGender(): SnapshotMetric {
+  get prisonPopulationBySex(): SnapshotMetric {
     return new SnapshotMetric({
-      id: "prisonPopulationByGender",
+      id: "prisonPopulationBySex",
       endpoint: "PrisonPopulationByDimensionCount",
       rootStore: this.rootStore,
-      accessor: "gender",
+      accessor: "sex",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });
@@ -455,12 +454,12 @@ export default class MetricsStore {
     });
   }
 
-  get supervisionToPrisonPopulationByGender(): SnapshotMetric {
+  get supervisionToPrisonPopulationBySex(): SnapshotMetric {
     return new SnapshotMetric({
-      id: "supervisionToPrisonPopulationByGender",
+      id: "supervisionToPrisonPopulationBySex",
       endpoint: "SupervisionToPrisonTransitionsCount",
       rootStore: this.rootStore,
-      accessor: "gender",
+      accessor: "sex",
       enableMetricModeToggle: true,
     });
   }
@@ -551,12 +550,12 @@ export default class MetricsStore {
     });
   }
 
-  get supervisionToLibertyPopulationByGender(): SnapshotMetric {
+  get supervisionToLibertyPopulationBySex(): SnapshotMetric {
     return new SnapshotMetric({
-      id: "supervisionToLibertyPopulationByGender",
+      id: "supervisionToLibertyPopulationBySex",
       endpoint: "SupervisionToLibertyTransitionsCount",
       rootStore: this.rootStore,
-      accessor: "gender",
+      accessor: "sex",
       enableMetricModeToggle: true,
     });
   }

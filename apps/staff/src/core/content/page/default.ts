@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ const content: PageCopy = {
     sections: {
       countOverTime: "Admissions from liberty to prison over time",
       countByLocation: "Admissions from liberty to prison by judicial district",
-      countByGender: "Admissions from liberty to prison by gender",
+      countBySex: "Admissions from liberty to prison by sex",
       countByAgeGroup: "Admissions from liberty to prison by age",
       countByRace: "Admissions from liberty to prison by race",
       countByPriorLengthOfIncarceration:
@@ -39,7 +39,7 @@ const content: PageCopy = {
       countOverTime: "Prison population over time",
       countByLocation: "Prison population by facility",
       countByRace: "Prison population by race",
-      countByGender: "Prison population by gender",
+      countBySex: "Prison population by sex",
       countByAgeGroup: "Prison population by age group",
       personLevelDetail: "List of people in prison",
     },
@@ -75,7 +75,7 @@ const content: PageCopy = {
       countOverTime: "Admissions from supervision over time",
       countByLocation: "Admissions from supervision by district",
       countByLengthOfStay: "Length of stay on supervision before admission",
-      countByGender: "Admissions from supervision by gender ",
+      countBySex: "Admissions from supervision by sex",
       countByRace: "Admissions from supervision by race",
       countBySupervisionLevel:
         "Admissions from supervision by supervision level",
@@ -97,7 +97,7 @@ const content: PageCopy = {
       countByLengthOfStay: "Length of stay on supervision before release",
       countByLocation: "Releases from supervision by district",
       countByRace: "Releases from supervision by race",
-      countByGender: "Releases from supervision by gender ",
+      countBySex: "Releases from supervision by sex",
       countByAgeGroup: "Releases from supervision by age",
     },
     methodology:

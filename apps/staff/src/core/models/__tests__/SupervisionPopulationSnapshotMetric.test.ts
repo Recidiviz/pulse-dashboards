@@ -50,7 +50,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       supervision_to_prison_population_snapshot_by_dimension: [
         // ALL row 6 months
         {
-          gender: "ALL",
+          sex: "ALL",
           age_group: "ALL",
           district: "ALL",
           event_count: "45",
@@ -63,7 +63,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         },
         // ALL row 12 months
         {
-          gender: "ALL",
+          sex: "ALL",
           age_group: "ALL",
           district: "ALL",
           event_count: "20",
@@ -76,28 +76,28 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         },
         // Row with missing dimension value which will default to Unknown
         {
-          gender: undefined,
+          sex: undefined,
           district: "ALL",
           event_count: "1",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
         {
-          gender: "ALL",
+          sex: "ALL",
           district: "DISTRICT 10",
           event_count: "15",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
         {
-          gender: "ALL",
+          sex: "ALL",
           district: "DISTRICT 81",
           person_count: "10",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
         {
-          gender: "FEMALE",
+          sex: "FEMALE",
           district: "DISTRICT 10",
           person_count: "5",
           last_updated: "2021-10-27",
@@ -116,7 +116,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       filters: {
         enabledFilters: [
           FILTER_TYPES.TIME_PERIOD,
-          FILTER_TYPES.GENDER,
+          FILTER_TYPES.SEX,
           FILTER_TYPES.DISTRICT,
         ],
       },
@@ -142,7 +142,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
   it("has a transformed records property", () => {
     expect(metric.records).toEqual([
       {
-        gender: "ALL",
+        sex: "ALL",
         ageGroup: "ALL",
         district: "ALL",
         count: 45,
@@ -157,7 +157,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         timePeriod: "6",
       },
       {
-        gender: "ALL",
+        sex: "ALL",
         ageGroup: "ALL",
         district: "ALL",
         count: 20,
@@ -172,7 +172,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         timePeriod: "12",
       },
       {
-        gender: "Unknown",
+        sex: "Unknown",
         ageGroup: "ALL",
         district: "ALL",
         count: 1,
@@ -187,7 +187,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         timePeriod: "6",
       },
       {
-        gender: "ALL",
+        sex: "ALL",
         ageGroup: "ALL",
         district: "DISTRICT 10",
         count: 15,
@@ -202,7 +202,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         timePeriod: "6",
       },
       {
-        gender: "ALL",
+        sex: "ALL",
         ageGroup: "ALL",
         district: "DISTRICT 81",
         count: 10,
@@ -217,7 +217,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         timePeriod: "6",
       },
       {
-        gender: "FEMALE",
+        sex: "FEMALE",
         ageGroup: "ALL",
         district: "DISTRICT 10",
         count: 5,
@@ -247,7 +247,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         filters: {
           enabledFilters: [
             FILTER_TYPES.TIME_PERIOD,
-            FILTER_TYPES.GENDER,
+            FILTER_TYPES.SEX,
             FILTER_TYPES.DISTRICT,
           ],
         },
@@ -291,7 +291,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         filters: {
           enabledFilters: [
             FILTER_TYPES.TIME_PERIOD,
-            FILTER_TYPES.GENDER,
+            FILTER_TYPES.SEX,
             FILTER_TYPES.DISTRICT,
           ],
         },
@@ -306,7 +306,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       // totalCount (denominator of populationProportion) is 45
       expect(metric.dataSeries).toEqual([
         {
-          gender: "ALL",
+          sex: "ALL",
           ageGroup: "ALL",
           district: "DISTRICT 10",
           count: 15,
@@ -322,7 +322,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           timePeriod: "6",
         },
         {
-          gender: "ALL",
+          sex: "ALL",
           ageGroup: "ALL",
           district: "DISTRICT 81",
           count: 10,
@@ -346,7 +346,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       // totalCount (denominator of populationProportion) is 90
       expect(metric.dataSeries).toEqual([
         {
-          gender: "ALL",
+          sex: "ALL",
           ageGroup: "ALL",
           district: "DISTRICT 10",
           count: 15,
@@ -362,7 +362,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           timePeriod: "6",
         },
         {
-          gender: "ALL",
+          sex: "ALL",
           ageGroup: "ALL",
           district: "DISTRICT 81",
           count: 10,
@@ -406,7 +406,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       runInAction(() => {
         if (metric.rootStore) {
           metric.rootStore.filtersStore.setFilters({
-            gender: ["FEMALE"],
+            sex: ["FEMALE"],
             district: ["DISTRICT 10"],
             timePeriod: ["12"],
           });
@@ -416,7 +416,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         expect(metric.dataSeries).toEqual([
           {
             ageGroup: "ALL",
-            gender: "FEMALE",
+            sex: "FEMALE",
             district: "DISTRICT 10",
             count: 5,
             lastUpdated: formatDateString("2021-10-27"),

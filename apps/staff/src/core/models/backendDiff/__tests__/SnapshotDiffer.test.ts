@@ -131,13 +131,13 @@ it("diffs data with extra fields", () => {
   const oldData: SnapshotDataRecord[] = [
     {
       ageGroup: "25-29",
-      gender: "ALL",
+      sex: "ALL",
       count: 10,
       lastUpdated: new Date(2022, 5, 1),
     },
     {
       ageGroup: "30-34",
-      gender: "FEMALE",
+      sex: "FEMALE",
       count: 20,
       lastUpdated: new Date(2022, 5, 1),
     },

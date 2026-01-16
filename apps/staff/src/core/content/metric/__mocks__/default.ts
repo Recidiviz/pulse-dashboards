@@ -34,10 +34,10 @@ const content: MetricCopy = {
     methodology:
       "Admissions from liberty by prior length of incarceration methodology",
   },
-  libertyToPrisonPopulationByGender: {
-    title: "Admissions from liberty by gender",
-    note: "Admissions from liberty by gender note",
-    methodology: "Admissions from liberty by gender methodology",
+  libertyToPrisonPopulationBySex: {
+    title: "Admissions from liberty by sex",
+    note: "Admissions from liberty by sex note",
+    methodology: "Admissions from liberty by sex methodology",
   },
   libertyToPrisonPopulationByAgeGroup: {
     title: "Admissions from liberty by age",
@@ -62,10 +62,10 @@ const content: MetricCopy = {
     note: "Incarcerated population by race note",
     methodology: "Incarcerated population by race methodology",
   },
-  prisonPopulationByGender: {
-    title: "Incarcerated Population by gender",
-    note: "Incarcerated population by gender note",
-    methodology: "Incarcerated population by gender methodology",
+  prisonPopulationBySex: {
+    title: "Incarcerated Population by sex",
+    note: "Incarcerated population by sex note",
+    methodology: "Incarcerated population by sex methodology",
   },
   prisonPopulationByAgeGroup: {
     title: "Incarcerated Population by Age Group",
@@ -165,10 +165,10 @@ const content: MetricCopy = {
     methodology:
       "Admissions from supervision to prison by supervision level methodology",
   },
-  supervisionToPrisonPopulationByGender: {
-    title: "Admissions from supervision by gender",
-    note: "Admissions from supervision by gender note",
-    methodology: "Admissions from supervision by gender methodology",
+  supervisionToPrisonPopulationBySex: {
+    title: "Admissions from supervision by sex",
+    note: "Admissions from supervision by sex note",
+    methodology: "Admissions from supervision by sex methodology",
   },
   supervisionToPrisonPopulationByRace: {
     title: "Admissions from supervision by race",
@@ -195,10 +195,10 @@ const content: MetricCopy = {
     note: "Releases to from supervision by district note",
     methodology: "Releases to from supervision by district methodology",
   },
-  supervisionToLibertyPopulationByGender: {
-    title: "Releases to from supervision by gender",
-    note: "Releases to from supervision by gender",
-    methodology: "Releases to from supervision by gender methodology",
+  supervisionToLibertyPopulationBySex: {
+    title: "Releases to from supervision by sex",
+    note: "Releases to from supervision by sex",
+    methodology: "Releases to from supervision by sex methodology",
   },
   supervisionToLibertyPopulationByAgeGroup: {
     title: "Releases to from supervision by age",

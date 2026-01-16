@@ -40,7 +40,7 @@ describe("OverTimeMetric", () => {
     { label: "Option 1", value: "OPTION_1" },
     { label: "Option 2", value: "OPTION_2" },
   ];
-  const genderOptions = [
+  const sexOptions = [
     { label: "Male", value: "MALE" },
     { label: "Non-binary", value: "NON_BINARY" },
   ];
@@ -79,7 +79,7 @@ describe("OverTimeMetric", () => {
       metadata: {
         lastUpdated: "2022-05-01",
         facilityIdNameMap: JSON.stringify(facilityOptions),
-        genderIdNameMap: JSON.stringify(genderOptions),
+        sexIdNameMap: JSON.stringify(sexOptions),
       },
     });
 
@@ -94,7 +94,7 @@ describe("OverTimeMetric", () => {
       filters: {
         enabledFilters: [
           FILTER_TYPES.TIME_PERIOD,
-          FILTER_TYPES.GENDER,
+          FILTER_TYPES.SEX,
           FILTER_TYPES.JUDICIAL_DISTRICT,
         ],
       },
@@ -166,7 +166,7 @@ describe("OverTimeMetric", () => {
   it("calls the backend again when filters change", () => {
     runInAction(() => {
       metric.rootStore.filtersStore.setFilters({
-        gender: ["MALE"],
+        sex: ["MALE"],
         judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
       });
     });
@@ -174,7 +174,7 @@ describe("OverTimeMetric", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
         `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
+          `&filters[sex]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
       ),
       RootStore.getTokenSilently,
       expect.any(AbortSignal),
@@ -202,7 +202,7 @@ describe("OverTimeMetric", () => {
     runInAction(() => {
       metric.rootStore.setPage("prison");
       metric.rootStore.filtersStore.setFilters({
-        gender: ["MALE"],
+        sex: ["MALE"],
         judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
       });
     });
@@ -214,7 +214,7 @@ describe("OverTimeMetric", () => {
     expect(callNewMetricsApi).not.toHaveBeenCalledWith(
       encodeURI(
         `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
+          `&filters[sex]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
       ),
       RootStore.getTokenSilently,
       expect.any(AbortSignal),
@@ -227,7 +227,7 @@ describe("OverTimeMetric", () => {
     runInAction(() => {
       metric.rootStore.setSection("personLevelDetail");
       metric.rootStore.filtersStore.setFilters({
-        gender: ["MALE"],
+        sex: ["MALE"],
         judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
       });
     });
@@ -239,7 +239,7 @@ describe("OverTimeMetric", () => {
     expect(callNewMetricsApi).not.toHaveBeenCalledWith(
       encodeURI(
         `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
+          `&filters[sex]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
       ),
       RootStore.getTokenSilently,
       expect.any(AbortSignal),
@@ -251,7 +251,7 @@ describe("OverTimeMetric", () => {
     runInAction(() => {
       metric.rootStore.setSection("personLevelDetail");
       metric.rootStore.filtersStore.setFilters({
-        gender: ["MALE"],
+        sex: ["MALE"],
         judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
       });
       metric.rootStore.setSection("countOverTime");
@@ -262,7 +262,7 @@ describe("OverTimeMetric", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
         `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
+          `&filters[sex]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
       ),
       RootStore.getTokenSilently,
       expect.any(AbortSignal),
@@ -372,8 +372,8 @@ describe("OverTimeMetric", () => {
     expect(metric.dynamicFilterOptions.facility).toEqual(facilityOptions);
   });
 
-  it("parses genderIdNameMap from metadata", () => {
-    expect(metric.dynamicFilterOptions.gender).toEqual(genderOptions);
+  it("parses sexIdNameMap from metadata", () => {
+    expect(metric.dynamicFilterOptions.sex).toEqual(sexOptions);
   });
 
   it("does not set dynamic filter option if invalid", async () => {
@@ -403,7 +403,7 @@ describe("OverTimeMetric", () => {
       metadata: {
         lastUpdated: "2022-05-01",
         facilityIdNameMap: JSON.stringify([]),
-        genderIdNameMap: JSON.stringify([]),
+        sexIdNameMap: JSON.stringify([]),
       },
     });
 

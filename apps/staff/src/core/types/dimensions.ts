@@ -19,7 +19,7 @@ import { DIMENSION_TYPES } from "../utils/constants";
 
 type Dimensions = {
   [DIMENSION_TYPES.TIME_PERIOD]: string;
-  [DIMENSION_TYPES.GENDER]: string;
+  [DIMENSION_TYPES.SEX]: string;
   [DIMENSION_TYPES.LEGAL_STATUS]: string;
   [DIMENSION_TYPES.SUPERVISION_TYPE]: string;
   [DIMENSION_TYPES.AGE_GROUP]: string;
