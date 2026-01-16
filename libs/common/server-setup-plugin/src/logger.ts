@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import has from "lodash/has";
+import { has } from "lodash-es";
 import type { Level } from "pino";
 import pino from "pino";
 
