@@ -167,10 +167,12 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
 
           if (notifications.length === 0) return undefined;
 
+          const { urlSection } = this.opportunityConfigurationStore.opportunities[opportunityType];
+
           // Build the URL for "See More" link
           const seeMoreLink = insightsUrl("supervisionSupervisorOpportunity", {
             supervisorPseudoId: this.supervisorPseudoId,
-            opportunityTypeUrl: opportunityType,
+            opportunityTypeUrl: urlSection,
           });
 
           return {

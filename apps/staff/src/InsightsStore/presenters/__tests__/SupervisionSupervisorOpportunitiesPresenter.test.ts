@@ -508,10 +508,10 @@ describe("Opportunity details methods", () => {
             presenter.alertOpportunitiesNotificationsByOpportunityType;
 
           expect(result?.[OPP_TYPE_1]?.seeMoreLink).toBe(
-            "/insights/supervision/supervisor/hashed-agonzalez123/opportunity/mockUsXxOpp",
+            "/insights/supervision/supervisor/hashed-agonzalez123/opportunity/mockOpportunity",
           );
           expect(result?.[OPP_TYPE_2]?.seeMoreLink).toBe(
-            "/insights/supervision/supervisor/hashed-agonzalez123/opportunity/mockUsXxTwoOpp",
+            "/insights/supervision/supervisor/hashed-agonzalez123/opportunity/mockOpportunity",
           );
         });
       });
