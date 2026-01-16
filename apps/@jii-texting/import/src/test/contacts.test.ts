@@ -46,7 +46,6 @@ describe("handle_import", () => {
           contact_external_id: fakeContactOne.externalId,
           contacting_officer_id: fakeContactOne.contactingOfficerId,
           contacting_po_name: fakeContactOne.contactingPoName,
-          contacting_po_phone_number: fakeContactOne.contactingPoPhoneNumber,
           contact_location_type: "OFFICE", // Changed from HOME to OFFICE
           contact_method: fakeContactOne.method,
           reminder_type: fakeContactOne.reminderType,
@@ -99,7 +98,6 @@ describe("handle_import", () => {
           contact_external_id: fakeContactThree.externalId,
           contacting_officer_id: fakeContactThree.contactingOfficerId,
           contacting_po_name: fakeContactThree.contactingPoName,
-          contacting_po_phone_number: fakeContactThree.contactingPoPhoneNumber,
           contact_location_type: fakeContactThree.locationType,
           contact_method: fakeContactThree.method,
           reminder_type: fakeContactThree.reminderType,
@@ -143,7 +141,6 @@ describe("handle_import", () => {
           contact_external_id: fakeContactOne.externalId,
           contacting_officer_id: fakeContactOne.contactingOfficerId,
           contacting_po_name: fakeContactOne.contactingPoName,
-          contacting_po_phone_number: fakeContactOne.contactingPoPhoneNumber,
           contact_location_type: fakeContactOne.locationType,
           contact_method: fakeContactOne.method,
           reminder_type: fakeContactOne.reminderType,

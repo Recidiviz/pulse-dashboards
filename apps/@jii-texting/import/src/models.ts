@@ -49,7 +49,7 @@ export const contactImportSchema = z.object({
   contact_external_id: z.string(),
   contacting_officer_id: z.string(),
   contacting_po_name: z.string(),
-  contacting_po_phone_number: z.string().nullable(),
+  contacting_po_phone_number: z.string().optional(),
   contact_location_type: z.string(),
   contact_method: z.string(),
   reminder_type: z.string().nullable(),
