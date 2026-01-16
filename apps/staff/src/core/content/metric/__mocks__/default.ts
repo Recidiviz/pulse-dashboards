@@ -62,6 +62,11 @@ const content: MetricCopy = {
     note: "Incarcerated population by race note",
     methodology: "Incarcerated population by race methodology",
   },
+  prisonPopulationByGender: {
+    title: "Incarcerated Population by gender identity",
+    note: "Incarcerated population by gender identity note",
+    methodology: "Incarcerated population by gender identity methodology",
+  },
   prisonPopulationBySex: {
     title: "Incarcerated Population by sex",
     note: "Incarcerated population by sex note",

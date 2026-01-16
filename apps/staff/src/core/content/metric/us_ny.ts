@@ -25,9 +25,14 @@ const content: StateSpecificMetricCopy = {
       'The chart describes the historical incarceration population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. \n- Please note that data labelled May 1, 2024 was actually generated May 4, 2024.',
   },
   prisonPopulationBySex: {
-    title: "Prison population by sex identity",
+    title: "Prison population by sex",
     methodology:
-      "The chart describes the number of people from each sex identity as of the date specified in the chart title. ",
+      "The chart describes the number of people from each sex as of the date specified in the chart title. ",
+  },
+  prisonPopulationByGender: {
+    title: "Prison population by gender identity",
+    methodology:
+      "The chart describes the number of people from each gender identity as of the date specified in the chart title. ",
   },
 };
 

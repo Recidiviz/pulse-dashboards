@@ -71,7 +71,7 @@ const content: StateSpecificMetricCopy = {
   libertyToPrisonPopulationBySex: {
     title: "Admissions from liberty to incarceration by sex",
     methodology:
-      'The chart describes the number of people admitted to incarceration from a new court commitment from each sex as of the date specified in the chart title. When "Counts" is selected, the number of people in each gender is shown. When "Rates" is selected, the percentage shows the number of people in each gender divided by the total number of people admitted to incarceration.',
+      'The chart describes the number of people admitted to incarceration from a new court commitment from each sex as of the date specified in the chart title. When "Counts" is selected, the number of people in each sex is shown. When "Rates" is selected, the percentage shows the number of people in each sex divided by the total number of people admitted to incarceration.',
   },
   libertyToPrisonPopulationByAgeGroup: {
     title: "Admissions from liberty to incarceration by age",
@@ -137,7 +137,7 @@ const content: StateSpecificMetricCopy = {
   supervisionToPrisonPopulationBySex: {
     title: "Admissions from supervision to incarceration by sex",
     methodology:
-      'The chart describes the number of people admitted from supervision to incarceration from each sex as of the date specified in the chart title. When "Counts" is selected, the number of people in each gender is shown. When "Rates" is selected, the percentage shows the number of people in each gender divided by the total number of people admitted to incarceration.',
+      'The chart describes the number of people admitted from supervision to incarceration from each sex as of the date specified in the chart title. When "Counts" is selected, the number of people in each sex is shown. When "Rates" is selected, the percentage shows the number of people in each sex divided by the total number of people admitted to incarceration.',
   },
   supervisionToPrisonPopulationByRace: {
     title: "Admissions from supervision to incarceration by race",

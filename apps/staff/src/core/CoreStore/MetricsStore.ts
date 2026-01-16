@@ -79,6 +79,7 @@ export default class MetricsStore {
           [PATHWAYS_SECTIONS.countByLocation]: this.prisonFacilityPopulation,
           [PATHWAYS_SECTIONS.countByRace]: this.prisonPopulationByRace,
           [PATHWAYS_SECTIONS.countByAgeGroup]: this.prisonPopulationByAgeGroup,
+          [PATHWAYS_SECTIONS.countByGender]: this.prisonPopulationByGender,
           [PATHWAYS_SECTIONS.countBySex]: this.prisonPopulationBySex,
           [PATHWAYS_SECTIONS.personLevelDetail]:
             this.prisonPopulationPersonLevel,
@@ -263,6 +264,17 @@ export default class MetricsStore {
       endpoint: "PrisonPopulationByDimensionCount",
       rootStore: this.rootStore,
       accessor: "ageGroup",
+      enableMetricModeToggle: true,
+      rotateLabels: true,
+    });
+  }
+
+  get prisonPopulationByGender(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationByGender",
+      endpoint: "PrisonPopulationByDimensionCount",
+      rootStore: this.rootStore,
+      accessor: "gender",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });

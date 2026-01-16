@@ -98,7 +98,7 @@ const content: MetricCopy = {
   libertyToPrisonPopulationBySex: {
     title: "Admissions from liberty to prison by sex",
     methodology:
-      'The chart describes the number of people admitted to prison from a new court commitment from each sex as of the date specified in the chart title. When "Counts" is selected, the number of people in each gender is shown. When "Rates" is selected, the percentage shows the number of people in each gender divided by the total number of people admitted to prison.',
+      'The chart describes the number of people admitted to prison from a new court commitment from each sex as of the date specified in the chart title. When "Counts" is selected, the number of people in each sex is shown. When "Rates" is selected, the percentage shows the number of people in each sex divided by the total number of people admitted to prison.',
   },
   libertyToPrisonPopulationByAgeGroup: {
     title: "Admissions from liberty to prison by age",
@@ -176,7 +176,7 @@ const content: MetricCopy = {
   supervisionToPrisonPopulationBySex: {
     title: "Admissions from supervision to prison by sex",
     methodology:
-      'The chart describes the number of people admitted to prison from each sex as of the date specified in the chart title. When "Counts" is selected, the number of people in each gender is shown. When "Rates" is selected, the percentage shows the number of people in each gender divided by the total number of people admitted to prison.',
+      'The chart describes the number of people admitted to prison from each sex as of the date specified in the chart title. When "Counts" is selected, the number of people in each sex is shown. When "Rates" is selected, the percentage shows the number of people in each sex divided by the total number of people admitted to prison.',
   },
   supervisionToPrisonPopulationByRace: {
     title: "Admissions from supervision to prison by race",
@@ -204,7 +204,7 @@ const content: MetricCopy = {
   supervisionToLibertyPopulationBySex: {
     title: "Releases from supervision by sex",
     methodology:
-      'The chart describes the number of people released from supervision to liberty from each sex as of the date specified in the chart title. When "Counts" is selected, the number of people in each gender is shown. When "Rates" is selected, the percentage shows the number of people in each gender divided by the total number of people released to liberty.',
+      'The chart describes the number of people released from supervision to liberty from each sex as of the date specified in the chart title. When "Counts" is selected, the number of people in each sex is shown. When "Rates" is selected, the percentage shows the number of people in each sex divided by the total number of people released to liberty.',
   },
   supervisionToLibertyPopulationByAgeGroup: {
     title: "Releases from supervision by age",
@@ -215,6 +215,11 @@ const content: MetricCopy = {
     title: "Releases from supervision by race",
     methodology:
       'The chart describes the number of people released from supervision to liberty from each race as of the date specified in the chart title. When "Counts" is selected, the number of people in each race is shown. When "Rates" is selected, the percentage shows the number of people in each race divided by the total number of people released to liberty.',
+  },
+  prisonPopulationByGender: {
+    title: "Prison population by gender identity",
+    methodology:
+      "The chart describes the number of people from each gender identity as of the date specified in the chart title. ",
   },
 };
 

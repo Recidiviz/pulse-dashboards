@@ -221,6 +221,7 @@ export const locationIdsBySearchType = {
 export type LocationSearchType = keyof typeof locationIdsBySearchType;
 
 export type Sex = "ALL" | "FEMALE" | "MALE";
+export type Gender = "ALL" | "FEMALE" | "MALE";
 export type AgeGroup =
   | "ALL"
   | "<24"
@@ -321,6 +322,7 @@ export type PopulationProjectionTimeSeriesRecord = {
 export type PrisonPopulationSnapshotRecord = {
   count: number;
   lastUpdated: Date;
+  gender: Gender;
   sex: Sex;
   ageGroup: AgeGroup;
   admissionReason: string;
@@ -474,6 +476,7 @@ export type MetricId =
   | "prisonFacilityPopulation"
   | "prisonPopulationByRace"
   | "prisonPopulationByAgeGroup"
+  | "prisonPopulationByGender"
   | "prisonPopulationBySex"
   | "projectedPrisonPopulationOverTime"
   | "prisonPopulationPersonLevel"

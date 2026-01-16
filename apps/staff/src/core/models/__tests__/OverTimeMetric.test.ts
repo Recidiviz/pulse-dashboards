@@ -40,7 +40,7 @@ describe("OverTimeMetric", () => {
     { label: "Option 1", value: "OPTION_1" },
     { label: "Option 2", value: "OPTION_2" },
   ];
-  const sexOptions = [
+  const genderOptions = [
     { label: "Male", value: "MALE" },
     { label: "Non-binary", value: "NON_BINARY" },
   ];
@@ -79,7 +79,7 @@ describe("OverTimeMetric", () => {
       metadata: {
         lastUpdated: "2022-05-01",
         facilityIdNameMap: JSON.stringify(facilityOptions),
-        sexIdNameMap: JSON.stringify(sexOptions),
+        genderIdNameMap: JSON.stringify(genderOptions),
       },
     });
 
@@ -372,8 +372,8 @@ describe("OverTimeMetric", () => {
     expect(metric.dynamicFilterOptions.facility).toEqual(facilityOptions);
   });
 
-  it("parses sexIdNameMap from metadata", () => {
-    expect(metric.dynamicFilterOptions.sex).toEqual(sexOptions);
+  it("parses genderIdNameMap from metadata", () => {
+    expect(metric.dynamicFilterOptions.gender).toEqual(genderOptions);
   });
 
   it("does not set dynamic filter option if invalid", async () => {
@@ -403,7 +403,7 @@ describe("OverTimeMetric", () => {
       metadata: {
         lastUpdated: "2022-05-01",
         facilityIdNameMap: JSON.stringify([]),
-        sexIdNameMap: JSON.stringify([]),
+        genderIdNameMap: JSON.stringify([]),
       },
     });
 

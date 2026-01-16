@@ -563,6 +563,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
       FILTER_TYPES.AGE_GROUP,
       FILTER_TYPES.RACE,
@@ -571,6 +572,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   prisonFacilityPopulation: {
     enabledFilters: [
       FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
       FILTER_TYPES.AGE_GROUP,
       FILTER_TYPES.RACE,
@@ -579,6 +581,16 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   prisonPopulationByAgeGroup: {
     enabledFilters: [
       FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.SEX,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+    ],
+  },
+  prisonPopulationByGender: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
       FILTER_TYPES.AGE_GROUP,
       FILTER_TYPES.RACE,
@@ -587,6 +599,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   prisonPopulationBySex: {
     enabledFilters: [
       FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
       FILTER_TYPES.AGE_GROUP,
       FILTER_TYPES.RACE,
@@ -595,6 +608,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   prisonPopulationByRace: {
     enabledFilters: [
       FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
       FILTER_TYPES.SEX,
       FILTER_TYPES.AGE_GROUP,
       FILTER_TYPES.RACE,

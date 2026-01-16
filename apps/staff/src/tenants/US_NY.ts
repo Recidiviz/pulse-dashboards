@@ -34,6 +34,7 @@ const US_NY_CONFIG: TenantConfig<"US_NY"> = {
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countByGender,
+      PATHWAYS_SECTIONS.countBySex,
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],

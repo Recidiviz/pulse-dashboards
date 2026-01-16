@@ -31,13 +31,15 @@ const useResizeFilterBar = (
     array: number[],
     outerWidth: number,
     initialWidth: number,
+    gap = 24, // 1.5rem padding-right per filter
   ) => {
     let total = initialWidth;
     for (let i = 0; i < array.length; i += 1) {
-      if (outerWidth > 0 && total + array[i] > outerWidth) {
+      const nextTotal = total + array[i] + gap;
+      if (outerWidth > 0 && nextTotal > outerWidth) {
         return i;
       }
-      total += array[i];
+      total = nextTotal;
     }
     return array.length;
   };
