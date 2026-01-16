@@ -39,14 +39,11 @@ RUN curl -o /usr/local/bin/cloud-sql-proxy https://storage.googleapis.com/cloud-
 
 RUN mkdir -p /cloudsql && chmod 777 /cloudsql
 
-WORKDIR /tmp
-ADD https://astral.sh/uv/install.sh /uv-installer.sh
-RUN sh /uv-installer.sh && rm /uv-installer.sh
-ENV PATH="/root/.local/bin/:$PATH"
+COPY --from=ghcr.io/astral-sh/uv:0.9.25 /uv /usr/local/bin/uv
 
 WORKDIR /app
 COPY pyproject.toml uv.lock /app/
-RUN uv sync --frozen
+RUN uv sync --locked
 
 COPY alembic.ini main.py /app/
 COPY deploy/entrypoint.gcp.sh /app/entrypoint.sh

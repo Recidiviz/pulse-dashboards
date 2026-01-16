@@ -1,0 +1,57 @@
+# This file specifies files that are not uploaded to Google Cloud Build
+# using gcloud.
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+*.cover
+pytestdebug.log
+
+# Type checking
+.mypy_cache/
+.pytype/
+.pyre/
+
+# Development
+*.log
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Binaries (downloaded during Docker build)
+bin/
+
+# Secrets
+.secrets/
+
+# Git
+.git/
+.gitignore
+
+# Experiments (not needed for deployment)
+experiments/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

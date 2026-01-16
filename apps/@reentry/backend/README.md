@@ -47,7 +47,7 @@ uv run fastapi dev
 
 ### Adding new packages
 - Add packages to the `dependencies` list at `apps/@reentry/backend/pyproject.toml`
-- `uv` is used for Python dependency management, so run `uv sync` to install the necessary packages
+- Then run `uv sync` to install and sync the dependent packages. This will update the `uv.lock` file.
 
 ### Sentry Error Tracking Configuration
 

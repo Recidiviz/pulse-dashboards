@@ -1,10 +1,20 @@
 steps:
-  # Build the container image
+  # Pull previous image for caching
+  - name: "gcr.io/cloud-builders/docker"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        docker pull gcr.io/$PROJECT_ID/backend:dev || exit 0
+
+  # Build the container image with cache
   # Built-in vairables
   # https://cloud.google.com/build/docs/configuring-builds/substitute-variable-values
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "build"
+      - "--cache-from"
+      - "gcr.io/$PROJECT_ID/backend:dev"
       - "-t"
       - "gcr.io/$PROJECT_ID/backend:dev"
       - "-t"

@@ -29,6 +29,8 @@ import { inc } from "semver";
 // in order for the gcloud stderr to display (used for the backend deploy)
 $.verbose = true;
 
+const startTime = Date.now();
+
 if ((await $`git status --porcelain`).stdout.trim() !== "") {
   console.error(
     "The git repo contains uncommitted changes. Make sure the repo is clean before deploying.",
@@ -1214,3 +1216,9 @@ if (slackChannel !== null && slackMessage !== null) {
 console.log(
   `Finished with the ${deployEnv} deploy! Commit hash: ${currentRevision}`,
 );
+
+const endTime = Date.now();
+const elapsedSeconds = Math.floor((endTime - startTime) / 1000);
+const minutes = Math.floor(elapsedSeconds / 60);
+const seconds = elapsedSeconds % 60;
+console.log(`Total execution time: ${minutes}m ${seconds}s`);
