@@ -20,6 +20,10 @@ import { z } from "zod";
 
 import { Prisma } from "~@meetings/prisma/client/client";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
+import {
+  extractActiveMeetingId,
+  extractLastCompletedMeetingTime,
+} from "~@meetings/trpc/routes/meeting.helpers";
 
 export const staffRouter = router({
   getClients: auth0Procedure.query(async ({ ctx: { prisma, user } }) => {
@@ -31,16 +35,16 @@ export const staffRouter = router({
       displayPersonExternalId: true,
       personId: true,
       supervisionType: true,
-      // Only get the latest active meeting, if it exists
       meetings: {
-        select: { id: true },
-        where: {
-          endTime: null,
-        },
         orderBy: {
           startTime: "desc",
         },
-        take: 1,
+        select: {
+          id: true,
+          staff: true,
+          endTime: true,
+          startTime: true,
+        },
       },
     } satisfies Prisma.ClientSelect;
 
@@ -70,7 +74,15 @@ export const staffRouter = router({
 
     return (await clients).map((client) => ({
       ..._.omit(client, ["meetings"]),
-      activeMeetingId: client.meetings[0]?.id ?? null,
+      activeMeetingId: extractActiveMeetingId({
+        user: user,
+        meetingsOrderedByDateDesc: client.meetings,
+      }),
+      meetingDetails: {
+        lastCompletedMeetingTime: extractLastCompletedMeetingTime({
+          meetingsOrderedByDateDesc: client.meetings,
+        }),
+      },
     }));
   }),
 
@@ -84,14 +96,15 @@ export const staffRouter = router({
         personId: true,
         supervisionType: true,
         meetings: {
-          select: { id: true },
-          where: {
-            endTime: null,
-          },
           orderBy: {
             startTime: "desc",
           },
-          take: 1,
+          select: {
+            id: true,
+            staff: true,
+            endTime: true,
+            startTime: true,
+          },
         },
       } satisfies Prisma.ClientSelect;
 
@@ -120,10 +133,17 @@ export const staffRouter = router({
       if (!client) {
         throw new Error("Client not found or access denied");
       }
-
       return {
         ..._.omit(client, ["meetings"]),
-        activeMeetingId: client.meetings[0]?.id ?? null,
+        activeMeetingId: extractActiveMeetingId({
+          user: user,
+          meetingsOrderedByDateDesc: client.meetings,
+        }),
+        meetingDetails: {
+          lastCompletedMeetingTime: extractLastCompletedMeetingTime({
+            meetingsOrderedByDateDesc: client.meetings,
+          }),
+        },
       };
     }),
 });

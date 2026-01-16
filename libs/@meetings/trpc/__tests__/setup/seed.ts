@@ -29,6 +29,7 @@ export const intakeId = "intake-1";
 export const clientPseudoId1 = "client-pid-1";
 export const clientPseudoId2 = "client-pid-2";
 export const clientPseudoId3 = "client-pid-3";
+export const clientPseudoId4 = "client-pid-4";
 export const residentPseudoId1 = "resident-pid-1";
 export const residentPseudoId2 = "resident-pid-2";
 export const residentPseudoId3 = "resident-pid-3";
@@ -114,6 +115,25 @@ export const fakeClients = [
     supervisionType: "PAROLE",
     isActive: false,
   },
+  {
+    stateCode: StateCode.US_NE,
+    personId: BigInt(4),
+    stablePersonExternalId: "client-ext-4",
+    stablePersonExternalIdType: "client-ext-type-1",
+    displayPersonExternalId: "client-display-ext-4",
+    pseudonymizedId: clientPseudoId4,
+    givenNames: faker.person.firstName(),
+    middleNames: faker.person.firstName(),
+    surname: faker.person.lastName(),
+    suffix: faker.person.suffix(),
+    staff: {
+      create: {
+        staffId: fakeStaff[0].staffId,
+      },
+    },
+    supervisionType: "PAROLE",
+    isActive: true,
+  },
 ] satisfies Prisma.ClientCreateInput[];
 
 export const fakeResidents = [
@@ -161,11 +181,15 @@ export const fakeResidents = [
   },
 ] satisfies Prisma.ResidentCreateInput[];
 
-export const fakeMeeting = {
+const dateNow = new Date();
+const millisecondsInOneHour = 60 * 60 * 1000;
+
+export const fakeActiveMeeting = {
   id: "meeting-1",
   staff: {
     connect: {
       staffId: fakeStaff[0].staffId,
+      pseudonymizedId: fakeStaff[0].pseudonymizedId,
     },
   },
   client: {
@@ -173,7 +197,7 @@ export const fakeMeeting = {
       personId: fakeClients[0].personId,
     },
   },
-  startTime: new Date(),
+  startTime: new Date(dateNow.getTime() - millisecondsInOneHour * 3),
   recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
   recordingsFolderPath: "meeting-1",
   userNotepadNotes: "Sample meeting notes.",
@@ -234,6 +258,63 @@ export const fakeMeeting = {
         },
       },
     ],
+  },
+} satisfies Prisma.MeetingCreateInput;
+
+export const fakeInactiveMeeting = {
+  id: "meeting-2",
+  staff: {
+    connect: {
+      staffId: fakeStaff[0].staffId,
+      pseudonymizedId: fakeStaff[0].pseudonymizedId,
+    },
+  },
+  client: {
+    connect: {
+      personId: fakeClients[3].personId,
+    },
+  },
+  startTime: new Date(dateNow.getTime() - millisecondsInOneHour * 2),
+  endTime: new Date(dateNow.getTime() - millisecondsInOneHour * 3),
+  recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
+  recordingsFolderPath: "meeting-1",
+  userNotepadNotes: "Sample meeting notes.",
+  actionItems:
+    "1. Follow up on employment status\n2. Schedule next check-in\n3. Review case file",
+  criticalUpdates:
+    "Client reported new job opportunity. Upcoming court date next week.",
+  meetingSummary:
+    "Productive meeting discussing client progress and upcoming milestones.",
+  transcriptions: {
+    create: [],
+  },
+} satisfies Prisma.MeetingCreateInput;
+
+export const fakeMeetingStaff1 = {
+  id: "meeting-3",
+  staff: {
+    connect: {
+      staffId: fakeStaff[1].staffId,
+      pseudonymizedId: fakeStaff[1].pseudonymizedId,
+    },
+  },
+  client: {
+    connect: {
+      personId: fakeClients[1].personId,
+    },
+  },
+  startTime: dateNow, //has the earliest start time so we can see it is filtered out based on staff id
+  recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
+  recordingsFolderPath: "meeting-1",
+  userNotepadNotes: "Sample meeting notes.",
+  actionItems:
+    "1. Follow up on employment status\n2. Schedule next check-in\n3. Review case file",
+  criticalUpdates:
+    "Client reported new job opportunity. Upcoming court date next week.",
+  meetingSummary:
+    "Productive meeting discussing client progress and upcoming milestones.",
+  transcriptions: {
+    create: [],
   },
 } satisfies Prisma.MeetingCreateInput;
 
@@ -299,7 +380,15 @@ export async function seed(prismaClient: PrismaClient) {
   });
 
   await prismaClient.meeting.create({
-    data: fakeMeeting,
+    data: fakeActiveMeeting,
+  });
+
+  await prismaClient.meeting.create({
+    data: fakeInactiveMeeting,
+  });
+
+  await prismaClient.meeting.create({
+    data: fakeMeetingStaff1,
   });
 
   await prismaClient.meeting.create({

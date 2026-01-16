@@ -21,6 +21,7 @@ import {
   PostMeetingProcessingStatus,
   Prisma,
   PrismaClient,
+  Staff,
 } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
 import { AuthUser } from "~@meetings/trpc/types";
@@ -124,4 +125,36 @@ export async function getMeetingsForPerson({
       postMeetingProcessingStatus: true,
     },
   });
+}
+
+export function extractActiveMeetingId({
+  user,
+  meetingsOrderedByDateDesc,
+}: {
+  user: AuthUser;
+  meetingsOrderedByDateDesc: {
+    endTime: Date | null;
+    startTime: Date;
+    staff: Staff | null;
+    id: string;
+  }[];
+}) {
+  const activeMeeting = meetingsOrderedByDateDesc.find(
+    (meeting) =>
+      meeting.endTime == null &&
+      (meeting.staff?.pseudonymizedId == user.pseudonymizedId ||
+        user.pseudonymizedId === "RECIDIVIZ"), //TODO(#11367)
+  );
+  return activeMeeting?.id ?? null;
+}
+
+export function extractLastCompletedMeetingTime({
+  meetingsOrderedByDateDesc,
+}: {
+  meetingsOrderedByDateDesc: { endTime: Date | null; startTime: Date }[];
+}) {
+  const latestMeeting = meetingsOrderedByDateDesc.find(
+    (meeting) => meeting.endTime != null,
+  );
+  return latestMeeting?.startTime ?? null;
 }

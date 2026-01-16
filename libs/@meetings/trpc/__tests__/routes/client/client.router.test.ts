@@ -25,8 +25,8 @@ import {
   testTRPCClient,
 } from "~@meetings/trpc/test/setup";
 import {
+  fakeActiveMeeting,
   fakeClients,
-  fakeMeeting,
   fakeStaff,
 } from "~@meetings/trpc/test/setup/seed";
 
@@ -68,7 +68,7 @@ describe("client router", () => {
             expect.objectContaining({
               clientId: fakeClients[0].personId,
               staffId: fakeStaff[0].staffId,
-              startTime: fakeMeeting.startTime,
+              startTime: fakeActiveMeeting.startTime,
               endTime: null,
               postMeetingProcessingStatus:
                 PostMeetingProcessingStatus.NOT_STARTED,
@@ -87,8 +87,8 @@ describe("client router", () => {
         // Check expected fields are returned
         expect(result).toEqual([
           expect.objectContaining({
-            id: fakeMeeting.id,
-            startTime: fakeMeeting.startTime,
+            id: fakeActiveMeeting.id,
+            startTime: fakeActiveMeeting.startTime,
             endTime: null,
           }),
         ]);
@@ -131,7 +131,7 @@ describe("client router", () => {
         // 2. All completed/processing meetings regardless of staff (completedMeeting)
         // Should NOT see: otherStaffInProgressMeeting (different staff, in-progress)
         const resultIds = result.map((m) => m.id);
-        expect(resultIds).toContain(fakeMeeting.id);
+        expect(resultIds).toContain(fakeActiveMeeting.id);
         expect(resultIds).toContain(completedMeeting.id);
         expect(resultIds).not.toContain(otherStaffInProgressMeeting.id);
         expect(result.length).toBe(2);
@@ -159,8 +159,8 @@ describe("client router", () => {
         // Check expected fields are returned
         expect(result).toEqual([
           expect.objectContaining({
-            id: fakeMeeting.id,
-            startTime: fakeMeeting.startTime,
+            id: fakeActiveMeeting.id,
+            startTime: fakeActiveMeeting.startTime,
             endTime: null,
           }),
         ]);
@@ -294,7 +294,7 @@ describe("client router", () => {
         expect(result.length).toBe(2);
         expect(result).not.toContainEqual(
           expect.objectContaining({
-            id: fakeMeeting.id,
+            id: fakeActiveMeeting.id,
           }),
         );
       });

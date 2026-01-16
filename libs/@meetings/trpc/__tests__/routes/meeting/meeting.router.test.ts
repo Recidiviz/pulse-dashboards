@@ -24,7 +24,7 @@ import {
   testPrismaClient,
   testTRPCClient,
 } from "~@meetings/trpc/test/setup";
-import { fakeMeeting } from "~@meetings/trpc/test/setup/seed";
+import { fakeActiveMeeting } from "~@meetings/trpc/test/setup/seed";
 
 const FAKE_DATE = new Date("2025-10-19");
 
@@ -43,12 +43,12 @@ describe("meeting router", () => {
 
     test("Should return meeting details if it exists", async () => {
       const result = await testTRPCClient.v1.meeting.getDetails.query({
-        meetingId: fakeMeeting.id,
+        meetingId: fakeActiveMeeting.id,
       });
 
       expect(result).toEqual({
-        id: fakeMeeting.id,
-        startTime: fakeMeeting.startTime,
+        id: fakeActiveMeeting.id,
+        startTime: fakeActiveMeeting.startTime,
         endTime: null,
         postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
         userNotepadNotes: "Sample meeting notes.",
@@ -96,7 +96,7 @@ describe("meeting router", () => {
     test("Returns a signed URL for the meeting recording", async () => {
       const result =
         await testTRPCClient.v1.meeting.getSignedUrlForRecording.query({
-          meetingId: fakeMeeting.id,
+          meetingId: fakeActiveMeeting.id,
         });
 
       expect(result).toEqual(
@@ -119,11 +119,11 @@ describe("meeting router", () => {
 
     test("Should delete meeting if it exists", async () => {
       await testTRPCClient.v1.meeting.discardMeeting.mutate({
-        meetingId: fakeMeeting.id,
+        meetingId: fakeActiveMeeting.id,
       });
 
       const meetingsInDb = await testPrismaClient.meeting.findMany({
-        where: { id: fakeMeeting.id },
+        where: { id: fakeActiveMeeting.id },
       });
 
       expect(meetingsInDb).toEqual([]);
@@ -145,12 +145,12 @@ describe("meeting router", () => {
 
     test("Should update notes if meeting exists", async () => {
       await testTRPCClient.v1.meeting.updateNotes.mutate({
-        meetingId: fakeMeeting.id,
+        meetingId: fakeActiveMeeting.id,
         userNotepadNotes: "These are some notes",
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
-        where: { id: fakeMeeting.id },
+        where: { id: fakeActiveMeeting.id },
       });
 
       expect(updatedMeeting).toEqual(
@@ -162,7 +162,7 @@ describe("meeting router", () => {
 
     test("Should update all fields including actionItems, criticalUpdates, and meetingSummary", async () => {
       await testTRPCClient.v1.meeting.updateNotes.mutate({
-        meetingId: fakeMeeting.id,
+        meetingId: fakeActiveMeeting.id,
         userNotepadNotes: "Updated notes",
         actionItems: "1. New action item\n2. Another action",
         criticalUpdates: "Critical update information",
@@ -170,7 +170,7 @@ describe("meeting router", () => {
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
-        where: { id: fakeMeeting.id },
+        where: { id: fakeActiveMeeting.id },
       });
 
       expect(updatedMeeting).toEqual(
@@ -212,12 +212,12 @@ describe("meeting router", () => {
       mockCloudTasksClient.createTask.mockRejectedValueOnce(new Error());
 
       await testTRPCClient.v1.meeting.endMeeting.mutate({
-        meetingId: fakeMeeting.id,
+        meetingId: fakeActiveMeeting.id,
         userNotepadNotes: "These are some notes",
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
-        where: { id: fakeMeeting.id },
+        where: { id: fakeActiveMeeting.id },
       });
 
       // Check that end date and post processing status were updated
@@ -236,12 +236,12 @@ describe("meeting router", () => {
 
     test("Should set meeting end time and queue stitching", async () => {
       await testTRPCClient.v1.meeting.endMeeting.mutate({
-        meetingId: fakeMeeting.id,
+        meetingId: fakeActiveMeeting.id,
         userNotepadNotes: "These are some notes",
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
-        where: { id: fakeMeeting.id },
+        where: { id: fakeActiveMeeting.id },
       });
 
       // Check that end date and post processing status were updated
@@ -266,7 +266,7 @@ describe("meeting router", () => {
               body: Buffer.from(
                 JSON.stringify({
                   stateCode: "US_NE",
-                  meetingId: fakeMeeting.id,
+                  meetingId: fakeActiveMeeting.id,
                 }),
               ),
               httpMethod: "POST",

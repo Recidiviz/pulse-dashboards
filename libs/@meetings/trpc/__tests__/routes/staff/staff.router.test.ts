@@ -20,8 +20,10 @@ import {
   testTRPCClient,
 } from "~@meetings/trpc/test/setup";
 import {
+  fakeActiveMeeting,
   fakeClients,
-  fakeMeeting,
+  fakeInactiveMeeting,
+  fakeMeetingStaff1,
   fakeStaff,
 } from "~@meetings/trpc/test/setup/seed";
 
@@ -29,14 +31,28 @@ describe("staff router", () => {
   describe("state user", () => {
     test("getClients returns list of clients for staff member", async () => {
       const result = await testTRPCClient.v1.staff.getClients.query();
-      expect(result).toEqual([
+      expect(result).toIncludeSameMembers([
         {
           personId: fakeClients[0].personId,
           givenNames: fakeClients[0].givenNames,
           surname: fakeClients[0].surname,
           displayPersonExternalId: fakeClients[0].displayPersonExternalId,
-          activeMeetingId: fakeMeeting.id,
+          activeMeetingId: fakeActiveMeeting.id,
           supervisionType: fakeClients[0].supervisionType,
+          meetingDetails: {
+            lastCompletedMeetingTime: null,
+          },
+        },
+        {
+          personId: fakeClients[3].personId,
+          givenNames: fakeClients[3].givenNames,
+          surname: fakeClients[3].surname,
+          displayPersonExternalId: fakeClients[3].displayPersonExternalId,
+          activeMeetingId: null,
+          supervisionType: fakeClients[3].supervisionType,
+          meetingDetails: {
+            lastCompletedMeetingTime: fakeInactiveMeeting.startTime,
+          },
         },
       ]);
     });
@@ -44,7 +60,7 @@ describe("staff router", () => {
     test("getClients returns only active clients", async () => {
       const result = await testTRPCClient.v1.staff.getClients.query();
       // Should not include fakeClients[2] which has isActive: false
-      expect(result).toHaveLength(1);
+      expect(result).toHaveLength(2);
       expect(
         result.every((client) => client.personId !== fakeClients[2].personId),
       ).toBe(true);
@@ -64,14 +80,28 @@ describe("staff router", () => {
 
     test("getClients returns list of clients for staff member", async () => {
       const result = await testTRPCClient.v1.staff.getClients.query();
-      expect(result).toEqual([
+      expect(result).toIncludeSameMembers([
         {
           personId: fakeClients[0].personId,
           givenNames: fakeClients[0].givenNames,
           surname: fakeClients[0].surname,
           displayPersonExternalId: fakeClients[0].displayPersonExternalId,
-          activeMeetingId: fakeMeeting.id,
+          activeMeetingId: fakeActiveMeeting.id,
           supervisionType: fakeClients[0].supervisionType,
+          meetingDetails: {
+            lastCompletedMeetingTime: null,
+          },
+        },
+        {
+          personId: fakeClients[3].personId,
+          givenNames: fakeClients[3].givenNames,
+          surname: fakeClients[3].surname,
+          displayPersonExternalId: fakeClients[3].displayPersonExternalId,
+          activeMeetingId: null,
+          supervisionType: fakeClients[3].supervisionType,
+          meetingDetails: {
+            lastCompletedMeetingTime: fakeInactiveMeeting.startTime,
+          },
         },
       ]);
     });
@@ -79,7 +109,7 @@ describe("staff router", () => {
     test("getClients returns only active clients", async () => {
       const result = await testTRPCClient.v1.staff.getClients.query();
       // Should not include fakeClients[2] which has isActive: false
-      expect(result).toHaveLength(1);
+      expect(result).toHaveLength(2);
       expect(
         result.every((client) => client.personId !== fakeClients[2].personId),
       ).toBe(true);
@@ -104,25 +134,42 @@ describe("staff router", () => {
           givenNames: fakeClients[0].givenNames,
           surname: fakeClients[0].surname,
           displayPersonExternalId: fakeClients[0].displayPersonExternalId,
-          activeMeetingId: fakeMeeting.id,
+          activeMeetingId: fakeActiveMeeting.id,
           supervisionType: fakeClients[0].supervisionType,
+          meetingDetails: {
+            lastCompletedMeetingTime: null,
+          },
         },
         {
           personId: fakeClients[1].personId,
           givenNames: fakeClients[1].givenNames,
           surname: fakeClients[1].surname,
           displayPersonExternalId: fakeClients[1].displayPersonExternalId,
-          activeMeetingId: null,
+          activeMeetingId: fakeMeetingStaff1.id, //returns meeting attached to staff[1] because this is a recidiviz user
           supervisionType: fakeClients[1].supervisionType,
+          meetingDetails: {
+            lastCompletedMeetingTime: null,
+          },
+        },
+        {
+          personId: fakeClients[3].personId,
+          givenNames: fakeClients[3].givenNames,
+          surname: fakeClients[3].surname,
+          displayPersonExternalId: fakeClients[3].displayPersonExternalId,
+          activeMeetingId: null,
+          supervisionType: fakeClients[3].supervisionType,
+          meetingDetails: {
+            lastCompletedMeetingTime: fakeInactiveMeeting.startTime,
+          },
         },
       ]);
     });
 
     test("getClients returns only active clients", async () => {
       const result = await testTRPCClient.v1.staff.getClients.query();
-      // Should only include active clients (fakeClients[0] and fakeClients[1])
+      // Should only include active clients (fakeClients[0] and fakeClients[1] and fakeClients[3])
       // and not fakeClients[2] which has isActive: false
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(3);
       expect(
         result.every((client) => client.personId !== fakeClients[2].personId),
       ).toBe(true);

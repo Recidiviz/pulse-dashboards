@@ -85,7 +85,7 @@ const PersonCardItem = ({
             </View>
           </View>
         </View>
-        {hasActiveMeeting && (
+        {!!person.activeMeetingId && (
           <MeetingInProgressBar
             recordingState={recordingState || "recording"}
             startTime={new Date()} // TODO: Replace with API value

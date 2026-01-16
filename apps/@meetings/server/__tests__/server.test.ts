@@ -33,6 +33,9 @@ describe("server", () => {
         displayPersonExternalId: fakeClient.displayPersonExternalId,
         activeMeetingId: fakeMeeting.id,
         supervisionType: fakeClient.supervisionType,
+        meetingDetails: {
+          lastCompletedMeetingTime: null,
+        },
       },
     ]);
   });
