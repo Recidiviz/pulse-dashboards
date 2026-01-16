@@ -115,7 +115,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         // Check authentication status on init (useful for page refresh)
         if (window.location.pathname !== "/auth/callback") {
-          await checkAuthentication(store);
+          const isAuthenticated = await checkAuthentication(store);
+          if (!isAuthenticated) {
+            // Redirect to Auth0 to verify whether there's an existing session
+            await store.loginWithRedirect();
+          }
         }
       } catch (error) {
         console.error("Error initializing authentication:", error);

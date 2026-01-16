@@ -21,7 +21,6 @@ import { type ReactNode } from "react";
 
 import EmailVerificationState from "~@reentry/frontend/components/auth/EmailVerificationState";
 import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
-import UnauthorizedState from "~@reentry/frontend/components/auth/UnauthorizedState";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 interface ProtectedRouteProps {
@@ -41,7 +40,7 @@ interface ProtectedRouteProps {
  *
  * To maintain full control over the auth flow and avoid abrupt redirections,
  * we first initialize our custom `authStore` in `useAuth()` and render proper fallback
- * components (`LoadingState`, `UnauthorizedState`, `EmailVerificationState`) accordingly.
+ * components (`LoadingState`, `EmailVerificationState`) accordingly.
  */
 
 export const ProtectedRoute = ({
@@ -50,13 +49,10 @@ export const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const { state } = useAuth();
 
-  if (state.isLoading) {
+  if (state.isLoading || !state.isAuthorized) {
+    // When the user is not authorized, they are automatically
+    // redirected to the Auth0 login screen
     return <LoadingState />;
-  }
-
-  // Not authorized, redirect to login
-  if (!state.isAuthorized) {
-    return <UnauthorizedState />;
   }
 
   // Email verification required but not verified
