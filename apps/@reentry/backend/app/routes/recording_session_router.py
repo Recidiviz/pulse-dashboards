@@ -3,14 +3,14 @@ Recording session router for managing audio recording sessions.
 """
 
 import base64
-import structlog
 from uuid import UUID
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import update
 from sqlmodel import select
 
-from app.auth.auth_core import get_pseudonymized_id
+from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.config import settings
 from app.core.db import AsyncSession, get_session
 from app.crud.intake import get_intake_by_id, get_intake_with_address_and_recording
@@ -53,6 +53,7 @@ async def get_client_recording_sessions(
     intake_id: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ) -> RecordingSessionResponse | None:
     intake = await get_intake_with_address_and_recording(session, intake_id)
     if not intake:
@@ -62,6 +63,7 @@ async def get_client_recording_sessions(
     check_access(
         client_pseudo_id=intake.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
     logger.info(f"Retrieved recording session for intake {intake_id}")
     return intake.recording_session
@@ -138,7 +140,9 @@ async def get_recording_session(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    structlog.contextvars.bind_contextvars(client_pseudo_id=recording_session.client_pseudo_id)
+    structlog.contextvars.bind_contextvars(
+        client_pseudo_id=recording_session.client_pseudo_id
+    )
     # TODO: here we're leaking a little info because someone who doesn't have access can know what recordings exist. Low priority
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
@@ -166,7 +170,9 @@ async def get_recording_session_status(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    structlog.contextvars.bind_contextvars(client_pseudo_id=recording_session.client_pseudo_id)
+    structlog.contextvars.bind_contextvars(
+        client_pseudo_id=recording_session.client_pseudo_id
+    )
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
@@ -202,7 +208,9 @@ async def update_recording_session_status(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    structlog.contextvars.bind_contextvars(client_pseudo_id=recording_session.client_pseudo_id)
+    structlog.contextvars.bind_contextvars(
+        client_pseudo_id=recording_session.client_pseudo_id
+    )
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
@@ -256,7 +264,9 @@ async def upload_audio_chunk(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    structlog.contextvars.bind_contextvars(client_pseudo_id=recording_session.client_pseudo_id)
+    structlog.contextvars.bind_contextvars(
+        client_pseudo_id=recording_session.client_pseudo_id
+    )
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
@@ -347,7 +357,9 @@ async def finalize_recording(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    structlog.contextvars.bind_contextvars(client_pseudo_id=recording_session.client_pseudo_id)
+    structlog.contextvars.bind_contextvars(
+        client_pseudo_id=recording_session.client_pseudo_id
+    )
     if recording_session.status != RecordingStatus.PROCESSING:
         check_access(
             client_pseudo_id=recording_session.client_pseudo_id,
@@ -389,7 +401,9 @@ async def retry_process_recording(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    structlog.contextvars.bind_contextvars(client_pseudo_id=recording_session.client_pseudo_id)
+    structlog.contextvars.bind_contextvars(
+        client_pseudo_id=recording_session.client_pseudo_id
+    )
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
@@ -435,7 +449,9 @@ async def get_signed_url(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    structlog.contextvars.bind_contextvars(client_pseudo_id=recording_session.client_pseudo_id)
+    structlog.contextvars.bind_contextvars(
+        client_pseudo_id=recording_session.client_pseudo_id
+    )
 
     if recording_session.status != RecordingStatus.COMPLETED:
         raise HTTPException(status_code=400, detail="Recording not completed yet")

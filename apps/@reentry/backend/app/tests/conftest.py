@@ -208,7 +208,10 @@ async def async_session() -> AsyncSession:
 @pytest.fixture
 async def client():
     # Import auth functions
-    from app.auth.auth_core import get_pseudonymized_id
+    from app.auth.auth_core import (
+        get_auth_user_context,
+        get_pseudonymized_id,
+    )
 
     # Save original dependency
     original_dependencies = fastapi_app.dependency_overrides.copy()
@@ -217,8 +220,17 @@ async def client():
     async def mock_get_pseudonymized_id():
         return "test_pseudonymized_id"
 
+    async def mock_get_auth_user_context():
+        return {
+            "pseudonymized_id": "test_pseudonymized_id",
+            "is_zero_caseload_user": False,
+            "is_read_only_user": False,
+            "cpa_client_locations": [],
+        }
+
     # Apply the override
     fastapi_app.dependency_overrides[get_pseudonymized_id] = mock_get_pseudonymized_id
+    fastapi_app.dependency_overrides[get_auth_user_context] = mock_get_auth_user_context
 
     # Create and yield the test client
     async with AsyncClient(

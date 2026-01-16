@@ -514,3 +514,27 @@ async def get_pseudonymized_id(request: Request) -> str:
         )
 
     return pseudonymized_id
+
+
+async def get_auth_user_context(request: Request):
+    if not hasattr(request.state, "user"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    token = request.headers["Authorization"].split(" ")[1]
+
+    user_info = await _get_cached_auth0_userinfo(token)
+    if not user_info:
+        raise HTTPException(status_code=401, detail="Userinfo not found")
+
+    app_metadata = user_info.get("https://dashboard.recidiviz.org/app_metadata", {})
+    feature_variants = app_metadata.get("featureVariants", {})
+    cpa_client_locations = [
+        key.replace("CPA_LOCATION_", "")
+        for key in feature_variants
+        if key.startswith("CPA_LOCATION_")
+    ]
+    return {
+        "is_zero_caseload_user": "zeroCaseloadUser" in feature_variants,
+        "is_read_only_user": "readOnly" in feature_variants,
+        "cpa_client_locations": cpa_client_locations,
+    }

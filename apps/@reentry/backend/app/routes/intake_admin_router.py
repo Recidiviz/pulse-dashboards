@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import DBAPIError
 from sqlmodel import select
 
-from app.auth.auth_core import get_pseudonymized_id
+from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
 from app.crud.address import get_collected_address_for_intake
 from app.crud.assessment_config import get_assessment_config_by_id
@@ -216,6 +216,7 @@ async def create_new_intake(
     request: CreateIntakeRequest,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     """
     Create a new intake for a client.
@@ -227,7 +228,11 @@ async def create_new_intake(
     """
     structlog.contextvars.bind_contextvars(client_pseudo_id=request.client_pseudo_id)
     try:
-        check_access(request.client_pseudo_id, pseudonymized_id)
+        check_access(
+            request.client_pseudo_id,
+            pseudonymized_id,
+            auth_user_context["cpa_client_locations"],
+        )
 
         # 1. Check if client has an existing IN_PROGRESS or CREATED intake
         existing_intake = await get_active_intake_by_client_pseudo_id(
@@ -416,7 +421,9 @@ async def get_intake_section_messages_route(
     if intake and intake.client_pseudo_id:
         structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
     else:
-        logger.error(f"Couldn't find client_pseudo_id from the intake. intake_id: {intake_id}")
+        logger.error(
+            f"Couldn't find client_pseudo_id from the intake. intake_id: {intake_id}"
+        )
 
     check_access(client_pseudo_id, pseudonymized_id)
 

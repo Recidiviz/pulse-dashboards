@@ -2,11 +2,11 @@ from datetime import date
 from typing import Optional
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi_pagination import Page
 from pydantic import BaseModel
 
-from app.auth.auth_core import get_pseudonymized_id
+from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.config import settings
 from app.core.db import AsyncSession, get_session
 from app.crud.address import get_latest_address_client_pseudo_id
@@ -67,9 +67,8 @@ async def router_list_clients(
     sort_order: str = "asc",  # "asc" or "desc"
     search: str | None = None,  # Search by client name
     status_filter: str | None = None,  # Filter by status
-    is_zero_caseload_user: bool = False,
-    cpa_client_locations: list[str] | None = Query(default=[]),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     # Get paginated list of clients, filtered by staff ID if available
     return await get_paginated_client_list(
@@ -81,8 +80,8 @@ async def router_list_clients(
         sort_order,
         search,
         status_filter,
-        is_zero_caseload_user,
-        cpa_client_locations,
+        auth_user_context["is_zero_caseload_user"],
+        auth_user_context["cpa_client_locations"],
     )
 
 
@@ -113,16 +112,14 @@ async def get_client_latest_address(
     request: Request,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
-    # Get client data with staff verification
-    record = Queries.get_client_data_by_pseudonymized_id(
-        pseudonymized_client_id=client_pseudo_id,
-        pseudonymized_staff_id=pseudonymized_id,
+    check_access(
+        client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
     )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client Record not found")
-
     # Get address from latest completed intake
     latest_address = await get_latest_address_client_pseudo_id(
         session, client_pseudo_id
@@ -146,17 +143,16 @@ async def get_client_record(
     request: Request,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
-    # Get client data with staff verification
-    record = Queries.get_client_data_by_pseudonymized_id(
-        pseudonymized_client_id=client_pseudo_id,
-        pseudonymized_staff_id=pseudonymized_id,
+    client_record = check_access(
+        client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
     )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client Record not found")
 
-    return record
+    return client_record
 
 
 @router.get(
@@ -170,6 +166,7 @@ async def get_client_intakes(
     client_pseudo_id: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     """
     Get all intakes for a client.
@@ -177,7 +174,11 @@ async def get_client_intakes(
     understand which assessments were used for each intake.
     """
     structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
-    check_access(client_pseudo_id, pseudonymized_id)
+    check_access(
+        client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
 
     intakes = await get_all_intakes_by_client_pseudo_id(session, client_pseudo_id)
 
@@ -227,6 +228,7 @@ async def reset_client_data(
     client_pseudo_id: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
 
@@ -236,14 +238,11 @@ async def reset_client_data(
             detail=f"Reset feature is not enabled in this environment. Current Env: {settings.ENV_NAME.lower()}",
         )
 
-    check_access(client_pseudo_id, pseudonymized_id)
-
-    client_record = Queries.get_client_by_pseudonymized_id_unsafe(client_pseudo_id)
-    if not client_record:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Client with pseudo_id {client_pseudo_id} not found",
-        )
+    check_access(
+        client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
 
     logger.info(
         f"Resetting intake data for client {client_pseudo_id} by staff {pseudonymized_id}"

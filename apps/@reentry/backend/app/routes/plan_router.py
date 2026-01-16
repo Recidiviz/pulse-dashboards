@@ -13,7 +13,7 @@ from fastapi_pagination.ext.sqlmodel import paginate
 from pydantic import BaseModel, computed_field
 from weasyprint import CSS, HTML
 
-from app.auth.auth_core import get_pseudonymized_id
+from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
 from app.crud.address import update_intake_address
 from app.crud.intake import get_intake_by_id
@@ -65,15 +65,17 @@ from app.services.resources import (
     ResourceSubcategory,
     list_resources,
 )
-from app.utils.permission_utils import check_access
 from app.utils.address_autocomplete import (
     AutocompleteAddressResponse,
     AutocompleteCityResponse,
 )
 from app.utils.address_autocomplete import (
     autocomplete_address as autocomplete_address_util,
+)
+from app.utils.address_autocomplete import (
     autocomplete_city as autocomplete_city_util,
 )
+from app.utils.permission_utils import check_access
 
 from ..utils.PrometheusBackgroundThreadManager import (
     llm_plan_creation_total_counter,
@@ -842,12 +844,17 @@ async def get_address(
     plan_id: UUID,
     session=Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     plan = await get_plan_by_id(session, plan_id)
 
     if not plan:
         raise HTTPException(status_code=404, detail="Intake not found")
-    check_access(plan.client_pseudo_id, pseudonymized_id)
+    check_access(
+        plan.client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
 
     intake = await get_intake_by_id(session, plan.intake_id)
 
