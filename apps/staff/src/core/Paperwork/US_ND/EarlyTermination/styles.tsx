@@ -48,5 +48,9 @@ export const FormHeadingContainer = styled.article`
 
   & div span:first-child {
     flex: 1;
+    margin-top:0;
+  }
+  & div span:not(first-child) { 
+    margin-top:0;
   }
 `;

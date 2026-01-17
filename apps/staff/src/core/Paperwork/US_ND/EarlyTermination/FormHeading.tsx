@@ -61,6 +61,9 @@ const Title = styled.pre`
 
 const LineItemLeft = styled(LineItem).attrs({
   separator: ")",
+  style: {
+    "margin-top": 0
+  }
 })``;
 
 type FormHeadingProps = {

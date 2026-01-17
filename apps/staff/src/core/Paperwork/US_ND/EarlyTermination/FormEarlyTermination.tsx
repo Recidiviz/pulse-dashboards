@@ -48,7 +48,7 @@ export const FormPage = styled.div`
   }
 
   :not(first-child) {
-    margin-top: ${rem(18)};
+    margin-top: ${rem(1)};
   }
 `;
 
