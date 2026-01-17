@@ -8,7 +8,7 @@ dependencies = [
     "alembic>=1.13.3",
     "asyncpg>=0.29.0",
     "fastapi-pagination>=0.12.27",
-    "fastapi[standard]>=0.115.0",
+    "fastapi[standard]==0.115.0",
     "httpx>=0.27.2",
     "langchain-core>=0.3.81",
     "langchain-community>=0.3.1",
