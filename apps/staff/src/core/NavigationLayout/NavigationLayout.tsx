@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography, zindex } from "@recidiviz/design-system";
+import { Pill, spacing, typography, zindex } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -74,7 +74,8 @@ const NavContainer = styled.div<{
   justify-content: space-between;
   background: ${({ backgroundColor }) => backgroundColor ?? palette.marble1};
   z-index: ${zindex.tooltip - 1};
-  ${({ isFixed, topOffset }) => isFixed && `position: fixed; top: ${topOffset || 0}px;`}
+  ${({ isFixed, topOffset }) =>
+    isFixed && `position: fixed; top: ${topOffset || 0}px;`}
   ${({ alignBottom }) =>
     alignBottom
       ? `bottom: 0;
@@ -417,6 +418,50 @@ function PSISupervisorLink({
   );
 }
 
+const BetaPill = styled(Pill)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  height: 18px;
+  margin-left: ${rem(spacing.sm)};
+  margin-right: ${rem(spacing.md)};
+  background-color: rgba(207, 245, 246, 1);
+  border: 1px solid rgba(162, 229, 239, 1);
+  border-radius: 4px;
+`;
+
+// TODO(#11341) - Remove external CPA navigation link when CPA is integrated into staff app
+function CPALink({ enabled }: OptionalLinkProps) {
+  const { isMobile } = useIsMobile(true);
+
+  if (!enabled) return null;
+
+  const cpaUrl =
+    import.meta.env.VITE_DEPLOY_ENV === "production"
+      ? "https://plan.recidiviz.org"
+      : "https://plan-staging.recidiviz.org";
+
+  return (
+    <DropdownMenuItem>
+      <a
+        href={cpaUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        role="menuitem"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {isMobile && <Icon kind={IconSVG.Open} width={20} />}
+        Case Planning Assistant
+        <BetaPill textColor="rgba(0, 85, 188, 1)">BETA</BetaPill>
+        <Icon kind={IconSVG.Open} width={15} />
+      </a>
+    </DropdownMenuItem>
+  );
+}
+
 function LogoutLink({ enabled }: OptionalLinkProps) {
   const logout = useLogout();
   const { isMobile } = useIsMobile(true);
@@ -543,6 +588,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
 
     const isPsiSupervisor = isPsiStaff && sentencingStore.isSupervisor;
 
+    // TODO(#11341) - Remove external CPA navigation link when CPA is integrated into staff app
+    const enabledCPA = userStore.getRoutePermission("cpa");
+
     const quickLinks = (
       <>
         <AccountLink enabled />
@@ -566,6 +614,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           enabled={isPsiStaff}
           staffPseudoId={sentencingStore.staffPseudoId}
         />
+        <CPALink enabled={enabledCPA} />
         <LogoutLink enabled={!isOfflineMode()} />
       </>
     );

@@ -76,6 +76,7 @@ describe("CoreLayout tests", () => {
         userAllowedNavigation: {
           system: ["page1", "page2", "page3"],
         },
+        getRoutePermission: vi.fn().mockReturnValue(false),
       },
       currentTenantId: "US_ID",
       workflowsStore: {
