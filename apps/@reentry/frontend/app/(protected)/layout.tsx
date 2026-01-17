@@ -23,12 +23,16 @@ import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
 import Navbar from "~@reentry/frontend/components/Navbar/Navbar";
 import ReadOnlyIndicatorBanner from "~@reentry/frontend/components/ReadOnlyIndicatorBanner";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import { hasCPAPermission } from "~@reentry/frontend/lib/auth/permissions";
+import {
+  hasCPAPermission,
+  isInternalUser,
+} from "~@reentry/frontend/lib/auth/permissions";
 import { ProtectedRoute } from "~@reentry/frontend/lib/auth/routeGuards";
 
 export default function ProtectedLayout({ children }) {
   const auth = useAuth();
   const pathname = usePathname();
+  const userEmail = auth.authStore?.user?.email;
 
   // Exclude specific routes from the layout (not using the Navbar)
   const routesWithoutLayout = ["/audio-recording/"];
@@ -40,7 +44,7 @@ export default function ProtectedLayout({ children }) {
     return <LoadingState />;
   }
 
-  if (!hasCPAPermission(auth.userAppMetadata)) {
+  if (!hasCPAPermission(auth.userAppMetadata) && !isInternalUser(userEmail)) {
     return <AccessDeniedState />;
   }
 

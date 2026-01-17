@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { hasCPAPermission } from "~@reentry/frontend/lib/auth/permissions";
+import { hasCPAPermission, isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
 
 describe('hasCPAPermission', () => {
   it('returns true when user has explicit CPA permission', () => {
@@ -42,5 +42,30 @@ describe('hasCPAPermission', () => {
     const metadata = { stateCode: 'US_ID', userHash: 'hash', routes: { cpa: false }};
     expect(hasCPAPermission(metadata)).toBe(false);
   });
+});
 
+describe('isInternalUser', () => {
+  it('returns true for @recidiviz.org email', () => {
+    expect(isInternalUser('user@recidiviz.org')).toBe(true);
+  });
+
+  it('returns true for @recidiviz-test.org email', () => {
+    expect(isInternalUser('user@recidiviz-test.org')).toBe(true);
+  });
+
+  it('returns false for external email', () => {
+    expect(isInternalUser('user@gmail.com')).toBe(false);
+  });
+
+  it('returns false for undefined email', () => {
+    expect(isInternalUser(undefined)).toBe(false);
+  });
+
+  it('returns false for null email', () => {
+    expect(isInternalUser(null)).toBe(false);
+  });
+
+  it('returns false for email containing but not ending with internal domain', () => {
+    expect(isInternalUser('user@recidiviz.org.fake.com')).toBe(false);
+  });
 });

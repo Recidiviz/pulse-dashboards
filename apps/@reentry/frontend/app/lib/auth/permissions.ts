@@ -22,3 +22,10 @@ export function hasCPAPermission(
 ): boolean {
   return userAppMetadata?.routes?.cpa === true;
 }
+
+const INTERNAL_DOMAINS = ["@recidiviz.org", "@recidiviz-test.org"];
+
+export function isInternalUser(email: string | undefined | null): boolean {
+  if (!email) return false;
+  return INTERNAL_DOMAINS.some((domain) => email.endsWith(domain));
+}
