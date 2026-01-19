@@ -55,6 +55,8 @@ yalc.lock
 # the root package.json is the only one we want to track
 !/package.json
 !apps/@meetings/app/package.json
+# this is for a standalone auth0 cli script
+!tools/auth0/package.json
 
 # Redis dump
 dump.rdb

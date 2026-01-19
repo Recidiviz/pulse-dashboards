@@ -1,0 +1,12 @@
+{
+  "name": "auth0",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "auth0": "^5.2.0",
+    "dotenv": "^17.2.3"
+  }
+}
