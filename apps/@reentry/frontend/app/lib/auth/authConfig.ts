@@ -17,6 +17,21 @@
 
 import type { AuthSettings } from "@recidiviz/auth";
 
+/**
+ * Routes that don't require Auth0 authentication.
+ * These routes will not trigger an Auth0 redirect when accessed.
+ */
+export const PUBLIC_ROUTES = ["/auth/callback", "/assessment"];
+
+/**
+ * Check if the given pathname is a public route that doesn't require Auth0 auth.
+ */
+export const isPublicRoute = (pathname: string): boolean => {
+  return PUBLIC_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+};
+
 export const getAuthSettings = (): AuthSettings => {
   if (
     !process.env["NEXT_PUBLIC_AUTH0_DOMAIN"] ||

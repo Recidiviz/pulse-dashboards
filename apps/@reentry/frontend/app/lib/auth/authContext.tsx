@@ -28,7 +28,7 @@ import {
 
 import { globalAuthStore } from "~@reentry/frontend-shared";
 
-import { getAuthSettings } from "./authConfig";
+import { getAuthSettings, isPublicRoute } from "./authConfig";
 import type { AuthContextType, AuthState } from "./types";
 
 // Create the auth context with default values
@@ -114,12 +114,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         globalAuthStore.setAuthStore(store);
 
         // Check authentication status on init (useful for page refresh)
-        if (window.location.pathname !== "/auth/callback") {
+        // Skip redirect for public routes that don't require Auth0
+        if (!isPublicRoute(window.location.pathname)) {
           const isAuthenticated = await checkAuthentication(store);
           if (!isAuthenticated) {
             // Redirect to Auth0 to verify whether there's an existing session
             await store.loginWithRedirect();
           }
+        } else {
+          // For public routes, mark loading as complete without requiring auth
+          setState((prev) => ({ ...prev, isLoading: false }));
         }
       } catch (error) {
         console.error("Error initializing authentication:", error);
