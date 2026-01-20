@@ -329,12 +329,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from COMS & OMNI",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: [
-        "UsMiLastAssessment",
-        "Incarceration",
-        "ResidentHousing",
-        "CaseNotes",
-      ],
+      sidebarComponents: ["Incarceration", "ResidentHousing"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
@@ -343,7 +338,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents who may be newly eligible for a custody level reduction because they have not had a Class I or II misconduct in over 6 months. ",
-      submittedTabTitle: "Needs Re-Screen",
+      submittedTabTitle: "Re-screen Pending",
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
@@ -351,27 +346,17 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "ELIGIBILITY STATUS",
           tabs: [
-            "Eligible for Review",
-            "Almost Eligible for Review",
-            "Needs Re-Screen",
+            "Eligible for Re-screen Now",
+            "Almost Eligible for Re-screen",
+            "Re-screen Pending",
             "Movement Pending",
             "Marked Ineligible",
           ],
         },
       ],
       tabPrefaceCopy: [
-        {
-          tab: "Eligible for Re-screen Now",
-          text: "Residents who may be eligible for a re-screen and downgrade to a lower custody level because they have not had any recent misconducts",
-        },
-        {
-          tab: "Re-screen Pending",
-          text: "Residents who have been identified as eligible for a re-screen so they can be transferred to a lower custody level",
-        },
-        {
-          tab: "Movement Pending",
-          text: "Residents who have a lower Actual Security Level than their current custody level assignment",
-        },
+        { tab: "Marked Ineligible", text: "Testing 123" },
+        { tab: "Eligible for Review", text: "Testing 123" },
       ],
       tooltipEligibilityText: null,
       urlSection: "custodyLevelDowngrade",

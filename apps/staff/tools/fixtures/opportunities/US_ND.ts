@@ -103,7 +103,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "supervisionPastEarlyDischargeDate",
-          text: "Early termination date (as calculated by DOCSTARS) is within 3 months",
+          text: "Early termination date (as calculated by DOCSTARS) is within 3 months: {{date eligibleDate}}",
           tooltip:
             "Policy requirement: must be passed early termination date (as calculated by DOCSTARS)",
         },
@@ -165,7 +165,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "supervisionPastEarlyDischargeDate",
-          text: "Early termination date (as calculated by DOCSTARS) is more than 3 months away",
+          text: "Early termination date (as calculated by DOCSTARS) is more than 3 months away: {{date eligibleDate}}",
           tooltip:
             "Policy requirement: must be passed early termination date (as calculated by DOCSTARS)",
         },

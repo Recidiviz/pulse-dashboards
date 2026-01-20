@@ -4,7 +4,7 @@ exports[`almost eligible past discharge date coming up > requirements almost met
 [
   {
     "key": "supervisionPastEarlyDischargeDate",
-    "text": "Early termination date (as calculated by DOCSTARS) is within 3 months",
+    "text": "Early termination date (as calculated by DOCSTARS) is within 3 months: Jan 3, 2024",
     "tooltip": "Policy requirement: must be passed early termination date (as calculated by DOCSTARS)",
   },
 ]
