@@ -359,6 +359,48 @@ export const fakeResidentMeeting = {
   },
 } satisfies Prisma.MeetingCreateInput;
 
+export const fakeResidentMeetingCompleted = {
+  id: "resident-meeting-2",
+  staff: {
+    connect: {
+      staffId: fakeStaff[0].staffId,
+    },
+  },
+  resident: {
+    connect: {
+      personId: fakeResidents[1].personId,
+    },
+  },
+  startTime: new Date(),
+  endTime: new Date(),
+  recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
+  recordingsFolderPath: "resident-meeting-2",
+  userNotepadNotes: "Sample resident meeting notes.",
+  transcriptions: {
+    create: [
+      {
+        provider: TranscriptionProvider.ASSEMBLYAI,
+        transcriptObject: {} as PrismaJson.TranscriptType,
+        confidence: 0.95,
+        summary: "This is a sample summary of the resident meeting.",
+        utterances: {
+          createMany: {
+            data: [
+              {
+                text: "Hello, this is a sample resident utterance.",
+                speaker: "Speaker A",
+                startTimeMs: 0,
+                endTimeMs: 3000,
+                confidence: 0.98,
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+} satisfies Prisma.MeetingCreateInput;
+
 export async function seed(prismaClient: PrismaClient) {
   // Seed Data
   await prismaClient.staff.createMany({
@@ -393,5 +435,9 @@ export async function seed(prismaClient: PrismaClient) {
 
   await prismaClient.meeting.create({
     data: fakeResidentMeeting,
+  });
+
+  await prismaClient.meeting.create({
+    data: fakeResidentMeetingCompleted,
   });
 }

@@ -131,7 +131,7 @@ export function extractActiveMeetingId({
   user,
   meetingsOrderedByDateDesc,
 }: {
-  user: AuthUser;
+  user: AuthUser | null;
   meetingsOrderedByDateDesc: {
     endTime: Date | null;
     startTime: Date;
@@ -139,12 +139,19 @@ export function extractActiveMeetingId({
     id: string;
   }[];
 }) {
-  const activeMeeting = meetingsOrderedByDateDesc.find(
-    (meeting) =>
-      meeting.endTime == null &&
-      (meeting.staff?.pseudonymizedId == user.pseudonymizedId ||
-        user.pseudonymizedId === "RECIDIVIZ"), //TODO(#11367)
-  );
+  let activeMeeting;
+  if (user == null) {
+    activeMeeting = meetingsOrderedByDateDesc.find(
+      (meeting) => meeting.endTime == null,
+    );
+  } else {
+    activeMeeting = meetingsOrderedByDateDesc.find(
+      (meeting) =>
+        meeting.endTime == null &&
+        (meeting.staff?.pseudonymizedId == user.pseudonymizedId ||
+          user.pseudonymizedId === "RECIDIVIZ"), //TODO(#11367)
+    );
+  }
   return activeMeeting?.id ?? null;
 }
 

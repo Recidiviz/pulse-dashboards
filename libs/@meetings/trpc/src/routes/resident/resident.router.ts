@@ -25,6 +25,10 @@ import {
   getMeetingsForPerson,
 } from "~@meetings/trpc/routes/meeting.helpers";
 import {
+  extractActiveMeetingId,
+  extractLastCompletedMeetingTime,
+} from "~@meetings/trpc/routes/meeting.helpers";
+import {
   createMeetingInputSchema,
   getMeetingsInputSchema,
 } from "~@meetings/trpc/routes/resident/resident.schema";
@@ -63,14 +67,15 @@ export const residentRouter = router({
         personId: true,
         facilityId: true,
         meetings: {
-          select: { id: true },
-          where: {
-            endTime: null,
-          },
           orderBy: {
             startTime: "desc",
           },
-          take: 1,
+          select: {
+            id: true,
+            staff: true,
+            endTime: true,
+            startTime: true,
+          },
         },
       } satisfies Prisma.ResidentSelect;
 
@@ -85,7 +90,15 @@ export const residentRouter = router({
 
       return {
         ..._.omit(resident, ["meetings"]),
-        activeMeetingId: resident.meetings[0]?.id ?? null,
+        activeMeetingId: extractActiveMeetingId({
+          user: null,
+          meetingsOrderedByDateDesc: resident.meetings,
+        }),
+        meetingDetails: {
+          lastCompletedMeetingTime: extractLastCompletedMeetingTime({
+            meetingsOrderedByDateDesc: resident.meetings,
+          }),
+        },
       };
     }),
   list: auth0Procedure.query(async ({ ctx: { prisma } }) => {
@@ -96,16 +109,16 @@ export const residentRouter = router({
         displayPersonExternalId: true,
         personId: true,
         facilityId: true,
-        // Only get the latest active meeting, if it exists
         meetings: {
-          select: { id: true },
-          where: {
-            endTime: null,
-          },
           orderBy: {
             startTime: "desc",
           },
-          take: 1,
+          select: {
+            id: true,
+            staff: true,
+            endTime: true,
+            startTime: true,
+          },
         },
       },
       where: {
@@ -115,7 +128,15 @@ export const residentRouter = router({
 
     return residents.map((resident) => ({
       ..._.omit(resident, ["meetings"]),
-      activeMeetingId: resident.meetings[0]?.id ?? null,
+      activeMeetingId: extractActiveMeetingId({
+        user: null,
+        meetingsOrderedByDateDesc: resident.meetings,
+      }),
+      meetingDetails: {
+        lastCompletedMeetingTime: extractLastCompletedMeetingTime({
+          meetingsOrderedByDateDesc: resident.meetings,
+        }),
+      },
     }));
   }),
 });

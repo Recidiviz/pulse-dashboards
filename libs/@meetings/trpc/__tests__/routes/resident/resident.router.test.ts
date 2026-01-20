@@ -26,6 +26,7 @@ import {
 } from "~@meetings/trpc/test/setup";
 import {
   fakeResidentMeeting,
+  fakeResidentMeetingCompleted,
   fakeResidents,
   fakeStaff,
 } from "~@meetings/trpc/test/setup/seed";
@@ -149,6 +150,9 @@ describe("resident router", () => {
             displayPersonExternalId: fakeResidents[0].displayPersonExternalId,
             facilityId: fakeResidents[0].facilityId,
             activeMeetingId: fakeResidentMeeting.id,
+            meetingDetails: {
+              lastCompletedMeetingTime: null,
+            },
           },
           {
             personId: fakeResidents[1].personId,
@@ -157,6 +161,9 @@ describe("resident router", () => {
             displayPersonExternalId: fakeResidents[1].displayPersonExternalId,
             facilityId: fakeResidents[1].facilityId,
             activeMeetingId: null,
+            meetingDetails: {
+              lastCompletedMeetingTime: fakeResidentMeetingCompleted.startTime,
+            },
           },
         ]);
       });
