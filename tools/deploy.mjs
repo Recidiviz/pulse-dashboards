@@ -77,7 +77,6 @@ let latestRelease;
 let latestReleaseVersion;
 let generatedReleaseNotes;
 let nextVersion = "deploy-candidate";
-let publishReleaseNotes;
 let releaseNotes;
 let isCpDeploy;
 const successfullyDeployed = [];
@@ -202,8 +201,6 @@ if (deployEnv === "production") {
 
   // Increment the version
   nextVersion = `v${inc(versionToIncrement, releaseType)}`;
-
-  publishReleaseNotes = false;
 }
 
 const staffBackendDisplayName = "Staff Backend";
@@ -344,7 +341,6 @@ if (deployBackend) {
           await $`./tools/gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-production.enc.yaml --quiet --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
             process.stdout,
           );
-          publishReleaseNotes = true;
           break;
         case "demo":
           await $`./tools/gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-staging-demo.enc.yaml --quiet --project recidiviz-dashboard-staging`.pipe(
@@ -395,7 +391,6 @@ if (deployFrontend) {
           await $`firebase deploy --only hosting -P production -m "Version ${nextVersion} - Commit hash ${currentRevision}"`.pipe(
             process.stdout,
           );
-          publishReleaseNotes = true;
           break;
         default:
           await $`firebase deploy --only hosting -P ${deployEnv} -m "${currentRevision}"`.pipe(
@@ -743,7 +738,6 @@ if (
       let deployMessage = `${currentRevision}`;
       if (deployEnv === "production") {
         deployMessage = `Version ${nextVersion} - Commit hash ${currentRevision}`;
-        publishReleaseNotes = true;
       }
 
       // we built the project manually first,
@@ -1071,7 +1065,7 @@ if (
 
 // If one deploy succeeded but the other deploy failed, we still want to publish release notes for
 // the one that succeeded, since any code change to fix the other will increment the release version.
-if (publishReleaseNotes) {
+if (deployEnv === "production" && successfullyDeployed.length > 0) {
   // Create a tag for the new version
   await $`git tag -m "Version [${nextVersion}] release - $(date +'%Y-%m-%d %H:%M:%S %Z')" "${nextVersion}"`;
   await $`git push origin ${nextVersion}`;
