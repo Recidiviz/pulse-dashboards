@@ -137,102 +137,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/assessment-trees": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Retrieve a list of assessment trees
-         * @description This endpoint retrieves a paginated list of all assessment trees.
-         */
-        get: operations["router_get_assessment_trees_list_assessment_trees_get"];
-        put?: never;
-        /**
-         * Create a new assessment tree
-         * @description This endpoint allows the creation of a new assessment tree. The assessment tree must have a unique name.
-         */
-        post: operations["router_add_assessment_tree_assessment_trees_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/assessment-trees/{assessment_tree_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Retrieve an assessment tree
-         * @description This endpoint retrieves an assessment tree by its ID, including all its revisions.
-         */
-        get: operations["router_get_assessment_tree_assessment_trees__assessment_tree_id__get"];
-        put?: never;
-        post?: never;
-        /**
-         * Delete an assessment tree
-         * @description Deletes an assessment tree by its ID.
-         */
-        delete: operations["router_delete_assessment_tree_assessment_trees__assessment_tree_id__delete"];
-        options?: never;
-        head?: never;
-        /**
-         * Update an assessment tree
-         * @description This endpoint updates an assessment tree by its ID with the given data.
-         */
-        patch: operations["router_update_assessment_tree_assessment_trees__assessment_tree_id__patch"];
-        trace?: never;
-    };
-    "/assessment-trees/{assessment_tree_id}/revisions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get assessment tree revisions
-         * @description Retrieve a paginated list of revisions for a specific assessment tree by its ID.
-         */
-        get: operations["router_get_assessment_tree_revisions_assessment_trees__assessment_tree_id__revisions_get"];
-        put?: never;
-        /**
-         * Add a new revision to an assessment tree
-         * @description This endpoint allows adding a new revision to an existing assessment tree by its ID. The revision includes mermaid content and optional data.
-         */
-        post: operations["router_add_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/assessment-trees/{assessment_tree_id}/revisions/{revision_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Retrieve a specific assessment tree revision
-         * @description This endpoint retrieves a specific revision of an assessment tree by its ID and revision ID.
-         */
-        get: operations["router_get_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions__revision_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/assessment-configs": {
         parameters: {
             query?: never;
@@ -265,46 +169,6 @@ export interface paths {
          * @description Returns the assessment configuration associated with a specific intake ID
          */
         get: operations["get_assessment_config_by_intake_id_assessment_configs_outputs__plan_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/assessments/{assessment_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get assessment by ID
-         * @description Returns a specific assessment by its ID
-         */
-        get: operations["get_assessment_assessments__assessment_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/assessments/intakes/{intake_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get assessments by intake ID
-         * @description Returns all assessments associated with an intake ID
-         */
-        get: operations["get_intake_assessments_assessments_intakes__intake_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1806,168 +1670,6 @@ export interface components {
             /** State Code */
             state_code: string;
         };
-        /** AssessmentResponse */
-        AssessmentResponse: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            /** Client Pseudo Id */
-            client_pseudo_id: string;
-            /** Intake Id */
-            intake_id?: string | null;
-            /** Scores */
-            scores?: Record<string, never> | null;
-            /** Status */
-            status: string;
-        };
-        /** AssessmentTreeCreate */
-        AssessmentTreeCreate: {
-            /** Name */
-            name: string;
-        };
-        /** AssessmentTreeResponse */
-        AssessmentTreeResponse: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            /** Name */
-            name: string;
-            /** Enabled */
-            enabled: boolean;
-            /** Current Revision Id */
-            current_revision_id?: string | null;
-        };
-        /** AssessmentTreeRevision */
-        AssessmentTreeRevision: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id?: string;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at?: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at?: string;
-            /**
-             * Assessment Tree Id
-             * Format: uuid
-             */
-            assessment_tree_id: string;
-            /** Mermaid Content */
-            mermaid_content: string;
-            /** Additional Structured Data */
-            additional_structured_data: Record<string, never>;
-            /** Content Hash */
-            content_hash: string | null;
-            /**
-             * Input Data
-             * @default [
-             *       "intake_conversation"
-             *     ]
-             */
-            input_data: components["schemas"]["InputType"][];
-        };
-        /** AssessmentTreeRevisionCreate */
-        AssessmentTreeRevisionCreate: {
-            /** Mermaid Content */
-            mermaid_content: string;
-            /** Additional Structured Data */
-            additional_structured_data?: Record<string, never> | null;
-            /** Input Data */
-            input_data?: components["schemas"]["InputType"][] | null;
-        };
-        /** AssessmentTreeRevisionResponse */
-        AssessmentTreeRevisionResponse: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            /**
-             * Assessment Tree Id
-             * Format: uuid
-             */
-            assessment_tree_id: string;
-            /** Mermaid Content */
-            mermaid_content: string;
-            /** Additional Structured Data */
-            additional_structured_data?: Record<string, never> | null;
-            /** Input Data */
-            input_data: components["schemas"]["InputType"][];
-        };
-        /** AssessmentTreeUpdate */
-        AssessmentTreeUpdate: {
-            /** Name */
-            name?: string | null;
-            /** Enabled */
-            enabled?: boolean | null;
-        };
-        /** AssessmentTreeWithRevisionsResponse */
-        AssessmentTreeWithRevisionsResponse: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            /** Name */
-            name: string;
-            /** Enabled */
-            enabled: boolean;
-            /** Current Revision Id */
-            current_revision_id?: string | null;
-            /** Revisions */
-            revisions: components["schemas"]["AssessmentTreeRevisionResponse"][];
-        };
         /** AutocompleteAddressResponse */
         AutocompleteAddressResponse: {
             /** Success */
@@ -2488,11 +2190,6 @@ export interface components {
             detail?: components["schemas"]["ValidationError"][];
         };
         /**
-         * InputType
-         * @enum {string}
-         */
-        InputType: "intake_conversation" | "conversation_summary";
-        /**
          * IntakeHistoryResponse
          * @description Response model for intake history listing
          */
@@ -2701,32 +2398,6 @@ export interface components {
              * @default {}
              */
             options: Record<string, never> | null;
-        };
-        /** Page[AssessmentTreeResponse] */
-        Page_AssessmentTreeResponse_: {
-            /** Items */
-            items: components["schemas"]["AssessmentTreeResponse"][];
-            /** Total */
-            total: number | null;
-            /** Page */
-            page: number | null;
-            /** Size */
-            size: number | null;
-            /** Pages */
-            pages?: number | null;
-        };
-        /** Page[AssessmentTreeRevision] */
-        Page_AssessmentTreeRevision_: {
-            /** Items */
-            items: components["schemas"]["AssessmentTreeRevision"][];
-            /** Total */
-            total: number | null;
-            /** Page */
-            page: number | null;
-            /** Size */
-            size: number | null;
-            /** Pages */
-            pages?: number | null;
         };
         /** Page[ClientResponse] */
         Page_ClientResponse_: {
@@ -3590,6 +3261,8 @@ export interface components {
         VerifyFirebaseTokenRequest: {
             /** Firebase Token */
             firebase_token: string;
+            /** Client Pseudo Id */
+            client_pseudo_id: string;
         };
         /** VerifyStateDocIdRequest */
         VerifyStateDocIdRequest: {
@@ -3892,271 +3565,6 @@ export interface operations {
             };
         };
     };
-    router_get_assessment_trees_list_assessment_trees_get: {
-        parameters: {
-            query?: {
-                /** @description Page number */
-                page?: number;
-                /** @description Page size */
-                size?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_AssessmentTreeResponse_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_add_assessment_tree_assessment_trees_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AssessmentTreeCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AssessmentTreeWithRevisionsResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_get_assessment_tree_assessment_trees__assessment_tree_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                assessment_tree_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AssessmentTreeWithRevisionsResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_delete_assessment_tree_assessment_trees__assessment_tree_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                assessment_tree_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_update_assessment_tree_assessment_trees__assessment_tree_id__patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                assessment_tree_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AssessmentTreeUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AssessmentTreeWithRevisionsResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_get_assessment_tree_revisions_assessment_trees__assessment_tree_id__revisions_get: {
-        parameters: {
-            query?: {
-                /** @description Page number */
-                page?: number;
-                /** @description Page size */
-                size?: number;
-            };
-            header?: never;
-            path: {
-                assessment_tree_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_AssessmentTreeRevision_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_add_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                assessment_tree_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AssessmentTreeRevisionCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AssessmentTreeRevisionResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    router_get_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions__revision_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                assessment_tree_id: string;
-                revision_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AssessmentTreeRevisionResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     list_assessment_configs_assessment_configs_get: {
         parameters: {
             query: {
@@ -4207,68 +3615,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AssessmentConfigOutput"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_assessment_assessments__assessment_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                assessment_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AssessmentResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_intake_assessments_assessments_intakes__intake_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                intake_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AssessmentResponse"][];
                 };
             };
             /** @description Validation Error */
@@ -4456,8 +3802,6 @@ export interface operations {
                 sort_order?: string;
                 search?: string | null;
                 status_filter?: string | null;
-                is_zero_caseload_user?: boolean;
-                cpa_client_locations?: string[] | null;
             };
             header?: never;
             path?: never;
@@ -4502,7 +3846,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ClientAddressResponse"];
+                    "application/json":
+                        | components["schemas"]["ClientAddressResponse"]
+                        | null;
                 };
             };
             /** @description Validation Error */

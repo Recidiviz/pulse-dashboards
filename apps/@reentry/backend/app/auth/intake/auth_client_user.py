@@ -207,7 +207,10 @@ async def validate_state_docid(
 
 
 async def verify_client_from_firebase_token(
-    request: Request, token_str: str, session: AsyncSession
+    request: Request,
+    token_str: str,
+    requested_client_pseudo_id: str,
+    session: AsyncSession,
 ) -> ValidationResult:
     """
     Validate client using Firebase ID token from the JII app surfaced on Edovo tablets.
@@ -219,65 +222,82 @@ async def verify_client_from_firebase_token(
 
     except Exception as exc:
         logger.error(f"Error verifying Firebase token: {exc}", exc_info=True)
-        sentry_sdk.capture_exception(
-            f"Could not verify Firebase token. Error: {str(exc)}"
-        )
+        sentry_sdk.capture_exception(exc)
         return ValidationResult.error_result(
             "Verification for user with Firebase token failed. Please contact your case worker for assistance."
         )
 
     state_code = decoded_token.get("stateCode")
     external_id = decoded_token.get("externalId")
+    user_pseudo_id = decoded_token.get("pseudonymizedId", "")
+    permissions_list = decoded_token.get("permissions", [])
+    has_elevated_access = "global_write" in permissions_list
 
+    # Validate state code exists
     if not state_code:
         error_msg = "Firebase token missing stateCode claim"
         logger.warning(error_msg)
-        sentry_sdk.capture_exception(error_msg)
+        sentry_sdk.capture_exception(ValueError(error_msg))
         return ValidationResult.error_result(
-            "Missing required claim from Firebase token"
+            "Missing state code claim from Firebase token"
         )
 
-    if not external_id:
-        error_msg = "Firebase token missing externalId claim"
+    # If user has a pseudo ID, then the user is a JII. Verify pseudo ID from token matches request
+    if user_pseudo_id and user_pseudo_id != requested_client_pseudo_id:
+        error_msg = f"Pseudo ID mismatch: token has {user_pseudo_id}, request has {requested_client_pseudo_id}"
         logger.warning(error_msg)
-        sentry_sdk.capture_exception(error_msg)
+        sentry_sdk.capture_exception(ValueError(error_msg))
         return ValidationResult.error_result(
-            "Missing required claim from Firebase token"
+            "Pseudo ID from token does not match request"
         )
 
-    record = Queries.get_client_by_doc_id_and_state(
-        state_code=state_code,
-        doc_id=external_id,
+    # If the user doesn't have a pseudo ID, check that the user is allowed to make the request
+    if not user_pseudo_id and not has_elevated_access:
+        error_msg = (
+            "User without external_id / pseudo ID must have global_write permission"
+        )
+        logger.warning(error_msg)
+        sentry_sdk.capture_exception(ValueError(error_msg))
+        return ValidationResult.error_result(
+            "Insufficient permissions for this operation"
+        )
+
+    # The pseudo IDs used in the request to this endpoint, i.e. the pseudo IDs in Opportunities,
+    # are generated differently from the pseudo IDs generated and used internally in CPA.
+    record = Queries.get_client_by_workflows_pseudonymized_id_unsafe(
+        requested_client_pseudo_id
     )
 
     if not record:
-        sentry_sdk.capture_exception("Could not find a matching client")
+        sentry_sdk.capture_exception(ValueError("Could not find a matching client"))
         return ValidationResult.error_result(
-            "Could not find a matching client. Please try again."
+            "Could not find a matching client for this ID. Please try again."
         )
 
-    client_pseudo_id = record.pseudonymized_client_id
+    internal_client_pseudo_id = record.pseudonymized_client_id
 
     # Check if an intake record exists
     intake_record = await get_latest_active_conversation_intake(
-        session, client_pseudo_id
+        session, internal_client_pseudo_id
     )
     if not intake_record:
         logger.error(
-            f"Intake record not found for client pseudo ID: {client_pseudo_id}"
+            f"Intake record not found for client pseudo ID: {internal_client_pseudo_id}"
         )
         return ValidationResult.error_result(
             "Intake not enabled. Please contact your case worker for assistance."
         )
 
     if not intake_record.internal_access:
-        logger.error(f"Intake not enabled for client pseudo ID: {client_pseudo_id}")
+        logger.error(
+            f"Intake not enabled for client pseudo ID: {internal_client_pseudo_id}"
+        )
         return ValidationResult.error_result(
             "Internal access is not enabled. Please contact your case worker for assistance."
         )
 
-    token_data = create_client_response(client_pseudo_id, record.full_name)
-    return ValidationResult.success_result(token_data, client_pseudo_id)
+    token_data = create_client_response(internal_client_pseudo_id, record.full_name)
+    return ValidationResult.success_result(token_data, internal_client_pseudo_id)
 
 
 class ClientAuthMiddleware(BaseHTTPMiddleware):

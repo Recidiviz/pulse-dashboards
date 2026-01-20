@@ -195,6 +195,7 @@ async def verify_state_doc_id(
 # ----------- Firebase token -------------------
 class VerifyFirebaseTokenRequest(BaseModel):
     firebase_token: str
+    client_pseudo_id: str
 
 
 @router.post(
@@ -215,7 +216,7 @@ async def verify_firebase_token(
 ):
     try:
         result = await verify_client_from_firebase_token(
-            request, data.firebase_token, session
+            request, data.firebase_token, data.client_pseudo_id, session
         )
 
         if not result.token_data or not result.success:

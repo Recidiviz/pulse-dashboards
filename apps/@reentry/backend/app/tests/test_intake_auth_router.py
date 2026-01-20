@@ -293,6 +293,7 @@ async def test_verify_dob_urltoken_internal_error(
 def valid_firebase_request_data():
     return {
         "firebase_token": "abcd1234",
+        "client_pseudo_id": "client-pseudo-id-01",
     }
 
 

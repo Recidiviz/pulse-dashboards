@@ -169,6 +169,82 @@ class Queries:
             return None
 
     @staticmethod
+    def get_client_by_workflows_pseudonymized_id_unsafe(
+        workflows_pseudonymized_id: str,
+    ) -> Optional[ClientDataRecord]:
+        """
+        Get a client record by workflows pseudonymized ID
+        Uses Redis caching to improve performance
+        Returns the ClientDataRecord or None if not found
+
+        Args:
+            workflows_pseudonymized_id: The workflows pseudonymized client ID to retrieve
+        """
+        if not workflows_pseudonymized_id:
+            return None
+
+        workflows_pseudonymized_id = str(workflows_pseudonymized_id).strip()
+
+        logger.info(f"Looking for client with workflows pseudonymized ID: {workflows_pseudonymized_id}")
+
+        # Check for cached results first
+        cache_key = f"client_by_workflows_pseudo:{workflows_pseudonymized_id}"
+        client_record = get_client_from_cache(cache_key)
+
+        if client_record:
+            return client_record
+
+        # Fetch client from BigQuery
+        logger.info(
+            f"Fetching client with workflows pseudonymized ID {workflows_pseudonymized_id} from BigQuery"
+        )
+
+        escaped_id = workflows_pseudonymized_id.replace("'", "''")
+        quoted_id = f"'{escaped_id}'"
+
+        query = f"""
+        SELECT
+        external_id,
+        pseudonymized_id,
+        full_name,
+        birthdate,
+        state_code,
+        location
+        FROM
+        `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
+        WHERE
+        workflows_pseudonymized_id = {quoted_id}
+        LIMIT 1
+        """
+
+        try:
+            client = get_bigquery_client()
+            query_job = client.query(query)
+            results = query_job.result()
+
+            client_record = None
+            for row in results:
+                client_record = process_client_row(row)
+                if client_record:
+                    # Cache the result
+                    cache_client_record(cache_key, client_record)
+                    break
+
+            if client_record:
+                logger.info(
+                    f"Successfully fetched client with workflows pseudonymized ID {workflows_pseudonymized_id}"
+                )
+                return client_record
+            else:
+                logger.info(f"No client found with workflows pseudonymized ID {workflows_pseudonymized_id}")
+                return None
+        except Exception as e:
+            logger.error(
+                f"Error fetching client with workflows pseudonymized ID {workflows_pseudonymized_id}: {str(e)}"
+            )
+            return None
+
+    @staticmethod
     def get_client_by_doc_id_and_state(
         doc_id: str,
         state_code: str,

@@ -34,6 +34,7 @@ def mock_decoded_token():
         "uid": "firebase-uid-123",
         "stateCode": "US_XX",
         "externalId": "ext-id-1",
+        "pseudonymizedId": "pseudo-id-1",
         "iat": 1234567890,
         "exp": 9999999999,
     }
@@ -73,7 +74,7 @@ async def test_verify_client_from_firebase_token_invalid_token(
     mock_verify_token.side_effect = auth.InvalidIdTokenError("Invalid token")
 
     result = await verify_client_from_firebase_token(
-        mock_request, valid_firebase_token, mock_session
+        mock_request, valid_firebase_token, None, mock_session
     )
 
     mock_sentry.assert_called()
@@ -104,14 +105,18 @@ async def test_verify_client_from_firebase_token_missing_state_code(
     }
 
     result = await verify_client_from_firebase_token(
-        mock_request, valid_firebase_token, mock_session
+        mock_request, valid_firebase_token, None, mock_session
     )
 
-    mock_sentry.assert_called()
+    mock_sentry.assert_called_once()
+    # Verify it was called with a ValueError containing the correct message
+    call_args = mock_sentry.call_args[0][0]
+    assert isinstance(call_args, ValueError)
+    assert str(call_args) == "Firebase token missing stateCode claim"
 
     assert result.success is False
     assert result.error_message is not None
-    assert result.error_message == "Missing required claim from Firebase token"
+    assert result.error_message == "Missing state code claim from Firebase token"
     assert result.token_data is None
     assert result.client_pseudo_id is None
 
@@ -119,27 +124,68 @@ async def test_verify_client_from_firebase_token_missing_state_code(
 @pytest.mark.asyncio
 @patch("app.auth.intake.auth_client_user.sentry_sdk.capture_exception")
 @patch("app.auth.intake.auth_client_user.auth.verify_id_token")
-async def test_verify_client_from_firebase_token_missing_external_id(
+async def test_verify_client_from_firebase_token_pseudo_id_mismatch(
     mock_verify_token,
     mock_sentry,
     mock_request,
     mock_session,
     valid_firebase_token,
 ):
+    """Test that pseudo ID from token must match the client_pseudo_id in the request when external_id exists."""
     mock_verify_token.return_value = {
         "uid": "firebase-uid-123",
         "stateCode": "US_XX",
+        "externalId": "ext-id-1",
+        "pseudonymizedId": "pseudo-id-from-token",
     }
 
     result = await verify_client_from_firebase_token(
-        mock_request, valid_firebase_token, mock_session
+        mock_request, valid_firebase_token, "different-pseudo-id", mock_session
     )
 
-    mock_sentry.assert_called()
+    mock_sentry.assert_called_once()
+    # Verify it was called with a ValueError containing the correct message
+    call_args = mock_sentry.call_args[0][0]
+    assert isinstance(call_args, ValueError)
+    assert "Pseudo ID mismatch" in str(call_args)
 
     assert result.success is False
     assert result.error_message is not None
-    assert result.error_message == "Missing required claim from Firebase token"
+    assert result.error_message == "Pseudo ID from token does not match request"
+    assert result.token_data is None
+    assert result.client_pseudo_id is None
+
+
+@pytest.mark.asyncio
+@patch("app.auth.intake.auth_client_user.sentry_sdk.capture_exception")
+@patch("app.auth.intake.auth_client_user.auth.verify_id_token")
+async def test_verify_client_from_firebase_token_missing_external_id_no_global_write(
+    mock_verify_token,
+    mock_sentry,
+    mock_request,
+    mock_session,
+    valid_firebase_token,
+):
+    """Test that users without external_id / pseudo ID must have global_write permission."""
+    mock_verify_token.return_value = {
+        "uid": "firebase-uid-123",
+        "stateCode": "US_XX",
+        "permissions": [],
+    }
+
+    result = await verify_client_from_firebase_token(
+        mock_request, valid_firebase_token, "pseudo-id-1", mock_session
+    )
+
+    mock_sentry.assert_called_once()
+    # Verify it was called with a ValueError containing the correct message
+    call_args = mock_sentry.call_args[0][0]
+    assert isinstance(call_args, ValueError)
+    assert str(call_args) == "User without external_id / pseudo ID must have global_write permission"
+
+    assert result.success is False
+    assert result.error_message is not None
+    assert result.error_message == "Insufficient permissions for this operation"
     assert result.token_data is None
     assert result.client_pseudo_id is None
 
@@ -147,7 +193,7 @@ async def test_verify_client_from_firebase_token_missing_external_id(
 @pytest.mark.asyncio
 @patch("app.auth.intake.auth_client_user.sentry_sdk.capture_exception")
 @patch(
-    "app.auth.intake.auth_client_user.Queries.get_client_by_doc_id_and_state"
+    "app.auth.intake.auth_client_user.Queries.get_client_by_workflows_pseudonymized_id_unsafe"
 )
 @patch("app.auth.intake.auth_client_user.auth.verify_id_token")
 async def test_verify_client_from_firebase_token_client_not_found(
@@ -163,21 +209,25 @@ async def test_verify_client_from_firebase_token_client_not_found(
     mock_get_client.return_value = None
 
     result = await verify_client_from_firebase_token(
-        mock_request, valid_firebase_token, mock_session
+        mock_request, valid_firebase_token, "pseudo-id-1", mock_session
     )
 
     assert result.success is False
-    assert result.error_message == "Could not find a matching client. Please try again."
+    assert result.error_message == "Could not find a matching client for this ID. Please try again."
     assert result.token_data is None
     assert result.client_pseudo_id is None
 
-    mock_sentry.assert_called_once_with("Could not find a matching client")
+    mock_sentry.assert_called_once()
+    # Verify it was called with a ValueError containing the correct message
+    call_args = mock_sentry.call_args[0][0]
+    assert isinstance(call_args, ValueError)
+    assert str(call_args) == "Could not find a matching client"
 
 
 @pytest.mark.asyncio
 @patch("app.auth.intake.auth_client_user.get_latest_active_conversation_intake")
 @patch(
-    "app.auth.intake.auth_client_user.Queries.get_client_by_doc_id_and_state"
+    "app.auth.intake.auth_client_user.Queries.get_client_by_workflows_pseudonymized_id_unsafe"
 )
 @patch("app.auth.intake.auth_client_user.auth.verify_id_token")
 async def test_verify_client_from_firebase_token_no_intake_record(
@@ -195,7 +245,7 @@ async def test_verify_client_from_firebase_token_no_intake_record(
     mock_get_intake.return_value = None
 
     result = await verify_client_from_firebase_token(
-        mock_request, valid_firebase_token, mock_session
+        mock_request, valid_firebase_token, "pseudo-id-1", mock_session
     )
 
     assert result.success is False
@@ -211,7 +261,7 @@ async def test_verify_client_from_firebase_token_no_intake_record(
 @patch("app.auth.intake.auth_client_user.create_client_response")
 @patch("app.auth.intake.auth_client_user.get_latest_active_conversation_intake")
 @patch(
-    "app.auth.intake.auth_client_user.Queries.get_client_by_doc_id_and_state"
+    "app.auth.intake.auth_client_user.Queries.get_client_by_workflows_pseudonymized_id_unsafe"
 )
 @patch("app.auth.intake.auth_client_user.auth.verify_id_token")
 async def test_verify_client_from_firebase_token_success(
@@ -236,7 +286,7 @@ async def test_verify_client_from_firebase_token_success(
     }
 
     result = await verify_client_from_firebase_token(
-        mock_request, valid_firebase_token, mock_session
+        mock_request, valid_firebase_token, "pseudo-id-1", mock_session
     )
 
     assert result.success is True
@@ -246,10 +296,62 @@ async def test_verify_client_from_firebase_token_success(
 
     mock_verify_token.assert_called_once_with(valid_firebase_token)
 
-    mock_get_client.assert_called_once_with(state_code="US_XX", doc_id="ext-id-1")
+    mock_get_client.assert_called_once_with("pseudo-id-1")
 
-    mock_get_intake.assert_called_once_with(mock_session, "pseudo-id-1")
+    mock_get_intake.assert_called_once_with(mock_session, mock_client_record.pseudonymized_client_id)
 
     mock_create_response.assert_called_once_with(
-        "pseudo-id-1", mock_client_record.full_name
+        mock_client_record.pseudonymized_client_id, mock_client_record.full_name
+    )
+
+
+@pytest.mark.asyncio
+@patch("app.auth.intake.auth_client_user.create_client_response")
+@patch("app.auth.intake.auth_client_user.get_latest_active_conversation_intake")
+@patch(
+    "app.auth.intake.auth_client_user.Queries.get_client_by_workflows_pseudonymized_id_unsafe"
+)
+@patch("app.auth.intake.auth_client_user.auth.verify_id_token")
+async def test_verify_client_from_firebase_token_success_elevated_permissions(
+    mock_verify_token,
+    mock_get_client,
+    mock_get_intake,
+    mock_create_response,
+    mock_request,
+    mock_session,
+    valid_firebase_token,
+    mock_client_record,
+    mock_intake_record,
+):
+    """Test successful validation for users with elevated permissions (no pseudo ID in token)."""
+    mock_verify_token.return_value = {
+        "uid": "firebase-uid-123",
+        "stateCode": "US_XX",
+        "permissions": ["global_write"],
+    }
+    mock_get_client.return_value = mock_client_record
+    mock_get_intake.return_value = mock_intake_record
+    mock_create_response.return_value = {
+        "token": "jwt-token-123",
+        "client_pseudo_id": "pseudo-id-1",
+        "client_name": "John Doe",
+    }
+
+    result = await verify_client_from_firebase_token(
+        mock_request, valid_firebase_token, "pseudo-id-1", mock_session
+    )
+
+    assert result.success is True
+    assert result.token_data is not None
+    assert result.client_pseudo_id == "pseudo-id-1"
+    assert result.error_message is None
+
+    mock_verify_token.assert_called_once_with(valid_firebase_token)
+
+    mock_get_client.assert_called_once_with("pseudo-id-1")
+
+    mock_get_intake.assert_called_once_with(mock_session, mock_client_record.pseudonymized_client_id)
+
+    mock_create_response.assert_called_once_with(
+        mock_client_record.pseudonymized_client_id, mock_client_record.full_name
     )
