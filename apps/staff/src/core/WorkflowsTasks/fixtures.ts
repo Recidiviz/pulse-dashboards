@@ -57,7 +57,7 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   usIdEmploymentVerification: "Employment Verifications",
   usIdFaceToFaceContact: "Contacts",
   usIdHomeVisit: "Home Visits",
-  usIdLsirAssessment: "Risk Assessments",
+  usIdLsirAssessment: "LSIR Assessments",
   usIdStableAssessment: "STABLE Assessments",
   usMoEmploymentVerification: "Employment Verifications",
   usMoPositiveHomeVisit: "Positive Home Visits",

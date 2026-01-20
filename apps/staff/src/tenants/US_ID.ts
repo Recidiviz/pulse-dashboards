@@ -132,8 +132,8 @@ const US_ID_CONFIG = {
           },
           {
             value: "usIdLsirAssessment",
-            label: "Risk Assessment",
-            shortLabel: "Assessment",
+            label: "LSIR Assessment",
+            shortLabel: "LSIR Assessment",
           },
           {
             value: "usIdStableAssessment",
