@@ -24,11 +24,12 @@ import { Button, palette } from "~design-system";
 export const MAX_MODAL_HEIGHT = "90vh";
 export const MODAL_PADDING = 40;
 
-const StyledModal = styled(ModalBase)`
+const StyledModal = styled(ModalBase)<{ $padding?: number }>`
   .ReactModal__Content {
     max-height: ${MAX_MODAL_HEIGHT};
     width: ${rem(626)};
-    padding: ${rem(MODAL_PADDING)};
+    padding: ${({ $padding }) => rem($padding ?? MODAL_PADDING)};
+    overflow: visible;
   }
 `;
 
@@ -50,9 +51,10 @@ export const Modal: React.FC<{
   children: React.ReactNode;
   isOpen: boolean;
   hideModal: () => void;
-}> = ({ children, isOpen, hideModal }) => {
+  padding?: number;
+}> = ({ children, isOpen, hideModal, padding }) => {
   return (
-    <StyledModal isOpen={isOpen} onRequestClose={hideModal}>
+    <StyledModal isOpen={isOpen} onRequestClose={hideModal} $padding={padding}>
       <CloseButton onClick={hideModal} />
       {children}
     </StyledModal>

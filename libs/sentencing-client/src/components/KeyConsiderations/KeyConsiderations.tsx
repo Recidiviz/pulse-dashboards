@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
+import { splitFullName } from "../../utils/utils";
 import { NeedsToBeAddressed, ProtectiveFactors } from "../constants";
 import { MultiSelectRadioInput } from "../shared/MultiSelectRadioInput";
 import * as Styled from "./KeyConsiderations.styles";
@@ -37,7 +38,8 @@ export const KeyConsiderations: React.FC<KeyConsiderationsProps> = observer(
       otherMitigatingFactor,
     } = presenter.SARData ?? {};
 
-    const firstName = presenter.SARData?.client?.firstName ?? "the defendant";
+    const { firstName } = splitFullName(presenter.SARData?.client?.fullName);
+    const displayName = firstName || "the defendant";
 
     // Options from shared constants - display values for UI
     const needsOptions = Object.values(NeedsToBeAddressed);
@@ -80,7 +82,7 @@ export const KeyConsiderations: React.FC<KeyConsiderationsProps> = observer(
       <Styled.Container>
         <Styled.InfoContainer>
           Select key considerations to help paint a fuller picture of{" "}
-          {firstName}'s situation. <br />
+          {displayName}'s situation. <br />
           Considerations selected will be listed on the final report and will be
           used to identify potential community and institutional strategies.
         </Styled.InfoContainer>

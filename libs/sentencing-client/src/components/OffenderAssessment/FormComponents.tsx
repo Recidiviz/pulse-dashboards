@@ -16,9 +16,12 @@
 // =============================================================================
 
 import React, { useEffect, useState } from "react";
+import { MultiValue, SingleValue } from "react-select";
 
 import { SAR } from "../../api/APIClient";
 import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
+import { Dropdown } from "../CaseDetails/Form/Elements/Dropdown";
+import { SelectOption } from "../CaseDetails/Form/types";
 import { LevelOfEducationLabels } from "../constants";
 import { SAR_AUTOSAVE_DELAY } from "../SARDetails/constants";
 import * as Styled from "./FormComponents.styles";
@@ -78,26 +81,35 @@ export const EducationDropdown: React.FC<EducationDropdownProps> = ({
   value,
   onChange,
 }) => {
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = event.target.value;
-    if (selectedValue === "") {
+  const options: SelectOption[] = Object.entries(LevelOfEducationLabels).map(
+    ([key, label]) => ({ value: key, label }),
+  );
+
+  const selectedOption = value
+    ? options.find((opt) => opt.value === value) || null
+    : null;
+
+  const handleChange = (
+    option: MultiValue<SelectOption> | SingleValue<SelectOption>,
+  ) => {
+    const singleOption = option as SingleValue<SelectOption>;
+    if (!singleOption) {
       onChange(null);
     } else {
-      onChange(selectedValue as LevelOfEducation);
+      onChange(singleOption.value as LevelOfEducation);
     }
   };
 
   return (
     <Styled.FieldContainer>
       <Styled.Label>{label}</Styled.Label>
-      <Styled.Select value={value ?? ""} onChange={handleChange}>
-        <option value="">Select...</option>
-        {Object.entries(LevelOfEducationLabels).map(([key, label]) => (
-          <option key={key} value={key}>
-            {label}
-          </option>
-        ))}
-      </Styled.Select>
+      <Dropdown
+        value={selectedOption}
+        options={options}
+        onChange={handleChange}
+        placeholder="Select..."
+        styles={Styled.dropdownStyles}
+      />
     </Styled.FieldContainer>
   );
 };

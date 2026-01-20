@@ -15,9 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StylesConfig } from "react-select";
 import styled from "styled-components";
 
 import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
+
+import { SelectOption } from "../CaseDetails/Form/types";
+import { customPalette } from "../styles/palette";
 
 export const CHEVRON_DOWN_BACKGROUND = iconToDataURI(
   <Icon kind={IconSVG["ChevronDown"]} color={palette.pine1} />,
@@ -75,4 +79,78 @@ export const Select = styled.select`
   background-position: right 1rem center;
   background-size: 1em;
   cursor: pointer;
+`;
+
+export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
+  control: (styles, { isFocused, isDisabled }) => ({
+    ...styles,
+    borderColor: isFocused ? palette.pine4 : palette.slate20,
+    boxShadow: isFocused ? `0 0 0 1px  ${palette.pine4}` : "none",
+    backgroundColor: isDisabled ? palette.slate10 : palette.white,
+    ":hover": {
+      borderColor: palette.pine4,
+    },
+  }),
+  option: (styles, { isFocused, isSelected }) => ({
+    ...styles,
+    color: palette.pine3,
+    // eslint-disable-next-line no-nested-ternary
+    backgroundColor: isFocused
+      ? palette.slate10
+      : isSelected
+        ? customPalette.green.light3
+        : undefined,
+    ":active": {
+      backgroundColor: palette.slate10,
+    },
+  }),
+  singleValue: (styles) => ({ ...styles, color: palette.pine3 }),
+  menu: (styles) => ({ ...styles, zIndex: 10 }),
+};
+
+// Shared button styles for modals and confirmations
+const Button = styled.button`
+  padding: 0.75rem 2rem;
+  border-radius: 0.25rem;
+  font-family: "Public Sans";
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  line-height: 1.5;
+  letter-spacing: -0.00875rem;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+export const CancelButton = styled(Button)`
+  background: transparent;
+  color: ${palette.slate85};
+
+  &:hover:not(:disabled) {
+    background: ${palette.marble4};
+  }
+`;
+
+export const SaveButton = styled(Button)`
+  background: ${palette.signal.links};
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: ${palette.pine4};
+  }
+`;
+
+export const DeleteButton = styled(Button)`
+  background: ${palette.signal.error};
+  color: white;
+`;
+
+export const ButtonRow = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
 `;

@@ -103,7 +103,7 @@ export const CustomDatePickerWrapper = styled(Styled.DatePickerWrapper)`
     min-width: 1px;
     background-repeat: no-repeat;
     background-position: left 4px center;
-    background-size: 0.75em;
+    background-size: 0.85rem;
     background-image: ${CALENDAR_BACKGROUND};
 
     &:focus {

@@ -24,6 +24,7 @@ import { SkippableTextArea } from "../shared/SkippableTextArea/SkippableTextArea
 import { DomainCard } from "./DomainCard";
 import { EducationDropdown, TextField } from "./FormComponents";
 import * as Styled from "./OffenderAssessment.styles";
+import { DrugHistoryCard } from "./SubstanceUse";
 
 interface OffenderAssessmentProps {
   presenter: SARDetailsPresenter;
@@ -56,8 +57,6 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       neighborhoodLevel,
       housingSummary,
       homePlan,
-      substanceAbuseLevel,
-      drugHistorySummary,
       peerAssociatesLevel,
       peerAssociatesSummary,
       criminalBehaviorLevel,
@@ -187,13 +186,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           />
         </DomainCard>
 
-        <DomainCard
-          title="Substance Use"
-          riskScore={substanceAbuseLevel ?? 0}
-          summaryValue={drugHistorySummary ?? null}
-          onSummaryChange={(value) => presenter.updateDrugHistorySummary(value)}
-          cardRef={substanceUseRef}
-        />
+        <DrugHistoryCard presenter={presenter} cardRef={substanceUseRef} />
 
         <DomainCard
           title="Peer Associations"

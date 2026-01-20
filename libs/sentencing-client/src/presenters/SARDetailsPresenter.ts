@@ -591,6 +591,80 @@ export class SARDetailsPresenter implements Hydratable {
     return this.updateStringField("drugHistorySummary", value);
   }
 
+  /** Get drug history records array */
+  get drugHistories(): NonNullable<SAR["drugHistories"]> {
+    return this.SARData?.drugHistories ?? [];
+  }
+
+  /** Add new drug history record */
+  async addDrugHistory(
+    history: NonNullable<SAR["drugHistories"]>[number]
+  ): Promise<void> {
+    if (!this.SARData) return;
+
+    const updated = [...this.drugHistories, history];
+    await this.saveDrugHistories(updated);
+  }
+
+  /** Update drug history record at specific index */
+  async updateDrugHistoryAtIndex(
+    index: number,
+    history: NonNullable<SAR["drugHistories"]>[number]
+  ): Promise<void> {
+    if (!this.SARData) return;
+    if (index < 0 || index >= this.drugHistories.length) {
+      console.error(`Invalid index ${index} for drug history update`);
+      return;
+    }
+
+    const updated = [...this.drugHistories];
+    updated[index] = history;
+    await this.saveDrugHistories(updated);
+  }
+
+  /** Delete drug history record at specific index */
+  async deleteDrugHistory(index: number): Promise<void> {
+    if (!this.SARData) return;
+
+    if (index < 0 || index >= this.drugHistories.length) {
+      console.error(
+        `Invalid index ${index} for deleting drug history. Valid range: 0-${this.drugHistories.length - 1}`
+      );
+      return;
+    }
+
+    const updated = this.drugHistories.filter((_, i) => i !== index);
+    await this.saveDrugHistories(updated);
+  }
+
+  /** Save entire drug history records array to backend */
+  private async saveDrugHistories(
+    histories: NonNullable<SAR["drugHistories"]>
+  ): Promise<void> {
+    if (!this.SARData) return;
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.drugHistories = histories;
+      }
+    });
+
+    const updates: Partial<MutableSARAttributes> = {
+      drugHistories: histories.map((h) => ({
+        substance: h.substance ?? undefined,
+        ageOfRegularUse: h.ageOfRegularUse ?? undefined,
+        lastUse: h.lastUse ?? undefined,
+        heaviestUse: h.heaviestUse ?? undefined,
+        method: h.method ?? undefined,
+      })),
+    };
+
+    await this.sentencingStore.apiClient.updateSARDetails(
+      this.SARData.id,
+      updates
+    );
+  }
+
   /** Update employer at offense */
   async updateEmployerAtOffense(value: string): Promise<void> {
     return this.updateStringField("employerAtOffense", value);
