@@ -88,6 +88,7 @@ import {
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { UsAzReleaseToTransitionProgramOpportunityBase } from "../../WorkflowsStore/Opportunity/UsAz";
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
+import { UsNeGoodTimeRestorationOpportunity } from "../../WorkflowsStore/Opportunity/UsNe";
 import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { CaseloadSelect } from "../CaseloadSelect";
@@ -609,10 +610,10 @@ const TableView = observer(function TableView({
       enableSorting: true,
       sortingFn: "alphanumeric",
       accessorFn: (opp: Opportunity) => {
-        if (opp.type === "usNeGoodTimeRestoration" && opp.record) {
-          return opp.record.metadata.isEligibleForMoreThan30Days
-            ? ">30 days"
-            : "30 days";
+        if (opp instanceof UsNeGoodTimeRestorationOpportunity) {
+          return opp.record.metadata.numberOfDaysEligibleFor === 90
+            ? "90+ days"
+            : `${opp.record.metadata.numberOfDaysEligibleFor} days`; // naive plural is fine since this will always be 30/60/90
         }
       },
     },

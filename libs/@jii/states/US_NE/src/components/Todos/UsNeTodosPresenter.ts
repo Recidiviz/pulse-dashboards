@@ -78,10 +78,10 @@ export class UsNeTodosPresenter {
     const {
       isEligible,
       isAlmostEligible,
-      metadata: { isEligibleForMoreThan30Days },
+      metadata: { numberOfDaysEligibleFor },
     } = goodTimeOpportunity.opportunityRecord;
 
-    if (isEligibleForMoreThan30Days) {
+    if (numberOfDaysEligibleFor > 30) {
       return "eligibleForMoreThan30Days";
     } else if (isEligible) {
       return "eligible";

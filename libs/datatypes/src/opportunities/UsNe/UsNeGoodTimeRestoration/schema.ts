@@ -22,7 +22,12 @@ import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 export const usNeGoodTimeRestorationSchema = opportunitySchemaBase.extend({
   metadata: z
-    .object({ isEligibleForMoreThan30Days: z.boolean() })
+    .object({
+      numberOfDaysEligibleFor: z
+        .string()
+        .transform((val) => parseInt(val))
+        .or(z.number()),
+    })
     .passthrough(),
 });
 

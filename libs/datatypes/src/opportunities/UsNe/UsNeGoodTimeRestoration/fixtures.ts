@@ -53,7 +53,7 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { isEligibleForMoreThan30Days: true },
+    metadata: { numberOfDaysEligibleFor: "60" },
   }),
   eligibleLowGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -84,7 +84,7 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { isEligibleForMoreThan30Days: false },
+    metadata: { numberOfDaysEligibleFor: "30" },
   }),
   eligibleHighGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -115,7 +115,7 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { isEligibleForMoreThan30Days: true },
+    metadata: { numberOfDaysEligibleFor: "90" },
   }),
   eligibleModerateGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -146,7 +146,7 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { isEligibleForMoreThan30Days: true },
+    metadata: { numberOfDaysEligibleFor: "90" },
   }),
   almostEligibleRecentIdcMr: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -179,7 +179,7 @@ export const usNeGoodTimeRestorationFixtures = {
         latestIncidentDate: relativeFixtureDate({ months: -4, days: -15 }),
       },
     },
-    metadata: { isEligibleForMoreThan30Days: false },
+    metadata: { numberOfDaysEligibleFor: 30 },
   }),
   almostEligibleRecentClass1Mr: makeRecordFixture(
     usNeGoodTimeRestorationSchema,
@@ -214,7 +214,7 @@ export const usNeGoodTimeRestorationFixtures = {
           latestEventDate: relativeFixtureDate({ months: -10, days: -10 }),
         },
       },
-      metadata: { isEligibleForMoreThan30Days: false },
+      metadata: { numberOfDaysEligibleFor: "30" },
     },
   ),
 } satisfies FixtureMapping<UsNeGoodTimeRestorationRecord>;
