@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Sans14, spacing, typography } from "@recidiviz/design-system";
+import { Sans14, Sans16, spacing, typography } from "@recidiviz/design-system";
 import { scaleBand } from "d3-scale";
 import { startOfDay } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -40,14 +41,34 @@ import {
   SentenceProgressPoint,
   SentenceProgressPointV2,
 } from "./SentenceProgressPointV2";
+import SentenceProgressSidePanel from "./SentenceProgressSidePanel";
 import { ClientProfileProps, ResidentProfileProps } from "./types";
 
 const Wrapper = styled.div``;
 
-const VizHeader = styled.div`
+const HeadingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledLink = styled(Link)`
+  color: ${palette.signal.links} !important;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+`;
+
+const SubHeader = styled.div`
   ${typography.Sans14}
   display: flex;
   justify-content: space-between;
+  margin-top: ${rem(spacing.md)};
 
   & > *:first-child {
     margin-right: ${rem(spacing.lg)};
@@ -85,7 +106,9 @@ const ProgressHeader = ({
   officerId,
   startDate,
   endDate,
+  presenter,
 }: {
+  presenter: SentenceProgressPresenter<Resident | Client>;
   header: string;
   officerId?: string;
   startDate?: Date;
@@ -93,18 +116,27 @@ const ProgressHeader = ({
 }) => {
   const showSentenceCalculations = !!startDate && !!endDate;
   return (
-    <VizHeader>
-      <div>
-        <Title>{header}</Title>
-        {showSentenceCalculations && (
-          <Sans14>
-            {formatSentenceLength(startDate, endDate)} (
-            {formatTimeToGo(endDate)})
-          </Sans14>
-        )}
-      </div>
-      <OfficerAssignmentDisplay officerId={officerId} />
-    </VizHeader>
+    <HeadingWrapper>
+      <Header>
+        <Sans16>Progress</Sans16>
+        <StyledLink to="#" onClick={() => (presenter.isModalOpen = true)}>
+          See All Events
+        </StyledLink>
+      </Header>
+
+      <SubHeader>
+        <div>
+          <Title>{header}</Title>
+          {showSentenceCalculations && (
+            <Sans14>
+              {formatSentenceLength(startDate, endDate)} (
+              {formatTimeToGo(endDate)})
+            </Sans14>
+          )}
+        </div>
+        <OfficerAssignmentDisplay officerId={officerId} />
+      </SubHeader>
+    </HeadingWrapper>
   );
 };
 
@@ -153,6 +185,7 @@ export const ManagedComponent = observer(function ProgressTimeline({
         header={header}
         startDate={startDate}
         endDate={endDate}
+        presenter={presenter}
       />
       <TimelineCanvas>
         <TimelinePast x1={0} x2={`${nowMarker}%`} y1={"50%"} y2={"50%"} />
@@ -172,6 +205,10 @@ export const ManagedComponent = observer(function ProgressTimeline({
           );
         })}
       </TimelineCanvas>
+      <SentenceProgressSidePanel
+        presenter={presenter}
+        timelineDates={timelineDates.filter((date) => date.label !== "Today")}
+      />
     </Wrapper>
   );
 });
@@ -189,13 +226,13 @@ export const ProgressTimelineV2 = withPresenterManager({
   managerIsObserver: true,
 });
 
-function SupervisionProgress({
+const SupervisionProgress = function SupervisionProgress({
   client,
 }: ClientProfileProps): React.ReactElement<any> {
   return <ProgressTimelineV2 person={client} />;
-}
+};
 
-export function IncarcerationProgress({
+const IncarcerationProgress = function IncarcerationProgress({
   resident,
 }: ResidentProfileProps): React.ReactElement<any> {
   const {
@@ -206,18 +243,18 @@ export function IncarcerationProgress({
 
   if (onLifeSentence) {
     return (
-      <VizHeader>
+      <SubHeader>
         <div>
           <Title>Incarceration</Title>
           <LifeSentenceDisplay admissionDate={admissionDate} />
         </div>
         <OfficerAssignmentDisplay officerId={officerId} />
-      </VizHeader>
+      </SubHeader>
     );
   }
 
   return <ProgressTimelineV2 person={resident} />;
-}
+};
 
 export const SentenceProgressV2: React.FC<{
   person: JusticeInvolvedPerson;

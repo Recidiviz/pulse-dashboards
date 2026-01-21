@@ -37,6 +37,8 @@ export class SentenceProgressPresenter<
 > {
   private _timelineDates?: TimelineDate[];
   private _hoveredDate?: string;
+  private _isModalOpen: boolean;
+
   constructor(
     private readonly workflowsStore: WorkflowsStore,
     private readonly person: PersonType,
@@ -44,6 +46,7 @@ export class SentenceProgressPresenter<
     makeAutoObservable(this);
 
     this.calculateTimelineDateArray();
+    this._isModalOpen = false;
   }
 
   get header() {
@@ -223,5 +226,13 @@ export class SentenceProgressPresenter<
       true,
       optionalFieldToDate(EIGHTYFIVEPercentDate),
     );
+  }
+
+  get isModalOpen(): boolean {
+    return this._isModalOpen;
+  }
+
+  set isModalOpen(isOpen: boolean) {
+    this._isModalOpen = isOpen;
   }
 }

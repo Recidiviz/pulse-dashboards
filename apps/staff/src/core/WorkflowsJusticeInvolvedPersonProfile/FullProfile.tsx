@@ -416,10 +416,7 @@ export const FullProfile = observer(
           {showFullWidthTimeline && (
             <>
               {sentenceProgressV2 ? (
-                <>
-                  <TimelineHeading>Progress</TimelineHeading>
-                  <SentenceProgressV2 person={person} />
-                </>
+                <SentenceProgressV2 person={person} />
               ) : (
                 <>
                   <TimelineHeading>Progress toward success</TimelineHeading>

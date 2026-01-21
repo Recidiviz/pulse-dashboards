@@ -138,6 +138,7 @@ type PreviewModalProps = {
   isOpen: boolean;
   pageContent: JSX.Element;
   footerContent?: JSX.Element;
+  titleContent?: JSX.Element;
   onAfterOpen?: () => void;
   onClose?: () => void;
   onBackClick?: () => void;
@@ -150,6 +151,7 @@ export const WorkflowsPreviewModal: FC<PreviewModalProps> = observer(
     isOpen,
     pageContent,
     footerContent,
+    titleContent,
     onAfterOpen,
     onBackClick,
     onClose = () => null,
@@ -220,6 +222,7 @@ export const WorkflowsPreviewModal: FC<PreviewModalProps> = observer(
               Back
             </Button>
           )}
+          {!!titleContent && titleContent}
           <Button
             className="WorkflowsPreviewModal__close"
             kind="link"
