@@ -15,6 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import baseConfig from "../../../eslint.config.mjs";
+// @ts-check
 
-export default [...baseConfig];
+import tseslint from "typescript-eslint";
+
+import baseConfig, { esmRestrictedImports } from "../../../eslint.config.mjs";
+
+export default tseslint.config(baseConfig, {
+  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [...esmRestrictedImports],
+      },
+    ],
+  },
+});

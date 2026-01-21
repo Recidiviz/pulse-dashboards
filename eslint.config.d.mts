@@ -32,6 +32,8 @@ type RestrictedImportsPath = {
 
 export const designSystemRestrictedImports: RestrictedImportsPath;
 
+export const esmRestrictedImports: Array<RestrictedImportsPath>;
+
 export const jiiRestrictedImports: Array<RestrictedImportsPath>;
 
 export const reactRestrictedImports: Array<RestrictedImportsPath>;

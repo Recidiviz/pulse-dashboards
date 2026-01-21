@@ -260,3 +260,10 @@ export const jiiRestrictedImports = [
       "Don't use the default i18next instance. Use the observable instance managed by TranslationStore instead.",
   },
 ];
+
+export const esmRestrictedImports = [
+  {
+    name: "lodash",
+    message: "lodash does not support ESM, please use lodash-es instead",
+  },
+];
