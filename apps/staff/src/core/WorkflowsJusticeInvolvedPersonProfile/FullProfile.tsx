@@ -59,6 +59,7 @@ import { PartialTime } from "./PartialTime";
 import { PreferredContact } from "./PreferredContact";
 import { ResidentHousing } from "./ResidentDetailSidebarComponents/ResidentHousing";
 import { SentenceProgress } from "./SentenceProgress";
+import { SentenceProgressV2 } from "./SentenceProgressV2";
 import { Divider, PhoneNumber } from "./styles";
 import {
   ClientProfileProps,
@@ -337,8 +338,11 @@ export const FullProfile = observer(
       currentTenantId,
     } = useRootStore();
     const { isTablet, isMobile } = useIsMobile(true);
-    const { caseNoteSearch, usTn2026ClassificationPolicyPilot } =
-      useFeatureVariants();
+    const {
+      caseNoteSearch,
+      usTn2026ClassificationPolicyPilot,
+      sentenceProgressV2,
+    } = useFeatureVariants();
 
     usePersonTracking(person, () => {
       person?.trackProfileViewed();
@@ -411,8 +415,17 @@ export const FullProfile = observer(
 
           {showFullWidthTimeline && (
             <>
-              <TimelineHeading>Progress toward success</TimelineHeading>
-              <SentenceProgress person={person} />
+              {sentenceProgressV2 ? (
+                <>
+                  <TimelineHeading>Progress</TimelineHeading>
+                  <SentenceProgressV2 person={person} />
+                </>
+              ) : (
+                <>
+                  <TimelineHeading>Progress toward success</TimelineHeading>
+                  <SentenceProgress person={person} />
+                </>
+              )}
               <Divider />
             </>
           )}
