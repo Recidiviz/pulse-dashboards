@@ -1,13 +1,13 @@
 import json
-import structlog
 from typing import Dict, List, Optional
 from uuid import UUID
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel, model_validator
 
-from app.auth.auth_core import get_pseudonymized_id
+from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
 from app.crud.intake import get_intake_with_address_and_recording
 from app.crud.recording_session import get_recording_session_by_id
@@ -155,6 +155,7 @@ async def get_client_transcription(
     recording_session_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     # Validate the session exists
     recording_session = await get_recording_session_by_id(session, recording_session_id)
@@ -170,6 +171,7 @@ async def get_client_transcription(
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
     # Try to retrieve the transcription from storage

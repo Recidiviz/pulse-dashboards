@@ -80,6 +80,7 @@ async def create_new_recording_session(
     request: CreateRecordingSessionRequest,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ) -> RecordingSessionResponse:
     intake = await get_intake_by_id(session, request.intake_id)
 
@@ -91,6 +92,7 @@ async def create_new_recording_session(
     check_access(
         client_pseudo_id=intake.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
     if intake.intake_type is not IntakeType.TRANSCRIPTION:
@@ -134,6 +136,7 @@ async def get_recording_session(
     session_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ) -> RecordingSessionResponse:
     recording_session = await get_recording_session_by_id(session, session_id)
 
@@ -147,6 +150,7 @@ async def get_recording_session(
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
     logger.info(f"Retrieved recording session {session_id}")
@@ -164,6 +168,7 @@ async def get_recording_session_status(
     session_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ) -> RecordingSessionStatusResponse:
     recording_session = await get_recording_session_by_id(session, session_id)
 
@@ -176,6 +181,7 @@ async def get_recording_session_status(
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
     logger.info(f"Retrieved status for recording session {session_id}")
@@ -203,6 +209,7 @@ async def update_recording_session_status(
     request: UpdateRecordingSessionStatusRequest,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ) -> RecordingSessionResponse:
     recording_session = await get_recording_session_by_id(session, session_id)
     if not recording_session:
@@ -214,6 +221,7 @@ async def update_recording_session_status(
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
     updated_session = await update_status(
@@ -259,6 +267,7 @@ async def upload_audio_chunk(
     request: UploadChunkRequest,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ) -> UploadChunkResponse:
     recording_session = await get_recording_session_by_id(session, session_id)
     if not recording_session:
@@ -270,6 +279,7 @@ async def upload_audio_chunk(
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
     try:
@@ -352,6 +362,7 @@ async def finalize_recording(
     request: FinalizeRecordingRequest,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ) -> FinalizeRecordingResponse:
     recording_session = await get_recording_session_by_id(session, session_id)
     if not recording_session:
@@ -364,6 +375,7 @@ async def finalize_recording(
         check_access(
             client_pseudo_id=recording_session.client_pseudo_id,
             pseudonymized_staff_id=pseudonymized_id,
+            cpa_client_locations=auth_user_context["cpa_client_locations"],
         )
 
         execution = await schedule_task(
@@ -396,6 +408,7 @@ async def retry_process_recording(
     session_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ) -> FinalizeRecordingResponse:
     recording_session = await get_recording_session_by_id(session, session_id)
     if not recording_session:
@@ -407,6 +420,7 @@ async def retry_process_recording(
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
     # Schedule the processing task
@@ -444,6 +458,7 @@ async def get_signed_url(
     session_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ) -> SignedUrlResponse:
     recording_session = await get_recording_session_by_id(session, session_id)
     if not recording_session:
@@ -462,6 +477,7 @@ async def get_signed_url(
     check_access(
         client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
     try:

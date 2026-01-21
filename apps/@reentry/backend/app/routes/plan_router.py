@@ -182,16 +182,19 @@ async def router_create_plan(
     request: PlanRequestCreate,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     structlog.contextvars.bind_contextvars(client_pseudo_id=request.client_pseudo_id)
 
     # increment the total call counter
     llm_plan_creation_total_counter.inc()
 
-    record = Queries.get_client_data_by_pseudonymized_id(
-        pseudonymized_client_id=request.client_pseudo_id,
-        pseudonymized_staff_id=pseudonymized_id,
+    record = check_access(
+        request.client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
     )
+
     if not record:
         raise HTTPException(status_code=404, detail="Client not found")
 

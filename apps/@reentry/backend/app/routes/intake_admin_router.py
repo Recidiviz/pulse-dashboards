@@ -37,7 +37,6 @@ from app.routes.shared_models import (
     IntakeResponse,
     ProcessingStatusResponse,
 )
-from app.services.client_data.queries import Queries
 from app.utils.assessment_config_utils import enrich_sections_with_status
 from app.utils.config_loader import ConfigLoader
 from app.utils.execution_utils import is_execution_stuck
@@ -176,6 +175,7 @@ async def get_intake_address(
     intake_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     """
     Get the address associated with an intake.
@@ -189,7 +189,11 @@ async def get_intake_address(
         raise HTTPException(status_code=404, detail="Intake not found")
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
-    check_access(intake.client_pseudo_id, pseudonymized_id)
+    check_access(
+        intake.client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
 
     # Get the address for this intake
     address = await get_collected_address_for_intake(session, intake_id)
@@ -228,7 +232,7 @@ async def create_new_intake(
     """
     structlog.contextvars.bind_contextvars(client_pseudo_id=request.client_pseudo_id)
     try:
-        check_access(
+        client_record = check_access(
             request.client_pseudo_id,
             pseudonymized_id,
             auth_user_context["cpa_client_locations"],
@@ -263,17 +267,6 @@ async def create_new_intake(
             )
 
         # 3. Verify client's state matches config's state
-        client_record = Queries.get_client_data_by_pseudonymized_id(
-            pseudonymized_client_id=request.client_pseudo_id,
-            pseudonymized_staff_id=pseudonymized_id,
-        )
-
-        if not client_record:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Client record not found for client_pseudo_id: {request.client_pseudo_id}",
-            )
-
         if client_record.state_code != assessment_config.state_code:
             raise HTTPException(
                 status_code=400,
@@ -323,6 +316,7 @@ async def delete_new_intake(
     intake_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     """
     Delete an intake by its ID.
@@ -336,7 +330,11 @@ async def delete_new_intake(
         )
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
-    check_access(intake.client_pseudo_id, pseudonymized_id)
+    check_access(
+        intake.client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
 
     if intake.status != IntakeStatus.CREATED:
         raise HTTPException(
@@ -368,6 +366,7 @@ async def get_client_intake(
     intake_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     intake: Intake | None = await get_intake_by_id(session, intake_id)
 
@@ -378,7 +377,11 @@ async def get_client_intake(
         )
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
-    check_access(intake.client_pseudo_id, pseudonymized_id)
+    check_access(
+        intake.client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
 
     try:
         token = (
@@ -414,6 +417,7 @@ async def get_intake_section_messages_route(
     section_title: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     intake: Intake | None = await get_intake_by_id(session, intake_id)
     client_pseudo_id = intake.client_pseudo_id if intake else "not_a_client"
@@ -425,7 +429,11 @@ async def get_intake_section_messages_route(
             f"Couldn't find client_pseudo_id from the intake. intake_id: {intake_id}"
         )
 
-    check_access(client_pseudo_id, pseudonymized_id)
+    check_access(
+        client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
 
     try:
         decoded_section_title = urllib.parse.unquote(section_title)
@@ -465,6 +473,7 @@ async def set_internal_access(
     body: InternalAccessUpdate,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     intake = await get_intake_by_id(session, intake_id)
 
@@ -475,7 +484,11 @@ async def set_internal_access(
         )
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
-    check_access(intake.client_pseudo_id, pseudonymized_id)
+    check_access(
+        intake.client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
 
     intake = await update_internal_access_by_intake_id(
         session=session,
@@ -497,6 +510,7 @@ async def generate_client_token(
     intake_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     try:
         intake = await get_intake_by_id(session, intake_id)
@@ -505,7 +519,11 @@ async def generate_client_token(
             raise HTTPException(status_code=404, detail="Intake not found")
 
         structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
-        check_access(intake.client_pseudo_id, pseudonymized_id)
+        check_access(
+            intake.client_pseudo_id,
+            pseudonymized_id,
+            auth_user_context["cpa_client_locations"],
+        )
 
         # Generate a new token
         token_entry, raw_token = await get_or_create_token(session, intake.id)
@@ -535,6 +553,7 @@ async def submit_address(
     address_data: AddressSubmission,
     session=Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     intake = await get_intake_by_id(session, intake_id)
 
@@ -542,7 +561,11 @@ async def submit_address(
         raise HTTPException(status_code=404, detail="Intake not found")
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
-    check_access(intake.client_pseudo_id, pseudonymized_id)
+    check_access(
+        intake.client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
     # Create or update address
     if intake.address:
         # Update existing address
@@ -575,6 +598,7 @@ async def retry_intake_processing(
     intake_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
 ):
     """
     Retry processing for a specific intake.
@@ -594,7 +618,11 @@ async def retry_intake_processing(
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
     # Verify access
-    check_access(intake.client_pseudo_id, pseudonymized_id)
+    check_access(
+        intake.client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
 
     # Check for failed or stuck recording/transcription
     recording = None
