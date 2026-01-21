@@ -87,7 +87,7 @@ export type UsNeCopy = {
 
 export const usNeCopy: UsNeCopy = {
   lastUpdated:
-    "This information is current as of {{formatFullDate goodTimeLastModifiedDate}}",
+    "This information is current as of {{formatFullDate sentenceLastModifiedDate}}",
   home: {
     pageTitle: "Learn More About Your Sentence",
     headerFields: [

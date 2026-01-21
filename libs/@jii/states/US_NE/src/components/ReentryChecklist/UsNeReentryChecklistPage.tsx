@@ -103,7 +103,7 @@ const ManagedComponent = observer(function ManagedComponent({
       {presenter.writeError && (
         <SlateCopy>
           {hydrateTemplate(copy.writeErrorMessage, {
-            writeError: presenter.writeError,
+            error: presenter.writeError,
           })}
         </SlateCopy>
       )}
