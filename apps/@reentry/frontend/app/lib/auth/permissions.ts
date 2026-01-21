@@ -20,7 +20,7 @@ import type { UserAppMetadata } from "./types";
 export function hasCPAPermission(
   userAppMetadata: UserAppMetadata | undefined,
 ): boolean {
-  return userAppMetadata?.routes?.cpa === true;
+  return userAppMetadata?.routes?.["cpa"] === true;
 }
 
 const INTERNAL_DOMAINS = ["@recidiviz.org", "@recidiviz-test.org"];

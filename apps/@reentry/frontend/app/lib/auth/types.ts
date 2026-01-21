@@ -35,13 +35,13 @@ export interface AuthContextType {
   getAccessToken: () => string | null | undefined;
   refreshToken: () => Promise<void>;
   userAppMetadata?: UserAppMetadata;
+  isRecidivizUser: boolean;
+  hasWorkflowsRoute: boolean;
 }
 
 export type UserAppMetadata = {
   stateCode: string;
   pseudonymizedId?: string;
   userHash: string;
-  routes?: {
-    cpa?: boolean;
-  };
+  routes?: Record<string, boolean>;
 };

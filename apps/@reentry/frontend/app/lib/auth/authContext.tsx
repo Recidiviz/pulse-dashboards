@@ -46,6 +46,8 @@ const AuthContext = createContext<AuthContextType>({
   getAccessToken: () => null,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   refreshToken: async () => {},
+  isRecidivizUser: false,
+  hasWorkflowsRoute: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -67,6 +69,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     process.env["NEXT_PUBLIC_AUTH0_METADATA_NAMESPACE"];
   const appMetadataKey = `${METADATA_NAMESPACE}app_metadata`;
   const userAppMetadata = authStore?.user?.[appMetadataKey];
+  const isRecidivizUser =
+    authStore?.user?.email?.endsWith("@recidiviz.org") ?? false;
+  const hasWorkflowsRoute = Object.keys(userAppMetadata?.routes ?? {}).some(
+    (route) =>
+      route.toLowerCase().includes("workflows") &&
+      userAppMetadata?.routes[route],
+  );
 
   // Helper function to check authentication status
   const checkAuthentication = async (store: AuthStore) => {
@@ -239,6 +248,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         getAccessToken,
         refreshToken,
         userAppMetadata,
+        isRecidivizUser,
+        hasWorkflowsRoute,
       }}
     >
       {children}

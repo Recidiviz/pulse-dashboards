@@ -24,8 +24,10 @@ import UserDropdown from "~@reentry/frontend/components/auth/userDropdown";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 
 const Navbar = () => {
-  const { state, login, logout } = useAuth();
+  const { state, login, logout, isRecidivizUser, hasWorkflowsRoute } = useAuth();
   const pathname = usePathname();
+  
+  const showDashboardsLink = hasWorkflowsRoute || isRecidivizUser;
 
   return (
     <nav className="w-full h-[65px] px-6 bg-white border-b border-[#2b5469]/20 justify-between items-center inline-flex print:hidden">
@@ -78,7 +80,7 @@ const Navbar = () => {
                   </Link>
                 </div>
               </div>
-              <UserDropdown user={state.user} onLogout={logout} />
+              <UserDropdown user={state.user} onLogout={logout} showDashboardsLink={showDashboardsLink} />
             </>
           ) : (
             <>
