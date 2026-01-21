@@ -80,8 +80,8 @@ steps:
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840,
         RECIDIVIZ_BASE_URL=https://backend-api-prod-773019812766.us-central1.run.app,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
-        CHECKFINALCHARACTERHERE=todo:pending-to-fix,
-        RECIDIVIZ_FIREBASE_ADMIN_PROJECT_ID=recidiviz-dashboard-production
+        RECIDIVIZ_FIREBASE_ADMIN_PROJECT_ID=recidiviz-dashboard-production,
+        CHECKFINALCHARACTERHERE=todo:pending-to-fix
 
 
   # Deploy Worker service

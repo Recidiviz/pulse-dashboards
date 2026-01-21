@@ -79,6 +79,7 @@ steps:
         RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
         RECIDIVIZ_BASE_URL=https://backend-api-demo-773019812766.us-central1.run.app,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
+        RECIDIVIZ_FIREBASE_ADMIN_PROJECT_ID=recidiviz-dashboard-staging,
         CHECKFINALCHARACTERHERE=todo:pending-to-fix
 
 
