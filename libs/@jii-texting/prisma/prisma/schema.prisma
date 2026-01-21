@@ -81,6 +81,13 @@ enum MessageAttemptStatus {
   UNKNOWN
 }
 
+// Storing these as lowercase to match BCP-47 convention for language tags
+// https://developer.mozilla.org/en-US/docs/Glossary/BCP_47_language_tag
+enum PreferredLanguage {
+  en
+  es
+}
+
 model Person {
   stableExternalId    String    @id // indicated by DOC
   pseudonymizedId     String    @unique // hashed id used to anonymize
@@ -97,6 +104,7 @@ model Person {
   district            String
   lastOptOutDate      DateTime? // will not be null if person has opted-out
   receivedWelcomeText Boolean   @default(false)
+  preferredLanguage   PreferredLanguage @default(en)
 
   groups                       Group[] // will be an empty list if this person should not be texted that day
   messageSeries                MessageSeries[]
