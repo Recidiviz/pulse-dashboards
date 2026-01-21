@@ -58,12 +58,43 @@ export const formatDraftCaseNoteMeetingDate = (date: Date) => {
   }).format(date);
 };
 
+export const formatRelativeTime = (date: Date): string => {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  const rtf = new Intl.RelativeTimeFormat("en", {
+    numeric: "auto",
+    style: "narrow",
+  });
+
+  const units: { unit: Intl.RelativeTimeFormatUnit; seconds: number }[] = [
+    { unit: "year", seconds: 31536000 },
+    { unit: "month", seconds: 2592000 },
+    { unit: "week", seconds: 604800 },
+    { unit: "day", seconds: 86400 },
+    { unit: "hour", seconds: 3600 },
+    { unit: "minute", seconds: 60 },
+  ];
+
+  for (const { unit, seconds } of units) {
+    const interval = Math.floor(diffInSeconds / seconds);
+    if (interval >= 1) {
+      return rtf.format(-interval, unit);
+    }
+  }
+
+  return "Just now";
+};
+
 export const deserializeClient = (rawClient: RawClient): Client => {
   return {
     ...rawClient,
     fullName: `${rawClient.givenNames} ${rawClient.surname}`,
     primaryMetadata: rawClient.supervisionType,
-    lastMeeting: "5d ago", // TODO: remove hardcode
+    lastMeeting:
+      rawClient.meetingDetails.lastCompletedMeetingTime == null
+        ? "No Meetings"
+        : formatRelativeTime(rawClient.meetingDetails.lastCompletedMeetingTime),
   };
 };
 
@@ -72,7 +103,12 @@ export const deserializeResident = (rawResident: RawResident): Resident => {
     ...rawResident,
     fullName: `${rawResident.givenNames} ${rawResident.surname}`,
     primaryMetadata: rawResident.facilityId,
-    lastMeeting: "5d ago", // TODO: remove hardcode
+    lastMeeting:
+      rawResident.meetingDetails.lastCompletedMeetingTime == null
+        ? "No Meetings"
+        : formatRelativeTime(
+            rawResident.meetingDetails.lastCompletedMeetingTime,
+          ),
   };
 };
 
