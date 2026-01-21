@@ -237,7 +237,7 @@ function formatISODateString(date: string): string {
   return format(parseISO(date), "M/d/yy");
 }
 
-function formatDate(date?: Date, pattern = "M/d/yy"): string {
+function formatDate(date?: Date | null, pattern = "M/d/yy"): string {
   if (!date) return "Unknown";
 
   return format(date, pattern);
@@ -247,15 +247,15 @@ function formatDateToISO(date: Date, pattern = "yyyy-MM-dd"): string {
   return format(date, pattern);
 }
 
-function formatWorkflowsDate(date?: Date): string {
+function formatWorkflowsDate(date?: Date | null): string {
   return formatDate(date, "MMM d, yyyy");
 }
 
-function formatWorkflowsDateWithTime(date?: Date): string {
+function formatWorkflowsDateWithTime(date?: Date | null): string {
   return formatDate(date, "MMM d, yyyy h:mm a");
 }
 
-function formatWorkflowsDateWithoutYear(date?: Date): string {
+function formatWorkflowsDateWithoutYear(date?: Date | null): string {
   return formatDate(date, "MMM d");
 }
 

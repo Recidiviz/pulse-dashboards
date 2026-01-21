@@ -66,7 +66,7 @@ const optionalClientInformation = z
         offenseType: z.string().nullable(),
         isSexOffense: z.boolean().nullable(),
         countyCode: z.string().nullable(),
-        dateImposed: dateStringSchema,
+        dateImposed: dateStringSchema.nullable(),
       }),
     ),
     hasAnyInStateSentences: z.boolean().nullish(),
