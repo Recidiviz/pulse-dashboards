@@ -89,6 +89,11 @@ variable "server_env_filename" {
   description = "Name of server dotenv file"
 }
 
+variable "server_env_secrets_filename" {
+  type        = string
+  description = "Name of SOPS file with secret env vars"
+}
+
 variable "secrets_filename" {
   type        = string
   description = "SOPS filename to reference from the secrets component"

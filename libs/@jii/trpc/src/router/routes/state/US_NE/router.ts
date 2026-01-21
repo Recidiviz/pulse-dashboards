@@ -20,7 +20,7 @@ import { z } from "zod";
 
 import { PrismaClient } from "~@jii/prisma";
 
-import { router } from "../../../../init";
+import { router } from "../../../../procedures/init";
 import { restrictedProcedureForState } from "../restrictedProcedureForState";
 
 const nebraskaProcedure = restrictedProcedureForState("US_NE");

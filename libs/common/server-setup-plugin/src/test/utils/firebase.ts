@@ -28,7 +28,7 @@ const plugin = procedurePlugin();
 
 export async function createFirebaseContext(opts: CreateFastifyContextOptions) {
   const { req, res } = opts;
-  const authPayload = await verifyFirebaseIdToken(opts);
+  const authPayload = await verifyFirebaseIdToken(req);
 
   return {
     req,

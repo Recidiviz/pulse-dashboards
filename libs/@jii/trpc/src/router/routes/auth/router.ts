@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,16 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../procedures/init";
-import { authRouter } from "./routes/auth/router";
-import { stateRouter } from "./routes/state/router";
-import { userRouter } from "./routes/user/router";
+import { router } from "../../../procedures/init";
+import { auth0ToFirebaseToken } from "./auth0ToFirebaseToken";
 
-export const appRouter = router({
-  auth: authRouter,
-  state: stateRouter,
-  user: userRouter,
+export const authRouter = router({
+  auth0ToFirebaseToken,
 });
-
-// clients will need the router's type definition only
-export type AppRouter = typeof appRouter;

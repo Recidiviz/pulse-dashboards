@@ -17,7 +17,7 @@
 
 import { TRPCError } from "@trpc/server";
 
-import { baseProcedure } from "../../../init";
+import { firebaseAuthedProcedure } from "../../../procedures/firebaseAuth";
 
 /*
  * Creates a procedure that is restricted to a specific state.
@@ -25,7 +25,7 @@ import { baseProcedure } from "../../../init";
  * in validateAuthPayload().
  */
 export const restrictedProcedureForState = (expectedStateCode: string) =>
-  baseProcedure.use(async ({ ctx, next }) => {
+  firebaseAuthedProcedure.use(async ({ ctx, next }) => {
     if (ctx.stateCode !== expectedStateCode) {
       throw new TRPCError({
         code: "BAD_REQUEST",

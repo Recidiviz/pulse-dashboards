@@ -15,16 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../procedures/init";
-import { authRouter } from "./routes/auth/router";
-import { stateRouter } from "./routes/state/router";
-import { userRouter } from "./routes/user/router";
+import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
 
-export const appRouter = router({
-  auth: authRouter,
-  state: stateRouter,
-  user: userRouter,
-});
+import { procedurePlugin } from "~server-setup-plugin";
 
-// clients will need the router's type definition only
-export type AppRouter = typeof appRouter;
+import { createContext } from "../context";
+
+const t = initTRPC
+  .context<typeof createContext>()
+  // Required to get Date objects to serialize correctly.
+  .create({ transformer: superjson });
+
+export const router = t.router;
+
+const plugin = procedurePlugin();
+
+/**
+ * tRPC procedure that verifies the caller has valid user credentials and is authorized
+ * to communicate with this API. Extend this to add further permissions checks as necessary.
+ */
+export const baseProcedure = t.procedure.concat(plugin);

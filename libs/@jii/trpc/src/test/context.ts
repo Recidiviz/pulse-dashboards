@@ -15,18 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Context } from "../context";
-import { testPrismaClient } from "./prisma";
-
 export const userId = "abc123";
-
-export function getTestContext(): Context {
-  return {
-    userId,
-    userProfile: {
-      stateCode: "US_XX",
-    },
-    stateCode: "US_XX",
-    prisma: testPrismaClient,
-  };
-}

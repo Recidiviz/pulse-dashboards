@@ -15,11 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getTestContext, userId } from "../../../test/context";
+import { userId } from "../../../test/context";
 import { testPrismaClient } from "../../../test/prisma";
 import { userRouter } from "./router";
 
-const c = userRouter.createCaller(getTestContext());
+vi.mock("../../../procedures/firebaseAuth");
+
+// we are mocking the procedure's context so it doesn't really matter what we pass here
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const c = userRouter.createCaller({ req: {} as any });
 
 describe("get properties for user in auth token", () => {
   test("no result", async () => {

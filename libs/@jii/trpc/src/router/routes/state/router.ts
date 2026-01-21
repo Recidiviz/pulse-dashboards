@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../init";
+import { router } from "../../../procedures/init";
 import { usCoRouter } from "./US_CO/router";
 import { usNeRouter } from "./US_NE/router";
 

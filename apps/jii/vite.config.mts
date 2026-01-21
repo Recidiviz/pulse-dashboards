@@ -28,7 +28,7 @@ import {
   REENTRY_DEV_BACKEND_PATH,
 } from "../../libs/@jii/case-planning/src/constants";
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { JII_BACKEND_PATH } from "../../libs/@jii/data/src/apis/data/constants";
+import { JII_BACKEND_PATH } from "../../libs/@jii/data/src/apis/constants";
 
 export default defineConfig(() => ({
   root: __dirname,

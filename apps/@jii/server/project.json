@@ -5,7 +5,7 @@
   "projectType": "application",
   "tags": ["scope:server"],
   "targets": {
-    "dev": {
+    "requires-sops-env:dev": {
       "dependsOn": ["^prisma-generate", "^prisma-deploy"],
       "executor": "nx:run-commands",
       "options": {

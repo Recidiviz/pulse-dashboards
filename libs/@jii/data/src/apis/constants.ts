@@ -15,16 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../procedures/init";
-import { authRouter } from "./routes/auth/router";
-import { stateRouter } from "./routes/state/router";
-import { userRouter } from "./routes/user/router";
-
-export const appRouter = router({
-  auth: authRouter,
-  state: stateRouter,
-  user: userRouter,
-});
-
-// clients will need the router's type definition only
-export type AppRouter = typeof appRouter;
+// this is reverse proxied to the server, which may contain routes other than trpc endpoints
+export const JII_BACKEND_PATH = "/api";
+// trpc endpoints live here
+export const JII_TRPC_BACKEND_PATH = `${JII_BACKEND_PATH}/trpc`;

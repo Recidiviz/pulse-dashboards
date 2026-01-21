@@ -20,6 +20,7 @@
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
     "vite.config.mts",
+    "src/**/__mocks__/*.ts",
     "src/test/**/*.ts"
   ]
 }

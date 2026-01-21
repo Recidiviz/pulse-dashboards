@@ -2,6 +2,10 @@ data "dotenv" "env" {
   filename = "../../../../../../apps/@jii/server/${var.server_env_filename}"
 }
 
+data "sops_file" "env_secrets" {
+  source_file = "../../../../../../apps/@jii/server/${var.server_env_secrets_filename}"
+}
+
 data "sops_file" "secrets" {
   source_file = "../../secrets/sops/${var.secrets_filename}"
 }
@@ -26,7 +30,7 @@ locals {
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
   server_env_vars = nonsensitive([
-    for key, value in merge(data.dotenv.env.entries, local.db_urls) : {
+    for key, value in merge(data.dotenv.env.entries, local.db_urls, yamldecode(data.sops_file.env_secrets.raw)) : {
       # The values may be sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key

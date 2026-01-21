@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
+import { userId } from "../../test/context";
+import { testPrismaClient } from "../../test/prisma";
+import type { AuthorizedUserContext } from "../firebaseAuth";
+import { baseProcedure } from "../init";
 
-import { procedurePlugin } from "~server-setup-plugin";
-
-import { createContext } from "./context";
-
-export const t = initTRPC
-  .context<typeof createContext>()
-  // Required to get Date objects to serialize correctly.
-  .create({ transformer: superjson });
-
-export const router = t.router;
-
-const plugin = procedurePlugin();
-
-/**
- * tRPC procedure that verifies the caller has valid user credentials and is authorized
- * to communicate with this API. Extend this to add further permissions checks as necessary.
- */
-export const baseProcedure = t.procedure.concat(plugin);
+// the real procedure depends on third party services such as Firestore
+// to create a context for authorized users; this just mocks that result
+// for a standardized test user
+export const firebaseAuthedProcedure = baseProcedure.use((opts) => {
+  return opts.next({
+    ctx: {
+      userId,
+      userProfile: {
+        stateCode: "US_XX",
+      },
+      stateCode: "US_XX",
+      prisma: testPrismaClient,
+    } satisfies AuthorizedUserContext,
+  });
+});

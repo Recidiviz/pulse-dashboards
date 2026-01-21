@@ -24,8 +24,9 @@ import { beforeAll } from "vitest";
 import { getPrismaClientForStateCode } from "~@jii/prisma";
 import { buildCommonServer } from "~server-setup-plugin";
 
-import { createContext } from "./context";
-import { baseProcedure, router } from "./init";
+import { createContext } from "../context";
+import { firebaseAuthedProcedure } from "./firebaseAuth";
+import { router } from "./init";
 
 vi.mock("firebase-admin");
 vi.mock("~@jii/prisma", () => {
@@ -51,7 +52,7 @@ let testServer: ReturnType<typeof buildCommonServer>;
 // but doesn't actually do anything useful
 const testAppRouter = router({
   // A procedure that does nothing, but is used to test that the base procedure auth checks are running.
-  test: baseProcedure.query(async () => {
+  test: firebaseAuthedProcedure.query(async () => {
     return "Hello, world!";
   }),
 });

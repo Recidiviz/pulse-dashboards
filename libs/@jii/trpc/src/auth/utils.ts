@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,4 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const JII_BACKEND_PATH = "/api";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { TRPCFastifyRequest } from "../context";
+
+/**
+ * Only verifies the fields we care about, passing through the rest
+ */
+export const jwtSchema = z.object({ sub: z.string() }).passthrough();
+
+export function getAuthToken(req: TRPCFastifyRequest) {
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  if (!token) {
+    throw new TRPCError({ code: "BAD_REQUEST" });
+  }
+  return token;
+}

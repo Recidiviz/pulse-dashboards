@@ -31,6 +31,7 @@ components:
         artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'
         artifact_registry_project_id: "{{ .settings.context.project_id }}"
         server_env_filename: .env.staging
+        server_env_secrets_filename: env.staging.enc.yaml
         secrets_filename: "{{ .settings.context.secrets_filename }}"
         firebase_auth_project_id: recidiviz-dashboard-staging
     

@@ -15,13 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createTRPCClient, httpLink } from "@trpc/client";
 import { makeAutoObservable, runInAction } from "mobx";
+import SuperJSON from "superjson";
 
 import {
   authorizedUserProfileSchema,
   getAuth0Config,
   metadataNamespace,
 } from "~@jii/auth";
+import type { JiiAppRouter } from "~@jii/trpc-types";
 import { AuthClient } from "~auth";
 import {
   castToError,
@@ -30,7 +33,7 @@ import {
   isHydrationInProgress,
 } from "~hydration-utils";
 
-import { API_URL_BASE } from "./constants";
+import { JII_TRPC_BACKEND_PATH } from "../constants";
 import { AuthHandler, AuthorizedUserProperties } from "./types";
 
 export class Auth0AuthHandler implements AuthHandler {
@@ -103,18 +106,28 @@ export class Auth0AuthHandler implements AuthHandler {
   }
 
   private async exchangeAuth0Token() {
-    const response = await fetch(`${API_URL_BASE}/auth/auth0`, {
-      headers: {
-        Authorization: `Bearer ${await this.authClient.getTokenSilently()}`,
-      },
+    // this client can only call the auth0 flow endpoint(s) with this configuration
+    const client = createTRPCClient<JiiAppRouter>({
+      links: [
+        httpLink({
+          url: JII_TRPC_BACKEND_PATH,
+          headers: async () => {
+            return {
+              Authorization: `Bearer ${await this.authClient.getTokenSilently()}`,
+            };
+          },
+          transformer: SuperJSON,
+        }),
+      ],
     });
 
-    if (response.ok) {
-      const firebaseToken = (await response.json()).firebaseToken;
+    try {
+      const { firebaseToken } = await client.auth.auth0ToFirebaseToken.query();
+
       runInAction(() => {
         this.firebaseToken = firebaseToken;
       });
-    } else {
+    } catch {
       throw new Error("Unable to retrieve Firebase token");
     }
   }

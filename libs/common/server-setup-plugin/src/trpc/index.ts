@@ -87,9 +87,9 @@ export function procedurePlugin() {
   );
 }
 
-export async function verifyFirebaseIdToken(opts: CreateFastifyContextOptions) {
-  const { req } = opts;
-
+export async function verifyFirebaseIdToken(
+  req: CreateFastifyContextOptions["req"],
+) {
   const token = req.headers.authorization?.replace("Bearer ", "");
   if (!token) {
     throw new TRPCError({ code: "BAD_REQUEST" });

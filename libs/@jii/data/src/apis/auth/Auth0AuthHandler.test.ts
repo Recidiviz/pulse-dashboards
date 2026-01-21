@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createTRPCClient, httpLink } from "@trpc/client";
 import { configure } from "mobx";
 
 import { AuthorizedUserProfile } from "~@jii/auth";
@@ -24,6 +25,8 @@ import { Auth0AuthHandler } from "./Auth0AuthHandler";
 vi.hoisted(() => {
   vi.stubEnv("VITE_API_URL_BASE", "http://localhost:9999");
 });
+
+vi.mock("@trpc/client");
 
 let handler: Auth0AuthHandler;
 
@@ -120,23 +123,25 @@ test("user profile", () => {
 test("get firebase token", async () => {
   const mockAuth0Token = "test-auth0-access-token";
   const mockFirebaseToken = "test-firebase-token";
-  const clientTokenSpy = vi
-    .spyOn(handler.authClient, "getTokenSilently")
-    .mockResolvedValue(mockAuth0Token);
-  fetchMock.mockResponse(JSON.stringify({ firebaseToken: mockFirebaseToken }));
-
-  await handler.getFirebaseToken();
-
-  expect(clientTokenSpy).toHaveBeenCalled();
-
-  expect(fetchMock.mock.lastCall).toMatchInlineSnapshot(`
-    [
-      "http://localhost:9999/auth/auth0",
-      {
-        "headers": {
-          "Authorization": "Bearer test-auth0-access-token",
+  vi.spyOn(handler.authClient, "getTokenSilently").mockResolvedValue(
+    mockAuth0Token,
+  );
+  // @ts-expect-error minimal stub
+  vi.mocked(createTRPCClient).mockReturnValue({
+    auth: {
+      auth0ToFirebaseToken: {
+        async query() {
+          return { firebaseToken: mockFirebaseToken };
         },
       },
-    ]
-  `);
+    },
+  });
+  await handler.getFirebaseToken();
+
+  const httpLinkOpts = vi.mocked(httpLink).mock.lastCall?.[0];
+  expect(httpLinkOpts?.url).toMatchInlineSnapshot(`"/api/trpc"`);
+  // @ts-expect-error headers should not be missing, and we want test to fail if it is
+  expect(await httpLinkOpts.headers()).toEqual({
+    Authorization: `Bearer ${mockAuth0Token}`,
+  });
 });

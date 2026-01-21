@@ -27,6 +27,7 @@ components:
         artifact_registry_repo: '{{ (atmos.Component "apps/jii" "recidiviz-jii-staging--jii").vars.artifact_registry_repo }}'
         artifact_registry_project_id: '{{ (atmos.Component "apps/jii" "recidiviz-jii-staging--jii").vars.project_id }}'
         server_env_filename: .env.production
+        server_env_secrets_filename: env.production.enc.yaml
         secrets_filename: "{{ .settings.context.secrets_filename }}"
         firebase_auth_project_id: recidiviz-dashboard-production
 
