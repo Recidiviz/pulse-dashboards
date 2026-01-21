@@ -88,3 +88,17 @@ export const SummaryLabel = styled.label`
   line-height: 120%;
   letter-spacing: -0.01rem;
 `;
+
+export const InfoBox = styled.div`
+  display: flex;
+  padding: 1rem 1rem 1rem 1.375rem;
+  align-items: center;
+  gap: 1rem;
+  align-self: stretch;
+  border-left: 4px solid ${palette.logoBlue};
+  background: rgba(0, 161, 255, 0.07);
+  color: ${palette.pine2};
+  font-family: "Public Sans";
+  font-size: 0.875rem;
+  line-height: 150%;
+`;

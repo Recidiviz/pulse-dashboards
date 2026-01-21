@@ -38,7 +38,10 @@ export const Label = styled.label`
   letter-spacing: -0.01rem;
 `;
 
-export const StyledTextArea = styled.textarea<{ height: string }>`
+export const StyledTextArea = styled.textarea<{
+  height: string;
+  $placeholderColor?: string;
+}>`
   ${typography.Sans14}
   display: flex;
   height: ${({ height }) => height};
@@ -57,7 +60,7 @@ export const StyledTextArea = styled.textarea<{ height: string }>`
   }
 
   &::placeholder {
-    color: ${palette.slate40};
+    color: ${({ $placeholderColor }) => $placeholderColor ?? palette.slate40};
   }
 
   &:disabled {

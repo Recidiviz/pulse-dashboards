@@ -18,10 +18,13 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 
+import { palette } from "~design-system";
+
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { OffenderAssessmentSubsection } from "../SARDetails/constants";
 import { SkippableTextArea } from "../shared/SkippableTextArea/SkippableTextArea";
 import { DomainCard } from "./DomainCard";
+import * as DomainCardStyled from "./DomainCard.styles";
 import { EducationDropdown, TextField } from "./FormComponents";
 import * as Styled from "./OffenderAssessment.styles";
 import { DrugHistoryCard } from "./SubstanceUse";
@@ -108,7 +111,17 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
             presenter.updateCriminalHistorySummary(value)
           }
           cardRef={criminalHistoryRef}
-        />
+          summaryPlaceholder="The defendant's complete criminal history is attached to this report."
+          summaryPlaceholderColor={palette.pine1}
+        >
+          <DomainCardStyled.InfoBox>
+            Default text provided below. You can customize this language as
+            needed.
+            <br />
+            Remember to export the CBRS screen from OPII and attach it to the
+            completed report.
+          </DomainCardStyled.InfoBox>
+        </DomainCard>
 
         <DomainCard
           title="Education, Employment, and Financial Situation"

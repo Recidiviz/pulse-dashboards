@@ -29,6 +29,7 @@ export interface SkippableTextAreaProps {
   disabled?: boolean;
   height?: string;
   onLocalChange?: () => void; // Called immediately on every keystroke (not debounced) for instant UI updates
+  placeholderColor?: string;
 }
 
 export function SkippableTextArea({
@@ -39,6 +40,7 @@ export function SkippableTextArea({
   disabled = false,
   height = "6.8125rem",
   onLocalChange,
+  placeholderColor,
 }: SkippableTextAreaProps) {
   // Local state for text input to provide instant UI feedback
   const [localValue, setLocalValue] = useState(value ?? "");
@@ -69,6 +71,7 @@ export function SkippableTextArea({
         onChange={(e) => handleTextChange(e.target.value)}
         disabled={disabled}
         height={height}
+        $placeholderColor={placeholderColor}
       />
     </Styled.Container>
   );
