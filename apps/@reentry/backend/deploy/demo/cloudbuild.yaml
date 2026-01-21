@@ -113,6 +113,8 @@ steps:
       - "--set-secrets=RECIDIVIZ_RESOURCES_API_KEY=RECIDIVIZ_RESOURCES_API_KEY_DEMO:latest"
       - "--set-secrets=RECIDIVIZ_JWT_SECRET_KEY=RECIDIVIZ_JWT_SECRET_KEY_DEMO:latest"
       - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
+      - "--set-secrets=RECIDIVIZ_BQ_PROJECT_ID=RECIDIVIZ_BQ_PROJECT_ID_DEMO:latest"
+      - "--set-secrets=RECIDIVIZ_BQ_DATASET=RECIDIVIZ_BQ_DATASET_DEMO:latest"
       - "--set-env-vars"
       - |
         ENTRYPOINT=worker,
@@ -132,6 +134,9 @@ steps:
         RECIDIVIZ_AUTH0_AUDIENCE=https://recidiviz-rnd.us.auth0.com/api/v2/,
         RECIDIVIZ_AUTH0_DOMAIN=recidiviz-rnd.us.auth0.com,
         RECIDIVIZ_JWT_ALGORITHM=HS256,
+        RECIDIVIZ_BQ_CASE_MANAGER_TABLE=case_manager_demo,
+        RECIDIVIZ_BQ_SUPERVISION_OFFICER_TABLE=supervision_officer_demo,
+        RECIDIVIZ_BQ_CLIENT_TABLE=client_demo,
         RECIDIVIZ_ALLOWED_ORIGINS=http://34.107.140.51,
         RECIDIVIZ_GCS_BUCKET_NAME=recidiviz-recording-bucket-demo,
         RECIDIVIZ_GCS_SERVICE_ACCOUNT_EMAIL=773019812766-compute@developer.gserviceaccount.com,
