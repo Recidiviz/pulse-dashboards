@@ -21,9 +21,7 @@
     "prisma": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn prisma"
-        ],
+        "commands": ["yarn prisma"],
         "forwardAllArgs": true,
         "cwd": "{projectRoot}"
       }
@@ -53,10 +51,6 @@
       "executor": "@nx-tools/nx-prisma:deploy",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
-      },
-      "configurations": {
-        "offline": {},
-        "test": {}
       }
     },
     "prisma-status": {

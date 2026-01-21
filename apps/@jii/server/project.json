@@ -15,7 +15,7 @@
     },
     "offline": {
       "continuous": true,
-      "dependsOn": ["^prisma-generate", "^prisma-deploy-offline"],
+      "dependsOn": ["^prisma-generate", "^prepare-offline-db"],
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
