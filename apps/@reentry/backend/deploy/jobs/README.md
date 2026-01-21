@@ -92,3 +92,9 @@ see [backend/deploy/jobs/docs/SEED_README.md](docs/SEED_README.md) for details
 
 ### requeue-pending-executions
 see [backend/deploy/jobs/docs/REQUEUE_README.md](docs/REQUEUE_README.md)  for details
+
+
+
+## Creating One-off jobs
+
+To create gcp cloud run jobs to run one-time procedures, you can follow the examples in [PR-9559](https://github.com/Recidiviz/pulse-dashboards/pull/9559) and [PR-9413](https://github.com/Recidiviz/pulse-dashboards/pull/9413).

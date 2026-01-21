@@ -1,10 +1,4 @@
-# Recidiviz
-
-This project provides an automated first draft of action plans for case workers,
-helping reduce time-consuming tasks while keeping human oversight and
-decision-making central.
-
-More documentation around the POC can be found in the [docs folder](./docs)
+# Getting Started
 
 ## Requirements
 
@@ -16,6 +10,15 @@ This project uses:
 Make sure all these are installed in your system.
 
 (You can use pipx to install pre-commit: `pipx install pre-commit`, then `pre-commit install`. For uv, use the installation instructions in the link above)
+
+Make sure you have the following libraries installed in your machine:
+
+For macOs:
+`brew install cairo pango glib gobject-introspection gdk-pixbuf uv`
+
+Ubuntu/Debian:
+`sudo apt-get install -y libcairo2-dev libpango1.0-dev libglib2.0-dev gobject-introspection libgirepository1.0-dev libgdk-pixbuf2.0-dev`
+
 
 ## Installation
 
@@ -31,11 +34,19 @@ gcloud config set project recidiviz-rnd-planner
 
 3. Set up environment variables
 
+
+Go inside the `apps/@reentry/backend` folder, make a `.env` file. Get the content of the file from one of your teammates.
+
 ```bash
+cd apps/@reentry/backend
+```
+
+```
 cp .env_example .env
 ```
 
-Adjust the values in the `.env` file to match your local environment.
+In the folder `apps/@reentry/backend/.secrets/gcp-service-account.json-sample`, create a `apps/@reentry/backend/.secrets/gcp-service-account.json`.
+Get the content of the file from a teammate.
 
 If you want to customize any settings from your environment, export them with `RECIDIVIZ_` prefix.
 For example:
@@ -45,77 +56,62 @@ export RECIDIVIZ_OPENAI_API_KEY=your_openai_api_key
 uv run fastapi dev
 ```
 
-### Adding new packages
-- Add packages to the `dependencies` list at `apps/@reentry/backend/pyproject.toml`
-- Then run `uv sync` to install and sync the dependent packages. This will update the `uv.lock` file.
+4. Start the services with docker-compose (postgres, pgadmin, ...)
 
-### Sentry Error Tracking Configuration
+```bash
+cd "apps/@reentry" (relative path to the project root, adjust accordingly)
+docker compose up
+```
 
-Both the backend and frontend support Sentry error tracking. To enable it:
-
-**Backend:**
-- Set `RECIDIVIZ_SENTRY_DSN` in your `.env` file or as an environment variable
-- The backend will automatically initialize Sentry if a DSN is provided
-
-**Frontend:**
-- Set `NEXT_PUBLIC_SENTRY_DSN` in your `.env.local` file
-
-## Usage
-
-Inside the `backend` folder, you can find the FastAPI code.
-
-1. Go inside the backend folder
+5. Inside the backend folder, run the database migrations
 
 ```bash
 cd backend
-```
-
-2. Start the services with docker-compose (postgres, pgadmin, ...)
-
-```bash
-docker-compose up
-```
-
-3. Run the database migrations
-
-```bash
 uv run alembic upgrade head
 ```
 
-4. Seed the database
+6. Seed the database
 
 ```bash
 uv run python -m app.manage seed-db
 ```
 
-5. Generate BigQuery client data (optional)
+# Dev usage
 
+## Run the backend API
+
+Start services (posgres, redis, pgadmin)
 ```bash
-uv run python -m app.manage generate-client-data
+cd "apps/@reentry" (relative path to the project root, adjust accordingly)
+docker compose up
 ```
 
-This command generates sample client, case manager, and supervision officer data for BigQuery tables. By default, it creates demo data (UXR users) for dev tables. Use `--env demo` to target demo tables and `--mode dev` for realistic fake data instead of demo data. Generated JSON files are saved in `backend/data/examples/clients/` and can be loaded to BigQuery using the provided `bq load` commands. The command also shows table status, deletion commands, and load commands.
-
-To clear Redis cache for client data:
-
+Run migrations
 ```bash
-uv run python -m app.manage reset-client-cache
+cd apps/@reentry/backend
+uv run alembic upgrade head
 ```
 
-6. Run the worker
+Start server
+```bash
+cd apps/@reentry/backend
+uv run fastapi dev
+```
+You can now access the API at [http://localhost:8000](http://localhost:8000).
+The API documentation is accessible at [http://localhost:8000/docs](http://localhost:8000/docs).
+
+
+Run the worker
+For any processing task to run, you need to start the worker
 
 ```bash
+cd apps/@reentry/backend
 uv run taskiq worker -r main:broker
 ```
 
-7. Run the backend API
-
-```bash
-uv run fastapi dev
-```
-
-You can now access the API at [http://localhost:8000](http://localhost:8000).
-The API documentation is accessible at [http://localhost:8000/docs](http://localhost:8000/docs).
+### Adding new packages
+- Add packages using uv add.
+- Then run any command and it will automatically sync, or `uv sync` to install and sync the dependent packages. This will update the `uv.lock` file.
 
 
 ## Testing
@@ -136,41 +132,73 @@ Other flags:
 - `--no-cov`: Disables coverage reporting for faster test execution
 - `--log-cli-level=DEBUG`: Control log verbosity (DEBUG, INFO, WARNING, ERROR)
 
-## Command Line Testing and Evaluation
+The test database should have started when you ran docker compose up, but here are more precise settings :
+```bash
+cd apps/@reentry
+docker compose up -d postgres-tests
+```
+
+```bash
+cd apps/@reentry/backend
+RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run pytest
+```
+
+Optional: apply Alembic migrations to the test database instead of relying on `create_all` in tests:
+
+```bash
+cd apps/@reentry/backend
+RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run alembic upgrade head
+```
+
+Sanity check the URL pytest will use:
+
+```bash
+cd apps/@reentry/backend
+uv run python -c "from app.core.config import settings; print(settings.DATABASE_URL_TESTS)"
+```
+
+## Updating OpenAPI schema
+
+If you have changed the api definition in any way, you need to update frontend OpenAPI schema.
+Ensure the server is running, then run the following command
+
+```bash
+cd apps/@reentry/frontend
+nx run @reentry/frontend:openapi
+```
+
+## Database schema changes
+See (apps/@reentry/backend/alembic/README.md)[apps/@reentry/backend/alembic/README.md]
+
+## LLM valuation
 
 For detailed instructions on manual testing, evaluation, and all CLI tools including:
 - Action plan generation
-- Interactive conversation testing
 - Automated conversation evaluation with AI clients
 - Summary generation testing
 - Action plan quality evaluation with LangSmith
 
 See the [Evaluation README](./app/manage/evaluate/README.md).
+Evaluation instruction to run and llm-grade the generative capabilities of the app.
+The setup section is standalone, it can be skipped entirely if you have setup your backend env, or it can be followed to intall only what you need for evals.
 
-
-This evaluates conversation quality including tone, repetition, section coverage, and flow. Results are saved to `experiments/headless_evaluations/`.
-
-#### Summary Generation Testing
-
-Test intake summary generation with fake conversation and assessment data:
+## Generate BigQuery client data (optional)
 
 ```bash
-# With default data (recommended for quick testing)
-uv run python -m app.manage evaluate-summary summary-default-v0.yaml
-
-# With custom conversation and assessment JSON files
-uv run python -m app.manage evaluate-summary summary-CCCI-v0.yaml \
-  --conversation-file path/to/conversation.json \
-  --assessment-file path/to/assessment.json
+cd apps/@reentry/backend
+uv run python -m app.manage generate-client-data
 ```
 
-This generates both an assessment summary and client summary using the specified output config.
+This command generates sample client, case manager, and supervision officer data for BigQuery tables. By default, it creates demo data (UXR users) for dev tables. Use `--env demo` to target demo tables and `--mode dev` for realistic fake data instead of demo data. Generated JSON files are saved in `backend/data/examples/clients/` and can be loaded to BigQuery using the provided `bq load` commands. The command also shows table status, deletion commands, and load commands.
+It will also include fixed data to provision clients that will match between JII and reentry, [apps/@reentry/backend/data/fixtures/README.md](apps/@reentry/backend/data/fixtures/README.md)
 
-## Updating OpenAPI schema
-
-To update frontend OpenAPI schema, ensure the server is running, then run the following command
+To clear Redis cache for client data:
 
 ```bash
-cd frontend
-yarn run openapi
+cd apps/@reentry/backend
+uv run python -m app.manage reset-client-cache
 ```
+
+## Run tasks on deployed environments
+
+For this we use Cloud Run Jobs (apps/@reentry/backend/deploy/jobs/README.md)[apps/@reentry/backend/deploy/jobs/README.md]

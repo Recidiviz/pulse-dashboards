@@ -1,176 +1,74 @@
-## Setup
+CPA
+---
+This app is composed of a python backend server and a nextjs frontend. Together they serve a web application that achieve a few main functionalities
+- It is accessible to authorized staff of states who restered for CPA use.
+- They have access to their list of assigned clients.
+- They can setup either bot assessments or record their live assessments.
+- The assessment transcripts are llm-summarized and used a base for generating action plans with resources from the resources API.
 
-In the project root directory run
+# Architecture
 
-```bash
-yarn install
-```
+## Backend
+- uv for python package management
+- Fastapi server
+- posgres database
+- alembic migrations
+- SqlModel ORM (based on sqlalchemy)
+- Redis for caching, communication btwn servers and workers
+- TaskIq for long running tasks management
 
-Then in any folder in the repo
+See setup and more information in [apps/@reentry/backend/README.md](apps/@reentry/backend/README.md)
 
-```bash
-yarn nx build @reentry/frontend
-```
+## Frontend
+- nextjs app
 
-## Running the Frontend/Backend
+See setup and more information in [apps/@reentry/frontend/README.md](apps/@reentry/frontend/README.md)
 
-### Backend
+## Authentication
+Authentication of staff is done through Auth0.
 
-0. Make sure you have the following libraries installed in your machine:
 
-For macOs:
-`brew install cairo pango glib gobject-introspection gdk-pixbuf uv`
-Ubuntu/Debian
+[apps/@reentry/backend/app/auth](apps/@reentry/backend/app/auth)
 
-`sudo apt-get install -y libcairo2-dev libpango1.0-dev libglib2.0-dev gobject-introspection libgirepository1.0-dev libgdk-pixbuf2.0-dev`
+[apps/@reentry/frontend/README.md](apps/@reentry/frontend/README.md)
 
-1. Go inside the `apps/@reentry/backend` folder, make a `.env` file. Get the content of the file from one of your teammates.
+Advanced : Script for managing auth0 properties through CLI at [tools/auth0](tools/auth0)
 
-```bash
-cd apps/@reentry/backend
-```
+## Staff and clients provisionning
+The tables are fetched live from BigQuery and cached in Redis. 
 
-```
-cp .env_example .env
-```
+[apps/@reentry/backend/app/services/client_data](apps/@reentry/backend/app/services/client_data)
 
-In the folder `apps/@reentry/backend/.secrets/gcp-service-account.json-sample`, create a `apps/@reentry/backend/.secrets/gcp-service-account.json`.
-Get the content of the file from a teammate.
+## Shared frontend
+The part of the app that allows justice impacted persons to answer the bot's questions is served through the nextjs app in /frontend and through the JII app.
 
-2. Start the services with docker-compose (postgres, pgadmin, ...)
+[libs/@reentry/frontend-shared](libs/@reentry/frontend-shared)
 
-```bash
-cd "apps/@reentry" (relative path to the project root, adjust accordingly)
-docker compose up
-```
+## Configuration
+The llm functionalities that describe both the assessment and how it is transformed into outputs are highly configurable. [apps/@reentry/backend/app/core/data_config/README.md](apps/@reentry/backend/app/core/data_config/README.md)
 
-3. Inside the backend folder, run the database migrations
+The functionalities of the app can be enabled and disabled through feature flags.
 
-```bash
-cd backend
-uv run alembic upgrade head
-```
+## V1 Server and import
+The server part of the chatbot was re-implemented in [/server](apps/@reentry/server/README.md). It is not currently used in production.
+The code in /import can be used to provision the V1 database with contents from BigQuery.
 
-4. Seed the database
+## intake-bot
+[apps/@reentry/intake-bot/README.md](apps/@reentry/intake-bot/README.md)
+This is a tool for automated testing through browser instrumentalization, slightly outdated but can be of use.
 
-```bash
-uv run python -m app.manage seed-db
-```
+# Setup
+Follow the repository installation instructions in [/README.md](/README.md), then [apps/@reentry/frontend/README.md](apps/@reentry/frontend/README.md) and [apps/@reentry/backend/README.md](apps/@reentry/backend/README.md)
 
-5. Generate BigQuery client data (optional)
-
-```bash
-uv run python -m app.manage generate-client-data
-```
-
-This command generates sample client, case manager, and supervision officer data for BigQuery tables. By default, it creates demo data (UXR users) for dev tables. Use `--env demo` to target demo tables and `--mode dev` for realistic fake data instead of demo data. Generated JSON files are saved in `backend/data/examples/clients/` and can be loaded to BigQuery using the provided `bq load` commands. The command also shows table status, deletion commands, and load commands.
-
-To clear Redis cache for client data:
-
-```bash
-uv run python -m app.manage reset-client-cache
-```
-
-6. Run the worker
-
-```bash
-uv run taskiq worker -r main:broker
-```
-
-7. Run the backend API
-
-```bash
-uv run fastapi dev
-```
-
-You can now access the API at [http://localhost:8000](http://localhost:8000).
-The API documentation is accessible at [http://localhost:8000/docs](http://localhost:8000/docs).
-
-### Frontend
-
-Anywhere in the repo run
-
-```
-yarn nx dev @reentry/frontend
-```
-
-## Testing
-
-Run tests against a dockerized Postgres test database.
-
-1. Start the test database (runs on localhost:5433):
-
-```bash
-cd apps/@reentry
-docker compose up -d postgres-tests
-```
-
-2. Run backend tests, pointing pytest at the dockerized DB in one line:
-
-```bash
-cd apps/@reentry/backend
-RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run pytest
-```
-
-To run integration tests only (skipped by default):
-
-```bash
-RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run pytest -m "integration"
-```
-
-Optional: apply Alembic migrations to the test database instead of relying on `create_all` in tests:
-
-```bash
-cd apps/@reentry/backend
-RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run alembic upgrade head
-```
-
-Sanity check the URL pytest will use:
-
-```bash
-uv run python -c "from app.core.config import settings; print(settings.DATABASE_URL_TESTS)"
-```
-
-Other useful flags:
-
-- `--no-cov`: Disables coverage reporting for faster test execution
-- `--log-cli-level=DEBUG`: Control log verbosity (DEBUG, INFO, WARNING, ERROR)
-
-To run the frontend unit or integration tests you can run the commands below from the frontend folder.
-
-```
-yarn vitest (for unit-tests)
-```
-
-```
-yarn vitest --watch=false --config vitest.integration.config.mts integration-tests/sentry.integration.test.ts (for integration-tests)
-```
-
-## Command Line Testing and Evaluation
-
-For detailed instructions on manual testing, evaluation, and CLI tools for action plans, intake conversations, and summary generation, see the [Evaluation README](backend/app/manage/evaluate/README.md).
-
-## Updating OpenAPI schema
-
-To update frontend OpenAPI schema, ensure the server is running, then run the following command
-
-```bash
-nx run @reentry/frontend:openapi
-```
 
 ## Sentry Error Tracking Configuration
 
-Both the backend and frontend support Sentry error tracking. To enable it:
+Both the backend and frontend support Sentry error tracking. To enable it set the environment variables
 
-**Backend:**
+# Usage
+This project can be deployed with `nx deploy`, whith the adequate permissions.
 
-- Set `RECIDIVIZ_SENTRY_DSN` in your `.env` file or as an environment variable
-- The backend will automatically initialize Sentry if a DSN is provided
+## CI
+Both front-end and back-end have automated tests and checks through github.
 
-**Frontend:**
-
-- Set `NEXT_PUBLIC_SENTRY_DSN` in your `.env.local` file
-
-## Creating One-off jobs
-
-To create gcp cloud run jobs to run one-time procedures, you can follow the examples in [PR-9559](https://github.com/Recidiviz/pulse-dashboards/pull/9559) and [PR-9413](https://github.com/Recidiviz/pulse-dashboards/pull/9413).
+[Advanced] You can use apps/@reentry/scripts/README.md to manage secrets.

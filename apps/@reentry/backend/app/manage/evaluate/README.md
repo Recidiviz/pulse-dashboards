@@ -5,7 +5,6 @@ This directory contains tools for evaluating and manually testing various parts 
 ## Overview
 
 This folder provides several CLI tools for:
-- **Interactive Testing**: Test intake conversations by typing responses yourself
 - **Automated Evaluation**: Run complete intake conversations with AI-simulated clients
 - **Summary Testing**: Test intake summary generation with fake data
 - **Action Plan Evaluation**: Evaluate AI-generated action plans using LangSmith with quality metrics
