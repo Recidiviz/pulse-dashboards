@@ -20,6 +20,7 @@ from app.crud.plan_generation import PlanGeneration, create_plan_generation
 from app.utils.intake_summary_runner import generate_summary
 
 from ..models.base import IntakeType
+from ..utils.transcription.post_processing import validate_recording_session
 from ..utils.transcription.transcription_messages import (
     get_transcription_messages_from_gcp,
 )
@@ -52,6 +53,22 @@ async def fetch_assets(
         intake_messages = await get_intake_messages(session, intake_id=intake.id)
     elif intake.intake_type == IntakeType.TRANSCRIPTION.value:
         task_logger.info("Intake type is transcription, fetching messages")
+
+        # Validate transcription quality before proceeding
+        recording_session = intake.recording_session
+        is_valid, validation_errors = validate_recording_session(recording_session)
+
+        if not is_valid:
+            error_message = "Transcription validation failed: " + "; ".join(
+                validation_errors
+            )
+            task_logger.error(error_message, recording_session_id=recording_session.id)
+            raise ValueError(error_message)
+
+        task_logger.info(
+            "Transcription validation passed", recording_session_id=recording_session.id
+        )
+
         intake_messages = await get_transcription_messages_from_gcp(
             intake.recording_session.id, session
         )
@@ -83,6 +100,9 @@ async def fetch_assets(
             formatted_messages_list.append(f'{role}: "{msg.content}"')
         formatted_messages = "\n".join(formatted_messages_list)
     elif intake.intake_type == IntakeType.TRANSCRIPTION.value:
+        # Validate transcription quality before processing
+        recording_session = intake.recording_session
+
         messages_json = intake_messages
         try:
             formatted_client_messages_list = [

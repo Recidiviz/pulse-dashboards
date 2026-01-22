@@ -11,6 +11,7 @@ from app.core.db import AsyncSession, get_session
 from app.models.intake import Intake, IntakeStatus
 from app.models.recording import RecordingSession, RecordingStatus
 from app.utils.transcription.deepgram_utils import process_deepgram_transcription
+from app.utils.transcription.post_processing import validate_transcription
 
 logger = structlog.get_logger(__name__)
 
@@ -111,12 +112,26 @@ async def handle_transcription_completion(
     """
     try:
         # Process the transcription using the shared utility function
-        await process_deepgram_transcription(
+        transcription_output = await process_deepgram_transcription(
             recording_session=recording_session,
             transcription_result=transcription_result,
             session=session,
             task_logger=task_logger,
         )
+
+        # Validate transcription and update recording session
+        validation_results = validate_transcription(
+            transcription_output, recording_session
+        )
+        recording_session.validation_word_count = validation_results["word_count"]
+        recording_session.validation_no_prompt_injection = validation_results[
+            "no_prompt_injection"
+        ]
+        recording_session.validation_diarization = validation_results["diarization"]
+        recording_session.validation_minimum_duration = validation_results[
+            "minimum_duration"
+        ]
+
         # Update recording session status to completed
         recording_session.status = RecordingStatus.COMPLETED
         session.add(recording_session)

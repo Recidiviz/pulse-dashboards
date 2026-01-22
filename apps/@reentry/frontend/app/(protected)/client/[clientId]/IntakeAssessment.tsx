@@ -21,10 +21,10 @@ import AudioRecordings from "~@reentry/frontend/(protected)/client/[clientId]/Au
 import IntakeArtifacts from "~@reentry/frontend/(protected)/client/[clientId]/IntakeArtifacts";
 import { $api } from "~@reentry/frontend/api";
 import {RemoveAssessmentIcon} from "~@reentry/frontend/components/icons/CloseIcon";
-import WarningCircleIcon from "~@reentry/frontend/components/icons/WarningCircleIcon";
 import RemoveAssessmentModal from "~@reentry/frontend/components/intake/RemoveAssessmentModal";
 import RetryProcessing from "~@reentry/frontend/components/intake/RetryProcessing";
 import StatusBadge from "~@reentry/frontend/components/intake/StatusBadge";
+import TranscriptionValidationWarnings from "~@reentry/frontend/components/transcription/TranscriptionValidationWarnings";
 import {useAuth} from "~@reentry/frontend/lib/auth/authContext";
 import {formatDateReadableDate} from "~@reentry/frontend/utils";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
@@ -66,7 +66,13 @@ export default function IntakeAssessment({
             Authorization: `Bearer ${useAuth().getAccessToken()}`,
             "Content-Type": "application/json",
         },
-    },{enabled:!!intakeInfo?.id}
+    },{
+        enabled: !!intakeInfo?.id,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        staleTime: Infinity
+    }
     );
 
     const {
@@ -84,7 +90,11 @@ export default function IntakeAssessment({
               "Content-Type": "application/json",
           },
       }, {
-        enabled: intakeInfo?.intake_type === "transcription"
+        enabled: intakeInfo?.intake_type === "transcription",
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        staleTime: Infinity
       });
 
     const { data: transcriptionData } = $api.useQuery(
@@ -102,7 +112,11 @@ export default function IntakeAssessment({
             },
         },
         {
-            enabled: !!recordingSession?.id && intakeInfo?.intake_type === "transcription"
+            enabled: !!recordingSession?.id && intakeInfo?.intake_type === "transcription",
+            refetchOnWindowFocus: false,
+            refetchOnMount: false,
+            refetchOnReconnect: false,
+            staleTime: Infinity
         }
     );
 
@@ -137,23 +151,9 @@ export default function IntakeAssessment({
         <div className={`flex flex-1 flex-col justify-center gap-2.5 max-w-7xl w-full self-stretch bg-white p-6 md:p-9 rounded-[5px] border border-solid border-[#2b5469]/20`}>
             <div className="w-full  flex flex-col gap-4">
                 { intakeInfo && intakeStatus?.processing_status === "needs_retry" && (
-
-                    transcriptionData && transcriptionData.conversation.length === 0 ? (
-                        <div className="flex pl-5 pr-4 py-3 bg-[#FFF3E1] border-l-4 border-[#C78F38] flex-col justify-center items-start gap-4 overflow-hidden mb-2">
-                            <div className="flex flex-col justify-start items-start gap-2">
-                                <div className="inline-flex justify-start items-center gap-2">
-                                    <WarningCircleIcon />
-                                    <div className="font-['Public_Sans'] text-sm font-medium leading-[120%] tracking-[-0.14px]">
-                                        Insufficient recording content to generate outputs
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        <RetryProcessing
-                            intakeId={intakeInfo?.id}
-                        />
-                    )
+                    <RetryProcessing
+                        intakeId={intakeInfo?.id}
+                    />
                 )}
           {intakeInfo && (
             <div className="flex flex-col justify-center gap-2">
@@ -221,6 +221,13 @@ export default function IntakeAssessment({
                     )}
                 </p>
             </div>
+            {/* Validation warnings */}
+            {transcriptionData?.validation && (
+                <TranscriptionValidationWarnings
+                    validation={transcriptionData.validation}
+                    hasConversation={transcriptionData.transcription?.conversation?.length > 0}
+                />
+            )}
             { intakeInfo?.status && (
                 <IntakeArtifacts
                     clientData={clientData}

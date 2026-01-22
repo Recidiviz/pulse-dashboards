@@ -58,7 +58,10 @@ const AudioRecordingPage: React.FC = () => {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity
   });
 
   const {
@@ -72,21 +75,30 @@ const AudioRecordingPage: React.FC = () => {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity
   });
   
+
+  const intakeId = useMemo(() => sessionData?.intake_id, [sessionData?.intake_id]);
 
   const {
     data: address,
     error: addressError,
     isLoading: addressLoading
   } = $api.useQuery("get", "/intake/admin/{intake_id}/address", {
-    params: { path: { intake_id: sessionData?.intake_id as string} },
+    params: { path: { intake_id: intakeId as string} },
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+    enabled: !!intakeId
   });
 
   // Compute whether address is needed based on session status and address data
@@ -156,7 +168,10 @@ const AudioRecordingPage: React.FC = () => {
     );
   }
 
-  if (clientLoading || sessionLoading || addressLoading) {
+  console.log("WHICH ONE IS LOADING?", clientLoading, sessionLoading, addressLoading);
+  console.log("Session data intake_id:", sessionData?.intake_id, "intakeId:", intakeId);
+
+  if (clientLoading || sessionLoading) {
     return (
       <div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-screen">
         <div className="flex justify-center items-center h-64">

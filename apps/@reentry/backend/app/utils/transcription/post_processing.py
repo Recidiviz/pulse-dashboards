@@ -1,10 +1,12 @@
-import structlog
+import re
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Union
 
+import structlog
 from pydantic import BaseModel, Field
 
 from app.core.data_config.assessment_configs.assessment_config import ModelConfig
+from app.models.recording import RecordingSession
 from app.utils.llm_agent_qa import LLMAgentQA
 
 logger = structlog.get_logger(__name__)
@@ -557,3 +559,103 @@ class TranscriptionProcessor:
         end_ms = self._convert_to_milliseconds(end_time)
         duration_s = (end_ms - start_ms) / 1000
         return f"{duration_s:.1f}s"
+
+
+# Prompt injection patterns to detect malicious content
+INJECTION_PATTERNS = [
+    re.compile(
+        r"(?:ignore|disregard|forget)\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions|prompts|rules)",
+        re.IGNORECASE,
+    ),
+    re.compile(r"system\s+override", re.IGNORECASE),
+    re.compile(r"you\s+are\s+now\s+(?:unrestricted|jailbroken)", re.IGNORECASE),
+    re.compile(r"delete\s+this\s+log", re.IGNORECASE),
+    re.compile(r"act\s+as\s+an\s+evil", re.IGNORECASE),
+]
+
+
+def validate_recording_session(
+    recording_session: RecordingSession,
+) -> tuple[bool, list[str]]:
+    """
+    Validate recording session transcription quality fields.
+
+    Args:
+        recording_session: The recording session to validate
+
+    Returns:
+        Tuple of (is_valid, error_messages):
+        - is_valid: True if all validations pass, False otherwise
+        - error_messages: List of validation error messages (empty if valid)
+    """
+    validation_errors = []
+
+    if not recording_session.validation_word_count:
+        validation_errors.append(
+            "Transcript does not meet minimum word count requirement (200 words)"
+        )
+
+    if not recording_session.validation_no_prompt_injection:
+        validation_errors.append(
+            "Transcript contains potential prompt injection patterns"
+        )
+
+    if not recording_session.validation_diarization:
+        validation_errors.append("Transcript does not have at least two speakers")
+
+    if not recording_session.validation_minimum_duration:
+        validation_errors.append(
+            "Recording does not meet minimum duration requirement (10 minutes)"
+        )
+
+    is_valid = len(validation_errors) == 0
+    return is_valid, validation_errors
+
+
+def validate_transcription(
+    transcription_output: TranscriptionOutput, recording_session: RecordingSession
+) -> Dict[str, bool]:
+    """
+    Validate transcription output against quality and security criteria.
+
+    Args:
+        transcription_output: The processed transcription output
+        recording_session: The recording session containing audio metadata
+
+    Returns:
+        Dict with four boolean fields:
+        - word_count: True if transcript has at least 200 words
+        - no_prompt_injection: True if transcript doesn't contain injection patterns
+        - diarization: True if at least two speakers are present
+        - minimum_duration: True if audio duration is at least 10 minutes
+    """
+    # 1. Word count validation - minimum 200 words
+    total_words = sum(turn.wordCount for turn in transcription_output.conversation)
+    word_count_valid = total_words >= 200
+
+    # 2. Prompt injection detection
+    full_transcript = " ".join(
+        turn.content for turn in transcription_output.conversation
+    )
+    has_injection = any(
+        pattern.search(full_transcript) for pattern in INJECTION_PATTERNS
+    )
+    no_prompt_injection = not has_injection
+
+    # 3. Diarization validation - at least two speakers
+    unique_speakers = len(transcription_output.metadata.speakers)
+    diarization_valid = unique_speakers >= 2
+
+    # 4. Minimum duration validation - at least 10 minutes (600000 milliseconds)
+    minimum_duration_ms = 10 * 60 * 1000  # 10 minutes in milliseconds
+    duration_valid = (
+        recording_session.duration is not None
+        and recording_session.duration >= minimum_duration_ms
+    )
+
+    return {
+        "word_count": word_count_valid,
+        "no_prompt_injection": no_prompt_injection,
+        "diarization": diarization_valid,
+        "minimum_duration": duration_valid,
+    }

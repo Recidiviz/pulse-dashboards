@@ -144,9 +144,21 @@ class TranscriptionOutputResponse(BaseModel):
     conversation: List[ConversationTurnResponse]
 
 
+class TranscriptionValidation(BaseModel):
+    word_count: bool
+    no_prompt_injection: bool
+    diarization: bool
+    minimum_duration: bool
+
+
+class TranscriptionWithValidationResponse(BaseModel):
+    transcription: TranscriptionOutputResponse
+    validation: TranscriptionValidation
+
+
 @router.get(
     "/{recording_session_id}/transcription",
-    response_model=TranscriptionOutputResponse,
+    response_model=TranscriptionWithValidationResponse,
     summary="Get Client Interview Transcription",
     description="Retrieve the interview transcription for a client recording session.",
     tags=["Transcription"],
@@ -194,4 +206,15 @@ async def get_client_transcription(
     except json.JSONDecodeError:
         raise HTTPException(status_code=500, detail="Invalid transcription file format")
 
-    return TranscriptionOutputResponse.model_validate(transcription_data)
+    # Build validation response from recording session fields
+    validation = TranscriptionValidation(
+        word_count=recording_session.validation_word_count,
+        no_prompt_injection=recording_session.validation_no_prompt_injection,
+        diarization=recording_session.validation_diarization,
+        minimum_duration=recording_session.validation_minimum_duration,
+    )
+
+    return TranscriptionWithValidationResponse(
+        transcription=TranscriptionOutputResponse.model_validate(transcription_data),
+        validation=validation,
+    )

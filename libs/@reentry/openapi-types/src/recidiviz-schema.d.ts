@@ -3166,6 +3166,22 @@ export interface components {
             /** Conversation */
             conversation: components["schemas"]["ConversationTurnResponse"][];
         };
+        /** TranscriptionValidation */
+        TranscriptionValidation: {
+            /** Word Count */
+            word_count: boolean;
+            /** No Prompt Injection */
+            no_prompt_injection: boolean;
+            /** Diarization */
+            diarization: boolean;
+            /** Minimum Duration */
+            minimum_duration: boolean;
+        };
+        /** TranscriptionWithValidationResponse */
+        TranscriptionWithValidationResponse: {
+            transcription: components["schemas"]["TranscriptionOutputResponse"];
+            validation: components["schemas"]["TranscriptionValidation"];
+        };
         /**
          * TravelMode
          * @enum {string}
@@ -4689,7 +4705,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TranscriptionOutputResponse"];
+                    "application/json": components["schemas"]["TranscriptionWithValidationResponse"];
                 };
             };
             /** @description Validation Error */

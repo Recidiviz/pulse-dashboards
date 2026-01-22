@@ -15,6 +15,7 @@ from app.services.recording_service import RecordingService
 from app.utils.config_loader import ConfigLoader
 from app.utils.transcription.post_processing import (
     DeepgramTranscriptionInput,
+    TranscriptionOutput,
     TranscriptionProcessor,
 )
 
@@ -39,7 +40,7 @@ async def process_deepgram_transcription(
     transcription_result: dict,
     session: AsyncSession,
     task_logger: structlog.BoundLogger,
-) -> dict:
+) -> TranscriptionOutput:
     """
     Process Deepgram transcription results and save to GCS.
 
@@ -53,7 +54,7 @@ async def process_deepgram_transcription(
         task_logger: Logger instance
 
     Returns:
-        dict: The processed transcription result
+        TranscriptionOutput: The processed transcription result
 
     Raises:
         ValueError: If transcription results are invalid or config is missing
@@ -83,7 +84,6 @@ async def process_deepgram_transcription(
         )
         result = await session.exec(statement)
         intake = result.first()
-        print(intake, "intake")
         if not intake:
             raise ValueError(
                 f"Intake not found for recording session {recording_session.id}"
@@ -122,4 +122,4 @@ async def process_deepgram_transcription(
 
     task_logger.info("Deepgram transcription processing completed successfully")
 
-    return transcription_result_processed.dict()
+    return transcription_result_processed

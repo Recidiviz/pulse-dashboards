@@ -24,6 +24,8 @@ import { $api } from "~@reentry/frontend/api";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { formatDuration } from "~@reentry/frontend/utils";
 
+import TranscriptionValidationWarnings from "./TranscriptionValidationWarnings";
+
 interface TranscriptionViewProps {
   sessionId: string;
 }
@@ -46,6 +48,13 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
         Authorization: `Bearer ${auth.getAccessToken()}`,
         "Content-Type": "application/json",
       },
+    },
+    {
+      enabled: !!sessionId,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      staleTime: Infinity,
     },
   );
 
@@ -98,81 +107,95 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
     );
   }
 
-  if (!data?.conversation?.length) {
-    return (
-      <Box p={4}>
-        <Typography variant="h6" color="textSecondary">
-          Insufficient recording content to generate outputs
-        </Typography>
-      </Box>
-    );
+  if (!data) {
+    return null;
   }
 
-  const transcription = data;
-  return (
-    <div className="self-stretch flex-1 flex flex-col justify-start items-center gap-5 p-6">
-      {/* Header with metadata */}
-      <div className="w-full max-w-[70%] flex flex-col justify-start items-center gap-4">
-        <div className="justify-start text-[#002321] text-lg font-bold font-['Public_Sans'] leading-snug">
-          Interview Transcription
-        </div>
+  const transcription = data.transcription;
+  const validation = data.validation;
+  const hasConversation = transcription?.conversation?.length > 0;
 
-        <div className="flex flex-wrap gap-6 text-[#2a5469]/90 text-sm font-medium font-['Public_Sans']">
-          <div>
-            <strong>Total Duration:</strong>{" "}
-            {formatDuration(
-              Number(transcription.metadata.totalDuration.replace("s", "")) *
-                1000,
-            )}
-          </div>
-        </div>
+  return (
+    <div className="self-stretch flex-1 flex flex-col justify-start items-start gap-5 p-6">
+      {/* Validation Warnings */}
+      <div className="w-full max-w-[70%] flex flex-col gap-4">
+        {validation && (
+          <TranscriptionValidationWarnings
+            validation={validation}
+            hasConversation={hasConversation}
+          />
+        )}
       </div>
 
-      {/* Conversation turns */}
-      <div className="max-h-[45vh] overflow-y-auto space-y-4">
-        {transcription.conversation.map((turn, index) => (
-          <div
-            key={`${turn.id}-${index}`}
-            className={`bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 ${
-              turn.role === "client"
-                ? "border-l-blue-500"
-                : "border-l-green-500"
-            }`}
-          >
-            <div className="p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="flex items-center gap-1 text-white px-3 py-1 rounded-full text-xs font-medium"
-                    style={{ backgroundColor: getRoleColor(turn.role) }}
-                  >
-                    {getRoleIcon(turn.role)}
-                    <span>{getRoleLabel(turn.role)}</span>
-                  </div>
-                </div>
+      {/* Only show transcription content if conversation exists */}
+      {hasConversation && (
+        <>
+          {/* Header with metadata */}
+          <div className="w-full max-w-[70%] flex flex-col justify-start items-start gap-4">
+            <div className="justify-start text-[#002321] text-lg font-bold font-['Public_Sans'] leading-snug">
+              Interview Transcription
+            </div>
 
-                <div className="flex items-center gap-4 text-xs text-[#2a5469]/70 font-['Public_Sans']">
-                  <span>
-                    {formatTime(turn.startTime)} - {formatTime(turn.endTime)}
-                  </span>
-                  <span>
-                    {formatDuration(
-                      Number(turn.duration.replace("s", "")) * 1000,
-                    )}
-                  </span>
-                </div>
-              </div>
-
-              <div
-                className="text-[#002321] text-sm font-medium font-['Public_Sans'] leading-[20px]"
-                style={{ whiteSpace: "pre-wrap" }}
-              >
-                {turn.content}
+            <div className="flex flex-wrap gap-6 text-[#2a5469]/90 text-sm font-medium font-['Public_Sans']">
+              <div>
+                <strong>Total Duration:</strong>{" "}
+                {formatDuration(
+                  Number(
+                    transcription.metadata.totalDuration.replace("s", ""),
+                  ) * 1000,
+                )}
               </div>
             </div>
           </div>
-        ))}
-      </div>
+
+          {/* Conversation turns */}
+          <div className="max-h-[45vh] overflow-y-auto space-y-4">
+            {transcription.conversation.map((turn, index) => (
+              <div
+                key={`${turn.id}-${index}`}
+                className={`bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 ${
+                  turn.role === "client"
+                    ? "border-l-blue-500"
+                    : "border-l-green-500"
+                }`}
+              >
+                <div className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="flex items-center gap-1 text-white px-3 py-1 rounded-full text-xs font-medium"
+                        style={{ backgroundColor: getRoleColor(turn.role) }}
+                      >
+                        {getRoleIcon(turn.role)}
+                        <span>{getRoleLabel(turn.role)}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-xs text-[#2a5469]/70 font-['Public_Sans']">
+                      <span>
+                        {formatTime(turn.startTime)} -{" "}
+                        {formatTime(turn.endTime)}
+                      </span>
+                      <span>
+                        {formatDuration(
+                          Number(turn.duration.replace("s", "")) * 1000,
+                        )}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    className="text-[#002321] text-sm font-medium font-['Public_Sans'] leading-[20px]"
+                    style={{ whiteSpace: "pre-wrap" }}
+                  >
+                    {turn.content}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

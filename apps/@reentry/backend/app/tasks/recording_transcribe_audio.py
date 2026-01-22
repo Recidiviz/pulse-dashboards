@@ -18,6 +18,7 @@ from app.utils.transcription.deepgram_utils import process_deepgram_transcriptio
 from app.utils.transcription.post_processing import (
     GCPTranscriptionInput,
     TranscriptionProcessor,
+    validate_transcription,
 )
 
 
@@ -107,12 +108,32 @@ async def transcribe_audio(
             else:
                 # Sync mode - full transcription result returned, process it now
                 task_logger.info("Processing Deepgram transcription result")
-                await process_deepgram_transcription(
+                transcription_output = await process_deepgram_transcription(
                     recording_session=recording_session,
                     transcription_result=result,
                     session=session,
                     task_logger=task_logger,
                 )
+
+                # Validate transcription and update recording session
+                validation_results = validate_transcription(
+                    transcription_output, recording_session
+                )
+                recording_session.validation_word_count = validation_results[
+                    "word_count"
+                ]
+                recording_session.validation_no_prompt_injection = validation_results[
+                    "no_prompt_injection"
+                ]
+                recording_session.validation_diarization = validation_results[
+                    "diarization"
+                ]
+                recording_session.validation_minimum_duration = validation_results[
+                    "minimum_duration"
+                ]
+                session.add(recording_session)
+                await session.commit()
+
                 await execution.log_progress(
                     session, 90, "Post-processing completed", logger=task_logger
                 )
@@ -149,6 +170,22 @@ async def transcribe_audio(
             model_config=config.intake.transcription_post_processing_model,
         )
         transcription_result = await processor.convert_transcript_to_conversation()
+
+        # Validate transcription and update recording session
+        validation_results = validate_transcription(
+            transcription_result, recording_session
+        )
+        recording_session.validation_word_count = validation_results["word_count"]
+        recording_session.validation_no_prompt_injection = validation_results[
+            "no_prompt_injection"
+        ]
+        recording_session.validation_diarization = validation_results["diarization"]
+        recording_session.validation_minimum_duration = validation_results[
+            "minimum_duration"
+        ]
+        session.add(recording_session)
+        await session.commit()
+
         await execution.log_progress(
             session, 90, "Post-processing completed", logger=task_logger
         )

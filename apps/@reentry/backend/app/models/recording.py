@@ -78,6 +78,28 @@ class RecordingSession(BaseModel, table=True):
         description="Flag indicating if transcription has been approved",
     )
 
+    # Transcription validation fields
+    validation_word_count: bool = Field(
+        default=True,
+        nullable=False,
+        description="Validation result: True if transcript has at least 200 words",
+    )
+    validation_no_prompt_injection: bool = Field(
+        default=True,
+        nullable=False,
+        description="Validation result: True if transcript doesn't contain injection patterns",
+    )
+    validation_diarization: bool = Field(
+        default=True,
+        nullable=False,
+        description="Validation result: True if at least two speakers are present",
+    )
+    validation_minimum_duration: bool = Field(
+        default=True,
+        nullable=False,
+        description="Validation result: True if audio duration is at least 10 minutes",
+    )
+
     deepgram_request_id: Optional[str] = Field(
         default=None,
         nullable=True,
