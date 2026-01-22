@@ -28,9 +28,9 @@ import styled from "styled-components";
 
 import { Selector } from "~@jii/common-ui";
 import { useResidentsContext, useRootStore } from "~@jii/data";
+import { MainContentHydrator } from "~@jii/layout";
 import { withPresenterManager } from "~hydration-utils";
 
-import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { ResidentSelector } from "./ResidentSelector";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 

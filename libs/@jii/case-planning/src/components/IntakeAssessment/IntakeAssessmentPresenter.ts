@@ -17,13 +17,92 @@
 
 import { makeAutoObservable } from "mobx";
 
-export class IntakeAssessmentPresenter {
-  authToken: string | null = null;
+import { FirebaseStore, UserStore } from "~@jii/data";
+import { getUserFacingErrorMessage } from "~@reentry/frontend-shared";
+import { ResidentRecord } from "~datatypes";
+import { Hydratable, HydrationState } from "~hydration-utils";
 
-  constructor() {
+import {
+  REENTRY_BACKEND_PATH,
+  REENTRY_DEV_BACKEND_PATH,
+} from "../../constants";
+
+export class IntakeAssessmentPresenter implements Hydratable {
+  authToken: string | null = null;
+  userFacingErrorMessage: string | null = null;
+  private hasAttemptedBackendVerification = false;
+
+  constructor(
+    private readonly firebaseStore: FirebaseStore,
+    private readonly userStore: UserStore,
+    private readonly resident: ResidentRecord,
+  ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
     this.updateAuthToken();
+  }
+
+  async hydrate() {
+    try {
+      const firebaseIdToken = await this.firebaseStore.getIdToken();
+
+      if (!firebaseIdToken) {
+        throw new Error(
+          "Expected Firebase ID token to be hydrated, but it was empty",
+        );
+      }
+
+      const response = await fetch(
+        `${window.location.origin}${this.userStore.hasPermission("live_data") ? REENTRY_BACKEND_PATH : REENTRY_DEV_BACKEND_PATH}/external/client/verify/firebase-token`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firebase_token: firebaseIdToken,
+            client_pseudo_id: this.resident.pseudonymizedId,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const error = new Error("Backend verification failed");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (error as any).detail = data.detail;
+        throw error;
+      }
+      if (data?.access_token && data?.client_pseudo_id) {
+        sessionStorage.setItem("intake_token", data.access_token);
+        this.updateAuthToken();
+      } else {
+        this.userFacingErrorMessage =
+          "Invalid response from server. Please try again.";
+        return;
+      }
+    } catch (err: unknown) {
+      console.error("Error verifying:", err);
+      this.userFacingErrorMessage = getUserFacingErrorMessage(err);
+    } finally {
+      this.hasAttemptedBackendVerification = true;
+    }
+  }
+
+  get hydrationState(): HydrationState {
+    if (!this.hasAttemptedBackendVerification) {
+      return { status: "needs hydration" };
+    } else {
+      if (this.userFacingErrorMessage) {
+        return {
+          status: "failed",
+          error: new Error(this.userFacingErrorMessage),
+        };
+      }
+
+      return { status: "hydrated" };
+    }
   }
 
   // retrieves the token from session storage to make it observable by Mobx

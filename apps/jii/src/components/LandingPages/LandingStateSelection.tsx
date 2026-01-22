@@ -21,9 +21,9 @@ import { useNavigate } from "react-router-dom";
 
 import { usePageTitle } from "~@jii/common-ui";
 import { useRootStore } from "~@jii/data";
+import { MainContentHydrator } from "~@jii/layout";
 import { withPresenterManager } from "~hydration-utils";
 
-import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { LandingPageCopyWrapper } from "./LandingPageCopyWrapper";
 import { LandingPageSelector } from "./LandingPageSelector";
 import { LandingStateSelectionPresenter } from "./LandingStateSelectionPresenter";

@@ -18,8 +18,9 @@
 import { ErrorBoundary } from "@sentry/react";
 import { Outlet } from "react-router-dom";
 
+import { ErrorPageMainContent } from "~@jii/layout";
+
 import { AppLayout } from "../AppLayout/AppLayout";
-import { ErrorPageMainContent } from "../ErrorPage/ErrorPageMainContent";
 import { ResidentNavBar } from "../ResidentNavBar/ResidentNavBar";
 
 /**

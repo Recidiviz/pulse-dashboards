@@ -16,8 +16,10 @@
 // =============================================================================
 
 export * from "./constants";
+export * from "./ErrorPage/ErrorPageMainContent";
 export * from "./FullWidthBanner";
 export * from "./InfoPage/InfoPage";
+export * from "./MainContent/MainContentHydrator";
 export * from "./Onboarding/OnboardingTakeover";
 export * from "./Onboarding/useTrackOnboardingSeen";
 export * from "./ScreenFillingWrapper/ScreenFillingWrapper";

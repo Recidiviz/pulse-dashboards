@@ -28,6 +28,7 @@ export * from "./configs/stateConstants";
 export * from "./configs/types";
 export * from "./contexts/ResidentsContext";
 export * from "./contexts/SingleResidentContext";
+export * from "./datastores/FirebaseStore";
 export * from "./datastores/LoginConfigStore";
 export * from "./datastores/ResidentsStore";
 export * from "./datastores/RootStore";

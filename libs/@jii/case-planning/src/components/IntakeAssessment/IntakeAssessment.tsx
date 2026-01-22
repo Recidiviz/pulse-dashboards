@@ -20,10 +20,9 @@ import { rem } from "polished";
 import { FC } from "react";
 
 import { TAILWIND_WRAPPER_CLASS } from "~@jii/common-ui";
-import { useRootStore } from "~@jii/data";
-import { PAGE_LAYOUT_HEADER_GAP } from "~@jii/layout";
+import { useRootStore, useSingleResidentContext } from "~@jii/data";
+import { MainContentHydrator, PAGE_LAYOUT_HEADER_GAP } from "~@jii/layout";
 import {
-  AssessmentLoginPage,
   IntakeRouter,
   IntakeSocketProvider,
   QueryProvider,
@@ -49,10 +48,7 @@ const ManagedComponent: FC<{ presenter: IntakeAssessmentPresenter }> = observer(
                 <IntakeRouter />
               </IntakeSocketProvider>
             ) : (
-              <AssessmentLoginPage
-                mode="dob+fullname"
-                onConfirmation={presenter.updateAuthToken}
-              />
+              <div>{presenter.userFacingErrorMessage}</div>
             )}
           </div>
         </QueryProvider>
@@ -62,11 +58,15 @@ const ManagedComponent: FC<{ presenter: IntakeAssessmentPresenter }> = observer(
 );
 
 function usePresenter() {
-  return new IntakeAssessmentPresenter();
+  const { firebaseStore, userStore } = useRootStore();
+  const { resident } = useSingleResidentContext();
+
+  return new IntakeAssessmentPresenter(firebaseStore, userStore, resident);
 }
 
 export const IntakeAssessment = withPresenterManager({
   usePresenter,
   ManagedComponent,
   managerIsObserver: false,
+  HydratorComponent: MainContentHydrator,
 });

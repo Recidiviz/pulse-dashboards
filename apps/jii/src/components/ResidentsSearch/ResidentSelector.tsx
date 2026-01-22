@@ -23,10 +23,10 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Selector } from "~@jii/common-ui";
 import { useResidentsContext } from "~@jii/data";
+import { MainContentHydrator } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
-import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { ResidentSelectorPresenter } from "./ResidentSelectorPresenter";
 
 function usePresenter({ facilityId }: { facilityId: string }) {

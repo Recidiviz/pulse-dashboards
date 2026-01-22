@@ -40,6 +40,6 @@
     "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "../common-ui/src/@types/scss.d.ts"
-  ]
+    "../common-ui/src/@types/scss.d.ts",
+    ]
 }

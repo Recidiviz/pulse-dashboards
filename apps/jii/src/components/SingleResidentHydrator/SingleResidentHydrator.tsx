@@ -21,10 +21,10 @@ import { Outlet } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { SingleResidentContextProvider, useResidentsContext } from "~@jii/data";
+import { MainContentHydrator } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
-import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresenter";
 
 // isolating data access in its own component prevents it from throwing errors before hydration is complete
