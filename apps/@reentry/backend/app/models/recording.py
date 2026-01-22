@@ -6,7 +6,7 @@ from enum import StrEnum
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import BigInteger, Column, UniqueConstraint
+from sqlalchemy import BigInteger, Column, UniqueConstraint, text
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import Mapped
 from sqlmodel import Field, Relationship
@@ -82,21 +82,25 @@ class RecordingSession(BaseModel, table=True):
     validation_word_count: bool = Field(
         default=True,
         nullable=False,
+        sa_column_kwargs={"server_default": text("true")},
         description="Validation result: True if transcript has at least 200 words",
     )
     validation_no_prompt_injection: bool = Field(
         default=True,
         nullable=False,
+        sa_column_kwargs={"server_default": text("true")},
         description="Validation result: True if transcript doesn't contain injection patterns",
     )
     validation_diarization: bool = Field(
         default=True,
         nullable=False,
+        sa_column_kwargs={"server_default": text("true")},
         description="Validation result: True if at least two speakers are present",
     )
     validation_minimum_duration: bool = Field(
         default=True,
         nullable=False,
+        sa_column_kwargs={"server_default": text("true")},
         description="Validation result: True if audio duration is at least 10 minutes",
     )
 
