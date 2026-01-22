@@ -69,6 +69,7 @@ export const UsNcRNARadioQuestion = function ({
   question,
   questionNumber,
   format,
+  presenter,
 }: RNARadioQuestionProps) {
   const answerCopy = rnaRadioAnswerCopy[format];
 
@@ -82,7 +83,15 @@ export const UsNcRNARadioQuestion = function ({
           const inputId = `${id}-${value}`;
           return (
             <MultipleAnswerOption key={value}>
-              <RadioButton type="radio" id={inputId} name={id} value={value} />
+              <RadioButton
+                type="radio"
+                id={inputId}
+                name={id}
+                value={value}
+                onChange={(e) => {
+                  presenter.form.handleTextAnswerChange(id, e.target.value);
+                }}
+              />
               <label htmlFor={inputId}>{label}</label>
             </MultipleAnswerOption>
           );

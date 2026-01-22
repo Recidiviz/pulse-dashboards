@@ -15,14 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Card, NotFound, usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
+import { withPresenterManager } from "~hydration-utils";
 
 import { NavigationButtons } from "./NavigationButtons";
 import { ProgressHeader } from "./ProgressBar";
 import { RNADescription, RNAHeading } from "./styles";
+import { useRNAFormContext } from "./UsNcRNAFormContextProvider";
+import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
 import {
   fullRNASpec,
   rnaQuestionConfig,
@@ -44,24 +48,17 @@ function UsNcRNASectionInfo({ heading, description }: RNASectionCopy) {
 /**
  * A form page for Risks and Needs Assessment, displaying progress and questions
  */
-export function UsNcRNAFormPage() {
-  usePageTitle("Self-Report");
-
-  // Grab the page number from the URL and check that it's valid
+const ManagedComponent = observer(function ManagedComponent({
+  presenter,
+}: {
+  presenter: UsNcRNAFormPagePresenter;
+}) {
   // (Users should not encounter invalid pages in practice as they can't edit the URL)
-  const { pageNum } = useTypedParams(State.Resident.UsNcRNA.FormPage);
-  const pageIndex = pageNum - 1;
-  if (
-    !Number.isInteger(pageIndex) ||
-    pageIndex < 0 ||
-    pageIndex >= fullRNASpec.length
-  ) {
+  if (!presenter.isValidPage) {
     return <NotFound />;
   }
 
-  const { id, questions } = fullRNASpec[pageIndex];
-  const showSubmit = pageIndex === fullRNASpec.length - 1;
-
+  const { pageNum, questionIds, sectionId, showSubmit } = presenter;
   return (
     <>
       <ProgressHeader
@@ -69,12 +66,13 @@ export function UsNcRNAFormPage() {
         totalSections={fullRNASpec.length}
         percentDone={22}
       />
-      <UsNcRNASectionInfo {...rnaSectionCopy[id]} />
+      <UsNcRNASectionInfo {...rnaSectionCopy[sectionId]} />
       <form>
-        {questions.map((questionId) => (
+        {questionIds.map((questionId) => (
           <UsNcRNAQuestion
             key={questionId}
             id={questionId}
+            presenter={presenter}
             {...rnaQuestionCopy[questionId]}
             {...rnaQuestionConfig[questionId]}
           />
@@ -83,4 +81,19 @@ export function UsNcRNAFormPage() {
       </form>
     </>
   );
+});
+
+function usePresenter() {
+  usePageTitle("Self-Report");
+
+  const { form } = useRNAFormContext();
+  const { pageNum } = useTypedParams(State.Resident.UsNcRNA.FormPage);
+
+  return new UsNcRNAFormPagePresenter(pageNum, form);
 }
+
+export const UsNcRNAFormPage = withPresenterManager({
+  ManagedComponent,
+  usePresenter,
+  managerIsObserver: true,
+});

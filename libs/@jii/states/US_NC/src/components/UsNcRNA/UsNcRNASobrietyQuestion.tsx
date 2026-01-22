@@ -38,6 +38,7 @@ export const UsNcRNASobrietyQuestion = function ({
   id,
   question,
   questionNumber,
+  presenter,
 }: RNASobrietyQuestionProps) {
   return (
     <QuestionCard>
@@ -49,7 +50,19 @@ export const UsNcRNASobrietyQuestion = function ({
           const inputId = `${id}-${value}`;
           return (
             <MultipleAnswerOption key={`${value}${label}`}>
-              <Checkbox $size={16} id={inputId} name={id} value={value} />
+              <Checkbox
+                $size={16}
+                id={inputId}
+                name={id}
+                value={value}
+                onChange={(e) => {
+                  presenter.form.handleCheckboxAnswerChange(
+                    id,
+                    value,
+                    e.target.checked,
+                  );
+                }}
+              />
               <label htmlFor={inputId}>{label}</label>
             </MultipleAnswerOption>
           );

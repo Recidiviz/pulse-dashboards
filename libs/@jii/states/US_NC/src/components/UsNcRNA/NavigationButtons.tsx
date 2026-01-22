@@ -45,12 +45,12 @@ export function NavigationButtons({
 
   const previousPageLink =
     "../" +
-    State.Resident.$.UsNcRNA.FormPage.buildRelativePath({
+    State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
       pageNum: currentPageNum - 1,
     });
   const nextPageLink =
     "../" +
-    State.Resident.$.UsNcRNA.FormPage.buildRelativePath({
+    State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
       pageNum: currentPageNum + 1,
     });
 

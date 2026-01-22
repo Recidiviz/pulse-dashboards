@@ -213,7 +213,7 @@ export const rnaLifeAreasQuestionCopy = {
   improvement: "What can you do to improve the situation? (optional)",
   improvementPlaceholder:
     "Ways you can improve the situation or obstacles that you may face while improving the situation",
-  improvementRatings: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  improvementRatings: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
 };
 
 // Copy for each of the questions on RNA form pages

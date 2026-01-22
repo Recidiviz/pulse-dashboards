@@ -30,6 +30,7 @@ export const UsNcRNADaysQuestion = function ({
   question,
   questionNumber,
   placeholderText,
+  presenter,
 }: RNADaysQuestionProps) {
   return (
     <QuestionCard>
@@ -42,6 +43,9 @@ export const UsNcRNADaysQuestion = function ({
         max={7}
         id={id}
         name={id}
+        onChange={(e) => {
+          presenter.form.handleTextAnswerChange(id, e.target.value);
+        }}
         placeholder={placeholderText}
       />
     </QuestionCard>

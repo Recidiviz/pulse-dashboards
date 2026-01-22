@@ -18,6 +18,7 @@
 import assertNever from "assert-never";
 
 import { UsNcRNADaysQuestion } from "./UsNcRNADaysQuestion";
+import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
 import {
   RNAQuestionConfig,
   RNAQuestionCopy,
@@ -29,6 +30,7 @@ import { UsNcRNASobrietyQuestion } from "./UsNcRNASobrietyQuestion";
 
 export interface RNAQuestionProps extends RNAQuestionCopy, RNAQuestionConfig {
   id: RNAQuestionId;
+  presenter: UsNcRNAFormPagePresenter;
 }
 
 /**
