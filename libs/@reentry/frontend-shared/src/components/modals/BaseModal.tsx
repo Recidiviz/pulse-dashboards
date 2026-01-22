@@ -21,12 +21,40 @@ import { X } from "lucide-react";
 import type React from "react";
 import Modal from "react-modal";
 
+import { TAILWIND_WRAPPER_CLASS } from "~@jii/common-ui";
+
 interface BaseModalProps {
   isOpen: boolean;
   title: string;
   children: React.ReactNode;
   onClose: () => void;
 }
+
+const ModalStyles = {
+  overlay: {
+    position: "fixed" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    zIndex: 50,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "1rem",
+  },
+  content: {
+    position: "relative" as const,
+    inset: "auto",
+    border: "none",
+    background: "transparent",
+    overflow: "visible",
+    borderRadius: 0,
+    outline: "none",
+    padding: 0,
+  },
+};
 
 export const BaseModal: React.FC<BaseModalProps> = ({
   isOpen,
@@ -38,9 +66,11 @@ export const BaseModal: React.FC<BaseModalProps> = ({
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      className="outline-none"
-      overlayClassName="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+      className={`${TAILWIND_WRAPPER_CLASS} outline-none`}
+      overlayClassName={`${TAILWIND_WRAPPER_CLASS}`}
+      style={ModalStyles}
       ariaHideApp={false}
+      parentSelector={() => document.getElementById("root") || document.body}
     >
       <div className="w-full max-w-[410px] max-h-[90vh] bg-white rounded-xl shadow-[0px_8px_56px_0px_rgba(43,84,105,0.12)] shadow-[0px_4px_8px_0px_rgba(43,84,105,0.06)] shadow-[0px_0px_1px_0px_rgba(43,84,105,0.10)] flex flex-col overflow-hidden">
         {/* Header */}
