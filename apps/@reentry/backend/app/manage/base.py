@@ -54,3 +54,4 @@ import app.manage.migrate_external_to_pseudonymized  # noqa
 import app.manage.update_recording_status  # noqa
 import app.manage.generate_assessment_migration  # noqa
 import app.manage.generate_output_migration  # noqa
+import app.manage.refresh_configs  # noqa

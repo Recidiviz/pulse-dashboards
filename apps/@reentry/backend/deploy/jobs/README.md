@@ -80,19 +80,8 @@ The Cloud Build pipeline:
 4. Deploys the job to Cloud Run
 
 
-## Available Jobs
-
-### force-db
-Executes forced database seeding:
-- Starts Cloud SQL Proxy
-- Runs `seed-db --force`
-
-### seed
-see [backend/deploy/jobs/docs/SEED_README.md](docs/SEED_README.md) for details
-
-### requeue-pending-executions
-see [backend/deploy/jobs/docs/REQUEUE_README.md](docs/REQUEUE_README.md)  for details
-
+### docs
+see [backend/deploy/jobs/docs/](docs/) for details
 
 
 ## Creating One-off jobs

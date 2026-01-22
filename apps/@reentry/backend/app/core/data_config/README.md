@@ -446,6 +446,11 @@ Deployment is automatic with normal process:
 
 **Result:** New intakes use new version, old intakes still reference their original version.
 
+**Refresh configs in db:**
+For iterating on a new config version before production deployment, use `uv run python -m app.manage refresh-configs` locally or *redeploy* and run the `refresh-configs` Cloud Run job to sync YAML changes to the database. Always create new versions via migrations for production deployments to maintain version immutability.
+If you make breaking changes to the configs, you need to dereploy and use the refresh cloud run job to update the old configs.
+see (apps/@reentry/backend/deploy/jobs/docs/REFRESH_CONFIGS_README.md)[apps/@reentry/backend/deploy/jobs/docs/REFRESH_CONFIGS_README.md]
+
 ---
 
 ## Summary

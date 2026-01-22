@@ -80,6 +80,12 @@ const JOBS = {
       "Force regenerate assessment for client specified in env config",
     environments: ["demo", "staging", "prod"],
   },
+  "refresh-configs": {
+    name: "demo-refresh-configs",
+    description:
+      "Refresh configs from YAML (dev iteration only - use migrations for prod)",
+    environments: ["demo", "staging", "prod", "pilot", "dev"],
+  },
 };
 
 async function main() {

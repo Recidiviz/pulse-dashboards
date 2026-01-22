@@ -13,26 +13,20 @@ For each problematic execution, provides:
 - Client information (pseudo ID, real name)
 - Complete resource summary (intake type/status, messages/recording length, assessments, plans, other executions)
 
+It read the database directly so unless we change something major to the schema it doesn't need to be re-deployed before use.
+It's only reading, no data will change.
+
 ## Usage
 
 ### Production
 ```bash
 # Deploy the job
-./deploy_jobs.mjs investigate-failures prod
+  cd backend/deploy/jobs
+  node deploy_jobs.mjs
+````
 
 # Run the job
-kubectl get jobs -n reentry-prod | grep investigate-failures
-kubectl logs -f job/investigate-failures-<timestamp> -n reentry-prod
-```
-
-### Demo/Staging
-```bash
-# Deploy to demo
-./deploy_jobs.mjs investigate-failures demo
-
-# Deploy to staging
-./deploy_jobs.mjs investigate-failures staging
-```
+You can run the job through the console.
 
 ## Output
 Generates detailed logs organized by:
@@ -46,7 +40,3 @@ Generates detailed logs organized by:
 - Need to investigate client-specific processing issues
 - Regular health checks on execution system
 - Before/after maintenance to verify system health
-
-## Related jobs
-- `requeue`: Re-enqueues stuck pending executions
-- `retry-plan-gens`: Retries failed plan generations specifically
