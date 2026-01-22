@@ -184,4 +184,11 @@ export class SentencingStore {
     );
     return psiSupervisionPermission ? psiSupervisionPermission[1] : false;
   }
+
+  get hasSARAccess(): boolean {
+    const sarAccessPermission = this.routePermissions.find(
+      ([route]) => route === ROUTE_PERMISSIONS.sarAccess,
+    );
+    return sarAccessPermission ? sarAccessPermission[1] : false;
+  }
 }

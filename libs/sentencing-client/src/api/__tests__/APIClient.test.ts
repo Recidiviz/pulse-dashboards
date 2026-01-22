@@ -34,13 +34,29 @@ const caseId = Object.keys(CaseDetailsFixture)[0];
 
 beforeEach(() => {
   // update to TRPC v11 broke the typing for this mock and it's not worth the effort to fix it. In an ideal world we would be using msw-trpc for mocking out requests
-  // @ts-expect-error: mockTRPCClient is a loose mock for testing purposes
+  // @ts-expect-error mockTRPCClient is a loose mock for testing purposes
   mockTRPCClient = {
     staff: {
       getStaff: {
-        query: vi.fn().mockResolvedValue(StaffInfoFixture),
+        query: vi.fn().mockResolvedValue({
+          ...StaffInfoFixture,
+          sentencingAssessmentReports: undefined,
+        }),
       },
       updateStaff: {
+        mutate: vi.fn(),
+      },
+    },
+    sar: {
+      getSAR: {
+        query: vi.fn(),
+      },
+      getSARsForStaff: {
+        query: vi
+          .fn()
+          .mockResolvedValue(StaffInfoFixture.sentencingAssessmentReports),
+      },
+      updateSAR: {
         mutate: vi.fn(),
       },
     },
@@ -115,12 +131,39 @@ test("should throw an error if staffPseudoId is undefined", async () => {
 });
 
 test("getStaffInfo and return data", async () => {
+  // Add SAR access permission to routes
+  sentencingStore.rootStore.userStore.routes.push(["sarAccess", true]);
+
   const result = await apiClient.getStaffInfo();
-  expect(result).toBe(StaffInfoFixture);
+  expect(result).toStrictEqual(StaffInfoFixture);
   expect(mockTRPCClient.staff.getStaff.query).toHaveBeenCalledTimes(1);
   expect(mockTRPCClient.staff.getStaff.query).toHaveBeenCalledWith({
     pseudonymizedId: "TestID-123",
   });
+  expect(mockTRPCClient.sar.getSARsForStaff.query).toHaveBeenCalledTimes(1);
+  expect(mockTRPCClient.sar.getSARsForStaff.query).toHaveBeenCalledWith({
+    staffPseudonymizedId: "TestID-123",
+  });
+
+  // Clean up - remove the route we added
+  sentencingStore.rootStore.userStore.routes.pop();
+});
+
+test("getStaffInfo should not fetch SARs if user lacks sarAccess permission", async () => {
+  // Ensure NO SAR access permission (don't add sarAccess to routes)
+  const result = await apiClient.getStaffInfo();
+
+  // Should still return staff data
+  expect(mockTRPCClient.staff.getStaff.query).toHaveBeenCalledTimes(1);
+  expect(mockTRPCClient.staff.getStaff.query).toHaveBeenCalledWith({
+    pseudonymizedId: "TestID-123",
+  });
+
+  // Should NOT call SAR endpoint
+  expect(mockTRPCClient.sar.getSARsForStaff.query).not.toHaveBeenCalled();
+
+  // Should return empty array for SARs
+  expect(result.sentencingAssessmentReports).toEqual([]);
 });
 
 test("setIsFirstLogin calls the updateStaff endpoint with the correct arguments", async () => {

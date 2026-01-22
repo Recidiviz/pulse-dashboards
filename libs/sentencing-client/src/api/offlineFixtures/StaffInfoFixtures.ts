@@ -47,6 +47,7 @@ export const StaffInfoFixture: Staff = {
       offense: "Burglary",
       status: "InProgress",
       isCancelled: false,
+      assignedTo: undefined,
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132",
@@ -61,6 +62,7 @@ export const StaffInfoFixture: Staff = {
       offense: "Burglary",
       status: "NotYetStarted",
       isCancelled: false,
+      assignedTo: "Jane Smith",
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x2",
@@ -75,6 +77,7 @@ export const StaffInfoFixture: Staff = {
       offense: undefined,
       status: "Complete",
       isCancelled: false,
+      assignedTo: undefined,
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x",
@@ -89,6 +92,7 @@ export const StaffInfoFixture: Staff = {
       offense: "Burglary",
       status: "Complete",
       isCancelled: false,
+      assignedTo: "John Doe",
     },
   ],
   sentencingAssessmentReports: [],

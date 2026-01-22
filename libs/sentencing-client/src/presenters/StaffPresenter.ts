@@ -72,6 +72,10 @@ export class StaffPresenter implements Hydratable {
     return !this.staffInfo ? undefined : this.staffInfo.sentencingAssessmentReports;
   }
 
+  get isSupervisor() {
+    return this.staffStore.sentencingStore.isSupervisor;
+  }
+
   get hydrationState(): HydrationState {
     return this.hydrator.hydrationState;
   }

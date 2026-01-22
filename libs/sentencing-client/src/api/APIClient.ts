@@ -117,10 +117,21 @@ export class APIClient {
     if (!this.sentencingStore.staffPseudoId)
       return Promise.reject({ message: "No staff pseudo id found" });
 
-    const fetchedData = await this.trpcClient.staff.getStaff.query({
+    const staffData = await this.trpcClient.staff.getStaff.query({
       pseudonymizedId: this.sentencingStore.staffPseudoId,
     });
-    return fetchedData;
+
+    // Only fetch SARs if user has SAR access permission
+    const sentencingAssessmentReports = this.sentencingStore.hasSARAccess
+      ? await this.trpcClient.sar.getSARsForStaff.query({
+          staffPseudonymizedId: this.sentencingStore.staffPseudoId,
+        })
+      : [];
+
+    return {
+      ...staffData,
+      sentencingAssessmentReports,
+    };
   }
 
   async getSupervisorInfo() {

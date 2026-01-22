@@ -20,6 +20,13 @@ import { TRPCError } from "@trpc/server";
 import { Prisma } from "~@sentencing/prisma/client";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
+  buildStaffCaseFilter,
+  fetchCasesForStaff,
+  fetchStaffById,
+  sanitizeStaffForResponse,
+  transformCaseForResponse,
+} from "~@sentencing/trpc/routes/staff/staff.helpers";
+import {
   getStaffInputSchema,
   updateStaffSchema,
 } from "~@sentencing/trpc/routes/staff/staff.schema";
@@ -28,67 +35,15 @@ export const staffRouter = router({
   getStaff: baseProcedure
     .input(getStaffInputSchema)
     .query(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
-      const staff = await prisma.staff.findUnique({
-        where: {
-          pseudonymizedId,
-        },
-        omit: {
-          externalId: true,
-        },
-        include: {
-          cases: {
-            select: {
-              id: true,
-              externalId: true,
-              dueDate: true,
-              customDueDate: true,
-              reportType: true,
-              status: true,
-              isCancelled: true,
-              client: {
-                select: {
-                  externalId: true,
-                  fullName: true,
-                },
-              },
-              offense: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-          sentencingAssessmentReports: {
-            select: {
-              id: true,
-              externalId: true,
-              dueDate: true,
-              status: true,
-              client: {
-                select: {
-                  externalId: true,
-                  fullName: true,
-                },
-              },
-            },
-          },
-        },
-      });
-
-      if (!staff) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Staff with that id was not found",
-        });
-      }
+      const staff = await fetchStaffById(prisma, pseudonymizedId);
+      const staffFilter = await buildStaffCaseFilter(prisma, staff);
+      const cases = await fetchCasesForStaff(prisma, staffFilter);
 
       return {
-        ...staff,
-        cases: staff.cases.map((c: (typeof staff.cases)[number]) => ({
-          ...c,
-          offense: c.offense?.name,
-          dueDate: c.customDueDate ?? c.dueDate,
-        })),
+        ...sanitizeStaffForResponse(staff),
+        cases: cases.map((c) =>
+          transformCaseForResponse(c, staff.pseudonymizedId),
+        ),
       };
     }),
   updateStaff: baseProcedure

@@ -19,4 +19,5 @@ export const ERROR_TOAST_DURATION = 3000;
 
 export const ROUTE_PERMISSIONS = {
   psiSupervision: "psiSupervision",
+  sarAccess: "sarAccess",
 };

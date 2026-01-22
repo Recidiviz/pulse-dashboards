@@ -19,9 +19,12 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import moment from "moment";
 
 import { sortFullNameByLastNameDescending } from "../../../utils/sorting";
-import { displayReportType } from "../../../utils/utils";
+import { capitalizeName, displayReportType } from "../../../utils/utils";
 import { REPORT_TYPE_KEY } from "../../CaseDetails/constants";
-import { stripFreeTextHelper, UNKNOWN_OPTION } from "../../CaseDetails/Form/constants";
+import {
+  stripFreeTextHelper,
+  UNKNOWN_OPTION,
+} from "../../CaseDetails/Form/constants";
 import { ReportType } from "../../constants";
 import {
   ARCHIVED_STATUS,
@@ -77,9 +80,10 @@ const createStatusColumn = (header: string): ColumnDef<CaseListTableCase> => ({
   cell: (info) => {
     const statusValue = info.getValue() as CaseStatus;
     // isCancelled only exists on PSI Cases (StaffCase), not SARs (StaffSAR)
-    const isCancelledStatus = "isCancelled" in info.cell.row.original
-      ? info.cell.row.original.isCancelled
-      : false;
+    const isCancelledStatus =
+      "isCancelled" in info.cell.row.original
+        ? info.cell.row.original.isCancelled
+        : false;
     const statusOrArchived = isBeforeDueDateWithExtraDayOffset(
       info.cell.row.original.dueDate,
     )
@@ -109,10 +113,8 @@ const createStatusColumn = (header: string): ColumnDef<CaseListTableCase> => ({
       Complete: 2,
     };
 
-    const isArchivedA =
-      !a.original.dueDate || moment.utc().isAfter(dueDateA);
-    const isArchivedB =
-      !b.original.dueDate || moment.utc().isAfter(dueDateB);
+    const isArchivedA = !a.original.dueDate || moment.utc().isAfter(dueDateA);
+    const isArchivedB = !b.original.dueDate || moment.utc().isAfter(dueDateB);
 
     // If both are archived, return 0
     if (isArchivedA && isArchivedB) {
@@ -144,6 +146,29 @@ const createStatusColumn = (header: string): ColumnDef<CaseListTableCase> => ({
 export const PSI_STATUS_COLUMN = createStatusColumn("Recommendation Status");
 export const SAR_STATUS_COLUMN = createStatusColumn("Status");
 
+export const ASSIGNED_TO_COLUMN: ColumnDef<CaseListTableCase> = {
+  header: "Assigned To",
+  accessorKey: "assignedTo",
+  sortingFn: (rowA: Row<CaseListTableCase>, rowB: Row<CaseListTableCase>) => {
+    const nameA =
+      "assignedTo" in rowA.original ? rowA.original.assignedTo : undefined;
+    const nameB =
+      "assignedTo" in rowB.original ? rowB.original.assignedTo : undefined;
+
+    // Put blank/undefined values at the top (supervisor's own cases)
+    if (!nameA && !nameB) return 0;
+    if (!nameA) return -1;
+    if (!nameB) return 1;
+
+    return sortFullNameByLastNameDescending(nameA, nameB);
+  },
+  cell: (info) => {
+    const assignedTo = info.getValue() as string | undefined;
+    // Show name if assigned to someone else, blank if it's the supervisor's own case
+    return assignedTo ? capitalizeName(assignedTo) : "";
+  },
+};
+
 export const SAR_DASHBOARD_COLUMNS: ColumnDef<CaseListTableCase>[] = [
   NAME_COLUMN,
   ID_COLUMN,
@@ -167,7 +192,9 @@ export const PSI_DASHBOARD_COLUMNS: ColumnDef<CaseListTableCase>[] = [
     header: "Offense",
     accessorKey: OFFENSE_KEY,
     cell: (info) => {
-      const displayValue = stripFreeTextHelper(info.getValue() as string | undefined) ?? "None Yet";
+      const displayValue =
+        stripFreeTextHelper(info.getValue() as string | undefined) ??
+        "None Yet";
       return (
         <Styled.Offense isNotSpecified={displayValue === "None Yet"}>
           {displayValue}

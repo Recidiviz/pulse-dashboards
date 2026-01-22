@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { withPresenterManager } from "~hydration-utils";
 
@@ -26,7 +26,7 @@ import CloseIcon from "../assets/close-icon.svg?react";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { CaseListTable } from "./CaseListTable";
 import * as Styled from "./Dashboard.styles";
-import { PSI_DASHBOARD_COLUMNS } from "./utils/dashboardColumns";
+import { ASSIGNED_TO_COLUMN, PSI_DASHBOARD_COLUMNS } from "./utils/dashboardColumns";
 
 const ManagedComponent = observer(function PSIStaffDashboard({
   presenter,
@@ -38,6 +38,7 @@ const ManagedComponent = observer(function PSIStaffDashboard({
     staffPseudoId,
     caseTableData,
     geoConfig,
+    isSupervisor,
     setIsFirstLogin,
     trackDashboardPageViewed,
     trackIndividualCaseClicked,
@@ -49,6 +50,21 @@ const ManagedComponent = observer(function PSIStaffDashboard({
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(
     !staffInfo?.hasLoggedIn,
   );
+
+  // Conditionally include "Assigned To" column for supervisors
+  const columns = useMemo(() => {
+    if (isSupervisor) {
+      // Insert ASSIGNED_TO_COLUMN before the status column (last column)
+      return [
+        ...PSI_DASHBOARD_COLUMNS.slice(0, -1),
+        ASSIGNED_TO_COLUMN,
+        PSI_DASHBOARD_COLUMNS[PSI_DASHBOARD_COLUMNS.length - 1],
+      ];
+    }
+    return PSI_DASHBOARD_COLUMNS;
+  }, [isSupervisor]);
+
+  const dashboardTitle = isSupervisor ? "Team Cases" : "My Cases";
 
   if (!staffPseudoId || !caseTableData) return null;
 
@@ -91,10 +107,10 @@ const ManagedComponent = observer(function PSIStaffDashboard({
       {/* List of Cases */}
       <Styled.Cases>
         <CaseListTable
-          columns={PSI_DASHBOARD_COLUMNS}
+          columns={columns}
           caseTableData={caseTableData}
           staffPseudoId={staffPseudoId}
-          title={"My Cases"}
+          title={dashboardTitle}
           excludedAttributeKeys={geoConfig.excludedAttributeKeys}
           analytics={{
             trackIndividualCaseClicked,

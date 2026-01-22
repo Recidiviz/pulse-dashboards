@@ -21,13 +21,14 @@ import _ from "lodash";
 import { Prisma } from "~@sentencing/prisma/client";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
-  getSARInputSchema,
+  getSARByIDInputSchema,
+  getSARsForStaffInputSchema,
   updateSARSchema,
 } from "~@sentencing/trpc/routes/sar/sar.schema";
 
 export const sarRouter = router({
   getSAR: baseProcedure
-    .input(getSARInputSchema)
+    .input(getSARByIDInputSchema)
     .query(async ({ input: { id }, ctx: { prisma } }) => {
       const sarData = await prisma.sentencingAssessmentReport.findUnique({
         where: {
@@ -93,6 +94,27 @@ export const sarRouter = router({
           offense: charge.offense?.name ?? null,
         })),
       };
+    }),
+  getSARsForStaff: baseProcedure
+    .input(getSARsForStaffInputSchema)
+    .query(async ({ input: { staffPseudonymizedId }, ctx: { prisma } }) => {
+      return prisma.sentencingAssessmentReport.findMany({
+        where: {
+          staff: { pseudonymizedId: staffPseudonymizedId },
+        },
+        select: {
+          id: true,
+          externalId: true,
+          dueDate: true,
+          status: true,
+          client: {
+            select: {
+              externalId: true,
+              fullName: true,
+            },
+          },
+        },
+      });
     }),
   updateSAR: baseProcedure
     .input(updateSARSchema)

@@ -32,9 +32,13 @@ import {
   GetSARInput,
   UpsertSARInput,
 } from "~@sentencing/trpc/routes/sar/types";
-export const getSARInputSchema = z.object({
+export const getSARByIDInputSchema = z.object({
   id: z.string(),
 }) satisfies z.ZodType<GetSARInput>;
+
+export const getSARsForStaffInputSchema = z.object({
+  staffPseudonymizedId: z.string(),
+});
 
 export const mitigatingFactorEnum = z.nativeEnum(ProtectiveFactor);
 export const educationLevelEnum = z.nativeEnum(LevelOfEducation);
