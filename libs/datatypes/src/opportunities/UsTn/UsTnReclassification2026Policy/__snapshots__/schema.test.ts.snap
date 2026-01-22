@@ -41,6 +41,8 @@ exports[`schema for fullyEligible 1`] = `
       "age": 37,
     },
     "q6Score": 0,
+    "q7Notes": "Completed ABC (Letter stitching) on 2/2/2022
+Completed XYZ (Xylophone Ensemble) on 4/4/2024",
     "q7Score": 1,
   },
   "ineligibleCriteria": {},
@@ -125,6 +127,7 @@ exports[`schema for ineligible 1`] = `
       "age": 26,
     },
     "q6Score": 0,
+    "q7Notes": "",
     "q7Score": 1,
   },
   "ineligibleCriteria": {

@@ -171,7 +171,7 @@ export const FormUsTnReclassification2026 = observer(
               </ScoredAssessmentQuestion>
             </ClassificationFormPage>
           </PrintablePage>
-          <PrintablePage landscape>
+          <PrintablePage landscape stretchable>
             <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[5]}
@@ -180,7 +180,12 @@ export const FormUsTnReclassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[6]}
                 questionNumber={7}
-              />
+              >
+                <TextboxWithHeader
+                  header={"List completed programs:"}
+                  name={"q7Notes"}
+                />
+              </ScoredAssessmentQuestion>
               <TotalScore score={derivedData.totalScore} />
             </ClassificationFormPage>
           </PrintablePage>

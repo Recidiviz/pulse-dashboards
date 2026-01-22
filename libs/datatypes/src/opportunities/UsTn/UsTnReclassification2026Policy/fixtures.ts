@@ -75,6 +75,18 @@ export const usTnReclassification2026PolicyFixtures = {
       q6Notes: {
         age: 37,
       },
+      q7Notes: [
+        {
+          programCode: "ABC",
+          programType: "Letter stitching",
+          completionDate: "2022-02-02",
+        },
+        {
+          programCode: "XYZ",
+          programType: "Xylophone Ensemble",
+          completionDate: "2024-04-04",
+        },
+      ],
     },
   }),
   ineligible: makeRecordFixture(usTnReclassification2026Schema, {

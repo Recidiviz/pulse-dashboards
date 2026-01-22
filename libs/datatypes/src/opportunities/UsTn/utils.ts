@@ -36,6 +36,14 @@ const UsTnConviction = z.object({
   imposedDate: dateStringSchema,
 });
 
+const UsTnProgramCompletionSchema = z.object({
+  completionDate: dateStringSchema,
+  programCode: z.string(),
+  programType: z.string(),
+});
+
+type UsTnProgramCompletion = z.output<typeof UsTnProgramCompletionSchema>;
+
 function formatConvictions(
   convictions: z.output<typeof UsTnConviction>[] | null,
 ): string {
@@ -114,3 +122,18 @@ export const multiIncidentPeriodReportSchema = z
   .array(UsTnIncidentPeriodReportSchema)
   .optional()
   .default([]);
+
+function formatProgramCompletions(reports: UsTnProgramCompletion[]): string {
+  return reports
+    .map(
+      ({ programCode, programType, completionDate }) =>
+        `Completed ${programCode} (${programType}) on ${completionDate.toLocaleDateString()}`,
+    )
+    .join("\n");
+}
+
+export const q7Notes = z
+  .array(UsTnProgramCompletionSchema)
+  .optional()
+  .default([])
+  .transform(formatProgramCompletions);

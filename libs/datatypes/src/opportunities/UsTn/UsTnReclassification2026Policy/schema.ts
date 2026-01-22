@@ -19,7 +19,12 @@ import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
-import { multiIncidentPeriodReportSchema, q1Notes, q2Notes } from "../utils";
+import {
+  multiIncidentPeriodReportSchema,
+  q1Notes,
+  q2Notes,
+  q7Notes,
+} from "../utils";
 
 const q6Notes = z
   .object({
@@ -43,6 +48,7 @@ export const usTnReclassification2026Schema = opportunitySchemaBase.extend({
       q4Notes: multiIncidentPeriodReportSchema,
       q5Notes: multiIncidentPeriodReportSchema,
       q6Notes,
+      q7Notes,
     })
     .passthrough(),
 });
