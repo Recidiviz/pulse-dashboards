@@ -478,7 +478,6 @@ const ClientsPage = () => {
                       // Reset to page 1 when filter changes
                       const params = new URLSearchParams(searchParams);
                       params.set("page", "1");
-                      router.push(`?${params.toString()}`);
                       track("clients_page_client_status_filtered", {
                         updated_status_filter: e.target.value,
                       });

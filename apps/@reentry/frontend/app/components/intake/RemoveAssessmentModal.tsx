@@ -56,16 +56,16 @@ export default function RemoveAssessmentModal({
         </p>
 
         <div className="flex gap-3 justify-end">
-          <PrimaryButton buttonText="No, go back" onClick={onClose} />
+          <PrimaryButton buttonText="No, go back" onClick={onClose} ignoreCapabilities={true}/>
 
           <PrimaryButton
-            //buttonText={`Yes, remove assessment`}
             buttonText={
               isDeletingInProgress ? "Removing..." : "Yes, remove assessment"
             }
             className="flex-1 h-8 px-4 py-2 bg-[#013830] rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
             onClick={onConfirm}
             disabled={isDeletingInProgress}
+            ignoreCapabilities={true}
           />
         </div>
       </>
