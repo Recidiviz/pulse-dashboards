@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { QuestionCard, QuestionCopy, ShortTextEntry } from "./styles";
+import { QuestionCopy, ShortTextEntry } from "./styles";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
 interface RNADaysQuestionProps extends RNAQuestionProps {
@@ -33,7 +33,7 @@ export const UsNcRNADaysQuestion = function ({
   presenter,
 }: RNADaysQuestionProps) {
   return (
-    <QuestionCard>
+    <>
       <QuestionCopy>
         {questionNumber}. {question}
       </QuestionCopy>
@@ -48,6 +48,6 @@ export const UsNcRNADaysQuestion = function ({
         }}
         placeholder={placeholderText}
       />
-    </QuestionCard>
+    </>
   );
 };

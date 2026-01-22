@@ -23,6 +23,8 @@ import { GoBackButton, JIIButton } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { Icon, spacing } from "~design-system";
 
+import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
+
 const RNAPageFooter = styled.div`
   margin-top: ${rem(spacing.md)};
   margin-bottom: ${rem(spacing.xl)};
@@ -35,13 +37,14 @@ const PreviousPageButton = styled(GoBackButton)`
 `;
 
 export function NavigationButtons({
-  currentPageNum,
+  presenter,
   showSubmit,
 }: {
-  currentPageNum: number;
+  presenter: UsNcRNAFormPagePresenter;
   showSubmit: boolean;
 }) {
   const navigate = useNavigate();
+  const currentPageNum = presenter.pageNum;
 
   const previousPageLink =
     "../" +
@@ -69,7 +72,11 @@ export function NavigationButtons({
         <JIIButton
           kind={"secondary"}
           onClick={() => {
-            navigate(nextPageLink);
+            if (presenter.hasAnyInvalidAnswer) {
+              presenter.displayInvalidAnswers();
+            } else {
+              navigate(nextPageLink);
+            }
           }}
         >
           <span>Next</span>

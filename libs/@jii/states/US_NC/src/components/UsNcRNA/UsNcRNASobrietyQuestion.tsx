@@ -20,7 +20,6 @@ import { Checkbox } from "~@jii/common-ui";
 import {
   MultipleAnswerGroup,
   MultipleAnswerOption,
-  QuestionCard,
   QuestionCopy,
 } from "./styles";
 import { rnaSobrietyAnswerCopy } from "./usNcRNAFormSpec";
@@ -41,7 +40,7 @@ export const UsNcRNASobrietyQuestion = function ({
   presenter,
 }: RNASobrietyQuestionProps) {
   return (
-    <QuestionCard>
+    <>
       <QuestionCopy>
         {questionNumber}. {question}
       </QuestionCopy>
@@ -68,6 +67,6 @@ export const UsNcRNASobrietyQuestion = function ({
           );
         })}
       </MultipleAnswerGroup>
-    </QuestionCard>
+    </>
   );
 };

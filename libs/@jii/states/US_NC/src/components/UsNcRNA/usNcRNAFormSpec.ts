@@ -44,6 +44,7 @@ type RNAQuestionFormat =
 export type RNAQuestionConfig = {
   questionNumber: number;
   format: RNAQuestionFormat;
+  optional?: boolean;
 };
 
 // The RNA form is a sequence of pages. Each page has a section header and some questions.
@@ -173,6 +174,12 @@ export const fullRNASpec: RNAPageSpec[] = [
 
 // Copy that depends on the format of the RNA question and is consistent for all
 // questions of the same format, such as answer choices
+
+export const rnaMiscellaneousCopy = {
+  INVALID_ANSWER_NOTICE: "You must answer this question to continue.",
+  ANSWER_ALL_QUESTIONS_NOTICE:
+    "You must answer all of the questions to continue.",
+};
 
 export const rnaRadioAnswerCopy = {
   FREQUENCY: {
@@ -510,7 +517,7 @@ export const rnaQuestionCopy = {
     question: "Is legal status a problem for you?",
   },
   lifeAreaCustom: {
-    question: "Any other areas you'd like to improve?",
+    question: "Any other areas you'd like to improve? (optional)",
     placeholderText: "Another life area",
   },
 } satisfies Record<string, RNAQuestionCopy>;
@@ -824,5 +831,6 @@ export const rnaQuestionConfig: Record<RNAQuestionId, RNAQuestionConfig> = {
   lifeAreaCustom: {
     questionNumber: 72,
     format: "LIFE_AREA",
+    optional: true,
   },
 };

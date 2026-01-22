@@ -16,10 +16,15 @@
 // =============================================================================
 
 import assertNever from "assert-never";
+import { observer } from "mobx-react-lite";
 
+import { Icon } from "~design-system";
+
+import { InvalidAnswerNotice, QuestionCard } from "./styles";
 import { UsNcRNADaysQuestion } from "./UsNcRNADaysQuestion";
 import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
 import {
+  rnaMiscellaneousCopy,
   RNAQuestionConfig,
   RNAQuestionCopy,
   RNAQuestionId,
@@ -37,7 +42,7 @@ export interface RNAQuestionProps extends RNAQuestionCopy, RNAQuestionConfig {
  * Component representing a question in the RNA form.
  * Renders the appropriate component based on the question format.
  */
-export const UsNcRNAQuestion = function (props: RNAQuestionProps) {
+const UsNcRNAQuestionContents = function (props: RNAQuestionProps) {
   const { format, ...rest } = props;
   switch (format) {
     case "DAYS_PER_WEEK_RADIO":
@@ -55,3 +60,26 @@ export const UsNcRNAQuestion = function (props: RNAQuestionProps) {
       assertNever(format);
   }
 };
+
+export const UsNcRNAQuestion = observer(function UsNcRNAQuestion(
+  props: RNAQuestionProps,
+) {
+  const { id, presenter } = props;
+
+  const invalid = presenter.isVisiblyInvalid(id);
+
+  return (
+    <QuestionCard $invalid={invalid}>
+      <UsNcRNAQuestionContents {...props} />
+
+      {invalid && (
+        <div>
+          <Icon kind={"Alert"} />
+          <InvalidAnswerNotice>
+            {rnaMiscellaneousCopy["INVALID_ANSWER_NOTICE"]}
+          </InvalidAnswerNotice>
+        </div>
+      )}
+    </QuestionCard>
+  );
+});

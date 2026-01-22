@@ -23,7 +23,6 @@ import { palette } from "~design-system";
 import {
   MultipleAnswerGroup,
   MultipleAnswerOption,
-  QuestionCard,
   QuestionCopy,
 } from "./styles";
 import { rnaRadioAnswerCopy, RNARadioQuestionFormat } from "./usNcRNAFormSpec";
@@ -74,7 +73,7 @@ export const UsNcRNARadioQuestion = function ({
   const answerCopy = rnaRadioAnswerCopy[format];
 
   return (
-    <QuestionCard>
+    <>
       <QuestionCopy>
         {questionNumber}. {question}
       </QuestionCopy>
@@ -97,6 +96,6 @@ export const UsNcRNARadioQuestion = function ({
           );
         })}
       </MultipleAnswerGroup>
-    </QuestionCard>
+    </>
   );
 };

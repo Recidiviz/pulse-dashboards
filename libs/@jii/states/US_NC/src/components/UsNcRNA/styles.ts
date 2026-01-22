@@ -38,13 +38,32 @@ export const RNADescription = styled.div`
   }
 `;
 
-export const QuestionCard = styled(Card)`
+export const QuestionCard = styled(Card)<{ $invalid: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
+
+  ${(props) => props.$invalid && `border: 1px solid ${palette.signal.error};`}
+
+  svg {
+    color: ${palette.signal.error};
+    height: ${rem(16)};
+    flex: 0;
+    margin-right: ${rem(spacing.sm)};
+    vertical-align: text-top;
+  }
 `;
 
 export const QuestionCopy = styled.div``;
+
+export const InvalidAnswerNotice = styled.span`
+  color: ${palette.signal.error};
+`;
+
+export const AnswerAllQuestionsNotice = styled.div`
+  color: ${palette.pine4};
+  text-align: center;
+`;
 
 // For radio button and checkbox answers
 export const MultipleAnswerGroup = styled.div`

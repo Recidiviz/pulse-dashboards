@@ -21,6 +21,9 @@ import { UsNcRNAForm } from "../../models/UsNcRNAForm";
 import { fullRNASpec, RNAQuestionId } from "./usNcRNAFormSpec";
 
 export class UsNcRNAFormPagePresenter {
+  // Only flag invalid answers once the user has tried to move forward on the page
+  shouldShowInvalidAnswers = false;
+
   constructor(
     readonly pageNum: number,
     public form: UsNcRNAForm,
@@ -53,5 +56,27 @@ export class UsNcRNAFormPagePresenter {
 
   get questionIds(): RNAQuestionId[] {
     return fullRNASpec[this.pageIndex].questions;
+  }
+
+  /**
+   * Whether to display invalid answer information for a particular question.
+   */
+  isVisiblyInvalid(questionId: RNAQuestionId): boolean {
+    return (
+      this.shouldShowInvalidAnswers && !this.form.hasValidAnswer(questionId)
+    );
+  }
+
+  displayInvalidAnswers(): void {
+    this.shouldShowInvalidAnswers = true;
+  }
+
+  /**
+   * Returns true when any answer on the current form page is invalid.
+   */
+  get hasAnyInvalidAnswer(): boolean {
+    return Boolean(
+      this.questionIds.find((id) => !this.form.hasValidAnswer(id)),
+    );
   }
 }

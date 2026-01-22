@@ -24,7 +24,6 @@ import {
   LongTextEntry,
   MultipleAnswerGroup,
   MultipleAnswerOption,
-  QuestionCard,
   QuestionCopy,
   ShortTextEntry,
 } from "./styles";
@@ -71,7 +70,7 @@ export const UsNcRNALifeAreaQuestion = observer(
     const improvementRatingId = `${id}-improvement`;
 
     return (
-      <QuestionCard>
+      <>
         <QuestionCopy>{question}</QuestionCopy>
 
         {
@@ -157,7 +156,7 @@ export const UsNcRNALifeAreaQuestion = observer(
             </LongTextEntry>
           </>
         )}
-      </QuestionCard>
+      </>
     );
   },
 );

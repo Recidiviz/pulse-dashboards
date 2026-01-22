@@ -26,9 +26,6 @@ import { UsNcRNAFormContextProvider } from "./UsNcRNAFormContextProvider";
  * Consume this context with `useRNAFormDataContext()`
  */
 export const UsNcRNAFormContext = observer(function UsNcRNAFormContext() {
-  // skeleton for right now -
-  // in the end, this component will wait until the form data has been populated
-
   const form = new UsNcRNAForm();
 
   return (

@@ -15,9 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
 import { makeAutoObservable } from "mobx";
 
-import { RNAQuestionId } from "../components/UsNcRNA/usNcRNAFormSpec";
+import {
+  rnaQuestionConfig,
+  RNAQuestionId,
+} from "../components/UsNcRNA/usNcRNAFormSpec";
 
 export type LifeAreaAnswer = Partial<{
   interest: boolean;
@@ -40,6 +44,66 @@ export class UsNcRNAForm {
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  /**
+   * Return true when the given question has a "valid" answer.
+   * The definition of "valid" depends on the question type.
+   * The return value is only meaningful for questions on the current page.
+   */
+  hasValidAnswer(questionId: RNAQuestionId): boolean {
+    const { optional, format } = rnaQuestionConfig[questionId];
+
+    // Optional questions with simple answer formats never have invalid answers
+    if (optional && format !== "LIFE_AREA") {
+      return true;
+    }
+
+    switch (format) {
+      // Number of days per week must be 0-7
+      case "DAYS_PER_WEEK_ENTRY": {
+        const input = Number(this.textAnswers[questionId]);
+        return Number.isInteger(input) && 0 <= input && input <= 7;
+      }
+      // Other radio or text questions are valid if any answer is selected
+      case "FREQUENCY":
+      case "RATIO":
+      case "YES_NO":
+      case "DAYS_PER_WEEK_RADIO": {
+        return Boolean(this.textAnswers[questionId]);
+      }
+      // Checkbox questions must have at least one answer selected
+      case "SOBRIETY": {
+        if (!this.checkboxAnswers[questionId]) {
+          return false;
+        }
+        return Boolean(
+          Object.values(this.checkboxAnswers[questionId]).find(Boolean),
+        );
+      }
+      // Life Area questions can be answered in three ways:
+      case "LIFE_AREA": {
+        const lifeAreaAnswer = this.lifeAreaAnswers[questionId];
+        // 1) with "no"
+        if (lifeAreaAnswer?.interest === false) {
+          return true;
+        }
+        // 2) with "yes" or custom text, and the rating follow-up also answered
+        if (lifeAreaAnswer?.interest || lifeAreaAnswer?.customLifeArea) {
+          return Boolean(lifeAreaAnswer.interestRating);
+        }
+        // 3) by being optional
+        // (this case is last on purpose: if an optional question has been answered,
+        // the rating follow-up is mandatory)
+        if (optional) {
+          return true;
+        }
+
+        return false;
+      }
+      default:
+        assertNever(format);
+    }
   }
 
   /**
