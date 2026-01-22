@@ -18,6 +18,7 @@
 import { Calendar } from "lucide-react";
 import type React from "react";
 
+import { toUTCDate } from "~@reentry/frontend/utils/date";
 import type { components } from "~@reentry/openapi-types";
 
 const UserSummary: React.FC<{
@@ -47,7 +48,7 @@ const UserSummary: React.FC<{
         <div className="flex justify-start items-center gap-2 md:gap-3">
           <Calendar size={18} className="text-[#2B5469]/85 flex-shrink-0 sm:w-5 sm:h-5" />
           <div className="justify-start text-[#2a5469]/90 text-sm sm:text-base font-medium font-['Public_Sans'] leading-tight">
-            {sessionData && new Date(sessionData?.created_at).toLocaleString()}
+            {sessionData && toUTCDate(sessionData?.created_at)?.toLocaleString()}
           </div>
         </div>
       </div>

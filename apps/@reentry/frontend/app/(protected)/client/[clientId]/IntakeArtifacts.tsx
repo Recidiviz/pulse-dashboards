@@ -20,9 +20,10 @@ import { useRouter } from "next/navigation";
 import { ClientRecord,IntakeInfo } from "~@reentry/frontend/(protected)/client/[clientId]/types";
 import {$api} from "~@reentry/frontend/api";
 import {PrimaryButton} from "~@reentry/frontend/components/buttons/PrimaryButton";
-import {ArrowRight} from "~@reentry/frontend/components/icons/ArrowRight";
-import Timeline, {TimelineItem} from "~@reentry/frontend/components/intake/TimelineIndicator";
-import {useAuth} from "~@reentry/frontend/lib/auth/authContext";
+import { ArrowRight } from "~@reentry/frontend/components/icons/ArrowRight";
+import Timeline, { TimelineItem } from "~@reentry/frontend/components/intake/TimelineIndicator";
+import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { toUTCDate } from "~@reentry/frontend/utils/date";
 import { components } from "~@reentry/openapi-types";
 
 interface IntakeArtifactsProps {
@@ -75,8 +76,9 @@ const mapIntakeToTimeline = (intakeInfo: IntakeInfo) => {
             day: 'numeric',
             year: 'numeric',
         });
-    // todo: check why created_at is 5 hours a head, adding "z" fix it temporarily
-    const createdAt = new Date(intakeInfo.created_at + 'Z');
+    const createdAt = toUTCDate(intakeInfo.created_at);
+    if (!createdAt) return [];
+
     const assignedStep = {
         time: formatTime(createdAt),
         description: `Assigned ${formatTime(createdAt)} on ${formatDate(createdAt)}`,
@@ -87,16 +89,24 @@ const mapIntakeToTimeline = (intakeInfo: IntakeInfo) => {
     timeline.push(assignedStep);
 
     if (intakeInfo.status === 'completed') {
-        const completedAt = new Date(intakeInfo?.completed_at + 'Z' );
+        const completedAt = toUTCDate(intakeInfo?.completed_at);
+        // We use updated_at as fallback in case completed_at is missing
+        const fallbackUpdatedAt = toUTCDate(intakeInfo?.updated_at);
 
-        const completedStep = {
-            time: formatTime(completedAt),
-            description: `Completed ${formatTime(completedAt)} on ${formatDate(completedAt)}`,
-            isCurrent: true,
-            isCompleted: true,
-        };
-        timeline.push(completedStep);
-        timeline[0].isCurrent = false;
+        const completionTimestamp = intakeInfo?.completed_at
+            ? completedAt
+            : fallbackUpdatedAt;
+
+        if (completionTimestamp) {
+            const completedStep = {
+                time: formatTime(completionTimestamp),
+                description: `Completed ${formatTime(completionTimestamp)} on ${formatDate(completionTimestamp)}`,
+                isCurrent: true,
+                isCompleted: true,
+            };
+            timeline.push(completedStep);
+            timeline[0].isCurrent = false;
+        }
     }
     return timeline;
 };
