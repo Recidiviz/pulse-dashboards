@@ -22,6 +22,7 @@ import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDeta
 import RegeneratePlan from "~@reentry/frontend/components/action-plan/RegeneratePlan";
 import Resources from "~@reentry/frontend/components/action-plan/Resources";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
+import { AIDisclosure, AIDisclosureType } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
 
 interface SidePanelProps {
@@ -77,47 +78,55 @@ const SidePanel = ({
 
   return (
     <div className="w-full md:w-[25%] overflow-auto md:h-full self-stretch bg-white border-r border-[#2b5469]/20 flex-col justify-start items-center gap-2 inline-flex print:hidden">
-      <div className="self-stretch h-full flex-col justify-start items-start flex">
-        <ProfileDetail
-          clientRecord={clientRecord}
-          isExpanded={isExpanded}
-          setIsExpanded={setIsExpanded}
-        />
+      <div className="self-stretch h-full flex-col justify-between items-start flex">
+        <div className="flex-col justify-start items-start flex w-full">
+          <ProfileDetail
+            clientRecord={clientRecord}
+            isExpanded={isExpanded}
+            setIsExpanded={setIsExpanded}
+          />
 
-        {isExpanded && (
-          <>
-            {/*<PlanStatus />*/}
-            {dataDetailPlan?.resources_pipeline_enabled && (
-              <Resources
-                selectedResource={selectedResource}
-                candidateResource={candidateResource}
-                relatedResourcesLoading={relatedResourcesLoading}
-                planResources={planResources}
-                handleSelectResource={handleSelectResource}
-                relatedResources={relatedResources}
-                handleOpenResourceSection={handleOpenResourceSection}
-                openResourceSection={openResourceSection}
+          {isExpanded && (
+            <>
+              {/*<PlanStatus />*/}
+              {dataDetailPlan?.resources_pipeline_enabled && (
+                <Resources
+                  selectedResource={selectedResource}
+                  candidateResource={candidateResource}
+                  relatedResourcesLoading={relatedResourcesLoading}
+                  planResources={planResources}
+                  handleSelectResource={handleSelectResource}
+                  relatedResources={relatedResources}
+                  handleOpenResourceSection={handleOpenResourceSection}
+                  openResourceSection={openResourceSection}
+                  clientRecord={clientRecord}
+                />
+              )}
+
+              {isFeatureEnabled("REGENERATE_WITH_PROMPT") && (
+                <RegeneratePlan
+                  planId={planId}
+                  startPolling={startPolling}
+                  setRegenerationMessage={setRegenerationMessage}
+                  dataDetailPlan={dataDetailPlan}
+                  isPolling={isPolling}
+                  clientRecord={clientRecord}
+                />
+              )}
+              <HomeAddressSection
                 clientRecord={clientRecord}
-              />
-            )}
-
-            {isFeatureEnabled("REGENERATE_WITH_PROMPT") && (
-              <RegeneratePlan
                 planId={planId}
                 startPolling={startPolling}
-                setRegenerationMessage={setRegenerationMessage}
-                dataDetailPlan={dataDetailPlan}
                 isPolling={isPolling}
-                clientRecord={clientRecord}
               />
-            )}
-            <HomeAddressSection
-              clientRecord={clientRecord}
-              planId={planId}
-              startPolling={startPolling}
-              isPolling={isPolling}
-            />
-          </>
+            </>
+          )}
+        </div>
+
+        {isExpanded && (
+          <div className="w-full mt-auto">
+            <AIDisclosure type={AIDisclosureType.Sidebar} />
+          </div>
         )}
       </div>
     </div>

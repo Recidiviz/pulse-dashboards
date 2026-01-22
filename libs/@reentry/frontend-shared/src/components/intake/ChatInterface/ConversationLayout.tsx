@@ -22,6 +22,7 @@ import { useState } from "react";
 
 import { ConnectionErrorAlert } from "../../../websockets/components/ConnectionErrorAlert";
 import { useSocket } from "../../../websockets/IntakeSocketContext";
+import { AIDisclosure, AIDisclosureType } from "../../AIDisclosure";
 import { ChatbotInterface } from "./ChatbotInterface";
 import { ChatHeader } from "./ChatHeader";
 import { Sidebar } from "./Sidebar";
@@ -111,8 +112,13 @@ const LinearChatComponent: React.FC = () => {
         />
 
         {/* Chat */}
-        <div className="flex-1 w-full bg-[#F9FAFA] overflow-hidden">
-          <ChatbotInterface />
+        <div className="flex flex-col flex-1 w-full bg-[#F9FAFA] overflow-hidden">
+          <div className="shrink-0 px-4 sm:px-6 pt-4 pb-2">
+            <AIDisclosure type={AIDisclosureType.Chatbot} />
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <ChatbotInterface />
+          </div>
         </div>
       </div>
     </div>

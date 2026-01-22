@@ -27,10 +27,17 @@ import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButt
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
+  createPDFPageStyles,
   extractCompleteCSS,
   generatePDF,
 } from "~@reentry/frontend/utils/pdfGenerator";
-import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
+import {
+  addBrowserPrintDisclosure,
+  AI_DISCLOSURE_PRINT_TEXT,
+  removeBrowserPrintDisclosure,
+  showErrorToast,
+  showSuccessToast,
+} from "~@reentry/frontend-shared";
 
 interface PlannerProps {
   markDownText: string;
@@ -72,7 +79,11 @@ const Planner = ({
         justiceInvolvedPersonId: clientPseudoId,
         planId: planId,
       });
+      addBrowserPrintDisclosure(contentRef.current);
       return Promise.resolve();
+    },
+    onAfterPrint: () => {
+      removeBrowserPrintDisclosure();
     },
   });
   const router = useRouter();
@@ -180,18 +191,15 @@ const Planner = ({
     });
     const pdfCSS = `
       ${extractedCSSResult.combined}
-      @media print {
-      .markdown_annotations__PyRaq, .markdown_notes__84h8O { display: none; }
-      .markdown_markdown__MnjCI > * { break-inside: avoid !important; }
-      .markdown_markdown__MnjCI button { border-bottom: none !important; }
-      .markdown_markdown__MnjCI img { display: none; }
-      }
+      ${createPDFPageStyles(AI_DISCLOSURE_PRINT_TEXT)}
     `;
 
     const actionPlan = {
       html: element.innerHTML,
       css: [pdfCSS],
-      options: {} as Record<string, unknown>,
+      options: {
+        printBackground: true,
+      } as Record<string, unknown>,
     };
     let accessToken = getAccessToken();
     if (!accessToken) {

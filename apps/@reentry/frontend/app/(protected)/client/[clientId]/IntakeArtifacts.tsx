@@ -24,6 +24,7 @@ import { ArrowRight } from "~@reentry/frontend/components/icons/ArrowRight";
 import Timeline, { TimelineItem } from "~@reentry/frontend/components/intake/TimelineIndicator";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { toUTCDate } from "~@reentry/frontend/utils/date";
+import { AIDisclosure, AIDisclosureType } from "~@reentry/frontend-shared";
 import { components } from "~@reentry/openapi-types";
 
 interface IntakeArtifactsProps {
@@ -193,7 +194,10 @@ export default function IntakeArtifacts({clientData, intakeInfo, recordingSessio
                 {/* INTAKE SUMMARY*/}
                 <div className={`flex flex-col gap-6 px-0 sm:px-6 py-6 sm:py-0 ${!intakeSummary ? "opacity-40 pointer-events-none" : ""}`}>
                     <div className="flex flex-col gap-2">
-                        <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">SUMMARY</span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">SUMMARY</span>
+                            <AIDisclosure type={AIDisclosureType.Inline} />
+                        </div>
                     </div>
 
                     <PrimaryButton
@@ -214,7 +218,10 @@ export default function IntakeArtifacts({clientData, intakeInfo, recordingSessio
                         {/* ACTION PLAN */}
                         <div className={`flex flex-col gap-6 px-0 sm:px-6 py-6 sm:py-0 ${planData && planData?.is_create_execution_finished ? "" : "opacity-40 pointer-events-none"}`}>
                             <div className="flex flex-col gap-2">
-                                <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">ACTION PLAN</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[rgba(43,84,105,0.5)] font-public-sans text-[14px] font-bold leading-[1.2] tracking-[-0.14px] uppercase">ACTION PLAN</span>
+                                    <AIDisclosure type={AIDisclosureType.Inline} />
+                                </div>
                             </div>
 
                             <PrimaryButton

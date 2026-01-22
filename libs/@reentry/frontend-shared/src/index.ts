@@ -18,6 +18,7 @@
 export * from "./api";
 export * from "./auth/authMiddleware";
 export * from "./auth/globalAuthStore";
+export * from "./components/AIDisclosure";
 export * from "./components/buttons/PrimaryButton";
 export { FullAddressForm } from "./components/FullAddressForm";
 export * from "./components/inputs";

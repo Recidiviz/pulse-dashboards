@@ -29,10 +29,11 @@ import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButt
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import {useAuth} from "~@reentry/frontend/lib/auth/authContext";
 import {
+  createPDFPageStyles,
   extractCompleteCSS,
   generatePDF,
 } from "~@reentry/frontend/utils/pdfGenerator";
-import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
+import { AI_DISCLOSURE_PRINT_TEXT, AIDisclosure, AIDisclosureType, showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 import type { components } from "~@reentry/openapi-types";
 
 
@@ -242,9 +243,6 @@ const IntakeManagementPage = () => {
     };
 
     const createPDFStyles = (tempContainer: HTMLDivElement): string => {
-        const marginVertical = 40;
-        const marginHorizontal = 40;
-
         const extractedCSSResult = extractCompleteCSS(tempContainer, {
             includeChildren: true,
             includeMediaQueries: true,
@@ -253,13 +251,7 @@ const IntakeManagementPage = () => {
 
         return `
             ${extractedCSSResult.combined}
-
-            @page {
-                size: A4;
-                margin: ${marginVertical}px ${marginHorizontal}px;
-                orphans: 4;
-                widows: 4;
-            }
+            ${createPDFPageStyles(AI_DISCLOSURE_PRINT_TEXT)}
 
             body, html {
                 margin: 0;
@@ -308,22 +300,11 @@ const IntakeManagementPage = () => {
     };
 
     const createPDFData = (tempContainer: HTMLDivElement, pdfCSS: string) => {
-        const marginVertical = 40;
-        const marginHorizontal = 40;
-
         return {
             html: tempContainer.innerHTML,
             css: [pdfCSS],
             options: {
-                format: 'A4',
                 printBackground: true,
-                displayHeaderFooter: false,
-                margin: {
-                    top: `${marginVertical}px`,
-                    right: `${marginHorizontal}px`,
-                    bottom: `${marginVertical}px`,
-                    left: `${marginHorizontal}px`,
-                }
             } as Record<string, unknown>,
         };
     };
@@ -389,10 +370,13 @@ const IntakeManagementPage = () => {
                     )
                     :(
                         <div className="p-0 md:p-10 mb-6  w-full max-w-7xl">
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-medium text-[#003331] flex items-center">
-                                    <FiMessageSquare className="mr-2" /> Intake Conversation History
-                                </h2>
+                            <div className="flex items-start justify-between mb-4 gap-4">
+                                <div className="flex-1">
+                                    <h2 className="text-lg font-medium text-[#003331] flex items-center mb-2">
+                                        <FiMessageSquare className="mr-2" /> Intake Conversation History
+                                    </h2>
+                                    <AIDisclosure type={AIDisclosureType.ChatHistory} />
+                                </div>
                                 {!IS_V2_INTAKE_CHAT &&
                                  intakeData &&
                                  intakeData.intake_sections &&

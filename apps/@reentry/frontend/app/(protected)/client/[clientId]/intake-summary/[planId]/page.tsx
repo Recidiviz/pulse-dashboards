@@ -29,10 +29,16 @@ import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
+  createPDFPageStyles,
   extractCompleteCSS,
   generatePDF,
 } from "~@reentry/frontend/utils/pdfGenerator";
 import {
+  addBrowserPrintDisclosure,
+  AI_DISCLOSURE_PRINT_TEXT,
+  AIDisclosure,
+  AIDisclosureType,
+  removeBrowserPrintDisclosure,
   showErrorToast,
   showSuccessToast,
 } from "~@reentry/frontend-shared";
@@ -61,7 +67,11 @@ const IntakeSummaryPage = () => {
     `,
     onBeforePrint: () => {
       track("intake_summary_printed", { justiceInvolvedPersonId: clientId });
+      addBrowserPrintDisclosure(contentRef.current);
       return Promise.resolve();
+    },
+    onAfterPrint: () => {
+      removeBrowserPrintDisclosure();
     },
   });
 
@@ -161,18 +171,15 @@ const IntakeSummaryPage = () => {
     });
     const pdfCSS = `
       ${extractedCSSResult.combined}
-      @media print {
-      .markdown_annotations__PyRaq, .markdown_notes__84h8O { display: none; }
-      .markdown_markdown__MnjCI > * { break-inside: avoid !important; }
-      .markdown_markdown__MnjCI button { border-bottom: none !important; }
-      .markdown_markdown__MnjCI img { display: none; }
-      }
+      ${createPDFPageStyles(AI_DISCLOSURE_PRINT_TEXT)}
     `;
 
     const intakeSummaryData = {
       html: element.innerHTML,
       css: [pdfCSS],
-      options: {} as Record<string, unknown>,
+      options: {
+        printBackground: true,
+      } as Record<string, unknown>,
     };
     const fileName = `${clientFullName}_intake_summary.pdf`;
     let accessToken = getAccessToken();
@@ -208,12 +215,15 @@ const IntakeSummaryPage = () => {
         }
       >
         <div className="w-full md:w-[25%] h-auto self-stretch bg-white  flex-col justify-start items-center gap-2 inline-flex print:hidden">
-          <div className="self-stretch h-full flex-col justify-start items-start flex">
+          <div className="self-stretch h-full flex-col justify-between items-start flex">
             <ProfileDetail
               clientRecord={clientData}
               isExpanded={undefined}
               setIsExpanded={() => console.log("expanded")}
             />
+            <div className="w-full mt-auto">
+              <AIDisclosure type={AIDisclosureType.Sidebar} />
+            </div>
           </div>
         </div>
         <div className="w-full md:w-[75%] h-full grow shrink basis-0 self-stretch px-6 md:px-14 py-8 bg-white flex-col justify-start items-center gap-2 inline-flex overflow-y-auto  border-l border-[#2b5469]/20">
