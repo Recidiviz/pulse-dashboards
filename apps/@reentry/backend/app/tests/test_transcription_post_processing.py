@@ -497,6 +497,7 @@ class TestValidateRecordingSession:
         )
 
 
+@patch("app.core.config.settings.DEEPGRAM_CALLBACK", True)
 class TestValidateTranscription:
     """Tests for validate_transcription function."""
 

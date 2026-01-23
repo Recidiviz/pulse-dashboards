@@ -29,11 +29,12 @@ interface ValidationData {
 interface TranscriptionValidationWarningsProps {
   validation: ValidationData;
   hasConversation?: boolean;
+  lastUpdated?: string;
 }
 
 const TranscriptionValidationWarnings: React.FC<
   TranscriptionValidationWarningsProps
-> = ({ validation, hasConversation = true }) => {
+> = ({ validation, hasConversation = true, lastUpdated }) => {
   const hasAnyValidationFailure =
     !validation.word_count ||
     !validation.diarization ||
@@ -52,7 +53,7 @@ const TranscriptionValidationWarnings: React.FC<
           <WarningCircleIcon />
           <div className="font-['Public_Sans'] text-sm font-medium leading-[120%] tracking-[-0.14px]">
             The recording contains insufficient information to generate output
-            document(s)
+            document(s). {lastUpdated && `Last updated: ${lastUpdated}`}
           </div>
         </div>
       </div>

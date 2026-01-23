@@ -31,6 +31,7 @@ interface IntakeArtifactsProps {
     clientData: ClientRecord
     intakeInfo: IntakeInfo
     recordingSession: components["schemas"]["RecordingSessionResponse"] | undefined;
+    validTranscription: boolean | undefined;
 }
 
 const TranscriptSection = ({ isDisabled, buttonText, onClick }) => (
@@ -112,7 +113,7 @@ const mapIntakeToTimeline = (intakeInfo: IntakeInfo) => {
     return timeline;
 };
 
-export default function IntakeArtifacts({clientData, intakeInfo, recordingSession}: IntakeArtifactsProps) {
+export default function IntakeArtifacts({clientData, intakeInfo, recordingSession, validTranscription}: IntakeArtifactsProps) {
     const router = useRouter();
 
     const planIncluded = intakeInfo.assessment_config_outputs_action_plan_activated
@@ -230,7 +231,7 @@ export default function IntakeArtifacts({clientData, intakeInfo, recordingSessio
                                         See action plan <ArrowRight  />
                                     </div>
                                 }
-                                className="h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white"
+                                className={`h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white ${!validTranscription ? "opacity-40 pointer-events-none" : ""}`}
                                 onClick={() => router.push(`/action-plan/${planData?.id}`)}
                                 ignoreCapabilities={true}
                             />

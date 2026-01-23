@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import AudioRecordings from "~@reentry/frontend/(protected)/client/[clientId]/AudioRecordings";
 import IntakeArtifacts from "~@reentry/frontend/(protected)/client/[clientId]/IntakeArtifacts";
@@ -146,11 +146,13 @@ export default function IntakeAssessment({
     };
 
     if (intakeLoading) { return "Loading intake data..."; }
-
+    const isValidTranscription = useMemo(() => {
+        return Object.values(transcriptionData?.validation || {}).every((value) => value) && transcriptionData?.transcription?.conversation && transcriptionData?.transcription?.conversation.length > 0;
+    }, [transcriptionData]);
     return (
         <div className={`flex flex-1 flex-col justify-center gap-2.5 max-w-7xl w-full self-stretch bg-white p-6 md:p-9 rounded-[5px] border border-solid border-[#2b5469]/20`}>
             <div className="w-full  flex flex-col gap-4">
-                { intakeInfo && intakeStatus?.processing_status === "needs_retry" && (
+                { intakeInfo && intakeStatus?.processing_status === "needs_retry" && isValidTranscription && (
                     <RetryProcessing
                         intakeId={intakeInfo?.id}
                     />
@@ -211,11 +213,11 @@ export default function IntakeAssessment({
                     {assessmentStatus === "created" && intakeInfo?.intake_type === "transcription" && (
                         <>Record an assessment to generate a transcript, summary, and action plan.&nbsp;</>
                     )}
-
-                    {assessmentStatus === "completed" && (
-                        <>Intake results are ready for your review below.&nbsp;</>
-                    )}
-
+                    {isValidTranscription && <>
+                        {assessmentStatus === "completed" && (
+                            <>Intake results are ready for your review below.&nbsp;</>
+                        )}
+                    </>}
                     {assessmentStatus && (
                         <>Last updated: {intakeInfo?.updated_at ? formatDateReadableDate(intakeInfo?.updated_at) : "N/A"}</>
                     )}
@@ -226,6 +228,7 @@ export default function IntakeAssessment({
                 <TranscriptionValidationWarnings
                     validation={transcriptionData.validation}
                     hasConversation={transcriptionData.transcription?.conversation?.length > 0}
+                    lastUpdated={intakeInfo?.updated_at ? formatDateReadableDate(intakeInfo?.updated_at) : "N/A"}
                 />
             )}
             { intakeInfo?.status && (
@@ -233,6 +236,7 @@ export default function IntakeAssessment({
                     clientData={clientData}
                     intakeInfo={intakeInfo}
                     recordingSession={ recordingSession|| undefined}
+                    validTranscription={isValidTranscription}
                 />
             )}
             </div>

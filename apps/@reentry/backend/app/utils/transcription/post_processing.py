@@ -5,6 +5,7 @@ from typing import Dict, List, Optional, Union
 import structlog
 from pydantic import BaseModel, Field
 
+from app.core.config import settings
 from app.core.data_config.assessment_configs.assessment_config import ModelConfig
 from app.models.recording import RecordingSession
 from app.utils.llm_agent_qa import LLMAgentQA
@@ -629,6 +630,13 @@ def validate_transcription(
         - diarization: True if at least two speakers are present
         - minimum_duration: True if audio duration is at least 10 minutes
     """
+    if not settings.DEEPGRAM_CALLBACK:
+        return {
+            "word_count": True,
+            "no_prompt_injection": True,
+            "diarization": True,
+            "minimum_duration": True,
+        }
     # 1. Word count validation - minimum 200 words
     total_words = sum(turn.wordCount for turn in transcription_output.conversation)
     word_count_valid = total_words >= 200
