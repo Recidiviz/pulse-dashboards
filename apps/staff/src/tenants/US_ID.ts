@@ -114,6 +114,10 @@ const US_ID_CONFIG = {
           {
             value: "High",
           },
+          {
+            label: "Expanded CRC",
+            value: "Expanded Crc",
+          },
         ],
       },
       {
