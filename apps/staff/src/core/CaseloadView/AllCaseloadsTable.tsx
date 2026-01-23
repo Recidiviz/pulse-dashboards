@@ -19,6 +19,7 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { Resident } from "../../WorkflowsStore/Resident";
 import {
   CaseloadTable,
@@ -27,6 +28,11 @@ import {
   ReleaseDateCell,
 } from "../CaseloadTable";
 import { FacilityUnitIdCell } from "../CaseloadTable/FacilityUnitIdCell";
+import { OPPORTUNITY_STATUS_COLORS } from "../utils/workflowsUtils";
+import {
+  AllCaseloadsModalProvider,
+  useAllCaseloadsModalContext,
+} from "./AllCaseloadsModalContext";
 import { AllCaseloadsPreviewModal } from "./AllCaseloadsPreviewModal";
 
 type CaseloadRowProps = { row: Row<Resident> };
@@ -45,6 +51,28 @@ function ReleaseDateWrapper({ row }: CaseloadRowProps) {
 
 function FacilityUnitItWrapper({ row }: CaseloadRowProps) {
   return <FacilityUnitIdCell person={row.original} />;
+}
+
+function AllFormsButton({ row }: CaseloadRowProps) {
+  const { setCurrentView } = useAllCaseloadsModalContext();
+
+  const { workflowsStore } = useRootStore();
+  const person = row.original;
+
+  return (
+    <div>
+      <NavigateToFormButtonStyle
+        buttonFill={OPPORTUNITY_STATUS_COLORS.eligible.buttonFill}
+        onClick={(event) => {
+          setCurrentView("SELECT_FORM");
+          workflowsStore.updateSelectedPerson(person.pseudonymizedId);
+          event.stopPropagation();
+        }}
+      >
+        Auto-fill paperwork
+      </NavigateToFormButtonStyle>
+    </div>
+  );
 }
 
 const columns = [
@@ -80,32 +108,54 @@ const columns = [
     sortingFn: "alphanumeric",
     cell: FacilityUnitItWrapper,
   },
+  {
+    header: "",
+    id: "formButton",
+    cell: AllFormsButton,
+  },
 ] satisfies ColumnDef<Resident>[];
+
+const AllCaseloadsTableComponent = observer(
+  function AllCaseloadsTableComponent() {
+    const {
+      workflowsStore,
+      workflowsStore: {
+        searchStore: { caseloadPersons },
+      },
+    } = useRootStore();
+
+    const { setCurrentView } = useAllCaseloadsModalContext();
+
+    return (
+      <CaseloadTable
+        // @ts-expect-error the activeSystem check ensures these are Residents
+        data={caseloadPersons}
+        columns={columns}
+        onRowClick={(person) => {
+          setCurrentView("OVERVIEW");
+          workflowsStore.updateSelectedPerson(person.pseudonymizedId);
+        }}
+        shouldHighlightRow={(person) =>
+          workflowsStore.selectedPerson?.pseudonymizedId ===
+          person.pseudonymizedId
+        }
+      />
+    );
+  },
+);
 
 export const AllCaseloadsTable = observer(function AllCaseloadsTable() {
   const {
-    workflowsStore,
-    workflowsStore: {
-      searchStore: { caseloadPersons },
-      activeSystem,
-    },
+    workflowsStore: { activeSystem },
   } = useRootStore();
 
   // This table only supports residents for now
   if (activeSystem !== "INCARCERATION") return;
 
   return (
-    <>
-      <CaseloadTable
-        // @ts-expect-error the activeSystem check ensures these are Residents
-        data={caseloadPersons}
-        columns={columns}
-        onRowClick={(person) => {
-          workflowsStore.updateSelectedPerson(person.pseudonymizedId);
-        }}
-        shouldHighlightRow={() => false}
-      />
+    <AllCaseloadsModalProvider>
+      <AllCaseloadsTableComponent />
       <AllCaseloadsPreviewModal />
-    </>
+    </AllCaseloadsModalProvider>
   );
 });

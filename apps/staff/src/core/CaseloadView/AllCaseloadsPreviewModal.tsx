@@ -23,10 +23,13 @@ import styled from "styled-components";
 import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { Resident } from "../../WorkflowsStore/Resident";
 import { Incarceration } from "../WorkflowsJusticeInvolvedPersonProfile";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitiesAccordion";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
+import { useAllCaseloadsModalContext } from "./AllCaseloadsModalContext";
+import { SelectFormContents } from "./SelectFormContents";
 
 const ItemHeader = styled(Sans12)`
   background-color: ${palette.marble2};
@@ -42,11 +45,35 @@ const ItemHeader = styled(Sans12)`
   text-transform: uppercase;
 `;
 
+export type AllResidentModalView = "OVERVIEW" | "SELECT_FORM";
+
+function OverviewContents({
+  selectedResident,
+}: {
+  selectedResident: Resident;
+}) {
+  return (
+    <>
+      <ItemHeader>Opportunities</ItemHeader>
+      <OpportunitiesAccordion
+        showIneligibleOpportunityTypes
+        showIneligibleFormButtons
+        formLinkButton
+        person={selectedResident}
+      />
+      <ItemHeader>Resident Details</ItemHeader>
+      <Incarceration resident={selectedResident} />
+    </>
+  );
+}
+
 export const AllCaseloadsPreviewModal = observer(
   function AllCaseloadsPreviewModal() {
     const {
       workflowsStore: { selectedResident },
     } = useRootStore();
+
+    const { currentView } = useAllCaseloadsModalContext();
 
     if (!selectedResident) return null;
 
@@ -56,15 +83,11 @@ export const AllCaseloadsPreviewModal = observer(
         pageContent={
           <article>
             <Heading person={selectedResident} />
-            <ItemHeader>Opportunities</ItemHeader>
-            <OpportunitiesAccordion
-              showIneligibleOpportunityTypes
-              showIneligibleFormButtons
-              formLinkButton
-              person={selectedResident}
-            />
-            <ItemHeader>Resident Details</ItemHeader>
-            <Incarceration resident={selectedResident} />
+            {currentView === "OVERVIEW" ? (
+              <OverviewContents selectedResident={selectedResident} />
+            ) : (
+              <SelectFormContents selectedResident={selectedResident} />
+            )}
           </article>
         }
       />
