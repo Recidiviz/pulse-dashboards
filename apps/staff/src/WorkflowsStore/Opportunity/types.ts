@@ -318,6 +318,7 @@ export type OpportunityTab =
   | "Almost Eligible for Review"
   | "Needs Re-Screen"
   | "Movement Pending"
+  | "Needs Review"
 
   // For US_ID CRC
   | "Medical-Ineligible";

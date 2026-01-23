@@ -45,15 +45,30 @@ export class UsMiCustodyLevelDowngradeOpportunity extends OpportunityBase<
   get undoSubmittedButtonText(): string {
     return "Revert from Needs Re-Screen";
   }
+
+  get subcategory() {
+    if (this.isSubmitted) {
+      return this.submittedUpdate?.subcategory;
+    }
+
+    if (this.tabTitle() === "Needs Review") {
+      if (this.almostEligible) return "ALMOST_ELIGIBLE_FOR_REVIEW";
+      return "ELIGIBLE_FOR_REVIEW";
+    }
+  }
+
   tabTitle(): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
     if (this.isSubmitted) return this.submittedTabTitle;
-    if (this.record.metadata.tabName === "ELIGIBLE_FOR_ASSESSMENT") {
-      if (this.almostEligible) return "Almost Eligible for Review";
-      return "Eligible for Review";
-    }
     if (this.record.metadata.tabName === "ELIGIBLE_FOR_MOVEMENT") {
       return "Movement Pending";
+    }
+    if (
+      this.record.metadata.tabName === "ELIGIBLE_FOR_ASSESSMENT" ||
+      this.record.isEligible ||
+      this.almostEligible
+    ) {
+      return "Needs Review";
     }
     return super.tabTitle();
   }
