@@ -72,10 +72,9 @@ def upgrade() -> None:
         )
 
         if result.rowcount == 0:
-            raise RuntimeError(
-                f"No assessmentconfig found for "
-                f"{config['state_code']} {config['code']} {config['version']} "
-                f"(from {config['file']})"
+            print(
+                f"Skipping {config['file']}: no assessmentconfig found for "
+                f"{config['state_code']} {config['code']} {config['version']}"
             )
 
 

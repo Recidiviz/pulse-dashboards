@@ -1,0 +1,16 @@
+metadata:
+  state_code: US_ND
+  code: default
+  version: 0
+  display_name: Parole & Probation Intake
+  description: Intake assessment for P&P clients in North Dakota
+intake:
+  intake_type: transcription
+  transcription_post_processing_model:
+    provider: openai
+    name: o4-mini
+    version: "2025-04-16"
+outputs:
+  codes:
+    - intake_summary_default
+    - plan_default
