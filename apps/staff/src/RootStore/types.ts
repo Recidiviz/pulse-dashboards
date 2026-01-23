@@ -103,6 +103,7 @@ export type FeatureVariant =
   //// Michigan
   | "usMiFacilitySearch"
   | "usMiCaseManagerSearch"
+  | "usMiCustodyLevelDowngrade"
   | "usMiSecurityClassificationCommittee"
 
   //// Missouri
@@ -214,6 +215,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMoSearchByUnit: {},
   usMoWorkRelease: {},
   usMiCaseManagerSearch: {},
+  usMiCustodyLevelDowngrade: {},
   usMiSecurityClassificationCommittee: {},
   usMiFacilitySearch: {},
   indefiniteSnooze: {},
@@ -245,6 +247,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},
         usMiCaseManagerSearch: {},
+        usMiCustodyLevelDowngrade: {},
         usMiSecurityClassificationCommittee: { activeTenants: ["US_MI"] },
         usMiFacilitySearch: {},
         usMoOverdueRHPilot: {},
