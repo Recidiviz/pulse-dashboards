@@ -121,7 +121,7 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
               <div className="w-full h-full flex">
                   <PrimaryButton
                       buttonText="Record now"
-                      className="text-white text-xs md:text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full max-w-sm"
+                      className="!px-2 !md:px-4 !w-[85px] text-white text-xs md:text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full max-w-sm md:!w-auto mx-auto"
                       onClick={
                           recordingSession
                               ? () => handleSessionClick(recordingSession.id)

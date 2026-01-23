@@ -441,10 +441,10 @@ const ClientsPage = () => {
                   All Clients ({data?.total || 0})
               </div>
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6">
-              <div className="text-[#2b5469]/70 text-lg font-medium leading-snug">
+              <div className="text-[#2b5469]/70 text-lg font-medium leading-snug  w-full md:w-auto">
                   {!isZeroCaseloadUser? "All clients on your caseload are displayed below.": "All clients in your assigned facilities are displayed below."}
               </div>
-              <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
+              <div className="flex flex-col  md:flex-row gap-4 items-stretch md:items-center w-full md:w-auto">
                 <IconInput
                   placeholder="Search by name"
                   startIcon={
@@ -455,7 +455,7 @@ const ClientsPage = () => {
                           executeSearch();
                         }
                       }}
-                      className="focus:outline-none"
+                      className="focus:outline-none h-10"
                     >
                       <Search fontSize="small" />
                     </button>
@@ -463,7 +463,7 @@ const ClientsPage = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyDown={handleSearchKeyDown}
-                  className="h-10 text-sm border border-gray-300 rounded-md flex-1 min-w-[100px]"
+                  className="text-sm border border-gray-300 rounded-md flex-1 min-w-[100px]"
                 />
                 <div className="relative flex-1 min-w-[100px]">
                   <FilterList

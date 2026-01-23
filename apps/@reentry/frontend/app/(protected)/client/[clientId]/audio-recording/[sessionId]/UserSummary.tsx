@@ -27,7 +27,7 @@ const UserSummary: React.FC<{
 }> = ({ clientData, sessionData }) => {
   return (
     <div className="flex flex-col justify-start items-start gap-3 md:gap-4 w-full">
-      <div className="inline-flex justify-start items-center gap-3 md:gap-4">
+      <div className="inline-flex justify-start items-center gap-3 md:gap-4 mt-4 md:mt-0">
         <div className="w-10 h-10 relative bg-white rounded-[40px] overflow-hidden flex-shrink-0">
           <div className="w-10 h-10 left-0 top-0 absolute bg-[#4c6290]" />
           <div className="w-[29.90px] h-[46.15px] left-[0.45px] top-[10.88px] absolute origin-top-left rotate-[-46deg] bg-[#90aeb5] blur-[4.55px]" />

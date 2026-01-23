@@ -70,7 +70,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
     <Modal
       isOpen={isOpen}
       onRequestClose={handleClose}
-      className="outline-none"
+      className="outline-none mx-4 md:mx-0"
       overlayClassName="fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
       ariaHideApp={false}
     >

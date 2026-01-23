@@ -159,7 +159,7 @@ export default function IntakeAssessment({
                 )}
           {intakeInfo && (
             <div className="flex flex-col justify-center gap-2">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 md:gap-4   w-full">
                 <span className="font-medium text-[24px] leading-[1] text-black">
                     {`${intakeInfo?.assessment_config_display_name}`}
                 </span>
@@ -168,7 +168,7 @@ export default function IntakeAssessment({
                     intakeFrontendStatus={intakeStatus?.frontend_status}
                   />
                 </div>
-                <div className={"flex ml-auto  gap-10"}>
+                <div className={"flex ml-auto  gap-2 md:gap-10"}>
                     {assessmentStatus != "completed" && intakeInfo.intake_type === "transcription" && (
                         <AudioRecordings
                           recordingSession={recordingSession || undefined}

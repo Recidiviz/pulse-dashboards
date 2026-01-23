@@ -18,29 +18,29 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 
 interface IconInputProps extends InputHTMLAttributes<HTMLInputElement> {
-	startIcon?: ReactNode;
-	endIcon?: ReactNode;
-	className?: string;
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
+  className?: string;
 }
 
 export function IconInput({
-	startIcon,
-	endIcon,
-	className = "",
-	...props
+  startIcon,
+  endIcon,
+  className = "",
+  ...props
 }: IconInputProps) {
-	const baseClasses =
-		"flex items-center border border-slate-300 rounded-md px-3 bg-white text-sm w-full h-10";
-	const combinedClasses = `${baseClasses} ${className}`.trim();
+  const baseClasses =
+    "flex items-center border border-slate-300 rounded-md px-3 bg-white text-sm w-full h-10";
+  const combinedClasses = `${baseClasses} ${className}`.trim();
 
-	return (
-		<div className={combinedClasses}>
-			{startIcon && <div className="mr-2 text-slate-400">{startIcon}</div>}
-			<input
-				{...props}
-				className="flex-1 outline-none bg-transparent placeholder:text-slate-400 h-full"
-			/>
-			{endIcon && <div className="ml-2 text-slate-400">{endIcon}</div>}
-		</div>
-	);
+  return (
+    <div className={combinedClasses}>
+      {startIcon && <div className="mr-2 text-slate-400">{startIcon}</div>}
+      <input
+        {...props}
+        className="min-w-0 flex-1 outline-none bg-transparent placeholder:text-slate-400 h-full"
+      />
+      {endIcon && <div className="ml-2 text-slate-400">{endIcon}</div>}
+    </div>
+  );
 }

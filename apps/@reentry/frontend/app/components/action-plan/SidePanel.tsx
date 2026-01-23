@@ -68,12 +68,13 @@ const SidePanel = ({
   });
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsExpanded(window.innerWidth >= 768);
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsExpanded(e.matches);
     };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    setIsExpanded(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   return (

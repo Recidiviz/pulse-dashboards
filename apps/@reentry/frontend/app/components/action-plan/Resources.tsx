@@ -53,7 +53,7 @@ const Resources = ({
   clientRecord,
 }: ResourcesProps) => {
   return (
-    <div className="self-stretch h-auto max-h-[320px] px-2 md:px-8 py-6 border-b border-[#2b5469]/20 flex-col justify-start items-start gap-3 flex ">
+    <div className="px-6 self-stretch h-auto max-h-[320px] px-2 md:px-8 py-6 border-b border-[#2b5469]/20 flex-col justify-start items-start gap-3 flex ">
       <div className="justify-start items-center gap-2 inline-flex w-full">
         <div className="text-[#002321] text-sm font-medium leading-[16.80px]">
           Resources
