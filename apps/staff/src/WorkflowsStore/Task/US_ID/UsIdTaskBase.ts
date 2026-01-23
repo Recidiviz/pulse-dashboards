@@ -40,8 +40,17 @@ abstract class UsIdTaskBase<T extends UsIdAgnosticTaskType> extends Task<T> {
   get frequency() {
     const { contactCadence } = this.details;
     if (!contactCadence) return "";
-    return toTitleCase(contactCadence.toLowerCase())
-      .replace("Lsir", "LSIR");
+    return toTitleCase(contactCadence.toLowerCase()).replace("Lsir", "LSIR");
+  }
+
+  /* ex: Risk assessment due 3 days ago */
+  get dueDateDisplayLong() {
+    return `${this.displayName} due ${this.dueDateFromToday}`;
+  }
+
+  /* ex: Due 3 days ago */
+  get dueDateDisplayShort() {
+    return `Due ${this.dueDateFromToday}`;
   }
 
   get additionalDetails(): string {
