@@ -41,7 +41,7 @@ export const AIDisclosure: React.FC<AIDisclosureProps> = ({ type }) => {
   switch (type) {
     case AIDisclosureType.Sidebar:
       return (
-        <div className="flex flex-col items-start gap-3 p-4">
+        <div className="flex flex-row items-start gap-3 p-4">
           <AIDisclosureIcon className="w-5 h-5 flex-shrink-0" />
           <p className="text-base text-[#424242] leading-relaxed">
             This document was generated using artificial intelligence. Please

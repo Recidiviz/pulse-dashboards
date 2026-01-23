@@ -102,16 +102,6 @@ const UserDropdown = ({
                 className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100"
               >
                 <span>Go to Supervision Assistant</span>
-                <span
-                  className="text-[10px] font-bold px-1.5 leading-4 rounded"
-                  style={{
-                    backgroundColor: "rgba(207, 245, 246, 1)",
-                    border: "1px solid rgba(162, 229, 239, 1)",
-                    color: "rgba(0, 85, 188, 1)",
-                  }}
-                >
-                  BETA
-                </span>
                 <svg
                   className="w-4 h-4 ml-0.5"
                   xmlns="http://www.w3.org/2000/svg"

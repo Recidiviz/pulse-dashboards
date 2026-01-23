@@ -125,7 +125,7 @@ const SidePanel = ({
         </div>
 
         {isExpanded && (
-          <div className="w-full mt-auto">
+          <div className="w-full mt-auto mb-[20px]">
             <AIDisclosure type={AIDisclosureType.Sidebar} />
           </div>
         )}

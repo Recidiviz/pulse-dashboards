@@ -24,7 +24,7 @@ import { useReactToPrint } from "react-to-print";
 
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
-import {PrimaryButton} from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
@@ -221,7 +221,7 @@ const IntakeSummaryPage = () => {
               isExpanded={undefined}
               setIsExpanded={() => console.log("expanded")}
             />
-            <div className="w-full mt-auto">
+            <div className="w-full mt-auto mb-[20px]">
               <AIDisclosure type={AIDisclosureType.Sidebar} />
             </div>
           </div>
