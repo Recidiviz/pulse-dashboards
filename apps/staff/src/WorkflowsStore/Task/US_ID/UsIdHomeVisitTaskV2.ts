@@ -15,11 +15,40 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import simplur from "simplur";
+
+import { fieldToDate } from "~datatypes";
+
+import { formatDate } from "../../../utils";
 import UsIdTaskBase from "./UsIdTaskBase";
 
 class UsIdHomeVisitTaskV2 extends UsIdTaskBase<"usIdHomeVisit"> {
   displayName = "Home Visit";
   taskAction = "home visit";
+
+  get addressChangeDueDate() {
+    const { addressChangeContactDueDate } = this.details;
+    if (!addressChangeContactDueDate) return;
+    return formatDate(fieldToDate(addressChangeContactDueDate));
+  }
+
+  get addressChangeDate() {
+    const { addressChangeDate } = this.details;
+    if (!addressChangeDate) return;
+    return formatDate(fieldToDate(addressChangeDate));
+  }
+
+  get isAddressChanged() {
+    if (!this.addressChangeDueDate) return false;
+    return this.addressChangeDueDate === formatDate(this.dueDate);
+  }
+
+  get lastActionTaskText(): string | undefined {
+    if (!this.lastContacted) return;
+    if (this.isAddressChanged)
+      return simplur`Address changed on ${this.addressChangeDate}.`;
+    return super.lastActionTaskText;
+  }
 }
 
 export default UsIdHomeVisitTaskV2;

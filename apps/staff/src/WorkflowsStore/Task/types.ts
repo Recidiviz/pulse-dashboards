@@ -140,6 +140,11 @@ type UsIdStableAssessmentDetails = UsIdTaskBaseDetails & {
   lastAssessmentDate: string | null;
 };
 
+type UsIdHomeVisitOrAddressChangeDetails = UsIdTaskBaseDetails & {
+  addressChangeContactDueDate: string | null;
+  addressChangeDate: string | null;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type CheckSupervisionTaskDetailsMappingType = Expect<
   Extends<
@@ -208,7 +213,7 @@ export type SupervisionDetails =
 export type SupervisionDetailsForTask = {
   // TODO(#10615): Remove 'homeVisit' v1 (keep v2, usIdHomeVisit) task type when UsIdTasksV2 is fully rolled out.
   homeVisit: UsIdHomeVisitDetails;
-  usIdHomeVisit: UsIdTaskBaseDetails;
+  usIdHomeVisit: UsIdHomeVisitOrAddressChangeDetails;
   // TODO(#10615): Remove 'assessment' v1 (keep v2, usIdRiskAssessment) task type when UsIdTasksV2 is fully rolled out.
   assessment: UsIdAssessmentDetails;
   // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
