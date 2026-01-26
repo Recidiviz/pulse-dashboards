@@ -27,6 +27,7 @@ import {
 
 import { Page } from "../../core/InsightsSupervisorPage/InsightsBreadcrumbs";
 import { insightsUrl } from "../../core/views";
+import { humanReadableTitleCase } from "../../utils";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import {
   ConfigLabels,
@@ -183,7 +184,9 @@ export function getBreadcrumbsPages(
 
   if (userCanAccessAllSupervisors) {
     previousPages.push({
-      title: "All Supervisors",
+      title: humanReadableTitleCase(
+        `All ${labels?.supervisionSupervisorLabel || "Supervisor"}s`,
+      ),
       url: insightsUrl("supervisionSupervisorsList"),
     });
   }

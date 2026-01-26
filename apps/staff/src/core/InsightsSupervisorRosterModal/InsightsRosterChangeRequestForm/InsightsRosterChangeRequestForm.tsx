@@ -41,6 +41,7 @@ export const InsightsRosterChangeRequestForm = ({
   presenter,
 }: InsightsRosterChangeRequestFormProps) => {
   const manager = useRosterChangeRequestForm(presenter);
+  const supervisorLabel = presenter.labels.supervisionSupervisorLabel;
 
   const [
     form,
@@ -109,7 +110,7 @@ export const InsightsRosterChangeRequestForm = ({
             <SupervisionOfficerRosterView manager={manager} />
           )}
           {presenter.view === "FORM" && (
-            <RosterChangeRequestSubmissionView manager={manager} />
+            <RosterChangeRequestSubmissionView manager={manager} supervisorLabel={supervisorLabel} />
           )}
         </RosterRequestViewContainer>
       )}

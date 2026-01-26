@@ -81,6 +81,7 @@ const ManagedComponent: React.FC<{
                     <InsightsSupervisorOpportunityReviewCard
                       opportunityInfo={oppInfo}
                       supervisorPseudoId={supervisorPseudoId}
+                      supervisorLabel={labels.supervisionSupervisorLabel}
                       key={oppInfo.label}
                     />
                   ))}

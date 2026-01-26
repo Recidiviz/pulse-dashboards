@@ -100,6 +100,7 @@ const StatusCount = styled(Sans24)`
 type InsightsSupervisorOpportunityReviewCardProps = {
   opportunityInfo: OpportunityCardInfo;
   supervisorPseudoId: string;
+  supervisorLabel: string;
 };
 
 /**
@@ -113,12 +114,13 @@ export const InsightsSupervisorOpportunityReviewCard: React.FC<
 > = ({
   opportunityInfo: { label, supervisorReviewCounts, urlSection },
   supervisorPseudoId,
+  supervisorLabel,
 }) => {
   const { isMobile } = useIsMobile(true);
 
   if (!supervisorReviewCounts) return null;
 
-  const reviewLabel = `${label} requires supervisor review`;
+  const reviewLabel = `${label} requires ${supervisorLabel} review`;
 
   return (
     <SupervisorReviewCardLink

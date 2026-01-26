@@ -28,6 +28,7 @@ import { InsightsRosterChangeRequestFormManager } from "../types";
 
 type RosterChangeRequestSubmissionViewProps = {
   manager: InsightsRosterChangeRequestFormManager;
+  supervisorLabel: string;
 };
 
 /**
@@ -39,6 +40,7 @@ type RosterChangeRequestSubmissionViewProps = {
  */
 export const RosterChangeRequestSubmissionView = ({
   manager,
+  supervisorLabel,
 }: RosterChangeRequestSubmissionViewProps) => {
   const [form] = manager;
   return (
@@ -53,7 +55,7 @@ export const RosterChangeRequestSubmissionView = ({
               onChange={(e) => field.handleChange(e.target.value)}
               onBlur={field.handleBlur}
               placeholder={
-                'Please offer an explanation for requesting this change, such as "has reported to this supervisor since movement to new unit last week."'
+                `Please offer an explanation for requesting this change, such as "has reported to this ${supervisorLabel} since movement to new unit last week."`
               }
               value={field.state.value}
             />
