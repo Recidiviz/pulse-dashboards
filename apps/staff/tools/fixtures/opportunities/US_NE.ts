@@ -131,17 +131,9 @@ export const mockApiOpportunityConfigurationResponse = {
       denialNoun: null,
       denialReasons: [
         {
-          key: "PROGRAMMING",
-          text: "Has not accepted or participated in clinical programming recommendation ",
+          key: "Good Time Restoration Appeal Pending",
+          text: "A good time restoration appeal is pending for this resident",
         },
-        { key: "MR", text: "Has pending Misconduct Reports" },
-        {
-          key: "RESTORATION_DENIED",
-          text: "Has recently (within 90 days) had a time restoration request denied",
-        },
-        { key: "LTRH", text: "Not assigned to LTRH in past 90 days" },
-        { key: "CIRCUMSTANCES", text: "Has other exigent circumstances" },
-        { key: "COURT_ORDER", text: "Is excluded via court order" },
       ],
       denialText: null,
       deniedTabTitle: null,
@@ -155,17 +147,20 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Currently has {{goodTimeLostDaysRestorable}} days lost restorable good time",
         },
         {
-          key: "housingUnitTypeIsSolitaryConfinement",
-          text: "Not in Restrictive Housing",
+          key: "usNeNotInLtrhFor90Days",
+          text: "Not in Longer Term Restrictive Housing (LTRH) in the past 90 days",
         },
-        { key: "usNeNotInCustodyLevel1a", text: "Not in 1A Custody Level" },
+        {
+          key: "underStatePrisonOrSupervisionCustodialAuthorityWithoutAbsconsionAtLeastOneYear",
+          text: "Has consistently been in NCDS jurisdiction for the past 12 months",
+        },
         {
           key: "noHighestSeverityIncarcerationSanctionsWithin1Year",
           text: "Have not had a Class 1 MR in the past year",
         },
         {
-          key: "incarceratedInStatePrisonAtLeast1Year",
-          text: "Has consistently been in NCDS jurisdiction for the past 12 months",
+          key: "noRevocationIncarcerationStartsInLast90Days",
+          text: "No parole or probation violations in the last 90 days",
         },
         {
           key: "usNeNoIdcMrsInPast6Months",
@@ -176,12 +171,22 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "No more than two UDC misconduct reports for the past 6 months",
         },
         {
+          key: "usNeNoOngoingClinicalTreatmentProgramRefusal",
+          text: "No ongoing refusals of clinical treatment recommendations",
+        },
+        {
           key: "usNeOver4MonthsFromTrd",
           text: "Over 4 months away from their TRD",
         },
         {
-          key: "usNeAtLeast2WeeksSinceLastGoodTimeRestoration",
+          key: "usNeNoGtRestorationDenialsInLast90Days",
+          text: "At least 90 days since last good time restoration request denial",
+        },
+        {
+          key: "usNeAtLeast2WeeksOrStartOfNextMonthBetweenGoodTimeRestorations",
           text: "At least 2 weeks since they last received good time back",
+          tooltip:
+            "If the good time restoration request was initiated and granted in the same month, must wait until the start of the following month ",
         },
       ],
       emptyTabCopy: [],
@@ -193,26 +198,18 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "noHighestSeverityIncarcerationSanctionsWithin1Year",
-          text: "Needs 1 Year without a Class 1 MR (latest was  {{daysToYearsMonthsPast (daysPast latestEventDate)}} ago)",
+          text: "Needs 1 Year without a Class 1 MR ({{monthsOrDaysRemainingFromToday latestEligibleDate}} remaining)",
         },
         {
           key: "usNeNoIdcMrsInPast6Months",
-          text: "Needs 6 months without an IDC misconduct report (latest was {{daysToYearsMonthsPast (daysPast latestIncidentDate)}} ago)",
+          text: "Needs 6 months without an IDC misconduct report ({{monthsOrDaysRemainingFromToday latestEligibleDate}} remaining)",
         },
       ],
       initialHeader: null,
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "TBD",
-      nonOmsCriteria: [
-        {
-          text: "Accepted and participated in clinical treatment and recommendations ",
-        },
-        {
-          text: "Has not had a good time restoration requested denied in the past 90 days",
-        },
-        { text: "Not assigned to LTRH in past 90 days" },
-      ],
+      nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Validated by data from NICaMS",

@@ -270,7 +270,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents who are due for annual custody reclassification and directs staff to complete & submit new classification paperwork.",
-      submittedTabTitle: null,
+      submittedTabTitle: "Pending",
       supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
@@ -636,9 +636,9 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "[2026 Pilot] This alert helps staff identify residents who may be at a higher custody level than recommended and directs staff to complete & submit new classification paperwork based on the resident's latest CAF score.",
-      submittedTabTitle: null,
+      submittedTabTitle: "Pending",
       supportsIneligible: true,
-      supportsSubmitted: false,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: null,
       tabPrefaceCopy: [],
@@ -852,7 +852,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "This tool helps staff identify residents who have not had an Diagnostic Classification since their latest start in TDOC custody.",
-      submittedTabTitle: null,
+      submittedTabTitle: "Pending",
       supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
@@ -926,7 +926,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "[2026 Pilot] This alert helps staff identify residents for whom the new CAF suggests a higher custody level than what the resident currently has. Residents who need upgrades due to a new disciplinary infraction, for example, will not be surfaced under this option.\n\nUse of this alert will phase out over time, as all residents are classified under the new CAF",
-      submittedTabTitle: null,
+      submittedTabTitle: "Pending",
       supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "INCARCERATION",

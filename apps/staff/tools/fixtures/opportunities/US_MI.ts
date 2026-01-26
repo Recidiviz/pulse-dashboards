@@ -268,10 +268,6 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "ACCOMMODATION",
           text: "There is a lack of accommodations that the resident requires for religious, medical or other reasons at other facilities or housing units with a lower security level.",
         },
-        {
-          key: "BED SPACE",
-          text: "There is a lack of bed space at the appropriate security level.",
-        },
         { key: "OTHER", text: "Other: Please specify a reason" },
       ],
       denialText: null,
@@ -321,7 +317,12 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
-      markSubmittedOptionsByTab: [],
+      markSubmittedOptionsByTab: [
+        {
+          tab: "Needs Re-Screen",
+          texts: ["RE-SCREEN_PENDING_BED_SPACE", "RE-SCREEN_IN_PROGRESS"],
+        },
+      ],
       methodologyUrl: "tbd",
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
@@ -329,16 +330,41 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from COMS & OMNI",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["Incarceration", "ResidentHousing"],
+      sidebarComponents: [
+        "Incarceration",
+        "ResidentHousing",
+        "UsMiLastAssessment",
+        "CaseNotes",
+      ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
       strictlyIneligibleCriteriaCopy: [],
-      subcategoryHeadings: [],
-      subcategoryOrderings: [],
+      subcategoryHeadings: [
+        { subcategory: "ELIGIBLE_FOR_REVIEW", text: "Eligible for Review" },
+        {
+          subcategory: "ALMOST_ELIGIBLE_FOR_REVIEW",
+          text: "Almost Eligible for Review",
+        },
+        {
+          subcategory: "RE-SCREEN_PENDING_BED_SPACE",
+          text: "Re-Screen Pending Bed Space",
+        },
+        { subcategory: "RE-SCREEN_IN_PROGRESS", text: "Re-Screen in Progress" },
+      ],
+      subcategoryOrderings: [
+        {
+          tab: "Needs Review",
+          texts: ["ELIGIBLE_FOR_REVIEW", "ALMOST_ELIGIBLE_FOR_REVIEW"],
+        },
+        {
+          tab: "Needs Re-Screen",
+          texts: ["RE-SCREEN_PENDING_BED_SPACE", "RE-SCREEN_IN_PROGRESS"],
+        },
+      ],
       subheading:
         "This alert helps staff identify residents who may be newly eligible for a custody level reduction because they have not had a Class I or II misconduct in over 6 months. ",
-      submittedTabTitle: "Re-screen Pending",
+      submittedTabTitle: "Needs Re-Screen",
       supportsIneligible: false,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
@@ -346,17 +372,38 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "ELIGIBILITY STATUS",
           tabs: [
-            "Eligible for Re-screen Now",
-            "Almost Eligible for Re-screen",
-            "Re-screen Pending",
-            "Movement Pending",
+            "Needs Review",
+            "Needs Re-Screen",
+            "Transfer in Progress",
             "Marked Ineligible",
           ],
         },
       ],
       tabPrefaceCopy: [
-        { tab: "Marked Ineligible", text: "Testing 123" },
-        { tab: "Eligible for Review", text: "Testing 123" },
+        {
+          tab: "Needs Review",
+          text: "Residents qualify as eligible for a re-screen and reduction to a lower custody level after six months of misconduct-free behavior. Residents are considered almost eligible if they remain misconduct-free and are within one month of reaching this six-month milestone.",
+        },
+        {
+          tab: "Marked Ineligible",
+          text: "These residents were not deemed eligible for a custody reduction at this time.",
+        },
+        {
+          tab: "Eligible for Review",
+          text: "Residents who may be eligible for a re-screen and reduction to a lower custody level because they have not had any misconducts in 6 months or more. They can be reviewed to confirm eligibility.",
+        },
+        {
+          tab: "Almost Eligible for Review",
+          text: "Residents who may be almost eligible for a re-screen and reduction to a lower custody level if they remain misconduct-free for up to one more month",
+        },
+        {
+          tab: "Needs Re-Screen",
+          text: "The Needs Re-Screen section shows residents who have been identified as immediately eligible for a re-screen so they can be transferred to a lower custody level. This can be used to track which re-screens can be completed immediately. The Re-screen Pending Bed Space section shows residents who have been identified as eligible for a re-screen to be reduced, but there is no bed space currently available at the lower level. This can be used to track who could be downgraded when bed space becomes available. ",
+        },
+        {
+          tab: "Transfer in Progress",
+          text: "Residents who have a lower Actual Security Level on their latest security screen than their current custody level, and who are actively transferring to a lower custody level.",
+        },
       ],
       tooltipEligibilityText: null,
       urlSection: "custodyLevelDowngrade",
