@@ -19,6 +19,7 @@
 import { usePathname } from "next/navigation";
 
 import AccessDeniedState from "~@reentry/frontend/components/auth/AccessDeniedState";
+import AuthErrorState from "~@reentry/frontend/components/auth/AuthErrorState";
 import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
 import Navbar from "~@reentry/frontend/components/Navbar/Navbar";
 import ReadOnlyIndicatorBanner from "~@reentry/frontend/components/ReadOnlyIndicatorBanner";
@@ -42,6 +43,18 @@ export default function ProtectedLayout({ children }) {
 
   if (auth.state.isLoading) {
     return <LoadingState />;
+  }
+
+  if (auth.state.error) {
+    return <AuthErrorState />;
+  }
+
+  if (!auth.authStore) {
+    return <LoadingState />;
+  }
+
+  if (!auth.state.isAuthorized) {
+    return <AccessDeniedState />;
   }
 
   if (!hasCPAPermission(auth.userAppMetadata) && !isInternalUser(userEmail)) {

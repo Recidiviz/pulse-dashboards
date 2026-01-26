@@ -77,36 +77,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       userAppMetadata?.routes[route],
   );
 
-  // Helper function to check authentication status
-  const checkAuthentication = async (store: AuthStore) => {
-    try {
-      console.log("Checking authentication status...");
-
-      const isAuthenticated = await store.checkForAuthentication();
-
-      setState({
-        isAuthorized: isAuthenticated,
-        isLoading: false,
-        user: store.user,
-        emailVerified: store.emailVerified,
-        error: null,
-      });
-
-      return isAuthenticated;
-    } catch (error) {
-      console.error("Authentication check failed:", error);
-      setState({
-        isAuthorized: false,
-        isLoading: false,
-        error:
-          error instanceof Error
-            ? error
-            : new Error("Unknown error during authentication check"),
-      });
-      return false;
-    }
-  };
-
   // Initialize the auth store
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -125,10 +95,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // Check authentication status on init (useful for page refresh)
         // Skip redirect for public routes that don't require Auth0
         if (!isPublicRoute(window.location.pathname)) {
-          const isAuthenticated = await checkAuthentication(store);
+          const isAuthenticated = await store.checkForAuthentication();
+
           if (!isAuthenticated) {
-            // Redirect to Auth0 to verify whether there's an existing session
             await store.loginWithRedirect();
+          } else {
+            setState({
+              isAuthorized: true,
+              isLoading: false,
+              user: store.user,
+              emailVerified: store.emailVerified,
+              error: null,
+            });
           }
         } else {
           // For public routes, mark loading as complete without requiring auth
