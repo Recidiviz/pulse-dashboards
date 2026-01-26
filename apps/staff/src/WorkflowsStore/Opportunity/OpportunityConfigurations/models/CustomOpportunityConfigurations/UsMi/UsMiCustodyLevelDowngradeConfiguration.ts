@@ -25,8 +25,10 @@ export class UsMiCustodyLevelDowngradeConfiguration extends ApiOpportunityConfig
         required: true,
         heading: "Programming details:",
         placeholder:
-          "Please specify what programming is pending and when the programming is expected to be completed",
+          "Please specify what programming is pending and when the programming is expected to be started and completed",
         inputType: "text",
+        minCharacters: 3,
+        maxCharacters: 1000,
       },
       ACCOMMODATION: {
         required: true,
@@ -34,6 +36,8 @@ export class UsMiCustodyLevelDowngradeConfiguration extends ApiOpportunityConfig
         placeholder:
           "Please specify the required accommodations that are unavailable at other facilities or housing units",
         inputType: "text",
+        minCharacters: 3,
+        maxCharacters: 1000,
       },
     };
   }
