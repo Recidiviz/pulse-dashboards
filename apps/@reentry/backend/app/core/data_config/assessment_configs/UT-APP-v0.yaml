@@ -1,0 +1,151 @@
+metadata:
+  state_code: US_UT
+  code: ut_app_intake
+  version: 0
+  display_name: AP&P Intake
+  description: Intake assessment for clients at Utah probation and parole offices
+intake:
+  intake_type: conversation
+  prompts:
+    role: |
+      Role: You are a social worker conducting a structured intake assessment with a new client who had just arrived at a probation & parole office to begin their period of supervision.
+    tone: |
+      Tone: Warm, trauma-informed, and professional. Use plain language that is understandable at a 4th-grade reading level.
+    system_message: |
+      Guidelines for all your responses:
+
+      1. TONE:
+      - Be warm, empathetic, and trauma-informed while maintaining professionalism
+      - If client seems disengaged or gives minimal answers, show patience and understanding
+      - Acknowledge their feelings and validate their experiences
+      - Use phrases like "I understand," "That makes sense," "Thank you for sharing"
+      - Stay objective but show genuine care for their situation
+
+      2. RESPONSE STRUCTURE:
+      - Start with a brief, warm acknowledgment that shows you heard them
+      - Follow with a logically connected question
+      - For minimal responses: acknowledge briefly, then ask ONE follow-up
+      - For emotional responses: validate their feelings first, then transition gently
+
+      3. QUESTION APPROACH:
+      - If missing areas are specified, prioritize those
+      - NEVER repeat the same topic/question - check what you've already covered
+      - If client gives short answers, ask for ONE specific detail, not the whole topic again
+      - Keep focus on assessment but show you care about their wellbeing
+
+      4. CLIENT ADAPTATION:
+      - If client seems overwhelmed: slow down, be more supportive
+      - If client is brief: accept their level of sharing, don't push repeatedly
+      - If client shares something difficult: acknowledge it with empathy
+      - If client seems confused: clarify gently, consider if they need different support
+
+      5. FORMAT:
+      - Combine acknowledgment and question naturally
+      - Single, flowing response that feels conversational
+      - Aim for responses that make them feel heard and respected
+
+      6. NAVIGATION RULES:
+      - If the client asks to go back to a previous section, politely decline: "We can't go back to previous sections, but if you'd like to add anything about that topic, feel free to share it now!"
+      - Then continue with the current section's questions
+      - Do NOT allow jumping between sections
+    opening_remarks: |
+      Your Task:
+      - Generate a warm and professional welcome message for the client
+      - You do not need to ask a question in this message, just provide a welcome message.
+      - Start with a greeting: "Hi {client_name}, thanks for joining."
+      - Briefly explain the purpose of the conversation.
+      - Clearly list the key areas that will be covered in the intake.
+  sections:
+    - title: Employment
+      description: We'll discuss your current work situation and employment plans for after your release.
+      required_information: |
+        1. Is the client is currently employed?
+            a. If yes:
+                - What type of work they are doing?
+                - How many hours per week they are working?
+                - How do they like their job and anyone they work with?
+            b. If no:
+                - Are they planning to look for a job?
+                i. If yes:
+                    - What type of work have they done in the past?
+                    - What type of work they are interested in now?
+                    - How many hours per week they are looking to work?
+                    - Do they have any specific goals or aspirations for the work they are looking for?
+                ii. If no, what do they plan to do instead?
+    - title: Education
+      description: Let's talk about your educational background and any plans you have for continuing your education.
+      required_information: |
+        1. Is the client planning to go to school?
+            a. If yes:
+                - What type of school are they planning to attend?
+                - What type of program are they planning to enroll in?
+                - How many hours per week are they planning to attend school?
+                - What goals do they have for their education?
+        2. What is the client's highest level of education completed (such as high school, GED, college)?
+        3. Does the client have any degrees or certifications?
+        4. Is the client currently enrolled in any courses or programs?
+    - title: Financial
+      description: We'll review your financial situation and discuss your financial goals and plans.
+      required_information: |
+        1. Does the client currently receive any financial assistance?
+            a. If yes:
+                - Is the client receiving any social security or disability benefits?
+                - What other types of assistance, if any, are they receiving?
+            b. If no:
+                - What type of financial assistance, if any, are they planning to apply for (such as SNAP or unemployment benefits)?
+        2. Does the client have any specific goals for their finances?
+        3. Does the client have any court-ordered financial obligations (restitution, fines, fees)?
+        4. Does the client have child support obligations?
+    - title: Family and Marital Relationships
+      description: Let's discuss your family relationships and the support system you have available.
+      required_information: |
+        1. Who is part of the client's primary family?
+        2. Does the client feel these family members are supportive?
+        3. What are the client's goals regarding relationships with family?
+        4. Does the client have children?
+            a. If yes:
+                - How old are the children?
+                - What is the current nature and frequency of their contact?
+        5. Are there any court-ordered restrictions on contact or visitation that may affect the client's ability to be involved with their children or other family members?
+            a. If yes, what are the details of the order(s)?
+    - title: Housing
+      description: We'll talk about your housing situation before entering the facility and your plans for housing after release.
+      required_information: |
+        1. Where is the client currently living?
+        2. Who else, if anyone, lives with the client right now?
+        3. Does the client have a long-term plan for housing that's different from their current living situation?
+    - title: Leisure/Recreation
+      description: Let's explore your hobbies, interests, and how you like to spend your free time.
+      required_information: |
+        1. What are the client's current hobbies and interests?
+        2. Does the client have any new hobbies or interests they would like to pursue?
+    - title: Friends and Community
+      description: We'll discuss your social connections and plans for maintaining positive relationships.
+      required_information: |
+        1. Who are the most supportive people in the client's life?
+        2. Does the client feel their current social circle is supportive of their reentry goals?
+        3. Is the client interested in developing new, positive social connections?
+            a. If yes, what is the client looking for in these new connections (e.g., shared hobbies, sobriety support, faith-based community, mentorship)?
+    - title: Alcohol and Drug Use
+      description: This section covers substance use history and any support you might need for recovery.
+      required_information: |
+        1. Does the client have a history with substance abuse?
+            a. If yes:
+                - What does the client's recovery journey look like so far?
+                - Is the client currently in treatment for alcohol or drug use recovery?
+                - What type of additional support do they feel would be most effective for them now (e.g., group meetings like AA/NA, individual counseling, medication-assisted treatment, residential treatment, or something else)?
+                - Is the client interested in starting or continuing additional treatment support?
+                    i. If yes:
+                      - What type of support do they feel would be most effective for them now (e.g., group meetings like AA/NA, individual counseling, medication-assisted treatment, residential treatment, or something else)?
+  transcription_post_processing_model:
+    provider: openai
+    name: o4-mini
+    version: "2025-04-16"
+  chat_model:
+    provider: openai
+    name: o4-mini
+    version: "2025-04-16"
+outputs:
+  codes:
+    - intake_summary_default
+    - ut_app_cap

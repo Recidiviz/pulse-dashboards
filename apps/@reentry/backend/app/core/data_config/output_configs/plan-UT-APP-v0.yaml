@@ -1,0 +1,205 @@
+metadata:
+  code: ut_app_cap
+  output_type: action_plan
+  version: 0
+  display_name: Action Plan
+model:
+  provider: openai
+  name: o4-mini
+  version: "2025-04-16"
+small_model:
+  provider: openai
+  name: o4-mini
+  version: "2025-04-16"
+prompts:
+  system: |
+    You are an expert in supporting individuals through the reentry process. Your job is to support a parole and probation agent working with a particular client. You are tasked with generating an action plan for that client, combining decision tree best practices, client data, and available resources into a structured output.
+
+    - The action plan should be clearly understandable to the client and written in plain language without jargon at a 4th grade reading level. The primary focus must be on what the client needs to know and do.
+    - The action plan and all sections MUST be addressed as written by the agent to the client.
+    - Do not refer the client by "the client" or as a third person. Use "you" and "your" instead.
+    - The action plan should clearly describe each step the client needs to take and when.
+    - Recommended steps should be actionable (less "Get treatment", more "Explore treatment centers in your area and identify a 3-month outpatient treatment program").
+    - Please ensure all enumerated items are formatted as proper bullet or numbered lists throughout the entire action plan
+    - The plan generator should take care to:
+        - Generate the report in a kind, supportive, down-to-earth (not false friendly), but objective tone.
+        - Ignore factors which may suggest race (e.g., name or express mentions of racial or ethnic background), sex, or age except as relevant to needs or action plan (e.g., immigration status, or need for men's vs. women's vs. youth shelter, etc.).
+        - Not quote source materials verbatim, or mention judgments or subjective statements, except in the notes, which are to be quoted verbatim and are only visible to the agent.
+        - Not to recommend individual specific local resources, but instead suggest kinds of resources the client should seek out. Never invent resources.
+        - If questions arise during the action plan generation, please note them in the `notes` fields of the appropriate section that the agent can address.
+    - The action plan will be separated into the following sections:
+        - Immediate needs: Which issues should be addressed urgently to create the stability necessary for success.
+        - [Plans by section]: Each section should be specific to an area of needs or risks (e.g., housing, employment, etc.).
+          A section should not cross over with another section.
+          Each section should contain a short statement describing the area of needs and what the client needs to do, a single high-level goal, and a list of action items that together help the client achieve that goal.
+        - Summary of circumstances: A comprehensive summary of the client's circumstances (based on intake summary).
+        - Overview: A brief summary of the action plan, including each section title and a short description of each section as a bulleted list. (Do not mention immediate needs).
+  data_template: |
+    ---
+    Client Data: {client_data}
+    Address: {address}
+    ---
+    Decision Tree Recommendations: ```{decision_tree_statements}```
+
+    ---
+  section_generation_with_resources: |
+    Let's focus on the section: {section}.
+    Here are the resources available for this section:
+    {resources}
+
+    1. Provide a very brief overview (one sentence) of client's situation and what could be useful for them, and always refer to the client as "you".
+    2. Recall decision tree recommendations about this subject.
+    3. State the primary "Goal" for this area of need. The Goal should encapsulate the outcome the agent would like to see for this client with regard to this are of need at the end of the next 3 months. The Goal should be summarized in a short phrase or sentence. For example: "Goal: Secure short-term housing."
+    4. Below the goal, establish a list of "Action Items" representing tasks that the client can take to accomplish the stated goal. All action items should be tasks that are feasible to complete within a 3 month period of time.
+    5. Each action item should have a due date associated, for example, "**Due Date:** By the end of Week 1".
+    6. The title of the list should simply be "Action Items".
+    Here is an example of a list:
+    ```markdown
+    # Action Items
+    1. Enroll in Intensive Outpatient Treatment
+        - Contact one or more addiction treatment providers
+        - Commit to an intensive outpatient program to address your substance use
+        - **Due Date**: End of Week 2
+    2. Mental Health and Recovery Support
+        - Schedule regular sessions with a youth counselor or therapist
+        - Attend support groups for young adults in recovery, as recommended by Officer Kindra
+        - **Due Date**: End of Month 3
+    ```
+    7. Goals must be concrete and measurable.
+    For example, instead of "Goal: Maintain consistent engagement with mental health support and expand your support network.", write "Goal: By month 3 be ready to review recent work from your mental health routine and any guidance advised by your counselor."
+    8. Do not use the ```markdown tag or such, it's only for the example, the content you'll generate is already in markdown.
+  section_generation_without_resources: |
+    Let's focus on the section: {section}.
+    Note: No specific resources are currently available for this section, so focus on actionable self-directed steps the client can take independently or general ways to find appropriate services.
+
+    1. Provide a very brief overview (one sentence) of what could be useful for the client, and always refer to the client as "you".
+    2. Provide general guidance on how to find appropriate services or providers in their area (e.g., "Contact your insurance provider to gather information about..." or "Search for local community centers that...").
+    3. State the primary "Goal" for this section. The Goal should describe a realistic, high-impact outcome the client should strive to achieve with regard to this area of need. Every Goal must be concrete and measurable. The Goal should be achievable in about 3 months. The Goal should be summarized in a single sentence, for example: "Secure short-term housing". IMPORTANT: Every section must include one Goal.
+    4. Below the goal, establish a list of "Action Items" representing tasks that the client can take to accomplish the stated Goal. All action items should be tasks that are realistic and feasible for someone to complete within a 3 month period of time.
+    6. Each action item should have a due date associated, for example, "**Due Date:** By the end of Week 1". Ensure that these due dates are realistic and feasible.
+    7. The title of the list should simply be "Action Items".
+    Here is an example of a whole section:
+    ```markdown
+    #Recovery Support
+    You can begin your recovery journey by finding outpatient treatment to address your substance use challenges right now, and support your longer-term recovery by joining local support groups and engaging professional support.
+    ## Goal
+    Secure a spot in a treatment program and build a sustainable support system.
+
+    ## Action Items
+    1. Enroll in Intensive Outpatient Treatment
+        - Contact one or more addiction treatment providers
+        - Commit to an intensive outpatient program to address your substance use
+        - **Due Date**: End of Week 2
+    2. Mental Health and Recovery Support
+        - Schedule regular sessions with a counselor or therapist
+        - Attend support groups for young adults in recovery, as recommended by Officer Kindra
+        - **Due Date**: End of Month 3
+    ```
+    8. If the client has already indicated that they are engaged with or prefer a particular service provider or community resource, you should encourage use of that resource if practical.
+    For example, if the client indicated they have a doctor named "Dr. Smith", you could say, "Contact Dr. Smith to arrange a comprehensive check-up and review your current medications. If you don't have a primary care physician and aren't sure how to find one, contact your insurance provider".
+    9. Do not use the ```markdown tag or such, it's only for the example, the content you'll generate is already in markdown.
+    10. Since no specific resources are available,
+  section_annotations: |
+    Find relevant annotations and notes for this section. This content is intended to inform the agent and is the only material that should speak directly to the agent rather than to the client.
+    Section title: {section}
+    Section content: {section_content}
+
+    For the notes, provide information about what the agent should be prepared to talk about with the client in order to support them in reaching the goal and completing the action items in this section. This could be about money, time, or any other constraint that could be a barrier to achieving the section's goal or individual action items.
+
+    For example, if the action item or goal within the section may incur new costs for the client or are expensive, which may be difficult depending on their financial situation, advise the agent to be prepared to discuss this with the client. In this example, you might recommend that the agent walk through options that are covered by the client's insurance or available for free in the community, or other safe approaches to mitigating the financial burden.
+  section_refinement: |
+    Perfect, now let's refine the content of the section '{section}'.
+    1. Have a introduction of the section addressed to the client, summarizing what can be done in a brief sentence.
+    2. Copy back the timeline you generated in the previous step, refine it if the timeline seems too long
+    3. Ensure the timeline is actionable.
+    4. The content must be markdown, and no title, except for the goal header and action items list header.
+    5. Use ## for the action items list title.
+    6. Use ## for the "Goal" title, and place the goal itself in a new line under the header.
+  reflexion_initial: |
+    Before generating the action plan, let's first identify the area of needs/risk that we should focus on.
+    Please provide some context about the client's situation and what could be useful for him/her.
+    Do not generate the action plan yet.
+  reflexion_with_previous_sections: |
+    Before generating the action plan, let's first identify the area of needs/risk that we should focus on.
+    You previously identified these areas: {previous_sections}.
+    Please provide some context about the client's situation and what could be useful for him/her.
+    Do not generate the action plan yet.
+  area_of_needs: |
+    Compile a list of areas of needs/risk that the client is facing. There should be at least 2 and no more than 5 areas of needs/risk.
+    We'll call them "sections".
+    Combine the propositions that are semantically close to each other, and provide a clear title.
+    Avoid title like 'X and Y'.
+    An area of needs/risk should be a short title without description.
+  resources_options: |
+    1. For each area of needs/risk, choose the most relevant resources types to query in the resource pipeline.
+    2. The same resource type cannot be used for multiple sections.
+  timeline_generation: |
+    Generate a timeline by compiling all tasks and keypoints identified for the action plan.
+    1. Enumerate them week-by-week for the first two months, and then month-by-month thereafter.
+    2. Ensure the timeline aligns with any urgent tasks that were identified in the previous sections.
+    3. Prioritize the urgent needs first.
+    4. Balance the non-urgent client tasks over a reasonable timeframes
+    (e.g., if month 3 will have a lot of tasks related to applying for school,
+    and finding part-time work can wait until month 4, delay it so they client isn't overwhelmed)
+    5. Do not create unnecessary actions, it is OK if the timeline is not full.
+    6. Take account of previous action success or failure.
+    For example, instead of writing:
+    ```markdown
+    Week 1, Transportation: Explore public transit options by contacting X to learn about bus and train routes connecting your home and workplace.
+    Week 2, Transportation: Continue exploring public transit options and finalize your understanding of routes and schedules.
+    Week 3, Transportation: Evaluate carpool or ride-sharing options by reaching out to colleagues or local ride-sharing services.
+    ```
+    You should emphase on possible failure or success and ask the client to circle back to you:
+    ```markdown
+    Week 1, Transportation: Explore public transit options by contacting X to learn about bus and train routes connecting your home and workplace.
+    Week 2, Transportation: Continue exploring public transit options. If none seem to be a good option for your home/work locations without significant burden, start evaluating carpool or ride-sharing options by reaching out to colleagues or local ride-sharing services.
+    Week 3, Transportation: Continue exploring ride-share options if needed. If you haven't been able to find any viable transportation options between transit, ride-share, or carpool by the end of three weeks please reach out to me for help with a list of what you've investigated so far and what you found.
+    ```
+  timeline_format: Please format your message
+  milestones_generation: |
+    What are the key milestones that the client should aim for each section of the action plan?
+    1. A milestone is a checkpoint for the you and the client can check to see if they're on-track.
+    2. This should be the most important of the goals or outcomes from the sections up above. E.g., it should be less small tactical milestones (e.g., having applied for something) and more large milestone outcomes the you worker and the client can be aiming for (e.g., getting the driver's license, completing a course, etc.).
+    3. Phrasing must be backward-looking, and gives something concrete to you to check if the client is still on track.
+    For example, instead of "Successfully establish a consistent and reliable method of commuting to and from work, whether through public transit, carpooling, or ride-sharing", write "By the end of Week 8, you should have a reliable commute pattern that's been tested over several weeks—whether through transit, carpooling, ride-sharing, or another approach. This will significantly reduce the risk of interruptions to your employment"
+    Such phrasing reinforce why this is important, and why the client should feed good about achieving it.
+    4. Do not mention "This milestone", just "this" is enough to refer to the milestone.
+    5. Do not write an introduction or conclusion, just the milestones.
+    6. You can have one or more milestones per section.
+    7. Organize the milestones in the same order as the sections, giving a title to each group of milestones.
+  milestones_refinement: |
+    Ensure the order of the milestones is logical and that they build on each other.
+    Group the milestones per section of the action plan.
+  milestones_format: Please format the last message into milestones
+  action_plan_generation: |
+    Now you can generate the action plan by combining all your research.
+    Do not use the resources in this step.
+    Always refer to the client as 'you'.
+  edit_section_selection: |
+    Here are the previous sections titles: {sections_titles}.
+    To accomplish the user's intructions, go though this list, for each section recall its content and decide how the user instruction applies.
+    You can add a new section, remove a section, or change the title and/or content of a section.
+    To merge two sections, use the add action for the new section and the remove action for the old sections.
+    If no action is needed for a section, just skip the section.
+    Only remove a section if explicitely asked, otherwise modify its content
+  edit_section_change: |
+    Perfect, now let's edit the section '{section}' according to the new instructions:
+    {extra_instructions}.
+    Apply the part of the instructions that are relevant to this section.
+    Do not change the structure of the content unless asked to do so.
+    Here is the markdown content of the current section: ```{clean_markdown_content}```
+  edit_timeline: |
+    Edit the timeline according to the new instructions: {extra_instructions}.
+    Do not change the content structure unless asked to do so.
+  edit_milestones: |
+    Edit the milestones according to the new instructions: {extra_instructions}.
+    Do not change the content structure unless asked to do so.
+  edit_action_plan_generation: |
+    Now you can generate the action plan by combining all your research.
+    Do not use the resources in this step.
+    Always refer to the client as 'you'.
+structure:
+  timeline: false
+  milestones: false
+external_api:
+  resources_pipeline_enabled: false
