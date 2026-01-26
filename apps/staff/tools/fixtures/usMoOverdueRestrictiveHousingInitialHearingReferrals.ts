@@ -36,7 +36,7 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
-          usMoNoActiveD1Sanctions: {
+          usMoNoActiveProgressiveDisciplineSanctions: {
             latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
             latestSanctionStartDate: "2023-01-15",
           },
@@ -77,7 +77,7 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
-          usMoNoActiveD1Sanctions: {
+          usMoNoActiveProgressiveDisciplineSanctions: {
             latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
             latestSanctionStartDate: "2023-01-15",
           },
@@ -114,7 +114,7 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
-          usMoNoActiveD1Sanctions: {
+          usMoNoActiveProgressiveDisciplineSanctions: {
             latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
             latestSanctionStartDate: "2023-01-15",
           },
@@ -160,7 +160,7 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
-          usMoNoActiveD1Sanctions: {
+          usMoNoActiveProgressiveDisciplineSanctions: {
             latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
             latestSanctionStartDate: "2023-01-15",
           },

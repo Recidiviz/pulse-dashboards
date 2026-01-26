@@ -20,11 +20,11 @@ import { maxBy } from "lodash";
 import { usMoOverdueRestrictiveHousingReleaseReferralRecordFixture } from "../__fixtures__";
 import { usMoOverdueRestrictiveHousingReleaseSchema } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity/UsMoOverdueRestrictiveHousingReleaseReferralRecord";
 
-const recordWithNullUsMoNoD1Sanctions = {
+const recordWithNullUsMoNoActiveProgressiveDisciplineSanctions = {
   ...usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
   eligibleCriteria: {
     ...usMoOverdueRestrictiveHousingReleaseReferralRecordFixture.eligibleCriteria,
-    usMoNoActiveD1Sanctions: null,
+    usMoNoActiveProgressiveDisciplineSanctions: null,
   },
   metadata: {
     ...usMoOverdueRestrictiveHousingReleaseReferralRecordFixture.metadata,
@@ -55,19 +55,19 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
       {
         "caseNotes": {},
         "eligibleCriteria": {
-          "usMoD1SanctionAfterMostRecentHearing": {
-            "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
-          },
-          "usMoD1SanctionAfterRestrictiveHousingStart": {
-            "latestD1SanctionStartDate": 2023-08-15T00:00:00.000Z,
-            "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
-          },
           "usMoInRestrictiveHousing": {
             "confinementType": "COMMUNITY",
           },
-          "usMoNoActiveD1Sanctions": {
+          "usMoNoActiveProgressiveDisciplineSanctions": {
             "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
             "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
+          },
+          "usMoProgressiveDisciplineSanctionAfterMostRecentHearing": {
+            "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
+          },
+          "usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart": {
+            "latestProgressiveDisciplineSanctionStartDate": 2023-08-15T00:00:00.000Z,
+            "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
           },
         },
         "externalId": "rh-1",
@@ -100,12 +100,12 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
     `);
   });
 
-  it("should have a valid schema when usMoD1Sanctions is null and metadata allSanctions is undefined", () => {
+  it("should have a valid schema when usMoNoActiveProgressiveDisciplineSanctions is null and metadata allSanctions is undefined", () => {
     expect(
       usMoOverdueRestrictiveHousingReleaseSchema.parse({
-        ...recordWithNullUsMoNoD1Sanctions,
+        ...recordWithNullUsMoNoActiveProgressiveDisciplineSanctions,
         metadata: {
-          ...recordWithNullUsMoNoD1Sanctions.metadata,
+          ...recordWithNullUsMoNoActiveProgressiveDisciplineSanctions.metadata,
           allSanctions: undefined,
         },
       }),
@@ -113,17 +113,17 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
       {
         "caseNotes": {},
         "eligibleCriteria": {
-          "usMoD1SanctionAfterMostRecentHearing": {
-            "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
-          },
-          "usMoD1SanctionAfterRestrictiveHousingStart": {
-            "latestD1SanctionStartDate": 2023-08-15T00:00:00.000Z,
-            "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
-          },
           "usMoInRestrictiveHousing": {
             "confinementType": "COMMUNITY",
           },
-          "usMoNoActiveD1Sanctions": null,
+          "usMoNoActiveProgressiveDisciplineSanctions": null,
+          "usMoProgressiveDisciplineSanctionAfterMostRecentHearing": {
+            "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
+          },
+          "usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart": {
+            "latestProgressiveDisciplineSanctionStartDate": 2023-08-15T00:00:00.000Z,
+            "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
+          },
         },
         "externalId": "rh-1",
         "ineligibleCriteria": {},
@@ -156,28 +156,28 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
     `);
   });
 
-  it("should have a valid schema when usMoD1Sanctions is null and metadata allSanctions is defined", () => {
+  it("should have a valid schema when usMoNoActiveProgressiveDisciplineSanctions is null and metadata allSanctions is defined", () => {
     expect(
       usMoOverdueRestrictiveHousingReleaseSchema.parse(
-        recordWithNullUsMoNoD1Sanctions,
+        recordWithNullUsMoNoActiveProgressiveDisciplineSanctions,
       ),
     ).toMatchInlineSnapshot(`
       {
         "caseNotes": {},
         "eligibleCriteria": {
-          "usMoD1SanctionAfterMostRecentHearing": {
-            "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
-          },
-          "usMoD1SanctionAfterRestrictiveHousingStart": {
-            "latestD1SanctionStartDate": 2023-08-15T00:00:00.000Z,
-            "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
-          },
           "usMoInRestrictiveHousing": {
             "confinementType": "COMMUNITY",
           },
-          "usMoNoActiveD1Sanctions": {
+          "usMoNoActiveProgressiveDisciplineSanctions": {
             "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
             "latestSanctionStartDate": 2023-08-24T00:00:00.000Z,
+          },
+          "usMoProgressiveDisciplineSanctionAfterMostRecentHearing": {
+            "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
+          },
+          "usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart": {
+            "latestProgressiveDisciplineSanctionStartDate": 2023-08-15T00:00:00.000Z,
+            "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
           },
         },
         "externalId": "rh-1",
@@ -224,12 +224,12 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
     `);
   });
 
-  it("should equal the latest sanction end date when usMoNoActiveD1Sanctions is null", () => {
+  it("should equal the latest sanction end date when usMoNoActiveProgressiveDisciplineSanctions is null", () => {
     const definedRecord = usMoOverdueRestrictiveHousingReleaseSchema.parse(
-      recordWithNullUsMoNoD1Sanctions,
+      recordWithNullUsMoNoActiveProgressiveDisciplineSanctions,
     );
     const { latestSanctionEndDate } = definedRecord.eligibleCriteria
-      .usMoNoActiveD1Sanctions ?? { undefined };
+      .usMoNoActiveProgressiveDisciplineSanctions ?? { undefined };
     const { allSanctions } = definedRecord.metadata;
     const latestSanction = allSanctions?.length
       ? maxBy(allSanctions, "sanctionStartDate")

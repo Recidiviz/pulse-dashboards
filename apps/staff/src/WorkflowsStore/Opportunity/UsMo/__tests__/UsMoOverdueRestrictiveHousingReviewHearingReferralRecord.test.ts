@@ -35,7 +35,7 @@ describe("UsMoOverdueRestrictiveHousingReviewHearingReferralRecord", () => {
           "usMoInRestrictiveHousing": {
             "confinementType": "COMMUNITY",
           },
-          "usMoNoActiveD1Sanctions": {
+          "usMoNoActiveProgressiveDisciplineSanctions": {
             "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
             "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
           },
@@ -91,7 +91,7 @@ describe("UsMoOverdueRestrictiveHousingReviewHearingReferralRecord", () => {
             "usMoInRestrictiveHousing": {
               "confinementType": "COMMUNITY",
             },
-            "usMoNoActiveD1Sanctions": {
+            "usMoNoActiveProgressiveDisciplineSanctions": {
               "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
               "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
             },

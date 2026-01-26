@@ -22,23 +22,23 @@ import { dateStringSchema } from "~datatypes";
 
 import {
   baseUsMoOverdueRestrictiveHousingSchema,
-  usMoNoActiveD1Sanctions,
+  usMoNoActiveProgressiveDisciplineSanctions,
 } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 
 const eligibleCriteria =
   baseUsMoOverdueRestrictiveHousingSchema.shape.eligibleCriteria.extend({
-    usMoD1SanctionAfterMostRecentHearing: z.object({
+    usMoProgressiveDisciplineSanctionAfterMostRecentHearing: z.object({
       latestRestrictiveHousingHearingDate: dateStringSchema.nullable(),
     }),
-    usMoD1SanctionAfterRestrictiveHousingStart: z.object({
-      latestD1SanctionStartDate: dateStringSchema,
+    usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart: z.object({
+      latestProgressiveDisciplineSanctionStartDate: dateStringSchema,
       restrictiveHousingStartDate: dateStringSchema,
     }),
   });
 
 const ineligibleCriteria =
   baseUsMoOverdueRestrictiveHousingSchema.shape.ineligibleCriteria.extend({
-    usMoNoActiveD1Sanctions,
+    usMoNoActiveProgressiveDisciplineSanctions,
   });
 
 export const usMoOverdueRestrictiveHousingReleaseSchema =
@@ -50,34 +50,40 @@ export const usMoOverdueRestrictiveHousingReleaseSchema =
     .transform((record) => {
       if (
         // if the criterion is null, not undefined, the dates should be filled.
-        record.eligibleCriteria.usMoNoActiveD1Sanctions === null ||
-        record.ineligibleCriteria.usMoNoActiveD1Sanctions === null
+        record.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions ===
+          null ||
+        record.ineligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions ===
+          null
       ) {
         const { allSanctions } = record.metadata;
         const latestSanction = allSanctions?.length
           ? maxBy(allSanctions, "sanctionStartDate")
           : undefined;
 
-        const rectifiedUsMoNoActiveD1Sanctions = latestSanction
-          ? {
-              latestSanctionEndDate: latestSanction.sanctionExpirationDate,
-              latestSanctionStartDate: latestSanction.sanctionStartDate,
-            }
-          : null;
+        const rectifiedUsMoNoActiveProgressiveDisciplineSanctions =
+          latestSanction
+            ? {
+                latestSanctionEndDate: latestSanction.sanctionExpirationDate,
+                latestSanctionStartDate: latestSanction.sanctionStartDate,
+              }
+            : null;
 
-        return record.eligibleCriteria.usMoNoActiveD1Sanctions === null
+        return record.eligibleCriteria
+          .usMoNoActiveProgressiveDisciplineSanctions === null
           ? {
               ...record,
               eligibleCriteria: {
                 ...record.eligibleCriteria,
-                usMoNoActiveD1Sanctions: rectifiedUsMoNoActiveD1Sanctions,
+                usMoNoActiveProgressiveDisciplineSanctions:
+                  rectifiedUsMoNoActiveProgressiveDisciplineSanctions,
               },
             }
           : {
               ...record,
               ineligibleCriteria: {
                 ...record.ineligibleCriteria,
-                usMoNoActiveD1Sanctions: rectifiedUsMoNoActiveD1Sanctions,
+                usMoNoActiveProgressiveDisciplineSanctions:
+                  rectifiedUsMoNoActiveProgressiveDisciplineSanctions,
               },
             };
       }

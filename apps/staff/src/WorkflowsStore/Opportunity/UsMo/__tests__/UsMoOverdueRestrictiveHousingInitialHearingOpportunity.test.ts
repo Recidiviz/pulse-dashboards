@@ -99,7 +99,7 @@ describe("fully eligible", () => {
           "tooltip": "If the hearing is scheduled in ITSC, the due date is the scheduled date. If NOT scheduled in ITSC, the due date is seven (7) business days after the initial assignment.",
         },
         {
-          "text": "No active D1 sanctions",
+          "text": "No active progressive discipline sanctions",
         },
         {
           "text": "In a Restrictive Housing cell",
@@ -120,7 +120,7 @@ describe("fully eligible", () => {
           "tooltip": "If the hearing is scheduled in ITSC, the due date is the scheduled date. If NOT scheduled in ITSC, the due date is seven (7) business days after the initial assignment.",
         },
         {
-          "text": "No active D1 sanctions",
+          "text": "No active progressive discipline sanctions",
         },
         {
           "text": "In a Restrictive Housing cell",
@@ -141,7 +141,7 @@ describe("fully eligible", () => {
           "tooltip": "If the hearing is scheduled in ITSC, the due date is the scheduled date. If NOT scheduled in ITSC, the due date is seven (7) business days after the initial assignment.",
         },
         {
-          "text": "No active D1 sanctions",
+          "text": "No active progressive discipline sanctions",
         },
         {
           "text": "In a Restrictive Housing cell",
@@ -162,7 +162,7 @@ describe("fully eligible", () => {
           "tooltip": "If the hearing is scheduled in ITSC, the due date is the scheduled date. If NOT scheduled in ITSC, the due date is seven (7) business days after the initial assignment.",
         },
         {
-          "text": "No active D1 sanctions",
+          "text": "No active progressive discipline sanctions",
         },
         {
           "text": "In a Restrictive Housing cell",

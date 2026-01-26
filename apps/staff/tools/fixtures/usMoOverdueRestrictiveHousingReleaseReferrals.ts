@@ -29,17 +29,17 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
         externalId: "RES007",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoD1SanctionAfterMostRecentHearing: {
+          usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {
             latestRestrictiveHousingHearingDate: "2023-01-20",
           },
-          usMoD1SanctionAfterRestrictiveHousingStart: {
-            latestD1SanctionStartDate: "2023-01-15",
+          usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart: {
+            latestProgressiveDisciplineSanctionStartDate: "2023-01-15",
             restrictiveHousingStartDate: "2023-01-10",
           },
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
-          usMoNoActiveD1Sanctions: {
+          usMoNoActiveProgressiveDisciplineSanctions: {
             latestSanctionEndDate: "2023-12-08",
             latestSanctionStartDate: "2023-01-15",
           },
@@ -73,11 +73,11 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
         externalId: "RES008",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoD1SanctionAfterMostRecentHearing: {
+          usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {
             latestRestrictiveHousingHearingDate: "2023-01-20",
           },
-          usMoD1SanctionAfterRestrictiveHousingStart: {
-            latestD1SanctionStartDate: "2023-01-15",
+          usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart: {
+            latestProgressiveDisciplineSanctionStartDate: "2023-01-15",
             restrictiveHousingStartDate: "2023-01-10",
           },
           usMoInRestrictiveHousing: {
@@ -85,7 +85,7 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
           },
         },
         ineligibleCriteria: {
-          usMoNoActiveD1Sanctions: {
+          usMoNoActiveProgressiveDisciplineSanctions: {
             latestSanctionEndDate: `${formatDateToISO(startOfTomorrow())}`,
             latestSanctionStartDate: "2023-01-15",
           },
@@ -118,11 +118,11 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
         externalId: "RES009",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoD1SanctionAfterMostRecentHearing: {
+          usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {
             latestRestrictiveHousingHearingDate: "2023-01-20",
           },
-          usMoD1SanctionAfterRestrictiveHousingStart: {
-            latestD1SanctionStartDate: "2023-01-15",
+          usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart: {
+            latestProgressiveDisciplineSanctionStartDate: "2023-01-15",
             restrictiveHousingStartDate: "2023-01-10",
           },
           usMoInRestrictiveHousing: {
@@ -130,7 +130,7 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
           },
         },
         ineligibleCriteria: {
-          usMoNoActiveD1Sanctions: {
+          usMoNoActiveProgressiveDisciplineSanctions: {
             latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
             latestSanctionStartDate: "2023-01-15",
           },
@@ -163,11 +163,11 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
         externalId: "RES010",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoD1SanctionAfterMostRecentHearing: {
+          usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {
             latestRestrictiveHousingHearingDate: "2023-01-20",
           },
-          usMoD1SanctionAfterRestrictiveHousingStart: {
-            latestD1SanctionStartDate: "2023-01-15",
+          usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart: {
+            latestProgressiveDisciplineSanctionStartDate: "2023-01-15",
             restrictiveHousingStartDate: "2023-01-10",
           },
           usMoInRestrictiveHousing: {
@@ -175,7 +175,7 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
           },
         },
         ineligibleCriteria: {
-          usMoNoActiveD1Sanctions: {
+          usMoNoActiveProgressiveDisciplineSanctions: {
             latestSanctionEndDate: `${formatDateToISO(new Date())}`,
             latestSanctionStartDate: "2023-01-15",
           },

@@ -25,7 +25,7 @@ export const usMoInRestrictiveHousing = z.object({
   confinementType: z.string(),
 });
 
-export const usMoNoActiveD1Sanctions = z
+export const usMoNoActiveProgressiveDisciplineSanctions = z
   .object({
     latestSanctionStartDate: dateStringSchema.nullable(),
     latestSanctionEndDate: dateStringSchema.nullable(),
@@ -38,7 +38,7 @@ export const baseUsMoOverdueRestrictiveHousingSchema =
     eligibleCriteria: z
       .object({
         usMoInRestrictiveHousing,
-        usMoNoActiveD1Sanctions,
+        usMoNoActiveProgressiveDisciplineSanctions,
       })
       .passthrough(),
     ineligibleCriteria: z.object({}).passthrough(), // Empty shape here so that it can be pulled out and extended

@@ -32,12 +32,13 @@ import { OpportunityBase } from "../../OpportunityBase";
 import { Component, OpportunityTab, OpportunityTabGroup } from "../../types";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecord } from "./UsMoOverdueRestrictiveHousingReferralRecord";
 
-export const usMoNoActiveD1Sanctions: CopyTuple<"usMoNoActiveD1Sanctions"> = [
-  "usMoNoActiveD1Sanctions",
-  {
-    text: "No active D1 sanctions",
-  },
-];
+export const usMoNoActiveProgressiveDisciplineSanctions: CopyTuple<"usMoNoActiveProgressiveDisciplineSanctions"> =
+  [
+    "usMoNoActiveProgressiveDisciplineSanctions",
+    {
+      text: "No active progressive discipline sanctions",
+    },
+  ];
 
 export const usMoInRestrictiveHousing: CopyTuple<"usMoInRestrictiveHousing"> = [
   "usMoInRestrictiveHousing",

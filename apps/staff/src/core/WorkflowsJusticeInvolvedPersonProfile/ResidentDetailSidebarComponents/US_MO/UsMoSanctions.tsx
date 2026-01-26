@@ -31,7 +31,7 @@ export function UsMoSanctions({
 }: {
   sanctions: UsMoSanctionInfo[] | undefined;
 }): React.ReactElement<any> {
-  const D1_SANCTION_DATE_COPY = (
+  const SANCTION_DATE_COPY = (
     sanctionStartDate: UsMoSanctionInfo["sanctionStartDate"],
     sanctionExpirationDate: UsMoSanctionInfo["sanctionExpirationDate"],
   ) => {
@@ -46,7 +46,9 @@ export function UsMoSanctions({
 
   return (
     <SecureDetailsList>
-      <DetailsHeading> D1 Sanctions in Past Year</DetailsHeading>
+      <DetailsHeading>
+        Progressive Discipline Sanctions in Past Year
+      </DetailsHeading>
       {sanctions && sanctions.length > 0 ? (
         sanctions.map(
           ({
@@ -57,10 +59,7 @@ export function UsMoSanctions({
           }: UsMoSanctionInfo) => {
             return (
               <SecureDetailsContent key={`${sanctionId}`}>
-                {D1_SANCTION_DATE_COPY(
-                  sanctionStartDate,
-                  sanctionExpirationDate,
-                )}
+                {SANCTION_DATE_COPY(sanctionStartDate, sanctionExpirationDate)}
               </SecureDetailsContent>
             );
           },

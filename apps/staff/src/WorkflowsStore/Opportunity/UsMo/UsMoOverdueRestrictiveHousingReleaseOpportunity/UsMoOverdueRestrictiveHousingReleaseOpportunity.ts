@@ -38,67 +38,75 @@ import {
   usMoOverdueRestrictiveHousingReleaseSchema,
 } from "./UsMoOverdueRestrictiveHousingReleaseReferralRecord";
 
-const usMoNoActiveD1SanctionsDueDateCopy: CopyTuple<"usMoNoActiveD1Sanctions"> =
+const usMoNoActiveProgressiveDisciplineSanctionsDueDateCopy: CopyTuple<"usMoNoActiveProgressiveDisciplineSanctions"> =
   [
-    "usMoNoActiveD1Sanctions",
+    "usMoNoActiveProgressiveDisciplineSanctions",
     {
-      text: "No longer subject to D1 sanction $DAYS_PAST ($DATE)",
+      text: "No longer subject to progressive discipline sanction $DAYS_PAST ($DATE)",
     },
   ];
 
-const usMoNoActiveD1SanctionsCriteriaFormatter: NonNullable<
+const usMoNoActiveProgressiveDisciplineSanctionsCriteriaFormatter: NonNullable<
   CriteriaFormatters<UsMoOverdueRestrictiveHousingReleaseReferralRecord>[
     | "eligibleCriteria"
     | "ineligibleCriteria"]
->["usMoNoActiveD1Sanctions"] = {
-  DAYS_PAST: (usMoNoActiveD1Sanctions) =>
-    usMoNoActiveD1Sanctions && usMoNoActiveD1Sanctions.latestSanctionEndDate
-      ? US_MO_DAYS_PAST(usMoNoActiveD1Sanctions.latestSanctionEndDate)
+>["usMoNoActiveProgressiveDisciplineSanctions"] = {
+  DAYS_PAST: (usMoNoActiveProgressiveDisciplineSanctions) =>
+    usMoNoActiveProgressiveDisciplineSanctions &&
+    usMoNoActiveProgressiveDisciplineSanctions.latestSanctionEndDate
+      ? US_MO_DAYS_PAST(
+          usMoNoActiveProgressiveDisciplineSanctions.latestSanctionEndDate,
+        )
       : "date is unavailable",
-  DATE: (usMoNoActiveD1Sanctions) =>
-    usMoNoActiveD1Sanctions && usMoNoActiveD1Sanctions.latestSanctionEndDate
-      ? formatWorkflowsDate(usMoNoActiveD1Sanctions.latestSanctionEndDate)
+  DATE: (usMoNoActiveProgressiveDisciplineSanctions) =>
+    usMoNoActiveProgressiveDisciplineSanctions &&
+    usMoNoActiveProgressiveDisciplineSanctions.latestSanctionEndDate
+      ? formatWorkflowsDate(
+          usMoNoActiveProgressiveDisciplineSanctions.latestSanctionEndDate,
+        )
       : "N/A",
 };
 
 const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingReleaseReferralRecord> =
   {
     eligibleCriteria: [
-      usMoNoActiveD1SanctionsDueDateCopy,
+      usMoNoActiveProgressiveDisciplineSanctionsDueDateCopy,
       [
-        "usMoD1SanctionAfterMostRecentHearing",
+        "usMoProgressiveDisciplineSanctionAfterMostRecentHearing",
         {
-          text: "In Restrictive Housing due to a D1 sanction",
+          text: "In Restrictive Housing due to a progressive discipline sanction",
         },
       ],
       [
-        "usMoD1SanctionAfterRestrictiveHousingStart",
+        "usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart",
         {
-          text: "In Restrictive Housing due to a D1 sanction",
+          text: "In Restrictive Housing due to a progressive discipline sanction",
         },
       ],
       usMoInRestrictiveHousing,
     ],
-    ineligibleCriteria: [usMoNoActiveD1SanctionsDueDateCopy],
+    ineligibleCriteria: [usMoNoActiveProgressiveDisciplineSanctionsDueDateCopy],
   };
 
 const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoOverdueRestrictiveHousingReleaseReferralRecord> =
   {
     eligibleCriteria: {
-      usMoNoActiveD1Sanctions: usMoNoActiveD1SanctionsCriteriaFormatter,
+      usMoNoActiveProgressiveDisciplineSanctions:
+        usMoNoActiveProgressiveDisciplineSanctionsCriteriaFormatter,
     },
     ineligibleCriteria: {
-      usMoNoActiveD1Sanctions: usMoNoActiveD1SanctionsCriteriaFormatter,
+      usMoNoActiveProgressiveDisciplineSanctions:
+        usMoNoActiveProgressiveDisciplineSanctionsCriteriaFormatter,
     },
   };
 
 type ThisCriteriaCopyInstance = typeof CRITERIA_COPY;
 
 /**
- * Removes `usMoD1SanctionAfterMostRecentHearing` if both `usMoD1SanctionAfterRestrictiveHousingStart`
+ * Removes `usMoProgressiveDisciplineSanctionAfterMostRecentHearing` if both `usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart`
  * are present
  * @param criteriaCopy
- * @returns {ThisCriteriaCopyInstance} {@link CRITERIA_COPY} unchanged or with `usMoD1SanctionAfterMostRecentHearing` removed.
+ * @returns {ThisCriteriaCopyInstance} {@link CRITERIA_COPY} unchanged or with `usMoProgressiveDisciplineSanctionAfterMostRecentHearing` removed.
  */
 const removeDuplicateCopyIfPresent = (
   criteriaCopy: typeof CRITERIA_COPY,
@@ -107,17 +115,19 @@ const removeDuplicateCopyIfPresent = (
   if (!record) return criteriaCopy;
 
   const {
-    usMoD1SanctionAfterRestrictiveHousingStart,
-    usMoD1SanctionAfterMostRecentHearing,
+    usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart,
+    usMoProgressiveDisciplineSanctionAfterMostRecentHearing,
   } = record?.eligibleCriteria || record?.ineligibleCriteria || {};
 
-  return usMoD1SanctionAfterRestrictiveHousingStart &&
-    usMoD1SanctionAfterMostRecentHearing
+  return usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart &&
+    usMoProgressiveDisciplineSanctionAfterMostRecentHearing
     ? reduce(
         criteriaCopy,
         (acc: any, value: ValuesType<ThisCriteriaCopyInstance>, key) => {
           acc[key] = value.filter(
-            (arr) => arr[0] !== "usMoD1SanctionAfterMostRecentHearing",
+            (arr) =>
+              arr[0] !==
+              "usMoProgressiveDisciplineSanctionAfterMostRecentHearing",
           );
           return acc as ThisCriteriaCopyInstance;
         },
@@ -157,8 +167,10 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
 
   get eligibilityDate(): Date | undefined {
     const sanctionInfo =
-      this.record?.eligibleCriteria.usMoNoActiveD1Sanctions ??
-      this.record?.ineligibleCriteria.usMoNoActiveD1Sanctions;
+      this.record?.eligibleCriteria
+        .usMoNoActiveProgressiveDisciplineSanctions ??
+      this.record?.ineligibleCriteria
+        .usMoNoActiveProgressiveDisciplineSanctions;
     return (
       super.eligibilityDate ?? sanctionInfo?.latestSanctionEndDate ?? undefined
     );

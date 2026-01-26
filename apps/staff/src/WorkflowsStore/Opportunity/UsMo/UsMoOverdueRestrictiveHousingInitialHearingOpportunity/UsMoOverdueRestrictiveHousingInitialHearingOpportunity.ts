@@ -29,7 +29,7 @@ import {
 import {
   US_MO_DAYS_PAST,
   usMoInRestrictiveHousing,
-  usMoNoActiveD1Sanctions,
+  usMoNoActiveProgressiveDisciplineSanctions,
   UsMoOverdueRestrictiveHousingBase,
 } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingOpportunityBase";
 import {
@@ -51,7 +51,7 @@ const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingInitialHearingRef
   {
     eligibleCriteria: [
       usMoInitialHearingPastDueDateCopy,
-      usMoNoActiveD1Sanctions,
+      usMoNoActiveProgressiveDisciplineSanctions,
       usMoInRestrictiveHousing,
     ],
     ineligibleCriteria: [usMoInitialHearingPastDueDateCopy],

@@ -58,7 +58,7 @@ export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <
       usMoInRestrictiveHousing: {
         confinementType: "COMMUNITY",
       },
-      usMoNoActiveD1Sanctions: {
+      usMoNoActiveProgressiveDisciplineSanctions: {
         latestSanctionStartDate: "2023-08-15",
         latestSanctionEndDate: "2023-12-05",
       },
@@ -95,11 +95,11 @@ export const usMoOverdueRestrictiveHousingReleaseReferralRecordFixture =
   baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw>(
     1,
     {
-      usMoD1SanctionAfterMostRecentHearing: {
+      usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {
         latestRestrictiveHousingHearingDate: "2023-09-20",
       },
-      usMoD1SanctionAfterRestrictiveHousingStart: {
-        latestD1SanctionStartDate: "2023-08-15",
+      usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart: {
+        latestProgressiveDisciplineSanctionStartDate: "2023-08-15",
         restrictiveHousingStartDate: "2023-08-15",
       },
     },

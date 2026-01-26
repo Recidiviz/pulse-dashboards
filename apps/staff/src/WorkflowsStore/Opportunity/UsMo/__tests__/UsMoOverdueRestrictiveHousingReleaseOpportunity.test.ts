@@ -94,10 +94,10 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       [
         {
-          "text": "No longer subject to D1 sanction 2 days ago (Dec 5, 2023)",
+          "text": "No longer subject to progressive discipline sanction 2 days ago (Dec 5, 2023)",
         },
         {
-          "text": "In Restrictive Housing due to a D1 sanction",
+          "text": "In Restrictive Housing due to a progressive discipline sanction",
         },
         {
           "text": "In a Restrictive Housing cell",
@@ -107,17 +107,17 @@ describe("fully eligible", () => {
   });
 
   test("requirements met, overdue today", () => {
-    if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+    if (fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions)
+      fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions.latestSanctionEndDate =
         today.toISOString().split("T")[0];
     createTestUnit(usMoPersonRecord, fixtureData);
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       [
         {
-          "text": "No longer subject to D1 sanction today (Dec 7, 2023)",
+          "text": "No longer subject to progressive discipline sanction today (Dec 7, 2023)",
         },
         {
-          "text": "In Restrictive Housing due to a D1 sanction",
+          "text": "In Restrictive Housing due to a progressive discipline sanction",
         },
         {
           "text": "In a Restrictive Housing cell",
@@ -127,17 +127,17 @@ describe("fully eligible", () => {
   });
 
   test("requirements met, overdue yesterday", () => {
-    if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+    if (fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions)
+      fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions.latestSanctionEndDate =
         subDays(today, 1).toISOString().split("T")[0];
     createTestUnit(usMoPersonRecord, fixtureData);
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       [
         {
-          "text": "No longer subject to D1 sanction 1 day ago (Dec 6, 2023)",
+          "text": "No longer subject to progressive discipline sanction 1 day ago (Dec 6, 2023)",
         },
         {
-          "text": "In Restrictive Housing due to a D1 sanction",
+          "text": "In Restrictive Housing due to a progressive discipline sanction",
         },
         {
           "text": "In a Restrictive Housing cell",
@@ -147,17 +147,17 @@ describe("fully eligible", () => {
   });
 
   test("requirements almost met, hearing tomorrow", () => {
-    if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+    if (fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions)
+      fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions.latestSanctionEndDate =
         addDays(today, 1).toISOString().split("T")[0];
     createTestUnit(usMoPersonRecord, fixtureData);
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       [
         {
-          "text": "No longer subject to D1 sanction in 1 day (Dec 8, 2023)",
+          "text": "No longer subject to progressive discipline sanction in 1 day (Dec 8, 2023)",
         },
         {
-          "text": "In Restrictive Housing due to a D1 sanction",
+          "text": "In Restrictive Housing due to a progressive discipline sanction",
         },
         {
           "text": "In a Restrictive Housing cell",
@@ -173,13 +173,16 @@ describe("fully eligible", () => {
     });
 
     test("Due this week", () => {
-      const { usMoNoActiveD1Sanctions } = fixtureData.eligibleCriteria;
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions = null;
+      const { usMoNoActiveProgressiveDisciplineSanctions } =
+        fixtureData.eligibleCriteria;
+      fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions =
+        null;
       fixtureData.ineligibleCriteria = {
         ...fixtureData.ineligibleCriteria,
-        usMoNoActiveD1Sanctions: {
+        usMoNoActiveProgressiveDisciplineSanctions: {
           latestSanctionStartDate:
-            usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
+            usMoNoActiveProgressiveDisciplineSanctions?.latestSanctionStartDate ??
+            null,
           latestSanctionEndDate: today.toISOString().split("T")[0],
         },
       };
@@ -188,13 +191,16 @@ describe("fully eligible", () => {
     });
 
     test("Due this week, on day of reset", () => {
-      const { usMoNoActiveD1Sanctions } = fixtureData.eligibleCriteria;
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions = null;
+      const { usMoNoActiveProgressiveDisciplineSanctions } =
+        fixtureData.eligibleCriteria;
+      fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions =
+        null;
       fixtureData.ineligibleCriteria = {
         ...fixtureData.ineligibleCriteria,
-        usMoNoActiveD1Sanctions: {
+        usMoNoActiveProgressiveDisciplineSanctions: {
           latestSanctionStartDate:
-            usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
+            usMoNoActiveProgressiveDisciplineSanctions?.latestSanctionStartDate ??
+            null,
           latestSanctionEndDate: startOfWeek(today, { weekStartsOn: 1 })
             .toISOString()
             .split("T")[0],
@@ -205,21 +211,26 @@ describe("fully eligible", () => {
     });
 
     test("Due last week", () => {
-      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+      if (
+        fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions
+      )
+        fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions.latestSanctionEndDate =
           subWeeks(today, 1).toISOString().split("T")[0];
       createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.tabTitle()).toMatch(/\b(Overdue as of Dec 4, 2023)/gm);
     });
 
     test("Due next week", () => {
-      const { usMoNoActiveD1Sanctions } = fixtureData.eligibleCriteria;
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions = null;
+      const { usMoNoActiveProgressiveDisciplineSanctions } =
+        fixtureData.eligibleCriteria;
+      fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions =
+        null;
       fixtureData.ineligibleCriteria = {
         ...fixtureData.ineligibleCriteria,
-        usMoNoActiveD1Sanctions: {
+        usMoNoActiveProgressiveDisciplineSanctions: {
           latestSanctionStartDate:
-            usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
+            usMoNoActiveProgressiveDisciplineSanctions?.latestSanctionStartDate ??
+            null,
           latestSanctionEndDate: addWeeks(new Date(), 1)
             .toISOString()
             .split("T")[0],
@@ -232,16 +243,20 @@ describe("fully eligible", () => {
 
   describe("(in)eligibility message", () => {
     test("Due this week", () => {
-      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+      if (
+        fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions
+      )
+        fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions.latestSanctionEndDate =
           today.toISOString().split("T")[0];
       createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.eligibleStatusMessage).toMatch(/\b(Sanction ends today)/gm);
     });
 
     test("Due this week, on day of reset", () => {
-      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+      if (
+        fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions
+      )
+        fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions.latestSanctionEndDate =
           startOfWeek(new Date(), { weekStartsOn: 1 })
             .toISOString()
             .split("T")[0];
@@ -252,13 +267,16 @@ describe("fully eligible", () => {
     });
 
     test("Due last week", () => {
-      const { usMoNoActiveD1Sanctions } = fixtureData.eligibleCriteria;
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions = null;
+      const { usMoNoActiveProgressiveDisciplineSanctions } =
+        fixtureData.eligibleCriteria;
+      fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions =
+        null;
       fixtureData.ineligibleCriteria = {
         ...fixtureData.ineligibleCriteria,
-        usMoNoActiveD1Sanctions: {
+        usMoNoActiveProgressiveDisciplineSanctions: {
           latestSanctionStartDate:
-            usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
+            usMoNoActiveProgressiveDisciplineSanctions?.latestSanctionStartDate ??
+            null,
           latestSanctionEndDate: subWeeks(new Date(), 1)
             .toISOString()
             .split("T")[0],
@@ -271,13 +289,16 @@ describe("fully eligible", () => {
     });
 
     test("Due next week", () => {
-      const { usMoNoActiveD1Sanctions } = fixtureData.eligibleCriteria;
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions = null;
+      const { usMoNoActiveProgressiveDisciplineSanctions } =
+        fixtureData.eligibleCriteria;
+      fixtureData.eligibleCriteria.usMoNoActiveProgressiveDisciplineSanctions =
+        null;
       fixtureData.ineligibleCriteria = {
         ...fixtureData.ineligibleCriteria,
-        usMoNoActiveD1Sanctions: {
+        usMoNoActiveProgressiveDisciplineSanctions: {
           latestSanctionStartDate:
-            usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
+            usMoNoActiveProgressiveDisciplineSanctions?.latestSanctionStartDate ??
+            null,
           latestSanctionEndDate: addWeeks(new Date(), 1)
             .toISOString()
             .split("T")[0],
