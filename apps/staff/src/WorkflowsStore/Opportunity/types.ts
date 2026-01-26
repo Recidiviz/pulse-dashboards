@@ -317,7 +317,7 @@ export type OpportunityTab =
   | "Eligible for Review"
   | "Almost Eligible for Review"
   | "Needs Re-Screen"
-  | "Movement Pending"
+  | "Transfer in Progress"
   | "Needs Review"
 
   // For US_ID CRC

@@ -181,7 +181,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
           shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
         />
 
-        {opportunity.config.sidebarComponents.map((componentName) => {
+        {opportunity.config.sidebarComponents?.map((componentName) => {
           if (componentName in FormViewOnlyComponent && !formView) return null;
           if (
             componentName in ClientDetailSidebarComponents &&

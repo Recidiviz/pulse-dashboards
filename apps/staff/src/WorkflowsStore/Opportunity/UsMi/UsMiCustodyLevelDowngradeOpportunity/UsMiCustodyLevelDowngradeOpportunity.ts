@@ -61,7 +61,7 @@ export class UsMiCustodyLevelDowngradeOpportunity extends OpportunityBase<
     if (this.denied) return this.deniedTabTitle;
     if (this.isSubmitted) return this.submittedTabTitle;
     if (this.record.metadata.tabName === "ELIGIBLE_FOR_MOVEMENT") {
-      return "Movement Pending";
+      return "Transfer in Progress";
     }
     if (
       this.record.metadata.tabName === "ELIGIBLE_FOR_ASSESSMENT" ||

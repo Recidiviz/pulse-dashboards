@@ -17,7 +17,10 @@
 
 import { observer } from "mobx-react-lite";
 
-import { Opportunity } from "../../WorkflowsStore";
+import {
+  Opportunity,
+  UsMiCustodyLevelDowngradeOpportunity,
+} from "../../WorkflowsStore";
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import {
   UsIaEarlyDischargeOpportunity,
@@ -43,8 +46,14 @@ export const MenuButton = observer(function MenuButton({
 }) {
   const { config } = opportunity;
 
+  const hideSubmittedButton =
+    opportunity instanceof UsMiCustodyLevelDowngradeOpportunity &&
+    opportunity.record.metadata.tabName === "ELIGIBLE_FOR_MOVEMENT";
   // If we don't support submission or denial, show no button
-  if (!config.supportsSubmitted && !config.supportsDenial) {
+  if (
+    hideSubmittedButton ||
+    (!config.supportsSubmitted && !config.supportsDenial)
+  ) {
     return null;
   }
 
