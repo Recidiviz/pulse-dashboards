@@ -28,7 +28,7 @@ export interface DelegateExecutorOptions {
 function delegateToTarget(
   project: string,
   target: string,
-  configuration: string,
+  configuration: string | undefined,
   overrides: { [k: string]: unknown },
 ): boolean {
   try {
@@ -75,10 +75,14 @@ export default async function runSopsDelegateExecutor(
     return { success: false };
   }
 
+  const { prefixedTarget, ...argsToForward } = options;
+
   const projectConfig = context.projectsConfigurations?.projects[projectName];
   const projectRoot = projectConfig?.root;
-  const configurationName = context.configurationName || "development";
-  const { prefixedTarget, ...argsToForward } = options;
+  const targetConfig = projectConfig.targets?.[prefixedTarget];
+
+  const configurationName =
+    context.configurationName || targetConfig?.defaultConfiguration;
 
   // Skip if explicitly disabled
   if (process.env["NX_SKIP_SOPS"] === "true") {
