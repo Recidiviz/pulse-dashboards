@@ -143,7 +143,7 @@ const RecordingControlsButtons: React.FC<RecordingControlsButtonsProps> = ({
           <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto">
             <PrimaryButton
               buttonText="Pause Recording"
-              onClick={actions.pauseRecording}
+              onClick={() => actions.pauseRecording()}
               className="h-10 sm:h-8 whitespace-nowrap text-xs sm:text-[13px]"
             />
             <PrimaryButton

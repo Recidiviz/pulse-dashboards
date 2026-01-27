@@ -22,7 +22,7 @@ import { useAuthUserCapabilities } from "~@reentry/frontend/contexts/AuthUserCap
 interface ButtonProps {
   className?: string;
   buttonText?: string | React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent) => void;
   disabled?: boolean;
   ignoreCapabilities?: boolean;
 }

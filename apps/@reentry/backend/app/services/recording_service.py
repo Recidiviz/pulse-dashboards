@@ -22,7 +22,6 @@ The combined group_x files is put into the final.
 """
 
 import asyncio
-import structlog
 import os
 import re
 import tempfile
@@ -30,6 +29,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
 import aiohttp
+import structlog
 from gcloud.aio.auth import Token
 from gcloud.aio.storage import Blob, Storage
 
@@ -809,6 +809,31 @@ class RecordingService:
                     logger.warning(
                         f"Failed to cleanup temp output file {temp_output_path}: {cleanup_error}"
                     )
+
+    async def upload_full_audio_file(
+        self,
+        session_id: str,
+        file_data: bytes,
+        file_name: str,
+        content_type: str,
+    ) -> str:
+        """Upload a complete audio file directly to GCS final folder."""
+        file_path = f"recordings/{session_id}/final/{file_name}"
+
+        logger.info(
+            f"Uploading full audio file for session {session_id}: {file_name} ({len(file_data)} bytes)"
+        )
+
+        await self.storage.upload(
+            bucket=self.bucket_name,
+            object_name=file_path,
+            file_data=file_data,
+            content_type=content_type,
+            timeout=500,
+        )
+
+        logger.info(f"Successfully uploaded full audio file to: {file_path}")
+        return file_path
 
     async def process_chunks_to_final_audio(
         self,

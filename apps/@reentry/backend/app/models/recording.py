@@ -42,6 +42,10 @@ class RecordingSession(BaseModel, table=True):
     audio_file_url: Optional[str] = Field(
         default=None, nullable=True, description="URL to final audio file"
     )
+    needs_audio_merge: bool = Field(
+        default=True,
+        description="Flag indicating if audio needs to be merged",
+    )
     status: RecordingStatus = Field(
         default=RecordingStatus.CREATED.value,
         sa_column=Column(

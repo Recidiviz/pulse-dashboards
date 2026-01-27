@@ -29,6 +29,7 @@ interface LiveAssessmentModalProps {
   onConfirm: () => void;
   isOnline: boolean;
   isPaused?: boolean;
+  isFileUpload?: boolean;
 }
 
 export default function LiveAssessmentModal({
@@ -37,14 +38,15 @@ export default function LiveAssessmentModal({
   onConfirm,
   isOnline,
   isPaused,
+  isFileUpload = false,
 }: LiveAssessmentModalProps) {
-
-  const { state} = useAuth();
+  const { state } = useAuth();
   const clientName = state?.user?.name;
   const [fullName, setFullName] = useState("");
   const [showError, setShowError] = useState(false);
 
-  const isNameMatch = fullName.trim().toLowerCase() === clientName?.toLowerCase();
+  const isNameMatch =
+    fullName.trim().toLowerCase() === clientName?.toLowerCase();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,19 +77,35 @@ export default function LiveAssessmentModal({
   return (
     <BaseModal
       isOpen={isOpen}
-      title="Start Live Intake Assessment"
+      title={
+        isFileUpload ? "Assessment has Started" : "Start Live Intake Assessment"
+      }
       onClose={onClose}
     >
       <div className="text-[#2a5469]/90 text-sm sm:text-sm font-medium font-['Public_Sans'] space-y-4">
-        <p>
-          Before proceeding, please inform all parties present that this session
-          is being recorded and transcribed by artificial intelligence to create
-          a record of the discussion and help facilitate case management.
-        </p>
-        <p>
-          Enter your full name ({clientName}) to confirm all parties were provided the above
-          notice and have consented to the recording:
-        </p>
+        {isFileUpload ? (
+          <>
+            <p>
+              This session may require a live assessment. If you are not
+              prepared, or this is not the correct file, click 'Cancel'. If you
+              are ready, click 'Continue'.
+            </p>
+            <p>Enter your full name ({clientName}) to confirm:</p>
+          </>
+        ) : (
+          <>
+            <p>
+              Before proceeding, please inform all parties present that this
+              session is being recorded and transcribed by artificial
+              intelligence to create a record of the discussion and help
+              facilitate case management.
+            </p>
+            <p>
+              Enter your full name ({clientName}) to confirm all parties were
+              provided the above notice and have consented to the recording:
+            </p>
+          </>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-2">
@@ -110,7 +128,8 @@ export default function LiveAssessmentModal({
         />
         {showError && (
           <p className="text-red-600 text-xs font-medium mt-1">
-            The name you entered does not match "{clientName}". Please enter the correct name to continue.
+            The name you entered does not match "{clientName}". Please enter the
+            correct name to continue.
           </p>
         )}
         <div className="flex flex-col sm:flex-row gap-3 mt-3">
@@ -126,7 +145,9 @@ export default function LiveAssessmentModal({
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                <span className="truncate">Confirm & Start Recording</span>
+                <span className="truncate">
+                  {isFileUpload ? "Continue" : "Confirm & Start Recording"}
+                </span>
                 {!isOnline && (
                   <SignalWifiConnectedNoInternet4Icon
                     className="text-red-600 flex-shrink-0"

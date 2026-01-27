@@ -80,3 +80,10 @@ class RecordingSessionStatusResponse(BaseModel):
     updated_at: datetime
     gcs_final_file_path: Optional[str] = None
     transcription_approved: bool = False
+
+
+class UploadAudioFileResponse(BaseModel):
+    success: bool
+    gcs_file_path: str
+    execution_id: str
+    message: str

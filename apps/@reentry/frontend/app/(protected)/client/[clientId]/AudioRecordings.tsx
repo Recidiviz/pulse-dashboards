@@ -23,6 +23,7 @@ import { $api } from "~@reentry/frontend/api";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 import {
   showErrorToast,
   showSuccessToast,
@@ -120,7 +121,7 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
           ) && (
               <div className="w-full h-full flex">
                   <PrimaryButton
-                      buttonText="Record now"
+                      buttonText={isFeatureEnabled("UPLOAD_AUDIO") ? "Record/Upload audio" : "Record now"}
                       className="!px-2 !md:px-4 !w-[85px] text-white text-xs md:text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full max-w-sm md:!w-auto mx-auto"
                       onClick={
                           recordingSession

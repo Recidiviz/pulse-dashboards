@@ -6,7 +6,7 @@ import base64
 from uuid import UUID
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy import update
 from sqlmodel import select
 
@@ -29,6 +29,7 @@ from app.routes.recording_session_models import (
     RecordingSessionStatusResponse,
     SignedUrlResponse,
     UpdateRecordingSessionStatusRequest,
+    UploadAudioFileResponse,
     UploadChunkRequest,
     UploadChunkResponse,
 )
@@ -349,6 +350,103 @@ async def upload_audio_chunk(
             f"for session {session_id}: {e}"
         )
         raise HTTPException(status_code=500, detail="Failed to upload chunk")
+
+
+@router.post(
+    "/sessions/{session_id}/upload-audio",
+    response_model=UploadAudioFileResponse,
+    summary="Upload full audio recording",
+    description="Upload a complete audio file for a recording session and automatically trigger processing",
+    tags=["Recording Sessions"],
+)
+async def upload_full_audio_recording(
+    session_id: UUID,
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
+) -> UploadAudioFileResponse:
+    recording_session = await get_recording_session_by_id(session, session_id)
+    if not recording_session:
+        raise HTTPException(status_code=404, detail="Recording session not found")
+
+    structlog.contextvars.bind_contextvars(
+        client_pseudo_id=recording_session.client_pseudo_id
+    )
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
+        pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+    )
+
+    # Validate file type (audio files only)
+    if not file.content_type or not file.content_type.startswith("audio/"):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid file type. Expected audio file, got: {file.content_type}",
+        )
+
+    try:
+        # Read file data
+        file_data = await file.read()
+        file_size = len(file_data)
+
+        logger.info(
+            f"Received audio file upload for session {session_id}: "
+            f"{file.filename} ({file_size} bytes, {file.content_type})"
+        )
+
+        # Upload to GCS
+        async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:
+            gcs_file_path = await recording_service.upload_full_audio_file(
+                str(session_id),
+                file_data,
+                file.filename or "uploaded_audio",
+                file.content_type,
+            )
+
+        # Update recording session with file metadata
+        recording_session.gcs_final_file_path = gcs_file_path
+        recording_session.audio_file_url = (
+            f"gs://{settings.GCS_BUCKET_NAME}/{gcs_file_path}"
+        )
+        recording_session.needs_audio_merge = False
+        recording_session.status = RecordingStatus.PROCESSING
+
+        # Schedule processing task
+        execution = await schedule_task(
+            session,
+            table_name="recording_session",
+            table_entity_id=session_id,
+            task_func=process_recording_task,
+            task_kwargs={
+                "recording_session_id": session_id,
+            },
+        )
+
+        recording_session.execution_id = execution.id
+        session.add(recording_session)
+        await session.commit()
+        await session.refresh(recording_session)
+
+        logger.info(
+            f"Successfully uploaded audio file for session {session_id} "
+            f"to {gcs_file_path} and scheduled processing with execution {execution.id}"
+        )
+
+        return UploadAudioFileResponse(
+            success=True,
+            gcs_file_path=gcs_file_path,
+            execution_id=str(execution.id),
+            message="Audio file uploaded successfully and processing started",
+        )
+
+    except Exception as e:
+        await session.rollback()
+        logger.error(f"Error uploading audio file for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to upload audio file: {str(e)}"
+        )
 
 
 @router.post(

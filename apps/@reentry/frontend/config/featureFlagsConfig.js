@@ -31,6 +31,7 @@ const FEATURE_FLAGS_CONFIG = {
   REGENERATE_WITH_PROMPT: "",
   TEST_FEATURE_DEV: "dev",
   TEST_FEATURE_DEV_STAGING: "dev,staging",
+  UPLOAD_AUDIO: "development,dev,demo,pilot,staging",
 };
 
 module.exports = { FEATURE_FLAGS_CONFIG };

@@ -58,7 +58,7 @@ async def process_recording(
         session, 1, "Get recording session", logger=task_logger
     )
 
-    # Assemble audio first
+    # Only assemble audio if needed
     recording_session = await assemble_audio(
         execution=execution,
         recording_session_id=recording_session_id,

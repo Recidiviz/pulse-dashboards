@@ -135,11 +135,15 @@ export default function EndAssessmentModal({
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <PrimaryButton buttonText="Close" onClick={onClose} />
+            <PrimaryButton
+              buttonText="Close"
+              onClick={onClose}
+              className="w-full sm:flex-1"
+            />
             {isRecording && onPause && (
               <PrimaryButton
                 buttonText="Pause Recording"
-                className="flex-1 min-h-[32px] px-4 py-2 bg-gray-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
+                className="w-full sm:flex-1 h-8 px-4 py-2 bg-gray-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
                 onClick={() => {
                   onPause();
                   onClose();
@@ -166,11 +170,15 @@ export default function EndAssessmentModal({
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <PrimaryButton buttonText="Close" onClick={onClose} />
+            <PrimaryButton
+              buttonText="Close"
+              onClick={onClose}
+              className="w-full sm:flex-1"
+            />
             {isRecording && onPause && (
               <PrimaryButton
                 buttonText="Pause Recording"
-                className="flex-1 min-h-[32px] px-4 py-2 bg-gray-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
+                className="w-full sm:flex-1 h-8 px-4 py-2 bg-gray-600 rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
                 onClick={() => {
                   onPause();
                   onClose();
@@ -189,11 +197,15 @@ export default function EndAssessmentModal({
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <PrimaryButton buttonText="Continue Assessment" onClick={onClose} />
+          <PrimaryButton
+            buttonText="Continue Assessment"
+            onClick={onClose}
+            className="w-full sm:flex-1"
+          />
           <PrimaryButton
             buttonText={isStopping ? `Stopping...` : "Yes, End Assessment"}
             disabled={isStopping}
-            className="flex-1 min-h-[32px] px-4 py-2 bg-[#006c67] rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
+            className="w-full sm:flex-1 h-8 px-4 py-2 bg-[#006c67] rounded-[32px] text-white text-[13px] font-medium font-['Public_Sans']"
             onClick={handleEndAssessment}
           />
         </div>

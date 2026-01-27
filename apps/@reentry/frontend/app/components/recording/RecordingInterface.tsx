@@ -24,6 +24,7 @@ import {
   DialogContentText,
   DialogTitle,
   Paper,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -40,8 +41,10 @@ import type {
   ClientRecordResponse,
   RecordingSessionResponse,
 } from "~@reentry/frontend/types/recording";
+import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 import { showInfoToast } from "~@reentry/frontend-shared";
 
+import AudioFileUpload from "./AudioFileUpload";
 import AudioWaveform from "./AudioWaveform";
 import RecordingControls from "./RecordingControls";
 import { SimpleAudioPlayer } from "./SimpleAudioPlayer";
@@ -75,6 +78,10 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     null,
   );
   const [recordDuration, setRecordDuration] = useState(0);
+  const [inputMode, setInputMode] = useState<"recording" | "upload">(
+    "recording",
+  );
+  const [hasFileSelected, setHasFileSelected] = useState(false);
   const [isWakeLockActive, setIsWakeLockActive] = useState(false);
 
   const blockNavigationRef = useRef(false);
@@ -221,6 +228,28 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     setNeedsAddress(true);
   };
 
+  const handleInputModeChange = (
+    _event: React.MouseEvent<HTMLElement>,
+    newMode: "recording" | "upload" | null,
+  ) => {
+    // Only allow mode change if recording hasn't started and no file is selected
+    const hasRecordingStarted =
+      ["recording", "paused", "stopped", "processing"].includes(
+        recording.uiStatus,
+      ) || recording.chunkCount > 0;
+    if (newMode !== null && !hasRecordingStarted && !hasFileSelected) {
+      setInputMode(newMode);
+    }
+  };
+
+  const handleFileSelected = (file: File) => {
+    console.log("File selected:", file);
+    setHasFileSelected(true);
+  };
+
+  const handleFileClear = () => {
+    setHasFileSelected(false);
+  };
   // Safe navigation function that checks if recording is active
   const safeNavigate = useCallback(
     (path: string) => {
@@ -265,40 +294,111 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     !!sessionData.gcs_final_file_path ||
     sessionData.status === "processing";
 
+  const hasRecordingStarted =
+    ["recording", "paused", "stopped", "processing"].includes(
+      recording.uiStatus,
+    ) || recording.chunkCount > 0;
+  const isToggleDisabled = hasRecordingStarted || hasFileSelected;
+
+  const getTooltipMessage = () => {
+    if (hasRecordingStarted) {
+      return "Cannot switch modes while recording is in progress";
+    }
+    if (hasFileSelected) {
+      return "Clear the selected file to switch modes";
+    }
+    return "";
+  };
+
   return (
     <div className="w-full flex flex-col">
       {shouldShowControls && (
         <>
-          <RecordingControls
-            recordingStatus={recording.uiStatus}
-            selectedMicrophone={recording.selectedMicrophone}
-            microphones={audioCapabilities.microphones}
-            isRecordingSupported={audioCapabilities.isRecordingSupported}
-            chunkCount={recording.chunkCount}
-            uploadDuration={
-              statusData?.duration ? Math.floor(statusData.duration / 1000) : 0
-            }
-            recordDuration={Math.floor(recordDuration / 1000)}
-            openLiveAssessmentModal={openLiveAssessmentModal}
-            setEndAssessmentOpen={setEndAssessmentOpen}
-            isOnline={recording.isOnline}
-            cannotConnectToServer={recording.cannotConnectToServer}
-            pausedByVisibilityChange={recording.pausedByVisibilityChange}
-            batteryLevel={recording.batteryLevel}
-            actions={{
-              startRecording: recording.startRecording,
-              pauseRecording: recording.pauseRecording,
-              resumeRecording: recording.resumeRecording,
-              stopRecording: recording.stopRecording,
-              setSelectedMicrophone: recording.setSelectedMicrophone,
-            }}
-          />
-          <AudioWaveform
-            selectedMicrophone={recording.selectedMicrophone}
-            recordingStatus={recording.uiStatus}
-            isRecordingSupported={audioCapabilities.isRecordingSupported}
-            recordDuration={recordDuration}
-          />
+          {isFeatureEnabled("UPLOAD_AUDIO") && (
+            <Box className="p-4 flex justify-center">
+              <Tooltip
+                title={getTooltipMessage()}
+                arrow
+                disableHoverListener={!isToggleDisabled}
+              >
+                <div className="px-4 sm:px-6 py-2 sm:py-2 bg-white rounded-[32px] sm:rounded-[99px] outline outline-1 outline-offset-[-1px] outline-[#2b5469]/10 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => handleInputModeChange(e, "recording")}
+                    disabled={isToggleDisabled}
+                    className={`h-8 px-4 py-2 rounded-[32px] text-xs sm:text-[13px] font-medium font-['Public_Sans'] whitespace-nowrap transition-colors duration-300 ${(() => {
+                      if (inputMode === "recording")
+                        return "bg-[#006c67] text-white";
+                      if (isToggleDisabled)
+                        return "bg-gray-200 text-gray-400 cursor-not-allowed";
+                      return "bg-transparent text-[#345262]/90 hover:bg-gray-100";
+                    })()}`}
+                  >
+                    Recording
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => handleInputModeChange(e, "upload")}
+                    disabled={isToggleDisabled}
+                    className={`h-8 px-4 py-2 rounded-[32px] text-xs sm:text-[13px] font-medium font-['Public_Sans'] whitespace-nowrap transition-colors duration-300 ${(() => {
+                      if (inputMode === "upload")
+                        return "bg-[#006c67] text-white";
+                      if (isToggleDisabled)
+                        return "bg-gray-200 text-gray-400 cursor-not-allowed";
+                      return "bg-transparent text-[#345262]/90 hover:bg-gray-100";
+                    })()}`}
+                  >
+                    File Upload
+                  </button>
+                </div>
+              </Tooltip>
+            </Box>
+          )}
+
+          {inputMode === "recording" ? (
+            <>
+              <RecordingControls
+                recordingStatus={recording.uiStatus}
+                selectedMicrophone={recording.selectedMicrophone}
+                microphones={audioCapabilities.microphones}
+                isRecordingSupported={audioCapabilities.isRecordingSupported}
+                chunkCount={recording.chunkCount}
+                uploadDuration={
+                  statusData?.duration
+                    ? Math.floor(statusData.duration / 1000)
+                    : 0
+                }
+                recordDuration={Math.floor(recordDuration / 1000)}
+                openLiveAssessmentModal={openLiveAssessmentModal}
+                setEndAssessmentOpen={setEndAssessmentOpen}
+                isOnline={recording.isOnline}
+                cannotConnectToServer={recording.cannotConnectToServer}
+                pausedByVisibilityChange={recording.pausedByVisibilityChange}
+                batteryLevel={recording.batteryLevel}
+                actions={{
+                  startRecording: recording.startRecording,
+                  pauseRecording: recording.pauseRecording,
+                  resumeRecording: recording.resumeRecording,
+                  stopRecording: recording.stopRecording,
+                  setSelectedMicrophone: recording.setSelectedMicrophone,
+                }}
+              />
+              <AudioWaveform
+                selectedMicrophone={recording.selectedMicrophone}
+                recordingStatus={recording.uiStatus}
+                isRecordingSupported={audioCapabilities.isRecordingSupported}
+                recordDuration={recordDuration}
+              />
+            </>
+          ) : (
+            <AudioFileUpload
+              onFileSelected={handleFileSelected}
+              onFileClear={handleFileClear}
+              isOnline={recording.isOnline}
+              sessionId={sessionData?.id || ""}
+              onFinishUpload={() => setNeedsAddress(true)}
+            />
+          )}
         </>
       )}
 

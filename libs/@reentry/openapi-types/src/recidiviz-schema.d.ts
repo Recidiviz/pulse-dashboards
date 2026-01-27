@@ -683,6 +683,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/recordings/sessions/{session_id}/upload-audio": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload full audio recording
+         * @description Upload a complete audio file for a recording session and automatically trigger processing
+         */
+        post: operations["upload_full_audio_recording_recordings_sessions__session_id__upload_audio_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/recordings/sessions/{session_id}/finalize": {
         parameters: {
             query?: never;
@@ -1706,6 +1726,14 @@ export interface components {
         };
         /** Body_transcribe_audio_route_intake_services_transcribe_post */
         Body_transcribe_audio_route_intake_services_transcribe_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
+        };
+        /** Body_upload_full_audio_recording_recordings_sessions__session_id__upload_audio_post */
+        Body_upload_full_audio_recording_recordings_sessions__session_id__upload_audio_post: {
             /**
              * File
              * Format: binary
@@ -3195,6 +3223,17 @@ export interface components {
             /** Audio File Url */
             audio_file_url?: string | null;
         };
+        /** UploadAudioFileResponse */
+        UploadAudioFileResponse: {
+            /** Success */
+            success: boolean;
+            /** Gcs File Path */
+            gcs_file_path: string;
+            /** Execution Id */
+            execution_id: string;
+            /** Message */
+            message: string;
+        };
         /** UploadChunkRequest */
         UploadChunkRequest: {
             /** Timestamp */
@@ -4543,6 +4582,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UploadChunkResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_full_audio_recording_recordings_sessions__session_id__upload_audio_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_full_audio_recording_recordings_sessions__session_id__upload_audio_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadAudioFileResponse"];
                 };
             };
             /** @description Validation Error */

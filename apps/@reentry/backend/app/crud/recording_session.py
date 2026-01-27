@@ -2,10 +2,10 @@
 CRUD operations for recording sessions.
 """
 
-import structlog
 from typing import Literal, overload
 from uuid import UUID
 
+import structlog
 from sqlmodel import select
 from sqlmodel.sql.expression import SelectOfScalar
 

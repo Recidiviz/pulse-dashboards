@@ -55,7 +55,7 @@ export interface RecordingActions {
   mediaRecorderRef?: React.RefObject<MediaRecorder | null>;
   startRecording: () => Promise<void>;
   pauseRecording: (
-    event?: Event | null,
+    event?: Event | MouseEvent | null | undefined,
     fromVisibilityChange?: boolean,
   ) => void;
   resumeRecording: () => void;

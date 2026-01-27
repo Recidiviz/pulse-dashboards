@@ -28,7 +28,10 @@ export const useUpdateRecordingStatus = () => {
     error,
   } = $api.useMutation("put", "/recordings/sessions/{session_id}/status");
 
-  const updateStatus = async (sessionId: string, status: RecordingStatus) => {
+  const updateStatus = async (
+    sessionId: string,
+    status: RecordingStatus,
+  ) => {
     try {
       await updateSessionStatus({
         params: { path: { session_id: sessionId } },

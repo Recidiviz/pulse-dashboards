@@ -169,12 +169,11 @@ export class PersistentChunkQueue {
         // Add chunkDuration index if it doesn't exist (for v1 to v2 upgrade)
         if (chunksStore) {
           if (!chunksStore.indexNames.contains("chunkDuration")) {
-              chunksStore.createIndex("chunkDuration", "chunkDuration", {
+            chunksStore.createIndex("chunkDuration", "chunkDuration", {
               unique: false,
             });
           }
         }
-
 
         // Create audioDuration store if it doesn't exist
         if (!db.objectStoreNames.contains(this.durationStoreName)) {
@@ -288,7 +287,6 @@ export class PersistentChunkQueue {
 
             // Check if the error is a 404
             const is404 = result.error == "Recording session not found";
-
 
             if (is404) {
               console.log(
