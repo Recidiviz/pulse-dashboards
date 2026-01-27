@@ -406,7 +406,7 @@ async def get_client_intake(
 
 
 @router.get(
-    "/{intake_id}/{section_title}/messages",
+    "/{intake_id}/{section_title:path}/messages",
     summary="Fetch intake messages for the given section",
     description="Returns the intake messages for the given section",
     tags=["Intake assessment - Admin"],
