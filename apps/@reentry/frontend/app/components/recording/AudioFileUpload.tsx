@@ -28,14 +28,11 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 
+import { $api } from "~@reentry/frontend/api";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import LiveAssessmentModal from "~@reentry/frontend/components/recording/modals/LiveAssessmentModal";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import {
-  getBaseUrl,
-  showErrorToast,
-  showSuccessToast,
-} from "~@reentry/frontend-shared";
+import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 interface AudioFileUploadProps {
   onFileSelected?: (file: File) => void;
@@ -52,6 +49,7 @@ const AudioFileUpload: React.FC<AudioFileUploadProps> = ({
   onFinishUpload,
   sessionId,
 }) => {
+  const { getAccessToken } = useAuth();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -63,7 +61,16 @@ const AudioFileUpload: React.FC<AudioFileUploadProps> = ({
   const waveformRef = useRef<HTMLDivElement>(null);
   const waveSurferRef = useRef<WaveSurfer | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { getAccessToken } = useAuth();
+
+  const { mutateAsync: getUploadUrl } = $api.useMutation(
+    "post",
+    "/recordings/sessions/{session_id}/get-upload-url",
+  );
+
+  const { mutateAsync: confirmUpload } = $api.useMutation(
+    "post",
+    "/recordings/sessions/{session_id}/confirm-upload",
+  );
   // Handle successful upload completion
   useEffect(() => {
     if (hasFinishedUpload) {
@@ -246,7 +253,7 @@ const AudioFileUpload: React.FC<AudioFileUploadProps> = ({
     console.log("Starting upload process for file:", selectedFile.name);
 
     try {
-      // Decode audio to get duration
+      // Step 1: Decode audio to get duration
       console.log("Getting audio duration...");
       setUploadProgress(5);
       const audioContext = new AudioContext();
@@ -257,35 +264,47 @@ const AudioFileUpload: React.FC<AudioFileUploadProps> = ({
       const durationMs = Math.round(decodedData.duration * 1000);
       console.log("Audio duration:", durationMs, "ms");
 
-      // Prepare FormData for upload
-      console.log("Preparing file for upload...");
+      // Step 2: Get signed upload URL from backend
+      console.log("Requesting upload URL...");
       setUploadProgress(10);
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-      formData.append("duration_ms", durationMs.toString());
-
-      // Upload file using XMLHttpRequest for progress tracking
-      console.log("Uploading file to server...");
-      const uploadAudioEndpoint = `${getBaseUrl()}/recordings/sessions/${sessionId}/upload-audio`;
       const accessToken = getAccessToken();
+
+      const { upload_url: uploadUrl, file_path: filePath } = await getUploadUrl(
+        {
+          params: { path: { session_id: sessionId } },
+          body: {
+            file_name: selectedFile.name,
+            content_type: selectedFile.type,
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      console.log("Received upload URL");
+
+      // Step 3: Upload file directly to GCS using signed URL
+      console.log("Uploading file directly to cloud storage...");
+      setUploadProgress(15);
+
       await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
         // Track upload progress
         xhr.upload.addEventListener("progress", (event) => {
           if (event.lengthComputable) {
-            // Map 10-100% to the upload progress
+            // Map 15-95% to the upload progress
             const percentComplete =
-              10 + Math.round((event.loaded / event.total) * 90);
+              15 + Math.round((event.loaded / event.total) * 80);
             setUploadProgress(percentComplete);
           }
         });
 
         xhr.addEventListener("load", () => {
           if (xhr.status >= 200 && xhr.status < 300) {
-            setUploadProgress(100);
-            console.log("File uploaded successfully!");
-            showSuccessToast("Audio file uploaded successfully!");
+            setUploadProgress(95);
+            console.log("File uploaded to cloud storage successfully!");
             resolve();
           } else {
             reject(new Error(`Upload failed with status: ${xhr.status}`));
@@ -300,11 +319,33 @@ const AudioFileUpload: React.FC<AudioFileUploadProps> = ({
           reject(new Error("Upload aborted"));
         });
 
-        xhr.open("POST", uploadAudioEndpoint);
-        xhr.setRequestHeader("Authorization", `Bearer ${accessToken}`);
+        xhr.open("PUT", uploadUrl);
+        xhr.setRequestHeader("Content-Type", selectedFile.type);
 
-        xhr.send(formData);
+        xhr.send(selectedFile);
       });
+
+      // Step 4: Confirm upload with backend to trigger processing
+      console.log("Confirming upload with backend...");
+      setUploadProgress(98);
+
+      await confirmUpload({
+        params: { path: { session_id: sessionId } },
+        body: {
+          file_path: filePath,
+          file_name: selectedFile.name,
+          content_type: selectedFile.type,
+          duration_ms: durationMs,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      setUploadProgress(100);
+      console.log("Upload confirmed and processing started!");
+      showSuccessToast("Audio file uploaded successfully!");
 
       // Mark upload as finished
       setHasFinishedUpload(true);
@@ -335,8 +376,14 @@ const AudioFileUpload: React.FC<AudioFileUploadProps> = ({
     if (uploadProgress < 10) {
       return "Preparing file...";
     }
+    if (uploadProgress < 15) {
+      return "Getting upload URL...";
+    }
+    if (uploadProgress < 95) {
+      return "Uploading to cloud storage...";
+    }
     if (uploadProgress < 100) {
-      return "Uploading to server...";
+      return "Finalizing...";
     }
     return "Upload complete!";
   };
@@ -345,8 +392,14 @@ const AudioFileUpload: React.FC<AudioFileUploadProps> = ({
     if (uploadProgress < 10) {
       return "Processing audio file...";
     }
+    if (uploadProgress < 15) {
+      return "Preparing secure upload...";
+    }
+    if (uploadProgress < 95) {
+      return `${Math.round((uploadProgress - 15) / 0.8)}% uploaded`;
+    }
     if (uploadProgress < 100) {
-      return `${Math.round((uploadProgress - 10) / 0.9)}% uploaded`;
+      return "Confirming upload...";
     }
     return "Upload successful!";
   };

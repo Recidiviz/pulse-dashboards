@@ -87,3 +87,21 @@ class UploadAudioFileResponse(BaseModel):
     gcs_file_path: str
     execution_id: str
     message: str
+
+
+class GetUploadUrlRequest(BaseModel):
+    file_name: str
+    content_type: str
+
+
+class GetUploadUrlResponse(BaseModel):
+    upload_url: str
+    file_path: str
+    expires_in_seconds: int
+
+
+class ConfirmUploadRequest(BaseModel):
+    file_path: str
+    file_name: str
+    content_type: str
+    duration_ms: int

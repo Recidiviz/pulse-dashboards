@@ -6,7 +6,7 @@ import base64
 from uuid import UUID
 
 import structlog
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import update
 from sqlmodel import select
 
@@ -22,9 +22,12 @@ from app.crud.recording_session import (
 from app.models.base import IntakeType
 from app.models.recording import RecordingChunk, RecordingSession, RecordingStatus
 from app.routes.recording_session_models import (
+    ConfirmUploadRequest,
     CreateRecordingSessionRequest,
     FinalizeRecordingRequest,
     FinalizeRecordingResponse,
+    GetUploadUrlRequest,
+    GetUploadUrlResponse,
     RecordingSessionResponse,
     RecordingSessionStatusResponse,
     SignedUrlResponse,
@@ -353,15 +356,78 @@ async def upload_audio_chunk(
 
 
 @router.post(
-    "/sessions/{session_id}/upload-audio",
-    response_model=UploadAudioFileResponse,
-    summary="Upload full audio recording",
-    description="Upload a complete audio file for a recording session and automatically trigger processing",
+    "/sessions/{session_id}/get-upload-url",
+    response_model=GetUploadUrlResponse,
+    summary="Get signed URL for direct upload to GCS",
+    description="Generate a signed URL that allows the client to upload audio directly to cloud storage",
     tags=["Recording Sessions"],
 )
-async def upload_full_audio_recording(
+async def get_upload_url(
     session_id: UUID,
-    file: UploadFile = File(...),
+    request: GetUploadUrlRequest,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
+) -> GetUploadUrlResponse:
+    recording_session = await get_recording_session_by_id(session, session_id)
+    if not recording_session:
+        raise HTTPException(status_code=404, detail="Recording session not found")
+
+    structlog.contextvars.bind_contextvars(
+        client_pseudo_id=recording_session.client_pseudo_id
+    )
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
+        pseudonymized_staff_id=pseudonymized_id,
+        cpa_client_locations=auth_user_context["cpa_client_locations"],
+    )
+
+    # Validate file type (audio files only)
+    if not request.content_type.startswith("audio/"):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid file type. Expected audio file, got: {request.content_type}",
+        )
+
+    try:
+        # Generate the GCS path for the file
+        file_path = f"recordings/{session_id}/final/{request.file_name}"
+
+        # Generate signed upload URL
+        async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:
+            upload_url = await recording_service.generate_upload_signed_url(
+                file_path=file_path,
+                content_type=request.content_type,
+                expiration_minutes=15,  # 15 minutes to upload
+            )
+
+        logger.info(
+            f"Generated upload URL for session {session_id}: {request.file_name}"
+        )
+
+        return GetUploadUrlResponse(
+            upload_url=upload_url,
+            file_path=file_path,
+            expires_in_seconds=30 * 60,
+        )
+
+    except Exception as e:
+        logger.error(f"Error generating upload URL for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to generate upload URL: {str(e)}"
+        )
+
+
+@router.post(
+    "/sessions/{session_id}/confirm-upload",
+    response_model=UploadAudioFileResponse,
+    summary="Confirm upload completion and trigger processing",
+    description="Called after client successfully uploads audio to GCS using signed URL",
+    tags=["Recording Sessions"],
+)
+async def confirm_upload(
+    session_id: UUID,
+    request: ConfirmUploadRequest,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
     auth_user_context=Depends(get_auth_user_context),
@@ -379,39 +445,15 @@ async def upload_full_audio_recording(
         cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
-    # Validate file type (audio files only)
-    if not file.content_type or not file.content_type.startswith("audio/"):
-        raise HTTPException(
-            status_code=400,
-            detail=f"Invalid file type. Expected audio file, got: {file.content_type}",
-        )
-
     try:
-        # Read file data
-        file_data = await file.read()
-        file_size = len(file_data)
-
-        logger.info(
-            f"Received audio file upload for session {session_id}: "
-            f"{file.filename} ({file_size} bytes, {file.content_type})"
-        )
-
-        # Upload to GCS
-        async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:
-            gcs_file_path = await recording_service.upload_full_audio_file(
-                str(session_id),
-                file_data,
-                file.filename or "uploaded_audio",
-                file.content_type,
-            )
-
         # Update recording session with file metadata
-        recording_session.gcs_final_file_path = gcs_file_path
+        recording_session.gcs_final_file_path = request.file_path
         recording_session.audio_file_url = (
-            f"gs://{settings.GCS_BUCKET_NAME}/{gcs_file_path}"
+            f"gs://{settings.GCS_BUCKET_NAME}/{request.file_path}"
         )
         recording_session.needs_audio_merge = False
         recording_session.status = RecordingStatus.PROCESSING
+        recording_session.duration = request.duration_ms
 
         # Schedule processing task
         execution = await schedule_task(
@@ -430,22 +472,22 @@ async def upload_full_audio_recording(
         await session.refresh(recording_session)
 
         logger.info(
-            f"Successfully uploaded audio file for session {session_id} "
-            f"to {gcs_file_path} and scheduled processing with execution {execution.id}"
+            f"Confirmed upload for session {session_id} at {request.file_path} "
+            f"and scheduled processing with execution {execution.id}"
         )
 
         return UploadAudioFileResponse(
             success=True,
-            gcs_file_path=gcs_file_path,
+            gcs_file_path=request.file_path,
             execution_id=str(execution.id),
-            message="Audio file uploaded successfully and processing started",
+            message="Upload confirmed and processing started",
         )
 
     except Exception as e:
         await session.rollback()
-        logger.error(f"Error uploading audio file for session {session_id}: {e}")
+        logger.error(f"Error confirming upload for session {session_id}: {e}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to upload audio file: {str(e)}"
+            status_code=500, detail=f"Failed to confirm upload: {str(e)}"
         )
 
 

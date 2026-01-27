@@ -689,6 +689,38 @@ class RecordingService:
         logger.info(f"Generated signed URL: {signed_url}")
         return signed_url
 
+    async def generate_upload_signed_url(
+        self, file_path: str, content_type: str, expiration_minutes: int = 15
+    ) -> str:
+        """Generate a signed URL for uploading a file directly to GCS."""
+        logger.info(
+            f"Generating upload signed URL for file: gs://{self.bucket_name}/{file_path}"
+        )
+
+        service_account_email = await self.get_client_email()
+
+        # For upload URLs, we need to provide minimal metadata since the file doesn't exist yet
+        metadata = {
+            "name": file_path,
+            "bucket": self.bucket_name,
+            "contentType": content_type,
+            "size": 0,  # Size is unknown for upload, but required by Blob
+        }
+
+        bucket = self.storage.get_bucket(self.bucket_name)
+        blob = Blob(bucket=bucket, name=file_path, metadata=metadata)
+
+        expiration_seconds = expiration_minutes * 60  # Convert minutes to seconds
+        signed_url = await blob.get_signed_url(
+            expiration=expiration_seconds,
+            http_method="PUT",
+            service_account_email=service_account_email,
+            headers={"Content-Type": content_type},
+        )
+
+        logger.info(f"Generated upload signed URL for: {file_path}")
+        return signed_url
+
     async def delete_chunks(self, session_id: str, total_chunks: int) -> None:
         # Sequential deletions to avoid rate limits
         for i in range(total_chunks):

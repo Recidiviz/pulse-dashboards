@@ -1,0 +1,14 @@
+[
+  {
+    "origin": [
+      "https://plan.recidiviz.org"
+    ],
+    "method": ["GET", "PUT", "POST", "HEAD", "OPTIONS"],
+    "responseHeader": [
+      "Content-Type",
+      "Content-Length",
+      "x-goog-resumable"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]

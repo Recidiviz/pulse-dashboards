@@ -683,7 +683,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/recordings/sessions/{session_id}/upload-audio": {
+    "/recordings/sessions/{session_id}/get-upload-url": {
         parameters: {
             query?: never;
             header?: never;
@@ -693,10 +693,30 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Upload full audio recording
-         * @description Upload a complete audio file for a recording session and automatically trigger processing
+         * Get signed URL for direct upload to GCS
+         * @description Generate a signed URL that allows the client to upload audio directly to cloud storage
          */
-        post: operations["upload_full_audio_recording_recordings_sessions__session_id__upload_audio_post"];
+        post: operations["get_upload_url_recordings_sessions__session_id__get_upload_url_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/recordings/sessions/{session_id}/confirm-upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm upload completion and trigger processing
+         * @description Called after client successfully uploads audio to GCS using signed URL
+         */
+        post: operations["confirm_upload_recordings_sessions__session_id__confirm_upload_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1732,14 +1752,6 @@ export interface components {
              */
             file: string;
         };
-        /** Body_upload_full_audio_recording_recordings_sessions__session_id__upload_audio_post */
-        Body_upload_full_audio_recording_recordings_sessions__session_id__upload_audio_post: {
-            /**
-             * File
-             * Format: binary
-             */
-            file: string;
-        };
         /** CitySuggestion */
         CitySuggestion: {
             /** Place Id */
@@ -1868,6 +1880,17 @@ export interface components {
             state?: string | null;
             /** Approved */
             approved?: boolean | null;
+        };
+        /** ConfirmUploadRequest */
+        ConfirmUploadRequest: {
+            /** File Path */
+            file_path: string;
+            /** File Name */
+            file_name: string;
+            /** Content Type */
+            content_type: string;
+            /** Duration Ms */
+            duration_ms: number;
         };
         /** ConversationStateCodesResponse */
         ConversationStateCodesResponse: {
@@ -2241,6 +2264,22 @@ export interface components {
                 | null;
             /** Error Message */
             error_message?: string | null;
+        };
+        /** GetUploadUrlRequest */
+        GetUploadUrlRequest: {
+            /** File Name */
+            file_name: string;
+            /** Content Type */
+            content_type: string;
+        };
+        /** GetUploadUrlResponse */
+        GetUploadUrlResponse: {
+            /** Upload Url */
+            upload_url: string;
+            /** File Path */
+            file_path: string;
+            /** Expires In Seconds */
+            expires_in_seconds: number;
         };
         /**
          * GoogleTTSAudioEncoding
@@ -4721,7 +4760,7 @@ export interface operations {
             };
         };
     };
-    upload_full_audio_recording_recordings_sessions__session_id__upload_audio_post: {
+    get_upload_url_recordings_sessions__session_id__get_upload_url_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -4732,7 +4771,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["Body_upload_full_audio_recording_recordings_sessions__session_id__upload_audio_post"];
+                "application/json": components["schemas"]["GetUploadUrlRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetUploadUrlResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_upload_recordings_sessions__session_id__confirm_upload_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmUploadRequest"];
             };
         };
         responses: {
