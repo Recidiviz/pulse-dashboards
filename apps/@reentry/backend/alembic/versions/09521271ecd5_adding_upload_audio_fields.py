@@ -20,11 +20,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column('recording_session', sa.Column('needs_audio_merge', sa.Boolean(), nullable=False))
-    # Update all existing records to set needs_audio_merge = True
-    op.execute("UPDATE recording_session SET needs_audio_merge = TRUE WHERE needs_audio_merge IS NULL")
-    # Now make the column non-nullable
-    op.alter_column('recording_session', 'needs_audio_merge', nullable=False)
+    op.add_column(
+        'recording_session',
+        sa.Column('needs_audio_merge', sa.Boolean(), nullable=False, server_default=sa.text('true'))
+    )
 
 
 def downgrade() -> None:
