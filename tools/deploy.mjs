@@ -203,6 +203,7 @@ if (deployEnv === "production") {
   nextVersion = `v${inc(versionToIncrement, releaseType)}`;
 }
 
+// Display names for the services to be deployed
 const staffBackendDisplayName = "Staff Backend";
 const staffFrontendDisplayName = "Staff Frontend";
 const sentencingAssistantDisplayName = "Sentencing Assistant Backend Services";
@@ -1145,17 +1146,18 @@ if (deployEnv === "staging" && successfullyDeployed.length > 0) {
     const githubLink = `https://github.com/${owner}/${repo}/commit/${mostRecentAncestor}`;
     slackMessage += ` (<${githubLink}|view on GitHub>)`;
   }
-} else if (deployEnv === "production") {
+} else if (deployEnv === "production" && successfullyDeployed.length > 0) {
   let message = `${deployer} deployed ${nextVersion} to production!`;
 
-  if (publishReleaseNotes) {
-    const releaseNotesMessage = releaseNotes
-      .split("\n")
-      .slice(1, -1)
-      .join("\n")
-      .trim(); // remove header and footer lines
-    message += ` \`\`\`${releaseNotesMessage}\`\`\``;
-  }
+  const releaseNotesMessage = releaseNotes
+    .split("\n")
+    .slice(1, -1)
+    .join("\n")
+    .trim(); // remove header and footer lines
+
+  const githubLink = `https://github.com/${owner}/${repo}/releases/tag/${nextVersion}`;
+  message += ` (<${githubLink}|view on GitHub>)`;
+  message += ` \`\`\`${releaseNotesMessage}\`\`\``;
 
   slackChannel = polarisChannelId;
   slackMessage = message;
