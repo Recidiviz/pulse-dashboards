@@ -9,7 +9,9 @@
     "jii-staging": "recidiviz-jii-staging",
     "jii-production": "recidiviz-jii-production",
     "meetings-staging": "recidiviz-meetings-staging",
-    "meetings-production": "recidiviz-meetings"
+    "meetings-production": "recidiviz-meetings",
+    "public-pathways-staging": "public-pathways-staging",
+    "public-pathways-production": "public-pathways-production"
   },
   "targets": {
     "recidiviz-jii-staging": {
@@ -26,6 +28,20 @@
       "hosting": {
         "live": [
           "recidiviz-jii-production"
+        ]
+      }
+    },
+    "public-pathways-staging": {
+      "hosting": {
+        "live": [
+          "public-pathways-staging"
+        ]
+      }
+    },
+    "public-pathways-production": {
+      "hosting": {
+        "live": [
+          "public-pathways-production"
         ]
       }
     }
