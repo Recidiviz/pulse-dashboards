@@ -1,7 +1,7 @@
-import structlog
 import time
 
 import httpx
+import structlog
 from deepgram import DeepgramClient
 
 from app.core.config import settings
@@ -74,6 +74,7 @@ async def deepgram_transcription_diarization(
                 "diarize": diarize,
                 "punctuate": diarize,
                 "smart_format": True,
+                "mip_opt_out": True,
             }
 
             # Add callback URL if provided for async transcription
@@ -143,6 +144,7 @@ async def deepgram_transcription_diarization(
                 diarize=diarize,
                 punctuate=diarize,
                 smart_format=True,
+                mip_opt_out=True,
             )
 
             end_time = time.time()
