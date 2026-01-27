@@ -212,6 +212,7 @@ export class SentenceProgressPresenter<
   private pushStateSpecificDates() {
     if (this.person instanceof Resident) {
       this.pushUsNdResidentDates(this.person);
+      this.pushUsUtResidentDates(this.person);
     }
   }
 
@@ -232,6 +233,15 @@ export class SentenceProgressPresenter<
       true,
       optionalFieldToDate(EIGHTYFIVEPercentDate),
     );
+  }
+
+  /**
+   * Add Parole date to timeline for UT residents.
+   */
+  private pushUsUtResidentDates(resident: Resident) {
+    if (resident.metadata.stateCode !== "US_UT") return;
+    const { paroleDate } = resident.metadata;
+    this.pushTimelineDate("Parole Date", true, optionalFieldToDate(paroleDate));
   }
 
   get isModalOpen(): boolean {

@@ -67,6 +67,15 @@ const usNDResidentRecord: ResidentRecord = {
   },
 };
 
+const usUtResidentRecord: ResidentRecord = {
+  ...baseResident,
+  stateCode: "US_UT",
+  metadata: {
+    stateCode: "US_UT",
+    paroleDate: "2024-01-01",
+  },
+};
+
 const baseClient: ClientRecord = {
   ...mockIneligibleClient,
   expirationDate: fieldToDate("2030-02-02"),
@@ -247,6 +256,33 @@ describe("SentenceProgressPresenter", () => {
 
         expect(presenter.sortedTimelineDates).toContainEqual(
           expectedParoleReviewEntry,
+        );
+      });
+    });
+
+    describe("UT metadata fields", () => {
+      beforeEach(() => {
+        selectedPerson = new Resident(usUtResidentRecord, rootStore);
+        workflowsStore = {
+          ...workflowsStore,
+          selectedPerson: selectedPerson,
+        } as unknown as WorkflowsStore;
+        presenter = new SentenceProgressPresenter(
+          workflowsStore,
+          selectedPerson,
+        );
+      });
+
+      test("timeline dates include parole date", () => {
+        const expectedParoleDateEntry: TimelineDate = {
+          date: fieldToDate("2024-01-01"),
+          label: "Parole Date",
+          formattedDate: "Jan 1, 2024",
+          hideLabel: true,
+        };
+
+        expect(presenter.sortedTimelineDates).toContainEqual(
+          expectedParoleDateEntry,
         );
       });
     });
