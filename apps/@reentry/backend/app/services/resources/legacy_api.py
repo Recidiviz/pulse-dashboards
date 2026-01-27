@@ -7,8 +7,8 @@ from fastapi import status
 from app.core.config import settings
 from app.services.resources import (
     ApiSearchResult,
-    GetResourcesRequest,
     GetResourcesResponse,
+    LegacyResourceRequest,
     Resource,
     ResourceFailureReason,
 )
@@ -16,39 +16,22 @@ from app.services.resources import (
 logger = structlog.get_logger(__name__)
 
 
-async def _call_resource_api(request: GetResourcesRequest) -> List[ApiSearchResult]:
+async def _call_legacy_resource_api(
+    params: LegacyResourceRequest,
+) -> List[ApiSearchResult]:
     """
-    Make an HTTP request to the external resources API v0 endpoint.
-    Uses /search endpoint when use_search is True, otherwise uses /discover.
+    Make an HTTP request to the external resources API legacy endpoint.
 
     Args:
-        request: The search parameters
+        params: The legacy search parameters
 
     Returns:
         List of search results
     """
     async with httpx.AsyncClient() as client:
-        # Build request payload matching ResourceRequest schema
-        request_json = {
-            "category": request.category,
-            "subcategory": request.subcategory,
-            "address": request.address,
-            "distance_miles": request.distance_miles,
-            "travel_mode": request.travel_mode,
-            "ids_to_exclude": request.exclude_ids if request.exclude_ids else None,
-            "addresses_to_exclude": request.exclude_addresses
-            if request.exclude_addresses
-            else None,
-            "keywords_to_exclude": request.exclude_names
-            if request.exclude_names
-            else None,
-            "limit": request.limit,
-        }
-
-        # Use /search endpoint for resource swapping, /discover for general discovery
-        endpoint = "search" if request.use_search else "discover"
+        request_json = params.model_dump(exclude_none=True)
         response = await client.post(
-            f"{settings.EXTERNAL_RESOURCES_API_URL}/api/v0/{endpoint}",
+            f"{settings.EXTERNAL_RESOURCES_API_URL}/legacy",
             json=request_json,
             headers={"x-api-key": settings.RESOURCES_API_KEY},
             timeout=30.0,  # 30 second timeout
@@ -91,13 +74,15 @@ def _convert_to_internal_resource(result: ApiSearchResult) -> Resource:
     return resource
 
 
-async def list_external_resources(request: GetResourcesRequest) -> GetResourcesResponse:
+async def list_legacy_resources(request: LegacyResourceRequest) -> GetResourcesResponse:
     """
-    List resources from the external API v0 endpoint based on the request parameters.
-    Uses /search endpoint when use_search is True, otherwise uses /discover.
+    List resources from the legacy external API endpoint based on the request parameters.
+
+    Filtering (ids_to_exclude, addresses_to_exclude, keywords_to_exclude) is handled
+    by the external API server-side.
 
     Args:
-        request: The resources request
+        request: The legacy resources request
 
     Returns:
         GetResourcesResponse with the list of resources
@@ -108,14 +93,12 @@ async def list_external_resources(request: GetResourcesRequest) -> GetResourcesR
         logger.error("External resources API URL not configured")
         raise ValueError("EXTERNAL_RESOURCES_API_URL is not configured in settings")
 
-    endpoint_type = "search" if request.use_search else "discover"
     logger.debug(
-        "Starting new external resources search",
+        "Starting legacy external resources search",
         category=request.category,
         subcategory=request.subcategory,
-        travel_mode=request.travel_mode,
+        travel_mode=request.mode,
         distance=request.distance_miles,
-        endpoint=endpoint_type,
     )
 
     # Prepare result list
@@ -124,21 +107,22 @@ async def list_external_resources(request: GetResourcesRequest) -> GetResourcesR
     subcategory = request.subcategory
 
     try:
-        results = await _call_resource_api(request)
+        results = await _call_legacy_resource_api(request)
         logger.debug(
-            "New External API returned results",
+            "Legacy External API returned results",
             category=category,
             subcategory=subcategory,
             results_count=len(results),
         )
 
-        # Process results - convert to internal model
+        # Convert results to internal model
+        # Note: Filtering is handled by external API, so we don't filter here
         for result in results:
             resource = _convert_to_internal_resource(result)
             resources.append(resource)
 
         logger.info(
-            "New external resources search completed",
+            "Legacy external resources search completed",
             category=category,
             subcategory=subcategory,
             total_found=len(results),
@@ -160,7 +144,7 @@ async def list_external_resources(request: GetResourcesRequest) -> GetResourcesR
 
     except Exception as error:
         logger.exception(
-            "Failed to fetch new external resources",
+            "Failed to fetch legacy external resources",
             category=category,
             subcategory=subcategory,
             address=request.address,

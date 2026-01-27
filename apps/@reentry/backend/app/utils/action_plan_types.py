@@ -4,7 +4,7 @@ from typing import Annotated, Literal
 from langgraph.graph import MessagesState
 from pydantic import BaseModel, Field
 
-from app.services.resources import Resource, ResourceCategory, ResourceSubcategory
+from app.services.resources import Resource, ResourceSubcategory
 
 
 ### Result Types
@@ -22,9 +22,6 @@ class Annotation(BaseModel):
 
 class ActionPlanSectionResourceTypes(BaseModel):
     section_title: str = Field(description="Name of the section")
-    categories: list[ResourceCategory] = Field(
-        description="List of resource categories to look for this section"
-    )
     subcategories: list[ResourceSubcategory] = Field(
         description="List of resource subcategories to look for this section"
     )

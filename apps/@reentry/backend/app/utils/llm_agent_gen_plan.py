@@ -123,7 +123,6 @@ async def call_generate_section(
     if state.get("resources_associations"):
         for association in state["resources_associations"].associations:
             if association.section_title == section:
-                # First, handle all specified subcategories
                 for subcategory in association.subcategories:
                     # Find the parent category for this subcategory
                     parent_category = None
@@ -158,40 +157,6 @@ async def call_generate_section(
                             subcategory=subcategory,
                             error=str(error),
                         )
-                # Then handle categories that don't have specific subcategories listed
-                for category in association.categories:
-                    # Check if this category already had subcategories handled
-                    subcategories_handled = False
-                    for subcategory in association.subcategories:
-                        if any(
-                            subcategory in subcat_list
-                            for cat, subcat_list in CATEGORY_SUBCATEGORY_MAP.items()
-                            if cat == category
-                        ):
-                            subcategories_handled = True
-                            break
-
-                    # If no subcategories were handled for this category, get all resources for the category
-                    if not subcategories_handled:
-                        request = GetResourcesRequest(
-                            category=category,
-                            subcategory=None,
-                            address=client_address,
-                            exclude_names=None,
-                            exclude_ids=None,
-                            limit=2,
-                        )
-                        try:
-                            fetched_resources = await fetch_resources_with_retry(
-                                request, max_retries=2
-                            )
-                            resources.extend(fetched_resources)
-                        except Exception as error:
-                            logger.error(
-                                "Failed to fetch resources for category",
-                                category=category,
-                                error=str(error),
-                            )
 
     if resources:
         message = prompts.get_section_generation_prompt_with_resources(

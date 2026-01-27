@@ -9,9 +9,12 @@ from app.crud.address import update_intake_address
 from app.routes.shared_models import AddressSubmission
 from app.services.resources import (
     CATEGORY_SUBCATEGORY_MAP,
+    CATEGORY_SUBCATEGORY_MAP_LEGACY,
     Resource,
     ResourceCategory,
+    ResourceCategoryLegacy,
     ResourceSubcategory,
+    ResourceSubcategoryLegacy,
 )
 from app.utils.action_plan_types import ActionPlan, ActionPlanMarkdown
 
@@ -394,9 +397,6 @@ async def test_resource_type_get_result(
     assert_response,
     category: ResourceCategory,
 ):
-    if category == ResourceCategory.UNKNOWN:
-        pytest.skip()
-
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     # create a plan
     cplan_r = await client.post(
@@ -428,19 +428,71 @@ async def test_resource_type_get_result(
     result = response.json()
 
     assert result is not None
-    # The resources endpoint now returns a list directly instead of a paginated response with "items"
-    # Initially the list will be empty since we haven't added any resources
-    # Skip resource assertions if the result is empty
-    if result:
-        for resource in result:
-            assert resource["category"] == category_str
-            assert resource["subcategory"] == subcategory_str
-            assert resource["name"] is not None
-            assert resource["address"] is not None
+
+    for resource in result:
+        assert resource["category"] == category_str
+        assert resource["subcategory"] == subcategory_str
+        assert resource["name"] is not None
+        assert resource["address"] is not None
+
+
+@pytest.mark.parametrize(
+    "category",
+    list(CATEGORY_SUBCATEGORY_MAP_LEGACY.keys()),
+)
+@pytest.mark.asyncio
+async def test_resource_type_get_result_legacy(
+    mock_clientdata_service,
+    mock_intake,
+    client,
+    async_session,
+    assert_response,
+    category: ResourceCategoryLegacy,
+):
+    if category == ResourceCategoryLegacy.UNKNOWN:
+        pytest.skip()
+
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    # create a plan
+    cplan_r = await client.post(
+        "/plans",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "intake_id": str(mock_intake.id),
+            "no_initial_generation": True,
+        },
+    )
+    assert_response(cplan_r, 200)
+    plan_id = cplan_r.json()["id"]
+
+    subcategories = CATEGORY_SUBCATEGORY_MAP_LEGACY[category]
+    subcategory = subcategories[0] if subcategories else None
+    # Convert enum to string value
+    category_str = category.value if category else None
+    subcategory_str = subcategory.value if subcategory else None
+
+    response = await client.get(
+        f"/plans/{plan_id}/resources",
+        params={
+            "filter_category": category_str,
+            "filter_subcategory": subcategory_str,
+        },
+    )
+    assert response.status_code == 200
+
+    result = response.json()
+
+    assert result is not None
+
+    for resource in result:
+        assert resource["category"] == category_str
+        assert resource["subcategory"] == subcategory_str
+        assert resource["name"] is not None
+        assert resource["address"] is not None
 
 
 @pytest.mark.asyncio
-async def test_suggested_resources(
+async def test_suggested_resources_legacy(
     mock_clientdata_service,
     mock_intake,
     client,
@@ -481,15 +533,15 @@ async def test_suggested_resources(
     mock_resources = [
         Resource(
             id="res-1",
-            category=ResourceCategory.BASIC_NEEDS,
-            subcategory=ResourceSubcategory.HOUSING,
+            category=ResourceCategoryLegacy.BASIC_NEEDS.value,
+            subcategory=ResourceSubcategoryLegacy.HOUSING.value,
             name="Test Housing Resource",
             address="123 Test St, Test City, TX",
         ),
         Resource(
             id="res-2",
-            category=ResourceCategory.EMPLOYMENT_AND_CAREER,
-            subcategory=ResourceSubcategory.JOB_PLACEMENT,
+            category=ResourceCategoryLegacy.EMPLOYMENT_AND_CAREER.value,
+            subcategory=ResourceSubcategoryLegacy.JOB_PLACEMENT.value,
             name="Test Employment Resource",
             address="456 Employment Rd, Test City, TX",
         ),
@@ -551,18 +603,152 @@ async def test_suggested_resources(
             # Verify resources match what was stored
             assert len(suggested_resources) == 2
             assert suggested_resources[0]["id"] == "res-1"
-            assert suggested_resources[0]["category"] == ResourceCategory.BASIC_NEEDS
-            assert suggested_resources[0]["subcategory"] == ResourceSubcategory.HOUSING
+            assert (
+                suggested_resources[0]["category"]
+                == ResourceCategoryLegacy.BASIC_NEEDS.value
+            )
+            assert (
+                suggested_resources[0]["subcategory"]
+                == ResourceSubcategoryLegacy.HOUSING.value
+            )
             assert suggested_resources[0]["name"] == "Test Housing Resource"
 
             assert suggested_resources[1]["id"] == "res-2"
             assert (
                 suggested_resources[1]["category"]
-                == ResourceCategory.EMPLOYMENT_AND_CAREER
+                == ResourceCategoryLegacy.EMPLOYMENT_AND_CAREER
             )
             assert (
                 suggested_resources[1]["subcategory"]
-                == ResourceSubcategory.JOB_PLACEMENT
+                == ResourceSubcategoryLegacy.JOB_PLACEMENT
+            )
+            assert suggested_resources[1]["name"] == "Test Employment Resource"
+
+
+@pytest.mark.asyncio
+async def test_suggested_resources(
+    mock_clientdata_service,
+    mock_intake,
+    client,
+    async_session,
+    assert_response,
+):
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+
+    # Create client address
+    address_data = AddressSubmission(
+        street_address="123 Main St", city="Portland", state="OR"
+    )
+    await update_intake_address(async_session, mock_intake.id, address_data)
+
+    # Create a plan
+    response = await client.post(
+        "/plans",
+        json={
+            "client_pseudo_id": client_pseudo_id,
+            "intake_id": str(mock_intake.id),
+            "no_initial_generation": True,
+        },
+    )
+    assert_response(response, 200)
+    plan_id = response.json()["id"]
+
+    # Upload assets
+    for filename, name, mimetype in [
+        ("client_messages.json", "messages.json", "application/json"),
+        ("client_summary.md", "summary.md", "text/markdown"),
+    ]:
+        with open(Path(__file__).parent / "data" / filename, "r", encoding="utf8") as f:
+            files = {"file": (name, f.read(), mimetype)}
+            response = await client.post(f"/plans/{plan_id}/assets/upload", files=files)
+            assert_response(response, 200)
+
+    # Mock resources
+    mock_resources = [
+        Resource(
+            id="res-1",
+            category=ResourceCategory.HOUSING.value,
+            subcategory=ResourceSubcategory.EMERGENCY.value,
+            name="Test Housing Resource",
+            address="123 Test St, Test City, TX",
+        ),
+        Resource(
+            id="res-2",
+            category=ResourceCategory.EMPLOYMENT.value,
+            subcategory=ResourceSubcategory.SECOND_CHANCE.value,
+            name="Test Employment Resource",
+            address="456 Employment Rd, Test City, TX",
+        ),
+    ]
+
+    # Create a generation with mock resources
+    with patch(
+        "app.utils.llm_agent_qa.LLMAgentQA.call",
+        new_callable=AsyncMock,
+    ) as mock_find:
+        mock_find.return_value = {}
+        # Create a generation with mock resources
+        with patch(
+            "app.utils.llm_agent_gen_plan.LLMAgentGenerate.generate",
+            new_callable=AsyncMock,
+        ) as mock_gen:
+            mock_gen.return_value = ActionPlanMarkdown(
+                user_prompt="USER_PROMPT_SENT_TO_MODEL",
+                action_plan="ACTION_PLAN",
+                messages=[],
+                suggested_resources=mock_resources,
+                structured_action_plan=ActionPlan(
+                    sections=[],
+                    immediate_needs={
+                        "annotations": [],
+                        "markdown_content": "",
+                        "notes": "",
+                        "title": "",
+                    },
+                    milestones=[],
+                    timeline=[],
+                    quick_summary_circumstances="",
+                    overview="",
+                    sections_order=[],
+                ),
+            )
+
+            # Generate the plan
+            response = await client.post(f"/plans/{plan_id}/generate", json={})
+            assert_response(response, 200)
+            gen_id = response.json()["id"]
+
+            # Wait for generation to complete
+            for x in range(10):
+                response = await client.get(f"/plans/{plan_id}/gens/{gen_id}")
+                assert_response(response, 200)
+                data = response.json()
+                if data["status"] in ("completed", "failed"):
+                    break
+                await asyncio.sleep(1)
+            else:
+                pytest.fail("Generation not completed in time")
+
+            # Check suggested resources endpoint
+            response = await client.get(f"/plans/{plan_id}/suggested-resources")
+            assert_response(response, 200)
+            suggested_resources = response.json()
+
+            # Verify resources match what was stored
+            assert len(suggested_resources) == 2
+            assert suggested_resources[0]["id"] == "res-1"
+            assert suggested_resources[0]["category"] == ResourceCategory.HOUSING.value
+            assert (
+                suggested_resources[0]["subcategory"]
+                == ResourceSubcategory.EMERGENCY.value
+            )
+            assert suggested_resources[0]["name"] == "Test Housing Resource"
+
+            assert suggested_resources[1]["id"] == "res-2"
+            assert suggested_resources[1]["category"] == ResourceCategory.EMPLOYMENT
+            assert (
+                suggested_resources[1]["subcategory"]
+                == ResourceSubcategory.SECOND_CHANCE
             )
             assert suggested_resources[1]["name"] == "Test Employment Resource"
 

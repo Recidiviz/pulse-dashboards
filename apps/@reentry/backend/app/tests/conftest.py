@@ -36,11 +36,21 @@ def prevent_resource_api_call(request, monkeypatch):
     """
 
     if "integration" not in request.keywords:
+        # Mock the new API call
         monkeypatch.setattr(
-            "app.services.resources.api.call_resource_api",
+            "app.services.resources.api._call_resource_api",
             MagicMock(
                 side_effect=RuntimeError(
-                    "The Resource API should not be called for unit tests, please mock it for your test."
+                    "The new Resource API should not be called for unit tests, please mock it for your test."
+                )
+            ),
+        )
+        # Mock the legacy API call
+        monkeypatch.setattr(
+            "app.services.resources.legacy_api._call_legacy_resource_api",
+            MagicMock(
+                side_effect=RuntimeError(
+                    "The legacy Resource API should not be called for unit tests, please mock it for your test."
                 )
             ),
         )

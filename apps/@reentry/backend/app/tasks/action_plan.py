@@ -206,7 +206,7 @@ async def _regenerate_action_plan(
     await execution.log_progress(
         session,
         5,
-        "Applying your instructions, this might take up to a minute",
+        "",
         logger=task_logger,
     )
 

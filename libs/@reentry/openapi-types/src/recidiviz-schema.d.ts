@@ -1321,7 +1321,7 @@ export interface paths {
         put?: never;
         /**
          * Search for resources using client info
-         * @description Search for resources based on the client's information from their plan generation data
+         * @description Search for resources based on the client's information from their plan generation data. Uses /search for new resources, /legacy for legacy resources.
          */
         post: operations["search_resources_plans__id__search_resources_post"];
         delete?: never;
@@ -2150,10 +2150,21 @@ export interface components {
         };
         /** GetPlanResourcesRequest */
         GetPlanResourcesRequest: {
-            /** @description Resource category */
-            category: components["schemas"]["ResourceCategory"];
-            /** @description Resource subcategory */
-            subcategory?: components["schemas"]["ResourceSubcategory"] | null;
+            /**
+             * Category
+             * @description Resource category
+             */
+            category:
+                | components["schemas"]["ResourceCategory"]
+                | components["schemas"]["ResourceCategoryLegacy"];
+            /**
+             * Subcategory
+             * @description Resource subcategory
+             */
+            subcategory?:
+                | components["schemas"]["ResourceSubcategory"]
+                | components["schemas"]["ResourceSubcategoryLegacy"]
+                | null;
             /**
              * Exclude
              * @description Keywords to exclude in the resource names, if a specific resource for one of the resource types is mentioned. For example, if the client was banned from a specific shelter.
@@ -2161,12 +2172,25 @@ export interface components {
              */
             exclude: string[];
         };
-        /** GetResourcesRequest */
+        /**
+         * GetResourcesRequest
+         * @description Unified request model that accepts both new and legacy category/subcategory values.
+         */
         GetResourcesRequest: {
-            /** @description Resource category */
-            category: components["schemas"]["ResourceCategory"];
-            /** @description Resource subcategory */
-            subcategory?: components["schemas"]["ResourceSubcategory"] | null;
+            /**
+             * Category
+             * @description Resource category
+             */
+            category:
+                | components["schemas"]["ResourceCategory"]
+                | components["schemas"]["ResourceCategoryLegacy"];
+            /**
+             * Subcategory
+             * @description Resource subcategory
+             */
+            subcategory:
+                | components["schemas"]["ResourceSubcategory"]
+                | components["schemas"]["ResourceSubcategoryLegacy"];
             /**
              * Address
              * @description Full address to find resources near. (e.g. '123 Main St, Cityville, CA 12345')
@@ -2191,11 +2215,22 @@ export interface components {
              */
             exclude_ids?: string[] | null;
             /**
+             * Exclude Addresses
+             * @description List of addresses to exclude from results
+             */
+            exclude_addresses?: string[] | null;
+            /**
              * Limit
              * @description How many
              * @default 10
              */
             limit: number | null;
+            /**
+             * Use Search
+             * @description If True, use /search endpoint instead of /discover for new resources
+             * @default false
+             */
+            use_search: boolean;
         };
         /** GetResourcesResponse */
         GetResourcesResponse: {
@@ -2969,10 +3004,21 @@ export interface components {
              * @description Unique identifier for the resource.
              */
             id: string;
-            /** @description Category of the resource. */
-            category: components["schemas"]["ResourceCategory"];
-            /** @description Subcategory of the resource. */
-            subcategory?: components["schemas"]["ResourceSubcategory"] | null;
+            /**
+             * Category
+             * @description Category of the resource.
+             */
+            category:
+                | components["schemas"]["ResourceCategory"]
+                | components["schemas"]["ResourceCategoryLegacy"];
+            /**
+             * Subcategory
+             * @description Subcategory of the resource.
+             */
+            subcategory?:
+                | components["schemas"]["ResourceSubcategory"]
+                | components["schemas"]["ResourceSubcategoryLegacy"]
+                | null;
             /**
              * Name
              * @description Name of the resource.
@@ -3022,10 +3068,25 @@ export interface components {
         };
         /**
          * ResourceCategory
-         * @description Resource categories
          * @enum {string}
          */
         ResourceCategory:
+            | "Housing"
+            | "Employment"
+            | "Basic Needs"
+            | "Mental Health"
+            | "Substance Use"
+            | "Physical Health"
+            | "Legal Aid & Rights Restoration"
+            | "Education & Vocational Training"
+            | "Family Reconnection & Parenting"
+            | "Peer Support & Community Integration";
+        /**
+         * ResourceCategoryLegacy
+         * @description Resource categories
+         * @enum {string}
+         */
+        ResourceCategoryLegacy:
             | "Basic Needs"
             | "Employment and Career Support"
             | "Education"
@@ -3044,10 +3105,75 @@ export interface components {
         ResourceFailureReason: "api_error" | "no_results_found" | "success";
         /**
          * ResourceSubcategory
-         * @description Resource subcategories
          * @enum {string}
          */
         ResourceSubcategory:
+            | "Emergency housing and shelters"
+            | "Transitional housing"
+            | "Sober living and recovery program"
+            | "Rental assistance"
+            | "Subsidized housing or vouchers"
+            | "Youth housing"
+            | "Second-chance employer"
+            | "Temporary staffing agency"
+            | "Job readiness training"
+            | "Job certification and licensing"
+            | "Food assistance"
+            | "Hygiene products"
+            | "Second hand clothing"
+            | "State ID, Driver's License"
+            | "Financial assistance"
+            | "Therapy and counseling"
+            | "Psychiatric care"
+            | "Trauma-informed care"
+            | "Crisis intervention services"
+            | "Anger management"
+            | "Domestic violence treatment"
+            | "Youth mental health services"
+            | "Detoxification centers"
+            | "Inpatient drug treatment programs"
+            | "Intensive outpatient programs"
+            | "Medication-assisted treatment"
+            | "Substance use support"
+            | "Youth substance use support"
+            | "HIV/AIDS and Hepatitis C services"
+            | "Medicaid enrollment assistance"
+            | "Community clinic"
+            | "Urgent care"
+            | "Prescription assistance"
+            | "Emergency dental care"
+            | "Youth health care"
+            | "Primary care"
+            | "Veterans health care"
+            | "Criminal record expungement"
+            | "Child support assistance"
+            | "Voting rights restoration"
+            | "Legal aid"
+            | "Youth legal aid"
+            | "GED preparation and testing"
+            | "Vocational trade school programs"
+            | "College re-entry programs"
+            | "Literacy programs"
+            | "Digital literacy programs"
+            | "Financial literacy programs"
+            | "Family therapy or counseling"
+            | "Parenting skills classes"
+            | "Family services"
+            | "Family reunification services"
+            | "Child protective services"
+            | "Mentorship programs"
+            | "Faith-based support"
+            | "Reentry support groups"
+            | "Community center"
+            | "Volunteer opportunities"
+            | "Civic engagement"
+            | "Youth community programs";
+        /**
+         * ResourceSubcategoryLegacy
+         * @description Resource subcategories
+         * @enum {string}
+         */
+        ResourceSubcategoryLegacy:
             | "Housing"
             | "Food Assistance"
             | "Clothing"
@@ -5652,9 +5778,11 @@ export interface operations {
             query?: {
                 filter_category?:
                     | components["schemas"]["ResourceCategory"]
+                    | components["schemas"]["ResourceCategoryLegacy"]
                     | null;
                 filter_subcategory?:
                     | components["schemas"]["ResourceSubcategory"]
+                    | components["schemas"]["ResourceSubcategoryLegacy"]
                     | null;
             };
             header?: never;

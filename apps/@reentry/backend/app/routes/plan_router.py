@@ -62,7 +62,9 @@ from app.services.resources import (
     GetResourcesResponse,
     Resource,
     ResourceCategory,
+    ResourceCategoryLegacy,
     ResourceSubcategory,
+    ResourceSubcategoryLegacy,
     list_resources,
 )
 from app.utils.address_autocomplete import (
@@ -584,8 +586,10 @@ async def router_download_asset(
 )
 async def get_plan_resources(
     id: uuid.UUID,
-    filter_category: Optional[ResourceCategory] = None,
-    filter_subcategory: Optional[ResourceSubcategory] = None,
+    filter_category: Optional[ResourceCategory | ResourceCategoryLegacy] = None,
+    filter_subcategory: Optional[
+        ResourceSubcategory | ResourceSubcategoryLegacy
+    ] = None,
     session: AsyncSession = Depends(get_session),
 ):
     plan = await get_plan_by_id(session, id)
@@ -626,7 +630,7 @@ async def get_plan_resources(
     "/plans/{id}/search-resources",
     response_model=GetResourcesResponse,
     summary="Search for resources using client info",
-    description="Search for resources based on the client's information from their plan generation data",
+    description="Search for resources based on the client's information from their plan generation data. Uses /search for new resources, /legacy for legacy resources.",
 )
 async def search_resources(
     id: uuid.UUID,
@@ -655,6 +659,7 @@ async def search_resources(
             exclude_names=request.exclude,
             exclude_ids=None,
             limit=10,
+            use_search=True,  # Use /search endpoint for resource swapping
         )
         return await list_resources(resource_request)
     except Exception as e:
