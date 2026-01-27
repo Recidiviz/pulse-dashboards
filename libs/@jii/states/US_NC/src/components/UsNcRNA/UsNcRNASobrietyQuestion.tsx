@@ -66,7 +66,7 @@ export const UsNcRNASobrietyQuestion = observer(
                       e.target.checked,
                     );
                   }}
-                  checked={checkboxAnswers?.[value]}
+                  checked={checkboxAnswers?.[value] ?? false}
                 />
                 <label htmlFor={inputId}>{label}</label>
               </MultipleAnswerOption>

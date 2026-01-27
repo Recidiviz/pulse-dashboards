@@ -49,7 +49,7 @@ export const UsNcRNADaysQuestion = observer(function UsNcRNADaysQuestion({
           presenter.form.handleTextAnswerChange(id, e.target.value);
         }}
         placeholder={placeholderText}
-        value={presenter.form.liveTextAnswers[id]}
+        value={presenter.form.liveTextAnswers[id] ?? ""}
       />
     </>
   );

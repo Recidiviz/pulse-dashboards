@@ -151,9 +151,10 @@ export const UsNcRNALifeAreaQuestion = observer(
                   improvementText: e.target.value,
                 });
               }}
-            >
-              {presenter.form.liveLifeAreaAnswers[id]?.improvementText ?? ""}
-            </LongTextEntry>
+              value={
+                presenter.form.liveLifeAreaAnswers[id]?.improvementText ?? ""
+              }
+            />
           </>
         )}
       </>

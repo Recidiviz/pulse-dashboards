@@ -16,6 +16,7 @@
 // =============================================================================
 
 import assertNever from "assert-never";
+import { merge } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import {
@@ -78,16 +79,10 @@ export class UsNcRNAForm {
     };
   }
   get liveCheckboxAnswers(): RNACheckboxAnswers {
-    return {
-      ...this.savedCheckboxAnswers,
-      ...this.checkboxAnswers,
-    };
+    return merge(this.savedCheckboxAnswers, this.checkboxAnswers);
   }
   get liveLifeAreaAnswers(): RNALifeAreaAnswers {
-    return {
-      ...this.savedLifeAreaAnswers,
-      ...this.lifeAreaAnswers,
-    };
+    return merge(this.savedLifeAreaAnswers, this.lifeAreaAnswers);
   }
   private get liveAnswers() {
     return {
@@ -114,7 +109,9 @@ export class UsNcRNAForm {
     switch (format) {
       // Number of days per week must be 0-7
       case "DAYS_PER_WEEK_ENTRY": {
-        const input = Number(this.liveTextAnswers[questionId]);
+        const inputStr = this.liveTextAnswers[questionId];
+        if (inputStr === "") return false;
+        const input = Number(inputStr);
         return Number.isInteger(input) && 0 <= input && input <= 7;
       }
       // Other radio or text questions are valid if any answer is selected
