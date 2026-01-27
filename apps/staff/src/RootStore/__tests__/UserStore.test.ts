@@ -464,6 +464,120 @@ describe("getRoutePermission", () => {
 
       expect(store.getRoutePermission("workflows")).toBeFalse();
     });
+    describe("when hideWorkflowsOpportunities is set", () => {
+      let store: UserStore;
+      beforeEach(() => {
+        store = new UserStore({
+          authSettings: testAuthSettings,
+          rootStore: {
+            currentTenantId: tenantId,
+            firestoreStore: {
+              authenticate: vi.fn(),
+            },
+            tenantStore: {
+              tenantFeatureVariants: {},
+            },
+          } as unknown as typeof RootStore,
+        });
+      });
+
+      test("resident profiles access only", async () => {
+        const userAppMetadata = {
+          [metadataField]: {
+            stateCode: "US_MO",
+            routes: {
+              workflowsSupervision: false,
+              workflowsFacilities: true,
+            },
+            featureVariants: {
+              hideWorkflowsOpportunities: true,
+            },
+          },
+        };
+        mockGetUser.mockResolvedValue({
+          email_verified: true,
+          ...userAppMetadata,
+        });
+        await store.authorize(mockHandleUrl);
+
+        expect(store.getRoutePermission("workflows", "residents")).toBeTrue();
+        expect(store.getRoutePermission("workflows", "clients")).toBeFalse();
+        expect(store.getRoutePermission("workflows")).toBeFalse();
+        expect(store.getRoutePermission("workflows", "home")).toBeFalse();
+      });
+
+      test("client profiles only", async () => {
+        const userAppMetadata = {
+          [metadataField]: {
+            stateCode: "US_MO",
+            routes: {
+              workflowsSupervision: true,
+              workflowsFacilities: false,
+            },
+            featureVariants: {
+              hideWorkflowsOpportunities: true,
+            },
+          },
+        };
+        mockGetUser.mockResolvedValue({
+          email_verified: true,
+          ...userAppMetadata,
+        });
+        await store.authorize(mockHandleUrl);
+
+        expect(store.getRoutePermission("workflows", "clients")).toBeTrue();
+        expect(store.getRoutePermission("workflows", "residents")).toBeFalse();
+        expect(store.getRoutePermission("workflows")).toBeFalse();
+        expect(store.getRoutePermission("workflows", "home")).toBeFalse();
+      });
+      test("both profile types", async () => {
+        const userAppMetadata = {
+          [metadataField]: {
+            stateCode: "US_MO",
+            routes: {
+              workflowsSupervision: true,
+              workflowsFacilities: true,
+            },
+            featureVariants: {
+              hideWorkflowsOpportunities: true,
+            },
+          },
+        };
+        mockGetUser.mockResolvedValue({
+          email_verified: true,
+          ...userAppMetadata,
+        });
+        await store.authorize(mockHandleUrl);
+
+        expect(store.getRoutePermission("workflows", "clients")).toBeTrue();
+        expect(store.getRoutePermission("workflows", "residents")).toBeTrue();
+        expect(store.getRoutePermission("workflows")).toBeFalse();
+        expect(store.getRoutePermission("workflows", "home")).toBeFalse();
+      });
+
+      test("no access to non-profile routes", async () => {
+        const userAppMetadata = {
+          [metadataField]: {
+            stateCode: "US_MO",
+            routes: {
+              workflowsSupervision: true,
+              workflowsFacilities: true,
+            },
+            featureVariants: {
+              hideWorkflowsOpportunities: true,
+            },
+          },
+        };
+        mockGetUser.mockResolvedValue({
+          email_verified: true,
+          ...userAppMetadata,
+        });
+        await store.authorize(mockHandleUrl);
+
+        expect(store.getRoutePermission("workflows")).toBeFalse();
+        expect(store.getRoutePermission("workflows", "home")).toBeFalse();
+      });
+    });
   });
 
   test("lantern permissions", async () => {
@@ -497,6 +611,9 @@ describe("isUserAllowedRoute", () => {
         currentTenantId: tenantId,
         firestoreStore: {
           authenticate: vi.fn(),
+        },
+        tenantStore: {
+          tenantFeatureVariants: {},
         },
       } as unknown as typeof RootStore,
     });
@@ -593,6 +710,9 @@ describe("userAllowedNavigation", () => {
         currentTenantId: stateCode,
         firestoreStore: {
           authenticate: vi.fn(),
+        },
+        tenantStore: {
+          tenantFeatureVariants: {},
         },
       } as unknown as typeof RootStore,
     });
@@ -746,6 +866,31 @@ describe("userAllowedNavigation", () => {
     await store.authorize(mockHandleUrl);
     const expected = {
       workflows: ["tasks", "clients", "residents"],
+      methodology: [],
+    };
+    expect(store.userAllowedNavigation).toEqual(expected);
+  });
+
+  test("disallows any route except system profile when hideWorkflowsOpportunities is set", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    TENANT_CONFIGS[stateCode].navigation = {
+      workflows: ["home", "tasks", "clients", "residents"],
+    };
+    const userAppMetadata = {
+      [metadataField]: {
+        stateCode,
+        routes: {
+          workflowsFacilities: true,
+        },
+        featureVariants: {
+          hideWorkflowsOpportunities: true,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...userAppMetadata });
+    await store.authorize(mockHandleUrl);
+    const expected = {
+      workflows: ["residents"],
       methodology: [],
     };
     expect(store.userAllowedNavigation).toEqual(expected);

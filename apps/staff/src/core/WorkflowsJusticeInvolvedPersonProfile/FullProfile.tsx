@@ -340,6 +340,7 @@ export const FullProfile = observer(
     const { isTablet, isMobile } = useIsMobile(true);
     const {
       caseNoteSearch,
+      hideWorkflowsOpportunities,
       usTn2026ClassificationPolicyPilot,
       sentenceProgressV2,
     } = useFeatureVariants();
@@ -361,6 +362,8 @@ export const FullProfile = observer(
 
     // Suppress unimplemented sections for MO clients
     const isMoClient = person instanceof Client && person.stateCode === "US_MO";
+
+    const hideOpportunitiesSection = isMoClient || hideWorkflowsOpportunities;
 
     const queryClient = new QueryClient();
 
@@ -452,7 +455,7 @@ export const FullProfile = observer(
                 </div>
               )}
             </ProfileDetailsWrapper>
-            {isMoClient ? null : (
+            {hideOpportunitiesSection ? null : (
               <div>
                 <SectionHeading>Opportunities</SectionHeading>
                 <OpportunitiesAccordion

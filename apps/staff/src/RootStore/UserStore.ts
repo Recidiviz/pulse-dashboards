@@ -608,30 +608,59 @@ export default class UserStore {
   getRoutePermission(route: string, subpage?: string): boolean {
     if (this.isRecidivizUser) return true;
 
+    // When hideWorkflowsOpportunities is turned on, we'll restrict workflows access to just
+    // the Resident and/or Client profile subpages.
+    // TODO(#11293): Detangle profile access from workflows access where possible.
+    const hideWorkflowsOpportunities =
+      this.activeFeatureVariants.hideWorkflowsOpportunities;
+
     const isTasksAccessibleSubpage = Boolean(
       subpage && ["tasks", "clients", "residents"].includes(subpage),
     );
 
     const routePermission = this.routes.find(
-      // permissionName represents a route permission of the user, such as added in the admin panel
-      ([permissionName, isAllowed]) =>
-        permissionName === route ||
-        // special case for the "workflows" route:
-        // there are actual multiple "routes" in the config that control the same URL route.
-        // if any of them are true then the route should be permitted,
-        // unless the subpage is "tasks", which is controlled with a different route permission
-        (route === "workflows" &&
-          permissionName.startsWith("workflows") &&
-          isAllowed &&
-          subpage !== "tasks") ||
-        // special case for "tasks": the route permission tasks grants access to
-        // /workflows/tasks, clients, and residents, but not other workflows routes
-        (route === "workflows" &&
-          permissionName === "tasks" &&
-          isAllowed &&
-          isTasksAccessibleSubpage) ||
-        // special case for the "lantern" route, which maps to the "revocations" navigation item
-        (route === "revocations" && permissionName === "lantern"),
+      // permissionName represents a route permission of the user, such as added in
+      // the admin panel (e.g. "workflowsSupervision", "insights", "tasks").
+      ([permissionName, isAllowed]) => {
+        const hasRestrictedResidentProfileAccess =
+          hideWorkflowsOpportunities &&
+          permissionName === "workflowsFacilities";
+        const hasRestrictedClientProfileAccess =
+          hideWorkflowsOpportunities &&
+          permissionName === "workflowsSupervision";
+
+        return (
+          permissionName === route ||
+          // special case for the "workflows" route:
+          // there are actually multiple "routes" in the config that control the same URL
+          // routes (e.g. "workflows", "workflowsSupervision", "workflowsFacilities").
+          // If any relevant routes are allowed then workflows routes should be permitted,
+          // unless:
+          //   - the subpage is "tasks" (controlled with a different route permission)
+          //   - user is restricted to only accessing profile subpages (controlled with a FV)
+          (route === "workflows" &&
+            permissionName.startsWith("workflows") &&
+            isAllowed &&
+            !hideWorkflowsOpportunities &&
+            subpage !== "tasks") ||
+          // special case for "tasks": the route permission tasks grants access to
+          // /workflows/tasks, clients, and residents, but not other workflows routes
+          (route === "workflows" &&
+            permissionName === "tasks" &&
+            isAllowed &&
+            isTasksAccessibleSubpage) ||
+          // special case for the workflows profile subpages when the user has been
+          // restricted to profile-only access.
+          (route === "workflows" &&
+            subpage === "clients" &&
+            hasRestrictedClientProfileAccess) ||
+          (route === "workflows" &&
+            subpage === "residents" &&
+            hasRestrictedResidentProfileAccess) ||
+          // special case for the "lantern" route, which maps to the "revocations" navigation item
+          (route === "revocations" && permissionName === "lantern")
+        );
+      },
     );
     // If the route does not exist in the RoutePermissions object, default to false;
     if (!routePermission) return false;

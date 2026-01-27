@@ -20,7 +20,10 @@ import { noop } from "lodash";
 import { BrowserRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
 import { mockIneligibleClient } from "../../../WorkflowsStore/__fixtures__";
 import { Client } from "../../../WorkflowsStore/Client";
@@ -35,6 +38,7 @@ vi.mock("../../CaseloadSelect", () => ({
 }));
 
 const useRootStoreMock = useRootStore as Mock;
+const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
 
 const mockGetMilestonesClientsByStatus = (mockClients: Client[]) => {
   return () => mockClients;
@@ -69,6 +73,7 @@ describe("WorkflowsMilestones", () => {
     vi.resetAllMocks();
     // Quiet errors during test runs
     vi.spyOn(console, "error").mockImplementation(noop);
+    useFeatureVariantsMock.mockReturnValue({});
   });
 
   afterEach(() => {

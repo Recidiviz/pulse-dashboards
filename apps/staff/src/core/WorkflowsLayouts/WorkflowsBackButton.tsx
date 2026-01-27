@@ -18,7 +18,10 @@
 import { observer } from "mobx-react-lite";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { NavigationBackButton } from "../NavigationBackButton/NavigationBackButton";
 import { isWorkflowsPathSection, workflowsUrl } from "../views";
 
@@ -43,6 +46,7 @@ export const WorkflowsBackButton = observer(function WorkflowsBackButton() {
   const {
     workflowsStore: { homepage: workflowsHomepage, activePageIsHomepage },
   } = useRootStore();
+  const { hideWorkflowsOpportunities } = useFeatureVariants();
   const location = useLocation();
   const navigate = useNavigate();
   const { previousPage } = location?.state || {};
@@ -67,7 +71,7 @@ export const WorkflowsBackButton = observer(function WorkflowsBackButton() {
   }
 
   // Home button
-  if (!activePageIsHomepage) {
+  if (!activePageIsHomepage && !hideWorkflowsOpportunities) {
     return (
       <NavigationBackButton action={{ url: workflowsUrl(workflowsHomepage) }}>
         Home

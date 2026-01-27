@@ -23,6 +23,7 @@ import { SystemId } from "~datatypes";
 
 import {
   PartiallyTypedRootStore,
+  useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
@@ -39,6 +40,7 @@ export const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
 export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   const { pathname } = useLocation();
   const { isMobile } = useIsMobile(true);
+  const { hideWorkflowsOpportunities } = useFeatureVariants();
 
   // TODO(#5636) Eliminate PartiallyTypedRootStore
   const {
@@ -53,7 +55,9 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
     userStore: { userAllowedNavigation },
   } = useRootStore() as PartiallyTypedRootStore;
 
-  const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
+  const enableWorkflows =
+    (userAllowedNavigation.workflows || []).length > 0 &&
+    !hideWorkflowsOpportunities;
   const enableMilestones = (userAllowedNavigation.workflows || []).includes(
     "milestones",
   );
@@ -66,7 +70,9 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   return (
     <>
       {enabledInsights && (
-        <NavLink to={`/${DASHBOARD_VIEWS.insights}`} role="menuitem">Overview</NavLink>
+        <NavLink to={`/${DASHBOARD_VIEWS.insights}`} role="menuitem">
+          Overview
+        </NavLink>
       )}
       {enableWorkflows && (
         <NavLink
@@ -84,7 +90,9 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
         </NavLink>
       )}
       {enableMilestones && (
-        <NavLink to={workflowsUrl("milestones")} role="menuitem">Kudos</NavLink>
+        <NavLink to={workflowsUrl("milestones")} role="menuitem">
+          Kudos
+        </NavLink>
       )}
       {isSupervisionTasksLinkEnabled && (
         <NavLink
@@ -98,7 +106,11 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       {enableSystems
         ? workflowsSupportedSystems?.map((systemId: SystemId) => {
             const path = SYSTEM_ID_TO_PATH[systemId];
-            if (path === homepage) {
+
+            // Don't duplicate the "Home" nav link.
+            // When hideWorkflowsOpportunities is set, we don't render the "Home" link,
+            // so there's no duplication.
+            if (path === homepage && !hideWorkflowsOpportunities) {
               return null;
             }
             return (

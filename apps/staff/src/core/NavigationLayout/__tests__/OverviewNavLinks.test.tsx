@@ -20,7 +20,11 @@ import { MemoryRouter, useLocation } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 import { Mock } from "vitest";
 
-import { useRootStore, useUserStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+  useUserStore,
+} from "../../../components/StoreProvider";
 import useIsMobile from "../../../hooks/useIsMobile";
 import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore/TenantStore";
@@ -50,6 +54,7 @@ const useRootStoreMock = useRootStore as Mock;
 const useCoreStoreMock = useCoreStore as Mock;
 const useUserStoreMock = useUserStore as Mock;
 const useQueryParamsMock = useQueryParams as Mock;
+const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
 
 describe("OverviewNavLinks tests", () => {
   const renderLinks = () => {
@@ -66,6 +71,7 @@ describe("OverviewNavLinks tests", () => {
       pathname: "/insights",
     });
     vi.mocked(useIsMobile).mockReturnValue(false);
+    useFeatureVariantsMock.mockReturnValue({});
 
     coreStore = new CoreStore(RootStore);
     vitalsStore = coreStore.vitalsStore;
@@ -187,6 +193,51 @@ describe("OverviewNavLinks tests", () => {
       expect(
         screen.getByRole("menuitem", { name: "Clients" }),
       ).toBeInTheDocument();
+    });
+  });
+
+  it("Renders all workflows links when hideWorkflowsOpportunities is not set", async () => {
+    rootStoreMock.workflowsStore.workflowsSupportedSystems = [
+      "INCARCERATION",
+      "SUPERVISION",
+    ];
+    rootStoreMock.workflowsStore.supportsMultipleSystems = true;
+
+    renderLinks();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("menuitem", { name: "Residents" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("menuitem", { name: "Clients" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("menuitem", { name: "Opportunities" }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("Does not render a link for opportunities if hideWorkflowsOpportunities is set", async () => {
+    rootStoreMock.workflowsStore.workflowsSupportedSystems = [
+      "INCARCERATION",
+      "SUPERVISION",
+    ];
+    rootStoreMock.workflowsStore.supportsMultipleSystems = true;
+    useFeatureVariantsMock.mockReturnValue({ hideWorkflowsOpportunities: {} });
+
+    renderLinks();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("menuitem", { name: "Residents" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("menuitem", { name: "Clients" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("menuitem", { name: "Opportunities" }),
+      ).not.toBeInTheDocument();
     });
   });
 });
