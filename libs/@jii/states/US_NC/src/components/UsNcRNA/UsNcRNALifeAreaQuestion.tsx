@@ -30,7 +30,7 @@ import {
 import {
   rnaLifeAreasQuestionCopy,
   rnaRadioAnswerCopy,
-} from "./usNcRNAFormSpec";
+} from "./usNcRNAFormCopy";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 import { RadioButton } from "./UsNcRNARadioQuestion";
 
@@ -127,8 +127,8 @@ export const UsNcRNALifeAreaQuestion = observer(
                       name={improvementRatingId}
                       value={value}
                       checked={
-                        presenter.form.lifeAreaAnswers[id]?.interestRating ===
-                        value
+                        presenter.form.liveLifeAreaAnswers[id]
+                          ?.interestRating === value
                       }
                       onChange={(e) => {
                         presenter.form.handleLifeAreaAnswerChange(id, {
@@ -152,7 +152,7 @@ export const UsNcRNALifeAreaQuestion = observer(
                 });
               }}
             >
-              {presenter.form.lifeAreaAnswers[id]?.improvementText ?? ""}
+              {presenter.form.liveLifeAreaAnswers[id]?.improvementText ?? ""}
             </LongTextEntry>
           </>
         )}

@@ -43,6 +43,7 @@
       "~@jii/auth": ["libs/@jii/auth/src/index.ts"],
       "~@jii/case-planning": ["libs/@jii/case-planning/src/index.ts"],
       "~@jii/common-ui": ["libs/@jii/common-ui/src/index.ts"],
+      "~@jii/configs": ["libs/@jii/configs/src/index.ts"],
       "~@jii/data": ["libs/@jii/data/src/index.ts"],
       "~@jii/earned-good-time": ["libs/@jii/earned-good-time/src/index.ts"],
       "~@jii/layout": ["libs/@jii/layout/src/index.ts"],

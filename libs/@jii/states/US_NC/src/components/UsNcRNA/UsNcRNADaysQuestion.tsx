@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+
 import { QuestionCopy, ShortTextEntry } from "./styles";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
@@ -25,7 +27,7 @@ interface RNADaysQuestionProps extends RNAQuestionProps {
 /**
  * A question in the RNA form with a text input for a number of days per week.
  */
-export const UsNcRNADaysQuestion = function ({
+export const UsNcRNADaysQuestion = observer(function UsNcRNADaysQuestion({
   id,
   question,
   questionNumber,
@@ -47,7 +49,8 @@ export const UsNcRNADaysQuestion = function ({
           presenter.form.handleTextAnswerChange(id, e.target.value);
         }}
         placeholder={placeholderText}
+        value={presenter.form.liveTextAnswers[id]}
       />
     </>
   );
-};
+});

@@ -19,26 +19,24 @@ import { observer } from "mobx-react-lite";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Card, NotFound, usePageTitle } from "~@jii/common-ui";
+import { fullRNASpec, rnaQuestionConfig } from "~@jii/configs";
 import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
 import { NavigationButtons } from "./NavigationButtons";
 import { ProgressHeader } from "./ProgressBar";
-import { RNADescription, RNAHeading } from "./styles";
-import { AnswerAllQuestionsNotice } from "./styles";
+import { RNADescription, RNAHeading, UnboxedNotice } from "./styles";
 import { useRNAFormContext } from "./UsNcRNAFormContextProvider";
-import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
 import {
-  fullRNASpec,
   rnaMiscellaneousCopy,
-  rnaQuestionConfig,
+  RNAPageCopy,
+  rnaPageCopy,
   rnaQuestionCopy,
-  RNASectionCopy,
-  rnaSectionCopy,
-} from "./usNcRNAFormSpec";
+} from "./usNcRNAFormCopy";
+import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
 import { UsNcRNAQuestion } from "./UsNcRNAQuestion";
 
-function UsNcRNASectionInfo({ heading, description }: RNASectionCopy) {
+function UsNcRNASectionInfo({ heading, description }: RNAPageCopy) {
   return (
     <Card>
       <RNAHeading>{heading}</RNAHeading>
@@ -60,7 +58,7 @@ const ManagedComponent = observer(function ManagedComponent({
     return <NotFound />;
   }
 
-  const { pageNum, questionIds, sectionId, showSubmit } = presenter;
+  const { pageNum, questionIds, pageId, showSubmit } = presenter;
   return (
     <>
       <ProgressHeader
@@ -68,7 +66,7 @@ const ManagedComponent = observer(function ManagedComponent({
         totalSections={fullRNASpec.length}
         percentDone={22}
       />
-      <UsNcRNASectionInfo {...rnaSectionCopy[sectionId]} />
+      <UsNcRNASectionInfo {...rnaPageCopy[pageId]} />
       <form>
         {questionIds.map((questionId) => (
           <UsNcRNAQuestion
@@ -80,9 +78,17 @@ const ManagedComponent = observer(function ManagedComponent({
           />
         ))}
         {presenter.hasAnyInvalidAnswer && (
-          <AnswerAllQuestionsNotice>
+          <UnboxedNotice>
             {rnaMiscellaneousCopy["ANSWER_ALL_QUESTIONS_NOTICE"]}
-          </AnswerAllQuestionsNotice>
+          </UnboxedNotice>
+        )}
+        {presenter.isSaving && (
+          <UnboxedNotice>{rnaMiscellaneousCopy["SAVING"]}</UnboxedNotice>
+        )}
+        {presenter.savingError && (
+          <UnboxedNotice>
+            {rnaMiscellaneousCopy["SAVING_ERROR"]} {presenter.savingError}
+          </UnboxedNotice>
         )}
         <NavigationButtons presenter={presenter} showSubmit={showSubmit} />
       </form>

@@ -19,6 +19,7 @@ import { Card, GoButton, usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 
 import { RNADescription, RNAHeading } from "./styles";
+import { useRNAFormContext } from "./UsNcRNAFormContextProvider";
 
 /**
  * Landing page for Risks and Needs Assessment, showing an informative message if the
@@ -27,6 +28,7 @@ import { RNADescription, RNAHeading } from "./styles";
  */
 export function UsNcRNALanding() {
   usePageTitle("Self-Report");
+  const { form } = useRNAFormContext();
 
   // TODO(#10888): show date/time of completed form
   // TODO(#10888): add functionality for continuing an in-progress form
@@ -41,7 +43,7 @@ export function UsNcRNALanding() {
       </RNADescription>
       <GoButton
         to={State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
-          pageNum: 1,
+          pageNum: form.pageToResumeAt,
         })}
       >
         Start

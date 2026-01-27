@@ -19,16 +19,18 @@ import assertNever from "assert-never";
 import { makeAutoObservable } from "mobx";
 
 import {
+  fullRNASpec,
+  RNAQuestionConfig,
   rnaQuestionConfig,
   RNAQuestionId,
-} from "../components/UsNcRNA/usNcRNAFormSpec";
-
-export type LifeAreaAnswer = Partial<{
-  interest: boolean;
-  customLifeArea: string;
-  interestRating: string;
-  improvementText: string;
-}>;
+} from "~@jii/configs";
+import {
+  LifeAreaAnswer,
+  RNACheckboxAnswers,
+  RNALifeAreaAnswers,
+  RNATextAnswers,
+} from "~@jii/configs";
+import { DataAPI } from "~@jii/data";
 
 /**
  * A particular resident's Risks and Needs Assessment form
@@ -36,23 +38,73 @@ export type LifeAreaAnswer = Partial<{
 export class UsNcRNAForm {
   // User's answers that have been changed during the lifespan of this form object,
   // keyed by question id
-  readonly textAnswers: Partial<Record<RNAQuestionId, string>> = {};
-  readonly checkboxAnswers: Partial<
-    Record<RNAQuestionId, Record<string, boolean>>
-  > = {};
-  readonly lifeAreaAnswers: Partial<Record<RNAQuestionId, LifeAreaAnswer>> = {};
+  private textAnswers: Partial<RNATextAnswers> = {};
+  private checkboxAnswers: Partial<RNACheckboxAnswers> = {};
+  private lifeAreaAnswers: Partial<RNALifeAreaAnswers> = {};
 
-  constructor() {
+  constructor(
+    readonly apiClient: DataAPI,
+    readonly id: string,
+
+    // All of the user's saved answers, read from the database
+    readonly savedTextAnswers: RNATextAnswers,
+    readonly savedCheckboxAnswers: RNACheckboxAnswers,
+    readonly savedLifeAreaAnswers: RNALifeAreaAnswers,
+  ) {
     makeAutoObservable(this);
+  }
+
+  /**
+   * Return the highest-numbered page of the form that has not yet been completed.
+   * Since pages are 1-indexed, the return value is also 1-indexed.
+   */
+  get pageToResumeAt(): number {
+    for (const [i, page] of fullRNASpec.entries()) {
+      if (page.questions.some((id) => !this.hasValidAnswer(id))) {
+        return i + 1;
+      }
+    }
+    return fullRNASpec.length;
+  }
+
+  /**
+   * Methods representing the current state of this form,
+   * incorporating both answers saved to the database and answers that the user has changed.
+   */
+  get liveTextAnswers(): RNATextAnswers {
+    return {
+      ...this.savedTextAnswers,
+      ...this.textAnswers,
+    };
+  }
+  get liveCheckboxAnswers(): RNACheckboxAnswers {
+    return {
+      ...this.savedCheckboxAnswers,
+      ...this.checkboxAnswers,
+    };
+  }
+  get liveLifeAreaAnswers(): RNALifeAreaAnswers {
+    return {
+      ...this.savedLifeAreaAnswers,
+      ...this.lifeAreaAnswers,
+    };
+  }
+  private get liveAnswers() {
+    return {
+      ...this.liveTextAnswers,
+      ...this.liveCheckboxAnswers,
+      ...this.liveLifeAreaAnswers,
+    };
   }
 
   /**
    * Return true when the given question has a "valid" answer.
    * The definition of "valid" depends on the question type.
-   * The return value is only meaningful for questions on the current page.
    */
   hasValidAnswer(questionId: RNAQuestionId): boolean {
-    const { optional, format } = rnaQuestionConfig[questionId];
+    const { optional, format } = rnaQuestionConfig[
+      questionId
+    ] as RNAQuestionConfig;
 
     // Optional questions with simple answer formats never have invalid answers
     if (optional && format !== "LIFE_AREA") {
@@ -62,7 +114,7 @@ export class UsNcRNAForm {
     switch (format) {
       // Number of days per week must be 0-7
       case "DAYS_PER_WEEK_ENTRY": {
-        const input = Number(this.textAnswers[questionId]);
+        const input = Number(this.liveTextAnswers[questionId]);
         return Number.isInteger(input) && 0 <= input && input <= 7;
       }
       // Other radio or text questions are valid if any answer is selected
@@ -70,20 +122,20 @@ export class UsNcRNAForm {
       case "RATIO":
       case "YES_NO":
       case "DAYS_PER_WEEK_RADIO": {
-        return Boolean(this.textAnswers[questionId]);
+        return Boolean(this.liveTextAnswers[questionId]);
       }
       // Checkbox questions must have at least one answer selected
       case "SOBRIETY": {
-        if (!this.checkboxAnswers[questionId]) {
+        if (!this.liveCheckboxAnswers[questionId]) {
           return false;
         }
         return Boolean(
-          Object.values(this.checkboxAnswers[questionId]).find(Boolean),
+          Object.values(this.liveCheckboxAnswers[questionId]).find(Boolean),
         );
       }
       // Life Area questions can be answered in three ways:
       case "LIFE_AREA": {
-        const lifeAreaAnswer = this.lifeAreaAnswers[questionId];
+        const lifeAreaAnswer = this.liveLifeAreaAnswers[questionId];
         // 1) with "no"
         if (lifeAreaAnswer?.interest === false) {
           return true;
@@ -114,14 +166,14 @@ export class UsNcRNAForm {
    */
   shouldShowLifeAreaFollowups(questionId: RNAQuestionId): boolean {
     // The user hasn't answered the question, or it isn't a life areas question
-    if (!this.lifeAreaAnswers[questionId]) {
+    if (!this.liveLifeAreaAnswers[questionId]) {
       return false;
     }
 
     // The user has answered the question with "no"
     if (
-      !this.lifeAreaAnswers[questionId].interest &&
-      !this.lifeAreaAnswers[questionId].customLifeArea
+      !this.liveLifeAreaAnswers[questionId].interest &&
+      !this.liveLifeAreaAnswers[questionId].customLifeArea
     ) {
       return false;
     }
@@ -152,5 +204,20 @@ export class UsNcRNAForm {
       ...(this.lifeAreaAnswers[questionId] ?? {}),
       ...answer,
     };
+  }
+
+  /**
+   * Write current state of answers to the database.
+   */
+  *saveAnswers() {
+    yield this.apiClient.trpc.state.usNc.updateRNA.mutate({
+      id: this.id,
+      answers: this.liveAnswers,
+    });
+    // Reset the form state after saving answers.
+    // This shouldn't be accessible
+    this.textAnswers = {};
+    this.checkboxAnswers = {};
+    this.lifeAreaAnswers = {};
   }
 }

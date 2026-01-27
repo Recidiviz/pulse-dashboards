@@ -1,0 +1,18 @@
+{
+  "name": "@jii/configs",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@jii/configs/src",
+  "projectType": "library",
+  "tags": ["scope:universal", "type:util"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

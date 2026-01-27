@@ -15,20 +15,42 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
 import { makeAutoObservable } from "mobx";
 
+import { fullRNASpec, RNAQuestionId } from "~@jii/configs";
+
 import { UsNcRNAForm } from "../../models/UsNcRNAForm";
-import { fullRNASpec, RNAQuestionId } from "./usNcRNAFormSpec";
 
 export class UsNcRNAFormPagePresenter {
   // Only flag invalid answers once the user has tried to move forward on the page
   shouldShowInvalidAnswers = false;
+
+  // Set to true during database writes
+  isSaving = false;
+  savingError: string | undefined;
 
   constructor(
     readonly pageNum: number,
     public form: UsNcRNAForm,
   ) {
     makeAutoObservable(this);
+  }
+
+  /**
+   * Write current state of answers to the database. Return whether the operation succeeded
+   * or not.
+   */
+  *saveAnswers() {
+    this.isSaving = true;
+    try {
+      yield this.form.saveAnswers();
+      this.savingError = undefined;
+    } catch (e) {
+      captureException(e);
+      this.savingError = e instanceof Error ? e.message : "Unknown error";
+    }
+    this.isSaving = false;
   }
 
   // Methods related to the display of the form page itself
@@ -46,7 +68,7 @@ export class UsNcRNAFormPagePresenter {
     return this.pageNum - 1;
   }
 
-  get sectionId() {
+  get pageId() {
     return fullRNASpec[this.pageIndex].id;
   }
 

@@ -60,7 +60,7 @@ export const InvalidAnswerNotice = styled.span`
   color: ${palette.signal.error};
 `;
 
-export const AnswerAllQuestionsNotice = styled.div`
+export const UnboxedNotice = styled.div`
   color: ${palette.pine4};
   text-align: center;
 `;

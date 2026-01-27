@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
+import { RNARadioQuestionFormat } from "~@jii/configs";
 import { palette } from "~design-system";
 
 import {
@@ -25,7 +27,7 @@ import {
   MultipleAnswerOption,
   QuestionCopy,
 } from "./styles";
-import { rnaRadioAnswerCopy, RNARadioQuestionFormat } from "./usNcRNAFormSpec";
+import { rnaRadioAnswerCopy } from "./usNcRNAFormCopy";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
 export const RadioButton = styled.input`
@@ -63,7 +65,7 @@ interface RNARadioQuestionProps extends RNAQuestionProps {
 /**
  * A question in the RNA form with radio buttons for answer choices.
  */
-export const UsNcRNARadioQuestion = function ({
+export const UsNcRNARadioQuestion = observer(function UsNcRNARadioQuestion({
   id,
   question,
   questionNumber,
@@ -90,6 +92,7 @@ export const UsNcRNARadioQuestion = function ({
                 onChange={(e) => {
                   presenter.form.handleTextAnswerChange(id, e.target.value);
                 }}
+                checked={presenter.form.liveTextAnswers[id] === value}
               />
               <label htmlFor={inputId}>{label}</label>
             </MultipleAnswerOption>
@@ -98,4 +101,4 @@ export const UsNcRNARadioQuestion = function ({
       </MultipleAnswerGroup>
     </>
   );
-};
+});

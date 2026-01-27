@@ -18,17 +18,13 @@
 import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 
+import type { RNAQuestionConfig, RNAQuestionId } from "~@jii/configs";
 import { Icon } from "~design-system";
 
 import { InvalidAnswerNotice, QuestionCard } from "./styles";
 import { UsNcRNADaysQuestion } from "./UsNcRNADaysQuestion";
+import { rnaMiscellaneousCopy, RNAQuestionCopy } from "./usNcRNAFormCopy";
 import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
-import {
-  rnaMiscellaneousCopy,
-  RNAQuestionConfig,
-  RNAQuestionCopy,
-  RNAQuestionId,
-} from "./usNcRNAFormSpec";
 import { UsNcRNALifeAreaQuestion } from "./UsNcRNALifeAreaQuestion";
 import { UsNcRNARadioQuestion } from "./UsNcRNARadioQuestion";
 import { UsNcRNASobrietyQuestion } from "./UsNcRNASobrietyQuestion";

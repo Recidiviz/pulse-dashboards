@@ -16,21 +16,45 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { FC } from "react";
 import { Outlet } from "react-router-dom";
 
-import { UsNcRNAForm } from "../../models/UsNcRNAForm";
+import { NotFound } from "~@jii/common-ui";
+import { useRootStore, useSingleResidentContext } from "~@jii/data";
+import { MainContentHydrator } from "~@jii/layout";
+import { withPresenterManager } from "~hydration-utils";
+
+import { UsNcRNAFormContextPresenter } from "./UsNcRNAFormContextPresenter";
 import { UsNcRNAFormContextProvider } from "./UsNcRNAFormContextProvider";
 
 /**
  * Provides an RNA Form object to RNA-related pages in the route's children.
  * Consume this context with `useRNAFormDataContext()`
  */
-export const UsNcRNAFormContext = observer(function UsNcRNAFormContext() {
-  const form = new UsNcRNAForm();
+const ManagedComponent: FC<{
+  presenter: UsNcRNAFormContextPresenter;
+}> = observer(function UsNcRNAFormContext({ presenter }) {
+  const { form } = presenter;
 
+  if (!form) {
+    return <NotFound />;
+  }
   return (
     <UsNcRNAFormContextProvider value={{ form }}>
       <Outlet />
     </UsNcRNAFormContextProvider>
   );
+});
+
+function usePresenter() {
+  const { apiClient } = useRootStore();
+  const { resident } = useSingleResidentContext();
+  return new UsNcRNAFormContextPresenter(apiClient, resident.pseudonymizedId);
+}
+
+export const UsNcRNAFormContext = withPresenterManager({
+  usePresenter,
+  managerIsObserver: true,
+  ManagedComponent,
+  HydratorComponent: MainContentHydrator,
 });

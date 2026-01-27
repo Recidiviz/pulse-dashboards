@@ -15,13 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../procedures/init";
-import { usCoRouter } from "./US_CO/router";
-import { usNcRouter } from "./US_NC/rna.router";
-import { usNeRouter } from "./US_NE/router";
+// @ts-check
 
-export const stateRouter = router({
-  usCo: usCoRouter,
-  usNe: usNeRouter,
-  usNc: usNcRouter,
-});
+import tseslint from "typescript-eslint";
+
+import baseConfig from "../../../eslint.config.mjs";
+
+export default tseslint.config(baseConfig);

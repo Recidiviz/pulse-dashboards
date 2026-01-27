@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../procedures/init";
-import { usCoRouter } from "./US_CO/router";
-import { usNcRouter } from "./US_NC/rna.router";
-import { usNeRouter } from "./US_NE/router";
+import { z } from "zod";
 
-export const stateRouter = router({
-  usCo: usCoRouter,
-  usNe: usNeRouter,
-  usNc: usNcRouter,
-});
+import { Prisma } from "~@jii/prisma";
+
+export const getRNAInputSchema = z.object({
+  pseudonymizedId: z.string(),
+}) satisfies z.ZodType<Prisma.UsNcRNAWhereInput>;
+
+export const updateRNASchema = z.object({
+  id: z.string(),
+  answers: z.record(z.string(), z.any()),
+}) satisfies z.ZodType<Prisma.UsNcRNAUpdateInput>;

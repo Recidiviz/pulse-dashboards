@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { flow } from "mobx";
 import { rem } from "polished";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -71,13 +72,17 @@ export function NavigationButtons({
       ) : (
         <JIIButton
           kind={"secondary"}
-          onClick={() => {
+          onClick={flow(function* () {
             if (presenter.hasAnyInvalidAnswer) {
               presenter.displayInvalidAnswers();
             } else {
-              navigate(nextPageLink);
+              yield presenter.saveAnswers();
+
+              if (!presenter.savingError) {
+                navigate(nextPageLink);
+              }
             }
-          }}
+          })}
         >
           <span>Next</span>
           <Icon kind="Arrow" size={16} />

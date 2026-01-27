@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+
 import { Checkbox } from "~@jii/common-ui";
 
 import {
@@ -22,7 +24,7 @@ import {
   MultipleAnswerOption,
   QuestionCopy,
 } from "./styles";
-import { rnaSobrietyAnswerCopy } from "./usNcRNAFormSpec";
+import { rnaSobrietyAnswerCopy } from "./usNcRNAFormCopy";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
 interface RNASobrietyQuestionProps extends RNAQuestionProps {
@@ -33,40 +35,45 @@ interface RNASobrietyQuestionProps extends RNAQuestionProps {
  * A question in the RNA form with checkboxes for answer choices.
  * (Currently the only possible answer copy for this question format is about sobriety)
  */
-export const UsNcRNASobrietyQuestion = function ({
-  id,
-  question,
-  questionNumber,
-  presenter,
-}: RNASobrietyQuestionProps) {
-  return (
-    <>
-      <QuestionCopy>
-        {questionNumber}. {question}
-      </QuestionCopy>
-      <MultipleAnswerGroup>
-        {Object.entries(rnaSobrietyAnswerCopy).map(([value, label]) => {
-          const inputId = `${id}-${value}`;
-          return (
-            <MultipleAnswerOption key={`${value}${label}`}>
-              <Checkbox
-                $size={16}
-                id={inputId}
-                name={id}
-                value={value}
-                onChange={(e) => {
-                  presenter.form.handleCheckboxAnswerChange(
-                    id,
-                    value,
-                    e.target.checked,
-                  );
-                }}
-              />
-              <label htmlFor={inputId}>{label}</label>
-            </MultipleAnswerOption>
-          );
-        })}
-      </MultipleAnswerGroup>
-    </>
-  );
-};
+export const UsNcRNASobrietyQuestion = observer(
+  function UsNcRNASobrietyQuestion({
+    id,
+    question,
+    questionNumber,
+    presenter,
+  }: RNASobrietyQuestionProps) {
+    return (
+      <>
+        <QuestionCopy>
+          {questionNumber}. {question}
+        </QuestionCopy>
+        <MultipleAnswerGroup>
+          {Object.entries(rnaSobrietyAnswerCopy).map(([value, label]) => {
+            const checkboxAnswers = presenter.form.liveCheckboxAnswers[id];
+
+            const inputId = `${id}-${value}`;
+            return (
+              <MultipleAnswerOption key={`${value}${label}`}>
+                <Checkbox
+                  $size={16}
+                  id={inputId}
+                  name={id}
+                  value={value}
+                  onChange={(e) => {
+                    presenter.form.handleCheckboxAnswerChange(
+                      id,
+                      value,
+                      e.target.checked,
+                    );
+                  }}
+                  checked={checkboxAnswers?.[value]}
+                />
+                <label htmlFor={inputId}>{label}</label>
+              </MultipleAnswerOption>
+            );
+          })}
+        </MultipleAnswerGroup>
+      </>
+    );
+  },
+);

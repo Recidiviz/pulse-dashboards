@@ -15,7 +15,26 @@ model UserProperties {
     hasSeenOnboarding DateTime?
 }
 
-// US_NE reentry checklist questions
+////////////////////////////////////////////////////////
+// Models intended to be state-specific follow
+////////////////////////////////////////////////////////
+
+// US_NC (North Carolina)
+
+// An instance of an RNA survey for North Carolina
+model UsNcRNA {
+    // internal identifier for this survey
+    id              String      @unique @default(cuid())
+
+    pseudonymizedId String
+    updatedAt       DateTime    @updatedAt
+    completed       Boolean     @default(false)
+
+    // The resident's answers, parsed via Zod
+    answers         Json
+}
+
+// US_NE (Nebraska) reentry checklist questions
 model usNeReentryChecklistQuestion {
     pseudonymizedId String
     questionId      String
