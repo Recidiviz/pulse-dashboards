@@ -26,6 +26,7 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dedent from "dedent";
+import { wrapOpenAI } from "langsmith/wrappers";
 import OpenAI from "openai";
 
 import type { Person } from "~@meetings/prisma/types";
@@ -39,6 +40,7 @@ import {
   ExtractionOutput,
   ExtractionOutputSchema,
   TranscriptInput,
+  VerificationEntry,
   VerificationOutput,
   VerificationPayloadSchema,
 } from "~@meetings/tasks/llm/schemas";
@@ -58,11 +60,19 @@ export class SpecialistCore {
       );
     }
 
+    // LangSmith environment variables (optional):
+    // - LANGCHAIN_API_KEY: API key for LangSmith
+    // - LANGCHAIN_PROJECT: Project name (e.g., "Meetings Module (development)")
+    // - LANGCHAIN_TRACING_V2: Set to "true" to enable tracing
+    const langsmithEnabled = Boolean(process.env["LANGCHAIN_API_KEY"]);
+
+    const baseOpenAI = new OpenAI({
+      apiKey: openaiKey,
+      baseURL: "https://us.api.openai.com/v1",
+    });
+
     return new SpecialistCore({
-      openai: new OpenAI({
-        apiKey: openaiKey,
-        baseURL: "https://us.api.openai.com/v1",
-      }),
+      openai: langsmithEnabled ? wrapOpenAI(baseOpenAI) : baseOpenAI,
       gemini: new GoogleGenerativeAI(geminiKey),
     });
   }
@@ -255,15 +265,17 @@ export class SpecialistCore {
       });
 
       // Re-attach evidence
-      const auditMap = new Map(
-        evidence.verifications.map((v) => [v.claimId, v]),
+      const auditMap = new Map<string, VerificationEntry>(
+        evidence.verifications.map((v: VerificationEntry) => [v.claimId, v]),
       );
 
       facts.actionItems.forEach((item, i) => {
         const key = `ACT_${i}`;
         const audit = auditMap.get(key);
         if (audit) {
-          const quotes = audit.evidenceQuotes.map((q) => `> "${q}"`).join("\n");
+          const quotes = audit.evidenceQuotes
+            .map((q: string) => `> "${q}"`)
+            .join("\n");
           item.context = (item.context || "") + `\n\n[EVIDENCE]:\n${quotes}`;
         }
       });
@@ -272,7 +284,9 @@ export class SpecialistCore {
         const key = `UPD_${i}`;
         const audit = auditMap.get(key);
         if (audit) {
-          const quotes = audit.evidenceQuotes.map((q) => `> "${q}"`).join("\n");
+          const quotes = audit.evidenceQuotes
+            .map((q: string) => `> "${q}"`)
+            .join("\n");
           item.details += `\n\n[EVIDENCE]:\n${quotes}`;
         }
       });

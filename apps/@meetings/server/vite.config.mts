@@ -66,6 +66,13 @@ export default defineConfig(() => ({
         process.env["SENTRY_DSN"] ??
         "https://4237e42b7c1d1964233e3a993f150553@o432474.ingest.us.sentry.io/4509985399373824",
       SENTRY_ENV: process.env["SENTRY_ENV"] ?? "test",
+      LANGCHAIN_API_KEY:
+        process.env["LANGCHAIN_API_KEY"] ?? "test-fake-langchain-api-key",
+      LANGCHAIN_TRACING_V2: process.env["LANGCHAIN_TRACING_V2"] ?? "false",
+      LANGCHAIN_PROJECT:
+        process.env["LANGCHAIN_PROJECT"] ?? "Meetings Module (test)",
+      LANGSMITH_ENDPOINT:
+        process.env["LANGSMITH_ENDPOINT"] ?? "http://langchain.local",
       AUDIO_RECORDINGS_BUCKET_NAME:
         process.env["AUDIO_RECORDINGS_BUCKET_NAME"] ?? "test-audio-bucket",
       CLOUD_TASKS_PROJECT: process.env["CLOUD_TASKS_PROJECT"] ?? "test-project",
@@ -90,8 +97,7 @@ export default defineConfig(() => ({
         process.env["TRANSCRIPTION_TASK_REQUEST_URL"] ??
         "https://test-server.app/transcribe-audio",
       NOTETAKING_TASK_QUEUE_NAME:
-        process.env["NOTETAKING_TASK_QUEUE_NAME"] ??
-        "notetaking-task-queue",
+        process.env["NOTETAKING_TASK_QUEUE_NAME"] ?? "notetaking-task-queue",
       NOTETAKING_TASK_REQUEST_URL:
         process.env["NOTETAKING_TASK_REQUEST_URL"] ??
         "https://test-server.app/process-notetaking",

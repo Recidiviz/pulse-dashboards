@@ -224,6 +224,17 @@
         "command": "../../../tools/cleanup_meetings_preview_resources.sh",
         "cwd": "{projectRoot}"
       }
+    },
+    "requires-sops-env:reprocess-meeting": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/reprocess-meeting-with-uploaded-audio.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "development": {},
+        "staging":  {}
+      }
     }
   }
 }

@@ -24,6 +24,8 @@
  * 3. Verification Agent → finds citations for extracted claims
  */
 
+import { traceable } from "langsmith/traceable";
+
 import { Person } from "~@meetings/prisma/types";
 import { SpecialistCore } from "~@meetings/tasks/llm/agents";
 import {
@@ -57,104 +59,122 @@ export class ProductionPipeline {
     person: Person,
     transcript: TranscriptInput,
   ): Promise<PipelineOutput> {
-    const logger = createLogger("meetings.llm.orchestrator", {
-      person_id: person.pseudonymizedId,
-      state_code: person.stateCode,
-    });
+    return await this.runTraced(agency, person, transcript);
+  }
 
-    logger.info("Starting pipeline", {
-      transcript_length: transcript.rawText.length,
-      transcript_duration_seconds: transcript.durationSeconds,
-    });
-
-    // STEP 0: TRANSCRIPT CHECK
-    const gatekeeperResult = transcriptGuard(TranscriptInputSchema, transcript);
-
-    if (!gatekeeperResult.valid) {
-      logger.error(`Gatekeeper check failed: ${gatekeeperResult.message}`, {
-        error_type: gatekeeperResult.errorKind,
-        message: gatekeeperResult.message,
+  /**
+   * Internal traced pipeline execution
+   */
+  private runTraced = traceable(
+    async (
+      agency: AgencyConfig,
+      person: Person,
+      transcript: TranscriptInput,
+    ): Promise<PipelineOutput> => {
+      const logger = createLogger("meetings.llm.orchestrator", {
+        person_id: person.pseudonymizedId,
+        state_code: person.stateCode,
       });
-      throw new Error(
-        gatekeeperResult.message || "Transcript validation failed",
+
+      logger.info("Starting pipeline", {
+        transcript_length: transcript.rawText.length,
+        transcript_duration_seconds: transcript.durationSeconds,
+      });
+
+      // STEP 0: TRANSCRIPT CHECK
+      const gatekeeperResult = transcriptGuard(
+        TranscriptInputSchema,
+        transcript,
       );
-    }
 
-    // STEP 1: EXTRACTION AGENT
-    const facts = await this.core.runExtraction(transcript, person, agency);
+      if (!gatekeeperResult.valid) {
+        logger.error(`Gatekeeper check failed: ${gatekeeperResult.message}`, {
+          error_type: gatekeeperResult.errorKind,
+          message: gatekeeperResult.message,
+        });
+        throw new Error(
+          gatekeeperResult.message || "Transcript validation failed",
+        );
+      }
 
-    const extractionResult = extractionGuard(ExtractionOutputSchema, facts);
-    if (!extractionResult.valid) {
-      logger.error("Extraction validation failed", {
-        error_type: extractionResult.errorKind,
-        message: extractionResult.message,
-      });
-    }
+      // STEP 1: EXTRACTION AGENT
+      const facts = await this.core.runExtraction(transcript, person, agency);
 
-    if (facts.actionItems.length === 0) {
-      logger.warning("Extraction found no action items", {
-        updates_count: facts.criticalUpdates.length,
-      });
-    }
+      const extractionResult = extractionGuard(ExtractionOutputSchema, facts);
+      if (!extractionResult.valid) {
+        logger.error("Extraction validation failed", {
+          error_type: extractionResult.errorKind,
+          message: extractionResult.message,
+        });
+      }
 
-    // STEP 2: WRITER AGENT (Drafting Loop with Retry)
-    let finalPayload: Awaited<ReturnType<typeof this.core.runDrafting>> | null =
-      null;
+      if (facts.actionItems.length === 0) {
+        logger.warning("Extraction found no action items", {
+          updates_count: facts.criticalUpdates.length,
+        });
+      }
 
-    for (let attempt = 0; attempt < this.maxDraftingAttempts; attempt++) {
-      logger.info("Starting drafting attempt", {
-        attempt: attempt + 1,
-        max_retries: this.maxDraftingAttempts,
-      });
+      // STEP 2: WRITER AGENT (Drafting Loop with Retry)
+      let finalPayload: Awaited<
+        ReturnType<typeof this.core.runDrafting>
+      > | null = null;
 
-      // eslint-disable-next-line no-await-in-loop
-      const draft = await this.core.runDrafting(
+      for (let attempt = 0; attempt < this.maxDraftingAttempts; attempt++) {
+        logger.info("Starting drafting attempt", {
+          attempt: attempt + 1,
+          max_retries: this.maxDraftingAttempts,
+        });
+
+        // eslint-disable-next-line no-await-in-loop
+        const draft = await this.core.runDrafting(
+          transcript,
+          facts,
+          agency,
+          person,
+        );
+
+        const draftingResult = draftingGuard(
+          DraftingOutputSchema,
+          draft,
+          agency.noteConfig,
+        );
+
+        if (draftingResult.valid || attempt == this.maxDraftingAttempts - 1) {
+          logger.info("Drafting validation passed", {
+            attempt: attempt + 1,
+          });
+          finalPayload = draft;
+          break;
+        } else {
+          logger.warning("Drafting validation failed - retrying", {
+            attempt: attempt + 1,
+            error_type: draftingResult.errorKind,
+            message: draftingResult.message,
+          });
+        }
+      }
+
+      // STEP 3: VERIFICATION AGENT
+      const verification = await this.core.runVerification(
         transcript,
         facts,
-        agency,
         person,
       );
 
-      const draftingResult = draftingGuard(
-        DraftingOutputSchema,
-        draft,
-        agency.noteConfig,
-      );
+      logger.info("Pipeline completed successfully");
 
-      if (draftingResult.valid || attempt == this.maxDraftingAttempts - 1) {
-        logger.info("Drafting validation passed", {
-          attempt: attempt + 1,
-        });
-        finalPayload = draft;
-        break;
-      } else {
-        logger.warning("Drafting validation failed - retrying", {
-          attempt: attempt + 1,
-          error_type: draftingResult.errorKind,
-          message: draftingResult.message,
-        });
+      // STEP 4: FINAL ASSEMBLY
+      if (!finalPayload) {
+        throw new Error("Drafting failed after all retry attempts");
       }
-    }
 
-    // STEP 3: VERIFICATION AGENT
-    const verification = await this.core.runVerification(
-      transcript,
-      facts,
-      person,
-    );
-
-    logger.info("Pipeline completed successfully");
-
-    // STEP 4: FINAL ASSEMBLY
-    if (!finalPayload) {
-      throw new Error("Drafting failed after all retry attempts");
-    }
-
-    return {
-      caseNote: finalPayload.caseNote,
-      meetingMinutes: finalPayload.minutes,
-      actionItems: verification.actionItems,
-      statusUpdates: verification.criticalUpdates,
-    };
-  }
+      return {
+        caseNote: finalPayload.caseNote,
+        meetingMinutes: finalPayload.minutes,
+        actionItems: verification.actionItems,
+        statusUpdates: verification.criticalUpdates,
+      };
+    },
+    { name: "meetings-pipeline", run_type: "chain" },
+  );
 }

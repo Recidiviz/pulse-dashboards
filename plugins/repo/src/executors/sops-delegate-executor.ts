@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { ExecutorContext, logger, targetToTargetString } from "@nx/devkit";
-import { execSync } from "child_process";
+import { spawnSync } from "child_process";
 
 import { SOPS_ENV_PREFIX } from "./sops-env";
 import { decryptSopsFile, getSopsPathsForTask } from "./utils";
@@ -39,15 +39,28 @@ function delegateToTarget(
       configuration,
     });
 
-    // Build override arguments
-    const overrideArgs = Object.entries(overrides)
-      .map(([key, value]) => `--${key}=${JSON.stringify(value)}`)
-      .join(" ");
+    // Build arguments as an array to avoid shell escaping issues
+    const args = ["run", targetString];
 
-    const command = `nx run ${targetString}${overrideArgs ? " " + overrideArgs : ""}`;
-    logger.verbose(`Running: ${command}`);
-    execSync(command, { stdio: "inherit" });
-    return true;
+    // Add override arguments
+    // No need for JSON.stringify since we're using spawnSync with shell: false
+    for (const [key, value] of Object.entries(overrides)) {
+      args.push(`--${key}=${String(value)}`);
+    }
+
+    logger.verbose(`Running: nx ${args}`);
+
+    // Use spawnSync with shell: false to avoid shell interpretation
+    const result = spawnSync("nx", args, {
+      stdio: "inherit",
+      shell: false,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    return result.status === 0;
   } catch (error) {
     logger.error(`Failed to run target ${target} for project ${project}:`);
     logger.error(error);

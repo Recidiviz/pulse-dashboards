@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { GoogleGenerativeAI, Schema } from "@google/generative-ai";
+import { traceable } from "langsmith/traceable";
 import { ZodSchema } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
@@ -79,13 +80,13 @@ type ZodGenerateContentOptions<T extends ZodSchema> = {
 /**
  * Generates content with Gemini using a Zod schema for structured output
  */
-export async function generateContentWithZodSchema<T extends ZodSchema>({
+const generateContentWithZodSchemaInternal = async <T extends ZodSchema>({
   client,
   systemInstruction,
   userMessage,
   schema,
   modelName = "gemini-2.5-flash",
-}: ZodGenerateContentOptions<T>): Promise<T["_output"]> {
+}: ZodGenerateContentOptions<T>): Promise<T["_output"]> => {
   const model = client.getGenerativeModel({
     model: modelName,
     systemInstruction,
@@ -100,4 +101,9 @@ export async function generateContentWithZodSchema<T extends ZodSchema>({
 
   // Parse and validate with Zod
   return schema.parse(JSON.parse(content));
-}
+};
+
+export const generateContentWithZodSchema = traceable(
+  generateContentWithZodSchemaInternal,
+  { name: "gemini-generate-content", run_type: "llm" },
+);
