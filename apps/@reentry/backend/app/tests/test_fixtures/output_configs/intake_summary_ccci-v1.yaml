@@ -11,5 +11,4 @@ model:
 
 prompts:
   system: "test"
-  assessment_summarize_template: "test"
   template: "test"

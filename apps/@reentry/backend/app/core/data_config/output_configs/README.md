@@ -44,8 +44,6 @@ prompts:
                                # Variables: {Conversation}, {Assessments}
   template: str                # Optional summary generation prompt template
                                # Variables: {Conversation}, {assessment}
-  assessment_summarize_template: str  # Optional assessment reformulation template
-                                      # Variables: {Assessments}
 
 model:                         # LLM model configuration
   provider: str                # Model provider: 'openai', 'anthropic', or 'google'

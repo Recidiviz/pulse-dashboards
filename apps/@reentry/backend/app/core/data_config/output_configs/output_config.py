@@ -36,9 +36,6 @@ class IntakeSummaryPromptsConfig(PromptsConfig):
     template: str = Field(
         description="Summary generation prompt template. Variables: {Conversation}, {assessment}",
     )
-    assessment_summarize_template: str = Field(
-        description="Assessment reformulation prompt template. Variables: {Assessments}",
-    )
 
 
 class SectionConfig(BaseModel):
