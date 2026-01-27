@@ -96,7 +96,6 @@ describe("SentenceProgressPresenter", () => {
     vi.resetAllMocks();
   });
 
-  // TODO(#11154): Add tests for presenter empty state logic, including erroneous dates
   describe("Resident Progress", () => {
     beforeEach(() => {
       selectedPerson = new Resident(baseResident, rootStore);
@@ -113,6 +112,11 @@ describe("SentenceProgressPresenter", () => {
 
     test("end date matches person record", () => {
       expect(presenter.endDate).toEqual(baseResident.releaseDate);
+    });
+
+    test("shouldShowEmptyState is false for valid dates", () => {
+      expect(presenter.startDate).toBeBefore(presenter.endDate as Date);
+      expect(presenter.shouldShowEmptyState).toBeFalse();
     });
 
     test("no timeline gaps when dates are within 7 years", () => {
@@ -245,6 +249,34 @@ describe("SentenceProgressPresenter", () => {
           expectedParoleReviewEntry,
         );
       });
+    });
+
+    test("Trigger empty state for resident with invalid start and end date", () => {
+      // Release date prior to admission date
+      selectedPerson = new Resident(
+        { ...baseResident, releaseDate: fieldToDate("2021-01-01") },
+        rootStore,
+      );
+      workflowsStore = {
+        ...workflowsStore,
+        selectedPerson: selectedPerson,
+      } as unknown as WorkflowsStore;
+      presenter = new SentenceProgressPresenter(workflowsStore, selectedPerson);
+      expect(presenter.shouldShowEmptyState).toBeTrue();
+    });
+
+    test("Trigger empty state when not enough dates to render timeline", () => {
+      selectedPerson = new Resident(
+        { ...baseResident, admissionDate: undefined },
+        rootStore,
+      );
+      workflowsStore = {
+        ...workflowsStore,
+        selectedPerson: selectedPerson,
+      } as unknown as WorkflowsStore;
+      presenter = new SentenceProgressPresenter(workflowsStore, selectedPerson);
+
+      expect(presenter.shouldShowEmptyState).toBeTrue();
     });
   });
 

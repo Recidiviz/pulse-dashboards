@@ -138,8 +138,14 @@ export class SentenceProgressPresenter<
     return this._timelineDates ?? [];
   }
 
-  // TODO(#11154): Handle empty state gracefully
   get shouldShowEmptyState(): boolean {
+    // If we have <3 dates (including today's date)
+    if (this.sortedTimelineDates.length < 3) return true;
+
+    // If we have invalid sentence dates
+    if (this.startDate && this.endDate && this.startDate >= this.endDate)
+      return true;
+
     return false;
   }
 

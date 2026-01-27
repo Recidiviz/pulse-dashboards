@@ -101,6 +101,52 @@ const TimelinePast = styled.line`
   stroke: ${palette.slate20};
 `;
 
+const TimelineViz = ({
+  presenter,
+}: {
+  presenter: SentenceProgressPresenter<Resident | Client>;
+}) => {
+  const { timelineDomain, timelineDates, shouldShowEmptyState } = presenter;
+
+  if (shouldShowEmptyState || !timelineDomain) return null;
+
+  // Use a band scale instead of a timescale so that we can exclude time gaps
+  // if necessary. Range is between 4-96 so that the timeline can extend past the
+  // start and end dates.
+  const timelineScale = scaleBand(timelineDomain, [4, 96]);
+
+  const nowMarker = timelineScale(startOfDay(new Date()));
+
+  // Calculate the x value for each timeline date
+  const progressPoints: SentenceProgressPoint[] = timelineDates.map(
+    (dateInfo) => {
+      const progressPoint = {
+        ...dateInfo,
+        x: timelineScale(dateInfo.date),
+        pointFill: dateInfo.label === "Today" ? palette.white : palette.slate90,
+      };
+
+      return progressPoint;
+    },
+  );
+
+  return (
+    <TimelineCanvas>
+      <TimelinePast x1={0} x2={`${nowMarker}%`} y1={"50%"} y2={"50%"} />
+      <TimelineFuture x1={`${nowMarker}%`} x2={"100%"} y1={"50%"} y2={"50%"} />
+      {progressPoints.map((point) => {
+        return (
+          <SentenceProgressPointV2
+            key={point.date.toDateString()}
+            point={point}
+            presenter={presenter}
+          />
+        );
+      })}
+    </TimelineCanvas>
+  );
+};
+
 const ProgressHeader = ({
   header,
   officerId,
@@ -119,7 +165,12 @@ const ProgressHeader = ({
     <HeadingWrapper>
       <Header>
         <Sans16>Progress</Sans16>
-        <StyledLink to="#" onClick={() => (presenter.isModalOpen = true)}>
+        <StyledLink
+          to="#"
+          onClick={() => {
+            presenter.isModalOpen = true;
+          }}
+        >
           See All Events
         </StyledLink>
       </Header>
@@ -149,34 +200,9 @@ export const ManagedComponent = observer(function ProgressTimeline({
     sortedTimelineDates: timelineDates,
     header,
     officerId,
-    timelineDomain,
     startDate,
     endDate,
   } = presenter;
-  if (timelineDates.length < 2 || !timelineDomain) {
-    // TODO(#11154): handle empty state gracefully or display fallback component
-    return null;
-  }
-
-  // Use a band scale instead of a timescale so that we can exclude time gaps
-  // if necessary. Range is between 4-96 so that the timeline can extend past the
-  // start and end dates.
-  const timelineScale = scaleBand(timelineDomain, [4, 96]);
-
-  const nowMarker = timelineScale(startOfDay(new Date()));
-
-  // Calculate the x value for each timeline date
-  const progressPoints: SentenceProgressPoint[] = timelineDates.map(
-    (dateInfo) => {
-      const progressPoint = {
-        ...dateInfo,
-        x: timelineScale(dateInfo.date),
-        pointFill: dateInfo.label === "Today" ? palette.white : palette.slate90,
-      };
-
-      return progressPoint;
-    },
-  );
 
   return (
     <Wrapper>
@@ -187,24 +213,7 @@ export const ManagedComponent = observer(function ProgressTimeline({
         endDate={endDate}
         presenter={presenter}
       />
-      <TimelineCanvas>
-        <TimelinePast x1={0} x2={`${nowMarker}%`} y1={"50%"} y2={"50%"} />
-        <TimelineFuture
-          x1={`${nowMarker}%`}
-          x2={"100%"}
-          y1={"50%"}
-          y2={"50%"}
-        />
-        {progressPoints.map((point) => {
-          return (
-            <SentenceProgressPointV2
-              key={point.date.toDateString()}
-              point={point}
-              presenter={presenter}
-            />
-          );
-        })}
-      </TimelineCanvas>
+      <TimelineViz presenter={presenter} />
       <SentenceProgressSidePanel
         presenter={presenter}
         timelineDates={timelineDates.filter((date) => date.label !== "Today")}
