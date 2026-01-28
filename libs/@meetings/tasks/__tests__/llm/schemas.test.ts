@@ -128,6 +128,7 @@ describe("LLM Pipeline Schemas", () => {
         category: "Housing",
         updateType: "Change",
         details: "Client moved to new apartment",
+        evidence: "I got a new apartment",
         is_critical: true,
       };
 
@@ -207,6 +208,7 @@ describe("LLM Pipeline Schemas", () => {
             category: "Housing",
             updateType: "Stable/Status Quo",
             details: "Still living at current address",
+            evidence: "I still live in the same place",
           },
         ],
         entities: [
@@ -379,6 +381,7 @@ describe("LLM Pipeline Schemas", () => {
             category: "Housing",
             updateType: "Stable/Status Quo",
             details: "No changes",
+            evidence: null,
           },
         ],
       };

@@ -477,7 +477,9 @@ describe("SpecialistCore", () => {
       expect(result.actionItems[0]?.context).toContain(
         "I'll get that proof to you by Friday",
       );
-      expect(result.criticalUpdates[0]?.details).toContain("[EVIDENCE]");
+      expect(result.criticalUpdates[0]?.evidence).toContain(
+        "I'm staying at my mom's place now",
+      );
     });
 
     test("should skip verification when no claims exist", async () => {

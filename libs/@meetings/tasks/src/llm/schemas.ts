@@ -89,6 +89,7 @@ export const CriticalUpdateSchema = z.object({
   ]),
   updateType: z.enum(["New", "Change", "Stable/Status Quo"]),
   details: z.string(),
+  evidence: z.string().nullable().optional(),
 });
 
 // Define the base schema first to avoid circular type issues

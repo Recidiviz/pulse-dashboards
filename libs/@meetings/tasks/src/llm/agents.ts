@@ -287,7 +287,7 @@ export class SpecialistCore {
           const quotes = audit.evidenceQuotes
             .map((q: string) => `> "${q}"`)
             .join("\n");
-          item.details += `\n\n[EVIDENCE]:\n${quotes}`;
+          item.evidence = quotes;
         }
       });
 

@@ -352,29 +352,61 @@ export async function transcribeAudioWithDeepgram(
   finalRecordingFilePath: string,
   apiKey: string,
 ) {
-  const storage = new Storage();
-  const bucket = storage.bucket(bucketName);
+  let transcriptionResult;
 
-  const file = bucket.file(finalRecordingFilePath);
+  if (isOffline()) {
+    // In offline mode, use local file path
+    // Extract meeting ID from the path (format: {meetingId}/final.{extension})
+    const meetingId = path.dirname(finalRecordingFilePath);
+    const localStorageDir =
+      process.env["OFFLINE_STORAGE_DIR"] ||
+      path.join(os.tmpdir(), "meetings-offline");
+    const meetingDir = path.join(localStorageDir, meetingId);
 
-  const [url] = await file.getSignedUrl({
-    version: "v4",
-    action: "read",
-    expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-  });
+    // Look for final file with either extension
+    const localFilePath = path.join(
+      meetingDir,
+      `final.${MOBILE_AUDIO_FILE_EXTENSION}`,
+    );
 
-  const deepgramClient = createClient(apiKey);
+    const audioUrl = localFilePath;
+    const bufferData = fs.readFileSync(audioUrl);
 
-  const transcriptionResult =
-    await deepgramClient.listen.prerecorded.transcribeUrl(
+    const deepgramClient = createClient(apiKey);
+
+    transcriptionResult =
+      await deepgramClient.listen.prerecorded.transcribeFile(bufferData, {
+        model: "nova-3",
+        punctuate: true,
+        diarize: true,
+        summarize: true,
+        mip_opt_out: true,
+      });
+  } else {
+    const storage = new Storage();
+    const bucket = storage.bucket(bucketName);
+
+    const file = bucket.file(finalRecordingFilePath);
+
+    const [url] = await file.getSignedUrl({
+      version: "v4",
+      action: "read",
+      expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+    });
+
+    const deepgramClient = createClient(apiKey);
+
+    transcriptionResult = await deepgramClient.listen.prerecorded.transcribeUrl(
       { url },
       {
         model: "nova-3",
         punctuate: true,
         diarize: true,
         summarize: true,
+        mip_opt_out: true,
       },
     );
+  }
 
   if (transcriptionResult.error) {
     throw new Error(
