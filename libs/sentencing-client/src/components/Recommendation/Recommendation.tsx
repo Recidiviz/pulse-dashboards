@@ -21,6 +21,7 @@ import React from "react";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { SkippableSection } from "../shared/SkippableSection";
 import { SkippableTextArea } from "../shared/SkippableTextArea";
+import * as Styled from "./Recommendation.styles";
 
 interface RecommendationProps {
   presenter: SARDetailsPresenter;
@@ -30,6 +31,7 @@ export const Recommendation: React.FC<RecommendationProps> = observer(
   function Recommendation({ presenter }) {
     const {
       communityStrategyRecommendation,
+      homePlan,
       institutionalStrategyRecommendation,
     } = presenter.SARData ?? {};
 
@@ -47,12 +49,23 @@ export const Recommendation: React.FC<RecommendationProps> = observer(
           onChange={(value) =>
             presenter.updateCommunityStrategyRecommendation(value)
           }
-          placeholder="Please enter a summary of community strategies and family/social support"
+          placeholder="Please enter a summary of family and social support"
           disabled={presenter.recommendationSkipped}
           onLocalChange={() =>
             presenter.markFieldAsEditedLocally("recommendation")
           }
         />
+        <SkippableTextArea
+          label="Home Plan"
+          value={homePlan ?? null}
+          onChange={(value) => presenter.updateHomePlan(value)}
+          placeholder="Enter home plan details"
+          disabled={presenter.recommendationSkipped}
+          onLocalChange={() =>
+            presenter.markFieldAsEditedLocally("recommendation")
+          }
+        />
+        <Styled.Divider />
         <SkippableTextArea
           label="Institutional Strategies"
           value={institutionalStrategyRecommendation ?? null}

@@ -68,7 +68,7 @@ type SARMetadata = {
 const PROGRESS_FIELD_COUNTS = {
   DEFENDANT_VERSION: 1, // defendantStatement
   VICTIM_IMPACT: 1, // victimImpactStatement
-  RECOMMENDATION: 2, // communityStrategyRecommendation + institutionalStrategyRecommendation
+  RECOMMENDATION: 3, // communityStrategyRecommendation + homePlan + institutionalStrategyRecommendation
   OFFENDER_ASSESSMENT_SUMMARIES: 8, // 8 summary text fields
   OFFENDER_ASSESSMENT_FORM: 4, // levelOfEducation, fatherName, motherName, guardianName (excludes employedAtOffense - see note in overallProgress)
 } as const;
@@ -242,14 +242,15 @@ export class SARDetailsPresenter implements Hydratable {
       this.victimImpactStatementSkipped,
     );
 
-    // Recommendation section (2 fields: community and institutional)
-    // Count both fields OR if section is skipped, count both as complete
+    // Recommendation section (3 fields: community, home plan, and institutional)
+    // Count all fields OR if section is skipped, count all as complete
     const recommendationCompleted = this.recommendationSkipped
-      ? 2
+      ? 3
       : this.isTextFieldComplete(
           this.SARData?.communityStrategyRecommendation,
           false,
         ) +
+        this.isTextFieldComplete(this.SARData?.homePlan, false) +
         this.isTextFieldComplete(
           this.SARData?.institutionalStrategyRecommendation,
           false,
@@ -1154,6 +1155,8 @@ export class SARDetailsPresenter implements Hydratable {
     const hasCommunity =
       this.SARData?.communityStrategyRecommendation &&
       this.SARData.communityStrategyRecommendation.trim() !== "";
+    const hasHomePlan =
+      this.SARData?.homePlan && this.SARData.homePlan.trim() !== "";
     const hasInstitutional =
       this.SARData?.institutionalStrategyRecommendation &&
       this.SARData.institutionalStrategyRecommendation.trim() !== "";
@@ -1162,22 +1165,34 @@ export class SARDetailsPresenter implements Hydratable {
     const isEdited =
       this.metadata?.["sections"]?.["recommendation"]?.["edited"] === true;
 
-    // If both fields are filled OR is skipped, complete
-    if ((hasCommunity && hasInstitutional) || isSkipped) {
+    // If all fields are filled OR is skipped, complete
+    if ((hasCommunity && hasHomePlan && hasInstitutional) || isSkipped) {
       return "complete";
     }
 
-    // If both fields are empty and not skipped but has been edited, show incomplete
-    if (!hasCommunity && !hasInstitutional && !isSkipped && isEdited) {
+    // If all fields are empty and not skipped but has been edited, show incomplete
+    if (
+      !hasCommunity &&
+      !hasHomePlan &&
+      !hasInstitutional &&
+      !isSkipped &&
+      isEdited
+    ) {
       return "incomplete";
     }
 
-    // If both fields are empty and never visited, show nothing
-    if (!hasCommunity && !hasInstitutional && !isSkipped && !isEdited) {
+    // If all fields are empty and never visited, show nothing
+    if (
+      !hasCommunity &&
+      !hasHomePlan &&
+      !hasInstitutional &&
+      !isSkipped &&
+      !isEdited
+    ) {
       return "empty";
     }
 
-    // If only one field is filled, incomplete (show warning)
+    // If any field is missing, incomplete (show warning)
     return "incomplete";
   }
 

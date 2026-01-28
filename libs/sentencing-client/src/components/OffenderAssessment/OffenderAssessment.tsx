@@ -22,7 +22,6 @@ import { palette } from "~design-system";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { OffenderAssessmentSubsection } from "../SARDetails/constants";
-import { SkippableTextArea } from "../shared/SkippableTextArea/SkippableTextArea";
 import { DomainCard } from "./DomainCard";
 import * as DomainCardStyled from "./DomainCard.styles";
 import { EmploymentHistoryCard } from "./EmploymentHistory";
@@ -63,7 +62,6 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       familyAndSocialSupportSummary,
       neighborhoodLevel,
       housingSummary,
-      homePlan,
       peerAssociatesLevel,
       peerAssociatesSummary,
       criminalBehaviorLevel,
@@ -187,15 +185,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           summaryValue={housingSummary ?? null}
           onSummaryChange={(value) => presenter.updateHousingSummary(value)}
           cardRef={neighborhoodRef}
-        >
-          <SkippableTextArea
-            label="Home Plan"
-            value={homePlan ?? null}
-            onChange={(value) => presenter.updateHomePlan(value)}
-            placeholder="Enter home plan details"
-            height="6.8125rem"
-          />
-        </DomainCard>
+        />
 
         <DrugHistoryCard presenter={presenter} cardRef={substanceUseRef} />
 
