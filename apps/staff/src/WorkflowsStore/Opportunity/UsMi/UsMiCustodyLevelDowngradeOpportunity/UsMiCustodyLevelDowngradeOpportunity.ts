@@ -48,7 +48,14 @@ export class UsMiCustodyLevelDowngradeOpportunity extends OpportunityBase<
 
   get subcategory() {
     if (this.isSubmitted) {
-      return this.submittedUpdate?.subcategory;
+      if (this.submittedUpdate?.subcategory) {
+        return this.submittedUpdate?.subcategory;
+      }
+
+      const submittedOptions =
+        this.config.markSubmittedOptionsByTab?.[this.tabTitle()];
+      // Return the last option in the array, if any
+      return submittedOptions?.[submittedOptions.length - 1] ?? undefined;
     }
 
     if (this.tabTitle() === "Needs Review") {
