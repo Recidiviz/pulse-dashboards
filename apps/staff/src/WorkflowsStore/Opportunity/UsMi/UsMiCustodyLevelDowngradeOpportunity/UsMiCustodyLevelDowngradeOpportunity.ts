@@ -46,6 +46,11 @@ export class UsMiCustodyLevelDowngradeOpportunity extends OpportunityBase<
     return "Revert from Needs Re-Screen";
   }
 
+  eligibilityStatusLabel(includeReasons?: boolean) {
+    if (this.subcategoryCopy) return this.subcategoryCopy;
+    return super.eligibilityStatusLabel(includeReasons);
+  }
+
   get subcategory() {
     if (this.isSubmitted) {
       if (this.submittedUpdate?.subcategory) {

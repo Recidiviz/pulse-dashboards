@@ -37,7 +37,6 @@ import { palette } from "~design-system";
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
-import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import { StatusAwareButton } from "../OpportunityDenial/MenuButton.styles";
 import { PersonIdWithCopyIcon } from "../PersonId/PersonId";
 
@@ -51,8 +50,10 @@ const Table = styled.table`
   flex: 1 1 auto;
 `; // necessary to keep the border at the bottom of the sticky table header
 
-const ScrollContainer = styled.div<{ $isMobile: boolean }>`
-  ${({ $isMobile }) => $isMobile && `overflow-x: scroll;`}
+const ScrollContainer = styled.div`
+  overflow-x: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const SortableHeader = styled.div<{ $sortable?: boolean }>`
@@ -62,12 +63,10 @@ const SortableHeader = styled.div<{ $sortable?: boolean }>`
   cursor: ${({ $sortable }) => ($sortable ? "pointer" : "default")};
 `;
 
-const TableHeader = styled.thead<{
-  $isMobile: boolean;
-}>`
+const TableHeader = styled.thead`
   position: sticky;
-  top: ${({ $isMobile }) => ($isMobile ? 0 : rem(NAV_BAR_HEIGHT))};
-
+  top: 0;
+  margin: 0;
   width: 100%;
   background-color: ${palette.marble1};
 `;
@@ -281,9 +280,9 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   };
 
   return (
-    <ScrollContainer $isMobile={isMobile}>
+    <ScrollContainer>
       <Table>
-        <TableHeader $isMobile={isMobile}>
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <Row key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
