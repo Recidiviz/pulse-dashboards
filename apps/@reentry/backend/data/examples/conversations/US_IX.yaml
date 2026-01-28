@@ -1,0 +1,233 @@
+# Idaho intake example
+# This example is used for US_IX state code
+
+metadata:
+  intake_type: conversation
+  status: completed
+
+  # Optional address information
+  address:
+    street_address: "123 Main Street"
+    city: "Boise"
+    state: "ID"
+
+  # Optional survey information
+  survey:
+    difficulty_rating: 4 # 1=Very hard, 5=Very easy
+    questions_confusing: "no" # Options: "no", "some", "most_all"
+    preferred_method: "chatbot" # Options: "chatbot", "voice", "person", "other"
+    additional_feedback: "The process was straightforward and easy to follow."
+
+conversation:
+  # Basic Information section
+  - section: "Basic Information"
+    role: caseworker
+    content: "Hi John, thanks for joining. We're going to go through an intake assessment together. This helps us understand your situation and plan for your successful reentry. We'll cover areas like basic information, housing, employment, health, and support services. Let's start with some basic information. Do you have a birth certificate?"
+
+  - section: "Basic Information"
+    role: client
+    content: "Yes, I have my birth certificate."
+
+  - section: "Basic Information"
+    role: caseworker
+    content: "Great. Do you have a social security card?"
+
+  - section: "Basic Information"
+    role: client
+    content: "Yes, I have that too."
+
+  - section: "Basic Information"
+    role: caseworker
+    content: "Perfect. Do you have a government-issued ID or driver's license from the DMV?"
+
+  - section: "Basic Information"
+    role: client
+    content: "I have a driver's license but it expired about a year ago."
+
+  - section: "Basic Information"
+    role: caseworker
+    content: "I understand. We can work on getting that renewed. Are you a veteran?"
+
+  - section: "Basic Information"
+    role: client
+    content: "No, I'm not."
+
+  - section: "Basic Information"
+    role: caseworker
+    content: "Okay. What mode of transportation do you expect to have access to after release?"
+
+  - section: "Basic Information"
+    role: client
+    content: "My brother said I can borrow his car sometimes, and there's a bus line near where I'll be staying."
+
+  - section: "Basic Information"
+    role: caseworker
+    content: "That's helpful to know. Do you have any outstanding warrants or detainers?"
+
+  - section: "Basic Information"
+    role: client
+    content: "No, nothing like that."
+
+  - section: "Basic Information"
+    role: caseworker
+    content: "Good. Is this your first time releasing from prison?"
+
+  - section: "Basic Information"
+    role: client
+    content: "No, this is my second time. Last time I struggled with finding stable work."
+
+  # Housing section
+  - section: "Housing"
+    role: caseworker
+    content: "Thank you for sharing that. Let's talk about housing. Do you have a confirmed place to stay immediately after release?"
+
+  - section: "Housing"
+    role: client
+    content: "Yes, I'll be staying with my brother and his family."
+
+  - section: "Housing"
+    role: caseworker
+    content: "That's great. Who will be living there with you?"
+
+  - section: "Housing"
+    role: client
+    content: "My brother, his wife, and their two kids."
+
+  - section: "Housing"
+    role: caseworker
+    content: "Have you discussed this living arrangement with them?"
+
+  - section: "Housing"
+    role: client
+    content: "Yes, we've talked about it. They're supportive."
+
+  - section: "Housing"
+    role: caseworker
+    content: "That's wonderful. What are the expectations or rules for living there?"
+
+  - section: "Housing"
+    role: client
+    content: "I need to help with groceries, keep my area clean, and be respectful of their family time. No guests without asking first."
+
+  - section: "Housing"
+    role: caseworker
+    content: "Those sound like reasonable expectations. How long have they agreed you can stay?"
+
+  - section: "Housing"
+    role: client
+    content: "They said I can stay for up to six months while I get on my feet."
+
+  - section: "Housing"
+    role: caseworker
+    content: "That's generous of them. What's your backup plan if this arrangement doesn't work out?"
+
+  - section: "Housing"
+    role: client
+    content: "I've looked into a transitional housing program called Hope House. I have their contact info."
+
+  - section: "Housing"
+    role: caseworker
+    content: "Good thinking to have a Plan B. What's your plan for income to contribute to housing costs?"
+
+  - section: "Housing"
+    role: client
+    content: "I'm hoping to find work within the first month. I have some savings from prison jobs, about $500."
+
+  # Employment section
+  - section: "Employment and Education"
+    role: caseworker
+    content: "That shows good planning. Let's talk about employment. What's your education level?"
+
+  - section: "Employment and Education"
+    role: client
+    content: "I have a high school diploma and some community college credits."
+
+  - section: "Employment and Education"
+    role: caseworker
+    content: "What kind of work experience do you have?"
+
+  - section: "Employment and Education"
+    role: client
+    content: "I worked in construction for about five years before I came in. Framing, roofing, general labor."
+
+  - section: "Employment and Education"
+    role: caseworker
+    content: "Construction is a field with good opportunities. Do you plan to return to that type of work?"
+
+  - section: "Employment and Education"
+    role: client
+    content: "Yes, that's what I know best. I'm hoping to get back into it."
+
+  - section: "Employment and Education"
+    role: caseworker
+    content: "Do you have any professional licenses or certifications?"
+
+  - section: "Employment and Education"
+    role: client
+    content: "I had an OSHA 10-hour certification but I'm not sure if it's still valid."
+
+  # Health and Wellness section
+  - section: "Health and Wellness"
+    role: caseworker
+    content: "We can help you check on that. Now let's discuss health and wellness. Do you have any ongoing medical conditions that require treatment?"
+
+  - section: "Health and Wellness"
+    role: client
+    content: "I have high blood pressure and I'm on medication for it."
+
+  - section: "Health and Wellness"
+    role: caseworker
+    content: "Will you have access to continue that medication after release?"
+
+  - section: "Health and Wellness"
+    role: client
+    content: "I think so. The medical unit said they'd give me a 30-day supply and help me set up with a clinic."
+
+  - section: "Health and Wellness"
+    role: caseworker
+    content: "That's important. Do you have any mental health concerns or are you receiving any mental health services?"
+
+  - section: "Health and Wellness"
+    role: client
+    content: "I've been seeing a counselor here for anxiety. I'd like to continue that outside."
+
+  - section: "Health and Wellness"
+    role: caseworker
+    content: "Continuing mental health support is really valuable. Have you had any substance use issues in the past?"
+
+  - section: "Health and Wellness"
+    role: client
+    content: "Yes, I had issues with alcohol before. I've been sober for two years now and want to stay that way."
+
+  # Support and Services section
+  - section: "Support and Services"
+    role: caseworker
+    content: "Two years is a significant accomplishment. What support systems do you have outside?"
+
+  - section: "Support and Services"
+    role: client
+    content: "My brother and his family, and I have a couple friends from before who have been supportive."
+
+  - section: "Support and Services"
+    role: caseworker
+    content: "Having that support network is crucial. Are there any specific services you think you'll need?"
+
+  - section: "Support and Services"
+    role: client
+    content: "I'd like help finding a job, getting my license renewed, and maybe connecting with an AA group."
+
+  - section: "Support and Services"
+    role: caseworker
+    content: "Those are all things we can help coordinate. Do you have any children or family obligations we should be aware of?"
+
+  - section: "Support and Services"
+    role: client
+    content: "I have a daughter who's 12. She lives with her mom. I want to rebuild that relationship."
+
+  - section: "Support and Services"
+    role: caseworker
+    content: "That's an important goal. Thank you for sharing all of this information with me today, John. This will help us create a reentry plan that addresses your needs and goals."
+
+  - section: "Support and Services"
+    role: client
+    content: "Thank you. I appreciate the help."
