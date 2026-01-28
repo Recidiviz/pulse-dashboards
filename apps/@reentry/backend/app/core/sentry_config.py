@@ -11,7 +11,9 @@ def setup_sentry() -> None:
         sentry_sdk.init(
             dsn=settings.SENTRY_DSN,
             environment=settings.ENV_NAME,
-            profiles_sample_rate=0,
+            traces_sample_rate=1.0,
+            # profile 25% of transactions
+            profiles_sample_rate=0.25,
             enable_logs=True,
             integrations=[
                 LoggingIntegration(
