@@ -276,4 +276,35 @@ export class APIClient {
 
     return fetchedData;
   }
+
+  // Employment History CRUD methods
+  async createEmploymentHistory(input: {
+    sarId: string;
+    employerName?: string | null;
+    startDate?: Date | null;
+    endDate?: Date | null;
+    verifiedByReportAuthor?: boolean | null;
+  }) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+    return this.trpcClient.sar.createEmploymentHistory.mutate(input);
+  }
+
+  async updateEmploymentHistory(input: {
+    id: string;
+    employerName?: string | null;
+    startDate?: Date | null;
+    endDate?: Date | null;
+    verifiedByReportAuthor?: boolean | null;
+  }) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+    return this.trpcClient.sar.updateEmploymentHistory.mutate(input);
+  }
+
+  async deleteEmploymentHistory(input: { id: string }) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+    return this.trpcClient.sar.deleteEmploymentHistory.mutate(input);
+  }
 }

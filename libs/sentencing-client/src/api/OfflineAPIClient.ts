@@ -97,4 +97,35 @@ export class OfflineAPIClient {
     });
     this.editableInfo.set(sarID, info);
   }
+
+  // Employment History CRUD stubs for offline mode
+  async createEmploymentHistory(input: {
+    sarId: string;
+    employerName?: string | null;
+    startDate?: Date | null;
+    endDate?: Date | null;
+    verifiedByReportAuthor?: boolean | null;
+  }) {
+    return {
+      id: `offline-${Date.now()}`,
+      employerName: input.employerName ?? null,
+      startDate: input.startDate ?? null,
+      endDate: input.endDate ?? null,
+      verifiedByReportAuthor: input.verifiedByReportAuthor ?? null,
+    };
+  }
+
+  async updateEmploymentHistory(_input: {
+    id: string;
+    employerName?: string | null;
+    startDate?: Date | null;
+    endDate?: Date | null;
+    verifiedByReportAuthor?: boolean | null;
+  }) {
+    // No-op for offline mode
+  }
+
+  async deleteEmploymentHistory(_input: { id: string }) {
+    // No-op for offline mode
+  }
 }

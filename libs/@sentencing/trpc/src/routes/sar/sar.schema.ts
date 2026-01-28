@@ -94,8 +94,7 @@ export const updateSARSchema = z.object({
     victimImpactStatement: z.string().nullable().optional(),
     criminalHistorySummary: z.string().nullable().optional(),
     levelOfEducation: educationLevelEnum.optional(),
-    employerAtOffense: z.string().nullable().optional(),
-    currentEmployer: z.string().nullable().optional(),
+    employedAtOffense: z.boolean().nullable().optional(),
     employmentSummary: z.string().nullable().optional(),
     motherName: z.string().nullable().optional(),
     fatherName: z.string().nullable().optional(),
@@ -122,4 +121,25 @@ export const updateSARSchema = z.object({
     institutionalStrategyRecommendation: z.string().nullable().optional(),
     metadata: SARMetadataSchema.optional(),
   }) satisfies z.ZodType<UpsertSARInput>,
+});
+
+// Employment History CRUD schemas
+export const createEmploymentHistorySchema = z.object({
+  sarId: z.string(),
+  employerName: z.string().nullable().optional(),
+  startDate: z.date().nullable().optional(),
+  endDate: z.date().nullable().optional(),
+  verifiedByReportAuthor: z.boolean().nullable().optional(),
+});
+
+export const updateEmploymentHistorySchema = z.object({
+  id: z.string(),
+  employerName: z.string().nullable().optional(),
+  startDate: z.date().nullable().optional(),
+  endDate: z.date().nullable().optional(),
+  verifiedByReportAuthor: z.boolean().nullable().optional(),
+});
+
+export const deleteEmploymentHistorySchema = z.object({
+  id: z.string(),
 });

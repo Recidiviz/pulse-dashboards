@@ -113,3 +113,57 @@ export const EducationDropdown: React.FC<EducationDropdownProps> = ({
     </Styled.FieldContainer>
   );
 };
+
+// Individual options for explicit access (avoid relying on array indexing)
+const YES_OPTION: SelectOption = { value: "true", label: "Yes" };
+const NO_OPTION: SelectOption = { value: "false", label: "No" };
+const UNKNOWN_OPTION: SelectOption = { value: "unknown", label: "Unknown" };
+
+const BOOLEAN_WITH_UNKNOWN_OPTIONS: SelectOption[] = [
+  YES_OPTION,
+  NO_OPTION,
+  UNKNOWN_OPTION,
+];
+
+interface BooleanDropdownProps {
+  label: string;
+  value: boolean | null;
+  onChange: (value: boolean | null) => Promise<void>;
+}
+
+export const BooleanDropdown: React.FC<BooleanDropdownProps> = ({
+  label,
+  value,
+  onChange,
+}) => {
+  const getSelectedOption = () => {
+    if (value === true) return YES_OPTION;
+    if (value === false) return NO_OPTION;
+    // null means unknown/not set
+    return UNKNOWN_OPTION;
+  };
+
+  const handleChange = (
+    option: MultiValue<SelectOption> | SingleValue<SelectOption>,
+  ) => {
+    const singleOption = option as SingleValue<SelectOption>;
+    if (!singleOption || singleOption.value === "unknown") {
+      onChange(null);
+    } else {
+      onChange(singleOption.value === "true");
+    }
+  };
+
+  return (
+    <Styled.FieldContainer>
+      <Styled.Label>{label}</Styled.Label>
+      <Dropdown
+        value={getSelectedOption()}
+        options={BOOLEAN_WITH_UNKNOWN_OPTIONS}
+        onChange={handleChange}
+        placeholder="Select..."
+        styles={Styled.dropdownStyles}
+      />
+    </Styled.FieldContainer>
+  );
+};

@@ -36,6 +36,7 @@ import { SARSection } from "../components/SARDetails";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
+import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
 
 // Type for SAR metadata structure
 type SARMetadataSections = {
@@ -62,16 +63,36 @@ type SARMetadata = {
   version?: "1.0";
 };
 
+// Field counts for progress tracking
+// These must stay in sync with the arrays used in overallProgress calculation
+const PROGRESS_FIELD_COUNTS = {
+  DEFENDANT_VERSION: 1, // defendantStatement
+  VICTIM_IMPACT: 1, // victimImpactStatement
+  RECOMMENDATION: 2, // communityStrategyRecommendation + institutionalStrategyRecommendation
+  OFFENDER_ASSESSMENT_SUMMARIES: 8, // 8 summary text fields
+  OFFENDER_ASSESSMENT_FORM: 4, // levelOfEducation, fatherName, motherName, guardianName (excludes employedAtOffense - see note in overallProgress)
+} as const;
+
+const OFFENDER_ASSESSMENT_TOTAL =
+  PROGRESS_FIELD_COUNTS.OFFENDER_ASSESSMENT_SUMMARIES +
+  PROGRESS_FIELD_COUNTS.OFFENDER_ASSESSMENT_FORM; // 12
+
 export class SARDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
 
   SARData?: SAR;
+
+  offenderAssessment: OffenderAssessmentPresenter;
 
   constructor(
     public readonly sentencingStore: SentencingStore,
     public sarId: string,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
+    this.offenderAssessment = new OffenderAssessmentPresenter(
+      this,
+      this.sentencingStore.apiClient,
+    );
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
@@ -234,7 +255,7 @@ export class SARDetailsPresenter implements Hydratable {
           false,
         );
 
-    // Offender Assessment section (8 summary fields + 6 form fields)
+    // Offender Assessment section (8 summary fields + 5 form fields)
     const offenderAssessmentSummaries = [
       this.SARData?.criminalHistorySummary,
       this.SARData?.employmentSummary,
@@ -245,21 +266,23 @@ export class SARDetailsPresenter implements Hydratable {
       this.SARData?.criminalAttitudesSummary,
       this.SARData?.responsivityAndBarriersSummary,
     ];
-    const offenderAssessmentSummariesCompleted = offenderAssessmentSummaries.filter(
-      (summary) => summary && summary.trim() !== "",
-    ).length;
+    const offenderAssessmentSummariesCompleted =
+      offenderAssessmentSummaries.filter(
+        (summary) => summary && summary.trim() !== "",
+      ).length;
 
-    // Offender Assessment form fields (6 fields)
+    // Offender Assessment form fields (4 fields)
+    // Note: employedAtOffense excluded because "Unknown" stores as null,
+    // which is indistinguishable from "not yet answered"
     const offenderAssessmentFormFields = [
       this.SARData?.levelOfEducation,
-      this.SARData?.employerAtOffense,
-      this.SARData?.currentEmployer,
       this.SARData?.client?.fatherName,
       this.SARData?.client?.motherName,
       this.SARData?.client?.guardianName,
     ];
     const offenderAssessmentFormCompleted = offenderAssessmentFormFields.filter(
-      (field) => field && field.toString().trim() !== "",
+      (field) =>
+        field !== null && field !== undefined && field.toString().trim() !== "",
     ).length;
 
     const offenderAssessmentCompleted =
@@ -267,7 +290,12 @@ export class SARDetailsPresenter implements Hydratable {
 
     // Total progress across all sections
     const totalFields =
-      caseInfoTotalFields + keyConsiderationsTotalFields + 4 + 2 + 14; // +2 for defendant/victim, +2 for recommendation fields, +14 for offender assessment (8 summaries + 6 form fields)
+      caseInfoTotalFields +
+      keyConsiderationsTotalFields +
+      PROGRESS_FIELD_COUNTS.DEFENDANT_VERSION +
+      PROGRESS_FIELD_COUNTS.VICTIM_IMPACT +
+      PROGRESS_FIELD_COUNTS.RECOMMENDATION +
+      OFFENDER_ASSESSMENT_TOTAL;
     const completedFields =
       caseInfoCompletedFields +
       keyConsiderationsCompletedFields +
@@ -492,13 +520,21 @@ export class SARDetailsPresenter implements Hydratable {
    * Handles local state update, API call, and status recalculation
    */
   private async updateStringField(
-    fieldName: "victimImpactStatement" | "defendantStatement" |
-              "communityStrategyRecommendation" | "institutionalStrategyRecommendation" |
-              "criminalHistorySummary" | "employmentSummary" |
-              "familyAndSocialSupportSummary" | "housingSummary" | "homePlan" |
-              "drugHistorySummary" | "peerAssociatesSummary" | "criminalAttitudesSummary" |
-              "responsivityAndBarriersSummary" | "employerAtOffense" | "currentEmployer",
-    value: string
+    fieldName:
+      | "victimImpactStatement"
+      | "defendantStatement"
+      | "communityStrategyRecommendation"
+      | "institutionalStrategyRecommendation"
+      | "criminalHistorySummary"
+      | "employmentSummary"
+      | "familyAndSocialSupportSummary"
+      | "housingSummary"
+      | "homePlan"
+      | "drugHistorySummary"
+      | "peerAssociatesSummary"
+      | "criminalAttitudesSummary"
+      | "responsivityAndBarriersSummary",
+    value: string,
   ): Promise<void> {
     if (!this.SARData) return;
 
@@ -510,9 +546,13 @@ export class SARDetailsPresenter implements Hydratable {
 
     const updates: Partial<MutableSARAttributes> = {
       [fieldName]: value,
-      metadata: this.metadata as SARMetadata,
       status: this.calculatedStatus,
     };
+
+    // Only include metadata if it exists to avoid validation errors
+    if (this.metadata) {
+      updates.metadata = this.metadata as SARMetadata;
+    }
 
     await this.sentencingStore.apiClient.updateSARDetails(
       this.SARData.id,
@@ -542,7 +582,9 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   /** Update institutional strategy recommendation */
-  async updateInstitutionalStrategyRecommendation(value: string): Promise<void> {
+  async updateInstitutionalStrategyRecommendation(
+    value: string,
+  ): Promise<void> {
     return this.updateStringField("institutionalStrategyRecommendation", value);
   }
 
@@ -598,7 +640,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Add new drug history record */
   async addDrugHistory(
-    history: NonNullable<SAR["drugHistories"]>[number]
+    history: NonNullable<SAR["drugHistories"]>[number],
   ): Promise<void> {
     if (!this.SARData) return;
 
@@ -609,11 +651,10 @@ export class SARDetailsPresenter implements Hydratable {
   /** Update drug history record at specific index */
   async updateDrugHistoryAtIndex(
     index: number,
-    history: NonNullable<SAR["drugHistories"]>[number]
+    history: NonNullable<SAR["drugHistories"]>[number],
   ): Promise<void> {
     if (!this.SARData) return;
     if (index < 0 || index >= this.drugHistories.length) {
-      console.error(`Invalid index ${index} for drug history update`);
       return;
     }
 
@@ -627,9 +668,6 @@ export class SARDetailsPresenter implements Hydratable {
     if (!this.SARData) return;
 
     if (index < 0 || index >= this.drugHistories.length) {
-      console.error(
-        `Invalid index ${index} for deleting drug history. Valid range: 0-${this.drugHistories.length - 1}`
-      );
       return;
     }
 
@@ -639,7 +677,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Save entire drug history records array to backend */
   private async saveDrugHistories(
-    histories: NonNullable<SAR["drugHistories"]>
+    histories: NonNullable<SAR["drugHistories"]>,
   ): Promise<void> {
     if (!this.SARData) return;
 
@@ -661,24 +699,36 @@ export class SARDetailsPresenter implements Hydratable {
 
     await this.sentencingStore.apiClient.updateSARDetails(
       this.SARData.id,
-      updates
+      updates,
     );
   }
 
-  /** Update employer at offense */
-  async updateEmployerAtOffense(value: string): Promise<void> {
-    return this.updateStringField("employerAtOffense", value);
-  }
+  /** Update employed at offense */
+  async updateEmployedAtOffense(value: boolean | null): Promise<void> {
+    if (!this.SARData) return;
 
-  /** Update current employer */
-  async updateCurrentEmployer(value: string): Promise<void> {
-    return this.updateStringField("currentEmployer", value);
+    const sarId = this.SARData.id;
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.employedAtOffense = value;
+      }
+    });
+
+    const updates: Partial<MutableSARAttributes> = {
+      employedAtOffense: value,
+    };
+
+    // Only include metadata if it exists to avoid validation errors
+    if (this.metadata) {
+      updates.metadata = this.metadata as SARMetadata;
+    }
+
+    await this.sentencingStore.apiClient.updateSARDetails(sarId, updates);
   }
 
   /** Update level of education */
-  async updateLevelOfEducation(
-    value: SAR["levelOfEducation"],
-  ): Promise<void> {
+  async updateLevelOfEducation(value: SAR["levelOfEducation"]): Promise<void> {
     if (!this.SARData) return;
 
     runInAction(() => {
@@ -812,11 +862,10 @@ export class SARDetailsPresenter implements Hydratable {
       ...currentMetadata,
       version: "1.0",
       sections: {
-        keyConsiderations:
-          currentSections?.keyConsiderations ?? {
-            areasOfNeed: { skipped: false },
-            mitigatingFactors: { skipped: false },
-          },
+        keyConsiderations: currentSections?.keyConsiderations ?? {
+          areasOfNeed: { skipped: false },
+          mitigatingFactors: { skipped: false },
+        },
         defendantStatement:
           section === "defendantStatement"
             ? {
@@ -949,9 +998,9 @@ export class SARDetailsPresenter implements Hydratable {
 
   get factorsSkipped(): boolean {
     return (
-      this.metadata?.["sections"]?.["keyConsiderations"]?.["mitigatingFactors"]?.[
-        "skipped"
-      ] === true
+      this.metadata?.["sections"]?.["keyConsiderations"]?.[
+        "mitigatingFactors"
+      ]?.["skipped"] === true
     );
   }
 
@@ -972,9 +1021,8 @@ export class SARDetailsPresenter implements Hydratable {
     return {
       [SARSection.CASE_INFORMATION]: this.getCaseInfoStatus(),
       [SARSection.KEY_CONSIDERATIONS]: this.getKeyConsiderationsStatus(),
-      [SARSection.DEFENDANTS_VERSION]: this.getTextFieldStatus(
-        "defendantStatement",
-      ),
+      [SARSection.DEFENDANTS_VERSION]:
+        this.getTextFieldStatus("defendantStatement"),
       [SARSection.VICTIM_IMPACT]: this.getTextFieldStatus(
         "victimImpactStatement",
       ),
@@ -990,10 +1038,7 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   /** Helper: Check if a section/subsection is skipped */
-  private isSectionSkipped(
-    section: string,
-    subSection?: string,
-  ): boolean {
+  private isSectionSkipped(section: string, subSection?: string): boolean {
     const metadata = this.metadata;
 
     if (!metadata?.sections) return false;
@@ -1012,7 +1057,11 @@ export class SARDetailsPresenter implements Hydratable {
 
     // For top-level sections (defendantStatement, victimImpactStatement, recommendation)
     const sectionData = metadata.sections[section as keyof SARMetadataSections];
-    if (sectionData && typeof sectionData === "object" && "skipped" in sectionData) {
+    if (
+      sectionData &&
+      typeof sectionData === "object" &&
+      "skipped" in sectionData
+    ) {
       return sectionData.skipped === true;
     }
 
@@ -1134,6 +1183,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Get Offender Assessment section status */
   private getOffenderAssessmentStatus(): SectionStatus {
+    // 8 summary text fields
     const summaries = [
       this.SARData?.criminalHistorySummary,
       this.SARData?.employmentSummary,
@@ -1145,10 +1195,28 @@ export class SARDetailsPresenter implements Hydratable {
       this.SARData?.responsivityAndBarriersSummary,
     ];
 
-    const filledCount = summaries.filter((s) => s && s.trim() !== "").length;
+    // 4 form fields (must match overallProgress calculation)
+    // Note: employedAtOffense excluded because "Unknown" stores as null,
+    // which is indistinguishable from "not yet answered"
+    const formFields = [
+      this.SARData?.levelOfEducation,
+      this.SARData?.client?.fatherName,
+      this.SARData?.client?.motherName,
+      this.SARData?.client?.guardianName,
+    ];
 
-    if (filledCount === summaries.length) return "complete";
-    if (filledCount > 0) return "incomplete";
+    const summaryFilledCount = summaries.filter(
+      (s) => s && s.trim() !== "",
+    ).length;
+    const formFilledCount = formFields.filter(
+      (f) => f !== null && f !== undefined && f.toString().trim() !== "",
+    ).length;
+
+    const totalFields = summaries.length + formFields.length; // 12 total
+    const totalFilledCount = summaryFilledCount + formFilledCount;
+
+    if (totalFilledCount === totalFields) return "complete";
+    if (totalFilledCount > 0) return "incomplete";
     return "empty";
   }
 }

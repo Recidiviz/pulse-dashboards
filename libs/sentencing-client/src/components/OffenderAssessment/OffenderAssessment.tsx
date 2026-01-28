@@ -25,7 +25,12 @@ import { OffenderAssessmentSubsection } from "../SARDetails/constants";
 import { SkippableTextArea } from "../shared/SkippableTextArea/SkippableTextArea";
 import { DomainCard } from "./DomainCard";
 import * as DomainCardStyled from "./DomainCard.styles";
-import { EducationDropdown, TextField } from "./FormComponents";
+import { EmploymentHistoryCard } from "./EmploymentHistory";
+import {
+  BooleanDropdown,
+  EducationDropdown,
+  TextField,
+} from "./FormComponents";
 import * as Styled from "./OffenderAssessment.styles";
 import { DrugHistoryCard } from "./SubstanceUse";
 
@@ -53,8 +58,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       educationLevelScore,
       employmentSummary,
       levelOfEducation,
-      employerAtOffense,
-      currentEmployer,
+      employedAtOffense,
       familySocialSupportLevel,
       familyAndSocialSupportSummary,
       neighborhoodLevel,
@@ -131,22 +135,16 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           onSummaryChange={(value) => presenter.updateEmploymentSummary(value)}
           cardRef={educationRef}
         >
+          <EmploymentHistoryCard presenter={presenter.offenderAssessment} />
           <EducationDropdown
             label="Highest Level of Education"
             value={levelOfEducation ?? null}
             onChange={(value) => presenter.updateLevelOfEducation(value)}
           />
-          <TextField
-            label="Employer at Time of Offense"
-            value={employerAtOffense ?? null}
-            onChange={(value) => presenter.updateEmployerAtOffense(value)}
-            placeholder="Enter employer name"
-          />
-          <TextField
-            label="Current Employer"
-            value={currentEmployer ?? null}
-            onChange={(value) => presenter.updateCurrentEmployer(value)}
-            placeholder="Enter current employer"
+          <BooleanDropdown
+            label="Employed at Time of Offense"
+            value={employedAtOffense ?? null}
+            onChange={(value) => presenter.updateEmployedAtOffense(value)}
           />
         </DomainCard>
 

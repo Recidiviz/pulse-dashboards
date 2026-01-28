@@ -613,8 +613,7 @@ model SentencingAssessmentReport {
   defendantStatement            String?
   victimImpactStatement         String?
   criminalHistorySummary        String?
-  employerAtOffense             String?
-  currentEmployer               String?
+  employedAtOffense             Boolean?
   employmentSummary             String?
   familyAndSocialSupportSummary String?
   homePlan                      String?
@@ -629,6 +628,7 @@ model SentencingAssessmentReport {
   // Relationships
   charges      Charge[]
   drugHistories DrugHistory[]
+  employmentHistories EmploymentHistory[]
 
   // Metadata stored as JSON
   // Tracks form completion state including:
@@ -681,4 +681,18 @@ model DrugHistory {
   lastUse         DateTime?
   heaviestUse     FrequencyOfUse?
   method          MethodOfUse?
+}
+
+model EmploymentHistory {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sentencingAssessmentReport   SentencingAssessmentReport @relation(fields: [sentencingAssessmentReportId], references: [id], onDelete: Cascade)
+  sentencingAssessmentReportId String
+
+  employerName            String?
+  startDate               DateTime?
+  endDate                 DateTime?
+  verifiedByReportAuthor  Boolean?
 }

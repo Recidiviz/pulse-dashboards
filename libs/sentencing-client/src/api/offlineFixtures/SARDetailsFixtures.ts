@@ -60,6 +60,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
       },
     ],
     drugHistories: [],
+    employmentHistories: [],
 
     status: "InProgress",
     needsToBeAddressed: [],
@@ -95,8 +96,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     // Narrative fields
     defendantStatement: null,
     criminalHistorySummary: null,
-    employerAtOffense: null,
-    currentEmployer: null,
+    employedAtOffense: null,
     employmentSummary: null,
     familyAndSocialSupportSummary: null,
     homePlan: null,

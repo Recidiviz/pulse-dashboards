@@ -19,7 +19,7 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-export const DrugHistorySection = styled.div`
+export const HistorySection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -44,9 +44,9 @@ export const AddButton = styled.button`
   align-items: center;
   gap: 0.5rem;
   border-radius: 2rem;
-  border: 1px solid rgba(43, 84, 105, 0.2);
+  border: 1px solid ${palette.slate20};
   background: transparent;
-  color: rgba(43, 84, 105, 0.85);
+  color: ${palette.slate85};
   font-family: "Public Sans";
   font-size: 0.8125rem;
   font-style: normal;
@@ -54,16 +54,42 @@ export const AddButton = styled.button`
   line-height: 1rem;
   letter-spacing: -0.00813rem;
   cursor: pointer;
+  outline: none;
 
   &:hover {
     background: ${palette.marble1};
   }
+
+  &:focus,
+  &:active {
+    outline: none;
+  }
 `;
 
-export const DrugHistoryList = styled.div`
+export const HistoryTable = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+`;
+
+export const TableHeaderRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  padding-right: 2.5rem; /* Space for edit/delete icons */
+`;
+
+export const TableHeaderCell = styled.span`
+  flex: 1;
+  font-family: "Public Sans";
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: ${palette.slate85};
+  line-height: 1.5;
+`;
+
+export const HistoryList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.3125rem; /* 5px */
 `;
 
 export const EmptyState = styled.div`

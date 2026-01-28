@@ -21,7 +21,6 @@ import styled from "styled-components";
 import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
 
 import { SelectOption } from "../CaseDetails/Form/types";
-import { customPalette } from "../styles/palette";
 
 export const CHEVRON_DOWN_BACKGROUND = iconToDataURI(
   <Icon kind={IconSVG["ChevronDown"]} color={palette.pine1} />,
@@ -84,9 +83,14 @@ export const Select = styled.select`
 export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
   control: (styles, { isFocused, isDisabled }) => ({
     ...styles,
-    borderColor: isFocused ? palette.pine4 : palette.slate20,
-    boxShadow: isFocused ? `0 0 0 1px  ${palette.pine4}` : "none",
+    minHeight: "2.5rem",
+    borderRadius: "0.5rem",
+    border: `1px solid ${isFocused ? palette.pine4 : "rgba(43, 84, 105, 0.20)"}`,
+    boxShadow: "none",
     backgroundColor: isDisabled ? palette.slate10 : palette.white,
+    fontFamily: "Public Sans",
+    fontSize: "0.875rem",
+    lineHeight: 1.5,
     ":hover": {
       borderColor: palette.pine4,
     },
@@ -98,7 +102,7 @@ export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
     backgroundColor: isFocused
       ? palette.slate10
       : isSelected
-        ? customPalette.green.light3
+        ? palette.white
         : undefined,
     ":active": {
       backgroundColor: palette.slate10,

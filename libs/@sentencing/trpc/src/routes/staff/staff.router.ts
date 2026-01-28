@@ -15,9 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TRPCError } from "@trpc/server";
-
-import { Prisma } from "~@sentencing/prisma/client";
+import { handlePrismaError } from "~@sentencing/trpc/errors";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
   buildStaffCaseFilter,
@@ -60,16 +58,7 @@ export const staffRouter = router({
             },
           });
         } catch (e) {
-          if (
-            e instanceof Prisma.PrismaClientKnownRequestError &&
-            e.code === "P2025"
-          ) {
-            throw new TRPCError({
-              code: "NOT_FOUND",
-              message: "Staff with that id was not found",
-              cause: e,
-            });
-          }
+          handlePrismaError(e, "Staff with that id was not found");
         }
       },
     ),

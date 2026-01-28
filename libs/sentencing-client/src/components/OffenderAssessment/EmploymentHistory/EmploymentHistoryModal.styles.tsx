@@ -15,18 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/**
- * Component-specific styles for DrugHistoryModal.
- * Shared modal styles should be imported directly from ../ModalStyles.
- */
-
 import styled from "styled-components";
 
 import { BaseDatePickerWrapper } from "../ModalStyles";
 
+// Re-export shared modal styles
+export {
+  Container,
+  DateRow,
+  Description,
+  ErrorMessage,
+  Field,
+  Footer,
+  Form,
+  Header,
+  Label,
+  TextInput,
+  Title,
+} from "../ModalStyles";
+
 export const DatePickerWrapper = styled(BaseDatePickerWrapper)`
   .react-datepicker__input-container input {
-    background-position: right 1rem center;
-    background-size: 1rem;
+    background-position: right 1rem top 60%;
+    background-size: 1.3rem;
   }
 `;

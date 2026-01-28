@@ -21,6 +21,7 @@ import _ from "lodash";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
 import { Prisma } from "~@sentencing/prisma/client";
+import { handlePrismaError } from "~@sentencing/trpc/errors";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
   getCaseInputSchema,
@@ -159,18 +160,7 @@ export const caseRouter = router({
           }
         }
       } catch (e) {
-        if (
-          e instanceof Prisma.PrismaClientKnownRequestError &&
-          e.code === "P2025"
-        ) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Case with that id was not found",
-            cause: e,
-          });
-        }
-
-        throw e;
+        handlePrismaError(e, "Case with that id was not found");
       }
 
       try {
@@ -238,16 +228,7 @@ export const caseRouter = router({
           data: updateData,
         });
       } catch (e) {
-        if (
-          e instanceof Prisma.PrismaClientKnownRequestError &&
-          e.code === "P2025"
-        ) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Case with that id was not found",
-            cause: e,
-          });
-        }
+        handlePrismaError(e, "Case with that id was not found");
       }
     }),
 });

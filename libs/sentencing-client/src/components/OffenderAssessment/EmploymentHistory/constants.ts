@@ -15,18 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/**
- * Component-specific styles for DrugHistoryModal.
- * Shared modal styles should be imported directly from ../ModalStyles.
- */
+import { SAR } from "../../../api";
 
-import styled from "styled-components";
+export type EmploymentHistory = NonNullable<SAR["employmentHistories"]>[number];
 
-import { BaseDatePickerWrapper } from "../ModalStyles";
-
-export const DatePickerWrapper = styled(BaseDatePickerWrapper)`
-  .react-datepicker__input-container input {
-    background-position: right 1rem center;
-    background-size: 1rem;
-  }
-`;
+export const VERIFIED_OPTIONS = [
+  { value: "true", label: "Yes" },
+  { value: "false", label: "No" },
+];

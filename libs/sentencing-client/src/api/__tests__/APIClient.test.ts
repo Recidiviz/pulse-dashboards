@@ -59,6 +59,15 @@ beforeEach(() => {
       updateSAR: {
         mutate: vi.fn(),
       },
+      createEmploymentHistory: {
+        mutate: vi.fn(),
+      },
+      updateEmploymentHistory: {
+        mutate: vi.fn(),
+      },
+      deleteEmploymentHistory: {
+        mutate: vi.fn(),
+      },
     },
     case: {
       getCase: {

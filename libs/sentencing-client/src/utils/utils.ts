@@ -192,3 +192,40 @@ export const formatPercentage = (rate?: number): string | undefined => {
   }
   return `${Math.round(rate)}%`;
 };
+
+/**
+ * Formats a boolean value for display as Yes/No/Not specified
+ */
+export const formatBooleanDisplay = (
+  value: boolean | null | undefined,
+): string => {
+  if (value === true) return "Yes";
+  if (value === false) return "No";
+  return "Not specified";
+};
+
+/**
+ * Formats a date range for display.
+ * Returns "Apr 2023 - Nov 2025" format, or "Apr 2023 - Present" if no end date.
+ * Returns "Not specified" if no start date.
+ * Uses UTC to avoid off-by-one timezone issues.
+ */
+export const formatDateRange = (
+  startDate: Date | null | undefined,
+  endDate: Date | null | undefined,
+): string => {
+  if (!startDate) return "Not specified";
+
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+      timeZone: "UTC",
+    });
+  };
+
+  const start = formatDate(startDate);
+  const end = endDate ? formatDate(endDate) : "Present";
+
+  return `${start} - ${end}`;
+};

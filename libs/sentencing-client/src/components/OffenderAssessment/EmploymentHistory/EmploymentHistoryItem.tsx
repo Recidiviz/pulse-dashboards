@@ -19,25 +19,19 @@ import React, { useState } from "react";
 
 import { Icon, IconSVG } from "~design-system";
 
+import { formatBooleanDisplay, formatDateRange } from "../../../utils/utils";
 import { DeleteConfirmation } from "../DeleteConfirmation";
 import * as Styled from "../HistoryItemStyles";
-import {
-  DrugHistory,
-  FrequencyOfUseLabels,
-  MethodOfUseLabels,
-  SubstanceTypeLabels,
-} from "./constants";
+import { EmploymentHistory } from "./constants";
 
-interface DrugHistoryItemProps {
-  history: DrugHistory;
-  index: number;
-  onEdit: (index: number) => void;
-  onDelete: (index: number) => Promise<void>;
+interface EmploymentHistoryItemProps {
+  history: EmploymentHistory;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
 }
 
-export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
+export const EmploymentHistoryItem: React.FC<EmploymentHistoryItemProps> = ({
   history,
-  index,
   onEdit,
   onDelete,
 }) => {
@@ -47,7 +41,7 @@ export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await onDelete(index);
+      await onDelete(history.id);
     } finally {
       setIsDeleting(false);
       setShowDeleteConfirm(false);
@@ -57,7 +51,7 @@ export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
   if (showDeleteConfirm) {
     return (
       <DeleteConfirmation
-        message="Are you sure you want to delete this substance use record?"
+        message="Are you sure you want to delete this employment record?"
         onCancel={() => setShowDeleteConfirm(false)}
         onDelete={handleDelete}
         isDeleting={isDeleting}
@@ -69,14 +63,14 @@ export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
     <Styled.Card>
       <Styled.IconRow>
         <Styled.EditButton
-          onClick={() => onEdit(index)}
-          aria-label="Edit substance use record"
+          onClick={() => onEdit(history.id)}
+          aria-label="Edit employment record"
         >
           <Icon kind={IconSVG["Edit"]} size={16} />
         </Styled.EditButton>
         <Styled.DeleteIconButton
           onClick={() => setShowDeleteConfirm(true)}
-          aria-label="Delete substance use record"
+          aria-label="Delete employment record"
         >
           <Icon kind={IconSVG["Minus"]} size={8} />
         </Styled.DeleteIconButton>
@@ -84,27 +78,13 @@ export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
 
       <Styled.DataRow>
         <Styled.DataCell>
-          {history.substance
-            ? SubstanceTypeLabels[history.substance]
-            : "Not specified"}
+          {history.employerName || "Not specified"}
         </Styled.DataCell>
         <Styled.DataCell>
-          {history.ageOfRegularUse ?? "Not specified"}
+          {formatDateRange(history.startDate, history.endDate)}
         </Styled.DataCell>
         <Styled.DataCell>
-          {history.lastUse
-            ? new Date(history.lastUse).toLocaleDateString("en-US", {
-                timeZone: "UTC",
-              })
-            : "Not specified"}
-        </Styled.DataCell>
-        <Styled.DataCell>
-          {history.heaviestUse
-            ? FrequencyOfUseLabels[history.heaviestUse]
-            : "Not specified"}
-        </Styled.DataCell>
-        <Styled.DataCell>
-          {history.method ? MethodOfUseLabels[history.method] : "Not specified"}
+          {formatBooleanDisplay(history.verifiedByReportAuthor)}
         </Styled.DataCell>
       </Styled.DataRow>
     </Styled.Card>

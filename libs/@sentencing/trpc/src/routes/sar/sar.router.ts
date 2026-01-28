@@ -19,10 +19,14 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 
 import { Prisma } from "~@sentencing/prisma/client";
+import { handlePrismaError } from "~@sentencing/trpc/errors";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
+  createEmploymentHistorySchema,
+  deleteEmploymentHistorySchema,
   getSARByIDInputSchema,
   getSARsForStaffInputSchema,
+  updateEmploymentHistorySchema,
   updateSARSchema,
 } from "~@sentencing/trpc/routes/sar/sar.schema";
 
@@ -58,6 +62,13 @@ export const sarRouter = router({
           drugHistories: {
             omit: {
               id: true,
+              createdAt: true,
+              updatedAt: true,
+              sentencingAssessmentReportId: true,
+            },
+          },
+          employmentHistories: {
+            omit: {
               createdAt: true,
               updatedAt: true,
               sentencingAssessmentReportId: true,
@@ -205,18 +216,62 @@ export const sarRouter = router({
           data: updateData,
         });
       } catch (e) {
-        if (
-          e instanceof Prisma.PrismaClientKnownRequestError &&
-          e.code === "P2025"
-        ) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Sentencing Assessment Report with that id was not found",
-            cause: e,
-          });
-        }
+        handlePrismaError(
+          e,
+          "Sentencing Assessment Report with that id was not found",
+        );
+      }
+    }),
 
-        throw e;
+  // Employment History CRUD mutations
+  createEmploymentHistory: baseProcedure
+    .input(createEmploymentHistorySchema)
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      try {
+        const { sarId, ...data } = input;
+        return await prisma.employmentHistory.create({
+          data: {
+            ...data,
+            sentencingAssessmentReportId: sarId,
+          },
+        });
+      } catch (e) {
+        handlePrismaError(
+          e,
+          "Sentencing Assessment Report with that id was not found",
+        );
+      }
+    }),
+
+  updateEmploymentHistory: baseProcedure
+    .input(updateEmploymentHistorySchema)
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      try {
+        const { id, ...data } = input;
+        return await prisma.employmentHistory.update({
+          where: { id },
+          data,
+        });
+      } catch (e) {
+        handlePrismaError(
+          e,
+          "Employment history record with that id was not found",
+        );
+      }
+    }),
+
+  deleteEmploymentHistory: baseProcedure
+    .input(deleteEmploymentHistorySchema)
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      try {
+        return await prisma.employmentHistory.delete({
+          where: { id: input.id },
+        });
+      } catch (e) {
+        handlePrismaError(
+          e,
+          "Employment history record with that id was not found",
+        );
       }
     }),
 });

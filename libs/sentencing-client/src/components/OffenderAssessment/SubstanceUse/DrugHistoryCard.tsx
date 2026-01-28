@@ -21,8 +21,8 @@ import React, { useState } from "react";
 import { SARDetailsPresenter } from "../../../presenters/SARDetailsPresenter";
 import { splitFullName } from "../../../utils/utils";
 import { DomainCard } from "../DomainCard";
+import * as Styled from "../HistoryCardStyles";
 import { DrugHistory } from "./constants";
-import * as Styled from "./DrugHistoryCard.styles";
 import { DrugHistoryItem } from "./DrugHistoryItem";
 import { DrugHistoryModal } from "./DrugHistoryModal";
 
@@ -90,34 +90,45 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
           onSummaryChange={(value) => presenter.updateDrugHistorySummary(value)}
           cardRef={cardRef}
         >
-          <Styled.DrugHistorySection>
+          <Styled.HistorySection>
             <Styled.SectionTitle>Substance Use History</Styled.SectionTitle>
 
             {drugHistories && drugHistories.length > 0 ? (
-              <Styled.DrugHistoryList>
-                {drugHistories.map((history, index) => {
-                  // Create a stable key using index and unique data from the record
-                  // Index is used since our CRUD operations are index-based
-                  const key = `${index}-${history.substance || "none"}-${history.ageOfRegularUse || "none"}`;
-                  return (
-                    <DrugHistoryItem
-                      key={key}
-                      history={history}
-                      index={index}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                    />
-                  );
-                })}
-              </Styled.DrugHistoryList>
+              <Styled.HistoryTable>
+                <Styled.TableHeaderRow>
+                  <Styled.TableHeaderCell>Substance</Styled.TableHeaderCell>
+                  <Styled.TableHeaderCell>
+                    Age of Regular Use
+                  </Styled.TableHeaderCell>
+                  <Styled.TableHeaderCell>Last Use</Styled.TableHeaderCell>
+                  <Styled.TableHeaderCell>Heaviest Use</Styled.TableHeaderCell>
+                  <Styled.TableHeaderCell>Method</Styled.TableHeaderCell>
+                </Styled.TableHeaderRow>
+                <Styled.HistoryList>
+                  {drugHistories.map((history, index) => {
+                    // Create a stable key using index and unique data from the record
+                    // Index is used since our CRUD operations are index-based
+                    const key = `${index}-${history.substance || "none"}-${history.ageOfRegularUse || "none"}`;
+                    return (
+                      <DrugHistoryItem
+                        key={key}
+                        history={history}
+                        index={index}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                      />
+                    );
+                  })}
+                </Styled.HistoryList>
+              </Styled.HistoryTable>
             ) : (
               <Styled.EmptyState>
-                No substance use records. Click "+ Add" to create one.
+                No substance use records. Click &quot;+ Add&quot; to create one.
               </Styled.EmptyState>
             )}
 
             <Styled.AddButton onClick={handleAdd}>+ Add</Styled.AddButton>
-          </Styled.DrugHistorySection>
+          </Styled.HistorySection>
         </DomainCard>
 
         <DrugHistoryModal

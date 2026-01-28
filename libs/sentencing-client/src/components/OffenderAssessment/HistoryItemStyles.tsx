@@ -46,6 +46,7 @@ export const EditButton = styled.button`
   position: absolute;
   right: 1.1875rem;
   top: 0.1875rem;
+  outline: none;
 
   svg {
     width: 0.5rem;
@@ -55,6 +56,11 @@ export const EditButton = styled.button`
 
   &:hover {
     color: ${palette.pine4};
+  }
+
+  &:focus,
+  &:active {
+    outline: none;
   }
 
   &:disabled {
@@ -75,6 +81,7 @@ export const DeleteIconButton = styled.button`
   position: absolute;
   right: 0;
   top: 0;
+  outline: none;
 
   svg {
     width: 0.75rem;
@@ -86,35 +93,30 @@ export const DeleteIconButton = styled.button`
     color: ${palette.pine4};
   }
 
+  &:focus,
+  &:active {
+    outline: none;
+  }
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 `;
 
-export const InfoRow = styled.div`
+export const DataRow = styled.div`
   display: flex;
   gap: 0.5rem;
+  align-items: center;
+  padding-right: 2.5rem; /* Space for edit/delete icons */
 `;
 
-export const InfoItem = styled.div`
+export const DataCell = styled.span`
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-`;
-
-export const InfoLabel = styled.span`
   font-family: "Public Sans";
   font-size: 0.875rem;
-  color: ${palette.slate70};
-  line-height: 1.5;
-`;
-
-export const InfoValue = styled.span`
-  font-family: "Public Sans";
-  font-size: 0.875rem;
-  color: ${palette.slate70};
+  font-weight: 500;
+  color: ${palette.slate85};
   line-height: 1.5;
 `;
 

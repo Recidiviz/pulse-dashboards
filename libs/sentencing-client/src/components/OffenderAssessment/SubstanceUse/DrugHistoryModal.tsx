@@ -26,6 +26,7 @@ import {
   dropdownStyles,
   SaveButton,
 } from "../FormComponents.styles";
+import * as ModalStyled from "../ModalStyles";
 import {
   AGE_OPTIONS,
   DrugHistory,
@@ -39,7 +40,7 @@ import {
   SubstanceType,
   SubstanceTypeLabels,
 } from "./constants";
-import * as Styled from "./DrugHistoryModal.styles";
+import { DatePickerWrapper } from "./DrugHistoryModal.styles";
 
 type SelectOption = { label: string; value: string };
 
@@ -107,8 +108,7 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
     try {
       await onSave(formData);
       handleClose();
-    } catch (error) {
-      console.error("Failed to save substance use record:", error);
+    } catch {
       setSaveError("Failed to save. Please try again.");
     } finally {
       setIsSaving(false);
@@ -125,21 +125,21 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
 
   return (
     <Modal isOpen={isOpen} hideModal={handleClose} padding={0}>
-      <Styled.Container>
-        <Styled.Header>
-          <Styled.Title>
+      <ModalStyled.Container>
+        <ModalStyled.Header>
+          <ModalStyled.Title>
             {isEditMode ? "Edit Substance Use" : "Add Substance Use"}
-          </Styled.Title>
-          <Styled.Description>
+          </ModalStyled.Title>
+          <ModalStyled.Description>
             We will use this data to generate opportunities for{" "}
             {clientFirstName}. If you don't have this information yet, you can
             add it in later.
-          </Styled.Description>
-        </Styled.Header>
+          </ModalStyled.Description>
+        </ModalStyled.Header>
 
-        <Styled.Form>
-          <Styled.Field>
-            <Styled.Label>Substance</Styled.Label>
+        <ModalStyled.Form>
+          <ModalStyled.Field>
+            <ModalStyled.Label>Substance</ModalStyled.Label>
             <Dropdown
               value={
                 formData.substance
@@ -160,10 +160,10 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
               placeholder="Select..."
               styles={dropdownStyles}
             />
-          </Styled.Field>
+          </ModalStyled.Field>
 
-          <Styled.Field>
-            <Styled.Label>Age of Regular Use</Styled.Label>
+          <ModalStyled.Field>
+            <ModalStyled.Label>Age of Regular Use</ModalStyled.Label>
             <Dropdown
               value={
                 formData.ageOfRegularUse
@@ -185,11 +185,11 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
               placeholder="Select..."
               styles={dropdownStyles}
             />
-          </Styled.Field>
+          </ModalStyled.Field>
 
-          <Styled.Field>
-            <Styled.Label>Last Use</Styled.Label>
-            <Styled.DatePickerWrapper>
+          <ModalStyled.Field>
+            <ModalStyled.Label>Last Use</ModalStyled.Label>
+            <DatePickerWrapper>
               <SharedDatePicker
                 selected={formData.lastUse ? new Date(formData.lastUse) : null}
                 onChange={(date) =>
@@ -197,11 +197,11 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
                 }
                 placeholder="Select date"
               />
-            </Styled.DatePickerWrapper>
-          </Styled.Field>
+            </DatePickerWrapper>
+          </ModalStyled.Field>
 
-          <Styled.Field>
-            <Styled.Label>Heaviest Use</Styled.Label>
+          <ModalStyled.Field>
+            <ModalStyled.Label>Heaviest Use</ModalStyled.Label>
             <Dropdown
               value={
                 formData.heaviestUse
@@ -222,10 +222,10 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
               placeholder="Select..."
               styles={dropdownStyles}
             />
-          </Styled.Field>
+          </ModalStyled.Field>
 
-          <Styled.Field>
-            <Styled.Label>Method</Styled.Label>
+          <ModalStyled.Field>
+            <ModalStyled.Label>Method</ModalStyled.Label>
             <Dropdown
               value={
                 formData.method
@@ -246,11 +246,13 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
               placeholder="Select..."
               styles={dropdownStyles}
             />
-          </Styled.Field>
-        </Styled.Form>
+          </ModalStyled.Field>
+        </ModalStyled.Form>
 
-        <Styled.Footer>
-          {saveError && <Styled.ErrorMessage>{saveError}</Styled.ErrorMessage>}
+        <ModalStyled.Footer>
+          {saveError && (
+            <ModalStyled.ErrorMessage>{saveError}</ModalStyled.ErrorMessage>
+          )}
           <ButtonRow>
             <CancelButton onClick={handleClose} disabled={isSaving}>
               Cancel
@@ -259,8 +261,8 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
               {isSaving ? "Saving..." : "Save"}
             </SaveButton>
           </ButtonRow>
-        </Styled.Footer>
-      </Styled.Container>
+        </ModalStyled.Footer>
+      </ModalStyled.Container>
     </Modal>
   );
 };
