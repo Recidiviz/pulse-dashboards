@@ -196,13 +196,7 @@ export const ManagedComponent = observer(function ProgressTimeline({
 }: {
   presenter: SentenceProgressPresenter<Resident | Client>;
 }) {
-  const {
-    sortedTimelineDates: timelineDates,
-    header,
-    officerId,
-    startDate,
-    endDate,
-  } = presenter;
+  const { timelineDates, header, officerId, startDate, endDate } = presenter;
 
   return (
     <Wrapper>

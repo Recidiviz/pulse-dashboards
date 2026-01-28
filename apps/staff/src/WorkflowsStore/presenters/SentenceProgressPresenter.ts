@@ -65,12 +65,6 @@ export class SentenceProgressPresenter<
     return this.workflowsStore.rootStore.currentTenantId;
   }
 
-  get sortedTimelineDates(): TimelineDate[] {
-    return this.timelineDates.toSorted(
-      (a, b) => a.date.getTime() - b.date.getTime(),
-    );
-  }
-
   get hoveredTimelineDate(): string | undefined {
     return this._hoveredDate;
   }
@@ -86,7 +80,7 @@ export class SentenceProgressPresenter<
    * */
   get timelineGaps(): Interval[] {
     const gaps: Interval[] = [];
-    this.sortedTimelineDates.forEach((dateInfo, index, dates) => {
+    this.timelineDates.forEach((dateInfo, index, dates) => {
       if (index > 0) {
         const cutoffDate = subYears(dateInfo.date, 7);
         const priorDate = dates[index - 1].date;
@@ -124,23 +118,30 @@ export class SentenceProgressPresenter<
   }
 
   get earliestDate(): Date | undefined {
-    return this.sortedTimelineDates.at(0)?.date;
+    return this.timelineDates.at(0)?.date;
   }
 
   get latestDate(): Date | undefined {
-    return this.sortedTimelineDates.at(-1)?.date;
+    return this.timelineDates.at(-1)?.date;
   }
 
+  /**
+   * A sorted list of dates to display on the timeline.
+   */
   get timelineDates(): TimelineDate[] {
     if (!this._timelineDates) {
       this.calculateTimelineDateArray();
     }
-    return this._timelineDates ?? [];
+
+    const unsortedDates = this._timelineDates ?? [];
+    return unsortedDates.toSorted(
+      (a, b) => a.date.getTime() - b.date.getTime(),
+    );
   }
 
   get shouldShowEmptyState(): boolean {
     // If we have <3 dates (including today's date)
-    if (this.sortedTimelineDates.length < 3) return true;
+    if (this.timelineDates.length < 3) return true;
 
     // If we have invalid sentence dates
     if (this.startDate && this.endDate && this.startDate >= this.endDate)

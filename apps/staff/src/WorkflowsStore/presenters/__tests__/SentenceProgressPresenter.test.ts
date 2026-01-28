@@ -154,9 +154,7 @@ describe("SentenceProgressPresenter", () => {
         hideLabel: false,
       };
 
-      expect(presenter.sortedTimelineDates).toContainEqual(
-        expectedAdmissionDate,
-      );
+      expect(presenter.timelineDates).toContainEqual(expectedAdmissionDate);
     });
 
     test("timeline dates include end date", () => {
@@ -167,7 +165,7 @@ describe("SentenceProgressPresenter", () => {
         hideLabel: false,
       };
 
-      expect(presenter.sortedTimelineDates).toContainEqual(expectedReleaseDate);
+      expect(presenter.timelineDates).toContainEqual(expectedReleaseDate);
     });
 
     test("timeline dates include today", () => {
@@ -178,7 +176,7 @@ describe("SentenceProgressPresenter", () => {
         hideLabel: true,
       };
 
-      expect(presenter.sortedTimelineDates).toContainEqual(todayDate);
+      expect(presenter.timelineDates).toContainEqual(todayDate);
     });
 
     describe("Timeline with date gaps", () => {
@@ -241,7 +239,7 @@ describe("SentenceProgressPresenter", () => {
           hideLabel: true,
         };
 
-        expect(presenter.sortedTimelineDates).toContainEqual(
+        expect(presenter.timelineDates).toContainEqual(
           expectedParoleReviewEntry,
         );
       });
@@ -254,7 +252,7 @@ describe("SentenceProgressPresenter", () => {
           hideLabel: true,
         };
 
-        expect(presenter.sortedTimelineDates).toContainEqual(
+        expect(presenter.timelineDates).toContainEqual(
           expectedParoleReviewEntry,
         );
       });
@@ -281,9 +279,7 @@ describe("SentenceProgressPresenter", () => {
           hideLabel: true,
         };
 
-        expect(presenter.sortedTimelineDates).toContainEqual(
-          expectedParoleDateEntry,
-        );
+        expect(presenter.timelineDates).toContainEqual(expectedParoleDateEntry);
       });
     });
 
@@ -344,7 +340,7 @@ describe("SentenceProgressPresenter", () => {
         hideLabel: false,
       };
 
-      expect(presenter.sortedTimelineDates).toContainEqual(expectedStartDate);
+      expect(presenter.timelineDates).toContainEqual(expectedStartDate);
     });
 
     test("timeline dates include end date", () => {
@@ -355,7 +351,7 @@ describe("SentenceProgressPresenter", () => {
         hideLabel: false,
       };
 
-      expect(presenter.sortedTimelineDates).toContainEqual(expectedEndDate);
+      expect(presenter.timelineDates).toContainEqual(expectedEndDate);
     });
 
     test("timeline dates include today", () => {
@@ -366,7 +362,7 @@ describe("SentenceProgressPresenter", () => {
         hideLabel: true,
       };
 
-      expect(presenter.sortedTimelineDates).toContainEqual(todayDate);
+      expect(presenter.timelineDates).toContainEqual(todayDate);
     });
   });
 });
