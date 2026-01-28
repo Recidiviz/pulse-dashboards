@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mapValues } from "lodash";
+import { mapValues } from "lodash-es";
 import { z } from "zod";
 
 import {

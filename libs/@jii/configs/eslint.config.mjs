@@ -19,6 +19,16 @@
 
 import tseslint from "typescript-eslint";
 
-import baseConfig from "../../../eslint.config.mjs";
+import baseConfig, { esmRestrictedImports } from "../../../eslint.config.mjs";
 
-export default tseslint.config(baseConfig);
+export default tseslint.config(baseConfig, {
+  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [...esmRestrictedImports],
+      },
+    ],
+  },
+});
