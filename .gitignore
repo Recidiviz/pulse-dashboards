@@ -116,3 +116,6 @@ cache/
 android/
 ios/
 logs/*
+
+# Claude
+.claude/settings.local.json
