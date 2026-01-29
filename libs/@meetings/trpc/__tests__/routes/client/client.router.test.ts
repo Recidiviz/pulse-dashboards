@@ -27,6 +27,7 @@ import {
 import {
   fakeActiveMeeting,
   fakeClients,
+  fakeInactiveMeeting,
   fakeStaff,
 } from "~@meetings/trpc/test/setup/seed";
 
@@ -135,6 +136,94 @@ describe("client router", () => {
         expect(resultIds).toContain(completedMeeting.id);
         expect(resultIds).not.toContain(otherStaffInProgressMeeting.id);
         expect(result.length).toBe(2);
+      });
+    });
+
+    describe("list", () => {
+      test("returns list of all active clients", async () => {
+        const result = await testTRPCClient.v1.client.list.query();
+
+        // Should return all active clients (fakeClients[0], fakeClients[1], fakeClients[3])
+        // but not fakeClients[2] which has isActive: false
+        expect(result).toHaveLength(3);
+
+        // Verify all expected clients are present with correct structure
+        expect(result).toIncludeSameMembers([
+          {
+            personId: fakeClients[0].personId,
+            givenNames: fakeClients[0].givenNames,
+            surname: fakeClients[0].surname,
+            displayPersonExternalId: fakeClients[0].displayPersonExternalId,
+            supervisionType: fakeClients[0].supervisionType,
+            activeMeetingId: fakeActiveMeeting.id,
+            meetingDetails: {
+              lastCompletedMeetingTime: null,
+            },
+            assignedStaffPseudoIds: [fakeStaff[0].pseudonymizedId],
+          },
+          {
+            personId: fakeClients[1].personId,
+            givenNames: fakeClients[1].givenNames,
+            surname: fakeClients[1].surname,
+            displayPersonExternalId: fakeClients[1].displayPersonExternalId,
+            supervisionType: fakeClients[1].supervisionType,
+            activeMeetingId: null,
+            meetingDetails: {
+              lastCompletedMeetingTime: null,
+            },
+            assignedStaffPseudoIds: [fakeStaff[1].pseudonymizedId],
+          },
+          {
+            personId: fakeClients[3].personId,
+            givenNames: fakeClients[3].givenNames,
+            surname: fakeClients[3].surname,
+            displayPersonExternalId: fakeClients[3].displayPersonExternalId,
+            supervisionType: fakeClients[3].supervisionType,
+            activeMeetingId: null,
+            meetingDetails: {
+              lastCompletedMeetingTime: fakeInactiveMeeting.startTime,
+            },
+            assignedStaffPseudoIds: [fakeStaff[0].pseudonymizedId],
+          },
+        ]);
+      });
+
+      test("returns only active clients", async () => {
+        const result = await testTRPCClient.v1.client.list.query();
+
+        // Should not include fakeClients[2] which has isActive: false
+        expect(
+          result.every((client) => client.personId !== fakeClients[2].personId),
+        ).toBe(true);
+      });
+    });
+
+    describe("get", () => {
+      test("returns a single client by personId", async () => {
+        const result = await testTRPCClient.v1.client.get.query({
+          personId: fakeClients[0].personId,
+        });
+
+        expect(result).toEqual({
+          personId: fakeClients[0].personId,
+          givenNames: fakeClients[0].givenNames,
+          surname: fakeClients[0].surname,
+          displayPersonExternalId: fakeClients[0].displayPersonExternalId,
+          supervisionType: fakeClients[0].supervisionType,
+          activeMeetingId: fakeActiveMeeting.id,
+          meetingDetails: {
+            lastCompletedMeetingTime: null,
+          },
+          assignedStaffPseudoIds: [fakeStaff[0].pseudonymizedId],
+        });
+      });
+
+      test("throws error when client not found", async () => {
+        await expect(
+          testTRPCClient.v1.client.get.query({
+            personId: BigInt(999),
+          }),
+        ).rejects.toThrow("Client not found or access denied");
       });
     });
   });

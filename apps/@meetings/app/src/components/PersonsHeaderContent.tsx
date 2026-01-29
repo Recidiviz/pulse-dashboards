@@ -24,7 +24,6 @@ import SearchBar from "./SearchBar";
 type Props = {
   keyword: "Client" | "Resident";
   description: string;
-  personsCount: number;
   searchQuery: string;
   setSearchQuery: (value: string) => void;
   setSortBy: (value: string) => void;
@@ -33,7 +32,6 @@ type Props = {
 const PersonsHeaderContent = ({
   keyword,
   description,
-  personsCount,
   searchQuery,
   setSearchQuery,
   setSortBy,
@@ -62,11 +60,7 @@ const PersonsHeaderContent = ({
           </View>
         </View>
       </View>
-      <View className="z-10 my-4 flex-row items-center justify-between px-4">
-        <Text className="font-inter text-sm text-[#707070]">
-          {personsCount} {keyword.toLowerCase()}
-          {personsCount === 1 ? "" : "s"}
-        </Text>
+      <View className="z-10 my-4 flex-row items-center justify-end px-4">
         <Dropdown
           label="Sort by"
           options={Object.values(SortOption)}

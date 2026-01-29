@@ -18,12 +18,16 @@
 import { describe } from "vitest";
 
 import { testTRPCClient } from "~@meetings/server/test/setup";
-import { fakeClient, fakeMeeting } from "~@meetings/server/test/setup/seed";
+import {
+  fakeClient,
+  fakeMeeting,
+  fakeStaff,
+} from "~@meetings/server/test/setup/seed";
 
 describe("server", () => {
   test("should include trpc routes", async () => {
     // If the trpc routes are not properly set up, this query will fail.
-    const returnedClients = await testTRPCClient.v1.staff.getClients.query();
+    const returnedClients = await testTRPCClient.v1.client.list.query();
 
     expect(returnedClients).toEqual([
       {
@@ -36,6 +40,7 @@ describe("server", () => {
         meetingDetails: {
           lastCompletedMeetingTime: null,
         },
+        assignedStaffPseudoIds: [fakeStaff.pseudonymizedId],
       },
     ]);
   });

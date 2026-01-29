@@ -18,12 +18,10 @@
 import type { AppRouter } from "~@meetings/trpc-types";
 
 export type RawClient = Awaited<
-  ReturnType<AppRouter["v1"]["staff"]["getClient"]>
->;
+  ReturnType<AppRouter["v1"]["client"]["list"]>
+>[0];
 
-export type Client = Awaited<
-  ReturnType<AppRouter["v1"]["staff"]["getClients"]>
->[0] & {
+export type Client = RawClient & {
   primaryMetadata: string;
   lastMeeting: string;
   fullName: string;

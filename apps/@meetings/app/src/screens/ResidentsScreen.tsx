@@ -121,7 +121,6 @@ const ResidentsScreen = () => {
                   <PersonsHeaderContent
                     keyword="Resident"
                     description="All residents are displayed below"
-                    personsCount={filteredResidents.length}
                     searchQuery={search}
                     setSearchQuery={setSearch}
                     setSortBy={setSortBy}

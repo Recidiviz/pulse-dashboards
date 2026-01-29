@@ -86,7 +86,6 @@ const PersonsMobileList = ({
           <PersonsHeaderContent
             keyword={keyword}
             description={headerDescription}
-            personsCount={persons.length}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             setSortBy={setSortBy}

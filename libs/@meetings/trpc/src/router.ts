@@ -20,10 +20,8 @@ import { clientRouter } from "~@meetings/trpc/routes/client/client.router";
 import { meetingRouter } from "~@meetings/trpc/routes/meeting/meeting.router";
 import { metadataRouter } from "~@meetings/trpc/routes/metadata/metadata.router";
 import { residentRouter } from "~@meetings/trpc/routes/resident/resident.router";
-import { staffRouter } from "~@meetings/trpc/routes/staff/staff.router";
 
 const v1Router = router({
-  staff: staffRouter,
   client: clientRouter,
   meeting: meetingRouter,
   metadata: metadataRouter,

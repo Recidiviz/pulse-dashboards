@@ -30,7 +30,7 @@ const ClientMeetingScreen = () => {
     { meetingId: route.params?.meetingId || "" },
     { enabled: !!route.params?.meetingId },
   );
-  const { data: person } = trpc.v1.staff.getClient.useQuery(
+  const { data: person } = trpc.v1.client.get.useQuery(
     { personId: BigInt(route.params?.personId || 0) },
     { enabled: !!route.params?.personId },
   );

@@ -19,6 +19,7 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
+import { useAuth0 } from "react-native-auth0";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -49,10 +50,30 @@ const sortClientsByOption = (data: Client[], option: string): Client[] => {
   );
 };
 
+const filterAndSortClients = (
+  clients: Client[],
+  search: string,
+  sortBy: string,
+): Client[] => {
+  let results = clients;
+  if (search) {
+    results = results.filter((e) =>
+      e.fullName.toLowerCase().includes(search.toLowerCase()),
+    );
+  }
+  results = sortClientsByOption(results, sortBy);
+  return results.sort(
+    (a, b) => Number(!!b.activeMeetingId) - Number(!!a.activeMeetingId),
+  );
+};
+
 const ClientsScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();
+  const { user } = useAuth0();
+  const userPseudoId =
+    user?.["https://dashboard.recidiviz.org/app_metadata"]?.pseudonymizedId;
 
   const isFocused = useIsFocused();
   const {
@@ -60,7 +81,7 @@ const ClientsScreen = () => {
     isLoading,
     error,
     refetch,
-  } = trpc.v1.staff.getClients.useQuery(undefined, {
+  } = trpc.v1.client.list.useQuery(undefined, {
     enabled: isFocused,
   });
 
@@ -72,20 +93,19 @@ const ClientsScreen = () => {
     return rawClients.map(deserializeClient);
   }, [rawClients]);
 
-  // filtering and sorting clients
-  const filteredClients = React.useMemo(() => {
-    let results = clients;
-    if (search) {
-      results = results.filter((e) =>
-        e.fullName.toLowerCase().includes(search.toLowerCase()),
-      );
-    }
-
-    results = sortClientsByOption(results, sortBy);
-    return results.sort(
-      (a, b) => Number(!!b.activeMeetingId) - Number(!!a.activeMeetingId),
-    );
-  }, [clients, search, sortBy]);
+  // Separate clients by caseload ownership
+  const { myCaseloadClients, otherCaseloadClients } = React.useMemo(() => {
+    const myCaseload = userPseudoId
+      ? clients.filter((c) => c.assignedStaffPseudoIds.includes(userPseudoId))
+      : [];
+    const otherCaseload = userPseudoId
+      ? clients.filter((c) => !c.assignedStaffPseudoIds.includes(userPseudoId))
+      : clients;
+    return {
+      myCaseloadClients: filterAndSortClients(myCaseload, search, sortBy),
+      otherCaseloadClients: filterAndSortClients(otherCaseload, search, sortBy),
+    };
+  }, [clients, search, sortBy, userPseudoId]);
 
   useEffect(() => {
     refetch();
@@ -104,7 +124,7 @@ const ClientsScreen = () => {
         {Platform.select({
           native: (
             <PersonsMobileList
-              persons={filteredClients}
+              persons={[...myCaseloadClients, ...otherCaseloadClients]}
               recordingState={recordingState}
               navigation={navigation}
               searchQuery={search}
@@ -116,7 +136,7 @@ const ClientsScreen = () => {
           web: (
             <View className="flex-1 pb-4">
               <PersonsMobileList
-                persons={filteredClients}
+                persons={[...myCaseloadClients, ...otherCaseloadClients]}
                 recordingState={recordingState}
                 navigation={navigation}
                 searchQuery={search}
@@ -129,13 +149,25 @@ const ClientsScreen = () => {
                 <View className="mx-auto w-full max-w-[960px] flex-1">
                   <PersonsHeaderContent
                     keyword="Client"
-                    description="All clients on your caseload are displayed below"
-                    personsCount={filteredClients.length}
+                    description="Search for clients across all caseloads"
                     searchQuery={search}
                     setSearchQuery={setSearch}
                     setSortBy={setSortBy}
                   />
-                  <PersonsTable persons={filteredClients} type="clients" />
+                  {myCaseloadClients.length > 0 && (
+                    <PersonsTable
+                      persons={myCaseloadClients}
+                      type="clients"
+                      sectionTitle="My caseload"
+                    />
+                  )}
+                  {otherCaseloadClients.length > 0 && (
+                    <PersonsTable
+                      persons={otherCaseloadClients}
+                      type="clients"
+                      sectionTitle="Results from other caseloads"
+                    />
+                  )}
                 </View>
               </ScrollView>
             </View>

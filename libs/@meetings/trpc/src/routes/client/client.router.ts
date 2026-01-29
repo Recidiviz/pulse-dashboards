@@ -15,6 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import _ from "lodash";
+import { z } from "zod";
+
+import { Prisma } from "~@meetings/prisma/client/client";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   createMeetingInputSchema,
@@ -22,8 +26,38 @@ import {
 } from "~@meetings/trpc/routes/client/client.schema";
 import {
   createMeetingForPerson,
+  extractActiveMeetingId,
+  extractLastCompletedMeetingTime,
   getMeetingsForPerson,
 } from "~@meetings/trpc/routes/meeting.helpers";
+
+const querySelect = {
+  givenNames: true,
+  surname: true,
+  displayPersonExternalId: true,
+  personId: true,
+  supervisionType: true,
+  meetings: {
+    orderBy: {
+      startTime: "desc",
+    },
+    select: {
+      id: true,
+      staff: true,
+      endTime: true,
+      startTime: true,
+    },
+  },
+  staff: {
+    select: {
+      staff: {
+        select: {
+          pseudonymizedId: true,
+        },
+      },
+    },
+  },
+} satisfies Prisma.ClientSelect;
 
 export const clientRouter = router({
   createMeeting: auth0Procedure
@@ -48,5 +82,56 @@ export const clientRouter = router({
         personId: clientId,
         personType: "client",
       });
+    }),
+
+  list: auth0Procedure.query(async ({ ctx: { prisma, user } }) => {
+    const clients = await prisma.client.findMany({
+      select: querySelect,
+      where: {
+        isActive: true,
+      },
+    });
+
+    return clients.map((client) => ({
+      ..._.omit(client, ["meetings", "staff"]),
+      activeMeetingId: extractActiveMeetingId({
+        user: user,
+        meetingsOrderedByDateDesc: client.meetings,
+      }),
+      meetingDetails: {
+        lastCompletedMeetingTime: extractLastCompletedMeetingTime({
+          meetingsOrderedByDateDesc: client.meetings,
+        }),
+      },
+      assignedStaffPseudoIds: client.staff.map((s) => s.staff.pseudonymizedId),
+    }));
+  }),
+
+  get: auth0Procedure
+    .input(z.object({ personId: z.bigint() }))
+    .query(async ({ input: { personId }, ctx: { prisma, user } }) => {
+      const client = await prisma.client.findUnique({
+        select: querySelect,
+        where: { personId },
+      });
+
+      if (!client) {
+        throw new Error("Client not found or access denied");
+      }
+      return {
+        ..._.omit(client, ["meetings", "staff"]),
+        activeMeetingId: extractActiveMeetingId({
+          user: user,
+          meetingsOrderedByDateDesc: client.meetings,
+        }),
+        meetingDetails: {
+          lastCompletedMeetingTime: extractLastCompletedMeetingTime({
+            meetingsOrderedByDateDesc: client.meetings,
+          }),
+        },
+        assignedStaffPseudoIds: client.staff.map(
+          (s) => s.staff.pseudonymizedId,
+        ),
+      };
     }),
 });

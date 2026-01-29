@@ -33,7 +33,7 @@ describe("auth", () => {
     });
     // arbitrary endpoint to test auth context
     await expect(
-      testTRPCClient.v1.staff.getClients.query(),
+      testTRPCClient.v1.client.list.query(),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCClientError: Unsupported state code provided in auth0 app_metadata: US_OZ]`,
     );
@@ -49,7 +49,7 @@ describe("auth", () => {
     });
     // arbitrary endpoint to test auth context
     await expect(
-      testTRPCClient.v1.staff.getClients.query(),
+      testTRPCClient.v1.client.list.query(),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCClientError: User with state code US_TN cannot request data about state: US_NE]`,
     );
@@ -68,7 +68,7 @@ describe("auth", () => {
 
     // Authenticated endpoint should fail without stateCode (treated as unauthorized)
     await expect(
-      testTRPCClient.v1.staff.getClients.query(),
+      testTRPCClient.v1.client.list.query(),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCClientError: UNAUTHORIZED]`,
     );
@@ -87,7 +87,7 @@ describe("auth", () => {
 
     // Any endpoint should fail with invalid stateCode format
     await expect(
-      testTRPCClient.v1.staff.getClients.query(),
+      testTRPCClient.v1.client.list.query(),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCClientError: Unsupported state code provided in request headers: INVALID_STATE]`,
     );
@@ -100,7 +100,7 @@ describe("auth", () => {
     });
     // arbitrary endpoint to test auth context
     await expect(
-      testTRPCClient.v1.staff.getClients.query(),
+      testTRPCClient.v1.client.list.query(),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCClientError: Missing pseudonymizedId for user]`,
     );
@@ -116,7 +116,7 @@ describe("auth", () => {
     });
     // arbitrary endpoint to test auth context
     await expect(
-      testTRPCClient.v1.staff.getClients.query(),
+      testTRPCClient.v1.client.list.query(),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCClientError: Recidiviz user cannot request data about state: US_NE. File a go/access request for access]`,
     );
@@ -140,7 +140,7 @@ describe("skip auth", () => {
       );
 
       // Test that we can access an endpoint with skip auth
-      const clients = await testTRPCClient.v1.staff.getClients.query();
+      const clients = await testTRPCClient.v1.client.list.query();
       expect(clients).toBeDefined();
     } finally {
       env.NODE_ENV = originalNodeEnv;
@@ -157,7 +157,7 @@ describe("skip auth", () => {
 
       // Without a valid auth, this should fail
       await expect(
-        testTRPCClient.v1.staff.getClients.query(),
+        testTRPCClient.v1.client.list.query(),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
         `[TRPCClientError: Auth can only be skipped on a server running in dev mode]`,
       );
@@ -176,7 +176,7 @@ describe("skip auth", () => {
 
       // The context should have created a user with pseudonymizedId "staff-pid-1"
       // We can verify this by checking that the endpoint works (it would fail if no user)
-      const clients = await testTRPCClient.v1.staff.getClients.query();
+      const clients = await testTRPCClient.v1.client.list.query();
       expect(clients).toBeDefined();
     } finally {
       env.NODE_ENV = originalNodeEnv;

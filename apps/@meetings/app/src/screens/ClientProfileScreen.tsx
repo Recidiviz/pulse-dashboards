@@ -34,7 +34,7 @@ type ProfileRouteProp = RouteProp<RootStackParamList, "ClientProfile">;
 
 const ClientProfileScreenContainer = () => {
   const route = useRoute<ProfileRouteProp>();
-  const { data: person } = trpc.v1.staff.getClient.useQuery(
+  const { data: person } = trpc.v1.client.get.useQuery(
     { personId: BigInt(route.params?.personId || 0) },
     { enabled: !!route.params?.personId },
   );
