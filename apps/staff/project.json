@@ -119,6 +119,12 @@
         "commands": ["nx dev-spa staff", "nx dev staff-shared-server"]
       }
     },
+    "dev-cpa": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx dev @cpa/server", "nx dev-spa staff", "nx dev staff-shared-server"]
+      }
+    },
 
     "env-dev-demo": {
       "executor": "nx:run-commands",

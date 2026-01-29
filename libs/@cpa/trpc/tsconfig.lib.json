@@ -12,5 +12,5 @@
     "vite.config.mts",
     "src/test/**.{ts,tsx}"
   ],
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "../intake-agent/src/get-checkpointer.ts"],
 }
