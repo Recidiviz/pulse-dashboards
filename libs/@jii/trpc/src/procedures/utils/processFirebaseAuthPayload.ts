@@ -15,23 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { userId } from "../../test/context";
-import { testPrismaClient } from "../../test/prisma";
-import type { AuthorizedUserContext } from "../firebaseAuth";
-import { baseProcedure } from "../init";
+import { TRPCError } from "@trpc/server";
+import { z, ZodTypeAny } from "zod";
 
-// the real procedure depends on third party services such as Firestore
-// to create a context for authorized users; this just mocks that result
-// for a standardized test user
-export const firebaseAuthedProcedure = baseProcedure.use((opts) => {
-  return opts.next({
-    ctx: {
-      userId,
-      userProfile: {
-        stateCode: "US_XX",
-      },
-      stateCode: "US_XX",
-      prisma: testPrismaClient,
-    } satisfies AuthorizedUserContext,
-  });
-});
+import { verifyFirebaseIdToken } from "~server-setup-plugin";
+
+import { jwtSchema } from "../../auth/utils";
+import { TRPCFastifyRequest } from "../../context";
+
+export async function processFirebaseAuthPayload<Schema extends ZodTypeAny>(
+  req: TRPCFastifyRequest,
+  userProfileSchema: Schema,
+): Promise<{ userId: string; userProfile: z.infer<Schema> }> {
+  const authPayload = await verifyFirebaseIdToken(req);
+
+  try {
+    const userId = jwtSchema.parse(authPayload).sub;
+    const userProfile = userProfileSchema.parse(authPayload);
+
+    return { userId, userProfile };
+  } catch (e) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Auth token missing required claims",
+      cause: e,
+    });
+  }
+}

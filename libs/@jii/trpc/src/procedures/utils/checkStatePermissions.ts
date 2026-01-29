@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const { sentryEsbuildPlugin } = require("@sentry/esbuild-plugin");
+import { TRPCError } from "@trpc/server";
 
-const plugins = [];
-
-if (process.env.DEPLOY_ENV !== "development") {
-  // Sentry sourcemap plugin must be last
-  plugins.push(
-    sentryEsbuildPlugin({
-      org: "recidiviz-inc",
-      project: "jii-backend",
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      sourcemaps: {
-        assets: ["**/*.js", "**/*.js.map"],
-      },
-    }),
-  );
+export function checkStatePermissions(
+  stateCodeRequest: string,
+  isDemoRequest: boolean,
+  userStateCode: string,
+  userAllowedStates: Array<string>,
+) {
+  // special permissions for Recidiviz users
+  if (userStateCode === "RECIDIVIZ" && isDemoRequest) {
+    // no state permissions check in this case, Recidiviz users can access all demo data
+  }
+  // everyone else, or Recidiviz users outside of demo mode
+  else if (
+    userStateCode !== stateCodeRequest &&
+    !userAllowedStates.includes(stateCodeRequest)
+  ) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You are not authorized to access this state",
+    });
+  }
 }
-
-module.exports = {
-  plugins,
-};

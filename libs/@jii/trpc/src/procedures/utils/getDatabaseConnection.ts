@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const { sentryEsbuildPlugin } = require("@sentry/esbuild-plugin");
+import { TRPCError } from "@trpc/server";
 
-const plugins = [];
+import { getPrismaClientForStateCode } from "~@jii/prisma";
 
-if (process.env.DEPLOY_ENV !== "development") {
-  // Sentry sourcemap plugin must be last
-  plugins.push(
-    sentryEsbuildPlugin({
-      org: "recidiviz-inc",
-      project: "jii-backend",
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      sourcemaps: {
-        assets: ["**/*.js", "**/*.js.map"],
-      },
-    }),
-  );
+/**
+ * Returns a Prisma client for the specified database (state specific, live data or demo),
+ * or throws if the database is not configured
+ */
+export function getDatabaseConnection(stateCode: string, useDemoDb: boolean) {
+  let prismaClient;
+
+  try {
+    prismaClient = getPrismaClientForStateCode(
+      `${stateCode}${useDemoDb ? "_DEMO" : ""}`,
+    );
+  } catch (e) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: `Unsupported state code provided in request headers: ${stateCode}${useDemoDb ? " (DEMO)" : ""}`,
+      cause: e,
+    });
+  }
+
+  return prismaClient;
 }
-
-module.exports = {
-  plugins,
-};

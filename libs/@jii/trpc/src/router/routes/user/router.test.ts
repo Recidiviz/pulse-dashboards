@@ -19,7 +19,7 @@ import { userId } from "../../../test/context";
 import { testPrismaClient } from "../../../test/prisma";
 import { userRouter } from "./router";
 
-vi.mock("../../../procedures/firebaseAuth");
+vi.mock("../../../procedures/firebaseAuthedResidentProcedure");
 
 // we are mocking the procedure's context so it doesn't really matter what we pass here
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { firebaseAuthedProcedure } from "../../../procedures/firebaseAuth";
+import { firebaseAuthedResidentProcedure } from "../../../procedures/firebaseAuthedResidentProcedure";
 import { router } from "../../../procedures/init";
 import { setPropertiesInputSchema } from "./schema";
 
@@ -26,7 +26,7 @@ import { setPropertiesInputSchema } from "./schema";
  * made accessible to staff members)
  */
 export const userRouter = router({
-  getProperties: firebaseAuthedProcedure.query(
+  getProperties: firebaseAuthedResidentProcedure.query(
     async ({ ctx: { prisma, userId } }) => {
       return prisma.userProperties.findUnique({
         where: { id: userId },
@@ -34,7 +34,7 @@ export const userRouter = router({
       });
     },
   ),
-  setProperties: firebaseAuthedProcedure
+  setProperties: firebaseAuthedResidentProcedure
     .input(setPropertiesInputSchema)
     .mutation(async ({ input, ctx: { prisma, userId } }) => {
       return prisma.userProperties.upsert({

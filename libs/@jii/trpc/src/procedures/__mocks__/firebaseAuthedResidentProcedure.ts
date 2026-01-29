@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const { sentryEsbuildPlugin } = require("@sentry/esbuild-plugin");
+import { userId } from "../../test/context";
+import { testPrismaClient } from "../../test/prisma";
+import type { AuthorizedUserContext } from "../firebaseAuthedResidentProcedure";
+import { baseProcedure } from "../init";
 
-const plugins = [];
-
-if (process.env.DEPLOY_ENV !== "development") {
-  // Sentry sourcemap plugin must be last
-  plugins.push(
-    sentryEsbuildPlugin({
-      org: "recidiviz-inc",
-      project: "jii-backend",
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      sourcemaps: {
-        assets: ["**/*.js", "**/*.js.map"],
+// the real procedure depends on third party services such as Firestore
+// to create a context for authorized users; this just mocks that result
+// for a standardized test user
+export const firebaseAuthedResidentProcedure = baseProcedure.use((opts) => {
+  return opts.next({
+    ctx: {
+      userId,
+      userProfile: {
+        stateCode: "US_XX",
       },
-    }),
-  );
-}
-
-module.exports = {
-  plugins,
-};
+      stateCode: "US_XX",
+      prisma: testPrismaClient,
+    } satisfies AuthorizedUserContext,
+  });
+});

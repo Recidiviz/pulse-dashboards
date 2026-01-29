@@ -20,12 +20,13 @@ import { TRPCError } from "@trpc/server";
 import firebaseAdmin from "firebase-admin";
 import superjson from "superjson";
 import { beforeAll } from "vitest";
+import { ZodError } from "zod";
 
 import { getPrismaClientForStateCode } from "~@jii/prisma";
 import { buildCommonServer } from "~server-setup-plugin";
 
 import { createContext } from "../context";
-import { firebaseAuthedProcedure } from "./firebaseAuth";
+import { firebaseAuthedResidentProcedure } from "./firebaseAuthedResidentProcedure";
 import { router } from "./init";
 
 vi.mock("firebase-admin");
@@ -36,6 +37,8 @@ vi.mock("~@jii/prisma", () => {
   return { getPrismaClientForStateCode: vi.fn() };
 });
 
+// needs to be different from the test server in firebaseAuthedStaffProcedure
+// so they don't contend for the port
 const testPort = 3005;
 const testHost = "localhost";
 const firebaseAuthMock = {
@@ -52,7 +55,7 @@ let testServer: ReturnType<typeof buildCommonServer>;
 // but doesn't actually do anything useful
 const testAppRouter = router({
   // A procedure that does nothing, but is used to test that the base procedure auth checks are running.
-  test: firebaseAuthedProcedure.query(async () => {
+  test: firebaseAuthedResidentProcedure.query(async () => {
     return "Hello, world!";
   }),
 });
@@ -143,7 +146,8 @@ test("require token from JII app", async () => {
   await expect(client.test.query()).rejects.toThrow(
     new TRPCError({
       code: "UNAUTHORIZED",
-      message: "You are not authorized to access this application",
+      message: "Auth token missing required claims",
+      cause: expect.any(ZodError),
     }),
   );
 });
