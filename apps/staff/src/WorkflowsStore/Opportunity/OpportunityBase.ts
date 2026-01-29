@@ -650,21 +650,21 @@ export class OpportunityBase<
       if (newSubcategory === this.subcategory) return;
 
       // provided a subcategory that isn't valid for the submitted status
-      if (!this.submittedSubcategories) {
+      if (!this.submitMenuOptions) {
         throw new Error(
           `Tried to mark as ${newSubcategory}, but there are no subcategories of ${this.submittedTabTitle} for this opportunity type`,
         );
       }
-      if (!this.submittedSubcategories.includes(newSubcategory)) {
+      if (!this.submitMenuOptions.includes(newSubcategory)) {
         throw new Error(
-          `Tried to mark as ${newSubcategory}, but the only valid subcategories are ${this.submittedSubcategories}`,
+          `Tried to mark as ${newSubcategory}, but the only valid subcategories are ${this.submitMenuOptions}`,
         );
       }
     } else {
       // trying to submit an already submitted opportunity
       if (this.isSubmitted) return;
       // not provided a subcategory, but submitted opportunities have subcategories
-      if (this.submittedSubcategories) {
+      if (this.submitMenuOptions) {
         throw new Error(
           `Tried to mark as ${this.submittedTabTitle}, but a subcategory needed to be provided for this opportunity type`,
         );
@@ -809,12 +809,18 @@ export class OpportunityBase<
     return this.subcategoryHeadingFor(this.subcategory);
   }
 
+  // The subcategories within the Submitted (or equivalent) tab of this opportunity
+  get allSubcategoriesOfSubmitted(): string[] | undefined {
+    return this.config.allSubcategoriesOfSubmitted;
+  }
+
   // The possible subcategories of the Submitted status that this opportunity can
   // logically transition INTO from its current state
-  get submittedSubcategories(): string[] | undefined {
+  get submitMenuOptions(): string[] | undefined {
     // From all the possible options, filter out this opportunity's current subcategory, if any
     const possibleSubcategories =
-      this.config.markSubmittedOptionsByTab?.[this.tabTitle()];
+      this.config.markSubmittedOptionsByTab?.[this.tabTitle()] ??
+      this.allSubcategoriesOfSubmitted;
     return possibleSubcategories?.filter(
       (subcategory) => subcategory !== this.subcategory,
     );

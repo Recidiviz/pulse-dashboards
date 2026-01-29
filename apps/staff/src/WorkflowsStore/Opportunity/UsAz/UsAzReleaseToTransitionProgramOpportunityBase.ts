@@ -108,8 +108,8 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
     }
   }
 
-  get submittedSubcategories() {
-    const possibleSubcategories = super.submittedSubcategories;
+  get submitMenuOptions() {
+    const possibleSubcategories = super.submitMenuOptions;
     // If the current opp is almost eligible, only "in progress" or "awaiting home plan
     // approval" are allowed depending on the subcategory
     if (this.almostEligible) {

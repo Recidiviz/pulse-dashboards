@@ -357,6 +357,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.markSubmittedOptionsByTab;
   }
 
+  get allSubcategoriesOfSubmitted() {
+    return this.subcategoryOrderings?.[this.submittedTabTitle];
+  }
+
   get markSubmittedOnFormDownload() {
     // If we require approval before granting an opportunity, we should not mark
     // submitted on form download.

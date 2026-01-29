@@ -88,7 +88,8 @@ export const mockOpportunity: Opportunity<Client> = {
     return OpportunityBase.prototype.tabTitle.call(this, tabGroup);
   },
   subcategory: undefined,
-  submittedSubcategories: undefined,
+  allSubcategoriesOfSubmitted: undefined,
+  submitMenuOptions: undefined,
   subcategoryHeadingFor: () => undefined,
   compare: () => 1,
   showEligibilityStatus: () => true,

@@ -153,7 +153,7 @@ export class FormBase<
     // a subcategory of the submitted status if there exist subcategories
     // and if the opportunity's config markSubmittedOnFormDownload is set to true
     if (
-      !this.opportunity.submittedSubcategories &&
+      !this.opportunity.allSubcategoriesOfSubmitted?.length &&
       this.opportunity.config.markSubmittedOnFormDownload
     )
       return this.opportunity?.markSubmittedAndGenerateToast();

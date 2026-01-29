@@ -242,14 +242,14 @@ const SubmittedNonSubcategoryItems = observer(
 const SubmittedSubcategoryItems = observer(
   function SubmittedSubcategoryMenuItems({
     opportunity,
-    submittedSubcategories,
+    submitMenuOptions,
   }: {
     opportunity: Opportunity;
-    submittedSubcategories: string[];
+    submitMenuOptions: string[];
   }) {
     return (
       <>
-        {submittedSubcategories.map((subcategory) => (
+        {submitMenuOptions.map((subcategory) => (
           <OpportunityStatusDropdownMenuItem
             key={subcategory}
             onClick={async () => {
@@ -272,12 +272,12 @@ const SubmittedItems = observer(function SubmittedItems({
 }: {
   opportunity: Opportunity;
 }) {
-  const { submittedSubcategories } = opportunity;
+  const { submitMenuOptions } = opportunity;
 
-  return submittedSubcategories && submittedSubcategories.length > 0 ? (
+  return submitMenuOptions && submitMenuOptions.length > 0 ? (
     <SubmittedSubcategoryItems
       opportunity={opportunity}
-      submittedSubcategories={submittedSubcategories}
+      submitMenuOptions={submitMenuOptions}
     />
   ) : (
     <SubmittedNonSubcategoryItems opportunity={opportunity} />

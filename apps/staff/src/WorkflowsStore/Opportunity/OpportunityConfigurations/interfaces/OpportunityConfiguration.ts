@@ -85,6 +85,7 @@ export interface OpportunityConfiguration {
   highlightCasesOnHomepage: boolean;
   highlightedCaseCtaCopy: string;
   subcategoryHeadings?: Record<string, string>;
+  allSubcategoriesOfSubmitted?: string[] | undefined;
   zeroGrantsTooltip?: string;
   linkedOverdueOpportunityType?: OpportunityType;
   overdueOpportunityCalloutCopy: string;
