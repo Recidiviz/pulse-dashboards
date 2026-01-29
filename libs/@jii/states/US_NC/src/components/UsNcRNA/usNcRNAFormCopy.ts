@@ -28,6 +28,16 @@ export const rnaMiscellaneousCopy = {
     "You must answer all of the questions to continue.",
   SAVING: "Saving your answers...",
   SAVING_ERROR: "There was a problem saving your answers.",
+  GO_BACK_MODAL: {
+    title: "Are you sure you want to go back?",
+    message:
+      "You can go back to edit your other responses, but if you do, the responses you have entered on this page will be lost.",
+    cancelButtonText: "Stay on this page",
+    confirmButtonText: "Go back",
+  },
+  PREVIOUS_BUTTON: "Previous",
+  NEXT_BUTTON: "Next",
+  SUBMIT_BUTTON: "Submit",
 } as const;
 
 // Types related to RNA copy

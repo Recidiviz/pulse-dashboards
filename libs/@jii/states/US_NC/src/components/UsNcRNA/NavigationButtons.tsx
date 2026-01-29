@@ -15,15 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flow } from "mobx";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { GoBackButton, JIIButton } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
+import { JIIButton } from "~@jii/common-ui";
 import { Icon, spacing } from "~design-system";
 
+import { rnaMiscellaneousCopy } from "./usNcRNAFormCopy";
 import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
 
 const RNAPageFooter = styled.div`
@@ -33,61 +32,40 @@ const RNAPageFooter = styled.div`
   justify-content: flex-end;
 `;
 
-const PreviousPageButton = styled(GoBackButton)`
+const PreviousPageButton = styled(JIIButton)`
   margin-right: auto;
 `;
 
-export function NavigationButtons({
+export const NavigationButtons = observer(function NavigationButtons({
   presenter,
-  showSubmit,
 }: {
   presenter: UsNcRNAFormPagePresenter;
-  showSubmit: boolean;
 }) {
-  const navigate = useNavigate();
-  const currentPageNum = presenter.pageNum;
-
-  const previousPageLink =
-    "../" +
-    State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
-      pageNum: currentPageNum - 1,
-    });
-  const nextPageLink =
-    "../" +
-    State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
-      pageNum: currentPageNum + 1,
-    });
-
   return (
     <RNAPageFooter>
-      {currentPageNum > 1 && (
-        <PreviousPageButton to={previousPageLink}>Previous</PreviousPageButton>
+      {presenter.showPrevious && (
+        <PreviousPageButton
+          onClick={() => presenter.onPreviousPageButtonClick()}
+        >
+          <Icon kind="Arrow" size={16} rotate={180} />
+          <span>{rnaMiscellaneousCopy.PREVIOUS_BUTTON}</span>
+        </PreviousPageButton>
       )}
 
-      {showSubmit ? (
+      {presenter.showSubmit ? (
         <JIIButton>
-          <span>Submit</span>
+          <span>{rnaMiscellaneousCopy.SUBMIT_BUTTON}</span>
           <Icon kind="Arrow" size={16} />
         </JIIButton>
       ) : (
         <JIIButton
           kind={"secondary"}
-          onClick={flow(function* () {
-            if (presenter.hasAnyInvalidAnswer) {
-              presenter.displayInvalidAnswers();
-            } else {
-              yield presenter.saveAnswers();
-
-              if (!presenter.savingError) {
-                navigate(nextPageLink);
-              }
-            }
-          })}
+          onClick={() => presenter.onNextPageButtonClick()}
         >
-          <span>Next</span>
+          <span>{rnaMiscellaneousCopy.NEXT_BUTTON}</span>
           <Icon kind="Arrow" size={16} />
         </JIIButton>
       )}
     </RNAPageFooter>
   );
-}
+});

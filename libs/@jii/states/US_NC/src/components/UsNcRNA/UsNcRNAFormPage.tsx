@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Card, NotFound, usePageTitle } from "~@jii/common-ui";
@@ -34,6 +35,7 @@ import {
   rnaQuestionCopy,
 } from "./usNcRNAFormCopy";
 import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
+import { UsNcRNAModal } from "./UsNcRNAModal";
 import { UsNcRNAQuestion } from "./UsNcRNAQuestion";
 
 function UsNcRNASectionInfo({ heading, description }: RNAPageCopy) {
@@ -58,7 +60,7 @@ const ManagedComponent = observer(function ManagedComponent({
     return <NotFound />;
   }
 
-  const { pageNum, questionIds, pageId, showSubmit } = presenter;
+  const { pageNum, questionIds, pageId } = presenter;
   return (
     <>
       <ProgressHeader
@@ -90,8 +92,15 @@ const ManagedComponent = observer(function ManagedComponent({
             {rnaMiscellaneousCopy["SAVING_ERROR"]} {presenter.savingError}
           </UnboxedNotice>
         )}
-        <NavigationButtons presenter={presenter} showSubmit={showSubmit} />
+        <NavigationButtons presenter={presenter} />
       </form>
+
+      <UsNcRNAModal
+        isOpen={presenter.isUnsavedChangesModalOpen}
+        onCancel={() => presenter.closeUnsavedChangesModal()}
+        onConfirm={() => presenter.navigateBack()}
+        {...rnaMiscellaneousCopy.GO_BACK_MODAL}
+      />
     </>
   );
 });
@@ -99,10 +108,11 @@ const ManagedComponent = observer(function ManagedComponent({
 function usePresenter() {
   usePageTitle("Self-Report");
 
+  const navigate = useNavigate();
   const { form } = useRNAFormContext();
   const { pageNum } = useTypedParams(State.Resident.UsNcRNA.FormPage);
 
-  return new UsNcRNAFormPagePresenter(pageNum, form);
+  return new UsNcRNAFormPagePresenter(pageNum, form, navigate);
 }
 
 export const UsNcRNAFormPage = withPresenterManager({

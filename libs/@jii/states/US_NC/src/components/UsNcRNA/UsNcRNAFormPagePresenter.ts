@@ -17,23 +17,41 @@
 
 import { captureException } from "@sentry/react";
 import { makeAutoObservable } from "mobx";
+import { NavigateFunction } from "react-router-dom";
 
 import { fullRNASpec, RNAQuestionId } from "~@jii/configs";
+import { State } from "~@jii/paths";
 
 import { UsNcRNAForm } from "../../models/UsNcRNAForm";
 
 export class UsNcRNAFormPagePresenter {
   // Only flag invalid answers once the user has tried to move forward on the page
   shouldShowInvalidAnswers = false;
+  isUnsavedChangesModalOpen = false;
 
   // Set to true during database writes
   isSaving = false;
   savingError: string | undefined;
 
+  // Links forward and back within the form
+  previousPageLink: string;
+  nextPageLink: string;
+
   constructor(
     readonly pageNum: number,
     public form: UsNcRNAForm,
+    private navigate: NavigateFunction,
   ) {
+    this.previousPageLink =
+      "../" +
+      State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
+        pageNum: pageNum - 1,
+      });
+    this.nextPageLink =
+      "../" +
+      State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
+        pageNum: pageNum + 1,
+      });
     makeAutoObservable(this);
   }
 
@@ -72,10 +90,6 @@ export class UsNcRNAFormPagePresenter {
     return fullRNASpec[this.pageIndex].id;
   }
 
-  get showSubmit(): boolean {
-    return this.pageIndex === fullRNASpec.length - 1;
-  }
-
   get questionIds(): RNAQuestionId[] {
     return fullRNASpec[this.pageIndex].questions;
   }
@@ -100,5 +114,68 @@ export class UsNcRNAFormPagePresenter {
     return Boolean(
       this.questionIds.find((id) => !this.form.hasValidAnswer(id)),
     );
+  }
+
+  // Methods relating to the navigation buttons at the bottom of the page
+
+  // Whether to show the submit button. If false, shows a button to navigate to
+  // the next page instead.
+  get showSubmit(): boolean {
+    return this.pageIndex === fullRNASpec.length - 1;
+  }
+
+  get showPrevious(): boolean {
+    return this.pageNum > 1;
+  }
+
+  /**
+   * Returns true when either there are invalid answers or the user has entered
+   * answers for free-text questions, which we can't save across page loads.
+   */
+  get shouldPreventSavingOnPreviousNavigation(): boolean {
+    return this.hasAnyInvalidAnswer || this.form.hasDirtyLifeAreaQuestions;
+  }
+
+  *onPreviousPageButtonClick() {
+    // If the form has been changed, either save answers silently if they're valid,
+    // or alert the user that their answers can't be saved if not
+    if (this.form.isDirty) {
+      if (this.shouldPreventSavingOnPreviousNavigation) {
+        this.openUnsavedChangesModal();
+      } else {
+        yield this.saveAnswers();
+      }
+    }
+
+    // Regardless of whether we tried to save answers above,
+    // we can navigate backward as long as we aren't waiting for user confirmation
+    // and there wasn't an error
+    if (!this.isUnsavedChangesModalOpen && !this.savingError) {
+      this.navigateBack();
+    }
+  }
+
+  *onNextPageButtonClick() {
+    if (this.hasAnyInvalidAnswer) {
+      this.displayInvalidAnswers();
+    } else {
+      yield this.saveAnswers();
+
+      if (!this.savingError) {
+        this.navigate(this.nextPageLink);
+      }
+    }
+  }
+
+  navigateBack() {
+    this.navigate(this.previousPageLink);
+  }
+
+  openUnsavedChangesModal() {
+    this.isUnsavedChangesModalOpen = true;
+  }
+
+  closeUnsavedChangesModal() {
+    this.isUnsavedChangesModalOpen = false;
   }
 }

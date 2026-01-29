@@ -69,6 +69,22 @@ export class UsNcRNAForm {
   }
 
   /**
+   * Return true when the form has been edited.
+   */
+  get isDirty(): boolean {
+    return (
+      Object.keys(this.textAnswers).length +
+        Object.keys(this.checkboxAnswers).length +
+        Object.keys(this.lifeAreaAnswers).length >
+      0
+    );
+  }
+
+  get hasDirtyLifeAreaQuestions(): boolean {
+    return Object.keys(this.lifeAreaAnswers).length > 0;
+  }
+
+  /**
    * Methods representing the current state of this form,
    * incorporating both answers saved to the database and answers that the user has changed.
    */
@@ -212,7 +228,8 @@ export class UsNcRNAForm {
       answers: this.liveAnswers,
     });
     // Reset the form state after saving answers.
-    // This shouldn't be accessible
+    // This is technically not needed because after every successful answer save,
+    // we'll navigate to a different page and load the answers from the database again.
     this.textAnswers = {};
     this.checkboxAnswers = {};
     this.lifeAreaAnswers = {};
