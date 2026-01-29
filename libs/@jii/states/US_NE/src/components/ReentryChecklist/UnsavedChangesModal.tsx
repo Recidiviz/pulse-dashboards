@@ -21,6 +21,8 @@ import styled from "styled-components";
 
 import { Button, palette, spacing } from "~design-system";
 
+import { useUsNeContext } from "../usNeContext";
+
 interface UnsavedChangesModalProps {
   isOpen: boolean;
   onCancel: () => void;
@@ -89,22 +91,22 @@ export function UnsavedChangesModal({
   onCancel,
   onDiscard,
 }: UnsavedChangesModalProps) {
+  const { title, message, cancelButtonText, discardButtonText } =
+    useUsNeContext().copy.reentryChecklist.unsavedChangesModal;
+
   if (!isOpen) return null;
 
   return (
     <Overlay onClick={onCancel}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
-        <ModalTitle>Unsaved Changes</ModalTitle>
-        <ModalMessage>
-          You have unsaved changes to your Roadmap to Re-entry. Are you sure
-          want to discard them?
-        </ModalMessage>
+        <ModalTitle>{title}</ModalTitle>
+        <ModalMessage>{message}</ModalMessage>
         <ButtonGroup>
           <Button kind="secondary" shape="pill" onClick={onCancel}>
-            Cancel
+            {cancelButtonText}
           </Button>
           <DiscardButton shape="pill" onClick={onDiscard}>
-            Discard
+            {discardButtonText}
           </DiscardButton>
         </ButtonGroup>
       </ModalContainer>

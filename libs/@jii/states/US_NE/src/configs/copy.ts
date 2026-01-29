@@ -72,6 +72,12 @@ export type UsNeCopy = {
     pageTitle: string;
     subtitle: string;
     writeErrorMessage: string;
+    unsavedChangesModal: {
+      title: string;
+      message: string;
+      cancelButtonText: string;
+      discardButtonText: string;
+    };
     sections: {
       id: string;
       title: string;
@@ -268,6 +274,13 @@ export const usNeCopy: UsNeCopy = {
     subtitle:
       "Mark tasks as complete to keep your case manager updated on your progress",
     writeErrorMessage: "We couldn't save your progress: {{error}}",
+    unsavedChangesModal: {
+      title: "Unsaved Changes",
+      message:
+        "You have unsaved changes to your Roadmap to Reentry. Are you sure you want to discard them?",
+      cancelButtonText: "Cancel",
+      discardButtonText: "Discard",
+    },
     sections: [
       {
         id: "early",
