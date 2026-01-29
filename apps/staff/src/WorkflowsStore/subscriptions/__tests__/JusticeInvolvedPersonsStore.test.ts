@@ -18,7 +18,7 @@
 import { configure } from "mobx";
 import { Mocked } from "vitest";
 
-import { ClientRecord, OpportunityType } from "~datatypes";
+import { ClientRecord } from "~datatypes";
 
 import FirestoreStore from "../../../FirestoreStore";
 import { getMockOpportunityConstructor } from "../../../InsightsStore/mixins/__mocks__/MockOpportunity";
@@ -29,22 +29,18 @@ import {
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
 import { JusticeInvolvedPersonsStore } from "../../JusticeInvolvedPersonsStore";
-import { mockUsXxOpp, mockUsXxTwoOpp } from "../../Opportunity/__fixtures__";
-import { OpportunityConfigurationStore } from "../../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import {
+  mockUsXxOpp,
+  mockUsXxOppConfig,
+  mockUsXxTwoOpp,
+  mockUsXxTwoOppConfig,
+} from "../../Opportunity/__fixtures__";
 import { opportunityConstructors } from "../../Opportunity/opportunityConstructors";
 import { mockFirestoreStoreClientsForOfficerId } from "./testUtils";
 
 let firestoreStoreMock: Mocked<FirestoreStore>;
 let rootStoreMock: Mocked<RootStore>;
 let store: Mocked<JusticeInvolvedPersonsStore>;
-
-function setTestEnabledOppTypes(oppTypes: OpportunityType[]) {
-  vi.spyOn(
-    OpportunityConfigurationStore.prototype,
-    "enabledOpportunityTypes",
-    "get",
-  ).mockReturnValue(oppTypes);
-}
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -57,11 +53,15 @@ beforeEach(() => {
     );
   else throw new Error("JusticeInvolvedPersonsStore not found");
 
+  rootStoreMock.workflowsStore.opportunityConfigurationStore.mockHydrated({
+    [mockUsXxOpp]: mockUsXxOppConfig,
+    [mockUsXxTwoOpp]: mockUsXxTwoOppConfig,
+  });
+
   rootStoreMock.tenantStore.setCurrentTenantId("US_XX" as unknown as TenantId);
 
   mockFirestoreStoreClientsForOfficerId(firestoreStoreMock);
 
-  setTestEnabledOppTypes([mockUsXxOpp, mockUsXxTwoOpp]);
   // @ts-ignore - override readonly property
   opportunityConstructors[mockUsXxOpp] =
     getMockOpportunityConstructor(mockUsXxOpp);

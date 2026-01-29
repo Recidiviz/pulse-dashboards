@@ -152,10 +152,8 @@ export const mockApiOpportunityConfigurationResponse = ${JSON.stringify(fetched)
 
   get enabledOpportunityTypes() {
     return Object.entries(this.opportunities)
-      .filter(([opportunityType, opportunity]) => opportunity.isEnabled)
-      .map(
-        ([opportunityType, opportunity]) => opportunityType as OpportunityType,
-      );
+      .filter(([_, opportunity]) => opportunity.isEnabled)
+      .map(([opportunityType, _]) => opportunityType as OpportunityType);
   }
 
   mockHydrated(

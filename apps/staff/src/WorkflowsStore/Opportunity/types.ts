@@ -263,6 +263,7 @@ export type OpportunityTab =
   | "Almost Eligible"
   | "Overridden"
   | "Marked Ineligible"
+  | "Not Currently Eligible"
   // "Other" should never appear in the actual frontend, but exists to provide a default value
   // for when the record is undefined on the Opportunity class
   | "Other"

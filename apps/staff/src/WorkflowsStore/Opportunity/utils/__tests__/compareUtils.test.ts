@@ -54,7 +54,8 @@ class TestOpportunity extends OpportunityBase<Client, OpportunityRecordBase> {
 function createTestUnit(systemType: SystemId = "SUPERVISION") {
   root = new RootStore();
 
-  client = new Client({} as any, root);
+  root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+  client = new Client({ allEligibleOpportunities: ["TEST"] } as any, root);
   return new TestOpportunity(client, "TEST" as OpportunityType, systemType, {
     stateCode: "US_OZ",
     externalId: "123",

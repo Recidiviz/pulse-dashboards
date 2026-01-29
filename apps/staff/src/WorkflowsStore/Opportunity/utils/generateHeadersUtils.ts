@@ -37,6 +37,8 @@ export const countOpportunities = (opportunities: Opportunity[]): number => {
   const countByFunction = opportunities[0].config.countByFunction;
   const count = countByFunction
     ? countByFunction(opportunities)
-    : opportunities.filter((opp) => !opp.isSubmitted && !opp.denial).length;
+    : opportunities.filter(
+        (opp) => !opp.isSubmitted && !opp.denial && !opp.isIneligible,
+      ).length;
   return count;
 };

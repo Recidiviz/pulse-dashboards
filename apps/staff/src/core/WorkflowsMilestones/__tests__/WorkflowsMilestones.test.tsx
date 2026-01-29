@@ -51,6 +51,7 @@ const baseRootStoreMock = {
   },
   workflowsRootStore: {
     opportunityConfigurationStore: {
+      enabledOpportunityTypes: [],
       isHydrated: true,
     },
   },

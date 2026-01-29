@@ -15,13 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  computed,
-  configure,
-  IObservableValue,
-  observable,
-  runInAction,
-} from "mobx";
+import { configure, runInAction } from "mobx";
 
 import {
   ClientRecord,
@@ -46,7 +40,6 @@ vi.mock("../subscriptions");
 
 let rootStore: RootStore;
 let testPerson: JusticeInvolvedPersonBase;
-let mockOpportunityTypes: IObservableValue<OpportunityType[]>;
 let record: ClientRecord;
 
 function createTestUnit() {
@@ -55,7 +48,6 @@ function createTestUnit() {
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  mockOpportunityTypes = observable.box(["JIP_TEST_OPP" as OpportunityType]);
 
   rootStore = new RootStore();
   vi.spyOn(
@@ -70,13 +62,7 @@ beforeEach(() => {
     } as StaffRecord,
   ]);
   vi.spyOn(rootStore.userStore, "stateCode", "get").mockReturnValue("US_TN");
-  vi.spyOn(
-    rootStore.workflowsRootStore.opportunityConfigurationStore,
-    "enabledOpportunityTypes",
-    "get",
-  ).mockImplementation(() => {
-    return computed(() => mockOpportunityTypes.get()).get();
-  });
+  rootStore.workflowsStore.opportunityConfigurationStore.mockHydrated();
   record = {
     allEligibleOpportunities: [],
     officerId: "OFFICER1",

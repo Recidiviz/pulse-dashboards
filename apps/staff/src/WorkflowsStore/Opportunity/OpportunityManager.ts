@@ -17,7 +17,7 @@
 
 import * as Sentry from "@sentry/react";
 import { DocumentData } from "firebase/firestore";
-import { difference, intersection } from "lodash";
+import { difference } from "lodash";
 import { makeAutoObservable, runInAction, set } from "mobx";
 
 import {
@@ -42,8 +42,8 @@ import { OpportunityManagerInterface, OpportunityMapping } from "./types";
 /**
  * Leverages the `Hydratable` interface to implement the hydration infrastructure
  * for a person's opportunities, which are instantiated with the corresponding
- * Firestore documents. The `activeOpportunityTypes` reflects all of the types that
- * the we care about surfacing in the webtool, thus `hydrate` and `hydrationState`
+ * Firestore documents. The `activeOpportunityTypes` reflects all types that
+ * we care about surfacing in the webtool, thus `hydrate` and `hydrationState`
  * take these values into account.
  */
 export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
@@ -77,19 +77,28 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
   }
 
   // The opportunity types that are enabled and that the person is eligible for
+  // or that should be hydrated even when the person is ineligible
   get incomingOpportunityTypes(): OpportunityType[] {
-    return intersection(
-      this.eligibleOpportunityTypes,
-      this.enabledOpportunityTypes,
-    ) as OpportunityType[];
+    return this.enabledOpportunityTypes.filter((opp) => {
+      const {
+        workflowsStore: {
+          opportunityConfigurationStore: { opportunities: configs },
+        },
+      } = this.rootStore;
+
+      return (
+        configs[opp].supportsIneligible ||
+        this.eligibleOpportunityTypes.indexOf(opp) !== -1
+      );
+    });
   }
 
   get ineligibleOpportunityTypes(): OpportunityType[] {
-      return difference(
-        this.enabledOpportunityTypes,
-        this.incomingOpportunityTypes,
-      );
-  };
+    return difference(
+      this.enabledOpportunityTypes,
+      this.eligibleOpportunityTypes,
+    );
+  }
 
   setSelectedOpportunityTypes(opportunityTypes: OpportunityType[]): void {
     runInAction(() => (this.selectedOpportunityTypes = opportunityTypes));
@@ -123,7 +132,7 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
     // Get the constructor from the defined mapping of type to constructor
     const constructor = opportunityConstructors[opportunityType];
 
-    const { firestoreCollection, supportsAlmostEligible } =
+    const { firestoreCollection, supportsAlmostEligible, supportsIneligible } =
       this.rootStore.workflowsRootStore.opportunityConfigurationStore
         .opportunities[opportunityType];
 
@@ -135,6 +144,7 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
         {
           includeEligible: true,
           includeAlmostEligible: supportsAlmostEligible,
+          includeIneligible: supportsIneligible,
         },
       );
 

@@ -20,6 +20,7 @@ import { configure } from "mobx";
 import { ClientRecord, OpportunityType } from "~datatypes";
 import { isHydrated } from "~hydration-utils";
 
+import { mockOpportunityConfigs } from "../../../core/__tests__/testUtils";
 import FirestoreStore from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { mockIneligibleClient } from "../../__fixtures__";
@@ -69,10 +70,18 @@ describe("instantiation", () => {
 
   test("ineligible client", () => {
     person = new Client(ineligibleClientRecord, rootStore);
+
+    const supportedIneligibleOpps = Object.entries(mockOpportunityConfigs)
+      .filter(([_, config]) => config.supportsIneligible)
+      .map(([oppType, _]) => oppType);
+
     // @ts-ignore
-    expect(person.opportunityManager.activeOpportunityTypes).toBeEmpty();
+    expect(person.opportunityManager.activeOpportunityTypes).toEqual(
+      supportedIneligibleOpps,
+    );
     expect(person.opportunityManager.opportunities).toBeEmptyObject();
-    expect(isHydrated(person.opportunityManager)).toBeTrue();
+    // There are opportunities we have not yet hydrated
+    expect(isHydrated(person.opportunityManager)).toBeFalse();
   });
 
   describe("LSU eligible client", () => {
@@ -103,9 +112,9 @@ describe("hydrate", () => {
   describe("single eligible opportunity for person", () => {
     beforeEach(() => {
       setTestEnabledOppTypes(["LSU"]);
-      person = new Client(lsuEligibleClient, rootStore);
       rootStore.tenantStore.currentTenantId = "US_ID";
       rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+      person = new Client(lsuEligibleClient, rootStore);
 
       vi.spyOn(
         FirestoreStore.prototype,
@@ -150,9 +159,9 @@ describe("hydrate", () => {
         ...ineligibleClientRecord,
         allEligibleOpportunities: ["LSU", "pastFTRD"] as OpportunityType[],
       };
-      person = new Client(clientRecord, rootStore);
       rootStore.tenantStore.currentTenantId = "US_ID";
       rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+      person = new Client(clientRecord, rootStore);
       const spy = vi.spyOn(
         OpportunityManager.prototype,
         "instantiateOpportunitiesByType",
@@ -190,9 +199,9 @@ describe("hydrate", () => {
           "pastFTRD",
         ] as OpportunityType[],
       };
-      person = new Client(clientRecord, rootStore);
       rootStore.tenantStore.currentTenantId = "US_ID";
       rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+      person = new Client(clientRecord, rootStore);
       const spy = vi.spyOn(
         OpportunityManager.prototype,
         "instantiateOpportunitiesByType",
@@ -239,9 +248,9 @@ describe("hydrate", () => {
 describe("instantiateOpportunitiesByType", () => {
   test("instantiation failed on bad record type", async () => {
     setTestEnabledOppTypes(["LSU"]);
-    person = new Client(lsuEligibleClient, rootStore);
     rootStore.tenantStore.currentTenantId = "US_ID";
     rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+    person = new Client(lsuEligibleClient, rootStore);
 
     const { formInformation } = LSUReferralRecordFixture;
 
@@ -265,9 +274,9 @@ describe("instantiateOpportunitiesByType", () => {
 
   test("instantiation failed on missing record", async () => {
     setTestEnabledOppTypes(["LSU"]);
-    person = new Client(lsuEligibleClient, rootStore);
     rootStore.tenantStore.currentTenantId = "US_ID";
     rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+    person = new Client(lsuEligibleClient, rootStore);
 
     vi.spyOn(
       FirestoreStore.prototype,
@@ -281,9 +290,9 @@ describe("instantiateOpportunitiesByType", () => {
 
   test("one instantiation failed, but one succeeded", async () => {
     setTestEnabledOppTypes(["LSU"]);
-    person = new Client(lsuEligibleClient, rootStore);
     rootStore.tenantStore.currentTenantId = "US_ID";
     rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+    person = new Client(lsuEligibleClient, rootStore);
 
     const { formInformation } = LSUReferralRecordFixture;
 
@@ -323,9 +332,9 @@ describe("instantiateOpportunitiesByType", () => {
       ...ineligibleClientRecord,
       allEligibleOpportunities: ["pastFTRD"] as OpportunityType[],
     };
-    person = new Client(clientRecord, rootStore);
     rootStore.tenantStore.currentTenantId = "US_ID";
     rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+    person = new Client(clientRecord, rootStore);
 
     const spy = vi
       .spyOn(
@@ -349,9 +358,9 @@ describe("instantiateOpportunitiesByType", () => {
         "usIdSupervisionLevelDowngrade",
       ] as OpportunityType[],
     };
-    person = new Client(clientRecord, rootStore);
     rootStore.tenantStore.currentTenantId = "US_ID";
     rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+    person = new Client(clientRecord, rootStore);
 
     const spy = vi
       .spyOn(
@@ -365,11 +374,32 @@ describe("instantiateOpportunitiesByType", () => {
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy.mock.lastCall?.[3].includeAlmostEligible).toBeFalse();
   });
+
+  test("fetch includes ineligible", async () => {
+    setTestEnabledOppTypes(["usTnInitialClassification2026Policy"]);
+
+    rootStore.tenantStore.currentTenantId = "US_ID";
+    rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+    person = new Client(ineligibleClientRecord, rootStore);
+
+    const spy = vi
+      .spyOn(
+        FirestoreStore.prototype,
+        "getOpportunitiesForJIIAndOpportunityType",
+      )
+      .mockResolvedValueOnce([]);
+
+    await person.opportunityManager.hydrate();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.lastCall?.[3].includeIneligible).toBeTrue();
+  });
 });
 
 describe("hydrationState", () => {
   test("multiple opportunities for given type, but only one is hydrated", () => {
     setTestEnabledOppTypes(["LSU"]);
+    rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
     person = new Client(lsuEligibleClient, rootStore);
 
     vi.spyOn(
@@ -394,6 +424,7 @@ describe("hydrationState", () => {
   test("opportunityMapping has hydrated opportunity, but it's not active", () => {
     setTestEnabledOppTypes(["pastFTRD"]);
 
+    rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
     const clientRecord = {
       ...ineligibleClientRecord,
       allEligibleOpportunities: ["LSU", "pastFTRD"] as OpportunityType[],

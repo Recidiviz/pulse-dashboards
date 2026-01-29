@@ -26,8 +26,8 @@ import {
   useRootStore,
 } from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
+import { Client } from "../../../WorkflowsStore";
 import { mockIneligibleClient } from "../../../WorkflowsStore/__fixtures__";
-import { Client } from "../../../WorkflowsStore/Client";
 import { MilestonesSidePanel } from "../MilestonesSidePanel";
 
 vi.mock("../../../WorkflowsStore/subscriptions");
@@ -58,6 +58,7 @@ const baseRootStoreMock = {
   workflowsRootStore: {
     opportunityConfigurationStore: {
       isHydrated: true,
+      enabledOpportunityTypes: [],
     },
   },
 };

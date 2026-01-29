@@ -245,7 +245,6 @@ export class OpportunityBase<
     // Use Set for O(1) lookup instead of O(n) array includes
     const dismissedIdsSet = new Set(dismissedOpportunityNotificationIds);
 
-
     // Create list of notifications for each page, checking dismissal per page, then group by page
     const notificationsByPage: OpportunityNotificationsByPage = {};
 
@@ -275,7 +274,6 @@ export class OpportunityBase<
           cta: n.cta ? hydrateStr(n.cta, context) : undefined,
           link: this.person.profileUrl,
         });
-
       });
     });
 
@@ -478,17 +476,17 @@ export class OpportunityBase<
   get bannerInfo(): OpportunityBannerInfo | undefined {
     return this.previewBannerText
       ? {
-        previewBannerText: this.previewBannerText,
-        link: this.person.profileUrl,
-        linkText: `See ${toTitleCase(this.rootStore.workflowsStore.justiceInvolvedPersonTitle)} Profile`,
-        onLinkClick: () =>
-          this.rootStore.analyticsStore.trackNavigateToPersonProfileLinkClicked(
-            {
-              justiceInvolvedPersonId: this.person.pseudonymizedId,
-              opportunityType: this.type,
-            },
-          ),
-      }
+          previewBannerText: this.previewBannerText,
+          link: this.person.profileUrl,
+          linkText: `See ${toTitleCase(this.rootStore.workflowsStore.justiceInvolvedPersonTitle)} Profile`,
+          onLinkClick: () =>
+            this.rootStore.analyticsStore.trackNavigateToPersonProfileLinkClicked(
+              {
+                justiceInvolvedPersonId: this.person.pseudonymizedId,
+                opportunityType: this.type,
+              },
+            ),
+        }
       : undefined;
   }
 
@@ -901,6 +899,7 @@ export class OpportunityBase<
     if (this.isInSupervisorReview) return this.supervisorReviewTabTitle;
     if (this.isGrantApproved) return this.grantApprovedTabTitle;
     if (this.almostEligible) return "Almost Eligible";
+    if (this.isIneligible) return "Not Currently Eligible";
     return "Eligible Now";
   }
 
@@ -939,9 +938,9 @@ export class OpportunityBase<
       record.ineligibleCriteria,
       isIneligible
         ? pickBy(
-          ineligibleCriteriaCopy,
-          (_, key) => !(key in strictlyIneligibleCriteriaCopy),
-        )
+            ineligibleCriteriaCopy,
+            (_, key) => !(key in strictlyIneligibleCriteriaCopy),
+          )
         : ineligibleCriteriaCopy,
       this,
       this.criteriaFormatters,
@@ -1042,10 +1041,10 @@ export class OpportunityBase<
       const calculatedMaxSnoozeDays =
         selectedReasons.length > 0
           ? Math.max(
-            ...selectedMaxSnoozeDays.filter(
-              (maxSnooze) => maxSnooze !== undefined,
-            ),
-          )
+              ...selectedMaxSnoozeDays.filter(
+                (maxSnooze) => maxSnooze !== undefined,
+              ),
+            )
           : this.config.snooze?.maxSnoozeDays;
 
       // Cap the max snooze length to the person's release date.
@@ -1111,10 +1110,10 @@ export class OpportunityBase<
     const actionMetadata: OpportunityApprovalActionsMetadata["action"] =
       officerAction.type === "DENIAL"
         ? {
-          type: officerAction.type,
-          actionPlan: officerAction.actionPlan,
-          requestedDenialReasons: officerAction.denialReasons,
-        }
+            type: officerAction.type,
+            actionPlan: officerAction.actionPlan,
+            requestedDenialReasons: officerAction.denialReasons,
+          }
         : { type: officerAction.type, additionalNotes: officerAction.notes };
 
     const originalStatus = this.reviewStatus;
