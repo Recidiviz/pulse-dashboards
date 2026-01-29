@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
@@ -47,12 +47,13 @@ const ResidentsScreen = () => {
   const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();
 
+  const isFocused = useIsFocused();
   const {
     data: rawResidents,
     isLoading,
     error,
     refetch,
-  } = trpc.v1.resident.list.useQuery();
+  } = trpc.v1.resident.list.useQuery(undefined, { enabled: isFocused });
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState(SortOption.Name as string);

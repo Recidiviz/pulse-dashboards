@@ -29,6 +29,7 @@ import { useAuth0 } from "react-native-auth0";
 import superjson from "superjson";
 
 import AppUpdateModal from "../components/AppUpdateModal";
+import { useStateSelection } from "../context/StateContext";
 import env from "../env";
 import LoginScreen from "../screens/LoginScreen";
 import { publicTrpc, trpc } from "../trpc/client";
@@ -60,6 +61,7 @@ const linking: LinkingOptions<AppStackParamList> = {
           ResidentNewMeeting: "residents/:personId/new-meeting",
           ClientMeeting: "clients/:personId/meetings/:meetingId",
           ResidentMeeting: "residents/:personId/meetings/:meetingId",
+          StateSelection: "settings",
         },
       },
     },
@@ -67,19 +69,26 @@ const linking: LinkingOptions<AppStackParamList> = {
 };
 
 const AppNavigator = () => {
+  const { selectedStateCode } = useStateSelection();
   const { user, isLoading, getCredentials } = useAuth0();
   // skipAuth state triggers re-render when user clicks "Skip Authentication"
   const [skipAuth, setSkipAuth] = React.useState(false);
-  // skipAuthRef allows the TRPC headers() function to access current value
+
+  // Refs to allow the TRPC headers() function to access current values
   // (headers() is defined once at initialization, so it needs a ref not state)
   const skipAuthRef = React.useRef(false);
-  // Store user in a ref so headers() can access the latest value
   const userRef = React.useRef(user);
+  const selectedStateRef = React.useRef(selectedStateCode);
 
   // Update userRef whenever user changes
   React.useEffect(() => {
     userRef.current = user;
   }, [user]);
+
+  // Update selectedStateRef whenever selectedStateCode changes
+  React.useEffect(() => {
+    selectedStateRef.current = selectedStateCode;
+  }, [selectedStateCode]);
 
   const [trpcClient] = React.useState(() =>
     trpc.createClient({
@@ -92,7 +101,7 @@ const AppNavigator = () => {
             if (skipAuthRef.current) {
               return {
                 "X-Skip-Auth": "true",
-                statecode: "US_NE",
+                statecode: selectedStateRef.current,
               };
             }
 
@@ -105,11 +114,11 @@ const AppNavigator = () => {
             const userAppMetadata =
               currentUser?.[`https://dashboard.recidiviz.org/app_metadata`];
 
-            // Default to US_NE for recidiviz users for now.
-            // TODO(#11150): Add state selector for Recidiviz users.
+            // For recidiviz users, use the selected state code from StateContext
+            // Otherwise use the user's assigned state code
             const stateCode =
               userAppMetadata?.stateCode === "recidiviz"
-                ? "US_NE"
+                ? selectedStateRef.current
                 : userAppMetadata?.stateCode.toUpperCase();
 
             // If stateCode is empty because the user, userAppMetadata, or stateCode is undefined,

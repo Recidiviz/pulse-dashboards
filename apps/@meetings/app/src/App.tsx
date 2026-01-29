@@ -27,6 +27,7 @@ import config from "~@meetings/app/auth0-config";
 import AppErrorBoundary from "./components/AppErrorBoundary";
 import { SnackbarProvider } from "./components/Snackbar";
 import { RecordingProvider } from "./context/RecordingContext";
+import { StateCodeProvider } from "./context/StateContext";
 import env from "./env";
 import AppNavigator from "./navigation/AppNavigator";
 
@@ -56,7 +57,9 @@ const App = () => {
         >
           <AppErrorBoundary>
             <RecordingProvider>
-              <AppNavigator />
+              <StateCodeProvider>
+                <AppNavigator />
+              </StateCodeProvider>
             </RecordingProvider>
           </AppErrorBoundary>
         </Auth0Provider>

@@ -32,12 +32,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
 import MobileMenuItem from "../components/MobileMenuItem";
+import { useStateSelection } from "../context/StateContext";
 import MobileMenuTextItem from "./MobileMenuTextItem";
 
 const DrawerContent = (props: DrawerContentComponentProps) => {
   const insets = useSafeAreaInsets();
   const { user, clearSession } = useAuth0();
   const { navigation } = props;
+  const { canSelectStateCode, currentStateName } = useStateSelection();
 
   const onLogout = async () => {
     await clearSession();
@@ -103,7 +105,19 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
         className="flex flex-col gap-1.5 bg-gray-100 px-4"
         style={{ paddingBottom: insets.bottom || 16, paddingTop: 16 }}
       >
-        <MobileMenuTextItem title="Settings" />
+        {canSelectStateCode && (
+          <>
+            <MobileMenuTextItem
+              title="Settings"
+              onPress={() => navigation.navigate("StateSelection")}
+            />
+            {currentStateName && (
+              <Text className="px-4 font-inter text-xs text-gray-500">
+                Current state: {currentStateName}
+              </Text>
+            )}
+          </>
+        )}
         <MobileMenuTextItem title="Contact Support" />
         <MobileMenuTextItem title="Log Out" onPress={onLogout} color="danger" />
       </View>

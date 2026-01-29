@@ -17,6 +17,7 @@
 
 import {
   DrawerActions,
+  Link,
   RouteProp,
   useNavigation,
   useRoute,
@@ -35,6 +36,7 @@ import { useAuth0 } from "react-native-auth0";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
+import { useStateSelection } from "../context/StateContext";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import DesktopMenuItem from "./DesktopMenuItem";
 
@@ -54,6 +56,7 @@ const Header: React.FC<HeaderProps> = ({
   const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
   const { clearSession } = useAuth0();
+  const { canSelectStateCode, currentStateName } = useStateSelection();
 
   const handleDropdownMenuPress = (callback: () => void) => {
     setProfileDropdownOpen(false);
@@ -132,15 +135,23 @@ const Header: React.FC<HeaderProps> = ({
             {profileDropdownOpen && (
               <View className="absolute right-0 top-9 rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm">
                 <ScrollView contentContainerClassName="gap-2">
-                  <TouchableOpacity
-                    onPress={() =>
-                      handleDropdownMenuPress(() => console.log("Settings"))
-                    }
-                  >
-                    <Text className="whitespace-nowrap font-inter text-sm text-gray-700">
-                      Settings
-                    </Text>
-                  </TouchableOpacity>
+                  {canSelectStateCode && (
+                    <Link
+                      screen="StateSelection"
+                      onPress={() => setProfileDropdownOpen(false)}
+                      params={{}}
+                      className="flex flex-col"
+                    >
+                      <Text className="whitespace-nowrap font-inter text-sm text-gray-700">
+                        Settings
+                      </Text>
+                      {currentStateName && (
+                        <Text className="whitespace-nowrap font-inter text-xs text-gray-500">
+                          Current state: {currentStateName}
+                        </Text>
+                      )}
+                    </Link>
+                  )}
                   <TouchableOpacity
                     onPress={() =>
                       handleDropdownMenuPress(() =>

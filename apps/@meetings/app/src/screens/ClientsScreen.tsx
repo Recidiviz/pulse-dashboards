@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
@@ -54,12 +54,15 @@ const ClientsScreen = () => {
   const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();
 
+  const isFocused = useIsFocused();
   const {
     data: rawClients,
     isLoading,
     error,
     refetch,
-  } = trpc.v1.staff.getClients.useQuery();
+  } = trpc.v1.staff.getClients.useQuery(undefined, {
+    enabled: isFocused,
+  });
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("Name (A-Z)");
@@ -100,7 +103,7 @@ const ClientsScreen = () => {
         <Header />
         {Platform.select({
           native: (
-            <PersonsMobileList 
+            <PersonsMobileList
               persons={filteredClients}
               recordingState={recordingState}
               navigation={navigation}
@@ -112,7 +115,7 @@ const ClientsScreen = () => {
           ),
           web: (
             <View className="flex-1 pb-4">
-              <PersonsMobileList 
+              <PersonsMobileList
                 persons={filteredClients}
                 recordingState={recordingState}
                 navigation={navigation}

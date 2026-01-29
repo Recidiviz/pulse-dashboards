@@ -20,9 +20,10 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { fireEvent, render } from "@testing-library/react-native";
+import { fireEvent, render, waitFor } from "@testing-library/react-native";
 
 import Header from "../../components/Header";
+import { StateCodeProvider } from "../../context/StateContext";
 
 // Mock react-native-auth0
 const mockClearSession = jest.fn();
@@ -59,6 +60,12 @@ jest.mock("../../../assets/icons", () => ({
   ArrowDown: { uri: "arrow-down" },
 }));
 
+// Mock AsyncStorage
+// https://react-native-async-storage.github.io/2.0/advanced/Jest-integration/
+jest.mock("@react-native-async-storage/async-storage", () =>
+  require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
+);
+
 describe("Header", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -69,12 +76,19 @@ describe("Header", () => {
   });
 
   describe("navigation changes", () => {
-    it("navigates to Clients when logo is pressed (changed from Home)", () => {
+    it("navigates to Clients when logo is pressed (changed from Home)", async () => {
       const { getByTestId } = render(
-        <NavigationContainer>
-          <Header />
-        </NavigationContainer>,
+        <StateCodeProvider>
+          <NavigationContainer>
+            <Header />
+          </NavigationContainer>
+        </StateCodeProvider>,
       );
+
+      // Wait for StateCodeProvider's async initialization to complete
+      await waitFor(() => {
+        expect(getByTestId("logo-button")).toBeTruthy();
+      });
 
       const logoButton = getByTestId("logo-button");
       fireEvent.press(logoButton);

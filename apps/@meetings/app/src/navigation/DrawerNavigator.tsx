@@ -27,10 +27,12 @@ import ResidentMeetingScreen from "../screens/ResidentMeetingScreen";
 import ResidentNewMeetingScreen from "../screens/ResidentNewMeetingScreen";
 import ResidentProfileScreen from "../screens/ResidentProfileScreen";
 import ResidentsScreen from "../screens/ResidentsScreen";
+import StateSelectionScreen from "../screens/StateSelectionScreen";
 
 export type RootStackParamList = {
   Clients: undefined;
   Residents: undefined;
+  StateSelection: undefined;
   // Messages: undefined;
   // Schedule: undefined;
   // Resources: undefined;
@@ -79,6 +81,7 @@ export default function DrawerNavigator() {
     >
       <Drawer.Screen name="Clients" component={ClientsScreen} />
       <Drawer.Screen name="Residents" component={ResidentsScreen} />
+      <Drawer.Screen name="StateSelection" component={StateSelectionScreen} />
       <Drawer.Screen name="ClientProfile" component={ClientProfileScreen} />
       <Drawer.Screen name="ResidentProfile" component={ResidentProfileScreen} />
       <Drawer.Screen
