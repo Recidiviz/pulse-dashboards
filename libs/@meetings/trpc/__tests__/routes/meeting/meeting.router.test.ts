@@ -52,7 +52,7 @@ describe("meeting router", () => {
         endTime: null,
         postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
         userNotepadNotes: "Sample meeting notes.",
-        caseNote: null,
+        caseNote: fakeActiveMeeting.caseNote,
         actionItems: [],
         criticalUpdates: [],
         meetingSummary: [],

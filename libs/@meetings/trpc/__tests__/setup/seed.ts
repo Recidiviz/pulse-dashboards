@@ -204,6 +204,7 @@ export const fakeActiveMeeting = {
   actionItems: JSON.stringify([]),
   criticalUpdates: JSON.stringify([]),
   meetingSummary: JSON.stringify([]),
+  caseNote: "draft case note",
   transcriptions: {
     create: [
       {

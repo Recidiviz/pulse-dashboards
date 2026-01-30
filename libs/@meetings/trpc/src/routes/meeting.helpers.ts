@@ -123,6 +123,7 @@ export async function getMeetingsForPerson({
       startTime: true,
       endTime: true,
       postMeetingProcessingStatus: true,
+      caseNote: true,
     },
   });
 }

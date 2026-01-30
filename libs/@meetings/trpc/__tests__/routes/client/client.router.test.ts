@@ -91,6 +91,7 @@ describe("client router", () => {
             id: fakeActiveMeeting.id,
             startTime: fakeActiveMeeting.startTime,
             endTime: null,
+            caseNote: fakeActiveMeeting.caseNote,
           }),
         ]);
       });
