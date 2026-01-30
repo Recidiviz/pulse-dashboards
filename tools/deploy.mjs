@@ -218,6 +218,7 @@ const reentryFrontendDisplayName = "Reentry Frontend";
 const meetingAssistantDisplayName = "Meeting Assistant Backend Services";
 const demoFixturesDisplayName = "Demo fixtures";
 const opportunitiesTestDataDisplayName = "Opportunities test data";
+const envSecretsDisplayName = "Env Secrets";
 
 const inStagingOrProd = ["staging", "production"].includes(deployEnv);
 const deployServicesChoices = [
@@ -233,6 +234,7 @@ const deployServicesChoices = [
   { name: reentryBackendV1DisplayName, checked: false },
   { name: reentryFrontendDisplayName, checked: false },
   { name: meetingAssistantDisplayName, checked: inStagingOrProd },
+  { name: envSecretsDisplayName, checked: inStagingOrProd },
 ];
 
 if (deployEnv === "demo") {
@@ -296,6 +298,10 @@ const deployMeetingAssistant = deployServicesPrompt.deployServices.includes(
   meetingAssistantDisplayName,
 );
 
+const deployEnvSecrets = deployServicesPrompt.deployServices.includes(
+  envSecretsDisplayName,
+);
+
 console.log("Running nx reset...");
 await $`nx reset`.pipe(process.stdout);
 
@@ -304,6 +310,14 @@ await $`yarn install`.pipe(process.stdout);
 
 console.log("Updating atmos...");
 await $`brew install atmos`.pipe(process.stdout);
+
+if (deployEnvSecrets && inStagingOrProd) {
+  // deploy any updated env secrets
+  console.log("Apply env-secrets");
+  await $`yarn atmos:apply env-secrets -s recidiviz-dashboard-${deployEnv}--shared-infra`.pipe(
+    process.stdout,
+  );
+}
 
 // Start docker and configure docker to upload to container registry
 // Only needed for staging deploys
