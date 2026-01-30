@@ -18,13 +18,21 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
+import { UsCoMoreInformation } from "~@jii/paths";
 
-import { UsCoSingleResidentHome } from "./UsCoSingleResidentHome";
+import { PageMoreInformation } from "../pages/PageMoreInformation";
+import { UsCoSingleResidentHome } from "../pages/UsCoSingleResidentHome";
 
 export function UsCoRouter() {
   return (
     <Routes>
       <Route index element={<UsCoSingleResidentHome />} />
+      <Route path={UsCoMoreInformation.path}>
+        <Route
+          path={UsCoMoreInformation.EarnedTime.path}
+          element={<PageMoreInformation pageSlug="earnedTime" />}
+        />
+      </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

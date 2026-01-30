@@ -15,17 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usePageTitle } from "~@jii/common-ui";
+import { FC } from "react";
+import styled from "styled-components";
 
-import { UsCoProgramsList } from "./UsCoProgramsList";
+import { Icon, palette } from "~design-system";
 
-export function UsCoSingleResidentHome() {
-  usePageTitle("Home");
+const StyledButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
+type StarButtonProps = {
+  isStarred: boolean;
+  onClick: (e: React.MouseEvent) => void;
+  size: number;
+};
+
+export const StarButton: FC<StarButtonProps> = ({
+  isStarred,
+  onClick,
+  size,
+}) => {
   return (
-    <div>
-      <h1>Home</h1>
-      <UsCoProgramsList />
-    </div>
+    <StyledButton type="button" onClick={onClick}>
+      <Icon
+        kind={isStarred ? "Star" : "StarOutline"}
+        role="img"
+        size={size}
+        color={isStarred ? palette.data.gold1 : palette.slate30}
+      />
+    </StyledButton>
   );
-}
+};

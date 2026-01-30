@@ -25,6 +25,8 @@ const basePalette = {
   logoBlue: rgba(0, 161, 255, 1),
   logoRed: rgba(224, 14, 0, 1),
 
+  opportunitiesAppGreen: rgb(0, 166, 155),
+
   /* Marble
      Used mainly for backgrounds and for knockout elements */
   marble1: white,

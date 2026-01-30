@@ -22,13 +22,17 @@ import { palette } from "~design-system";
 
 export const Checkbox = styled.input.attrs({ type: "checkbox" })<{
   $size: number;
+  /** Custom accent color for checked state and hover. Defaults to palette.signal.links */
+  $accentColor?: string;
+  /** Background color when unchecked. Defaults to transparent */
+  $uncheckedBackground?: string;
 }>`
   appearance: none;
   width: ${(props) => rem(props.$size)};
   height: ${(props) => rem(props.$size)};
   border: 2px solid ${palette.slate30};
   border-radius: ${rem(4)};
-  background-color: transparent;
+  background-color: ${(props) => props.$uncheckedBackground ?? "transparent"};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,8 +42,8 @@ export const Checkbox = styled.input.attrs({ type: "checkbox" })<{
   position: relative;
 
   &:checked {
-    border-color: ${palette.signal.links};
-    background-color: ${palette.signal.links};
+    border-color: ${(props) => props.$accentColor ?? palette.signal.links};
+    background-color: ${(props) => props.$accentColor ?? palette.signal.links};
   }
 
   &:checked::after {
@@ -55,11 +59,11 @@ export const Checkbox = styled.input.attrs({ type: "checkbox" })<{
   }
 
   &:hover {
-    border-color: ${palette.signal.links};
+    border-color: ${(props) => props.$accentColor ?? palette.signal.links};
   }
 
   &:focus-visible {
-    outline: 2px solid ${palette.signal.links};
+    outline: 2px solid ${(props) => props.$accentColor ?? palette.signal.links};
     outline-offset: 2px;
   }
 `;

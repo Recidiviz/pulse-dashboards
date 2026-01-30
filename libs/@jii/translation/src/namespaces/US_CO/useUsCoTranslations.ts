@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./constants";
-export * from "./createI18nInstance";
-export * from "./namespaces/common/useCommonTranslations";
-export * from "./namespaces/US_AZ/resources/markdownHeadingUtils";
-export * from "./namespaces/US_AZ/useUsAzTranslations";
-export * from "./namespaces/US_CO/useUsCoTranslations";
-export * from "./namespaces/US_MA/useUsMaTranslations";
-export * from "./namespaces/US_TN/useUsTnTranslations";
-export * from "./utils/date";
+import { useTranslation } from "react-i18next";
+
+import { TranslationsObject } from "../../utils/types";
+
+export function useUsCoTranslations() {
+  return useTranslation("US_CO");
+}
+
+/**
+ * The shape of the object that can be traversed and returned
+ * by the selector function in the US_CO namespace
+ */
+export type UsCoTranslationsObject = TranslationsObject<"US_CO">;
+
+export type UsCoTFunction = ReturnType<typeof useUsCoTranslations>["t"];

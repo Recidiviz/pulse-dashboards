@@ -1,0 +1,54 @@
+{
+  "moreInformation": {
+    "pages": {
+      "earnedTime": {
+        "heading": "How Earned Time Works",
+        "body": "Earned Time is a way for you to reduce the total amount of time you spend incarcerated. Think of it as \"credits\" you may receive for completing programs, education, or vocational training. By staying on track, you can move your release dates closer and return home sooner. Staying engaged doesn't just move your final release date; it can also help you get to Parole or Community Corrections sooner.\n\n**Regular Earned Time.** Most people can earn up to 10 days of time per month for meeting the goals set by your case manager. You earn these days by showing positive progress, including by:\n* Following the facility rules.\n* Participating in recommended programs.\n* Going to school or vocational training.\n* Working your assigned job.\n\nPeople with certain charges are also eligible for an extra 2 days/month, if they have not received a Class I disciplinary for 2 years and Class II disciplinary for 1 year. Ask your case manager for more information about whether you are eligible.\n\nYou can miss out on these days or have them taken away if:\n* You get COPD write-ups (disciplinary actions).\n* You refuse to participate in your recommended programs.\n\n**Achievement Earned Time.** Even if you're not eligible for regular earned time, you may be eligible to earn credit by completing programming. You can earn up to 120 days over the course of your incarceration. This app will tell you how many days you can earn for completing certain programs!"
+      }
+    }
+  },
+  "programs": {
+    "lastUpdated": "This information was last updated {{date, formatFullDate}}.",
+    "pageTitle": "Earn time off your sentence",
+    "pageDescription": "This page helps you find programs and activities that earn you Achievement Credits. These credits can take time off your sentence. You can earn a total of 120 days of credit. The list updates from time to time – look for the \"New\" label to see what has changed. Ask your Case Manager if you qualify for a particular program, and to help you sign up.",
+    "learnMoreLink": "Learn about earned time",
+    "resultsCount_one": "{{count}} result below.",
+    "resultsCount_other": "{{count}} results below.",
+    "resultsHint": "Tap on each card to view more information.",
+    "filters": {
+      "button": "Filters",
+      "categoryLabel": "Select by Category",
+      "facilityLabel": "Select by Facility",
+      "allCategories": "All categories",
+      "allFacilities": "All facilities",
+      "onlyEarnCredits": "Only show programs that earn credits",
+      "onlyStarred": "Only show my starred programs",
+      "clearAll": "Clear all"
+    },
+    "card": {
+      "earnLabel": "EARN",
+      "daysOfCredit_zero": "no achievement credits earned",
+      "daysOfCredit_one": "up to {{count}} day of achievement credit",
+      "daysOfCredit_other": "up to {{count}} days of achievement credit",
+      "newBadge": "New"
+    },
+    "category": {
+      "programCount_one": "{{count}} program",
+      "programCount_other": "{{count}} programs",
+      "programCountFiltered_one": "{{count}} program (out of {{total}} total)",
+      "programCountFiltered_other": "{{count}} programs (out of {{total}} total)"
+    },
+    "modal": {
+      "earnSubtitle_zero": "No achievement credits earned",
+      "earnSubtitle_one": "Earn up to {{count}} day of achievement credit",
+      "earnSubtitle_other": "Earn up to {{count}} days of achievement credit",
+      "programDescription": "Program Description",
+      "eligibility": "Eligibility",
+      "eligibilityPrereq": "Prerequisite: {{prereq}}",
+      "eligibilityNone": "No requirements needed",
+      "availableFacilities": "Available Facilities",
+      "callToAction": "Sound interesting? Talk to your case manager to see if there might be a good fit.",
+      "closeWindow": "Close window"
+    }
+  }
+}
