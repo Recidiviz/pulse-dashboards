@@ -32,6 +32,7 @@ const envSchema = z.object({
     .string()
     .min(1, "EXPO_PUBLIC_SENTRY_DSN is required"),
   EXPO_PUBLIC_SERVER_URL: z.string().default("http://localhost:3002"),
+  EXPO_PUBLIC_DEPLOY_ENV: z.string().default("development"),
 });
 
 const env = {
@@ -41,6 +42,7 @@ const env = {
   EXPO_PUBLIC_OFFLINE_MODE: process.env["EXPO_PUBLIC_OFFLINE_MODE"],
   EXPO_PUBLIC_SENTRY_DSN: process.env["EXPO_PUBLIC_SENTRY_DSN"],
   EXPO_PUBLIC_SERVER_URL: process.env["EXPO_PUBLIC_SERVER_URL"],
+  EXPO_PUBLIC_DEPLOY_ENV: process.env["EXPO_PUBLIC_DEPLOY_ENV"],
 };
 
 const parsedEnv = envSchema.safeParse(env);

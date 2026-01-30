@@ -18,6 +18,7 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
+import env from "../env";
 
 export enum Tab {
   Notes = "Notes",
@@ -35,9 +36,19 @@ const MeetingTabs = ({
   setActiveTab,
   isTranscriptionUnavailable,
 }: Props) => {
+  const isProduction = env.EXPO_PUBLIC_DEPLOY_ENV === "production";
+  const visibleTabs = isProduction
+    ? Object.values(Tab).filter((tab) => tab !== Tab.Transcription)
+    : Object.values(Tab);
+
+  // Hide tabs entirely if only one tab is visible
+  if (visibleTabs.length <= 1) {
+    return null;
+  }
+
   return (
     <View className="flex w-full flex-row rounded-full bg-[#E6EAEB] p-1 print:hidden">
-      {Object.values(Tab).map((tab) => (
+      {visibleTabs.map((tab) => (
         <TouchableOpacity
           key={tab}
           className={`flex w-1/2 items-center justify-center rounded-full bg-transparent p-2.5 ${tab === activeTab ? "bg-white" : "bg-[#E6EAEB]"}`}
