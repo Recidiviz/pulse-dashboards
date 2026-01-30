@@ -29,10 +29,11 @@ import { DrugHistoryModal } from "./DrugHistoryModal";
 interface DrugHistoryCardProps {
   presenter: SARDetailsPresenter;
   cardRef?: React.RefObject<HTMLDivElement | null>;
+  title?: string;
 }
 
 export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
-  function DrugHistoryCard({ presenter, cardRef }) {
+  function DrugHistoryCard({ presenter, cardRef, title = "Substance Use" }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [initialData, setInitialData] = useState<DrugHistory | undefined>(
@@ -84,7 +85,7 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
     return (
       <>
         <DomainCard
-          title="Substance Use"
+          title={title}
           riskScore={substanceAbuseLevel ?? 0}
           summaryValue={drugHistorySummary ?? null}
           onSummaryChange={(value) => presenter.updateDrugHistorySummary(value)}

@@ -32,10 +32,12 @@ import {
   REQUIRED_FIELD_IDS,
 } from "../components/CaseInformation/constants";
 import { KEY_CONSIDERATIONS_REQUIRED_FIELDS } from "../components/KeyConsiderations/constants";
+import { getDomainsForAssessmentType } from "../components/OffenderAssessment/utils";
 import { SARSection } from "../components/SARDetails";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
+import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
 import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
 
 // Type for SAR metadata structure
@@ -1198,27 +1200,28 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** Get Offender Assessment section status */
   private getOffenderAssessmentStatus(): SectionStatus {
-    // 8 summary text fields
-    const summaries = [
-      this.SARData?.criminalHistorySummary,
-      this.SARData?.employmentSummary,
-      this.SARData?.familyAndSocialSupportSummary,
-      this.SARData?.housingSummary,
-      this.SARData?.drugHistorySummary,
-      this.SARData?.peerAssociatesSummary,
-      this.SARData?.criminalAttitudesSummary,
-      this.SARData?.responsivityAndBarriersSummary,
-    ];
+    // Get domains for this ORAS assessment type
+    const domains = getDomainsForAssessmentType(this.SARData?.assessmentType);
 
-    // 4 form fields (must match overallProgress calculation)
-    // Note: employedAtOffense excluded because "Unknown" stores as null,
-    // which is indistinguishable from "not yet answered"
-    const formFields = [
-      this.SARData?.levelOfEducation,
-      this.SARData?.client?.fatherName,
-      this.SARData?.client?.motherName,
-      this.SARData?.client?.guardianName,
-    ];
+    // Only check summaries for visible domains
+    const summaries = domains
+      .map((d) => DOMAIN_TO_SUMMARY_FIELD[d.key])
+      .filter(Boolean)
+      .map((field) => this.SARData?.[field]);
+
+    // Form fields also need to be conditional based on which domains are visible
+    const formFields: (string | null | undefined)[] = [];
+
+    if (domains.some((d) => d.key === "educationEmployment")) {
+      formFields.push(this.SARData?.levelOfEducation);
+    }
+    if (domains.some((d) => d.key === "familySocialSupport")) {
+      formFields.push(
+        this.SARData?.client?.fatherName,
+        this.SARData?.client?.motherName,
+        this.SARData?.client?.guardianName,
+      );
+    }
 
     const summaryFilledCount = summaries.filter(
       (s) => s && s.trim() !== "",
@@ -1227,11 +1230,19 @@ export class SARDetailsPresenter implements Hydratable {
       (f) => f !== null && f !== undefined && f.toString().trim() !== "",
     ).length;
 
-    const totalFields = summaries.length + formFields.length; // 12 total
+    const totalFields = summaries.length + formFields.length;
     const totalFilledCount = summaryFilledCount + formFilledCount;
 
+    // Check if only the criminal history default is filled (nothing else touched)
+    const criminalHistoryValue = this.SARData?.criminalHistorySummary?.trim();
+    const onlyDefaultCriminalHistory =
+      criminalHistoryValue === CRIMINAL_HISTORY_DEFAULT &&
+      totalFilledCount === 1 &&
+      formFilledCount === 0;
+
     if (totalFilledCount === totalFields) return "complete";
-    if (totalFilledCount > 0) return "incomplete";
+    if (totalFilledCount > 0 && !onlyDefaultCriminalHistory)
+      return "incomplete";
     return "empty";
   }
 }

@@ -18,11 +18,8 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 
-import { palette } from "~design-system";
-
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { OffenderAssessmentSubsection } from "../SARDetails/constants";
-import { DOMAIN_DISPLAY_NAMES, DOMAIN_SCORE_KEYS } from "./constants";
 import { DomainCard } from "./DomainCard";
 import * as DomainCardStyled from "./DomainCard.styles";
 import { EmploymentHistoryCard } from "./EmploymentHistory";
@@ -35,6 +32,10 @@ import * as Styled from "./OffenderAssessment.styles";
 import { OrasAssessmentScoreCard } from "./OrasAssessmentScoreCard";
 import { RiskCategorySummary } from "./RiskCategorySummary";
 import { DrugHistoryCard } from "./SubstanceUse";
+import {
+  getDomainsForAssessmentType,
+  ORASDomainKey,
+} from "./utils";
 
 interface OffenderAssessmentProps {
   presenter: SARDetailsPresenter;
@@ -81,6 +82,25 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
     const { fatherName, motherName, guardianName } =
       presenter.SARData?.client ?? {};
 
+    // Get domains configuration for this ORAS assessment type
+    const domains = getDomainsForAssessmentType(assessmentType);
+    const shouldRenderDomain = (key: ORASDomainKey) =>
+      domains.some((d) => d.key === key);
+    const getDomainTitle = (key: ORASDomainKey) =>
+      domains.find((d) => d.key === key)?.title ?? "";
+
+    // Build domain scores record for RiskCategorySummary
+    const domainScores: Record<string, number | null> = {
+      criminalHistoryLevel: criminalHistoryLevel ?? null,
+      educationLevelScore: educationLevelScore ?? null,
+      familySocialSupportLevel: familySocialSupportLevel ?? null,
+      neighborhoodLevel: neighborhoodLevel ?? null,
+      substanceAbuseLevel: presenter.SARData?.substanceAbuseLevel ?? null,
+      peerAssociatesLevel: peerAssociatesLevel ?? null,
+      criminalBehaviorLevel: criminalBehaviorLevel ?? null,
+      responsivityLevel: responsivityLevel ?? null,
+    };
+
     // Scroll to subsection when changed
     useEffect(() => {
       if (!currentSubsection) return;
@@ -118,127 +138,143 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
         />
 
         <RiskCategorySummary
-          domainScores={DOMAIN_SCORE_KEYS.map((field) => ({
-            name: DOMAIN_DISPLAY_NAMES[field],
-            score: presenter.SARData?.[field] ?? null,
-          }))}
+          assessmentType={assessmentType ?? null}
+          domainScores={domainScores}
         />
 
         <Styled.DomainsTitle>Domains</Styled.DomainsTitle>
 
-        <DomainCard
-          title="Criminal History"
-          riskScore={criminalHistoryLevel ?? 0}
-          summaryValue={criminalHistorySummary ?? null}
-          onSummaryChange={(value) =>
-            presenter.updateCriminalHistorySummary(value)
-          }
-          cardRef={criminalHistoryRef}
-          summaryPlaceholder="The defendant's complete criminal history is attached to this report."
-          summaryPlaceholderColor={palette.pine1}
-        >
-          <DomainCardStyled.InfoBox>
-            Default text provided below. You can customize this language as
-            needed.
-            <br />
-            Remember to export the CBRS screen from OPII and attach it to the
-            completed report.
-          </DomainCardStyled.InfoBox>
-        </DomainCard>
+        {shouldRenderDomain("criminalHistory") && (
+          <DomainCard
+            title={getDomainTitle("criminalHistory")}
+            riskScore={criminalHistoryLevel ?? 0}
+            summaryValue={criminalHistorySummary ?? null}
+            onSummaryChange={(value) =>
+              presenter.updateCriminalHistorySummary(value)
+            }
+            cardRef={criminalHistoryRef}
+          >
+            <DomainCardStyled.InfoBox>
+              Default text provided below. You can customize this language as
+              needed.
+              <br />
+              Remember to export the CBRS screen from OPII and attach it to the
+              completed report.
+            </DomainCardStyled.InfoBox>
+          </DomainCard>
+        )}
 
-        <DomainCard
-          title="Education, Employment, and Financial Situation"
-          riskScore={educationLevelScore ?? 0}
-          helperText='Enter "None Listed" where not applicable'
-          summaryValue={employmentSummary ?? null}
-          onSummaryChange={(value) => presenter.updateEmploymentSummary(value)}
-          cardRef={educationRef}
-        >
-          <EmploymentHistoryCard presenter={presenter.offenderAssessment} />
-          <EducationDropdown
-            label="Highest Level of Education"
-            value={levelOfEducation ?? null}
-            onChange={(value) => presenter.updateLevelOfEducation(value)}
+        {shouldRenderDomain("educationEmployment") && (
+          <DomainCard
+            title={getDomainTitle("educationEmployment")}
+            riskScore={educationLevelScore ?? 0}
+            helperText='Enter "None Listed" where not applicable'
+            summaryValue={employmentSummary ?? null}
+            onSummaryChange={(value) => presenter.updateEmploymentSummary(value)}
+            cardRef={educationRef}
+          >
+            <EmploymentHistoryCard presenter={presenter.offenderAssessment} />
+            <EducationDropdown
+              label="Highest Level of Education"
+              value={levelOfEducation ?? null}
+              onChange={(value) => presenter.updateLevelOfEducation(value)}
+            />
+            <BooleanDropdown
+              label="Employed at Time of Offense"
+              value={employedAtOffense ?? null}
+              onChange={(value) => presenter.updateEmployedAtOffense(value)}
+            />
+          </DomainCard>
+        )}
+
+        {shouldRenderDomain("familySocialSupport") && (
+          <DomainCard
+            title={getDomainTitle("familySocialSupport")}
+            riskScore={familySocialSupportLevel ?? 0}
+            helperText='Enter "None Listed" where not applicable'
+            summaryValue={familyAndSocialSupportSummary ?? null}
+            onSummaryChange={(value) =>
+              presenter.updateFamilyAndSocialSupportSummary(value)
+            }
+            cardRef={familyRef}
+          >
+            <TextField
+              label="Father"
+              value={fatherName ?? null}
+              onChange={(value) => presenter.updateFatherName(value)}
+              placeholder="Enter father's name"
+              halfWidth
+            />
+            <TextField
+              label="Mother"
+              value={motherName ?? null}
+              onChange={(value) => presenter.updateMotherName(value)}
+              placeholder="Enter mother's name"
+              halfWidth
+            />
+            <TextField
+              label="Who Raised Offender"
+              value={guardianName ?? null}
+              onChange={(value) => presenter.updateGuardianName(value)}
+              placeholder="Enter who raised offender"
+              halfWidth
+            />
+          </DomainCard>
+        )}
+
+        {shouldRenderDomain("neighborhoodProblems") && (
+          <DomainCard
+            title={getDomainTitle("neighborhoodProblems")}
+            riskScore={neighborhoodLevel ?? 0}
+            summaryValue={housingSummary ?? null}
+            onSummaryChange={(value) => presenter.updateHousingSummary(value)}
+            cardRef={neighborhoodRef}
           />
-          <BooleanDropdown
-            label="Employed at Time of Offense"
-            value={employedAtOffense ?? null}
-            onChange={(value) => presenter.updateEmployedAtOffense(value)}
+        )}
+
+        {shouldRenderDomain("substanceUse") && (
+          <DrugHistoryCard
+            presenter={presenter}
+            cardRef={substanceUseRef}
+            title={getDomainTitle("substanceUse")}
           />
-        </DomainCard>
+        )}
 
-        <DomainCard
-          title="Family and Social Support"
-          riskScore={familySocialSupportLevel ?? 0}
-          helperText='Enter "None Listed" where not applicable'
-          summaryValue={familyAndSocialSupportSummary ?? null}
-          onSummaryChange={(value) =>
-            presenter.updateFamilyAndSocialSupportSummary(value)
-          }
-          cardRef={familyRef}
-        >
-          <TextField
-            label="Father"
-            value={fatherName ?? null}
-            onChange={(value) => presenter.updateFatherName(value)}
-            placeholder="Enter father's name"
-            halfWidth
+        {shouldRenderDomain("peerAssociates") && (
+          <DomainCard
+            title={getDomainTitle("peerAssociates")}
+            riskScore={peerAssociatesLevel ?? 0}
+            summaryValue={peerAssociatesSummary ?? null}
+            onSummaryChange={(value) =>
+              presenter.updatePeerAssociatesSummary(value)
+            }
+            cardRef={peerRef}
           />
-          <TextField
-            label="Mother"
-            value={motherName ?? null}
-            onChange={(value) => presenter.updateMotherName(value)}
-            placeholder="Enter mother's name"
-            halfWidth
+        )}
+
+        {shouldRenderDomain("criminalAttitudes") && (
+          <DomainCard
+            title={getDomainTitle("criminalAttitudes")}
+            riskScore={criminalBehaviorLevel ?? 0}
+            summaryValue={criminalAttitudesSummary ?? null}
+            onSummaryChange={(value) =>
+              presenter.updateCriminalAttitudesSummary(value)
+            }
+            cardRef={attitudesRef}
           />
-          <TextField
-            label="Who Raised Offender"
-            value={guardianName ?? null}
-            onChange={(value) => presenter.updateGuardianName(value)}
-            placeholder="Enter who raised offender"
-            halfWidth
+        )}
+
+        {shouldRenderDomain("responsivity") && (
+          <DomainCard
+            title={getDomainTitle("responsivity")}
+            riskScore={responsivityLevel ?? 0}
+            summaryValue={responsivityAndBarriersSummary ?? null}
+            onSummaryChange={(value) =>
+              presenter.updateResponsivityAndBarriersSummary(value)
+            }
+            cardRef={responsivityRef}
           />
-        </DomainCard>
-
-        <DomainCard
-          title="Neighborhood Problems"
-          riskScore={neighborhoodLevel ?? 0}
-          summaryValue={housingSummary ?? null}
-          onSummaryChange={(value) => presenter.updateHousingSummary(value)}
-          cardRef={neighborhoodRef}
-        />
-
-        <DrugHistoryCard presenter={presenter} cardRef={substanceUseRef} />
-
-        <DomainCard
-          title="Peer Associations"
-          riskScore={peerAssociatesLevel ?? 0}
-          summaryValue={peerAssociatesSummary ?? null}
-          onSummaryChange={(value) =>
-            presenter.updatePeerAssociatesSummary(value)
-          }
-          cardRef={peerRef}
-        />
-
-        <DomainCard
-          title="Criminal Attitudes and Behavioral Patterns"
-          riskScore={criminalBehaviorLevel ?? 0}
-          summaryValue={criminalAttitudesSummary ?? null}
-          onSummaryChange={(value) =>
-            presenter.updateCriminalAttitudesSummary(value)
-          }
-          cardRef={attitudesRef}
-        />
-
-        <DomainCard
-          title="Responsivity Issues and Other Barriers"
-          riskScore={responsivityLevel ?? 0}
-          summaryValue={responsivityAndBarriersSummary ?? null}
-          onSummaryChange={(value) =>
-            presenter.updateResponsivityAndBarriersSummary(value)
-          }
-          cardRef={responsivityRef}
-        />
+        )}
       </Styled.Container>
     );
   },

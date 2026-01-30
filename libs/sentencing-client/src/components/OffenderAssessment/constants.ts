@@ -47,15 +47,3 @@ export const DOMAIN_SCORE_KEYS = [
 ] as const;
 
 export type DomainScoreKey = (typeof DOMAIN_SCORE_KEYS)[number];
-
-// Domain display names for Risk Category Summary
-export const DOMAIN_DISPLAY_NAMES: Record<DomainScoreKey, string> = {
-  criminalHistoryLevel: "Criminal History",
-  educationLevelScore: "Education/ Employment/ Financial Situations",
-  familySocialSupportLevel: "Family Social Support",
-  neighborhoodLevel: "Neighborhood Problems",
-  substanceAbuseLevel: "Substance Abuse Domain",
-  peerAssociatesLevel: "Peer Association",
-  criminalBehaviorLevel: "Criminal Attitudes and Behavioral Patterns",
-  responsivityLevel: "Responsivity Issues and Other Barriers",
-};

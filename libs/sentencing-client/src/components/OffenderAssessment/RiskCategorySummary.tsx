@@ -19,21 +19,22 @@ import React from "react";
 
 import { calculateRiskLevel, RISK_COLORS, RISK_LEVELS } from "./constants";
 import * as Styled from "./RiskCategorySummary.styles";
-
-interface DomainScore {
-  name: string;
-  score: number | null;
-}
+import { getDomainsForAssessmentType } from "./utils";
 
 interface RiskCategorySummaryProps {
-  domainScores: DomainScore[];
+  assessmentType: string | null;
+  domainScores: Record<string, number | null>; // scoreField -> score
 }
 
 type RiskLevelKey = keyof typeof RISK_LEVELS;
 
 export const RiskCategorySummary: React.FC<RiskCategorySummaryProps> = ({
+  assessmentType,
   domainScores,
 }) => {
+  // Get domains for this assessment type
+  const domains = getDomainsForAssessmentType(assessmentType);
+
   // Group domains by risk level
   const groupedDomains: Record<RiskLevelKey, string[]> = {
     HIGH: [],
@@ -41,10 +42,11 @@ export const RiskCategorySummary: React.FC<RiskCategorySummaryProps> = ({
     LOW: [],
   };
 
-  domainScores.forEach(({ name, score }) => {
+  domains.forEach((domain) => {
+    const score = domainScores[domain.scoreField];
     if (score !== null && score !== undefined) {
       const riskLevel = calculateRiskLevel(score);
-      groupedDomains[riskLevel].push(name);
+      groupedDomains[riskLevel].push(domain.title);
     }
   });
 

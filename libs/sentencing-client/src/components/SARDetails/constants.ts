@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ORASDomainKey } from "../OffenderAssessment/utils";
+
 export enum SARSection {
   CASE_INFORMATION = "Case Information",
   KEY_CONSIDERATIONS = "Key Considerations",
@@ -58,6 +60,21 @@ export const OFFENDER_ASSESSMENT_SUBSECTIONS = [
   OffenderAssessmentSubsection.CRIMINAL_ATTITUDES,
   OffenderAssessmentSubsection.RESPONSIVITY_BARRIERS,
 ] as const;
+
+// Maps sidebar subsections to domain keys for conditional rendering based on ORAS type
+export const SUBSECTION_TO_DOMAIN_KEY: Record<
+  OffenderAssessmentSubsection,
+  ORASDomainKey
+> = {
+  [OffenderAssessmentSubsection.CRIMINAL_HISTORY]: "criminalHistory",
+  [OffenderAssessmentSubsection.EDUCATION_EMPLOYMENT]: "educationEmployment",
+  [OffenderAssessmentSubsection.FAMILY_SOCIAL_SUPPORT]: "familySocialSupport",
+  [OffenderAssessmentSubsection.NEIGHBORHOOD_PROBLEMS]: "neighborhoodProblems",
+  [OffenderAssessmentSubsection.SUBSTANCE_USE]: "substanceUse",
+  [OffenderAssessmentSubsection.PEER_ASSOCIATIONS]: "peerAssociates",
+  [OffenderAssessmentSubsection.CRIMINAL_ATTITUDES]: "criminalAttitudes",
+  [OffenderAssessmentSubsection.RESPONSIVITY_BARRIERS]: "responsivity",
+};
 
 // Autosave delay for all SAR form fields
 export const SAR_AUTOSAVE_DELAY = 500; // 500ms

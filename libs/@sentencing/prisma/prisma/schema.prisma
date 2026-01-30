@@ -613,7 +613,8 @@ model SentencingAssessmentReport {
   // Free text sections
   defendantStatement            String?
   victimImpactStatement         String?
-  criminalHistorySummary        String?
+  // Default value so Criminal History section is considered complete by default
+  criminalHistorySummary        String?  @default("The defendant's complete criminal history is attached to this report.")
   employedAtOffense             Boolean?
   employmentSummary             String?
   familyAndSocialSupportSummary String?
