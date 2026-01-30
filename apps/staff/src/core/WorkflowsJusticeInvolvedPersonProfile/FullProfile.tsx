@@ -71,6 +71,7 @@ import { UsAzResidentInformation } from "./UsAz/UsAzResidentInformation";
 import { UsIdResidentInformation } from "./UsId/UsIdResidentInformation";
 import { UsMoResidentInformation } from "./UsMo/UsMoResidentInformation";
 import { UsNdResidentInformation } from "./UsNd/UsNdResidentInformation";
+import { UsUtResidentInformation } from "./UsUt/UsUtResidentInformation";
 
 const COLUMNS = "1fr 1.2fr";
 
@@ -270,6 +271,8 @@ function StateSpecificResidentInformation({
       return <UsMoResidentInformation resident={resident} />;
     case "US_ND":
       return <UsNdResidentInformation resident={resident} />;
+    case "US_UT":
+      return <UsUtResidentInformation resident={resident} />;
     default:
       return null;
   }

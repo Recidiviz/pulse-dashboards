@@ -212,4 +212,23 @@ export const locationRecordFixtures: Array<LocationRecord> = [
     id: "BLEDSOE_CC‡UNIT A",
     name: "Bledsoe County Correctional Complex/UNIT A",
   },
+
+  //
+  // Utah
+  //
+
+  {
+    stateCode: "US_UT",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "FACILITY1",
+    name: "Facility #1",
+  },
+  {
+    stateCode: "US_UT",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "FACILITY2",
+    name: "Facility #2",
+  },
 ];

@@ -15,21 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import UsUtProgramParticipation from "../ResidentDetailSidebarComponents/US_UT/UsUtProgramParticipation";
+import { Divider } from "../styles";
+import { ResidentProfileProps } from "../types";
 
-import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
+export function UsUtResidentInformation({
+  resident,
+}: ResidentProfileProps): React.ReactElement<any> | null {
+  const { stateCode } = resident;
 
-export const usUtResidentMetadataSchema = z.object({
-  stateCode: z.literal("US_UT"),
-  paroleDate: nullishAsUndefined(z.string()),
-  // TODO(#11106): remove nullish handling after data deploy catches up
-  programs: nullishAsUndefined(
-    z
-      .object({
-        completionDate: dateStringSchema,
-        program: z.string(),
-        status: z.string(),
-      })
-      .array(),
-  ),
-});
+  if (stateCode !== "US_UT") return null;
+
+  return (
+    <>
+      <Divider />
+      <UsUtProgramParticipation resident={resident} />
+    </>
+  );
+}

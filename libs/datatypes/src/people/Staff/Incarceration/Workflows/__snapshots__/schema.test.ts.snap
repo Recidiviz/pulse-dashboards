@@ -47,3 +47,27 @@ exports[`incarceration staff schema for 'US_ME' 'OFFICER5' 1`] = `
   "surname": "Gomez",
 }
 `;
+
+exports[`incarceration staff schema for 'US_UT' 'OFFICER1' 1`] = `
+{
+  "email": "ut-officer-1@example.com",
+  "givenNames": "Michael",
+  "id": "OFFICER1",
+  "pseudonymizedId": "anon_officer1",
+  "recordType": "incarcerationStaff",
+  "stateCode": "US_UT",
+  "surname": "Maxwell",
+}
+`;
+
+exports[`incarceration staff schema for 'US_UT' 'OFFICER2' 1`] = `
+{
+  "email": "ut-officer-2@example.com",
+  "givenNames": "Riley",
+  "id": "OFFICER2",
+  "pseudonymizedId": "anon_officer2",
+  "recordType": "incarcerationStaff",
+  "stateCode": "US_UT",
+  "surname": "Goodman",
+}
+`;
