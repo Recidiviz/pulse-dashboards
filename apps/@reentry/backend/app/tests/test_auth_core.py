@@ -108,10 +108,12 @@ def test_auth0_config_properties(auth0_config):
     )
 
 
-@patch("app.auth.auth_core.urlopen")
-def test_jwks_cache_fetch(mock_urlopen, auth0_config):
+@pytest.mark.asyncio
+@patch("app.auth.auth_core.httpx.AsyncClient.get")
+async def test_jwks_cache_fetch(mock_get, auth0_config):
     mock_response = MagicMock()
-    mock_response.read.return_value = json.dumps(
+    mock_response.status_code = 200
+    mock_response.text = json.dumps(
         {
             "keys": [
                 {
@@ -123,29 +125,34 @@ def test_jwks_cache_fetch(mock_urlopen, auth0_config):
                 }
             ]
         }
-    ).encode("utf-8")
-    mock_urlopen.return_value.__enter__.return_value = mock_response
+    )
+    mock_response.raise_for_status = MagicMock()
+
+    mock_get.return_value = mock_response
 
     with patch("app.auth.auth_core.PyJWKSet") as mock_jwk_set:
         mock_key = MagicMock()
         mock_key.key_id = "test-kid"
         mock_key.key = "mock-rsa-key"
 
-        mock_jwk_set.from_json.return_value = MagicMock()
-        mock_jwk_set.from_json.return_value.keys = [mock_key]
+        mock_instance = MagicMock()
+        mock_instance.keys = [mock_key]
+        mock_jwk_set.from_json.return_value = mock_instance
 
         # create a new JWKSCache instance
         jwks_cache = JWKSCache(auth0_config)
 
         # Verify that the key is fetched from the JWKS URL
-        key = jwks_cache.get_key("test-kid")
+        key = await jwks_cache.get_key("test-kid")
         assert key == "mock-rsa-key"
+        mock_get.assert_called_once_with(auth0_config.jwks_url, timeout=5)
 
 
+@pytest.mark.asyncio
 @patch("app.auth.auth_core.get_jwks_cache")
 @patch("app.auth.auth_core.jwt.decode")
 @patch("app.auth.auth_core.jwt.get_unverified_header")
-def test_validate_token_success(
+async def test_validate_token_success(
     mock_get_header,
     mock_decode,
     mock_get_jwks_cache,
@@ -158,11 +165,11 @@ def test_validate_token_success(
     mock_decode.return_value = mock_jwt_payload
 
     jwks_cache_mock = MagicMock()
-    jwks_cache_mock.get_key.return_value = "mock-key"
+    jwks_cache_mock.get_key = AsyncMock(return_value="mock-key")
     mock_get_jwks_cache.return_value = jwks_cache_mock
 
     # run validate_token
-    result = validate_token(mock_token, auth0_config)
+    result = await validate_token(mock_token, auth0_config)
 
     # call assertions
     mock_get_header.assert_called_once_with(mock_token)
@@ -178,13 +185,13 @@ def test_validate_token_success(
 
 @patch("app.auth.auth_core.get_jwks_cache")
 @patch("app.auth.auth_core.jwt.get_unverified_header")
-def test_validate_token_invalid_type(
+async def test_validate_token_invalid_type(
     mock_get_header, mock_get_jwks_cache, auth0_config, mock_token
 ):
     mock_get_header.return_value = {"typ": "Invalid", "kid": "test-kid"}
 
     with pytest.raises(HTTPException) as exec_info:
-        validate_token(mock_token, auth0_config)
+        await validate_token(mock_token, auth0_config)
 
     assert exec_info.value.status_code == 401
     assert exec_info.value.detail == "Authentication error"
@@ -192,7 +199,7 @@ def test_validate_token_invalid_type(
 
 @patch("app.auth.auth_core.get_jwks_cache")
 @patch("app.auth.auth_core.jwt.get_unverified_header")
-def test_validate_token_key_not_found(
+async def test_validate_token_key_not_found(
     mock_get_header, mock_get_jwks_cache, auth0_config, mock_token
 ):
     mock_get_header.return_value = {"typ": "JWT", "kid": "test-kid"}
@@ -202,15 +209,18 @@ def test_validate_token_key_not_found(
     mock_get_jwks_cache.return_value = jwks_cache_mock
 
     with pytest.raises(HTTPException) as excinfo:
-        validate_token(mock_token, auth0_config)
+        await validate_token(mock_token, auth0_config)
 
     assert excinfo.value.status_code == 401
     assert excinfo.value.detail == "Authentication error"
 
 
+@pytest.mark.asyncio
 @patch("app.auth.auth_core.get_jwks_cache")
 @patch("app.auth.auth_core.logger")
-def test_validate_token_expired(mock_logger, mock_get_jwks_cache, mock_expired_token):
+async def test_validate_token_expired(
+    mock_logger, mock_get_jwks_cache, mock_expired_token
+):
     # Create auth0_config that matches the test token algorithm (HS256), simplifies the test.
     auth0_config = Auth0Config(
         algorithms=["HS256"],
@@ -221,31 +231,32 @@ def test_validate_token_expired(mock_logger, mock_get_jwks_cache, mock_expired_t
 
     # Set up JWKS cache mock to return a key for decoding
     jwks_cache_mock = MagicMock()
-    jwks_cache_mock.get_key.return_value = "dummy-secret-key-for-testing"
+    jwks_cache_mock.get_key = AsyncMock(return_value="dummy-secret-key-for-testing")
     mock_get_jwks_cache.return_value = jwks_cache_mock
 
     with pytest.raises(HTTPException) as excinfo:
-        validate_token(mock_expired_token, auth0_config)
+        await validate_token(mock_expired_token, auth0_config)
 
     assert excinfo.value.status_code == 401
     assert excinfo.value.detail == "Token has expired"
 
 
+@pytest.mark.asyncio
 @patch("app.auth.auth_core.get_jwks_cache")
 @patch("app.auth.auth_core.jwt.decode")
 @patch("app.auth.auth_core.jwt.get_unverified_header")
-def test_validate_token_invalid_claims(
+async def test_validate_token_invalid_claims(
     mock_get_header, mock_decode, mock_get_jwks_cache, auth0_config, mock_token
 ):
     mock_get_header.return_value = {"typ": "JWT", "kid": "test-kid"}
     mock_decode.side_effect = jwt.InvalidAudienceError("Invalid audience")
 
     jwks_cache_mock = MagicMock()
-    jwks_cache_mock.get_key.return_value = "mock-key"
+    jwks_cache_mock.get_key = AsyncMock(return_value="mock-key")
     mock_get_jwks_cache.return_value = jwks_cache_mock
 
     with pytest.raises(HTTPException) as excinfo:
-        validate_token(mock_token, auth0_config)
+        await validate_token(mock_token, auth0_config)
 
     assert excinfo.value.status_code == 401
     assert (
@@ -501,9 +512,9 @@ async def test_get_pseudonymized_id_missing(
 
 
 @patch("app.auth.auth_core.logger")
-def test_null_token_logs_not_enough_segments_error(mock_logger, auth0_config):
+async def test_null_token_logs_not_enough_segments_error(mock_logger, auth0_config):
     with pytest.raises(HTTPException) as excinfo:
-        validate_token("null", auth0_config)
+        await validate_token("null", auth0_config)
 
     assert mock_logger.exception.call_count >= 1
     calls = [str(call) for call in mock_logger.exception.call_args_list]

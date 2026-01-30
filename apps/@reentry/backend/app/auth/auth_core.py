@@ -1,9 +1,9 @@
 import pickle
 import time
+from asyncio import Lock
 from datetime import datetime, timezone
 from functools import lru_cache
 from typing import Any, Callable, List, Optional
-from urllib.request import urlopen
 
 import httpx
 import jwt
@@ -150,34 +150,59 @@ class Auth0Config(BaseModel):
 
 
 class JWKSCache:
-    """Cache for JWKS (JSON Web Key Sets)."""
+    """Async Cache for JWKS (JSON Web Key Sets)."""
 
     def __init__(self, auth0_config: Auth0Config):
         self.auth0_config = auth0_config
         self._jwks = {}
-        self._fetch_jwks()
+        self._last_fetch = 0
+        self._lock = Lock()
+        self._ttl = 3600  # 1 hour TTL for JWKS
 
-    def _fetch_jwks(self) -> None:
-        """Fetch the JWKS from the Auth0 domain."""
-        try:
-            with urlopen(self.auth0_config.jwks_url) as json_response:
-                jwks = PyJWKSet.from_json(json_response.read())
-                self._jwks = {jwk.key_id: jwk.key for jwk in jwks.keys}
-        except Exception as e:
-            logger.error(f"Error fetching JWKS: {e}")
-            raise
+    async def _fetch_jwks(self) -> None:
+        """Async fetch the JWKS from the Auth0 domain."""
+        async with self._lock:
+            # double-check locking
+            now = time.time()
+            if (
+                now - self._last_fetch < 10
+            ):  # no need to fetch again if fetched recently
+                return
 
-    def get_key(self, key_id: str):
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(self.auth0_config.jwks_url, timeout=5)
+                    response.raise_for_status()
+                    jwks_data = PyJWKSet.from_json(response.text)
+                    self._jwks = {jwk.key_id: jwk.key for jwk in jwks_data.keys}
+                    self._last_fetch = now
+                    logger.info("JWKS Cache refreshed successfully.")
+            except Exception as e:
+                logger.error(f"Error fetching JWKS: {e}")
+                # if we have no keys at all, we must raise
+                if not self._jwks:
+                    raise
+
+    async def get_key(self, key_id: str):
         """Get the RSA public key for the given key ID."""
+        now = time.time()
 
-        if key_id not in self._jwks:
-            self._fetch_jwks()
+        # check if we need to fetch new keys
+        if key_id not in self._jwks or (now - self._last_fetch > self._ttl):
+            await self._fetch_jwks()
+
         return self._jwks.get(key_id)
 
 
+# Singleton JWKSCache instance
+_jwks_instance = None
+
+
 def get_jwks_cache(auth0_config: Auth0Config) -> JWKSCache:
-    """Get the JWKS cache for the Auth0 configuration."""
-    return JWKSCache(auth0_config)
+    global _jwks_instance
+    if _jwks_instance is None:
+        _jwks_instance = JWKSCache(auth0_config)
+    return _jwks_instance
 
 
 @lru_cache
@@ -192,7 +217,7 @@ def get_auth0_config() -> Auth0Config:
     )
 
 
-def validate_token(token: str, auth0_config: Auth0Config):
+async def validate_token(token: str, auth0_config: Auth0Config):
     """Validate the token and return the claims."""
 
     jwks_cache = get_jwks_cache(auth0_config)
@@ -207,7 +232,7 @@ def validate_token(token: str, auth0_config: Auth0Config):
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-        rsa_key = jwks_cache.get_key(unverified_header.get("kid", ""))
+        rsa_key = await jwks_cache.get_key(unverified_header.get("kid", ""))
         if not rsa_key:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -316,7 +341,7 @@ class Auth0Middleware(BaseHTTPMiddleware):
         token = auth_header.split(" ")[1]
 
         try:
-            payload = validate_token(token, self.auth0_config)
+            payload = await validate_token(token, self.auth0_config)
             # Add the user information to the request state
             request.state.user = payload
             return await call_next(request)

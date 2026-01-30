@@ -10,8 +10,8 @@ from app.core.config import settings
 from app.services.client_data.types import ClientDataRecord, FullNameModel
 from app.utils.state_code import normalize_state_code
 
-# Cache expiration time (5 minutes)
-CACHE_TTL = 300  # seconds
+# Cache expiration time (6 hours)
+CACHE_TTL = 21600  # seconds
 
 # Initialize Redis client
 redis_client = redis.from_url(settings.REDIS_URL)
