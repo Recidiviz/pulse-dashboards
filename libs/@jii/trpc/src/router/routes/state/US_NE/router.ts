@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { PrismaClient } from "~@jii/prisma";
 
+import { residentRestrictedMiddleware } from "../../../../middleware/residentRestrictedMiddleware";
 import { router } from "../../../../procedures/init";
 import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
 
@@ -55,38 +55,16 @@ export type ReentryChecklistData = Awaited<ReturnType<typeof getChecklistData>>;
 export const usNeRouter = router({
   getReentryChecklist: nebraskaProcedure
     .input(z.object({ pseudonymizedId: z.string() }))
+    .use(residentRestrictedMiddleware)
     .query(async ({ ctx, input }) => {
-      const hasPermission =
-        ctx.userProfile.pseudonymizedId === input.pseudonymizedId ||
-        ctx.userProfile.permissions?.includes("enhanced");
-
-      if (!hasPermission) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message:
-            "You do not have permission to access this resident's checklist data",
-        });
-      }
-
       return getChecklistData(ctx.prisma, input.pseudonymizedId);
     }),
 
   updateReentryChecklist: nebraskaProcedure
     .input(updateChecklistInputSchema)
+    .use(residentRestrictedMiddleware)
     .mutation(async ({ ctx, input }) => {
       const { pseudonymizedId, questions } = input;
-
-      const hasPermission =
-        ctx.userProfile.pseudonymizedId === input.pseudonymizedId ||
-        ctx.userProfile.permissions?.includes("global_write");
-
-      if (!hasPermission) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message:
-            "You do not have permission to update this resident's checklist data",
-        });
-      }
 
       const updates = Object.entries(questions).map(([questionId, value]) =>
         ctx.prisma.usNeReentryChecklistQuestion.upsert({

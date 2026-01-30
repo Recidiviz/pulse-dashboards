@@ -18,7 +18,7 @@
 import { getSheetData } from "../../../../../helpers/googleSheets";
 import { US_CO_PROGRAM_FIXTURES } from "./fixtures";
 
-export type Program = {
+export type ProgramFromSheet = {
   dateAddedOrUpdated?: Date;
   programId: string;
   category: string;
@@ -47,7 +47,7 @@ type ProgramField = (typeof PROGRAM_FIELDS)[number];
 const parseCommaSeparated = (value: string): string[] =>
   value ? value.split(",").map((s) => s.trim()) : [];
 
-const parseProgram = (row: Record<ProgramField, string>): Program => ({
+const parseProgram = (row: Record<ProgramField, string>): ProgramFromSheet => ({
   dateAddedOrUpdated: row["Date added or updated"]
     ? new Date(row["Date added or updated"])
     : undefined,
@@ -64,8 +64,10 @@ const parseProgram = (row: Record<ProgramField, string>): Program => ({
   prerequisites: row["Prerequisites"],
 });
 
-export async function getPrograms(): Promise<Program[]> {
-  if (process.env["IS_OFFLINE"]) return US_CO_PROGRAM_FIXTURES;
+export async function fetchPrograms(): Promise<ProgramFromSheet[]> {
+  if (process.env["IS_OFFLINE"]) {
+    return US_CO_PROGRAM_FIXTURES;
+  }
 
   const spreadsheetId = process.env["US_CO_PROGRAMS_SPREADSHEET_ID"];
 

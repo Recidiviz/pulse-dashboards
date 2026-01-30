@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Program } from ".";
+import type { ProgramFromSheet } from ".";
 
-export const US_CO_PROGRAM_FIXTURES: Program[] = [
+export const US_CO_PROGRAM_FIXTURES: ProgramFromSheet[] = [
   {
     dateAddedOrUpdated: new Date("2026-01-16"),
     programId: "99.0001",

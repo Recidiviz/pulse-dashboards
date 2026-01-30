@@ -19,6 +19,18 @@ model UserProperties {
 // Models intended to be state-specific follow
 ////////////////////////////////////////////////////////
 
+// US_CO (Colorado)
+
+// Tracks programs that a user has starred/favorited in Colorado
+model UsCoStarredProgram {
+    pseudonymizedId String
+    programId       String
+    title           String
+    createdAt       DateTime @default(now())
+
+    @@id([pseudonymizedId, programId, title])
+}
+
 // US_NC (North Carolina)
 
 // An instance of an RNA survey for North Carolina

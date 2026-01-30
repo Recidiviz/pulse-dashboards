@@ -17,6 +17,7 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { differenceInDays } from "date-fns";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
@@ -99,7 +100,7 @@ const CreditsText = styled.span`
 export type ProgramCardProps = {
   program: UsCoProgram;
   isStarred?: boolean;
-  onToggleStar: (programId: string) => void;
+  onToggleStar: (program: UsCoProgram) => void;
   onClick: (program: UsCoProgram) => void;
 };
 
@@ -108,9 +109,8 @@ function isNew(dateAddedOrUpdated?: Date): boolean {
   return differenceInDays(new Date(), dateAddedOrUpdated) < 90;
 }
 
-export const ProgramCard: FC<ProgramCardProps> = ({
+const ProgramCardComponent: FC<ProgramCardProps> = ({
   program,
-  isStarred = false,
   onToggleStar,
   onClick,
 }) => {
@@ -118,7 +118,7 @@ export const ProgramCard: FC<ProgramCardProps> = ({
 
   const handleStarClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onToggleStar?.(program.programId);
+    onToggleStar?.(program);
   };
 
   const showNewBadge = isNew(program.dateAddedOrUpdated);
@@ -137,7 +137,7 @@ export const ProgramCard: FC<ProgramCardProps> = ({
             />
           </Title>
           <StarButton
-            isStarred={isStarred}
+            isStarred={program.isStarred}
             onClick={handleStarClick}
             size={20}
           />
@@ -160,3 +160,5 @@ export const ProgramCard: FC<ProgramCardProps> = ({
     </CardContainer>
   );
 };
+
+export const ProgramCard = observer(ProgramCardComponent);

@@ -27,7 +27,7 @@ import {
   HomepageSectionHeading,
   PageContainer,
 } from "~@jii/common-ui";
-import { useRootStore } from "~@jii/data";
+import { useRootStore, useSingleResidentContext } from "~@jii/data";
 import { FullWidthBanner, MainContentHydrator } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsCoTranslations } from "~@jii/translation";
@@ -92,8 +92,8 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
       UsCoProgram | undefined
     >(undefined);
 
-    const handleToggleStar = (programId: string) => {
-      presenter.toggleStarred(programId);
+    const handleToggleStar = (program: UsCoProgram) => {
+      presenter.toggleStarred(program);
     };
 
     return (
@@ -145,9 +145,6 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
                   <ProgramCard
                     key={`${program.programId}-${program.title}`}
                     program={program}
-                    isStarred={presenter.starredProgramIds.has(
-                      program.programId,
-                    )}
                     onToggleStar={handleToggleStar}
                     onClick={setSelectedProgram}
                   />
@@ -161,10 +158,6 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
           program={selectedProgram}
           isOpen={!!selectedProgram}
           onClose={() => setSelectedProgram(undefined)}
-          isStarred={
-            !!selectedProgram &&
-            presenter.starredProgramIds.has(selectedProgram.programId)
-          }
           onToggleStar={handleToggleStar}
         />
       </PageContainer>
@@ -174,7 +167,8 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
 
 function usePresenter() {
   const rootStore = useRootStore();
-  return new UsCoProgramsPresenter(rootStore);
+  const { resident } = useSingleResidentContext();
+  return new UsCoProgramsPresenter(resident, rootStore.apiClient);
 }
 
 export const UsCoProgramsList = withPresenterManager({

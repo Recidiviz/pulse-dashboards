@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Modal as ModalBase, typography } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
@@ -137,15 +138,13 @@ type ProgramDetailModalProps = {
   program?: UsCoProgram;
   isOpen: boolean;
   onClose: () => void;
-  isStarred: boolean;
-  onToggleStar: (programId: string) => void;
+  onToggleStar: (program: UsCoProgram) => void;
 };
 
-export const ProgramDetailModal: FC<ProgramDetailModalProps> = ({
+const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
   program,
   isOpen,
   onClose,
-  isStarred,
   onToggleStar,
 }) => {
   const { t } = useUsCoTranslations();
@@ -169,7 +168,7 @@ export const ProgramDetailModal: FC<ProgramDetailModalProps> = ({
   }
 
   return (
-    <StyledModal isOpen={isOpen && !!program} onRequestClose={onClose}>
+    <StyledModal isOpen={isOpen} onRequestClose={onClose}>
       {program && (
         <>
           <Header>
@@ -177,18 +176,13 @@ export const ProgramDetailModal: FC<ProgramDetailModalProps> = ({
               <TitleLeft>
                 <Title>{program.title}</Title>
                 <StarButton
-                  isStarred={isStarred}
-                  onClick={() => onToggleStar(program.programId)}
+                  isStarred={program.isStarred}
+                  onClick={() => onToggleStar(program)}
                   size={20}
                 />
               </TitleLeft>
               <CloseButton type="button" onClick={onClose} aria-label="Close">
-                <Icon
-                  kind="Close"
-                  role="img"
-                  size={16}
-                  color={palette.slate85}
-                />
+                <Icon kind="Close" size={16} color={palette.slate85} />
               </CloseButton>
             </TitleRow>
             <EarnSubtitle>
@@ -251,3 +245,5 @@ export const ProgramDetailModal: FC<ProgramDetailModalProps> = ({
     </StyledModal>
   );
 };
+
+export const ProgramDetailModal = observer(ProgramDetailModalComponent);

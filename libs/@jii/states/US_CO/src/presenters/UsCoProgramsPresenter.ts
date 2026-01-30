@@ -15,22 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react";
+import { TRPCClientError } from "@trpc/client";
 import { group, rollup } from "d3-array";
 import { max, parseISO } from "date-fns";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
-import { RootStore } from "~@jii/data";
+import { DataAPI } from "~@jii/data";
+import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
+import { ResidentRecord } from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,
   HydrationState,
 } from "~hydration-utils";
 
-export type UsCoProgram = Awaited<ReturnType<typeof getProgramsQuery>>[number];
-
-function getProgramsQuery(rootStore: RootStore) {
-  return rootStore.apiClient.trpc.state.usCo.getPrograms.query();
-}
+export type UsCoProgram =
+  JiiResidentAppRouterOutputs["state"]["usCo"]["getPrograms"][number];
 
 export class UsCoProgramsPresenter implements Hydratable {
   programs?: UsCoProgram[];
@@ -40,9 +41,11 @@ export class UsCoProgramsPresenter implements Hydratable {
   selectedFacility?: string;
   showOnlyEarnCredits = false;
   showOnlyStarred = false;
-  starredProgramIds: Set<string> = new Set();
 
-  constructor(private rootStore: RootStore) {
+  constructor(
+    private readonly resident: ResidentRecord,
+    private readonly apiClient: DataAPI,
+  ) {
     makeAutoObservable(this, {}, { autoBind: true });
 
     this.hydrator = new HydratesFromSource({
@@ -51,6 +54,10 @@ export class UsCoProgramsPresenter implements Hydratable {
         await this.populatePrograms();
       },
     });
+  }
+
+  get residentId() {
+    return this.resident.pseudonymizedId;
   }
 
   private hydrator: HydratesFromSource;
@@ -64,7 +71,9 @@ export class UsCoProgramsPresenter implements Hydratable {
   }
 
   private async populatePrograms() {
-    this.programs = await getProgramsQuery(this.rootStore);
+    this.programs = await this.apiClient.trpc.state.usCo.getPrograms.query({
+      pseudonymizedId: this.residentId,
+    });
   }
 
   private expectProgramsPopulated() {
@@ -136,10 +145,7 @@ export class UsCoProgramsPresenter implements Hydratable {
       }
 
       // Starred filter
-      if (
-        this.showOnlyStarred &&
-        !this.starredProgramIds.has(program.programId)
-      ) {
+      if (this.showOnlyStarred && !program.isStarred) {
         return false;
       }
 
@@ -181,11 +187,33 @@ export class UsCoProgramsPresenter implements Hydratable {
     this.showOnlyStarred = value;
   }
 
-  toggleStarred(programId: string): void {
-    if (this.starredProgramIds.has(programId)) {
-      this.starredProgramIds.delete(programId);
-    } else {
-      this.starredProgramIds.add(programId);
+  async toggleStarred(program: UsCoProgram): Promise<void> {
+    if (!this.programs) return;
+
+    const isCurrentlyStarred = program.isStarred;
+
+    // Optimistic update - update the program directly
+    program.isStarred = !isCurrentlyStarred;
+
+    try {
+      // Persist to backend
+      await this.apiClient.trpc.state.usCo.setStarredProgram.mutate({
+        pseudonymizedId: this.residentId,
+        programId: program.programId,
+        title: program.title,
+        isStarred: !isCurrentlyStarred,
+      });
+    } catch (error) {
+      // Revert optimistic update on error
+      runInAction(() => {
+        program.isStarred = isCurrentlyStarred;
+      });
+      if (
+        !(error instanceof TRPCClientError) ||
+        error.data.code !== "FORBIDDEN"
+      ) {
+        Sentry.captureException(error);
+      }
     }
   }
 
