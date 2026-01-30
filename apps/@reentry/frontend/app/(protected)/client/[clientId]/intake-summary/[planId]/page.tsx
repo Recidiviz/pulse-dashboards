@@ -20,7 +20,6 @@
 import Markdown from "markdown-to-jsx";
 import { useParams, useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { useReactToPrint } from "react-to-print";
 
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
@@ -31,14 +30,11 @@ import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import {
   createPDFPageStyles,
   extractCompleteCSS,
-  generatePDF,
 } from "~@reentry/frontend/utils/pdfGenerator";
 import {
-  addBrowserPrintDisclosure,
   AI_DISCLOSURE_PRINT_TEXT,
   AIDisclosure,
   AIDisclosureType,
-  removeBrowserPrintDisclosure,
   showErrorToast,
   showSuccessToast,
 } from "~@reentry/frontend-shared";
@@ -53,27 +49,6 @@ const IntakeSummaryPage = () => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const reactToPrintFn = useReactToPrint({
-    contentRef,
-    pageStyle: `
-      @page {
-        margin: 20mm;
-      }
-      @media print {
-        body {
-          padding: 20px;
-        }
-      }
-    `,
-    onBeforePrint: () => {
-      track("intake_summary_printed", { justiceInvolvedPersonId: clientId });
-      addBrowserPrintDisclosure(contentRef.current);
-      return Promise.resolve();
-    },
-    onAfterPrint: () => {
-      removeBrowserPrintDisclosure();
-    },
-  });
 
   const { data: clientData } = $api.useQuery(
       "get",
@@ -155,14 +130,14 @@ const IntakeSummaryPage = () => {
     return customLinkButtonsHtmlContent;
   }
 
-  const handleDownload = async (): Promise<void> => {
-    track("intake_summary_downloaded", { justiceInvolvedPersonId: clientId });
-    setIsDownloading(true);
+  const generatePDFBlob = async (
+    addAiDisclosure = false,
+  ): Promise<Blob | null> => {
     const element = document.getElementById("contentToDownload");
     if (!element) {
-      setIsDownloading(false);
-      return;
+      return null;
     }
+
     convertButtonsToSpansPreserveText(element);
     const extractedCSSResult = extractCompleteCSS(element, {
       includeChildren: true,
@@ -174,34 +149,116 @@ const IntakeSummaryPage = () => {
       ${createPDFPageStyles(AI_DISCLOSURE_PRINT_TEXT)}
     `;
 
+    const aiDisclosureHTML = addAiDisclosure
+      ? `<div style="background-color: #F3F4F6; padding: 12px 16px; margin-bottom: 16px; border-radius: 4px;">
+           <p style="margin: 0; color: #374151; font-size: 14px; line-height: 1.5;">
+             ${AI_DISCLOSURE_PRINT_TEXT}
+           </p>
+         </div>`
+      : "";
+
     const intakeSummaryData = {
-      html: element.innerHTML,
+      html: aiDisclosureHTML + element.innerHTML,
       css: [pdfCSS],
       options: {
         printBackground: true,
       } as Record<string, unknown>,
     };
-    const fileName = `${clientFullName}_intake_summary.pdf`;
+
     let accessToken = getAccessToken();
     if (!accessToken) {
       await refreshToken();
       accessToken = getAccessToken();
     }
     if (!accessToken) {
-      setIsDownloading(false);
-      return;
+      return null;
     }
-    await generatePDF(
-      intakeSummaryData,
-      fileName,
-      accessToken,
-      () => {
-        showSuccessToast("PDF downloaded successfully");
-      },
-      (error) => {
-        showErrorToast(error);
-      },
-    );
+
+    try {
+      const response = await fetch(
+        `${process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:8000"}/api/generate-pdf`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(intakeSummaryData),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to generate PDF");
+      }
+
+      return await response.blob();
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      return null;
+    }
+  };
+
+  const handlePrint = async () => {
+    track("intake_summary_printed", { justiceInvolvedPersonId: clientId });
+
+    try {
+      const pdfBlob = await generatePDFBlob(true);
+
+      if (!pdfBlob) {
+        showErrorToast("Failed to generate PDF for printing");
+        return;
+      }
+
+      const blobUrl = URL.createObjectURL(pdfBlob);
+
+      const iframe = document.createElement("iframe");
+      iframe.style.position = "absolute";
+      iframe.style.left = "-9999px";
+      iframe.src = blobUrl;
+      document.body.appendChild(iframe);
+
+      iframe.onload = () => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+
+        setTimeout(() => {
+          iframe.remove();
+          URL.revokeObjectURL(blobUrl);
+        }, 1000);
+      };
+    } catch (error) {
+      console.error("Failed to print:", error);
+      showErrorToast("Failed to print intake summary");
+    }
+  };
+
+  const handleDownload = async (): Promise<void> => {
+    track("intake_summary_downloaded", { justiceInvolvedPersonId: clientId });
+    setIsDownloading(true);
+
+    try {
+      const pdfBlob = await generatePDFBlob();
+
+      if (!pdfBlob) {
+        showErrorToast("Failed to generate PDF");
+        setIsDownloading(false);
+        return;
+      }
+
+      const fileName = `${clientFullName}_intake_summary.pdf`;
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+
+      showSuccessToast("PDF downloaded successfully");
+    } catch {
+      showErrorToast("Failed to download PDF");
+    }
 
     setIsDownloading(false);
   };
@@ -240,7 +297,7 @@ const IntakeSummaryPage = () => {
                       />
                   ) }
 
-                <PrimaryButton buttonText="Print" onClick={reactToPrintFn} ignoreCapabilities={true} />
+                <PrimaryButton buttonText="Print" onClick={handlePrint} ignoreCapabilities={true} />
                 <PrimaryButton
                   buttonText={isDownloading ? "Downloading..." : "Download"}
                   onClick={handleDownload}
