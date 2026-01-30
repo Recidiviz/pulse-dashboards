@@ -273,7 +273,12 @@ export const fakeSAR = {
   otherMitigatingFactor: null,
   levelOfEducation: LevelOfEducation.HighSchoolDiplomaOrGED,
   assessmentScore: 7,
-  assessmentType: AssessmentType.ORAS_CST,
+  assessmentType: faker.helpers.arrayElement([
+    AssessmentType.ORAS_CST,
+    AssessmentType.ORAS_SRT,
+    AssessmentType.ORAS_PIT,
+    AssessmentType.ORAS_RT,
+  ]),
   assessmentDate: faker.date.recent(),
   assessmentAdministeredBy: faker.person.fullName(),
   criminalHistoryLevel: 3,

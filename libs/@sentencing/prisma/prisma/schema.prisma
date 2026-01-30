@@ -291,9 +291,10 @@ enum LevelOfEducation {
 }
 
 enum AssessmentType {
-  ORAS_CST
-  ORAS_PST
-  ORAS_REENTRY
+  ORAS_CST // Community Supervision Tool: clients at liberty/probation/parole OR jail < 3 months
+  ORAS_SRT // Supplemental Reentry Tool: clients in jail > 3 months OR state prison <= 4 years
+  ORAS_PIT // Prison Intake Tool: clients in prison if done in last 12 months
+  ORAS_RT  // Reentry Tool: clients in state prison > 4 years
   Other
 }
 

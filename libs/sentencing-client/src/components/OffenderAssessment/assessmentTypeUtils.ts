@@ -15,14 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  AssessmentTypeDisplayNames,
-  getAssessmentTypeDisplayName,
-} from "./assessmentTypeUtils";
-export * from "./constants";
-export { DomainCard } from "./DomainCard";
-export { OffenderAssessment } from "./OffenderAssessment";
-export { OrasAssessmentScoreCard } from "./OrasAssessmentScoreCard";
-export { OrasScoreDonut } from "./OrasScoreDonut";
-export { RiskCategorySummary } from "./RiskCategorySummary";
-export { RiskScoreChip } from "./RiskScoreChip";
+// Keys = DB values (from Prisma enum), Values = UI display names
+export const AssessmentTypeDisplayNames = {
+  ORAS_CST: "Community Supervision Tool (ORAS-CST)",
+  ORAS_SRT: "Supplemental Reentry Tool (ORAS-SRT)",
+  ORAS_PIT: "Prison Intake Tool (ORAS-PIT)",
+  ORAS_RT: "Reentry Tool (ORAS-RT)",
+  Other: "Other Assessment",
+} as const;
+
+export type AssessmentTypeKey = keyof typeof AssessmentTypeDisplayNames;
+
+export function getAssessmentTypeDisplayName(
+  dbValue: AssessmentTypeKey | null | undefined,
+): string {
+  if (!dbValue) return "Unknown";
+  return AssessmentTypeDisplayNames[dbValue];
+}

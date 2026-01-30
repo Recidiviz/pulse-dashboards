@@ -15,14 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  AssessmentTypeDisplayNames,
-  getAssessmentTypeDisplayName,
-} from "./assessmentTypeUtils";
-export * from "./constants";
-export { DomainCard } from "./DomainCard";
-export { OffenderAssessment } from "./OffenderAssessment";
-export { OrasAssessmentScoreCard } from "./OrasAssessmentScoreCard";
-export { OrasScoreDonut } from "./OrasScoreDonut";
-export { RiskCategorySummary } from "./RiskCategorySummary";
-export { RiskScoreChip } from "./RiskScoreChip";
+import styled from "styled-components";
+
+import { palette } from "~design-system";
+
+export const DonutContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const CenterText = styled.div`
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+`;
+
+export const RiskLevelLabel = styled.span`
+  color: ${palette.pine1};
+  text-align: center;
+  font-family: "Public Sans";
+  font-size: 0.919rem;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.009rem;
+`;
+
+export const ScoreText = styled.span`
+  color: ${palette.pine1};
+  font-family: "Public Sans";
+  font-size: 1.072rem;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.011rem;
+`;

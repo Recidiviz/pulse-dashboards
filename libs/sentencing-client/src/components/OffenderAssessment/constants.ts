@@ -33,22 +33,29 @@ export const RISK_COLORS = {
   LOW: "#CCF2EB", // Light teal
 };
 
-// Backend field mappings
-export const DOMAIN_SCORE_FIELDS = {
-  CRIMINAL_HISTORY: "criminalHistoryLevel",
-  EDUCATION_EMPLOYMENT: "educationLevelScore",
-  FAMILY_SOCIAL_SUPPORT: "familySocialSupportLevel",
-  NEIGHBORHOOD_PROBLEMS: "neighborhoodLevel",
-  PEER_ASSOCIATIONS: "peerAssociatesLevel",
-  CRIMINAL_ATTITUDES: "criminalBehaviorLevel",
-} as const;
+// Domain score field names used in the Risk Category Summary.
+// These keys match fields on the SAR type.
+export const DOMAIN_SCORE_KEYS = [
+  "criminalHistoryLevel",
+  "educationLevelScore",
+  "familySocialSupportLevel",
+  "neighborhoodLevel",
+  "substanceAbuseLevel",
+  "peerAssociatesLevel",
+  "criminalBehaviorLevel",
+  "responsivityLevel",
+] as const;
 
-export const DOMAIN_SUMMARY_FIELDS = {
-  CRIMINAL_HISTORY: "criminalHistorySummary",
-  EDUCATION_EMPLOYMENT: "employmentSummary",
-  FAMILY_SOCIAL_SUPPORT: "familyAndSocialSupportSummary",
-  NEIGHBORHOOD_PROBLEMS: "housingSummary",
-  PEER_ASSOCIATIONS: "peerAssociatesSummary",
-  CRIMINAL_ATTITUDES: "criminalAttitudesSummary",
-  RESPONSIVITY_BARRIERS: "responsivityAndBarriersSummary",
-} as const;
+export type DomainScoreKey = (typeof DOMAIN_SCORE_KEYS)[number];
+
+// Domain display names for Risk Category Summary
+export const DOMAIN_DISPLAY_NAMES: Record<DomainScoreKey, string> = {
+  criminalHistoryLevel: "Criminal History",
+  educationLevelScore: "Education/ Employment/ Financial Situations",
+  familySocialSupportLevel: "Family Social Support",
+  neighborhoodLevel: "Neighborhood Problems",
+  substanceAbuseLevel: "Substance Abuse Domain",
+  peerAssociatesLevel: "Peer Association",
+  criminalBehaviorLevel: "Criminal Attitudes and Behavioral Patterns",
+  responsivityLevel: "Responsivity Issues and Other Barriers",
+};

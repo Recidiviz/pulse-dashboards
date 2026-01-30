@@ -22,6 +22,7 @@ import { palette } from "~design-system";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { OffenderAssessmentSubsection } from "../SARDetails/constants";
+import { DOMAIN_DISPLAY_NAMES, DOMAIN_SCORE_KEYS } from "./constants";
 import { DomainCard } from "./DomainCard";
 import * as DomainCardStyled from "./DomainCard.styles";
 import { EmploymentHistoryCard } from "./EmploymentHistory";
@@ -31,6 +32,8 @@ import {
   TextField,
 } from "./FormComponents";
 import * as Styled from "./OffenderAssessment.styles";
+import { OrasAssessmentScoreCard } from "./OrasAssessmentScoreCard";
+import { RiskCategorySummary } from "./RiskCategorySummary";
 import { DrugHistoryCard } from "./SubstanceUse";
 
 interface OffenderAssessmentProps {
@@ -52,6 +55,10 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
 
     // Extract all data from presenter
     const {
+      assessmentScore,
+      assessmentType,
+      assessmentDate,
+      assessmentAdministeredBy,
       criminalHistoryLevel,
       criminalHistorySummary,
       educationLevelScore,
@@ -103,6 +110,20 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
 
     return (
       <Styled.Container>
+        <OrasAssessmentScoreCard
+          score={assessmentScore ?? 0}
+          assessmentType={assessmentType ?? null}
+          assessmentDate={assessmentDate ?? null}
+          administeredBy={assessmentAdministeredBy ?? null}
+        />
+
+        <RiskCategorySummary
+          domainScores={DOMAIN_SCORE_KEYS.map((field) => ({
+            name: DOMAIN_DISPLAY_NAMES[field],
+            score: presenter.SARData?.[field] ?? null,
+          }))}
+        />
+
         <Styled.DomainsTitle>Domains</Styled.DomainsTitle>
 
         <DomainCard

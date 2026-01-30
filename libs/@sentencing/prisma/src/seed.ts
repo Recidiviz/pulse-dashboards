@@ -25,6 +25,7 @@ import { getPrismaClientForStateCode } from "~@sentencing/prisma/utils";
 
 import {
   AsamLevelOfCareRecommendationCriterion,
+  AssessmentType,
   CaseStatus,
   DiagnosedSubstanceUseDisorderCriterion,
   Division,
@@ -249,7 +250,7 @@ async function addSARClientsAndReports(
   for (let i = 0; i < 5; i++) {
     const clientId = clients[i].externalId;
 
-    // Create the SAR with minimal imported data
+    // Create the SAR with imported data including ORAS assessment
     const sar = await prisma.sentencingAssessmentReport.create({
       data: {
         externalId: faker.string.uuid(),
@@ -266,6 +267,25 @@ async function addSARClientsAndReports(
         dueDate: faker.date.future(),
         division: faker.helpers.enumValue(Division),
         address: faker.location.streetAddress(),
+        // ORAS Assessment data
+        assessmentScore: faker.number.int({ min: 0, max: 9 }),
+        assessmentType: faker.helpers.arrayElement([
+          AssessmentType.ORAS_CST,
+          AssessmentType.ORAS_SRT,
+          AssessmentType.ORAS_PIT,
+          AssessmentType.ORAS_RT,
+        ]),
+        assessmentDate: faker.date.recent(),
+        assessmentAdministeredBy: faker.person.fullName(),
+        // ORAS domain scores (0-9 scale)
+        criminalHistoryLevel: faker.number.int({ min: 0, max: 9 }),
+        educationLevelScore: faker.number.int({ min: 0, max: 9 }),
+        neighborhoodLevel: faker.number.int({ min: 0, max: 9 }),
+        substanceAbuseLevel: faker.number.int({ min: 0, max: 9 }),
+        familySocialSupportLevel: faker.number.int({ min: 0, max: 9 }),
+        peerAssociatesLevel: faker.number.int({ min: 0, max: 9 }),
+        criminalBehaviorLevel: faker.number.int({ min: 0, max: 9 }),
+        responsivityLevel: faker.number.int({ min: 0, max: 9 }),
       },
     });
 
