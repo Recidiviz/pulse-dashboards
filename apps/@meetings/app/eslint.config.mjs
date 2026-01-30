@@ -41,6 +41,25 @@ export default [
     rules: {
       "tailwindcss/no-custom-classname": "off",
       "tailwindcss/classnames-order": "off", // conflicts with prettier
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "./features/*/*",
+                "!./features/*/index",
+                "../features/*/*",
+                "!../features/*/index",
+                "../../features/*/*",
+                "!../../features/*/index",
+              ],
+              message:
+                "Please import from the feature's index.ts file (e.g., '@/features/featureName' instead of '@/features/featureName/component')",
+            },
+          ],
+        },
+      ],
     },
   },
   {

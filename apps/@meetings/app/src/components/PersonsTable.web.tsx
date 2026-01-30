@@ -96,12 +96,21 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                 <TableCell>{person.displayPersonExternalId}</TableCell>
                 <TableCell>{person.primaryMetadata}</TableCell>
                 <TableCell>
-                  <Text className="font-inter text-base text-[#355362D9]">
-                    Last meeting{" "}
-                    <Text className="font-inter font-bold">
-                      {person.lastMeeting}
+                  {person.activeMeetingId ? (
+                    <View className="flex-row items-center pb-2">
+                      <Image source={Icons.Record} className="!size-4" />
+                      <Text className="px-2 font-inter text-black">
+                        In progress
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text className="font-inter text-base text-[#355362D9]">
+                      Last meeting{" "}
+                      <Text className="font-inter font-bold">
+                        {person.lastMeeting}
+                      </Text>
                     </Text>
-                  </Text>
+                  )}
                 </TableCell>
                 <TableCell>
                   <Link

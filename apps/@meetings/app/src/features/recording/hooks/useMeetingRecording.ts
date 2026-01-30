@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,60 +16,23 @@
 // =============================================================================
 
 import { useIsFocused } from "@react-navigation/native";
-import { useAudioRecorderState } from "expo-audio";
 import * as FileSystem from "expo-file-system/legacy";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Alert, Platform } from "react-native";
 
-import { RecordingStatus } from "../common/types";
-import { useRecording } from "../context/RecordingContext";
-import { trpc } from "../trpc/client";
+import { trpc } from "~@meetings/app/trpc/client";
+import { getItem, removeItem, saveItem } from "~@meetings/app/utils/storage";
+
+import { RecordingContext } from "../context";
 import { sendNotification } from "../utils/notifications";
-import { getItem, removeItem } from "../utils/storage";
-
-interface Person {
-  personId: bigint;
-  fullName: string;
-  displayPersonExternalId: string;
-  primaryMetadata: string;
-}
-
-interface UseMeetingRecordingParams {
-  person: Person;
-  meetingId: string;
-  onComplete?: () => void;
-  getNotes?: () => string | Promise<string>;
-}
-
-interface UseMeetingRecordingReturn {
-  status: RecordingStatus;
-  setStatus: (status: RecordingStatus) => void;
-  note: string;
-  setNote: (note: string) => void;
-  recorderState: ReturnType<typeof useAudioRecorderState>;
-  totalDurationMs: number;
-  actions: {
-    initializeRecording: () => Promise<void>;
-    startRecording: () => Promise<void>;
-    handleTogglePauseResume: () => Promise<void>;
-    stopRecording: () => void;
-    stopAndUploadRecording: (
-      uploadFn: (uri: string) => Promise<void>,
-    ) => Promise<void>;
-    uploadSegmentToGCS: (uri: string) => Promise<void>;
-    handleFinishAndSave: () => Promise<void>;
-    handleDiscard: () => void;
-    handleFinalDiscard: () => Promise<void>;
-    handleContinue: () => void;
-  };
-}
 
 export const useMeetingRecording = ({
-  person,
   meetingId,
   onComplete,
-  getNotes,
-}: UseMeetingRecordingParams): UseMeetingRecordingReturn => {
+}: {
+  meetingId: string;
+  onComplete?: () => void;
+}) => {
   const [totalDurationMs, setTotalDurationMs] = useState(0);
   const [accumulatedDurationMs, setAccumulatedDurationMs] = useState(0);
 
@@ -85,18 +48,18 @@ export const useMeetingRecording = ({
   const {
     status,
     setStatus,
-    recorderState,
+    isRecording,
+    durationMs,
     note,
     setNote,
-    initializeRecording,
     startRecording,
     stopRecording,
     stopAndUploadRecording,
     togglePauseResume: contextTogglePauseResume,
     cleanupRecording,
-  } = useRecording();
+  } = useContext(RecordingContext);
 
-  const prevRecorderStateRef = useRef(recorderState.isRecording);
+  const prevRecorderStateRef = useRef(isRecording);
 
   const endMeetingMutation = trpc.v1.meeting.endMeeting.useMutation({
     onSuccess: () => {
@@ -136,13 +99,12 @@ export const useMeetingRecording = ({
 
   const uploadSegmentToGCS = useCallback(
     async (uri: string) => {
-      setAccumulatedDurationMs(
-        accumulatedDurationMs + recorderState.durationMillis,
-      );
+      setAccumulatedDurationMs(accumulatedDurationMs + durationMs);
+      saveItem("durationMs", (accumulatedDurationMs + durationMs).toString());
 
       if (Platform.OS === "web") {
         const response = await fetch(uri);
-        if (!response.url) {
+        if (!response.ok) {
           console.warn("File does not exist:", uri);
           return;
         }
@@ -164,6 +126,7 @@ export const useMeetingRecording = ({
         if (Platform.OS === "web") {
           const response = await fetch(uri);
           const blob = await response.blob();
+
           await fetch(signedUrl, {
             method: "PUT",
             body: blob,
@@ -181,15 +144,12 @@ export const useMeetingRecording = ({
         throw error;
       }
     },
-    [refetch, accumulatedDurationMs, recorderState.durationMillis],
+    [refetch, accumulatedDurationMs, durationMs],
   );
 
   const resolveUserNotepadNotes = useCallback(async (): Promise<string> => {
-    if (getNotes) {
-      return getNotes();
-    }
     return (await getItem("note")) ?? "";
-  }, [getNotes]);
+  }, []);
 
   const handleTogglePauseResume = useCallback(async () => {
     await contextTogglePauseResume(uploadSegmentToGCS);
@@ -219,7 +179,7 @@ export const useMeetingRecording = ({
     setStatus("ending");
 
     try {
-      if (recorderState.isRecording) {
+      if (isRecording) {
         await stopAndUploadRecording(uploadSegmentToGCS);
       }
 
@@ -240,7 +200,7 @@ export const useMeetingRecording = ({
     }
   }, [
     setStatus,
-    recorderState.isRecording,
+    isRecording,
     stopAndUploadRecording,
     uploadSegmentToGCS,
     resolveUserNotepadNotes,
@@ -280,35 +240,31 @@ export const useMeetingRecording = ({
     //introduced to keep track of previous recorder state to prevent initial triggering of the handleAutoStopRecording function
     const prevIsRecording = prevRecorderStateRef.current;
 
-    if (
-      status === "recording" &&
-      prevIsRecording &&
-      !recorderState.isRecording
-    ) {
+    if (status === "recording" && prevIsRecording && !isRecording) {
       handleAutoStopRecording();
     }
 
-    prevRecorderStateRef.current = recorderState.isRecording;
+    prevRecorderStateRef.current = isRecording;
 
     // handleAutoStop causes infinite loop if not disabled
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, recorderState.isRecording]);
+  }, [status, isRecording]);
 
   useEffect(() => {
     if (status === "recording") {
-      setTotalDurationMs(accumulatedDurationMs + recorderState.durationMillis);
+      setTotalDurationMs(accumulatedDurationMs + durationMs);
     }
-  }, [status, recorderState.durationMillis, accumulatedDurationMs]);
+  }, [status, durationMs, accumulatedDurationMs]);
 
   return {
     status,
     setStatus,
     note,
     setNote,
-    recorderState,
+    isRecording,
+    durationMs,
     totalDurationMs,
     actions: {
-      initializeRecording,
       startRecording,
       handleTogglePauseResume,
       stopRecording,

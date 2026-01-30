@@ -9456,6 +9456,7 @@ __metadata:
     expo-status-bar: "npm:~3.0.8"
     expo-system-ui: "npm:~6.0.8"
     expo-updates: "npm:~29.0.12"
+    idb: "npm:^8.0.3"
     jest-expo: "npm:~54.0.16"
     metro-config: "npm:^0.83.3"
     metro-resolver: "npm:^0.83.3"
@@ -33583,6 +33584,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"idb@npm:^8.0.3":
+  version: 8.0.3
+  resolution: "idb@npm:8.0.3"
+  checksum: 10c0/421cd9a3281b7564528857031cc33fd9e95753f8191e483054cb25d1ceea7303a0d1462f4f69f5b41606f0f066156999e067478abf2460dfcf9cab80dae2a2b2
+  languageName: node
+  linkType: hard
+
 "identity-obj-proxy@npm:3.0.0":
   version: 3.0.0
   resolution: "identity-obj-proxy@npm:3.0.0"
@@ -47461,6 +47469,7 @@ __metadata:
     i18next-browser-languagedetector: "npm:^8.2.0"
     i18next-chained-backend: "npm:^4.6.2"
     i18next-resources-to-backend: "npm:^1.2.1"
+    idb: "npm:^8.0.3"
     inquirer: "npm:^9.1.5"
     ioredis: "npm:^5.3.2"
     ioredis-mock: "npm:^8.9.0"

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,16 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Notifications from "expo-notifications";
 
-export const saveItem = async (key: string, value: string) => {
-  await AsyncStorage.setItem(key, value);
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
+export const requestNotificationPermissions = async () => {
+  const { status } = await Notifications.requestPermissionsAsync();
+  if (status !== "granted") {
+    console.warn("Notification permission denied");
+  }
+  return status;
 };
 
-export const getItem = async (key: string) => {
-  return (await AsyncStorage.getItem(key)) || "";
-};
-
-export const removeItem = async (key: string) => {
-  await AsyncStorage.removeItem(key);
+export const sendNotification = async (title: string, body: string) => {
+  await Notifications.scheduleNotificationAsync({
+    content: { title, body },
+    trigger: null, // send immediately
+  });
 };

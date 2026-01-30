@@ -29,10 +29,9 @@ import Icons from "../../assets/icons";
 import MeetingSheet from "../components/MeetingSheet";
 import RecordingControls from "../components/RecordingControls";
 import SubHeader from "../components/SubHeader";
-import { useMeetingRecording } from "../hooks/useMeetingRecording";
+import { useMeetingRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { humanReadableTitleCase } from "../utils/format";
-import { saveItem } from "../utils/storage";
 
 type NewMeetingRouteProp = RouteProp<
   RootStackParamList,
@@ -53,13 +52,12 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const route = useRoute<NewMeetingRouteProp>();
   const meetingId = route.params?.meetingId;
 
-  const { status, note, setNote, recorderState, actions } = useMeetingRecording(
-    {
-      person,
-      meetingId,
-      onComplete: navigateToPersonProfile,
-    },
-  );
+  const { status, note, setNote, isRecording, actions } = useMeetingRecording({
+    meetingId,
+    onComplete: navigateToPersonProfile,
+  });
+
+  if (!status) return null;
 
   const {
     startRecording,
@@ -118,14 +116,11 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
         placeholder="Write your notes..."
         maxLength={100000}
         multiline
-        onEndEditing={() => {
-          saveItem("note", note);
-        }}
       />
     </View>
   );
 
-  const isMeetingActive = status !== "idle" || recorderState.isRecording;
+  const isMeetingActive = status !== "idle" || isRecording;
   return (
     <View className="flex-1 bg-white">
       <SubHeader

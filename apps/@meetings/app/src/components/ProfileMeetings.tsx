@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Link } from "@react-navigation/native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -41,7 +41,7 @@ import MeetingsCardsList from "../components/MeetingsCardsList";
 import MeetingsTable from "../components/MeetingsTable.web";
 import NewMeetingModal from "../components/NewMeetingModal";
 import SearchBar from "../components/SearchBar";
-import { useRecording } from "../context/RecordingContext";
+import { RecordingContext } from "../features/recording";
 import { humanReadableTitleCase } from "../utils/format";
 
 enum MeetingsSort {
@@ -82,7 +82,7 @@ const ProfileMeetings = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [mobileHeaderHeight, setMobileHeaderHeight] = useState(0);
-  const { status: recordingState } = useRecording();
+  const { status: recordingState } = useContext(RecordingContext);
   // const [sortBy, setSortBy] = useState<MeetingsSort>(MeetingsSort.NEWEST_FIRST);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -117,6 +117,8 @@ const ProfileMeetings = ({
 
   // Processed meetings
   const processedMeetings = useMemo(() => {
+    if (!recordingState) return [];
+
     return (
       rawMeetings?.map((m) => {
         const start = new Date(m.startTime);
@@ -289,6 +291,7 @@ const ProfileMeetings = ({
               meetings={filteredMeetings}
               person={person}
               personType={type}
+              continueMeeting={setWebMeetingId}
             />
           </View>
         </View>

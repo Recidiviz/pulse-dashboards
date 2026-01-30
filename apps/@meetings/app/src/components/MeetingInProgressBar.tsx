@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import { Person } from "../common/types";
-import { useMeetingRecording } from "../hooks/useMeetingRecording";
+import { useMeetingRecording } from "../features/recording";
 import MeetingSheet from "./MeetingSheet";
 
 type MeetingInProgressBarProps = {
@@ -52,15 +52,7 @@ const MeetingInProgressBar = ({
 }: MeetingInProgressBarProps) => {
   const isPaused = recordingState === "paused";
 
-  const normalizedPerson = {
-    ...person,
-    personId: BigInt(person.personId),
-  };
-
-  const { actions, totalDurationMs } = useMeetingRecording({
-    person: normalizedPerson,
-    meetingId,
-  });
+  const { actions, totalDurationMs } = useMeetingRecording({ meetingId });
 
   const {
     handleTogglePauseResume,

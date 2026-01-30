@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,99 +23,48 @@ import {
   useAudioRecorderState,
 } from "expo-audio";
 import * as FileSystem from "expo-file-system/legacy";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useEffect, useRef } from "react";
 import { Alert } from "react-native";
 
-import { RecordingStatus } from "../common/types";
+import { getItem, removeItem, saveItem } from "~@meetings/app/utils/storage";
+
+import { useNote } from "../hooks/useNote";
+import { useRecordingStatus } from "../hooks/useRecordingStatus";
+import { Recording, RecordingStatus } from "../types";
 import { requestNotificationPermissions } from "../utils/notifications";
 import {
-  getItem,
   getRecordingState,
   getRecordingUri,
-  removeItem,
   removeRecordingUri,
-  saveItem,
   saveRecordingUri,
   setRecordingState,
 } from "../utils/storage";
 
-interface RecordingContextType {
-  // runtimeStatus: in-memory status that updates UI
-  status: RecordingStatus;
-
-  // Updates both runtimeStatus AND persistedStatus
-  setStatus: (status: RecordingStatus) => void;
-
-  audioRecorder: ReturnType<typeof useAudioRecorder>;
-  recorderState: ReturnType<typeof useAudioRecorderState>;
-
-  note: string;
-  setNote: (note: string) => void;
-
-  startRecording: () => Promise<void>;
-  stopRecording: () => void;
-  stopAndUploadRecording: (
-    uploadFn: (uri: string) => Promise<void>,
-  ) => Promise<void>;
-
-  togglePauseResume: (
-    uploadFn: (uri: string) => Promise<void>,
-  ) => Promise<void>;
-
-  // Called when app opens or screen mounts
-  initializeRecording: () => Promise<void>;
-
-  // Cleanup everything — invoked when user discards or finishes
-  cleanupRecording: () => Promise<void>;
-}
-
 const MAX_RECORDING_SECONDS = 90 * 60; // 90 minutes
 
-const RecordingContext = createContext<RecordingContextType | undefined>(
-  undefined,
-);
+export const RecordingContext = createContext<Recording>({} as Recording);
 
-export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
+export const RecordingProvider = ({
   children,
+}: {
+  children: React.ReactNode;
 }) => {
   /**
-   * runtimeStatus = the UI state machine.
+   * status = the UI state machine.
    * This drives the active screen state.
    */
-  const [runtimeStatus, setRuntimeStatus] = useState<RecordingStatus>("idle");
-  const [note, setNote] = useState<string>("");
+  const [status, setStatus] = useRecordingStatus();
+  const [note, setNote] = useNote();
 
   const audioRecorder = useAudioRecorder(RecordingPresets["HIGH_QUALITY"]);
   const recorderState = useAudioRecorderState(audioRecorder);
-
-  // Initialize recording + restore previous state on provider mount (once per app session)
-  useEffect(() => {
-    (async () => {
-      await initializeRecording();
-      const saved = await getItem("note");
-      if (saved) {
-        setNote(saved);
-      }
-      requestNotificationPermissions();
-    })();
-  }, []);
-
-  /**
-   * setStatus()
-   * - updates REAL UI state (runtimeStatus)
-   * - persists value so app can restore after crash/restart
-   */
-  const setStatus = async (newStatus: RecordingStatus) => {
-    setRuntimeStatus(newStatus);
-    await setRecordingState(newStatus); // Persist for future sessions
-  };
 
   /**
    * initializeRecording()
    * - restores persisted state after reload
    * - validates that stored recording file still exists
    */
-  const initializeRecording = async () => {
+  const initializeRecording = useCallback(async () => {
     const permissionStatus =
       await AudioModule.requestRecordingPermissionsAsync();
     if (!permissionStatus.granted) {
@@ -148,7 +97,7 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
           );
           await setRecordingState("idle");
           await removeRecordingUri();
-          setRuntimeStatus("idle");
+          setStatus("idle");
           return;
         }
       } else {
@@ -156,14 +105,26 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
           "Persisted 'recording' state but no URI found -> reset to idle",
         );
         await setRecordingState("idle");
-        setRuntimeStatus("idle");
+        setStatus("idle");
         return;
       }
     }
 
     // Hydrate UI state from persisted status
-    setRuntimeStatus(persistedStatus as RecordingStatus);
-  };
+    setStatus(persistedStatus as RecordingStatus);
+  }, [setStatus]);
+
+  // Initialize recording + restore previous state on provider mount (once per app session)
+  const isInitialized = useRef(false);
+  useEffect(() => {
+    if (isInitialized.current) return;
+
+    (async () => {
+      await initializeRecording();
+      requestNotificationPermissions();
+    })();
+    isInitialized.current = true;
+  }, [initializeRecording]);
 
   /**
    * startRecording()
@@ -232,11 +193,11 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
   const togglePauseResume = async (
     uploadFn: (uri: string) => Promise<void>,
   ) => {
-    if (runtimeStatus === "uploading") return;
+    if (status === "uploading") return;
 
-    if (runtimeStatus === "paused") {
+    if (status === "paused") {
       await startRecording();
-    } else if (runtimeStatus === "recording") {
+    } else if (status === "recording") {
       await setStatus("uploading");
       await stopAndUploadRecording(uploadFn);
       await setStatus("paused");
@@ -271,29 +232,20 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <RecordingContext.Provider
       value={{
-        status: runtimeStatus, // exposed to UI
+        status,
         setStatus,
-        audioRecorder,
-        recorderState,
+        isRecording: recorderState.isRecording,
+        durationMs: recorderState.durationMillis,
         note,
         setNote,
         startRecording,
         stopRecording,
         stopAndUploadRecording,
         togglePauseResume,
-        initializeRecording,
         cleanupRecording,
       }}
     >
       {children}
     </RecordingContext.Provider>
   );
-};
-
-export const useRecording = () => {
-  const context = useContext(RecordingContext);
-  if (context === undefined) {
-    throw new Error("useRecording must be used within a RecordingProvider");
-  }
-  return context;
 };

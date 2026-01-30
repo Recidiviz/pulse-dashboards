@@ -21,7 +21,8 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import { Person } from "../common/types";
-import { formatDurationCompact } from "../utils/format";
+import { useMeetingRecording } from "../features/recording";
+import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
 import {
   Table,
   TableBody,
@@ -41,6 +42,10 @@ type Meeting = {
   time: string;
   duration: string | null;
   content: string;
+  status: string;
+  recordingState: string;
+  start: Date;
+  end: Date | null;
 };
 
 const PAGE_SIZE = 7;
@@ -59,9 +64,19 @@ type MeetingRowProps = {
   meeting: Meeting;
   person: Person;
   personType: "client" | "resident";
+  continueMeeting: () => void;
 };
 
-const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
+const MeetingRow = ({
+  meeting,
+  person,
+  personType,
+  continueMeeting,
+}: MeetingRowProps) => {
+  const isProcessingMeeting = meeting.status !== "NOT_STARTED";
+
+  const { totalDurationMs } = useMeetingRecording({ meetingId: meeting.id });
+
   return (
     <TableRow>
       <TableCell>{meeting.date}</TableCell>
@@ -69,7 +84,7 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
       <TableCell>
         {meeting.duration
           ? formatDurationCompact(meeting.duration)
-          : "In progress..."}
+          : formatDurationNumeric(totalDurationMs)}
       </TableCell>
       <TableCell>
         <View className="w-[150px] flex-row flex-wrap gap-1">
@@ -78,31 +93,51 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
           ))}
         </View>
       </TableCell>
+      {isProcessingMeeting ? (
+        <TableCell>
+          <Text
+            className="w-[180px] font-inter text-base text-[#355362D9]"
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
+            {meeting.content || (
+              // TODO: adding note under discussion with design team
+              <TouchableOpacity className="rounded-full px-2.5 py-1.5 font-inter text-[#006C67] hover:bg-[#4D5255] hover:text-white">
+                <Text className="font-inter">+ Add note</Text>
+              </TouchableOpacity>
+            )}
+          </Text>
+        </TableCell>
+      ) : (
+        <TableCell>
+          <View className="flex-row items-center pb-2">
+            <Image source={Icons.Record} className="!size-4" />
+            <Text className="px-2 font-inter text-black">In progress</Text>
+          </View>
+        </TableCell>
+      )}
       <TableCell>
-        <Text
-          className="w-[180px] font-inter text-base text-[#355362D9]"
-          numberOfLines={2}
-          ellipsizeMode="tail"
-        >
-          {meeting.content || (
-            // TODO: adding note under discussion with design team
-            <TouchableOpacity className="rounded-full px-2.5 py-1.5 font-inter text-[#006C67] hover:bg-[#4D5255] hover:text-white">
-              <Text className="font-inter">+ Add note</Text>
-            </TouchableOpacity>
-          )}
-        </Text>
-      </TableCell>
-      <TableCell>
-        <Link
-          screen={personType === "client" ? "ClientMeeting" : "ResidentMeeting"}
-          params={{
-            meetingId: meeting.id,
-            personId: person.personId.toString(),
-          }}
-          className="invisible size-5 items-center justify-center group-hover:visible"
-        >
-          <Image source={Icons.ArrowRight} className="!size-full" />
-        </Link>
+        {isProcessingMeeting ? (
+          <Link
+            screen={
+              personType === "client" ? "ClientMeeting" : "ResidentMeeting"
+            }
+            params={{
+              meetingId: meeting.id,
+              personId: person.personId.toString(),
+            }}
+            className="invisible size-5 items-center justify-center group-hover:visible"
+          >
+            <Image source={Icons.ArrowRight} className="!size-full" />
+          </Link>
+        ) : (
+          <TouchableOpacity
+            className="invisible size-5 items-center justify-center group-hover:visible"
+            onPress={continueMeeting}
+          >
+            <Image source={Icons.ArrowRight} className="!size-full" />
+          </TouchableOpacity>
+        )}
       </TableCell>
     </TableRow>
   );
@@ -112,12 +147,14 @@ type MeetingsTableProps = {
   meetings: Meeting[];
   person: Person;
   personType: "client" | "resident";
+  continueMeeting: (meetingId: string) => void;
 };
 
 const MeetingsTable = ({
   meetings,
   person,
   personType,
+  continueMeeting,
 }: MeetingsTableProps) => {
   const [page, setPage] = React.useState(1);
 
@@ -142,6 +179,7 @@ const MeetingsTable = ({
               meeting={meeting}
               person={person}
               personType={personType}
+              continueMeeting={() => continueMeeting(meeting.id)}
             />
           ))}
       </TableBody>

@@ -71,7 +71,7 @@ const PersonsMobileList = ({
           person={item}
           recordingState={recordingState}
           navigation={navigation}
-          type={keyword.toLowerCase() as "clients" | "residents"}
+          type={keyword === "Client" ? "clients" : "residents"}
         />
       )}
       initialNumToRender={10}

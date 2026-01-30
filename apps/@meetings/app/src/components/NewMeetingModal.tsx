@@ -20,7 +20,7 @@ import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import { Person, RecordingStatus } from "../common/types";
-import { useMeetingRecording } from "../hooks/useMeetingRecording";
+import { useMeetingRecording } from "../features/recording";
 import { formatDurationNumeric } from "../utils/format";
 import Modal from "./Modal";
 
@@ -49,12 +49,13 @@ const NewMeetingModal = ({
   onClose,
   person,
 }: NewMeetingModalProps) => {
-  const { status, note, setNote, recorderState, totalDurationMs, actions } =
+  const { status, note, setNote, isRecording, totalDurationMs, actions } =
     useMeetingRecording({
-      person,
       meetingId,
       onComplete: onClose,
     });
+
+  if (!status) return null;
 
   const {
     startRecording,
@@ -66,7 +67,7 @@ const NewMeetingModal = ({
     handleContinue,
   } = actions;
 
-  const isMeetingActive = status !== "idle" || recorderState.isRecording;
+  const isMeetingActive = status !== "idle" || isRecording;
 
   return (
     <Modal
