@@ -19,7 +19,7 @@ import type { TRPCClient } from "@trpc/client";
 import { makeObservable, when } from "mobx";
 import { ILazyObservable, lazyObservable } from "mobx-utils";
 
-import type { JiiAppRouter } from "~@jii/trpc-types";
+import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentOpportunitySchemas } from "../../configs/residentsOpportunitySchemas";
@@ -37,7 +37,7 @@ import { createTrpcClientForApi } from "./trpcMixin";
 export class ApiClient implements DataAPI {
   private firestoreClient: FirestoreAPIClient;
 
-  readonly trpc: TRPCClient<JiiAppRouter>;
+  readonly trpc: TRPCClient<JiiResidentAppRouter>;
 
   private authentication: ILazyObservable<boolean>;
 

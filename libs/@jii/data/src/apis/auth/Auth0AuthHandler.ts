@@ -24,7 +24,7 @@ import {
   getAuth0Config,
   metadataNamespace,
 } from "~@jii/auth";
-import type { JiiAppRouter } from "~@jii/trpc-types";
+import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import { AuthClient } from "~auth";
 import {
   castToError,
@@ -107,7 +107,7 @@ export class Auth0AuthHandler implements AuthHandler {
 
   private async exchangeAuth0Token() {
     // this client can only call the auth0 flow endpoint(s) with this configuration
-    const client = createTRPCClient<JiiAppRouter>({
+    const client = createTRPCClient<JiiResidentAppRouter>({
       links: [
         httpLink({
           url: JII_TRPC_BACKEND_PATH,

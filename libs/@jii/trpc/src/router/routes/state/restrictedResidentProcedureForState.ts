@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TRPCError } from "@trpc/server";
-
+import { validateStateContext } from "../../../auth/validateStateContext";
 import { firebaseAuthedResidentProcedure } from "../../../procedures/firebaseAuthedResidentProcedure";
 
 /*
@@ -24,14 +23,10 @@ import { firebaseAuthedResidentProcedure } from "../../../procedures/firebaseAut
  * We've already checked that the user is allowed to access ctx.stateCode
  * in validateAuthPayload().
  */
-export const restrictedProcedureForState = (expectedStateCode: string) =>
+export const restrictedResidentProcedureForState = (
+  expectedStateCode: string,
+) =>
   firebaseAuthedResidentProcedure.use(async ({ ctx, next }) => {
-    if (ctx.stateCode !== expectedStateCode) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: `This endpoint is for ${expectedStateCode} but request was made for ${ctx.stateCode}`,
-      });
-    }
-
+    validateStateContext(expectedStateCode, ctx);
     return next({ ctx });
   });

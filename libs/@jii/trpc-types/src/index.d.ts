@@ -21,9 +21,23 @@ import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 // intended use of TRPC to share from server to client
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import type { AppRouter } from "~@jii/trpc";
+import { appRouter } from "~@jii/trpc";
 
-export type JiiAppRouter = AppRouter;
+type RequiredTRPCInternals = "_def" | "createCaller";
 
-export type JiiAppRouterOutputs = inferRouterOutputs<AppRouter>;
-export type JiiAppRouterInputs = inferRouterInputs<AppRouter>;
+type AppRouter = typeof appRouter;
+export type JiiResidentAppRouter = Pick<
+  AppRouter,
+  "auth" | "state" | "user" | RequiredTRPCInternals
+>;
+export type JiiResidentAppRouterOutputs =
+  inferRouterOutputs<JiiResidentAppRouter>;
+export type JiiResidentAppRouterInputs =
+  inferRouterInputs<JiiResidentAppRouter>;
+
+export type JiiStaffAppRouter = Pick<
+  AppRouter,
+  "staff" | RequiredTRPCInternals
+>;
+export type JiiStaffAppRouterOutputs = inferRouterOutputs<JiiStaffAppRouter>;
+export type JiiStaffAppRouterInputs = inferRouterInputs<JiiStaffAppRouter>;

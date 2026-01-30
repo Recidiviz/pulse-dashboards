@@ -18,6 +18,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { PrismaClient } from "~@jii/prisma";
+
 import { TRPCFastifyRequest } from "../context";
 import { baseProcedure } from "./init";
 import { checkStatePermissions } from "./utils/checkStatePermissions";
@@ -96,6 +98,13 @@ async function validateAuthPayload(
   return { userId, userProfile };
 }
 
+export type AuthorizedStaffUserContext = {
+  userId: string;
+  userProfile: AuthorizedStaffAppUserProfile;
+  stateCode: string;
+  prisma: PrismaClient;
+};
+
 export const firebaseAuthedStaffProcedure = baseProcedure.use(
   async ({ ctx: { req }, type, next }) => {
     const { stateCode, isDemoRequest } = validateCRUDHeaders(req);
@@ -107,6 +116,8 @@ export const firebaseAuthedStaffProcedure = baseProcedure.use(
     );
     const prisma = getDatabaseConnection(stateCode, isDemoRequest);
 
-    return next({ ctx: { userId, userProfile, prisma } });
+    return next<AuthorizedStaffUserContext>({
+      ctx: { userId, userProfile, stateCode, prisma },
+    });
   },
 );

@@ -15,12 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../../procedures/init";
-import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
-import { getPrograms } from "./getPrograms";
+import { validateStateContext } from "../auth/validateStateContext";
+import { firebaseAuthedStaffProcedure } from "./firebaseAuthedStaffProcedure";
 
-const coloradoProcedure = restrictedResidentProcedureForState("US_CO");
-
-export const usCoRouter = router({
-  getPrograms: coloradoProcedure.query(getPrograms),
-});
+/*
+ * Creates and a procedure for staff-accessible endpoints that is restricted to a specific state.
+ * We've already checked that the user is allowed to access ctx.stateCode in the base procedure.
+ */
+export const stateRestrictedStaffProcedureFactory = (
+  expectedStateCode: string,
+) =>
+  firebaseAuthedStaffProcedure.use(async ({ ctx, next }) => {
+    validateStateContext(expectedStateCode, ctx);
+    return next({ ctx });
+  });

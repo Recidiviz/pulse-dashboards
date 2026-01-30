@@ -21,7 +21,7 @@ import { addDays, addMonths, addYears, isBefore, min } from "date-fns";
 import { flowResult, makeAutoObservable } from "mobx";
 
 import { DataAPI } from "~@jii/data";
-import type { JiiAppRouterOutputs } from "~@jii/trpc-types";
+import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { ResidentRecord } from "~datatypes";
 import {
   Hydratable,
@@ -32,7 +32,7 @@ import {
 import { UsNeCopy } from "../../configs/copy";
 
 type ReentryChecklistData =
-  JiiAppRouterOutputs["state"]["usNe"]["getReentryChecklist"];
+  JiiResidentAppRouterOutputs["state"]["usNe"]["getReentryChecklist"];
 export type ChecklistState = ReentryChecklistData["questions"];
 
 export class UsNeReentryChecklistPresenter implements Hydratable {

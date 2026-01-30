@@ -17,10 +17,10 @@
 
 import { userId } from "../../test/context";
 import { testPrismaClient } from "../../test/prisma";
-import type { AuthorizedUserContext } from "../firebaseAuthedResidentProcedure";
+import type { AuthorizedResidentUserContext } from "../firebaseAuthedResidentProcedure";
 import { baseProcedure } from "../init";
 
-// the real procedure depends on third party services such as Firestore
+// the real procedure depends on third party services such as Firebase
 // to create a context for authorized users; this just mocks that result
 // for a standardized test user
 export const firebaseAuthedResidentProcedure = baseProcedure.use((opts) => {
@@ -32,6 +32,6 @@ export const firebaseAuthedResidentProcedure = baseProcedure.use((opts) => {
       },
       stateCode: "US_XX",
       prisma: testPrismaClient,
-    } satisfies AuthorizedUserContext,
+    } satisfies AuthorizedResidentUserContext,
   });
 });

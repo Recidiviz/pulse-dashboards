@@ -25,10 +25,10 @@ import {
 import { Prisma } from "~@jii/prisma";
 
 import { router } from "../../../../procedures/init";
-import { restrictedProcedureForState } from "../restrictedProcedureForState";
+import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
 import { getRNAInputSchema, updateRNASchema } from "./rna.schema";
 
-const ncProcedure = restrictedProcedureForState("US_NC");
+const ncProcedure = restrictedResidentProcedureForState("US_NC");
 
 export const usNcRouter = router({
   // Given a resident's pseudonymized ID, return the latest RNA object

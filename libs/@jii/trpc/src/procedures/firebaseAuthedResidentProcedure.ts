@@ -57,7 +57,7 @@ function getDatabaseConnectionForPermissions(
   return getDatabaseConnection(stateCode, useDemoDb);
 }
 
-export type AuthorizedUserContext = {
+export type AuthorizedResidentUserContext = {
   userId: string;
   userProfile: AuthorizedUserProfile;
   stateCode: string;
@@ -80,7 +80,7 @@ export const firebaseAuthedResidentProcedure = baseProcedure.use(
       userProfile.permissions,
     );
 
-    return next<AuthorizedUserContext>({
+    return next<AuthorizedResidentUserContext>({
       ctx: {
         userId,
         userProfile,

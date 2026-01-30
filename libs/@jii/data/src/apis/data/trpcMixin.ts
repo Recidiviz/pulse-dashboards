@@ -19,7 +19,7 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { when } from "mobx";
 import superjson from "superjson";
 
-import type { JiiAppRouter } from "~@jii/trpc-types";
+import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import { isDemoMode } from "~client-env-utils";
 
 import { stateCodeFromCurrentUrl } from "../../utils/stateCodeFromCurrentUrl";
@@ -30,7 +30,7 @@ import { DataAPI } from "./interface";
 const UseDemoData = `${isDemoMode()}`;
 
 export function createTrpcClientForApi(apiClient: DataAPI) {
-  return createTRPCClient<JiiAppRouter>({
+  return createTRPCClient<JiiResidentAppRouter>({
     links: [
       httpBatchLink({
         url: JII_TRPC_BACKEND_PATH,

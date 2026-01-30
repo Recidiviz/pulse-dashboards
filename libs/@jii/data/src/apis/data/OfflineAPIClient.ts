@@ -19,7 +19,7 @@ import type { TRPCClient } from "@trpc/client";
 import assertNever from "assert-never";
 import isMatch from "lodash/isMatch";
 
-import type { JiiAppRouter } from "~@jii/trpc-types";
+import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import {
   outputFixture,
   usMeSccpFixtures,
@@ -42,7 +42,7 @@ export class OfflineAPIClient implements DataAPI {
 
   isAuthenticated = true;
 
-  readonly trpc: TRPCClient<JiiAppRouter>;
+  readonly trpc: TRPCClient<JiiResidentAppRouter>;
 
   constructor(private externals: { authManager: AuthManager }) {
     this.firestoreClient = new FirestoreOfflineAPIClient();

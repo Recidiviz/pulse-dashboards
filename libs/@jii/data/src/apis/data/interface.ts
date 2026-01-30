@@ -17,7 +17,7 @@
 
 import type { TRPCClient } from "@trpc/client";
 
-import type { JiiAppRouter } from "~@jii/trpc-types";
+import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 
@@ -78,5 +78,5 @@ export interface DataAPI {
   locations(stateCode: StateCode): Promise<Array<LocationRecord>>;
   isAuthenticated: boolean;
   getApiToken(): Promise<string>;
-  readonly trpc: TRPCClient<JiiAppRouter>;
+  readonly trpc: TRPCClient<JiiResidentAppRouter>;
 }

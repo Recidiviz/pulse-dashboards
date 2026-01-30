@@ -15,12 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../../procedures/init";
-import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
-import { getPrograms } from "./getPrograms";
+import { TRPCError } from "@trpc/server";
 
-const coloradoProcedure = restrictedResidentProcedureForState("US_CO");
-
-export const usCoRouter = router({
-  getPrograms: coloradoProcedure.query(getPrograms),
-});
+export function validateStateContext(
+  expectedStateCode: string,
+  ctx: { stateCode: string },
+) {
+  if (ctx.stateCode !== expectedStateCode) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `This endpoint is for ${expectedStateCode} but request was made for ${ctx.stateCode}`,
+    });
+  }
+}

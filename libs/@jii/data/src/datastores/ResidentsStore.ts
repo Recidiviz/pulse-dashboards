@@ -21,7 +21,7 @@ import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
 import { makeAutoObservable, runInAction, set } from "mobx";
 
-import type { JiiAppRouterOutputs } from "~@jii/trpc-types";
+import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
@@ -40,7 +40,8 @@ type OpportunityRecordMapping = {
   [O in IncarcerationOpportunityId]?: OpportunityRecord<O>;
 };
 
-export type StateUserProperties = JiiAppRouterOutputs["user"]["getProperties"];
+export type StateUserProperties =
+  JiiResidentAppRouterOutputs["user"]["getProperties"];
 
 // these are legacy keys from when properties were kept in local storage.
 // we still support them but only to incrementally migrate them to the backend

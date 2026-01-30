@@ -21,9 +21,9 @@ import { z } from "zod";
 import { PrismaClient } from "~@jii/prisma";
 
 import { router } from "../../../../procedures/init";
-import { restrictedProcedureForState } from "../restrictedProcedureForState";
+import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
 
-const nebraskaProcedure = restrictedProcedureForState("US_NE");
+const nebraskaProcedure = restrictedResidentProcedureForState("US_NE");
 
 async function getChecklistData(prisma: PrismaClient, pseudonymizedId: string) {
   const records = await prisma.usNeReentryChecklistQuestion.findMany({

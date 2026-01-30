@@ -17,6 +17,7 @@
 
 import { router } from "../procedures/init";
 import { authRouter } from "./routes/auth/router";
+import { staffRouter } from "./routes/staff/router";
 import { stateRouter } from "./routes/state/router";
 import { userRouter } from "./routes/user/router";
 
@@ -24,7 +25,5 @@ export const appRouter = router({
   auth: authRouter,
   state: stateRouter,
   user: userRouter,
+  staff: staffRouter,
 });
-
-// clients will need the router's type definition only
-export type AppRouter = typeof appRouter;

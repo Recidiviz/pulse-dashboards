@@ -15,12 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../../procedures/init";
-import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
-import { getPrograms } from "./getPrograms";
+import { router } from "../../../procedures/init";
+import { usNcStaffRouter } from "./states/US_NC/router";
 
-const coloradoProcedure = restrictedResidentProcedureForState("US_CO");
-
-export const usCoRouter = router({
-  getPrograms: coloradoProcedure.query(getPrograms),
+export const staffRouter = router({
+  usNc: usNcStaffRouter,
 });
