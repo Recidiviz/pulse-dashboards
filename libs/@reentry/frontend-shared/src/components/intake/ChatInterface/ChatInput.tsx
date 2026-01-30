@@ -39,8 +39,14 @@ type UIRecordingStatus =
   | "error"
   | "processing";
 
-const ChatInput = ({ clientPseudoId, alreadyHasMessages }: { clientPseudoId?: string | null, alreadyHasMessages?: boolean }) => {
-  const { analytics } = useApplicationContext()
+const ChatInput = ({
+  clientPseudoId,
+  alreadyHasMessages,
+}: {
+  clientPseudoId?: string | null;
+  alreadyHasMessages?: boolean;
+}) => {
+  const { analytics } = useApplicationContext();
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -62,7 +68,7 @@ const ChatInput = ({ clientPseudoId, alreadyHasMessages }: { clientPseudoId?: st
       intakeStatus,
       currentSection,
     },
-    
+
     intakeDispatchContext: { sendMessage },
   } = useSocket();
 
@@ -103,7 +109,7 @@ const ChatInput = ({ clientPseudoId, alreadyHasMessages }: { clientPseudoId?: st
   };
 
   const isInputDisabled =
-    (intakeStatus !== "in_progress"  && intakeStatus !== "created") ||
+    (intakeStatus !== "in_progress" && intakeStatus !== "created") ||
     waitingForAIInput ||
     connectionStatus !== "connected" ||
     currentSection === "Completion" ||
@@ -333,7 +339,7 @@ const ChatInput = ({ clientPseudoId, alreadyHasMessages }: { clientPseudoId?: st
               />
             </div>
           </div>
-          <div>
+          <div className="flex items-center">
             <IconButton
               onClick={onSend}
               disabled={
@@ -342,7 +348,7 @@ const ChatInput = ({ clientPseudoId, alreadyHasMessages }: { clientPseudoId?: st
                 isRecording ||
                 recordingStatus === "processing"
               }
-              className={`absolute right-1 border-none bg-transparent transition-opacity duration-300 ${
+              className={`border-none bg-transparent transition-opacity duration-300 ${
                 isRecording || recordingStatus === "processing"
                   ? "opacity-0 pointer-events-none"
                   : "opacity-100"
@@ -364,7 +370,7 @@ const ChatInput = ({ clientPseudoId, alreadyHasMessages }: { clientPseudoId?: st
                 !isRecordingSupported ||
                 recordingStatus === "processing"
               }
-              className={`absolute right-3 border-none transition-all duration-300 ${
+              className={`border-none transition-all duration-300 ${
                 isRecording
                   ? "!bg-green-100 hover:!bg-green-300"
                   : "bg-transparent"
