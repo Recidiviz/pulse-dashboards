@@ -157,6 +157,10 @@ export const fullRNASpec: RNAPageSpec[] = [
   },
 ];
 
+export const allRNAQuestions: RNAQuestionId[] = fullRNASpec.flatMap(
+  (pageSpec) => pageSpec.questions,
+);
+
 // RNA questions have different formats. These correspond to different answer types,
 // which are stored in the database differently.
 
@@ -179,7 +183,6 @@ type RNAQuestionFormat =
 export type RNAQuestionId = keyof typeof rnaQuestionConfig;
 
 export type RNAQuestionConfig = {
-  questionNumber: number; // TODO: remove this and just count questions as they appear
   format: RNAQuestionFormat;
   optional?: boolean;
 };
@@ -188,310 +191,238 @@ export const rnaQuestionConfig = {
   // Page 1 of the paper form
 
   needsWorkSchoolSatisfied: {
-    questionNumber: 1,
     format: "FREQUENCY",
   },
   needsHasJobSkills: {
-    questionNumber: 2,
     format: "FREQUENCY",
   },
   needsImproveJobSchool: {
-    questionNumber: 3,
     format: "FREQUENCY",
   },
   needsRanOutOfMoney: {
-    questionNumber: 4,
     format: "FREQUENCY",
   },
   needsStruggledWithBills: {
-    questionNumber: 5,
     format: "FREQUENCY",
   },
   needsReliedOnOthersForMoney: {
-    questionNumber: 6,
     format: "FREQUENCY",
   },
   needsHasPermanentHousing: {
-    questionNumber: 7,
     format: "FREQUENCY",
   },
   needsSpecialEducation: {
-    questionNumber: 8,
     format: "FREQUENCY",
   },
   needsReadingDifficulty: {
-    questionNumber: 9,
     format: "FREQUENCY",
   },
   needsCalculatingChange: {
-    questionNumber: 10,
     format: "FREQUENCY",
   },
   needsMedicalPaymentHardship: {
-    questionNumber: 11,
     format: "FREQUENCY",
   },
 
   // Page 2 of the paper form
 
   alcoholDrugsDaysOfUse: {
-    questionNumber: 12,
     format: "DAYS_PER_WEEK_RADIO",
   },
   alcoholDrugsMoreThan5Drinks: {
-    questionNumber: 13,
     format: "DAYS_PER_WEEK_ENTRY",
   },
   alcoholDrugsTimeOfOffense: {
-    questionNumber: 14,
     format: "SOBRIETY",
   },
   alcoholDrugsArguments: {
-    questionNumber: 15,
     format: "FREQUENCY",
   },
   alcoholDrugsHungOver: {
-    questionNumber: 16,
     format: "FREQUENCY",
   },
   alcoholDrugsTrouble: {
-    questionNumber: 17,
     format: "FREQUENCY",
   },
   alcoholDrugsStopping: {
-    questionNumber: 18,
     format: "FREQUENCY",
   },
 
   // Page 3 of the paper form
 
   childhoodSkippingSchool: {
-    questionNumber: 19,
     format: "YES_NO",
   },
   childhoodRunningAway: {
-    questionNumber: 20,
     format: "YES_NO",
   },
   childhoodFighting: {
-    questionNumber: 21,
     format: "YES_NO",
   },
   childhoodHavingWeapons: {
-    questionNumber: 22,
     format: "YES_NO",
   },
   childhoodForcingSexualActivities: {
-    questionNumber: 23,
     format: "YES_NO",
   },
   childhoodHurtingAnimalsOrPeople: {
-    questionNumber: 24,
     format: "YES_NO",
   },
   childhoodTearingProperty: {
-    questionNumber: 25,
     format: "YES_NO",
   },
   childhoodStartingFires: {
-    questionNumber: 26,
     format: "YES_NO",
   },
   childhoodLying: {
-    questionNumber: 27,
     format: "YES_NO",
   },
   childhoodStealing: {
-    questionNumber: 28,
     format: "YES_NO",
   },
 
   familyLawTrouble: {
-    questionNumber: 29,
     format: "FREQUENCY",
   },
   familyFights: {
-    questionNumber: 30,
     format: "FREQUENCY",
   },
   familyProblemSolving: {
-    questionNumber: 31,
     format: "FREQUENCY",
   },
   familyPunished: {
-    questionNumber: 32,
     format: "FREQUENCY",
   },
   familyNoRules: {
-    questionNumber: 33,
     format: "FREQUENCY",
   },
   familyAnythingGoes: {
-    questionNumber: 34,
     format: "FREQUENCY",
   },
 
   // Page 4 of the paper form
 
   familyHappy: {
-    questionNumber: 35,
     format: "FREQUENCY",
   },
   familyUnderstands: {
-    questionNumber: 36,
     format: "FREQUENCY",
   },
 
   behaviorCantStop: {
-    questionNumber: 37,
     format: "FREQUENCY",
   },
   behaviorImpulsive: {
-    questionNumber: 38,
     format: "FREQUENCY",
   },
   behaviorTryGetInTrouble: {
-    questionNumber: 39,
     format: "FREQUENCY",
   },
   behaviorAngry: {
-    questionNumber: 40,
     format: "FREQUENCY",
   },
   behaviorStayOutOfTrouble: {
-    questionNumber: 41,
     format: "FREQUENCY",
   },
   behaviorThinkBeforeActing: {
-    questionNumber: 42,
     format: "FREQUENCY",
   },
   behaviorLoseTemper: {
-    questionNumber: 43,
     format: "FREQUENCY",
   },
   behaviorApologize: {
-    questionNumber: 44,
     format: "FREQUENCY",
   },
   behaviorBlurt: {
-    questionNumber: 45,
     format: "FREQUENCY",
   },
 
   // Page 5 of the paper form
 
   behaviorWorldOwesBetter: {
-    questionNumber: 46,
     format: "FREQUENCY",
   },
   behaviorGetEven: {
-    questionNumber: 47,
     format: "FREQUENCY",
   },
   behaviorBadLuck: {
-    questionNumber: 48,
     format: "FREQUENCY",
   },
   behaviorAffectOthers: {
-    questionNumber: 49,
     format: "FREQUENCY",
   },
   behaviorControlSpeech: {
-    questionNumber: 50,
     format: "FREQUENCY",
   },
   behaviorNotPlanned: {
-    questionNumber: 51,
     format: "FREQUENCY",
   },
   behaviorLawbreaking: {
-    questionNumber: 52,
     format: "FREQUENCY",
   },
 
   // Page 6 of the paper form
   friendsJusticeInvolved: {
-    questionNumber: 53,
     format: "RATIO",
   },
   friendsGangMembers: {
-    questionNumber: 54,
     format: "RATIO",
   },
   friendsCommittedCrime: {
-    questionNumber: 55,
     format: "RATIO",
   },
   friendsDrugs: {
-    questionNumber: 56,
     format: "RATIO",
   },
   friendsOrganizations: {
-    questionNumber: 57,
     format: "RATIO",
   },
   friendsClose: {
-    questionNumber: 58,
     format: "RATIO",
   },
 
   // Life Areas / Self-Assessment Survey (part 2 of the paper form)
 
   lifeAreaBehavior: {
-    questionNumber: 59,
     format: "LIFE_AREA",
   },
   lifeAreaEmployability: {
-    questionNumber: 60,
     format: "LIFE_AREA",
   },
   lifeAreaAlcoholDrugs: {
-    questionNumber: 61,
     format: "LIFE_AREA",
   },
   lifeAreaEducation: {
-    questionNumber: 62,
     format: "LIFE_AREA",
   },
   lifeAreaEmployment: {
-    questionNumber: 63,
     format: "LIFE_AREA",
   },
   lifeAreaFamilyFriends: {
-    questionNumber: 64,
     format: "LIFE_AREA",
   },
   lifeAreaLifeSkills: {
-    questionNumber: 65,
     format: "LIFE_AREA",
   },
   lifeAreaPhysicalMedical: {
-    questionNumber: 66,
     format: "LIFE_AREA",
   },
   lifeAreaMentalHealth: {
-    questionNumber: 67,
     format: "LIFE_AREA",
   },
   lifeAreaFinancial: {
-    questionNumber: 68,
     format: "LIFE_AREA",
   },
   lifeAreaHousing: {
-    questionNumber: 69,
     format: "LIFE_AREA",
   },
   lifeAreaTransportation: {
-    questionNumber: 70,
     format: "LIFE_AREA",
   },
   lifeAreaLegalStatus: {
-    questionNumber: 71,
     format: "LIFE_AREA",
   },
   lifeAreaCustom: {
-    questionNumber: 72,
     format: "LIFE_AREA",
     optional: true,
   },

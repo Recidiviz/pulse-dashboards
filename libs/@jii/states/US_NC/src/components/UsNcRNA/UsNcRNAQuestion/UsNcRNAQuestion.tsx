@@ -18,7 +18,7 @@
 import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 
-import type { RNAQuestionConfig, RNAQuestionId } from "~@jii/configs";
+import { type RNAQuestionConfig, type RNAQuestionId } from "~@jii/configs";
 import { Icon } from "~design-system";
 
 import { InvalidAnswerNotice, QuestionCard } from "../styles";
@@ -31,6 +31,7 @@ import { UsNcRNASobrietyQuestion } from "./UsNcRNASobrietyQuestion";
 
 export interface RNAQuestionProps extends RNAQuestionCopy, RNAQuestionConfig {
   id: RNAQuestionId;
+  questionNumber: number;
   presenter: UsNcRNAFormPagePresenter;
 }
 

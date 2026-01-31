@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Card, NotFound, usePageTitle } from "~@jii/common-ui";
-import { fullRNASpec, rnaQuestionConfig } from "~@jii/configs";
+import { allRNAQuestions, fullRNASpec, rnaQuestionConfig } from "~@jii/configs";
 import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -60,13 +60,13 @@ const ManagedComponent = observer(function ManagedComponent({
     return <NotFound />;
   }
 
-  const { pageNum, questionIds, pageId } = presenter;
+  const { pageNum, questionIds, pageId, percentDone } = presenter;
   return (
     <>
       <ProgressHeader
         section={pageNum}
         totalSections={fullRNASpec.length}
-        percentDone={22}
+        percentDone={percentDone}
       />
       <UsNcRNASectionInfo {...rnaPageCopy[pageId]} />
       <form>
@@ -74,6 +74,7 @@ const ManagedComponent = observer(function ManagedComponent({
           <UsNcRNAQuestion
             key={questionId}
             id={questionId}
+            questionNumber={allRNAQuestions.indexOf(questionId) + 1}
             presenter={presenter}
             {...rnaQuestionCopy[questionId]}
             {...rnaQuestionConfig[questionId]}

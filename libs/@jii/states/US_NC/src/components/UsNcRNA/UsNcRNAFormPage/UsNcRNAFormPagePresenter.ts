@@ -19,7 +19,7 @@ import { captureException } from "@sentry/react";
 import { makeAutoObservable } from "mobx";
 import { NavigateFunction } from "react-router-dom";
 
-import { fullRNASpec, RNAQuestionId } from "~@jii/configs";
+import { allRNAQuestions, fullRNASpec, RNAQuestionId } from "~@jii/configs";
 import { RouteParams, State } from "~@jii/paths";
 
 import { UsNcRNAForm } from "../../../models/UsNcRNAForm";
@@ -99,6 +99,14 @@ export class UsNcRNAFormPagePresenter {
 
   get questionIds(): RNAQuestionId[] {
     return fullRNASpec[this.pageIndex].questions;
+  }
+
+  get percentDone(): number {
+    const numCompleted = allRNAQuestions.filter((id) =>
+      this.form.hasValidAnswer(id),
+    ).length;
+
+    return (numCompleted * 100) / allRNAQuestions.length;
   }
 
   /**

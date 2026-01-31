@@ -96,7 +96,7 @@ export const ProgressHeader = observer(function ProgressHeader({
           <span>
             Section {section} of {totalSections}
           </span>
-          <span>{percentDone}% complete</span>
+          <span>{Math.trunc(percentDone)}% complete</span>
         </ProgressLabel>
       </PageContainer>
     </ProgressContainer>
