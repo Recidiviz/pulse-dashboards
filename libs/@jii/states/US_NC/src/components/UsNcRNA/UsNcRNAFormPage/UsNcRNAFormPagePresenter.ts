@@ -22,7 +22,7 @@ import { NavigateFunction } from "react-router-dom";
 import { fullRNASpec, RNAQuestionId } from "~@jii/configs";
 import { RouteParams, State } from "~@jii/paths";
 
-import { UsNcRNAForm } from "../../models/UsNcRNAForm";
+import { UsNcRNAForm } from "../../../models/UsNcRNAForm";
 
 export class UsNcRNAFormPagePresenter {
   // Only flag invalid answers once the user has tried to move forward on the page

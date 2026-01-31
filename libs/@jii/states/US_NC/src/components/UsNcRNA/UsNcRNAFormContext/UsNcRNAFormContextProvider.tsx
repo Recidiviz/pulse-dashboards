@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,25 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card } from "~@jii/common-ui";
-import { formatFullDate } from "~@jii/data";
+import { createContext } from "react";
 
-import { RNADescription, RNAHeading } from "./styles";
-import { useRNAFormContext } from "./UsNcRNAFormContextProvider";
+import { useRequiredContext } from "~utils";
 
-/**
- * Landing page for Risks and Needs Assessment when the form has been completed.
- */
-export function UsNcRNASuccessfulSubmission() {
-  const { form } = useRNAFormContext();
+import { UsNcRNAForm } from "../../../models/UsNcRNAForm";
 
-  return (
-    <Card>
-      <RNAHeading>Thanks for filling out your Self-Report</RNAHeading>
-      <RNADescription>
-        You completed the form on {formatFullDate(form.updatedAt)}. A staff
-        member will be in touch about next steps.
-      </RNADescription>
-    </Card>
-  );
+export type RNAFormContext = {
+  form: UsNcRNAForm;
+};
+
+const context = createContext<RNAFormContext | undefined>(undefined);
+
+export const UsNcRNAFormContextProvider = context.Provider;
+
+export function useRNAFormContext() {
+  return useRequiredContext(context);
 }

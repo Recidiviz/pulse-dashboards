@@ -26,8 +26,8 @@ import {
   MultipleAnswerGroup,
   MultipleAnswerOption,
   QuestionCopy,
-} from "./styles";
-import { rnaRadioAnswerCopy } from "./usNcRNAFormCopy";
+} from "../styles";
+import { rnaRadioAnswerCopy } from "../usNcRNAFormCopy";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
 export const RadioButton = styled.input`

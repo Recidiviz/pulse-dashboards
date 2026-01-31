@@ -20,7 +20,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { DataAPI } from "~@jii/data";
 import { castToError, Hydratable, HydrationState } from "~hydration-utils";
 
-import { UsNcRNAForm } from "../../models/UsNcRNAForm";
+import { UsNcRNAForm } from "../../../models/UsNcRNAForm";
 
 export class UsNcRNAFormContextPresenter implements Hydratable {
   form: UsNcRNAForm | undefined;

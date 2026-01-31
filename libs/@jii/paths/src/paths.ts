@@ -69,6 +69,7 @@ export const UsNcRNA = route(
   {},
   {
     Landing: route(""),
+    ConfirmIdentity: route("is-this-you"),
     FormPage: route("page/:pageNum", {
       params: { pageNum: number().defined() },
     }),

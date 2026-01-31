@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 
-import { QuestionCopy, ShortTextEntry } from "./styles";
+import { QuestionCopy, ShortTextEntry } from "../styles";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
 interface RNADaysQuestionProps extends RNAQuestionProps {

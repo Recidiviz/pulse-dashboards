@@ -24,19 +24,19 @@ import { fullRNASpec, rnaQuestionConfig } from "~@jii/configs";
 import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
-import { NavigationButtons } from "./NavigationButtons";
-import { ProgressHeader } from "./ProgressBar";
-import { RNADescription, RNAHeading, UnboxedNotice } from "./styles";
-import { useRNAFormContext } from "./UsNcRNAFormContextProvider";
+import { RNADescription, RNAHeading, UnboxedNotice } from "../styles";
+import { useRNAFormContext } from "../UsNcRNAFormContext/UsNcRNAFormContextProvider";
 import {
   rnaMiscellaneousCopy,
   RNAPageCopy,
   rnaPageCopy,
   rnaQuestionCopy,
-} from "./usNcRNAFormCopy";
+} from "../usNcRNAFormCopy";
+import { UsNcRNAQuestion } from "../UsNcRNAQuestion/UsNcRNAQuestion";
+import { NavigationButtons } from "./NavigationButtons";
+import { ProgressHeader } from "./ProgressBar";
 import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
 import { UsNcRNAModal } from "./UsNcRNAModal";
-import { UsNcRNAQuestion } from "./UsNcRNAQuestion";
 
 function UsNcRNASectionInfo({ heading, description }: RNAPageCopy) {
   return (

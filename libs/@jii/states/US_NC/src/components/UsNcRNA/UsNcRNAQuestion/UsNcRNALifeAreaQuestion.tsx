@@ -26,11 +26,11 @@ import {
   MultipleAnswerOption,
   QuestionCopy,
   ShortTextEntry,
-} from "./styles";
+} from "../styles";
 import {
   rnaLifeAreasQuestionCopy,
   rnaRadioAnswerCopy,
-} from "./usNcRNAFormCopy";
+} from "../usNcRNAFormCopy";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 import { RadioButton } from "./UsNcRNARadioQuestion";
 

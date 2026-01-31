@@ -20,9 +20,10 @@ import { Route, Routes } from "react-router-dom";
 import { NotFound } from "~@jii/common-ui";
 import { UsNcRNA } from "~@jii/paths";
 
-import { UsNcRNAFormContext } from "./UsNcRNA/UsNcRNAFormContext";
-import { UsNcRNAFormPage } from "./UsNcRNA/UsNcRNAFormPage";
-import { UsNcRNALanding } from "./UsNcRNA/UsNcRNALanding";
+import { UsNcRNAFormContext } from "./UsNcRNA/UsNcRNAFormContext/UsNcRNAFormContext";
+import { UsNcRNAFormPage } from "./UsNcRNA/UsNcRNAFormPage/UsNcRNAFormPage";
+import { UsNcRNAConfirmIdentity } from "./UsNcRNA/UsNcRNALanding/UsNcRNAConfirmIdentity";
+import { UsNcRNALanding } from "./UsNcRNA/UsNcRNALanding/UsNcRNALanding";
 import { UsNcSingleResidentHome } from "./UsNcSingleResidentHome";
 
 export function UsNcRouter() {
@@ -31,6 +32,10 @@ export function UsNcRouter() {
       <Route index element={<UsNcSingleResidentHome />} />
       <Route path={UsNcRNA.path} element={<UsNcRNAFormContext />}>
         <Route path={UsNcRNA.Landing.path} element={<UsNcRNALanding />} />
+        <Route
+          path={UsNcRNA.ConfirmIdentity.path}
+          element={<UsNcRNAConfirmIdentity />}
+        />
         <Route path={UsNcRNA.FormPage.path} element={<UsNcRNAFormPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />

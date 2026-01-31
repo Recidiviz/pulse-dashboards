@@ -23,8 +23,8 @@ import {
   MultipleAnswerGroup,
   MultipleAnswerOption,
   QuestionCopy,
-} from "./styles";
-import { rnaSobrietyAnswerCopy } from "./usNcRNAFormCopy";
+} from "../styles";
+import { rnaSobrietyAnswerCopy } from "../usNcRNAFormCopy";
 import { RNAQuestionProps } from "./UsNcRNAQuestion";
 
 interface RNASobrietyQuestionProps extends RNAQuestionProps {

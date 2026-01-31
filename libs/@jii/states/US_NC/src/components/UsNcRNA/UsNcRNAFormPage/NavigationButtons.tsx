@@ -22,7 +22,7 @@ import styled from "styled-components";
 import { JIIButton } from "~@jii/common-ui";
 import { Icon, spacing } from "~design-system";
 
-import { rnaMiscellaneousCopy } from "./usNcRNAFormCopy";
+import { rnaMiscellaneousCopy } from "../usNcRNAFormCopy";
 import { UsNcRNAFormPagePresenter } from "./UsNcRNAFormPagePresenter";
 
 const RNAPageFooter = styled.div`
