@@ -97,9 +97,16 @@ const ManagedComponent = observer(function ManagedComponent({
 
       <UsNcRNAModal
         isOpen={presenter.isUnsavedChangesModalOpen}
-        onCancel={() => presenter.closeUnsavedChangesModal()}
-        onConfirm={() => presenter.navigateBack()}
+        onCancel={presenter.closeUnsavedChangesModal}
+        onConfirm={presenter.navigateBack}
         {...rnaMiscellaneousCopy.GO_BACK_MODAL}
+      />
+
+      <UsNcRNAModal
+        isOpen={presenter.isConfirmSubmissionModalOpen}
+        onCancel={presenter.closeConfirmSubmissionModal}
+        onConfirm={presenter.onConfirmSubmission}
+        {...rnaMiscellaneousCopy.CONFIRM_SUBMISSION_MODAL}
       />
     </>
   );
@@ -110,9 +117,9 @@ function usePresenter() {
 
   const navigate = useNavigate();
   const { form } = useRNAFormContext();
-  const { pageNum } = useTypedParams(State.Resident.UsNcRNA.FormPage);
+  const routeParams = useTypedParams(State.Resident.UsNcRNA.FormPage);
 
-  return new UsNcRNAFormPagePresenter(pageNum, form, navigate);
+  return new UsNcRNAFormPagePresenter(routeParams, form, navigate);
 }
 
 export const UsNcRNAFormPage = withPresenterManager({

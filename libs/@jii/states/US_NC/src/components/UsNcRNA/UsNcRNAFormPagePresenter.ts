@@ -20,14 +20,16 @@ import { makeAutoObservable } from "mobx";
 import { NavigateFunction } from "react-router-dom";
 
 import { fullRNASpec, RNAQuestionId } from "~@jii/configs";
-import { State } from "~@jii/paths";
+import { RouteParams, State } from "~@jii/paths";
 
 import { UsNcRNAForm } from "../../models/UsNcRNAForm";
 
 export class UsNcRNAFormPagePresenter {
   // Only flag invalid answers once the user has tried to move forward on the page
   shouldShowInvalidAnswers = false;
+
   isUnsavedChangesModalOpen = false;
+  isConfirmSubmissionModalOpen = false;
 
   // Set to true during database writes
   isSaving = false;
@@ -37,38 +39,43 @@ export class UsNcRNAFormPagePresenter {
   previousPageLink: string;
   nextPageLink: string;
 
+  // Extracted from the route parameters, for convenience.
+  pageNum: number;
+
   constructor(
-    readonly pageNum: number,
+    readonly routeParams: RouteParams<typeof State.Resident.UsNcRNA.FormPage>,
     public form: UsNcRNAForm,
     private navigate: NavigateFunction,
   ) {
-    this.previousPageLink =
-      "../" +
-      State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
-        pageNum: pageNum - 1,
-      });
-    this.nextPageLink =
-      "../" +
-      State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
-        pageNum: pageNum + 1,
-      });
-    makeAutoObservable(this);
+    this.pageNum = routeParams.pageNum;
+
+    this.previousPageLink = State.Resident.UsNcRNA.FormPage.buildPath({
+      ...routeParams,
+      pageNum: routeParams.pageNum - 1,
+    });
+    this.nextPageLink = State.Resident.UsNcRNA.FormPage.buildPath({
+      ...routeParams,
+      pageNum: routeParams.pageNum - 1,
+    });
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   /**
    * Write current state of answers to the database. Return whether the operation succeeded
    * or not.
    */
-  *saveAnswers() {
-    this.isSaving = true;
-    try {
-      yield this.form.saveAnswers();
-      this.savingError = undefined;
-    } catch (e) {
-      captureException(e);
-      this.savingError = e instanceof Error ? e.message : "Unknown error";
+  *saveAnswers(completed = false) {
+    if (!this.isSaving) {
+      this.isSaving = true;
+      try {
+        yield this.form.saveAnswers({ completed });
+        this.savingError = undefined;
+      } catch (e) {
+        captureException(e);
+        this.savingError = e instanceof Error ? e.message : "Unknown error";
+      }
+      this.isSaving = false;
     }
-    this.isSaving = false;
   }
 
   // Methods related to the display of the form page itself
@@ -167,6 +174,24 @@ export class UsNcRNAFormPagePresenter {
     }
   }
 
+  onSubmitButtonClick() {
+    if (this.hasAnyInvalidAnswer) {
+      this.displayInvalidAnswers();
+    } else {
+      this.openConfirmSubmissionModal();
+    }
+  }
+
+  *onConfirmSubmission() {
+    yield this.saveAnswers(true);
+
+    if (!this.savingError) {
+      this.navigate(State.Resident.UsNcRNA.Landing.buildPath(this.routeParams));
+    } else {
+      this.closeConfirmSubmissionModal();
+    }
+  }
+
   navigateBack() {
     this.navigate(this.previousPageLink);
   }
@@ -177,5 +202,13 @@ export class UsNcRNAFormPagePresenter {
 
   closeUnsavedChangesModal() {
     this.isUnsavedChangesModalOpen = false;
+  }
+
+  openConfirmSubmissionModal() {
+    this.isConfirmSubmissionModalOpen = true;
+  }
+
+  closeConfirmSubmissionModal() {
+    this.isConfirmSubmissionModalOpen = false;
   }
 }

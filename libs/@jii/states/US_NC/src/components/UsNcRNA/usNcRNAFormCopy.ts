@@ -31,9 +31,16 @@ export const rnaMiscellaneousCopy = {
   GO_BACK_MODAL: {
     title: "Are you sure you want to go back?",
     message:
-      "You can go back to edit your other responses, but if you do, the responses you have entered on this page will be lost.",
+      "You can go back to edit your other answers, but if you do, the answers you have entered on this page will be lost.",
     cancelButtonText: "Stay on this page",
     confirmButtonText: "Go back",
+  },
+  CONFIRM_SUBMISSION_MODAL: {
+    title: "Are you sure you want to submit?",
+    message:
+      "Your case manager will see your answers. You won't be able to change your answers after you submit the form.",
+    cancelButtonText: "Stay on this page",
+    confirmButtonText: "Submit",
   },
   PREVIOUS_BUTTON: "Previous",
   NEXT_BUTTON: "Next",

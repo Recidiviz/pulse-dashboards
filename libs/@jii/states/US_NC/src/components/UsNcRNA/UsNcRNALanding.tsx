@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useTypedParams } from "react-router-typesafe-routes/dom";
+
 import { Card, GoButton, usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 
 import { RNADescription, RNAHeading } from "./styles";
 import { useRNAFormContext } from "./UsNcRNAFormContextProvider";
+import { UsNcRNASuccessfulSubmission } from "./UsNcRNASuccessfulSubmission";
 
 /**
  * Landing page for Risks and Needs Assessment, showing an informative message if the
@@ -29,10 +32,15 @@ import { useRNAFormContext } from "./UsNcRNAFormContextProvider";
 export function UsNcRNALanding() {
   usePageTitle("Self-Report");
   const { form } = useRNAFormContext();
+  const routeParams = useTypedParams(State.Resident);
 
-  // TODO(#10888): show date/time of completed form
   // TODO(#10888): add functionality for continuing an in-progress form
   // TODO(#10889): show message if form is not enabled
+
+  if (form.completed) {
+    return <UsNcRNASuccessfulSubmission />;
+  }
+
   return (
     <Card>
       <RNAHeading>Time for your Self-Report</RNAHeading>
@@ -42,7 +50,8 @@ export function UsNcRNALanding() {
         finish.
       </RNADescription>
       <GoButton
-        to={State.Resident.UsNcRNA.$.FormPage.buildRelativePath({
+        to={State.Resident.UsNcRNA.FormPage.buildPath({
+          ...routeParams,
           pageNum: form.pageToResumeAt,
         })}
       >

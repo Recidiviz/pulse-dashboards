@@ -15,13 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useTypedParams } from "react-router-typesafe-routes/dom";
+
 import { Redirect, usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 
 export function UsNcSingleResidentHome() {
   usePageTitle("Home");
+  const routeParams = useTypedParams(State.Resident);
 
   return (
-    <Redirect to={State.Resident.$.UsNcRNA.Landing.buildRelativePath({})} />
+    <Redirect to={State.Resident.UsNcRNA.Landing.buildPath(routeParams)} />
   );
 }

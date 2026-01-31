@@ -53,6 +53,8 @@ export class UsNcRNAFormContextPresenter implements Hydratable {
         this.form = new UsNcRNAForm(
           this.apiClient,
           queryResult.id,
+          queryResult.completed,
+          queryResult.updatedAt,
           queryResult.textAnswers,
           queryResult.checkboxAnswers,
           queryResult.lifeAreaAnswers,

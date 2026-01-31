@@ -46,6 +46,8 @@ export class UsNcRNAForm {
   constructor(
     readonly apiClient: DataAPI,
     readonly id: string,
+    readonly completed: boolean,
+    readonly updatedAt: Date,
 
     // All of the user's saved answers, read from the database
     readonly savedTextAnswers: RNATextAnswers,
@@ -222,10 +224,11 @@ export class UsNcRNAForm {
   /**
    * Write current state of answers to the database.
    */
-  *saveAnswers() {
+  *saveAnswers({ completed }: { completed: boolean }) {
     yield this.apiClient.trpc.state.usNc.updateRNA.mutate({
       id: this.id,
       answers: this.liveAnswers,
+      completed,
     });
     // Reset the form state after saving answers.
     // This is technically not needed because after every successful answer save,

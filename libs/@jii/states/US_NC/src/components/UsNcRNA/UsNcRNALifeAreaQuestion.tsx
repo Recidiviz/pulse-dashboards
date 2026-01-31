@@ -77,6 +77,7 @@ export const UsNcRNALifeAreaQuestion = observer(
           /* The user can either enter an answer or select yes or no. */
           placeholderText ? (
             <ShortTextEntry
+              id={id}
               type={"text"}
               placeholder={placeholderText}
               onChange={(e) => {
@@ -89,6 +90,9 @@ export const UsNcRNALifeAreaQuestion = observer(
             <MultipleAnswerGroup>
               {Object.entries(yesNoCopy).map(([value, label]) => {
                 const inputId = `${id}-${value}`;
+                // This radio button does not have checked or defaultChecked set
+                // on purpose: we restrict saving Life Area answers without fully
+                // submitting the form, so users should never see saved values here.
                 return (
                   <MultipleAnswerOption key={value}>
                     <RadioButton
