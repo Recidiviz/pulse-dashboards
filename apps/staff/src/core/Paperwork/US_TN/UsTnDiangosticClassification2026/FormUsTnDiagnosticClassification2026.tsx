@@ -16,9 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import React, { useState } from "react";
-import styled from "styled-components";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
@@ -30,35 +28,16 @@ import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
 import { downloadZipFile } from "../../utils";
 import {
-  BoldWeight,
   ClassificationFormPage,
-  FormFont,
-  TextAreaContainer,
+  DoubleNotes,
+  Header,
   TextboxWithHeader,
   TotalScore,
 } from "../common/Classification2026";
 import { PostDownloadModal } from "../common/Classification2026/NextStepsModal";
+import { TrusteeChecklist } from "../common/Classification2026/TrusteeChecklist";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import { assessmentQuestions } from "./assessmentQuestions";
-
-const DoubleNotes = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-
-  ${TextAreaContainer} {
-    min-height: unset;
-  }
-`;
-
-const Header = styled.h1`
-  ${FormFont}
-  ${BoldWeight}
-  text-align: center;
-  font-size: ${rem(10)};
-  width: 100%;
-  letter-spacing: -0.01rem;
-`;
 
 export const FormUsTnDiagnosticClassification2026 = observer(
   function FormUsTnInitialClassification2026({
@@ -178,6 +157,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <TotalScore score={derivedData.totalScore} />
             </ClassificationFormPage>
           </PrintablePage>
+          <TrusteeChecklist display={derivedData.totalScore <= 12} />
         </FormViewer>
         <PostDownloadModal
           isOpen={postDownloadModalIsOpen}

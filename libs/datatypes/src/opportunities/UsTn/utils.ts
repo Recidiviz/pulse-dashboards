@@ -93,16 +93,12 @@ const formatIncidentReportPeriod = (
 export function formatMultiplePeriodReports(
   periods: UsTnIncidentPeriodReport[],
 ): string {
-  const all_formatted = periods
+  return periods
     .map((p) => {
       const header = `Disciplinaries in last ${p.incidentTimePeriod}:\n`;
-      const formatted = header + formatIncidentReportPeriod(p, "  ");
-      console.log({ formatted });
-      return formatted;
+      return header + formatIncidentReportPeriod(p, "  ");
     })
     .join("\n");
-  console.log({ all_formatted });
-  return all_formatted;
 }
 
 const formatSinglePeriodReport = (
@@ -137,3 +133,29 @@ export const q7Notes = z
   .optional()
   .default([])
   .transform(formatProgramCompletions);
+
+const booleanToString = z.boolean().transform((x) => x.toString());
+
+export const trusteeFormSchema = z.object({
+  trusteeHas10YearsOrLessRemaining: booleanToString,
+  trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years: booleanToString,
+  trusteeNoEscapeFromLowTrusteePast5Years: booleanToString,
+  trusteeNoEscapeFromMediumCloseMaxPast10Years: booleanToString,
+  trusteeNoViolentFelonyConvictionPast5YearsIncarceration: booleanToString,
+  trusteeNotConvictedOfFirstDegreeMurder: booleanToString,
+  trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody: booleanToString,
+  trusteeNotScoredHighForViolence: booleanToString,
+  trusteeNotServingForSexualOffense: booleanToString,
+});
+
+export type TrusteeFormAdditionalFields = {
+  trusteeNoFelonyDetainers: string;
+  trusteeNoPendingFelonyCharges: string;
+  trusteeNoPendingImmigrationActions: string;
+  trusteeWardenHasApproved: string;
+  trusteeDenailReasons: string;
+  trusteeCustodyApproved: string;
+};
+
+export type TrusteeFormSchema = z.output<typeof trusteeFormSchema> &
+  TrusteeFormAdditionalFields;

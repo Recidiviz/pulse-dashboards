@@ -24,6 +24,8 @@ import {
   q1Notes,
   q2Notes,
   q7Notes,
+  TrusteeFormAdditionalFields,
+  trusteeFormSchema,
 } from "../utils";
 
 const q6Notes = z
@@ -50,6 +52,7 @@ export const usTnReclassification2026Schema = opportunitySchemaBase.extend({
       q6Notes,
       q7Notes,
     })
+    .merge(trusteeFormSchema)
     .passthrough(),
 });
 
@@ -58,23 +61,24 @@ export type UsTnReclassification2026ReferralRecord = ParsedRecord<
 >;
 
 export type UsTnReclassification2026DraftData =
-  UsTnReclassification2026ReferralRecord["output"]["formInformation"] & {
-    q1Selection: number;
-    q2Selection: number;
-    q3Selection_0_6: number;
-    q3Selection_6_12: number;
-    q4Selection_0_6: number;
-    q4Selection_6_12: number;
-    q5Selection_0_6: number;
-    q5Selection_6_12: number;
-    q5Selection_12_18: number;
-    q5Selection_18_36: number;
-    q5Selection_36_60: number;
-    q6Selection: number;
-    q7Selection: number;
-    q1aNotes: string;
-    q1bNotes: string;
-    q3NotesFormatted: string;
-    q4NotesFormatted: string;
-    q5NotesFormatted: string;
-  };
+  UsTnReclassification2026ReferralRecord["output"]["formInformation"] &
+    TrusteeFormAdditionalFields & {
+      q1Selection: number;
+      q2Selection: number;
+      q3Selection_0_6: number;
+      q3Selection_6_12: number;
+      q4Selection_0_6: number;
+      q4Selection_6_12: number;
+      q5Selection_0_6: number;
+      q5Selection_6_12: number;
+      q5Selection_12_18: number;
+      q5Selection_18_36: number;
+      q5Selection_36_60: number;
+      q6Selection: number;
+      q7Selection: number;
+      q1aNotes: string;
+      q1bNotes: string;
+      q3NotesFormatted: string;
+      q4NotesFormatted: string;
+      q5NotesFormatted: string;
+    };

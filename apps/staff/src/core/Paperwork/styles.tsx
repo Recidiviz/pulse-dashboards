@@ -25,6 +25,7 @@ type PrintablePageProps = {
   stretchable?: boolean;
   lineHeight?: number;
   landscape?: boolean;
+  hidden?: boolean;
 };
 
 function pageHeight(landscape = false): string {
@@ -44,7 +45,7 @@ function pageWidth(landscape = false): string {
 export const PrintablePageContainer = styled.div.attrs({
   className: "form-page",
 })<PrintablePageProps>`
-  display: flex;
+  display: ${(p) => (p.hidden ? "none" : "flex")};
   flex-direction: column;
   background-color: white;
   height: ${(p) => (p.stretchable ? undefined : pageHeight(p.landscape))};

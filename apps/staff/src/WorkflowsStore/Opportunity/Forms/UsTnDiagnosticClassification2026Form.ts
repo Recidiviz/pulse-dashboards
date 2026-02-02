@@ -132,6 +132,22 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       q1Score + q2Score + q3Score + q4Score + q5Score + q6Score,
     );
 
+    const trusteeEligible = [
+      this.formData.trusteeHas10YearsOrLessRemaining,
+      this.formData.trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years,
+      this.formData.trusteeNoEscapeFromLowTrusteePast5Years,
+      this.formData.trusteeNoEscapeFromMediumCloseMaxPast10Years,
+      this.formData.trusteeNoViolentFelonyConvictionPast5YearsIncarceration,
+      this.formData.trusteeNotConvictedOfFirstDegreeMurder,
+      this.formData.trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody,
+      this.formData.trusteeNotScoredHighForViolence,
+      this.formData.trusteeNotServingForSexualOffense,
+      this.formData.trusteeNoFelonyDetainers,
+      this.formData.trusteeNoPendingFelonyCharges,
+      this.formData.trusteeNoPendingImmigrationActions,
+      this.formData.trusteeWardenHasApproved,
+    ].every((criterion) => criterion === "true");
+
     return {
       q1Score,
       q2Score,
@@ -140,6 +156,7 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       q5Score,
       q6Score,
       totalScore,
+      trusteeEligible,
     };
   }
 }

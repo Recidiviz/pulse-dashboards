@@ -19,6 +19,7 @@ import { rem } from "polished";
 import styled, { css } from "styled-components";
 
 import { Item, LeftColumn, SubItem } from "../ScoredAssessmentQuestion";
+import { TextAreaContainer } from "./TextboxWithHeader";
 
 export const FormFont = css`
   font-family: "Arial", sans-serif;
@@ -28,7 +29,30 @@ export const BoldWeight = css`
   font-weight: 600;
 `;
 
-export const ClassificationFormPage = styled.div`
+export const Bold = styled.span`
+  ${BoldWeight}
+`;
+
+export const DoubleNotes = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  ${TextAreaContainer} {
+    min-height: unset;
+  }
+`;
+
+export const Header = styled.h1`
+  ${FormFont}
+  ${BoldWeight}
+  text-align: center;
+  font-size: ${rem(10)};
+  width: 100%;
+  letter-spacing: -0.01rem;
+`;
+
+const BaseFormPage = styled.div`
   ${FormFont}
   display: flex;
   height: 100%;
@@ -36,6 +60,20 @@ export const ClassificationFormPage = styled.div`
   font-size: ${rem(10)};
   color: black;
   background-color: white;
+`;
+
+export const TrusteeFormPage = styled(BaseFormPage)`
+  padding: 3rem 1.5rem 3rem 3rem;
+  font-size: ${rem(11)};
+  gap: 1rem;
+
+  & p {
+    ${FormFont}
+    line-height: 1.1;
+  }
+`;
+
+export const ClassificationFormPage = styled(BaseFormPage)`
   padding: 3rem 4.25rem;
 
   ${LeftColumn} {

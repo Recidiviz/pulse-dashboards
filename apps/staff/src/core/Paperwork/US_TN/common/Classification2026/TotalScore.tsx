@@ -17,17 +17,13 @@
 
 import styled from "styled-components";
 
-import { BoldWeight } from "./styles";
+import { Bold } from "./styles";
 
 const Container = styled.div`
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-`;
-
-const Bold = styled.span`
-  ${BoldWeight}
 `;
 
 export function TotalScore({ score }: { score: number }) {

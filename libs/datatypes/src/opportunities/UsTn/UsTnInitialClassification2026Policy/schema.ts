@@ -19,7 +19,13 @@ import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
-import { q1Notes, q2Notes, singleIncidentPeriodReportSchema } from "../utils";
+import {
+  q1Notes,
+  q2Notes,
+  singleIncidentPeriodReportSchema,
+  TrusteeFormAdditionalFields,
+  trusteeFormSchema,
+} from "../utils";
 
 export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
   {
@@ -53,6 +59,7 @@ export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
         q4Notes: singleIncidentPeriodReportSchema,
         q5Notes: singleIncidentPeriodReportSchema,
       })
+      .merge(trusteeFormSchema)
       .passthrough(),
   },
 );
@@ -62,13 +69,14 @@ export type UsTnInitialClassification2026ReferralRecord = ParsedRecord<
 >;
 
 export type UsTnInitialClassification2026DraftData =
-  UsTnInitialClassification2026ReferralRecord["output"]["formInformation"] & {
-    q1Selection: number;
-    q2Selection: number;
-    q3Selection: number;
-    q4Selection: number;
-    q5Selection: number;
-    q6Selection: number;
-    q1aNotes: string;
-    q1bNotes: string;
-  };
+  UsTnInitialClassification2026ReferralRecord["output"]["formInformation"] &
+    TrusteeFormAdditionalFields & {
+      q1Selection: number;
+      q2Selection: number;
+      q3Selection: number;
+      q4Selection: number;
+      q5Selection: number;
+      q6Selection: number;
+      q1aNotes: string;
+      q1bNotes: string;
+    };
