@@ -1,7 +1,15 @@
 import importlib
-import json
-import logging
 from contextlib import asynccontextmanager
+
+import firebase_admin
+import redis.asyncio as redis
+import structlog
+import taskiq_fastapi
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import add_pagination
+from fastapi_pagination.utils import disable_installed_extensions_check
+from prometheus_fastapi_instrumentator import Instrumentator
 
 import app.models.assessment  # noqa
 import app.models.assessment_tree  # noqa
@@ -11,10 +19,6 @@ import app.models.intake  # noqa
 import app.models.models  # noqa
 import app.models.plan_decision_tree  # noqa
 import app.models.recording  # noqa
-import firebase_admin
-import redis.asyncio as redis
-import structlog
-import taskiq_fastapi
 from app.auth.auth_core import get_auth0_config, setup_auth
 from app.auth.intake.auth_client_user import setup_client_auth
 from app.core.config import settings
@@ -43,11 +47,6 @@ from app.utils.intake.socket_manager import intake_setup_background_tasks, socke
 from app.utils.PrometheusBackgroundThreadManager import (
     PrometheusBackgroundThreadManager,
 )
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi_pagination import add_pagination
-from fastapi_pagination.utils import disable_installed_extensions_check
-from prometheus_fastapi_instrumentator import Instrumentator
 
 logger = structlog.get_logger(__name__)
 
@@ -112,7 +111,8 @@ async def lifespan(app: FastAPI):
 
 
 setup_logging()
-setup_sentry()
+if settings.ENV_NAME != "pytest":
+    setup_sentry()
 
 app = FastAPI(root_path="/api", lifespan=lifespan)
 ALLOWED_ORIGINS = settings.ALLOWED_ORIGINS.split(",")

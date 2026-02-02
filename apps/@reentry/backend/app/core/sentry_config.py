@@ -22,6 +22,7 @@ class SentryEnvironment(str, Enum):
     PILOT = "pilot"
     PROD = "prod"
     STAGING = "staging"
+    TEST = "pytest"
 
 
 class SampleRateType(str, Enum):
@@ -59,6 +60,10 @@ SAMPLE_RATES: dict[SentryEnvironment, dict[SampleRateType, float]] = {
     SentryEnvironment.PROD: {
         SampleRateType.TRACES: 0.5,
         SampleRateType.PROFILES: 0.2,
+    },
+    SentryEnvironment.TEST: {
+        SampleRateType.TRACES: 1.0,
+        SampleRateType.PROFILES: 1.0,
     },
 }
 
