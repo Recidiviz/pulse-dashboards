@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { useState } from "react";
-import { Image, Text, View } from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import SearchBar from "./SearchBar";
@@ -75,7 +75,7 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
     ) || [];
 
   return (
-    <View className="flex flex-col gap-3">
+    <ScrollView className="flex flex-col">
       <SearchBar
         placeholder="Search by keyword or phrase"
         value={searchQuery}
@@ -85,7 +85,7 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
         }}
       />
       {filteredTranscriptions.map((u) => (
-        <View key={u.startTimeMs} className="flex flex-col gap-1">
+        <View key={u.startTimeMs} className="flex flex-col gap-1 mt-3">
           <View className="flex flex-row gap-2">
             <Text className="font-inter text-sm font-normal text-[#355362D9]">
               {formatSpeakerStartTime(u.startTimeMs)}
@@ -99,7 +99,7 @@ const MeetingsTranscriptionTab = ({ transcription }: Props) => {
           </Text>
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 };
 
