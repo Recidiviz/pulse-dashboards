@@ -73,6 +73,7 @@ def generate_schema_files():
         },
         {"name": "birthdate", "type": "DATE", "mode": "REQUIRED"},
         {"name": "location", "type": "STRING", "mode": "REPEATED"},
+        {"name": "workflows_pseudonymized_id", "type": "STRING", "mode": "NULLABLE"},
     ]
 
     # Write schema files
@@ -205,7 +206,7 @@ def generate_client_data(
     def generate_address_for_state(state_code: str) -> str:
         """Generate an address appropriate for the given state code."""
         state_data = {
-            "US_ID": {
+            "US_IX": {
                 "cities": [
                     "Boise",
                     "Meridian",
@@ -271,9 +272,9 @@ def generate_client_data(
 
         # First case manager gets the special pseudonymized ID and all clients
         if i == 0:
-            # For demo mode, use US_ID, for non-demo decide based on distribution
+            # For demo mode, use US_IX, for non-demo decide based on distribution
             if mode == "demo":
-                state_code = "US_ID"
+                state_code = "US_IX"
             else:
                 # First case manager gets Arizona (half the staff will be in AZ)
                 state_code = "US_AZ"
@@ -317,10 +318,10 @@ def generate_client_data(
 
             # For non-demo mode: distribute states with half in Arizona
             if mode == "demo":
-                state_code = random.choice(["US_ID", "US_AZ", "US_UT"])
+                state_code = random.choice(["US_IX", "US_AZ", "US_UT"])
             else:
                 # Second case manager gets non-Arizona state (other half)
-                state_code = random.choice(["US_ID", "US_UT"])
+                state_code = random.choice(["US_IX", "US_UT"])
                 # Add state letter to surname for non-demo
                 state_letter = state_code.split("_")[-1]
                 last_name = f"{last_name} {state_letter}"
@@ -362,13 +363,13 @@ def generate_client_data(
 
         # For non-demo mode: distribute states with roughly half in Arizona
         if mode == "demo":
-            state_code = random.choice(["US_ID", "US_AZ", "US_UT"])
+            state_code = random.choice(["US_IX", "US_AZ", "US_UT"])
         else:
             # Distribute: first SO gets AZ, others get non-AZ states
             if i == 0:
                 state_code = "US_AZ"
             else:
-                state_code = random.choice(["US_ID", "US_UT"])
+                state_code = random.choice(["US_IX", "US_UT"])
             # Add state letter to surname for non-demo
             state_letter = state_code.split("_")[-1]
             last_name = f"{last_name} {state_letter}"
@@ -415,13 +416,13 @@ def generate_client_data(
 
         # State distribution based on mode
         if mode == "demo":
-            state_code = "US_ID"
+            state_code = "US_IX"
         else:
             # For non-demo: half in Arizona (first 5), half in other states (last 5)
             if i < 5:
                 state_code = "US_AZ"
             else:
-                state_code = random.choice(["US_ID", "US_UT"])
+                state_code = random.choice(["US_IX", "US_UT"])
             # Add state letter to surname for non-demo
             state_letter = state_code.split("_")[-1]
             last_name = f"{last_name} {state_letter}"
