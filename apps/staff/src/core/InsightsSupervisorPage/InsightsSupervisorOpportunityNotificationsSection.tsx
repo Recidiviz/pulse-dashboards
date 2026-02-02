@@ -42,11 +42,11 @@ const usePresenter = () => {
     return null;
 
   return new SupervisionSupervisorOpportunitiesPresenter(
-        supervisionStore,
-        supervisionStore?.supervisorPseudoId,
-        justiceInvolvedPersonsStore,
-        opportunityConfigurationStore,
-      );
+    supervisionStore,
+    supervisionStore?.supervisorPseudoId,
+    justiceInvolvedPersonsStore,
+    opportunityConfigurationStore,
+  );
 };
 
 const ManagedComponent: React.FC<{

@@ -32,11 +32,12 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { Client } from "../../WorkflowsStore";
+import { Client, OpportunityNotification } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { CaseNoteSearch } from "../CaseNoteSearch";
 import { trpc } from "../CaseNoteSearch/trpc";
 import { usePersonTracking } from "../hooks/usePersonTracking";
+import OpportunityNotifications from "../OpportunityCaseloadView/OpportunityNotifications";
 import { ProfileCapsule } from "../PersonCapsules";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
@@ -336,7 +337,9 @@ function ContactDetails({
 export const FullProfile = observer(
   function FullProfile(): React.ReactElement<any> | null {
     const {
-      workflowsStore: { selectedPerson: person },
+      workflowsStore: {
+        selectedPerson: person,
+      },
       userStore,
       currentTenantId,
     } = useRootStore();
@@ -396,6 +399,12 @@ export const FullProfile = observer(
       </NoOpportunities>
     );
 
+    const notifications: OpportunityNotification[] = Object.values(
+      person.opportunities,
+    )
+      .flat()
+      .flatMap((o) => o.notificationsByPage?.profile ?? []);
+
     return (
       <WorkflowsNavLayout>
         <Wrapper isMobile={isMobile}>
@@ -418,7 +427,13 @@ export const FullProfile = observer(
               <Divider />
             </CasenoteSearchWrapper>
           )}
-
+          {
+            notifications.length > 0 && (
+              <OpportunityNotifications
+                notifications={notifications}
+              />
+            )
+          }
           {showFullWidthTimeline && (
             <>
               {sentenceProgressV2 ? (

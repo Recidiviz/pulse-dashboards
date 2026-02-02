@@ -20,24 +20,36 @@ import { useEffect, useState } from "react";
 import MarkdownView from "react-showdown";
 import styled from "styled-components";
 
-import { Button, palette } from "~design-system";
+import { Button, Icon, IconSVG, palette } from "~design-system";
 
 import { OpportunityNotification } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 
 interface OpportunityNotificationsProps {
   notifications: OpportunityNotification[];
-  handleDismiss: (id: string) => void;
+  handleDismiss?: (id: string) => void;
 }
 
 interface OpportunityNotificationDisplayProps {
   notification: OpportunityNotification;
-  handleDismiss: () => void;
+  handleDismiss?: () => void;
 }
 
-const Notification = styled.div<{ cta: boolean; fade: boolean }>`
-  background-color: #edf8ff;
-  border-left: 5px solid #00a1ff;
+const notificationColorMap = {
+  info: { backgroundColor: "#edf8ff", borderLeft: " #00a1ff" },
+  alert: { backgroundColor: "#fff4f9", borderLeft: palette.logoRed },
+} as const satisfies Record<
+  OpportunityNotification["type"],
+  { backgroundColor: string; borderLeft: string }
+>;
+
+const Notification = styled.div<{
+  cta: boolean;
+  fade: boolean;
+  type: keyof typeof notificationColorMap;
+}>`
+  background-color: ${({ type }) => notificationColorMap[type].backgroundColor};
+  border-left: 5px solid ${({ type }) => notificationColorMap[type].borderLeft};
   padding: 15px;
   display: flex;
   justify-content: space-between;
@@ -97,6 +109,15 @@ const DismissButtonIcon = styled(Button)`
   min-width: unset;
 `;
 
+const NotificationBodyWrapper = styled.div`
+  &:has(> :nth-child(2)) {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+`;
+
 const OpportunityNotificationDisplay = ({
   notification,
   handleDismiss,
@@ -105,30 +126,43 @@ const OpportunityNotificationDisplay = ({
 
   // Call parent handleDismiss after fade-out animation
   useEffect(() => {
-    if (dismissed) {
+    if (dismissed && handleDismiss) {
       setTimeout(() => handleDismiss(), animation.defaultDurationMs);
     }
   }, [dismissed, handleDismiss]);
 
-  const { cta, id, title, body } = notification;
-  const dismissButton = cta ? (
-    <DismissButtonCTA onClick={() => setDismissed(true)}>
-      {cta}
-    </DismissButtonCTA>
-  ) : (
-    <DismissButtonIcon
-      icon="Close"
-      kind="borderless"
-      onClick={() => setDismissed(true)}
-    />
-  );
+  const { cta, id, title, body, type } = notification;
+  let dismissButton = null;
+  if (handleDismiss) {
+    dismissButton = cta ?  (
+      <DismissButtonCTA onClick={() => setDismissed(true)}>
+        {cta}
+      </DismissButtonCTA>
+    ) : (
+      <DismissButtonIcon
+        icon="Close"
+        kind="borderless"
+        onClick={() => setDismissed(true)}
+      />
+    );
+  }
+
 
   return (
-    <Notification key={id} cta={!!cta} fade={dismissed}>
-      <div>
+    <Notification key={id} cta={!!cta} fade={dismissed} type={type}>
+      <NotificationBodyWrapper>
         {title && <Title>{title.toUpperCase()}</Title>}
+        {type === "alert" && (
+          <Icon 
+            kind={IconSVG.Warning} 
+            height={16} 
+            width={16}
+            color={palette.signal.warning}
+            fill={palette.signal.warning}
+          />
+        )}
         <Body markdown={body} />
-      </div>
+      </NotificationBodyWrapper>
       {dismissButton}
     </Notification>
   );
@@ -144,7 +178,7 @@ const OpportunityNotifications = ({
         <OpportunityNotificationDisplay
           key={notification.id}
           notification={notification}
-          handleDismiss={() => handleDismiss(notification.id)}
+          handleDismiss={handleDismiss ? () => handleDismiss(notification.id) : undefined}
         />
       ))}
     </div>

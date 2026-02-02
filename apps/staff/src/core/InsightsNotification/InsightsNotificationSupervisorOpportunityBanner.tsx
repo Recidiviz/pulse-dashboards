@@ -67,7 +67,6 @@ const NotificationLink = styled(Link)`
   flex-direction: row;
   align-items: center;
   gap: ${rem(4)};
-
   &:hover {
     ${ArrowIcon} {
       transform: translateX(${rem(4)});
