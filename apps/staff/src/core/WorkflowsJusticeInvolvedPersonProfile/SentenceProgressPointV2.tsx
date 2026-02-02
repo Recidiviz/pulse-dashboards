@@ -20,6 +20,7 @@ import {
   autoUpdate,
   FloatingPortal,
   offset,
+  Placement,
   shift,
   useFloating,
   useFocus,
@@ -80,6 +81,10 @@ export type SentenceProgressPoint = {
    */
   pointFill: string;
   /**
+   * Sets the label alignment to avoid label overflow at the ends of the timeline.
+   */
+  labelPlacement: Placement;
+  /**
    * The scaled value corresponding to where the point falls on the timeline. Only
    * undefined when the relevant input is not included in the timeline scale domain
    * (should never happen, but typescript is unhappy if this is not an optional field).
@@ -88,13 +93,13 @@ export type SentenceProgressPoint = {
 };
 
 // TODO(#11429): Revisit label alignment for edge cases.
-function useHoverProps() {
+function useHoverProps(labelPlacement: Placement) {
   const [isOpen, setIsOpen] = useState(false);
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
     middleware: [
-      autoPlacement({ allowedPlacements: ["bottom"] }),
+      autoPlacement({ allowedPlacements: [labelPlacement] }),
       offset(spacing.sm),
       shift({ padding: spacing.sm }),
     ],
@@ -118,7 +123,14 @@ function useHoverProps() {
 
 export const SentenceProgressPointV2 = observer(
   function SentenceProgressPointV2({
-    point: { label, hideLabel: labelHidden, x, pointFill, formattedDate },
+    point: {
+      label,
+      hideLabel: labelHidden,
+      x,
+      pointFill,
+      formattedDate,
+      labelPlacement,
+    },
     presenter,
   }: {
     point: SentenceProgressPoint;
@@ -130,7 +142,7 @@ export const SentenceProgressPointV2 = observer(
       getFloatingProps,
       isOpen: isHovered,
       refs,
-    } = useHoverProps();
+    } = useHoverProps(labelPlacement);
 
     // X is only undefined when the relevant date is not including in the timeline
     // domain (this should never happen, but typescript doesn't know that).

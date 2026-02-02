@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Placement } from "@floating-ui/react";
 import { ScaleBand, scaleBand } from "d3-scale";
 import { addDays, eachDayOfInterval, startOfDay, subYears } from "date-fns";
 import { differenceBy } from "lodash";
@@ -30,7 +31,10 @@ import { JusticeInvolvedPerson } from "../types";
 import { fieldToDate, optionalFieldToDate } from "../utils";
 import { WorkflowsStore } from "../WorkflowsStore";
 
-export type TimelineDate = Omit<SentenceProgressPoint, "x" | "pointFill">;
+export type TimelineDate = Omit<
+  SentenceProgressPoint,
+  "x" | "pointFill" | "labelPlacement"
+>;
 
 /**
  * A presenter for components related to sentence progress on the person profile page.
@@ -180,14 +184,14 @@ export class SentenceProgressPresenter<
 
   get timelineScale(): ScaleBand<Date> {
     // Use a band scale instead of a timescale so that we can exclude time gaps
-    // if necessary. Range is between 4-96 so that the timeline can extend past the
-    // start and end dates.
-    return scaleBand(this.timelineDomain ?? [], [4, 96]);
+    // if necessary.
+    return scaleBand(this.timelineDomain ?? [], [0, 100]);
   }
 
   get progressPoints(): SentenceProgressPoint[] {
     return this.timelineDates.map((dateInfo) => {
       let pointFill = palette.slate90;
+      let pointPlacement: Placement = "bottom";
 
       // Handle point fill for timeline breakpoint/today's date.
       if (dateInfo.label === "Today" && !this.expired) {
@@ -200,10 +204,19 @@ export class SentenceProgressPresenter<
         pointFill = palette.white;
       }
 
+      // Calculate where the point falls on the timeline
+      const timelineXValue = this.timelineScale(dateInfo.date);
+
+      // Handle point label placement for edges of timeline
+      if (timelineXValue && timelineXValue > 90) pointPlacement = "bottom-end";
+      if (timelineXValue !== undefined && timelineXValue < 10)
+        pointPlacement = "bottom-start";
+
       const progressPoint = {
         ...dateInfo,
-        x: this.timelineScale(dateInfo.date),
+        x: timelineXValue,
         pointFill,
+        labelPlacement: pointPlacement,
       };
 
       return progressPoint;
