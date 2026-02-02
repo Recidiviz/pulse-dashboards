@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ScaleBand, scaleBand } from "d3-scale";
 import { addDays, eachDayOfInterval, startOfDay, subYears } from "date-fns";
 import { differenceBy } from "lodash";
 import { makeAutoObservable } from "mobx";
+
+import { palette } from "~design-system";
 
 import { SentenceProgressPoint } from "../../core/WorkflowsJusticeInvolvedPersonProfile/SentenceProgressPointV2";
 import { formatWorkflowsDate } from "../../utils";
@@ -147,6 +150,8 @@ export class SentenceProgressPresenter<
     if (this.startDate && this.endDate && this.startDate >= this.endDate)
       return true;
 
+    if (!this.timelineDomain) return true;
+
     return false;
   }
 
@@ -166,6 +171,49 @@ export class SentenceProgressPresenter<
     if (this.person instanceof Client) {
       return this.person.expirationDate;
     }
+  }
+
+  get expired(): boolean {
+    const today = startOfDay(new Date());
+    return !!this.endDate && this.endDate < today;
+  }
+
+  get timelineScale(): ScaleBand<Date> {
+    // Use a band scale instead of a timescale so that we can exclude time gaps
+    // if necessary. Range is between 4-96 so that the timeline can extend past the
+    // start and end dates.
+    return scaleBand(this.timelineDomain ?? [], [4, 96]);
+  }
+
+  get progressPoints(): SentenceProgressPoint[] {
+    return this.timelineDates.map((dateInfo) => {
+      let pointFill = palette.slate90;
+
+      // Handle point fill for timeline breakpoint/today's date.
+      if (dateInfo.label === "Today" && !this.expired) {
+        pointFill = palette.white;
+      }
+      if (dateInfo.label === "Today" && this.expired) {
+        pointFill = palette.data.gold1;
+      }
+      if (dateInfo.date === this.endDate && this.expired) {
+        pointFill = palette.white;
+      }
+
+      const progressPoint = {
+        ...dateInfo,
+        x: this.timelineScale(dateInfo.date),
+        pointFill,
+      };
+
+      return progressPoint;
+    });
+  }
+
+  get timelineBreakpoint(): number | undefined {
+    const breakpointDate =
+      this.expired && this.endDate ? this.endDate : startOfDay(new Date());
+    return this.timelineScale(breakpointDate);
   }
 
   calculateTimelineDateArray(): TimelineDate[] | undefined {

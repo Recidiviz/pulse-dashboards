@@ -16,8 +16,6 @@
 // =============================================================================
 
 import { Sans14, Sans16, spacing, typography } from "@recidiviz/design-system";
-import { scaleBand } from "d3-scale";
-import { startOfDay } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -37,10 +35,7 @@ import {
   LifeSentenceDisplay,
   OfficerAssignmentDisplay,
 } from "./SentenceProgress";
-import {
-  SentenceProgressPoint,
-  SentenceProgressPointV2,
-} from "./SentenceProgressPointV2";
+import { SentenceProgressPointV2 } from "./SentenceProgressPointV2";
 import SentenceProgressSidePanel from "./SentenceProgressSidePanel";
 import { ClientProfileProps, ResidentProfileProps } from "./types";
 
@@ -96,6 +91,11 @@ const TimelineFuture = styled.line`
   stroke: ${palette.slate50};
 `;
 
+const TimelineExpired = styled.line`
+  stroke-width: ${rem(TIMELINE_HEIGHT)};
+  stroke: ${palette.data.crimson1};
+`;
+
 const TimelinePast = styled.line`
   stroke-width: ${rem(TIMELINE_HEIGHT)};
   stroke: ${palette.slate20};
@@ -106,34 +106,34 @@ const TimelineViz = ({
 }: {
   presenter: SentenceProgressPresenter<Resident | Client>;
 }) => {
-  const { timelineDomain, timelineDates, shouldShowEmptyState } = presenter;
+  const { shouldShowEmptyState, progressPoints, timelineBreakpoint, expired } =
+    presenter;
 
-  if (shouldShowEmptyState || !timelineDomain) return null;
-
-  // Use a band scale instead of a timescale so that we can exclude time gaps
-  // if necessary. Range is between 4-96 so that the timeline can extend past the
-  // start and end dates.
-  const timelineScale = scaleBand(timelineDomain, [4, 96]);
-
-  const nowMarker = timelineScale(startOfDay(new Date()));
-
-  // Calculate the x value for each timeline date
-  const progressPoints: SentenceProgressPoint[] = timelineDates.map(
-    (dateInfo) => {
-      const progressPoint = {
-        ...dateInfo,
-        x: timelineScale(dateInfo.date),
-        pointFill: dateInfo.label === "Today" ? palette.white : palette.slate90,
-      };
-
-      return progressPoint;
-    },
-  );
+  if (shouldShowEmptyState) return null;
 
   return (
     <TimelineCanvas>
-      <TimelinePast x1={0} x2={`${nowMarker}%`} y1={"50%"} y2={"50%"} />
-      <TimelineFuture x1={`${nowMarker}%`} x2={"100%"} y1={"50%"} y2={"50%"} />
+      <TimelinePast
+        x1={0}
+        x2={`${timelineBreakpoint}%`}
+        y1={"50%"}
+        y2={"50%"}
+      />
+      {expired ? (
+        <TimelineExpired
+          x1={`${timelineBreakpoint}%`}
+          x2={"100%"}
+          y1={"50%"}
+          y2={"50%"}
+        />
+      ) : (
+        <TimelineFuture
+          x1={`${timelineBreakpoint}%`}
+          x2={"100%"}
+          y1={"50%"}
+          y2={"50%"}
+        />
+      )}
       {progressPoints.map((point) => {
         return (
           <SentenceProgressPointV2

@@ -310,6 +310,41 @@ describe("SentenceProgressPresenter", () => {
 
       expect(presenter.shouldShowEmptyState).toBeTrue();
     });
+
+    test("When end date is past today's date", () => {
+      const today = startOfDay(new Date());
+
+      expect(presenter.expired).toBeFalse();
+      expect(presenter.timelineBreakpoint).toEqual(
+        presenter.timelineScale(today),
+      );
+    });
+
+    test("When end date is prior to today's date", () => {
+      const mockReleaseDate = fieldToDate("2021-01-01");
+      selectedPerson = new Resident(
+        { ...baseResident, releaseDate: mockReleaseDate },
+        rootStore,
+      );
+      workflowsStore = {
+        ...workflowsStore,
+        selectedPerson: selectedPerson,
+      } as unknown as WorkflowsStore;
+      presenter = new SentenceProgressPresenter(workflowsStore, selectedPerson);
+
+      expect(presenter.expired).toBeTrue();
+      expect(presenter.timelineBreakpoint).toEqual(
+        presenter.timelineScale(mockReleaseDate),
+      );
+    });
+
+    test("Timeline progress points are in chronological order", () => {
+      const pointDates = presenter.progressPoints.map((p) => p.date);
+      const sortedPointDates = pointDates.toSorted(
+        (a, b) => a.getTime() - b.getTime(),
+      );
+      expect(pointDates).toEqual(sortedPointDates);
+    });
   });
 
   // TODO(#11154): Add metadata tests once client metadata is being visualized on
