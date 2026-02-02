@@ -36,14 +36,14 @@ vi.mock("../../../api/metrics/metricsClient");
 
 describe("OverTimeMetric", () => {
   let metric: OverTimeMetric;
-  const facilityOptions = [
+  const facilityOptions = JSON.stringify([
     { label: "Option 1", value: "OPTION_1" },
     { label: "Option 2", value: "OPTION_2" },
-  ];
-  const genderOptions = [
+  ]);
+  const genderOptions = JSON.stringify([
     { label: "Male", value: "MALE" },
     { label: "Non-binary", value: "NON_BINARY" },
-  ];
+  ]);
 
   beforeEach(() => {
     vi.mocked(callNewMetricsApi).mockResolvedValue({
@@ -78,8 +78,10 @@ describe("OverTimeMetric", () => {
       ],
       metadata: {
         lastUpdated: "2022-05-01",
-        facilityIdNameMap: JSON.stringify(facilityOptions),
-        genderIdNameMap: JSON.stringify(genderOptions),
+        dynamicFilterOptions: JSON.stringify({
+          facility_id_name_map: facilityOptions,
+          gender_id_name_map: genderOptions,
+        }),
       },
     });
 
@@ -368,12 +370,16 @@ describe("OverTimeMetric", () => {
     expect(metric.downloadableData).toEqual(expected);
   });
 
-  it("parses facilityIdNameMap from metadata", () => {
-    expect(metric.dynamicFilterOptions.facility).toEqual(facilityOptions);
+  it("parses facility_id_name_map from metadata", () => {
+    expect(metric.dynamicFilterOptions.facility).toEqual(
+      JSON.parse(facilityOptions),
+    );
   });
 
-  it("parses genderIdNameMap from metadata", () => {
-    expect(metric.dynamicFilterOptions.gender).toEqual(genderOptions);
+  it("parses gender_id_name_map from metadata", () => {
+    expect(metric.dynamicFilterOptions.gender).toEqual(
+      JSON.parse(genderOptions),
+    );
   });
 
   it("does not set dynamic filter option if invalid", async () => {
@@ -381,10 +387,9 @@ describe("OverTimeMetric", () => {
       data: [],
       metadata: {
         lastUpdated: "2022-05-01",
-        facilityIdNameMap: JSON.stringify([
-          { label: "Option 1" },
-          { anything_else: 1 },
-        ]),
+        dynamicFilterOptions: JSON.stringify({
+          facility_id_name_map: [{ label: "Option 1" }, { anything_else: 1 }],
+        }),
       },
     });
 
@@ -402,8 +407,10 @@ describe("OverTimeMetric", () => {
       data: [],
       metadata: {
         lastUpdated: "2022-05-01",
-        facilityIdNameMap: JSON.stringify([]),
-        genderIdNameMap: JSON.stringify([]),
+        dynamicFilterOptions: JSON.stringify({
+          facility_id_name_map: [],
+          gender_id_name_map: [],
+        }),
       },
     });
 

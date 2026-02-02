@@ -36,12 +36,15 @@ import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import {
+  DynamicFilterOptionMetadata,
+  DynamicFilterOptionMetadataKey,
+  DynamicFilterOptions,
   FilterOption,
   Filters,
   FilterType,
   PopulationFilterValues,
 } from "../types/filters";
-import { dynamicFilterOptionMapToFilterType} from "../types/filters";
+import { dynamicFilterOptionMapToFilterType } from "../types/filters";
 import { isAbortException } from "../utils/exceptions";
 import {
   getMetricIdsForPage,
@@ -54,16 +57,15 @@ import {
   HydratablePathwaysMetric,
   MetricId,
   MetricRecord,
-  NewBackendMetricMetadata,
   NewBackendRecord,
   PathwaysMetricRecords,
-  SimulationCompartment} from "./types";
+  SimulationCompartment,
+} from "./types";
 import {
   formatDateString,
   getTimePeriodRawValue,
   validateDynamicFilterOptions,
 } from "./utils";
-
 
 export type BaseNewMetricConstructorOptions = {
   id: MetricId;
@@ -112,7 +114,7 @@ export default abstract class PathwaysNewBackendMetric<
 
   lastUpdated?: Date;
 
-  dynamicFilterOptions: Record<FilterType, FilterOption[]>;
+  dynamicFilterOptions: DynamicFilterOptions;
 
   protected abortController?: AbortController;
 
@@ -266,6 +268,25 @@ export default abstract class PathwaysNewBackendMetric<
     ];
   }
 
+  private parseDynamicFilterOptions(
+    options: Partial<DynamicFilterOptionMetadata>,
+  ): void {
+    (
+      Object.entries(options) as [DynamicFilterOptionMetadataKey, string][]
+    ).forEach(([nameMapKey, optionValues]) => {
+      const filterType = dynamicFilterOptionMapToFilterType[nameMapKey];
+
+      if (!filterType || !optionValues) return;
+
+      const filterOptions = JSON.parse(optionValues);
+      if (!validateDynamicFilterOptions(filterOptions))
+        throw new Error(
+          `Invalid dynamic filter option for ${this.id}: ${filterType}`,
+        );
+      this.dynamicFilterOptions[filterType] = filterOptions;
+    });
+  }
+
   protected async fetchNewMetrics(
     params: URLSearchParams,
   ): Promise<NewBackendRecord<RecordFormat>> {
@@ -299,21 +320,9 @@ export default abstract class PathwaysNewBackendMetric<
           this.lastUpdated = formatDateString(
             fetchedData.metadata?.lastUpdated,
           );
-          if (fetchedData.metadata) {
-            (Object.entries(fetchedData.metadata) as [keyof NewBackendMetricMetadata, string][]).forEach(
-              ([metadataKey, value]) => {
-                if (metadataKey === "lastUpdated") return;
-                const filterType =
-                  dynamicFilterOptionMapToFilterType[metadataKey]
-                if (filterType && value) {
-                  const idNameMap = JSON.parse(value);
-                  if (!validateDynamicFilterOptions(idNameMap))
-                    throw new Error(
-                      `Invalid dynamic filter option for ${this.id}: ${filterType}`,
-                    );
-                  this.dynamicFilterOptions[filterType] = idNameMap;
-                }
-              },
+          if (fetchedData.metadata?.dynamicFilterOptions) {
+            this.parseDynamicFilterOptions(
+              JSON.parse(fetchedData.metadata.dynamicFilterOptions),
             );
           }
           this.hydrationState = { status: "hydrated" };

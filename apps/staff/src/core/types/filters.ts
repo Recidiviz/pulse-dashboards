@@ -61,16 +61,20 @@ export type EnabledFiltersByMetric = {
   [key in MetricId]: Filters;
 };
 
-export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionMetadata = {
-  facilityIdNameMap: "facility",
-  raceIdNameMap: "race",
-  genderIdNameMap: "gender",
+
+
+export type DynamicFilterOptionMetadata = Record<DynamicFilterOptionMetadataKey, string>
+export type DynamicFilterOptionMetadataKey =
+  | "facility_id_name_map"
+  | "race_id_name_map"
+  | "gender_id_name_map";
+export type DynamicFilterOptionKeyToFilterTypeMap = {
+  [key in DynamicFilterOptionMetadataKey]: FilterType;
+};
+export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterTypeMap = {
+  facility_id_name_map: "facility",
+  race_id_name_map: "race",
+  gender_id_name_map: "gender",
 };
 
-export type DynamicFilterOptionIdNameMap =
-  | "facilityIdNameMap"
-  | "raceIdNameMap"
-  | "genderIdNameMap";
-export type DynamicFilterOptionMetadata = {
-  [key in DynamicFilterOptionIdNameMap]: FilterType;
-};
+export type DynamicFilterOptions = Record<FilterType, FilterOption[]>

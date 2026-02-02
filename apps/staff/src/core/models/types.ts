@@ -48,7 +48,6 @@ import {
 import { MetricCopy, PageCopy } from "../content/types";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
-import { DynamicFilterOptionMetadata } from "../types/filters";
 import { Navigation } from "../types/navigation";
 import { WorkflowsPathSection } from "../views";
 import { ClientDetailComponentName } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
@@ -287,7 +286,8 @@ export type MetricRecord =
 
 export type NewBackendMetricMetadata = {
   lastUpdated: string;
-} & Partial<DynamicFilterOptionMetadata>;
+  dynamicFilterOptions: string;
+};
 
 export type NewBackendRecord<RecordType extends MetricRecord> = {
   data: RecordType[];
