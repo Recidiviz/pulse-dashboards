@@ -94,4 +94,5 @@ dev = [
     "pytest-env>=1.1.5",
     "pytest-cov>=6.0.0",
     "ruff>=0.12.11",
+    "freezegun>=1.5.5",
 ]

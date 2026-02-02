@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock, patch
 from uuid import uuid4
 
 import pytest
+from freezegun import freeze_time
 
 from app.core.data_config.assessment_configs.assessment_config import ModelConfig
 from app.models.recording import RecordingSession, RecordingStatus
@@ -297,6 +298,7 @@ class TestTranscriptionProcessor:
             await processor.convert_transcript_to_conversation()
 
     @pytest.mark.asyncio
+    @freeze_time("2025-01-15T00:00:00Z")
     @patch("app.utils.transcription.post_processing.LLMAgentQA")
     async def test_deepgram_full_process_and_save_output(
         self, mock_llm_agent, deepgram_sample_from_file
@@ -326,6 +328,7 @@ class TestTranscriptionProcessor:
         assert output_file.exists()
 
     @pytest.mark.asyncio
+    @freeze_time("2025-01-15T00:00:00Z")
     @patch("app.utils.transcription.post_processing.LLMAgentQA")
     async def test_gcp_full_process_and_save_output(
         self, mock_llm_agent, gcp_sample_from_file
