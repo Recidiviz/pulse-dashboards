@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, MockInstance, test, vi } from "vitest";
 
+import type { PrismaClient } from "~@meetings/prisma/client";
 import { Client } from "~@meetings/prisma/client";
 import { SpecialistCore } from "~@meetings/tasks/llm/agents";
+import * as evaluationStore from "~@meetings/tasks/llm/evaluation-store";
 import { ProductionPipeline } from "~@meetings/tasks/llm/orchestrator";
 import {
   AgencyConfig,
@@ -30,6 +32,7 @@ import { mockGemini, mockOpenAI } from "~@meetings/tasks/test/setup";
 
 describe("ProductionPipeline", () => {
   let mockCore: SpecialistCore;
+  let mockPrisma: PrismaClient;
 
   const mockClient: Client = {
     personId: BigInt(67890),
@@ -75,9 +78,42 @@ describe("ProductionPipeline", () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
     // Create a mock SpecialistCore instance for testing
     mockCore = new SpecialistCore({ openai: mockOpenAI, gemini: mockGemini });
+    // Create mock Prisma client with methods we need
+    mockPrisma = {
+      notetakingPipelineRun: {
+        create: vi.fn().mockResolvedValue({
+          id: "pipeline-run-123",
+          createdAt: new Date(),
+          meetingId: "test-meeting",
+          langsmithTraceId: "trace-789",
+          personPseudonymizedId: "PSEUDO_123",
+          status: "IN_PROGRESS",
+          errorDetails: null,
+        }),
+        update: vi.fn().mockResolvedValue({
+          id: "pipeline-run-123",
+          createdAt: new Date(),
+          meetingId: "test-meeting",
+          langsmithTraceId: "trace-789",
+          personPseudonymizedId: "PSEUDO_123",
+          status: "SUCCESS",
+          errorDetails: null,
+        }),
+      },
+      notetakingAgentExecution: {
+        create: vi.fn().mockResolvedValue({
+          id: "agent-exec-123",
+          createdAt: new Date(),
+          pipelineRunId: "pipeline-run-123",
+          agentType: "EXTRACTION",
+          attemptNumber: 1,
+          outputData: {},
+          validationResult: {},
+        }),
+      },
+    } as unknown as PrismaClient;
   });
 
   describe("Pipeline Execution", () => {
@@ -172,8 +208,13 @@ describe("ProductionPipeline", () => {
         mockVerifiedExtraction,
       );
 
-      const pipeline = new ProductionPipeline(mockCore);
-      const result = await pipeline.run(mockAgency, mockClient, mockTranscript);
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      const result = await pipeline.run(
+        mockAgency,
+        mockClient,
+        mockTranscript,
+        "test-meeting-1",
+      );
 
       expect(result).toEqual({
         caseNote: mockDrafting.caseNote,
@@ -191,10 +232,10 @@ describe("ProductionPipeline", () => {
         poNotes: "",
       };
 
-      const pipeline = new ProductionPipeline(mockCore);
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
 
       await expect(
-        pipeline.run(mockAgency, mockClient, shortTranscript),
+        pipeline.run(mockAgency, mockClient, shortTranscript, "test-meeting-2"),
       ).rejects.toThrow();
     });
 
@@ -263,8 +304,13 @@ describe("ProductionPipeline", () => {
         mockExtraction,
       );
 
-      const pipeline = new ProductionPipeline(mockCore);
-      const result = await pipeline.run(mockAgency, mockClient, mockTranscript);
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      const result = await pipeline.run(
+        mockAgency,
+        mockClient,
+        mockTranscript,
+        "test-meeting-3",
+      );
 
       // Should have been called 3 times (initial + 2 retries)
       expect(runDraftingSpy).toHaveBeenCalledTimes(3);
@@ -296,8 +342,13 @@ describe("ProductionPipeline", () => {
         mockExtraction,
       );
 
-      const pipeline = new ProductionPipeline(mockCore);
-      const result = await pipeline.run(mockAgency, mockClient, mockTranscript);
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      const result = await pipeline.run(
+        mockAgency,
+        mockClient,
+        mockTranscript,
+        "test-meeting-4",
+      );
 
       // Should have been called: initial attempt + 2 retries
       expect(runDraftingSpy).toHaveBeenCalledTimes(3);
@@ -342,8 +393,13 @@ describe("ProductionPipeline", () => {
         mockExtraction,
       );
 
-      const pipeline = new ProductionPipeline(mockCore);
-      const result = await pipeline.run(mockAgency, mockClient, mockTranscript);
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      const result = await pipeline.run(
+        mockAgency,
+        mockClient,
+        mockTranscript,
+        "test-meeting-5",
+      );
 
       expect(result.actionItems).toHaveLength(0);
       expect(result.statusUpdates).toHaveLength(1);
@@ -381,8 +437,13 @@ describe("ProductionPipeline", () => {
         mockExtraction,
       );
 
-      const pipeline = new ProductionPipeline(mockCore);
-      const result = await pipeline.run(mockAgency, mockClient, mockTranscript);
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      const result = await pipeline.run(
+        mockAgency,
+        mockClient,
+        mockTranscript,
+        "test-meeting-6",
+      );
 
       // Should still complete successfully
       expect(result.actionItems).toEqual(mockExtraction.actionItems);
@@ -422,8 +483,13 @@ describe("ProductionPipeline", () => {
         .spyOn(SpecialistCore.prototype, "runVerification")
         .mockResolvedValue(emptyExtraction);
 
-      const pipeline = new ProductionPipeline(mockCore);
-      await pipeline.run(mockAgency, mockClient, mockTranscript);
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      await pipeline.run(
+        mockAgency,
+        mockClient,
+        mockTranscript,
+        "test-meeting-7",
+      );
 
       // Verification should still be called, it just won't call the LLM internally
       expect(verificationSpy).toHaveBeenCalled();
@@ -436,10 +502,10 @@ describe("ProductionPipeline", () => {
         new Error("Extraction failed"),
       );
 
-      const pipeline = new ProductionPipeline(mockCore);
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
 
       await expect(
-        pipeline.run(mockAgency, mockClient, mockTranscript),
+        pipeline.run(mockAgency, mockClient, mockTranscript, "test-meeting-8"),
       ).rejects.toThrow("Extraction failed");
     });
 
@@ -457,11 +523,342 @@ describe("ProductionPipeline", () => {
         new Error("Drafting failed"),
       );
 
-      const pipeline = new ProductionPipeline(mockCore);
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
 
       await expect(
-        pipeline.run(mockAgency, mockClient, mockTranscript),
+        pipeline.run(mockAgency, mockClient, mockTranscript, "test-meeting-9"),
       ).rejects.toThrow("Drafting failed");
+    });
+  });
+
+  describe("Evaluation Tracking", () => {
+    let mockPrisma: PrismaClient;
+    let createPipelineRunSpy: MockInstance;
+    let createAgentExecutionSpy: MockInstance;
+    let updatePipelineRunStatusSpy: MockInstance;
+
+    beforeEach(() => {
+      // Create mock Prisma client with methods we need
+      mockPrisma = {
+        notetakingPipelineRun: {
+          create: vi.fn(),
+          update: vi.fn(),
+        },
+        notetakingAgentExecution: {
+          create: vi.fn(),
+        },
+      } as unknown as PrismaClient;
+
+      // Spy on evaluation store functions
+      createPipelineRunSpy = vi
+        .spyOn(evaluationStore, "createPipelineRun")
+        .mockResolvedValue({
+          id: "pipeline-run-123",
+          createdAt: new Date(),
+          meetingId: "meeting-456",
+          langsmithTraceId: "trace-789",
+          personPseudonymizedId: "PSEUDO_123",
+          status: "SUCCESS",
+          errorDetails: null,
+        });
+
+      createAgentExecutionSpy = vi
+        .spyOn(evaluationStore, "createAgentExecution")
+        .mockResolvedValue({
+          id: "agent-exec-123",
+          createdAt: new Date(),
+          pipelineRunId: "pipeline-run-123",
+          agentType: "EXTRACTION",
+          attemptNumber: 1,
+          outputData: {},
+          validationResult: {},
+        });
+
+      updatePipelineRunStatusSpy = vi
+        .spyOn(evaluationStore, "updatePipelineRunStatus")
+        .mockResolvedValue({
+          id: "pipeline-run-123",
+          createdAt: new Date(),
+          meetingId: "meeting-456",
+          langsmithTraceId: "trace-789",
+          personPseudonymizedId: "PSEUDO_123",
+          status: "FAILURE",
+          errorDetails: null,
+        });
+    });
+
+    test("should create pipeline run on successful execution", async () => {
+      const mockExtraction: ExtractionOutput = {
+        actionItems: [],
+        criticalUpdates: [],
+        entities: [],
+      };
+
+      const mockDrafting: DraftingOutput = {
+        caseNote: "Case note content. ".repeat(50),
+        minutes: [
+          {
+            title: "Discussion",
+            items: Array(5).fill({
+              content: "Item",
+              status: "Discussed",
+              subItems: [],
+            }),
+          },
+        ],
+      };
+
+      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
+        mockExtraction,
+      );
+      vi.spyOn(SpecialistCore.prototype, "runDrafting").mockResolvedValue(
+        mockDrafting,
+      );
+      vi.spyOn(SpecialistCore.prototype, "runVerification").mockResolvedValue(
+        mockExtraction,
+      );
+
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      await pipeline.run(mockAgency, mockClient, mockTranscript, "meeting-456");
+
+      // Verify pipeline run was created
+      expect(createPipelineRunSpy).toHaveBeenCalledTimes(1);
+      expect(createPipelineRunSpy).toHaveBeenCalledWith(mockPrisma, {
+        meetingId: "meeting-456",
+        personPseudonymizedId: "PSEUDO_123",
+        status: "IN_PROGRESS",
+      });
+    });
+
+    test("should store all agent executions on successful run", async () => {
+      const mockExtraction: ExtractionOutput = {
+        actionItems: [{ assignee: "Client", task: "Complete form" }],
+        criticalUpdates: [],
+        entities: [],
+      };
+
+      const mockDrafting: DraftingOutput = {
+        caseNote: "Case note content. ".repeat(50),
+        minutes: [
+          {
+            title: "Discussion",
+            items: Array(5).fill({
+              content: "Item",
+              status: "Discussed",
+              subItems: [],
+            }),
+          },
+        ],
+      };
+
+      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
+        mockExtraction,
+      );
+      vi.spyOn(SpecialistCore.prototype, "runDrafting").mockResolvedValue(
+        mockDrafting,
+      );
+      vi.spyOn(SpecialistCore.prototype, "runVerification").mockResolvedValue(
+        mockExtraction,
+      );
+
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      await pipeline.run(mockAgency, mockClient, mockTranscript, "meeting-456");
+
+      // Should create 3 agent executions: extraction, drafting (1 attempt), verification
+      expect(createAgentExecutionSpy).toHaveBeenCalledTimes(3);
+
+      // Verify extraction execution
+      expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(1, mockPrisma, {
+        pipelineRunId: "pipeline-run-123",
+        agentType: "EXTRACTION",
+        outputData: mockExtraction,
+        validationResult: expect.objectContaining({ valid: true }),
+      });
+
+      // Verify drafting execution
+      expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(2, mockPrisma, {
+        pipelineRunId: "pipeline-run-123",
+        agentType: "DRAFTING",
+        attemptNumber: 1,
+        outputData: mockDrafting,
+        validationResult: expect.objectContaining({ valid: true }),
+      });
+
+      // Verify verification execution
+      expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(3, mockPrisma, {
+        pipelineRunId: "pipeline-run-123",
+        agentType: "VERIFICATION",
+        outputData: mockExtraction,
+        validationResult: { valid: true },
+      });
+    });
+
+    test("should store all drafting attempts with correct attempt numbers", async () => {
+      const mockExtraction: ExtractionOutput = {
+        actionItems: [],
+        criticalUpdates: [],
+        entities: [],
+      };
+
+      const badDrafting: DraftingOutput = {
+        caseNote: "Too short",
+        minutes: [],
+      };
+
+      const goodDrafting: DraftingOutput = {
+        caseNote: "Sufficient content for validation. ".repeat(50),
+        minutes: [
+          {
+            title: "Discussion",
+            items: Array(5).fill({
+              content: "Item",
+              status: "Discussed",
+              subItems: [],
+            }),
+          },
+        ],
+      };
+
+      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
+        mockExtraction,
+      );
+      vi.spyOn(SpecialistCore.prototype, "runDrafting")
+        .mockResolvedValueOnce(badDrafting)
+        .mockResolvedValueOnce(badDrafting)
+        .mockResolvedValueOnce(goodDrafting);
+      vi.spyOn(SpecialistCore.prototype, "runVerification").mockResolvedValue(
+        mockExtraction,
+      );
+
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      await pipeline.run(mockAgency, mockClient, mockTranscript, "meeting-456");
+
+      // Should create 5 agent executions: extraction, 3 drafting attempts, verification
+      expect(createAgentExecutionSpy).toHaveBeenCalledTimes(5);
+
+      // Verify all three drafting attempts were stored with correct attempt numbers
+      expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(2, mockPrisma, {
+        pipelineRunId: "pipeline-run-123",
+        agentType: "DRAFTING",
+        attemptNumber: 1,
+        outputData: badDrafting,
+        validationResult: expect.objectContaining({ valid: false }),
+      });
+
+      expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(3, mockPrisma, {
+        pipelineRunId: "pipeline-run-123",
+        agentType: "DRAFTING",
+        attemptNumber: 2,
+        outputData: badDrafting,
+        validationResult: expect.objectContaining({ valid: false }),
+      });
+
+      expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(4, mockPrisma, {
+        pipelineRunId: "pipeline-run-123",
+        agentType: "DRAFTING",
+        attemptNumber: 3,
+        outputData: goodDrafting,
+        validationResult: expect.objectContaining({ valid: true }),
+      });
+    });
+
+    test("should update pipeline status to FAILURE on gatekeeper error", async () => {
+      const shortTranscript: TranscriptInput = {
+        rawText: "Too short",
+        recordingDate: "2025-01-15",
+        durationSeconds: 10,
+        poNotes: "",
+      };
+
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+
+      await expect(
+        pipeline.run(mockAgency, mockClient, shortTranscript, "meeting-456"),
+      ).rejects.toThrow();
+
+      // Verify pipeline run was created
+      expect(createPipelineRunSpy).toHaveBeenCalledTimes(1);
+
+      // Verify status was updated to FAILURE with error details
+      expect(updatePipelineRunStatusSpy).toHaveBeenCalledWith(
+        mockPrisma,
+        "pipeline-run-123",
+        "FAILURE",
+        expect.objectContaining({
+          message: expect.stringContaining("Transcript too short"),
+          stack: expect.any(String),
+        }),
+      );
+
+      // Should not create any agent executions
+      expect(createAgentExecutionSpy).not.toHaveBeenCalled();
+    });
+
+    test("should update pipeline status to FAILURE on extraction error", async () => {
+      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockRejectedValue(
+        new Error("Extraction API error"),
+      );
+
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+
+      await expect(
+        pipeline.run(mockAgency, mockClient, mockTranscript, "meeting-456"),
+      ).rejects.toThrow("Extraction API error");
+
+      // Verify pipeline run was created
+      expect(createPipelineRunSpy).toHaveBeenCalledTimes(1);
+
+      // Verify status was updated to FAILURE
+      expect(updatePipelineRunStatusSpy).toHaveBeenCalledTimes(1);
+      expect(updatePipelineRunStatusSpy).toHaveBeenCalledWith(
+        mockPrisma,
+        "pipeline-run-123",
+        "FAILURE",
+        expect.objectContaining({
+          message: "Extraction API error",
+          stack: expect.any(String),
+        }),
+      );
+    });
+
+    test("should update pipeline status to FAILURE on drafting error", async () => {
+      const mockExtraction: ExtractionOutput = {
+        actionItems: [],
+        criticalUpdates: [],
+        entities: [],
+      };
+
+      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
+        mockExtraction,
+      );
+      vi.spyOn(SpecialistCore.prototype, "runDrafting").mockRejectedValue(
+        new Error("Drafting timeout"),
+      );
+
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+
+      await expect(
+        pipeline.run(mockAgency, mockClient, mockTranscript, "meeting-456"),
+      ).rejects.toThrow("Drafting timeout");
+
+      // Verify extraction was stored before error
+      expect(createAgentExecutionSpy).toHaveBeenCalledWith(mockPrisma, {
+        pipelineRunId: "pipeline-run-123",
+        agentType: "EXTRACTION",
+        outputData: mockExtraction,
+        validationResult: expect.objectContaining({ valid: true }),
+      });
+
+      // Verify status was updated to FAILURE
+      expect(updatePipelineRunStatusSpy).toHaveBeenCalledTimes(1);
+      expect(updatePipelineRunStatusSpy).toHaveBeenCalledWith(
+        mockPrisma,
+        "pipeline-run-123",
+        "FAILURE",
+        expect.objectContaining({
+          message: "Drafting timeout",
+        }),
+      );
     });
   });
 });

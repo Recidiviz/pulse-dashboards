@@ -369,11 +369,12 @@ export async function handleNotetakingProcessing(
   }
 
   // Run the LLM pipeline
-  const pipeline = new ProductionPipeline();
+  const pipeline = new ProductionPipeline(prisma);
   const result = await pipeline.run(
     agencyConfig,
     meeting.client,
     transcriptInput,
+    meetingId,
   );
 
   // Return the full result with metadata

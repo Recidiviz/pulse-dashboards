@@ -26,8 +26,15 @@
 
 import { traceable } from "langsmith/traceable";
 
+import type { PrismaClient } from "~@meetings/prisma/client";
 import { Person } from "~@meetings/prisma/types";
 import { SpecialistCore } from "~@meetings/tasks/llm/agents";
+import {
+  createAgentExecution,
+  createPipelineRun,
+  serializeError,
+  updatePipelineRunStatus,
+} from "~@meetings/tasks/llm/evaluation-store";
 import {
   draftingGuard,
   extractionGuard,
@@ -46,8 +53,10 @@ import { createLogger } from "~server-setup-plugin";
 export class ProductionPipeline {
   private core: SpecialistCore;
   private maxDraftingAttempts = 3;
+  private prisma: PrismaClient;
 
-  constructor(core?: SpecialistCore) {
+  constructor(prisma: PrismaClient, core?: SpecialistCore) {
+    this.prisma = prisma;
     this.core = core ?? SpecialistCore.factory();
   }
 
@@ -58,8 +67,9 @@ export class ProductionPipeline {
     agency: AgencyConfig,
     person: Person,
     transcript: TranscriptInput,
+    meetingId: string,
   ): Promise<PipelineOutput> {
-    return await this.runTraced(agency, person, transcript);
+    return this.runTraced(agency, person, transcript, meetingId);
   }
 
   /**
@@ -70,6 +80,7 @@ export class ProductionPipeline {
       agency: AgencyConfig,
       person: Person,
       transcript: TranscriptInput,
+      meetingId: string,
     ): Promise<PipelineOutput> => {
       const logger = createLogger("meetings.llm.orchestrator", {
         person_id: person.pseudonymizedId,
@@ -81,99 +92,165 @@ export class ProductionPipeline {
         transcript_duration_seconds: transcript.durationSeconds,
       });
 
-      // STEP 0: TRANSCRIPT CHECK
-      const gatekeeperResult = transcriptGuard(
-        TranscriptInputSchema,
-        transcript,
-      );
+      // Create evaluation pipeline run if prisma client is available
+      const pipelineRun = await createPipelineRun(this.prisma, {
+        meetingId,
+        personPseudonymizedId: person.pseudonymizedId,
+        status: "IN_PROGRESS", // Will update on error
+      });
 
-      if (!gatekeeperResult.valid) {
-        logger.error(`Gatekeeper check failed: ${gatekeeperResult.message}`, {
-          error_type: gatekeeperResult.errorKind,
-          message: gatekeeperResult.message,
-        });
-        throw new Error(
-          gatekeeperResult.message || "Transcript validation failed",
+      try {
+        // STEP 0: TRANSCRIPT CHECK
+        const gatekeeperResult = transcriptGuard(
+          TranscriptInputSchema,
+          transcript,
         );
-      }
 
-      // STEP 1: EXTRACTION AGENT
-      const facts = await this.core.runExtraction(transcript, person, agency);
+        if (!gatekeeperResult.valid) {
+          logger.error(`Gatekeeper check failed: ${gatekeeperResult.message}`, {
+            error_type: gatekeeperResult.errorKind,
+            message: gatekeeperResult.message,
+          });
+          const error = new Error(
+            gatekeeperResult.message || "Transcript validation failed",
+          );
 
-      const extractionResult = extractionGuard(ExtractionOutputSchema, facts);
-      if (!extractionResult.valid) {
-        logger.error("Extraction validation failed", {
-          error_type: extractionResult.errorKind,
-          message: extractionResult.message,
+          // Update pipeline run status on gatekeeper failure
+          await updatePipelineRunStatus(
+            this.prisma,
+            pipelineRun.id,
+            "FAILURE",
+            serializeError(error),
+          );
+
+          throw error;
+        }
+
+        // STEP 1: EXTRACTION AGENT
+        const facts = await this.core.runExtraction(transcript, person, agency);
+
+        const extractionResult = extractionGuard(ExtractionOutputSchema, facts);
+        if (!extractionResult.valid) {
+          logger.error("Extraction validation failed", {
+            error_type: extractionResult.errorKind,
+            message: extractionResult.message,
+          });
+        }
+
+        // Store extraction execution
+        await createAgentExecution(this.prisma, {
+          pipelineRunId: pipelineRun.id,
+          agentType: "EXTRACTION",
+          outputData: facts,
+          validationResult: extractionResult,
         });
-      }
 
-      if (facts.actionItems.length === 0) {
-        logger.warning("Extraction found no action items", {
-          updates_count: facts.criticalUpdates.length,
-        });
-      }
+        if (facts.actionItems.length === 0) {
+          logger.warning("Extraction found no action items", {
+            updates_count: facts.criticalUpdates.length,
+          });
+        }
 
-      // STEP 2: WRITER AGENT (Drafting Loop with Retry)
-      let finalPayload: Awaited<
-        ReturnType<typeof this.core.runDrafting>
-      > | null = null;
+        // STEP 2: WRITER AGENT (Drafting Loop with Retry)
+        let finalPayload: Awaited<
+          ReturnType<typeof this.core.runDrafting>
+        > | null = null;
 
-      for (let attempt = 0; attempt < this.maxDraftingAttempts; attempt++) {
-        logger.info("Starting drafting attempt", {
-          attempt: attempt + 1,
-          max_retries: this.maxDraftingAttempts,
-        });
+        for (let attempt = 0; attempt < this.maxDraftingAttempts; attempt++) {
+          logger.info("Starting drafting attempt", {
+            attempt: attempt + 1,
+            max_retries: this.maxDraftingAttempts,
+          });
 
-        // eslint-disable-next-line no-await-in-loop
-        const draft = await this.core.runDrafting(
+          // eslint-disable-next-line no-await-in-loop
+          const draft = await this.core.runDrafting(
+            transcript,
+            facts,
+            agency,
+            person,
+          );
+
+          const draftingResult = draftingGuard(
+            DraftingOutputSchema,
+            draft,
+            agency.noteConfig,
+          );
+
+          // Store each drafting attempt
+          // eslint-disable-next-line no-await-in-loop
+          await createAgentExecution(this.prisma, {
+            pipelineRunId: pipelineRun.id,
+            agentType: "DRAFTING",
+            attemptNumber: attempt + 1,
+            outputData: draft,
+            validationResult: draftingResult,
+          });
+
+          if (draftingResult.valid || attempt == this.maxDraftingAttempts - 1) {
+            logger.info("Drafting validation passed", {
+              attempt: attempt + 1,
+            });
+            finalPayload = draft;
+            break;
+          } else {
+            logger.warning("Drafting validation failed - retrying", {
+              attempt: attempt + 1,
+              error_type: draftingResult.errorKind,
+              message: draftingResult.message,
+            });
+          }
+        }
+
+        // STEP 3: VERIFICATION AGENT
+        const verification = await this.core.runVerification(
           transcript,
           facts,
-          agency,
           person,
         );
 
-        const draftingResult = draftingGuard(
-          DraftingOutputSchema,
-          draft,
-          agency.noteConfig,
-        );
+        // Store verification execution
+        await createAgentExecution(this.prisma, {
+          pipelineRunId: pipelineRun.id,
+          agentType: "VERIFICATION",
+          outputData: verification,
+          validationResult: { valid: true }, // Verification has no guard
+        });
 
-        if (draftingResult.valid || attempt == this.maxDraftingAttempts - 1) {
-          logger.info("Drafting validation passed", {
-            attempt: attempt + 1,
-          });
-          finalPayload = draft;
-          break;
-        } else {
-          logger.warning("Drafting validation failed - retrying", {
-            attempt: attempt + 1,
-            error_type: draftingResult.errorKind,
-            message: draftingResult.message,
-          });
+        logger.info("Pipeline completed successfully");
+
+        // STEP 4: FINAL ASSEMBLY
+        if (!finalPayload) {
+          const error = new Error("Drafting failed after all retry attempts");
+
+          // Update pipeline run status on drafting failure
+          await updatePipelineRunStatus(
+            this.prisma,
+            pipelineRun.id,
+            "FAILURE",
+            serializeError(error),
+          );
+
+          throw error;
         }
+
+        await updatePipelineRunStatus(this.prisma, pipelineRun.id, "SUCCESS");
+
+        return {
+          caseNote: finalPayload.caseNote,
+          meetingMinutes: finalPayload.minutes,
+          actionItems: verification.actionItems,
+          statusUpdates: verification.criticalUpdates,
+        };
+      } catch (error) {
+        // Update pipeline run status on any error
+        await updatePipelineRunStatus(
+          this.prisma,
+          pipelineRun.id,
+          "FAILURE",
+          serializeError(error),
+        );
+        throw error;
       }
-
-      // STEP 3: VERIFICATION AGENT
-      const verification = await this.core.runVerification(
-        transcript,
-        facts,
-        person,
-      );
-
-      logger.info("Pipeline completed successfully");
-
-      // STEP 4: FINAL ASSEMBLY
-      if (!finalPayload) {
-        throw new Error("Drafting failed after all retry attempts");
-      }
-
-      return {
-        caseNote: finalPayload.caseNote,
-        meetingMinutes: finalPayload.minutes,
-        actionItems: verification.actionItems,
-        statusUpdates: verification.criticalUpdates,
-      };
     },
     { name: "meetings-pipeline", run_type: "chain" },
   );

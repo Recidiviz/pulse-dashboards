@@ -246,3 +246,55 @@ model Utterance {
   transcription   Transcription @relation(fields: [transcriptionId], references: [id])
   transcriptionId String
 }
+
+enum NotetakingPipelineStatus {
+  SUCCESS
+  PARTIAL_FAILURE
+  FAILURE
+  IN_PROGRESS
+}
+
+enum NotetakingAgentType {
+  EXTRACTION
+  DRAFTING
+  VERIFICATION
+}
+
+model NotetakingPipelineRun {
+  id String @id @default(cuid())
+
+  createdAt DateTime @default(now())
+
+  // This is intentionally not stored as a foreign key
+  // We want a full historical log of pipeline runs, even when the upstream meeting gets deleted
+  meetingId            String
+  langsmithTraceId     String?
+  personPseudonymizedId String
+
+  status NotetakingPipelineStatus
+
+  /// [ErrorDetails]
+  errorDetails Json?
+
+  agentExecutions NotetakingAgentExecution[]
+}
+
+model NotetakingAgentExecution {
+  id String @id @default(cuid())
+
+  createdAt DateTime @default(now())
+
+  pipelineRun   NotetakingPipelineRun @relation(fields: [pipelineRunId], references: [id])
+  pipelineRunId String
+
+  agentType     NotetakingAgentType
+  attemptNumber Int                 @default(1)
+
+  /// [AgentOutput]
+  outputData Json
+
+  /// [ValidationResult]
+  validationResult Json
+
+  @@index([pipelineRunId])
+}
