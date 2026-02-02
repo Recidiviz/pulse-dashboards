@@ -113,6 +113,17 @@ import { prisma } from "~@sentencing/prisma";
 - **Database**: Prisma ORM with PostgreSQL (Cloud SQL)
 - **Auth**: Auth0 with separate staging/production tenants
 
+### Design System
+
+Design artifacts (components, color palettes, etc.) are defined in two locations:
+
+- **~design-system** (preferred): The monorepo's UI component library located in `libs/design-system/`
+- **@recidiviz/design-system**: External package with additional components not yet ported to the monorepo
+  - Source code: https://github.com/Recidiviz/web-libraries/tree/main/packages/design-system
+  - When you need to understand available components, their props, or implementation details, reference the source code at this URL
+
+Prefer using ~design-system when components are available in both locations.
+
 ### Environment Variables
 
 - Stored in Google Secret Manager (GSM)
