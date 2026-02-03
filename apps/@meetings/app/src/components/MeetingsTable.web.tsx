@@ -50,16 +50,6 @@ type Meeting = {
 
 const PAGE_SIZE = 7;
 
-const TOPICS = ["New Job", "Motivation", "Partner", "Address"];
-
-const Topic = ({ topic }: { topic: string }) => {
-  return (
-    <Text className="rounded bg-[#E6EAEB] px-1.5 py-0.5 font-inter text-xs font-semibold">
-      {topic}
-    </Text>
-  );
-};
-
 type MeetingRowProps = {
   meeting: Meeting;
   person: Person;
@@ -85,13 +75,6 @@ const MeetingRow = ({
         {meeting.duration
           ? formatDurationCompact(meeting.duration)
           : formatDurationNumeric(totalDurationMs)}
-      </TableCell>
-      <TableCell>
-        <View className="w-[150px] flex-row flex-wrap gap-1">
-          {TOPICS.map((topic) => (
-            <Topic key={`${meeting.id}-${topic}`} topic={topic} />
-          ))}
-        </View>
       </TableCell>
       {isProcessingMeeting ? (
         <TableCell>
@@ -165,7 +148,6 @@ const MeetingsTable = ({
           <TableHeadCell>DATE</TableHeadCell>
           <TableHeadCell>TIME</TableHeadCell>
           <TableHeadCell>DURATION</TableHeadCell>
-          <TableHeadCell>TOPICS</TableHeadCell>
           <TableHeadCell>DRAFT CASE NOTE</TableHeadCell>
           <TableHeadCell></TableHeadCell>
         </TableHeadRow>

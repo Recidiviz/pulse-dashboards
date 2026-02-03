@@ -80,7 +80,6 @@ const ProfileMeetings = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Date (Latest first)");
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [mobileHeaderHeight, setMobileHeaderHeight] = useState(0);
   const { status: recordingState } = useContext(RecordingContext);
   // const [sortBy, setSortBy] = useState<MeetingsSort>(MeetingsSort.NEWEST_FIRST);
@@ -98,22 +97,6 @@ const ProfileMeetings = ({
       refetch();
     }
   }, [recordingState, refetch]);
-
-  const filterOptions = [
-    "New Job",
-    "Address",
-    "Substance use",
-    "Motivation",
-    "Partner",
-  ];
-
-  const toggleFilter = (filter: string) => {
-    setActiveFilters((prev) =>
-      prev.includes(filter)
-        ? prev.filter((f) => f !== filter)
-        : [...prev, filter],
-    );
-  };
 
   // Processed meetings
   const processedMeetings = useMemo(() => {
@@ -199,13 +182,7 @@ const ProfileMeetings = ({
       meeting.date?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       meeting.content?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesFilters =
-      activeFilters.length === 0 ||
-      activeFilters.some((filter) =>
-        meeting.content?.toLowerCase().includes(filter.toLowerCase()),
-      );
-
-    return matchesSearch && matchesFilters;
+    return matchesSearch;
   });
 
   if (isLoading) {
@@ -416,57 +393,6 @@ const ProfileMeetings = ({
               value={searchQuery}
               onChange={setSearchQuery}
             />
-          </View>
-
-          <View className="gap-2 py-2 md:flex-row md:items-center">
-            <Text className="text-sm text-[#355362D9] md:text-base">
-              Filter by meeting topics:
-            </Text>
-
-            <View className="flex-row flex-wrap gap-2">
-              {/* TODO: filters are under discussion with design team */}
-              {filterOptions.map((filter) => {
-                const isActive = activeFilters.includes(filter);
-                return (
-                  <TouchableOpacity
-                    key={filter}
-                    className={`flex-row items-center gap-2 rounded-[5px] border px-3 py-1 ${
-                      isActive
-                        ? "border-[#00665F] bg-[#C1E3D83B]"
-                        : "border-gray-300 bg-white"
-                    }`}
-                    onPress={() => toggleFilter(filter)}
-                  >
-                    <Text
-                      className={`text-sm font-medium ${
-                        isActive ? "text-primary" : "text-gray-700"
-                      }`}
-                    >
-                      {filter}
-                    </Text>
-
-                    {isActive && (
-                      <Image source={Icons.CrossRound} className="!size-4" />
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
-
-              {activeFilters.length > 0 && (
-                <TouchableOpacity
-                  className="group flex-row items-center gap-1 rounded-full px-4 py-1 hover:bg-[#4D5255]"
-                  onPress={() => setActiveFilters([])}
-                >
-                  <Image
-                    source={Icons.Reset}
-                    className="!size-3 group-hover:invert"
-                  />
-                  <Text className="text-sm text-[#252C32] group-hover:text-white">
-                    Reset
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
           </View>
 
           <View className="z-10 my-4 flex-row items-center justify-between">
