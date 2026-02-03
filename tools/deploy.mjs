@@ -311,7 +311,7 @@ await $`yarn install`.pipe(process.stdout);
 console.log("Updating atmos...");
 await $`brew install atmos`.pipe(process.stdout);
 
-if (deployEnvSecrets && inStagingOrProd) {
+if (deployEnvSecrets && deployEnv === "staging") {
   // deploy any updated env secrets
   console.log("Apply env-secrets");
   await $`yarn atmos:apply env-secrets -s recidiviz-dashboard-${deployEnv}--shared-infra`.pipe(
