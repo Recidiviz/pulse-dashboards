@@ -72,22 +72,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
-      notifications: [
-        {
-          id: "1",
-          type: "alert",
-          pages: ["profile", "supervisionSupervisor"],
-          body: "{{opportunity.person.displayName}} may be eligible for the Limited Supervision Unit",
-          title: "Eligible for LSU",
-        },
-        {
-          id: "2",
-          type: "alert",
-          pages: ["caseload"],
-          body: "There has been a recent policy change that affects the Limited Supervision Unit opportunity.",
-          title: "Policy change affects LSU",
-        },
-      ],
+      notifications: [],
       omsCriteriaHeader: "Validated by data from Atlas",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",

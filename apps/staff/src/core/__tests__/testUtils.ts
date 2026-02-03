@@ -29,8 +29,36 @@ import { formatEligibilityText } from "../../WorkflowsStore/Opportunity/Opportun
 import { apiOpportunityConfigurationFactory } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/CustomOpportunityConfigurations";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 
+/**
+ * These are the configurations that are persisted regardless of the 
+ * on-call task to replace {@link CONFIG_FIXTURES}. This ensures that these configurations
+ * are always available for testing and demo purposes.
+ */
+const persistantConfigFixtures = {
+  ...CONFIG_FIXTURES,
+  LSU: {
+    ...CONFIG_FIXTURES.LSU,
+    notifications:  [
+      {
+        id: "1",
+        type: "alert",
+        pages: ["profile", "supervisionSupervisor"],
+        body: "{{opportunity.person.displayName}} may be eligible for the Limited Supervision Unit",
+        title: "Eligible for LSU",
+      },
+      {
+        id: "2",
+        type: "alert",
+        pages: ["caseload"],
+        body: "There has been a recent policy change that affects the Limited Supervision Unit opportunity.",
+        title: "Policy change affects LSU",
+      },
+    ]
+  }
+}
+
 export const mockOpportunityConfigs = Object.fromEntries(
-  Object.entries(CONFIG_FIXTURES).map(([type, rawConfig]) => [
+  Object.entries(persistantConfigFixtures).map(([type, rawConfig]) => [
     type,
     apiOpportunityConfigurationFactory(
       type as OpportunityType,
