@@ -68,6 +68,15 @@ beforeEach(() => {
       deleteEmploymentHistory: {
         mutate: vi.fn(),
       },
+      createDrugHistory: {
+        mutate: vi.fn(),
+      },
+      updateDrugHistory: {
+        mutate: vi.fn(),
+      },
+      deleteDrugHistory: {
+        mutate: vi.fn(),
+      },
     },
     case: {
       getCase: {

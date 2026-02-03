@@ -16,6 +16,11 @@
 // =============================================================================
 
 import { FormAttributes } from "../components/CaseDetails/types";
+import {
+  FrequencyOfUse,
+  MethodOfUse,
+  SubstanceType,
+} from "../components/OffenderAssessment/SubstanceUse/constants";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { Case, Opportunities, SAR, Staff, Supervisor } from "./APIClient";
 
@@ -126,6 +131,40 @@ export class OfflineAPIClient {
   }
 
   async deleteEmploymentHistory(_input: { id: string }) {
+    // No-op for offline mode
+  }
+
+  // Substance Use History CRUD stubs for offline mode
+  async createDrugHistory(input: {
+    sarId: string;
+    substance?: SubstanceType | null;
+    ageOfRegularUse?: number | null;
+    lastUse?: Date | null;
+    heaviestUse?: FrequencyOfUse | null;
+    method?: MethodOfUse | null;
+  }) {
+    return {
+      id: `offline-${Date.now()}`,
+      substance: input.substance ?? null,
+      ageOfRegularUse: input.ageOfRegularUse ?? null,
+      lastUse: input.lastUse ?? null,
+      heaviestUse: input.heaviestUse ?? null,
+      method: input.method ?? null,
+    };
+  }
+
+  async updateDrugHistory(_input: {
+    id: string;
+    substance?: SubstanceType | null;
+    ageOfRegularUse?: number | null;
+    lastUse?: Date | null;
+    heaviestUse?: FrequencyOfUse | null;
+    method?: MethodOfUse | null;
+  }) {
+    // No-op for offline mode
+  }
+
+  async deleteDrugHistory(_input: { id: string }) {
     // No-op for offline mode
   }
 }

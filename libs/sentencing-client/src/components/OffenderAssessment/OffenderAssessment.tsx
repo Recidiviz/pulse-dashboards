@@ -32,10 +32,7 @@ import * as Styled from "./OffenderAssessment.styles";
 import { OrasAssessmentScoreCard } from "./OrasAssessmentScoreCard";
 import { RiskCategorySummary } from "./RiskCategorySummary";
 import { DrugHistoryCard } from "./SubstanceUse";
-import {
-  getDomainsForAssessmentType,
-  ORASDomainKey,
-} from "./utils";
+import { getDomainsForAssessmentType, ORASDomainKey } from "./utils";
 
 interface OffenderAssessmentProps {
   presenter: SARDetailsPresenter;
@@ -76,6 +73,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       criminalAttitudesSummary,
       responsivityLevel,
       responsivityAndBarriersSummary,
+      substanceAbuseLevel,
+      drugHistorySummary,
     } = presenter.SARData ?? {};
 
     // Extract client data
@@ -95,7 +94,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       educationLevelScore: educationLevelScore ?? null,
       familySocialSupportLevel: familySocialSupportLevel ?? null,
       neighborhoodLevel: neighborhoodLevel ?? null,
-      substanceAbuseLevel: presenter.SARData?.substanceAbuseLevel ?? null,
+      substanceAbuseLevel: substanceAbuseLevel ?? null,
       peerAssociatesLevel: peerAssociatesLevel ?? null,
       criminalBehaviorLevel: criminalBehaviorLevel ?? null,
       responsivityLevel: responsivityLevel ?? null,
@@ -170,7 +169,9 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
             riskScore={educationLevelScore ?? 0}
             helperText='Enter "None Listed" where not applicable'
             summaryValue={employmentSummary ?? null}
-            onSummaryChange={(value) => presenter.updateEmploymentSummary(value)}
+            onSummaryChange={(value) =>
+              presenter.updateEmploymentSummary(value)
+            }
             cardRef={educationRef}
           >
             <EmploymentHistoryCard presenter={presenter.offenderAssessment} />
@@ -233,11 +234,17 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
         )}
 
         {shouldRenderDomain("substanceUse") && (
-          <DrugHistoryCard
-            presenter={presenter}
-            cardRef={substanceUseRef}
+          <DomainCard
             title={getDomainTitle("substanceUse")}
-          />
+            riskScore={substanceAbuseLevel ?? 0}
+            summaryValue={drugHistorySummary ?? null}
+            onSummaryChange={(value) =>
+              presenter.updateDrugHistorySummary(value)
+            }
+            cardRef={substanceUseRef}
+          >
+            <DrugHistoryCard presenter={presenter.offenderAssessment} />
+          </DomainCard>
         )}
 
         {shouldRenderDomain("peerAssociates") && (

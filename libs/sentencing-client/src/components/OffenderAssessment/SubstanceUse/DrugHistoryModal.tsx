@@ -47,9 +47,9 @@ type SelectOption = { label: string; value: string };
 interface DrugHistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (history: DrugHistory) => Promise<void>;
+  onSave: (history: Omit<DrugHistory, "id">) => Promise<void>;
   initialData?: DrugHistory;
-  editIndex?: number;
+  isEditMode?: boolean;
   clientFirstName: string;
 }
 
@@ -58,10 +58,10 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
   onClose,
   onSave,
   initialData,
-  editIndex,
+  isEditMode,
   clientFirstName,
 }) => {
-  const [formData, setFormData] = useState<DrugHistory>({
+  const [formData, setFormData] = useState<Omit<DrugHistory, "id">>({
     substance: null,
     ageOfRegularUse: null,
     lastUse: null,
@@ -70,8 +70,6 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-
-  const isEditMode = editIndex !== undefined && initialData !== undefined;
 
   // Initialize form with initial data when in edit mode
   useEffect(() => {

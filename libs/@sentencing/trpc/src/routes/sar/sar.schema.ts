@@ -102,17 +102,6 @@ export const updateSARSchema = z.object({
     familyAndSocialSupportSummary: z.string().nullable().optional(),
     homePlan: z.string().nullable().optional(),
     housingSummary: z.string().nullable().optional(),
-    drugHistories: z
-      .array(
-        z.object({
-          substance: substanceEnum.optional(),
-          ageOfRegularUse: z.number().int().nullable().optional(),
-          lastUse: z.date().nullable().optional(),
-          heaviestUse: frequencyOfUseEnum.optional(),
-          method: methodOfUseEnum.optional(),
-        }),
-      )
-      .optional(),
     drugHistorySummary: z.string().nullable().optional(),
     peerAssociatesSummary: z.string().nullable().optional(),
     criminalAttitudesSummary: z.string().nullable().optional(),
@@ -141,5 +130,28 @@ export const updateEmploymentHistorySchema = z.object({
 });
 
 export const deleteEmploymentHistorySchema = z.object({
+  id: z.string(),
+});
+
+// Substance Use History CRUD schemas
+export const createDrugHistorySchema = z.object({
+  sarId: z.string(),
+  substance: substanceEnum.nullable().optional(),
+  ageOfRegularUse: z.number().int().nullable().optional(),
+  lastUse: z.date().nullable().optional(),
+  heaviestUse: frequencyOfUseEnum.nullable().optional(),
+  method: methodOfUseEnum.nullable().optional(),
+});
+
+export const updateDrugHistorySchema = z.object({
+  id: z.string(),
+  substance: substanceEnum.nullable().optional(),
+  ageOfRegularUse: z.number().int().nullable().optional(),
+  lastUse: z.date().nullable().optional(),
+  heaviestUse: frequencyOfUseEnum.nullable().optional(),
+  method: methodOfUseEnum.nullable().optional(),
+});
+
+export const deleteDrugHistorySchema = z.object({
   id: z.string(),
 });

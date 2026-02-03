@@ -284,39 +284,35 @@ describe("SAR router", () => {
       });
     });
 
-    test("should update drug histories by replacing all existing histories", async () => {
-      await testTRPCClient.sar.updateSAR.mutate({
-        id: fakeSAR.id,
-        attributes: {
-          drugHistories: [
-            {
-              substance: SubstanceType.Alcohol,
-              ageOfRegularUse: 18,
-              heaviestUse: FrequencyOfUse.Daily,
-              method: MethodOfUse.Oral,
-            },
-            {
-              substance: SubstanceType.Marijuana,
-              ageOfRegularUse: null,
-              heaviestUse: FrequencyOfUse.Weekly,
-              method: MethodOfUse.Smoking,
-            },
-          ],
-        },
-      });
-
-      const updatedHistories = await testPrismaClient.drugHistory.findMany({
-        where: { sentencingAssessmentReportId: fakeSAR.id },
-      });
-
-      expect(updatedHistories).toHaveLength(2);
-      expect(updatedHistories[0]).toMatchObject({
+    test("should create drug histories via CRUD mutation", async () => {
+      await testTRPCClient.sar.createDrugHistory.mutate({
+        sarId: fakeSAR.id,
         substance: SubstanceType.Alcohol,
         ageOfRegularUse: 18,
         heaviestUse: FrequencyOfUse.Daily,
         method: MethodOfUse.Oral,
       });
-      expect(updatedHistories[1]).toMatchObject({
+
+      await testTRPCClient.sar.createDrugHistory.mutate({
+        sarId: fakeSAR.id,
+        substance: SubstanceType.Marijuana,
+        ageOfRegularUse: null,
+        heaviestUse: FrequencyOfUse.Weekly,
+        method: MethodOfUse.Smoking,
+      });
+
+      const histories = await testPrismaClient.drugHistory.findMany({
+        where: { sentencingAssessmentReportId: fakeSAR.id },
+      });
+
+      expect(histories).toHaveLength(2);
+      expect(histories[0]).toMatchObject({
+        substance: SubstanceType.Alcohol,
+        ageOfRegularUse: 18,
+        heaviestUse: FrequencyOfUse.Daily,
+        method: MethodOfUse.Oral,
+      });
+      expect(histories[1]).toMatchObject({
         substance: SubstanceType.Marijuana,
         ageOfRegularUse: null,
         heaviestUse: FrequencyOfUse.Weekly,
@@ -324,27 +320,28 @@ describe("SAR router", () => {
       });
     });
 
-    test("should clear drug histories when set to empty array", async () => {
-      // First add some drug histories
-      await testPrismaClient.drugHistory.create({
-        data: {
-          sentencingAssessmentReportId: fakeSAR.id,
-          substance: SubstanceType.Alcohol,
-        },
+    test("should delete drug histories via CRUD mutation", async () => {
+      // First add a drug history
+      const created = await testTRPCClient.sar.createDrugHistory.mutate({
+        sarId: fakeSAR.id,
+        substance: SubstanceType.Alcohol,
       });
 
-      // Then clear them
-      await testTRPCClient.sar.updateSAR.mutate({
-        id: fakeSAR.id,
-        attributes: {
-          drugHistories: [],
-        },
-      });
-
-      const histories = await testPrismaClient.drugHistory.findMany({
+      // Verify it exists
+      let histories = await testPrismaClient.drugHistory.findMany({
         where: { sentencingAssessmentReportId: fakeSAR.id },
       });
+      expect(histories).toHaveLength(1);
 
+      // Delete it
+      if (!created) throw new Error("Expected drug history to be created");
+      await testTRPCClient.sar.deleteDrugHistory.mutate({
+        id: created.id,
+      });
+
+      histories = await testPrismaClient.drugHistory.findMany({
+        where: { sentencingAssessmentReportId: fakeSAR.id },
+      });
       expect(histories).toHaveLength(0);
     });
 
@@ -458,7 +455,6 @@ describe("SAR router", () => {
           levelOfEducation: LevelOfEducation.BachelorsDegree,
           needsToBeAddressed: [NeedToBeAddressed.Education],
           charges: [{ id: charge.id, pleaAgreement: "Not Guilty" }],
-          drugHistories: [{ substance: SubstanceType.Cocaine }],
           metadata: {
             sections: {
               keyConsiderations: {
@@ -479,7 +475,6 @@ describe("SAR router", () => {
           include: {
             client: true,
             charges: true,
-            drugHistories: true,
           },
         });
 
@@ -501,7 +496,6 @@ describe("SAR router", () => {
       });
       expect(updatedSAR?.charges).toHaveLength(1);
       expect(updatedSAR?.charges[0].pleaAgreement).toBe("Not Guilty");
-      expect(updatedSAR?.drugHistories).toHaveLength(1);
     });
 
     test("should throw error if SAR does not exist", async () => {

@@ -519,10 +519,10 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   /**
-   * Generic helper to update a string field in SAR data
-   * Handles local state update, API call, and status recalculation
+   * Generic helper to update a string field in SAR data.
+   * Handles local state update, API call, and status recalculation.
    */
-  private async updateStringField(
+  async updateStringField(
     fieldName:
       | "victimImpactStatement"
       | "defendantStatement"
@@ -634,76 +634,6 @@ export class SARDetailsPresenter implements Hydratable {
   /** Update drug history summary */
   async updateDrugHistorySummary(value: string): Promise<void> {
     return this.updateStringField("drugHistorySummary", value);
-  }
-
-  /** Get drug history records array */
-  get drugHistories(): NonNullable<SAR["drugHistories"]> {
-    return this.SARData?.drugHistories ?? [];
-  }
-
-  /** Add new drug history record */
-  async addDrugHistory(
-    history: NonNullable<SAR["drugHistories"]>[number],
-  ): Promise<void> {
-    if (!this.SARData) return;
-
-    const updated = [...this.drugHistories, history];
-    await this.saveDrugHistories(updated);
-  }
-
-  /** Update drug history record at specific index */
-  async updateDrugHistoryAtIndex(
-    index: number,
-    history: NonNullable<SAR["drugHistories"]>[number],
-  ): Promise<void> {
-    if (!this.SARData) return;
-    if (index < 0 || index >= this.drugHistories.length) {
-      return;
-    }
-
-    const updated = [...this.drugHistories];
-    updated[index] = history;
-    await this.saveDrugHistories(updated);
-  }
-
-  /** Delete drug history record at specific index */
-  async deleteDrugHistory(index: number): Promise<void> {
-    if (!this.SARData) return;
-
-    if (index < 0 || index >= this.drugHistories.length) {
-      return;
-    }
-
-    const updated = this.drugHistories.filter((_, i) => i !== index);
-    await this.saveDrugHistories(updated);
-  }
-
-  /** Save entire drug history records array to backend */
-  private async saveDrugHistories(
-    histories: NonNullable<SAR["drugHistories"]>,
-  ): Promise<void> {
-    if (!this.SARData) return;
-
-    runInAction(() => {
-      if (this.SARData) {
-        this.SARData.drugHistories = histories;
-      }
-    });
-
-    const updates: Partial<MutableSARAttributes> = {
-      drugHistories: histories.map((h) => ({
-        substance: h.substance ?? undefined,
-        ageOfRegularUse: h.ageOfRegularUse ?? undefined,
-        lastUse: h.lastUse ?? undefined,
-        heaviestUse: h.heaviestUse ?? undefined,
-        method: h.method ?? undefined,
-      })),
-    };
-
-    await this.sentencingStore.apiClient.updateSARDetails(
-      this.SARData.id,
-      updates,
-    );
   }
 
   /** Update employed at offense */

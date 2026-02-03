@@ -22,10 +22,13 @@ import { Prisma } from "~@sentencing/prisma/client";
 import { handlePrismaError } from "~@sentencing/trpc/errors";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
+  createDrugHistorySchema,
   createEmploymentHistorySchema,
+  deleteDrugHistorySchema,
   deleteEmploymentHistorySchema,
   getSARByIDInputSchema,
   getSARsForStaffInputSchema,
+  updateDrugHistorySchema,
   updateEmploymentHistorySchema,
   updateSARSchema,
 } from "~@sentencing/trpc/routes/sar/sar.schema";
@@ -61,7 +64,6 @@ export const sarRouter = router({
           },
           drugHistories: {
             omit: {
-              id: true,
               createdAt: true,
               updatedAt: true,
               sentencingAssessmentReportId: true,
@@ -137,7 +139,6 @@ export const sarRouter = router({
           fatherName,
           guardianName,
           charges,
-          drugHistories,
         } = attributes;
 
         const updateData: Prisma.SentencingAssessmentReportUpdateInput = {
@@ -147,7 +148,6 @@ export const sarRouter = router({
             "fatherName",
             "guardianName",
             "charges",
-            "drugHistories",
           ]),
         };
 
@@ -190,24 +190,6 @@ export const sarRouter = router({
                 sentencingDate: charge.sentencingDate,
               },
             })),
-          };
-        }
-
-        // Handle drug histories - delete all and recreate if provided
-        if (drugHistories !== undefined && drugHistories !== null) {
-          const mapped = drugHistories.map((history) => {
-            return {
-              substance: history.substance,
-              ageOfRegularUse: history.ageOfRegularUse,
-              lastUse: history.lastUse,
-              heaviestUse: history.heaviestUse,
-              method: history.method,
-            };
-          });
-
-          updateData.drugHistories = {
-            deleteMany: {},
-            create: mapped,
           };
         }
 
@@ -271,6 +253,58 @@ export const sarRouter = router({
         handlePrismaError(
           e,
           "Employment history record with that id was not found",
+        );
+      }
+    }),
+
+  // Substance Use History CRUD mutations
+  createDrugHistory: baseProcedure
+    .input(createDrugHistorySchema)
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      try {
+        const { sarId, ...data } = input;
+        return await prisma.drugHistory.create({
+          data: {
+            ...data,
+            sentencingAssessmentReportId: sarId,
+          },
+        });
+      } catch (e) {
+        handlePrismaError(
+          e,
+          "Sentencing Assessment Report with that id was not found",
+        );
+      }
+    }),
+
+  updateDrugHistory: baseProcedure
+    .input(updateDrugHistorySchema)
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      try {
+        const { id, ...data } = input;
+        return await prisma.drugHistory.update({
+          where: { id },
+          data,
+        });
+      } catch (e) {
+        handlePrismaError(
+          e,
+          "Substance use history record with that id was not found",
+        );
+      }
+    }),
+
+  deleteDrugHistory: baseProcedure
+    .input(deleteDrugHistorySchema)
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      try {
+        return await prisma.drugHistory.delete({
+          where: { id: input.id },
+        });
+      } catch (e) {
+        handlePrismaError(
+          e,
+          "Substance use history record with that id was not found",
         );
       }
     }),

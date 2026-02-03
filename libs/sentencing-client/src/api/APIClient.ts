@@ -26,6 +26,11 @@ import {
   FormAttributes,
   MutableSARAttributes,
 } from "../components/CaseDetails/types";
+import {
+  FrequencyOfUse,
+  MethodOfUse,
+  SubstanceType,
+} from "../components/OffenderAssessment/SubstanceUse/constants";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { splitFullName } from "../utils/utils";
 
@@ -306,5 +311,39 @@ export class APIClient {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
     return this.trpcClient.sar.deleteEmploymentHistory.mutate(input);
+  }
+
+  // Substance Use History CRUD methods
+
+  async createDrugHistory(input: {
+    sarId: string;
+    substance?: SubstanceType | null;
+    ageOfRegularUse?: number | null;
+    lastUse?: Date | null;
+    heaviestUse?: FrequencyOfUse | null;
+    method?: MethodOfUse | null;
+  }) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+    return this.trpcClient.sar.createDrugHistory.mutate(input);
+  }
+
+  async updateDrugHistory(input: {
+    id: string;
+    substance?: SubstanceType | null;
+    ageOfRegularUse?: number | null;
+    lastUse?: Date | null;
+    heaviestUse?: FrequencyOfUse | null;
+    method?: MethodOfUse | null;
+  }) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+    return this.trpcClient.sar.updateDrugHistory.mutate(input);
+  }
+
+  async deleteDrugHistory(input: { id: string }) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+    return this.trpcClient.sar.deleteDrugHistory.mutate(input);
   }
 }

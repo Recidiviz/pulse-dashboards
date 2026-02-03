@@ -19,12 +19,17 @@ import { makeAutoObservable, runInAction } from "mobx";
 
 import { APIClient, OfflineAPIClient } from "../api";
 import { EmploymentHistory } from "../components/OffenderAssessment/EmploymentHistory/constants";
+import { DrugHistory } from "../components/OffenderAssessment/SubstanceUse/constants";
+import { splitFullName } from "../utils/utils";
 import { SARDetailsPresenter } from "./SARDetailsPresenter";
 
 export type CreateEmploymentHistoryInput = Omit<EmploymentHistory, "id">;
 export type UpdateEmploymentHistoryInput = Partial<
   Omit<EmploymentHistory, "id">
 >;
+
+export type CreateDrugHistoryInput = Omit<DrugHistory, "id">;
+export type UpdateDrugHistoryInput = Partial<Omit<DrugHistory, "id">>;
 
 /**
  * Presenter for Offender Assessment section (ORAS domain logic).
@@ -42,7 +47,7 @@ export class OffenderAssessmentPresenter {
   }
 
   // Delegate to parent for SAR data access
-  private get SARData() {
+  get SARData() {
     return this.sarDetailsPresenter.SARData;
   }
 
@@ -105,5 +110,71 @@ export class OffenderAssessmentPresenter {
           this.SARData.employmentHistories.filter((e) => e.id !== id);
       }
     });
+  }
+
+  get clientFirstName(): string {
+    return splitFullName(this.SARData?.client?.fullName).firstName;
+  }
+
+  // Substance Use History - Individual CRUD operations
+  get drugHistories(): DrugHistory[] {
+    return this.SARData?.drugHistories ?? [];
+  }
+
+  async createDrugHistory(data: CreateDrugHistoryInput): Promise<void> {
+    if (!this.SARData) return;
+
+    const result = await this.apiClient.createDrugHistory({
+      sarId: this.SARData.id,
+      ...data,
+    });
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.drugHistories = [...this.SARData.drugHistories, result];
+      }
+    });
+  }
+
+  async updateDrugHistory(
+    id: string,
+    data: UpdateDrugHistoryInput,
+  ): Promise<void> {
+    if (!this.SARData) return;
+
+    await this.apiClient.updateDrugHistory({ id, ...data });
+
+    runInAction(() => {
+      if (this.SARData) {
+        const index = this.SARData.drugHistories.findIndex((e) => e.id === id);
+        if (index !== -1) {
+          this.SARData.drugHistories[index] = {
+            ...this.SARData.drugHistories[index],
+            ...data,
+          };
+        }
+      }
+    });
+  }
+
+  async deleteDrugHistory(id: string): Promise<void> {
+    if (!this.SARData) return;
+
+    await this.apiClient.deleteDrugHistory({ id });
+
+    runInAction(() => {
+      if (this.SARData) {
+        this.SARData.drugHistories = this.SARData.drugHistories.filter(
+          (e) => e.id !== id,
+        );
+      }
+    });
+  }
+
+  async updateDrugHistorySummary(value: string): Promise<void> {
+    return this.sarDetailsPresenter.updateStringField(
+      "drugHistorySummary",
+      value,
+    );
   }
 }

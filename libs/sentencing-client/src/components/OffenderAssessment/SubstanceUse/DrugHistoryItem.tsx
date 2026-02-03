@@ -30,14 +30,12 @@ import {
 
 interface DrugHistoryItemProps {
   history: DrugHistory;
-  index: number;
-  onEdit: (index: number) => void;
-  onDelete: (index: number) => Promise<void>;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
 }
 
 export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
   history,
-  index,
   onEdit,
   onDelete,
 }) => {
@@ -47,7 +45,7 @@ export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await onDelete(index);
+      await onDelete(history.id);
     } finally {
       setIsDeleting(false);
       setShowDeleteConfirm(false);
@@ -69,7 +67,7 @@ export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
     <Styled.Card>
       <Styled.IconRow>
         <Styled.EditButton
-          onClick={() => onEdit(index)}
+          onClick={() => onEdit(history.id)}
           aria-label="Edit substance use record"
         >
           <Icon kind={IconSVG["Edit"]} size={16} />

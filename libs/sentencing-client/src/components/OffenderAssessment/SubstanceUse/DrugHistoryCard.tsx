@@ -18,126 +18,103 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
-import { SARDetailsPresenter } from "../../../presenters/SARDetailsPresenter";
-import { splitFullName } from "../../../utils/utils";
-import { DomainCard } from "../DomainCard";
+import { OffenderAssessmentPresenter } from "../../../presenters/OffenderAssessmentPresenter";
 import * as Styled from "../HistoryCardStyles";
 import { DrugHistory } from "./constants";
 import { DrugHistoryItem } from "./DrugHistoryItem";
 import { DrugHistoryModal } from "./DrugHistoryModal";
 
 interface DrugHistoryCardProps {
-  presenter: SARDetailsPresenter;
-  cardRef?: React.RefObject<HTMLDivElement | null>;
-  title?: string;
+  presenter: OffenderAssessmentPresenter;
 }
 
 export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
-  function DrugHistoryCard({ presenter, cardRef, title = "Substance Use" }) {
+  function DrugHistoryCard({ presenter }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [initialData, setInitialData] = useState<DrugHistory | undefined>(
       undefined,
     );
 
-    const { substanceAbuseLevel, drugHistorySummary, drugHistories } =
-      presenter.SARData ?? {};
-
-    // Get client's first name
-    const { firstName: clientFirstName } = splitFullName(
-      presenter.SARData?.client?.fullName,
-    );
+    const { drugHistories, clientFirstName } = presenter;
 
     const handleAdd = () => {
-      setEditingIndex(null);
+      setEditingId(null);
       setInitialData(undefined);
       setIsModalOpen(true);
     };
 
-    const handleEdit = (index: number) => {
-      if (drugHistories && drugHistories[index]) {
-        setEditingIndex(index);
-        setInitialData(drugHistories[index]);
+    const handleEdit = (id: string) => {
+      const history = drugHistories.find((h) => h.id === id);
+      if (history) {
+        setEditingId(id);
+        setInitialData(history);
         setIsModalOpen(true);
       }
     };
 
-    const handleModalSave = async (data: DrugHistory) => {
-      if (editingIndex !== null) {
+    const handleModalSave = async (data: Omit<DrugHistory, "id">) => {
+      if (editingId) {
         // Edit mode
-        await presenter.updateDrugHistoryAtIndex(editingIndex, data);
+        await presenter.updateDrugHistory(editingId, data);
       } else {
         // Add mode
-        await presenter.addDrugHistory(data);
+        await presenter.createDrugHistory(data);
       }
     };
 
-    const handleDelete = async (index: number) => {
-      await presenter.deleteDrugHistory(index);
+    const handleDelete = async (id: string) => {
+      await presenter.deleteDrugHistory(id);
     };
 
     const handleModalClose = () => {
       setIsModalOpen(false);
-      setEditingIndex(null);
+      setEditingId(null);
       setInitialData(undefined);
     };
 
     return (
       <>
-        <DomainCard
-          title={title}
-          riskScore={substanceAbuseLevel ?? 0}
-          summaryValue={drugHistorySummary ?? null}
-          onSummaryChange={(value) => presenter.updateDrugHistorySummary(value)}
-          cardRef={cardRef}
-        >
-          <Styled.HistorySection>
-            <Styled.SectionTitle>Substance Use History</Styled.SectionTitle>
+        <Styled.HistorySection>
+          <Styled.SectionTitle>Substance Use History</Styled.SectionTitle>
 
-            {drugHistories && drugHistories.length > 0 ? (
-              <Styled.HistoryTable>
-                <Styled.TableHeaderRow>
-                  <Styled.TableHeaderCell>Substance</Styled.TableHeaderCell>
-                  <Styled.TableHeaderCell>
-                    Age of Regular Use
-                  </Styled.TableHeaderCell>
-                  <Styled.TableHeaderCell>Last Use</Styled.TableHeaderCell>
-                  <Styled.TableHeaderCell>Heaviest Use</Styled.TableHeaderCell>
-                  <Styled.TableHeaderCell>Method</Styled.TableHeaderCell>
-                </Styled.TableHeaderRow>
-                <Styled.HistoryList>
-                  {drugHistories.map((history, index) => {
-                    // Create a stable key using index and unique data from the record
-                    // Index is used since our CRUD operations are index-based
-                    const key = `${index}-${history.substance || "none"}-${history.ageOfRegularUse || "none"}`;
-                    return (
-                      <DrugHistoryItem
-                        key={key}
-                        history={history}
-                        index={index}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                      />
-                    );
-                  })}
-                </Styled.HistoryList>
-              </Styled.HistoryTable>
-            ) : (
-              <Styled.EmptyState>
-                No substance use records. Click &quot;+ Add&quot; to create one.
-              </Styled.EmptyState>
-            )}
+          {drugHistories && drugHistories.length > 0 ? (
+            <Styled.HistoryTable>
+              <Styled.TableHeaderRow>
+                <Styled.TableHeaderCell>Substance</Styled.TableHeaderCell>
+                <Styled.TableHeaderCell>
+                  Age of Regular Use
+                </Styled.TableHeaderCell>
+                <Styled.TableHeaderCell>Last Use</Styled.TableHeaderCell>
+                <Styled.TableHeaderCell>Heaviest Use</Styled.TableHeaderCell>
+                <Styled.TableHeaderCell>Method</Styled.TableHeaderCell>
+              </Styled.TableHeaderRow>
+              <Styled.HistoryList>
+                {drugHistories.map((history) => (
+                  <DrugHistoryItem
+                    key={history.id}
+                    history={history}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </Styled.HistoryList>
+            </Styled.HistoryTable>
+          ) : (
+            <Styled.EmptyState>
+              No substance use records. Click &quot;+ Add&quot; to create one.
+            </Styled.EmptyState>
+          )}
 
-            <Styled.AddButton onClick={handleAdd}>+ Add</Styled.AddButton>
-          </Styled.HistorySection>
-        </DomainCard>
+          <Styled.AddButton onClick={handleAdd}>+ Add</Styled.AddButton>
+        </Styled.HistorySection>
 
         <DrugHistoryModal
           isOpen={isModalOpen}
           onClose={handleModalClose}
           onSave={handleModalSave}
           initialData={initialData}
-          editIndex={editingIndex ?? undefined}
+          isEditMode={editingId !== null}
           clientFirstName={clientFirstName}
         />
       </>

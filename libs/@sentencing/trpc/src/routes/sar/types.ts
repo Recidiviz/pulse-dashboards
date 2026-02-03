@@ -65,11 +65,4 @@ export type UpsertSARInput = Pick<
     pleaDate?: Date | null;
     sentencingDate?: Date | null;
   }[];
-  drugHistories?: {
-    substance?: Prisma.DrugHistoryUpdateInput["substance"];
-    ageOfRegularUse?: number | null;
-    lastUse?: Date | null;
-    heaviestUse?: Prisma.DrugHistoryUpdateInput["heaviestUse"];
-    method?: Prisma.DrugHistoryUpdateInput["method"];
-  }[];
 };
