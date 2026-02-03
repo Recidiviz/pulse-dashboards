@@ -144,6 +144,7 @@ describe("OverviewNavLinks tests", () => {
 
   it("Should render a link for Clients page if enabled", async () => {
     rootStoreMock.workflowsStore.workflowsSupportedSystems = ["SUPERVISION"];
+    rootStoreMock.userStore.userAllowedNavigation = { workflows: ["clients"] };
     renderLinks();
 
     await waitFor(() =>
@@ -153,15 +154,33 @@ describe("OverviewNavLinks tests", () => {
     );
   });
 
-  it("Should render a link for Residents page if enabled", async () => {
-    rootStoreMock.workflowsStore.workflowsSupportedSystems = ["INCARCERATION"];
+  it("Does not render a link for Clients page if user cannot see it", async () => {
+    rootStoreMock.workflowsStore.workflowsSupportedSystems = ["SUPERVISION"];
+    rootStoreMock.userStore.userAllowedNavigation = { workflows: [] };
     renderLinks();
 
-    await waitFor(() =>
-      expect(
-        screen.getByRole("menuitem", { name: "Residents" }),
-      ).toBeInTheDocument(),
-    );
+    expect(screen.queryByText("Clients")).not.toBeInTheDocument();
+  });
+
+  it("Does not render a link for Residents page if user cannot see it", async () => {
+    rootStoreMock.workflowsStore.workflowsSupportedSystems = ["INCARCERATION"];
+    rootStoreMock.userStore.userAllowedNavigation = {
+      workflows: [],
+    };
+    renderLinks();
+
+    expect(screen.queryByText("Residents")).not.toBeInTheDocument();
+  });
+
+  it("Does not render a link for Clients or Residents page if not enabled on tenant", async () => {
+    rootStoreMock.workflowsStore.workflowsSupportedSystems = [];
+    rootStoreMock.userStore.userAllowedNavigation = {
+      workflows: ["residents", "clients"],
+    };
+    renderLinks();
+
+    expect(screen.queryByText("Clients")).not.toBeInTheDocument();
+    expect(screen.queryByText("Residents")).not.toBeInTheDocument();
   });
 
   it("Should not render a link for Residents or Clients page if supportsMultipleSystems enabled on mobile", async () => {
@@ -171,6 +190,9 @@ describe("OverviewNavLinks tests", () => {
       "SUPERVISION",
     ];
     rootStoreMock.workflowsStore.supportsMultipleSystems = true;
+    rootStoreMock.userStore.userAllowedNavigation = {
+      workflows: ["clients", "residents"],
+    };
     renderLinks();
 
     await waitFor(() =>
@@ -184,6 +206,9 @@ describe("OverviewNavLinks tests", () => {
       "SUPERVISION",
     ];
     rootStoreMock.workflowsStore.supportsMultipleSystems = true;
+    rootStoreMock.userStore.userAllowedNavigation = {
+      workflows: ["clients", "residents"],
+    };
     renderLinks();
 
     await waitFor(() => {
@@ -202,6 +227,9 @@ describe("OverviewNavLinks tests", () => {
       "SUPERVISION",
     ];
     rootStoreMock.workflowsStore.supportsMultipleSystems = true;
+    rootStoreMock.userStore.userAllowedNavigation = {
+      workflows: ["clients", "residents"],
+    };
 
     renderLinks();
 
@@ -225,6 +253,9 @@ describe("OverviewNavLinks tests", () => {
     ];
     rootStoreMock.workflowsStore.supportsMultipleSystems = true;
     useFeatureVariantsMock.mockReturnValue({ hideWorkflowsOpportunities: {} });
+    rootStoreMock.userStore.userAllowedNavigation = {
+      workflows: ["clients", "residents"],
+    };
 
     renderLinks();
 

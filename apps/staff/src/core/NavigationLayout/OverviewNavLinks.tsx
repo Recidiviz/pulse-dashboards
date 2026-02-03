@@ -22,16 +22,15 @@ import { NavLink, useLocation } from "react-router-dom";
 import { SystemId } from "~datatypes";
 
 import {
-  PartiallyTypedRootStore,
   useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
 import { getJusticeInvolvedPersonTitle } from "../../WorkflowsStore/utils";
-import { DASHBOARD_VIEWS, WorkflowsPage, workflowsUrl } from "../views";
+import { DASHBOARD_VIEWS, WorkflowsPathSection, workflowsUrl } from "../views";
 
-export const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
+export const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPathSection> = {
   SUPERVISION: "clients",
   INCARCERATION: "residents",
   ALL: "home",
@@ -42,7 +41,6 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   const { isMobile } = useIsMobile(true);
   const { hideWorkflowsOpportunities } = useFeatureVariants();
 
-  // TODO(#5636) Eliminate PartiallyTypedRootStore
   const {
     workflowsStore,
     workflowsStore: {
@@ -51,18 +49,23 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       supportsMultipleSystems,
       homepage,
       homepageNameOverride,
+      activeSystem,
     },
     userStore: { userAllowedNavigation },
-  } = useRootStore() as PartiallyTypedRootStore;
+  } = useRootStore();
 
   const enableWorkflows =
-    (userAllowedNavigation.workflows || []).length > 0 &&
+    (userAllowedNavigation?.workflows || []).length > 0 &&
     !hideWorkflowsOpportunities;
-  const enableMilestones = (userAllowedNavigation.workflows || []).includes(
+  const enableMilestones = (userAllowedNavigation?.workflows || []).includes(
     "milestones",
   );
-  const enabledInsights = (userAllowedNavigation.insights || []).length > 0;
+  const enabledInsights = (userAllowedNavigation?.insights || []).length > 0;
   const enableSystems = !supportsMultipleSystems || !isMobile;
+  const enableRNA =
+    activeSystem !== "SUPERVISION" &&
+    !!(userAllowedNavigation?.workflows || []).includes("rna");
+
   const workflowsHomepageName = homepageNameOverride ?? "Opportunities";
 
   // TODO(#7613): Dynamically dedupe nav links when homepage is a normal tab
@@ -89,6 +92,11 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
           {workflowsHomepageName}
         </NavLink>
       )}
+      {enableRNA && (
+        <NavLink to={workflowsUrl("rna")} role="menuitem">
+          RNA Viewer
+        </NavLink>
+      )}
       {enableMilestones && (
         <NavLink to={workflowsUrl("milestones")} role="menuitem">
           Kudos
@@ -111,6 +119,12 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
             // When hideWorkflowsOpportunities is set, we don't render the "Home" link,
             // so there's no duplication.
             if (path === homepage && !hideWorkflowsOpportunities) {
+              return null;
+            }
+
+            // Don't show Clients/Residents links when the user does not have access to
+            // the page.
+            if (!userAllowedNavigation?.workflows?.includes(path)) {
               return null;
             }
             return (

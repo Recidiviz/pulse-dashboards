@@ -578,6 +578,104 @@ describe("getRoutePermission", () => {
         expect(store.getRoutePermission("workflows", "home")).toBeFalse();
       });
     });
+
+    describe("when hideWorkflowsResidentsPage is set", () => {
+      let store: UserStore;
+
+      beforeEach(() => {
+        store = new UserStore({
+          authSettings: testAuthSettings,
+          rootStore: {
+            currentTenantId: tenantId,
+            firestoreStore: {
+              authenticate: vi.fn(),
+            },
+            tenantStore: {
+              tenantFeatureVariants: {},
+            },
+          } as unknown as typeof RootStore,
+        });
+      });
+
+      test("cannot access residents page, no effect on other pages", async () => {
+        const userAppMetadata = {
+          [metadataField]: {
+            stateCode: "US_MO",
+            routes: {
+              workflowsSupervision: true,
+              workflowsFacilities: true,
+            },
+            featureVariants: {
+              hideWorkflowsResidentsPage: true,
+            },
+          },
+        };
+        mockGetUser.mockResolvedValue({
+          email_verified: true,
+          ...userAppMetadata,
+        });
+        await store.authorize(mockHandleUrl);
+
+        expect(store.getRoutePermission("workflows", "residents")).toBeFalse();
+        expect(store.getRoutePermission("workflows", "clients")).toBeTrue();
+        expect(store.getRoutePermission("workflows")).toBeTrue();
+        expect(store.getRoutePermission("workflows", "home")).toBeTrue();
+      });
+    });
+
+    describe("RNA subpage for North Carolina", () => {
+      let store: UserStore;
+      beforeEach(() => {
+        store = new UserStore({
+          authSettings: testAuthSettings,
+          rootStore: {
+            currentTenantId: tenantId,
+            firestoreStore: {
+              authenticate: vi.fn(),
+            },
+            tenantStore: {
+              tenantFeatureVariants: {},
+            },
+          } as unknown as typeof RootStore,
+        });
+      });
+
+      test("denies access without workflowsFacilities permission", async () => {
+        const userAppMetadata = {
+          [metadataField]: {
+            stateCode: "US_NC",
+            routes: {
+              workflowsFacilities: false,
+            },
+          },
+        };
+        mockGetUser.mockResolvedValue({
+          email_verified: true,
+          ...userAppMetadata,
+        });
+        await store.authorize(mockHandleUrl);
+
+        expect(store.getRoutePermission("workflows", "rna")).toBeFalse();
+      });
+
+      test("allows access with workflowsFacilities permission", async () => {
+        const userAppMetadata = {
+          [metadataField]: {
+            stateCode: "US_NC",
+            routes: {
+              workflowsFacilities: true,
+            },
+          },
+        };
+        mockGetUser.mockResolvedValue({
+          email_verified: true,
+          ...userAppMetadata,
+        });
+        await store.authorize(mockHandleUrl);
+
+        expect(store.getRoutePermission("workflows", "rna")).toBeTrue();
+      });
+    });
   });
 
   test("lantern permissions", async () => {

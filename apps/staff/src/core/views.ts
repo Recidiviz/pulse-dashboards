@@ -228,6 +228,7 @@ export const WORKFLOWS_PATH_SECTIONS = [
   "residents",
   "tasks",
   "milestones",
+  "rna", // North Carolina Facilities RNA viewer
 ] as const;
 export type WorkflowsPathSection = (typeof WORKFLOWS_PATH_SECTIONS)[number];
 export const isWorkflowsPathSection = (
@@ -245,7 +246,7 @@ export const WORKFLOWS_SYSTEM_ID_TO_PAGE: Record<
   SystemId,
   WorkflowsPathSection[]
 > = {
-  INCARCERATION: ["residents"],
+  INCARCERATION: ["residents", "rna"],
   SUPERVISION: ["clients", "tasks", "milestones"],
   ALL: ["home"],
 };
@@ -258,6 +259,7 @@ export const WorkflowsPageIdList = [
   "opportunityClients",
   "opportunityAction",
   "tasksRoutePlanner",
+  "rnaSingleResidentResults",
 ] as const;
 export type WorkflowsPage = (typeof WorkflowsPageIdList)[number];
 
@@ -280,6 +282,8 @@ export const WORKFLOWS_PATHS: Record<WorkflowsPage | "workflows", string> = {
   residents: `/${DASHBOARD_VIEWS.workflows}/residents`,
   clientProfile: `/${DASHBOARD_VIEWS.workflows}/clients/${PERSON_ID_SLUG}`,
   residentProfile: `/${DASHBOARD_VIEWS.workflows}/residents/${PERSON_ID_SLUG}`,
+  rna: `/${DASHBOARD_VIEWS.workflows}/rna`,
+  rnaSingleResidentResults: `/${DASHBOARD_VIEWS.workflows}/rna/${PERSON_ID_SLUG}`,
 };
 
 // Compute which pre-defined path sections never contain a person ID or opportunity ID

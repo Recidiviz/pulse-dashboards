@@ -47,7 +47,7 @@ const US_NC_CONFIG: TenantConfig<"US_NC"> = {
     },
   },
   navigation: {
-    workflows: ["home", "clients", "residents"],
+    workflows: ["home", "clients", "rna"],
   },
 };
 

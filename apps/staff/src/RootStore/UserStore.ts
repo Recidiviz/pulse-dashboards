@@ -611,8 +611,8 @@ export default class UserStore {
     // When hideWorkflowsOpportunities is turned on, we'll restrict workflows access to just
     // the Resident and/or Client profile subpages.
     // TODO(#11293): Detangle profile access from workflows access where possible.
-    const hideWorkflowsOpportunities =
-      this.activeFeatureVariants.hideWorkflowsOpportunities;
+    const { hideWorkflowsOpportunities, hideWorkflowsResidentsPage } =
+      this.activeFeatureVariants;
 
     const isTasksAccessibleSubpage = Boolean(
       subpage && ["tasks", "clients", "residents"].includes(subpage),
@@ -629,6 +629,14 @@ export default class UserStore {
           hideWorkflowsOpportunities &&
           permissionName === "workflowsSupervision";
 
+        if (
+          route === "workflows" &&
+          subpage === "residents" &&
+          hideWorkflowsResidentsPage
+        ) {
+          return false;
+        }
+
         return (
           permissionName === route ||
           // special case for the "workflows" route:
@@ -637,18 +645,26 @@ export default class UserStore {
           // If any relevant routes are allowed then workflows routes should be permitted,
           // unless:
           //   - the subpage is "tasks" (controlled with a different route permission)
+          //   - the subpage is "rna" (controlled with only the "workflowsFacilities" permission)
           //   - user is restricted to only accessing profile subpages (controlled with a FV)
           (route === "workflows" &&
             permissionName.startsWith("workflows") &&
             isAllowed &&
             !hideWorkflowsOpportunities &&
-            subpage !== "tasks") ||
+            subpage !== "tasks" &&
+            subpage !== "rna") ||
           // special case for "tasks": the route permission tasks grants access to
           // /workflows/tasks, clients, and residents, but not other workflows routes
           (route === "workflows" &&
             permissionName === "tasks" &&
             isAllowed &&
             isTasksAccessibleSubpage) ||
+          // special case for the "RNA viewer" page, which is only available in facilities
+          // in North Carolina
+          (route === "workflows" &&
+            subpage === "rna" &&
+            permissionName === "workflowsFacilities" &&
+            isAllowed) ||
           // special case for the workflows profile subpages when the user has been
           // restricted to profile-only access.
           (route === "workflows" &&

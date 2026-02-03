@@ -37,6 +37,8 @@ describe("getRelativePath", () => {
       residents: `/residents`,
       clientProfile: `/clients/:justiceInvolvedPersonId`,
       residentProfile: `/residents/:justiceInvolvedPersonId`,
+      rna: `/rna`,
+      rnaSingleResidentResults: `/rna/:justiceInvolvedPersonId`,
     };
 
   test.each([...Object.keys(WORKFLOWS_PATHS)])(

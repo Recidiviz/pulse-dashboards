@@ -26,6 +26,7 @@ import isIE11 from "../../utils/isIE11";
 import { CaseloadView } from "../CaseloadView";
 import ModelHydrator from "../ModelHydrator";
 import { OpportunityCaseloadView } from "../OpportunityCaseloadView";
+import { UsNcRNASingleResident, UsNcRNAViewer } from "../UsNcRNA";
 import { workflowsRoute } from "../views";
 import WorkflowsHomepage from "../WorkflowsHomepage";
 import { FullProfile } from "../WorkflowsJusticeInvolvedPersonProfile";
@@ -122,6 +123,18 @@ const PageWorkflows: React.FC = () => {
                 routeName: "tasksRoutePlanner",
               })}
               element={<WorkflowsTasksRoutePlanner />}
+            />
+            <Route
+              path={workflowsRoute({
+                routeName: "rna",
+              })}
+              element={<UsNcRNAViewer />}
+            />
+            <Route
+              path={workflowsRoute({
+                routeName: "rnaSingleResidentResults",
+              })}
+              element={<UsNcRNASingleResident />}
             />
             <Route
               path={workflowsRoute({

@@ -72,6 +72,7 @@ export type FeatureVariant =
   | "formRevertButton"
   | "hideDenialRevert"
   | "hideWorkflowsOpportunities"
+  | "hideWorkflowsResidentsPage"
   | "indefiniteSnooze"
   | "supervisionUnrestrictedSearch"
   | "tasksRoutePlanner"
@@ -232,6 +233,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   insightsSupervisorOpportunityNotifications: {},
   sentenceProgressV2: {},
   hideWorkflowsOpportunities: {},
+  hideWorkflowsResidentsPage: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -270,6 +272,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         usIdTasksV2: {},
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
+        hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
       }
     : {
         ...allFeatureVariants,
@@ -289,6 +292,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         SARBuilder: { activeTenants: ["US_MO"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },
         hideWorkflowsOpportunities: undefined,
+        hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
       };
 
 export type LanternMethodologyByTenant = {
