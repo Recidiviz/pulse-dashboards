@@ -6,51 +6,64 @@ import structlog_gcp
 from structlog_sentry import SentryProcessor
 
 
-def setup_stdlib_logging() -> None:
-    if not sys.stderr.isatty():
-        # In GCP: Just output the JSON message without extra formatting
-        logging.basicConfig(
-            format="%(message)s",
-            level=logging.INFO,
-        )
-    else:
-        # In local dev: Keep the readable format for console output
-        logging.basicConfig(
-            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-            level=logging.INFO,
-        )
-
-
-def setup_structlog() -> None:
-    processors = [
+def setup_logging() -> None:
+    shared_processors = [
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.add_logger_name,
         structlog.stdlib.add_log_level,
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.StackInfoRenderer(),
-        SentryProcessor(
-            level=logging.INFO,
-            event_level=logging.ERROR,
-        ),
-        structlog.processors.format_exc_info,
     ]
 
+    # Determine the final renderer based on environment
     if not sys.stderr.isatty():
+        # GCP: Use JSON rendering for structured logs
         gcp_processors = structlog_gcp.build_processors(service="action-plan-generator")
         if gcp_processors:
-            processors.extend(gcp_processors)
+            # structlog_gcp provides its own renderer
+            renderer = (
+                gcp_processors[-1]
+                if gcp_processors
+                else structlog.processors.JSONRenderer()
+            )
+        else:
+            renderer = structlog.processors.JSONRenderer()
     else:
-        processors.append(structlog.dev.ConsoleRenderer())
+        # Local dev: Use console rendering for readability
+        renderer = structlog.dev.ConsoleRenderer()
 
+    # Configure structlog with ProcessorFormatter integration
     structlog.configure(
-        processors=processors,
+        processors=[
+            *shared_processors,
+            SentryProcessor(
+                level=logging.INFO,
+                event_level=logging.ERROR,
+            ),
+            structlog.processors.format_exc_info,
+            # Wrap for ProcessorFormatter instead of rendering directly
+            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+        ],
         wrapper_class=structlog.stdlib.BoundLogger,
         context_class=dict,
         logger_factory=structlog.stdlib.LoggerFactory(),
         cache_logger_on_first_use=True,
     )
 
+    # Configure standard library logging with ProcessorFormatter
+    # This routes ALL standard library logs (socketio, uvicorn, etc.) through structlog
+    formatter = structlog.stdlib.ProcessorFormatter(
+        # Foreign logs (from third-party libraries) go through this chain first
+        foreign_pre_chain=shared_processors,
+        processors=[
+            structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+            renderer,
+        ],
+    )
 
-def setup_logging() -> None:
-    setup_stdlib_logging()
-    setup_structlog()
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+
+    root_logger = logging.getLogger()
+    root_logger.addHandler(handler)
+    root_logger.setLevel(logging.INFO)

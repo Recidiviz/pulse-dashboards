@@ -2,12 +2,12 @@
 Client connection manager for tracking and enforcing one connection per client.
 """
 
-import structlog
 import traceback
 from typing import Optional
 
 import redis.asyncio as redis
 import socketio
+import structlog
 
 from app.utils.intake.redis_keys import RedisKeys
 from app.utils.intake.schemas import ForceDisconnectEvent
@@ -55,6 +55,11 @@ class ClientConnectionManager:
             bool: True if the client was connected elsewhere and had to be disconnected
         """
         try:
+            if client_pseudo_id:
+                structlog.contextvars.bind_contextvars(
+                    client_pseudo_id=client_pseudo_id
+                )
+
             # Check if client already has an active connection
             current_sid = await self.get_client_sid(client_pseudo_id)
             was_connected_elsewhere = False
@@ -118,6 +123,12 @@ class ClientConnectionManager:
         try:
             # Get client_pseudo_id from the sid
             client_pseudo_id = await self.get_client_pseudo_id_by_sid(sid)
+
+            if client_pseudo_id:
+                structlog.contextvars.bind_contextvars(
+                    client_pseudo_id=client_pseudo_id
+                )
+
             if not client_pseudo_id:
                 logger.warning(f"No client ID found for socket ID {sid}")
                 return False
@@ -228,6 +239,9 @@ class ClientConnectionManager:
             return None
 
     async def disconnect_client_pseudo_id(self, client_pseudo_id: str):
+        if client_pseudo_id:
+            structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
+
         sid = await self.get_client_sid(client_pseudo_id)
         # Signal to that connection to disconnect
 

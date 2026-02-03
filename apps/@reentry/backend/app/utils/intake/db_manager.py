@@ -3,11 +3,11 @@ Manages persistent conversation data in the database.
 This manager is focused solely on database operations and data persistence.
 """
 
-import structlog
 import traceback
 from typing import Dict, List, Literal, Optional
 from uuid import UUID
 
+import structlog
 from sqlmodel import and_, select
 
 from app.core.data_config.assessment_configs.assessment_config import (
@@ -270,6 +270,11 @@ class DatabaseManager:
             Optional[ClientDataRecord]: The client data from BigQuery or None if not found
         """
         try:
+            if client_pseudo_id:
+                structlog.contextvars.bind_contextvars(
+                    client_pseudo_id=client_pseudo_id
+                )
+
             from app.services.client_data.queries import Queries
 
             return Queries.get_client_by_pseudonymized_id_unsafe(client_pseudo_id)
@@ -297,6 +302,11 @@ class DatabaseManager:
             Optional[Intake]: The latest active conversation intake or None if not found
         """
         try:
+            if client_pseudo_id:
+                structlog.contextvars.bind_contextvars(
+                    client_pseudo_id=client_pseudo_id
+                )
+
             async with await self._get_session() as session:
                 return await get_latest_active_conversation_intake(
                     session, client_pseudo_id, token_from_url

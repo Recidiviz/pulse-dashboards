@@ -1,8 +1,8 @@
-import structlog
 import traceback
 from datetime import datetime
 from typing import Any, Callable, Coroutine, Dict, Literal, Optional
 
+import structlog
 from langchain_core.messages import AIMessage, AnyMessage
 from langchain_core.messages.human import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -112,6 +112,11 @@ class IntakeConversationGraph:
     async def initialize(self, intake: Intake) -> None:
         """Initialize the conversation graph."""
         try:
+            if client_pseudo_id := self.session.client_pseudo_id:
+                structlog.contextvars.bind_contextvars(
+                    client_pseudo_id=client_pseudo_id
+                )
+
             # Store intake_id to pass to db_manager methods
             self.intake_id = intake.id
 
@@ -685,6 +690,11 @@ class IntakeConversationGraph:
             Dict: Final state after running the assessment
         """
         try:
+            if client_pseudo_id := self.session.client_pseudo_id:
+                structlog.contextvars.bind_contextvars(
+                    client_pseudo_id=client_pseudo_id
+                )
+
             if self.graph is None:
                 raise RuntimeError("Failed to initialize conversation graph")
 

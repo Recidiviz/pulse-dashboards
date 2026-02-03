@@ -5,12 +5,13 @@ Is responsible for routing and saving user messages
 """
 
 import asyncio
-import structlog
+import logging
 import traceback
 from time import time
 from typing import Dict, Optional
 
 import socketio
+import structlog
 
 from app.auth.intake.auth_client_user import verify_client_token
 from app.core.config import create_model_from_config, settings
@@ -43,12 +44,17 @@ logger = structlog.get_logger(__name__)
 # Initialize managers
 mgr = socketio.AsyncRedisManager(f"{settings.REDIS_URL}", channel="intake_channel")
 
+# Create standard library loggers for socketio/engineio
+# These logs flow through ProcessorFormatter (configured in logging_config.py),
+socketio_logger = logging.getLogger("socketio.server")
+engineio_logger = logging.getLogger("engineio.server")
+
 sio = socketio.AsyncServer(
     async_mode="asgi",
     client_manager=mgr,
     cors_allowed_origins=settings.ALLOWED_ORIGINS.split(","),
-    # logger=True,
-    engineio_logger=True,
+    logger=socketio_logger,
+    engineio_logger=engineio_logger,
     cookie={"name": "test", "httpOnly": False, "path": "/custom"},
 )
 
@@ -143,6 +149,9 @@ class SocketIOManager:
                         return False
 
                     client_pseudo_id = extracted_client_pseudo_id
+                    structlog.contextvars.bind_contextvars(
+                        client_pseudo_id=client_pseudo_id
+                    )
 
                     if client_pseudo_id:
                         user_agent = environ.get("HTTP_USER_AGENT", "Unknown")
@@ -269,6 +278,7 @@ class SocketIOManager:
 
     async def _init_and_run_graph(self, intake: Intake, client: ClientDataRecord, sid):
         client_pseudo_id = intake.client_pseudo_id
+        structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
         # Create a client context with the client information
         # Format the full structured name as a string
         formatted_name = client.full_name.formatted_full_name()
@@ -381,6 +391,7 @@ class SocketIOManager:
                 await self.client_connection_manager.get_client_pseudo_id_by_sid(sid)
             )
 
+            structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
             # Clean up in client connection manager
             await self.client_connection_manager.disconnect_client(sid)
 
@@ -415,6 +426,7 @@ class SocketIOManager:
                 logger.warning(f"No client ID found for socket ID {sid}")
                 return
 
+            structlog.contextvars.bind_contextvars(client_pseudo_id=client_pseudo_id)
             content = parsed_message.content
             if not content:
                 logger.debug(f"Empty content received from sid {sid}")
