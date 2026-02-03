@@ -153,7 +153,7 @@ export type TrusteeFormAdditionalFields = {
   trusteeNoPendingFelonyCharges: string;
   trusteeNoPendingImmigrationActions: string;
   trusteeWardenHasApproved: string;
-  trusteeDenailReasons: string;
+  trusteeDenialReasons: string;
   trusteeCustodyApproved: string;
 };
 

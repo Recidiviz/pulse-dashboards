@@ -21,11 +21,18 @@ import styled from "styled-components";
 
 import { TrusteeFormSchema } from "~datatypes";
 
+import { JusticeInvolvedPerson } from "../../../../../WorkflowsStore";
 import { UsTnDiagnosticClassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
+import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
+import { FileGeneratorArgs } from "../../../DOCXFormGenerator";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { PrintablePage } from "../../../styles";
 import { Bold, Header, TrusteeFormPage } from "./styles";
 import { TextboxWithHeader } from "./TextboxWithHeader";
+
+type TrusteeForm =
+  | UsTnDiagnosticClassification2026Form
+  | UsTnReclassification2026Form;
 
 const CriteriaTable = styled.table`
   border-collapse: collapse;
@@ -47,6 +54,65 @@ const CriteriaTable = styled.table`
     font-weight: 500;
   }
 `;
+
+const QUESTION_ORDER = [
+  "trusteeHas10YearsOrLessRemaining",
+  "trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody",
+  "trusteeNotConvictedOfFirstDegreeMurder",
+  "trusteeNotServingForSexualOffense",
+  "trusteeNoFelonyDetainers",
+  "trusteeNoPendingFelonyCharges",
+  "trusteeNoPendingImmigrationActions",
+  "trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years",
+  "trusteeNoViolentFelonyConvictionPast5YearsIncarceration",
+  "trusteeNoEscapeFromMediumCloseMaxPast10Years",
+  "trusteeNoEscapeFromLowTrusteePast5Years",
+  "trusteeNotScoredHighForViolence",
+  "trusteeWardenHasApproved",
+] satisfies (keyof TrusteeFormSchema)[];
+
+export function getTrusteeTemplateArgs(
+  resident: JusticeInvolvedPerson,
+  form: TrusteeForm,
+): FileGeneratorArgs {
+  const { derivedData, formData, formTemplateData } = form;
+
+  const formContents: Record<string, string> = {};
+
+  for (let i = 0; i < QUESTION_ORDER.length; i++) {
+    const index = i + 1;
+    const value = formData[QUESTION_ORDER[i]];
+    formContents[`q${index}t`] = value === "true" ? "X" : "";
+    formContents[`q${index}f`] = value === "false" ? "X" : "";
+  }
+
+  const { trusteeEligible } = derivedData;
+
+  formContents.eligibleYes = trusteeEligible ? "X" : "_";
+  formContents.eligibleNo = !trusteeEligible ? "X" : "_";
+
+  formContents.approvedYes = "_";
+  formContents.approvedNo = "_";
+
+  if (trusteeEligible) {
+    switch (formData.trusteeCustodyApproved) {
+      case "true":
+        formContents.approvedYes = "X";
+        break;
+      case "false":
+        formContents.approvedNo = "X";
+    }
+  }
+
+  formContents.denialReasons = formData.trusteeDenialReasons ?? "";
+
+  return [
+    `${resident.displayName} - Trustee Checklist.docx`,
+    resident.stateCode,
+    "trustee_assessment_template.docx",
+    { ...formTemplateData, ...formContents },
+  ];
+}
 
 const TrusteeCriteriaRow = observer(function TrusteeCriteriaRow({
   dataKey,
@@ -246,7 +312,14 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
               <TrusteeCriteriaRow dataKey="trusteeNoPendingImmigrationActions">
                 Inmate has no pending immigration deportation actions
               </TrusteeCriteriaRow>
-
+            </tbody>
+          </CriteriaTable>
+        </TrusteeFormPage>
+      </PrintablePage>
+      <PrintablePage stretchable hidden={!display}>
+        <TrusteeFormPage>
+          <CriteriaTable>
+            <tbody>
               <TrusteeCriteriaRow dataKey="trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years">
                 Inmate has no disciplinary convictions for assaultive conduct
                 that resulted in serious injury or the death of another
@@ -261,14 +334,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
                 has approved trustee custody placement (signature required
                 below)
               </TrusteeCriteriaRow>
-            </tbody>
-          </CriteriaTable>
-        </TrusteeFormPage>
-      </PrintablePage>
-      <PrintablePage stretchable hidden={!display}>
-        <TrusteeFormPage>
-          <CriteriaTable>
-            <tbody>
+
               <TrusteeCriteriaRow dataKey="trusteeNoViolentFelonyConvictionPast5YearsIncarceration">
                 Inmate has no court-prosecuted felony convictions for a violent
                 offense committed during the past 5 years of incarceration

@@ -30,7 +30,7 @@ export function TotalScore({ score }: { score: number }) {
   return (
     <Container>
       <div>
-        <Bold>TOTAL SCORE (IF GREATER THAN 40, WRITE 40):</Bold> {score}
+        <Bold>TOTAL SCORE (IF GREATER THAN 41, WRITE 41):</Bold> {score}
       </div>
       <div>
         <div>

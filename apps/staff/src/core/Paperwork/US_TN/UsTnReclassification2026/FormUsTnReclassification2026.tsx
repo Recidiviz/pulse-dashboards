@@ -20,7 +20,7 @@ import React, { useState } from "react";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
-import { UsTnDiagnosticClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
+import { UsTnReclassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
@@ -35,7 +35,10 @@ import {
   TotalScore,
 } from "../common/Classification2026";
 import { PostDownloadModal } from "../common/Classification2026/NextStepsModal";
-import { TrusteeChecklist } from "../common/Classification2026/TrusteeChecklist";
+import {
+  getTrusteeTemplateArgs,
+  TrusteeChecklist,
+} from "../common/Classification2026/TrusteeChecklist";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import { assessmentQuestions } from "./assessmentQuestions";
 
@@ -48,22 +51,27 @@ export const FormUsTnReclassification2026 = observer(
     const formRef = React.useRef<HTMLDivElement>(null);
     const [postDownloadModalIsOpen, setPostDownloadModalIsOpen] =
       useState<boolean>(false);
-    const { derivedData } =
-      useOpportunityFormContext() as UsTnDiagnosticClassification2026Form;
+    const form = useOpportunityFormContext() as UsTnReclassification2026Form;
+    const { derivedData, formTemplateData } = form;
     const { getTokenSilently } = useRootStore();
     const resident = opportunity.person;
 
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [
         ["classification_next_steps_2026", "Classification Next Steps"],
+        ["rcaf_template", "Reclassification Form"],
       ].map(([filename, outputName]) => {
         return [
           `${resident.displayName} - ${outputName}.docx`,
           resident.stateCode,
           `${filename}.docx`,
-          {}, // No form contents yet
+          formTemplateData,
         ];
       });
+
+      if (derivedData.totalScore <= 12) {
+        fileInputs.push(getTrusteeTemplateArgs(resident, form));
+      }
 
       const documents = await renderMultipleDocx(fileInputs, getTokenSilently);
 

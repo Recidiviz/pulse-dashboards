@@ -24,7 +24,7 @@ import {
   q1Notes,
   q2Notes,
   q7Notes,
-  TrusteeFormAdditionalFields,
+  TrusteeFormSchema,
   trusteeFormSchema,
 } from "../utils";
 
@@ -62,7 +62,7 @@ export type UsTnReclassification2026ReferralRecord = ParsedRecord<
 
 export type UsTnReclassification2026DraftData =
   UsTnReclassification2026ReferralRecord["output"]["formInformation"] &
-    TrusteeFormAdditionalFields & {
+    TrusteeFormSchema & {
       q1Selection: number;
       q2Selection: number;
       q3Selection_0_6: number;

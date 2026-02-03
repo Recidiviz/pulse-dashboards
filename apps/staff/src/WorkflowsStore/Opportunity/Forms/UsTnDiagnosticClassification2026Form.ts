@@ -128,7 +128,7 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
     );
 
     const totalScore = Math.min(
-      40,
+      41,
       q1Score + q2Score + q3Score + q4Score + q5Score + q6Score,
     );
 
@@ -157,6 +157,20 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       q6Score,
       totalScore,
       trusteeEligible,
+    };
+  }
+
+  get formTemplateData() {
+    const { person, formData, derivedData } = this;
+
+    const now = new Date();
+
+    return {
+      ...formData,
+      ...derivedData,
+      omsId: person.externalId,
+      downloadDate: now.toLocaleDateString(),
+      downloadTime: now.toLocaleTimeString(),
     };
   }
 }
