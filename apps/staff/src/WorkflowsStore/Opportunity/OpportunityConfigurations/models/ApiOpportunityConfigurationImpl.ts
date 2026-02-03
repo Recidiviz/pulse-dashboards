@@ -321,6 +321,16 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.supportsIneligible;
   }
 
+  // This field controls if the opportunity manager will hydrate an opportunity
+  // record when we instantiate a JII instance even if the record says
+  // the person is ineligible.
+  //
+  // NOTE: Be wary when enabling this as it can vastly increase the number of
+  // requests made when a user first loads up a searchable (officer, facility, etc.)
+  get hydrateIneligibleRecordsInOpportunityManager() {
+    return false;
+  }
+
   get highlightCasesOnHomepage() {
     return this.configurationObject.highlightCasesOnHomepage;
   }

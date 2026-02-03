@@ -82,6 +82,7 @@ export interface OpportunityConfiguration {
   supportsAlmostEligible: boolean;
   supportsSubmitted: boolean;
   supportsIneligible: boolean;
+  hydrateIneligibleRecordsInOpportunityManager: boolean;
   highlightCasesOnHomepage: boolean;
   highlightedCaseCtaCopy: string;
   subcategoryHeadings?: Record<string, string>;

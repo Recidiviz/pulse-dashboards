@@ -72,10 +72,12 @@ describe("instantiation", () => {
     person = new Client(ineligibleClientRecord, rootStore);
 
     const supportedIneligibleOpps = Object.entries(mockOpportunityConfigs)
-      .filter(([_, config]) => config.supportsIneligible)
+      .filter(
+        ([_, config]) => config.hydrateIneligibleRecordsInOpportunityManager,
+      )
       .map(([oppType, _]) => oppType);
 
-    // @ts-ignore
+    // @ts-expect-error
     expect(person.opportunityManager.activeOpportunityTypes).toEqual(
       supportedIneligibleOpps,
     );

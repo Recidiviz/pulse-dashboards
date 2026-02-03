@@ -87,7 +87,7 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
       } = this.rootStore;
 
       return (
-        configs[opp].supportsIneligible ||
+        configs[opp].hydrateIneligibleRecordsInOpportunityManager ||
         this.eligibleOpportunityTypes.indexOf(opp) !== -1
       );
     });
@@ -132,7 +132,11 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
     // Get the constructor from the defined mapping of type to constructor
     const constructor = opportunityConstructors[opportunityType];
 
-    const { firestoreCollection, supportsAlmostEligible, supportsIneligible } =
+    const {
+      firestoreCollection,
+      supportsAlmostEligible,
+      hydrateIneligibleRecordsInOpportunityManager,
+    } =
       this.rootStore.workflowsRootStore.opportunityConfigurationStore
         .opportunities[opportunityType];
 
@@ -144,7 +148,7 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
         {
           includeEligible: true,
           includeAlmostEligible: supportsAlmostEligible,
-          includeIneligible: supportsIneligible,
+          includeIneligible: hydrateIneligibleRecordsInOpportunityManager,
         },
       );
 

@@ -40,6 +40,7 @@ import { UsNeGoodTimeRestorationConfiguration } from "./UsNe/UsNeGoodTimeRestora
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
 import { UsPaSupervisionConfiguration } from "./UsPa/UsPaSupervisionBaseConfiguration";
 import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfiguration";
+import { UsTn2026ClassificationConfiguration } from "./UsTn/UsTn2026ClassificationConfiguration";
 import { UsTnCompliantReporting2025PolicyConfiguration } from "./UsTn/UsTnCompliantReporting2025PolicyConfiguration";
 import { UsTnSuspensionofDirectSupervisionConfiguration } from "./UsTn/UsTnSuspensionofDirectSupervisionConfiguration";
 import { UsTxAnnualReportStatusConfiguration } from "./UsTx/UsTxAnnualReportStatusConfiguration";
@@ -106,6 +107,10 @@ const customOpportunityConfigurations: Partial<
     UsTnCompliantReporting2025PolicyConfiguration,
   usTnSuspensionOfDirectSupervision:
     UsTnSuspensionofDirectSupervisionConfiguration,
+  usTnAnnualReclassification2026Policy: UsTn2026ClassificationConfiguration,
+  usTnCustodyLevelDowngrade2026Policy: UsTn2026ClassificationConfiguration,
+  usTnInitialClassification2026Policy: UsTn2026ClassificationConfiguration,
+  usTnSpecialCustodyLevelUpgrade2026Policy: UsTn2026ClassificationConfiguration,
 
   // Texas
   usTxAnnualReportStatus: UsTxAnnualReportStatusConfiguration,
