@@ -286,7 +286,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usMiManagementLevelWithinSixPointsOfLowerLevel",
           text: "Management level could be reduced due to favorable behavior",
           tooltip:
-            "Management score is {{managementLevelRawScore}}. A 6-point reduction to management score due to favorable behavior would result in a lower management level.",
+            "Management score is {{managementLevelRawScore}}. A 6-point (5-point for female facility) reduction to management score due to favorable behavior would result in a lower management level.",
         },
         {
           key: "usMiManagementLevelGreaterThanConfinementLevel",
@@ -322,6 +322,14 @@ export const mockApiOpportunityConfigurationResponse = {
           tab: "Needs Re-Screen",
           texts: ["RE-SCREEN_PENDING_BED_SPACE", "RE-SCREEN_IN_PROGRESS"],
         },
+        {
+          tab: "Needs Review",
+          texts: ["RE-SCREEN_PENDING_BED_SPACE", "RE-SCREEN_IN_PROGRESS"],
+        },
+        {
+          tab: "Marked Ineligible",
+          texts: ["RE-SCREEN_PENDING_BED_SPACE", "RE-SCREEN_IN_PROGRESS"],
+        },
       ],
       methodologyUrl: "tbd",
       nonOmsCriteria: [],
@@ -330,12 +338,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from COMS & OMNI",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: [
-        "Incarceration",
-        "ResidentHousing",
-        "UsMiLastAssessment",
-        "CaseNotes",
-      ],
+      sidebarComponents: ["UsMiLastAssessment", "Incarceration", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MI",
@@ -398,7 +401,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           tab: "Needs Re-Screen",
-          text: "The Needs Re-Screen section shows residents who have been identified as immediately eligible for a re-screen so they can be transferred to a lower custody level. This can be used to track which re-screens can be completed immediately. The Re-screen Pending Bed Space section shows residents who have been identified as eligible for a re-screen to be reduced, but there is no bed space currently available at the lower level. This can be used to track who could be downgraded when bed space becomes available. ",
+          text: "The Re-screen Pending Bed Space section shows residents who have been identified as eligible for a re-screen to be reduced, but there is no bed space currently available at the lower level. This can be used to track who could be downgraded when bed space becomes available. The Re-Screen in Progress section shows residents who have been identified as immediately eligible for a re-screen so they can be transferred to a lower custody level. This can be used to track which re-screens can be completed immediately. ",
         },
         {
           tab: "Transfer in Progress",

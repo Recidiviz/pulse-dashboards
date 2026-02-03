@@ -134,6 +134,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "Good Time Restoration Appeal Pending",
           text: "A good time restoration appeal is pending for this resident",
         },
+        { key: "Circumstances", text: "Has other exigent circumstances" },
       ],
       denialText: null,
       deniedTabTitle: null,
@@ -155,7 +156,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Has consistently been in NCDS jurisdiction for the past 12 months",
         },
         {
-          key: "noHighestSeverityIncarcerationSanctionsWithin1Year",
+          key: "noHighestSeverityIncarcerationSanctionsWithin1YearOfReport",
           text: "Have not had a Class 1 MR in the past year",
         },
         {
@@ -183,10 +184,9 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "At least 90 days since last good time restoration request denial",
         },
         {
-          key: "usNeAtLeast2WeeksOrStartOfNextMonthBetweenGoodTimeRestorations",
-          text: "At least 2 weeks since they last received good time back",
-          tooltip:
-            "If the good time restoration request was initiated and granted in the same month, must wait until the start of the following month ",
+          key: "usNeWaitUntilNextMonthBeforeNextGoodTimeRestoration",
+          text: "No approved good time restoration yet this month",
+          tooltip: "",
         },
       ],
       emptyTabCopy: [],
@@ -197,7 +197,7 @@ export const mockApiOpportunityConfigurationResponse = {
       homepagePosition: 3,
       ineligibleCriteriaCopy: [
         {
-          key: "noHighestSeverityIncarcerationSanctionsWithin1Year",
+          key: "noHighestSeverityIncarcerationSanctionsWithin1YearOfReport",
           text: "Needs 1 Year without a Class 1 MR ({{monthsOrDaysRemainingFromToday latestEligibleDate}} remaining)",
         },
         {
