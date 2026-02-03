@@ -35,6 +35,7 @@ import {
   LifeSentenceDisplay,
   OfficerAssignmentDisplay,
 } from "./SentenceProgress";
+import { SentenceProgressGap } from "./SentenceProgressGapV2";
 import { SentenceProgressPointV2 } from "./SentenceProgressPointV2";
 import SentenceProgressSidePanel from "./SentenceProgressSidePanel";
 import { ClientProfileProps, ResidentProfileProps } from "./types";
@@ -106,8 +107,13 @@ const TimelineViz = ({
 }: {
   presenter: SentenceProgressPresenter<Resident | Client>;
 }) => {
-  const { shouldShowEmptyState, progressPoints, timelineBreakpoint, expired } =
-    presenter;
+  const {
+    shouldShowEmptyState,
+    progressPoints,
+    progressGaps,
+    timelineBreakpoint,
+    expired,
+  } = presenter;
 
   if (shouldShowEmptyState) return null;
 
@@ -142,6 +148,9 @@ const TimelineViz = ({
             presenter={presenter}
           />
         );
+      })}
+      {progressGaps.map((gap) => {
+        return <SentenceProgressGap key={gap.x} gap={gap} />;
       })}
     </TimelineCanvas>
   );

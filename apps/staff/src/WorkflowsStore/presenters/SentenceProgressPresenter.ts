@@ -17,14 +17,21 @@
 
 import { Placement } from "@floating-ui/react";
 import { ScaleBand, scaleBand } from "d3-scale";
-import { addDays, eachDayOfInterval, startOfDay, subYears } from "date-fns";
+import {
+  add,
+  addDays,
+  eachDayOfInterval,
+  startOfDay,
+  subYears,
+} from "date-fns";
 import { differenceBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import { palette } from "~design-system";
 
+import { ProgressGap } from "../../core/WorkflowsJusticeInvolvedPersonProfile/SentenceProgressGapV2";
 import { SentenceProgressPoint } from "../../core/WorkflowsJusticeInvolvedPersonProfile/SentenceProgressPointV2";
-import { formatWorkflowsDate } from "../../utils";
+import { formatDate, formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import { JusticeInvolvedPerson } from "../types";
@@ -35,6 +42,8 @@ export type TimelineDate = Omit<
   SentenceProgressPoint,
   "x" | "pointFill" | "labelPlacement"
 >;
+
+type DateInterval = { start: Date; end: Date };
 
 /**
  * A presenter for components related to sentence progress on the person profile page.
@@ -85,8 +94,8 @@ export class SentenceProgressPresenter<
    * timeline; this calculates and returns the intervals that should be removed from
    * the timeline domain.
    * */
-  get timelineGaps(): Interval[] {
-    const gaps: Interval[] = [];
+  get timelineGaps(): DateInterval[] {
+    const gaps: DateInterval[] = [];
     this.timelineDates.forEach((dateInfo, index, dates) => {
       if (index > 0) {
         const cutoffDate = subYears(dateInfo.date, 7);
@@ -188,6 +197,41 @@ export class SentenceProgressPresenter<
     return scaleBand(this.timelineDomain ?? [], [0, 100]);
   }
 
+  /**
+   * Returns information relevant to rendering a progress gap (i.e. segments of time
+   * with no relevant dates) on the timeline viz.
+   */
+  get progressGaps(): ProgressGap[] {
+    // Each timeline gap corresponds to the period of time that has been sliced out of
+    // the timeline domain (i.e. everything past the 7 year cutoff).
+    return this.timelineGaps.map(({ start: gapStartDate, end: gapEndDate }) => {
+      // We then calculate the midpoint of the remaining 7 year segment. The 7 year
+      // segment begins at the end point of the sliced out interval.
+      const condensedSegmentMidpoint = startOfDay(
+        add(gapEndDate, { years: 3, months: 6 }),
+      );
+      const timelineXValue = this.timelineScale(condensedSegmentMidpoint);
+
+      const nextDate = this.timelineDates.find(
+        (dateInfo) => dateInfo.date > gapEndDate,
+      );
+
+      const label = nextDate
+        ? `${formatDate(gapStartDate, "yyyy")} - ${formatDate(nextDate.date, "yyyy")}`
+        : "Timeline not to scale";
+
+      const progressGap = {
+        x: timelineXValue,
+        label,
+      };
+      return progressGap;
+    });
+  }
+
+  /**
+   * Returns information relevant to rendering a progress point (i.e. a relevant date)
+   * on the timeline viz
+   */
   get progressPoints(): SentenceProgressPoint[] {
     return this.timelineDates.map((dateInfo) => {
       let pointFill = palette.slate90;
