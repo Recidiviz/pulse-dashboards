@@ -124,7 +124,15 @@ export async function checkResidentsRoster(
   userId: string,
 ): Promise<AuthorizedUserProfile | undefined> {
   let userResidentRecord;
-  if (["US_AZ", "US_CO", "US_NE"].includes(stateCode)) {
+  if (stateCode === "US_CO") {
+    // Our ids are zero-padded, but Edovo's are not
+    const displayId =
+      userId.length < 6 ? "0".repeat(6 - userId.length) + userId : userId;
+    userResidentRecord = await getResidentRecordForDisplayId(
+      stateCode,
+      displayId,
+    );
+  } else if (["US_AZ", "US_NE"].includes(stateCode)) {
     userResidentRecord = await getResidentRecordForDisplayId(stateCode, userId);
   } else {
     userResidentRecord = (
