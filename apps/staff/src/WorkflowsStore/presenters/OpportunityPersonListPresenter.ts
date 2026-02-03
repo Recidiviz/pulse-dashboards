@@ -147,6 +147,7 @@ export class OpportunityPersonListPresenter
     const enabledOpportunityTypes: OpportunityType[] = [
       "LSU",
       "usTnCompliantReporting2025Policy",
+      "usAzTransferToAdministrativeSupervision"
     ];
     const hasAlmostEligibleColumnEnabled = enabledOpportunityTypes.includes(
       this.opportunityType,
