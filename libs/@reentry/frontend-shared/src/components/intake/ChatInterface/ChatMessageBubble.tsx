@@ -95,7 +95,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
   name,
   isTyping = false,
   clientPseudoId,
-  disableTTS = false
+  disableTTS = false,
 }) => {
   // Return nothing if no message and not typing
   if (!message && !isTyping) {
@@ -109,11 +109,11 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
 
   const isUser = message?.from_role === "client";
   // Disable TTS button for staff members viewing chat history
-  const showTTSButton = !disableTTS && !isTyping && message?.content
+  const showTTSButton = !disableTTS && !isTyping && message?.content;
 
   return (
     <div
-      className={`flex w-full px-4 mb-4 ${isUser ? "justify-end" : "justify-start"}`}
+      className={`flex w-full px-4 md:mb-4 xs:mb-0 ${isUser ? "justify-end" : "justify-start"}`}
     >
       {isUser ? (
         <div className="flex flex-col items-end sm:flex-row sm:items-start">
@@ -124,7 +124,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
 
           <div className="relative inline-flex flex-col items-end">
             <div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-[#2B6C75] text-white break-words">
-              <Typography className="break-words whitespace-pre-wrap">
+              <Typography className="break-words whitespace-pre-wrap md:!text-[18px] xs:!text-[16px]">
                 {isTyping ? <TypingDots /> : message?.content}
               </Typography>
             </div>
@@ -149,7 +149,7 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
               <div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-white text-[#1E3A3A] break-words">
                 <Typography
                   variant="body1"
-                  className="font-inter !text-[18px] leading-[1.2] font-normal break-words whitespace-pre-wrap"
+                  className="font-inter md:!text-[18px] xs:!text-[16px] leading-[1.2] font-normal break-words whitespace-pre-wrap"
                 >
                   {isTyping ? <TypingDots /> : message?.content}
                 </Typography>

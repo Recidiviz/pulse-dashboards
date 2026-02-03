@@ -65,14 +65,19 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     <>
       {/* Main header */}
       <Box
-        className="h-16 sm:h-20 md:h-20 border-b md:border-slate-400/40 lg:border-slate-200/40 bg-white flex items-center justify-between px-4 sm:px-8 py-3 sm:py-4"
+        className="border-b md:border-slate-400/40 lg:border-slate-200/40 bg-white flex items-center md:justify-between xs:px-2 xs:py-0 md:px-4 md:py-3"
         sx={{
           maxWidth: "100%",
+          maxHeight: "10vh",
+          height: "100%",
           overflow: "hidden",
         }}
       >
         {/* Client info */}
-        <Box className="flex items-center overflow-hidden">
+        <Box
+          className="flex items-center overflow-hidden flex-1 lg:flex-initial"
+          sx={{ height: "100%" }}
+        >
           <ClientAvatar size={42} />
           <Box className="ml-3 overflow-hidden">
             <div className="flex justify-between gap-x-2 overflow-hidden">
@@ -113,7 +118,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </Box>
         {isConversationInProgress && (
           <>
-            <Box className="flex justify-end px-4 sm:px-8 py-3 ">
+            <Box className="flex justify-end px-4 xs:px-0 md:px-8 py-3 flex-none">
               <PrimaryButton
                 className={"w-[100px] md:max-w-lg"}
                 buttonText="End chat"
@@ -129,13 +134,16 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         )}
 
         {/* Progress indicator — only on small screens */}
-        <div className="lg:hidden">
+        <div className="lg:hidden flex-none">
           {conversationStarted && currentSection !== "Completion" && (
-            <div className="relative h-10 w-10 flex-shrink-0 ml-2">
+            <div
+              className="relative flex-shrink-0 ml-2"
+              style={{ height: "7vh", width: "7vh" }}
+            >
               <svg
                 className="absolute inset-0"
-                width="40"
-                height="40"
+                width="100%"
+                height="100%"
                 viewBox="0 0 40 40"
                 role="img"
                 aria-hidden="true"
@@ -176,7 +184,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </div>
       </Box>
 
-      <div className="lg:hidden">
+      <div className="lg:hidden sm:hidden xs:hidden">
         {conversationStarted && currentSection !== "Completion" && (
           <div className="flex justify-end px-8">
             <div className="inline-block bg-white rounded-lg shadow-[2px_0px_12px_0px_rgba(0,0,0,0.08)] z-20">

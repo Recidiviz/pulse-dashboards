@@ -99,7 +99,7 @@ export const ChatbotInterface: React.FC = () => {
       </div>
 
       {/* Input */}
-      <div className="shrink-0 pb-6">
+      <div className="shrink-0 md:pb-6 xs:pb-0">
         <ChatInput
           clientPseudoId={clientPseudoId}
           alreadyHasMessages={messages.length > 0}

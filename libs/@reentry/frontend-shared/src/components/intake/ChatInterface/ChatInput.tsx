@@ -46,7 +46,7 @@ const ChatInput = ({
   clientPseudoId?: string | null;
   alreadyHasMessages?: boolean;
 }) => {
-  const { analytics } = useApplicationContext();
+  const { analytics, features } = useApplicationContext();
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -135,6 +135,7 @@ const ChatInput = ({
   };
 
   const isRecordingSupported =
+    features.enableSTT &&
     typeof navigator !== "undefined" &&
     navigator.mediaDevices &&
     typeof navigator.mediaDevices.getUserMedia === "function";
@@ -262,7 +263,7 @@ const ChatInput = ({
   }, [recordingStatus, audioBlob, sendAudioBlob]);
 
   return (
-    <Box className="p-4 flex flex-col">
+    <Box className="md:p-4 xs:p-0 flex flex-col">
       {(intakeStatus === "completed" || currentSection === "Completion") && (
         <Box className="flex flex-col justify-center items-center p-2 rounded-md text-center w-4/5 min-h-[100px] break-words">
           <span className="text-sm text-gray-500">
@@ -316,7 +317,7 @@ const ChatInput = ({
 							w-full max-w-[800px]
 							border-none outline-none resize-none
 							overflow-auto font-public text-md
-							tracking-[-1%] px-[16px] py-[8px]
+							tracking-[-1%] px-[16px] py-[8px] 
 							${isRecording ? "opacity-0 absolute pointer-events-none" : "opacity-100"}
 							${isInputDisabled ? "text-[#525454] text-opacity-20 placeholder-[#2B5469] placeholder-opacity-20" : "text-[#2B5469] text-opacity-100 placeholder-[#2B5469] placeholder-opacity-80"}
 						`}
@@ -363,45 +364,43 @@ const ChatInput = ({
               />
             </IconButton>
 
-            <IconButton
-              onClick={toggleRecording}
-              disabled={
-                isInputDisabled ||
-                !isRecordingSupported ||
-                recordingStatus === "processing"
-              }
-              className={`border-none transition-all duration-300 ${
-                isRecording
-                  ? "!bg-green-100 hover:!bg-green-300"
-                  : "bg-transparent"
-              }`}
-            >
-              {(() => {
-                if (recordingStatus === "processing") {
+            {isRecordingSupported && (
+              <IconButton
+                onClick={toggleRecording}
+                disabled={isInputDisabled || recordingStatus === "processing"}
+                className={`border-none transition-all duration-300 ${
+                  isRecording
+                    ? "!bg-green-100 hover:!bg-green-300"
+                    : "bg-transparent"
+                }`}
+              >
+                {(() => {
+                  if (recordingStatus === "processing") {
+                    return (
+                      <CircularProgress size={20} sx={{ color: "#2B5469" }} />
+                    );
+                  }
+                  if (isRecording) {
+                    return (
+                      <CheckIcon
+                        className={`text-green-600 transition-opacity duration-300 ${
+                          isInputDisabled
+                            ? "text-opacity-20"
+                            : "text-opacity-100"
+                        } text-[17px] leading-[22px] tracking-[-0.43px] font-normal`}
+                      />
+                    );
+                  }
                   return (
-                    <CircularProgress size={20} sx={{ color: "#2B5469" }} />
-                  );
-                }
-                if (isRecording) {
-                  return (
-                    <CheckIcon
-                      className={`text-green-600 transition-opacity duration-300 ${
-                        isInputDisabled ? "text-opacity-20" : "text-opacity-100"
+                    <MicrophoneIcon
+                      className={`text-[#2B5469] transition-opacity duration-300 ${
+                        isInputDisabled ? "text-opacity-20" : "text-opacity-80"
                       } text-[17px] leading-[22px] tracking-[-0.43px] font-normal`}
                     />
                   );
-                }
-                return (
-                  <MicrophoneIcon
-                    className={`text-[#2B5469] transition-opacity duration-300 ${
-                      isInputDisabled || !isRecordingSupported
-                        ? "text-opacity-20"
-                        : "text-opacity-80"
-                    } text-[17px] leading-[22px] tracking-[-0.43px] font-normal`}
-                  />
-                );
-              })()}
-            </IconButton>
+                })()}
+              </IconButton>
+            )}
           </div>
         </Box>
       </Box>

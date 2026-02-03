@@ -46,8 +46,8 @@ export const ClientAvatar: React.FC<AvatarProps> = ({ size = 32, name }) => {
   return (
     <Avatar
       sx={{
-        width: size,
-        height: size,
+        height: "5vh",
+        width: "5vh",
       }}
       variant="circular"
       className={`

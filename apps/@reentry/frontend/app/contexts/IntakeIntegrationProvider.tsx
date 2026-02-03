@@ -33,6 +33,9 @@ const applicationContext = {
   socket,
   $api,
   Image: (props: ImageComponentProps) => <Image {...props} />,
+  features: {
+    enableSTT: true,
+  },
 };
 
 export const IntakeIntegrationProvider: FC<{ children: ReactNode }> = memo(

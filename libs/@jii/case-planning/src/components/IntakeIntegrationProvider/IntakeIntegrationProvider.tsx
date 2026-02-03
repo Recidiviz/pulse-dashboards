@@ -49,7 +49,11 @@ export const IntakeIntegrationProvider: FC<{ children: ReactNode }> = memo(
 
     return (
       <ApplicationContextProvider
-        value={{ ...applicationContext, analytics: segmentClient }}
+        value={{
+          ...applicationContext,
+          analytics: segmentClient,
+          features: { enableSTT: false },
+        }}
       >
         {children}
       </ApplicationContextProvider>

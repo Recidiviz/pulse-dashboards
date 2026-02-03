@@ -71,6 +71,9 @@ export type ApplicationContext = {
   socket: SocketConnection;
   Image: ComponentType<ImageComponentProps>;
   analytics: IntakeAnalytics;
+  features: {
+    enableSTT: boolean;
+  };
 };
 
 const context = createContext<ApplicationContext | undefined>(undefined);
