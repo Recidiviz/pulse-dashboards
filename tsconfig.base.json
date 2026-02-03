@@ -26,6 +26,7 @@
       "~@cpa/client": ["libs/@cpa/client/src/index.ts"],
       "~@cpa/server/*": ["apps/@cpa/server/src/*"],
       "~@cpa/server/test/*": ["apps/@cpa/server/__tests__/*"],
+      "~@cpa/staff-client": ["libs/@cpa/staff-client/src/index.ts"],
       "~@cpa/trpc": ["libs/@cpa/trpc/src/index.ts"],
       "~@cpa/trpc-types": ["libs/@cpa/trpc-types/src/index.ts"],
       "~@cpa/trpc/*": ["libs/@cpa/trpc/src/*"],

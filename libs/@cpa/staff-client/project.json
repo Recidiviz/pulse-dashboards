@@ -1,7 +1,7 @@
 {
-  "name": "@cpa/client",
+  "name": "@cpa/staff-client",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/@cpa/client/src",
+  "sourceRoot": "libs/@cpa/staff-client/src",
   "projectType": "library",
   "tags": ["scope:client"],
   "targets": {
@@ -23,7 +23,7 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/@cpa/client"],
+      "outputs": ["{workspaceRoot}/coverage/libs/@cpa/staff-client"],
       "cache": true,
       "options": {
         "command": "vitest",

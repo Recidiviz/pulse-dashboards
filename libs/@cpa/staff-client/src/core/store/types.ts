@@ -15,4 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { App } from "./App";
+import { GetTokenSilentlyOptions } from "@auth0/auth0-spa-js";
+
+export interface UserStore {
+  getToken?: (options?: GetTokenSilentlyOptions) => Promise<string> | undefined;
+  userPseudoId?: string;
+  isRecidivizUser?: boolean;
+  stateCode?: string;
+}
+
+export interface RootStore {
+  currentTenantId?: string;
+  userStore: UserStore;
+}

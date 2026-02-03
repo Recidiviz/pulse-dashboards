@@ -15,4 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { App } from "./app";
+import { ErrorPage } from "@recidiviz/design-system";
+import { ErrorBoundary } from "@sentry/react";
+
+import { App } from "~@cpa/staff-client";
+
+import { useRootStore } from "../../components/StoreProvider";
+import { StaffDashboardPageLayout } from "../StaffDashboardPageLayout";
+
+export function PageCPA() {
+  const { cpaStore } = useRootStore();
+
+  return (
+    <ErrorBoundary
+      fallback={
+        <ErrorPage headerText="Sorry, it looks like something went wrong...">
+          Please try refreshing the page or reach out to your contact at
+          Recidiviz for more assistance.
+        </ErrorPage>
+      }
+    >
+      <StaffDashboardPageLayout>
+        <App store={cpaStore} />
+      </StaffDashboardPageLayout>
+    </ErrorBoundary>
+  );
+}

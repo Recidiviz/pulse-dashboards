@@ -42,6 +42,7 @@ import {
 import CoreStoreProvider from "./CoreStoreProvider";
 import ErrorBoundary from "./ErrorBoundary";
 import { NavigationLayout } from "./NavigationLayout";
+import { PageCPA } from "./PageCPA";
 import PageInsights from "./PageInsights";
 import PageMethodology from "./PageMethodology";
 import PagePSI from "./PagePSI";
@@ -74,13 +75,21 @@ const DashboardLayout: React.FC = () => {
   // TODO(#5636) Eliminate PartiallyTypedRootStore
   const {
     currentTenantId,
-    userStore: { userAllowedNavigation },
+    userStore: { userAllowedNavigation, isRecidivizUser },
   } = useRootStore() as PartiallyTypedRootStore;
+
+  // TODO(#11341) - remove temporary allowed path once v1 is released
+  const isDevOrStagingEnv = ["dev", "staging"].includes(
+    import.meta.env.VITE_DEPLOY_ENV ?? "",
+  );
+  const allowCPAV1 = isRecidivizUser && isDevOrStagingEnv;
+  const cpaPath = allowCPAV1 ? [DASHBOARD_PATHS.cpa] : [];
 
   const dashboardAllowedPaths = [
     ...getPathsFromNavigation(userAllowedNavigation),
     "/profile",
     "/system",
+    ...cpaPath,
   ];
 
   if (
@@ -103,6 +112,7 @@ const DashboardLayout: React.FC = () => {
             Insights: currentView === DASHBOARD_VIEWS.insights,
             PSI: currentView === DASHBOARD_VIEWS.psi,
             SAR: currentView === DASHBOARD_VIEWS.sar,
+            CPA: currentView === DASHBOARD_VIEWS.cpa,
           })}
         >
           {currentView === DASHBOARD_VIEWS.operations && !isMobile ? (
@@ -141,6 +151,7 @@ const DashboardLayout: React.FC = () => {
               />
               <Route path={`${PSI_PATHS.psi}/*`} element={<PagePSI />} />
               <Route path={`${SAR_PATHS.sar}/*`} element={<PageSAR />} />
+              <Route path={`${DASHBOARD_PATHS.cpa}/*`} element={<PageCPA />} />
               {/* TODO(#4601): Remove redirect after confirming no longer in use */}
               <Route
                 path="/id-methodology/:dashboard"

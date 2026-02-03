@@ -22,7 +22,7 @@ import svgr from "vite-plugin-svgr";
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: "../../../node_modules/.vite/libs/@cpa/client",
+  cacheDir: "../../../node_modules/.vite/libs/@cpa/staff-client",
 
   plugins: [
     react({
@@ -46,7 +46,7 @@ export default defineConfig(() => ({
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
     coverage: {
-      reportsDirectory: "../../../coverage/libs/@cpa/client",
+      reportsDirectory: "../../../coverage/libs/@cpa/staff-client",
       provider: "v8",
     },
   },

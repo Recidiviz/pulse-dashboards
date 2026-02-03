@@ -1,4 +1,4 @@
-# cpa-client
+# cpa-staff-client
 
 This library contains the client-side components for the Case Planning Assistant (CPA),
 used by the `staff` application and communicating with the `@cpa` backend services.
@@ -19,18 +19,18 @@ The platform generates two output types:
 
 ## Structure
 
-- `@types/` — TypeScript type definitions
-- `app/` — Application entry point and routing configuration
+- `App.tsx` — Application entry point and routing configuration
+- `@types/` — Global TypeScript type definitions
 - `core/` — Core functionality including:
   - `query/` — React Query configuration and utilities
-  - `routing.ts` — Route definitions and navigation
+  - `utils/routing.ts` — Route definitions and navigation
   - `store/` — Global state management
   - `trpc/` — tRPC client configuration
-- `features/` — Self-contained feature modules (e.g., `ClientList/`)
+- `features/` — Self-contained feature modules (e.g., `ClientList`, `ClientProfile`, `Recorder`)
 - `pages/` — Page components that compose features and are rendered at routes
 
 ## Running lint and unit tests
 
-Run `nx lint cpa-client` to execute linting.
+Run `nx lint cpa-staff-client` to execute linting.
 
-Run `nx test cpa-client` to execute the unit tests via [Vitest](https://vitest.dev/).
+Run `nx test cpa-staff-client` to execute the unit tests via [Vitest](https://vitest.dev/).

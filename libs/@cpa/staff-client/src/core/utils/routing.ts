@@ -15,13 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
+export const cpaRootPath = "cpa";
 
-export const App = observer(function App() {
-  return (
-    <div>
-      <h1>CPA Application</h1>
-      <p>Case Planning Assistant - Boilerplate</p>
-    </div>
-  );
-});
+type RouteParams = {
+  caseloadOverview: { staffPseudoId: string };
+};
+
+/** Relative route patterns for use with react-router */
+export const ROUTES = {
+  caseloadOverview: "staff/:staffPseudoId",
+} as const satisfies Record<keyof RouteParams, string>;
+
+type RouteName = keyof typeof ROUTES;
+
+/**
+ * Generates a URL for a CPA route with the given parameters.
+ */
+export function cpaUrl<T extends RouteName>(
+  routeName: T,
+  params: RouteParams[T],
+): string {
+  let path: string = ROUTES[routeName];
+  for (const [key, value] of Object.entries(params)) {
+    path = path.replace(`:${key}`, value as string);
+  }
+  return path;
+}

@@ -19,6 +19,7 @@ import { Auth0ClientOptions, User } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
 import { computed, configure, makeObservable, onReactionError } from "mobx";
 
+import { CPAStore } from "~@cpa/staff-client";
 import { isTestEnv } from "~client-env-utils";
 import { SentencingStore } from "~sentencing-client";
 import {
@@ -117,6 +118,8 @@ export class RootStore {
 
   sentencingStore: SentencingStore;
 
+  cpaStore: CPAStore;
+
   constructor() {
     makeObservable(this, {
       currentTenantId: computed,
@@ -164,6 +167,8 @@ export class RootStore {
     this.insightsStore = new InsightsStore(this);
 
     this.sentencingStore = new SentencingStore(this);
+
+    this.cpaStore = new CPAStore(this);
   }
 
   get currentTenantId(): TenantId | undefined {

@@ -99,6 +99,17 @@
       "dependsOn": ["env-dev-spa"],
       "options": { "command": "vite dev --force", "cwd": "{projectRoot}" }
     },
+    "dev-cpa": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "nx dev staff",
+          "nx dev @cpa/server",
+          "bash -c 'npx wait-on http://localhost:3000 && open http://localhost:3000/cpa'"
+        ]
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
@@ -117,12 +128,6 @@
       "dependsOn": ["env-dev-be"],
       "options": {
         "commands": ["nx dev-spa staff", "nx dev staff-shared-server"]
-      }
-    },
-    "dev-cpa": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["nx dev @cpa/server", "nx dev-spa staff", "nx dev staff-shared-server"]
       }
     },
 
