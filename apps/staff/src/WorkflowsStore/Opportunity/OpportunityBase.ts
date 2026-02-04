@@ -1367,8 +1367,6 @@ export class OpportunityBase<
 
     if (!isHydrated(this)) return null;
 
-    if (this.isIneligible) return "Ineligible";
-
     if (denial?.reasons.length) {
       const statusText = isAlert
         ? "Override"
@@ -1383,6 +1381,8 @@ export class OpportunityBase<
     if (isSubmitted) {
       return submittedTabTitle;
     }
+
+    if (this.isIneligible) return "Ineligible";
 
     if (almostEligible) {
       return includeReasons && almostEligibleStatusMessage

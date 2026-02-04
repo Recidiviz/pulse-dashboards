@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { Resident } from "../../WorkflowsStore/Resident";
-import { Incarceration } from "../WorkflowsJusticeInvolvedPersonProfile";
-import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
-import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitiesAccordion";
-import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
-import { useAllCaseloadsModalContext } from "./AllCaseloadsModalContext";
+import { Resident } from "../../../../WorkflowsStore/Resident";
+import { Incarceration } from "../../../WorkflowsJusticeInvolvedPersonProfile";
+import { Heading } from "../../../WorkflowsJusticeInvolvedPersonProfile/Heading";
+import { OpportunitiesAccordion } from "../../../WorkflowsJusticeInvolvedPersonProfile/OpportunitiesAccordion";
+import { WorkflowsPreviewModal } from "../../../WorkflowsPreviewModal";
+import { useAllCaseloadsModalContext } from "../AllCaseloadsModalContext";
+import { AllCaseloadsTablePresenter } from "../AllCaseloadsTablePresenter";
 import { SelectFormContents } from "./SelectFormContents";
 
 const ItemHeader = styled(Sans12)`
@@ -44,8 +44,6 @@ const ItemHeader = styled(Sans12)`
   padding-left: ${rem(16)};
   text-transform: uppercase;
 `;
-
-export type AllResidentModalView = "OVERVIEW" | "SELECT_FORM";
 
 function OverviewContents({
   selectedResident,
@@ -67,10 +65,12 @@ function OverviewContents({
 }
 
 export const AllCaseloadsPreviewModal = observer(
-  function AllCaseloadsPreviewModal() {
-    const {
-      workflowsStore: { selectedResident },
-    } = useRootStore();
+  function AllCaseloadsPreviewModal({
+    presenter,
+  }: {
+    presenter: AllCaseloadsTablePresenter;
+  }) {
+    const { selectedResident } = presenter;
 
     const { currentView } = useAllCaseloadsModalContext();
 

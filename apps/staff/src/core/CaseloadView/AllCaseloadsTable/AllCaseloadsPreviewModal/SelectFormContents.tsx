@@ -21,11 +21,11 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { OpportunityType } from "~datatypes";
 import { Button, palette, spacing } from "~design-system";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { Resident } from "../../WorkflowsStore/Resident";
+import { useRootStore } from "../../../../components/StoreProvider";
+import { Resident } from "../../../../WorkflowsStore/Resident";
+import { US_TN_CLASSIFICATION_OPPORTUNITIES } from "../utils";
 
 const SelectFormWrapper = styled.div`
   border-top: 1px solid ${palette.slate10};
@@ -59,13 +59,6 @@ const FormLinkButton = styled(Button).attrs({
   }
 `;
 
-const FORMS_TO_LIST: OpportunityType[] = [
-  "usTnInitialClassification2026Policy",
-  "usTnAnnualReclassification2026Policy",
-  "usTnCustodyLevelDowngrade2026Policy",
-  "usTnSpecialCustodyLevelUpgrade2026Policy",
-];
-
 export const SelectFormContents = observer(function SelectFormContents({
   selectedResident: { pseudonymizedId },
 }: {
@@ -81,7 +74,7 @@ export const SelectFormContents = observer(function SelectFormContents({
       <Subheader>
         Please select the type of classification for this Resident
       </Subheader>
-      {FORMS_TO_LIST.map((type) => {
+      {US_TN_CLASSIFICATION_OPPORTUNITIES.map((type) => {
         if (
           opportunityConfigurationStore.enabledOpportunityTypes.indexOf(
             type,

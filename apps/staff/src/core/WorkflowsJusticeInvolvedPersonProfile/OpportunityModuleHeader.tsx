@@ -33,7 +33,9 @@ const TitleText = styled(Sans16)`
   display: inline-block;
 `;
 
-const EligibilityStatusPillStyled = styled(Pill)<{ $borderColor: string }>`
+export const EligibilityStatusPillStyled = styled(Pill)<{
+  $borderColor: string;
+}>`
   border-radius: ${rem(4)};
   border: 1px solid ${(props) => props.$borderColor};
   font-size: ${rem(12)};
@@ -62,8 +64,11 @@ export const EligibilityStatusPill = observer(function EligibilityStatusPill({
   const isResidentProfile = useMatch(WORKFLOWS_PATHS.residentProfile);
   const isFullProfilePage = isClientProfile || isResidentProfile;
 
+  const showStatusPill =
+    isFullProfilePage || opportunity.isSubmitted || !opportunity.isIneligible;
+
   return (
-    (!opportunity.isIneligible || isFullProfilePage) && (
+    showStatusPill && (
       <EligibilityStatusPillStyled
         className="EligibilityStatus"
         filled

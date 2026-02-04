@@ -139,14 +139,16 @@ export function useStatusColors({
   denial,
   almostEligible,
   customStatusPalette,
-  isIneligible
+  isIneligible,
 }: Opportunity): StatusPalette {
   if (customStatusPalette) return customStatusPalette;
 
-  if (isIneligible)
-    return OPPORTUNITY_STATUS_COLORS.ineligible;
-
+  // Submitted should come before ineligible since we can now
+  // move people through certain opportunities even when the
+  // system thinks they are ineligible
   if (isSubmitted) return OPPORTUNITY_STATUS_COLORS.submitted;
+
+  if (isIneligible) return OPPORTUNITY_STATUS_COLORS.ineligible;
 
   if (isAlert) {
     if (denial) {

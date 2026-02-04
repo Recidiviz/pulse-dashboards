@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,27 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ColumnDef, Row } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
-import { Resident } from "../../WorkflowsStore/Resident";
+import { withPresenterManager } from "~hydration-utils";
+
+import { useRootStore } from "../../../components/StoreProvider";
+import { NavigateToFormButtonStyle } from "../../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
+import { Resident } from "../../../WorkflowsStore/Resident";
 import {
   CaseloadTable,
   PersonIdCell,
   PersonNameCell,
   ReleaseDateCell,
-} from "../CaseloadTable";
-import { FacilityUnitIdCell } from "../CaseloadTable/FacilityUnitIdCell";
-import { OPPORTUNITY_STATUS_COLORS } from "../utils/workflowsUtils";
+} from "../../CaseloadTable";
+import { FacilityUnitIdCell } from "../../CaseloadTable/FacilityUnitIdCell";
+import ModelHydrator from "../../ModelHydrator";
+import { OPPORTUNITY_STATUS_COLORS } from "../../utils/workflowsUtils";
 import {
   AllCaseloadsModalProvider,
   useAllCaseloadsModalContext,
 } from "./AllCaseloadsModalContext";
 import { AllCaseloadsPreviewModal } from "./AllCaseloadsPreviewModal";
-
-type CaseloadRowProps = { row: Row<Resident> };
+import { AllCaseloadsTablePresenter } from "./AllCaseloadsTablePresenter";
+import { CaseloadRowProps } from "./types";
+import { usTnOpportunityColumn, usTnStatusColumn } from "./UsTnColumns";
 
 function PersonNameWrapper({ row }: CaseloadRowProps) {
   return <PersonNameCell person={row.original} />;
@@ -100,6 +104,8 @@ const columns = [
     sortingFn: "datetime",
     cell: ReleaseDateWrapper,
   },
+  usTnStatusColumn,
+  usTnOpportunityColumn,
   {
     header: "Facility/Unit",
     id: "facilityUnit",
@@ -115,47 +121,53 @@ const columns = [
   },
 ] satisfies ColumnDef<Resident>[];
 
-const AllCaseloadsTableComponent = observer(
-  function AllCaseloadsTableComponent() {
-    const {
-      workflowsStore,
-      workflowsStore: {
-        searchStore: { caseloadPersons },
-      },
-    } = useRootStore();
+function AllCaseloadsTableComponent({
+  presenter,
+}: {
+  presenter: AllCaseloadsTablePresenter;
+}) {
+  const { setCurrentView } = useAllCaseloadsModalContext();
 
-    const { setCurrentView } = useAllCaseloadsModalContext();
+  return (
+    <CaseloadTable
+      data={presenter.people}
+      columns={columns}
+      onRowClick={(person) => {
+        setCurrentView("OVERVIEW");
+        presenter.updateSelectedPerson(person);
+      }}
+      shouldHighlightRow={(person) =>
+        presenter.selectedResident?.pseudonymizedId === person.pseudonymizedId
+      }
+    />
+  );
+}
 
-    return (
-      <CaseloadTable
-        // @ts-expect-error the activeSystem check ensures these are Residents
-        data={caseloadPersons}
-        columns={columns}
-        onRowClick={(person) => {
-          setCurrentView("OVERVIEW");
-          workflowsStore.updateSelectedPerson(person.pseudonymizedId);
-        }}
-        shouldHighlightRow={(person) =>
-          workflowsStore.selectedPerson?.pseudonymizedId ===
-          person.pseudonymizedId
-        }
-      />
-    );
-  },
-);
-
-export const AllCaseloadsTable = observer(function AllCaseloadsTable() {
-  const {
-    workflowsStore: { activeSystem },
-  } = useRootStore();
-
-  // This table only supports residents for now
-  if (activeSystem !== "INCARCERATION") return;
+const ManagedComponent = observer(function AllCaseloadsTable({
+  presenter,
+}: {
+  presenter: AllCaseloadsTablePresenter;
+}) {
+  if (!presenter.canRenderTable) return;
 
   return (
     <AllCaseloadsModalProvider>
-      <AllCaseloadsTableComponent />
-      <AllCaseloadsPreviewModal />
+      <ModelHydrator hydratable={presenter}>
+        <AllCaseloadsTableComponent presenter={presenter} />
+        <AllCaseloadsPreviewModal presenter={presenter} />
+      </ModelHydrator>
     </AllCaseloadsModalProvider>
   );
+});
+
+function usePresenter() {
+  const rootStore = useRootStore();
+
+  return new AllCaseloadsTablePresenter(rootStore);
+}
+
+export const AllCaseloadsTable = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: false,
 });
