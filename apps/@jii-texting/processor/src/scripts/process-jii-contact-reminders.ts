@@ -27,6 +27,7 @@ import {
   throttlePromises,
   updateMessageStatuses,
 } from "~@jii-texting/utils";
+import { i18nInstance, initI18n } from "~@jii-texting/utils/common/i18n";
 import { getTwilioClientForStateCode } from "~twilio-api";
 
 export type processJiiArguments = {
@@ -49,6 +50,9 @@ export async function processJiiContactReminders({
 
   // Get Prisma client
   const prisma = getPrismaClientForStateCode(stateCode);
+
+  // Instantiate i18Next
+  await initI18n();
 
   // Get the latest statuses for in progress messages
   if (!dryRun) {
@@ -86,6 +90,7 @@ export async function processJiiContactReminders({
         dryRun,
         prisma,
         twilioClient,
+        i18nInstance,
       );
 
       return {

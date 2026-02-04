@@ -5,15 +5,15 @@ exports[`copy for person where locationType='EMPLOYMENT' and method='IN_PERSON' 
 
 Date: 4/14/25
 
-Time: Approximately 7:00 AM CDT
+Time: 7:00 AM CDT
 
 Location: At your place of employment
 
-Be aware that the officer may arrive within 2 hours before or after the time listed above.
+Need to reschedule or have questions? Contact Officer John Doe at 9879879879.
 
-Need to reschedule or have questions? Contact Officer John Doe
+Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
 
-Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
 `;
 
 exports[`copy for person where locationType='EMPLOYMENT' and method='VIRTUAL' 1`] = `
@@ -21,15 +21,15 @@ exports[`copy for person where locationType='EMPLOYMENT' and method='VIRTUAL' 1`
 
 Date: 4/14/25
 
-Time: Approximately 7:00 AM CDT
+Time: 7:00 AM CDT
 
-Location: Virtual video call
+Location: Virtual video call or phone call
 
-Be aware that the officer may call within 2 hours before or after the time listed above.
+Need to reschedule or have questions? Contact Officer John Doe at 9879879879.
 
-Need to reschedule or have questions? Contact Officer John Doe
+Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
 
-Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
 `;
 
 exports[`copy for person where locationType='FIELD' and method='IN_PERSON' 1`] = `
@@ -37,15 +37,15 @@ exports[`copy for person where locationType='FIELD' and method='IN_PERSON' 1`] =
 
 Date: 4/14/25
 
-Time: Approximately 7:00 AM CDT
+Time: 7:00 AM CDT
 
 Location: 123 North Pole
 
-Be aware that the officer may arrive within 2 hours before or after the time listed above.
+Need to reschedule or have questions? Contact Officer John Doe at 9879879879.
 
-Need to reschedule or have questions? Contact Officer John Doe
+Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
 
-Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
 `;
 
 exports[`copy for person where locationType='FIELD' and method='VIRTUAL' 1`] = `
@@ -53,15 +53,15 @@ exports[`copy for person where locationType='FIELD' and method='VIRTUAL' 1`] = `
 
 Date: 4/14/25
 
-Time: Approximately 7:00 AM CDT
+Time: 7:00 AM CDT
 
-Location: Virtual video call
+Location: 123 North Pole
 
-Be aware that the officer may call within 2 hours before or after the time listed above.
+Need to reschedule or have questions? Contact Officer John Doe at 9879879879.
 
-Need to reschedule or have questions? Contact Officer John Doe
+Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
 
-Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
 `;
 
 exports[`copy for person where locationType='HOME' and method='IN_PERSON' 1`] = `
@@ -69,31 +69,31 @@ exports[`copy for person where locationType='HOME' and method='IN_PERSON' 1`] = 
 
 Date: 4/14/25
 
-Time: Approximately 7:00 AM CDT
+Time: 7:00 AM CDT
 
 Location: Your home
 
-Be aware that the officer may arrive within 2 hours before or after the time listed above.
+Need to reschedule or have questions? Contact Officer John Doe at 9879879879.
 
-Need to reschedule or have questions? Contact Officer John Doe
+Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
 
-Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
 `;
 
 exports[`copy for person where locationType='HOME' and method='VIRTUAL' 1`] = `
-"Hi Jane, this is a reminder that you have an upcoming home contact tomorrow.
+"Hi Jane, this is a reminder that you have an upcoming home contact tomorrow.You must be at your home while on the video call.
 
 Date: 4/14/25
 
-Time: Approximately 7:00 AM CDT
+Time: 7:00 AM CDT
 
 Location: Your home via virtual video call
 
-Be aware that the officer may call within 2 hours before or after the time listed above.
+Need to reschedule or have questions? Contact Officer John Doe at 9879879879.
 
-Need to reschedule or have questions? Contact Officer John Doe
+Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
 
-Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
 `;
 
 exports[`copy for person where locationType='OFFICE' and method='IN_PERSON' 1`] = `
@@ -101,15 +101,15 @@ exports[`copy for person where locationType='OFFICE' and method='IN_PERSON' 1`] 
 
 Date: 4/14/25
 
-Time: Approximately 7:00 AM CDT
+Time: 7:00 AM CDT
 
 Location: 123 North Pole
 
-Be aware that the officer may arrive within 2 hours before or after the time listed above.
+Need to reschedule or have questions? Contact Officer John Doe at 9879879879.
 
-Need to reschedule or have questions? Contact Officer John Doe
+Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
 
-Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
 `;
 
 exports[`copy for person where locationType='OFFICE' and method='VIRTUAL' 1`] = `
@@ -117,13 +117,141 @@ exports[`copy for person where locationType='OFFICE' and method='VIRTUAL' 1`] = 
 
 Date: 4/14/25
 
-Time: Approximately 7:00 AM CDT
+Time: 7:00 AM CDT
 
-Location: Virtual video call
+Location: Virtual video call or phone call
 
-Be aware that the officer may call within 2 hours before or after the time listed above.
+Need to reschedule or have questions? Contact Officer John Doe at 9879879879.
 
-Need to reschedule or have questions? Contact Officer John Doe
+Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
 
-Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
+`;
+
+exports[`spanish copy for person where locationType='EMPLOYMENT' and method='IN_PERSON' 1`] = `
+"Hola Jane, este es un recordatorio de que tiene una visita de empleo mañana.
+
+Fecha: 4/14/25
+
+Hora: 7:00 AM CDT
+
+Ubicación: En su lugar de trabajo
+
+¿Necesitas reprogramar tu cita o tienes preguntas? Contacta al Oficial John Doe al 9879879879.
+
+If you prefer to receive these messages in English, respond 1 at any time.
+
+Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+`;
+
+exports[`spanish copy for person where locationType='EMPLOYMENT' and method='VIRTUAL' 1`] = `
+"Hola Jane, este es un recordatorio de que tiene una visita de empleo mañana.
+
+Fecha: 4/14/25
+
+Hora: 7:00 AM CDT
+
+Ubicación: Videollamada virtual o llamada telefónica
+
+¿Necesitas reprogramar tu cita o tienes preguntas? Contacta al Oficial John Doe al 9879879879.
+
+If you prefer to receive these messages in English, respond 1 at any time.
+
+Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+`;
+
+exports[`spanish copy for person where locationType='FIELD' and method='IN_PERSON' 1`] = `
+"Hola Jane, este es un recordatorio de que tiene una visita de field mañana.
+
+Fecha: 4/14/25
+
+Hora: 7:00 AM CDT
+
+Ubicación: 123 North Pole
+
+¿Necesitas reprogramar tu cita o tienes preguntas? Contacta al Oficial John Doe al 9879879879.
+
+If you prefer to receive these messages in English, respond 1 at any time.
+
+Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+`;
+
+exports[`spanish copy for person where locationType='FIELD' and method='VIRTUAL' 1`] = `
+"Hola Jane, este es un recordatorio de que tiene una visita de field mañana.
+
+Fecha: 4/14/25
+
+Hora: 7:00 AM CDT
+
+Ubicación: 123 North Pole
+
+¿Necesitas reprogramar tu cita o tienes preguntas? Contacta al Oficial John Doe al 9879879879.
+
+If you prefer to receive these messages in English, respond 1 at any time.
+
+Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+`;
+
+exports[`spanish copy for person where locationType='HOME' and method='IN_PERSON' 1`] = `
+"Hola Jane, este es un recordatorio de que tiene una visita a domicilio mañana.
+
+Fecha: 4/14/25
+
+Hora: 7:00 AM CDT
+
+Ubicación: Su domicilio
+
+¿Necesitas reprogramar tu cita o tienes preguntas? Contacta al Oficial John Doe al 9879879879.
+
+If you prefer to receive these messages in English, respond 1 at any time.
+
+Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+`;
+
+exports[`spanish copy for person where locationType='HOME' and method='VIRTUAL' 1`] = `
+"Hola Jane, este es un recordatorio de que tiene una visita a domicilio mañana.Debe estar en su casa durante la videollamada.
+
+Fecha: 4/14/25
+
+Hora: 7:00 AM CDT
+
+Ubicación: Su domicilio a través de una videollamada virtual
+
+¿Necesitas reprogramar tu cita o tienes preguntas? Contacta al Oficial John Doe al 9879879879.
+
+If you prefer to receive these messages in English, respond 1 at any time.
+
+Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+`;
+
+exports[`spanish copy for person where locationType='OFFICE' and method='IN_PERSON' 1`] = `
+"Hola Jane, este es un recordatorio de que tiene una visita de la oficina mañana.
+
+Fecha: 4/14/25
+
+Hora: 7:00 AM CDT
+
+Ubicación: 123 North Pole
+
+¿Necesitas reprogramar tu cita o tienes preguntas? Contacta al Oficial John Doe al 9879879879.
+
+If you prefer to receive these messages in English, respond 1 at any time.
+
+Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+`;
+
+exports[`spanish copy for person where locationType='OFFICE' and method='VIRTUAL' 1`] = `
+"Hola Jane, este es un recordatorio de que tiene una visita de la oficina mañana.
+
+Fecha: 4/14/25
+
+Hora: 7:00 AM CDT
+
+Ubicación: Videollamada virtual o llamada telefónica
+
+¿Necesitas reprogramar tu cita o tienes preguntas? Contacta al Oficial John Doe al 9879879879.
+
+If you prefer to receive these messages in English, respond 1 at any time.
+
+Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
 `;

@@ -31,6 +31,7 @@ import { i18nInstance, initI18n } from "~@jii-texting/utils/common/i18n";
 import { fakePersonOne } from "~@jii-texting/utils/test/constants";
 import { getTwilioClientForStateCode, TwilioAPIClient } from "~twilio-api";
 
+
 describe("POST /webhook/twilio/incoming_message/US_ID", () => {
   describe("authenticated requests", () => {
     beforeEach(() => {
@@ -301,7 +302,7 @@ describe("send_language_confirmation", () => {
 
   test("sends English confirmation message with correct body", () => {
     const expectedEnglishMessage =
-      "All future messages will be in English.\n\nReply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number.";
+      "All future messages will be in English.\n\nSi prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.\n\nReply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number.";
 
     send_language_confirmation("US_TX", "5551234567", "en", i18nInstance);
 
@@ -314,7 +315,7 @@ describe("send_language_confirmation", () => {
 
   test("sends Spanish confirmation message with correct body", () => {
     const expectedSpanishMessage =
-      "A partir de hoy, todos los mensajes se enviarán en español.\n\nResponde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número.";
+      "A partir de hoy, todos los mensajes se enviarán en español.\n\nIf you prefer to receive these messages in English, respond 1 at any time.\n\nResponde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número.";
 
     send_language_confirmation("US_TX", "5551234567", "es", i18nInstance);
 

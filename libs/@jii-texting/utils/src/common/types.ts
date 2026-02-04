@@ -116,6 +116,7 @@ export const PERSON_SELECT_DATA_FOR_MESSAGE = {
     district: true,
     stableExternalId: true,
     pseudonymizedId: true,
+    preferredLanguage: true,
   } satisfies Prisma.PersonSelectScalar & Prisma.PersonDefaultArgs,
 };
 

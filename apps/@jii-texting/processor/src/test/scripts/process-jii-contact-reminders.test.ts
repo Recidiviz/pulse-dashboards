@@ -94,11 +94,15 @@ describe("one person in DB without prior messages", () => {
     // Validates the request to the createMessage API
     expect(spy).toBeCalledTimes(1);
     expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`
-      "Hi Jane, we’re reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.
+      "Hi Jane, we're reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You're now subscribed to receive updates about appointments and other items related to your parole.
 
-      If you have questions, reach out to Officer John Doe at 9879879879. Please note each appointment reminder will specify if you are meeting with your primary officer or another officer.
+      If you have questions, reach out to Officer John Doe at 9879879879.
+      
+      Standard messaging rates may apply.
 
-      Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+      Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
+      
+      Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
     `);
     expect(spy.mock.calls[0][1]).toBe(fakePersonOne.phoneNumber);
     expect(spy.mock.calls[0][2]).toBeUndefined();
@@ -218,11 +222,15 @@ describe("one person in DB without prior messages", () => {
     // Validates arguments to Twilio's createMessage
     expect(spy).toBeCalledTimes(1);
     expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`
-      "Hi Jane, we’re reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.
+      "Hi Jane, we're reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You're now subscribed to receive updates about appointments and other items related to your parole.
 
-      If you have questions, reach out to Officer John Doe at 9879879879. Please note each appointment reminder will specify if you are meeting with your primary officer or another officer.
+      If you have questions, reach out to Officer John Doe at 9879879879.
+      
+      Standard messaging rates may apply.
 
-      Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+      Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
+      
+      Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
     `);
     expect(spy.mock.calls[0][1]).toBe(fakePersonOne.phoneNumber);
     expect(spy.mock.calls[0][2]).toStrictEqual(
@@ -389,15 +397,15 @@ describe("one person in DB with welcome text in progress", () => {
 
       Date: 4/14/25
 
-      Time: Approximately 7:00 AM CDT
+      Time: 7:00 AM CDT
 
       Location: Your home
 
-      Be aware that the officer may arrive within 2 hours before or after the time listed above.
+      Need to reschedule or have questions? Contact Officer John Doe at 9879879879.
 
-      Need to reschedule or have questions? Contact Officer John Doe
+      Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
 
-      Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+      Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
     `);
 
     // Validate person is updated
@@ -768,6 +776,65 @@ test.each([
       },
       data: {
         receivedWelcomeText: true,
+      },
+    });
+
+    const spy = vi
+      .spyOn(TwilioAPIClient.prototype, "createMessage")
+      .mockResolvedValue({
+        body: "message body",
+        status: "queued",
+        sid: "twilio-message-sid",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+    await processJiiContactReminders({
+      stateCode: StateCode.US_TX,
+      dryRun: false,
+      workflowExecutionId: fakeWorkflowExecutionOne.id,
+    });
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy.mock.calls[0][0]).toMatchSnapshot();
+    expect(spy.mock.calls[0][1]).toBe(fakePersonOne.phoneNumber);
+  },
+);
+
+test.each([
+  { locationType: "HOME", method: "IN_PERSON" },
+  { locationType: "HOME", method: "VIRTUAL" },
+  { locationType: "OFFICE", method: "IN_PERSON" },
+  { locationType: "OFFICE", method: "VIRTUAL" },
+  { locationType: "FIELD", method: "IN_PERSON" },
+  { locationType: "FIELD", method: "VIRTUAL" },
+  { locationType: "EMPLOYMENT", method: "IN_PERSON" },
+  { locationType: "EMPLOYMENT", method: "VIRTUAL" },
+])(
+  "spanish copy for person where locationType=$locationType and method=$method",
+  async ({ locationType, method }) => {
+    vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+      sid: "message-sid-1",
+      status: "delivered",
+    } as MessageInstance);
+
+    await testUsTxPrismaClient.contact.update({
+      where: { externalId: fakeContactOne.externalId },
+      data: {
+        locationType: locationType,
+        method: method,
+      },
+    });
+
+    await testUsTxPrismaClient.person.update({
+      where: {
+        stableExternalId: fakePersonOne.stableExternalId,
+      },
+      data: {
+        receivedWelcomeText: true,
+        preferredLanguage: "es",
       },
     });
 

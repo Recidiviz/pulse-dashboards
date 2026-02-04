@@ -22,6 +22,7 @@ import {
   PrismaClient,
 } from "@prisma/jii-texting/client";
 import { captureException } from "@sentry/node";
+import type { i18n } from "i18next";
 import { DateTime } from "luxon";
 import moment from "moment";
 import {
@@ -281,13 +282,19 @@ function getIdahoLSUMessageBody(
  *
  * @param givenName The first name of the person we're sending a text to
  * @param poName The full name of the person's supervising officer
+ * @param i18n The i18next instance
+ * @param preferredLanguage The jii's preferred language (en or es)
  * @returns The full text to send the person
  */
-function getWelcomeMessageBody({
-  givenName,
-  poName: assignedOfficerName,
-  poPhoneNumber,
-}: PersonDataForMessage) {
+function getWelcomeMessageBody(
+  {
+    givenName,
+    poName: assignedOfficerName,
+    poPhoneNumber,
+    preferredLanguage,
+  }: PersonDataForMessage,
+  i18n: i18n,
+) {
   let body = "";
 
   const givenNameToUse =
@@ -303,9 +310,12 @@ function getWelcomeMessageBody({
     ? ` at ${poPhoneNumber.trim()}`
     : "";
 
-  body += `Hi ${givenNameToUse}, we’re reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You’re now subscribed to receive updates about appointments and other items related to your parole.\n\nIf you have questions, reach out to Officer ${assignedPoNameToUse}${poPhoneNumberAddendum}. Please note each appointment reminder will specify if you are meeting with your primary officer or another officer.`;
-
-  body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
+  body += i18n.t("welcomeMessage", {
+    givenNameToUse,
+    assignedPoNameToUse,
+    poPhoneNumberAddendum,
+    lng: preferredLanguage,
+  });
 
   return body;
 }
@@ -315,12 +325,15 @@ function getWelcomeMessageBody({
  * This is currently specific to Texas.
  *
  * @param givenName The first name of the person we're sending a text to
- * @param poName The full name of the person's supervising officer
+ * @param contactData Data relating to the contact (externalId, locationType, method, datetime, address, contactingPoName, contactingPoPhoneNumber, reminderType)
+ * @param i18n The i18next instance
+ * @param preferredLanguage The jii's preferred language (en or es)
  * @returns The full text to send the person
  */
 function getTexasReminderMessageBody(
-  { givenName }: PersonDataForMessage,
+  { givenName, preferredLanguage }: PersonDataForMessage,
   contactData: ContactDataForMessage,
+  i18n: i18n,
 ) {
   let body = "";
 
@@ -343,28 +356,42 @@ function getTexasReminderMessageBody(
     .join(" ");
 
   const officerPhoneNumberAddendum = contactingPoPhoneNumber
-    ? ` at ${contactingPoPhoneNumber.trim()}`
+    ? i18n.t("officerPhoneNumberAddendum", {
+        contactingPoPhoneNumber: contactingPoPhoneNumber.trim(),
+        lng: preferredLanguage,
+      })
     : "";
 
-  const locationStr = (function () {
-    if (locationType === "HOME" && method === "IN_PERSON") {
-      return "Your home";
-    } else if (locationType === "HOME" && method === "VIRTUAL") {
-      return "Your home via virtual video call";
-    } else if (method === "VIRTUAL") {
-      return "Virtual video call";
-      //for clauses below method === "IN_PERSON"
-    } else if (locationType === "OFFICE") {
-      return address || "In person";
-    } else if (locationType === "EMPLOYMENT") {
-      return "At your place of employment";
-    } else {
-      console.log(`Received unexpected contact type: ${locationType}`);
-      return address;
-    }
-  })();
+  let locationStr = address ?? "Unknown";
+  let contactType = i18n.t("defaultContactType", {
+    locationType: locationType.toLowerCase(),
+    lng: preferredLanguage,
+  });
+  let mustBeAtHomeCall = "";
 
-  const contactDescription = method === "IN_PERSON" ? "arrive" : "call";
+  if (locationType === "HOME" && method === "IN_PERSON") {
+    locationStr = i18n.t("homeLocation", { lng: preferredLanguage });
+    contactType = i18n.t("homeContactType", { lng: preferredLanguage });
+  } else if (locationType === "HOME" && method === "VIRTUAL") {
+    locationStr = i18n.t("homeOrVirtualLocation", { lng: preferredLanguage });
+    contactType = i18n.t("homeContactType", { lng: preferredLanguage });
+    mustBeAtHomeCall = i18n.t("mustBeAtHomeCall", { lng: preferredLanguage });
+  } else if (locationType === "OFFICE" && method === "IN_PERSON") {
+    locationStr =
+      address || i18n.t("inPersonLocation", { lng: preferredLanguage });
+    contactType = i18n.t("officeContactType", { lng: preferredLanguage });
+  } else if (locationType === "OFFICE" && method === "VIRTUAL") {
+    locationStr = i18n.t("virtualLocation", { lng: preferredLanguage });
+    contactType = i18n.t("officeContactType", { lng: preferredLanguage });
+  } else if (locationType === "EMPLOYMENT" && method === "IN_PERSON") {
+    locationStr = i18n.t("jobLocation", { lng: preferredLanguage });
+    contactType = i18n.t("employmentContactType", { lng: preferredLanguage });
+  } else if (locationType === "EMPLOYMENT" && method === "VIRTUAL") {
+    locationStr = i18n.t("virtualLocation", { lng: preferredLanguage });
+    contactType = i18n.t("employmentContactType", { lng: preferredLanguage });
+  } else {
+    console.log(`Received unexpected contact type: ${locationType}`);
+  }
 
   const dateStr = new Intl.DateTimeFormat("en-US", {
     dateStyle: "short",
@@ -377,9 +404,20 @@ function getTexasReminderMessageBody(
     timeZoneName: "short",
   }).format(datetime);
 
-  body += `Hi ${givenNameToUse}, this is a reminder that you have an upcoming ${locationType.toLowerCase()} contact tomorrow.\n\nDate: ${dateStr}\n\nTime: Approximately ${timeStr}\n\nLocation: ${locationStr}\n\nBe aware that the officer may ${contactDescription} within 2 hours before or after the time listed above.\n\nNeed to reschedule or have questions? Contact Officer ${officerToContact}${officerPhoneNumberAddendum}`;
-
-  body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
+  body += i18n.t("contactMessage", {
+    givenNameToUse,
+    contactType,
+    mustBeAtHomeCall,
+    dateStr,
+    timeStr,
+    locationStr,
+    officerToContact,
+    officerPhoneNumberAddendum,
+    lng: preferredLanguage,
+    interpolation: {
+      escapeValue: false,
+    },
+  });
 
   return body;
 }
@@ -551,6 +589,8 @@ async function createTwilioMessage(
  * @param workflowExecutionId The ID of the current Workflow Execution that the message is being sent during
  * @param prisma Prisma Client
  * @param twilio Twilio API Client
+ * @param i18n The i18next instance
+ * @param preferredLanguage The jii's preferred language (en or es)
  * @param messageSeriesId The id of the MessageSeries to connect the new MessageAttempt to
  */
 export async function sendWelcomeText(
@@ -558,12 +598,13 @@ export async function sendWelcomeText(
   workflowExecutionId: string,
   prisma: PrismaClient,
   twilio: TwilioAPIClient,
+  i18n: i18n,
   messageSeriesId?: string,
 ) {
   const { phoneNumber, pseudonymizedId } = personMetadata;
 
   try {
-    const messageBody = getWelcomeMessageBody(personMetadata);
+    const messageBody = getWelcomeMessageBody(personMetadata, i18n);
 
     const [messageInstance, sendAt] = await createTwilioMessage(
       twilio,
@@ -637,6 +678,7 @@ export async function sendWelcomeText(
  * @param prisma Prisma Client
  * @param twilio Twilio API Client
  * @param contactDataForMessage Metadata about the scheduled contact that the reminder is being sent for
+ * @param i18n The i18next instance
  * @param messageSeriesId The id of the MessageSeries to connect the new MessageAttempt to
  */
 export async function sendReminderText(
@@ -646,6 +688,7 @@ export async function sendReminderText(
   prisma: PrismaClient,
   twilio: TwilioAPIClient,
   contactDataForMessage: ContactDataForMessage,
+  i18n: i18n,
   messageSeriesId?: string,
 ) {
   const { phoneNumber, stableExternalId, pseudonymizedId } = personMetadata;
@@ -654,6 +697,7 @@ export async function sendReminderText(
     const messageBody = getTexasReminderMessageBody(
       personMetadata,
       contactDataForMessage,
+      i18n,
     );
 
     const [messageInstance, sendAt] = await createTwilioMessage(
@@ -955,7 +999,6 @@ async function handleLatestMessageTypeIsEligibilityText(
 function personHasOptedOut(jii: Person) {
   return jii.lastOptOutDate != null;
 }
-
 /**
  * Returns the difference in days between dateOne and dateTwo.
  * This will be done like dateOne minus dateTwo, so dateOne < dateTwo, then the result will be negative
@@ -1000,6 +1043,7 @@ export async function processIndividualJiiEligibilityTexts(
     poPhoneNumber: jii.poPhoneNumber,
     district: jii.district,
     pseudonymizedId: jii.pseudonymizedId,
+    preferredLanguage: jii.preferredLanguage,
   };
 
   if (personHasOptedOut(jii)) return ScriptAction.SKIPPED;
@@ -1148,6 +1192,7 @@ export async function processContact(
   prisma: PrismaClient,
   twilio: TwilioAPIClient,
   dryRun: boolean,
+  i18n: i18n,
 ): Promise<ScriptAction> {
   const contactDataForMessage: ContactDataForMessage = {
     externalId: contact.externalId,
@@ -1182,6 +1227,7 @@ export async function processContact(
         prisma,
         twilio,
         contactDataForMessage,
+        i18n,
       );
 
       console.log(
@@ -1222,6 +1268,7 @@ export async function processContact(
       prisma,
       twilio,
       contactDataForMessage,
+      i18n,
       reminderMessageSeries.id,
     );
 
@@ -1246,6 +1293,7 @@ export async function processWelcomeText(
   dryRun: boolean,
   prisma: PrismaClient,
   twilio: TwilioAPIClient,
+  i18n: i18n,
 ) {
   if (jii.welcomeMessageSeries === null) {
     if (dryRun) {
@@ -1259,6 +1307,7 @@ export async function processWelcomeText(
       workflowExecutionId,
       prisma,
       twilio,
+      i18n,
     );
 
     console.log(
@@ -1326,6 +1375,7 @@ export async function processWelcomeText(
         workflowExecutionId,
         prisma,
         twilio,
+        i18n,
         initialMessageSeries.id,
       );
 
@@ -1350,6 +1400,7 @@ export async function processIndividualJiiContactReminders(
   dryRun: boolean,
   prisma: PrismaClient,
   twilio: TwilioAPIClient,
+  i18n: i18n,
 ): Promise<ScriptAction[]> {
   console.log(
     `Processing ${jii.pseudonymizedId} with ${jii.contacts.length} contacts where dryRun is ${dryRun}`,
@@ -1363,6 +1414,7 @@ export async function processIndividualJiiContactReminders(
     poPhoneNumber: jii.poPhoneNumber,
     district: jii.district,
     pseudonymizedId: jii.pseudonymizedId,
+    preferredLanguage: jii.preferredLanguage,
   };
 
   if (personHasOptedOut(jii)) return [ScriptAction.SKIPPED];
@@ -1383,6 +1435,7 @@ export async function processIndividualJiiContactReminders(
       dryRun,
       prisma,
       twilio,
+      i18n,
     );
 
     if (result !== ScriptAction.NOOP) {
@@ -1401,6 +1454,7 @@ export async function processIndividualJiiContactReminders(
       prisma,
       twilio,
       dryRun,
+      i18n,
     );
 
     return result;

@@ -1,5 +1,18 @@
 {
+  "welcomeMessage": "Hi {{givenNameToUse}}, we're reaching out on behalf of the Texas Department of Criminal Justice (TDCJ). You're now subscribed to receive updates about appointments and other items related to your parole.\n\nIf you have questions, reach out to Officer {{assignedPoNameToUse}}{{poPhoneNumberAddendum}}.\n\nStandard messaging rates may apply.$t(optOutMessage)",
+  "contactMessage": "Hi {{givenNameToUse}}, this is a reminder that you have an upcoming {{contactType}} tomorrow.{{mustBeAtHomeCall}}\n\nDate: {{dateStr}}\n\nTime: {{timeStr}}\n\nLocation: {{locationStr}}\n\nNeed to reschedule or have questions? Contact Officer {{officerToContact}}{{officerPhoneNumberAddendum}}.$t(optOutMessage)",
+  "mustBeAtHomeCall": "You must be at your home while on the video call.",
+  "defaultContactType": "{{locationType}} contact",
+  "homeContactType": "home contact",
+  "officeContactType": "office contact",
+  "employmentContactType": "employment contact",
+  "officerPhoneNumberAddendum": " at {{contactingPoPhoneNumber}}",
+  "homeLocation": "Your home",
+  "homeOrVirtualLocation": "Your home via virtual video call",
+  "virtualLocation": "Virtual video call or phone call",
+  "inPersonLocation": "In person",
+  "jobLocation": "At your place of employment",
   "languagePreferenceConfirmationMessage": "All future messages will be in English.$t(optOutMessage)",
-  "optOutMessage": "\n\nReply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number.",
+  "optOutMessage": "\n\nSi prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.\n\nReply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number.",
   "languagePreferenceKeywords": ["1", "english", "inglés", "ingles"]
 }

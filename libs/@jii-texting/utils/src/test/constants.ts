@@ -199,6 +199,7 @@ export const fakeContactOne = {
   externalId: "contact-id-1",
   contactingOfficerId: faker.string.uuid(),
   contactingPoName: "JOHN DOE",
+  contactingPoPhoneNumber: "9879879879",
   locationType: "HOME",
   method: "IN_PERSON",
   address: "123 North Pole",
