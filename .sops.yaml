@@ -4,5 +4,7 @@
 creation_rules:
   - path_regex: 'apps/@jii/.+\.enc\.yaml$'
     gcp_kms: projects/recidiviz-jii-staging/locations/us-central1/keyRings/recidiviz-jii-staging-sops/cryptoKeys/recidiviz-jii-staging-sops-key
+  - path_regex: 'apps/public-pathways/.+\.enc\.yaml$'
+    gcp_kms: projects/public-pathways-staging/locations/us-central1/keyRings/public-pathways-staging-sops/cryptoKeys/public-pathways-staging-sops-key
   - path_regex: '\.enc\.yaml$'
     gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key

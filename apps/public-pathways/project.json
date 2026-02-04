@@ -15,14 +15,14 @@
         "cwd": "{projectRoot}"
       }
     },
-    "dev": {
+    "requires-sops-env:dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["vite dev"],
         "cwd": "{projectRoot}"
       }
     },
-    "build": {
+    "requires-sops-env:build": {
       "executor": "@nx/vite:build",
       "cache": true,
       "options": {

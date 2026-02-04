@@ -15,16 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+interface ViteTypeOptions {
+  // By adding this line, you can make the type of ImportMetaEnv strict
+  // to disallow unknown keys.
+  strictImportMetaEnv: unknown;
+}
 
-import { App } from "./components/App/App";
+interface ImportMetaEnv {
+  readonly VITE_PUBLIC_PATHWAYS_API_URL_BASE: string;
+  readonly VITE_PUBLIC_PATHWAYS_AUTH0_DOMAIN: string;
+  readonly VITE_PUBLIC_PATHWAYS_AUTH0_CLIENT_ID: string;
+  readonly VITE_PUBLIC_PATHWAYS_AUTH_ENV: string;
+  readonly VITE_PUBLIC_PATHWAYS_AUTH0_AUDIENCE: string;
+  readonly VITE_PUBLIC_PATHWAYS_FIRESTORE_API_KEY: string;
+  readonly VITE_PUBLIC_PATHWAYS_FIRESTORE_PROJECT: string;
+  readonly VITE_PUBLIC_PATHWAYS_SENTRY_DSN: string;
+  readonly VITE_PUBLIC_PATHWAYS_SENTRY_ENV: string;
+  readonly VITE_PUBLIC_PATHWAYS_METADATA_NAMESPACE: string;
+}
 
-// safe to assert that this exists, see index.html
-const container = document.getElementById("root") as HTMLElement;
-
-ReactDOM.createRoot(container).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
-);
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}

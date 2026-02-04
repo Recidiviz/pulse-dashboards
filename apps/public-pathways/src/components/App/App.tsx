@@ -17,13 +17,29 @@
 
 import "./global.css";
 
+import { ErrorBoundary, withSentryReactRouterV6Routing } from "@sentry/react";
 import { Route, Routes } from "react-router-dom";
+
+import { initializeSentry } from "../../initializeSentry";
+import AuthProvider from "../AuthProvider/AuthProvider";
+import { StoreProvider } from "../StoreProvider";
+
+initializeSentry();
+
+// doing this once (at the root off all <Routes>) allows Sentry to trace client-side URLs
+const SentryRoutes = withSentryReactRouterV6Routing(Routes);
 
 export function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-    </Routes>
+    <ErrorBoundary>
+      <StoreProvider>
+        <AuthProvider>
+          <SentryRoutes>
+            <Route path="/" element={<Home />} />
+          </SentryRoutes>
+        </AuthProvider>
+      </StoreProvider>
+    </ErrorBoundary>
   );
 }
 

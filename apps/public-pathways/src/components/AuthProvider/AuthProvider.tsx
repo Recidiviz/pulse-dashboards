@@ -15,16 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { Loading as LoadingSpinner } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
+import { ReactNode } from "react";
+import styled from "styled-components";
 
-import { App } from "./components/App/App";
+import useAuth from "../../useAuth";
+import { useUserStore } from "../StoreProvider";
 
-// safe to assert that this exists, see index.html
-const container = document.getElementById("root") as HTMLElement;
+const LoadingContainer = styled.div`
+  position: fixed;
+  left: calc(50% - 45px);
+  top: calc(50% - 45px);
+`;
 
-ReactDOM.createRoot(container).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
-);
+type AuthProviderProps = {
+  children: ReactNode;
+};
+
+const AuthProvider = observer(function AuthProvider({
+  children,
+}: AuthProviderProps) {
+  const { userIsLoading } = useUserStore();
+
+  useAuth();
+
+  if (userIsLoading) {
+    return (
+      <LoadingContainer>
+        <LoadingSpinner />
+      </LoadingContainer>
+    );
+  }
+  return <>{children}</>;
+});
+
+export default AuthProvider;

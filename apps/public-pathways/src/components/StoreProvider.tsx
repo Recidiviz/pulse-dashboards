@@ -15,16 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { FC, memo, ReactNode, useContext, useMemo } from "react";
 
-import { App } from "./components/App/App";
+import { RootStore } from "../datastores/RootStore";
+import UserStore from "../datastores/UserStore";
+import { StoreContext } from "./StoreContext";
 
-// safe to assert that this exists, see index.html
-const container = document.getElementById("root") as HTMLElement;
-
-ReactDOM.createRoot(container).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+export const StoreProvider: FC<{ children: ReactNode }> = memo(
+  function StoreProvider({ children }) {
+    const store = useMemo(() => new RootStore(), []);
+    return (
+      <StoreContext.Provider value={{ store }}>
+        {children}
+      </StoreContext.Provider>
+    );
+  },
 );
+
+export function useRootStore(): RootStore {
+  const context = useContext(StoreContext);
+  if (context === undefined) {
+    throw new Error("useRootStore must be used within a StoreProvider");
+  }
+  return context.store;
+}
+
+export function useUserStore(): UserStore {
+  const { userStore } = useRootStore();
+  return userStore;
+}

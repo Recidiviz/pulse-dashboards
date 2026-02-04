@@ -15,16 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { createContext } from "react";
 
-import { App } from "./components/App/App";
+import { RootStore } from "../datastores/RootStore";
 
-// safe to assert that this exists, see index.html
-const container = document.getElementById("root") as HTMLElement;
-
-ReactDOM.createRoot(container).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+export const StoreContext = createContext<undefined | { store: RootStore }>(
+  undefined,
 );
