@@ -80,18 +80,23 @@ export const useWebAudioRecorder = ({ onStop, onError }: Params) => {
       throw new Error("Your browser does not support recording audio");
     }
 
-    // Request microphone access
+    // Request microphone access with processing disabled — the defaults
+    // (noiseSuppression, echoCancellation, autoGainControl) are designed for
+    // live calls and introduce audible artifacts in recordings.
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: {
         sampleRate: 44100,
-        channelCount: 2,
+        channelCount: 1,
+        noiseSuppression: false,
+        echoCancellation: false,
+        autoGainControl: false,
       },
     });
     streamRef.current = stream;
 
     // Create MediaRecorder for the stream
     const mediaRecorder = new MediaRecorder(stream, {
-      mimeType: "audio/webm",
+      mimeType: "audio/webm;codecs=opus",
       audioBitsPerSecond: 128000,
     });
     mediaRecorderRef.current = mediaRecorder;
