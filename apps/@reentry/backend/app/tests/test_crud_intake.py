@@ -17,7 +17,6 @@ from app.crud.intake import (
     get_intake_section_messages,
     get_intake_token,
     get_latest_active_conversation_intake,
-    get_latest_active_external_intake,
     get_latest_message,
     get_latest_not_welcome_message,
     get_or_create_token,
@@ -173,42 +172,6 @@ async def test_get_latest_active_conversation_intake(
     assert result is not None
     assert result.id == intake2.id
     assert result.intake_type == IntakeType.CONVERSATION
-
-
-@pytest.mark.asyncio
-async def test_get_latest_active_external_intake(
-    async_session: AsyncSession, seed_configs
-):
-    """Test retrieving the latest active external intake."""
-    client_id = "client-007"
-    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
-
-    # Create a conversation intake (should be ignored)
-    intake1 = Intake(
-        client_pseudo_id=client_id,
-        status=IntakeStatus.CREATED,
-        intake_type=IntakeType.CONVERSATION,
-        assessment_config_id=assessment_config_id,
-    )
-    async_session.add(intake1)
-    await async_session.commit()
-
-    # Create an external intake
-    intake2 = Intake(
-        client_pseudo_id=client_id,
-        status=IntakeStatus.CREATED,
-        intake_type=IntakeType.EXTERNAL,
-        assessment_config_id=assessment_config_id,
-    )
-    async_session.add(intake2)
-    await async_session.commit()
-    await async_session.refresh(intake2)
-
-    result = await get_latest_active_external_intake(async_session, client_id)
-
-    assert result is not None
-    assert result.id == intake2.id
-    assert result.intake_type == IntakeType.EXTERNAL
 
 
 @pytest.mark.asyncio

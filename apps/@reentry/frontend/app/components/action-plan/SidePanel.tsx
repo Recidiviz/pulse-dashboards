@@ -100,7 +100,6 @@ const SidePanel = ({
                   relatedResources={relatedResources}
                   handleOpenResourceSection={handleOpenResourceSection}
                   openResourceSection={openResourceSection}
-                  clientRecord={clientRecord}
                 />
               )}
 

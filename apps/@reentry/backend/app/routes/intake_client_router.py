@@ -1,4 +1,3 @@
-import structlog
 import os
 import shutil
 import tempfile
@@ -6,6 +5,7 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
+import structlog
 from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel
@@ -412,89 +412,3 @@ async def transcribe_audio_route(
         if os.path.exists(temp_file_path):
             os.unlink(temp_file_path)
     return {"transcription": transcription}
-
-
-# -------------------- External ------
-# This endpoint allows scheduling an assessment and subsequent plan generation
-# based on chat messages provided directly, To be used by external systems that handle intake conversations separately
-# (e.g. the 2nd version of the intake chat).
-# class ChatMessageInput(BaseModel):
-#     role: str
-#     content: str
-#     section: Optional[str] = None
-
-
-# class CompleteExternalChatRequest(BaseModel):
-#     messages: List[ChatMessageInput]
-#     address: AddressSubmission
-#     assessment_config_id: UUID
-
-
-# TODO V2SUPPORT or remove - verify the assessment config exist and has external type
-# class CompleteExternalChatResponse(BaseModel):
-#     intake_id: str
-#     status: str
-#     message: str
-
-
-# @router.post(
-#     "/start-assessment-action-plan",
-#     summary="Trigger assessment + plan generation from external chat",
-#     description=("Schedules an assessment using provided chat messages. "),
-#     tags=["Intake assessment - external"],
-#     response_model=CompleteExternalChatResponse,
-# )
-# async def complete_external_chat(
-#     request: Request,
-#     data: CompleteExternalChatRequest,
-#     session=Depends(get_session),
-# ):
-#     if not getattr(request.state, "client", None):
-#         from app.auth.intake.utils import decode_jwt_token
-
-#         auth_header = request.headers.get("Authorization", "")
-#         if not auth_header.startswith("Bearer "):
-#             raise HTTPException(status_code=401, detail="Missing Authorization header")
-#         raw = auth_header.split(" ", 1)[1].strip()
-#         claims = decode_jwt_token(raw)
-#         request.state.client = {"sub": claims.get("sub")}
-
-#     client_pseudo_id: str = request.state.client.get("sub")
-#     if not client_pseudo_id:
-#         raise HTTPException(status_code=401, detail="Unauthorized: missing client id")
-
-#     # Get the latest CREATED or IN_PROGRESS external intake (or create if none exists)
-#     intake = await get_latest_active_external_intake(session, client_pseudo_id)
-
-#     if not intake:
-#         try:
-#             intake = await create_intake(
-#                 session,
-#                 client_pseudo_id,
-#                 data.assessment_config_id,
-#             )
-#         except ValueError as e:
-#             raise HTTPException(status_code=422, detail=str(e))
-
-#     # save the intake messages to the database into the intake table
-#     external_chat_messages = [msg.model_dump() for msg in data.messages]
-#     intake.external_chat_messages = external_chat_messages
-
-#     new_address = ClientAddress(
-#         intake_id=intake.id,
-#         street_address=data.address.street_address,
-#         city=data.address.city,
-#         state=data.address.state,
-#     )
-#     session.add(new_address)
-#     session.add(intake)
-
-#     await intake.update_status(session, IntakeStatus.COMPLETED)
-#     await session.commit()
-#     await session.refresh(intake)
-
-#     return CompleteExternalChatResponse(
-#         intake_id=str(intake.id),
-#         status=str(intake.status),
-#         message="Action plan scheduled",
-#     )

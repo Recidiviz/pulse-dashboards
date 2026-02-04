@@ -16,7 +16,6 @@ class AssessmentType(StrEnum):
 class IntakeType(StrEnum):  # Todo manually keep up to date with AssessmentModels
     TRANSCRIPTION = "transcription"
     CONVERSATION = "conversation"
-    EXTERNAL = "external"
 
 
 class IntakeStatus(StrEnum):

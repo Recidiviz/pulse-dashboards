@@ -22,11 +22,9 @@ import { useState } from "react";
 import { FiMessageSquare } from "react-icons/fi";
 
 import AdminIntakeHistory from "~@reentry/frontend/(protected)/intake/[intakeId]/chat-history/AdminIntakeHistory";
-import AdminIntakeHistoryV2 from "~@reentry/frontend/(protected)/intake/[intakeId]/chat-history/AdminIntakeHistoryV2";
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
 import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
-import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import {useAuth} from "~@reentry/frontend/lib/auth/authContext";
 import {
   createPDFPageStyles,
@@ -56,7 +54,6 @@ const IntakeManagementPage = () => {
                 "Content-Type": "application/json",
             },
         },
-        { enabled: !IS_V2_INTAKE_CHAT },
     );
 
     const { data: clientData, isLoading: clientLoading } = $api.useQuery(
@@ -93,7 +90,6 @@ const IntakeManagementPage = () => {
     }
 
     const getIntakeConvoHistoryCopy = () => {
-        if (IS_V2_INTAKE_CHAT) return;
         if (!intakeData) {
             return "No intake has been created for this client";
         }
@@ -377,8 +373,7 @@ const IntakeManagementPage = () => {
                                     </h2>
                                     <AIDisclosure type={AIDisclosureType.ChatHistory} />
                                 </div>
-                                {!IS_V2_INTAKE_CHAT &&
-                                 intakeData &&
+                                {intakeData &&
                                  intakeData.intake_sections &&
                                  intakeData.intake_sections.length > 0 &&
                                  intakeData.status !== "created" && (
@@ -391,13 +386,7 @@ const IntakeManagementPage = () => {
                                 )}
                             </div>
                             <div className="h-[600px]">
-                                {IS_V2_INTAKE_CHAT && (
-                                    <AdminIntakeHistoryV2
-                                        clientRecord={clientData}
-                                    />
-                                )}
-
-                                {!IS_V2_INTAKE_CHAT &&
+                                {
                                 clientData?.external_client_id &&
                                 intakeData &&
                                 intakeData.id &&

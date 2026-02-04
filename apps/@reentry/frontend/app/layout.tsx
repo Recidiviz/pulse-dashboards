@@ -25,7 +25,6 @@ import { ToastContainer } from "react-toastify";
 
 import { AuthUserCapabilitiesProvider } from "~@reentry/frontend/contexts/AuthUserCapabilitiesContext";
 import { AuthProvider } from "~@reentry/frontend/lib/auth/authContext";
-import { TrpcReactQueryProvider } from "~@reentry/frontend/trpc/TrpcReactQueryProvider";
 import { QueryProvider } from "~@reentry/frontend-shared";
 
 import { AnalyticsProvider } from "./contexts/AnalyticsProvider";
@@ -75,16 +74,12 @@ export default function RootLayout({
                 <AnalyticsProvider
                   writeKey={process.env["NEXT_PUBLIC_SEGMENT_WRITE_KEY"]}
                 >
-                  <TrpcReactQueryProvider>
-                    <IntakeIntegrationProvider>
-                      {children}
-                    </IntakeIntegrationProvider>
-                    {process.env["NEXT_PUBLIC_GA_ID"] && (
-                      <GoogleAnalytics
-                        gaId={process.env["NEXT_PUBLIC_GA_ID"]}
-                      />
-                    )}
-                  </TrpcReactQueryProvider>
+                  <IntakeIntegrationProvider>
+                    {children}
+                  </IntakeIntegrationProvider>
+                  {process.env["NEXT_PUBLIC_GA_ID"] && (
+                    <GoogleAnalytics gaId={process.env["NEXT_PUBLIC_GA_ID"]} />
+                  )}
                 </AnalyticsProvider>
               </AuthUserCapabilitiesProvider>
             </AuthProvider>

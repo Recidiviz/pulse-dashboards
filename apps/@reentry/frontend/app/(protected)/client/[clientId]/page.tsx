@@ -25,15 +25,14 @@ import AssessmentTypeDropdown from "~@reentry/frontend/(protected)/client/[clien
 import IntakeAssessment from "~@reentry/frontend/(protected)/client/[clientId]/IntakeAssessment";
 import { $api } from "~@reentry/frontend/api";
 import BackButton from "~@reentry/frontend/components/base/BackButton";
+import LoadingSpinner from "~@reentry/frontend/components/base/LoadingSpinner";
 import {PrimaryButton} from "~@reentry/frontend/components/buttons/PrimaryButton";
 import ClientMetadata from "~@reentry/frontend/components/clients/ClientMetadata";
-import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { PageView } from "~@reentry/frontend/components/PageView";
-import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import {useClientDelete} from "~@reentry/frontend/hooks/useClientDelete";
 import {useClientReset} from "~@reentry/frontend/hooks/useClientReset";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
-import {isFeatureEnabled} from "~@reentry/frontend/utils/featureFlagsRuntime";
+import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 
 
 const ClientProfilePage = () => {
@@ -70,7 +69,6 @@ const ClientProfilePage = () => {
                 "Content-Type": "application/json",
             },
         },
-        { enabled: !IS_V2_INTAKE_CHAT },
     );
 
     if (clientLoading && !intakeList) {
@@ -159,7 +157,7 @@ const ClientProfilePage = () => {
                     {isDeletingClient && (
                         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
                             <div className="bg-white rounded-xl shadow-lg p-6">
-                                <Loading message="Deleting client..." />
+                                <LoadingSpinner message="Deleting client..." />
                             </div>
                         </div>
                     )}

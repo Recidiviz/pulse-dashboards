@@ -49,9 +49,6 @@ The llm functionalities that describe both the assessment and how it is transfor
 
 The functionalities of the app can be enabled and disabled through feature flags.
 
-## V1 Server and import
-The server part of the chatbot was re-implemented in [/server](apps/@reentry/server/README.md). It is not currently used in production.
-The code in /import can be used to provision the V1 database with contents from BigQuery.
 
 ## intake-bot
 [apps/@reentry/intake-bot/README.md](apps/@reentry/intake-bot/README.md)

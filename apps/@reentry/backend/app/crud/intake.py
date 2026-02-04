@@ -144,53 +144,6 @@ async def get_latest_active_conversation_intake(
 
 
 @overload
-async def get_latest_active_external_intake(
-    session: AsyncSession,
-    client_pseudo_id: str,
-    *,
-    query_only: Literal[True],
-) -> SelectOfScalar[Intake]: ...
-
-
-@overload
-async def get_latest_active_external_intake(
-    session: AsyncSession,
-    client_pseudo_id: str,
-    *,
-    query_only: Literal[False] = False,
-) -> Intake | None: ...
-
-
-@statement_or_result(first_only=True)
-async def get_latest_active_external_intake(
-    session: AsyncSession,
-    client_pseudo_id: str,
-    *,
-    query_only: bool = False,
-) -> SelectOfScalar[Intake] | Intake | None:
-    """
-    Get the latest CREATED or IN_PROGRESS EXTERNAL intake for a client.
-    Orders by created_at DESC to get the most recent one.
-    Filters by IntakeType.EXTERNAL to ensure only external intakes are returned.
-    Supports multiple intakes per client.
-    """
-    return (
-        select(Intake)
-        .options(
-            selectinload(Intake.address),
-        )
-        .where(
-            and_(
-                Intake.client_pseudo_id == client_pseudo_id,
-                Intake.status.in_([IntakeStatus.CREATED, IntakeStatus.IN_PROGRESS]),
-                Intake.intake_type == IntakeType.EXTERNAL.value,
-            )
-        )
-        .order_by(Intake.created_at.desc())
-    )
-
-
-@overload
 async def get_active_intake_by_client_pseudo_id(
     session: AsyncSession,
     client_pseudo_id: str,

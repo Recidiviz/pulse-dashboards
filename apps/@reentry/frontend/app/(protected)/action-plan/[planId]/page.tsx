@@ -26,6 +26,7 @@ import UpdateResource from "~@reentry/frontend/components/action-plan/UpdateReso
 import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
 import LoadingSpinner from "~@reentry/frontend/components/base/LoadingSpinner";
 import { PageView } from "~@reentry/frontend/components/PageView";
+import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import { useExecutionPolling } from "~@reentry/frontend/hooks/useExecutionPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
@@ -36,17 +37,17 @@ type ResourceType = components["schemas"]["Resource"];
 const ActionPlanPage = () => {
   const { planId }: { planId: string } = useParams();
   const { getAccessToken } = useAuth();
+  const { track } = useAnalytics();
+
 
   // ----------- Loading and regeneration reloading ------------
   const [regenerationMessage, setRegenerationMessage] = useState("");
   const {
     isPolling,
     isCompleted,
-    progress,
     message,
     error: errorPolling,
     startPolling,
-    startTime,
   } = useExecutionPolling({ interval: 5000 });
 
   const {
@@ -176,6 +177,10 @@ const ActionPlanPage = () => {
   };
 
   const handleSelectResource = (resource: ResourceType | string) => {
+    track("action_plan_resource_selected", {
+      justiceInvolvedPersonId:
+        dataDetailPlan?.client_record?.pseudonymized_client_id,
+    });
     let foundResource: ResourceType | undefined;
     if (typeof resource === "string") {
       foundResource = planResources.find((r) => r.id === resource);
@@ -277,7 +282,7 @@ const ActionPlanPage = () => {
           "bg-white w-full screen:h-[calc(100vh-65px)] flex flex-col md:flex-row"
         }
       >
-        <div className="w-full h-full justify-start items-start inline-flex flex flex-col md:flex-row">
+        <div className="w-full h-full justify-start items-start flex flex-col md:flex-row">
           <SidePanel
             clientRecord={dataDetailPlan.client_record}
             planId={dataDetailPlan.id}
@@ -316,9 +321,7 @@ const ActionPlanPage = () => {
             )}
           {isPolling && (
             <LoadingSpinner
-              progress={progress || 0}
               message={`${message ? `${message}.` : ""} This may take several minutes, so feel free to return to this page later.`}
-              startTime={startTime || 0}
               regenerationInProgress={isPolling}
               regenerationMessage={regenerationMessage}
             />

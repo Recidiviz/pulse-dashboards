@@ -17,10 +17,8 @@
 
 import { useEffect, useState } from "react";
 
-import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
+import LoadingSpinner from "~@reentry/frontend/components/base/LoadingSpinner";
 import type { components } from "~@reentry/openapi-types";
-
-import LoadingSpinner from "../base/LoadingSpinner";
 
 type ResourcesListProps = {
   selectedResource: components["schemas"]["Resource"] | null | undefined;
@@ -29,10 +27,6 @@ type ResourcesListProps = {
   planResources?: components["schemas"]["Resource"][] | null | undefined;
   relatedResourcesLoading: boolean;
   handleSelectResource: (r: components["schemas"]["Resource"]) => void;
-  clientRecord:
-    | components["schemas"]["ClientRecordResponse"]
-    | null
-    | undefined;
 };
 
 const ResourcesList = ({
@@ -42,9 +36,7 @@ const ResourcesList = ({
   planResources,
   relatedResourcesLoading,
   handleSelectResource,
-  clientRecord,
 }: ResourcesListProps) => {
-  const { track } = useAnalytics();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredResources, setFilteredReources] = useState<
     components["schemas"]["Resource"][]
@@ -82,23 +74,14 @@ const ResourcesList = ({
       <div className="mt-4 flex flex-col gap-3">
         {/* eslint-disable-next-line no-nested-ternary */}
         {(selectedResource && relatedResourcesLoading) || !planResources ? (
-          <LoadingSpinner
-            progress={5}
-            message="Loading resources"
-            startTime={Date.now()}
-          />
+          <LoadingSpinner message="Loading resources" />
         ) : filteredResources?.length > 0 ? (
           filteredResources.map((resource, index) => (
             <div
               key={index}
               className={`p-2 border rounded-lg cursor-pointer ${(candidateResource && candidateResource?.name === resource.name && "bg-blue-100 border-blue-300") || (candidateResource === null && selectedResource?.name === resource.name) ? "bg-blue-100 border-blue-300" : "bg-white"}`}
-              onClick={() => {
-                track("action_plan_resource_selected", {
-                  justiceInvolvedPersonId:
-                    clientRecord?.pseudonymized_client_id,
-                });
-                handleSelectResource(resource);
-              }}
+              onClick={() => handleSelectResource(resource)}
+              onKeyDown={() => handleSelectResource(resource)}
             >
               <div className="font-semibold text-sm text-[#002321]">
                 {resource.name}

@@ -19,9 +19,6 @@
 
 import { useEffect, useState } from "react";
 
-import IntakeChatV2 from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
-import { IntakeAuthProvider } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
-import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import {
   AssessmentLoginPage,
   IntakeRouter,
@@ -42,14 +39,6 @@ export default function Intake() {
       setLoading(false);
     }
   }, []);
-
-  if (IS_V2_INTAKE_CHAT) {
-    return (
-      <IntakeAuthProvider>
-        <IntakeChatV2 />
-      </IntakeAuthProvider>
-    );
-  }
 
   if (loading) {
     return (

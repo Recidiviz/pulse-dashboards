@@ -36,11 +36,9 @@ import AddClientModal, {
   type AddClientFormData,
 } from "~@reentry/frontend/components/clients/AddClientModal";
 import {ClipboardIcon} from "~@reentry/frontend/components/icons/ClipboardIcon";
-import { ClientsTableV2 } from "~@reentry/frontend/components/IntakeChatV2/ClientsTableV2/ClientsTableV2";
 import { PageView } from "~@reentry/frontend/components/PageView";
 import { useAnalytics } from "~@reentry/frontend/contexts/AnalyticsProvider";
 import {useAuthUserCapabilities} from "~@reentry/frontend/contexts/AuthUserCapabilitiesContext";
-import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
 import { isFeatureEnabled } from "~@reentry/frontend/utils/featureFlagsRuntime";
 import { showSuccessToast } from "~@reentry/frontend-shared";
@@ -129,7 +127,7 @@ const ClientsPage = () => {
     ["Assessment Complete", "intake_complete"],
     ["Error", "error"],
   ];
-  
+
   const auth = useAuth();
 
   // Get page from URL query parameters, default to 1
@@ -376,20 +374,6 @@ const ClientsPage = () => {
         <div className="text-red-500">
           An error occurred while loading, please try again later
         </div>
-      );
-    }
-    if (IS_V2_INTAKE_CHAT) {
-      return (
-        <ClientsTableV2
-          items={data?.items || []}
-          total={data?.total || 0}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          customStyles={customStyles}
-          onSort={handleSort}
-          SortIconComp={<SortIcon />}
-          buildColumns={buildColumns}
-        />
       );
     }
     return (

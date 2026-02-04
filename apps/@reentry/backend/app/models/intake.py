@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 import jwt
 from sqlalchemy import Column, and_
 from sqlalchemy import Enum as SAEnum
-from sqlmodel import JSON, Field, Relationship, select
+from sqlmodel import Field, Relationship, select
 
 from app.core.config import settings
 from app.core.db import AsyncSession
@@ -110,11 +110,6 @@ class Intake(BaseModel, table=True):
         default=None, nullable=True, description="Current section being processed"
     )
 
-    # Store external chat messages for external intakes
-    external_chat_messages: list[dict] | None = Field(
-        sa_type=JSON, nullable=True, default=None
-    )
-
     # Relationships
     assessment_config: Mapped[Optional["AssessmentConfig"]] = Relationship(
         sa_relationship_kwargs={
@@ -180,12 +175,6 @@ class Intake(BaseModel, table=True):
             "cascade": "all, delete-orphan",
             "lazy": "selectin",
         },
-    )
-
-    # External
-    # Store external chat messages for external intakes
-    external_chat_messages: list[dict] | None = Field(
-        sa_type=JSON, nullable=True, default=None
     )
 
     # Deprecated

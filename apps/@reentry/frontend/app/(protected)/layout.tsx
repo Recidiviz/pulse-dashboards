@@ -70,12 +70,10 @@ export default function ProtectedLayout({ children }) {
   }
 
   return (
-    <>
       <main className="flex flex-col min-h-full">
         <ReadOnlyIndicatorBanner />
         <Navbar />
         <ProtectedRoute>{children}</ProtectedRoute>
       </main>
-    </>
   );
 }
