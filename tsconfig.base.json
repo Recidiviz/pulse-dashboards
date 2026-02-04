@@ -24,6 +24,7 @@
       "~@case-notes-server/trpc": ["libs/@case-notes-server/trpc/src/index.ts"],
       "~@case-notes-server/trpc/*": ["libs/@case-notes-server/trpc/src/*"],
       "~@cpa/client": ["libs/@cpa/client/src/index.ts"],
+      "~@cpa/jii-client": ["libs/@cpa/jii-client/src/index.ts"],
       "~@cpa/server/*": ["apps/@cpa/server/src/*"],
       "~@cpa/server/test/*": ["apps/@cpa/server/__tests__/*"],
       "~@cpa/staff-client": ["libs/@cpa/staff-client/src/index.ts"],

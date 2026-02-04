@@ -1,4 +1,4 @@
-# cpa-staff-client
+# Case Planning Assistant - Staff Frontend
 
 This library contains the client-side components for the Case Planning Assistant (CPA),
 used by the `staff` application and communicating with the `@cpa` backend services.
@@ -31,6 +31,6 @@ The platform generates two output types:
 
 ## Running lint and unit tests
 
-Run `nx lint cpa-staff-client` to execute linting.
+Run `nx lint @cpa/staff-client` to execute linting.
 
-Run `nx test cpa-staff-client` to execute the unit tests via [Vitest](https://vitest.dev/).
+Run `nx test @cpa/staff-client` to execute the unit tests via [Vitest](https://vitest.dev/).
