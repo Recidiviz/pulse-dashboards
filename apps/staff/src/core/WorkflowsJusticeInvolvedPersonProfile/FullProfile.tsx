@@ -55,10 +55,10 @@ import {
   NoOpportunities,
   OpportunitiesAccordion,
 } from "./OpportunitiesAccordion";
-import { UsIaActionPlansAndNotes } from "./OpportunityDetailSidebarComponents/US_IA";
+import { UsIaActionPlansAndNotes } from "./OpportunityDetailSidebarComponents";
 import { PartialTime } from "./PartialTime";
 import { PreferredContact } from "./PreferredContact";
-import { ResidentHousing } from "./ResidentDetailSidebarComponents/ResidentHousing";
+import { ResidentHousing } from "./ResidentDetailSidebarComponents";
 import { SentenceProgress } from "./SentenceProgress";
 import { SentenceProgressV2 } from "./SentenceProgressV2";
 import { Divider, PhoneNumber } from "./styles";
@@ -181,8 +181,6 @@ const ProfileDetailsWrapper = styled.div`
   flex-direction: column;
   gap: ${rem(spacing.md)};
 `;
-
-export const DETAILS_NOT_AVAILABLE_STRING = "currently not available";
 
 function AdditionalDetails({
   person,
@@ -337,19 +335,12 @@ function ContactDetails({
 export const FullProfile = observer(
   function FullProfile(): React.ReactElement<any> | null {
     const {
-      workflowsStore: {
-        selectedPerson: person,
-      },
+      workflowsStore: { selectedPerson: person },
       userStore,
-      currentTenantId,
     } = useRootStore();
     const { isTablet, isMobile } = useIsMobile(true);
-    const {
-      caseNoteSearch,
-      hideWorkflowsOpportunities,
-      usTn2026ClassificationPolicyPilot,
-      sentenceProgressV2,
-    } = useFeatureVariants();
+    const { caseNoteSearch, hideWorkflowsOpportunities, sentenceProgressV2 } =
+      useFeatureVariants();
 
     usePersonTracking(person, () => {
       person?.trackProfileViewed();
@@ -427,13 +418,9 @@ export const FullProfile = observer(
               <Divider />
             </CasenoteSearchWrapper>
           )}
-          {
-            notifications.length > 0 && (
-              <OpportunityNotifications
-                notifications={notifications}
-              />
-            )
-          }
+          {notifications.length > 0 && (
+            <OpportunityNotifications notifications={notifications} />
+          )}
           {showFullWidthTimeline && (
             <>
               {sentenceProgressV2 ? (
@@ -480,10 +467,6 @@ export const FullProfile = observer(
                   person={person}
                   formLinkButton
                   showIneligibleOpportunityTypes
-                  showIneligibleFormButtons={
-                    !!usTn2026ClassificationPolicyPilot &&
-                    currentTenantId === "US_TN"
-                  }
                 />
               </div>
             )}

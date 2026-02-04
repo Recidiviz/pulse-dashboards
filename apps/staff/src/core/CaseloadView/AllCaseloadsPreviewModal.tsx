@@ -57,7 +57,6 @@ function OverviewContents({
       <ItemHeader>Opportunities</ItemHeader>
       <OpportunitiesAccordion
         showIneligibleOpportunityTypes
-        showIneligibleFormButtons
         formLinkButton
         person={selectedResident}
       />

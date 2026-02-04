@@ -40,10 +40,9 @@ const OpportunityOverviewComponent: React.FC<OpportunityOverviewProps> = ({
   shouldTrackOpportunityPreviewed = true,
 }) => {
   const selectedPerson = opportunity.person;
-  const showAccordion = isEligibleOrAlmostEligible(
-    selectedPerson,
-    opportunity.type,
-  );
+  const showAccordion =
+    isEligibleOrAlmostEligible(selectedPerson, opportunity.type) ||
+    opportunity.config.supportsIneligible;
 
   return (
     <>

@@ -31,7 +31,7 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { FeatureGateError } from "../../errors/FeatureGateError";
+import { FeatureGateError } from "../../errors";
 import { Opportunity, OpportunityMapping } from "../Opportunity";
 import { OpportunityBase } from "../Opportunity/OpportunityBase";
 import { opportunityConstructors } from "../Opportunity/opportunityConstructors";
@@ -58,7 +58,6 @@ export class OpportunitiesAccordionPresenter<
      * Whether to show ineligible opportunities in the accordion.
      */
     public showIneligibleOpportunities = false,
-    public showIneligibleFormButtons = false,
   ) {
     reaction(
       () => workflowsStore.opportunityTypes,

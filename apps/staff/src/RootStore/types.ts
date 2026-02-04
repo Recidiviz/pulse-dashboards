@@ -77,7 +77,6 @@ export type FeatureVariant =
   | "supervisionUnrestrictedSearch"
   | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
-  | "ineligibleOpportunityTypesOnFullProfile"
   | "sentenceProgressV2"
 
   //// Arizona
@@ -224,7 +223,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIdDistrictSearch: {},
   usIaFinesAndFees: {},
   tasksRoutePlanner: {},
-  ineligibleOpportunityTypesOnFullProfile: {},
   usPaUnclearEligibility: {},
   usIdTasksV2: {},
   SARBuilder: {},
