@@ -37,8 +37,10 @@ def setup_logging() -> None:
         processors=[
             *shared_processors,
             SentryProcessor(
-                level=logging.INFO,
+                level=logging.WARNING,
                 event_level=logging.ERROR,
+                ignore_breadcrumb_data=("address"),
+                as_context=True,
             ),
             structlog.processors.format_exc_info,
             # Wrap for ProcessorFormatter instead of rendering directly

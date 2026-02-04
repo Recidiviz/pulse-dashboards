@@ -1,4 +1,3 @@
-import logging
 from enum import Enum
 
 import sentry_sdk
@@ -107,7 +106,7 @@ def setup_sentry() -> None:
                 RedisIntegration(),
                 # Logging - breadcrumbs only (structlog-sentry handles events)
                 LoggingIntegration(
-                    level=logging.INFO,
+                    level=None,
                     event_level=None,  # Don't send events via LoggingIntegration (structlog-sentry handles this)
                 ),
             ],

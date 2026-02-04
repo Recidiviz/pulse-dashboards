@@ -54,8 +54,6 @@ sio = socketio.AsyncServer(
     client_manager=mgr,
     cors_allowed_origins=settings.ALLOWED_ORIGINS.split(","),
     logger=socketio_logger,
-    engineio_logger=engineio_logger,
-    cookie={"name": "test", "httpOnly": False, "path": "/custom"},
 )
 
 

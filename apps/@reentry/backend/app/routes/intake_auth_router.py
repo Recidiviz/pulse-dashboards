@@ -2,6 +2,9 @@ from datetime import date
 from typing import Optional
 
 import structlog
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel
+
 from app.auth.intake.auth_client_user import (
     validate_dob_fullname,
     validate_dob_urltoken,
@@ -9,8 +12,6 @@ from app.auth.intake.auth_client_user import (
     verify_client_from_firebase_token,
 )
 from app.core.db import AsyncSession, get_session
-from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel
 
 logger = structlog.get_logger(__name__)
 
@@ -120,7 +121,7 @@ async def verify_dob_fullname(
 
         structlog.contextvars.bind_contextvars(client_pseudo_id=result.client_pseudo_id)
 
-        logger.info(f"Verification successful for {result}")
+        logger.info(f"Verification successful for {result.client_pseudo_id}")
 
         return VerifyClientResponse(
             status=True,
@@ -173,7 +174,7 @@ async def verify_state_doc_id(
 
         structlog.contextvars.bind_contextvars(client_pseudo_id=result.client_pseudo_id)
 
-        logger.info(f"Verification successful for {result}")
+        logger.info(f"Verification successful for {result.client_pseudo_id}")
 
         return VerifyClientResponse(
             status=True,

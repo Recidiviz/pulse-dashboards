@@ -185,7 +185,9 @@ class Queries:
 
         workflows_pseudonymized_id = str(workflows_pseudonymized_id).strip()
 
-        logger.info(f"Looking for client with workflows pseudonymized ID: {workflows_pseudonymized_id}")
+        logger.info(
+            f"Looking for client with workflows pseudonymized ID: {workflows_pseudonymized_id}"
+        )
 
         # Check for cached results first
         cache_key = f"client_by_workflows_pseudo:{workflows_pseudonymized_id}"
@@ -236,7 +238,9 @@ class Queries:
                 )
                 return client_record
             else:
-                logger.info(f"No client found with workflows pseudonymized ID {workflows_pseudonymized_id}")
+                logger.info(
+                    f"No client found with workflows pseudonymized ID {workflows_pseudonymized_id}"
+                )
                 return None
         except Exception as e:
             logger.error(
@@ -316,7 +320,7 @@ class Queries:
 
             if client_record:
                 logger.info(
-                    f"Successfully fetched client with DOC ID {doc_id} and state {bq_state_code}"
+                    f"Successfully fetched client with DOC ID and state {bq_state_code}"
                 )
                 return client_record
             else:
