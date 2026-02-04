@@ -147,7 +147,7 @@ export class OpportunityPersonListPresenter
     const enabledOpportunityTypes: OpportunityType[] = [
       "LSU",
       "usTnCompliantReporting2025Policy",
-      "usAzTransferToAdministrativeSupervision"
+      "usAzTransferToAdministrativeSupervision",
     ];
     const hasAlmostEligibleColumnEnabled = enabledOpportunityTypes.includes(
       this.opportunityType,
@@ -236,6 +236,8 @@ export class OpportunityPersonListPresenter
           "usMiWardenInPersonSecurityClassificationCommitteeReview",
         ].includes(this.opportunityType),
 
+      US_TN_LATEST_CLASSIFICATION_DATE:
+        "usTnCustodyLevelDowngrade2026Policy" === this.opportunityType,
       LAST_VIEWED: true,
       ALMOST_ELIGIBLE_STATUS: opportunities.some(
         (opp: Opportunity) =>
@@ -271,10 +273,15 @@ export class OpportunityPersonListPresenter
    * Returns a custom initial state for the opportunity table view based on the opportunity type
    */
   get initialTableState() {
-    if (this.opportunityType === "usIaEarlyDischarge") {
-      return {
-        sorting: [{ id: "SUPERVISION_EXPIRATION_DATE", desc: false }],
-      };
+    switch (this.opportunityType) {
+      case "usIaEarlyDischarge":
+        return {
+          sorting: [{ id: "SUPERVISION_EXPIRATION_DATE", desc: false }],
+        };
+      case "usTnCustodyLevelDowngrade2026Policy":
+        return {
+          sorting: [{ id: "US_TN_LATEST_CLASSIFICATION_DATE", desc: true }],
+        };
     }
     return undefined;
   }

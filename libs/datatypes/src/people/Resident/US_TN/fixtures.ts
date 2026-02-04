@@ -23,6 +23,7 @@ const metadata = {
   expirationDate: relativeFixtureDate({ years: 1, days: 249 }),
   expirationDateOriginal: relativeFixtureDate({ years: 3, days: 300 }),
   fileUpdateDate: relativeFixtureDate({ days: -1 }),
+  latestClassificationDate: relativeFixtureDate({ days: -172 }),
   releaseEligibilityDate: relativeFixtureDate({ days: 222 }),
   sentenceEffectiveDate: relativeFixtureDate({ years: -2, days: -222 }),
   creditActivity: [

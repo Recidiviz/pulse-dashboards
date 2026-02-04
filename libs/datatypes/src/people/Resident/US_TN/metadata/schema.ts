@@ -41,6 +41,7 @@ export const usTnResidentMetadataSchema = z.object({
   stateCode: z.literal("US_TN"),
   expirationDate: dateStringSchema.nullable(),
   expirationDateOriginal: dateStringSchema.nullable(),
+  latestClassificationDate: dateStringSchema.nullable(),
   releaseEligibilityDate: dateStringSchema.nullable(),
   sentenceEffectiveDate: dateStringSchema.nullable(),
   creditActivity: z.array(usTnJiiCreditsSchema),

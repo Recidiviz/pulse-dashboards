@@ -244,6 +244,7 @@ export type OpportunityTableColumnId =
   | "US_MI_ERD"
   | "US_MI_CUSTODY_LEVEL"
   | "US_MI_NEXT_SCC_DATE"
+  | "US_TN_LATEST_CLASSIFICATION_DATE"
   | "SNOOZE_ENDS_IN"
   | "SUBMITTED_FOR"
   | "CTA_BUTTON"
@@ -698,6 +699,31 @@ const TableView = observer(function TableView({
         ) {
           return formatWorkflowsDate(opp.record.metadata.nextSccDate);
         }
+      },
+    },
+    {
+      header: "Latest Classification",
+      id: "US_TN_LATEST_CLASSIFICATION_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: ({ person }: Opportunity) => {
+        if (
+          person instanceof Resident &&
+          person.metadata.stateCode === "US_TN"
+        ) {
+          return person.metadata.latestClassificationDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const { person } = row.original;
+        if (
+          person instanceof Resident &&
+          person.metadata.stateCode === "US_TN"
+        ) {
+          return formatWorkflowsDate(person.metadata.latestClassificationDate);
+        }
+
+        return "-";
       },
     },
     {
