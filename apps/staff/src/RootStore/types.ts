@@ -271,6 +271,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usIdTasksV2: {},
         tasksRoutePlanner: { activeTenants: ["US_TX"] },
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
+        sentenceProgressV2: { activeTenants: ["US_ND"] },
       }
     : {
         ...allFeatureVariants,
