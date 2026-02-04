@@ -116,9 +116,9 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
   const hasConversation = transcription?.conversation?.length > 0;
 
   return (
-    <div className="self-stretch flex-1 flex flex-col justify-start items-start gap-5 p-6">
+    <div className="self-stretch flex-1 flex flex-col justify-start items-start gap-5 pl-6 pt-6 pr-6 mb-[-1.25rem]">
       {/* Validation Warnings */}
-      <div className="w-full max-w-[70%] flex flex-col gap-4">
+      <div className="w-full md:max-w-[70%] flex flex-col gap-4">
         {validation && (
           <TranscriptionValidationWarnings
             validation={validation}
@@ -149,7 +149,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
           </div>
 
           {/* Conversation turns */}
-          <div className="max-h-[45vh] overflow-y-auto space-y-4">
+          <div className="max-h-[45vh] overflow-y-auto space-y-4 self-center">
             {transcription.conversation.map((turn, index) => (
               <div
                 key={`${turn.id}-${index}`}
