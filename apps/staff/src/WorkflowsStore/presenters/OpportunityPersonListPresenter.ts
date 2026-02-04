@@ -384,7 +384,11 @@ export class OpportunityPersonListPresenter
   }
 
   private get defaultTab() {
-    if (this.supervisorInfo) {
+    if (
+      this.supervisorInfo &&
+      this.config.supervisorReviewTabTitle &&
+      this.displayTabs.includes(this.config.supervisorReviewTabTitle)
+    ) {
       return this.config.supervisorReviewTabTitle;
     }
     return this.displayTabs[0];
