@@ -446,7 +446,7 @@ const ClientsPage = () => {
               </div>
               <div className="flex flex-col  md:flex-row gap-4 items-stretch md:items-center w-full md:w-auto">
                 <IconInput
-                  placeholder="Search by name"
+                  placeholder="Search by name or ID"
                   startIcon={
                     <button
                       type="button"

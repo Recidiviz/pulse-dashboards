@@ -71,8 +71,11 @@ def apply_search_filter(clients, search):
     return [
         c
         for c in clients
-        if c.full_name
-        and query in f"{c.full_name.given_names} {c.full_name.surname}".lower()
+        if (
+            c.full_name
+            and query in f"{c.full_name.given_names} {c.full_name.surname}".lower()
+        )
+        or (c.external_client_id and query in c.external_client_id.lower())
     ]
 
 

@@ -979,3 +979,52 @@ async def test_get_paginated_client_list_pagination(
         assert result["total"] == 5
         assert len(result["items"]) == 1
         assert result["page"] == 3
+
+
+@pytest.mark.asyncio
+async def test_get_paginated_client_list_search_by_external_id(
+    async_session: AsyncSession, create_client_view, mock_clientdata
+):
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        mock_get_clients.return_value = mock_clientdata
+
+        # SCENARIO 1: Case-insensitive search
+        # Searching for 'CLIENT-001EX' (uppercase) should match John Doe's ID (lowercase)
+        result_upper = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            search="CLIENT-001EX",
+        )
+
+        assert result_upper["total"] == 1
+        assert result_upper["items"][0]["client"].external_client_id == "client-001ex"
+
+        # SCENARIO 2: Partial ID search
+        # Searching for '002' should match Jane Smith's ID 'client-002ex'
+        result_partial = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            search="002",
+        )
+
+        assert result_partial["total"] == 1
+        assert result_partial["items"][0]["client"].external_client_id == "client-002ex"
+
+        # SCENARIO 3: Non-matching ID
+        # Searching for an ID that doesn't exist in the mock data
+        result_none = await get_paginated_client_list(
+            session=async_session,
+            page=1,
+            page_size=20,
+            pseudonymized_staff_id="staff-123",
+            search="client-non-existent",
+        )
+
+        assert result_none["total"] == 0
+        assert len(result_none["items"]) == 0
