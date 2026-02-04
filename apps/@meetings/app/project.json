@@ -115,7 +115,7 @@
     },
     "build:web": {
       "dependsOn": [{ "target": "load-env-file-eas", "params": "forward" }],
-      "command": "nx export @meetings/app -p web",
+      "command": "nx export @meetings/app -p web --skip-nx-cache",
       "cache": false,
       "configurations": {
         "dev": {},
