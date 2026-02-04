@@ -18,8 +18,8 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import {
+  idahoTestPrismaClient,
   mockGetPayload,
-  testPrismaClient,
   testServer,
 } from "~@jii-texting/server/test/setup";
 import { testAndGetSentryReports } from "~@jii-texting/server/test/setup/utils";
@@ -57,7 +57,7 @@ describe("GET /workflow-executions/latest/US_ID", () => {
     test("returns 200 and object", async () => {
       const stateCode = "US_ID";
 
-      await testPrismaClient.workflowExecution.create({
+      await idahoTestPrismaClient.workflowExecution.create({
         data: { ...fakeWorkflowExecutionOne },
       });
 
@@ -166,11 +166,13 @@ describe("POST /workflows-executions", () => {
         url: "/workflow-executions/US_ID",
       });
 
-      const execution = await testPrismaClient.workflowExecution.findFirst({
-        where: {
-          id: JSON.parse(response.body).id,
+      const execution = await idahoTestPrismaClient.workflowExecution.findFirst(
+        {
+          where: {
+            id: JSON.parse(response.body).id,
+          },
         },
-      });
+      );
 
       expect(execution).toBeDefined();
     });

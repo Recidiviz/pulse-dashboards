@@ -32,7 +32,12 @@ export const testPort = process.env["PORT"]
 export const testHost = process.env["HOST"] ?? "localhost";
 
 export let testServer: ReturnType<typeof buildServer>;
-export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
+export const idahoTestPrismaClient = getPrismaClientForStateCode(
+  StateCode.US_ID,
+);
+export const texasTestPrismaClient = getPrismaClientForStateCode(
+  StateCode.US_TX,
+);
 export let mockVerifyIdToken: ReturnType<typeof vi.fn>;
 export let mockGetPayload: ReturnType<typeof vi.fn>;
 export let mockTwilioVaildateRequest: ReturnType<typeof vi.fn>;
@@ -45,18 +50,6 @@ vi.mock("twilio/lib/webhooks/webhooks", () => ({
   validateRequest: vi.fn(),
 }));
 
-export const mockInsertFn = vi.fn();
-export const mockTableFn = vi.fn().mockImplementation(() => {
-  return {
-    insert: mockInsertFn,
-  };
-});
-export const mockDatasetFn = vi.fn().mockImplementation(() => {
-  return {
-    table: mockTableFn,
-  };
-});
-
 vi.mock("~twilio-api", () => {
   const MockTwilioAPIClient = vi.fn();
   MockTwilioAPIClient.prototype.createMessage = vi.fn();
@@ -68,18 +61,24 @@ vi.mock("~twilio-api", () => {
   };
 });
 
-vi.mock("@google-cloud/bigquery", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("@google-cloud/bigquery")>();
-  return {
-    ...actual,
-    BigQuery: vi.fn().mockImplementation(() => {
-      return {
-        dataset: mockDatasetFn,
-      };
-    }),
-  };
+const { mockInsertFn, mockTableFn, mockDatasetFn } = vi.hoisted(() => {
+  const mockInsertFn = vi.fn();
+  const mockTableFn = vi.fn().mockImplementation(() => ({
+    insert: mockInsertFn,
+  }));
+  const mockDatasetFn = vi.fn().mockImplementation(() => ({
+    table: mockTableFn,
+  }));
+  return { mockInsertFn, mockTableFn, mockDatasetFn };
 });
+
+export { mockDatasetFn, mockInsertFn, mockTableFn };
+
+vi.mock("@google-cloud/bigquery", () => ({
+  BigQuery: vi.fn().mockImplementation(() => ({
+    dataset: mockDatasetFn,
+  })),
+}));
 
 beforeAll(async () => {
   init({
@@ -103,8 +102,10 @@ beforeAll(async () => {
 beforeEach(async () => {
   testkit.reset();
 
-  await resetDb(testPrismaClient);
-  await seed(testPrismaClient);
+  await resetDb(idahoTestPrismaClient);
+  await seed(idahoTestPrismaClient);
+  await resetDb(texasTestPrismaClient);
+  await seed(texasTestPrismaClient);
 
   // Get the mocked verifyIdToken function from OAuth2Client
   mockVerifyIdToken = vi.fn(async () => ({
@@ -119,7 +120,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
-  vi.restoreAllMocks();
+  vi.clearAllMocks();
 });
 
 afterAll(async () => {

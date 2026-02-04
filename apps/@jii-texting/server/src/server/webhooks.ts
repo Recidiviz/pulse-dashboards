@@ -37,22 +37,19 @@ import { getTwilioClientForStateCode } from "~twilio-api";
  * @param phoneNumber The phone number to send the confirmation text to
  * @param preferredLanguage The preferred language indicated by the jii in the text response (en or es)
  */
-export async function send_language_confirmation(
+export async function sendLanguageConfirmation(
   stateCode: string,
   phoneNumber: string,
   preferredLanguage: string,
   i18n: i18n,
 ) {
-  // Instantiate the Twilio client
   const twilioClient = getTwilioClientForStateCode(stateCode);
 
-  // Construct message body
   let confirmationBody = "";
   confirmationBody += i18n.t("languagePreferenceConfirmationMessage", {
     lng: preferredLanguage,
   });
 
-  // Request twilio client to send confirmation message
   try {
     await twilioClient.createMessage(confirmationBody, phoneNumber);
   } catch (error) {
@@ -173,7 +170,24 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
         await initI18n();
         const preferredLanguage = setPreferredLanguage(Body, i18nInstance);
         if (preferredLanguage && stateCode.toUpperCase() === "US_TX") {
-          await send_language_confirmation(
+          await prisma.person.updateMany({
+            where: {
+              phoneNumber: fromPhoneNumber,
+            },
+            data: {
+              preferredLanguage: preferredLanguage,
+            },
+          });
+
+          const updatedPseudoIds = people.map((person) => {
+            return person.pseudonymizedId;
+          });
+
+          console.log(
+            `Updated language preference for people: ${updatedPseudoIds}`,
+          );
+
+          await sendLanguageConfirmation(
             stateCode,
             fromPhoneNumber,
             preferredLanguage,

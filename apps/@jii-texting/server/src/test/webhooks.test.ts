@@ -18,19 +18,19 @@
 import { validateRequest } from "twilio/lib/webhooks/webhooks";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { send_language_confirmation } from "~@jii-texting/server/server/webhooks";
+import { sendLanguageConfirmation } from "~@jii-texting/server/server/webhooks";
 import {
+  idahoTestPrismaClient,
   mockDatasetFn,
   mockTableFn,
   testHost,
   testPort,
-  testPrismaClient,
   testServer,
+  texasTestPrismaClient,
 } from "~@jii-texting/server/test/setup";
 import { i18nInstance, initI18n } from "~@jii-texting/utils/common/i18n";
 import { fakePersonOne } from "~@jii-texting/utils/test/constants";
 import { getTwilioClientForStateCode, TwilioAPIClient } from "~twilio-api";
-
 
 describe("POST /webhook/twilio/incoming_message/US_ID", () => {
   describe("authenticated requests", () => {
@@ -61,7 +61,7 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
         statusCode: 200,
       });
 
-      const persons = await testPrismaClient.person.findMany({
+      const persons = await idahoTestPrismaClient.person.findMany({
         where: {
           phoneNumber: existingPersonPhoneNumber,
         },
@@ -102,11 +102,25 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
       });
 
       expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledTimes(0);
+
+      const persons = await idahoTestPrismaClient.person.findMany({
+        where: {
+          phoneNumber: existingPersonPhoneNumber,
+        },
+      });
+
+      expect(persons.length).toBe(1);
+      // Validate person's language preference has not changed (still default value 'en')
+      expect(persons[0].preferredLanguage).toBe("en");
+
+      expect(mockDatasetFn).toHaveBeenCalledOnce();
+
+      expect(mockTableFn).toHaveBeenCalledOnce();
     });
 
     test("START message from existing person resets lastOptOutDate", async () => {
       // Set up test so that the person has opted out
-      const person = await testPrismaClient.person.update({
+      const person = await idahoTestPrismaClient.person.update({
         where: {
           personId: fakePersonOne.personId,
         },
@@ -136,11 +150,13 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
         statusCode: 200,
       });
 
-      const updatedPerson = await testPrismaClient.person.findFirstOrThrow({
-        where: {
-          personId: person.personId,
+      const updatedPerson = await idahoTestPrismaClient.person.findFirstOrThrow(
+        {
+          where: {
+            personId: person.personId,
+          },
         },
-      });
+      );
 
       // Validate person lastOptOutDate reset
       expect(updatedPerson.lastOptOutDate).toBeNull();
@@ -262,6 +278,23 @@ describe("POST /webhook/twilio/incoming_message/US_TX", () => {
       });
 
       expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledOnce();
+
+      const persons = await texasTestPrismaClient.person.findMany({
+        where: {
+          phoneNumber: existingPersonPhoneNumber,
+        },
+      });
+
+      expect(persons.length).toBe(1);
+      // Validate person's language preference has changed
+      expect(persons[0].preferredLanguage).toBe("es");
+
+      expect(mockDatasetFn).toHaveBeenCalledExactlyOnceWith(
+        "twilio_webhook_requests",
+      );
+      expect(mockTableFn).toHaveBeenCalledExactlyOnceWith(
+        "jii_texting_incoming_messages",
+      );
     });
 
     test("texas incoming message invalid language preference keyword", async () => {
@@ -291,7 +324,7 @@ describe("POST /webhook/twilio/incoming_message/US_TX", () => {
   });
 });
 
-describe("send_language_confirmation", () => {
+describe("sendLanguageConfirmation", () => {
   beforeAll(async () => {
     await initI18n();
   });
@@ -304,7 +337,7 @@ describe("send_language_confirmation", () => {
     const expectedEnglishMessage =
       "All future messages will be in English.\n\nSi prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.\n\nReply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number.";
 
-    send_language_confirmation("US_TX", "5551234567", "en", i18nInstance);
+    sendLanguageConfirmation("US_TX", "5551234567", "en", i18nInstance);
 
     expect(getTwilioClientForStateCode).toHaveBeenCalledWith("US_TX");
     expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledWith(
@@ -317,7 +350,7 @@ describe("send_language_confirmation", () => {
     const expectedSpanishMessage =
       "A partir de hoy, todos los mensajes se enviarán en español.\n\nIf you prefer to receive these messages in English, respond 1 at any time.\n\nResponde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número.";
 
-    send_language_confirmation("US_TX", "5551234567", "es", i18nInstance);
+    sendLanguageConfirmation("US_TX", "5551234567", "es", i18nInstance);
 
     expect(getTwilioClientForStateCode).toHaveBeenCalledWith("US_TX");
     expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledWith(
