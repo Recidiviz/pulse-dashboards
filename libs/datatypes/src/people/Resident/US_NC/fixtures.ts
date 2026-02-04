@@ -37,7 +37,9 @@ export const rawUsNcResidents: Array<RawResidentRecord> = [
     allEligibleOpportunities: [],
     unitId: null,
     stateCode: "US_NC",
-    metadata: {},
+    metadata: {
+      rnaDueDate: relativeFixtureDate({ days: -3 }),
+    },
   },
   {
     displayId: "RES002",
@@ -57,7 +59,9 @@ export const rawUsNcResidents: Array<RawResidentRecord> = [
     allEligibleOpportunities: [],
     unitId: null,
     stateCode: "US_NC",
-    metadata: {},
+    metadata: {
+      rnaDueDate: relativeFixtureDate({ days: 22 }),
+    },
   },
 ];
 

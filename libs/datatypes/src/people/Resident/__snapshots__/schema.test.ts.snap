@@ -1485,7 +1485,9 @@ exports[`schema for 'US_NC' 'RES001' 1`] = `
   "facilityId": "NC_DEMO_FACILITY",
   "facilityUnitId": null,
   "gender": "MALE",
-  "metadata": {},
+  "metadata": {
+    "rnaDueDate": "2021-12-13",
+  },
   "personExternalId": "RES001",
   "personName": {
     "givenNames": "Albert",
@@ -1509,7 +1511,9 @@ exports[`schema for 'US_NC' 'RES002' 1`] = `
   "facilityId": "NC_DEMO_FACILITY",
   "facilityUnitId": null,
   "gender": "FEMALE",
-  "metadata": {},
+  "metadata": {
+    "rnaDueDate": "2022-01-07",
+  },
   "personExternalId": "RES002",
   "personName": {
     "givenNames": "Sabrina",

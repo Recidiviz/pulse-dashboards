@@ -29,6 +29,7 @@ import { usMaResidentMetadataSchema } from "./US_MA/metadata/schema";
 import { usMeResidentMetadataSchema } from "./US_ME/metadata/schema";
 import { usMiResidentMetadataSchema } from "./US_MI/metadata/schema";
 import { usMoResidentMetadataSchema } from "./US_MO/metadata/schema";
+import { usNcResidentMetadataSchema } from "./US_NC/metadata/schema";
 import { usNdResidentMetadataSchema } from "./US_ND/metadata/schema";
 import { usNeResidentMetadataSchema } from "./US_NE/metadata/schema";
 import { usTnResidentMetadataSchema } from "./US_TN/metadata/schema";
@@ -61,7 +62,7 @@ export const residentRecordObjectSchema =
       sccpEligibilityDate: dateStringSchema.nullish(),
       usTnFacilityAdmissionDate: nullishAsUndefined(dateStringSchema),
       usMePortionNeededEligibleDate: dateStringSchema.nullish(),
-      gender: z.string(),
+      gender: nullishAsUndefined(z.string()),
       metadata: personMetadataSchema([
         usArResidentMetadataSchema,
         usAzResidentMetadataSchema,
@@ -70,6 +71,7 @@ export const residentRecordObjectSchema =
         usMaResidentMetadataSchema,
         usMiResidentMetadataSchema,
         usMoResidentMetadataSchema,
+        usNcResidentMetadataSchema,
         usNdResidentMetadataSchema,
         usNeResidentMetadataSchema,
         usTnResidentMetadataSchema,
