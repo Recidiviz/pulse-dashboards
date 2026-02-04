@@ -18,12 +18,56 @@
 import { BigQuery } from "@google-cloud/bigquery";
 import { captureException } from "@sentry/node";
 import { FastifyInstance } from "fastify";
+import type { i18n } from "i18next";
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import { getAuthenticateTwilioWebhookRequestFn } from "~@jii-texting/server/server/authUtils";
 import { TwilioWebhookRequest } from "~@jii-texting/server/server/types";
-import { isOptOut } from "~@jii-texting/server/server/utils";
+import {
+  isOptOut,
+  setPreferredLanguage,
+} from "~@jii-texting/server/server/utils";
 import { BQ_DATASET_ID, BQ_REPLIES_VIEW_ID } from "~@jii-texting/utils";
+import { i18nInstance, initI18n } from "~@jii-texting/utils/common/i18n";
+import { getTwilioClientForStateCode } from "~twilio-api";
+
+/**
+ * Makes a request to the Twilio client to send a confirmation text message
+ * @param stateCode The state code which indicates which Twilio messaging service to use
+ * @param phoneNumber The phone number to send the confirmation text to
+ * @param preferredLanguage The preferred language indicated by the jii in the text response (en or es)
+ */
+export async function send_language_confirmation(
+  stateCode: string,
+  phoneNumber: string,
+  preferredLanguage: string,
+  i18n: i18n,
+) {
+  // Instantiate the Twilio client
+  const twilioClient = getTwilioClientForStateCode(stateCode);
+
+  // Construct message body
+  let confirmationBody = "";
+  confirmationBody += i18n.t("languagePreferenceConfirmationMessage", {
+    lng: preferredLanguage,
+  });
+
+  // Request twilio client to send confirmation message
+  try {
+    await twilioClient.createMessage(confirmationBody, phoneNumber);
+  } catch (error) {
+    console.log(
+      `There was a twilio client error when attempting to send the confirmation text: ${error}`,
+    );
+    captureException(
+      `There was a twilio client error when attempting to send the confirmation text: ${error}`,
+    );
+    return;
+  }
+
+  console.log(`Sent a language preference confirmation text.`);
+  return;
+}
 
 /**
  * Encapsulates the routes for Twilio webhooks
@@ -100,9 +144,11 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
           console.log(
             `Received incoming message from phone number without associated Person`,
           );
+          return response.status(200).send();
         }
+
         // If the person exists and the person has opted out, update their record
-        if (people && optOutType) {
+        if (optOutType) {
           const isValidOptOut = isOptOut(optOutType);
 
           await prisma.person.updateMany({
@@ -119,6 +165,20 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
           });
 
           console.log(`Updated opt-out for people: ${updatedPseudoIds}`);
+          console.log("Incoming opt-out message handled");
+          return response.status(200).send();
+        }
+
+        // Instantiate i18Next
+        await initI18n();
+        const preferredLanguage = setPreferredLanguage(Body, i18nInstance);
+        if (preferredLanguage && stateCode.toUpperCase() === "US_TX") {
+          await send_language_confirmation(
+            stateCode,
+            fromPhoneNumber,
+            preferredLanguage,
+            i18nInstance,
+          );
         }
       } catch (e) {
         captureException(
@@ -127,7 +187,7 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
       }
 
       console.log("Incoming message handled");
-      response.status(200);
+      return response.status(200).send();
     },
   );
 }

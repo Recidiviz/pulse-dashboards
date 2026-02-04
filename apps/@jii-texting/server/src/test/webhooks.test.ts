@@ -16,8 +16,9 @@
 // =============================================================================
 
 import { validateRequest } from "twilio/lib/webhooks/webhooks";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+import { send_language_confirmation } from "~@jii-texting/server/server/webhooks";
 import {
   mockDatasetFn,
   mockTableFn,
@@ -26,7 +27,9 @@ import {
   testPrismaClient,
   testServer,
 } from "~@jii-texting/server/test/setup";
+import { i18nInstance, initI18n } from "~@jii-texting/utils/common/i18n";
 import { fakePersonOne } from "~@jii-texting/utils/test/constants";
+import { getTwilioClientForStateCode, TwilioAPIClient } from "~twilio-api";
 
 describe("POST /webhook/twilio/incoming_message/US_ID", () => {
   describe("authenticated requests", () => {
@@ -73,6 +76,31 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
       expect(mockTableFn).toHaveBeenCalledExactlyOnceWith(
         "jii_texting_incoming_messages",
       );
+    });
+
+    test("idaho incoming message cannot set language preference", async () => {
+      const existingPersonPhoneNumber = fakePersonOne.phoneNumber;
+      const twilioMessageSid = "incoming-message-sid-1";
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/webhook/twilio/incoming_message/US_ID",
+        headers: {
+          "x-twilio-signature": "signature",
+          "content-type": "application/x-www-form-urlencoded",
+        },
+        payload: new URLSearchParams({
+          MessageSid: twilioMessageSid,
+          From: `+1${existingPersonPhoneNumber}`,
+          Body: "spanish",
+        }).toString(),
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+      });
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledTimes(0);
     });
 
     test("START message from existing person resets lastOptOutDate", async () => {
@@ -201,5 +229,99 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
         requestParams,
       );
     });
+  });
+});
+
+describe("POST /webhook/twilio/incoming_message/US_TX", () => {
+  describe("authenticated requests", () => {
+    beforeEach(() => {
+      vi.mocked(validateRequest).mockReturnValueOnce(true);
+    });
+
+    test("texas incoming message can set language preference", async () => {
+      const existingPersonPhoneNumber = fakePersonOne.phoneNumber;
+      const twilioMessageSid = "incoming-message-sid-1";
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/webhook/twilio/incoming_message/US_TX",
+        headers: {
+          "x-twilio-signature": "signature",
+          "content-type": "application/x-www-form-urlencoded",
+        },
+        payload: new URLSearchParams({
+          MessageSid: twilioMessageSid,
+          From: `+1${existingPersonPhoneNumber}`,
+          Body: "spanish",
+        }).toString(),
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+      });
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledOnce();
+    });
+
+    test("texas incoming message invalid language preference keyword", async () => {
+      const existingPersonPhoneNumber = fakePersonOne.phoneNumber;
+      const twilioMessageSid = "incoming-message-sid-1";
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/webhook/twilio/incoming_message/US_TX",
+        headers: {
+          "x-twilio-signature": "signature",
+          "content-type": "application/x-www-form-urlencoded",
+        },
+        payload: new URLSearchParams({
+          MessageSid: twilioMessageSid,
+          From: `+1${existingPersonPhoneNumber}`,
+          Body: "german",
+        }).toString(),
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+      });
+
+      expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledTimes(0);
+    });
+  });
+});
+
+describe("send_language_confirmation", () => {
+  beforeAll(async () => {
+    await initI18n();
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("sends English confirmation message with correct body", () => {
+    const expectedEnglishMessage =
+      "All future messages will be in English.\n\nReply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number.";
+
+    send_language_confirmation("US_TX", "5551234567", "en", i18nInstance);
+
+    expect(getTwilioClientForStateCode).toHaveBeenCalledWith("US_TX");
+    expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledWith(
+      expectedEnglishMessage,
+      "5551234567",
+    );
+  });
+
+  test("sends Spanish confirmation message with correct body", () => {
+    const expectedSpanishMessage =
+      "A partir de hoy, todos los mensajes se enviarán en español.\n\nResponde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número.";
+
+    send_language_confirmation("US_TX", "5551234567", "es", i18nInstance);
+
+    expect(getTwilioClientForStateCode).toHaveBeenCalledWith("US_TX");
+    expect(TwilioAPIClient.prototype.createMessage).toHaveBeenCalledWith(
+      expectedSpanishMessage,
+      "5551234567",
+    );
   });
 });

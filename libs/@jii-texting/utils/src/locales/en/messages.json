@@ -1,0 +1,5 @@
+{
+  "languagePreferenceConfirmationMessage": "All future messages will be in English.$t(optOutMessage)",
+  "optOutMessage": "\n\nReply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number.",
+  "languagePreferenceKeywords": ["1", "english", "inglés", "ingles"]
+}

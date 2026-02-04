@@ -35,7 +35,16 @@ import {
 } from "~@jii-texting/utils/test/constants";
 import { TwilioAPIClient } from "~twilio-api";
 
-vi.mock("~twilio-api");
+vi.mock("~twilio-api", () => {
+  const MockTwilioAPIClient = vi.fn();
+  MockTwilioAPIClient.prototype.createMessage = vi.fn();
+  MockTwilioAPIClient.prototype.getMessage = vi.fn();
+
+  return {
+    TwilioAPIClient: MockTwilioAPIClient,
+    getTwilioClientForStateCode: vi.fn(() => new MockTwilioAPIClient()),
+  };
+});
 
 vi.stubEnv("TWILIO_MESSAGING_SERVICE_SID_US_TX", "test-msg-service-sid");
 

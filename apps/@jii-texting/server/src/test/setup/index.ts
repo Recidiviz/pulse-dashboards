@@ -57,6 +57,17 @@ export const mockDatasetFn = vi.fn().mockImplementation(() => {
   };
 });
 
+vi.mock("~twilio-api", () => {
+  const MockTwilioAPIClient = vi.fn();
+  MockTwilioAPIClient.prototype.createMessage = vi.fn();
+  MockTwilioAPIClient.prototype.getMessage = vi.fn();
+
+  return {
+    TwilioAPIClient: MockTwilioAPIClient,
+    getTwilioClientForStateCode: vi.fn(() => new MockTwilioAPIClient()),
+  };
+});
+
 vi.mock("@google-cloud/bigquery", async (importOriginal) => {
   const actual =
     await importOriginal<typeof import("@google-cloud/bigquery")>();

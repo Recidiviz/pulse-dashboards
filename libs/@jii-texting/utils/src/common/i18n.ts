@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,5 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./api/TwilioAPIClient";
-export * from "./api/utils";
+import i18next from "i18next";
+
+/* eslint-disable no-restricted-imports */
+import englishMessages from "../locales/en/messages.json";
+import spanishMessages from "../locales/es/messages.json";
+/* eslint-enable no-restricted-imports */
+
+export const i18nInstance = i18next;
+
+export async function initI18n() {
+  await i18next.init({
+    lng: "en",
+    resources: {
+      en: { translation: englishMessages },
+      es: { translation: spanishMessages },
+    },
+    supportedLngs: ["en", "es"],
+    returnObjects: true,
+  });
+}

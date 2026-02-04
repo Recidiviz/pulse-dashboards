@@ -27,7 +27,7 @@ import {
   throttlePromises,
   updateMessageStatuses,
 } from "~@jii-texting/utils";
-import { TwilioAPIClient } from "~twilio-api";
+import { getTwilioClientForStateCode } from "~twilio-api";
 
 export type processJiiArguments = {
   stateCode: StateCode;
@@ -45,16 +45,7 @@ export async function processJiiContactReminders({
   );
 
   // Instantiate the Twilio client
-  const twilioAccountSid = process.env["TWILIO_ACCOUNT_SID"] ?? "";
-  const twilioAuthToken = process.env["TWILIO_AUTH_TOKEN"] ?? "";
-  const twilioSubaccountSid =
-    process.env[`TWILIO_MESSAGING_SERVICE_SID_${stateCode.toUpperCase()}`];
-
-  const twilioClient = new TwilioAPIClient(
-    twilioAccountSid,
-    twilioAuthToken,
-    twilioSubaccountSid,
-  );
+  const twilioClient = getTwilioClientForStateCode(stateCode);
 
   // Get Prisma client
   const prisma = getPrismaClientForStateCode(stateCode);

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,5 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./api/TwilioAPIClient";
-export * from "./api/utils";
+import { TwilioAPIClient } from "~twilio-api";
+
+export function getTwilioClientForStateCode(
+  stateCode: string,
+): TwilioAPIClient {
+  const twilioAccountSid = process.env["TWILIO_ACCOUNT_SID"] ?? "";
+  const twilioAuthToken = process.env["TWILIO_AUTH_TOKEN"] ?? "";
+  const twilioSubaccountSid =
+    process.env[`TWILIO_MESSAGING_SERVICE_SID_${stateCode.toUpperCase()}`];
+
+  return new TwilioAPIClient(
+    twilioAccountSid,
+    twilioAuthToken,
+    twilioSubaccountSid,
+  );
+}

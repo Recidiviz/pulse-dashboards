@@ -16,6 +16,7 @@
 // =============================================================================
 
 export * from "~@jii-texting/utils/common/constants";
+export * from "~@jii-texting/utils/common/i18n";
 export * from "~@jii-texting/utils/common/throttle-promises";
 export * from "~@jii-texting/utils/common/types";
 export * from "~@jii-texting/utils/common/utils";

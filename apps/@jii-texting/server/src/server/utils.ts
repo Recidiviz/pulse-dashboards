@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { StateCode } from "@prisma/jii-texting/client";
+import type { i18n } from "i18next";
 
 export function isValidStateCode(stateCode: string) {
   return (Object.values(StateCode) as string[]).includes(stateCode);
@@ -39,4 +40,22 @@ export function isOptOut(optOutString: string) {
       console.log(`Received unexpected OptOutType: ${optOutString}`);
       return undefined;
   }
+}
+
+export function setPreferredLanguage(body: string, i18n: i18n) {
+  // this assumes that the entire body of the incoming text only contains a keyword
+  const responseBodyClean = body.trim().toLowerCase();
+
+  const spanishKeyWords = i18n.t("languagePreferenceKeywords", { lng: "es" });
+  const englishKeyWords = i18n.t("languagePreferenceKeywords", { lng: "en" });
+
+  if (spanishKeyWords.includes(responseBodyClean)) {
+    // Current preference is switched to Spanish
+    return "es";
+  } else if (englishKeyWords.includes(responseBodyClean)) {
+    // Current preference is switched to English
+    return "en";
+  }
+  // No preference noted. Do not change what is already stored
+  return undefined;
 }
