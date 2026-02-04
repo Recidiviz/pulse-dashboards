@@ -31,7 +31,23 @@ module.exports = {
       },
       fontFamily: {
         "libre-baskerville": ["LibreBaskerville-Bold", "serif"],
-        "inter": ["Inter", "sans-serif"],
+        inter: ["Inter", "sans-serif"],
+      },
+      keyframes: {
+        "linear-progress-1": {
+          "0%": { transform: "translateX(-50%) scaleX(1)" },
+          "100%": { transform: "translateX(175%) scaleX(0.25)" },
+        },
+        "linear-progress-2": {
+          "0%": { transform: "translateX(-200%) scaleX(1)" },
+          "100%": { transform: "translateX(214%) scaleX(0.05)" },
+        },
+      },
+      animation: {
+        "linear-progress-1":
+          "linear-progress-1 2.5s cubic-bezier(0.65,0.815,0.735,0.395) infinite",
+        "linear-progress-2":
+          "linear-progress-2 2.5s cubic-bezier(0.165,0.84,0.44,1) 2s infinite",
       },
     },
   },

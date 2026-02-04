@@ -30,8 +30,6 @@ export const useDurationTimer = () => {
   // time when recording started, helps calculate elapsed time more accurately
   const startTimeRef = useRef<number | null>(null);
 
-  console.log("duration", duration);
-
   const startTimer = useCallback(() => {
     startTimeRef.current = Date.now();
     setDuration(0);

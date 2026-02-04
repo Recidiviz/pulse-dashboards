@@ -22,6 +22,7 @@ import Icons from "../../assets/icons";
 import { Person, RecordingStatus } from "../common/types";
 import { useMeetingRecording } from "../features/recording";
 import { formatDurationNumeric } from "../utils/format";
+import LinearProgressBar from "./LinearProgressBar";
 import Modal from "./Modal";
 
 type NewMeetingModalContainerProps = {
@@ -239,7 +240,7 @@ const NewMeetingProgress = ({
   //   if (showLiveTranscript) scrollToBottom();
   // }, [showLiveTranscript]);
 
-  const isUploading = status === "uploading";
+  const isModalDisabled = status === "uploading" || status === "ending";
 
   return (
     <>
@@ -294,6 +295,7 @@ const NewMeetingProgress = ({
               multiline
               className="grow justify-start px-8 leading-[20px] text-primary outline-none"
               placeholder="Use the notepad to flag anything you want to make sure is in the final notes. It won’t be saved, just used to build the summary"
+              editable={!isModalDisabled}
             />
           </View>
           {/* {showLiveTranscript && (
@@ -351,6 +353,10 @@ const NewMeetingProgress = ({
           )} */}
         </View>
 
+        <View className="h-1">
+          {status === "ending" && <LinearProgressBar />}
+        </View>
+
         <View className="columns-3 flex-row items-center justify-between border-t border-[#EDF1F1] bg-[#F4F5F5] px-8 py-5">
           <View className="w-[180px]">
             <Text className="font-inter text-lg font-semibold text-primary">
@@ -372,7 +378,7 @@ const NewMeetingProgress = ({
               <TouchableOpacity
                 className="w-[150px] flex-row items-center justify-center rounded-full bg-white py-3"
                 onPress={handleTogglePauseResume}
-                disabled={isUploading}
+                disabled={isModalDisabled}
               >
                 <Image source={Icons.PauseBlack} className="mr-2 !size-6" />
                 <Text className="font-inter text-lg font-semibold text-primary">
@@ -383,7 +389,7 @@ const NewMeetingProgress = ({
               <TouchableOpacity
                 className="w-[150px] flex-row items-center justify-center rounded-full bg-[#006C67] py-3"
                 onPress={handleTogglePauseResume}
-                disabled={isUploading}
+                disabled={isModalDisabled}
               >
                 <Image source={Icons.Play} className="mr-2 !size-4" />
                 <Text className="font-inter text-lg font-semibold text-white">
@@ -394,7 +400,7 @@ const NewMeetingProgress = ({
             <TouchableOpacity
               className="w-[150px] flex-row items-center justify-center rounded-full bg-[#B42D2D] py-3"
               onPress={stopRecording}
-              disabled={isUploading}
+              disabled={isModalDisabled}
             >
               <Image source={Icons.Stop} className="mr-2 !size-6" />
               <Text className="font-inter text-lg font-semibold text-white">
@@ -405,7 +411,7 @@ const NewMeetingProgress = ({
           <View className="w-[180px] items-end">
             <TouchableOpacity
               className="flex-row items-center"
-              disabled={isUploading}
+              disabled={isModalDisabled}
               onPress={handleDiscard}
             >
               <Image source={Icons.Cross} className="mr-2 !size-6" />
