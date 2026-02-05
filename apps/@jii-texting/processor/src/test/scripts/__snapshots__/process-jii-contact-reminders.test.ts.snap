@@ -141,7 +141,7 @@ Ubicación: En su lugar de trabajo
 
 If you prefer to receive these messages in English, respond 1 at any time.
 
-Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+Responde DETENER para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
 `;
 
 exports[`spanish copy for person where locationType='EMPLOYMENT' and method='VIRTUAL' 1`] = `
@@ -157,7 +157,7 @@ Ubicación: Videollamada virtual o llamada telefónica
 
 If you prefer to receive these messages in English, respond 1 at any time.
 
-Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+Responde DETENER para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
 `;
 
 exports[`spanish copy for person where locationType='FIELD' and method='IN_PERSON' 1`] = `
@@ -173,7 +173,7 @@ Ubicación: 123 North Pole
 
 If you prefer to receive these messages in English, respond 1 at any time.
 
-Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+Responde DETENER para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
 `;
 
 exports[`spanish copy for person where locationType='FIELD' and method='VIRTUAL' 1`] = `
@@ -189,7 +189,7 @@ Ubicación: 123 North Pole
 
 If you prefer to receive these messages in English, respond 1 at any time.
 
-Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+Responde DETENER para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
 `;
 
 exports[`spanish copy for person where locationType='HOME' and method='IN_PERSON' 1`] = `
@@ -205,7 +205,7 @@ Ubicación: Su domicilio
 
 If you prefer to receive these messages in English, respond 1 at any time.
 
-Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+Responde DETENER para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
 `;
 
 exports[`spanish copy for person where locationType='HOME' and method='VIRTUAL' 1`] = `
@@ -221,7 +221,7 @@ Ubicación: Su domicilio a través de una videollamada virtual
 
 If you prefer to receive these messages in English, respond 1 at any time.
 
-Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+Responde DETENER para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
 `;
 
 exports[`spanish copy for person where locationType='OFFICE' and method='IN_PERSON' 1`] = `
@@ -237,7 +237,7 @@ Ubicación: 123 North Pole
 
 If you prefer to receive these messages in English, respond 1 at any time.
 
-Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+Responde DETENER para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
 `;
 
 exports[`spanish copy for person where locationType='OFFICE' and method='VIRTUAL' 1`] = `
@@ -253,5 +253,5 @@ Ubicación: Videollamada virtual o llamada telefónica
 
 If you prefer to receive these messages in English, respond 1 at any time.
 
-Responde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
+Responde DETENER para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número."
 `;

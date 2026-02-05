@@ -348,7 +348,7 @@ describe("sendLanguageConfirmation", () => {
 
   test("sends Spanish confirmation message with correct body", () => {
     const expectedSpanishMessage =
-      "A partir de hoy, todos los mensajes se enviarán en español.\n\nIf you prefer to receive these messages in English, respond 1 at any time.\n\nResponde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número.";
+      "A partir de hoy, todos los mensajes se enviarán en español.\n\nIf you prefer to receive these messages in English, respond 1 at any time.\n\nResponde DETENER para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número.";
 
     sendLanguageConfirmation("US_TX", "5551234567", "es", i18nInstance);
 

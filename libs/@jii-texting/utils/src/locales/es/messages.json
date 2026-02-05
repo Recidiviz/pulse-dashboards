@@ -12,6 +12,6 @@
   "inPersonLocation": "En persona",
   "jobLocation": "En su lugar de trabajo",
   "languagePreferenceConfirmationMessage": "A partir de hoy, todos los mensajes se enviarán en español.$t(optOutMessage)",
-  "optOutMessage": "\n\nIf you prefer to receive these messages in English, respond 1 at any time.\n\nResponde STOP para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número.",
+  "optOutMessage": "\n\nIf you prefer to receive these messages in English, respond 1 at any time.\n\nResponde DETENER para dejar de recibir estos mensajes en cualquier momento. No podemos responder a los mensajes enviados a este número.",
   "languagePreferenceKeywords": ["2", "spanish", "español", "espanol"]
 }
