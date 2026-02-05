@@ -1058,6 +1058,7 @@ export const NdPopulationFilterOptions: PopulationFilters = {
       },
       { label: "BTC", longLabel: "Bismarck Transition Center", value: "BTC" },
       { label: "CPP", longLabel: "Community Placement Program", value: "CPP" },
+      { label: "DEFP", longLabel: "Deferred Admissions", value: "DEFP" },
       {
         label: "GFC",
         longLabel: "Grand Forks County Correctional",
