@@ -146,11 +146,11 @@ async def test_get_latest_active_conversation_intake(
     client_id = "client-006"
     assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
 
-    # Create an external intake (should be ignored)
+    # Create an intake (should be ignored)
     intake1 = Intake(
         client_pseudo_id=client_id,
         status=IntakeStatus.CREATED,
-        intake_type=IntakeType.EXTERNAL,
+        intake_type=IntakeType.TRANSCRIPTION,
         assessment_config_id=assessment_config_id,
     )
     async_session.add(intake1)

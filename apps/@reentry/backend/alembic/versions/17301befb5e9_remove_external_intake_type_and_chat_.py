@@ -20,11 +20,38 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Delete all intakes with type 'external' before modifying the enum
-    op.execute("DELETE FROM intake WHERE intake_type = 'external'")
+    # Check if there are any intakes with type 'external' before trying to delete
+    # Use text cast to avoid "unsafe use of new value" error when migrations run in same transaction
+    connection = op.get_bind()
+    result = connection.execute(
+        sa.text("""
+            SELECT EXISTS (
+                SELECT 1 FROM intake
+                WHERE intake_type::text = 'external'
+            )
+        """)
+    )
+    has_external_intakes = result.scalar()
 
-    # Drop the external_chat_messages column
-    op.drop_column('intake', 'external_chat_messages')
+    # Only delete if there are rows with 'external' intake type
+    if has_external_intakes:
+        op.execute("DELETE FROM intake WHERE intake_type::text = 'external'")
+
+    # Drop the external_chat_messages column if it exists
+    connection = op.get_bind()
+    result = connection.execute(
+        sa.text("""
+            SELECT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'intake'
+                AND column_name = 'external_chat_messages'
+            )
+        """)
+    )
+    column_exists = result.scalar()
+
+    if column_exists:
+        op.drop_column('intake', 'external_chat_messages')
 
     # Remove 'external' from intake_type_enum
     # PostgreSQL doesn't allow removing enum values directly, so we need to:
