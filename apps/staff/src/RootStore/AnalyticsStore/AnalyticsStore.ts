@@ -261,18 +261,16 @@ export enum RoutePlannerRouteEvent {
   LinkCopied = "frontend.route_planner_route_link_copied",
   LinkOpened = "frontend.route_planner_route_link_opened",
   LinkEmailed = "frontend.route_planner_route_link_emailed",
+  RouteOptimizationAttempted = "frontend.route_planner_route_optimization_attempted",
 }
 
-type RoutePlannerStartingAddressMetadata = {
-  startingAddress: string;
+type RoutePlannerRouteMetadataBase = {
+  hasStartingAddress: boolean;
+  hasEndingAddress: boolean;
+  waypointCount: number;
 };
 
-type RoutePlannerSelectedClientsMetadata = {
-  selectedClientPseudoIds: string[];
-};
-
-export type RoutePlannerRouteMetadata = RoutePlannerStartingAddressMetadata &
-  RoutePlannerSelectedClientsMetadata;
+export type RoutePlannerRouteMetadata = RoutePlannerRouteMetadataBase;
 
 type UserDataDownloadButtonClickedMetadata = {
   staffId: string;
@@ -795,27 +793,36 @@ export default class AnalyticsStore {
 
   trackRoutePlannerRouteEvent(
     eventType: RoutePlannerRouteEvent,
-    metadata: RoutePlannerStartingAddressMetadata &
-      RoutePlannerSelectedClientsMetadata,
+    metadata: RoutePlannerRouteMetadata & { orderChanged?: boolean },
   ) {
     this.track(eventType, metadata);
   }
 
-  trackRoutePlannerStartingAddressChanged(
-    metadata: RoutePlannerStartingAddressMetadata & { previousAddress: string },
-  ) {
-    this.track("frontend.route_planner_starting_address_changed", metadata);
+  trackRoutePlannerStartingAddressChanged() {
+    this.track("frontend.route_planner_starting_address_changed", {});
   }
 
-  trackRoutePlannerClientSelected(
-    metadata: RoutePlannerClientMetadata & RoutePlannerSelectedClientsMetadata,
-  ) {
+  trackRoutePlannerEndingAddressChanged(metadata: {
+    hadPreviousAddress: boolean;
+  }) {
+    this.track("frontend.route_planner_ending_address_changed", metadata);
+  }
+
+  trackRoutePlannerEndingAddressCopiedFromStart() {
+    this.track("frontend.route_planner_ending_address_copied_from_start", {});
+  }
+
+  trackRoutePlannerClientSelected(metadata: {
+    pseudonymizedId: string;
+    selectedCount: number;
+  }) {
     this.track("frontend.route_planner_client_selected", metadata);
   }
 
-  trackRoutePlannerClientDeselected(
-    metadata: RoutePlannerClientMetadata & RoutePlannerSelectedClientsMetadata,
-  ) {
+  trackRoutePlannerClientDeselected(metadata: {
+    pseudonymizedId: string;
+    selectedCount: number;
+  }) {
     this.track("frontend.route_planner_client_deselected", metadata);
   }
 

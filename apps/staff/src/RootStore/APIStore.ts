@@ -53,4 +53,26 @@ export class APIStore {
       body,
     );
   }
+
+  async optimizeRoute(body: {
+    origin: string;
+    destination?: string;
+    waypoints: Array<{
+      pseudonymizedId: string;
+      placeId: string;
+      formattedAddress: string | undefined;
+    }>;
+  }): Promise<{
+    optimizedOrder: string[];
+    isChanged: boolean;
+  }> {
+    const stateCode = this.userStore.isRecidivizUser
+      ? this.userStore.rootStore?.currentTenantId
+      : this.userStore.stateCode;
+    const response = await this.client.post(
+      `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/external_request/${stateCode}/optimize_route`,
+      body,
+    );
+    return response.data;
+  }
 }

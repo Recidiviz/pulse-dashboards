@@ -62,6 +62,8 @@ export class RoutePlannerPresenter {
   public readonly clientsPresenter: RoutePlannerClientsPresenter;
   private readonly analyticsStore: AnalyticsStore;
   private _userPickedStartingAddress: string | undefined = undefined;
+  private _userPickedEndingAddress: string | undefined = undefined;
+  private _isEndingAddressMatchingStart = false;
 
   constructor(private readonly workflowsStore: WorkflowsStore) {
     this.clientsPresenter = new RoutePlannerClientsPresenter(workflowsStore);
@@ -77,15 +79,69 @@ export class RoutePlannerPresenter {
   // Starting address picker and autocomplete settings
 
   set userPickedStartingAddress(newAddress: string) {
-    this.analyticsStore.trackRoutePlannerStartingAddressChanged({
-      startingAddress: newAddress,
-      previousAddress: this.startingAddress,
-    });
+    this.analyticsStore.trackRoutePlannerStartingAddressChanged();
     this._userPickedStartingAddress = newAddress;
+
+    // Keep ending address in sync when the "match" checkbox is checked
+    if (this._isEndingAddressMatchingStart) {
+      this._userPickedEndingAddress = newAddress;
+    }
   }
 
   get startingAddress() {
     return this._userPickedStartingAddress ?? this.startingAddressPlaceholder;
+  }
+
+  set userPickedEndingAddress(newAddress: string | undefined) {
+    this.analyticsStore.trackRoutePlannerEndingAddressChanged({
+      hadPreviousAddress: !!this.endingAddress,
+    });
+    this._userPickedEndingAddress = newAddress;
+
+    // Uncheck the matching checkbox if the ending address no longer matches the starting address
+    if (this._isEndingAddressMatchingStart && newAddress !== this.startingAddress) {
+      this._isEndingAddressMatchingStart = false;
+    }
+  }
+
+  get userPickedEndingAddress(): string | undefined {
+    return this._userPickedEndingAddress;
+  }
+
+  get endingAddress(): string | undefined {
+    return this._userPickedEndingAddress;
+  }
+
+  get hasEndingAddress(): boolean {
+    return this._userPickedEndingAddress !== undefined;
+  }
+
+  get endingAddressPlaceholder(): string {
+    return this.startingAddressPlaceholder;
+  }
+
+  copyStartToEnd() {
+    if (this.startingAddress) {
+      this.analyticsStore.trackRoutePlannerEndingAddressCopiedFromStart();
+      this._userPickedEndingAddress = this.startingAddress;
+    }
+  }
+
+  clearEndingAddress() {
+    this._userPickedEndingAddress = undefined;
+  }
+
+  get isEndingAddressMatchingStart(): boolean {
+    return this._isEndingAddressMatchingStart;
+  }
+
+  setEndingAddressMatchingStart(value: boolean) {
+    this._isEndingAddressMatchingStart = value;
+    if (value) {
+      this.copyStartToEnd();
+    } else {
+      this.clearEndingAddress();
+    }
   }
 
   get startingAddressPlaceholder(): string {
@@ -161,21 +217,35 @@ export class RoutePlannerPresenter {
     const { selectedFormattedAddresses, selectedPlaceIds } =
       this.clientsPresenter;
 
-    const formattedWaypoints = selectedFormattedAddresses
-      .slice(0, -1)
-      .join("|");
-    const formattedWaypointPlaceIds = selectedPlaceIds.slice(0, -1).join("|");
+    // If an ending address is specified, all client addresses are waypoints
+    // Otherwise, the last client address is the destination
+    const hasEndingAddress = this.hasEndingAddress;
+    const waypointAddresses = hasEndingAddress
+      ? selectedFormattedAddresses
+      : selectedFormattedAddresses.slice(0, -1);
+    const waypointPlaceIds = hasEndingAddress
+      ? selectedPlaceIds
+      : selectedPlaceIds.slice(0, -1);
 
-    const queryParams = {
+    const formattedWaypoints = waypointAddresses.join("|");
+    const formattedWaypointPlaceIds = waypointPlaceIds.join("|");
+
+    const destination = hasEndingAddress
+      ? this.endingAddress
+      : selectedFormattedAddresses[selectedFormattedAddresses.length - 1];
+    const destinationPlaceId = hasEndingAddress
+      ? undefined
+      : selectedPlaceIds[selectedPlaceIds.length - 1];
+
+    const queryParams: Record<string, string | number> = {
       api: 1,
       travelmode: "driving",
       origin: this.startingAddress,
-      destination:
-        selectedFormattedAddresses[selectedFormattedAddresses.length - 1],
-      destination_place_id: selectedPlaceIds[selectedPlaceIds.length - 1],
-      // There are only intermediate waypoints when there are 2 or more selected addresses.
-      // Giving an empty parameter for waypoints leads to an error.
-      ...(selectedFormattedAddresses.length >= 2
+      destination: destination ?? "",
+      // Only include destination_place_id if we're using a client address as destination
+      ...(destinationPlaceId ? { destination_place_id: destinationPlaceId } : {}),
+      // Only include waypoints if there is at least one; an empty waypoints parameter causes an error
+      ...(waypointAddresses.length >= 1
         ? {
             waypoints: formattedWaypoints,
             waypoint_place_ids: formattedWaypointPlaceIds,
@@ -250,18 +320,28 @@ export class RoutePlannerPresenter {
       return `${BASE_EMBED_URL_NO_POINTS}?${queryParams}`;
     }
 
-    const formattedAddresses = selectedPlaceIds.map(
+    // If an ending address is specified, all client addresses are waypoints
+    // Otherwise, the last client address is the destination
+    const hasEndingAddress = this.hasEndingAddress;
+    const formattedClientAddresses = selectedPlaceIds.map(
       (placeId) => `place_id:${placeId}`,
     );
-    const formattedWaypoints = formattedAddresses.slice(0, -1).join("|");
+    const waypointAddresses = hasEndingAddress
+      ? formattedClientAddresses
+      : formattedClientAddresses.slice(0, -1);
+    const formattedWaypoints = waypointAddresses.join("|");
+
+    const destination = hasEndingAddress
+      ? this.endingAddress
+      : formattedClientAddresses[formattedClientAddresses.length - 1];
+
     const queryParams = new URLSearchParams({
       key: this.mapsApiKey,
       mode: "driving",
       origin: this.startingAddress,
-      destination: formattedAddresses[formattedAddresses.length - 1],
-      // There are only intermediate waypoints when there are 2 or more selected addresses.
-      // Giving an empty parameter for waypoints leads to an error.
-      ...(formattedAddresses.length >= 2
+      destination: destination ?? "",
+      // Only include waypoints if there is at least one; an empty waypoints parameter causes an error
+      ...(waypointAddresses.length >= 1
         ? {
             waypoints: formattedWaypoints,
           }
@@ -297,8 +377,9 @@ export class RoutePlannerPresenter {
 
   get routeEventMetadata(): RoutePlannerRouteMetadata {
     return {
-      startingAddress: this.startingAddress,
-      selectedClientPseudoIds: this.clientsPresenter.selectedClientPseudoIds,
+      hasStartingAddress: !!this.startingAddress,
+      hasEndingAddress: !!this.endingAddress,
+      waypointCount: this.clientsPresenter.selectedClientPseudoIds.length,
     };
   }
 

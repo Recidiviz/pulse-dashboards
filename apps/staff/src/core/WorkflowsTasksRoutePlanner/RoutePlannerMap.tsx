@@ -33,6 +33,7 @@ import { Button, Icon, IconSVG, palette, spacing } from "~design-system";
 import CopyIcon from "../../assets/static/images/copy.svg?react";
 import Star from "../../assets/static/images/grayStar.svg?react";
 import SendIcon from "../../assets/static/images/sendIcon.svg?react";
+import SendIconFilled from "../../assets/static/images/sendIconFilled.svg?react";
 import { RoutePlannerRouteEvent } from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { Client } from "../../WorkflowsStore";
 import { AlignedIcon } from "../sharedComponents";
@@ -311,10 +312,30 @@ const RoutePlannerDescription = observer(function RoutePlannerDescription({
                 </TooltipTrigger>
               </IconButton>
 
-              <Button shape={"block"} onClick={onClickEmailLink}>
-                <SendIcon />
-                <EmailButtonText>Email route link to me</EmailButtonText>
-              </Button>
+              <IconButton onClick={onClickEmailLink}>
+                <TooltipTrigger contents={"Email route link to me"}>
+                  <SendIconFilled fill={palette.slate50} height={12} />
+                </TooltipTrigger>
+              </IconButton>
+
+              {presenter.clientsPresenter.canOptimizeRoute && (
+                <Button
+                  shape={"block"}
+                  onClick={async () => {
+                    await presenter.clientsPresenter.optimizeRoute(
+                      presenter.startingAddress,
+                      presenter.endingAddress,
+                    );
+                  }}
+                  disabled={presenter.clientsPresenter.isOptimizing}
+                  className="ml-1"
+                  style={{ minWidth: "120px" }}
+                >
+                  {presenter.clientsPresenter.isOptimizing
+                    ? "Optimizing..."
+                    : "Optimize Route"}
+                </Button>
+              )}
             </>
           )}
         </RouteDescriptionControls>

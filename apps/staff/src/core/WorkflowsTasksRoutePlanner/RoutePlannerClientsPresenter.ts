@@ -29,7 +29,10 @@ import {
 
 import { GeocodingResponse, GeocodingStatus } from "../../FirestoreStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
-import { RoutePlannerClientEvent } from "../../RootStore/AnalyticsStore/AnalyticsStore";
+import {
+  RoutePlannerClientEvent,
+  RoutePlannerRouteEvent,
+} from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { formatWorkflowsDateWithoutYear } from "../../utils";
 import { PartialRecord } from "../../utils/typeUtils";
 import {
@@ -59,6 +62,8 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   private placeIds: Record<string, string> = {};
   // Prevent trying to add multiple people while we're waiting to see if some person can be added
   isAddingPerson = false;
+  // Prevent trying to optimize while an optimization is in progress
+  isOptimizing = false;
 
   private TASK_TYPE_COPY: PartialRecord<SupervisionTaskType, string> = {
     usTxHomeContactScheduled: "Scheduled Home Contact",
@@ -275,6 +280,10 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     return this.selectedPeople.map((client) => client.pseudonymizedId);
   }
 
+  get canOptimizeRoute(): boolean {
+    return this.selectedPeople.length >= 2;
+  }
+
   isPersonSelected(person: JusticeInvolvedPerson) {
     return this.indexOfPerson(person) !== -1;
   }
@@ -331,7 +340,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
         this.isAddingPerson = false;
         this.analyticsStore.trackRoutePlannerClientSelected({
           pseudonymizedId: person.pseudonymizedId,
-          selectedClientPseudoIds: this.selectedClientPseudoIds,
+          selectedCount: this.selectedClientPseudoIds.length,
         });
       });
     } else {
@@ -361,8 +370,66 @@ export class RoutePlannerClientsPresenter implements Hydratable {
       this.selectedPeople.splice(i, 1);
       this.analyticsStore.trackRoutePlannerClientDeselected({
         pseudonymizedId: person.pseudonymizedId,
-        selectedClientPseudoIds: this.selectedClientPseudoIds,
+        selectedCount: this.selectedClientPseudoIds.length,
       });
+    }
+  }
+
+  async optimizeRoute(startingAddress: string, endingAddress?: string) {
+    if (this.isOptimizing || !this.canOptimizeRoute) return;
+
+    this.isOptimizing = true;
+
+    try {
+      const waypoints = this.selectedPeople.map((person) => ({
+        pseudonymizedId: person.pseudonymizedId,
+        placeId: this.placeIds[person.pseudonymizedId],
+        formattedAddress: (person as Client).formattedAddress,
+      }));
+
+      const apiStore = this.workflowsStore.rootStore.apiStore;
+      const result = await apiStore.optimizeRoute({
+        origin: startingAddress,
+        destination: endingAddress,
+        waypoints,
+      });
+
+      runInAction(() => {
+        this.selectedPeople = result.optimizedOrder
+          .map((id) =>
+            this.selectedPeople.find((p) => p.pseudonymizedId === id),
+          )
+          .filter(
+            (person): person is JusticeInvolvedPerson => person !== undefined,
+          );
+        this.isOptimizing = false;
+      });
+
+      if (result.isChanged) {
+        toast("Route optimized! New order may reduce travel time.", {
+          duration: 5000,
+        });
+      } else {
+        toast("Route is already optimal!", {
+          duration: 5000,
+        });
+      }
+
+      this.analyticsStore.trackRoutePlannerRouteEvent(
+        RoutePlannerRouteEvent.RouteOptimizationAttempted,
+        {
+          hasStartingAddress: !!startingAddress,
+          hasEndingAddress: !!endingAddress,
+          waypointCount: this.selectedClientPseudoIds.length,
+          orderChanged: result.isChanged,
+        },
+      );
+    } catch (e) {
+      runInAction(() => {
+        this.isOptimizing = false;
+      });
+      toast.error("Unable to optimize route. Please try again.");
+      captureException(e);
     }
   }
 
