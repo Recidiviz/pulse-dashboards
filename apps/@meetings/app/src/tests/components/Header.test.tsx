@@ -21,15 +21,27 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
+import React from "react";
 
 import Header from "../../components/Header";
-import { StateCodeProvider } from "../../context/StateContext";
+import { StateCode, StateCodeProvider } from "../../context/StateContext";
+import { UserContextProvider } from "../../context/UserContext";
 
 // Mock react-native-auth0
 const mockClearSession = jest.fn();
+const mockGetCredentials = jest.fn();
 jest.mock("react-native-auth0", () => ({
   useAuth0: () => ({
+    user: {
+      name: "Test User",
+      "https://dashboard.recidiviz.org/app_metadata": {
+        stateCode: "US_NE",
+        pseudonymizedId: "test-pid",
+      },
+    },
+    isLoading: false,
     clearSession: mockClearSession,
+    getCredentials: mockGetCredentials,
   }),
 }));
 
@@ -75,14 +87,19 @@ describe("Header", () => {
     (useRoute as jest.Mock).mockReturnValue(mockRoute);
   });
 
+  const selectedStateRef = React.createRef<StateCode>();
+  selectedStateRef.current = "US_NE";
+
   describe("navigation changes", () => {
     it("navigates to Clients when logo is pressed (changed from Home)", async () => {
       const { getByTestId } = render(
-        <StateCodeProvider>
-          <NavigationContainer>
-            <Header />
-          </NavigationContainer>
-        </StateCodeProvider>,
+        <UserContextProvider isSkipAuthUser={false}>
+          <StateCodeProvider selectedStateRef={selectedStateRef}>
+            <NavigationContainer>
+              <Header />
+            </NavigationContainer>
+          </StateCodeProvider>
+        </UserContextProvider>,
       );
 
       // Wait for StateCodeProvider's async initialization to complete

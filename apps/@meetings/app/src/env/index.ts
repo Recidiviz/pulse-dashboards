@@ -45,14 +45,6 @@ const env = {
   EXPO_PUBLIC_DEPLOY_ENV: process.env["EXPO_PUBLIC_DEPLOY_ENV"],
 };
 
-const parsedEnv = envSchema.safeParse(env);
+const parsedEnv = envSchema.parse(env);
 
-if (!parsedEnv.success) {
-  console.error(
-    "Environment variable validation failed:",
-    parsedEnv.error.format(),
-  );
-  process.exit(1); // Terminate the application
-}
-
-export default parsedEnv.data;
+export default parsedEnv;

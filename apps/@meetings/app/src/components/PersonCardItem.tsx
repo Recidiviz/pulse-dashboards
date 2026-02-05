@@ -24,7 +24,7 @@ import { Person } from "~@meetings/app/common/types";
 
 import Icons from "../../assets/icons";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
-import { getClientInitials, humanReadableTitleCase } from "../utils/format";
+import { getInitials, humanReadableTitleCase } from "../utils/format";
 import MeetingInProgressBar from "./MeetingInProgressBar";
 
 type ProfileNavProp = NativeStackNavigationProp<
@@ -64,7 +64,7 @@ const PersonCardItem = ({
             imageClassName="!size-11"
           >
             <Text className="font-inter text-sm font-semibold text-white">
-              {getClientInitials(person.fullName)}
+              {getInitials(person.fullName)}
             </Text>
           </ImageBackground>
           <View className="flex-1">

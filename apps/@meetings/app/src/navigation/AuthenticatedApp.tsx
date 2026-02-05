@@ -1,0 +1,92 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
+import React from "react";
+import superjson from "superjson";
+
+import {
+  DEFAULT_STATE_CODE,
+  StateCode,
+  StateCodeProvider,
+} from "../context/StateContext";
+import { useUserContext } from "../context/UserContext";
+import env from "../env";
+import { trpc } from "../trpc/client";
+import DrawerNavigator from "./DrawerNavigator";
+
+const queryClient = new QueryClient();
+
+/**
+ * Sets up tRPC client and provides it to the app.
+ * This component must be wrapped by UserContextProvider.
+ */
+const AuthenticatedApp: React.FC = () => {
+  const { isLoading, isSkipAuthUser, getCredentials } = useUserContext();
+
+  // State code ref is managed here since it's only needed for authenticated requests. StateContext
+  // will initialize this to the user's state for state users, or allow Recidiviz users to change it
+  // via settings.
+  const selectedStateRef = React.useRef<StateCode>(DEFAULT_STATE_CODE);
+
+  const [trpcClient] = React.useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: env.EXPO_PUBLIC_SERVER_URL,
+          async headers() {
+            // In skip auth mode, send a special header
+            if (isSkipAuthUser) {
+              return {
+                "X-Skip-Auth": "true",
+                statecode: selectedStateRef.current,
+              };
+            }
+
+            const audience = env.EXPO_PUBLIC_AUTH0_AUDIENCE;
+            const creds = await getCredentials(undefined, undefined, {
+              audience,
+            });
+
+            return {
+              Authorization: `Bearer ${creds?.accessToken}`,
+              statecode: selectedStateRef.current,
+            };
+          },
+          transformer: superjson,
+        }),
+      ],
+    }),
+  );
+
+  if (isLoading) {
+    return null;
+  }
+
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <StateCodeProvider selectedStateRef={selectedStateRef}>
+          <DrawerNavigator />
+        </StateCodeProvider>
+      </QueryClientProvider>
+    </trpc.Provider>
+  );
+};
+
+export default AuthenticatedApp;

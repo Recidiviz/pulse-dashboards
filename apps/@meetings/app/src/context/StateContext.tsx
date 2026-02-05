@@ -16,9 +16,9 @@
 // =============================================================================
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useAuth0 } from "react-native-auth0";
 
 import { getItem, saveItem } from "../utils/storage";
+import { useUserContext } from "./UserContext";
 
 // Available state codes with meetings databases
 export const AVAILABLE_STATE_CODES = [
@@ -29,12 +29,21 @@ export const AVAILABLE_STATE_CODES = [
 
 export type StateCode = (typeof AVAILABLE_STATE_CODES)[number]["code"];
 
-const DEFAULT_STATE_CODE: StateCode = "US_NE";
+export const DEFAULT_STATE_CODE: StateCode = "US_NE";
 
 interface StateContextType {
+  /**
+   * The currently selected state code for data queries.
+   * For Recidiviz users (stateCode === "recidiviz"), this can be changed via settings to view different states.
+   * For state users, this is always set to their organizational stateCode and cannot be changed.
+   */
   selectedStateCode: StateCode;
   setSelectedStateCode: (stateCode: StateCode) => Promise<void>;
   isLoading: boolean;
+  /**
+   * Whether the current user has permission to select different state codes.
+   * Only true for Recidiviz staff (stateCode === "recidiviz") and skip auth users.
+   */
   canSelectStateCode: boolean;
   currentStateName: string | undefined;
 }
@@ -43,29 +52,47 @@ const StateContext = createContext<StateContextType | undefined>(undefined);
 
 const SELECTED_STATE_KEY = "selectedStateCode";
 
-export const StateCodeProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const { user } = useAuth0();
+export const StateCodeProvider: React.FC<{
+  children: React.ReactNode;
+  selectedStateRef: React.RefObject<StateCode | null>;
+}> = ({ children, selectedStateRef }) => {
+  const {
+    isSkipAuthUser,
+    recidivizAllowedStates,
+    stateCode: userStateCode,
+  } = useUserContext();
   const [selectedStateCode, setSelectedStateCodeInternal] =
     useState<StateCode>(DEFAULT_STATE_CODE);
   const [isLoading, setIsLoading] = useState(true);
 
-  const userAppMetadata =
-    user?.[`https://dashboard.recidiviz.org/app_metadata`];
-  const isRecidivizUser = userAppMetadata?.stateCode === "recidiviz";
-  // If user is null/undefined, assume they're in skip auth mode (local development)
-  const isSkipAuthUser = !user;
-  // Show settings for Recidiviz users or skip auth users
-  const canSelectStateCode = isRecidivizUser || isSkipAuthUser;
+  // Show settings for skip auth users or users who have access to multiple states.
+  // Currently only Recidiviz users (UserContext.stateCode === "recidiviz") have
+  // recidivizAllowedStates.length > 1, so this effectively limits state selection to internal staff.
+  // State users have exactly one allowed state and cannot select others.
+  const canSelectStateCode =
+    isSkipAuthUser || recidivizAllowedStates.length > 1;
   const currentStateName = AVAILABLE_STATE_CODES.find(
     (s) => s.code === selectedStateCode,
   )?.name;
 
-  // Load saved state code on mount
+  // Load saved state code on mount, or initialize to user's state code if not a Recidiviz user
   useEffect(() => {
     const loadSavedStateCode = async () => {
       try {
+        // For state users, initialize to their state code
+        if (!canSelectStateCode) {
+          const normalizedStateCode = userStateCode?.toUpperCase() as StateCode;
+          if (
+            AVAILABLE_STATE_CODES.some((s) => s.code === normalizedStateCode)
+          ) {
+            setSelectedStateCodeInternal(normalizedStateCode);
+          }
+          // If unsupported, keep the default - DrawerNavigator will handle showing NoAccessScreen
+          setIsLoading(false);
+          return;
+        }
+
+        // For Recidiviz users and skip auth, try to load from storage
         const saved = await getItem(SELECTED_STATE_KEY);
         if (saved && AVAILABLE_STATE_CODES.some((s) => s.code === saved)) {
           setSelectedStateCodeInternal(saved as StateCode);
@@ -80,17 +107,31 @@ export const StateCodeProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     loadSavedStateCode();
-  }, []);
+  }, [canSelectStateCode, userStateCode]);
 
   const setSelectedStateCode = async (stateCode: StateCode) => {
+    if (!canSelectStateCode) {
+      throw new Error(
+        "User does not have permission to select state codes. Only Recidiviz staff can switch between states.",
+      );
+    }
     try {
       await saveItem(SELECTED_STATE_KEY, stateCode);
       setSelectedStateCodeInternal(stateCode);
+      // Update the ref (used for TRPC headers)
+      selectedStateRef.current = stateCode;
     } catch (error) {
       console.error("Failed to save selected state code:", error);
       throw error;
     }
   };
+
+  // Sync state code to ref (for TRPC headers)
+  useEffect(() => {
+    if (selectedStateRef) {
+      selectedStateRef.current = selectedStateCode;
+    }
+  }, [selectedStateCode, selectedStateRef]);
 
   return (
     <StateContext.Provider

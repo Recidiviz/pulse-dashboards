@@ -29,14 +29,14 @@ import { useAuth0 } from "react-native-auth0";
 import superjson from "superjson";
 
 import AppUpdateModal from "../components/AppUpdateModal";
-import { useStateSelection } from "../context/StateContext";
+import { UserContextProvider } from "../context/UserContext";
 import env from "../env";
 import LoginScreen from "../screens/LoginScreen";
-import { publicTrpc, trpc } from "../trpc/client";
-import DrawerNavigator, { RootStackParamList } from "./DrawerNavigator";
+import { publicTrpc } from "../trpc/client";
+import AuthenticatedApp from "./AuthenticatedApp";
+import { RootStackParamList } from "./DrawerNavigator";
 
 const Drawer = createDrawerNavigator();
-const queryClient = new QueryClient();
 const publicQueryClient = new QueryClient();
 
 const trpcUrl = env.EXPO_PUBLIC_SERVER_URL;
@@ -69,70 +69,9 @@ const linking: LinkingOptions<AppStackParamList> = {
 };
 
 const AppNavigator = () => {
-  const { selectedStateCode } = useStateSelection();
-  const { user, isLoading, getCredentials } = useAuth0();
+  const { user, isLoading } = useAuth0();
   // skipAuth state triggers re-render when user clicks "Skip Authentication"
   const [skipAuth, setSkipAuth] = React.useState(false);
-
-  // Refs to allow the TRPC headers() function to access current values
-  // (headers() is defined once at initialization, so it needs a ref not state)
-  const skipAuthRef = React.useRef(false);
-  const userRef = React.useRef(user);
-  const selectedStateRef = React.useRef(selectedStateCode);
-
-  // Update userRef whenever user changes
-  React.useEffect(() => {
-    userRef.current = user;
-  }, [user]);
-
-  // Update selectedStateRef whenever selectedStateCode changes
-  React.useEffect(() => {
-    selectedStateRef.current = selectedStateCode;
-  }, [selectedStateCode]);
-
-  const [trpcClient] = React.useState(() =>
-    trpc.createClient({
-      links: [
-        httpBatchLink({
-          url: trpcUrl,
-          async headers() {
-            // In skip auth mode, send a special header
-            // Use ref here since this closure is created once during initialization
-            if (skipAuthRef.current) {
-              return {
-                "X-Skip-Auth": "true",
-                statecode: selectedStateRef.current,
-              };
-            }
-
-            const audience = env.EXPO_PUBLIC_AUTH0_AUDIENCE;
-            const creds = await getCredentials(undefined, undefined, {
-              audience,
-            });
-            // Use userRef.current to get the latest user value
-            const currentUser = userRef.current;
-            const userAppMetadata =
-              currentUser?.[`https://dashboard.recidiviz.org/app_metadata`];
-
-            // For recidiviz users, use the selected state code from StateContext
-            // Otherwise use the user's assigned state code
-            const stateCode =
-              userAppMetadata?.stateCode === "recidiviz"
-                ? selectedStateRef.current
-                : userAppMetadata?.stateCode.toUpperCase();
-
-            // If stateCode is empty because the user, userAppMetadata, or stateCode is undefined,
-            // just pass it anyway and let the backend auth fail.
-            return {
-              Authorization: `Bearer ${creds?.accessToken}`,
-              statecode: stateCode,
-            };
-          },
-          transformer: superjson,
-        }),
-      ],
-    }),
-  );
 
   // Public tRPC client for unauthenticated endpoints
   const [publicTrpcClient] = React.useState(() =>
@@ -158,8 +97,6 @@ const AppNavigator = () => {
   }, [fontsLoadingError]);
 
   const handleSkipAuth = () => {
-    // Update both ref (for TRPC headers) and state (to trigger re-render)
-    skipAuthRef.current = true;
     setSkipAuth(true);
   };
 
@@ -175,23 +112,25 @@ const AppNavigator = () => {
     >
       <QueryClientProvider client={publicQueryClient}>
         <AppUpdateModal />
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
-          <QueryClientProvider client={queryClient}>
-            <NavigationContainer linking={linking}>
-              <Drawer.Navigator screenOptions={{ headerShown: false }}>
-                {!loggedIn ? (
-                  <Drawer.Screen name="Login">
-                    {(props) => (
-                      <LoginScreen {...props} onSkipAuth={handleSkipAuth} />
-                    )}
-                  </Drawer.Screen>
-                ) : (
-                  <Drawer.Screen name="Main" component={DrawerNavigator} />
+        <NavigationContainer linking={linking}>
+          <Drawer.Navigator screenOptions={{ headerShown: false }}>
+            {!loggedIn ? (
+              <Drawer.Screen name="Login">
+                {(props) => (
+                  <LoginScreen {...props} onSkipAuth={handleSkipAuth} />
                 )}
-              </Drawer.Navigator>
-            </NavigationContainer>
-          </QueryClientProvider>
-        </trpc.Provider>
+              </Drawer.Screen>
+            ) : (
+              <Drawer.Screen name="Main">
+                {() => (
+                  <UserContextProvider isSkipAuthUser={skipAuth}>
+                    <AuthenticatedApp />
+                  </UserContextProvider>
+                )}
+              </Drawer.Screen>
+            )}
+          </Drawer.Navigator>
+        </NavigationContainer>
       </QueryClientProvider>
     </publicTrpc.Provider>
   );

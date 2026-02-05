@@ -27,23 +27,21 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAuth0 } from "react-native-auth0";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
 import MobileMenuItem from "../components/MobileMenuItem";
 import { useStateSelection } from "../context/StateContext";
+import { useUserContext } from "../context/UserContext";
+import { getInitials } from "../utils/format";
 import MobileMenuTextItem from "./MobileMenuTextItem";
 
 const DrawerContent = (props: DrawerContentComponentProps) => {
   const insets = useSafeAreaInsets();
-  const { user, clearSession } = useAuth0();
   const { navigation } = props;
   const { canSelectStateCode, currentStateName } = useStateSelection();
-
-  const onLogout = async () => {
-    await clearSession();
-  };
+  const { name, email, hasSupervisionAccess, hasFacilitiesAccess, onLogout } =
+    useUserContext();
 
   return (
     <DrawerContentScrollView
@@ -73,32 +71,38 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             source={Icons.BgAvatar}
             className="mr-3 size-12 items-center justify-center overflow-hidden rounded-full"
           >
-            <Text className="font-inter text-white">SS</Text>
+            <Text className="font-inter text-white">
+              {name ? getInitials(name) : "SS"}
+            </Text>
           </ImageBackground>
           <View>
             <Text className="font-inter text-base font-semibold text-primary">
-              {user?.name || "User name not found"}
+              {name ?? "User name not found"}
             </Text>
             <Text className="font-inter text-sm text-[#355362D9]">
-              {user?.email || "User email not found"}
+              {email ?? "User email not found"}
             </Text>
           </View>
         </View>
       </View>
 
       <View className="flex-1 px-4">
-        <MobileMenuItem
-          icon={Icons.Clients}
-          title="Clients"
-          screen="Clients"
-          onPress={navigation.closeDrawer}
-        />
-        <MobileMenuItem
-          icon={Icons.Clients}
-          title="Residents"
-          screen="Residents"
-          onPress={navigation.closeDrawer}
-        />
+        {hasSupervisionAccess && (
+          <MobileMenuItem
+            icon={Icons.Clients}
+            title="Clients"
+            screen="Clients"
+            onPress={navigation.closeDrawer}
+          />
+        )}
+        {hasFacilitiesAccess && (
+          <MobileMenuItem
+            icon={Icons.Clients}
+            title="Residents"
+            screen="Residents"
+            onPress={navigation.closeDrawer}
+          />
+        )}
       </View>
 
       <View

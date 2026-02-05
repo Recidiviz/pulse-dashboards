@@ -19,10 +19,17 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import React from "react";
 
 import DrawerContent from "../components/DrawerContent";
+import Loading from "../components/Loading";
+import {
+  AVAILABLE_STATE_CODES,
+  useStateSelection,
+} from "../context/StateContext";
+import { useUserContext } from "../context/UserContext";
 import ClientMeetingScreen from "../screens/ClientMeetingScreen";
 import ClientNewMeetingScreen from "../screens/ClientNewMeetingScreen";
 import ClientProfileScreen from "../screens/ClientProfileScreen";
 import ClientsScreen from "../screens/ClientsScreen";
+import NoAccessScreen from "../screens/NoAccessScreen";
 import ResidentMeetingScreen from "../screens/ResidentMeetingScreen";
 import ResidentNewMeetingScreen from "../screens/ResidentNewMeetingScreen";
 import ResidentProfileScreen from "../screens/ResidentProfileScreen";
@@ -69,6 +76,32 @@ export type RootStackParamList = {
 const Drawer = createDrawerNavigator<RootStackParamList>();
 
 export default function DrawerNavigator() {
+  const { hasSupervisionAccess, hasFacilitiesAccess, isLoading, stateCode } =
+    useUserContext();
+  const { isLoading: isStateLoading } = useStateSelection();
+
+  // Wait for user metadata and state context to load before checking access
+  if (isLoading || isStateLoading) {
+    return <Loading message="Loading..." />;
+  }
+
+  // If user's state code is not supported by the Meetings app, show NoAccessScreen
+  // Only check for state users (non-Recidiviz) since Recidiviz users can select any state
+  if (stateCode && stateCode !== "recidiviz") {
+    const normalizedStateCode = stateCode.toUpperCase();
+    const isSupported = AVAILABLE_STATE_CODES.some(
+      (s) => s.code === normalizedStateCode,
+    );
+    if (!isSupported) {
+      return <NoAccessScreen />;
+    }
+  }
+
+  // If user has no access to any route, show NoAccessScreen
+  if (!hasSupervisionAccess && !hasFacilitiesAccess) {
+    return <NoAccessScreen />;
+  }
+
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -79,21 +112,35 @@ export default function DrawerNavigator() {
       drawerContent={(props) => <DrawerContent {...props} />}
       backBehavior="fullHistory"
     >
-      <Drawer.Screen name="Clients" component={ClientsScreen} />
-      <Drawer.Screen name="Residents" component={ResidentsScreen} />
+      {hasSupervisionAccess && (
+        <>
+          <Drawer.Screen name="Clients" component={ClientsScreen} />
+          <Drawer.Screen name="ClientProfile" component={ClientProfileScreen} />
+          <Drawer.Screen
+            name="ClientNewMeeting"
+            component={ClientNewMeetingScreen}
+          />
+          <Drawer.Screen name="ClientMeeting" component={ClientMeetingScreen} />
+        </>
+      )}
+      {hasFacilitiesAccess && (
+        <>
+          <Drawer.Screen name="Residents" component={ResidentsScreen} />
+          <Drawer.Screen
+            name="ResidentProfile"
+            component={ResidentProfileScreen}
+          />
+          <Drawer.Screen
+            name="ResidentNewMeeting"
+            component={ResidentNewMeetingScreen}
+          />
+          <Drawer.Screen
+            name="ResidentMeeting"
+            component={ResidentMeetingScreen}
+          />
+        </>
+      )}
       <Drawer.Screen name="StateSelection" component={StateSelectionScreen} />
-      <Drawer.Screen name="ClientProfile" component={ClientProfileScreen} />
-      <Drawer.Screen name="ResidentProfile" component={ResidentProfileScreen} />
-      <Drawer.Screen
-        name="ClientNewMeeting"
-        component={ClientNewMeetingScreen}
-      />
-      <Drawer.Screen
-        name="ResidentNewMeeting"
-        component={ResidentNewMeetingScreen}
-      />
-      <Drawer.Screen name="ClientMeeting" component={ClientMeetingScreen} />
-      <Drawer.Screen name="ResidentMeeting" component={ResidentMeetingScreen} />
     </Drawer.Navigator>
   );
 }

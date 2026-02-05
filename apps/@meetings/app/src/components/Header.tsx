@@ -32,12 +32,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAuth0 } from "react-native-auth0";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
 import { useStateSelection } from "../context/StateContext";
+import { useUserContext } from "../context/UserContext";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
+import { getInitials } from "../utils/format";
 import DesktopMenuItem from "./DesktopMenuItem";
 
 type HeaderNavProp = NativeStackNavigationProp<RootStackParamList>;
@@ -55,16 +56,12 @@ const Header: React.FC<HeaderProps> = ({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
-  const { clearSession } = useAuth0();
+  const { onLogout, name } = useUserContext();
   const { canSelectStateCode, currentStateName } = useStateSelection();
 
   const handleDropdownMenuPress = (callback: () => void) => {
     setProfileDropdownOpen(false);
     callback();
-  };
-
-  const onLogout = async () => {
-    await clearSession();
   };
 
   return (
@@ -125,7 +122,9 @@ const Header: React.FC<HeaderProps> = ({
                 className="size-8 items-center justify-center overflow-hidden rounded-full"
                 imageClassName="!size-8"
               >
-                <Text className="font-inter text-base text-white">SS</Text>
+                <Text className="font-inter text-base text-white">
+                  {name ? getInitials(name) : "SS"}
+                </Text>
               </ImageBackground>
               <Image
                 source={profileDropdownOpen ? Icons.ArrowUp : Icons.ArrowDown}

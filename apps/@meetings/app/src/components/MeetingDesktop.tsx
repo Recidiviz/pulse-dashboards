@@ -38,7 +38,7 @@ import env from "../env";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
-  getClientInitials,
+  getInitials,
   humanReadableTitleCase,
 } from "../utils/format";
 import Header from "./Header";
@@ -150,7 +150,7 @@ const MeetingDesktop = ({ meetingDetails, person, personType }: Props) => {
               imageClassName="!size-full"
             >
               <Text className="font-inter text-lg text-white">
-                {getClientInitials(person.fullName)}
+                {getInitials(person.fullName)}
               </Text>
             </ImageBackground>
             <View>

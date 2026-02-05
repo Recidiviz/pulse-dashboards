@@ -28,7 +28,7 @@ import {
 import { Person } from "~@meetings/app/common/types";
 
 import Icons from "../../assets/icons";
-import { getClientInitials } from "../utils/format";
+import { getInitials } from "../utils/format";
 import {
   Table,
   TableBody,
@@ -85,7 +85,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                       imageClassName="!size-11"
                     >
                       <Text className="font-inter text-base font-medium text-white">
-                        {getClientInitials(person.fullName)}
+                        {getInitials(person.fullName)}
                       </Text>
                     </ImageBackground>
                     <Text className="font-inter text-base font-medium text-primary">

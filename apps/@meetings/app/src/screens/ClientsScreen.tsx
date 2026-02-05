@@ -19,7 +19,6 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useContext, useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
-import { useAuth0 } from "react-native-auth0";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -32,6 +31,7 @@ import Loading from "../components/Loading";
 import PersonsHeaderContent from "../components/PersonsHeaderContent";
 import PersonsMobileList from "../components/PersonsMobileList";
 import PersonsTable from "../components/PersonsTable.web";
+import { useUserContext } from "../context/UserContext";
 import { RecordingContext } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
@@ -71,9 +71,7 @@ const ClientsScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useContext(RecordingContext);
-  const { user } = useAuth0();
-  const userPseudoId =
-    user?.["https://dashboard.recidiviz.org/app_metadata"]?.pseudonymizedId;
+  const { pseudonymizedId: userPseudoId } = useUserContext();
 
   const isFocused = useIsFocused();
   const {

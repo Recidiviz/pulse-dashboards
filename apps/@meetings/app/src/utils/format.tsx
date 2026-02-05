@@ -19,8 +19,9 @@ import { startCase } from "lodash";
 
 import { Client, RawClient, RawResident, Resident } from "../common/types";
 
-export const getClientInitials = (name: Client["fullName"]) => {
+export const getInitials = (name: string) => {
   const parts = name.trim().split(" ");
+  if (!parts[0]) return "";
   return (parts[0][0] + (parts.pop() || "")[0]).toUpperCase();
 };
 
