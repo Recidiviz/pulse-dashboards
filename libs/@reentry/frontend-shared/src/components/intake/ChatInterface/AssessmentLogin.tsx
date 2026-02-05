@@ -57,7 +57,7 @@ export function AssessmentLoginPage({
     "/public/intake-config/conversation-states",
     {
       refetchOnWindowFocus: false,
-    }
+    },
   );
 
   const availableStates =
@@ -249,9 +249,8 @@ export function AssessmentLoginPage({
                 "dob+fullname":
                   "Before you proceed, please confirm your name and birthdate.",
                 "dob+token":
-                  "Before you proceed, Please confirm your full name and birthdate.",
-                "state+docid":
-                  "Before you proceed, please select your state and enter your DOC ID.",
+                  "Before you proceed, please confirm your full name and birthdate.",
+                "state+docid": `Before you proceed, please select your state and enter your ${stateCode === "US_UT" ? "DOC ID / Offender Number" : "DOC ID"}.`,
               }[mode]
             }
           </p>
@@ -334,12 +333,18 @@ export function AssessmentLoginPage({
                   htmlFor="doc-id-input"
                   className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
                 >
-                  DOC ID
+                  {stateCode === "US_UT"
+                    ? "DOC ID / Offender Number"
+                    : "DOC ID"}
                 </label>
                 <input
                   id="doc-id-input"
                   type="text"
-                  placeholder="Enter DOC ID"
+                  placeholder={
+                    stateCode === "US_UT"
+                      ? "Enter DOC ID / Offender Number"
+                      : "Enter DOC ID"
+                  }
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start placeholder:text-gray-500"
                   value={docId}
                   onChange={(e) => setDocId(e.target.value)}
