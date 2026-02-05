@@ -78,6 +78,11 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
   const auth = useAuth();
 
   const isInternalUser = () => {
+    // Wait for auth to fully load before checking internal user status
+    if (auth.state.isLoading || !auth.state.isAuthorized) {
+      return false;
+    }
+
     if (auth.authStore && auth.authStore.user && auth.authStore.user.email) {
       const userEmail = auth.authStore.user.email.toLowerCase();
       return (
@@ -87,10 +92,11 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
       );
     }
 
+    // Only log to Sentry if auth is complete but user data is still missing
     captureException(
       `Could not determine if user ${auth.userAppMetadata?.pseudonymizedId} is an internal user`,
     );
-    return;
+    return false;
   };
 
   const shouldSkipWriteToSegment = () => {

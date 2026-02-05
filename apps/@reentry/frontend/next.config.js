@@ -64,6 +64,7 @@ module.exports = composePlugins(...plugins)(
   withSentryConfig(nextConfig, {
     org: process.env.SENTRY_ORG,
     project: process.env.SENTRY_PROJECT,
+    tunnelRoute: "/monitoring",
     silent: !process.env.CI,
     widenClientFileUpload: true,
     sourcemaps: {

@@ -26,6 +26,7 @@ const PUBLIC_ENDPOINTS = [
   "/autocomplete-address",
   "/intake/services",
   "/public/intake-config",
+  "/monitoring",
 ];
 
 const isPublicEndpoint = (url: string): boolean => {
