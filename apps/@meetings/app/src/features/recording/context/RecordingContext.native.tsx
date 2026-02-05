@@ -141,14 +141,6 @@ export const RecordingProvider = ({
   };
 
   /**
-   * stopRecording()
-   * Only updates status — the actual stop happens later in upload.
-   */
-  const stopRecording = () => {
-    setStatus("stopping");
-  };
-
-  /**
    * stopAndUploadRecording()
    * Stops recorder, uploads file, removes saved URI.
    */
@@ -183,6 +175,16 @@ export const RecordingProvider = ({
       await setStatus("paused"); // fallback safe state
       throw err;
     }
+  };
+
+  const stopRecording = async (uploadFn: (uri: string) => Promise<void>) => {
+    await togglePauseResume(uploadFn);
+    setStatus("stopping");
+  };
+
+  const discardRecording = async (uploadFn: (uri: string) => Promise<void>) => {
+    await togglePauseResume(uploadFn);
+    setStatus("discarding");
   };
 
   /**
@@ -240,6 +242,7 @@ export const RecordingProvider = ({
         setNote,
         startRecording,
         stopRecording,
+        discardRecording,
         stopAndUploadRecording,
         togglePauseResume,
         cleanupRecording,

@@ -56,7 +56,7 @@ const MeetingInProgressBar = ({
 
   const {
     handleTogglePauseResume,
-    stopRecording,
+    handleStopRecording,
     handleFinishAndSave,
     handleDiscard,
     handleFinalDiscard,
@@ -98,7 +98,7 @@ const MeetingInProgressBar = ({
 
         <TouchableOpacity
           className="ml-2 rounded-full bg-[#B91C1C] p-2"
-          onPress={stopRecording}
+          onPress={handleStopRecording}
         >
           <Image
             source={Icons.Stop}

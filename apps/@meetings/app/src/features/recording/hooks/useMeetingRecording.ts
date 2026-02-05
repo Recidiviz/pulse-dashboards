@@ -54,6 +54,7 @@ export const useMeetingRecording = ({
     setNote,
     startRecording,
     stopRecording,
+    discardRecording,
     stopAndUploadRecording,
     togglePauseResume: contextTogglePauseResume,
     cleanupRecording,
@@ -175,6 +176,10 @@ export const useMeetingRecording = ({
     meetingId,
   ]);
 
+  const handleStopRecording = useCallback(async () => {
+    await stopRecording(uploadSegmentToGCS);
+  }, [stopRecording, uploadSegmentToGCS]);
+
   const handleFinishAndSave = useCallback(async () => {
     setStatus("ending");
 
@@ -210,8 +215,8 @@ export const useMeetingRecording = ({
     onComplete,
   ]);
 
-  const handleContinue = () => setStatus("recording");
-  const handleDiscard = () => setStatus("discarding");
+  const handleContinue = () => contextTogglePauseResume(uploadSegmentToGCS);
+  const handleDiscard = () => discardRecording(uploadSegmentToGCS);
 
   const handleFinalDiscard = useCallback(async () => {
     await cleanupRecording();
@@ -240,11 +245,16 @@ export const useMeetingRecording = ({
     //introduced to keep track of previous recorder state to prevent initial triggering of the handleAutoStopRecording function
     const prevIsRecording = prevRecorderStateRef.current;
 
+    // Only trigger auto-stop if we're in "recording" status and the recorder stopped unexpectedly
+    // (not when user manually stopped via stopRecording which sets status to "stopping")
     if (status === "recording" && prevIsRecording && !isRecording) {
       handleAutoStopRecording();
     }
 
-    prevRecorderStateRef.current = isRecording;
+    // Don't update the ref when transitioning to "stopping" status to avoid false triggers
+    if (status !== "stopping") {
+      prevRecorderStateRef.current = isRecording;
+    }
 
     // handleAutoStop causes infinite loop if not disabled
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -267,7 +277,7 @@ export const useMeetingRecording = ({
     actions: {
       startRecording,
       handleTogglePauseResume,
-      stopRecording,
+      handleStopRecording,
       stopAndUploadRecording,
       uploadSegmentToGCS,
       handleFinishAndSave,

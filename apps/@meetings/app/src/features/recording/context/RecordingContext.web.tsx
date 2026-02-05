@@ -93,7 +93,7 @@ export const RecordingProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    if (status === "paused") {
+    if (status && ["paused", "stopping", "discarding"].includes(status)) {
       await stopAndUploadRecording(uploadFn); // we need only uploading, the recording is already paused
       await startRecording();
       return;
@@ -116,6 +116,16 @@ export const RecordingProvider = ({ children }: { children: ReactNode }) => {
     setNote("");
   };
 
+  const stopRecording = async (uploadFn: (uri: string) => Promise<void>) => {
+    await togglePauseResume(uploadFn);
+    setStatus("stopping");
+  };
+
+  const discardRecording = async (uploadFn: (uri: string) => Promise<void>) => {
+    await togglePauseResume(uploadFn);
+    setStatus("discarding");
+  };
+
   return (
     <RecordingContext.Provider
       value={{
@@ -126,7 +136,8 @@ export const RecordingProvider = ({ children }: { children: ReactNode }) => {
         note,
         setNote,
         startRecording,
-        stopRecording: () => setStatus("stopping"),
+        stopRecording,
+        discardRecording,
         stopAndUploadRecording,
         togglePauseResume,
         cleanupRecording,

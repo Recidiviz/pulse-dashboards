@@ -71,5 +71,10 @@ export const useDurationTimer = () => {
     startTimeRef.current = null;
   }, [stopTimer]);
 
-  return { duration, startTimer, stopTimer, resetTimer };
+  return {
+    duration,
+    startTimer,
+    stopTimer,
+    resetTimer,
+  };
 };

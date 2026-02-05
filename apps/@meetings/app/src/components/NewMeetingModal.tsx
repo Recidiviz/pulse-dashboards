@@ -61,7 +61,7 @@ const NewMeetingModal = ({
   const {
     startRecording,
     handleTogglePauseResume,
-    stopRecording,
+    handleStopRecording,
     handleFinishAndSave,
     handleDiscard,
     handleFinalDiscard,
@@ -83,7 +83,7 @@ const NewMeetingModal = ({
           status={status}
           note={note}
           setNote={setNote}
-          stopRecording={stopRecording}
+          handleStopRecording={handleStopRecording}
           handleTogglePauseResume={handleTogglePauseResume}
           handleDiscard={handleDiscard}
           handleContinue={handleContinue}
@@ -177,7 +177,7 @@ type NewMeetingProgressProps = {
   note: string;
   totalDurationMs: number;
   setNote: (note: string) => void;
-  stopRecording: () => void;
+  handleStopRecording: () => void;
   handleTogglePauseResume: () => void;
   handleDiscard: () => void;
   handleContinue: () => void;
@@ -192,7 +192,7 @@ const NewMeetingProgress = ({
   note,
   totalDurationMs,
   setNote,
-  stopRecording,
+  handleStopRecording,
   handleTogglePauseResume,
   handleDiscard,
   handleContinue,
@@ -399,7 +399,7 @@ const NewMeetingProgress = ({
             )}
             <TouchableOpacity
               className="w-[150px] flex-row items-center justify-center rounded-full bg-[#B42D2D] py-3"
-              onPress={stopRecording}
+              onPress={handleStopRecording}
               disabled={isModalDisabled}
             >
               <Image source={Icons.Stop} className="mr-2 !size-6" />

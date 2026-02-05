@@ -62,7 +62,7 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const {
     startRecording,
     handleTogglePauseResume,
-    stopRecording,
+    handleStopRecording,
     handleFinishAndSave,
     handleDiscard,
     handleFinalDiscard,
@@ -144,7 +144,7 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
         <RecordingControls
           status={status}
           onStart={startRecording}
-          onStop={stopRecording}
+          onStop={handleStopRecording}
           onPauseResume={handleTogglePauseResume}
         />
       </View>

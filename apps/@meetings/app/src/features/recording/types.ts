@@ -38,7 +38,8 @@ export type Recording = {
   setNote: (note: string) => void;
 
   startRecording: () => Promise<void>;
-  stopRecording: () => void;
+  stopRecording: (uploadFn: (uri: string) => Promise<void>) => Promise<void>;
+  discardRecording: (uploadFn: (uri: string) => Promise<void>) => Promise<void>;
   stopAndUploadRecording: (
     uploadFn: (uri: string) => Promise<void>,
   ) => Promise<void>;
