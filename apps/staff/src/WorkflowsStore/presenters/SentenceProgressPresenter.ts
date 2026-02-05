@@ -330,7 +330,7 @@ export class SentenceProgressPresenter<
 
     const { paroleReviewDate, EIGHTYFIVEPercentDate } = resident.metadata;
     this.pushTimelineDate(
-      "Parole Review Eligibility",
+      "Parole Review Date",
       true,
       fieldToDate(paroleReviewDate),
     );

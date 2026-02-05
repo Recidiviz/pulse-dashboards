@@ -234,7 +234,7 @@ describe("SentenceProgressPresenter", () => {
       test("timeline dates include parole review date", () => {
         const expectedParoleReviewEntry: TimelineDate = {
           date: fieldToDate("2024-01-01"),
-          label: "Parole Review Eligibility",
+          label: "Parole Review Date",
           formattedDate: "Jan 1, 2024",
           hideLabel: true,
         };
