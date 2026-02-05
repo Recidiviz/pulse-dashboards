@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@cpa/staff-client/src",
   "projectType": "library",
-  "tags": ["scope:client"],
+  "tags": ["cpa", "scope:client"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",

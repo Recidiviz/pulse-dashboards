@@ -69,9 +69,7 @@
         "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
-        "additionalEntryPoints": [
-          "{projectRoot}/src/sentry/index.ts"
-        ],
+        "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
         "sourcemap": true,
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "generatePackageJson": true,
