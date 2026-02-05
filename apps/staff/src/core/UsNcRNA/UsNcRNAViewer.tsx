@@ -15,12 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useQuery } from "@tanstack/react-query";
+import { observer } from "mobx-react-lite";
+
+import { useRootStore } from "../../components/StoreProvider";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 
-export const UsNcRNAViewer = function () {
+export const UsNcRNAViewer = observer(function UsNcRNAViewer() {
+  const { jiiTrpcClient, workflowsStore } = useRootStore();
+
+  const q = useQuery(
+    jiiTrpcClient.staff.usNc.rnaStatusList.queryOptions({
+      pseudonymizedIds: workflowsStore.caseloadPersons.map(
+        (p) => p.pseudonymizedId,
+      ),
+    }),
+  );
+  // TODO: proof of concept only
+  // eslint-disable-next-line no-console
+  console.log(q.data);
+
   return (
     <WorkflowsNavLayout>
       <div>Hello world!</div>
     </WorkflowsNavLayout>
   );
-};
+});

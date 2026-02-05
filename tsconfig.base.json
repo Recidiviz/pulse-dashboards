@@ -60,7 +60,7 @@
       "~@jii/prisma": ["libs/@jii/prisma/src/index.ts"],
       "~@jii/translation": ["libs/@jii/translation/src/index.ts"],
       "~@jii/trpc": ["libs/@jii/trpc/src/index.ts"],
-      "~@jii/trpc-types": ["libs/@jii/trpc-types/src/index.ts"],
+      "~@jii/trpc-types": ["libs/@jii/trpc-types/src/index.d.ts"],
       "~@meetings/app/*": ["apps/@meetings/app/src/*"],
       "~@meetings/import": ["apps/@meetings/import/src/index.ts"],
       "~@meetings/import/*": ["apps/@meetings/import/src/*"],

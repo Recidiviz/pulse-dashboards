@@ -17,9 +17,11 @@
 
 import { Auth0ClientOptions, User } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
+import { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { computed, configure, makeObservable, onReactionError } from "mobx";
 
 import { CPAStore } from "~@cpa/staff-client";
+import type { JiiStaffAppRouter } from "~@jii/trpc-types";
 import { isTestEnv } from "~client-env-utils";
 import { FirebaseAuthClient } from "~firebase-auth";
 import { SentencingStore } from "~sentencing-client";
@@ -34,6 +36,7 @@ import TasksFilterStore from "../FilterStore/TasksFilterStore";
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
 import { TENANT_CONFIGS } from "../tenants";
+import { createJiiTrpcClient } from "../trpc/jii";
 import { getFirestoreProjectId } from "../utils/getFirestoreProjectId";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { WorkflowsRootStore } from "../WorkflowsStore/WorkflowsRootStore";
@@ -124,6 +127,8 @@ export class RootStore {
 
   firebaseAuthClient: FirebaseAuthClient;
 
+  jiiTrpcClient: TRPCOptionsProxy<JiiStaffAppRouter>;
+
   constructor() {
     makeObservable(this, {
       currentTenantId: computed,
@@ -178,6 +183,11 @@ export class RootStore {
     this.sentencingStore = new SentencingStore(this);
 
     this.cpaStore = new CPAStore(this);
+
+    this.jiiTrpcClient = createJiiTrpcClient({
+      firebaseAuthClient: this.firebaseAuthClient,
+      currentTenantId: () => this.currentTenantId,
+    });
   }
 
   get currentTenantId(): TenantId | undefined {

@@ -31,6 +31,7 @@ import StoreProvider from "./components/StoreProvider";
 import StyledToaster from "./components/StyledToaster";
 import VerificationNeeded from "./components/VerificationNeeded";
 import ProtectedLayout from "./ProtectedLayout";
+import { ReactQueryClientProvider } from "./reactQuery/ReactQueryClientProvider";
 import { initI18n } from "./utils/i18nSettings";
 import initIntercom from "./utils/initIntercom";
 
@@ -42,18 +43,20 @@ initI18n();
 function App() {
   return (
     <StoreProvider>
-      <Router>
-        <SentryErrorBoundary>
-          <QueryParamProvider adapter={ReactRouter6Adapter}>
-            <Routes>
-              <Route path="/verify" element={<VerificationNeeded />} />
-              <Route path="/*" element={<ProtectedLayout />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <StyledToaster />
-          </QueryParamProvider>
-        </SentryErrorBoundary>
-      </Router>
+      <ReactQueryClientProvider>
+        <Router>
+          <SentryErrorBoundary>
+            <QueryParamProvider adapter={ReactRouter6Adapter}>
+              <Routes>
+                <Route path="/verify" element={<VerificationNeeded />} />
+                <Route path="/*" element={<ProtectedLayout />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <StyledToaster />
+            </QueryParamProvider>
+          </SentryErrorBoundary>
+        </Router>
+      </ReactQueryClientProvider>
     </StoreProvider>
   );
 }

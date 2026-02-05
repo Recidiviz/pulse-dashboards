@@ -7,12 +7,7 @@
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        {
-          "projects": ["@sentencing/prisma"],
-          "target": "prisma-generate"
-        }
-      ],
+      "dependsOn": ["^prisma-generate"],
       "options": {
         "commands": [
           "tsc -p ./tsconfig.app.json",
@@ -158,12 +153,10 @@
       ],
       "options": {
         "cwd": "{projectRoot}",
-    "commands": [
-  "mkdir -p ../../dist/firestore-emulator-fixtures/apps/staff",
-  "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit ../../dist/firestore-emulator-fixtures/apps/staff 'NODE_OPTIONS=\"--unhandled-rejections=strict\" vite-node --config vite.config.mts tools/loadWorkflowsFixtures.ts'"
-]
-,
-
+        "commands": [
+          "mkdir -p ../../dist/firestore-emulator-fixtures/apps/staff",
+          "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit ../../dist/firestore-emulator-fixtures/apps/staff 'NODE_OPTIONS=\"--unhandled-rejections=strict\" vite-node --config vite.config.mts tools/loadWorkflowsFixtures.ts'"
+        ],
         "parallel": false
       }
     },
@@ -205,13 +198,7 @@
     },
     "build": {
       "executor": "@nx/vite:build",
-      "dependsOn": [
-        {
-          "projects": ["@sentencing/prisma"],
-          "target": "prisma-generate"
-        },
-        "env-prod"
-      ],
+      "dependsOn": ["^prisma-generate", "env-prod"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -225,13 +212,7 @@
     },
     "build-staging": {
       "executor": "@nx/vite:build",
-      "dependsOn": [
-        {
-          "projects": ["@sentencing/prisma"],
-          "target": "prisma-generate"
-        },
-        "env-staging"
-      ],
+      "dependsOn": ["^prisma-generate", "env-staging"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -245,13 +226,7 @@
     },
     "build-preview-ci": {
       "executor": "@nx/vite:build",
-      "dependsOn": [
-        {
-          "projects": ["@sentencing/prisma"],
-          "target": "prisma-generate"
-        },
-        "env-preview-ci"
-      ],
+      "dependsOn": ["^prisma-generate", "env-preview-ci"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -265,13 +240,7 @@
     },
     "build-demo": {
       "executor": "@nx/vite:build",
-      "dependsOn": [
-        {
-          "projects": ["@sentencing/prisma"],
-          "target": "prisma-generate"
-        },
-        "env-demo"
-      ],
+      "dependsOn": ["^prisma-generate", "env-demo"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -285,13 +254,7 @@
     },
     "build-e2e": {
       "executor": "@nx/vite:build",
-      "dependsOn": [
-        {
-          "projects": ["@sentencing/prisma"],
-          "target": "prisma-generate"
-        },
-        "env-build-e2e"
-      ],
+      "dependsOn": ["^prisma-generate", "env-build-e2e"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }

@@ -16905,6 +16905,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@trpc/tanstack-react-query@npm:^11.9.0":
+  version: 11.9.0
+  resolution: "@trpc/tanstack-react-query@npm:11.9.0"
+  peerDependencies:
+    "@tanstack/react-query": ^5.80.3
+    "@trpc/client": 11.9.0
+    "@trpc/server": 11.9.0
+    react: ">=18.2.0"
+    react-dom: ">=18.2.0"
+    typescript: ">=5.7.2"
+  checksum: 10c0/1f69f7feddd8eecdc41a84d855114dd450c89eb2977d0fb5c27e363da45eee780dee167703f5831dc3b1eee6940f06bc49313e2f54dd6f4a4f9de1b604bd3149
+  languageName: node
+  linkType: hard
+
 "@trysound/sax@npm:0.2.0":
   version: 0.2.0
   resolution: "@trysound/sax@npm:0.2.0"
@@ -47325,6 +47339,7 @@ __metadata:
     "@trpc/client": "npm:^11.4.3"
     "@trpc/react-query": "npm:^11.4.3"
     "@trpc/server": "npm:^11.4.3"
+    "@trpc/tanstack-react-query": "npm:^11.9.0"
     "@tsconfig/node20": "npm:^20.1.4"
     "@types/argparse": "npm:^2.0.10"
     "@types/cache-manager": "npm:^3.4.3"

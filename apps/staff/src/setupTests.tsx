@@ -61,6 +61,7 @@ process.env = {
   ...process.env,
   VITE_TEST_ENV: "true",
   VITE_METADATA_NAMESPACE: "test-metadata-namespace/",
+  VITE_JII_API_URL: "http://jii-api",
 };
 
 // mock analytics configuration

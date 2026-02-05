@@ -78,6 +78,7 @@
     "@trpc/client": "^11.4.3",
     "@trpc/react-query": "^11.4.3",
     "@trpc/server": "^11.4.3",
+    "@trpc/tanstack-react-query": "^11.9.0",
     "@types/crypto-js": "^4.0.2",
     "@types/d3-shape": "^2.0.0",
     "@types/dedent": "^0.7.0",

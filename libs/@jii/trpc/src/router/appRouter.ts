@@ -15,15 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../procedures/init";
+import { mergeRouters, router } from "../procedures/init";
 import { authRouter } from "./routes/auth/router";
 import { staffRouter } from "./routes/staff/router";
 import { stateRouter } from "./routes/state/router";
 import { userRouter } from "./routes/user/router";
 
-export const appRouter = router({
+// routes are divided up by intended client to make the types more useful,
+// but in the end there is just one router on this server that handles both
+const opportunitiesRoutes = router({
   auth: authRouter,
   state: stateRouter,
   user: userRouter,
+});
+export type OpportunitiesRoutes = typeof opportunitiesRoutes;
+const staffRoutes = router({
   staff: staffRouter,
 });
+export type StaffRoutes = typeof staffRoutes;
+
+export const appRouter = mergeRouters(opportunitiesRoutes, staffRoutes);

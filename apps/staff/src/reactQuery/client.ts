@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,26 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
-
-import { procedurePlugin } from "~server-setup-plugin";
-
-import { createContext } from "../context";
-
-const t = initTRPC
-  .context<typeof createContext>()
-  // Required to get Date objects to serialize correctly.
-  .create({ transformer: superjson });
-
-export const router = t.router;
-
-const plugin = procedurePlugin();
+import { QueryClient } from "@tanstack/react-query";
 
 /**
- * tRPC procedure that verifies the caller has valid user credentials and is authorized
- * to communicate with this API. Extend this to add further permissions checks as necessary.
+ * This QueryClient is a singleton for the entire app
  */
-export const baseProcedure = t.procedure.concat(plugin);
-
-export const mergeRouters = t.mergeRouters;
+export const queryClient = new QueryClient();
