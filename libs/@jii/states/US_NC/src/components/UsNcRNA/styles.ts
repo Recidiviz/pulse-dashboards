@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, typography } from "@recidiviz/design-system";
+import { animation, Sans14, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
@@ -55,6 +55,8 @@ export const QuestionCard = styled(Card)<{ $invalid: boolean }>`
 `;
 
 export const QuestionCopy = styled.div``;
+
+export const QuestionExplainer = styled(Sans14)``;
 
 export const InvalidAnswerNotice = styled.span`
   color: ${palette.signal.error};

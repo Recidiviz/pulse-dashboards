@@ -23,6 +23,8 @@ const US_NC_CONFIG: TenantConfig<"US_NC"> = {
   stateCode: "NC",
   domain: "dac.nc.gov",
   DOCName: "NCDAC",
+  supervisionDisplayIdCopy: "OPUS ID",
+  facilitiesDisplayIdCopy: "OPUS ID",
   enableUserRestrictions: false,
   availableStateCodes: [US_NC],
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],

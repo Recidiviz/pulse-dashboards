@@ -28,15 +28,17 @@
 export type RNAPageId =
   | "sectionBasicNeeds"
   | "sectionAlcoholDrugs"
+  | "sectionAlcoholDrugs2"
   | "sectionChildhoodTrouble"
   | "sectionFamilyGrowingUp"
   | "sectionFamilyNow"
   | "sectionBehavior"
   | "sectionBehavior2"
+  | "sectionBehavior3"
   | "sectionFriends"
   | "sectionLifeAreas";
 
-type RNAPageSpec = {
+export type RNAPageSpec = {
   id: RNAPageId;
   questions: RNAQuestionId[];
 };
@@ -63,6 +65,11 @@ export const fullRNASpec: RNAPageSpec[] = [
       "alcoholDrugsDaysOfUse",
       "alcoholDrugsMoreThan5Drinks",
       "alcoholDrugsTimeOfOffense",
+    ],
+  },
+  {
+    id: "sectionAlcoholDrugs2",
+    questions: [
       "alcoholDrugsArguments",
       "alcoholDrugsHungOver",
       "alcoholDrugsTrouble",
@@ -106,6 +113,11 @@ export const fullRNASpec: RNAPageSpec[] = [
       "behaviorImpulsive",
       "behaviorTryGetInTrouble",
       "behaviorAngry",
+    ],
+  },
+  {
+    id: "sectionBehavior2",
+    questions: [
       "behaviorStayOutOfTrouble",
       "behaviorThinkBeforeActing",
       "behaviorLoseTemper",
@@ -114,7 +126,7 @@ export const fullRNASpec: RNAPageSpec[] = [
     ],
   },
   {
-    id: "sectionBehavior2",
+    id: "sectionBehavior3",
     questions: [
       "behaviorWorldOwesBetter",
       "behaviorGetEven",
@@ -171,10 +183,10 @@ const rnaRadioQuestionFormats = [
   "RATIO",
 ] as const;
 export type RNARadioQuestionFormat = (typeof rnaRadioQuestionFormats)[number];
-const isRNARadioFormat = (s: string): s is RNARadioQuestionFormat =>
+export const isRNARadioFormat = (s: string): s is RNARadioQuestionFormat =>
   rnaRadioQuestionFormats.includes(s as RNARadioQuestionFormat);
 
-type RNAQuestionFormat =
+export type RNAQuestionFormat =
   | RNARadioQuestionFormat
   | "SOBRIETY"
   | "DAYS_PER_WEEK_ENTRY"

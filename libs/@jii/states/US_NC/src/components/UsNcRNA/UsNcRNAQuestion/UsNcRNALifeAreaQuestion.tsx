@@ -25,6 +25,7 @@ import {
   MultipleAnswerGroup,
   MultipleAnswerOption,
   QuestionCopy,
+  QuestionExplainer,
   ShortTextEntry,
 } from "../styles";
 import {
@@ -35,7 +36,7 @@ import { RNAQuestionProps } from "./UsNcRNAQuestion";
 import { RadioButton } from "./UsNcRNARadioQuestion";
 
 const VerticalMultipleAnswerGroup = styled(MultipleAnswerGroup)`
-  flex-direction: row;
+  flex-direction: unset;
 `;
 
 const VerticalMultipleAnswerOption = styled(MultipleAnswerOption)`
@@ -76,41 +77,51 @@ export const UsNcRNALifeAreaQuestion = observer(
         {
           /* The user can either enter an answer or select yes or no. */
           placeholderText ? (
-            <ShortTextEntry
-              id={id}
-              type={"text"}
-              placeholder={placeholderText}
-              onChange={(e) => {
-                presenter.form.handleLifeAreaAnswerChange(id, {
-                  customLifeArea: e.target.value,
-                });
-              }}
-            />
+            <>
+              <QuestionExplainer>
+                {rnaLifeAreasQuestionCopy.customLifeAreaPrompt}
+              </QuestionExplainer>
+              <ShortTextEntry
+                id={id}
+                type={"text"}
+                placeholder={placeholderText}
+                onChange={(e) => {
+                  presenter.form.handleLifeAreaAnswerChange(id, {
+                    customLifeArea: e.target.value,
+                  });
+                }}
+              />
+            </>
           ) : (
-            <MultipleAnswerGroup>
-              {Object.entries(yesNoCopy).map(([value, label]) => {
-                const inputId = `${id}-${value}`;
-                // This radio button does not have checked or defaultChecked set
-                // on purpose: we restrict saving Life Area answers without fully
-                // submitting the form, so users should never see saved values here.
-                return (
-                  <MultipleAnswerOption key={value}>
-                    <RadioButton
-                      type="radio"
-                      id={inputId}
-                      name={yesNoId}
-                      value={label}
-                      onChange={(e) => {
-                        presenter.form.handleLifeAreaAnswerChange(id, {
-                          interest: e.target.value === yesNoCopy["YES"],
-                        });
-                      }}
-                    />
-                    <label htmlFor={inputId}>{label}</label>
-                  </MultipleAnswerOption>
-                );
-              })}
-            </MultipleAnswerGroup>
+            <>
+              <QuestionExplainer>
+                {rnaLifeAreasQuestionCopy.isThisAProblem}
+              </QuestionExplainer>
+              <MultipleAnswerGroup>
+                {Object.entries(yesNoCopy).map(([value, label]) => {
+                  const inputId = `${id}-${value}`;
+                  // This radio button does not have checked or defaultChecked set
+                  // on purpose: we restrict saving Life Area answers without fully
+                  // submitting the form, so users should never see saved values here.
+                  return (
+                    <MultipleAnswerOption key={value}>
+                      <RadioButton
+                        type="radio"
+                        id={inputId}
+                        name={yesNoId}
+                        value={label}
+                        onChange={(e) => {
+                          presenter.form.handleLifeAreaAnswerChange(id, {
+                            interest: e.target.value === yesNoCopy["YES"],
+                          });
+                        }}
+                      />
+                      <label htmlFor={inputId}>{label}</label>
+                    </MultipleAnswerOption>
+                  );
+                })}
+              </MultipleAnswerGroup>
+            </>
           )
         }
 
@@ -118,7 +129,7 @@ export const UsNcRNALifeAreaQuestion = observer(
           <>
             <RowDivider />
 
-            <QuestionCopy>{interestedInImproving}</QuestionCopy>
+            <QuestionExplainer>{interestedInImproving}</QuestionExplainer>
             <VerticalMultipleAnswerGroup>
               {improvementRatings.map((value) => {
                 const inputId = `${improvementRatingId}${value}`;
@@ -147,7 +158,7 @@ export const UsNcRNALifeAreaQuestion = observer(
 
             <RowDivider />
 
-            <QuestionCopy>{improvement}</QuestionCopy>
+            <QuestionExplainer>{improvement}</QuestionExplainer>
             <LongTextEntry
               placeholder={improvementPlaceholder}
               onChange={(e) => {

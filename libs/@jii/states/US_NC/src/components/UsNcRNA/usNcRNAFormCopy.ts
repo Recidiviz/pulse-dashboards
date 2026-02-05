@@ -94,6 +94,8 @@ export const rnaSobrietyAnswerCopy = {
 } as const;
 
 export const rnaLifeAreasQuestionCopy = {
+  isThisAProblem: "Is this a problem for you?",
+  customLifeAreaPrompt: "Is there another area you want to improve?",
   interestedInImproving:
     "How much are you interested in improving? (1 = Not at all, 10 = Very)",
   improvement: "What can you do to improve the situation? (optional)",
@@ -113,36 +115,45 @@ export const rnaPageCopy = {
     description:
       "Think of a typical week in your life as you answer the questions below. Select the answer that best shows what is true for you.",
   },
+  sectionAlcoholDrugs2: {
+    heading: "Section 3: Alcohol and Drugs",
+    description:
+      "Think of a typical week in your life as you answer the questions below. Select the answer that best shows what is true for you.",
+  },
   sectionChildhoodTrouble: {
-    heading: "Section 3: Your Childhood",
+    heading: "Section 4: Your Childhood",
     description:
       "Think of times before you were 15 years old when you got in trouble.",
   },
   sectionFamilyGrowingUp: {
-    heading: "Section 4: Your Family Growing Up",
+    heading: "Section 5: Your Family Growing Up",
     description:
       "Select the answer that best shows what it was like in your family when you were growing up.",
   },
   sectionFamilyNow: {
-    heading: "Section 5: Your Family Now",
+    heading: "Section 6: Your Family Now",
     description:
       "Select the answer that best shows what is true for your current family situation.",
   },
   sectionBehavior: {
-    heading: "Section 6: Your Behavior",
-    description: "Select the answer that best shows what is true for you.",
-  },
-  sectionBehavior2: {
     heading: "Section 7: Your Behavior",
     description: "Select the answer that best shows what is true for you.",
   },
+  sectionBehavior2: {
+    heading: "Section 8: Your Behavior",
+    description: "Select the answer that best shows what is true for you.",
+  },
+  sectionBehavior3: {
+    heading: "Section 9: Your Behavior",
+    description: "Select the answer that best shows what is true for you.",
+  },
   sectionFriends: {
-    heading: "Section 8: Your Friends",
+    heading: "Section 10: Your Friends",
     description:
       "Think about the friends you have now and keep them in mind when you answer the following questions.",
   },
   sectionLifeAreas: {
-    heading: "Section 9: Life Areas",
+    heading: "Section 11: Life Areas",
     description:
       "Below you will see life areas that may or may not be areas of concern to you. For each area you mark as a problem, please rate your interest in improving your situation and what you can do.",
   },
@@ -357,46 +368,46 @@ export const rnaQuestionCopy: Record<RNAQuestionId, RNAQuestionCopy> = {
   // Life Areas / Self-Assessment Survey (part 2 of the paper form)
 
   lifeAreaBehavior: {
-    question: "Is your behavior a problem for you?",
+    question: "Behavior",
   },
   lifeAreaEmployability: {
-    question: "Is your employability a problem for you?",
+    question: "Employability",
   },
   lifeAreaAlcoholDrugs: {
-    question: "Are alcohol or other drugs a problem for you?",
+    question: "Alcohol & Other Drugs",
   },
   lifeAreaEducation: {
-    question: "Is education a problem for you?",
+    question: "Education",
   },
   lifeAreaEmployment: {
-    question: "Is employment a problem for you?",
+    question: "Employment",
   },
   lifeAreaFamilyFriends: {
-    question: "Are family / friends a problem for you?",
+    question: "Family / Friends",
   },
   lifeAreaLifeSkills: {
-    question: "Are life skills a problem for you?",
+    question: "Life Skills",
   },
   lifeAreaPhysicalMedical: {
-    question: "Are physical / medical concerns a problem for you?",
+    question: "Physical / Medical",
   },
   lifeAreaMentalHealth: {
-    question: "Are mental health concerns a problem for you?",
+    question: "Mental Health",
   },
   lifeAreaFinancial: {
-    question: "Are financial matters a problem for you?",
+    question: "Financial",
   },
   lifeAreaHousing: {
-    question: "Is housing a problem for you?",
+    question: "Housing",
   },
   lifeAreaTransportation: {
-    question: "Is transportation a problem for you?",
+    question: "Transportation",
   },
   lifeAreaLegalStatus: {
-    question: "Is legal status a problem for you?",
+    question: "Legal Status",
   },
   lifeAreaCustom: {
-    question: "Any other areas you'd like to improve? (optional)",
+    question: "Other (optional)",
     placeholderText: "Another life area",
   },
 };
