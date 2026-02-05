@@ -45,7 +45,6 @@ describe("SAR router", () => {
           status: fakeSAR.status,
           requestingJudgeName: fakeSAR.requestingJudgeName,
           dateRequested: fakeSAR.dateRequested,
-          dateDueToCourt: fakeSAR.dateDueToCourt,
           division: fakeSAR.division,
           address: fakeSAR.address,
           defendantDeclinedToParticipate: false,
@@ -74,6 +73,8 @@ describe("SAR router", () => {
           homePlan: fakeSAR.homePlan,
           housingSummary: fakeSAR.housingSummary,
           drugHistorySummary: fakeSAR.drugHistorySummary,
+          priorTreatmentHistorySummary:
+            fakeSAR.priorTreatmentHistorySummary,
           peerAssociatesSummary: fakeSAR.peerAssociatesSummary,
           criminalAttitudesSummary: fakeSAR.criminalAttitudesSummary,
           responsivityAndBarriersSummary:
@@ -96,9 +97,19 @@ describe("SAR router", () => {
               "fatherName",
               "guardianName",
             ]),
+            DOCTreatmentHistories:
+              fakeSARClient.DOCTreatmentHistories.create.map(
+                ({ programCategory, programName, completedOn }) => ({
+                  programCategory,
+                  programName,
+                  completedOn,
+                }),
+              ),
           },
           charges: [],
           drugHistories: [],
+          priorTreatmentHistories: [],
+          employmentHistories: [],
         }),
       );
     });

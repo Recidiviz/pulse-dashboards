@@ -346,4 +346,33 @@ export class APIClient {
       return Promise.reject({ message: "No tRPC client initialized" });
     return this.trpcClient.sar.deleteDrugHistory.mutate(input);
   }
+
+  // Prior Treatment History CRUD methods
+  async createPriorTreatmentHistory(input: {
+    sarId: string;
+    programName?: string | null;
+    yearCompleted?: number | null;
+    verifiedByReportAuthor?: boolean | null;
+  }) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+    return this.trpcClient.sar.createPriorTreatmentHistory.mutate(input);
+  }
+
+  async updatePriorTreatmentHistory(input: {
+    id: string;
+    programName?: string | null;
+    yearCompleted?: number | null;
+    verifiedByReportAuthor?: boolean | null;
+  }) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+    return this.trpcClient.sar.updatePriorTreatmentHistory.mutate(input);
+  }
+
+  async deletePriorTreatmentHistory(input: { id: string }) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+    return this.trpcClient.sar.deletePriorTreatmentHistory.mutate(input);
+  }
 }

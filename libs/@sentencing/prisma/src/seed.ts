@@ -37,6 +37,7 @@ import {
   ReportType,
   StateCode,
   SubstanceUseDiagnosis,
+  TreatmentProgramCategory,
 } from "./client/client";
 interface Auth0TokenResponse {
   access_token: string;
@@ -224,6 +225,13 @@ async function addSARClientsAndReports(
     ]);
     const sex = gender === Gender.MALE ? "male" : "female";
 
+    const numDOCHistories = faker.number.int({ min: 0, max: 7 });
+    const DOCHistories = Array.from({ length: numDOCHistories }, () => ({
+      programCategory: faker.helpers.enumValue(TreatmentProgramCategory),
+      programName: faker.word.words({ count: { min: 1, max: 3 } }),
+      completedOn: faker.date.past(),
+    }));
+
     await prisma.client.create({
       data: {
         externalId,
@@ -239,6 +247,9 @@ async function addSARClientsAndReports(
           "Asian",
           "Native American",
         ]),
+        DOCTreatmentHistories: {
+          create: DOCHistories,
+        },
       },
       select: { externalId: true },
     });
@@ -263,7 +274,6 @@ async function addSARClientsAndReports(
         status: faker.helpers.enumValue(CaseStatus),
         requestingJudgeName: faker.person.fullName(),
         dateRequested: faker.date.recent(),
-        dateDueToCourt: faker.date.future(),
         dueDate: faker.date.future(),
         division: faker.helpers.enumValue(Division),
         address: faker.location.streetAddress(),

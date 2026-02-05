@@ -31,6 +31,7 @@ import {
   ReportType,
   StateCode,
   SubstanceUseDiagnosis,
+  TreatmentProgramCategory,
 } from "~@sentencing/prisma/client";
 import {
   CaseCreateInput,
@@ -236,6 +237,25 @@ export const fakeSARClient = {
   motherName: faker.person.fullName(),
   fatherName: faker.person.fullName(),
   guardianName: null,
+  DOCTreatmentHistories: {
+    create: [
+      {
+        programCategory: TreatmentProgramCategory.CommunityTreatment,
+        programName: "Substance Abuse Treatment Program",
+        completedOn: faker.date.past(),
+      },
+      {
+        programCategory: TreatmentProgramCategory.EducationProgram,
+        programName: "GED Preparation Course",
+        completedOn: faker.date.past(),
+      },
+      {
+        programCategory: TreatmentProgramCategory.CommunityTreatment,
+        programName: "Anger Management Program",
+        completedOn: faker.date.past(),
+      },
+    ],
+  },
 } satisfies ClientCreateInput;
 
 export const fakeSARStaff = {
@@ -257,7 +277,6 @@ export const fakeSAR = {
   status: CaseStatus.InProgress,
   requestingJudgeName: faker.person.fullName(),
   dateRequested: faker.date.recent(),
-  dateDueToCourt: faker.date.future(),
   dueDate: faker.date.future(),
   division: Division.Criminal,
   address: faker.location.streetAddress(),
@@ -303,6 +322,7 @@ export const fakeSAR = {
   responsivityAndBarriersSummary: faker.lorem.paragraph(),
   communityStrategyRecommendation: faker.lorem.paragraph(),
   institutionalStrategyRecommendation: faker.lorem.paragraph(),
+  priorTreatmentHistorySummary: faker.lorem.paragraph(),
 };
 
 export const fakeRecidivismSeries = createFakeRecidivismSeries();

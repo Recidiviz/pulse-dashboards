@@ -49,6 +49,7 @@ export type UpsertSARInput = Pick<
   | "peerAssociatesSummary"
   | "criminalAttitudesSummary"
   | "responsivityAndBarriersSummary"
+  | "priorTreatmentHistorySummary"
   | "communityStrategyRecommendation"
   | "institutionalStrategyRecommendation"
 > & {

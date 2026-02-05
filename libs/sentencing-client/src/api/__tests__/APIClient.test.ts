@@ -19,7 +19,7 @@ import { createTRPCClient } from "@trpc/client";
 import { beforeEach, expect, Mock, vi } from "vitest";
 
 import { createMockSentencingStore } from "../../utils/test";
-import { APIClient, tRPCClient } from "../APIClient";
+import { APIClient } from "../APIClient";
 import { CaseDetailsFixture, StaffInfoFixture } from "../offlineFixtures";
 
 vi.mock("@trpc/client", () => ({
@@ -28,13 +28,13 @@ vi.mock("@trpc/client", () => ({
 }));
 
 const sentencingStore = createMockSentencingStore();
-let mockTRPCClient: tRPCClient;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let mockTRPCClient: any;
 let apiClient: APIClient;
 const caseId = Object.keys(CaseDetailsFixture)[0];
 
 beforeEach(() => {
   // update to TRPC v11 broke the typing for this mock and it's not worth the effort to fix it. In an ideal world we would be using msw-trpc for mocking out requests
-  // @ts-expect-error mockTRPCClient is a loose mock for testing purposes
   mockTRPCClient = {
     staff: {
       getStaff: {
@@ -75,6 +75,15 @@ beforeEach(() => {
         mutate: vi.fn(),
       },
       deleteDrugHistory: {
+        mutate: vi.fn(),
+      },
+      createPriorTreatmentHistory: {
+        mutate: vi.fn(),
+      },
+      updatePriorTreatmentHistory: {
+        mutate: vi.fn(),
+      },
+      deletePriorTreatmentHistory: {
         mutate: vi.fn(),
       },
     },

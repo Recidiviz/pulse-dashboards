@@ -24,12 +24,15 @@ import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
   createDrugHistorySchema,
   createEmploymentHistorySchema,
+  createPriorTreatmentHistorySchema,
   deleteDrugHistorySchema,
   deleteEmploymentHistorySchema,
+  deletePriorTreatmentHistorySchema,
   getSARByIDInputSchema,
   getSARsForStaffInputSchema,
   updateDrugHistorySchema,
   updateEmploymentHistorySchema,
+  updatePriorTreatmentHistorySchema,
   updateSARSchema,
 } from "~@sentencing/trpc/routes/sar/sar.schema";
 
@@ -76,6 +79,13 @@ export const sarRouter = router({
               sentencingAssessmentReportId: true,
             },
           },
+          priorTreatmentHistories: {
+            omit: {
+              createdAt: true,
+              updatedAt: true,
+              sentencingAssessmentReportId: true,
+            },
+          },
           client: {
             select: {
               fullName: true,
@@ -87,6 +97,14 @@ export const sarRouter = router({
               motherName: true,
               fatherName: true,
               guardianName: true,
+              DOCTreatmentHistories: {
+                omit: {
+                  id: true,
+                  createdAt: true,
+                  updatedAt: true,
+                  clientExternalId: true,
+                },
+              },
             },
           },
         },
@@ -118,8 +136,8 @@ export const sarRouter = router({
         select: {
           id: true,
           externalId: true,
-          dueDate: true,
           status: true,
+          dueDate: true,
           client: {
             select: {
               externalId: true,
@@ -133,13 +151,8 @@ export const sarRouter = router({
     .input(updateSARSchema)
     .mutation(async ({ input: { id, attributes }, ctx: { prisma } }) => {
       try {
-        const {
-          ssn,
-          motherName,
-          fatherName,
-          guardianName,
-          charges,
-        } = attributes;
+        const { ssn, motherName, fatherName, guardianName, charges } =
+          attributes;
 
         const updateData: Prisma.SentencingAssessmentReportUpdateInput = {
           ..._.omit(attributes, [
@@ -305,6 +318,58 @@ export const sarRouter = router({
         handlePrismaError(
           e,
           "Substance use history record with that id was not found",
+        );
+      }
+    }),
+
+  // Prior Treatment History CRUD mutations
+  createPriorTreatmentHistory: baseProcedure
+    .input(createPriorTreatmentHistorySchema)
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      try {
+        const { sarId, ...data } = input;
+        return await prisma.priorTreatmentHistory.create({
+          data: {
+            ...data,
+            sentencingAssessmentReportId: sarId,
+          },
+        });
+      } catch (e) {
+        handlePrismaError(
+          e,
+          "Sentencing Assessment Report with that id was not found",
+        );
+      }
+    }),
+
+  updatePriorTreatmentHistory: baseProcedure
+    .input(updatePriorTreatmentHistorySchema)
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      try {
+        const { id, ...data } = input;
+        return await prisma.priorTreatmentHistory.update({
+          where: { id },
+          data,
+        });
+      } catch (e) {
+        handlePrismaError(
+          e,
+          "Prior treatment history record with that id was not found",
+        );
+      }
+    }),
+
+  deletePriorTreatmentHistory: baseProcedure
+    .input(deletePriorTreatmentHistorySchema)
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      try {
+        return await prisma.priorTreatmentHistory.delete({
+          where: { id: input.id },
+        });
+      } catch (e) {
+        handlePrismaError(
+          e,
+          "Prior treatment history record with that id was not found",
         );
       }
     }),

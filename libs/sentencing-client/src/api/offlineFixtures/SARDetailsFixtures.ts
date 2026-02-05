@@ -39,6 +39,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
       motherName: null,
       fatherName: null,
       guardianName: null,
+      DOCTreatmentHistories: [],
     },
     age,
     charges: [
@@ -61,6 +62,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     ],
     drugHistories: [],
     employmentHistories: [],
+    priorTreatmentHistories: [],
 
     status: "InProgress",
     needsToBeAddressed: [],
@@ -72,7 +74,6 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     victimImpactStatement: null,
     requestingJudgeName: null,
     dateRequested: null,
-    dateDueToCourt: null,
     division: null,
     address: null,
 
@@ -107,6 +108,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     responsivityAndBarriersSummary: null,
     communityStrategyRecommendation: null,
     institutionalStrategyRecommendation: null,
+    priorTreatmentHistorySummary: null,
 
     // Metadata
     metadata: {},

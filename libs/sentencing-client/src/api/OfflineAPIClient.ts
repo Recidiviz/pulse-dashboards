@@ -167,4 +167,32 @@ export class OfflineAPIClient {
   async deleteDrugHistory(_input: { id: string }) {
     // No-op for offline mode
   }
+
+  // Prior Treatment History CRUD stubs for offline mode
+  async createPriorTreatmentHistory(input: {
+    sarId: string;
+    programName?: string | null;
+    yearCompleted?: number | null;
+    verifiedByReportAuthor?: boolean | null;
+  }) {
+    return {
+      id: `offline-${Date.now()}`,
+      programName: input.programName ?? null,
+      yearCompleted: input.yearCompleted ?? null,
+      verifiedByReportAuthor: input.verifiedByReportAuthor ?? null,
+    };
+  }
+
+  async updatePriorTreatmentHistory(_input: {
+    id: string;
+    programName?: string | null;
+    yearCompleted?: number | null;
+    verifiedByReportAuthor?: boolean | null;
+  }) {
+    // No-op for offline mode
+  }
+
+  async deletePriorTreatmentHistory(_input: { id: string }) {
+    // No-op for offline mode
+  }
 }

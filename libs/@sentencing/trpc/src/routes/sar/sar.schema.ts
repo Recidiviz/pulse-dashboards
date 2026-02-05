@@ -106,6 +106,7 @@ export const updateSARSchema = z.object({
     peerAssociatesSummary: z.string().nullable().optional(),
     criminalAttitudesSummary: z.string().nullable().optional(),
     responsivityAndBarriersSummary: z.string().nullable().optional(),
+    priorTreatmentHistorySummary: z.string().nullable().optional(),
     communityStrategyRecommendation: z.string().nullable().optional(),
     institutionalStrategyRecommendation: z.string().nullable().optional(),
     metadata: SARMetadataSchema.optional(),
@@ -153,5 +154,24 @@ export const updateDrugHistorySchema = z.object({
 });
 
 export const deleteDrugHistorySchema = z.object({
+  id: z.string(),
+});
+
+// Prior Treatment History CRUD schemas
+export const createPriorTreatmentHistorySchema = z.object({
+  sarId: z.string(),
+  programName: z.string().nullable().optional(),
+  yearCompleted: z.number().int().nullable().optional(),
+  verifiedByReportAuthor: z.boolean().nullable().optional(),
+});
+
+export const updatePriorTreatmentHistorySchema = z.object({
+  id: z.string(),
+  programName: z.string().nullable().optional(),
+  yearCompleted: z.number().int().nullable().optional(),
+  verifiedByReportAuthor: z.boolean().nullable().optional(),
+});
+
+export const deletePriorTreatmentHistorySchema = z.object({
   id: z.string(),
 });

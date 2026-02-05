@@ -124,6 +124,7 @@ model Client {
   motherName   String?
   fatherName   String?
   guardianName String?
+  DOCTreatmentHistories DOCTreatmentHistory[]
 }
 
 enum ReportType {
@@ -288,6 +289,12 @@ enum LevelOfEducation {
   BachelorsDegree
   MastersDegree
   DoctorateDegree
+}
+
+enum TreatmentProgramCategory {
+  CommunityTreatment
+  EducationProgram
+  CognitiveProgram
 }
 
 enum AssessmentType {
@@ -582,7 +589,6 @@ model SentencingAssessmentReport {
   // Basic case information
   requestingJudgeName String?   // Judge who requested the report
   dateRequested       DateTime? // When the report was requested
-  dateDueToCourt      DateTime? // Deadline for the report
   division            Division?
   address             String?
   defendantDeclinedToParticipate Boolean @default(false)
@@ -626,11 +632,14 @@ model SentencingAssessmentReport {
   responsivityAndBarriersSummary String?
   communityStrategyRecommendation String?
   institutionalStrategyRecommendation String?
+  priorTreatmentHistorySummary  String?
 
   // Relationships
   charges      Charge[]
   drugHistories DrugHistory[]
   employmentHistories EmploymentHistory[]
+  priorTreatmentHistories PriorTreatmentHistory[]
+
 
   // Metadata stored as JSON
   // Tracks form completion state including:
@@ -697,4 +706,31 @@ model EmploymentHistory {
   startDate               DateTime?
   endDate                 DateTime?
   verifiedByReportAuthor  Boolean?
+}
+
+
+model PriorTreatmentHistory {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  sentencingAssessmentReport   SentencingAssessmentReport @relation(fields: [sentencingAssessmentReportId], references: [id], onDelete: Cascade)
+  sentencingAssessmentReportId String
+
+  programName            String?
+  yearCompleted          Int?
+  verifiedByReportAuthor Boolean?
+}
+
+model DOCTreatmentHistory {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  client   Client @relation(fields: [clientExternalId], references: [externalId], onDelete: Cascade)
+  clientExternalId String
+
+  programCategory           TreatmentProgramCategory?
+  programName               String?
+  completedOn               DateTime? 
 }
