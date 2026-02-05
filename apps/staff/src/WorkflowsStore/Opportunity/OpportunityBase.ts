@@ -292,7 +292,7 @@ export class OpportunityBase<
   }
 
   get denial(): Denial | undefined {
-    if (this.updates?.denial?.reasons.length) {
+    if (this.updates?.denial?.reasons?.length) {
       return this.updates?.denial;
     }
   }
