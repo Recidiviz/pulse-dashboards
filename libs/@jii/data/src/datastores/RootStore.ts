@@ -19,6 +19,7 @@ import { captureException } from "@sentry/react";
 import { makeObservable, onReactionError } from "mobx";
 
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
+import { FirebaseAuthClient } from "~firebase-auth";
 import { FlowMethod } from "~hydration-utils";
 
 import { ApiClient } from "../apis/data/ApiClient";
@@ -26,7 +27,6 @@ import { DataAPI } from "../apis/data/interface";
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
 import { StateCode } from "../configs/types";
 import { proxyHost } from "../utils/proxy";
-import { FirebaseStore } from "./FirebaseStore";
 import { LoginConfigStore } from "./LoginConfigStore";
 import { ResidentsStore } from "./ResidentsStore";
 import { TranslationStore } from "./TranslationStore";
@@ -55,7 +55,7 @@ export class RootStore {
 
   translationStore: TranslationStore;
 
-  firebaseStore: FirebaseStore;
+  firebaseAuthClient: FirebaseAuthClient;
 
   constructor() {
     makeObservable(this, {
@@ -65,7 +65,7 @@ export class RootStore {
 
     this.translationStore = new TranslationStore(this);
 
-    this.firebaseStore = new FirebaseStore(
+    this.firebaseAuthClient = new FirebaseAuthClient(
       import.meta.env["VITE_FIRESTORE_PROJECT"],
       import.meta.env["VITE_FIRESTORE_API_KEY"],
       proxyHost(),
@@ -108,8 +108,8 @@ export class RootStore {
         get config() {
           return store.residentsStore?.config;
         },
-        get firebaseStore() {
-          return store.firebaseStore;
+        get firebaseAuthClient() {
+          return store.firebaseAuthClient;
         },
       };
 

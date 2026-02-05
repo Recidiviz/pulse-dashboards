@@ -16,12 +16,6 @@
 // =============================================================================
 
 import { startOfToday } from "date-fns";
-import { FirebaseApp, initializeApp } from "firebase/app";
-import {
-  connectAuthEmulator,
-  getAuth,
-  signInWithCustomToken,
-} from "firebase/auth";
 import {
   and,
   collection,
@@ -90,40 +84,17 @@ import {
   UsTnExpirationOpportunityUpdate,
 } from "./types";
 
-function getFirestoreProjectId() {
-  const projectId = import.meta.env.VITE_FIREBASE_BACKEND_PROJECT;
-  const testEnv = import.meta.env.VITE_TEST_ENV;
-  // Avoid connection attempts to firestore emulator in tests
-  if (testEnv) return "test";
-
-  // default to offline mode when missing configuration (e.g. in unit tests)
-  if (isOfflineMode() || !projectId) {
-    // demo-* is the Firebase magic word for a dummy project
-    return "demo-dev";
-  }
-
-  return projectId;
-}
-
-const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
-
 export default class FirestoreStore {
   rootStore;
-
-  app: FirebaseApp;
-
-  projectId: string = getFirestoreProjectId();
 
   private db: Firestore;
 
   constructor({ rootStore }: { rootStore: typeof RootStore }) {
-    makeAutoObservable(this, { useOfflineFirestore: false });
+    makeAutoObservable(this, { useOfflineFirestore: false, rootStore: false });
 
     this.rootStore = rootStore;
 
-    this.app = initializeApp({ projectId: this.projectId, apiKey });
-
-    this.db = getFirestore(this.app);
+    this.db = getFirestore(this.rootStore.firebaseAuthClient.app);
 
     if (this.useOfflineFirestore) {
       connectFirestoreEmulator(this.db, "localhost", 8080);
@@ -132,7 +103,7 @@ export default class FirestoreStore {
 
   get useOfflineFirestore() {
     // demo- is a Firebase-reserved prefix that will only work with local emulators
-    return this.projectId.startsWith("demo-");
+    return this.rootStore.firebaseAuthClient.projectId.startsWith("demo-");
   }
 
   /* Authenticate with Firebase for users with access to workflows */
@@ -140,7 +111,7 @@ export default class FirestoreStore {
     auth0Token: string,
     appMetadata: UserAppMetadata,
     impersonatedEmail?: string,
-  ): Promise<ReturnType<typeof signInWithCustomToken> | undefined> {
+  ): Promise<void> {
     const shouldGenerateToken =
       appMetadata.stateCode === "recidiviz" ||
       isOfflineMode() ||
@@ -168,11 +139,10 @@ export default class FirestoreStore {
         );
       }
 
-      const auth = getAuth(this.app);
-      if (this.useOfflineFirestore) {
-        connectAuthEmulator(auth, "http://localhost:9099");
-      }
-      return signInWithCustomToken(auth, firebaseToken);
+      await this.rootStore.firebaseAuthClient.authenticate(
+        firebaseToken,
+        this.useOfflineFirestore ? "http://localhost:9099" : undefined,
+      );
     }
   }
 

@@ -20,10 +20,10 @@ import { FirebaseApp } from "firebase/app";
 import { z } from "zod";
 
 import { usAzResidents, usMeSccpFixtures } from "~datatypes";
+import { FirebaseAuthClient } from "~firebase-auth";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
-import { FirebaseStore } from "../../datastores/FirebaseStore";
 import { proxyHost } from "../../utils/proxy";
 import type { AuthManager } from "../auth/AuthManager";
 import { ApiClient } from "./ApiClient";
@@ -35,10 +35,10 @@ let client: ApiClient;
 const getFirebaseTokenMock = vi.fn();
 const authenticateMock = vi.fn();
 const mockFirebaseApp = {} as FirebaseApp;
-const mockFirebaseStore = {
+const mockFirebaseAuthClient = {
   app: mockFirebaseApp,
   authenticate: authenticateMock,
-} as unknown as FirebaseStore;
+} as unknown as FirebaseAuthClient;
 
 const stateCodeMock = "US_AZ";
 
@@ -51,7 +51,7 @@ beforeEach(() => {
       isDemoUser: false,
     } as unknown as AuthManager,
     config: residentsConfigByState.US_AZ,
-    firebaseStore: mockFirebaseStore,
+    firebaseAuthClient: mockFirebaseAuthClient,
   });
 });
 
@@ -197,7 +197,7 @@ test("with proxy option", () => {
       isDemoUser: false,
     } as unknown as AuthManager,
     config: residentsConfigByState.US_AZ,
-    firebaseStore: mockFirebaseStore,
+    firebaseAuthClient: mockFirebaseAuthClient,
   });
 
   expect(FirestoreAPIClient).toHaveBeenLastCalledWith(

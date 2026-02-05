@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { connectAuthEmulator } from "firebase/auth";
 import {
   deleteField,
   doc,
@@ -43,7 +42,6 @@ import {
   SupervisionTaskUpdate,
 } from "../types";
 
-vi.mock("firebase/auth");
 vi.mock("firebase/firestore");
 vi.mock("~client-env-utils");
 
@@ -56,7 +54,6 @@ const { VITE_TEST_ENV } = vi.hoisted(() => {
 });
 
 const mockFetchFirebaseToken = fetchFirebaseToken as Mock;
-const mockConnectAuthEmulator = connectAuthEmulator as Mock;
 const mockSetDoc = setDoc as Mock;
 const mockDoc = doc as Mock;
 const mockDeleteField = deleteField as Mock;
@@ -96,6 +93,10 @@ describe("FirestoreStore", () => {
       userStore: { user: { email: "user@domain.gov" } },
       tenantStore: {
         currentTenantId: "us_ca",
+      },
+      firebaseAuthClient: {
+        authenticate: vi.fn(),
+        projectId: "real-project",
       },
     } as unknown as RootStore;
     store = new FirestoreStore({ rootStore: mockRootStore });
@@ -170,15 +171,38 @@ describe("FirestoreStore", () => {
       expect(mockFetchFirebaseToken).toBeCalled();
     });
 
-    test("Should call connectAuthEmulator for offline user", async () => {
+    test("should auth via FirebaseAuthClient", async () => {
+      const auth0Token = "token123";
+      const appMetadata: UserAppMetadata = {
+        stateCode: "us_nd",
+        routes: {
+          workflowsSupervision: true,
+        },
+      };
+      const mockFbToken = "fake-firebase-token";
+      mockFetchFirebaseToken.mockResolvedValue(mockFbToken);
+      await store.authenticate(auth0Token, appMetadata);
+      expect(
+        mockRootStore.firebaseAuthClient.authenticate,
+      ).toHaveBeenCalledWith(mockFbToken, undefined);
+    });
+
+    test("Should auth to emulator for offline user", async () => {
       const isOfflineModeMock = isOfflineMode as Mock;
       isOfflineModeMock.mockReturnValue(true);
       const auth0Token = "token123";
       const appMetadata: UserAppMetadata = {
         stateCode: "us_ca",
       };
+      const mockFbToken = "fake-firebase-token";
+      mockFetchFirebaseToken.mockResolvedValue(mockFbToken);
+      // we'll be using a fake project id in offline mode,
+      // in Firebase these always start with "demo"
+      mockRootStore.firebaseAuthClient.projectId = "demo-test";
       await store.authenticate(auth0Token, appMetadata);
-      expect(mockConnectAuthEmulator).toBeCalled();
+      expect(
+        mockRootStore.firebaseAuthClient.authenticate,
+      ).toHaveBeenCalledWith(mockFbToken, "http://localhost:9099");
     });
   });
 

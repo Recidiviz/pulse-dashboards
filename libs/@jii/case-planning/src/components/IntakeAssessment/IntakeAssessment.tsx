@@ -58,10 +58,10 @@ const ManagedComponent: FC<{ presenter: IntakeAssessmentPresenter }> = observer(
 );
 
 function usePresenter() {
-  const { firebaseStore, userStore } = useRootStore();
+  const { firebaseAuthClient, userStore } = useRootStore();
   const { resident } = useSingleResidentContext();
 
-  return new IntakeAssessmentPresenter(firebaseStore, userStore, resident);
+  return new IntakeAssessmentPresenter(firebaseAuthClient, userStore, resident);
 }
 
 export const IntakeAssessment = withPresenterManager({

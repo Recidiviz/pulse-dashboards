@@ -15,32 +15,49 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FirebaseApp, initializeApp } from "firebase/app";
-import { getAuth, getIdToken, signInWithCustomToken } from "firebase/auth";
+import { FirebaseApp, getApps, initializeApp } from "firebase/app";
+import {
+  Auth,
+  connectAuthEmulator,
+  getAuth,
+  getIdToken,
+  signInWithCustomToken,
+} from "firebase/auth";
 
-export class FirebaseStore {
-  app: FirebaseApp;
-
+export class FirebaseAuthClient {
   constructor(
-    projectId: string,
-    apiKey: string,
+    public projectId: string,
+    private apiKey: string,
     private proxyHost?: string,
-  ) {
-    this.app = initializeApp({ projectId, apiKey });
+  ) {}
+
+  get app(): FirebaseApp {
+    return (
+      getApps()[0] ??
+      initializeApp({ projectId: this.projectId, apiKey: this.apiKey })
+    );
   }
 
-  get auth() {
+  get auth(): Auth {
     return getAuth(this.app);
   }
 
-  async authenticate(firebaseToken: string) {
-    const auth = this.auth;
+  /**
+   * Signs into Firebase with a custom token
+   * @param firebaseToken the custom token, obtained from the backend of your current app
+   * @param emulatorUrl pass this to connect Firebase to a local emulator instead of the live service
+   */
+  async authenticate(firebaseToken: string, emulatorUrl?: string) {
+    const { auth } = this;
     if (this.proxyHost) {
       // there seems to be no documented API for changing this config,
       // but editing it directly works! Only making the overrides necessary
       // to support custom token logins, not every possible API call
       auth.config.apiHost = `${this.proxyHost}/gcp-identitytoolkit`;
       auth.config.tokenApiHost = `${this.proxyHost}/gcp-securetoken`;
+    }
+    if (emulatorUrl) {
+      connectAuthEmulator(auth, emulatorUrl);
     }
     await signInWithCustomToken(auth, firebaseToken);
   }

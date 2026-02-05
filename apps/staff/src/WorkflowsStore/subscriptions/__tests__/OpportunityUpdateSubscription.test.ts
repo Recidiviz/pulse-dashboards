@@ -31,6 +31,7 @@ const mockRef = vi.fn() as unknown as DocumentReference;
 const firestoreStoreMock = new FirestoreStore({
   rootStore: {
     isImpersonating: false,
+    firebaseAuthClient: { app: {}, projectId: "test" },
   } as unknown as typeof RootStore,
 });
 const getDocMock = getDoc as Mock;

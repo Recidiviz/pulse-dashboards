@@ -15,21 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FirebaseStore, UserStore } from "~@jii/data";
+import { UserStore } from "~@jii/data";
 import { ResidentRecord } from "~datatypes";
+import { FirebaseAuthClient } from "~firebase-auth";
 
 import { IntakeAssessmentPresenter } from "./IntakeAssessmentPresenter";
 
-let mockFirebaseStore: FirebaseStore;
+let mockFirebaseAuthClient: FirebaseAuthClient;
 let mockUserStore: UserStore;
 let mockResident: ResidentRecord;
 
 beforeEach(() => {
   window.sessionStorage.clear();
 
-  mockFirebaseStore = {
+  mockFirebaseAuthClient = {
     getIdToken: vi.fn().mockResolvedValue("mock-firebase-token"),
-  } as unknown as FirebaseStore;
+  } as unknown as FirebaseAuthClient;
 
   mockUserStore = {
     hasPermission: vi.fn().mockReturnValue(false),
@@ -42,7 +43,7 @@ beforeEach(() => {
 
 test("no token", () => {
   const presenter = new IntakeAssessmentPresenter(
-    mockFirebaseStore,
+    mockFirebaseAuthClient,
     mockUserStore,
     mockResident,
   );
@@ -54,7 +55,7 @@ test("with token", () => {
   window.sessionStorage.setItem("intake_token", "foobar");
 
   const presenter = new IntakeAssessmentPresenter(
-    mockFirebaseStore,
+    mockFirebaseAuthClient,
     mockUserStore,
     mockResident,
   );
@@ -64,7 +65,7 @@ test("with token", () => {
 
 test("a new token appears", () => {
   const presenter = new IntakeAssessmentPresenter(
-    mockFirebaseStore,
+    mockFirebaseAuthClient,
     mockUserStore,
     mockResident,
   );

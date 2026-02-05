@@ -25,7 +25,9 @@ import { CollectionDocumentSubscription } from "../CollectionDocumentSubscriptio
 vi.mock("firebase/firestore");
 
 const firestoreStoreMock = new FirestoreStore({
-  rootStore: vi.fn() as unknown as RootStore,
+  rootStore: {
+    firebaseAuthClient: { app: {}, projectId: "test" },
+  } as unknown as RootStore,
 });
 const docMock = vi.mocked(doc);
 const mockRef = vi.fn() as unknown as DocumentReference;

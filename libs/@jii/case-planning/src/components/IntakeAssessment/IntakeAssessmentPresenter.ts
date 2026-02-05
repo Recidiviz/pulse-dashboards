@@ -17,9 +17,10 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { FirebaseStore, UserStore } from "~@jii/data";
+import { UserStore } from "~@jii/data";
 import { getUserFacingErrorMessage } from "~@reentry/frontend-shared";
 import { ResidentRecord } from "~datatypes";
+import { FirebaseAuthClient } from "~firebase-auth";
 import { Hydratable, HydrationState } from "~hydration-utils";
 
 import {
@@ -33,7 +34,7 @@ export class IntakeAssessmentPresenter implements Hydratable {
   private hasAttemptedBackendVerification = false;
 
   constructor(
-    private readonly firebaseStore: FirebaseStore,
+    private readonly firebaseAuthClient: FirebaseAuthClient,
     private readonly userStore: UserStore,
     private readonly resident: ResidentRecord,
   ) {
@@ -44,7 +45,7 @@ export class IntakeAssessmentPresenter implements Hydratable {
 
   async hydrate() {
     try {
-      const firebaseIdToken = await this.firebaseStore.getIdToken();
+      const firebaseIdToken = await this.firebaseAuthClient.getIdToken();
 
       if (!firebaseIdToken) {
         throw new Error(

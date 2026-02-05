@@ -21,6 +21,7 @@ import { computed, configure, makeObservable, onReactionError } from "mobx";
 
 import { CPAStore } from "~@cpa/staff-client";
 import { isTestEnv } from "~client-env-utils";
+import { FirebaseAuthClient } from "~firebase-auth";
 import { SentencingStore } from "~sentencing-client";
 import {
   demoAuthConfig,
@@ -33,6 +34,7 @@ import TasksFilterStore from "../FilterStore/TasksFilterStore";
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
 import { TENANT_CONFIGS } from "../tenants";
+import { getFirestoreProjectId } from "../utils/getFirestoreProjectId";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { WorkflowsRootStore } from "../WorkflowsStore/WorkflowsRootStore";
 import AnalyticsStore from "./AnalyticsStore";
@@ -120,6 +122,8 @@ export class RootStore {
 
   cpaStore: CPAStore;
 
+  firebaseAuthClient: FirebaseAuthClient;
+
   constructor() {
     makeObservable(this, {
       currentTenantId: computed,
@@ -149,6 +153,11 @@ export class RootStore {
       rootStore: this,
       isTestMode: isTestEnv(),
     });
+
+    this.firebaseAuthClient = new FirebaseAuthClient(
+      getFirestoreProjectId(),
+      import.meta.env.VITE_FIREBASE_API_KEY,
+    );
 
     this.firestoreStore = new FirestoreStore({ rootStore: this });
 

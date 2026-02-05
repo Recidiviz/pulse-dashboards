@@ -127,6 +127,7 @@
       ],
       "~datatypes": ["libs/datatypes/src/index.ts"],
       "~design-system": ["libs/design-system/src/index.ts"],
+      "~firebase-auth": ["libs/firebase-auth/src/index.ts"],
       "~firestore-api": ["libs/firestore-api/src/index.ts"],
       "~firestore-config": ["libs/firestore-config/src/index.ts"],
       "~fixture-generator": ["libs/fixture-generator/src/index.ts"],

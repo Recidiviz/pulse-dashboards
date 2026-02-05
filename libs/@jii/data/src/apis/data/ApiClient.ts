@@ -20,6 +20,7 @@ import { makeObservable, when } from "mobx";
 import { ILazyObservable, lazyObservable } from "mobx-utils";
 
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
+import { FirebaseAuthClient } from "~firebase-auth";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentOpportunitySchemas } from "../../configs/residentsOpportunitySchemas";
@@ -28,7 +29,6 @@ import {
   ResidentsConfig,
   StateCode,
 } from "../../configs/types";
-import { FirebaseStore } from "../../datastores/FirebaseStore";
 import { proxyHost } from "../../utils/proxy";
 import { AuthManager } from "../auth/AuthManager";
 import { DataAPI } from "./interface";
@@ -45,13 +45,13 @@ export class ApiClient implements DataAPI {
     private externals: {
       authManager: AuthManager;
       config?: ResidentsConfig;
-      firebaseStore: FirebaseStore;
+      firebaseAuthClient: FirebaseAuthClient;
     },
   ) {
     makeObservable<this, "isAuthenticated">(this, { isAuthenticated: true });
 
     this.firestoreClient = new FirestoreAPIClient(
-      this.externals.firebaseStore.app,
+      this.externals.firebaseAuthClient.app,
       () => this.externals.authManager.isDemoUser,
       proxyHost(),
     );
@@ -64,13 +64,13 @@ export class ApiClient implements DataAPI {
       // otherwise this would result in an error being thrown
       const firebaseToken = await this.externals.authManager.getFirebaseToken();
 
-      await this.externals.firebaseStore.authenticate(firebaseToken);
+      await this.externals.firebaseAuthClient.authenticate(firebaseToken);
       updateValue(true);
     }, false);
   }
 
   getApiToken(): Promise<string> {
-    return this.externals.firebaseStore.getIdToken();
+    return this.externals.firebaseAuthClient.getIdToken();
   }
 
   get isAuthenticated() {
