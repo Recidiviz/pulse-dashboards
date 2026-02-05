@@ -28,7 +28,7 @@ exports.onExecutePostLogin = async (event, api) => {
   const emailAddress = event.user.email?.toLowerCase();
 
   if (
-    event.user.app_metatata?.doNotSyncProfile ||
+    event.user.app_metadata?.doNotSyncProfile ||
     emailAddress?.endsWith("@recidiviz-test.org")
   ) {
     // Do not sync profile for test users or users flagged manually
