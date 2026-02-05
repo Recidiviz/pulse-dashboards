@@ -20,11 +20,13 @@ import { z } from "zod";
 import { ParsedRecord } from "../../../utils/types";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import {
+  coverSheetInformationSchema,
   q1Notes,
   q2Notes,
   singleIncidentPeriodReportSchema,
   TrusteeFormSchema,
   trusteeFormSchema,
+  UsTnCoverSheetSharedDraftData,
 } from "../utils";
 
 export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
@@ -60,6 +62,7 @@ export const usTnInitialClassification2026Schema = opportunitySchemaBase.extend(
         q5Notes: singleIncidentPeriodReportSchema,
       })
       .merge(trusteeFormSchema)
+      .merge(coverSheetInformationSchema)
       .passthrough(),
   },
 );
@@ -70,6 +73,7 @@ export type UsTnInitialClassification2026ReferralRecord = ParsedRecord<
 
 export type UsTnInitialClassification2026DraftData =
   UsTnInitialClassification2026ReferralRecord["output"]["formInformation"] &
+    UsTnCoverSheetSharedDraftData &
     TrusteeFormSchema & {
       q1Selection: number;
       q2Selection: number;

@@ -21,6 +21,7 @@ import {
   getSingleSectionQuestionIndex,
   getSingleSectionQuestionScore,
 } from "../../../core/Paperwork/US_TN/common/ScoredAssessmentQuestion";
+import { prefilledCoverSheetData } from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
 import { assessmentQuestions } from "../../../core/Paperwork/US_TN/UsTnDiangosticClassification2026/assessmentQuestions";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { UsTnInitialClassification2026Opportunity } from "../UsTn";
@@ -38,7 +39,9 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
 
   prefilledDataTransformer() {
     const {
+      opportunity,
       opportunity: {
+        person,
         record: { formInformation },
       },
     } = this;
@@ -79,8 +82,15 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
     const q1bNotes =
       formInformation.q1Notes.listPriorViolentTdocConvictions60Months;
 
+    const coverData = prefilledCoverSheetData(
+      person,
+      opportunity.type,
+      formInformation,
+    );
+
     return {
       ...formInformation,
+      ...coverData,
       q1Selection,
       q2Selection,
       q3Selection,

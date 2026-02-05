@@ -17,7 +17,7 @@
 
 import { relativeFixtureDate } from "~datatypes";
 
-import { UsTnCustodyLevelDowngradeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn";
+import { UsTnCustodyLevelDowngradeReferralRecordRaw } from "../../src/WorkflowsStore";
 import { fixtureWithIdKey } from "./utils";
 
 export const usTnCustodyLevelDowngradeFixture =
@@ -41,7 +41,6 @@ export const usTnCustodyLevelDowngradeFixture =
       ineligibleCriteria: {},
       formInformation: {
         activeRecommendations: [],
-        classificationType: "SPECIAL",
         hasIncompatibles: false,
         incompatibleArray: [],
         lastCafDate: relativeFixtureDate({ months: -11, days: -11 }),
@@ -49,7 +48,6 @@ export const usTnCustodyLevelDowngradeFixture =
         latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
         latestVantageRiskLevel: "LOW",
         levelOfCare: "LVL1",
-        sentenceEffectiveDate: relativeFixtureDate({ years: -2, days: -200 }),
         sentenceReleaseEligibilityDate: relativeFixtureDate({ years: 1 }),
         sentenceExpirationDate: relativeFixtureDate({ years: 3, days: 300 }),
         statusAtHearingSeg: "GEN",
@@ -106,7 +104,6 @@ export const usTnCustodyLevelDowngradeFixture =
       formInformation: {
         activeRecommendations: [],
         currentOffenses: ["THEFT OF PROPERTY"],
-        classificationType: "SPECIAL",
         hasIncompatibles: false,
         incompatibleArray: [],
         lastCafDate: relativeFixtureDate({ years: -1, months: -5 }),
@@ -114,7 +111,6 @@ export const usTnCustodyLevelDowngradeFixture =
         latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
         latestVantageRiskLevel: "LOW",
         levelOfCare: "LVL1",
-        sentenceEffectiveDate: relativeFixtureDate({ years: -4, days: -400 }),
         sentenceReleaseEligibilityDate: relativeFixtureDate({ days: 144 }),
         sentenceExpirationDate: relativeFixtureDate({ years: 1, days: 100 }),
         statusAtHearingSeg: "GEN",

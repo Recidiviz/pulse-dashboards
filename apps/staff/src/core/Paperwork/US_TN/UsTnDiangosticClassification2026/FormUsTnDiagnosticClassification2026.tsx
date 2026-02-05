@@ -40,10 +40,11 @@ import {
   TrusteeChecklist,
 } from "../common/Classification2026/TrusteeChecklist";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
+import CoverSheet from "../CustodyReclassification/CoverSheet";
 import { assessmentQuestions } from "./assessmentQuestions";
 
 export const FormUsTnDiagnosticClassification2026 = observer(
-  function FormUsTnInitialClassification2026({
+  function FormUsTnDiagnosticClassification2026({
     opportunity,
   }: {
     opportunity: Opportunity;
@@ -93,6 +94,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
         downloadButtonLabel="Download as .DOCX"
       >
         <FormViewer formRef={formRef}>
+          <CoverSheet />
           <PrintablePage landscape stretchable>
             <ClassificationFormPage>
               <Header>TENNESSEE CLASSIFICATION INSTRUMENT: DIAGNOSTIC</Header>

@@ -17,7 +17,11 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import {
+  coverSheetInformationSchema,
+  dateStringSchema,
+  UsTnCoverSheetSharedDraftData,
+} from "~datatypes";
 
 import { AssessmentQuestionNumber } from "../../../core/Paperwork/US_TN/CustodyReclassification/assessmentQuestions";
 
@@ -26,74 +30,50 @@ const eventNote = z.object({
   noteBody: z.string(),
 });
 
-export const formInformationSchema = z.object({
-  activeRecommendations: z.array(
-    z.object({
-      Recommendation: z.string(),
-      // // May also include these fields we're not using and therefore don't need to validate:
-      // Pathway: z.string(),
-      // PathwayName: z.string(),
-      // TreatmentGoal: z.string(),
-      // VantagePointTitle: z.string(),
-    }),
-  ),
-  classificationType: z.string(),
-  hasIncompatibles: z.boolean(),
-  incompatibleArray: z.array(
-    z.object({
-      incompatibleOffenderId: z.string(),
-      incompatibleType: z.string(),
-    }),
-  ),
-  currentOffenses: z.string().array().optional(),
-  lastCafDate: dateStringSchema.optional(),
-  lastCafTotal: z.string().optional(),
-  latestClassificationDate: dateStringSchema.optional(),
-  latestVantageCompletedDate: dateStringSchema.optional(),
-  latestVantageRiskLevel: z.string().optional(),
-  levelOfCare: z.string().optional(),
-  sentenceEffectiveDate: dateStringSchema.optional(),
-  sentenceReleaseEligibilityDate: dateStringSchema.optional(),
-  sentenceExpirationDate: dateStringSchema.optional(),
-  statusAtHearingSeg: z.string(),
-  healthClassification: z.string().optional(),
-  q1Score: z.coerce.number(),
-  q2Score: z.coerce.number(),
-  q3Score: z.coerce.number(),
-  q4Score: z.coerce.number(),
-  q5Score: z.coerce.number(),
-  q6Score: z.coerce.number(),
-  q7Score: z.coerce.number(),
-  q8Score: z.coerce.number(),
-  q9Score: z.coerce.number(),
-  q6Notes: z.optional(z.array(eventNote)),
-  q7Notes: z.optional(z.array(eventNote).or(eventNote.transform((n) => [n]))),
-  q8Notes: z.optional(
-    z.array(
-      z.object({
-        detainerReceivedDate: dateStringSchema,
-        detainerFelonyFlag: z
-          .string()
-          .nullable()
-          .transform((raw) => raw === "X"),
-        detainerMisdemeanorFlag: z
-          .string()
-          .nullable()
-          .transform((raw) => raw === "X"),
-        jurisdiction: z.string().nullish(),
-        description: z.string().nullish(),
-        chargePending: z
-          .string()
-          .nullish()
-          .transform((raw) => {
-            if (raw === "Y") return true;
-            if (raw === "N") return false;
-            return undefined;
-          }),
-      }),
+export const formInformationSchema = coverSheetInformationSchema.merge(
+  z.object({
+    currentOffenses: z.string().array().optional(),
+    lastCafDate: dateStringSchema.optional(),
+    lastCafTotal: z.string().optional(),
+    latestClassificationDate: dateStringSchema.optional(),
+    q1Score: z.coerce.number(),
+    q2Score: z.coerce.number(),
+    q3Score: z.coerce.number(),
+    q4Score: z.coerce.number(),
+    q5Score: z.coerce.number(),
+    q6Score: z.coerce.number(),
+    q7Score: z.coerce.number(),
+    q8Score: z.coerce.number(),
+    q9Score: z.coerce.number(),
+    q6Notes: z.optional(z.array(eventNote)),
+    q7Notes: z.optional(z.array(eventNote).or(eventNote.transform((n) => [n]))),
+    q8Notes: z.optional(
+      z.array(
+        z.object({
+          detainerReceivedDate: dateStringSchema,
+          detainerFelonyFlag: z
+            .string()
+            .nullable()
+            .transform((raw) => raw === "X"),
+          detainerMisdemeanorFlag: z
+            .string()
+            .nullable()
+            .transform((raw) => raw === "X"),
+          jurisdiction: z.string().nullish(),
+          description: z.string().nullish(),
+          chargePending: z
+            .string()
+            .nullish()
+            .transform((raw) => {
+              if (raw === "Y") return true;
+              if (raw === "N") return false;
+              return undefined;
+            }),
+        }),
+      ),
     ),
-  ),
-});
+  }),
+);
 
 type DraftDataSelections = {
   [I in AssessmentQuestionNumber as `q${I}Selection`]: number;
@@ -104,31 +84,12 @@ type DraftDataNotes = {
 };
 
 export type UsTnSharedReclassificationDraftData = {
-  institutionName: string;
-  residentFullName: string;
-  omsId: string;
-  date: string;
   lastCafDate: string;
   lastCafTotal: string;
   latestClassificationDate: string;
   levelOfCare: string;
-  statusAtHearing: string;
-  hasIncompatibles: boolean;
-  incompatiblesList: string;
-  inmateWaivesNotice: boolean;
-  currentCustodyLevel: string;
-  recommendationFacilityAssignment: string;
-  recommendationTransfer: boolean;
-  recommendationCustodyLevel: string;
-  recommendationOverrideType: string;
-  recommendationJustification: string;
-  updatedPhotoNeeded: boolean;
-  emergencyContactUpdated: boolean;
-  emergencyContactUpdatedDate: string;
-  inmateAppeal: boolean;
-  disagreementReasons: string;
-  denialReasons: string;
   hearingDate: string;
   hearingLocation: string;
 } & DraftDataSelections &
+  UsTnCoverSheetSharedDraftData &
   DraftDataNotes;

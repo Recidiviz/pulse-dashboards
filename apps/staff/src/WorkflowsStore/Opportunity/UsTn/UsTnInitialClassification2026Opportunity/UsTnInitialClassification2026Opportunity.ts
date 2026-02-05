@@ -22,25 +22,25 @@ import {
   usTnInitialClassification2026Schema,
 } from "~datatypes";
 
-import { Client } from "../../../Client";
+import { Resident } from "../../../Resident";
 import { UsTnDiagnosticClassification2026Form } from "../../Forms/UsTnDiagnosticClassification2026Form";
 import { OpportunityBase } from "../../OpportunityBase";
 
 export class UsTnInitialClassification2026Opportunity extends OpportunityBase<
-  Client,
+  Resident,
   UsTnInitialClassification2026ReferralRecord["output"]
 > {
-  constructor(client: Client, record: DocumentData) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
-      client,
+      resident,
       "usTnInitialClassification2026Policy",
-      client.rootStore,
+      resident.rootStore,
       usTnInitialClassification2026Schema.parse(record),
     );
 
     this.form = new UsTnDiagnosticClassification2026Form(
       this,
-      client.rootStore,
+      resident.rootStore,
     );
   }
 }

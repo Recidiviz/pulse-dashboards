@@ -159,3 +159,58 @@ export type TrusteeFormAdditionalFields = {
 
 export type TrusteeFormSchema = z.output<typeof trusteeFormSchema> &
   TrusteeFormAdditionalFields;
+
+export const coverSheetInformationSchema = z.object({
+  levelOfCare: z.string().optional(),
+  sentenceReleaseEligibilityDate: dateStringSchema.optional(),
+  latestVantageCompletedDate: dateStringSchema.optional(),
+  latestVantageRiskLevel: z.string().optional(),
+  healthClassification: z.string().optional(),
+  sentenceExpirationDate: dateStringSchema.optional(),
+  activeRecommendations: z.array(
+    z.object({
+      Recommendation: z.string(),
+      // // May also include these fields we're not using and therefore don't need to validate:
+      // Pathway: z.string(),
+      // PathwayName: z.string(),
+      // TreatmentGoal: z.string(),
+      // VantagePointTitle: z.string(),
+    }),
+  ),
+  hasIncompatibles: z.boolean(),
+  incompatibleArray: z.array(
+    z.object({
+      incompatibleOffenderId: z.string(),
+      incompatibleType: z.string(),
+    }),
+  ),
+  statusAtHearingSeg: z.string(),
+});
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const partialCoverSheetInformation = coverSheetInformationSchema.partial();
+
+export type CoverSheetFormData = z.infer<typeof partialCoverSheetInformation>;
+
+export type UsTnCoverSheetSharedDraftData = {
+  institutionName: string;
+  residentFullName: string;
+  omsId: string;
+  date: string;
+  statusAtHearing: string;
+  hasIncompatibles: boolean;
+  incompatiblesList: string;
+  inmateWaivesNotice: boolean;
+  currentCustodyLevel: string;
+  recommendationFacilityAssignment: string;
+  recommendationTransfer: boolean;
+  recommendationCustodyLevel: string;
+  recommendationOverrideType: string;
+  recommendationJustification: string;
+  updatedPhotoNeeded: boolean;
+  emergencyContactUpdated: boolean;
+  emergencyContactUpdatedDate: string;
+  inmateAppeal: boolean;
+  disagreementReasons: string;
+  denialReasons: string;
+};

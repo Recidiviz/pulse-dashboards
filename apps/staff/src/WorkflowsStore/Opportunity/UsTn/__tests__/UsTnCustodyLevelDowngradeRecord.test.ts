@@ -18,7 +18,7 @@
 import {
   UsTnCustodyLevelDowngradeReferralRecordRaw,
   usTnCustodyLevelDowngradeSchema,
-} from "../UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeReferralRecord";
+} from "../UsTnCustodyLevelDowngradeOpportunity";
 
 const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecordRaw =
   {
@@ -40,7 +40,6 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
     ineligibleCriteria: {},
     formInformation: {
       activeRecommendations: [],
-      classificationType: "SPECIAL",
       hasIncompatibles: false,
       incompatibleArray: [],
       statusAtHearingSeg: "GEN",

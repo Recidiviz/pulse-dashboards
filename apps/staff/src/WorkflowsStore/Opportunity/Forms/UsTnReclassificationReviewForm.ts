@@ -24,6 +24,7 @@ import {
   assessmentQuestionNumbers,
   assessmentQuestions,
 } from "../../../core/Paperwork/US_TN/CustodyReclassification/assessmentQuestions";
+import { prefilledCoverSheetData } from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatDate } from "../../../utils";
 import {
@@ -72,152 +73,90 @@ export class UsTnReclassificationReviewForm extends FormBase<
 
   prefilledDataTransformer(): Partial<UsTnSharedReclassificationDraftData> {
     const {
-      opportunity: { record },
+      opportunity: { type, record },
     } = this;
+    if (!record) return {};
+
+    const { formInformation } = record;
+
     const out: Partial<UsTnSharedReclassificationDraftData> = {
-      residentFullName: this.person.displayName,
-      omsId: this.person.externalId,
-      institutionName: this.person.facilityId,
-      recommendationFacilityAssignment: this.person.facilityId,
-      date: formatDate(new Date()),
+      ...prefilledCoverSheetData(this.person, type, formInformation),
     };
-    if (record) {
-      const { formInformation } = record;
-      out.lastCafDate = formatDate(formInformation.lastCafDate);
-      out.lastCafTotal = formInformation.lastCafTotal;
-      out.latestClassificationDate = formatDate(
-        formInformation.latestClassificationDate,
-      );
-      out.levelOfCare = formInformation.levelOfCare;
 
-      out.statusAtHearing = formInformation.statusAtHearingSeg;
-      out.hasIncompatibles = formInformation.hasIncompatibles;
-      out.incompatiblesList = formInformation.incompatibleArray
-        ?.map(({ incompatibleOffenderId }) => incompatibleOffenderId)
-        .join(", ");
+    out.levelOfCare = formInformation.levelOfCare;
+    out.lastCafTotal = formInformation.lastCafTotal;
+    out.lastCafDate = formatDate(formInformation.lastCafDate);
+    out.latestClassificationDate = formatDate(
+      formInformation.latestClassificationDate,
+    );
 
-      if (this.opportunity instanceof UsTnInitialClassificationOpportunity) {
-        out.currentCustodyLevel = "NOT YET CLASSIFIED";
+    assessmentQuestionNumbers.forEach((q) => {
+      // If we haven't calculated a score or the question should be left blank
+      // (for initial classifications), skip this one
+      if (!(`q${q}Score` in formInformation)) return;
+      const score = formInformation[`q${q}Score`];
+      if (score === null) return;
+
+      if (q === 1 && score === 5) {
+        // special logic because two options give the same score
+        const recentWeapon = some(
+          record.caseNotes["ASSAULTIVE DISCIPLINARIES"],
+          ({ noteTitle, eventDate }) =>
+            noteTitle &&
+            eventDate &&
+            ["AOW", "ASW", "ASV"].includes(noteTitle.slice(0, 3)) &&
+            differenceInMonths(new Date(), eventDate) < 18,
+        );
+        out.q1Selection = recentWeapon ? 1 : 3;
+        return;
+      }
+      const question = assessmentQuestions[q - 1];
+
+      //@ts-expect-error canBeNone is an option property. This will set it to false when it does not exist
+      const { canBeNone = false, options } = question;
+
+      if (canBeNone && score === 0) {
+        out[`q${q}Selection`] = -1;
       } else {
-        out.currentCustodyLevel = this.person.displayCustodyLevel;
+        const selection = findIndex(options, (o) => o.score === score);
+        if (selection === -1) return;
+        out[`q${q}Selection`] = selection;
       }
-
-      const justifications: string[] = ["Justification for classification: "];
-      if (formInformation.sentenceExpirationDate) {
-        justifications.push(
-          `Release Date: ${formatDate(formInformation.sentenceExpirationDate)}`,
-        );
-      }
-      if (formInformation.sentenceReleaseEligibilityDate) {
-        justifications.push(
-          `RED Date: ${formatDate(
-            formInformation.sentenceReleaseEligibilityDate,
-          )}`,
-        );
-      }
-      if (formInformation.healthClassification) {
-        justifications.push(
-          `Medical Classification: ${formInformation.healthClassification}`,
-        );
-      }
-      if (formInformation.levelOfCare) {
-        justifications.push(`Level of Care: ${formInformation.levelOfCare}`);
-      }
-      if (formInformation.latestVantageRiskLevel) {
-        justifications.push(
-          `Latest Vantage Risk Assessment: ${formInformation.latestVantageRiskLevel}`,
-        );
-      }
-      if (formInformation.latestVantageCompletedDate) {
-        justifications.push(
-          `Latest Vantage Risk Assessment Date: ${formatDate(
-            formInformation.latestVantageCompletedDate,
-          )}`,
-        );
-      }
-      if (
-        formInformation.activeRecommendations &&
-        formInformation.activeRecommendations.length
-      ) {
-        justifications.push(
-          `Active Recommendations: ${uniq(
-            formInformation.activeRecommendations.map(
-              ({ Recommendation }) => Recommendation,
-            ),
-          ).join(", ")}`,
-        );
-      }
-
-      out.recommendationJustification = justifications.join("\n");
-
-      assessmentQuestionNumbers.forEach((q) => {
-        // If we haven't calculated a score or the question should be left blank
-        // (for initial classifications), skip this one
-        if (!(`q${q}Score` in formInformation)) return;
-        const score = formInformation[`q${q}Score`];
-        if (score === null) return;
-
-        if (q === 1 && score === 5) {
-          // special logic because two options give the same score
-          const recentWeapon = some(
-            record.caseNotes["ASSAULTIVE DISCIPLINARIES"],
-            ({ noteTitle, eventDate }) =>
-              noteTitle &&
-              eventDate &&
-              ["AOW", "ASW", "ASV"].includes(noteTitle.slice(0, 3)) &&
-              differenceInMonths(new Date(), eventDate) < 18,
-          );
-          out.q1Selection = recentWeapon ? 1 : 3;
-          return;
-        }
-        const question = assessmentQuestions[q - 1];
-
-        //@ts-expect-error canBeNone is an option property. This will set it to false when it does not exist
-        const { canBeNone = false, options } = question;
-
-        if (canBeNone && score === 0) {
-          out[`q${q}Selection`] = -1;
-        } else {
-          const selection = findIndex(options, (o) => o.score === score);
-          if (selection === -1) return;
-          out[`q${q}Selection`] = selection;
-        }
-      });
-      const { currentOffenses, q6Notes, q7Notes, q8Notes } = formInformation;
-      if (currentOffenses) {
-        out.q3Note = uniq(currentOffenses).join(", ");
-      }
-      if (q6Notes) {
-        out.q6Note = formatViolationNotes(q6Notes);
-      }
-      if (q7Notes) {
-        out.q7Note = formatViolationNotes(q7Notes);
-      }
-      if (q8Notes) {
-        out.q8Note = q8Notes
-          .map(
-            ({
-              detainerReceivedDate,
-              detainerFelonyFlag,
-              detainerMisdemeanorFlag,
-              jurisdiction,
-              description,
-              chargePending,
-            }) => {
-              const parts = [formatDate(detainerReceivedDate)];
-              if (detainerFelonyFlag || detainerMisdemeanorFlag)
-                parts.push(detainerFelonyFlag ? "Felony" : "Misdemeanor");
-              if (description) parts.push(description);
-              if (jurisdiction) parts.push(`Jurisdiction: ${jurisdiction}`);
-              if (chargePending !== undefined)
-                parts.push(
-                  chargePending ? "Charge Pending" : "No Charge Pending",
-                );
-              return parts.join(" - ");
-            },
-          )
-          .join("; ");
-      }
+    });
+    const { currentOffenses, q6Notes, q7Notes, q8Notes } = formInformation;
+    if (currentOffenses) {
+      out.q3Note = uniq(currentOffenses).join(", ");
+    }
+    if (q6Notes) {
+      out.q6Note = formatViolationNotes(q6Notes);
+    }
+    if (q7Notes) {
+      out.q7Note = formatViolationNotes(q7Notes);
+    }
+    if (q8Notes) {
+      out.q8Note = q8Notes
+        .map(
+          ({
+            detainerReceivedDate,
+            detainerFelonyFlag,
+            detainerMisdemeanorFlag,
+            jurisdiction,
+            description,
+            chargePending,
+          }) => {
+            const parts = [formatDate(detainerReceivedDate)];
+            if (detainerFelonyFlag || detainerMisdemeanorFlag)
+              parts.push(detainerFelonyFlag ? "Felony" : "Misdemeanor");
+            if (description) parts.push(description);
+            if (jurisdiction) parts.push(`Jurisdiction: ${jurisdiction}`);
+            if (chargePending !== undefined)
+              parts.push(
+                chargePending ? "Charge Pending" : "No Charge Pending",
+              );
+            return parts.join(" - ");
+          },
+        )
+        .join("; ");
     }
     return out;
   }

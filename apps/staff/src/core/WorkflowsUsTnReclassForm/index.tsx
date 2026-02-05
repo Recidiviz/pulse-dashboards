@@ -34,6 +34,7 @@ import {
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import ClassificationCustodyAssessment from "../Paperwork/US_TN/CustodyReclassification/ClassificationCustodyAssessment";
+import { getCoverSheetTemplateArgs } from "../Paperwork/US_TN/CustodyReclassification/utils";
 import { downloadZipFile } from "../Paperwork/utils";
 
 const WorkflowsUsTnReclassForm = ({
@@ -71,7 +72,10 @@ const WorkflowsUsTnReclassForm = ({
     });
 
     const fileInputs: FileGeneratorArgs[] = [
-      ["custody_reclassification_template", "Offender Classification Summary"],
+      [
+        "custody_reclassification_template",
+        "Classification Custody Assessment",
+      ],
       [
         "classification_pilot_verification_template",
         "Classification Pilot Verification",
@@ -84,6 +88,8 @@ const WorkflowsUsTnReclassForm = ({
         contents,
       ];
     });
+
+    fileInputs.push(getCoverSheetTemplateArgs(resident, form.formData));
 
     const documents = await renderMultipleDocx(
       fileInputs,

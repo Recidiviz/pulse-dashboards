@@ -65,15 +65,18 @@ export const useResizeForm = (
       }
 
       const margin = 0;
-      const scale = (container.offsetWidth - margin * 2) / pages[0].offsetWidth;
-      const scaledMargin = margin / scale;
-
       const gutter = 10;
 
       let yOffset = gutter;
       let containerHeight = 0;
 
       pages.forEach((page, i) => {
+        // Skip hidden elements or elements that would otherwise break our calculations
+        if (!page.offsetWidth || !page.offsetHeight) return;
+
+        const scale = (container.offsetWidth - margin * 2) / page.offsetWidth;
+        const scaledMargin = margin / scale;
+
         const transform = `scale(${scale})
          translateX(${rem(scaledMargin)})
          translateY(${rem(yOffset / scale)})`;

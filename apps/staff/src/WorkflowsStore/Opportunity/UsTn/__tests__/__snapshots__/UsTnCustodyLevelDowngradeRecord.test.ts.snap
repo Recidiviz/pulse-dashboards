@@ -23,7 +23,6 @@ exports[`record is properly parsed for opportunity 1`] = `
   "externalId": "abc123",
   "formInformation": {
     "activeRecommendations": [],
-    "classificationType": "SPECIAL",
     "currentOffenses": [
       "ROBBERY-ARMED WITH DEADLY WEAPON",
     ],

@@ -442,7 +442,6 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
     ineligibleCriteria: {},
     formInformation: {
       activeRecommendations: [],
-      classificationType: "SPECIAL",
       hasIncompatibles: false,
       incompatibleArray: [],
       statusAtHearingSeg: "GEN",

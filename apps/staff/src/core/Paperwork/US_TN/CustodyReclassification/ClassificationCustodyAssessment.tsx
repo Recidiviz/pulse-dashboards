@@ -88,11 +88,7 @@ const ClassificationCustodyAssessment: React.FC = () => {
 
   return (
     <>
-      <PrintablePage>
-        <FormContainer {...formViewerContext}>
-          <CoverSheet />
-        </FormContainer>
-      </PrintablePage>
+      <CoverSheet />
       <PrintablePage stretchable>
         <FormContainer {...formViewerContext}>
           <Header>

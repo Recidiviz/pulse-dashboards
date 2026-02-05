@@ -34,6 +34,7 @@ const EDIT_BACKGROUND = iconToDataURI(
 export const Label = styled.label`
   display: flex;
   align-items: baseline;
+  text-wrap: nowrap;
 `;
 
 export const Input = styled.input`

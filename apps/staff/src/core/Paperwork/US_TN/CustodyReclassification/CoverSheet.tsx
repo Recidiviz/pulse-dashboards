@@ -15,15 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useContext } from "react";
 import styled from "styled-components";
 
-import { UsTnSharedReclassificationDraftData } from "../../../../WorkflowsStore";
+import { UsTnCoverSheetSharedDraftData } from "~datatypes";
+
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import DOCXFormTextArea from "../../DOCXFormTextArea";
+import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
+import { PrintablePage } from "../../styles";
 import FormInput from "./FormInput";
 import FormRadioButton from "./FormRadioButton";
-import { Label } from "./styles";
+import { FormContainer, Label } from "./styles";
 
 const Container = styled.div`
   font-family: monospace;
@@ -54,195 +58,233 @@ const Item = styled.div`
 `;
 
 const SigBlock = styled.div`
-  margin-top: 5em;
+  margin-top: 3em;
   border-top: 0.5px solid black;
+  padding-top: 0.25em;
   flex-grow: 1;
-  margin-right: 2em;
   margin-bottom: 1em;
+  &:not(:last-child) {
+    margin-right: 2em;
+  }
 `;
 
-const FormTextarea = DOCXFormTextArea<UsTnSharedReclassificationDraftData>;
+const FormTextarea = DOCXFormTextArea<UsTnCoverSheetSharedDraftData>;
 
 const CoverSheet: React.FC = () => {
   const { formData, derivedData } =
     useOpportunityFormContext() as UsTnReclassificationReviewForm;
+  const formViewerContext = useContext(FormViewerContext);
 
   return (
-    <Container>
-      <Headline>TENNESSEE DEPARTMENT OF CORRECTION</Headline>
-      <Headline>OFFENDER CLASSIFICATION SUMMARY</Headline>
-      <Row grouped>
-        <Label>
-          TOMIS ID: <FormInput name="omsId" />
-        </Label>
-      </Row>
-      <Row grouped>
-        <Label>
-          Offender Name: <FormInput name="residentFullName" />
-        </Label>
-      </Row>
-      <Row>
-        <Label>
-          Institution Name: <FormInput name="institutionName" />
-        </Label>
-      </Row>
-      <Row>
-        <Label>Classification Type: CLASSIFICATION</Label>
-        <Label>
-          CAF Date: <FormInput name="date" />
-        </Label>
-      </Row>
-      <Row>
-        <Item>
-          Status at time of hearing:
-          <FormRadioButton
-            name="statusAtHearing"
-            targetValue="GEN"
-            label="Gen. Pop."
-          />
-          <FormRadioButton name="statusAtHearing" targetValue="AS" label="AS" />
-          <FormRadioButton name="statusAtHearing" targetValue="PC" label="PC" />
-          <Label>
-            Other:{" "}
-            <FormInput
-              name="statusAtHearing"
-              hideValue={(
-                ["GEN", "AS", "PC"] as (typeof formData)["statusAtHearing"][]
-              ).includes(formData.statusAtHearing)}
-            />
-          </Label>
-        </Item>
-      </Row>
-      <Row>
-        <Item>
-          Incompatibles:
-          <FormRadioButton name="hasIncompatibles" targetValue label="Yes" />
-          <FormRadioButton
-            name="hasIncompatibles"
-            targetValue={false}
-            label="No"
-          />
-        </Item>
-        <Item>Inmate agrees to waive 48 hr. hearing notice: __</Item>
-      </Row>
-      {formData.hasIncompatibles && (
-        <Row>
-          <Label>
-            Incompatibles: <FormInput name="incompatiblesList" width="100%" />
-          </Label>
-        </Row>
-      )}
-      <Row>
-        <Label>
-          Scored CAF Range:
-          {derivedData.totalText}
-        </Label>
-        <Label>
-          Current Custody Level: <FormInput name="currentCustodyLevel" />
-        </Label>
-      </Row>
-      <Row>Panel&apos;s Majority Recommendation:</Row>
-      <Row indented>
-        <Label>
-          Facility Assignment:
-          <FormInput name="recommendationFacilityAssignment" />
-        </Label>
-        <Item>
-          Transfer:
-          <FormRadioButton
-            name="recommendationTransfer"
-            targetValue
-            label="Yes"
-          />
-          <FormRadioButton
-            name="recommendationTransfer"
-            targetValue={false}
-            label="No"
-          />
-          Explain below:
-        </Item>
-      </Row>
-      <Row indented>
-        <Label>
-          Custody Level: <FormInput name="recommendationCustodyLevel" />
-        </Label>
-      </Row>
-      <Row indented>
-        <Label>
-          Override Type: <FormInput name="recommendationOverrideType" />
-        </Label>
-      </Row>
-      <Row indented grouped>
-        <Label htmlFor="recommendationJustification">
-          Justification, Program Recommendations, and Summary:
-        </Label>
-      </Row>
-      <FormTextarea name="recommendationJustification" minRows={4} />
-      <Row grouped>
-        <Item>
-          Updated Photo Needed:
-          <FormRadioButton name="updatedPhotoNeeded" targetValue label="Yes" />
-          <FormRadioButton
-            name="updatedPhotoNeeded"
-            targetValue={false}
-            label="No"
-          />
-        </Item>
-      </Row>
-      <Row>
-        <Item>
-          Emergency contact updated:
-          <FormRadioButton
-            name="emergencyContactUpdated"
-            targetValue
-            label="Yes"
-          />
-          <FormRadioButton
-            name="emergencyContactUpdated"
-            targetValue={false}
-            label="No"
-          />
-          <Label>
-            Date Updated: <FormInput name="emergencyContactUpdatedDate" />
-          </Label>
-        </Item>
-      </Row>
-      <Row>
-        Offender Signature: _______________________
-        <Label>
-          Appeal:
-          <FormRadioButton name="inmateAppeal" targetValue label="Yes" />
-          <FormRadioButton name="inmateAppeal" targetValue={false} label="No" />
-        </Label>
-        If Yes, provide appeal & copy to Inmate
-      </Row>
-      <Row>
-        <Item>Panel Member Signatures:</Item>
-        <Item>Date: ___________</Item>
-      </Row>
-      <Row>
-        <SigBlock>Chairperson</SigBlock>
-        <SigBlock>Treatment Member</SigBlock>
-        <SigBlock>Security Member</SigBlock>
-      </Row>
-      <Row>
-        <Label htmlFor="disagreementReasons">
-          If panel member disagrees with majority recommend, state specific
-          reasons:
-        </Label>
-      </Row>
-      <FormTextarea name="disagreementReasons" minRows={4} />
-      <Row>Approving Authority:</Row>
-      <Row>
-        <SigBlock>Signature</SigBlock>
-        <SigBlock>Date</SigBlock>
-        <Item style={{ marginTop: "4em" }}>Approve ___ Deny ___</Item>
-      </Row>
-      <Row>
-        <Label htmlFor="denialReasons">If denied, reasons include:</Label>
-      </Row>
-      <FormTextarea name="denialReasons" minRows={4} />
-    </Container>
+    <PrintablePage>
+      <FormContainer {...formViewerContext}>
+        <Container>
+          <Headline>TENNESSEE DEPARTMENT OF CORRECTION</Headline>
+          <Headline>OFFENDER CLASSIFICATION SUMMARY</Headline>
+          <br />
+          <Row>
+            <Label>
+              TOMIS ID: <FormInput name="omsId" />
+            </Label>
+            <Label>
+              Offender Name: <FormInput name="residentFullName" />
+            </Label>
+            <Label>
+              Institution Name: <FormInput name="institutionName" />
+            </Label>
+          </Row>
+          <Row>
+            <Label>Classification Type: CLASSIFICATION</Label>
+            <Label>
+              CAF Date: <FormInput name="date" />
+            </Label>
+          </Row>
+          <Row>
+            <Item>Status at time of hearing:</Item>
+            <Item>
+              <FormRadioButton
+                name="statusAtHearing"
+                targetValue="GEN"
+                label="Gen. Pop."
+              />
+              <FormRadioButton
+                name="statusAtHearing"
+                targetValue="AS"
+                label="AS"
+              />
+              <FormRadioButton
+                name="statusAtHearing"
+                targetValue="PC"
+                label="PC"
+              />
+              <Label>
+                Other:{" "}
+                <FormInput
+                  name="statusAtHearing"
+                  hideValue={(
+                    [
+                      "GEN",
+                      "AS",
+                      "PC",
+                    ] as (typeof formData)["statusAtHearing"][]
+                  ).includes(formData.statusAtHearing)}
+                />
+              </Label>
+            </Item>
+          </Row>
+          <Row>
+            <Item>
+              Incompatibles:
+              <FormRadioButton
+                name="hasIncompatibles"
+                targetValue
+                label="Yes"
+              />
+              <FormRadioButton
+                name="hasIncompatibles"
+                targetValue={false}
+                label="No"
+              />
+            </Item>
+            <Item>
+              Inmate agrees to waive 48 hr. hearing notice: __________
+            </Item>
+          </Row>
+          {formData.hasIncompatibles && (
+            <Row>
+              <Label>
+                Incompatibles:{" "}
+                <FormInput name="incompatiblesList" width="100%" />
+              </Label>
+            </Row>
+          )}
+          <Row>
+            <Label>
+              Scored CAF Range:
+              {derivedData.totalText}
+            </Label>
+            <Label>
+              Current Custody Level: <FormInput name="currentCustodyLevel" />
+            </Label>
+          </Row>
+          <Row>Panel&apos;s Majority Recommendation:</Row>
+          <Row indented grouped>
+            <Label>
+              Facility Assignment:
+              <FormInput name="recommendationFacilityAssignment" />
+            </Label>
+            <Item>
+              Transfer:
+              <FormRadioButton
+                name="recommendationTransfer"
+                targetValue
+                label="Yes"
+              />
+              <FormRadioButton
+                name="recommendationTransfer"
+                targetValue={false}
+                label="No"
+              />
+              Explain below:
+            </Item>
+          </Row>
+          <Row indented grouped>
+            <Label>
+              Custody Level: <FormInput name="recommendationCustodyLevel" />
+            </Label>
+          </Row>
+          <Row indented grouped>
+            <Label>
+              Override Type: <FormInput name="recommendationOverrideType" />
+            </Label>
+          </Row>
+          <Row indented grouped>
+            <Label htmlFor="recommendationJustification">
+              Justification, Program Recommendations, and Summary:
+            </Label>
+          </Row>
+          <FormTextarea name="recommendationJustification" minRows={4} />
+          <Row grouped>
+            <Item>
+              Updated Photo Needed:
+              <FormRadioButton
+                name="updatedPhotoNeeded"
+                targetValue
+                label="Yes"
+              />
+              <FormRadioButton
+                name="updatedPhotoNeeded"
+                targetValue={false}
+                label="No"
+              />
+            </Item>
+          </Row>
+          <Row>
+            <Item>
+              Emergency contact updated:
+              <FormRadioButton
+                name="emergencyContactUpdated"
+                targetValue
+                label="Yes"
+              />
+              <FormRadioButton
+                name="emergencyContactUpdated"
+                targetValue={false}
+                label="No"
+              />
+              <Label>
+                Date Updated: <FormInput name="emergencyContactUpdatedDate" />
+              </Label>
+            </Item>
+          </Row>
+          <Row grouped>
+            Offender Signature: ___________________________________________
+            <Label>
+              Appeal:&nbsp;&nbsp;
+              <FormRadioButton name="inmateAppeal" targetValue label="Yes" />
+              &nbsp;&nbsp;
+              <FormRadioButton
+                name="inmateAppeal"
+                targetValue={false}
+                label="No"
+              />
+            </Label>
+          </Row>
+          <Row>
+            <Item />
+            <Label>If Yes, provide appeal & copy to Inmate</Label>
+          </Row>
+          <Row>
+            <Item>Panel Member Signatures:</Item>
+            <Item>Date: __________________________</Item>
+          </Row>
+          <Row>
+            <SigBlock>Chairperson</SigBlock>
+            <SigBlock>Treatment Member</SigBlock>
+            <SigBlock>Security Member</SigBlock>
+          </Row>
+          <Row>
+            <Label htmlFor="disagreementReasons">
+              If panel member disagrees with majority recommend, state specific
+              reasons:
+            </Label>
+          </Row>
+          <FormTextarea name="disagreementReasons" minRows={4} />
+          <Row>Approving Authority:</Row>
+          <Row>
+            <SigBlock>Signature</SigBlock>
+            <SigBlock>Date</SigBlock>
+            <Item style={{ marginTop: "4em" }}>
+              Approve ________&nbsp;&nbsp;Deny ________
+            </Item>
+          </Row>
+          <Row>
+            <Label htmlFor="denialReasons">If denied, reasons include:</Label>
+          </Row>
+          <FormTextarea name="denialReasons" minRows={4} />
+        </Container>
+      </FormContainer>
+    </PrintablePage>
   );
 };
 

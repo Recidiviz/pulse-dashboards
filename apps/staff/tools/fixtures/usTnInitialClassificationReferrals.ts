@@ -17,7 +17,7 @@
 
 import { relativeFixtureDate } from "~datatypes";
 
-import { UsTnInitialClassificationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn/UsTnInitialClassificationOpportunity/UsTnInitialClassificationReferralRecord";
+import { UsTnInitialClassificationReferralRecordRaw } from "../../src/WorkflowsStore";
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
 const data: UsTnInitialClassificationReferralRecordRaw[] = [
@@ -58,7 +58,6 @@ const data: UsTnInitialClassificationReferralRecordRaw[] = [
       latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
       latestVantageRiskLevel: "LOW",
       levelOfCare: "LVL2",
-      sentenceEffectiveDate: relativeFixtureDate({ years: -3, days: -100 }),
       sentenceReleaseEligibilityDate: relativeFixtureDate({ months: 2 }),
       sentenceExpirationDate: relativeFixtureDate({ years: 1, days: 100 }),
       statusAtHearingSeg: "GEN",
@@ -108,7 +107,6 @@ const data: UsTnInitialClassificationReferralRecordRaw[] = [
       ],
     },
     formInformation: {
-      classificationType: "ANNUAL",
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
       hasIncompatibles: false,
       lastCafDate: relativeFixtureDate({ days: -359 }),
@@ -117,7 +115,6 @@ const data: UsTnInitialClassificationReferralRecordRaw[] = [
       latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
       latestVantageRiskLevel: "LOW",
       levelOfCare: "LVL2",
-      sentenceEffectiveDate: relativeFixtureDate({ years: -2, days: -200 }),
       sentenceReleaseEligibilityDate: relativeFixtureDate({ days: 100 }),
       sentenceExpirationDate: relativeFixtureDate({ years: 1, days: 200 }),
       statusAtHearingSeg: "GEN",

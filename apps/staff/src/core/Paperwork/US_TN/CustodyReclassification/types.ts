@@ -15,6 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnSharedReclassificationDraftData } from "../../../../WorkflowsStore/Opportunity/UsTn";
+import {
+  UsTnAnnualReclassificationReviewOpportunity,
+  UsTnCustodyLevelDowngradeOpportunity,
+  UsTnInitialClassification2026Opportunity,
+  UsTnInitialClassificationOpportunity,
+  UsTnSharedReclassificationDraftData,
+} from "../../../../WorkflowsStore";
 
 export type FormDataType = Partial<UsTnSharedReclassificationDraftData>;
+
+export type UsTnReclassificationOpportunity =
+  | UsTnCustodyLevelDowngradeOpportunity
+  | UsTnAnnualReclassificationReviewOpportunity
+  | UsTnInitialClassificationOpportunity
+  | UsTnInitialClassification2026Opportunity;

@@ -76,6 +76,13 @@ export const usTnInitialClassification2026PolicyFixtures = {
       trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody: true,
       trusteeNotScoredHighForViolence: false,
       trusteeNotServingForSexualOffense: true,
+      activeRecommendations: [{ Recommendation: "do this thing" }],
+      hasIncompatibles: true,
+      incompatibleArray: [
+        { incompatibleOffenderId: "123", incompatibleType: "magentism" },
+        { incompatibleOffenderId: "456", incompatibleType: "psychic" },
+      ],
+      statusAtHearingSeg: "GEN",
     },
   }),
   ineligible: makeRecordFixture(usTnInitialClassification2026Schema, {
@@ -165,6 +172,10 @@ export const usTnInitialClassification2026PolicyFixtures = {
       trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody: true,
       trusteeNotScoredHighForViolence: true,
       trusteeNotServingForSexualOffense: true,
+      activeRecommendations: [],
+      hasIncompatibles: false,
+      incompatibleArray: [],
+      statusAtHearingSeg: "GEN",
     },
   }),
 } satisfies FixtureMapping<UsTnInitialClassification2026ReferralRecord>;
