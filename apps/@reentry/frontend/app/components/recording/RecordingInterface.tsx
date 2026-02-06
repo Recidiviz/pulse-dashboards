@@ -56,6 +56,9 @@ interface RecordingInterfaceProps {
   setNeedsAddress: (needs: boolean) => void;
   onRecordingStatusChange?: (status: string) => void;
   onSafeNavigateReady?: (safeNavigate: (path: string) => void) => void;
+  onAudioTimeUpdate?: (currentTime: number) => void;
+  onAudioPlayerReady?: (seekFunction: (time: number) => void) => void;
+  currentSpeakerRole?: string | null;
 }
 
 const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
@@ -65,6 +68,8 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
   setNeedsAddress,
   onRecordingStatusChange,
   onSafeNavigateReady,
+  onAudioTimeUpdate,
+  onAudioPlayerReady,
 }) => {
   const { statusData } = useRecordingSessionStatus(sessionData?.id || "", true);
   const [recordingStopped, setRecordingStopped] = useState(false);
@@ -403,12 +408,16 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
       )}
 
       {shouldShowPlayer && sessionData.id && (
-        <Box className="border-t p-6">
-          <SimpleAudioPlayer
-            sessionId={sessionData.id}
-            onLoadComplete={() => console.log("Audio loaded successfully")}
-            shouldPollStatus={recordingStopped}
-          />
+        <Box className="fixed bottom-0 left-0 right-0 border-t p-4 bg-white z-50 shadow-lg flex justify-center">
+          <div className="w-full max-w-7xl px-4">
+            <SimpleAudioPlayer
+              sessionId={sessionData.id}
+              onLoadComplete={() => console.log("Audio loaded successfully")}
+              shouldPollStatus={recordingStopped}
+              onTimeUpdate={onAudioTimeUpdate}
+              onPlayerReady={onAudioPlayerReady}
+            />
+          </div>
         </Box>
       )}
 

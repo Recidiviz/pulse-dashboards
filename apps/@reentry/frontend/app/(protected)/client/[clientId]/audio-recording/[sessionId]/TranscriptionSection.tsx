@@ -108,7 +108,10 @@ const TranscriptionSection: React.FC<{
   onRefreshNeeded?: () => void;
   recordingStatus: string;
   sessionStatus: string | null | undefined;
-}> = ({ sessionDataId, onRefreshNeeded, recordingStatus, sessionStatus }) => {
+  currentAudioTime?: number;
+  onTurnClick?: (startTime: number) => void;
+  onActiveTurnChange?: (role: string | null) => void;
+}> = ({ sessionDataId, onRefreshNeeded, recordingStatus, sessionStatus, currentAudioTime = 0, onTurnClick, onActiveTurnChange }) => {
   const { statusData } = useRecordingSessionStatus(sessionDataId || "", true);
 
   useEffect(() => {
@@ -120,7 +123,14 @@ const TranscriptionSection: React.FC<{
   if (!sessionDataId || !recordingStatus) return null;
 
   if (sessionStatus === "completed") {
-    return <TranscriptionConversation sessionId={sessionDataId || ""} />;
+    return (
+      <TranscriptionConversation
+        sessionId={sessionDataId || ""}
+        currentAudioTime={currentAudioTime}
+        onTurnClick={onTurnClick}
+        onActiveTurnChange={onActiveTurnChange}
+      />
+    );
   }
 
   if (sessionStatus === "processing") {

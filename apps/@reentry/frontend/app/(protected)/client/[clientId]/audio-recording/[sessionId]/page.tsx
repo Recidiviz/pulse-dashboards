@@ -39,6 +39,11 @@ const AudioRecordingPage: React.FC = () => {
   const [safeNavigate, setSafeNavigate] = useState<
     ((path: string) => void) | null
   >(null);
+  const [currentAudioTime, setCurrentAudioTime] = useState<number>(0);
+  const [audioSeekFunction, setAudioSeekFunction] = useState<
+    ((time: number) => void) | null
+  >(null);
+  const [currentSpeakerRole, setCurrentSpeakerRole] = useState<string | null>(null);
   // Form state for address form
   const [addressInput, setAddressInput] = useState("");
   const [city, setCity] = useState("");
@@ -204,7 +209,7 @@ const AudioRecordingPage: React.FC = () => {
       <PageView />
       <QueueProvider>
         <NavRecordingPage client_pseudo_id={clientData?.pseudonymized_client_id} safeNavigate={safeNavigate}/>
-        <div className="min-h-[calc(100vh-65px)] self-stretch px-4 md:p-10 bg-[#f9fafa] flex flex-col items-start gap-5">
+        <div className="min-h-[calc(100vh-65px)] self-stretch px-4 md:p-10 pb-24 bg-[#f9fafa] flex flex-col items-start gap-5">
           <UserSummary
             clientData={clientData}
             sessionData={sessionData || null}
@@ -214,6 +219,13 @@ const AudioRecordingPage: React.FC = () => {
             onRefreshNeeded={() => refetchSession()}
             recordingStatus={recordingStatus}
             sessionStatus={sessionData?.status}
+            currentAudioTime={currentAudioTime}
+            onTurnClick={(time) => {
+              if (audioSeekFunction) {
+                audioSeekFunction(time);
+              }
+            }}
+            onActiveTurnChange={setCurrentSpeakerRole}
           />
           <RecordingInterface
             clientRecord={clientData}
@@ -221,6 +233,9 @@ const AudioRecordingPage: React.FC = () => {
             setNeedsAddress={setNeedsAddress}
             onRecordingStatusChange={setRecordingStatus}
             onSafeNavigateReady={(navigate) => setSafeNavigate(() => navigate)}
+            onAudioTimeUpdate={setCurrentAudioTime}
+            onAudioPlayerReady={(seekFn) => setAudioSeekFunction(() => seekFn)}
+            currentSpeakerRole={currentSpeakerRole}
           />
         </div>
       </QueueProvider>

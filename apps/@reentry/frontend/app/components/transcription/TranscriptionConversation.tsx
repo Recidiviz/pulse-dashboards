@@ -16,9 +16,10 @@
 // =============================================================================
 
 "use client";
-import { Person, Support } from "@mui/icons-material";
+import { PlayArrow } from "@mui/icons-material";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import type React from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
@@ -28,12 +29,20 @@ import TranscriptionValidationWarnings from "./TranscriptionValidationWarnings";
 
 interface TranscriptionViewProps {
   sessionId: string;
+  currentAudioTime?: number;
+  onTurnClick?: (startTime: number) => void;
+  onActiveTurnChange?: (role: string | null) => void;
 }
 
 const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
   sessionId,
+  currentAudioTime = 0,
+  onTurnClick,
+  onActiveTurnChange,
 }) => {
   const auth = useAuth();
+  const [activeTurnIndex, setActiveTurnIndex] = useState<number>(-1);
+  const turnRefs = useRef<(HTMLDivElement | null | undefined)[]>([]);
 
   const { data, error, isLoading } = $api.useQuery(
     "get",
@@ -65,10 +74,6 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
-  const getRoleIcon = (role: string) => {
-    return role === "client" ? <Person /> : <Support />;
-  };
-
   const getRoleColor = (role: string) => {
     return role === "client" ? "#1976d2" : "#2e7d32";
   };
@@ -76,6 +81,41 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
   const getRoleLabel = (role: string) => {
     return role === "client" ? "Client" : "Caseworker";
   };
+
+  // Find and focus on the active conversation turn based on current audio time
+  useEffect(() => {
+    if (!data?.transcription?.conversation) return;
+
+    const conversation = data.transcription.conversation;
+
+    // Find the turn that contains the current audio time
+    const activeIndex = conversation.findIndex((turn) => {
+      const startTime = Number.parseFloat(turn.startTime.replace("s", ""));
+      const endTime = Number.parseFloat(turn.endTime.replace("s", ""));
+      return currentAudioTime >= startTime && currentAudioTime <= endTime;
+    });
+
+    if (activeIndex !== -1 && activeIndex !== activeTurnIndex) {
+      setActiveTurnIndex(activeIndex);
+
+      // Notify parent of active turn change
+      const activeTurn = conversation[activeIndex];
+      onActiveTurnChange?.(activeTurn.role);
+
+      // Scroll the active turn into view
+      const activeElement = turnRefs.current[activeIndex];
+      if (activeElement) {
+        activeElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    } else if (activeIndex === -1 && activeTurnIndex !== -1) {
+      // No active turn, clear the highlight
+      setActiveTurnIndex(-1);
+      onActiveTurnChange?.(null);
+    }
+  }, [currentAudioTime, data, activeTurnIndex]);
 
   if (isLoading) {
     return (
@@ -149,33 +189,61 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
           </div>
 
           {/* Conversation turns */}
-          <div className="max-h-[45vh] overflow-y-auto space-y-4 self-center">
-            {transcription.conversation.map((turn, index) => (
+          <div className="max-h-[45vh] overflow-y-auto space-y-2 self-center pb-32">
+            {transcription.conversation.map((turn, index) => {
+              const isActive = index === activeTurnIndex;
+              const startTime = Number.parseFloat(turn.startTime.replace("s", ""));
+
+              return (
               <div
                 key={`${turn.id}-${index}`}
-                className={`bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 ${
+                ref={(el) => {
+                  turnRefs.current[index] = el;
+                }}
+                className={`bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 transition-all duration-300 ${
                   turn.role === "client"
                     ? "border-l-blue-500"
                     : "border-l-green-500"
+                } ${
+                  isActive
+                    ? "ring-2 ring-[#006c67] ring-offset-2 shadow-lg"
+                    : ""
                 }`}
               >
-                <div className="p-4">
+                <div className="p-3">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <div
-                        className="flex items-center gap-1 text-white px-3 py-1 rounded-full text-xs font-medium"
+                        className="flex items-center gap-1 text-white px-2 py-0.5 rounded-full text-[11px] font-medium"
                         style={{ backgroundColor: getRoleColor(turn.role) }}
                       >
-                        {getRoleIcon(turn.role)}
                         <span>{getRoleLabel(turn.role)}</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 text-xs text-[#2a5469]/70 font-['Public_Sans']">
-                      <span>
-                        {formatTime(turn.startTime)} -{" "}
-                        {formatTime(turn.endTime)}
-                      </span>
+                    <div
+                      className="flex items-center gap-4 text-xs text-[#2a5469]/70 font-['Public_Sans'] cursor-pointer hover:text-[#006c67]"
+                      onClick={() => {
+                        console.log(`[TranscriptionConversation] Turn clicked, seeking to ${startTime}s`);
+                        onTurnClick?.(startTime);
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onTurnClick?.(startTime);
+                        }
+                      }}
+                      title="Click to jump to this point in the audio"
+                    >
+                      <div className="flex items-center gap-1">
+                        <PlayArrow sx={{ fontSize: 14 }} className="text-[#006c67]" />
+                        <span>
+                          {formatTime(turn.startTime)} -{" "}
+                          {formatTime(turn.endTime)}
+                        </span>
+                      </div>
                       <span>
                         {formatDuration(
                           Number(turn.duration.replace("s", "")) * 1000,
@@ -192,7 +260,8 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}
