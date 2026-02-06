@@ -29,17 +29,19 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
 
-export const PersonIdWithCopyIcon = styled.span<{ shiftIcon: boolean }>`
+export const PersonIdWithCopyIcon = styled.span<{ $shiftIcon: boolean }>`
   color: ${palette.text.secondary};
   padding: 0 ${rem(spacing.xs)};
   border-radius: ${rem(spacing.xs / 2)};
   transition: all 0.3s ease;
   white-space: nowrap;
 
+  display: inline-block;
+
   &::after {
     content: url("${copyIcon}");
     margin-left: ${rem(spacing.sm)};
-    vertical-align: ${(props) => (props.shiftIcon ? "-15%" : "0")};
+    vertical-align: ${(props) => (props.$shiftIcon ? "-15%" : "0")};
   }
   &:hover {
     background: ${palette.slate05};
@@ -107,7 +109,7 @@ const PersonId: React.FC<{
             });
           }
         }}
-        shiftIcon={shiftIcon}
+        $shiftIcon={shiftIcon}
       >
         {children}
       </PersonIdWithCopyIcon>

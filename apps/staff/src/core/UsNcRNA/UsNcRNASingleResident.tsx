@@ -15,12 +15,84 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsNavLayout } from "../WorkflowsLayouts";
+import { observer } from "mobx-react-lite";
+import { rem } from "polished";
+import styled from "styled-components";
 
-export const UsNcRNASingleResident = function () {
+import { fullRNASpec } from "~@jii/configs";
+import { palette, spacing } from "~design-system";
+import { withPresenterManager } from "~hydration-utils";
+
+import { useRootStore } from "../../components/StoreProvider";
+import { Resident } from "../../WorkflowsStore/Resident";
+import ModelHydrator from "../ModelHydrator";
+import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
+import { UsNcRNASingleResidentPresenter } from "./UsNcRNASingleResidentPresenter";
+import { RNAResultsFooter } from "./UsNcRNASingleResidentResults/RNAResultsFooter";
+import { RNAResultsHeader } from "./UsNcRNASingleResidentResults/RNAResultsHeader";
+import { RNAResultsSection } from "./UsNcRNASingleResidentResults/RNAResultsSection";
+
+const Wrapper = styled.div`
+  background-color: ${palette.marble1};
+  min-height: 100vh;
+  max-height: 100vh;
+  height: 100%;
+  width: 100%;
+`;
+
+export const PaddedRNAContent = styled.div`
+  padding: ${rem(spacing.md)} ${rem(72)};
+`;
+
+/**
+ * View of a single person's RNA assessment results.
+ */
+export const ManagedComponent = observer(function UsNcRNASingleResident({
+  presenter,
+}: {
+  presenter: UsNcRNASingleResidentPresenter;
+}) {
   return (
-    <WorkflowsNavLayout>
-      <div>Hello single resident!</div>
-    </WorkflowsNavLayout>
+    <Wrapper>
+      <NavigationLayout>
+        <OverviewNavLinks />
+      </NavigationLayout>
+      <RNAResultsHeader resident={presenter.selectedPerson} />
+      <PaddedRNAContent>
+        {fullRNASpec.map((rnaPageSpec) => {
+          return (
+            <RNAResultsSection
+              key={rnaPageSpec.id}
+              questions={rnaPageSpec.questions}
+              presenter={presenter}
+            />
+          );
+        })}
+        <RNAResultsFooter resident={presenter.selectedPerson} />
+      </PaddedRNAContent>
+    </Wrapper>
   );
-};
+});
+
+function usePresenter() {
+  const {
+    workflowsStore: { selectedPerson },
+  } = useRootStore();
+
+  if (
+    !selectedPerson ||
+    selectedPerson.stateCode !== "US_NC" ||
+    !(selectedPerson instanceof Resident)
+  ) {
+    return null;
+  }
+
+  return new UsNcRNASingleResidentPresenter(selectedPerson);
+}
+
+export const UsNcRNASingleResident = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
+  HydratorComponent: ModelHydrator,
+});

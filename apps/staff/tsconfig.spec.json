@@ -26,6 +26,7 @@
     "src/**/*.test.tsx",
     "src/**/*.test.js",
     "src/**/*.test.jsx",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "../../libs/@jii/translation/**/*.d.ts"
   ]
 }

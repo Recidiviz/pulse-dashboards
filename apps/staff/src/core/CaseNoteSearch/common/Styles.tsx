@@ -21,6 +21,7 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
+// TODO(#11717) Consider unifying this with other pills
 export const PrototypePill = styled(Pill).attrs({
   color: "#CFF5F6",
   textColor: "#0055BC",

@@ -33,6 +33,7 @@ const TitleText = styled(Sans16)`
   display: inline-block;
 `;
 
+// TODO(#11717) Unify this with other pills
 export const EligibilityStatusPillStyled = styled(Pill)<{
   $borderColor: string;
 }>`
