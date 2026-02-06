@@ -54,7 +54,8 @@ export const usTnStatusColumn = {
   header: "Status",
   id: "status",
   accessorFn: (resident) =>
-    usTnPrioritizedOpportunity(resident)?.reviewStatus || "NOT_ELIGIBLE",
+    usTnPrioritizedOpportunity(resident)?.eligibilityStatusLabel() ||
+    "Not Eligible",
   enableSorting: true,
   sortingFn: "alphanumeric",
   cell: StatusWrapper,

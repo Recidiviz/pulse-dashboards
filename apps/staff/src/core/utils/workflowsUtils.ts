@@ -140,35 +140,26 @@ export function useStatusColors({
   almostEligible,
   customStatusPalette,
   isIneligible,
+  reviewStatus,
 }: Opportunity): StatusPalette {
   if (customStatusPalette) return customStatusPalette;
 
-  // Submitted should come before ineligible since we can now
-  // move people through certain opportunities even when the
-  // system thinks they are ineligible
-  if (isSubmitted) return OPPORTUNITY_STATUS_COLORS.submitted;
+  switch (reviewStatus) {
+    case "SUBMITTED":
+      return OPPORTUNITY_STATUS_COLORS.submitted;
+    case "DENIED":
+      return isAlert
+        ? OPPORTUNITY_STATUS_COLORS.alertOverride
+        : OPPORTUNITY_STATUS_COLORS.denied;
+    case "ALMOST":
+      return OPPORTUNITY_STATUS_COLORS.almostEligible;
+  }
 
   if (isIneligible) return OPPORTUNITY_STATUS_COLORS.ineligible;
 
-  if (isAlert) {
-    if (denial) {
-      return OPPORTUNITY_STATUS_COLORS.alertOverride;
-    }
-    if (almostEligible) {
-      return OPPORTUNITY_STATUS_COLORS.almostEligible;
-    }
-    return OPPORTUNITY_STATUS_COLORS.alert;
-  }
-
-  if (denial) {
-    return OPPORTUNITY_STATUS_COLORS.denied;
-  }
-
-  if (almostEligible) {
-    return OPPORTUNITY_STATUS_COLORS.almostEligible;
-  }
-
-  return OPPORTUNITY_STATUS_COLORS.eligible;
+  return isAlert
+    ? OPPORTUNITY_STATUS_COLORS.alert
+    : OPPORTUNITY_STATUS_COLORS.eligible;
 }
 
 export function reasonsIncludesOtherKey(reasons?: string[]) {

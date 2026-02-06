@@ -43,4 +43,8 @@ export class UsTnInitialClassification2026Opportunity extends OpportunityBase<
       resident.rootStore,
     );
   }
+
+  get isCompleted() {
+    return false;
+  }
 }

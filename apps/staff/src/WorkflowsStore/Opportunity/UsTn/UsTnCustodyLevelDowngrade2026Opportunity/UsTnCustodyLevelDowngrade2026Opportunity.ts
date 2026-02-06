@@ -40,4 +40,8 @@ export class UsTnCustodyLevelDowngrade2026Opportunity extends OpportunityBase<
 
     this.form = new UsTnReclassification2026Form(this, client.rootStore);
   }
+
+  get isCompleted() {
+    return false;
+  }
 }

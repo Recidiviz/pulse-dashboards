@@ -169,6 +169,9 @@ export class OpportunityBase<
       setOtherReasonText: action,
       denied: computed,
       isSubmitted: computed,
+      isDenied: computed,
+      isCompleted: computed,
+      isInProgress: computed,
       submittedUpdate: computed,
       submittedButtonText: computed,
       undoSubmittedButtonText: computed,
@@ -358,6 +361,18 @@ export class OpportunityBase<
     return this.config.supportsSubmitted && !!this.submittedUpdate;
   }
 
+  get isCompleted(): boolean {
+    return !!this.updates?.completed;
+  }
+
+  get isDenied(): boolean {
+    return !!this.denial;
+  }
+
+  get isInProgress(): boolean {
+    return !!this.lastViewed || !!this.updates?.referralForm;
+  }
+
   get isSnoozed(): boolean {
     const snoozeUntil =
       (this.autoSnooze?.snoozeUntil &&
@@ -395,37 +410,33 @@ export class OpportunityBase<
   }
 
   get reviewStatus(): OpportunityStatus {
-    const { updates, denial, isSubmitted } = this;
-    if (denial) {
-      return "DENIED";
-    }
+    switch (true) {
+      case this.isDenied:
+        return "DENIED";
 
-    if (updates?.completed) {
-      return "COMPLETED";
-    }
+      case this.isCompleted:
+        return "COMPLETED";
 
-    if (isSubmitted) {
-      return "SUBMITTED";
-    }
+      case this.isSubmitted:
+        return "SUBMITTED";
 
-    if (this.isInRevisionsRequests) {
-      return "REVISIONS_REQUESTED";
-    }
+      case this.isInRevisionsRequests:
+        return "REVISIONS_REQUESTED";
 
-    if (this.isGrantApproved) {
-      return "GRANT_APPROVED";
-    }
+      case this.isGrantApproved:
+        return "GRANT_APPROVED";
 
-    if (this.isInGrantReview) {
-      return "GRANT_REVIEW";
-    }
+      case this.isInGrantReview:
+        return "GRANT_REVIEW";
 
-    if (this.isInSnoozeReview) {
-      return "SNOOZE_REVIEW";
-    }
+      case this.isInSnoozeReview:
+        return "SNOOZE_REVIEW";
 
-    if (this.lastViewed || updates?.referralForm) {
-      return "IN_PROGRESS";
+      case this.isInProgress:
+        return "IN_PROGRESS";
+
+      case this.almostEligible:
+        return "ALMOST";
     }
     return "PENDING";
   }
