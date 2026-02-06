@@ -35,6 +35,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Icons from "../../assets/icons";
+import Logout from "../../assets/icons/logout.svg";
+import Support from "../../assets/icons/support.svg";
 import { useStateSelection } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
@@ -56,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
-  const { onLogout, name } = useUserContext();
+  const { onLogout, name, email } = useUserContext();
   const { canSelectStateCode, currentStateName } = useStateSelection();
 
   const handleDropdownMenuPress = (callback: () => void) => {
@@ -114,60 +116,74 @@ const Header: React.FC<HeaderProps> = ({
           </DesktopMenuItem>
           <View className="relative">
             <TouchableOpacity
-              className="flex-row items-center gap-x-1"
               onPress={() => setProfileDropdownOpen(!profileDropdownOpen)}
             >
-              <ImageBackground
-                source={Icons.BgAvatar}
-                className="size-8 items-center justify-center overflow-hidden rounded-full"
-                imageClassName="!size-8"
+              <View
+                className="flex-row items-center gap-x-1 border border-transparent hover:border-[#35536226] rounded-full transition-all duration-300 p-1.5"
+                style={{ borderColor: profileDropdownOpen ? "#00665F" : "" }}
               >
-                <Text className="font-inter text-base text-white">
-                  {name ? getInitials(name) : "SS"}
-                </Text>
-              </ImageBackground>
-              <Image
-                source={profileDropdownOpen ? Icons.ArrowUp : Icons.ArrowDown}
-                className="!size-4"
-              />
+                <ImageBackground
+                  source={Icons.BgAvatar}
+                  className="size-8 items-center justify-center overflow-hidden rounded-full"
+                  imageClassName="!size-8"
+                >
+                  <Text className="font-inter text-base text-white">{name ? getInitials(name) : "SS"}</Text>
+                </ImageBackground>
+                <Image
+                  source={profileDropdownOpen ? Icons.ArrowUp : Icons.ArrowDown}
+                  className="!size-4"
+                />
+              </View>
             </TouchableOpacity>
             {profileDropdownOpen && (
-              <View className="absolute right-0 top-9 rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm">
-                <ScrollView contentContainerClassName="gap-2">
+              <View className="absolute right-0 top-16 rounded-[20px] bg-white p-2 shadow-sm">
+                <ScrollView contentContainerClassName="gap-1">
+                  <TouchableOpacity
+                    onPress={() =>
+                      handleDropdownMenuPress(() => console.log("Settings"))
+                    }
+                  >
+                    <View className="bg-[#C1E3D83B] border border-transparent p-3.5 rounded-2xl flex flex-row items-center gap-3 min-w-[337px] mb-1 cursor-default">
+                      <ImageBackground
+                        source={Icons.BgAvatar}
+                        className="size-12 items-center justify-center overflow-hidden rounded-full"
+                        imageClassName="!size-12"
+                      >
+                        <Text className="font-inter text-2xl leading-6 text-white">{name ? getInitials(name) : "SS"}</Text>
+                      </ImageBackground>
+                      <View className="flex flex-col justify-between">
+                        <Text className="font-semibold font-inter text-base leading-5">{name ?? "Test User"}</Text>
+                        <Text className="font-normal font-inter text-base text-[#355362D9]">{email ?? "testuser@mail.com"}</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
                   {canSelectStateCode && (
                     <Link
                       screen="StateSelection"
                       onPress={() => setProfileDropdownOpen(false)}
                       params={{}}
-                      className="flex flex-col"
+                      className="flex flex-row items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#C1E3D83B] group transition-all duration-300"
                     >
-                      <Text className="whitespace-nowrap font-inter text-sm text-gray-700">
+                      <Support width={24} height={24} className="fill-[#35536280] group-hover:fill-[#006C67] transition-all duration-300" />
+                      <Text className="whitespace-nowrap font-inter font-medium text-base leading-5 text-[#355362D9] group-hover:text-[#006C67] transition-all duration-300">
                         Settings
                       </Text>
                       {currentStateName && (
-                        <Text className="whitespace-nowrap font-inter text-xs text-gray-500">
+                        <Text className="whitespace-nowrap font-inter text-xs text-gray-500 ml-auto">
                           Current state: {currentStateName}
                         </Text>
                       )}
                     </Link>
                   )}
                   <TouchableOpacity
-                    onPress={() =>
-                      handleDropdownMenuPress(() =>
-                        console.log("Contact Support"),
-                      )
-                    }
-                  >
-                    <Text className="whitespace-nowrap font-inter text-sm text-gray-700">
-                      Contact Support
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
                     onPress={() => handleDropdownMenuPress(onLogout)}
                   >
-                    <Text className="whitespace-nowrap font-inter text-sm text-[#B42D2D]">
-                      Log Out
-                    </Text>
+                    <View className="flex flex-row items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#C1E3D83B] group transition-all duration-300">
+                      <Logout width={24} height={24} className="stroke-[#35536280] stroke-2 group-hover:stroke-[#006C67] transition-all duration-300" />
+                      <Text className="whitespace-nowrap font-inter font-medium text-base leading-5 text-[#355362D9] group-hover:text-[#006C67] transition-all duration-300">
+                        Log Out
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 </ScrollView>
               </View>
