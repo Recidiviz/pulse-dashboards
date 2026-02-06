@@ -46,6 +46,7 @@ export interface PongEventContent {
 
 export interface ConnectionAckEventContent {
   accepted: boolean;
+  status: "error" | "created" | "in_progress" | "completed"
 }
 
 export interface SectionChangeContent {

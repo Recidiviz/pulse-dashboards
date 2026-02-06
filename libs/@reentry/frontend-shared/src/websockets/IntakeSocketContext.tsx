@@ -147,6 +147,11 @@ type SetWaitingForAIInputAction = {
   content: boolean;
 };
 
+type SetStatusAction = {
+  type: "setStatus";
+  content: components["schemas"]["IntakeStatus"];
+};
+
 type IntakeAction =
   | ConnectionAction
   | IntakeApiAction
@@ -157,7 +162,8 @@ type IntakeAction =
   | InitializeIntakeMetaAction
   | SetConversationStartedAction
   | SetIntakeCompleteAction
-  | SetWaitingForAIInputAction;
+  | SetWaitingForAIInputAction
+  | SetStatusAction;
 
 const intakeReducer = (
   state: IntakeSocketContextType,
@@ -194,6 +200,13 @@ const intakeReducer = (
         ...state,
         connectionStatus: "disconnected",
         disconnectReason,
+      };
+    }
+    case "setStatus": {
+      if (state.intakeStatus === action.content) return state;
+      return {
+        ...state,
+        intakeStatus: action.content,
       };
     }
     case "apiIntakeData": {
@@ -433,6 +446,10 @@ export function IntakeSocketProvider({
           if (content.accepted) {
             console.log("ConnectionAck accepted=true");
             dispatch({ type: "connected" });
+
+            if (content.status) {
+              dispatch({ type: "setStatus", content: content.status });
+            }
           } else {
             console.log("ConnectionAck accepted=false");
             dispatch({ type: "disconnect" });

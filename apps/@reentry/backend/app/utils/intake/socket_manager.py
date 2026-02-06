@@ -175,7 +175,9 @@ class SocketIOManager:
                                 await self.send_event_client_pseudo_id(
                                     client_pseudo_id,
                                     ConnectionAckEvent(
-                                        content=ConnectionAckContent(accepted=True)
+                                        content=ConnectionAckContent(
+                                            accepted=True, status=intake.status
+                                        )
                                     ),
                                 )
 
