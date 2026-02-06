@@ -520,6 +520,46 @@ function WorkflowsSystemLinks() {
   });
 }
 
+const ENVIRONMENTS = [
+  {
+    name: "Development",
+    domain: "http://localhost:3000",
+    env: "dev",
+  },
+  {
+    name: "Staging",
+    domain: "https://dashboard-staging.recidiviz.org",
+    env: "staging",
+  },
+  {
+    name: "Production",
+    domain: "https://dashboard.recidiviz.org",
+    env: "production",
+  },
+];
+
+function EnvironmentLinks() {
+  const { userStore, currentTenantId } = useRootStore();
+  const { pathname } = useLocation();
+
+  if (!userStore.isRecidivizUser) return null;
+
+  return ENVIRONMENTS.filter(
+    (e) => import.meta.env.VITE_DEPLOY_ENV !== e.env,
+  ).map((e) => (
+    <DropdownMenuItem key={e.env}>
+      <a
+        href={`${e.domain}${pathname}?tenantId=${currentTenantId}`}
+        role="menuitem"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Open in {e.name} <Icon kind={IconSVG.Open} width={15} />
+      </a>
+    </DropdownMenuItem>
+  ));
+}
+
 type NavigationLayoutProps = {
   backgroundColor?: string;
   isFixed?: boolean;
@@ -615,6 +655,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           staffPseudoId={sentencingStore.staffPseudoId}
         />
         <CPALink enabled={enabledCPA} />
+        <EnvironmentLinks />
         <LogoutLink enabled={!isOfflineMode()} />
       </>
     );
