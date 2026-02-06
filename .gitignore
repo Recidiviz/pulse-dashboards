@@ -4,6 +4,7 @@
 .env
 *.env*
 !.env.offline
+!.env.typecheck
 !apps/jii/.env.*
 !apps/jii-functions/.env*
 !apps/jii-functions/**/.enc.env*
