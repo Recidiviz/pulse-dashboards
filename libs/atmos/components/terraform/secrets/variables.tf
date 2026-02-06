@@ -1,4 +1,3 @@
-
 variable "sops_file" {
   type        = string
   description = "Path to SOPS file, relative to this component, to use for secrets"
@@ -14,7 +13,6 @@ variable "deletion_policy" {
   default     = "DELETE"
   description = "Default deletion policy"
 }
-
 
 variable "replication_overrides" {
   type        = map(string)

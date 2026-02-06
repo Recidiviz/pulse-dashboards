@@ -1,0 +1,24 @@
+FROM python:3.11-alpine
+
+ENV PYTHONUNBUFFERED=1 \
+    UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1
+
+COPY --from=ghcr.io/astral-sh/uv:0.9.25 /uv /usr/local/bin/uv
+
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
+WORKDIR /app
+
+# Copy uv files and install dependencies
+COPY apps/@cpa-labeling/backend/pyproject.toml apps/@cpa-labeling/backend/uv.lock ./
+RUN uv sync --locked
+
+# Copy application code (will be mounted as volume for hot reload in dev)
+COPY apps/@cpa-labeling/backend/app/ ./app/
+COPY apps/@cpa-labeling/backend/alembic/ ./alembic/
+COPY apps/@cpa-labeling/backend/alembic.ini ./
+
+# Run migrations and start server with hot reload
+CMD sh -c "uv run alembic upgrade head && uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8080"

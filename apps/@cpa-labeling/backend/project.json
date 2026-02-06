@@ -1,0 +1,93 @@
+{
+  "name": "@cpa-labeling/backend",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@cpa-labeling/backend/app",
+  "projectType": "application",
+  "tags": ["cpa-labeling", "scope:server"],
+  "targets": {
+    "docker": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f apps/@cpa-labeling/compose.yml up --wait",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "docker-down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f apps/@cpa-labeling/compose.yml down",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "docker-logs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f apps/@cpa-labeling/compose.yml logs -f backend",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8080",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "dev:docker": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["docker"],
+      "options": {
+        "command": "docker compose -f apps/@cpa-labeling/compose.yml logs -f backend",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "sync": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv sync",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": [
+        {
+          "projects": ["@cpa-labeling/frontend"],
+          "target": "build"
+        }
+      ],
+      "cwd": "{workspaceRoot}",
+      "options": {
+        "engine": "docker",
+        "file": "apps/@cpa-labeling/backend/Dockerfile",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "production": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-rnd-planner/cpa-labeling/production:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-rnd-planner/cpa-labeling/production:latest"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["container"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "parallel": false
+      },
+      "configurations": {
+        "production": {
+          "commands": [
+            "yarn atmos:apply apps/cpa-labeling -s recidiviz-rnd-planner--cpa-labeling -- -auto-approve -var server_container_version=$COMMIT_SHA"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "name": "@cpa-labeling/frontend",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@cpa-labeling/frontend/src",
+  "projectType": "application",
+  "tags": ["scope:client"],
+  "targets": {
+    "docker": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@cpa-labeling/backend"],
+          "target": "docker"
+        }
+      ],
+      "options": {
+        "command": "echo 'Docker services started by backend'",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "docker-down": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@cpa-labeling/backend"],
+          "target": "docker-down"
+        }
+      ],
+      "options": {
+        "command": "echo 'Docker services stopped by backend'",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "docker-logs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f apps/@cpa-labeling/compose.yml logs -f frontend",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "dev:docker": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["docker"],
+      "options": {
+        "command": "docker compose -f apps/@cpa-labeling/compose.yml logs -f frontend",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "requires-sops-env:build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "cache": true,
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/apps/@cpa-labeling/frontend",
+        "emptyOutDir": true
+      },
+      "configurations": {
+        "production": {}
+      },
+      "defaultConfiguration": "production"
+    }
+  }
+}

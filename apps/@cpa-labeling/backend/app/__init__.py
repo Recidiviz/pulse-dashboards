@@ -1,0 +1,1 @@
+"""Labeling backend app."""

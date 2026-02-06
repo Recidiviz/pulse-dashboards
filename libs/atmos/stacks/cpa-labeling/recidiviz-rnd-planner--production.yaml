@@ -1,0 +1,47 @@
+# Infrastructure configuration for CPA Labeling app in production
+#
+# This app is deployed to the same project as reentry so it can access the reentry database.
+settings:
+  context:
+    project_id: recidiviz-rnd-planner
+    product: cpa-labeling
+    location: us-central1
+
+# The variables set here are automatically provided to any components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+  location: "{{ .settings.context.location }}"
+
+import:
+  - ../@defaults/terraform-backend
+  - ../@defaults/vendor/artifact-registry
+
+components:
+  terraform:
+    artifact_registry:
+      vars:
+        project_id: "{{ .settings.context.project_id }}"
+        location: "{{ .settings.context.location }}"
+        repository_id: cpa-labeling
+
+    apps/cpa-labeling:
+      vars:
+        values_filename: values/cpa-labeling-production.enc.yaml
+        secrets_filename: secrets/cpa-labeling-production.enc.yaml
+
+        # Artifact Registry
+        artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}/production'
+        artifact_registry_project_id: "{{ .settings.context.project_id }}"
+
+        # Reentry database connection (for read-only access to intake/plan data)
+        reentry_sql_connection_name: "recidiviz-rnd-planner:us-central1:recidiviz-prod"
+
+        # CORS - allow the labeling frontend
+        allowed_origins: "https://cpa-labeling.recidiviz.org,https://labeling.recidiviz.org"
+
+        # Database high availability for production
+        database_availability_type: REGIONAL
+        database_secondary_zone: us-central1-c
+
+        # Load balancer and IAP
+        domain_name: "cpa-labeling.recidiviz.org"

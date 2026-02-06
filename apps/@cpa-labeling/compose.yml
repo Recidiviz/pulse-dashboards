@@ -1,0 +1,84 @@
+name: "cpa-labeling"
+
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # Default database (will create this on startup)
+      POSTGRES_DB: reentry
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d reentry -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cpa-labeling-net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@recidiviz.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "8002:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - cpa-labeling-net
+
+  backend:
+    build:
+      # Context is repo root (two levels up from compose.yml location)
+      context: ../..
+      dockerfile: apps/@cpa-labeling/backend/Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      LABELING_REENTRY_POSTGRES_SERVER: postgres
+      LABELING_REENTRY_POSTGRES_PORT: 5432
+      LABELING_REENTRY_POSTGRES_USER: postgres
+      LABELING_REENTRY_POSTGRES_PASSWORD: postgres
+      LABELING_REENTRY_POSTGRES_DB: reentry
+      LABELING_LABELING_POSTGRES_SERVER: postgres
+      LABELING_LABELING_POSTGRES_PORT: 5432
+      LABELING_LABELING_POSTGRES_USER: postgres
+      LABELING_LABELING_POSTGRES_PASSWORD: postgres
+      LABELING_LABELING_POSTGRES_DB: labeling
+      LABELING_ALLOWED_ORIGINS: "http://localhost:5173,http://localhost:3000"
+      LABELING_SKIP_AUTH: "true"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/alembic:/app/alembic
+      - ./backend/alembic.ini:/app/alembic.ini
+      - ./backend/scripts:/app/scripts
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - cpa-labeling-net
+
+volumes:
+  postgres_data:
+
+networks:
+  cpa-labeling-net:
+    driver: bridge

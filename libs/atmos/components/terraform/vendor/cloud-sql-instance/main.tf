@@ -15,10 +15,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
-provider "google" {
-  project = var.project_id
-}
-
 # Data from Google Secrets Manager is added in this terraform module's scope
 # The following secrets are used to configure the instance:
 # =========================================================
