@@ -35,6 +35,20 @@ def upgrade() -> None:
 
     # Only delete if there are rows with 'external' intake type
     if has_external_intakes:
+        # First, remove dependent records that reference external intakes
+        # to avoid foreign key violations (assessment and plan tables)
+        op.execute("""
+            DELETE FROM assessment
+            WHERE intake_id IN (
+                SELECT id FROM intake WHERE intake_type::text = 'external'
+            )
+        """)
+        op.execute("""
+            UPDATE plan SET intake_id = NULL
+            WHERE intake_id IN (
+                SELECT id FROM intake WHERE intake_type::text = 'external'
+            )
+        """)
         op.execute("DELETE FROM intake WHERE intake_type::text = 'external'")
 
     # Drop the external_chat_messages column if it exists
