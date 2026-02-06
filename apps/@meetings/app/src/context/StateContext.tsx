@@ -17,6 +17,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+import env from "../env";
 import { getItem, saveItem } from "../utils/storage";
 import { useUserContext } from "./UserContext";
 
@@ -30,6 +31,13 @@ export const AVAILABLE_STATE_CODES = [
 export type StateCode = (typeof AVAILABLE_STATE_CODES)[number]["code"];
 
 export const DEFAULT_STATE_CODE: StateCode = "US_NE";
+
+export const TRANSCRIPTION_ENABLED_STATES: string[] =
+  env.EXPO_PUBLIC_TRANSCRIPTION_ENABLED_STATES
+    ? env.EXPO_PUBLIC_TRANSCRIPTION_ENABLED_STATES.split(",").map((s) =>
+        s.trim(),
+      )
+    : [];
 
 interface StateContextType {
   /**

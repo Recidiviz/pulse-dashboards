@@ -54,9 +54,15 @@ type Props = {
   meetingDetails?: MeetingDetails;
   person: Person;
   personType: "client" | "resident";
+  showTranscription?: boolean;
 };
 
-const MeetingMobile = ({ meetingDetails, person, personType }: Props) => {
+const MeetingMobile = ({
+  meetingDetails,
+  person,
+  personType,
+  showTranscription = false,
+}: Props) => {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Notes);
   const scrollY = useSharedValue(0);
@@ -323,6 +329,7 @@ const MeetingMobile = ({ meetingDetails, person, personType }: Props) => {
               />
             )}
             {activeTab === Tab.Transcription &&
+              showTranscription &&
               meetingDetails?.transcription && (
                 <MeetingTranscriptionTab
                   transcription={{

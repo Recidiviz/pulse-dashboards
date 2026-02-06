@@ -34,7 +34,6 @@ import MeetingNotesTab from "../components/MeetingNotesTab";
 import MeetingTabs, { Tab } from "../components/MeetingTabs";
 import MeetingTranscriptionTab from "../components/MeetingTranscriptionTab";
 import { useSnackbar } from "../components/Snackbar";
-import env from "../env";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
@@ -114,9 +113,15 @@ type Props = {
   meetingDetails?: MeetingDetails;
   person: Person;
   personType: "client" | "resident";
+  showTranscription?: boolean;
 };
 
-const MeetingDesktop = ({ meetingDetails, person, personType }: Props) => {
+const MeetingDesktop = ({
+  meetingDetails,
+  person,
+  personType,
+  showTranscription = false,
+}: Props) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Notes);
 
   const meetingDate = meetingDetails?.startTime
@@ -224,7 +229,7 @@ const MeetingDesktop = ({ meetingDetails, person, personType }: Props) => {
               />
             )}
             {activeTab === Tab.Transcription &&
-              !(env.EXPO_PUBLIC_DEPLOY_ENV === "production") &&
+              showTranscription &&
               meetingDetails?.transcription && (
                 <MeetingTranscriptionTab
                   transcription={{

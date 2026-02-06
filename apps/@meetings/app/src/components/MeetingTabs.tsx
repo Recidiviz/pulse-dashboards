@@ -18,7 +18,10 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
-import env from "../env";
+import {
+  TRANSCRIPTION_ENABLED_STATES,
+  useStateSelection,
+} from "../context/StateContext";
 
 export enum Tab {
   Notes = "Notes",
@@ -36,10 +39,12 @@ const MeetingTabs = ({
   setActiveTab,
   isTranscriptionUnavailable,
 }: Props) => {
-  const isProduction = env.EXPO_PUBLIC_DEPLOY_ENV === "production";
-  const visibleTabs = isProduction
-    ? Object.values(Tab).filter((tab) => tab !== Tab.Transcription)
-    : Object.values(Tab);
+  const { selectedStateCode } = useStateSelection();
+  const showTranscription =
+    TRANSCRIPTION_ENABLED_STATES.includes(selectedStateCode);
+  const visibleTabs = showTranscription
+    ? Object.values(Tab)
+    : Object.values(Tab).filter((tab) => tab !== Tab.Transcription);
 
   // Hide tabs entirely if only one tab is visible
   if (visibleTabs.length <= 1) {

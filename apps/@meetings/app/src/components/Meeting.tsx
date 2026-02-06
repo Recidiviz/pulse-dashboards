@@ -21,6 +21,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MeetingDetails, Person } from "../common/types";
 import MeetingDesktop from "../components/MeetingDesktop";
 import MeetingMobile from "../components/MeetingMobile";
+import {
+  TRANSCRIPTION_ENABLED_STATES,
+  useStateSelection,
+} from "../context/StateContext";
 
 type Props = {
   meetingDetails?: MeetingDetails;
@@ -29,6 +33,9 @@ type Props = {
 };
 
 const Meeting = ({ meetingDetails, person, personType }: Props) => {
+  const { selectedStateCode } = useStateSelection();
+  const showTranscription =
+    TRANSCRIPTION_ENABLED_STATES.includes(selectedStateCode);
   return (
     <SafeAreaView className="flex-1 grow bg-white">
       <View className="flex-1 grow md:hidden">
@@ -36,6 +43,7 @@ const Meeting = ({ meetingDetails, person, personType }: Props) => {
           meetingDetails={meetingDetails}
           person={person}
           personType={personType}
+          showTranscription={showTranscription}
         />
       </View>
       <View className="hidden flex-1 grow md:flex">
@@ -43,6 +51,7 @@ const Meeting = ({ meetingDetails, person, personType }: Props) => {
           meetingDetails={meetingDetails}
           person={person}
           personType={personType}
+          showTranscription={showTranscription}
         />
       </View>
     </SafeAreaView>
