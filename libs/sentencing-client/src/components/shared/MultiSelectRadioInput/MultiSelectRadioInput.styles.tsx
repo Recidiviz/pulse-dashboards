@@ -23,12 +23,12 @@ import { palette } from "~design-system";
 import { customPalette } from "../../styles/palette";
 
 // Re-export shared skip-related styles
+export { SectionTitle as Title } from "../styles/SectionStyles";
 export {
   HeaderContainer,
   SkipCheckbox,
   SkipContainer,
   SkipLabel,
-  Title,
 } from "../styles/SkipStyles";
 
 export const HelperText = styled.div`

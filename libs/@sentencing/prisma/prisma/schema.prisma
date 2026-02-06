@@ -640,7 +640,6 @@ model SentencingAssessmentReport {
   employmentHistories EmploymentHistory[]
   priorTreatmentHistories PriorTreatmentHistory[]
 
-
   // Metadata stored as JSON
   // Tracks form completion state including:
   // - sectionsCompleted: string[] - Sections that have been filled out

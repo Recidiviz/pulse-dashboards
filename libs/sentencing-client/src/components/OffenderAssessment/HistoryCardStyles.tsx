@@ -96,9 +96,5 @@ export const EmptyState = styled.div`
   font-family: "Public Sans";
   font-size: 0.875rem;
   color: ${palette.slate70};
-  text-align: center;
-  padding: 2rem;
-  border: 1px dashed ${palette.slate30};
-  border-radius: 0.5rem;
   line-height: 1.5;
 `;

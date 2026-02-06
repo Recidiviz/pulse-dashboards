@@ -101,9 +101,7 @@ export const EmploymentHistoryCard: React.FC<EmploymentHistoryCardProps> =
               </Styled.HistoryList>
             </Styled.HistoryTable>
           ) : (
-            <Styled.EmptyState>
-              No employment records. Click &quot;+ Add&quot; to create one.
-            </Styled.EmptyState>
+            <Styled.EmptyState>No employment records</Styled.EmptyState>
           )}
 
           <Styled.AddButton onClick={handleAdd}>+ Add</Styled.AddButton>

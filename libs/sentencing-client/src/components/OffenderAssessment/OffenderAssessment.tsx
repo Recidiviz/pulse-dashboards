@@ -20,6 +20,7 @@ import React, { useEffect, useRef } from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { OffenderAssessmentSubsection } from "../SARDetails/constants";
+import { SectionContainer } from "../SARDetails/SARDetails.styles";
 import { DomainCard } from "./DomainCard";
 import * as DomainCardStyled from "./DomainCard.styles";
 import { EmploymentHistoryCard } from "./EmploymentHistory";
@@ -128,7 +129,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
     }, [currentSubsection]);
 
     return (
-      <Styled.Container>
+      <SectionContainer>
         <OrasAssessmentScoreCard
           score={assessmentScore ?? 0}
           assessmentType={assessmentType ?? null}
@@ -282,7 +283,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
             cardRef={responsivityRef}
           />
         )}
-      </Styled.Container>
+      </SectionContainer>
     );
   },
 );

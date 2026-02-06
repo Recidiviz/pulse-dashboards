@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,35 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { typography } from "@recidiviz/design-system";
-import styled from "styled-components";
+import { SAR } from "../../../api";
 
-import { palette } from "~design-system";
+export type PriorTreatmentHistory = NonNullable<
+  SAR["priorTreatmentHistories"]
+>[number];
 
-export const HeaderContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
-  margin-bottom: 12px;
-  width: 100%;
-`;
+export type DOCTreatmentHistory = NonNullable<
+  NonNullable<SAR["client"]>["DOCTreatmentHistories"]
+>[number];
 
-export const SkipContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
+export type TreatmentProgramCategory = NonNullable<
+  DOCTreatmentHistory["programCategory"]
+>;
 
-export const SkipCheckbox = styled.input`
-  width: 1rem;
-  height: 1rem;
-  accent-color: ${palette.pine4};
-  cursor: pointer;
-`;
+export type CreatePriorTreatmentHistoryInput = Omit<
+  PriorTreatmentHistory,
+  "id"
+>;
 
-export const SkipLabel = styled.label`
-  ${typography.Sans14}
-  color: ${palette.slate85};
-  cursor: pointer;
-  padding-top: 0.35rem;
-`;
+export type UpdatePriorTreatmentHistoryInput = Partial<
+  Omit<PriorTreatmentHistory, "id">
+>;

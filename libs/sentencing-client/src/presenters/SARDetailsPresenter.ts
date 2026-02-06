@@ -39,6 +39,7 @@ import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
 import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
 import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
+import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter";
 
 // Type for SAR metadata structure
 type SARMetadataSections = {
@@ -67,12 +68,14 @@ type SARMetadata = {
 
 // Field counts for progress tracking
 // These must stay in sync with the arrays used in overallProgress calculation
+// TODO(#11083): Explore ways to infer these counts automatically to avoid manual updates
 const PROGRESS_FIELD_COUNTS = {
   DEFENDANT_VERSION: 1, // defendantStatement
   VICTIM_IMPACT: 1, // victimImpactStatement
   RECOMMENDATION: 3, // communityStrategyRecommendation + homePlan + institutionalStrategyRecommendation
   OFFENDER_ASSESSMENT_SUMMARIES: 8, // 8 summary text fields
   OFFENDER_ASSESSMENT_FORM: 4, // levelOfEducation, fatherName, motherName, guardianName (excludes employedAtOffense - see note in overallProgress)
+  PRIOR_TREATMENT_HISTORY: 1, // priorTreatmentHistorySummary
 } as const;
 
 const OFFENDER_ASSESSMENT_TOTAL =
@@ -86,12 +89,18 @@ export class SARDetailsPresenter implements Hydratable {
 
   offenderAssessment: OffenderAssessmentPresenter;
 
+  priorTreatmentHistory: PriorTreatmentHistoryPresenter;
+
   constructor(
     public readonly sentencingStore: SentencingStore,
     public sarId: string,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
     this.offenderAssessment = new OffenderAssessmentPresenter(
+      this,
+      this.sentencingStore.apiClient,
+    );
+    this.priorTreatmentHistory = new PriorTreatmentHistoryPresenter(
       this,
       this.sentencingStore.apiClient,
     );
@@ -536,7 +545,8 @@ export class SARDetailsPresenter implements Hydratable {
       | "drugHistorySummary"
       | "peerAssociatesSummary"
       | "criminalAttitudesSummary"
-      | "responsivityAndBarriersSummary",
+      | "responsivityAndBarriersSummary"
+      | "priorTreatmentHistorySummary",
     value: string,
   ): Promise<void> {
     if (!this.SARData) return;
@@ -960,6 +970,7 @@ export class SARDetailsPresenter implements Hydratable {
         "victimImpactStatement",
       ),
       [SARSection.OFFENDER_ASSESSMENT]: this.getOffenderAssessmentStatus(),
+      [SARSection.PRIOR_TREATMENT_HISTORY]: this.getPriorTreatmentHistoryStatus(),
       [SARSection.RECOMMENDATION]: this.getRecommendationStatus(),
       // Future sections will be added here
     };
@@ -1023,6 +1034,13 @@ export class SARDetailsPresenter implements Hydratable {
 
     // If never visited (empty, not skipped, not edited), show nothing
     return "empty";
+  }
+
+  /** Helper: Get status for Prior Treatment History (no metadata/skip support) */
+  private getPriorTreatmentHistoryStatus(): SectionStatus {
+    const summary = this.SARData?.priorTreatmentHistorySummary;
+    const hasContent = !!summary && summary.trim() !== "";
+    return hasContent ? "complete" : "empty";
   }
 
   /** Get Case Information section status */

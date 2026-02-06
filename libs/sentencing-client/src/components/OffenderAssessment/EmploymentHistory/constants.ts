@@ -16,10 +16,11 @@
 // =============================================================================
 
 import { SAR } from "../../../api";
+export { VERIFIED_OPTIONS } from "../constants";
 
 export type EmploymentHistory = NonNullable<SAR["employmentHistories"]>[number];
 
-export const VERIFIED_OPTIONS = [
-  { value: "true", label: "Yes" },
-  { value: "false", label: "No" },
-];
+export type CreateEmploymentHistoryInput = Omit<EmploymentHistory, "id">;
+export type UpdateEmploymentHistoryInput = Partial<
+  Omit<EmploymentHistory, "id">
+>;

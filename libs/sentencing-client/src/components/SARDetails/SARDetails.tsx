@@ -25,6 +25,7 @@ import { sarUrl } from "../../utils/routing";
 import { CaseInformation } from "../CaseInformation/CaseInformation";
 import { KeyConsiderations } from "../KeyConsiderations";
 import { OffenderAssessment } from "../OffenderAssessment";
+import { PriorTreatmentHistorySection } from "../OffenderAssessment/PriorTreatmentHistory/PriorTreatmentHistorySection";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { Recommendation } from "../Recommendation";
 import { TopProgressBar } from "../shared/TopProgressBar";
@@ -112,6 +113,13 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
                     title="Enter Victim Impact Statement"
                     fieldName="victimImpactStatement"
                     placeholder="Please add the Victim Impact here"
+                  />
+                );
+              }
+              if (currentSection === SARSection.PRIOR_TREATMENT_HISTORY) {
+                return (
+                  <PriorTreatmentHistorySection
+                    presenter={presenter.priorTreatmentHistory}
                   />
                 );
               }

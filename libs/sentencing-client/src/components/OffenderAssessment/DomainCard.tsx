@@ -22,7 +22,7 @@ import * as Styled from "./DomainCard.styles";
 import { RiskScoreChip } from "./RiskScoreChip";
 
 interface DomainCardProps {
-  title: string;
+  title: string | null;
   riskScore?: number;
   helperText?: string; // Optional helper text shown below title
   children?: React.ReactNode; // Domain-specific form fields
@@ -48,10 +48,12 @@ export const DomainCard: React.FC<DomainCardProps> = ({
     <Styled.ScrollWrapper ref={cardRef}>
       <Styled.CardContainer>
         <Styled.HeaderSection>
-          <Styled.HeaderRow>
-            <Styled.Title>{title}</Styled.Title>
-            {riskScore !== undefined && <RiskScoreChip score={riskScore} />}
-          </Styled.HeaderRow>
+          {title && (
+            <Styled.HeaderRow>
+              <Styled.Title>{title}</Styled.Title>
+              {riskScore !== undefined && <RiskScoreChip score={riskScore} />}
+            </Styled.HeaderRow>
+          )}
 
           {helperText && <Styled.HelperText>{helperText}</Styled.HelperText>}
         </Styled.HeaderSection>
@@ -65,7 +67,7 @@ export const DomainCard: React.FC<DomainCardProps> = ({
             onChange={onSummaryChange}
             placeholder={
               summaryPlaceholder ??
-              `Please enter a summary of ${title.toLowerCase()}`
+              `Please enter a summary of ${title?.toLowerCase() ?? "this section"}`
             }
             height="6.8125rem"
             placeholderColor={summaryPlaceholderColor}

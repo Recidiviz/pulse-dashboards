@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,32 +17,16 @@
 
 import styled from "styled-components";
 
-// Re-export shared skip-related styles
-export { SectionTitle as Title } from "../styles/SectionStyles";
-export {
-  HeaderContainer,
-  SkipCheckbox,
-  SkipContainer,
-  SkipLabel,
-} from "../styles/SkipStyles";
+import { palette } from "~design-system";
 
-export const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-  align-self: stretch;
-  position: relative;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-`;
-
-export const ContentContainer = styled.div<{ skipped?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.5rem;
-  align-self: stretch;
-  opacity: ${({ skipped }) => (skipped ? 0.5 : 1)};
-  pointer-events: ${({ skipped }) => (skipped ? "none" : "auto")};
+export const SectionTitle = styled.h3`
+  color: ${palette.pine1};
+  font-family: "Public Sans";
+  font-size: 1.125rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.0225rem;
+  width: 90%;
+  margin: 0;
 `;

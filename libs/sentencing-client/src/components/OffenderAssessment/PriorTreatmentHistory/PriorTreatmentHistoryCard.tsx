@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,25 +18,25 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
-import { OffenderAssessmentPresenter } from "../../../presenters/OffenderAssessmentPresenter";
+import { PriorTreatmentHistoryPresenter } from "../../../presenters/PriorTreatmentHistoryPresenter";
 import * as Styled from "../HistoryCardStyles";
-import { DrugHistory } from "./constants";
-import { DrugHistoryItem } from "./DrugHistoryItem";
-import { DrugHistoryModal } from "./DrugHistoryModal";
+import { PriorTreatmentHistoryItem } from "./PriorTreatmentHistoryItem";
+import { PriorTreatmentHistoryModal } from "./PriorTreatmentHistoryModal";
+import { PriorTreatmentHistory } from "./types";
 
-interface DrugHistoryCardProps {
-  presenter: OffenderAssessmentPresenter;
+interface PriorTreatmentHistoryCardProps {
+  presenter: PriorTreatmentHistoryPresenter;
 }
 
-export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
-  function DrugHistoryCard({ presenter }) {
+export const PriorTreatmentHistoryCard: React.FC<PriorTreatmentHistoryCardProps> =
+  observer(function PriorTreatmentHistoryCard({ presenter }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [initialData, setInitialData] = useState<DrugHistory | undefined>(
-      undefined,
-    );
+    const [initialData, setInitialData] = useState<
+      PriorTreatmentHistory | undefined
+    >(undefined);
 
-    const { drugHistories, clientFirstName } = presenter;
+    const { priorTreatmentHistories } = presenter;
 
     const handleAdd = () => {
       setEditingId(null);
@@ -45,7 +45,7 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
     };
 
     const handleEdit = (id: string) => {
-      const history = drugHistories.find((h) => h.id === id);
+      const history = priorTreatmentHistories.find((h) => h.id === id);
       if (history) {
         setEditingId(id);
         setInitialData(history);
@@ -53,18 +53,18 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
       }
     };
 
-    const handleModalSave = async (data: Omit<DrugHistory, "id">) => {
+    const handleModalSave = async (data: Omit<PriorTreatmentHistory, "id">) => {
       if (editingId) {
         // Edit mode
-        await presenter.updateDrugHistory(editingId, data);
+        await presenter.updatePriorTreatmentHistory(editingId, data);
       } else {
         // Add mode
-        await presenter.createDrugHistory(data);
+        await presenter.createPriorTreatmentHistory(data);
       }
     };
 
     const handleDelete = async (id: string) => {
-      await presenter.deleteDrugHistory(id);
+      await presenter.deletePriorTreatmentHistory(id);
     };
 
     const handleModalClose = () => {
@@ -76,22 +76,16 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
     return (
       <>
         <Styled.HistorySection>
-          <Styled.SectionTitle>Substance Use History</Styled.SectionTitle>
-
-          {drugHistories && drugHistories.length > 0 ? (
+          {priorTreatmentHistories && priorTreatmentHistories.length > 0 ? (
             <Styled.HistoryTable>
               <Styled.TableHeaderRow>
-                <Styled.TableHeaderCell>Substance</Styled.TableHeaderCell>
-                <Styled.TableHeaderCell>
-                  Age of Regular Use
-                </Styled.TableHeaderCell>
-                <Styled.TableHeaderCell>Last Use</Styled.TableHeaderCell>
-                <Styled.TableHeaderCell>Heaviest Use</Styled.TableHeaderCell>
-                <Styled.TableHeaderCell>Method</Styled.TableHeaderCell>
+                <Styled.TableHeaderCell>Year Completed</Styled.TableHeaderCell>
+                <Styled.TableHeaderCell>Program</Styled.TableHeaderCell>
+                <Styled.TableHeaderCell>Verified</Styled.TableHeaderCell>
               </Styled.TableHeaderRow>
               <Styled.HistoryList>
-                {drugHistories.map((history) => (
-                  <DrugHistoryItem
+                {priorTreatmentHistories.map((history) => (
+                  <PriorTreatmentHistoryItem
                     key={history.id}
                     history={history}
                     onEdit={handleEdit}
@@ -101,21 +95,24 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
               </Styled.HistoryList>
             </Styled.HistoryTable>
           ) : (
-            <Styled.EmptyState>No substance use records</Styled.EmptyState>
+            <Styled.EmptyState>No history added</Styled.EmptyState>
           )}
 
-          <Styled.AddButton onClick={handleAdd}>+ Add</Styled.AddButton>
+          <Styled.AddButton
+            onClick={handleAdd}
+            aria-label="Add prior treatment history"
+          >
+            + Add
+          </Styled.AddButton>
         </Styled.HistorySection>
 
-        <DrugHistoryModal
+        <PriorTreatmentHistoryModal
           isOpen={isModalOpen}
           onClose={handleModalClose}
           onSave={handleModalSave}
           initialData={initialData}
           isEditMode={editingId !== null}
-          clientFirstName={clientFirstName}
         />
       </>
     );
-  },
-);
+  });

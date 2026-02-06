@@ -23,6 +23,7 @@ export enum SARSection {
   DEFENDANTS_VERSION = "Defendant's Version",
   VICTIM_IMPACT = "Victim Impact",
   OFFENDER_ASSESSMENT = "Offender Assessment",
+  PRIOR_TREATMENT_HISTORY = "Prior Treatment History",
   RECOMMENDATION = "Recommendation",
   SUMMARY = "Summary",
 }
@@ -33,6 +34,7 @@ export const SAR_REPORT_SECTIONS = [
   SARSection.DEFENDANTS_VERSION,
   SARSection.VICTIM_IMPACT,
   SARSection.OFFENDER_ASSESSMENT,
+  SARSection.PRIOR_TREATMENT_HISTORY,
   SARSection.RECOMMENDATION,
   SARSection.SUMMARY,
 ] as const;

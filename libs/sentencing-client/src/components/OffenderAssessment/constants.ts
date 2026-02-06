@@ -47,3 +47,14 @@ export const DOMAIN_SCORE_KEYS = [
 ] as const;
 
 export type DomainScoreKey = (typeof DOMAIN_SCORE_KEYS)[number];
+
+// Shared form constants
+export interface SelectOption {
+  label: string;
+  value: string;
+}
+
+export const VERIFIED_OPTIONS: SelectOption[] = [
+  { label: "Yes", value: "true" },
+  { label: "No", value: "false" },
+];

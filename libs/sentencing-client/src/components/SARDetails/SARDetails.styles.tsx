@@ -40,6 +40,26 @@ export const ContentLayout = styled.div`
   position: sticky;
 `;
 
+export const SectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 50rem;
+  height: fit-content;
+  left: 26rem;
+  position: sticky;
+  padding: 1.5rem;
+  gap: 1.5rem;
+`;
+
+export const PriorTreatmentSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  overflow: hidden;
+`;
+
 export const MainContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -49,7 +69,7 @@ export const MainContent = styled.div`
   border-radius: 0.625rem;
   border: 1px solid ${palette.slate10};
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
-  left: 25rem;
+  left: 26rem;
   position: sticky;
   padding-top: 2rem;
   padding-bottom: 2rem;

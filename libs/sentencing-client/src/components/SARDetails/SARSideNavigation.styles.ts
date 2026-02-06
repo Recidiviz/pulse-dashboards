@@ -42,7 +42,7 @@ export const AutosaveMessage = styled.div`
 export const SideNavigationContainer = styled.div`
   position: sticky;
   top: 1rem; /* Account for progress bar height */
-  width: 16 rem;
+  width: 17rem;
   height: fit-content;
   max-height: calc(100vh - 1rem); /* Subtract progress bar height */
   gap: 1rem;

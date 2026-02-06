@@ -69,3 +69,6 @@ export const AGE_OPTIONS = Array.from({ length: 100 }, (_, i) => ({
   value: (i + 1).toString(),
   label: (i + 1).toString(),
 }));
+
+export type CreateDrugHistoryInput = Omit<DrugHistory, "id">;
+export type UpdateDrugHistoryInput = Partial<Omit<DrugHistory, "id">>;

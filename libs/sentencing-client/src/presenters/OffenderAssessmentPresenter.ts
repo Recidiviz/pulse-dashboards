@@ -18,18 +18,18 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { APIClient, OfflineAPIClient } from "../api";
-import { EmploymentHistory } from "../components/OffenderAssessment/EmploymentHistory/constants";
-import { DrugHistory } from "../components/OffenderAssessment/SubstanceUse/constants";
+import {
+  CreateEmploymentHistoryInput,
+  EmploymentHistory,
+  UpdateEmploymentHistoryInput,
+} from "../components/OffenderAssessment/EmploymentHistory/constants";
+import {
+  CreateDrugHistoryInput,
+  DrugHistory,
+  UpdateDrugHistoryInput,
+} from "../components/OffenderAssessment/SubstanceUse/constants";
 import { splitFullName } from "../utils/utils";
 import { SARDetailsPresenter } from "./SARDetailsPresenter";
-
-export type CreateEmploymentHistoryInput = Omit<EmploymentHistory, "id">;
-export type UpdateEmploymentHistoryInput = Partial<
-  Omit<EmploymentHistory, "id">
->;
-
-export type CreateDrugHistoryInput = Omit<DrugHistory, "id">;
-export type UpdateDrugHistoryInput = Partial<Omit<DrugHistory, "id">>;
 
 /**
  * Presenter for Offender Assessment section (ORAS domain logic).
