@@ -510,6 +510,83 @@ class Queries:
             return None
 
     @staticmethod
+    def get_client_by_names(
+        first_name: str,
+        last_name: str,
+    ) -> Optional[ClientDataRecord]:
+        """
+        Get a client record by personal details (first name, last name only)
+        Uses Redis caching to improve performance
+        Returns the ClientDataRecord or None if not found
+
+        Args:
+            first_name: The first name of the client
+            last_name: The last name of the client
+        """
+        if not first_name or not last_name:
+            return None
+
+        first_name = str(first_name).strip()
+        last_name = str(last_name).strip()
+
+        logger.info(f"Looking for client with name: {first_name} {last_name}")
+
+        # Check for cached results first
+        cache_key = f"client_by_name:{first_name}:{last_name}"
+        client_record = get_client_from_cache(cache_key)
+
+        if client_record:
+            return client_record
+
+        # Fetch client from BigQuery
+        logger.info(f"Fetching client with name {first_name} {last_name} from BigQuery")
+        escaped_first_name = first_name.replace("'", "''")
+        escaped_last_name = last_name.replace("'", "''")
+
+        query = f"""
+        SELECT
+        external_id,
+        pseudonymized_id,
+        full_name,
+        birthdate,
+        state_code,
+        location
+        FROM
+        `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}`
+        WHERE
+            UPPER(JSON_VALUE(full_name, "$.given_names")) = UPPER('{escaped_first_name}')
+            AND UPPER(JSON_VALUE(full_name, "$.surname")) = UPPER('{escaped_last_name}')
+        LIMIT 1
+        """
+
+        try:
+            client = get_bigquery_client()
+            query_job = client.query(query)
+            results = query_job.result()
+
+            client_record = None
+            for row in results:
+                client_record = process_client_row(row)
+                if client_record:
+                    # Cache the result
+                    cache_client_record(cache_key, client_record)
+                    break
+
+            if client_record:
+                logger.info(
+                    f"Successfully fetched client with name {first_name} {last_name}"
+                )
+                return client_record
+            else:
+                logger.info(f"No client found with name {first_name} {last_name}")
+                return None
+        except Exception as e:
+            logger.error(
+                f"Error fetching client with {first_name} {last_name}: {str(e)}"
+            )
+            return None
+
+    @staticmethod
     def get_clients_by_pseudonymized_staff_id(
         pseudonymized_staff_id: str,
     ) -> list[ClientDataRecord]:
@@ -767,12 +844,19 @@ class Queries:
 
     @staticmethod
     def get_pseudonymized_id_by_names_and_dob(
-        first_name: str, last_name: str, date_of_birth: date
+        first_name: str, last_name: str, date_of_birth: date | None = None
     ) -> Optional[str]:
         try:
-            client = Queries.get_client_by_names_and_dob(
-                first_name=first_name, last_name=last_name, date_of_birth=date_of_birth
-            )
+            if date_of_birth:
+                client = Queries.get_client_by_names_and_dob(
+                    first_name=first_name,
+                    last_name=last_name,
+                    date_of_birth=date_of_birth,
+                )
+            else:
+                client = Queries.get_client_by_names(
+                    first_name=first_name, last_name=last_name
+                )
             return client.pseudonymized_client_id if client else None
         except Exception as e:
             logger.exception(
@@ -821,7 +905,7 @@ class Queries:
     def add_client(
         given_names: str,
         surname: str,
-        birthdate: date,
+        birthdate: Optional[date],
         state_code: str,
         staff_pseudonymized_id: str,
         middle_names: Optional[str] = None,
@@ -850,11 +934,18 @@ class Queries:
                     "Could not acquire lock to add client. Another client addition is in progress. Please try again."
                 )
 
-            existing_client = Queries.get_client_by_names_and_dob(
-                first_name=given_names,
-                last_name=surname,
-                date_of_birth=birthdate,
-            )
+            # Check for duplicates by name (and birthdate if provided)
+            if birthdate:
+                existing_client = Queries.get_client_by_names_and_dob(
+                    first_name=given_names,
+                    last_name=surname,
+                    date_of_birth=birthdate,
+                )
+            else:
+                existing_client = Queries.get_client_by_names(
+                    first_name=given_names,
+                    last_name=surname,
+                )
 
             if existing_client:
                 error_msg = (

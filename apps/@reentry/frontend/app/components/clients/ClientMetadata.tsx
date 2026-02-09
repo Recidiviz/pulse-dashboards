@@ -99,7 +99,7 @@ export default function ClientMetadata({ clientData }: ClientMetadataProps) {
             {clientData?.full_name?.surname}
           </span>
           <span className="text-[#012322] font-['Public_Sans'] text-sm font-medium leading-[120%] tracking-[-0.14px]">
-            {formatDateMMDDYYYY(clientData?.birthdate)}
+            {formatDateMMDDYYYY(clientData?.birthdate) || "—"}
           </span>
         </div>
       </div>

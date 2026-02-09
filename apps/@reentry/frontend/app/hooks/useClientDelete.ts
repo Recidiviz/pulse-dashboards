@@ -27,7 +27,7 @@ export const useClientDelete = () => {
   const handleDeleteClient = async (
     firstName: string,
     lastName: string,
-    dateOfBirth: string,
+    dateOfBirth: string | null | undefined,
     onSuccess?: () => void,
     setIsDeletingClient?: (isDeleting: boolean) => void,
   ) => {
@@ -50,7 +50,7 @@ export const useClientDelete = () => {
         body: {
           first_name: firstName,
           last_name: lastName,
-          date_of_birth: dateOfBirth,
+          date_of_birth: dateOfBirth || undefined,
         },
         headers: {
           Authorization: `Bearer ${getAccessToken()}`,

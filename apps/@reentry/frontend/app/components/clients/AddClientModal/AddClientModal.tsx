@@ -38,7 +38,7 @@ interface AddClientModalProps {
 export interface AddClientFormData {
   given_names: string;
   surname: string;
-  birthdate: string; // YYYY-MM-DD format
+  birthdate?: string; // YYYY-MM-DD format, optional
   state_code: string;
 }
 
@@ -124,7 +124,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
           {/* Date of Birth */}
           <div>
             <label className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left">
-              Date of Birth *
+              Date of Birth
             </label>
             <div className="flex space-x-3">
               <div className="w-1/4">

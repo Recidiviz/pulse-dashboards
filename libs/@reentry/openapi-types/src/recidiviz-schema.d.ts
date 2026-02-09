@@ -1565,11 +1565,8 @@ export interface components {
             given_names: string;
             /** Surname */
             surname: string;
-            /**
-             * Birthdate
-             * Format: date
-             */
-            birthdate: string;
+            /** Birthdate */
+            birthdate?: string | null;
             /** State Code */
             state_code: string;
             /** Middle Names */
@@ -1811,11 +1808,8 @@ export interface components {
             /** External Client Id */
             external_client_id: string;
             full_name: components["schemas"]["FullNameModel"];
-            /**
-             * Birthdate
-             * Format: date
-             */
-            birthdate: string;
+            /** Birthdate */
+            birthdate?: string | null;
             /** State Code */
             state_code: string;
             address?: components["schemas"]["ClientAddressResponse"] | null;
@@ -2375,7 +2369,7 @@ export interface components {
          * IntakeType
          * @enum {string}
          */
-        IntakeType: "transcription" | "conversation" | "external";
+        IntakeType: "transcription" | "conversation";
         /** IntakeWithSectionsAndMessagesResponse */
         IntakeWithSectionsAndMessagesResponse: {
             /**
@@ -3023,11 +3017,8 @@ export interface components {
             first_name: string;
             /** Last Name */
             last_name: string;
-            /**
-             * Date Of Birth
-             * Format: date
-             */
-            date_of_birth: string;
+            /** Date Of Birth */
+            date_of_birth?: string | null;
         };
         /** RemoveClientResponse */
         RemoveClientResponse: {

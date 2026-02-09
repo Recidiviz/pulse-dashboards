@@ -268,7 +268,7 @@ async def reset_client_data(
 class AddClientRequest(BaseModel):
     given_names: str
     surname: str
-    birthdate: date
+    birthdate: date | None = None
     state_code: str
     middle_names: str | None = None
     name_suffix: str | None = None
@@ -283,7 +283,7 @@ class AddClientResponse(BaseModel):
 class RemoveClientRequest(BaseModel):
     first_name: str
     last_name: str
-    date_of_birth: date
+    date_of_birth: date | None = None
 
 
 class RemoveClientResponse(BaseModel):
@@ -362,8 +362,9 @@ async def remove_client_route(
             detail=f"Client deletion feature is not enabled in this environment. Current Env: {settings.ENV_NAME.lower()}",
         )
 
+    dob_info = f" with DOB {request.date_of_birth}" if request.date_of_birth else ""
     logger.info(
-        f"Removing client '{request.first_name} {request.last_name}' with DOB {request.date_of_birth} by staff {pseudonymized_id}"
+        f"Removing client '{request.first_name} {request.last_name}'{dob_info} by staff {pseudonymized_id}"
     )
 
     try:
@@ -374,9 +375,12 @@ async def remove_client_route(
         )
 
         if not pseudonymized_client_id:
+            detail = (
+                f"Client '{request.first_name} {request.last_name}'{dob_info} not found"
+            )
             raise HTTPException(
                 status_code=404,
-                detail=f"Client '{request.first_name} {request.last_name}' with DOB {request.date_of_birth} not found",
+                detail=detail,
             )
 
         structlog.contextvars.bind_contextvars(client_pseudo_id=pseudonymized_client_id)

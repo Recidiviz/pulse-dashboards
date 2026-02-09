@@ -36,7 +36,7 @@ class ClientRecordResponse(BaseModel):
     pseudonymized_client_id: str
     external_client_id: str
     full_name: FullNameModel
-    birthdate: date
+    birthdate: Optional[date] = None
     state_code: str
     address: Optional["ClientAddressResponse"] = None
 

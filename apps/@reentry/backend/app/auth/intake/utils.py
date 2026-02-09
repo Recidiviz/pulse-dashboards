@@ -64,7 +64,9 @@ def validate_credentials_and_dob(
     if not record:
         return False, None
 
-    date_matches = date_of_birth == record.birthdate
+    # If client has no birthdate on record, fail silently (same as wrong birthdate)
+    # Don't disclose whether birthdate is missing vs wrong for security reasons
+    date_matches = record.birthdate is not None and date_of_birth == record.birthdate
 
     if not date_matches:
         return False, None

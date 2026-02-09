@@ -50,8 +50,11 @@ export function useClientForm({ onSubmit, onClose }: UseClientFormProps) {
     if (!lastName.trim()) {
       return "Please enter last name";
     }
-    if (!day || !month || !year) {
-      return "Please enter complete date of birth";
+    // Date of birth is now optional, but if any part is provided, all parts must be provided
+    const hasAnyDatePart = day || month || year;
+    const hasAllDateParts = day && month && year;
+    if (hasAnyDatePart && !hasAllDateParts) {
+      return "Please enter complete date of birth or leave all fields empty";
     }
     if (!state) {
       return "Please select a state";
@@ -68,10 +71,13 @@ export function useClientForm({ onSubmit, onClose }: UseClientFormProps) {
       return;
     }
 
-    // Format date as YYYY-MM-DD
-    const paddedMonth = month.padStart(2, "0");
-    const paddedDay = day.padStart(2, "0");
-    const isoDateString = `${year}-${paddedMonth}-${paddedDay}`;
+    // Format date as YYYY-MM-DD if all date parts are provided
+    let isoDateString: string | undefined;
+    if (day && month && year) {
+      const paddedMonth = month.padStart(2, "0");
+      const paddedDay = day.padStart(2, "0");
+      isoDateString = `${year}-${paddedMonth}-${paddedDay}`;
+    }
 
     try {
       await onSubmit({

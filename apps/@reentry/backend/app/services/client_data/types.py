@@ -42,6 +42,6 @@ class ClientDataRecord(BaseModel):
     external_client_id: str
     pseudonymized_client_id: str
     full_name: FullNameModel
-    birthdate: date
+    birthdate: Optional[date] = None
     state_code: str
     location: Optional[list[str]] = None

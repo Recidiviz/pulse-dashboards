@@ -575,7 +575,8 @@ class IntakeToken(BaseModel, table=True):
 
             # Assuming dob is in format MM/DD/YYYY
             dob_date = datetime.strptime(dob, "%m/%d/%Y").date()
-            if dob_date != client_record.birthdate:
+            # Fail silently if birthdate is missing (same as wrong birthdate)
+            if client_record.birthdate is None or dob_date != client_record.birthdate:
                 return False
         except ValueError:
             # If date format is invalid
