@@ -41,6 +41,7 @@ test("mock user profile in offline mode", () => {
         "live_data",
         "translator",
         "global_write",
+        "cpa_v1",
       ],
       "stateCode": "OFFLINE",
     }
