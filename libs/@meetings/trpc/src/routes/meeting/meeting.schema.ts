@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,7 @@
 
 import { z } from "zod";
 
-import {
-  ActionItemSchema,
-  CriticalUpdateSchema,
-  MinuteSectionSchema,
-} from "~@meetings/tasks";
+import { MinuteSectionSchema } from "~@meetings/tasks";
 
 export const getDetailInputSchema = z.object({
   meetingId: z.string(),
@@ -34,8 +30,8 @@ export const getDetailsOutputSchema = z.object({
   endTime: z.date().nullable(),
   caseNote: z.string().nullable(),
   userNotepadNotes: z.string().nullable(),
-  actionItems: z.array(ActionItemSchema).nullable(),
-  criticalUpdates: z.array(CriticalUpdateSchema).nullable(),
+  actionItems: z.array(z.string()).nullable(),
+  criticalUpdates: z.array(z.string()).nullable(),
   meetingSummary: z.array(MinuteSectionSchema).nullable(),
   postMeetingProcessingStatus: z.string(),
   transcription: z
@@ -70,16 +66,12 @@ export const discardMeetingInputSchema = z.object({
 export const endMeetingInputSchema = z.object({
   meetingId: z.string(),
   userNotepadNotes: z.string().max(100000).optional(),
-  actionItems: z.string().max(100000).optional(),
-  criticalUpdates: z.string().max(100000).optional(),
-  meetingSummary: z.string().max(100000).optional(),
 });
 
 export const updateNotesInputSchema = z.object({
   meetingId: z.string(),
   userNotepadNotes: z.string().max(100000).optional(),
-  actionItems: z.string().max(100000).optional(),
-  criticalUpdates: z.string().max(100000).optional(),
-  meetingSummary: z.string().max(100000).optional(),
+  actionItems: z.array(z.string().max(100000)).optional(),
+  criticalUpdates: z.array(z.string().max(100000)).optional(),
   caseNote: z.string().max(100000).optional(),
 });

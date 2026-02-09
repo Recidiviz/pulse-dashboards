@@ -190,11 +190,11 @@ model Meeting {
 
   postMeetingProcessingStatus PostMeetingProcessingStatus @default(NOT_STARTED)
 
-  userNotepadNotes            String?
+  userNotepadNotes String?
   caseNote         String?
-  actionItems      String?
-  criticalUpdates  String?
-  meetingSummary   String?
+  actionItems      Json?
+  criticalUpdates  Json?
+  meetingSummary   Json?
 
   transcriptions Transcription[]
 

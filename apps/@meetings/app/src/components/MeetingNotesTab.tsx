@@ -17,16 +17,12 @@
 
 import { ScrollView, Text, View } from "react-native";
 
-import type {
-  ActionItem,
-  CriticalUpdate,
-  MinuteSection,
-} from "~@meetings/trpc-types";
+import type { MinuteSection } from "~@meetings/trpc-types";
 
 type Props = {
   notes?: string | null;
-  actionItems?: ActionItem[] | null;
-  criticalUpdates?: CriticalUpdate[] | null;
+  actionItems?: string[] | null;
+  criticalUpdates?: string[] | null;
   meetingSummary?: MinuteSection[] | null;
 };
 
@@ -46,15 +42,8 @@ const SectionContainer = ({
   </View>
 );
 
-// Assignee badge colors
-const ASSIGNEE_COLORS: Record<string, string> = {
-  PO: "bg-[#00665F] text-white",
-  Client: "bg-[#8BB1BA] text-white",
-  "Third Party": "bg-[#D4E2E7] text-primary",
-};
-
 // Action Items List Component
-const ActionItemsList = ({ items }: { items: ActionItem[] }) => {
+const ActionItemsList = ({ items }: { items: string[] }) => {
   if (items.length === 0) {
     return (
       <Text className="font-inter text-base leading-[22px] text-primary">
@@ -68,49 +57,19 @@ const ActionItemsList = ({ items }: { items: ActionItem[] }) => {
       {items.map((item, index) => (
         <View key={index}>
           <View className="flex flex-col gap-1.5 py-3">
-            <View className="flex flex-row items-center gap-2">
-              <View
-                className={`rounded px-2 py-0.5 ${ASSIGNEE_COLORS[item.assignee] || ASSIGNEE_COLORS["Third Party"]}`}
-              >
-                <Text
-                  className={`font-inter text-xs font-medium ${ASSIGNEE_COLORS[item.assignee]?.includes("text-white") ? "text-white" : "text-primary"}`}
-                >
-                  {item.assignee}
-                </Text>
-              </View>
-              {item.deadline && (
-                <Text className="font-inter text-xs text-[#355362]">
-                  Due: {item.deadline}
-                </Text>
-              )}
-            </View>
             <Text className="font-inter text-base leading-[22px] text-primary">
-              {item.task}
+              {item}
             </Text>
-            {item.context && (
-              <Text className="font-inter text-sm leading-[20px] text-[#355362]">
-                {item.context}
-              </Text>
-            )}
           </View>
-          {index < items.length - 1 && (
-            <View className="h-px bg-[#35536226]" />
-          )}
+          {index < items.length - 1 && <View className="h-px bg-[#35536226]" />}
         </View>
       ))}
     </View>
   );
 };
 
-// Update type indicator colors
-const UPDATE_TYPE_COLORS: Record<string, string> = {
-  New: "text-[#00665F]",
-  Change: "text-[#8BB1BA]",
-  "Stable/Status Quo": "text-[#355362]",
-};
-
 // Critical Updates List Component
-const CriticalUpdatesList = ({ updates }: { updates: CriticalUpdate[] }) => {
+const CriticalUpdatesList = ({ updates }: { updates: string[] }) => {
   if (updates.length === 0) {
     return (
       <Text className="font-inter text-base leading-[22px] text-primary">
@@ -124,18 +83,8 @@ const CriticalUpdatesList = ({ updates }: { updates: CriticalUpdate[] }) => {
       {updates.map((update, index) => (
         <View key={index}>
           <View className="flex flex-col gap-1 py-3">
-            <View className="flex flex-row items-center gap-2">
-              <Text className="font-inter text-sm font-semibold text-primary">
-                {update.category}
-              </Text>
-              <Text
-                className={`font-inter text-sm font-medium ${UPDATE_TYPE_COLORS[update.updateType] || UPDATE_TYPE_COLORS["Stable/Status Quo"]}`}
-              >
-                • {update.updateType}
-              </Text>
-            </View>
             <Text className="font-inter text-base leading-[22px] text-primary">
-              {update.details}
+              {update}
             </Text>
           </View>
           {index < updates.length - 1 && (

@@ -280,10 +280,15 @@ export const fakeInactiveMeeting = {
   recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
   recordingsFolderPath: "meeting-1",
   userNotepadNotes: "Sample meeting notes.",
-  actionItems:
-    "1. Follow up on employment status\n2. Schedule next check-in\n3. Review case file",
-  criticalUpdates:
-    "Client reported new job opportunity. Upcoming court date next week.",
+  actionItems: JSON.stringify([
+    "Follow up on employment status",
+    "Schedule next check-in",
+    "Review case file",
+  ]),
+  criticalUpdates: JSON.stringify([
+    "Employment - New: Client reported new job opportunity",
+    "Legal - Change: Upcoming court date next week",
+  ]),
   meetingSummary:
     "Productive meeting discussing client progress and upcoming milestones.",
   transcriptions: {
@@ -308,10 +313,15 @@ export const fakeMeetingStaff1 = {
   recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
   recordingsFolderPath: "meeting-1",
   userNotepadNotes: "Sample meeting notes.",
-  actionItems:
-    "1. Follow up on employment status\n2. Schedule next check-in\n3. Review case file",
-  criticalUpdates:
-    "Client reported new job opportunity. Upcoming court date next week.",
+  actionItems: JSON.stringify([
+    "Follow up on employment status",
+    "Schedule next check-in",
+    "Review case file",
+  ]),
+  criticalUpdates: JSON.stringify([
+    "Employment - New: Client reported new job opportunity",
+    "Legal - Change: Upcoming court date next week",
+  ]),
   meetingSummary:
     "Productive meeting discussing client progress and upcoming milestones.",
   transcriptions: {

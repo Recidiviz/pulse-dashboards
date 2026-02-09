@@ -93,6 +93,54 @@ async function main() {
   for (const createdClient of createdClients) {
     const meetingStart = faker.date.past();
     const meetingEnd = faker.date.soon({ refDate: meetingStart });
+
+    // Generate sample action items as string array
+    const actionItems = Array.from({ length: 3 }, () => faker.lorem.sentence());
+
+    // Generate sample critical updates as formatted string array
+    const criticalUpdates = Array.from({ length: 2 }, () => {
+      const category = faker.helpers.arrayElement([
+        "Housing",
+        "Employment",
+        "Legal",
+        "Substance",
+        "Family",
+        "Health",
+        "Other",
+      ]);
+      const updateType = faker.helpers.arrayElement([
+        "New",
+        "Change",
+        "Stable/Status Quo",
+      ]);
+      const details = faker.lorem.sentence();
+      return `${category} - ${updateType}: ${details}`;
+    });
+
+    // Generate meeting summary conforming to MinuteSectionSchema
+    const meetingSummary = [
+      {
+        title: "General Discussion",
+        items: Array.from({ length: 3 }, () => ({
+          content: faker.lorem.sentence(),
+          status: faker.helpers.arrayElement([
+            "Discussed",
+            "Completed",
+            "Assigned",
+          ]) as "Discussed" | "Completed" | "Assigned",
+          subItems: [],
+        })),
+      },
+      {
+        title: "Action Items Review",
+        items: Array.from({ length: 2 }, () => ({
+          content: faker.lorem.sentence(),
+          status: "Discussed" as const,
+          subItems: [],
+        })),
+      },
+    ];
+
     await prisma.meeting.create({
       data: {
         id: `meeting-${createdClient.personId}`,
@@ -103,9 +151,9 @@ async function main() {
         recordingsGCSBucket: "test-audio-bucket",
         recordingsFolderPath: `meeting-${createdClient.personId}`,
         userNotepadNotes: faker.lorem.paragraph(),
-        actionItems: faker.lorem.sentences(3),
-        criticalUpdates: faker.lorem.sentences(2),
-        meetingSummary: faker.lorem.paragraph(),
+        actionItems: JSON.stringify(actionItems),
+        criticalUpdates: JSON.stringify(criticalUpdates),
+        meetingSummary: JSON.stringify(meetingSummary),
         postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
         transcriptions: {
           create: [
@@ -159,6 +207,54 @@ async function main() {
   for (const createdResident of createdResidents) {
     const meetingStart = faker.date.past();
     const meetingEnd = faker.date.soon({ refDate: meetingStart });
+
+    // Generate sample action items as string array
+    const actionItems = Array.from({ length: 3 }, () => faker.lorem.sentence());
+
+    // Generate sample critical updates as formatted string array
+    const criticalUpdates = Array.from({ length: 2 }, () => {
+      const category = faker.helpers.arrayElement([
+        "Housing",
+        "Employment",
+        "Legal",
+        "Substance",
+        "Family",
+        "Health",
+        "Other",
+      ]);
+      const updateType = faker.helpers.arrayElement([
+        "New",
+        "Change",
+        "Stable/Status Quo",
+      ]);
+      const details = faker.lorem.sentence();
+      return `${category} - ${updateType}: ${details}`;
+    });
+
+    // Generate meeting summary conforming to MinuteSectionSchema
+    const meetingSummary = [
+      {
+        title: "General Discussion",
+        items: Array.from({ length: 3 }, () => ({
+          content: faker.lorem.sentence(),
+          status: faker.helpers.arrayElement([
+            "Discussed",
+            "Completed",
+            "Assigned",
+          ]) as "Discussed" | "Completed" | "Assigned",
+          subItems: [],
+        })),
+      },
+      {
+        title: "Action Items Review",
+        items: Array.from({ length: 2 }, () => ({
+          content: faker.lorem.sentence(),
+          status: "Discussed" as const,
+          subItems: [],
+        })),
+      },
+    ];
+
     await prisma.meeting.create({
       data: {
         id: `resident-meeting-${createdResident.personId}`,
@@ -169,9 +265,9 @@ async function main() {
         recordingsGCSBucket: "test-audio-bucket",
         recordingsFolderPath: `resident-meeting-${createdResident.personId}`,
         userNotepadNotes: faker.lorem.paragraph(),
-        actionItems: faker.lorem.sentences(3),
-        criticalUpdates: faker.lorem.sentences(2),
-        meetingSummary: faker.lorem.paragraph(),
+        actionItems: JSON.stringify(actionItems),
+        criticalUpdates: JSON.stringify(criticalUpdates),
+        meetingSummary: JSON.stringify(meetingSummary),
         postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
         transcriptions: {
           create: [

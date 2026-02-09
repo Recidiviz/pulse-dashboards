@@ -44,8 +44,29 @@ import {
   queueNotetakingTask,
   queueTranscriptionTask,
 } from "~@meetings/server/server/utils";
-import { cleanupOfflineFiles, stitchAudio } from "~@meetings/tasks";
+import {
+  ActionItem,
+  cleanupOfflineFiles,
+  CriticalUpdate,
+  stitchAudio,
+} from "~@meetings/tasks";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
+
+/**
+ * Convert ActionItem objects to simple task strings
+ */
+function formatActionItems(actionItems: ActionItem[]): string[] {
+  return actionItems.map((item) => item.task);
+}
+
+/**
+ * Convert CriticalUpdate objects to formatted strings
+ */
+function formatCriticalUpdates(criticalUpdates: CriticalUpdate[]): string[] {
+  return criticalUpdates.map(
+    (item) => `${item.category} - ${item.updateType}: ${item.details}`,
+  );
+}
 
 class AuthError extends Error {
   errorCode: number;
@@ -407,6 +428,12 @@ export function registerTaskRoutes(app: FastifyInstance) {
         // Run the LLM processing pipeline
         const result = await handleNotetakingProcessing({ meetingId, prisma });
 
+        // Transform action items and critical updates to simple string arrays
+        const actionItems = formatActionItems(result.output.actionItems);
+        const criticalUpdates = formatCriticalUpdates(
+          result.output.statusUpdates,
+        );
+
         // Update status through drafting and verification stages
         await prisma.meeting.update({
           where: {
@@ -414,8 +441,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
           },
           data: {
             caseNote: result.output.caseNote,
-            actionItems: JSON.stringify(result.output.actionItems),
-            criticalUpdates: JSON.stringify(result.output.statusUpdates),
+            actionItems: JSON.stringify(actionItems),
+            criticalUpdates: JSON.stringify(criticalUpdates),
             meetingSummary: JSON.stringify(result.output.meetingMinutes),
             postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
           },

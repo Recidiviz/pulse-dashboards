@@ -160,13 +160,12 @@ describe("meeting router", () => {
       );
     });
 
-    test("Should update all fields including actionItems, criticalUpdates, meetingSummary, and caseNote", async () => {
+    test("Should update all fields including actionItems and criticalUpdates", async () => {
       await testTRPCClient.v1.meeting.updateNotes.mutate({
         meetingId: fakeActiveMeeting.id,
         userNotepadNotes: "Updated notes",
-        actionItems: "1. New action item\n2. Another action",
-        criticalUpdates: "Critical update information",
-        meetingSummary: "Updated summary of the meeting",
+        actionItems: ["New action item", "Another action"],
+        criticalUpdates: ["Critical update information"],
         caseNote: "Updated case note",
       });
 
@@ -177,9 +176,8 @@ describe("meeting router", () => {
       expect(updatedMeeting).toEqual(
         expect.objectContaining({
           userNotepadNotes: "Updated notes",
-          actionItems: "1. New action item\n2. Another action",
-          criticalUpdates: "Critical update information",
-          meetingSummary: "Updated summary of the meeting",
+          actionItems: ["New action item", "Another action"],
+          criticalUpdates: ["Critical update information"],
           caseNote: "Updated case note",
         }),
       );
@@ -189,7 +187,7 @@ describe("meeting router", () => {
       // Update only actionItems
       await testTRPCClient.v1.meeting.updateNotes.mutate({
         meetingId: fakeActiveMeeting.id,
-        actionItems: "1. New action item only",
+        actionItems: ["1. New action item only"],
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
@@ -197,7 +195,7 @@ describe("meeting router", () => {
       });
 
       // actionItems should be updated
-      expect(updatedMeeting?.actionItems).toEqual("1. New action item only");
+      expect(updatedMeeting?.actionItems).toEqual(["1. New action item only"]);
 
       // Other fields should remain unchanged from their original values
       expect(updatedMeeting?.userNotepadNotes).toEqual(

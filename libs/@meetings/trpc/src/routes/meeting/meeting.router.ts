@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@ import { z } from "zod";
 
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import {
-  ActionItemSchema,
-  CriticalUpdateSchema,
   getSignedUrlForNewRecording,
   MinuteSectionSchema,
   MOBILE_AUDIO_FILE_EXTENSION,
@@ -85,17 +83,16 @@ export const meetingRouter = router({
           },
         });
 
-        // Parse JSON strings into typed objects
-        const parseJsonField = <T>(
-          fieldValue: string | null,
+        // Validate and parse JSON fields
+        const validateJsonField = <T>(
+          fieldValue: unknown,
           schema: z.ZodType<T>,
         ): T | null => {
           if (!fieldValue) return null;
           try {
-            const parsed = JSON.parse(fieldValue);
-            return schema.parse(parsed);
+            return schema.parse(fieldValue);
           } catch (error) {
-            console.error("Failed to parse JSON field:", error);
+            console.error("Failed to validate JSON field:", error);
             return null;
           }
         };
@@ -103,14 +100,12 @@ export const meetingRouter = router({
         return {
           ..._.omit(meeting, ["transcriptions"]),
           actionItems:
-            parseJsonField(meeting.actionItems, ActionItemSchema.array()) || [],
+            validateJsonField(meeting.actionItems, z.array(z.string())) || [],
           criticalUpdates:
-            parseJsonField(
-              meeting.criticalUpdates,
-              CriticalUpdateSchema.array(),
-            ) || [],
+            validateJsonField(meeting.criticalUpdates, z.array(z.string())) ||
+            [],
           meetingSummary:
-            parseJsonField(
+            validateJsonField(
               meeting.meetingSummary,
               MinuteSectionSchema.array(),
             ) || [],
@@ -191,13 +186,7 @@ export const meetingRouter = router({
     .input(endMeetingInputSchema)
     .mutation(
       async ({
-        input: {
-          meetingId,
-          userNotepadNotes,
-          actionItems,
-          criticalUpdates,
-          meetingSummary,
-        },
+        input: { meetingId, userNotepadNotes },
         ctx: { prisma, stateCode },
       }) => {
         try {
@@ -206,9 +195,6 @@ export const meetingRouter = router({
             data: {
               endTime: new Date(),
               userNotepadNotes,
-              actionItems,
-              criticalUpdates,
-              meetingSummary,
             },
           });
         } catch (e) {
@@ -246,14 +232,7 @@ export const meetingRouter = router({
     .input(updateNotesInputSchema)
     .mutation(
       async ({
-        input: {
-          meetingId,
-          userNotepadNotes,
-          actionItems,
-          criticalUpdates,
-          meetingSummary,
-          caseNote,
-        },
+        input: { meetingId, userNotepadNotes, actionItems, criticalUpdates, caseNote },
         ctx: { prisma },
       }) => {
         try {
@@ -263,7 +242,6 @@ export const meetingRouter = router({
               userNotepadNotes,
               actionItems,
               criticalUpdates,
-              meetingSummary,
               caseNote,
             },
           });
