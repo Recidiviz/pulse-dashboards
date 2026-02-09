@@ -41,6 +41,7 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
 
   tabTitle(): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
+    if (this.isInSupervisorReview) return this.supervisorReviewTabTitle;
     switch (this.record.metadata.tabName) {
       case "REPORT_DUE_ELIGIBLE":
       case "REPORT_DUE_ALMOST_ELIGIBLE":

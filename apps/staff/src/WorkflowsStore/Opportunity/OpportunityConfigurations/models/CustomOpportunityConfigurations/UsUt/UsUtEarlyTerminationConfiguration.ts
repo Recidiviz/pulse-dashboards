@@ -24,4 +24,15 @@ export class UsUtEarlyTerminationConfiguration extends ApiOpportunityConfigurati
       (opp) => opp.tabTitle() === "Suitable for Early Termination",
     ).length;
   };
+
+  get reasonsRequiringApproval(): string[] {
+    return ["ICOTS"];
+  }
+
+  get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {
+    return {
+      ...super.maxSnoozeDaysByDenialReason,
+      ICOTS: 180,
+    };
+  }
 }
