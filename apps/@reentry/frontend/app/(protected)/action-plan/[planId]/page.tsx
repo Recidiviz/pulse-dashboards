@@ -39,6 +39,9 @@ const ActionPlanPage = () => {
   const { getAccessToken } = useAuth();
   const { track } = useAnalytics();
 
+  // Track if outputs are disabled (403 error)
+  const [outputsDisabled, setOutputsDisabled] = useState(false);
+
 
   // ----------- Loading and regeneration reloading ------------
   const [regenerationMessage, setRegenerationMessage] = useState("");
@@ -92,6 +95,16 @@ const ActionPlanPage = () => {
     dataDetailPlan?.latest_generation,
     startPolling,
   ]);
+
+  useEffect(() => {
+    if (errorDetailPlan) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = errorDetailPlan as any;
+      if (error?.detail === "Outputs are disabled for this assessment because they are under revision") {
+        setOutputsDisabled(true);
+      }
+    }
+  }, [errorDetailPlan]);
 
   //----------- Resources --------------
 
@@ -266,11 +279,14 @@ const ActionPlanPage = () => {
   };
 
   if (isLoadingDetailPlan) return <LoadingState />;
-  if (!dataDetailPlan?.id)
+
+  if (outputsDisabled || !dataDetailPlan?.id)
     return (
       <div className="flex flex-col items-center space-y-4 w-full h-full justify-center ">
         <span className="text-[#003331] text-lg font-medium">
-          Failed to generate the plan, please try again or contact support.
+          {outputsDisabled
+            ? "Outputs are disabled for this assessment because they are under revision"
+            : "Failed to generate the plan, please try again or contact support."}
         </span>
       </div>
     );
@@ -329,8 +345,9 @@ const ActionPlanPage = () => {
           {!isLoadingDetailPlan && errorDetailPlan && (
             <div className="flex flex-col items-center space-y-4 w-full h-full justify-center ">
               <div className="text-[#003331] text-lg font-medium">
-                An error occurred, plan may not have been started for this
-                client.
+                {outputsDisabled
+                  ? "Outputs are disabled for this assessment because they are under revision"
+                  : "An error occurred, plan may not have been started for this client."}
               </div>
             </div>
           )}

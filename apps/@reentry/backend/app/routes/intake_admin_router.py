@@ -22,6 +22,7 @@ from app.crud.intake import (
     get_intake_section_messages,
     get_or_create_token,
     update_internal_access_by_intake_id,
+    update_outputs_enabled_by_intake_id,
 )
 from app.crud.plan import create_plan, get_plan_by_intake_id, retry_plan_creation
 from app.models.base import IntakeStatus, IntakeType
@@ -33,6 +34,7 @@ from app.routes.execution_router import ExecutionResponse
 from app.routes.shared_models import (
     AddressSubmission,
     ClientAddressResponse,
+    IntakeHistoryResponse,
     IntakeMessageResponse,
     IntakeResponse,
     ProcessingStatusResponse,
@@ -73,6 +75,10 @@ class TokenAccessResponse(BaseModel):
 
 class InternalAccessUpdate(BaseModel):
     internal_access: bool
+
+
+class OutputsEnabledUpdate(BaseModel):
+    outputs_enabled: bool
 
 
 class CreateIntakeRequest(BaseModel):
@@ -490,13 +496,60 @@ async def set_internal_access(
         auth_user_context["cpa_client_locations"],
     )
 
-    intake = await update_internal_access_by_intake_id(
+    await update_internal_access_by_intake_id(
         session=session,
         intake_id=intake_id,
         internal_access=body.internal_access,
     )
 
     return "success"
+
+
+@router.patch(
+    "/{intake_id}/outputs-enabled",
+    summary="Update outputs enabled field",
+    description="Sets outputs_enabled (true/false) for a specific intake to show/hide summary and action plan",
+    tags=["Intake assessment - Admin"],
+    response_model=IntakeHistoryResponse,
+)
+async def set_outputs_enabled(
+    intake_id: UUID,
+    body: OutputsEnabledUpdate,
+    session: AsyncSession = Depends(get_session),
+    pseudonymized_id: str = Depends(get_pseudonymized_id),
+    auth_user_context=Depends(get_auth_user_context),
+):
+    intake = await get_intake_by_id(session, intake_id)
+
+    if not intake:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Intake with ID {intake_id} not found",
+        )
+
+    structlog.contextvars.bind_contextvars(client_pseudo_id=intake.client_pseudo_id)
+    check_access(
+        intake.client_pseudo_id,
+        pseudonymized_id,
+        auth_user_context["cpa_client_locations"],
+    )
+
+    old_outputs_enabled = intake.outputs_enabled
+    logger.info(
+        f"Updating outputs_enabled for intake {intake_id}: {old_outputs_enabled} -> {body.outputs_enabled}"
+    )
+
+    intake = await update_outputs_enabled_by_intake_id(
+        session=session,
+        intake_id=intake_id,
+        outputs_enabled=body.outputs_enabled,
+    )
+
+    logger.info(
+        f"Successfully updated outputs_enabled for intake {intake_id}: was {old_outputs_enabled}, now {intake.outputs_enabled}"
+    )
+
+    return intake
 
 
 @router.post(

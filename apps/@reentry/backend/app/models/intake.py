@@ -150,6 +150,12 @@ class Intake(BaseModel, table=True):
         nullable=True,
         description="Enable for internal access",
     )
+    # Enable/disable outputs (summary and action plan) for this intake
+    outputs_enabled: bool = Field(
+        default=True,
+        nullable=False,
+        description="Enable outputs (summary and action plan) for this intake",
+    )
     # For shareable token authentication
     intake_token: Mapped[Optional["IntakeToken"]] = Relationship(
         back_populates="intake",

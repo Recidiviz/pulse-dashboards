@@ -508,3 +508,23 @@ async def update_internal_access_by_intake_id(
     await session.refresh(intake)
 
     return intake
+
+
+async def update_outputs_enabled_by_intake_id(
+    session: AsyncSession,
+    intake_id: UUID,
+    outputs_enabled: bool,
+) -> Intake | None:
+    """Update the outputs_enabled field for a specific intake."""
+    intake = await get_intake_by_id(session, intake_id)
+
+    if not intake:
+        return None
+
+    intake.outputs_enabled = outputs_enabled
+    session.add(intake)
+
+    await session.commit()
+    await session.refresh(intake)
+
+    return intake

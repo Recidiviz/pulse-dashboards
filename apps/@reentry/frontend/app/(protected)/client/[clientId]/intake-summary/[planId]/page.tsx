@@ -19,7 +19,7 @@
 
 import Markdown from "markdown-to-jsx";
 import { useParams, useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
@@ -49,6 +49,9 @@ const IntakeSummaryPage = () => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   const contentRef = useRef<HTMLDivElement | null>(null);
+
+  // Track if outputs are disabled (403 error)
+  const [outputsDisabled, setOutputsDisabled] = useState(false);
 
   const { data: clientData } = $api.useQuery(
       "get",
@@ -99,6 +102,16 @@ const IntakeSummaryPage = () => {
             },
         },
     );
+
+  useEffect(() => {
+    if (errorIntakeSummary) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = errorIntakeSummary as any;
+      if (error?.detail === "Outputs are disabled for this assessment because they are under revision") {
+        setOutputsDisabled(true);
+      }
+    }
+  }, [errorIntakeSummary]);
 
   const givenNames = clientData?.full_name?.given_names || "";
   const surname = clientData?.full_name?.surname || "";
@@ -306,18 +319,16 @@ const IntakeSummaryPage = () => {
                 />
               </div>
               <div className="w-full h-full justify-start items-start inline-flex">
-                {(errorIntakeSummary) && (
+                {errorIntakeSummary && (
                   <div className="flex flex-col items-center space-y-4 w-full h-full justify-center">
                     <div className="text-lg text-[#003331] font-medium">
-                      {errorIntakeSummary && (
-                        <div>
-                          An error occurred, unable to load the intake summary
-                        </div>
-                      )}
+                      {outputsDisabled
+                        ? "Outputs are disabled for this assessment because they are under revision"
+                        : "An error occurred, unable to load the intake summary"}
                     </div>
                   </div>
                 )}
-                {intakeSummary && (
+                {!errorIntakeSummary && intakeSummary && (
                   <div
                     ref={contentRef}
                     id={"contentToDownload"}

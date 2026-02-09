@@ -32,6 +32,7 @@ interface IntakeArtifactsProps {
     intakeInfo: IntakeInfo
     recordingSession: components["schemas"]["RecordingSessionResponse"] | undefined;
     validTranscription: boolean | undefined;
+    outputsEnabled: boolean;
 }
 
 const TranscriptSection = ({ isDisabled, buttonText, onClick }) => (
@@ -113,7 +114,7 @@ const mapIntakeToTimeline = (intakeInfo: IntakeInfo) => {
     return timeline;
 };
 
-export default function IntakeArtifacts({clientData, intakeInfo, recordingSession, validTranscription}: IntakeArtifactsProps) {
+export default function IntakeArtifacts({clientData, intakeInfo, recordingSession, validTranscription, outputsEnabled}: IntakeArtifactsProps) {
     const router = useRouter();
 
     const planIncluded = intakeInfo.assessment_config_outputs_action_plan_activated
@@ -133,7 +134,7 @@ export default function IntakeArtifacts({clientData, intakeInfo, recordingSessio
                 Authorization: `Bearer ${useAuth().getAccessToken()}`,
                 "Content-Type": "application/json",
             },
-            enabled: intakeInfo?.status === "completed"
+            enabled: intakeInfo?.status === "completed" && outputsEnabled
         });
 
     const { data: intakeSummary, isLoading: isLoadingSummary} = $api.useQuery(
@@ -154,7 +155,7 @@ export default function IntakeArtifacts({clientData, intakeInfo, recordingSessio
                 "Content-Type": "application/json",
             },
         },
-        { enabled: intakeInfo?.status === "completed" && !!(planData?.id)}
+        { enabled: intakeInfo?.status === "completed" && !!(planData?.id) && outputsEnabled}
     );
 
     if(isLoadingPlan || isLoadingSummary){
@@ -207,6 +208,7 @@ export default function IntakeArtifacts({clientData, intakeInfo, recordingSessio
                                 See summary <ArrowRight />
                             </div>
                         }
+                        disabled={!outputsEnabled}
                         ignoreCapabilities={true}
                         className="h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white"
                         onClick={() => router.push(`/client/${clientData?.pseudonymized_client_id}/intake-summary/${planData?.id}`)}
@@ -231,6 +233,7 @@ export default function IntakeArtifacts({clientData, intakeInfo, recordingSessio
                                         See action plan <ArrowRight  />
                                     </div>
                                 }
+                                disabled={!outputsEnabled}
                                 className={`h-8 flex items-center gap-2 bg-[#006c67] px-4 py-2 rounded-[32px] text-white ${!validTranscription ? "opacity-40 pointer-events-none" : ""}`}
                                 onClick={() => router.push(`/action-plan/${planData?.id}`)}
                                 ignoreCapabilities={true}
@@ -239,6 +242,15 @@ export default function IntakeArtifacts({clientData, intakeInfo, recordingSessio
                         </>
                     )
                 }
+
+                {/* Warning message when outputs are disabled */}
+                {!outputsEnabled && (
+                    <div className="px-0 sm:px-6 py-4">
+                        <p className="text-sm text-[#d97706] font-medium whitespace-nowrap">
+                            Outputs are disabled for this assessment because they are under revision
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

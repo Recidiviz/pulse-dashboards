@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -540,6 +540,26 @@ export interface paths {
          * @description Sets internal_access (true/false) for a specific intake
          */
         patch: operations["set_internal_access_intake_admin__intake_id__internal_access_patch"];
+        trace?: never;
+    };
+    "/intake/admin/{intake_id}/outputs-enabled": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update outputs enabled field
+         * @description Sets outputs_enabled (true/false) for a specific intake to show/hide summary and action plan
+         */
+        patch: operations["set_outputs_enabled_intake_admin__intake_id__outputs_enabled_patch"];
         trace?: never;
     };
     "/intake/admin/{intake_id}/token-access": {
@@ -2315,6 +2335,11 @@ export interface components {
             assessment_config_outputs_action_plan_activated?: boolean | null;
             /** Completed At */
             completed_at?: string | null;
+            /**
+             * Outputs Enabled
+             * @default true
+             */
+            outputs_enabled: boolean;
         };
         /** IntakeMessageResponse */
         IntakeMessageResponse: {
@@ -2479,6 +2504,11 @@ export interface components {
             language: string;
             /** Createdat */
             createdAt: string;
+        };
+        /** OutputsEnabledUpdate */
+        OutputsEnabledUpdate: {
+            /** Outputs Enabled */
+            outputs_enabled: boolean;
         };
         /** PDFRequest */
         PDFRequest: {
@@ -4478,6 +4508,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": string;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_outputs_enabled_intake_admin__intake_id__outputs_enabled_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OutputsEnabledUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeHistoryResponse"];
                 };
             };
             /** @description Validation Error */

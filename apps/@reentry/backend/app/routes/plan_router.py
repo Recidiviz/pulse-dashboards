@@ -241,6 +241,13 @@ async def router_get_plan_by_intake_id(
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
 
+    intake = await get_intake_by_id(session, intake_id)
+    if intake and not intake.outputs_enabled:
+        raise HTTPException(
+            status_code=403,
+            detail="Outputs are disabled for this assessment because they are under revision",
+        )
+
     gen = await plan.get_latest_generation(session)
     latest_generation = None
     if gen:
@@ -275,6 +282,14 @@ async def router_get_plan(
         raise HTTPException(status_code=404, detail="Plan not found")
 
     structlog.contextvars.bind_contextvars(client_pseudo_id=plan.client_pseudo_id)
+
+    if plan.intake_id:
+        intake = await get_intake_by_id(session, plan.intake_id)
+        if intake and not intake.outputs_enabled:
+            raise HTTPException(
+                status_code=403,
+                detail="Outputs are disabled for this assessment because they are under revision",
+            )
 
     gens = await get_gen_by_plan_id(session, id)
     gens = [gen for gen in gens if gen.status == PlanGenerationStatus.COMPLETED]
@@ -525,6 +540,16 @@ async def router_get_asset_by_filename(
     asset = await get_asset_by_filename(session, id, filename)
     if not asset or asset.plan_id != id:
         raise HTTPException(status_code=404, detail="Asset not found")
+
+    # Check if outputs are enabled for this intake
+    plan = await get_plan_by_id(session, id)
+    if plan and plan.intake_id:
+        intake = await get_intake_by_id(session, plan.intake_id)
+        if intake and not intake.outputs_enabled:
+            raise HTTPException(
+                status_code=403,
+                detail="Outputs are disabled for this assessment because they are under revision",
+            )
 
     asset_response = asset.model_dump()
     if include_data:

@@ -20,6 +20,7 @@ import React, { useMemo, useState } from "react";
 import AudioRecordings from "~@reentry/frontend/(protected)/client/[clientId]/AudioRecordings";
 import IntakeArtifacts from "~@reentry/frontend/(protected)/client/[clientId]/IntakeArtifacts";
 import { $api } from "~@reentry/frontend/api";
+import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import {RemoveAssessmentIcon} from "~@reentry/frontend/components/icons/CloseIcon";
 import RemoveAssessmentModal from "~@reentry/frontend/components/intake/RemoveAssessmentModal";
 import RetryProcessing from "~@reentry/frontend/components/intake/RetryProcessing";
@@ -122,6 +123,38 @@ export default function IntakeAssessment({
 
     const { mutateAsync: deleteIntakeMutation, isPending: isDeletingInProgress } = $api.useMutation("delete", "/intake/admin/{intake_id}");
 
+    const { mutateAsync: toggleOutputsMutation, isPending: isTogglingOutputs } = $api.useMutation("patch", "/intake/admin/{intake_id}/outputs-enabled", {
+        onSuccess: () => {
+            refetchIntakeData();
+        },
+    });
+
+    const handleToggleOutputs = async () => {
+        if (!intakeInfo?.id) return;
+
+        try {
+            const newOutputsEnabled = !intakeInfo.outputs_enabled;
+
+            await toggleOutputsMutation({
+                params: { path: { intake_id: intakeInfo.id } },
+                body: { outputs_enabled: newOutputsEnabled },
+                headers: {
+                    Authorization: `Bearer ${auth.getAccessToken()}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            showSuccessToast(
+                newOutputsEnabled
+                    ? "Outputs enabled successfully"
+                    : "Outputs disabled successfully"
+            );
+        } catch (error) {
+            console.error("Error toggling outputs:", error);
+            showErrorToast("Failed to toggle outputs");
+        }
+    };
+
     const handleDeleteIntake = async (
         intake_id: string
     ) => {
@@ -174,6 +207,13 @@ export default function IntakeAssessment({
                   />
                 </div>
                 <div className={"flex ml-auto  gap-2 md:gap-10"}>
+                    <PrimaryButton
+                        buttonText={intakeInfo.outputs_enabled ? "Disable Outputs" : "Enable Outputs"}
+                        onClick={handleToggleOutputs}
+                        disabled={isTogglingOutputs}
+                        className="!px-2 md:!px-4 text-white text-xs md:text-sm font-medium rounded-md !bg-[#006B66] hover:!bg-[#005c59] !border-none normal-case whitespace-nowrap shrink-0"
+                        ignoreCapabilities={true}
+                    />
                     {assessmentStatus != "completed" && intakeInfo.intake_type === "transcription" && (
                         <AudioRecordings
                           recordingSession={recordingSession || undefined}
@@ -242,6 +282,7 @@ export default function IntakeAssessment({
                     intakeInfo={intakeInfo}
                     recordingSession={ recordingSession|| undefined}
                     validTranscription={isValidTranscription}
+                    outputsEnabled={intakeInfo.outputs_enabled ?? true}
                 />
             )}
             </div>
