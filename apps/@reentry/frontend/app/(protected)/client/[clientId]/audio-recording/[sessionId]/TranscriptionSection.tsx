@@ -113,7 +113,6 @@ const TranscriptionSection: React.FC<{
   onActiveTurnChange?: (role: string | null) => void;
 }> = ({ sessionDataId, onRefreshNeeded, recordingStatus, sessionStatus, currentAudioTime = 0, onTurnClick, onActiveTurnChange }) => {
   const { statusData } = useRecordingSessionStatus(sessionDataId || "", true);
-
   useEffect(() => {
     if (statusData?.status === "completed") {
       onRefreshNeeded?.();
@@ -187,7 +186,7 @@ const TranscriptionSection: React.FC<{
       />
     );
   }
-  
+
   return null;
 };
 

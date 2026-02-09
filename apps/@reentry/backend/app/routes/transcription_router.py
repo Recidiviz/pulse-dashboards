@@ -186,6 +186,12 @@ async def get_client_transcription(
         cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
+    if recording_session.status != RecordingStatus.COMPLETED:
+        raise HTTPException(
+            status_code=400,
+            detail="Transcription incomplete",
+        )
+
     # Try to retrieve the transcription from storage
     service = RecordingService(recording_session.gcs_bucket_name)
     try:

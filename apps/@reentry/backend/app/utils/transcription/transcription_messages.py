@@ -3,6 +3,7 @@ from uuid import UUID
 
 from app.core.db import AsyncSession
 from app.crud.recording_session import get_recording_session_by_id
+from app.models.recording import RecordingStatus
 from app.services.recording_service import RecordingService
 from app.utils.transcription.post_processing import TranscriptionOutput
 
@@ -18,6 +19,8 @@ async def get_transcription_messages_from_gcp(
     if intake.client_pseudo_id != recording_session.client_pseudo_id:
         raise ValueError("Client ID mismatch between intake and recording session")
 
+    if recording_session.status != RecordingStatus.COMPLETED:
+        raise ValueError("Recording incomplete")
     # Try to retrieve the transcription from storage
     service = RecordingService(recording_session.gcs_bucket_name)
     try:

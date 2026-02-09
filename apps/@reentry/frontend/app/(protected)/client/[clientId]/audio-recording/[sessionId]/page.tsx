@@ -85,7 +85,7 @@ const AudioRecordingPage: React.FC = () => {
     refetchOnReconnect: false,
     staleTime: Infinity
   });
-  
+
 
   const intakeId = useMemo(() => sessionData?.intake_id, [sessionData?.intake_id]);
 
@@ -173,8 +173,6 @@ const AudioRecordingPage: React.FC = () => {
     );
   }
 
-  console.log("WHICH ONE IS LOADING?", clientLoading, sessionLoading, addressLoading);
-  console.log("Session data intake_id:", sessionData?.intake_id, "intakeId:", intakeId);
 
   if (clientLoading || sessionLoading) {
     return (
