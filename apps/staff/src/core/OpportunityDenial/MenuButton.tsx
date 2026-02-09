@@ -26,12 +26,12 @@ import {
   UsIaEarlyDischargeOpportunity,
   UsIaSupervisionLevelDowngradeOpportunity,
 } from "../../WorkflowsStore/Opportunity/UsIa";
-import { StatusAwareButton } from "./MenuButton.styles";
 import {
   deleteSubmitted,
+  DropdownMenuButton,
   markSubmittedAndToast,
-  SubmissionMenuButton,
-} from "./SubmissionMenuButton";
+} from "./DropdownMenuButton";
+import { StatusAwareButton } from "./MenuButton.styles";
 import UsAzMenuButton from "./UsAz/UsAzMenuButton";
 import UsIaMenuButton from "./UsIa/UsIaMenuButton";
 
@@ -88,9 +88,12 @@ export const MenuButton = observer(function MenuButton({
     );
   }
 
-  if (config.supportsSubmitted) {
+  const shouldShowDropdownMenu =
+    config.supportsSubmitted || opportunity.isInSupervisorReview;
+
+  if (shouldShowDropdownMenu) {
     return (
-      <SubmissionMenuButton
+      <DropdownMenuButton
         opportunity={opportunity}
         onDenialButtonClick={onDenialButtonClick}
       />

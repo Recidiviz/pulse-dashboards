@@ -18,11 +18,8 @@
 import { observer } from "mobx-react-lite";
 
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
+import { deleteSubmitted, markSubmittedAndToast } from "../DropdownMenuButton";
 import { StatusAwareButton } from "../MenuButton.styles";
-import {
-  deleteSubmitted,
-  markSubmittedAndToast,
-} from "../SubmissionMenuButton";
 
 export const UsAzMarkSubmittedButton = observer(
   function UsAzMarkSubmittedButton({

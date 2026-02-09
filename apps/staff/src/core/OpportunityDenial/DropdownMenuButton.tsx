@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -333,11 +333,12 @@ const MenuItems = observer(function MenuItems({
 });
 
 /**
- * The menu button shown when the opportunity is configured for submissions, i.e. when
- * supportsSubmitted is true on the opp config, which allows us to change the status
- * of the given opportunity (e.g. to submit, deny, request supervisor approval, etc...).
+ * The dropdown menu button rendered when more than one menu action is available, e.g.
+ * when supportsSubmitted is true on the opp config. This menu allows us to change the
+ * status of the given opportunity (e.g. to submit, deny, request supervisor approval,
+ * etc...).
  */
-export const SubmissionMenuButton = observer(function SubmissionMenuButton({
+export const DropdownMenuButton = observer(function DropdownMenuButton({
   opportunity,
   onDenialButtonClick,
 }: {

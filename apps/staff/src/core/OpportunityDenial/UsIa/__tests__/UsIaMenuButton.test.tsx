@@ -24,7 +24,7 @@ import { OpportunitySidePanelProvider } from "../../../WorkflowsJusticeInvolvedP
 import {
   deleteSubmitted,
   markSubmittedAndToast,
-} from "../../SubmissionMenuButton";
+} from "../../DropdownMenuButton";
 import UsIaMenuButton from "../UsIaMenuButton";
 
 vi.mock("../../../../components/StoreProvider", () => ({
