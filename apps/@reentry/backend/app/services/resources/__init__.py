@@ -2,6 +2,7 @@ from enum import Enum
 from typing import List, Optional, Set, TypeAlias
 
 import structlog
+from langsmith import traceable
 from pydantic import BaseModel, Field, TypeAdapter, field_validator
 
 from app.utils.disallowed_resources import (
@@ -635,6 +636,7 @@ class GetResourcesResponse(BaseModel):
         return ResourcesListModel.dump_json(self.resources).decode("utf8")
 
 
+@traceable(name="fetch_resources_api")
 async def list_resources(request: GetResourcesRequest) -> GetResourcesResponse:
     """
     Unified resource listing that routes to appropriate API based on category/subcategory type.

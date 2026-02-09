@@ -5,6 +5,7 @@ import structlog
 from langchain_core.messages import AIMessage
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.types import RetryPolicy, Send
+from langsmith import traceable
 from pydantic import ValidationError
 
 from app.core.config import create_model_from_config
@@ -59,6 +60,7 @@ def call_generate_sections(state: ExtendedMessagesState) -> Literal["gen_section
     ]
 
 
+@traceable(name="fetch_resources_with_retry")
 async def fetch_resources_with_retry(
     request: GetResourcesRequest, max_retries: int = 2
 ):
@@ -107,6 +109,7 @@ async def fetch_resources_with_retry(
     return []
 
 
+@traceable(name="call_generate_section")
 async def call_generate_section(
     config: dict,
     state: ExtendedMessagesState,
@@ -119,7 +122,7 @@ async def call_generate_section(
     logger.debug("Generating section", section=section)
     if not section:
         raise ValueError("Error generating section")
-    resources = []
+    resource_requests = []
     if state.get("resources_associations"):
         for association in state["resources_associations"].associations:
             if association.section_title == section:
@@ -145,18 +148,23 @@ async def call_generate_section(
                         exclude_names=None,
                         exclude_ids=None,
                     )
-                    try:
-                        fetched_resources = await fetch_resources_with_retry(
-                            request, max_retries=2
-                        )
-                        resources.extend(fetched_resources)
-                    except Exception as error:
-                        logger.error(
-                            "Failed to fetch resources for subcategory",
-                            category=parent_category,
-                            subcategory=subcategory,
-                            error=str(error),
-                        )
+                    resource_requests.append(request)
+
+    # Fetch all resources in parallel
+    fetch_tasks = [fetch_resources_with_retry(request) for request in resource_requests]
+    results = await asyncio.gather(*fetch_tasks, return_exceptions=True)
+
+    resources = []
+    for request, result in zip(resource_requests, results):
+        if isinstance(result, list):
+            resources.extend(result)
+        elif isinstance(result, Exception):
+            logger.error(
+                "Failed to fetch resources for subcategory",
+                category=request.category,
+                subcategory=request.subcategory,
+                error=str(result),
+            )
 
     if resources:
         message = prompts.get_section_generation_prompt_with_resources(
