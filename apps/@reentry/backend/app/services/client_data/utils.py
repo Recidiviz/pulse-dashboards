@@ -50,10 +50,14 @@ def format_name_capitalization(name_dict):
     Ensure consistent capitalization of names.
 
     Args:
-        name_dict: Dictionary containing name components
+        name_dict: Dictionary containing name components or string representation
 
     Returns:
         A dictionary with properly capitalized name components
+
+    Raises:
+        KeyError: If required keys (given_names or surname) are missing
+        ValueError: If the input cannot be parsed
     """
     # Handle case where name_dict is a string representation of a dictionary
     if (
@@ -62,40 +66,102 @@ def format_name_capitalization(name_dict):
         and name_dict.strip().endswith("}")
     ):
         try:
-            # Strip quotes and replace single quotes with double quotes for proper JSON
-            cleaned_str = name_dict.replace("'", '"')
-            name_dict = json.loads(cleaned_str)
-        except Exception as e:
-            logger.error(f"Error parsing full_name string as dictionary: {e}")
-            # Return placeholder dictionary on error
-            return {
-                "given_names": "Unknown",
-                "middle_names": "",
-                "surname": "User",
-                "name_suffix": "",
-            }
+            # Try parsing as JSON first (handles escaped quotes properly)
+            name_dict = json.loads(name_dict)
+        except json.JSONDecodeError:
+            # If JSON parsing fails, preprocess for Python dict format with apostrophes
+            import ast
+            import re
+
+            try:
+                processed = name_dict.strip()
+
+                # Match pattern: 'key': 'value...', or 'key': 'value...'}
+                # The value may contain apostrophes and continues until we hit a comma or closing brace
+                # Pattern: 'key': 'value content' followed by , or }
+                # We need to escape apostrophes within the value part
+
+                def escape_value_apostrophes(match):
+                    """Escape apostrophes in string values for ast.literal_eval."""
+                    key = match.group(1)
+                    value = match.group(2)
+                    terminator = match.group(3)  # comma or closing brace
+
+                    # Escape apostrophes in the value
+                    escaped_value = value.replace("'", "\\'")
+
+                    return f"'{key}': '{escaped_value}'{terminator}"
+
+                # Pattern explanation:
+                # '([^']+)' - matches 'key'
+                # \s*:\s* - matches : with optional whitespace
+                # '([^']*(?:'[^']*)*?)' - matches 'value' potentially containing apostrophes
+                # (,|}) - matches comma or closing brace
+                # This pattern matches: 'key': 'value with any apostrophes',
+                pattern = r"'([^']+)'\s*:\s*'(.*?)'(\s*[,}])"
+
+                processed = re.sub(pattern, escape_value_apostrophes, processed)
+
+                name_dict = ast.literal_eval(processed)
+            except Exception as e:
+                logger.error(f"Error parsing full_name string as dictionary: {e}")
+                raise ValueError(f"Cannot parse name string: {e}")
+
+    # Validate required fields are present
+    if not isinstance(name_dict, dict):
+        raise ValueError(
+            "name_dict must be a dictionary or string representation of one"
+        )
+
+    if "given_names" not in name_dict:
+        raise KeyError("Required field 'given_names' is missing")
+
+    if "surname" not in name_dict:
+        raise KeyError("Required field 'surname' is missing")
 
     # Process a dictionary with name components
-    try:
-        return {
-            "given_names": name_dict["given_names"].title()
-            if name_dict["given_names"]
-            else "",
-            "middle_names": name_dict["middle_names"].title()
-            if name_dict["middle_names"]
-            else "",
-            "surname": name_dict["surname"].title() if name_dict["surname"] else "",
-            # Don't capitalize suffix like "Jr." or "III"
-            "name_suffix": name_dict["name_suffix"] if name_dict["name_suffix"] else "",
+    # Use .get() with defaults for optional fields
+    given_names = name_dict["given_names"]
+    surname = name_dict["surname"]
+    middle_names = name_dict.get("middle_names", "")
+    name_suffix = name_dict.get("name_suffix", "")
+
+    # Helper function to format suffix appropriately
+    def format_suffix(suffix: str) -> str:
+        """Format suffix with proper capitalization."""
+        if not suffix:
+            return ""
+
+        suffix_lower = suffix.lower().rstrip(".")
+
+        # Roman numerals should be uppercase
+        roman_numerals = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"]
+        if suffix_lower in roman_numerals:
+            return suffix_lower.upper()
+
+        # Common suffixes with standard formatting
+        suffix_map = {
+            "jr": "Jr.",
+            "sr": "Sr.",
+            "esq": "Esq.",
+            "phd": "PhD",
+            "md": "MD",
+            "dds": "DDS",
         }
-    except Exception as e:
-        logger.error(f"Error formatting name dictionary: {e}")
-        return {
-            "given_names": "Unknown",
-            "middle_names": "",
-            "surname": "User",
-            "name_suffix": "",
-        }
+
+        if suffix_lower in suffix_map:
+            return suffix_map[suffix_lower]
+
+        # For anything else, capitalize
+        return suffix.title()
+
+    # Capitalize names, handling None values
+    return {
+        "given_names": given_names.title() if given_names else "",
+        "middle_names": middle_names.title() if middle_names else "",
+        "surname": surname.title() if surname else "",
+        "name_suffix": format_suffix(name_suffix),
+    }
 
 
 def get_client_from_cache(cache_key: str) -> Optional[ClientDataRecord]:
