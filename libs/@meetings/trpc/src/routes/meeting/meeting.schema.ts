@@ -81,4 +81,5 @@ export const updateNotesInputSchema = z.object({
   actionItems: z.string().max(100000).optional(),
   criticalUpdates: z.string().max(100000).optional(),
   meetingSummary: z.string().max(100000).optional(),
+  caseNote: z.string().max(100000).optional(),
 });

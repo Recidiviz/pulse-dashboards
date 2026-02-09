@@ -160,13 +160,14 @@ describe("meeting router", () => {
       );
     });
 
-    test("Should update all fields including actionItems, criticalUpdates, and meetingSummary", async () => {
+    test("Should update all fields including actionItems, criticalUpdates, meetingSummary, and caseNote", async () => {
       await testTRPCClient.v1.meeting.updateNotes.mutate({
         meetingId: fakeActiveMeeting.id,
         userNotepadNotes: "Updated notes",
         actionItems: "1. New action item\n2. Another action",
         criticalUpdates: "Critical update information",
         meetingSummary: "Updated summary of the meeting",
+        caseNote: "Updated case note",
       });
 
       const updatedMeeting = await testPrismaClient.meeting.findUnique({
@@ -179,8 +180,36 @@ describe("meeting router", () => {
           actionItems: "1. New action item\n2. Another action",
           criticalUpdates: "Critical update information",
           meetingSummary: "Updated summary of the meeting",
+          caseNote: "Updated case note",
         }),
       );
+    });
+
+    test("Should update only the specified field and leave other note fields unchanged", async () => {
+      // Update only actionItems
+      await testTRPCClient.v1.meeting.updateNotes.mutate({
+        meetingId: fakeActiveMeeting.id,
+        actionItems: "1. New action item only",
+      });
+
+      const updatedMeeting = await testPrismaClient.meeting.findUnique({
+        where: { id: fakeActiveMeeting.id },
+      });
+
+      // actionItems should be updated
+      expect(updatedMeeting?.actionItems).toEqual("1. New action item only");
+
+      // Other fields should remain unchanged from their original values
+      expect(updatedMeeting?.userNotepadNotes).toEqual(
+        fakeActiveMeeting.userNotepadNotes,
+      );
+      expect(updatedMeeting?.criticalUpdates).toEqual(
+        fakeActiveMeeting.criticalUpdates,
+      );
+      expect(updatedMeeting?.meetingSummary).toEqual(
+        fakeActiveMeeting.meetingSummary,
+      );
+      expect(updatedMeeting?.caseNote).toEqual(fakeActiveMeeting.caseNote);
     });
   });
 

@@ -102,18 +102,18 @@ export const meetingRouter = router({
 
         return {
           ..._.omit(meeting, ["transcriptions"]),
-          actionItems: parseJsonField(
-            meeting.actionItems,
-            ActionItemSchema.array(),
-          ) || [],
-          criticalUpdates: parseJsonField(
-            meeting.criticalUpdates,
-            CriticalUpdateSchema.array(),
-          ) || [],
-          meetingSummary: parseJsonField(
-            meeting.meetingSummary,
-            MinuteSectionSchema.array(),
-          ) || [],
+          actionItems:
+            parseJsonField(meeting.actionItems, ActionItemSchema.array()) || [],
+          criticalUpdates:
+            parseJsonField(
+              meeting.criticalUpdates,
+              CriticalUpdateSchema.array(),
+            ) || [],
+          meetingSummary:
+            parseJsonField(
+              meeting.meetingSummary,
+              MinuteSectionSchema.array(),
+            ) || [],
           transcription: meeting.transcriptions[0] || null,
         };
       } catch (e) {
@@ -252,6 +252,7 @@ export const meetingRouter = router({
           actionItems,
           criticalUpdates,
           meetingSummary,
+          caseNote,
         },
         ctx: { prisma },
       }) => {
@@ -263,6 +264,7 @@ export const meetingRouter = router({
               actionItems,
               criticalUpdates,
               meetingSummary,
+              caseNote,
             },
           });
         } catch (e) {
