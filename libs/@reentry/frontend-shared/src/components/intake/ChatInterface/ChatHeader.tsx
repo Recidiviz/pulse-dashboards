@@ -183,27 +183,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           )}
         </div>
       </Box>
-
-      <div className="lg:hidden sm:hidden xs:hidden">
-        {conversationStarted && currentSection !== "Completion" && (
-          <div className="flex justify-end px-8">
-            <div className="inline-block bg-white rounded-lg shadow-[2px_0px_12px_0px_rgba(0,0,0,0.08)] z-20">
-              <div className="px-5 py-2">
-                <Typography
-                  sx={{
-                    fontFamily: "'Public Sans'",
-                    fontWeight: 500,
-                    fontSize: "12px",
-                  }}
-                  className="leading-[120%] tracking-[-0.01em] text-[#000000]"
-                >
-                  {currentSection}
-                </Typography>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
     </>
   );
 };
