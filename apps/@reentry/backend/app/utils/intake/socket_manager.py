@@ -85,6 +85,7 @@ class SocketIOManager:
         self.db_manager = database_manager
         self.conversation_graphs: Dict[str, IntakeConversationGraph | None] = {}
         self.pending_responses = {}
+        self.graph_tasks: Dict[str, asyncio.Task] = {}  # Track running graph tasks
 
         self._register_event_handlers()
 
@@ -181,11 +182,12 @@ class SocketIOManager:
                                     ),
                                 )
 
-                                asyncio.create_task(
+                                task = asyncio.create_task(
                                     self.handle_conversation_state(
                                         intake, client_data, sid
                                     )
                                 )
+                                self.graph_tasks[client_pseudo_id] = task
                                 return True
 
             # Always acknowledge the connection via sid - this works even if token is invalid
@@ -316,7 +318,28 @@ class SocketIOManager:
         # Store the graph for future reference
         self.conversation_graphs[client_pseudo_id] = graph
 
-        await graph.run_assessment()
+        current_task = asyncio.current_task()
+
+        try:
+            await graph.run_assessment()
+        finally:
+            # Cleanup when done (success, error, or cancellation)
+            logger.info(f"Graph execution finished for {client_pseudo_id}")
+            if client_pseudo_id in self.graph_tasks:
+                if self.graph_tasks[client_pseudo_id] is current_task:
+                    del self.graph_tasks[client_pseudo_id]
+                else:
+                    logger.info(
+                        f"Skipping graph_tasks cleanup - newer task exists for {client_pseudo_id}"
+                    )
+
+            if client_pseudo_id in self.conversation_graphs:
+                if self.conversation_graphs[client_pseudo_id] is graph:
+                    del self.conversation_graphs[client_pseudo_id]
+                else:
+                    logger.info(
+                        f"Skipping conversation_graphs cleanup - newer graph exists for {client_pseudo_id}"
+                    )
 
     async def handle_conversation_state(
         self, intake: Intake, client: ClientDataRecord, sid: str
@@ -329,10 +352,9 @@ class SocketIOManager:
             client_data (ClientDataRecord): Client data from BigQuery
             sid (str): Socket ID for direct messaging
         """
+        client_pseudo_id = intake.client_pseudo_id
 
         try:
-            client_pseudo_id = intake.client_pseudo_id
-
             # Don't create graphs for completed intakes
             if (
                 intake.status == IntakeStatus.COMPLETED
@@ -364,19 +386,35 @@ class SocketIOManager:
             traceback.print_exc()
             logger.error(f"Error handling conversation state: {e}")
             return
+        finally:
+            if client_pseudo_id in self.graph_tasks:
+                current_task = asyncio.current_task()
+                if self.graph_tasks[client_pseudo_id] is current_task:
+                    if client_pseudo_id not in self.conversation_graphs:
+                        logger.info(
+                            f"Cleaning up task reference for {client_pseudo_id} (no graph created)"
+                        )
+                        del self.graph_tasks[client_pseudo_id]
 
     async def handle_disconnect_client(self, client_pseudo_id) -> None:
         logger.info(f"Cleaning up resources for disconnected client {client_pseudo_id}")
-
-        # Safely delete items from dictionaries only if they exist
-        if client_pseudo_id in self.conversation_graphs:
-            del self.conversation_graphs[client_pseudo_id]
 
         if client_pseudo_id in self.pending_responses:
             # Cancel the pending future to prevent hanging
             if not self.pending_responses[client_pseudo_id].done():
                 self.pending_responses[client_pseudo_id].cancel()
                 del self.pending_responses[client_pseudo_id]
+
+        if client_pseudo_id in self.graph_tasks:
+            task = self.graph_tasks[client_pseudo_id]
+            if not task.done():
+                logger.warning(f"Cancelling running graph task for {client_pseudo_id}")
+                task.cancel()
+            del self.graph_tasks[client_pseudo_id]
+
+        # Safely delete graph reference
+        if client_pseudo_id in self.conversation_graphs:
+            del self.conversation_graphs[client_pseudo_id]
 
     async def handle_disconnect(self, sid: str) -> None:
         """
@@ -510,8 +548,11 @@ class SocketIOManager:
             if client_pseudo_id in self.conversation_graphs:
                 del self.conversation_graphs[client_pseudo_id]
 
-            # Reinitialize the conversation graph
-            asyncio.create_task(self._init_and_run_graph(intake, client_data, sid))
+            # Reinitialize the conversation graph and track the task
+            task = asyncio.create_task(
+                self._init_and_run_graph(intake, client_data, sid)
+            )
+            self.graph_tasks[client_pseudo_id] = task
 
             # Return the message for acknowledgment
             # Create the IntakeMessageResponse and then model_dump it

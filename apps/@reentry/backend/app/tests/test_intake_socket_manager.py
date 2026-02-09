@@ -266,6 +266,20 @@ async def test_init_and_run_graph(
 
     # Mock IntakeConversationGraph
     mock_graph = AsyncMock(spec=IntakeConversationGraph)
+
+    # Track that graph was created and then removed
+    graph_was_stored = False
+
+    async def mock_run_assessment():
+        """Verify graph is stored while running."""
+        nonlocal graph_was_stored
+        # At this point, graph should be in the dictionary
+        assert intake.client_pseudo_id in socket_manager.conversation_graphs
+        assert socket_manager.conversation_graphs["test_client"] == mock_graph
+        graph_was_stored = True
+
+    mock_graph.run_assessment.side_effect = mock_run_assessment
+
     with (
         patch(
             "app.utils.intake.socket_manager.IntakeConversationGraph",
@@ -284,15 +298,16 @@ async def test_init_and_run_graph(
             intake.assessment_config_id
         )
 
-        # Verify client_context was created correctly
+        # Verify graph initialization and execution
         mock_graph.initialize.assert_called_once_with(intake)
         mock_graph.run_assessment.assert_called_once()
 
-        # Verify graph was stored
-        assert socket_manager.conversation_graphs["test_client"] == mock_graph
+        # Verify graph was stored during execution
+        assert graph_was_stored, "Graph should have been stored during run_assessment"
 
-        # Ensure the graphs are keyed by client_pseudo_id
-        assert intake.client_pseudo_id in socket_manager.conversation_graphs
+        # Verify graph was cleaned up after completion
+        assert intake.client_pseudo_id not in socket_manager.conversation_graphs
+        assert "test_client" not in socket_manager.conversation_graphs
 
 
 @pytest.mark.asyncio
