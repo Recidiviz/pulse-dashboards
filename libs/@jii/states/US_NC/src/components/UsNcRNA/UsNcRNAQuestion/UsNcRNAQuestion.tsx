@@ -22,7 +22,11 @@ import { type RNAQuestionConfig, type RNAQuestionId } from "~@jii/configs";
 import { Icon } from "~design-system";
 
 import { InvalidAnswerNotice, QuestionCard } from "../styles";
-import { rnaMiscellaneousCopy, RNAQuestionCopy } from "../usNcRNAFormCopy";
+import {
+  rnaMiscellaneousCopy,
+  RNAQuestionCopy,
+  rnaQuestionCopy,
+} from "../usNcRNAFormCopy";
 import { UsNcRNAFormPagePresenter } from "../UsNcRNAFormPage/UsNcRNAFormPagePresenter";
 import { UsNcRNADaysQuestion } from "./UsNcRNADaysQuestion";
 import { UsNcRNALifeAreaQuestion } from "./UsNcRNALifeAreaQuestion";
@@ -73,7 +77,8 @@ export const UsNcRNAQuestion = observer(function UsNcRNAQuestion(
         <div>
           <Icon kind={"Alert"} />
           <InvalidAnswerNotice>
-            {rnaMiscellaneousCopy["INVALID_ANSWER_NOTICE"]}
+            {rnaQuestionCopy[id].customInvalidAnswerNotice ??
+              rnaMiscellaneousCopy["INVALID_ANSWER_NOTICE"]}
           </InvalidAnswerNotice>
         </div>
       )}

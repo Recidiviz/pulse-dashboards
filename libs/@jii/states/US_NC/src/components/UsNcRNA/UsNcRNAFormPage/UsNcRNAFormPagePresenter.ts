@@ -19,7 +19,11 @@ import { captureException } from "@sentry/react";
 import { makeAutoObservable } from "mobx";
 import { NavigateFunction } from "react-router-dom";
 
-import { allRNAQuestions, fullRNASpec, RNAQuestionId } from "~@jii/configs";
+import {
+  fullRNASpec,
+  requiredRNAQuestions,
+  RNAQuestionId,
+} from "~@jii/configs";
 import { RouteParams, State } from "~@jii/paths";
 
 import { UsNcRNAForm } from "../../../models/UsNcRNAForm";
@@ -55,7 +59,7 @@ export class UsNcRNAFormPagePresenter {
     });
     this.nextPageLink = State.Resident.UsNcRNA.FormPage.buildPath({
       ...routeParams,
-      pageNum: routeParams.pageNum - 1,
+      pageNum: routeParams.pageNum + 1,
     });
     makeAutoObservable(this, {}, { autoBind: true });
   }
@@ -102,11 +106,11 @@ export class UsNcRNAFormPagePresenter {
   }
 
   get percentDone(): number {
-    const numCompleted = allRNAQuestions.filter((id) =>
+    const numCompleted = requiredRNAQuestions.filter((id) =>
       this.form.hasValidAnswer(id),
     ).length;
 
-    return (numCompleted * 100) / allRNAQuestions.length;
+    return (numCompleted * 100) / requiredRNAQuestions.length;
   }
 
   /**

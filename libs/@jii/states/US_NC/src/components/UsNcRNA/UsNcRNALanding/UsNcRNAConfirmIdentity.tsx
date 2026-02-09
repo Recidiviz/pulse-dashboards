@@ -51,10 +51,10 @@ export function UsNcRNAConfirmIdentity() {
           value={`${resident.personName.givenNames} ${resident.personName.surname}`}
         />
         <IdentityPart label="ID Number" value={resident.displayId} />
-        <p>If this is not you, please talk to a staff member.</p>
         <p>
           If this is you, please tap the button to continue to your Self-Report.
         </p>
+        <p>If this is not you, please talk to a staff member.</p>
       </RNADescription>
       <GoButton
         to={

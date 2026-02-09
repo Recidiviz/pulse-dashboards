@@ -36,7 +36,7 @@ export function UsNcRNAResumeForm() {
 
   return (
     <Card>
-      <RNAHeading>Pick up where you left off</RNAHeading>
+      <RNAHeading>Self-Report: Pick up where you left off</RNAHeading>
       <RNADescription>
         You have finished {numCompletedSections} of {totalSections} sections.
       </RNADescription>
@@ -46,7 +46,7 @@ export function UsNcRNAResumeForm() {
           pageNum: form.pageToResumeAt,
         })}
       >
-        Continue Assessment
+        Continue Self-Report
       </GoButton>
     </Card>
   );

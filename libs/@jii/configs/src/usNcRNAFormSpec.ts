@@ -440,6 +440,10 @@ export const rnaQuestionConfig = {
   },
 } satisfies Record<string, RNAQuestionConfig>;
 
+export const requiredRNAQuestions: RNAQuestionId[] = allRNAQuestions.filter(
+  (q) => !(rnaQuestionConfig[q] as RNAQuestionConfig).optional,
+);
+
 export const rnaTextQuestionConfig = Object.fromEntries(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Object.entries(rnaQuestionConfig).filter(([_, config]) => {

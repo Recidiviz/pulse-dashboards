@@ -31,7 +31,7 @@ export const rnaMiscellaneousCopy = {
   GO_BACK_MODAL: {
     title: "Are you sure you want to go back?",
     message:
-      "You can go back to edit your other answers, but if you do, the answers you have entered on this page will be lost.",
+      "You can go back to edit your other answers, but if you do, the answers you have entered on this page will not be saved.",
     cancelButtonText: "Stay on this page",
     confirmButtonText: "Go back",
   },
@@ -54,6 +54,7 @@ export type RNAPageCopy = {
 };
 export type RNAQuestionCopy = {
   question: string;
+  customInvalidAnswerNotice?: string;
   placeholderText?: string;
 };
 
@@ -207,6 +208,8 @@ export const rnaQuestionCopy: Record<RNAQuestionId, RNAQuestionCopy> = {
     question:
       "How many days in a typical week did you drink more than 5 drinks at one sitting?",
     placeholderText: "Number of days",
+    customInvalidAnswerNotice:
+      "You must enter a number between 0 and 7 to continue.",
   },
   alcoholDrugsTimeOfOffense: {
     question:
@@ -345,7 +348,7 @@ export const rnaQuestionCopy: Record<RNAQuestionId, RNAQuestionCopy> = {
   // Page 6 of the paper form
   friendsJusticeInvolved: {
     question:
-      "How many of those friends are in prison or on probation, parole or post release supervision?",
+      "How many of those friends are in prison, on probation, parole or post release supervision?",
   },
   friendsGangMembers: {
     question: "How many of those friends are members of a gang?",
@@ -407,7 +410,7 @@ export const rnaQuestionCopy: Record<RNAQuestionId, RNAQuestionCopy> = {
     question: "Legal Status",
   },
   lifeAreaCustom: {
-    question: "Other (optional)",
-    placeholderText: "Another life area",
+    question: "Other",
+    placeholderText: "Any other area you want to improve (optional)",
   },
 };
