@@ -28,7 +28,11 @@ import {
 } from "../../../core/Paperwork/US_TN/common/ScoredAssessmentQuestion";
 import { assessmentQuestions } from "../../../core/Paperwork/US_TN/UsTnReclassification2026/assessmentQuestions";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { UsTnAnnualReclassification2026Opportunity } from "../UsTn";
+import {
+  UsTnAnnualReclassification2026Opportunity,
+  UsTnSeriousMisconductUpgradeOpportunity,
+  UsTnTrusteeTransferOpportunity,
+} from "../UsTn";
 import { FormBase } from "./FormBase";
 
 const QUESTION_TEMPLATE_MAP = {
@@ -45,7 +49,9 @@ const QUESTION_TEMPLATE_MAP = {
 
 export class UsTnReclassification2026Form extends FormBase<
   UsTnReclassification2026DraftData,
-  UsTnAnnualReclassification2026Opportunity
+  | UsTnAnnualReclassification2026Opportunity
+  | UsTnTrusteeTransferOpportunity
+  | UsTnSeriousMisconductUpgradeOpportunity
 > {
   navigateToFormText = "Auto-fill paperwork";
 

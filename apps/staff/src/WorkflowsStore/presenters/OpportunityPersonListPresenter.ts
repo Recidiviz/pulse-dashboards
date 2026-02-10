@@ -747,8 +747,7 @@ export class OpportunityPersonListPresenter
       return this.supervisionPresenter.opportunityConfigurationStore
         ?.apiOpportunityConfigurations;
     }
-    return this.workflowsStore.opportunityConfigurationStore
-      .apiOpportunityConfigurations;
+    return this.workflowsStore.opportunityConfigurationStore.opportunities;
   }
 
   get opportunityTypes(): OpportunityType[] {

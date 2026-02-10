@@ -23,6 +23,8 @@ export * from "./UsTnCustodyLevelDowngradeOpportunity";
 export * from "./UsTnExpirationOpportunity";
 export * from "./UsTnInitialClassification2026Opportunity";
 export * from "./UsTnInitialClassificationOpportunity";
+export * from "./UsTnSeriousMisconductUpgradeOpportunity/UsTnSeriousMisconductUpgradeOpportunity";
 export * from "./UsTnSharedCriteria";
 export * from "./UsTnSupervisionLevelDowngradeOpportunity";
 export * from "./UsTnSuspensionOfDirectSupervisionOpportunity";
+export * from "./UsTnTrusteeTransferOpportunity/UsTnTrusteeTransferOpportunity";

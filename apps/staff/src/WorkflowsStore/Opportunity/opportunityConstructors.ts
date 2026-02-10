@@ -40,7 +40,9 @@ import {
   UsNdTransferToMinFacilityOpportunity,
   UsPaSpecialCircumstancesSupervisionOpportunity,
   UsTnExpirationOpportunity,
+  UsTnSeriousMisconductUpgradeOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
+  UsTnTrusteeTransferOpportunity,
 } from ".";
 import { UsArInstitutionalWorkerStatusOpportunity } from "./UsAr";
 import {
@@ -192,6 +194,8 @@ export const opportunityConstructors = {
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
   usTnSuspensionOfDirectSupervision:
     UsTnSuspensionOfDirectSupervisionOpportunity,
+  usTnTrusteeTransfer: UsTnTrusteeTransferOpportunity,
+  usTnSeriousMisconductUpgrade: UsTnSeriousMisconductUpgradeOpportunity,
 
   // US_TX
   usTxAnnualReportStatus: UsTxAnnualReportStatusOpportunity,

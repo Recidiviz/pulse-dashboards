@@ -32,6 +32,7 @@ import { OpportunityConfigurationAPIClient } from "./api/OpportunityConfiguratio
 import { OpportunityConfigurationOfflineAPIClient } from "./api/OpportunityConfigurationOfflineAPIClient";
 import { OpportunityConfiguration } from "./interfaces";
 import { apiOpportunityConfigurationFactory } from "./models/CustomOpportunityConfigurations";
+import { getLocalOpportunityRawConfigs } from "./models/CustomOpportunityConfigurations/localOpportunityConfigurations";
 
 type OpportunityConfigurations = Record<
   OpportunityType,
@@ -39,8 +40,8 @@ type OpportunityConfigurations = Record<
 >;
 
 export class OpportunityConfigurationStore implements Hydratable {
-  apiClient: OpportunityConfigurationAPI;
-  apiOpportunityConfigurations?: OpportunityConfigurations;
+  private apiClient: OpportunityConfigurationAPI;
+  private apiOpportunityConfigurations?: OpportunityConfigurations;
   hydrator: HydratesFromSource;
 
   constructor(public rootStore: RootStore) {
@@ -94,7 +95,13 @@ export class OpportunityConfigurationStore implements Hydratable {
     OpportunityConfigurationAPI["opportunities"],
     void
   > {
-    const rawConfigs = yield this.apiClient.opportunities();
+    const { currentTenantId, userStore } = this.rootStore;
+    if (!currentTenantId) return;
+
+    const rawConfigs = {
+      ...(getLocalOpportunityRawConfigs(currentTenantId) ?? {}),
+      ...(yield this.apiClient.opportunities()),
+    };
 
     this.apiOpportunityConfigurations = Object.fromEntries(
       Object.entries(rawConfigs).map(([oppType, rawConfig]) => [
@@ -102,7 +109,7 @@ export class OpportunityConfigurationStore implements Hydratable {
         apiOpportunityConfigurationFactory(
           oppType as OpportunityType,
           rawConfig,
-          this.rootStore.userStore,
+          userStore,
         ),
       ]),
     ) as OpportunityConfigurations;

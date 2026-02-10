@@ -16,6 +16,7 @@
 // =============================================================================
 
 import UserStore from "../../../../../../RootStore/UserStore";
+import { IApiOpportunityConfiguration } from "../../../interfaces";
 
 // TODO(#9838):[US_TN][Workflows] Remove usTnDoNotMarkPendingOnDownload post-rollout
 // When doing so, please add a field to state configs to disable this behavior
@@ -26,3 +27,34 @@ export function usTnGateMarkSubmittedOnFormDownloaded(
   const { usTnDoNotMarkPendingOnDownload } = userStore.activeFeatureVariants;
   return !usTnDoNotMarkPendingOnDownload;
 }
+
+export const usTnUntrackedEligibilityConfigBase = {
+  stateCode: "US_TN",
+  systemType: "INCARCERATION",
+  priority: "NORMAL",
+  isAlert: false,
+  featureVariant: "usTn2026ClassificationPolicyPilot",
+  notifications: [],
+  denialReasons: {},
+  eligibleCriteriaCopy: {},
+  ineligibleCriteriaCopy: {},
+  strictlyIneligibleCriteriaCopy: {},
+  sidebarComponents: [],
+  methodologyUrl: "",
+  supportsIneligible: true,
+  supportsSubmitted: true,
+  submittedTabTitle: "Pending",
+  emptyTabCopy: {},
+  tabPrefaceCopy: {},
+  // Only show pending tab since no one will ever be eligible
+  tabGroups: {
+    ELIGIBILITY_STATUS: ["Pending"],
+  },
+  subcategoryHeadings: {},
+  subcategoryOrderings: {},
+  markSubmittedOptionsByTab: {},
+  nonOmsCriteria: [],
+  highlightCasesOnHomepage: false,
+  snoozeCompanionOpportunityTypes: [],
+  enableWorkflowsFilter: false,
+} satisfies Partial<IApiOpportunityConfiguration>;
