@@ -15,30 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getItem, removeItem, saveItem } from "~@meetings/app/utils/storage";
+import { View } from "react-native";
 
-import { Status } from "./../model";
-
-// --- Helpers for recording state persistence ---
-export const setRecordingState = async (state: Status) => {
-  await saveItem("recordingState", state);
-};
-
-export const getRecordingState = async (): Promise<Status> => {
-  const saved = await getItem("recordingState");
-  return (saved as Status) || "idle";
-};
-
-// --- Helpers for recording URI persistence ---
-export const saveRecordingUri = async (uri: string) => {
-  await saveItem("recordingUri", uri);
-};
-
-export const getRecordingUri = async (): Promise<string | null> => {
-  const saved = await getItem("recordingUri");
-  return saved || null;
-};
-
-export const removeRecordingUri = async () => {
-  await removeItem("recordingUri");
-};
+export function ModalConfirmationBackdrop() {
+  return (
+    <View className="absolute size-full bg-[#E0E6E680] backdrop-blur-sm" />
+  );
+}

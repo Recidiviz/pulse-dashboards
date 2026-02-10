@@ -15,21 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createContext, ReactNode, useEffect, useRef } from "react";
+import { createContext, useEffect, useRef } from "react";
 
+import { Person } from "~@meetings/app/common/types";
 import { removeItem } from "~@meetings/app/utils/storage";
 
 import { useWebAudioRecorder } from "../hooks/useAudioRecorder.web";
 import { useDurationTimer } from "../hooks/useDurationTimer";
-import { useNote } from "../hooks/useNote";
-import { useRecordingStatus } from "../hooks/useRecordingStatus";
-import { Recording } from "../types";
+import { MeetingModal } from "../ui/MeetingModal";
+import { useRecordingStore } from "./store";
+import { RecordingProviderProps, RecordingWeb } from "./types";
 
-export const RecordingContext = createContext<Recording>({} as Recording);
+export const RecordingContext = createContext<RecordingWeb | null>(null);
 
-export const RecordingProvider = ({ children }: { children: ReactNode }) => {
-  const [status, setStatus] = useRecordingStatus();
-  const [note, setNote] = useNote();
+export const RecordingProvider = ({ children }: RecordingProviderProps) => {
+  const {
+    status,
+    note,
+    meetingId,
+    person,
+    isRecordingViewMinimized,
+    setStatus,
+    setNote,
+    setMeetingId,
+    setPerson,
+    setIsRecordingViewMinimized,
+  } = useRecordingStore();
 
   const { duration, startTimer, stopTimer, resetTimer } = useDurationTimer();
 
@@ -51,6 +62,23 @@ export const RecordingProvider = ({ children }: { children: ReactNode }) => {
     }
     isInitialized.current = true;
   }, [status, setStatus]);
+
+  const openRecordingView = ({
+    meetingId,
+    person,
+  }: {
+    meetingId: string;
+    person: Person;
+  }) => {
+    setMeetingId(meetingId);
+    setPerson(person);
+  };
+
+  const closeRecordingView = () => {
+    setMeetingId(null);
+    setPerson(null);
+    setIsRecordingViewMinimized(false);
+  };
 
   const startRecording = async () => {
     try {
@@ -131,6 +159,12 @@ export const RecordingProvider = ({ children }: { children: ReactNode }) => {
       value={{
         status,
         setStatus,
+        isRecordingViewMinimized,
+        setIsRecordingViewMinimized,
+        meetingId,
+        person,
+        openRecordingView,
+        closeRecordingView,
         isRecording: recorder.isRecording,
         durationMs: duration,
         note,
@@ -144,6 +178,7 @@ export const RecordingProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
+      <MeetingModal />
     </RecordingContext.Provider>
   );
 };

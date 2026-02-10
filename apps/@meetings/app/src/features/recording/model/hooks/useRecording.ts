@@ -15,4 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { RecordingContext, RecordingProvider } from "./RecordingContext";
+import { useContext } from "react";
+
+import { RecordingContext } from "../model";
+import { RecordingBase, RecordingNative, RecordingWeb } from "../types";
+
+/* eslint-disable no-redeclare */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export function useRecording(): RecordingBase;
+export function useRecording<T extends "web">(): RecordingWeb;
+export function useRecording<T extends "native">(): RecordingNative;
+
+export function useRecording() {
+  const ctx = useContext(RecordingContext);
+
+  if (!ctx) {
+    throw new Error("useRecording must be used within RecordingProvider");
+  }
+
+  return ctx;
+}

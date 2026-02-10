@@ -22,6 +22,7 @@ import { Alert, Platform } from "react-native";
 
 import { Person } from "../common/types";
 import ProfileMeetings from "../components/ProfileMeetings";
+import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeResident } from "../utils/format";
@@ -51,7 +52,7 @@ type ProfileScreenProps = {
 const ResidentProfileScreen = ({ person }: ProfileScreenProps) => {
   const navigation = useNavigation<ProfileNavProp>();
   const [isCreating, setIsCreating] = useState(false);
-  const [webMeetingId, setWebMeetingId] = useState<string | null>(null);
+  const { openRecordingView } = useRecording<"web">();
 
   const {
     data: rawMeetings,
@@ -75,7 +76,7 @@ const ResidentProfileScreen = ({ person }: ProfileScreenProps) => {
 
       switch (Platform.OS) {
         case "web":
-          setWebMeetingId(meetingId);
+          openRecordingView({ meetingId, person });
           break;
         case "ios":
         case "android":
@@ -106,8 +107,6 @@ const ResidentProfileScreen = ({ person }: ProfileScreenProps) => {
       refetch={refetch}
       isMeetingCreating={isCreating}
       handleCreateMeeting={handleCreateMeeting}
-      webMeetingId={webMeetingId}
-      setWebMeetingId={setWebMeetingId}
     />
   );
 };

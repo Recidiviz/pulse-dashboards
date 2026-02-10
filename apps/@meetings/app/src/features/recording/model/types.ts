@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type RecordingStatus =
+import { ReactNode } from "react";
+
+import { Person } from "~@meetings/app/common/types";
+
+export type Status =
   | "idle"
   | "recording"
   | "paused"
@@ -24,12 +28,15 @@ export type RecordingStatus =
   | "discarding"
   | "ending";
 
-export type Recording = {
-  // runtimeStatus: in-memory status that updates UI
-  status: RecordingStatus | null;
+export type RecordingProviderProps = {
+  children: ReactNode;
+};
 
-  // Updates both runtimeStatus AND persistedStatus
-  setStatus: (status: RecordingStatus) => void;
+export type RecordingBase = {
+  // status: in-memory status that updates UI
+  status: Status | null;
+  // Updates both status AND persistedStatus
+  setStatus: (status: Status) => void;
 
   isRecording: boolean;
   durationMs: number;
@@ -50,4 +57,26 @@ export type Recording = {
 
   // Cleanup everything — invoked when user discards or finishes
   cleanupRecording: () => Promise<void>;
+};
+
+export type RecordingWeb = RecordingBase & {
+  isRecordingViewMinimized: boolean;
+  setIsRecordingViewMinimized: (isMinimized: boolean) => void;
+  meetingId: string | null;
+  person: Person | null;
+  openRecordingView: ({
+    meetingId,
+    person,
+  }: {
+    meetingId: string;
+    person: Person;
+  }) => void;
+  closeRecordingView: () => void;
+};
+
+export type RecordingNative = RecordingBase & {
+  // TODO: absence of meetingId in context was the main reason of separated context and useMeetingRecording
+  // we can combine them after adding meetingId to native. see ./store.ts for more details.
+  // it can be done as a part of https://github.com/Recidiviz/pulse-dashboards/issues/11571
+  // meetingId: string | null;
 };

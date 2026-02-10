@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Link } from "@react-navigation/native";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -39,9 +39,8 @@ import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import MeetingsCardsList from "../components/MeetingsCardsList";
 import MeetingsTable from "../components/MeetingsTable.web";
-import NewMeetingModal from "../components/NewMeetingModal";
 import SearchBar from "../components/SearchBar";
-import { RecordingContext } from "../features/recording";
+import { useRecording } from "../features/recording";
 import { humanReadableTitleCase } from "../utils/format";
 
 enum MeetingsSort {
@@ -59,8 +58,6 @@ type Props = {
   error: unknown;
   refetch: () => void;
   handleCreateMeeting: () => void;
-  webMeetingId: string | null;
-  setWebMeetingId: (id: string | null) => void;
 };
 
 const ProfileMeetings = ({
@@ -72,8 +69,6 @@ const ProfileMeetings = ({
   error,
   refetch,
   handleCreateMeeting,
-  webMeetingId,
-  setWebMeetingId,
 }: Props) => {
   const insets = useSafeAreaInsets();
 
@@ -81,7 +76,7 @@ const ProfileMeetings = ({
   const [sortBy, setSortBy] = useState("Date (Latest first)");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileHeaderHeight, setMobileHeaderHeight] = useState(0);
-  const { status: recordingState } = useContext(RecordingContext);
+  const { status: recordingState } = useRecording();
   // const [sortBy, setSortBy] = useState<MeetingsSort>(MeetingsSort.NEWEST_FIRST);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -268,7 +263,6 @@ const ProfileMeetings = ({
               meetings={filteredMeetings}
               person={person}
               personType={type}
-              continueMeeting={setWebMeetingId}
             />
           </View>
         </View>
@@ -409,14 +403,6 @@ const ProfileMeetings = ({
           </View>
 
           <View className="grow basis-0 pb-8">{renderMeetingsContent()}</View>
-
-          {webMeetingId && (
-            <NewMeetingModal
-              person={person}
-              onClose={() => setWebMeetingId(null)}
-              meetingId={webMeetingId}
-            />
-          )}
         </View>
       </ScrollView>
     </SafeAreaView>

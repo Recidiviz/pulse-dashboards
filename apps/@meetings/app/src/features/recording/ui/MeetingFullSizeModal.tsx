@@ -15,46 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useEffect, useState } from "react";
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 
-import Icons from "../../assets/icons";
-import { Person, RecordingStatus } from "../common/types";
-import { useMeetingRecording } from "../features/recording";
-import { formatDurationNumeric } from "../utils/format";
-import LinearProgressBar from "./LinearProgressBar";
-import Modal from "./Modal";
+import Icons from "~@meetings/icons";
 
-type NewMeetingModalContainerProps = {
+import { Person, RecordingStatus } from "../../../common/types";
+import LinearProgressBar from "../../../components/LinearProgressBar";
+import Modal from "../../../components/Modal";
+import { formatDurationNumeric } from "../../../utils/format";
+import { useMeetingRecording, useRecording } from "..";
+
+type Props = {
   person: Person;
-  meetingId: string;
-  onClose: () => void;
+  meetingRecording: ReturnType<typeof useMeetingRecording>;
 };
 
-const NewMeetingModalContainer = ({
-  person,
-  meetingId,
-  onClose,
-}: NewMeetingModalContainerProps) => {
-  return (
-    <NewMeetingModal meetingId={meetingId} onClose={onClose} person={person} />
-  );
-};
+export const MeetingFullSizeModal = ({ person, meetingRecording }: Props) => {
+  const { closeRecordingView, setIsRecordingViewMinimized } =
+    useRecording<"web">();
 
-type NewMeetingModalProps = NewMeetingModalContainerProps & {
-  person: Person;
-};
-
-const NewMeetingModal = ({
-  meetingId,
-  onClose,
-  person,
-}: NewMeetingModalProps) => {
   const { status, note, setNote, isRecording, totalDurationMs, actions } =
-    useMeetingRecording({
-      meetingId,
-      onComplete: onClose,
-    });
+    meetingRecording;
 
   if (!status) return null;
 
@@ -62,19 +43,22 @@ const NewMeetingModal = ({
     startRecording,
     handleTogglePauseResume,
     handleStopRecording,
-    handleFinishAndSave,
     handleDiscard,
-    handleFinalDiscard,
-    handleContinue,
   } = actions;
 
   const isMeetingActive = status !== "idle" || isRecording;
+
+  const onModalClickOutside = () => {
+    setIsRecordingViewMinimized(true);
+  };
 
   return (
     <Modal
       visible
       transparent
-      onClose={isMeetingActive ? handleDiscard : onClose}
+      onClickOutside={
+        isMeetingActive ? onModalClickOutside : closeRecordingView
+      }
       containerClassName="max-w-[960px] md:h-[658px] size-full"
     >
       {isMeetingActive ? (
@@ -86,16 +70,12 @@ const NewMeetingModal = ({
           handleStopRecording={handleStopRecording}
           handleTogglePauseResume={handleTogglePauseResume}
           handleDiscard={handleDiscard}
-          handleContinue={handleContinue}
-          handleFinishAndSave={handleFinishAndSave}
-          handleFinalDiscard={handleFinalDiscard}
           totalDurationMs={totalDurationMs}
-          onClose={onClose}
         />
       ) : (
         <NewMeetingIntro
           person={person}
-          onClose={onClose}
+          onClose={closeRecordingView}
           startRecording={startRecording}
         />
       )}
@@ -180,10 +160,6 @@ type NewMeetingProgressProps = {
   handleStopRecording: () => void;
   handleTogglePauseResume: () => void;
   handleDiscard: () => void;
-  handleContinue: () => void;
-  handleFinishAndSave: () => void;
-  handleFinalDiscard: () => void;
-  onClose: () => void;
 };
 
 const NewMeetingProgress = ({
@@ -195,35 +171,14 @@ const NewMeetingProgress = ({
   handleStopRecording,
   handleTogglePauseResume,
   handleDiscard,
-  handleContinue,
-  handleFinishAndSave,
-  handleFinalDiscard,
-  onClose,
 }: NewMeetingProgressProps) => {
+  const { setIsRecordingViewMinimized } = useRecording<"web">();
+
   // TODO: live transcript will be added in next releases
   // const [showLiveTranscript, setShowLiveTranscript] = useState(false);
   // const [isScrollToBottomButtonVisible, setIsScrollToBottomButtonVisible] =
   //   useState(true);
-  const [discardCountdown, setDiscardCountdown] = useState(3);
   // const scrollViewRef = useRef<ScrollView>(null);
-
-  useEffect(() => {
-    if (status !== "discarding") return;
-
-    setDiscardCountdown(3);
-
-    const interval = setInterval(() => {
-      setDiscardCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [status]);
 
   // const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
   //   const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
@@ -243,22 +198,21 @@ const NewMeetingProgress = ({
   const isModalDisabled = status === "uploading" || status === "ending";
 
   return (
-    <>
-      <View className="h-full flex-1 grow md:h-auto">
-        <View className="w-full flex-row items-center justify-between border-b border-[#EDF1F1] px-8 pb-3 pt-5">
-          <View className="gap-1">
-            <Text className="font-inter text-xl font-semibold text-primary">
-              New Meeting
+    <View className="h-full flex-1 grow md:h-auto">
+      <View className="w-full flex-row items-center justify-between border-b border-[#EDF1F1] px-8 pb-3 pt-5">
+        <View className="gap-1">
+          <Text className="font-inter text-xl font-semibold text-primary">
+            New Meeting
+          </Text>
+          <Text className="font-inter text-base font-medium text-primary">
+            {person.fullName}{" "}
+            <Text className="text-base font-normal text-[#355362D9]">
+              {person.primaryMetadata} • ID: {person.displayPersonExternalId}
             </Text>
-            <Text className="font-inter text-base font-medium text-primary">
-              {person.fullName}{" "}
-              <Text className="text-base font-normal text-[#355362D9]">
-                {person.primaryMetadata} • ID: {person.displayPersonExternalId}
-              </Text>
-            </Text>
-          </View>
-          <View className="flex-row items-center gap-4">
-            {/* <View className="flex-row items-center gap-2">
+          </Text>
+        </View>
+        <View className="flex-row items-center gap-4">
+          {/* <View className="flex-row items-center gap-2">
               <Text className="text-sm font-medium text-[#355362D9]">
                 Show live AI transcript
               </Text>
@@ -272,33 +226,33 @@ const NewMeetingProgress = ({
                 </View>
               </TouchableWithoutFeedback>
             </View> */}
-            <TouchableOpacity
-              onPress={handleDiscard}
-              className="rounded-full bg-[#F4F5F5] p-1.5"
-            >
-              <Image source={Icons.Minimize} className="!size-3.5" />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            onPress={() => setIsRecordingViewMinimized(true)}
+            className="rounded-full bg-[#F4F5F5] p-1.5"
+          >
+            <Image source={Icons.Minimize} className="!size-3.5" />
+          </TouchableOpacity>
         </View>
+      </View>
 
-        <View className="flex-1 grow flex-row">
-          <View className="grow gap-5 py-5">
-            <View className="flex-row items-center gap-1.5 px-8">
-              <Image source={Icons.Notes} className="!size-6" />
-              <Text className="font-inter font-semibold text-primary">
-                Notepad
-              </Text>
-            </View>
-            <TextInput
-              value={note}
-              onChangeText={setNote}
-              multiline
-              className="grow justify-start px-8 leading-[20px] text-primary outline-none"
-              placeholder="Use the notepad to flag anything you want to make sure is in the final notes. It won’t be saved, just used to build the summary"
-              editable={!isModalDisabled}
-            />
+      <View className="flex-1 grow flex-row">
+        <View className="grow gap-5 py-5">
+          <View className="flex-row items-center gap-1.5 px-8">
+            <Image source={Icons.Notes} className="!size-6" />
+            <Text className="font-inter font-semibold text-primary">
+              Notepad
+            </Text>
           </View>
-          {/* {showLiveTranscript && (
+          <TextInput
+            value={note}
+            onChangeText={setNote}
+            multiline
+            className="grow justify-start px-8 leading-[20px] text-primary outline-none"
+            placeholder="Use the notepad to flag anything you want to make sure is in the final notes. It won’t be saved, just used to build the summary"
+            editable={!isModalDisabled}
+          />
+        </View>
+        {/* {showLiveTranscript && (
             <View className="min-w-[300px] flex-1 gap-5 border-l border-[#EDF1F1] py-5">
               <View className="flex-row items-center gap-1.5 px-8">
                 <Image source={Icons.Sparkles} className="!size-5" />
@@ -351,154 +305,76 @@ const NewMeetingProgress = ({
               )}
             </View>
           )} */}
-        </View>
-
-        <View className="h-1">
-          {status === "ending" && <LinearProgressBar />}
-        </View>
-
-        <View className="columns-3 flex-row items-center justify-between border-t border-[#EDF1F1] bg-[#F4F5F5] px-8 py-5">
-          <View className="w-[180px]">
-            <Text className="font-inter text-lg font-semibold text-primary">
-              {formatDurationNumeric(totalDurationMs)}
-            </Text>
-            <View className="flex-row items-center gap-2">
-              {status === "recording" && (
-                <Image source={Icons.Record} className="!size-4" />
-              )}
-              <Text className="font-inter font-medium text-[#9AA6AC]">
-                {status === "recording"
-                  ? "Recording in progress"
-                  : "Recording paused"}
-              </Text>
-            </View>
-          </View>
-          <View className="flex-row items-center gap-2">
-            {status === "recording" ? (
-              <TouchableOpacity
-                className="w-[150px] flex-row items-center justify-center rounded-full bg-white py-3"
-                onPress={handleTogglePauseResume}
-                disabled={isModalDisabled}
-              >
-                <Image source={Icons.PauseBlack} className="mr-2 !size-6" />
-                <Text className="font-inter text-lg font-semibold text-primary">
-                  Pause
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                className="w-[150px] flex-row items-center justify-center rounded-full bg-[#006C67] py-3"
-                onPress={handleTogglePauseResume}
-                disabled={isModalDisabled}
-              >
-                <Image source={Icons.Play} className="mr-2 !size-4" />
-                <Text className="font-inter text-lg font-semibold text-white">
-                  Resume
-                </Text>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity
-              className="w-[150px] flex-row items-center justify-center rounded-full bg-[#B42D2D] py-3"
-              onPress={handleStopRecording}
-              disabled={isModalDisabled}
-            >
-              <Image source={Icons.Stop} className="mr-2 !size-6" />
-              <Text className="font-inter text-lg font-semibold text-white">
-                Stop
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View className="w-[180px] items-end">
-            <TouchableOpacity
-              className="flex-row items-center"
-              disabled={isModalDisabled}
-              onPress={handleDiscard}
-            >
-              <Image source={Icons.Cross} className="mr-2 !size-6" />
-              <Text className="font-inter text-lg font-semibold text-[#9AA6AC]">
-                Discard
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
       </View>
 
-      {status === "stopping" && (
-        <Modal
-          visible
-          transparent
-          onClose={onClose}
-          containerClassName="px-6 py-5"
-        >
-          <Text className="mb-3 font-inter text-xl font-semibold text-primary">
-            End this meeting?
-          </Text>
-          <Text className="mb-5 w-[350px] font-inter text-[#355362D9]">
-            You’re about to finish the meeting with{" "}
-            <Text className="font-bold">{person.fullName}</Text> and save the
-            notes for processing.
-          </Text>
-          <View className="flex-row gap-2">
-            <TouchableOpacity
-              className="w-[170px] items-center rounded-full border border-[#35536233] py-3"
-              onPress={handleContinue}
-            >
-              <Text className="font-inter font-semibold text-primary">
-                Cancel
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="w-[170px] items-center rounded-full bg-primary py-3"
-              onPress={handleFinishAndSave}
-            >
-              <Text className="font-inter font-semibold text-white">
-                Finish & Save
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      )}
+      <View className="h-1">
+        {status === "ending" && <LinearProgressBar />}
+      </View>
 
-      {status === "discarding" && (
-        <Modal
-          visible
-          transparent
-          onClose={onClose}
-          containerClassName="px-6 py-5"
-        >
-          <Text className="mb-3 font-inter text-xl font-semibold text-primary">
-            Discard meeting?
+      <View className="columns-3 flex-row items-center justify-between border-t border-[#EDF1F1] bg-[#F4F5F5] px-8 py-5">
+        <View className="w-[180px]">
+          <Text className="font-inter text-lg font-semibold text-primary">
+            {formatDurationNumeric(totalDurationMs)}
           </Text>
-          <Text className="mb-5 w-[350px] font-inter text-[#355362D9]">
-            You’re about to discard the meeting with{" "}
-            <Text className="font-bold">{person.fullName}.</Text> Notes and
-            transcript won't be saved.
-          </Text>
-          <View className="flex-row gap-2">
-            <TouchableOpacity
-              className="w-[170px] items-center rounded-full border border-[#35536233] py-3"
-              onPress={handleContinue}
-            >
-              <Text className="font-inter font-semibold text-primary">
-                Cancel
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className={`w-[170px] items-center rounded-full py-3 ${discardCountdown > 0 ? "bg-[#4D5255] opacity-30" : "bg-[#B42D2D]"}`}
-              onPress={handleFinalDiscard}
-              disabled={discardCountdown > 0}
-            >
-              <Text className="font-inter font-semibold text-white">
-                {discardCountdown > 0
-                  ? `Discard (0:${discardCountdown.toString().padStart(2, "0")})`
-                  : "Discard"}
-              </Text>
-            </TouchableOpacity>
+          <View className="flex-row items-center gap-2">
+            {status === "recording" && (
+              <Image source={Icons.Record} className="!size-4" />
+            )}
+            <Text className="font-inter font-medium text-[#9AA6AC]">
+              {status === "recording"
+                ? "Recording in progress"
+                : "Recording paused"}
+            </Text>
           </View>
-        </Modal>
-      )}
-    </>
+        </View>
+        <View className="flex-row items-center gap-2">
+          {status === "recording" ? (
+            <TouchableOpacity
+              className="w-[150px] flex-row items-center justify-center rounded-full bg-white py-3 aria-disabled:opacity-40"
+              onPress={handleTogglePauseResume}
+              disabled={isModalDisabled}
+            >
+              <Image source={Icons.PauseBlack} className="mr-2 !size-6" />
+              <Text className="font-inter text-lg font-semibold text-primary">
+                Pause
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              className="w-[150px] flex-row items-center justify-center rounded-full bg-[#006C67] py-3 aria-disabled:opacity-40"
+              onPress={handleTogglePauseResume}
+              disabled={isModalDisabled}
+            >
+              <Image source={Icons.Play} className="mr-2 !size-4" />
+              <Text className="font-inter text-lg font-semibold text-white">
+                Resume
+              </Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            className="w-[150px] flex-row items-center justify-center rounded-full bg-[#B42D2D] py-3 aria-disabled:opacity-40"
+            onPress={handleStopRecording}
+            disabled={isModalDisabled}
+          >
+            <Image source={Icons.Stop} className="mr-2 !size-6" />
+            <Text className="font-inter text-lg font-semibold text-white">
+              Stop
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View className="w-[180px] items-end">
+          <TouchableOpacity
+            className="flex-row items-center aria-disabled:opacity-40"
+            disabled={isModalDisabled}
+            onPress={handleDiscard}
+          >
+            <Image source={Icons.Cross} className="mr-2 !size-6" />
+            <Text className="font-inter text-lg font-semibold text-[#9AA6AC]">
+              Discard
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 };
-
-export default NewMeetingModalContainer;

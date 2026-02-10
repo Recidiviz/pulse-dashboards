@@ -40,6 +40,7 @@ import LockBig from "./lock-big.png";
 import LockSmall from "./lock-small.png";
 import Logo from "./logo.png";
 import Mail from "./mail.png";
+import Maximize from "./maximize.png";
 import Menu from "./menu.png";
 import Microphone from "./microphone.png";
 import Minimize from "./minimize.png";
@@ -104,6 +105,7 @@ const Icons = {
   CrossRound,
   ArrowUpGreen,
   Minimize,
+  Maximize,
   Printer,
 };
 

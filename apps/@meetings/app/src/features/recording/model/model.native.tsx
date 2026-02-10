@@ -30,7 +30,6 @@ import { getItem, removeItem, saveItem } from "~@meetings/app/utils/storage";
 
 import { useNote } from "../hooks/useNote";
 import { useRecordingStatus } from "../hooks/useRecordingStatus";
-import { Recording, RecordingStatus } from "../types";
 import { requestNotificationPermissions } from "../utils/notifications";
 import {
   getRecordingState,
@@ -39,16 +38,13 @@ import {
   saveRecordingUri,
   setRecordingState,
 } from "../utils/storage";
+import { RecordingNative, RecordingProviderProps, Status } from "./types";
 
 const MAX_RECORDING_SECONDS = 90 * 60; // 90 minutes
 
-export const RecordingContext = createContext<Recording>({} as Recording);
+export const RecordingContext = createContext<RecordingNative | null>(null);
 
-export const RecordingProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   /**
    * status = the UI state machine.
    * This drives the active screen state.
@@ -111,7 +107,7 @@ export const RecordingProvider = ({
     }
 
     // Hydrate UI state from persisted status
-    setStatus(persistedStatus as RecordingStatus);
+    setStatus(persistedStatus as Status);
   }, [setStatus]);
 
   // Initialize recording + restore previous state on provider mount (once per app session)

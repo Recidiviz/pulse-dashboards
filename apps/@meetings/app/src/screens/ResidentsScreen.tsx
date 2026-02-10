@@ -17,7 +17,7 @@
 
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 import {
   SafeAreaView,
@@ -31,7 +31,7 @@ import Loading from "../components/Loading";
 import PersonsHeaderContent from "../components/PersonsHeaderContent";
 import PersonsMobileList from "../components/PersonsMobileList";
 import PersonsTable from "../components/PersonsTable.web";
-import { RecordingContext } from "../features/recording";
+import { useRecording } from "../features/recording";
 import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { trpc } from "../trpc/client";
 import { deserializeResident } from "../utils/format";
@@ -45,7 +45,7 @@ type ProfileNavProp = NativeStackNavigationProp<
 const ResidentsScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<ProfileNavProp>();
-  const { status: recordingState } = useContext(RecordingContext);
+  const { status: recordingState } = useRecording();
 
   const isFocused = useIsFocused();
   const {

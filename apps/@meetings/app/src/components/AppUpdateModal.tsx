@@ -36,21 +36,21 @@ const AppUpdateModal = () => {
       visible={isModalVisible}
       transparent
       animationType="fade"
-      onClose={hideModal}
+      onClickOutside={hideModal}
       containerClassName="w-80"
     >
       <View className="p-6">
-        <Text className="mb-2 font-inter font-bold text-gray-900 text-xl text-center">
+        <Text className="mb-2 text-center font-inter text-xl font-bold text-gray-900">
           {title}
         </Text>
 
-        <Text className="mb-6 font-inter text-gray-600 text-base text-center">
+        <Text className="mb-6 text-center font-inter text-base text-gray-600">
           {message}
         </Text>
 
         <TouchableOpacity
           onPress={openStore}
-          className="items-center bg-[#006C67] mb-3 py-4 rounded-full"
+          className="mb-3 items-center rounded-full bg-[#006C67] py-4"
           accessibilityRole="button"
           accessibilityLabel="Update app"
         >

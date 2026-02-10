@@ -45,7 +45,7 @@ export const LearnMoreModal = ({ visible, onClose }: LearnMoreModalProps) => {
       visible={visible}
       transparent
       animationType="fade"
-      onClose={onClose}
+      onClickOutside={onClose}
       containerClassName="max-w-[620px] p-6"
     >
       <View className="mb-5 flex-row items-center justify-between">

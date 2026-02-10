@@ -20,7 +20,7 @@ const { mergeConfig } = require("metro-config");
 const { withNativeWind } = require("nativewind/metro");
 const {
   wrapWithReanimatedMetroConfig,
-} = require('react-native-reanimated/metro-config');
+} = require("react-native-reanimated/metro-config");
 
 const defaultConfig = getSentryExpoConfig(__dirname);
 const { assetExts, sourceExts } = defaultConfig.resolver;
@@ -39,9 +39,14 @@ const customConfig = {
   resolver: {
     assetExts: assetExts.filter((ext) => ext !== "svg"),
     sourceExts: [...sourceExts, "cjs", "mjs", "svg"],
+    // Fixes 'import.meta' errors on web (for example for zustand lib) by enabling proper ESM resolution for browser
+    // https://github.com/expo/expo/issues/30323
+    unstable_conditionNames: ["browser", "require", "react-native"],
   },
 };
 
-module.exports = wrapWithReanimatedMetroConfig(withNativeWind(mergeConfig(defaultConfig, customConfig), {
-  input: "./global.css",
-}));
+module.exports = wrapWithReanimatedMetroConfig(
+  withNativeWind(mergeConfig(defaultConfig, customConfig), {
+    input: "./global.css",
+  }),
+);

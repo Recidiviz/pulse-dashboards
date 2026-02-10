@@ -27,7 +27,6 @@ import config from "~@meetings/app/auth0-config";
 import AppErrorBoundary from "./components/AppErrorBoundary";
 import { SnackbarProvider } from "./components/Snackbar";
 import env from "./env";
-import { RecordingProvider } from "./features/recording";
 import AppNavigator from "./navigation/AppNavigator";
 
 Sentry.init({
@@ -55,9 +54,7 @@ const App = () => {
           clientId={config.clientId as string}
         >
           <AppErrorBoundary>
-            <RecordingProvider>
-              <AppNavigator />
-            </RecordingProvider>
+            <AppNavigator />
           </AppErrorBoundary>
         </Auth0Provider>
       </SnackbarProvider>

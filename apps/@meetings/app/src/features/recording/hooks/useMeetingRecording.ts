@@ -17,15 +17,16 @@
 
 import { useIsFocused } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system/legacy";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Platform } from "react-native";
 
 import { trpc } from "~@meetings/app/trpc/client";
 import { getItem, removeItem, saveItem } from "~@meetings/app/utils/storage";
 
-import { RecordingContext } from "../context";
+import { useRecording } from "../model";
 import { sendNotification } from "../utils/notifications";
 
+// TODO(#11571): get rid of this hook, move all the code into models
 export const useMeetingRecording = ({
   meetingId,
   onComplete,
@@ -58,7 +59,7 @@ export const useMeetingRecording = ({
     stopAndUploadRecording,
     togglePauseResume: contextTogglePauseResume,
     cleanupRecording,
-  } = useContext(RecordingContext);
+  } = useRecording();
 
   const prevRecorderStateRef = useRef(isRecording);
 

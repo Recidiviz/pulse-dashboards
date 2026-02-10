@@ -21,7 +21,7 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import { Person } from "../common/types";
-import { useMeetingRecording } from "../features/recording";
+import { useMeetingRecording, useRecording } from "../features/recording";
 import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
 import {
   Table,
@@ -54,18 +54,13 @@ type MeetingRowProps = {
   meeting: Meeting;
   person: Person;
   personType: "client" | "resident";
-  continueMeeting: () => void;
 };
 
-const MeetingRow = ({
-  meeting,
-  person,
-  personType,
-  continueMeeting,
-}: MeetingRowProps) => {
-  const isProcessingMeeting = meeting.status !== "NOT_STARTED";
-
+const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
   const { totalDurationMs } = useMeetingRecording({ meetingId: meeting.id });
+  const { openRecordingView } = useRecording<"web">();
+
+  const isProcessingMeeting = meeting.status !== "NOT_STARTED";
 
   return (
     <TableRow>
@@ -116,7 +111,7 @@ const MeetingRow = ({
         ) : (
           <TouchableOpacity
             className="invisible size-5 items-center justify-center group-hover:visible"
-            onPress={continueMeeting}
+            onPress={() => openRecordingView({ meetingId: meeting.id, person })}
           >
             <Image source={Icons.ArrowRight} className="!size-full" />
           </TouchableOpacity>
@@ -130,14 +125,12 @@ type MeetingsTableProps = {
   meetings: Meeting[];
   person: Person;
   personType: "client" | "resident";
-  continueMeeting: (meetingId: string) => void;
 };
 
 const MeetingsTable = ({
   meetings,
   person,
   personType,
-  continueMeeting,
 }: MeetingsTableProps) => {
   const [page, setPage] = React.useState(1);
 
@@ -165,7 +158,6 @@ const MeetingsTable = ({
               meeting={meeting}
               person={person}
               personType={personType}
-              continueMeeting={() => continueMeeting(meeting.id)}
             />
           ))}
       </TableBody>

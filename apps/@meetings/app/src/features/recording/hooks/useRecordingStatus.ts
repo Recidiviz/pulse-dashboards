@@ -17,13 +17,13 @@
 
 import { useEffect, useState } from "react";
 
-import { RecordingStatus } from "../types";
 import { getRecordingState, setRecordingState } from "../utils/storage";
+import { Status } from "./../model";
 
 export function useRecordingStatus() {
-  const [status, setStatus] = useState<RecordingStatus | null>(null);
+  const [status, setStatus] = useState<Status | null>(null);
 
-  const updateStatus = async (newStatus: RecordingStatus) => {
+  const updateStatus = async (newStatus: Status) => {
     setStatus(newStatus);
     await setRecordingState(newStatus);
   };

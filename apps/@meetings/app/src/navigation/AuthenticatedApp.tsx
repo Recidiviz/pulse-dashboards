@@ -27,6 +27,7 @@ import {
 } from "../context/StateContext";
 import { useUserContext } from "../context/UserContext";
 import env from "../env";
+import { RecordingProvider } from "../features/recording";
 import { trpc } from "../trpc/client";
 import DrawerNavigator from "./DrawerNavigator";
 
@@ -82,7 +83,9 @@ const AuthenticatedApp: React.FC = () => {
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <StateCodeProvider selectedStateRef={selectedStateRef}>
-          <DrawerNavigator />
+          <RecordingProvider>
+            <DrawerNavigator />
+          </RecordingProvider>
         </StateCodeProvider>
       </QueryClientProvider>
     </trpc.Provider>

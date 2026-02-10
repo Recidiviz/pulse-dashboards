@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReactNode } from "react";
+import { ComponentType, ReactNode } from "react";
 import {
   Modal as RNModal,
   ModalBaseProps,
@@ -24,24 +24,34 @@ import {
 } from "react-native";
 
 type ModalProps = ModalBaseProps & {
-  onClose: () => void;
+  onClickOutside?: () => void;
   containerClassName?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  backdrop?: ComponentType<any>;
   children: ReactNode;
 };
 
+function DefaultBackdrop() {
+  return <View className="absolute size-full bg-[#00000099]" />;
+}
+
 const Modal = ({
-  onClose,
+  onClickOutside,
+  backdrop: customBackdrop,
   children,
   containerClassName = "",
   ...modalProps
 }: ModalProps) => {
+  const Backdrop = customBackdrop || DefaultBackdrop;
+
   return (
-    <TouchableWithoutFeedback onPress={onClose}>
+    <TouchableWithoutFeedback onPress={onClickOutside}>
       <RNModal {...modalProps}>
-        <View className="size-full items-center justify-center bg-[#00000099] p-5">
+        <Backdrop />
+        <View className="size-full items-center justify-center p-5">
           <TouchableWithoutFeedback>
             <View
-              className={`max-h-full overflow-hidden rounded-3xl bg-white ${containerClassName}`}
+              className={`max-h-full overflow-hidden rounded-3xl bg-white shadow-md ${containerClassName}`}
             >
               {children}
             </View>

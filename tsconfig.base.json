@@ -62,6 +62,7 @@
       "~@jii/trpc": ["libs/@jii/trpc/src/index.ts"],
       "~@jii/trpc-types": ["libs/@jii/trpc-types/src/index.d.ts"],
       "~@meetings/app/*": ["apps/@meetings/app/src/*"],
+      "~@meetings/icons": ["apps/@meetings/app/assets/icons"],
       "~@meetings/import": ["apps/@meetings/import/src/index.ts"],
       "~@meetings/import/*": ["apps/@meetings/import/src/*"],
       "~@meetings/import/test/*": ["apps/@meetings/import/__tests__/*"],
