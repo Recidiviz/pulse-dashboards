@@ -36,14 +36,15 @@ model UsCoStarredProgram {
 // An instance of an RNA survey for North Carolina
 model UsNcRNA {
     // internal identifier for this survey
-    id              String      @unique @default(cuid())
+    id String @unique @default(cuid())
 
     pseudonymizedId String
-    updatedAt       DateTime    @updatedAt
-    completed       Boolean     @default(false)
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+    completed       Boolean  @default(false)
 
     // The resident's answers, parsed via Zod
-    answers         Json
+    answers Json
 }
 
 // US_NE (Nebraska) reentry checklist questions

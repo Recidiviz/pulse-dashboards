@@ -21,6 +21,10 @@ import { z } from "zod";
 import { PrismaClient } from "~@jii/prisma";
 
 import { TRPCFastifyRequest } from "../context";
+import {
+  FirestoreCollectionQuerier,
+  getFirestoreCollectionQuerier,
+} from "../helpers/firebaseAdmin";
 import { baseProcedure } from "./init";
 import { checkStatePermissions } from "./utils/checkStatePermissions";
 import { getDatabaseConnection } from "./utils/getDatabaseConnection";
@@ -103,6 +107,7 @@ export type AuthorizedStaffUserContext = {
   userProfile: AuthorizedStaffAppUserProfile;
   stateCode: string;
   prisma: PrismaClient;
+  firestoreCurrentStateQuerier: FirestoreCollectionQuerier;
 };
 
 export const firebaseAuthedStaffProcedure = baseProcedure.use(
@@ -115,9 +120,19 @@ export const firebaseAuthedStaffProcedure = baseProcedure.use(
       req,
     );
     const prisma = getDatabaseConnection(stateCode, isDemoRequest);
+    const firestoreCurrentStateQuerier = getFirestoreCollectionQuerier(
+      stateCode,
+      isDemoRequest,
+    );
 
     return next<AuthorizedStaffUserContext>({
-      ctx: { userId, userProfile, stateCode, prisma },
+      ctx: {
+        userId,
+        userProfile,
+        stateCode,
+        prisma,
+        firestoreCurrentStateQuerier,
+      },
     });
   },
 );

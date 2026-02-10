@@ -15,42 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isDemoMode } from "~client-env-utils";
-
-import { collectionNameForCurrentEnv } from "./collectionNames";
+import { collectionNameFromConfig } from "./names";
 
 vi.mock("~client-env-utils");
 
-describe("collectionNameForCurrentEnv", () => {
-  describe("live mode", () => {
-    beforeEach(() => {
-      vi.mocked(isDemoMode).mockReturnValue(false);
-    });
-
+describe("collectionNameFromConfig", () => {
+  describe("live collections", () => {
     test("collection key", () => {
-      expect(collectionNameForCurrentEnv({ key: "residents" })).toBe(
-        "residents",
-      );
+      expect(
+        collectionNameFromConfig({ name: { key: "residents" }, demo: false }),
+      ).toBe("residents");
     });
 
     test("raw name", () => {
-      expect(collectionNameForCurrentEnv({ raw: "foo" })).toBe("foo");
+      expect(
+        collectionNameFromConfig({ name: { raw: "foo" }, demo: false }),
+      ).toBe("foo");
     });
   });
-
-  describe("demo mode", () => {
-    beforeEach(() => {
-      vi.mocked(isDemoMode).mockReturnValue(true);
-    });
-
+  describe("demo collections", () => {
     test("collection key", () => {
-      expect(collectionNameForCurrentEnv({ key: "residents" })).toBe(
-        "DEMO_residents",
-      );
+      expect(
+        collectionNameFromConfig({ name: { key: "residents" }, demo: true }),
+      ).toBe("DEMO_residents");
     });
 
     test("raw name", () => {
-      expect(collectionNameForCurrentEnv({ raw: "foo" })).toBe("DEMO_foo");
+      expect(
+        collectionNameFromConfig({ name: { raw: "foo" }, demo: true }),
+      ).toBe("DEMO_foo");
     });
   });
 });

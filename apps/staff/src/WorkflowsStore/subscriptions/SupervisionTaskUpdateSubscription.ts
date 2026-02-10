@@ -17,7 +17,7 @@
 
 import { DocumentReference } from "firebase/firestore";
 
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-config";
 
 import FirestoreStore, { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";

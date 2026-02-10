@@ -15,29 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
+import { Suspense } from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
+import Loading from "../../components/Loading";
+import ErrorBoundary from "../ErrorBoundary";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
+import { RNAListQuerier } from "./RnaListQuerier";
 
 export const UsNcRNAViewer = observer(function UsNcRNAViewer() {
-  const { jiiTrpcClient, workflowsStore } = useRootStore();
-
-  const q = useQuery(
-    jiiTrpcClient.staff.usNc.rnaStatusList.queryOptions({
-      pseudonymizedIds: workflowsStore.caseloadPersons.map(
-        (p) => p.pseudonymizedId,
-      ),
-    }),
-  );
-  // TODO: proof of concept only
-  // eslint-disable-next-line no-console
-  console.log(q.data);
-
   return (
     <WorkflowsNavLayout>
-      <div>Hello world!</div>
+      <ErrorBoundary>
+        <Suspense fallback={<Loading />}>
+          <RNAListQuerier />
+        </Suspense>
+      </ErrorBoundary>
     </WorkflowsNavLayout>
   );
 });

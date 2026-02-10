@@ -26,6 +26,7 @@ import { getPrismaClientForStateCode } from "~@jii/prisma";
 import { buildCommonServer } from "~server-setup-plugin";
 
 import { createContext } from "../context";
+import { getFirestoreCollectionQuerier } from "../helpers/firebaseAdmin";
 import { firebaseAuthedStaffProcedure } from "./firebaseAuthedStaffProcedure";
 import { router } from "./init";
 
@@ -36,6 +37,7 @@ vi.mock("~@jii/prisma", () => {
   // which is why this is only a partial implementation of the public api
   return { getPrismaClientForStateCode: vi.fn() };
 });
+vi.mock("../helpers/firebaseAdmin");
 
 // needs to be different from the test server in firebaseAuthedResidentProcedure
 // so they don't contend for the port
@@ -71,8 +73,10 @@ beforeAll(async () => {
   testServer = buildCommonServer({
     createContext: createContext,
     appRouter: testAppRouter,
+    // this needs to be configured but for these tests it doesn't actually have to work,
+    // the firestore parts are all mocked anyway
     firebaseAuthOptions: {
-      projectId: "demo-test",
+      app: firebaseAdmin.initializeApp(),
     },
   });
 
@@ -229,6 +233,7 @@ describe.each([
     await expect(proc()).resolves.toBe(successResponse);
 
     expect(getPrismaClientForStateCode).toHaveBeenCalledWith("US_XX");
+    expect(getFirestoreCollectionQuerier).toHaveBeenCalledWith("US_XX", false);
   });
 
   test("successful context creation for demo request", async () => {
@@ -237,6 +242,7 @@ describe.each([
     await expect(proc()).resolves.toBe(successResponse);
 
     expect(getPrismaClientForStateCode).toHaveBeenCalledWith("US_XX_DEMO");
+    expect(getFirestoreCollectionQuerier).toHaveBeenCalledWith("US_XX", true);
   });
 
   test("Recidiviz users don't need state permissions for demo data", async () => {

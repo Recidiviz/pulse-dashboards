@@ -23,7 +23,7 @@
 import { Firestore, Query } from "@google-cloud/firestore";
 import inquirer from "inquirer";
 
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-config";
 
 import { deleteQueryBatch } from "./firestoreUtils";
 

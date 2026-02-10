@@ -19,7 +19,7 @@ import { DocumentData } from "@google-cloud/firestore";
 import { and, or, Query, query, where } from "firebase/firestore";
 import { z } from "zod";
 
-import { FirestoreCollectionKey } from "~firestore-api";
+import { FirestoreCollectionKey } from "~firestore-config";
 
 import { RootStore } from "../../RootStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";

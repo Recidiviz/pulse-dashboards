@@ -44,5 +44,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["scope:universal", "type:util"]
 }

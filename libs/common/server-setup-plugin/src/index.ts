@@ -106,14 +106,10 @@ export function buildCommonServer<TRouter extends AnyRouter>(
   }
 
   if (options.firebaseAuthOptions) {
-    // avoid duplicate app instances when hot reloading etc
-    const firebaseApp =
-      firebaseAdmin.apps[0] ??
-      firebaseAdmin.initializeApp({
-        projectId: options.firebaseAuthOptions.projectId,
-      });
-
-    server.decorate("firebaseAuth", firebaseAdmin.auth(firebaseApp));
+    server.decorate(
+      "firebaseAuth",
+      firebaseAdmin.auth(options.firebaseAuthOptions.app),
+    );
   }
 
   server.register(cors, {

@@ -19,6 +19,7 @@ import type { FastifyJWTOptions, JWT as BaseJWT } from "@fastify/jwt";
 import type { AnyRouter } from "@trpc/server";
 import type { FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
 import type { Algorithm } from "fast-jwt";
+import type { App as FirebaseApp } from "firebase-admin/app";
 import type { Auth } from "firebase-admin/auth";
 
 declare module "@fastify/jwt" {
@@ -51,7 +52,7 @@ type JwtConfig = {
 };
 
 type FirebaseAuthConfig = {
-  projectId: string;
+  app: FirebaseApp;
 };
 
 export type BuildServerOptions<TRouter extends AnyRouter> = {

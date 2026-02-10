@@ -15,4 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// this library has no public API
+export * from "./collections/names";

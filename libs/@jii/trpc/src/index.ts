@@ -16,4 +16,5 @@
 // =============================================================================
 
 export * from "./context";
+export { firebaseApp } from "./helpers/firebaseAdmin";
 export * from "./router/appRouter";

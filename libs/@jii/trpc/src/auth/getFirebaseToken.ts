@@ -20,24 +20,7 @@ import { toUpper } from "lodash-es";
 
 import { AuthorizedUserProfile } from "~@jii/auth";
 
-const firebaseCredential = process.env["DATA_SOURCE_FIREBASE_CREDENTIAL"];
-
-if (!firebaseCredential && process.env["IS_OFFLINE"] !== "true") {
-  throw new Error("Missing Firebase credential");
-}
-
-const firebaseApp = firebaseAdmin.initializeApp(
-  // this should only be missing in offline mode, where it doesn't really matter,
-  // thanks to the check above
-  firebaseCredential
-    ? {
-        projectId: process.env["FIREBASE_BACKEND_PROJECT"],
-        credential: firebaseAdmin.credential.cert(
-          JSON.parse(firebaseCredential),
-        ),
-      }
-    : undefined,
-);
+import { firebaseApp } from "../helpers/firebaseAdmin";
 
 /**
  * Returns a Firebase auth token for a given user, which can be used to access Firestore
@@ -57,7 +40,7 @@ export async function getFirebaseToken(
 ) {
   const allowedStatesNormalized = (allowedStates ?? []).map(toUpper);
 
-  return firebaseAdmin.auth(firebaseApp).createCustomToken(uid, {
+  return firebaseAdmin.auth(firebaseApp()).createCustomToken(uid, {
     app: "jii",
     stateCode,
     externalId,

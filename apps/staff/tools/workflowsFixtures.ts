@@ -38,7 +38,7 @@ import {
 import {
   FIRESTORE_GENERAL_COLLECTION_MAP,
   FirestoreCollectionKey,
-} from "~firestore-api";
+} from "~firestore-config";
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { MilestonesMessage } from "../src/FirestoreStore/types";

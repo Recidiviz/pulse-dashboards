@@ -50,11 +50,11 @@ import {
   ResidentRecord,
   residentRecordSchema,
 } from "~datatypes";
+import { collectionNameForCurrentEnv } from "~firestore-api";
 import {
-  collectionNameForCurrentEnv,
   FIRESTORE_GENERAL_COLLECTION_MAP,
   FirestoreCollectionKey,
-} from "~firestore-api";
+} from "~firestore-config";
 
 import { fetchFirebaseToken } from "../api/fetchFirebaseToken";
 import type RootStore from "../RootStore";

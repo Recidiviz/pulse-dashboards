@@ -19,8 +19,7 @@ import { where } from "firebase/firestore";
 import { z } from "zod";
 
 import { LocationRecord, ResidentRecord } from "~datatypes";
-
-import { FirestoreCollectionKey } from "../types";
+import { FirestoreCollectionKey } from "~firestore-config";
 
 export type FilterParams = Parameters<typeof where>;
 

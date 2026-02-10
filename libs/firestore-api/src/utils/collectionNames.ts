@@ -16,24 +16,15 @@
 // =============================================================================
 
 import { isDemoMode } from "~client-env-utils";
-
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../constants";
-import { FirestoreCollectionKey, FirestoreCollectionKeyConfig } from "../types";
+import {
+  collectionNameFromConfig,
+  FirestoreCollectionKey,
+} from "~firestore-config";
 
 /**
  * Given a Firestore collection specifier and a demo flag,
  * returns the collection name that should be used in Firestore queries
  */
-export function collectionNameFromConfig({
-  name,
-  demo,
-}: FirestoreCollectionKeyConfig) {
-  let collectionName = name.key
-    ? FIRESTORE_GENERAL_COLLECTION_MAP[name.key]
-    : name.raw;
-  if (demo) collectionName = `DEMO_${collectionName}`;
-  return collectionName;
-}
 
 /**
  * Given a Firestore collection specifier, returns the collection name that should

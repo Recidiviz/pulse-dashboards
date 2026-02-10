@@ -68,8 +68,10 @@ beforeAll(async () => {
   testServer = buildCommonServer({
     createContext: createContext,
     appRouter: testAppRouter,
+    // this needs to be configured but for these tests it doesn't actually have to work,
+    // the firestore parts are all mocked anyway
     firebaseAuthOptions: {
-      projectId: "demo-test",
+      app: firebaseAdmin.initializeApp(),
     },
   });
 

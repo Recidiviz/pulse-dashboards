@@ -23,7 +23,7 @@ import {
   StaffRecord,
   SystemId,
 } from "~datatypes";
-import { FirestoreCollectionName } from "~firestore-api";
+import { FirestoreCollectionName } from "~firestore-config";
 import { Hydratable } from "~hydration-utils";
 
 import { SupervisionTaskUpdate } from "../../FirestoreStore";

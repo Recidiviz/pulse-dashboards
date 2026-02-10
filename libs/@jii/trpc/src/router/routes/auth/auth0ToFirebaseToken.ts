@@ -24,7 +24,7 @@ import {
   metadataNamespace,
 } from "~@jii/auth";
 
-import { getFirebaseToken } from "../../../auth/firebaseAdmin";
+import { getFirebaseToken } from "../../../auth/getFirebaseToken";
 import { getAuthToken, jwtSchema } from "../../../auth/utils";
 import { baseProcedure } from "../../../procedures/init";
 

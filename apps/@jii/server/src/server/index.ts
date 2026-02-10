@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@jii/trpc";
+import { appRouter, createContext, firebaseApp } from "~@jii/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
 
 export function buildServer() {
@@ -30,7 +30,7 @@ export function buildServer() {
     }
 
     firebaseAuthOptions = {
-      projectId: firebaseBackendProject,
+      app: firebaseApp(),
     };
   }
 

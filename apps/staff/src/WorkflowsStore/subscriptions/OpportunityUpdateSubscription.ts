@@ -17,7 +17,7 @@
 
 import { DocumentData, DocumentReference } from "firebase/firestore";
 
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-config";
 
 import FirestoreStore, { OpportunityUpdate } from "../../FirestoreStore";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";

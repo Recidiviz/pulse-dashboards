@@ -18,7 +18,7 @@
 import { DocumentData, Query, query } from "firebase/firestore";
 import { z } from "zod";
 
-import { FirestoreCollectionKey } from "~firestore-api";
+import { FirestoreCollectionKey } from "~firestore-config";
 
 import { WorkflowsStore } from "../WorkflowsStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";

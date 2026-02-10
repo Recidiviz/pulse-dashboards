@@ -43,18 +43,15 @@ const firebaseAuthMock = {
 describe("firebase auth", () => {
   beforeAll(async () => {
     // @ts-expect-error just stubbing what we need
-    vi.mocked(firebaseAdmin.initializeApp).mockImplementation((opts) => {
-      expect(opts).toEqual({ projectId: "demo-test" });
-    });
-
-    // @ts-expect-error just stubbing what we need
     vi.mocked(firebaseAdmin.auth).mockReturnValue(firebaseAuthMock);
 
     testServer = buildCommonServer({
       createContext: createFirebaseContext,
       appRouter: testFbRouter,
+      // this needs to be configured but for these tests it doesn't actually have to work,
+      // the firestore parts are all mocked anyway
       firebaseAuthOptions: {
-        projectId: "demo-test",
+        app: firebaseAdmin.initializeApp(),
       },
     });
 

@@ -49,9 +49,11 @@ import {
   residentRecordSchema,
   shiftAllDates,
 } from "~datatypes";
+import {
+  collectionNameFromConfig,
+  FirestoreCollectionKey,
+} from "~firestore-config";
 
-import { FirestoreCollectionKey } from "../types";
-import { collectionNameFromConfig } from "../utils/collectionNames";
 import { FilterParams, FirestoreAPI } from "./interface";
 
 export class FirestoreAPIClient implements FirestoreAPI {
