@@ -18,6 +18,7 @@
 "use client";
 
 import { Box, CircularProgress, Typography } from "@mui/material";
+import { X } from "lucide-react";
 import { useState } from "react";
 
 import { ConnectionErrorAlert } from "../../../websockets/components/ConnectionErrorAlert";
@@ -29,6 +30,11 @@ import { Sidebar } from "./Sidebar";
 
 const LinearChatComponent: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [disclosureDismissed, setDisclosureDismissed] = useState(false);
+
+  const handleDismissDisclosure = () => {
+    setDisclosureDismissed(true);
+  };
 
   const {
     intakeContext: { isLoading, error, intakeStatus },
@@ -113,9 +119,21 @@ const LinearChatComponent: React.FC = () => {
 
         {/* Chat */}
         <div className="flex flex-col flex-1 w-full bg-[#F9FAFA] overflow-hidden">
-          <div className="shrink-0 px-4 sm:px-6 pt-4 pb-2">
-            <AIDisclosure type={AIDisclosureType.Chatbot} />
-          </div>
+          {!disclosureDismissed && (
+            <div className="shrink-0 px-4 sm:px-6 pt-4 pb-2">
+              <div className="relative flex items-start gap-2 w-full">
+                <AIDisclosure type={AIDisclosureType.Chatbot} />
+                <button
+                  onClick={handleDismissDisclosure}
+                  className="flex-shrink-0 p-1 hover:bg-gray-100 rounded transition-colors"
+                  aria-label="Dismiss AI disclosure"
+                  type="button"
+                >
+                  <X size={16} className="text-gray-500" />
+                </button>
+              </div>
+            </div>
+          )}
           <div className="flex-1 overflow-hidden">
             <ChatbotInterface />
           </div>
