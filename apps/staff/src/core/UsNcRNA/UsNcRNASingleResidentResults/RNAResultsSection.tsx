@@ -21,14 +21,14 @@ import {
   RNAQuestionId,
 } from "~@jii/configs";
 
-import { UsNcRNASingleResidentPresenter } from "../UsNcRNASingleResidentPresenter";
+import { ResultsPagePresenter } from "./ResultsPagePresenter";
 import { RNAResultsAnswerGrid } from "./RNAResultsAnswerGrid";
 import { RNAResultsAnswerList } from "./RNAResultsAnswerList";
 import { RNAResultsLifeAreaGrid } from "./RNAResultsLifeAreaGrid";
 
 export type RNAResultsSectionProps = {
   questions: RNAQuestionId[];
-  presenter: UsNcRNASingleResidentPresenter;
+  presenter: ResultsPagePresenter;
 };
 
 export const RNAResultsSection = ({

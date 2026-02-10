@@ -35,25 +35,25 @@ const RNAPill = styled(Pill)<{ $borderColor: string }>`
 `;
 
 const badgeSettings = {
-  upcoming: {
+  UPCOMING: {
     backgroundColor: palette.slate05,
     borderColor: palette.slate20,
     textColor: palette.slate80,
     text: "Upcoming",
   },
-  residentNotStarted: {
+  NOT_STARTED: {
     backgroundColor: "rgb(242,240,245)",
     borderColor: "rgb(137,115,165)",
     textColor: "rgb(98,68,136)",
     text: "Not Started",
   },
-  residentInProgress: {
+  IN_PROGRESS: {
     backgroundColor: "rgb(239,243,255)",
     borderColor: "rgb(162,179,239)",
     textColor: "rgb(0,56,124)",
     text: "In Progress",
   },
-  residentComplete: {
+  COMPLETE: {
     backgroundColor: "rgb(255,248,222)",
     borderColor: "rgb(252,213,121)",
     textColor: "rgb(168,44,0)",

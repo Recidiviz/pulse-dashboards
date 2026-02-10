@@ -15,12 +15,40 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { makeAutoObservable } from "mobx";
 
-import { Prisma } from "~@jii/prisma";
+import {
+  RNACheckboxAnswers,
+  RNALifeAreaAnswers,
+  RNATextAnswers,
+} from "~@jii/configs";
+import { JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
 
-export const updateRNASchema = z.object({
-  id: z.string(),
-  completed: z.boolean(),
-  answers: z.record(z.string(), z.any()),
-}) satisfies z.ZodType<Prisma.UsNcRNAUpdateInput>;
+import { Resident } from "../../../WorkflowsStore/Resident";
+
+export class ResultsPagePresenter {
+  constructor(
+    public resident: Resident,
+    private answerData: NonNullable<
+      JiiStaffAppRouterOutputs["staff"]["usNc"]["getRNA"]
+    >,
+  ) {
+    makeAutoObservable(this);
+  }
+
+  get status() {
+    return this.answerData.status;
+  }
+
+  get textAnswers(): RNATextAnswers {
+    return this.answerData.textAnswers;
+  }
+
+  get checkboxAnswers(): RNACheckboxAnswers {
+    return this.answerData.checkboxAnswers;
+  }
+
+  get lifeAreaAnswers(): RNALifeAreaAnswers {
+    return this.answerData.lifeAreaAnswers;
+  }
+}

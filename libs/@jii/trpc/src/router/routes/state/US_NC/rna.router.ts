@@ -24,38 +24,18 @@ import {
 } from "~@jii/configs";
 import { Prisma } from "~@jii/prisma";
 
+import {
+  getRNAInputSchema,
+  getRNAQueryResolver,
+} from "../../../../helpers/US_NC/rna";
 import { router } from "../../../../procedures/init";
 import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
-import { getRNAInputSchema, updateRNASchema } from "./rna.schema";
+import { updateRNASchema } from "./rna.schema";
 
 const ncProcedure = restrictedResidentProcedureForState("US_NC");
 
 export const usNcRouter = router({
-  // Given a resident's pseudonymized ID, return the latest RNA object
-  // corresponding to that resident, or null if none was found
-  getRNA: ncProcedure
-    .input(getRNAInputSchema)
-    .query(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
-      const result = await prisma.usNcRNA.findFirst({
-        where: {
-          pseudonymizedId,
-        },
-        orderBy: {
-          updatedAt: "desc",
-        },
-      });
-
-      if (!result) {
-        return;
-      }
-
-      return {
-        ...result,
-        textAnswers: rnaTextAnswersSchema.parse(result.answers),
-        checkboxAnswers: rnaCheckboxAnswersSchema.parse(result.answers),
-        lifeAreaAnswers: rnaLifeAreaAnswersSchema.parse(result.answers),
-      };
-    }),
+  getRNA: ncProcedure.input(getRNAInputSchema).query(getRNAQueryResolver),
 
   // Idempotently try to create a new RNA for this resident. More specifically,
   // - if the resident does not have an RNA or the latest RNA is completed,

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
 import { Suspense } from "react";
 
 import Loading from "../../components/Loading";
@@ -23,7 +22,7 @@ import ErrorBoundary from "../ErrorBoundary";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { RNAListQuerier } from "./RnaListQuerier";
 
-export const UsNcRNAViewer = observer(function UsNcRNAViewer() {
+export function UsNcRNAViewer() {
   return (
     <WorkflowsNavLayout>
       <ErrorBoundary>
@@ -33,4 +32,4 @@ export const UsNcRNAViewer = observer(function UsNcRNAViewer() {
       </ErrorBoundary>
     </WorkflowsNavLayout>
   );
-});
+}

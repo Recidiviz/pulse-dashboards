@@ -16,17 +16,18 @@
 // =============================================================================
 
 import { Sans18, Sans24, Serif34 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
 import { palette, spacing } from "~design-system";
 
-import { Resident } from "../../../WorkflowsStore/Resident";
 import PersonId from "../../PersonId";
 import { WorkflowsBackButton } from "../../WorkflowsLayouts/WorkflowsBackButton";
 import { RNABadge } from "../RNABadge";
 import { RNAMarkSubmittedButton } from "../RNAMarkSubmittedButton";
-import { PaddedRNAContent } from "../UsNcRNASingleResident";
+import { PaddedRNAContent } from "./ResultsPage";
+import { ResultsPagePresenter } from "./ResultsPagePresenter";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -56,7 +57,13 @@ const IdText = styled(Sans24).attrs({ as: "span" })`
   color: ${palette.data.teal2};
 `;
 
-export const RNAResultsHeader = ({ resident }: { resident: Resident }) => {
+export const RNAResultsHeader = observer(function RNAResultsHeader({
+  presenter,
+}: {
+  presenter: ResultsPagePresenter;
+}) {
+  const { resident, status } = presenter;
+
   return (
     <HeaderContainer>
       <PaddedRNAContent>
@@ -74,8 +81,8 @@ export const RNAResultsHeader = ({ resident }: { resident: Resident }) => {
           </div>
           <RNAMarkSubmittedButton />
         </MainInfo>
-        <RNABadge kind={"residentComplete"} />
+        <RNABadge kind={status} />
       </PaddedRNAContent>
     </HeaderContainer>
   );
-};
+});

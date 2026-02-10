@@ -33,7 +33,7 @@ import {
 } from "~@jii/US_NC";
 import { spacing } from "~design-system";
 
-import { UsNcRNASingleResidentPresenter } from "../UsNcRNASingleResidentPresenter";
+import { ResultsPagePresenter } from "./ResultsPagePresenter";
 import { RNAResultsSectionProps } from "./RNAResultsSection";
 import {
   FakeRadioButton,
@@ -75,7 +75,7 @@ export const RNAResultsAnswers = observer(function RNAResultsAnswers({
 }: {
   format: RNAQuestionFormat;
   questionId: RNAQuestionId;
-  presenter: UsNcRNASingleResidentPresenter;
+  presenter: ResultsPagePresenter;
 }) {
   if (isRNARadioFormat(format)) {
     // Radio button question

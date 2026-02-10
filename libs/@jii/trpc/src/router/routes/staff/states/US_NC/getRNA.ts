@@ -15,12 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
-import { Prisma } from "~@jii/prisma";
+import {
+  getRNAInputSchema,
+  getRNAQueryResolver,
+} from "../../../../../helpers/US_NC/rna";
+import { getStatusOfExistingRNA } from "./rnaStatus";
+import { stateStaffProcedure } from "./stateStaffProcedure";
 
-export const updateRNASchema = z.object({
-  id: z.string(),
-  completed: z.boolean(),
-  answers: z.record(z.string(), z.any()),
-}) satisfies z.ZodType<Prisma.UsNcRNAUpdateInput>;
+export const getRNA = stateStaffProcedure
+  .input(getRNAInputSchema)
+  .query(async (queryArgs) => {
+    const rnaData = await getRNAQueryResolver(queryArgs);
+
+    if (!rnaData)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `No assessment data could be found for this resident (ID: ${queryArgs.input.pseudonymizedId})`,
+      });
+
+    const { textAnswers, checkboxAnswers, lifeAreaAnswers } = rnaData;
+
+    return {
+      textAnswers,
+      checkboxAnswers,
+      lifeAreaAnswers,
+      status: getStatusOfExistingRNA(rnaData),
+    };
+  });

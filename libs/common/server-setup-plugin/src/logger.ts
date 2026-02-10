@@ -34,6 +34,7 @@ export const ENV_TO_LOGGER = {
       },
     },
   },
+  test: false,
 };
 
 export interface LogEntry {
@@ -48,7 +49,7 @@ type LogMetadata = Record<string, unknown>;
 class Logger {
   private defaultComponent?: string;
   private defaultMetadata: LogMetadata;
-  private logger;
+  private logger?;
 
   constructor(component?: string, defaultMetadata?: LogMetadata) {
     this.defaultComponent = component;
@@ -61,7 +62,9 @@ class Logger {
       logger = {};
     }
 
-    this.logger = pino(logger);
+    if (typeof logger === "object") {
+      this.logger = pino(logger);
+    }
   }
 
   private log(entry: LogEntry): void {
@@ -77,7 +80,7 @@ class Logger {
 
     // Remove duplicate keys
     delete logObject.component;
-    this.logger[entry.severity](logObject);
+    this.logger?.[entry.severity](logObject);
   }
 
   debug(message: string, metadata?: LogMetadata): void {

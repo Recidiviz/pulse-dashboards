@@ -15,12 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { stateRestrictedStaffProcedureFactory } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
 
-import { Prisma } from "~@jii/prisma";
-
-export const updateRNASchema = z.object({
-  id: z.string(),
-  completed: z.boolean(),
-  answers: z.record(z.string(), z.any()),
-}) satisfies z.ZodType<Prisma.UsNcRNAUpdateInput>;
+export const stateStaffProcedure =
+  stateRestrictedStaffProcedureFactory("US_NC");

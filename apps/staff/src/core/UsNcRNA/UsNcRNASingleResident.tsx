@@ -16,65 +16,15 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import styled from "styled-components";
+import { Suspense } from "react";
 
-import { fullRNASpec } from "~@jii/configs";
-import { palette, spacing } from "~design-system";
-import { withPresenterManager } from "~hydration-utils";
-
+import Loading from "../../components/Loading";
 import { useRootStore } from "../../components/StoreProvider";
 import { Resident } from "../../WorkflowsStore/Resident";
-import ModelHydrator from "../ModelHydrator";
-import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
-import { UsNcRNASingleResidentPresenter } from "./UsNcRNASingleResidentPresenter";
-import { RNAResultsFooter } from "./UsNcRNASingleResidentResults/RNAResultsFooter";
-import { RNAResultsHeader } from "./UsNcRNASingleResidentResults/RNAResultsHeader";
-import { RNAResultsSection } from "./UsNcRNASingleResidentResults/RNAResultsSection";
+import ErrorBoundary from "../ErrorBoundary";
+import { ResultsPage } from "./UsNcRNASingleResidentResults/ResultsPage";
 
-const Wrapper = styled.div`
-  background-color: ${palette.marble1};
-  min-height: 100vh;
-  max-height: 100vh;
-  height: 100%;
-  width: 100%;
-`;
-
-export const PaddedRNAContent = styled.div`
-  padding: ${rem(spacing.md)} ${rem(72)};
-`;
-
-/**
- * View of a single person's RNA assessment results.
- */
-export const ManagedComponent = observer(function UsNcRNASingleResident({
-  presenter,
-}: {
-  presenter: UsNcRNASingleResidentPresenter;
-}) {
-  return (
-    <Wrapper>
-      <NavigationLayout>
-        <OverviewNavLinks />
-      </NavigationLayout>
-      <RNAResultsHeader resident={presenter.selectedPerson} />
-      <PaddedRNAContent>
-        {fullRNASpec.map((rnaPageSpec) => {
-          return (
-            <RNAResultsSection
-              key={rnaPageSpec.id}
-              questions={rnaPageSpec.questions}
-              presenter={presenter}
-            />
-          );
-        })}
-        <RNAResultsFooter resident={presenter.selectedPerson} />
-      </PaddedRNAContent>
-    </Wrapper>
-  );
-});
-
-function usePresenter() {
+export const UsNcRNASingleResident = observer(function UsNcRNASingleResident() {
   const {
     workflowsStore: { selectedPerson },
   } = useRootStore();
@@ -87,12 +37,11 @@ function usePresenter() {
     return null;
   }
 
-  return new UsNcRNASingleResidentPresenter(selectedPerson);
-}
-
-export const UsNcRNASingleResident = withPresenterManager({
-  usePresenter,
-  ManagedComponent,
-  managerIsObserver: true,
-  HydratorComponent: ModelHydrator,
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<Loading />}>
+        <ResultsPage resident={selectedPerson} />;
+      </Suspense>
+    </ErrorBoundary>
+  );
 });

@@ -29,6 +29,7 @@ export default defineConfig(() => ({
     unstubEnvs: true,
     globalSetup: ["src/test/setupTestsGlobal.ts"],
     setupFiles: ["src/test/setupTests.ts"],
+    fileParallelism: false,
     name: "@jii/trpc",
     watch: false,
     globals: true,
