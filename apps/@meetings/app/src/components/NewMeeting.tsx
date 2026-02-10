@@ -20,6 +20,7 @@ import {
   ActivityIndicator,
   Image,
   Modal,
+  Platform,
   Text,
   TextInput,
   View,
@@ -150,7 +151,7 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
       </View>
 
       <Modal
-        visible={["stopping", "discarding"].includes(status)}
+        visible={["stopping", "discarding"].includes(status) && Platform.OS !== "web"}
         animationType="slide"
         transparent
       >

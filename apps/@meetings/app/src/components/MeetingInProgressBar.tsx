@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React from "react";
-import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
+import { Image, Modal, Platform, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import { Person } from "../common/types";
@@ -109,7 +109,7 @@ const MeetingInProgressBar = ({
       </View>
 
       <Modal
-        visible={["stopping", "discarding"].includes(recordingState)}
+        visible={["stopping", "discarding"].includes(recordingState) && Platform.OS !== "web"}
         animationType="slide"
         transparent
       >
