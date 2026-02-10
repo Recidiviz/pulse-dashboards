@@ -3,6 +3,11 @@ from pathlib import Path
 
 import pytest
 
+# These tests use seed config files from seed_assessment_configs/
+# The AssessmentFileLoader automatically checks both assessment_configs/ and
+# seed_assessment_configs/ directories.
+SEED_CONFIG_FILE = "UT-CCCI-v1.yaml"
+
 
 @pytest.mark.integration
 def test_headless_conversation_eval_use_sample_conversation():
@@ -17,7 +22,7 @@ def test_headless_conversation_eval_use_sample_conversation():
             "app.manage",
             "headless-conversation-eval",
             "--config_file_name",
-            "ID-FACR-v0.yaml",
+            SEED_CONFIG_FILE,
             "--use-sample-conversation",
         ],
         cwd=backend_dir,
@@ -47,7 +52,7 @@ def test_headless_conversation_eval_use_failed_sample_conversation():
             "app.manage",
             "headless-conversation-eval",
             "--config_file_name",
-            "ID-FACR-v0.yaml",
+            SEED_CONFIG_FILE,
             "--use-sample-failed-conversation",
         ],
         cwd=backend_dir,
@@ -72,7 +77,7 @@ def test_headless_conversation_eval_use_failed_sample_conversation():
 
 @pytest.mark.integration
 @pytest.mark.skip(
-    reason="Requires authentication to demo environment - run manually if needed by uncommenting this line."
+    reason="Requires authentication to demo environment - run manually if needed."
 )
 def test_headless_conversation_eval_in_demo_env():
     backend_dir = Path(__file__).parent.parent.parent
@@ -86,7 +91,7 @@ def test_headless_conversation_eval_in_demo_env():
             "app.manage",
             "headless-conversation-eval",
             "--config_file_name",
-            "UT-CCCI-v0.yaml",
+            SEED_CONFIG_FILE,
             "--client-pseudo-id",
             "p1234",
             "--environment",
@@ -108,7 +113,7 @@ def test_headless_conversation_eval_in_demo_env():
 
 @pytest.mark.integration
 @pytest.mark.skip(
-    reason="Takes about 5 minutes to generate and evaluate a converstion; to run manually comment out the skip label."
+    reason="Takes about 5 minutes to generate and evaluate a conversation."
 )
 def test_headless_conversation_eval_generate_conversation():
     backend_dir = Path(__file__).parent.parent.parent
@@ -122,7 +127,7 @@ def test_headless_conversation_eval_generate_conversation():
             "app.manage",
             "headless-conversation-eval",
             "--config_file_name",
-            "ID-FACR-v0.yaml",
+            SEED_CONFIG_FILE,
             "--generate-conversation",
         ],
         cwd=backend_dir,

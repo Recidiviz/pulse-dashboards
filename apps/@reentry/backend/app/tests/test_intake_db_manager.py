@@ -289,7 +289,7 @@ async def test_get_latest_active_conversation_intake_returns_most_recent(
     from app.crud.intake import create_intake, get_latest_active_conversation_intake
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create first intake (older)
     await create_intake(
@@ -331,7 +331,7 @@ async def test_get_latest_active_conversation_intake_ignores_completed(
     from app.crud.intake import create_intake, get_latest_active_conversation_intake
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create older IN_PROGRESS intake
     intake1 = await create_intake(
@@ -380,7 +380,7 @@ async def test_get_latest_active_conversation_intake_returns_none_when_all_compl
     from app.crud.intake import create_intake, get_latest_active_conversation_intake
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create only COMPLETED intakes
     await create_intake(
@@ -435,7 +435,7 @@ async def test_get_latest_active_conversation_intake_prefers_most_recent_regardl
     from app.crud.intake import create_intake, get_latest_active_conversation_intake
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create IN_PROGRESS intake first
     await create_intake(
@@ -475,7 +475,7 @@ async def test_get_latest_active_conversation_intake_with_multiple_clients(
 
     client1_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     client2_pseudo_id = "different_client_id"
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create intake for client1
     intake1 = await create_intake(

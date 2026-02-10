@@ -15,7 +15,6 @@ from app.core.data_config.output_configs.loader import OutputFileLoader
 from app.core.db import AsyncSession, get_session
 from app.models.assessment_config import AssessmentConfig
 from app.models.output_config import OutputConfig
-from app.utils.string_utils import normalize_code
 
 from .base import cli
 
@@ -46,10 +45,9 @@ async def refresh_assessment_configs(session: AsyncSession) -> tuple[int, int]:
             file_model = AssessmentFileLoader.validate_yaml_content(yaml_content)
 
             # Find the matching record in the database
-            normalized_code = normalize_code(file_model.metadata.code)
             statement = select(AssessmentConfig).where(
                 AssessmentConfig.state_code == file_model.metadata.state_code,
-                AssessmentConfig.code == normalized_code,
+                AssessmentConfig.code == file_model.metadata.code,
                 AssessmentConfig.version == file_model.metadata.version,
             )
             result = await session.exec(statement)
@@ -113,9 +111,8 @@ async def refresh_output_configs(session: AsyncSession) -> tuple[int, int]:
             file_model = OutputFileLoader.validate_yaml_content(yaml_content)
 
             # Find the matching record in the database
-            normalized_code = normalize_code(file_model.metadata.code)
             statement = select(OutputConfig).where(
-                OutputConfig.code == normalized_code,
+                OutputConfig.code == file_model.metadata.code,
                 OutputConfig.version == file_model.metadata.version,
             )
             result = await session.exec(statement)

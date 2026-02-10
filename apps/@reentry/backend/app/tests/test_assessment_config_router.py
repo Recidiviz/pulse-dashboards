@@ -2,7 +2,6 @@ import pytest
 from httpx import AsyncClient
 
 from app.models.assessment_config import AssessmentConfig
-from app.utils.string_utils import normalize_code
 
 # =============================================================================
 # Tests for GET /assessment-configs
@@ -31,9 +30,9 @@ async def test_list_assessment_configs_success(
     assert "state_code" in first_config
     assert first_config["state_code"] == "US_UT"
 
-    # Verify it includes the test config (codes are normalized to lowercase)
+    # Verify it includes the test config
     codes = [config["code"] for config in data]
-    assert "ccci" in codes
+    assert "CCCI" in codes
 
 
 @pytest.mark.asyncio
@@ -73,7 +72,7 @@ async def test_list_assessment_configs_only_active(
     # Create an inactive assessment config for US_UT
     inactive_config = AssessmentConfig(
         state_code="US_UT",
-        code=normalize_code("INACTIVE_TEST"),
+        code="INACTIVE_TEST",
         version=1,
         display_name="Inactive Test Config",
         config_yaml="metadata:\n  code: INACTIVE_TEST\n  version: 1",
@@ -89,10 +88,10 @@ async def test_list_assessment_configs_only_active(
 
     # Inactive config should not be in the results
     codes = [config["code"] for config in data]
-    assert "inactivetest" not in codes
+    assert "INACTIVE_TEST" not in codes
 
     # But active configs should be there
-    assert "ccci" in codes
+    assert "CCCI" in codes
 
 
 @pytest.mark.asyncio
@@ -113,7 +112,7 @@ async def test_list_assessment_configs_multiple_for_state(
     # Add multiple configs for a state not in fixtures
     config_a = AssessmentConfig(
         state_code="US_CA",
-        code=normalize_code("AAA"),
+        code="AAA",
         version=1,
         display_name="A Config",
         config_yaml="metadata:\n  code: AAA\n  version: 1",
@@ -121,7 +120,7 @@ async def test_list_assessment_configs_multiple_for_state(
     )
     config_z = AssessmentConfig(
         state_code="US_CA",
-        code=normalize_code("ZZZ"),
+        code="ZZZ",
         version=1,
         display_name="Z Config",
         config_yaml="metadata:\n  code: ZZZ\n  version: 1",
@@ -129,7 +128,7 @@ async def test_list_assessment_configs_multiple_for_state(
     )
     config_m = AssessmentConfig(
         state_code="US_CA",
-        code=normalize_code("MMM"),
+        code="MMM",
         version=1,
         display_name="M Config",
         config_yaml="metadata:\n  code: MMM\n  version: 1",
@@ -147,4 +146,4 @@ async def test_list_assessment_configs_multiple_for_state(
     # Verify all three configs are returned
     assert len(data) == 3
     codes = {config["code"] for config in data}
-    assert codes == {"aaa", "zzz", "mmm"}
+    assert codes == {"AAA", "ZZZ", "MMM"}

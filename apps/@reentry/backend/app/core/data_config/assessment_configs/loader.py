@@ -26,25 +26,33 @@ class AssessmentFileLoader:
 
         Args:
             file_name: Name of the YAML file (e.g., "UT-CCCI-v1.yaml")
-                      File will be loaded from the assessment_configs directory
+                      File will be loaded from assessment_configs or seed_assessment_configs
 
         Returns:
             Raw YAML content as string
 
         Raises:
-            FileNotFoundError: If file doesn't exist
+            FileNotFoundError: If file doesn't exist in either directory
         """
-        # Construct path to file in assessment_configs directory
+        # Check primary directory (assessment_configs/)
         config_dir = Path(__file__).parent
         file_path = config_dir / file_name
 
+        # If not found, check seed directory (seed_assessment_configs/)
         if not file_path.exists():
-            raise FileNotFoundError(f"Config file not found: {file_path}")
+            seed_dir = config_dir.parent / "seed_assessment_configs"
+            file_path = seed_dir / file_name
+
+        if not file_path.exists():
+            raise FileNotFoundError(
+                f"Config file not found: {file_name} "
+                f"(searched in assessment_configs/ and seed_assessment_configs/)"
+            )
 
         with open(file_path, "r") as f:
             yaml_content = f.read()
 
-        logger.debug(f"Read config file: {file_path.name}")
+        logger.debug(f"Read config file: {file_path}")
         return yaml_content
 
     @staticmethod

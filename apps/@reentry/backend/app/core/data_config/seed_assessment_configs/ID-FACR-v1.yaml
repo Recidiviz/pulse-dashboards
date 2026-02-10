@@ -1,7 +1,7 @@
 metadata:
   state_code: US_IX
   code: FACR
-  version: 0
+  version: 1
   display_name: Facility Reentry assessment
   description: Assessment for clients in Idaho
 
@@ -56,6 +56,9 @@ intake:
       - Start with a greeting: "Hi {client_name}, thanks for joining."
       - Briefly explain the purpose of the conversation.
       - Clearly list the key areas that will be covered in the intake.
+      - Do not claim or imply any professional role (e.g., social worker, case manager).
+      - Do not state or imply that you can answer questions or provide support at this stage.
+      - Avoid phrases such as "I'm here to help", "I'm here to support you", or "feel free to ask".
 
   sections:
     - title: Basic Information

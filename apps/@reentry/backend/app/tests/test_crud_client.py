@@ -541,7 +541,7 @@ async def test_reset_client_data(async_session: AsyncSession, seed_configs):
     from app.models.models import Plan
 
     client_pseudo_id = "client-005"
-    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     # Create intake with proper config
     intake = Intake(
@@ -850,7 +850,7 @@ async def test_get_paginated_client_list_filter_intake_complete(
         mock_get_clients.return_value = mock_clientdata
 
         client_pseudo_id = mock_clientdata[0].pseudonymized_client_id
-        assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+        assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
         # Create completed intake
         intake = Intake(

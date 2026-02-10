@@ -15,8 +15,6 @@ from app.models.assessment_config import AssessmentConfig
 from app.utils.config_loader import (
     ConfigLoader,
     _assessment_cache,
-    _plan_cache,
-    _summary_cache,
 )
 
 # Path to test fixtures
@@ -34,13 +32,9 @@ def load_fixture_yaml(fixture_path: Path) -> str:
 def clear_caches():
     """Clear module-level caches before and after each test"""
     _assessment_cache.clear()
-    _summary_cache.clear()
-    _plan_cache.clear()
 
     yield
     _assessment_cache.clear()
-    _summary_cache.clear()
-    _plan_cache.clear()
 
 
 @pytest.mark.asyncio
@@ -49,7 +43,7 @@ async def test_load_assessment_config(
 ):
     """Test loading and validating assessment config from database"""
     # Get UUID for UT-CCCI-v0
-    config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     # Load the config
     loaded = await ConfigLoader.load_assessment_config(config_id, async_session)
@@ -75,7 +69,7 @@ async def test_load_assessment_config_caching(
 ):
     """Test that assessment configs are cached after first load"""
     # Get UUID for UT-CCCI-v0
-    config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     # First load - should query database
     loaded1 = await ConfigLoader.load_assessment_config(config_id, async_session)
@@ -96,9 +90,9 @@ async def test_load_assessment_config_multiple_versions(
 ):
     """Test loading multiple versions of the same assessment"""
     # Get UUIDs for different versions
-    config_id_v0 = seed_configs["assessments"][("US_UT", "ccci", 0)]
-    config_id_v1 = seed_configs["assessments"][("US_UT", "ccci", 1)]
-    config_id_v2 = seed_configs["assessments"][("US_UT", "ccci", 2)]
+    config_id_v0 = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    config_id_v1 = seed_configs["assessments"][("US_UT", "CCCI", 1)]
+    config_id_v2 = seed_configs["assessments"][("US_UT", "CCCI", 2)]
 
     # Load each version
     loaded_v0 = await ConfigLoader.load_assessment_config(config_id_v0, async_session)
@@ -122,8 +116,8 @@ async def test_load_assessment_config_different_states(
 ):
     """Test loading configs from different states"""
     # Get UUIDs for different states
-    ut_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
-    ix_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    ut_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    ix_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
     az_id = seed_configs["assessments"][("US_AZ", "default", 0)]
 
     # Load each config
@@ -157,18 +151,22 @@ async def test_load_assessment_config_not_found(
 async def test_load_summary_config_by_assessment(
     async_session: AsyncSession, seed_configs, clear_caches
 ):
-    """Test loading intake summary config via assessment"""
+    """Test loading intake summary config via assessment.
+
+    The seed fixture creates both v0 and v1 of intake_summary_ccci as active.
+    With ORDER BY version DESC, we expect the latest version (v1) to be returned.
+    """
     # Get UUID for UT-CCCI-v0 (references intake_summary_ccci)
-    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     # Load the summary config
     loaded = await ConfigLoader.load_summary_config(assessment_id, async_session)
 
-    # Verify it returns validated IntakeSummaryConfigFile
+    # Verify it returns validated IntakeSummaryConfigFile (latest active version)
     assert isinstance(loaded, IntakeSummaryConfigFile)
     assert loaded.metadata.code == "intake_summary_ccci"
     assert loaded.metadata.output_type == "intake_summary"
-    assert loaded.metadata.version == 0
+    assert loaded.metadata.version == 1  # latest active version from seed
     assert loaded.prompts.system == "test"
     assert loaded.prompts.template == "test"
 
@@ -179,7 +177,7 @@ async def test_load_plan_config_by_assessment(
 ):
     """Test loading action plan config via assessment"""
     # Get UUID for UT-CCCI-v0 (references action_plan_ccci)
-    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     # Load the plan config
     loaded = await ConfigLoader.load_plan_config(assessment_id, async_session)
@@ -194,69 +192,65 @@ async def test_load_plan_config_by_assessment(
 
 
 @pytest.mark.asyncio
-async def test_load_summary_config_caching(
+async def test_load_summary_config_consistent_results(
     async_session: AsyncSession, seed_configs, clear_caches
 ):
-    """Test that summary configs are cached after first load"""
+    """Test that summary configs are loaded consistently (always fresh from DB)"""
     # Get UUID for UT-CCCI-v0
-    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
-    # First load - should query database
+    # First load
     loaded1 = await ConfigLoader.load_summary_config(assessment_id, async_session)
 
-    # Verify it's cached in the output cache
-    assert assessment_id in _summary_cache
-
-    # Second load - should use cache
+    # Second load - always queries DB (no output cache)
     loaded2 = await ConfigLoader.load_summary_config(assessment_id, async_session)
 
-    # Both should be the same object from cache
-    assert loaded1 is loaded2
+    # Both should return equivalent results
+    assert loaded1 is not None
+    assert loaded2 is not None
+    assert loaded1.metadata.code == loaded2.metadata.code
+    assert loaded1.metadata.version == loaded2.metadata.version
 
 
 @pytest.mark.asyncio
-async def test_load_summary_config_multiple_versions(
+async def test_load_summary_config_multiple_assessments(
     async_session: AsyncSession, seed_configs, clear_caches
 ):
     """Test loading summary configs from different assessment versions"""
     # Get UUIDs for different assessment versions
-    assessment_id_v0 = seed_configs["assessments"][("US_UT", "ccci", 0)]
-    assessment_id_v1 = seed_configs["assessments"][("US_UT", "ccci", 1)]
+    assessment_id_v0 = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    assessment_id_v1 = seed_configs["assessments"][("US_UT", "CCCI", 1)]
 
     # Load summary config for each version
     loaded_v0 = await ConfigLoader.load_summary_config(assessment_id_v0, async_session)
     loaded_v1 = await ConfigLoader.load_summary_config(assessment_id_v1, async_session)
 
-    # Both should return valid summaries
+    # Both should return valid summaries (they reference the same output code)
     assert loaded_v0 is not None
     assert loaded_v1 is not None
     assert isinstance(loaded_v0, IntakeSummaryConfigFile)
     assert isinstance(loaded_v1, IntakeSummaryConfigFile)
 
-    # Verify both are cached separately in output cache
-    assert assessment_id_v0 in _summary_cache
-    assert assessment_id_v1 in _summary_cache
-
 
 @pytest.mark.asyncio
-async def test_load_plan_config_caching(
+async def test_load_plan_config_consistent_results(
     async_session: AsyncSession, seed_configs, clear_caches
 ):
-    """Test that plan configs are cached after first load"""
+    """Test that plan configs are loaded consistently (always fresh from DB)"""
     # Get UUID for UT-CCCI-v0 (references action_plan_ccci)
-    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
-    # First load - should query database
+    # First load
     loaded1 = await ConfigLoader.load_plan_config(assessment_id, async_session)
 
-    # Verify it's cached in the output cache
-    assert assessment_id in _plan_cache
-
-    # Second load - should use cache
+    # Second load - always queries DB (no output cache)
     loaded2 = await ConfigLoader.load_plan_config(assessment_id, async_session)
 
-    # Both should be the same object from cache
-    assert loaded1 is loaded2
+    # Both should return equivalent results
+    assert loaded1 is not None
+    assert loaded2 is not None
+    assert loaded1.metadata.code == loaded2.metadata.code
+    assert loaded1.metadata.version == loaded2.metadata.version
 
 
 @pytest.mark.asyncio
@@ -271,9 +265,7 @@ async def test_list_assessment_configs(
     assert len(ut_configs) == 3
     assert all(isinstance(c, AssessmentConfig) for c in ut_configs)
     assert all(c.state_code == "US_UT" for c in ut_configs)
-    assert all(
-        c.code == "ccci" for c in ut_configs
-    )  # codes are normalized to lowercase
+    assert all(c.code == "CCCI" for c in ut_configs)
 
     # List configs for US_IX (should have FACR v0)
     ix_configs = await ConfigLoader.list_assessment_configs("US_IX", async_session)
@@ -281,7 +273,7 @@ async def test_list_assessment_configs(
     # Should return 1 config for US_IX
     assert len(ix_configs) == 1
     assert ix_configs[0].state_code == "US_IX"
-    assert ix_configs[0].code == "facr"  # codes are normalized to lowercase
+    assert ix_configs[0].code == "FACR"
 
     # List configs for US_AZ (should have default v0)
     az_configs = await ConfigLoader.list_assessment_configs("US_AZ", async_session)
@@ -289,7 +281,7 @@ async def test_list_assessment_configs(
     # Should return 1 config for US_AZ
     assert len(az_configs) == 1
     assert az_configs[0].state_code == "US_AZ"
-    assert az_configs[0].code == "default"  # codes are normalized to lowercase
+    assert az_configs[0].code == "default"
 
 
 @pytest.mark.asyncio
@@ -307,7 +299,7 @@ async def test_load_summary_config(
 ):
     """Test loading summary config for an assessment"""
     # Get UUID for UT-CCCI-v0 (references intake_summary_ccci)
-    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     # Load summary config
     summary = await ConfigLoader.load_summary_config(assessment_id, async_session)
@@ -365,7 +357,7 @@ async def test_load_summary_config_with_version(
 ):
     """Test loading different versions of summary config"""
     # Get UUID for UT-CCCI-v1 (should reference intake_summary_ccci if it exists in fixture)
-    assessment_id = seed_configs["assessments"][("US_UT", "ccci", 1)]
+    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 1)]
 
     # Load summary config
     summary = await ConfigLoader.load_summary_config(assessment_id, async_session)
@@ -451,7 +443,7 @@ async def test_get_active_assessment_configs_by_state_multiple_configs(
 
     config1 = AssessmentConfig(
         state_code="US_CA",
-        code="ccci",
+        code="CCCI",
         version=0,
         display_name="Config 1",
         config_yaml=yaml_content,
@@ -459,7 +451,7 @@ async def test_get_active_assessment_configs_by_state_multiple_configs(
     )
     config2 = AssessmentConfig(
         state_code="US_CA",
-        code="facr",
+        code="FACR",
         version=0,
         display_name="Config 2",
         config_yaml=yaml_content,
@@ -489,7 +481,7 @@ async def test_get_active_assessment_configs_by_state_returns_latest_version(
     # Create two active configs with same state_code and code but different versions
     config_v1 = AssessmentConfig(
         state_code="US_CA",
-        code="ccci",
+        code="CCCI",
         version=1,
         display_name="Config v1",
         config_yaml=yaml_content,
@@ -497,7 +489,7 @@ async def test_get_active_assessment_configs_by_state_returns_latest_version(
     )
     config_v3 = AssessmentConfig(
         state_code="US_CA",
-        code="ccci",
+        code="CCCI",
         version=3,
         display_name="Config v3",
         config_yaml=yaml_content,
@@ -513,7 +505,7 @@ async def test_get_active_assessment_configs_by_state_returns_latest_version(
     )
     assert len(configs) == 1
     assert configs[0].state_code == "US_CA"
-    assert configs[0].code == "ccci"
+    assert configs[0].code == "CCCI"
     assert configs[0].version == 3
 
 
@@ -531,7 +523,7 @@ async def test_get_active_assessment_configs_by_state_returns_latest_per_code(
     configs_to_add = [
         AssessmentConfig(
             state_code="US_CA",
-            code="ccci",
+            code="CCCI",
             version=1,
             display_name="CCCI v1",
             config_yaml=yaml_content,
@@ -539,7 +531,7 @@ async def test_get_active_assessment_configs_by_state_returns_latest_per_code(
         ),
         AssessmentConfig(
             state_code="US_CA",
-            code="ccci",
+            code="CCCI",
             version=3,
             display_name="CCCI v3",
             config_yaml=yaml_content,
@@ -547,7 +539,7 @@ async def test_get_active_assessment_configs_by_state_returns_latest_per_code(
         ),
         AssessmentConfig(
             state_code="US_CA",
-            code="facr",
+            code="FACR",
             version=0,
             display_name="FACR v0",
             config_yaml=yaml_content,
@@ -555,7 +547,7 @@ async def test_get_active_assessment_configs_by_state_returns_latest_per_code(
         ),
         AssessmentConfig(
             state_code="US_CA",
-            code="facr",
+            code="FACR",
             version=2,
             display_name="FACR v2",
             config_yaml=yaml_content,
@@ -576,11 +568,11 @@ async def test_get_active_assessment_configs_by_state_returns_latest_per_code(
     configs_sorted = sorted(configs, key=lambda c: c.code)
 
     # CCCI should be v3
-    assert configs_sorted[0].code == "ccci"
+    assert configs_sorted[0].code == "CCCI"
     assert configs_sorted[0].version == 3
 
     # FACR should be v2
-    assert configs_sorted[1].code == "facr"
+    assert configs_sorted[1].code == "FACR"
     assert configs_sorted[1].version == 2
 
 
@@ -597,7 +589,7 @@ async def test_get_active_assessment_configs_by_state_different_states_no_interf
         # US_CA: CCCI v1 and v3 (should return v3)
         AssessmentConfig(
             state_code="US_CA",
-            code="ccci",
+            code="CCCI",
             version=1,
             display_name="CA CCCI v1",
             config_yaml=yaml_content,
@@ -605,7 +597,7 @@ async def test_get_active_assessment_configs_by_state_different_states_no_interf
         ),
         AssessmentConfig(
             state_code="US_CA",
-            code="ccci",
+            code="CCCI",
             version=3,
             display_name="CA CCCI v3",
             config_yaml=yaml_content,
@@ -614,7 +606,7 @@ async def test_get_active_assessment_configs_by_state_different_states_no_interf
         # US_TX: CCCI v2 and v5 (should return v5)
         AssessmentConfig(
             state_code="US_TX",
-            code="ccci",
+            code="CCCI",
             version=2,
             display_name="TX CCCI v2",
             config_yaml=yaml_content,
@@ -622,7 +614,7 @@ async def test_get_active_assessment_configs_by_state_different_states_no_interf
         ),
         AssessmentConfig(
             state_code="US_TX",
-            code="ccci",
+            code="CCCI",
             version=5,
             display_name="TX CCCI v5",
             config_yaml=yaml_content,
@@ -681,16 +673,16 @@ async def test_seed_configs_maintains_one_active_per_state_code_pair(
             f"The seed_configs fixture should ensure only one version is active per (state_code, code) pair."
         )
 
-    # Verify we have configs for the expected test state-code pairs (codes are normalized to lowercase)
+    # Verify we have configs for the expected test state-code pairs
     active_pairs = set(state_code_pairs_count.keys())
     assert (
         "US_UT",
-        "ccci",
-    ) in active_pairs, "Expected US_UT/ccci to have an active config"
+        "CCCI",
+    ) in active_pairs, "Expected US_UT/CCCI to have an active config"
     assert (
         "US_IX",
-        "facr",
-    ) in active_pairs, "Expected US_IX/facr to have an active config"
+        "FACR",
+    ) in active_pairs, "Expected US_IX/FACR to have an active config"
     assert (
         "US_AZ",
         "default",
@@ -724,3 +716,287 @@ async def test_get_active_assessment_configs_by_state_ignores_inactive(
     assert configs is not None
     assert isinstance(configs, list)
     assert len(configs) == 0
+
+
+# =============================================================================
+# Tests for stale cache bug: output config activation should invalidate cache
+# =============================================================================
+
+
+@pytest.mark.asyncio
+async def test_summary_picks_up_new_active_version_immediately(
+    async_session: AsyncSession, seed_configs, clear_caches
+):
+    """
+    Verify the fix for the production bug: after activating a new output config
+    version, load_summary_config returns the new version immediately because
+    there is no stale in-memory cache.
+
+    This test reproduces the exact production timeline:
+    1. Load summary config (would have cached v0 in the old buggy code)
+    2. Activate a new version directly in DB
+    3. Load summary config again -> should return new version (not stale v0)
+    """
+    from app.crud.config_management import (
+        create_output_config,
+        update_output_config,
+    )
+    from app.models.output_config import OutputConfig
+
+    # Get assessment_id for UT-CCCI-v0 (references intake_summary_ccci output code)
+    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+
+    # Step 1: Load summary config (in old code this would populate stale cache)
+    loaded_v0 = await ConfigLoader.load_summary_config(assessment_id, async_session)
+    assert loaded_v0 is not None
+    assert isinstance(loaded_v0, IntakeSummaryConfigFile)
+
+    # Step 2: Create and activate a new version directly in DB
+    new_yaml = """metadata:
+  code: intake_summary_ccci
+  output_type: intake_summary
+  version: 99
+  display_name: "CCCI Intake Summary v99 - Updated"
+
+model:
+  provider: openai
+  name: gpt-4o
+  version: "2024-11-20"
+
+prompts:
+  system: "UPDATED system prompt for v99"
+  template: "UPDATED template prompt for v99"
+"""
+    new_output = OutputConfig(
+        output_type="intake_summary",
+        code="intake_summary_ccci",
+        version=99,
+        display_name="CCCI Intake Summary v99 - Updated",
+        config_yaml=new_yaml,
+        is_active=False,
+    )
+    created = await create_output_config(async_session, new_output)
+
+    # Deactivate all old active configs for this code
+    from sqlmodel import select
+
+    result = await async_session.exec(
+        select(OutputConfig).where(
+            OutputConfig.code == "intake_summary_ccci",
+            OutputConfig.is_active == True,  # noqa: E712
+            OutputConfig.id != created.id,
+        )
+    )
+    for old_config in result.all():
+        old_config.is_active = False
+        await update_output_config(async_session, old_config)
+
+    # Activate new version
+    created.is_active = True
+    await update_output_config(async_session, created)
+
+    # Step 3: Verify DB has correct active config
+    from app.crud.config_management import get_active_output_config
+
+    active_db = await get_active_output_config(async_session, "intake_summary_ccci")
+    assert active_db is not None
+    assert active_db.version == 99
+
+    # Step 4: Load summary config again - should get v99 (no stale cache!)
+    loaded_after = await ConfigLoader.load_summary_config(assessment_id, async_session)
+    assert loaded_after is not None
+    assert loaded_after.metadata.version == 99, (
+        f"Expected v99 after activation, but got v{loaded_after.metadata.version}. "
+        f"Stale cache bug has regressed!"
+    )
+    assert (
+        loaded_after.prompts.system == "UPDATED system prompt for v99"
+    ), f"Expected updated prompt, got: {loaded_after.prompts.system}"
+
+
+@pytest.mark.asyncio
+async def test_summary_via_lifecycle_activation(
+    async_session: AsyncSession, seed_configs, clear_caches
+):
+    """
+    Verify that LifecycleService activation works correctly and load_summary_config
+    returns the newly activated version.
+    """
+    from sqlmodel import select
+
+    from app.crud.config_management import create_output_config, update_output_config
+    from app.models.output_config import OutputConfig
+    from app.services.config_management.lifecycle import LifecycleService
+
+    # Get assessment_id for UT-CCCI-v0 (references intake_summary_ccci output code)
+    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+
+    # Ensure only one active output config for this code (seed creates multiple)
+    result = await async_session.exec(
+        select(OutputConfig).where(
+            OutputConfig.code == "intake_summary_ccci",
+            OutputConfig.is_active == True,  # noqa: E712
+        )
+    )
+    all_active = result.all()
+    for cfg in all_active:
+        if cfg.version != 0:
+            cfg.is_active = False
+            await update_output_config(async_session, cfg)
+
+    # Step 1: Load summary config
+    loaded_v0 = await ConfigLoader.load_summary_config(assessment_id, async_session)
+    assert loaded_v0 is not None
+    assert loaded_v0.metadata.version == 0
+    assert loaded_v0.prompts.system == "test"
+
+    # Step 2: Create a new version with different prompt content
+    new_yaml = """metadata:
+  code: intake_summary_ccci
+  output_type: intake_summary
+  version: 99
+  display_name: "CCCI Intake Summary v99 - Updated"
+
+model:
+  provider: openai
+  name: gpt-4o
+  version: "2024-11-20"
+
+prompts:
+  system: "UPDATED system prompt for v99"
+  template: "UPDATED template prompt for v99"
+"""
+    new_output = OutputConfig(
+        output_type="intake_summary",
+        code="intake_summary_ccci",
+        version=99,
+        display_name="CCCI Intake Summary v99 - Updated",
+        config_yaml=new_yaml,
+        is_active=False,
+    )
+    created = await create_output_config(async_session, new_output)
+
+    # Step 3: Activate via LifecycleService
+    activation_result = await LifecycleService.activate_output_config(
+        async_session, created.id, "test@recidiviz.org"
+    )
+    assert activation_result.is_active is True
+
+    # Step 4: Load summary config again - should get v99
+    loaded_after = await ConfigLoader.load_summary_config(assessment_id, async_session)
+    assert loaded_after is not None
+    assert (
+        loaded_after.metadata.version == 99
+    ), f"Expected v99 after lifecycle activation, got v{loaded_after.metadata.version}"
+    assert (
+        loaded_after.prompts.system == "UPDATED system prompt for v99"
+    ), f"Expected updated prompt, got: {loaded_after.prompts.system}"
+
+
+@pytest.mark.asyncio
+async def test_plan_picks_up_new_active_version_immediately(
+    async_session: AsyncSession, seed_configs, clear_caches
+):
+    """
+    Verify that load_plan_config always returns the currently active version,
+    even after a new version is activated (no stale cache).
+    """
+    from sqlmodel import select
+
+    from app.crud.config_management import create_output_config, update_output_config
+    from app.models.output_config import OutputConfig
+    from app.services.config_management.lifecycle import LifecycleService
+
+    # Get assessment_id for UT-CCCI-v0 (references action_plan_ccci output code)
+    assessment_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+
+    # Ensure only v0 is active for action_plan_ccci
+    result = await async_session.exec(
+        select(OutputConfig).where(
+            OutputConfig.code == "action_plan_ccci",
+            OutputConfig.is_active == True,  # noqa: E712
+        )
+    )
+    all_active = result.all()
+    for cfg in all_active:
+        if cfg.version != 0:
+            cfg.is_active = False
+            await update_output_config(async_session, cfg)
+
+    # Step 1: Load plan config
+    loaded_v0 = await ConfigLoader.load_plan_config(assessment_id, async_session)
+    assert loaded_v0 is not None
+    assert loaded_v0.metadata.version == 0
+    assert loaded_v0.structure.timeline is False
+
+    # Step 2: Create a new version with different content (complete valid YAML)
+    new_yaml = """metadata:
+  code: action_plan_ccci
+  output_type: action_plan
+  version: 99
+  display_name: "CCCI Action Plan v99 - Updated"
+
+model:
+  provider: openai
+  name: gpt-4o
+  version: "2024-11-20"
+
+small_model:
+  provider: openai
+  name: gpt-4o-mini
+  version: "2024-07-18"
+
+prompts:
+  system: "UPDATED"
+  data_template: "UPDATED"
+  section_generation_with_resources: "UPDATED"
+  section_generation_without_resources: "UPDATED"
+  section_annotations: "UPDATED"
+  section_refinement: "UPDATED"
+  reflexion_initial: "UPDATED"
+  reflexion_with_previous_sections: "UPDATED"
+  area_of_needs: "UPDATED"
+  resources_options: "UPDATED"
+  timeline_generation: "UPDATED"
+  timeline_format: "UPDATED"
+  milestones_generation: "UPDATED"
+  milestones_refinement: "UPDATED"
+  milestones_format: "UPDATED"
+  action_plan_generation: "UPDATED"
+  edit_section_selection: "UPDATED"
+  edit_section_change: "UPDATED"
+  edit_timeline: "UPDATED"
+  edit_milestones: "UPDATED"
+  edit_action_plan_generation: "UPDATED"
+
+structure:
+  timeline: true
+  milestones: true
+
+external_api:
+  resources_pipeline_enabled: true
+"""
+    new_output = OutputConfig(
+        output_type="action_plan",
+        code="action_plan_ccci",
+        version=99,
+        display_name="CCCI Action Plan v99 - Updated",
+        config_yaml=new_yaml,
+        is_active=False,
+    )
+    created = await create_output_config(async_session, new_output)
+
+    # Step 3: Activate via LifecycleService
+    activation_result = await LifecycleService.activate_output_config(
+        async_session, created.id, "test@recidiviz.org"
+    )
+    assert activation_result.is_active is True
+
+    # Step 4: Load plan config again - should get v99
+    loaded_after = await ConfigLoader.load_plan_config(assessment_id, async_session)
+    assert loaded_after is not None
+    assert (
+        loaded_after.metadata.version == 99
+    ), f"Expected v99 after lifecycle activation, got v{loaded_after.metadata.version}"
+    assert loaded_after.structure.timeline is True
+    assert loaded_after.structure.milestones is True

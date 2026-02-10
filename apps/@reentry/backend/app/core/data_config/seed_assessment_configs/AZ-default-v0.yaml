@@ -1,9 +1,9 @@
 metadata:
-  state_code: US_ND
+  state_code: US_AZ
   code: default
-  version: 1
-  display_name: Parole & Probation Intake
-  description: Intake assessment for P&P clients in North Dakota
+  version: 0
+  display_name: Arizona Intake
+  description: Intake assessment for clients in Utah
 
 intake:
   intake_type: transcription
@@ -15,4 +15,4 @@ intake:
 outputs:
   codes:
     - intake_summary_default
-    - ap_default_noresources
+    - plan_default

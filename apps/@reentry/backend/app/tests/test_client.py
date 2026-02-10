@@ -94,7 +94,7 @@ async def test_list_clients(
 #     target_status = IntakeStatus.IN_PROGRESS
 #     other_status = IntakeStatus.COMPLETED
 #     client_pseudo_ids = ["client-001ps", "client-002ps", "client-003ps"]
-#     config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+#     config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
 #     for i, cid in enumerate(client_pseudo_ids):
 #         status = target_status if i % 2 == 0 else other_status
@@ -124,7 +124,7 @@ async def test_list_clients_sort_by_status(
 ):
     """Test the /clients endpoint supports pagination."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     for _ in range(5):
         intake = await create_intake(
@@ -160,7 +160,7 @@ async def test_list_clients_pagination_edge_cases(
 ):
     """Test pagination edge cases including invalid page numbers and boundary conditions."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
     # Create some test data
     for i in range(3):
         intake = await create_intake(
@@ -211,7 +211,7 @@ async def test_list_clients_pagination_metadata(
 ):
     """Test that pagination metadata is correctly calculated."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
     # Create some test data
     for i in range(5):
         intake = await create_intake(
@@ -263,7 +263,7 @@ async def test_list_clients_pagination_with_filters(
     """Test that pagination works correctly with status filters."""
     # Create test data with different statuses
     client_pseudo_ids = ["client-001ps", "client-002ps", "client-003ps", "client-004ps"]
-    config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     statuses = [
         IntakeStatus.IN_PROGRESS,
@@ -323,7 +323,7 @@ async def test_get_client_intakes_success(
 ):
     """Test successfully retrieving intake history for a client."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create multiple intakes for the client
     intake1 = await create_intake(
@@ -363,7 +363,7 @@ async def test_get_client_intakes_success(
     assert str(data[1]["id"]) == str(intake1.id)
 
     # Verify assessment config info is included (codes are normalized to lowercase)
-    assert data[0]["assessment_config_code"] == "facr"
+    assert data[0]["assessment_config_code"] == "FACR"
     assert data[0]["assessment_config_display_name"] is not None
 
 
@@ -388,7 +388,7 @@ async def test_get_client_intakes_multiple_statuses(
 ):
     """Test that all intakes are returned regardless of status."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create intakes with different statuses
     await create_intake(
@@ -432,8 +432,8 @@ async def test_get_client_intakes_multiple_types(
 ):
     """Test that all intake types are returned."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    conversation_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
-    transcription_config_id = seed_configs["assessments"][("US_TEST", "tran", 0)]
+    conversation_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
+    transcription_config_id = seed_configs["assessments"][("US_TEST", "TRAN", 0)]
 
     # Create intakes with different types
     await create_intake(
@@ -471,8 +471,8 @@ async def test_get_client_intakes_different_assessment_configs(
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Use two different configs (both conversation type for same client state US_IX)
-    config_id_1 = seed_configs["assessments"][("US_IX", "facr", 0)]
-    config_id_2 = seed_configs["assessments"][("US_TEST", "tran", 0)]
+    config_id_1 = seed_configs["assessments"][("US_IX", "FACR", 0)]
+    config_id_2 = seed_configs["assessments"][("US_TEST", "TRAN", 0)]
 
     await create_intake(
         session=async_session,
@@ -497,8 +497,8 @@ async def test_get_client_intakes_different_assessment_configs(
 
     # Verify both configs are represented correctly (codes are normalized to lowercase)
     codes = {intake["assessment_config_code"] for intake in data}
-    assert "facr" in codes
-    assert "tran" in codes
+    assert "FACR" in codes
+    assert "TRAN" in codes
 
 
 @pytest.mark.asyncio
@@ -510,7 +510,7 @@ async def test_reset_client_data(
     seed_configs,
 ):
     client_pseudo_id = "client-001ps"
-    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     intake = Intake(
         client_pseudo_id=client_pseudo_id,

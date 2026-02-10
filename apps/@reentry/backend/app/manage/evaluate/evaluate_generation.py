@@ -164,18 +164,30 @@ async def initialize_existing(dataset_name: str):
 
 
 @cli.command()
-async def evaluate(output_config_file: str = "plan-default-v0.yaml"):
+async def evaluate(output_config_file: str = "exported-config.yaml"):
     """
     Launches the evaluation process for the generation of action plans interactively asking for user input
 
+    NOTE: Config YAML files are now managed via the Config Management UI.
+    Export a config from the UI at /config, then provide the exported file name.
+
     Args:
-        output_config_file: Action plan output config YAML filename (default: "plan-default-v0.yaml", None for defaults)
+        output_config_file: Action plan output config YAML filename (export from UI at /config)
     """
     if not settings.LANGCHAIN_API_KEY:
         raise ValueError("Experiments are run on Langsmith, please provide an API key")
 
     print(f"Loading action plan config: {output_config_file}")
-    yaml_content = OutputFileLoader.read_file_content(output_config_file)
+    try:
+        yaml_content = OutputFileLoader.read_file_content(output_config_file)
+    except FileNotFoundError:
+        print(f"❌ Error: Config file not found: {output_config_file}")
+        print(
+            "\n💡 Tip: Config YAML files are now managed via the Config Management UI."
+        )
+        print("   Export a config from the UI at /config, place it in output_configs/,")
+        print("   then provide the exported file name.")
+        return
     action_plan_config = OutputFileLoader.validate_yaml_content(yaml_content)
     print(
         f"Loaded config: {action_plan_config.metadata.code} v{action_plan_config.metadata.version}"

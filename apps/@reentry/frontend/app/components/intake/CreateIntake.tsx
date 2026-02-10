@@ -26,7 +26,7 @@ import { components } from "~@reentry/openapi-types";
 interface CreateIntakeProps {
   clientData: components["schemas"]["ClientRecordResponse"];
   onIntakeUpdate: () => void;
-  assessmentConfigData: components["schemas"]["AssessmentConfigResponse"];
+  assessmentConfigData: components["schemas"]["app__routes__shared_models__AssessmentConfigResponse"];
 }
 
 export default function CreateIntake({

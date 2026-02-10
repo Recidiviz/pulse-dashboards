@@ -1,29 +1,30 @@
 """String utility functions for data configuration normalization."""
 
-import string
 
-
-def normalize_code(code_str: str) -> str:
+def normalize_state_code_format(state_code: str) -> str:
     """
-    Normalize a code by converting to lowercase and removing punctuation.
+    Normalize state code format (case and separators only).
 
-    This normalization is used consistently across the codebase for config codes
-    to ensure case-insensitive and punctuation-insensitive matching.
+    This is a format-only normalization for config management that does NOT
+    apply state code aliases (like US_ID → US_IX). Use this when the state code
+    comes from explicit user input where the exact value should be preserved.
+
+    For client data from BigQuery where US_ID/US_IX aliasing is needed,
+    use `app.utils.state_code.normalize_state_code()` instead.
 
     Args:
-        code_str: The code string to normalize (e.g., "UT-CCCI", "ID_FACR")
+        state_code: The state code to normalize (e.g., "us_ut", "US-UT")
 
     Returns:
-        Normalized code (e.g., "utccci", "idfacr")
+        Normalized state code in uppercase with underscores (e.g., "US_UT")
 
     Example:
-        >>> normalize_code("UT-CCCI")
-        'utccci'
-        >>> normalize_code("ID_FACR")
-        'idfacr'
+        >>> normalize_state_code_format("us_ut")
+        'US_UT'
+        >>> normalize_state_code_format("US-ID")
+        'US_ID'  # Note: NOT converted to US_IX
     """
-    translator = str.maketrans("", "", string.punctuation)
-    return code_str.casefold().translate(translator)
+    return state_code.upper().replace("-", "_")
 
 
 def escape_sql_string(content: str) -> str:
@@ -53,7 +54,7 @@ def normalize_locations(locations: list[str]) -> list[str]:
     Normalize a list of location codes.
 
     This function applies normalization to each location code in the list
-    using the `normalize_code` function.
+    by stripping whitespace and replacing underscores with spaces.
 
     Example:
         >>> normalize_locations(["ORANGE_STREET_CCC", "DISTRICT_4_-_BOISE"])

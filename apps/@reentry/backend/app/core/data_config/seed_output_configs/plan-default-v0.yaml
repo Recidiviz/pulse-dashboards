@@ -1,6 +1,5 @@
-# The defaults at the time of implementing configuration files
 metadata:
-  code: ap_default_noresources
+  code: plan_default
   output_type: action_plan
   version: 0
   display_name: Action Plan
@@ -23,12 +22,13 @@ prompts:
     - The action plan and all sections MUST be addressed as written by the caseworker to the client.
     - Do not refer the client by "the client" or as a third person. Use "you" and "your" instead.
     - The action plan should clearly delineate which steps need to be taken, and when, by the client, and which should be taken by the caseworker.
-    - Recommended steps should be actionable (less "Get treatment", more "Register with a local treatment center's outpatient treatment program").
+    - Recommended steps should be actionable (less "Get treatment", more "Register with XYZ treatment center's 3-month outpatient treatment program").
     - Please ensure all enumerated items are formatted as proper bullet or numbered lists throughout the entire action plan
     - The plan generator should take care to:
         - Generate the report in a kind, supportive, down-to-earth (not false friendly), but objective tone.
         - Ignore factors which may suggest race (e.g., name or express mentions of racial or ethnic background), sex, or age except as relevant to needs or action plan (e.g., immigration status, or need for men's vs. women's vs. youth shelter, etc.).
         - Not quote source materials verbatim, or mention judgments or subjective statements, except in the notes, which are to be quoted verbatim and are only visible to the case worker.
+        - Not to recommend local resources except as provided through the resource pipeline.
         - If questions arise during the action plan generation, please note them in the `notes` fields of the appropriate section that the case worker can address.
     - The action plan will be separated into the following sections:
         - Immediate needs: Which issues should be addressed urgently to create the stability necessary for success.
@@ -107,9 +107,9 @@ prompts:
     9. Goals must be concrete and measurable.
     For example, instead of "Goal: By month 4, maintain consistent engagement with mental health support and expand your support network.", write "Goal: By month 4, be ready to review recent work from your mental health routine, how expanding your social circles has gone, and any guidance advised by your counselor."
     10. Guidance must first refer the client to their current one, and provide guidance if they don't have one.
-    For example, instead of "Contact a local hospital to arrange a comprehensive health check-up and review your current medications.", write "Contact your doctor to arrange a comprehensive check-up and review your current medications. If you don't have a primary care physician and aren't sure how to find one, ask your insurance provider or reach out to a local hospital for help". This should be the same for all guidance (lawyer, therapist, etc.)
+    For example, instead of "Contact City General Hospital to arrange a comprehensive health check-up and review your current medications.", write "Contact your doctor to arrange a comprehensive check-up and review your current medications. If you don't have a primary care physician and aren't sure how to find one, ask your insurance provider or reach out to City General Hospital for help". This should be the same for all guidance (lawyer, therapist, etc.)
     11. Do not use the ```markdown tag or such, it's only for the example, the content you'll generate is already in markdown.
-    12. Focus on actionable steps the client can take independently or general ways to find appropriate services without specifying particular providers. Do NOT make up specific providers.
+    12. Since no specific resources are available, focus on actionable steps the client can take independently or general ways to find appropriate services.
 
   section_annotations: |
     Find relevant annotations and notes for this section. This content is for the case worker only and does not need to be addressed to the client
@@ -232,4 +232,4 @@ structure:
   milestones: false
 
 external_api:
-  resources_pipeline_enabled: false
+  resources_pipeline_enabled: true

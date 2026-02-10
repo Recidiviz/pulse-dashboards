@@ -4348,6 +4348,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/css@npm:^11.11.2":
+  version: 11.13.5
+  resolution: "@emotion/css@npm:11.13.5"
+  dependencies:
+    "@emotion/babel-plugin": "npm:^11.13.5"
+    "@emotion/cache": "npm:^11.13.5"
+    "@emotion/serialize": "npm:^1.3.3"
+    "@emotion/sheet": "npm:^1.4.0"
+    "@emotion/utils": "npm:^1.4.2"
+  checksum: 10c0/45d444b08c1a9776046786f1ad8b93297d9e0fb79e6a40b73e9f9c5c20a071f83bae2408e7b98fe526fc123774a18b12ae3c8dc5b5883b8169685ee7b8df9463
+  languageName: node
+  linkType: hard
+
 "@emotion/hash@npm:0.8.0":
   version: 0.8.0
   resolution: "@emotion/hash@npm:0.8.0"
@@ -18333,7 +18346,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prismjs@npm:^1.0.0":
+"@types/prismjs@npm:^1.0.0, @types/prismjs@npm:^1.26.5":
   version: 1.26.5
   resolution: "@types/prismjs@npm:1.26.5"
   checksum: 10c0/5619cb449e0d8df098c8759d6f47bf8fdd510abf5dbdfa999e55c6a2545efbd1e209cc85a33d8d9f4ff2898089a1a6d9a70737c9baffaae635c46852c40d384a
@@ -46036,6 +46049,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-diff-viewer-continued@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "react-diff-viewer-continued@npm:3.4.0"
+  dependencies:
+    "@emotion/css": "npm:^11.11.2"
+    classnames: "npm:^2.3.2"
+    diff: "npm:^5.1.0"
+    memoize-one: "npm:^6.0.0"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    react: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 10c0/4ba340feb619bee6c193d5a8d2ad446a31366f1804610ebc19af534acffbcb1a745d145c681190c4b7b425ff9948d899f04f17a1e0a56ed8298845420241bed8
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:19.1.0":
   version: 19.1.0
   resolution: "react-dom@npm:19.1.0"
@@ -46765,6 +46794,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-simple-code-editor@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "react-simple-code-editor@npm:0.14.1"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10c0/63264fce03315c80de4fc65b9e0a30b359cb0a6c269a90ad67ccff36c21d0f3ba1f9ac9bdfbe76477fc9a6d7033182debc64a58345f4914f0bc0b416eb686e61
+  languageName: node
+  linkType: hard
+
 "react-spinners@npm:^0.8.1":
   version: 0.8.3
   resolution: "react-spinners@npm:0.8.3"
@@ -47391,6 +47430,7 @@ __metadata:
     "@types/numeral": "npm:^2.0.1"
     "@types/pizzip": "npm:^3.0.2"
     "@types/pluralize": "npm:^0.0.29"
+    "@types/prismjs": "npm:^1.26.5"
     "@types/prompts": "npm:^2.4.4"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
@@ -47583,6 +47623,7 @@ __metadata:
     prettier-plugin-tailwindcss: "npm:^0.5.11"
     prisma: "npm:6.16.1"
     prisma-json-types-generator: "npm:^3.5.2"
+    prismjs: "npm:^1.30.0"
     prompts: "npm:^2.4.2"
     prop-types: "npm:^15.7.2"
     puppeteer: "npm:^24.32.0"
@@ -47597,6 +47638,7 @@ __metadata:
     react-chartjs-2: "npm:^2.7.6"
     react-data-table-component: "npm:^7.6.2"
     react-datepicker: "npm:^8.8.0"
+    react-diff-viewer-continued: "npm:^3.4.0"
     react-dom: "npm:19.1.4"
     react-google-recaptcha: "npm:^3.1.0"
     react-helmet: "npm:^6.1.0"
@@ -47627,6 +47669,7 @@ __metadata:
     react-select-event: "npm:^5.5.1"
     react-shadow: "npm:^20.6.0"
     react-showdown: "npm:^2.3.1"
+    react-simple-code-editor: "npm:^0.14.1"
     react-spinners: "npm:^0.8.1"
     react-sticky-fill: "npm:^0.8.4"
     react-table: "npm:^7.6.3"

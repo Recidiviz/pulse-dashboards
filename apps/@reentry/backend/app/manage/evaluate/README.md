@@ -72,27 +72,33 @@ RECIDIVIZ_DEEPGRAM_API_KEY=dummy_deepgram_key
 Test that your environment is configured correctly:
 
 ```bash
-# Test summary evaluation (uses default data)
-uv run python -m app.manage evaluate-summary summary-default-v0.yaml
-
 # Test action plan evaluation (requires LangSmith)
 uv run python -m app.manage evaluate
 ```
 
-If these commands run without errors, you're ready to use the evaluation tools!
+If this command runs without errors, you're ready to use the evaluation tools!
+
+> **Note:** To test summary evaluation, first export an output config from the
+> Config Management UI, then run:
+> ```bash
+> uv run python -m app.manage evaluate-summary exported-config.yaml
+> ```
 
 ## Command Line Testing Tools
 
 All commands should be run from the `backend` directory.
 
+> **Note:** Config YAML files are now managed via the **Config Management UI**.
+> To use these testing tools, first export a config from the UI, then provide the exported YAML file.
 
 ### Interactive Conversation Testing
 
 Test intake conversations interactively by typing client responses yourself:
 
 ```bash
-# Test with a specific assessment config file
-uv run python -m app.manage test-conversation UT-CCCI-v0.yaml
+# First, export a config from the Config Management UI
+# Then test with the exported YAML file
+uv run python -m app.manage test-conversation exported-config.yaml
 ```
 
 This allows you to manually test the conversation flow and see how the system responds to different inputs.
@@ -102,8 +108,9 @@ This allows you to manually test the conversation flow and see how the system re
 Run complete intake conversations with AI-simulated clients and get quality evaluations:
 
 ```bash
-# Test with a specific assessment config file
-uv run python -m app.manage headless-conversation-eval UT-CCCI-v0.yaml
+# First, export a config from the Config Management UI
+# Then test with the exported YAML file
+uv run python -m app.manage headless-conversation-eval exported-config.yaml
 ```
 
 This evaluates conversation quality including tone, repetition, section coverage, and flow. Results are saved to `experiments/headless_evaluations/`.
@@ -113,11 +120,12 @@ This evaluates conversation quality including tone, repetition, section coverage
 Test intake summary generation with fake conversation and assessment data:
 
 ```bash
-# With default data (recommended for quick testing)
-uv run python -m app.manage evaluate-summary summary-default-v0.yaml
+# First, export an output config from the Config Management UI
+# Then test with the exported YAML file
+uv run python -m app.manage evaluate-summary exported-summary-config.yaml
 
 # With custom conversation and assessment JSON files
-uv run python -m app.manage evaluate-summary summary-CCCI-v0.yaml \
+uv run python -m app.manage evaluate-summary exported-config.yaml \
   --conversation-file path/to/conversation.json \
   --assessment-file path/to/assessment.json
 ```

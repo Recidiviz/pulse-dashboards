@@ -2,37 +2,8 @@
 
 from app.utils.string_utils import (
     escape_sql_string,
-    normalize_code,
     normalize_locations,
 )
-
-
-class TestNormalizeCode:
-    """Tests for normalize_code function"""
-
-    def test_remove_punctuation(self):
-        """Test that punctuation is removed"""
-        assert normalize_code("UT-CCCI") == "utccci"
-        assert normalize_code("ID_FACR") == "idfacr"
-        assert normalize_code("AZ.TEST") == "aztest"
-
-    def test_lowercase(self):
-        """Test that code is converted to lowercase"""
-        assert normalize_code("CCCI") == "ccci"
-        assert normalize_code("CcCi") == "ccci"
-
-    def test_combined(self):
-        """Test combined punctuation removal and lowercase"""
-        assert normalize_code("US-UT-CCCI") == "usutccci"
-
-    def test_empty_string(self):
-        """Test empty string handling"""
-        assert normalize_code("") == ""
-
-    def test_no_changes_needed(self):
-        """Test string that's already normalized"""
-        assert normalize_code("ccci") == "ccci"
-        assert normalize_code("test") == "test"
 
 
 class TestEscapeSqlString:

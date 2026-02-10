@@ -15,21 +15,33 @@ from app.core.data_config.output_configs.output_config import (
     IntakeSummaryConfigFile,
 )
 from app.core.db import AsyncSession
+from app.crud.config_management import get_active_output_config
 from app.models.assessment_config import AssessmentConfig
-from app.models.output_config import OutputConfig
 from app.utils.state_code import normalize_state_code
-from app.utils.string_utils import normalize_code
 
 logger = structlog.get_logger(__name__)
 # Module-level caches (shared across application)
 _assessment_cache: Dict[UUID, AssessmentConfigFile] = {}
-# TODO phase 2: change this to support multiple same type output in one assessment
-_summary_cache: Dict[UUID, IntakeSummaryConfigFile] = {}
-_plan_cache: Dict[UUID, ActionPlanConfigFile] = {}
 
 
 class ConfigLoader:
     """Loads and caches assessment and output configs from database."""
+
+    @classmethod
+    def invalidate_assessment_cache(cls) -> None:
+        """Invalidate the assessment config cache.
+
+        Must be called whenever an assessment config is activated or deactivated,
+        because the assessment config content may have changed.
+
+        Note: Summary and plan output configs are always loaded fresh from the
+        database (no caching) so they don't need explicit invalidation.
+        """
+        _assessment_cache.clear()
+        logger.info(
+            "Assessment config cache invalidated",
+            assessment_cache_cleared=True,
+        )
 
     @classmethod
     async def load_assessment_config(
@@ -118,28 +130,26 @@ class ConfigLoader:
             >>> if config:
             ...     intake = Intake(assessment_config_id=config.id)
         """
-        # Normalize the code to match database storage format
-        normalized_code = normalize_code(code)
         state_code = normalize_state_code(state_code)
 
-        # Query for active config
+        # Query for active config, ordered by version desc as a safety net
+        # in case multiple configs are accidentally active for the same code
         statement = (
             select(AssessmentConfig)
             .where(normalize_state_code(AssessmentConfig.state_code) == state_code)
-            .where(AssessmentConfig.code == normalized_code)
+            .where(AssessmentConfig.code == code)
             .where(AssessmentConfig.is_active)
+            .order_by(AssessmentConfig.version.desc())
         )
         result = await session.exec(statement)
         config = result.first()
 
         if config:
             logger.debug(
-                f"Found active assessment config: {state_code}/{normalized_code} v{config.version}"
+                f"Found active assessment config: {state_code}/{code} v{config.version}"
             )
         else:
-            logger.warning(
-                f"No active assessment config found for {state_code}/{normalized_code}"
-            )
+            logger.warning(f"No active assessment config found for {state_code}/{code}")
 
         return config
 
@@ -253,6 +263,9 @@ class ConfigLoader:
     ) -> Optional[IntakeSummaryConfigFile]:
         """Load the summary output config for a given assessment.
 
+        Always queries the database for the currently active output config
+        to ensure newly activated versions are picked up immediately.
+
         Args:
             assessment_id: UUID of the assessment config
             session: Database session
@@ -260,25 +273,15 @@ class ConfigLoader:
         Returns:
             The IntakeSummaryConfigFile referenced by the assessment, or None if not found
         """
-        if assessment_id in _summary_cache:
-            logger.debug(f"Assessment config cache hit: {assessment_id}")
-            return _summary_cache[assessment_id]
-
-        # Load the assessment config
+        # Load the assessment config (this cache is safe - keyed by immutable UUID)
         assessment = await cls.load_assessment_config(assessment_id, session)
 
         try:
-            print(assessment)
-            # Find the summary output code from the assessment's outputs
+            # Find the summary output code from the assessment's outputs.
+            # Use the *active* output config for this code so we get the currently
+            # activated version (e.g. utcccsummary v1), not an arbitrary inactive one.
             for output_code in assessment.outputs.codes:
-                # Need to find the output config by code (search database)
-                # Query for output config matching this code
-                statement = select(OutputConfig).where(
-                    OutputConfig.code == normalize_code(output_code)
-                )
-                result = await session.exec(statement)
-                output_db = result.first()
-                print(output_db)
+                output_db = await get_active_output_config(session, output_code)
                 if output_db and output_db.output_type == "intake_summary":
                     # Validate and parse YAML content
                     try:
@@ -290,15 +293,14 @@ class ConfigLoader:
                         )
                         if not isinstance(validated, IntakeSummaryConfigFile):
                             raise ValueError(
-                                f"error loading plan congfig for {assessment_id}"
+                                f"error loading summary config for {assessment_id}"
                             )
-                        _summary_cache[assessment_id] = validated
                         return validated
                     except Exception as e:
                         logger.error(
-                            f"Failed to validate assessment config {output_db.id}: {e}"
+                            f"Failed to validate output config {output_db.id}: {e}"
                         )
-                return None
+                # No return here: try next output code (assessment may list multiple)
 
         except Exception:
             return None
@@ -310,6 +312,9 @@ class ConfigLoader:
     ) -> Optional[ActionPlanConfigFile]:
         """Load the plan output config for a given assessment.
 
+        Always queries the database for the currently active output config
+        to ensure newly activated versions are picked up immediately.
+
         Args:
             assessment_id: UUID of the assessment config
             session: Database session
@@ -317,23 +322,12 @@ class ConfigLoader:
         Returns:
             The ActionPlanConfigFile referenced by the assessment, or None if not found
         """
-
-        if assessment_id in _plan_cache:
-            logger.debug(f"Assessment config cache hit: {assessment_id}")
-            return _plan_cache[assessment_id]
-        # Load the assessment config
+        # Load the assessment config (this cache is safe - keyed by immutable UUID)
         assessment = await cls.load_assessment_config(assessment_id, session)
-        print(assessment)
-        # Find the plan output code from the assessment's outputs
+
+        # Find the plan output code from the assessment's outputs.
         for output_code in assessment.outputs.codes:
-            print(output_code)
-            # Query for output config matching this code
-            statement = select(OutputConfig).where(
-                OutputConfig.code == normalize_code(output_code)
-            )
-            result = await session.exec(statement)
-            output_db = result.first()
-            print(output_db)
+            output_db = await get_active_output_config(session, output_code)
             if output_db and output_db.output_type == "action_plan":
                 # Validate and parse YAML content
                 try:
@@ -345,9 +339,8 @@ class ConfigLoader:
                     )
                     if not isinstance(validated, ActionPlanConfigFile):
                         raise ValueError(
-                            f"error loading plan congfig for {assessment_id}"
+                            f"error loading plan config for {assessment_id}"
                         )
-                    _plan_cache[assessment_id] = validated
                     return validated
                 except Exception as e:
                     logger.error(f"Failed to validate plan config {output_db.id}: {e}")

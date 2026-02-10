@@ -45,12 +45,21 @@ describe('hasCPAPermission', () => {
 });
 
 describe('isInternalUser', () => {
+  // Note: In test environment, NEXT_PUBLIC_ENVIRONMENT is not set to "staging" or "prod",
+  // so monadical.com is included in internal domains (for development purposes).
+  // In staging/prod, only @recidiviz.org and @recidiviz-test.org are allowed.
+
   it('returns true for @recidiviz.org email', () => {
     expect(isInternalUser('user@recidiviz.org')).toBe(true);
   });
 
   it('returns true for @recidiviz-test.org email', () => {
     expect(isInternalUser('user@recidiviz-test.org')).toBe(true);
+  });
+
+  it('returns true for @monadical.com email in dev environment', () => {
+    // In test/dev environment, monadical.com is allowed
+    expect(isInternalUser('user@monadical.com')).toBe(true);
   });
 
   it('returns false for external email', () => {

@@ -12,7 +12,6 @@ from app.models.intake import (
     IntakeStatus,
 )
 from app.models.intake_sections import CompletionStatus
-from app.utils.string_utils import normalize_code
 
 
 @pytest.mark.asyncio
@@ -171,7 +170,7 @@ async def test_create_intake_success(
     """Test successfully creating a new intake."""
     # Default client is US_IX, so use a US_IX config
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     response = await client.post(
         "/intake/admin",
@@ -186,7 +185,7 @@ async def test_create_intake_success(
 
     assert "id" in data
     assert data["status"] == "created"
-    assert data["assessment_config_code"] == "facr"
+    assert data["assessment_config_code"] == "FACR"
 
     # Verify the intake was created in the database
     from app.crud.intake import get_intake_by_id
@@ -204,7 +203,7 @@ async def test_create_intake_conflict_in_progress_conversation(
 ):
     """Test 409 conflict when client already has an IN_PROGRESS conversation intake."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create an existing IN_PROGRESS conversation intake
     existing_intake = Intake(
@@ -235,7 +234,7 @@ async def test_create_intake_conflict_with_created_intake(
 ):
     """Test 409 conflict when client already has a CREATED intake."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create an existing CREATED intake
     existing_intake = Intake(
@@ -267,7 +266,7 @@ async def test_create_intake_allows_multiple_completed(
 ):
     """Test that multiple intakes are allowed when previous ones are COMPLETED."""
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create an existing COMPLETED intake
     existing_intake = Intake(
@@ -325,7 +324,7 @@ async def test_create_intake_inactive_assessment_config(
     # Create an inactive assessment config for the client's state (US_IX)
     inactive_config = AssessmentConfig(
         state_code="US_IX",
-        code=normalize_code("INACTIVE"),
+        code="INACTIVE",
         version=1,
         display_name="Inactive Config",
         config_yaml="metadata:\n  code: INACTIVE\n  version: 1",
@@ -355,7 +354,7 @@ async def test_create_intake_state_mismatch(
     # client-002ps is US_AZ, try to use US_UT config (should fail)
     client_pseudo_id = "client-002ps"  # This is a US_AZ client
     # Use active version of UT config
-    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 2)]
+    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 2)]
 
     response = await client.post(
         "/intake/admin",

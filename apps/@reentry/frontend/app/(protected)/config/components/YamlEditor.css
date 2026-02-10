@@ -1,0 +1,61 @@
+/* Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2026 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * =============================================================================
+ */
+
+/* YAML Editor base styles */
+.yaml-editor textarea {
+  outline: none !important;
+}
+
+.yaml-editor pre {
+  margin: 0 !important;
+}
+
+/* Prism YAML syntax highlighting colors */
+.token.key,
+.token.atrule {
+  color: #e06c75;
+}
+
+.token.string {
+  color: #98c379;
+}
+
+.token.number {
+  color: #d19a66;
+}
+
+.token.boolean {
+  color: #56b6c2;
+}
+
+.token.punctuation {
+  color: #abb2bf;
+}
+
+.token.comment {
+  color: #5c6370;
+  font-style: italic;
+}
+
+.token.important {
+  color: #c678dd;
+}
+
+.token.null {
+  color: #56b6c2;
+}

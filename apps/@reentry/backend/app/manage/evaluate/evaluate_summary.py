@@ -2,14 +2,19 @@
 Evaluate summary generation using fake conversation data.
 
 This command allows testing the summary generation pipeline without running a full conversation,
-using pre-defined conversation history  data from JSON files or default values.
+using pre-defined conversation history data from JSON files or default values.
+
+NOTE: Config YAML files are now managed via the Config Management UI.
+To use this command, first export a config from the UI at /config, then provide
+the exported file name as the output_config_name parameter.
 """
 
 import json
 import logging
-import structlog
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+import structlog
 
 from app.core.data_config.output_configs.loader import OutputFileLoader
 from app.utils.intake_summary_runner import generate_summary
@@ -148,6 +153,12 @@ async def evaluate_summary(
     except FileNotFoundError as e:
         logger.error(f"File not found: {e}")
         print(f"❌ Error: {e}")
+        print(
+            "\n💡 Tip: Config YAML files are now managed via the Config Management UI."
+        )
+        print(
+            "   Export a config from the UI at /config, then provide the exported file name."
+        )
     except json.JSONDecodeError as e:
         logger.error(f"Invalid JSON: {e}")
         print(f"❌ Error: Invalid JSON in input file: {e}")

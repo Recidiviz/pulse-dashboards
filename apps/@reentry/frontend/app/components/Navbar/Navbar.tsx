@@ -22,12 +22,15 @@ import { usePathname } from "next/navigation";
 
 import UserDropdown from "~@reentry/frontend/components/auth/userDropdown";
 import { useAuth } from "~@reentry/frontend/lib/auth/authContext";
+import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
 
 const Navbar = () => {
-  const { state, login, logout, isRecidivizUser, hasWorkflowsRoute } = useAuth();
+  const { state, login, logout, isRecidivizUser, hasWorkflowsRoute } =
+    useAuth();
   const pathname = usePathname();
-  
+
   const showDashboardsLink = hasWorkflowsRoute || isRecidivizUser;
+  const showConfigLink = isInternalUser(state.user?.email);
 
   return (
     <nav className="w-full h-[65px] px-6 bg-white border-b border-[#2b5469]/20 justify-between items-center inline-flex print:hidden">
@@ -79,8 +82,29 @@ const Navbar = () => {
                     </div>
                   </Link>
                 </div>
+                {showConfigLink && (
+                  <div
+                    className={`self-stretch px-1 py-6 flex-col justify-center items-center gap-2 inline-flex ${
+                      pathname.startsWith("/config")
+                        ? "border-t-4 border-[#00c49d] text-[#003331]"
+                        : "text-[#2a5469]/90"
+                    }`}
+                  >
+                    <Link href="/config">
+                      <div
+                        className={`text-sm font-medium leading-[16.80px] ${pathname.startsWith("/config") ? "mt-[-4%]" : ""}`}
+                      >
+                        Config I/O
+                      </div>
+                    </Link>
+                  </div>
+                )}
               </div>
-              <UserDropdown user={state.user} onLogout={logout} showDashboardsLink={showDashboardsLink} />
+              <UserDropdown
+                user={state.user}
+                onLogout={logout}
+                showDashboardsLink={showDashboardsLink}
+              />
             </>
           ) : (
             <>

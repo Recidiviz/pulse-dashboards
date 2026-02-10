@@ -3,7 +3,6 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 from app.models.base import IntakeType
-from app.utils.string_utils import normalize_code
 
 # Set environment variable BEFORE any imports that might use settings
 os.environ["RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE"] = "false"
@@ -79,6 +78,9 @@ async def async_session() -> AsyncSession:
     import app.models.assessment  # noqa
     import app.models.intake  # noqa
     import app.models.recording  # noqa
+    import app.models.assessment_config  # noqa
+    import app.models.output_config  # noqa
+    import app.models.config_audit_log  # noqa
     import sqlalchemy
 
     session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
@@ -232,6 +234,7 @@ async def client():
 
     async def mock_get_auth_user_context():
         return {
+            "email": "test@recidiviz.org",
             "pseudonymized_id": "test_pseudonymized_id",
             "is_zero_caseload_user": False,
             "is_read_only_user": False,
@@ -393,7 +396,7 @@ async def mock_intake(async_session: AsyncSession, mock_client_data, seed_config
     from app.models.intake import Intake, IntakeStatus
 
     # Get the assessment config for US_UT CCCI (which includes both summary and plan configs)
-    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     intake = Intake(
         client_pseudo_id=mock_client_data["client_pseudo_id"],
@@ -417,7 +420,7 @@ async def mock_intake_summary_only(
     from app.models.intake import Intake, IntakeStatus
 
     # Get the assessment config for US_IX FACR (which has only intake summary, no action plan config)
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     intake = Intake(
         client_pseudo_id=mock_client_data["client_pseudo_id"],
@@ -478,7 +481,7 @@ async def seed_configs(async_session: AsyncSession):
         # Create database model
         output_config = OutputConfig(
             output_type=validated.metadata.output_type,
-            code=normalize_code(validated.metadata.code),
+            code=validated.metadata.code,
             version=validated.metadata.version,
             display_name=validated.metadata.display_name,
             description=validated.metadata.description
@@ -491,8 +494,8 @@ async def seed_configs(async_session: AsyncSession):
         await async_session.commit()
         await async_session.refresh(output_config)
 
-        # Store mapping (use normalized code for consistent lookups)
-        key = (normalize_code(validated.metadata.code), validated.metadata.version)
+        # Store mapping
+        key = (validated.metadata.code, validated.metadata.version)
         outputs[key] = output_config.id
 
     # Load and save all assessment configs (sorted to ensure consistent order)
@@ -507,7 +510,7 @@ async def seed_configs(async_session: AsyncSession):
         # This ensures only one active config per state
         existing_query = select(AssessmentConfig).where(
             AssessmentConfig.state_code == validated.metadata.state_code,
-            AssessmentConfig.code == normalize_code(validated.metadata.code),
+            AssessmentConfig.code == validated.metadata.code,
             AssessmentConfig.is_active,
         )
         result = await async_session.exec(existing_query)
@@ -523,7 +526,7 @@ async def seed_configs(async_session: AsyncSession):
         # Create database model (marked as active)
         assessment_config = AssessmentConfig(
             state_code=validated.metadata.state_code,
-            code=normalize_code(validated.metadata.code),
+            code=validated.metadata.code,
             version=validated.metadata.version,
             display_name=validated.metadata.display_name,
             description=validated.metadata.description
@@ -536,10 +539,10 @@ async def seed_configs(async_session: AsyncSession):
         await async_session.commit()
         await async_session.refresh(assessment_config)
 
-        # Store mapping (use normalized code for consistent lookups)
+        # Store mapping
         key = (
             validated.metadata.state_code,
-            normalize_code(validated.metadata.code),
+            validated.metadata.code,
             validated.metadata.version,
         )
         assessments[key] = assessment_config.id

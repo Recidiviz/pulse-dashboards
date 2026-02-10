@@ -4,11 +4,11 @@ File loader for converting output YAML configuration files into database records
 Flow: YAML File → OutputConfigFile (validation) → OutputConfig (database)
 """
 
-import structlog
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
 
+import structlog
 import yaml
 
 from app.core.data_config.output_configs.output_config import (
@@ -16,7 +16,6 @@ from app.core.data_config.output_configs.output_config import (
     IntakeSummaryConfigFile,
     OutputType,
 )
-from app.utils.string_utils import normalize_code
 
 logger = structlog.get_logger(__name__)
 
@@ -152,9 +151,7 @@ class OutputFileLoader:
                     data = yaml.safe_load(f)
                     code = data.get("metadata", {}).get("code")
                     if code:
-                        # Normalize the code for comparison
-                        normalized = normalize_code(code)
-                        existing_codes.add(normalized)
+                        existing_codes.add(code)
             except Exception:
                 # Skip files that can't be parsed
                 continue
@@ -164,8 +161,7 @@ class OutputFileLoader:
         missing = []
 
         for output_code in output_codes:
-            normalized_output = normalize_code(output_code)
-            if normalized_output in existing_codes:
+            if output_code in existing_codes:
                 found.append(output_code)
             else:
                 missing.append(output_code)

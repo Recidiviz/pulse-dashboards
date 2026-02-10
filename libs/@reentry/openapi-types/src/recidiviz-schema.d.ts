@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2026 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -169,6 +169,410 @@ export interface paths {
          * @description Returns the assessment configuration associated with a specific intake ID
          */
         get: operations["get_assessment_config_by_intake_id_assessment_configs_outputs__plan_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/assessments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Assessment Configs
+         * @description Retrieve a paginated list of assessment configs with optional filters.
+         */
+        get: operations["list_assessment_configs_config_management_assessments_get"];
+        put?: never;
+        /**
+         * Create Assessment Config Draft
+         * @description Create a new assessment config as a draft.
+         */
+        post: operations["create_assessment_config_draft_config_management_assessments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/assessments/{config_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Assessment Config
+         * @description Retrieve a specific assessment config by its ID, including YAML content.
+         */
+        get: operations["get_assessment_config_config_management_assessments__config_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Assessment Config Draft
+         * @description Delete a draft assessment config. Only drafts can be deleted.
+         */
+        delete: operations["delete_assessment_config_endpoint_config_management_assessments__config_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Assessment Config Draft
+         * @description Update an existing draft assessment config. Only drafts can be updated.
+         */
+        patch: operations["update_assessment_config_draft_config_management_assessments__config_id__patch"];
+        trace?: never;
+    };
+    "/config-management/assessments/{config_id}/new-version": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create New Version
+         * @description Create a new draft version from an existing config.
+         */
+        post: operations["create_new_assessment_version_config_management_assessments__config_id__new_version_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/assessments/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Validate Assessment YAML
+         * @description Validate assessment config YAML content without saving.
+         */
+        post: operations["validate_assessment_yaml_config_management_assessments_validate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/assessments/{config_id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Activate Assessment Config
+         * @description Activate a config (from draft or inactive), making it the active version for its state/code. Previous active version becomes inactive.
+         */
+        post: operations["activate_assessment_config_config_management_assessments__config_id__activate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/assessments/{config_id}/deactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Deactivate Assessment Config
+         * @description Deactivate an active config. Warning: This will leave no active config for this state/code.
+         */
+        post: operations["deactivate_assessment_config_config_management_assessments__config_id__deactivate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/assessments/{config_id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Assessment Config
+         * @description Export an assessment config as a YAML file download.
+         */
+        get: operations["export_assessment_config_config_management_assessments__config_id__export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/assessments/import/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Validate Assessment Import
+         * @description Validate a YAML file for import without creating a config.
+         */
+        post: operations["validate_assessment_import_config_management_assessments_import_validate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/assessments/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import Assessment Config
+         * @description Import an assessment config from a YAML file.
+         */
+        post: operations["import_assessment_config_config_management_assessments_import_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/outputs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Output Configs
+         * @description Retrieve a paginated list of output configs with optional filters.
+         */
+        get: operations["list_output_configs_config_management_outputs_get"];
+        put?: never;
+        /**
+         * Create Output Config Draft
+         * @description Create a new output config as a draft.
+         */
+        post: operations["create_output_config_draft_config_management_outputs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/outputs/{config_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Output Config
+         * @description Retrieve a specific output config by its ID, including YAML content.
+         */
+        get: operations["get_output_config_config_management_outputs__config_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Output Config Draft
+         * @description Delete a draft output config. Only drafts can be deleted.
+         */
+        delete: operations["delete_output_config_endpoint_config_management_outputs__config_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Output Config Draft
+         * @description Update an existing draft output config. Only drafts can be updated.
+         */
+        patch: operations["update_output_config_draft_config_management_outputs__config_id__patch"];
+        trace?: never;
+    };
+    "/config-management/outputs/{config_id}/new-version": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create New Output Version
+         * @description Create a new draft version from an existing output config.
+         */
+        post: operations["create_new_output_version_config_management_outputs__config_id__new_version_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/outputs/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Validate Output YAML
+         * @description Validate output config YAML content without saving.
+         */
+        post: operations["validate_output_yaml_config_management_outputs_validate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/outputs/{config_id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Activate Output Config
+         * @description Activate a config (from draft or inactive), making it the active version for its code. Previous active version becomes inactive.
+         */
+        post: operations["activate_output_config_config_management_outputs__config_id__activate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/outputs/{config_id}/deactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Deactivate Output Config
+         * @description Deactivate an active config. Warning: This will leave no active config for this code.
+         */
+        post: operations["deactivate_output_config_config_management_outputs__config_id__deactivate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/outputs/{config_id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Output Config
+         * @description Export an output config as a YAML file download.
+         */
+        get: operations["export_output_config_config_management_outputs__config_id__export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/outputs/import/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Validate Output Import
+         * @description Validate a YAML file for import without creating a config.
+         */
+        post: operations["validate_output_import_config_management_outputs_import_validate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/outputs/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import Output Config
+         * @description Import an output config from a YAML file.
+         */
+        post: operations["import_output_config_config_management_outputs_import_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config-management/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Audit Logs
+         * @description Retrieve a paginated list of audit log entries with optional filters.
+         */
+        get: operations["list_audit_logs_config_management_audit_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1579,6 +1983,39 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * ActivateRequest
+         * @description Request schema for activating a config.
+         */
+        ActivateRequest: {
+            /**
+             * Change Note
+             * @description Optional note about why this config is being activated
+             */
+            change_note?: string | null;
+        };
+        /**
+         * ActivationResult
+         * @description Result of activating or deactivating a config.
+         */
+        ActivationResult: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Status */
+            status: string;
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Previous Active Id
+             * @description ID of the previously active config (if any)
+             */
+            previous_active_id?: string | null;
+            /** Message */
+            message: string;
+        };
         /** AddClientRequest */
         AddClientRequest: {
             /** Given Names */
@@ -1662,6 +2099,84 @@ export interface components {
             source_text_extract: string;
         };
         /**
+         * AssessmentConfigCreate
+         * @description Schema for creating a new assessment config draft.
+         */
+        AssessmentConfigCreate: {
+            /**
+             * State Code
+             * @description State code (e.g., 'US_UT')
+             */
+            state_code: string;
+            /**
+             * Code
+             * @description Config code (e.g., 'CCCI')
+             */
+            code: string;
+            /**
+             * Display Name
+             * @description Human-readable name
+             */
+            display_name: string;
+            /**
+             * Description
+             * @description Optional description
+             */
+            description?: string | null;
+            /**
+             * Config Yaml
+             * @description YAML configuration content
+             */
+            config_yaml: string;
+        };
+        /**
+         * AssessmentConfigDetailResponse
+         * @description Detailed response schema for assessment config including YAML content.
+         */
+        AssessmentConfigDetailResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** State Code */
+            state_code: string;
+            /** Code */
+            code: string;
+            /** Version */
+            version: number;
+            /** Display Name */
+            display_name: string;
+            /** Description */
+            description?: string | null;
+            /** Status */
+            status: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Created By Email */
+            created_by_email?: string | null;
+            /** Activated At */
+            activated_at?: string | null;
+            /** Activated By Email */
+            activated_by_email?: string | null;
+            /** Imported From Env */
+            imported_from_env?: string | null;
+            /** Import Hash */
+            import_hash?: string | null;
+            /** Config Yaml */
+            config_yaml: string;
+        };
+        /**
          * AssessmentConfigOutput
          * @description Response model for assessment configuration with outputs flag
          */
@@ -1697,10 +2212,36 @@ export interface components {
             outputs_summary_activated: boolean;
         };
         /**
-         * AssessmentConfigResponse
-         * @description Response model for assessment configuration listing
+         * AssessmentConfigUpdate
+         * @description Schema for updating an existing draft assessment config.
          */
-        AssessmentConfigResponse: {
+        AssessmentConfigUpdate: {
+            /**
+             * Display Name
+             * @description Human-readable name
+             */
+            display_name?: string | null;
+            /**
+             * Description
+             * @description Optional description
+             */
+            description?: string | null;
+            /**
+             * Config Yaml
+             * @description YAML configuration content
+             */
+            config_yaml?: string | null;
+            /**
+             * Change Note
+             * @description Note describing what was changed (required, max 500 chars)
+             */
+            change_note: string;
+        };
+        /**
+         * AuditLogResponse
+         * @description Response schema for audit log entries.
+         */
+        AuditLogResponse: {
             /**
              * Id
              * Format: uuid
@@ -1716,16 +2257,19 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
-            /** Code */
-            code: string;
-            /** Version */
-            version: number;
-            /** Display Name */
-            display_name: string;
-            /** Description */
-            description?: string | null;
-            /** State Code */
-            state_code: string;
+            /** Config Type */
+            config_type: string;
+            /**
+             * Config Id
+             * Format: uuid
+             */
+            config_id: string;
+            /** Action */
+            action: string;
+            /** Performed By Email */
+            performed_by_email: string;
+            /** Details */
+            details?: Record<string, never> | null;
         };
         /** AutocompleteAddressResponse */
         AutocompleteAddressResponse: {
@@ -1745,6 +2289,22 @@ export interface components {
             /** Error */
             error?: string | null;
         };
+        /** Body_import_assessment_config_config_management_assessments_import_post */
+        Body_import_assessment_config_config_management_assessments_import_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
+        };
+        /** Body_import_output_config_config_management_outputs_import_post */
+        Body_import_output_config_config_management_outputs_import_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
+        };
         /** Body_router_upload_asset_plans__id__assets_upload_post */
         Body_router_upload_asset_plans__id__assets_upload_post: {
             /**
@@ -1763,6 +2323,22 @@ export interface components {
         };
         /** Body_transcribe_audio_route_intake_services_transcribe_post */
         Body_transcribe_audio_route_intake_services_transcribe_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
+        };
+        /** Body_validate_assessment_import_config_management_assessments_import_validate_post */
+        Body_validate_assessment_import_config_management_assessments_import_validate_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
+        };
+        /** Body_validate_output_import_config_management_outputs_import_validate_post */
+        Body_validate_output_import_config_management_outputs_import_validate_post: {
             /**
              * File
              * Format: binary
@@ -1959,6 +2535,17 @@ export interface components {
              * Format: uuid
              */
             intake_id: string;
+        };
+        /**
+         * DeactivateRequest
+         * @description Request schema for deactivating a config.
+         */
+        DeactivateRequest: {
+            /**
+             * Change Note
+             * @description Note explaining why the config is being deactivated (required, max 500 chars)
+             */
+            change_note: string;
         };
         /** DecisionTreeCreate */
         DecisionTreeCreate: {
@@ -2306,6 +2893,84 @@ export interface components {
             detail?: components["schemas"]["ValidationError"][];
         };
         /**
+         * ImportResult
+         * @description Result of importing a config.
+         */
+        ImportResult: {
+            /**
+             * Id
+             * Format: uuid
+             * @description ID of the created config
+             */
+            id: string;
+            /**
+             * State Code
+             * @description State code (for assessment configs)
+             */
+            state_code?: string | null;
+            /**
+             * Code
+             * @description Config code
+             */
+            code: string;
+            /**
+             * Version
+             * @description Version number
+             */
+            version: number;
+            /**
+             * Status
+             * @description Config status after import
+             */
+            status: string;
+            /**
+             * Is Active
+             * @description Whether the config is active
+             */
+            is_active: boolean;
+            /**
+             * Previous Active Version
+             * @description Previous active version if auto-activated
+             */
+            previous_active_version?: number | null;
+            /**
+             * Message
+             * @description Human-readable result message
+             */
+            message: string;
+        };
+        /**
+         * ImportValidationResult
+         * @description Result of validating an imported YAML file.
+         */
+        ImportValidationResult: {
+            /**
+             * Valid
+             * @description Whether the YAML is valid
+             */
+            valid: boolean;
+            /**
+             * Parsed Config
+             * @description Parsed config metadata if valid
+             */
+            parsed_config?: Record<string, never> | null;
+            /**
+             * Existing Version
+             * @description Existing version number if config family exists
+             */
+            existing_version?: number | null;
+            /**
+             * Warnings
+             * @description Validation warnings
+             */
+            warnings?: string[];
+            /**
+             * Errors
+             * @description Validation errors
+             */
+            errors?: string[];
+        };
+        /**
          * IntakeHistoryResponse
          * @description Response model for intake history listing
          */
@@ -2488,6 +3153,166 @@ export interface components {
             /** Internal Access */
             internal_access: boolean;
         };
+        /**
+         * NewVersionRequest
+         * @description Request schema for creating a new version from an existing config.
+         */
+        NewVersionRequest: {
+            /**
+             * Config Yaml
+             * @description Optional YAML content; if not provided, copies from source
+             */
+            config_yaml?: string | null;
+            /**
+             * Change Note
+             * @description Note describing why a new version is being created (required, max 500 chars)
+             */
+            change_note: string;
+        };
+        /**
+         * OutputConfigCreate
+         * @description Schema for creating a new output config draft.
+         */
+        OutputConfigCreate: {
+            /** @description Type of output (intake_summary or action_plan) */
+            output_type: components["schemas"]["OutputType"];
+            /**
+             * Code
+             * @description Config code
+             */
+            code: string;
+            /**
+             * Display Name
+             * @description Human-readable name
+             */
+            display_name: string;
+            /**
+             * Description
+             * @description Optional description
+             */
+            description?: string | null;
+            /**
+             * Config Yaml
+             * @description YAML configuration content
+             */
+            config_yaml: string;
+        };
+        /**
+         * OutputConfigDetailResponse
+         * @description Detailed response schema for output config including YAML content.
+         */
+        OutputConfigDetailResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            output_type: components["schemas"]["OutputType"];
+            /** Code */
+            code: string;
+            /** Version */
+            version: number;
+            /** Display Name */
+            display_name: string;
+            /** Description */
+            description?: string | null;
+            /** Status */
+            status: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Created By Email */
+            created_by_email?: string | null;
+            /** Activated At */
+            activated_at?: string | null;
+            /** Activated By Email */
+            activated_by_email?: string | null;
+            /** Imported From Env */
+            imported_from_env?: string | null;
+            /** Import Hash */
+            import_hash?: string | null;
+            /** Config Yaml */
+            config_yaml: string;
+        };
+        /**
+         * OutputConfigResponse
+         * @description Response schema for output config.
+         */
+        OutputConfigResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            output_type: components["schemas"]["OutputType"];
+            /** Code */
+            code: string;
+            /** Version */
+            version: number;
+            /** Display Name */
+            display_name: string;
+            /** Description */
+            description?: string | null;
+            /** Status */
+            status: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Created By Email */
+            created_by_email?: string | null;
+            /** Activated At */
+            activated_at?: string | null;
+            /** Activated By Email */
+            activated_by_email?: string | null;
+            /** Imported From Env */
+            imported_from_env?: string | null;
+            /** Import Hash */
+            import_hash?: string | null;
+        };
+        /**
+         * OutputConfigUpdate
+         * @description Schema for updating an existing draft output config.
+         */
+        OutputConfigUpdate: {
+            /**
+             * Display Name
+             * @description Human-readable name
+             */
+            display_name?: string | null;
+            /**
+             * Description
+             * @description Optional description
+             */
+            description?: string | null;
+            /**
+             * Config Yaml
+             * @description YAML configuration content
+             */
+            config_yaml?: string | null;
+            /**
+             * Change Note
+             * @description Note describing what was changed (required, max 500 chars)
+             */
+            change_note: string;
+        };
         /** OutputMetadataResponse */
         OutputMetadataResponse: {
             /** Totalduration */
@@ -2505,6 +3330,11 @@ export interface components {
             /** Createdat */
             createdAt: string;
         };
+        /**
+         * OutputType
+         * @enum {string}
+         */
+        OutputType: "intake_summary" | "action_plan";
         /** OutputsEnabledUpdate */
         OutputsEnabledUpdate: {
             /** Outputs Enabled */
@@ -2524,6 +3354,32 @@ export interface components {
              * @default {}
              */
             options: Record<string, never> | null;
+        };
+        /** Page[AssessmentConfigResponse] */
+        Page_AssessmentConfigResponse_: {
+            /** Items */
+            items: components["schemas"]["app__schemas__config_management__AssessmentConfigResponse"][];
+            /** Total */
+            total: number | null;
+            /** Page */
+            page: number | null;
+            /** Size */
+            size: number | null;
+            /** Pages */
+            pages?: number | null;
+        };
+        /** Page[AuditLogResponse] */
+        Page_AuditLogResponse_: {
+            /** Items */
+            items: components["schemas"]["AuditLogResponse"][];
+            /** Total */
+            total: number | null;
+            /** Page */
+            page: number | null;
+            /** Size */
+            size: number | null;
+            /** Pages */
+            pages?: number | null;
         };
         /** Page[ClientResponse] */
         Page_ClientResponse_: {
@@ -2555,6 +3411,19 @@ export interface components {
         Page_DecisionTreeRevision_: {
             /** Items */
             items: components["schemas"]["DecisionTreeRevision"][];
+            /** Total */
+            total: number | null;
+            /** Page */
+            page: number | null;
+            /** Size */
+            size: number | null;
+            /** Pages */
+            pages?: number | null;
+        };
+        /** Page[OutputConfigResponse] */
+        Page_OutputConfigResponse_: {
+            /** Items */
+            items: components["schemas"]["OutputConfigResponse"][];
             /** Total */
             total: number | null;
             /** Page */
@@ -3449,6 +4318,17 @@ export interface components {
             /** Message */
             message: string;
         };
+        /**
+         * ValidateYamlRequest
+         * @description Request schema for validating YAML content.
+         */
+        ValidateYamlRequest: {
+            /**
+             * Yaml Content
+             * @description YAML content to validate
+             */
+            yaml_content: string;
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -3457,6 +4337,27 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /**
+         * ValidationResult
+         * @description Result of validating YAML content.
+         */
+        ValidationResult: {
+            /**
+             * Valid
+             * @description Whether the YAML is valid
+             */
+            valid: boolean;
+            /**
+             * Errors
+             * @description Validation errors
+             */
+            errors?: string[];
+            /**
+             * Warnings
+             * @description Validation warnings
+             */
+            warnings?: string[];
         };
         /** VerifyClientResponse */
         VerifyClientResponse: {
@@ -3511,6 +4412,82 @@ export interface components {
             doc_id: string;
             /** State Code */
             state_code: string;
+        };
+        /**
+         * AssessmentConfigResponse
+         * @description Response model for assessment configuration listing
+         */
+        app__routes__shared_models__AssessmentConfigResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Code */
+            code: string;
+            /** Version */
+            version: number;
+            /** Display Name */
+            display_name: string;
+            /** Description */
+            description?: string | null;
+            /** State Code */
+            state_code: string;
+        };
+        /**
+         * AssessmentConfigResponse
+         * @description Response schema for assessment config.
+         */
+        app__schemas__config_management__AssessmentConfigResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** State Code */
+            state_code: string;
+            /** Code */
+            code: string;
+            /** Version */
+            version: number;
+            /** Display Name */
+            display_name: string;
+            /** Description */
+            description?: string | null;
+            /** Status */
+            status: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Created By Email */
+            created_by_email?: string | null;
+            /** Activated At */
+            activated_at?: string | null;
+            /** Activated By Email */
+            activated_by_email?: string | null;
+            /** Imported From Env */
+            imported_from_env?: string | null;
+            /** Import Hash */
+            import_hash?: string | null;
         };
     };
     responses: never;
@@ -3824,7 +4801,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AssessmentConfigResponse"][];
+                    "application/json": components["schemas"]["app__routes__shared_models__AssessmentConfigResponse"][];
                 };
             };
             /** @description Validation Error */
@@ -3856,6 +4833,874 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AssessmentConfigOutput"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_assessment_configs_config_management_assessments_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by state code */
+                state_code?: string | null;
+                /** @description Filter by config code */
+                code?: string | null;
+                /** @description Filter by status (draft, active, inactive) */
+                status?: string[] | null;
+                /** @description Page number */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AssessmentConfigResponse_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_assessment_config_draft_config_management_assessments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssessmentConfigCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentConfigDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_assessment_config_config_management_assessments__config_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentConfigDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_assessment_config_endpoint_config_management_assessments__config_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_assessment_config_draft_config_management_assessments__config_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssessmentConfigUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentConfigDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_new_assessment_version_config_management_assessments__config_id__new_version_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentConfigDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_assessment_yaml_config_management_assessments_validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ValidateYamlRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    activate_assessment_config_config_management_assessments__config_id__activate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ActivateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivationResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deactivate_assessment_config_config_management_assessments__config_id__deactivate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeactivateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivationResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_assessment_config_config_management_assessments__config_id__export_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_assessment_import_config_management_assessments_import_validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_validate_assessment_import_config_management_assessments_import_validate_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportValidationResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    import_assessment_config_config_management_assessments_import_post: {
+        parameters: {
+            query: {
+                /** @description Note describing the purpose of this import (required) */
+                change_note: string;
+                /** @description Automatically publish and activate the imported config */
+                auto_activate?: boolean;
+                /** @description Source environment name (for audit purposes) */
+                source_env?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_import_assessment_config_config_management_assessments_import_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_output_configs_config_management_outputs_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by output type */
+                output_type?: components["schemas"]["OutputType"] | null;
+                /** @description Filter by config code */
+                code?: string | null;
+                /** @description Filter by status (draft, active, inactive) */
+                status?: string[] | null;
+                /** @description Page number */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_OutputConfigResponse_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_output_config_draft_config_management_outputs_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OutputConfigCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutputConfigDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_output_config_config_management_outputs__config_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutputConfigDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_output_config_endpoint_config_management_outputs__config_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_output_config_draft_config_management_outputs__config_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OutputConfigUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutputConfigDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_new_output_version_config_management_outputs__config_id__new_version_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutputConfigDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_output_yaml_config_management_outputs_validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ValidateYamlRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    activate_output_config_config_management_outputs__config_id__activate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ActivateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivationResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deactivate_output_config_config_management_outputs__config_id__deactivate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeactivateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivationResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_output_config_config_management_outputs__config_id__export_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_output_import_config_management_outputs_import_validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_validate_output_import_config_management_outputs_import_validate_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportValidationResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    import_output_config_config_management_outputs_import_post: {
+        parameters: {
+            query: {
+                /** @description Note describing the purpose of this import (required) */
+                change_note: string;
+                /** @description Automatically publish and activate the imported config */
+                auto_activate?: boolean;
+                /** @description Source environment name (for audit purposes) */
+                source_env?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_import_output_config_config_management_outputs_import_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_audit_logs_config_management_audit_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by config type (assessment or output) */
+                config_type?: string | null;
+                /** @description Filter by config ID */
+                config_id?: string | null;
+                /** @description Filter by action */
+                action?: string | null;
+                /** @description Filter from date (inclusive) */
+                from_date?: string | null;
+                /** @description Filter to date (inclusive) */
+                to_date?: string | null;
+                /** @description Page number */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AuditLogResponse_"];
                 };
             };
             /** @description Validation Error */

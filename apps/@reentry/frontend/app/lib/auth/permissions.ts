@@ -23,9 +23,22 @@ export function hasCPAPermission(
   return userAppMetadata?.routes?.["cpa"] === true;
 }
 
-const INTERNAL_DOMAINS = ["@recidiviz.org", "@recidiviz-test.org"];
+// Internal domains for access control
+// In production/staging, only Recidiviz domains are allowed
+// In dev/demo/local, Monadical is also allowed for development purposes
+const RECIDIVIZ_DOMAINS = ["@recidiviz.org", "@recidiviz-test.org"];
+const DEV_DOMAINS = ["@monadical.com"];
+
+function getInternalDomains(): string[] {
+  const env = process.env["NEXT_PUBLIC_ENVIRONMENT"];
+  if (env === "staging" || env === "prod" || env === "production") {
+    return RECIDIVIZ_DOMAINS;
+  }
+  return [...RECIDIVIZ_DOMAINS, ...DEV_DOMAINS];
+}
 
 export function isInternalUser(email: string | undefined | null): boolean {
   if (!email) return false;
-  return INTERNAL_DOMAINS.some((domain) => email.endsWith(domain));
+  const domains = getInternalDomains();
+  return domains.some((domain) => email.endsWith(domain));
 }

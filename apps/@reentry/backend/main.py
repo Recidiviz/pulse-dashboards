@@ -28,6 +28,7 @@ from app.routes import (
     assessment_config_router,
     autocomplete_router,
     client_router,
+    config_management_router,
     decision_tree_router,
     execution_router,
     intake_admin_router,
@@ -123,6 +124,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
 )
 
 # Auth0 setup
@@ -176,6 +178,7 @@ firebase_app = firebase_admin.initialize_app(
 # Internal routers with prefixes - require authentication
 app.include_router(decision_tree_router.router, prefix="/decision-trees")
 app.include_router(assessment_config_router.router, prefix="/assessment-configs")
+app.include_router(config_management_router.router, prefix="/config-management")
 app.include_router(execution_router.router, prefix="/executions")
 app.include_router(intake_services_router.router, prefix="/intake/services")
 app.include_router(client_router.router, prefix="/clients")

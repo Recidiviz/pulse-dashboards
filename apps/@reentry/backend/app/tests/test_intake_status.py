@@ -24,7 +24,7 @@ async def test_update_status_idempotent(
     """Test that updating to the same status does nothing."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create a test intake and set to IN_PROGRESS
     intake = await create_intake(
@@ -50,7 +50,7 @@ async def test_prevent_going_back_to_created(
     """Test that an intake cannot go back to CREATED state once it has moved beyond it."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create a test intake and set to IN_PROGRESS
     intake = await create_intake(
@@ -181,7 +181,7 @@ async def test_completion_section_for_terminal_statuses(
     """Test that terminal statuses set the current_section to COMPLETION_SECTION."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create intake using create_intake which sets assessment_config_id
     intake = await create_intake(
@@ -224,7 +224,7 @@ async def test_update_status_with_no_messages(
     """Test that updating to COMPLETED with no messages raises an error with Intakes based-trancriptions"""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_TEST", "tran", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_TEST", "TRAN", 0)]
 
     # Create transcription intake
     intake = await create_intake(
@@ -250,7 +250,7 @@ async def test_completed_status_idempotent(
     """Test that updating to COMPLETED status is idempotent."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create intake and set to COMPLETED
     intake = await create_intake(
@@ -282,7 +282,7 @@ async def test_db_manager_update_status(
     from app.crud.intake import create_intake
     from app.utils.intake.db_manager import DatabaseManager
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create a test intake using create_intake which sets assessment_config_id
     intake = await create_intake(
@@ -333,7 +333,7 @@ async def test_all_transition_combinations(
     """Test various status transitions between all possible statuses."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Setup - create intake with CREATED status using create_intake which sets assessment_config_id
     intake = await create_intake(
@@ -401,7 +401,7 @@ async def test_next_section_basic(async_session, seed_configs, mock_clientdata_s
     """Test the basic functionality of next_section - moving to the next section."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create some intake sections first
     sections = create_test_sections(3)
@@ -486,7 +486,7 @@ async def test_next_section_moves_to_completion_section(
     """Test that next_section moves to completion section but stays in progress until address is provided."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create a single section
     section = create_test_section("Only Section")
@@ -538,7 +538,7 @@ async def test_next_section_no_current_section(
     """Test that next_section raises an error when there is no current section."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create intake
     intake = await create_intake(
@@ -567,7 +567,7 @@ async def test_next_section_invalid_current_section(
     """Test that next_section raises error when current section doesn't exist in config."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create intake
     intake = await create_intake(
@@ -596,7 +596,7 @@ async def test_next_section_skip_incomplete(
     """Test next_section correctly skips to the next section even if some are incomplete."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create sections first
     sections = create_test_sections(3)
@@ -676,7 +676,7 @@ async def test_legacy_intake_next_section_with_client_sections(
     """Test that legacy intakes with ClientIntakeSections can navigate sections."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create sections to simulate legacy data
     sections = create_test_sections(3)
@@ -745,7 +745,7 @@ async def test_legacy_intake_completion_with_client_sections(
     """Test that legacy intakes with ClientIntakeSections can reach completion."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create a single section
     section = create_test_section("Legacy Final Section")
@@ -798,7 +798,7 @@ async def test_legacy_intake_status_transitions_with_client_sections(
     """Test that legacy intakes with ClientIntakeSections can transition statuses."""
     from app.crud.intake import create_intake
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create section
     section = create_test_section("Legacy Status Test Section")
@@ -857,7 +857,7 @@ async def test_create_intake_sets_assessment_config_id(
     from app.crud.intake import create_intake
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     intake = await create_intake(async_session, client_pseudo_id, assessment_config_id)
 
@@ -886,8 +886,8 @@ async def test_create_intake_different_states(
     ix_client.state_code = "US_IX"
 
     # Get config IDs for each state
-    ut_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
-    ix_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    ut_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
+    ix_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create intake for UT client
     ut_intake = await create_intake(async_session, "client-001ps", ut_config_id)
@@ -908,7 +908,7 @@ async def test_new_intake_no_client_sections_created(
     from app.crud.intake import create_intake
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     intake = await create_intake(async_session, client_pseudo_id, assessment_config_id)
 
@@ -932,7 +932,7 @@ async def test_new_intake_status_transition_sets_first_section(
     from app.crud.intake import create_intake
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     intake = await create_intake(async_session, client_pseudo_id, assessment_config_id)
     assert intake.current_section is None
@@ -962,7 +962,7 @@ async def test_new_intake_next_section_uses_config(
     from app.crud.intake import create_intake
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create and start intake
     intake = await create_intake(async_session, client_pseudo_id, assessment_config_id)
@@ -991,7 +991,7 @@ async def test_new_intake_completion_flow(
     from app.crud.intake import create_intake
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Create intake
     intake = await create_intake(async_session, client_pseudo_id, assessment_config_id)
@@ -1030,7 +1030,7 @@ async def test_transcription_intake_no_sections(
     from app.crud.intake import create_intake
 
     client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
-    assessment_config_id = seed_configs["assessments"][("US_TEST", "tran", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_TEST", "TRAN", 0)]
 
     # Create transcription intake
     intake = await create_intake(async_session, client_pseudo_id, assessment_config_id)
@@ -1058,7 +1058,7 @@ async def test_create_intake_missing_client_error(
     from app.crud.intake import create_intake
     from app.services.client_data.queries import Queries
 
-    assessment_config_id = seed_configs["assessments"][("US_IX", "facr", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_IX", "FACR", 0)]
 
     # Mock the client data service to return None for non-existent client
     def mock_get_client_by_pseudonymized_id_unsafe(pseudonymized_id: str):

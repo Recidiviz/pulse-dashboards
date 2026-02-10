@@ -21,6 +21,35 @@ from app.core.config import settings
 # Initialize Redis client for auth caching
 redis_client = redis.from_url(settings.REDIS_URL)
 
+# Internal domains for access control
+# In production/staging, only Recidiviz domains are allowed
+# In dev/demo/local, Monadical is also allowed for development purposes
+_RECIDIVIZ_DOMAINS = ["@recidiviz.org", "@recidiviz-test.org"]
+_DEV_DOMAINS = ["@monadical.com"]
+
+
+def get_internal_domains() -> list[str]:
+    """Get the list of internal domains based on environment."""
+    if settings.ENV_NAME in ("staging", "prod"):
+        return _RECIDIVIZ_DOMAINS
+    return _RECIDIVIZ_DOMAINS + _DEV_DOMAINS
+
+
+def is_internal_user(email: str | None) -> bool:
+    """
+    Check if the user email is from an internal domain.
+
+    Internal users have access to admin features like Config Management.
+    The allowed domains are environment-dependent:
+    - staging/prod: Only @recidiviz.org and @recidiviz-test.org
+    - dev/demo/local: Also includes @monadical.com for development
+    """
+    if not email:
+        return False
+    domains = get_internal_domains()
+    return any(email.endswith(domain) for domain in domains)
+
+
 # Cache expiration time for auth data (5 minutes, same as client data)
 AUTH_CACHE_TTL = 300  # seconds
 
@@ -559,6 +588,7 @@ async def get_auth_user_context(request: Request):
         if key.startswith("CPA_LOCATION_")
     ]
     return {
+        "email": user_info.get("email"),
         "is_zero_caseload_user": "zeroCaseloadUser" in feature_variants,
         "is_read_only_user": "readOnly" in feature_variants,
         "cpa_client_locations": cpa_client_locations,

@@ -5,7 +5,8 @@ State code normalization utilities.
 
 ### 1. BigQuery
 - **Service**: `app/services/client_data/queries.py`
-- **Data Model**: `ClientDataRecord.state_code` and `CaseWorkerDataRecord.state_code` in `app/services/client_data/types.py`
+- **Data Model**: `ClientDataRecord.state_code` and `CaseWorkerDataRecord.state_code`
+  in `app/services/client_data/types.py`
 - **Environment-specific values**:
   - Development/Staging: Idaho state code is `US_ID`
   - **Production**: Idaho state code is `US_IX`

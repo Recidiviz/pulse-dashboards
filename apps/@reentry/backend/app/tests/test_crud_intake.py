@@ -50,7 +50,7 @@ async def test_get_active_intake_by_client_pseudo_id_created(
 ):
     """Test retrieving a CREATED intake for a client."""
     client_id = "client-002"
-    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     intake = Intake(
         client_pseudo_id=client_id,
@@ -74,7 +74,7 @@ async def test_get_active_intake_by_client_pseudo_id_in_progress(
 ):
     """Test retrieving an IN_PROGRESS intake for a client."""
     client_id = "client-003"
-    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     intake = Intake(
         client_pseudo_id=client_id,
@@ -111,7 +111,7 @@ async def test_get_active_intake_returns_most_recent(
 ):
     """Test that the most recent active intake is returned when multiple exist."""
     client_id = "client-005"
-    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     # Create older intake
     intake1 = Intake(
@@ -144,7 +144,7 @@ async def test_get_latest_active_conversation_intake(
 ):
     """Test retrieving the latest active conversation intake."""
     client_id = "client-006"
-    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     # Create an intake (should be ignored)
     intake1 = Intake(
@@ -180,7 +180,7 @@ async def test_get_all_intakes_by_client_pseudo_id(
 ):
     """Test retrieving all intakes for a client."""
     client_id = "client-008"
-    assessment_config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    assessment_config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     intake1 = Intake(
         client_pseudo_id=client_id,
@@ -233,7 +233,7 @@ async def test_create_intake_with_mocks(
 ):
     """Test creating an intake with mocked dependencies."""
     client_pseudo_id = "client-001ps"
-    config_id = seed_configs["assessments"][("US_UT", "ccci", 0)]
+    config_id = seed_configs["assessments"][("US_UT", "CCCI", 0)]
 
     # Mock ConfigLoader
     mock_config = MagicMock()

@@ -1,8 +1,9 @@
+from datetime import datetime
 from enum import Enum
 from typing import Optional
 
 import structlog
-from sqlalchemy import Column, Text, UniqueConstraint
+from sqlalchemy import Column, Index, Text, UniqueConstraint
 from sqlalchemy import Enum as SAEnum
 from sqlmodel import Field
 
@@ -19,6 +20,7 @@ class OutputType(str, Enum):
 class OutputConfig(BaseModel, table=True):
     __table_args__ = (
         UniqueConstraint("code", "version", name="unique_output_version"),
+        Index("idx_output_config_status", "status"),
     )
 
     # Metadata -- for querying
@@ -41,3 +43,13 @@ class OutputConfig(BaseModel, table=True):
     config_yaml: str = Field(sa_column=Column(Text, nullable=False))
     # Management
     is_active: bool = Field(default=True, sa_column_kwargs={"server_default": "true"})
+    # Config Management fields
+    status: str = Field(
+        default="draft",
+        sa_column_kwargs={"server_default": "draft"},
+    )
+    created_by_email: Optional[str] = Field(default=None)
+    activated_at: Optional[datetime] = Field(default=None)
+    activated_by_email: Optional[str] = Field(default=None)
+    imported_from_env: Optional[str] = Field(default=None)
+    import_hash: Optional[str] = Field(default=None)
