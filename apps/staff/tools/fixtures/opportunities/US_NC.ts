@@ -35,7 +35,8 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "usNc90ConsecutiveDaysOfPositiveBehaviorForCrr",
-          text: "90 days of employment, in educational program, or at a treatment / rehab facility.",
+          text: "{{#if continuousEnrollmentAtFacilityFor90Days}} The action step {{facilityProgramId}} has been ONGOING since {{facilityProgramStartDate}}. {{/if}}{{#if continuousEmploymentFor90Days}} This person has been employed at {{employerName}} since {{employmentStartDate}}.{{/if}}{{#if continuousStudentFor90Days}} This person has been a student since {{studentStartDate}}.{{/if}} ",
+          tooltip: "",
         },
       ],
       emptyTabCopy: [],

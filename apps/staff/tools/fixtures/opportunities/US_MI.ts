@@ -993,7 +993,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population. See frequently asked questions [here](https://drive.google.com/file/d/1aqHekX0rxCYc1U1KZdo-nK3ZS62pjKuR/view?usp=sharing).",
       submittedTabTitle: "Pending",
-      supportsIneligible: false,
+      supportsIneligible: true,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [

@@ -357,7 +357,12 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usTnNoArrestsInPast6Months",
-          text: "No positive arrest checks (ARRP) in past 6 months. {{#if record.metadata.latestNegativeArrestCheck.contactDate}}\nNegative arrest check on {{date record.metadata.latestNegativeArrestCheck.contactDate}}\n{{else}}\nNo recent ARRNs found\n{{/if}}",
+          text: "No positive arrest checks (ARRP) in past 6 months",
+          tooltip: "Client has had no arrests in the past 6 months",
+        },
+        {
+          key: "usTnNegativeArrestCheckInPast6Months",
+          text: "Negative arrest check (ARRN) on {{date record.metadata.latestNegativeArrestCheck.contactDate}}",
           tooltip: "Client has had no arrests in the past 6 months",
         },
         {
@@ -425,6 +430,11 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Did not have 3 face to face contacts within 60 days of starting Intake. Has had contacts on {{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
           tooltip:
             "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discrection.",
+        },
+        {
+          key: "usTnNegativeArrestCheckInPast6Months",
+          text: "{{#if record.metadata.latestNegativeArrestCheck.contactDate}} Latest ARRN ({{date record.metadata.latestNegativeArrestCheck.contactDate}}) is more than 6 months old\n{{else}}\nNo recent ARRNs found\n{{/if}}",
+          tooltip: "Client has had no arrests in the past 6 months",
         },
       ],
       initialHeader:
