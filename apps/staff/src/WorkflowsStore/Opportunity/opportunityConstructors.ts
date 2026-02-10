@@ -58,6 +58,7 @@ import {
 } from "./UsId";
 import { UsIdCRCResidentWorkerOpportunity } from "./UsId/UsIdCRCResidentWorkerOpportunity";
 import { UsIdCRCWorkReleaseOpportunity } from "./UsId/UsIdCRCWorkReleaseOpportunity";
+import { UsIdOverdueFaceToFaceContactOpportunity } from "./UsId/usIdOverdueFaceToFaceContact";
 import {
   UsMeFurloughReleaseOpportunity,
   UsMeSCCPOpportunity,
@@ -123,6 +124,7 @@ export const opportunityConstructors = {
   pastFTRD: UsIdPastFTRDOpportunity,
   usIdSupervisionLevelDowngrade: UsIdSupervisionLevelDowngradeOpportunity,
   usIdCustodyLevelDowngrade: UsIdCustodyLevelDowngradeOpportunity,
+  usIdOverdueFaceToFaceContact: UsIdOverdueFaceToFaceContactOpportunity,
 
   // US_MI
   usMiAddInPersonSecurityClassificationCommitteeReview:

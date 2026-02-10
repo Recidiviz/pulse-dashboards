@@ -88,6 +88,7 @@ import {
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { UsAzReleaseToTransitionProgramOpportunityBase } from "../../WorkflowsStore/Opportunity/UsAz";
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
+import { UsIdOverdueFaceToFaceContactOpportunity } from "../../WorkflowsStore/Opportunity/UsId/usIdOverdueFaceToFaceContact";
 import { UsNeGoodTimeRestorationOpportunity } from "../../WorkflowsStore/Opportunity/UsNe";
 import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
@@ -253,7 +254,11 @@ export type OpportunityTableColumnId =
   | "AGREEMENT_STATUS"
   | "HOME_PLAN_STATUS"
   | "MAN_LIT_STATUS"
-  | "DENIAL_REASONS";
+  | "DENIAL_REASONS"
+  | "US_ID_LAST_CONTACT_DATE"
+  | "US_ID_SUPERVISION_LEVEL"
+  | "US_ID_CASE_TYPE"
+  | "US_ID_NEXT_CONTACT_DUE_DATE";
 
 type OpportunityTableColumnDef = {
   header: string;
@@ -837,6 +842,98 @@ const TableView = observer(function TableView({
       accessorFn: (opp: Opportunity) => {
         if (!opp.denial) return "";
         return opp.denial.reasons.join(", ");
+      },
+    },
+    {
+      header: "Last Contact Date",
+      id: "US_ID_LAST_CONTACT_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => {
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          return opp.record?.eligibleCriteria
+            ?.usIdMeetsOverdueFaceToFaceContactAlert?.lastContactDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          const lastContactDate =
+            opp.record?.eligibleCriteria?.usIdMeetsOverdueFaceToFaceContactAlert
+              ?.lastContactDate;
+          if (lastContactDate) {
+            return formatWorkflowsDate(lastContactDate);
+          }
+        }
+        return "—";
+      },
+    },
+    {
+      header: "Supervision Level",
+      id: "US_ID_SUPERVISION_LEVEL",
+      enableSorting: true,
+      sortingFn: "text",
+      accessorFn: (opp: Opportunity) => {
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          return opp.record?.eligibleCriteria
+            ?.usIdMeetsOverdueFaceToFaceContactAlert?.supervisionLevel;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          const supervisionLevel =
+            opp.record?.eligibleCriteria?.usIdMeetsOverdueFaceToFaceContactAlert
+              ?.supervisionLevel;
+          return supervisionLevel || "—";
+        }
+        return "—";
+      },
+    },
+    {
+      header: "Case Type",
+      id: "US_ID_CASE_TYPE",
+      enableSorting: true,
+      sortingFn: "text",
+      accessorFn: (opp: Opportunity) => {
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          return opp.record?.eligibleCriteria
+            ?.usIdMeetsOverdueFaceToFaceContactAlert?.caseType;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          const caseType =
+            opp.record?.eligibleCriteria?.usIdMeetsOverdueFaceToFaceContactAlert
+              ?.caseType;
+          return caseType || "—";
+        }
+        return "—";
+      },
+    },
+    {
+      header: "Last Contact Due Date",
+      id: "US_ID_NEXT_CONTACT_DUE_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => {
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          return opp.record?.eligibleCriteria
+            ?.usIdMeetsOverdueFaceToFaceContactAlert?.contactRequiredStartDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (opp instanceof UsIdOverdueFaceToFaceContactOpportunity) {
+          const contactRequiredStartDate =
+            opp.record?.eligibleCriteria?.usIdMeetsOverdueFaceToFaceContactAlert
+              ?.contactRequiredStartDate;
+          if (contactRequiredStartDate) {
+            return formatWorkflowsDate(contactRequiredStartDate);
+          }
+        }
+        return "—";
       },
     },
     {

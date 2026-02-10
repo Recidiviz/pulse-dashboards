@@ -177,6 +177,7 @@ export class OpportunityPersonListPresenter
         "usAzTransferToAdministrativeSupervision",
         "usAzReleaseToTPR",
         "usAzReleaseToDTP",
+        "usIdOverdueFaceToFaceContact",
       ].includes(this.opportunityType),
       // TODO(#7921): More gracefully handle these special cases
       ELIGIBILITY_DATE:
@@ -206,6 +207,8 @@ export class OpportunityPersonListPresenter
           "pastFTRD",
           "usMiPastFTRD",
           "usTnExpiration",
+          // usIdOverdueFaceToFaceContact uses contact-specific columns instead
+          "usIdOverdueFaceToFaceContact",
         ].includes(this.opportunityType),
       US_ID_EPRD: this.opportunityType === "usIdCustodyLevelDowngrade",
       US_NE_PEDD_DATE:
@@ -266,6 +269,13 @@ export class OpportunityPersonListPresenter
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         this.tenantStore.currentTenantId === "US_MI" &&
         this.opportunityType === "usMiCustodyLevelDowngrade",
+      US_ID_LAST_CONTACT_DATE:
+        this.opportunityType === "usIdOverdueFaceToFaceContact",
+      US_ID_SUPERVISION_LEVEL:
+        this.opportunityType === "usIdOverdueFaceToFaceContact",
+      US_ID_CASE_TYPE: this.opportunityType === "usIdOverdueFaceToFaceContact",
+      US_ID_NEXT_CONTACT_DUE_DATE:
+        this.opportunityType === "usIdOverdueFaceToFaceContact",
     };
   }
 

@@ -40,6 +40,7 @@ export const constructedOpportunityTypes = [
   "usIdCRCWorkRelease",
   "usIdSupervisionLevelDowngrade",
   "usIdCustodyLevelDowngrade",
+  "usIdOverdueFaceToFaceContact",
 
   // US_ME
   "usMeSCCP",

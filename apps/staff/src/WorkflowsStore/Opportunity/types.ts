@@ -321,6 +321,7 @@ export type OpportunityTab =
   | "Needs Re-Screen"
   | "Transfer in Progress"
   | "Needs Review"
+  | "Active Alert"
 
   // For US_ID CRC
   | "Medical-Ineligible";
