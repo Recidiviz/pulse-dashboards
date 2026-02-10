@@ -39,6 +39,10 @@ export const usTxAnnualReportStatusSchema = opportunitySchemaBase.extend({
   formInformation: z
     .object({
       tdcjNumber: z.string(),
+      unitSupervisor: z.string().nullish(),
+      paroleSupervisor: z.string().nullish(),
+      assistantRegionDirector: z.string().nullish(),
+      regionDirector: z.string().nullish(),
     })
     .partial(),
 });

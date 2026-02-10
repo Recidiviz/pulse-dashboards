@@ -22,6 +22,7 @@ import {
   PDFFillerFunc,
 } from "../../../../core/Paperwork/PDFFormFiller";
 import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
+import { toTitleCase } from "../../../../utils/formatStrings";
 import { UsTxAnnualReportStatusOpportunity } from "../../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
 import { UsTxAnnualReportStatusDraftData } from "../../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
 import { FormBase } from "../FormBase";
@@ -156,7 +157,7 @@ export class UsTxAnnualReportStatusForm extends FormBase<
     const clientId = this.person.displayId;
 
     const {
-      formInformation: { tdcjNumber },
+      formInformation: { tdcjNumber, unitSupervisor, paroleSupervisor, assistantRegionDirector, regionDirector },
     } = this.opportunity.record;
 
     const tdcjNumberAndSid = tdcjNumber
@@ -177,6 +178,11 @@ export class UsTxAnnualReportStatusForm extends FormBase<
     const societyBestInterestCheck = true;
     const officerName = this.person.assignedStaffFullName;
 
+    const unitSupervisorName = unitSupervisor ? toTitleCase(unitSupervisor) : "";
+    const paroleSupervisorName = paroleSupervisor? toTitleCase(paroleSupervisor) : "";
+    const assistantRegionDirectorName = assistantRegionDirector ? toTitleCase(assistantRegionDirector) : "";
+    const regionDirectorName = regionDirector ? toTitleCase(regionDirector) : "";
+
     return {
       clientName,
       tdcjNumberAndSid,
@@ -187,6 +193,10 @@ export class UsTxAnnualReportStatusForm extends FormBase<
       warrantCheck,
       societyBestInterestCheck,
       officerName,
+      unitSupervisorName,
+      paroleSupervisorName,
+      assistantRegionDirectorName,
+      regionDirectorName
     };
   }
 
