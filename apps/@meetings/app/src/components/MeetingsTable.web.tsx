@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Link } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
@@ -140,6 +140,10 @@ const MeetingsTable = ({
   continueMeeting,
 }: MeetingsTableProps) => {
   const [page, setPage] = React.useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [meetings]);
 
   return (
     <Table>

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Link } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Image,
   ImageBackground,
@@ -52,6 +52,10 @@ interface PersonsProps {
 
 const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
   const [page, setPage] = React.useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [persons]);
 
   return (
     <>
