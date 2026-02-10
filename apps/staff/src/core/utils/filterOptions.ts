@@ -421,6 +421,73 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
+  [FILTER_TYPES.ETHNICITY]: {
+    type: FILTER_TYPES.ETHNICITY,
+    title: "Ethnic status",
+    setFilters: setFilters(FILTER_TYPES.ETHNICITY),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Not Hispanic", value: "NOT_HISPANIC" },
+      { label: "Hispanic", value: "HISPANIC" },
+      { label: "Unknown", value: "UNKNOWN" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
+  [FILTER_TYPES.SENTENCE_LENGTH_MAX]: {
+    type: FILTER_TYPES.SENTENCE_LENGTH_MAX,
+    title: "Max Sentence",
+    setFilters: setFilters(FILTER_TYPES.SENTENCE_LENGTH_MAX),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "< 36 (< 3 yrs)", value: "< 36 MONTHS" },
+      { label: "36 (3 yrs)", value: "36 MONTHS" },
+      { label: "37-53 (3-4.5 yrs)", value: "37-53 MONTHS" },
+      { label: "53-71 (4.5-6 yrs)", value: "54-71 MONTHS" },
+      { label: "72-95 (6-8 yrs)", value: "72-95 MONTHS" },
+      { label: "96-107 (8-9 yrs)", value: "96-107 MONTHS" },
+      { label: "108-143 (9-12 yrs)", value: "108-143 MONTHS" },
+      { label: "144-179 (12-15 yrs)", value: "144-179 MONTHS" },
+      { label: "180+ (15+ yrs)", value: "180+ MONTHS" },
+      { label: "Life", value: "LIFE MAX" },
+      { label: "Life, no parole", value: "LIFE, NO PAROLE" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
+  [FILTER_TYPES.SENTENCE_LENGTH_MIN]: {
+    type: FILTER_TYPES.SENTENCE_LENGTH_MIN,
+    title: "Min Sentence",
+    setFilters: setFilters(FILTER_TYPES.SENTENCE_LENGTH_MIN),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "< 12 (< 1 yr)", value: "< 12 MONTHS" },
+      { label: "12-17 (1-1.5 yrs)", value: "12-17 MONTHS" },
+      { label: "18-23 (1.5-2 yrs)", value: "18-23 MONTHS" },
+      { label: "24-35 (2-3 yrs)", value: "24-35 MONTHS" },
+      { label: "36-47 (3-4 yrs)", value: "36-47 MONTHS" },
+      { label: "48-71 (4-6 yrs)", value: "48-71 MONTHS" },
+      { label: "72-119 (6-10 yrs)", value: "72-119 MONTHS" },
+      { label: "120-179 (10-15 yrs)", value: "120-179 MONTHS" },
+      { label: "180-239 (15-20 yrs)", value: "180-239 MONTHS" },
+      { label: "240+ (20+ yrs)", value: "240+ MONTHS" },
+      { label: "Life, no parole", value: "LIFE, NO PAROLE" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
 };
 
 export const IdPopulationFilterOptions: PopulationFilters = {
@@ -1330,6 +1397,18 @@ export const NyPopulationFilterOptions: PopulationFilters = {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.SEX],
     useDynamicOptions: false,
   },
+  [FILTER_TYPES.ETHNICITY]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.ETHNICITY],
+    useDynamicOptions: true,
+  },
+  [FILTER_TYPES.SENTENCE_LENGTH_MIN]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.SENTENCE_LENGTH_MIN],
+    useDynamicOptions: true,
+  },
+  [FILTER_TYPES.SENTENCE_LENGTH_MAX]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.SENTENCE_LENGTH_MAX],
+    useDynamicOptions: true,
+  },
 };
 
 export const PaPopulationFilterOptions: PopulationFilters = {
@@ -1593,6 +1672,15 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
     DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_LEVEL].defaultValue,
   ],
   [FILTER_TYPES.RACE]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.RACE].defaultValue,
+  ],
+  [FILTER_TYPES.ETHNICITY]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.RACE].defaultValue,
+  ],
+  [FILTER_TYPES.SENTENCE_LENGTH_MIN]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.RACE].defaultValue,
+  ],
+  [FILTER_TYPES.SENTENCE_LENGTH_MAX]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.RACE].defaultValue,
   ],
 };

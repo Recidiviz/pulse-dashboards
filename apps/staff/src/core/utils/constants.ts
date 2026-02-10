@@ -40,6 +40,9 @@ export const FILTER_TYPES = {
   RACE: "race",
   NUMBER_OF_VIOLATIONS: "numberOfViolations",
   SUPERVISION_LEVEL: "supervisionLevel",
+  ETHNICITY: "ethnicity",
+  SENTENCE_LENGTH_MIN: "sentenceLengthMin",
+  SENTENCE_LENGTH_MAX: "sentenceLengthMax",
 } as const;
 
 export const DIMENSION_TYPES = {
@@ -64,4 +67,7 @@ export const filtersOrder = [
   FILTER_TYPES.NUMBER_OF_VIOLATIONS,
   FILTER_TYPES.AGE_GROUP,
   FILTER_TYPES.RACE,
+  FILTER_TYPES.ETHNICITY,
+  FILTER_TYPES.SENTENCE_LENGTH_MIN,
+  FILTER_TYPES.SENTENCE_LENGTH_MAX,
 ];

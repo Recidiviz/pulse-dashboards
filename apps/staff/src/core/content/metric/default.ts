@@ -221,6 +221,21 @@ const content: MetricCopy = {
     methodology:
       "The chart describes the number of people from each gender identity as of the date specified in the chart title. ",
   },
+  prisonPopulationByEthnicity: {
+    title: "Prison population by ethnic status",
+    methodology:
+      "The chart describes the number of people from each ethnic status as of the date specified in the chart title. ",
+  },
+  prisonPopulationBySentenceLengthMin: {
+    title: "Prison population by minimum sentence (months)",
+    methodology:
+      "The chart describes the number of people from each minimum sentence (months) as of the date specified in the chart title. ",
+  },
+  prisonPopulationBySentenceLengthMax: {
+    title: "Prison population by maximum sentence (months)",
+    methodology:
+      "The chart describes the number of people from each maximum sentence (months) as of the date specified in the chart title. ",
+  },
 };
 
 export default content;

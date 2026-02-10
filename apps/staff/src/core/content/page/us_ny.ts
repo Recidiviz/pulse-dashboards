@@ -29,6 +29,9 @@ const content: StateSpecificPageCopy = {
       countBySex: "Prison population by sex",
       countByAgeGroup: "Prison population by age group",
       personLevelDetail: "List of people in prison",
+      countByEthnicity: "Prison population by ethnic status",
+      countBySentenceLengthMin: "Prison population by min sentence",
+      countBySentenceLengthMax: "Prison population by max sentence",
     },
     methodology:
       "This dashboard shows data on individuals who are admitted to New York State DOCCS prison facilities. Data is uploaded from DOCCS's systems monthly. \n- For more reports, please see: https://doccs.ny.gov/research-and-reports \n- For questions, please contact NYS DOCCS. \n",

@@ -144,6 +144,7 @@ const withRouteSync = <Props extends RouteParams>(
           setQuery({ selectedMetric: metricName });
         } else {
           const { current: metric } = metricsStore;
+
           if (metric) {
             const updatedQuery = [
               ...metric.filters.enabledFilters,

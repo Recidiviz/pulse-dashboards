@@ -81,6 +81,9 @@ export default class MetricsStore {
           [PATHWAYS_SECTIONS.countByAgeGroup]: this.prisonPopulationByAgeGroup,
           [PATHWAYS_SECTIONS.countByGender]: this.prisonPopulationByGender,
           [PATHWAYS_SECTIONS.countBySex]: this.prisonPopulationBySex,
+          [PATHWAYS_SECTIONS.countByEthnicity]: this.prisonPopulationByEthnicity,
+          [PATHWAYS_SECTIONS.countBySentenceLengthMin]: this.prisonPopulationBySentenceLengthMin,
+          [PATHWAYS_SECTIONS.countBySentenceLengthMax]: this.prisonPopulationBySentenceLengthMax,
           [PATHWAYS_SECTIONS.personLevelDetail]:
             this.prisonPopulationPersonLevel,
         },
@@ -286,6 +289,37 @@ export default class MetricsStore {
       endpoint: "PrisonPopulationByDimensionCount",
       rootStore: this.rootStore,
       accessor: "sex",
+      enableMetricModeToggle: true,
+      rotateLabels: true,
+    });
+  }
+
+  get prisonPopulationByEthnicity(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationByEthnicity",
+      endpoint: "PrisonPopulationByDimensionCount",
+      rootStore: this.rootStore,
+      accessor: "ethnicity",
+      enableMetricModeToggle: true,
+      rotateLabels: true,
+    });
+  }
+  get prisonPopulationBySentenceLengthMin(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationBySentenceLengthMin",
+      endpoint: "PrisonPopulationByDimensionCount",
+      rootStore: this.rootStore,
+      accessor: "sentenceLengthMin",
+      enableMetricModeToggle: true,
+      rotateLabels: true,
+    });
+  }
+  get prisonPopulationBySentenceLengthMax(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationBySentenceLengthMax",
+      endpoint: "PrisonPopulationByDimensionCount",
+      rootStore: this.rootStore,
+      accessor: "sentenceLengthMax",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });

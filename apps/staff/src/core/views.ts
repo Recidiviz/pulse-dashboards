@@ -91,6 +91,9 @@ export const PATHWAYS_SECTIONS: Record<string, string> = {
   countBySex: "countBySex",
   countByRace: "countByRace",
   countByOfficer: "countByOfficer",
+  countByEthnicity: "countByEthnicity",
+  countBySentenceLengthMin: "countBySentenceLengthMin",
+  countBySentenceLengthMax: "countBySentenceLengthMax",
 };
 
 export const DEFAULT_PATHWAYS_PAGE = PATHWAYS_PAGES.prison;
@@ -123,6 +126,9 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
     "prisonPopulationByRace",
     "prisonPopulationBySex",
     "prisonPopulationByAgeGroup",
+    "prisonPopulationByEthnicity",
+    "prisonPopulationBySentenceLengthMin",
+    "prisonPopulationBySentenceLengthMax",
     "prisonPopulationPersonLevel",
   ],
   [PATHWAYS_PAGES.prisonToSupervision]: [
@@ -179,6 +185,11 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<MetricId, PathwaysSection> =
     prisonPopulationByGender: PATHWAYS_SECTIONS.countByGender,
     prisonPopulationBySex: PATHWAYS_SECTIONS.countBySex,
     prisonPopulationByAgeGroup: PATHWAYS_SECTIONS.countByAgeGroup,
+    prisonPopulationByEthnicity: PATHWAYS_SECTIONS.countByEthnicity,
+    prisonPopulationBySentenceLengthMin:
+      PATHWAYS_SECTIONS.countBySentenceLengthMin,
+    prisonPopulationBySentenceLengthMax:
+      PATHWAYS_SECTIONS.countBySentenceLengthMax,
     prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
     projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.projectedCountOverTime,
     projectedSupervisionPopulationOverTime:
