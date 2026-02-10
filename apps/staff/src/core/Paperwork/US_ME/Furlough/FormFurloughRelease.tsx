@@ -20,7 +20,6 @@ import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import {
   Opportunity,
   UsMeFurloughReleaseDraftData,
@@ -45,6 +44,11 @@ import p7 from "./assets/p7.png";
 import p8 from "./assets/p8.png";
 import p9 from "./assets/p9.png";
 import p10 from "./assets/p10.png";
+import furloughDisclosureTemplate from "./furlough_disclosure.docx";
+import furloughLeaveApplicationTemplate from "./furlough_leave_application.docx";
+import furloughPassApplicationTemplate from "./furlough_pass_application.docx";
+import furloughProgramAgreementTemplate from "./furlough_program_agreement.docx";
+import furloughProgramReviewTemplate from "./furlough_program_review.pdf";
 
 const FormPreviewPage = styled.img`
   height: auto;
@@ -68,7 +72,6 @@ export const FormFurloughRelease = observer(function FormWorkRelease({
 }: {
   opportunity: Opportunity;
 }) {
-  const { getTokenSilently } = useRootStore();
   const resident = opportunity.person;
 
   if (
@@ -95,24 +98,31 @@ export const FormFurloughRelease = observer(function FormWorkRelease({
     ): string => `${residentName} - ${startCase(filename)}`;
 
     const fileInputs: FileGeneratorArgs[] = [
-      "furlough_leave_application",
-      "furlough_pass_application",
-      "furlough_disclosure",
-      "furlough_program_agreement",
-    ].map((filename) => {
-      return [
-        `${fileNameFormatter(filename, displayName)}.docx`,
-        resident.stateCode,
-        `${filename}.docx`,
+      [
+        `${fileNameFormatter("furlough_leave_application", displayName)}.docx`,
+        furloughLeaveApplicationTemplate,
         contents,
-      ];
-    });
+      ],
+      [
+        `${fileNameFormatter("furlough_pass_application", displayName)}.docx`,
+        furloughPassApplicationTemplate,
+        contents,
+      ],
+      [
+        `${fileNameFormatter("furlough_disclosure", displayName)}.docx`,
+        furloughDisclosureTemplate,
+        contents,
+      ],
+      [
+        `${fileNameFormatter("furlough_program_agreement", displayName)}.docx`,
+        furloughProgramAgreementTemplate,
+        contents,
+      ],
+    ];
 
     const pdfTemplateName = "furlough_program_review";
     const pdfTemplate = await getPdfTemplate(
-      resident.stateCode,
-      `${pdfTemplateName}.pdf`,
-      getTokenSilently,
+      furloughProgramReviewTemplate,
       fillerFunc,
     );
 
@@ -120,7 +130,7 @@ export const FormFurloughRelease = observer(function FormWorkRelease({
 
     const [pdfFileContents, docxFiles] = await Promise.all([
       pdfTemplate(contents),
-      renderMultipleDocx(fileInputs, getTokenSilently),
+      renderMultipleDocx(fileInputs),
     ]);
 
     downloadZipFile(`${resident.displayName} Furlough Release Packet.zip`, [

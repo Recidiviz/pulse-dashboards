@@ -20,11 +20,12 @@ import startOfMonth from "date-fns/startOfMonth";
 import {
   fillAndSavePDF,
   PDFFillerFunc,
-} from "../../../core/Paperwork/PDFFormFiller";
-import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { UsTxAnnualReportStatusOpportunity } from "../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
-import { UsTxAnnualReportStatusDraftData } from "../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
-import { FormBase } from "./FormBase";
+} from "../../../../core/Paperwork/PDFFormFiller";
+import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
+import { UsTxAnnualReportStatusOpportunity } from "../../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
+import { UsTxAnnualReportStatusDraftData } from "../../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
+import { FormBase } from "../FormBase";
+import arsTemplate from "./ARS.pdf";
 
 const fillerFunc: PDFFillerFunc<UsTxAnnualReportStatusDraftData> = async (
   formData,
@@ -194,11 +195,9 @@ export class UsTxAnnualReportStatusForm extends FormBase<
 
     await fillAndSavePDF(
       `${nameBase}.pdf`,
-      "US_TX",
-      "ARS.pdf",
+      arsTemplate,
       fillerFunc,
       this.formData,
-      this.rootStore.getTokenSilently,
     );
   }
 }

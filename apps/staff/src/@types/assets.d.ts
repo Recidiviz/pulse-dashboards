@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import UserStore from "../RootStore/UserStore";
-import {fetchHelper} from "./utils";
+type PdfUrl = string & { __pdf_url__: true };
+type DocxUrl = string & { __docx_url__: true };
+type AssetURL = PdfUrl | DocxUrl;
 
+declare module "*.docx" {
+  const src: DocxUrl;
+  export default src;
+}
 
-export async function fetchWorkflowsTemplates(
-  stateCode: string,
-  templateName: string,
-  getTokenSilently: UserStore["getTokenSilently"],
-): Promise<ArrayBuffer> {
-  const url = `${import.meta.env.VITE_API_URL}/api/${stateCode}/workflows/templates?filename=${templateName}`;
-
-  return fetchHelper(
-    getTokenSilently,
-    url,
-    "Fetching Workflows Template from API failed.\nStatus:"
-  )
+declare module "*.pdf" {
+  const src: PdfUrl;
+  export default src;
 }

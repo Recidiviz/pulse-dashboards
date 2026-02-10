@@ -130,24 +130,6 @@ export function respondWithBadRequest(res, errors) {
   );
 }
 
-export function workflowsTemplates(req, res, next) {
-  const { stateCode } = req.params;
-  const { filename } = req.query;
-  const sanitizedFileName = sanitizeFilename(filename);
-  const filepath = path.resolve(
-    __dirname,
-    `../assets/workflowsTemplates/${stateCode}/${sanitizedFileName}`,
-  );
-  res.sendFile(filepath, {}, (err) => {
-    if (err) {
-      const error = {
-        message: `Failed to send file ${sanitizedFileName} for stateCode ${stateCode}. ${err}`,
-      };
-      next(error);
-    }
-  });
-}
-
 export async function userDataDownload(req, res) {
   const { stateCode } = req.params;
   const { filename } = req.query;

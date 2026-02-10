@@ -25,7 +25,6 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-import { useRootStore } from "../../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../../utils";
 import { Opportunity } from "../../../WorkflowsStore";
 import { UsArInstitutionalWorkerStatusOpportunity } from "../../../WorkflowsStore/Opportunity/UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusOpportunity";
@@ -38,6 +37,7 @@ import {
 } from "../../Paperwork/PDFFormFiller";
 import { createDownloadLabel, downloadZipFile } from "../../Paperwork/utils";
 import { DetailsHeading, Divider } from "../styles";
+import institutionalWorkerStatusFormTemplate from "./institutional_worker_status_form.pdf";
 
 const Heading = styled(DetailsHeading)`
   margin-bottom: 0;
@@ -117,7 +117,6 @@ export const UsArApprovedVisitors = observer(function UsArApprovedVisitors({
 }: {
   opportunity: Opportunity;
 }): React.ReactElement<any> | null {
-  const { getTokenSilently } = useRootStore();
   if (!(opportunity instanceof UsArInstitutionalWorkerStatusOpportunity))
     return null;
 
@@ -127,12 +126,8 @@ export const UsArApprovedVisitors = observer(function UsArApprovedVisitors({
     const fileNameFormatter = (fullName?: string): string =>
       `${(fullName ?? "").replace(/\//g, "-")} - Approved Relative Associate Form`;
 
-    const pdfTemplateName = "institutional_worker_status_form";
-
     const pdfTemplate = await getPdfTemplate(
-      resident.stateCode,
-      `${pdfTemplateName}.pdf`,
-      getTokenSilently,
+      institutionalWorkerStatusFormTemplate,
       fillerFunc,
     );
 

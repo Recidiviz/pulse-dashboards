@@ -36,6 +36,10 @@ import p3 from "./assets/p3.png";
 import p4 from "./assets/p4.png";
 import p5 from "./assets/p5.png";
 import p6 from "./assets/p6.png";
+import workRelease48hourReviewTemplate from "./WorkRelease_48hour_review.docx";
+import workReleaseAgreementConditionsTemplate from "./WorkRelease_agreement_conditions.docx";
+import workReleaseProgramApplicationTemplate from "./WorkRelease_program_application.docx";
+import workReleaseProgramReviewTemplate from "./WorkRelease_program_review.docx";
 
 const FormPreviewPage = styled.img`
   height: auto;
@@ -47,7 +51,7 @@ const previewImages = [p1, p2, p3, p4, p5, p6];
 const formDownloader = async (
   opportunity: UsMeWorkReleaseOpportunity,
 ): Promise<void> => {
-  let contents: DocxTemplateFormContents;
+  let contents: DocxTemplateFormContents = {};
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
@@ -58,23 +62,29 @@ const formDownloader = async (
   const resident = opportunity.person;
 
   const fileInputs: FileGeneratorArgs[] = [
-    "WorkRelease_48hour_review",
-    "WorkRelease_program_application",
-    "WorkRelease_program_review",
-    "WorkRelease_agreement_conditions",
-  ].map((filename) => {
-    return [
-      `${resident.displayName} ${filename}.docx`,
-      resident.stateCode,
-      `${filename}.docx`,
+    [
+      `${resident.displayName} WorkRelease_48hour_review.docx`,
+      workRelease48hourReviewTemplate,
       contents,
-    ];
-  });
+    ],
+    [
+      `${resident.displayName} WorkRelease_program_application.docx`,
+      workReleaseProgramApplicationTemplate,
+      contents,
+    ],
+    [
+      `${resident.displayName} WorkRelease_program_review.docx`,
+      workReleaseProgramReviewTemplate,
+      contents,
+    ],
+    [
+      `${resident.displayName} WorkRelease_agreement_conditions.docx`,
+      workReleaseAgreementConditionsTemplate,
+      contents,
+    ],
+  ];
 
-  const documents = await renderMultipleDocx(
-    fileInputs,
-    resident.rootStore.getTokenSilently,
-  );
+  const documents = await renderMultipleDocx(fileInputs);
   downloadZipFile(`${resident.displayName} Work Release Packet.zip`, documents);
 };
 

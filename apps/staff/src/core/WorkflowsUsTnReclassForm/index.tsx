@@ -36,6 +36,8 @@ import FormViewer from "../Paperwork/FormViewer";
 import ClassificationCustodyAssessment from "../Paperwork/US_TN/CustodyReclassification/ClassificationCustodyAssessment";
 import { getCoverSheetTemplateArgs } from "../Paperwork/US_TN/CustodyReclassification/utils";
 import { downloadZipFile } from "../Paperwork/utils";
+import classificationPilotVerificationTemplate from "./classification_pilot_verification_template.docx";
+import custodyReclassificationTemplate from "./custody_reclassification_template.docx";
 
 const WorkflowsUsTnReclassForm = ({
   opportunity,
@@ -60,7 +62,7 @@ const WorkflowsUsTnReclassForm = ({
     : "Please review any data pre-filled from previous Classification scores for questions 3, 4, 5 and 9 in the Classification Assessment Form.";
 
   const onClickDownload = async () => {
-    let contents: DocxTemplateFormContents;
+    let contents: DocxTemplateFormContents = {};
 
     const { derivedData } = form;
 
@@ -73,28 +75,20 @@ const WorkflowsUsTnReclassForm = ({
 
     const fileInputs: FileGeneratorArgs[] = [
       [
-        "custody_reclassification_template",
-        "Classification Custody Assessment",
+        `${resident.displayName} - Classification Custody Assessment.docx`,
+        custodyReclassificationTemplate,
+        contents,
       ],
       [
-        "classification_pilot_verification_template",
-        "Classification Pilot Verification",
-      ],
-    ].map(([filename, outputName]) => {
-      return [
-        `${resident.displayName} - ${outputName}.docx`,
-        resident.stateCode,
-        `${filename}.docx`,
+        `${resident.displayName} - Classification Pilot Verification.docx`,
+        classificationPilotVerificationTemplate,
         contents,
-      ];
-    });
+      ],
+    ];
 
     fileInputs.push(getCoverSheetTemplateArgs(resident, form.formData));
 
-    const documents = await renderMultipleDocx(
-      fileInputs,
-      resident.rootStore.getTokenSilently,
-    );
+    const documents = await renderMultipleDocx(fileInputs);
 
     downloadZipFile(`${resident.displayName} - ${packetName}.zip`, documents);
   };

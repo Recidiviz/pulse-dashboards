@@ -26,6 +26,7 @@ import {
 import { formatDate } from "../../../../utils";
 import { Resident } from "../../../../WorkflowsStore/Resident";
 import { FileGeneratorArgs } from "../../DOCXFormGenerator";
+import custodyReclassificationCoverSheetTemplate from "./custody_reclassification_cover_sheet.docx";
 
 export function prefilledCoverSheetData(
   resident: Resident,
@@ -171,8 +172,7 @@ export function getCoverSheetTemplateArgs(
 
   return [
     `${resident.displayName} - Offender Classification Summary.docx`,
-    resident.stateCode,
-    "custody_reclassification_cover_sheet.docx",
+    custodyReclassificationCoverSheetTemplate,
     { ...formData, ...formContents },
   ];
 }

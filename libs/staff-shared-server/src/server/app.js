@@ -205,11 +205,6 @@ app.get(`${stateApiBaseRoute}pathways/:file`, api.pathways);
 app.post("/api/generateFileLink", upload.single("zip"), api.generateFileLink);
 app.get("/file/:name", api.upload);
 app.get(
-  `${stateApiBaseRoute}workflows/templates`,
-  filenameNotEmptyValidation,
-  api.workflowsTemplates,
-);
-app.get(
   `${stateApiBaseRoute}workflows/dataDownload`,
   filenameNotEmptyValidation,
   api.userDataDownload,

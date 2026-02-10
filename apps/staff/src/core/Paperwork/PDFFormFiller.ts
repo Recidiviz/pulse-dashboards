@@ -30,7 +30,7 @@ import {
   StandardFonts,
 } from "pdf-lib";
 
-import { fetchWorkflowsTemplates } from "../../api/fetchWorkflowsTemplates";
+import { fetchWorkflowsTemplate } from "./fetchWorkflowsTemplate";
 
 export type SetFunc = (
   fieldName: string,
@@ -125,17 +125,15 @@ const fillPDF: (
 //
 // After setting the fields, calling `form.flatten()` will bake the form into a
 // static PDF. To generate the boilerplate needed to fill all the fields in a
-// given PDF, run: `nx pdfformfiller-boilerplate staff server/assets/workflowsTemplates/path/to/your.pdf`
+// given PDF, run: `nx pdfformfiller-boilerplate staff src/api/workflowsTemplates/path/to/your.pdf`
 export async function getPdfTemplate(
-  stateCode: string,
-  templateName: string,
-  getTokenSilently: () => Promise<any>,
+  templateUrl: PdfUrl,
   fillerFunc: PDFFillerFunc,
 ) {
   // While the template is being downloaded, we also dynamically import pdf-lib as
   // a separate code chunk. Otherwise it would add 200k to the bundle for everyone.
   const [template, pdfLib] = await Promise.all([
-    fetchWorkflowsTemplates(stateCode, templateName, getTokenSilently),
+    fetchWorkflowsTemplate(templateUrl),
     import("pdf-lib"),
   ]);
   const { PDFDocument, PDFCheckBox, PDFRadioGroup, PDFTextField } = pdfLib;
@@ -148,18 +146,11 @@ export async function getPdfTemplate(
 
 export async function fillAndSavePDF(
   fileName: string,
-  stateCode: string,
-  templateName: string,
+  templateUrl: PdfUrl,
   fillerFunc: PDFFillerFunc,
   formData: any,
-  getTokenSilently: () => Promise<any>,
 ) {
-  const pdfTemplate = await getPdfTemplate(
-    stateCode,
-    templateName,
-    getTokenSilently,
-    fillerFunc,
-  );
+  const pdfTemplate = await getPdfTemplate(templateUrl, fillerFunc);
 
   const pdfBytes = await pdfTemplate({ ...toJS(formData) });
 

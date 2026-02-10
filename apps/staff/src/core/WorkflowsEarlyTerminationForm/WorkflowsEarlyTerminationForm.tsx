@@ -44,6 +44,7 @@ import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import FormEarlyTermination from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
+import earlyTerminationTemplate from "./early_termination_template.docx";
 
 const collectAdditionalDepositionLinesToDownload = (
   earlyTermination: UsNdEarlyTerminationOpportunity,
@@ -76,10 +77,8 @@ function WorkflowsEarlyTerminationForm({
 
     await downloadSingle(
       `${client?.displayName} - Form SFN 9281.docx`,
-      client.stateCode,
-      "early_termination_template.docx",
+      earlyTerminationTemplate,
       contents,
-      client.rootStore.getTokenSilently,
     );
   };
 

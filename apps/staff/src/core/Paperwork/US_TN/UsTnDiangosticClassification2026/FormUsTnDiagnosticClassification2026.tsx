@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnDiagnosticClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
 import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
@@ -34,6 +33,7 @@ import {
   TextboxWithHeader,
   TotalScore,
 } from "../common/Classification2026";
+import classificationNextSteps2026Template from "../common/Classification2026/classification_next_steps_2026.docx";
 import { PostDownloadModal } from "../common/Classification2026/NextStepsModal";
 import {
   getTrusteeTemplateArgs,
@@ -42,6 +42,7 @@ import {
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import CoverSheet from "../CustodyReclassification/CoverSheet";
 import { assessmentQuestions } from "./assessmentQuestions";
+import dcafTemplate from "./dcaf_template.docx";
 
 export const FormUsTnDiagnosticClassification2026 = observer(
   function FormUsTnDiagnosticClassification2026({
@@ -55,27 +56,27 @@ export const FormUsTnDiagnosticClassification2026 = observer(
     const form =
       useOpportunityFormContext() as UsTnDiagnosticClassification2026Form;
     const { derivedData, formTemplateData } = form;
-    const { getTokenSilently } = useRootStore();
     const resident = opportunity.person;
 
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [
-        ["classification_next_steps_2026", "Classification Next Steps"],
-        ["dcaf_template", "Diagnostic Classification Form"],
-      ].map(([filename, outputName]) => {
-        return [
-          `${resident.displayName} - ${outputName}.docx`,
-          resident.stateCode,
-          `${filename}.docx`,
+        [
+          `${resident.displayName} - Classification Next Steps.docx`,
+          classificationNextSteps2026Template,
           formTemplateData,
-        ];
-      });
+        ],
+        [
+          `${resident.displayName} - Diagnostic Classification Form.docx`,
+          dcafTemplate,
+          formTemplateData,
+        ],
+      ];
 
       if (derivedData.totalScore <= 12) {
         fileInputs.push(getTrusteeTemplateArgs(resident, form));
       }
 
-      const documents = await renderMultipleDocx(fileInputs, getTokenSilently);
+      const documents = await renderMultipleDocx(fileInputs);
 
       downloadZipFile(
         `${resident.displayName} - Classification Packet 2026.zip`,

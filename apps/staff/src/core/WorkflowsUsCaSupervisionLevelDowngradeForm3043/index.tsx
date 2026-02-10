@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import { PDFForm } from "pdf-lib";
 import styled from "styled-components";
 
-import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { UsCaSupervisionLevelDowngradeSharedDraftData } from "../../WorkflowsStore/Opportunity/UsCa";
 import { FormContainer } from "../Paperwork/FormContainer";
@@ -31,6 +30,7 @@ import {
 } from "../Paperwork/PDFFormFiller";
 import p1 from "./assets/p1.png";
 import p2 from "./assets/p2.png";
+import cdcr3043Template from "./CDCR3043.pdf";
 
 const FormPreviewPage = styled.img`
   height: auto;
@@ -61,19 +61,15 @@ const Form3043UsCaSupervisionLeveDowngrade = observer(
   }: {
     opportunity: Opportunity;
   }) {
-    const { getTokenSilently } = useRootStore();
-
     const onClickDownload = async () => {
       const formData = opportunity?.form?.formData;
       if (!formData) return;
 
       await fillAndSavePDF(
         `${opportunity.person.displayName} - CDCR 3043.pdf`,
-        "US_CA",
-        "CDCR3043.pdf",
+        cdcr3043Template,
         fillerFunc,
         formData,
-        getTokenSilently,
       );
     };
 

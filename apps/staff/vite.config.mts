@@ -107,4 +107,6 @@ export default defineConfig(() => ({
       },
     },
   },
+
+  assetsInclude: ["**/*.docx", "**/*.pdf"],
 }));

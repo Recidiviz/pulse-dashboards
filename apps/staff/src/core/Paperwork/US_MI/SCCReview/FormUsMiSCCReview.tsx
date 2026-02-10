@@ -36,6 +36,7 @@ import FormInterviews from "./FormInterviews";
 import FormReview from "./FormReview";
 import FormSCCAction from "./FormSCCAction";
 import FormTeamEvaluation from "./FormTeamEvaluation";
+import sccReviewTemplate from "./scc_review_template.docx";
 
 const FormPage = styled.div`
   font-family: "Arial";
@@ -65,10 +66,8 @@ const formDownloader = async (
 
   await downloadSingle(
     `${form.person?.displayName} - Form 283.docx`,
-    form.person.stateCode,
-    "scc_review_template.docx",
+    sccReviewTemplate,
     contents,
-    form.person.rootStore.getTokenSilently,
   );
   return;
 };

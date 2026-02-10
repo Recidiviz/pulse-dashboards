@@ -28,6 +28,7 @@ import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import FormEarlyTerminationDeferred from "../Paperwork/US_ND/EarlyTermination/FormEarlyTerminationDeferred";
+import earlyTerminationDeferredTemplate from "./early_termination_deferred_template.docx";
 
 function WorkflowsEarlyTerminationDeferredForm({
   opportunity: earlyTermination,
@@ -50,10 +51,8 @@ function WorkflowsEarlyTerminationDeferredForm({
 
     await downloadSingle(
       `${client?.displayName} - Form SFN 9278.docx`,
-      client.stateCode,
-      "early_termination_deferred_template.docx",
+      earlyTerminationDeferredTemplate,
       contents,
-      client.rootStore.getTokenSilently,
     );
   };
 

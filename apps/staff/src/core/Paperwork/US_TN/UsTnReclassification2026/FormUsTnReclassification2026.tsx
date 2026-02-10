@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnReclassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
@@ -34,6 +33,7 @@ import {
   TextboxWithHeader,
   TotalScore,
 } from "../common/Classification2026";
+import classificationNextSteps2026Template from "../common/Classification2026/classification_next_steps_2026.docx";
 import { PostDownloadModal } from "../common/Classification2026/NextStepsModal";
 import {
   getTrusteeTemplateArgs,
@@ -41,6 +41,7 @@ import {
 } from "../common/Classification2026/TrusteeChecklist";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import { assessmentQuestions } from "./assessmentQuestions";
+import rcafTemplate from "./rcaf_template.docx";
 
 export const FormUsTnReclassification2026 = observer(
   function FormUsTnReclassification2026({
@@ -53,27 +54,27 @@ export const FormUsTnReclassification2026 = observer(
       useState<boolean>(false);
     const form = useOpportunityFormContext() as UsTnReclassification2026Form;
     const { derivedData, formTemplateData } = form;
-    const { getTokenSilently } = useRootStore();
     const resident = opportunity.person;
 
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [
-        ["classification_next_steps_2026", "Classification Next Steps"],
-        ["rcaf_template", "Reclassification Form"],
-      ].map(([filename, outputName]) => {
-        return [
-          `${resident.displayName} - ${outputName}.docx`,
-          resident.stateCode,
-          `${filename}.docx`,
+        [
+          `${resident.displayName} - Classification Next Steps.docx`,
+          classificationNextSteps2026Template,
           formTemplateData,
-        ];
-      });
+        ],
+        [
+          `${resident.displayName} - Reclassification Form.docx`,
+          rcafTemplate,
+          formTemplateData,
+        ],
+      ];
 
       if (derivedData.totalScore <= 12) {
         fileInputs.push(getTrusteeTemplateArgs(resident, form));
       }
 
-      const documents = await renderMultipleDocx(fileInputs, getTokenSilently);
+      const documents = await renderMultipleDocx(fileInputs);
 
       downloadZipFile(
         `${resident.displayName} - Classification Packet 2026.zip`,

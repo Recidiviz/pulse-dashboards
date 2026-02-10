@@ -26,6 +26,7 @@ import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import p1 from "./assets/p1.png";
 import p2 from "./assets/p2.png";
+import mediumTrusteeFormTemplate from "./medium_trustee_form.docx";
 const previewImages = [p1, p2];
 const FormPreviewPage = styled.img`
   height: auto;
@@ -37,7 +38,7 @@ const formDownloader = async (
 ): Promise<void> => {
   let contents: Partial<UsMeMediumTrusteeFormData> = {};
 
-  const { displayName, stateCode, rootStore } = opportunity.person;
+  const { displayName } = opportunity.person;
 
   runInAction(() => {
     contents = {
@@ -47,10 +48,8 @@ const formDownloader = async (
 
   await downloadSingle(
     `${displayName} - Medium Trustee.docx`,
-    stateCode,
-    "medium_trustee_form.docx",
+    mediumTrusteeFormTemplate,
     contents,
-    rootStore.getTokenSilently,
   );
 };
 

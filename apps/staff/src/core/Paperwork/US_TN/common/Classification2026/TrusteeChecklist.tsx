@@ -29,6 +29,7 @@ import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { PrintablePage } from "../../../styles";
 import { Bold, Header, TrusteeFormPage } from "./styles";
 import { TextboxWithHeader } from "./TextboxWithHeader";
+import trusteeAssessmentTemplate from "./trustee_assessment_template.docx";
 
 type TrusteeForm =
   | UsTnDiagnosticClassification2026Form
@@ -108,8 +109,7 @@ export function getTrusteeTemplateArgs(
 
   return [
     `${resident.displayName} - Trustee Checklist.docx`,
-    resident.stateCode,
-    "trustee_assessment_template.docx",
+    trusteeAssessmentTemplate,
     { ...formTemplateData, ...formContents },
   ];
 }

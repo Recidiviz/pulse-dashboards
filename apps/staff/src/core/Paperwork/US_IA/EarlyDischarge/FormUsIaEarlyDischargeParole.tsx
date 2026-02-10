@@ -28,7 +28,9 @@ import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { downloadZipFile } from "../../utils";
+import cbcDischargeReportTemplate from "./cbc_discharge_report_template.docx";
 import { CbcDischargeReport } from "./CbcDischargeReport";
+import paroleDischargeOrderTemplate from "./parole_discharge_order_template.docx";
 import { ParoleDischarge } from "./ParoleDischargeOrder";
 
 const formDownloader = async (
@@ -50,23 +52,18 @@ const formDownloader = async (
   const fileInputs: FileGeneratorArgs[] = [
     [
       `${client.displayName} - CBC Discharge Report.docx`,
-      client.stateCode,
-      "cbc_discharge_report_template.docx",
+      cbcDischargeReportTemplate,
       contents,
     ],
     [
       `${client.displayName} - Proposed Parole Discharge Order.docx`,
-      client.stateCode,
-      "parole_discharge_order_template.docx",
+      paroleDischargeOrderTemplate,
       contents,
     ],
   ];
 
   downloadZipFile(`${client?.displayName} Parole Discharge Packet.zip`, [
-    ...(await renderMultipleDocx(
-      fileInputs,
-      client.rootStore.getTokenSilently,
-    )),
+    ...(await renderMultipleDocx(fileInputs)),
   ]);
 };
 

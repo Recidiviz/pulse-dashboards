@@ -25,6 +25,7 @@ import {
 import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
+import cr4044Template from "./CR4044_template.docx";
 import FormSuspensionOfDirectSupervision from "./FormUsTnSuspensionOfDirectSupervision";
 
 const formDownloader = async (
@@ -41,10 +42,8 @@ const formDownloader = async (
   const client = opportunity.person;
   await downloadSingle(
     `${client?.displayName} - CR4044.docx`,
-    client.stateCode,
-    "CR4044_template.docx",
+    cr4044Template,
     contents,
-    client.rootStore.getTokenSilently,
   );
 };
 

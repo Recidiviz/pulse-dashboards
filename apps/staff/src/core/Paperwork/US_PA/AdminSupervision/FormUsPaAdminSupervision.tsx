@@ -27,6 +27,7 @@ import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { PrintablePage } from "../../styles";
+import adminSupervisionTemplate from "./admin_supervision_template.docx";
 import {
   FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY,
   strings,
@@ -84,10 +85,8 @@ const formDownloader = async (
 
   await downloadSingle(
     `${client?.displayName} - Form DC-P 402.docx`,
-    client.stateCode,
-    "admin_supervision_template.docx",
+    adminSupervisionTemplate,
     contents,
-    client.rootStore.getTokenSilently,
   );
 };
 

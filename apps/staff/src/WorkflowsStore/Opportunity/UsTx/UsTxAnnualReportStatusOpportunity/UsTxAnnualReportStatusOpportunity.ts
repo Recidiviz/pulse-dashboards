@@ -19,7 +19,7 @@ import { DocumentData } from "@google-cloud/firestore";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
-import { UsTxAnnualReportStatusForm } from "../../Forms/UsTxAnnualReportStatusForm";
+import { UsTxAnnualReportStatusForm } from "../../Forms/UsTxAnnualReportStatusForm/UsTxAnnualReportStatusForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
   UsTxAnnualReportStatusDraftData,

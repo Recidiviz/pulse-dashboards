@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
-import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { UsAzReleaseToTransitionProgramDraftData } from "../../WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTransitionProgramBaseSchema";
 import { FormContainer } from "../Paperwork/FormContainer";
@@ -27,6 +26,7 @@ import {
   PDFFillerFunc,
   SetFunc,
 } from "../Paperwork/PDFFormFiller";
+import adcrr100111Template from "./ADCRR1001-11.pdf";
 import previewImage from "./assets/ADCRR1001-11preview.png";
 
 const FormPreviewPage = styled.img`
@@ -61,19 +61,15 @@ const WorkflowsUsAzReleaseToTransitionProgramForm = observer(
   }: {
     opportunity: Opportunity;
   }) {
-    const { getTokenSilently } = useRootStore();
-
     const onClickDownload = async () => {
       const formData = opportunity?.form?.formData;
       if (!formData) return;
 
       await fillAndSavePDF(
         `${opportunity.person.displayName} - Transition Program Agreement.pdf`,
-        "US_AZ",
-        "ADCRR1001-11.pdf",
+        adcrr100111Template,
         fillerFunc,
         formData,
-        getTokenSilently,
       );
     };
 

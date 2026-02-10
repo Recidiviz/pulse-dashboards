@@ -19,18 +19,20 @@ import { sortBy } from "lodash";
 
 import { usMoFormatSentenceLength } from "~datatypes";
 
-import { renderDocx } from "../../../core/Paperwork/DOCXFormGenerator";
+import { renderDocx } from "../../../../core/Paperwork/DOCXFormGenerator";
 import {
   fillAndSavePDF,
   getPdfTemplate,
   PDFFillerFunc,
-} from "../../../core/Paperwork/PDFFormFiller";
-import { downloadZipFile } from "../../../core/Paperwork/utils";
-import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { formatDate } from "../../../utils/formatStrings";
-import { UsMoWorkReleaseOpportunity } from "../UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseOpportunity";
-import { UsMoWorkReleaseDraftData } from "../UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseReferralRecord";
-import { FormBase, PrefilledDataTransformer } from "./FormBase";
+} from "../../../../core/Paperwork/PDFFormFiller";
+import { downloadZipFile } from "../../../../core/Paperwork/utils";
+import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
+import { formatDate } from "../../../../utils/formatStrings";
+import { UsMoWorkReleaseOpportunity } from "../../UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseOpportunity";
+import { UsMoWorkReleaseDraftData } from "../../UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseReferralRecord";
+import { FormBase, PrefilledDataTransformer } from "../FormBase";
+import workReleaseAddendumTemplate from "./work_release_addendum.docx";
+import workReleaseTemplate from "./work_release_template.pdf";
 
 function formatList<T>(items: T[], formatFn: (item: T) => string): string {
   return items.length > 0 ? items.map(formatFn).join("\n") : "None Noted";
@@ -406,21 +408,14 @@ export class UsMoWorkReleaseForm extends FormBase<
     if (!hasAddendum) {
       fillAndSavePDF(
         `${nameBase}.pdf`,
-        "US_MO",
-        "work_release_template.pdf",
+        workReleaseTemplate,
         fillerFunc,
         this.formData,
-        this.rootStore.getTokenSilently,
       );
       return;
     }
 
-    const pdfTemplate = await getPdfTemplate(
-      "US_MO",
-      "work_release_template.pdf",
-      this.rootStore.getTokenSilently,
-      fillerFunc,
-    );
+    const pdfTemplate = await getPdfTemplate(workReleaseTemplate, fillerFunc);
 
     downloadZipFile(`${nameBase} with Addendum.zip`, [
       {
@@ -429,10 +424,8 @@ export class UsMoWorkReleaseForm extends FormBase<
       },
       await renderDocx(
         `${nameBase} Addendum.docx`,
-        "US_MO",
-        "work_release_addendum.docx",
+        workReleaseAddendumTemplate,
         this.formData,
-        this.rootStore.getTokenSilently,
       ),
     ]);
   }

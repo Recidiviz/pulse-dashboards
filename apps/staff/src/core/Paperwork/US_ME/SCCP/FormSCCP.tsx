@@ -38,6 +38,11 @@ import {
 } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import { downloadZipFile } from "../../utils";
+import sccpAgreementTemplate from "./SCCP_agreement.docx";
+import sccpDisclosureTemplate from "./SCCP_disclosure.docx";
+import sccpExtraditionWaiverTemplate from "./SCCP_extradition_waiver.docx";
+import sccpProgramPlanTemplate from "./SCCP_program_plan.docx";
+import sccpWarrantlessSearchesTemplate from "./SCCP_warrantless_searches.docx";
 
 const FormPreviewPage = styled.img`
   height: auto;
@@ -49,7 +54,7 @@ const previewImages = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10];
 const formDownloader = async (
   opportunity: UsMeSCCPOpportunity,
 ): Promise<void> => {
-  let contents: DocxTemplateFormContents;
+  let contents: DocxTemplateFormContents = {};
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
@@ -60,24 +65,34 @@ const formDownloader = async (
   const resident = opportunity.person;
 
   const fileInputs: FileGeneratorArgs[] = [
-    "SCCP_program_plan",
-    "SCCP_warrantless_searches",
-    "SCCP_extradition_waiver",
-    "SCCP_disclosure",
-    "SCCP_agreement",
-  ].map((filename) => {
-    return [
-      `${resident.displayName} ${filename}.docx`,
-      resident.stateCode,
-      `${filename}.docx`,
+    [
+      `${resident.displayName} SCCP_program_plan.docx`,
+      sccpProgramPlanTemplate,
       contents,
-    ];
-  });
+    ],
+    [
+      `${resident.displayName} SCCP_warrantless_searches.docx`,
+      sccpWarrantlessSearchesTemplate,
+      contents,
+    ],
+    [
+      `${resident.displayName} SCCP_extradition_waiver.docx`,
+      sccpExtraditionWaiverTemplate,
+      contents,
+    ],
+    [
+      `${resident.displayName} SCCP_disclosure.docx`,
+      sccpDisclosureTemplate,
+      contents,
+    ],
+    [
+      `${resident.displayName} SCCP_agreement.docx`,
+      sccpAgreementTemplate,
+      contents,
+    ],
+  ];
 
-  const documents = await renderMultipleDocx(
-    fileInputs,
-    resident.rootStore.getTokenSilently,
-  );
+  const documents = await renderMultipleDocx(fileInputs);
 
   downloadZipFile(`${resident.displayName} SCCP Packet.zip`, documents);
 };

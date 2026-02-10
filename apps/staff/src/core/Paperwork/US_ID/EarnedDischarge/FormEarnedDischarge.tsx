@@ -30,6 +30,7 @@ import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
 import { useResizeForm } from "../../utils";
+import earnedDischargeTemplate from "./earned_discharge_template.docx";
 import { FORM_US_ID_EARLY_DISCHARGE_FORM_FONT_FAMILY } from "./FormComponents";
 import { FormCrimeTable } from "./FormCrimeTable";
 import { FormFeesTable } from "./FormFeesTable";
@@ -75,10 +76,8 @@ const formDownloader = async (
 
   await downloadSingle(
     `${client.displayName} Earned Discharge Application.docx`,
-    client.stateCode,
-    "earned_discharge_template.docx",
+    earnedDischargeTemplate,
     contents,
-    client.rootStore.getTokenSilently,
   );
 };
 

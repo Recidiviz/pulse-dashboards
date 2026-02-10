@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import { PDFDocument, PDFForm } from "pdf-lib";
 import * as React from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../WorkflowsStore/Opportunity/UsCa";
 import { FormContainer } from "../Paperwork/FormContainer";
@@ -30,6 +29,7 @@ import {
   PDFFillerFunc,
   SetFunc,
 } from "../Paperwork/PDFFormFiller";
+import cdcr1657Template from "../Paperwork/US_CA/SupervisionLevelDowngrade/CDCR1657.pdf";
 import FormCDCR1657 from "../Paperwork/US_CA/SupervisionLevelDowngrade/FormCDCR1657";
 
 const fillerFunc: PDFFillerFunc = async (
@@ -162,8 +162,6 @@ const FormUsCaSupervisionLeveDowngrade = observer(
   }: {
     opportunity: Opportunity;
   }) {
-    const { getTokenSilently } = useRootStore();
-
     const formRef = React.useRef<HTMLDivElement>(null);
 
     const onClickDownload = async () => {
@@ -172,11 +170,9 @@ const FormUsCaSupervisionLeveDowngrade = observer(
 
       await fillAndSavePDF(
         `${opportunity.person.displayName} - CDCR 1657.pdf`,
-        "US_CA",
-        "CDCR1657.pdf",
+        cdcr1657Template,
         fillerFunc,
         formData,
-        getTokenSilently,
       );
     };
 

@@ -19,7 +19,7 @@ import { DocumentData } from "@google-cloud/firestore";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
-import { UsTxEarlyReleaseFromSupervisionForm } from "../../Forms/UsTxEarlyReleaseFromSupervisionForm";
+import { UsTxEarlyReleaseFromSupervisionForm } from "../../Forms/UsTxEarlyReleaseFromSupervisionForm/UsTxEarlyReleaseFromSupervisionForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
   UsTxEarlyReleaseFromSupervisionDraftData,

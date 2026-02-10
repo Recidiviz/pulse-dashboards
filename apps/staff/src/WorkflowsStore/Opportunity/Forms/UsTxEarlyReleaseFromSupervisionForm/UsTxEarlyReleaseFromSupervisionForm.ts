@@ -20,11 +20,12 @@ import startOfMonth from "date-fns/startOfMonth";
 import {
   fillAndSavePDF,
   PDFFillerFunc,
-} from "../../../core/Paperwork/PDFFormFiller";
-import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { UsTxEarlyReleaseFromSupervisionOpportunity } from "../UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
-import { UsTxEarlyReleaseFromSupervisionDraftData } from "../UsTx/UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
-import { FormBase } from "./FormBase";
+} from "../../../../core/Paperwork/PDFFormFiller";
+import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
+import { UsTxEarlyReleaseFromSupervisionOpportunity } from "../../UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
+import { UsTxEarlyReleaseFromSupervisionDraftData } from "../../UsTx/UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
+import { FormBase } from "../FormBase";
+import ersTemplate from "./ERS.pdf";
 
 const fillerFunc: PDFFillerFunc<
   UsTxEarlyReleaseFromSupervisionDraftData
@@ -211,11 +212,9 @@ export class UsTxEarlyReleaseFromSupervisionForm extends FormBase<
 
     await fillAndSavePDF(
       `${nameBase}.pdf`,
-      "US_TX",
-      "ERS.pdf",
+      ersTemplate,
       fillerFunc,
       this.formData,
-      this.rootStore.getTokenSilently,
     );
   }
 }
