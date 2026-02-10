@@ -96,6 +96,7 @@ export type FeatureVariant =
   | "usIdCRCFacilitySearch"
   | "usIdDistrictSearch"
   | "usIdTasksV2"
+  | "crcLikeBeds"
 
   //// Maine
   | "usMeCaseNoteSnooze"
@@ -225,6 +226,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   tasksRoutePlanner: {},
   usPaUnclearEligibility: {},
   usIdTasksV2: {},
+  crcLikeBeds: {},
   SARBuilder: {},
   splitParoleProbationOutcomes: {},
   supervisorHomepageReviewCard: {},
@@ -237,6 +239,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
   import.meta.env.VITE_DEPLOY_ENV === "production"
     ? {
         actionStrategies: { activeTenants: ["US_MI"] },
+        crcLikeBeds: {},
         insightsOnboarding: {},
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
         supervisionUnrestrictedSearch: {},
