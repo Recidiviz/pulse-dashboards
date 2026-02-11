@@ -18,8 +18,8 @@
 import { observer } from "mobx-react-lite";
 
 import { usePageTitle } from "~@jii/common-ui";
+import { RequiresPermission } from "~@jii/layout";
 
-import { RequiresPermission } from "../RequiresPermission/RequiresPermission";
 import { ResidentsSearch } from "../ResidentsSearch/ResidentsSearch";
 
 export const PageSearch = observer(function PageSearch() {

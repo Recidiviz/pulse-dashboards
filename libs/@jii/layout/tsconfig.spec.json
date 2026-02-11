@@ -3,25 +3,20 @@
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
     "types": [
+      "vitest/globals",
+      "vitest/importMeta",
+      "vite/client",
       "node",
+      "vitest",
       "@nx/react/typings/cssmodule.d.ts",
-      "@nx/react/typings/image.d.ts",
-      "vite/client"
+      "@nx/react/typings/image.d.ts"
     ]
   },
-  "exclude": [
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "**/*.spec.tsx",
-    "**/*.test.tsx",
-    "**/*.spec.js",
-    "**/*.test.js",
-    "**/*.spec.jsx",
-    "**/*.test.jsx",
+  "include": [
+    "../translation/**/*.d.ts",
+    "../../design-system/src/types/**/*.d.ts",
     "vite.config.ts",
-    "vite.config.mts",
     "vitest.config.ts",
-    "vitest.config.mts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
@@ -30,17 +25,13 @@
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
+    "src/**/testUtils.ts",
+    "src/**/testUtils.tsx",
+    "src/**/__tests__/*.ts",
+    "src/**/__tests__/*.tsx",
+    "src/**/*.d.ts",
     "vite.config.mts",
     "src/setupTests.ts",
     "src/setupTestsGlobal.ts"
-  ],
-  "include": [
-    "../translation/**/*.d.ts",
-    "../../design-system/src/types/**/*.d.ts",
-    "src/**/*.js",
-    "src/**/*.jsx",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "../common-ui/src/@types/scss.d.ts"
   ]
 }

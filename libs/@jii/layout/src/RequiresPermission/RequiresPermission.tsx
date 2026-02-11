@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./constants";
-export * from "./ErrorPage/ErrorPageMainContent";
-export * from "./FullWidthBanner";
-export * from "./InfoPage/InfoPage";
-export * from "./MainContent/MainContentHydrator";
-export * from "./Onboarding/OnboardingTakeover";
-export * from "./Onboarding/useTrackOnboardingSeen";
-export * from "./RequiresPermission/RequiresPermission";
-export * from "./ScreenFillingWrapper/ScreenFillingWrapper";
+import { observer } from "mobx-react-lite";
+import { FC, ReactNode } from "react";
+
+import { Permission } from "~@jii/auth";
+import { useRootStore } from "~@jii/data";
+import { NotAuthorized } from "~auth";
+
+export const RequiresPermission: FC<{
+  children: ReactNode;
+  permissionId: Permission;
+}> = observer(function RequiresPermission({ children, permissionId }) {
+  const { userStore } = useRootStore();
+
+  if (userStore.hasPermission(permissionId)) return children;
+
+  return <NotAuthorized />;
+});

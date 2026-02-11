@@ -20,12 +20,14 @@ import { Route, Routes } from "react-router-dom";
 import { NotFound } from "~@jii/common-ui";
 
 import { PageIntakeAssessment } from "./pages/PageIntakeAssessment";
+import { PageInterview } from "./pages/PageInterview";
 
 export const UsIdRouter = () => {
   return (
     <Routes>
       <Route index element={<PageIntakeAssessment />} />
       <Route path="*" element={<NotFound />} />
+      <Route path="cpa" element={<PageInterview/>}/>
     </Routes>
   );
 };

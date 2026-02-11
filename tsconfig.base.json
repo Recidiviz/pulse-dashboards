@@ -55,6 +55,7 @@
       "~@jii/configs": ["libs/@jii/configs/src/index.ts"],
       "~@jii/data": ["libs/@jii/data/src/index.ts"],
       "~@jii/earned-good-time": ["libs/@jii/earned-good-time/src/index.ts"],
+      "~@jii/interview": ["libs/@jii/interview/src/index.ts"],
       "~@jii/layout": ["libs/@jii/layout/src/index.ts"],
       "~@jii/paths": ["libs/@jii/paths/src/index.ts"],
       "~@jii/prisma": ["libs/@jii/prisma/src/index.ts"],

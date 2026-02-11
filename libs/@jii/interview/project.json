@@ -1,7 +1,7 @@
 {
-  "name": "@jii/layout",
+  "name": "@jii/interview",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/@jii/layout/src",
+  "sourceRoot": "libs/@jii/interview/src",
   "projectType": "library",
   "tags": ["scope:client", "type:feature"],
   "targets": {
@@ -17,7 +17,7 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/@jii/layout"],
+      "outputs": ["{workspaceRoot}/coverage/libs/@jii/interview"],
       "cache": true,
       "options": {
         "command": "vitest",

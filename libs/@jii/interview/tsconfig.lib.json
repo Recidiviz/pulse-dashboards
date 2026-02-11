@@ -36,11 +36,10 @@
   ],
   "include": [
     "../translation/**/*.d.ts",
-    "../../design-system/src/types/**/*.d.ts",
     "src/**/*.js",
     "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "../common-ui/src/@types/scss.d.ts"
-  ]
+    "../common-ui/src/@types/scss.d.ts",
+    ]
 }

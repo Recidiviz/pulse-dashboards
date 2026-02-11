@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,35 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/// <reference types='vitest' />
+import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: "../../../node_modules/.vite/libs/@jii/layout",
+  cacheDir: "../../../node_modules/.vite/libs/@jii/interview",
   plugins: [
-    react({
-      babel: {
-        plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
-      },
-    }),
+    react({ babel: { plugins: ["babel-plugin-macros"] } }),
     nxViteTsPaths(),
+    nxCopyAssetsPlugin(["*.md"]),
   ],
   test: {
+    passWithNoTests: true,
     mockReset: true,
     unstubEnvs: true,
-    unstubGlobals: true,
     globalSetup: ["src/setupTestsGlobal.ts"],
     setupFiles: ["src/setupTests.ts"],
-    name: "@jii/layout",
+    name: "@jii/interview",
+    watch: false,
     globals: true,
     environment: "jsdom",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
     coverage: {
-      reportsDirectory: "../../../coverage/libs/@jii/layout",
+      reportsDirectory: "../../../coverage/libs/@jii/interview",
       provider: "v8" as const,
     },
   },
