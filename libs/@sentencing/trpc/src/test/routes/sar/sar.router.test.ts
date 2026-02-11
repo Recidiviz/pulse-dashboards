@@ -73,8 +73,7 @@ describe("SAR router", () => {
           homePlan: fakeSAR.homePlan,
           housingSummary: fakeSAR.housingSummary,
           drugHistorySummary: fakeSAR.drugHistorySummary,
-          priorTreatmentHistorySummary:
-            fakeSAR.priorTreatmentHistorySummary,
+          priorTreatmentHistorySummary: fakeSAR.priorTreatmentHistorySummary,
           peerAssociatesSummary: fakeSAR.peerAssociatesSummary,
           criminalAttitudesSummary: fakeSAR.criminalAttitudesSummary,
           responsivityAndBarriersSummary:
@@ -100,6 +99,7 @@ describe("SAR router", () => {
             DOCTreatmentHistories:
               fakeSARClient.DOCTreatmentHistories.create.map(
                 ({ programCategory, programName, completedOn }) => ({
+                  id: expect.any(String),
                   programCategory,
                   programName,
                   completedOn,

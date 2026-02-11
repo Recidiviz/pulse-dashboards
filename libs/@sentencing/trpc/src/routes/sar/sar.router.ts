@@ -112,11 +112,11 @@ export const sarRouter = router({
               fatherName: true,
               guardianName: true,
               DOCTreatmentHistories: {
-                omit: {
+                select: {
                   id: true,
-                  createdAt: true,
-                  updatedAt: true,
-                  clientExternalId: true,
+                  programCategory: true,
+                  programName: true,
+                  completedOn: true,
                 },
               },
             },

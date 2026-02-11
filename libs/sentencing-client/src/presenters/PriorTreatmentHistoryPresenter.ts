@@ -22,6 +22,7 @@ import {
   CreatePriorTreatmentHistoryInput,
   DOCTreatmentHistory,
   PriorTreatmentHistory,
+  TreatmentProgramCategory,
   UpdatePriorTreatmentHistoryInput,
 } from "../components/OffenderAssessment/PriorTreatmentHistory/types";
 import { SARDetailsPresenter } from "./SARDetailsPresenter";
@@ -50,6 +51,47 @@ export class PriorTreatmentHistoryPresenter {
 
   get DOCTreatmentHistories(): DOCTreatmentHistory[] {
     return this.SARData?.client?.DOCTreatmentHistories ?? [];
+  }
+
+  /**
+   * Returns DOC treatment histories completed before the SAR due date,
+   * grouped by program category.
+   */
+  get DOCTreatmentHistoriesByCategory(): Record<
+    TreatmentProgramCategory,
+    DOCTreatmentHistory[]
+  > {
+    const dueDate = this.SARData?.dueDate;
+    const allHistories = this.DOCTreatmentHistories;
+
+    // Filter to only those completed before the SAR due date
+    const filtered = allHistories.filter((history) => {
+      if (!history.completedOn) return false;
+      if (!dueDate) return true; // If no due date, include all completed
+      return new Date(history.completedOn) <= new Date(dueDate);
+    });
+
+    // Group by category
+    const grouped: Record<TreatmentProgramCategory, DOCTreatmentHistory[]> = {
+      CommunityTreatment: [],
+      EducationProgram: [],
+      CognitiveProgram: [],
+    };
+
+    filtered.forEach((history) => {
+      if (history.programCategory) {
+        grouped[history.programCategory].push(history);
+      }
+    });
+
+    Object.values(grouped).forEach((histories) => {
+      histories.sort((a, b) => {
+        if (!a.completedOn || !b.completedOn) return 0;
+        return new Date(b.completedOn).getTime() - new Date(a.completedOn).getTime();
+      });
+    });
+
+    return grouped;
   }
 
   async createPriorTreatmentHistory(

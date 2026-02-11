@@ -36,6 +36,62 @@ import * as Styled from "./SARDetails.styles";
 import { SARHeader } from "./SARHeader";
 import { SARSideNavigation } from "./SARSideNavigation";
 
+const SARSectionContent: React.FC<{
+  currentSection: SARSectionName;
+  currentSubsection?: string;
+  presenter: SARDetailsPresenter;
+}> = observer(function SARSectionContent({
+  currentSection,
+  currentSubsection,
+  presenter,
+}) {
+  if (currentSection === SARSection.OFFENDER_ASSESSMENT) {
+    return (
+      <OffenderAssessment
+        presenter={presenter}
+        currentSubsection={currentSubsection}
+      />
+    );
+  }
+  if (currentSection === SARSection.PRIOR_TREATMENT_HISTORY) {
+    return (
+      <PriorTreatmentHistorySection
+        presenter={presenter.priorTreatmentHistory}
+      />
+    );
+  }
+
+  return (
+    <Styled.MainContent>
+      {currentSection === SARSection.CASE_INFORMATION && (
+        <CaseInformation presenter={presenter} />
+      )}
+      {currentSection === SARSection.KEY_CONSIDERATIONS && (
+        <KeyConsiderations presenter={presenter} />
+      )}
+      {currentSection === SARSection.DEFENDANTS_VERSION && (
+        <SkippableTextSection
+          presenter={presenter}
+          title="Enter Defendant's Version"
+          fieldName="defendantStatement"
+          placeholder="Please add the details of the Defendant's version"
+        />
+      )}
+      {currentSection === SARSection.VICTIM_IMPACT && (
+        <SkippableTextSection
+          presenter={presenter}
+          title="Enter Victim Impact Statement"
+          fieldName="victimImpactStatement"
+          placeholder="Please add the Victim Impact here"
+        />
+      )}
+      {currentSection === SARSection.RECOMMENDATION && (
+        <Recommendation presenter={presenter} />
+      )}
+    </Styled.MainContent>
+  );
+});
+
 const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
   presenter,
 }: {
@@ -82,59 +138,11 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
           presenter={presenter}
         />
 
-        {currentSection === SARSection.OFFENDER_ASSESSMENT ? (
-          <OffenderAssessment
-            presenter={presenter}
-            currentSubsection={currentSubsection}
-          />
-        ) : (
-          <Styled.MainContent>
-            {(() => {
-              if (currentSection === SARSection.CASE_INFORMATION) {
-                return <CaseInformation presenter={presenter} />;
-              }
-              if (currentSection === SARSection.KEY_CONSIDERATIONS) {
-                return <KeyConsiderations presenter={presenter} />;
-              }
-              if (currentSection === SARSection.DEFENDANTS_VERSION) {
-                return (
-                  <SkippableTextSection
-                    presenter={presenter}
-                    title="Enter Defendant's Version"
-                    fieldName="defendantStatement"
-                    placeholder="Please add the details of the Defendant's version"
-                  />
-                );
-              }
-              if (currentSection === SARSection.VICTIM_IMPACT) {
-                return (
-                  <SkippableTextSection
-                    presenter={presenter}
-                    title="Enter Victim Impact Statement"
-                    fieldName="victimImpactStatement"
-                    placeholder="Please add the Victim Impact here"
-                  />
-                );
-              }
-              if (currentSection === SARSection.PRIOR_TREATMENT_HISTORY) {
-                return (
-                  <PriorTreatmentHistorySection
-                    presenter={presenter.priorTreatmentHistory}
-                  />
-                );
-              }
-              if (currentSection === SARSection.RECOMMENDATION) {
-                return <Recommendation presenter={presenter} />;
-              }
-              return (
-                <>
-                  <h2>{currentSection}</h2>
-                  <p>Content for {currentSection} goes here...</p>
-                </>
-              );
-            })()}
-          </Styled.MainContent>
-        )}
+        <SARSectionContent
+          currentSection={currentSection}
+          currentSubsection={currentSubsection}
+          presenter={presenter}
+        />
       </Styled.ContentLayout>
     </Styled.PageContainer>
   );

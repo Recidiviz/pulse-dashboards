@@ -51,15 +51,6 @@ export const SectionContainer = styled.div`
   gap: 1.5rem;
 `;
 
-export const PriorTreatmentSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  overflow: hidden;
-`;
-
 export const MainContent = styled.div`
   display: flex;
   flex-direction: column;
