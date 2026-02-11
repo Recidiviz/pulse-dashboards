@@ -246,19 +246,18 @@ export class FormBase<
     const { person } = this.opportunity;
 
     const update = {
-      referralForm: {
-        updated: {
-          by: this.currentUserEmail,
-          date: serverTimestamp(),
-        },
-        data: { [name]: value },
+      opportunity: this.type,
+      updated: {
+        by: this.currentUserEmail,
+        date: serverTimestamp(),
       },
+      data: { [name]: value },
     };
     const isFirstEdit = !this.formLastUpdated;
 
     await this.rootStore.firestoreStore.updateForm(
       person.recordId,
-      update.referralForm,
+      update,
       this.formId,
     );
 
