@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,26 +22,21 @@ import {
   usTnReclassification2026Schema,
 } from "~datatypes";
 
-import { Client } from "../../../Client";
+import { Resident } from "../../../Resident";
 import { UsTnReclassification2026Form } from "../../Forms/UsTnReclassification2026Form";
-import { OpportunityBase } from "../../OpportunityBase";
+import { UsTn2026ClassificationBase } from "./UsTn2026ClassificationBase";
 
-export class UsTnAnnualReclassification2026Opportunity extends OpportunityBase<
-  Client,
+export class UsTnAnnualReclassification2026Opportunity extends UsTn2026ClassificationBase<
   UsTnReclassification2026ReferralRecord["output"]
 > {
-  constructor(client: Client, record: DocumentData) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
-      client,
+      resident,
       "usTnAnnualReclassification2026Policy",
-      client.rootStore,
+      resident.rootStore,
       usTnReclassification2026Schema.parse(record),
     );
 
-    this.form = new UsTnReclassification2026Form(this, client.rootStore);
-  }
-
-  get isCompleted() {
-    return false;
+    this.form = new UsTnReclassification2026Form(this, resident.rootStore);
   }
 }

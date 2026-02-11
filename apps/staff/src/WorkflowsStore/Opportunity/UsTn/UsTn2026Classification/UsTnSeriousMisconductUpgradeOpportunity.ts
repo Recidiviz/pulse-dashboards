@@ -24,16 +24,15 @@ import {
 
 import { Resident } from "../../../Resident";
 import { UsTnReclassification2026Form } from "../../Forms/UsTnReclassification2026Form";
-import { OpportunityBase } from "../../OpportunityBase";
+import { UsTn2026ClassificationBase } from "./UsTn2026ClassificationBase";
 
-export class UsTnTrusteeTransferOpportunity extends OpportunityBase<
-  Resident,
+export class UsTnSeriousMisconductUpgradeOpportunity extends UsTn2026ClassificationBase<
   UsTnReclassification2026ReferralRecord["output"]
 > {
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
-      "usTnTrusteeTransfer",
+      "usTnSeriousMisconductUpgrade",
       resident.rootStore,
       usTnReclassification2026Schema.parse(record),
     );
@@ -47,9 +46,5 @@ export class UsTnTrusteeTransferOpportunity extends OpportunityBase<
 
   get isIneligible() {
     return true;
-  }
-
-  get isCompleted() {
-    return false;
   }
 }

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,33 +18,33 @@
 import { DocumentData } from "firebase/firestore";
 
 import {
-  UsTnInitialClassification2026ReferralRecord,
-  usTnInitialClassification2026Schema,
+  UsTnReclassification2026ReferralRecord,
+  usTnReclassification2026Schema,
 } from "~datatypes";
 
 import { Resident } from "../../../Resident";
-import { UsTnDiagnosticClassification2026Form } from "../../Forms/UsTnDiagnosticClassification2026Form";
-import { OpportunityBase } from "../../OpportunityBase";
+import { UsTnReclassification2026Form } from "../../Forms/UsTnReclassification2026Form";
+import { UsTn2026ClassificationBase } from "./UsTn2026ClassificationBase";
 
-export class UsTnInitialClassification2026Opportunity extends OpportunityBase<
-  Resident,
-  UsTnInitialClassification2026ReferralRecord["output"]
+export class UsTnTrusteeTransferOpportunity extends UsTn2026ClassificationBase<
+  UsTnReclassification2026ReferralRecord["output"]
 > {
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
-      "usTnInitialClassification2026Policy",
+      "usTnTrusteeTransfer",
       resident.rootStore,
-      usTnInitialClassification2026Schema.parse(record),
+      usTnReclassification2026Schema.parse(record),
     );
 
-    this.form = new UsTnDiagnosticClassification2026Form(
-      this,
-      resident.rootStore,
-    );
+    this.form = new UsTnReclassification2026Form(this, resident.rootStore);
   }
 
-  get isCompleted() {
+  get isEligible() {
     return false;
+  }
+
+  get isIneligible() {
+    return true;
   }
 }

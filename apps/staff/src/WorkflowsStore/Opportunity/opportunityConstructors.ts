@@ -91,10 +91,10 @@ import {
   UsTnAnnualReclassification2026Opportunity,
   UsTnAnnualReclassificationReviewOpportunity,
   UsTnCompliantReporting2025PolicyOpportunity,
+  UsTnCustodyLevelDowngrade2026Opportunity,
+  UsTnCustodyLevelUpgrade2026Opportunity,
   UsTnInitialClassification2026Opportunity,
 } from "./UsTn";
-import { UsTnCustodyLevelDowngrade2026Opportunity } from "./UsTn/UsTnCustodyLevelDowngrade2026Opportunity/UsTnCustodyLevelDowngrade2026Opportunity";
-import { UsTnCustodyLevelUpgrade2026Opportunity } from "./UsTn/UsTnCustodyLevelUpgrade2026Opportunity/UsTnCustodyLevelUpgrade2026Opportunity";
 import { UsTxAnnualReportStatusOpportunity } from "./UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
 import { UsTxEarlyReleaseFromSupervisionOpportunity } from "./UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
 import { UsUtEarlyTerminationOpportunity } from "./UsUt";
