@@ -119,10 +119,10 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({
               !recordingSession ||
               ["created", "recording", "paused"].includes(recordingSession.status)
           ) && (
-              <div className="w-full h-full flex">
+              <div className="w-full h-full flex justify-end">
                   <PrimaryButton
                       buttonText={isFeatureEnabled("UPLOAD_AUDIO") ? "Record/Upload audio" : "Record now"}
-                      className="!px-2 !md:px-4 !w-[85px] text-white text-xs md:text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full max-w-sm md:!w-auto mx-auto"
+                      className="!px-2 md:!px-4 text-white text-xs md:text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full md:w-auto whitespace-nowrap"
                       onClick={
                           recordingSession
                               ? () => handleSessionClick(recordingSession.id)

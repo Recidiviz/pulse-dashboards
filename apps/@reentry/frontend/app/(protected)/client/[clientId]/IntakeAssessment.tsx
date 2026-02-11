@@ -20,8 +20,8 @@ import React, { useMemo, useState } from "react";
 import AudioRecordings from "~@reentry/frontend/(protected)/client/[clientId]/AudioRecordings";
 import IntakeArtifacts from "~@reentry/frontend/(protected)/client/[clientId]/IntakeArtifacts";
 import { $api } from "~@reentry/frontend/api";
-import { PrimaryButton } from "~@reentry/frontend/components/buttons/PrimaryButton";
 import {RemoveAssessmentIcon} from "~@reentry/frontend/components/icons/CloseIcon";
+import IntakeSwitch from "~@reentry/frontend/components/intake/IntakeSwitchButton";
 import RemoveAssessmentModal from "~@reentry/frontend/components/intake/RemoveAssessmentModal";
 import RetryProcessing from "~@reentry/frontend/components/intake/RetryProcessing";
 import StatusBadge from "~@reentry/frontend/components/intake/StatusBadge";
@@ -197,33 +197,37 @@ export default function IntakeAssessment({
                 )}
           {intakeInfo && (
             <div className="flex flex-col justify-center gap-2">
-              <div className="flex items-center gap-2 md:gap-4   w-full">
-                <span className="font-medium text-[24px] leading-[1] text-black">
-                    {`${intakeInfo?.assessment_config_display_name}`}
-                </span>
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-4 w-full md:items-center">
+                <div className="flex items-center gap-2 md:gap-4">
+                  <span className="font-medium text-[24px] leading-[1] text-black">
+                      {`${intakeInfo?.assessment_config_display_name}`}
+                  </span>
                   <StatusBadge
                     intakeFrontendStatus={intakeStatus?.frontend_status}
                   />
                 </div>
-                <div className={"flex ml-auto  gap-2 md:gap-10"}>
-                    <PrimaryButton
-                        buttonText={intakeInfo.outputs_enabled ? "Disable Outputs" : "Enable Outputs"}
-                        onClick={handleToggleOutputs}
-                        disabled={isTogglingOutputs}
-                        className="!px-2 md:!px-4 text-white text-xs md:text-sm font-medium rounded-md !bg-[#006B66] hover:!bg-[#005c59] !border-none normal-case whitespace-nowrap shrink-0"
-                        ignoreCapabilities={true}
-                    />
-                    {assessmentStatus != "completed" && intakeInfo.intake_type === "transcription" && (
-                        <AudioRecordings
-                          recordingSession={recordingSession || undefined}
-                          recordingSessionError={!!recordingSessionError}
-                          recordingSessionLoading={recordingSessionLoading}
-                          recordingSessionRefetch={recordingSessionRefetch}
-                          intakeId={intakeInfo.id}
-                          clientPseudoId={clientData?.pseudonymized_client_id}
+                <div className="flex flex-col md:flex-row gap-2 md:gap-4 md:ml-auto md:items-center w-full md:w-auto">
+                    <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-xs md:text-sm font-medium text-[#012322] whitespace-nowrap">
+                            {intakeInfo.outputs_enabled ? "Outputs Enabled" : "Outputs Disabled"}
+                        </span>
+                        <IntakeSwitch
+                            checked={intakeInfo.outputs_enabled ?? true}
+                            onChange={handleToggleOutputs}
+                            disabled={isTogglingOutputs}
                         />
-
+                    </div>
+                    {assessmentStatus != "completed" && intakeInfo.intake_type === "transcription" && (
+                        <div className="w-full md:w-auto shrink-0">
+                            <AudioRecordings
+                              recordingSession={recordingSession || undefined}
+                              recordingSessionError={!!recordingSessionError}
+                              recordingSessionLoading={recordingSessionLoading}
+                              recordingSessionRefetch={recordingSessionRefetch}
+                              intakeId={intakeInfo.id}
+                              clientPseudoId={clientData?.pseudonymized_client_id}
+                            />
+                        </div>
                     )}
                     {(assessmentStatus === "created" && !(intakeInfo?.intake_type === "transcription" && (recordingSession?.chunk_count ?? 0) > 0)) && (
                         <>
