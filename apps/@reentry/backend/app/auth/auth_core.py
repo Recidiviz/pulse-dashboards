@@ -280,7 +280,7 @@ async def validate_token(token: str, auth0_config: Auth0Config):
         return payload
 
     except jwt.ExpiredSignatureError as e:
-        logger.exception(f"Expired token: {e}.")
+        logger.warning(f"Expired token: {e}.")
 
         # Get token info for logging.
         try:
@@ -294,7 +294,7 @@ async def validate_token(token: str, auth0_config: Auth0Config):
                 token_expiration_datetime_utc = datetime.fromtimestamp(
                     unverified_payload["exp"], tz=timezone.utc
                 )
-                logger.error(
+                logger.warning(
                     f"Token expired. current_time_utc={current_datetime_utc}, "
                     f"expiration_time_utc={token_expiration_datetime_utc}, "
                     f"expired_duration_seconds={expired_duration_seconds}"

@@ -217,10 +217,7 @@ async def test_validate_token_key_not_found(
 
 @pytest.mark.asyncio
 @patch("app.auth.auth_core.get_jwks_cache")
-@patch("app.auth.auth_core.logger")
-async def test_validate_token_expired(
-    mock_logger, mock_get_jwks_cache, mock_expired_token
-):
+async def test_validate_token_expired(mock_get_jwks_cache, mock_expired_token):
     # Create auth0_config that matches the test token algorithm (HS256), simplifies the test.
     auth0_config = Auth0Config(
         algorithms=["HS256"],
