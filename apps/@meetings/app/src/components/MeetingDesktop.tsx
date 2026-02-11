@@ -200,6 +200,7 @@ const MeetingDesktop = ({
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 isTranscriptionUnavailable={!meetingDetails?.transcription}
+                showTranscription={showTranscription}
               />
             </View>
             <View className="flex-row gap-3">

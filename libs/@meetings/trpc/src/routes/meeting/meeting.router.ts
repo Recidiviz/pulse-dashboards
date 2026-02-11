@@ -30,6 +30,7 @@ import {
   WEB_AUDIO_FILE_EXTENSION,
   WEB_GCS_CONTENT_TYPE,
 } from "~@meetings/tasks";
+import env from "~@meetings/trpc/env";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   discardMeetingInputSchema,
@@ -45,7 +46,7 @@ export const meetingRouter = router({
   getDetails: auth0Procedure
     .input(getDetailInputSchema)
     .output(getDetailsOutputSchema)
-    .query(async ({ input: { meetingId }, ctx: { prisma } }) => {
+    .query(async ({ input: { meetingId }, ctx: { prisma, stateCode } }) => {
       try {
         const meeting = await prisma.meeting.findUniqueOrThrow({
           where: { id: meetingId },
@@ -98,6 +99,13 @@ export const meetingRouter = router({
           }
         };
 
+        const transcriptionDisabledStatesList =
+          env.TRANSCRIPTION_DISABLED_STATES
+            ? env.TRANSCRIPTION_DISABLED_STATES.split(",").map((s) => s.trim())
+            : [];
+        const includeTranscription =
+          !transcriptionDisabledStatesList.includes(stateCode);
+
         return {
           ..._.omit(meeting, ["transcriptions"]),
           actionItems:
@@ -110,7 +118,9 @@ export const meetingRouter = router({
               meeting.meetingSummary,
               MinuteSectionSchema.array(),
             ) || [],
-          transcription: meeting.transcriptions[0] || null,
+          transcription: includeTranscription
+            ? meeting.transcriptions[0] || null
+            : undefined,
         };
       } catch (e) {
         if (

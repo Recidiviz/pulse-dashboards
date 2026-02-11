@@ -18,10 +18,6 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
-import {
-  TRANSCRIPTION_ENABLED_STATES,
-  useStateSelection,
-} from "../context/StateContext";
 
 export enum Tab {
   Notes = "Notes",
@@ -32,16 +28,15 @@ type Props = {
   activeTab: Tab;
   setActiveTab: (tab: Tab) => void;
   isTranscriptionUnavailable?: boolean;
+  showTranscription: boolean;
 };
 
 const MeetingTabs = ({
   activeTab,
   setActiveTab,
   isTranscriptionUnavailable,
+  showTranscription,
 }: Props) => {
-  const { selectedStateCode } = useStateSelection();
-  const showTranscription =
-    TRANSCRIPTION_ENABLED_STATES.includes(selectedStateCode);
   const visibleTabs = showTranscription
     ? Object.values(Tab)
     : Object.values(Tab).filter((tab) => tab !== Tab.Transcription);

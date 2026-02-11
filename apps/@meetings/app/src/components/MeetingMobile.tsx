@@ -219,6 +219,7 @@ const MeetingMobile = ({
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               isTranscriptionUnavailable={!meetingDetails?.transcription}
+              showTranscription={showTranscription}
             />
           </Animated.View>
 
@@ -310,6 +311,7 @@ const MeetingMobile = ({
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             isTranscriptionUnavailable={!meetingDetails?.transcription}
+            showTranscription={showTranscription}
           />
         </Animated.View>
 

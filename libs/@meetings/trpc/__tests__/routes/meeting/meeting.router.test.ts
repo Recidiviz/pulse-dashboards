@@ -18,6 +18,7 @@
 import { describe, expect, test, vi } from "vitest";
 
 import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
+import env from "~@meetings/trpc/env";
 import {
   mockCloudTasksClient,
   testkit,
@@ -45,42 +46,76 @@ describe("meeting router", () => {
     });
 
     test("Should return meeting details if it exists", async () => {
-      const result = await testTRPCClient.v1.meeting.getDetails.query({
-        meetingId: fakeActiveMeeting.id,
-      });
+      // Set env so US_NE is not in the disabled list (transcription included)
+      const originalDisabledStates = env.TRANSCRIPTION_DISABLED_STATES;
+      env.TRANSCRIPTION_DISABLED_STATES = "US_XX";
 
-      expect(result).toEqual({
-        id: fakeActiveMeeting.id,
-        startTime: fakeActiveMeeting.startTime,
-        endTime: null,
-        postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
-        userNotepadNotes: "Sample meeting notes.",
-        caseNote: fakeActiveMeeting.caseNote,
-        actionItems: [],
-        criticalUpdates: [],
-        meetingSummary: [],
-        transcription: {
-          confidence: 0.95,
-          summary: "This is a sample summary of the meeting.",
-          // These should be ordered by startTimeMs
-          utterances: [
-            {
-              confidence: 0.98,
-              endTimeMs: 3000,
-              speaker: "Speaker A",
-              startTimeMs: 0,
-              text: "Hello, this is a sample utterance.",
-            },
-            {
-              confidence: 0.98,
-              endTimeMs: 6000,
-              speaker: "Speaker B",
-              startTimeMs: 3000,
-              text: "Hello, this is second a sample utterance.",
-            },
-          ],
-        },
-      });
+      try {
+        const result = await testTRPCClient.v1.meeting.getDetails.query({
+          meetingId: fakeActiveMeeting.id,
+        });
+
+        expect(result).toEqual({
+          id: fakeActiveMeeting.id,
+          startTime: fakeActiveMeeting.startTime,
+          endTime: null,
+          postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
+          userNotepadNotes: "Sample meeting notes.",
+          caseNote: fakeActiveMeeting.caseNote,
+          actionItems: [],
+          criticalUpdates: [],
+          meetingSummary: [],
+          transcription: {
+            confidence: 0.95,
+            summary: "This is a sample summary of the meeting.",
+            // These should be ordered by startTimeMs
+            utterances: [
+              {
+                confidence: 0.98,
+                endTimeMs: 3000,
+                speaker: "Speaker A",
+                startTimeMs: 0,
+                text: "Hello, this is a sample utterance.",
+              },
+              {
+                confidence: 0.98,
+                endTimeMs: 6000,
+                speaker: "Speaker B",
+                startTimeMs: 3000,
+                text: "Hello, this is second a sample utterance.",
+              },
+            ],
+          },
+        });
+      } finally {
+        env.TRANSCRIPTION_DISABLED_STATES = originalDisabledStates;
+      }
+    });
+
+    test("Should return meeting details if it exists without transcription", async () => {
+      // Set env so US_NE is in the disabled list (transcription excluded)
+      const originalDisabledStates = env.TRANSCRIPTION_DISABLED_STATES;
+      env.TRANSCRIPTION_DISABLED_STATES = "US_NE";
+
+      try {
+        const result = await testTRPCClient.v1.meeting.getDetails.query({
+          meetingId: fakeActiveMeeting.id,
+        });
+
+        expect(result).toEqual({
+          id: fakeActiveMeeting.id,
+          startTime: fakeActiveMeeting.startTime,
+          endTime: null,
+          postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
+          userNotepadNotes: "Sample meeting notes.",
+          caseNote: fakeActiveMeeting.caseNote,
+          actionItems: [],
+          criticalUpdates: [],
+          meetingSummary: [],
+        });
+      } finally {
+        env.TRANSCRIPTION_DISABLED_STATES = originalDisabledStates;
+      }
     });
 
     test("Should parse JSON-encoded actionItems and criticalUpdates from database", async () => {
