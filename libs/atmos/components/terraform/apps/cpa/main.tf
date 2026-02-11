@@ -116,3 +116,36 @@ module "gcs_bucket" {
     (local.archive_bucket_name) = "serviceAccount:cloud-build-ci-cd@${var.data_platform_project_id}.iam.gserviceaccount.com"
   }
 }
+
+
+# Configure a Google Workflow that is executed when a pubsub notification is pushed to the cpa_export_success topic
+module "handle_cpa_gcs_upload" {
+  source = "../../vendor/google-workflows-workflow"
+
+  # Don't create a workflow for demo
+  count = local.can_configure_import ? 1 : 0
+
+  project_id            = var.project_id
+  region                = var.location
+  service_account_email = google_service_account.default.email
+  workflow_name         = "handle-cpa-export-wf"
+  workflow_trigger = {
+    event_arc = {
+      name                  = "handle-cpa-export-wf"
+      service_account_email = google_service_account.default.email
+      pubsub_topic_id       = google_pubsub_topic.cpa_export_success_topic[0].id
+      matching_criteria = [
+        {
+          attribute = "type"
+          value     = "google.cloud.pubsub.topic.v1.messagePublished"
+        }
+      ]
+    }
+  }
+  workflow_source = file("${path.module}/workflows/handle-cpa-gcs-upload.workflows.yaml")
+  env_vars = {
+    PROJECT_ID        = var.project_id
+    ARCHIVE_BUCKET_ID = module.gcs_bucket[0].names[local.archive_bucket_name]
+    ETL_BUCKET_ID     = module.gcs_bucket[0].names[local.etl_bucket_name]
+  }
+}
