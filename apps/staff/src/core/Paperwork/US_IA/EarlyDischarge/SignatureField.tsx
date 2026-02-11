@@ -65,16 +65,15 @@ const SignatureField = observer(function SignatureField({
   additionalFieldsToSave?: (keyof UsIaEarlyDischargeDraftData)[];
 }) {
   const { userStore, analyticsStore } = useRootStore();
+  const userName =
+    userStore.userFullNameFromAdminPanel ?? userStore.userFullName;
 
   const isSigned = !!form.formData[signatureField];
 
   const onClickButton = () => {
     runInAction(() => {
       if (!isSigned) {
-        form.updateDraftData(
-          signatureField,
-          userStore.userFullNameFromAdminPanel ?? "",
-        );
+        form.updateDraftData(signatureField, userName ?? "");
         // Save whatever is in shown in the form into the
         // draft data so that it will be available
         // when the supervisor goes to review it.

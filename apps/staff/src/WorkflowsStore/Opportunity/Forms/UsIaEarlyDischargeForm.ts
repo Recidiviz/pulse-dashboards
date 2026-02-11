@@ -132,8 +132,9 @@ export class UsIaEarlyDischargeForm extends FormBase<
 
     const staffTitle = staff?.staffTitle || "";
     const workUnit = staff?.workUnit || "";
-    const officerFullName =
-      (staff && userStore.userFullNameFromAdminPanel) ?? "";
+    const userName =
+      userStore.userFullNameFromAdminPanel ?? userStore.userFullName;
+    const officerFullName = (staff && userName) ?? "";
 
     const todaysDate = formatWorkflowsDate(new Date());
 
