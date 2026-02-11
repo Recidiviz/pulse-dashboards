@@ -92,6 +92,9 @@ model Staff {
   // SAR-specific fields for Missouri
   officeAddress     String?
   officePhoneNumber String?
+
+  district      District? @relation(fields: [districtId], references: [id])
+  districtId    String?
 }
 
 model Client {
@@ -102,7 +105,7 @@ model Client {
 
   gender          Gender
   birthDate       DateTime
-  raceOrEthnicity String?
+  raceOrEthnicity String[] @default([]) // Array of one or more races/ethnicity of the client
   cases           Case[]
   sentencingAssessmentReports SentencingAssessmentReport[]
 
@@ -263,12 +266,6 @@ enum ProtectiveFactor {
 }
 
 // SAR-specific enums
-enum Division {
-  Criminal
-  Juvenile
-  Family
-}
-
 enum FelonyClass {
   ClassA
   ClassB
@@ -569,6 +566,7 @@ model District {
   counties  County[]
   Case      Case[]
   Client    Client[]
+  Staff     Staff[]
 }
 
 // SAR-specific models for Missouri
@@ -589,7 +587,7 @@ model SentencingAssessmentReport {
   // Basic case information
   requestingJudgeName String?   // Judge who requested the report
   dateRequested       DateTime? // When the report was requested
-  division            Division?
+  division            String?
   address             String?
   defendantDeclinedToParticipate Boolean @default(false)
 
@@ -664,9 +662,9 @@ model Charge {
   felonyClass FelonyClass?
   causeNum     String?
   moCode      String?
-  judgeName   String?
+  judgeNames  String[] @default([])
   county      String?
-  division    Division?
+  division    String?
 
   // Attorneys
   prosecutingAttorney String?

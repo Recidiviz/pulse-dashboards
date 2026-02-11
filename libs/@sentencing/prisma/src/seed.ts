@@ -28,7 +28,6 @@ import {
   AssessmentType,
   CaseStatus,
   DiagnosedSubstanceUseDisorderCriterion,
-  Division,
   FelonyClass,
   Gender,
   Plea,
@@ -73,6 +72,8 @@ async function addLocalUserAsStaff(
       email: email,
       stateCode: StateCode.US_ID,
       hasLoggedIn: true,
+      officeAddress: faker.location.streetAddress(),
+      officePhoneNumber: faker.phone.number(),
     },
   });
 }
@@ -240,13 +241,9 @@ async function addSARClientsAndReports(
         stateCode: StateCode.US_MO,
         gender,
         birthDate: faker.date.birthdate(),
-        raceOrEthnicity: faker.helpers.arrayElement([
-          "White",
-          "Black",
-          "Hispanic",
-          "Asian",
-          "Native American",
-        ]),
+        raceOrEthnicity: faker.helpers
+          .shuffle(["WHITE", "BLACK", "ASIAN", "AMERICAN_INDIAN_ALASKAN_NATIVE"])
+          .slice(0, faker.number.int({ min: 1, max: 3 })),
         DOCTreatmentHistories: {
           create: DOCHistories,
         },
@@ -275,7 +272,7 @@ async function addSARClientsAndReports(
         requestingJudgeName: faker.person.fullName(),
         dateRequested: faker.date.recent(),
         dueDate: faker.date.future(),
-        division: faker.helpers.enumValue(Division),
+        division: faker.string.numeric(4),
         address: faker.location.streetAddress(),
         // ORAS Assessment data
         assessmentScore: faker.number.int({ min: 0, max: 9 }),
@@ -315,8 +312,11 @@ async function addSARClientsAndReports(
           // Only imported fields - the rest will be filled in by users
           causeNum: `${faker.string.numeric(2)}-CR-${faker.string.numeric(5)}`,
           felonyClass: faker.helpers.enumValue(FelonyClass),
-          judgeName: faker.person.fullName(),
-          division: faker.helpers.enumValue(Division),
+          judgeNames: Array.from(
+            { length: faker.number.int({ min: 1, max: 3 }) },
+            () => faker.person.fullName(),
+          ),
+          division: faker.string.numeric(4),
           county: faker.location.county(),
           moCode: `${faker.string.numeric(3)}${faker.string.numeric(3)}`,
         },
@@ -554,6 +554,13 @@ async function main() {
   console.log("Adding Counties...");
   const districts = await addDistricts();
   const countyByName = await addCounties(districts);
+
+  // Assign a district to the staff member
+  const staffDistrict = faker.helpers.arrayElement(districts);
+  await prisma.staff.update({
+    where: { externalId: staff.externalId },
+    data: { districtId: staffDistrict.id },
+  });
 
   console.log("Adding Offenses...");
   const offenses = await addOffenses();

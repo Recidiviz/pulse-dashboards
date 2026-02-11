@@ -16,11 +16,9 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
-import { GenderToDisplayName } from "../CaseDetails/constants";
 import * as Styled from "./CaseInformation.styles";
 import { EditableChargeField } from "./constants";
 import { OffenseCard } from "./OffenseCard";
@@ -31,8 +29,7 @@ interface CaseInformationProps {
 
 export const CaseInformation: React.FC<CaseInformationProps> = observer(
   function CaseInformation({ presenter }) {
-    const { clientAttributes, charges, defendantDeclinedToParticipate } =
-      presenter;
+    const { charges, defendantDeclinedToParticipate } = presenter;
 
     const handleChargeUpdate = async (
       chargeId: string,
@@ -46,43 +43,69 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
       presenter.updateDefendantDeclined(!defendantDeclinedToParticipate);
     };
 
-    // Format birth date for display (using PSI pattern)
-    const formattedBirthDate = clientAttributes?.birthDate
-      ? moment(clientAttributes.birthDate).utc().format("MM/DD/YYYY")
-      : undefined;
-
-    // Format gender for display
-    const formattedGender = clientAttributes?.gender
-      ? GenderToDisplayName[clientAttributes.gender]
-      : undefined;
-
     return (
       <Styled.Container>
         {/* Defendant declined checkbox */}
-        <Styled.CheckboxContainer>
-          <Styled.CheckboxLabel>
-            Defendant declined to participate in the SAR process
-          </Styled.CheckboxLabel>
-          <Styled.Checkbox
-            type="checkbox"
-            checked={defendantDeclinedToParticipate}
-            onChange={handleDeclinedToggle}
-          />
-        </Styled.CheckboxContainer>
+        <Styled.StaffInformationContainer>
+          <Styled.CheckboxContainer>
+            <Styled.Checkbox
+              type="checkbox"
+              checked={defendantDeclinedToParticipate}
+              onChange={handleDeclinedToggle}
+            />
+            <Styled.CheckboxLabel>
+              Defendant declined to participate in the SAR process
+            </Styled.CheckboxLabel>
+          </Styled.CheckboxContainer>
+
+          <Styled.JudgeInformationContainer>
+            <Styled.StaffInfoColumn>
+              {presenter.SARData?.requestingJudgeName
+                ? `To Honorable ${presenter.SARData.requestingJudgeName}`
+                : null}
+            </Styled.StaffInfoColumn>
+            <Styled.SARDivisionName>
+              {presenter.SARData?.division
+                ? `Division ${presenter.SARData.division}`
+                : null}
+            </Styled.SARDivisionName>
+          </Styled.JudgeInformationContainer>
+
+          <Styled.OfficerInformationContainer>
+            <Styled.StaffInfoColumn>
+              <Styled.SubsectionTitle>Requested Of</Styled.SubsectionTitle>
+            </Styled.StaffInfoColumn>
+            <Styled.StaffInfoColumn>
+              Date Requested: {presenter.formattedDateRequested ?? "—"}
+            </Styled.StaffInfoColumn>
+            <Styled.StaffInfoColumn>
+              Officer: {presenter.officerInfo.name ?? "—"}
+            </Styled.StaffInfoColumn>
+            <Styled.StaffInfoColumn>
+              District: {presenter.officerInfo.district ?? "—"}
+            </Styled.StaffInfoColumn>
+            <Styled.StaffInfoColumn>
+              Address: {presenter.officerInfo.address ?? "—"}
+            </Styled.StaffInfoColumn>
+            <Styled.StaffInfoColumn>
+              Phone: {presenter.officerInfo.phoneNumber ?? "—"}
+            </Styled.StaffInfoColumn>
+          </Styled.OfficerInformationContainer>
+        </Styled.StaffInformationContainer>
 
         {/* Read-only client info - horizontal layout */}
         <Styled.ClientInfoRow>
           <Styled.ClientInfoColumn>
             <Styled.SubsectionTitle>Date of Birth</Styled.SubsectionTitle>
-            {formattedBirthDate}
+            {presenter.formattedBirthDate}
           </Styled.ClientInfoColumn>
           <Styled.ClientInfoColumn>
             <Styled.SubsectionTitle>Gender</Styled.SubsectionTitle>
-            {formattedGender}
+            {presenter.formattedGender}
           </Styled.ClientInfoColumn>
           <Styled.ClientInfoColumn>
             <Styled.SubsectionTitle>Race</Styled.SubsectionTitle>
-            {clientAttributes?.raceOrEthnicity}
+            {presenter.formattedRaceOrEthnicity}
           </Styled.ClientInfoColumn>
         </Styled.ClientInfoRow>
 

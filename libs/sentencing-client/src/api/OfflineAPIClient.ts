@@ -48,6 +48,7 @@ export class OfflineAPIClient {
       ...StaffInfoFixture,
       externalId: undefined,
       supervisorDashboardStats: undefined,
+      districtId: null,
     };
   }
 

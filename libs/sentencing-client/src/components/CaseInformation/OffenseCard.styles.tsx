@@ -24,7 +24,7 @@ export const CardContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   align-self: stretch;
-  gap: 1.5rem;
+  gap: 0.75rem;
 `;
 
 export const Divider = styled.div`
@@ -44,9 +44,9 @@ export const Card = styled.div`
 
 export const SubsectionTitle = styled.div`
   color: ${palette.pine1};
-  padding-bottom: 1rem;
   font-size: 1rem;
   padding-left: 2.5rem;
+  padding-top: 1rem;
 `;
 
 export const ColumnSection = styled.div`

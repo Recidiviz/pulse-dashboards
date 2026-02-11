@@ -37,6 +37,7 @@ export const SupervisorInfoFixture: Supervisor = {
         supervisesAll: null,
         officeAddress: null,
         officePhoneNumber: null,
+        districtId: null,
       },
     ],
   },
@@ -51,5 +52,5 @@ export const SupervisorInfoFixture: Supervisor = {
   externalId: undefined,
   officeAddress: null,
   officePhoneNumber: null,
-  
+  districtId: null,
 };

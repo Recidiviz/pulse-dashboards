@@ -36,6 +36,7 @@ export const CheckboxContainer = styled.div`
   align-items: center;
   gap: 0.5rem;
   align-self: stretch;
+  padding-left: 2.5rem;
 `;
 
 export const Checkbox = styled.input`
@@ -46,14 +47,59 @@ export const Checkbox = styled.input`
 
 export const CheckboxLabel = styled.span`
   font-size: 0.875rem;
-  padding-left: 2.5rem;
 `;
 
 export const ClientInfoRow = styled.div`
+  border-top: 1px solid ${palette.slate20};
+  padding-top: 1.5rem;
   display: flex;
   gap: 0.375rem;
   align-self: stretch;
-  font-size: 0.75 rem;
+`;
+
+export const StaffInfoRow = styled.div`
+  border-top: 1px solid ${palette.slate20};
+  padding-top: 1.5rem;
+  display: flex;
+  gap: 0.375rem;
+  align-self: stretch;
+  font-size: 0.75rem;
+`;
+
+export const StaffInformationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  align-self: stretch;
+`;
+
+export const JudgeInformationContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-self: stretch;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  padding-right: 2.5rem;
+`;
+
+export const SARDivisionName = styled.div`
+  justify-content: flex-end;
+`;
+
+export const OfficerInformationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  align-self: stretch;
+`;
+
+export const SubsectionTitle = styled.div`
+  color: ${palette.pine1};
+  padding-bottom: 1rem;
+  font-size: 1rem;
 `;
 
 export const ClientInfoColumn = styled.div`
@@ -63,8 +109,8 @@ export const ClientInfoColumn = styled.div`
   flex-direction: column;
 `;
 
-export const SubsectionTitle = styled.div`
-  color: ${palette.pine1};
-  padding-bottom: 1rem;
-  font-size: 1rem;
+export const StaffInfoColumn = styled.div`
+  display: flex;
+  padding-left: 2.5rem;
+  flex-direction: column;
 `;

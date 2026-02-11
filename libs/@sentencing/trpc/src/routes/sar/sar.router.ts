@@ -51,6 +51,20 @@ export const sarRouter = router({
           updatedAt: true,
         },
         include: {
+          staff: {
+            select: {
+              externalId: true,
+              fullName: true,
+              email: true,
+              officeAddress: true,
+              officePhoneNumber: true,
+              district: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
           charges: {
             omit: {
               createdAt: true,

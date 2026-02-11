@@ -20,7 +20,6 @@ import { faker } from "@faker-js/faker";
 import {
   AssessmentType,
   CaseStatus,
-  Division,
   Gender,
   LevelOfEducation,
   NeedToBeAddressed,
@@ -104,7 +103,7 @@ export const fakeClient = {
   fullName: faker.person.fullName(),
   stateCode: StateCode.US_ID,
   gender: FAKE_CLIENT_GENDER,
-  raceOrEthnicity: null,
+  raceOrEthnicity: [],
   isCountyLocked: false,
   birthDate: faker.date.birthdate(),
 } satisfies ClientCreateInput;
@@ -230,7 +229,7 @@ export const fakeSARClient = {
   fullName: faker.person.fullName(),
   stateCode: StateCode.US_ID,
   gender: Gender.MALE,
-  raceOrEthnicity: "WHITE",
+  raceOrEthnicity: ["WHITE"],
   isCountyLocked: false,
   birthDate: faker.date.birthdate(),
   ssn: faker.string.numeric(9),
@@ -278,7 +277,7 @@ export const fakeSAR = {
   requestingJudgeName: faker.person.fullName(),
   dateRequested: faker.date.recent(),
   dueDate: faker.date.future(),
-  division: Division.Criminal,
+  division: "0003",
   address: faker.location.streetAddress(),
   needsToBeAddressed: [
     NeedToBeAddressed.SubstanceUse,

@@ -151,10 +151,42 @@ export class SARDetailsPresenter implements Hydratable {
     };
   }
 
+  /** Formatted birth date for display */
+  get formattedBirthDate(): string | undefined {
+    const birthDate = this.SARData?.client?.birthDate;
+    return birthDate ? moment(birthDate).format("MM/DD/YYYY") : undefined;
+  }
+
+  /** Formatted date requested for display */
+  get formattedDateRequested(): string | undefined {
+    const dateRequested = this.SARData?.dateRequested;
+    return dateRequested
+      ? moment(dateRequested).format("MM/DD/YYYY")
+      : undefined;
+  }
+
   /** Formatted gender for display */
   get formattedGender(): string | undefined {
     const gender = this.SARData?.client?.gender;
     return gender ? GenderToDisplayName[gender] : undefined;
+  }
+  
+  /** Formatted race/ethnicity for display */
+  get formattedRaceOrEthnicity(): string {
+    const raceArray = this.SARData?.client?.raceOrEthnicity;
+    if (!raceArray || raceArray.length === 0) return "Not Specified";
+    
+    const formattedRaces = raceArray.map((race) =>
+      race
+        .trim()
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
+    );
+    
+    return formattedRaces.join(", ");
   }
 
   /** Extract offense names from charges */
@@ -169,6 +201,17 @@ export class SARDetailsPresenter implements Hydratable {
   get charges(): FormCharge[] {
     if (!this.SARData?.charges) return [];
     return [...this.SARData.charges].sort((a, b) => a.id.localeCompare(b.id));
+  }
+
+  /** Get officer (staff) info */
+  get officerInfo() {
+    const staff = this.SARData?.staff;
+    return {
+      name: staff?.fullName,
+      district: staff?.district?.name,
+      address: staff?.officeAddress,
+      phoneNumber: staff?.officePhoneNumber,
+    };
   }
 
   /** Get client attributes for Case Information section */

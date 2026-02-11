@@ -62,11 +62,15 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
       debouncedSave(charge.id, fieldId, value);
     };
 
-    // Format judge name and division
+    // Format judge names and division
+    const judgeNames =
+      charge.judgeNames && charge.judgeNames.length > 0
+        ? charge.judgeNames.join(", ")
+        : null;
     const judgeAndDivision =
-      charge.judgeName && charge.division
-        ? `${charge.judgeName} / ${charge.division}`
-        : charge.judgeName || charge.division || null;
+      judgeNames && charge.division
+        ? `${judgeNames} / ${charge.division}`
+        : judgeNames || charge.division || null;
 
     return (
       <Styled.CardContainer>

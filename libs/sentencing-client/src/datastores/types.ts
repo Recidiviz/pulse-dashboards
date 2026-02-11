@@ -103,7 +103,7 @@ export type Charge = SAR["charges"][number];
 export type FormCharge = Omit<Charge, "pleaDate" | "sentencingDate"> & {
   pleaDate: string | Date | null;
   sentencingDate: string | Date | null;
-  [key: string]: string | Date | null | undefined;
+  [key: string]: string | string[] | Date | null | undefined;
 };
 
 // Feature variants exclusive to this app
