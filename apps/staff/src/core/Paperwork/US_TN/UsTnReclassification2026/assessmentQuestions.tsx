@@ -68,11 +68,11 @@ export const assessmentQuestions = [
     sections: [
       {
         period: "0-6",
-        scores: [-1, 3, 5, 8],
+        scores: [-1, 3, 6, 9],
       },
       {
         period: "6-12",
-        scores: [0, 1, 2, 3],
+        scores: [0, 2, 3, 4],
       },
     ],
   },
@@ -82,11 +82,11 @@ export const assessmentQuestions = [
     sections: [
       {
         period: "0-6",
-        scores: [-1, 9, 18, 27],
+        scores: [-1, 10, 20, 30],
       },
       {
         period: "6-12",
-        scores: [0, 8, 16, 24],
+        scores: [0, 9, 18, 27],
       },
       {
         period: "12-18",
@@ -106,17 +106,17 @@ export const assessmentQuestions = [
     title: "AGE",
     type: "SINGLE",
     options: [
-      { text: "21 or Younger", score: 18 },
-      { text: "22 - 25", score: 7 },
+      { text: "21 or Younger", score: 15 },
+      { text: "22 - 25", score: 6 },
       { text: "26 - 30", score: 2 },
       {
         text: "30 or Younger with no Class A or B Disciplinary in Previous Year",
-        score: 0,
+        score: 1,
       },
-      { text: "31 - 35", score: 0 },
-      { text: "36 - 40", score: -2 },
-      { text: "41 - 45", score: -3 },
-      { text: "Older than 45", score: -4 },
+      { text: "31 - 35", score: 1 },
+      { text: "36 - 40", score: -1 },
+      { text: "41 - 45", score: -2 },
+      { text: "Older than 45", score: -3 },
     ],
   },
   {

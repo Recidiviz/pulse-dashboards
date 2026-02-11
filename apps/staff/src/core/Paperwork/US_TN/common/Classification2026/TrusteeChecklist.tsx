@@ -19,16 +19,19 @@ import { observer } from "mobx-react-lite";
 import { ChangeEventHandler } from "react";
 import styled from "styled-components";
 
-import { TrusteeFormSchema } from "~datatypes";
+import {
+  TrusteeFormSchema,
+  UsTnInitialClassification2026DraftData,
+} from "~datatypes";
 
 import { JusticeInvolvedPerson } from "../../../../../WorkflowsStore";
 import { UsTnDiagnosticClassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
 import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { FileGeneratorArgs } from "../../../DOCXFormGenerator";
+import DOCXFormTextArea from "../../../DOCXFormTextArea";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { PrintablePage } from "../../../styles";
 import { Bold, Header, TrusteeFormPage } from "./styles";
-import { TextboxWithHeader } from "./TextboxWithHeader";
 import trusteeAssessmentTemplate from "./trustee_assessment_template.docx";
 
 type TrusteeForm =
@@ -105,7 +108,11 @@ export function getTrusteeTemplateArgs(
     }
   }
 
-  formContents.denialReasons = formData.trusteeDenialReasons ?? "";
+  formContents.denialReasons =
+    formData.trusteeDenialReasons ?? "_________________________";
+
+  formContents.notesForWarden =
+    formData.trusteeNotesForWarden ?? "_________________________";
 
   return [
     `${resident.displayName} - Trustee Checklist.docx`,
@@ -354,7 +361,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
 
               <TrusteeCriteriaRow dataKey="trusteeNotScoredHighForViolence">
                 Inmate has not scored high for violence on the risk assessment,{" "}
-                <Bold>AND</Bold>
+                <Bold>OR</Bold>
                 <br />
                 <br />
                 <Bold>If</Bold> inmate has scored high for violence on the risk
@@ -384,7 +391,11 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
           <Approval />
           <div>
             <Bold>Reasons for Denial:</Bold>
-            <TextboxWithHeader header="" name="trusteeDenialReasons" />
+            <DOCXFormTextArea<UsTnInitialClassification2026DraftData> name="trusteeDenialReasons" />
+          </div>
+          <div>
+            <Bold>Notes for Warden Review:</Bold>
+            <DOCXFormTextArea<UsTnInitialClassification2026DraftData> name="trusteeNotesForWarden" />
           </div>
         </TrusteeFormPage>
       </PrintablePage>

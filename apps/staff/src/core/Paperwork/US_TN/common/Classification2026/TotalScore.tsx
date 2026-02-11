@@ -26,7 +26,13 @@ const Container = styled.div`
   gap: 1rem;
 `;
 
-export function TotalScore({ score }: { score: number }) {
+export function TotalScore({
+  score,
+  mediumUpper,
+}: {
+  score: number;
+  mediumUpper: number;
+}) {
   return (
     <Container>
       <div>
@@ -40,14 +46,13 @@ export function TotalScore({ score }: { score: number }) {
           <Bold>Low:</Bold> 0-12
         </div>
         <div>
-          <Bold>Medium:</Bold> 13-27
+          <Bold>Medium:</Bold> 13-{mediumUpper}
         </div>
         <div>
-          <Bold>Close:</Bold> 28-40
+          <Bold>Close:</Bold> {mediumUpper + 1}-40
         </div>
         <div>
-          <Bold>Maximum:</Bold> 3+ violent Class A or B disciplinaries in last 6
-          months OR homicide disciplinary while incarcerated
+          <Bold>Maximum:</Bold> 41+
         </div>
       </div>
       <div>

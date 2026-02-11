@@ -166,7 +166,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
                 questionSpec={assessmentQuestions[5]}
                 questionNumber={6}
               />
-              <TotalScore score={derivedData.totalScore} />
+              <TotalScore score={derivedData.totalScore} mediumUpper={27} />
             </ClassificationFormPage>
           </PrintablePage>
           <TrusteeChecklist display={derivedData.totalScore <= 12} />

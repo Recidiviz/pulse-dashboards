@@ -56,7 +56,7 @@ export function prefilledCoverSheetData(
     out.currentCustodyLevel = resident.displayCustodyLevel;
   }
 
-  const justifications: string[] = ["Justification for classification: "];
+  const justifications: string[] = [];
   if (formInformation.sentenceExpirationDate) {
     justifications.push(
       `Release Date: ${formatDate(formInformation.sentenceExpirationDate)}`,
@@ -163,11 +163,14 @@ export function getCoverSheetTemplateArgs(
       "denialReasons",
     ] as const
   ).forEach((multiLineField) => {
-    if (formData[multiLineField])
+    if (formData[multiLineField]) {
       formContents[multiLineField] = formData[multiLineField].replace(
         /\n/g,
         "\t\n",
       );
+    } else {
+      formContents[multiLineField] = "\t";
+    }
   });
 
   return [

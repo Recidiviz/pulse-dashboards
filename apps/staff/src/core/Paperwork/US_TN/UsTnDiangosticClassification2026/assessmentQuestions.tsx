@@ -55,7 +55,7 @@ export const assessmentQuestions = [
     title: "NONVIOLENT CLASS B OR C DISCIPLINARY REPORTS SINCE RECEPTION",
     type: "SINGLE",
     options: [
-      { text: "Yes", score: 6 },
+      { text: "Yes", score: 8 },
       { text: "No", score: -1 },
     ],
   },
@@ -63,7 +63,7 @@ export const assessmentQuestions = [
     title: "NONVIOLENT CLASS A DISCIPLINARY REPORTS",
     type: "SINGLE",
     options: [
-      { text: "Yes", score: 20 },
+      { text: "Yes", score: 10 },
       { text: "No", score: -1 },
     ],
   },
@@ -80,12 +80,12 @@ export const assessmentQuestions = [
     type: "SINGLE",
     options: [
       { text: "21 or Younger", score: 11 },
-      { text: "22 - 25", score: 8 },
+      { text: "22 - 25", score: 7 },
       { text: "26 - 30", score: 2 },
-      { text: "31 - 35", score: -1 },
-      { text: "36 - 40", score: -2 },
-      { text: "41 - 45", score: -4 },
-      { text: "Older than 45", score: -6 },
+      { text: "31 - 35", score: 0 },
+      { text: "36 - 40", score: -1 },
+      { text: "41 - 45", score: -3 },
+      { text: "Older than 45", score: -4 },
     ],
   },
 ] satisfies TupleWithArity<
