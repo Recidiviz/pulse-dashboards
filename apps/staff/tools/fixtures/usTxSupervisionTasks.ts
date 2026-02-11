@@ -106,9 +106,9 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         type: "usTxHomeContactEdgeCase",
         dueDate: "2022-03-12",
         details: {
-          reasonForContact: "Initial Home Contact",
           contactCadence: "1 EVERY 3 MONTHS",
           scheduledContactDates: null,
+          causalDate: "2020-01-01",
         },
       },
       {
@@ -137,9 +137,9 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         type: "usTxHomeContactEdgeCase",
         dueDate: "2022-03-18",
         details: {
-          reasonForContact: "Home Contact due to Address Change",
           contactCadence: "1 EVERY 3 MONTHS",
           scheduledContactDates: "2022-03-10",
+          causalDate: "2021-02-10",
         },
       },
       {
@@ -372,9 +372,10 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         type: "usTxHomeContactEdgeCase",
         dueDate: "2023-11-30",
         details: {
-          reasonForContact: "Initial Home Contact",
           contactCadence: "1 EVERY 3 MONTHS",
           scheduledContactDates: null,
+          causalDate: "2022-06-25",
+
         },
       },
     ],

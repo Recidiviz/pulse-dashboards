@@ -114,9 +114,9 @@ type UsTxTypeAgnosticContactDetails = {
 };
 
 type UsTxEdgeCaseContactDetails = {
-  reasonForContact: string;
   contactCadence: string;
   scheduledContactDates: string | null;
+  causalDate: string;
 };
 
 type UsTxAssessmentDetails = {

@@ -17,14 +17,14 @@
 
 import { toDateList } from "~datatypes";
 
-import { toTitleCase } from "../../../utils/formatStrings";
+import { formatWorkflowsDateString,toTitleCase } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 
 class UsTxHomeContactEdgeCaseTask extends Task<"usTxHomeContactEdgeCase"> {
   displayName = "Residence Validation";
 
   get additionalDetails(): string {
-    return this.details.reasonForContact;
+    return `Event Date: ${formatWorkflowsDateString(this.details.causalDate)}`;
   }
 
   get frequency(): string {
