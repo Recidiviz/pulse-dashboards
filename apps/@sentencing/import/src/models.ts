@@ -91,6 +91,7 @@ export const clientImportSchema = z
   .object({
     external_id: z.string(),
     pseudonymized_id: z.string(),
+    race: z.array(z.string()).optional().default([]),
     case_ids: caseIdsSchema,
     state_code: stateCode,
     full_name: nameSchema,
@@ -114,9 +115,12 @@ export const staffImportSchema = z
     case_ids: caseIdsSchema,
     state_code: stateCode,
     full_name: nameSchema,
-    email: z.string(),
+    email: z.string().optional(), // Email is null for MO staff
     supervisor_id: z.string().optional(),
     supervises_all: z.string().optional(),
+    officeAddress: z.string().optional(),
+    officePhoneNumber: z.string().optional(),
+    district: z.string().optional(),
   })
   .transform((data) => {
     // Spread the full_name object into the root object

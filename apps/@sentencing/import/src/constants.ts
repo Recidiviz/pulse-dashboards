@@ -79,3 +79,19 @@ export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
     loaderFn: transformAndLoadCountyAndDistrictData,
   },
 };
+
+/**
+ * Missouri (US_MO) uses SAR (Sentencing Assessment Reports) instead of PSI cases.
+ * This requires different loading functions for certain views (e.g., SAR records
+ * instead of case records). For now, only staff and client imports are supported.
+ */
+export const SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
+  [STAFF_FILE_NAME]: {
+    schema: staffImportSchema,
+    loaderFn: transformAndLoadStaffData,
+  },
+  [CLIENTS_FILE_NAME]: {
+    schema: clientImportSchema,
+    loaderFn: transformAndLoadClientData,
+  },
+};

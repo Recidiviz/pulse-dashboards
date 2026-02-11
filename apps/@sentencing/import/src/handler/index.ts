@@ -15,18 +15,55 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FILE_NAME_TO_SCHEMA_AND_LOADER_FN } from "~@sentencing/import/constants";
+import {
+  FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
+  SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
+} from "~@sentencing/import/constants";
 import { getPrismaClientForStateCode } from "~@sentencing/prisma";
+import { StateCode } from "~@sentencing/prisma/client";
 import { ImportHandler } from "~data-import-plugin";
 
-export function getImportHandler() {
+/**
+ * Report types supported by the sentencing import pipeline.
+ * - PSI: Pre-Sentence Investigation (used by ID, ND)
+ * - SAR: Sentencing Assessment Report (used by MO)
+ */
+type ReportType = "PSI" | "SAR";
+
+/**
+ * Maps state codes to their report type.
+ */
+const STATE_TO_REPORT_TYPE: Record<StateCode, ReportType> = {
+  [StateCode.US_ID]: "PSI",
+  [StateCode.US_MO]: "SAR",
+  [StateCode.US_ND]: "PSI",
+} as Record<StateCode, ReportType>;
+
+/**
+ * Returns the appropriate file-to-schema mapping based on state code.
+ * Uses STATE_TO_REPORT_TYPE to determine which loaders to use.
+ */
+export function getFilesToSchemasAndLoaderFns(stateCode: StateCode) {
+  const reportType = STATE_TO_REPORT_TYPE[stateCode];
+
+  if (reportType === "SAR") {
+    return SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN;
+  }
+  return FILE_NAME_TO_SCHEMA_AND_LOADER_FN;
+}
+
+export function getImportHandler(stateCode?: StateCode) {
   if (!process.env["IMPORT_BUCKET_ID"]) {
     throw new Error("Missing import bucket id environment variable");
   }
 
+  const filesToSchemasAndLoaderFns = stateCode
+    ? getFilesToSchemasAndLoaderFns(stateCode)
+    : FILE_NAME_TO_SCHEMA_AND_LOADER_FN;
+
   return new ImportHandler({
     bucket: process.env["IMPORT_BUCKET_ID"],
     getPrismaClientForStateCode: getPrismaClientForStateCode,
-    filesToSchemasAndLoaderFns: FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
+    filesToSchemasAndLoaderFns,
   });
 }

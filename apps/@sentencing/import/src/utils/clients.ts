@@ -41,12 +41,17 @@ export async function transformAndLoadClientData(
       clientData.gender !== Gender.EXTERNAL_UNKNOWN;
     const isCountyLocked = Boolean(clientData.county);
 
+    // Race is already transformed to an array by the schema
+    const filteredRaceList = clientData.race.filter(
+      (race) => race !== "EXTERNAL_UNKNOWN",
+    );
     const newClient = {
       externalId: clientData.external_id,
       pseudonymizedId: clientData.pseudonymized_id,
       stateCode: clientData.state_code,
       fullName: clientData.full_name,
       birthDate: clientData.birth_date,
+      raceOrEthnicity: filteredRaceList,
       isGenderLocked: hasKnownGender,
       isCountyLocked,
       cases: {

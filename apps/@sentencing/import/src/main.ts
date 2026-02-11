@@ -16,17 +16,20 @@
 // =============================================================================
 
 import { getImportHandler } from "~@sentencing/import/handler";
+import { StateCode } from "~@sentencing/prisma/client";
 
 async function importData() {
   if (!process.env["STATE_CODE"]) {
     throw new Error("Missing state code environment variable");
   }
 
+  const stateCode = process.env["STATE_CODE"] as StateCode;
   const files = process.env["FILES"]?.split(",");
 
-  const importHandler = getImportHandler();
+  // Pass stateCode to get the appropriate file-to-schema mapping (e.g., SAR for MO)
+  const importHandler = getImportHandler(stateCode);
 
-  await importHandler.import(process.env["STATE_CODE"], files);
+  await importHandler.import(stateCode, files);
 }
 
 await importData();

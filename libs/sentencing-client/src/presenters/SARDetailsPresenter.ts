@@ -174,7 +174,7 @@ export class SARDetailsPresenter implements Hydratable {
   /** Formatted race/ethnicity for display */
   get formattedRaceOrEthnicity(): string {
     const raceArray = this.SARData?.client?.raceOrEthnicity;
-    if (!raceArray || raceArray.length === 0) return "Not Specified";
+    if (!raceArray || raceArray.length === 0) return "Unknown";
     
     const formattedRaces = raceArray.map((race) =>
       race

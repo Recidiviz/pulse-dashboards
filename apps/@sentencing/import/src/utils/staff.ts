@@ -18,6 +18,7 @@
 import z from "zod";
 
 import { staffImportSchema } from "~@sentencing/import/models";
+import { getMODistrictFullName } from "~@sentencing/import/utils/helpers";
 import { PrismaClient } from "~@sentencing/prisma/client";
 
 export async function transformAndLoadStaffData(
@@ -36,6 +37,22 @@ export async function transformAndLoadStaffData(
       staffData.case_ids.includes(externalId),
     );
 
+    // Only connect district for MO staff (convert acronym to full name)
+    const districtConnection =
+      staffData.state_code === "US_MO" && staffData.district
+        ? {
+            connectOrCreate: {
+              where: {
+                name: getMODistrictFullName(staffData.district),
+              },
+              create: {
+                stateCode: staffData.state_code,
+                name: getMODistrictFullName(staffData.district),
+              },
+            },
+          }
+        : undefined;
+
     const newStaff = {
       externalId: staffData.external_id,
       pseudonymizedId: staffData.pseudonymized_id,
@@ -47,6 +64,9 @@ export async function transformAndLoadStaffData(
       },
       supervisorId: staffData.supervisor_id,
       supervisesAll: !!staffData.supervises_all,
+      officeAddress: staffData.officeAddress,
+      officePhoneNumber: staffData.officePhoneNumber,
+      district: districtConnection,
     };
 
     // Load data
