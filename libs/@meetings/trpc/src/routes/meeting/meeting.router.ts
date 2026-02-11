@@ -19,6 +19,7 @@ import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { z } from "zod";
+import { zu } from "zod_utilz";
 
 import { PostMeetingProcessingStatus, Prisma } from "~@meetings/prisma/client";
 import {
@@ -90,7 +91,7 @@ export const meetingRouter = router({
         ): T | null => {
           if (!fieldValue) return null;
           try {
-            return schema.parse(fieldValue);
+            return zu.stringToJSON().pipe(schema).parse(fieldValue);
           } catch (error) {
             console.error("Failed to validate JSON field:", error);
             return null;
@@ -232,7 +233,13 @@ export const meetingRouter = router({
     .input(updateNotesInputSchema)
     .mutation(
       async ({
-        input: { meetingId, userNotepadNotes, actionItems, criticalUpdates, caseNote },
+        input: {
+          meetingId,
+          userNotepadNotes,
+          actionItems,
+          criticalUpdates,
+          caseNote,
+        },
         ctx: { prisma },
       }) => {
         try {

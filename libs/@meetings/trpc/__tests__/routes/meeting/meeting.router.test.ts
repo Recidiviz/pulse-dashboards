@@ -24,7 +24,10 @@ import {
   testPrismaClient,
   testTRPCClient,
 } from "~@meetings/trpc/test/setup";
-import { fakeActiveMeeting } from "~@meetings/trpc/test/setup/seed";
+import {
+  fakeActiveMeeting,
+  fakeInactiveMeeting,
+} from "~@meetings/trpc/test/setup/seed";
 
 const FAKE_DATE = new Date("2025-10-19");
 
@@ -78,6 +81,24 @@ describe("meeting router", () => {
           ],
         },
       });
+    });
+
+    test("Should parse JSON-encoded actionItems and criticalUpdates from database", async () => {
+      // This test uses fakeInactiveMeeting which has JSON-encoded arrays for actionItems and criticalUpdates
+      const result = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeInactiveMeeting.id,
+      });
+
+      // Verify that the JSON strings are properly parsed into arrays
+      expect(result.actionItems).toEqual([
+        "Follow up on employment status",
+        "Schedule next check-in",
+        "Review case file",
+      ]);
+      expect(result.criticalUpdates).toEqual([
+        "Employment - New: Client reported new job opportunity",
+        "Legal - Change: Upcoming court date next week",
+      ]);
     });
   });
 
