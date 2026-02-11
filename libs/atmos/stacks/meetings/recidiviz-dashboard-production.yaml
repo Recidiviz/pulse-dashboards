@@ -33,6 +33,7 @@ components:
         private_network: projects/recidiviz-dashboard-production/global/networks/default
         meetings_bucket_cors_origins:
           - "https://recidiviz-meetings.web.app/"
+          - "https://meet.recidiviz.org"
 
     postgres-bq-data-transfer:
       vars:
