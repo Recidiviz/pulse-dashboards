@@ -181,6 +181,11 @@ module "import_job" {
     name       = "cloudsql"
     mount_path = "/cloudsql"
   }]
+
+  limits = {
+    cpu    = "1000m"
+    memory = "1024Mi"
+  }
 }
 
 
