@@ -15,16 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Sans14 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { Suspense } from "react";
+import styled from "styled-components";
+
+import { palette } from "~design-system";
 
 import Loading from "../../components/Loading";
+import useIsMobile from "../../hooks/useIsMobile";
+import { CaseloadSelect } from "../CaseloadSelect";
 import ErrorBoundary from "../ErrorBoundary";
+import { Heading, SubHeading } from "../sharedComponents";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { RNAListQuerier } from "./RnaListQuerier";
 
-export function UsNcRNAViewer() {
+export const Subheading = styled(Sans14)`
+  color: ${palette.slate70};
+`;
+
+export const UsNcRNAViewer = observer(function UsNcRNAViewer() {
+  const { isMobile } = useIsMobile(true);
   return (
-    <WorkflowsNavLayout>
+    <WorkflowsNavLayout limitedWidth={false}>
+      <CaseloadSelect />
+      <Heading isMobile={isMobile}>RNA Self-Report Manager</Heading>
+      <SubHeading>
+        The people listed below might have upcoming self-report due dates.
+      </SubHeading>
       <ErrorBoundary>
         <Suspense fallback={<Loading />}>
           <RNAListQuerier />
@@ -32,4 +50,4 @@ export function UsNcRNAViewer() {
       </ErrorBoundary>
     </WorkflowsNavLayout>
   );
-}
+});

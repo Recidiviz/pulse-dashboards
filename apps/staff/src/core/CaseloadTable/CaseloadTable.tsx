@@ -39,6 +39,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { StatusAwareButton } from "../OpportunityDenial/MenuButton.styles";
 import { PersonIdWithCopyIcon } from "../PersonId/PersonId";
+import { EnableToggle } from "../UsNcRNA/UsNcRNATable";
 
 const Table = styled.table`
   width: 100%;
@@ -121,6 +122,10 @@ const Cell = styled.td<{
     /* Increase size of target for click-to-copy when within a table cell */
     padding-top: ${rem(spacing.sm + spacing.xs)};
     padding-bottom: ${rem(spacing.sm + spacing.xs)};
+  }
+
+  &:has(${EnableToggle}) {
+    border-left: 1px solid ${palette.slate10};
   }
 `;
 
@@ -205,8 +210,8 @@ type CaseloadTableProps<TData> = {
   data: TData[];
   columns: ColumnDef<TData>[];
   expandedLastColumn?: boolean;
-  onRowClick: (row: TData) => void;
-  shouldHighlightRow: (row: TData) => boolean;
+  onRowClick?: (row: TData) => void;
+  shouldHighlightRow?: (row: TData) => boolean;
   onRowRender?: (row: TData) => void;
   manualSorting?: CaseloadTableManualSorting;
   enableMultiSort?: boolean;
@@ -219,8 +224,8 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   expandedLastColumn = false,
   data,
   columns,
-  onRowClick,
-  shouldHighlightRow,
+  onRowClick = () => undefined,
+  shouldHighlightRow = () => false,
   onRowRender = () => undefined,
   manualSorting = undefined,
   enableMultiSort = false,

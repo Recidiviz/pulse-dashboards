@@ -19,6 +19,11 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 
 import { useRootStore } from "../../components/StoreProvider";
+import {
+  EmptyStateText,
+  EmptyStateWrapper,
+} from "../OpportunityCaseloadView/HydratedOpportunityPersonList";
+import { RNATable } from "./UsNcRNATable";
 
 export const RNAListQuerier = observer(function RNAListQuerier() {
   const { workflowsStore } = useRootStore();
@@ -27,8 +32,11 @@ export const RNAListQuerier = observer(function RNAListQuerier() {
     workflowsStore.searchStore.searchType !== "FACILITY" ||
     workflowsStore.searchStore.selectedSearchIds.length === 0
   ) {
-    // TODO: style this correctly to match other workflows pages
-    return <div>Please select a facility</div>;
+    return (
+      <EmptyStateWrapper>
+        <EmptyStateText>Please select a facility above.</EmptyStateText>
+      </EmptyStateWrapper>
+    );
   }
 
   return (
@@ -52,10 +60,5 @@ function RNAFacilityQuerier({ facilityIds }: QuerierProps) {
     }),
   );
 
-  return (
-    <>
-      <div>Hello world!</div>
-      <pre>{JSON.stringify(data, undefined, 2)}</pre>
-    </>
-  );
+  return <RNATable data={data} />;
 }

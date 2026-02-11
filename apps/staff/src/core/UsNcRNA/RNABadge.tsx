@@ -67,11 +67,9 @@ const badgeSettings = {
   },
 } as const;
 
-export const RNABadge = function ({
-  kind,
-}: {
-  kind: keyof typeof badgeSettings;
-}) {
+export type RNAStatus = keyof typeof badgeSettings;
+
+export const RNABadge = function ({ kind }: { kind: RNAStatus }) {
   const { backgroundColor, borderColor, textColor, text } = badgeSettings[kind];
 
   return (

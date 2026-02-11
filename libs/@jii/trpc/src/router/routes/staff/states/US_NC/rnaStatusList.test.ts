@@ -291,6 +291,7 @@ describe("rnaStatusList", () => {
     expect(await c.rnaStatusList(testInput)).toMatchInlineSnapshot(`
       [
         {
+          "createdAt": 2026-01-05T00:00:00.000Z,
           "pseudonymizedId": "abc",
           "status": "NOT_STARTED",
           "updatedAt": 2026-01-10T00:00:00.000Z,
@@ -319,6 +320,7 @@ describe("rnaStatusList", () => {
     expect(await c.rnaStatusList(testInput)).toMatchInlineSnapshot(`
       [
         {
+          "createdAt": 2026-01-05T00:00:00.000Z,
           "pseudonymizedId": "abc",
           "status": "IN_PROGRESS",
           "updatedAt": 2026-01-10T00:00:00.000Z,
@@ -348,6 +350,7 @@ describe("rnaStatusList", () => {
     expect(await c.rnaStatusList(testInput)).toMatchInlineSnapshot(`
       [
         {
+          "createdAt": 2026-01-05T00:00:00.000Z,
           "pseudonymizedId": "abc",
           "status": "COMPLETE",
           "updatedAt": 2026-01-10T00:00:00.000Z,

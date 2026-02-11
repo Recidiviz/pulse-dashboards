@@ -119,6 +119,7 @@ export const rnaStatusList = stateStaffProcedure
           pseudonymizedId: string;
           status: RNAAssessmentStatus;
           updatedAt?: Date;
+          createdAt?: Date;
         } => {
           const {
             pseudonymizedId,
@@ -146,6 +147,7 @@ export const rnaStatusList = stateStaffProcedure
             pseudonymizedId,
             status: getStatusOfExistingRNA(currentRNA),
             updatedAt: currentRNA.updatedAt,
+            createdAt: currentRNA.createdAt,
           };
         },
       );
