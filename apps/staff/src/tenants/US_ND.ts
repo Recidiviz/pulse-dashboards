@@ -130,7 +130,6 @@ const US_ND_CONFIG = {
       PATHWAYS_SECTIONS.countByRace,
     ],
     psi: [],
-    sar: [],
     methodology: ["system", "operations"],
   },
   tableColumns: enabledTableColumns[pathways.US_ND],

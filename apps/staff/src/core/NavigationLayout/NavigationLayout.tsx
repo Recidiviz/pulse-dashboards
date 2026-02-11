@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Pill, spacing, typography, zindex } from "@recidiviz/design-system";
+import { Pill, zindex } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -33,8 +33,10 @@ import {
   IconSVG,
   Menubar,
   palette,
+  spacing,
+  typography,
 } from "~design-system";
-import { psiUrl } from "~sentencing-client";
+import { psiUrl, sarUrl } from "~sentencing-client";
 
 import Drawer from "../../components/Drawer/Drawer";
 import { useRootStore } from "../../components/StoreProvider";
@@ -395,6 +397,26 @@ function PSIStaffLink({
   );
 }
 
+function SARStaffLink({
+  enabled,
+  staffPseudoId,
+}: {
+  enabled: boolean;
+  staffPseudoId?: string;
+}) {
+  const { isMobile } = useIsMobile(true);
+
+  if (!enabled || !staffPseudoId) return null;
+  return (
+    <DropdownMenuItem>
+      <NavLink to={sarUrl("staffDashboard", { staffPseudoId })} role="menuitem">
+        {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
+        Go to SAR Dashboard
+      </NavLink>
+    </DropdownMenuItem>
+  );
+}
+
 function PSISupervisorLink({
   enabled,
   staffPseudoId,
@@ -626,6 +648,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         !!sentencingStore.staffPseudoId) ||
       (isDevOrStagingOrOfflineEnv && enabledPSI);
 
+    const enabledSAR = !!userAllowedNavigation.sar;
+    const isSARStaff = enabledSAR && !!sentencingStore.staffPseudoId;
+
     const isPsiSupervisor = isPsiStaff && sentencingStore.isSupervisor;
 
     // TODO(#11341) - Remove external CPA navigation link when CPA is integrated into staff app
@@ -652,6 +677,10 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         />
         <PSIStaffLink
           enabled={isPsiStaff}
+          staffPseudoId={sentencingStore.staffPseudoId}
+        />
+        <SARStaffLink
+          enabled={isSARStaff}
           staffPseudoId={sentencingStore.staffPseudoId}
         />
         <CPALink enabled={enabledCPA} />
