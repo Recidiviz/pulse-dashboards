@@ -25,8 +25,7 @@ import {
 
 import { formatDate } from "../../../../utils";
 import { Resident } from "../../../../WorkflowsStore/Resident";
-import { FileGeneratorArgs } from "../../DOCXFormGenerator";
-import custodyReclassificationCoverSheetTemplate from "./custody_reclassification_cover_sheet.docx";
+import { DocxTemplateFormContents } from "../../DOCXFormGenerator";
 
 export function prefilledCoverSheetData(
   resident: Resident,
@@ -108,7 +107,7 @@ export function prefilledCoverSheetData(
 export function getCoverSheetTemplateArgs(
   resident: Resident,
   formData: Partial<UsTnCoverSheetSharedDraftData>,
-): FileGeneratorArgs {
+): DocxTemplateFormContents {
   const formContents: Record<string, string> = {};
 
   const now = new Date();
@@ -134,19 +133,19 @@ export function getCoverSheetTemplateArgs(
   formContents.statPc = statusAtHearing === "PC" ? "X" : " ";
 
   formContents.incY = hasIncompatibles ? "X" : " ";
-  formContents.incN = !hasIncompatibles ? "X" : " ";
+  formContents.incN = hasIncompatibles === false ? "X" : " ";
 
   formContents.trY = recommendationTransfer ? "X" : " ";
-  formContents.trN = !recommendationTransfer ? "X" : " ";
+  formContents.trN = recommendationTransfer === false ? "X" : " ";
 
   formContents.photoY = updatedPhotoNeeded ? "X" : " ";
-  formContents.photoN = !updatedPhotoNeeded ? "X" : " ";
+  formContents.photoN = updatedPhotoNeeded === false ? "X" : " ";
 
   formContents.emeY = emergencyContactUpdated ? "X" : " ";
-  formContents.emeN = !emergencyContactUpdated ? "X" : " ";
+  formContents.emeN = emergencyContactUpdated === false ? "X" : " ";
 
   formContents.apY = inmateAppeal ? "X" : " ";
-  formContents.apN = !inmateAppeal ? "X" : " ";
+  formContents.apN = inmateAppeal === false ? " X " : "_";
 
   formContents.recFacAs = recommendationFacilityAssignment ?? "";
 
@@ -173,9 +172,5 @@ export function getCoverSheetTemplateArgs(
     }
   });
 
-  return [
-    `${resident.displayName} - Offender Classification Summary.docx`,
-    custodyReclassificationCoverSheetTemplate,
-    { ...formData, ...formContents },
-  ];
+  return { ...formData, ...formContents };
 }

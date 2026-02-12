@@ -70,6 +70,7 @@ const WorkflowsUsTnReclassForm = ({
     runInAction(() => {
       contents = {
         ...toJS(derivedData),
+        ...getCoverSheetTemplateArgs(resident, form.formData),
       };
     });
 
@@ -85,8 +86,6 @@ const WorkflowsUsTnReclassForm = ({
         contents,
       ],
     ];
-
-    fileInputs.push(getCoverSheetTemplateArgs(resident, form.formData));
 
     const documents = await renderMultipleDocx(fileInputs);
 
