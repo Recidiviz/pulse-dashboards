@@ -41,6 +41,14 @@ describe("import insight data", () => {
   });
 
   test("should import new insights and delete old data", async () => {
+    // Create the second offense so insights can link to it
+    await testPrismaClient.offense.create({
+      data: {
+        stateCode: StateCode.US_ID,
+        name: "another-offense",
+      },
+    });
+
     dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
       // New insights
       {
@@ -159,6 +167,41 @@ describe("import insight data", () => {
         }),
       ]),
     );
+  });
+
+  test("should skip insights with no matching offense", async () => {
+    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+      {
+        state_code: StateCode.US_ID,
+        gender: Gender.MALE,
+        assessment_score_bucket_start: faker.number.int({ max: 100 }),
+        assessment_score_bucket_end: faker.number.int({ max: 100 }),
+        most_severe_description: "nonexistent-offense",
+        recidivism_rollup: JSON.stringify({
+          state_code: StateCode.US_ID,
+        }),
+        recidivism_num_records: faker.number.int({ max: 100 }),
+        recidivism_series: createFakeRecidivismSeriesForImport([
+          { sentence_type: "Probation" },
+        ]),
+        disposition_num_records: faker.number.int({ max: 100 }),
+        dispositions: createFakeDispositionsForImport([
+          { sentence_type: "Probation" },
+        ]),
+      },
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
+
+    const dbInsights = await testPrismaClient.insight.findMany();
+    // The seeded insight should be deleted and the new one skipped (no matching offense)
+    expect(dbInsights).toHaveLength(0);
+
+    // No orphaned offense should have been created
+    const offenses = await testPrismaClient.offense.findMany({
+      where: { name: "nonexistent-offense" },
+    });
+    expect(offenses).toHaveLength(0);
   });
 
   test("should handle data without sentence lengths", async () => {

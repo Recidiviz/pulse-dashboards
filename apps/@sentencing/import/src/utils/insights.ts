@@ -70,18 +70,21 @@ export async function transformAndLoadInsightData(
   // Load new insight data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
   for await (const insightData of data) {
-    // Create the offense if it doesn't already exist in the db
-    const offense = await prismaClient.offense.upsert({
+    // Look up the offense by name — offenses are imported before insights,
+    // so they should already exist. If not, skip this insight with a warning.
+    const offense = await prismaClient.offense.findUnique({
       where: {
         stateCode: insightData.state_code,
         name: insightData.most_severe_description,
       },
-      create: {
-        stateCode: insightData.state_code,
-        name: insightData.most_severe_description,
-      },
-      update: {},
     });
+
+    if (!offense) {
+      console.warn(
+        `Skipping insight: no matching offense found for "${insightData.most_severe_description}" (state: ${insightData.state_code})`,
+      );
+      continue;
+    }
 
     const newInsight = {
       stateCode: insightData.state_code,
