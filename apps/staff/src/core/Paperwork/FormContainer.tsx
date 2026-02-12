@@ -84,6 +84,7 @@ const FormPreviewContainer = styled.div`
 `;
 
 export type FormHeaderProps = {
+  hideLastEditedMessage?: boolean;
   agencyName: string;
   dataProviso?: string;
   heading: string;
@@ -102,6 +103,7 @@ export const FormContainer = observer(function FormContainer({
   isMissingContent,
   onClickDownload,
   agencyName,
+  hideLastEditedMessage,
   dataProviso,
   opportunity,
   children,
@@ -138,14 +140,16 @@ export const FormContainer = observer(function FormContainer({
         <FormHeaderSection>
           <div>
             <FormHeading>{heading}</FormHeading>
-            <LastEditedMessage>
-              <FormLastEdited
-                agencyName={agencyName}
-                dataProviso={dataProviso}
-                form={form}
-                darkMode
-              />
-            </LastEditedMessage>
+            {!hideLastEditedMessage && (
+              <LastEditedMessage>
+                <FormLastEdited
+                  agencyName={agencyName}
+                  dataProviso={dataProviso}
+                  form={form}
+                  darkMode
+                />
+              </LastEditedMessage>
+            )}
           </div>
         </FormHeaderSection>
         <FormHeaderSection>

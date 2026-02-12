@@ -76,6 +76,7 @@ import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./UsMo/U
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
 import { UsMoWorkReleaseOpportunity } from "./UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseOpportunity";
+import { UsNcCreditReductionReviewOpportunity } from "./UsNc/UsNcCreditReductionReviewOpportunity";
 import {
   UsNeGoodTimeRestorationOpportunity,
   UsNeSupervisionDowngradeOpportunity,
@@ -161,14 +162,17 @@ export const opportunityConstructors = {
   usMoOutsideClearance: UsMoWorkReleaseOpportunity,
   usMoWorkRelease: UsMoWorkReleaseOpportunity,
 
-  // US_NE
-  usNeConditionalLowRiskOverride: UsNeSupervisionDowngradeOpportunity,
-  usNeOverrideModerateToLow: UsNeSupervisionDowngradeOpportunity,
-  usNeGoodTimeRestoration: UsNeGoodTimeRestorationOpportunity,
+  // US_NC
+  usNcCreditReductionReview: UsNcCreditReductionReviewOpportunity,
 
   // US_ND
   earlyTermination: UsNdEarlyTerminationOpportunity,
   usNdTransferToMinFacility: UsNdTransferToMinFacilityOpportunity,
+
+  // US_NE
+  usNeConditionalLowRiskOverride: UsNeSupervisionDowngradeOpportunity,
+  usNeOverrideModerateToLow: UsNeSupervisionDowngradeOpportunity,
+  usNeGoodTimeRestoration: UsNeGoodTimeRestorationOpportunity,
 
   // US_OR
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceOpportunity,

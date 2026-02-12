@@ -69,14 +69,17 @@ export const constructedOpportunityTypes = [
   "usMoOutsideClearance",
   "usMoWorkRelease",
 
-  // US_NE
-  "usNeConditionalLowRiskOverride",
-  "usNeOverrideModerateToLow",
-  "usNeGoodTimeRestoration",
+  // US_NC
+  "usNcCreditReductionReview",
 
   // US_ND
   "earlyTermination",
   "usNdTransferToMinFacility",
+
+  // US_NE
+  "usNeConditionalLowRiskOverride",
+  "usNeOverrideModerateToLow",
+  "usNeGoodTimeRestoration",
 
   // US_OR
   "usOrEarnedDischargeSentence",

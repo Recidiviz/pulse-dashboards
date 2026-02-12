@@ -72,12 +72,7 @@ export class WorkflowsFormLayoutPresenter implements Hydratable {
         );
   }
 
-  public get workflowsMethodologyUrl(): string {
-    if (!this.tenantStore.workflowsMethodologyUrl) {
-      throw new Error(
-        "WorkflowsFormLayoutPresenter: workflowsMethodologyUrl is undefined",
-      );
-    }
+  public get workflowsMethodologyUrl(): string | undefined {
     return this.tenantStore.workflowsMethodologyUrl;
   }
 

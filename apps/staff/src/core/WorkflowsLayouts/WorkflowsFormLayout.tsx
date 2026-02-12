@@ -45,6 +45,7 @@ import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import { FormUsMiSCCReview } from "../Paperwork/US_MI/SCCReview/FormUsMiSCCReview";
 import { FormUsMoWorkRelease } from "../Paperwork/US_MO/WorkRelease/FormUsMoWorkRelease";
+import { FormUsNcCreditReductionReview } from "../Paperwork/US_NC/CreditReductionReview/FormUsNcCreditReductionReview";
 import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
 import { WorkflowsFormUsTnSuspensionOfDirectSupervision } from "../Paperwork/US_TN/SuspensionOfDirectSupervision/WorkflowsFormUsTnSuspensionOfDirectSupervision";
 import { FormUsTnDiagnosticClassification2026 } from "../Paperwork/US_TN/UsTnDiangosticClassification2026/FormUsTnDiagnosticClassification2026";
@@ -128,6 +129,7 @@ const FormComponents = {
   WorkflowsUsTxAnnualReportStatusForm,
   WorkflowsUsTxEarlyReleaseFromSupervisionForm,
   FormUsMoWorkRelease,
+  FormUsNcCreditReductionReview,
 };
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;
