@@ -350,7 +350,7 @@ const MeetingMobile = ({
         </Animated.ScrollView>
       </Animated.View>
 
-      <View className="absolute size-full print:hidden">
+      <View className="absolute size-full print:hidden" pointerEvents="none">
         <DraftCaseNoteSheet
           notes={meetingDetails?.userNotepadNotes || ""}
           clientName={person.fullName}
