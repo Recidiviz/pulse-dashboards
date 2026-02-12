@@ -17,12 +17,24 @@
 
 import { observer } from "mobx-react-lite";
 import { Suspense } from "react";
+import styled from "styled-components";
+
+import { palette } from "~design-system";
 
 import Loading from "../../components/Loading";
 import { useRootStore } from "../../components/StoreProvider";
 import { Resident } from "../../WorkflowsStore/Resident";
 import ErrorBoundary from "../ErrorBoundary";
+import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
 import { ResultsPage } from "./UsNcRNASingleResidentResults/ResultsPage";
+
+const Wrapper = styled.div`
+  background-color: ${palette.marble1};
+  min-height: 100vh;
+  max-height: 100vh;
+  height: 100%;
+  width: 100%;
+`;
 
 export const UsNcRNASingleResident = observer(function UsNcRNASingleResident() {
   const {
@@ -38,10 +50,16 @@ export const UsNcRNASingleResident = observer(function UsNcRNASingleResident() {
   }
 
   return (
-    <ErrorBoundary>
-      <Suspense fallback={<Loading />}>
-        <ResultsPage resident={selectedPerson} />;
-      </Suspense>
-    </ErrorBoundary>
+    <Wrapper>
+      <NavigationLayout>
+        <OverviewNavLinks />
+      </NavigationLayout>
+
+      <ErrorBoundary>
+        <Suspense fallback={<Loading />}>
+          <ResultsPage resident={selectedPerson} />;
+        </Suspense>
+      </ErrorBoundary>
+    </Wrapper>
   );
 });

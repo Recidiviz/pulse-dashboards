@@ -51,8 +51,10 @@ export function createJiiTrpcClient({
     ],
   });
 
-  return createTRPCOptionsProxy<JiiStaffAppRouter>({
+  const trpcQueryOptionsProxy = createTRPCOptionsProxy<JiiStaffAppRouter>({
     client: trpcClient,
     queryClient,
   });
+
+  return { client: trpcClient, querier: trpcQueryOptionsProxy };
 }

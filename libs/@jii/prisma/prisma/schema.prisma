@@ -38,10 +38,11 @@ model UsNcRNA {
     // internal identifier for this survey
     id String @unique @default(cuid())
 
-    pseudonymizedId String
-    createdAt       DateTime @default(now())
-    updatedAt       DateTime @updatedAt
-    completed       Boolean  @default(false)
+    pseudonymizedId    String
+    createdAt          DateTime  @default(now())
+    updatedAt          DateTime  @updatedAt
+    completedAt        DateTime?
+    submittedByStaffAt DateTime?
 
     // The resident's answers, parsed via Zod
     answers Json

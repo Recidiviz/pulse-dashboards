@@ -38,6 +38,8 @@ type RNARowData = {
   status: RNAStatusList[number]["status"];
   updatedAt?: RNAStatusList[number]["updatedAt"];
   createdAt?: RNAStatusList[number]["createdAt"];
+  completedAt?: RNAStatusList[number]["completedAt"];
+  submittedByStaffAt?: RNAStatusList[number]["submittedByStaffAt"];
   person: Resident;
   rnaDueDate?: Date;
 };
@@ -130,11 +132,13 @@ export const EnableCell = ({ row }: { row: Row<RNARowData> }) => {
 const LastUpdatedCell = ({ row }: { row: Row<RNARowData> }) => {
   const { status } = row.original;
   if (status === "COMPLETE") {
-    return `Ready since ${formatWorkflowsDate(row.original.updatedAt)}`;
+    return `Ready since ${formatWorkflowsDate(row.original.completedAt)}`;
   } else if (status === "IN_PROGRESS") {
     return formatWorkflowsDate(row.original.updatedAt);
   } else if (status === "NOT_STARTED") {
     return `Enabled on ${formatWorkflowsDate(row.original.createdAt)}`;
+  } else if (status === "SUBMITTED_BY_STAFF") {
+    return `Submitted ${formatWorkflowsDate(row.original.submittedByStaffAt)}`;
   } else {
     return "–";
   }
@@ -142,7 +146,7 @@ const LastUpdatedCell = ({ row }: { row: Row<RNARowData> }) => {
 
 const ViewResultsCell = ({ row }: { row: Row<RNARowData> }) => {
   const { status } = row.original;
-  if (status !== "COMPLETE") {
+  if (status !== "COMPLETE" && status !== "SUBMITTED_BY_STAFF") {
     return null;
   }
   return (
@@ -164,7 +168,7 @@ const rnaStatusOrder: RNAStatus[] = [
   "NOT_STARTED",
   "IN_PROGRESS",
   "COMPLETE",
-  "staffSubmitted",
+  "SUBMITTED_BY_STAFF",
 ];
 
 const columns = [
@@ -218,7 +222,8 @@ const columns = [
   {
     header: "Last Updated",
     id: "lastUpdated",
-    accessorFn: (r: RNARowData) => r.updatedAt,
+    accessorFn: (r: RNARowData) =>
+      r.submittedByStaffAt ?? r.completedAt ?? r.updatedAt,
     enableSorting: true,
     sortingFn: "datetime",
     cell: LastUpdatedCell,

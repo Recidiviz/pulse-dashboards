@@ -51,10 +51,12 @@ type QuerierProps = {
 };
 
 function RNAFacilityQuerier({ facilityIds }: QuerierProps) {
-  const { jiiTrpcClient } = useRootStore();
+  const {
+    jiiTrpc: { querier },
+  } = useRootStore();
 
   const { data } = useSuspenseQuery(
-    jiiTrpcClient.staff.usNc.rnaStatusList.queryOptions({
+    querier.staff.usNc.rnaStatusList.queryOptions({
       lookupField: "facilityId",
       lookupValue: facilityIds,
     }),

@@ -15,15 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { TRPCClient } from "@trpc/client";
+import { makeAutoObservable, runInAction } from "mobx";
 
 import {
   RNACheckboxAnswers,
   RNALifeAreaAnswers,
   RNATextAnswers,
 } from "~@jii/configs";
-import { JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
+import { JiiStaffAppRouter, JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
 
+import { formatWorkflowsDate } from "../../../utils";
 import { Resident } from "../../../WorkflowsStore/Resident";
 
 export class ResultsPagePresenter {
@@ -32,12 +34,20 @@ export class ResultsPagePresenter {
     private answerData: NonNullable<
       JiiStaffAppRouterOutputs["staff"]["usNc"]["getRNA"]
     >,
+    private trpcClient: TRPCClient<JiiStaffAppRouter>,
   ) {
-    makeAutoObservable(this);
+    makeAutoObservable<this, "trpcClient">(this, { trpcClient: false });
   }
 
+  // temporary view state to reflect clicks of the submitted/undo buttons;
+  // the upstream queries will be refetched when a user navigates away from this
+  // page so the other views will catch up to this state on their own
+  private submittedDateOverride?: Date | null;
+
   get status() {
-    return this.answerData.status;
+    return this.submittedDateOverride
+      ? "SUBMITTED_BY_STAFF"
+      : this.answerData.status;
   }
 
   get textAnswers(): RNATextAnswers {
@@ -50,5 +60,33 @@ export class ResultsPagePresenter {
 
   get lifeAreaAnswers(): RNALifeAreaAnswers {
     return this.answerData.lifeAreaAnswers;
+  }
+
+  get formattedSubmissionDate() {
+    const dateSubmitted =
+      this.answerData.submittedByStaffAt ?? this.submittedDateOverride;
+
+    return dateSubmitted ? formatWorkflowsDate(dateSubmitted) : undefined;
+  }
+
+  async markSubmitted() {
+    const { submittedByStaffAt } =
+      await this.trpcClient.staff.usNc.setRNASubmitted.mutate({
+        id: this.answerData.id,
+        isSubmitted: true,
+      });
+    runInAction(() => {
+      this.submittedDateOverride = submittedByStaffAt;
+    });
+  }
+
+  async clearSubmitted() {
+    await this.trpcClient.staff.usNc.setRNASubmitted.mutate({
+      id: this.answerData.id,
+      isSubmitted: false,
+    });
+    runInAction(() => {
+      this.submittedDateOverride = undefined;
+    });
   }
 }

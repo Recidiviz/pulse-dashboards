@@ -91,10 +91,11 @@ export const rnaStatusList = stateStaffProcedure
         },
         select: {
           pseudonymizedId: true,
-          completed: true,
+          completedAt: true,
           createdAt: true,
           updatedAt: true,
           answers: true,
+          submittedByStaffAt: true,
         },
         // we only want the most recent for each person,
         // this will help us filter for that in memory
@@ -120,6 +121,8 @@ export const rnaStatusList = stateStaffProcedure
           status: RNAAssessmentStatus;
           updatedAt?: Date;
           createdAt?: Date;
+          completedAt?: Date;
+          submittedByStaffAt?: Date;
         } => {
           const {
             pseudonymizedId,
@@ -148,6 +151,10 @@ export const rnaStatusList = stateStaffProcedure
             status: getStatusOfExistingRNA(currentRNA),
             updatedAt: currentRNA.updatedAt,
             createdAt: currentRNA.createdAt,
+            // coalescing nulls to undefined just to simplify the output type,
+            // the distinction between them is not important
+            completedAt: currentRNA.completedAt ?? undefined,
+            submittedByStaffAt: currentRNA.submittedByStaffAt ?? undefined,
           };
         },
       );

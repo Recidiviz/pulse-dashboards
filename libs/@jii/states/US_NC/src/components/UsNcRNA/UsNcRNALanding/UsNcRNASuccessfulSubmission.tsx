@@ -19,20 +19,21 @@ import { Card } from "~@jii/common-ui";
 import { formatFullDate } from "~@jii/data";
 
 import { RNADescription, RNAHeading } from "../styles";
-import { useRNAFormContext } from "../UsNcRNAFormContext/UsNcRNAFormContextProvider";
 
 /**
  * Landing page for Risks and Needs Assessment when the form has been completed.
  */
-export function UsNcRNASuccessfulSubmission() {
-  const { form } = useRNAFormContext();
-
+export function UsNcRNASuccessfulSubmission({
+  completedAt,
+}: {
+  completedAt: Date;
+}) {
   return (
     <Card>
       <RNAHeading>Thanks for filling out your Self-Report</RNAHeading>
       <RNADescription>
-        You completed the form on {formatFullDate(form.updatedAt)}. A staff
-        member will be in touch about next steps.
+        You completed the form on {formatFullDate(completedAt)}. A staff member
+        will be in touch about next steps.
       </RNADescription>
     </Card>
   );

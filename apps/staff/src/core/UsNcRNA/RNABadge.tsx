@@ -59,7 +59,7 @@ const badgeSettings = {
     textColor: "rgb(168,44,0)",
     text: "Complete – Review",
   },
-  staffSubmitted: {
+  SUBMITTED_BY_STAFF: {
     backgroundColor: "rgb(239,255,229)",
     borderColor: "rgb(166,235,132)",
     textColor: "rgb(0,105,8)",

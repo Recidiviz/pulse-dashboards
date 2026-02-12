@@ -57,7 +57,7 @@ export const usNcRouter = router({
       let result;
       // todo: edit this condition once we can use the date of RNA enablement
       // to determine whether to make a new RNA object or not.
-      if (existingRNA && !existingRNA.completed) {
+      if (existingRNA && !existingRNA.completedAt) {
         result = existingRNA;
       } else {
         result = await prisma.usNcRNA.create({
@@ -81,25 +81,30 @@ export const usNcRouter = router({
   // existing answers with existing db info.
   updateRNA: ncProcedure
     .input(updateRNASchema)
-    .mutation(async ({ input, ctx: { prisma } }) => {
-      try {
-        return prisma.usNcRNA.update({
-          where: { id: input.id },
-          data: input,
-        });
-      } catch (e) {
-        if (
-          e instanceof Prisma.PrismaClientKnownRequestError &&
-          e.code === "P2025"
-        ) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Trying to update RNA with invalid id",
-            cause: e,
+    .mutation(
+      async ({ input: { id, answers, completed }, ctx: { prisma } }) => {
+        try {
+          return prisma.usNcRNA.update({
+            where: { id: id },
+            data: {
+              answers,
+              completedAt: completed ? new Date() : undefined,
+            },
           });
-        }
+        } catch (e) {
+          if (
+            e instanceof Prisma.PrismaClientKnownRequestError &&
+            e.code === "P2025"
+          ) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Trying to update RNA with invalid id",
+              cause: e,
+            });
+          }
 
-        throw e;
-      }
-    }),
+          throw e;
+        }
+      },
+    ),
 });

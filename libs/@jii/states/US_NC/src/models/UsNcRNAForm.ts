@@ -46,7 +46,7 @@ export class UsNcRNAForm {
   constructor(
     readonly apiClient: DataAPI,
     readonly id: string,
-    readonly completed: boolean,
+    readonly completedAt: Date | null,
     readonly updatedAt: Date,
 
     // All of the user's saved answers, read from the database

@@ -22,8 +22,9 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-import { Resident } from "../../../WorkflowsStore/Resident";
 import { RNAMarkSubmittedButton } from "../RNAMarkSubmittedButton";
+import { ResultsPagePresenter } from "./ResultsPagePresenter";
+import { SubmissionDateandUndo } from "./SubmissionDateAndUndo";
 
 const FooterContainer = styled.div`
   background-color: ${palette.marble3};
@@ -37,6 +38,14 @@ const FooterContainer = styled.div`
   justify-content: center;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.sm)};
+  align-items: center;
+  justify-content: center;
+`;
+
 const FooterText = styled(Sans18)`
   color: black;
   max-width: 60%;
@@ -45,17 +54,21 @@ const FooterText = styled(Sans18)`
 `;
 
 export const RNAResultsFooter = observer(function RNAResultsFooter({
-  resident,
+  presenter,
 }: {
-  resident: Resident;
+  presenter: ResultsPagePresenter;
 }) {
   return (
     <FooterContainer>
       <FooterText>
-        You've reached the end of {resident.preferredGivenName}'s RNA assessment
-        results. Make sure you've copied all of the information into OPUS.
+        You've reached the end of {presenter.resident.preferredGivenName}'s RNA
+        assessment results. Make sure you've copied all of the information into
+        OPUS.
       </FooterText>
-      <RNAMarkSubmittedButton />
+      <ButtonContainer>
+        <RNAMarkSubmittedButton presenter={presenter} />
+        <SubmissionDateandUndo presenter={presenter} />
+      </ButtonContainer>
     </FooterContainer>
   );
 });

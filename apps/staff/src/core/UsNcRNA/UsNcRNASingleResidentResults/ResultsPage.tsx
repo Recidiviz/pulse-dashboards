@@ -21,24 +21,15 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import { fullRNASpec } from "~@jii/configs";
-import { palette, spacing } from "~design-system";
+import { spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { Resident } from "../../../WorkflowsStore/Resident";
-import { NavigationLayout, OverviewNavLinks } from "../../NavigationLayout";
 import { ResultsPagePresenter } from "./ResultsPagePresenter";
 import { RNAResultsFooter } from "./RNAResultsFooter";
 import { RNAResultsHeader } from "./RNAResultsHeader";
 import { RNAResultsSection } from "./RNAResultsSection";
-
-const Wrapper = styled.div`
-  background-color: ${palette.marble1};
-  min-height: 100vh;
-  max-height: 100vh;
-  height: 100%;
-  width: 100%;
-`;
 
 export const PaddedRNAContent = styled.div`
   padding: ${rem(spacing.md)} ${rem(72)};
@@ -53,11 +44,7 @@ export const ManagedComponent = observer(function ResultsPage({
   presenter: ResultsPagePresenter;
 }) {
   return (
-    <Wrapper>
-      <NavigationLayout>
-        <OverviewNavLinks />
-      </NavigationLayout>
-
+    <>
       <RNAResultsHeader presenter={presenter} />
       <PaddedRNAContent>
         {fullRNASpec.map((rnaPageSpec) => {
@@ -69,24 +56,26 @@ export const ManagedComponent = observer(function ResultsPage({
             />
           );
         })}
-        <RNAResultsFooter resident={presenter.resident} />
+        <RNAResultsFooter presenter={presenter} />
       </PaddedRNAContent>
-    </Wrapper>
+    </>
   );
 });
 
 type Props = { resident: Resident };
 
 function usePresenter({ resident }: Props) {
-  const { jiiTrpcClient } = useRootStore();
+  const {
+    jiiTrpc: { querier, client },
+  } = useRootStore();
 
   const { data } = useSuspenseQuery(
-    jiiTrpcClient.staff.usNc.getRNA.queryOptions({
+    querier.staff.usNc.getRNA.queryOptions({
       pseudonymizedId: resident.pseudonymizedId,
     }),
   );
 
-  return new ResultsPagePresenter(resident, data);
+  return new ResultsPagePresenter(resident, data, client);
 }
 
 export const ResultsPage = withPresenterManager({

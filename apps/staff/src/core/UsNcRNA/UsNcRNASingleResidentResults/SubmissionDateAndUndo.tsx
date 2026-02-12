@@ -15,35 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { JsonValue } from "@prisma/client/runtime/client";
-import isEmpty from "lodash-es/isEmpty";
-import { z } from "zod";
+import { typography } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
+import { FC } from "react";
+import styled from "styled-components";
 
-export const rnaAssessmentStatus = z.enum([
-  "UPCOMING",
-  "NOT_STARTED",
-  "IN_PROGRESS",
-  "COMPLETE",
-  "SUBMITTED_BY_STAFF",
-]);
+import { Button } from "~design-system";
 
-export type RNAAssessmentStatus = z.infer<typeof rnaAssessmentStatus>;
+import { ResultsPagePresenter } from "./ResultsPagePresenter";
 
-type RNARow = {
-  completedAt: Date | null;
-  answers: JsonValue;
-  submittedByStaffAt: Date | null;
-};
+const Wrapper = styled.div`
+  ${typography.Sans12}
 
-export function getStatusOfExistingRNA(
-  currentRNA: RNARow,
-): RNAAssessmentStatus {
-  if (currentRNA.submittedByStaffAt)
-    return rnaAssessmentStatus.enum.SUBMITTED_BY_STAFF;
+  button {
+    ${typography.Sans12}
+    text-decoration: underline;
+  }
+`;
 
-  if (currentRNA.completedAt) return rnaAssessmentStatus.enum.COMPLETE;
+export const SubmissionDateandUndo: FC<{
+  presenter: ResultsPagePresenter;
+}> = observer(function SubmissionDateandUndo({ presenter }) {
+  if (!presenter.formattedSubmissionDate) return null;
 
-  if (!isEmpty(currentRNA.answers)) return rnaAssessmentStatus.enum.IN_PROGRESS;
-
-  return rnaAssessmentStatus.enum.NOT_STARTED;
-}
+  return (
+    <Wrapper>
+      Submitted {presenter.formattedSubmissionDate}.{" "}
+      <Button kind={"link"} onClick={() => presenter.clearSubmitted()}>
+        Undo
+      </Button>
+    </Wrapper>
+  );
+});

@@ -37,8 +37,8 @@ export function UsNcRNALanding() {
 
   // TODO(#10889): show message if form is not enabled
 
-  if (form.completed) {
-    return <UsNcRNASuccessfulSubmission />;
+  if (form.completedAt) {
+    return <UsNcRNASuccessfulSubmission completedAt={form.completedAt} />;
   }
 
   if (form.pageToResumeAt > 1) {

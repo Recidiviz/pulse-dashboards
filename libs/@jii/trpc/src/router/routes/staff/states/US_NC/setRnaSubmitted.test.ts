@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import tk from "timekeeper";
+
 import { testPrismaClient } from "../../../../../test/prisma";
 import {
   checkboxAnswers,
@@ -24,18 +26,13 @@ import {
 import { caller } from "../../../../../test/US_NC/mockStaffProcedure";
 
 const testResidentId = "abc123";
-const testCompletionDate = new Date(2026, 1, 1);
+const testCompletedDate = new Date(2025, 4, 6);
+const testDate = new Date(2025, 4, 7);
 
-test("no result", async () => {
-  await expect(
-    caller.getRNA({ pseudonymizedId: testResidentId }),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[TRPCError: No assessment data could be found for this resident (ID: abc123)]`,
-  );
-});
+test("set submitted", async () => {
+  tk.freeze(testDate);
 
-test("completed assessment", async () => {
-  await testPrismaClient.usNcRNA.create({
+  const rna = await testPrismaClient.usNcRNA.create({
     data: {
       pseudonymizedId: testResidentId,
       answers: {
@@ -43,58 +40,58 @@ test("completed assessment", async () => {
         ...lifeAreaAnswers,
         ...checkboxAnswers,
       },
-      completedAt: testCompletionDate,
+      completedAt: testCompletedDate,
     },
   });
 
-  const result = await caller.getRNA({ pseudonymizedId: testResidentId });
-  expect(result).toEqual({
-    status: "COMPLETE",
-    textAnswers,
-    checkboxAnswers,
-    lifeAreaAnswers,
-    id: expect.any(String),
-    submittedByStaffAt: null,
+  const result = await caller.setRNASubmitted({
+    id: rna.id,
+    isSubmitted: true,
   });
+  expect(result).toEqual({
+    submittedByStaffAt: testDate,
+  });
+
+  expect(
+    (
+      await testPrismaClient.usNcRNA.findUnique({
+        select: { submittedByStaffAt: true },
+        where: { id: rna.id },
+      })
+    )?.submittedByStaffAt,
+  ).toEqual(testDate);
+
+  tk.reset();
 });
 
-test("in progress assessment", async () => {
-  await testPrismaClient.usNcRNA.create({
+test("clear submitted", async () => {
+  const rna = await testPrismaClient.usNcRNA.create({
     data: {
       pseudonymizedId: testResidentId,
-      // this is not entirely realistic, what matters is that it's not empty
       answers: {
+        ...textAnswers,
         ...lifeAreaAnswers,
+        ...checkboxAnswers,
       },
+      completedAt: testCompletedDate,
+      submittedByStaffAt: testDate,
     },
   });
 
-  const result = await caller.getRNA({ pseudonymizedId: testResidentId });
+  const result = await caller.setRNASubmitted({
+    id: rna.id,
+    isSubmitted: false,
+  });
   expect(result).toEqual({
-    status: "IN_PROGRESS",
-    lifeAreaAnswers,
-    checkboxAnswers: {},
-    textAnswers: {},
-    id: expect.any(String),
     submittedByStaffAt: null,
   });
-});
 
-test("not started assessment", async () => {
-  await testPrismaClient.usNcRNA.create({
-    data: {
-      pseudonymizedId: testResidentId,
-      answers: {},
-    },
-  });
-
-  const result = await caller.getRNA({ pseudonymizedId: testResidentId });
-  expect(result).toEqual({
-    status: "NOT_STARTED",
-    checkboxAnswers: {},
-    textAnswers: {},
-    lifeAreaAnswers: {},
-    id: expect.any(String),
-    submittedByStaffAt: null,
-  });
+  expect(
+    (
+      await testPrismaClient.usNcRNA.findUnique({
+        select: { submittedByStaffAt: true },
+        where: { id: rna.id },
+      })
+    )?.submittedByStaffAt,
+  ).toBeNull();
 });

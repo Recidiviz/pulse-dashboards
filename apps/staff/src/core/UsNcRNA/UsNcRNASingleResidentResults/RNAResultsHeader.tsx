@@ -28,6 +28,7 @@ import { RNABadge } from "../RNABadge";
 import { RNAMarkSubmittedButton } from "../RNAMarkSubmittedButton";
 import { PaddedRNAContent } from "./ResultsPage";
 import { ResultsPagePresenter } from "./ResultsPagePresenter";
+import { SubmissionDateandUndo } from "./SubmissionDateAndUndo";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -37,15 +38,24 @@ const HeaderContainer = styled.div`
   padding-bottom: ${rem(spacing.sm)};
 `;
 
-const Heading = styled(Sans18).attrs({ as: "h2" })`
+const Columns = styled.div`
   margin-top: ${rem(spacing.xl)};
-  color: ${palette.slate85};
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: ${rem(spacing.lg)};
+  align-items: end;
+  row-gap: ${rem(spacing.md)};
 `;
 
-const MainInfo = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: ${rem(spacing.sm)};
+const Left = styled.div`
+  grid-area: auto / 1;
+`;
+const Right = styled.div`
+  grid-area: auto / 2;
+`;
+
+const Heading = styled(Sans18).attrs({ as: "h2" })`
+  color: ${palette.slate85};
 `;
 
 const Name = styled(Serif34).attrs({ as: "span" })`
@@ -68,20 +78,29 @@ export const RNAResultsHeader = observer(function RNAResultsHeader({
     <HeaderContainer>
       <PaddedRNAContent>
         <WorkflowsBackButton />
-        <Heading>RNA Assessment Results</Heading>
-        <MainInfo>
-          <div>
-            <Name>{resident.displayName}</Name>
-            <PersonId
-              personId={resident.displayId}
-              pseudoId={resident.pseudonymizedId}
-            >
-              <IdText>{resident.displayId}</IdText>
-            </PersonId>
-          </div>
-          <RNAMarkSubmittedButton />
-        </MainInfo>
-        <RNABadge kind={status} />
+        <Columns>
+          <Left>
+            <Heading>RNA Assessment Results</Heading>
+            <div>
+              <Name>{resident.displayName}</Name>
+              <PersonId
+                personId={resident.displayId}
+                pseudoId={resident.pseudonymizedId}
+              >
+                <IdText>{resident.displayId}</IdText>
+              </PersonId>
+            </div>
+          </Left>
+          <Right>
+            <RNAMarkSubmittedButton presenter={presenter} />
+          </Right>
+          <Left>
+            <RNABadge kind={status} />
+          </Left>
+          <Right>
+            <SubmissionDateandUndo presenter={presenter} />
+          </Right>
+        </Columns>
       </PaddedRNAContent>
     </HeaderContainer>
   );

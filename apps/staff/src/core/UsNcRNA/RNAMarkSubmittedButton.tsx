@@ -15,9 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+import { FC } from "react";
+
 import { Button } from "~design-system";
 
-export const RNAMarkSubmittedButton = () => {
-  // TODO: Make this do something on click.
-  return <Button shape={"block"}>Mark as submitted in OPUS</Button>;
-};
+import { ResultsPagePresenter } from "./UsNcRNASingleResidentResults/ResultsPagePresenter";
+
+export const RNAMarkSubmittedButton: FC<{
+  presenter: ResultsPagePresenter;
+}> = observer(function RNAMarkSubmittedButton({ presenter }) {
+  return (
+    <Button
+      shape={"block"}
+      disabled={presenter.status !== "COMPLETE"}
+      onClick={() => {
+        presenter.markSubmitted();
+      }}
+    >
+      Mark as submitted in OPUS
+    </Button>
+  );
+});

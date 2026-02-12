@@ -17,6 +17,7 @@
 
 import { Auth0ClientOptions, User } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
+import { TRPCClient } from "@trpc/client";
 import { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { computed, configure, makeObservable, onReactionError } from "mobx";
 
@@ -127,7 +128,10 @@ export class RootStore {
 
   firebaseAuthClient: FirebaseAuthClient;
 
-  jiiTrpcClient: TRPCOptionsProxy<JiiStaffAppRouter>;
+  jiiTrpc: {
+    querier: TRPCOptionsProxy<JiiStaffAppRouter>;
+    client: TRPCClient<JiiStaffAppRouter>;
+  };
 
   constructor() {
     makeObservable(this, {
@@ -184,7 +188,7 @@ export class RootStore {
 
     this.cpaStore = new CPAStore(this);
 
-    this.jiiTrpcClient = createJiiTrpcClient({
+    this.jiiTrpc = createJiiTrpcClient({
       firebaseAuthClient: this.firebaseAuthClient,
       currentTenantId: () => this.currentTenantId,
     });

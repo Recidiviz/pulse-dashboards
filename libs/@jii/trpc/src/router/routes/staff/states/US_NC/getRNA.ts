@@ -35,12 +35,20 @@ export const getRNA = stateStaffProcedure
         message: `No assessment data could be found for this resident (ID: ${queryArgs.input.pseudonymizedId})`,
       });
 
-    const { textAnswers, checkboxAnswers, lifeAreaAnswers } = rnaData;
+    const {
+      textAnswers,
+      checkboxAnswers,
+      lifeAreaAnswers,
+      id,
+      submittedByStaffAt,
+    } = rnaData;
 
     return {
+      id,
       textAnswers,
       checkboxAnswers,
       lifeAreaAnswers,
       status: getStatusOfExistingRNA(rnaData),
+      submittedByStaffAt,
     };
   });

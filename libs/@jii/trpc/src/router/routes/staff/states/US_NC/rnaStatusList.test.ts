@@ -18,42 +18,11 @@
 import { formatISO } from "date-fns";
 import { freeze, reset } from "timekeeper";
 
-import type { AuthorizedStaffUserContext } from "../../../../../procedures/firebaseAuthedStaffProcedure";
-import { baseProcedure } from "../../../../../procedures/init";
-import { userId } from "../../../../../test/context";
 import { testPrismaClient } from "../../../../../test/prisma";
-import { usNcStaffRouter } from "./router";
-
-const mocks = vi.hoisted(() => {
-  return { mockCollectionQuerier: vi.fn() };
-});
-vi.mock("../../../../../procedures/firebaseAuthedStaffProcedure", () => {
-  return {
-    // the real procedure depends on third party services such as Firebase
-    // to create a context for authorized users; this just mocks that result
-    // for a standardized test user
-    firebaseAuthedStaffProcedure: baseProcedure.use((opts) => {
-      return opts.next({
-        ctx: {
-          userId,
-          userProfile: {
-            app: "staff",
-            stateCode: "US_NC",
-            recidivizAllowedStates: [],
-            impersonator: false,
-          },
-          stateCode: "US_NC",
-          prisma: testPrismaClient,
-          firestoreCurrentStateQuerier: mocks.mockCollectionQuerier,
-        } satisfies AuthorizedStaffUserContext,
-      });
-    }),
-  };
-});
-
-// we are mocking the procedure's context so it doesn't really matter what we pass here
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const c = usNcStaffRouter.createCaller({ req: {} as any });
+import {
+  caller,
+  mockCollectionQuerier,
+} from "../../../../../test/US_NC/mockStaffProcedure";
 
 const testDate = new Date(2026, 0, 10);
 const futureDueDate = new Date(2026, 10, 10);
@@ -118,7 +87,7 @@ describe("rnaStatusList", () => {
     mockQuerierObject.where.mockReturnValue({
       select: vi.fn().mockReturnValue(mockFirestoreGet),
     });
-    mocks.mockCollectionQuerier.mockReturnValue(mockQuerierObject);
+    mockCollectionQuerier.mockReturnValue(mockQuerierObject);
   });
 
   afterEach(async () => {
@@ -127,7 +96,7 @@ describe("rnaStatusList", () => {
   });
 
   test("firestore lookup for residents", async () => {
-    await c.rnaStatusList(testInput);
+    await caller.rnaStatusList(testInput);
     expect(mockQuerierObject.where).toHaveBeenCalledWith("facilityId", "in", [
       "abc123",
     ]);
@@ -152,7 +121,7 @@ describe("rnaStatusList", () => {
       ],
     });
 
-    expect(await c.rnaStatusList(testInput)).toEqual(
+    expect(await caller.rnaStatusList(testInput)).toEqual(
       expect.arrayContaining(
         ...[
           allResidents.map((r) =>
@@ -214,7 +183,7 @@ describe("rnaStatusList", () => {
       })),
     });
 
-    expect(await c.rnaStatusList(testInput)).toEqual(
+    expect(await caller.rnaStatusList(testInput)).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           pseudonymizedId: testResidents[0].pseudonymizedId,
@@ -246,14 +215,15 @@ describe("rnaStatusList", () => {
         {
           pseudonymizedId: testResidents[0].pseudonymizedId,
           createdAt: olderRNADate,
-          completed: true,
+          // creation date matters, not completion
+          completedAt: recentRNADate,
           answers: { foo: ["bar"] },
         },
         // resident 1 is in the window but does not have a record
         // resident 2 is not in the window but also does not have a record
       ],
     });
-    expect(await c.rnaStatusList(testInput)).toMatchInlineSnapshot(`
+    expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
       [
         {
           "pseudonymizedId": "abc",
@@ -288,12 +258,14 @@ describe("rnaStatusList", () => {
         },
       ],
     });
-    expect(await c.rnaStatusList(testInput)).toMatchInlineSnapshot(`
+    expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
       [
         {
+          "completedAt": undefined,
           "createdAt": 2026-01-05T00:00:00.000Z,
           "pseudonymizedId": "abc",
           "status": "NOT_STARTED",
+          "submittedByStaffAt": undefined,
           "updatedAt": 2026-01-10T00:00:00.000Z,
         },
       ]
@@ -317,19 +289,21 @@ describe("rnaStatusList", () => {
         },
       ],
     });
-    expect(await c.rnaStatusList(testInput)).toMatchInlineSnapshot(`
+    expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
       [
         {
+          "completedAt": undefined,
           "createdAt": 2026-01-05T00:00:00.000Z,
           "pseudonymizedId": "abc",
           "status": "IN_PROGRESS",
+          "submittedByStaffAt": undefined,
           "updatedAt": 2026-01-10T00:00:00.000Z,
         },
       ]
     `);
   });
 
-  test("COMPLETED status", async () => {
+  test("COMPLETE status", async () => {
     mockFirestoreGet.get.mockResolvedValue({
       docs: testResidents.slice(0, 1).map((r) => ({
         data() {
@@ -342,17 +316,52 @@ describe("rnaStatusList", () => {
         {
           pseudonymizedId: testResidents[0].pseudonymizedId,
           createdAt: recentRNADate,
-          completed: true,
+          completedAt: recentRNADate,
           answers: { foo: ["bar"] },
         },
       ],
     });
-    expect(await c.rnaStatusList(testInput)).toMatchInlineSnapshot(`
+    expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
       [
         {
+          "completedAt": 2026-01-05T00:00:00.000Z,
           "createdAt": 2026-01-05T00:00:00.000Z,
           "pseudonymizedId": "abc",
           "status": "COMPLETE",
+          "submittedByStaffAt": undefined,
+          "updatedAt": 2026-01-10T00:00:00.000Z,
+        },
+      ]
+    `);
+  });
+
+  test("SUBMITTED_BY_STAFF status", async () => {
+    mockFirestoreGet.get.mockResolvedValue({
+      docs: testResidents.slice(0, 1).map((r) => ({
+        data() {
+          return r;
+        },
+      })),
+    });
+    await testPrismaClient.usNcRNA.createMany({
+      data: [
+        {
+          pseudonymizedId: testResidents[0].pseudonymizedId,
+          createdAt: recentRNADate,
+          completedAt: recentRNADate,
+          answers: { foo: ["bar"] },
+          submittedByStaffAt: new Date(),
+        },
+      ],
+    });
+    expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
+      [
+        {
+          "completedAt": 2026-01-05T00:00:00.000Z,
+          "createdAt": 2026-01-05T00:00:00.000Z,
+          "pseudonymizedId": "abc",
+          "status": "SUBMITTED_BY_STAFF",
+          "submittedByStaffAt": 2026-01-10T00:00:00.000Z,
           "updatedAt": 2026-01-10T00:00:00.000Z,
         },
       ]
