@@ -236,14 +236,18 @@ describe("CaseloadTasksPresenterV2", () => {
     });
 
     it("filters by type in orderedTasksForCategory", () => {
-      expect(presenter.orderedTasksForCategory("ALL_TASKS")).toHaveLength(6);
-      expect(presenter.orderedTasksForCategory("OVERDUE")).toHaveLength(1);
-      expect(presenter.orderedTasksForCategory("DUE_THIS_WEEK")).toHaveLength(
-        2,
-      );
-      expect(presenter.orderedTasksForCategory("DUE_THIS_MONTH")).toHaveLength(
-        3,
-      );
+      expect(
+        presenter.filterStore.orderedTasksForCategory("ALL_TASKS"),
+      ).toHaveLength(6);
+      expect(
+        presenter.filterStore.orderedTasksForCategory("OVERDUE"),
+      ).toHaveLength(1);
+      expect(
+        presenter.filterStore.orderedTasksForCategory("DUE_THIS_WEEK"),
+      ).toHaveLength(2);
+      expect(
+        presenter.filterStore.orderedTasksForCategory("DUE_THIS_MONTH"),
+      ).toHaveLength(3);
     });
 
     it("uses stored category for orderedTasksForSelectedCategory", () => {
@@ -255,7 +259,7 @@ describe("CaseloadTasksPresenterV2", () => {
 
     it("are ordered by due date", () => {
       expect(
-        presenter
+        presenter.filterStore
           .orderedTasksForCategory("DUE_THIS_MONTH")
           .map((t) => t.dueDate),
       ).toEqual([
@@ -292,19 +296,23 @@ describe("CaseloadTasksPresenterV2", () => {
     });
 
     it("filters people by selected task types", () => {
-      presenter.toggleFilter("type", { value: "employment" });
+      presenter.filterStore.toggleFilter("type", { value: "employment" });
       expect(presenter.clientsWithUpcomingTasks).toHaveLength(1);
       expect(presenter.clientsWithOverdueTasks).toHaveLength(1);
     });
 
     it("can filter by a single option", () => {
-      presenter.setOnlyFilterForField("type", { value: "employment" });
+      presenter.filterStore.setOnlyFilterForField("type", {
+        value: "employment",
+      });
       expect(presenter.clientsWithUpcomingTasks).toHaveLength(1);
       expect(presenter.clientsWithOverdueTasks).toHaveLength(1);
     });
 
     it("can filter down to empty lists", () => {
-      presenter.setOnlyFilterForField("type", { value: "someOtherType" });
+      presenter.filterStore.setOnlyFilterForField("type", {
+        value: "someOtherType",
+      });
       expect(presenter.clientsWithUpcomingTasks).toHaveLength(0);
       expect(presenter.clientsWithOverdueTasks).toHaveLength(0);
     });
@@ -346,8 +354,8 @@ describe("CaseloadTasksPresenterV2", () => {
     });
 
     it("returns all tasks when a filter is set and then unset", () => {
-      presenter.toggleFilter("supervisionLevel", { value: "Low" });
-      presenter.toggleFilter("supervisionLevel", { value: "Low" });
+      presenter.filterStore.toggleFilter("supervisionLevel", { value: "Low" });
+      presenter.filterStore.toggleFilter("supervisionLevel", { value: "Low" });
 
       expect(presenter.countForCategory("ALL_TASKS")).toEqual(5);
       expect(presenter.countForCategory("OVERDUE")).toEqual(0);
@@ -356,7 +364,9 @@ describe("CaseloadTasksPresenterV2", () => {
     });
 
     it("filters tasks by set filters", () => {
-      presenter.setOnlyFilterForField("supervisionLevel", { value: "Low" });
+      presenter.filterStore.setOnlyFilterForField("supervisionLevel", {
+        value: "Low",
+      });
 
       expect(presenter.countForCategory("ALL_TASKS")).toEqual(3);
       expect(presenter.countForCategory("OVERDUE")).toEqual(0);
@@ -371,56 +381,20 @@ describe("CaseloadTasksPresenterV2", () => {
       expect(presenter.allTasksForCategory("ALL_TASKS", false)).toHaveLength(5);
 
       // Next, set filter
-      presenter.setOnlyFilterForField("supervisionLevel", { value: "Low" });
+      presenter.filterStore.setOnlyFilterForField("supervisionLevel", {
+        value: "Low",
+      });
 
       // allTasksForCategory should return a different number of tasks depending on applyFilter
       expect(presenter.allTasksForCategory("ALL_TASKS", true)).toHaveLength(3);
       expect(presenter.allTasksForCategory("ALL_TASKS", false)).toHaveLength(5);
     });
 
-    it("logs filter changes", () => {
-      presenter.unsetFilter("supervisionLevel", { value: "Low" });
-
-      expect(
-        mockAnalyticsStore.trackTaskFilterChanged,
-      ).toHaveBeenLastCalledWith({
-        changedFilterValue: "Low",
-        changedFilterCategory: "supervisionLevel",
-        changedFilterSelected: false,
-        selectedFilters: {},
-        onlyClicked: false,
-      });
-
-      presenter.unsetFilter("supervisionLevel", { value: "High" });
-
-      expect(
-        mockAnalyticsStore.trackTaskFilterChanged,
-      ).toHaveBeenLastCalledWith({
-        changedFilterValue: "High",
-        changedFilterCategory: "supervisionLevel",
-        changedFilterSelected: false,
-        onlyClicked: false,
-        selectedFilters: {},
-      });
-
-      presenter.setOnlyFilterForField("district", { value: "D31" });
-
-      expect(
-        mockAnalyticsStore.trackTaskFilterChanged,
-      ).toHaveBeenLastCalledWith({
-        changedFilterValue: "D31",
-        changedFilterCategory: "district",
-        changedFilterSelected: true,
-        onlyClicked: true,
-        selectedFilters: {
-          district: ["D31"],
-        },
-      });
-    });
-
     it("can filter on multiple values per field", () => {
-      presenter.setOnlyFilterForField("supervisionLevel", { value: "Limited" });
-      presenter.setFilter("supervisionLevel", { value: "Low" });
+      presenter.filterStore.setOnlyFilterForField("supervisionLevel", {
+        value: "Limited",
+      });
+      presenter.filterStore.setFilter("supervisionLevel", { value: "Low" });
 
       expect(presenter.countForCategory("ALL_TASKS")).toEqual(4);
       expect(presenter.countForCategory("OVERDUE")).toEqual(0);
@@ -429,154 +403,15 @@ describe("CaseloadTasksPresenterV2", () => {
     });
 
     it("can filter on multiple fields", () => {
-      presenter.setOnlyFilterForField("supervisionLevel", { value: "Low" });
-      presenter.setOnlyFilterForField("district", { value: "D10" });
+      presenter.filterStore.setOnlyFilterForField("supervisionLevel", {
+        value: "Low",
+      });
+      presenter.filterStore.setOnlyFilterForField("district", { value: "D10" });
 
       expect(presenter.countForCategory("ALL_TASKS")).toEqual(2);
       expect(presenter.countForCategory("OVERDUE")).toEqual(0);
       expect(presenter.countForCategory("DUE_THIS_WEEK")).toEqual(2);
       expect(presenter.countForCategory("DUE_THIS_MONTH")).toEqual(0);
-    });
-  });
-
-  describe("storing filter state", () => {
-    beforeEach(() => {
-      presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
-    });
-
-    it("starts with no filters selected", () => {
-      expect(presenter.selectedFilters).toEqual({});
-    });
-
-    it("stores multiple selected filters", () => {
-      presenter.setOnlyFilterForField("supervisionLevel", { value: "Low" });
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "Low" }),
-      ).toBeTrue();
-
-      presenter.setFilter("supervisionLevel", { value: "High" });
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeTrue();
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "Low" }),
-      ).toBeTrue();
-    });
-
-    it("setFilter() does not deselect selected filters", () => {
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeFalse();
-
-      presenter.setFilter("supervisionLevel", { value: "High" });
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeTrue();
-
-      presenter.unsetFilter("supervisionLevel", { value: "High" });
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeFalse();
-    });
-
-    it("resetting sets all filters", () => {
-      presenter.setOnlyFilterForField("supervisionLevel", { value: "Low" });
-      presenter.setFilter("supervisionLevel", { value: "High" });
-      presenter.setOnlyFilterForField("caseType", { value: "general" });
-      presenter.setOnlyFilterForField("displayName", { value: "Bob" });
-      presenter.selectAllFilters();
-      expect(presenter.selectedFilters).toEqual({
-        district: ["D1", "D31", "D10", "D7"],
-        supervisionLevel: ["Low", "Medium", "High", "Limited"],
-        type: ["employment", "assessment", "homeVisit", "contact"],
-      });
-
-      expect(mockAnalyticsStore.trackTaskFiltersReset).toHaveBeenLastCalledWith(
-        {
-          selectedFiltersBeforeReset: {
-            caseType: ["general"],
-            displayName: ["Bob"],
-            supervisionLevel: ["Low", "High"],
-          },
-        },
-      );
-    });
-
-    it("clearing sets a cleared entry for all filter fields", () => {
-      presenter.clearFilters();
-      expect(presenter.selectedFilters).toEqual({
-        district: undefined,
-        supervisionLevel: undefined,
-        type: undefined,
-      });
-
-      expect(
-        mockAnalyticsStore.trackTaskFiltersCleared,
-      ).toHaveBeenLastCalledWith();
-    });
-
-    it("toggles filters", () => {
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeFalse();
-
-      presenter.toggleFilter("supervisionLevel", { value: "High" });
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeTrue();
-    });
-
-    it("can toggle multiple filters", () => {
-      presenter.toggleFilter("supervisionLevel", { value: "High" });
-      presenter.toggleFilter("supervisionLevel", { value: "Low" });
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeTrue();
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "Low" }),
-      ).toBeTrue();
-
-      presenter.toggleFilter("supervisionLevel", { value: "High" });
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeFalse();
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "Low" }),
-      ).toBeTrue();
-
-      presenter.toggleFilter("district", { value: "District 10" });
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeFalse();
-      expect(
-        presenter.filterIsSelected("supervisionLevel", { value: "Low" }),
-      ).toBeTrue();
-      expect(
-        presenter.filterIsSelected("district", { value: "District 10" }),
-      ).toBeTrue();
-    });
-
-    it("can track when all filters are selected", () => {
-      // By default, no filters are selected
-      expect(presenter.allFiltersSelected).toBeFalse();
-      // Select high
-      presenter.toggleFilter("supervisionLevel", { value: "High" });
-      expect(presenter.allFiltersSelected).toBeFalse();
-      // Select low
-      presenter.toggleFilter("supervisionLevel", { value: "Low" });
-      expect(presenter.allFiltersSelected).toBeFalse();
-      // Deselect high
-      presenter.toggleFilter("supervisionLevel", { value: "High" });
-      expect(presenter.allFiltersSelected).toBeFalse();
-      // Deselect low
-      presenter.toggleFilter("supervisionLevel", { value: "Low" });
-      expect(presenter.allFiltersSelected).toBeFalse();
-      // Reselect all
-      presenter.selectAllFilters();
-      expect(presenter.allFiltersSelected).toBeTrue();
-      // Deselect all
-      presenter.clearFilters();
-      expect(presenter.allFiltersSelected).toBeFalse();
     });
   });
 
@@ -661,7 +496,9 @@ describe("CaseloadTasksPresenterV2", () => {
       expect(presenter.allTasksForCategory("HIDDEN")).toHaveLength(1);
 
       // Apply a filter that excludes the hidden task
-      presenter.setOnlyFilterForField("type", { value: "employment" });
+      presenter.filterStore.setOnlyFilterForField("type", {
+        value: "employment",
+      });
 
       // Now we should have no hidden tasks
       expect(presenter.allTasksForCategory("HIDDEN")).toHaveLength(0);
@@ -669,7 +506,9 @@ describe("CaseloadTasksPresenterV2", () => {
 
     it("ignores filters when applyFilter is false", () => {
       // Apply a filter that would exclude tasks
-      presenter.setOnlyFilterForField("type", { value: "employment" });
+      presenter.filterStore.setOnlyFilterForField("type", {
+        value: "employment",
+      });
 
       // When applyFilter is true, we should only get employment tasks
       expect(presenter.allTasksForCategory("HIDDEN", true)).toHaveLength(0);

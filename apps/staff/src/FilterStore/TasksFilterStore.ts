@@ -39,7 +39,7 @@ export default class TasksFilterStore extends FilterStoreBase {
     readonly tenantStore: TenantStore,
     protected readonly workflowsStore: WorkflowsStore,
   ) {
-    super(analyticsStore, tenantStore, workflowsStore);
+    super();
     makeObservable<TasksFilterStore>(this, {
       // Observables
       _selectedFilters: true,
@@ -62,6 +62,16 @@ export default class TasksFilterStore extends FilterStoreBase {
       trackTaskFilterDropdownOpened: true,
       trackFiltersReset: true,
       trackFilterChanged: true,
+    });
+  }
+
+  get filters() {
+    // TODO(#10615): Remove filter condition when UsIdTasksV2 is fully rolled out.
+    return super.filters.filter(({ title }) => {
+      // Special case: hide "Task Type" filter for US_ID without v2 flag
+      if (title === "Task Type" && this.workflowsStore.isUsIdLegacyTasksEnabled)
+        return false;
+      return true;
     });
   }
 

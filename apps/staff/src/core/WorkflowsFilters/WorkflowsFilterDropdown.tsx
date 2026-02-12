@@ -30,11 +30,10 @@ import {
 } from "~design-system";
 
 import Checkbox from "../../components/Checkbox";
+import { FilterPresenter } from "../../FilterStore/FilterPresenter";
 import useIsMobile from "../../hooks/useIsMobile";
-import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
-import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { FilterField, FilterOption, FilterType } from "../models/types";
-import { MobileTaskFilterModal } from "./MobileTaskFilterModal";
+import { MobileWorkflowsFilterModal } from "./MobileWorkflowsFilterModal";
 
 const FilterDropdownToggle = styled(DropdownToggle)`
   padding: 12px 16px;
@@ -200,93 +199,99 @@ const ClearAllButton = styled(StyledFilterDropdownMenuItem)`
   }
 `;
 
-const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
-  option,
-  onClick,
-  onClickOnly,
-  checked,
-  count,
-}: {
-  option: FilterOption;
-  onClick: () => void;
-  onClickOnly: () => void;
-  checked: boolean;
-  count: number;
-}) {
-  const disabled = count === 0;
-  return (
-    <StyledFilterDropdownMenuItem
-      preventCloseOnClickEvent
-      onClick={(e) => {
-        e.preventDefault();
-        if (!disabled) onClick();
-      }}
-      key={String(option.value)}
-      $disabled={disabled}
-    >
-      <FilterOptionLabel $disabled={false}>
-        <FilterCheckboxContainer>
-          <Checkbox
-            checked={checked}
-            value={String(option.value)}
-            disabled={disabled}
-          />
-        </FilterCheckboxContainer>
-        {option.shortLabel ?? option.label ?? option.value}
-      </FilterOptionLabel>
-      {<FilterCount $isZero={count === 0}>{count}</FilterCount>}
-      <SelectOnlyButton
+const WorkflowsFilterDropdownItem = observer(
+  function WorkflowsFilterDropdownItem({
+    option,
+    onClick,
+    onClickOnly,
+    checked,
+    count,
+  }: {
+    option: FilterOption;
+    onClick: () => void;
+    onClickOnly: () => void;
+    checked: boolean;
+    count: number;
+  }) {
+    const disabled = count === 0;
+    return (
+      <StyledFilterDropdownMenuItem
+        preventCloseOnClickEvent
         onClick={(e) => {
-          onClickOnly();
-          e.stopPropagation();
+          e.preventDefault();
+          if (!disabled) onClick();
         }}
+        key={String(option.value)}
+        $disabled={disabled}
       >
-        ONLY
-      </SelectOnlyButton>
-    </StyledFilterDropdownMenuItem>
-  );
-});
+        <FilterOptionLabel $disabled={false}>
+          <FilterCheckboxContainer>
+            <Checkbox
+              checked={checked}
+              value={String(option.value)}
+              disabled={disabled}
+            />
+          </FilterCheckboxContainer>
+          {option.shortLabel ?? option.label ?? option.value}
+        </FilterOptionLabel>
+        {<FilterCount $isZero={count === 0}>{count}</FilterCount>}
+        <SelectOnlyButton
+          onClick={(e) => {
+            onClickOnly();
+            e.stopPropagation();
+          }}
+        >
+          ONLY
+        </SelectOnlyButton>
+      </StyledFilterDropdownMenuItem>
+    );
+  },
+);
 
-const TaskFilterDropdownGroup = observer(function TaskFilterDropdownGroup({
-  type,
-  field,
-  options,
-  presenter,
-  title,
-}: {
-  type: FilterType;
-  field: FilterField;
-  options: FilterOption[];
-  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
-  title: string;
-}) {
-  return (
-    <FilterGroup $isMobile={false}>
-      <FilterGroupHeader>{title}</FilterGroupHeader>
-      {options.map((option) => (
-        <TaskFilterDropdownItem
-          key={String(option.value)}
-          option={option}
-          checked={presenter.filterIsSelected(field, option)}
-          onClick={() => presenter.toggleFilter(field, option)}
-          onClickOnly={() => presenter.setOnlyFilterForField(field, option)}
-          count={presenter.numItems(type, field, option)}
-        />
-      ))}
-    </FilterGroup>
-  );
-});
+const WorkflowsFilterDropdownGroup = observer(
+  function WorkflowsFilterDropdownGroup({
+    type,
+    field,
+    options,
+    presenter,
+    title,
+  }: {
+    type: FilterType;
+    field: FilterField;
+    options: FilterOption[];
+    presenter: FilterPresenter;
+    title: string;
+  }) {
+    return (
+      <FilterGroup $isMobile={false}>
+        <FilterGroupHeader>{title}</FilterGroupHeader>
+        {options.map((option) => (
+          <WorkflowsFilterDropdownItem
+            key={String(option.value)}
+            option={option}
+            checked={presenter.filterStore.filterIsSelected(field, option)}
+            onClick={() => presenter.filterStore.toggleFilter(field, option)}
+            onClickOnly={() =>
+              presenter.filterStore.setOnlyFilterForField(field, option)
+            }
+            count={presenter.numItems(type, field, option)}
+          />
+        ))}
+      </FilterGroup>
+    );
+  },
+);
 
 const ClearAll = observer(function ClearAll({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
+  presenter: FilterPresenter;
 }) {
-  if (presenter.allFiltersSelected) {
+  if (presenter.filterStore.allFiltersSelected) {
     return (
       <ClearAllButton
         preventCloseOnClickEvent
-        onClick={() => presenter.clearFilters()}
+        onClick={() => presenter.filterStore.clearFilters()}
       >
         Clear all filters
       </ClearAllButton>
@@ -296,94 +301,98 @@ const ClearAll = observer(function ClearAll({
   return (
     <ClearAllButton
       preventCloseOnClickEvent
-      onClick={() => presenter.selectAllFilters()}
+      onClick={() => presenter.filterStore.selectAllFilters()}
     >
       Select all filters
     </ClearAllButton>
   );
 });
 
-export const TaskFilterDropdown = observer(function TaskFilterDropdown({
-  presenter,
-}: {
-  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
-}) {
-  const { isMobile } = useIsMobile(true);
+export const WorkflowsFilterDropdown = observer(
+  function WorkflowsFilterDropdown({
+    presenter,
+  }: {
+    presenter: FilterPresenter;
+  }) {
+    const { isMobile } = useIsMobile(true);
 
-  const filters = presenter.filters;
+    const [modalIsOpen, setModalIsOpen] = React.useState(false);
 
-  const [modalIsOpen, setModalIsOpen] = React.useState(false);
+    React.useEffect(() => {
+      if (!isMobile) setModalIsOpen(false);
+    }, [isMobile]);
 
-  React.useEffect(() => {
-    if (!isMobile) setModalIsOpen(false);
-  }, [isMobile]);
+    if (isMobile) {
+      return (
+        <>
+          <Dropdown>
+            <FilterDropdownToggle
+              // TODO(#7899): Replace with a proper onMenuOpen handler
+              onMouseUp={() => {
+                presenter.trackFilterDropdownOpened();
+                setModalIsOpen(true);
+              }}
+            >
+              <FilterIcon $filters={presenter.filterStore.someFiltersSet} />{" "}
+              Filters
+              <FilterDownArrow />
+            </FilterDropdownToggle>
+          </Dropdown>
 
-  if (isMobile) {
+          <MobileWorkflowsFilterModal
+            presenter={presenter}
+            modalIsOpen={modalIsOpen}
+            setModalIsOpen={setModalIsOpen}
+          />
+        </>
+      );
+    }
+
+    const filters = presenter.filterStore.filters;
+
     return (
-      <>
-        <Dropdown>
-          <FilterDropdownToggle
-            // TODO(#7899): Replace with a proper onMenuOpen handler
-            onMouseUp={() => {
-              presenter.trackFilterDropdownOpened();
-              setModalIsOpen(true);
-            }}
-          >
-            <FilterIcon $filters={presenter.someFiltersSet} /> Filters
-            <FilterDownArrow />
-          </FilterDropdownToggle>
-        </Dropdown>
-
-        <MobileTaskFilterModal
-          presenter={presenter}
-          modalIsOpen={modalIsOpen}
-          setModalIsOpen={setModalIsOpen}
-        />
-      </>
+      <Dropdown>
+        <FilterDropdownToggle
+          // TODO(#7899): Replace with a proper onMenuOpen handler
+          onMouseUp={() => presenter.trackFilterDropdownOpened()}
+        >
+          <FilterIcon $filters={presenter.filterStore.someFiltersSet} /> Filters
+          <FilterDownArrow />
+        </FilterDropdownToggle>
+        <FilterDropdownMenu>
+          <FilterGroupColumns>
+            <FilterGroupColumn>
+              {filters
+                .slice(0, Math.ceil(filters.length / 2))
+                .map(({ type, field, options, title }) => (
+                  <WorkflowsFilterDropdownGroup
+                    key={field}
+                    type={type}
+                    title={title}
+                    field={field}
+                    options={options}
+                    presenter={presenter}
+                  />
+                ))}
+            </FilterGroupColumn>
+            <FilterGroupColumn>
+              {filters
+                .slice(Math.ceil(filters.length / 2))
+                .map(({ type, field, options, title }) => (
+                  <WorkflowsFilterDropdownGroup
+                    key={field}
+                    type={type}
+                    title={title}
+                    field={field}
+                    options={options}
+                    presenter={presenter}
+                  />
+                ))}
+            </FilterGroupColumn>
+          </FilterGroupColumns>
+          <ClearAll presenter={presenter} key="clear" />
+        </FilterDropdownMenu>
+      </Dropdown>
     );
-  }
-  return (
-    <Dropdown>
-      <FilterDropdownToggle
-        // TODO(#7899): Replace with a proper onMenuOpen handler
-        onMouseUp={() => presenter.trackFilterDropdownOpened()}
-      >
-        <FilterIcon $filters={presenter.someFiltersSet} /> Filters
-        <FilterDownArrow />
-      </FilterDropdownToggle>
-      <FilterDropdownMenu>
-        <FilterGroupColumns>
-          <FilterGroupColumn>
-            {filters
-              .slice(0, Math.ceil(filters.length / 2))
-              .map(({ type, field, options, title }) => (
-                <TaskFilterDropdownGroup
-                  key={field}
-                  type={type}
-                  title={title}
-                  field={field}
-                  options={options}
-                  presenter={presenter}
-                />
-              ))}
-          </FilterGroupColumn>
-          <FilterGroupColumn>
-            {filters
-              .slice(Math.ceil(filters.length / 2))
-              .map(({ type, field, options, title }) => (
-                <TaskFilterDropdownGroup
-                  key={field}
-                  type={type}
-                  title={title}
-                  field={field}
-                  options={options}
-                  presenter={presenter}
-                />
-              ))}
-          </FilterGroupColumn>
-        </FilterGroupColumns>
-        <ClearAll presenter={presenter} key="clear" />
-      </FilterDropdownMenu>
-    </Dropdown>
-  );
-});
+  },
+);

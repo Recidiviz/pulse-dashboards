@@ -94,7 +94,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   workflowsHomepage?: WorkflowsPathSection;
   workflowsHomepageName?: string;
   workflowsTasksConfig?: WorkflowsTasksConfig;
-  workflowsOpportunityFilterConfig?: WorkflowsOpportunityFilterConfig;
+  workflowsOpportunityFilterConfig?: FilterConfig;
   workflowsMethodologyUrl?: string;
   milestoneTypes?: MilestoneType[];
   releaseDateCopyOverride?: string;
@@ -121,11 +121,11 @@ export type StaffFilter = {
 
 type ValidSnoozeForDays = 7 | 30 | 90;
 
-export type WorkflowsOpportunityFilterConfig = {
+export interface FilterConfig {
   filters?: FilterSection[];
-};
+}
 
-export type WorkflowsTasksConfig = {
+export interface WorkflowsTasksConfig extends FilterConfig {
   collection: FirestoreCollectionName;
   methodologyUrl?: string;
   tasks: {
@@ -139,12 +139,11 @@ export type WorkflowsTasksConfig = {
       snoozeForOptionsInDays?: Array<ValidSnoozeForDays>;
     };
   };
-  filters?: FilterSection[];
   columns?: TaskTableColumnId[];
   sideBarComponents?: ClientDetailComponentName[];
   categories?: SupervisionTaskCategory[];
   pageDescriptionMarkdown?: string;
-};
+}
 
 export type TaskFilterValue = string | boolean;
 export type FilterOption = {

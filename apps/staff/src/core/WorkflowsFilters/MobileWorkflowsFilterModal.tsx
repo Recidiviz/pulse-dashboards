@@ -23,11 +23,10 @@ import styled from "styled-components";
 import { palette } from "~design-system";
 
 import Checkbox from "../../components/Checkbox";
-import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
-import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
+import { FilterPresenter } from "../../FilterStore/FilterPresenter";
 import { ModalCloseButton } from "../CaseloadSelect";
 import { FilterField, FilterOption, FilterType } from "../models/types";
-import { FilterGroup, FilterGroupHeader } from "./TaskFilterDropdown";
+import { FilterGroup, FilterGroupHeader } from "./WorkflowsFilterDropdown";
 
 const FullScreenModal = styled(Modal)`
   .ReactModal__Content {
@@ -103,7 +102,7 @@ const BiggerCheckboxContainer = styled.div`
 `;
 
 // unset default button styles
-const TaskFilterOptionRow = styled.button`
+const WorkflowsFilterOptionRow = styled.button`
   border: unset;
   background-color: unset;
   text-align: left;
@@ -120,14 +119,14 @@ const FilterCount = styled.div<{ $isZero: boolean }>`
   color: ${({ $isZero }) => ($isZero ? palette.slate30 : palette.pine4)};
 `;
 
-const TaskFilterOption = styled.div`
+const WorkflowsFilterOption = styled.div`
   width: auto;
   max-width: 90%;
   display: flex;
   gap: 8px;
 `;
 
-const TaskFilterOptionText = styled.div`
+const WorkflowsFilterOptionText = styled.div`
   color: ${palette.slate85};
   white-space: wrap;
 `;
@@ -162,7 +161,7 @@ const MobileClearAllButton = styled.button`
   }
 `;
 
-const MobileTaskFilterItem = observer(function MobileTaskFilterItem({
+const MobileWorkflowsFilterItem = observer(function MobileWorkflowsFilterItem({
   option,
   onClick,
   checked,
@@ -174,14 +173,14 @@ const MobileTaskFilterItem = observer(function MobileTaskFilterItem({
   count: number;
 }) {
   return (
-    <TaskFilterOptionRow
+    <WorkflowsFilterOptionRow
       onClick={(e) => {
         e.preventDefault();
         onClick();
       }}
       disabled={count === 0}
     >
-      <TaskFilterOption>
+      <WorkflowsFilterOption>
         <BiggerCheckboxContainer>
           <Checkbox
             checked={checked}
@@ -189,113 +188,121 @@ const MobileTaskFilterItem = observer(function MobileTaskFilterItem({
             disabled={count === 0}
           />
         </BiggerCheckboxContainer>
-        <TaskFilterOptionText>
+        <WorkflowsFilterOptionText>
           {option.label ?? option.value}
-        </TaskFilterOptionText>
-      </TaskFilterOption>
+        </WorkflowsFilterOptionText>
+      </WorkflowsFilterOption>
       {<FilterCount $isZero={count === 0}>{count}</FilterCount>}
-    </TaskFilterOptionRow>
+    </WorkflowsFilterOptionRow>
   );
 });
 
 const MobileClearAll = observer(function ClearAll({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
+  presenter: FilterPresenter;
 }) {
-  if (presenter.allFiltersSelected) {
+  if (presenter.filterStore.allFiltersSelected) {
     return (
-      <MobileClearAllButton onClick={() => presenter.clearFilters()}>
+      <MobileClearAllButton
+        onClick={() => presenter.filterStore.clearFilters()}
+      >
         Clear all filters
       </MobileClearAllButton>
     );
   }
 
   return (
-    <MobileClearAllButton onClick={() => presenter.selectAllFilters()}>
+    <MobileClearAllButton
+      onClick={() => presenter.filterStore.selectAllFilters()}
+    >
       Select all filters
     </MobileClearAllButton>
   );
 });
 
-const MobileTaskFilterGroup = observer(function MobileTaskFilterGroup({
-  type,
-  field,
-  options,
-  presenter,
-  title,
-}: {
-  type: FilterType;
-  field: FilterField;
-  options: FilterOption[];
-  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
-  title: string;
-}) {
-  return (
-    <FilterGroup $isMobile>
-      <FilterGroupHeader>{title}</FilterGroupHeader>
-      {options.map((option) => {
-        const checked = presenter.filterIsSelected(field, option);
-        return (
-          <MobileTaskFilterItem
-            key={String(option.value)}
-            option={option}
-            checked={checked}
-            onClick={() => presenter.toggleFilter(field, option)}
-            count={presenter.numItems(type, field, option)}
-          />
-        );
-      })}
-    </FilterGroup>
-  );
-});
+const MobileWorkflowsFilterGroup = observer(
+  function MobileWorkflowsFilterGroup({
+    type,
+    field,
+    options,
+    presenter,
+    title,
+  }: {
+    type: FilterType;
+    field: FilterField;
+    options: FilterOption[];
+    presenter: FilterPresenter;
+    title: string;
+  }) {
+    return (
+      <FilterGroup $isMobile>
+        <FilterGroupHeader>{title}</FilterGroupHeader>
+        {options.map((option) => {
+          const checked = presenter.filterStore.filterIsSelected(field, option);
+          return (
+            <MobileWorkflowsFilterItem
+              key={String(option.value)}
+              option={option}
+              checked={checked}
+              onClick={() => presenter.filterStore.toggleFilter(field, option)}
+              count={presenter.numItems(type, field, option)}
+            />
+          );
+        })}
+      </FilterGroup>
+    );
+  },
+);
 
-export const MobileTaskFilterModal = observer(function MobileTaskFilterModal({
-  presenter,
-  modalIsOpen,
-  setModalIsOpen,
-}: {
-  presenter: CaseloadTasksPresenterV2 | OpportunityPersonListPresenter;
-  modalIsOpen: boolean;
-  setModalIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  const { filters } = presenter;
-  return (
-    <FullScreenModal
-      isOpen={modalIsOpen}
-      onRequestClose={(e: React.MouseEvent | React.KeyboardEvent) => {
-        setModalIsOpen(false);
-      }}
-    >
-      <ModalContents>
-        <ModalCloseButton
-          onClick={(e) => {
-            setModalIsOpen(false);
-          }}
-        >
-          <ModalCloseIcon className="fa fa-angle-left" /> Back
-        </ModalCloseButton>
-        <ModalHeaderText>Filters</ModalHeaderText>
+export const MobileWorkflowsFilterModal = observer(
+  function MobileWorkflowsFilterModal({
+    presenter,
+    modalIsOpen,
+    setModalIsOpen,
+  }: {
+    presenter: FilterPresenter;
+    modalIsOpen: boolean;
+    setModalIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  }) {
+    const { filters } = presenter.filterStore;
+    return (
+      <FullScreenModal
+        isOpen={modalIsOpen}
+        onRequestClose={(e: React.MouseEvent | React.KeyboardEvent) => {
+          setModalIsOpen(false);
+        }}
+      >
+        <ModalContents>
+          <ModalCloseButton
+            onClick={(e) => {
+              setModalIsOpen(false);
+            }}
+          >
+            <ModalCloseIcon className="fa fa-angle-left" /> Back
+          </ModalCloseButton>
+          <ModalHeaderText>Filters</ModalHeaderText>
 
-        <ScrollableContainer>
-          <TopGradient />
-          <div>
-            {filters.map(({ type, field, options, title }) => (
-              <MobileTaskFilterGroup
-                key={field}
-                type={type}
-                title={title}
-                field={field}
-                options={options}
-                presenter={presenter}
-              />
-            ))}
-          </div>
-          <BottomGradient />
-        </ScrollableContainer>
+          <ScrollableContainer>
+            <TopGradient />
+            <div>
+              {filters.map(({ type, field, options, title }) => (
+                <MobileWorkflowsFilterGroup
+                  key={field}
+                  type={type}
+                  title={title}
+                  field={field}
+                  options={options}
+                  presenter={presenter}
+                />
+              ))}
+            </div>
+            <BottomGradient />
+          </ScrollableContainer>
 
-        <MobileClearAll presenter={presenter} />
-      </ModalContents>
-    </FullScreenModal>
-  );
-});
+          <MobileClearAll presenter={presenter} />
+        </ModalContents>
+      </FullScreenModal>
+    );
+  },
+);

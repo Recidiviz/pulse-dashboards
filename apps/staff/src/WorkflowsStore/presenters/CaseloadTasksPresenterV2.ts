@@ -17,14 +17,10 @@
 
 import { action, makeAutoObservable, reaction } from "mobx";
 
-import {
-  FilterField,
-  FilterOption,
-  FilterSection,
-  FilterType,
-} from "../../core/models/types";
+import { FilterField, FilterOption, FilterType } from "../../core/models/types";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";
+import { FilterPresenter } from "../../FilterStore/FilterPresenter";
 import TasksFilterStore from "../../FilterStore/TasksFilterStore";
 import FirestoreStore from "../../FirestoreStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
@@ -54,22 +50,21 @@ function sortPeopleByNextTaskDueDate(
   );
 }
 
-export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
+export class CaseloadTasksPresenterV2
+  implements TableViewSelectInterface, FilterPresenter<TasksFilterStore>
+{
   private _selectedCategory: SupervisionTaskCategory | undefined = undefined;
   private tableViewSelectPresenter: TableViewSelectPresenter;
   private _navigablePeople: JusticeInvolvedPerson[] = [];
-  readonly filters: FilterSection[];
 
   constructor(
     protected workflowsStore: WorkflowsStore,
     protected tenantStore: TenantStore,
-    protected tasksFilterStore: TasksFilterStore,
+    public readonly filterStore: TasksFilterStore,
     protected analyticsStore: AnalyticsStore,
     protected firestoreStore: FirestoreStore,
     protected featureVariants: FeatureVariantRecord,
   ) {
-    this.filters = this.tasksFilterStore.filters;
-
     // only update the list of tasks to navigate through when necessary,
     // to avoid changing the list when a task is snoozed
     reaction(
@@ -122,7 +117,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
       selectedCategory: newCategory,
       previousCategory: this.selectedCategory,
       newTabRowCount:
-        this.tasksFilterStore.countForSupervisionTaskCategory(newCategory),
+        this.filterStore.countForSupervisionTaskCategory(newCategory),
       selectedCaseloadIds: this.workflowsStore.searchStore.selectedSearchIds,
     });
 
@@ -135,7 +130,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
       // If the user hasn't selected anything, default to the first non-empty category
       this.displayedTaskCategories.find(
         (category) =>
-          this.tasksFilterStore.countForSupervisionTaskCategory(category) > 0,
+          this.filterStore.countForSupervisionTaskCategory(category) > 0,
       ) ??
       this.displayedTaskCategories[0]
     );
@@ -154,7 +149,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   }
 
   get clientsWithOverdueTasks(): JusticeInvolvedPerson[] {
-    return this.tasksFilterStore.filteredPeople
+    return this.filterStore.filteredPeople
       .filter(
         (person) => (person.supervisionTasks?.overdueTasks.length ?? 0) > 0,
       )
@@ -162,7 +157,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   }
 
   get clientsWithUpcomingTasks(): JusticeInvolvedPerson[] {
-    return this.tasksFilterStore.filteredPeople
+    return this.filterStore.filteredPeople
       .filter(
         (person) =>
           (person.supervisionTasks?.overdueTasks.length ?? 0) === 0 &&
@@ -199,21 +194,9 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   // Filtering
 
   get orderedTasksForSelectedCategory(): SupervisionTask[] {
-    return this.tasksFilterStore.orderedTasksForSelectedCategory(
+    return this.filterStore.orderedTasksForSelectedCategory(
       this.selectedCategory,
     );
-  }
-
-  filterIsSelected(field: FilterField, value: FilterOption): boolean {
-    return this.tasksFilterStore.filterIsSelected(field, value);
-  }
-
-  toggleFilter(field: FilterField, option: FilterOption) {
-    return this.tasksFilterStore.toggleFilter(field, option);
-  }
-
-  setOnlyFilterForField(field: FilterField, option: FilterOption) {
-    return this.tasksFilterStore.setOnlyFilterForField(field, option);
   }
 
   // Return the number of total tasks, regardless of the current category and filters.
@@ -233,17 +216,6 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     }).length;
   }
 
-  clearFilters() {
-    return this.tasksFilterStore.clearFilters();
-  }
-
-  get allFiltersSelected() {
-    return this.tasksFilterStore.allFiltersSelected;
-  }
-
-  selectAllFilters() {
-    return this.tasksFilterStore.selectAllFilters();
-  }
   // List vs Table controls
 
   get showListView() {
@@ -273,50 +245,32 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   }
 
   countForCategory(category: SupervisionTaskCategory): number {
-    return this.orderedTasksForCategory(category).length;
-  }
-
-  orderedTasksForCategory(
-    category: SupervisionTaskCategory,
-  ): SupervisionTask[] {
-    return this.tasksFilterStore.orderedTasksForCategory(category);
-  }
-
-  get someFiltersSet() {
-    return this.tasksFilterStore.someFiltersSet;
+    return this.filterStore.orderedTasksForCategory(category).length;
   }
 
   trackFilterDropdownOpened() {
-    return this.tasksFilterStore.trackTaskFilterDropdownOpened;
+    return this.filterStore.trackTaskFilterDropdownOpened;
   }
 
   get displayedTaskCategories(): SupervisionTaskCategory[] {
-    return this.tasksFilterStore.displayedTaskCategories;
-  }
-
-  unsetFilter(field: FilterField, option: FilterOption) {
-    this.tasksFilterStore.unsetFilter(field, option);
+    return this.filterStore.displayedTaskCategories;
   }
 
   allTasksForCategory(
     category: SupervisionTaskCategory,
     applyFilter = true,
   ): SupervisionTask[] {
-    return this.tasksFilterStore.allTasksForCategory(category, applyFilter);
-  }
-
-  setFilter(field: FilterField, option: FilterOption) {
-    this.tasksFilterStore.setFilter(field, option);
+    return this.filterStore.allTasksForCategory(category, applyFilter);
   }
 
   get selectedFilters() {
-    return this.tasksFilterStore.selectedFilters;
+    return this.filterStore.selectedFilters;
   }
 
   orderedPersonsForCategory(
     category: SupervisionTaskCategory,
   ): JusticeInvolvedPerson[] {
-    return this.tasksFilterStore.orderedPersonsForCategory(category);
+    return this.filterStore.orderedPersonsForCategory(category);
   }
 
   // Route planner-related settings

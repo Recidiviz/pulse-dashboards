@@ -105,9 +105,9 @@ import { UsAzMarkSubmittedButton } from "../OpportunityDenial/UsAz/UsAzMenuButto
 import PersonId from "../PersonId";
 import { Heading, MaxWidth } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
+import { WorkflowsFilterDropdown } from "../WorkflowsFilters/WorkflowsFilterDropdown";
 import { EligibilityStatusPill } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityModuleHeader";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
-import { TaskFilterDropdown } from "../WorkflowsTasks/TaskFilterDropdown";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
 import { LinkedOpportunityCallout } from "./LinkedOpportunityCallout";
 import OpportunityNotifications from "./OpportunityNotifications";
@@ -1067,7 +1067,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
           {!presenter.isSupervisorHomepage && !isTablet && <CaseloadSelect />}
           <TableViewToggle presenter={presenter} />
           {presenter.config.enableWorkflowsFilter && (
-            <TaskFilterDropdown presenter={presenter} />
+            <WorkflowsFilterDropdown presenter={presenter} />
           )}
         </FlexWrapper>
       </MaxWidthWrapper>

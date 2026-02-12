@@ -17,11 +17,7 @@
 
 import { makeObservable } from "mobx";
 
-import {
-  FilterField,
-  FilterOption,
-  WorkflowsOpportunityFilterConfig,
-} from "../core/models/types";
+import { FilterConfig, FilterField, FilterOption } from "../core/models/types";
 import AnalyticsStore from "../RootStore/AnalyticsStore";
 import TenantStore from "../RootStore/TenantStore";
 import { WorkflowsStore } from "../WorkflowsStore";
@@ -39,7 +35,7 @@ export default class OpportunitiesFilterStore extends FilterStoreBase {
     readonly tenantStore: TenantStore,
     protected readonly workflowsStore: WorkflowsStore,
   ) {
-    super(analyticsStore, tenantStore, workflowsStore);
+    super();
     makeObservable<OpportunitiesFilterStore>(this, {
       // Observables (superclass and this class)
       _selectedFilters: true,
@@ -64,13 +60,14 @@ export default class OpportunitiesFilterStore extends FilterStoreBase {
     });
   }
 
-  get filterConfig(): WorkflowsOpportunityFilterConfig {
-    const { workflowsOpportunityFilterConfig } =
-      this.tenantStore;
+  get filterConfig(): FilterConfig {
+    const { workflowsOpportunityFilterConfig } = this.tenantStore;
 
-    return workflowsOpportunityFilterConfig || {
-      filters: [],
-    }
+    return (
+      workflowsOpportunityFilterConfig || {
+        filters: [],
+      }
+    );
   }
 
   clearFilters = () => {

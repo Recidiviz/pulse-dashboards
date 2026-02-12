@@ -24,15 +24,11 @@ import toast from "react-hot-toast";
 
 import { OpportunityType } from "~datatypes";
 
-import {
-  FilterField,
-  FilterOption,
-  FilterSection,
-  FilterType,
-} from "../../core/models/types";
+import { FilterField, FilterOption, FilterType } from "../../core/models/types";
 import { OpportunityTableColumnId } from "../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { insightsUrl, workflowsUrl } from "../../core/views";
 import { formatSupervisionEndDatePhrase } from "../../core/WorkflowsJusticeInvolvedPersonProfile/utils";
+import { FilterPresenter } from "../../FilterStore/FilterPresenter";
 import OpportunitiesFilterStore from "../../FilterStore/OpportunitiesFilterStore";
 import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
@@ -62,7 +58,9 @@ import {
  * visual settings such as tab grouping and tab ordering.
  */
 export class OpportunityPersonListPresenter
-  implements TableViewSelectInterface
+  implements
+    TableViewSelectInterface,
+    FilterPresenter<OpportunitiesFilterStore>
 {
   readonly isSupervisorHomepage: boolean;
   readonly displayTabGroups: OpportunityTabGroup[];
@@ -74,13 +72,12 @@ export class OpportunityPersonListPresenter
   private tableViewSelectPresenter: TableViewSelectPresenter;
 
   private _navigablePeople: Opportunity<JusticeInvolvedPerson>[] = [];
-  readonly filters: FilterSection[];
 
   constructor(
     private readonly analyticsStore: AnalyticsStore,
     private readonly firestoreStore: FirestoreStore,
     private readonly tenantStore: TenantStore,
-    private readonly opportunitiesFilterStore: OpportunitiesFilterStore,
+    readonly filterStore: OpportunitiesFilterStore,
     private readonly workflowsStore: WorkflowsStore,
     public readonly config: OpportunityConfiguration,
     featureVariants: FeatureVariantRecord,
@@ -90,7 +87,6 @@ export class OpportunityPersonListPresenter
       | SupervisionSupervisorOpportunityPresenter,
   ) {
     this.isSupervisorHomepage = !!supervisionPresenter;
-    this.filters = this.opportunitiesFilterStore.filters;
 
     this.displayTabGroups = Object.keys(
       config.tabGroups,
@@ -635,7 +631,7 @@ export class OpportunityPersonListPresenter
       opps = this.peopleInActiveTab;
     }
 
-    return this.opportunitiesFilterStore.orderedOpportunitiesForCategory(
+    return this.filterStore.orderedOpportunitiesForCategory(
       this.selectedCategory,
       opps,
     );
@@ -682,7 +678,7 @@ export class OpportunityPersonListPresenter
       // If the user hasn't selected anything, default to the first non-empty category
       this.displayedOpportunityCategories.find(
         (category) =>
-          this.opportunitiesFilterStore.countForOpportunityCategory(
+          this.filterStore.countForOpportunityCategory(
             category,
             this.peopleInActiveTab,
           ) > 0,
@@ -832,26 +828,13 @@ export class OpportunityPersonListPresenter
 
   // Filtering
 
-  filterIsSelected(field: FilterField, value: FilterOption): boolean {
-    return this.opportunitiesFilterStore.filterIsSelected(field, value);
-  }
-
-  toggleFilter(field: FilterField, option: FilterOption) {
-    return this.opportunitiesFilterStore.toggleFilter(field, option);
-  }
-
-  setOnlyFilterForField(field: FilterField, option: FilterOption) {
-    return this.opportunitiesFilterStore.setOnlyFilterForField(field, option);
-  }
-
   // Return the number of total opportunities, regardless of the current category and filters.
   numItems(type: FilterType, field: FilterField, option: FilterOption): number {
-    const allOpportunities =
-      this.opportunitiesFilterStore.allOpportunitiesForCategory(
-        "ELIGIBILITY STATUS",
-        this.peopleInActiveTab,
-        false,
-      );
+    const allOpportunities = this.filterStore.allOpportunitiesForCategory(
+      "ELIGIBILITY STATUS",
+      this.peopleInActiveTab,
+      false,
+    );
 
     return allOpportunities.filter((opp) => {
       if (type === "opportunity") {
@@ -867,23 +850,7 @@ export class OpportunityPersonListPresenter
     }).length;
   }
 
-  clearFilters() {
-    return this.opportunitiesFilterStore.clearFilters();
-  }
-
-  get allFiltersSelected() {
-    return this.opportunitiesFilterStore.allFiltersSelected;
-  }
-
-  selectAllFilters() {
-    return this.opportunitiesFilterStore.selectAllFilters();
-  }
-
-  get someFiltersSet() {
-    return this.opportunitiesFilterStore.someFiltersSet;
-  }
-
   trackFilterDropdownOpened() {
-    return this.opportunitiesFilterStore.trackOpportunityFilterDropdownOpened;
+    return this.filterStore.trackOpportunityFilterDropdownOpened;
   }
 }

@@ -16,34 +16,22 @@
 // =============================================================================
 
 import {
+  FilterConfig,
   FilterField,
   FilterOption,
   FilterSection,
   FilterType,
-  WorkflowsOpportunityFilterConfig,
-  WorkflowsTasksConfig,
 } from "../core/models/types";
-import AnalyticsStore from "../RootStore/AnalyticsStore";
-import TenantStore from "../RootStore/TenantStore";
 import { PartialRecord } from "../utils/typeUtils";
-import { WorkflowsStore } from "../WorkflowsStore";
 
 type SelectedFilters = PartialRecord<FilterField, FilterOption["value"][]>;
 
 export default abstract class FilterStoreBase {
   _selectedFilters: SelectedFilters = {};
 
-  constructor(
-    protected readonly analyticsStore: AnalyticsStore,
-    readonly tenantStore: TenantStore,
-    protected readonly workflowsStore: WorkflowsStore,
-  ) {}
-
   // Shared filter controls
 
-  abstract filterConfig:
-    | WorkflowsTasksConfig
-    | WorkflowsOpportunityFilterConfig;
+  abstract filterConfig: FilterConfig;
   // Deselect all filters. All people will show after this
   abstract clearFilters: () => void;
   abstract trackFiltersReset: () => void;
@@ -56,15 +44,7 @@ export default abstract class FilterStoreBase {
 
   get filters(): FilterSection[] {
     const { filters } = this.filterConfig;
-    if (!filters) return [];
-
-    // TODO(#10615): Remove filter condition when UsIdTasksV2 is fully rolled out.
-    return filters.filter(({ title }) => {
-      // Special case: hide "Task Type" filter for US_ID without v2 flag
-      if (title === "Task Type" && this.workflowsStore.isUsIdLegacyTasksEnabled)
-        return false;
-      return true;
-    });
+    return filters ?? [];
   }
 
   get someFiltersSet(): boolean {

@@ -32,10 +32,10 @@ import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/Caselo
 import { TableViewToggle } from "../OpportunityCaseloadView/TableViewToggle";
 import { MaxWidthWithSidebar } from "../sharedComponents";
 import WorkflowsCaseloadTabs from "../WorkflowsCaseloadControlBar";
+import { WorkflowsFilterDropdown } from "../WorkflowsFilters/WorkflowsFilterDropdown";
 import { WorkflowsUnderstaffedPill } from "../WorkflowsUnderstaffed";
 import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
 import { TasksHeader } from "./styles";
-import { TaskFilterDropdown } from "./TaskFilterDropdown";
 import { TaskPreviewModal } from "./TaskPreviewModal";
 import { TasksDescription } from "./TasksDescription";
 import { TasksList } from "./TasksList";
@@ -83,7 +83,7 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
         </TasksDescription>
         <TableControls $isMobile={isMobile}>
           <TableViewToggle presenter={presenter} />
-          <TaskFilterDropdown presenter={presenter} />
+          <WorkflowsFilterDropdown presenter={presenter} />
         </TableControls>
       </TasksTopbarContainer>
       {presenter.showListView ? (

@@ -21,8 +21,8 @@ import qs from "query-string";
 import { SystemId } from "~datatypes";
 
 import {
+  FilterConfig,
   StaffFilter,
-  WorkflowsOpportunityFilterConfig,
   WorkflowsTasksConfig,
 } from "../../core/models/types";
 import { ClientDetailComponentName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
@@ -239,9 +239,7 @@ export default class TenantStore {
     return this.tasksConfiguration?.categories ?? tasksDefault;
   }
 
-  get workflowsOpportunityFilterConfig():
-    | WorkflowsOpportunityFilterConfig
-    | undefined {
+  get workflowsOpportunityFilterConfig(): FilterConfig | undefined {
     if (!this.currentTenantId) return;
 
     return this.tenantConfigs[this.currentTenantId]
