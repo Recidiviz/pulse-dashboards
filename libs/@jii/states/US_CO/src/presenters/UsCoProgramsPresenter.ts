@@ -15,13 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as Sentry from "@sentry/react";
-import { TRPCClientError } from "@trpc/client";
 import { group, rollup } from "d3-array";
 import { max, parseISO } from "date-fns";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { DataAPI } from "~@jii/data";
+import { DataAPI, handleMutationError } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { ResidentRecord } from "~datatypes";
 import {
@@ -208,12 +206,7 @@ export class UsCoProgramsPresenter implements Hydratable {
       runInAction(() => {
         program.isStarred = isCurrentlyStarred;
       });
-      if (
-        !(error instanceof TRPCClientError) ||
-        error.data.code !== "FORBIDDEN"
-      ) {
-        Sentry.captureException(error);
-      }
+      handleMutationError(error);
     }
   }
 

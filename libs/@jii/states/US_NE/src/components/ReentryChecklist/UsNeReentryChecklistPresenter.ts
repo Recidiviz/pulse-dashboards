@@ -15,12 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as Sentry from "@sentry/react";
-import { TRPCClientError } from "@trpc/client";
 import { addDays, addMonths, addYears, isBefore, min } from "date-fns";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { DataAPI } from "~@jii/data";
+import { DataAPI, handleMutationError } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { ResidentRecord } from "~datatypes";
 import {
@@ -210,11 +208,7 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
       this.lastSaved = data.lastUpdated;
       this.isSaving = false;
     } catch (e) {
-      // Attempted writes by staff or Recidiviz users on prod aren't bugs,
-      // so don't log them to Sentry
-      if (!(e instanceof TRPCClientError) || e.data.code !== "FORBIDDEN") {
-        Sentry.captureException(e);
-      }
+      handleMutationError(e);
       this.writeError =
         e instanceof Error ? e.message : "An unknown error occurred";
       this.isSaving = false;
