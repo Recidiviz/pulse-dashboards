@@ -47,12 +47,12 @@ export default abstract class FilterStoreBase {
     return filters ?? [];
   }
 
-  get someFiltersSet(): boolean {
-    return this.filters.some(
+  get numFiltersSet(): number {
+    return this.filters.filter(
       (filter) =>
         this._selectedFilters[filter.field] &&
         this._selectedFilters[filter.field]?.length !== 0,
-    );
+    ).length;
   }
 
   get allFiltersSelected(): boolean {

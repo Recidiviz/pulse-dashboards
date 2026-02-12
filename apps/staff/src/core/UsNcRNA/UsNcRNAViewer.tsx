@@ -28,6 +28,7 @@ import { CaseloadSelect } from "../CaseloadSelect";
 import ErrorBoundary from "../ErrorBoundary";
 import { Heading, SubHeading } from "../sharedComponents";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
+import { RNAFilterStoreProvider } from "./RNAFilterStoreProvider";
 import { RNAListQuerier } from "./RnaListQuerier";
 
 export const Subheading = styled(Sans14)`
@@ -44,9 +45,11 @@ export const UsNcRNAViewer = observer(function UsNcRNAViewer() {
         The people listed below might have upcoming self-report due dates.
       </SubHeading>
       <ErrorBoundary>
-        <Suspense fallback={<Loading />}>
-          <RNAListQuerier />
-        </Suspense>
+        <RNAFilterStoreProvider>
+          <Suspense fallback={<Loading />}>
+            <RNAListQuerier />
+          </Suspense>
+        </RNAFilterStoreProvider>
       </ErrorBoundary>
     </WorkflowsNavLayout>
   );

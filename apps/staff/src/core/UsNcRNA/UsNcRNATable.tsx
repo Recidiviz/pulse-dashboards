@@ -23,26 +23,17 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
 import { palette, spacing } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../utils";
-import { Resident } from "../../WorkflowsStore/Resident";
 import { CaseloadTable, PersonIdCell, PersonNameCell } from "../CaseloadTable";
 import { workflowsUrl } from "../views";
+import { WorkflowsFilterDropdown } from "../WorkflowsFilters/WorkflowsFilterDropdown";
 import { RNABadge, RNAStatus } from "./RNABadge";
-
-type RNAStatusList = JiiStaffAppRouterOutputs["staff"]["usNc"]["rnaStatusList"];
-type RNARowData = {
-  status: RNAStatusList[number]["status"];
-  updatedAt?: RNAStatusList[number]["updatedAt"];
-  createdAt?: RNAStatusList[number]["createdAt"];
-  completedAt?: RNAStatusList[number]["completedAt"];
-  submittedByStaffAt?: RNAStatusList[number]["submittedByStaffAt"];
-  person: Resident;
-  rnaDueDate?: Date;
-};
+import { RNAFilterPresenter } from "./RNAFilterPresenter";
+import { RNARowData, RNAStatusList } from "./RNAFilterPresenter";
+import { useRNAFilterStore } from "./RNAFilterStoreProvider";
 
 const ViewResults = styled.div`
   border-radius: ${rem(spacing.xs)};
@@ -241,43 +232,29 @@ export const RNATable = observer(function RNATable({
   data: RNAStatusList;
 }) {
   const { workflowsStore } = useRootStore();
-
-  const tableData: RNARowData[] = data.flatMap((status) => {
-    const person =
-      workflowsStore.justiceInvolvedPersons[status.pseudonymizedId];
-
-    // we don't expect this to actually filter anyone out:
-    // this is just to help TS narrow the types to NC residents
-    if (
-      !person ||
-      !(person instanceof Resident) ||
-      person.metadata.stateCode !== "US_NC"
-    ) {
-      return [];
-    }
-
-    return [
-      {
-        ...status,
-        person,
-        rnaDueDate: person.metadata.rnaDueDate,
-      },
-    ];
-  });
+  const rnaFilterStore = useRNAFilterStore();
+  const presenter = new RNAFilterPresenter(
+    data,
+    rnaFilterStore,
+    workflowsStore,
+  );
 
   return (
-    <CaseloadTable
-      expandedLastColumn={true}
-      data={tableData}
-      columns={columns}
-      initialState={{
-        sorting: [
-          { id: "status", desc: false },
-          { id: "dueDate", desc: false },
-        ],
-      }}
-      enableProgressiveLoading={true}
-      progressiveLoadingBatchSize={50}
-    />
+    <>
+      <WorkflowsFilterDropdown presenter={presenter} alignedWithLeft={true} />
+      <CaseloadTable
+        expandedLastColumn={true}
+        data={presenter.filteredQueryData}
+        columns={columns}
+        initialState={{
+          sorting: [
+            { id: "status", desc: false },
+            { id: "dueDate", desc: false },
+          ],
+        }}
+        enableProgressiveLoading={true}
+        progressiveLoadingBatchSize={50}
+      />
+    </>
   );
 });

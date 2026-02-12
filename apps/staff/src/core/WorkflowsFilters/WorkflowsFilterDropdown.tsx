@@ -67,8 +67,10 @@ const FilterDownArrow = styled.i.attrs({
 // TODO: Replace the magic numbers with calculations
 const FILTER_COLUMN_WIDTH = 250;
 
-const FilterDropdownMenu = styled(DropdownMenu)`
-  transform: translateX(-${rem(2 * FILTER_COLUMN_WIDTH - 26)}) translateY(4px);
+const FilterDropdownMenu = styled(DropdownMenu)<{ $alignedWithLeft?: boolean }>`
+  ${({ $alignedWithLeft }) =>
+    !$alignedWithLeft &&
+    `transform: translateX(-${rem(2 * FILTER_COLUMN_WIDTH - 26)}) translateY(4px);`}
   padding: 24px 22px;
 `;
 
@@ -308,11 +310,32 @@ const ClearAll = observer(function ClearAll({
   );
 });
 
-export const WorkflowsFilterDropdown = observer(
-  function WorkflowsFilterDropdown({
+const WorkflowsFilterDropdownButton = observer(
+  function WorkflowsFilterDropdownButton({
     presenter,
   }: {
     presenter: FilterPresenter;
+  }) {
+    const numFiltersSet = presenter.filterStore.numFiltersSet;
+    const someFiltersSet = numFiltersSet > 0;
+
+    return (
+      <>
+        <FilterIcon $filters={someFiltersSet} /> Filters
+        {someFiltersSet && ` (${numFiltersSet})`}
+        <FilterDownArrow />
+      </>
+    );
+  },
+);
+
+export const WorkflowsFilterDropdown = observer(
+  function WorkflowsFilterDropdown({
+    presenter,
+    alignedWithLeft = false,
+  }: {
+    presenter: FilterPresenter;
+    alignedWithLeft?: boolean;
   }) {
     const { isMobile } = useIsMobile(true);
 
@@ -333,9 +356,7 @@ export const WorkflowsFilterDropdown = observer(
                 setModalIsOpen(true);
               }}
             >
-              <FilterIcon $filters={presenter.filterStore.someFiltersSet} />{" "}
-              Filters
-              <FilterDownArrow />
+              <WorkflowsFilterDropdownButton presenter={presenter} />
             </FilterDropdownToggle>
           </Dropdown>
 
@@ -356,10 +377,9 @@ export const WorkflowsFilterDropdown = observer(
           // TODO(#7899): Replace with a proper onMenuOpen handler
           onMouseUp={() => presenter.trackFilterDropdownOpened()}
         >
-          <FilterIcon $filters={presenter.filterStore.someFiltersSet} /> Filters
-          <FilterDownArrow />
+          <WorkflowsFilterDropdownButton presenter={presenter} />
         </FilterDropdownToggle>
-        <FilterDropdownMenu>
+        <FilterDropdownMenu $alignedWithLeft={alignedWithLeft}>
           <FilterGroupColumns>
             <FilterGroupColumn>
               {filters

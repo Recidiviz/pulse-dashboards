@@ -158,7 +158,7 @@ export type FilterField =
   | FilterFieldForPerson
   | FilterFieldForTask
   | FilterFieldForOpportunity;
-export type FilterType = "person" | "task" | "opportunity";
+export type FilterType = "person" | "task" | "opportunity" | "usNcRNA";
 
 export type FilterSection<T extends FilterType = FilterType> = {
   title: string;
