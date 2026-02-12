@@ -17,7 +17,7 @@
 
 import { rem } from "polished";
 import { ReactNode } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { DIMENSIONS_PX } from "./PDFFormGenerator";
 
@@ -26,6 +26,7 @@ type PrintablePageProps = {
   lineHeight?: number;
   landscape?: boolean;
   hidden?: boolean;
+  watermark?: string;
 };
 
 function pageHeight(landscape = false): string {
@@ -44,7 +45,7 @@ function pageWidth(landscape = false): string {
 
 export const PrintablePageContainer = styled.div.attrs({
   className: "form-page",
-})<PrintablePageProps>`
+})<Exclude<PrintablePageProps, "watermark">>`
   display: ${(p) => (p.hidden ? "none" : "flex")};
   flex-direction: column;
   background-color: white;
@@ -75,6 +76,26 @@ export const PrintablePageMargin = styled.div<
   min-height: ${(p) => (p.stretchable ? pageHeight(p.landscape) : "none")};
   width: ${(p) => pageWidth(p.landscape)};
   max-width: ${(p) => pageWidth(p.landscape)};
+
+  ${(p) =>
+    p.watermark &&
+    css`
+      &::before {
+        display: flex;
+        position: absolute;
+        z-index: 1;
+        content: "${p.watermark}";
+        width: 100%;
+        height: 100%;
+        font-size: 160pt;
+        color: black;
+        justify-content: center;
+        align-items: center;
+        transform: rotate(-45deg);
+        opacity: 0.06;
+        pointer-events: none;
+      }
+    `}
 `;
 
 export const PrintablePage = (

@@ -213,7 +213,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
   const { trusteeEligible } = opportunityForm.derivedData;
   return (
     <>
-      <PrintablePage stretchable hidden={!display}>
+      <PrintablePage stretchable hidden={!display} watermark="Draft">
         <TrusteeFormPage>
           <Header>
             TENNESSEE CLASSIFICATION INSTRUMENT: TRUSTEE/ANNEX ASSESSMENT
@@ -323,7 +323,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
           </CriteriaTable>
         </TrusteeFormPage>
       </PrintablePage>
-      <PrintablePage stretchable hidden={!display}>
+      <PrintablePage stretchable hidden={!display} watermark="Draft">
         <TrusteeFormPage>
           <CriteriaTable>
             <tbody>
