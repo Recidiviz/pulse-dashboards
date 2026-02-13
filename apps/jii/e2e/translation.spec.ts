@@ -46,8 +46,8 @@ import { clearAllLoaders } from "./utils";
 ].forEach((opts) => {
   test.describe(`${opts.state}`, () => {
     // convention is for test data to use predictable resident IDs.
-    // we expect this one to always exist in any state
-    const residentUrl = `${opts.slug}/anonres001`;
+    const testPseudoId = `anonres001${opts.state === "US_NE" ? "-ne" : ""}`;
+    const residentUrl = `${opts.slug}/${testPseudoId}`;
 
     test.beforeEach(async ({ page }) => {
       // the contents of this page are affected by the current date
