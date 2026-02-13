@@ -10,7 +10,7 @@
   "programs": {
     "lastUpdated": "This information was last updated {{date, formatFullDate}}.",
     "pageTitle": "Earn time off your sentence",
-    "pageDescription": "This page helps you find programs and activities that earn you Achievement Credits. These credits can take time off your sentence. You can earn a total of 120 days of credit. The list updates from time to time – look for the \"New\" label to see what has changed. Ask your Case Manager if you qualify for a particular program, and to help you sign up.",
+    "pageDescription": "This page helps you find programs and activities that earn you Achievement Credits. These credits can take time off your sentence. You can earn a total of 120 days of credit. The list updates from time to time – look for the \"New\" label to see what has changed. Ask your Case Manager if you qualify for a particular program, and to help you sign up.\n\nYOS offenders are not eligible for standard achievement earned time awards, but will continue to earn Discretionary Time (DT) days in accordance with YOS policy and practice.",
     "learnMoreLink": "Learn about earned time",
     "resultsCount_one": "{{count}} result below.",
     "resultsCount_other": "{{count}} results below.",

@@ -24,6 +24,7 @@ import styled from "styled-components";
 
 import {
   ButtonLink,
+  CopyWrapper,
   HomepageSectionHeading,
   PageContainer,
 } from "~@jii/common-ui";
@@ -48,7 +49,7 @@ const Header = styled.header`
   margin-bottom: ${rem(spacing.lg)};
 `;
 
-const Description = styled.p`
+const Description = styled(CopyWrapper)`
   ${typography.Sans14};
   color: ${palette.slate85};
   margin: 0 0 ${rem(spacing.md)} 0;
