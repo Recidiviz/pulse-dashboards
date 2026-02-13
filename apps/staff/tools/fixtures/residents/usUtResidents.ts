@@ -40,7 +40,12 @@ export const usUtResidents: ResidentFixture[] = [
     metadata: {
       stateCode: "US_UT",
       paroleDate: relativeFixtureDate({ months: 10 }),
-      programs: null,
+      programs: [
+        {
+          program: "Anger Management",
+          status: "SUCCESSFUL COMPLETION",
+        },
+      ],
     },
   },
   {

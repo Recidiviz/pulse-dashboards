@@ -22,14 +22,11 @@ import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
 export const usUtResidentMetadataSchema = z.object({
   stateCode: z.literal("US_UT"),
   paroleDate: nullishAsUndefined(z.string()),
-  // TODO(#11106): remove nullish handling after data deploy catches up
-  programs: nullishAsUndefined(
-    z
-      .object({
-        completionDate: dateStringSchema,
-        program: z.string(),
-        status: z.string(),
-      })
-      .array(),
-  ),
+  programs: z
+    .object({
+      completionDate: nullishAsUndefined(dateStringSchema),
+      program: z.string(),
+      status: z.string(),
+    })
+    .array(),
 });

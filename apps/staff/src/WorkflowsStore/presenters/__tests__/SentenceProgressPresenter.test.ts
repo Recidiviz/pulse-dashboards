@@ -73,6 +73,7 @@ const usUtResidentRecord: ResidentRecord = {
   metadata: {
     stateCode: "US_UT",
     paroleDate: "2024-01-01",
+    programs: [{ program: "TEST_PROGRAM", status: "TEST_STATUS" }],
   },
 };
 
