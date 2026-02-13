@@ -58,9 +58,9 @@ type MeetingRowProps = {
 
 const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
   const { totalDurationMs } = useMeetingRecording({ meetingId: meeting.id });
-  const { openRecordingView } = useRecording<"web">();
+  const { openRecordingView, status: recordingState, meetingId } = useRecording<"web">();
 
-  const isProcessingMeeting = meeting.status !== "NOT_STARTED";
+  const isMeetingInProgress = recordingState !== "idle" && meeting.id === meetingId;
 
   return (
     <TableRow>
@@ -71,7 +71,7 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
           ? formatDurationCompact(meeting.duration)
           : formatDurationNumeric(totalDurationMs)}
       </TableCell>
-      {isProcessingMeeting ? (
+      {!isMeetingInProgress ? (
         <TableCell>
           <Text
             className="w-[180px] font-inter text-base text-[#355362D9]"
@@ -95,7 +95,7 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
         </TableCell>
       )}
       <TableCell>
-        {isProcessingMeeting ? (
+        {!isMeetingInProgress ? (
           <Link
             screen={
               personType === "client" ? "ClientMeeting" : "ResidentMeeting"

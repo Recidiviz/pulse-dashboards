@@ -21,6 +21,7 @@ import { Image, Text, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import { Person } from "../common/types";
+import { useRecording } from "../features/recording";
 import MeetingInProgressBar from "./MeetingInProgressBar";
 
 type MeetingCardProps = {
@@ -39,13 +40,24 @@ type MeetingCardProps = {
   personType: "client" | "resident";
 };
 
+const RecordProcessingStatuses = [
+  "STITCHING_QUEUED", 
+  "STITCHING_IN_PROGRESS", 
+  "TRANSCRIPTION_QUEUED", 
+  "TRANSCRIPTION_IN_PROGRESS", 
+  "NOTETAKING_QUEUED", 
+  "NOTETAKING_IN_PROGRESS"
+];
+
 const MeetingsCardsList = ({
   meetings,
   person,
   personType,
 }: MeetingCardProps) => {
+  const { status: recordingState } = useRecording<"native">();
   return meetings.map((meeting, index) => {
-    const isProcessingMeeting = meeting.status !== "NOT_STARTED";
+    const isMeetingInProgress = recordingState !== "idle" && meeting.status === "NOT_STARTED";
+    const isMeetingProcessing = RecordProcessingStatuses.includes(meeting.status);
 
     const linkProps =
       meeting.status === "NOT_STARTED"
@@ -92,7 +104,17 @@ const MeetingsCardsList = ({
           <Text className="mr-1 font-inter text-xs font-medium text-primary">
             {meeting.time} • {meeting.duration || "In progress..."}
           </Text>
-          {isProcessingMeeting ? (
+          {isMeetingInProgress && (
+            <MeetingInProgressBar
+              recordingState={meeting.recordingState}
+              startTime={meeting.start}
+              endTime={meeting.end}
+              person={person}
+              meetingId={meeting.id}
+              className="mt-2"
+            />
+          )}
+          {isMeetingProcessing && (
             <View className="mt-4 rounded-xl bg-[#C1E3D83B] p-4">
               <View className="flex-row items-start">
                 <Image
@@ -112,15 +134,6 @@ const MeetingsCardsList = ({
                 </View>
               </View>
             </View>
-          ) : (
-            <MeetingInProgressBar
-              recordingState={meeting.recordingState}
-              startTime={meeting.start}
-              endTime={meeting.end}
-              person={person}
-              meetingId={meeting.id}
-              className="mt-2"
-            />
           )}
           {/* <View className="my-2 border-gray-200 border-b" />
        <View className="mt-3">
