@@ -254,16 +254,21 @@ function MethodologyLink({
     );
   }
 
-  const methodologyView =
-    view === DASHBOARD_VIEWS.profile || view === DASHBOARD_VIEWS.methodology
-      ? DASHBOARD_VIEWS.system
-      : view;
+  const methodologyViews: Record<string, string> = {
+    [DASHBOARD_VIEWS.methodology]: DASHBOARD_VIEWS.system,
+    [DASHBOARD_VIEWS.system]: DASHBOARD_VIEWS.system,
+    [DASHBOARD_VIEWS.operations]: DASHBOARD_VIEWS.operations,
+  };
+
+  if (!Object.keys(methodologyViews).includes(view)) {
+    return null;
+  }
 
   return (
     <DropdownMenuItem>
       <NavLink
         to={{
-          pathname: `/${DASHBOARD_VIEWS.methodology}/${methodologyView}`,
+          pathname: `/${DASHBOARD_VIEWS.methodology}/${methodologyViews[view]}`,
           search: `?stateCode=${currentTenantId}`,
         }}
         onClick={handleMethodologyLinkClick}

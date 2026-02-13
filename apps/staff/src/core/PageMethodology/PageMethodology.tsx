@@ -26,7 +26,6 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import MethodologyPathways from "../MethodologyPathways";
-import MethodologyProjections from "../MethodologyProjections";
 
 const PageMethodology: React.FC = () => {
   // TODO(#5636) Eliminate PartiallyTypedRootStore
@@ -42,7 +41,6 @@ const PageMethodology: React.FC = () => {
 
   const methodologies: { [k: string]: React.FC } = {
     operations: MethodologyPathways,
-    projections: MethodologyProjections,
     system: MethodologyPathways,
   };
 

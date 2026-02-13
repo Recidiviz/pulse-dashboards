@@ -93,6 +93,7 @@ function MethodologyLink({
   };
 
   if (view === DASHBOARD_VIEWS.workflows) {
+    if (!workflowsMethodologyUrl) return null;
     return (
       <a
         className="ViewNavigation__navlink"
