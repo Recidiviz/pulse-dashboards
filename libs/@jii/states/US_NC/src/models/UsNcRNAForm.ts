@@ -45,6 +45,7 @@ export class UsNcRNAForm {
 
   constructor(
     readonly apiClient: DataAPI,
+    readonly pseudonymizedId: string,
     readonly id: string,
     readonly completedAt: Date | null,
     readonly updatedAt: Date,
@@ -226,6 +227,7 @@ export class UsNcRNAForm {
    */
   *saveAnswers({ completed }: { completed: boolean }) {
     yield this.apiClient.trpc.state.usNc.updateRNA.mutate({
+      pseudonymizedId: this.pseudonymizedId,
       id: this.id,
       answers: this.liveAnswers,
       completed,

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components/UsNcRNA/usNcRNAFormCopy";
-export * from "./components/UsNcRNA/UsNcRNALanding/UsNcRNANotEnabled";
-export * from "./components/UsNcRouter";
+import { Card } from "~@jii/common-ui";
+
+import { RNADescription, RNAHeading } from "../styles";
+
+/**
+ * Landing page when the case manager has not enabled the form for a user,
+ * or we aren't sure how to identify a user.
+ */
+export function UsNcRNANotEnabled() {
+  return (
+    <Card>
+      <RNAHeading>It's not time for your Self-Report yet</RNAHeading>
+      <RNADescription>
+        Check again after your case manager starts the reassessment process.
+      </RNADescription>
+    </Card>
+  );
+}

@@ -44,14 +44,17 @@ export const NavigationButtons = observer(function NavigationButtons({
   return (
     <RNAPageFooter>
       {presenter.showPrevious && (
-        <PreviousPageButton onClick={presenter.onPreviousPageButtonClick}>
+        <PreviousPageButton
+          kind={"secondary"}
+          onClick={presenter.onPreviousPageButtonClick}
+        >
           <Icon kind="Arrow" size={16} rotate={180} />
           <span>{rnaMiscellaneousCopy.PREVIOUS_BUTTON}</span>
         </PreviousPageButton>
       )}
 
       {presenter.showSubmit ? (
-        <JIIButton onClick={presenter.onSubmitButtonClick}>
+        <JIIButton kind={"primary"} onClick={presenter.onSubmitButtonClick}>
           <span>{rnaMiscellaneousCopy.SUBMIT_BUTTON}</span>
           <Icon kind="Arrow" size={16} />
         </JIIButton>

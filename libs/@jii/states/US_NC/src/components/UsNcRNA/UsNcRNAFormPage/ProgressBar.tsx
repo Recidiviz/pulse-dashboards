@@ -51,6 +51,7 @@ const ProgressBackground = styled.div`
   width: 100%;
   height: ${rem(12)};
   border-radius: ${rem(8)};
+  overflow: hidden;
   background-color: ${palette.marble5};
   margin-bottom: ${rem(spacing.sm)};
 `;

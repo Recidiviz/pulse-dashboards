@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components/UsNcRNA/usNcRNAFormCopy";
-export * from "./components/UsNcRNA/UsNcRNALanding/UsNcRNANotEnabled";
-export * from "./components/UsNcRouter";
+import { PageContainer } from "~@jii/common-ui";
+import { UsNcRNANotEnabled } from "~@jii/US_NC";
+
+import { AppLayout } from "../AppLayout/AppLayout";
+import { ErrorPage } from "../ErrorPage/ErrorPage";
+import { NavMenu } from "../NavMenu/NavMenu";
+import { stateCodeFromError } from "./Auth0UnknownUserError";
+
+export const EdovoUnknownUserError = ({ error }: { error: Error }) => {
+  const stateCode = stateCodeFromError(error.message);
+
+  switch (stateCode) {
+    case "US_NC":
+      return (
+        <AppLayout
+          main={
+            <PageContainer>
+              <UsNcRNANotEnabled />
+            </PageContainer>
+          }
+          header={<NavMenu />}
+        />
+      );
+    default:
+      return <ErrorPage error={error} />;
+  }
+};

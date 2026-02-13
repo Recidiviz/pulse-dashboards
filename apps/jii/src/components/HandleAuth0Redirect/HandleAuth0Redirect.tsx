@@ -24,7 +24,7 @@ import { useRootStore } from "~@jii/data";
 import { AfterLogin } from "~@jii/paths";
 import { HandleRedirectAfterLogin } from "~auth";
 
-import { UnknownUserError } from "./UnknownUserError";
+import { Auth0UnknownUserError } from "../UnknownUserError/Auth0UnknownUserError";
 
 export const HandleAuth0Redirect: FC = observer(function HandleAuth0Redirect() {
   const {
@@ -42,7 +42,7 @@ export const HandleAuth0Redirect: FC = observer(function HandleAuth0Redirect() {
 
   const customErrorComponent =
     // error will be an OAuth error code. Values other than this one are unexpected
-    error === "access_denied" ? UnknownUserError : undefined;
+    error === "access_denied" ? Auth0UnknownUserError : undefined;
 
   return (
     <HandleRedirectAfterLogin

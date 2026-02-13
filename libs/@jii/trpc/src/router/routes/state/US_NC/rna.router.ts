@@ -28,6 +28,7 @@ import {
   getRNAInputSchema,
   getRNAQueryResolver,
 } from "../../../../helpers/US_NC/rna";
+import { residentRestrictedMiddleware } from "../../../../middleware/residentRestrictedMiddleware";
 import { router } from "../../../../procedures/init";
 import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
 import { updateRNASchema } from "./rna.schema";
@@ -44,6 +45,7 @@ export const usNcRouter = router({
   //   wipes away the answers of the most recent RNA to be empty
   createRNA: ncProcedure
     .input(getRNAInputSchema)
+    .use(residentRestrictedMiddleware)
     .mutation(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
       const existingRNA = await prisma.usNcRNA.findFirst({
         where: {
@@ -81,6 +83,7 @@ export const usNcRouter = router({
   // existing answers with existing db info.
   updateRNA: ncProcedure
     .input(updateRNASchema)
+    .use(residentRestrictedMiddleware)
     .mutation(
       async ({ input: { id, answers, completed }, ctx: { prisma } }) => {
         try {

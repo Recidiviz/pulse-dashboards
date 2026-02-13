@@ -102,9 +102,11 @@ app.get("/*", async (request, response, next): Promise<void> => {
         encryptedEdovoToken,
       });
     } else {
-      response
-        .status(403)
-        .json({ error: "You are not authorized to access this application" });
+      // the (state code: US_XX) part is important, the application may look for that string
+      // to determine which state the user in question arrived from when handling this error
+      response.status(403).json({
+        error: `You are not authorized to access this application (state code: ${userData.facility_state})`,
+      });
 
       segment.track("backend_edovo_login_denied", {
         isRecidiviz: isRecidiviz,

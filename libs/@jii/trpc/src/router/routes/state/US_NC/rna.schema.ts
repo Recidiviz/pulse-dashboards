@@ -20,6 +20,7 @@ import { z } from "zod";
 import { Prisma } from "~@jii/prisma";
 
 export const updateRNASchema = z.object({
+  pseudonymizedId: z.string(),
   id: z.string(),
   completed: z.boolean(),
   answers: z.record(z.string(), z.any()),

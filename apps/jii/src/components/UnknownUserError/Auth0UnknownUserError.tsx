@@ -42,11 +42,13 @@ const GenericError = () => {
 // when roster lookup fails
 const stateCodeErrorRegex = /\(state code: ([A-Z]{2}_[A-Z]{2})\)/;
 
-function stateCodeFromError(error: string | undefined): string | undefined {
+export function stateCodeFromError(
+  error: string | undefined,
+): string | undefined {
   return error?.match(stateCodeErrorRegex)?.[1];
 }
 
-export const UnknownUserError: FC = () => {
+export const Auth0UnknownUserError: FC = () => {
   const [{ error_description }] = useTypedSearchParams(AfterLogin);
 
   const stateCode = stateCodeFromError(error_description);

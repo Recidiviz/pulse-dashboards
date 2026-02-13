@@ -10,5 +10,5 @@ If you aren't already, you'll need to be running the standard JII dev environmen
 
 As seen in `project.json` there are two additional Nx targets to run:
 
-1. `jwks-sim` starts a local server that simulates the Edovo endpoint we hit to retrive the public key for verifying their signed tokens. Setting `DEV_ONLY_SIMULATED_JWKS_URI` in `.env.develoment` tells your locally emulated Firebase Function to hit that server instead of the real one.
+1. `jwks-sim` starts a local server that simulates the Edovo endpoint we hit to retrive the public key for verifying their signed tokens. Setting `DEV_ONLY_SIMULATED_JWKS_URI` in `.env.development` tells your locally emulated Firebase Function to hit that server instead of the real one.
 1. `edovo-test-token` generates a URL containing a token with the payload contents you specify (pass `-h` or see the script file for details). This token will be encrypted with our key and signed with the keypair used in the simulator.

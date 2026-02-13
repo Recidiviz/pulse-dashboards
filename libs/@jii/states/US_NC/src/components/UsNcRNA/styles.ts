@@ -108,14 +108,19 @@ const textEntryStyles = `
   }
 `;
 
-export const ShortTextEntry = styled.input`
+export const ShortTextEntry = styled.input.attrs({
+  maxLength: 100,
+})`
   ${textEntryStyles}
 
   height: ${rem(36)};
   width: 60%;
 `;
 
-export const LongTextEntry = styled.textarea.attrs({ rows: 3 })`
+export const LongTextEntry = styled.textarea.attrs({
+  rows: 3,
+  maxLength: 750,
+})`
   ${textEntryStyles}
 
   resize: none;

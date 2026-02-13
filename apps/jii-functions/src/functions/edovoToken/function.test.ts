@@ -181,7 +181,13 @@ test("succeeds with Recidiviz account lookup", async () => {
     user: {
       stateCode: "RECIDIVIZ",
       allowedStates: ["US_OZ"],
-      permissions: ["enhanced", "live_data", "translator", "cpa_v1", "global_write"],
+      permissions: [
+        "enhanced",
+        "live_data",
+        "translator",
+        "cpa_v1",
+        "global_write",
+      ],
     },
   });
 });
@@ -235,7 +241,7 @@ test("unknown user", async () => {
   expect(resp.status).toBe(403);
   expect(resp.body).toMatchInlineSnapshot(`
     {
-      "error": "You are not authorized to access this application",
+      "error": "You are not authorized to access this application (state code: US_OZ)",
     }
   `);
 });

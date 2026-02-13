@@ -49,9 +49,10 @@ export function UsNcRNALanding() {
     <Card>
       <RNAHeading>Time for your Self-Report</RNAHeading>
       <RNADescription>
-        This helps NCDAC assign you to the programs, classes, or jobs that will
-        be most helpful to you. These questions should take around 15 minutes to
-        finish.
+        Your answers will help your case manager build a better, more personal
+        case plan for you, tailored to your programming interests, goals, and
+        the areas you want to work on. These questions should take around 15
+        minutes to finish.
       </RNADescription>
       <GoButton
         to={State.Resident.UsNcRNA.ConfirmIdentity.buildPath(routeParams)}
