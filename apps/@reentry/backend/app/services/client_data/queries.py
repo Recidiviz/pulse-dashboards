@@ -742,36 +742,39 @@ class Queries:
 
         # Data not in cache or error deserializing, fetch from BigQuery
         query = f"""
-        SELECT
-            external_id,
-            pseudonymized_id,
-            email,
-            full_name,
-            client_ids,
-            state_code,
-            locations
-        FROM
-            `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CASE_MANAGER_TABLE}`
-        WHERE
-            pseudonymized_id = @pseudonymized_staff_id
-        LIMIT 1
-
-        UNION ALL
-
-        SELECT
-            external_id,
-            pseudonymized_id,
-            email,
-            full_name,
-            client_ids,
-            state_code,
-            locations
-        FROM
-            `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_SUPERVISION_OFFICER_TABLE}`
-        WHERE
-            pseudonymized_id = @pseudonymized_staff_id
-        LIMIT 1
-        """
+                SELECT
+                external_id,
+                pseudonymized_id,
+                email,
+                full_name,
+                client_ids,
+                state_code,
+                locations
+                FROM (
+                SELECT
+                    external_id,
+                    pseudonymized_id,
+                    email,
+                    full_name,
+                    client_ids,
+                    state_code,
+                    locations
+                FROM
+                    `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CASE_MANAGER_TABLE}`
+                UNION ALL
+                SELECT
+                    external_id,
+                    pseudonymized_id,
+                    email,
+                    full_name,
+                    client_ids,
+                    state_code,
+                    locations
+                FROM
+                    `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_SUPERVISION_OFFICER_TABLE}`)
+                WHERE
+                pseudonymized_id = @pseudonymized_staff_id
+                """
 
         job_config = bigquery.QueryJobConfig(
             query_parameters=[
