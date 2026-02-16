@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e  # Exit on any error
+set -o pipefail
 
 # initialize the cloud sql proxy
 cloud-sql-proxy --port 5432 $RECIDIVIZ_POSTGRES_SERVER &
@@ -12,9 +14,15 @@ done
 
 if [ "$ENTRYPOINT" = "api" ]; then
     echo "Running database migrations..."
-    uv run alembic upgrade head
+    if ! uv run alembic upgrade head; then
+        echo "ERROR: Database migration failed" >&2
+        exit 1
+    fi
     echo "Seeding database..."
-    uv run python -m app.manage seed-db
+    if ! uv run python -m app.manage seed-db; then
+        echo "ERROR: Database seeding failed" >&2
+        exit 1
+    fi
     #echo "Populating intakes from OMS..."
     echo "Starting FastAPI application..."
     uv run fastapi run --host 0.0.0.0 --port $PORT

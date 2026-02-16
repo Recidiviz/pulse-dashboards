@@ -1,6 +1,8 @@
 from __future__ import with_statement
 
 import asyncio
+import json
+import logging
 import pathlib
 import sys
 from logging.config import fileConfig
@@ -30,6 +32,31 @@ config = context.config
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
+
+
+# Configure structured logging for GCP Cloud Logging
+class GCPFormatter(logging.Formatter):
+    """Format logs as JSON for GCP Cloud Logging to properly detect severity."""
+
+    def format(self, record):
+        log_obj = {
+            "severity": record.levelname,
+            "message": record.getMessage(),
+            "timestamp": self.formatTime(record, "%Y-%m-%dT%H:%M:%S.%fZ"),
+        }
+        if record.exc_info:
+            log_obj["exception"] = self.formatException(record.exc_info)
+        return json.dumps(log_obj)
+
+
+for logger_name in ["alembic.runtime.migration", "alembic.util.messaging", "alembic"]:
+    logger = logging.getLogger(logger_name)
+    # Remove existing handlers and add one with GCP formatter
+    logger.handlers = []
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(GCPFormatter())
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
 
 target_metadata = SQLModel.metadata
 
