@@ -294,3 +294,27 @@ class ActivationResult(BaseModel):
         default=None, description="ID of the previously active config (if any)"
     )
     message: str
+
+
+# ============================================================================
+# Config Access / Password Gate Schemas
+# ============================================================================
+
+
+class VerifyPasswordRequest(BaseModel):
+    """Request schema for verifying the config management password."""
+
+    password: str
+
+
+class VerifyPasswordResponse(BaseModel):
+    """Response schema after successful password verification."""
+
+    token: str
+    expires_in_minutes: int
+
+
+class PasswordGateStatusResponse(BaseModel):
+    """Response schema for the password gate status check."""
+
+    enabled: bool

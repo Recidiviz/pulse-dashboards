@@ -28,6 +28,7 @@ import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import { ValidationStatus } from "../components/ValidationStatus";
+import { configHeaders } from "../utils/configFetch";
 
 const getCharCountColor = (currentLength: number, maxLength: number): string => {
   if (currentLength > maxLength) return "text-red-500";
@@ -159,11 +160,10 @@ const ImportConfigPage = () => {
           ? "/config-management/assessments/import/validate"
           : "/config-management/outputs/import/validate";
 
+      const accessToken = await auth.getAccessToken();
       const response = await fetch(`${BACKEND_URL}${endpoint}`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${auth.getAccessToken()}`,
-        },
+        headers: configHeaders(accessToken),
         body: formData,
       });
 
@@ -200,11 +200,10 @@ const ImportConfigPage = () => {
           ? `/config-management/assessments/import?${params}`
           : `/config-management/outputs/import?${params}`;
 
+      const importAccessToken = await auth.getAccessToken();
       const response = await fetch(`${BACKEND_URL}${endpoint}`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${auth.getAccessToken()}`,
-        },
+        headers: configHeaders(importAccessToken),
         body: formData,
       });
 

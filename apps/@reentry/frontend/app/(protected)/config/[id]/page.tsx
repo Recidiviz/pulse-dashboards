@@ -34,6 +34,7 @@ import { StatusBadge } from "../components/StatusBadge";
 import { ValidationStatus } from "../components/ValidationStatus";
 import { YamlDiffViewer } from "../components/YamlDiffViewer";
 import { YamlEditor } from "../components/YamlEditor";
+import { configHeaders } from "../utils/configFetch";
 
 // Debounce delay for validation (ms)
 const VALIDATION_DEBOUNCE_MS = 500;
@@ -350,10 +351,9 @@ const ConfigDetailPage = () => {
         ? `/config-management/outputs/${configId}/export`
         : `/config-management/assessments/${configId}/export`;
 
+      const exportAccessToken = await auth.getAccessToken();
       const response = await fetch(`${BACKEND_URL}${exportEndpoint}`, {
-        headers: {
-          Authorization: `Bearer ${auth.getAccessToken()}`,
-        },
+        headers: configHeaders(exportAccessToken),
       });
 
       if (!response.ok) throw new Error("Export failed");

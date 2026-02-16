@@ -69,20 +69,27 @@ async def config_client(async_session: AsyncSession):
     """Test client that shares async_session with route handlers."""
     from app.auth.auth_core import get_auth_user_context, get_pseudonymized_id
     from app.core.db import get_session
+    from app.routes.config_management_router import require_internal_user
 
     original_dependencies = fastapi_app.dependency_overrides.copy()
+
+    mock_auth_context = {
+        "email": "test@recidiviz.org",
+        "pseudonymized_id": "test_pseudonymized_id",
+        "is_zero_caseload_user": False,
+        "is_read_only_user": False,
+        "cpa_client_locations": [],
+    }
 
     async def mock_get_pseudonymized_id():
         return "test_pseudonymized_id"
 
     async def mock_get_auth_user_context():
-        return {
-            "email": "test@recidiviz.org",
-            "pseudonymized_id": "test_pseudonymized_id",
-            "is_zero_caseload_user": False,
-            "is_read_only_user": False,
-            "cpa_client_locations": [],
-        }
+        return mock_auth_context
+
+    async def mock_require_internal_user():
+        """Bypass password gate for unit tests; return mock auth context."""
+        return mock_auth_context
 
     async def mock_get_session():
         yield async_session
@@ -90,6 +97,7 @@ async def config_client(async_session: AsyncSession):
     fastapi_app.dependency_overrides[get_pseudonymized_id] = mock_get_pseudonymized_id
     fastapi_app.dependency_overrides[get_auth_user_context] = mock_get_auth_user_context
     fastapi_app.dependency_overrides[get_session] = mock_get_session
+    fastapi_app.dependency_overrides[require_internal_user] = mock_require_internal_user
 
     async with AsyncClient(
         transport=ASGITransport(app=fastapi_app), base_url="http://test"

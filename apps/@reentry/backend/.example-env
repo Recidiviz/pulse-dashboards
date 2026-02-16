@@ -97,4 +97,12 @@ RECIDIVIZ_RECAPTCHA_SECRET_KEY=
 # ----------------------------------------------- #
 RECIDIVIZ_SENTRY_DSN=
 
+# ----------------------------------------------- #
+# CONFIG MANAGEMENT PASSWORD PROTECTION
+# In demo/staging/prod, set via Secret Manager.
+# Leave empty to disable password gate (local/dev).
+# ----------------------------------------------- #
+RECIDIVIZ_CONFIG_MANAGEMENT_PASSWORD=
+RECIDIVIZ_CONFIG_ACCESS_TOKEN_EXPIRY_MINUTES=30
+
 RECIDIVIZ_ENVIRONMENT_TEST_FEATURE="dev,demo"

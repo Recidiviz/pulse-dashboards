@@ -33,6 +33,24 @@ const isPublicEndpoint = (url: string): boolean => {
   return PUBLIC_ENDPOINTS.some((endpoint) => url.includes(endpoint));
 };
 
+/**
+ * Get config access token from sessionStorage (if available).
+ * This is only set when password gate is enabled and user has unlocked access.
+ */
+function getConfigAccessToken(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const token = sessionStorage.getItem("config_access_token");
+    const expiryStr = sessionStorage.getItem("config_access_expiry");
+    if (!token || !expiryStr) return null;
+    const expiry = parseInt(expiryStr, 10);
+    if (Date.now() > expiry) return null;
+    return token;
+  } catch {
+    return null;
+  }
+}
+
 export const authMiddleware: Middleware = {
   async onRequest({ request }) {
     const url = request.url;
@@ -51,6 +69,14 @@ export const authMiddleware: Middleware = {
       }
     } catch (error) {
       console.error("Error setting token in middleware:", error);
+    }
+
+    // Attach config access token for config-management endpoints
+    if (url.includes("/config-management/")) {
+      const configToken = getConfigAccessToken();
+      if (configToken) {
+        request.headers.set("X-Config-Access-Token", configToken);
+      }
     }
 
     return request;

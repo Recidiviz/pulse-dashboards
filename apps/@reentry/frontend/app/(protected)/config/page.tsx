@@ -28,6 +28,7 @@ import { isInternalUser } from "~@reentry/frontend/lib/auth/permissions";
 import { showErrorToast, showSuccessToast } from "~@reentry/frontend-shared";
 
 import { ConfigTable } from "./components/ConfigTable";
+import { configHeaders } from "./utils/configFetch";
 
 const ConfigManagementPage = () => {
   const auth = useAuth();
@@ -127,12 +128,11 @@ const ConfigManagementPage = () => {
   // Export needs to use fetch directly because it returns a blob (YAML file)
   const handleExportAssessment = async (configId: string) => {
     try {
+      const accessToken = await auth.getAccessToken();
       const response = await fetch(
         `${BACKEND_URL}/config-management/assessments/${configId}/export`,
         {
-          headers: {
-            Authorization: `Bearer ${auth.getAccessToken()}`,
-          },
+          headers: configHeaders(accessToken),
         }
       );
 
@@ -161,12 +161,11 @@ const ConfigManagementPage = () => {
   // Export needs to use fetch directly because it returns a blob (YAML file)
   const handleExportOutput = async (configId: string) => {
     try {
+      const accessToken = await auth.getAccessToken();
       const response = await fetch(
         `${BACKEND_URL}/config-management/outputs/${configId}/export`,
         {
-          headers: {
-            Authorization: `Bearer ${auth.getAccessToken()}`,
-          },
+          headers: configHeaders(accessToken),
         }
       );
 

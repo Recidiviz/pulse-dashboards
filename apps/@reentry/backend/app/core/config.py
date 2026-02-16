@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Optional
 
-from langchain_core.tracers.langchain import LangChainTracer
 from langchain_anthropic import ChatAnthropic
+from langchain_core.tracers.langchain import LangChainTracer
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from langsmith import Client
@@ -107,6 +107,14 @@ class Settings(BaseSettings):
     # Firebase Admin Project ID
     # Used for client authentication for clients logging in from the Edovo platform
     FIREBASE_ADMIN_PROJECT_ID: str = "recidiviz-dashboard-staging"
+
+    # Config Management password protection
+    # In demo/staging/prod, this should be set via Secret Manager.
+    # When set, users must enter this password to access config management.
+    # When empty/unset, password gate is disabled (e.g. local/dev).
+    CONFIG_MANAGEMENT_PASSWORD: str = ""
+    # Token expiry in minutes for config management access
+    CONFIG_ACCESS_TOKEN_EXPIRY_MINUTES: int = 30
 
     @property
     def DATABASE_URL(self):
