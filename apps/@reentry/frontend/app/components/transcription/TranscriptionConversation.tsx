@@ -189,77 +189,84 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
           </div>
 
           {/* Conversation turns */}
-          <div className="max-h-[45vh] overflow-y-auto space-y-2 self-center pb-32">
+          <div className="max-h-[calc(100vh-350px)] overflow-y-auto space-y-2 self-center pb-40 w-full flex flex-col items-center">
             {transcription.conversation.map((turn, index) => {
               const isActive = index === activeTurnIndex;
-              const startTime = Number.parseFloat(turn.startTime.replace("s", ""));
+              const startTime = Number.parseFloat(
+                turn.startTime.replace("s", ""),
+              );
 
               return (
-              <div
-                key={`${turn.id}-${index}`}
-                ref={(el) => {
-                  turnRefs.current[index] = el;
-                }}
-                className={`bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 transition-all duration-300 ${
-                  turn.role === "client"
-                    ? "border-l-blue-500"
-                    : "border-l-green-500"
-                } ${
-                  isActive
-                    ? "ring-2 ring-[#006c67] ring-offset-2 shadow-lg"
-                    : ""
-                }`}
-              >
-                <div className="p-3">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2">
+                <div
+                  key={`${turn.id}-${index}`}
+                  ref={(el) => {
+                    turnRefs.current[index] = el;
+                  }}
+                  className={`w-full lg:max-w-[70%] bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 transition-all duration-300 ${
+                    turn.role === "client"
+                      ? "border-l-blue-500"
+                      : "border-l-green-500"
+                  } ${
+                    isActive
+                      ? "ring-2 ring-[#006c67] ring-offset-2 shadow-lg"
+                      : ""
+                  }`}
+                >
+                  <div className="p-3">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="flex items-center gap-1 text-white px-2 py-0.5 rounded-full text-[11px] font-medium"
+                          style={{ backgroundColor: getRoleColor(turn.role) }}
+                        >
+                          <span>{getRoleLabel(turn.role)}</span>
+                        </div>
+                      </div>
+
                       <div
-                        className="flex items-center gap-1 text-white px-2 py-0.5 rounded-full text-[11px] font-medium"
-                        style={{ backgroundColor: getRoleColor(turn.role) }}
+                        className="flex items-center gap-4 text-xs text-[#2a5469]/70 font-['Public_Sans'] cursor-pointer hover:text-[#006c67]"
+                        onClick={() => {
+                          console.log(
+                            `[TranscriptionConversation] Turn clicked, seeking to ${startTime}s`,
+                          );
+                          onTurnClick?.(startTime);
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            onTurnClick?.(startTime);
+                          }
+                        }}
+                        title="Click to jump to this point in the audio"
                       >
-                        <span>{getRoleLabel(turn.role)}</span>
+                        <div className="flex items-center gap-1">
+                          <PlayArrow
+                            sx={{ fontSize: 14 }}
+                            className="text-[#006c67]"
+                          />
+                          <span>
+                            {formatTime(turn.startTime)} -{" "}
+                            {formatTime(turn.endTime)}
+                          </span>
+                        </div>
+                        <span>
+                          {formatDuration(
+                            Number(turn.duration.replace("s", "")) * 1000,
+                          )}
+                        </span>
                       </div>
                     </div>
 
                     <div
-                      className="flex items-center gap-4 text-xs text-[#2a5469]/70 font-['Public_Sans'] cursor-pointer hover:text-[#006c67]"
-                      onClick={() => {
-                        console.log(`[TranscriptionConversation] Turn clicked, seeking to ${startTime}s`);
-                        onTurnClick?.(startTime);
-                      }}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          onTurnClick?.(startTime);
-                        }
-                      }}
-                      title="Click to jump to this point in the audio"
+                      className="text-[#002321] text-sm font-medium font-['Public_Sans'] leading-[20px]"
+                      style={{ whiteSpace: "pre-wrap" }}
                     >
-                      <div className="flex items-center gap-1">
-                        <PlayArrow sx={{ fontSize: 14 }} className="text-[#006c67]" />
-                        <span>
-                          {formatTime(turn.startTime)} -{" "}
-                          {formatTime(turn.endTime)}
-                        </span>
-                      </div>
-                      <span>
-                        {formatDuration(
-                          Number(turn.duration.replace("s", "")) * 1000,
-                        )}
-                      </span>
+                      {turn.content}
                     </div>
                   </div>
-
-                  <div
-                    className="text-[#002321] text-sm font-medium font-['Public_Sans'] leading-[20px]"
-                    style={{ whiteSpace: "pre-wrap" }}
-                  >
-                    {turn.content}
-                  </div>
                 </div>
-              </div>
               );
             })}
           </div>
