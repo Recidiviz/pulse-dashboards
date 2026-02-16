@@ -478,6 +478,7 @@ class Queries:
             UPPER(JSON_VALUE(full_name, "$.given_names")) = UPPER('{escaped_first_name}')
             AND UPPER(JSON_VALUE(full_name, "$.surname")) = UPPER('{escaped_last_name}')
             AND birthdate = DATE('{date_of_birth}')
+        LIMIT 1
         """
 
         try:
@@ -742,15 +743,6 @@ class Queries:
         # Data not in cache or error deserializing, fetch from BigQuery
         query = f"""
         SELECT
-        external_id,
-        pseudonymized_id,
-        email,
-        full_name,
-        client_ids,
-        state_code,
-        locations
-        FROM (
-        SELECT
             external_id,
             pseudonymized_id,
             email,
@@ -760,7 +752,12 @@ class Queries:
             locations
         FROM
             `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CASE_MANAGER_TABLE}`
+        WHERE
+            pseudonymized_id = @pseudonymized_staff_id
+        LIMIT 1
+
         UNION ALL
+
         SELECT
             external_id,
             pseudonymized_id,
@@ -770,9 +767,10 @@ class Queries:
             state_code,
             locations
         FROM
-            `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_SUPERVISION_OFFICER_TABLE}`)
+            `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_SUPERVISION_OFFICER_TABLE}`
         WHERE
-        pseudonymized_id = @pseudonymized_staff_id
+            pseudonymized_id = @pseudonymized_staff_id
+        LIMIT 1
         """
 
         job_config = bigquery.QueryJobConfig(
