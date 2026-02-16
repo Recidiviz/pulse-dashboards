@@ -1,10 +1,11 @@
 #!/bin/bash
+# must run from the repo root.
 set -e
 
 SCHEMA_FILE="libs/@reentry/openapi-types/src/recidiviz-schema.d.ts"
 
 # Generate OpenAPI types
-openapi-typescript http://127.0.0.1:8000/openapi.json -o "$SCHEMA_FILE"
+yarn openapi-typescript http://127.0.0.1:8000/openapi.json -o "$SCHEMA_FILE"
 
 # Prepend license header
 cat tools/license-header.txt "$SCHEMA_FILE" > "$SCHEMA_FILE.tmp"
