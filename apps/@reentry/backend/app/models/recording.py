@@ -142,7 +142,9 @@ class RecordingChunk(BaseModel, table=True):
         UniqueConstraint("session_id", "timestamp", name="uq_session_timestamp"),
     )
 
-    session_id: UUID = Field(..., foreign_key="recording_session.id", nullable=False)
+    session_id: UUID = Field(
+        ..., foreign_key="recording_session.id", nullable=False, ondelete="CASCADE"
+    )
     chunk_index: int = Field(
         ..., nullable=False, description="Index of the audio chunk"
     )

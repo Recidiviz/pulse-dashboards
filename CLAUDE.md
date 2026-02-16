@@ -159,7 +159,7 @@ uv run python -m app.manage seed-db
 uv run fastapi dev
 
 # Run tests
-RECIDIVIZ_DATABASE_URL_TESTS='postgresql+asyncpg://postgres:password@localhost:5433/recidiviz_test' uv run pytest
+uv run pytest
 ```
 
 ## Testing Patterns

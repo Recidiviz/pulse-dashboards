@@ -41,6 +41,7 @@ class Plan(BaseModel, table=True):
         foreign_key="intake.id",
         nullable=True,
         default=None,
+        ondelete="SET NULL",
     )
     intake: Mapped[Optional[Intake]] = Relationship(
         back_populates="plan", sa_relationship_kwargs={"lazy": "selectin"}
@@ -153,7 +154,7 @@ class Plan(BaseModel, table=True):
 
 
 class PlanAsset(BaseModel, table=True):
-    plan_id: UUID = Field(foreign_key="plan.id")
+    plan_id: UUID = Field(foreign_key="plan.id", ondelete="CASCADE")
     filename: str
     file_blob: bytes = Field(nullable=False)
     mimetype: str
@@ -169,7 +170,7 @@ class PlanAsset(BaseModel, table=True):
 
 
 class PlanGeneration(BaseModel, table=True):
-    plan_id: UUID = Field(foreign_key="plan.id")
+    plan_id: UUID = Field(foreign_key="plan.id", ondelete="CASCADE")
     plan: Mapped[Optional[Plan]] = Relationship(back_populates="generations")
 
     prompt: Optional[str] = None

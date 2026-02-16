@@ -32,6 +32,7 @@ class Assessment(BaseModel, table=True):
         foreign_key="intake.id",
         nullable=True,
         default=None,
+        ondelete="CASCADE",
     )
     intake: Mapped[Optional[Intake]] = Relationship(
         back_populates="assessments", sa_relationship_kwargs={"lazy": "selectin"}
