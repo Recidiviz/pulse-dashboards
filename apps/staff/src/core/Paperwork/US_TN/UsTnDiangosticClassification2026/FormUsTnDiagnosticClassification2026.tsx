@@ -26,6 +26,7 @@ import FormViewer from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage } from "../../styles";
 import { downloadZipFile } from "../../utils";
+import { CafScoreSourceModal } from "../common/cafScoreSourceModal";
 import {
   ClassificationFormPage,
   DoubleNotes,
@@ -94,6 +95,10 @@ export const FormUsTnDiagnosticClassification2026 = observer(
         opportunity={opportunity}
         downloadButtonLabel="Download as .DOCX"
       >
+        <CafScoreSourceModal
+          lastestCafQs={[2]}
+          latestRecordQs={[1, 3, 4, 5, 6]}
+        />
         <FormViewer formRef={formRef}>
           <CoverSheet />
           <PrintablePage landscape stretchable watermark="Draft">
@@ -102,6 +107,9 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[0]}
                 questionNumber={1}
+                supportingText={
+                  "Recidiviz is auto-filling this score based on the resident’s sentence history, as found in eTOMIS. Convictions are considered prior if they did not occur on the resident’s most recent felony Sentence Imposed Date."
+                }
               >
                 <DoubleNotes>
                   <TextboxWithHeader
@@ -121,6 +129,9 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[1]}
                 questionNumber={2}
+                supportingText={
+                  "Recidiviz is auto-filling this score from the resident’s last completed CAF, directly from eTOMIS."
+                }
               >
                 <TextboxWithHeader
                   header={"List current offenses:"}
@@ -130,6 +141,9 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[2]}
                 questionNumber={3}
+                supportingText={
+                  "Recidiviz is auto-filling this score based on the resident’s disciplinary record using data from eTOMIS."
+                }
               >
                 <TextboxWithHeader
                   header={"List disciplinaries:"}
@@ -143,6 +157,9 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[3]}
                 questionNumber={4}
+                supportingText={
+                  "Recidiviz is auto-filling this score based on the resident’s disciplinary record using data from eTOMIS."
+                }
               >
                 <TextboxWithHeader
                   header={"List disciplinaries:"}
@@ -152,6 +169,9 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[4]}
                 questionNumber={5}
+                supportingText={
+                  "Recidiviz is auto-filling this score based on the resident’s disciplinary record using data from eTOMIS."
+                }
               >
                 <TextboxWithHeader
                   header={"List disciplinaries:"}
@@ -165,6 +185,9 @@ export const FormUsTnDiagnosticClassification2026 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={assessmentQuestions[5]}
                 questionNumber={6}
+                supportingText={
+                  "Recidiviz is auto-filling this score based on the resident’s age using data from eTOMIS."
+                }
               />
               <TotalScore score={derivedData.totalScore} mediumUpper={27} />
             </ClassificationFormPage>
