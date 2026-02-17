@@ -549,6 +549,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "SUBSTANCE",
           text: "Currently dealing with substance use issues",
         },
+        { key: "IN_CUSTODY", text: "In state or county custody" },
         { key: "Other", text: "Other" },
       ],
       denialText: "Mark Ineligible",

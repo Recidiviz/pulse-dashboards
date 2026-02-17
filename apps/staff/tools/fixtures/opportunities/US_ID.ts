@@ -1003,5 +1003,157 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "supervisionLevelMismatch",
       zeroGrantsTooltip: null,
     },
+    usIdTransferToCRCLikeBed: {
+      callToAction:
+        "Review residents who may be eligible for work release on a CRC-like bed and make the update in ATLAS.",
+      caseNotesTitle: null,
+      compareBy: [{ field: "releaseDate" }],
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        {
+          key: "PENDING",
+          text: "There are pending felony charges or felony investigations in which the resident is a suspect",
+        },
+        {
+          key: "BEHAVIOR",
+          text: "Resident has had poor institutional behavior",
+        },
+        {
+          key: "PENDING",
+          text: "There are pending felony charges or felony investigations in which the resident is a suspect",
+        },
+        { key: "PROGRAM", text: "Missing required facility programming" },
+        { key: "ESCAPE_ABSCONSION", text: "Prior escape or absconsion" },
+        { key: "SEX_OFFENSE", text: "Prior sex-related charge" },
+        { key: "VICTIM", text: "A victim lives in the area" },
+        { key: "OTHER", text: "Other, please specify a reason" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "CRC-Like Beds",
+      dynamicEligibilityText:
+        "resident[|s] may be eligible for work-release at a CRC-like bed",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        { key: "custodyLevelIsMinimum", text: "Currently on Minimum custody" },
+        {
+          key: "usIdCrcLikeBedTimeBasedCriteria",
+          text: "Resident satisfies the time-based criteria",
+          tooltip:
+            "For individuals serving low-severity risk crimes, eligibility is met if either (1) the EPRD (Earliest Possible Release Date) is in the past and the TPD (Tentative Parole Date) is between 6 and 12 months away, or (2) the EPRD equals the TPD and the TPD is between 6 and 12 months away. For individuals serving high-severity risk crimes, eligibility is met if either (1) the FTRD (Full Term Release Date) is within the next 6 months, or (2) the EPRD is in the past and the TPD is within the next 6 months.",
+        },
+        {
+          key: "notServingForSexualOffense",
+          text: "Not serving for a sexual offense",
+        },
+        {
+          key: "notServingForViolentOffense",
+          text: "Not serving for a violent offense",
+        },
+        {
+          key: "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years",
+          text: "No escape attempts in the last 10 years",
+          tooltip:
+            "No escape, eluding police, or absconsion offense(s) in the last 10 years",
+        },
+        {
+          key: "usIdNotDetainersForXcrcAndCrc",
+          text: "No active felony detainers or holds",
+          tooltip: "Cannot have any felony detainers or holds",
+        },
+        {
+          key: "usIdNotServingARiderSentence",
+          text: "Not serving for a rider sentence",
+        },
+        {
+          key: "usIdInSiciOrIcioOrRelevantReleaseNotes",
+          text: "Is currently housed in SICI, ICIO or is releasing to a relevant district",
+          tooltip:
+            "For SICI, the release district must be D3–D7. For ICIO, the individual must be male and releasing to D1 or D2.",
+        },
+      ],
+      emptyTabCopy: [],
+      firestoreCollection: "US_ID-transferToCRCLikeBedReferrals",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 10,
+      ineligibleCriteriaCopy: [
+        {
+          key: "notServingForViolentOffense",
+          text: "Serving for a violent offense",
+        },
+        {
+          key: "usIdNotDeniedForCrc",
+          text: "Has a CRC Termer Denied case note",
+        },
+        { key: "custodyLevelIsMinimum", text: "Is not Minimum custody" },
+      ],
+      initialHeader: null,
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl:
+        "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
+      notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: [
+        "Incarceration",
+        "UsIdPastTwoYearsAlert",
+        "UsIdParoleDates",
+        "CaseNotes",
+      ],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
+      snoozeCompanionOpportunityTypes: [],
+      stateCode: "US_ID",
+      strictlyIneligibleCriteriaCopy: [],
+      subcategoryHeadings: [
+        { subcategory: "ELIGIBLE_STANDARD", text: "Standard" },
+        {
+          subcategory: "ELIGIBLE_MEDICAL_INELIGIBLE",
+          text: "Medical Ineligible",
+        },
+        { subcategory: "NONE", text: "Unknown" },
+      ],
+      subcategoryOrderings: [],
+      subheading:
+        "This alert helps staff identify people who may be eligible for work release on a CRC-like bed. Review eligible residents and make the update in Atlas.",
+      submittedTabTitle: null,
+      supportsIneligible: false,
+      supportsSubmitted: true,
+      systemType: "INCARCERATION",
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Eligible Now",
+            "Almost Eligible",
+            "Pending",
+            "Marked Ineligible",
+          ],
+        },
+        {
+          key: "GENDER",
+          tabs: [
+            "Cisgender Male",
+            "Cisgender Female",
+            "Non-Binary",
+            "Transgender Male",
+            "Transgender Female",
+            "Transgender - Unavailable",
+            "Gender Unavailable",
+            "Marked Ineligible",
+          ],
+        },
+      ],
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "transferToCRCLikeBed",
+      zeroGrantsTooltip: null,
+    },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

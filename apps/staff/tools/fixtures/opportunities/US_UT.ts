@@ -47,7 +47,10 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Has a sex offense charge inappropriate for early termination",
         },
         { key: "DRUG SCREEN", text: "No drug screen in the past six months" },
-        { key: "ICOTS", text: "Interstate Compact (ICOTS) in" },
+        {
+          key: "ICOTS",
+          text: "Interstate Compact (ICOTS) in (Requires supervisor approval)",
+        },
         { key: "OTHER", text: "Other" },
       ],
       denialText: null,

@@ -882,9 +882,9 @@ export const mockApiOpportunityConfigurationResponse = {
       denialText: null,
       deniedTabTitle: null,
       displayName:
-        "[2026 Pilot] Special Reclassification - Upgrade Due to New CAF Scoring",
+        "[2026 Pilot] Special Reclassification - Upgrade Due to Updated CAF Scoring",
       dynamicEligibilityText:
-        "resident[|s] may need custody level reviewed under new CAF [2026 Pilot]",
+        "resident[|s] may need custody level reviewed under updated CAF [2026 Pilot]",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -935,7 +935,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "[2026 Pilot] This alert helps staff identify residents for whom the new CAF suggests a higher custody level than what the resident currently has. Residents who need upgrades due to a new disciplinary infraction, for example, will not be surfaced under this option.\n\nUse of this alert will phase out over time, as all residents are classified under the new CAF",
+        "[2026 Pilot] This alert helps staff identify residents for whom the updated CAF suggests a higher custody level than what the resident currently has. Residents who need upgrades due to a new disciplinary infraction, for example, will not be surfaced under this option.\n\nUse of this alert will phase out over time, as all residents are classified under the new CAF",
       submittedTabTitle: "Pending",
       supportsIneligible: true,
       supportsSubmitted: true,

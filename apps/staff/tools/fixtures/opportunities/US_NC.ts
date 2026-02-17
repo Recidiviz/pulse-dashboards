@@ -25,18 +25,44 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [],
+      denialReasons: [
+        {
+          key: "HAS_VIOLATION",
+          text: "Has a violation that makes them ineligible for a Credit Review.",
+        },
+        {
+          key: "INCORRECT_POSITIVE_BEHAVIOR",
+          text: "Has not demonstrated 90 days of compliance with reintegrative conditions.",
+        },
+        {
+          key: "NOT_REPORTING_AS_DIRECTED",
+          text: "Has not reported as directed.",
+        },
+        { key: "OTHER", text: "Ineligible for another reason." },
+      ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Credit Reduction Review",
-      dynamicEligibilityText:
-        "clients may be eligible for a Credit Reduction Review",
+      displayName: "Credit Review",
+      dynamicEligibilityText: "clients may be eligible for a Credit Review",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
           key: "usNc90ConsecutiveDaysOfPositiveBehaviorForCrr",
-          text: "{{#if continuousEnrollmentAtFacilityFor90Days}} The action step {{facilityProgramId}} has been ONGOING since {{facilityProgramStartDate}}. {{/if}}{{#if continuousEmploymentFor90Days}} This person has been employed at {{employerName}} since {{employmentStartDate}}.{{/if}}{{#if continuousStudentFor90Days}} This person has been a student since {{studentStartDate}}.{{/if}} ",
-          tooltip: "",
+          text: '{{#if continuousEnrollmentAtFacilityFor90Days}}The following action step(s) have been ONGOING for 90 days or more: {{#each facilityProgramId}}"{{titleCase this}}"{{#unless @last}}, {{/unless}}{{/each}}. {{/if}}{{#if continuousEmploymentFor90Days}}Employed consistently for 90 days or more, and currently at: {{#each employerName}}"{{titleCase this}}"{{#unless @last}}, {{/unless}}{{/each}}.{{/if}}{{#if continuousStudentFor90Days}}This person has been enrolled in an educational program for 90 days or more.{{/if}}{{#if completionOfFacilityProgramDuringPrs}}Spent 90 days or more successfully completing the following programs: {{#each completedFacilityProgramIds}}"{{titleCase this}}"{{#unless @last}}, {{/unless}}{{/each}}.{{/if}}',
+          tooltip:
+            "90 consecutive days employed, actively enrolled in an education program, or at a facility or institution for medical or psychological treatment.\n\nIf you believe this is incorrect, please email feedback@recidiviz.org.",
+        },
+        {
+          key: "usNcNoPendingViolationsOrConvictionsPrecludingCrr",
+          text: "No pending violations or charges which would preclude the client from receiving a CRR. ",
+          tooltip:
+            "If you believe this is incorrect, please email feedback@recidiviz.org.",
+        },
+        {
+          key: "usNcReportingAsDirected",
+          text: "Client reports as directed. ",
+          tooltip:
+            "If you believe this is incorrect, please email feedback@recidiviz.org.",
         },
       ],
       emptyTabCopy: [],
@@ -45,13 +71,20 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 1,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "usNc90ConsecutiveDaysOfPositiveBehaviorForCrr",
+          text: 'This person will have demonstrated 90 days of positive behavior on {{eligibleDate}}.\n{{#if facilityProgramId}} They have been pursuing \n{{#each facilityProgramId}}\n{{#if @first}}"{{titleCase this}}" since \n{{/if}}\n{{/each}}\n{{#each facilityProgramStartDate}}\n{{#if @first}}{{this}}.\n{{/if}}\n{{/each}}\n{{/if}}\n\n{{#if employerName}} They have been working at  \n{{#each employerName}}\n{{#if @first}}"{{titleCase this}}" since \n{{/if}}\n{{/each}}\n{{#each employmentStartDate}}\n{{#if @first}}{{this}}.\n{{/if}}\n{{/each}}\n{{/if}}\n\n{{#if studentStartDate}} They have been enrolled in an education program since  \n{{#each studentStartDate}}\n{{#if @first}}{{this}}.\n{{/if}}\n{{/each}}\n{{/if}}',
+          tooltip:
+            "90 consecutive days employed, actively enrolled in an education program, or at a facility or institution for medical or psychological treatment.",
+        },
+      ],
       initialHeader:
-        "Search for XXX above to review and refer eligible clients for Credit Reduction Reviews.",
+        "Search above to review and refer eligible clients for Credit Reviews.",
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
-        "https://docs.google.com/document/d/1L4AnHzD_FH0lOy7Z2byQK8OIT8gCPSCvOwKS2KHV21w/edit?tab=t.0",
+        "https://drive.google.com/file/d/1cPba5k8U16EF-xBqo9pCZkCqaddk3j_Y/view?usp=sharing",
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
@@ -59,13 +92,14 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Supervision"],
-      snooze: null,
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_NC",
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
-      subheading: null,
+      subheading:
+        "Credit Reviews allow clients to earn time off their sentence if they meet certain criteria. This tool highlights clients who may be eligible for this opportunity using data from OPUS.",
       submittedTabTitle: "Submitted",
       supportsIneligible: false,
       supportsSubmitted: true,
