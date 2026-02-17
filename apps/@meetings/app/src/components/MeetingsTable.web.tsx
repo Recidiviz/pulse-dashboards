@@ -75,15 +75,11 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
         <TableCell>
           <Text
             className="w-[180px] font-inter text-base text-[#355362D9]"
+            style={{ fontStyle: meeting.content ? "normal" : "italic" }}
             numberOfLines={2}
             ellipsizeMode="tail"
           >
-            {meeting.content || (
-              // TODO: adding note under discussion with design team
-              <TouchableOpacity className="rounded-full px-2.5 py-1.5 font-inter text-[#006C67] hover:bg-[#4D5255] hover:text-white">
-                <Text className="font-inter">+ Add note</Text>
-              </TouchableOpacity>
-            )}
+            {meeting.content || "Note is empty"}
           </Text>
         </TableCell>
       ) : (
