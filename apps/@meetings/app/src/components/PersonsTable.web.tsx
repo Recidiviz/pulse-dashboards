@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Link } from "@react-navigation/native";
+import upperFirst from "lodash/upperFirst";
 import React, { useEffect } from "react";
 import {
   Image,
@@ -52,6 +53,7 @@ interface PersonsProps {
 
 const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
   const [page, setPage] = React.useState(1);
+  console.log(persons.map((p) => p.lastMeeting));  
 
   useEffect(() => {
     setPage(1);
@@ -109,9 +111,8 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                     </View>
                   ) : (
                     <Text className="font-inter text-base text-[#355362D9]">
-                      Last meeting{" "}
                       <Text className="font-inter font-bold">
-                        {person.lastMeeting}
+                        {upperFirst(person.lastMeeting)}
                       </Text>
                     </Text>
                   )}

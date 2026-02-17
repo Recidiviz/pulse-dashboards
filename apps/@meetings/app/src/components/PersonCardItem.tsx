@@ -17,6 +17,7 @@
 
 import { Link } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import upperFirst from "lodash/upperFirst";
 import React from "react";
 import { Image, ImageBackground, Text, View } from "react-native";
 
@@ -80,7 +81,7 @@ const PersonCardItem = ({
                 {humanReadableTitleCase(person.primaryMetadata)}
               </Text>
               <Text className="font-inter text-xs text-gray-600">
-                Last meeting {person.lastMeeting}
+                {upperFirst(person.lastMeeting)}
               </Text>
             </View>
           </View>

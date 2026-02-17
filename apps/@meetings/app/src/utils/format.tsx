@@ -65,7 +65,7 @@ export const formatRelativeTime = (date: Date): string => {
 
   const rtf = new Intl.RelativeTimeFormat("en", {
     numeric: "auto",
-    style: "narrow",
+    style: "long",
   });
 
   const units: { unit: Intl.RelativeTimeFormatUnit; seconds: number }[] = [
@@ -94,7 +94,7 @@ export const deserializeClient = (rawClient: RawClient): Client => {
     primaryMetadata: rawClient.supervisionType,
     lastMeeting:
       rawClient.meetingDetails.lastCompletedMeetingTime == null
-        ? "No Meetings"
+        ? "No meetings"
         : formatRelativeTime(rawClient.meetingDetails.lastCompletedMeetingTime),
   };
 };
@@ -106,7 +106,7 @@ export const deserializeResident = (rawResident: RawResident): Resident => {
     primaryMetadata: rawResident.facilityId,
     lastMeeting:
       rawResident.meetingDetails.lastCompletedMeetingTime == null
-        ? "No Meetings"
+        ? "No meetings"
         : formatRelativeTime(
             rawResident.meetingDetails.lastCompletedMeetingTime,
           ),
