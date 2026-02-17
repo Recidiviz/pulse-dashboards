@@ -59,6 +59,11 @@ export type UsNeCopy = {
         body: string;
         linkText: string;
       };
+      reentryAssessment: {
+        title: string;
+        body: string;
+        linkText: string;
+      };
     };
     dates: UsNeCardGroupCopy;
     goodTimeBalances: UsNeCardGroupCopy;
@@ -149,6 +154,11 @@ export const usNeCopy: UsNeCopy = {
       reentryChecklist: {
         title: "Complete Your Roadmap to Reentry",
         body: "Complete the items on your reentry checklist to prepare for success.",
+        linkText: "Learn More",
+      },
+      reentryAssessment: {
+        title: "Complete 120 Day Reentry Assessment",
+        body: "Your Reentry Specialist has assigned this assessment to you so they can better understand your needs before your 120 day meeting with them. This will enable them to bring more customized resources and clear answers to your meeting.",
         linkText: "Learn More",
       },
     },

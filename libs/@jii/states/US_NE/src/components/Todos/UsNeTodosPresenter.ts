@@ -15,16 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityData } from "~@jii/data";
+import { makeAutoObservable } from "mobx";
+
+import { IntakeAssessmentPresenter } from "~@jii/case-planning";
+import { OpportunityData, UserStore } from "~@jii/data";
 import { ResidentRecord, UsNeGoodTimeRestorationRecord } from "~datatypes";
+import { FirebaseAuthClient } from "~firebase-auth";
+import {
+  Hydratable,
+  hydrationFailure,
+  HydrationState,
+  isHydrated,
+} from "~hydration-utils";
 
 import { UsNeCopy } from "../../configs/copy";
 
-export class UsNeTodosPresenter {
+export class UsNeTodosPresenter implements Hydratable {
+  readonly intakeAssessmentPresenter: IntakeAssessmentPresenter;
+
   constructor(
     private readonly resident: ResidentRecord,
     private readonly opportunities: OpportunityData[],
-  ) {}
+    firebaseAuthClient: FirebaseAuthClient,
+    userStore: UserStore,
+  ) {
+    makeAutoObservable(this, undefined, { autoBind: true });
+
+    this.intakeAssessmentPresenter = new IntakeAssessmentPresenter(
+      firebaseAuthClient,
+      userStore,
+      resident,
+    );
+  }
 
   get residentMetadata() {
     const { metadata } = this.resident;
@@ -36,6 +58,27 @@ export class UsNeTodosPresenter {
     }
 
     return metadata;
+  }
+
+  async hydrate(): Promise<void> {
+    await this.intakeAssessmentPresenter.hydrate();
+  }
+
+  get hydrationState(): HydrationState {
+    if (hydrationFailure(this.intakeAssessmentPresenter)) {
+      // Hydration will fail if the user doesn't have an active assessment.
+      // We don't consider this an error.
+      return { status: "hydrated" };
+    }
+    return this.intakeAssessmentPresenter.hydrationState;
+  }
+
+  get shouldShowTodos(): boolean {
+    return (
+      this.shouldShowReentryChecklist ||
+      !!this.goodTimeRestorationStatus ||
+      this.shouldShowReentryAssessment
+    );
   }
 
   /**
@@ -91,7 +134,8 @@ export class UsNeTodosPresenter {
     return null;
   }
 
-  get shouldShowTodos(): boolean {
-    return this.shouldShowReentryChecklist || !!this.goodTimeRestorationStatus;
+  get shouldShowReentryAssessment(): boolean {
+    // If the intake presenter successfully hydrated, then an assessment is available
+    return isHydrated(this.intakeAssessmentPresenter);
   }
 }

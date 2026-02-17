@@ -16,3 +16,4 @@
 // =============================================================================
 
 export * from "./components/IntakeAssessment/IntakeAssessment";
+export { IntakeAssessmentPresenter } from "./components/IntakeAssessment/IntakeAssessmentPresenter";

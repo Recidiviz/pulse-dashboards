@@ -15,16 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+import { ReactNode } from "react";
+
 import { HomepageSectionHeading } from "~@jii/common-ui";
-import { useSingleResidentContext } from "~@jii/data";
+import { useRootStore, useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
-import { withPresenterManager } from "~hydration-utils";
+import {
+  Hydratable,
+  HydratorWithDirectHydration,
+  withPresenterManager,
+} from "~hydration-utils";
 
 import { useUsNeContext } from "../usNeContext";
 import { TodoCard } from "./TodoCard";
 import { UsNeTodosPresenter } from "./UsNeTodosPresenter";
 
-function ManagedComponent({ presenter }: { presenter: UsNeTodosPresenter }) {
+const ManagedComponent = observer(function ManagedComponent({
+  presenter,
+}: {
+  presenter: UsNeTodosPresenter;
+}) {
   const {
     copy: {
       home: { todos: copy },
@@ -35,6 +46,7 @@ function ManagedComponent({ presenter }: { presenter: UsNeTodosPresenter }) {
     goodTimeRestorationStatus,
     shouldShowReentryChecklist,
     shouldShowTodos,
+    shouldShowReentryAssessment,
   } = presenter;
 
   if (!shouldShowTodos) {
@@ -60,17 +72,43 @@ function ManagedComponent({ presenter }: { presenter: UsNeTodosPresenter }) {
           )}
         />
       )}
+      {shouldShowReentryAssessment && (
+        <TodoCard
+          {...copy.reentryAssessment}
+          linkTarget={State.Resident.$.UsNeReentryChecklist.buildRelativePath(
+            {},
+          )}
+        />
+      )}
     </section>
+  );
+});
+
+function usePresenter() {
+  const { firebaseAuthClient, userStore } = useRootStore();
+  const { resident, opportunities } = useSingleResidentContext();
+  return new UsNeTodosPresenter(
+    resident,
+    opportunities,
+    firebaseAuthClient,
+    userStore,
   );
 }
 
-function usePresenter() {
-  const { resident, opportunities } = useSingleResidentContext();
-  return new UsNeTodosPresenter(resident, opportunities);
-}
+// We don't want to block rendering while hydrating, because in most cases (people without an assessment) hydration
+// won't change anything. Right now hydration literally can't fail, so `failed` is just a passthrough too.
+const TodosHydrator: React.FC<{
+  children: ReactNode;
+  hydratable: Hydratable;
+}> = ({ children, hydratable }) => (
+  <HydratorWithDirectHydration hydratable={hydratable} failed={children}>
+    {children}
+  </HydratorWithDirectHydration>
+);
 
 export const UsNeTodos = withPresenterManager({
   ManagedComponent,
   usePresenter,
   managerIsObserver: true,
+  HydratorComponent: TodosHydrator,
 });
