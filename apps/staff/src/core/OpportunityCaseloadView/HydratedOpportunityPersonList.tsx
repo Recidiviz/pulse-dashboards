@@ -34,6 +34,7 @@ import {
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import {
+  Pill,
   Sans14,
   Sans16,
   Sans18,
@@ -189,7 +190,8 @@ const CaseloadAccordionHeading = styled(AccordionItemHeading)`
 const CaseloadAccordionTitleWrapper = styled.div`
   display: flex;
   gap: ${rem(spacing.xs)};
-
+  max-width: 100%;
+  align-items: center;
   width: fit-content;
   padding: ${rem(spacing.sm)};
   border-radius: ${rem(spacing.sm)};
@@ -209,8 +211,17 @@ const CaseloadAccordionTitle = styled(Sans14)`
   color: ${palette.pine3};
 `;
 
-const CaseloadAccordionCount = styled(Sans14)`
-  color: ${palette.slate80};
+/** Pill badge for subcategory count. */
+const SubcategoryCountBadge = styled(Pill)`
+  font-size: 0.75rem;
+  padding: 0.2rem 0.7rem;
+  margin: 0;
+  height: 1.6rem;
+  flex-shrink: 0;
+  min-width: 1.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 // In Table View, when sorting is enabled for a column, we need to specify the data used
@@ -463,9 +474,13 @@ const MultiTableView = observer(function MultiTableView({
                         <CaseloadAccordionTitle>
                           {presenter.headingText(category)}
                         </CaseloadAccordionTitle>
-                        <CaseloadAccordionCount>
+                        <SubcategoryCountBadge
+                          filled
+                          color={palette.slate10}
+                          textColor={palette.slate70}
+                        >
                           {sortedOpps.length}
-                        </CaseloadAccordionCount>
+                        </SubcategoryCountBadge>
                       </CaseloadAccordionTitleWrapper>
                     </TooltipTrigger>
                   )}
