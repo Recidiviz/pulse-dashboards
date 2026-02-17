@@ -40,7 +40,7 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
           <HomepageSectionHeading>
             {t(($) => $.importantDates.sectionHeader)}
           </HomepageSectionHeading>
-          <SectionSubHeader as="p">
+          <SectionSubHeader>
             {t(($) => $.importantDates.sectionSubHeader)}
           </SectionSubHeader>
           {presenter.hasNoDates ? (
@@ -59,7 +59,7 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
             </>
           ) : (
             presenter.dateEntries.map(
-              ({ key, date, isUpcoming, highlightType, infoPageHash }) => {
+              ({ key, date, isUpcoming, infoPageHash }) => {
                 const dateKey = key as UsAzDateField;
 
                 return (
@@ -68,13 +68,13 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
                     title={t(($) => $.importantDates.dates[dateKey].title)}
                     date={date}
                     info={t(($) => $.importantDates.dates[dateKey].info)}
+                    infoTag={t(($) => $.importantDates.dates[dateKey].infoTag)}
                     dateKey={dateKey}
                     shortName={t(
                       ($) => $.importantDates.dates[dateKey].shortName,
                     )}
                     isUpcoming={isUpcoming}
                     infoPageHash={infoPageHash}
-                    highlightType={highlightType}
                   />
                 );
               },

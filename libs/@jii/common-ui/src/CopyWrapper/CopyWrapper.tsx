@@ -66,6 +66,18 @@ export const styles = css`
     position: relative;
   }
 
+  // we can keep nesting these forever if we have to,
+  // but in practice we're not likely to have too many levels
+  ol {
+    list-style-type: decimal;
+  }
+  ol ol {
+    list-style-type: lower-alpha;
+  }
+  ol ol ol {
+    list-style-type: lower-roman;
+  }
+
   li {
     margin: 0.75em 0;
   }

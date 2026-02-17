@@ -18,7 +18,7 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { Card, CardValue, SlateCopy } from "~@jii/common-ui";
+import { Card, CardValue, CopyWrapper, SlateCopy } from "~@jii/common-ui";
 import { palette, spacing } from "~design-system";
 
 import { UsAzDateField } from "./UsAzImportantDatesPresenter";
@@ -53,6 +53,11 @@ export const StyledCard = styled(Card)<StyledCardProps>`
     if ($highlightType === "acisDtpDateRaw") {
       return `border-top: 8px solid #624488;`;
     }
+    if ($highlightType === "csbdDateRaw") {
+      // slightly thicker border makes the dashing more legible,
+      // particularly with the very light border color used here
+      return `border-style: dashed; border-width: ${rem(2)}`;
+    }
     return "";
   }}
 `;
@@ -63,7 +68,9 @@ export const SectionSubHeader = styled(SlateCopy)`
   }
 `;
 
-export const DateInfoContent = styled.div`
+export const DateInfoContent = styled(CopyWrapper).attrs({
+  options: { forceBlock: true },
+})`
   margin-top: ${rem(spacing.xxl)};
 `;
 
@@ -73,4 +80,9 @@ export const LearnMoreLinkWrapper = styled.div`
 
 export const StyledSlateCopy = styled(SlateCopy)<{ $isPastDate?: boolean }>`
   ${({ $isPastDate }) => $isPastDate && `color: ${palette.data.gold2};`}
+`;
+
+export const CardValueWrapper = styled.span`
+  display: inline-block;
+  margin-right: ${rem(spacing.md)};
 `;

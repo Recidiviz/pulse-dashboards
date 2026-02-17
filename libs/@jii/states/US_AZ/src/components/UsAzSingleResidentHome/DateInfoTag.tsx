@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./constants";
-export * from "./ErrorPage/ErrorPageMainContent";
-export * from "./FullWidthBanner";
-export * from "./InfoPage/InfoPage";
-export type * from "./InfoPage/TableOfContents";
-export * from "./MainContent/MainContentHydrator";
-export * from "./Onboarding/OnboardingTakeover";
-export * from "./Onboarding/useTrackOnboardingSeen";
-export * from "./RequiresPermission/RequiresPermission";
-export * from "./ScreenFillingWrapper/ScreenFillingWrapper";
+import { typography } from "@recidiviz/design-system";
+import { rem } from "polished";
+import { FC } from "react";
+import styled from "styled-components";
+
+import { Icon, palette, spacing } from "~design-system";
+
+const Wrapper = styled.span`
+  ${typography.Sans12}
+  align-items: center;
+  background: ${palette.slate10};
+  border-radius: ${rem(4)};
+  color: ${palette.slate85};
+  column-gap: ${rem(spacing.xs)};
+  display: inline-flex;
+  padding: ${rem(spacing.sm)};
+  position: relative;
+  top: -${rem(spacing.sm)};
+`;
+
+export const DateInfoTag: FC<{ text: string }> = ({ text }) => {
+  return (
+    <Wrapper>
+      {text} <Icon kind="Info" size={14} />
+    </Wrapper>
+  );
+};

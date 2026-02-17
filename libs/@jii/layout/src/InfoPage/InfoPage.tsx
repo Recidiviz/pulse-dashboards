@@ -21,7 +21,7 @@ import { FC } from "react";
 import { CopyProps, CopyWrapper } from "~@jii/common-ui";
 import { usePageTitle } from "~@jii/common-ui";
 
-import { TableOfContents } from "./TableOfContents";
+import { HeadingsAggregator, TableOfContents } from "./TableOfContents";
 
 /**
  * Renders the page content along with a table of contents for jumping between sections.
@@ -36,7 +36,13 @@ export const InfoPage: FC<{
   heading: string;
   body: string;
   CopyWrapperOverride?: FC<CopyProps>;
-}> = ({ heading, body, CopyWrapperOverride }) => {
+  tocHeadingsAggregatorOverride?: HeadingsAggregator;
+}> = ({
+  heading,
+  body,
+  CopyWrapperOverride,
+  tocHeadingsAggregatorOverride,
+}) => {
   usePageTitle(heading);
 
   const CopyWrapperComponent = CopyWrapperOverride ?? CopyWrapper;
@@ -44,7 +50,10 @@ export const InfoPage: FC<{
   return (
     <article>
       <CopyWrapperComponent>{`# ${heading}`}</CopyWrapperComponent>
-      <TableOfContents body={body} />
+      <TableOfContents
+        body={body}
+        headingsAggregator={tocHeadingsAggregatorOverride}
+      />
       <CopyWrapperComponent>{body}</CopyWrapperComponent>
       <ScrollToHashElement />
     </article>

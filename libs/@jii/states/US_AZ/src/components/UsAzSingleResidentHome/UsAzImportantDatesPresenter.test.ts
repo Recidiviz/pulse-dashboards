@@ -85,19 +85,15 @@ describe("UsAzImportantDatesPresenter", () => {
       // Check sorting order
       expect(entries[0].key).toBe("csbdDateRaw");
       expect(entries[0].date).toBe("2024-01-10");
-      expect(entries[0].highlightType).toBeUndefined();
 
       expect(entries[1].key).toBe("acisTprDateRaw");
       expect(entries[1].date).toBe("2024-03-15");
-      expect(entries[1].highlightType).toBe("acisTprDateRaw");
 
       expect(entries[2].key).toBe("ercdDateRaw");
       expect(entries[2].date).toBe("2024-06-01");
-      expect(entries[2].highlightType).toBeUndefined();
 
       expect(entries[3].key).toBe("sedDateRaw");
       expect(entries[3].date).toBe("2024-12-01");
-      expect(entries[3].highlightType).toBeUndefined();
 
       // Should only include dates that have values
       expect(entries).toHaveLength(4);

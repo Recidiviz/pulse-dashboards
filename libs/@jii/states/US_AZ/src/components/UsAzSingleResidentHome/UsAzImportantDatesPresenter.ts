@@ -35,15 +35,10 @@ export const US_AZ_DATE_KEYS = [
 
 export type UsAzDateField = (typeof US_AZ_DATE_KEYS)[number];
 
-function isUsAzDateField(key: string): key is UsAzDateField {
-  return US_AZ_DATE_KEYS.includes(key as UsAzDateField);
-}
-
 export interface DateEntry {
-  key: string;
+  key: UsAzDateField;
   date: string;
   isUpcoming: boolean; // Within 31 days
-  highlightType?: UsAzDateField;
   infoPageHash: string;
 }
 
@@ -100,13 +95,6 @@ export class UsAzImportantDatesPresenter {
           entry.key as UsAzDateField,
         ),
       };
-
-      if (
-        ["acisTprDateRaw", "acisDtpDateRaw"].includes(entry.key) &&
-        isUsAzDateField(entry.key)
-      ) {
-        result.highlightType = entry.key;
-      }
 
       return result;
     });

@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { BackLink, PageLinksFooter } from "~@jii/common-ui";
-import { InfoPage, ScreenFillingWrapper } from "~@jii/layout";
+import { BackLink, CopyProps, PageLinksFooter } from "~@jii/common-ui";
+import {
+  HeadingsAggregator,
+  InfoPage,
+  ScreenFillingWrapper,
+} from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
@@ -26,6 +31,8 @@ type DefinitionViewProps = {
   heading: string;
   body: string;
   moreInfoPageLinks?: { text: string; url: string }[];
+  CopyWrapperOverride?: FC<CopyProps>;
+  tocHeadingsAggregatorOverride?: HeadingsAggregator;
 };
 
 export const DefinitionView = (props: DefinitionViewProps) => {

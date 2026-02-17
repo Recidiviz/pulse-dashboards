@@ -17,36 +17,29 @@
 
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 
+import { GoButton } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
-import { Icon, palette } from "~design-system";
 
 const LinkContainer = styled.div`
   margin-top: ${rem(spacing.lg)};
   margin-bottom: ${rem(spacing.lg)};
   width: 100%;
-  text-align: center;
-`;
-
-const StyledLink = styled(Link)`
-  color: ${palette.pine4};
-  text-decoration: none;
 `;
 
 export const UsAzImportantDatesLink = () => {
   const { t } = useUsAzTranslations();
   return (
     <LinkContainer>
-      <StyledLink
+      <GoButton
         to={State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath(
           {},
         )}
       >
-        {t(($) => $.goLinkFull)} <Icon kind="Arrow" size={12} />
-      </StyledLink>
+        {t(($) => $.goLinkFull)}
+      </GoButton>
     </LinkContainer>
   );
 };

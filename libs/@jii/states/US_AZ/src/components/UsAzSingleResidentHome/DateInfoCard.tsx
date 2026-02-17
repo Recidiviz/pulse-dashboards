@@ -21,7 +21,9 @@ import { CardHeading, CardValue, GoLink } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
+import { DateInfoTag } from "./DateInfoTag";
 import {
+  CardValueWrapper,
   DateInfoContent,
   LearnMoreLinkWrapper,
   StyledCard,
@@ -33,10 +35,10 @@ export interface DateInfoCardProps {
   title: string;
   date: string;
   info: string;
+  infoTag?: string;
   shortName: string;
   dateKey: UsAzDateField;
   isUpcoming: boolean;
-  highlightType?: UsAzDateField;
   infoPageHash: string;
 }
 
@@ -44,10 +46,10 @@ export const DateInfoCard = ({
   title,
   date,
   info,
+  infoTag,
   shortName,
   dateKey,
   isUpcoming,
-  highlightType,
   infoPageHash,
 }: DateInfoCardProps) => {
   const { t } = useUsAzTranslations();
@@ -89,9 +91,12 @@ export const DateInfoCard = ({
     : getDistanceTranslation(dateObj);
 
   return (
-    <StyledCard $isUpcoming={isUpcoming} $highlightType={highlightType}>
+    <StyledCard $isUpcoming={isUpcoming} $highlightType={dateKey}>
       <CardHeading>{title}</CardHeading>
-      <CardValue>{cardValue}</CardValue>
+      <CardValue>
+        <CardValueWrapper>{cardValue}</CardValueWrapper>
+        {infoTag && <DateInfoTag text={infoTag} />}
+      </CardValue>
       <StyledSlateCopy $isPastDate={isPastDate}>
         {slateCopyContent}
       </StyledSlateCopy>

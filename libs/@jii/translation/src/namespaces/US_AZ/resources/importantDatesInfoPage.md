@@ -2,21 +2,28 @@
 
 There are two options.
 
-## Standard Transition Program
+<section class="tpr">
 
-### What does this mean?
+### Standard Transition Program
 
-The Standard Transition Program (STP) allows eligible people to leave prison up to 90 days before their earliest eligible release date if they are willing to attend a program while in the community. It is designed to help people transition to the community earlier. You may also hear it called "Transition Release" or "TPR".
+#### What does this mean?
 
-### Who has this date?
+The Standard Transition Program (STP) allows eligible people to leave prison up to **90 days before their earliest eligible release date** if they are willing to attend a program while in the community. It is designed to help people transition to the community earlier. You may also hear it called "Transition Release" or "TPR".
+
+<section class="callout">
+#### Who has this STP date?
 
 Most people can qualify for this release type unless they are serving time for a disqualifying conviction. See below for a list of those convictions.
 
-### What do I need to do in order to be released on this date?
+</section>
+
+#### What do I need to do in order to be released on this date?
 
 Some people will not be able to qualify for Transition Release because of their current offense or criminal history.
 
-Convictions that prevent you from being eligible for STP include sex offenses, arson, or certain other violent crimes – see ARS 13-901.03. If you do not have one of those convictions , then you may be able to qualify for STP if you do the following:
+- Convictions that prevent you from being eligible for STP include sex offenses, arson, or certain other violent crimes – see ARS 13-901.03.
+
+If you do not have one of those convictions, then you may be able to qualify for STP if you do the following:
 
 - You must sign the Transition Program agreement form – talk to your COIII in order to do this.
 - You must be in Medium or Minimum custody.
@@ -30,21 +37,18 @@ Convictions that prevent you from being eligible for STP include sex offenses, a
 - You can’t have been revoked to prison after release while serving your current sentence.
 - You must be a US Citizen or legal permanent resident without an ICE detainer.
 
-### What convictions would disqualify me from Transition Release?
-
-TK
-
-### If I'm released on STP, what does that mean for me?
+#### If I'm released on STP, what does that mean for me?
 
 With STP, you begin community supervision early. During the Transition Release period (the 90 days until you reach your next release date), you will need to regularly attend a program in the community, and report to a supervision officer.
 
-## Drug Transition Program (DTP)
+### Drug Transition Program (DTP)
 
-### What does this mean?
+#### What does this mean?
 
-The Drug Transition program allows eligible people to leave prison up to 90 days before their earliest eligible release date (often but not always CSBD), if they are willing to attend a program while in the community. It is designed to help people transition to the community earlier. DTP is a special version of the "Transition Program Release" for people who only have drug possession/use charges.
+The Drug Transition program allows eligible people to leave prison up to **90 days before their earliest eligible release date** (often but not always CSBD), if they are willing to attend a program while in the community. It is designed to help people transition to the community earlier. DTP is a special version of the "Transition Program Release" for people who only have drug possession/use charges.
 
-### Who has this date?
+<section class="callout">
+#### Who has this DTP date?
 
 People convicted of particular drug use/possession offenses, who also meet the rest of the criteria. Those offenses and their code in AZ Sentencing Law are:
 
@@ -55,7 +59,9 @@ People convicted of particular drug use/possession offenses, who also meet the r
 
 Please note that to qualify, your current sentence can only be for drug possession/use. Someone convicted of marijuana possession and assault will not qualify for DTP. But, they might still qualify for another version of Transition Program Release called STP.
 
-### What do I need to do in order to be released on this date?
+</section>
+
+#### What do I need to do in order to be released on this date?
 
 - You must sign the Transition Program agreement form.
 - You must be in Medium or Minimum custody.
@@ -70,9 +76,11 @@ Please note that to qualify, your current sentence can only be for drug possessi
 - You must be a US Citizen or legal permanent resident without an ICE detainer.
 - You must be up to date with any restitution payments.
 
-### If I'm released on DTP, what does that mean for me?
+#### If I'm released on DTP, what does that mean for me?
 
 With DTP, you begin community supervision early. During the Transition Release period (the 90 days until you reach your next release date), you will need to regularly attend a program in the community, and report to a supervision officer.
+
+</section>
 
 ## Community Supervision Begin Date (CSBD) / Temporary Release to Absolute Discharge Date (TR to ADD)
 
@@ -82,9 +90,12 @@ This is a release up to 90 days earlier than ERCD (for most people, it's ~77 day
 
 If you are being released to Probation, the date will be called Temporary Release to Absolute Discharge Date (or TR to ADD). Be careful not to confuse this ("Temporary Release") with "Transition Release" (TPR).
 
-### Who has this date?
+<section class="callout">
+### Who has this CSBD date?
 
-Most people whose crime was on/after January 1, 1994 can qualify if they meet the criteria.
+Most people whose crime was on/after January 1, 1994 can qualify if they meet the criteria. The law that created the rules after that date is often called “Truth in Sentencing,” or TIS.
+
+</section>
 
 ### Why can there be two different names for this date (CSBD vs. TR to ADD)?
 
@@ -94,16 +105,17 @@ If you have Community Supervision after your prison sentence, it is referred to 
 
 ### What do I need to do in order to be released on this date?
 
+In order to be released on your CSBD or TR to ADD, you must meet these requirements:
+
 - You can't have any past arrests, convictions, or requirements to register for sex offenses.
 - You can’t have a history of Dangerous Crimes Against Children (ARS 13-705).
 - You must be on Medium or Minimum custody
 - You can’t have any felony holds, felony detainers, or felony warrants
 - You must meet the Mandatory Literacy requirement, unless you have an exemption
 - You can’t have been revoked to prison after release while serving your current sentence.
-- If you are a foreign national, you cannot have an ICE detainer.
-- If you are a foreign national, you must either:
-  - Have an approved placement/program by Community Corrections prior to release; or
-  - Be reverting from Home Arrest or Work Furlough to a Provisional or Mandatory
+- If you are a foreign national:
+  - You cannot have an ICE detainer, and
+  - You must have an approved placement/program by Community Corrections prior to release.
 
 ### If I'm released on my CSBD, what does that mean for me?
 
@@ -115,9 +127,12 @@ At CSBD, you move to supervision in the community, reporting to a Supervision Of
 
 The ERCD (may be called ADD, if you have Probation after your prison sentence finishes) is the earliest date you can leave prison based on credits earned for time served, good behavior, and program participation. For most people sentenced after 1994, this is when you have served 85.7% of your sentence. Some offenses have different rules (for example, flat-time).
 
-### Who has this date?
+<section class="callout">
+### Who has this ERCD date?
 
 Most people sentenced under Truth in Sentencing (after January 1, 1994), except for those serving flat-time sentences, mandatory minimums, or crimes that exclude release credits (certain violent or sex offenses).
+
+</section>
 
 ### Why can there be two different names for this date (ERCD or ADD)?
 
@@ -143,9 +158,12 @@ If released at ERCD, you serve the rest of your sentence (15%) on Community Supe
 
 This is the last day of your prison sentence.
 
-### Who has this date?
+<section class="callout">
+### Who has this SED date?
 
 Everyone.
+
+</section>
 
 ### What do I need to do in order to be released on this date?
 
@@ -161,9 +179,12 @@ If your sentence has a term of Community Supervision or Probation at SED, being 
 
 The CSED is the date when your supervision ends, and you are fully discharged from ADCRR custody.
 
-### Who has this date?
+<section class="callout">
+### Who has this CSED date?
 
 Most people with sentences after 1994 that require Community Supervision. If you have Probation rather than Community Supervision after your prison sentence, you likely will not have a CSED.
+
+</section>
 
 ### What do I need to do in order to be released on this date?
 

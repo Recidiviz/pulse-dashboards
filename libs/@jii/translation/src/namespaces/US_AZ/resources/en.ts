@@ -48,7 +48,7 @@ export default {
   importantDates: {
     sectionHeader: "Your Important Dates",
     sectionSubHeader:
-      "These are all the dates that Time Comp has calculated for your sentence. These dates may change if you get a disciplinary infraction, or get lost time restored. You may also see some dates appear or disappear  depending on if you meet the criteria to qualify for them. Tap “Learn More” to see what you need to do in order to be released on a particular date",
+      "These are all the dates that Time Comp has calculated for your sentence. **These dates may change** if you get a disciplinary infraction, or get lost time restored. You may also see some dates appear or disappear  depending on if you meet the criteria to qualify for them. Tap “Learn More” to see what you need to do in order to be released on a particular date",
     moreInfo: {
       heading: "Release Types, Their Requirements, and Restrictions",
       body: importantDatesInfoPage,
@@ -60,6 +60,7 @@ export default {
         skeletonInfo: "",
         shortName: "TPR",
         value: "{{acisTprDateRaw, formatFullDate}}",
+        infoTag: "",
       },
       acisDtpDateRaw: {
         title: "Drug Transition Program (DTP)",
@@ -67,13 +68,15 @@ export default {
         skeletonInfo: "",
         shortName: "DTP",
         value: "{{acisDtpDateRaw, formatFullDate}}",
+        infoTag: "",
       },
       csbdDateRaw: {
         title: "Community Supervision Begin Date (CSBD)",
-        info: "Also called a Transition Release (TR) date, allows for release up to 90 days before your ERCD; must meet criteria.",
+        info: "Also called a Temporary Release (TR) date, allows for release up to 90 days before your ERCD. **You must meet the criteria** in order to be released on this date. Ask your COIII if you can still qualify for this release type.",
         skeletonInfo: "",
         shortName: "CSBD",
         value: "{{csbdDateRaw, formatFullDate}}",
+        infoTag: "Only true if criteria are met",
       },
       ercdDateRaw: {
         title: "Earned Release Credit Date (ERCD)",
@@ -81,6 +84,7 @@ export default {
         skeletonInfo: "",
         shortName: "ERCD",
         value: "{{ercdDateRaw, formatFullDate}}",
+        infoTag: "",
       },
       sedDateRaw: {
         title: "100% Date (Flat Sentence, SED)",
@@ -88,6 +92,7 @@ export default {
         skeletonInfo: "TKTK",
         shortName: "SED",
         value: "{{sedDateRaw, formatFullDate}}",
+        infoTag: "",
       },
       csedDateRaw: {
         title: "115% Date (CSED)",
@@ -95,6 +100,7 @@ export default {
         skeletonInfo: "TKTK",
         shortName: "CSED",
         value: "{{csedDateRaw, formatFullDate}}",
+        infoTag: "",
       },
       addDateRaw: {
         title: "Absolute Discharge Date (ADD)",
@@ -102,6 +108,7 @@ export default {
         skeletonInfo: "",
         shortName: "ADD",
         value: "{{addDateRaw, formatFullDate}}",
+        infoTag: "",
       },
       trToAddDateRaw: {
         title: "Transition to Absolute Discharge Date (TR to ADD)",
@@ -109,6 +116,7 @@ export default {
         skeletonInfo: "",
         shortName: "TR to ADD",
         value: "{{trToAddDateRaw, formatFullDate}}",
+        infoTag: "",
       },
     },
   },
