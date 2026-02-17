@@ -24,7 +24,7 @@ import {
   typography,
 } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { Button, Icon, palette } from "~design-system";
 
@@ -199,4 +199,10 @@ export const AlignedIcon = styled(Icon)<{
   $alignment: string;
 }>`
   vertical-align: ${({ $alignment }) => $alignment};
+`;
+
+export const hideWhenPrintingStyle = css`
+  @media print {
+    display: none;
+  }
 `;

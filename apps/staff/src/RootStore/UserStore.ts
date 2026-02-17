@@ -659,7 +659,7 @@ export default class UserStore {
             permissionName === "tasks" &&
             isAllowed &&
             isTasksAccessibleSubpage) ||
-          // special case for the "RNA viewer" page, which is only available in facilities
+          // special case for the "RNA self-report viewer" page, which is only available in facilities
           // in North Carolina
           (route === "workflows" &&
             subpage === "rna" &&

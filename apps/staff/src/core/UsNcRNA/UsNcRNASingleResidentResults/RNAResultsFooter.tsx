@@ -22,6 +22,7 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
+import { hideWhenPrintingStyle } from "../../sharedComponents";
 import { RNAMarkSubmittedButton } from "../RNAMarkSubmittedButton";
 import { ResultsPagePresenter } from "./ResultsPagePresenter";
 import { SubmissionDateandUndo } from "./SubmissionDateAndUndo";
@@ -36,6 +37,8 @@ const FooterContainer = styled.div`
   gap: ${rem(spacing.xl)};
   align-items: center;
   justify-content: center;
+
+  ${hideWhenPrintingStyle}
 `;
 
 const ButtonContainer = styled.div`
@@ -62,7 +65,7 @@ export const RNAResultsFooter = observer(function RNAResultsFooter({
     <FooterContainer>
       <FooterText>
         You've reached the end of {presenter.resident.preferredGivenName}'s RNA
-        assessment results. Make sure you've copied all of the information into
+        self-report results. Make sure you've copied all of the information into
         OPUS.
       </FooterText>
       <ButtonContainer>

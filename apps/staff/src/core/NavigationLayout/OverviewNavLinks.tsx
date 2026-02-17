@@ -94,7 +94,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       )}
       {enableRNA && (
         <NavLink to={workflowsUrl("rna")} role="menuitem">
-          RNA Viewer
+          Self-Report Viewer
         </NavLink>
       )}
       {enableMilestones && (

@@ -239,7 +239,7 @@ export const WORKFLOWS_PATH_SECTIONS = [
   "residents",
   "tasks",
   "milestones",
-  "rna", // North Carolina Facilities RNA viewer
+  "rna", // North Carolina Facilities RNA self-report viewer
 ] as const;
 export type WorkflowsPathSection = (typeof WORKFLOWS_PATH_SECTIONS)[number];
 export const isWorkflowsPathSection = (

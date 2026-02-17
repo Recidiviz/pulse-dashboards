@@ -80,7 +80,7 @@ export const RNAResultsHeader = observer(function RNAResultsHeader({
         <WorkflowsBackButton />
         <Columns>
           <Left>
-            <Heading>RNA Assessment Results</Heading>
+            <Heading>RNA Self-Report Results</Heading>
             <div>
               <Name>{resident.displayName}</Name>
               <PersonId

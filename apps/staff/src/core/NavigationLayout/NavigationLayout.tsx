@@ -49,6 +49,7 @@ import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
 import LanternLogo from "../LanternLogo";
 import RecidivizLogo from "../RecidivizLogo";
+import { hideWhenPrintingStyle } from "../sharedComponents";
 import { DASHBOARD_VIEWS, WorkflowsPage, workflowsUrl } from "../views";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { SYSTEM_ID_TO_PATH } from "./OverviewNavLinks";
@@ -85,6 +86,8 @@ const NavContainer = styled.div<{
       : `border-bottom: 1px solid ${palette.slate20};`}
 
   ${({ hasBorder }) => !hasBorder && `border: 0 !important;`}
+
+  ${hideWhenPrintingStyle}
 `;
 
 const NavMenu = styled.div<{ alignBottom?: boolean }>`

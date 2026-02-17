@@ -98,11 +98,10 @@ export const RNAResultsLifeAreaGrid = observer(function RNAResultsLifeAreaGrid({
             <tr key={id}>
               <MediumAnswerCell>
                 <>
-                  {customText ? (
-                    <CopiableText text={customText} />
-                  ) : (
-                    <span>{lifeAreaName}</span>
-                  )}
+                  <span>
+                    <strong>{lifeAreaName}</strong>
+                  </span>
+                  {customText && <CopiableText text={customText} />}
                 </>
               </MediumAnswerCell>
               <MediumAnswerCell>{hasInterest ? "Yes" : "No"}</MediumAnswerCell>

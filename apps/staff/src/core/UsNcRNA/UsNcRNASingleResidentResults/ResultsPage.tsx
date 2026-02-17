@@ -15,17 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Serif24 } from "@recidiviz/design-system";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
 import { fullRNASpec } from "~@jii/configs";
-import { spacing } from "~design-system";
+import { palette, spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { Resident } from "../../../WorkflowsStore/Resident";
+import { SubHeading } from "../../sharedComponents";
+import { Divider } from "../../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { ResultsPagePresenter } from "./ResultsPagePresenter";
 import { RNAResultsFooter } from "./RNAResultsFooter";
 import { RNAResultsHeader } from "./RNAResultsHeader";
@@ -33,6 +36,10 @@ import { RNAResultsSection } from "./RNAResultsSection";
 
 export const PaddedRNAContent = styled.div`
   padding: ${rem(spacing.md)} ${rem(72)};
+`;
+
+const PartHeading = styled(Serif24).attrs({ as: "h3" })`
+  color: ${palette.pine2};
 `;
 
 /**
@@ -43,20 +50,42 @@ export const ManagedComponent = observer(function ResultsPage({
 }: {
   presenter: ResultsPagePresenter;
 }) {
+  const subheadCopy: Record<string, string> = {
+    IN_PROGRESS:
+      "This person has not yet completed their self-report, but you can view their responses so far here.",
+    COMPLETE:
+      "This person has completed their self-report. Please make sure to copy all their responses into OPUS.",
+  };
+
   return (
     <>
       <RNAResultsHeader presenter={presenter} />
       <PaddedRNAContent>
-        {fullRNASpec.map((rnaPageSpec) => {
-          return (
+        {subheadCopy[presenter.status] && (
+          <>
+            <SubHeading>{subheadCopy[presenter.status]}</SubHeading>
+            <Divider />
+          </>
+        )}
+        <PartHeading>Part 1</PartHeading>
+        {fullRNASpec.map((rnaPageSpec) => (
+          <>
+            {rnaPageSpec.id === "sectionLifeAreas" && (
+              <>
+                <Divider />
+                <PartHeading>Part 2</PartHeading>
+              </>
+            )}
             <RNAResultsSection
               key={rnaPageSpec.id}
               questions={rnaPageSpec.questions}
               presenter={presenter}
             />
-          );
-        })}
-        <RNAResultsFooter presenter={presenter} />
+          </>
+        ))}
+        {presenter.status !== "IN_PROGRESS" && (
+          <RNAResultsFooter presenter={presenter} />
+        )}
       </PaddedRNAContent>
     </>
   );
