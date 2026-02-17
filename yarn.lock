@@ -10414,6 +10414,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/ciphers@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@noble/ciphers@npm:2.1.1"
+  checksum: 10c0/f02662723475a9785a2f7bcd6e8e12d4b5f77537154f5e21edb0fed398051fb1ae5057eb444987e1c65342f8632474f0143ea612a2dad49593d3358eb730a079
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:^2.0.1, @noble/curves@npm:~2.0.0":
+  version: 2.0.1
+  resolution: "@noble/curves@npm:2.0.1"
+  dependencies:
+    "@noble/hashes": "npm:2.0.1"
+  checksum: 10c0/e0b329eb9229e862d3b7203e0444bd479e9ecf2d5990181908dad416aab69106717ca696fc7b12ad0eb19d710f58c454646b27ce517a4298ab9abc89a9bdb6ee
+  languageName: node
+  linkType: hard
+
+"@noble/hashes@npm:2.0.1, @noble/hashes@npm:^2.0.1, @noble/hashes@npm:~2.0.0":
+  version: 2.0.1
+  resolution: "@noble/hashes@npm:2.0.1"
+  checksum: 10c0/e81769ce21c3b1c80141a3b99bd001f17edea09879aa936692ae39525477386d696101cd573928a304806efb2b9fa751e1dd83241c67d0c84d30091e85c79bdb
+  languageName: node
+  linkType: hard
+
+"@noble/post-quantum@npm:^0.5.3":
+  version: 0.5.4
+  resolution: "@noble/post-quantum@npm:0.5.4"
+  dependencies:
+    "@noble/curves": "npm:~2.0.0"
+    "@noble/hashes": "npm:~2.0.0"
+  checksum: 10c0/0fd2ecc41148796c27819fbdf3b48c4bc2fe0efb0ba6ca184192c2b1b2bf5e5a01d2b1216e8fe03ed8782374d188b7dd7906e6c42f4fefb68236470d3840d6c1
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -15227,6 +15260,13 @@ __metadata:
   version: 1.12.0
   resolution: "@rushstack/eslint-patch@npm:1.12.0"
   checksum: 10c0/1e567656d92632c085a446f40767bc451caffe1131e8d6a7a3e8f3e3f4167f5f29744a84c709f2440f299442d4bc68ff773784462166800b8c09c0e08042415b
+  languageName: node
+  linkType: hard
+
+"@scure/base@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@scure/base@npm:2.0.0"
+  checksum: 10c0/7d999c7bebf053bb49cb706fdc6c5366737cff0f7f7518f52d32d7f7ad7b898904f03673648a2af5c4f22396f5c05f1d8bddbf010d6595052d07ba8163d506ad
   languageName: node
   linkType: hard
 
@@ -20671,6 +20711,19 @@ __metadata:
   version: 0.5.16
   resolution: "adm-zip@npm:0.5.16"
   checksum: 10c0/6f10119d4570c7ba76dcf428abb8d3f69e63f92e51f700a542b43d4c0130373dd2ddfc8f85059f12d4a843703a90c3970cfd17876844b4f3f48bf042bfa6b49f
+  languageName: node
+  linkType: hard
+
+"age-encryption@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "age-encryption@npm:0.3.0"
+  dependencies:
+    "@noble/ciphers": "npm:^2.1.1"
+    "@noble/curves": "npm:^2.0.1"
+    "@noble/hashes": "npm:^2.0.1"
+    "@noble/post-quantum": "npm:^0.5.3"
+    "@scure/base": "npm:^2.0.0"
+  checksum: 10c0/eaeed7169162b0837d5d34cecf85d97bf487db182126ad786e06aa4020fe41bfaeb5a10e7d864f7c902229f862e4df7ba12c5b54bffd82a7f9294e1823c8ad35
   languageName: node
   linkType: hard
 
@@ -30299,7 +30352,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.0.3, fast-glob@npm:^3.2.7":
+"fast-glob@npm:^3.0.3, fast-glob@npm:^3.2.7, fast-glob@npm:^3.3.3":
   version: 3.3.3
   resolution: "fast-glob@npm:3.3.3"
   dependencies:
@@ -47457,6 +47510,7 @@ __metadata:
     "@wdio/local-runner": "npm:^7.3.0"
     "@wdio/spec-reporter": "npm:^7.3.0"
     acorn: "npm:^6.0.7"
+    age-encryption: "npm:^0.3.0"
     argparse: "npm:^2.0.1"
     assemblyai: "npm:^4.18.0"
     assert-never: "npm:^1.2.1"
@@ -47526,6 +47580,7 @@ __metadata:
     express-validator: "npm:^6.8.1"
     extensionless: "npm:^1.9.9"
     factory.ts: "npm:^1.4.1"
+    fast-glob: "npm:^3.3.3"
     fast-jwt: "npm:^6.0.2"
     fastify: "npm:5.2.1"
     fastify-auth0-verify: "npm:^3.0.0"

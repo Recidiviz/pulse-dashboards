@@ -267,3 +267,105 @@ If you're using `.env` files, migrate to SOPS:
 2. Update target names with `requires-sops-env:` prefix
 
 3. Remove `.env` files (now encrypted in `env.*.enc.yaml`)
+
+## Contractor Management
+
+A CLI tool for managing contractor access to SOPS-encrypted environment files using a hybrid encryption approach (SOPS with GCP KMS + age encryption).
+
+### Overview
+
+The contractor management system allows you to securely share environment files with external contractors without granting them access to your GCP KMS keys. It uses:
+
+- **age encryption**: Generates individual `age` keypairs for each contractor
+- **SOPS encryption**: Maintains dual encryption with both GCP KMS and contractor age keys. Allows for transparent contractor-env editing
+- **Project-scoped access**: Control which `nx` project secrets a contractor can access
+- **Automatic rotation**: Re-encrypts all files when removing contractor access
+
+
+```bash
+nx run repo:manage-contractor-sops
+```
+
+### Commands
+
+#### Onboard a contractor
+Onboarding a contractor will generate an `age` keypair that they can use to access contractor env files.
+
+You will be prompted to select which nx projects they should have access to.
+
+* Existing `.contractor.env.yaml` files will be re-encrypted and have the public key for the new contractor added as a recipient
+* The root `.sops.yaml` will be modified so that any newly created contractor env files will automatically include the contractor as a recipient 
+
+An `INSTRUCTIONS.md` file will be generated in the `.contractor-keys` directory. This will contain setup instructions for the contractor. **CAUTION**: The instructions must be distributed through a secure channel and deleted upon sending. They contain the contractor's public key and a link to a onetimesecret.com private key.
+
+#### Create contractor environment file
+This will create a contractor accessible environment file using an existing `env.enc.yaml` file's contents.
+
+You will be prompted to select which contractors should have access to the newly created file.
+
+You may optionally onboard new contractors during this process.
+
+#### Modify contractor access for a project
+
+This command allows you to change which contractors have access to a specific project's contractor files through an interactive checkbox UI.
+
+You will be prompted to:
+1. Select a project (with optional filtering)
+2. View current contractors with access
+3. Toggle checkboxes to add/remove contractors
+4. Preview changes before applying
+
+This is the recommended way to manage access after initial onboarding, as it:
+- Shows the current state before making changes
+- Allows bulk addition/removal in a single operation
+- Automatically updates `.sops.yaml` rules and re-encrypts all contractor files in the project
+- Provides a clear diff of changes (contractors added/removed)
+
+#### Offboard a contractor
+
+This command will remove contractor access from **ALL** projects. It performs the following actions:
+
+Removes contractor access:
+1. Removes age key from creation rules `.sops.yaml`
+2. Re-encrypts all contractor env files without the contractor's public key as a recipient
+3. Removes contractor from the `contractor-keys.enc.yaml` database
+
+#### Environment risk detection
+
+The tool warns when creating contractor files from sensitive environments:
+- ⚠️ **Risky**: production, staging, demo environments
+- ✅ **Safe**: local, offline, development environments
+- ℹ️ **Unknown**: Other environments (requires confirmation)
+
+### Key Features
+
+- **Automatic keypair management**: Age keys generated and stored in encrypted `contractor-keys.enc.yaml`
+- **Project-specific rules**: Each `nx` project gets its own SOPS rule in `.sops.yaml`
+- **Dual encryption**: Files encrypted with both GCP KMS (for team) and age (for contractors)
+- **Zero-trust offboarding**: Re-encrypting files ensures contractor can no longer decrypt them. However, they will still be able to decrypt any previously shared data.
+- **Dry-run mode**: Test operations with `--dry-run` flag
+
+### Encryption model
+
+Contractors can edit and re-encrypt `*.contractor.enc.yaml` files without GCP access thanks to **SOPS hybrid encryption** and asymmetric cryptography:
+
+1. **Each SOPS file contains**:
+   - Encrypted data (the actual secrets)
+   - A data encryption key (DEK) that's encrypted separately for each recipient
+   - Multiple recipients: GCP KMS key + multiple age public keys
+
+2. **When a contractor edits a file**:
+   - SOPS decrypts the DEK using the contractor's age private key
+   - Contractor edits the plaintext content
+   - SOPS generates a new DEK and encrypts it for ALL recipients listed in `.sops.yaml`
+
+3. **GCP KMS encryption is a public operation**:
+   - Encrypting data with a GCP KMS key does NOT require authentication
+   - Only decryption requires GCP IAM permissions
+   - SOPS can call the GCP KMS encrypt API without credentials to generate the encrypted DEK for FTEs
+   - This is similar to how anyone can encrypt data with a public PGP key without the owner's permission
+
+4. **Result**: Both contractors (using age) and FTEs (using GCP KMS) can independently decrypt and re-encrypt the same file, with each save operation automatically encrypting the DEK for all recipients.
+
+This architecture enables seamless collaboration where contractors can modify files via `git pull/push` without requiring GCP access or manual file sharing.
+

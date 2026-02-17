@@ -5,6 +5,13 @@
   "projectType": "library",
   "tags": [],
   "targets": {
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{workspaceRoot}/coverage/{projectName}"],
+      "options": {
+        "reportsDirectory": "../../coverage/{projectName}"
+      }
+    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
@@ -15,6 +22,16 @@
           }
         ],
         "cwd": "{projectRoot}"
+      }
+    },
+    "manage-contractor-sops": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/scripts/contractor-interactive.mts",
+        "cwd": "{projectRoot}",
+        "env": {
+          "NODE_OPTIONS": "--no-warnings"
+        }
       }
     }
   }
