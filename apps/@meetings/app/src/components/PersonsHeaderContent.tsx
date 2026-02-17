@@ -38,7 +38,7 @@ const PersonsHeaderContent = ({
 }: Props) => {
   return (
     <>
-      <View className="rounded-b-[24px] bg-white p-4 sm:flex-row sm:justify-between sm:gap-x-4 md:bg-[initial]">
+      <View className="rounded-b-[24px] bg-white p-4 md:pt-10 md:pb-0 md:px-0 sm:flex-row sm:justify-between sm:gap-x-4 md:bg-[initial]">
         <View>
           <Text className="font-libre-baskerville text-3xl font-semibold text-black">
             {keyword}s
@@ -60,7 +60,7 @@ const PersonsHeaderContent = ({
           </View>
         </View>
       </View>
-      <View className="z-10 my-4 flex-row items-center justify-end px-4">
+      <View className="z-10 my-4 md:my-0 flex-row items-center justify-end px-4 md:px-0">
         <Dropdown
           label="Sort by"
           options={Object.values(SortOption)}

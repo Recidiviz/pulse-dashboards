@@ -62,11 +62,11 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
   return (
     <>
       {sectionTitle && (
-        <Text className="mb-2 mt-6 font-inter text-base font-medium text-[#355362D9]">
+        <Text className="mt-6 font-inter text-base font-medium text-[#355362D9]">
           {sectionTitle}
         </Text>
       )}
-      <Table className="table-fixed">
+      <Table className="table-fixed mt-2">
         <TableHead>
           <TableHeadRow>
             <TableHeadCell className="w-[35%]">NAME</TableHeadCell>
