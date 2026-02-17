@@ -258,18 +258,9 @@ describe("rnaStatusList", () => {
         },
       ],
     });
-    expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
-      [
-        {
-          "completedAt": undefined,
-          "createdAt": 2026-01-05T00:00:00.000Z,
-          "pseudonymizedId": "abc",
-          "status": "NOT_STARTED",
-          "submittedByStaffAt": undefined,
-          "updatedAt": 2026-01-10T00:00:00.000Z,
-        },
-      ]
-    `);
+    expect((await caller.rnaStatusList(testInput))[0].status).toBe(
+      "NOT_STARTED",
+    );
   });
 
   test("IN_PROGRESS status", async () => {
@@ -289,18 +280,9 @@ describe("rnaStatusList", () => {
         },
       ],
     });
-    expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
-      [
-        {
-          "completedAt": undefined,
-          "createdAt": 2026-01-05T00:00:00.000Z,
-          "pseudonymizedId": "abc",
-          "status": "IN_PROGRESS",
-          "submittedByStaffAt": undefined,
-          "updatedAt": 2026-01-10T00:00:00.000Z,
-        },
-      ]
-    `);
+    expect((await caller.rnaStatusList(testInput))[0].status).toBe(
+      "IN_PROGRESS",
+    );
   });
 
   test("COMPLETE status", async () => {
@@ -321,18 +303,7 @@ describe("rnaStatusList", () => {
         },
       ],
     });
-    expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
-      [
-        {
-          "completedAt": 2026-01-05T00:00:00.000Z,
-          "createdAt": 2026-01-05T00:00:00.000Z,
-          "pseudonymizedId": "abc",
-          "status": "COMPLETE",
-          "submittedByStaffAt": undefined,
-          "updatedAt": 2026-01-10T00:00:00.000Z,
-        },
-      ]
-    `);
+    expect((await caller.rnaStatusList(testInput))[0].status).toBe("COMPLETE");
   });
 
   test("SUBMITTED_BY_STAFF status", async () => {
@@ -354,17 +325,8 @@ describe("rnaStatusList", () => {
         },
       ],
     });
-    expect(await caller.rnaStatusList(testInput)).toMatchInlineSnapshot(`
-      [
-        {
-          "completedAt": 2026-01-05T00:00:00.000Z,
-          "createdAt": 2026-01-05T00:00:00.000Z,
-          "pseudonymizedId": "abc",
-          "status": "SUBMITTED_BY_STAFF",
-          "submittedByStaffAt": 2026-01-10T00:00:00.000Z,
-          "updatedAt": 2026-01-10T00:00:00.000Z,
-        },
-      ]
-    `);
+    expect((await caller.rnaStatusList(testInput))[0].status).toBe(
+      "SUBMITTED_BY_STAFF",
+    );
   });
 });

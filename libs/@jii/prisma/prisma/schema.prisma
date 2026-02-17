@@ -40,6 +40,7 @@ model UsNcRNA {
 
     pseudonymizedId    String
     createdAt          DateTime  @default(now())
+    enabledAt          DateTime?
     updatedAt          DateTime  @updatedAt
     completedAt        DateTime?
     submittedByStaffAt DateTime?

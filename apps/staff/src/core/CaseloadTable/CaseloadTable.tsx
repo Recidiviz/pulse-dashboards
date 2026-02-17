@@ -143,7 +143,7 @@ const Row = styled.tr<{ $isSelected?: boolean }>`
   }
 `;
 
-const TableBody = styled.tbody`
+const TableBody = styled.tbody<{ $clickableRows: boolean }>`
   width: 100%;
 
   /* Give the hover state to only body rows, not header rows */
@@ -151,7 +151,8 @@ const TableBody = styled.tbody`
     &:hover,
     &:focus {
       background-color: ${palette.marble2};
-      cursor: pointer;
+      cursor: ${({ $clickableRows }) =>
+        $clickableRows ? "pointer" : "default"};
     }
   }
 `;
@@ -224,7 +225,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   expandedLastColumn = false,
   data,
   columns,
-  onRowClick = () => undefined,
+  onRowClick,
   shouldHighlightRow = () => false,
   onRowRender = () => undefined,
   manualSorting = undefined,
@@ -313,14 +314,14 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
             </Row>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody $clickableRows={!!onRowClick}>
           {table.getRowModel().rows.map((row) => {
             onRowRender(row.original);
             return (
               <Row
                 key={row.id}
                 onClick={() => {
-                  onRowClick(row.original);
+                  if (onRowClick) onRowClick(row.original);
                 }}
                 $isSelected={shouldHighlightRow(row.original)}
               >

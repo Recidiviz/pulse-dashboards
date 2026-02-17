@@ -24,6 +24,7 @@ import { UsNcRNAForm } from "../../../models/UsNcRNAForm";
 
 export class UsNcRNAFormContextPresenter implements Hydratable {
   form: UsNcRNAForm | undefined;
+  hydrationSucceeded = false;
   hydrationError: Error | undefined;
 
   constructor(
@@ -35,31 +36,25 @@ export class UsNcRNAFormContextPresenter implements Hydratable {
 
   async hydrate() {
     try {
-      // TODO: integrate this with case manager enabling forms for residents/users.
-      // In particular, we need to handle the case where the form isn't enabled for
-      // the user: hydration should be marked as complete but we won't have a form object.
-
-      let queryResult = await this.apiClient.trpc.state.usNc.getRNA.query({
+      const queryResult = await this.apiClient.trpc.state.usNc.getRNA.query({
         pseudonymizedId: this.pseudonymizedId,
       });
 
-      if (!queryResult) {
-        queryResult = await this.apiClient.trpc.state.usNc.createRNA.mutate({
-          pseudonymizedId: this.pseudonymizedId,
-        });
-      }
-
       runInAction(() => {
-        this.form = new UsNcRNAForm(
-          this.apiClient,
-          this.pseudonymizedId,
-          queryResult.id,
-          queryResult.completedAt,
-          queryResult.updatedAt,
-          queryResult.textAnswers,
-          queryResult.checkboxAnswers,
-          queryResult.lifeAreaAnswers,
-        );
+        this.hydrationSucceeded = true;
+        if (queryResult) {
+          this.form = new UsNcRNAForm(
+            this.apiClient,
+            this.pseudonymizedId,
+            queryResult.id,
+            queryResult.completedAt,
+            queryResult.updatedAt,
+            queryResult.enabledAt,
+            queryResult.textAnswers,
+            queryResult.checkboxAnswers,
+            queryResult.lifeAreaAnswers,
+          );
+        }
       });
     } catch (e) {
       this.hydrationError = castToError(e);
@@ -67,7 +62,7 @@ export class UsNcRNAFormContextPresenter implements Hydratable {
   }
 
   get hydrationState(): HydrationState {
-    if (this.form) {
+    if (this.hydrationSucceeded) {
       return { status: "hydrated" };
     } else if (this.hydrationError) {
       return { status: "failed", error: this.hydrationError };

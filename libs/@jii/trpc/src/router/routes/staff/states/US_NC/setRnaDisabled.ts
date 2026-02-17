@@ -15,19 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../../../procedures/init";
-import { createRNA } from "./createRNA";
-import { getRNA } from "./getRNA";
-import { rnaStatusList } from "./rnaStatusList";
-import { setRNADisabled } from "./setRnaDisabled";
-import { setRNAEnabled } from "./setRnaEnabled";
-import { setRNASubmitted } from "./setRnaSubmitted";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
-export const usNcStaffRouter = router({
-  rnaStatusList,
-  getRNA,
-  setRNASubmitted,
-  setRNAEnabled,
-  setRNADisabled,
-  createRNA,
-});
+import { stateStaffProcedure } from "./stateStaffProcedure";
+
+/**
+ * Disable / un-enable an existing RNA, preventing the resident from viewing it.
+ */
+export const setRNADisabled = stateStaffProcedure
+  .input(
+    z.object({
+      id: z.string(),
+    }),
+  )
+  .mutation(async ({ input: { id }, ctx: { prisma } }) => {
+    try {
+      await prisma.usNcRNA.update({
+        where: {
+          id,
+        },
+        data: {
+          enabledAt: null,
+        },
+      });
+    } catch (e) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        cause: e,
+        message: "This assessment could not be disabled.",
+      });
+    }
+  });

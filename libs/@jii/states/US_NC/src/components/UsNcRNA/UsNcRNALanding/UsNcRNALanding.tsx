@@ -22,6 +22,7 @@ import { State } from "~@jii/paths";
 
 import { RNADescription, RNAHeading } from "../styles";
 import { useRNAFormContext } from "../UsNcRNAFormContext/UsNcRNAFormContextProvider";
+import { UsNcRNANotEnabled } from "./UsNcRNANotEnabled";
 import { UsNcRNAResumeForm } from "./UsNcRNAResumeForm";
 import { UsNcRNASuccessfulSubmission } from "./UsNcRNASuccessfulSubmission";
 
@@ -35,14 +36,20 @@ export function UsNcRNALanding() {
   const { form } = useRNAFormContext();
   const routeParams = useTypedParams(State.Resident);
 
-  // TODO(#10889): show message if form is not enabled
-
   if (form.completedAt) {
     return <UsNcRNASuccessfulSubmission completedAt={form.completedAt} />;
   }
 
+  // TODO(#10883): Reorder these conditions before full-state launch
+
+  // In case people started filling out the form before it was enabled,
+  // we should allow them to resume the form.
   if (form.pageToResumeAt > 1) {
     return <UsNcRNAResumeForm />;
+  }
+
+  if (!form.enabledAt) {
+    return <UsNcRNANotEnabled />;
   }
 
   return (

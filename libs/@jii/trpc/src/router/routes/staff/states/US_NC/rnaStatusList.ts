@@ -34,7 +34,7 @@ const residentRecordFields = z.object({
   }),
 });
 
-function validateCurrentRNA<T extends { createdAt: Date }>(
+export function validateCurrentRNA<T extends { createdAt: Date }>(
   rnaDueDate: Date | null | undefined,
   latestRNA: T,
 ) {
@@ -90,12 +90,14 @@ export const rnaStatusList = stateStaffProcedure
           pseudonymizedId: { in: residents.map((r) => r.pseudonymizedId) },
         },
         select: {
+          id: true,
           pseudonymizedId: true,
           completedAt: true,
           createdAt: true,
           updatedAt: true,
           answers: true,
           submittedByStaffAt: true,
+          enabledAt: true,
         },
         // we only want the most recent for each person,
         // this will help us filter for that in memory
@@ -119,10 +121,12 @@ export const rnaStatusList = stateStaffProcedure
         ): {
           pseudonymizedId: string;
           status: RNAAssessmentStatus;
+          id?: string;
           updatedAt?: Date;
           createdAt?: Date;
           completedAt?: Date;
           submittedByStaffAt?: Date;
+          enabledAt?: Date;
         } => {
           const {
             pseudonymizedId,
@@ -149,12 +153,14 @@ export const rnaStatusList = stateStaffProcedure
           return {
             pseudonymizedId,
             status: getStatusOfExistingRNA(currentRNA),
+            id: currentRNA.id,
             updatedAt: currentRNA.updatedAt,
             createdAt: currentRNA.createdAt,
             // coalescing nulls to undefined just to simplify the output type,
             // the distinction between them is not important
             completedAt: currentRNA.completedAt ?? undefined,
             submittedByStaffAt: currentRNA.submittedByStaffAt ?? undefined,
+            enabledAt: currentRNA.enabledAt ?? undefined,
           };
         },
       );

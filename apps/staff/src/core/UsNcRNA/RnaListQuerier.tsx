@@ -55,12 +55,12 @@ function RNAFacilityQuerier({ facilityIds }: QuerierProps) {
     jiiTrpc: { querier },
   } = useRootStore();
 
-  const { data } = useSuspenseQuery(
+  const { data, refetch } = useSuspenseQuery(
     querier.staff.usNc.rnaStatusList.queryOptions({
       lookupField: "facilityId",
       lookupValue: facilityIds,
     }),
   );
 
-  return <RNATable data={data} />;
+  return <RNATable data={data} refetch={refetch} />;
 }

@@ -17,6 +17,7 @@
 
 import Switch from "@mui/material/Switch";
 import { animation } from "@recidiviz/design-system";
+import { UseSuspenseQueryResult } from "@tanstack/react-query";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -49,6 +50,7 @@ const ViewResults = styled.div`
   }
 `;
 
+// many styles taken from AntSwitch at https://mui.com/material-ui/react-switch/#customization
 export const EnableToggle = styled(Switch)<{ $width: number; $height: number }>`
   &.MuiSwitch-root {
     width: ${({ $width }) => rem($width)};
@@ -68,10 +70,15 @@ export const EnableToggle = styled(Switch)<{ $width: number; $height: number }>`
         background-color: ${palette.pine4};
       }
     }
+
+    &.Mui-disabled + .MuiSwitch-track {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
   }
 
   & .MuiSwitch-thumb {
-    color: ${palette.marble1} !important;
+    color: ${palette.marble1};
 
     width: ${({ $height }) => rem($height - 4)};
     height: ${({ $height }) => rem($height - 4)};
@@ -79,11 +86,13 @@ export const EnableToggle = styled(Switch)<{ $width: number; $height: number }>`
   }
 
   & .MuiSwitch-track {
+    cursor: pointer;
     height: ${({ $height }) => rem($height)};
     border-radius: ${({ $height }) => rem($height / 2)};
     background-color: ${palette.slate50Opaque};
     opacity: 1;
-    transition: background-color ${animation.defaultDurationMs}ms ease-in-out;
+    transition: opacity background-color ${animation.defaultDurationMs}ms
+      ease-in-out;
   }
 `;
 
@@ -103,14 +112,29 @@ const StatusBadgeCell = ({ row }: { row: Row<RNARowData> }) => (
   <RNABadge kind={row.original.status} />
 );
 
-export const EnableCell = ({ row }: { row: Row<RNARowData> }) => {
-  const canBeEnabled = row.original.status === "UPCOMING";
+export const EnableCell = observer(function EnableCell({
+  row,
+}: {
+  row: Row<RNARowData>;
+}) {
+  const { presenter, pseudonymizedId, id, isEnabled } = row.original;
 
-  // TODO: add a click handler that creates the assessment
   return (
     <EnableToggle
-      defaultChecked={!canBeEnabled}
-      disabled={!canBeEnabled}
+      onChange={(e) => {
+        if (presenter.isUpdating(pseudonymizedId)) return;
+
+        if (e.target.checked) {
+          presenter.onEnableClick(pseudonymizedId, id);
+        } else {
+          presenter.onDisableClick(pseudonymizedId, id);
+        }
+      }}
+      defaultChecked={isEnabled ?? false}
+      // setting the key is a workaround to force re-renders on change, since MUI
+      // expects defaultChecked to remain the same between renders
+      key={String(isEnabled)}
+      disabled={presenter.isUpdating(pseudonymizedId)}
       $width={38}
       $height={22}
       slotProps={{ input: { "aria-label": "enable self-report" } }}
@@ -118,11 +142,14 @@ export const EnableCell = ({ row }: { row: Row<RNARowData> }) => {
       disableTouchRipple={true}
     />
   );
-};
+});
 
 const LastUpdatedCell = ({ row }: { row: Row<RNARowData> }) => {
-  const { status } = row.original;
-  if (status === "COMPLETE") {
+  const { status, enabledAt } = row.original;
+
+  if (status !== "UPCOMING" && !enabledAt) {
+    return `Access disabled on ${formatWorkflowsDate(row.original.updatedAt)}`;
+  } else if (status === "COMPLETE") {
     return `Ready since ${formatWorkflowsDate(row.original.completedAt)}`;
   } else if (status === "IN_PROGRESS") {
     return formatWorkflowsDate(row.original.updatedAt);
@@ -228,15 +255,22 @@ const columns = [
 
 export const RNATable = observer(function RNATable({
   data,
+  refetch,
 }: {
   data: RNAStatusList;
+  refetch: UseSuspenseQueryResult<RNAStatusList, any>["refetch"];
 }) {
-  const { workflowsStore } = useRootStore();
+  const {
+    workflowsStore,
+    jiiTrpc: { client },
+  } = useRootStore();
   const rnaFilterStore = useRNAFilterStore();
   const presenter = new RNAFilterPresenter(
     data,
+    refetch,
     rnaFilterStore,
     workflowsStore,
+    client,
   );
 
   return (

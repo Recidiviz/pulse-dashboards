@@ -17,11 +17,6 @@
 
 import { TRPCError } from "@trpc/server";
 
-import {
-  rnaCheckboxAnswersSchema,
-  rnaLifeAreaAnswersSchema,
-  rnaTextAnswersSchema,
-} from "~@jii/configs";
 import { Prisma } from "~@jii/prisma";
 
 import {
@@ -37,45 +32,6 @@ const ncProcedure = restrictedResidentProcedureForState("US_NC");
 
 export const usNcRouter = router({
   getRNA: ncProcedure.input(getRNAInputSchema).query(getRNAQueryResolver),
-
-  // Idempotently try to create a new RNA for this resident. More specifically,
-  // - if the resident does not have an RNA or the latest RNA is completed,
-  //   creates a new RNA with empty answers
-  // - otherwise, if the latest RNA exists and is not completed,
-  //   wipes away the answers of the most recent RNA to be empty
-  createRNA: ncProcedure
-    .input(getRNAInputSchema)
-    .use(residentRestrictedMiddleware)
-    .mutation(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
-      const existingRNA = await prisma.usNcRNA.findFirst({
-        where: {
-          pseudonymizedId,
-        },
-        orderBy: {
-          updatedAt: "desc",
-        },
-      });
-
-      let result;
-      // todo: edit this condition once we can use the date of RNA enablement
-      // to determine whether to make a new RNA object or not.
-      if (existingRNA && !existingRNA.completedAt) {
-        result = existingRNA;
-      } else {
-        result = await prisma.usNcRNA.create({
-          data: {
-            pseudonymizedId,
-            answers: {},
-          },
-        });
-      }
-      return {
-        ...result,
-        textAnswers: rnaTextAnswersSchema.parse(result.answers),
-        checkboxAnswers: rnaCheckboxAnswersSchema.parse(result.answers),
-        lifeAreaAnswers: rnaLifeAreaAnswersSchema.parse(result.answers),
-      };
-    }),
 
   // Update the RNA that has the given RNA id with the provided answers.
   // This will fully overwrite the user's answers stored in the db with whatever

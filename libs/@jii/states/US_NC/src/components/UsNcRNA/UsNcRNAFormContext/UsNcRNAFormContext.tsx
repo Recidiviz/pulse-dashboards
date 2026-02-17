@@ -19,11 +19,11 @@ import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { Outlet } from "react-router-dom";
 
-import { NotFound } from "~@jii/common-ui";
 import { useRootStore, useSingleResidentContext } from "~@jii/data";
 import { MainContentHydrator } from "~@jii/layout";
 import { withPresenterManager } from "~hydration-utils";
 
+import { UsNcRNANotEnabled } from "../UsNcRNALanding/UsNcRNANotEnabled";
 import { UsNcRNAFormContextPresenter } from "./UsNcRNAFormContextPresenter";
 import { UsNcRNAFormContextProvider } from "./UsNcRNAFormContextProvider";
 
@@ -37,7 +37,7 @@ const ManagedComponent: FC<{
   const { form } = presenter;
 
   if (!form) {
-    return <NotFound />;
+    return <UsNcRNANotEnabled />;
   }
   return (
     <UsNcRNAFormContextProvider value={{ form }}>
