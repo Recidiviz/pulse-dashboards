@@ -15,48 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ErrorBoundary, ErrorBoundaryProps } from "@sentry/react";
 import { observer } from "mobx-react-lite";
-import { FC } from "react";
+import { ComponentType, FC } from "react";
 
 import { hydrationFailure } from "../Hydratable/utils";
 import { Hydrator } from "./Hydrator";
 import { HydratorProps } from "./types";
 
-type ThrowingHydratorProps = Omit<HydratorProps, "failed">;
-
-type HydratorWithErrorLoggingProps = ThrowingHydratorProps & {
-  fallback: NonNullable<ErrorBoundaryProps["fallback"]>;
+type HydratorWithErrorMessageProps = Omit<HydratorProps, "failed"> & {
+  // similar API as HydratorWithErrorLogging for convenience
+  fallback: ComponentType<{ error: Error }>;
 };
 
-const ThrowingHydrator: FC<ThrowingHydratorProps> = observer(
-  function ThrowingHydrator(hydratorProps) {
+/**
+ * Catches and displays hydration error messages using the provided fallback component,
+ * but does not log them to Sentry
+ */
+export const HydratorWithErrorMessage: FC<HydratorWithErrorMessageProps> =
+  observer(function HydratorWithErrorMessage(hydratorProps) {
     const error = hydrationFailure(hydratorProps.hydratable);
     if (error) {
-      throw error;
+      return <hydratorProps.fallback error={error} />;
     }
 
     return (
       <Hydrator
         {...hydratorProps}
-        // this should never be seen because the parent component will throw first
+        // this should never be seen because the parent component will render an error message first
         failed={null}
       />
     );
-  },
-);
-
-/**
- * Catches and displays hydration error messages using the provided fallback component
- * and logs them to Sentry
- */
-export const HydratorWithErrorLogging: FC<HydratorWithErrorLoggingProps> = ({
-  fallback,
-  ...hydratorProps
-}) => {
-  return (
-    <ErrorBoundary fallback={fallback}>
-      <ThrowingHydrator {...hydratorProps} />
-    </ErrorBoundary>
-  );
-};
+  });

@@ -45,7 +45,7 @@ import {
 import { palette } from "~design-system";
 
 import { ErrorPage } from "../ErrorPage/ErrorPage";
-import { GenericLayoutRoute } from "../GenericLayoutRoute/GenericLayoutRoute";
+import { GenericLayoutRoute } from "../GenericLayout/GenericLayout";
 import { PageAfterLogin } from "../pages/PageAfterLogin";
 import { PageEdovoLanding } from "../pages/PageEdovoLanding";
 import { PageHome } from "../pages/PageHome";

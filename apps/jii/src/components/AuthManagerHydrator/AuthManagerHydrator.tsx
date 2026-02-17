@@ -19,11 +19,18 @@ import { FC, ReactNode } from "react";
 
 import { useRootStore } from "~@jii/data";
 import { EdovoAuthHandler } from "~@jii/data";
-import { HydratorWithErrorLogging } from "~hydration-utils";
+import { HydratorWithErrorMessage } from "~hydration-utils";
 
-import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { EdovoUnknownUserError } from "../UnknownUserError/EdovoUnknownUserError";
 
+/**
+ * Hydrator component with some special logic for handling AuthManager errors.
+ * Certain known errors trigger dedicated components that are more user-friendly,
+ * and errors in general are not logged to Sentry because they typically represent
+ * access denials rather than actual bugs. (Whatever happened during the auth flow
+ * should be captured in other logs for troubleshooting if needed.)
+ */
 export const AuthManagerHydrator: FC<{ children: ReactNode }> = ({
   children,
 }) => {
@@ -31,16 +38,16 @@ export const AuthManagerHydrator: FC<{ children: ReactNode }> = ({
     userStore: { authManager },
   } = useRootStore();
 
-  if (authManager.handler instanceof EdovoAuthHandler) {
-    return (
-      <HydratorWithErrorLogging
-        hydratable={authManager}
-        fallback={EdovoUnknownUserError}
-      >
-        {children}
-      </HydratorWithErrorLogging>
-    );
-  } else {
-    return <PageHydrator hydratable={authManager}>{children}</PageHydrator>;
-  }
+  return (
+    <HydratorWithErrorMessage
+      hydratable={authManager}
+      fallback={
+        authManager.handler instanceof EdovoAuthHandler
+          ? EdovoUnknownUserError
+          : ErrorPage
+      }
+    >
+      {children}
+    </HydratorWithErrorMessage>
+  );
 };

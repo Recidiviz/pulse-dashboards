@@ -15,15 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
+import { FC, ReactNode } from "react";
 import { Outlet } from "react-router-dom";
 
 import { AppLayout } from "../AppLayout/AppLayout";
 import { NavMenu } from "../NavMenu/NavMenu";
 
 /**
- * Page layout that renders nested routes with empty header bar (no resident-specific navigation).
+ * Page layout that renders children as main content with empty header bar (no resident-specific navigation).
  */
-export const GenericLayoutRoute = observer(function GenericLayoutRoute() {
-  return <AppLayout main={<Outlet />} header={<NavMenu />} />;
-});
+export const GenericLayout: FC<{ children: ReactNode }> = ({ children }) => {
+  return <AppLayout main={children} header={<NavMenu />} />;
+};
+
+/**
+ * Layout route that renders nested routes with empty header bar (no resident-specific navigation).
+ */
+export function GenericLayoutRoute() {
+  return (
+    <GenericLayout>
+      <Outlet />
+    </GenericLayout>
+  );
+}

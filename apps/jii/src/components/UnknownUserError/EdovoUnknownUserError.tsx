@@ -18,9 +18,8 @@
 import { PageContainer } from "~@jii/common-ui";
 import { UsNcRNANotEnabled } from "~@jii/US_NC";
 
-import { AppLayout } from "../AppLayout/AppLayout";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
-import { NavMenu } from "../NavMenu/NavMenu";
+import { GenericLayout } from "../GenericLayout/GenericLayout";
 import { stateCodeFromError } from "./Auth0UnknownUserError";
 
 export const EdovoUnknownUserError = ({ error }: { error: Error }) => {
@@ -29,14 +28,11 @@ export const EdovoUnknownUserError = ({ error }: { error: Error }) => {
   switch (stateCode) {
     case "US_NC":
       return (
-        <AppLayout
-          main={
-            <PageContainer>
-              <UsNcRNANotEnabled />
-            </PageContainer>
-          }
-          header={<NavMenu />}
-        />
+        <GenericLayout>
+          <PageContainer>
+            <UsNcRNANotEnabled />
+          </PageContainer>
+        </GenericLayout>
       );
     default:
       return <ErrorPage error={error} />;

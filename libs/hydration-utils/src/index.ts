@@ -21,6 +21,7 @@ export * from "./HydratesFromSource/HydratesFromSource";
 export * from "./Hydrator/Hydrator";
 export * from "./Hydrator/HydratorWithDirectHydration";
 export * from "./Hydrator/HydratorWithErrorLogging";
+export * from "./Hydrator/HydratorWithErrorMessage";
 export type * from "./types";
 export * from "./utils/castToError";
 export * from "./utils/unpackAggregatedErrors";

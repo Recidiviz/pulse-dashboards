@@ -17,14 +17,12 @@
 
 import { ErrorPageMainContent } from "~@jii/layout";
 
-import { AppLayout } from "../AppLayout/AppLayout";
-import { NavMenu } from "../NavMenu/NavMenu";
+import { GenericLayout } from "../GenericLayout/GenericLayout";
 
 export const ErrorPage = ({ error }: { error: Error }) => {
   return (
-    <AppLayout
-      main={<ErrorPageMainContent error={error} />}
-      header={<NavMenu />}
-    ></AppLayout>
+    <GenericLayout>
+      <ErrorPageMainContent error={error} />
+    </GenericLayout>
   );
 };
