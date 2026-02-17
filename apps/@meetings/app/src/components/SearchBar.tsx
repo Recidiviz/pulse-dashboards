@@ -60,8 +60,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
       {value?.length > 0 && (
         <TouchableOpacity onPress={() => onChange("")}>
-          <View className="size-4 items-center justify-center rounded-full bg-[#9AA9B1]">
-            <Text className="font-inter text-[8px] font-extrabold text-white">
+          <View className="flex size-4 items-center justify-center rounded-full bg-[#9AA9B1]">
+            <Text className="font-inter text-[8px] leading-[8px] font-extrabold text-white">
               ✕
             </Text>
           </View>
