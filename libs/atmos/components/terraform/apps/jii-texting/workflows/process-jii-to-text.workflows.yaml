@@ -23,6 +23,8 @@ main:
         call: googleapis.run.v2.projects.locations.jobs.run
         args:
           name: ${import_job_name}
+          connector_params:
+            timeout: 10800
           body:
             overrides:
               containerOverrides:
@@ -51,6 +53,8 @@ main:
         call: googleapis.run.v2.projects.locations.jobs.run
         args:
           name: ${process_job_name}
+          connector_params:
+            timeout: 10800
           body:
             overrides:
               containerOverrides:

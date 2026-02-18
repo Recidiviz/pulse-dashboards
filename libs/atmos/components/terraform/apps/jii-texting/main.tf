@@ -204,7 +204,7 @@ module "process_jii_cloud_run_job" {
   cloud_run_deletion_protection = false
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
   limits                        = { memory = "1Gi", cpu = "1" }
-  timeout                       = "3600s"
+  timeout                       = "10800s"
 }
 
 moved {
@@ -224,7 +224,7 @@ module "import_job" {
   env_vars                      = local.import_job_env_vars
   cloud_run_deletion_protection = false
   exec                          = false
-  timeout                       = "3600s"
+  timeout                       = "10800s"
   max_retries                   = 1
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
 }
