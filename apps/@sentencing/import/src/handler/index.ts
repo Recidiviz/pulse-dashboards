@@ -16,8 +16,8 @@
 // =============================================================================
 
 import {
-  FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
-  SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
+    FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
+    SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
 } from "~@sentencing/import/constants";
 import { getPrismaClientForStateCode } from "~@sentencing/prisma";
 import { StateCode } from "~@sentencing/prisma/client";
@@ -57,13 +57,19 @@ export function getImportHandler(stateCode?: StateCode) {
     throw new Error("Missing import bucket id environment variable");
   }
 
-  const filesToSchemasAndLoaderFns = stateCode
-    ? getFilesToSchemasAndLoaderFns(stateCode)
-    : FILE_NAME_TO_SCHEMA_AND_LOADER_FN;
+  const bucket = process.env["IMPORT_BUCKET_ID"];
+
+  if (stateCode && STATE_TO_REPORT_TYPE[stateCode] === "SAR") {
+    return new ImportHandler({
+      bucket,
+      getPrismaClientForStateCode,
+      filesToSchemasAndLoaderFns: SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
+    });
+  }
 
   return new ImportHandler({
-    bucket: process.env["IMPORT_BUCKET_ID"],
-    getPrismaClientForStateCode: getPrismaClientForStateCode,
-    filesToSchemasAndLoaderFns,
+    bucket,
+    getPrismaClientForStateCode,
+    filesToSchemasAndLoaderFns: FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
   });
 }

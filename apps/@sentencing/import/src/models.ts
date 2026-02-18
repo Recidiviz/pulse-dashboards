@@ -73,6 +73,15 @@ const reportType = z.enum([
   "PSI File Review w/LSI Assigned",
 ]);
 
+const assessmentType = z.enum([
+  "ORAS_COMMUNITY_SUPERVISION",
+  "ORAS_COMMUNITY_SUPERVISION_SCREENING",
+  "ORAS_PRISON_INTAKE",
+  "ORAS_PRISON_SCREENING",
+  "ORAS_REENTRY",
+  "ORAS_SUPPLEMENTAL_REENTRY",
+]);
+
 export const caseImportSchema = z.object({
   external_id: z.string(),
   state_code: stateCode,
@@ -85,6 +94,24 @@ export const caseImportSchema = z.object({
   lsir_level: z.string().optional(),
   report_type: reportType.optional(),
   investigation_status: z.string().optional(),
+});
+
+export const SARImportSchema = z.object({
+  external_id: z.string(),
+  state_code: stateCode,
+  staff_id: z.string(),
+  client_id: z.string(),
+  due_date: z.coerce.date().optional(),
+  report_type: assessmentType.optional(), // MO sends ORAS types, not PSI types
+  assessment_score: z.string().optional(),
+  assessment_metadata: z
+    .array(
+      z.object({
+        domain_name: z.string(),
+        domain_score: z.string(),
+      }),
+    )
+    .optional(),
 });
 
 export const clientImportSchema = z

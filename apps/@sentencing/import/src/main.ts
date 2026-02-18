@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PSI_FILES, SAR_FILES } from "~@sentencing/import/constants";
 import { getImportHandler } from "~@sentencing/import/handler";
 import { StateCode } from "~@sentencing/prisma/client";
 
@@ -24,11 +25,23 @@ async function importData() {
   }
 
   const stateCode = process.env["STATE_CODE"] as StateCode;
-  const files = process.env["FILES"]?.split(",");
 
-  // Pass stateCode to get the appropriate file-to-schema mapping (e.g., SAR for MO)
+  // TODO(#11931): Remove fallback logic after launch. FILES should always be set by workflow.
+  // Use FILES from environment if provided, otherwise use state-specific defaults
+  let files: string[];
+  if (process.env["FILES"]) {
+    files = process.env["FILES"].split(",");
+  } else {
+    // Fallback to state-specific defaults
+    if (stateCode === "US_MO") {
+      files = SAR_FILES;
+    } else {
+      // For ID, ND, and other states: use PSI files
+      files = PSI_FILES;
+    }
+  }
+
   const importHandler = getImportHandler(stateCode);
-
   await importHandler.import(stateCode, files);
 }
 

@@ -20,23 +20,23 @@
  * Source: https://doc.mo.gov/facilities/probation-parole/address-listing
  */
 export const MO_DISTRICT_ACRONYM_TO_NAME: Record<string, string> = {
-  "1": "District 1 - St. Joseph Community Supervision Center",
+  "01": "District 1 - St. Joseph Community Supervision Center",
   "1S": "District 1S - Maryville",
-  "2": "District 2 - Chillicothe",
+  "02": "District 2 - Chillicothe",
   "2S": "District 2S - Brookfield",
-  "3": "District 3 - Hannibal Community Supervision Center",
+  "03": "District 3 - Hannibal Community Supervision Center",
   "3S": "District 3S - Kirksville",
-  "4": "District 4 - Kansas City",
+  "04": "District 4 - Kansas City",
   "4W": "District 4W - Kansas City",
-  "5": "District 5 - Nevada",
+  "05": "District 5 - Nevada",
   "5S": "District 5S - Belton",
-  "6": "District 6 - Columbia",
+  "06": "District 6 - Columbia",
   "6S": "District 6S - Moberly",
   "7B": "District 7B - St. Louis",
   "8C": "District 8C - St. Louis",
   "8N": "District 8N - St. Louis",
   "8S": "District 8S - St. Louis",
-  "9": "District 9 - Joplin",
+  "09": "District 9 - Joplin",
   "9S": "District 9S - Neosho",
   "10": "District 10 - Springfield",
   "10N": "District 10N - Springfield",
@@ -66,9 +66,9 @@ export const MO_DISTRICT_ACRONYM_TO_NAME: Record<string, string> = {
   "27": "District 27 - Jefferson City",
   "29": "District 29 - Lexington",
   "29S": "District 29S - Marshall",
-  EP: "District EP - St. Louis",
-  TCKC: "Transition Center of Kansas City",
-  TCSTL: "Transition Center of St. Louis",
+  "EP": "District EP - St. Louis",
+  "TCKC": "Transition Center of Kansas City",
+  "TCSTL": "Transition Center of St. Louis",
 };
 
 /**

@@ -84,11 +84,11 @@ const createStatusColumn = (header: string): ColumnDef<CaseListTableCase> => ({
       "isCancelled" in info.cell.row.original
         ? info.cell.row.original.isCancelled
         : false;
-    const statusOrArchived = isBeforeDueDateWithExtraDayOffset(
-      info.cell.row.original.dueDate,
-    )
-      ? CaseStatusToDisplay[statusValue]
-      : ARCHIVED_STATUS;
+    const statusOrArchived =
+      !info.cell.row.original.dueDate ||
+      isBeforeDueDateWithExtraDayOffset(info.cell.row.original.dueDate)
+        ? CaseStatusToDisplay[statusValue]
+        : ARCHIVED_STATUS;
     const statusToDisplay = isCancelledStatus
       ? CANCELLED_STATUS
       : statusOrArchived;
@@ -113,8 +113,8 @@ const createStatusColumn = (header: string): ColumnDef<CaseListTableCase> => ({
       Complete: 2,
     };
 
-    const isArchivedA = !a.original.dueDate || moment.utc().isAfter(dueDateA);
-    const isArchivedB = !b.original.dueDate || moment.utc().isAfter(dueDateB);
+    const isArchivedA = !!a.original.dueDate && moment.utc().isAfter(dueDateA);
+    const isArchivedB = !!b.original.dueDate && moment.utc().isAfter(dueDateB);
 
     // If both are archived, return 0
     if (isArchivedA && isArchivedB) {

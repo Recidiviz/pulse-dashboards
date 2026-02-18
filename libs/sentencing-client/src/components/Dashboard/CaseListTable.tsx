@@ -16,12 +16,12 @@
 // =============================================================================
 
 import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    SortDirection,
-    useReactTable,
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  SortDirection,
+  useReactTable,
 } from "@tanstack/react-table";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -31,20 +31,20 @@ import { filterExcludedAttributes } from "../../geoConfigs/utils";
 import { psiUrl, sarUrl } from "../../utils/routing";
 import SortIcon from "../assets/sort-icon.svg?react";
 import {
-    ACTIVE_STATUS,
-    ARCHIVED_STATUS,
-    CANCELLED_STATUS,
-    CLIENT_KEY,
-    FULL_NAME_KEY,
+  ACTIVE_STATUS,
+  ARCHIVED_STATUS,
+  CANCELLED_STATUS,
+  CLIENT_KEY,
+  FULL_NAME_KEY,
 } from "./constants";
 import * as Styled from "./Dashboard.styles";
 import { useDetectOutsideClick } from "./hooks";
 import {
-    AttributeKey,
-    CaseListTableCase,
-    CaseListTableCases,
-    CaseStatusToDisplay,
-    RecommendationStatusFilter,
+  AttributeKey,
+  CaseListTableCase,
+  CaseListTableCases,
+  CaseStatusToDisplay,
+  RecommendationStatusFilter,
 } from "./types";
 import { isBeforeDueDateWithExtraDayOffset } from "./utils";
 
@@ -71,7 +71,6 @@ type CaseListTableProps = {
 };
 
 type StatusFilter = RecommendationStatusFilter | typeof ACTIVE_STATUS;
-
 
 const getUpdatedStatusFilters = (
   status: StatusFilter,
@@ -124,7 +123,9 @@ export const CaseListTable = ({
   const dropdownRef = useDetectOutsideClick(() => setShowFilterDropdown(false));
 
   const [data, setData] = useState(
-    caseTableData.filter((dp) => isBeforeDueDateWithExtraDayOffset(dp.dueDate)), // Hide archived cases on initial load
+    caseTableData.filter(
+      (dp) => !dp.dueDate || isBeforeDueDateWithExtraDayOffset(dp.dueDate),
+    ), // Hide archived cases on initial load; show cases with no due date
   );
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [statusFilters, setStatusFilters] = useState<StatusFilter[]>([
@@ -190,7 +191,10 @@ export const CaseListTable = ({
             // Include the case if it is cancelled and the CANCELLED_STATUS filter is active
             return includesCancelled;
           }
-          if (!isBeforeDueDateWithExtraDayOffset(datapoint.dueDate)) {
+          if (
+            datapoint.dueDate &&
+            !isBeforeDueDateWithExtraDayOffset(datapoint.dueDate)
+          ) {
             // Include the case if it is archived and the ARCHIVED_STATUS filter is active
             return includesArchived;
           }
@@ -334,7 +338,9 @@ export const CaseListTable = ({
           ))}
           {data.length === 0 && (
             <Styled.Row>
-              <Styled.Cell>No cases to display</Styled.Cell>
+              <Styled.Cell>
+                {isSAR ? "No reports to display" : "No cases to display"}
+              </Styled.Cell>
             </Styled.Row>
           )}
         </Styled.TableBody>

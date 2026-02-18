@@ -141,15 +141,18 @@ export const ORAS_DOMAIN_CONFIG: Record<string, DomainConfig[]> = {
     DOMAIN.CRIMINAL_ATTITUDES,
     DOMAIN.RESPONSIVITY,
   ],
+  // Screening tools and other non-full assessments have no domain breakdown
+  Other: [],
 };
 
 // Helper function to get domains for an assessment type
 export function getDomainsForAssessmentType(
   assessmentType: string | null | undefined,
 ): DomainConfig[] {
-  if (!assessmentType || !ORAS_DOMAIN_CONFIG[assessmentType]) {
-    // Default to CST (most comprehensive) if unknown
+  if (!assessmentType) {
+    // Default to CST (most comprehensive) if no type provided
     return ORAS_DOMAIN_CONFIG["ORAS_CST"];
   }
-  return ORAS_DOMAIN_CONFIG[assessmentType];
+  // Return configured domains, or empty array for unknown types
+  return ORAS_DOMAIN_CONFIG[assessmentType] ?? [];
 }

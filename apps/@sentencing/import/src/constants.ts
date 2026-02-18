@@ -22,6 +22,7 @@ import {
   insightImportSchema,
   offenseImportSchema,
   opportunityImportSchema,
+  SARImportSchema,
   staffImportSchema,
 } from "~@sentencing/import/models";
 import { transformAndLoadCaseData } from "~@sentencing/import/utils/cases";
@@ -30,6 +31,7 @@ import { transformAndLoadCountyAndDistrictData } from "~@sentencing/import/utils
 import { transformAndLoadInsightData } from "~@sentencing/import/utils/insights";
 import { transformAndLoadOffenseData } from "~@sentencing/import/utils/offenses";
 import { transformAndLoadOpportunityData } from "~@sentencing/import/utils/opportunities";
+import { transformAndLoadSARData } from "~@sentencing/import/utils/sar";
 import { transformAndLoadStaffData } from "~@sentencing/import/utils/staff";
 
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/case_record.py
@@ -83,7 +85,7 @@ export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
 /**
  * Missouri (US_MO) uses SAR (Sentencing Assessment Reports) instead of PSI cases.
  * This requires different loading functions for certain views (e.g., SAR records
- * instead of case records). For now, only staff and client imports are supported.
+ * instead of case records).
  */
 export const SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
   [STAFF_FILE_NAME]: {
@@ -94,4 +96,28 @@ export const SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
     schema: clientImportSchema,
     loaderFn: transformAndLoadClientData,
   },
+  [CASES_FILE_NAME]: {
+    schema: SARImportSchema,
+    loaderFn: transformAndLoadSARData,
+  },
 };
+
+/**
+ * List of files to import for PSI states (ID, ND).
+ * These states use the full PSI (Pre-Sentence Investigation) workflow.
+ */
+export const PSI_FILES = [
+  STAFF_FILE_NAME,
+  CLIENTS_FILE_NAME,
+  CASES_FILE_NAME,
+  INSIGHTS_FILE_NAME,
+  OPPORTUNITIES_FILE_NAME,
+  OFFENSES_FILE_NAME,
+  COUNTIES_AND_DISTRICTS_FILES_NAME,
+];
+
+/**
+ * List of files to import for SAR states (MO).
+ * These states use SAR (Sentencing Assessment Report) instead of full PSI.
+ */
+export const SAR_FILES = [STAFF_FILE_NAME, CLIENTS_FILE_NAME, CASES_FILE_NAME];

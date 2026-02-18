@@ -29,6 +29,7 @@ import {
   RecommendationStatusFilter,
 } from "../components/Dashboard/types";
 import { StaffStore } from "../datastores/StaffStore";
+import { GEO_CONFIG } from "../geoConfigs/geoConfigs";
 
 export class StaffPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
@@ -53,7 +54,7 @@ export class StaffPresenter implements Hydratable {
   }
 
   get geoConfig() {
-    return this.staffStore.sentencingStore.geoConfig;
+    return GEO_CONFIG[this.stateCode] ?? { excludedAttributeKeys: [] };
   }
 
   get staffPseudoId() {
@@ -69,7 +70,9 @@ export class StaffPresenter implements Hydratable {
   }
 
   get sarTableData() {
-    return !this.staffInfo ? undefined : this.staffInfo.sentencingAssessmentReports;
+    return !this.staffInfo
+      ? undefined
+      : this.staffInfo.sentencingAssessmentReports;
   }
 
   get isSupervisor() {
