@@ -69,32 +69,32 @@ const ManagedComponent = observer(function ManagedComponent({
         percentDone={percentDone}
       />
       <UsNcRNASectionInfo {...rnaPageCopy[pageId]} />
-      <form>
-        {questionIds.map((questionId) => (
-          <UsNcRNAQuestion
-            key={questionId}
-            id={questionId}
-            questionNumber={allRNAQuestions.indexOf(questionId) + 1}
-            presenter={presenter}
-            {...rnaQuestionCopy[questionId]}
-            {...rnaQuestionConfig[questionId]}
-          />
-        ))}
-        {presenter.hasAnyInvalidAnswer && (
-          <UnboxedNotice>
-            {rnaMiscellaneousCopy["ANSWER_ALL_QUESTIONS_NOTICE"]}
-          </UnboxedNotice>
-        )}
-        {presenter.isSaving && (
-          <UnboxedNotice>{rnaMiscellaneousCopy["SAVING"]}</UnboxedNotice>
-        )}
-        {presenter.savingError && (
-          <UnboxedNotice>
-            {rnaMiscellaneousCopy["SAVING_ERROR"]} {presenter.savingError}
-          </UnboxedNotice>
-        )}
-        <NavigationButtons presenter={presenter} />
-      </form>
+
+      {questionIds.map((questionId) => (
+        <UsNcRNAQuestion
+          key={questionId}
+          id={questionId}
+          questionNumber={allRNAQuestions.indexOf(questionId) + 1}
+          presenter={presenter}
+          {...rnaQuestionCopy[questionId]}
+          {...rnaQuestionConfig[questionId]}
+        />
+      ))}
+
+      {presenter.hasAnyInvalidAnswer && (
+        <UnboxedNotice>
+          {rnaMiscellaneousCopy["ANSWER_ALL_QUESTIONS_NOTICE"]}
+        </UnboxedNotice>
+      )}
+      {presenter.isSaving && (
+        <UnboxedNotice>{rnaMiscellaneousCopy["SAVING"]}</UnboxedNotice>
+      )}
+      {presenter.savingError && (
+        <UnboxedNotice>
+          {rnaMiscellaneousCopy["SAVING_ERROR"]} {presenter.savingError}
+        </UnboxedNotice>
+      )}
+      <NavigationButtons presenter={presenter} />
 
       <UsNcRNAModal
         isOpen={presenter.isUnsavedChangesModalOpen}
