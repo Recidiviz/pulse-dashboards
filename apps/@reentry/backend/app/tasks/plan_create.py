@@ -20,7 +20,6 @@ from app.crud.plan_generation import PlanGeneration, create_plan_generation
 from app.utils.intake_summary_runner import generate_summary
 
 from ..models.base import IntakeType
-from ..utils.transcription.post_processing import validate_recording_session
 from ..utils.transcription.transcription_messages import (
     get_transcription_messages_from_gcp,
 )
@@ -56,7 +55,7 @@ async def fetch_assets(
 
         # Validate transcription quality before proceeding
         recording_session = intake.recording_session
-        is_valid, validation_errors = validate_recording_session(recording_session)
+        is_valid, validation_errors = recording_session.validate_recording_session()
 
         if not is_valid:
             error_message = "Transcription validation failed: " + "; ".join(
@@ -72,8 +71,6 @@ async def fetch_assets(
         intake_messages = await get_transcription_messages_from_gcp(
             intake.recording_session.id, session
         )
-    elif intake.intake_type == IntakeType.EXTERNAL.value:
-        intake_messages = intake.external_chat_messages
 
     if not intake_messages:
         task_logger.error(f"No messages found for intake {intake.id}")

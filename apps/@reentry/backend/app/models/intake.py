@@ -106,9 +106,6 @@ class Intake(BaseModel, table=True):
     completed_at: Optional[datetime] = Field(
         default=None, nullable=True, description="Timestamp when intake was completed"
     )
-    current_section: Optional[str] = Field(
-        default=None, nullable=True, description="Current section being processed"
-    )
 
     # Relationships
     assessment_config: Mapped[Optional["AssessmentConfig"]] = Relationship(

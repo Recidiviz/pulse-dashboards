@@ -59,6 +59,9 @@ def compute_frontend_status(
     if intake_status == "in_progress":
         return "intake_in_progress"
 
+    if intake_status == "processing":
+        return "processing"
+
     if intake_status == "completed":
         if processing_status == ProcessingStatus.IN_PROGRESS:
             return "processing"
@@ -277,7 +280,7 @@ async def handle_simple_status_filter(
             MAX(completed_at) as last_completed_date
         FROM intake
         WHERE client_pseudo_id IN ({placeholders})
-          {f"AND status = '{intake_status}'"if intake_status else ''}
+          {f"AND status = '{intake_status}'" if intake_status else ""}
         GROUP BY client_pseudo_id
         {order_clause}
     """

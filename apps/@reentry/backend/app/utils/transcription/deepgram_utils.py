@@ -113,10 +113,8 @@ async def process_deepgram_transcription(
 
     # Save processed transcription
     task_logger.info("Saving processed transcription to GCS")
-    await save_to_gcs(
-        recording_session.gcs_bucket_name,
-        f"transcriptions/{recording_session.id}_processed.json",
-        transcription_result_processed.dict(),
+    await recording_session.save_transcription_to_gcs(
+        transcription_result_processed.dict(), is_processed=True
     )
     task_logger.info("Processed transcription saved to GCS")
 

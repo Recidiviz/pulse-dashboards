@@ -215,7 +215,7 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
     const interval = setInterval(checkWakeLock, 1000);
 
     return () => clearInterval(interval);
-  }, [recording]);
+  }, [recording.isWakeLockActive]);
 
   const openLiveAssessmentModal = (action: () => void) => {
     setModalConfirmAction(() => action);
@@ -412,7 +412,6 @@ const RecordingInterface: React.FC<RecordingInterfaceProps> = ({
           <div className="w-full max-w-7xl px-4">
             <SimpleAudioPlayer
               sessionId={sessionData.id}
-              onLoadComplete={() => console.log("Audio loaded successfully")}
               shouldPollStatus={recordingStopped}
               onTimeUpdate={onAudioTimeUpdate}
               onPlayerReady={onAudioPlayerReady}

@@ -19,7 +19,7 @@ from app.crud.recording_session import (
     get_recording_session_by_id,
     update_status,
 )
-from app.models.base import IntakeType
+from app.models.base import IntakeStatus, IntakeType
 from app.models.recording import RecordingChunk, RecordingSession, RecordingStatus
 from app.routes.recording_session_models import (
     ConfirmUploadRequest,
@@ -286,6 +286,13 @@ async def upload_audio_chunk(
         cpa_client_locations=auth_user_context["cpa_client_locations"],
     )
 
+    if recording_session.status not in [
+        RecordingStatus.RECORDING,
+        RecordingStatus.PAUSED,
+        RecordingStatus.CREATED,
+    ]:
+        raise HTTPException(status_code=404, detail="Recording session is closed")
+
     try:
         result = await session.exec(
             select(RecordingChunk)
@@ -339,6 +346,17 @@ async def upload_audio_chunk(
         logger.info(
             f"Uploaded chunk {request.chunk_index} for session {session_id} (has_header: {request.has_header})"
         )
+        if recording_session.status in [
+            RecordingStatus.CREATED,
+            RecordingStatus.PAUSED,
+        ]:
+            await update_status(
+                session, recording_session.id, RecordingStatus.RECORDING
+            )
+        intake = await get_intake_by_id(session, recording_session.intake_id)
+
+        if intake and intake.status == IntakeStatus.CREATED:
+            await intake.update_status(session, IntakeStatus.IN_PROGRESS)
 
         return UploadChunkResponse(
             success=True,
@@ -511,7 +529,10 @@ async def finalize_recording(
     structlog.contextvars.bind_contextvars(
         client_pseudo_id=recording_session.client_pseudo_id
     )
-    if recording_session.status != RecordingStatus.PROCESSING:
+    if recording_session.status not in [
+        RecordingStatus.PROCESSING,
+        RecordingStatus.COMPLETED,
+    ]:
         check_access(
             client_pseudo_id=recording_session.client_pseudo_id,
             pseudonymized_staff_id=pseudonymized_id,
@@ -534,7 +555,18 @@ async def finalize_recording(
         await session.commit()
         await session.refresh(recording_session)
 
-    return FinalizeRecordingResponse(execution_id=str(execution.id))
+        intake = await get_intake_by_id(session, recording_session.intake_id)
+        if not intake:
+            raise HTTPException(status_code=422, detail="Intake not found")
+
+        intake.status = IntakeStatus.PROCESSING
+        session.add(intake)
+        await session.commit()
+        await session.refresh(intake)
+
+        return FinalizeRecordingResponse(execution_id=str(execution.id))
+
+    raise HTTPException(status_code=422, detail="Recording session not in progress")
 
 
 @router.post(

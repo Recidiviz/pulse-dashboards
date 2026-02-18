@@ -1,10 +1,8 @@
-import json
 from uuid import UUID
 
 from app.core.db import AsyncSession
 from app.crud.recording_session import get_recording_session_by_id
 from app.models.recording import RecordingStatus
-from app.services.recording_service import RecordingService
 from app.utils.transcription.post_processing import TranscriptionOutput
 
 
@@ -21,23 +19,16 @@ async def get_transcription_messages_from_gcp(
 
     if recording_session.status != RecordingStatus.COMPLETED:
         raise ValueError("Recording incomplete")
-    # Try to retrieve the transcription from storage
-    service = RecordingService(recording_session.gcs_bucket_name)
-    try:
-        data = await service.storage.download(
-            bucket=recording_session.gcs_bucket_name,
-            object_name=f"transcriptions/{recording_session_id}_processed.json",
-        )
-    except Exception as e:
-        raise ValueError(f"Failed to download transcription file: {str(e)}")
-    finally:
-        await service.close()
 
-    # Try to parse the JSON
+    # Retrieve the transcription from storage using the model method
     try:
-        transcription_data = json.loads(data)
-    except json.JSONDecodeError:
-        raise ValueError("Invalid transcription file format")
+        transcription_data = await recording_session.get_transcription_from_gcs(
+            is_processed=True
+        )
+    except FileNotFoundError as e:
+        raise ValueError(f"Transcription not found: {str(e)}") from e
+    except Exception as e:
+        raise ValueError(f"Failed to retrieve transcription: {str(e)}") from e
 
     transcription_output = TranscriptionOutput(
         conversation=transcription_data.get("conversation", []),

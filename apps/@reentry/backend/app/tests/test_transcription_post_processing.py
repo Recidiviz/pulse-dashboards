@@ -17,8 +17,6 @@ from app.utils.transcription.post_processing import (
     SpeakerStats,
     TranscriptionOutput,
     TranscriptionProcessor,
-    validate_recording_session,
-    validate_transcription,
 )
 
 llm_config = ModelConfig(provider="openai", name="test-model")
@@ -374,7 +372,7 @@ class TestValidateRecordingSession:
             validation_minimum_duration=True,
         )
 
-        is_valid, errors = validate_recording_session(recording_session)
+        is_valid, errors = recording_session.validate_recording_session()
 
         assert is_valid is True
         assert errors == []
@@ -394,7 +392,7 @@ class TestValidateRecordingSession:
             validation_minimum_duration=True,
         )
 
-        is_valid, errors = validate_recording_session(recording_session)
+        is_valid, errors = recording_session.validate_recording_session()
 
         assert is_valid is False
         assert len(errors) == 1
@@ -418,7 +416,7 @@ class TestValidateRecordingSession:
             validation_minimum_duration=True,
         )
 
-        is_valid, errors = validate_recording_session(recording_session)
+        is_valid, errors = recording_session.validate_recording_session()
 
         assert is_valid is False
         assert len(errors) == 1
@@ -439,7 +437,7 @@ class TestValidateRecordingSession:
             validation_minimum_duration=True,
         )
 
-        is_valid, errors = validate_recording_session(recording_session)
+        is_valid, errors = recording_session.validate_recording_session()
 
         assert is_valid is False
         assert len(errors) == 1
@@ -460,7 +458,7 @@ class TestValidateRecordingSession:
             validation_minimum_duration=False,
         )
 
-        is_valid, errors = validate_recording_session(recording_session)
+        is_valid, errors = recording_session.validate_recording_session()
 
         assert is_valid is False
         assert len(errors) == 1
@@ -484,7 +482,7 @@ class TestValidateRecordingSession:
             validation_minimum_duration=False,
         )
 
-        is_valid, errors = validate_recording_session(recording_session)
+        is_valid, errors = recording_session.validate_recording_session()
 
         assert is_valid is False
         assert len(errors) == 4
@@ -545,7 +543,7 @@ class TestValidateTranscription:
             duration=600000,  # 10 minutes in milliseconds
         )
 
-        result = validate_transcription(transcription_output, recording_session)
+        result = recording_session.validate_transcription(transcription_output)
 
         assert result["word_count"] is True
         assert result["no_prompt_injection"] is True
@@ -593,7 +591,7 @@ class TestValidateTranscription:
             duration=600000,
         )
 
-        result = validate_transcription(transcription_output, recording_session)
+        result = recording_session.validate_transcription(transcription_output)
 
         assert result["word_count"] is False
         assert result["no_prompt_injection"] is True
@@ -653,7 +651,7 @@ class TestValidateTranscription:
             duration=600000,
         )
 
-        result = validate_transcription(transcription_output, recording_session)
+        result = recording_session.validate_transcription(transcription_output)
 
         assert result["word_count"] is True
         assert result["no_prompt_injection"] is False
@@ -700,7 +698,7 @@ class TestValidateTranscription:
             duration=600000,
         )
 
-        result = validate_transcription(transcription_output, recording_session)
+        result = recording_session.validate_transcription(transcription_output)
 
         assert result["word_count"] is True
         assert result["no_prompt_injection"] is True
@@ -748,7 +746,7 @@ class TestValidateTranscription:
             duration=300000,  # 5 minutes in milliseconds
         )
 
-        result = validate_transcription(transcription_output, recording_session)
+        result = recording_session.validate_transcription(transcription_output)
 
         assert result["word_count"] is True
         assert result["no_prompt_injection"] is True
@@ -796,7 +794,7 @@ class TestValidateTranscription:
             duration=None,
         )
 
-        result = validate_transcription(transcription_output, recording_session)
+        result = recording_session.validate_transcription(transcription_output)
 
         assert result["word_count"] is True
         assert result["no_prompt_injection"] is True
@@ -843,7 +841,7 @@ class TestValidateTranscription:
             duration=300000,  # 5 minutes
         )
 
-        result = validate_transcription(transcription_output, recording_session)
+        result = recording_session.validate_transcription(transcription_output)
 
         assert result["word_count"] is False
         assert result["no_prompt_injection"] is False
@@ -913,7 +911,7 @@ class TestValidateTranscription:
                 duration=600000,
             )
 
-            result = validate_transcription(transcription_output, recording_session)
+            result = recording_session.validate_transcription(transcription_output)
 
             assert (
                 result["no_prompt_injection"] is False

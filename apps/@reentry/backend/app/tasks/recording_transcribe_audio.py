@@ -18,7 +18,6 @@ from app.utils.transcription.deepgram_utils import process_deepgram_transcriptio
 from app.utils.transcription.post_processing import (
     GCPTranscriptionInput,
     TranscriptionProcessor,
-    validate_transcription,
 )
 
 
@@ -116,21 +115,7 @@ async def transcribe_audio(
                 )
 
                 # Validate transcription and update recording session
-                validation_results = validate_transcription(
-                    transcription_output, recording_session
-                )
-                recording_session.validation_word_count = validation_results[
-                    "word_count"
-                ]
-                recording_session.validation_no_prompt_injection = validation_results[
-                    "no_prompt_injection"
-                ]
-                recording_session.validation_diarization = validation_results[
-                    "diarization"
-                ]
-                recording_session.validation_minimum_duration = validation_results[
-                    "minimum_duration"
-                ]
+                recording_session.validate_transcription(transcription_output)
                 session.add(recording_session)
                 await session.commit()
 
@@ -155,10 +140,8 @@ async def transcribe_audio(
 
         # Save raw transcription in gcp bucket
         response_dict = json.loads(response.__class__.to_json(response))
-        await _save_to_gcs(
-            recording_session.gcs_bucket_name,
-            f"transcriptions/{recording_session.id}.json",
-            response_dict,
+        await recording_session.save_transcription_to_gcs(
+            response_dict, is_processed=False
         )
 
         # Post-process transcription
@@ -172,17 +155,7 @@ async def transcribe_audio(
         transcription_result = await processor.convert_transcript_to_conversation()
 
         # Validate transcription and update recording session
-        validation_results = validate_transcription(
-            transcription_result, recording_session
-        )
-        recording_session.validation_word_count = validation_results["word_count"]
-        recording_session.validation_no_prompt_injection = validation_results[
-            "no_prompt_injection"
-        ]
-        recording_session.validation_diarization = validation_results["diarization"]
-        recording_session.validation_minimum_duration = validation_results[
-            "minimum_duration"
-        ]
+        recording_session.validate_transcription(transcription_result)
         session.add(recording_session)
         await session.commit()
 
@@ -191,10 +164,8 @@ async def transcribe_audio(
         )
 
         # Save processed transcription
-        await _save_to_gcs(
-            recording_session.gcs_bucket_name,
-            f"transcriptions/{recording_session.id}_processed.json",
-            transcription_result.dict(),
+        await recording_session.save_transcription_to_gcs(
+            transcription_result.dict(), is_processed=True
         )
 
         task_logger.info(
@@ -353,10 +324,3 @@ async def _transcribe_audio_with_deepgram(
     except Exception as e:
         task_logger.error("Deepgram transcription failed", error=str(e))
         raise
-
-
-async def _save_to_gcs(bucket_name: str, object_name: str, data: dict) -> None:
-    """Wrapper for the GCS save utility function."""
-    from app.utils.transcription.deepgram_utils import save_to_gcs
-
-    await save_to_gcs(bucket_name, object_name, data)

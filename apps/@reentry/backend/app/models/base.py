@@ -28,6 +28,7 @@ class IntakeStatus(StrEnum):
     IN_PROGRESS = "in_progress"
     ERROR = "error"
     COMPLETED = "completed"
+    PROCESSING = "processing"
 
 
 class BaseModel(SQLModel):

@@ -22,7 +22,7 @@ import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import NavRecordingPage from "~@reentry/frontend/(protected)/client/[clientId]/audio-recording/[sessionId]/NavRecordingPage";
-import TranscriptionAdressForm from "~@reentry/frontend/(protected)/client/[clientId]/audio-recording/[sessionId]/TranscriptionAddressForm";
+import TranscriptionAddressForm from "~@reentry/frontend/(protected)/client/[clientId]/audio-recording/[sessionId]/TranscriptionAddressForm";
 import TranscriptionSection from "~@reentry/frontend/(protected)/client/[clientId]/audio-recording/[sessionId]/TranscriptionSection";
 import UserSummary from "~@reentry/frontend/(protected)/client/[clientId]/audio-recording/[sessionId]/UserSummary";
 import { $api } from "~@reentry/frontend/api";
@@ -155,7 +155,7 @@ const AudioRecordingPage: React.FC = () => {
 
   if (clientData && needsAddress) {
     return (
-      <TranscriptionAdressForm
+      <TranscriptionAddressForm
         clientData={clientData}
         setNeedsAddress={handleAddressFormClose}
         onError={(error) => {

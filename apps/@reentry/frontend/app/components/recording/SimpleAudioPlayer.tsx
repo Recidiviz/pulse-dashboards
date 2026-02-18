@@ -82,7 +82,7 @@ export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
     }
   }, [statusData?.status, shouldLoad, signedUrl, sessionId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data) {
       console.info(
         `Signed URL received for session ${sessionId}: ${data.signed_url}`,

@@ -69,10 +69,6 @@ export default function IntakeAssessment({
         },
     },{
         enabled: !!intakeInfo?.id,
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-        refetchOnReconnect: false,
-        staleTime: Infinity
     }
     );
 
@@ -92,10 +88,6 @@ export default function IntakeAssessment({
           },
       }, {
         enabled: intakeInfo?.intake_type === "transcription",
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-        refetchOnReconnect: false,
-        staleTime: Infinity
       });
 
     const { data: transcriptionData } = $api.useQuery(
