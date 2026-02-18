@@ -123,7 +123,6 @@ export function getCoverSheetTemplateArgs(
     updatedPhotoNeeded,
     emergencyContactUpdated,
     inmateAppeal,
-    denialReasons,
   } = formData;
 
   formContents.residentFullName = resident.displayName;
@@ -149,11 +148,6 @@ export function getCoverSheetTemplateArgs(
 
   formContents.recFacAs = recommendationFacilityAssignment ?? "";
 
-  formContents.denialReasons =
-    denialReasons && denialReasons.length > 0
-      ? denialReasons
-      : "___________________________________________________________________________";
-
   // Add tabs before newlines so the underlining looks right in these big blocks
   (
     [
@@ -168,7 +162,12 @@ export function getCoverSheetTemplateArgs(
         "\t\n",
       );
     } else {
-      formContents[multiLineField] = "\t";
+      if (multiLineField === "denialReasons") {
+        formContents["denialReasons"] =
+          "_________________________________________________________________________________________";
+      } else {
+        formContents[multiLineField] = "\t";
+      }
     }
   });
 

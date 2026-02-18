@@ -26,6 +26,7 @@ import {
   getSingleSectionQuestionIndex,
   getSingleSectionQuestionScore,
 } from "../../../core/Paperwork/US_TN/common/ScoredAssessmentQuestion";
+import { prefilledCoverSheetData } from "../../../core/Paperwork/US_TN/CustodyReclassification/utils";
 import { assessmentQuestions } from "../../../core/Paperwork/US_TN/UsTnReclassification2026/assessmentQuestions";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import {
@@ -64,6 +65,7 @@ export class UsTnReclassification2026Form extends FormBase<
       opportunity: {
         record: { formInformation },
       },
+      person,
     } = this;
 
     const q1Selection = getSingleSectionQuestionIndex(
@@ -155,8 +157,15 @@ export class UsTnReclassification2026Form extends FormBase<
       formInformation.q5Notes,
     );
 
+    const coverData = prefilledCoverSheetData(
+      person,
+      this.opportunity.type,
+      formInformation,
+    );
+
     return {
       ...formInformation,
+      ...coverData,
       q1Selection,
       q2Selection,
       q3Selection_0_6,

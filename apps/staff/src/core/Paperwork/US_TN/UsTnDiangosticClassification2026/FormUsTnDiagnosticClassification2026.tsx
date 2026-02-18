@@ -20,6 +20,7 @@ import React, { useState } from "react";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnDiagnosticClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
+import { Resident } from "../../../../WorkflowsStore/Resident";
 import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
@@ -42,6 +43,7 @@ import {
 } from "../common/Classification2026/TrusteeChecklist";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
 import CoverSheet from "../CustodyReclassification/CoverSheet";
+import { getCoverSheetTemplateArgs } from "../CustodyReclassification/utils";
 import { assessmentQuestions } from "./assessmentQuestions";
 import dcafTemplate from "./dcaf_template.docx";
 
@@ -56,8 +58,8 @@ export const FormUsTnDiagnosticClassification2026 = observer(
       useState<boolean>(false);
     const form =
       useOpportunityFormContext() as UsTnDiagnosticClassification2026Form;
-    const { derivedData, formTemplateData } = form;
-    const resident = opportunity.person;
+    const { derivedData, formTemplateData, formData } = form;
+    const resident = opportunity.person as Resident;
 
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [
@@ -69,7 +71,10 @@ export const FormUsTnDiagnosticClassification2026 = observer(
         [
           `${resident.displayName} - Diagnostic Classification Form.docx`,
           dcafTemplate,
-          formTemplateData,
+          {
+            ...formTemplateData,
+            ...getCoverSheetTemplateArgs(resident, formData),
+          },
         ],
       ];
 
@@ -96,8 +101,9 @@ export const FormUsTnDiagnosticClassification2026 = observer(
         downloadButtonLabel="Download as .DOCX"
       >
         <CafScoreSourceModal
+          sentenceHistoryQs={[1]}
           lastestCafQs={[2]}
-          latestRecordQs={[1, 3, 4, 5, 6]}
+          latestRecordQs={[3, 4, 5, 6]}
         />
         <FormViewer formRef={formRef}>
           <CoverSheet />

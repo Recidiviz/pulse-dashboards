@@ -21,6 +21,7 @@ import styled from "styled-components";
 import { UsTnCoverSheetSharedDraftData } from "~datatypes";
 
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
+import { US_TN_CLASSIFICATION_OPPORTUNITIES } from "../../../CaseloadView/AllCaseloadsTable/utils";
 import DOCXFormTextArea from "../../DOCXFormTextArea";
 import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
@@ -71,9 +72,14 @@ const SigBlock = styled.div`
 const FormTextarea = DOCXFormTextArea<UsTnCoverSheetSharedDraftData>;
 
 const CoverSheet: React.FC = () => {
-  const { formData, derivedData } =
+  const { formData, derivedData, opportunity } =
     useOpportunityFormContext() as UsTnReclassificationReviewForm;
   const formViewerContext = useContext(FormViewerContext);
+
+  const showPilotDisclaimer = US_TN_CLASSIFICATION_OPPORTUNITIES.includes(
+    // @ts-expect-error Yeah, I know opportunity.type might not be in US_TN_CLASSIFICATION_OPPORTUNITIES. That's why I'm checking it
+    opportunity.type,
+  );
 
   return (
     <PrintablePage>
@@ -81,6 +87,21 @@ const CoverSheet: React.FC = () => {
         <Container>
           <Headline>TENNESSEE DEPARTMENT OF CORRECTION</Headline>
           <Headline>OFFENDER CLASSIFICATION SUMMARY</Headline>
+          {showPilotDisclaimer && (
+            <>
+              <hr />
+              FOR 2026 CLASSIFICATION PILOT PURPOSES
+              <br />
+              Name of Chief Counselor Finalizing Classification Form: ________
+              <br />
+              Date of Final Approval and Entry in OMS / Recidiviz Tool, with any
+              edits: ___________
+              <br />
+              If Offender scored or overridden to LOW, Trustee checklist
+              completed: YES____NO____N/A___
+              <hr />
+            </>
+          )}
           <br />
           <Row>
             <Label>

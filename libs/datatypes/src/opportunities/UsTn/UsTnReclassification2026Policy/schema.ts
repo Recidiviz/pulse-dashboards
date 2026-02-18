@@ -20,12 +20,14 @@ import { z } from "zod";
 import { ParsedRecord } from "../../../utils/types";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import {
+  coverSheetInformationSchema,
   multiIncidentPeriodReportSchema,
   q1Notes,
   q2Notes,
   q7Notes,
   TrusteeFormSchema,
   trusteeFormSchema,
+  UsTnCoverSheetSharedDraftData,
 } from "../utils";
 
 const q6Notes = z
@@ -53,6 +55,7 @@ export const usTnReclassification2026Schema = opportunitySchemaBase.extend({
       q7Notes,
     })
     .merge(trusteeFormSchema)
+    .merge(coverSheetInformationSchema)
     .passthrough(),
 });
 
@@ -62,6 +65,7 @@ export type UsTnReclassification2026ReferralRecord = ParsedRecord<
 
 export type UsTnReclassification2026DraftData =
   UsTnReclassification2026ReferralRecord["output"]["formInformation"] &
+    UsTnCoverSheetSharedDraftData &
     TrusteeFormSchema & {
       q1Selection: number;
       q2Selection: number;

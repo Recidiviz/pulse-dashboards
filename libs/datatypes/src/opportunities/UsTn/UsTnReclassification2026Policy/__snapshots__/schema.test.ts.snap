@@ -13,6 +13,9 @@ exports[`schema for fullyEligible 1`] = `
   },
   "externalId": "RES003",
   "formInformation": {
+    "activeRecommendations": [],
+    "hasIncompatibles": false,
+    "incompatibleArray": [],
     "q1Notes": {
       "listPriorNonTdocConvictions60Months": "some offense on 12/1/2022",
       "listPriorViolentTdocConvictions60Months": "some other offense on 8/22/2021",
@@ -44,6 +47,7 @@ exports[`schema for fullyEligible 1`] = `
     "q7Notes": "Completed ABC (Letter stitching) on 2/2/2022
 Completed XYZ (Xylophone Ensemble) on 4/4/2024",
     "q7Score": 1,
+    "statusAtHearingSeg": "GEN",
     "trusteeHas10YearsOrLessRemaining": "true",
     "trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years": "true",
     "trusteeNoEscapeFromLowTrusteePast5Years": "true",
@@ -68,6 +72,22 @@ exports[`schema for ineligible 1`] = `
   "eligibleCriteria": {},
   "externalId": "RES003",
   "formInformation": {
+    "activeRecommendations": [
+      {
+        "Recommendation": "do this thing",
+      },
+    ],
+    "hasIncompatibles": true,
+    "incompatibleArray": [
+      {
+        "incompatibleOffenderId": "123",
+        "incompatibleType": "magentism",
+      },
+      {
+        "incompatibleOffenderId": "456",
+        "incompatibleType": "psychic",
+      },
+    ],
     "q1Notes": {
       "listPriorNonTdocConvictions60Months": "some offense on 12/1/2022",
       "listPriorViolentTdocConvictions60Months": "some other offense on 8/22/2021",
@@ -138,6 +158,7 @@ exports[`schema for ineligible 1`] = `
     "q6Score": 0,
     "q7Notes": "",
     "q7Score": 1,
+    "statusAtHearingSeg": "GEN",
     "trusteeHas10YearsOrLessRemaining": "true",
     "trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years": "true",
     "trusteeNoEscapeFromLowTrusteePast5Years": "true",

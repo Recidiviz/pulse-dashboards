@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ascending } from "d3-array";
 import { z } from "zod";
 
 import { dateStringSchema } from "../../utils/zod";
@@ -94,6 +95,14 @@ export function formatMultiplePeriodReports(
   periods: UsTnIncidentPeriodReport[],
 ): string {
   return periods
+    .sort((a, b) =>
+      ascending(
+        // Pad the start of the period before sorting so 000-6 comes before 06-12 comes before 12-18.
+        // The 12 comes from "XX-YY months".length -> 12
+        a.incidentTimePeriod.padStart(12, "0"),
+        b.incidentTimePeriod.padStart(12, "0"),
+      ),
+    )
     .map((p) => {
       const header = `Disciplinaries in last ${p.incidentTimePeriod}:\n`;
       return header + formatIncidentReportPeriod(p, "  ");

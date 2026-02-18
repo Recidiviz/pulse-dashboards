@@ -38,6 +38,10 @@ export const usTnReclassification2026PolicyFixtures = {
     },
     ineligibleCriteria: {},
     formInformation: {
+      activeRecommendations: [],
+      hasIncompatibles: false,
+      incompatibleArray: [],
+      statusAtHearingSeg: "GEN",
       q1Score: 2,
       q2Score: 10,
       q3Score: -3,
@@ -115,6 +119,13 @@ export const usTnReclassification2026PolicyFixtures = {
       },
     },
     formInformation: {
+      hasIncompatibles: true,
+      activeRecommendations: [{ Recommendation: "do this thing" }],
+      incompatibleArray: [
+        { incompatibleOffenderId: "123", incompatibleType: "magentism" },
+        { incompatibleOffenderId: "456", incompatibleType: "psychic" },
+      ],
+      statusAtHearingSeg: "GEN",
       q1Score: 2,
       q2Score: 10,
       q3Score: -3,

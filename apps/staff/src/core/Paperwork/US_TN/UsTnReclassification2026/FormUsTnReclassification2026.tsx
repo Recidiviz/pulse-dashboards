@@ -20,6 +20,7 @@ import React, { useState } from "react";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnReclassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
+import { Resident } from "../../../../WorkflowsStore/Resident";
 import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
@@ -41,6 +42,8 @@ import {
   TrusteeChecklist,
 } from "../common/Classification2026/TrusteeChecklist";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
+import CoverSheet from "../CustodyReclassification/CoverSheet";
+import { getCoverSheetTemplateArgs } from "../CustodyReclassification/utils";
 import { assessmentQuestions } from "./assessmentQuestions";
 import rcafTemplate from "./rcaf_template.docx";
 
@@ -54,8 +57,8 @@ export const FormUsTnReclassification2026 = observer(
     const [postDownloadModalIsOpen, setPostDownloadModalIsOpen] =
       useState<boolean>(false);
     const form = useOpportunityFormContext() as UsTnReclassification2026Form;
-    const { derivedData, formTemplateData } = form;
-    const resident = opportunity.person;
+    const { derivedData, formTemplateData, formData } = form;
+    const resident = opportunity.person as Resident;
 
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [
@@ -67,7 +70,10 @@ export const FormUsTnReclassification2026 = observer(
         [
           `${resident.displayName} - Reclassification Form.docx`,
           rcafTemplate,
-          formTemplateData,
+          {
+            ...formTemplateData,
+            ...getCoverSheetTemplateArgs(resident, formData),
+          },
         ],
       ];
 
@@ -94,11 +100,13 @@ export const FormUsTnReclassification2026 = observer(
         downloadButtonLabel="Download as .DOCX"
       >
         <CafScoreSourceModal
+          sentenceHistoryQs={[1]}
           lastestCafQs={[2]}
-          latestRecordQs={[1, 3, 4, 5, 6]}
+          latestRecordQs={[3, 4, 5, 6]}
           jobHistoryQs={[7]}
         />
         <FormViewer formRef={formRef}>
+          <CoverSheet />
           <PrintablePage landscape stretchable watermark="Draft">
             <ClassificationFormPage>
               <Header>
