@@ -170,12 +170,12 @@ export class SARDetailsPresenter implements Hydratable {
     const gender = this.SARData?.client?.gender;
     return gender ? GenderToDisplayName[gender] : undefined;
   }
-  
+
   /** Formatted race/ethnicity for display */
   get formattedRaceOrEthnicity(): string {
     const raceArray = this.SARData?.client?.raceOrEthnicity;
     if (!raceArray || raceArray.length === 0) return "Unknown";
-    
+
     const formattedRaces = raceArray.map((race) =>
       race
         .trim()
@@ -185,7 +185,7 @@ export class SARDetailsPresenter implements Hydratable {
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" "),
     );
-    
+
     return formattedRaces.join(", ");
   }
 
@@ -1013,7 +1013,8 @@ export class SARDetailsPresenter implements Hydratable {
         "victimImpactStatement",
       ),
       [SARSection.OFFENDER_ASSESSMENT]: this.getOffenderAssessmentStatus(),
-      [SARSection.PRIOR_TREATMENT_HISTORY]: this.getPriorTreatmentHistoryStatus(),
+      [SARSection.PRIOR_TREATMENT_HISTORY]:
+        this.getPriorTreatmentHistoryStatus(),
       [SARSection.RECOMMENDATION]: this.getRecommendationStatus(),
       // Future sections will be added here
     };

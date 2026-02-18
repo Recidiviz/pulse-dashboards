@@ -128,6 +128,9 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       }
     }, [currentSubsection]);
 
+    // Check if this assessment type has domains (screening/Other types don't)
+    const hasDomains = domains.length > 0;
+
     return (
       <SectionContainer>
         <OrasAssessmentScoreCard
@@ -137,12 +140,14 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
           administeredBy={assessmentAdministeredBy ?? null}
         />
 
-        <RiskCategorySummary
-          assessmentType={assessmentType ?? null}
-          domainScores={domainScores}
-        />
+        {hasDomains && (
+          <RiskCategorySummary
+            assessmentType={assessmentType ?? null}
+            domainScores={domainScores}
+          />
+        )}
 
-        <Styled.DomainsTitle>Domains</Styled.DomainsTitle>
+        {hasDomains && <Styled.DomainsTitle>Domains</Styled.DomainsTitle>}
 
         {shouldRenderDomain("criminalHistory") && (
           <DomainCard

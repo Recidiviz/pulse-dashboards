@@ -20,6 +20,7 @@ import React from "react";
 
 import { FormCharge } from "../../datastores/types";
 import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
+import { formatJudgeAndDivision } from "../../utils/utils";
 import { SAR_AUTOSAVE_DELAY } from "../SARDetails/constants";
 import { EditableChargeField } from "./constants";
 import { FormField } from "./FormField";
@@ -62,15 +63,7 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
       debouncedSave(charge.id, fieldId, value);
     };
 
-    // Format judge names and division
-    const judgeNames =
-      charge.judgeNames && charge.judgeNames.length > 0
-        ? charge.judgeNames.join(", ")
-        : null;
-    const judgeAndDivision =
-      judgeNames && charge.division
-        ? `${judgeNames} / ${charge.division}`
-        : judgeNames || charge.division || null;
+    const judgeAndDivision = formatJudgeAndDivision(charge);
 
     return (
       <Styled.CardContainer>

@@ -31,6 +31,7 @@ import { Recommendation } from "../Recommendation";
 import { TopProgressBar } from "../shared/TopProgressBar";
 import { SkippableTextSection } from "../SkippableTextSection";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
+import { Summary } from "../Summary/Summary";
 import { SARSection, SARSectionName } from "./constants";
 import * as Styled from "./SARDetails.styles";
 import { SARHeader } from "./SARHeader";
@@ -59,6 +60,10 @@ const SARSectionContent: React.FC<{
         presenter={presenter.priorTreatmentHistory}
       />
     );
+  }
+
+  if (currentSection === SARSection.SUMMARY) {
+    return <Summary presenter={presenter} />;
   }
 
   return (

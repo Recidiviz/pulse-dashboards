@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { startCase } from "lodash";
+import moment from "moment";
 import Pluralize from "pluralize";
 
 import {
@@ -23,6 +24,7 @@ import {
   OFFENSES_SUFFIX,
 } from "../components/CaseDetails/constants";
 import { ReportType } from "../components/constants";
+import { FormCharge } from "../datastores/types";
 
 /**
  * Converts a decimal number to a percentage
@@ -228,4 +230,24 @@ export const formatDateRange = (
   const end = endDate ? formatDate(endDate) : "Present";
 
   return `${start} - ${end}`;
+};
+
+/** Format a judge/division display string for a charge */
+export const formatJudgeAndDivision = (charge: FormCharge): string | null => {
+  const judgeNames =
+    charge.judgeNames && charge.judgeNames.length > 0
+      ? charge.judgeNames.join(", ")
+      : null;
+  if (judgeNames && charge.division) {
+    return `${judgeNames} / ${charge.division}`;
+  }
+  return judgeNames || charge.division || null;
+};
+
+/** Format a date for display as MM/DD/YYYY, returning a dash for empty values */
+export const formatDisplayDate = (
+  date: string | Date | null | undefined,
+): string => {
+  if (!date) return "—";
+  return moment(date).format("MM/DD/YYYY");
 };
