@@ -18,7 +18,7 @@
 import { residentRestrictedMiddleware } from "../../../../middleware/residentRestrictedMiddleware";
 import { router } from "../../../../procedures/init";
 import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
-import { fetchPrograms } from "./fetchPrograms";
+import { cachedFetchPrograms } from "./fetchPrograms";
 import { getProgramsInputSchema, setStarredProgramInputSchema } from "./schema";
 
 const coloradoProcedure = restrictedResidentProcedureForState("US_CO");
@@ -29,7 +29,7 @@ export const usCoRouter = router({
     .use(residentRestrictedMiddleware)
     .query(async ({ ctx, input }) => {
       const [programs, starredPrograms] = await Promise.all([
-        fetchPrograms(),
+        cachedFetchPrograms(),
         ctx.prisma.usCoStarredProgram.findMany({
           where: {
             pseudonymizedId: input.pseudonymizedId,

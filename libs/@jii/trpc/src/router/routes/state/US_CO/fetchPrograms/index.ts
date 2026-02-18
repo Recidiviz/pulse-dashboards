@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createCachedCall } from "../../../../../helpers/createCachedCall";
 import { getSheetData } from "../../../../../helpers/googleSheets";
 import { US_CO_PROGRAM_FIXTURES } from "./fixtures";
 
@@ -82,3 +83,7 @@ export async function fetchPrograms(): Promise<ProgramFromSheet[]> {
   );
   return rows.map(parseProgram);
 }
+
+// Google Sheets rate limits are per-minute, so we use a TTL of 1 minute
+// to avoid throttling while still ensuring reasonably fresh data.
+export const cachedFetchPrograms = createCachedCall(fetchPrograms, 60);
