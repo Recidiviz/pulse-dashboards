@@ -15,14 +15,50 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { describe } from "vitest";
+import { createTRPCClient, httpBatchLink, TRPCClient } from "@trpc/client";
+import superjson from "superjson";
+import { beforeAll, describe } from "vitest";
 
-import { testTRPCClient } from "~@meetings/server/test/setup";
+import { testServer } from "~@meetings/server/test/setup";
 import {
   fakeClient,
   fakeMeeting,
   fakeStaff,
 } from "~@meetings/server/test/setup/seed";
+import { AppRouter } from "~@meetings/trpc";
+
+const testPort = process.env["PORT"] ? Number(process.env["PORT"]) : 3003;
+const testHost = process.env["HOST"] ?? "localhost";
+
+let testTRPCClient: TRPCClient<AppRouter>;
+
+beforeAll(async () => {
+  // Start listening.
+  testServer.listen({ port: testPort, host: testHost }, (err: unknown) => {
+    if (err) {
+      testServer.log.error(err);
+      process.exit(1);
+    } else {
+      console.log(`[ ready ] http://${testHost}:${testPort}`);
+    }
+  });
+
+  testTRPCClient = createTRPCClient<AppRouter>({
+    links: [
+      httpBatchLink({
+        url: `http://${testHost}:${testPort}`,
+        headers() {
+          return {
+            Authorization: "Bearer test-token",
+            StateCode: "US_NE",
+          };
+        },
+        // Required to get Date objects to serialize correctly.
+        transformer: superjson,
+      }),
+    ],
+  });
+});
 
 describe("server", () => {
   test("should include trpc routes", async () => {

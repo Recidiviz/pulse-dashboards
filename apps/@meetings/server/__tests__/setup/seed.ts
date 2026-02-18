@@ -19,6 +19,10 @@ import { faker } from "@faker-js/faker";
 
 import { Prisma, PrismaClient, StateCode } from "~@meetings/prisma/client";
 
+// Use a fixed seed so faker generates the same values across module re-evaluations
+// (vitest re-evaluates setupFiles for each test file)
+faker.seed(1234);
+
 export const intakeId = "intake-1";
 export const clientPseudoId = "client-pid-1";
 

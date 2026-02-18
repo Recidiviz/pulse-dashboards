@@ -17,10 +17,8 @@
 
 import { CloudTasksClient } from "@google-cloud/tasks";
 import { init } from "@sentry/node";
-import { createTRPCClient, httpBatchLink, TRPCClient } from "@trpc/client";
 import type { FastifyInstance } from "fastify";
 import sentryTestkit from "sentry-testkit";
-import superjson from "superjson";
 import { beforeAll, beforeEach } from "vitest";
 import { mock } from "vitest-mock-extended";
 
@@ -29,14 +27,6 @@ import { StateCode } from "~@meetings/prisma/client";
 import { buildServer } from "~@meetings/server/server";
 import { fakeStaff, seed } from "~@meetings/server/test/setup/seed";
 import { resetDb } from "~@meetings/server/test/setup/utils";
-import { AppRouter } from "~@meetings/trpc";
-
-export const testPort = process.env["PORT"]
-  ? Number(process.env["PORT"])
-  : 3003;
-export const testHost = process.env["HOST"] ?? "localhost";
-
-export let testTRPCClient: TRPCClient<AppRouter>;
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_NE);
 
 const { testkit, sentryTransport } = sentryTestkit();
@@ -116,32 +106,6 @@ beforeAll(async () => {
       },
     };
     done();
-  });
-
-  // Start listening.
-  testServer.listen({ port: testPort, host: testHost }, (err: unknown) => {
-    if (err) {
-      testServer.log.error(err);
-      process.exit(1);
-    } else {
-      console.log(`[ ready ] http://${testHost}:${testPort}`);
-    }
-  });
-
-  testTRPCClient = createTRPCClient<AppRouter>({
-    links: [
-      httpBatchLink({
-        url: `http://${testHost}:${testPort}`,
-        headers() {
-          return {
-            Authorization: "Bearer test-token",
-            StateCode: "US_NE",
-          };
-        },
-        // Required to get Date objects to serialize correctly.
-        transformer: superjson,
-      }),
-    ],
   });
 });
 
