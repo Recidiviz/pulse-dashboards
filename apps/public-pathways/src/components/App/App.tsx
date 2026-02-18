@@ -17,12 +17,34 @@
 
 import "./global.css";
 
+import { GlobalStyle as GlobalStyleBase } from "@recidiviz/design-system";
 import { ErrorBoundary, withSentryReactRouterV6Routing } from "@sentry/react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
+import styled, { createGlobalStyle } from "styled-components";
 
 import { initializeSentry } from "../../initializeSentry";
-import AuthProvider from "../AuthProvider/AuthProvider";
+import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
+import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
+import { PageMethodology } from "../pages/PageMethodology";
+import { PagePublicPathways } from "../pages/PagePublicPathways";
+import { PageRoot } from "../pages/PageRoot";
 import { StoreProvider } from "../StoreProvider";
+import { PublicPathwaysLayout } from "./PublicPathwaysLayout";
+
+const StyledApp = styled.div`
+  /* these properties prevent full-bleed sections from messing up the page width */
+  min-height: 100vh;
+  overflow-x: clip;
+`;
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    ${publicPathwaysTypography.Sans16}
+
+    background: ${publicPathwaysPalette.white};
+    color: ${publicPathwaysPalette.pine2};
+  }
+`;
 
 initializeSentry();
 
@@ -33,20 +55,20 @@ export function App() {
   return (
     <ErrorBoundary>
       <StoreProvider>
-        <AuthProvider>
+        <GlobalStyleBase />
+        <GlobalStyle />
+        <StyledApp>
           <SentryRoutes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<PageRoot />}>
+              <Route index element={<Navigate to="/system/prison" replace />} />
+              <Route path="/system" element={<PublicPathwaysLayout />}>
+                <Route path="methodology" element={<PageMethodology />} />
+                <Route path=":pageId" element={<PagePublicPathways />} />
+              </Route>
+            </Route>
           </SentryRoutes>
-        </AuthProvider>
+        </StyledApp>
       </StoreProvider>
     </ErrorBoundary>
-  );
-}
-
-function Home() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-4xl font-bold">Hello World!</h1>
-    </div>
   );
 }

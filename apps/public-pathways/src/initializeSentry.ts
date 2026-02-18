@@ -59,6 +59,8 @@ export function initializeSentry(): void {
       console.error(hint.originalException || hint.syntheticException);
     }
 
+    if (environment === "development") return null;
+
     // returning the event means Sentry will proceed with sending it
     return event;
   };
