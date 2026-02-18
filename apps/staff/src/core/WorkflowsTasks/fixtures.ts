@@ -60,6 +60,14 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   usIdLsirAssessment: "LSIR Assessments",
   usIdStableAssessment: "STABLE Assessments",
   usMoEmploymentVerification: "Employment Verifications",
+  usMoInitialEmploymentVerificationIap:
+    "Initial Employment Verifications (IAP)",
+  usMoInitialPositiveContactWithSignificantOtherIap:
+    "Initial Positive Contacts with Significant Other (IAP)",
+  usMoInitialPositiveContactWithSignificantOtherSmi:
+    "Initial Positive Contacts with Significant Other (SMI)",
+  usMoInitialPositiveHomeVisitIap: "Initial Positive Home Visits (IAP)",
+  usMoInitialPositiveHomeVisitSmi: "Initial Positive Home Visits (SMI)",
   usMoPositiveHomeVisit: "Positive Home Visits",
   usMoInPersonContact: "In-Person Contacts",
   usMoPositiveContactWithSignificantOther:

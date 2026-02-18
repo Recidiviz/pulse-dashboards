@@ -20,6 +20,11 @@ import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import UsMoEmploymentVerificationTask from "../WorkflowsStore/Task/US_MO/UsMoEmploymentVerificationTask";
+import UsMoInitialEmploymentVerificationIapTask from "../WorkflowsStore/Task/US_MO/UsMoInitialEmploymentVerificationIapTask";
+import UsMoInitialPositiveContactWithSignificantOtherIapTask from "../WorkflowsStore/Task/US_MO/UsMoInitialPositiveContactWithSignificantOtherIapTask";
+import UsMoInitialPositiveContactWithSignificantOtherSmiTask from "../WorkflowsStore/Task/US_MO/UsMoInitialPositiveContactWithSignificantOtherSmiTask";
+import UsMoInitialPositiveHomeVisitIapTask from "../WorkflowsStore/Task/US_MO/UsMoInitialPositiveHomeVisitIapTask";
+import UsMoInitialPositiveHomeVisitSmiTask from "../WorkflowsStore/Task/US_MO/UsMoInitialPositiveHomeVisitSmiTask";
 import UsMoInPersonContactTask from "../WorkflowsStore/Task/US_MO/UsMoInPersonContactTask";
 import UsMoPositiveContactWithSignificantOtherTask from "../WorkflowsStore/Task/US_MO/UsMoPositiveContactWithSignificantOtherTask";
 import UsMoPositiveHomeVisitTask from "../WorkflowsStore/Task/US_MO/UsMoPositiveHomeVisitTask";
@@ -38,6 +43,26 @@ const US_MO_CONFIG = {
     tasks: {
       usMoEmploymentVerification: {
         constructor: UsMoEmploymentVerificationTask,
+        snoozeForOptionsInDays: [7, 30],
+      },
+      usMoInitialEmploymentVerificationIap: {
+        constructor: UsMoInitialEmploymentVerificationIapTask,
+        snoozeForOptionsInDays: [7, 30],
+      },
+      usMoInitialPositiveContactWithSignificantOtherIap: {
+        constructor: UsMoInitialPositiveContactWithSignificantOtherIapTask,
+        snoozeForOptionsInDays: [7, 30],
+      },
+      usMoInitialPositiveContactWithSignificantOtherSmi: {
+        constructor: UsMoInitialPositiveContactWithSignificantOtherSmiTask,
+        snoozeForOptionsInDays: [7, 30],
+      },
+      usMoInitialPositiveHomeVisitIap: {
+        constructor: UsMoInitialPositiveHomeVisitIapTask,
+        snoozeForOptionsInDays: [7, 30],
+      },
+      usMoInitialPositiveHomeVisitSmi: {
+        constructor: UsMoInitialPositiveHomeVisitSmiTask,
         snoozeForOptionsInDays: [7, 30],
       },
       usMoPositiveHomeVisit: {
@@ -64,11 +89,41 @@ const US_MO_CONFIG = {
         options: [
           {
             value: "usMoEmploymentVerification",
-            label: "Employment Verification",
+            label: "EC/PEV",
+          },
+          {
+            value: "usMoInitialEmploymentVerificationIap",
+            label: "Initial EC/PEV (IAP)",
+          },
+          {
+            value: "usMoPositiveContactWithSignificantOther",
+            label: "Positive Contact with Significant Other",
+            shortLabel: "PSO",
+          },
+          {
+            value: "usMoInitialPositiveContactWithSignificantOtherIap",
+            label: "Initial Positive Contact with Significant Other (IAP)",
+            shortLabel: "Initial PSO (IAP)",
+          },
+          {
+            value: "usMoInitialPositiveContactWithSignificantOtherSmi",
+            label: "Initial Positive Contact with Significant Other (SMI)",
+            shortLabel: "Initial PSO (SMI)",
           },
           {
             value: "usMoPositiveHomeVisit",
             label: "Positive Home Visit",
+            shortLabel: "PHV",
+          },
+          {
+            value: "usMoInitialPositiveHomeVisitIap",
+            label: "Initial Positive Home Visit (IAP)",
+            shortLabel: "Initial PHV (IAP)",
+          },
+          {
+            value: "usMoInitialPositiveHomeVisitSmi",
+            label: "Initial Positive Home Visit (SMI)",
+            shortLabel: "Initial PHV (SMI)",
           },
           {
             value: "usMoInPersonContact",
@@ -90,6 +145,7 @@ const US_MO_CONFIG = {
           {
             value: "High",
           },
+          { value: "Maximum" },
         ],
       },
       {

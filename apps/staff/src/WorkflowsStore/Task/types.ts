@@ -62,6 +62,10 @@ type UsMoTaskDetails = {
   lastContactDate: string | null;
 };
 
+type UsMoInitialTaskDetails = {
+  contactCadence: string;
+};
+
 type UsMoHomeVisitTaskDetails = UsMoTaskDetails & {
   supplementaryContacts: {
     contactTypes: string;
@@ -172,6 +176,11 @@ export const SUPERVISION_TASK_TYPES = [
   "employment",
   "usIdEmploymentVerification",
   "usMoEmploymentVerification",
+  "usMoInitialEmploymentVerificationIap",
+  "usMoInitialPositiveContactWithSignificantOtherIap",
+  "usMoInitialPositiveContactWithSignificantOtherSmi",
+  "usMoInitialPositiveHomeVisitIap",
+  "usMoInitialPositiveHomeVisitSmi",
   "usMoPositiveHomeVisit",
   "usMoInPersonContact",
   "usMoPositiveContactWithSignificantOther",
@@ -203,6 +212,8 @@ export type SupervisionDetails =
   | UsIdContactDetails
   | UsIdEmploymentDetails
   | UsMoTaskDetails
+  | UsMoInitialTaskDetails
+  | UsMoHomeVisitTaskDetails
   | UsNeAssessmentDetails
   | UsNeContactDetails
   | UsTxContactDetails
@@ -226,6 +237,11 @@ export type SupervisionDetailsForTask = {
   usIdEmploymentVerification: UsIdTaskBaseDetails;
   usMoPositiveHomeVisit: UsMoHomeVisitTaskDetails;
   usMoEmploymentVerification: UsMoTaskDetails;
+  usMoInitialEmploymentVerificationIap: UsMoInitialTaskDetails;
+  usMoInitialPositiveContactWithSignificantOtherIap: UsMoInitialTaskDetails;
+  usMoInitialPositiveContactWithSignificantOtherSmi: UsMoInitialTaskDetails;
+  usMoInitialPositiveHomeVisitIap: UsMoInitialTaskDetails;
+  usMoInitialPositiveHomeVisitSmi: UsMoInitialTaskDetails;
   usMoInPersonContact: UsMoTaskDetails;
   usMoPositiveContactWithSignificantOther: UsMoTaskDetails;
   usNeOrasAssessment: UsNeAssessmentDetails;
