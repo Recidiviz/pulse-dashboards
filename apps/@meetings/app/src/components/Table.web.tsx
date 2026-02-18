@@ -68,7 +68,7 @@ export const TableHeadCell = ({
   return (
     <th
       {...props}
-      className={`border-b-2 border-white px-1 first:pl-7 last:pr-7 ${className}`}
+      className={`px-1 first:pl-7 last:pr-7 ${className}`}
     >
       <Text className="inline-block w-full py-3 text-left font-inter text-sm font-medium text-[#355362D9]">
         {children}
@@ -97,7 +97,7 @@ export const TableRow = ({
   return (
     <tr
       {...props}
-      className={`group [&:first-child>td>div]:border-none [&:first-child>td]:border-none [&:hover+tr>td>div]:border-transparent [&:hover+tr>td]:border-transparent [&:last-child>td]:border-b-2 [&:last-child>td]:border-transparent ${className}`}
+      className={`group hover:cursor-pointer [&:first-child>td>div]:border-none [&:first-child>td]:border-none [&:hover+tr>td>div]:border-transparent [&:hover+tr>td]:border-transparent ${className}`}
     >
       {children}
     </tr>
@@ -112,7 +112,7 @@ export const TableCell = ({
   return (
     <td
       {...props}
-      className={`h-[72px] p-0 [&:first-child>div>div]:rounded-l-[20px] [&:first-child>div>div]:pl-4 [&:first-child>div]:ml-3 [&:last-child>div>div]:rounded-r-[20px] [&:last-child>div>div]:pr-4 [&:last-child>div]:mr-3 ${className}`}
+      className={`h-[72px] p-0 [&:first-child>div>div]:pl-4 [&:last-child>div>div]:pr-4 ${className}`}
     >
       <View className="h-full justify-center border-t border-[#35536226] p-0 group-hover:border-transparent">
         <View className=" h-full justify-center px-1 group-hover:bg-[#3553620A]">

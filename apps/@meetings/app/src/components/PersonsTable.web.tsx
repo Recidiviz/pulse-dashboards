@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import upperFirst from "lodash/upperFirst";
 import React, { useEffect } from "react";
 import {
@@ -29,6 +30,7 @@ import {
 import { Person } from "~@meetings/app/common/types";
 
 import Icons from "../../assets/icons";
+import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { getInitials } from "../utils/format";
 import {
   Table,
@@ -45,6 +47,11 @@ import {
 
 const PAGE_SIZE = 7;
 
+type ProfileNavProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "ClientProfile" | "ResidentProfile"
+>;
+
 interface PersonsProps {
   persons: Person[];
   type: "clients" | "residents";
@@ -53,11 +60,18 @@ interface PersonsProps {
 
 const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
   const [page, setPage] = React.useState(1);
-  console.log(persons.map((p) => p.lastMeeting));  
+  const navigation = useNavigation<ProfileNavProp>();
 
   useEffect(() => {
     setPage(1);
   }, [persons]);
+
+  const handleNavigateToProfile = (personId: string) => {
+    navigation.navigate(
+      type === "clients" ? "ClientProfile" : "ResidentProfile", 
+      { personId } 
+    )
+  };
 
   return (
     <>
@@ -82,7 +96,10 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
           {persons
             .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
             .map((person) => (
-              <TableRow key={person.personId}>
+              <TableRow 
+                key={person.personId} 
+                onClick={() => handleNavigateToProfile(person.personId.toString())}
+              >
                 <TableCell>
                   <View className="flex h-full flex-row items-center gap-3">
                     <ImageBackground
@@ -118,15 +135,9 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                   )}
                 </TableCell>
                 <TableCell>
-                  <Link
-                    className="invisible size-5 items-center justify-center group-hover:visible"
-                    screen={
-                      type === "clients" ? "ClientProfile" : "ResidentProfile"
-                    }
-                    params={{ personId: person.personId.toString() }}
-                  >
+                  <View className="invisible size-5 items-center justify-center group-hover:visible">
                     <Image source={Icons.ArrowRight} className="!size-full" />
-                  </Link>
+                  </View>
                 </TableCell>
               </TableRow>
             ))}

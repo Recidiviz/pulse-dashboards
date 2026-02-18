@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import Icons from "../../assets/icons";
 import { Person } from "../common/types";
 import { useMeetingRecording, useRecording } from "../features/recording";
+import { RootStackParamList } from "../navigation/DrawerNavigator";
 import { formatDurationCompact, formatDurationNumeric } from "../utils/format";
 import {
   Table,
@@ -35,6 +37,11 @@ import {
   TableHeadRow,
   TableRow,
 } from "./Table.web";
+
+type ProfileMeetingNavProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "ClientMeeting" | "ResidentMeeting"
+>;
 
 type Meeting = {
   id: string;
@@ -57,13 +64,26 @@ type MeetingRowProps = {
 };
 
 const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
+  const navigation = useNavigation<ProfileMeetingNavProp>()
   const { totalDurationMs } = useMeetingRecording({ meetingId: meeting.id });
-  const { openRecordingView, status: recordingState, meetingId } = useRecording<"web">();
+  const { status: recordingState, meetingId } = useRecording<"web">();
 
   const isMeetingInProgress = recordingState !== "idle" && meeting.id === meetingId;
 
+  const handleNavigateToMeeting = () => {
+    if (!isMeetingInProgress) {
+      navigation.navigate(
+        personType === "client" ? "ClientMeeting" : "ResidentMeeting",
+        {
+          meetingId: meeting.id,
+          personId: person.personId.toString(),
+        }
+      );
+    }
+  };
+
   return (
-    <TableRow>
+    <TableRow onClick={handleNavigateToMeeting} style={{ pointerEvents: isMeetingInProgress ? "none" : "auto" }}>
       <TableCell>{meeting.date}</TableCell>
       <TableCell>{meeting.time}</TableCell>
       <TableCell>
@@ -91,27 +111,9 @@ const MeetingRow = ({ meeting, person, personType }: MeetingRowProps) => {
         </TableCell>
       )}
       <TableCell>
-        {!isMeetingInProgress ? (
-          <Link
-            screen={
-              personType === "client" ? "ClientMeeting" : "ResidentMeeting"
-            }
-            params={{
-              meetingId: meeting.id,
-              personId: person.personId.toString(),
-            }}
-            className="invisible size-5 items-center justify-center group-hover:visible"
-          >
-            <Image source={Icons.ArrowRight} className="!size-full" />
-          </Link>
-        ) : (
-          <TouchableOpacity
-            className="invisible size-5 items-center justify-center group-hover:visible"
-            onPress={() => openRecordingView({ meetingId: meeting.id, person })}
-          >
-            <Image source={Icons.ArrowRight} className="!size-full" />
-          </TouchableOpacity>
-        )}
+        <View className="invisible size-5 items-center justify-center group-hover:visible">
+          <Image source={Icons.ArrowRight} className="!size-full" />
+        </View>
       </TableCell>
     </TableRow>
   );
