@@ -441,9 +441,9 @@ export function registerTaskRoutes(app: FastifyInstance) {
           },
           data: {
             caseNote: result.output.caseNote,
-            actionItems: JSON.stringify(actionItems),
-            criticalUpdates: JSON.stringify(criticalUpdates),
-            meetingSummary: JSON.stringify(result.output.meetingMinutes),
+            actionItems: actionItems,
+            criticalUpdates: criticalUpdates,
+            meetingSummary: result.output.meetingMinutes,
             postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
           },
         });

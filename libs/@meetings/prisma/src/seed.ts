@@ -143,9 +143,9 @@ async function main() {
         recordingsGCSBucket: "test-audio-bucket",
         recordingsFolderPath: `meeting-${createdClient.personId}`,
         userNotepadNotes: faker.lorem.paragraph(),
-        actionItems: JSON.stringify(actionItems),
-        criticalUpdates: JSON.stringify(criticalUpdates),
-        meetingSummary: JSON.stringify(meetingSummary),
+        actionItems: actionItems,
+        criticalUpdates: criticalUpdates,
+        meetingSummary: meetingSummary,
         postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
         transcriptions: {
           create: [
@@ -257,9 +257,9 @@ async function main() {
         recordingsGCSBucket: "test-audio-bucket",
         recordingsFolderPath: `resident-meeting-${createdResident.personId}`,
         userNotepadNotes: faker.lorem.paragraph(),
-        actionItems: JSON.stringify(actionItems),
-        criticalUpdates: JSON.stringify(criticalUpdates),
-        meetingSummary: JSON.stringify(meetingSummary),
+        actionItems: actionItems,
+        criticalUpdates: criticalUpdates,
+        meetingSummary: meetingSummary,
         postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
         transcriptions: {
           create: [
