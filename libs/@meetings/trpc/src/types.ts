@@ -20,7 +20,8 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { PrismaClient, StateCode } from "~@meetings/prisma/client";
 
 export type AuthUser = {
-  pseudonymizedId: string;
+  email: string;
+  isRecidivizUser: boolean;
 };
 
 export type Context = {

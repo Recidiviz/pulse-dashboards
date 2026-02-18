@@ -83,9 +83,7 @@ model Staff {
   surname     String
   suffix      String?
 
-  email    String?
-  clients  ClientsToStaff[]
-  meetings Meeting[]
+  email String?
 
   // Whether or not the staff appeared in the most recent export. Needed to ensure we don't delete
   // meetings when staff are removed.
@@ -112,8 +110,8 @@ model Client {
   suffix      String?
 
   supervisionType String
+  staffEmails     String[]
 
-  staff    ClientsToStaff[]
   meetings Meeting[]
 
   // Whether or not the client appeared in the most recent export. Needed to ensure we don't delete
@@ -122,15 +120,6 @@ model Client {
 
   @@unique([stablePersonExternalId, stablePersonExternalIdType])
   @@unique([pseudonymizedId, stablePersonExternalIdType])
-}
-
-model ClientsToStaff {
-  staff    Staff  @relation(fields: [staffId], references: [staffId])
-  staffId  BigInt
-  Client   Client @relation(fields: [clientId], references: [personId])
-  clientId BigInt
-
-  @@id([staffId, clientId])
 }
 
 model Resident {
@@ -206,10 +195,7 @@ model Meeting {
   resident   Resident? @relation(fields: [residentId], references: [personId])
   residentId BigInt?
 
-  // Recidiviz users don't appear in the staff table and should still be able to create meetings, so
-  // make this relation optional.
-  staff   Staff?  @relation(fields: [staffId], references: [staffId])
-  staffId BigInt?
+  staffEmail String
 }
 
 enum TranscriptionProvider {
@@ -267,8 +253,8 @@ model NotetakingPipelineRun {
 
   // This is intentionally not stored as a foreign key
   // We want a full historical log of pipeline runs, even when the upstream meeting gets deleted
-  meetingId            String
-  langsmithTraceId     String?
+  meetingId             String
+  langsmithTraceId      String?
   personPseudonymizedId String
 
   status NotetakingPipelineStatus

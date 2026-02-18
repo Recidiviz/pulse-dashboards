@@ -42,7 +42,7 @@ export const fakeStaff = [
     givenNames: faker.person.firstName(),
     middleNames: faker.person.firstName(),
     surname: faker.person.lastName(),
-    email: faker.internet.email(),
+    email: faker.internet.email().toLowerCase(),
     stateCode: StateCode.US_NE,
   },
   {
@@ -52,7 +52,7 @@ export const fakeStaff = [
     givenNames: faker.person.firstName(),
     middleNames: faker.person.firstName(),
     surname: faker.person.lastName(),
-    email: faker.internet.email(),
+    email: faker.internet.email().toLowerCase(),
     stateCode: StateCode.US_NE,
   },
 ] satisfies Prisma.StaffCreateManyInput[];
@@ -69,11 +69,7 @@ export const fakeClients = [
     middleNames: faker.person.firstName(),
     surname: faker.person.lastName(),
     suffix: faker.person.suffix(),
-    staff: {
-      create: {
-        staffId: fakeStaff[0].staffId,
-      },
-    },
+    staffEmails: [fakeStaff[0].email],
     supervisionType: "PAROLE",
     isActive: true,
   },
@@ -88,11 +84,7 @@ export const fakeClients = [
     middleNames: faker.person.firstName(),
     surname: faker.person.lastName(),
     suffix: faker.person.suffix(),
-    staff: {
-      create: {
-        staffId: fakeStaff[1].staffId,
-      },
-    },
+    staffEmails: [fakeStaff[1].email],
     supervisionType: "PAROLE",
     isActive: true,
   },
@@ -107,11 +99,7 @@ export const fakeClients = [
     middleNames: faker.person.firstName(),
     surname: faker.person.lastName(),
     suffix: faker.person.suffix(),
-    staff: {
-      create: {
-        staffId: fakeStaff[0].staffId,
-      },
-    },
+    staffEmails: [fakeStaff[0].email],
     supervisionType: "PAROLE",
     isActive: false,
   },
@@ -126,11 +114,7 @@ export const fakeClients = [
     middleNames: faker.person.firstName(),
     surname: faker.person.lastName(),
     suffix: faker.person.suffix(),
-    staff: {
-      create: {
-        staffId: fakeStaff[0].staffId,
-      },
-    },
+    staffEmails: [fakeStaff[0].email],
     supervisionType: "PAROLE",
     isActive: true,
   },
@@ -186,12 +170,7 @@ const millisecondsInOneHour = 60 * 60 * 1000;
 
 export const fakeActiveMeeting = {
   id: "meeting-1",
-  staff: {
-    connect: {
-      staffId: fakeStaff[0].staffId,
-      pseudonymizedId: fakeStaff[0].pseudonymizedId,
-    },
-  },
+  staffEmail: fakeStaff[0].email,
   client: {
     connect: {
       personId: fakeClients[0].personId,
@@ -264,12 +243,7 @@ export const fakeActiveMeeting = {
 
 export const fakeInactiveMeeting = {
   id: "meeting-2",
-  staff: {
-    connect: {
-      staffId: fakeStaff[0].staffId,
-      pseudonymizedId: fakeStaff[0].pseudonymizedId,
-    },
-  },
+  staffEmail: fakeStaff[0].email,
   client: {
     connect: {
       personId: fakeClients[3].personId,
@@ -298,12 +272,7 @@ export const fakeInactiveMeeting = {
 
 export const fakeMeetingStaff1 = {
   id: "meeting-3",
-  staff: {
-    connect: {
-      staffId: fakeStaff[1].staffId,
-      pseudonymizedId: fakeStaff[1].pseudonymizedId,
-    },
-  },
+  staffEmail: fakeStaff[1].email,
   client: {
     connect: {
       personId: fakeClients[1].personId,
@@ -331,11 +300,7 @@ export const fakeMeetingStaff1 = {
 
 export const fakeResidentMeeting = {
   id: "resident-meeting-1",
-  staff: {
-    connect: {
-      staffId: fakeStaff[0].staffId,
-    },
-  },
+  staffEmail: fakeStaff[0].email,
   resident: {
     connect: {
       personId: fakeResidents[0].personId,
@@ -372,11 +337,7 @@ export const fakeResidentMeeting = {
 
 export const fakeResidentMeetingCompleted = {
   id: "resident-meeting-2",
-  staff: {
-    connect: {
-      staffId: fakeStaff[0].staffId,
-    },
-  },
+  staffEmail: fakeStaff[0].email,
   resident: {
     connect: {
       personId: fakeResidents[1].personId,

@@ -174,9 +174,9 @@ beforeEach(async () => {
   testkit.reset();
 
   await initFastifyAndSetUser({
+    "https://dashboard.recidiviz.org/email_address": fakeStaff[0].email,
     "https://dashboard.recidiviz.org/app_metadata": {
       stateCode: "US_NE",
-      pseudonymizedId: fakeStaff[0].pseudonymizedId,
     },
   });
 });

@@ -25,10 +25,10 @@ import { fakeStaff } from "~@meetings/trpc/test/setup/seed";
 describe("auth", () => {
   test("invalid state code", async () => {
     await initFastifyAndSetUser({
+      "https://dashboard.recidiviz.org/email_address": fakeStaff[0].email,
       "https://dashboard.recidiviz.org/app_metadata": {
         // @ts-expect-error testing invalid state code
         stateCode: "US_OZ",
-        pseudonymizedId: fakeStaff[0].pseudonymizedId,
       },
     });
     // arbitrary endpoint to test auth context
@@ -41,10 +41,10 @@ describe("auth", () => {
 
   test("mismatched state", async () => {
     await initFastifyAndSetUser({
+      "https://dashboard.recidiviz.org/email_address": fakeStaff[0].email,
       "https://dashboard.recidiviz.org/app_metadata": {
         // auth header is hardcoded to request US_NE
         stateCode: "US_TN",
-        pseudonymizedId: fakeStaff[0].pseudonymizedId,
       },
     });
     // arbitrary endpoint to test auth context
@@ -58,9 +58,9 @@ describe("auth", () => {
   test("missing stateCode in header", async () => {
     await initFastifyAndSetUser(
       {
+        "https://dashboard.recidiviz.org/email_address": fakeStaff[0].email,
         "https://dashboard.recidiviz.org/app_metadata": {
           stateCode: "US_NE",
-          pseudonymizedId: fakeStaff[0].pseudonymizedId,
         },
       },
       { omitStateCode: true },
@@ -77,9 +77,9 @@ describe("auth", () => {
   test("invalid stateCode header format throws error", async () => {
     await initFastifyAndSetUser(
       {
+        "https://dashboard.recidiviz.org/email_address": fakeStaff[0].email,
         "https://dashboard.recidiviz.org/app_metadata": {
           stateCode: "US_NE",
-          pseudonymizedId: fakeStaff[0].pseudonymizedId,
         },
       },
       { stateCode: "INVALID_STATE" },
@@ -92,8 +92,9 @@ describe("auth", () => {
       `[TRPCClientError: Unsupported state code provided in request headers: INVALID_STATE]`,
     );
   });
-  test("missing pseudonymizedId", async () => {
+  test("missing email", async () => {
     await initFastifyAndSetUser({
+      "https://dashboard.recidiviz.org/email_address": undefined,
       "https://dashboard.recidiviz.org/app_metadata": {
         stateCode: "US_NE",
       },
@@ -102,12 +103,13 @@ describe("auth", () => {
     await expect(
       testTRPCClient.v1.client.list.query(),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCClientError: Missing pseudonymizedId for user]`,
+      `[TRPCClientError: Missing email for user]`,
     );
   });
 
   test("recidiviz not allowed state", async () => {
     await initFastifyAndSetUser({
+      "https://dashboard.recidiviz.org/email_address": "test@recidiviz.org",
       "https://dashboard.recidiviz.org/app_metadata": {
         stateCode: "recidiviz",
         // auth header is hardcoded to request US_NE
@@ -131,9 +133,9 @@ describe("skip auth", () => {
     try {
       await initFastifyAndSetUser(
         {
+          "https://dashboard.recidiviz.org/email_address": fakeStaff[0].email,
           "https://dashboard.recidiviz.org/app_metadata": {
             stateCode: "US_NE",
-            pseudonymizedId: fakeStaff[0].pseudonymizedId,
           },
         },
         { skipAuth: true },
@@ -166,7 +168,7 @@ describe("skip auth", () => {
     }
   });
 
-  test("skip auth sets pseudonymizedId to staff-pid-1", async () => {
+  test("skip auth sets email to staff-email-1@example.com", async () => {
     const originalNodeEnv = env.NODE_ENV;
     env.NODE_ENV = "development";
 
@@ -174,7 +176,7 @@ describe("skip auth", () => {
       // Initialize without providing a user (skip auth should create mock user)
       await initFastifyAndSetUser(undefined, { skipAuth: true });
 
-      // The context should have created a user with pseudonymizedId "staff-pid-1"
+      // The context should have created a user with a mock email
       // We can verify this by checking that the endpoint works (it would fail if no user)
       const clients = await testTRPCClient.v1.client.list.query();
       expect(clients).toBeDefined();

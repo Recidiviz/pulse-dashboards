@@ -47,6 +47,7 @@ describe("ProductionPipeline", () => {
     displayPersonExternalId: "ADC456",
     supervisionType: "PROBATION",
     isActive: true,
+    staffEmails: ["fake@fake.com"],
   };
 
   const mockAgency: AgencyConfig = {

@@ -58,7 +58,7 @@ describe("resident router", () => {
             expect.objectContaining({
               id: result.id,
               residentId: fakeResidents[0].personId,
-              staffId: fakeStaff[0].staffId,
+              staffEmail: fakeStaff[0].email,
               startTime,
               endTime: null,
               recordingsGCSBucket: "test-audio-bucket",
@@ -68,7 +68,7 @@ describe("resident router", () => {
             }),
             expect.objectContaining({
               residentId: fakeResidents[0].personId,
-              staffId: fakeStaff[0].staffId,
+              staffEmail: fakeStaff[0].email,
               startTime: fakeResidentMeeting.startTime,
               endTime: null,
               postMeetingProcessingStatus:
@@ -80,12 +80,12 @@ describe("resident router", () => {
     });
 
     describe("getMeetings", () => {
-      test("Returns list of meetings", async () => {
+      test("Returns own in-progress meetings and all completed meetings", async () => {
+        // fakeResidentMeeting belongs to fakeStaff[0] (the current user) and is in progress
         const result = await testTRPCClient.v1.resident.getMeetings.query({
           residentId: fakeResidents[0].personId,
         });
 
-        // Check expected fields are returned
         expect(result).toEqual([
           expect.objectContaining({
             id: fakeResidentMeeting.id,
@@ -95,13 +95,13 @@ describe("resident router", () => {
         ]);
       });
 
-      test("Returns only own in-progress meetings but all completed meetings", async () => {
+      test("Returns own in-progress meetings but not other staff's in-progress meetings, plus all completed meetings", async () => {
         // Create an in-progress meeting with a different staff member
         const otherStaffInProgressMeeting =
           await testPrismaClient.meeting.create({
             data: {
               residentId: fakeResidents[0].personId,
-              staffId: fakeStaff[1].staffId,
+              staffEmail: fakeStaff[1].email,
               startTime: faker.date.past(),
               recordingsGCSBucket: "test-audio-bucket",
               recordingsFolderPath: "test-folder",
@@ -114,7 +114,7 @@ describe("resident router", () => {
         const completedMeeting = await testPrismaClient.meeting.create({
           data: {
             residentId: fakeResidents[0].personId,
-            staffId: fakeStaff[1].staffId,
+            staffEmail: fakeStaff[1].email,
             startTime: faker.date.past(),
             endTime: faker.date.recent(),
             recordingsGCSBucket: "test-audio-bucket",
@@ -127,13 +127,12 @@ describe("resident router", () => {
           residentId: fakeResidents[0].personId,
         });
 
-        // State user (fakeStaff[0]) should see:
-        // 1. Their own in-progress meetings (fakeResidentMeeting)
-        // 2. All completed/processing meetings regardless of staff (completedMeeting)
-        // Should NOT see: otherStaffInProgressMeeting (different staff, in-progress)
         const resultIds = result.map((m) => m.id);
+        // Own in-progress meeting
         expect(resultIds).toContain(fakeResidentMeeting.id);
+        // Completed meeting from another staff member
         expect(resultIds).toContain(completedMeeting.id);
+        // Other staff's in-progress meeting should be excluded
         expect(resultIds).not.toContain(otherStaffInProgressMeeting.id);
         expect(result.length).toBe(2);
       });
@@ -182,38 +181,10 @@ describe("resident router", () => {
     });
   });
 
-  describe("recidiviz user with pseudo ID set", () => {
-    beforeEach(async () => {
-      await initFastifyAndSetUser({
-        "https://dashboard.recidiviz.org/app_metadata": {
-          stateCode: "recidiviz",
-          pseudonymizedId: fakeStaff[0].pseudonymizedId,
-          allowedStates: ["US_NE"],
-        },
-      });
-    });
-
-    describe("getMeetings", () => {
-      test("Returns list of meetings", async () => {
-        const result = await testTRPCClient.v1.resident.getMeetings.query({
-          residentId: fakeResidents[0].personId,
-        });
-
-        // Check expected fields are returned
-        expect(result).toEqual([
-          expect.objectContaining({
-            id: fakeResidentMeeting.id,
-            startTime: fakeResidentMeeting.startTime,
-            endTime: null,
-          }),
-        ]);
-      });
-    });
-  });
-
   describe("recidiviz user", () => {
     beforeEach(async () => {
       await initFastifyAndSetUser({
+        "https://dashboard.recidiviz.org/email_address": "test@recidiviz.org",
         "https://dashboard.recidiviz.org/app_metadata": {
           stateCode: "recidiviz",
           allowedStates: ["US_NE"],
@@ -222,7 +193,7 @@ describe("resident router", () => {
     });
 
     describe("createMeeting", () => {
-      test("Creates a meeting without staffId in non-production", async () => {
+      test("Creates a meeting with staffEmail set to the recidiviz user's email", async () => {
         const startTime = faker.date.future();
 
         const result = await testTRPCClient.v1.resident.createMeeting.mutate({
@@ -230,13 +201,11 @@ describe("resident router", () => {
           startTime,
         });
 
-        // Check expected fields are returned
         expect(result).toEqual({
           id: expect.any(String),
           startTime,
         });
 
-        // Check meeting was created in DB without staffId
         const meeting = await testPrismaClient.meeting.findUnique({
           where: { id: result.id },
         });
@@ -244,7 +213,7 @@ describe("resident router", () => {
           expect.objectContaining({
             id: result.id,
             residentId: fakeResidents[0].personId,
-            staffId: null,
+            staffEmail: "test@recidiviz.org",
           }),
         );
       });
@@ -254,12 +223,10 @@ describe("resident router", () => {
         env.DEPLOY_ENV = "production";
 
         try {
-          const startTime = faker.date.future();
-
           await expect(
             testTRPCClient.v1.resident.createMeeting.mutate({
               residentId: fakeResidents[0].personId,
-              startTime,
+              startTime: faker.date.future(),
             }),
           ).rejects.toThrow(
             "Recidiviz users may not create meetings in production",
@@ -271,30 +238,12 @@ describe("resident router", () => {
     });
 
     describe("getMeetings", () => {
-      test("Does not return in-progress meetings of staff user", async () => {
-        // Recidiviz users should NOT see the fakeResidentMeeting because it has a staffId
-        // and is NOT_STARTED (in-progress)
-        let result = await testTRPCClient.v1.resident.getMeetings.query({
-          residentId: fakeResidents[0].personId,
-        });
-
-        expect(result).toEqual([]);
-
-        // Check that we can also query a different resident
-        result = await testTRPCClient.v1.resident.getMeetings.query({
-          residentId: fakeResidents[1].personId,
-        });
-
-        // There are no meetings for this resident, but it should not error
-        expect(result).toEqual([]);
-      });
-
-      test("Returns only in-progress meetings without staffId and all completed meetings", async () => {
-        // Create a meeting without staffId (RECIDIVIZ user)
-        const recidivizMeeting = await testPrismaClient.meeting.create({
+      test("Returns own in-progress meetings but not other staff's in-progress meetings, plus all completed meetings", async () => {
+        // Create an in-progress meeting owned by the recidiviz user
+        const ownInProgressMeeting = await testPrismaClient.meeting.create({
           data: {
             residentId: fakeResidents[0].personId,
-            staffId: null,
+            staffEmail: "test@recidiviz.org",
             startTime: faker.date.past(),
             recordingsGCSBucket: "test-audio-bucket",
             recordingsFolderPath: "test-folder",
@@ -307,7 +256,7 @@ describe("resident router", () => {
         const completedMeeting = await testPrismaClient.meeting.create({
           data: {
             residentId: fakeResidents[0].personId,
-            staffId: fakeStaff[1].staffId,
+            staffEmail: fakeStaff[1].email,
             startTime: faker.date.past(),
             endTime: faker.date.recent(),
             recordingsGCSBucket: "test-audio-bucket",
@@ -320,26 +269,14 @@ describe("resident router", () => {
           residentId: fakeResidents[0].personId,
         });
 
-        // RECIDIVIZ user should see:
-        // 1. In-progress meetings without staffId (recidivizMeeting)
-        // 2. All completed/processing meetings regardless of staff (completedMeeting)
-        // Should NOT see: fakeResidentMeeting (has staffId and is NOT_STARTED)
-        expect(result).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              id: recidivizMeeting.id, // Meeting without staffId
-            }),
-            expect.objectContaining({
-              id: completedMeeting.id, // Completed meeting with different staff
-            }),
-          ]),
-        );
+        const resultIds = result.map((m) => m.id);
+        // Own in-progress meeting
+        expect(resultIds).toContain(ownInProgressMeeting.id);
+        // Completed meeting from another staff member
+        expect(resultIds).toContain(completedMeeting.id);
+        // fakeResidentMeeting belongs to fakeStaff[0], not the recidiviz user — excluded
+        expect(resultIds).not.toContain(fakeResidentMeeting.id);
         expect(result.length).toBe(2);
-        expect(result).not.toContainEqual(
-          expect.objectContaining({
-            id: fakeResidentMeeting.id,
-          }),
-        );
       });
     });
   });

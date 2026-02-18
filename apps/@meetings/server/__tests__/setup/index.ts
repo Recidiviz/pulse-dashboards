@@ -109,6 +109,7 @@ beforeAll(async () => {
     };
 
     req.user = {
+      "https://dashboard.recidiviz.org/email_address": fakeStaff.email,
       "https://dashboard.recidiviz.org/app_metadata": {
         stateCode: "US_NE",
         pseudonymizedId: fakeStaff.pseudonymizedId,

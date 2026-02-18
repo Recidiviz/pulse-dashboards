@@ -73,13 +73,7 @@ describe("import staff data", () => {
     await importHandler.import(TEST_STATE_CODE, [STAFF_FILE_NAME]);
 
     // Check that the new staff was created
-    const dbStaff = await testPrismaClient.staff.findMany({
-      include: {
-        clients: {
-          select: { clientId: true },
-        },
-      },
-    });
+    const dbStaff = await testPrismaClient.staff.findMany();
 
     // There should only be two staff in the database - the new one and the updated existing one
     expect(dbStaff).toHaveLength(2);
@@ -90,19 +84,12 @@ describe("import staff data", () => {
         pseudonymizedId: fakeStaff.pseudonymizedId,
         givenNames: "New Name",
         isActive: true,
-        clients: [
-          // should still have the relation to the client
-          {
-            clientId: fakeClient.personId,
-          },
-        ],
       }),
       expect.objectContaining({
         staffId: BigInt(2),
         stableStaffExternalId: "staff-ext-2",
         pseudonymizedId: "new-staff-pid-2",
         isActive: true,
-        clients: [],
       }),
     ]);
   });

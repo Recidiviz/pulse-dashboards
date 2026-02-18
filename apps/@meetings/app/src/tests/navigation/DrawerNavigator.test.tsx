@@ -69,7 +69,6 @@ describe("DrawerNavigator", () => {
         stateCode: undefined,
         isSkipAuthUser: false,
         recidivizAllowedStates: [],
-        pseudonymizedId: undefined,
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
       });
@@ -93,7 +92,6 @@ describe("DrawerNavigator", () => {
         stateCode: "US_NE",
         isSkipAuthUser: false,
         recidivizAllowedStates: ["US_NE"],
-        pseudonymizedId: "test-pid",
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
       });
@@ -119,7 +117,6 @@ describe("DrawerNavigator", () => {
         stateCode: "US_TX", // Texas is not in AVAILABLE_STATE_CODES
         isSkipAuthUser: false,
         recidivizAllowedStates: ["US_TX"],
-        pseudonymizedId: "test-pid",
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
       });
@@ -143,7 +140,6 @@ describe("DrawerNavigator", () => {
         stateCode: "recidiviz",
         isSkipAuthUser: false,
         recidivizAllowedStates: ["US_NE", "US_ME", "US_NC"],
-        pseudonymizedId: "test-pid",
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
       });
@@ -167,7 +163,6 @@ describe("DrawerNavigator", () => {
         stateCode: "US_NE", // Nebraska is supported
         isSkipAuthUser: false,
         recidivizAllowedStates: ["US_NE"],
-        pseudonymizedId: "test-pid",
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
       });
@@ -191,7 +186,6 @@ describe("DrawerNavigator", () => {
         stateCode: "us_ne", // lowercase but should still match
         isSkipAuthUser: false,
         recidivizAllowedStates: ["us_ne"],
-        pseudonymizedId: "test-pid",
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
       });
@@ -217,7 +211,6 @@ describe("DrawerNavigator", () => {
         stateCode: "US_NE",
         isSkipAuthUser: false,
         recidivizAllowedStates: ["US_NE"],
-        pseudonymizedId: "test-pid",
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
       });

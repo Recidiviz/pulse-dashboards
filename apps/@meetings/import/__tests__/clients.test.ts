@@ -93,15 +93,7 @@ describe("import client data", () => {
     await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
 
     // Check that the new case was created
-    const dbClients = await testPrismaClient.client.findMany({
-      include: {
-        staff: {
-          select: {
-            staffId: true,
-          },
-        },
-      },
-    });
+    const dbClients = await testPrismaClient.client.findMany();
 
     // There should only be two clients in the database - the new one and the updated existing one
     expect(dbClients).toHaveLength(2);
@@ -115,12 +107,6 @@ describe("import client data", () => {
         displayPersonExternalId: fakeClient.displayPersonExternalId,
         givenNames: "New Name",
         isActive: true,
-        // Should have added the new staff assignment and removed the old one
-        staff: [
-          {
-            staffId: newStaff.staffId,
-          },
-        ],
       }),
       expect.objectContaining({
         personId: BigInt(2),
@@ -129,11 +115,6 @@ describe("import client data", () => {
         pseudonymizedId: "new-client-pid",
         displayPersonExternalId: "new-client-display-ext-id",
         isActive: true,
-        staff: [
-          {
-            staffId: fakeStaff.staffId,
-          },
-        ],
         supervisionType: "GENERAL",
       }),
     ]);

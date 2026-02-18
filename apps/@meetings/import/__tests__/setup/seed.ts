@@ -46,11 +46,6 @@ export const fakeClient = {
   middleNames: faker.person.firstName(),
   surname: faker.person.lastName(),
   suffix: faker.person.suffix(),
-  staff: {
-    create: {
-      staffId: fakeStaff.staffId,
-    },
-  },
   supervisionType: "PAROLE",
 } satisfies ClientCreateInput;
 

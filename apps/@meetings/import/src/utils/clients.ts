@@ -49,35 +49,10 @@ export async function transformAndLoadClientData(
     ),
   );
 
-  const existingStaffExternalIdsToStaffIds = new Map(
-    (
-      await prismaClient.staff.findMany({
-        select: {
-          staffId: true,
-          stableStaffExternalId: true,
-        },
-      })
-    ).map(({ staffId, stableStaffExternalId }) => [
-      stableStaffExternalId,
-      staffId,
-    ]),
-  );
-
   const newClientsToCreate: ClientCreateInput[] = [];
   const existingClientsToUpdate: BulkUpdateEntries = [];
-  const clientToStaff = [];
 
   for await (const clientData of data) {
-    const officerStaffId = existingStaffExternalIdsToStaffIds.get(
-      clientData.officer_id,
-    );
-    if (officerStaffId) {
-      clientToStaff.push({
-        clientId: clientData.person_id,
-        staffId: officerStaffId,
-      });
-    }
-
     const newClient = {
       personId: clientData.person_id,
       stablePersonExternalId: clientData.stable_person_external_id,
@@ -113,23 +88,5 @@ export async function transformAndLoadClientData(
 
   await prismaClient.client.createMany({
     data: newClientsToCreate,
-  });
-
-  // Add all of the new connections
-  await prismaClient.clientsToStaff.createMany({
-    data: clientToStaff,
-    skipDuplicates: true,
-  });
-
-  // Delete all of old connections between clients and staff
-  await prismaClient.clientsToStaff.deleteMany({
-    where: {
-      NOT: {
-        OR: clientToStaff.map((c) => ({
-          clientId: c.clientId,
-          staffId: c.staffId,
-        })),
-      },
-    },
   });
 }

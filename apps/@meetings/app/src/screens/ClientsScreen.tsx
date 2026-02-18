@@ -71,7 +71,7 @@ const ClientsScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<ProfileNavProp>();
   const { status: recordingState } = useRecording();
-  const { pseudonymizedId: userPseudoId } = useUserContext();
+  const { email: userEmail } = useUserContext();
 
   const isFocused = useIsFocused();
   const {
@@ -93,17 +93,17 @@ const ClientsScreen = () => {
 
   // Separate clients by caseload ownership
   const { myCaseloadClients, otherCaseloadClients } = React.useMemo(() => {
-    const myCaseload = userPseudoId
-      ? clients.filter((c) => c.assignedStaffPseudoIds.includes(userPseudoId))
+    const myCaseload = userEmail
+      ? clients.filter((c) => c.staffEmails.includes(userEmail))
       : [];
-    const otherCaseload = userPseudoId
-      ? clients.filter((c) => !c.assignedStaffPseudoIds.includes(userPseudoId))
+    const otherCaseload = userEmail
+      ? clients.filter((c) => !c.staffEmails.includes(userEmail))
       : clients;
     return {
       myCaseloadClients: filterAndSortClients(myCaseload, search, sortBy),
       otherCaseloadClients: filterAndSortClients(otherCaseload, search, sortBy),
     };
-  }, [clients, search, sortBy, userPseudoId]);
+  }, [clients, search, sortBy, userEmail]);
 
   useEffect(() => {
     if (recordingState) {

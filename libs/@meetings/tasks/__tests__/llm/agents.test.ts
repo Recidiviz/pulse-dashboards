@@ -40,6 +40,7 @@ describe("SpecialistCore", () => {
     displayPersonExternalId: "ADC123",
     supervisionType: "PAROLE",
     isActive: true,
+    staffEmails: ["fake@fake.com"],
   };
 
   const mockTranscript: TranscriptInput = {

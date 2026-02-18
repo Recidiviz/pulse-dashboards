@@ -19,9 +19,7 @@ import { TRPCError } from "@trpc/server";
 
 import {
   PostMeetingProcessingStatus,
-  Prisma,
   PrismaClient,
-  Staff,
 } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
 import { AuthUser } from "~@meetings/trpc/types";
@@ -39,30 +37,21 @@ export async function createMeetingForPerson({
   startTime: Date;
   personType: "client" | "resident";
 }) {
-  if (env.DEPLOY_ENV === "production" && user.pseudonymizedId === "RECIDIVIZ") {
+  if (env.DEPLOY_ENV === "production" && user.isRecidivizUser) {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Recidiviz users may not create meetings in production",
     });
   }
 
-  const staffPseudoId =
-    user.pseudonymizedId === "RECIDIVIZ" ? null : user.pseudonymizedId;
-
   const meeting = await prisma.meeting.create({
     data: {
-      ...(staffPseudoId && {
-        staff: {
-          connect: {
-            pseudonymizedId: staffPseudoId,
-          },
-        },
-      }),
       [personType]: {
         connect: {
           personId,
         },
       },
+      staffEmail: user.email,
       startTime,
       recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
       recordingsFolderPath: "placeholder",
@@ -94,23 +83,13 @@ export async function getMeetingsForPerson({
   personId: bigint;
   personType: "client" | "resident";
 }) {
-  const staffWhereClause = (
-    user.pseudonymizedId === "RECIDIVIZ"
-      ? {
-          staffId: null,
-        }
-      : {
-          staff: {
-            pseudonymizedId: user.pseudonymizedId,
-          },
-        }
-  ) satisfies Prisma.MeetingWhereInput;
-
   return await prisma.meeting.findMany({
     where: {
       [`${personType}Id`]: personId,
       OR: [
-        staffWhereClause,
+        {
+          staffEmail: user.email,
+        },
         {
           postMeetingProcessingStatus: {
             not: PostMeetingProcessingStatus.NOT_STARTED,
@@ -132,27 +111,17 @@ export function extractActiveMeetingId({
   user,
   meetingsOrderedByDateDesc,
 }: {
-  user: AuthUser | null;
+  user: AuthUser;
   meetingsOrderedByDateDesc: {
     endTime: Date | null;
     startTime: Date;
-    staff: Staff | null;
+    staffEmail: string;
     id: string;
   }[];
 }) {
-  let activeMeeting;
-  if (user == null) {
-    activeMeeting = meetingsOrderedByDateDesc.find(
-      (meeting) => meeting.endTime == null,
-    );
-  } else {
-    activeMeeting = meetingsOrderedByDateDesc.find(
-      (meeting) =>
-        meeting.endTime == null &&
-        (meeting.staff?.pseudonymizedId == user.pseudonymizedId ||
-          user.pseudonymizedId === "RECIDIVIZ"), //TODO(#11367)
-    );
-  }
+  const activeMeeting = meetingsOrderedByDateDesc.find(
+    (meeting) => meeting.endTime == null && meeting.staffEmail == user.email,
+  );
   return activeMeeting?.id ?? null;
 }
 

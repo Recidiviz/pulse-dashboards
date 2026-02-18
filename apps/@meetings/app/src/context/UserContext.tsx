@@ -31,7 +31,6 @@ interface UserContextType {
   stateCode: string | undefined;
   name?: string | undefined;
   email?: string | undefined;
-  pseudonymizedId: string | undefined;
   isSkipAuthUser: boolean;
   recidivizAllowedStates: string[];
   hasSupervisionAccess: boolean;
@@ -64,7 +63,6 @@ export const UserContextProvider: React.FC<{
         value={{
           isLoading: false,
           stateCode: "US_NE",
-          pseudonymizedId: "staff-pid-1",
           isSkipAuthUser: true,
           recidivizAllowedStates: AVAILABLE_STATE_CODES.map(
             (state) => state.code,
@@ -102,7 +100,6 @@ export const UserContextProvider: React.FC<{
         stateCode: userAppMetadata?.stateCode,
         name: user?.name,
         email: user?.email,
-        pseudonymizedId: userAppMetadata?.pseudonymizedId,
         isSkipAuthUser: false,
         recidivizAllowedStates: allowedStateCodes,
         hasSupervisionAccess: isRecidiviz || !!routes?.["meetingsSupervision"],

@@ -37,24 +37,16 @@ const querySelect = {
   displayPersonExternalId: true,
   personId: true,
   supervisionType: true,
+  staffEmails: true,
   meetings: {
     orderBy: {
       startTime: "desc",
     },
     select: {
       id: true,
-      staff: true,
+      staffEmail: true,
       endTime: true,
       startTime: true,
-    },
-  },
-  staff: {
-    select: {
-      staff: {
-        select: {
-          pseudonymizedId: true,
-        },
-      },
     },
   },
 } satisfies Prisma.ClientSelect;
@@ -93,7 +85,7 @@ export const clientRouter = router({
     });
 
     return clients.map((client) => ({
-      ..._.omit(client, ["meetings", "staff"]),
+      ..._.omit(client, ["meetings"]),
       activeMeetingId: extractActiveMeetingId({
         user: user,
         meetingsOrderedByDateDesc: client.meetings,
@@ -103,7 +95,6 @@ export const clientRouter = router({
           meetingsOrderedByDateDesc: client.meetings,
         }),
       },
-      assignedStaffPseudoIds: client.staff.map((s) => s.staff.pseudonymizedId),
     }));
   }),
 
@@ -119,7 +110,7 @@ export const clientRouter = router({
         throw new Error("Client not found or access denied");
       }
       return {
-        ..._.omit(client, ["meetings", "staff"]),
+        ..._.omit(client, ["meetings"]),
         activeMeetingId: extractActiveMeetingId({
           user: user,
           meetingsOrderedByDateDesc: client.meetings,
@@ -129,9 +120,6 @@ export const clientRouter = router({
             meetingsOrderedByDateDesc: client.meetings,
           }),
         },
-        assignedStaffPseudoIds: client.staff.map(
-          (s) => s.staff.pseudonymizedId,
-        ),
       };
     }),
 });

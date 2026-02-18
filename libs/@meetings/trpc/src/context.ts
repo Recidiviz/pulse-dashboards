@@ -30,9 +30,9 @@ import { verifyAuth0Token } from "~server-setup-plugin";
 export type Auth0User = {
   "https://dashboard.recidiviz.org/app_metadata": {
     stateCode: "recidiviz" | StateCode;
-    pseudonymizedId?: string;
     allowedStates?: string[];
   };
+  "https://dashboard.recidiviz.org/email_address": string | undefined;
 };
 
 // HTTP headers are flattened to lowercase in Fastify
@@ -48,15 +48,20 @@ function formatAndVerifyUser(
   }
 
   // Grab the fields we want from the metadata since there is more in there than just these
-  const {
-    stateCode: userStateLower,
-    pseudonymizedId,
-    allowedStates,
-  } = user["https://dashboard.recidiviz.org/app_metadata"];
+  const { stateCode: userStateLower, allowedStates } =
+    user["https://dashboard.recidiviz.org/app_metadata"];
+  const userEmail = user["https://dashboard.recidiviz.org/email_address"];
   const userState = userStateLower.toUpperCase();
+  const isRecidivizUser = userState === "RECIDIVIZ";
 
+  if (!userEmail) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: `Missing email for user`,
+    });
+  }
   // Check non-Recidiviz users first
-  if (userState !== "RECIDIVIZ") {
+  if (!isRecidivizUser) {
     if (!Object.values(StateCode).includes(userState as StateCode)) {
       throw new TRPCError({
         code: "PRECONDITION_FAILED",
@@ -69,12 +74,6 @@ function formatAndVerifyUser(
         message: `User with state code ${userState} cannot request data about state: ${requestedState}`,
       });
     }
-    if (!pseudonymizedId) {
-      throw new TRPCError({
-        code: "PRECONDITION_FAILED",
-        message: `Missing pseudonymizedId for user`,
-      });
-    }
   } else {
     if (!allowedStates?.includes(requestedState)) {
       throw new TRPCError({
@@ -85,8 +84,8 @@ function formatAndVerifyUser(
   }
 
   return {
-    // we checked missing pseudonymized id above for non-Recidiviz users, so if it's missing here then they are recidiviz
-    pseudonymizedId: pseudonymizedId ?? "RECIDIVIZ",
+    email: userEmail.toLowerCase(),
+    isRecidivizUser,
   };
 }
 
@@ -142,7 +141,8 @@ export async function createContext(
     // In dev mode with skip auth, create a mock user
     console.log("Skipping Auth0 verification in dev mode - using mock user");
     formattedUser = {
-      pseudonymizedId: "staff-pid-1",
+      email: "staff-email-1@example.com",
+      isRecidivizUser: false,
     };
   } else {
     // Cast since the returned object from verifyAuth0Token has no type information

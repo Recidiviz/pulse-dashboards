@@ -59,7 +59,7 @@ export const residentRouter = router({
     }),
   get: auth0Procedure
     .input(z.object({ personId: z.bigint() }))
-    .query(async ({ input: { personId }, ctx: { prisma } }) => {
+    .query(async ({ input: { personId }, ctx: { prisma, user } }) => {
       const querySelect = {
         givenNames: true,
         surname: true,
@@ -72,7 +72,7 @@ export const residentRouter = router({
           },
           select: {
             id: true,
-            staff: true,
+            staffEmail: true,
             endTime: true,
             startTime: true,
           },
@@ -91,7 +91,7 @@ export const residentRouter = router({
       return {
         ..._.omit(resident, ["meetings"]),
         activeMeetingId: extractActiveMeetingId({
-          user: null,
+          user,
           meetingsOrderedByDateDesc: resident.meetings,
         }),
         meetingDetails: {
@@ -101,7 +101,7 @@ export const residentRouter = router({
         },
       };
     }),
-  list: auth0Procedure.query(async ({ ctx: { prisma } }) => {
+  list: auth0Procedure.query(async ({ ctx: { prisma, user } }) => {
     const residents = await prisma.resident.findMany({
       select: {
         givenNames: true,
@@ -115,7 +115,7 @@ export const residentRouter = router({
           },
           select: {
             id: true,
-            staff: true,
+            staffEmail: true,
             endTime: true,
             startTime: true,
           },
@@ -129,7 +129,7 @@ export const residentRouter = router({
     return residents.map((resident) => ({
       ..._.omit(resident, ["meetings"]),
       activeMeetingId: extractActiveMeetingId({
-        user: null,
+        user,
         meetingsOrderedByDateDesc: resident.meetings,
       }),
       meetingDetails: {

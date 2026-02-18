@@ -34,7 +34,6 @@ const mockUser = {
   email: "test@example.com",
   "https://dashboard.recidiviz.org/app_metadata": {
     stateCode: "US_ND",
-    pseudonymizedId: "test-pid-123",
     routes: {
       meetingsSupervision: true,
       meetingsFacilities: false,
@@ -87,7 +86,6 @@ describe("UserContext", () => {
       expect(result.current).toMatchObject({
         isLoading: false,
         stateCode: "US_NE",
-        pseudonymizedId: "staff-pid-1",
         isSkipAuthUser: true,
         hasSupervisionAccess: true,
         hasFacilitiesAccess: true,
@@ -121,7 +119,6 @@ describe("UserContext", () => {
         name: "Test User",
         email: "test@example.com",
         stateCode: "US_ND",
-        pseudonymizedId: "test-pid-123",
         isSkipAuthUser: false,
         recidivizAllowedStates: ["US_ND"],
         hasSupervisionAccess: true,
@@ -135,7 +132,6 @@ describe("UserContext", () => {
         ...mockUser,
         "https://dashboard.recidiviz.org/app_metadata": {
           stateCode: "recidiviz",
-          pseudonymizedId: "recidiviz-pid-456",
           allowedStates: ["US_ND", "US_PA", "US_TN"],
         },
       };
@@ -161,7 +157,6 @@ describe("UserContext", () => {
 
       expect(result.current).toMatchObject({
         stateCode: "recidiviz",
-        pseudonymizedId: "recidiviz-pid-456",
         isSkipAuthUser: false,
         recidivizAllowedStates: ["US_ND", "US_PA", "US_TN"],
         hasSupervisionAccess: true,
@@ -242,9 +237,7 @@ describe("UserContext", () => {
     it("handles user with no stateCode", async () => {
       const userWithNoStateCode = {
         ...mockUser,
-        "https://dashboard.recidiviz.org/app_metadata": {
-          pseudonymizedId: "test-pid-789",
-        },
+        "https://dashboard.recidiviz.org/app_metadata": {},
       };
 
       mockUseAuth0.mockReturnValue({

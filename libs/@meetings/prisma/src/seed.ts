@@ -40,13 +40,13 @@ async function main() {
   await prisma.utterance.deleteMany({});
   await prisma.transcription.deleteMany({});
   await prisma.meeting.deleteMany({});
-  await prisma.clientsToStaff.deleteMany({});
   await prisma.client.deleteMany({});
   await prisma.resident.deleteMany({});
   await prisma.staff.deleteMany({});
 
   // Seed single staff
-  const seededStaff = await prisma.staff.create({
+  const staffEmail = faker.internet.email();
+  await prisma.staff.create({
     data: {
       staffId: 1,
       stableStaffExternalId: `staff-ext-1`,
@@ -54,7 +54,7 @@ async function main() {
       givenNames: faker.person.firstName(),
       middleNames: faker.person.firstName(),
       surname: faker.person.lastName(),
-      email: faker.internet.email(),
+      email: staffEmail,
       stateCode: StateCode.US_NE,
     },
   });
@@ -74,15 +74,7 @@ async function main() {
       middleNames: faker.person.firstName(),
       surname: faker.person.lastName(),
       suffix: faker.person.suffix(),
-      staff: {
-        create: {
-          staff: {
-            connect: {
-              staffId: seededStaff.staffId,
-            },
-          },
-        },
-      },
+      staffEmails: [staffEmail],
       supervisionType: "PAROLE",
     };
     const client = await prisma.client.create({ data: clientData });
@@ -147,7 +139,7 @@ async function main() {
         startTime: meetingStart,
         endTime: meetingEnd,
         clientId: createdClient.personId,
-        staffId: seededStaff.staffId,
+        staffEmail: staffEmail,
         recordingsGCSBucket: "test-audio-bucket",
         recordingsFolderPath: `meeting-${createdClient.personId}`,
         userNotepadNotes: faker.lorem.paragraph(),
@@ -261,7 +253,7 @@ async function main() {
         startTime: meetingStart,
         endTime: meetingEnd,
         residentId: createdResident.personId,
-        staffId: seededStaff.staffId,
+        staffEmail: staffEmail,
         recordingsGCSBucket: "test-audio-bucket",
         recordingsFolderPath: `resident-meeting-${createdResident.personId}`,
         userNotepadNotes: faker.lorem.paragraph(),

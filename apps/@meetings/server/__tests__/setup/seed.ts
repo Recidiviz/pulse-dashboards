@@ -29,7 +29,7 @@ export const fakeStaff = {
   givenNames: faker.person.firstName(),
   middleNames: faker.person.firstName(),
   surname: faker.person.lastName(),
-  email: faker.internet.email(),
+  email: faker.internet.email().toLowerCase(),
   stateCode: StateCode.US_NE,
 } satisfies Prisma.StaffCreateInput;
 
@@ -44,21 +44,13 @@ export const fakeClient = {
   middleNames: faker.person.firstName(),
   surname: faker.person.lastName(),
   suffix: faker.person.suffix(),
-  staff: {
-    create: {
-      staffId: fakeStaff.staffId,
-    },
-  },
+  staffEmails: [fakeStaff.email],
   supervisionType: "PAROLE",
 } satisfies Prisma.ClientCreateInput;
 
 export const fakeMeeting = {
   id: "meeting-1",
-  staff: {
-    connect: {
-      staffId: fakeStaff.staffId,
-    },
-  },
+  staffEmail: fakeStaff.email,
   client: {
     connect: {
       personId: fakeClient.personId,

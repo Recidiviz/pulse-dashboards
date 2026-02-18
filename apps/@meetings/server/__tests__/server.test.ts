@@ -40,7 +40,7 @@ describe("server", () => {
         meetingDetails: {
           lastCompletedMeetingTime: null,
         },
-        assignedStaffPseudoIds: [fakeStaff.pseudonymizedId],
+        staffEmails: [fakeStaff.email],
       },
     ]);
   });
