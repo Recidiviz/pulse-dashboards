@@ -207,14 +207,6 @@ const ProfileMeetings = ({
           <Text className="mb-6 text-center font-inter text-sm font-normal leading-5 tracking-[-0.28px] text-[#9CA3AF]">
             Create a new meeting when you’re ready.
           </Text>
-          <TouchableOpacity
-            onPress={handleCreateMeeting}
-            className="rounded-full bg-[#006C67] px-6 py-3"
-          >
-            <Text className="font-inter text-[16px] font-medium text-white">
-              + Meeting
-            </Text>
-          </TouchableOpacity>
         </View>
       );
     }
@@ -358,10 +350,7 @@ const ProfileMeetings = ({
 
           <View className="my-4 flex-row items-center justify-between">
             <Text className="text-xl font-semibold text-primary md:text-2xl">
-              Meetings{" "}
-              <Text className="font-inter text-gray-400">
-                ({filteredMeetings.length})
-              </Text>
+              Meetings
             </Text>
 
             {recordingState === "idle" && (
@@ -392,7 +381,7 @@ const ProfileMeetings = ({
           <View className="z-10 my-4 flex-row items-center justify-between">
             <Text className="font-inter text-sm text-[#9AA6AC]">
               {filteredMeetings.length} meeting
-              {filteredMeetings.length > 1 ? "s" : ""}
+              {filteredMeetings.length === 1 ? "" : "s"}
             </Text>
 
             <Dropdown
