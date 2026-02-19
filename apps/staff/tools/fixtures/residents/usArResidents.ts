@@ -57,10 +57,11 @@ export const usArResidents: ResidentFixture[] = [
         },
       ],
       gedCompletionDate: "2017-05-23",
-      maxFlatReleaseDate: "2025-10-22",
+      maximumReleaseDate: "2025-10-22",
       noIncarcerationSanctionsWithin6Months: true,
       noIncarcerationSanctionsWithin12Months: true,
-      paroleEligibilityDate: "2023-12-01",
+      eligibilityDate: "2023-12-01",
+      eligibilityDateName: "Release Eligibility Date",
       programAchievement: [
         {
           programLocation: "1400758",
@@ -75,7 +76,6 @@ export const usArResidents: ResidentFixture[] = [
           programEvaluationScore: "PASS",
         },
       ],
-      projectedReleaseDate: "2025-10-22",
     },
   },
   {
@@ -116,11 +116,12 @@ export const usArResidents: ResidentFixture[] = [
           personId: 2,
         },
       ],
+      eligibilityDate: "2023-12-01",
+      eligibilityDateName: "Transfer Eligibility Date",
       gedCompletionDate: "2017-05-23",
-      maxFlatReleaseDate: "2025-10-22",
+      maximumReleaseDate: "2025-10-22",
       noIncarcerationSanctionsWithin6Months: true,
       noIncarcerationSanctionsWithin12Months: true,
-      paroleEligibilityDate: "2023-12-01",
       programAchievement: [
         {
           programLocation: "1400758",
@@ -135,7 +136,6 @@ export const usArResidents: ResidentFixture[] = [
           programEvaluationScore: "PASS",
         },
       ],
-      projectedReleaseDate: "2025-10-22",
     },
   },
   {
@@ -176,11 +176,12 @@ export const usArResidents: ResidentFixture[] = [
           personId: 3,
         },
       ],
+      eligibilityDate: "2023-12-01",
+      eligibilityDateName: "Transfer Eligibility Date",
       gedCompletionDate: "2017-05-23",
-      maxFlatReleaseDate: "2025-10-22",
+      maximumReleaseDate: "2025-10-22",
       noIncarcerationSanctionsWithin6Months: true,
       noIncarcerationSanctionsWithin12Months: true,
-      paroleEligibilityDate: "2023-12-01",
       programAchievement: [
         {
           programLocation: "1400758",
@@ -195,7 +196,6 @@ export const usArResidents: ResidentFixture[] = [
           programEvaluationScore: "PASS",
         },
       ],
-      projectedReleaseDate: "2025-10-22",
     },
   },
   {
@@ -236,11 +236,12 @@ export const usArResidents: ResidentFixture[] = [
           personId: 4,
         },
       ],
+      eligibilityDate: "2024-06-01",
+      eligibilityDateName: "Transfer Eligibility Date",
       gedCompletionDate: "2018-11-23",
-      maxFlatReleaseDate: "2026-01-15",
+      maximumReleaseDate: "2026-01-15",
       noIncarcerationSanctionsWithin6Months: true,
       noIncarcerationSanctionsWithin12Months: true,
-      paroleEligibilityDate: "2024-06-01",
       programAchievement: [
         {
           programLocation: "1400759",
@@ -255,7 +256,6 @@ export const usArResidents: ResidentFixture[] = [
           programEvaluationScore: "PASS",
         },
       ],
-      projectedReleaseDate: "2026-01-15",
     },
   },
   {
@@ -296,11 +296,12 @@ export const usArResidents: ResidentFixture[] = [
           personId: 5,
         },
       ],
+      eligibilityDate: "2022-11-01",
+      eligibilityDateName: "Parole Eligibility Date",
       gedCompletionDate: "2016-02-23",
-      maxFlatReleaseDate: "2024-05-10",
+      maximumReleaseDate: "2024-05-10",
       noIncarcerationSanctionsWithin6Months: true,
       noIncarcerationSanctionsWithin12Months: true,
-      paroleEligibilityDate: "2022-11-01",
       programAchievement: [
         {
           programLocation: "1400760",
@@ -315,7 +316,6 @@ export const usArResidents: ResidentFixture[] = [
           programEvaluationScore: "PASS",
         },
       ],
-      projectedReleaseDate: "2024-05-10",
     },
   },
 ];

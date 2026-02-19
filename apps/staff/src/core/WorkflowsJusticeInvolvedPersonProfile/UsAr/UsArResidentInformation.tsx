@@ -129,7 +129,7 @@ function UsArCurrentStatus({
 }
 
 function UsArReleaseDates({
-  metadata: { paroleEligibilityDate, maxFlatReleaseDate, projectedReleaseDate },
+  metadata: { eligibilityDate, eligibilityDateName, maximumReleaseDate },
 }: {
   metadata: ResidentMetadata<"US_AR">;
 }): React.ReactElement<any> {
@@ -137,17 +137,13 @@ function UsArReleaseDates({
     <DetailsSection>
       <DetailsHeading>Release Dates</DetailsHeading>
       <DetailsList>
-        <DetailsSubheading>Parole Eligibility Date</DetailsSubheading>
+        <DetailsSubheading>{eligibilityDateName}</DetailsSubheading>
         <SecureDetailsContent>
-          {formatWorkflowsDate(new Date(paroleEligibilityDate))}
+          {formatWorkflowsDate(eligibilityDate)}
         </SecureDetailsContent>
-        <DetailsSubheading>Projected Release Date</DetailsSubheading>
+        <DetailsSubheading>Maximum Release Date</DetailsSubheading>
         <SecureDetailsContent>
-          {formatWorkflowsDate(new Date(projectedReleaseDate))}
-        </SecureDetailsContent>
-        <DetailsSubheading>Max Flat Release Date</DetailsSubheading>
-        <SecureDetailsContent>
-          {formatWorkflowsDate(new Date(maxFlatReleaseDate))}
+          {formatWorkflowsDate(maximumReleaseDate)}
         </SecureDetailsContent>
       </DetailsList>
     </DetailsSection>

@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { nullishAsUndefined } from "../../../../utils/zod";
+import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
 
 export const usArProgramAchievementSchema = z.object({
   programLocation: z.string(),
@@ -40,11 +40,11 @@ export const usArResidentMetadataSchema = z.object({
   currentGtEarningClass: z.string(),
   currentLocation: z.string(),
   currentSentences: z.array(usArCurrentSentencesSchema),
+  eligibilityDate: dateStringSchema,
+  eligibilityDateName: z.string(),
   gedCompletionDate: nullishAsUndefined(z.string()),
-  maxFlatReleaseDate: z.string(),
+  maximumReleaseDate: dateStringSchema,
   noIncarcerationSanctionsWithin6Months: z.boolean(),
   noIncarcerationSanctionsWithin12Months: z.boolean(),
-  paroleEligibilityDate: z.string(),
   programAchievement: z.array(usArProgramAchievementSchema),
-  projectedReleaseDate: z.string(),
 });
