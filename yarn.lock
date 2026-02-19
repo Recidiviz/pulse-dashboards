@@ -9480,6 +9480,7 @@ __metadata:
     "@testing-library/react-native": "npm:~13.2.0"
     "@trpc/server": "npm:^11.4.3"
     babel-preset-expo: "npm:~54.0.0"
+    date-fns: "npm:^4.1.0"
     enhanced-resolve: "npm:*"
     eslint-plugin-tailwindcss: "npm:^3.18.2"
     expo: "npm:^54.0.0"

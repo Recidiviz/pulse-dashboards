@@ -60,6 +60,14 @@ export default [
           ],
         },
       ],
+      "no-restricted-globals": [
+        "warn",
+        {
+          name: "Intl",
+          message:
+            "Use date-fns utilities instead of Intl.* functions for better React Native compatibility",
+        },
+      ],
     },
   },
   {

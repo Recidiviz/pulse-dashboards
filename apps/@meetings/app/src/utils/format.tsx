@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { format, formatDistanceToNow, isYesterday } from "date-fns";
 import { startCase } from "lodash";
 
 import { Client, RawClient, RawResident, Resident } from "../common/types";
@@ -53,38 +54,21 @@ export const humanReadableTitleCase = (str: string): string =>
   startCase(str.toLowerCase());
 
 export const formatDraftCaseNoteMeetingDate = (date: Date) => {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-  }).format(date);
+  return format(date, "MMM d");
 };
 
 export const formatRelativeTime = (date: Date): string => {
   const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  const rtf = new Intl.RelativeTimeFormat("en", {
-    numeric: "auto",
-    style: "long",
-  });
-
-  const units: { unit: Intl.RelativeTimeFormatUnit; seconds: number }[] = [
-    { unit: "year", seconds: 31536000 },
-    { unit: "month", seconds: 2592000 },
-    { unit: "week", seconds: 604800 },
-    { unit: "day", seconds: 86400 },
-    { unit: "hour", seconds: 3600 },
-    { unit: "minute", seconds: 60 },
-  ];
-
-  for (const { unit, seconds } of units) {
-    const interval = Math.floor(diffInSeconds / seconds);
-    if (interval >= 1) {
-      return rtf.format(-interval, unit);
-    }
+  const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
+  if (secondsAgo < 60) {
+    return "Just now";
   }
 
-  return "Just now";
+  if (isYesterday(date)) {
+    return "Yesterday";
+  }
+  
+  return formatDistanceToNow(date, { addSuffix: true });
 };
 
 export const deserializeClient = (rawClient: RawClient): Client => {
@@ -114,11 +98,7 @@ export const deserializeResident = (rawResident: RawResident): Resident => {
 };
 
 export const formatMeetingStartDate = (date: Date) => {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
+  return format(date, "MMMM d, yyyy");
 };
 
 export const formatMeetingDuration = ({
@@ -132,16 +112,8 @@ export const formatMeetingDuration = ({
     return { time: null, duration: null };
   }
 
-  const startTimeFormatted = startDate.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  const endTimeFormatted = endDate
-    ? endDate.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "";
+  const startTimeFormatted = format(startDate, "HH:mm");
+  const endTimeFormatted = endDate ? format(endDate, "HH:mm") : "";
   const timeFormatted = endTimeFormatted
     ? `${startTimeFormatted} - ${endTimeFormatted}`
     : startTimeFormatted;

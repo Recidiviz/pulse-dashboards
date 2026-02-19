@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Link } from "@react-navigation/native";
+import { format } from "date-fns";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -108,22 +109,9 @@ const ProfileMeetings = ({
               .substring(11, 19)
           : null;
 
-        const date = start.toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "short",
-          day: "2-digit",
-        });
-
-        const time = `${start.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}${
-          end
-            ? ` - ${end.toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}`
-            : ""
+        const date = format(start, "EEEE MMM dd");
+        const time = `${format(start, "HH:mm")}${
+          end ? ` - ${format(end, "HH:mm")}` : ""
         }`;
 
         return {
