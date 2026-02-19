@@ -17,6 +17,8 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "~shared-pathways";
+
 import OverTimeMetric from "../models/OverTimeMetric";
 import PathwaysMetric from "../models/PathwaysMetric";
 import PersonLevelMetric from "../models/PersonLevelMetric";
@@ -27,7 +29,6 @@ import {
   createProjectionTimeSeries,
   createSupervisionPopulationSnapshot,
 } from "../models/utils";
-import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../views";
 import type CoreStore from ".";
 
 export default class MetricsStore {
@@ -81,9 +82,12 @@ export default class MetricsStore {
           [PATHWAYS_SECTIONS.countByAgeGroup]: this.prisonPopulationByAgeGroup,
           [PATHWAYS_SECTIONS.countByGender]: this.prisonPopulationByGender,
           [PATHWAYS_SECTIONS.countBySex]: this.prisonPopulationBySex,
-          [PATHWAYS_SECTIONS.countByEthnicity]: this.prisonPopulationByEthnicity,
-          [PATHWAYS_SECTIONS.countBySentenceLengthMin]: this.prisonPopulationBySentenceLengthMin,
-          [PATHWAYS_SECTIONS.countBySentenceLengthMax]: this.prisonPopulationBySentenceLengthMax,
+          [PATHWAYS_SECTIONS.countByEthnicity]:
+            this.prisonPopulationByEthnicity,
+          [PATHWAYS_SECTIONS.countBySentenceLengthMin]:
+            this.prisonPopulationBySentenceLengthMin,
+          [PATHWAYS_SECTIONS.countBySentenceLengthMax]:
+            this.prisonPopulationBySentenceLengthMax,
           [PATHWAYS_SECTIONS.personLevelDetail]:
             this.prisonPopulationPersonLevel,
         },

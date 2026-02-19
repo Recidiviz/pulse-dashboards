@@ -21,7 +21,12 @@ import React, { ComponentType, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 
-import { PopulationFilterLabels } from "~shared-pathways";
+import {
+  getDefaultPathwaysSectionByPage,
+  PathwaysPage,
+  PathwaysSection,
+  PopulationFilterLabels,
+} from "~shared-pathways";
 
 import { TenantId } from "../RootStore/types";
 import { decrypt } from "../utils";
@@ -33,12 +38,7 @@ import {
 import { useCoreStore } from "./CoreStoreProvider";
 import { DEFAULT_ENTITY_ID, METRIC_TYPES } from "./PageVitals/types";
 import { convertLabelsToValues } from "./utils/filterOptions";
-import {
-  DASHBOARD_VIEWS,
-  getDefaultPathwaysSectionByPage,
-  PathwaysPage,
-  PathwaysSection,
-} from "./views";
+import { DASHBOARD_VIEWS } from "./views";
 
 type RouteParams = {
   sectionId?: string;

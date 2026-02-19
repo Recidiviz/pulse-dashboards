@@ -23,6 +23,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { Icon, IconSVG, Menubar, palette } from "~design-system";
+import { PathwaysPage } from "~shared-pathways";
 
 import Drawer from "../../components/Drawer";
 import {
@@ -32,7 +33,6 @@ import {
 import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
 import usePageContent from "../hooks/usePageContent";
-import { PathwaysPage } from "../views";
 
 const SectionNavigation: React.FC = () => {
   const [open, setOpen] = useState(false);

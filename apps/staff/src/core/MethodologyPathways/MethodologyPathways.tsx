@@ -20,6 +20,12 @@ import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 import { Menubar } from "~design-system";
+import {
+  getMetricIdsForPage,
+  getSectionIdForMetric,
+  PathwaysPage,
+  PathwaysPageIdList,
+} from "~shared-pathways";
 
 import {
   PartiallyTypedRootStore,
@@ -29,13 +35,7 @@ import { convertToSlug } from "../../utils/navigation";
 import { getMethodologyCopy } from "../content";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
-import {
-  DASHBOARD_VIEWS,
-  getMetricIdsForPage,
-  getSectionIdForMetric,
-  PathwaysPage,
-  PathwaysPageIdList,
-} from "../views";
+import { DASHBOARD_VIEWS } from "../views";
 import ContentBlock from "./ContentBlock";
 
 // Opens all external links in a new window

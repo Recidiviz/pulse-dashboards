@@ -17,13 +17,12 @@
 
 import { QueryParamConfigMap, StringParam } from "use-query-params";
 
-import { FILTER_TYPES } from "~shared-pathways";
+import { FILTER_TYPES, PATHWAYS_PAGES } from "~shared-pathways";
 
 import { Navigation } from "../core/types/navigation";
 import {
   DASHBOARD_VIEWS,
   INSIGHTS_PAGES,
-  PATHWAYS_PAGES,
   WORKFLOWS_PATH_SECTIONS,
 } from "../core/views";
 import { TenantId } from "../RootStore/types";

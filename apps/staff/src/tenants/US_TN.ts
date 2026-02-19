@@ -15,14 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "~shared-pathways";
+
 import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
-import {
-  DASHBOARD_VIEWS,
-  INSIGHTS_PAGES,
-  PATHWAYS_PAGES,
-  PATHWAYS_SECTIONS,
-} from "../core/views";
+import { DASHBOARD_VIEWS, INSIGHTS_PAGES } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 

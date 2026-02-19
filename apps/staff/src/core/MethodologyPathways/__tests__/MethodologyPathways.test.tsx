@@ -18,16 +18,16 @@
 import { useLocation } from "react-router-dom";
 import { Mock } from "vitest";
 
-import { MetricId } from "~shared-pathways";
+import {
+  getMetricIdsForPage,
+  getSectionIdForMetric,
+  MetricId,
+  PathwaysPage,
+} from "~shared-pathways";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { render } from "../../../testUtils";
 import { getMethodologyCopy } from "../../content";
-import {
-  getMetricIdsForPage,
-  getSectionIdForMetric,
-  PathwaysPage,
-} from "../../views";
 import MethodologyPathways from "..";
 
 vi.mock("react-router-dom", async () => ({

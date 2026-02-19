@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PathwaysPage } from "~shared-pathways";
+
 import {
   PartiallyTypedRootStore,
   useRootStore,
 } from "../../components/StoreProvider";
 import { getPageCopy } from "../content";
 import { PageContent } from "../content/types";
-import { PathwaysPage } from "../views";
 
 export default function usePageContent(pageId: PathwaysPage): PageContent {
   // TODO(#5636) Eliminate PartiallyTypedRootStore

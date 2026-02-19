@@ -15,14 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "~shared-pathways";
+
 import { TenantConfig } from "../core/models/types";
 import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
-import {
-  INSIGHTS_PAGES,
-  PATHWAYS_PAGES,
-  PATHWAYS_SECTIONS,
-} from "../core/views";
+import { INSIGHTS_PAGES } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import UsIdContactTask from "../WorkflowsStore/Task/US_ID/UsIdContactTask";
 import UsIdEmploymentVerificationTask from "../WorkflowsStore/Task/US_ID/UsIdEmploymentVerificationTask";

@@ -36,9 +36,13 @@ import {
   FilterOption,
   Filters,
   FilterType,
+  getMetricIdsForPage,
+  getSectionIdForMetric,
   HydratablePathwaysMetric,
   MetricId,
+  PATHWAYS_PAGES,
   PathwaysMetricRecords,
+  PathwaysPage,
   PopulationFilterValues,
   SimulationCompartment,
 } from "~shared-pathways";
@@ -50,12 +54,6 @@ import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { isAbortException } from "../utils/exceptions";
-import {
-  getMetricIdsForPage,
-  getSectionIdForMetric,
-  PATHWAYS_PAGES,
-  PathwaysPage,
-} from "../views";
 import PathwaysMetric from "./PathwaysMetric";
 import { MetricRecord, NewBackendRecord } from "./types";
 import {

@@ -19,3 +19,4 @@ export * from "./constants";
 export * from "./dimensions";
 export * from "./filters";
 export * from "./types";
+export * from "./views";

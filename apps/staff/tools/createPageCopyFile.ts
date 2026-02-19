@@ -18,7 +18,8 @@
 import { promises } from "fs";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
-import { PathwaysPageIdList } from "../src/core/views";
+import { PathwaysPageIdList } from "~shared-pathways";
+
 import { convertCurlyQuotesToStraight } from "../src/utils/formatStrings";
 
 const { readFile, writeFile } = promises;

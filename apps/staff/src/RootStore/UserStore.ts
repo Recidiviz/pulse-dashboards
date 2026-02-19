@@ -39,6 +39,7 @@ import qs from "qs";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import { castToError } from "~hydration-utils";
+import { PATHWAYS_SECTIONS, PathwaysPageIdList } from "~shared-pathways";
 
 import { fetchImpersonatedUserAppMetadata } from "../api/fetchImpersonatedUserAppMetadata";
 import { fetchOfflineUser } from "../api/fetchOfflineUser";
@@ -48,12 +49,7 @@ import {
   NavigationSection,
   RoutePermission,
 } from "../core/types/navigation";
-import {
-  DASHBOARD_VIEWS,
-  PATHWAYS_SECTIONS,
-  PathwaysPageIdList,
-  UNRESTRICTED_PAGES,
-} from "../core/views";
+import { DASHBOARD_VIEWS, UNRESTRICTED_PAGES } from "../core/views";
 import { TENANT_CONFIGS } from "../tenants";
 import { capitalizeName } from "../utils";
 import isIE11 from "../utils/isIE11";

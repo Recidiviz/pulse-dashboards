@@ -22,15 +22,11 @@ import { runInAction } from "mobx";
 import { Mock } from "vitest";
 
 import { isDemoMode } from "~client-env-utils";
+import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "~shared-pathways";
 
 import { fetchImpersonatedUserAppMetadata } from "../../api/fetchImpersonatedUserAppMetadata";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
-import {
-  DASHBOARD_VIEWS,
-  PATHWAYS_PAGES,
-  PATHWAYS_SECTIONS,
-  UNRESTRICTED_PAGES,
-} from "../../core/views";
+import { DASHBOARD_VIEWS, UNRESTRICTED_PAGES } from "../../core/views";
 import { TENANT_CONFIGS } from "../../tenants";
 import isIE11 from "../../utils/isIE11";
 import RootStore from "..";

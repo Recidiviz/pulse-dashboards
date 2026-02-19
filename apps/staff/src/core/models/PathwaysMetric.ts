@@ -32,6 +32,7 @@ import {
   HydratablePathwaysMetric,
   MetricId,
   PathwaysMetricRecords,
+  PathwaysPage,
   RawMetricData,
   SimulationCompartment,
 } from "~shared-pathways";
@@ -46,7 +47,6 @@ import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { PopulationFilters } from "../types/filters";
-import { PathwaysPage } from "../views";
 import { Diff, Differ } from "./backendDiff/Differ";
 import { DiffError } from "./backendDiff/DiffError";
 import { dimensionsByMetricType } from "./dimensions";

@@ -17,20 +17,19 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { PopulationFilterValues } from "~shared-pathways";
-
-import type TenantStore from "../../RootStore/TenantStore";
-import { TenantId } from "../../RootStore/types";
-import type UserStore from "../../RootStore/UserStore";
 import {
-  DASHBOARD_VIEWS,
-  DashboardView,
   DEFAULT_PATHWAYS_PAGE,
   DEFAULT_PATHWAYS_SECTION_BY_PAGE,
   PATHWAYS_PAGES,
   PathwaysPage,
   PathwaysSection,
-} from "../views";
+  PopulationFilterValues,
+} from "~shared-pathways";
+
+import type TenantStore from "../../RootStore/TenantStore";
+import { TenantId } from "../../RootStore/types";
+import type UserStore from "../../RootStore/UserStore";
+import { DASHBOARD_VIEWS, DashboardView } from "../views";
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
 import VitalsStore from "./VitalsStore";

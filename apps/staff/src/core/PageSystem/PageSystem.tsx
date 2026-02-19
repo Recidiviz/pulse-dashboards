@@ -18,6 +18,8 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { PathwaysPage } from "~shared-pathways";
+
 import ChartNote from "../ChartNote";
 import { useCoreStore } from "../CoreStoreProvider";
 import usePageContent from "../hooks/usePageContent";
@@ -26,7 +28,6 @@ import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 import PathwaysFilterBar from "../PathwaysFilterBar/PathwaysFilterBar";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
-import { PathwaysPage } from "../views";
 import withRouteSync from "../withRouteSync";
 
 const PageSystem: React.FC = () => {

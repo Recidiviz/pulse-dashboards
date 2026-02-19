@@ -15,10 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricId } from "~shared-pathways";
-
-import { PathwaysPage, PathwaysSection } from "../views";
-
+import { MetricId, PathwaysPage, PathwaysSection } from "~shared-pathways";
 export type PageContent = {
   title: string;
   summary: string;

@@ -15,12 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  PathwaysPageRootPath,
-  PathwaysSection,
-  ViewRootPath,
-  WorkflowsPathSection,
-} from "../views";
+import { PathwaysPageRootPath, PathwaysSection } from "~shared-pathways";
+
+import { ViewRootPath, WorkflowsPathSection } from "../views";
 
 export type RoutePermission = [route: string, permission: boolean];
 
