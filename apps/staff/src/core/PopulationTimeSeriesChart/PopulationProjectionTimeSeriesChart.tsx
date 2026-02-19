@@ -19,10 +19,11 @@ import { isEqual } from "lodash";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { PopulationProjectionTimeSeriesRecord } from "~shared-pathways";
+
 import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import { PopulationProjectionTimeSeriesRecord } from "../models/types";
 import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import {
   getChartBottom,

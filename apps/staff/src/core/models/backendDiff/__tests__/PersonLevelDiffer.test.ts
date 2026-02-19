@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrisonPopulationPersonLevelRecord } from "../../types";
+import { PrisonPopulationPersonLevelRecord } from "~shared-pathways";
+
 import { Diff, DiffValue } from "../Differ";
 import { PersonLevelDiffer } from "../PersonLevelDiffer";
 

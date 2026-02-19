@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { AgeGroup, Gender, Sex } from "~shared-pathways";
+
 import {
   US_IA,
   US_PA,
@@ -29,7 +31,6 @@ import {
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { PathwaysTenants } from "../../RootStore/types";
-import { AgeGroup, Gender, Sex } from "../models/types";
 import {
   FilterOption,
   PopulationFilterLabels,

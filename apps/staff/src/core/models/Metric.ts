@@ -18,12 +18,13 @@
 import { autorun, makeObservable, observable, runInAction } from "mobx";
 
 import { castToError } from "~hydration-utils";
+import { RawMetricData } from "~shared-pathways";
 
 import { callMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
 import CoreStore from "../CoreStore";
-import { MetricRecord, RawMetricData } from "./types";
+import { MetricRecord } from "./types";
 
 export type BaseMetricProps = {
   tenantId?: TenantId;

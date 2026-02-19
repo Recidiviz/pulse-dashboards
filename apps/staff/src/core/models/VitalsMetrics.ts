@@ -17,12 +17,13 @@
 
 import { computed, makeObservable } from "mobx";
 
+import { RawMetricData } from "~shared-pathways";
+
 import { parseResponseByFileFormat } from "../../api/metrics";
 import { toTitleCase } from "../../utils/formatStrings";
 import Metric, { BaseMetricProps } from "./Metric";
 import {
   EntityType,
-  RawMetricData,
   VitalsSummaryRecord,
   VitalsTimeSeriesRecord,
 } from "./types";

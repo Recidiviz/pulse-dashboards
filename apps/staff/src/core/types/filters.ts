@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { AgeGroup, Gender, MetricId, Sex } from "~shared-pathways";
+
 import type FiltersStore from "../CoreStore/FiltersStore";
-import { AgeGroup, Gender, MetricId, Sex } from "../models/types";
 import { FILTER_TYPES } from "../utils/constants";
 
 export type EnabledFilter = keyof PopulationFilters;
@@ -61,9 +62,10 @@ export type EnabledFiltersByMetric = {
   [key in MetricId]: Filters;
 };
 
-
-
-export type DynamicFilterOptionMetadata = Record<DynamicFilterOptionMetadataKey, string>
+export type DynamicFilterOptionMetadata = Record<
+  DynamicFilterOptionMetadataKey,
+  string
+>;
 export type DynamicFilterOptionMetadataKey =
   | "facility_id_name_map"
   | "race_id_name_map"
@@ -71,10 +73,11 @@ export type DynamicFilterOptionMetadataKey =
 export type DynamicFilterOptionKeyToFilterTypeMap = {
   [key in DynamicFilterOptionMetadataKey]: FilterType;
 };
-export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterTypeMap = {
-  facility_id_name_map: "facility",
-  race_id_name_map: "race",
-  gender_id_name_map: "gender",
-};
+export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterTypeMap =
+  {
+    facility_id_name_map: "facility",
+    race_id_name_map: "race",
+    gender_id_name_map: "gender",
+  };
 
-export type DynamicFilterOptions = Record<FilterType, FilterOption[]>
+export type DynamicFilterOptions = Record<FilterType, FilterOption[]>;

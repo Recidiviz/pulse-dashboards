@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TimeSeriesDataRecord } from "../../types";
+import { TimeSeriesDataRecord } from "~shared-pathways";
+
 import { Diff, DiffValue } from "../Differ";
 import { TimeSeriesDiffer } from "../TimeSeriesDiffer";
 

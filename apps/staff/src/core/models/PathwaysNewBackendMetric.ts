@@ -28,6 +28,12 @@ import {
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import { castToError, HydrationState } from "~hydration-utils";
+import {
+  HydratablePathwaysMetric,
+  MetricId,
+  PathwaysMetricRecords,
+  SimulationCompartment,
+} from "~shared-pathways";
 
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
@@ -53,14 +59,7 @@ import {
   PathwaysPage,
 } from "../views";
 import PathwaysMetric from "./PathwaysMetric";
-import {
-  HydratablePathwaysMetric,
-  MetricId,
-  MetricRecord,
-  NewBackendRecord,
-  PathwaysMetricRecords,
-  SimulationCompartment,
-} from "./types";
+import { MetricRecord, NewBackendRecord } from "./types";
 import {
   formatDateString,
   getTimePeriodRawValue,

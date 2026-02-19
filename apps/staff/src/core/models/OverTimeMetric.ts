@@ -18,14 +18,18 @@
 import { eachMonthOfInterval, startOfMonth, subMonths } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
+import {
+  DownloadableData,
+  DownloadableDataset,
+  TimeSeriesDataRecord,
+} from "~shared-pathways";
+
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysNewBackendMetric, {
   BaseNewMetricConstructorOptions,
 } from "./PathwaysNewBackendMetric";
-import { TimeSeriesDataRecord } from "./types";
 import { getRecordDate } from "./utils";
 
 export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesDataRecord> {

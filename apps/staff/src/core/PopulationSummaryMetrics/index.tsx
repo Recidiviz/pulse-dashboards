@@ -22,11 +22,12 @@ import { observer } from "mobx-react-lite";
 import numeral from "numeral";
 import React from "react";
 
+import type { PopulationProjectionTimeSeriesRecord } from "~shared-pathways";
+
 import { formatLargeNumber } from "../../utils";
 import PercentDelta from "../controls/PercentDelta";
 import { useCoreStore } from "../CoreStoreProvider";
 import MetricsCard from "../MetricsCard";
-import type { PopulationProjectionTimeSeriesRecord } from "../models/types";
 
 type PropTypes = {
   data: PopulationProjectionTimeSeriesRecord[];

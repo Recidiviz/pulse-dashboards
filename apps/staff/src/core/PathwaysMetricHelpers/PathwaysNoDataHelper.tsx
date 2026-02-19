@@ -21,10 +21,11 @@ import { rem } from "polished";
 import { ReactNode } from "react";
 import styled from "styled-components";
 
+import { HydratablePathwaysMetric } from "~shared-pathways";
+
 import NoDataLogo from "../../assets/static/images/no_data_logo.svg?react";
 import { StatusMessage } from "../../components/StatusMessage";
 import { useCoreStore } from "../CoreStoreProvider";
-import { HydratablePathwaysMetric } from "../models/types";
 
 type NoDataHelperProps = {
   metric: HydratablePathwaysMetric;

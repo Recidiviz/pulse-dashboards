@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type OrderKeys = Record<string, number>;
+import jestExtendedMatchers from "jest-extended";
 
-export const DefaultSupervisionLevelOrder: OrderKeys = {
-  ELECTRONIC_MONITORING_ONLY: 1,
-  LIMITED: 2,
-  MINIMUM: 3,
-  MEDIUM: 4,
-  HIGH: 5,
-  MAXIMUM: 6,
-  INCARCERATED: 7,
-  IN_CUSTODY: 8,
-  UNASSIGNED: 9,
-  UNSUPERVISED: 10,
-  DIVERSION: 11,
-  INTERSTATE_COMPACT: 12,
-  OTHER: 13,
-  ABSCONDED: 14,
-  WARRANT: 15,
-  ALL: 16,
-  UNKNOWN: 17,
-};
+expect.extend(jestExtendedMatchers);

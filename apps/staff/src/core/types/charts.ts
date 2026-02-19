@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricId, RawApiData } from "../models/types";
+import { MetricId, RawApiData } from "~shared-pathways";
 
 export type ChartDataType = {
   isLoading: boolean;

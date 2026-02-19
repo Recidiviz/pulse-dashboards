@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,22 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TimeSeriesDataRecord } from "~shared-pathways";
+// @ts-check
 
-import { Differ } from "./Differ";
+import tseslint from "typescript-eslint";
 
-export class TimeSeriesDiffer extends Differ<TimeSeriesDataRecord, number> {
-  emptyValue = undefined;
+import baseConfig, {
+  designSystemRestrictedImports,
+} from "../../eslint.config.mjs";
 
-  getKey(result: TimeSeriesDataRecord): string {
-    return `${result.year}-${result.month}`;
-  }
-
-  getValue(result: TimeSeriesDataRecord): number {
-    return result.count;
-  }
-
-  compare(value: number, other: number): boolean {
-    return value === other;
-  }
-}
+export default tseslint.config(baseConfig, {
+  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [designSystemRestrictedImports],
+      },
+    ],
+  },
+});

@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { SnapshotDataRecord } from "../types";
+import { SnapshotDataRecord } from "~shared-pathways";
+
 import { Differ } from "./Differ";
 
 export type SnapshotDiffType = {

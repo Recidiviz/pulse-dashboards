@@ -23,6 +23,8 @@ import React, { useEffect, useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 import { ResponsiveFrameProps } from "semiotic/lib/ResponsiveFrame";
 
+import { SupervisionPopulationSnapshotRecord } from "~shared-pathways";
+
 import {
   formatDate,
   formatName,
@@ -36,7 +38,6 @@ import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
-import { SupervisionPopulationSnapshotRecord } from "../models/types";
 import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import { Dimension } from "../types/dimensions";

@@ -17,7 +17,11 @@
 
 import { isEqual } from "lodash";
 
-import { PrisonPopulationPersonLevelRecord, TimePeriod } from "../types";
+import {
+  PrisonPopulationPersonLevelRecord,
+  TimePeriod,
+} from "~shared-pathways";
+
 import { Differ } from "./Differ";
 
 /**

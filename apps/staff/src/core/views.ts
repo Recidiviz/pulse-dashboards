@@ -22,8 +22,7 @@ import { groupBy } from "lodash";
 import { cpaRootPath } from "~@cpa/staff-client";
 import { SystemId } from "~datatypes";
 import { psiRootPath, sarRootPath } from "~sentencing-client";
-
-import { MetricId } from "./models/types";
+import { MetricId } from "~shared-pathways";
 
 export const UNRESTRICTED_PAGES = ["profile", "methodology", ""];
 

@@ -19,9 +19,10 @@ import { typography } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components";
 
+import { HydratablePathwaysMetric } from "~shared-pathways";
+
 import styles from "../CoreConstants.module.scss";
 import ModelHydrator from "../ModelHydrator";
-import { HydratablePathwaysMetric } from "../models/types";
 import { PathwaysNoDataHelper } from "./PathwaysNoDataHelper";
 
 type withPathwaysMetricHelperProps = {

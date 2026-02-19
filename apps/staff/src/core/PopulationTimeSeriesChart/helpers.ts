@@ -17,9 +17,10 @@
 
 import { differenceInCalendarMonths } from "date-fns";
 
+import { PopulationProjectionTimeSeriesRecord } from "~shared-pathways";
+
 import { formatDate } from "../../utils";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import { PopulationProjectionTimeSeriesRecord } from "../models/types";
 import { getRecordDate } from "../models/utils";
 
 export type MonthOptions = 6 | 12 | 24 | 60;

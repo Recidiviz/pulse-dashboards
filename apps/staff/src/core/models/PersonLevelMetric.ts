@@ -17,16 +17,20 @@
 
 import { computed, makeObservable } from "mobx";
 
+import {
+  DownloadableData,
+  DownloadableDataset,
+  PersonLevelDataRecord,
+} from "~shared-pathways";
+
 import { TENANT_CONFIGS } from "../../tenants";
 import { toHumanReadable, toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { TableColumn } from "../types/charts";
 import { PopulationFilterLabels } from "../types/filters";
 import PathwaysNewBackendMetric, {
   BaseNewMetricConstructorOptions,
 } from "./PathwaysNewBackendMetric";
-import { PersonLevelDataRecord } from "./types";
 
 export default class PersonLevelMetric extends PathwaysNewBackendMetric<PersonLevelDataRecord> {
   constructor(props: BaseNewMetricConstructorOptions) {

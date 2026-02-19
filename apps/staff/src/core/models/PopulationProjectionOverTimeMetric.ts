@@ -15,17 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  DownloadableData,
+  DownloadableDataset,
+  PopulationProjectionTimeSeriesRecord,
+  SimulationCompartment,
+} from "~shared-pathways";
+
 import RootStore from "../../RootStore";
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import {
-  PopulationProjectionTimeSeriesRecord,
-  SimulationCompartment,
-} from "./types";
 import { filterRecordByDimensions, getRecordDate } from "./utils";
 
 export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<PopulationProjectionTimeSeriesRecord> {

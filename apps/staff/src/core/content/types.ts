@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricId } from "../models/types";
+import { MetricId } from "~shared-pathways";
+
 import { PathwaysPage, PathwaysSection } from "../views";
 
 export type PageContent = {

@@ -18,10 +18,11 @@
 import { useLocation } from "react-router-dom";
 import { Mock } from "vitest";
 
+import { MetricId } from "~shared-pathways";
+
 import { useRootStore } from "../../../components/StoreProvider";
 import { render } from "../../../testUtils";
 import { getMethodologyCopy } from "../../content";
-import { MetricId } from "../../models/types";
 import {
   getMetricIdsForPage,
   getSectionIdForMetric,

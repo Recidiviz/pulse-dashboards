@@ -19,8 +19,9 @@ import Markdown from "markdown-to-jsx";
 import React from "react";
 import { AnchorSection } from "react-anchor-navigation";
 
+import { MethodologyContent } from "~shared-pathways";
+
 import { convertToSlug } from "../../utils/navigation";
-import { MethodologyContent } from "../models/types";
 
 type Props = {
   content: MethodologyContent;

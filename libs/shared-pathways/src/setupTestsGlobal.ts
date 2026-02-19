@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,22 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TimeSeriesDataRecord } from "~shared-pathways";
-
-import { Differ } from "./Differ";
-
-export class TimeSeriesDiffer extends Differ<TimeSeriesDataRecord, number> {
-  emptyValue = undefined;
-
-  getKey(result: TimeSeriesDataRecord): string {
-    return `${result.year}-${result.month}`;
-  }
-
-  getValue(result: TimeSeriesDataRecord): number {
-    return result.count;
-  }
-
-  compare(value: number, other: number): boolean {
-    return value === other;
-  }
-}
+export const setup = () => {
+  // prevents silly timezone issues when testing dates
+  process.env.TZ = "UTC";
+};

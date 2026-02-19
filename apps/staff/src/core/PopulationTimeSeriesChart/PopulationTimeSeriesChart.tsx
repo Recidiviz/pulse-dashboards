@@ -17,8 +17,9 @@
 
 import React from "react";
 
+import { TimeSeriesDataRecord } from "~shared-pathways";
+
 import OverTimeMetric from "../models/OverTimeMetric";
-import { TimeSeriesDataRecord } from "../models/types";
 import { getRecordDate } from "../models/utils";
 import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import { getChartBottom, getChartTop, getDateRange } from "./helpers";

@@ -25,6 +25,13 @@ import {
 } from "mobx";
 
 import { castToError, HydrationState } from "~hydration-utils";
+import {
+  HydratablePathwaysMetric,
+  MetricId,
+  PathwaysMetricRecords,
+  RawMetricData,
+  SimulationCompartment,
+} from "~shared-pathways";
 
 import { parseResponseByFileFormat } from "../../api/metrics";
 import { callMetricsApi } from "../../api/metrics/metricsClient";
@@ -42,14 +49,7 @@ import { Diff, Differ } from "./backendDiff/Differ";
 import { DiffError } from "./backendDiff/DiffError";
 import { dimensionsByMetricType } from "./dimensions";
 import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
-import {
-  HydratablePathwaysMetric,
-  MetricId,
-  MetricRecord,
-  PathwaysMetricRecords,
-  RawMetricData,
-  SimulationCompartment,
-} from "./types";
+import { MetricRecord } from "./types";
 
 export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   id: MetricId;

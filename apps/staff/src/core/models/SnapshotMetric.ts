@@ -20,18 +20,20 @@ import { sumBy } from "lodash/fp";
 import map from "lodash/fp/map";
 import { computed, makeObservable } from "mobx";
 
-import { toTitleCase } from "../../utils";
-import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
-import { PopulationFilterLabels } from "../types/filters";
 import {
   DefaultSupervisionLevelOrder,
+  DownloadableData,
+  DownloadableDataset,
   OrderKeys,
-} from "../utils/enabledSupervisionLevelOrder";
+  SnapshotDataRecord,
+} from "~shared-pathways";
+
+import { toTitleCase } from "../../utils";
+import { downloadChartAsData } from "../../utils/downloads/downloadData";
+import { PopulationFilterLabels } from "../types/filters";
 import PathwaysNewBackendMetric, {
   BaseNewMetricConstructorOptions,
 } from "./PathwaysNewBackendMetric";
-import { SnapshotDataRecord } from "./types";
 import { convertLengthOfStay } from "./utils";
 
 export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDataRecord> {

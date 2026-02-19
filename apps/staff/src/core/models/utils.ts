@@ -19,19 +19,10 @@ import { every } from "lodash";
 import { property } from "lodash/fp";
 import moment from "moment";
 
-import { toTitleCase } from "../../utils";
-import { Dimension } from "../types/dimensions";
-import {
-  EnabledFilter,
-  EnabledFilters,
-  PopulationFilterValues,
-} from "../types/filters";
 import {
   AgeGroup,
   LengthOfStay,
   LengthOfStayRawValue,
-  MetricRecord,
-  NewBackendRecord,
   PopulationProjectionTimeSeriesRecord,
   RawMetricData,
   Sex,
@@ -41,7 +32,16 @@ import {
   SupervisionType,
   TimePeriod,
   TimePeriodRawValue,
-} from "./types";
+} from "~shared-pathways";
+
+import { toTitleCase } from "../../utils";
+import { Dimension } from "../types/dimensions";
+import {
+  EnabledFilter,
+  EnabledFilters,
+  PopulationFilterValues,
+} from "../types/filters";
+import { MetricRecord, NewBackendRecord } from "./types";
 
 const sharedDimensionDefaults = {
   sex: "ALL" as Sex,

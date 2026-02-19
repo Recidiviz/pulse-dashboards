@@ -22,11 +22,12 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 
+import { SnapshotDataRecord } from "~shared-pathways";
+
 import { formatDate, formatPercent, getTicks } from "../../utils";
 import { useCoreStore } from "../CoreStoreProvider";
 import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
-import { SnapshotDataRecord } from "../models/types";
 import { filterUnknownLengthOfStay } from "../models/utils";
 import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";

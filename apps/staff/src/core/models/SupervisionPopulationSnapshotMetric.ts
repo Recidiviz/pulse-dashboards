@@ -22,17 +22,20 @@ import sumBy from "lodash/fp/sumBy";
 import values from "lodash/fp/values";
 import { computed, makeObservable } from "mobx";
 
-import { humanReadableTitleCase } from "../../utils";
-import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
-import { PopulationFilterLabels } from "../types/filters";
 import {
   DefaultSupervisionLevelOrder,
+  DownloadableData,
+  DownloadableDataset,
   OrderKeys,
-} from "../utils/enabledSupervisionLevelOrder";
+  SupervisionPopulationSnapshotRecord,
+  TimePeriod,
+} from "~shared-pathways";
+
+import { humanReadableTitleCase } from "../../utils";
+import { downloadChartAsData } from "../../utils/downloads/downloadData";
+import { PopulationFilterLabels } from "../types/filters";
 import { SnapshotDiffer } from "./backendDiff/SnapshotDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { SupervisionPopulationSnapshotRecord, TimePeriod } from "./types";
 import { filterRecordByDimensions, filterTimePeriod } from "./utils";
 
 export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<SupervisionPopulationSnapshotRecord> {
