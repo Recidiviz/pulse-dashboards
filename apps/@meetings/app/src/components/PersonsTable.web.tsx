@@ -84,12 +84,12 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
         <TableHead>
           <TableHeadRow>
             <TableHeadCell className="w-[35%]">NAME</TableHeadCell>
-            <TableHeadCell className="w-1/4">ID</TableHeadCell>
-            <TableHeadCell className="w-[15%]">
+            <TableHeadCell className="w-[15%]">ID</TableHeadCell>
+            <TableHeadCell className="w-[23%]">
               {type === "clients" ? "SUPERVISION" : "FACILITY"}
             </TableHeadCell>
-            <TableHeadCell className="w-1/5">LAST MEETING</TableHeadCell>
-            <TableHeadCell className="w-[5%]"></TableHeadCell>
+            <TableHeadCell className="w-[23%]">LAST MEETING</TableHeadCell>
+            <TableHeadCell className="w-[4%]"></TableHeadCell>
           </TableHeadRow>
         </TableHead>
         <TableBody>

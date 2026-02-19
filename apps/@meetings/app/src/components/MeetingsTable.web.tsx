@@ -140,11 +140,11 @@ const MeetingsTable = ({
     <Table>
       <TableHead>
         <TableHeadRow>
-          <TableHeadCell>DATE</TableHeadCell>
-          <TableHeadCell>TIME</TableHeadCell>
-          <TableHeadCell>DURATION</TableHeadCell>
-          <TableHeadCell>DRAFT CASE NOTE</TableHeadCell>
-          <TableHeadCell></TableHeadCell>
+          <TableHeadCell className="w-1/5">DATE</TableHeadCell>
+          <TableHeadCell className="w-1/5">TIME</TableHeadCell>
+          <TableHeadCell className="w-[15%]">DURATION</TableHeadCell>
+          <TableHeadCell className="w-2/5">DRAFT CASE NOTE</TableHeadCell>
+          <TableHeadCell className="w-[5%]"></TableHeadCell>
         </TableHeadRow>
       </TableHead>
       <TableBody>
