@@ -340,8 +340,8 @@ const ProfileMeetings = ({
         </View>
 
         <View className="mx-auto w-full max-w-[960px]">
-          <Text className="hidden font-libre-baskerville text-[28px] font-bold leading-[32px] tracking-[-0.56px] text-primary md:block md:text-[32px]">
-            {person.fullName}
+          <Text className="hidden font-libre-baskerville text-[28px] font-bold capitalize leading-[32px] tracking-[-0.56px] text-primary md:block md:text-[32px]">
+            {person.fullName.toLowerCase()}
           </Text>
 
           <Text className="mt-1 hidden font-inter text-[14px] leading-[16px] tracking-[-0.28px] text-primary md:block md:text-base">

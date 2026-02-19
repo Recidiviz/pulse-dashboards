@@ -68,9 +68,9 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
 
   const handleNavigateToProfile = (personId: string) => {
     navigation.navigate(
-      type === "clients" ? "ClientProfile" : "ResidentProfile", 
-      { personId } 
-    )
+      type === "clients" ? "ClientProfile" : "ResidentProfile",
+      { personId },
+    );
   };
 
   return (
@@ -80,7 +80,7 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
           {sectionTitle}
         </Text>
       )}
-      <Table className="table-fixed mt-2">
+      <Table className="mt-2 table-fixed">
         <TableHead>
           <TableHeadRow>
             <TableHeadCell className="w-[35%]">NAME</TableHeadCell>
@@ -96,9 +96,11 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
           {persons
             .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
             .map((person) => (
-              <TableRow 
-                key={person.personId} 
-                onClick={() => handleNavigateToProfile(person.personId.toString())}
+              <TableRow
+                key={person.personId}
+                onClick={() =>
+                  handleNavigateToProfile(person.personId.toString())
+                }
               >
                 <TableCell>
                   <View className="flex h-full flex-row items-center gap-3">
@@ -111,8 +113,8 @@ const PersonsTable = ({ persons, type, sectionTitle }: PersonsProps) => {
                         {getInitials(person.fullName)}
                       </Text>
                     </ImageBackground>
-                    <Text className="font-inter text-base font-medium text-primary">
-                      {person.fullName}
+                    <Text className="font-inter text-base font-medium capitalize text-primary">
+                      {person.fullName.toLowerCase()}
                     </Text>
                   </View>
                 </TableCell>
