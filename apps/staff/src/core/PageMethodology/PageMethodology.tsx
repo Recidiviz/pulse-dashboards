@@ -51,7 +51,7 @@ const PageMethodology: React.FC = () => {
 
   if (stateCode === "US_ID" && dashboard === "operations") {
     window.location.replace(
-      "https://docs.google.com/document/d/1BmzbVFUQhbWOs9IOwR-gykUHNtZin5iUyzPdn8zRdx4/edit",
+      "https://docs.google.com/document/d/e/2PACX-1vRN_KixvGRM-PlVlgyqThRaehhmXs-1j3iNJBOv9XWW00caonEqd4t0czI1ohN6VjyJWc16AqCr7rUg/pub",
     );
     return null;
   }

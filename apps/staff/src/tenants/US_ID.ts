@@ -43,11 +43,11 @@ const US_ID_CONFIG = {
   availableStateCodes: [pathways.US_ID],
   enableUserRestrictions: false,
   workflowsMethodologyUrl:
-    "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
+    "https://docs.google.com/document/d/e/2PACX-1vT4TRUUKqjyFhpZ_-9vCTT_sWYeXbteeg4Lyp4EK2UdPuMLVqC0e0cU2zrmoAzQ5XjAanzw0lFCA-jP/pub",
   workflowsTasksConfig: {
     collection: "usIdSupervisionTasks",
     methodologyUrl:
-      "https://docs.google.com/document/d/1BmzbVFUQhbWOs9IOwR-gykUHNtZin5iUyzPdn8zRdx4/edit",
+      "https://docs.google.com/document/d/e/2PACX-1vRN_KixvGRM-PlVlgyqThRaehhmXs-1j3iNJBOv9XWW00caonEqd4t0czI1ohN6VjyJWc16AqCr7rUg/pub",
     pageDescriptionMarkdown:
       "The clients below might have upcoming requirements this month. Hiding a below task will not change an officer's timeliness percentage in the Operations metrics.",
     tasks: {
