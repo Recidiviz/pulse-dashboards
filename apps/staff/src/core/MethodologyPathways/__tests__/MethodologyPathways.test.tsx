@@ -19,6 +19,7 @@ import { useLocation } from "react-router-dom";
 import { Mock } from "vitest";
 
 import {
+  getMethodologyCopy,
   getMetricIdsForPage,
   getSectionIdForMetric,
   MetricId,
@@ -27,7 +28,6 @@ import {
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { render } from "../../../testUtils";
-import { getMethodologyCopy } from "../../content";
 import MethodologyPathways from "..";
 
 vi.mock("react-router-dom", async () => ({
@@ -35,10 +35,10 @@ vi.mock("react-router-dom", async () => ({
   useLocation: vi.fn(),
 }));
 vi.mock("../../../components/StoreProvider");
-vi.mock("../../content/page/default.ts");
-vi.mock("../../content/page/us_id.ts");
-vi.mock("../../content/metric/default.ts");
-vi.mock("../../content/metric/us_id.ts");
+vi.mock("~/shared-pathways/src/content/page/default");
+vi.mock("~/shared-pathways/src/content/page/us_id");
+vi.mock("~/shared-pathways/src/content/metric/default");
+vi.mock("~/shared-pathways/src/content/metric/us_id");
 
 describe("MethodologyPathways", () => {
   beforeEach(() => {
@@ -67,15 +67,17 @@ describe("MethodologyPathways", () => {
     });
 
     describe("TOC links", () => {
-      // @ts-expect-error
-      const { pageCopy } = getMethodologyCopy("US_ID").system;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const { pageCopy } = getMethodologyCopy("US_ID").system!;
 
       it.each(allowedNavigation.system)(
         "renders the TOC link for %s",
         (pageId) => {
           const { getByRole } = render(<MethodologyPathways />);
           expect(
-            getByRole("menuitem", { name: pageCopy[pageId].title }),
+            getByRole("menuitem", {
+              name: pageCopy[pageId as PathwaysPage].title,
+            }),
           ).toBeInTheDocument();
         },
       );
@@ -89,7 +91,9 @@ describe("MethodologyPathways", () => {
         (pageId) => {
           const { queryByRole } = render(<MethodologyPathways />);
           expect(
-            queryByRole("link", { name: pageCopy[pageId].title }),
+            queryByRole("link", {
+              name: pageCopy[pageId as PathwaysPage].title,
+            }),
           ).toBeNull();
         },
       );

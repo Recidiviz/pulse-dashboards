@@ -21,6 +21,7 @@ import { useLocation } from "react-router-dom";
 
 import { Menubar } from "~design-system";
 import {
+  getMethodologyCopy,
   getMetricIdsForPage,
   getSectionIdForMetric,
   PathwaysPage,
@@ -32,7 +33,6 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import { convertToSlug } from "../../utils/navigation";
-import { getMethodologyCopy } from "../content";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 import { DASHBOARD_VIEWS } from "../views";

@@ -18,8 +18,8 @@
 import { promises } from "fs";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
-import { MetricContent } from "../src/core/content/types";
-import { convertCurlyQuotesToStraight } from "../src/utils/formatStrings";
+import { MetricContent } from "../src/content/types";
+import { convertCurlyQuotesToStraight } from "./formatUtils";
 
 const { readFile, writeFile } = promises;
 
@@ -80,12 +80,12 @@ const createMetricCopyFile = async (
       );
     }
 
-    const outPath = `src/core/content/metric/${
+    const outPath = `src/content/metric/${
       stateCode ? stateCode.toLowerCase() : "default"
     }.ts`;
 
     await writeFile(outPath, copyFileContents);
-    // eslint-disable-next-line no-console
+
     console.log(`${outPath} successfully generated.`);
   }
 };

@@ -15,13 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const US_ID = "US_ID";
-export const US_MO = "US_MO";
-export const US_ND = "US_ND";
-export const US_NY = "US_NY";
-export const US_TN = "US_TN";
-export const US_DEMO = "US_DEMO";
-
-export {
-  PATHWAYS_TENANTS,
-} from "~shared-pathways";
+export function convertCurlyQuotesToStraight(text: string): string {
+  return text.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+}

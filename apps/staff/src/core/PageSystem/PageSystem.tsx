@@ -18,11 +18,10 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { PathwaysPage } from "~shared-pathways";
+import { PathwaysPage, usePageContent } from "~shared-pathways";
 
 import ChartNote from "../ChartNote";
 import { useCoreStore } from "../CoreStoreProvider";
-import usePageContent from "../hooks/usePageContent";
 import MetricVizMapper from "../MetricVizMapper";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
@@ -34,8 +33,8 @@ const PageSystem: React.FC = () => {
   window.scrollTo({
     top: 0,
   });
-  const { metricsStore, page, filtersStore } = useCoreStore();
-  const pageContent = usePageContent(page as PathwaysPage);
+  const { metricsStore, page, filtersStore, currentTenantId } = useCoreStore();
+  const pageContent = usePageContent(currentTenantId, page as PathwaysPage);
   if (!pageContent) return <div />;
 
   const metric = metricsStore.current;

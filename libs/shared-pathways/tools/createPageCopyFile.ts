@@ -20,7 +20,7 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 
 import { PathwaysPageIdList } from "~shared-pathways";
 
-import { convertCurlyQuotesToStraight } from "../src/utils/formatStrings";
+import { convertCurlyQuotesToStraight } from "./formatUtils";
 
 const { readFile, writeFile } = promises;
 
@@ -82,12 +82,12 @@ const createPageCopyFile = async (
       );
     }
 
-    const outPath = `src/core/content/page/${
+    const outPath = `src/content/page/${
       stateCode ? stateCode.toLowerCase() : "default"
     }.ts`;
 
     await writeFile(outPath, copyFileContents);
-    // eslint-disable-next-line no-console
+
     console.log(`${outPath} successfully generated.`);
   }
 };

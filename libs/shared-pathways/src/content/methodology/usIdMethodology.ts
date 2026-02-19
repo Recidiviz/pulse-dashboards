@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ViewMethodology } from "../../models/types";
 import { getMetricCopy, getPageCopy } from "..";
+import { ViewMethodology } from "../types";
 
 /**
  * All methodology attribute blocks are in Markdown

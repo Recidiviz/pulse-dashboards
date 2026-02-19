@@ -145,12 +145,14 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<MetricId, PathwaysSection> =
     prisonPopulationBySentenceLengthMax:
       PATHWAYS_SECTIONS["countBySentenceLengthMax"],
     prisonPopulationOverTime: PATHWAYS_SECTIONS["countOverTime"],
-    projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS["projectedCountOverTime"],
+    projectedPrisonPopulationOverTime:
+      PATHWAYS_SECTIONS["projectedCountOverTime"],
     projectedSupervisionPopulationOverTime:
       PATHWAYS_SECTIONS["projectedCountOverTime"],
     prisonToSupervisionPopulationOverTime: PATHWAYS_SECTIONS["countOverTime"],
     prisonToSupervisionPopulationByAge: PATHWAYS_SECTIONS["countByAgeGroup"],
-    prisonToSupervisionPopulationByFacility: PATHWAYS_SECTIONS["countByLocation"],
+    prisonToSupervisionPopulationByFacility:
+      PATHWAYS_SECTIONS["countByLocation"],
     prisonToSupervisionPopulationByRace: PATHWAYS_SECTIONS["countByRace"],
     prisonToSupervisionPopulationPersonLevel:
       PATHWAYS_SECTIONS["personLevelDetail"],
@@ -160,7 +162,8 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<MetricId, PathwaysSection> =
     supervisionPopulationBySupervisionLevel:
       PATHWAYS_SECTIONS["countBySupervisionLevel"],
     supervisionToPrisonOverTime: PATHWAYS_SECTIONS["countOverTime"],
-    supervisionToPrisonPopulationByDistrict: PATHWAYS_SECTIONS["countByLocation"],
+    supervisionToPrisonPopulationByDistrict:
+      PATHWAYS_SECTIONS["countByLocation"],
     supervisionToPrisonPopulationByMostSevereViolation:
       PATHWAYS_SECTIONS["countByMostSevereViolation"],
     supervisionToPrisonPopulationByNumberOfViolations:
@@ -175,9 +178,11 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<MetricId, PathwaysSection> =
     supervisionToLibertyOverTime: PATHWAYS_SECTIONS["countOverTime"],
     supervisionToLibertyPopulationByLengthOfStay:
       PATHWAYS_SECTIONS["countByLengthOfStay"],
-    supervisionToLibertyPopulationByLocation: PATHWAYS_SECTIONS["countByLocation"],
+    supervisionToLibertyPopulationByLocation:
+      PATHWAYS_SECTIONS["countByLocation"],
     supervisionToLibertyPopulationBySex: PATHWAYS_SECTIONS["countBySex"],
-    supervisionToLibertyPopulationByAgeGroup: PATHWAYS_SECTIONS["countByAgeGroup"],
+    supervisionToLibertyPopulationByAgeGroup:
+      PATHWAYS_SECTIONS["countByAgeGroup"],
     supervisionToLibertyPopulationByRace: PATHWAYS_SECTIONS["countByRace"],
   };
 

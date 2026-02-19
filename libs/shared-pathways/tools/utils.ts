@@ -15,18 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PathwaysPage } from "~shared-pathways";
+import { JWT } from "google-auth-library";
+import { GoogleSpreadsheet } from "google-spreadsheet";
 
-import {
-  PartiallyTypedRootStore,
-  useRootStore,
-} from "../../components/StoreProvider";
-import { getPageCopy } from "../content";
-import { PageContent } from "../content/types";
+export async function getGoogleSheet(sheetId: string) {
+  const SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+  ];
 
-export default function usePageContent(pageId: PathwaysPage): PageContent {
-  // TODO(#5636) Eliminate PartiallyTypedRootStore
-  const { currentTenantId } = useRootStore() as PartiallyTypedRootStore;
+  const clientEmail = process.env.SHEET_API_SERVICE_ACCOUNT || "";
+  const privateKey = process.env.SHEET_API_SERVICE_ACCOUNT_KEY || "";
 
-  return getPageCopy(currentTenantId)[pageId];
+  const jwt = new JWT({
+    email: clientEmail,
+    key: privateKey.replace(/\\\\n/gm, "\n"),
+    scopes: SCOPES,
+  });
+
+  const doc = new GoogleSpreadsheet(sheetId, jwt);
+
+  await doc.loadInfo();
+
+  return doc;
 }

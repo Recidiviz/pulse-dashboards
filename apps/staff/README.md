@@ -74,7 +74,7 @@ There is no script for Prettier; formatting changes will be applied by the pre-c
 
 ### Syncing content
 
-Content found in the folder `src/core/content` can be synced with an external google sheet by running `nx sync-content staff`. The ID of the sheet as well as the credentials of a service account with access credentials should be loaded into the environment using the vars specified below as part of the `nx sync-content staff` command.
+Pathways content in `libs/shared-pathways/src/content` can be synced with an external google sheet by running `nx sync-content shared-pathways`. The ID of the sheet as well as the credentials of a service account with access credentials should be loaded into the environment using the vars specified below as part of the `nx sync-content shared-pathways` command.
 
 - `CONTENT_SHEET_ID` - Id of the Google Sheet where the content is stored
 - `SHEET_API_SERVICE_ACCOUNT` - Service account used to authenticate/authorize access to the sheet

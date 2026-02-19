@@ -22,6 +22,13 @@ export const US_NY = "US_NY";
 export const US_TN = "US_TN";
 export const US_DEMO = "US_DEMO";
 
-export {
-  PATHWAYS_TENANTS,
-} from "~shared-pathways";
+export const PATHWAYS_TENANTS = [
+  // NOTE: the first state in this list is where Recidiviz users will default to
+  US_TN,
+  US_ID,
+  US_MO,
+  US_ND,
+  US_NY,
+] as const;
+
+export type PathwaysTenantId = (typeof PATHWAYS_TENANTS)[number];

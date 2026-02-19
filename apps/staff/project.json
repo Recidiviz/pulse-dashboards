@@ -299,13 +299,6 @@
         "production": {}
       }
     },
-    "sync-content": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_sync_content && vite-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*'"
-      }
-    },
     "load-prod-fixtures": {
       "executor": "nx:run-commands",
       "options": {

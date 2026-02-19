@@ -19,11 +19,11 @@ import { MetricCopy } from "../types";
 
 const content: MetricCopy = {
   projectedPrisonPopulationOverTime: {
-    title: "Prison population over time",
+    title: "Projected Prison population over time",
     note: "Historical and projected population data were generated",
   },
   projectedSupervisionPopulationOverTime: {
-    title: "Supervision population over time",
+    title: "Projected Supervision population over time",
     note: "Historical and projected population data were generated",
   },
   prisonFacilityPopulation: {

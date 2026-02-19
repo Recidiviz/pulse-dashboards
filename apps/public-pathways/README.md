@@ -137,3 +137,13 @@ import {
 ```
 
 The `~` prefix is a workspace path alias configured in `tsconfig.base.json`. See `libs/shared-pathways/src/index.ts` for the full list of exports.
+
+## Syncing content
+
+Pathways content (page copy, metric copy) lives in `libs/shared-pathways/src/content` and is shared with the staff app. To sync content from the Google Sheet, run:
+
+```bash
+nx sync-content shared-pathways
+```
+
+See the [shared-pathways README](../../libs/shared-pathways/README.md) for required environment variables.

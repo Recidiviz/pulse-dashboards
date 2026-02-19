@@ -26,7 +26,6 @@ import {
 import { FirestoreCollectionName } from "~firestore-config";
 import {
   type LibertyPopulationSnapshotRecord,
-  type MethodologyContent,
   type PersonLevelDataRecord,
   type PopulationProjectionTimeSeriesRecord,
   type PrisonPopulationPersonLevelRecord,
@@ -55,7 +54,6 @@ import {
   SupervisionTaskRecord,
   SupervisionTaskType,
 } from "../../WorkflowsStore/Task/types";
-import { MetricCopy, PageCopy } from "../content/types";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
 import { Navigation } from "../types/navigation";
@@ -266,22 +264,6 @@ export const ENTITY_TYPES = {
   LEVEL_2_SUPERVISION_LOCATION: "LEVEL_2_SUPERVISION_LOCATION",
   PO: "PO",
 } as const;
-
-export type ViewMethodology = {
-  operations?: {
-    title: string;
-    description: string;
-    pageCopy: Record<string, MethodologyContent>;
-    metricCopy: Record<string, MethodologyContent>;
-  };
-  system?: {
-    title: string;
-    description: string;
-    descriptionSecondary?: string;
-    pageCopy: PageCopy;
-    metricCopy: MetricCopy;
-  };
-};
 
 /**
  * Staff-level MetricRecord includes pathways records, vitals records,

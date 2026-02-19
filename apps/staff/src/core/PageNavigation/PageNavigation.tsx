@@ -23,14 +23,17 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { palette } from "~design-system";
+import {
+  getMethodologyCopy,
+  getPageCopy,
+  PATHWAYS_TENANTS,
+} from "~shared-pathways";
 
 import {
   PartiallyTypedRootStore,
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { PATHWAYS_TENANTS } from "../../RootStore/TenantStore/pathwaysTenants";
-import { getMethodologyCopy, getPageCopy } from "../content";
 import { useCoreStore } from "../CoreStoreProvider";
 import { NavigationLayout } from "../NavigationLayout";
 import { NavigationSection } from "../types/navigation";

@@ -17,10 +17,11 @@
 
 import { makeAutoObservable, reaction } from "mobx";
 
+import { getMethodologyCopy } from "~shared-pathways";
+
 import { TENANT_CONFIGS } from "../../tenants";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { formatISODateString, formatPercent } from "../../utils/formatStrings";
-import { getMethodologyCopy } from "../content";
 import {
   ENTITY_TYPES,
   VitalsSummaryRecord,

@@ -23,7 +23,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { Icon, IconSVG, Menubar, palette } from "~design-system";
-import { PathwaysPage } from "~shared-pathways";
+import { PathwaysPage, usePageContent } from "~shared-pathways";
 
 import Drawer from "../../components/Drawer";
 import {
@@ -32,7 +32,6 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
-import usePageContent from "../hooks/usePageContent";
 
 const SectionNavigation: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -41,12 +40,15 @@ const SectionNavigation: React.FC = () => {
   const { pathname } = useLocation();
   // TODO(#5636) Eliminate PartiallyTypedRootStore
   const { userStore } = useRootStore() as PartiallyTypedRootStore;
-  const { setSection } = useCoreStore();
+  const { setSection, currentTenantId } = useCoreStore();
   const navigationLayout = userStore.userAllowedNavigation;
   const [currentView, currentPage] = pathname.split("/").slice(1, 4);
   const enabledSections = navigationLayout[currentPage] ?? [];
   const [currentSection = enabledSections[0]] = pathname.split("/").slice(3, 4);
-  const { sections } = usePageContent(currentPage as PathwaysPage);
+  const { sections } = usePageContent(
+    currentTenantId,
+    currentPage as PathwaysPage,
+  );
 
   const isMultipleSections = enabledSections.length > 1;
 

@@ -36,10 +36,14 @@ import {
   FilterOption,
   Filters,
   FilterType,
+  getMethodologyCopy,
+  getMetricCopy,
   getMetricIdsForPage,
   getSectionIdForMetric,
   HydratablePathwaysMetric,
+  MetricContent,
   MetricId,
+  PageContent,
   PATHWAYS_PAGES,
   PathwaysMetricRecords,
   PathwaysPage,
@@ -50,8 +54,6 @@ import {
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
-import { getMethodologyCopy, getMetricCopy } from "../content";
-import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { isAbortException } from "../utils/exceptions";
 import PathwaysMetric from "./PathwaysMetric";

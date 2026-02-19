@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2026 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const US_ID = "US_ID";
-export const US_MO = "US_MO";
-export const US_ND = "US_ND";
-export const US_NY = "US_NY";
-export const US_TN = "US_TN";
-export const US_DEMO = "US_DEMO";
+import { getMetricCopy, getPageCopy } from "..";
+import { ViewMethodology } from "../types";
 
-export {
-  PATHWAYS_TENANTS,
-} from "~shared-pathways";
+/**
+ * All methodology attribute blocks are in Markdown
+ */
+export const usNyMethodology: ViewMethodology = {
+  system: {
+    title: "Pathways",
+    description: `Pathways provides a real-time map of the corrections system and helps identify patterns of success and failure among specific cohorts of people.`,
+    get pageCopy() {
+      return getPageCopy("US_NY");
+    },
+    get metricCopy() {
+      return getMetricCopy("US_NY");
+    },
+  },
+};

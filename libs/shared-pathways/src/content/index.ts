@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,7 @@
 
 import { merge } from "lodash";
 
-import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
-import { TenantId } from "../../RootStore/types";
-import { ViewMethodology } from "../models/types";
+import * as pathwaysTenants from "../tenants";
 import { usIdMethodology } from "./methodology/usIdMethodology";
 import { usMoMethodology } from "./methodology/usMoMethodology";
 import { usNdMethodology } from "./methodology/usNdMethodology";
@@ -42,7 +40,10 @@ import {
   PageCopy,
   StateSpecificMetricCopy,
   StateSpecificPageCopy,
+  ViewMethodology,
 } from "./types";
+
+export { default as usePageContent } from "./usePageContent";
 
 export const pageContentOverrides: {
   [category: string]: StateSpecificPageCopy;
@@ -64,7 +65,7 @@ export const metricContentOverrides: {
   US_NY: NyMetricContent,
 };
 
-export const getPageCopy = (currentTenantId: TenantId): PageCopy => {
+export const getPageCopy = (currentTenantId: string): PageCopy => {
   const copyOfContent = JSON.parse(JSON.stringify(defaultPageContent));
   return currentTenantId in pageContentOverrides
     ? merge(copyOfContent, pageContentOverrides[currentTenantId])
@@ -72,7 +73,7 @@ export const getPageCopy = (currentTenantId: TenantId): PageCopy => {
 };
 
 export const getMetricCopy = (
-  currentTenantId: TenantId | undefined,
+  currentTenantId: string | undefined,
 ): MetricCopy => {
   return currentTenantId && currentTenantId in metricContentOverrides
     ? merge(defaultMetricContent, metricContentOverrides[currentTenantId])
@@ -80,7 +81,7 @@ export const getMetricCopy = (
 };
 
 export const getMethodologyCopy = (
-  currentTenantId: TenantId,
+  currentTenantId: string,
 ): ViewMethodology => {
   switch (currentTenantId) {
     case pathwaysTenants.US_ID:

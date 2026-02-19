@@ -36,5 +36,4 @@ const syncContentWithSheet = async () => {
   }
 };
 
-// eslint-disable-next-line no-console
 syncContentWithSheet().catch((err) => console.log(err));

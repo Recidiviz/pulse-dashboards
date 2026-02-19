@@ -29,8 +29,12 @@ import {
   Dimension,
   EnabledFilters,
   Filters,
+  getMethodologyCopy,
+  getMetricCopy,
   HydratablePathwaysMetric,
+  MetricContent,
   MetricId,
+  PageContent,
   PathwaysMetricRecords,
   PathwaysPage,
   RawMetricData,
@@ -43,8 +47,6 @@ import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import flags from "../../flags";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
-import { getMethodologyCopy, getMetricCopy } from "../content";
-import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { PopulationFilters } from "../types/filters";
 import { Diff, Differ } from "./backendDiff/Differ";
